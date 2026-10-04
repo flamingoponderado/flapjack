@@ -14,8 +14,7 @@ namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Encoders.AsmSem
 open Flapjack.Compiler.Encoders.AsmProps Flapjack.Compiler.Backend.Semantics.TargetProps
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "asm_step_nop_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def asmStepNop {width : Nat} [NeZero width] (bytes : List (BitVec 8))
     (c : AsmConfigExact width) (s1 : AsmState width) (i : HolAsm width)
     (s2 : AsmState width) : Prop :=
@@ -73,8 +72,7 @@ private theorem asmOk_skip {width : Nat} [NeZero width] (c : AsmConfigExact widt
     asmOkExact (.inst .skip) c = true := by
   simp [asmOkExact, asmInstOkExact]
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "evaluate_nop_steps"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateNopSteps {width : Nat} [NeZero width] {S Q : Type} {σ : Type}
     (io : HolFfiState σ) (n : Nat) (s1 : AsmState width) (ms1 : S)
     (c : MachineConfig width S Q)
@@ -135,8 +133,7 @@ theorem evaluateNopSteps {width : Nat} [NeZero width] {S Q : Type} {σ : Type}
       rw [pcAddAdd, show len + n * len = (n + 1) * len by rw [Nat.succ_mul]; omega] at h3
       exact h3
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "asm_step_IMP_evaluate_step_nop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem asmStepImpEvaluateStepNop {width : Nat} [NeZero width] {S Q : Type} {σ : Type}
     (c : MachineConfig width S Q) (s1 : AsmState width) (ms1 : S) (io : HolFfiState σ)
     (i : HolAsm width) (s2 : AsmState width) (bytes : List (BitVec 8))

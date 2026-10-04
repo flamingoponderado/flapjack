@@ -8,8 +8,7 @@ open Flapjack.Compiler.Backend.LabProps.LabelSets
 
 /-- Full original extraction theorem: both zero insertions and the arbitrary
 label accumulator are retained. The only premise is the actual returned tuple. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "section_labels_line_get_code_labels" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem sectionLabels_codeLabels {width : Nat} [NeZero width] (pos : Nat)
     (lines : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))

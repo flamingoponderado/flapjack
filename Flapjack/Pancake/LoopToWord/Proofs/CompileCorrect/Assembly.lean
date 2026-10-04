@@ -109,11 +109,7 @@ theorem compileCorrect_all {width : Nat} [NeZero width] {C F : Type} :
     conclusion is `goal`'s existential with the `case res of` rendered by
     `resultCase` (`CompileCorrect/Property.lean`).  There is no additional
     premise. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "compile_correct"
-  (fmap_as_finite_support_relation :=
-    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.fpRegs,
-      WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect {width : Nat} [NeZero width] {C F : Type} :
     ∀ (prog : HolLoopProg width) (s : LoopSemStateFiniteExact width F)
       (res : Option (LoopSemStateFiniteExact.LoopResultExact width))

@@ -18,13 +18,4 @@ example : getWritesInst (.arith (.longDiv 1 2 3 4 5) : WordLangInst (BitVec 8)) 
 example : getWritesInst (.mem .load16 1 (.addr 2 0) : WordLangInst (BitVec 8)) =
     .ln := by decide +kernel
 
-example : getWritesInst (.fp (.fpMovToReg 1 2 3) : WordLangInst (BitVec 64)) =
-    sptInsert 1 () .ln := by decide +kernel
-
-example : getWritesInst (.fp (.fpMovToReg 1 2 3) : WordLangInst (BitVec 32)) =
-    sptInsert 2 () (sptInsert 1 () .ln) := by decide +kernel
-
-example : getWritesInst (.fp (.fpMovFromReg 3 1 2) : WordLangInst (BitVec 32)) =
-    .ln := by decide +kernel
-
 end Flapjack.Test.WordAllocInstructionWritesParity

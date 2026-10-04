@@ -6,8 +6,7 @@ open Flapjack.Compiler.Backend.StackLang
 open Flapjack.Compiler.Encoders.Asm
 
 /-- Literal native performance frame setup syntax. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "perf_call_prefix_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def perfCallPrefixNative {width : Nat} [NeZero width]
     (l1 l2 k : Nat) : HolProg width :=
   Flapjack.Compiler.Backend.StackLang.listSeq
@@ -25,8 +24,7 @@ def perfCallPrefixNative {width : Nat} [NeZero width]
         (.reg (Flapjack.Compiler.Backend.WordToStack.perfRsp)))) ]
 
 /-- Literal native performance frame teardown syntax. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "perf_call_suffix_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def perfCallSuffixNative {width : Nat} [NeZero width] : HolProg width :=
   Flapjack.Compiler.Backend.StackLang.listSeq
     [ .inst (.mem .load (Flapjack.Compiler.Backend.WordToStack.perfRbp)

@@ -71,8 +71,7 @@ private theorem compNative_bitmapAccounting {width : Nat} [NeZero width]
 
 /-- Complete original bitmap accounting theorem: the actual compiler output
 equation and sole initial length bound imply both final accounting conjuncts. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_IMP_LENGTH"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compImpLength {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (program : WordLangProgHOL (BitVec width)) (bs : AppList (BitVec width) × Nat)

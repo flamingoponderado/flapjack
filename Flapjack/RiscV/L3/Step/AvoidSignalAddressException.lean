@@ -9,7 +9,6 @@ the pair-typed exception argument; no premise beyond the original guard is added
 namespace Flapjack.RiscV.L3.Step
 open Flapjack.RiscV.L3
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "avoid_signalAddressException"]
 theorem avoidSignalAddressException (b : Bool) (t : (ExceptionType × (BitVec 64)))
     (u s : riscv_state) :
     (¬ b) → ((if b then signalAddressException t u else s) = s) := by

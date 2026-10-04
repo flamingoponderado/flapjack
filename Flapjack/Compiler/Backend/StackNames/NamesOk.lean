@@ -40,8 +40,7 @@ theorem mappedNodupNe {α β : Type} (f : α → β) (xs : List α)
 bound and avoided-register conditions. No bijection premise is added. The exact sparse tree is passed to
 the existing lookup-function helper through its tree lookup, matching HOL
 tlookup without assuming a representation exception. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "names_ok_imp"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem namesOkImp {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (h : namesOkSptHOL names config.regCount config.avoidRegs) :
@@ -56,8 +55,7 @@ theorem namesOkImp {width : Nat} [NeZero width]
 
 /-- HOL names_ok_imp2: distinct logical registers below the source name bound
 remain distinct under renaming. The sole source antecedent is retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "names_ok_imp2"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem namesOkImp2 {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (register other : Nat)

@@ -27,11 +27,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 of actual FP reads at every index, including absent entries. Fixed word64 FP
 payloads and arbitrary positive machine width are retained. Structural equality
 establishes no numerical FP agreement and uses no real-arithmetic assumption. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "state_rel_get_fp_var"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelGetFpVar {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (k f frame : Nat)
     (source : WordSemStateFiniteExact width (Nat × C) F)
@@ -46,11 +42,7 @@ theorem stateRelGetFpVar {width : Nat} [NeZero width] {C F : Type}
 an arbitrary word64 value preserve the entire original relation for arbitrary
 extra and index. No postrelation premise or numerical FP agreement is assumed;
 no real-arithmetic assumption is used. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "state_rel_set_fp_var"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelSetFpVar {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (k f frame : Nat)
     (source : WordSemStateFiniteExact width (Nat × C) F)

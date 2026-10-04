@@ -1,18 +1,12 @@
 import Flapjack.Compiler.Backend.LabSem.Arithmetic
 import Flapjack.Compiler.Backend.LabSem.Memory
-import Flapjack.Compiler.Backend.LabSem.FpUpdates
 
-/-! Literal native LabSem instruction dispatch and its full source frame
-theorem. FP execution inherits the reviewed `reals_as_rational_cuts`
-translation of `fpUpd` (docs/SOUNDNESS.md item 8); this module introduces no
-real-number rendering of its own. Failed updates are preserved by dispatch.
--/
+/-! Integer-only LabSem instruction dispatch and field preservation.
+The restricted instruction carrier intentionally differs from HOL. -/
 
 namespace Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Encoders.Asm
 
-@[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "asm_inst_def"
-  (words_as_type_indexed_bitvec)]
 noncomputable def asmInst {width : Nat} [NeZero width] {C F : Type}
     (instruction : HolInst width)
     (state : Flapjack.Compiler.Backend.LabSem.State width C F) :
@@ -22,13 +16,9 @@ noncomputable def asmInst {width : Nat} [NeZero width] {C F : Type}
   | .const register value => updReg register (.word value) state
   | .arith operation => arithUpd operation state
   | .mem operator register address => memOp operator register address state
-  | .fp operation => fpUpd operation state
-
 /-- All thirteen source frame conjuncts, including unsuccessful transitions.
 No assumption about operand validity, the failed flag, or a target execution
-is required. The inherited FP translation is the same as that of `asmInst`. -/
-@[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "asm_inst_consts"
-  (words_as_type_indexed_bitvec)]
+is required. -/
 theorem asmInstConsts {width : Nat} [NeZero width] {C F : Type}
     (instruction : HolInst width) (state : Flapjack.Compiler.Backend.LabSem.State width C F) :
     (asmInst instruction state).pc = state.pc ∧
@@ -58,10 +48,4 @@ theorem asmInstConsts {width : Nat} [NeZero width] {C F : Type}
       all_goals repeat' first
         | simp_all [updReg, updMem, assertState]
         | split
-  | fp operation =>
-      cases operation <;> simp only [asmInst, fpUpd]
-      all_goals repeat' first
-        | simp_all [updFpReg, updReg, assertState]
-        | split
-
 end Flapjack.Compiler.Backend.LabSem

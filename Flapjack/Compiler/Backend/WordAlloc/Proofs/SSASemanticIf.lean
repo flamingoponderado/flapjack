@@ -159,9 +159,7 @@ inherited through the reviewed compiler invariant and reconciliation proofs;
 original If9263-9331 adds no selector default or weakened out-of-range behavior.
 Reconciliation selector bounds remain discharged by the original helper guards.
 Final whole-program assembly must discharge both branch IHs. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_correct"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransCorrectIf {width : Nat} [NeZero width] {C F : Type}
     (operator : Cmp) (left : Nat) (immediate : WordRegImm (BitVec width))
     (first second : WordLangProgHOL (BitVec width))

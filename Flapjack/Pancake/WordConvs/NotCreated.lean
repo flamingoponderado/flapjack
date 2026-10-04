@@ -100,8 +100,7 @@ noncomputable abbrev holArbMemOp : WordMemOp :=
 clause by clause, on the faithful Spt-backed program with HOL `ARB` as the
 uninterpreted `holArbMemOp`. HOL's predicate is `bool`-valued (`P : 'a prog ->
 bool`), as here. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "not_created_subprogs_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def notCreatedSubprogsHOL {width : Nat} [NeZero width]
     (P : WordLangProgHOL (BitVec width) → Bool) : WordLangProgHOL (BitVec width) → Bool
   | .mustTerminate body => P (.mustTerminate .skip) && notCreatedSubprogsHOL P body
@@ -158,8 +157,7 @@ theorem notCreatedSubprogsHOL_eq_withMemOp {width : Nat} [NeZero width]
 the checker, inequality with `Alloc 0 (LN,LN)` is exactly this constructor test.
 The correspondence theorem below checks that simplification for every input
 and every possible interpretation of `ARB`. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "no_alloc_subprogs_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def noAllocSubprogsHOL {width : Nat} [NeZero width]
     (program : WordLangProgHOL (BitVec width)) : Bool :=
   notCreatedSubprogsWithMemOp .load (fun q => match q with
@@ -167,8 +165,7 @@ def noAllocSubprogsHOL {width : Nat} [NeZero width]
     | _ => true) program
 
 /-- Boolean HOL-shaped `no_install` specialization; see its correspondence theorem. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "no_install_subprogs_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def noInstallSubprogsHOL {width : Nat} [NeZero width]
     (program : WordLangProgHOL (BitVec width)) : Bool :=
   notCreatedSubprogsWithMemOp .load (fun q => match q with
@@ -176,8 +173,7 @@ def noInstallSubprogsHOL {width : Nat} [NeZero width]
     | _ => true) program
 
 /-- Boolean HOL-shaped `no_mt` specialization; see its correspondence theorem. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "no_mt_subprogs_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def noMtSubprogsHOL {width : Nat} [NeZero width]
     (program : WordLangProgHOL (BitVec width)) : Bool :=
   notCreatedSubprogsWithMemOp .load (fun q => match q with
@@ -186,8 +182,7 @@ def noMtSubprogsHOL {width : Nat} [NeZero width]
 
 /-- Boolean HOL-shaped `no_share_inst` specialization; the constructor test
 removes dependence on the arbitrary memory operation. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "no_share_inst_subprogs_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def noShareInstSubprogsHOL {width : Nat} [NeZero width]
     (program : WordLangProgHOL (BitVec width)) : Bool :=
   notCreatedSubprogsWithMemOp .load (fun q => match q with

@@ -29,8 +29,7 @@ exactly Seq (StoreConsts t1 t2 NONE) (Return 0) at label n. The shared HOL
 word dimension uses the reviewed positive-width HolProg carrier; code is an
 sptree, not a finite map. This
 proof-side prerequisite does not claim full evaluator or production routing. -/
-@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "check_store_consts_opt_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def checkStoreConstsOpt {width : Nat} [NeZero width] (t1 t2 : Nat) (stub : Option Nat)
     (code : Spt (HolProg width)) : Bool :=
   match stub with

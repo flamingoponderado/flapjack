@@ -11,11 +11,11 @@ not independently chosen as an arbitrary function or zero-filled. -/
 namespace Flapjack.Compiler.Encoders.RiscV.Target
 open Flapjack RiscV.L3
 
-@[hol "cakeml/compiler/encoders/riscv/riscv_targetScript.sml" "riscv_next_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def riscvNext (s : riscv_state) : riscv_state :=
   holThe (RiscV.L3.Step.NextRISCV s)
 
-@[hol "cakeml/compiler/encoders/riscv/riscv_targetScript.sml" "riscv_ok_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def riscvOk (s : riscv_state) : Bool :=
   ((s.c_MCSR s.procID).mstatus.VM == 0) &&
   ((s.c_MCSR s.procID).mcpuid.ArchBase == 2) &&
@@ -27,7 +27,7 @@ no independent original declaration or extra validity restriction. -/
 abbrev RiscVProjection := BitVec 5 × BitVec 2 × Option TransferControl ×
   exception × (BitVec 5 → BitVec 64) × ((BitVec 64 × BitVec 8) → Prop) × BitVec 64
 
-@[hol "cakeml/compiler/encoders/riscv/riscv_targetScript.sml" "riscv_proj_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def riscvProj (d : BitVec 64 → Prop) (s : riscv_state) : RiscVProjection :=
   ((s.c_MCSR s.procID).mstatus.VM,
    (s.c_MCSR s.procID).mcpuid.ArchBase,
@@ -45,7 +45,7 @@ local instance : Nonempty (HolAsmTarget 64 riscv_state RiscVProjection) :=
      getByte := fun _ _ => 0, stateOk := fun _ => true,
      proj := riscvProj }⟩
 
-@[hol "cakeml/compiler/encoders/riscv/riscv_targetScript.sml" "riscv_target_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def riscvTarget : HolAsmTarget 64 riscv_state RiscVProjection where
   next := riscvNext
   config := riscvConfig

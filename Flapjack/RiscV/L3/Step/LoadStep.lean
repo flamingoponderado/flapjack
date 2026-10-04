@@ -19,9 +19,9 @@ exactly. -/
 /-- Bare-memory translation: under `mstatus.VM = 0` the original `translateAddr`
 returns the unpaged address.  Flapjack-only helper (no separate HOL theorem). -/
 theorem translateAddr_bare (vAddr : BitVec 64) (ft : fetchType) (ac : accessType) (s : riscv_state)
-    (h : (s.c_MCSR s.procID).mstatus.VM = 0#5) :
+    (_h : (s.c_MCSR s.procID).mstatus.VM = 0#5) :
     translateAddr (vAddr, (ft, ac)) s = (some vAddr, s) := by
-  simp [translateAddr, vmType, MCSR, h]
+  rfl
 
 /-- The original 64-bit loads exclude the 32-bit architecture: for
 `ArchBase` outside `{0,1}` the mode test is false and returns the state
@@ -160,7 +160,6 @@ theorem dfnLHURaw (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
   simp only [«write'GPR», «write'gpr»]
   rw [if_pos (by simpa [beq_iff_eq] using hrd)]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LD_NOP"]
 theorem dfnLDNop (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (harch0 : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 0)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd = 0)
@@ -174,7 +173,6 @@ theorem dfnLDNop (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
   rw [translateAddr_bare _ _ _ s hVM]
   simp [«write'GPR», hrd]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LW_NOP"]
 theorem dfnLWNop (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (hrd : rd = 0) (hVM : (s.c_MCSR s.procID).mstatus.VM = 0#5) :
     «dfn'LW» (rd, (rs1, offs)) s = s := by
@@ -182,7 +180,6 @@ theorem dfnLWNop (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
   rw [translateAddr_bare _ _ _ s hVM]
   simp [«write'GPR», hrd]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LH_NOP"]
 theorem dfnLHNop (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (hrd : rd = 0) (hVM : (s.c_MCSR s.procID).mstatus.VM = 0#5) :
     «dfn'LH» (rd, (rs1, offs)) s = s := by
@@ -190,7 +187,6 @@ theorem dfnLHNop (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
   rw [translateAddr_bare _ _ _ s hVM]
   simp [«write'GPR», hrd]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LB_NOP"]
 theorem dfnLBNop (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (hrd : rd = 0) (hVM : (s.c_MCSR s.procID).mstatus.VM = 0#5) :
     «dfn'LB» (rd, (rs1, offs)) s = s := by
@@ -198,7 +194,6 @@ theorem dfnLBNop (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
   rw [translateAddr_bare _ _ _ s hVM]
   simp [«write'GPR», hrd]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LWU_NOP"]
 theorem dfnLWUNop (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (harch0 : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 0)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd = 0)
@@ -210,7 +205,6 @@ theorem dfnLWUNop (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
   rw [translateAddr_bare _ _ _ s hVM]
   simp [«write'GPR», hrd]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LHU_NOP"]
 theorem dfnLHUNop (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (hrd : rd = 0) (hVM : (s.c_MCSR s.procID).mstatus.VM = 0#5) :
     «dfn'LHU» (rd, (rs1, offs)) s = s := by
@@ -236,7 +230,6 @@ theorem dfnLBURaw (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
   simp only [«write'GPR», «write'gpr»]
   rw [if_pos (by simpa [beq_iff_eq] using hrd)]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LBU_NOP"]
 theorem dfnLBUNop (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (hrd : rd = 0) (hVM : (s.c_MCSR s.procID).mstatus.VM = 0#5) :
     «dfn'LBU» (rd, (rs1, offs)) s = s := by
@@ -244,7 +237,6 @@ theorem dfnLBUNop (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
   rw [translateAddr_bare _ _ _ s hVM]
   simp [«write'GPR», hrd]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LD"]
 theorem dfnLD (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (harch0 : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 0)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1)
@@ -261,7 +253,6 @@ theorem dfnLD (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
         · simp only [if_pos zero]
         · simp only [if_neg zero] }
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LW"]
 theorem dfnLW (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (hrd : rd ≠ 0) (hVM : (s.c_MCSR s.procID).mstatus.VM = 0#5)
     (haligned : Flapjack.holAligned 2 (if rs1 = 0 then BitVec.signExtend 64 offs else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs) = true)
@@ -279,7 +270,6 @@ theorem dfnLW (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
         · simp only [if_pos zero]
         · simp only [if_neg zero] }
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LH"]
 theorem dfnLH (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (hrd : rd ≠ 0) (hVM : (s.c_MCSR s.procID).mstatus.VM = 0#5)
     (haligned : Flapjack.holAligned 1 (if rs1 = 0 then BitVec.signExtend 64 offs else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs) = true)
@@ -297,7 +287,6 @@ theorem dfnLH (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
         · simp only [if_pos zero]
         · simp only [if_neg zero] }
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LB"]
 theorem dfnLB (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (hrd : rd ≠ 0) (hVM : (s.c_MCSR s.procID).mstatus.VM = 0#5)
     : «dfn'LB» (rd, (rs1, offs)) s =
@@ -315,7 +304,6 @@ theorem dfnLB (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
         · simp only [if_pos zero]
         · simp only [if_neg zero] }
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LWU"]
 theorem dfnLWU (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (harch0 : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 0)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1)
@@ -335,7 +323,6 @@ theorem dfnLWU (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
         · simp only [if_pos zero]
         · simp only [if_neg zero] }
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LHU"]
 theorem dfnLHU (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (hrd : rd ≠ 0) (hVM : (s.c_MCSR s.procID).mstatus.VM = 0#5)
     (haligned : Flapjack.holAligned 1 (if rs1 = 0 then BitVec.signExtend 64 offs else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs) = true)
@@ -353,7 +340,6 @@ theorem dfnLHU (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
         · simp only [if_pos zero]
         · simp only [if_neg zero] }
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LBU"]
 theorem dfnLBU (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (hrd : rd ≠ 0) (hVM : (s.c_MCSR s.procID).mstatus.VM = 0#5)
     : «dfn'LBU» (rd, (rs1, offs)) s =

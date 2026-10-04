@@ -7,8 +7,7 @@ open Flapjack.Basis.Pure.MlString LabelSets
 
 /-- Both source guards establish the owning section and nonzero label ID.
 No distinctness or label-length premise is required. -/
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml"
-  "sec_label_ok_extract_labels" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem secLabelOk_extractLabels {width : Nat} [NeZero width]
     (sectionId : Nat)
     (lines : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))

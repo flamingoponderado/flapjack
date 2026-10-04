@@ -99,10 +99,7 @@ abbrev BranchIH {width : Nat} [NeZero width] (C F : Type)
 evaluate_ind hypotheses augment the three original premises. Both existential conclusions
 are retained. The full evaluator inherits its documented real-carrier
 assurance limit; this comparison/branch proof introduces no real rendering. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectIf {width : Nat} [NeZero width] {C F : Type}
     (comparison : Cmp) (register : Nat) (operand : Compiler.Encoders.Asm.HolRegImm width)
     (first second : HolProg width)

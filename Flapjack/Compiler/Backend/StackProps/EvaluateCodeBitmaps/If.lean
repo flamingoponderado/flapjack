@@ -17,8 +17,7 @@ end IfCase
 only. All failed reads/comparisons retain the original fields with count zero.
 The native evaluator closure inherits reals_as_rational_cuts; this case makes
 no numeric alignment or floating-point correspondence claim. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsIf {width : Nat} [NeZero width] {C F : Type}
     (comparison : Cmp) (register : Nat) (operand : HolRegImm width)
     (first second : HolProg width) (source post : StackSemStateFiniteExact width C F)

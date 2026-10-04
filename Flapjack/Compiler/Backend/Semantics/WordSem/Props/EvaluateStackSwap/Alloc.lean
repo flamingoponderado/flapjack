@@ -248,8 +248,7 @@ open EvaluateStackSwapAllocWitnesses
 /-- HOL `evaluate_stack_swap` (`wordPropsScript.sml:2316-2363`), `Alloc` case
 (proof `wordPropsScript.sml:2371-2411`): the HOL conclusion at `Alloc n names`,
 for every state; no sub-program and no extra premise. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_swap"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateStackSwap_Alloc {width : Nat} [NeZero width] {C F : Type} (n : Nat)
     (names : WordLangCutsetsHOL) :
     ∀ s : WordSemStateFiniteExact width C F,

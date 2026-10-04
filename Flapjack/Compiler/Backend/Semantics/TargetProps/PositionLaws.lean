@@ -4,8 +4,7 @@ namespace Flapjack.Compiler.Backend.Semantics.TargetProps
 open Flapjack Classical
 
 /-- Literal source437: suffix counts start at the returned configuration, FFI and application post-state. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "interference_count_tail" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem interferenceCountTail {width : Nat} [NeZero width]
     {S Q : Type} {σ : Type} (P : InterferenceApp width S → Prop)
     (mc : MachineConfig width S Q) (ffi : HolFfiState σ) (ms : S)
@@ -22,8 +21,7 @@ theorem interferenceCountTail {width : Nat} [NeZero width]
     omega
 
 /-- Literal source449: a selected first application is exactly the guarded choice for count zero. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "interference_pos_head" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem interferencePosHead {width : Nat} [NeZero width]
     {S Q : Type} {σ : Type} (P : InterferenceApp width S → Prop)
     (mc : MachineConfig width S Q) (ffi : HolFfiState σ) (ms : S)

@@ -116,11 +116,7 @@ open LoopToWordCompileCorrectArithSupport
     (Arith ...)` over `find_var`-renamed registers.  The operands are read
     through `locals_rel`, and the destinations are updated in the same order
     on both sides. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "compile_correct"
-  (fmap_as_finite_support_relation :=
-    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.fpRegs,
-      WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_Arith {width : Nat} [NeZero width] {C F : Type}
     (arith : LoopArith) (s : LoopSemStateFiniteExact width F) :
     ∀ (res : Option (LoopSemStateFiniteExact.LoopResultExact width))
@@ -220,11 +216,7 @@ theorem compileCorrect_Arith {width : Nat} [NeZero width] {C F : Type}
     (`find_var_neq_odd`).  So the scratch writes are unmapped updates
     (`locals_rel_insert_unmapped`), and the two destination writes are mapped
     updates (`locals_rel_insert`). -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "compile_correct"
-  (fmap_as_finite_support_relation :=
-    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.fpRegs,
-      WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_Primitive {width : Nat} [NeZero width] {C F : Type}
     (lhss : List Nat) (pop : PrimOp) (rhss : List Nat) (s : LoopSemStateFiniteExact width F) :
     ∀ (res : Option (LoopSemStateFiniteExact.LoopResultExact width))

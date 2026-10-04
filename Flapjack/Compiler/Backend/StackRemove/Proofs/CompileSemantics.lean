@@ -261,10 +261,7 @@ Every run simulation and clock/trace property is derived from the accepted
 native compCorrect and evaluator theorems. The native evaluator closure
 inherits reviewed reals_as_rational_cuts (SOUNDNESS item 8); this theorem
 does not assert numerical FP parity or whole compiler correctness. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "compile_semantics"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileSemantics {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer start : Nat)
     (source target : StackSemStateFiniteExact width C F)

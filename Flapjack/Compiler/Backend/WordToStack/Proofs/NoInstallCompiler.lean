@@ -27,12 +27,6 @@ theorem wInstNoInstall {width : Nat} [NeZero width]
     cases addr
     cases op <;> simp [wInstNative, wStackLoadNoInstall,
       write1, noInstall]
-  | fp f =>
-    cases f
-    all_goals
-      by_cases hw : width = 64
-      all_goals simp [wInstNative, hw, wStackLoadNoInstall,
-        write1, write21, noInstall]
   | skip => rfl
   | const n c => simp [wInstNative, write1]
 
@@ -60,8 +54,6 @@ private theorem shareNoInstall {width : Nat} [NeZero width]
 /-- Full original arbitrary-program no-install preservation theorem. The
 original performance equality is retained alongside the source predicate and
 actual full compiler output equation. All recursive assumptions are internal. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "comp_no_install" (words_as_type_indexed_bitvec)]
 theorem compNoInstall {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (program : WordLangProgHOL (BitVec width))

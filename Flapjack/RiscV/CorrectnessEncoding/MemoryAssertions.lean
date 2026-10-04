@@ -27,8 +27,6 @@ theorem memory_source_post_domain (m : HolMemop) (r base : Nat) (w : BitVec 64)
 Both original assertion predicates and every projection-preserving environment
 are retained. The native RISC-V model inherits the rational-cut rendering
 limitation recorded in SOUNDNESS section 8. -/
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml"
-  "riscv_encoder_correct"]
 theorem riscv_encoder_correct_mem (m : HolMemop) (r base : Nat) (w : BitVec 64)
     (s1 s2 : AsmState 64) (ms : riscv_state)
     (h : asmStep riscvTarget.config s1 (.inst (.mem m r (.addr base w))) s2 ∧

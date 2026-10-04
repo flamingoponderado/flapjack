@@ -25,8 +25,7 @@ private theorem labelOnly_zeroLength {width : Nat} [NeZero width]
 
 /-- Full original section lookup theorem. All six guards are retained, and the
 existential includes both the exhausted boundary and successful position cases. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "ALOOKUP_section_labels" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem sectionLabels_lookup_position {width : Nat} [NeZero width] (pos : Nat)
     (lines : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))

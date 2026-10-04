@@ -24,22 +24,19 @@ open Flapjack.Compiler.Backend.DataToWord
 open Flapjack.Compiler.Backend.StackRemove (leftShiftInst rightShiftInst constInst loadInst storeInst)
 
 /-- Exact HOL `memcpy_code_def` (`stack_allocScript.sml:16-24`). -/
-@[hol "cakeml/compiler/backend/stack_allocScript.sml" "memcpy_code_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def memcpyCode {width : Nat} [NeZero width] : HolProg width :=
   whileHOL .notEqual 0 (.imm 0)
     (listSeqHOL [loadInst 1 2, addBytesInWordInst 2, sub1Inst 0, storeInst 1 3,
       addBytesInWordInst 3])
 
 /-- Exact HOL `clear_top_inst_def` (`stack_allocScript.sml:26-30`). -/
-@[hol "cakeml/compiler/backend/stack_allocScript.sml" "clear_top_inst_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def clearTopInst {width : Nat} [NeZero width] (i n : Nat) : HolProg width :=
   .seq (leftShiftInst i (width - n - 1)) (rightShiftInst i (width - n - 1))
 
 /-- Exact HOL `word_gc_move_code_def` (`stack_allocScript.sml:32-71`). -/
-@[hol "cakeml/compiler/backend/stack_allocScript.sml" "word_gc_move_code_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wordGcMoveCode {width : Nat} [NeZero width] (conf : Config) : HolProg width :=
   .ite .test 5 (.imm 1) .skip
     (listSeqHOL
@@ -73,16 +70,14 @@ def wordGcMoveCode {width : Nat} [NeZero width] (conf : Config) : HolProg width 
                       addInst 4 6])])
 
 /-- Exact HOL `word_gc_move_list_code_def` (`stack_allocScript.sml:73-81`). -/
-@[hol "cakeml/compiler/backend/stack_allocScript.sml" "word_gc_move_list_code_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wordGcMoveListCode {width : Nat} [NeZero width] (conf : Config) : HolProg width :=
   whileHOL .notEqual 7 (.imm 0)
     (listSeqHOL [loadInst 5 8, sub1Inst 7, wordGcMoveCode conf, storeInst 5 8,
       addBytesInWordInst 8])
 
 /-- Exact HOL `word_gc_move_loop_code_def` (`stack_allocScript.sml:83-95`). -/
-@[hol "cakeml/compiler/backend/stack_allocScript.sml" "word_gc_move_loop_code_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wordGcMoveLoopCode {width : Nat} [NeZero width] (conf : Config) : HolProg width :=
   whileHOL .notEqual 3 (.reg 8)
     (listSeqHOL [loadInst 7 8,
@@ -93,8 +88,7 @@ def wordGcMoveLoopCode {width : Nat} [NeZero width] (conf : Config) : HolProg wi
           leftShiftInst 7 (wordShiftAmount width), addInst 8 7])])
 
 /-- Exact HOL `word_gc_move_bitmap_code_def` (`stack_allocScript.sml:98-109`). -/
-@[hol "cakeml/compiler/backend/stack_allocScript.sml" "word_gc_move_bitmap_code_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wordGcMoveBitmapCode {width : Nat} [NeZero width] (conf : Config) : HolProg width :=
   whileHOL .notLower 7 (.imm 2)
     (.ite .test 7 (.imm 1)
@@ -103,16 +97,14 @@ def wordGcMoveBitmapCode {width : Nat} [NeZero width] (conf : Config) : HolProg 
         .stackStoreAny 5 8, addBytesInWordInst 8]))
 
 /-- Exact HOL `word_gc_move_bitmaps_code_def` (`stack_allocScript.sml:112-120`). -/
-@[hol "cakeml/compiler/backend/stack_allocScript.sml" "word_gc_move_bitmaps_code_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wordGcMoveBitmapsCode {width : Nat} [NeZero width] (conf : Config) : HolProg width :=
   whileHOL .notTest 0 (.reg 0)
     (listSeqHOL [.bitmapLoad 7 9, wordGcMoveBitmapCode conf, .bitmapLoad 0 9, add1Inst 9,
       rightShiftInst 0 (width - 1)])
 
 /-- Exact HOL `word_gc_move_roots_bitmaps_code_def` (`stack_allocScript.sml:123-131`). -/
-@[hol "cakeml/compiler/backend/stack_allocScript.sml" "word_gc_move_roots_bitmaps_code_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wordGcMoveRootsBitmapsCode {width : Nat} [NeZero width] (conf : Config) :
     HolProg width :=
   whileHOL .notTest 9 (.reg 9)
@@ -120,8 +112,7 @@ def wordGcMoveRootsBitmapsCode {width : Nat} [NeZero width] (conf : Config) :
       .stackLoadAny 9 8])
 
 /-- Exact HOL `word_gen_gc_move_code_def` (`stack_allocScript.sml:133-206`). -/
-@[hol "cakeml/compiler/backend/stack_allocScript.sml" "word_gen_gc_move_code_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wordGenGcMoveCode {width : Nat} [NeZero width] (conf : Config) : HolProg width :=
   .ite .test 5 (.imm 1) .skip
     (listSeqHOL
@@ -184,8 +175,7 @@ def wordGenGcMoveCode {width : Nat} [NeZero width] (conf : Config) : HolProg wid
                           addInst 4 6])])])
 
 /-- Exact HOL `word_gen_gc_partial_move_code_def` (`stack_allocScript.sml:208-255`). -/
-@[hol "cakeml/compiler/backend/stack_allocScript.sml" "word_gen_gc_partial_move_code_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wordGenGcPartialMoveCode {width : Nat} [NeZero width] (conf : Config) : HolProg width :=
   .ite .test 5 (.imm 1) .skip
     (listSeqHOL
@@ -225,8 +215,7 @@ def wordGenGcPartialMoveCode {width : Nat} [NeZero width] (conf : Config) : HolP
                           addInst 4 6])])))])
 
 /-- Exact HOL `word_gen_gc_move_bitmap_code_def` (`stack_allocScript.sml:257-268`). -/
-@[hol "cakeml/compiler/backend/stack_allocScript.sml" "word_gen_gc_move_bitmap_code_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wordGenGcMoveBitmapCode {width : Nat} [NeZero width] (conf : Config) : HolProg width :=
   whileHOL .notLower 7 (.imm 2)
     (.ite .test 7 (.imm 1)
@@ -235,8 +224,7 @@ def wordGenGcMoveBitmapCode {width : Nat} [NeZero width] (conf : Config) : HolPr
         .stackStoreAny 5 8, addBytesInWordInst 8]))
 
 /-- Exact HOL `word_gen_gc_partial_move_bitmap_code_def` (`stack_allocScript.sml:270-281`). -/
-@[hol "cakeml/compiler/backend/stack_allocScript.sml" "word_gen_gc_partial_move_bitmap_code_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wordGenGcPartialMoveBitmapCode {width : Nat} [NeZero width] (conf : Config) :
     HolProg width :=
   whileHOL .notLower 7 (.imm 2)
@@ -246,16 +234,14 @@ def wordGenGcPartialMoveBitmapCode {width : Nat} [NeZero width] (conf : Config) 
         .stackStoreAny 5 8, addBytesInWordInst 8]))
 
 /-- Exact HOL `word_gen_gc_move_bitmaps_code_def` (`stack_allocScript.sml:284-292`). -/
-@[hol "cakeml/compiler/backend/stack_allocScript.sml" "word_gen_gc_move_bitmaps_code_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wordGenGcMoveBitmapsCode {width : Nat} [NeZero width] (conf : Config) : HolProg width :=
   whileHOL .notTest 0 (.reg 0)
     (listSeqHOL [.bitmapLoad 7 9, wordGenGcMoveBitmapCode conf, .bitmapLoad 0 9, add1Inst 9,
       rightShiftInst 0 (width - 1)])
 
 /-- Exact HOL `word_gen_gc_partial_move_bitmaps_code_def` (`stack_allocScript.sml:295-303`). -/
-@[hol "cakeml/compiler/backend/stack_allocScript.sml"
-  "word_gen_gc_partial_move_bitmaps_code_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wordGenGcPartialMoveBitmapsCode {width : Nat} [NeZero width] (conf : Config) :
     HolProg width :=
   whileHOL .notTest 0 (.reg 0)
@@ -263,8 +249,7 @@ def wordGenGcPartialMoveBitmapsCode {width : Nat} [NeZero width] (conf : Config)
       add1Inst 9, rightShiftInst 0 (width - 1)])
 
 /-- Exact HOL `word_gen_gc_move_roots_bitmaps_code_def` (`stack_allocScript.sml:306-314`). -/
-@[hol "cakeml/compiler/backend/stack_allocScript.sml"
-  "word_gen_gc_move_roots_bitmaps_code_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wordGenGcMoveRootsBitmapsCode {width : Nat} [NeZero width] (conf : Config) :
     HolProg width :=
   whileHOL .notTest 9 (.reg 9)
@@ -273,8 +258,7 @@ def wordGenGcMoveRootsBitmapsCode {width : Nat} [NeZero width] (conf : Config) :
 
 /-- Exact HOL `word_gen_gc_partial_move_roots_bitmaps_code_def`
 (`stack_allocScript.sml:317-325`). -/
-@[hol "cakeml/compiler/backend/stack_allocScript.sml"
-  "word_gen_gc_partial_move_roots_bitmaps_code_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wordGenGcPartialMoveRootsBitmapsCode {width : Nat} [NeZero width] (conf : Config) :
     HolProg width :=
   whileHOL .notTest 9 (.reg 9)
@@ -282,16 +266,14 @@ def wordGenGcPartialMoveRootsBitmapsCode {width : Nat} [NeZero width] (conf : Co
       wordGenGcPartialMoveBitmapsCode conf, .stackLoadAny 9 8])
 
 /-- Exact HOL `word_gen_gc_move_list_code_def` (`stack_allocScript.sml:327-335`). -/
-@[hol "cakeml/compiler/backend/stack_allocScript.sml" "word_gen_gc_move_list_code_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wordGenGcMoveListCode {width : Nat} [NeZero width] (conf : Config) : HolProg width :=
   whileHOL .notEqual 7 (.imm 0)
     (listSeqHOL [loadInst 5 8, sub1Inst 7, wordGenGcMoveCode conf, storeInst 5 8,
       addBytesInWordInst 8])
 
 /-- Exact HOL `word_gen_gc_partial_move_list_code_def` (`stack_allocScript.sml:337-345`). -/
-@[hol "cakeml/compiler/backend/stack_allocScript.sml"
-  "word_gen_gc_partial_move_list_code_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wordGenGcPartialMoveListCode {width : Nat} [NeZero width] (conf : Config) :
     HolProg width :=
   whileHOL .notEqual 7 (.imm 0)
@@ -299,8 +281,7 @@ def wordGenGcPartialMoveListCode {width : Nat} [NeZero width] (conf : Config) :
       addBytesInWordInst 8])
 
 /-- Exact HOL `word_gen_gc_move_data_code_def` (`stack_allocScript.sml:347-359`). -/
-@[hol "cakeml/compiler/backend/stack_allocScript.sml" "word_gen_gc_move_data_code_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wordGenGcMoveDataCode {width : Nat} [NeZero width] (conf : Config) : HolProg width :=
   whileHOL .notEqual 3 (.reg 8)
     (listSeqHOL [loadInst 7 8,
@@ -311,8 +292,7 @@ def wordGenGcMoveDataCode {width : Nat} [NeZero width] (conf : Config) : HolProg
           leftShiftInst 7 (wordShiftAmount width), addInst 8 7])])
 
 /-- Exact HOL `word_gen_gc_partial_move_ref_list_code_def` (`stack_allocScript.sml:361-368`). -/
-@[hol "cakeml/compiler/backend/stack_allocScript.sml"
-  "word_gen_gc_partial_move_ref_list_code_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wordGenGcPartialMoveRefListCode {width : Nat} [NeZero width] (conf : Config) :
     HolProg width :=
   whileHOL .notEqual 9 (.reg 8)
@@ -320,8 +300,7 @@ def wordGenGcPartialMoveRefListCode {width : Nat} [NeZero width] (conf : Config)
       wordGenGcPartialMoveListCode conf])
 
 /-- Exact HOL `word_gen_gc_partial_move_data_code_def` (`stack_allocScript.sml:370-382`). -/
-@[hol "cakeml/compiler/backend/stack_allocScript.sml"
-  "word_gen_gc_partial_move_data_code_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wordGenGcPartialMoveDataCode {width : Nat} [NeZero width] (conf : Config) :
     HolProg width :=
   whileHOL .notEqual 3 (.reg 8)
@@ -333,16 +312,14 @@ def wordGenGcPartialMoveDataCode {width : Nat} [NeZero width] (conf : Config) :
           leftShiftInst 7 (wordShiftAmount width), addInst 8 7])])
 
 /-- Exact HOL `word_gen_gc_move_refs_code_def` (`stack_allocScript.sml:384-393`). -/
-@[hol "cakeml/compiler/backend/stack_allocScript.sml" "word_gen_gc_move_refs_code_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wordGenGcMoveRefsCode {width : Nat} [NeZero width] (conf : Config) : HolProg width :=
   whileHOL .notEqual 0 (.reg 8)
     (listSeqHOL [loadInst 7 8, rightShiftInst 7 (width - conf.lenSize), addBytesInWordInst 8,
       wordGenGcMoveListCode conf, .get 0 (.temp 4)])
 
 /-- Exact HOL `word_gen_gc_move_loop_code_def` (`stack_allocScript.sml:395-427`). -/
-@[hol "cakeml/compiler/backend/stack_allocScript.sml" "word_gen_gc_move_loop_code_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wordGenGcMoveLoopCode {width : Nat} [NeZero width] (conf : Config) : HolProg width :=
   whileHOL .notTest 7 (.reg 7)
     (.ite .equal 1 (.reg 2)
@@ -354,8 +331,7 @@ def wordGenGcMoveLoopCode {width : Nat} [NeZero width] (conf : Config) : HolProg
         subInst 7 2, .get 8 (.temp 6), moveHOL 5 8, subInst 5 3, orInst 7 5]))
 
 /-- Exact HOL `word_gc_partial_or_full_def` (`stack_allocScript.sml:429-440`). -/
-@[hol "cakeml/compiler/backend/stack_allocScript.sml" "word_gc_partial_or_full_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wordGcPartialOrFull {width : Nat} [NeZero width] (genSizes : List Nat)
     (partialCode fullCode : List (HolProg width)) : HolProg width :=
   match genSizes with
@@ -365,8 +341,7 @@ def wordGcPartialOrFull {width : Nat} [NeZero width] (genSizes : List Nat)
        .ite .notLower 7 (.reg 1) (listSeqHOL partialCode) (listSeqHOL fullCode)]
 
 /-- Exact HOL `SetNewTrigger_def` (`stack_allocScript.sml:442-457`). -/
-@[hol "cakeml/compiler/backend/stack_allocScript.sml" "SetNewTrigger_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def setNewTrigger {width : Nat} [NeZero width] (endh ib : Nat) (gs : List Nat) :
     HolProg width :=
   listSeqHOL [constInst 1 (getGenSize gs : BitVec width),
@@ -385,8 +360,7 @@ def setNewTrigger {width : Nat} [NeZero width] (endh ib : Nat) (gs : List Nat) :
 
 /-- Exact HOL `word_gc_code_def` (`stack_allocScript.sml:459-636`): the `None`,
 `Simple` and `Generational` (partial and full) collector stubs. -/
-@[hol "cakeml/compiler/backend/stack_allocScript.sml" "word_gc_code_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wordGcCode {width : Nat} [NeZero width] (conf : Config) : HolProg width :=
   match conf.gcKind with
   | .none =>

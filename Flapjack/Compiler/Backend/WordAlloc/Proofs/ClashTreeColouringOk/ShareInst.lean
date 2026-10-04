@@ -18,8 +18,7 @@ private theorem insertReadsStore {width : Nat} [NeZero width]
     ← sptUnion_assoc, sptUnion_insert_ln]
 
 /-- Exact HOL ShareInst Store case, retaining the full original motive. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "clash_tree_colouring_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_ShareStore {width : Nat} [NeZero width]
     (v : Nat) (e : WordLangExpHOL (BitVec width)) :
     clashTreeGoal (.shareInst .store v e) := by
@@ -33,8 +32,7 @@ theorem clashTreeColouringOk_ShareStore {width : Nat} [NeZero width]
       exact insertReadsStore e v live hw) Iff.rfl
 
 /-- Exact HOL ShareInst Store8 case, retaining the full original motive. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "clash_tree_colouring_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_ShareStore8 {width : Nat} [NeZero width]
     (v : Nat) (e : WordLangExpHOL (BitVec width)) :
     clashTreeGoal (.shareInst .store8 v e) := by
@@ -48,8 +46,7 @@ theorem clashTreeColouringOk_ShareStore8 {width : Nat} [NeZero width]
       exact insertReadsStore e v live hw) Iff.rfl
 
 /-- Exact HOL ShareInst Store16 case, retaining the full original motive. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "clash_tree_colouring_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_ShareStore16 {width : Nat} [NeZero width]
     (v : Nat) (e : WordLangExpHOL (BitVec width)) :
     clashTreeGoal (.shareInst .store16 v e) := by
@@ -63,8 +60,7 @@ theorem clashTreeColouringOk_ShareStore16 {width : Nat} [NeZero width]
       exact insertReadsStore e v live hw) Iff.rfl
 
 /-- Exact HOL ShareInst Store32 case, retaining the full original motive. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "clash_tree_colouring_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_ShareStore32 {width : Nat} [NeZero width]
     (v : Nat) (e : WordLangExpHOL (BitVec width)) :
     clashTreeGoal (.shareInst .store32 v e) := by
@@ -78,8 +74,7 @@ theorem clashTreeColouringOk_ShareStore32 {width : Nat} [NeZero width]
       exact insertReadsStore e v live hw) Iff.rfl
 
 /-- Exact HOL ShareInst Load case, retaining the full original motive. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "clash_tree_colouring_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_ShareLoad {width : Nat} [NeZero width]
     (v : Nat) (e : WordLangExpHOL (BitVec width)) :
     clashTreeGoal (.shareInst .load v e) := by
@@ -92,8 +87,7 @@ theorem clashTreeColouringOk_ShareLoad {width : Nat} [NeZero width]
       exact insertReadsEqUnion e (sptDelete v live) (sptWfDelete live v hw)) Iff.rfl
 
 /-- Exact HOL ShareInst Load8 case, retaining the full original motive. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "clash_tree_colouring_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_ShareLoad8 {width : Nat} [NeZero width]
     (v : Nat) (e : WordLangExpHOL (BitVec width)) :
     clashTreeGoal (.shareInst .load8 v e) := by
@@ -106,8 +100,7 @@ theorem clashTreeColouringOk_ShareLoad8 {width : Nat} [NeZero width]
       exact insertReadsEqUnion e (sptDelete v live) (sptWfDelete live v hw)) Iff.rfl
 
 /-- Exact HOL ShareInst Load16 case, retaining the full original motive. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "clash_tree_colouring_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_ShareLoad16 {width : Nat} [NeZero width]
     (v : Nat) (e : WordLangExpHOL (BitVec width)) :
     clashTreeGoal (.shareInst .load16 v e) := by
@@ -120,8 +113,7 @@ theorem clashTreeColouringOk_ShareLoad16 {width : Nat} [NeZero width]
       exact insertReadsEqUnion e (sptDelete v live) (sptWfDelete live v hw)) Iff.rfl
 
 /-- Exact HOL ShareInst Load32 case, retaining the full original motive. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "clash_tree_colouring_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_ShareLoad32 {width : Nat} [NeZero width]
     (v : Nat) (e : WordLangExpHOL (BitVec width)) :
     clashTreeGoal (.shareInst .load32 v e) := by

@@ -17,8 +17,6 @@ namespace Flapjack.WordAlloc
 open Flapjack.RegAlloc Flapjack.Compiler.Encoders.Asm
 
 /-- HOL `get_forced_tail_split` (`word_allocProofScript.sml:3311-3318`). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "get_forced_tail_split"
-  (words_as_type_indexed_bitvec)]
 theorem getForcedTailSplit {width : Nat} [NeZero width] (c : AsmConfigExact width)
     (p : WordLangProgHOL (BitVec width)) (ls ls' : List (Nat × Nat)) :
     getForced c p (ls ++ ls') = getForced c p ls ++ ls' := by
@@ -26,8 +24,6 @@ theorem getForcedTailSplit {width : Nat} [NeZero width] (c : AsmConfigExact widt
   | _ => simp_all [getForced]
 
 /-- HOL `EVERY_get_forced` (`word_allocProofScript.sml:3320-3326`). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "EVERY_get_forced"
-  (words_as_type_indexed_bitvec)]
 theorem everyGetForced {width : Nat} [NeZero width] (P : Nat × Nat → Prop)
     (c : AsmConfigExact width) (p : WordLangProgHOL (BitVec width)) (ls : List (Nat × Nat)) :
     (∀ x ∈ getForced c p ls, P x) ↔ (∀ x ∈ getForced c p [], P x) ∧ ∀ x ∈ ls, P x := by
@@ -39,8 +35,6 @@ theorem everyGetForced {width : Nat} [NeZero width] (P : Nat × Nat → Prop)
     fun ⟨h1, h2⟩ x m => m.elim (h1 x) (h2 x)⟩
 
 /-- HOL `get_forced_pairwise_distinct` (`word_allocProofScript.sml:3328-3335`). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "get_forced_pairwise_distinct"
-  (words_as_type_indexed_bitvec)]
 theorem getForcedPairwiseDistinct {width : Nat} [NeZero width] (c : AsmConfigExact width)
     (prog : WordLangProgHOL (BitVec width)) (ls : List (Nat × Nat))
     (h : ∀ x ∈ ls, x.1 ≠ x.2) : ∀ x ∈ getForced c prog ls, x.1 ≠ x.2 := by
@@ -58,24 +52,24 @@ theorem getForcedInClashTreeAcc {width : Nat} [NeZero width] (c : AsmConfigExact
     ∀ lt, ∀ x ∈ getForced c prog acc, x ∈ acc ∨
       (inClashTree (getClashTree prog lt) x.1 ∧ inClashTree (getClashTree prog lt) x.2) := by
   induction prog, acc using getForced.induct c with
-  | case12 i acc =>
+  | case10 i acc =>
       intro lt x hx; left
-      rcases i with _ | _ | a | _ | f <;> (try rcases a) <;> (try rcases f) <;>
+      rcases i with _ | _ | a | _ <;> (try rcases a) <;>
         simp_all [getForced]
       all_goals exfalso; rename_i hneg
       all_goals first
         | exact hneg _ _ _ _ rfl rfl rfl rfl
         | exact hneg _ _ _ rfl rfl rfl
-  | case19 p acc =>
+  | case17 p acc =>
       intro lt x hx; left
       cases p <;> (try simp_all [getForced])
       all_goals exfalso; rename_i hneg
       exact hneg _ _ _ _ _ rfl rfl rfl rfl rfl
-  | case13 s acc ih =>
+  | case11 s acc ih =>
       intro lt x hx
       simp only [getForced] at hx
       simpa [getClashTree] using ih lt x hx
-  | case14 s1 s2 acc ih2 ih1 =>
+  | case12 s1 s2 acc ih2 ih1 =>
       intro lt x hx
       simp only [getForced] at hx
       rcases ih1 lt x hx with h | ⟨h1, h2⟩
@@ -83,7 +77,7 @@ theorem getForcedInClashTreeAcc {width : Nat} [NeZero width] (c : AsmConfigExact
         · exact Or.inl h
         · exact Or.inr (by simp [getClashTree, inClashTree, h1, h2])
       · exact Or.inr (by simp [getClashTree, inClashTree, h1, h2])
-  | case15 op cond right e2 e3 acc ih2 ih1 =>
+  | case13 op cond right e2 e3 acc ih2 ih1 =>
       intro lt x hx
       simp only [getForced] at hx
       rcases ih1 lt x hx with h | ⟨h1, h2⟩
@@ -91,13 +85,13 @@ theorem getForcedInClashTreeAcc {width : Nat} [NeZero width] (c : AsmConfigExact
         · exact Or.inl h
         · exact Or.inr (by cases right <;> simp [getClashTree, inClashTree, h1, h2])
       · exact Or.inr (by cases right <;> simp [getClashTree, inClashTree, h1, h2])
-  | case16 vs cs rh l1 l2 dest args acc ih =>
+  | case14 vs cs rh l1 l2 dest args acc ih =>
       intro lt x hx
       simp only [getForced] at hx
       rcases ih lt x hx with h | ⟨h1, h2⟩
       · exact Or.inl h
       · exact Or.inr (by simp [getClashTree, inClashTree, h1, h2])
-  | case17 vs cs rh l1 l2 dest args v prog l1' l2' acc ih2 ih1 =>
+  | case15 vs cs rh l1 l2 dest args v prog l1' l2' acc ih2 ih1 =>
       intro lt x hx
       simp only [getForced] at hx
       rcases ih1 lt x hx with h | ⟨h1, h2⟩
@@ -105,7 +99,7 @@ theorem getForcedInClashTreeAcc {width : Nat} [NeZero width] (c : AsmConfigExact
         · exact Or.inl h
         · exact Or.inr (by simp [getClashTree, inClashTree, h1, h2])
       · exact Or.inr (by simp [getClashTree, inClashTree, h1, h2])
-  | case18 names body exitNames acc ih =>
+  | case16 names body exitNames acc ih =>
       intro lt x hx
       simp only [getForced] at hx
       rcases ih ((names, exitNames) :: lt) x hx with h | ⟨h1, h2⟩
@@ -127,8 +121,6 @@ theorem getForcedInClashTreeAcc {width : Nat} [NeZero width] (c : AsmConfigExact
 
 /-- HOL `get_forced_in_get_clash_tree` (`word_allocProofScript.sml:3337-3375`):
 both registers of every forced pair occur in the program's clash tree. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "get_forced_in_get_clash_tree"
-  (words_as_type_indexed_bitvec)]
 theorem getForcedInGetClashTree {width : Nat} [NeZero width]
     (prog : WordLangProgHOL (BitVec width)) (lt : List (NumSet × NumSet))
     (c : AsmConfigExact width) :

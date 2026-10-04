@@ -34,8 +34,7 @@ theorem seq_bound_right (m ss g d1 d2 m1 : Option Nat)
   all_goals omega
 
 /-- `max_depth_call_graph_lemma`, `If` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_depthProofScript.sml" "max_depth_call_graph_lemma"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem maxDepthCallGraphLemma_If {width : Nat} [NeZero width] {C F : Type}
     (cmp : Cmp) (r1 : Nat) (ri : WordRegImm (BitVec width))
     (c1 c2 : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F)
@@ -75,8 +74,7 @@ theorem maxDepthCallGraphLemma_If {width : Nat} [NeZero width] {C F : Type}
 
 /-- `max_depth_call_graph_lemma`, `MustTerminate` case: the body runs on the
 same stack fields with only `clock`/`termdep` changed. -/
-@[hol "cakeml/compiler/backend/proofs/word_depthProofScript.sml" "max_depth_call_graph_lemma"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem maxDepthCallGraphLemma_MustTerminate {width : Nat} [NeZero width] {C F : Type}
     (p : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F)
     (ih : s.termdep ≠ 0 →

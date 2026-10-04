@@ -76,8 +76,7 @@ private theorem frameAfterFirst {S : Type} (n : Nat) (oracle : Nat → S → S)
 retained, including the universal environment assertion and full frame condition.
 Inherited total holEl/holHd semantics are unchanged: out-of-range names remain
 shared opaque holHdNil/holArb, with no additional bounds premise or fallback. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "evaluate_EQ_evaluate_lemma" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateEqEvaluate_base {width : Nat} [NeZero width]
     {S Q : Type} {σ : Type} (ms1 : S) (c : MachineConfig width S Q)
     (io : HolFfiState σ) (dm : BitVec width → Prop)
@@ -150,8 +149,7 @@ theorem evaluateEqEvaluate_base {width : Nat} [NeZero width]
 number induction. All source hypotheses and existential conclusions are retained.
 Inherited total holEl/holHd retains shared opaque holHdNil/holArb past the end;
 no bounds premise or concrete fallback is introduced. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "evaluate_EQ_evaluate_lemma" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateEqEvaluate_all {width : Nat} [NeZero width]
     {S Q : Type} {σ : Type} (n : Nat) (ms1 : S) (c : MachineConfig width S Q)
     (io : HolFfiState σ) (dm : BitVec width → Prop)

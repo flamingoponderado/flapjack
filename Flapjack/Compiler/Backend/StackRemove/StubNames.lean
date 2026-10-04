@@ -15,8 +15,7 @@ def stubNames (_ : Unit) : List (Nat × MlString) :=
 
 /-- Full original initialization stub count for the actual native initializer,
 with arbitrary positive word width and all original initializer parameters. -/
-@[hol "cakeml/compiler/backend/stack_removeScript.sml" "check_init_stubs_length"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem checkInitStubsLength {width : Nat} [NeZero width] (generateGc : Bool)
     (maximumHeap pointer start : Nat) :
     (@initStubs width _ generateGc maximumHeap pointer start :

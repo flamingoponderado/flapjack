@@ -327,7 +327,7 @@ theorem panToTargetFullMakeInitAssumptions {width : Nat} [NeZero width] {S Q F C
     (fun _ => (ltc, StackToLab.compileNoStubs regNames c.stackConf.jump
       mc.target.config.addrOffset sp []))
     bitmaps dataSp hpi
-  exact ⟨good, rfl, rfl, hnf, hma, hcfg.2.2.2.2.2.2.2.2.2.2.2.1, hl, hpc, hio, hcc, hmd, hsmd,
+  exact ⟨good, rfl, rfl, hnf, hma, hcfg.2.2.2.2.2.2.2.2.2.1, hl, hpc, hio, hcc, hmd, hsmd,
     hgc, fun _ => hgco, hsp, hsave, n4, n3, n2, n1, n0, hbij⟩
 
 end Flapjack.Pancake.Proofs.PanToTarget

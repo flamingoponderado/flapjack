@@ -50,10 +50,6 @@ private theorem instCallArgs {width : Nat} [NeZero width]
   | mem op d addr =>
       cases addr
       cases op <;> simp [wInstNative, loadCallArgs, write1, callArgs]
-  | fp f =>
-      cases f
-      all_goals by_cases hw : width = 64
-      all_goals simp [wInstNative, hw, loadCallArgs, write1, write21, callArgs]
   | skip => trivial
   | const _ _ => simp [wInstNative, write1]
 
@@ -184,8 +180,6 @@ decreasing_by
 /-- Full original arbitrary-program compiler call-convention theorem. The
 entire post-allocation guard and false-performance premise are retained; every
 recursive hypothesis is discharged internally on actual native compiler outputs. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_call_args" (words_as_type_indexed_bitvec)]
 theorem wordToStackCallArgs {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (program : WordLangProgHOL (BitVec width))
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)

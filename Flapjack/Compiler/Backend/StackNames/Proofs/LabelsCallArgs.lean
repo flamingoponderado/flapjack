@@ -16,8 +16,7 @@ open Flapjack Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Backend.Stac
 open Flapjack.StackPropsCodeLabels
 
 /-- Exact HOL `stack_names_lab_pres` (`stack_namesProofScript.sml:589-596`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "stack_names_lab_pres"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesLabPres {width : Nat} [NeZero width] :
     ∀ (f : Spt Nat) (p : HolProg width), extractLabels p = extractLabels (progCompHOL f p) := by
   intro f p
@@ -41,8 +40,7 @@ theorem callArgs_progCompHOL {width : Nat} [NeZero width] (f : Spt Nat) (p : Hol
 
 /-- Exact HOL `stack_names_call_args` (`stack_namesProofScript.sml:668-685`). HOL's free `f`,
 `p` and `p'` are the implicit binders; `EVERY P l` is `∀ q ∈ l, P q`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "stack_names_call_args"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCallArgs {width : Nat} [NeZero width] {f : Spt Nat}
     {p p' : List (Nat × HolProg width)} :
     compileHOL f p = p' ∧ (∀ q ∈ p.map Prod.snd, callArgs q 1 2 3 4 0) →

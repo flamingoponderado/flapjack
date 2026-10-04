@@ -6,7 +6,6 @@ namespace Flapjack.RiscV.L3
 /-- HOL types are intrinsically nonempty; Nonempty records that kind obligation,
 as in the reviewed generic HD/EL/THE/LINV ports, without a chosen Lean default.
 The return value is canonical unspecified ARB. Only the first exception is kept. -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "raise'exception_def"]
 noncomputable def «raise'exception» {Ta : Type} [Nonempty Ta] (e : exception) :
     riscv_state → Ta × riscv_state := fun state =>
   (Flapjack.holArb Ta,

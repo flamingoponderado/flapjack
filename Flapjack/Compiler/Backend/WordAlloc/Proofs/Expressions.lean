@@ -101,9 +101,7 @@ private theorem applyColourExpAux {width : Nat} [NeZero width] {C F : Type}
 
 /-- Exact HOL successful expression-colouring simulation. Only source success,
 the original state relation, and live-scoped local transport are premises. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "apply_colour_exp_lemma"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem applyColourExpLemma {width : Nat} [NeZero width] {C F : Type} :
     ∀ (st : WordSemStateFiniteExact width C F) (w : WordLangExpHOL (BitVec width))
       (cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (res : WordLocW width),

@@ -94,9 +94,7 @@ end GetSetVarsWitnesses
 conjunctive premises and arbitrary replacement locals. Fresh original types
 confirm that names are natural lists and values/locals share the state word
 dimension. Native list insertion preserves original prefix priority. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "get_vars_list_insert_eq_gen"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getVarsListInsertEqGen {width : Nat} [NeZero width] {C F : Type}
     (state : WordSemStateFiniteExact width C F) (names : List Nat)
     (values : List (WordLocW width)) (locals : Spt (WordLocW width))
@@ -121,9 +119,7 @@ theorem getVarsListInsertEqGen {width : Nat} [NeZero width] {C F : Type}
 /-- Full original set/read statement with both original premises, the real
 native WordSem read/write operations, and generic state code/FFI carriers.
 Fresh literal original proof and inferred types were checked before tagging. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "get_vars_set_vars_eq"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getVarsSetVarsEq {width : Nat} [NeZero width] {C F : Type}
     (names : List Nat) (values : List (WordLocW width))
     (state : WordSemStateFiniteExact width C F)

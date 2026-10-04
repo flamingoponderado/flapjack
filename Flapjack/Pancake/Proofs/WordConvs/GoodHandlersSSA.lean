@@ -16,8 +16,7 @@ open Flapjack Flapjack.Compiler.Backend.WordAlloc Flapjack.WordAlloc
 
 /-- HOL `word_good_handlers_fake_moves` (`wordConvsProofScript.sml:1310-1321`, `[local]`);
     HOL's free `n prio` lead. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "word_good_handlers_fake_moves"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem goodHandlers_fakeMoves {width : Nat} [NeZero width] (n : Nat)
     (prio : Option (Unit ⊕ Unit)) :
     ∀ (a : List Nat) (b c : Spt Nat) (d : Nat) (e f : WordLangProgHOL (BitVec width)) (g : Nat)
@@ -59,8 +58,7 @@ private theorem fixGood {width : Nat} [NeZero width] (n : Nat)
 
 /-- HOL `ssa_reconcile_good_handlers` (`wordConvsProofScript.sml:1029-1033`, `[local]`). HOL's free
     `n cur_ssa tgt_ssa ns` are explicit; `ns` keeps its independent value type `β`. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "ssa_reconcile_good_handlers"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem reconcileGood {width : Nat} [NeZero width] (n : Nat) {β : Type}
     (current target : Spt Nat) (names : Spt β) :
     goodHandlersHOL n (ssaReconcile current target names : WordLangProgHOL (BitVec width)) = true := by
@@ -70,8 +68,7 @@ theorem reconcileGood {width : Nat} [NeZero width] (n : Nat) {β : Type}
 
 /-- HOL `fake_seq_good_handlers` (`wordConvsProofScript.sml:999-1003`, `[local]`). HOL's free `n`
     leads; `ls` stays universally quantified. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "fake_seq_good_handlers"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fakeSeqGood {width : Nat} [NeZero width] (n : Nat) :
     ∀ ls : List Nat, goodHandlersHOL n
       ((ls.map (fakeMove : Nat → WordLangProgHOL (BitVec width))).foldr .seq .skip) = true := by
@@ -82,8 +79,7 @@ theorem fakeSeqGood {width : Nat} [NeZero width] (n : Nat) :
 
 /-- HOL `loop_setup_good_handlers` (`wordConvsProofScript.sml:1069-1078`, `[local]`). HOL's free
     variables are explicit (`n` first); the premise and conclusion are kept. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "loop_setup_good_handlers"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loopSetupGood {width : Nat} [NeZero width] (n : Nat)
     (names exitNames : Spt Unit) (ssa : Spt Nat) (na : Nat)
     (setupProg : WordLangProgHOL (BitVec width)) (ssaRefreshed : Spt Nat) (naRefreshed : Nat)
@@ -189,8 +185,7 @@ theorem goodHandlers_ssaCcTrans_fst {width : Nat} [NeZero width] (n : Nat) :
           fixGood1, fixGood2]
 
 /-- HOL `word_good_handlers_ssa_cc_trans` (`wordConvsProofScript.sml:1323-1372`, `[local]`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "word_good_handlers_ssa_cc_trans"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem goodHandlers_ssaCcTrans {width : Nat} [NeZero width] (n : Nat) :
     ∀ (x : WordLangProgHOL (BitVec width)) (y : Spt Nat) (z : Nat)
       (lt : List (Spt Nat × Spt Unit × Spt Unit)) (a : WordLangProgHOL (BitVec width))
@@ -203,8 +198,7 @@ theorem goodHandlers_ssaCcTrans {width : Nat} [NeZero width] (n : Nat) :
 
 /-- HOL `word_good_handlers_full_ssa_cc_trans` (`wordConvsProofScript.sml:1374-1385`,
     `[local]`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "word_good_handlers_full_ssa_cc_trans" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem goodHandlers_fullSsaCcTrans {width : Nat} [NeZero width] (n : Nat) :
     ∀ (m : Nat) (p : WordLangProgHOL (BitVec width)),
       goodHandlersHOL n (fullSsaCcTrans m p) = true ↔ goodHandlersHOL n p = true := by

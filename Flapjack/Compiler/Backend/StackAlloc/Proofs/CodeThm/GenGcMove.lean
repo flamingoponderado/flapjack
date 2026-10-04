@@ -59,8 +59,7 @@ HOL's free variables are implicit; `FLOOKUP s.store`, `k IN FDOM`, `|++` and
 `Temp nw` is `WordStore.temp n` over its fixed five-bit address. HOL's
 duplicated `1 IN FDOM s.regs` and `2 IN FDOM s.regs` premises are kept, and the
 existentials `ck r0 r1 r2 r6 t0 t1` are kept. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "word_gen_gc_move_code_thm"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_gen_gc_move_code_thm {width : Nat} [NeZero width] {C F : Type} {conf : Config}
     {w : WordLocW width} {i pa ib pb old : BitVec width} {m : BitVec width → WordLocW width}
     {dm : BitVec width → Bool} {w1 : WordLocW width} {i1 pa1 ib1 pb1 : BitVec width}

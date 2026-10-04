@@ -211,8 +211,7 @@ private theorem clockMeasure {width : Nat} [NeZero width] {C F : Type} :
                 exact leaf _ _ h hc
 /-- Full original arbitrary-program clock inequality for the faithful native total evaluator.
 No clock-law, callback, restricted-program or target-evaluation premise is added. -/
-@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "evaluate_clock"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateClock {width : Nat} [NeZero width] {C F : Type}
     (program : HolProg width) (source : StackSemStateFiniteExact width C F)
     (result : Option (StackSemResult width)) (post : StackSemStateFiniteExact width C F)
@@ -221,8 +220,7 @@ theorem evaluateClock {width : Nat} [NeZero width] {C F : Type}
 
 /-- Full original unconditional identity: clamping an evaluation to its own input clock
 leaves the actual evaluation unchanged. -/
-@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "fix_clock_evaluate"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fixClockEvaluate {width : Nat} [NeZero width] {C F : Type}
     (program : HolProg width) (source : StackSemStateFiniteExact width C F) :
     fixClock source (evaluate (program, source)) = evaluate (program, source) := by

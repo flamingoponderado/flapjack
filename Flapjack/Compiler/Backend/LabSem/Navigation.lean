@@ -17,8 +17,7 @@ no executable instruction position. No separate HOL declaration. -/
 private def navigationSize {width : Nat} [NeZero width] (code : LabProgHOL width) : Nat :=
   (code.map (fun sec => sec.lines.length + 1)).sum
 
-@[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "asm_fetch_aux_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def asmFetchAux {width : Nat} [NeZero width] (position : Nat)
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
@@ -33,14 +32,12 @@ def asmFetchAux {width : Nat} [NeZero width] (position : Nat)
 termination_by navigationSize code
 decreasing_by all_goals simp_wf; simp_all [navigationSize] <;> omega
 
-@[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "asm_fetch_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def asmFetch {width : Nat} [NeZero width] {C F : Type}
     (state : Flapjack.Compiler.Backend.LabSem.State width C F) : Option (LabLineHOL width) :=
   asmFetchAux state.pc state.code
 
-@[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "asm_code_length_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def asmCodeLength {width : Nat} [NeZero width]
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) : Nat :=
@@ -58,8 +55,7 @@ def labToLoc {width : Nat} [NeZero width] (label : Lab) : WordLocW width :=
   match label with
   | .lab sectionId labelId => .loc sectionId labelId
 
-@[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "loc_to_pc_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def locToPc {width : Nat} [NeZero width] (sectionId labelId : Nat)
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) : Option Nat :=
@@ -79,8 +75,7 @@ def locToPc {width : Nat} [NeZero width] (sectionId labelId : Nat)
 termination_by navigationSize code
 decreasing_by all_goals simp_wf; simp_all [navigationSize] <;> omega
 
-@[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "get_pc_value_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def getPcValue {width : Nat} [NeZero width] {C F : Type}
     (label : Lab) (state : Flapjack.Compiler.Backend.LabSem.State width C F) : Option Nat :=
   match label with
@@ -88,8 +83,7 @@ def getPcValue {width : Nat} [NeZero width] {C F : Type}
 
 /-- The original result word dimension is independent of the code/state dimension.
 Native evaluator calls select their state dimension through the expected result type. -/
-@[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "next_label_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def nextLabel {width : Nat} [NeZero width] {resultWidth : Nat} [NeZero resultWidth]
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
@@ -106,8 +100,7 @@ decreasing_by all_goals simp_wf; simp_all [navigationSize] <;> omega
 
 /-- The original result word dimension is independent of the code/state dimension.
 Native evaluator calls select their state dimension through the expected result type. -/
-@[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "get_lab_after_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def getLabAfter {width : Nat} [NeZero width] {resultWidth : Nat} [NeZero resultWidth] (position : Nat)
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
@@ -124,8 +117,7 @@ decreasing_by all_goals simp_wf; simp_all [navigationSize] <;> omega
 
 /-- The original result word dimension is independent of the code/state dimension.
 Native evaluator calls select their state dimension through the expected result type. -/
-@[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "get_ret_Loc_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def getRetLoc {width : Nat} [NeZero width] {resultWidth : Nat} [NeZero resultWidth] {C F : Type}
     (state : Flapjack.Compiler.Backend.LabSem.State width C F) : Option (WordLocW resultWidth) :=
   getLabAfter (resultWidth := resultWidth) state.pc state.code
@@ -137,8 +129,7 @@ private theorem asmFetchAuxBound {width : Nat} [NeZero width]
   fun_induction asmFetchAux position code generalizing line <;>
     simp_all [asmCodeLength] <;> omega
 
-@[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "asm_fetch_IMP"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem asmFetchImp {width : Nat} [NeZero width] {C F : Type}
     (state : Flapjack.Compiler.Backend.LabSem.State width C F) (line : LabLineHOL width) :
     asmFetch state = some line → state.pc < asmCodeLength state.code :=

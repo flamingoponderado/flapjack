@@ -21,8 +21,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
 
 /-- Complete original FFI observation of the initializer: replacing the input
 FFI state replaces the output FFI state and leaves the result unchanged. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "evaluate_init_code_ffi"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateInitCodeFfi {width : Nat} [NeZero width] {C : Type} {F : Type}
     (generateGc : Bool) (maxHeap pointer : Nat) (s t : StackSemStateFiniteExact width C F)
     (result : Option (StackSemResult width)) (c : HolFfiState F)
@@ -34,8 +33,7 @@ theorem evaluateInitCodeFfi {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Complete original law: the total initialized state keeps the input FFI
 state. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "make_init_any_ffi"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem makeInitAnyFfi {width : Nat} [NeZero width] {C F : Type}
     (generateGc : Bool) (maxHeap : Nat) (bitmaps : List (BitVec width)) (dataSpace : Nat)
     (oracle : Nat → C × List (Nat × HolProg width) × List (BitVec width))

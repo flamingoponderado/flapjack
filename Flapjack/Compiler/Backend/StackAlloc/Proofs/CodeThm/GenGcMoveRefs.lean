@@ -265,9 +265,7 @@ The conclusion has the original four temporary-slot updates and nine register
 updates, including register 0 restored to `r1a1` and register 8 set to `r2a2`.
 `Temp 4w` is not changed by the field mover. There is no additional dimension,
 simulation or target-evaluation premise. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml"
-  "word_gen_gc_move_refs_code_thm"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_gen_gc_move_refs_code_thm {width : Nat} [NeZero width] {C F : Type}
     {conf : Config} :
     ∀ (k : Nat) (r2a1 r1a1 r2a2 i1 pa1 ib1 pb1 old1 : BitVec width)

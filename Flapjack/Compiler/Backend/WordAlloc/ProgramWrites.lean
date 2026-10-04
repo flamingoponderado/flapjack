@@ -8,8 +8,7 @@ not a recursive collection of writes from subprograms. Compound programs and
 all unlisted constructors return LN. Shared Load16 writes its destination,
 whereas the instruction-level Load16 uses getWritesInst's source catchall.
 The separate production-route obligation remains open. -/
-@[hol "cakeml/compiler/backend/word_allocScript.sml" "get_writes_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def getWrites {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) → NumSet
   | .move _ moves => numsetListInsert (moves.map Prod.fst) .ln
   | .inst instruction => getWritesInst instruction

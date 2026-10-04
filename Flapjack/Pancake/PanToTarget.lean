@@ -51,8 +51,7 @@ lengths; no extra equal-length hypothesis or arbitrary truncation is added.
 This is the reviewed source-shaped definition, separate from the executed
 production pipeline. Its delivery does not establish production routing or
 the final machine-semantics compiler theorem. -/
-@[hol "cakeml/pancake/pan_to_targetScript.sml" "compile_prog_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def compileProgHOL {width : Nat} [NeZero width]
     (asmConf : AsmConfigExact width) (config : Backend.Config)
     (program : List (DeclHOL width)) :

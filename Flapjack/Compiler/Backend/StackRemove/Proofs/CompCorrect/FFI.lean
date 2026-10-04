@@ -66,10 +66,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 /-- Full original FFI case (2081–2098), with the original four premises,
 actual mlstring identifier, native evaluator and FFI result. Byte reads and
 framed writeback on the target are proved from the original relation. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectFFI {width : Nat} [NeZero width] {C F : Type}
     (name : Basis.Pure.MlString.MlString) (ptr len ptr2 len2 ret : Nat)
     (source : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))

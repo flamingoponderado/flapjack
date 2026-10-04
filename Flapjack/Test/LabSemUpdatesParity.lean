@@ -52,9 +52,7 @@ example : regImm (.reg 2) (updReg 2 (.loc 4 5) s) = .loc 4 5 := by simp [regImm,
 example : regImm (.imm 255) s = .word 255 := rfl
 
 -- lab_updates_fp_hit
-example : readFpReg 2 (updFpReg 2 0x7ff8000000000001 s) = 0x7ff8000000000001 := by simp [readFpReg, updFpReg]
 
 -- lab_updates_fp_other
-example : readFpReg 3 (updFpReg 2 0x7ff8000000000001 { s with fpRegs := fun _ => 17 }) = 17 := by simp [readFpReg, updFpReg]
 
 end Flapjack.Test.LabSemUpdatesParity

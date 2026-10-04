@@ -7,8 +7,7 @@ open Flapjack.Basis.Pure.MlString
 /-- Full original append closure at the physical-byte-adjusted second start.
 Both input validity guards retain every original encoding/length/label/parity
 condition; none of those facts are replaced by output validity assumptions. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "all_enc_ok_append" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem allEncOk_append {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (pos : Nat) (left right : List (Section
@@ -78,8 +77,7 @@ private theorem lineOk_extend {width : Nat} [NeZero width]
 preserved, and complete original input validity establishes complete validity
 under the extended canonical label map. No side condition on failed lookups or
 map domains is added. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "all_enc_ok_labs_mono" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem allEncOk_extendLabels {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (pos : Nat) (code : List (Section

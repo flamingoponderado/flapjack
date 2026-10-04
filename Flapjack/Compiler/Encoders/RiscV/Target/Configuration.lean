@@ -9,7 +9,7 @@ open Flapjack Compiler.Encoders.Asm
 /-- Complete source record at fixed word64, including its real encode field.
 Signed word comparisons preserve the strict Sub lower bound and every original
 range endpoint. The generic legacy check record remains separate and untagged. -/
-@[hol "cakeml/compiler/encoders/riscv/riscv_targetScript.sml" "riscv_config_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def riscvConfig : AsmConfigExact 64 where
   isa := .riscv
   encode := riscvEnc

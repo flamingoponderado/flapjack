@@ -53,11 +53,7 @@ end LoopToWordCompileCorrectSeqWitnesses
 /-- Genuine Seq induction case of HOL `loop_to_wordProof$compile_correct`.
     The first hypothesis is conditional on the first source command returning
     `NONE`; the second is the unrestricted first-command case. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "compile_correct"
-  (fmap_as_finite_support_relation :=
-    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.fpRegs,
-      WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_Seq {width : Nat} [NeZero width] {C F : Type}
     (c1 c2 : HolLoopProg width) (s : LoopSemStateFiniteExact width F) :
     ((∀ res s1, (res, s1) = LoopSemStateFiniteExact.evaluate c1 s ∧ res = none →

@@ -129,8 +129,7 @@ end CompileSemanticsSupport
 /-- Exact HOL `with_same_regs_lemma` (`stack_allocProofScript.sml:5901-5905`):
 re-setting `regs` to its own value is redundant in a record update. HOL's free
 `s cc oracle anything k c` are implicit. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "with_same_regs_lemma"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem with_same_regs_lemma {width : Nat} [NeZero width] {C F : Type}
     {s : StackSemStateFiniteExact width C F}
     {cc : C → List (Nat × HolProg width) → Option (List (BitVec 8) × C)}
@@ -154,8 +153,7 @@ are renamed `i k q` and `cfg`; `dimword (:'a)` is `2 ^ width` and
 `comp_correct_thm`), `evaluate_add_clock` and
 `evaluate_add_clock_io_events_mono`. The native evaluator's instruction closure
 inherits the `reals_as_rational_cuts` limit (`docs/SOUNDNESS.md` item 8). -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "compile_semantics"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compile_semantics {width : Nat} [NeZero width] {C F : Type}
     {s : StackSemStateFiniteExact width C F} {c : DataToWord.Config}
     {compile_rest : C → List (Nat × HolProg width) → Option (List (BitVec 8) × C)}

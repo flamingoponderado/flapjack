@@ -16,8 +16,7 @@ open Flapjack Flapjack.Compiler.Backend.DataToWord Flapjack.Pancake
 
 /-- HOL `init_store_ok_def`. HOL's memory values `'b`, and the code and data
 buffers' element widths `'c` and `'d`, are unconstrained; they stay generic. -/
-@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "init_store_ok_def"
-  (fmap_as_finite_support_relation := [store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def initStoreOk {width : Nat} [NeZero width] {β : Type} {cw dw : Nat} [NeZero cw] [NeZero dw]
     (c : Config) (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
     (m : BitVec width → β) (dm : BitVec width → Bool) (codeBuffer : WordSemBuffer width cw)

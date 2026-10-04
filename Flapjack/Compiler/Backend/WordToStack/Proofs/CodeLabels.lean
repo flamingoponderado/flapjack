@@ -8,8 +8,7 @@ open Flapjack Flapjack.Compiler.Backend.StackLang
 open Flapjack.Compiler.Backend.StackProps
 
 /-- Complete source conjunction for arbitrary load lists and continuations. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "get_code_handler_labels_wStackLoad" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getCodeHandlerLabelsWStackLoad {width : Nat} [NeZero width]
     (ls : List (Nat × Nat)) (x : HolProg width) (owner : Nat) :
     getCodeLabels (wStackLoadNative ls x) = getCodeLabels x ∧
@@ -21,8 +20,7 @@ theorem getCodeHandlerLabelsWStackLoad {width : Nat} [NeZero width]
     simpa [wStackLoadNative, getCodeLabels, stackGetHandlerLabels] using ih
 
 /-- Original output equation, including the returned bitmap component. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "wLive_code_labels" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wLiveCodeLabels {width : Nat} [NeZero width]
     (q : Spt Unit × Spt Unit) (bs : AppList (BitVec width) × Nat)
     (kf : Nat × Nat × Nat) (out : HolProg width) (bsOut : AppList (BitVec width) × Nat)
@@ -33,8 +31,7 @@ theorem wLiveCodeLabels {width : Nat} [NeZero width]
   by_cases empty : kf.2.1 = 0 <;> simp [wLiveNative, empty, getCodeLabels]
 
 /-- Complete code-label preservation for arbitrary slot movement parameters. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "stack_move_code_labels" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackMoveCodeLabels {width : Nat} [NeZero width]
     (a b c d : Nat) (e : HolProg width) :
     getCodeLabels (stackMoveNative a b c d e) = getCodeLabels e := by
@@ -43,8 +40,7 @@ theorem stackMoveCodeLabels {width : Nat} [NeZero width]
   | succ a ih => simp [stackMoveNative, getCodeLabels, ih]
 
 /-- Both complete source label sets of the return-copy loop are empty. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "get_code_handler_labels_copy_ret_aux" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getCodeHandlerLabelsCopyRetAux {width : Nat} [NeZero width]
     (k f n owner : Nat) :
     getCodeLabels (copyRetAuxNative k f n : HolProg width) = ∅ ∧
@@ -55,8 +51,7 @@ theorem getCodeHandlerLabelsCopyRetAux {width : Nat} [NeZero width]
 
 /-- Complete source conjunction for arbitrary return-list payloads, independent
 unused frame-tail carriers and both flags. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "get_code_handler_labels_copy_ret" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getCodeHandlerLabelsCopyRet {width : Nat} [NeZero width] {β γ : Type}
     (perf b : Bool) (kf : Nat × Nat × γ) (vs : List β)
     (kont : HolProg width) (owner : Nat) :

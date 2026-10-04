@@ -6,8 +6,7 @@ open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString
 
 /-- Complete original zero-instruction position law. Empty/all-label lists
 are excluded only by the original NOT EVERY classifier guard. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "sec_pos_val_0"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem secPosVal_zero {width : Nat} [NeZero width] (pos : Nat)
     (lines : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) :
     ¬(∀ line ∈ lines, isLabelHOL line = true) ∧

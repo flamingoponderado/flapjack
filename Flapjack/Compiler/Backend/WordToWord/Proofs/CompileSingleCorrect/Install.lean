@@ -26,8 +26,7 @@ left-biased. No target-run or post-state premise is added.
 The evaluator closure inherits reals_as_rational_cuts (SOUNDNESS item 8);
 this case adds no real arithmetic and makes no full compiler or executed-route
 completion claim. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_single_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compile_single_correct_Install {width : Nat} [NeZero width] {C F : Type}
     (tt : Bool) (kk aa : Nat) (co : AsmConfigExact width)
     (ptr len dptr dlen : Nat) (names : WordLangCutsetsHOL)

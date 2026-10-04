@@ -88,8 +88,7 @@ stability and event monotonicity, and compares the actual cofinal event chains.
 The shared semanticsAux_shift lemma is Flapjack proof infrastructure; its
 simulation premise is discharged here, never added to this theorem's premises.
 The evaluator inherits the reviewed real-carrier limit (SOUNDNESS item 8). -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "compile_semantics"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileSemantics {width : Nat} [NeZero width] {C F : Type}
     (code : List (Nat × HolProg width)) (source : StackSemStateFiniteExact width C F)
     (start : Nat) (distinct : (code.map Prod.fst).Nodup)

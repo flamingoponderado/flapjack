@@ -31,8 +31,7 @@ end MakeInitSupport
 /-- Exact HOL `make_init_def` (`stack_allocProofScript.sml:6068-6073`): the
 source-side initial state, with the given code and oracle, the collector of `c`,
 allocation and stack enabled, and the compiler that first runs `prog_comp`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "make_init_def"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def makeInit {width : Nat} [NeZero width] {C F : Type} (c : DataToWord.Config)
     (code : Spt (HolProg width))
     (oracle : Nat → C × List (Nat × HolProg width) × List (BitVec width))
@@ -44,8 +43,7 @@ noncomputable def makeInit {width : Nat} [NeZero width] {C F : Type} (c : DataTo
 
 /-- Exact HOL `prog_comp_lambda` (`stack_allocProofScript.sml:6075-6079`): the
 paired-lambda form of `prog_comp_def`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "prog_comp_lambda"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem prog_comp_lambda {width : Nat} [NeZero width] :
     (progComp : Nat × HolProg width → Nat × HolProg width) =
       fun np => (np.1, (comp np.1 (nextLabHOL np.2 2) np.2).1) :=
@@ -58,8 +56,7 @@ oracle` is `Prod.map id (Prod.map (List.map progComp) id) ∘ oracle`. All ten
 premises are kept; as in HOL, `ALL_DISTINCT` is not needed by the proof. The
 native evaluator inherits the `reals_as_rational_cuts` limit (`docs/SOUNDNESS.md`
 item 8). -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "make_init_semantics"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem make_init_semantics {width : Nat} [NeZero width] {C F : Type}
     {code : List (Nat × HolProg width)}
     {oracle : Nat → C × List (Nat × HolProg width) × List (BitVec width)}

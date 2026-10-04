@@ -12,8 +12,7 @@ open Flapjack.Compiler.Backend.StackToLab.Proofs.LabelSets
 open Flapjack.Compiler.Backend.StackToLab.Proofs.GoodCodeLabels
 
 /-- HOL `nonzero_get_labels_MAP_prog_to_section_SUBSET_code_labels`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "nonzero_get_labels_MAP_prog_to_section_SUBSET_code_labels" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem nonzeroGetLabelsMapProgToSectionSubsetCodeLabels {width : Nat} [NeZero width] :
     ∀ p : List (Nat × HolProg width),
       (∀ sec ∈ p.map progToSectionHOL, LabProps.secLabelsOk sec) ∧ stackGoodHandlerLabels p →
@@ -107,8 +106,7 @@ theorem goodHandler_map {prog : List (Nat × HolProg width)}
 end Infrastructure
 
 /-- HOL `stack_names_stack_good_handler_labels`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_names_stack_good_handler_labels" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesStackGoodHandlerLabels {width : Nat} [NeZero width] :
     ∀ (prog : List (Nat × HolProg width)) (f : Spt Nat),
       stackGoodHandlerLabels prog → stackGoodHandlerLabels (StackNames.compileHOL f prog) := by
@@ -132,8 +130,7 @@ theorem restrictNonzeroIn {x : Nat × Nat} {s : Set (Nat × Nat)} :
   Iff.rfl
 
 /-- HOL `stack_good_handler_labels_append`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_good_handler_labels_append" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackGoodHandlerLabelsAppend {width : Nat} [NeZero width]
     {xs ys : List (Nat × HolProg width)} :
     stackGoodHandlerLabels xs ∧ stackGoodHandlerLabels ys →
@@ -146,8 +143,7 @@ theorem stackGoodHandlerLabelsAppend {width : Nat} [NeZero width]
   · exact handlerRhs_append_right (hy np hm a b hab hb)
 
 /-- HOL `stack_remove_stack_good_handler_labels_incr`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_remove_stack_good_handler_labels_incr" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackRemoveStackGoodHandlerLabelsIncr {width : Nat} [NeZero width] {jump : Bool}
     {offset : BitVec width × BitVec width} {sp : Nat} :
     ∀ prog : List (Nat × HolProg width),
@@ -159,8 +155,7 @@ theorem stackRemoveStackGoodHandlerLabelsIncr {width : Nat} [NeZero width] {jump
     (fun np _ => stackRemoveGetCodeLabelsComp jump offset sp np.2) h
 
 /-- HOL `stack_remove_stack_good_handler_labels`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_remove_stack_good_handler_labels" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackRemoveStackGoodHandlerLabels {width : Nat} [NeZero width] {jump : Bool}
     {off : BitVec width × BitVec width} {ggc : Bool} {mh sp loc : Nat} :
     ∀ prog : List (Nat × HolProg width),
@@ -176,8 +171,7 @@ theorem stackRemoveStackGoodHandlerLabels {width : Nat} [NeZero width] {jump : B
   omega
 
 /-- HOL `stack_alloc_stack_good_handler_labels_incr`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_alloc_stack_good_handler_labels_incr" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackAllocStackGoodHandlerLabelsIncr {width : Nat} [NeZero width] :
     ∀ prog : List (Nat × HolProg width),
       stackGoodHandlerLabels prog → stackGoodHandlerLabels (prog.map StackAlloc.progComp) := by
@@ -188,8 +182,7 @@ theorem stackAllocStackGoodHandlerLabelsIncr {width : Nat} [NeZero width] :
     (fun np _ => stackAllocGetCodeLabelsComp _ _ np.2) h
 
 /-- HOL `stack_alloc_stack_good_handler_labels`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_alloc_stack_good_handler_labels" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackAllocStackGoodHandlerLabels {width : Nat} [NeZero width] :
     ∀ (prog : List (Nat × HolProg width)) (c : DataToWord.Config),
       stackGoodHandlerLabels prog → stackGoodHandlerLabels (StackAlloc.compile c prog) := by
@@ -202,8 +195,7 @@ theorem stackAllocStackGoodHandlerLabels {width : Nat} [NeZero width] :
   simp [getCodeLabels, stackAllocInitCodeLabels] at hab
 
 /-- HOL `stack_rawcall_stack_good_handler_labels`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_rawcall_stack_good_handler_labels" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackRawcallStackGoodHandlerLabels {width : Nat} [NeZero width]
     {prog : List (Nat × HolProg width)} :
     stackGoodHandlerLabels prog → stackGoodHandlerLabels (StackRawCall.compile prog) := by
@@ -223,8 +215,7 @@ theorem stackRawcallStackGoodHandlerLabels {width : Nat} [NeZero width]
     exact .inr ⟨ha, rfl⟩
 
 /-- HOL `stack_to_lab_stack_good_handler_labels`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_to_lab_stack_good_handler_labels" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackToLabStackGoodHandlerLabels {width : Nat} [NeZero width]
     {stackConf : StackToLab.Config} {dataConf : DataToWord.Config} {maxHeap sp : Nat}
     {offset : BitVec width × BitVec width} {prog : List (Nat × HolProg width)}
@@ -239,8 +230,7 @@ theorem stackToLabStackGoodHandlerLabels {width : Nat} [NeZero width]
     (stackAllocStackGoodHandlerLabels _ _ (stackRawcallStackGoodHandlerLabels h)))
 
 /-- HOL `stack_to_lab_stack_good_handler_labels_incr`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_to_lab_stack_good_handler_labels_incr" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackToLabStackGoodHandlerLabelsIncr {width : Nat} [NeZero width] {f : Spt Nat}
     {jump : Bool} {offset : BitVec width × BitVec width} {sp : Nat}
     {prog : List (Nat × HolProg width)} {prog' : LabSem.LabProgHOL width} :

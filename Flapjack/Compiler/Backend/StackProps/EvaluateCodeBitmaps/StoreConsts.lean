@@ -18,8 +18,7 @@ end StoreConstsCase
 conjuncts and only the actual evaluator equation as premise. The full primitive
 preservation lemma covers failures as well as successful copies; count zero
 therefore follows without a successful-guard or post-state assumption. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsStoreConsts {width : Nat} [NeZero width] {C F : Type}
     (first second : Nat) (stub : Option Nat)
     (source post : StackSemStateFiniteExact width C F)

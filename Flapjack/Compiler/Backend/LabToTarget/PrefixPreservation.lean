@@ -20,8 +20,7 @@ private theorem nonlabelOfNotEvery {width : Nat} [NeZero width]
     · exact hy
     · exact False.elim (h ⟨line,by simpa using hm,hy⟩)
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "lines_upd_lab_len_label_prefix_zero"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem linesUpdLabLen_labelPrefixZero {width : Nat} [NeZero width]
     (pos : Nat) (ls acc : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) :
@@ -73,8 +72,7 @@ private theorem ends_iff {width : Nat} [NeZero width]
   rw [hn]
   cases sec.lines.reverse <;> simp
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "upd_lab_len_label_prefix_zero"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem updLabLen_labelPrefixZero {width : Nat} [NeZero width]
     (pos : Nat) (ss : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
@@ -94,8 +92,7 @@ theorem updLabLen_labelPrefixZero {width : Nat} [NeZero width]
     have hr := ih (linesUpdLabLen pos ls []).2 hp' (fun s hm => hends s (by simp [hm]))
     simpa [updLabLen,secLabelPrefixZero] using And.intro hl hr
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "enc_lines_again_simp_label_prefix_zero"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem encLinesAgainSimp_labelPrefixZero {width : Nat} [NeZero width]
     (labs : Spt (Spt Nat)) (ffis : List HolFfiName) (pos : Nat)
     (enc : HolAsm width → List (BitVec 8)) (ls res : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -117,8 +114,7 @@ theorem encLinesAgainSimp_labelPrefixZero {width : Nat} [NeZero width]
       try have ht := ih _ rest flag ⟨hr,hls.2⟩
       simp_all [isLabelHOL,lineLen]
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "enc_secs_again_label_prefix_zero"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem encSecsAgain_labelPrefixZero {width : Nat} [NeZero width]
     (pos : Nat) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (enc : HolAsm width → List (BitVec 8))

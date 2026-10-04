@@ -59,27 +59,4 @@ example : maxVarInstHOL (width := 64) (.mem .load8 3 (.addr 17 99)) = 17 := by d
 example : maxVarInstHOL (width := 64) (.mem .store8 3 (.addr 17 99)) = 17 := by decide
 
 -- mi_fpLess
-example : maxVarInstHOL (width := 64) (.fp (.fpLess 3 99 101)) = 3 := by decide
-
--- mi_fpLessEqual
-example : maxVarInstHOL (width := 64) (.fp (.fpLessEqual 3 99 101)) = 3 := by decide
-
--- mi_fpEqual
-example : maxVarInstHOL (width := 64) (.fp (.fpEqual 3 99 101)) = 3 := by decide
-
--- mi_toreg64
-example : maxVarInstHOL (width := 64) (.fp (.fpMovToReg 3 17 99)) = 3 := by decide
-
--- mi_fromreg64
-example : maxVarInstHOL (width := 64) (.fp (.fpMovFromReg 99 3 17)) = 3 := by decide
-
--- mi_toreg32
-example : maxVarInstHOL (width := 32) (.fp (.fpMovToReg 3 17 99)) = 17 := by decide
-
--- mi_fromreg32
-example : maxVarInstHOL (width := 32) (.fp (.fpMovFromReg 99 3 17)) = 17 := by decide
-
--- mi_fpdefault
-example : maxVarInstHOL (width := 64) (.fp (.fpAdd 99 101 103)) = 0 := by decide
-
 end Flapjack.Test.WordLangMaxVarInstParity

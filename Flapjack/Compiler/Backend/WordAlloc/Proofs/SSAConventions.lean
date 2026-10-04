@@ -12,8 +12,7 @@ open Flapjack Flapjack.Compiler.Backend.WordAlloc
 
 /-- Original four conventions for both fake-move outputs. No freshness,
 map validity, or register bound is assumed by the HOL statement. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "fake_moves_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fakeMoves_conventions {width : Nat} [NeZero width]
     (prio : Option (Unit ⊕ Unit)) (ls : List Nat) (ssaL ssaR : Spt Nat) (na : Nat) :
     let (a, b, _, _, _) : WordLangProgHOL (BitVec width) ×
@@ -36,8 +35,7 @@ theorem fakeMoves_conventions {width : Nat} [NeZero width]
 
 /-- Original conventions for the actual reconciliation result, including
 both initial merge moves and subsequent fake moves. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "fix_inconsistencies_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fixInconsistencies_conventions {width : Nat} [NeZero width]
     (ssaL ssaR : Spt Nat) (na : Nat) (prio : Option (Unit ⊕ Unit)) :
     let (a, b, _, _) : WordLangProgHOL (BitVec width) ×
@@ -59,8 +57,7 @@ theorem fixInconsistencies_conventions {width : Nat} [NeZero width]
   simpa [hm, hf, everyStackVarHOL, callArgConventionHOL] using moves
 
 /-- Original conventions for the complete source fake-move sequence. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "fake_seq_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fakeSeq_preAllocConventions {width : Nat} [NeZero width] (ls : List Nat) :
     preAllocConventionsHOL
       ((ls.map (fakeMove : Nat → WordLangProgHOL (BitVec width))).foldr .seq .skip :
@@ -72,8 +69,7 @@ theorem fakeSeq_preAllocConventions {width : Nat} [NeZero width] (ls : List Nat)
         fakeMove, instArgConvention] using ih
 
 /-- Original loop setup implication, retaining its actual output equation. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "loop_setup_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loopSetup_preAllocConventions {width : Nat} [NeZero width]
     (names exitNames : Spt Unit) (ssa : Spt Nat) (na : Nat)
     (setupProg : WordLangProgHOL (BitVec width)) (ssaRefreshed : Spt Nat)
@@ -106,8 +102,7 @@ theorem loopSetup_preAllocConventions {width : Nat} [NeZero width]
 
 /-- Original syntactic setup properties, requiring only the source allocation
 class of the limit. No evaluator run or target-state fact is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "setup_ssa_props_2" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem setupSSAProps2 {width : Nat} [NeZero width] (limit count : Nat)
     (program : WordLangProgHOL (BitVec width)) (allocated : isAllocVar limit) :
     let (move, ssa, next) := setupSSA (outputWidth := width) count limit program
@@ -122,8 +117,7 @@ theorem setupSSAProps2 {width : Nat} [NeZero width] (limit count : Nat)
   simp [preAllocConventionsHOL, everyStackVarHOL, callArgConventionHOL]
 
 /-- Original local loop setup invariant and counter properties. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "loop_setup_props_local" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loopSetup_propsLocal {width : Nat} [NeZero width]
     (names exitNames : Spt Unit) (ssa : Spt Nat) (na : Nat)
     (setupProg : WordLangProgHOL (BitVec width)) (ssaRefreshed : Spt Nat)

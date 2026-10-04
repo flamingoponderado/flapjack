@@ -20,8 +20,7 @@ theorem wfNames_applyNummapsKey {α β : Type} (f : Nat → Nat) (names : Spt α
   ⟨sptWfFromAList _, sptWfFromAList _⟩
 
 /-- HOL `fake_seq_wf_cutsets` (`wordConvsProofScript.sml:1011-1015`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "fake_seq_wf_cutsets" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fakeSeq_wfCutsets {width : Nat} [NeZero width] (names : List Nat) :
     wfCutsets ((names.map (fakeMove : Nat → WordLangProgHOL (BitVec width))).foldr .seq .skip) := by
   induction names with
@@ -29,8 +28,7 @@ theorem fakeSeq_wfCutsets {width : Nat} [NeZero width] (names : List Nat) :
   | cons name names ih => simpa [wfCutsets, fakeMove] using ih
 
 /-- HOL `ssa_reconcile_wf_cutsets` (`wordConvsProofScript.sml:1041-1045`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "ssa_reconcile_wf_cutsets" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaReconcile_wfCutsets {width : Nat} [NeZero width] {β : Type}
     (current target : Spt Nat) (names : Spt β) :
     wfCutsets (ssaReconcile current target names : WordLangProgHOL (BitVec width)) := by
@@ -40,8 +38,7 @@ theorem ssaReconcile_wfCutsets {width : Nat} [NeZero width] {β : Type}
 
 /-- HOL `loop_setup_wf_cutsets` (`wordConvsProofScript.sml:1091-1100`), with the
 producer equation as sole premise. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "loop_setup_wf_cutsets" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loopSetup_wfCutsets {width : Nat} [NeZero width]
     (names exitNames : Spt Unit) (ssa : Spt Nat) (na : Nat)
     (setupProg : WordLangProgHOL (BitVec width)) (ssaRefreshed : Spt Nat)
@@ -72,8 +69,7 @@ theorem loopSetup_wfCutsets {width : Nat} [NeZero width]
 
 /-- HOL `fake_moves_wf_cutsets` (`wordConvsProofScript.sml:1477-1486`); HOL's free
 `prio` is the leading binder. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "fake_moves_wf_cutsets" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fakeMoves_wfCutsets {width : Nat} [NeZero width] (prio : Option (Unit ⊕ Unit)) :
     ∀ (ls : List Nat) (A B : Spt Nat) (C : Nat) (L R : WordLangProgHOL (BitVec width)) (D : Nat)
       (E G : Spt Nat),
@@ -115,8 +111,7 @@ private def programWf {width : Nat} [NeZero width] (program : WordLangProgHOL (B
   ∀ ssa next tables, wfCutsets (ssaCcTrans program ssa next tables).1
 
 /-- HOL `ssa_cc_trans_wf_cutsets` (`wordConvsProofScript.sml:1487-1503`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "ssa_cc_trans_wf_cutsets" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_wfCutsets {width : Nat} [NeZero width] :
     ∀ (prog : WordLangProgHOL (BitVec width)) (ssa : Spt Nat) (na : Nat)
       (lt : List (Spt Nat × Spt Unit × Spt Unit)),
@@ -177,8 +172,7 @@ theorem ssaCcTrans_wfCutsets {width : Nat} [NeZero width] :
           wfNames_applyNummapsKey, (fixWf _ _ _ _).1, (fixWf _ _ _ _).2]
 
 /-- HOL `full_ssa_cc_trans_wf_cutsets` (`wordConvsProofScript.sml:1505-1516`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "full_ssa_cc_trans_wf_cutsets" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fullSsaCcTrans_wfCutsets {width : Nat} [NeZero width] :
     ∀ (n : Nat) (prog : WordLangProgHOL (BitVec width)), wfCutsets (fullSsaCcTrans n prog) := by
   intro count program

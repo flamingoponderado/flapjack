@@ -17,9 +17,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 
 /-- Full original local evaluate_wStackLoad_clock, with explicit canonical map and positive-word qualifications. Unconditional whole-pair equality, including invalid
 stack use and out-of-range errors; no supplied run or bound premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_wStackLoad_clock"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs, StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateWStackLoadClock {width : Nat} [NeZero width] {C F : Type}
     (loads : List (Nat × Nat)) (target : StackSemStateFiniteExact width C F)
     (clock : Nat) :

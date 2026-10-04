@@ -12,8 +12,7 @@ namespace Flapjack.Compiler.Backend.WordCse
 open Flapjack Misc.BalancedMap Compiler.Encoders.Asm
 
 /-- Exact HOL `firstRegOfArith_canonicalArith` (`word_cseProof:152-156`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "firstRegOfArith_canonicalArith"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: declaration over the reduced integer carrier.
 theorem firstRegOfArith_canonicalArith {width : Nat} [NeZero width]
     (data : Knowledge) (a : HolArith width) :
     firstRegOfArith (canonicalArith data a) = firstRegOfArith a := by

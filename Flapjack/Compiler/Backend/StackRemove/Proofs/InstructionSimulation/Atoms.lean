@@ -16,10 +16,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 
 /-- Genuine Skip case of the full instruction theorem, retaining all three
 original hypotheses and its existential successful target/full relation. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "state_rel_inst"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelInstSkip {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer : Nat)
     (source target postSource : StackSemStateFiniteExact width C F)
@@ -37,10 +34,7 @@ theorem stateRelInstSkip {width : Nat} [NeZero width] {C F : Type}
 /-- Genuine Const case of the full instruction theorem. Native assignment
 updates the same bounded register in both actual states, with no supplied
 post-state relation or target execution. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "state_rel_inst"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelInstConst {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer register : Nat)
     (value : BitVec width) (source target postSource : StackSemStateFiniteExact width C F)

@@ -18,8 +18,7 @@ end AllocCase
 allocation/GC errors and every rejected dispatch. The native evaluator closure
 inherits reals_as_rational_cuts; no numerical alignment or FP correspondence
 is asserted by this field-preservation case. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsAlloc {width : Nat} [NeZero width] {C F : Type}
     (register : Nat) (source post : StackSemStateFiniteExact width C F)
     (result : Option (StackSemResult width))

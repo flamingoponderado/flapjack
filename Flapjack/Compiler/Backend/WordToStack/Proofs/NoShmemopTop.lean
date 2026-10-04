@@ -7,8 +7,7 @@ open Flapjack.Compiler.Encoders.Asm
 
 /-- Full original top-level no-shared-memory theorem, with HOL fixed false
 performance flag, full compilation quadruple, and both injected stubs. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "compile_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileNoShmemop {width : Nat} [NeZero width]
     (conf : AsmConfigExact width)
     (programs : List (Nat × Nat × WordLangProgHOL (BitVec width)))

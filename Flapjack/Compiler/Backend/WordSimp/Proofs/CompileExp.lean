@@ -75,8 +75,7 @@ theorem evaluate_hoist_ite {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL local `evaluate_try_if_hoist2` (`word_simpProofScript.sml:1171-1206`);
     HOL's free `p3` is an explicit binder. -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "evaluate_try_if_hoist2"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_try_if_hoist2 {width : Nat} [NeZero width] {C : Type} {F : Type}
     (p3 : WordLangProgHOL (BitVec width)) :
     ∀ (N : Nat) (p1 interm dummy p2 : WordLangProgHOL (BitVec width))
@@ -126,8 +125,7 @@ theorem evaluate_try_if_hoist2 {width : Nat} [NeZero width] {C : Type} {F : Type
 
 /-- Exact HOL local `evaluate_try_if_hoist1` (`word_simpProofScript.sml:1208-1220`);
     HOL's free `p1 p2 p3 s` are explicit binders. -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "evaluate_try_if_hoist1"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_try_if_hoist1 {width : Nat} [NeZero width] {C : Type} {F : Type}
     (p1 p2 p3 : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F) :
     tryIfHoist1 p1 p2 = some p3 → gcFunConstOk s.gcFun →
@@ -251,8 +249,7 @@ theorem evaluate_seq_congr_gc {width : Nat} [NeZero width] {C : Type} {F : Type}
 /-- Exact HOL `evaluate_simp_duplicate_if` (`word_simpProofScript.sml:1222-1264`), by
     structural recursion as HOL's `simp_duplicate_if_ind`.  Inherits
     `reals_as_rational_cuts` through `evaluate`. -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "evaluate_simp_duplicate_if"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_simp_duplicate_if {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (p : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F),
       gcFunConstOk s.gcFun → evaluate (simpDuplicateIf p) s = evaluate p s
@@ -301,8 +298,7 @@ theorem evaluate_simp_duplicate_if {width : Nat} [NeZero width] {C : Type} {F : 
 
 /-- Exact HOL local `push_out_if_aux_T` (`word_simpProofScript.sml:1266-1280`), by
     structural recursion as HOL's `push_out_if_aux_ind`. -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "push_out_if_aux_T"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem push_out_if_aux_T {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (c2 c2' : WordLangProgHOL (BitVec width)) (res : Option (WordSemResult width))
       (s s' : WordSemStateFiniteExact width C F),
@@ -458,8 +454,7 @@ theorem evaluate_push_out_if_aux {width : Nat} [NeZero width] {C : Type} {F : Ty
   | .shareInst _ _ _, _ => by simp only [pushOutIfAux]
 
 /-- Exact HOL `evaluate_simp_push_out_if` (`word_simpProofScript.sml:1287-1314`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "evaluate_simp_push_out_if"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_simp_push_out_if {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (p : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F),
       evaluate (pushOutIf p) s = evaluate p s :=
@@ -467,8 +462,7 @@ theorem evaluate_simp_push_out_if {width : Nat} [NeZero width] {C : Type} {F : T
 
 /-- Exact HOL `compile_exp_thm` (`word_simpProofScript.sml:1318-1327`): the
     `word_simp` pass preserves every non-`Error` evaluation. -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "compile_exp_thm"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compile_exp_thm {width : Nat} [NeZero width] {C : Type} {F : Type}
     (prog : WordLangProgHOL (BitVec width)) (s s2 : WordSemStateFiniteExact width C F)
     (res : Option (WordSemResult width)) :

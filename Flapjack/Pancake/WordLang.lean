@@ -128,41 +128,20 @@ inductive WordLangArith (α : Type u) where
   | subOverflow (destination resultCarry sourceLeft sourceRight : Nat)
   deriving Repr
 
-/-- `asm$fp` (`cakeml/compiler/encoders/asm/asmScript.sml:87-108`). -/
-inductive WordLangFp where
-  | fpLess (destination left right : Nat)
-  | fpLessEqual (destination left right : Nat)
-  | fpEqual (destination left right : Nat)
-  | fpAbs (destination source : Nat)
-  | fpNeg (destination source : Nat)
-  | fpSqrt (destination source : Nat)
-  | fpAdd (destination left right : Nat)
-  | fpSub (destination left right : Nat)
-  | fpMul (destination left right : Nat)
-  | fpDiv (destination left right : Nat)
-  | fpFma (destination left right : Nat)
-  | fpMov (destination source : Nat)
-  | fpMovToReg (destinationInteger second sourceFloat : Nat)
-  | fpMovFromReg (destinationFloat sourceInteger second : Nat)
-  | fpToInt (destination source : Nat)
-  | fpFromInt (destination source : Nat)
-  deriving DecidableEq, Repr
-
 /-- `asm$addr = Addr reg ('a word)`
 (`cakeml/compiler/encoders/asm/asmScript.sml:120-122`). -/
 inductive WordLangAddr (α : Type u) where
   | addr (base : Nat) (offset : α)
   deriving Repr
 
-/-- `asm$inst = Skip | Const reg ('a word) | Arith ('a arith) |
-`Mem memop reg ('a addr) | FP fp`
-(`cakeml/compiler/encoders/asm/asmScript.sml:129-134`). -/
+/-- Integer specialization of `asm$inst`
+(`cakeml/compiler/encoders/asm/asmScript.sml:129-134`), retaining
+`Skip`, `Const`, `Arith` and `Mem`. -/
 inductive WordLangInst (α : Type u) where
   | skip
   | const (destination : Nat) (value : α)
   | arith (operation : WordLangArith α)
   | mem (operator : WordMemOp) (destination : Nat) (address : WordLangAddr α)
-  | fp (operation : WordLangFp)
   deriving Repr
 
 /-- Production `wordLang$exp` shape. Use `WordLangExpHOL` when an exact carrier
@@ -177,7 +156,8 @@ inductive WordLangExp (α : Type u) where
   | shift (operator : Shift) (left right : WordLangExp α)
   deriving Repr
 
-/-- `wordLang$prog` (`cakeml/compiler/backend/wordLangScript.sml:35-68`). -/
+/-- `wordLang$prog` shape (`cakeml/compiler/backend/wordLangScript.sml:35-68`)
+with integer-only `Inst` payloads. -/
 inductive WordLangProg (α : Type u) where
   | skip
   | move (priority : Nat) (moves : List (Nat × Nat))
@@ -235,10 +215,9 @@ inductive WordLangExpHOL (α : Type u) where
   | op (operator : BinOp) (args : List (WordLangExpHOL α))
   | shift (operator : Shift) (left right : WordLangExpHOL α)
 
-/-- HOL-shaped backend program carrier with the exact `spt` cut sets and
-`mlstring` FFI name. Other syntax components are shared with `WordLangProg`
-because their constructors and fields already match the HOL declarations. -/
-@[hol "cakeml/compiler/backend/wordLangScript.sml" "prog"]
+/-- Backend program carrier with HOL-shaped `spt` cut sets and `mlstring`
+FFI names. Instruction payloads use the riscv-mi integer specialization. -/
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 inductive WordLangProgHOL (α : Type u) where
   | skip
   | move (priority : Nat) (moves : List (Nat × Nat))
@@ -371,11 +350,6 @@ def everyVarInst {width : Nat} (P : Nat -> Bool) :
   | .mem .store32 reg (.addr base _) => P reg && P base
   | .mem .load8 reg (.addr base _) => P reg && P base
   | .mem .store8 reg (.addr base _) => P reg && P base
-  | .fp (.fpLess reg _ _) => P reg
-  | .fp (.fpLessEqual reg _ _) => P reg
-  | .fp (.fpEqual reg _ _) => P reg
-  | .fp (.fpMovToReg r1 r2 _) => if width = 64 then P r1 else (P r1 && P r2)
-  | .fp (.fpMovFromReg _ r1 r2) => if width = 64 then P r1 else (P r1 && P r2)
   | _ => true
 
 /-- Exact HOL `wordLang$every_var_imm` (`wordLangScript.sml:93-96`): the only
@@ -390,13 +364,10 @@ def everyVarImmHOL {width : Nat} [NeZero width] (P : Nat → Bool) :
   | .reg num => P num
   | _ => true
 
-/-- Exact HOL `wordLang$every_var_inst` (`wordLangScript.sml:98-133`) over the
-exact instruction carrier, with the two HOL FP-move `dimindex (:α) = 64` tests
-rendered as `width = 64`.  `[NeZero width]` models HOL's positive word
-dimension; the production `everyVarInst` omits that binder and stays
-`documented_mismatch`. -/
-@[hol "cakeml/compiler/backend/wordLangScript.sml" "every_var_inst_def"
-  (words_as_type_indexed_bitvec)]
+/-- Integer-only specialization of `wordLang$every_var_inst`.
+`[NeZero width]` retains the positive word dimension binder. -/
+-- riscv-mi: integer-only specialization of the referenced HOL declaration.
+
 def everyVarInstHOL {width : Nat} [NeZero width] (P : Nat → Bool) :
     WordLangInst (BitVec width) → Bool
   | .const reg _ => P reg
@@ -414,11 +385,6 @@ def everyVarInstHOL {width : Nat} [NeZero width] (P : Nat → Bool) :
   | .mem .store32 reg (.addr base _) => P reg && P base
   | .mem .load8 reg (.addr base _) => P reg && P base
   | .mem .store8 reg (.addr base _) => P reg && P base
-  | .fp (.fpLess reg _ _) => P reg
-  | .fp (.fpLessEqual reg _ _) => P reg
-  | .fp (.fpEqual reg _ _) => P reg
-  | .fp (.fpMovToReg r1 r2 _) => if width = 64 then P r1 else (P r1 && P r2)
-  | .fp (.fpMovFromReg _ r1 r2) => if width = 64 then P r1 else (P r1 && P r2)
   | _ => true
 
 /-- HOL `wordLang$every_name` (`wordLangScript.sml:127-131`). HOL enumerates

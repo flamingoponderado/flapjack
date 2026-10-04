@@ -14,8 +14,7 @@ open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm
 open Flapjack.Basis.Pure.MlString
 
 /-- HOL `EVERY_sec_label_ok` (`labPropsScript.sml:1279-1286`); HOL's free `n l` are explicit. -/
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "EVERY_sec_label_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem EVERY_sec_label_ok {width : Nat} [NeZero width] (n : Nat)
     (l : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) :

@@ -81,8 +81,7 @@ theorem stateRel_cbw {width : Nat} [NeZero width] {S Q F : Type}
   · intro bn hbn
     exact c37 bn (by simp only [List.length_append, List.length_singleton] at hbn; omega)
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "compile_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_cbw {width : Nat} [NeZero width] {S Q F : Type}
     (s1 : Flapjack.Compiler.Backend.LabSem.State width Config F) (r1 r2 : Nat)
     (bytes : List (BitVec 8)) (n : Nat)

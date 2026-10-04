@@ -42,9 +42,7 @@ preserved renamed-label lookup after the moves are derived from original native
 helpers. Both executions return the same location/value list and flush their
 locals exactly. No target run, success, or post-state relation is assumed.
 The total evaluator inherits reals_as_rational_cuts (SOUNDNESS item 8). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_correct"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransCorrectReturn {width : Nat} [NeZero width] {C F : Type}
     (source target : WordSemStateFiniteExact width C F)
     (ssa : Spt Nat) (next name : Nat) (names : List Nat)

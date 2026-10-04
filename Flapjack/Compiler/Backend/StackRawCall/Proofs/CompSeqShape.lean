@@ -5,8 +5,7 @@ open Flapjack Flapjack.Compiler.Backend.StackLang
 
 /-- Original non-fallback shape implication. No assumption about frame lookup
 success or the transformed program is added beyond the source inequality. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_seq_neq_IMP"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compSeqNeqImp {width : Nat} [NeZero width]
     (first second fallback : HolProg width) (info : Spt Nat)
     (h : compSeq first second info fallback ≠ fallback) :

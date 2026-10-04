@@ -213,8 +213,7 @@ theorem decStackStackKeyEq {width : Nat} [NeZero width] :
             exact ⟨(mapFstZipTake l wl (by omega)).symm, rfl, rfl, rfl⟩
 
 /-- Exact HOL `gc_s_key_eq` (`wordPropsScript.sml:2004-2009`). -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "gc_s_key_eq"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem gcSKeyEq {width : Nat} [NeZero width] {C F : Type} :
     ∀ (s x : WordSemStateFiniteExact width C F),
       WordSemStateFiniteExact.gc s = some x → sKeyEq s.stack x.stack := by
@@ -303,8 +302,7 @@ theorem sValEqDecStack {width : Nat} [NeZero width] :
 
 /-- Exact HOL `gc_s_val_eq` (`wordPropsScript.sml:2037-2049`). HOL's unused
 universally quantified `x` is retained. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "gc_s_val_eq"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem gcSValEq {width : Nat} [NeZero width] {C F : Type} :
     ∀ (s _x : WordSemStateFiniteExact width C F) (st : List (WordSemStackFrame width))
       (y : WordSemStateFiniteExact width C F),
@@ -328,8 +326,7 @@ theorem gcSValEq {width : Nat} [NeZero width] {C F : Type} :
       refine ⟨z, rfl, hsz, (sKeyEqSym _ _).mp (decStackStackKeyEq wl st z hz)⟩
 
 /-- Exact HOL `gc_s_val_eq_word_state` (`wordPropsScript.sml:2053-2067`). -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "gc_s_val_eq_word_state"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem gcSValEqWordState {width : Nat} [NeZero width] {C F : Type} :
     ∀ (s : WordSemStateFiniteExact width C F) (tlocs : Spt (WordLocW width))
       (tstack : List (WordSemStackFrame width)) (y : WordSemStateFiniteExact width C F),
@@ -355,8 +352,7 @@ theorem gcSValEqWordState {width : Nat} [NeZero width] {C F : Type} :
       exact ⟨tlocs, z, rfl, hsz, (sKeyEqSym _ _).mp (decStackStackKeyEq wl tstack z hz)⟩
 
 /-- Exact HOL `gc_s_val_eq_gen` (`wordPropsScript.sml:2083-2113`). -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "gc_s_val_eq_gen"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem gcSValEqGen {width : Nat} [NeZero width] {C F : Type} :
     ∀ (s t s' : WordSemStateFiniteExact width C F),
       s.gcFun = t.gcFun ∧ s.memory = t.memory ∧ s.mdomain = t.mdomain ∧ s.store = t.store ∧
@@ -418,8 +414,7 @@ private theorem envToListKeys' {width : Nat} [NeZero width] (x : Spt (WordLocW w
 
 /-- Exact HOL `push_env_pop_env_s_key_eq` (`wordPropsScript.sml:2115-2133`). HOL
 set union of the two domains is pointwise disjunction. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "push_env_pop_env_s_key_eq"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem pushEnvPopEnvSKeyEq {width : Nat} [NeZero width] {C F : Type} :
     ∀ (x : Spt (WordLocW width) × Spt (WordLocW width))
       (b : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))

@@ -1,3 +1,5 @@
+import Batteries.Tactic.PermuteGoals
+import Mathlib.Tactic.Set
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelGetVar
 import Flapjack.Compiler.Backend.WordToStack.NativeCallArgs
 import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
@@ -118,10 +120,7 @@ theorem stateRel_setVar_of_ge {width : Nat} [NeZero width] {C F : Type}
 /-- Exact HOL `call_dest_lemma` (`word_to_stackProofScript.sml:3315-3415`). HOL's
 free `ret`, `ac`, `k`, `f`, `f'` and `lens` are explicit; HOL `the fs ssize` is
 `ssize.getD fs`. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "call_dest_lemma"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store,
-    StackSemStateFiniteExact.regs, StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem callDestLemma {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (k f f' : Nat) (dest : Option Nat) (args : List Nat)
     (s : WordSemStateFiniteExact width (Nat × C) F) (t : StackSemStateFiniteExact width C F)

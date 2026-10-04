@@ -16,8 +16,7 @@ end EvaluateApplyColourIfWitnesses
 
 /-- HOL `evaluate_apply_colour`, If case. Only the genuine two branch
 induction hypotheses supplement the original three premises. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_If {width : Nat} [NeZero width] {C F : Type}
     (cmp : Cmp) (left : Nat) (right : WordRegImm (BitVec width))
     (yes no : WordLangProgHOL (BitVec width))

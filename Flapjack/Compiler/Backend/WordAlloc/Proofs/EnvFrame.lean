@@ -36,8 +36,7 @@ open EnvFrameWitnesses
 
 /-- Exact HOL `gc_frame` (`word_allocProofScript.sml:565-594`): a successful
 garbage collection changes only the stack, store and memory. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "gc_frame"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem gcFrame {width : Nat} [NeZero width] {C F : Type}
     (st st' : WordSemStateFiniteExact width C F)
     (h : WordSemStateFiniteExact.gc st = some st') :

@@ -257,9 +257,7 @@ HOL type variables range over nonempty carriers; these instances are the
 standard type interpretation, not an operational premise or another data
 representation translation. `conf`, `gs`, and `rs` are free in the original source and remain
 implicit parameters. All four original curried premise groups are retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml"
-  "word_gen_gc_partial_move_data_code_thm"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_gen_gc_partial_move_data_code_thm {width : Nat} [NeZero width]
     {C F D E : Type} [Nonempty D] [Nonempty E]
     {conf : Config} {gs rs : BitVec width} :

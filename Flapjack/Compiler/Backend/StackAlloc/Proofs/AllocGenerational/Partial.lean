@@ -2112,9 +2112,7 @@ case selector is HOL's `word_gen_gc_can_do_partial` on the AllocSize-updated
 source store. This is the original4592-4832 partial branch; it does not prove
 the remaining full-collector case. Canonical finite-support regs/fpRegs/store
 and positive-width words are the only carrier translations. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml"
-  "alloc_correct_lemma_Generational"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem alloc_correct_lemma_Generational_partial {width : Nat} [NeZero width] {C F : Type}
     {conf : Config} {genSizes : List Nat} {c : DataToWord.Config}
     {w : BitVec width} {s t : StackSemStateFiniteExact width C F}

@@ -32,8 +32,7 @@ end CompCorrectCarrier
     run of `v` from a state satisfying `data_inv data` is reproduced by the CSE
     output program, and a normal result re-establishes the invariant for the
     output knowledge. Proved by HOL's `recInduct evaluate_ind`. -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "comp_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem comp_correct {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (v : WordLangProgHOL (BitVec width)) (v1 : WordSemStateFiniteExact width C F)
       (res : Option (WordSemResult width)) (s' : WordSemStateFiniteExact width C F)
@@ -55,8 +54,7 @@ theorem comp_correct {width : Nat} [NeZero width] {C : Type} {F : Type} :
 /-- Exact HOL `word_common_subexp_elim_correct` (`word_cseProof:3795-3804`):
     the CSE pass reproduces every flat, non-error run, from `comp_correct` with
     the empty knowledge. -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "word_common_subexp_elim_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_common_subexp_elim_correct {width : Nat} [NeZero width] {C : Type} {F : Type}
     (p : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F)
     (res : Option (WordSemResult width)) (s1 : WordSemStateFiniteExact width C F)

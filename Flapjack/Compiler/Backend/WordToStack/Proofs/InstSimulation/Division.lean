@@ -71,11 +71,7 @@ write are derived internally, including arbitrary aliases and all positive width
 Canonical maps are qualified; source/target/result word width is shared and
 host/FFI types remain independent. Evaluators inherit reals_as_rational_cuts
 (SOUNDNESS item 8), without a new agreement assumption. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_wInst"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateWInstDiv {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (destination numerator denominator k f frame : Nat)
     (source sourcePost : WordSemStateFiniteExact width (Nat × C) F)

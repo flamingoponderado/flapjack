@@ -19,8 +19,7 @@ open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackProps
 open Flapjack.Compiler.Backend.StackToLab.Proofs.CodeInstalled
 
 /-- HOL `stack_rawcall_comp_no_shmemop`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "stack_rawcall_comp_no_shmemop"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackRawcallCompNoShmemop {width : Nat} [NeZero width] :
     ∀ (i : Spt Nat) (p : HolProg width),
       noShmemop p = true → noShmemop (StackRawCall.comp i p) = true := by
@@ -42,8 +41,7 @@ theorem stackRawcallCompNoShmemop {width : Nat} [NeZero width] :
   | _ => intro h; simp_all [StackRawCall.comp, noShmemop]
 
 /-- HOL `stack_rawcall_comp_top_no_shmemop`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_rawcall_comp_top_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackRawcallCompTopNoShmemop {width : Nat} [NeZero width] {i : Spt Nat} :
     ∀ p : HolProg width, noShmemop p = true → noShmemop (StackRawCall.compTop i p) = true := by
   intro p h
@@ -55,8 +53,7 @@ theorem stackRawcallCompTopNoShmemop {width : Nat} [NeZero width] {i : Spt Nat} 
   · exact stackRawcallCompNoShmemop i _ h
 
 /-- HOL `stack_rawcall_compile_no_shmemop`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_rawcall_compile_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackRawcallCompileNoShmemop {width : Nat} [NeZero width] :
     ∀ prog : List (Nat × HolProg width), (∀ ap ∈ prog, noShmemop ap.2 = true) →
       ∀ ap ∈ StackRawCall.compile prog, noShmemop ap.2 = true := by
@@ -66,8 +63,7 @@ theorem stackRawcallCompileNoShmemop {width : Nat} [NeZero width] :
   exact stackRawcallCompTopNoShmemop p (h _ hm)
 
 /-- HOL `stack_alloc_comp_no_shmemop`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "stack_alloc_comp_no_shmemop"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackAllocCompNoShmemop {width : Nat} [NeZero width] :
     ∀ (n m : Nat) (p : HolProg width),
       noShmemop p = true → noShmemop (StackAlloc.comp n m p).1 = true
@@ -111,8 +107,7 @@ termination_by _ _ p => sizeOf p
 decreasing_by all_goals simp_wf <;> omega
 
 /-- HOL `stack_alloc_prog_comp_no_shmemop`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_alloc_prog_comp_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackAllocProgCompNoShmemop {width : Nat} [NeZero width] :
     ∀ prog : List (Nat × HolProg width), (∀ ap ∈ prog, noShmemop ap.2 = true) →
       ∀ ap ∈ prog.map StackAlloc.progComp, noShmemop ap.2 = true := by
@@ -155,8 +150,7 @@ theorem noShmemop_wordGcCode {width : Nat} [NeZero width] (c : DataToWord.Config
         StackAlloc.wordGenGcMoveLoopCode, StackAlloc.wordGcPartialOrFull, StackAlloc.setNewTrigger]
 
 /-- HOL `stack_alloc_compile_no_shmemop`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_alloc_compile_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackAllocCompileNoShmemop {width : Nat} [NeZero width] {data : DataToWord.Config}
     {prog : List (Nat × HolProg width)} :
     (∀ ap ∈ prog, noShmemop ap.2 = true) →
@@ -169,8 +163,7 @@ theorem stackAllocCompileNoShmemop {width : Nat} [NeZero width] {data : DataToWo
   · exact stackAllocProgCompNoShmemop prog h ap hap
 
 /-- HOL `upshift_no_shmemop`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "upshift_no_shmemop"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem upshiftNoShmemop {width : Nat} [NeZero width] :
     ∀ k n : Nat, noShmemop (StackRemove.upshift k n : HolProg width) = true := by
   intro k n
@@ -183,8 +176,7 @@ theorem upshiftNoShmemop {width : Nat} [NeZero width] :
       apply ih; simp only [StackRemove.maxStackAlloc] at *; omega
 
 /-- HOL `downshift_no_shmemop`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "downshift_no_shmemop"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem downshiftNoShmemop {width : Nat} [NeZero width] :
     ∀ k n : Nat, noShmemop (StackRemove.downshift k n : HolProg width) = true := by
   intro k n
@@ -197,8 +189,7 @@ theorem downshiftNoShmemop {width : Nat} [NeZero width] :
       apply ih; simp only [StackRemove.maxStackAlloc] at *; omega
 
 /-- HOL `stack_free_no_shmemop`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "stack_free_no_shmemop"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackFreeNoShmemop {width : Nat} [NeZero width] :
     ∀ k n : Nat, noShmemop (StackRemove.stackFree k n : HolProg width) = true := by
   intro k n
@@ -214,8 +205,7 @@ theorem stackFreeNoShmemop {width : Nat} [NeZero width] :
       simp only [StackRemove.maxStackAlloc] at *; omega
 
 /-- HOL `stack_alloc_no_shmemop`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "stack_alloc_no_shmemop"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackAllocNoShmemop {width : Nat} [NeZero width] :
     ∀ (jump : Bool) (k n : Nat),
       noShmemop (StackRemove.stackAlloc jump k n : HolProg width) = true := by
@@ -233,8 +223,7 @@ theorem stackAllocNoShmemop {width : Nat} [NeZero width] :
       simp only [StackRemove.maxStackAlloc] at *; omega
 
 /-- HOL `stack_remove_comp_no_shmemop`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "stack_remove_comp_no_shmemop"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackRemoveCompNoShmemop {width : Nat} [NeZero width] :
     ∀ (jump : Bool) (off : BitVec width × BitVec width) (k : Nat) (p : HolProg width),
       noShmemop p = true → noShmemop (StackRemove.comp jump off k p) = true := by
@@ -252,8 +241,7 @@ theorem stackRemoveCompNoShmemop {width : Nat} [NeZero width] :
       simp_all [StackRemove.comp, noShmemop]
 
 /-- HOL `stack_remove_prog_comp_no_shmemop`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_remove_prog_comp_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackRemoveProgCompNoShmemop {width : Nat} [NeZero width] {Name : Type} {jump : Bool}
     {off : BitVec width × BitVec width} {k : Nat} {n : Name} :
     ∀ p : HolProg width, noShmemop p = true →
@@ -276,8 +264,7 @@ theorem noShmemop_initCode {width : Nat} [NeZero width] (gen : Bool) (maxHeap k 
     StackRemove.constInst, StackRemove.loadInst, StackRemove.storeInst]
 
 /-- HOL `stack_remove_compile_no_shmemop`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_remove_compile_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackRemoveCompileNoShmemop {width : Nat} [NeZero width] {jump : Bool}
     {offset : BitVec width × BitVec width} {gckind : Bool} {mh sp loc : Nat}
     {prog : List (Nat × HolProg width)} :
@@ -293,8 +280,7 @@ theorem stackRemoveCompileNoShmemop {width : Nat} [NeZero width] {jump : Bool}
   · exact stackRemoveCompNoShmemop jump offset sp p (h _ hm)
 
 /-- HOL `stack_remove_prog_comp_no_shmemop_MAP`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_remove_prog_comp_no_shmemop_MAP" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackRemoveProgCompNoShmemopMap {width : Nat} [NeZero width] {Name : Type} {jump : Bool}
     {offset : BitVec width × BitVec width} {sp : Nat} {prog : List (Name × HolProg width)} :
     (∀ ap ∈ prog, noShmemop ap.2 = true) →
@@ -304,8 +290,7 @@ theorem stackRemoveProgCompNoShmemopMap {width : Nat} [NeZero width] {Name : Typ
   exact stackRemoveCompNoShmemop jump offset sp p (h _ hm)
 
 /-- HOL `stack_names_comp_no_shmemop`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "stack_names_comp_no_shmemop"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompNoShmemop {width : Nat} [NeZero width] :
     ∀ (f : Spt Nat) (p : HolProg width),
       noShmemop p = true → noShmemop (StackNames.progCompHOL f p) = true := by
@@ -317,8 +302,7 @@ theorem stackNamesCompNoShmemop {width : Nat} [NeZero width] :
     simp_all [StackNames.progCompHOL, noShmemop]
 
 /-- HOL `stack_names_prog_comp_no_shmemop`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_names_prog_comp_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesProgCompNoShmemop {width : Nat} [NeZero width] {Name : Type} {f : Spt Nat} :
     ∀ prog : List (Name × HolProg width), (∀ ap ∈ prog, noShmemop ap.2 = true) →
       ∀ ap ∈ prog.map (StackNames.progCompEntryHOL f), noShmemop ap.2 = true := by
@@ -327,8 +311,7 @@ theorem stackNamesProgCompNoShmemop {width : Nat} [NeZero width] {Name : Type} {
   exact stackNamesCompNoShmemop f p (h _ hm)
 
 /-- HOL `stack_names_compile_no_shmemop`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_names_compile_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompileNoShmemop {width : Nat} [NeZero width] {Name : Type} {names : Spt Nat}
     {prog : List (Name × HolProg width)} :
     (∀ ap ∈ prog, noShmemop ap.2 = true) →
@@ -362,8 +345,7 @@ theorem flattenAllNoShareMem {width : Nat} [NeZero width] :
   all_goals rename_i h; split at h <;> simp at h
 
 /-- HOL `flatten_no_share_mem_inst`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_no_share_mem_inst"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenNoShareMemInst {width : Nat} [NeZero width] :
     ∀ (t : Bool) (p : HolProg width) (n m : Nat) (cs bs : List Nat), noShmemop p = true →
       ∀ ln ∈ appListAppend (flattenHOL t p n m cs bs).1,
@@ -374,8 +356,7 @@ theorem flattenNoShareMemInst {width : Nat} [NeZero width] :
   simp [lineNoShareMem] at this
 
 /-- HOL `asm_fetch_aux_no_share_mem_inst_CONS`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "asm_fetch_aux_no_share_mem_inst_CONS" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem asmFetchAuxNoShareMemInstCons {width : Nat} [NeZero width] {k : Nat}
     {ls : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) Basis.Pure.MlString.MlString) (BitVec width)))} :
@@ -402,8 +383,7 @@ theorem asmFetchAuxNoShareMemInstCons {width : Nat} [NeZero width] {k : Nat}
     · exact ih' (pos - 1) op re a inst len
 
 /-- HOL `prog_to_section_no_share_mem_inst`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "prog_to_section_no_share_mem_inst" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem progToSectionNoShareMemInst {width : Nat} [NeZero width] :
     ∀ prog : List (Nat × HolProg width), (∀ ap ∈ prog, noShmemop ap.2 = true) →
       LabProps.noShareMemInst (prog.map progToSectionHOL) := by
@@ -425,8 +405,7 @@ theorem progToSectionNoShareMemInst {width : Nat} [NeZero width] :
       cases h
 
 /-- HOL `compile_no_share_mem_inst`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "compile_no_share_mem_inst"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileNoShareMemInst {width : Nat} [NeZero width] {stackConf : StackToLab.Config}
     {dataConf : DataToWord.Config} {maxHeap sp : Nat} {offset : BitVec width × BitVec width} :
     ∀ (prog : List (Nat × HolProg width)) (prog' : LabSem.LabProgHOL width),
@@ -439,8 +418,7 @@ theorem compileNoShareMemInst {width : Nat} [NeZero width] {stackConf : StackToL
       (stackRawcallCompileNoShmemop prog h))))
 
 /-- HOL `compile_no_stubs_no_share_mem_inst`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "compile_no_stubs_no_share_mem_inst" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileNoStubsNoShareMemInst {width : Nat} [NeZero width] {f : Spt Nat} {jump : Bool}
     {offset : BitVec width × BitVec width} {sp : Nat} {prog : List (Nat × HolProg width)}
     {prog' : LabSem.LabProgHOL width} :

@@ -17,8 +17,7 @@ private theorem stubCodeLabelsEmpty {width : Nat} [NeZero width] (registers : Na
 /-- Complete original top-level code-label safety: the actual compiler's full
 output equation and source safety are the only premises. Both generated stub
 entries are owned by the returned program; the external set stays arbitrary. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_good_code_labels" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackGoodCodeLabels {width : Nat} [NeZero width]
     (conf : AsmConfigExact width)
     (rows : List (Nat × Nat × WordLangProgHOL (BitVec width)))
@@ -86,8 +85,7 @@ theorem wordToStackGoodCodeLabels {width : Nat} [NeZero width]
 /-- Complete original top-level handler-label safety, retaining EVERY
 good_handlers and the full four-component native compiler equation. No source
 code-label safety or desired target predicate is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_good_handler_labels" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackGoodHandlerLabels {width : Nat} [NeZero width]
     (conf : AsmConfigExact width)
     (rows : List (Nat × Nat × WordLangProgHOL (BitVec width)))

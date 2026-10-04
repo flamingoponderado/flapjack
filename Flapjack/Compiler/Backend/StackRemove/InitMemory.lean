@@ -8,8 +8,7 @@ open Flapjack.Compiler.Backend.StackLang
 decremented by one word, the terminal stack slot is zeroed, then all initial
 stores are emitted through the original list compiler. Register aliases and
 arbitrary natural register indices are retained without extra premises. -/
-@[hol "cakeml/compiler/backend/stack_removeScript.sml" "init_memory_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def initMemory {width : Nat} [NeZero width] (pointer : Nat)
     (values : List (Sum (BitVec width) Nat)) : HolProg width :=
   listSeqHOL [constInst 0 (bytesInWord width), subInst pointer 0,

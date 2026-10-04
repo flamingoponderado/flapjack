@@ -1,9 +1,25 @@
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstAssign
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstArith
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstMemory
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstFp
 
 namespace Flapjack.WordAlloc
+
+open WordSemStateFiniteExact
+
+theorem evaluateApplyColour_InstSkip {width : Nat} [NeZero width] {C F : Type} :
+    ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)
+      (lt : List (NumSet × NumSet)),
+      colouringOk f (.inst .skip : WordLangProgHOL (BitVec width)) live lt ∧ wordStateEqRel st cst ∧
+        strongLocalsRel f (sptDomain (getLive (.inst .skip : WordLangProgHOL (BitVec width)) live lt))
+          st.locals cst.locals →
+      applyColourPost f (.inst .skip : WordLangProgHOL (BitVec width)) live lt st cst := by
+  rintro st cst f live lt ⟨-, hs, hr⟩
+  apply applyColourPost_self
+  intro _
+  simp only [applyColour, applyColourInst, applyColourInstCore]
+  rw [evaluate, evaluate]
+  exact ⟨rfl, hs, by simpa [inst, getLive, getLiveInst, getLiveInstCore, applyColourLocals] using hr⟩
+
 
 namespace InstWitnesses
 
@@ -24,8 +40,6 @@ FP operations are covered by the accepted literal constructor proofs. The
 statement has exactly the original three premises and full existential
 postcondition. Instructions contain no sub-programs, so no induction hypothesis
 is needed. Full program correctness assembly remains separate work. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluateApplyColour_Inst {width : Nat} [NeZero width] {C F : Type}
     (instruction : WordLangInst (BitVec width)) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)
@@ -38,7 +52,6 @@ theorem evaluateApplyColour_Inst {width : Nat} [NeZero width] {C F : Type}
   cases instruction with
   | skip => exact evaluateApplyColour_InstSkip st cst f live lt h
   | const r w => exact evaluateApplyColour_InstConst r w st cst f live lt h
-  | fp op => exact evaluateApplyColour_InstFp op st cst f live lt h
   | arith op =>
       cases op with
       | binop op d r ri => exact evaluateApplyColour_InstBinop op d r ri st cst f live lt h

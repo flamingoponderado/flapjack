@@ -108,8 +108,7 @@ end Infrastructure
 /-! ### stack_names -/
 
 /-- HOL `get_code_labels_comp` (stack_names version, line 4090). -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "get_code_labels_comp" 4090
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem complexGetCodeLabelsStackNamesComp {width : Nat} [NeZero width] :
     ∀ (f : Spt Nat) (p : HolProg width),
       complexGetCodeLabels (StackNames.progCompHOL f p) = complexGetCodeLabels p := by
@@ -123,8 +122,7 @@ theorem complexGetCodeLabelsStackNamesComp {width : Nat} [NeZero width] :
 
 /-- HOL `stack_names_get_code_labels`. The program-name type stays generic, as HOL's
 `prog :(β # α prog) list`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "stack_names_get_code_labels"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesGetCodeLabels {width : Nat} [NeZero width] {Name : Type} {f : Spt Nat}
     {prog : List (Name × HolProg width)} :
     List.Forall₂ (fun cp p => complexGetCodeLabels cp = complexGetCodeLabels p)
@@ -248,8 +246,7 @@ theorem handlerLabels_downshift (register owner : Nat) :
 end StackRemoveHelpers
 
 /-- HOL `get_code_labels_comp` (stack_remove version, line 4110). -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "get_code_labels_comp" 4110
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getCodeLabelsStackRemoveComp {width : Nat} [NeZero width] :
     ∀ (a : Bool) (b : BitVec width × BitVec width) (c : Nat) (p : HolProg width),
       getCodeLabels (StackRemove.comp a b c p) ⊆
@@ -298,8 +295,7 @@ theorem mem_getCodeLabels_initCode {width : Nat} [NeZero width] {ggc : Bool} {mh
     StackRemove.constInst, StackRemove.loadInst, StackRemove.storeInst]
 
 /-- HOL `init_stubs_labels`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "init_stubs_labels"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem initStubsLabels {width : Nat} [NeZero width] {ggc : Bool} {mh k start : Nat} :
     ∀ p ∈ (StackRemove.initStubs ggc mh k start : List (Nat × HolProg width)).map Prod.snd,
       getCodeLabels p ⊆ {x | x ∈ [(1, 0), (start, 0)]} := by
@@ -314,8 +310,7 @@ theorem initStubsLabels {width : Nat} [NeZero width] {ggc : Bool} {mh k start : 
   all_goals simp [getCodeLabels, StackRemove.haltInst] at hx
 
 /-- HOL `stack_names_get_code_labels_comp`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_names_get_code_labels_comp" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesGetCodeLabelsComp {width : Nat} [NeZero width] :
     ∀ (f : Spt Nat) (p : HolProg width),
       getCodeLabels (StackNames.progCompHOL f p) = getCodeLabels p := by
@@ -328,8 +323,7 @@ theorem stackNamesGetCodeLabelsComp {width : Nat} [NeZero width] :
       simp_all [StackNames.progCompHOL, getCodeLabels, StackNames.destFindNameHOL]
 
 /-- HOL `stack_names_stack_get_handler_labels_comp`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_names_stack_get_handler_labels_comp" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesStackGetHandlerLabelsComp {width : Nat} [NeZero width] :
     ∀ (f : Spt Nat) (p : HolProg width) (n : Nat),
       stackGetHandlerLabels n (StackNames.progCompHOL f p) = stackGetHandlerLabels n p := by
@@ -352,8 +346,7 @@ theorem compileHOL_eq_map {width : Nat} [NeZero width] (f : Spt Nat)
     StackNames.compileHOL f prog = prog.map fun np => (np.1, StackNames.progCompHOL f np.2) := rfl
 
 /-- HOL `stack_names_stack_good_code_labels`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_names_stack_good_code_labels" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesStackGoodCodeLabels {width : Nat} [NeZero width] {elabs : Set Nat} :
     ∀ (prog : List (Nat × HolProg width)) (f : Spt Nat),
       stackGoodCodeLabels prog elabs →
@@ -370,8 +363,7 @@ theorem stackNamesStackGoodCodeLabels {width : Nat} [NeZero width] {elabs : Set 
 
 /-- HOL `stack_remove_get_code_labels_comp` (the same statement as the line-4110
 `get_code_labels_comp`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_remove_get_code_labels_comp" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackRemoveGetCodeLabelsComp {width : Nat} [NeZero width] :
     ∀ (a : Bool) (b : BitVec width × BitVec width) (c : Nat) (p : HolProg width),
       getCodeLabels (StackRemove.comp a b c p) ⊆
@@ -379,8 +371,7 @@ theorem stackRemoveGetCodeLabelsComp {width : Nat} [NeZero width] :
   getCodeLabelsStackRemoveComp
 
 /-- HOL `stack_remove_stack_get_handler_labels_comp`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_remove_stack_get_handler_labels_comp" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackRemoveStackGetHandlerLabelsComp {width : Nat} [NeZero width] :
     ∀ (a : Bool) (b : BitVec width × BitVec width) (c : Nat) (p : HolProg width) (m : Nat),
       stackGetHandlerLabels m (StackRemove.comp a b c p) = stackGetHandlerLabels m p := by
@@ -398,8 +389,7 @@ theorem stackRemoveStackGetHandlerLabelsComp {width : Nat} [NeZero width] :
       simp_all [StackRemove.comp, stackGetHandlerLabels]
 
 /-- HOL `stack_remove_init_code_labels`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_remove_init_code_labels" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackRemoveInitCodeLabels {width : Nat} [NeZero width] {ggc : Bool} {mh sp : Nat}
     {x : Nat × Nat} :
     x ∈ getCodeLabels (StackRemove.initCode ggc mh sp : HolProg width) → x = (1, 0) := by
@@ -413,8 +403,7 @@ theorem compileHOL_eq {width : Nat} [NeZero width] (jump : Bool)
         prog.map fun np => (np.1, StackRemove.comp jump off sp np.2) := rfl
 
 /-- HOL `stack_remove_stack_good_code_labels`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_remove_stack_good_code_labels" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackRemoveStackGoodCodeLabels {width : Nat} [NeZero width] {elabs : Set Nat}
     {jump : Bool} {off : BitVec width × BitVec width} {ggc : Bool} {mh sp loc : Nat} :
     ∀ prog : List (Nat × HolProg width),
@@ -450,8 +439,7 @@ theorem stackRemoveStackGoodCodeLabels {width : Nat} [NeZero width] {elabs : Set
       h np hm
 
 /-- HOL `stack_remove_stack_good_code_labels_incr`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_remove_stack_good_code_labels_incr" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackRemoveStackGoodCodeLabelsIncr {width : Nat} [NeZero width] {elabs : Set Nat}
     {jump : Bool} {offset : BitVec width × BitVec width} {sp : Nat} :
     ∀ prog : List (Nat × HolProg width),
@@ -479,8 +467,7 @@ theorem stackRemoveStackGoodCodeLabelsIncr {width : Nat} [NeZero width] {elabs :
 
 /-- HOL `stack_alloc_get_code_labels_comp`. HOL's binders `pp mm` do not occur
 in the statement and are omitted. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_alloc_get_code_labels_comp" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackAllocGetCodeLabelsComp {width : Nat} [NeZero width] :
     ∀ (n m : Nat) (p : HolProg width),
       getCodeLabels (StackAlloc.comp n m p).1 ⊆ insert (gcStubLocation, 0) (getCodeLabels p)
@@ -537,8 +524,7 @@ decreasing_by all_goals simp_wf <;> omega
 
 /-- HOL `stack_alloc_stack_get_handler_labels_comp`. HOL's binders `pp mm` do not
 occur in the statement and are omitted. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_alloc_stack_get_handler_labels_comp" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackAllocStackGetHandlerLabelsComp {width : Nat} [NeZero width] {i : Nat} :
     ∀ (n m : Nat) (p : HolProg width),
       stackGetHandlerLabels i (StackAlloc.comp n m p).1 = stackGetHandlerLabels i p
@@ -578,8 +564,7 @@ termination_by _ _ p => sizeOf p
 decreasing_by all_goals simp_wf <;> omega
 
 /-- HOL `stack_alloc_init_code_labels`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_alloc_init_code_labels" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackAllocInitCodeLabels {width : Nat} [NeZero width] {c : DataToWord.Config} :
     getCodeLabels (StackAlloc.wordGcCode c : HolProg width) = ∅ := by
   unfold StackAlloc.wordGcCode
@@ -619,8 +604,7 @@ theorem progComp_eq_map {width : Nat} [NeZero width] (prog : List (Nat × HolPro
   rfl
 
 /-- HOL `stack_alloc_stack_good_code_labels`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_alloc_stack_good_code_labels" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackAllocStackGoodCodeLabels {width : Nat} [NeZero width] {elabs : Set Nat} :
     ∀ (prog : List (Nat × HolProg width)) (c : DataToWord.Config),
       stackGoodCodeLabels prog elabs → stackGoodCodeLabels (StackAlloc.compile c prog) elabs := by
@@ -647,8 +631,7 @@ theorem stackAllocStackGoodCodeLabels {width : Nat} [NeZero width] {elabs : Set 
       h np hm
 
 /-- HOL `stack_alloc_stack_good_code_labels_incr`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_alloc_stack_good_code_labels_incr" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackAllocStackGoodCodeLabelsIncr {width : Nat} [NeZero width] {elabs : Set Nat} :
     ∀ prog : List (Nat × HolProg width),
       gcStubLocation ∈ elabs ∧ stackGoodCodeLabels prog elabs →
@@ -694,8 +677,7 @@ theorem CompTopWitness.mono {i : Spt Nat} {q q' : HolProg width} {p_1 p_2 : Nat}
 end RawCallHelpers
 
 /-- HOL `IN_get_code_labels_comp_top_lemma`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "IN_get_code_labels_comp_top_lemma" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem inGetCodeLabelsCompTopLemma {width : Nat} [NeZero width] :
     ∀ (i : Spt Nat) (q : HolProg width) (p_1 p_2 : Nat),
       ((p_1, p_2) ∈ getCodeLabels (StackRawCall.comp i q) →
@@ -803,8 +785,7 @@ theorem inGetCodeLabelsCompTopLemma {width : Nat} [NeZero width] :
     exact ⟨fun h => CompTopWitness.refl (hc ▸ h), fun h => CompTopWitness.refl (ht ▸ h)⟩
 
 /-- HOL `IN_domain_collect_info`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "IN_domain_collect_info"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem inDomainCollectInfo {width : Nat} [NeZero width] :
     ∀ (prog : List (Nat × HolProg width)) (f : Spt Nat) (p_1 : Nat),
       sptMem p_1 (StackRawCall.collectInfo prog f) → p_1 ∈ prog.map Prod.fst ∨ sptMem p_1 f := by
@@ -826,8 +807,7 @@ theorem inDomainCollectInfo {width : Nat} [NeZero width] :
 /-- HOL `IN_get_code_labels_comp_top`. The program list and the compiled body keep
 HOL's two independent word types (`prog :(num # β prog) list`, `q :α prog`); only
 the width-free `collect_info` table links them. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "IN_get_code_labels_comp_top"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem inGetCodeLabelsCompTop {width : Nat} {progWidth : Nat} [NeZero width] [NeZero progWidth]
     {p_1 p_2 : Nat} {prog : List (Nat × HolProg progWidth)} {q : HolProg width} :
     (p_1, p_2) ∈ getCodeLabels (StackRawCall.compTop (StackRawCall.collectInfo prog .ln) q) →
@@ -842,8 +822,7 @@ theorem inGetCodeLabelsCompTop {width : Nat} {progWidth : Nat} [NeZero width] [N
   · simp at h
 
 /-- HOL `stack_rawcall_stack_good_code_labels`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_rawcall_stack_good_code_labels" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackRawcallStackGoodCodeLabels {width : Nat} [NeZero width] {elabs : Set Nat}
     {prog : List (Nat × HolProg width)} :
     stackGoodCodeLabels prog elabs → stackGoodCodeLabels (StackRawCall.compile prog) elabs := by
@@ -866,8 +845,7 @@ theorem stackRawcallStackGoodCodeLabels {width : Nat} [NeZero width] {elabs : Se
 /-! ### stack_to_lab -/
 
 /-- HOL `stack_to_lab_stack_good_code_labels`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_to_lab_stack_good_code_labels" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackToLabStackGoodCodeLabels {width : Nat} [NeZero width] {stackConf : StackToLab.Config}
     {dataConf : DataToWord.Config} {maxHeap sp : Nat} {offset : BitVec width × BitVec width}
     {prog : List (Nat × HolProg width)} {prog' : LabSem.LabProgHOL width} {elabs : Set Nat} :
@@ -886,8 +864,7 @@ theorem stackToLabStackGoodCodeLabels {width : Nat} [NeZero width] {stackConf : 
   · exact stackAllocStackGoodCodeLabels _ _ (stackRawcallStackGoodCodeLabels h)
 
 /-- HOL `stack_to_lab_stack_good_code_labels_incr`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_to_lab_stack_good_code_labels_incr" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackToLabStackGoodCodeLabelsIncr {width : Nat} [NeZero width] {elabs : Set Nat}
     {f : Spt Nat} {jump : Bool} {offset : BitVec width × BitVec width} {sp : Nat}
     {prog : List (Nat × HolProg width)} {prog' : LabSem.LabProgHOL width} :

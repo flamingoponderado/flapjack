@@ -25,11 +25,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 /-- Full original wRegWrite1_thm1 (3722–3743), including the arbitrary
 continuation callback and all existential run/relation/resource conclusions.
 The callback run is HOL’s original premise, not an assumed compiler result. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "wRegWrite1_thm1"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 
 theorem wRegWrite1Thm1 {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (k f frame m : Nat)

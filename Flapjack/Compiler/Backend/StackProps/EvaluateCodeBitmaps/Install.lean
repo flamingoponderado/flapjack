@@ -20,8 +20,7 @@ leaves these fields unchanged (count zero), successful installation advances
 exactly once (count one). This is one case, not the assembled theorem. The full evaluator closure
 inherits reals_as_rational_cuts; no numerical alignment or floating-point
 correspondence is asserted here. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsInstall {width : Nat} [NeZero width] {C F : Type}
     (codeBuffer codeLength dataBuffer dataLength returnAddress : Nat)
     (source post : StackSemStateFiniteExact width C F)

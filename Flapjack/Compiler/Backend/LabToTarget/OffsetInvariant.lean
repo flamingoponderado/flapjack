@@ -6,24 +6,21 @@ open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString
 
 /-- Original proof-side stored jump-offset invariant, observing every labelled
 opcode at the current annotation position and imposing nothing on other lines. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "line_offset_ok_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def lineOffsetOk {width : Nat} [NeZero width] (labs : Spt (Spt Nat))
     (ffis : List HolFfiName) (pos : Nat) : Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width) → Prop
   | .labAsm a w _ _ => w = getJumpOffset a ffis labs pos
   | _ => True
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "lines_offset_ok_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def linesOffsetOk {width : Nat} [NeZero width] (labs : Spt (Spt Nat))
     (ffis : List HolFfiName) (pos : Nat) : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)) → Prop
   | [] => True
   | l :: ls => lineOffsetOk labs ffis pos l ∧ linesOffsetOk labs ffis (pos + lineLen l) ls
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "lines_offset_ok_append"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem linesOffsetOk_append {width : Nat} [NeZero width] (labs : Spt (Spt Nat))
     (ffis : List HolFfiName) (pos : Nat) (l1 l2 : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) :
@@ -35,8 +32,7 @@ theorem linesOffsetOk_append {width : Nat} [NeZero width] (labs : Spt (Spt Nat))
 
 /-- Original section offset traversal advances through recorded annotations,
 including empty sections; section identifiers and physical bytes are unobserved. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "offset_ok_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def offsetOk {width : Nat} [NeZero width] (labs : Spt (Spt Nat))
     (ffis : List HolFfiName) (pos : Nat) : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) → Prop

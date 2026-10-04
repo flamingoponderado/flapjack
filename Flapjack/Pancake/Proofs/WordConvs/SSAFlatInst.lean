@@ -7,8 +7,7 @@ open Flapjack Flapjack.Compiler.Backend.WordAlloc
 
 /-- Original complete Inst case of SSA flat-expression preservation, including
 all native instruction constructors, FP width branches and fallback clauses. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "ssa_cc_trans_flat_exp_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_flatExpInst {width : Nat} [NeZero width]
     (instruction : WordLangInst (BitVec width)) (ssa : Spt Nat) (next : Nat)
     (tables : List (Spt Nat × Spt Unit × Spt Unit))

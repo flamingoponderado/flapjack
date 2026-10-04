@@ -26,8 +26,7 @@ open Flapjack.Basis.Pure.MlString
 `not_skip l = case l of Asm (Asmi (Inst Skip)) _ _ => F | _ => T`. The skip
 line is the only rejected constructor; the catch-all keeps `Label`, any other
 `Asm` and every `LabAsm`. -/
-@[hol "cakeml/compiler/backend/lab_filterScript.sml" "not_skip_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def notSkip {width : Nat} [NeZero width] :
     Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width) → Bool
@@ -38,8 +37,7 @@ def notSkip {width : Nat} [NeZero width] :
 clauses: `filter_skip [] = []` and
 `filter_skip (Section n xs :: rest) = Section n (FILTER not_skip xs) ::
 filter_skip rest`. -/
-@[hol "cakeml/compiler/backend/lab_filterScript.sml" "filter_skip_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def filterSkip {width : Nat} [NeZero width] :
     List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) →

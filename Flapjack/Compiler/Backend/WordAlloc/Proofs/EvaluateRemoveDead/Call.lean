@@ -40,9 +40,7 @@ theorem removeDeadPostRefl {width : Nat} [NeZero width] {C F : Type} (live : Num
       | exact ⟨rfl, by split <;> first | trivial | exact strongLocalsRelIdRefl _ _⟩
 
 /-- HOL `evaluate_remove_dead`, `Call NONE` case (Resume 4268). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_remove_dead"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateRemoveDead_CallNone {width : Nat} [NeZero width] {C F : Type}
     (dest : Option Nat) (args : List Nat)
     (h : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat)) :
@@ -122,9 +120,7 @@ theorem pushEnvRemoveDead {width : Nat} [NeZero width] {C F : Type}
 
 /-- HOL `evaluate_remove_dead`, `Call (SOME _)` case (Resume 4212), with induction
 hypotheses for the return handler and the exception handler program. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_remove_dead"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateRemoveDead_CallSome {width : Nat} [NeZero width] {C F : Type}
     (n : List Nat) (names : WordLangCutsetsHOL) (retH : WordLangProgHOL (BitVec width))
     (l1 l2 : Nat) (dest : Option Nat) (args : List Nat)

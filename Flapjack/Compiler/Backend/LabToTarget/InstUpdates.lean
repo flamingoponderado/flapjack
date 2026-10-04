@@ -20,8 +20,6 @@ theorem wordLocVal_word_target {width : Nat} [NeZero width] {p : BitVec width}
   subst hv
   simpa [wordLocVal] using h.symm
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "arith_upd_lemma"
-  (words_as_type_indexed_bitvec)]
 theorem arithUpd_lemma {width : Nat} [NeZero width] {C F : Type} (p : BitVec width)
     (labs : Spt (Spt Nat)) (a : HolArith width) (s1 : LabSem.State width C F)
     (t1 : AsmState width) :
@@ -163,60 +161,6 @@ theorem arithUpd_lemma {width : Nat} [NeZero width] {C F : Type} (p : BitVec wid
           AsmSem.updReg, AsmSem.readReg, hw r2 w2 hr2, hw r3 w3 hr3]
         split_ifs <;> first | exact h r | simp [wordLocVal]
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "fp_upd_lemma"
-  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
-theorem fpUpd_lemma {width : Nat} [NeZero width] {C F : Type} (p : BitVec width)
-    (labs : Spt (Spt Nat)) (f : HolFp) (s1 : LabSem.State width C F)
-    (t1 : AsmState width) :
-    (∀ r, wordLocVal p labs (s1.regs r) = some (t1.regs r)) ∧
-      (∀ r, s1.fpRegs r = t1.fpRegs r) ∧ ¬ (LabSem.fpUpd f s1).failed →
-    (∀ r, (LabSem.fpUpd f s1).fpRegs r = (AsmSem.fpUpd f t1).fpRegs r) ∧
-    ∀ r, wordLocVal p labs ((LabSem.fpUpd f s1).regs r) =
-      some ((AsmSem.fpUpd f t1).regs r) := by
-  rintro ⟨h, hfp, hf⟩
-  have hw : ∀ r w, s1.regs r = .word w → t1.regs r = w :=
-    fun r w e => wordLocVal_word_target (h r) e
-  have hfp' : s1.fpRegs = t1.fpRegs := funext hfp
-  cases f <;> simp only [LabSem.fpUpd, AsmSem.fpUpd, LabSem.readFpReg, AsmSem.readFpReg,
-    hfp', LabSem.updReg, AsmSem.updReg, LabSem.updFpReg, AsmSem.updFpReg,
-    LabSem.assertState, AsmSem.assertState, fpSemFpfma] at hf ⊢
-  case fpMovToReg r1 r2 d =>
-    by_cases h64 : width = 64
-    · simp only [h64, ↓reduceIte]
-      refine ⟨fun _ => trivial, fun r => ?_⟩
-      split_ifs <;> first | exact h r | simp [wordLocVal]
-    · simp only [h64, ↓reduceIte]
-      refine ⟨fun _ => trivial, fun r => ?_⟩
-      split_ifs <;> first | exact h r | simp [wordLocVal]
-  case fpMovFromReg d r1 r2 =>
-    by_cases h64 : width = 64
-    · simp only [h64, ↓reduceIte] at hf ⊢
-      cases e1 : s1.regs r1 with
-      | loc _ _ => simp [e1] at hf
-      | word w1 =>
-        refine ⟨fun r => ?_, h⟩
-        simp only [AsmSem.readReg, hw r1 w1 e1]
-    · simp only [h64, ↓reduceIte] at hf ⊢
-      cases e1 : s1.regs r1 with
-      | loc _ _ => simp [e1] at hf
-      | word w1 =>
-        cases e2 : s1.regs r2 with
-        | loc _ _ => simp [e1, e2] at hf
-        | word w2 =>
-          refine ⟨fun r => ?_, h⟩
-          simp only [AsmSem.readReg, hw r1 w1 e1, hw r2 w2 e2]
-  case fpToInt d1 d2 =>
-    cases hi : holFp64ToInt .roundTiesToEven (t1.fpRegs d2) with
-    | none => exact ⟨fun _ => rfl, h⟩
-    | some n =>
-      by_cases h64 : width = 64 <;> simp only [h64, ↓reduceIte] <;> exact ⟨fun _ => trivial, h⟩
-  all_goals first
-    | exact ⟨fun _ => trivial, h⟩
-    | (refine ⟨fun _ => trivial, fun r => ?_⟩
-       split_ifs <;> first | exact h r | simp_all [wordLocVal])
-
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "arith_upd_fp_regs"
-  (words_as_type_indexed_bitvec)]
 theorem arithUpd_fpRegs {width : Nat} [NeZero width] {C F : Type} (a : HolArith width)
     (s : Flapjack.Compiler.Backend.LabSem.State width C F) (t : AsmState width) :
     (LabSem.arithUpd a s).fpRegs = s.fpRegs ∧ (AsmSem.arithUpd a t).fpRegs = t.fpRegs := by
@@ -237,8 +181,6 @@ theorem shareMemStateRel_of_ffi {labWidth : Nat} [NeZero labWidth] {width : Nat}
   rw [hffi]
   exact h
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "Inst_share_mem_pc_update_helper" (words_as_type_indexed_bitvec)]
 theorem inst_shareMem_pcUpdate_helper {width : Nat} [NeZero width] {labWidth : Nat}
     [NeZero labWidth] {S Q F Z : Type}
     (mc : MachineConfig width S Q) (s1 : LabSem.State labWidth Config F) (t1 : AsmState width)
@@ -248,8 +190,6 @@ theorem inst_shareMem_pcUpdate_helper {width : Nat} [NeZero width] {labWidth : N
       { t1 with pc := pc' } ms2 :=
   fun h => shareMemStateRel_of_ffi mc s1 _ t1 ms1 _ ms2 rfl h.1
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "Inst_share_mem_reg_update_helper" (words_as_type_indexed_bitvec)]
 theorem inst_shareMem_regUpdate_helper {width : Nat} [NeZero width] {S Q F Z : Type}
     (mc : MachineConfig width S Q) (s1 : LabSem.State width Config F) (t1 : AsmState width)
     (ms1 : Z) (ms2 : S) (pc' : BitVec width) (n : Nat) (c : BitVec width) :
@@ -264,20 +204,10 @@ theorem inst_shareMem_regUpdate_helper {width : Nat} [NeZero width] {S Q F Z : T
       { t1 with regs := (fun r => if r = n then c else t1.regs r), pc := pc' } ms2 :=
   fun h => shareMemStateRel_of_ffi mc s1 _ t1 ms1 _ ms2 rfl h.1
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "arith_upd_share_mem_domain_unchange" (words_as_type_indexed_bitvec)]
 theorem arithUpd_sharedMemDomain {width : Nat} [NeZero width] {C F : Type}
     (a : HolArith width) (s1 : Flapjack.Compiler.Backend.LabSem.State width C F) :
     (LabSem.arithUpd a s1).sharedMemDomain = s1.sharedMemDomain := by
   cases a <;> simp only [LabSem.arithUpd] <;> (repeat' split) <;>
     simp [LabSem.binopUpd, LabSem.updReg, LabSem.assertState]
-
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "fp_upd_share_mem_domain_unchange" (words_as_type_indexed_bitvec)]
-theorem fpUpd_sharedMemDomain {width : Nat} [NeZero width] {C F : Type}
-    (f : HolFp) (s1 : Flapjack.Compiler.Backend.LabSem.State width C F) :
-    (LabSem.fpUpd f s1).sharedMemDomain = s1.sharedMemDomain := by
-  cases f <;> simp only [LabSem.fpUpd] <;> (repeat' split) <;>
-    simp [LabSem.updReg, LabSem.updFpReg, LabSem.assertState]
 
 end Flapjack.Compiler.Backend.LabToTarget

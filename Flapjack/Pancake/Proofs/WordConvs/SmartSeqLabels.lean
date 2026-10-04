@@ -6,8 +6,7 @@ open Flapjack.Compiler.Backend.WordSimp
 
 /-- Exact HOL SmartSeq label preservation: the same two program binders and
 unconditional equality. Only positive-width word representation is translated. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "extract_labels_SmartSeq"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem extractLabels_smartSeqHOL {width : Nat} [NeZero width]
     (first second : WordLangProgHOL (BitVec width)) :
     extractLabels (smartSeqHOL first second) = extractLabels (.seq first second) := by

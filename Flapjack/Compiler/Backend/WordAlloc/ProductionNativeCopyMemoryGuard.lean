@@ -20,8 +20,6 @@ theorem nativeCopyInstructionMemoryGuard {width : Nat} [NeZero width]
   case mem operator destination address =>
     cases address
     cases operator <;> simp [nativeMemorySupported]
-  case fp operation =>
-    cases operation <;> simp [nativeMemorySupported]
 
 /-- Whole native copy propagation retains the additional runtime memory guard,
 including both call continuations. No guard success or output correspondence

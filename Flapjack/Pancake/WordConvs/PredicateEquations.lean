@@ -8,8 +8,7 @@ constructor compares the same normalized node with itself. No source binder,
 side condition or callback body is specialized. The source ARB memory operation
 is either in a distinct-constructor comparison or the same node on both sides;
 no choice representative or extra premise is introduced. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "no_alloc_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem noAllocDef {width : Nat} [NeZero width]
     (p p1 p2 c : WordLangProgHOL (BitVec width))
     (names exitNames : Spt Unit) (v0 : Cmp) (v1 : Nat) (v2 : WordRegImm (BitVec width))
@@ -64,8 +63,7 @@ constructor compares the same normalized node with itself. No source binder,
 side condition or callback body is specialized. The source ARB memory operation
 is either in a distinct-constructor comparison or the same node on both sides;
 no choice representative or extra premise is introduced. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "no_mt_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem noMtDef {width : Nat} [NeZero width]
     (p p1 p2 c : WordLangProgHOL (BitVec width))
     (names exitNames : Spt Unit) (v0 : Cmp) (v1 : Nat) (v2 : WordRegImm (BitVec width))
@@ -120,8 +118,7 @@ constructor compares the same normalized node with itself. No source binder,
 side condition or callback body is specialized. The source ARB memory operation
 is either in a distinct-constructor comparison or the same node on both sides;
 no choice representative or extra premise is introduced. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "no_share_inst_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem noShareInstDef {width : Nat} [NeZero width]
     (p p1 p2 c : WordLangProgHOL (BitVec width))
     (names exitNames : Spt Unit) (v0 : Cmp) (v1 : Nat) (v2 : WordRegImm (BitVec width))

@@ -44,10 +44,7 @@ theorem evaluateSeqSome {width : Nat} [NeZero width] {C F : Type}
 induction hypotheses augment the original four premises: the first is fixed
 at the input source; the second is guarded by the actual first NONE run.
 Target evaluation and extra clocks are derived, not assumed. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectSeq {width : Nat} [NeZero width] {C F : Type}
     (first second : HolProg width)
     (source : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))

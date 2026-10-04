@@ -57,8 +57,7 @@ end StackSemSemanticsSupport
     of HOL's `lprefix_lub`/`llist` libraries. The set `IMAGE f UNIV` is the predicate
     `fun l => ∃ k, l = f k`. HOL's `=`/`<>` on results and `word_loc` are decided
     classically. The definition is noncomputable, as HOL's classical definition is. -/
-@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "semantics_def"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def semantics {width : Nat} [NeZero width] {C F : Type}
     (start : Nat) (s : StackSemStateFiniteExact width C F) : HolBehaviour :=
   let prog : HolProg width := .call none (.inl start) none

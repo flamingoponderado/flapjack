@@ -34,8 +34,7 @@ private theorem memListConsSet {α : Type} (a : α) (xs : List α) :
 /-- Full original whole-program union bound. The original EVERY guard, perf=F,
 and complete output equation (including frames and bitmap residual) are retained.
 Only the positive HOL word dimension is translated to BitVec width. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "compile_word_to_stack_code_labels" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileWordToStackCodeLabels {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (registers : Nat)
     (rows : List (Nat × Nat × WordLangProgHOL (BitVec width)))

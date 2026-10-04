@@ -404,9 +404,7 @@ actual renaming Moves, physical scratch Move and shared FFI operation. All six
 original premises and the full Error-exempt permutation/result/frame/locals
 conclusion remain. Inherits the evaluator real-rendering boundary of
 SOUNDNESS item 8. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_correct"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransCorrectFFI {width : Nat} [NeZero width] {C F : Type}
     (source target : WordSemStateFiniteExact width C F)
     (ssa : Spt Nat) (next ptr1 len1 ptr2 len2 : Nat)

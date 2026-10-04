@@ -48,26 +48,6 @@ theorem memoryName {width : Nat} [NeZero width] (conf : AsmConfigExact width)
   all_goals simp_all [stackAsmName, instName, addrName, regName, instOkLessExact]
   all_goals omega
 
-/-- Internal FP-instruction calculation over the original naming predicate.
-It preserves both source word-size tests and the positive-width source guards;
-there is no separately named HOL theorem for this case-proof calculation. -/
-theorem floatingName {width : Nat} [NeZero width] (conf : AsmConfigExact width)
-    (instruction : HolFp) (frame : Nat × Nat × Nat)
-    (room : frame.1 + 1 < conf.regCount - conf.avoidRegs.length)
-    (physical : everyVarInstHOL isPhyVar (.fp instruction : WordLangInst (BitVec width)) = true)
-    (valid : instOkLessExact conf (.fp instruction) = true) :
-    stackAsmName conf (wInstNative (.fp instruction) frame) := by
-  cases instruction
-  all_goals by_cases hw : width = 64
-  all_goals simp only [wInstNative, hw, if_true, if_false, loadName,
-    writeNameEquation, write2NameEquation, wReg1, wReg2]
-  all_goals try split_ifs
-  all_goals simp_all [stackAsmName, instName, fpName, regName, everyVarInstHOL, isPhyVar,
-    instOkLessExact]
-  all_goals repeat' first | apply And.intro | intro
-  all_goals try simp_all
-  all_goals omega
-
 /-- Internal arithmetic case calculation with precisely the source validity,
 physical-register, argument-placement and conditional two-register facts.
 These are extracted from the original compiler guards, not new public premises. -/
@@ -106,8 +86,6 @@ guards retained and the actual compiler output. All arithmetic, memory and FP
 forms are discharged internally, including the original ordinary-16-bit fallback,
 two-register restrictions and the positive-width 32/64-bit FP move distinctions.
 The no-share guard remains although this constructor itself is not shared memory. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_stack_asm_name_lem" (words_as_type_indexed_bitvec)]
 theorem wordToStackStackAsmNameInst {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (instruction : WordLangInst (BitVec width))
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat) (plain : perf = false)
@@ -136,9 +114,6 @@ theorem wordToStackStackAsmNameInst {width : Nat} [NeZero width]
       | addr base offset =>
           simp only [HolInst.ofWordLangInst, HolAddr.ofWordLangAddr] at valid ⊢
           exact memoryName conf operator destination base offset frame room valid
-  | fp operation =>
-      simp only [HolInst.ofWordLangInst] at valid ⊢
-      exact floatingName conf operation frame room physical valid
   | const destination value =>
       simp only [HolInst.ofWordLangInst, wInstNative, writeNameEquation]
       split <;> simp only [stackAsmName, instName, regName] <;> omega

@@ -5,8 +5,7 @@ namespace Flapjack.WordConvs
 open Flapjack.Compiler.Backend.WordSimp
 
 /-- Full original SmartSeq label equality for arbitrary native programs. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "extract_labels_SmartSeq"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem extractLabelsSmartSeq {width : Nat} [NeZero width]
     (first second : WordLangProgHOL (BitVec width)) :
     extractLabels (smartSeqHOL first second) = extractLabels (.seq first second) := by
@@ -14,8 +13,7 @@ theorem extractLabelsSmartSeq {width : Nat} [NeZero width]
 
 /-- Full original Seq_assoc label equality, including both actual recursive
 handler families and arbitrary accumulator. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "extract_labels_Seq_assoc_lemma"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem extractLabelsSeqAssocLemma {width : Nat} [NeZero width]
     (first second : WordLangProgHOL (BitVec width)) :
     extractLabels (seqAssoc first second) = extractLabels first ++ extractLabels second := by
@@ -58,8 +56,7 @@ theorem extractLabelsSeqAssocLemma {width : Nat} [NeZero width]
       rfl
 
 /-- Full original Skip-accumulator sequence reassociation label equality. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "extract_labels_Seq_assoc"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem extractLabelsSeqAssoc {width : Nat} [NeZero width]
     (program : WordLangProgHOL (BitVec width)) :
     extractLabels (seqAssoc .skip program) = extractLabels program := by
@@ -67,8 +64,7 @@ theorem extractLabelsSeqAssoc {width : Nat} [NeZero width]
 
 /-- Full original materialized-constant program has no labels, for arbitrary
 knowledge tree and register list. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "extract_labels_drop_consts_1"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem extractLabelsDropConsts1 {width : Nat} [NeZero width]
     (cs : Spt (BitVec width)) (names : List Nat) :
     extractLabels (dropConsts cs names) = [] := by
@@ -79,8 +75,7 @@ theorem extractLabelsDropConsts1 {width : Nat} [NeZero width]
     split <;> simp_all [extractLabelsSmartSeq, extractLabels]
 
 /-- Full original drop-constant prefix label equality with arbitrary continuation. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "extract_labels_drop_consts"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem extractLabelsDropConsts {width : Nat} [NeZero width]
     (cs : Spt (BitVec width)) (names : List Nat) (program : WordLangProgHOL (BitVec width)) :
     extractLabels (smartSeqHOL (dropConsts cs names) program) = extractLabels program := by

@@ -168,8 +168,7 @@ def byteOffsetOk {width : Nat} [NeZero width] (c : AsmConfigExact width) (w : Bi
 
 /-- Exact HOL `inst_select_exp_def` (`word_instScript.sml:206-262`), clause by
     clause; `dimindex (:'a)` is `width`, `w2n`/`n2w` are `toNat`/`ofNat`. -/
-@[hol "cakeml/compiler/backend/word_instScript.sml" "inst_select_exp_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def instSelectExp {width : Nat} [NeZero width] (c : AsmConfigExact width) :
     Nat → Nat → WordLangExpHOL (BitVec width) → WordLangProgHOL (BitVec width)
   | tar, temp, .load exp =>
@@ -230,8 +229,7 @@ decreasing_by
 
 /-- Exact HOL `inst_select_def` (`word_instScript.sml:284-339`): every clause,
     with HOL's `o` composition applied. -/
-@[hol "cakeml/compiler/backend/word_instScript.sml" "inst_select_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def instSelect {width : Nat} [NeZero width] (c : AsmConfigExact width)
     (temp : Nat) : WordLangProgHOL (BitVec width) → WordLangProgHOL (BitVec width)
   | .assign v exp => instSelectExp c v temp (flattenExp (pullExp exp))
@@ -284,8 +282,7 @@ noncomputable def instSelect {width : Nat} [NeZero width] (c : AsmConfigExact wi
   | prog => prog
 
 /-- Exact HOL `three_to_two_reg_def` (`word_instScript.sml:394-431`). -/
-@[hol "cakeml/compiler/backend/word_instScript.sml" "three_to_two_reg_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def threeToTwoReg {width : Nat} [NeZero width] :
     WordLangProgHOL (BitVec width) → WordLangProgHOL (BitVec width)
   | .inst (.arith (.binop bop r1 r2 ri)) =>
@@ -316,8 +313,7 @@ def threeToTwoReg {width : Nat} [NeZero width] :
   | prog => prog
 
 /-- Exact HOL `three_to_two_reg_prog_def` (`word_instScript.sml:470-473`). -/
-@[hol "cakeml/compiler/backend/word_instScript.sml" "three_to_two_reg_prog_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def threeToTwoRegProg {width : Nat} [NeZero width] (b : Bool)
     (prog : WordLangProgHOL (BitVec width)) : WordLangProgHOL (BitVec width) :=
   if b then threeToTwoReg prog else prog

@@ -44,8 +44,7 @@ theorem setAfterTree (f : Nat → Nat) (t : NumSet) (tree : ClashTree)
 /-- HOL `clash_tree_colouring_ok`, `Call` case, returning call with an exception
 handler (`word_allocProofScript.sml:3253-3268`); the induction hypotheses are
 those of the return handler and the handler program. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "clash_tree_colouring_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_CallHandler {width : Nat} [NeZero width] (vs : List Nat)
     (cutsets : WordLangCutsetsHOL) (rh : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
     (dest : Option Nat) (args : List Nat) (v' : Nat) (hp : WordLangProgHOL (BitVec width))

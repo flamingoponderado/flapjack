@@ -6,8 +6,7 @@ namespace Flapjack.Compiler.Backend.WordAlloc
 /-- Full native move-renaming wrapper: the original producer equality precedes
 the allocation-or-stack/map premise. The program retains its arbitrary positive
 word dimension; all four output conclusions are unchanged. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "list_next_var_rename_move_props"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem listNextVarRenameMoveProps {width : Nat} [NeZero width]
     (names : List Nat) (ssa : Spt Nat) (next : Nat)
     (move : WordLangProgHOL (BitVec width)) (ssaOut : Spt Nat) (nextOut : Nat)

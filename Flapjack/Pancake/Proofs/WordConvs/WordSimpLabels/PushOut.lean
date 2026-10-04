@@ -7,8 +7,7 @@ open Flapjack.Compiler.Backend.WordSimp
 /-- Full original push-out-if label relation, including branch permutations.
 The native auxiliary traversal preserves all label occurrences up to permutation;
 no distinct-output or successful-pass premise is introduced. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "labels_rel_push_out_if"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem labelsRelPushOutIf {width : Nat} [NeZero width]
     (program : WordLangProgHOL (BitVec width)) :
     labelsRel (extractLabels program) (extractLabels (pushOutIf program)) := by

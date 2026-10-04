@@ -119,10 +119,7 @@ theorem compCorrectBasic {width : Nat} [NeZero width] {C F : Type}
 /-- Genuine original Skip case with the original three premises and both
 existential conclusions. Native evaluator retains its inherited real-carrier
 assurance limit; this case proof introduces no real rendering. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectSkip {width : Nat} [NeZero width] {C F : Type}
      (info : Spt Nat)
     (source target resultState : StackSemStateFiniteExact width C F)
@@ -146,10 +143,7 @@ theorem compCorrectSkip {width : Nat} [NeZero width] {C F : Type}
 /-- Genuine original Halt case with the original three premises and both
 existential conclusions. Native evaluator retains its inherited real-carrier
 assurance limit; this case proof introduces no real rendering. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectHalt {width : Nat} [NeZero width] {C F : Type}
     (register : Nat) (info : Spt Nat)
     (source target resultState : StackSemStateFiniteExact width C F)
@@ -173,10 +167,7 @@ theorem compCorrectHalt {width : Nat} [NeZero width] {C F : Type}
 /-- Genuine original Get case with the original three premises and both
 existential conclusions. Native evaluator retains its inherited real-carrier
 assurance limit; this case proof introduces no real rendering. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectGet {width : Nat} [NeZero width] {C F : Type}
     (register : Nat) (name : StoreName) (info : Spt Nat)
     (source target resultState : StackSemStateFiniteExact width C F)
@@ -200,10 +191,7 @@ theorem compCorrectGet {width : Nat} [NeZero width] {C F : Type}
 /-- Genuine original Set case with the original three premises and both
 existential conclusions. Native evaluator retains its inherited real-carrier
 assurance limit; this case proof introduces no real rendering. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectSet {width : Nat} [NeZero width] {C F : Type}
     (name : StoreName) (register : Nat) (info : Spt Nat)
     (source target resultState : StackSemStateFiniteExact width C F)
@@ -227,10 +215,7 @@ theorem compCorrectSet {width : Nat} [NeZero width] {C F : Type}
 /-- Genuine original OpCurrHeap case with the original three premises and both
 existential conclusions. Native evaluator retains its inherited real-carrier
 assurance limit; this case proof introduces no real rendering. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectOpCurrHeap {width : Nat} [NeZero width] {C F : Type}
     (operator : Compiler.Encoders.Asm.HolBinop) (destination input : Nat) (info : Spt Nat)
     (source target resultState : StackSemStateFiniteExact width C F)
@@ -254,10 +239,7 @@ theorem compCorrectOpCurrHeap {width : Nat} [NeZero width] {C F : Type}
 /-- Genuine original Tick case with the original three premises and both
 existential conclusions. Native evaluator retains its inherited real-carrier
 assurance limit; this case proof introduces no real rendering. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectTick {width : Nat} [NeZero width] {C F : Type}
      (info : Spt Nat)
     (source target resultState : StackSemStateFiniteExact width C F)

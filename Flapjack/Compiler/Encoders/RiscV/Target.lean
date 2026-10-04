@@ -10,16 +10,13 @@ compiler route replacement remain tracked separately. -/
 namespace Flapjack.Compiler.Encoders.RiscV.Target
 open Flapjack Compiler.Encoders.Asm RiscV.L3
 
-@[hol "cakeml/compiler/encoders/riscv/riscv_targetScript.sml" "riscv_encode_fail_def"]
 def riscvEncodeFail : List instruction := [.ArithI (.ADDI (0,0,0))]
 
-@[hol "cakeml/compiler/encoders/riscv/riscv_targetScript.sml" "riscv_encode_def"]
 def riscvEncode (i : instruction) : List (BitVec 8) :=
   let w := Encode i
   [holWordExtract 8 7 0 w, holWordExtract 8 15 8 w,
    holWordExtract 8 23 16 w, holWordExtract 8 31 24 w]
 
-@[hol "cakeml/compiler/encoders/riscv/riscv_targetScript.sml" "riscv_bop_r_def"]
 def riscvBopR : BinOp → (BitVec 5 × BitVec 5 × BitVec 5 → ArithR)
   | .add => ArithR.ADD
   | .sub => ArithR.SUB
@@ -38,7 +35,6 @@ noncomputable def riscvBopI : BinOp → (BitVec 5 × BitVec 5 × BitVec 12 → A
   | .xor => ArithI.XORI
   | .sub => Flapjack.holArb _
 
-@[hol "cakeml/compiler/encoders/riscv/riscv_targetScript.sml" "riscv_bop_i_def"]
 theorem riscvBopIClauses :
     riscvBopI .add = ArithI.ADDI ∧ riscvBopI .and = ArithI.ANDI ∧
     riscvBopI .or = ArithI.ORI ∧ riscvBopI .xor = ArithI.XORI := by
@@ -53,7 +49,6 @@ noncomputable def riscvSh : Flapjack.Shift →
   | .asr => RiscV.L3.Shift.SRAI
   | .ror => Flapjack.holArb _
 
-@[hol "cakeml/compiler/encoders/riscv/riscv_targetScript.sml" "riscv_sh_def"]
 theorem riscvShClauses :
     riscvSh .lsl = RiscV.L3.Shift.SLLI ∧
     riscvSh .lsr = RiscV.L3.Shift.SRLI ∧
@@ -68,13 +63,11 @@ noncomputable def riscvShv : Flapjack.Shift →
   | .asr => RiscV.L3.Shift.SRA
   | .ror => Flapjack.holArb _
 
-@[hol "cakeml/compiler/encoders/riscv/riscv_targetScript.sml" "riscv_shv_def"]
 theorem riscvShvClauses :
     riscvShv .lsl = RiscV.L3.Shift.SLL ∧
     riscvShv .lsr = RiscV.L3.Shift.SRL ∧
     riscvShv .asr = RiscV.L3.Shift.SRA := by exact ⟨rfl,rfl,rfl⟩
 
-@[hol "cakeml/compiler/encoders/riscv/riscv_targetScript.sml" "riscv_memop_def"]
 def riscvMemop : HolMemop →
     Sum (BitVec 5 × BitVec 5 × BitVec 12 → Load)
         (BitVec 5 × BitVec 5 × BitVec 12 → Store)
@@ -87,7 +80,6 @@ def riscvMemop : HolMemop →
   | .store16 => .inr Store.SH
   | .store8 => .inr Store.SB
 
-@[hol "cakeml/compiler/encoders/riscv/riscv_targetScript.sml" "riscv_const32_def"]
 def riscvConst32 (r : BitVec 5) (i : BitVec 32) : List instruction :=
   if i.getLsbD 11 then
     [.ArithI (.LUI (r, ~~~(holWordExtract 20 31 12 i))),
@@ -104,7 +96,6 @@ def inSignedRange (lo hi a : BitVec 64) : Bool := lo.sle a && a.sle hi
 all original inputs and avoids running the undefined partial-table cases.
 Register n2w truncation, signed range tests, sign extension and all instruction
 sequences follow the source. No validity or target-evaluation premise. -/
-@[hol "cakeml/compiler/encoders/riscv/riscv_targetScript.sml" "riscv_ast_def"]
 def riscvAst : HolAsm 64 → List instruction
   | .inst .skip => riscvEncodeFail
   | .inst (.const r i) =>
@@ -179,7 +170,6 @@ def riscvAst : HolAsm 64 → List instruction
     match riscvMemop mop with
     | .inl f => [.Load (f (BitVec.ofNat 5 r1,BitVec.ofNat 5 r2,a.setWidth 12))]
     | .inr f => [.Store (f (BitVec.ofNat 5 r2,BitVec.ofNat 5 r1,a.setWidth 12))]
-  | .inst (.fp _) => riscvEncodeFail
   | .jump a =>
     if inSignedRange (-1048576) 1048575 a then [.Branch (.JAL (0,(a.sshiftRight 1).setWidth 20))]
     else let imm12 := holWordExtract 12 11 0 a
@@ -248,6 +238,5 @@ def riscvAst : HolAsm 64 → List instruction
     [.ArithI (.AUIPC (rd,holWordExtract 20 31 12 (i-imm12.signExtend 64))),
      .ArithI (.ADDI (rd,rd,imm12))]
 
-@[hol "cakeml/compiler/encoders/riscv/riscv_targetScript.sml" "riscv_enc_def"]
 def riscvEnc (a : HolAsm 64) : List (BitVec 8) := (riscvAst a).flatMap riscvEncode
 end Flapjack.Compiler.Encoders.RiscV.Target

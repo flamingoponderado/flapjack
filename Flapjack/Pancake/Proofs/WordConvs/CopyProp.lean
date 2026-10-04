@@ -133,12 +133,11 @@ theorem CopyOut.mono {I J : CopyState → Prop} (hIJ : ∀ cs, I cs → J cs)
 /-- `copy_prop_inst` returns `Skip` or an instruction. -/
 theorem copyPropInst_shape (i : WordLangInst (BitVec width)) (cs : CopyState) :
     (copyPropInst i cs).1 = .skip ∨ ∃ j, (copyPropInst i cs).1 = .inst j := by
-  rcases i with _ | _ | a | ⟨op, r, ad⟩ | f
+  rcases i with _ | _ | a | ⟨op, r, ad⟩
   · simp [copyPropInst]
   · simp [copyPropInst]
   · cases a <;> simp [copyPropInst]
   · cases op <;> cases ad <;> simp [copyPropInst]
-  · cases f <;> simp only [copyPropInst] <;> (try split) <;> simp
 
 theorem wfCutsets_copyOut {I : CopyState → Prop} {p q : WordLangProgHOL (BitVec width)}
     (h : CopyOut I p q) (hp : wfCutsets p) : wfCutsets q := by
@@ -229,7 +228,7 @@ theorem flatExpConventions_copyOut {I : CopyState → Prop} {p q : WordLangProgH
 theorem distinctTarReg_copyPropInst (i : WordLangInst (BitVec width)) (cs : CopyState)
     (hp : distinctTarRegExact (HolInst.ofWordLangInst i) = true) :
     everyInst (fun i => distinctTarRegExact (HolInst.ofWordLangInst i)) (copyPropInst i cs).1 = true := by
-  rcases i with _ | _ | a | ⟨op, r, ad⟩ | f
+  rcases i with _ | _ | a | ⟨op, r, ad⟩
   · simp [copyPropInst, everyInst]
   · simp [copyPropInst, everyInst, HolInst.ofWordLangInst, distinctTarRegExact]
   · cases a <;> simp only [copyPropInst, everyInst, HolInst.ofWordLangInst, HolArith.ofWordLangArith,
@@ -237,8 +236,6 @@ theorem distinctTarReg_copyPropInst (i : WordLangInst (BitVec width)) (cs : Copy
       simp_all [HolRegImm.ofWordRegImm, lookupEqImm] <;> (repeat' split at *) <;> (try split_ifs at *) <;> (try simp_all) <;>
       exact fun h => absurd h.symm ‹_›
   · cases op <;> cases ad <;> simp [copyPropInst, everyInst, HolInst.ofWordLangInst, distinctTarRegExact]
-  · cases f <;> simp only [copyPropInst] <;> (try split) <;>
-      simp [everyInst, HolInst.ofWordLangInst, distinctTarRegExact]
 
 theorem distinctTarReg_copyOut {I : CopyState → Prop} {p q : WordLangProgHOL (BitVec width)}
     (h : CopyOut I p q)
@@ -263,7 +260,7 @@ theorem fullInstOkLess_copyPropInst (c : AsmConfigExact width) (i : WordLangInst
     (cs : CopyState) (hp : fullInstOkLessExact c (.inst i) = true) :
     fullInstOkLessExact c (copyPropInst i cs).1 = true := by
   simp only [fullInstOkLessExact, fullInstOkLessWith] at hp ⊢
-  rcases i with _ | _ | a | ⟨op, r, ad⟩ | f
+  rcases i with _ | _ | a | ⟨op, r, ad⟩
   · simp [copyPropInst, fullInstOkLessWith]
   · simpa [copyPropInst, fullInstOkLessWith] using hp
   · cases a with
@@ -293,8 +290,6 @@ theorem fullInstOkLess_copyPropInst (c : AsmConfigExact width) (i : WordLangInst
         instOkLessExact] using hp
   · cases op <;> cases ad <;> simpa [copyPropInst, fullInstOkLessWith, HolInst.ofWordLangInst,
       HolAddr.ofWordLangAddr, instOkLessExact] using hp
-  · cases f <;> simp only [copyPropInst] at hp ⊢ <;> (try split) <;>
-      simp_all [fullInstOkLessWith, HolInst.ofWordLangInst, instOkLessExact]
 
 /-- `copy_prop_share` renames only the base register of the address. -/
 theorem expToAddr_copyPropShare (exp : WordLangExpHOL (BitVec width)) (cs : CopyState) :
@@ -381,15 +376,13 @@ theorem notAllocInv_copyPropMove : ∀ (xs : List (Nat × Nat)) {cs : CopyState}
 
 theorem notAllocInv_copyPropInst (i : WordLangInst (BitVec width)) {cs : CopyState}
     (h : NotAllocInv cs) : NotAllocInv (copyPropInst i cs).2 := by
-  rcases i with _ | _ | a | ⟨op, r, ad⟩ | f
+  rcases i with _ | _ | a | ⟨op, r, ad⟩
   · exact h
   · exact notAllocInv_removeEq _ h
   · cases a <;> simp only [copyPropInst] <;>
       first | exact notAllocInv_removeEq _ h | exact notAllocInv_removeEqs _ h
   · cases op <;> cases ad <;> simp only [copyPropInst] <;>
       first | exact h | exact notAllocInv_removeEq _ h
-  · cases f <;> simp only [copyPropInst] <;>
-      first | exact h | exact notAllocInv_removeEq _ h | exact notAllocInv_removeEqs _ h
 
 theorem notAllocInv_mergeEqs {cs ds : CopyState} (h : NotAllocInv cs) : NotAllocInv (mergeEqs cs ds) := by
   intro v hv
@@ -424,7 +417,7 @@ theorem callArg_copyPropInst (i : WordLangInst (BitVec width)) {cs : CopyState} 
   have l6 := lookupEq_notAlloc hI (v := 6) (notAllocVar_even rfl)
   have l0 := lookupEq_notAlloc hI (v := 0) (notAllocVar_even rfl)
   simp only [callArgConventionHOL] at hp
-  rcases i with _ | _ | a | ⟨op, r, ad⟩ | f
+  rcases i with _ | _ | a | ⟨op, r, ad⟩
   · simp [copyPropInst, callArgConventionHOL]
   · simp [copyPropInst, callArgConventionHOL, instArgConvention]
   · cases a with
@@ -449,8 +442,6 @@ theorem callArg_copyPropInst (i : WordLangInst (BitVec width)) {cs : CopyState} 
       simp only [copyPropInst]
       (try split_ifs) <;> simp_all [callArgConventionHOL, instArgConvention]
   · cases op <;> cases ad <;> simp [copyPropInst, callArgConventionHOL, instArgConvention]
-  · cases f <;> simp only [copyPropInst] <;> (try split) <;>
-      simp [callArgConventionHOL, instArgConvention]
 
 theorem callArg_copyOut {p q : WordLangProgHOL (BitVec width)} (h : CopyOut NotAllocInv p q)
     (hp : callArgConventionHOL p = true) : callArgConventionHOL q = true := by
@@ -519,14 +510,14 @@ theorem notAllocInv_copyPropProg :
 end Shape
 
 /-- HOL `wf_cutsets_copy_prop_aux` (`wordConvsProofScript.sml:1873-1878`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "wf_cutsets_copy_prop_aux" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wf_cutsets_copy_prop_aux {width : Nat} [NeZero width] :
     ∀ (p : WordLangProgHOL (BitVec width)) (cs : CopyState),
       wfCutsets p → wfCutsets (copyPropProg p cs).1 :=
   fun p cs => wfCutsets_copyOut (copyPropProg_out (fun _ => True) trivial (fun _ _ _ => trivial) p cs trivial)
 
 /-- HOL `wf_cutsets_copy_prop` (`wordConvsProofScript.sml:1880-1884`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "wf_cutsets_copy_prop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wf_cutsets_copy_prop {width : Nat} [NeZero width] (p : WordLangProgHOL (BitVec width)) :
     wfCutsets p → wfCutsets (copyProp p) :=
   wf_cutsets_copy_prop_aux p emptyEq
@@ -534,7 +525,7 @@ theorem wf_cutsets_copy_prop {width : Nat} [NeZero width] (p : WordLangProgHOL (
 /-- HOL `every_inst_distinct_tar_reg_copy_prop_aux` (`wordConvsProofScript.sml:1886-1907`);
 HOL's `every_inst distinct_tar_reg` over `'a inst` reads each instruction through the
 reviewed `HolInst.ofWordLangInst` mirror. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "every_inst_distinct_tar_reg_copy_prop_aux" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem every_inst_distinct_tar_reg_copy_prop_aux {width : Nat} [NeZero width] :
     ∀ (p : WordLangProgHOL (BitVec width)) (cs : CopyState),
       everyInst (fun i => distinctTarRegExact (HolInst.ofWordLangInst i)) p = true →
@@ -543,7 +534,7 @@ theorem every_inst_distinct_tar_reg_copy_prop_aux {width : Nat} [NeZero width] :
     (copyPropProg_out (fun _ => True) trivial (fun _ _ _ => trivial) p cs trivial)
 
 /-- HOL `every_inst_distinct_tar_reg_copy_prop` (`wordConvsProofScript.sml:1909-1914`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "every_inst_distinct_tar_reg_copy_prop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem every_inst_distinct_tar_reg_copy_prop {width : Nat} [NeZero width]
     (p : WordLangProgHOL (BitVec width)) :
     everyInst (fun i => distinctTarRegExact (HolInst.ofWordLangInst i)) p = true →
@@ -551,7 +542,7 @@ theorem every_inst_distinct_tar_reg_copy_prop {width : Nat} [NeZero width]
   every_inst_distinct_tar_reg_copy_prop_aux p emptyEq
 
 /-- HOL `extract_labels_copy_prop_aux` (`wordConvsProofScript.sml:1916-1922`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "extract_labels_copy_prop_aux" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem extract_labels_copy_prop_aux {width : Nat} [NeZero width] :
     ∀ (p : WordLangProgHOL (BitVec width)) (cs : CopyState),
       extractLabels (copyPropProg p cs).1 = extractLabels p :=
@@ -559,13 +550,13 @@ theorem extract_labels_copy_prop_aux {width : Nat} [NeZero width] :
     (copyPropProg_out (fun _ => True) trivial (fun _ _ _ => trivial) p cs trivial)
 
 /-- HOL `extract_labels_copy_prop` (`wordConvsProofScript.sml:1924-1929`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "extract_labels_copy_prop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem extract_labels_copy_prop {width : Nat} [NeZero width] (p : WordLangProgHOL (BitVec width)) :
     extractLabels (copyProp p) = extractLabels p :=
   extract_labels_copy_prop_aux p emptyEq
 
 /-- HOL `flat_exp_conventions_copy_prop_aux` (`wordConvsProofScript.sml:1931-1940`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "flat_exp_conventions_copy_prop_aux" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flat_exp_conventions_copy_prop_aux {width : Nat} [NeZero width] :
     ∀ (p : WordLangProgHOL (BitVec width)) (cs : CopyState),
       flatExpConventions p = true → flatExpConventions (copyPropProg p cs).1 = true :=
@@ -573,7 +564,7 @@ theorem flat_exp_conventions_copy_prop_aux {width : Nat} [NeZero width] :
     (copyPropProg_out (fun _ => True) trivial (fun _ _ _ => trivial) p cs trivial)
 
 /-- HOL `flat_exp_conventions_copy_prop` (`wordConvsProofScript.sml:1942-1947`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "flat_exp_conventions_copy_prop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flat_exp_conventions_copy_prop {width : Nat} [NeZero width]
     (p : WordLangProgHOL (BitVec width)) :
     flatExpConventions p = true → flatExpConventions (copyProp p) = true :=
@@ -595,7 +586,7 @@ theorem copy_prop_prog_not_alloc_var_aux2 (x : Nat) (yy : List Nat) :
   fun _ h hx => notAllocInv_removeEqs yy h x hx
 
 /-- HOL `copy_prop_prog_not_alloc_var` (`wordConvsProofScript.sml:1968-2032`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "copy_prop_prog_not_alloc_var" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem copy_prop_prog_not_alloc_var {width : Nat} [NeZero width] :
     ∀ (p : WordLangProgHOL (BitVec width)) (cs : CopyState),
       (∀ x, ¬isAllocVar x = true → sptLookup x cs.toEq = none) →
@@ -603,7 +594,7 @@ theorem copy_prop_prog_not_alloc_var {width : Nat} [NeZero width] :
   fun p _ h => notAllocInv_copyPropProg p h
 
 /-- HOL `pre_alloc_conventions_copy_prop_aux` (`wordConvsProofScript.sml:2034-2082`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "pre_alloc_conventions_copy_prop_aux" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem pre_alloc_conventions_copy_prop_aux {width : Nat} [NeZero width] :
     ∀ (p : WordLangProgHOL (BitVec width)) (cs : CopyState),
       (∀ x, ¬isAllocVar x = true → sptLookup x cs.toEq = none) →
@@ -615,14 +606,14 @@ theorem pre_alloc_conventions_copy_prop_aux {width : Nat} [NeZero width] :
   exact ⟨everyStackVar_copyOut _ hout hp.1, callArg_copyOut hout hp.2⟩
 
 /-- HOL `pre_alloc_conventions_copy_prop` (`wordConvsProofScript.sml:2084-2090`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "pre_alloc_conventions_copy_prop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem pre_alloc_conventions_copy_prop {width : Nat} [NeZero width]
     (p : WordLangProgHOL (BitVec width)) :
     preAllocConventionsHOL p = true → preAllocConventionsHOL (copyProp p) = true :=
   pre_alloc_conventions_copy_prop_aux p emptyEq notAllocInv_emptyEq
 
 /-- HOL `full_inst_ok_less_copy_prop_aux` (`wordConvsProofScript.sml:2092-2129`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "full_inst_ok_less_copy_prop_aux" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem full_inst_ok_less_copy_prop_aux {width : Nat} [NeZero width] (ac : AsmConfigExact width) :
     ∀ (p : WordLangProgHOL (BitVec width)) (cs : CopyState),
       fullInstOkLessExact ac p = true → fullInstOkLessExact ac (copyPropProg p cs).1 = true :=
@@ -630,21 +621,21 @@ theorem full_inst_ok_less_copy_prop_aux {width : Nat} [NeZero width] (ac : AsmCo
     (copyPropProg_out (fun _ => True) trivial (fun _ _ _ => trivial) p cs trivial)
 
 /-- HOL `full_inst_ok_less_copy_prop` (`wordConvsProofScript.sml:2131-2136`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "full_inst_ok_less_copy_prop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem full_inst_ok_less_copy_prop {width : Nat} [NeZero width] (ac : AsmConfigExact width)
     (p : WordLangProgHOL (BitVec width)) :
     fullInstOkLessExact ac p = true → fullInstOkLessExact ac (copyProp p) = true :=
   full_inst_ok_less_copy_prop_aux ac p emptyEq
 
 /-- HOL `word_get_code_labels_copy_prop` (`wordConvsProofScript.sml:2138-2155`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "word_get_code_labels_copy_prop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_get_code_labels_copy_prop {width : Nat} [NeZero width]
     (ps : WordLangProgHOL (BitVec width)) :
     getCodeLabelsHOL (copyProp ps) = getCodeLabelsHOL ps :=
   getCodeLabels_copyOut (copyProp_out ps)
 
 /-- HOL `word_good_handlers_copy_prop` (`wordConvsProofScript.sml:2157-2174`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "word_good_handlers_copy_prop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_good_handlers_copy_prop {width : Nat} [NeZero width] (n : Nat)
     (ps : WordLangProgHOL (BitVec width)) :
     goodHandlersHOL n (copyProp ps) = true ↔ goodHandlersHOL n ps = true := by
@@ -652,7 +643,7 @@ theorem word_good_handlers_copy_prop {width : Nat} [NeZero width] (n : Nat)
 
 /-- HOL `copy_prop_not_created_subprogs` (`wordConvsProofScript.sml:2176-2192`); HOL's free
 predicate `P` is the leading binder. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "copy_prop_not_created_subprogs" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem copy_prop_not_created_subprogs {width : Nat} [NeZero width]
     (P : WordLangProgHOL (BitVec width) → Bool) (prog : WordLangProgHOL (BitVec width)) :
     notCreatedSubprogsHOL P prog = true → notCreatedSubprogsHOL P (copyProp prog) = true :=

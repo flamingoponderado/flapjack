@@ -4,8 +4,7 @@ namespace Flapjack.Compiler.Backend.Semantics.TargetProps
 open Flapjack Classical
 
 /-- Literal source646: the full guarded external-call result and shifted interference oracle. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "next_interference_ExtCall" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem nextInterferenceExtCall {width : Nat} [NeZero width]
     {S Q : Type} {σ : Type} (mc : MachineConfig width S Q) (ffi : HolFfiState σ)
     (ms : S) (index : Nat) (name : Flapjack.Basis.Pure.MlString.MlString)
@@ -25,8 +24,7 @@ theorem nextInterferenceExtCall {width : Nat} [NeZero width]
   simp [findNextInterference, hn, hh, hc, hi, he, hm, hr, hf, applyOracleHOL]
 
 /-- Literal source666: the full guarded cache result and shifted interference oracle. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "next_interference_ccache" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem nextInterferenceCache {width : Nat} [NeZero width]
     {S Q : Type} {σ : Type} (mc : MachineConfig width S Q) (ffi : HolFfiState σ)
     (ms : S)

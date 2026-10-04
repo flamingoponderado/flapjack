@@ -128,8 +128,7 @@ theorem shift_name {width : Nat} [NeZero width] {c : AsmConfigExact width} (hdim
 
 /-- HOL `stack_remove_comp_stack_asm_name`. HOL's free `c` is implicit; all
 eleven premises are kept in order. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml"
-  "stack_remove_comp_stack_asm_name" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackRemoveCompStackAsmName {width : Nat} [NeZero width] {c : AsmConfigExact width} :
     ∀ (jump : Bool) (off : BitVec width × BitVec width) (k : Nat) (p : HolProg width),
       stackAsmName c p ∧ stackAsmRemove c p ∧ asmAddrOffsetOkExact c 0 = true ∧
@@ -243,8 +242,7 @@ theorem initCode_name {width : Nat} [NeZero width] {c : AsmConfigExact width}
 
 /-- HOL `stack_remove_stack_asm_name`. HOL's free `c prog jump gen_gc max_heap
 k start` are implicit; all thirteen premises are kept in order. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml"
-  "stack_remove_stack_asm_name" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackRemoveStackAsmName {width : Nat} [NeZero width] {c : AsmConfigExact width}
     {prog : List (Nat × HolProg width)} {jump genGc : Bool} {maxHeap k start : Nat} :
     (∀ np ∈ prog, stackAsmName c np.2) ∧ (∀ np ∈ prog, stackAsmRemove c np.2) ∧

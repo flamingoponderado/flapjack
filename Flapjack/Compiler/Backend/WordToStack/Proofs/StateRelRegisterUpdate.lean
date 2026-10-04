@@ -25,11 +25,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 /-- Full original physical-register update law (2930–2951). Every stateRel
 conjunct, arbitrary extra offset and Word/Loc payload is retained. The inherited
 real carrier is unchanged; this structural update asserts no FP equivalence. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "state_rel_set_var"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelSetVar {width : Nat} [NeZero width] {C F : Type}
     {ac : AsmConfigExact width} {k f frame : Nat}
     {source : WordSemStateFiniteExact width (Nat × C) F}
@@ -69,11 +65,7 @@ theorem stateRelSetVar {width : Nat} [NeZero width] {C F : Type}
 /-- Full original spilled-local update law (2962–2997), including the explicit
 original stack/space equalities and every full stateRel conjunct. Bounds follow
 from the original relation and source index guards. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "state_rel_set_var2"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 
 theorem wordToStackStateRelSetVar2 {width : Nat} [NeZero width] {C F : Type}
     {ac : AsmConfigExact width} {k f frame : Nat}
@@ -183,11 +175,7 @@ theorem stateRelSetVarHigh {width : Nat} [NeZero width] {C F : Type}
 /-- Full original `state_rel_set_var_k` (2917–2928): writing target register
 `k+1` or `k` (the two scratch registers) leaves the relation unchanged, for every
 extra offset. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "state_rel_set_var_k"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelSetVarK {width : Nat} [NeZero width] {C F : Type}
     {ac : AsmConfigExact width} {k f frame : Nat}
     {source : WordSemStateFiniteExact width (Nat × C) F}

@@ -28,8 +28,7 @@ structure Config where
   perfCalls : Bool
 
 /-- HOL `compile_def`. -/
-@[hol "cakeml/compiler/backend/stack_to_labScript.sml" "compile_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def compile {width : Nat} [NeZero width] (stackConf : Config) (dataConf : DataToWord.Config)
     (maxHeap sp : Nat) (offset : BitVec width × BitVec width)
     (prog : List (Nat × HolProg width)) : LabSem.LabProgHOL width :=
@@ -41,8 +40,7 @@ def compile {width : Nat} [NeZero width] (stackConf : Config) (dataConf : DataTo
   prog.map progToSectionHOL
 
 /-- HOL `compile_no_stubs_def`. -/
-@[hol "cakeml/compiler/backend/stack_to_labScript.sml" "compile_no_stubs_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def compileNoStubs {width : Nat} [NeZero width] (f : Spt Nat) (jump : Bool)
     (offset : BitVec width × BitVec width) (sp : Nat)
     (prog : List (Nat × HolProg width)) : LabSem.LabProgHOL width :=

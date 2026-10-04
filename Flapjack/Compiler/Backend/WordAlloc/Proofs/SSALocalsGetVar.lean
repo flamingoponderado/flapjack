@@ -23,9 +23,7 @@ relation and successful source read are assumed; target read success is proved.
 Source/target code and FFI hosts remain independently arbitrary, as confirmed
 by the complete original type replay. Opaque THE is observed only after the
 original locals relation supplies the source map domain. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_locals_rel_get_var"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaLocalsRelGetVar {width : Nat} [NeZero width] {C₁ F₁ C₂ F₂ : Type}
     (next : Nat) (ssa : Spt Nat) (source : WordSemStateFiniteExact width C₁ F₁)
     (target : WordSemStateFiniteExact width C₂ F₂) (name : Nat) (value : WordLocW width)

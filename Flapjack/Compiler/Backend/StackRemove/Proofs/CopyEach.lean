@@ -1,3 +1,4 @@
+import Mathlib.Tactic.Convert
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeap
 import Flapjack.FiniteMap.MapKeys
 import Flapjack.Compiler.Backend.StackRemove.CopyLoop
@@ -372,8 +373,7 @@ the original pattern induction. Boolean native domains denote their true sets;
 words and canonical finite maps use only the named reviewed translations.
 The native evaluator closure inherits the reviewed reals_as_rational_cuts FP real carrier (SOUNDNESS
 item 8), although this copy body executes only integer instructions. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "copy_each_thm"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem copyEachThm {width : Nat} [NeZero width] {C F : Type}
     (temporary bitmap index finalIndex : Nat)
     (pattern address offset finalAddress base : BitVec width)

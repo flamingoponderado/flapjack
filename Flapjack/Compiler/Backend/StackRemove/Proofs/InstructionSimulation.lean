@@ -1,7 +1,6 @@
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Arithmetic
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Binary
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Memory
-import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.FloatingPoint
 
 namespace Flapjack.Compiler.Backend.StackRemove.InstructionSimulation
 open Flapjack Compiler.Encoders.Asm
@@ -20,10 +19,6 @@ constructors, eight arithmetic operations, eight memory opcodes and sixteen FP
 opcodes. Only the original full relation, instruction bound and source success
 are premises. Successful target execution and its full post-state relation are
 proved. Native FP retains the inherited reals_as_rational_cuts assumption. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "state_rel_inst"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
 theorem stateRelInst {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer : Nat)
     (instruction : HolInst width) (source target postSource : StackSemStateFiniteExact width C F)
@@ -38,8 +33,6 @@ theorem stateRelInst {width : Nat} [NeZero width] {C F : Type}
     exact Atoms.stateRelInstConst jump bounds pointer register value source target postSource hypothesis
   | mem operator register address =>
     exact Memory.stateRelInstMem jump bounds pointer register operator address source target postSource hypothesis
-  | fp operation =>
-    exact FloatingPoint.stateRelInstFp jump bounds pointer operation source target postSource hypothesis
   | arith operation =>
     cases operation with
     | binop operator destination input right =>

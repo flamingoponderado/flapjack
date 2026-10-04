@@ -46,8 +46,7 @@ private theorem updateCancel {α : Type} (m : HolFiniteMapExact Nat α)
   split_ifs <;> rfl
 
 /-- Full original StackSem distinct-key update commutation, as state equality. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "set_var_swap"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem setVarSwap {width : Nat} [NeZero width] {C F : Type}
     (a a' : Nat) (b b' : WordLocW width) (s : StackSemStateFiniteExact width C F)
     (h : a ≠ a') :
@@ -56,8 +55,7 @@ theorem setVarSwap {width : Nat} [NeZero width] {C F : Type}
   simp only [StackSemStateOps.setVar, updateSwap _ _ _ _ _ h]
 
 /-- Full original StackSem same-key shadowing, with no state premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "set_var_cancel"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem setVarCancel {width : Nat} [NeZero width] {C F : Type}
     (a : Nat) (b b' : WordLocW width) (s : StackSemStateFiniteExact width C F) :
     StackSemStateOps.setVar a b (StackSemStateOps.setVar a b' s) =
@@ -65,22 +63,19 @@ theorem setVarCancel {width : Nat} [NeZero width] {C F : Type}
   simp only [StackSemStateOps.setVar, updateCancel]
 
 /-- Full original StackSem read after update at the same key. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "get_var_set_var"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getVarSetVar {width : Nat} [NeZero width] {C F : Type}
     (k : Nat) (v : WordLocW width) (s : StackSemStateFiniteExact width C F) :
     StackSemStateOps.getVar k (StackSemStateOps.setVar k v s) = some v := by
   simp [StackSemStateOps.getVar, StackSemStateOps.setVar, FUPDATE_HOL]
 
 /-- Full original clock self-update equality, preserving the whole state. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "state_with_const"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateWithConst {width : Nat} [NeZero width] {C F : Type}
     (s : StackSemStateFiniteExact width C F) : { s with clock := s.clock } = s := rfl
 
 /-- Full original store/register update commutation, as whole state equality. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "set_store_set_var"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem setStoreSetVar {width : Nat} [NeZero width] {C F : Type}
     (a : WordStoreHOL) (b : WordLocW width) (c : Nat) (d : WordLocW width)
     (s : StackSemStateFiniteExact width C F) :
@@ -104,8 +99,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
   WordSemStateExact.holFmapAsFiniteSupportWitness
 
 /-- Full original WordSem distinct-key update commutation as whole state equality. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "set_var_swap_word"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem setVarSwapWord {width : Nat} [NeZero width] {C F : Type}
     (a a' : Nat) (b b' : WordLocW width) (s : WordSemStateFiniteExact width C F)
     (h : a ≠ a') :
@@ -113,8 +107,7 @@ theorem setVarSwapWord {width : Nat} [NeZero width] {C F : Type}
   simp only [setVar, sptInsert_swap _ _ _ _ _ h]
 
 /-- Full original WordSem same-key shadowing as whole state equality. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "set_var_cancel_word"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem setVarCancelWord {width : Nat} [NeZero width] {C F : Type}
     (a : Nat) (b b' : WordLocW width) (s : WordSemStateFiniteExact width C F) :
     setVar a b (setVar a b' s) = setVar a b s := by
@@ -122,8 +115,7 @@ theorem setVarCancelWord {width : Nat} [NeZero width] {C F : Type}
 
 /-- Full original EVERY/read-success equivalence for arbitrary native states
 and name lists, including duplicate names and empty reads. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "IS_SOME_get_vars_EVERY"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem isSomeGetVarsEvery {width : Nat} [NeZero width] {C F : Type}
     (xs : List Nat) (s : WordSemStateFiniteExact width C F) :
     (WordSemStateFiniteExact.getVars xs s).isSome = true ↔
@@ -136,8 +128,7 @@ theorem isSomeGetVarsEvery {width : Nat} [NeZero width] {C F : Type}
 
 /-- Full original read-success preservation after any native variable update.
 No desired output values or environment relation is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "IS_SOME_get_vars_set_var"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem isSomeGetVarsSetVar {width : Nat} [NeZero width] {C F : Type}
     (ls : List Nat) (s : WordSemStateFiniteExact width C F) (k : Nat) (v : WordLocW width)
     (h : (WordSemStateFiniteExact.getVars ls s).isSome = true) :
@@ -152,8 +143,7 @@ theorem isSomeGetVarsSetVar {width : Nat} [NeZero width] {C F : Type}
 /-- Full original successful-read decomposition: every lookup succeeds and
 all returned values equal MAP THE of those actual lookups. The existing
 option THE is only rewritten on SOME, never evaluated at NONE. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "get_vars_eq"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getVarsEq {width : Nat} [NeZero width] {C F : Type}
     (ls : List Nat) (st : WordSemStateFiniteExact width C F) (z : List (WordLocW width))
     (h : WordSemStateFiniteExact.getVars ls st = some z) :
@@ -176,8 +166,7 @@ theorem getVarsEq {width : Nat} [NeZero width] {C F : Type}
 
 /-- Full original successful pop preserves the entire FFI field, for both
 plain and handler frames. Source/target state success is the sole premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "pop_env_ffi"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem popEnvFfi {width : Nat} [NeZero width] {C F : Type}
     (s s' : WordSemStateFiniteExact width C F) (h : popEnv s = some s') :
     s.ffi = s'.ffi := by

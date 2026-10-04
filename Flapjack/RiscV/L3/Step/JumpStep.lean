@@ -17,7 +17,6 @@ are primitive step-library ports, not whole encoder/compiler correctness.
 namespace Flapjack.RiscV.L3.Step
 open Flapjack.RiscV.L3
 /-- Original full evaluated JAL write equation, including both address outcomes. -/
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "JAL"]
 theorem dfnJal (rd : BitVec 5) (imm : BitVec 20) (s : riscv_state) (h : rd ≠ 0) :
     «dfn'JAL» (rd, imm) s =
     let v : BitVec 64 := s.c_PC s.procID + (BitVec.signExtend 64 imm <<< 1)
@@ -30,7 +29,6 @@ theorem dfnJal (rd : BitVec 5) (imm : BitVec 20) (s : riscv_state) (h : rd ≠ 0
   split <;> simp_all
 
 /-- Original full evaluated JALR write equation; source operands are read before the link write. -/
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "JALR"]
 theorem dfnJalr (rd : BitVec 5) (rs1 : BitVec 5) (imm : BitVec 12) (s : riscv_state) (h : rd ≠ 0) :
     «dfn'JALR» (rd, rs1, imm) s =
     let v : BitVec 64 := if rs1 = 0 then BitVec.signExtend 64 imm &&& BitVec.ofNat 64 0xFFFFFFFFFFFFFFFE
@@ -45,7 +43,6 @@ theorem dfnJalr (rd : BitVec 5) (rs1 : BitVec 5) (imm : BitVec 12) (s : riscv_st
   split <;> split <;> simp_all
 
 /-- Original zero-destination JAL equation, preserving jump/exception NextFetch effects. -/
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "JAL_NOP"]
 theorem dfnJalNop (rd : BitVec 5) (imm : BitVec 20) (s : riscv_state) (h : rd = 0) :
     «dfn'JAL» (rd, imm) s =
     let v : BitVec 64 := s.c_PC s.procID + (BitVec.signExtend 64 imm <<< 1)
@@ -56,7 +53,6 @@ theorem dfnJalNop (rd : BitVec 5) (imm : BitVec 20) (s : riscv_state) (h : rd = 
   split <;> simp_all
 
 /-- Original zero-destination JALR equation, preserving jump/exception NextFetch effects. -/
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "JALR_NOP"]
 theorem dfnJalrNop (rd : BitVec 5) (rs1 : BitVec 5) (imm : BitVec 12) (s : riscv_state) (h : rd = 0) :
     «dfn'JALR» (rd, rs1, imm) s =
     let v : BitVec 64 := if rs1 = 0 then BitVec.signExtend 64 imm &&& BitVec.ofNat 64 0xFFFFFFFFFFFFFFFE

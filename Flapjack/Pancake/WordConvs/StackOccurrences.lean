@@ -21,8 +21,7 @@ theorem everyNameConj (P : Nat → Bool) (names : WordLangCutsetsHOL) (Q : Nat �
       ⟨fun x member => (left x member).2, fun x member => (right x member).2⟩⟩
 
 /-- Original full program occurrence implication to stack occurrences. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml"
-  "every_var_imp_every_stack_var" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem everyVarImpEveryStackVar {width : Nat} [NeZero width] (P : Nat → Bool)
     (prog : WordLangProgHOL (BitVec width)) :
     everyVarHOL P prog = true → everyStackVarHOL P prog = true := by
@@ -36,8 +35,7 @@ theorem everyVarImpEveryStackVar {width : Nat} [NeZero width] (P : Nat → Bool)
   all_goals try simp_all [everyVarHOL, everyStackVarHOL]
 
 /-- Original monotonicity for arbitrary stack-occurrence predicates. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml"
-  "every_stack_var_mono" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem everyStackVarMono {width : Nat} [NeZero width] (P : Nat → Bool)
     (prog : WordLangProgHOL (BitVec width)) (Q : Nat → Bool) :
     ((∀ x, P x = true → Q x = true) ∧ everyStackVarHOL P prog = true) →
@@ -55,8 +53,7 @@ theorem everyStackVarMono {width : Nat} [NeZero width] (P : Nat → Bool)
   all_goals try simp_all [everyStackVarHOL]
 
 /-- Original conjunction equivalence, over every constructor and cut-set field. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml"
-  "every_stack_var_conj" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem everyStackVarConj {width : Nat} [NeZero width] (P : Nat → Bool)
     (prog : WordLangProgHOL (BitVec width)) (Q : Nat → Bool) :
     (everyStackVarHOL P prog = true ∧ everyStackVarHOL Q prog = true) ↔

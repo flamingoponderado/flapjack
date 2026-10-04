@@ -18,8 +18,7 @@ entry-PC prefix. All nine source guard families are retained, including the
 shared/halt/cache exclusions and emitted-size bound. Every EL is accessed only
 under a bound derived from original hypotheses or the original search witness.
 The existing optional choice and total-list defaults remain unchanged. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "asm_fetch_NOT_ffi_entry_pcs" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem asmFetch_notFfiEntryPcs {width : Nat} [NeZero width]
     {state projection : Type} (a : Nat)
     (line : Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))

@@ -113,8 +113,7 @@ premises are retained, including the two distinctness guards (the observation
 proof does not need to strengthen either guard). Missing selected destinations
 must be self moves by the original coverage premise; read success proves their
 writes preserve the existing value. No desired lookup/post-state is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "alist_insert_get_vars"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem alistInsertGetVars {width : Nat} [NeZero width] {C F : Type}
     (moves : List (Nat × Nat)) (s : WordSemStateFiniteExact width C F)
     (x : List (WordLocW width)) (ls : List (Option Nat))

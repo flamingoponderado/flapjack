@@ -8,8 +8,7 @@ namespace Flapjack
 set_option maxHeartbeats 1200000 in
 /-- Input event trace is retained as a prefix by every literal target run.
 All machine/FFI/clock inputs are arbitrary, with no extra oracle or validity premise. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml" "evaluate_io_events_mono"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateTargetIoEventsMono {width : Nat} [NeZero width]
     {state projection : Type} {σ : Type} (mc : MachineConfig width state projection)
     (ffi : HolFfiState σ) (k : Nat) (ms : state) :

@@ -6,8 +6,7 @@ open Flapjack Flapjack.Compiler.Backend.WordAlloc Flapjack.Compiler.Encoders.Asm
 
 /-- Original unconditional fake-sequence flat-expression conventions, with arbitrary
 source list. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "fake_seq_flat_exp_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fakeSeq_flatExpConventions {width : Nat} [NeZero width]
     (names : List Nat) :
     flatExpConventions
@@ -19,8 +18,7 @@ theorem fakeSeq_flatExpConventions {width : Nat} [NeZero width]
 
 /-- Original loop setup flat-expression conventions with the actual producer equation as sole
 premise; no SSA map or register-bound assumptions are added. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "loop_setup_flat_exp_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loopSetup_flatExpConventions {width : Nat} [NeZero width]
     (names exitNames : Spt Unit) (ssa : Spt Nat) (na : Nat)
     (setupProg : WordLangProgHOL (BitVec width)) (ssaRefreshed : Spt Nat)
@@ -53,8 +51,7 @@ theorem loopSetup_flatExpConventions {width : Nat} [NeZero width]
 /-- HOL quantifies a vacuous configuration binder; it is omitted because it
 does not occur in the premise or conclusion. Original reconciliation flat-expression conventions pair conclusion,
 with the actual fake-move producer equality as the sole premise. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "flat_exp_conventions_fake_moves" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fakeMoves_flatExpConventions {width : Nat} [NeZero width]
     (prio : Option (Unit ⊕ Unit)) (names : List Nat)
     (ssaL ssaR : Spt Nat) (next : Nat)
@@ -82,8 +79,7 @@ theorem fakeMoves_flatExpConventions {width : Nat} [NeZero width]
   exact result
 
 /-- Original unconditional reconciliation flat-expression conventions. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "ssa_reconcile_flat_exp_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaReconcile_flatExpConventions {width : Nat} [NeZero width] {β : Type}
     (current target : Spt Nat) (names : Spt β) :
     flatExpConventions (ssaReconcile current target names : WordLangProgHOL (BitVec width)) = true := by

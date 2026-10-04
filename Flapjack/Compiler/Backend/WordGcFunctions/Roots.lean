@@ -64,8 +64,7 @@ theorem wordGcMoveRoots_rootRel {width : Nat} [NeZero width] (c : Config) :
       exact .cons (wordGcMove_rootRel c x i pa old m dm) (wordGcMoveRoots_rootRel c xs _ _ _ _ _)
 
 /-- Exact HOL `word_gc_move_roots_IMP_EVERY2` (`word_gcFunctionsScript.sml:504-521`). -/
-@[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml"
-  "word_gc_move_roots_IMP_EVERY2" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordGcMoveRoots_IMP_EVERY2 {width : Nat} [NeZero width] :
     ∀ (xs ys : List (WordLocW width)) (pa : BitVec width) (m : BitVec width → WordLocW width)
       (i : BitVec width) (c1 : Bool) (m1 : BitVec width → WordLocW width)
@@ -87,8 +86,7 @@ theorem wordGenGcMoveRoots_rootRel {width : Nat} [NeZero width] (c : Config) :
       exact .cons (wordGenGcMove_rootRel c x i pa ib pb old m dm) (wordGenGcMoveRoots_rootRel c xs _ _ _ _ _ _ _)
 
 /-- Exact HOL `word_gen_gc_move_roots_IMP_EVERY2` (`word_gcFunctionsScript.sml:523-543`). -/
-@[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml"
-  "word_gen_gc_move_roots_IMP_EVERY2" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordGenGcMoveRoots_IMP_EVERY2 {width : Nat} [NeZero width] :
     ∀ (xs ys : List (WordLocW width)) (pa : BitVec width) (m : BitVec width → WordLocW width)
       (i ib pb : BitVec width) (c1 : Bool) (m1 : BitVec width → WordLocW width)
@@ -111,8 +109,7 @@ theorem wordGenGcPartialMoveRoots_rootRel {width : Nat} [NeZero width] (c : Conf
 
 /-- Exact HOL `word_gen_gc_partial_move_roots_IMP_EVERY2`
 (`word_gcFunctionsScript.sml:545-566`). -/
-@[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml"
-  "word_gen_gc_partial_move_roots_IMP_EVERY2" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordGenGcPartialMoveRoots_IMP_EVERY2 {width : Nat} [NeZero width] :
     ∀ (xs ys : List (WordLocW width)) (pa : BitVec width) (m : BitVec width → WordLocW width)
       (i gs rs : BitVec width) (c1 : Bool) (m1 : BitVec width → WordLocW width)
@@ -144,8 +141,7 @@ theorem wordGenGc_fst {width : Nat} [NeZero width] (c : Config) (r : List (WordL
   simp only [wordGenGc]
 
 /-- Exact HOL `word_gc_IMP_EVERY2` (`word_gcFunctionsScript.sml:568-589`). -/
-@[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "word_gc_IMP_EVERY2"
-  (fmap_as_finite_support_relation := [st, s1]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_gc_IMP_EVERY2 {width : Nat} [NeZero width] {c : Config}
     {xs ys : List (WordLocW width)} {m m1 : BitVec width → WordLocW width}
     {dm : BitVec width → Bool} {st : HolFiniteMapExact WordStoreHOL (WordLocW width)}
@@ -205,8 +201,7 @@ theorem word_gc_IMP_EVERY2 {width : Nat} [NeZero width] {c : Config}
           · exact absurd h (by simp)
 
 /-- Exact HOL `word_gc_fun_LENGTH` (`word_gcFunctionsScript.sml:591-596`). -/
-@[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "word_gc_fun_LENGTH"
-  (fmap_as_finite_support_relation := [s, s1]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_gc_fun_LENGTH {width : Nat} [NeZero width] {c : Config}
     {xs zs : List (WordLocW width)} {m m1 : BitVec width → WordLocW width}
     {dm : BitVec width → Bool} {s : HolFiniteMapExact WordStoreHOL (WordLocW width)}

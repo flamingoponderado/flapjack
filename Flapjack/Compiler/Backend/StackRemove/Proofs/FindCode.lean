@@ -26,10 +26,7 @@ theorem codeLookup {width : Nat} [NeZero width] {C F : Type}
   exact (code.1 label program lookup).symm
 
 /-- Original231-241: full relation, original destination guard and successful source lookup prove compiled target lookup and register bound. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "find_code_lemma"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem findCodeLemma {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer : Nat)
     (source target : StackSemStateFiniteExact width C F) (dest : Sum Nat Nat)
@@ -59,10 +56,7 @@ theorem findCodeLemma {width : Nat} [NeZero width] {C F : Type}
         | succ offset => simp [h] at lookup
 
 /-- Original243-255: identical successful lookup theorem after erasing any register from both maps; no alias, erasure-bound, or target-success premise. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "find_code_lemma2"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem findCodeLemmaErased {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer : Nat)
     (source target : StackSemStateFiniteExact width C F) (dest : Sum Nat Nat)

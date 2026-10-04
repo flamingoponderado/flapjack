@@ -21,8 +21,7 @@ private theorem sharedProjection {width : Nat} [NeZero width] {C F : Type}
   | some pair =>
       exact (shareMemOpAlignSDM m r a s pair.2 pair.1 hw).2 h
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "evaluate_align_sdm"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateAlignSDM {width : Nat} [NeZero width] {C F : Type} :
     goodDimindex width → ∀ (s : Flapjack.Compiler.Backend.LabSem.State width C F),
     evaluate (alignSdm s) = let (r,next) := evaluate s; (r,alignSdm next) := by
@@ -78,8 +77,7 @@ private theorem semanticsProjection {width : Nat} [NeZero width] {C F : Type}
     simp only [evaluateClock hw]
     simp [alignSdm, Prod.ext_iff, and_assoc]
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "implements_align_sdm"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem implementsAlignSDM {width : Nat} [NeZero width] {C F : Type}
     (s : Flapjack.Compiler.Backend.LabSem.State width C F) :
     goodDimindex width → Flapjack.SemanticsPropsHOL.implementsPrimeHOL true

@@ -29,8 +29,7 @@ namespace WordSemStateFiniteExact
     independent of the computed floating-point result. This prefix theorem
     must not be used as evidence that the evaluator's numerical results
     already agree with HOL. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_io_events_mono"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_io_events_mono {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (exps : WordLangProgHOL (BitVec width)) (s1 : WordSemStateFiniteExact width C F)
       (res : Option (WordSemResult width)) (s2 : WordSemStateFiniteExact width C F),

@@ -43,8 +43,7 @@ def negateHOL : HolCmp → HolCmp
   | .notTest => .test
 
 /-- The two native direct/indirect jump equations, including empty caches. -/
-@[hol "cakeml/compiler/backend/stack_to_labScript.sml" "compile_jump_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def compileJumpHOL {width : Nat} [NeZero width] (target : Sum Nat Nat) :
     Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString)
@@ -54,8 +53,7 @@ def compileJumpHOL {width : Nat} [NeZero width] (target : Sum Nat Nat) :
   | .inr register => .asm (.asmi (.jumpReg register)) [] 0
 
 /-- The complete native recursive flatten quotation, including its fallback case. -/
-@[hol "cakeml/compiler/backend/stack_to_labScript.sml" "flatten_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def flattenHOL {width : Nat} [NeZero width]
     (tail : Bool) (program : HolProg width) (sectionId next : Nat)
     (conts breaks : List Nat) : AppList (LabLineHOL width) × Bool × Nat :=
@@ -137,15 +135,13 @@ termination_by sizeOf program
 decreasing_by all_goals decreasing_trivial
 
 /-- The original root-constructor test; it does not inspect nested programs. -/
-@[hol "cakeml/compiler/backend/stack_to_labScript.sml" "is_Seq_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def isSeqHOL {width : Nat} [NeZero width] : HolProg width → Bool
   | .seq _ _ => true
   | _ => false
 
 /-- The original pair-input section wrapper and final label choice. -/
-@[hol "cakeml/compiler/backend/stack_to_labScript.sml" "prog_to_section_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def progToSectionHOL {width : Nat} [NeZero width]
     (input : Nat × HolProg width) : Section (LabLineHOL width) :=
   let (sectionId, program) := input

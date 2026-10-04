@@ -6,8 +6,7 @@ open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString
 
 /-- Both original zero-label and position-validity guards are retained. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "label_zero_pos_ok_lines_even_labels" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem labelZero_posOk_linesEvenLabels {width : Nat} [NeZero width] (pos : Nat)
     (lines : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) :
@@ -32,8 +31,7 @@ theorem labelZero_posOk_linesEvenLabels {width : Nat} [NeZero width] (pos : Nat)
     | labAsm _ _ _ _ => simp [isLabelHOL]
 
 /-- Full original section theorem with both guards and actual annotation advancement. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "label_zero_pos_ok_even_labels" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem labelZero_posOk_evenLabels {width : Nat} [NeZero width] (pos : Nat)
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :

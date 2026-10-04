@@ -41,8 +41,7 @@ theorem liveBound {width : Nat} [NeZero width] (live : WordLangCutsetsHOL)
   all_goals constructor <;> omega
 
 /-- Full original Skip case: all fields and all original guards retained. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_reg_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackRegBoundSkip {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -53,8 +52,7 @@ theorem wordToStackRegBoundSkip {width : Nat} [NeZero width]
   simp only [compNative, regBound]
 
 /-- Full original Move case: all fields and all original guards retained. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_reg_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackRegBoundMove {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (priority : Nat) (moves : List (Nat × Nat))
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -66,8 +64,7 @@ theorem wordToStackRegBoundMove {width : Nat} [NeZero width]
   exact formattedMovesBound (width := width) _ frame
 
 /-- Full original Assign case: all fields and all original guards retained. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_reg_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackRegBoundAssign {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (v : Nat) (exp : WordLangExpHOL (BitVec width))
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -78,8 +75,7 @@ theorem wordToStackRegBoundAssign {width : Nat} [NeZero width]
   simp only [compNative, regBound]
 
 /-- Full original Get case: all fields and all original guards retained. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_reg_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackRegBoundGet {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (v : Nat) (name : WordStoreHOL)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -94,8 +90,7 @@ theorem wordToStackRegBoundGet {width : Nat} [NeZero width]
   all_goals first | trivial | omega
 
 /-- Full original Set case: all fields and all original guards retained. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_reg_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackRegBoundSet {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (name : WordStoreHOL) (exp : WordLangExpHOL (BitVec width))
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -112,8 +107,7 @@ theorem wordToStackRegBoundSet {width : Nat} [NeZero width]
   all_goals first | trivial | omega
 
 /-- Full original Store case: all fields and all original guards retained. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_reg_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackRegBoundStore {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (exp : WordLangExpHOL (BitVec width)) (v : Nat)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -124,8 +118,7 @@ theorem wordToStackRegBoundStore {width : Nat} [NeZero width]
   simp only [compNative, regBound]
 
 /-- Full original Alloc case: all fields and all original guards retained. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_reg_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackRegBoundAlloc {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (v : Nat) (live : WordLangCutsetsHOL)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -137,8 +130,7 @@ theorem wordToStackRegBoundAlloc {width : Nat} [NeZero width]
   exact ⟨liveBound live bs frame, by trivial⟩
 
 /-- Full original StoreConsts case: all fields and all original guards retained. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_reg_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackRegBoundStoreConsts {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (r1 r2 r3 r4 : Nat) (ws : List (Bool × BitVec width))
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -150,8 +142,7 @@ theorem wordToStackRegBoundStoreConsts {width : Nat} [NeZero width]
   all_goals first | trivial | (constructor <;> omega)
 
 /-- Full original Raise case: all fields and all original guards retained. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_reg_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackRegBoundRaise {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (v : Nat)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -163,8 +154,7 @@ theorem wordToStackRegBoundRaise {width : Nat} [NeZero width]
   all_goals first | trivial
 
 /-- Full original Return case: all fields and all original guards retained. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_reg_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackRegBoundReturn {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (v : Nat) (vs : List Nat)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -179,8 +169,7 @@ theorem wordToStackRegBoundReturn {width : Nat} [NeZero width]
   all_goals first | trivial | omega
 
 /-- Full original Break case: all fields and all original guards retained. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_reg_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackRegBoundBreak {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (label : Nat)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -191,8 +180,7 @@ theorem wordToStackRegBoundBreak {width : Nat} [NeZero width]
   simp only [compNative, regBound]
 
 /-- Full original Continue case: all fields and all original guards retained. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_reg_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackRegBoundContinue {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (label : Nat)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -203,8 +191,7 @@ theorem wordToStackRegBoundContinue {width : Nat} [NeZero width]
   simp only [compNative, regBound]
 
 /-- Full original Tick case: all fields and all original guards retained. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_reg_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackRegBoundTick {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -215,8 +202,7 @@ theorem wordToStackRegBoundTick {width : Nat} [NeZero width]
   simp only [compNative, regBound]
 
 /-- Full original OpCurrHeap case: all fields and all original guards retained. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_reg_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackRegBoundOpCurrHeap {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (op : BinOp) (v src : Nat)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -231,8 +217,7 @@ theorem wordToStackRegBoundOpCurrHeap {width : Nat} [NeZero width]
   all_goals first | trivial | omega
 
 /-- Full original LocValue case: all fields and all original guards retained. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_reg_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackRegBoundLocValue {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (v label : Nat)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -247,8 +232,7 @@ theorem wordToStackRegBoundLocValue {width : Nat} [NeZero width]
   all_goals first | trivial | omega
 
 /-- Full original Install case: all fields and all original guards retained. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_reg_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackRegBoundInstall {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (r1 r2 r3 r4 : Nat) (live : WordLangCutsetsHOL)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -267,8 +251,7 @@ theorem wordToStackRegBoundInstall {width : Nat} [NeZero width]
   all_goals first | trivial | omega
 
 /-- Full original CodeBufferWrite case: all fields and all original guards retained. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_reg_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackRegBoundCodeBufferWrite {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (r1 r2 : Nat)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -283,8 +266,7 @@ theorem wordToStackRegBoundCodeBufferWrite {width : Nat} [NeZero width]
   all_goals first | trivial | omega
 
 /-- Full original DataBufferWrite case: all fields and all original guards retained. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_reg_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackRegBoundDataBufferWrite {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (r1 r2 : Nat)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -299,8 +281,7 @@ theorem wordToStackRegBoundDataBufferWrite {width : Nat} [NeZero width]
   all_goals first | trivial | omega
 
 /-- Full original Ffi case: all fields and all original guards retained. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_reg_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackRegBoundFfi {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (name : Basis.Pure.MlString.MlString) (r1 r2 r3 r4 : Nat) (live : WordLangCutsetsHOL)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)

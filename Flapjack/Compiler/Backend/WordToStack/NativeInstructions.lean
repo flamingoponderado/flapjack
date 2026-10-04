@@ -10,8 +10,7 @@ open Flapjack.Compiler.Backend.StackLang
 open WordToStackRegFormat (wReg1 wReg2)
 
 /-- Literal register-write helper over the native HOL program carrier. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "wRegWrite1_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wRegWrite1Native {width : Nat} [NeZero width] (g : Nat → HolProg width)
     (r : Nat) (kf : Nat × Nat × Nat) : HolProg width :=
   let r := r / 2
@@ -19,8 +18,7 @@ def wRegWrite1Native {width : Nat} [NeZero width] (g : Nat → HolProg width)
   else .seq (g kf.1) (.stackStore kf.1 (kf.2.1 - 1 - (r - kf.1)))
 
 /-- Literal second temporary register-write helper. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "wRegWrite2_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wRegWrite2Native {width : Nat} [NeZero width] (g : Nat → HolProg width)
     (r : Nat) (kf : Nat × Nat × Nat) : HolProg width :=
   let r := r / 2
@@ -28,17 +26,16 @@ def wRegWrite2Native {width : Nat} [NeZero width] (g : Nat → HolProg width)
   else .seq (g (kf.1 + 1)) (.stackStore (kf.1 + 1) (kf.2.1 - 1 - (r - kf.1)))
 
 /-- Literal ordered frame-slot loads on the native program carrier. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "wStackLoad_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wStackLoadNative {width : Nat} [NeZero width] :
     List (Nat × Nat) → HolProg width → HolProg width
   | [], x => x
   | (r, i) :: ps, x => .seq (.stackLoad r i) (wStackLoadNative ps x)
 
-/-- All literal source instruction clauses, including the 64-bit FP split and
-unhandled-instruction catchall. No conversion success or bounds premise. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "wInst_def"
-  (words_as_type_indexed_bitvec)]
+/-- Integer source instruction clauses and the unhandled-instruction catchall.
+No conversion success or bounds premise. -/
+-- riscv-mi: integer-only specialization of the referenced HOL declaration.
+
 def wInstNative {width : Nat} [NeZero width] (i : HolInst width)
     (kf : Nat × Nat × Nat) : HolProg width :=
   match i with
@@ -115,25 +112,6 @@ def wInstNative {width : Nat} [NeZero width] (i : HolInst width)
       let l2 := wReg2 n1 kf
       wStackLoadNative (l1.1 ++ l2.1)
         (.inst (.mem .store32 l2.2 (.addr l1.2 offset)))
-  | .fp (.fpLess r f1 f2) =>
-      wRegWrite1Native (fun r => .inst (.fp (.fpLess r f1 f2))) r kf
-  | .fp (.fpLessEqual r f1 f2) =>
-      wRegWrite1Native (fun r => .inst (.fp (.fpLessEqual r f1 f2))) r kf
-  | .fp (.fpEqual r f1 f2) =>
-      wRegWrite1Native (fun r => .inst (.fp (.fpEqual r f1 f2))) r kf
-  | .fp (.fpMovToReg r1 r2 d) =>
-      if width = 64 then
-        wRegWrite1Native (fun r1 => .inst (.fp (.fpMovToReg r1 0 d))) r1 kf
-      else
-        wRegWrite2Native
-          (fun r2 => wRegWrite1Native (fun r1 => .inst (.fp (.fpMovToReg r1 r2 d))) r1 kf)
-          r2 kf
-  | .fp (.fpMovFromReg d r1 r2) =>
-      let l := wReg1 r1 kf
-      let l' := if width = 64 then ([], 0) else wReg2 r2 kf
-      wStackLoadNative (l.1 ++ l'.1)
-        (.inst (.fp (.fpMovFromReg d l.2 l'.2)))
-  | .fp f => .inst (.fp f)
   | _ => .inst .skip
 
 
@@ -193,14 +171,6 @@ theorem toGeneric_wInst {width : Nat} [NeZero width]
       try simp only [toGeneric_wStackLoad, toGeneric_wRegWrite1]
       simp [toGeneric, StackLang.Prog.map, HolInst.toWordLangInst,
         HolAddr.toWordLangAddr]
-  | fp f =>
-    cases f <;> simp only [wInstNative, WordToStackRegFormat.wInst, HolInst.toWordLangInst]
-    all_goals
-      by_cases hw : width = 64
-      all_goals
-        try simp only [hw, if_true, if_false]
-        try simp only [toGeneric_wStackLoad, toGeneric_wRegWrite1, toGeneric_wRegWrite2]
-        simp [toGeneric, StackLang.Prog.map, HolInst.toWordLangInst]
   | skip => simp [wInstNative, WordToStackRegFormat.wInst, toGeneric, StackLang.Prog.map,
       HolInst.toWordLangInst]
   | const n c =>

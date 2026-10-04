@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterTwo
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadContinuations
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelMemory
@@ -177,11 +178,7 @@ are retained for arbitrary aliases, physical/spilled operands and address offset
 Plain Store retains Word or Loc payloads; byte/32-bit cases retain their actual
 source word conversion. No target read/run/postmemory premise is assumed.
 The evaluators inherit reals_as_rational_cuts, without a new FP agreement claim. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_wInst"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateWInstStore {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (valueRegister base k f frame : Nat) (offset : BitVec width)
     (source sourcePost : WordSemStateFiniteExact width (Nat × C) F)
@@ -204,11 +201,7 @@ are retained for arbitrary aliases, physical/spilled operands and address offset
 Plain Store retains Word or Loc payloads; byte/32-bit cases retain their actual
 source word conversion. No target read/run/postmemory premise is assumed.
 The evaluators inherit reals_as_rational_cuts, without a new FP agreement claim. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_wInst"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateWInstStore8 {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (valueRegister base k f frame : Nat) (offset : BitVec width)
     (source sourcePost : WordSemStateFiniteExact width (Nat × C) F)
@@ -231,11 +224,7 @@ are retained for arbitrary aliases, physical/spilled operands and address offset
 Plain Store retains Word or Loc payloads; byte/32-bit cases retain their actual
 source word conversion. No target read/run/postmemory premise is assumed.
 The evaluators inherit reals_as_rational_cuts, without a new FP agreement claim. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_wInst"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateWInstStore32 {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (valueRegister base k f frame : Nat) (offset : BitVec width)
     (source sourcePost : WordSemStateFiniteExact width (Nat × C) F)

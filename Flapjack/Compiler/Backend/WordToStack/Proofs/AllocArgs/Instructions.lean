@@ -55,11 +55,6 @@ theorem instAllocArg {width : Nat} [NeZero width]
   | mem op d addr =>
       cases addr
       cases op <;> simp [wInstNative, loadAllocArg, write1, allocArg]
-  | fp f =>
-      cases f
-      all_goals
-        by_cases hw : width = 64
-        all_goals simp [wInstNative, hw, loadAllocArg, write1, write21, allocArg]
   | skip => trivial
   | const n c => simp [wInstNative, write1]
 
@@ -76,8 +71,6 @@ theorem shareAllocArg {width : Nat} [NeZero width]
 
 /-- Entire Inst case of the original compiler theorem. Its original performance
 equality is the only premise; the actual native compiler result is concluded. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_alloc_arg" (words_as_type_indexed_bitvec)]
 theorem wordToStackAllocArgInst {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (instruction : WordLangInst (BitVec width))
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -89,8 +82,6 @@ theorem wordToStackAllocArgInst {width : Nat} [NeZero width]
 
 /-- Entire ShareInst case, including every expression whose address extraction
 fails. No successful extraction or instruction restriction is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_alloc_arg" (words_as_type_indexed_bitvec)]
 theorem wordToStackAllocArgShareInst {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (op : HolMemop) (v : Nat)
     (exp : WordLangExpHOL (BitVec width)) (bs : AppList (BitVec width) × Nat)

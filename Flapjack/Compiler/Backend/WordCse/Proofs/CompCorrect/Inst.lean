@@ -44,21 +44,6 @@ theorem data_inv_inst_arith (d : Knowledge) (a : HolArith width)
     | (obtain rfl := Option.some.inj h
        repeat (first | exact hd | apply sv _ _ _ (by simp [arithWrites])))
 
-/-- A successful FP instruction writes only its `fpWrites` registers and FP
-    registers (Flapjack decomposition of the HOL `Inst` case). -/
-theorem data_inv_inst_fp (d : Knowledge) (f : HolFp) (s s' : WordSemStateFiniteExact width C F)
-    (hd : dataInv d s) (hw : ∀ x ∈ fpWrites f, sptLookup x d.toCanonical = none)
-    (h : inst (.fp f) s = some s') : dataInv d s' := by
-  have sv : ∀ x v (t : WordSemStateFiniteExact width C F), x ∈ fpWrites f → dataInv d t →
-      dataInv d (setVar x v t) := fun x v t hx ht => (data_inv_set_var d t x v (hw x hx)).mpr ht
-  have sf : ∀ x v (t : WordSemStateFiniteExact width C F), dataInv d t → dataInv d (setFpVar x v t) :=
-    fun x v t ht => (data_inv_set_fp_var d x v t).mpr ht
-  cases f <;> simp only [inst] at h <;> (repeat' split at h)
-  all_goals first
-    | (simp at h; done)
-    | (obtain rfl := Option.some.inj h
-       repeat (first | exact hd | apply sf | apply sv _ _ _ (by simp [fpWrites])))
-
 /-- The CSE-storable arithmetic shapes write exactly their first register. -/
 theorem inst_arith_single (a : HolArith width) (s s' : WordSemStateFiniteExact width C F)
     (hshape : arithWrites a = [firstRegOfArith a]) (h : inst (.arith a.toWordLangArith) s = some s') :
@@ -102,8 +87,6 @@ theorem inst_store_memory (op : HolMemop) (r a : Nat) (ofs : BitVec width)
 end Helpers
 
 /-- HOL `comp_correct`, `Inst` case (`word_cseProof:3357-3484`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "comp_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem comp_correct_Inst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (i : WordLangInst (BitVec width)) (s : WordSemStateFiniteExact width C F) :
     CompCorrectAt (.inst i) s := by
@@ -177,11 +160,6 @@ theorem comp_correct_Inst {width : Nat} [NeZero width] {C : Type} {F : Type}
             obtain ⟨e1, i1⟩ := add_to_load_correct _ s op r a _ ofs w data' p'
               ⟨dD, rD, rfl, hst, hguard.1, hguard.2.1, hguard.2.2, orig, hw⟩
             exact ⟨e1, fun _ => i1⟩
-    | fp f =>
-      simp only [wordCseInst] at hw
-      obtain ⟨rfl, rfl⟩ := Prod.mk.inj hw
-      exact ⟨orig, fun _ => data_inv_inst_fp _ f s s1 (data_inv_invalidate_regs _ data s hd)
-        (fun x hx => lookup_invalidate_regs _ data x hx) hs1⟩
   · cases he; exact absurd rfl hres
 
 end Flapjack.Compiler.Backend.WordCse

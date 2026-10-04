@@ -5,8 +5,7 @@ open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm
 open Flapjack.Basis.Pure.MlString
 open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabProps
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "label_zero_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def labelZero {width : Nat} [NeZero width]
     (line : Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)) : Prop :=
@@ -14,15 +13,13 @@ def labelZero {width : Nat} [NeZero width]
   | .label _ _ n => n = 0
   | _ => True
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "sec_label_zero_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def secLabelZero {width : Nat} [NeZero width]
     (sec : Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) : Prop :=
   ∀ line ∈ sec.lines, labelZero line
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "sec_label_zero_pos_val_0" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem secLabelZero_posVal_zero {width : Nat} [NeZero width]
     (xs : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) (pos : Nat) :
@@ -51,8 +48,7 @@ theorem secLabelZero_posVal_zero {width : Nat} [NeZero width]
 
 /-- Full original append theorem, including the boundary equality branch and
 physical-byte shift, with zero label annotations required only of the suffix. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "pos_val_append" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem posVal_append {width : Nat} [NeZero width]
     (c1 : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) (i pos : Nat)

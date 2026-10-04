@@ -21,8 +21,7 @@ private def programValid {width : Nat} [NeZero width]
 structural induction including both nested return and exception handlers.
 Retains the original source variable bound, allocation class, SSA map invariant
 and source instruction-validity hypotheses; no remaining induction premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_fullInstOkLess {width : Nat} [NeZero width]
     (config : AsmConfigExact width) (prog : WordLangProgHOL (BitVec width)) (ssa : Spt Nat) (next : Nat)
     (tables : List (Spt Nat × Spt Unit × Spt Unit))

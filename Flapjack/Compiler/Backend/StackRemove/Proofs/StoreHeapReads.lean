@@ -107,9 +107,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 /-- Full original store-heap read: ordered store membership, source lookup,
 and all five native heap assertions derive the actual target load, with no
 successful-target or derived-domain assumption. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "mem_load_lemma"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem memLoadLemma {width : Nat} [NeZero width] {C F : Type}
     (name : StoreName) (source target : StackSemStateFiniteExact width C F)
     (value : WordLocW width) (base : BitVec width)
@@ -158,9 +156,7 @@ theorem memLoadLemma {width : Nat} [NeZero width] {C F : Type}
 
 /-- Full original store-slot domain theorem: the complete five-factor heap
 and ordered store membership suffice without any source store lookup premise. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "mem_load_lemma2"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem memLoadLemma2 {width : Nat} [NeZero width] {SourceC SourceF TargetC TargetF : Type}
     (name : StoreName) (source : StackSemStateFiniteExact width SourceC SourceF)
     (target : StackSemStateFiniteExact width TargetC TargetF)

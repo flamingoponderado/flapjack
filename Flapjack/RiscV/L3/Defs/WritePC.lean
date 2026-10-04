@@ -4,7 +4,6 @@ import Flapjack.RiscV.L3.Defs.ReadInst
 no totalCore bound is imposed on the word8 function key. -/
 namespace Flapjack.RiscV.L3
 
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "write'PC_def"]
 def «write'PC» (value : (BitVec 64)) : (riscv_state → riscv_state) :=
   (fun (state : riscv_state) => (let r := state; { r with c_PC := ((fun (_eta1 : ((BitVec 8) → (BitVec 64))) => (holUpdate state.procID value state.c_PC))) r.c_PC }))
 

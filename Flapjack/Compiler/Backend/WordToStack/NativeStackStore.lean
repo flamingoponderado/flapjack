@@ -8,8 +8,7 @@ executes before the head store. Source review found no production use in
 word_to_stackScript beyond this definition; original wRegWrite1/wRegWrite2
 retain their direct StackStore clauses. This native helper supports the full
 original proof-side store/register continuation laws. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "wStackStore_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wStackStoreNative {width : Nat} [NeZero width] :
     List (Nat × Nat) → HolProg width → HolProg width
   | [], continuation => continuation

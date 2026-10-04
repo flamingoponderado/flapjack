@@ -90,7 +90,7 @@ exact asm carriers `HolMemop`/`HolAddr` and the exact `AsmConfigExact`:
 `Load`/`Store`/`Load32`/`Store32` use the word address offset; `Load16`/`Store16`
 use the halfword offset and are unavailable on `Ag32`; every other memory
 operation uses the byte offset.  HOL argument order is `addr_ok op addr c`. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "addr_ok_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def asmAddrOkExact {width : Nat} [NeZero width] (operator : HolMemop)
     (address : HolAddr width) (config : AsmConfigExact width) : Bool :=
   match address with

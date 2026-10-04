@@ -7,8 +7,7 @@ open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Encoders.Asm Flapjack.
 /-- Full original code-padding invariant with the conditional non-single-byte
 alignment guard, every source section predicate and actual positional encoding.
 Section advancement is proved from the original padding length laws. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "all_enc_with_nop_pad_code"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem allEncWithNop_padCode {width : Nat} [NeZero width]
     (enc : HolAsm width → List (BitVec 8)) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (nop : List (BitVec 8))

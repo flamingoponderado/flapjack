@@ -84,11 +84,7 @@ the callee body (`get_vars`, `bad_dest_args`, `find_code`, `ret = NONE`,
 All original premises and the complete target clock/run/result/resource
 conclusion are retained. Evaluator closure inherits reals_as_rational_cuts; no
 numerical FP assertion. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_correct" 5756
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectCallTail {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (dest : Option Nat) (args : List Nat)
     (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))

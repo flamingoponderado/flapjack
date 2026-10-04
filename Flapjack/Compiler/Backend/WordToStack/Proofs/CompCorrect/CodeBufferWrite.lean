@@ -79,11 +79,7 @@ simulation premises and the full result/resource conclusion are retained.
 Actual ordered source reads, native loads and target write are derived;
 no targetrun, successful-buffer or postrelation premise is introduced.
 Evaluator closure inherits reals_as_rational_cuts; no numerical FP claim. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_correct" 5756
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectCodeBufferWrite {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (r1 r2 : Nat)
     (source : WordSemStateFiniteExact width (Nat × C) F) :

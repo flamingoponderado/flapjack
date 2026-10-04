@@ -18,8 +18,7 @@ private theorem encodedEven {width : Nat} [NeZero width]
   rw [hc.2.1 a |>.1] at hm
   simpa using hm.symm
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "lines_upd_lab_len_encd0_label_zero"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem linesUpdLabLen_encd0LabelZero {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (enc : HolAsm width → List (BitVec 8))
     (pos : Nat) (lines aux : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -68,8 +67,7 @@ private theorem ends_iff {width : Nat} [NeZero width]
   rw [hn]
   cases sec.lines.reverse <;> simp
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "upd_lab_len_encd0_label_zero"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem updLabLen_encd0LabelZero {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (enc : HolAsm width → List (BitVec 8))
     (pos : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))

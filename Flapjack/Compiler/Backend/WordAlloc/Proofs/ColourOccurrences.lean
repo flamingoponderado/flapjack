@@ -13,8 +13,6 @@ open Flapjack
 
 /-- Original instruction occurrence transport with arbitrary source and target
 predicates and the original pointwise implication premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "every_var_inst_apply_colour_inst" (words_as_type_indexed_bitvec)]
 theorem everyVarInst_applyColourInst {width : Nat} [NeZero width] (P : Nat → Bool)
     (inst : WordLangInst (BitVec width)) (Q : Nat → Bool) (f : Nat → Nat) :
     everyVarInstHOL P inst = true ∧ (∀ x, P x = true → Q (f x) = true) →
@@ -34,14 +32,8 @@ theorem everyVarInst_applyColourInst {width : Nat} [NeZero width] (P : Nat → B
   | mem op r addr =>
       cases op <;> cases addr <;>
         simp_all [everyVarInstHOL, applyColourInst, applyColourInstCore]
-  | fp op =>
-      cases op <;> simp_all [everyVarInstHOL, applyColourInst, applyColourInstCore]
-      all_goals by_cases dimension : width = 64 <;> simp_all
-
 /-- Original full expression occurrence transport, including recursive operator
 argument lists and both Shift operands. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "every_var_exp_apply_colour_exp" (words_as_type_indexed_bitvec)]
 theorem everyVarExp_applyColourExp {width : Nat} [NeZero width] (P : Nat → Bool)
     (exp : WordLangExpHOL (BitVec width)) (Q : Nat → Bool) (f : Nat → Nat) :
     everyVarExpHOL P exp = true ∧ (∀ x, P x = true → Q (f x) = true) →
@@ -69,8 +61,6 @@ theorem everyVarExp_applyColourExp {width : Nat} [NeZero width] (P : Nat → Boo
 
 /-- Original key-enumeration transport on arbitrary Unit Spt trees. It requires
 neither injectivity of f nor a canonical-tree assumption. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "every_apply_nummap_key_helper"]
 theorem everyApplyNummapKeyHelper (f : Nat → Nat) (names : Spt Unit)
     (P Q : Nat → Bool) :
     ((sptToAList names).map Prod.fst).all P = true ∧
@@ -97,8 +87,6 @@ private theorem everyName_applyColour (P Q : Nat → Bool) (f : Nat → Nat)
 
 /-- Original full program occurrence transport, including all source fields and
 return-dependent handlers. Arbitrary renaming may collapse names. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "every_var_apply_colour" (words_as_type_indexed_bitvec)]
 theorem everyVar_applyColour {width : Nat} [NeZero width] (P : Nat → Bool)
     (prog : WordLangProgHOL (BitVec width)) (Q : Nat → Bool) (f : Nat → Nat) :
     everyVarHOL P prog = true ∧ (∀ x, P x = true → Q (f x) = true) →
@@ -151,8 +139,6 @@ theorem everyVar_applyColour {width : Nat} [NeZero width] (P : Nat → Bool)
   all_goals aesop
 
 /-- Original stack-field occurrence transport under arbitrary colouring. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "every_stack_var_apply_colour" (words_as_type_indexed_bitvec)]
 theorem everyStackVar_applyColour {width : Nat} [NeZero width] (P : Nat → Bool)
     (prog : WordLangProgHOL (BitVec width)) (Q : Nat → Bool) (f : Nat → Nat) :
     everyStackVarHOL P prog = true ∧ (∀ x, P x = true → Q (f x) = true) →
@@ -184,8 +170,6 @@ theorem everyStackVar_applyColour {width : Nat} [NeZero width] (P : Nat → Bool
 
 /-- Original unconditional occurrence predicate with the constantly true
 predicate, derived from the original full maximum bound as in HOL. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "every_var_T" (words_as_type_indexed_bitvec)]
 theorem everyVarTrue {width : Nat} [NeZero width] (prog : WordLangProgHOL (BitVec width)) :
     everyVarHOL (fun _ => true) prog = true := by
   exact everyVarMono (fun x => decide (x ≤ maxVarHOL prog)) prog (fun _ => true)
@@ -193,8 +177,6 @@ theorem everyVarTrue {width : Nat} [NeZero width] (prog : WordLangProgHOL (BitVe
 
 /-- Original unconditional physical-register occurrence result for total colouring.
 No oracle acceptance or allocator success is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "every_var_is_phy_var_total_colour" (words_as_type_indexed_bitvec)]
 theorem everyVar_isPhyVar_totalColour {width : Nat} [NeZero width]
     (col : Spt Nat) (prog : WordLangProgHOL (BitVec width)) :
     everyVarHOL isPhyVar (applyColour (totalColour col) prog) = true := by

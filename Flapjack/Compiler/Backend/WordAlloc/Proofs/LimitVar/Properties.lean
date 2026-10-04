@@ -8,8 +8,7 @@ namespace Flapjack.Compiler.Backend.WordAlloc
 /-- Full native program limit: the original equality premise implies the
 allocation class and strict bound on every original register occurrence.
 Call handler traversal remains return-dependent as in the original every_var. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "limit_var_props" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem limitVarProps {width : Nat} [NeZero width]
     (program : WordLangProgHOL (BitVec width)) (limit : Nat)
     (hlimit : limitVar program = limit) :

@@ -6,8 +6,7 @@ open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString
 
 /-- Full original zero-position law. The encoding-validity start and queried
 physical start remain independent, with no bounds or encoder-validity premise. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "pos_val_0_aux" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem posVal_zeroAt {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (validPos : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) (pos : Nat) :
@@ -19,8 +18,7 @@ theorem posVal_zeroAt {width : Nat} [NeZero width]
 /-- Full original fetched-instruction successor equation. Literal successful
 source fetch and complete encoding validity are its only guards. Encoding
 validity is checked at validPos independently of the arbitrary queried pos. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "asm_fetch_aux_pos_val_SUC" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem asmFetchAux_posVal_successor {width : Nat} [NeZero width]
     (pc pos : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) (validPos : Nat)
     (c : AsmConfigExact width) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)

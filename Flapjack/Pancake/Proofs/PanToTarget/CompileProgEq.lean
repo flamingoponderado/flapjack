@@ -9,8 +9,7 @@ from_word_0. Main ordering, native symbol construction, and exports are exactly
 those of compileProgHOL; only independent let bindings move. No successful
 pass, target execution, or output premise is assumed. This equation is source
 correspondence, not the final compiler-semantics theorem or production routing. -/
-@[hol "cakeml/pancake/pan_to_targetScript.sml" "compile_prog_eq"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileProgEqHOL {width : Nat} [NeZero width]
     (asmConf : AsmConfigExact width) (config : Flapjack.Compiler.Backend.Backend.Config)
     (program : List (DeclHOL width)) :

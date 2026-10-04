@@ -27,8 +27,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C : Type} {F
 end CompCorrectControlCarrier
 
 /-- HOL `comp_correct`, `MustTerminate` case (`word_cseProof:3630-3645`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "comp_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem comp_correct_MustTerminate {width : Nat} [NeZero width] {C : Type} {F : Type}
     (p : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F)
     (ih : s.termdep ≠ 0 →
@@ -59,8 +58,7 @@ theorem comp_correct_MustTerminate {width : Nat} [NeZero width] {C : Type} {F : 
       simp only
 
 /-- HOL `comp_correct`, `Seq` case (`word_cseProof:3647-3662`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "comp_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem comp_correct_Seq {width : Nat} [NeZero width] {C : Type} {F : Type}
     (c1 c2 : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F)
     (ih : (∀ res s1, (res, s1) = evaluate c1 s ∧ res = none → CompCorrectAt c2 s1) ∧
@@ -87,8 +85,7 @@ theorem comp_correct_Seq {width : Nat} [NeZero width] {C : Type} {F : Type}
     exact ⟨by rw [evaluate, fix_clock_evaluate, e1], fun h => by cases h⟩
 
 /-- HOL `comp_correct`, `If` case (`word_cseProof:3676-3697`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "comp_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem comp_correct_If {width : Nat} [NeZero width] {C : Type} {F : Type}
     (cmp : Cmp) (r1 : Nat) (ri : WordRegImm (BitVec width)) (c1 c2 : WordLangProgHOL (BitVec width))
     (s : WordSemStateFiniteExact width C F)
@@ -125,8 +122,7 @@ theorem comp_correct_If {width : Nat} [NeZero width] {C : Type} {F : Type}
   · cases he; exact absurd rfl hres
 
 /-- HOL `comp_correct`, `Loop` case (`word_cseProof:3765-3791`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "comp_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem comp_correct_Loop {width : Nat} [NeZero width] {C : Type} {F : Type}
     (names : WordLangNumSetHOL) (c : WordLangProgHOL (BitVec width)) (exitNames : WordLangNumSetHOL)
     (s : WordSemStateFiniteExact width C F)

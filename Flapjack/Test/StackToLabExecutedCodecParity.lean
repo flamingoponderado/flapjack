@@ -29,7 +29,6 @@ example : instToExecuted? (.const 999 (BitVec.ofNat 80 (2^79+1)) : HolInst 80) =
 example : instToExecuted? (.const 999 1 : HolInst 1) = some (.word (.const 999 1)) := rfl
 example : instToExecuted? (.arith (.addCarry 1 2 3 4) : HolInst 64) =
     some (.word (.arith (.cakeAddCarry 1 2 3 4))) := rfl
-example (operation : HolFp) : instToExecuted? (.fp operation : HolInst 64) = none := rfl
 -- Covers all eight source memory operators at arbitrary base/offset registers.
 example (operation : HolMemop) : instToExecuted?
     (.mem operation 2 (.addr 3 255) : HolInst 64) =

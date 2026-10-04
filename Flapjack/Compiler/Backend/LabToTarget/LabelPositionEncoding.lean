@@ -6,8 +6,7 @@ open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString
 
 /-- Original successful repeated-encoding preservation, with precisely the
 source result equality and input parity conjunct. No encoder-validity premise. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "enc_lines_again_simp_pos_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem encLinesAgainSimp_posOk {width : Nat} [NeZero width]
     (labs : Spt (Spt Nat)) (ffis : List HolFfiName) (pos : Nat)
     (enc : HolAsm width → List (BitVec 8))
@@ -40,8 +39,7 @@ theorem encLinesAgainSimp_posOk {width : Nat} [NeZero width]
 
 /-- Full original successful section encoding preserves input label parity.
 The original simple-encoder agreement and length law identify its next position. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "enc_secs_again_pos_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem encSecsAgain_posOk {width : Nat} [NeZero width]
     (pos : Nat) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (enc : HolAsm width → List (BitVec 8))

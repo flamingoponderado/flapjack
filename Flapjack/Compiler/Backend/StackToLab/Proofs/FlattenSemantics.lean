@@ -259,10 +259,7 @@ theorem stackRunsSim {width : Nat} [NeZero width] {C F : Type} {start : Nat}
 /-- HOL `flatten_semantics`: under the halting assumption for procedure 1,
 `state_rel` and the start procedure at the LabSem pc, a non-failing StackSem
 semantics of the start call is the LabSem semantics. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_semantics"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenSemantics {width : Nat} [NeZero width] {C F : Type} {start : Nat}
     {s1 : StackSemStateFiniteExact width C F}
     {s2 : Flapjack.Compiler.Backend.LabSem.State width C F} :

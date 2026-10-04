@@ -6,8 +6,7 @@ namespace Flapjack.Compiler.Backend.WordAlloc
 
 /-- Full Seq case with the original guarded second-program IH followed by the
 first-program IH. The actual produced first state discharges its guard. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_props"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransPropsSeq {width : Nat} [NeZero width]
     (first second : WordLangProgHOL (BitVec width)) (ssa : Spt Nat) (next : Nat)
     (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -38,8 +37,7 @@ theorem ssaCcTransPropsSeq {width : Nat} [NeZero width]
   exact ⟨Nat.le_trans firstFrame.1 secondFrame.1, secondFrame.2.1, secondFrame.2.2⟩
 
 /-- Full MustTerminate case with exactly the original same-context body IH. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_props"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransPropsMustTerminate {width : Nat} [NeZero width]
     (body : WordLangProgHOL (BitVec width)) (ssa : Spt Nat) (next : Nat)
     (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -61,8 +59,7 @@ theorem ssaCcTransPropsMustTerminate {width : Nat} [NeZero width]
 /-- Full If case retains both original renamed-condition guards and the
 actual first-branch producer guard. The second branch uses the original map at
 the produced counter. Its input validity and final reconciliation are derived. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_props"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransPropsIf {width : Nat} [NeZero width]
     (cmp : Cmp) (condition : Nat) (right : WordRegImm (BitVec width))
     (yes no : WordLangProgHOL (BitVec width)) (ssa : Spt Nat) (next : Nat)

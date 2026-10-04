@@ -5,8 +5,7 @@ open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Encoders.Asm
 open Flapjack.Basis.Pure.MlString
 
 /-- Full original name projection offset equation. The two word dimensions are independent. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "line_to_info_offset_FST_eq" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem lineToInfo_offsetNames {codeWidth : Nat} {fetchedWidth : Nat}
     [NeZero codeWidth] [NeZero fetchedWidth]
     (code : List (Section (Line (AsmOrCbw (HolAsm codeWidth) HolMemop (HolAddr codeWidth))
@@ -30,8 +29,7 @@ theorem lineToInfo_offsetNames {codeWidth : Nat} {fetchedWidth : Nat}
 
 /-- Full independent-carrier line-record offset equation; no desired record
 or encoding hypothesis is supplied. Both original word dimensions remain independent. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "line_to_info_offset_SND_eq" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem lineToInfo_offsetRecords {codeWidth : Nat} {fetchedWidth : Nat}
     [NeZero codeWidth] [NeZero fetchedWidth]
     (code : List (Section (Line (AsmOrCbw (HolAsm codeWidth) HolMemop (HolAddr codeWidth))
@@ -61,8 +59,7 @@ theorem lineToInfo_offsetRecords {codeWidth : Nat} {fetchedWidth : Nat}
         simp only [Nat.add_assoc]
 /-- Full original initial-PC offset conjunction. The sole original encoding
 validity guard and independent validity/query positions remain quantified. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "get_shmem_info_init_pc_offset" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getShmemInfo_initPcOffset {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (validPos : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))

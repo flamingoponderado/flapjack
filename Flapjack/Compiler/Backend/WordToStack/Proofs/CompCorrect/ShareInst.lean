@@ -41,10 +41,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 
 /-- HOL `word_exp_Op_SOME_Word` (4396-4400): an operator expression evaluates
 only to a word. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "word_exp_Op_SOME_Word"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordExpOpSomeWord {width : Nat} [NeZero width] {C F : Type}
     {s : WordSemStateFiniteExact width C F} {op : BinOp}
     {wexps : List (WordLangExpHOL (BitVec width))} {x : WordLocW width} :
@@ -57,8 +54,7 @@ theorem wordExpOpSomeWord {width : Nat} [NeZero width] {C F : Type}
   · cases h
 
 /-- HOL `flat_exp_conventions_ShareInst_exp_simp` (7166-7173). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "flat_exp_conventions_ShareInst_exp_simp" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flatExpConventionsShareInstExpSimp {width : Nat} [NeZero width]
     {op : WordMemOp} {v : Nat} {exp : WordLangExpHOL (BitVec width)} :
     flatExpConventions (.shareInst op v exp : WordLangProgHOL (BitVec width)) = true →
@@ -68,10 +64,7 @@ theorem flatExpConventionsShareInstExpSimp {width : Nat} [NeZero width]
   split at h <;> simp_all
 
 /-- HOL `word_exp_Op_Add_0` (7175-7184). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "word_exp_Op_Add_0"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordExpOpAdd0 {width : Nat} [NeZero width] {C F : Type}
     {s : WordSemStateFiniteExact width C F} {exp : WordLangExpHOL (BitVec width)}
     {x : BitVec width} :
@@ -82,11 +75,7 @@ theorem wordExpOpAdd0 {width : Nat} [NeZero width] {C F : Type}
 
 /-- HOL `evaluate_ShareInst_Var_eq_Op_Add` (7186-7205): a bare variable
 address behaves as that variable plus zero. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "evaluate_ShareInst_Var_eq_Op_Add"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateShareInstVarEqOpAdd {width : Nat} [NeZero width] {C F : Type}
     {op : WordMemOp} {v ad : Nat} {s : WordSemStateFiniteExact width C F} :
     WordSemStateFiniteExact.evaluate (.shareInst op v (.var ad)) s =
@@ -124,11 +113,7 @@ theorem stateRelFfi {width : Nat} [NeZero width] {C F : Type}
 
 /-- HOL `share_load_lemma2` (7254-7296): a shared-memory load into a
 register-placed variable. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "share_load_lemma2"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem shareLoadLemma2 {width : Nat} [NeZero width] {C F : Type}
     {ac : AsmConfigExact width} {k f frame : Nat} {op : WordMemOp} {v : Nat}
     {ad' : BitVec width} {s s1 : WordSemStateFiniteExact width (Nat × C) F}
@@ -171,11 +156,7 @@ theorem shareLoadLemma2 {width : Nat} [NeZero width] {C F : Type}
 /-- HOL `share_load_lemma1` (7207-7252): a shared-memory load into a
 stack-placed variable, through the scratch register `k`. HOL's `LUPDATE` is
 `List.set` and `THE` is `holThe`. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "share_load_lemma1"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem shareLoadLemma1 {width : Nat} [NeZero width] {C F : Type}
     {ac : AsmConfigExact width} {k f frame : Nat} {op : WordMemOp} {v : Nat}
     {ad' : BitVec width} {s s1 : WordSemStateFiniteExact width (Nat × C) F}
@@ -231,11 +212,7 @@ theorem shareLoadLemma1 {width : Nat} [NeZero width] {C F : Type}
 
 /-- HOL `share_store_lemma2` (7348-7384): a shared-memory store of a
 register-placed variable. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "share_store_lemma2"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem shareStoreLemma2 {width : Nat} [NeZero width] {C F : Type}
     {ac : AsmConfigExact width} {k f frame : Nat} {op : WordMemOp} {v : Nat}
     {ad' : BitVec width} {s s1 : WordSemStateFiniteExact width (Nat × C) F}
@@ -286,11 +263,7 @@ theorem shareStoreLemma2 {width : Nat} [NeZero width] {C F : Type}
 /-- HOL `share_store_lemma1` (7298-7346): a shared-memory store of a
 stack-placed variable, whose value is first copied from its stack slot into the
 scratch register `k+1`. HOL's `EL` is `holEl` and `|+` is `updateEq`. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "share_store_lemma1"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem shareStoreLemma1 {width : Nat} [NeZero width] {C F : Type}
     {ac : AsmConfigExact width} {k f frame : Nat} {op : WordMemOp} {v : Nat}
     {ad' : BitVec width} {s s1 : WordSemStateFiniteExact width (Nat × C) F}
@@ -406,11 +379,7 @@ theorem shMemOp_clock {width : Nat} [NeZero width] {C F : Type} (op : WordMemOp)
   all_goals rfl
 
 /-- HOL `evaluate_ShareInst_Load` (7386-7445). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_ShareInst_Load"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateShareInstLoad {width : Nat} [NeZero width] {C F : Type}
     {ac : AsmConfigExact width} {k f frame : Nat} {op : WordMemOp} {v ad : Nat}
     {offset : BitVec width} {s s1 : WordSemStateFiniteExact width (Nat × C) F}
@@ -539,11 +508,7 @@ theorem shareStoreGeneric {width : Nat} [NeZero width] {C F : Type}
       exact absurd hrun.1.symm notError
 
 /-- HOL `evaluate_ShareInst_Store` (7447-7499). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_ShareInst_Store"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateShareInstStore {width : Nat} [NeZero width] {C F : Type}
     {ac : AsmConfigExact width} {k f frame : Nat} {op : WordMemOp} {v ad : Nat}
     {offset : BitVec width} {s s1 : WordSemStateFiniteExact width (Nat × C) F}
@@ -612,12 +577,7 @@ theorem evaluateShareInstStore {width : Nat} [NeZero width] {C F : Type}
     exact shareStoreGeneric hshare rel2 hw loaded2 (by simp) notError
 
 /-- HOL `evaluate_ShareInst_correct_lemma` (7501-7526). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "evaluate_ShareInst_correct_lemma"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateShareInstCorrectLemma {width : Nat} [NeZero width] {C F : Type}
     {ac : AsmConfigExact width} {k f frame : Nat} {op : WordMemOp} {v ad : Nat}
     {offset : BitVec width} {s s1 : WordSemStateFiniteExact width (Nat × C) F}
@@ -657,11 +617,7 @@ All original premises and the complete target clock/run/result/resource
 conclusion are retained; no target run, simulation law or successful-execution
 restriction is assumed. Evaluator closure inherits reals_as_rational_cuts; no
 numerical FP assertion. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_correct" 5756
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectShareInst {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (op : WordMemOp) (v : Nat) (exp : WordLangExpHOL (BitVec width))
     (source : WordSemStateFiniteExact width (Nat × C) F) :

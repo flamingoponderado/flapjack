@@ -33,8 +33,7 @@ theorem writesSingle (v k : Nat) : sptDomain (sptInsert v () (.ln : NumSet)) k �
 
 
 /-- HOL `clash_tree_colouring_ok`, `Skip` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "clash_tree_colouring_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_Skip {width : Nat} [NeZero width] :
     clashTreeGoal (.skip : WordLangProgHOL (BitVec width)) := by
   rintro lt f live flive livein flivein ⟨-, hw, -, hd, hi, hc⟩
@@ -44,8 +43,7 @@ theorem clashTreeColouringOk_Skip {width : Nat} [NeZero width] :
     (fun _ => by rw [getLive]; rfl) Iff.rfl
 
 /-- HOL `clash_tree_colouring_ok`, `Tick` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "clash_tree_colouring_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_Tick {width : Nat} [NeZero width] :
     clashTreeGoal (.tick : WordLangProgHOL (BitVec width)) := by
   rintro lt f live flive livein flivein ⟨-, hw, -, hd, hi, hc⟩
@@ -55,8 +53,7 @@ theorem clashTreeColouringOk_Tick {width : Nat} [NeZero width] :
     (fun _ => by rw [getLive]; rfl) Iff.rfl
 
 /-- HOL `clash_tree_colouring_ok`, `Move` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "clash_tree_colouring_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_Move {width : Nat} [NeZero width]
     (pri : Nat) (moves : List (Nat × Nat)) :
     clashTreeGoal (.move pri moves : WordLangProgHOL (BitVec width)) := by
@@ -69,8 +66,7 @@ theorem clashTreeColouringOk_Move {width : Nat} [NeZero width]
     (fun hw => by rw [getLive, wfNumsetListDeleteEq _ live hw]) Iff.rfl
 
 /-- HOL `clash_tree_colouring_ok`, `Assign` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "clash_tree_colouring_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_Assign {width : Nat} [NeZero width]
     (v : Nat) (e : WordLangExpHOL (BitVec width)) :
     clashTreeGoal (.assign v e : WordLangProgHOL (BitVec width)) := by
@@ -81,8 +77,7 @@ theorem clashTreeColouringOk_Assign {width : Nat} [NeZero width]
     (fun hw => by rw [getLive]; exact insertReadsEqUnion e _ (sptWfDelete live v hw)) Iff.rfl
 
 /-- HOL `clash_tree_colouring_ok`, `Get` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "clash_tree_colouring_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_Get {width : Nat} [NeZero width] (v : Nat) (name : WordStoreHOL) :
     clashTreeGoal (.get v name : WordLangProgHOL (BitVec width)) := by
   rintro lt f live flive livein flivein ⟨-, hw, -, hd, hi, hc⟩
@@ -92,8 +87,7 @@ theorem clashTreeColouringOk_Get {width : Nat} [NeZero width] (v : Nat) (name : 
     (fun _ => by rw [getLive]; rfl) Iff.rfl
 
 /-- HOL `clash_tree_colouring_ok`, `Set` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "clash_tree_colouring_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_Set {width : Nat} [NeZero width]
     (name : WordStoreHOL) (e : WordLangExpHOL (BitVec width)) :
     clashTreeGoal (.set name e : WordLangProgHOL (BitVec width)) := by
@@ -104,8 +98,7 @@ theorem clashTreeColouringOk_Set {width : Nat} [NeZero width]
     (fun hw => by rw [getLive]; exact insertReadsEqUnion e live hw) Iff.rfl
 
 /-- HOL `clash_tree_colouring_ok`, `Store` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "clash_tree_colouring_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_Store {width : Nat} [NeZero width]
     (e : WordLangExpHOL (BitVec width)) (v : Nat) :
     clashTreeGoal (.store e v : WordLangProgHOL (BitVec width)) := by
@@ -119,8 +112,7 @@ theorem clashTreeColouringOk_Store {width : Nat} [NeZero width]
       rw [insertReadsEqUnion e live hw]) Iff.rfl
 
 /-- HOL `clash_tree_colouring_ok`, `Raise` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "clash_tree_colouring_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_Raise {width : Nat} [NeZero width] (n : Nat) :
     clashTreeGoal (.raise n : WordLangProgHOL (BitVec width)) := by
   rintro lt f live flive livein flivein ⟨-, hw, -, hd, hi, hc⟩
@@ -130,8 +122,7 @@ theorem clashTreeColouringOk_Raise {width : Nat} [NeZero width] (n : Nat) :
     (fun _ => by rw [getLive]; rfl) Iff.rfl
 
 /-- HOL `clash_tree_colouring_ok`, `Return` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "clash_tree_colouring_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_Return {width : Nat} [NeZero width] (n : Nat) (ns : List Nat) :
     clashTreeGoal (.return n ns : WordLangProgHOL (BitVec width)) := by
   rintro lt f live flive livein flivein ⟨-, hw, -, hd, hi, hc⟩
@@ -141,8 +132,7 @@ theorem clashTreeColouringOk_Return {width : Nat} [NeZero width] (n : Nat) (ns :
     (fun _ => by rw [getLive]; rfl) Iff.rfl
 
 /-- HOL `clash_tree_colouring_ok`, `LocValue` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "clash_tree_colouring_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_LocValue {width : Nat} [NeZero width] (r l : Nat) :
     clashTreeGoal (.locValue r l : WordLangProgHOL (BitVec width)) := by
   rintro lt f live flive livein flivein ⟨-, hw, -, hd, hi, hc⟩
@@ -152,8 +142,7 @@ theorem clashTreeColouringOk_LocValue {width : Nat} [NeZero width] (r l : Nat) :
     (fun _ => by rw [getLive]; rfl) Iff.rfl
 
 /-- HOL `clash_tree_colouring_ok`, `OpCurrHeap` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "clash_tree_colouring_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_OpCurrHeap {width : Nat} [NeZero width] (b : BinOp) (dst src : Nat) :
     clashTreeGoal (.opCurrHeap b dst src : WordLangProgHOL (BitVec width)) := by
   rintro lt f live flive livein flivein ⟨-, hw, -, hd, hi, hc⟩
@@ -163,8 +152,7 @@ theorem clashTreeColouringOk_OpCurrHeap {width : Nat} [NeZero width] (b : BinOp)
     (fun _ => by rw [getLive]; rfl) Iff.rfl
 
 /-- HOL `clash_tree_colouring_ok`, `CodeBufferWrite` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "clash_tree_colouring_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_CodeBufferWrite {width : Nat} [NeZero width] (r1 r2 : Nat) :
     clashTreeGoal (.codeBufferWrite r1 r2 : WordLangProgHOL (BitVec width)) := by
   rintro lt f live flive livein flivein ⟨-, hw, -, hd, hi, hc⟩
@@ -174,8 +162,7 @@ theorem clashTreeColouringOk_CodeBufferWrite {width : Nat} [NeZero width] (r1 r2
     (fun _ => by rw [getLive]; rfl) Iff.rfl
 
 /-- HOL `clash_tree_colouring_ok`, `DataBufferWrite` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "clash_tree_colouring_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_DataBufferWrite {width : Nat} [NeZero width] (r1 r2 : Nat) :
     clashTreeGoal (.dataBufferWrite r1 r2 : WordLangProgHOL (BitVec width)) := by
   rintro lt f live flive livein flivein ⟨-, hw, -, hd, hi, hc⟩
@@ -186,8 +173,7 @@ theorem clashTreeColouringOk_DataBufferWrite {width : Nat} [NeZero width] (r1 r2
 
 /-- HOL `clash_tree_colouring_ok`, `StoreConsts` case: the deleted then reinserted
 `c` and `d` give the same well-formed tree (HOL `spt_eq_thm`). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "clash_tree_colouring_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_StoreConsts {width : Nat} [NeZero width]
     (a b c d : Nat) (ws : List (Bool × BitVec width)) :
     clashTreeGoal (.storeConsts a b c d ws : WordLangProgHOL (BitVec width)) := by

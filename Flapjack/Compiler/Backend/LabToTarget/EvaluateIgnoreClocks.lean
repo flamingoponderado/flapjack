@@ -4,8 +4,7 @@ namespace Flapjack
 
 /-- Two completed native machine runs have the same full result regardless of
 clock. This local HOL lemma uses only the two original non-TimeOut runs. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "evaluate_ignore_clocks"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateTargetIgnoreClocks {width : Nat} [NeZero width]
     {state projection : Type} {σ : Type} (mc : MachineConfig width state projection)
     (ffi : HolFfiState σ) (k k' : Nat) (ms : state)

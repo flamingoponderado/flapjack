@@ -10,8 +10,7 @@ open Flapjack.Compiler.Backend.StackLang
 open Flapjack.Compiler.Encoders.Asm
 
 /-- Literal handler argument frame; both f and f-prime gain the source slots. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "StackHandlerArgs_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def stackHandlerArgsNative {width : Nat} [NeZero width] {α β : Type}
     (perf : Bool) (dest : Sum α β) (argCount : Nat) (kf : Nat × Nat × Nat) :
     HolProg width :=
@@ -21,8 +20,7 @@ def stackHandlerArgsNative {width : Nat} [NeZero width] {α β : Type}
 
 /-- Literal handler restoration/freeing before the arbitrary native continuation.
 The two unused frame fields retain independent HOL type variables. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "PopHandler_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def popHandlerNative {width : Nat} [NeZero width] {β γ : Type}
     (perf : Bool) (kf : Nat × β × γ) (prog : HolProg width) : HolProg width :=
   .seq (.stackLoad kf.1 2)
@@ -31,8 +29,7 @@ def popHandlerNative {width : Nat} [NeZero width] {β γ : Type}
 
 /-- Literal allocation, saved handler/labels and optional perf register slots.
 Both unused frame fields remain independently polymorphic, as in HOL. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "PushHandler_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def pushHandlerNative {width : Nat} [NeZero width] {β γ : Type}
     (perf : Bool) (l1 l2 : Nat) (kf : Nat × β × γ) : HolProg width :=
   .seq (.stackAlloc (Flapjack.Compiler.Backend.WordToStack.handlerSlots perf))

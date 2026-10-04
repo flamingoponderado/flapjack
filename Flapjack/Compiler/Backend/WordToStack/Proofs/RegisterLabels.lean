@@ -9,8 +9,7 @@ open Flapjack.Compiler.Backend.StackProps
 arbitrary callback whose results have no labels. The conjunction of implications
 matches the original proved val after its explicit IMP_CONJ_THM simplification.
 No register/frame bounds or calling convention premise is added. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "get_code_labels_wReg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getCodeLabelsWReg {width : Nat} [NeZero width]
     (g : Nat → HolProg width) (register : Nat) (frame : Nat × Nat × Nat) :
     ((∀ n, getCodeLabels (g n) = ∅) →

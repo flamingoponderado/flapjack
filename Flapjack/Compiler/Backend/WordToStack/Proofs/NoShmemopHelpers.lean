@@ -8,8 +8,7 @@ open Flapjack Flapjack.Compiler.Backend.StackLang
 open Flapjack.Compiler.Backend.StackProps
 
 /-- Full source move-list preservation, with no frame or scheduler premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "wMoveAux_no_shmemop_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wMoveAuxNoShmemop {width : Nat} [NeZero width]
     (xs : List (Sum Nat Nat × Sum Nat Nat)) (kf : Nat × Nat × Nat) :
     noShmemop (wMoveAuxNative xs kf : HolProg width) = true := by
@@ -25,8 +24,7 @@ theorem wMoveAuxNoShmemop {width : Nat} [NeZero width]
       | cons next tail => simp only [wMoveAuxNative, noShmemop, single, ih, Bool.true_and]
 
 /-- Ordered loads preserve the complete continuation predicate, including false. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "wStackLoad_no_shmemop_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wStackLoadNoShmemop {width : Nat} [NeZero width]
     (loads : List (Nat × Nat)) (prog : HolProg width) :
     noShmemop (wStackLoadNative loads prog) = noShmemop prog := by
@@ -35,8 +33,7 @@ theorem wStackLoadNoShmemop {width : Nat} [NeZero width]
   | cons load rest ih => simp [wStackLoadNative, noShmemop, ih]
 
 /-- The only premise is the original pointwise register-continuation guard. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "wRegWrite1_no_shmemop_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wRegWrite1NoShmemop {width : Nat} [NeZero width]
     (prog : Nat → HolProg width) (r : Nat) (kf : Nat × Nat × Nat)
     (h : ∀ reg, noShmemop (prog reg) = true) :
@@ -44,8 +41,7 @@ theorem wRegWrite1NoShmemop {width : Nat} [NeZero width]
   by_cases reg : r / 2 < kf.1 <;> simp [wRegWrite1Native, reg, noShmemop, h]
 
 /-- Second temporary register write has the same original pointwise guard. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "wRegWrite2_no_shmemop_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wRegWrite2NoShmemop {width : Nat} [NeZero width]
     (prog : Nat → HolProg width) (r : Nat) (kf : Nat × Nat × Nat)
     (h : ∀ reg, noShmemop (prog reg) = true) :
@@ -53,8 +49,7 @@ theorem wRegWrite2NoShmemop {width : Nat} [NeZero width]
   by_cases reg : r / 2 < kf.1 <;> simp [wRegWrite2Native, reg, noShmemop, h]
 
 /-- Arbitrary source cutsets and full bitmap state; no validity premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "wLive_no_shmemop_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wLiveNoShmemop {width : Nat} [NeZero width]
     (live : Spt Unit × Spt Unit) (bs : AppList (BitVec width) × Nat)
     (kf : Nat × Nat × Nat) :
@@ -63,8 +58,7 @@ theorem wLiveNoShmemop {width : Nat} [NeZero width]
   split <;> rfl
 
 /-- All source offsets and counts preserve the full continuation predicate. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "stack_move_no_shmemop_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackMoveNoShmemop {width : Nat} [NeZero width]
     (n start offset i : Nat) (p : HolProg width) :
     noShmemop (stackMoveNative n start offset i p) = noShmemop p := by

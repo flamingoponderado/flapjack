@@ -41,8 +41,7 @@ The sole carrier translation is HOL's type-indexed `'a word`
 dimension discharged by `[NeZero width]`. All list orders, duplicate reads,
 finite-map operators, and clause guards are literal. This proof-side port does
 not replace the executed `get_clash_tree` caller yet. -/
-@[hol "cakeml/compiler/backend/word_allocScript.sml" "get_clash_tree_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def getClashTree {width : Nat} [NeZero width] :
     WordLangProgHOL (BitVec width) → List (NumSet × NumSet) → ClashTree
   | .skip, _ => .delta [] []

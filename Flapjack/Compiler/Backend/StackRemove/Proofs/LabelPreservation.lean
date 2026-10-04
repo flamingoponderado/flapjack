@@ -4,8 +4,7 @@ namespace Flapjack.Compiler.Backend.StackRemove.LabelPreservation
 open Flapjack.Compiler.Backend.StackRemove
 open Flapjack Flapjack.StackSem Flapjack.Compiler.Backend.StackLang LabelBuilders
 /-- Compilation preserves the complete continuation-label predicate on every native constructor. No register-bound premise is needed. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "get_labels_comp"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem labelsComp {width : Nat} [NeZero width] (jump : Bool)
     (bounds : BitVec width × BitVec width) (pointer : Nat) (program : HolProg width) :
     getLabelsExact (comp jump bounds pointer program) = getLabelsExact program := by
@@ -33,8 +32,7 @@ theorem labelsComp {width : Nat} [NeZero width] (jump : Bool)
         obtain ⟨handlerBody, handlerFirst, handlerSecond⟩ := handler
         simp_all [comp, getLabelsExact]
 /-- The full native code relation transports a successful source location check. Target lookup and label membership are derived, not assumed. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "code_rel_loc_check"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem codeRelLocCheck {width : Nat} [NeZero width] (jump : Bool)
     (bounds : BitVec width × BitVec width) (pointer : Nat)
     (source target : Spt (HolProg width)) (first second : Nat)

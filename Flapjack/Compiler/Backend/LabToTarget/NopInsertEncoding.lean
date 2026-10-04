@@ -36,8 +36,7 @@ private theorem labAsm_appendSkip {width : Nat} [NeZero width]
 /-- Full original reverse-accumulator preservation, retaining the one-byte NOP
 guard and every native line constructor. Word dimension is the sole representation
 translation; no extra label or length-correctness premise is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "lines_enc_with_nop_add_nop"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem linesEncWithNop_addNop {width : Nat} [NeZero width]
     (enc : HolAsm width → List (BitVec 8)) (labs : Spt (Spt Nat))
     (ffis : List HolFfiName) (pos : Nat)

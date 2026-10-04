@@ -513,8 +513,7 @@ decreasing_by
     is applied to the tagged `evaluate_io_events_mono`.  Like that theorem, it
     concerns FFI event traces only, not the numerical results of the
     floating-point instructions (whose `FPSqrt` rendering is untagged). -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_add_clock_io_events_mono"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_add_clock_io_events_mono {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (exps : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F)
       (extra : Nat),

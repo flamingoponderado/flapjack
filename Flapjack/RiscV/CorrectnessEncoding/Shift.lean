@@ -19,8 +19,6 @@ Each concrete case derives actual native Next from emitted bytes, including
 zero-count Ror and legal aliases. Inherits reals_as_rational_cuts through native
 state closure (SOUNDNESS item8). `CorrectnessEncoding.Complete`
 assembles the full encoder correctness theorem. -/
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml"
-  "riscv_encoder_correct"]
 theorem riscv_encoder_correct_shift (op : Flapjack.Shift) (rd rs1 : Nat) (right : HolRegImm 64) (s1 s2 : AsmState 64) (ms : riscv_state)
     (h : asmStep riscvTarget.config s1 (.inst (.arith (.shift op rd rs1 right))) s2 ∧
       targetStateRel riscvTarget s1 ms) :

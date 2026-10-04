@@ -5,8 +5,7 @@ open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString
 
 /-- Full original annotation conservation with its conditional prefix guard.
 Empty/all-label accumulators are admitted; no nonlabel premise is added. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "line_len_pad_section"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem lineLen_padSection_prefix {width : Nat} [NeZero width]
     (nop : List (BitVec 8))
     (xs aux : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))

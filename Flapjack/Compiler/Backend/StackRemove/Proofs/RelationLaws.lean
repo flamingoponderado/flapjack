@@ -16,10 +16,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
   StackSemStateSupport.holFmapAsFiniteSupportWitness
 
 /-- Source get_var is preserved for every register below the original bound. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "state_rel_get_var"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelGetVar {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer register : Nat)
     (source target : StackSemStateFiniteExact width C F)
@@ -30,10 +27,7 @@ theorem stateRelGetVar {width : Nat} [NeZero width] {C F : Type}
   exact (relation.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1 register hypothesis.2).symm
 
 /-- Updating both clocks to any common value preserves the full relation. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "state_rel_with_clock"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelWithClock {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer clock : Nat)
     (source target : StackSemStateFiniteExact width C F)
@@ -44,10 +38,7 @@ theorem stateRelWithClock {width : Nat} [NeZero width] {C F : Type}
   exact ⟨h0, h1, h2, h3, h4, h5, h6, h7, True.intro, h9, h10, h11, h12, h13, h14, h15, h16, h17, h18, h19, h20, h21, h22, h23, h24, h25⟩
 
 /-- The original decrement operation truncates at zero on both states. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "state_rel_IMP"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelDecClock {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer : Nat)
     (source target : StackSemStateFiniteExact width C F)
@@ -61,10 +52,7 @@ theorem stateRelDecClock {width : Nat} [NeZero width] {C F : Type}
     stateRelWithClock jump bounds pointer (source.clock - 1) source target relation
 
 /-- Complete source constant-field conclusion, including both transport equations. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "state_rel_const"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelConst {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer : Nat)
     (source target : StackSemStateFiniteExact width C F)

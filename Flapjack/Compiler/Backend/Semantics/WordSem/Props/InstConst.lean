@@ -22,8 +22,7 @@ namespace WordSemStateFiniteExact
     successful-instruction premise and the clock/FFI conclusions.  Like
     `inst_const_full`, it inherits `reals_as_rational_cuts` from `inst`; it
     establishes no cross-language numerical FP correspondence. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "inst_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem instConst {width : Nat} [NeZero width] {C F : Type}
     (i : WordLangInst (BitVec width)) (state next : WordSemStateFiniteExact width C F)
     (h : inst i state = some next) :

@@ -29,8 +29,7 @@ private theorem appendList_eq {α : Type} (left right : AppList α) :
   (appListAppend_thm left right []).1
 
 /-- Recursive constructor piece under whole-statement structural motives for its subprograms; not a literal flatten_ind case. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreSeq {width : Nat} [NeZero width]
     (tail : Bool) (first second : HolProg width) (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -76,8 +75,7 @@ theorem flattenLineOkPreSeq {width : Nat} [NeZero width]
                   trivial
             · exact hy line hSecond
 /-- Recursive constructor piece under whole-statement structural motives for its subprograms; not a literal flatten_ind case. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreLoop {width : Nat} [NeZero width]
     (tail : Bool) (body : HolProg width) (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -116,8 +114,7 @@ theorem flattenLineOkPreLoop {width : Nat} [NeZero width]
         trivial
 
 /-- Recursive constructor piece under whole-statement structural motives for its subprograms; not a literal flatten_ind case. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreIf {width : Nat} [NeZero width]
     (tail : Bool) (condition : HolCmp) (register : Nat) (right : HolRegImm width)
     (first second : HolProg width) (sectionId next : Nat)
@@ -161,8 +158,7 @@ theorem flattenLineOkPreIf {width : Nat} [NeZero width]
             grind only [lineOkPreHOL]
 
 /-- Recursive constructor piece under whole-statement structural motives for its subprograms; not a literal flatten_ind case. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreReturnedCallNone {width : Nat} [NeZero width]
     (tail : Bool) (body : HolProg width) (link returnSection returnLabel : Nat)
     (target : Sum Nat Nat) (sectionId next : Nat) (conts breaks : List Nat)
@@ -200,8 +196,7 @@ theorem flattenLineOkPreReturnedCallNone {width : Nat} [NeZero width]
       grind only [lineOkPreHOL]
 
 /-- Recursive constructor piece under whole-statement structural motives for its subprograms; not a literal flatten_ind case. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreReturnedCallSome {width : Nat} [NeZero width]
     (tail : Bool) (body : HolProg width) (link returnSection returnLabel : Nat)
     (target : Sum Nat Nat) (handlerBody : HolProg width)

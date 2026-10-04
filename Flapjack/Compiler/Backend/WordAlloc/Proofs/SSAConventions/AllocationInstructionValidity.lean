@@ -6,8 +6,7 @@ open Flapjack Flapjack.Compiler.Backend.WordAlloc Flapjack.Compiler.Encoders.Asm
 
 /-- Original Alloc instruction-validity case with the complete source
 hypotheses and actual compiler-output conclusion. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_fullInstAlloc {width : Nat} [NeZero width]
     (config : AsmConfigExact width)
     (destination : Nat) (cutsets : WordLangCutsetsHOL)
@@ -19,8 +18,7 @@ theorem ssaCcTrans_fullInstAlloc {width : Nat} [NeZero width]
 
 /-- Original Install instruction-validity case with the complete source
 hypotheses and actual compiler-output conclusion. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_fullInstInstall {width : Nat} [NeZero width]
     (config : AsmConfigExact width)
     (ptr len dptr dlen : Nat) (cutsets : WordLangCutsetsHOL)
@@ -32,8 +30,7 @@ theorem ssaCcTrans_fullInstInstall {width : Nat} [NeZero width]
 
 /-- Original FFI instruction-validity case with the complete source
 hypotheses and actual compiler-output conclusion. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_fullInstFFI {width : Nat} [NeZero width]
     (config : AsmConfigExact width)
     (index : Basis.Pure.MlString.MlString) (ptr len ptr2 len2 : Nat) (cutsets : WordLangCutsetsHOL)

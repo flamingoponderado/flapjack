@@ -46,8 +46,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C : Type} {F
 end CompileSingleCarrier
 
 /-- HOL `FST_compile_single` (`word_to_wordProofScript.sml:25-29`). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "FST_compile_single"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem FST_compile_single {width : Nat} [NeZero width] (a : Bool) (b c : Nat)
     (d : AsmConfigExact width)
     (e : (Nat × Nat × WordLangProgHOL (BitVec width)) × Option (Spt Nat)) :
@@ -127,8 +126,7 @@ locals on a returning or raising result. HOL's free `t k a c name col` are the
 leading binders; `if res = SOME Error` is decided classically, as in the
 accepted `word_alloc_correct`. The proof chains the tagged pass theorems in
 HOL's order. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_single_lem"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compile_single_lem {width : Nat} [NeZero width] {C F : Type} (t : Bool) (k a : Nat)
     (c : AsmConfigExact width) (name : Nat) (col : Option (Spt Nat)) :
     ∀ (prog : WordLangProgHOL (BitVec width)) (n : Nat) (st : WordSemStateFiniteExact width C F),

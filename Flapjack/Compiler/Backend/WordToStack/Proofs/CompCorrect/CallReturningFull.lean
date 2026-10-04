@@ -98,11 +98,7 @@ That fourth IH is vacuous here because its original guard requires ret = NONE.
 Both entry points assemble the same checked NONE/SOME handler simulations;
 this overlap is intentional specialization, not a second independent proof of
 the whole pass. No conclusion or source guard is omitted. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_correct" 5756
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectCallReturning {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (values : List Nat) (names : WordLangCutsetsHOL)
     (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)

@@ -76,10 +76,7 @@ theorem cutEnvs_eq {β : Type} {names : WordLangCutsetsHOL} {env : Spt β}
 free `c`, `names`, `k`, `f`, `f'`, `lens` and `envs` are explicit; `x ∈ domain t`
 is `sptDomain t x` and `EVEN x` is `x % 2 = 0`. The pushed-frame state is HOL's
 `push_env envs NONE s with <|locals := LN; locals_size := SOME 0|>`. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "alloc_IMP_alloc"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store,
-    StackSemStateFiniteExact.regs, StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem allocImpAlloc {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (k f f' : Nat) (c : BitVec width) (names : WordLangCutsetsHOL)
     (s s1 : WordSemStateFiniteExact width (Nat × C) F) (res : Option (WordSemResult width))
@@ -316,8 +313,7 @@ theorem allocImpAlloc {width : Nat} [NeZero width] {C F : Type}
 /-- Exact HOL `word_gc_empty_frame` (`word_to_stackProofScript.sml:2320-2332`):
 collecting under an empty frame without a handler, then popping it, is
 collecting without it. HOL's free `n` is explicit. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "word_gc_empty_frame"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordGcEmptyFrame {width : Nat} [NeZero width] {C F : Type}
     (s x y : WordSemStateFiniteExact width C F) (n : Option Nat) :
     gc { s with stack := .stackFrame n [] [] none :: s.stack } = some x ∧ popEnv x = some y →
@@ -395,10 +391,7 @@ theorem gc_stackMax {width : Nat} [NeZero width] {C F : Type}
 /-- Exact HOL `alloc_IMP_alloc2` (`word_to_stackProofScript.sml:2334-2380`). HOL's
 free `c`, `names`, `k` and `lens` are explicit; `domain t = {}` is the empty
 characteristic predicate. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "alloc_IMP_alloc2"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store,
-    StackSemStateFiniteExact.regs, StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem allocImpAlloc2 {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (k : Nat) (c : BitVec width) (names : WordLangCutsetsHOL)
     (s s1 : WordSemStateFiniteExact width (Nat × C) F) (res : Option (WordSemResult width))

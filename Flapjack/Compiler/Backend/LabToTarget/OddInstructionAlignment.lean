@@ -7,8 +7,7 @@ open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Encoders.Asm Flapjack.
 
 /-- Original proof-side classifier, using physical line length, including the
 Label length conditional. There is no executed compiler caller in HOL. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "has_odd_inst_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def hasOddInst {width : Nat} [NeZero width] :
     List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) → Prop
@@ -46,8 +45,7 @@ private theorem encWithNop_even {width : Nat} [NeZero width]
 
 /-- Full original line alignment theorem, retaining exactly encoding contract,
 full line validity, and odd physical length. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "line_ok_alignment" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem lineOk_alignment {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (pos : Nat) (line : Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -75,8 +73,7 @@ theorem lineOk_alignment {width : Nat} [NeZero width]
 
 /-- Full original whole-code alignment theorem. Oddness is detected on the
 same physical recursion traversed by all_enc_ok; no extra result premise. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "has_odd_inst_alignment" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem hasOddInst_alignment {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (pos : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))

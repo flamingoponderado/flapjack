@@ -57,10 +57,7 @@ entries contain compTop. Source nonError derives callee nonError and valid
 return dispatch. Full evaluateMono derives the outer frame-info postcondition.
 The full native evaluator inherits reals_as_rational_cuts (SOUNDNESS item 8);
 this case introduces no real rendering or HOL-to-Lean equivalence claim. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectJumpLower {width : Nat} [NeZero width] {C F : Type}
     (r1 r2 dest : Nat) (info : Spt Nat)
     (source target post : StackSemStateFiniteExact width C F)

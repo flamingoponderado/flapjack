@@ -24,10 +24,9 @@ open Flapjack.Compiler.Encoders.Asm
     mem_domain : 'a word set ; pc : 'a word ; lr : reg ; align : num ;
     be : bool ; failed : bool |>` (`cakeml/compiler/encoders/asm/asmSemScript.sml:12-23`),
     field order preserved. -/
-@[hol "cakeml/compiler/encoders/asm/asmSemScript.sml" "asm_state"
-  (words_as_type_indexed_bitvec)]
 structure AsmState (width : Nat) [NeZero width] where
   regs : Nat → BitVec width
+  /-- Compatibility field for existing state relations; integer execution never accesses it. -/
   fpRegs : Nat → BitVec 64
   mem : BitVec width → BitVec 8
   memDomain : BitVec width → Prop

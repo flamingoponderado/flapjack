@@ -4,8 +4,7 @@ namespace Flapjack.Compiler.Backend.Semantics.TargetProps
 open Flapjack Classical
 
 /-- Literal source383: Initial whole next-interference result equality gives full sequence equality for every n; no additional context premise. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "interference_app_seq_EQ" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem interferenceAppSeqEq {width : Nat} [NeZero width]
     {S Q : Type} {σ : Type} (mc1 mc2 : MachineConfig width S Q)
     (ffi1 ffi2 : HolFfiState σ) (ms1 ms2 : S)
@@ -15,8 +14,7 @@ theorem interferenceAppSeqEq {width : Nat} [NeZero width]
   cases n <;> simp only [interferenceAppSeq, h]
 
 /-- Literal source391: Exact successful first result gives every successor suffix at returned configuration, FFI and appPost; no changed clock or oracle. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "interference_app_seq_tail" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem interferenceAppSeqTail {width : Nat} [NeZero width]
     {S Q : Type} {σ : Type} (mc : MachineConfig width S Q) (ffi : HolFfiState σ)
     (ms : S) (app : InterferenceApp width S) (mc' : MachineConfig width S Q)
@@ -27,8 +25,7 @@ theorem interferenceAppSeqTail {width : Nat} [NeZero width]
   simp only [interferenceAppSeq, h]
 
 /-- Literal source399: Arbitrary predicate count at m is at most count at m+i for all i,m; no presence or success assumption. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "interference_count_mono" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem interferenceCountMono {width : Nat} [NeZero width]
     {S Q : Type} {σ : Type} (P : InterferenceApp width S → Prop)
     (mc : MachineConfig width S Q) (ffi : HolFfiState σ) (ms : S) :

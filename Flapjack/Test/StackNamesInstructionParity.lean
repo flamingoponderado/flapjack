@@ -25,16 +25,4 @@ example : instFindNameHOL names (.arith (.subOverflow 3 4 3 4) : HolInst 8) = .a
   simp [instFindNameHOL, findNameSpt, names, Flapjack.sptInsert, Flapjack.sptLookup]
 example : instFindNameHOL names (.mem .load 3 (.addr 3 255) : HolInst 8) = .mem .load 7 (.addr 7 255) := by
   simp [instFindNameHOL, findNameSpt, names, Flapjack.sptInsert, Flapjack.sptLookup]
-example : instFindNameHOL names (.fp (.fpLess 3 3 4) : HolInst 8) = .fp (.fpLess 7 3 4) := by
-  simp [instFindNameHOL, findNameSpt, names, Flapjack.sptInsert, Flapjack.sptLookup]
-example : instFindNameHOL names (.fp (.fpLessEqual 3 3 4) : HolInst 8) = .fp (.fpLessEqual 7 3 4) := by
-  simp [instFindNameHOL, findNameSpt, names, Flapjack.sptInsert, Flapjack.sptLookup]
-example : instFindNameHOL names (.fp (.fpEqual 3 3 4) : HolInst 8) = .fp (.fpEqual 7 3 4) := by
-  simp [instFindNameHOL, findNameSpt, names, Flapjack.sptInsert, Flapjack.sptLookup]
-example : instFindNameHOL names (.fp (.fpMovToReg 3 4 3) : HolInst 8) = .fp (.fpMovToReg 7 4 3) := by
-  simp [instFindNameHOL, findNameSpt, names, Flapjack.sptInsert, Flapjack.sptLookup]
-example : instFindNameHOL names (.fp (.fpMovFromReg 3 3 4) : HolInst 8) = .fp (.fpMovFromReg 3 7 4) := by
-  simp [instFindNameHOL, findNameSpt, names, Flapjack.sptInsert, Flapjack.sptLookup]
-example : instFindNameHOL names (.fp (.fpAdd 3 3 4) : HolInst 8) = .fp (.fpAdd 3 3 4) := by
-  rfl
 end Flapjack.Test.StackNamesInstructionParity

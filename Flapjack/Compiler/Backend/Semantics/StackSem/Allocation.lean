@@ -16,8 +16,7 @@ encode only the active stack, pass the original four GC arguments, decode
 against the old active stack and update exactly stack/store/regs/memory.
 This proof-side port is a prerequisite of the faithful evaluator; production
 routing/refinement is still required on the parent evaluator bead. -/
-@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "gc_def"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def gc {width : Nat} [NeZero width] {C F : Type}
     (s : StackSemStateFiniteExact width C F) : Option (StackSemStateFiniteExact width C F) :=
   if s.stack.length < s.stackSpace then none else
@@ -49,8 +48,7 @@ def hasSpace {requestWidth : Nat} {storeWidth : Nat} [NeZero requestWidth] [NeZe
 /-- Exact allocation result: GC failure returns the original input state;
 post-GC lookup/space errors retain that GC state; insufficient space emits
 Halt (Word 1) after empty_env. No extra success assumption is introduced. -/
-@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "alloc_def"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def alloc {width : Nat} [NeZero width] {C F : Type}
     (w : BitVec width) (s : StackSemStateFiniteExact width C F) :
     Option (StackSemResult width) × StackSemStateFiniteExact width C F :=

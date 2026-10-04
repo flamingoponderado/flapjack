@@ -6,8 +6,7 @@ open Flapjack Flapjack.Compiler.Backend.WordAlloc Flapjack.Compiler.Encoders.Asm
 
 /-- Original unconditional fake-sequence empty extracted labels, with arbitrary
 source list. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "fake_seq_no_labs" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fakeSeq_noLabels {width : Nat} [NeZero width]
     (names : List Nat) :
     extractLabels
@@ -19,8 +18,7 @@ theorem fakeSeq_noLabels {width : Nat} [NeZero width]
 
 /-- Original loop setup empty extracted labels with the actual producer equation as sole
 premise; no SSA map or register-bound assumptions are added. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "loop_setup_no_labs" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loopSetup_noLabels {width : Nat} [NeZero width]
     (names exitNames : Spt Unit) (ssa : Spt Nat) (na : Nat)
     (setupProg : WordLangProgHOL (BitVec width)) (ssaRefreshed : Spt Nat)
@@ -51,8 +49,7 @@ theorem loopSetup_noLabels {width : Nat} [NeZero width]
 
 /-- Original reconciliation empty-label pair conclusion,
 with the actual fake-move producer equality as the sole premise. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "fake_moves_no_labs" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fakeMoves_noLabels {width : Nat} [NeZero width]
     (prio : Option (Unit ⊕ Unit)) (names : List Nat)
     (ssaL ssaR : Spt Nat) (next : Nat)
@@ -80,8 +77,7 @@ theorem fakeMoves_noLabels {width : Nat} [NeZero width]
   exact result
 
 /-- Original unconditional reconciliation empty extracted labels. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "ssa_reconcile_no_labs" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaReconcile_noLabels {width : Nat} [NeZero width] {β : Type}
     (current target : Spt Nat) (names : Spt β) :
     extractLabels (ssaReconcile current target names : WordLangProgHOL (BitVec width)) = [] := by

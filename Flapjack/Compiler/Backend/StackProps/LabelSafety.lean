@@ -7,8 +7,7 @@ open StackLang
 /-- Whole-program referenced labels are covered by owned handlers, program
 entries zero/one, or arbitrary external entries zero/one. HOL sets remain sets;
 no finiteness or uniqueness hypothesis is imposed on the external labels. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml"
-  "stack_good_code_labels_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def stackGoodCodeLabels {width : Nat} [NeZero width]
     (program : List (Nat × HolProg width)) (externalLabels : Set Nat) : Prop :=
   ⋃₀ (getCodeLabels '' {body | body ∈ program.map Prod.snd}) ⊆
@@ -20,8 +19,7 @@ def stackGoodCodeLabels {width : Nat} [NeZero width]
 
 /-- Nonzero referenced entries must be owned handlers or program entry one.
 This is the full source predicate, with no successful evaluation premise. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml"
-  "stack_good_handler_labels_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def stackGoodHandlerLabels {width : Nat} [NeZero width]
     (program : List (Nat × HolProg width)) : Prop :=
   BackendProps.restrictNonzero

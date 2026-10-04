@@ -16,8 +16,7 @@ open Flapjack Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Encoders.Asm
 /-- Complete original compiler on faithful native programs. All configuration,
 store/register/word inputs and unchanged constructors are retained; no successful
 compilation, source safety or target evaluation premise is assumed. -/
-@[hol "cakeml/compiler/backend/stack_removeScript.sml" "comp_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def comp {width : Nat} [NeZero width] (jump : Bool) (bounds : BitVec width × BitVec width)
     (pointer : Nat) (program : HolProg width) : HolProg width :=
   match program with

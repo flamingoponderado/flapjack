@@ -29,8 +29,7 @@ open Classical in
 code with the native evaluator; any result is `NONE`, and a normal return
 yields the reduced state exactly when the original `init_prop` holds for the
 limits read from the input pointers. No successful run is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "make_init_opt_def"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def makeInitOpt {width : Nat} [NeZero width] {C F : Type}
     (generateGc : Bool) (maxHeap : Nat) (bitmaps : List (BitVec width)) (dataSpace : Nat)
     (oracle : Nat → C × List (Nat × HolProg width) × List (BitVec width))
@@ -50,8 +49,7 @@ noncomputable def makeInitOpt {width : Nat} [NeZero width] {C F : Type}
 /-- Complete original initializer precondition: entry 0 of the code is the
 initializer followed by the tail call to `start`, together with the original
 `init_code_pre` and the maximum-heap lower bound. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "init_pre_def"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def initPre {width : Nat} [NeZero width] {C F : Type}
     (generateGc : Bool) (maxHeap : Nat) (bitmaps : List (BitVec width)) (dataSpace : Nat)
     (pointer start : Nat) (s : StackSemStateFiniteExact width C F) : Prop :=
@@ -63,8 +61,7 @@ def initPre {width : Nat} [NeZero width] {C F : Type}
 present, and otherwise the literal fallback record update of `s` with all
 fifteen original fields, including the zero-word store over
 `CurrHeap :: store_list` and the compile callback through `prog_comp`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "make_init_any_def"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def makeInitAny {width : Nat} [NeZero width] {C F : Type}
     (generateGc : Bool) (maxHeap : Nat) (bitmaps : List (BitVec width)) (dataSpace : Nat)
     (oracle : Nat → C × List (Nat × HolProg width) × List (BitVec width))
@@ -97,8 +94,7 @@ noncomputable def makeInitAny {width : Nat} [NeZero width] {C F : Type}
 register bounds and stub numbering of the source code and every oracle entry,
 the literal compile-oracle and code equations, the register base, entry 1,
 the FFI save registers, the three disabled flags and the heap lower bound. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "discharge_these_def"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def dischargeThese {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (generateGc : Bool)
     (maxHeap pointer start : Nat)
@@ -121,8 +117,7 @@ def dischargeThese {width : Nat} [NeZero width] {C F : Type}
 good dimension and four existential pointers with every original register,
 header-load, buffer, unsigned-order, alignment and separated-heap conjunct.
 The heap size uses the original `w2n (-1w * ptr2 + ptr4)`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "propagate_these_def"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def propagateThese {width : Nat} [NeZero width] {C F : Type}
     (s : StackSemStateFiniteExact width C F) (bitmaps : List (BitVec width))
     (dataSpace : Nat) : Prop :=

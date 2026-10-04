@@ -8,8 +8,7 @@ open Flapjack Flapjack.Compiler.Backend.WordAlloc Flapjack.Compiler.Encoders.Asm
 /-- Original complete full SSA instruction-validity theorem. Source limit and
 setup properties discharge the recursive theorem hypotheses. Only the original
 source instruction-validity premise remains; no target property is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "full_ssa_cc_trans_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fullSsaCcTrans_fullInstOkLess {width : Nat} [NeZero width]
     (config : AsmConfigExact width) (count : Nat) (program : WordLangProgHOL (BitVec width))
     (source : fullInstOkLessExact config program = true) :

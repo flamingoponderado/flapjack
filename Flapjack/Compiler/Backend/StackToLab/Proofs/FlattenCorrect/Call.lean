@@ -265,7 +265,7 @@ theorem callPropagate {p p' : HolProg width} {t : Bool} {x : StackSemResult widt
     (hind : ∀ cs bs cs' bs' : List Nat, ∀ m m', resultView x m cs bs = resultView x m' cs' bs')
     (ph : FlattenConcl p true (some x) s2 d l' [] [] tE) :
     FlattenConcl p' t (some x) s2 n l cs bs t1 :=
-  flattenConclComposeSome run1 f1 f2 f3 f4 f5 (by rw [fcode])
+  flattenConclComposeSome run1 f1 f2 f3 f4 f5 (by rw [fcode]; exact List.prefix_refl _)
     (flattenConclResult (p' := p) (t' := true) (l' := 0) (h := ph) rfl (hind _ _ _ _ _ _))
 
 /-- The code after the return continuation of a call with an exception

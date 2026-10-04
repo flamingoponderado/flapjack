@@ -21,9 +21,7 @@ success is proved. Source and target code/FFI hosts remain independently
 arbitrary, as confirmed by the full original carrier capture. The proof uses
 the actual native recursive getVars clauses and original single-register
 transport; it adds no target-success or source-domain premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_locals_rel_get_vars"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaLocalsRelGetVars {width : Nat} [NeZero width] {C₁ F₁ C₂ F₂ : Type}
     (names : List Nat) (values : List (WordLocW width)) (next : Nat) (ssa : Spt Nat)
     (source : WordSemStateFiniteExact width C₁ F₁)

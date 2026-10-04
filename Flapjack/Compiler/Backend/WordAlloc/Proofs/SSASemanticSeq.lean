@@ -47,9 +47,7 @@ proof; the original Seq9228-9263 requires no new selector bounds or concrete
 out-of-range default. The native total opaque selectors and original helper
 side conditions remain intact; first-run NONE discharges the scheduler-swap
 non-Error guard, not an added premise. Final assembly must discharge both IHs. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_correct"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransCorrectSeq {width : Nat} [NeZero width] {C F : Type}
     (first second : WordLangProgHOL (BitVec width))
     (source target : WordSemStateFiniteExact width C F)

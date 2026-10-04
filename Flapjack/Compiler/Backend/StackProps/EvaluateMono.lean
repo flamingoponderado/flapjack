@@ -17,8 +17,7 @@ premise is actual source evaluation: errors, timeouts, final FFI and successful
 results all preserve the bitmap prefix and every original code lookup.
 The native evaluator closure inherits reals_as_rational_cuts (SOUNDNESS item 8);
 this theorem does not assert numerical FP or full compiler correspondence. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_mono"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateMono {width : Nat} [NeZero width] {C F : Type}
     (program : HolProg width) (source post : StackSemStateFiniteExact width C F)
     (result : Option (StackSemResult width))

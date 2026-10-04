@@ -8,8 +8,7 @@ open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabProps
 
 /-- Original section-local byte position: label lines consume physical bytes
 without consuming an instruction index; exhaustion is NONE. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "sec_pos_val_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def secPosVal {width : Nat} [NeZero width] (i pos : Nat)
     (lines : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) : Option Nat :=
@@ -20,8 +19,7 @@ def secPosVal {width : Nat} [NeZero width] (i pos : Nat)
     else if i = 0 then some pos
     else secPosVal (i - 1) (pos + lineLength y) ys
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "sec_pos_val_too_big" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem secPosVal_tooBig {width : Nat} [NeZero width] (i pos : Nat)
     (lines : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) :
@@ -42,8 +40,7 @@ theorem secPosVal_tooBig {width : Nat} [NeZero width] (i pos : Nat)
       apply ih
       omega
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "EVERY_is_Label_sec_pos_val" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem everyIsLabel_secPosVal {width : Nat} [NeZero width] (n pos : Nat)
     (lines : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) :
@@ -58,8 +55,7 @@ theorem everyIsLabel_secPosVal {width : Nat} [NeZero width] (n pos : Nat)
 
 /-- Original whole-code position recursion, retaining empty sections and label
 physical lengths. The termination measure only justifies the source recursion. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "pos_val_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def posVal {width : Nat} [NeZero width] (i pos : Nat)
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) : Nat :=
@@ -73,8 +69,7 @@ def posVal {width : Nat} [NeZero width] (i pos : Nat)
 termination_by code.length + (code.map (fun sec => sec.lines.length)).sum
 decreasing_by all_goals simp_wf <;> omega
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "pos_val_thm0" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem posVal_decompose {width : Nat} [NeZero width] (i pos : Nat)
     (acc : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
@@ -105,8 +100,7 @@ theorem posVal_decompose {width : Nat} [NeZero width] (i pos : Nat)
 
 /-- The original empty-code conjunct has its own polymorphic word index,
 independent of the nonempty section's word index; both are retained. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "pos_val_thm" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem posVal_sections {emptyWidth : Nat} {width : Nat} [NeZero emptyWidth] [NeZero width]
     (i pos k : Nat)
     (s : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -118,8 +112,7 @@ theorem posVal_sections {emptyWidth : Nat} {width : Nat} [NeZero emptyWidth] [Ne
       | some x => x := by
   constructor <;> exact posVal_decompose _ _ _
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "pos_val_acc" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem posVal_acc {width : Nat} [NeZero width]
     (ls : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) (n : Nat) :

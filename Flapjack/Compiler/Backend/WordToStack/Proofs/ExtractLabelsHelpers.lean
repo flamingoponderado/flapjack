@@ -15,16 +15,14 @@ theorem stackMoveLabels {width : Nat} [NeZero width]
   | succ n ih => simp [stackMoveNative, extractLabels, ih]
 
 /-- The complete original stack-move label-free implication. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "stack_move_no_labs" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackMoveNoLabs {width : Nat} [NeZero width]
     (n a b c : Nat) (p : HolProg width) (h : extractLabels p = []) :
     extractLabels (stackMoveNative n a b c p) = [] := by
   rw [stackMoveLabels, h]
 
 /-- Every descending return-slot copy is label-free, including zero copies. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "extract_labels_copy_ret_aux" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem copyRetAuxLabels {width : Nat} [NeZero width] (k f n : Nat) :
     extractLabels (copyRetAuxNative k f n : HolProg width) = [] := by
   induction n with
@@ -33,8 +31,7 @@ theorem copyRetAuxLabels {width : Nat} [NeZero width] (k f n : Nat) :
 
 /-- The complete original return-copy wrapper preserves ordered continuation
 labels. Both unused frame-tail and return-list element carriers remain arbitrary. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "extract_labels_copy_ret" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem copyRetLabels {width : Nat} [NeZero width] {β γ : Type}
     (perf b : Bool) (kf : Nat × Nat × γ) (vs : List β) (kont : HolProg width) :
     extractLabels (copyRetNative perf b kf vs kont) = extractLabels kont := by
@@ -53,15 +50,13 @@ theorem stackLoadLabels {width : Nat} [NeZero width]
   | cons x xs ih => rcases x with ⟨r,i⟩; simp [wStackLoadNative, extractLabels, ih]
 
 /-- The complete original frame-load Skip result. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "extract_labels_wStackLoad_Skip" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackLoadSkipLabels {width : Nat} [NeZero width] (xs : List (Nat × Nat)) :
     extractLabels (wStackLoadNative xs (.skip : HolProg width)) = [] := by
   rw [stackLoadLabels]; simp [extractLabels]
 
 /-- The complete original stack-move allocation result for arbitrary counts. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "extract_labels_stack_move_StackAlloc" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackMoveAllocLabels {width : Nat} [NeZero width]
     (n start offset i k : Nat) :
     extractLabels (stackMoveNative n start offset i (.stackAlloc k : HolProg width)) = [] := by

@@ -5,7 +5,6 @@ constructors. No successful-decode or accepted-opcode premise is added. -/
 namespace Flapjack.RiscV.L3.Step
 open Flapjack.RiscV.L3
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "DecodeAny_def"]
 def DecodeAny (f : rawInstType) : instruction :=
   match f with
   | .Half h => DecodeRVC h

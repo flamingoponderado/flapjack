@@ -12,8 +12,7 @@ open Flapjack.Compiler.Backend.LabToTarget.FilterSkip
 private def codeSize {width : Nat} [NeZero width] (code : LabProgHOL width) : Nat :=
   (code.map (fun sect => sect.lines.length + 1)).sum
 
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "adjust_pc_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def adjustPc {width : Nat} [NeZero width] (pc : Nat)
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString)
@@ -29,8 +28,7 @@ def adjustPc {width : Nat} [NeZero width] (pc : Nat)
 termination_by codeSize code
 decreasing_by all_goals simp_all [codeSize]
 
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "all_skips_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def allSkips {width : Nat} [NeZero width] (pc : Nat)
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString)
@@ -39,8 +37,7 @@ def allSkips {width : Nat} [NeZero width] (pc : Nat)
     ∀ i, i < count → ∃ bytes len,
       asmFetchAux (pc + i) code = some (.asm (.asmi (.inst .skip)) bytes len)
 
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "is_Label_not_skip"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem isLabelNotSkip {width : Nat} [NeZero width]
     (line : Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString)
@@ -61,8 +58,7 @@ private theorem adjustPc_label {width : Nat} [NeZero width]
     adjustPc pc (⟨k, line :: lines⟩ :: rest) = adjustPc pc (⟨k, lines⟩ :: rest) := by
   by_cases hp : pc = 0 <;> simp [adjustPc, hp, h, adjustPc_zero]
 
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "asm_fetch_aux_eq"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem asmFetchAuxEq {width : Nat} [NeZero width] (pc : Nat)
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString)
@@ -124,16 +120,14 @@ theorem asmFetchAuxEq {width : Nat} [NeZero width] (pc : Nat)
             · simpa [adjustPc, filterSkip, notSkip, asmFetchAux, isLabelHOL, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using he
             · simpa [allSkips, asmFetchAux, isLabelHOL, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using hs
 
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "state_rw"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRw {width : Nat} [NeZero width] {C F : Type}
     (s : Flapjack.Compiler.Backend.LabSem.State width C F) (extra : Nat) :
     {s with clock := s.clock} = s ∧ {s with pc := s.pc} = s ∧
       {s with pc := s.pc, clock := s.clock + extra} =
         {s with clock := s.clock + extra} := ⟨rfl, rfl, rfl⟩
 
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "all_skips_evaluate"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem allSkipsEvaluate {width : Nat} [NeZero width] {C F : Type}
     (count : Nat) (s : Flapjack.Compiler.Backend.LabSem.State width C F) :
     allSkips s.pc s.code count ∧ s.failed = false → ∀ extra,

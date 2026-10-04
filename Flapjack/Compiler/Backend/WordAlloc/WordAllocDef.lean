@@ -24,8 +24,7 @@ fallback. The sole carrier translation is HOL's type-indexed `'a word` and
 `'a asm_config` to `BitVec width` and `AsmConfigExact width`, with HOL's positive dimension
 discharged by `[NeZero width]`. This proof-side port does not replace the executed RISC-V
 word allocator yet. -/
-@[hol "cakeml/compiler/backend/word_allocScript.sml" "word_alloc_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wordAlloc {width : Nat} [NeZero width] (fc : Nat) (c : AsmConfigExact width) (alg k : Nat)
     (prog : WordLangProgHOL (BitVec width)) (col_opt : Option (Spt Nat)) :
     WordLangProgHOL (BitVec width) :=

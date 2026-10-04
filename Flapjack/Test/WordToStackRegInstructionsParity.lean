@@ -128,136 +128,70 @@ example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.mem
   apply wordToStackRegBoundInst <;> first | rfl | cbv
 
 -- rbi_1_0_fpless_guard
-example : postAllocConventionsHOL (width := 1) 4 (.inst (.fp (.fpLess 998 2 4))) = true := by cbv
--- rbi_1_0_fpless_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpLess 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_0_fplessequal_guard
-example : postAllocConventionsHOL (width := 1) 4 (.inst (.fp (.fpLessEqual 998 2 4))) = true := by cbv
--- rbi_1_0_fplessequal_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpLessEqual 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_0_fpequal_guard
-example : postAllocConventionsHOL (width := 1) 4 (.inst (.fp (.fpEqual 998 2 4))) = true := by cbv
--- rbi_1_0_fpequal_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpEqual 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_0_fpabs_guard
-example : postAllocConventionsHOL (width := 1) 4 (.inst (.fp (.fpAbs 998 2))) = true := by cbv
--- rbi_1_0_fpabs_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpAbs 998 2))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_0_fpneg_guard
-example : postAllocConventionsHOL (width := 1) 4 (.inst (.fp (.fpNeg 998 2))) = true := by cbv
--- rbi_1_0_fpneg_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpNeg 998 2))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_0_fpsqrt_guard
-example : postAllocConventionsHOL (width := 1) 4 (.inst (.fp (.fpSqrt 998 2))) = true := by cbv
--- rbi_1_0_fpsqrt_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpSqrt 998 2))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_0_fpadd_guard
-example : postAllocConventionsHOL (width := 1) 4 (.inst (.fp (.fpAdd 998 2 4))) = true := by cbv
--- rbi_1_0_fpadd_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpAdd 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_0_fpsub_guard
-example : postAllocConventionsHOL (width := 1) 4 (.inst (.fp (.fpSub 998 2 4))) = true := by cbv
--- rbi_1_0_fpsub_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpSub 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_0_fpmul_guard
-example : postAllocConventionsHOL (width := 1) 4 (.inst (.fp (.fpMul 998 2 4))) = true := by cbv
--- rbi_1_0_fpmul_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpMul 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_0_fpdiv_guard
-example : postAllocConventionsHOL (width := 1) 4 (.inst (.fp (.fpDiv 998 2 4))) = true := by cbv
--- rbi_1_0_fpdiv_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpDiv 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_0_fpfma_guard
-example : postAllocConventionsHOL (width := 1) 4 (.inst (.fp (.fpFma 998 2 4))) = true := by cbv
--- rbi_1_0_fpfma_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpFma 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_0_fpmov_guard
-example : postAllocConventionsHOL (width := 1) 4 (.inst (.fp (.fpMov 998 2))) = true := by cbv
--- rbi_1_0_fpmov_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpMov 998 2))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_0_fpmovtoreg_guard
-example : postAllocConventionsHOL (width := 1) 4 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_1_0_fpmovtoreg_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_0_fpmovfromreg_guard
-example : postAllocConventionsHOL (width := 1) 4 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_1_0_fpmovfromreg_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_0_fptoint_guard
-example : postAllocConventionsHOL (width := 1) 4 (.inst (.fp (.fpToInt 998 2))) = true := by cbv
--- rbi_1_0_fptoint_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpToInt 998 2))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_0_fpfromint_guard
-example : postAllocConventionsHOL (width := 1) 4 (.inst (.fp (.fpFromInt 998 2))) = true := by cbv
--- rbi_1_0_fpfromint_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpFromInt 998 2))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_0_fpmovtoreg1_guard
-example : postAllocConventionsHOL (width := 1) 4 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_1_0_fpmovtoreg1_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_0_fpmovfromreg1_guard
-example : postAllocConventionsHOL (width := 1) 4 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_1_0_fpmovfromreg1_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_0_fpmovtoreg32_guard
-example : postAllocConventionsHOL (width := 1) 4 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_1_0_fpmovtoreg32_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_0_fpmovfromreg32_guard
-example : postAllocConventionsHOL (width := 1) 4 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_1_0_fpmovfromreg32_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_0_fpmovtoreg80_guard
-example : postAllocConventionsHOL (width := 1) 4 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_1_0_fpmovtoreg80_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_0_fpmovfromreg80_guard
-example : postAllocConventionsHOL (width := 1) 4 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_1_0_fpmovfromreg80_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_0_share_Load_0_guard
 example : postAllocConventionsHOL (width := 1) 4 (.shareInst .load 1180591620717411303426 (.var 998)) = true := by cbv
@@ -524,136 +458,70 @@ example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.mem
   apply wordToStackRegBoundInst <;> first | rfl | cbv
 
 -- rbi_1_1_fpless_guard
-example : postAllocConventionsHOL (width := 1) 8 (.inst (.fp (.fpLess 998 2 4))) = true := by cbv
--- rbi_1_1_fpless_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpLess 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_1_fplessequal_guard
-example : postAllocConventionsHOL (width := 1) 8 (.inst (.fp (.fpLessEqual 998 2 4))) = true := by cbv
--- rbi_1_1_fplessequal_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpLessEqual 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_1_fpequal_guard
-example : postAllocConventionsHOL (width := 1) 8 (.inst (.fp (.fpEqual 998 2 4))) = true := by cbv
--- rbi_1_1_fpequal_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpEqual 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_1_fpabs_guard
-example : postAllocConventionsHOL (width := 1) 8 (.inst (.fp (.fpAbs 998 2))) = true := by cbv
--- rbi_1_1_fpabs_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpAbs 998 2))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_1_fpneg_guard
-example : postAllocConventionsHOL (width := 1) 8 (.inst (.fp (.fpNeg 998 2))) = true := by cbv
--- rbi_1_1_fpneg_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpNeg 998 2))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_1_fpsqrt_guard
-example : postAllocConventionsHOL (width := 1) 8 (.inst (.fp (.fpSqrt 998 2))) = true := by cbv
--- rbi_1_1_fpsqrt_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpSqrt 998 2))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_1_fpadd_guard
-example : postAllocConventionsHOL (width := 1) 8 (.inst (.fp (.fpAdd 998 2 4))) = true := by cbv
--- rbi_1_1_fpadd_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpAdd 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_1_fpsub_guard
-example : postAllocConventionsHOL (width := 1) 8 (.inst (.fp (.fpSub 998 2 4))) = true := by cbv
--- rbi_1_1_fpsub_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpSub 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_1_fpmul_guard
-example : postAllocConventionsHOL (width := 1) 8 (.inst (.fp (.fpMul 998 2 4))) = true := by cbv
--- rbi_1_1_fpmul_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpMul 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_1_fpdiv_guard
-example : postAllocConventionsHOL (width := 1) 8 (.inst (.fp (.fpDiv 998 2 4))) = true := by cbv
--- rbi_1_1_fpdiv_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpDiv 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_1_fpfma_guard
-example : postAllocConventionsHOL (width := 1) 8 (.inst (.fp (.fpFma 998 2 4))) = true := by cbv
--- rbi_1_1_fpfma_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpFma 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_1_fpmov_guard
-example : postAllocConventionsHOL (width := 1) 8 (.inst (.fp (.fpMov 998 2))) = true := by cbv
--- rbi_1_1_fpmov_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpMov 998 2))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_1_fpmovtoreg_guard
-example : postAllocConventionsHOL (width := 1) 8 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_1_1_fpmovtoreg_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_1_fpmovfromreg_guard
-example : postAllocConventionsHOL (width := 1) 8 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_1_1_fpmovfromreg_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_1_fptoint_guard
-example : postAllocConventionsHOL (width := 1) 8 (.inst (.fp (.fpToInt 998 2))) = true := by cbv
--- rbi_1_1_fptoint_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpToInt 998 2))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_1_fpfromint_guard
-example : postAllocConventionsHOL (width := 1) 8 (.inst (.fp (.fpFromInt 998 2))) = true := by cbv
--- rbi_1_1_fpfromint_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpFromInt 998 2))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_1_fpmovtoreg1_guard
-example : postAllocConventionsHOL (width := 1) 8 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_1_1_fpmovtoreg1_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_1_fpmovfromreg1_guard
-example : postAllocConventionsHOL (width := 1) 8 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_1_1_fpmovfromreg1_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_1_fpmovtoreg32_guard
-example : postAllocConventionsHOL (width := 1) 8 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_1_1_fpmovtoreg32_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_1_fpmovfromreg32_guard
-example : postAllocConventionsHOL (width := 1) 8 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_1_1_fpmovfromreg32_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_1_fpmovtoreg80_guard
-example : postAllocConventionsHOL (width := 1) 8 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_1_1_fpmovtoreg80_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_1_fpmovfromreg80_guard
-example : postAllocConventionsHOL (width := 1) 8 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_1_1_fpmovfromreg80_target
-example (conf : AsmConfigExact 1) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_1_1_share_Load_0_guard
 example : postAllocConventionsHOL (width := 1) 8 (.shareInst .load 1180591620717411303426 (.var 998)) = true := by cbv
@@ -920,136 +788,70 @@ example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.mem
   apply wordToStackRegBoundInst <;> first | rfl | cbv
 
 -- rbi_2_0_fpless_guard
-example : postAllocConventionsHOL (width := 2) 4 (.inst (.fp (.fpLess 998 2 4))) = true := by cbv
--- rbi_2_0_fpless_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpLess 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_0_fplessequal_guard
-example : postAllocConventionsHOL (width := 2) 4 (.inst (.fp (.fpLessEqual 998 2 4))) = true := by cbv
--- rbi_2_0_fplessequal_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpLessEqual 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_0_fpequal_guard
-example : postAllocConventionsHOL (width := 2) 4 (.inst (.fp (.fpEqual 998 2 4))) = true := by cbv
--- rbi_2_0_fpequal_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpEqual 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_0_fpabs_guard
-example : postAllocConventionsHOL (width := 2) 4 (.inst (.fp (.fpAbs 998 2))) = true := by cbv
--- rbi_2_0_fpabs_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpAbs 998 2))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_0_fpneg_guard
-example : postAllocConventionsHOL (width := 2) 4 (.inst (.fp (.fpNeg 998 2))) = true := by cbv
--- rbi_2_0_fpneg_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpNeg 998 2))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_0_fpsqrt_guard
-example : postAllocConventionsHOL (width := 2) 4 (.inst (.fp (.fpSqrt 998 2))) = true := by cbv
--- rbi_2_0_fpsqrt_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpSqrt 998 2))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_0_fpadd_guard
-example : postAllocConventionsHOL (width := 2) 4 (.inst (.fp (.fpAdd 998 2 4))) = true := by cbv
--- rbi_2_0_fpadd_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpAdd 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_0_fpsub_guard
-example : postAllocConventionsHOL (width := 2) 4 (.inst (.fp (.fpSub 998 2 4))) = true := by cbv
--- rbi_2_0_fpsub_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpSub 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_0_fpmul_guard
-example : postAllocConventionsHOL (width := 2) 4 (.inst (.fp (.fpMul 998 2 4))) = true := by cbv
--- rbi_2_0_fpmul_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpMul 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_0_fpdiv_guard
-example : postAllocConventionsHOL (width := 2) 4 (.inst (.fp (.fpDiv 998 2 4))) = true := by cbv
--- rbi_2_0_fpdiv_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpDiv 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_0_fpfma_guard
-example : postAllocConventionsHOL (width := 2) 4 (.inst (.fp (.fpFma 998 2 4))) = true := by cbv
--- rbi_2_0_fpfma_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpFma 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_0_fpmov_guard
-example : postAllocConventionsHOL (width := 2) 4 (.inst (.fp (.fpMov 998 2))) = true := by cbv
--- rbi_2_0_fpmov_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpMov 998 2))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_0_fpmovtoreg_guard
-example : postAllocConventionsHOL (width := 2) 4 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_2_0_fpmovtoreg_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_0_fpmovfromreg_guard
-example : postAllocConventionsHOL (width := 2) 4 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_2_0_fpmovfromreg_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_0_fptoint_guard
-example : postAllocConventionsHOL (width := 2) 4 (.inst (.fp (.fpToInt 998 2))) = true := by cbv
--- rbi_2_0_fptoint_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpToInt 998 2))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_0_fpfromint_guard
-example : postAllocConventionsHOL (width := 2) 4 (.inst (.fp (.fpFromInt 998 2))) = true := by cbv
--- rbi_2_0_fpfromint_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpFromInt 998 2))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_0_fpmovtoreg1_guard
-example : postAllocConventionsHOL (width := 2) 4 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_2_0_fpmovtoreg1_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_0_fpmovfromreg1_guard
-example : postAllocConventionsHOL (width := 2) 4 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_2_0_fpmovfromreg1_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_0_fpmovtoreg32_guard
-example : postAllocConventionsHOL (width := 2) 4 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_2_0_fpmovtoreg32_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_0_fpmovfromreg32_guard
-example : postAllocConventionsHOL (width := 2) 4 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_2_0_fpmovfromreg32_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_0_fpmovtoreg80_guard
-example : postAllocConventionsHOL (width := 2) 4 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_2_0_fpmovtoreg80_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_0_fpmovfromreg80_guard
-example : postAllocConventionsHOL (width := 2) 4 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_2_0_fpmovfromreg80_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_0_share_Load_0_guard
 example : postAllocConventionsHOL (width := 2) 4 (.shareInst .load 1180591620717411303426 (.var 998)) = true := by cbv
@@ -1316,136 +1118,70 @@ example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.mem
   apply wordToStackRegBoundInst <;> first | rfl | cbv
 
 -- rbi_2_1_fpless_guard
-example : postAllocConventionsHOL (width := 2) 8 (.inst (.fp (.fpLess 998 2 4))) = true := by cbv
--- rbi_2_1_fpless_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpLess 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_1_fplessequal_guard
-example : postAllocConventionsHOL (width := 2) 8 (.inst (.fp (.fpLessEqual 998 2 4))) = true := by cbv
--- rbi_2_1_fplessequal_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpLessEqual 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_1_fpequal_guard
-example : postAllocConventionsHOL (width := 2) 8 (.inst (.fp (.fpEqual 998 2 4))) = true := by cbv
--- rbi_2_1_fpequal_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpEqual 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_1_fpabs_guard
-example : postAllocConventionsHOL (width := 2) 8 (.inst (.fp (.fpAbs 998 2))) = true := by cbv
--- rbi_2_1_fpabs_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpAbs 998 2))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_1_fpneg_guard
-example : postAllocConventionsHOL (width := 2) 8 (.inst (.fp (.fpNeg 998 2))) = true := by cbv
--- rbi_2_1_fpneg_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpNeg 998 2))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_1_fpsqrt_guard
-example : postAllocConventionsHOL (width := 2) 8 (.inst (.fp (.fpSqrt 998 2))) = true := by cbv
--- rbi_2_1_fpsqrt_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpSqrt 998 2))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_1_fpadd_guard
-example : postAllocConventionsHOL (width := 2) 8 (.inst (.fp (.fpAdd 998 2 4))) = true := by cbv
--- rbi_2_1_fpadd_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpAdd 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_1_fpsub_guard
-example : postAllocConventionsHOL (width := 2) 8 (.inst (.fp (.fpSub 998 2 4))) = true := by cbv
--- rbi_2_1_fpsub_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpSub 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_1_fpmul_guard
-example : postAllocConventionsHOL (width := 2) 8 (.inst (.fp (.fpMul 998 2 4))) = true := by cbv
--- rbi_2_1_fpmul_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpMul 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_1_fpdiv_guard
-example : postAllocConventionsHOL (width := 2) 8 (.inst (.fp (.fpDiv 998 2 4))) = true := by cbv
--- rbi_2_1_fpdiv_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpDiv 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_1_fpfma_guard
-example : postAllocConventionsHOL (width := 2) 8 (.inst (.fp (.fpFma 998 2 4))) = true := by cbv
--- rbi_2_1_fpfma_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpFma 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_1_fpmov_guard
-example : postAllocConventionsHOL (width := 2) 8 (.inst (.fp (.fpMov 998 2))) = true := by cbv
--- rbi_2_1_fpmov_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpMov 998 2))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_1_fpmovtoreg_guard
-example : postAllocConventionsHOL (width := 2) 8 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_2_1_fpmovtoreg_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_1_fpmovfromreg_guard
-example : postAllocConventionsHOL (width := 2) 8 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_2_1_fpmovfromreg_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_1_fptoint_guard
-example : postAllocConventionsHOL (width := 2) 8 (.inst (.fp (.fpToInt 998 2))) = true := by cbv
--- rbi_2_1_fptoint_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpToInt 998 2))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_1_fpfromint_guard
-example : postAllocConventionsHOL (width := 2) 8 (.inst (.fp (.fpFromInt 998 2))) = true := by cbv
--- rbi_2_1_fpfromint_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpFromInt 998 2))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_1_fpmovtoreg1_guard
-example : postAllocConventionsHOL (width := 2) 8 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_2_1_fpmovtoreg1_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_1_fpmovfromreg1_guard
-example : postAllocConventionsHOL (width := 2) 8 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_2_1_fpmovfromreg1_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_1_fpmovtoreg32_guard
-example : postAllocConventionsHOL (width := 2) 8 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_2_1_fpmovtoreg32_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_1_fpmovfromreg32_guard
-example : postAllocConventionsHOL (width := 2) 8 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_2_1_fpmovfromreg32_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_1_fpmovtoreg80_guard
-example : postAllocConventionsHOL (width := 2) 8 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_2_1_fpmovtoreg80_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_1_fpmovfromreg80_guard
-example : postAllocConventionsHOL (width := 2) 8 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_2_1_fpmovfromreg80_target
-example (conf : AsmConfigExact 2) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_2_1_share_Load_0_guard
 example : postAllocConventionsHOL (width := 2) 8 (.shareInst .load 1180591620717411303426 (.var 998)) = true := by cbv
@@ -1712,136 +1448,70 @@ example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.mem
   apply wordToStackRegBoundInst <;> first | rfl | cbv
 
 -- rbi_8_0_fpless_guard
-example : postAllocConventionsHOL (width := 8) 4 (.inst (.fp (.fpLess 998 2 4))) = true := by cbv
--- rbi_8_0_fpless_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpLess 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_0_fplessequal_guard
-example : postAllocConventionsHOL (width := 8) 4 (.inst (.fp (.fpLessEqual 998 2 4))) = true := by cbv
--- rbi_8_0_fplessequal_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpLessEqual 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_0_fpequal_guard
-example : postAllocConventionsHOL (width := 8) 4 (.inst (.fp (.fpEqual 998 2 4))) = true := by cbv
--- rbi_8_0_fpequal_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpEqual 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_0_fpabs_guard
-example : postAllocConventionsHOL (width := 8) 4 (.inst (.fp (.fpAbs 998 2))) = true := by cbv
--- rbi_8_0_fpabs_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpAbs 998 2))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_0_fpneg_guard
-example : postAllocConventionsHOL (width := 8) 4 (.inst (.fp (.fpNeg 998 2))) = true := by cbv
--- rbi_8_0_fpneg_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpNeg 998 2))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_0_fpsqrt_guard
-example : postAllocConventionsHOL (width := 8) 4 (.inst (.fp (.fpSqrt 998 2))) = true := by cbv
--- rbi_8_0_fpsqrt_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpSqrt 998 2))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_0_fpadd_guard
-example : postAllocConventionsHOL (width := 8) 4 (.inst (.fp (.fpAdd 998 2 4))) = true := by cbv
--- rbi_8_0_fpadd_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpAdd 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_0_fpsub_guard
-example : postAllocConventionsHOL (width := 8) 4 (.inst (.fp (.fpSub 998 2 4))) = true := by cbv
--- rbi_8_0_fpsub_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpSub 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_0_fpmul_guard
-example : postAllocConventionsHOL (width := 8) 4 (.inst (.fp (.fpMul 998 2 4))) = true := by cbv
--- rbi_8_0_fpmul_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpMul 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_0_fpdiv_guard
-example : postAllocConventionsHOL (width := 8) 4 (.inst (.fp (.fpDiv 998 2 4))) = true := by cbv
--- rbi_8_0_fpdiv_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpDiv 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_0_fpfma_guard
-example : postAllocConventionsHOL (width := 8) 4 (.inst (.fp (.fpFma 998 2 4))) = true := by cbv
--- rbi_8_0_fpfma_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpFma 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_0_fpmov_guard
-example : postAllocConventionsHOL (width := 8) 4 (.inst (.fp (.fpMov 998 2))) = true := by cbv
--- rbi_8_0_fpmov_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpMov 998 2))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_0_fpmovtoreg_guard
-example : postAllocConventionsHOL (width := 8) 4 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_8_0_fpmovtoreg_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_0_fpmovfromreg_guard
-example : postAllocConventionsHOL (width := 8) 4 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_8_0_fpmovfromreg_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_0_fptoint_guard
-example : postAllocConventionsHOL (width := 8) 4 (.inst (.fp (.fpToInt 998 2))) = true := by cbv
--- rbi_8_0_fptoint_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpToInt 998 2))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_0_fpfromint_guard
-example : postAllocConventionsHOL (width := 8) 4 (.inst (.fp (.fpFromInt 998 2))) = true := by cbv
--- rbi_8_0_fpfromint_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpFromInt 998 2))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_0_fpmovtoreg1_guard
-example : postAllocConventionsHOL (width := 8) 4 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_8_0_fpmovtoreg1_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_0_fpmovfromreg1_guard
-example : postAllocConventionsHOL (width := 8) 4 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_8_0_fpmovfromreg1_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_0_fpmovtoreg32_guard
-example : postAllocConventionsHOL (width := 8) 4 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_8_0_fpmovtoreg32_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_0_fpmovfromreg32_guard
-example : postAllocConventionsHOL (width := 8) 4 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_8_0_fpmovfromreg32_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_0_fpmovtoreg80_guard
-example : postAllocConventionsHOL (width := 8) 4 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_8_0_fpmovtoreg80_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_0_fpmovfromreg80_guard
-example : postAllocConventionsHOL (width := 8) 4 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_8_0_fpmovfromreg80_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_0_share_Load_0_guard
 example : postAllocConventionsHOL (width := 8) 4 (.shareInst .load 1180591620717411303426 (.var 998)) = true := by cbv
@@ -2108,136 +1778,70 @@ example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.mem
   apply wordToStackRegBoundInst <;> first | rfl | cbv
 
 -- rbi_8_1_fpless_guard
-example : postAllocConventionsHOL (width := 8) 8 (.inst (.fp (.fpLess 998 2 4))) = true := by cbv
--- rbi_8_1_fpless_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpLess 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_1_fplessequal_guard
-example : postAllocConventionsHOL (width := 8) 8 (.inst (.fp (.fpLessEqual 998 2 4))) = true := by cbv
--- rbi_8_1_fplessequal_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpLessEqual 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_1_fpequal_guard
-example : postAllocConventionsHOL (width := 8) 8 (.inst (.fp (.fpEqual 998 2 4))) = true := by cbv
--- rbi_8_1_fpequal_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpEqual 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_1_fpabs_guard
-example : postAllocConventionsHOL (width := 8) 8 (.inst (.fp (.fpAbs 998 2))) = true := by cbv
--- rbi_8_1_fpabs_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpAbs 998 2))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_1_fpneg_guard
-example : postAllocConventionsHOL (width := 8) 8 (.inst (.fp (.fpNeg 998 2))) = true := by cbv
--- rbi_8_1_fpneg_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpNeg 998 2))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_1_fpsqrt_guard
-example : postAllocConventionsHOL (width := 8) 8 (.inst (.fp (.fpSqrt 998 2))) = true := by cbv
--- rbi_8_1_fpsqrt_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpSqrt 998 2))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_1_fpadd_guard
-example : postAllocConventionsHOL (width := 8) 8 (.inst (.fp (.fpAdd 998 2 4))) = true := by cbv
--- rbi_8_1_fpadd_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpAdd 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_1_fpsub_guard
-example : postAllocConventionsHOL (width := 8) 8 (.inst (.fp (.fpSub 998 2 4))) = true := by cbv
--- rbi_8_1_fpsub_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpSub 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_1_fpmul_guard
-example : postAllocConventionsHOL (width := 8) 8 (.inst (.fp (.fpMul 998 2 4))) = true := by cbv
--- rbi_8_1_fpmul_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpMul 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_1_fpdiv_guard
-example : postAllocConventionsHOL (width := 8) 8 (.inst (.fp (.fpDiv 998 2 4))) = true := by cbv
--- rbi_8_1_fpdiv_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpDiv 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_1_fpfma_guard
-example : postAllocConventionsHOL (width := 8) 8 (.inst (.fp (.fpFma 998 2 4))) = true := by cbv
--- rbi_8_1_fpfma_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpFma 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_1_fpmov_guard
-example : postAllocConventionsHOL (width := 8) 8 (.inst (.fp (.fpMov 998 2))) = true := by cbv
--- rbi_8_1_fpmov_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpMov 998 2))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_1_fpmovtoreg_guard
-example : postAllocConventionsHOL (width := 8) 8 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_8_1_fpmovtoreg_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_1_fpmovfromreg_guard
-example : postAllocConventionsHOL (width := 8) 8 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_8_1_fpmovfromreg_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_1_fptoint_guard
-example : postAllocConventionsHOL (width := 8) 8 (.inst (.fp (.fpToInt 998 2))) = true := by cbv
--- rbi_8_1_fptoint_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpToInt 998 2))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_1_fpfromint_guard
-example : postAllocConventionsHOL (width := 8) 8 (.inst (.fp (.fpFromInt 998 2))) = true := by cbv
--- rbi_8_1_fpfromint_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpFromInt 998 2))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_1_fpmovtoreg1_guard
-example : postAllocConventionsHOL (width := 8) 8 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_8_1_fpmovtoreg1_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_1_fpmovfromreg1_guard
-example : postAllocConventionsHOL (width := 8) 8 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_8_1_fpmovfromreg1_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_1_fpmovtoreg32_guard
-example : postAllocConventionsHOL (width := 8) 8 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_8_1_fpmovtoreg32_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_1_fpmovfromreg32_guard
-example : postAllocConventionsHOL (width := 8) 8 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_8_1_fpmovfromreg32_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_1_fpmovtoreg80_guard
-example : postAllocConventionsHOL (width := 8) 8 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_8_1_fpmovtoreg80_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_1_fpmovfromreg80_guard
-example : postAllocConventionsHOL (width := 8) 8 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_8_1_fpmovfromreg80_target
-example (conf : AsmConfigExact 8) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_8_1_share_Load_0_guard
 example : postAllocConventionsHOL (width := 8) 8 (.shareInst .load 1180591620717411303426 (.var 998)) = true := by cbv
@@ -2504,136 +2108,70 @@ example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.me
   apply wordToStackRegBoundInst <;> first | rfl | cbv
 
 -- rbi_64_0_fpless_guard
-example : postAllocConventionsHOL (width := 64) 4 (.inst (.fp (.fpLess 998 2 4))) = true := by cbv
--- rbi_64_0_fpless_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpLess 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_0_fplessequal_guard
-example : postAllocConventionsHOL (width := 64) 4 (.inst (.fp (.fpLessEqual 998 2 4))) = true := by cbv
--- rbi_64_0_fplessequal_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpLessEqual 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_0_fpequal_guard
-example : postAllocConventionsHOL (width := 64) 4 (.inst (.fp (.fpEqual 998 2 4))) = true := by cbv
--- rbi_64_0_fpequal_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpEqual 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_0_fpabs_guard
-example : postAllocConventionsHOL (width := 64) 4 (.inst (.fp (.fpAbs 998 2))) = true := by cbv
--- rbi_64_0_fpabs_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpAbs 998 2))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_0_fpneg_guard
-example : postAllocConventionsHOL (width := 64) 4 (.inst (.fp (.fpNeg 998 2))) = true := by cbv
--- rbi_64_0_fpneg_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpNeg 998 2))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_0_fpsqrt_guard
-example : postAllocConventionsHOL (width := 64) 4 (.inst (.fp (.fpSqrt 998 2))) = true := by cbv
--- rbi_64_0_fpsqrt_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpSqrt 998 2))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_0_fpadd_guard
-example : postAllocConventionsHOL (width := 64) 4 (.inst (.fp (.fpAdd 998 2 4))) = true := by cbv
--- rbi_64_0_fpadd_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpAdd 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_0_fpsub_guard
-example : postAllocConventionsHOL (width := 64) 4 (.inst (.fp (.fpSub 998 2 4))) = true := by cbv
--- rbi_64_0_fpsub_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpSub 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_0_fpmul_guard
-example : postAllocConventionsHOL (width := 64) 4 (.inst (.fp (.fpMul 998 2 4))) = true := by cbv
--- rbi_64_0_fpmul_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpMul 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_0_fpdiv_guard
-example : postAllocConventionsHOL (width := 64) 4 (.inst (.fp (.fpDiv 998 2 4))) = true := by cbv
--- rbi_64_0_fpdiv_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpDiv 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_0_fpfma_guard
-example : postAllocConventionsHOL (width := 64) 4 (.inst (.fp (.fpFma 998 2 4))) = true := by cbv
--- rbi_64_0_fpfma_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpFma 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_0_fpmov_guard
-example : postAllocConventionsHOL (width := 64) 4 (.inst (.fp (.fpMov 998 2))) = true := by cbv
--- rbi_64_0_fpmov_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpMov 998 2))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_0_fpmovtoreg_guard
-example : postAllocConventionsHOL (width := 64) 4 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_64_0_fpmovtoreg_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_0_fpmovfromreg_guard
-example : postAllocConventionsHOL (width := 64) 4 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_64_0_fpmovfromreg_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_0_fptoint_guard
-example : postAllocConventionsHOL (width := 64) 4 (.inst (.fp (.fpToInt 998 2))) = true := by cbv
--- rbi_64_0_fptoint_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpToInt 998 2))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_0_fpfromint_guard
-example : postAllocConventionsHOL (width := 64) 4 (.inst (.fp (.fpFromInt 998 2))) = true := by cbv
--- rbi_64_0_fpfromint_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpFromInt 998 2))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_0_fpmovtoreg1_guard
-example : postAllocConventionsHOL (width := 64) 4 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_64_0_fpmovtoreg1_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_0_fpmovfromreg1_guard
-example : postAllocConventionsHOL (width := 64) 4 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_64_0_fpmovfromreg1_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_0_fpmovtoreg32_guard
-example : postAllocConventionsHOL (width := 64) 4 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_64_0_fpmovtoreg32_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_0_fpmovfromreg32_guard
-example : postAllocConventionsHOL (width := 64) 4 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_64_0_fpmovfromreg32_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_0_fpmovtoreg80_guard
-example : postAllocConventionsHOL (width := 64) 4 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_64_0_fpmovtoreg80_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_0_fpmovfromreg80_guard
-example : postAllocConventionsHOL (width := 64) 4 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_64_0_fpmovfromreg80_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_0_share_Load_0_guard
 example : postAllocConventionsHOL (width := 64) 4 (.shareInst .load 1180591620717411303426 (.var 998)) = true := by cbv
@@ -2900,136 +2438,70 @@ example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.me
   apply wordToStackRegBoundInst <;> first | rfl | cbv
 
 -- rbi_64_1_fpless_guard
-example : postAllocConventionsHOL (width := 64) 8 (.inst (.fp (.fpLess 998 2 4))) = true := by cbv
--- rbi_64_1_fpless_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpLess 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_1_fplessequal_guard
-example : postAllocConventionsHOL (width := 64) 8 (.inst (.fp (.fpLessEqual 998 2 4))) = true := by cbv
--- rbi_64_1_fplessequal_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpLessEqual 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_1_fpequal_guard
-example : postAllocConventionsHOL (width := 64) 8 (.inst (.fp (.fpEqual 998 2 4))) = true := by cbv
--- rbi_64_1_fpequal_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpEqual 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_1_fpabs_guard
-example : postAllocConventionsHOL (width := 64) 8 (.inst (.fp (.fpAbs 998 2))) = true := by cbv
--- rbi_64_1_fpabs_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpAbs 998 2))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_1_fpneg_guard
-example : postAllocConventionsHOL (width := 64) 8 (.inst (.fp (.fpNeg 998 2))) = true := by cbv
--- rbi_64_1_fpneg_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpNeg 998 2))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_1_fpsqrt_guard
-example : postAllocConventionsHOL (width := 64) 8 (.inst (.fp (.fpSqrt 998 2))) = true := by cbv
--- rbi_64_1_fpsqrt_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpSqrt 998 2))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_1_fpadd_guard
-example : postAllocConventionsHOL (width := 64) 8 (.inst (.fp (.fpAdd 998 2 4))) = true := by cbv
--- rbi_64_1_fpadd_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpAdd 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_1_fpsub_guard
-example : postAllocConventionsHOL (width := 64) 8 (.inst (.fp (.fpSub 998 2 4))) = true := by cbv
--- rbi_64_1_fpsub_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpSub 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_1_fpmul_guard
-example : postAllocConventionsHOL (width := 64) 8 (.inst (.fp (.fpMul 998 2 4))) = true := by cbv
--- rbi_64_1_fpmul_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpMul 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_1_fpdiv_guard
-example : postAllocConventionsHOL (width := 64) 8 (.inst (.fp (.fpDiv 998 2 4))) = true := by cbv
--- rbi_64_1_fpdiv_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpDiv 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_1_fpfma_guard
-example : postAllocConventionsHOL (width := 64) 8 (.inst (.fp (.fpFma 998 2 4))) = true := by cbv
--- rbi_64_1_fpfma_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpFma 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_1_fpmov_guard
-example : postAllocConventionsHOL (width := 64) 8 (.inst (.fp (.fpMov 998 2))) = true := by cbv
--- rbi_64_1_fpmov_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpMov 998 2))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_1_fpmovtoreg_guard
-example : postAllocConventionsHOL (width := 64) 8 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_64_1_fpmovtoreg_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_1_fpmovfromreg_guard
-example : postAllocConventionsHOL (width := 64) 8 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_64_1_fpmovfromreg_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_1_fptoint_guard
-example : postAllocConventionsHOL (width := 64) 8 (.inst (.fp (.fpToInt 998 2))) = true := by cbv
--- rbi_64_1_fptoint_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpToInt 998 2))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_1_fpfromint_guard
-example : postAllocConventionsHOL (width := 64) 8 (.inst (.fp (.fpFromInt 998 2))) = true := by cbv
--- rbi_64_1_fpfromint_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpFromInt 998 2))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_1_fpmovtoreg1_guard
-example : postAllocConventionsHOL (width := 64) 8 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_64_1_fpmovtoreg1_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_1_fpmovfromreg1_guard
-example : postAllocConventionsHOL (width := 64) 8 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_64_1_fpmovfromreg1_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_1_fpmovtoreg32_guard
-example : postAllocConventionsHOL (width := 64) 8 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_64_1_fpmovtoreg32_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_1_fpmovfromreg32_guard
-example : postAllocConventionsHOL (width := 64) 8 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_64_1_fpmovfromreg32_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_1_fpmovtoreg80_guard
-example : postAllocConventionsHOL (width := 64) 8 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_64_1_fpmovtoreg80_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_1_fpmovfromreg80_guard
-example : postAllocConventionsHOL (width := 64) 8 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_64_1_fpmovfromreg80_target
-example (conf : AsmConfigExact 64) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_64_1_share_Load_0_guard
 example : postAllocConventionsHOL (width := 64) 8 (.shareInst .load 1180591620717411303426 (.var 998)) = true := by cbv
@@ -3296,136 +2768,70 @@ example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.me
   apply wordToStackRegBoundInst <;> first | rfl | cbv
 
 -- rbi_80_0_fpless_guard
-example : postAllocConventionsHOL (width := 80) 4 (.inst (.fp (.fpLess 998 2 4))) = true := by cbv
--- rbi_80_0_fpless_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpLess 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_0_fplessequal_guard
-example : postAllocConventionsHOL (width := 80) 4 (.inst (.fp (.fpLessEqual 998 2 4))) = true := by cbv
--- rbi_80_0_fplessequal_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpLessEqual 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_0_fpequal_guard
-example : postAllocConventionsHOL (width := 80) 4 (.inst (.fp (.fpEqual 998 2 4))) = true := by cbv
--- rbi_80_0_fpequal_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpEqual 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_0_fpabs_guard
-example : postAllocConventionsHOL (width := 80) 4 (.inst (.fp (.fpAbs 998 2))) = true := by cbv
--- rbi_80_0_fpabs_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpAbs 998 2))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_0_fpneg_guard
-example : postAllocConventionsHOL (width := 80) 4 (.inst (.fp (.fpNeg 998 2))) = true := by cbv
--- rbi_80_0_fpneg_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpNeg 998 2))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_0_fpsqrt_guard
-example : postAllocConventionsHOL (width := 80) 4 (.inst (.fp (.fpSqrt 998 2))) = true := by cbv
--- rbi_80_0_fpsqrt_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpSqrt 998 2))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_0_fpadd_guard
-example : postAllocConventionsHOL (width := 80) 4 (.inst (.fp (.fpAdd 998 2 4))) = true := by cbv
--- rbi_80_0_fpadd_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpAdd 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_0_fpsub_guard
-example : postAllocConventionsHOL (width := 80) 4 (.inst (.fp (.fpSub 998 2 4))) = true := by cbv
--- rbi_80_0_fpsub_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpSub 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_0_fpmul_guard
-example : postAllocConventionsHOL (width := 80) 4 (.inst (.fp (.fpMul 998 2 4))) = true := by cbv
--- rbi_80_0_fpmul_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpMul 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_0_fpdiv_guard
-example : postAllocConventionsHOL (width := 80) 4 (.inst (.fp (.fpDiv 998 2 4))) = true := by cbv
--- rbi_80_0_fpdiv_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpDiv 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_0_fpfma_guard
-example : postAllocConventionsHOL (width := 80) 4 (.inst (.fp (.fpFma 998 2 4))) = true := by cbv
--- rbi_80_0_fpfma_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpFma 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_0_fpmov_guard
-example : postAllocConventionsHOL (width := 80) 4 (.inst (.fp (.fpMov 998 2))) = true := by cbv
--- rbi_80_0_fpmov_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpMov 998 2))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_0_fpmovtoreg_guard
-example : postAllocConventionsHOL (width := 80) 4 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_80_0_fpmovtoreg_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_0_fpmovfromreg_guard
-example : postAllocConventionsHOL (width := 80) 4 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_80_0_fpmovfromreg_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_0_fptoint_guard
-example : postAllocConventionsHOL (width := 80) 4 (.inst (.fp (.fpToInt 998 2))) = true := by cbv
--- rbi_80_0_fptoint_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpToInt 998 2))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_0_fpfromint_guard
-example : postAllocConventionsHOL (width := 80) 4 (.inst (.fp (.fpFromInt 998 2))) = true := by cbv
--- rbi_80_0_fpfromint_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpFromInt 998 2))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_0_fpmovtoreg1_guard
-example : postAllocConventionsHOL (width := 80) 4 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_80_0_fpmovtoreg1_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_0_fpmovfromreg1_guard
-example : postAllocConventionsHOL (width := 80) 4 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_80_0_fpmovfromreg1_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_0_fpmovtoreg32_guard
-example : postAllocConventionsHOL (width := 80) 4 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_80_0_fpmovtoreg32_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_0_fpmovfromreg32_guard
-example : postAllocConventionsHOL (width := 80) 4 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_80_0_fpmovfromreg32_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_0_fpmovtoreg80_guard
-example : postAllocConventionsHOL (width := 80) 4 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_80_0_fpmovtoreg80_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_0_fpmovfromreg80_guard
-example : postAllocConventionsHOL (width := 80) 4 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_80_0_fpmovfromreg80_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (4,7,9)).1 6 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_0_share_Load_0_guard
 example : postAllocConventionsHOL (width := 80) 4 (.shareInst .load 1180591620717411303426 (.var 998)) = true := by cbv
@@ -3692,136 +3098,70 @@ example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.me
   apply wordToStackRegBoundInst <;> first | rfl | cbv
 
 -- rbi_80_1_fpless_guard
-example : postAllocConventionsHOL (width := 80) 8 (.inst (.fp (.fpLess 998 2 4))) = true := by cbv
--- rbi_80_1_fpless_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpLess 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_1_fplessequal_guard
-example : postAllocConventionsHOL (width := 80) 8 (.inst (.fp (.fpLessEqual 998 2 4))) = true := by cbv
--- rbi_80_1_fplessequal_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpLessEqual 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_1_fpequal_guard
-example : postAllocConventionsHOL (width := 80) 8 (.inst (.fp (.fpEqual 998 2 4))) = true := by cbv
--- rbi_80_1_fpequal_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpEqual 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_1_fpabs_guard
-example : postAllocConventionsHOL (width := 80) 8 (.inst (.fp (.fpAbs 998 2))) = true := by cbv
--- rbi_80_1_fpabs_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpAbs 998 2))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_1_fpneg_guard
-example : postAllocConventionsHOL (width := 80) 8 (.inst (.fp (.fpNeg 998 2))) = true := by cbv
--- rbi_80_1_fpneg_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpNeg 998 2))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_1_fpsqrt_guard
-example : postAllocConventionsHOL (width := 80) 8 (.inst (.fp (.fpSqrt 998 2))) = true := by cbv
--- rbi_80_1_fpsqrt_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpSqrt 998 2))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_1_fpadd_guard
-example : postAllocConventionsHOL (width := 80) 8 (.inst (.fp (.fpAdd 998 2 4))) = true := by cbv
--- rbi_80_1_fpadd_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpAdd 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_1_fpsub_guard
-example : postAllocConventionsHOL (width := 80) 8 (.inst (.fp (.fpSub 998 2 4))) = true := by cbv
--- rbi_80_1_fpsub_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpSub 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_1_fpmul_guard
-example : postAllocConventionsHOL (width := 80) 8 (.inst (.fp (.fpMul 998 2 4))) = true := by cbv
--- rbi_80_1_fpmul_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpMul 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_1_fpdiv_guard
-example : postAllocConventionsHOL (width := 80) 8 (.inst (.fp (.fpDiv 998 2 4))) = true := by cbv
--- rbi_80_1_fpdiv_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpDiv 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_1_fpfma_guard
-example : postAllocConventionsHOL (width := 80) 8 (.inst (.fp (.fpFma 998 2 4))) = true := by cbv
--- rbi_80_1_fpfma_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpFma 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_1_fpmov_guard
-example : postAllocConventionsHOL (width := 80) 8 (.inst (.fp (.fpMov 998 2))) = true := by cbv
--- rbi_80_1_fpmov_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpMov 998 2))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_1_fpmovtoreg_guard
-example : postAllocConventionsHOL (width := 80) 8 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_80_1_fpmovtoreg_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_1_fpmovfromreg_guard
-example : postAllocConventionsHOL (width := 80) 8 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_80_1_fpmovfromreg_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_1_fptoint_guard
-example : postAllocConventionsHOL (width := 80) 8 (.inst (.fp (.fpToInt 998 2))) = true := by cbv
--- rbi_80_1_fptoint_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpToInt 998 2))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_1_fpfromint_guard
-example : postAllocConventionsHOL (width := 80) 8 (.inst (.fp (.fpFromInt 998 2))) = true := by cbv
--- rbi_80_1_fpfromint_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpFromInt 998 2))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_1_fpmovtoreg1_guard
-example : postAllocConventionsHOL (width := 80) 8 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_80_1_fpmovtoreg1_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_1_fpmovfromreg1_guard
-example : postAllocConventionsHOL (width := 80) 8 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_80_1_fpmovfromreg1_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_1_fpmovtoreg32_guard
-example : postAllocConventionsHOL (width := 80) 8 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_80_1_fpmovtoreg32_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_1_fpmovfromreg32_guard
-example : postAllocConventionsHOL (width := 80) 8 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_80_1_fpmovfromreg32_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_1_fpmovtoreg80_guard
-example : postAllocConventionsHOL (width := 80) 8 (.inst (.fp (.fpMovToReg 998 2 4))) = true := by cbv
--- rbi_80_1_fpmovtoreg80_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpMovToReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_1_fpmovfromreg80_guard
-example : postAllocConventionsHOL (width := 80) 8 (.inst (.fp (.fpMovFromReg 998 2 4))) = true := by cbv
--- rbi_80_1_fpmovfromreg80_target
-example (conf : AsmConfigExact 80) : regBound (compNative conf false (.inst (.fp (.fpMovFromReg 998 2 4))) (.append (.list [4]) (.list [7]),17) (8,7,9)).1 10 := by
-  apply wordToStackRegBoundInst <;> first | rfl | cbv
+
 
 -- rbi_80_1_share_Load_0_guard
 example : postAllocConventionsHOL (width := 80) 8 (.shareInst .load 1180591620717411303426 (.var 998)) = true := by cbv

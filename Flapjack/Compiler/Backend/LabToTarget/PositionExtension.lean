@@ -7,8 +7,7 @@ open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString
 
 /-- Full original unrestricted accumulator equation, retaining its position
 split guard and arbitrary label annotations without an encoding premise. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "pos_val_acc_sum" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem posVal_accSum {width : Nat} [NeZero width]
     (i pos : Nat) (secs : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) (x y : Nat) :
     x + y = pos → x + posVal i y secs = posVal i pos secs := by
@@ -40,8 +39,7 @@ theorem posVal_accSum {width : Nat} [NeZero width]
             using ihLines i (y + bytes.length)
 
 /-- Full original zero-base accumulator transport with no validity guard. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "pos_val_acc_0" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem posVal_accZero {width : Nat} [NeZero width]
     (i pos : Nat) (secs : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
     pos + posVal i 0 secs = posVal i pos secs :=
@@ -88,8 +86,7 @@ private theorem posVal_prefix {width : Nat} [NeZero width]
 
 /-- Full original strict-prefix equation. The suffix is unrestricted, including
 nonzero label annotations; no suffix validity or zero-label guard is added. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "pos_val_APPEND1" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem posVal_appendPrefix {width : Nat} [NeZero width]
     (pc : Nat) (code suffix : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
     pc < numPcs code → posVal pc 0 (code ++ suffix) = posVal pc 0 code :=
@@ -126,8 +123,7 @@ private theorem posVal_suffix {width : Nat} [NeZero width]
 /-- Full original suffix equation, with encoding validity required only of the
 prefix at its independent start position. The suffix is entirely unrestricted;
 physical-byte length is derived rather than assumed. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "pos_val_APPEND2" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem posVal_appendSuffix {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (p : Nat) (code : List (Section

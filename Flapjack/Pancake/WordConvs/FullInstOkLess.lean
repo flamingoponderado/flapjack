@@ -13,8 +13,7 @@ uses it in proofs, rather than invoking it from executable compiler passes.
 Native WordToStack naming and assembler-convention theorems use this exact
 guard, as does the executed WordLangFullInstOkLessParity runner. This caller
 disposition does not establish the broader production encoder/carrier bridge. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "full_inst_ok_less_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def fullInstOkLessExact {width : Nat} [NeZero width] (config : AsmConfigExact width)
     (program : WordLangProgHOL (BitVec width)) : Bool :=
   fullInstOkLessWith (fun i => instOkLessExact config (HolInst.ofWordLangInst i))

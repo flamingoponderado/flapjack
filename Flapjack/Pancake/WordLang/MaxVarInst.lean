@@ -5,8 +5,8 @@ namespace Flapjack
 
 /-- Literal instruction maximum. Only integer registers count; the two
 floating-point transfer clauses retain HOL's dimension-64 special case. -/
-@[hol "cakeml/compiler/backend/wordLangScript.sml" "max_var_inst_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: integer-only specialization of the referenced HOL declaration.
+
 def maxVarInstHOL {width : Nat} [NeZero width] : WordLangInst (BitVec width) → Nat
   | .skip => 0
   | .const r _ => r
@@ -26,11 +26,6 @@ def maxVarInstHOL {width : Nat} [NeZero width] : WordLangInst (BitVec width) →
   | .mem .store32 r (.addr a _) => max a r
   | .mem .load8 r (.addr a _) => max a r
   | .mem .store8 r (.addr a _) => max a r
-  | .fp (.fpLess r _ _) => r
-  | .fp (.fpLessEqual r _ _) => r
-  | .fp (.fpEqual r _ _) => r
-  | .fp (.fpMovToReg a b _) => if width = 64 then a else max a b
-  | .fp (.fpMovFromReg _ a b) => if width = 64 then a else max a b
   | _ => 0
 
 end Flapjack

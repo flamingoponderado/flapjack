@@ -35,9 +35,7 @@ theorem filterSub {α : Type} (p : α → Bool) (l : List α) : ∀ x, x ∈ l.f
   fun _ hx => (List.mem_filter.mp hx).1
 
 /-- HOL `evaluate_remove_dead`, `Get` case (Resume 4073). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_remove_dead"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateRemoveDead_Get {width : Nat} [NeZero width] {C F : Type} (v : Nat)
     (name : WordStoreHOL) :
     removeDeadGoal C F (.get v name : WordLangProgHOL (BitVec width)) := by
@@ -66,9 +64,7 @@ theorem evaluateRemoveDead_Get {width : Nat} [NeZero width] {C F : Type} (v : Na
       rw [evaluate, htg]; rfl
 
 /-- HOL `evaluate_remove_dead`, `OpCurrHeap` case (Resume 4090). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_remove_dead"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateRemoveDead_OpCurrHeap {width : Nat} [NeZero width] {C F : Type} (b : BinOp)
     (dst src : Nat) :
     removeDeadGoal C F (.opCurrHeap b dst src : WordLangProgHOL (BitVec width)) := by
@@ -113,9 +109,7 @@ theorem evaluateRemoveDead_OpCurrHeap {width : Nat} [NeZero width] {C F : Type} 
 
 /-- HOL `evaluate_remove_dead`, `Set` case (Resume 4123); `flat_exp_conventions`
 restricts the expression to a register. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_remove_dead"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateRemoveDead_Set {width : Nat} [NeZero width] {C F : Type} (v : WordStoreHOL)
     (exp : WordLangExpHOL (BitVec width)) :
     removeDeadGoal C F (.set v exp : WordLangProgHOL (BitVec width)) := by

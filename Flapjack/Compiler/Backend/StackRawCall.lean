@@ -7,15 +7,13 @@ namespace Flapjack.Compiler.Backend.StackRawCall
 open Flapjack Flapjack.Compiler.Backend.StackLang
 
 /-- Original entry-allocation recognition. A bare StackAlloc is not an entry. -/
-@[hol "cakeml/compiler/backend/stack_rawcallScript.sml" "seq_stack_alloc_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def seqStackAlloc {width : Nat} [NeZero width] : HolProg width → Option Nat
   | .seq (.stackAlloc k) _ => some k
   | _ => none
 
 /-- Original left-to-right information collection; later duplicate keys win. -/
-@[hol "cakeml/compiler/backend/stack_rawcallScript.sml" "collect_info_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def collectInfo {width : Nat} [NeZero width] :
     List (Nat × HolProg width) → Spt Nat → Spt Nat
   | [], info => info
@@ -25,8 +23,7 @@ def collectInfo {width : Nat} [NeZero width] :
         | some k => sptInsert n k info)
 
 /-- Original recognition of a stack release followed by a direct tail call. -/
-@[hol "cakeml/compiler/backend/stack_rawcallScript.sml" "dest_case_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def destCase {width : Nat} [NeZero width] (first second : HolProg width) :
     Option (Nat × Nat) :=
   match first, second with
@@ -34,8 +31,7 @@ def destCase {width : Nat} [NeZero width] (first second : HolProg width) :
   | _, _ => none
 
 /-- Original raw-call substitution, retaining the supplied default tree. -/
-@[hol "cakeml/compiler/backend/stack_rawcallScript.sml" "comp_seq_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def compSeq {width : Nat} [NeZero width] (first second : HolProg width)
     (info : Spt Nat) (fallback : HolProg width) : HolProg width :=
   match destCase first second with
@@ -50,8 +46,7 @@ def compSeq {width : Nat} [NeZero width] (first second : HolProg width)
 
 /-- Original recursive compiler. NONE-return calls are unchanged, including
 populated handlers; only returning continuations are recursively compiled. -/
-@[hol "cakeml/compiler/backend/stack_rawcallScript.sml" "comp_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def comp {width : Nat} [NeZero width] (info : Spt Nat) : HolProg width → HolProg width
   | .seq first second => compSeq first second info (.seq (comp info first) (comp info second))
   | .ite op r ri first second => .ite op r ri (comp info first) (comp info second)
@@ -64,8 +59,7 @@ def comp {width : Nat} [NeZero width] (info : Spt Nat) : HolProg width → HolPr
 
 /-- Original top-level compiler preserves the first Seq node without applying
 compSeq there, so a function entry allocation remains at the entry. -/
-@[hol "cakeml/compiler/backend/stack_rawcallScript.sml" "comp_top_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def compTop {width : Nat} [NeZero width] (info : Spt Nat) : HolProg width → HolProg width
   | .seq first second => .seq (comp info first) (comp info second)
   | other => comp info other
@@ -73,8 +67,7 @@ def compTop {width : Nat} [NeZero width] (info : Spt Nat) : HolProg width → Ho
 /-- Original whole-program wrapper collects frame sizes from the complete input
 before compiling any body. Keys, list order and duplicate entries are retained.
 This native definition is not yet the executed broad compiler route. -/
-@[hol "cakeml/compiler/backend/stack_rawcallScript.sml" "compile_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def compile {width : Nat} [NeZero width]
     (programs : List (Nat × HolProg width)) : List (Nat × HolProg width) :=
   let info := collectInfo programs .ln

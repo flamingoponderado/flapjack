@@ -41,8 +41,7 @@ theorem makeInitOpt_eq_some {width : Nat} [NeZero width] {C F : Type}
 
 /-- Complete original bitmap law: the supplied bitmaps on success and the
 fallback `[4w]` otherwise. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "make_init_any_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem makeInitAnyBitmaps {width : Nat} [NeZero width] {C F : Type}
     (generateGc : Bool) (maxHeap : Nat) (bitmaps : List (BitVec width)) (dataSpace : Nat)
     (oracle : Nat → C × List (Nat × HolProg width) × List (BitVec width))
@@ -60,8 +59,7 @@ theorem makeInitAnyBitmaps {width : Nat} [NeZero width] {C F : Type}
     rfl
 
 /-- Complete original law: the total initialized state uses the stack. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "make_init_any_use_stack"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem makeInitAnyUseStack {width : Nat} [NeZero width] {C F : Type}
     (generateGc : Bool) (maxHeap : Nat) (bitmaps : List (BitVec width)) (dataSpace : Nat)
     (oracle : Nat → C × List (Nat × HolProg width) × List (BitVec width))
@@ -77,8 +75,7 @@ theorem makeInitAnyUseStack {width : Nat} [NeZero width] {C F : Type}
     rfl
 
 /-- Complete original law: the total initialized state uses the store. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "make_init_any_use_store"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem makeInitAnyUseStore {width : Nat} [NeZero width] {C F : Type}
     (generateGc : Bool) (maxHeap : Nat) (bitmaps : List (BitVec width)) (dataSpace : Nat)
     (oracle : Nat → C × List (Nat × HolProg width) × List (BitVec width))
@@ -94,8 +91,7 @@ theorem makeInitAnyUseStore {width : Nat} [NeZero width] {C F : Type}
     rfl
 
 /-- Complete original law: the total initialized state disables allocation. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "make_init_any_use_alloc"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem makeInitAnyUseAlloc {width : Nat} [NeZero width] {C F : Type}
     (generateGc : Bool) (maxHeap : Nat) (bitmaps : List (BitVec width)) (dataSpace : Nat)
     (oracle : Nat → C × List (Nat × HolProg width) × List (BitVec width))
@@ -112,8 +108,7 @@ theorem makeInitAnyUseAlloc {width : Nat} [NeZero width] {C F : Type}
 
 /-- Complete original law: the total initialized state carries the supplied
 code. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "make_init_any_code"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem makeInitAnyCode {width : Nat} [NeZero width] {C F : Type}
     (generateGc : Bool) (maxHeap : Nat) (bitmaps : List (BitVec width)) (dataSpace : Nat)
     (oracle : Nat → C × List (Nat × HolProg width) × List (BitVec width))
@@ -130,8 +125,7 @@ theorem makeInitAnyCode {width : Nat} [NeZero width] {C F : Type}
 
 /-- Complete original law: the total initialized state carries the supplied
 compile oracle. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "make_init_any_compile_oracle"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem makeInitAnyCompileOracle {width : Nat} [NeZero width] {C F : Type}
     (ggc : Bool) (maxHeap : Nat) (bitmaps : List (BitVec width)) (dataSpace : Nat)
     (oracle : Nat → C × List (Nat × HolProg width) × List (BitVec width))
@@ -148,8 +142,7 @@ theorem makeInitAnyCompileOracle {width : Nat} [NeZero width] {C F : Type}
 
 /-- Complete original stack bound of the total initialized state: on success
 it is the original `init_prop` conjunct, and the fallback stack has one word. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "make_init_any_stack_limit"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem makeInitAnyStackLimit {width : Nat} [NeZero width] {C F : Type}
     (generateGc : Bool) (maxHeap : Nat) (bitmaps : List (BitVec width)) (dataSpace : Nat)
     (oracle : Nat → C × List (Nat × HolProg width) × List (BitVec width))

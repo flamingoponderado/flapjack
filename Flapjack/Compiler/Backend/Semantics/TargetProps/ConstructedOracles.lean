@@ -6,8 +6,7 @@ namespace Flapjack.Compiler.Backend.Semantics.TargetProps
 open Flapjack Classical
 
 /-- Literal source527: the complete six-conjunct constructed FFI oracle step. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "constructed_oracles_ffi_step" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem constructedOraclesFfiStep {width : Nat} [NeZero width]
     {S Q : Type} {σ : Type} (mc : MachineConfig width S Q)
     (ffi : HolFfiState σ) (ms : S) (index : Nat) (bytes : List (BitVec 8)) (pre post : S)
@@ -39,8 +38,7 @@ theorem constructedOraclesFfiStep {width : Nat} [NeZero width]
       hz, hh, hm, hzero, hi, hc, hs, hconst.1, hconst.2.1, hconst.2.2]
 
 /-- Literal source563: the complete six-conjunct constructed cache oracle step. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "constructed_oracles_cc_step" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem constructedOraclesCcStep {width : Nat} [NeZero width]
     {S Q : Type} {σ : Type} (mc : MachineConfig width S Q)
     (ffi : HolFfiState σ) (ms : S) (a1 a2 : BitVec width) (pre post : S)

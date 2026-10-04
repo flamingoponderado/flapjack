@@ -7,7 +7,7 @@ namespace Flapjack.Test.GenGcMoveRefsParity
 open Flapjack Flapjack.Compiler.Backend.DataToWord Flapjack.Compiler.Backend.WordGcFunctions
 private def conf : Config :=
   { tagBits := 1, lenBits := 2, padBits := 3, lenSize := 16, hasDiv := false,
-    hasLongdiv := false, hasFpOps := false, hasFpTern := false, be := false,
+    hasLongdiv := false, be := false,
     callEmptyFfi := false, gcKind := .simple }
 
 /-- Fixture infrastructure: the native zero-payload equation. -/

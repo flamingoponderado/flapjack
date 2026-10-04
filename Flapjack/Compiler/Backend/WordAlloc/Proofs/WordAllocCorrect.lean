@@ -92,8 +92,7 @@ open Classical in
 /-- Exact HOL `word_alloc_correct` (`word_allocProofScript.sml:3399-3477`). HOL's
 `if res = SOME Error` is decided classically, as in the accepted `evaluate_apply_colour`
 motive. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "word_alloc_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordAllocCorrect {width : Nat} [NeZero width] {C F : Type} :
     ∀ (fc : Nat) (c : AsmConfigExact width) (alg : Nat) (prog : WordLangProgHOL (BitVec width))
       (k : Nat) (col_opt : Option (Spt Nat)) (st : WordSemStateFiniteExact width C F),

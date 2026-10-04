@@ -15,8 +15,7 @@ def everyNameHOL (predicate : Nat → Bool) (cutsets : WordLangCutsetsHOL) : Boo
   ((sptToAList cutsets.1).map Prod.fst).all predicate &&
     ((sptToAList cutsets.2).map Prod.fst).all predicate
 
-@[hol "cakeml/compiler/backend/wordLangScript.sml" "every_var_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def everyVarHOL {width : Nat} [NeZero width] (predicate : Nat → Bool) :
     WordLangProgHOL (BitVec width) → Bool
   | .skip => true
@@ -59,8 +58,7 @@ def everyVarHOL {width : Nat} [NeZero width] (predicate : Nat → Bool) :
         ((sptToAList liveOut).map Prod.fst).all predicate
   | _ => true
 
-@[hol "cakeml/compiler/backend/wordLangScript.sml" "every_stack_var_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def everyStackVarHOL {width : Nat} [NeZero width] (predicate : Nat → Bool) :
     WordLangProgHOL (BitVec width) → Bool
   | .ffi _ _ _ _ _ names => everyNameHOL predicate names

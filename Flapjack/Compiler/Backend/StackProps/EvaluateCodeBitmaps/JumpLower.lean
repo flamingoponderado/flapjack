@@ -18,8 +18,7 @@ actual word reads, successful lower comparison, code lookup and nonzero clock;
 it applies only at decClock source. No arbitrary-state IH or target/poststate
 fact is supplied. The native evaluator closure inherits reals_as_rational_cuts;
 no numeric alignment/FP correspondence is asserted. Parent assembly is open. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsJumpLower {width : Nat} [NeZero width] {C F : Type}
     (r1 r2 dest : Nat) (source post : StackSemStateFiniteExact width C F)
     (result : Option (StackSemResult width))

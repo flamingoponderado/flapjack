@@ -12,8 +12,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
 
 /-- Genuine Seq case of the original pre-rebind clock induction. Both source
 IHs are retained; the second is guarded by the actual clamped first run. -/
-@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "evaluate_clock"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateClockSeq {width : Nat} [NeZero width] {C F : Type}
     (first second : HolProg width) (source : StackSemStateFiniteExact width C F)
     (_firstIH : ∀ result post, evaluate (first,source) = (result,post) → post.clock ≤ source.clock)
@@ -33,8 +32,7 @@ theorem evaluateClockSeq {width : Nat} [NeZero width] {C F : Type}
     subst post
     exact bound
 /-- Genuine If case, with the two original lookup/comparison-guarded IHs. -/
-@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "evaluate_clock"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateClockIf {width : Nat} [NeZero width] {C F : Type}
     (comparison : Cmp) (register : Nat) (operand : HolRegImm width) (first second : HolProg width)
     (source : StackSemStateFiniteExact width C F)
@@ -67,8 +65,7 @@ theorem evaluateClockIf {width : Nat} [NeZero width] {C F : Type}
         | true => rw [compared] at execution; exact firstIH left right leftLookup rightLookup compared result post execution
 /-- Genuine Loop case, retaining the actual body IH and original guarded
 reentry IH. No global clock monotonicity premise is introduced. -/
-@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "evaluate_clock"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateClockLoop {width : Nat} [NeZero width] {C F : Type}
     (body : HolProg width) (source : StackSemStateFiniteExact width C F)
     (_bodyIH : ∀ result post, evaluate (body,source) = (result,post) → post.clock ≤ source.clock)

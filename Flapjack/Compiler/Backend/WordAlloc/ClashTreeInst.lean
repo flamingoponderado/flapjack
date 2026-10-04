@@ -27,8 +27,8 @@ sibling `FP` operations such as `FPNeg`/`FPAdd`, `Load16`, etc.) falls through t
 the empty delta.
 
 This proof-side port does not replace the executed caller yet. -/
-@[hol "cakeml/compiler/backend/word_allocScript.sml" "get_delta_inst_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: integer-only specialization of the referenced HOL declaration.
+
 def getDeltaInst {width : Nat} [NeZero width] : HolInst width → ClashTree
   | .skip => .delta [] []
   | .const reg _ => .delta [reg] []
@@ -48,13 +48,6 @@ def getDeltaInst {width : Nat} [NeZero width] : HolInst width → ClashTree
   | .mem .store32 r (.addr a _) => .delta [] [r, a]
   | .mem .load8 r (.addr a _) => .delta [r] [a]
   | .mem .store8 r (.addr a _) => .delta [] [r, a]
-  | .fp (.fpLess r _ _) => .delta [r] []
-  | .fp (.fpLessEqual r _ _) => .delta [r] []
-  | .fp (.fpEqual r _ _) => .delta [r] []
-  | .fp (.fpMovToReg r1 r2 _) =>
-      if width = 64 then .delta [r1] [] else .delta [r1, r2] []
-  | .fp (.fpMovFromReg _ r1 r2) =>
-      if width = 64 then .delta [] [r1] else .delta [] [r1, r2]
   | _ => .delta [] []
 
 end Flapjack.WordAlloc

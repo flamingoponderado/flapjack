@@ -221,8 +221,7 @@ theorem lastNLengthCond {α : Type} : ∀ (n : Nat) (xs : List α), n = xs.lengt
   rw [List.take_of_length_le (by simp), List.reverse_reverse]
 
 /-- Exact HOL `handler_eq` (`wordPropsScript.sml:2275-2279`). -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "handler_eq"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem handlerEq {width : Nat} [NeZero width] {C F : Type}
     (x : WordSemStateFiniteExact width C F) : { x with handler := x.handler } = x := rfl
 

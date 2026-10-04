@@ -54,8 +54,6 @@ private def unaligned2 : Bool := asmAligned 2 (w8 10)
 private def regOk2 : Bool := asmRegOk asmConfig8 2
 private def regOk3 : Bool := asmRegOk asmConfig8 3
 private def regOk8 : Bool := asmRegOk asmConfig8 8
-private def fpRegOk3 : Bool := asmFpRegOk asmConfig8 3
-private def fpRegOk4 : Bool := asmFpRegOk asmConfig8 4
 private def regImmReg : Bool :=
   asmRegImmOk asmConfig8 (.inl .add) (.reg 2)
 private def regImmXorMinus1 : Bool :=
@@ -77,9 +75,6 @@ private def arithAddCarryBad : Bool :=
   asmArithOk asmConfig8 (.addCarry 1 2 1 4)
 private def arithLongDivBad : Bool :=
   asmArithOk asmConfig8 (.longDiv 0 2 2 0 3)
-private def fpLessOk : Bool := asmFpOk asmConfig8 (.fpLess 1 2 3)
-private def fpFmaBad : Bool := asmFpOk asmConfig8 (.fpFma 1 2 3)
-private def fpAbsTwoReg : Bool := asmFpOk asmConfig8 (.fpAbs 2 2)
 private def cmpOk : Bool := asmCmpOk asmConfig8 .equal 2 (.imm (w8 1))
 private def addrOffsetOk : Bool := asmAddrOffsetOk asmConfig8 (w8 8)
 private def hwOffsetOk : Bool := asmHwOffsetOk asmConfig8 (w8 8)
@@ -88,7 +83,6 @@ private def jumpOffsetOk : Bool := asmJumpOffsetOk asmConfig8 (w8 200)
 private def jumpOffsetUnaligned : Bool := asmJumpOffsetOk asmConfig8 (w8 3)
 private def instConstOk : Bool := asmInstOk asmConfig8 (.const 2 (w8 0))
 private def instArithOk : Bool := asmInstOk asmConfig8 (.arith (.div 1 2 3))
-private def instFpOk : Bool := asmInstOk asmConfig8 (.fp (.fpLess 1 2 3))
 private def instMemLoadOk : Bool :=
   asmInstOk asmConfig8 (.mem .load 2 (.addr 2 (w8 8)))
 private def instMemHwOk : Bool :=
@@ -112,17 +106,15 @@ private def asmOkLoc : Bool := asmOk asmConfig8 (.loc 1 (w8 100))
 private def asmConfigGuard : Bool :=
   aligned0 == true && aligned2 == true && unaligned2 == false &&
   regOk2 == true && regOk3 == false && regOk8 == false &&
-  fpRegOk3 == true && fpRegOk4 == false &&
   regImmReg == true && regImmXorMinus1 == true && regImmXorOther == true &&
   arithBinopOk == true && arithBinopTwoRegBad == false &&
   arithShiftOk == true && arithShiftWidth == false &&
   arithDivOk == false && arithAddCarryOk == false &&
   arithAddCarryBad == false && arithLongDivBad == false &&
-  fpLessOk == true && fpFmaBad == false && fpAbsTwoReg == false &&
   cmpOk == true &&
   addrOffsetOk == true && hwOffsetOk == true && byteOffsetOk == false &&
   jumpOffsetOk == false && jumpOffsetUnaligned == false &&
-  instConstOk == true && instArithOk == false && instFpOk == true &&
+  instConstOk == true && instArithOk == false &&
   instMemLoadOk == true && instMemHwOk == true && instMemByteOk == true &&
   stackAddrLoad == true && stackAddrHw == true && stackAddrByte == true &&
   signedHighLeZero == true && unsignedHighLeZero == false &&
@@ -141,7 +133,7 @@ def runChecks : IO Bool := do
     IO.println "PASS asm alignment clears the low bits"
   else
     IO.println "FAIL asm alignment"
-  if regOk2 && !regOk3 && !regOk8 && fpRegOk3 && !fpRegOk4 then
+  if regOk2 && !regOk3 && !regOk8 then
     IO.println "PASS asm register validity respects reg_count and avoid_regs"
   else
     IO.println "FAIL asm register validity"
@@ -154,16 +146,12 @@ def runChecks : IO Bool := do
     IO.println "PASS asm arith validity matches the HOL clauses"
   else
     IO.println "FAIL asm arith validity"
-  if fpLessOk && !fpFmaBad && !fpAbsTwoReg then
-    IO.println "PASS asm fp validity matches the HOL clauses"
-  else
-    IO.println "FAIL asm fp validity"
   if cmpOk && addrOffsetOk && hwOffsetOk && !byteOffsetOk && !jumpOffsetOk &&
       !jumpOffsetUnaligned then
     IO.println "PASS asm offset validity uses signed bounds"
   else
     IO.println "FAIL asm offset validity"
-  if instConstOk && !instArithOk && instFpOk && instMemLoadOk && instMemHwOk &&
+  if instConstOk && !instArithOk && instMemLoadOk && instMemHwOk &&
       instMemByteOk then
     IO.println "PASS asm instruction validity delegates to the predicates"
   else
@@ -251,7 +239,7 @@ example :
 The oracle rows `ab_*`/`ac_*`/`am_*`/`aa_*`/`af_*`/`as_*` read the HOL
 `binop`/`cmp`/`memop`/`arith`/`fp`/`asm` constructors.  The guards below read
 the Lean mirrors: the monomorphic aliases `HolBinop`/`HolCmp`/`HolMemop`/
-`HolFp` and the width-indexed `HolArith 64`/`HolAsm 64`. -/
+the width-indexed `HolArith 64`/`HolAsm 64`. -/
 
 private def binopTag : HolBinop → Nat
   | .add => 1
@@ -288,14 +276,6 @@ private def arithLongDivSum {width : Nat} [NeZero width] : HolArith width → Na
   | .longDiv a b c d e => a + b + c + d + e
   | _ => 0
 
-private def fpMovToRegSum : HolFp → Nat
-  | .fpMovToReg a b c => a + b + c
-  | _ => 0
-
-private def fpFromIntSum : HolFp → Nat
-  | .fpFromInt a b => a + b
-  | _ => 0
-
 private def asmJumpTarget {width : Nat} [NeZero width] : HolAsm width → Nat
   | .jump target => target.toNat
   | _ => 0
@@ -318,8 +298,6 @@ private def asmSyntaxGuard : Bool :=
   memopTag .store32 == 7 &&
   arithDivSum (.div 1 2 3 : HolArith 64) == 6 &&
   arithLongDivSum (.longDiv 1 2 3 4 5 : HolArith 64) == 15 &&
-  fpMovToRegSum (.fpMovToReg 1 2 3 : HolFp) == 6 &&
-  fpFromIntSum (.fpFromInt 4 5 : HolFp) == 9 &&
   asmJumpTarget (.jump (w64 9) : HolAsm 64) == 9 &&
   asmJumpCmpReg (.jumpCmp .equal 1 (.reg 2) (w64 3) : HolAsm 64) == 1 &&
   asmJumpRegTarget (.jumpReg 7 : HolAsm 64) == 7 &&

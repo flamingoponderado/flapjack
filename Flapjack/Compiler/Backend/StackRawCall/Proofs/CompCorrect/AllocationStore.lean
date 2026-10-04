@@ -1,3 +1,4 @@
+import Mathlib.Tactic.ByContra
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.MemoryFfi
 
 namespace Flapjack.Compiler.Backend.StackRawCall.AllocationStoreCase
@@ -150,10 +151,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 /-- Full original Alloc case153-163: original three source premises and both
 existential simulations. Native GC/store-copy outcomes and the target optional
 stub guard are derived. Inherits reals_as_rational_cuts, SOUNDNESS item8. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectAlloc {width : Nat} [NeZero width] {C F : Type}
     (register : Nat) (info : Spt Nat)
     (source target post : StackSemStateFiniteExact width C F)
@@ -178,10 +176,7 @@ theorem compCorrectAlloc {width : Nat} [NeZero width] {C F : Type}
 /-- Full original StoreConsts case153-163: original three source premises and both
 existential simulations. Native GC/store-copy outcomes and the target optional
 stub guard are derived. Inherits reals_as_rational_cuts, SOUNDNESS item8. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectStoreConsts {width : Nat} [NeZero width] {C F : Type}
     (first second : Nat) (stub : Option Nat) (info : Spt Nat)
     (source target post : StackSemStateFiniteExact width C F)

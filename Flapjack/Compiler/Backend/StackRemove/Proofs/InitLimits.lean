@@ -76,8 +76,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
 `THE` and `theWord`. An absent register keeps HOL's unspecified `THE NONE`
 value and a location keeps the shared `theWord` ARB completion; no register
 presence or word-valuedness premise is added. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "read_pointers_def"
-  (fmap_as_finite_support := [regs]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def readPointers {width : Nat} [NeZero width] {C F : Type}
     (s : StackSemStateFiniteExact width C F) : BitVec width × BitVec width × BitVec width :=
   (wordSemTheWord (holThe (s.regs.lookup 2)),

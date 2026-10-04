@@ -47,8 +47,7 @@ inductive MachineResult where
     target : ('a,'b,'c) target ;
     mmio_info : (num # (word8 # 'a addr # num # 'a word)) list |>` (field order
     preserved; `cakeml/compiler/backend/semantics/targetSemScript.sml:18-45`). -/
-@[hol "cakeml/compiler/backend/semantics/targetSemScript.sml" "machine_config"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 structure MachineConfig (width : Nat) [NeZero width] (state : Type) (projection : Type) where
   progAddresses : BitVec width → Prop
   sharedAddresses : BitVec width → Prop

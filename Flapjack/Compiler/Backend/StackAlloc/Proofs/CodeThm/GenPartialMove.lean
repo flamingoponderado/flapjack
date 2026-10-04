@@ -33,9 +33,7 @@ end GenPartialMoveSupport
 
 /-- Exact HOL `word_gen_gc_partial_move_code_thm` (`stack_allocProofScript.sml:2680-2803`),
 with HOL's duplicated `1 IN FDOM`/`2 IN FDOM` hypotheses kept. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml"
-  "word_gen_gc_partial_move_code_thm"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_gen_gc_partial_move_code_thm {width : Nat} [NeZero width] {C F : Type} {conf : Config}
     {w : WordLocW width} {i pa old : BitVec width} {m : BitVec width → WordLocW width}
     {dm : BitVec width → Bool} {gs rs : BitVec width} {w1 : WordLocW width} {i1 pa1 : BitVec width}

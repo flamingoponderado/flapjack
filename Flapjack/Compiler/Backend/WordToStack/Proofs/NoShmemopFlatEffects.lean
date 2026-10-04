@@ -13,8 +13,7 @@ assembler configuration, performance flag, bitmap state, frame and outputs.
 No safety, validity, bounds or evaluator premises are added. -/
 
 /-- Full original Move case; the no-share guard is retained even where redundant. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "comp_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compNoShmemopMove {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (priority : Nat) (moves : List (Nat × Nat))
@@ -29,8 +28,7 @@ theorem compNoShmemopMove {width : Nat} [NeZero width]
   simp only [wMoveNative, wMoveAuxNoShmemop]
 
 /-- Full original Return case; the no-share guard is retained even where redundant. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "comp_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compNoShmemopReturn {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (label : Nat) (values : List Nat)
@@ -47,8 +45,7 @@ theorem compNoShmemopReturn {width : Nat} [NeZero width]
   split <;> rfl
 
 /-- Full original OpCurrHeap case; the no-share guard is retained even where redundant. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "comp_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compNoShmemopOpCurrHeap {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (op : BinOp) (dst src : Nat)
@@ -64,8 +61,7 @@ theorem compNoShmemopOpCurrHeap {width : Nat} [NeZero width]
   exact wRegWrite1NoShmemop _ dst frame (fun _ => rfl)
 
 /-- Full original Set case; the no-share guard is retained even where redundant. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "comp_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compNoShmemopSet {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (name : WordStoreHOL) (value : WordLangExpHOL (BitVec width))
@@ -84,8 +80,7 @@ theorem compNoShmemopSet {width : Nat} [NeZero width]
       | (rw [wStackLoadNoShmemop]; rfl)
 
 /-- Full original Get case; the no-share guard is retained even where redundant. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "comp_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compNoShmemopGet {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (dst : Nat) (name : WordStoreHOL)
@@ -100,8 +95,7 @@ theorem compNoShmemopGet {width : Nat} [NeZero width]
   exact wRegWrite1NoShmemop _ dst frame (fun _ => rfl)
 
 /-- Full original Alloc case; the no-share guard is retained even where redundant. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "comp_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compNoShmemopAlloc {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (dst : Nat) (live : WordLangCutsetsHOL)
@@ -116,8 +110,7 @@ theorem compNoShmemopAlloc {width : Nat} [NeZero width]
   simp [noShmemop, wLiveNoShmemop]
 
 /-- Full original StoreConsts case; the no-share guard is retained even where redundant. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "comp_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compNoShmemopStoreConsts {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (src bitmap codeLength dataLength : Nat)
@@ -133,8 +126,7 @@ theorem compNoShmemopStoreConsts {width : Nat} [NeZero width]
   rfl
 
 /-- Full original LocValue case; the no-share guard is retained even where redundant. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "comp_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compNoShmemopLocValue {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (dst label : Nat)
@@ -149,8 +141,7 @@ theorem compNoShmemopLocValue {width : Nat} [NeZero width]
   exact wRegWrite1NoShmemop _ dst frame (fun _ => rfl)
 
 /-- Full original Install case; the no-share guard is retained even where redundant. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "comp_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compNoShmemopInstall {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (codeBuffer codeLength dataBuffer dataLength : Nat) (live : WordLangCutsetsHOL)
@@ -166,8 +157,7 @@ theorem compNoShmemopInstall {width : Nat} [NeZero width]
   rfl
 
 /-- Full original CodeBufferWrite case; the no-share guard is retained even where redundant. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "comp_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compNoShmemopCodeBufferWrite {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (addr value : Nat)
@@ -183,8 +173,7 @@ theorem compNoShmemopCodeBufferWrite {width : Nat} [NeZero width]
   rfl
 
 /-- Full original DataBufferWrite case; the no-share guard is retained even where redundant. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "comp_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compNoShmemopDataBufferWrite {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (addr value : Nat)
@@ -200,8 +189,7 @@ theorem compNoShmemopDataBufferWrite {width : Nat} [NeZero width]
   rfl
 
 /-- Full original FFI case; the no-share guard is retained even where redundant. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "comp_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compNoShmemopFFI {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (name : Basis.Pure.MlString.MlString)

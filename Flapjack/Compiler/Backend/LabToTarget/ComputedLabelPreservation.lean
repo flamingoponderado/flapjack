@@ -9,8 +9,7 @@ open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString
 
 /-- Full original untouched-section lookup theorem; its sole guard is absence
 of the queried outer key from the section-number list. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "lab_lookup_compute_labels_alt_ignore" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem labLookup_computeLabelsAlt_ignore {width : Nat} [NeZero width]
     (pos : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))
@@ -31,8 +30,7 @@ theorem labLookup_computeLabelsAlt_ignore {width : Nat} [NeZero width]
 
 /-- Full original complete section-label pair preservation, with precisely the
 source true-flag result equality and the arbitrary association accumulator. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "enc_lines_again_section_labels" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem encLinesAgain_sectionLabels {width : Nat} [NeZero width]
     (labs : Spt (Spt Nat)) (ffis : List HolFfiName) (pos : Nat)
     (enc : HolAsm width → List (BitVec 8))
@@ -71,8 +69,7 @@ theorem encLinesAgain_sectionLabels {width : Nat} [NeZero width]
 
 /-- Full original equality of computed nested maps. Only the original successful
 section-encoder result equality is assumed; no map freshness or validity guard. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "enc_secs_again_compute_labels" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem encSecsAgain_computeLabels {width : Nat} [NeZero width]
     (pos : Nat) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (enc : HolAsm width → List (BitVec 8))

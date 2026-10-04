@@ -157,8 +157,7 @@ end Helpers
 set_option linter.unusedSimpArgs false in
 /-- Exact HOL local `inst_select_exp_thm` (`word_instProofScript.sml:430-712`),
     by recursion on the expression as HOL's `completeInduct_on exp_size`. -/
-@[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "inst_select_exp_thm"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem inst_select_exp_thm {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (c : AsmConfigExact width) (tar temp : Nat) (exp : WordLangExpHOL (BitVec width))
       (s : WordSemStateFiniteExact width C F) (w : WordLocW width) (loc : Spt (WordLocW width)),
@@ -474,8 +473,7 @@ termination_by _ _ _ e => sizeOf e
 
 /-- Exact HOL local `locals_rm` (`word_instProofScript.sml:714-718`):
     `D with locals := D.locals = D`. -/
-@[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "locals_rm"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem locals_rm {width : Nat} [NeZero width] {C : Type} {F : Type}
     (D : WordSemStateFiniteExact width C F) : { D with locals := D.locals } = D := rfl
 
@@ -1049,8 +1047,7 @@ termination_by p => sizeOf p
 end InstSelectThm
 
 /-- Exact HOL `inst_select_Loop_helper` (`word_instProofScript.sml:1066-1131`). -/
-@[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "inst_select_Loop_helper"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem inst_select_Loop_helper {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (s : WordSemStateFiniteExact width C F) (names : WordLangNumSetHOL)
       (prog : WordLangProgHOL (BitVec width)) (exit_names : WordLangNumSetHOL)
@@ -1096,8 +1093,7 @@ theorem inst_select_Loop_helper {width : Nat} [NeZero width] {C : Type} {F : Typ
     resumed `Assign`, `Set`, `Store`, `Seq`, `MustTerminate`, `ShareInst`, `If`,
     `Call` and `Loop` cases): the instruction-selected program gives the same
     result with possibly more locals used. -/
-@[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "inst_select_thm"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem inst_select_thm {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (c : AsmConfigExact width) (temp : Nat) (prog : WordLangProgHOL (BitVec width))
       (st : WordSemStateFiniteExact width C F) (res : Option (WordSemResult width))

@@ -70,8 +70,7 @@ and actual compiler-result tuple equality. Source EVERY is represented by its
 equivalent membership quantifier. The result contains all five original
 predicates; only source validity/conventions and the two frame guards are used.
 The residual pair retains both original frame sizes and bitmaps. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "compile_word_to_stack_convs" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileWordToStackConvs {width : Nat} [NeZero width] {β : Type}
     (conf : AsmConfigExact width) (k : Nat)
     (programs : List (β × Nat × WordLangProgHOL (BitVec width)))
@@ -96,8 +95,7 @@ theorem compileWordToStackConvs {width : Nat} [NeZero width] {β : Type}
 compiler's output, including both prepended stubs. The register count is the
 original natural subtraction, and its strict minimum derives the naming/removal
 room guard internally. No extra frame or target-safety premise is introduced. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_stack_asm_convs" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackStackAsmConvs {width : Nat} [NeZero width]
     (conf : AsmConfigExact width)
     (programs : List (Nat × Nat × WordLangProgHOL (BitVec width)))

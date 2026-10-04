@@ -69,8 +69,7 @@ source/result/post-state and replacement-clock binders are retained. The only
 premises are source evaluation and the original neutrality predicate; target
 execution and post-clock constancy are derived. The evaluator closure inherits
 reals_as_rational_cuts (SOUNDNESS item 8); no new floating-point agreement is asserted. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_clock_neutral"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateClockNeutral {width : Nat} [NeZero width] {C F : Type}
     (program : HolProg width) (source post : StackSemStateFiniteExact width C F)
     (result : Option (StackSemResult width)) (clock : Nat)
@@ -137,8 +136,7 @@ retained; HOL's record update keeps the FFI type, as here. The only premises
 are source evaluation and the original neutrality predicate; the updated
 evaluation is derived. The evaluator closure inherits reals_as_rational_cuts
 (SOUNDNESS item 8); no new floating-point agreement is asserted. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_ffi_neutral"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateFfiNeutral {width : Nat} [NeZero width] {C : Type} {F : Type}
     (program : HolProg width) (source post : StackSemStateFiniteExact width C F)
     (result : Option (StackSemResult width)) (ffi : HolFfiState F)

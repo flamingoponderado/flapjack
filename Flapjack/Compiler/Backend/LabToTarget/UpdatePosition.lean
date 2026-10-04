@@ -38,8 +38,7 @@ private theorem updateConservation {width : Nat} [NeZero width]
       simp only [linesUpdLabLen]
       omega
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "SND_lines_upd_lab_len"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem linesUpdLabLen_position {width : Nat} [NeZero width]
     (pos : Nat) (lines acc : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) :
@@ -69,8 +68,7 @@ private theorem finalPositionEven {width : Nat} [NeZero width]
 
 /-- The original conditional premise guards LAST by the nonempty branch;
 `lastLabel` contributes no interpretation of total HOL LAST on an empty list. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "EVEN_sec_length_lines_upd_lab_len"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem linesUpdLabLen_evenLength {width : Nat} [NeZero width]
     (pos : Nat) (lines acc : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) :

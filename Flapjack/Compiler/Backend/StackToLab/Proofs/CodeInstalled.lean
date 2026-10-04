@@ -20,8 +20,7 @@ open Flapjack.Basis.Pure.MlString
 
 /-- Complete original installation predicate: labels resolve to the current
 position, other lines are fetched there. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "code_installed_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def codeInstalled {width : Nat} [NeZero width] (n : Nat) :
     List (LabLineHOL width) → List (Section (Line (AsmOrCbw (HolAsm width) HolMemop
       (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) → Prop
@@ -44,8 +43,7 @@ theorem codeInstalled_cons {width : Nat} [NeZero width] (n : Nat) (x : LabLineHO
       else asmFetchAux n code = some x ∧ codeInstalled (n + 1) xs code := rfl
 
 /-- Complete original fetch append law. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "asm_fetch_aux_SOME_append"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem asmFetchAuxSomeAppend {width : Nat} [NeZero width] :
     ∀ (pc : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
         (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))
@@ -56,8 +54,7 @@ theorem asmFetchAuxSomeAppend {width : Nat} [NeZero width] :
     simp_all [asmFetchAux]
 
 /-- Complete original fetch prefix law. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "asm_fetch_aux_SOME_isPREFIX"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem asmFetchAuxSomeIsPrefix {width : Nat} [NeZero width] :
     ∀ (pc : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
         (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))
@@ -67,8 +64,7 @@ theorem asmFetchAuxSomeIsPrefix {width : Nat} [NeZero width] :
   exact asmFetchAuxSomeAppend pc code l t h
 
 /-- Complete original label-position append law. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "loc_to_pc_APPEND"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem locToPcAppend {width : Nat} [NeZero width] :
     ∀ (n m : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
         (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))
@@ -113,8 +109,7 @@ theorem locToPcAppend {width : Nat} [NeZero width] :
 
 
 /-- Complete original installation append law. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "code_installed_APPEND"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem codeInstalledAppend {width : Nat} [NeZero width] :
     ∀ (ls : List (LabLineHOL width)) (pc : Nat)
       (code code2 : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -138,8 +133,7 @@ theorem codeInstalledAppend {width : Nat} [NeZero width] :
       exact ⟨asmFetchAuxSomeAppend _ _ _ _ h.1, ih _ _ _ h.2⟩
 
 /-- Complete original installation prefix law. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "code_installed_isPREFIX"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem codeInstalledIsPrefix {width : Nat} [NeZero width] :
     ∀ (ls : List (LabLineHOL width)) (pc : Nat)
       (code code2 : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -149,8 +143,7 @@ theorem codeInstalledIsPrefix {width : Nat} [NeZero width] :
   exact codeInstalledAppend ls pc code t h
 
 /-- Complete original label-position prefix law. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "loc_to_pc_isPREFIX"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem locToPcIsPrefix {width : Nat} [NeZero width] :
     ∀ (n m : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
         (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))
@@ -160,8 +153,7 @@ theorem locToPcIsPrefix {width : Nat} [NeZero width] :
   exact locToPcAppend n m code pc t h
 
 /-- Complete original installation split for an appended line list. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "code_installed_append_imp"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem codeInstalledAppendImp {width : Nat} [NeZero width] :
     ∀ (l1 : List (LabLineHOL width)) (pc : Nat) (l2 : List (LabLineHOL width))
       (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -212,8 +204,7 @@ theorem asmFetchAuxSkipLines {width : Nat} [NeZero width] (sid : Nat) :
       exact ih pc rest
 
 /-- Complete original fetch law for code appended on the left. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "asm_fetch_aux_SOME_append2"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem asmFetchAuxSomeAppend2 {width : Nat} [NeZero width] :
     ∀ (pc : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
         (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))
@@ -249,8 +240,7 @@ theorem alookupPartition {α β : Type} [DecidableEq α] :
       exact ⟨(k, w) :: ls1, ls2, rfl, by simp [notMem]; exact fun h => hk h.symm⟩
 
 /-- Complete original installation predicate ignoring label positions. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "code_installed'_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def codeInstalled' {width : Nat} [NeZero width] (n : Nat) :
     List (LabLineHOL width) → List (Section (Line (AsmOrCbw (HolAsm width) HolMemop
       (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) → Prop
@@ -260,8 +250,7 @@ def codeInstalled' {width : Nat} [NeZero width] (n : Nat) :
     else asmFetchAux n code = some x ∧ codeInstalled' (n + 1) xs code
 
 /-- Complete original label correctness predicate. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "labs_correct_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def labsCorrect {width : Nat} [NeZero width] (n : Nat) :
     List (LabLineHOL width) → List (Section (Line (AsmOrCbw (HolAsm width) HolMemop
       (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) → Prop
@@ -274,8 +263,7 @@ def labsCorrect {width : Nat} [NeZero width] (n : Nat) :
     else labsCorrect (n + 1) xs code
 
 /-- Complete original decomposition of installation. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "code_installed_eq"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem codeInstalledEq {width : Nat} [NeZero width] :
     ∀ (pc : Nat) (xs : List (LabLineHOL width))
       (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -293,8 +281,7 @@ theorem codeInstalledEq {width : Nat} [NeZero width] :
     · simp only [lab, Bool.false_eq_true, ite_false, ih]; tauto
 
 /-- Complete original `code_installed'` cons law for a leading section. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "code_installed_cons"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem codeInstalledCons {width : Nat} [NeZero width]
     (rest : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
@@ -317,8 +304,7 @@ theorem codeInstalledCons {width : Nat} [NeZero width]
           pc + (ys.filter fun x => !isLabelHOL x).length + 1 by omega] at this
 
 /-- Complete original fetch shift over a leading section. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "asm_fetch_aux_add"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem asmFetchAuxAdd {width : Nat} [NeZero width] :
     ∀ (ys : List (LabLineHOL width)) (pc pos : Nat)
       (rest : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -367,8 +353,7 @@ theorem locToPcSkip {width : Nat} [NeZero width] (k ll sid : Nat) (hsid : sid �
       · intro _ _ _ h; cases h
 
 /-- Complete original section-entry search past another section. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "loc_to_pc_skip_section"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem locToPcSkipSection {width : Nat} [NeZero width] (n p : Nat)
     (xs : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
@@ -382,8 +367,7 @@ theorem locToPcSkipSection {width : Nat} [NeZero width] (n p : Nat)
   cases locToPc n 0 xs <;> rfl
 
 /-- Complete original label-position law for code appended on the left. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "loc_to_pc_append2"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem locToPcAppend2 {width : Nat} [NeZero width] :
     ∀ (k ll : Nat) (code code2 : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop
         (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))
@@ -408,8 +392,7 @@ theorem locToPcAppend2 {width : Nat} [NeZero width] :
       omega
 
 /-- Complete original installation law for code appended on the left. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "code_installed_append2"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem codeInstalledAppend2 {width : Nat} [NeZero width] :
     ∀ (lines : List (LabLineHOL width)) (pc : Nat)
       (c1 c2 : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -443,8 +426,7 @@ theorem codeInstalledAppend2 {width : Nat} [NeZero width] :
         rwa [← Nat.add_assoc] at this
 
 /-- Complete original `code_installed'` law for a leading label line. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "code_installed'_cons_label"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem codeInstalled'ConsLabel {width : Nat} [NeZero width] (h : LabLineHOL width)
     (n : Nat) (xs : List (LabLineHOL width))
     (other : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -465,8 +447,7 @@ theorem codeInstalled'ConsLabel {width : Nat} [NeZero width] (h : LabLineHOL wid
 
 /-- Complete original `code_installed'` law for a leading non-label line,
 specialised as in the source to position zero. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "code_installed'_cons_non_label"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem codeInstalled'ConsNonLabel {width : Nat} [NeZero width] (h : LabLineHOL width)
     (n : Nat) (xs : List (LabLineHOL width))
     (other : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -488,8 +469,7 @@ theorem codeInstalled'ConsNonLabel {width : Nat} [NeZero width] (h : LabLineHOL 
         Nat.add_one_ne_zero, Nat.add_sub_cancel]
 
 /-- Complete original self-installation of a section prefix. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "code_installed'_simp"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem codeInstalled'Simp {width : Nat} [NeZero width] (n : Nat) (rest : List (LabLineHOL width))
     (other : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
@@ -506,8 +486,7 @@ theorem codeInstalled'Simp {width : Nat} [NeZero width] (n : Nat) (rest : List (
       exact (codeInstalled'ConsNonLabel x n _ other lines lx).mpr ih
 
 /-- Complete original label-correctness prefix law. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "labs_correct_append"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem labsCorrectAppend {width : Nat} [NeZero width] (rest : List (LabLineHOL width))
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
@@ -565,8 +544,7 @@ theorem locToPcPrefix {width : Nat} [NeZero width] (n b sid : Nat) (hb : b ≠ 0
 
 open Flapjack.Compiler.Backend.LabProps.LabelSets in
 /-- Complete original label correctness of a section's own labels. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "labs_correct_hd"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem labsCorrectHd {width : Nat} [NeZero width] (n : Nat)
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
@@ -606,8 +584,7 @@ open Flapjack.Compiler.Backend.LabProps.LabelSets
 
 /-- Complete original label well-formedness of a section list: distinct
 section names, and per section distinct positive labels of that section. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "labels_ok_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def labelsOk {width : Nat} [NeZero width]
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) : Prop :=
@@ -627,8 +604,7 @@ theorem label_mem_extractLabels {width : Nat} [NeZero width] (a b c : Nat) :
     · cases x <;> simp [extractLabels, ih h]
 
 /-- Complete original consequences of label well-formedness. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "labels_ok_imp"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem labelsOkImp {width : Nat} [NeZero width] :
     ∀ code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))), labelsOk code →
@@ -692,8 +668,7 @@ theorem locToPcSelf {width : Nat} [NeZero width] (n : Nat) (lines : List (LabLin
     · rw [locToPc.eq_4, if_pos ⟨rfl, rfl⟩]; intro _ _ _ h; cases h
 
 /-- Complete original label correctness of every section from well-formedness. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "labels_ok_labs_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem labelsOkLabsCorrect {width : Nat} [NeZero width] :
     ∀ code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))), labelsOk code →
@@ -738,8 +713,7 @@ theorem progToSection_eq {width : Nat} [NeZero width] (n : Nat) (p : HolProg wid
   simp only [progToSectionHOL, (appListAppend_thm _ _ []).1, (appListAppend_thm .nil .nil _).2.1]
 
 /-- Complete original section-name law of the section compiler. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "MAP_prog_to_section_FST" 228
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem mapProgToSectionFst {width : Nat} [NeZero width] (prog : List (Nat × HolProg width)) :
     (prog.map progToSectionHOL).map (fun s => s.sectionId) = prog.map Prod.fst := by
   induction prog with
@@ -749,16 +723,14 @@ theorem mapProgToSectionFst {width : Nat} [NeZero width] (prog : List (Nat × Ho
     simp only [List.map_cons, progToSection_eq, ih]
 
 /-- Complete original section-number law of the section compiler. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "MAP_prog_to_section_Section_num"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem mapProgToSectionSectionNum {width : Nat} [NeZero width] (prog : List (Nat × HolProg width)) :
     (prog.map progToSectionHOL).map (·.sectionId) = prog.map Prod.fst :=
   mapProgToSectionFst prog
 
 /-- Complete original installation of a compiled section body (without
 label positions) at its section entry. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "code_installed_prog_to_section_lemma" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem codeInstalledProgToSectionLemma {width : Nat} [NeZero width] :
     ∀ (prog4 : List (Nat × HolProg width)) (n : Nat) (prog3 : HolProg width),
       holAlookup prog4 n = some prog3 →
@@ -793,8 +765,7 @@ theorem holAlookup_mem {α β : Type} [DecidableEq α] :
 
 /-- Complete original installation of a compiled section body at its entry,
 from label well-formedness of the compiled program. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "code_installed_prog_to_section" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem codeInstalledProgToSection {width : Nat} [NeZero width] :
     ∀ (prog4 : List (Nat × HolProg width)) (n : Nat) (prog3 : HolProg width),
       labelsOk (prog4.map progToSectionHOL) ∧ holAlookup prog4 n = some prog3 →
@@ -874,8 +845,7 @@ private theorem codeInstalledLabelMem {width : Nat} [NeZero width] (l1 l2 x : Na
 
 /-- Every StackSem label of an installed flattened program resolves to a
 position of the installed LabLang code. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "code_installed_get_labels_IMP" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem codeInstalledGetLabelsImp {width : Nat} [NeZero width]
     {c : LabProgHOL width} {l1 l2 : Nat} :
     ∀ (top : Bool) (e : HolProg width) (n q : Nat) (cs bs : List Nat) (pc : Nat),

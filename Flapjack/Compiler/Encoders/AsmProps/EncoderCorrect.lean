@@ -21,8 +21,7 @@ open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Encoders.AsmSem
 
 /-- Exact HOL `encoder_correct_def` (`asmPropsScript.sml:117-133`), with the original binders
 `s1 i s2 ms`, `n` and `env`, and the `let pcs = all_pcs ...` binding. -/
-@[hol "cakeml/compiler/encoders/asm/asmPropsScript.sml" "encoder_correct_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def encoderCorrect {width : Nat} [NeZero width] {β γ : Type}
     (t : HolAsmTarget width β γ) : Prop :=
   targetOk t ∧

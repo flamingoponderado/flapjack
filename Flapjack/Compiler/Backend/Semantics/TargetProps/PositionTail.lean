@@ -30,8 +30,7 @@ private theorem optionSomeSucc (P Q : Nat → Prop)
     rfl
 
 /-- Literal source468: the hit suffix position shifts by successor, including absence. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "interference_pos_tail_hit" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem interferencePosTailHit {width : Nat} [NeZero width]
     {S Q : Type} {σ : Type} (P : InterferenceApp width S → Prop)
     (mc : MachineConfig width S Q) (ffi : HolFfiState σ) (ms : S)
@@ -58,8 +57,7 @@ theorem interferencePosTailHit {width : Nat} [NeZero width]
       ⟨hsa, hpa, hsb, hpb, hca.trans hcb.symm⟩
 
 /-- Literal source498: the miss suffix position shifts by successor, including absence. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "interference_pos_tail_miss" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem interferencePosTailMiss {width : Nat} [NeZero width]
     {S Q : Type} {σ : Type} (P : InterferenceApp width S → Prop)
     (mc : MachineConfig width S Q) (ffi : HolFfiState σ) (ms : S)

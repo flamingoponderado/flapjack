@@ -122,8 +122,7 @@ Canonical state maps and positive-width words use the named translations.
 The evaluator closure inherits reals_as_rational_cuts; this theorem establishes
 structural oracle/code/bitmap preservation, not numeric FP correspondence or
 whole compiler correctness. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmaps {width : Nat} [NeZero width] {C F : Type}
     (program : HolProg width) (source : StackSemStateFiniteExact width C F)
     (result : Option (StackSemResult width)) (post : StackSemStateFiniteExact width C F)

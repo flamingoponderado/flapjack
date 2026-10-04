@@ -12,8 +12,7 @@ open WordToStackRegFormat (wReg1 wReg2)
 /-- Literal eight source shared-memory cases on the native same-width carrier.
 Loads stage the address then spill the destination; stores stage address and
 source in that order. Offsets and all four memory sizes are preserved. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "wShareInst_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wShareInstNative {width : Nat} [NeZero width] (op : HolMemop) (v : Nat)
     (address : HolAddr width) (kf : Nat × Nat × Nat) : HolProg width :=
   match op, address with

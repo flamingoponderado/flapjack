@@ -64,8 +64,7 @@ private theorem adjustPcSkippedPrefix {width : Nat} [NeZero width] (count pc : N
     have hp := ih (pc + 1) ht
     simpa only [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using hp.trans he
 
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "adjust_pc_all_skips"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem adjustPcAllSkips {width : Nat} [NeZero width] (count pc : Nat)
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString)
@@ -76,8 +75,7 @@ theorem adjustPcAllSkips {width : Nat} [NeZero width] (count pc : Nat)
   rw [adjustPcSkippedPrefix count pc code h.2] at he
   exact he.symm
 
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "all_skips_initial_adjust"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem allSkipsInitialAdjust {width : Nat} [NeZero width]
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString)

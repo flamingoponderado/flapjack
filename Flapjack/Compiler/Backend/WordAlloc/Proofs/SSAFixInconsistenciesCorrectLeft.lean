@@ -31,9 +31,7 @@ allocation/map premises, quantified states and locals relation implication are
 retained, with the actual returned program evaluated to NONE and both final
 relations proved. The evaluator inherits reals_as_rational_cuts, SOUNDNESS
 item 8; the returned code only executes Move and zero Const instructions. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "fix_inconsistencies_correctL"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fixInconsistenciesCorrectL {width : Nat} [NeZero width] {C F : Type}
     (next : Nat) (left right : Spt Nat) (prio : Option (Unit ⊕ Unit))
     (source target : WordSemStateFiniteExact width C F)

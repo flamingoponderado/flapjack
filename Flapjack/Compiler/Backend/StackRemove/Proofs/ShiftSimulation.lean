@@ -12,10 +12,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 /-- Full original arbitrary-count upshift execution theorem.
 The sole premise is the original word-valued register lookup. The native
 zero-count instruction is retained, and every other state field is unchanged. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "evaluate_upshift"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateUpshift {width : Nat} [NeZero width] {C F : Type}
     (count register : Nat) (state : StackSemStateFiniteExact width C F) (value : BitVec width)
     (lookup : state.regs.lookup register = some (.word value)) :
@@ -55,10 +52,7 @@ theorem runSub {width : Nat} [NeZero width] {C F : Type}
 /-- Full original arbitrary-count downshift execution theorem.
 The sole premise is the original word-valued register lookup. The native
 zero-count instruction is retained, and every other state field is unchanged. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "evaluate_downshift"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateDownshift {width : Nat} [NeZero width] {C F : Type}
     (count register : Nat) (state : StackSemStateFiniteExact width C F) (value : BitVec width)
     (lookup : state.regs.lookup register = some (.word value)) :

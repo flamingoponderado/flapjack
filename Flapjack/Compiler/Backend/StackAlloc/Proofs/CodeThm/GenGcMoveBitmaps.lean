@@ -315,9 +315,7 @@ quantified `a1`, which the statement never mentions, is kept. HOL's duplicated
 lookups, `updateListEq` and `getVar`, `Temp nw` is `WordStore.temp n`, and
 `dimindex (:'a) DIV 8` and `dimword (:'a)` are `width / 8` and `2 ^ width`; the
 existentials `ck r0 r1 r2 r5 r6 r7 r9 t0 t1` are kept. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml"
-  "word_gen_gc_move_bitmaps_code_thm"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_gen_gc_move_bitmaps_code_thm {width : Nat} [NeZero width] {C F : Type}
     {conf : Config} {init : List (WordLocW width)} :
     ∀ (w : BitVec width) (bitmaps : List (BitVec width)) (z : BitVec width)

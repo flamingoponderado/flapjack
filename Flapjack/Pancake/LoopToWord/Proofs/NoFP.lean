@@ -52,7 +52,6 @@ theorem loopToWordCompFuncHOL_arithMemOnly {width : Nat} [NeZero width]
 /-- Flapjack-specific structural absence of `Inst (FP _)`, including both
 Call continuations. There is no corresponding HOL declaration to tag. -/
 def wordProgHOLNoFP {α : Type} : WordLangProgHOL α → Prop
-  | .inst (.fp _) => False
   | .mustTerminate body => wordProgHOLNoFP body
   | .seq first second => wordProgHOLNoFP first ∧ wordProgHOLNoFP second
   | .ite _ _ _ first second => wordProgHOLNoFP first ∧ wordProgHOLNoFP second

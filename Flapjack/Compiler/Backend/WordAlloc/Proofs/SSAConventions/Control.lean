@@ -17,8 +17,7 @@ private theorem preAlloc_seq {width : Nat} [NeZero width]
   exact ⟨⟨ha.1, hb.1⟩, ha.2, hb.2⟩
 
 /-- Original Seq case, with structurally generalized induction hypotheses added. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_preAllocSeq {width : Nat} [NeZero width]
     (first second : WordLangProgHOL (BitVec width))
     (firstIH : ∀ (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit)),
@@ -42,8 +41,7 @@ theorem ssaCcTrans_preAllocSeq {width : Nat} [NeZero width]
   simpa only [ssaCcTrans, firstEq, secondEq] using preAlloc_seq a b ha hb
 
 /-- Original MustTerminate case with a structurally generalized source-body IH. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_preAllocMustTerminate {width : Nat} [NeZero width]
     (body : WordLangProgHOL (BitVec width))
     (bodyIH : ∀ (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit)),
@@ -60,8 +58,7 @@ theorem ssaCcTrans_preAllocMustTerminate {width : Nat} [NeZero width]
     callArgConventionHOL] using pre
 
 /-- Original If case with the two structurally generalized branch induction hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_preAllocIf {width : Nat} [NeZero width]
     (cmp : Cmp) (condition : Nat) (right : WordRegImm (BitVec width))
     (yes no : WordLangProgHOL (BitVec width))
@@ -110,8 +107,7 @@ private theorem preAlloc_reconcile {width : Nat} [NeZero width] {β : Type}
   split <;> simp [preAllocConventionsHOL, everyStackVarHOL, callArgConventionHOL]
 
 /-- Original Loop case with the source body structurally generalized induction hypothesis. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_preAllocLoop {width : Nat} [NeZero width]
     (names exitNames : Spt Unit) (body : WordLangProgHOL (BitVec width))
     (bodyIH : ∀ (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit)),
@@ -146,8 +142,7 @@ theorem ssaCcTrans_preAllocLoop {width : Nat} [NeZero width]
     simpa only [ssaCcTrans, setupEq, bodyEq, backEq] using preAlloc_seq setup _ setupPre loopPre
 
 /-- Original Break case over the complete arbitrary loop context. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_preAllocBreak {width : Nat} [NeZero width] (index : Nat)
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
     (_h : isAllocVar next ∧ ssaMapOK next ssa) :
@@ -163,8 +158,7 @@ theorem ssaCcTrans_preAllocBreak {width : Nat} [NeZero width] (index : Nat)
       cases back <;> first | rfl | exact preAlloc_seq _ _ pre (by rfl)
 
 /-- Original Continue case over the complete arbitrary loop context. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_preAllocContinue {width : Nat} [NeZero width] (index : Nat)
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
     (_h : isAllocVar next ∧ ssaMapOK next ssa) :

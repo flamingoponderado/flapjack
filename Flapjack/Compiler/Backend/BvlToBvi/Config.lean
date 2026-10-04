@@ -8,7 +8,7 @@ namespace Flapjack.Compiler.Backend.BvlToBvi
 /-- Complete source configuration. Both inline trees retain the distinct original
 expression carriers and arities; HOL spt maps remain literal Spt trees.
 The source initializer is separate and depends on backend_common's stub counts. -/
-@[hol "cakeml/compiler/backend/bvl_to_bviScript.sml" "config"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 structure Config where
   inlineSizeLimit : Nat
   expCut : Nat
@@ -24,7 +24,7 @@ structure Config where
 /-- Full source default, with the original shared stub-count chain. HOL's local
 `num_stubs` abbreviation denotes `backend_common$bvl_num_stubs`; both inline
 maps are the literal empty Spt trees, not arbitrary expression placeholders. -/
-@[hol "cakeml/compiler/backend/bvl_to_bviScript.sml" "default_config_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def defaultConfig : Config :=
   { inlineSizeLimit := 10, expCut := 1000, splitMainAtSeq := true,
     nextName1 := Flapjack.bvlNumStubs + 1,

@@ -65,34 +65,12 @@ theorem arithUpd_target_notFailed {width : Nat} [NeZero width] {C F : Type}
   | addOverflow => simp [AsmSem.arithUpd, AsmSem.updReg, ht]
   | subOverflow => simp [AsmSem.arithUpd, AsmSem.updReg, ht]
 
-/-- Target FP updates succeed whenever the related source update does;
-Flapjack infrastructure. -/
-theorem fpUpd_target_notFailed {width : Nat} [NeZero width] {C F : Type}
-    (f : HolFp) (s1 : LabSem.State width C F) (t1 : AsmState width)
-    (hfp : ∀ r, s1.fpRegs r = t1.fpRegs r) (ht : t1.failed = false)
-    (hf : ¬ (LabSem.fpUpd f s1).failed) : ¬ (AsmSem.fpUpd f t1).failed := by
-  have hfp' : s1.fpRegs = t1.fpRegs := funext hfp
-  cases f <;> simp only [LabSem.fpUpd, AsmSem.fpUpd, LabSem.readFpReg, AsmSem.readFpReg,
-    hfp', LabSem.updReg, AsmSem.updReg, LabSem.updFpReg, AsmSem.updFpReg,
-    LabSem.assertState, AsmSem.assertState, ht] at hf ⊢
-  case fpMovToReg => split <;> simp
-  case fpToInt d1 d2 =>
-    cases hi : holFp64ToInt .roundTiesToEven (t1.fpRegs d2) with
-    | none => simp [hi] at hf
-    | some n => by_cases h64 : width = 64 <;> simp_all
-  all_goals simp
-
 /-- Source arithmetic and FP updates leave memory unchanged; Flapjack
 infrastructure. -/
 theorem arithUpd_memory {width : Nat} [NeZero width] {C F : Type} (a : HolArith width)
     (s : LabSem.State width C F) : (LabSem.arithUpd a s).memory = s.memory := by
   cases a <;> simp only [LabSem.arithUpd] <;> (repeat' split) <;>
     simp [LabSem.binopUpd, LabSem.updReg, LabSem.assertState]
-
-theorem fpUpd_memory {width : Nat} [NeZero width] {C F : Type} (f : HolFp)
-    (s : LabSem.State width C F) : (LabSem.fpUpd f s).memory = s.memory := by
-  cases f <;> simp only [LabSem.fpUpd] <;> (repeat' split) <;>
-    simp [LabSem.updReg, LabSem.updFpReg, LabSem.assertState]
 
 /-- The register-only instructions: Skip, Const, Arith and FP. -/
 theorem instSim_nonMem {width : Nat} [NeZero width] {C F : Type} (p : BitVec width)
@@ -126,19 +104,8 @@ theorem instSim_nonMem {width : Nat} [NeZero width] {C F : Type} (p : BitVec wid
     · intro x hx
       simp only [asmInst, AsmSem.instUpd, arithUpd_memory, htm]
       exact hmem x hx
-  | fp f =>
-    have hf' : ¬ (LabSem.fpUpd f s1).failed := hf
-    have htm := (AsmProps.fpUpd_consts f t1).2.2.1
-    have hl := fpUpd_lemma p labs f s1 t1 ⟨hregs, hfp, hf'⟩
-    refine ⟨fpUpd_target_notFailed f s1 t1 hfp ht hf',
-      fun x _ => by simp [AsmSem.instUpd, htm], hl.2, hl.1, ?_⟩
-    intro x hx
-    simp only [asmInst, AsmSem.instUpd, fpUpd_memory, htm]
-    exact hmem x hx
   | mem m r a => exact absurd rfl (hi m r a)
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "Inst_lemma"
-  (words_as_type_indexed_bitvec)]
 theorem instLemma {width : Nat} [NeZero width] {S Q F : Type}
     (i : HolInst width) (s1 : LabSem.State width Config F)
     (mc : MachineConfig width S Q) (code2 : LabProgHOL width) (labs : Spt (Spt Nat))

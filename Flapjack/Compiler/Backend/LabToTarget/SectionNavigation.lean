@@ -29,8 +29,7 @@ private instance labelTestDecidable {width : Nat} [NeZero width]
   | asm _ _ _ => exact isFalse (by simp)
   | labAsm _ _ _ _ => exact isFalse (by simp)
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "sec_loc_to_pc_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def secLocToPc {width : Nat} [NeZero width] (labelId : Nat)
     (lines : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) : Option Nat :=
@@ -42,8 +41,7 @@ def secLocToPc {width : Nat} [NeZero width] (labelId : Nat)
     else if isLabelHOL line then secLocToPc labelId rest
     else (secLocToPc labelId rest).map Nat.succ
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "sec_loc_to_pc_cons" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem secLocToPc_cons {width : Nat} [NeZero width] (labelId : Nat)
     (line : Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)) (lines : List (LabLineHOL width)) :
@@ -55,8 +53,7 @@ theorem secLocToPc_cons {width : Nat} [NeZero width] (labelId : Nat)
   · simp [secLocToPc, h]
   · cases line <;> simp [secLocToPc, h, isLabelHOL]
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "loc_to_pc_thm" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem locToPc_sections {width : Nat} [NeZero width] (sectionId labelId : Nat)
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :

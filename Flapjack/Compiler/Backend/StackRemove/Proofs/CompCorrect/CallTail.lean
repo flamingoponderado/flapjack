@@ -1,3 +1,4 @@
+import Batteries.Tactic.PermuteGoals
 import Flapjack.Compiler.Backend.StackRemove.Proofs.FindCode
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
 import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
@@ -17,10 +18,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 SOME is excluded only by the original source non-Error premise. Only actual
 source lookup/handler NONE/nonzero-clock guarded callee IHs are assumed.
 Unconditional clock clamping is discharged for both faithful evaluators. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectCallTail {width : Nat} [NeZero width] {C F : Type}
     (dest : Sum Nat Nat) (handler : Option (HolProg width × Nat × Nat))
     (source : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))

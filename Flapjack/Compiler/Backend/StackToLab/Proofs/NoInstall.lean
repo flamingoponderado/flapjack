@@ -19,8 +19,7 @@ open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackProps
 open Flapjack.Compiler.Backend.StackToLab.Proofs.CodeInstalled
 
 /-- HOL `stack_rawcall_comp_no_install`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "stack_rawcall_comp_no_install"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackRawcallCompNoInstall {width : Nat} [NeZero width] :
     ∀ (i : Spt Nat) (p : HolProg width),
       noInstall p = true → noInstall (StackRawCall.comp i p) = true := by
@@ -42,8 +41,7 @@ theorem stackRawcallCompNoInstall {width : Nat} [NeZero width] :
   | _ => intro h; simp_all [StackRawCall.comp, noInstall]
 
 /-- HOL `stack_rawcall_comp_top_no_install`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_rawcall_comp_top_no_install" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackRawcallCompTopNoInstall {width : Nat} [NeZero width] {i : Spt Nat} :
     ∀ p : HolProg width, noInstall p = true → noInstall (StackRawCall.compTop i p) = true := by
   intro p h
@@ -55,8 +53,7 @@ theorem stackRawcallCompTopNoInstall {width : Nat} [NeZero width] {i : Spt Nat} 
   · exact stackRawcallCompNoInstall i _ h
 
 /-- HOL `stack_rawcall_compile_no_install`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_rawcall_compile_no_install" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackRawcallCompileNoInstall {width : Nat} [NeZero width] :
     ∀ prog : List (Nat × HolProg width), (∀ ap ∈ prog, noInstall ap.2 = true) →
       ∀ ap ∈ StackRawCall.compile prog, noInstall ap.2 = true := by
@@ -66,8 +63,7 @@ theorem stackRawcallCompileNoInstall {width : Nat} [NeZero width] :
   exact stackRawcallCompTopNoInstall p (h _ hm)
 
 /-- HOL `stack_alloc_comp_no_install`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "stack_alloc_comp_no_install"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackAllocCompNoInstall {width : Nat} [NeZero width] :
     ∀ (n m : Nat) (p : HolProg width),
       noInstall p = true → noInstall (StackAlloc.comp n m p).1 = true
@@ -111,8 +107,7 @@ termination_by _ _ p => sizeOf p
 decreasing_by all_goals simp_wf <;> omega
 
 /-- HOL `stack_alloc_prog_comp_no_install`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_alloc_prog_comp_no_install" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackAllocProgCompNoInstall {width : Nat} [NeZero width] :
     ∀ prog : List (Nat × HolProg width), (∀ ap ∈ prog, noInstall ap.2 = true) →
       ∀ ap ∈ prog.map StackAlloc.progComp, noInstall ap.2 = true := by
@@ -155,8 +150,7 @@ theorem noInstall_wordGcCode {width : Nat} [NeZero width] (c : DataToWord.Config
         StackAlloc.wordGenGcMoveLoopCode, StackAlloc.wordGcPartialOrFull, StackAlloc.setNewTrigger]
 
 /-- HOL `stack_alloc_compile_no_install`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_alloc_compile_no_install" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackAllocCompileNoInstall {width : Nat} [NeZero width] {data : DataToWord.Config}
     {prog : List (Nat × HolProg width)} :
     (∀ ap ∈ prog, noInstall ap.2 = true) →
@@ -169,8 +163,7 @@ theorem stackAllocCompileNoInstall {width : Nat} [NeZero width] {data : DataToWo
   · exact stackAllocProgCompNoInstall prog h ap hap
 
 /-- HOL `upshift_no_install`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "upshift_no_install"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem upshiftNoInstall {width : Nat} [NeZero width] :
     ∀ k n : Nat, noInstall (StackRemove.upshift k n : HolProg width) = true := by
   intro k n
@@ -183,8 +176,7 @@ theorem upshiftNoInstall {width : Nat} [NeZero width] :
       apply ih; simp only [StackRemove.maxStackAlloc] at *; omega
 
 /-- HOL `downshift_no_install`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "downshift_no_install"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem downshiftNoInstall {width : Nat} [NeZero width] :
     ∀ k n : Nat, noInstall (StackRemove.downshift k n : HolProg width) = true := by
   intro k n
@@ -197,8 +189,7 @@ theorem downshiftNoInstall {width : Nat} [NeZero width] :
       apply ih; simp only [StackRemove.maxStackAlloc] at *; omega
 
 /-- HOL `stack_free_no_install`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "stack_free_no_install"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackFreeNoInstall {width : Nat} [NeZero width] :
     ∀ k n : Nat, noInstall (StackRemove.stackFree k n : HolProg width) = true := by
   intro k n
@@ -214,8 +205,7 @@ theorem stackFreeNoInstall {width : Nat} [NeZero width] :
       simp only [StackRemove.maxStackAlloc] at *; omega
 
 /-- HOL `stack_alloc_no_install`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "stack_alloc_no_install"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackAllocNoInstall {width : Nat} [NeZero width] :
     ∀ (jump : Bool) (k n : Nat),
       noInstall (StackRemove.stackAlloc jump k n : HolProg width) = true := by
@@ -233,8 +223,7 @@ theorem stackAllocNoInstall {width : Nat} [NeZero width] :
       simp only [StackRemove.maxStackAlloc] at *; omega
 
 /-- HOL `stack_remove_comp_no_install`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "stack_remove_comp_no_install"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackRemoveCompNoInstall {width : Nat} [NeZero width] :
     ∀ (jump : Bool) (off : BitVec width × BitVec width) (k : Nat) (p : HolProg width),
       noInstall p = true → noInstall (StackRemove.comp jump off k p) = true := by
@@ -252,8 +241,7 @@ theorem stackRemoveCompNoInstall {width : Nat} [NeZero width] :
       simp_all [StackRemove.comp, noInstall]
 
 /-- HOL `stack_remove_prog_comp_no_install`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_remove_prog_comp_no_install" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackRemoveProgCompNoInstall {width : Nat} [NeZero width] {Name : Type} {jump : Bool}
     {off : BitVec width × BitVec width} {k : Nat} {n : Name} :
     ∀ p : HolProg width, noInstall p = true →
@@ -276,8 +264,7 @@ theorem noInstall_initCode {width : Nat} [NeZero width] (gen : Bool) (maxHeap k 
     StackRemove.constInst, StackRemove.loadInst, StackRemove.storeInst]
 
 /-- HOL `stack_remove_compile_no_install`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_remove_compile_no_install" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackRemoveCompileNoInstall {width : Nat} [NeZero width] {jump : Bool}
     {offset : BitVec width × BitVec width} {gckind : Bool} {mh sp loc : Nat}
     {prog : List (Nat × HolProg width)} :
@@ -293,8 +280,7 @@ theorem stackRemoveCompileNoInstall {width : Nat} [NeZero width] {jump : Bool}
   · exact stackRemoveCompNoInstall jump offset sp p (h _ hm)
 
 /-- HOL `stack_names_comp_no_install`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "stack_names_comp_no_install"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompNoInstall {width : Nat} [NeZero width] :
     ∀ (f : Spt Nat) (p : HolProg width),
       noInstall p = true → noInstall (StackNames.progCompHOL f p) = true := by
@@ -306,8 +292,7 @@ theorem stackNamesCompNoInstall {width : Nat} [NeZero width] :
     simp_all [StackNames.progCompHOL, noInstall]
 
 /-- HOL `stack_names_prog_comp_no_install`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_names_prog_comp_no_install" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesProgCompNoInstall {width : Nat} [NeZero width] {Name : Type} {f : Spt Nat} :
     ∀ prog : List (Name × HolProg width), (∀ ap ∈ prog, noInstall ap.2 = true) →
       ∀ ap ∈ prog.map (StackNames.progCompEntryHOL f), noInstall ap.2 = true := by
@@ -316,8 +301,7 @@ theorem stackNamesProgCompNoInstall {width : Nat} [NeZero width] {Name : Type} {
   exact stackNamesCompNoInstall f p (h _ hm)
 
 /-- HOL `stack_names_compile_no_install`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_names_compile_no_install" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompileNoInstall {width : Nat} [NeZero width] {Name : Type} {names : Spt Nat}
     {prog : List (Name × HolProg width)} :
     (∀ ap ∈ prog, noInstall ap.2 = true) →
@@ -351,8 +335,7 @@ theorem flattenAllNoInstall {width : Nat} [NeZero width] :
   all_goals rename_i h; split at h <;> simp at h
 
 /-- HOL `flatten_no_install`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_no_install"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenNoInstall {width : Nat} [NeZero width] :
     ∀ (t : Bool) (p : HolProg width) (n m : Nat) (cs bs : List Nat), noInstall p = true →
       ∀ ln ∈ appListAppend (flattenHOL t p n m cs bs).1,
@@ -363,8 +346,7 @@ theorem flattenNoInstall {width : Nat} [NeZero width] :
   simp [lineNoInstall] at this
 
 /-- HOL `asm_fetch_aux_no_install_CONS`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "asm_fetch_aux_no_install_CONS" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem asmFetchAuxNoInstallCons {width : Nat} [NeZero width] {k : Nat}
     {ls : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) Basis.Pure.MlString.MlString) (BitVec width)))} :
@@ -391,8 +373,7 @@ theorem asmFetchAuxNoInstallCons {width : Nat} [NeZero width] {k : Nat}
     · exact ih' (pos - 1) w bytes l
 
 /-- HOL `prog_to_section_no_install`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "prog_to_section_no_install" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem progToSectionNoInstall {width : Nat} [NeZero width] :
     ∀ prog : List (Nat × HolProg width), (∀ ap ∈ prog, noInstall ap.2 = true) →
       LabProps.noInstall (prog.map progToSectionHOL) := by
@@ -414,8 +395,7 @@ theorem progToSectionNoInstall {width : Nat} [NeZero width] :
       cases h
 
 /-- HOL `stack_to_lab_compile_no_install`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "stack_to_lab_compile_no_install"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileNoInstall {width : Nat} [NeZero width] {stackConf : StackToLab.Config}
     {dataConf : DataToWord.Config} {maxHeap sp : Nat} {offset : BitVec width × BitVec width} :
     ∀ (prog : List (Nat × HolProg width)) (prog' : LabSem.LabProgHOL width),

@@ -22,8 +22,7 @@ private theorem lineExists_of_similar {α : Type} {width : Nat} [NeZero width]
 polymorphic existence-map values and the full Nat × Bool returned component.
 Original quantified k is vacuous: source5088-5094 and the full inferred type
 show no occurrence in any premise or result. Only that unused binder is omitted. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "enc_lines_again_line_labs_exist" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem encLinesAgain_lineLabsExist {α : Type} {width : Nat} [NeZero width]
     (labs : Spt (Spt Nat)) (ffis : List HolFfiName) (pos : Nat)
     (enc : HolAsm width → List (BitVec 8)) (lines acc : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))
@@ -48,8 +47,7 @@ Bool flag. Original source5100-5105 swaps the names ffis/labs relative to their
 inferred map/list types; the operation's actual argument types/order are retained.
 The original independent quantified k is unused in all premises and conclusion
 and is omitted, as confirmed by the complete original type capture. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "enc_secs_again_all_labs_exist" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem encSecsAgain_allLabsExist {α : Type} {width : Nat} [NeZero width]
     (pos : Nat) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (enc : HolAsm width → List (BitVec 8)) (code res : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))

@@ -75,10 +75,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 actual native evaluator and FFI transition. The target address and run follow
 from the original four premises; zero clock addition suffices, including the
 original timeout and terminal FFI cases. No target execution is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectShMemOp {width : Nat} [NeZero width] {C F : Type}
     (op : WordMemOp) (register base : Nat) (offset : BitVec width)
     (source : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))

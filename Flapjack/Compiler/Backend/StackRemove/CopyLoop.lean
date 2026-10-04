@@ -10,8 +10,7 @@ namespace Flapjack.Compiler.Backend.StackRemove
 open Flapjack.Compiler.Backend.StackLang
 
 /-- Full original per-bitmap-word copy loop with exact register positions. -/
-@[hol "cakeml/compiler/backend/stack_removeScript.sml" "copy_each_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def copyEach {width : Nat} [NeZero width] (temporary bitmap : Nat) : HolProg width :=
   whileProg .notEqual 1 (.imm 1)
     (listSeqHOL [loadInst temporary bitmap,
@@ -23,8 +22,7 @@ def copyEach {width : Nat} [NeZero width] (temporary bitmap : Nat) : HolProg wid
 
 /-- Complete outer copy loop, retaining signed Less against zero and both
 per-word copy calls; no memory, successful-run or output premise is added. -/
-@[hol "cakeml/compiler/backend/stack_removeScript.sml" "copy_loop_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def copyLoop {width : Nat} [NeZero width] (temporary bitmap : Nat) : HolProg width :=
   listSeqHOL [loadInst 1 bitmap,
     addBytesInWordInst bitmap,

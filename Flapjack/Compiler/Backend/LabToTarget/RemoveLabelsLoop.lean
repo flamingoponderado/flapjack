@@ -298,8 +298,7 @@ private theorem loopChecked {width : Nat} [NeZero width]
 conclusion clauses are retained over actual native recursive encoding, label
 updates, padding and canonical numeric sptrees. No returned validity, lookup
 result or simulation callback is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "remove_labels_loop_thm" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem removeLabelsLoop_correct {width : Nat} [NeZero width]
     (clock : Nat) (c : AsmConfigExact width) (pos : Nat) (acc : Spt (Spt Nat))
     (ffis : List HolFfiName)

@@ -25,8 +25,7 @@ theorem listNextVarRenameProps2 (names : List Nat) (ssa : Spt Nat) (next : Nat)
 /-- Full original shifted move-list wrapper. Its original map bound is at the
 unshifted counter; the shifted bound is derived, and allocation/stack classes
 swap exactly as in the source. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "list_next_var_rename_move_props_2"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem listNextVarRenameMoveProps2 {width : Nat} [NeZero width]
     (names : List Nat) (ssa : Spt Nat) (next : Nat)
     (output : WordLangProgHOL (BitVec width)) (ssaOut : Spt Nat) (nextOut : Nat)

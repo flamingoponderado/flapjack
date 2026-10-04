@@ -87,98 +87,15 @@ The following are open review or verification obligations:
    state and selected regressions. It does not review the mathematical
    adequacy of the specifications or prove untested source programs compile
    identically to CakeML.
-8. HOL's floating-point library specifies rounding over real numbers. The
-   current Lean binary64 arithmetic rendering uses `Rat` for finite float
-   values and rational operation inputs. Lean proves its computable
-   round-to-nearest-even algorithm agrees with the Lean choice-based
-   specification for every rational input, but the correspondence between
-   that rational rendering and HOL's real-number specification is a
-   source-reviewed external assumption, not a kernel-checked cross-prover
-   theorem. The value-component theorems do not establish flag equivalence;
-   NaN payload choice remains unspecified. HOL `real_to_float` and
-   `real_to_fp64` accept arbitrary reals. The executed path renders them
-   only for rational inputs (`holRealToFloat`, `holRealToFp64`); the
-   general-real `real_to_float` over Mathlib `ℝ` is `holRealToFloatR`, and
-   `holRealToFloatR_ratCast` proves that at every rational argument it equals
-   the executed `holRealToFloat` (likewise `round`, `float_round` and
-   `float_round_with_flags`, in `Flapjack/Misc/BinaryIeeeSqrt/RealCarrier.lean`).
-   The one wordSem
-   use, `int_to_fp64`, applies them to integers, which are in scope. The
-   WordSem and StackSem `FPSqrt`/`FPToInt`/`FPFromInt` instruction clauses
-   are proved equal, with no premise, to the same clauses over the tagged
-   Mathlib-real `fp64_sqrt`, `fp64_to_int` and `real_to_fp64` ports
-   (`WordSem/Inst/RealSqrtAgreement.lean`, `WordSem/Inst/RealConvertAgreement.lean`,
-   `StackSem/FpRegisterInstructions/RealAgreement.lean`). Likewise the executed
-   `float_add`/`float_sub`/`float_mul`/`float_div`/`float_mul_add`/`float_compare`
-   and their generated fp64 lifts and comparisons are proved equal, for every mode
-   and input, to literal Mathlib-real transcriptions
-   (`Misc/BinaryIeeeArith/RealCarrier.lean`, `Misc/MachineIeee/ArithReal.lean`), so
-   no executed binary64 operation relies on an unproved `Rat`-versus-real step; the
-   reading of Mathlib `ℝ` as HOL `real` remains the standard carrier assumption.
-   Irrational square-root rounding
-   is not covered by these rational-input theorems, and is handled
-   separately below.
-
-   `float_sqrt` rounds the real `sqrt r` of a nonnegative rational `r`.
-   `Flapjack/Misc/BinaryIeeeSqrt.lean` replaces each HOL comparison against
-   `s = sqrt r` with an exact rational criterion:
-   - `s ≤ q` iff `0 ≤ q ∧ r ≤ q²`;
-   - `s < q` iff `0 < q ∧ r < q²`;
-   - `q ≤ s` iff `q ≤ 0 ∨ q² ≤ r`;
-   - `q < s` iff `q < 0 ∨ q² < r`;
-   - `q = s` iff `0 ≤ q ∧ q² = r`;
-   - `|A − s| ≤ |B − s|` iff `A = B`, or `A < B ∧ s ≤ (A+B)/2`, or
-     `B < A ∧ (A+B)/2 ≤ s`;
-   - `|s| = s`.
-
-   `Misc/BinaryIeeeSqrt/RealAgreement.lean` now kernel-checks the rational-cut
-   comparisons against Mathlib's `Real.sqrt`, including distance comparisons,
-   and `Misc/BinaryIeeeSqrt/RealCarrier.lean` (with `Misc/MachineIeee/SqrtReal.lean`
-   for `fp64_sqrt`) kernel-checks that the executed
-   cut `float_sqrt`/`fp64_sqrt` equal literal transcriptions of HOL `round`,
-   `float_round`, `float_round_with_flags` and `float_sqrt` over Mathlib `ℝ`
-   (with `Real.sqrt`, HOL `abs` and all flag tests kept), for every rounding
-   mode and input.
-   The agreement of that Lean real specification with HOL's
-   real specification remains an external assurance assumption. The fixed
-   binary64 `holFp64SqrtR` wrapper has a source-reviewed `@[hol]` tag with
-   the conservative IEEE real-representation qualifier; the generic
-   zero-width-capable real helpers remain untagged. Consumer agreement proofs
-   cover the actual unary evaluator and native WordSem sqrt instruction,
-   including missing-register failure. These kernel equalities remove the
-   cut-comparison proof gap without proving cross-assistant real equivalence. Lean proves that the
-   computable binary64 sqrt equals the cut specification for every rational
-   `r ≥ 0` (`holFloatRoundSqrt_rte_fp64`).
-
-   HOL's rounding specification (`float_round_with_flags`, `float_round`,
-   `round`, `closest_such`, `is_closest`, `threshold`) inspects its real
-   argument only through order, equality and absolute-difference comparisons
-   with rationals, including the flag computations, and its rounded value does
-   not depend on HOL's choice operator. So the rational and rational-cut
-   renderings are a representation of HOL's reals rather than a different
-   specification. Every tagged declaration that uses them directly carries
-   the `(reals_as_rational_cuts)` qualifier (AGENTS.md): the wordSem
-   `inst_def` and the `fpSem` `fp_uop_comp_def`, `fp_bop_comp_def`,
-   `fpfma_def`, `fp_cmp_comp_def` and `fp_cmp_def` renderings.
-   Declarations stated over those, such as the wordSem `evaluate_def` and
-   its theorems, record the inherited assumption in the theorem map
-   (`inherits_reals_as_rational_cuts`, checked against a constant-closure
-   export). That marker propagates the assumption only; it does not review
-   the untagged definitions on the path. The qualifier is a reviewed
-   representation, not an equivalence theorem, and does not remove the
-   external assumption stated above.
-
-   Every real value these renderings reach is rational except `sqrt r`:
-   finite comparisons, the sum, difference, product and nonzero quotient of
-   two float values, the fused `x * y + z`, `float_to_int`'s floor, ceiling
-   and comparison with `1/2`, and `int_to_fp64` of an integer. Subnormal
-   values are dyadic rationals, signed zeros and infinities are decided by
-   sign bits and case splits without reals, the value-level `fp64_*`
-   operations discard the flags, and no transcendental function is reached.
-   NaN results are HOL's choice `float_some_qnan`, rendered by
-   `Classical.epsilon` over the same predicate; their payload is unspecified
-   in both systems, and this choice rendering is not covered by the
-   qualifier.
+8. The persistent `riscv-mi` branch removes floating-point operations and
+   their IEEE/real renderings. Their rounding and real-carrier assumptions
+   apply to the full development on `main`, not to this integer branch.
+   Instruction and machine carriers here are reduced specifications for the
+   supported `riscv-zkvm` subset. Surviving compiler proofs over those carriers
+   are branch-specific results; they are not exact ports of the original
+   full-HOL statements. Independent HOL declarations keep their applicable
+   reference annotations. Rejection tests establish the unsupported-opcode
+   boundary, not semantic equivalence with `riscv-zkvm`.
 
 ## Stack bounds and liveness
 

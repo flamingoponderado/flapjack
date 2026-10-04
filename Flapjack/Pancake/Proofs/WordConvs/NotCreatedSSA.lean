@@ -20,8 +20,7 @@ open Flapjack.Compiler.Backend.WordAlloc Flapjack.WordAlloc
 variable {width : Nat} [NeZero width]
 
 /-- HOL `ssa_cc_trans_inst_not_created_subprogs` (`wordConvsProofScript.sml:1128-1142`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "ssa_cc_trans_inst_not_created_subprogs"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem notCreated_ssaCcTransInst {width : Nat} [NeZero width] (P : WordLangProgHOL (BitVec width) → Bool)
     (i : WordLangInst (BitVec width)) (ssa : Spt Nat) (na : Nat)
     (i' : WordLangProgHOL (BitVec width)) (ssa' : Spt Nat) (na' : Nat)
@@ -32,8 +31,7 @@ theorem notCreated_ssaCcTransInst {width : Nat} [NeZero width] (P : WordLangProg
   exact this
 
 /-- HOL `fake_moves_not_created_subprogs` (`wordConvsProofScript.sml:1144-1157`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "fake_moves_not_created_subprogs"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem notCreated_fakeMoves {width : Nat} [NeZero width] (P : WordLangProgHOL (BitVec width) → Bool) (prio : Option (Unit ⊕ Unit))
     (ls : List Nat) (nL nR : Spt Nat) (n : Nat) (prog1 prog2 : WordLangProgHOL (BitVec width)) (n' : Nat)
     (ssa ssa' : Spt Nat) (h : fakeMoves prio ls nL nR n = (prog1, prog2, n', ssa, ssa')) :
@@ -58,8 +56,7 @@ theorem notCreated_fakeMoves {width : Nat} [NeZero width] (P : WordLangProgHOL (
   exact result
 
 /-- HOL `fake_seq_not_created_subprogs` (`wordConvsProofScript.sml:1159-1163`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "fake_seq_not_created_subprogs"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem notCreated_fakeSeq {width : Nat} [NeZero width] (P : WordLangProgHOL (BitVec width) → Bool) :
     ∀ ls : List Nat, notCreatedSubprogsHOL P
       ((ls.map (fakeMove : Nat → WordLangProgHOL (BitVec width))).foldr .seq .skip) = true := by
@@ -69,8 +66,7 @@ theorem notCreated_fakeSeq {width : Nat} [NeZero width] (P : WordLangProgHOL (Bi
   | cons name names ih => simpa [notCreatedSubprogsHOL, fakeMove] using ih
 
 /-- HOL `loop_setup_not_created_subprogs` (`wordConvsProofScript.sml:1165-1174`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "loop_setup_not_created_subprogs"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem notCreated_loopSetup {width : Nat} [NeZero width] (P : WordLangProgHOL (BitVec width) → Bool)
     (names exitNames : Spt Unit) (ssa : Spt Nat) (na : Nat)
     (setupProg : WordLangProgHOL (BitVec width)) (ssaRefreshed : Spt Nat) (naRefreshed : Nat)
@@ -183,8 +179,7 @@ theorem notCreated_ssaCcTrans_fst (P : WordLangProgHOL (BitVec width) → Bool) 
           (fixNotCreated P _ _ _ _).1, (fixNotCreated P _ _ _ _).2]
 
 /-- HOL `ssa_cc_trans_not_created_subprogs` (`wordConvsProofScript.sml:1176-1203`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "ssa_cc_trans_not_created_subprogs"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem notCreated_ssaCcTrans {width : Nat} [NeZero width] (P : WordLangProgHOL (BitVec width) → Bool)
     (prog : WordLangProgHOL (BitVec width)) (ssa : Spt Nat) (n : Nat)
     (lt : List (Spt Nat × Spt Unit × Spt Unit)) (prog' : WordLangProgHOL (BitVec width))
@@ -196,8 +191,7 @@ theorem notCreated_ssaCcTrans {width : Nat} [NeZero width] (P : WordLangProgHOL 
   exact this
 
 /-- HOL `setup_ssa_not_created_subprogs` (`wordConvsProofScript.sml:1205-1215`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "setup_ssa_not_created_subprogs"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem notCreated_setupSSA {width : Nat} [NeZero width] (P : WordLangProgHOL (BitVec width) → Bool)
     (prog : WordLangProgHOL (BitVec width)) (n v : Nat) (mov : WordLangProgHOL (BitVec width))
     (ssa : Spt Nat) (na : Nat)
@@ -211,8 +205,7 @@ theorem notCreated_setupSSA {width : Nat} [NeZero width] (P : WordLangProgHOL (B
   rfl
 
 /-- HOL `full_ssa_cc_trans_not_created_subprogs` (`wordConvsProofScript.sml:1217-1228`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "full_ssa_cc_trans_not_created_subprogs"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem notCreated_fullSsaCcTrans {width : Nat} [NeZero width] (P : WordLangProgHOL (BitVec width) → Bool) (n : Nat)
     (prog : WordLangProgHOL (BitVec width)) :
     notCreatedSubprogsHOL P prog = true → notCreatedSubprogsHOL P (fullSsaCcTrans n prog) = true := by

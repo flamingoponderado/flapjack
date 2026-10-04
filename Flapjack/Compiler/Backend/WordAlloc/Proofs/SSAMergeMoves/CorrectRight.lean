@@ -125,9 +125,7 @@ share the word dimension only; code and FFI types remain independent. Every
 original premise and all five conclusions are retained. The evaluator inherits
 its documented rational-cut FP boundary, although this Move branch only reads
 and writes locals. Guarded SOME lookups make the THE fallback irrelevant. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "merge_moves_correctR"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem mergeMovesCorrectR {width : Nat} [NeZero width]
     {C₁ F₁ C₂ F₂ : Type} (names : List Nat) (next : Nat)
     (left right : Spt Nat) (source : WordSemStateFiniteExact width C₁ F₁)

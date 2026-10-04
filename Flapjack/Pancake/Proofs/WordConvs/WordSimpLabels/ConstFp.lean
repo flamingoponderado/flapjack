@@ -35,8 +35,7 @@ private theorem constFpLoopLabelsSublist {width : Nat} [NeZero width]
 
 /-- Full original loop theorem: an actual returned program/map pair preserves
 both clauses of labelsRel, without an output invariant hypothesis. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "extract_labels_const_fp_loop"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem extractLabelsConstFpLoop {width : Nat} [NeZero width]
     (program : WordLangProgHOL (BitVec width)) (cs : Spt (BitVec width))
     (out : WordLangProgHOL (BitVec width)) (outState : Spt (BitVec width))
@@ -46,8 +45,7 @@ theorem extractLabelsConstFpLoop {width : Nat} [NeZero width]
   simpa only [run] using constFpLoopLabelsSublist program cs
 
 /-- Full original constant-folding wrapper theorem for every native program. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "extract_labels_const_fp"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem extractLabelsConstFp {width : Nat} [NeZero width]
     (program : WordLangProgHOL (BitVec width)) :
     labelsRel (extractLabels program) (extractLabels (constFp program)) :=

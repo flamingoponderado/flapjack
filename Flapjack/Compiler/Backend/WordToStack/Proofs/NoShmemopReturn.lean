@@ -8,8 +8,7 @@ open Flapjack.Compiler.Backend.StackProps
 return-value element carrier are independent of each other and the native
 continuation. HOL iff between its Boolean predicates is Bool equality here,
 so the false-continuation direction is retained without a safety premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "copy_ret_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem copyRetNoShmemop {width : Nat} [NeZero width] {β γ : Type}
     (perf isHandle : Bool) (kf : Nat × Nat × γ) (vs : List β)
     (kont : HolProg width) :

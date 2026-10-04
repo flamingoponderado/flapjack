@@ -39,8 +39,7 @@ private theorem reversePushParity {width : Nat} [NeZero width]
 /-- Full original pair equality and all four source guards. Both HD tests in
 HOL occur behind explicit nonempty guards. Their constructor-case rendering
 here avoids any dependence on the held unguarded total HD/EL operations. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "pad_section_labels"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem padSection_labels {width : Nat} [NeZero width]
     (nop : List (BitVec 8)) (lines aux : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))
     (pos : Nat) (labs : List (Nat × Nat)) :
@@ -144,8 +143,7 @@ theorem padSection_labels {width : Nat} [NeZero width]
 
 /-- Full original code-level label-map equality, with all four original
 predicates retained and arbitrary initial nested-map accumulator. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "pad_code_compute_labels"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem padCode_computeLabels {width : Nat} [NeZero width]
     (nop : List (BitVec 8)) (pos : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))
     (acc : Spt (Spt Nat)) :

@@ -132,10 +132,7 @@ by `sptFromAList`, whose lookup is the same first-match lookup as `ALOOKUP`.
 The premise uses the `permute` field of the exact target WordSem state `t`;
 `fpRegs` and `store` are recorded by the finite-map carrier qualifier, and
 `WordLocW width` by the word-width qualifier. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "env_to_list_IMP"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem envToListIMPHOL {width : Nat} [NeZero width] {C F : Type}
     (env : Spt (WordLocW width)) (target : WordSemStateFiniteExact width C F)
     (entries : List (Nat × WordLocW width)) (permutation : Nat → Nat → Nat)

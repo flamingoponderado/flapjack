@@ -1,3 +1,4 @@
+import Mathlib.Tactic.SplitIfs
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.ProgComp
 import Flapjack.Compiler.Backend.Semantics.StackSem.Inst
 
@@ -14,7 +15,6 @@ namespace Flapjack.Compiler.Backend.StackAlloc
 
 open Flapjack Flapjack.StackSemStateOps Flapjack.Compiler.Backend.StackLang
 open Flapjack.StackSemExpressions Flapjack.StackSemIntegerInstructions
-open Flapjack.StackSemFpInstructions Flapjack.StackSemFpRegisterInstructions
 open Flapjack.StackSemInst Flapjack.Compiler.Encoders.Asm
 
 namespace InstCorrectSupport
@@ -401,49 +401,11 @@ theorem instInteger_rel {width : Nat} [NeZero width] {C F : Type}
               exact ⟨u.regs, rfl, hr.regs⟩
             · simp at h
           · simp at h
-  | fp f => simp [instInteger] at h
-
 theorem InstRel.setFpVar1 {width : Nat} [NeZero width] {C F : Type}
     {s u : StackSemStateFiniteExact width C F} (hr : InstRel s u) (a : Nat) (x : BitVec 64) :
     StackSemStateOps.setFpVar a x u =
       liftState u (StackSemStateOps.setFpVar a x s) u.regs := by
   cases u; simp [StackSemStateOps.setFpVar, liftState, ← hr.fpRegs, ← hr.memory]
-
-theorem instFp_rel {width : Nat} [NeZero width] {C F : Type}
-    {s u t : StackSemStateFiniteExact width C F} (hr : InstRel s u) {op : HolFp}
-    (h : instFp op s = some t) :
-    ∃ rg1, instFp op u = some (liftState u t rg1) ∧ t.regs.submap rg1 := by
-  cases op
-  case fpMovFromReg d r1 r2 =>
-    simp only [instFp, instFpRegister, Option.join_some] at h ⊢
-    split_ifs at h ⊢
-    · split at h
-      · rename_i w hw
-        rw [getVar_rel hr hw]
-        simp only [Option.some.injEq] at h ⊢
-        subst h
-        exact ⟨_, hr.setFpVar1 _ _, hr.regs⟩
-      · simp at h
-    · split at h
-      · rename_i lo hi hlo hhi
-        rw [getVar_rel hr hlo, getVar_rel hr hhi]
-        simp only [Option.some.injEq] at h ⊢
-        subst h
-        exact ⟨_, hr.setFpVar1 _ _, hr.regs⟩
-      · simp at h
-  all_goals
-    simp only [instFp, instFpRegister, instFpSqrt, instFpToInt, instFpFromInt,
-      getFpVar_rel hr, Option.join_some] at h ⊢
-  all_goals try split_ifs at h ⊢
-  all_goals repeat' split at h
-  all_goals try simp only [Option.some.injEq, reduceCtorEq] at h
-  all_goals try subst h
-  all_goals try simp only [ite_true, *]
-  all_goals try simp only [Option.some.injEq]
-  all_goals first
-    | exact ⟨_, hr.setFpVar1 _ _, hr.regs⟩
-    | exact ⟨_, hr.setVar1 _ _, submap_fupdate_both hr.regs⟩
-    | exact ⟨_, hr.setVar2 _ _ _ _, submap_fupdate_both (submap_fupdate_both hr.regs)⟩
 
 theorem InstRel.refl {width : Nat} [NeZero width] {C F : Type}
     (s : StackSemStateFiniteExact width C F) : InstRel s s :=
@@ -467,7 +429,6 @@ theorem instHOL_rel {width : Nat} [NeZero width] {C F : Type}
     (h : instHOL i s = some t) :
     ∃ rg1, instHOL i u = some (liftState u t rg1) ∧ t.regs.submap rg1 := by
   cases i with
-  | fp op => exact instFp_rel hr h
   | skip => exact instHOL_rel_integer hr rfl rfl rfl h
   | const _ _ => exact instHOL_rel_integer hr rfl rfl rfl h
   | arith _ => exact instHOL_rel_integer hr rfl rfl rfl h
@@ -492,8 +453,6 @@ proof follows HOL's case split over the instruction: every register read of the
 source succeeds in the extended registers (`FLOOKUP_SUBMAP`) and every register
 write preserves `SUBMAP` (`SUBMAP_FUPDATE_both`). The total instruction semantics
 inherits the `reals_as_rational_cuts` limit through its FP clauses. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "inst_correct"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem inst_correct {width : Nat} [NeZero width] {C F : Type}
     {i : HolInst width} {s t : StackSemStateFiniteExact width C F}
     {regs : HolFiniteMapExact Nat (WordLocW width)}

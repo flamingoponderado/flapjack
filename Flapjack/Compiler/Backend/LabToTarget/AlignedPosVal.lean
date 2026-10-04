@@ -25,8 +25,7 @@ theorem encWithNop_length_mod {width : Nat} [NeZero width] (c : AsmConfigExact w
   rw [List.length_append, hlength, Nat.add_mod, hi, Nat.mul_mod, hs]
   simp
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "line_length_MOD_0"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem lineLength_mod_zero {width : Nat} [NeZero width] {S Q : Type}
     (mc : MachineConfig width S Q) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (p : Nat) (h : LabLineHOL width) :
@@ -112,8 +111,7 @@ theorem posVal_mod_zero_gen {width : Nat} [NeZero width] {S Q : Type}
     exact ih (posVal_step_odd hodd) (posVal_step_even hodd hev)
       (posVal_step_mod mc labs ffis hec hev hmod henc.1) henc.2
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "all_enc_ok_aligned_pos_val" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem allEncOk_aligned_posVal {width : Nat} [NeZero width] {S Q : Type}
     (mc : MachineConfig width S Q) (labs : Spt (Spt Nat)) (code2 : LabProgHOL width)
     (pc : Nat) (ffis : List HolFfiName) :

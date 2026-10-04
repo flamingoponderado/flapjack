@@ -19,8 +19,7 @@ end InstallWitnesses
 
 /-- HOL evaluate_apply_colour Install case (2133-2162), with the original
 three premises and full existential result; successful installation is derived. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_Install {width : Nat} [NeZero width] {C F : Type}
     (ptr len dptr dlen : Nat) (n1 n2 : NumSet) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)

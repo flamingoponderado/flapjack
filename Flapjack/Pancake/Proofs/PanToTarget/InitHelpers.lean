@@ -40,8 +40,7 @@ end InitHelpersCarrier
 /-- HOL `word_to_stack_compile_FST` (`pan_to_targetProofScript.sml:79-87`); `word_to_stack_compile`
     is the script's overload of the tagged `word_to_stack$compile` (`compileNative`), and HOL's free
     `mc wprog bitmaps c'' fs p` are explicit. -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "word_to_stack_compile_FST"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_to_stack_compile_FST {width : Nat} [NeZero width] {State Projection : Type}
     (mc : MachineConfig width State Projection)
     (wprog : List (Nat × Nat × WordLangProgHOL (BitVec width))) (bitmaps : List (BitVec width))
@@ -104,8 +103,7 @@ theorem makeInitAny_be {width : Nat} [NeZero width] {C F : Type}
 /-- HOL `full_make_init_be` (`pan_to_targetProofScript.sml:277-288`): the initial StackSem state
     keeps the LabSem endianness flag. HOL's free `a … k` are explicit, as in the tagged
     `full_make_init_ffi`. -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "full_make_init_be"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem full_make_init_be {width : Nat} [NeZero width] {C F : Type}
     (a : Compiler.Backend.StackToLab.Config) (b : Compiler.Backend.DataToWord.Config) (c d : Nat)
     (e : BitVec width × BitVec width) (f : List (BitVec width))

@@ -8,8 +8,7 @@ open Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Encoders.Asm
 CodeBufferWrite is explicitly checked; DataBufferWrite is a default-true case.
 An indirect Call target is checked independently of its return continuation,
 while handler traversal is nested under the SOME-return branch. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "stack_asm_ok_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def stackAsmOkExact {width : Nat} [NeZero width] (config : AsmConfigExact width) :
     HolProg width → Prop
   | .inst instruction => asmInstOkExact instruction config = true

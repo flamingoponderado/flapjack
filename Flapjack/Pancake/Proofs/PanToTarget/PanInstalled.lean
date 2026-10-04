@@ -20,8 +20,7 @@ open Flapjack
     domains `bitmaps_dm`/`sdm` are the Boolean domains of the tagged
     `installed_def`/`good_init_state_def`, as in `installed`.  All other clauses are those
     of `installed`, in HOL order. HOL's paired argument `(r1,r2)` is `regs`. -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "pan_installed_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def panInstalled {width : Nat} [NeZero width] {S Q : Type} (bytes : List (BitVec 8))
     (cbspace : Nat) (bitmaps : List (BitVec width)) (dataSp : Nat)
     (ffiNames : Option (List HolFfiName)) (regs : Nat × Nat) (mc : MachineConfig width S Q)
@@ -66,8 +65,7 @@ def panInstalled {width : Nat} [NeZero width] {S Q : Type} (bytes : List (BitVec
 
 /-- HOL `pan_installed_imp_installed` (`pan_to_targetProofScript.sml:328-334`). HOL's free
     variables are explicit, in order of appearance. -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "pan_installed_imp_installed"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem pan_installed_imp_installed {width : Nat} [NeZero width] {S Q : Type}
     (bytes : List (BitVec 8)) (cbspace : Nat) (bitmaps : List (BitVec width)) (dataSp : Nat)
     (ffiNames : Option (List HolFfiName)) (r1 r2 : Nat) (mc : MachineConfig width S Q)

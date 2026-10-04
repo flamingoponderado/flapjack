@@ -6,8 +6,7 @@ open Flapjack Flapjack.Compiler.Backend.WordInst Flapjack.Compiler.Encoders.Asm
 
 /-- Original unconditional native instruction-selection label preservation,
 including recursive return and exception handlers. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "inst_select_lab_pres" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem instSelect_labPres {width : Nat} [NeZero width]
     (config : AsmConfigExact width) (temporary : Nat)
     (program : WordLangProgHOL (BitVec width)) :
@@ -28,8 +27,7 @@ theorem instSelect_labPres {width : Nat} [NeZero width]
 
 /-- Original unconditional flat expression conventions for every native
 instruction-selection output, including both kinds of call handler. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "inst_select_flat_exp_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem instSelect_flatExpConventions {width : Nat} [NeZero width]
     (config : AsmConfigExact width) (temporary : Nat)
     (program : WordLangProgHOL (BitVec width)) :
@@ -49,8 +47,7 @@ theorem instSelect_flatExpConventions {width : Nat} [NeZero width]
 /-- Original complete instruction-selection instruction-validity theorem.
 Only the original zero-offset configuration and source-instruction premises
 are assumed; every native constructor and nested handler remains in scope. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "inst_select_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem instSelect_fullInstOkLess {width : Nat} [NeZero width]
     (config : AsmConfigExact width) (temporary : Nat)
     (program : WordLangProgHOL (BitVec width))

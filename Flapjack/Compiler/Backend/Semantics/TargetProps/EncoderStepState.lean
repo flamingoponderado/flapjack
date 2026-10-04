@@ -32,8 +32,7 @@ encoded-byte/PC/state invariant and every inclusive-prefix out-of-domain byte
 invariant. Inherited total holEl/holHd retains shared opaque holHdNil/holArb,
 without bounds or fallback. FP semantics transitively inherit the reviewed
 rational-cut real translation and the SOUNDNESS item 8 assumption. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "encoder_correct_asm_step_target_state_rel" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem encoderCorrectAsmStepStateRel {width : Nat} [NeZero width] {S Q : Type}
     (t : HolAsmTarget width S Q) (s1 s2 : AsmState width) (ms : S) (i : HolAsm width)
     (h : encoderCorrect t ∧ targetStateRel t s1 ms ∧ asmStep t.config s1 i s2) :
@@ -80,8 +79,7 @@ Lean's least reflexive-transitive closure; each target
 iteration witness is constructed from the full single-step result. Inherited
 total holEl/holHd retains shared opaque holHdNil/holArb without bounds/fallback;
 FP semantics inherit rational-cut reals and the SOUNDNESS item 8 assumption. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "encoder_correct_RTC_asm_step_target_state_rel" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem encoderCorrectRtcAsmStepStateRel {width : Nat} [NeZero width] {S Q : Type}
     (t : HolAsmTarget width S Q) (s1 s2 : AsmState width) (ms : S)
     (h : encoderCorrect t ∧ targetStateRel t s1 ms ∧

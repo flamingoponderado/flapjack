@@ -186,10 +186,7 @@ native constructor simulations. The compiled evaluation and extra clock,
 and the full original result-dispatch postcondition, are conclusions.
 The native evaluator closure inherits the reviewed reals_as_rational_cuts
 FP carrier (SOUNDNESS item 8), with no additional semantic assumptions. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrect {width : Nat} [NeZero width] {C F : Type}
     (program : HolProg width)
     (source : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))

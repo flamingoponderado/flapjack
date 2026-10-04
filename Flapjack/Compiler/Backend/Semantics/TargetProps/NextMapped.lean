@@ -4,8 +4,7 @@ namespace Flapjack.Compiler.Backend.Semantics.TargetProps
 open Flapjack Classical
 
 /-- Literal source685: the complete mapped-read interference guards, payload and oracle shift. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "next_interference_MappedRead" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem nextInterferenceMappedRead {width : Nat} [NeZero width]
     {S Q : Type} {σ : Type} (mc : MachineConfig width S Q) (ffi : HolFfiState σ)
     (ms : S) (index r reg : Nat) (nb : BitVec 8) (off pc' : BitVec width)
@@ -32,8 +31,7 @@ theorem nextInterferenceMappedRead {width : Nat} [NeZero width]
   simp only [hi, he, hm, halign, hd, hv, applyOracleHOL, hf, and_self, ite_true]
 
 /-- Literal source712: the complete mapped-write interference guards, payload and oracle shift. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "next_interference_MappedWrite" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem nextInterferenceMappedWrite {width : Nat} [NeZero width]
     {S Q : Type} {σ : Type} (mc : MachineConfig width S Q) (ffi : HolFfiState σ)
     (ms : S) (index r reg : Nat) (nb : BitVec 8) (off pc' : BitVec width)

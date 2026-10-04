@@ -30,8 +30,7 @@ clock-indexed simulation is proved from the real compileCorrect theorem and
 initial relation/oracle witnesses. Both finite termination and all-clock lazy
 trace divergence are retained. Inherits the evaluator FP real rendering
 assurance (SOUNDNESS item8); no stronger numerical parity claim is made. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "machine_sem_EQ_sem"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem machineSemEqSem {width : Nat} [NeZero width] {S Q F : Type}
     (mc : MachineConfig width S Q) (p : BitVec width) (ms : S)
     (s : Flapjack.Compiler.Backend.LabSem.State width Config F) :

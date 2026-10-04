@@ -9,8 +9,7 @@ open Flapjack.Compiler.Backend.StackLang
 
 /-- Full HOL assembler-admissibility theorem. Structural compiler induction
 supplies each original child IH, discharging every constructor case internally. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (program : HolProg width) (config : AsmConfigExact width) :
     stackAsmName config program ∧ namesOkSptHOL names config.regCount config.avoidRegs ∧
@@ -45,8 +44,7 @@ theorem stackNamesCompStackAsmOk {width : Nat} [NeZero width]
 
 /-- HOL EVERY is rendered as universal list membership, with the same input
 list order and compiled entry bodies. This lifts the full constructor theorem. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesStackAsmOk {width : Nat} [NeZero width]
     (config : AsmConfigExact width) (names : Flapjack.Spt Nat)
     (program : List (Nat × HolProg width)) :

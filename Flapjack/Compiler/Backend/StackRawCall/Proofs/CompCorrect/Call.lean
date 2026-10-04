@@ -34,10 +34,7 @@ nonError and literal state relation premises plus only the actual guarded
 recursive hypotheses. Both original existential conclusions and timeout/
 Halt Word2 stackspace exceptions remain. No target execution, successful body
 or final relation is assumed. Inherits reals_as_rational_cuts, SOUNDNESS item8. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectCall {width : Nat} [NeZero width] {C F : Type}
     (ret : Option (HolProg width × Nat × Nat × Nat)) (dest : Sum Nat Nat)
     (handler : Option (HolProg width × Nat × Nat)) (info : Spt Nat)

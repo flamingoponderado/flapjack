@@ -4,8 +4,6 @@ namespace Flapjack.Compiler.Backend.WordAlloc
 
 /-- Every integer register in an instruction is bounded by its literal
 maximum, including HOL's dimension-dependent floating-point transfers. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "max_var_inst_max" (words_as_type_indexed_bitvec)]
 theorem maxVarInstMax {width : Nat} [NeZero width]
     (instruction : WordLangInst (BitVec width)) :
     everyVarInstHOL (fun x => decide (x ≤ maxVarInstHOL instruction)) instruction = true := by
@@ -28,8 +26,4 @@ theorem maxVarInstMax {width : Nat} [NeZero width]
   | mem operator r address =>
       cases operator <;> cases address <;>
         simp [everyVarInstHOL, maxVarInstHOL, Nat.le_max_left, Nat.le_max_right]
-  | fp operation =>
-      cases operation <;> simp [everyVarInstHOL, maxVarInstHOL]
-      all_goals split <;> simp_all <;> omega
-
 end Flapjack.Compiler.Backend.WordAlloc

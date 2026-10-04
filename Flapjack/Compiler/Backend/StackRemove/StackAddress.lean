@@ -9,8 +9,7 @@ namespace Flapjack.Compiler.Backend.StackRemove
 open Flapjack.Compiler.Backend.StackLang
 
 /-- Literal immediate Add recursion. Zero retains an instruction. -/
-@[hol "cakeml/compiler/backend/stack_removeScript.sml" "upshift_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def upshift {width : Nat} [NeZero width] (register count : Nat) : HolProg width :=
   if count ≤ maxStackAlloc then
     .inst (.arith (.binop .add register register (.imm (wordOffset count))))
@@ -21,8 +20,7 @@ termination_by count
 decreasing_by simp only [maxStackAlloc] at *; omega
 
 /-- Literal immediate Sub recursion, including the zero-count instruction. -/
-@[hol "cakeml/compiler/backend/stack_removeScript.sml" "downshift_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def downshift {width : Nat} [NeZero width] (register count : Nat) : HolProg width :=
   if count ≤ maxStackAlloc then
     .inst (.arith (.binop .sub register register (.imm (wordOffset count))))
@@ -33,15 +31,13 @@ termination_by count
 decreasing_by simp only [maxStackAlloc] at *; omega
 
 /-- Preserve HOL's nested Seq and restore the address register after Store. -/
-@[hol "cakeml/compiler/backend/stack_removeScript.sml" "stack_store_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def stackStore {width : Nat} [NeZero width] (address register count : Nat) : HolProg width :=
   .seq (upshift address count)
     (.seq (.inst (.mem .store register (.addr address 0))) (downshift address count))
 
 /-- Load through the shifted destination itself, without a restoring shift. -/
-@[hol "cakeml/compiler/backend/stack_removeScript.sml" "stack_load_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def stackLoad {width : Nat} [NeZero width] (register count : Nat) : HolProg width :=
   .seq (upshift register count) (.inst (.mem .load register (.addr register 0)))
 

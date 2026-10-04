@@ -25,7 +25,8 @@ inductive GcKind where
 
 /-- Exact HOL `data_to_word$config` (`data_to_wordScript.sml:25-36`), field for
 field in HOL order. -/
-@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "config"]
+-- riscv-mi: integer-only specialization of the referenced HOL declaration.
+
 structure Config where
   tagBits : Nat
   lenBits : Nat
@@ -33,19 +34,17 @@ structure Config where
   lenSize : Nat
   hasDiv : Bool
   hasLongdiv : Bool
-  hasFpOps : Bool
-  hasFpTern : Bool
   be : Bool
   callEmptyFfi : Bool
   gcKind : GcKind
   deriving DecidableEq, Repr
 
 /-- Exact HOL `small_shift_length_def` (`data_to_wordScript.sml:101-103`). -/
-@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "small_shift_length_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def smallShiftLength (conf : Config) : Nat := conf.lenBits + conf.tagBits + 1
 
 /-- Exact HOL `shift_length_def` (`data_to_wordScript.sml:105-107`). -/
-@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "shift_length_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def shiftLength (conf : Config) : Nat := 1 + conf.padBits + conf.lenBits + conf.tagBits + 1
 
 /-- Exact HOL `get_gen_size_def` (`data_to_wordScript.sml:1109-1115`): the first

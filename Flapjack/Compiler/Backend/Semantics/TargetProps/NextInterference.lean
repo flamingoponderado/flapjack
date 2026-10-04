@@ -6,8 +6,7 @@ open Flapjack Classical
 
 /-- Literal source333: a successful finite clock search fixes the result of
 unbounded HOL option choice. Existence and uniqueness are proved, not assumed. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "next_interference_intro" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem nextInterferenceIntro {width : Nat} [NeZero width]
     {S Q : Type} {σ : Type} (mc : MachineConfig width S Q) (ffi : HolFfiState σ)
     (k : Nat) (ms : S)
@@ -25,8 +24,7 @@ theorem nextInterferenceIntro {width : Nat} [NeZero width]
 
 /-- Literal source343: equality of all shifted search results implies equality
 of the complete unbounded next-interference result. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "next_interference_shift" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem nextInterferenceShift {width : Nat} [NeZero width]
     {S Q : Type} {σ : Type} (mc1 mc2 : MachineConfig width S Q)
     (ffi1 ffi2 : HolFfiState σ) (ms1 ms2 : S) (l : Nat)

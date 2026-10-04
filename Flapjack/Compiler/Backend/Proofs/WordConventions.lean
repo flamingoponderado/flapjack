@@ -8,8 +8,7 @@ open Flapjack.Compiler.Backend.WordToWord Flapjack.Compiler.Backend.WordInst
 /-- Full original result equation and whole-input guard; names, labels and all
 five output conditions retained. The wildcard oracle result is universally
 quantified explicitly. No target evaluation or output property is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml"
-  "compile_to_word_conventions2" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileToWordConventions2 {width : Nat} [NeZero width] (wc : Config)
     (ac : AsmConfigExact width)
     (programs : List (Nat × Nat × WordLangProgHOL (BitVec width)))

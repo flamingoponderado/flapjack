@@ -85,9 +85,7 @@ end EvaluationFramesWitness
 
 /-- Full original arithmetic write-frame equivalence; no disjoint-destination
 guard is added. Native `can_mem_arith` and the actual read list are retained. -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "evaluate_arith_set_var"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateArithSetVar {width : Nat} [NeZero width] {C : Type} {F : Type}
     (a : HolArith width) (r : Nat) (u w : WordLocW width) (s : WordSemStateFiniteExact width C F)
     (h : canMemArith a = true ∧ r ∉ arithReads a) :
@@ -102,9 +100,7 @@ theorem evaluateArithSetVar {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Full original replacement of arbitrary memory. The post-state update is
 exactly HOL's update after `set_var`, not an assumed memory relation. -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "evaluate_arith_memory"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateArithMemory {width : Nat} [NeZero width] {C : Type} {F : Type}
     (a : HolArith width) (w : WordLocW width) (s : WordSemStateFiniteExact width C F)
     (m : BitVec width → WordLocW width) (h : canMemArith a = true) :
@@ -121,9 +117,7 @@ theorem evaluateArithMemory {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Full original arithmetic state agreement, requiring only input locals
 equality and original eligibility/source evaluation. -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "evaluate_arith_agree"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateArithAgree {width : Nat} [NeZero width] {C : Type} {F : Type}
     (a : HolArith width) (w : WordLocW width) (s1 s2 : WordSemStateFiniteExact width C F)
     (h : evaluate (.inst (.arith (HolArith.toWordLangArith a))) s1 =
@@ -139,9 +133,7 @@ theorem evaluateArithAgree {width : Nat} [NeZero width] {C : Type} {F : Type}
 /-- Full original load agreement on locals, memory, domain and endianness.
 All four frame theorems retain the inherited evaluator rational-cut assumption
 (SOUNDNESS item 8) and add no evaluation or global invariant hypothesis. -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "evaluate_load_agree"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateLoadAgree {width : Nat} [NeZero width] {C : Type} {F : Type}
     (op : HolMemop) (r a : Nat) (ofs : BitVec width) (w : WordLocW width)
     (s1 s2 : WordSemStateFiniteExact width C F)

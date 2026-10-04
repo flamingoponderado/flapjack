@@ -96,8 +96,7 @@ membership, `SUBMAP` is `HolFiniteMapExact.submap` and `fromAList`/`toAList`/
 `lookup` are the `Spt` renderings. The evaluator is the native StackSem
 `evaluate`, whose instruction closure inherits the `reals_as_rational_cuts`
 limit (`docs/SOUNDNESS.md` item 8). -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "comp_correct"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem comp_correct {width : Nat} [NeZero width] {C F : Type}
     {anything : WordSemGcFun width}
     {compile_rest : C → List (Nat × HolProg width) → Option (List (BitVec 8) × C)} :

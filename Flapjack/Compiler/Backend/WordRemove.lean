@@ -14,8 +14,7 @@ namespace Flapjack.Compiler.Backend.WordRemove
 /-- Exact HOL `remove_must_terminate_def` (`word_removeScript.sml:16-31`), clause by
 clause with HOL's final catchall: `MustTerminate p` is replaced by its body, and
 the recursion descends through `Seq`, `If`, both `Call` bodies and `Loop`. -/
-@[hol "cakeml/compiler/backend/word_removeScript.sml" "remove_must_terminate_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def removeMustTerminate {width : Nat} [NeZero width] :
     WordLangProgHOL (BitVec width) → WordLangProgHOL (BitVec width)
   | .seq p0 p1 => .seq (removeMustTerminate p0) (removeMustTerminate p1)

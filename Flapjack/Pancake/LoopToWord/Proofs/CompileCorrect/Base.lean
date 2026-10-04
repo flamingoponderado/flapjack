@@ -49,11 +49,7 @@ end LoopToWordCompileCorrectBaseWitnesses
 
 /-- Genuine `Skip` case of HOL `compile_correct`
     (`loop_to_wordProofScript.sml:57-97`, resumed at `:533-538`). There is no induction hypothesis. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "compile_correct"
-  (fmap_as_finite_support_relation :=
-    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.fpRegs,
-      WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_Skip {width : Nat} [NeZero width] {C F : Type}
     (s : LoopSemStateFiniteExact width F) :
     ∀ (res : Option (LoopSemStateFiniteExact.LoopResultExact width))
@@ -78,11 +74,7 @@ theorem compileCorrect_Skip {width : Nat} [NeZero width] {C F : Type}
 
 /-- Genuine `Fail` case of HOL `compile_correct`
     (`loop_to_wordProofScript.sml:57-97`, resumed at `:540-545`). There is no induction hypothesis. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "compile_correct"
-  (fmap_as_finite_support_relation :=
-    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.fpRegs,
-      WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_Fail {width : Nat} [NeZero width] {C F : Type}
     (s : LoopSemStateFiniteExact width F) :
     ∀ (res : Option (LoopSemStateFiniteExact.LoopResultExact width))
@@ -104,11 +96,7 @@ theorem compileCorrect_Fail {width : Nat} [NeZero width] {C F : Type}
 
 /-- Genuine `Tick` case of HOL `compile_correct`
     (`loop_to_wordProofScript.sml:57-97`, resumed at `:547-556`). There is no induction hypothesis. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "compile_correct"
-  (fmap_as_finite_support_relation :=
-    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.fpRegs,
-      WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_Tick {width : Nat} [NeZero width] {C F : Type}
     (s : LoopSemStateFiniteExact width F) :
     ∀ (res : Option (LoopSemStateFiniteExact.LoopResultExact width))
@@ -144,11 +132,7 @@ theorem compileCorrect_Tick {width : Nat} [NeZero width] {C F : Type}
 
 /-- Genuine `Continue` case of HOL `compile_correct`
     (`loop_to_wordProofScript.sml:57-97`, resumed at `:559-562`). There is no induction hypothesis. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "compile_correct"
-  (fmap_as_finite_support_relation :=
-    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.fpRegs,
-      WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_Continue {width : Nat} [NeZero width] {C F : Type}
     (k : Nat) (s : LoopSemStateFiniteExact width F) :
     ∀ (res : Option (LoopSemStateFiniteExact.LoopResultExact width))
@@ -173,11 +157,7 @@ theorem compileCorrect_Continue {width : Nat} [NeZero width] {C F : Type}
 
 /-- Genuine `Break` case of HOL `compile_correct`
     (`loop_to_wordProofScript.sml:57-97`, resumed at `:565-568`). There is no induction hypothesis. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "compile_correct"
-  (fmap_as_finite_support_relation :=
-    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.fpRegs,
-      WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_Break {width : Nat} [NeZero width] {C F : Type}
     (k : Nat) (s : LoopSemStateFiniteExact width F) :
     ∀ (res : Option (LoopSemStateFiniteExact.LoopResultExact width))
@@ -202,11 +182,7 @@ theorem compileCorrect_Break {width : Nat} [NeZero width] {C F : Type}
 
 /-- Genuine `Mark` case of HOL `compile_correct`
     (`loop_to_wordProofScript.sml:57-97`, resumed at `:730-734`). The induction hypothesis is HOL's `P (p, s)` for the body. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "compile_correct"
-  (fmap_as_finite_support_relation :=
-    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.fpRegs,
-      WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_Mark {width : Nat} [NeZero width] {C F : Type}
     (p : HolLoopProg width) (s : LoopSemStateFiniteExact width F)
     (ih : PropertyAt C p s) :

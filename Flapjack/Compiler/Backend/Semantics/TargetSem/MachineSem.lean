@@ -13,8 +13,7 @@ lookup is source-reviewed against original EL/TL/HD: in-range names are list
 elements, and out-of-range names use the shared `holHdNil`/`holArb HolFfiName`.
 The all-clock trace set and termination/failure witnesses retain that identical
 total evaluator; no extra bounds guard, names-length premise or fallback is added. -/
-@[hol "cakeml/compiler/backend/semantics/targetSemScript.sml" "machine_sem_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def machineSemHOL {width : Nat} [NeZero width] {state projection : Type} {σ : Type}
     (mc : MachineConfig width state projection) (ffi : HolFfiState σ) (ms : state) :
     HolBehaviour → Prop

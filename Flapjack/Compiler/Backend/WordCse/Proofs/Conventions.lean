@@ -80,8 +80,6 @@ theorem wordCseInst_out (data : Knowledge) (j : HolInst width) :
       · split
         · simp
         · exact addToLoadAux_out _ _ _ _
-  | fp f => simp [wordCseInst]
-
 theorem wordCse_out : ∀ (p : WordLangProgHOL (BitVec width)) (data : Knowledge),
     CseOut p (wordCse data p).2
   | .move r rs, _ => by simp only [wordCse]; exact .refl _
@@ -184,8 +182,6 @@ theorem preAllocConventionsHOL_cseOut {p q : WordLangProgHOL (BitVec width)}
 end Shape
 
 /-- Exact HOL `word_cse_full_inst_ok_less` (`word_cseProof:3813-3836`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "word_cse_full_inst_ok_less"
-  (words_as_type_indexed_bitvec)]
 theorem word_cse_full_inst_ok_less {width : Nat} [NeZero width] (p : WordLangProgHOL (BitVec width))
     (data : Knowledge) (c : AsmConfigExact width) (data' : Knowledge) (q : WordLangProgHOL (BitVec width))
     (h : fullInstOkLessExact c p = true ∧ wordCse data p = (data', q)) : fullInstOkLessExact c q = true := by
@@ -195,8 +191,6 @@ theorem word_cse_full_inst_ok_less {width : Nat} [NeZero width] (p : WordLangPro
   exact fullInstOkLessWith_cseOut _ _ this hp
 
 /-- Exact HOL `word_cse_pre_alloc_conventions`. -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "word_cse_pre_alloc_conventions"
-  (words_as_type_indexed_bitvec)]
 theorem word_cse_pre_alloc_conventions {width : Nat} [NeZero width] (p : WordLangProgHOL (BitVec width))
     (data data' : Knowledge) (q : WordLangProgHOL (BitVec width))
     (h : preAllocConventionsHOL p = true ∧ wordCse data p = (data', q)) : preAllocConventionsHOL q = true := by
@@ -206,8 +200,6 @@ theorem word_cse_pre_alloc_conventions {width : Nat} [NeZero width] (p : WordLan
   exact preAllocConventionsHOL_cseOut this hp
 
 /-- Exact HOL `word_cse_every_inst_distinct_tar_reg`. -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "word_cse_every_inst_distinct_tar_reg"
-  (words_as_type_indexed_bitvec)]
 theorem word_cse_every_inst_distinct_tar_reg {width : Nat} [NeZero width]
     (p : WordLangProgHOL (BitVec width)) (data data' : Knowledge) (q : WordLangProgHOL (BitVec width))
     (h : everyInst (fun i => distinctTarRegExact (HolInst.ofWordLangInst i)) p = true ∧
@@ -219,8 +211,6 @@ theorem word_cse_every_inst_distinct_tar_reg {width : Nat} [NeZero width]
   exact everyInst_cseOut _ this hp
 
 /-- Exact HOL `word_cse_every_inst_two_reg`. -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "word_cse_every_inst_two_reg"
-  (words_as_type_indexed_bitvec)]
 theorem word_cse_every_inst_two_reg {width : Nat} [NeZero width]
     (p : WordLangProgHOL (BitVec width)) (data data' : Knowledge) (q : WordLangProgHOL (BitVec width))
     (h : everyInst (fun i => twoRegInstExact (HolInst.ofWordLangInst i)) p = true ∧
@@ -232,8 +222,6 @@ theorem word_cse_every_inst_two_reg {width : Nat} [NeZero width]
   exact everyInst_cseOut _ this hp
 
 /-- Exact HOL `every_inst_distinct_tar_reg_word_common_subexp_elim`. -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml"
-  "every_inst_distinct_tar_reg_word_common_subexp_elim" (words_as_type_indexed_bitvec)]
 theorem every_inst_distinct_tar_reg_word_common_subexp_elim {width : Nat} [NeZero width]
     (p : WordLangProgHOL (BitVec width))
     (h : everyInst (fun i => distinctTarRegExact (HolInst.ofWordLangInst i)) p = true) :
@@ -241,16 +229,12 @@ theorem every_inst_distinct_tar_reg_word_common_subexp_elim {width : Nat} [NeZer
   everyInst_cseOut _ (wordCse_out p emptyData) h
 
 /-- Exact HOL `pre_alloc_conventions_word_common_subexp_elim`. -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml"
-  "pre_alloc_conventions_word_common_subexp_elim" (words_as_type_indexed_bitvec)]
 theorem pre_alloc_conventions_word_common_subexp_elim {width : Nat} [NeZero width]
     (p : WordLangProgHOL (BitVec width)) (h : preAllocConventionsHOL p = true) :
     preAllocConventionsHOL (wordCommonSubexpElim p) = true :=
   preAllocConventionsHOL_cseOut (wordCse_out p emptyData) h
 
 /-- Exact HOL `full_inst_ok_less_word_common_subexp_elim`. -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml"
-  "full_inst_ok_less_word_common_subexp_elim" (words_as_type_indexed_bitvec)]
 theorem full_inst_ok_less_word_common_subexp_elim {width : Nat} [NeZero width]
     (ac : AsmConfigExact width) (p : WordLangProgHOL (BitVec width))
     (h : fullInstOkLessExact ac p = true) : fullInstOkLessExact ac (wordCommonSubexpElim p) = true :=

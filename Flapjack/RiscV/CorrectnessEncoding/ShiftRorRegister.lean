@@ -187,8 +187,6 @@ private theorem bytes_from_domain (pc : BitVec 64) (bs : List (BitVec 8))
 
 /-- Full original Shift Reg/Ror constructor (560-620), including the actual five-instruction ORI31/SUB31/SLL31/SRLrd/ORrd lowering. Source count/avoid-register guards, every fetch/Next, scratch effect, PC coverage and both full original assertions are derived. This case inherits reals_as_rational_cuts, SOUNDNESS8. riscv_encoder_correct_shift (Shift.lean) assembles the full Shift constructor; whole-encoder and compiler assembly is separate. Original source step and initial target
 relation only; every original environment and both assertion predicates retained. -/
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml"
-  "riscv_encoder_correct"]
 theorem riscv_encoder_correct_shiftRorRegister (rd rs rc : Nat)
     (s1 s2 : AsmState 64) (ms : riscv_state)
     (h : asmStep riscvTarget.config s1 (.inst (.arith (.shift .ror rd rs (.reg rc)))) s2 ∧

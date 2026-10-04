@@ -974,13 +974,6 @@ private def winstInstBEq : WordLangInst (BitVec 64) → WordLangInst (BitVec 64)
       a == a' && b == b' && c == c' && d == d' && e == e'
   | .mem op dst (.addr b o), .mem op' dst' (.addr b' o') =>
       op == op' && dst == dst' && b == b' && o == o'
-  | .fp (.fpLess r f1 f2), .fp (.fpLess r' f1' f2') =>
-      r == r' && f1 == f1' && f2 == f2'
-  | .fp (.fpMovToReg r1 r2 d), .fp (.fpMovToReg r1' r2' d') =>
-      r1 == r1' && r2 == r2' && d == d'
-  | .fp (.fpMovFromReg d r1 r2), .fp (.fpMovFromReg d' r1' r2') =>
-      d == d' && r1 == r1' && r2 == r2'
-  | .fp (.fpAdd d l r), .fp (.fpAdd d' l' r') => d == d' && l == l' && r == r'
   | .skip, .skip => true
   | _, _ => false
 
@@ -1003,11 +996,6 @@ private def wiInstAddCarry (d c l r : Nat) : StackMoveProg :=
 private def wiInstLongMul : StackMoveProg := .inst (.arith (.longMul 3 0 0 2))
 private def wiInstLongDiv (q : Nat) : StackMoveProg := .inst (.arith (.longDiv 0 3 3 0 q))
 private def wiInstStore (r b : Nat) : StackMoveProg := .inst (.mem .store r (.addr b 9))
-private def wiInstFpLess (r : Nat) : StackMoveProg := .inst (.fp (.fpLess r 1 2))
-private def wiInstFpMovToReg (r1 : Nat) : StackMoveProg := .inst (.fp (.fpMovToReg r1 0 0))
-private def wiInstFpMovFromReg (d r1 : Nat) : StackMoveProg :=
-  .inst (.fp (.fpMovFromReg d r1 0))
-private def wiInstFpAdd : StackMoveProg := .inst (.fp (.fpAdd 1 2 3))
 private def wiInstSkip : StackMoveProg := .inst .skip
 
 def wInstParityGuard : Bool :=
@@ -1029,13 +1017,6 @@ def wInstParityGuard : Bool :=
     wiInstSkip &&
   winstProgBEq (wInst (width := 64) (.mem .store 4 (.addr 3 9)) (2, 7, 9))
     (.seq (.stackLoad 3 6) (wiInstStore 3 1)) &&
-  winstProgBEq (wInst (width := 64) (.fp (.fpLess 4 1 2)) (2, 7, 9))
-    (.seq (wiInstFpLess 2) (.stackStore 2 6)) &&
-  winstProgBEq (wInst (width := 64) (.fp (.fpMovToReg 4 3 0)) (2, 7, 9))
-    (.seq (wiInstFpMovToReg 2) (.stackStore 2 6)) &&
-  winstProgBEq (wInst (width := 64) (.fp (.fpMovFromReg 0 4 3)) (2, 7, 9))
-    (.seq (.stackLoad 2 6) (wiInstFpMovFromReg 0 2)) &&
-  winstProgBEq (wInst (width := 64) (.fp (.fpAdd 1 2 3)) (2, 7, 9)) wiInstFpAdd &&
   winstProgBEq (wInst (width := 64) .skip (2, 7, 9)) wiInstSkip
 
 #eval wInstParityGuard

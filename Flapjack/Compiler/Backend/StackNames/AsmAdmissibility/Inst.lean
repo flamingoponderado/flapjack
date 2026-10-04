@@ -10,8 +10,8 @@ open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackProps
 /-- Instruction case of HOL's local assembler-admissibility theorem. Renaming
 preserves the source register, immediate, architecture and fixed-name guards.
 The remaining program constructors and full theorem are separate open work. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: integer-only specialization of the referenced HOL declaration.
+
 theorem stackNamesCompStackAsmOk_Inst {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (instruction : HolInst width)
@@ -55,9 +55,5 @@ theorem stackNamesCompStackAsmOk_Inst {width : Nat} [NeZero width]
     cases operation <;>
       simp_all [instName, addrName, instFindNameHOL, asmInstOkExact,
         findNameSpt_eq_lookupHelper] <;> grind
-  | fp operation =>
-    cases operation <;>
-      simp_all [instName, fpName, instFindNameHOL, asmInstOkExact,
-        asmFpOkExact, findNameSpt_eq_lookupHelper] <;> grind
 
 end Flapjack.Compiler.Backend.StackNames

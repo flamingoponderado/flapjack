@@ -362,9 +362,7 @@ mentions, is kept as a quantified Boolean with its premise `c1`, and HOL's
 use it. `FLOOKUP s.store`, `k IN FDOM`, `|++` and `get_var` are the canonical
 carrier's lookups, `updateListEq` and `getVar`, and `Temp nw` is
 `WordStore.temp n`; the existentials `ck r0 r1 r2 r5 r6 r7 t0 t1` are kept. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml"
-  "word_gen_gc_move_data_code_thm"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_gen_gc_move_data_code_thm {width : Nat} [NeZero width] {C F : Type}
     {conf : Config} :
     ∀ (k : Nat) (ha1 i1 pa1 ib1 pb1 old1 : BitVec width) (m1 : BitVec width → WordLocW width)

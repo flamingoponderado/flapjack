@@ -5,8 +5,7 @@ open Flapjack Flapjack.Compiler.Backend.StackLang
 
 /-- Full source frame-insertion prefix result. Cutsets, frame and bitmap tree
 are arbitrary; no input length bound or wellformedness premise is added. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "wLive_isPREFIX"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wLiveIsPrefix {width : Nat} [NeZero width]
     (live : Spt Unit × Spt Unit) (bitmaps : AppList (BitVec width) × Nat)
     (frame : Nat × Nat × Nat) (program : HolProg width)

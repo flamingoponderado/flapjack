@@ -8,8 +8,7 @@ namespace Flapjack.Compiler.Backend.WordAlloc
 instruction compiler output equality precedes the original map/allocation
 premises. All instruction constructors, including both FP word-width branches,
 retain the monotonic counter, allocated counter and output-map bounds. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_inst_props"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransInstProps {width : Nat} [NeZero width]
     (instruction : WordLangInst (BitVec width)) (ssa : Spt Nat) (next : Nat)
     (output : WordLangProgHOL (BitVec width)) (ssaOut : Spt Nat) (nextOut : Nat)
@@ -72,17 +71,6 @@ theorem ssaCcTransInstProps {width : Nat} [NeZero width]
         | exact ⟨Nat.le_refl _, h.2, h.1⟩
         | exact ⟨by omega, allocation4, map4 _⟩
         | exact ⟨by omega, allocation8, map8 _ _⟩
-  case fp operation =>
-    cases operation
-    all_goals simp only [ssaCcTransInst, nextVarRename] at produced
-    all_goals repeat first | split at produced
-    all_goals repeat first | split at produced
-    all_goals simp only [Prod.mk.injEq] at produced
-    all_goals obtain ⟨_, rfl, rfl⟩ := produced
-    all_goals first
-      | exact ⟨Nat.le_refl _, h.2, h.1⟩
-      | exact ⟨by omega, allocation4, map4 _⟩
-      | exact ⟨by omega, allocation8, map8 _ _⟩
   all_goals
     simp only [ssaCcTransInst, nextVarRename] at produced
     repeat first | split at produced

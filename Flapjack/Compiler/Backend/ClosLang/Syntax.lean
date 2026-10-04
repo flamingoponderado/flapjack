@@ -2,16 +2,14 @@ import Flapjack.AstHOL.BackendOperators
 import Flapjack.Basis.Pure.MlString
 import Flapjack.Compiler.Backend.BackendCommon.Trace
 import Flapjack.Compiler.Backend.BackendCommon.Operators
-import Flapjack.FpSemHOL
 
 namespace Flapjack.Compiler.Backend.ClosLang
 
 open Flapjack.Basis.Pure.MlString
 
-/-! Complete source syntax carriers. HOL word64 payloads are fixed BitVec 64,
-not a variable-width substitute. All names use native MlString. FP payloads
-are the exact operation enums, without importing an evaluator into the syntax.
-Lists retain their literal order and recursive payloads, including Letrec pairs. -/
+/-! Integer source syntax carriers for riscv-mi. Word64 payloads are fixed
+BitVec 64. All names use native MlString. Lists retain their literal order
+and recursive payloads, including Letrec pairs. -/
 
 /-- Complete original `const` datatype, preserving every constructor and payload. -/
 @[hol "cakeml/compiler/backend/closLangScript.sml" "const"]
@@ -44,8 +42,9 @@ inductive IntOp where
   | greaterEq
   | lessConstSmall : Nat → IntOp
 
-/-- Complete original `word_op` datatype, preserving every constructor and payload. -/
-@[hol "cakeml/compiler/backend/closLangScript.sml" "word_op"]
+/-- Integer specialization of `word_op`, retaining word operations and conversions. -/
+-- riscv-mi: integer-only specialization of the referenced HOL declaration.
+
 inductive WordOp where
   | wordOpw : AstHOL.WordSize → BackendCommon.Opw → WordOp
   | wordShift : AstHOL.WordSize → Shift → Nat → WordOp
@@ -53,10 +52,6 @@ inductive WordOp where
   | wordFromInt
   | wordToInt
   | wordFromWord : Bool → WordOp
-  | fpCmp : FpCmp → WordOp
-  | fpUop : FpUop → WordOp
-  | fpBop : FpBop → WordOp
-  | fpTop : FpTop → WordOp
 
 /-- Complete original `block_op` datatype, preserving every constructor and payload. -/
 @[hol "cakeml/compiler/backend/closLangScript.sml" "block_op"]
@@ -114,8 +109,8 @@ inductive MemOp where
   | finaliseCons
   | configGC
 
-/-- Complete original `op` datatype, preserving every constructor and payload. -/
-@[hol "cakeml/compiler/backend/closLangScript.sml" "op"]
+/-- Original `op` constructor shape with integer-specialized `WordOp` payloads. -/
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 inductive Op where
   | label : Nat → Op
   | ffi : MlString → Op
@@ -127,8 +122,8 @@ inductive Op where
   | install
   | thunkOp : AstHOL.ThunkOp → Op
 
-/-- Complete original `exp` datatype, preserving every constructor and payload. -/
-@[hol "cakeml/compiler/backend/closLangScript.sml" "exp"]
+/-- Original `exp` constructor shape with integer-specialized operator payloads. -/
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 inductive Exp where
   | var : BackendCommon.Tra → Nat → Exp
   | ifThenElse : BackendCommon.Tra → Exp → Exp → Exp → Exp

@@ -57,13 +57,6 @@ example : instOkLess cfg (.mem .load8 0 (.addr 0 (w8 1))) = true := by decide
 example : instOkLess cfg (.mem .load16 0 (.addr 0 (w8 1))) = true := by decide
 example : instOkLess cfg .skip = true := by decide
 example : instOkLess cfg (.const 0 (w8 0)) = true := by decide
-example : instOkLess cfg (.fp (.fpLess 0 1 2)) = true := by decide
-example : instOkLess cfg (.fp (.fpLess 0 1 5)) = false := by decide
-example : instOkLess cfg (.fp (.fpFma 0 1 2)) = false := by decide
-example : instOkLess cfg (.fp (.fpMovToReg 1 1 0)) = true := by decide
-example : instOkLess cfg (.fp (.fpMovToReg 1 2 9)) = false := by decide
-example : instOkLess cfg (.fp (.fpMovFromReg 9 1 2)) = false := by decide
-
 private def guards : List Bool :=
   [ instOkLess cfg (.arith (.binop .add 0 0 (.imm (w8 1))))
   , instOkLess cfg (.arith (.binop .add 0 0 (.imm (w8 2))))
@@ -83,23 +76,17 @@ private def guards : List Bool :=
   , instOkLess cfg (.mem .load16 0 (.addr 0 (w8 1)))
   , instOkLess cfg .skip
   , instOkLess cfg (.const 0 (w8 0))
-  , instOkLess cfg (.fp (.fpLess 0 1 2))
-  , instOkLess cfg (.fp (.fpLess 0 1 5))
-  , instOkLess cfg (.fp (.fpFma 0 1 2))
-  , instOkLess cfg (.fp (.fpMovToReg 1 1 0))
-  , instOkLess cfg (.fp (.fpMovToReg 1 2 9))
-  , instOkLess cfg (.fp (.fpMovFromReg 9 1 2)) ]
+ ]
 
 private def expected : List Bool :=
-  [ true, false, true, true, false, false, true, false, false, true, false,
-    false, false, true, true, true, true, true, true, false, false, true,
-    false, false ]
+  [ true, false, true, true, false, false, true, false, false, true, false, false, false, true, true, true, true, true ]
 
 def runChecks : IO Bool := do
   if guards == expected then
-    IO.println "PASS wordConvs inst_ok_less matches all 24 oracle rows"
+    IO.println "PASS wordConvs inst_ok_less matches all 18 retained integer oracle rows"
   else
     IO.println "FAIL wordConvs inst_ok_less oracle rows"
   pure (guards == expected)
+
 
 end Flapjack.Test.WordLangInstOkLessParity

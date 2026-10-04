@@ -27,8 +27,7 @@ private theorem stackArgsAllocArg {width : Nat} [NeZero width] {α β : Type}
 
 /-- Full MustTerminate case. The hypothesis is exactly the compiler induction
 claim for its body, with arbitrary bitmap and frame inputs and the same guard. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_alloc_arg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackAllocArgMustTerminate {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (body : WordLangProgHOL (BitVec width))
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -39,8 +38,7 @@ theorem wordToStackAllocArgMustTerminate {width : Nat} [NeZero width]
 
 /-- Full Loop case, retaining both source cutsets and only the body induction
 hypothesis. No bitmap or frame wellformedness restriction is added. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_alloc_arg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackAllocArgLoop {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (liveIn liveOut : WordLangNumSetHOL)
     (body : WordLangProgHOL (BitVec width)) (bs : AppList (BitVec width) × Nat)
@@ -51,8 +49,7 @@ theorem wordToStackAllocArgLoop {width : Nat} [NeZero width]
 
 /-- Full Seq case. The second induction hypothesis is instantiated with the
 actual first compiler call's returned bitmap, rather than an assumed output. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_alloc_arg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackAllocArgSeq {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (first second : WordLangProgHOL (BitVec width)) (bs : AppList (BitVec width) × Nat)
@@ -65,8 +62,7 @@ theorem wordToStackAllocArgSeq {width : Nat} [NeZero width]
 
 /-- Full If case, including register operands and both valid/invalid immediate
 branches for an arbitrary original assembler configuration. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_alloc_arg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackAllocArgIf {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (cmp : Cmp) (reg : Nat)
     (ri : WordRegImm (BitVec width)) (first second : WordLangProgHOL (BitVec width))
@@ -84,8 +80,7 @@ theorem wordToStackAllocArgIf {width : Nat} [NeZero width]
 
 /-- Full tail Call case. The arbitrary optional handler remains quantified and
 is ignored by the original compiler when the return record is absent. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_alloc_arg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackAllocArgCallTail {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (dest : Option Nat) (args : List Nat)
     (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
@@ -97,8 +92,7 @@ theorem wordToStackAllocArgCallTail {width : Nat} [NeZero width]
 
 /-- Full returning Call without a handler. Its sole extra premise is the
 original subprogram induction hypothesis for the return body. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_alloc_arg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackAllocArgCallReturn {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (values : List Nat)
     (live : WordLangCutsetsHOL) (retCode : WordLangProgHOL (BitVec width))
@@ -115,8 +109,7 @@ theorem wordToStackAllocArgCallReturn {width : Nat} [NeZero width]
 /-- Full returning Call with a handler. Both genuine subprogram induction
 hypotheses are instantiated at the actual successive compiler bitmap outputs;
 handler value and both label pairs remain arbitrary. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_alloc_arg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackAllocArgCallHandler {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (values : List Nat)
     (live : WordLangCutsetsHOL) (retCode handleCode : WordLangProgHOL (BitVec width))

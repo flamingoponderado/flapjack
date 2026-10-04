@@ -8,7 +8,7 @@ assumption; this does not establish the stronger full real-carrier acceptance
 criterion or the clocked evaluator/whole compiler theorem. -/
 namespace Flapjack.StackPropsInstructionConstants
 open Compiler.Encoders.Asm StackSemInst StackSemIntegerInstructions
-  StackSemFpInstructions StackSemFpRegisterInstructions StackSemExpressions
+  StackSemExpressions
   StackSemStateOps StackPropsExpressionClock
 
 /-- Same-module canonical codec for the actual native state owner. -/
@@ -21,8 +21,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
 
 /-- Full original thirteen-field successful-instruction conclusion. Only the
 original primitive execution equality is a premise. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "inst_const"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem instConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (i : HolInst width) (s t : StackSemStateFiniteExact width C F)
     (h : instHOL i s = some t) :
@@ -31,15 +30,14 @@ theorem instConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     t.be = s.be ∧ t.gcFun = s.gcFun ∧ t.mdomain = s.mdomain ∧
     t.shMdomain = s.shMdomain ∧ t.bitmaps = s.bitmaps ∧
     t.compile = s.compile ∧ t.compileOracle = s.compileOracle := by
-  cases i <;> simp only [instHOL, instFp, instInteger, instFpRegister,
-    instFpSqrt, instFpToInt, instFpFromInt, Option.join_some] at h
+  cases i <;> simp only [instHOL, instInteger, Option.join_some] at h
   all_goals repeat' split at h
   all_goals try simp only [assign] at h
   all_goals repeat' split at h
   all_goals try contradiction
   all_goals try simp only [Option.some.injEq] at h
   all_goals cases h
-  all_goals try simp [setVar, setFpVar]
+  all_goals try simp [setVar]
   all_goals have hmem := ‹StackSemStateOps.memStore _ _ s = some t›
   all_goals unfold StackSemStateOps.memStore at hmem
   all_goals split at hmem
@@ -92,23 +90,20 @@ private theorem assignWithFfi {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Full original OPTION_MAP clock commutation, over the actual complete
 native primitive operation; success and semantic failure are both included. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "inst_with_const"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem instWithClock {width : Nat} [NeZero width] {C : Type} {F : Type}
     (i : HolInst width) (s : StackSemStateFiniteExact width C F) (k : Nat) :
     instHOL i { s with clock := k } =
       (instHOL i s).map (fun s => { s with clock := k }) := by
-  cases i <;> simp only [instHOL, instFp, instInteger, instFpRegister,
-    instFpSqrt, instFpToInt, instFpFromInt, Option.join_some,
-    assignWithClock, wordExpWithClock, getVar, StackSemStateOps.getVars, getFpVar,
-    memLoad, memStore, setVar, setFpVar]
+  cases i <;> simp only [instHOL, instInteger, Option.join_some,
+    assignWithClock, wordExpWithClock, getVar, StackSemStateOps.getVars,
+    memLoad, memStore, setVar]
   all_goals repeat' (split <;> try simp_all)
   all_goals try simp_all
 
 /-- Full original two-implication conjunction, retaining its arbitrary t and
 both the successful-result and semantic-failure branches. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "inst_clock_neutral"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem instClockNeutral {width : Nat} [NeZero width] {C : Type} {F : Type}
     (i : HolInst width) (s t : StackSemStateFiniteExact width C F) (k : Nat) :
     (instHOL i s = some t → instHOL i { s with clock := k } = some { t with clock := k }) ∧
@@ -121,17 +116,15 @@ private theorem instWithFfi {width : Nat} [NeZero width] {C : Type} {F : Type} {
     (i : HolInst width) (s : StackSemStateFiniteExact width C F) (k : HolFfiState OtherF) :
     instHOL i ({ s with ffi := k } : StackSemStateFiniteExact width C OtherF) =
       (instHOL i s).map (fun s => { s with ffi := k }) := by
-  cases i <;> simp only [instHOL, instFp, instInteger, instFpRegister,
-    instFpSqrt, instFpToInt, instFpFromInt, Option.join_some,
-    assignWithFfi, wordExpWithFfi, getVar, StackSemStateOps.getVars, getFpVar,
-    memLoad, memStore, setVar, setFpVar]
+  cases i <;> simp only [instHOL, instInteger, Option.join_some,
+    assignWithFfi, wordExpWithFfi, getVar, StackSemStateOps.getVars,
+    memLoad, memStore, setVar]
   all_goals repeat' (split <;> try simp_all)
   all_goals try simp_all
 
 /-- Full original FFI-update conjunction, with both success and NONE cases.
 The updated FFI state has the original arbitrary host carrier. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "inst_clock_neutral_ffi"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem instClockNeutralFfi {width : Nat} [NeZero width] {C : Type} {F : Type} {OtherF : Type}
     (i : HolInst width) (s t : StackSemStateFiniteExact width C F) (k : HolFfiState OtherF) :
     (instHOL i s = some t → instHOL i ({ s with ffi := k } : StackSemStateFiniteExact width C OtherF) = some { t with ffi := k }) ∧

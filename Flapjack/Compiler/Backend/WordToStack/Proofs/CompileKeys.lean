@@ -30,8 +30,7 @@ private theorem compileWordToStackKeys {width : Nat} [NeZero width] {β : Type}
 independent generic type; the output remainder is the original right-associated
 pair of frame sizes and bitmap state. No frame, uniqueness or compilation
 success premise is added. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "MAP_FST_compile_word_to_stack" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem mapFstCompileWordToStack {width : Nat} [NeZero width] {β : Type} :
     ∀ (conf : AsmConfigExact width) (perf : Bool) (registerCount : Nat)
       (programs : List (β × Nat × WordLangProgHOL (BitVec width)))

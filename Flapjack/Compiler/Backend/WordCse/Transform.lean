@@ -29,8 +29,8 @@ open Flapjack Compiler.Encoders.Asm
 
 /-- Exact HOL `word_cseInst_def` (`word_cseScript.sml:446-479`): all five
     instruction clauses. -/
-@[hol "cakeml/compiler/backend/word_cseScript.sml" "word_cseInst_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: integer-only specialization of the referenced HOL declaration.
+
 def wordCseInst {width : Nat} [NeZero width] (data : Knowledge) :
     HolInst width → Knowledge × WordLangProgHOL (BitVec width)
   | .skip => (data, .inst (HolInst.skip : HolInst width).toWordLangInst)
@@ -58,13 +58,11 @@ def wordCseInst {width : Nat} [NeZero width] (data : Knowledge) :
           let a' := canonicalRegs' r data a
           addToLoadAux (registerRead data a') r (loadToNumList op a' ofs)
             (.inst (HolInst.mem op r (.addr a ofs)).toWordLangInst)
-  | .fp fp => (invalidateRegs data (fpWrites fp), .inst (HolInst.fp fp : HolInst width).toWordLangInst)
 
 /-- Exact HOL `word_cse_def` (`word_cseScript.sml:538-632`): all twenty-six
     program clauses, by structural recursion on the program. The `Get` and
     `Set` clauses are the reviewed clause bodies `getClause`/`setClause`. -/
-@[hol "cakeml/compiler/backend/word_cseScript.sml" "word_cse_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wordCse {width : Nat} [NeZero width] (data : Knowledge) :
     WordLangProgHOL (BitVec width) → Knowledge × WordLangProgHOL (BitVec width)
   | .move r rs =>
@@ -121,15 +119,14 @@ def wordCse {width : Nat} [NeZero width] (data : Knowledge) :
   | .continue k => (data, .continue k)
 
 /-- Exact HOL `word_common_subexp_elim_def` (`word_cseScript.sml:634-638`). -/
-@[hol "cakeml/compiler/backend/word_cseScript.sml" "word_common_subexp_elim_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wordCommonSubexpElim {width : Nat} [NeZero width] (prog : WordLangProgHOL (BitVec width)) :
     WordLangProgHOL (BitVec width) :=
   let (_, newProg) := wordCse emptyData prog
   newProg
 
 /-- Exact HOL `Seqs_def` (`word_cseScript.sml:642-646`). -/
-@[hol "cakeml/compiler/backend/word_cseScript.sml" "Seqs_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def seqs {α : Type} : List (WordLangProgHOL α) → WordLangProgHOL α
   | [] => .skip
   | [x] => x

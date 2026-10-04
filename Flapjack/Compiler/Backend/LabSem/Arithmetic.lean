@@ -11,8 +11,7 @@ udiv: zero quotient and unchanged numerator as remainder at a zero divisor. No c
 namespace Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Encoders.Asm
 
-@[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "binop_upd_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def binopUpd {width : Nat} [NeZero width] {C F : Type} (register : Nat)
     (operator : Flapjack.BinOp) (left right : BitVec width)
     (state : Flapjack.Compiler.Backend.LabSem.State width C F) :
@@ -24,8 +23,7 @@ def binopUpd {width : Nat} [NeZero width] {C F : Type} (register : Nat)
     | .or => left ||| right
     | .xor => left ^^^ right)) state
 
-@[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "arith_upd_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def arithUpd {width : Nat} [NeZero width] {C F : Type} (operation : HolArith width)
     (state : Flapjack.Compiler.Backend.LabSem.State width C F) :
     Flapjack.Compiler.Backend.LabSem.State width C F :=

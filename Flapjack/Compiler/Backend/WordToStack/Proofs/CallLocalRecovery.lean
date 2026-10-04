@@ -70,8 +70,7 @@ open CallLocalRecoveryWitnesses
 
 /-- Full original caller-local recovery after native even-key argument binding.
 The values and valid index are derived from the two original successes. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "get_vars_fromList2_eq"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getVarsFromList2Eq {width : Nat} [NeZero width] {C F A : Type}
     (args : List A) (s : WordSemStateFiniteExact width C F)
     (xs : List (WordLocW width)) (n : Nat) (y : WordLocW width)
@@ -94,8 +93,7 @@ theorem getVarsFromList2Eq {width : Nat} [NeZero width] {C F A : Type}
 
 /-- Full original return-local recovery. Key zero is reserved for the Loc;
 the sole original nonzero guard derives the shifted source index. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "get_vars_fromList2_eq_cons"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getVarsFromList2EqCons {width : Nat} [NeZero width] {C F A : Type}
     (args : List A) (s : WordSemStateFiniteExact width C F)
     (xs : List (WordLocW width)) (n x3 x4 : Nat) (y : WordLocW width)

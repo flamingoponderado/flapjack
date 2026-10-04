@@ -12,8 +12,7 @@ collect counters and calls from two empty trees, use call absence for the
 tail-cost multiplier, then weight canonicalized preferences. Even algorithms
 return raw preferences and no spill-cost map. Production allocator routing
 remains on the parent definition-composition bead. -/
-@[hol "cakeml/compiler/backend/word_allocScript.sml" "get_heuristics_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def getHeuristics {width : Nat} [NeZero width] (algorithm functionName : Nat)
     (program : WordLangProgHOL (BitVec width)) :
     List (Nat × (Nat × Nat)) × Option (Spt Nat) :=

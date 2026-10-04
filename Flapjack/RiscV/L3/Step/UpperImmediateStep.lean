@@ -18,7 +18,6 @@ namespace Flapjack.RiscV.L3.Step
 
 open Flapjack.RiscV.L3
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LUI"]
 theorem dfnLui (rd : BitVec 5) (imm : BitVec 20) (s : riscv_state) (h : rd ≠ 0) :
     «dfn'LUI» (rd, imm) s =
       { s with
@@ -32,7 +31,6 @@ theorem dfnLui (rd : BitVec 5) (imm : BitVec 20) (s : riscv_state) (h : rd ≠ 0
   simp only [«dfn'LUI», «write'GPR», «write'gpr»]
   simp_all
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "AUIPC"]
 theorem dfnAuiPC (rd : BitVec 5) (imm : BitVec 20) (s : riscv_state) (h : rd ≠ 0) :
     «dfn'AUIPC» (rd, imm) s =
       { s with
@@ -47,13 +45,11 @@ theorem dfnAuiPC (rd : BitVec 5) (imm : BitVec 20) (s : riscv_state) (h : rd ≠
   simp only [«dfn'AUIPC», «write'GPR», «write'gpr», PC]
   simp_all
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LUI_NOP"]
 theorem dfnLuiNop (rd : BitVec 5) (imm : BitVec 20) (s : riscv_state) (h : rd = 0) :
     «dfn'LUI» (rd, imm) s = s := by
   simp only [«dfn'LUI», «write'GPR», h]
   simp
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "AUIPC_NOP"]
 theorem dfnAuiPCNop (rd : BitVec 5) (imm : BitVec 20) (s : riscv_state) (h : rd = 0) :
     «dfn'AUIPC» (rd, imm) s = s := by
   simp only [«dfn'AUIPC», «write'GPR», h]

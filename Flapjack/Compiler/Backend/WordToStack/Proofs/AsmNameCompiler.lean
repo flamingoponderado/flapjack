@@ -111,8 +111,7 @@ private theorem freeName {width : Nat} [NeZero width]
 Recursion uses only proper subprograms and actual threaded bitmap states; no
 target naming/result/simulation premise is assumed. Full assembler conventions
 and compiler simulation remain separate results. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_stack_asm_name_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackStackAsmName {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (program : WordLangProgHOL (BitVec width))
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)

@@ -18,8 +18,7 @@ private theorem aListLookupNoneOfNotMem {α : Type} (key : Nat)
 
 /-- Full original unconditional code-domain preservation, including duplicate
 keys and arbitrary programs. Native Spt and List carriers are unchanged. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "domain_fromAList_compile"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem domainFromAListCompile {width : Nat} [NeZero width]
     (code : List (Nat × HolProg width)) :
     sptDomain (sptFromAList (compile code)) = sptDomain (sptFromAList code) := by
@@ -29,8 +28,7 @@ theorem domainFromAListCompile {width : Nat} [NeZero width]
 /-- Full original lookup law with exactly the ALL_DISTINCT key guard.
 The supplied rest map is arbitrary; no canonical or well-formedness premise
 is added. List/Spt and all positive word dimensions are retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "lookup_collect_info"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem lookupCollectInfo {width : Nat} [NeZero width]
     (code : List (Nat × HolProg width)) (key : Nat) (rest : Spt Nat)
     (distinct : (code.map Prod.fst).Nodup) :
@@ -64,8 +62,7 @@ theorem lookupCollectInfo {width : Nat} [NeZero width]
 /-- Full original collected-frame invariant. Distinct source keys are the only
 guard; every recorded size has the literal leading Seq(StackAlloc size) witness
 in the original code map. Zero frames and arbitrary remaining bodies are kept. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "state_ok_collect_info"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateOkCollectInfo {width : Nat} [NeZero width]
     (code : List (Nat × HolProg width)) (distinct : (code.map Prod.fst).Nodup) :
     stateOk (collectInfo code .ln) (sptFromAList code) := by

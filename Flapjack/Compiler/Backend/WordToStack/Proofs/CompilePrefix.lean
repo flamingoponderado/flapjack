@@ -35,8 +35,7 @@ private theorem actualCompPrefix {width : Nat} [NeZero width]
 /-- Full source compiler prefix result, retaining its actual output equation.
 Every native constructor and recursive call is covered; only the conventional
 positive word-dimension translation differs from the source carrier. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_IMP_isPREFIX"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compImpIsPrefix {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (program : WordLangProgHOL (BitVec width))

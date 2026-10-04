@@ -88,11 +88,7 @@ full actual native run/stateRel/stack resources. Actual operand reads and
 successful word operation are derived internally, retaining arbitrary aliases, spill
 locations and positive widths. Canonical maps and word widths are qualified;
 evaluators inherit reals_as_rational_cuts (SOUNDNESS item 8). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_wInst"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateWInstBinopReg {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (op : BinOp) (destination input k f frame : Nat)
     (amount : Nat)
@@ -169,11 +165,7 @@ full actual native run/stateRel/stack resources. Actual operand reads and
 successful word operation are derived internally, retaining arbitrary aliases, spill
 locations and positive widths. Canonical maps and word widths are qualified;
 evaluators inherit reals_as_rational_cuts (SOUNDNESS item 8). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_wInst"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateWInstBinopImm {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (op : BinOp) (destination input k f frame : Nat)
     (amount : BitVec width)

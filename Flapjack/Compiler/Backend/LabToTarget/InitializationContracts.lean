@@ -14,8 +14,7 @@ Every index satisfies both code invariants; index zero retains all three
 initial-configuration equalities. The unused zero-index code component is
 retained in the pair destructuring. This proof-layer predicate introduces no
 successful compilation or desired target-state premise. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "compiler_oracle_ok_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def compilerOracleOk {width : Nat} [NeZero width]
     (coracle : Nat → Config × LabProgHOL width) (initLabs : Spt (Spt Nat))
     (initPos : Nat) (c : AsmConfigExact width) (ffis : List HolFfiName) : Prop :=
@@ -30,8 +29,7 @@ register fallback, and encoding invariant. State and projection carriers remain
 independent. The imported encoderCorrect inherits the reviewed FP real-rendering
 assumption of SOUNDNESS item8; this definition performs no real rendering itself.
 The dimension clause is retained separately from intrinsic word positivity. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "mc_conf_ok_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def mcConfOk {width : Nat} [NeZero width] {S Q : Type}
     (mc : MachineConfig width S Q) : Prop :=
   goodDimindex width ∧

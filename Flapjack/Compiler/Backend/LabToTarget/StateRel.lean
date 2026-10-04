@@ -23,8 +23,7 @@ membership or excluded-domain behavior. Total holEl retains the shared opaque
 HD-nil value, and holThe retains its unspecified NONE value; no bounds or
 completion premise is added. Every source conjunct, compiler/oracle
 field, normal-FFI/cache contract and actual target state is retained. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "state_rel_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def stateRel {width : Nat} [NeZero width] {S Q F : Type}
     (bundle : MachineConfig width S Q × LabProgHOL width × Spt (Spt Nat) × BitVec width)
     (s1 : LabSem.State width Config F) (t1 : AsmState width) (ms1 : S) : Prop :=

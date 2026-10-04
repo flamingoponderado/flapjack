@@ -31,10 +31,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 
 /-- Genuine complete original arithmetic constructor case; input failures,
 operation guards and ordered destination updates follow native execution. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "state_rel_inst"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelInstDiv {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer r1 r2 r3 : Nat)
     (source target postSource : StackSemStateFiniteExact width C F)
@@ -63,10 +60,7 @@ theorem stateRelInstDiv {width : Nat} [NeZero width] {C F : Type}
 
 /-- Genuine complete original arithmetic constructor case; input failures,
 operation guards and ordered destination updates follow native execution. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "state_rel_inst"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelInstAddCarry {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer r1 r2 r3 r4 : Nat)
     (source target postSource : StackSemStateFiniteExact width C F)
@@ -96,10 +90,7 @@ theorem stateRelInstAddCarry {width : Nat} [NeZero width] {C F : Type}
 
 /-- Genuine complete original arithmetic constructor case; input failures,
 operation guards and ordered destination updates follow native execution. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "state_rel_inst"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelInstAddOverflow {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer r1 r2 r3 r4 : Nat)
     (source target postSource : StackSemStateFiniteExact width C F)
@@ -128,10 +119,7 @@ theorem stateRelInstAddOverflow {width : Nat} [NeZero width] {C F : Type}
 
 /-- Genuine complete original arithmetic constructor case; input failures,
 operation guards and ordered destination updates follow native execution. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "state_rel_inst"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelInstSubOverflow {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer r1 r2 r3 r4 : Nat)
     (source target postSource : StackSemStateFiniteExact width C F)
@@ -160,10 +148,7 @@ theorem stateRelInstSubOverflow {width : Nat} [NeZero width] {C F : Type}
 
 /-- Genuine complete original arithmetic constructor case; input failures,
 operation guards and ordered destination updates follow native execution. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "state_rel_inst"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelInstLongMul {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer r1 r2 r3 r4 : Nat)
     (source target postSource : StackSemStateFiniteExact width C F)
@@ -192,10 +177,7 @@ theorem stateRelInstLongMul {width : Nat} [NeZero width] {C F : Type}
 
 /-- Genuine complete original arithmetic constructor case; input failures,
 operation guards and ordered destination updates follow native execution. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "state_rel_inst"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelInstLongDiv {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer r1 r2 r3 r4 r5 : Nat)
     (source target postSource : StackSemStateFiniteExact width C F)

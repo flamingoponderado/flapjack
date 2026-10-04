@@ -20,8 +20,7 @@ open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.WordInst
 
 /-- HOL `cond16bit_inst_select_exp'` (`word_to_wordProofScript.sml:906-915`); HOL's free
     `x c t1 t2 exp` are explicit. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "cond16bit_inst_select_exp'"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem cond16bit_inst_select_exp' {width : Nat} [NeZero width] (x : WordLangProgHOL (BitVec width))
     (c : AsmConfigExact width) (t1 t2 : Nat) (exp : WordLangExpHOL (BitVec width)) :
     x = instSelectExp c t1 t2 exp → noShareInstSubprogsHOL x = true ∨ c.isa ≠ .ag32 := by
@@ -32,8 +31,7 @@ theorem cond16bit_inst_select_exp' {width : Nat} [NeZero width] (x : WordLangPro
 
 /-- HOL `cond16bit_inst_select` (`word_to_wordProofScript.sml:919-929`); HOL's free
     `x c n p` are explicit. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "cond16bit_inst_select"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem cond16bit_inst_select {width : Nat} [NeZero width] (x : WordLangProgHOL (BitVec width))
     (c : AsmConfigExact width) (n : Nat) (p : WordLangProgHOL (BitVec width)) :
     x = instSelect c n p ∧ (noShareInstSubprogsHOL p = true ∨ c.isa ≠ .ag32) →
@@ -56,8 +54,7 @@ theorem notCreated_removeMustTerminate {width : Nat} [NeZero width]
   all_goals simp_all [notCreatedSubprogsHOL]
 
 /-- HOL `remove_must_terminate_no_share_inst` (`word_to_wordProofScript.sml:931-938`). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml"
-  "remove_must_terminate_no_share_inst" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem remove_must_terminate_no_share_inst {width : Nat} [NeZero width]
     (p : WordLangProgHOL (BitVec width)) :
     noShareInstSubprogsHOL p = true → noShareInstSubprogsHOL (removeMustTerminate p) = true := by
@@ -66,8 +63,7 @@ theorem remove_must_terminate_no_share_inst {width : Nat} [NeZero width]
 
 /-- HOL `full_compile_single_no_share_inst` (`word_to_wordProofScript.sml:940-954`); HOL's
     free `prog_info two_reg_arith reg_count alg c` are explicit. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml"
-  "full_compile_single_no_share_inst" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem full_compile_single_no_share_inst {width : Nat} [NeZero width]
     (progInfo : (Nat × Nat × WordLangProgHOL (BitVec width)) × Option (Spt Nat))
     (twoRegArith : Bool) (regCount alg : Nat) (c : AsmConfigExact width) :
@@ -81,8 +77,7 @@ theorem full_compile_single_no_share_inst {width : Nat} [NeZero width]
 
 /-- HOL `code_rel_not_created_subprogs` (`word_to_wordProofScript.sml:1067-1080`); HOL's
     free `P op args c1 sz v c2 v'` are explicit. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml"
-  "code_rel_not_created_subprogs" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem code_rel_not_created_subprogs {width : Nat} [NeZero width] {locWidth : Nat} [NeZero locWidth]
     {γ : Type}
     (P : WordLangProgHOL (BitVec width) → Bool) (op : Option Nat) (args : List (WordLocW locWidth))
@@ -131,8 +126,7 @@ theorem code_rel_not_created_subprogs {width : Nat} [NeZero width] {locWidth : N
 
 /-- HOL `code_rel_no_alloc` (`word_to_wordProofScript.sml:1084-1085`, `[local]`): the
     `no_alloc` instance of `code_rel_not_created_subprogs`. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "code_rel_no_alloc"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem code_rel_no_alloc {width : Nat} [NeZero width] {locWidth : Nat} [NeZero locWidth] {γ : Type}
     (op : Option Nat)
     (args : List (WordLocW locWidth)) (c1 : Spt (Nat × WordLangProgHOL (BitVec width))) (sz : Spt γ)
@@ -147,8 +141,7 @@ theorem code_rel_no_alloc {width : Nat} [NeZero width] {locWidth : Nat} [NeZero 
 
 /-- HOL `code_rel_no_install` (`word_to_wordProofScript.sml:1087-1088`, `[local]`): the
     `no_install` instance of `code_rel_not_created_subprogs`. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "code_rel_no_install"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem code_rel_no_install {width : Nat} [NeZero width] {locWidth : Nat} [NeZero locWidth] {γ : Type}
     (op : Option Nat)
     (args : List (WordLocW locWidth)) (c1 : Spt (Nat × WordLangProgHOL (BitVec width))) (sz : Spt γ)
@@ -162,8 +155,7 @@ theorem code_rel_no_install {width : Nat} [NeZero width] {locWidth : Nat} [NeZer
   exact code_rel_not_created_subprogs _ op args c1 sz v c2 v'
 
 /-- HOL `no_mt_remove_must_terminate_const` (`word_to_wordProofScript.sml:2102-2109`). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml"
-  "no_mt_remove_must_terminate_const" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem no_mt_remove_must_terminate_const {width : Nat} [NeZero width]
     (prog : WordLangProgHOL (BitVec width)) :
     noMtSubprogsHOL prog = true → removeMustTerminate prog = prog := by
@@ -176,8 +168,7 @@ theorem no_mt_remove_must_terminate_const {width : Nat} [NeZero width]
 
 /-- HOL `no_mt_full_compile_single` (`word_to_wordProofScript.sml:2111-2123`); HOL's free
     `x tt kk aa c` are explicit. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "no_mt_full_compile_single"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem no_mt_full_compile_single {width : Nat} [NeZero width]
     (x : (Nat × Nat × WordLangProgHOL (BitVec width)) × Option (Spt Nat))
     (tt : Bool) (kk aa : Nat) (c : AsmConfigExact width) :
@@ -209,8 +200,7 @@ theorem sptAListLookup_of_mem_nodup {α : Type} :
 
 /-- HOL `no_mt_code_full_compile_single` (`word_to_wordProofScript.sml:2125-2140`); HOL's
     free `progs x tt kk aa co` are explicit and `ALL_DISTINCT` is `List.Nodup`. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml"
-  "no_mt_code_full_compile_single" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem no_mt_code_full_compile_single {width : Nat} [NeZero width]
     (progs : List (Nat × Nat × WordLangProgHOL (BitVec width))) (x : List (Option (Spt Nat)))
     (tt : Bool) (kk aa : Nat) (co : AsmConfigExact width) :
@@ -227,8 +217,7 @@ theorem no_mt_code_full_compile_single {width : Nat} [NeZero width]
 
 /-- HOL `code_rel_ext_def` (`word_to_wordProofScript.sml:2144-2151`): every source entry is
     compiled by some `full_compile_single` instance. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "code_rel_ext_def" 2144
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def codeRelExt {width : Nat} [NeZero width] (code l : Spt (Nat × WordLangProgHOL (BitVec width))) :
     Prop :=
   ∀ (n : Nat) (p1 : Nat) (p2 : WordLangProgHOL (BitVec width)),
@@ -262,8 +251,7 @@ theorem sptAListLookup_map_fullCompileSingle {width : Nat} [NeZero width] (t : B
 
 /-- HOL `code_rel_ext_word_to_word` (`word_to_wordProofScript.sml:2155-2183`); HOL's free
     `c2` is the leading binder. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "code_rel_ext_word_to_word"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem code_rel_ext_word_to_word {width : Nat} [NeZero width] (c2 : AsmConfigExact width) :
     ∀ (code : List (Nat × Nat × WordLangProgHOL (BitVec width))) (c1 : Config)
       (col : List (Option (Spt Nat))) (code' : List (Nat × Nat × WordLangProgHOL (BitVec width))),
@@ -280,8 +268,7 @@ theorem code_rel_ext_word_to_word {width : Nat} [NeZero width] (c2 : AsmConfigEx
 
 /-- HOL `no_mt_code_rel_ext` (`word_to_wordProofScript.sml:2185-2203`); HOL's free
     `cd1 cd2` are explicit. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "no_mt_code_rel_ext"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem no_mt_code_rel_ext {width : Nat} [NeZero width]
     (cd1 cd2 : Spt (Nat × WordLangProgHOL (BitVec width))) :
     WordProps.noMtCode cd1 ∧ codeRelExt cd1 cd2 → codeRel cd1 cd2 := by
@@ -292,8 +279,7 @@ theorem no_mt_code_rel_ext {width : Nat} [NeZero width]
 
 /-- HOL `code_rel_no_share_inst` (`word_to_wordProofScript.sml:2207-2215`); HOL's free
     `op args c1 sz v c2 v'` are explicit. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "code_rel_no_share_inst"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem code_rel_no_share_inst {width : Nat} [NeZero width] {locWidth : Nat} [NeZero locWidth] {γ : Type}
     (op : Option Nat)
     (args : List (WordLocW locWidth)) (c1 : Spt (Nat × WordLangProgHOL (BitVec width))) (sz : Spt γ)

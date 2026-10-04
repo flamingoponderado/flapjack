@@ -18,8 +18,7 @@ compileOracle, code and bitmaps, so the count is zero. No target evaluation,
 poststate field fact, name restriction or byte-alignment premise is supplied.
 The evaluator closure inherits reals_as_rational_cuts; this case does not assert
 floating-point or numerical alignment correspondence. Parent assembly remains open. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsFFI {width : Nat} [NeZero width] {C F : Type}
     (ffiIndex : Basis.Pure.MlString.MlString) (ptr len ptr2 len2 ret : Nat)
     (source post : StackSemStateFiniteExact width C F)

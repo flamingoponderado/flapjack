@@ -8,15 +8,14 @@ open Flapjack.RiscV.L3
 /-- Flapjack proof infrastructure: original bare-VM premise reduces the faithful
 step Fetch definition; no distinct named original HOL theorem. -/
 theorem fetch_bare (s : riscv_state)
-    (h : (s.c_MCSR s.procID).mstatus.VM = 0#5) :
+    (_h : (s.c_MCSR s.procID).mstatus.VM = 0#5) :
     Fetch s = rawReadInst (s.c_PC s.procID) s := by
-  simp [Fetch, translateAddr, vmType, MCSR, PC, h, holThe]
+  rfl
 
 
 
 /-- Original full compressed fetch theorem: all Boolean/list and native state
 variables retain their source domains, premises and complete Skip update. -/
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "Fetch16"]
 theorem fetch16 (s : riscv_state) (xs : List Bool) (x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 xA xB xC xD xE xF : Bool)
     (h : xs = [x0,x1,x2,x3,x4,x5,x6,x7,x8,x9,xA,xB,xC,xD,xE,xF] ∧
       (s.c_MCSR s.procID).mstatus.VM = 0#5 ∧
@@ -43,7 +42,6 @@ theorem fetch16 (s : riscv_state) (xs : List Bool) (x0 x1 x2 x3 x4 x5 x6 x7 x8 x
 
 /-- Original full word fetch theorem: all32 Boolean/list variables and full
 state are unrestricted, with exactly the source VM/byte/low-bit premises. -/
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "Fetch32"]
 theorem fetch32 (s : riscv_state) (xs : List Bool) (x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 xA xB xC xD xE xF y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 yA yB yC yD yE yF : Bool)
     (h : xs = [y0,y1,y2,y3,y4,y5,y6,y7,y8,y9,yA,yB,yC,yD,yE,yF,x0,x1,x2,x3,x4,x5,x6,x7,x8,x9,xA,xB,xC,xD,xE,xF] ∧
       (s.c_MCSR s.procID).mstatus.VM = 0#5 ∧

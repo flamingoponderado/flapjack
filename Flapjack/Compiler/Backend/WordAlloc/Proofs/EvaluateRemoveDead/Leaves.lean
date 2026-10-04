@@ -26,9 +26,7 @@ theorem holFmapAsFiniteSupportRelationWitness_WordSemStateFiniteExact
 end EvaluateRemoveDeadLeavesWitnesses
 
 /-- HOL `evaluate_remove_dead`, `Skip` case (Resume 4334). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_remove_dead"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateRemoveDead_Skip {width : Nat} [NeZero width] {C F : Type} :
     removeDeadGoal C F (.skip : WordLangProgHOL (BitVec width)) := by
   rintro live nlive lt prog' livein nlivein st t tstore res rst ⟨hl, hs, hev, -, hrd, -⟩
@@ -40,9 +38,7 @@ theorem evaluateRemoveDead_Skip {width : Nat} [NeZero width] {C F : Type} :
   exact ⟨t, tstore, by rw [evaluate], hl, hs⟩
 
 /-- HOL `evaluate_remove_dead`, `Tick` case (Resume 4347). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_remove_dead"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateRemoveDead_Tick {width : Nat} [NeZero width] {C F : Type} :
     removeDeadGoal C F (.tick : WordLangProgHOL (BitVec width)) := by
   rintro live nlive lt prog' livein nlivein st t tstore res rst ⟨hl, hs, hev, -, hrd, -⟩
@@ -63,9 +59,7 @@ theorem evaluateRemoveDead_Tick {width : Nat} [NeZero width] {C F : Type} :
     exact ⟨t, tstore, rfl, hl, hs⟩
 
 /-- HOL `evaluate_remove_dead`, `Break` case (Resume 4291). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_remove_dead"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateRemoveDead_Break {width : Nat} [NeZero width] {C F : Type} (k : Nat) :
     removeDeadGoal C F (.break k : WordLangProgHOL (BitVec width)) := by
   rintro live nlive lt prog' livein nlivein st t tstore res rst ⟨hl, hs, hev, -, hrd, -⟩
@@ -85,9 +79,7 @@ theorem evaluateRemoveDead_Break {width : Nat} [NeZero width] {C F : Type} (k : 
   | some e => obtain ⟨names, exitNames⟩ := e; simpa [ho] using hl
 
 /-- HOL `evaluate_remove_dead`, `Continue` case (Resume 4296). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_remove_dead"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateRemoveDead_Continue {width : Nat} [NeZero width] {C F : Type} (k : Nat) :
     removeDeadGoal C F (.continue k : WordLangProgHOL (BitVec width)) := by
   rintro live nlive lt prog' livein nlivein st t tstore res rst ⟨hl, hs, hev, -, hrd, -⟩
@@ -107,9 +99,7 @@ theorem evaluateRemoveDead_Continue {width : Nat} [NeZero width] {C F : Type} (k
   | some e => obtain ⟨names, exitNames⟩ := e; simpa [ho] using hl
 
 /-- HOL `evaluate_remove_dead`, `Raise` case (Resume 4320). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_remove_dead"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateRemoveDead_Raise {width : Nat} [NeZero width] {C F : Type} (n : Nat) :
     removeDeadGoal C F (.raise n : WordLangProgHOL (BitVec width)) := by
   rintro live nlive lt prog' livein nlivein st t tstore res rst ⟨hl, hs, hev, -, hrd, herr⟩
@@ -141,9 +131,7 @@ theorem evaluateRemoveDead_Raise {width : Nat} [NeZero width] {C F : Type} (n : 
       exact ⟨s1.locals, s1.store, by simp, rfl, rfl⟩
 
 /-- HOL `evaluate_remove_dead`, `Return` case (Resume 4326). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_remove_dead"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateRemoveDead_Return {width : Nat} [NeZero width] {C F : Type} (n : Nat)
     (ms : List Nat) :
     removeDeadGoal C F (.return n ms : WordLangProgHOL (BitVec width)) := by
@@ -184,9 +172,7 @@ theorem evaluateRemoveDead_Return {width : Nat} [NeZero width] {C F : Type} (n :
 
 /-- HOL `evaluate_remove_dead`, `LocValue` case (Resume 4116): a dead destination is
 removed (its write is outside the live set), a live one keeps the instruction. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_remove_dead"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateRemoveDead_LocValue {width : Nat} [NeZero width] {C F : Type} (r l1 : Nat) :
     removeDeadGoal C F (.locValue r l1 : WordLangProgHOL (BitVec width)) := by
   rintro live nlive lt prog' livein nlivein st t tstore res rst ⟨hl, hs, hev, -, hrd, herr⟩

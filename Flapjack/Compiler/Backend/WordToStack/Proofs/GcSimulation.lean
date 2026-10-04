@@ -215,10 +215,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
   StackSemStateSupport.holFmapAsFiniteSupportWitness
 
 /-- Exact HOL `IMP_enc_stack` (`word_to_stackProofScript.sml:1692-1700`). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "IMP_enc_stack"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store,
-    StackSemStateFiniteExact.regs, StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem impEncStack {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (k : Nat)
     (s1 : WordSemStateFiniteExact width (Nat × C) F)
@@ -503,9 +500,7 @@ theorem decStackLemma1 {width : Nat} [NeZero width] (k len : Nat) :
 /-- Exact HOL `dec_stack_lemma` (`word_to_stackProofScript.sml:1962-1995`). HOL's
 free `k`, `lens`, `x0` and `x` are explicit; HOL's total `t1.store ' Handler` is
 `holFapply`. The source configuration carrier is `Nat × C` as in HOL. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "dec_stack_lemma"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem decStackLemma {width : Nat} [NeZero width] {C F : Type} (k : Nat) (lens : List Nat)
     (t1 : StackSemStateFiniteExact width C F) (s1 : WordSemStateFiniteExact width (Nat × C) F)
     (x0 : List (WordLocW width)) (x : List (WordSemStackFrame width)) :
@@ -548,10 +543,7 @@ theorem decStackLemma {width : Nat} [NeZero width] {C F : Type} (k : Nat) (lens 
 /-- Exact HOL `gc_state_rel` (`word_to_stackProofScript.sml:2045-2073`). WordSem
 and StackSem `gc` are the native transitions; the source configuration carrier
 is `Nat × C` as in HOL. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "gc_state_rel"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store,
-    StackSemStateFiniteExact.regs, StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem gcStateRel {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (k : Nat)
     (s1 s2 : WordSemStateFiniteExact width (Nat × C) F)

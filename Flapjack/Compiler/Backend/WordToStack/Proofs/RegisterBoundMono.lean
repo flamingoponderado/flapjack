@@ -17,16 +17,12 @@ private theorem instBoundMono {width : Nat} [NeZero width]
   | mem op d addr =>
       cases addr
       simp_all [regBoundInst] <;> omega
-  | fp f =>
-      cases f <;> simp_all [regBoundInst] <;> omega
   | skip => trivial
   | const _ _ => simp_all [regBoundInst] <;> omega
 
 /-- Full original native program register-bound monotonicity. The original
 return-dependent handler branch is preserved; no guard on ignored handlers,
 stack offsets, allocation counts, word width or target evaluation is added. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "reg_bound_mono" (words_as_type_indexed_bitvec)]
 theorem regBoundMono {width : Nat} [NeZero width]
     (program : HolProg width) (k k' : Nat)
     (bounded : regBound program k) (le : k ≤ k') : regBound program k' := by

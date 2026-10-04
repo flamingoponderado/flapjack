@@ -11,8 +11,7 @@ open Flapjack.Compiler.Encoders.Asm
 /-- Full source incremental code-label safety. External labels remain an arbitrary
 set; only the original two stub memberships, complete compiler output equation
 and source safety predicate are premises. Target label safety is derived. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_good_code_labels_incr" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackGoodCodeLabelsIncr {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (registers : Nat)
     (rows : List (Nat × Nat × WordLangProgHOL (BitVec width)))

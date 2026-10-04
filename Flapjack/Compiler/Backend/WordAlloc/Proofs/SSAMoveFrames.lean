@@ -35,8 +35,7 @@ private theorem lookup_ins {α : Type} (x k : Nat) (v : α) (t : Spt α) :
   · simp [h, sptLookup_sptInsert_ne k x v t h]
 
 /-- HOL `fake_moves_frame3` (`word_allocProofScript.sml:4968-4993`). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "fake_moves_frame3"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fakeMovesFrame3 {width : Nat} [NeZero width] (prio : Option (Unit ⊕ Unit)) :
     ∀ (ls : List Nat) (na : Nat) (ssaL ssaR : Spt Nat),
       ∀ x, ¬ x ∈ ls ∨ sptDomain (sptInter ssaL ssaR) x →
@@ -84,8 +83,7 @@ theorem fakeMovesFrame3 {width : Nat} [NeZero width] (prio : Option (Unit ⊕ Un
       · exact ⟨hl, hr⟩
 
 /-- HOL `fake_moves_frame` (`word_allocProofScript.sml:4917-4946`). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "fake_moves_frame"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fakeMovesFrame {width : Nat} [NeZero width] (prio : Option (Unit ⊕ Unit)) :
     ∀ (ls : List Nat) (na : Nat) (ssaL ssaR : Spt Nat),
       isAllocVar na →
@@ -117,8 +115,7 @@ theorem fakeMovesFrame {width : Nat} [NeZero width] (prio : Option (Unit ⊕ Uni
       · exact ⟨ha', hle, hokL, hokR⟩
 
 /-- HOL `fake_moves_frame2` (`word_allocProofScript.sml:4948-4966`). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "fake_moves_frame2"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fakeMovesFrame2 {width : Nat} [NeZero width] (prio : Option (Unit ⊕ Unit)) :
     ∀ (ls : List Nat) (na : Nat) (ssaL ssaR : Spt Nat),
       sptDomain (fakeMoves prio ls ssaL ssaR na : WordLangProgHOL (BitVec width) × WordLangProgHOL (BitVec width) × Nat × Spt Nat × Spt Nat).2.2.2.1 =

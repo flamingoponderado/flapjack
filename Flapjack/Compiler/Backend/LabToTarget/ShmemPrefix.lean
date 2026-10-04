@@ -41,8 +41,7 @@ private theorem shmemPrefix {width : Nat} [NeZero width]
 
 /-- Full original APPEND theorem: arbitrary source code and accumulator
 splits, preserving the supplied result tuple and all three source premises. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "get_shmem_info_APPEND" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getShmemInfo_append {width : Nat} [NeZero width]
     (secs : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))
@@ -59,8 +58,7 @@ theorem getShmemInfo_append {width : Nat} [NeZero width]
 
 /-- Full original PREPEND theorem, with the original output equality premise;
 it follows from unconditional prefix transport, including invalid labels. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "get_shmem_info_PREPEND" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getShmemInfo_prepend {width : Nat} [NeZero width]
     (secs : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))

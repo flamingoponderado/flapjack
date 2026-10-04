@@ -7,8 +7,7 @@ open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabFilter
 open Flapjack.Compiler.Backend.LabToTarget.FilterSkip
 
 /-- Full original NONE clause, retaining its allSkips premise and arbitrary compiler/oracle binders. -/
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "share_mem_op_NONE_filter_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem shareMemOpNoneFilterCorrect {width : Nat} [NeZero width] {C : Type} {F : Type}
     (t : Flapjack.Compiler.Backend.LabSem.State width C F) (count : Nat)
     (operator : HolMemop) (register : Nat) (address : HolAddr width)
@@ -29,8 +28,7 @@ theorem shareMemOpNoneFilterCorrect {width : Nat} [NeZero width] {C : Type} {F :
 
 /-- Full original final-outcome clause. The actual original-PC state is derived;
 all source guards and arbitrary configuration/FFI carriers are retained. -/
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "share_mem_op_FFI_final_filter_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem shareMemOpFfiFinalFilterCorrect {width : Nat} [NeZero width] {C : Type} {F : Type}
     (t : Flapjack.Compiler.Backend.LabSem.State width C F) (count : Nat)
     (operator : HolMemop) (register : Nat) (address : HolAddr width)
@@ -59,8 +57,7 @@ theorem shareMemOpFfiFinalFilterCorrect {width : Nat} [NeZero width] {C : Type} 
 /-- Full original returning shared-memory filter simulation. The existential
 poststate, entire state relation, nonfailed facts and arbitrary clock extension
 are derived over the actual native primitive; every source guard is retained. -/
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "share_mem_op_FFI_return_filter_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem shareMemOpFfiReturnFilterCorrect {width : Nat} [NeZero width] {C : Type} {F : Type}
     (t : Flapjack.Compiler.Backend.LabSem.State width C F) (count : Nat)
     (operator : HolMemop) (register : Nat) (address : HolAddr width)

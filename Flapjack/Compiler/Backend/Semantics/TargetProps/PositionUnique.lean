@@ -4,8 +4,7 @@ namespace Flapjack.Compiler.Backend.Semantics.TargetProps
 open Flapjack Classical
 
 /-- Literal source411: a present selected application strictly increases the count at every later index. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "interference_count_lt" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem interferenceCountLt {width : Nat} [NeZero width]
     {S Q : Type} {σ : Type} (P : InterferenceApp width S → Prop)
     (mc : MachineConfig width S Q) (ffi : HolFfiState σ) (ms : S) (n n2 : Nat)
@@ -20,8 +19,7 @@ theorem interferenceCountLt {width : Nat} [NeZero width]
   omega
 
 /-- Literal source425: selected present applications with equal preceding counts have the same index. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "interference_pos_unique" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem interferencePosUnique {width : Nat} [NeZero width]
     {S Q : Type} {σ : Type} (P : InterferenceApp width S → Prop)
     (mc : MachineConfig width S Q) (ffi : HolFfiState σ) (ms : S) (n1 n2 : Nat)

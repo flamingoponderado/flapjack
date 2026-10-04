@@ -31,8 +31,6 @@ set_option autoImplicit false
 every source instruction, every interference environment and both assertions.
 The component proofs derive native fetch/decode/Run/Next from the actual emitted
 bytes. Inherits reals_as_rational_cuts (SOUNDNESS section 8). -/
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml"
-  "riscv_encoder_correct"]
 theorem riscv_encoder_correct : encoderCorrect riscvTarget := by
   refine ⟨riscv_target_ok, ?_⟩
   intro s1 i s2 ms h
@@ -54,7 +52,6 @@ theorem riscv_encoder_correct : encoderCorrect riscvTarget := by
     | mem m r address =>
       cases address with
       | addr base w => exact riscv_encoder_correct_mem m r base w s1 s2 ms h
-    | fp f => exact riscv_encoder_correct_fp f s1 s2 ms h
   | jump c => exact riscv_encoder_correct_jump c s1 s2 ms h
   | jumpCmp c r right a => exact riscv_encoder_correct_jumpCmp c r right a s1 s2 ms h
   | call c => exact riscv_encoder_correct_call c s1 s2 ms h

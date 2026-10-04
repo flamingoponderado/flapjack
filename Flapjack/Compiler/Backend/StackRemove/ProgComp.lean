@@ -11,8 +11,7 @@ open Flapjack.Compiler.Backend.StackLang
 
 /-- Full original wrapper: preserve the arbitrary section name and compile
 only its faithful native program. No successful-pass or safety premise. -/
-@[hol "cakeml/compiler/backend/stack_removeScript.sml" "prog_comp_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def progComp {width : Nat} [NeZero width] {Name : Type} (jump : Bool)
     (bounds : BitVec width × BitVec width) (pointer : Nat) (entry : Name × HolProg width) :
     Name × HolProg width :=

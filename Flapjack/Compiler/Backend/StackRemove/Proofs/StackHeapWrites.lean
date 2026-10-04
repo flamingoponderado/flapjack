@@ -77,10 +77,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 
 /-- Full original stack-store relation transition, retaining all five original
 hypothesis conjuncts and deriving every post-state relation conjunct. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "state_rel_stack_store"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelStackStore {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer count : Nat)
     (source target : StackSemStateFiniteExact width C F)

@@ -48,8 +48,7 @@ subprogram induction hypotheses. CodeBitmaps unfolds to the three literal
 original existential conjuncts; no successful-result or clock premise.
 The native evaluator closure retains inherited reals_as_rational_cuts; this
 case asserts no numeric alignment or floating-point correspondence. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsSeq {width : Nat} [NeZero width] {C F : Type}
     (first second : HolProg width)
     (source post : StackSemStateFiniteExact width C F)

@@ -74,8 +74,7 @@ namespace WordSemStateFiniteExact
     `call_env args size s = s with <| locals := fromList2 args; locals_size :=
     size; stack_max := OPTION_MAP2 MAX s.stack_max (OPTION_MAP2 $+
     (stack_size s.stack) size) |>`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "call_env_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def callEnv {width : Nat} [NeZero width] {C : Type} {F : Type}
     (args : List (WordLocW width)) (size : Option Nat)
     (state : WordSemStateFiniteExact width C F) : WordSemStateFiniteExact width C F :=
@@ -141,8 +140,7 @@ namespace WordSemStateFiniteExact
     handler `SOME (s.handler, l1, l2)` and sets `handler := LENGTH s.stack`.
     In both cases `stack_max := OPTION_MAP2 MAX s.stack_max (stack_size stack)`
     and `permute` is updated. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "push_env_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def pushEnv {width : Nat} [NeZero width] {C : Type} {F : Type}
     (envs : Spt (WordLocW width) × Spt (WordLocW width)) :
     Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat) →
@@ -170,8 +168,7 @@ def pushEnv {width : Nat} [NeZero width] {C : Type} {F : Type}
     and restore `locals := union (fromAList e) (fromAList e0)` and
     `locals_size := m`.  A frame with a handler `SOME (n, _, _)` also restores
     `handler := n`.  An empty stack gives `NONE`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "pop_env_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def popEnv {width : Nat} [NeZero width] {C : Type} {F : Type}
     (state : WordSemStateFiniteExact width C F) : Option (WordSemStateFiniteExact width C F) :=
   match state.stack with
@@ -186,8 +183,7 @@ def popEnv {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL local `push_env_clock` (`wordSemScript.sml:549-555`):
     `(push_env env b s).clock = s.clock`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "push_env_clock"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem pushEnv_clock {width : Nat} [NeZero width] {C : Type} {F : Type}
     (env : Spt (WordLocW width) × Spt (WordLocW width))
     (b : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
@@ -197,8 +193,7 @@ theorem pushEnv_clock {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL local `pop_env_clock` (`wordSemScript.sml:557-563`):
     `pop_env s = SOME s1 ⇒ s1.clock = s.clock`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "pop_env_clock"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem popEnv_clock {width : Nat} [NeZero width] {C : Type} {F : Type}
     (s s1 : WordSemStateFiniteExact width C F) :
     popEnv s = some s1 → s1.clock = s.clock := by
@@ -213,8 +208,7 @@ theorem popEnv_clock {width : Nat} [NeZero width] {C : Type} {F : Type}
     frame has a handler `SOME (n, l1, l2)`, return the state with `handler :=
     n`, the frame's `locals` union, `stack := xs` and `locals_size := m`,
     together with `l1` and `l2`.  Otherwise return `NONE`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "jump_exc_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def jumpExc {width : Nat} [NeZero width] {C : Type} {F : Type}
     (state : WordSemStateFiniteExact width C F) :
     Option (WordSemStateFiniteExact width C F × Nat × Nat) :=
@@ -266,8 +260,7 @@ namespace WordSemStateFiniteExact
 /-- Exact HOL `cut_state_def` (`wordSemScript.sml:600-605`):
     `case cut_env names s.locals of NONE => NONE | SOME env => SOME (s with
     locals := env)`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "cut_state_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def cutState {width : Nat} [NeZero width] {C : Type} {F : Type}
     (names : WordLangCutsetsHOL) (state : WordSemStateFiniteExact width C F) :
     Option (WordSemStateFiniteExact width C F) :=
@@ -277,8 +270,7 @@ def cutState {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `cut_state_opt_def` (`wordSemScript.sml:607-612`):
     `case names of NONE => SOME s | SOME names => cut_state names s`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "cut_state_opt_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def cutStateOpt {width : Nat} [NeZero width] {C : Type} {F : Type}
     (names : Option WordLangCutsetsHOL) (state : WordSemStateFiniteExact width C F) :
     Option (WordSemStateFiniteExact width C F) :=

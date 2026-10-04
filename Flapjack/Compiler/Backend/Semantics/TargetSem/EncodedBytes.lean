@@ -25,8 +25,7 @@ def applyOracleHOL {α β : Type} (oracle : Nat → α → β) (x : α) :
 /-- Exact HOL `encoded_bytes_in_mem_def`: some encoded instruction block
     (`c.encode i`) appears in memory at `pc` after dropping a whole number of
     alignment blocks. -/
-@[hol "cakeml/compiler/backend/semantics/targetSemScript.sml" "encoded_bytes_in_mem_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def encodedBytesInMemHOL {width : Nat} [NeZero width] (c : AsmConfigExact width)
     (pc : BitVec width) (m : BitVec width → BitVec 8)
     (md : BitVec width → Prop) : Prop :=

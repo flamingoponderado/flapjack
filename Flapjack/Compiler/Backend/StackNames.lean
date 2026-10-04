@@ -71,12 +71,6 @@ def instFindName {width : Nat} [NeZero width] (names : FiniteMap Nat Nat) :
       .arith (.longDiv (findName names r1) (findName names r2) (findName names r3) (findName names r4) (findName names r5))
   | .mem operator register (.addr base offset) =>
       .mem operator (findName names register) (.addr (findName names base) offset)
-  | .fp (.fpLess r f1 f2) => .fp (.fpLess (findName names r) f1 f2)
-  | .fp (.fpLessEqual r f1 f2) => .fp (.fpLessEqual (findName names r) f1 f2)
-  | .fp (.fpEqual r f1 f2) => .fp (.fpEqual (findName names r) f1 f2)
-  | .fp (.fpMovToReg r1 r2 d) => .fp (.fpMovToReg (findName names r1) (findName names r2) d)
-  | .fp (.fpMovFromReg d r1 r2) => .fp (.fpMovFromReg d (findName names r1) (findName names r2))
-  | instruction => instruction
 
 /-- HOL `dest_find_name_def` (`stack_namesScript.sml:51-54`). -/
 /- Untagged Flapjack rendering: HOL names uses Spt Nat, while this API

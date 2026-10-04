@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
 import Flapjack.Compiler.Backend.LabToTarget.StateRel
 import Flapjack.Compiler.Backend.LabToTarget.InstUpdates
 
@@ -19,8 +20,6 @@ theorem one_and_eq_zero_iff {width : Nat} [NeZero width] (w : BitVec width) :
   rw [← BitVec.toNat_inj, BitVec.toNat_and, h1, Nat.one_and_eq_mod_two]
   simp
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "EVEN_add_AND"
-  (words_as_type_indexed_bitvec)]
 theorem even_add_and {width : Nat} [NeZero width] (p : BitVec width) (x : Nat) :
     ((1 : BitVec width) &&& p) = 0 ∧ x % 2 = 0 →
     ((1 : BitVec width) &&& (p + BitVec.ofNat width x)) = 0 := by
@@ -32,8 +31,6 @@ theorem even_add_and {width : Nat} [NeZero width] (p : BitVec width) (x : Nat) :
   rw [BitVec.toNat_add, BitVec.toNat_ofNat, Nat.mod_mod_of_dvd _ h2, Nat.add_mod,
     Nat.mod_mod_of_dvd _ h2, hp, hx]
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "word_cmp_lemma"
-  (words_as_type_indexed_bitvec)]
 theorem wordCmp_lemma {width : Nat} [NeZero width] {S Q F : Type}
     (mc : MachineConfig width S Q) (code2 : LabProgHOL width) (labs : Spt (Spt Nat))
     (p : BitVec width) (s1 : LabSem.State width Config F) (t1 : AsmState width) (ms1 : S)

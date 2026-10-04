@@ -169,11 +169,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 release/placement obligation are derived from the original full motive.
 The native evaluator closure inherits reals_as_rational_cuts; this
 structural case makes no additional numerical FP correspondence claim. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_correct" 5756
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectReturn {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (register : Nat) (names : List Nat)
     (source : WordSemStateFiniteExact width (Nat × C) F) :

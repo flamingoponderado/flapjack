@@ -7,8 +7,7 @@ pair order are retained and an arbitrary initial accumulator is preserved.
 The exceptional handler precedes the returning handler in the output; calls
 without a return contribute no preferences, even with a handler. This native
 collector does not replace the executed allocator. -/
-@[hol "cakeml/compiler/backend/word_allocScript.sml" "get_prefs_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def getPrefs {width : Nat} [NeZero width] :
     WordLangProgHOL (BitVec width) → List (Nat × Nat × Nat) → List (Nat × Nat × Nat)
   | .move priority moves, accumulator =>

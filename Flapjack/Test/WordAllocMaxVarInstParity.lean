@@ -42,23 +42,4 @@ example : maxVarInstHOL (.mem .load8 2 (.addr 80 7) : WordLangInst (BitVec 64)) 
       (.mem .load8 2 (.addr 80 7) : WordLangInst (BitVec 64)) = true := by
   exact ⟨by decide, maxVarInstMax _⟩
 -- Original mi_fp64_to
-example : maxVarInstHOL (.fp (.fpMovToReg 2 99 100) : WordLangInst (BitVec 64)) = 2 ∧
-    everyVarInstHOL (fun x => decide (x ≤ maxVarInstHOL (.fp (.fpMovToReg 2 99 100) : WordLangInst (BitVec 64))))
-      (.fp (.fpMovToReg 2 99 100) : WordLangInst (BitVec 64)) = true := by
-  exact ⟨by decide, maxVarInstMax _⟩
--- Original mi_fp32_to
-example : maxVarInstHOL (.fp (.fpMovToReg 2 99 100) : WordLangInst (BitVec 32)) = 99 ∧
-    everyVarInstHOL (fun x => decide (x ≤ maxVarInstHOL (.fp (.fpMovToReg 2 99 100) : WordLangInst (BitVec 32))))
-      (.fp (.fpMovToReg 2 99 100) : WordLangInst (BitVec 32)) = true := by
-  exact ⟨by decide, maxVarInstMax _⟩
--- Original mi_fp80_from
-example : maxVarInstHOL (.fp (.fpMovFromReg 100 2 99) : WordLangInst (BitVec 80)) = 99 ∧
-    everyVarInstHOL (fun x => decide (x ≤ maxVarInstHOL (.fp (.fpMovFromReg 100 2 99) : WordLangInst (BitVec 80))))
-      (.fp (.fpMovFromReg 100 2 99) : WordLangInst (BitVec 80)) = true := by
-  exact ⟨by decide, maxVarInstMax _⟩
--- Original mi_fpignored
-example : maxVarInstHOL (.fp (.fpAdd 100 200 300) : WordLangInst (BitVec 64)) = 0 ∧
-    everyVarInstHOL (fun x => decide (x ≤ maxVarInstHOL (.fp (.fpAdd 100 200 300) : WordLangInst (BitVec 64))))
-      (.fp (.fpAdd 100 200 300) : WordLangInst (BitVec 64)) = true := by
-  exact ⟨by decide, maxVarInstMax _⟩
 end Flapjack.Test.WordAllocMaxVarInstParity

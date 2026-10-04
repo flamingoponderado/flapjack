@@ -19,8 +19,7 @@ namespace Flapjack.PanToWord
 open Flapjack Flapjack.LoopToWord Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString
 
 /-- Full original every_inst_ok_loop_call (`pan_to_wordProofScript.sml:738-752`). -/
-@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "every_inst_ok_loop_call"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem everyInstOkLoopCall {width : Nat} [NeZero width] {cWidth : Nat} [NeZero cWidth] (c : AsmConfigExact cWidth) :
     ∀ (l : Spt Nat) (prog : HolLoopProg width),
       everyProgHOL (loopInstOk c) prog →
@@ -144,8 +143,7 @@ theorem markAllHOL_everyProg_loopInstOk {width : Nat} [NeZero width] {cWidth : N
     unfold everyProgHOL; exact ⟨by simp [loopInstOk], hp⟩
 
 /-- Full original every_inst_ok_loop_live (`pan_to_wordProofScript.sml:756-793`). -/
-@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "every_inst_ok_loop_live"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem everyInstOkLoopLive {width : Nat} [NeZero width] {cWidth : Nat} [NeZero cWidth] (c : AsmConfigExact cWidth) :
     ∀ (prog : HolLoopProg width),
       everyProgHOL (loopInstOk c) prog → everyProgHOL (loopInstOk c) (Flapjack.compHOL prog) := by
@@ -153,8 +151,7 @@ theorem everyInstOkLoopLive {width : Nat} [NeZero width] {cWidth : Nat} [NeZero 
   exact markAllHOL_everyProg_loopInstOk c _ (shrinkHOL_everyProg_loopInstOk c [] prog .ln h)
 
 /-- Full original every_inst_ok_less_optimise (`pan_to_wordProofScript.sml:795-801`). -/
-@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "every_inst_ok_less_optimise"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem everyInstOkLessOptimise {width : Nat} [NeZero width] {cWidth : Nat} [NeZero cWidth] (c : AsmConfigExact cWidth)
     (prog : HolLoopProg width) :
     everyProgHOL (loopInstOk c) prog → everyProgHOL (loopInstOk c) (optimiseHOL prog) := by
@@ -176,9 +173,7 @@ theorem compileExpsHOLExact_values_length {width : Nat} [NeZero width]
 /-- Full original every_inst_ok_less_crep_to_loop_compile_exp
 (`pan_to_wordProofScript.sml:803-838`), both conjuncts: for `compile_exp` and for
 the mutual `compile_exps`. -/
-@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml"
-  "every_inst_ok_less_crep_to_loop_compile_exp"
-  (fmap_as_finite_support := [vars, funcs]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem everyInstOkLessCrepToLoopCompileExp {width : Nat} [NeZero width]
     {cWidth : Nat} [NeZero cWidth] (c : AsmConfigExact cWidth) :
     (∀ (ctxt : CrepToLoopContextExact) (n : Nat) (ns : NumSet) (e : CrepExpHOL width),
@@ -302,8 +297,7 @@ theorem everyInstOkLessCrepToLoopCompileExp {width : Nat} [NeZero width]
 
 /-- Full original every_prog_loop_inst_ok_nested_seq
 (`pan_to_wordProofScript.sml:840-847`); HOL's Boolean equation is `↔`. -/
-@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "every_prog_loop_inst_ok_nested_seq"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem everyProgLoopInstOkNestedSeq {cWidth : Nat} [NeZero cWidth] {width : Nat} [NeZero width] :
     ∀ (c : AsmConfigExact cWidth) (ps : List (HolLoopProg width)),
       everyProgHOL (loopInstOk c) (loopNestedSeqHOL ps) ↔ ∀ p ∈ ps, everyProgHOL (loopInstOk c) p := by
@@ -345,9 +339,7 @@ end CrepToLoopContextWitness
 
 /-- Full original every_inst_ok_less_crep_to_loop_compile
 (`pan_to_wordProofScript.sml:849-884`). -/
-@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml"
-  "every_inst_ok_less_crep_to_loop_compile"
-  (fmap_as_finite_support := [vars, funcs]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem everyInstOkLessCrepToLoopCompile {width : Nat} [NeZero width]
     {cWidth : Nat} [NeZero cWidth] (c : AsmConfigExact cWidth) :
     ∀ (ctxt : CrepToLoopContextExact) (ns : NumSet) (body : CrepProgHOL width),
@@ -483,8 +475,7 @@ theorem everyInstOkLessCrepToLoopCompile {width : Nat} [NeZero width]
 `comp_func c.ISA (make_funcs prog) params body`, with `make_funcs` the reviewed
 generic `crepToLoopMakeFuncsExactHOL` over the independent `γ`, `δ` of HOL's
 `prog : (mlstring # γ list # δ) list`. -/
-@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "every_inst_ok_less_comp_func"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem everyInstOkLessCompFunc {width : Nat} [NeZero width] {cWidth : Nat} [NeZero cWidth]
     {γ δ : Type} (c : AsmConfigExact cWidth) (prog : List (MlString × List γ × δ))
     (params : List Nat) (body : CrepProgHOL width) :
@@ -706,8 +697,7 @@ theorem mem_zipWith_exists {α β γ : Type} (g : α → β → γ) :
 
 /-- Full original every_inst_ok_less_crep_to_loop_compile_prog
 (`pan_to_wordProofScript.sml:1209-1223`). -/
-@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml"
-  "every_inst_ok_less_crep_to_loop_compile_prog" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem everyInstOkLessCrepToLoopCompileProg {width : Nat} [NeZero width]
     {cWidth : Nat} [NeZero cWidth] (c : AsmConfigExact cWidth)
     (crepCode : List (MlString × List Nat × CrepProgHOL width)) :

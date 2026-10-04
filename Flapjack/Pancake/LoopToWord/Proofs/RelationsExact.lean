@@ -51,8 +51,7 @@ and the parameter list must have no duplicates. The source code carrier is the
 `Spt`, the target carrier is `wordSem`'s code `Spt` of
 `Nat × WordLangProgHOL`, and the compiled body uses the exact
 `loopToWordCompFuncHOL` port of HOL `comp_func`. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "code_rel_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def loopToWordCodeRelHOLExact {width : Nat} [NeZero width]
     (sourceCode : Spt (List Nat × HolLoopProg width))
     (targetCode : Spt (Nat × WordLangProgHOL (BitVec width))) : Prop :=
@@ -101,10 +100,7 @@ The same native word appears directly in both HeapLength and the top-address
 equation; the width remains positive and the configuration and FFI types remain
 independent. No natural-number witness or extra representation qualifier is
 introduced. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "state_rel_def"
-  (fmap_as_finite_support_relation :=
-    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def loopToWordStateRelHOLExact {width : Nat} [NeZero width] {C F : Type}
     (source : LoopSemStateFiniteExact width F)
     (target : WordSemStateFiniteExact width C F) : Prop :=
@@ -126,8 +122,7 @@ def loopToWordStateRelHOLExact {width : Nat} [NeZero width] {C F : Type}
 `code_rel` implication, exposing the target lookup result
 `(params.length+1, comp_func name params body)` and the `ALL_DISTINCT params`
 side condition. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "code_rel_intro"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loopToWordCodeRelIntroHOLExact {width : Nat} [NeZero width]
     (sourceCode : Spt (List Nat × HolLoopProg width))
     (targetCode : Spt (Nat × WordLangProgHOL (BitVec width)))
@@ -146,10 +141,7 @@ endianness and FFI state, the target `CurrHeap` entry for the source base
 address, and the `globals_rel`/`code_rel` relations. Of the eligible
 finite-map fields only `LoopSemStateFiniteExact.globals` and
 `WordSemStateFiniteExact.store` are named. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "state_rel_intro"
-  (fmap_as_finite_support_relation :=
-    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loopToWordStateRelIntroHOLExact {width : Nat} [NeZero width] {C F : Type}
     (source : LoopSemStateFiniteExact width F)
     (target : WordSemStateFiniteExact width C F)
@@ -168,10 +160,7 @@ theorem loopToWordStateRelIntroHOLExact {width : Nat} [NeZero width] {C F : Type
 /-- Exact HOL `state_rel_IMP`
 (`cakeml/pancake/proofs/loop_to_wordProofScript.sml:272-275`): the two states of
 `state_rel` share their clock. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "state_rel_IMP"
-  (fmap_as_finite_support_relation :=
-    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loopToWordStateRelImpClockHOLExact {width : Nat} [NeZero width] {C F : Type}
     (source : LoopSemStateFiniteExact width F)
     (target : WordSemStateFiniteExact width C F)
@@ -183,10 +172,7 @@ theorem loopToWordStateRelImpClockHOLExact {width : Nat} [NeZero width] {C F : T
 /-- Exact HOL `state_rel_with_clock`
 (`cakeml/pancake/proofs/loop_to_wordProofScript.sml:1497-1501`): replacing both
 clocks by the same `k` preserves `state_rel`. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "state_rel_with_clock"
-  (fmap_as_finite_support_relation :=
-    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loopToWordStateRelWithClockHOLExact {width : Nat} [NeZero width] {C F : Type}
     (source : LoopSemStateFiniteExact width F)
     (target : WordSemStateFiniteExact width C F) (k : Nat)

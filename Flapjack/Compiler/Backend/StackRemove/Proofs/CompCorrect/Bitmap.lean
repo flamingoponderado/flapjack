@@ -1,3 +1,4 @@
+import Mathlib.Tactic.NormNum
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StackMemoryAny
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StoreTransfers
 namespace Flapjack.Compiler.Backend.StackRemove.CompCorrect.Bitmap
@@ -99,10 +100,7 @@ theorem runBitmap {width : Nat} [NeZero width] {C F : Type}
 
 /-- Full original BitmapLoad constructor, retaining all original guards and
 four premises. Target reads are derived from the full separated source heap. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectBitmapLoad {width : Nat} [NeZero width] {C F : Type}
     (source : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (postSource target : StackSemStateFiniteExact width C F) (register index pointer : Nat)

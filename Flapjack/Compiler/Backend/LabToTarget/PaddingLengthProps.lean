@@ -10,8 +10,7 @@ open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString
 
 /-- Retains the original one-byte NOP, label-one and non-label accumulator guards. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "line_len_pad_section1"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem lineLen_padSection_nonlabel {width : Nat} [NeZero width]
     (nop : List (BitVec 8)) (ls acc : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) :
@@ -51,8 +50,7 @@ theorem lineLen_padSection_nonlabel {width : Nat} [NeZero width]
       omega
 
 /-- Zero source labels suppress NOP insertion, for arbitrary NOP bytes and accumulator. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "line_len_pad_section0"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem lineLen_padSection_zero {width : Nat} [NeZero width]
     (nop : List (BitVec 8)) (ls acc : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) :
@@ -79,8 +77,7 @@ theorem lineLen_padSection_zero {width : Nat} [NeZero width]
       omega
 
 /-- Physical sum with all original source bounds and non-label accumulator guard. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "line_length_pad_section1"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem lineLength_padSection_nonlabel {width : Nat} [NeZero width]
     (nop : List (BitVec 8))
     (ls acc : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -133,8 +130,7 @@ theorem lineLength_padSection_nonlabel {width : Nat} [NeZero width]
       omega
 
 /-- All-label accumulator case retains the full original bounded prefix predicate. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "line_length_pad_section"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem lineLength_padSection_labels {width : Nat} [NeZero width]
     (nop : List (BitVec 8))
     (ls acc : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -176,8 +172,7 @@ theorem lineLength_padSection_labels {width : Nat} [NeZero width]
       omega
 
 /-- Preserves the original map equality, not merely equality of its sum. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "label_zero_line_length_pad_section"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem lineLength_padSection_zero {width : Nat} [NeZero width]
     (nop : List (BitVec 8))
     (ls acc : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))

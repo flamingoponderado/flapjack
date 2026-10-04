@@ -46,9 +46,7 @@ that bound, `holEl_eq_getElem` connects the selected key, and the indexed getVar
 and zip-lookup facts use the same derived bounds. The inherited total holEl/holHd
 rendering retains shared opaque holHdNil/holArb outside the list; no public
 bounds premise or concrete out-of-range value is introduced. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_ssa_reconcile"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateSSAReconcile {width : Nat} [NeZero width] {C F β : Type}
     (next : Nat) (curSSA tgtSSA : Spt Nat) (names : Spt β)
     (sourceLocals : Spt (WordLocW width))

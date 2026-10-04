@@ -480,8 +480,7 @@ The clock-first induction derives all recursive obligations; checked native
 single-run prefixes handle further execution after a timeout. The evaluator
 closure inherits reviewed reals_as_rational_cuts (SOUNDNESS item 8); this
 event theorem does not assert FP numerical parity. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_add_clock_io_events_mono"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateAddClockIoEventsMono {width : Nat} [NeZero width] {C F : Type}
     (extra : Nat) (program : HolProg width) (source : StackSemStateFiniteExact width C F) :
     (evaluate (program, source)).2.ffi.ioEvents <+:

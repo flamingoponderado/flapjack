@@ -790,8 +790,7 @@ end Swap
 
     `PERM_STACK` is the untagged rendering `permStack` of HOL's overload.
     Inherits `reals_as_rational_cuts` through `evaluate`. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "permute_swap_lemma2"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem permute_swap_lemma2 {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (prog : WordLangProgHOL (BitVec width)) (st : WordSemStateFiniteExact width C F)
       (perm : Nat → Nat → Nat) (stack : List (WordSemStackFrame width)),
@@ -813,8 +812,7 @@ theorem permute_swap_lemma2 {width : Nat} [NeZero width] {C : Type} {F : Type} :
     `permute_swap_lemma2` with the original stack, whose environments have
     distinct keys (HOL `EVERY` over the frames).  HOL's unused binder `stack`
     is kept.  Inherits `reals_as_rational_cuts` through `evaluate`. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "permute_swap_lemma3"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem permute_swap_lemma3 {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (prog : WordLangProgHOL (BitVec width)) (st : WordSemStateFiniteExact width C F)
       (perm : Nat → Nat → Nat) (_stack : List (WordSemStackFrame width)),

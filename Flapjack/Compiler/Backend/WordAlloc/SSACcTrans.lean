@@ -20,8 +20,7 @@ namespace Flapjack.Compiler.Backend.WordAlloc
 open Flapjack.WordAlloc (applyNummapKey applyNummapsKey)
 
 /-- Literal `ssa_cc_trans` (`word_allocScript.sml:347-568`). -/
-@[hol "cakeml/compiler/backend/word_allocScript.sml" "ssa_cc_trans_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def ssaCcTrans {width : Nat} [NeZero width] :
     WordLangProgHOL (BitVec width) → Spt Nat → Nat →
       List (Spt Nat × Spt Unit × Spt Unit) →

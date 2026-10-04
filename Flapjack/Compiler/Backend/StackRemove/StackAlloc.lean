@@ -9,8 +9,7 @@ namespace Flapjack.Compiler.Backend.StackRemove
 open Flapjack.Compiler.Backend.StackLang
 
 /-- Preserve both original overflow-check forms after the immediate Sub. -/
-@[hol "cakeml/compiler/backend/stack_removeScript.sml" "single_stack_alloc_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def singleStackAlloc {width : Nat} [NeZero width] (jump : Bool) (pointer count : Nat) :
     HolProg width :=
   if jump then
@@ -21,8 +20,7 @@ def singleStackAlloc {width : Nat} [NeZero width] (jump : Bool) (pointer count :
       (.ite .lower pointer (.reg (pointer + 1)) (haltInst 2) .skip)
 
 /-- Full original zero/small/chunked allocation recursion, retaining every check. -/
-@[hol "cakeml/compiler/backend/stack_removeScript.sml" "stack_alloc_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def stackAlloc {width : Nat} [NeZero width] (jump : Bool) (pointer count : Nat) :
     HolProg width :=
   if count = 0 then .skip

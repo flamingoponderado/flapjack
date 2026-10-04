@@ -11,7 +11,6 @@ retain the mode hypotheses. -/
 namespace Flapjack.RiscV.L3.Step
 open Flapjack.RiscV.L3
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "MULW"]
 theorem dfnMULW (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     (harch0 : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 0)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd ≠ 0) :
@@ -27,7 +26,6 @@ theorem dfnMULW (rd rs1 rs2 : BitVec 5) (s : riscv_state)
   simp only [Bool.false_eq_true, reduceIte, «write'GPR», «write'gpr», GPR, gpr]
   by_cases h1 : rs1 = 0 <;> by_cases h2 : rs2 = 0 <;> simp_all [holWordExtract]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "DIVW"]
 theorem dfnDIVW (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     (harch0 : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 0)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd ≠ 0) :
@@ -47,7 +45,6 @@ theorem dfnDIVW (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     by_cases hz : (holWordExtract 32 31 0 (s.c_gpr s.procID rs2)) = 0 <;>
     simp_all [beq_iff_eq, holWordExtract]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "DIVUW"]
 theorem dfnDIVUW (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     (harch0 : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 0)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd ≠ 0) :
@@ -67,7 +64,6 @@ theorem dfnDIVUW (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     by_cases hz : (holWordExtract 32 31 0 (s.c_gpr s.procID rs2)) = 0 <;>
     simp_all [beq_iff_eq, holWordExtract]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "REMW"]
 theorem dfnREMW (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     (harch0 : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 0)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd ≠ 0) :
@@ -88,7 +84,6 @@ theorem dfnREMW (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     by_cases hz : (holWordExtract 32 31 0 (s.c_gpr s.procID rs2)) = 0 <;>
     simp_all [beq_iff_eq, holWordExtract]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "REMUW"]
 theorem dfnREMUW (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     (harch0 : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 0)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd ≠ 0) :
@@ -109,7 +104,6 @@ theorem dfnREMUW (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     by_cases hz : (holWordExtract 32 31 0 (s.c_gpr s.procID rs2)) = 0 <;>
     simp_all [beq_iff_eq, holWordExtract]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "MULW_NOP"]
 theorem dfnMULWNop (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     (harch0 : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 0)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd = 0) :
@@ -119,7 +113,6 @@ theorem dfnMULWNop (rd rs1 rs2 : BitVec 5) (s : riscv_state)
   rcases hcases (s.c_MCSR s.procID).mcpuid.ArchBase with h | h | h | h <;>
     simp_all [in32BitMode, curArch, architecture, MCSR, beq_iff_eq, ne_eq]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "DIVW_NOP"]
 theorem dfnDIVWNop (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     (harch0 : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 0)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd = 0) :
@@ -129,7 +122,6 @@ theorem dfnDIVWNop (rd rs1 rs2 : BitVec 5) (s : riscv_state)
   rcases hcases (s.c_MCSR s.procID).mcpuid.ArchBase with h | h | h | h <;>
     simp_all [in32BitMode, curArch, architecture, MCSR, beq_iff_eq, ne_eq]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "DIVUW_NOP"]
 theorem dfnDIVUWNop (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     (harch0 : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 0)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd = 0) :
@@ -139,7 +131,6 @@ theorem dfnDIVUWNop (rd rs1 rs2 : BitVec 5) (s : riscv_state)
   rcases hcases (s.c_MCSR s.procID).mcpuid.ArchBase with h | h | h | h <;>
     simp_all [in32BitMode, curArch, architecture, MCSR, beq_iff_eq, ne_eq]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "REMW_NOP"]
 theorem dfnREMWNop (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     (harch0 : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 0)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd = 0) :
@@ -149,7 +140,6 @@ theorem dfnREMWNop (rd rs1 rs2 : BitVec 5) (s : riscv_state)
   rcases hcases (s.c_MCSR s.procID).mcpuid.ArchBase with h | h | h | h <;>
     simp_all [in32BitMode, curArch, architecture, MCSR, beq_iff_eq, ne_eq]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "REMUW_NOP"]
 theorem dfnREMUWNop (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     (harch0 : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 0)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd = 0) :

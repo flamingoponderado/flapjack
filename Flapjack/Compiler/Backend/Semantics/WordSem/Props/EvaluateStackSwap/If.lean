@@ -36,8 +36,7 @@ open EvaluateStackSwapIfWitnesses
 `If cmp r1 ri c1 c2`, from exactly HOL `evaluate_ind`'s two guarded `If`
 induction hypotheses; no extra premise. The guard reads only locals, so the
 stack-swapped run takes the same branch. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_swap"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateStackSwap_If {width : Nat} [NeZero width] {C F : Type} (cmp : Cmp) (r1 : Nat)
     (ri : WordRegImm (BitVec width)) (c1 c2 : WordLangProgHOL (BitVec width)) :
     ∀ s : WordSemStateFiniteExact width C F,

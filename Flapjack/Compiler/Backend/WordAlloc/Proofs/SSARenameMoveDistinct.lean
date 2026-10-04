@@ -8,8 +8,7 @@ namespace Flapjack.Compiler.Backend.WordAlloc
 All five original conjuncts remain: producer equation, distinct input names,
 two input memberships and equal output-map selectors. No global injection,
 map validity, register allocation or target execution is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "list_next_var_rename_move_distinct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem listNextVarRenameMoveDistinct {width : Nat} [NeZero width]
     (ssa : Spt Nat) (next : Nat) (names : List Nat)
     (move : WordLangProgHOL (BitVec width)) (mapOut : Spt Nat) (nextOut x y : Nat)

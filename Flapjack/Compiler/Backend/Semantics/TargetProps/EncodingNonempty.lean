@@ -5,8 +5,7 @@ open Flapjack Flapjack.Compiler.Encoders.Asm
 
 /-- Original local encoding nonemptiness lemma. Its asm_ok premise is retained
 verbatim even though the enc_ok nonemptiness conjunct suffices for the proof. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "enc_ok_not_empty" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem encOkNotEmpty {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (w : HolAsm width)
     (h : encOk c ∧ asmOkExact w c = true) : c.encode w ≠ [] := by

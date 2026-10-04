@@ -29,11 +29,7 @@ simulation premises and result/resource conclusion. Flatness derives Var,
 source nonerror excludes Handler/BitmapBase and missing reads, full Reg1
 provides actual loads and value, and the general store law proves postrelation.
 Evaluator closure inherits reals_as_rational_cuts; no numerical FP claim. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_correct" 5756
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectSet {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (name : WordStoreHOL)
     (expression : WordLangExpHOL (BitVec width))

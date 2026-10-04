@@ -10,7 +10,6 @@ attribute [local irreducible] Run Fetch DecodeAny update_pc NextRISCV
 
 /-- Original normal-control rule: the five conjuncts are exactly the source
 Fetch, decode, Run, exception and empty-control premises; no Next result is assumed. -/
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "NextRISCV"]
 theorem nextRISCV (s : riscv_state) (w : rawInstType) (fetched : riscv_state)
     (i : instruction) (nxt : riscv_state)
     (h : Fetch s = (w, fetched) ∧ DecodeAny w = i ∧ Run i fetched = nxt ∧
@@ -21,7 +20,6 @@ theorem nextRISCV (s : riscv_state) (w : rawInstType) (fetched : riscv_state)
 
 /-- Original direct-branch rule over the full native state: clear the function
 entry at the unrestricted core key, then update PC to the original word64 target. -/
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "NextRISCV_branch"]
 theorem nextRISCV_branch (s : riscv_state) (w : rawInstType) (fetched : riscv_state)
     (i : instruction) (nxt : riscv_state) (a : BitVec 64)
     (h : Fetch s = (w, fetched) ∧ DecodeAny w = i ∧ Run i fetched = nxt ∧
@@ -35,7 +33,6 @@ theorem nextRISCV_branch (s : riscv_state) (w : rawInstType) (fetched : riscv_st
 
 /-- Original conditional rule: keep the cleared-control record in both outcomes.
 Its identity in the false case is proved from the original NONE premise. -/
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "NextRISCV_cond_branch"]
 theorem nextRISCV_cond_branch (s : riscv_state) (w : rawInstType) (fetched : riscv_state)
     (i : instruction) (nxt : riscv_state) (a : BitVec 64) (b : Bool)
     (h : Fetch s = (w, fetched) ∧ DecodeAny w = i ∧ Run i fetched = nxt ∧

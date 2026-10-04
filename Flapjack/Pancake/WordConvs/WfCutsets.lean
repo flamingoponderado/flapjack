@@ -22,8 +22,7 @@ clause: the cut sets of `Alloc`, `Install`, a returning `Call` (with its return
 handler and optional exception handler program) and `FFI` are well formed,
 `MustTerminate`, `Seq` and `If` recurse into their sub-programs, `Loop` also
 requires both live sets to be `wf`, and every other statement is `T`. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "wf_cutsets_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wfCutsets {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) → Prop
   | .alloc _ s => wfNames s
   | .install _ _ _ _ s => wfNames s

@@ -191,7 +191,7 @@ def mkBranch (t1 t2 : CallTree) : CallTree :=
     [NeZero width]` with the `(words_as_type_indexed_bitvec)` qualifier. This is
     a carrier translation only: no clause, quantifier, or side condition
     changes. -/
-@[hol "cakeml/compiler/backend/word_depthScript.sml" "call_graph_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def callGraph {width : Nat} [NeZero width] :
     Spt (Nat × WordLangProgHOL (BitVec width)) → Nat → List Nat → Nat →
       WordLangProgHOL (BitVec width) → CallTree
@@ -255,7 +255,7 @@ decreasing_by
     `dimindex (:α)`; Lean binds `{width : Nat} [NeZero width]` and carries the
     `(words_as_type_indexed_bitvec)` qualifier for that carrier translation
     only. -/
-@[hol "cakeml/compiler/backend/word_depthScript.sml" "full_call_graph_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def fullCallGraph {width : Nat} [NeZero width] (n : Nat)
     (funs : Spt (Nat × WordLangProgHOL (BitVec width))) : CallTree :=
   match sptLookup n funs with
@@ -280,7 +280,7 @@ def fullCallGraph {width : Nat} [NeZero width] (n : Nat)
     `'a word` at positive `dimindex (:α)`; Lean binds `{width : Nat}
     [NeZero width]` and carries the `(words_as_type_indexed_bitvec)` qualifier
     for that carrier translation only. -/
-@[hol "cakeml/compiler/backend/word_depthScript.sml" "max_depth_graphs_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def maxDepthGraphs {width : Nat} [NeZero width] {Metadata : Type} :
     Spt Nat → List Nat → List Nat →
       Spt (Nat × WordLangProgHOL (BitVec width)) →

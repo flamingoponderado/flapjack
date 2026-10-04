@@ -22,8 +22,7 @@ private theorem compileProgNoShmemop {width : Nat} [NeZero width]
 independent of the word dimension, every source field and output component
 remains arbitrary, and only the original source EVERY and compiler equality
 are hypotheses. Row and tail induction hypotheses are discharged internally. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "compile_word_to_stack_no_share_inst" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileWordToStackNoShareInst {width : Nat} [NeZero width] {β : Type}
     (conf : AsmConfigExact width) (perf : Bool) (registerCount : Nat)
     (programs : List (β × Nat × WordLangProgHOL (BitVec width)))

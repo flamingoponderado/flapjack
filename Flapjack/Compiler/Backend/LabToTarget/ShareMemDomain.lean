@@ -29,8 +29,7 @@ private instance : Nonempty HolFfiName := ⟨.sharedMem .mappedRead⟩
 
 /-- Exact HOL `share_mem_domain_code_rel_def` (`lab_to_targetProofScript.sml:688-717`): the
 four conjuncts with the original binders `pc op re a inst len i` and `pc line`. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "share_mem_domain_code_rel_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def shareMemDomainCodeRel {width : Nat} [NeZero width] {β γ : Type}
     (mcConf : MachineConfig width β γ) (p : BitVec width) (code2 : List (Section (LabLineHOL width)))
     (s1SharedMemDomain : BitVec width → Prop) : Prop :=

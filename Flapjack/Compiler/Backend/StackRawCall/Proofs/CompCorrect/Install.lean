@@ -89,10 +89,7 @@ existential simulations, including actual native oracle/compiler/buffer updates.
 Old entries win the union; newly visible entries use empty frame information.
 Configuration equality is internal classical decidability, not an extra source
 premise. Inherits reals_as_rational_cuts, SOUNDNESS item8. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectInstall {width : Nat} [NeZero width] {C F : Type}
     (ptr len dptr dlen ret : Nat) (info : Spt Nat)
     (source target post : StackSemStateFiniteExact width C F)

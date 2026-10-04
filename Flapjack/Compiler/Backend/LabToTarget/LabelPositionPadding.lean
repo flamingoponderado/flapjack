@@ -25,8 +25,7 @@ private theorem reverseAddNop_posOk {width : Nat} [NeZero width]
 /-- Full source padding parity statement. The literal NULL-or-label-head guard
 is represented by cases: empty is True; a nonempty list observes its head.
 Thus the source's masked empty HD is never evaluated or assigned a default. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "pad_section_pos_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem padSection_posOk {width : Nat} [NeZero width]
     (nop : List (BitVec 8))
     (lines aux : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))

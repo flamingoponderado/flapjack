@@ -6,8 +6,7 @@ namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "line_length_add_nop1"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem lineLength_addNop_nonlabel {width : Nat} [NeZero width]
     (nop : List (BitVec 8)) (ls : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) :
@@ -27,8 +26,7 @@ theorem lineLength_addNop_nonlabel {width : Nat} [NeZero width]
     | asm a bs n => simp [addNop,lineLength,List.length_append]; omega
     | labAsm a w bs n => simp [addNop,lineLength,List.length_append]; omega
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "line_length_add_nop"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem lineLength_addNop_labels {width : Nat} [NeZero width]
     (nop : List (BitVec 8)) (ls : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) :
@@ -38,8 +36,7 @@ theorem lineLength_addNop_labels {width : Nat} [NeZero width]
   | nil => simp [addNop]
   | cons x xs ih => cases x <;> simp_all [addNop,lineLength,isLabelHOL]
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "line_len_add_nop1"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem lineLen_addNop_nonlabel {width : Nat} [NeZero width]
     (nop : List (BitVec 8)) (ls : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) :
@@ -59,8 +56,7 @@ theorem lineLen_addNop_nonlabel {width : Nat} [NeZero width]
     | asm a bs n => simp [addNop,lineLen]; omega
     | labAsm a w bs n => simp [addNop,lineLen]; omega
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "line_len_add_nop"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem lineLen_addNop_labels {width : Nat} [NeZero width]
     (nop : List (BitVec 8)) (ls : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) :
@@ -70,8 +66,7 @@ theorem lineLen_addNop_labels {width : Nat} [NeZero width]
   | nil => simp [addNop]
   | cons x xs ih => cases x <;> simp_all [addNop,lineLen,isLabelHOL]
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "add_nop_append"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem addNop_append {width : Nat} [NeZero width]
     (nop : List (BitVec 8)) (l1 l2 : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) :
@@ -82,8 +77,7 @@ theorem addNop_append {width : Nat} [NeZero width]
     cases x <;> simp_all [addNop,isLabelHOL]
     split <;> rfl
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "EXISTS_not_Label_add_nop"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem existsNotLabel_addNop {width : Nat} [NeZero width]
     (nop : List (BitVec 8)) (acc : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) :
@@ -93,8 +87,7 @@ theorem existsNotLabel_addNop {width : Nat} [NeZero width]
   | nil => simp [addNop]
   | cons x xs ih => cases x <;> simp_all [addNop,isLabelHOL]
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "EVERY_is_Label_add_nop_preserved"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem everyIsLabel_addNop {width : Nat} [NeZero width]
     (nop : List (BitVec 8)) (acc : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) :

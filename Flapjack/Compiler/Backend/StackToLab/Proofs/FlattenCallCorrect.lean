@@ -59,10 +59,7 @@ theorem callNoneInlCases {width : Nat} [NeZero width] {C F : Type} {start : Nat}
   exact .inr ⟨h0, x, rfl, by simpa using hbad, rfl⟩
 
 /-- HOL `flatten_call_correct`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_call_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenCallCorrect {width : Nat} [NeZero width] {C F : Type} {start : Nat}
     {s1 s2 : StackSemStateFiniteExact width C F} {res : Option (StackSemResult width)}
     {t1 : Flapjack.Compiler.Backend.LabSem.State width C F} :
@@ -185,8 +182,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
 whose clock is nonzero halts with `Word 0w` when calling procedure 1, using one
 clock tick and no FFI. The HOL type argument `(:('ffi#'c))` is the explicit
 `C F`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "halt_assum_def"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def haltAssum {width : Nat} [NeZero width] (C F : Type)
     (code : Spt (HolProg width)) : Prop := ∀ s : StackSemStateFiniteExact width C F,
     sptSubspt code s.code ∧ s.clock ≠ 0 →

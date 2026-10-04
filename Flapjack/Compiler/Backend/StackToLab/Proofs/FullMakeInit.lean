@@ -29,8 +29,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
 compilers; `I ## f ## I` is `Prod.map id (Prod.map f id)`; the four
 `make_init`s are, in order of application, stack_to_lab's, stack_names',
 stack_remove's `make_init_any`/`make_init_opt` and stack_alloc's. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "full_make_init_def"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def fullMakeInit {width : Nat} [NeZero width] {C F : Type}
     (stackConf : StackToLab.Config) (dataConf : DataToWord.Config) (maxHeap sp : Nat)
     (offset : BitVec width × BitVec width) (bitmaps : List (BitVec width))
@@ -97,8 +96,7 @@ theorem makeInitAnyFields {width : Nat} [NeZero width] {C F : Type}
 
 /-- HOL `full_make_init_buffer`: both buffers of the initial state are
 empty. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "full_make_init_buffer"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fullMakeInitBuffer {width : Nat} [NeZero width] {C F : Type}
     (a : StackToLab.Config) (b : DataToWord.Config) (c d : Nat)
     (e : BitVec width × BitVec width) (f : List (BitVec width))
@@ -127,8 +125,7 @@ theorem fullMakeInitBuffer {width : Nat} [NeZero width] {C F : Type}
   exact ⟨this.1, this.2.1⟩
 
 /-- HOL `full_make_init_ffi`: the initial state keeps the LabSem FFI state. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "full_make_init_ffi"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fullMakeInitFfi {width : Nat} [NeZero width] {C F : Type}
     (a : StackToLab.Config) (b : DataToWord.Config) (c d : Nat)
     (e : BitVec width × BitVec width) (f : List (BitVec width))
@@ -142,8 +139,7 @@ theorem fullMakeInitFfi {width : Nat} [NeZero width] {C F : Type}
 /-- HOL `full_make_init_compile`: the compile callback of the initial state
 runs the stack_alloc, stack_remove and stack_names program transformations and
 `prog_to_section` before the LabSem compiler. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "full_make_init_compile"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fullMakeInitCompile {width : Nat} [NeZero width] {C F : Type}
     (a : StackToLab.Config) (b : DataToWord.Config) (c d : Nat)
     (e : BitVec width × BitVec width) (f : List (BitVec width))

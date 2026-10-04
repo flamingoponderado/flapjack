@@ -5,8 +5,7 @@ namespace Flapjack.Compiler.Backend.StackRawCall
 open Flapjack Flapjack.Compiler.Backend.StackLang Flapjack.StackSem
 /-- Original full label-set preservation for recursive and top compilation.
 There is no validity, evaluation or successful lookup premise. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "get_labels_comp"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getLabelsComp {width : Nat} [NeZero width] (info : Spt Nat) (body : HolProg width) :
     getLabelsExact (comp info body) = getLabelsExact body ∧
     getLabelsExact (compTop info body) = getLabelsExact body := by

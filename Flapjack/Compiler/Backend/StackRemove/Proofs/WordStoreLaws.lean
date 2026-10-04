@@ -16,9 +16,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 CurrHeap is not among the original ordered store slots. Address and stored-word
 dimensions remain independent, as in HOL; arbitrary Word or Loc updates pass
 through the actual native finite-map carrier. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "word_store_CurrHeap"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordStoreCurrHeap {addressWidth : Nat} {valueWidth : Nat}
     [NeZero addressWidth] [NeZero valueWidth] {C F : Type}
     (base : BitVec addressWidth) (state : StackSemStateFiniteExact valueWidth C F)

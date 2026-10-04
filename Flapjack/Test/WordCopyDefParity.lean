@@ -51,13 +51,6 @@ private def obsI : WordLangInst (BitVec 64) → Option (List Nat)
   | .arith (.addOverflow a b c d) => some [8, a, b, c, d]
   | .arith (.subOverflow a b c d) => some [9, a, b, c, d]
   | .mem m r (.addr a w) => some [10, obsMemOp m, r, a, w.toNat]
-  | .fp (.fpLess a b c) => some [11, a, b, c]
-  | .fp (.fpLessEqual a b c) => some [12, a, b, c]
-  | .fp (.fpEqual a b c) => some [13, a, b, c]
-  | .fp (.fpMovFromReg a b c) => some [14, a, b, c]
-  | .fp (.fpMovToReg a b c) => some [15, a, b, c]
-  | .fp (.fpAdd a b c) => some [16, a, b, c]
-  | _ => none
 
 private def obsCuts (c : WordLangCutsetsHOL) : Option (List Nat) :=
   match c with
@@ -177,14 +170,6 @@ example : obsP (copyPropProg ((.seq (.move 0 [(5, 1)]) (.inst (.mem .load 1 (.ad
     obsCS (copyPropProg ((.seq (.move 0 [(5, 1)]) (.inst (.mem .load 1 (.addr 1 8)))) : P) emptyEq).2 = expS [] [] ([] : List (WordStoreHOL × Nat)) 0 ∧
     (obsP (.seq (.move 0 [(5, 1)]) (.inst (.mem .load 1 (.addr 5 8))) : P)).isSome := by decide +kernel
 -- wc_fp=(Seq (Move 0 [(5,1)]) (Seq (Inst (FP (FPLess 9 2 3))) (Seq (Inst (FP (FPMovFromReg 4 5 13))) (Seq (Inst (FP (FPMovFromReg 6 1 5))) (Seq (Inst (FP (FPAdd 7 8 9))) (Inst (FP (FPMovToReg 21 25 3))))))),<|to_eq := ⦕ 1 ↦ 0; 5 ↦ 0 ⦖; from_eq := ⦕ 0 ↦ 5 ⦖; store_to_eq := []; next := 1|>)
-example : obsP (copyPropProg ((.seq (.move 0 [(5, 1)]) (.seq (.inst (.fp (.fpLess 9 2 3))) (.seq (.inst (.fp (.fpMovFromReg 4 1 13))) (.seq (.inst (.fp (.fpMovFromReg 6 1 5))) (.seq (.inst (.fp (.fpAdd 7 8 9))) (.inst (.fp (.fpMovToReg 21 25 3)))))))) : P) emptyEq).1 = obsP (.seq (.move 0 [(5, 1)]) (.seq (.inst (.fp (.fpLess 9 2 3))) (.seq (.inst (.fp (.fpMovFromReg 4 5 13))) (.seq (.inst (.fp (.fpMovFromReg 6 1 5))) (.seq (.inst (.fp (.fpAdd 7 8 9))) (.inst (.fp (.fpMovToReg 21 25 3))))))) : P) ∧
-    obsCS (copyPropProg ((.seq (.move 0 [(5, 1)]) (.seq (.inst (.fp (.fpLess 9 2 3))) (.seq (.inst (.fp (.fpMovFromReg 4 1 13))) (.seq (.inst (.fp (.fpMovFromReg 6 1 5))) (.seq (.inst (.fp (.fpAdd 7 8 9))) (.inst (.fp (.fpMovToReg 21 25 3)))))))) : P) emptyEq).2 = expS [(1, 0), (5, 0)] [(0, 5)] ([] : List (WordStoreHOL × Nat)) 1 ∧
-    (obsP (.seq (.move 0 [(5, 1)]) (.seq (.inst (.fp (.fpLess 9 2 3))) (.seq (.inst (.fp (.fpMovFromReg 4 5 13))) (.seq (.inst (.fp (.fpMovFromReg 6 1 5))) (.seq (.inst (.fp (.fpAdd 7 8 9))) (.inst (.fp (.fpMovToReg 21 25 3))))))) : P)).isSome := by decide +kernel
--- wc_fp_kill=(Seq (Move 0 [(5,1)]) (Seq (Inst (FP (FPEqual 1 2 3))) (Seq (Move 0 [(9,13)]) (Inst (FP (FPLessEqual 13 2 3))))),<|to_eq := LN; from_eq := LN; store_to_eq := []; next := 0|>)
-example : obsP (copyPropProg ((.seq (.move 0 [(5, 1)]) (.seq (.inst (.fp (.fpEqual 1 2 3))) (.seq (.move 0 [(9, 13)]) (.inst (.fp (.fpLessEqual 13 2 3)))))) : P) emptyEq).1 = obsP (.seq (.move 0 [(5, 1)]) (.seq (.inst (.fp (.fpEqual 1 2 3))) (.seq (.move 0 [(9, 13)]) (.inst (.fp (.fpLessEqual 13 2 3))))) : P) ∧
-    obsCS (copyPropProg ((.seq (.move 0 [(5, 1)]) (.seq (.inst (.fp (.fpEqual 1 2 3))) (.seq (.move 0 [(9, 13)]) (.inst (.fp (.fpLessEqual 13 2 3)))))) : P) emptyEq).2 = expS [] [] ([] : List (WordStoreHOL × Nat)) 0 ∧
-    (obsP (.seq (.move 0 [(5, 1)]) (.seq (.inst (.fp (.fpEqual 1 2 3))) (.seq (.move 0 [(9, 13)]) (.inst (.fp (.fpLessEqual 13 2 3))))) : P)).isSome := by decide +kernel
--- wc_skip_inst=(Seq (Move 0 [(5,1)]) Skip,<|to_eq := ⦕ 1 ↦ 0; 5 ↦ 0 ⦖; from_eq := ⦕ 0 ↦ 5 ⦖; store_to_eq := []; next := 1|>)
 example : obsP (copyPropProg ((.seq (.move 0 [(5, 1)]) (.inst .skip)) : P) emptyEq).1 = obsP (.seq (.move 0 [(5, 1)]) .skip : P) ∧
     obsCS (copyPropProg ((.seq (.move 0 [(5, 1)]) (.inst .skip)) : P) emptyEq).2 = expS [(1, 0), (5, 0)] [(0, 5)] ([] : List (WordStoreHOL × Nat)) 1 ∧
     (obsP (.seq (.move 0 [(5, 1)]) .skip : P)).isSome := by decide +kernel

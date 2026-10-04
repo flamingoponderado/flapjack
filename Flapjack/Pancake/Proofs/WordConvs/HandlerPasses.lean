@@ -10,8 +10,7 @@ open Flapjack.Compiler.Backend.WordUnreach Flapjack.Compiler.Encoders.Asm
 
 /-- Original unconditional expression-selector handler safety, arbitrary config,
 registers, owner and expression. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "word_good_handlers_inst_select_exp" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem goodHandlers_instSelectExp {width : Nat} [NeZero width] (n : Nat)
     (config : AsmConfigExact width) (target temporary : Nat)
     (expression : WordLangExpHOL (BitVec width)) :
@@ -35,8 +34,7 @@ theorem goodHandlers_instSelectExp {width : Nat} [NeZero width] (n : Nat)
 
 /-- Original complete program-selector iff; no input validity or target-handler
 premise, including all returning/exceptional call combinations. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "word_good_handlers_inst_select" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem goodHandlers_instSelect {width : Nat} [NeZero width] (n : Nat)
     (config : AsmConfigExact width) (temporary : Nat)
     (program : WordLangProgHOL (BitVec width)) :
@@ -64,8 +62,7 @@ theorem goodHandlers_instSelect {width : Nat} [NeZero width] (n : Nat)
   rw [equal]
 
 /-- Original iff for either enabled value and every program/owner. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "word_good_handlers_three_to_two_reg_prog" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem goodHandlers_threeToTwoRegProg {width : Nat} [NeZero width] (n : Nat)
     (enabled : Bool) (program : WordLangProgHOL (BitVec width)) :
     goodHandlersHOL n (threeToTwoRegProg enabled program) = true ↔
@@ -107,8 +104,7 @@ private theorem goodHandlers_ofDestSeqMove {width : Nat} [NeZero width] (n : Nat
 
 /-- Original SimpSeq implication retains both source guards and all native
 terminal/skip/move-merging cases. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "word_good_handlers_SimpSeq" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem goodHandlers_simpSeq {width : Nat} [NeZero width] (n : Nat)
     (first second : WordLangProgHOL (BitVec width))
     (firstValid : goodHandlersHOL n first = true)
@@ -119,8 +115,7 @@ theorem goodHandlers_simpSeq {width : Nat} [NeZero width] (n : Nat)
 
 /-- Original right-association implication with both source guards; native
 nested return and exception handlers are included. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "word_good_handlers_Seq_assoc_right" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem goodHandlers_seqAssocRight {width : Nat} [NeZero width] (n : Nat)
     (first second : WordLangProgHOL (BitVec width))
     (firstValid : goodHandlersHOL n first = true)
@@ -142,8 +137,7 @@ theorem goodHandlers_seqAssocRight {width : Nat} [NeZero width] (n : Nat)
         | constructor
 
 /-- Original remove-unreach implication, only the original owner/source guard. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "word_good_handlers_remove_unreach" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem goodHandlers_removeUnreach {width : Nat} [NeZero width] (n : Nat)
     (program : WordLangProgHOL (BitVec width)) (source : goodHandlersHOL n program = true) :
     goodHandlersHOL n (removeUnreach program) = true :=

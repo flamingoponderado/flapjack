@@ -31,8 +31,7 @@ open Flapjack.Compiler.Encoders.Asm
     `'a word` is rendered as `BitVec width` with the reviewed `[NeZero width]`
     discharge; the state parameter `'b` and projection parameter `'c` are kept
     polymorphic.  `config` is the exact reviewed `AsmConfigExact`. -/
-@[hol "cakeml/compiler/encoders/asm/asmPropsScript.sml" "target"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 structure HolAsmTarget (width : Nat) [NeZero width] (state : Type) (projection : Type) where
   config : AsmConfigExact width
   next : state → state
@@ -50,8 +49,7 @@ structure HolAsmTarget (width : Nat) [NeZero width] (state : Type) (projection :
     /\ (!i. i < t.config.fp_reg_count ==> t.get_fp_reg ms i = s.fp_regs i)`
     (`cakeml/compiler/encoders/asm/asmPropsScript.sml:58-64`), argument order
     `t s ms` preserved over the exact `HolAsmTarget`/`AsmState` carriers. -/
-@[hol "cakeml/compiler/encoders/asm/asmPropsScript.sml" "target_state_rel_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def targetStateRel {width : Nat} [NeZero width] {state projection : Type}
     (t : HolAsmTarget width state projection) (s : AsmState width) (ms : state) : Prop :=
   t.stateOk ms = true ∧

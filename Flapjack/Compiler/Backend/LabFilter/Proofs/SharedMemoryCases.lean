@@ -18,8 +18,7 @@ private theorem relatedShiftIo {width : Nat} [NeZero width] {C : Type} {F : Type
 FFI outcomes. Only the actual returning source successor supplies an induction
 hypothesis; target primitive/execution, clock and successor relation are derived.
 The IH includes the original evaluator's nonzero source-clock path guard. -/
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem filterCorrectSharedMemory {width : Nat} [NeZero width] {C : Type} {F : Type}
     (s1 t1 : Flapjack.Compiler.Backend.LabSem.State width C F)
     (res : MachineResult) (s2 : Flapjack.Compiler.Backend.LabSem.State width C F)

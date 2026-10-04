@@ -28,11 +28,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 The unsupported 16-bit cases contradict actual source success, as in HOL;
 no additional opcode restriction is assumed. All native runs, full relations
 and resource conclusions are retained. Evaluators inherit reals_as_rational_cuts. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_wInst"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateWInstMemory {width : Nat} [NeZero width] {C F : Type}
     (operation : WordMemOp) (ac : AsmConfigExact width) (valueRegister base k f frame : Nat) (offset : BitVec width)
     (source sourcePost : WordSemStateFiniteExact width (Nat × C) F)

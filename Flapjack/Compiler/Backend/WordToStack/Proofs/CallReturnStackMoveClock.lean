@@ -19,8 +19,7 @@ actual poststate is preserved except for the original clock replacement; no
 useStack, access bound, successful execution or target poststate is assumed.
 Evaluator closure inherits reals_as_rational_cuts; the structural clock proof
 asserts no numerical FP correspondence. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_stack_move_clock"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateStackMoveClock {width : Nat} [NeZero width] {C F : Type}
     (n start offset register : Nat) (target : StackSemStateFiniteExact width C F) (clock : Nat) :
     StackSemEvaluate.evaluate (stackMoveNative n start offset register .skip,

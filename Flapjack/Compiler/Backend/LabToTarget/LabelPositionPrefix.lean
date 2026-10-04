@@ -6,8 +6,7 @@ open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString
 
 /-- Full original even-position and label-parity implication. Nonlabel fields
 are unrestricted; the bounded prefix predicate observes only initial labels. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "lab_len_pos_ok_even_prefix_zero"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem labLenPosOk_evenPrefixZero {width : Nat} [NeZero width] (pos : Nat)
     (lines : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) :

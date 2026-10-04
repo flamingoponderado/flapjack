@@ -20,16 +20,14 @@ namespace Flapjack.WordConvs.WordSimpInstructions
 open Flapjack Flapjack.Compiler.Backend.WordSimp
 
 /-- Smart sequencing preserves exactly the conjunction of the two source predicates. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "every_inst_SmartSeq"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem everyInstSmartSeq {width : Nat} [NeZero width]
     (P : WordLangInst (BitVec width) → Bool) (p q : WordLangProgHOL (BitVec width)) :
     everyInst P (smartSeqHOL p q) = (everyInst P p && everyInst P q) := by
   cases p <;> simp [smartSeqHOL, everyInst]
 
 /-- Both actual sequence-destructor components satisfy the source instruction predicate. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "dest_Seq_no_inst"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem destSeqNoInst {width : Nat} [NeZero width]
     (P : WordLangInst (BitVec width) → Bool) (program : WordLangProgHOL (BitVec width))
     (source : everyInst P program = true) :
@@ -37,8 +35,7 @@ theorem destSeqNoInst {width : Nat} [NeZero width]
   cases program <;> simp_all [destSeq, everyInst]
 
 /-- Sequence association preserves the two original source predicates, including all recursive handlers. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "Seq_assoc_no_inst"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem seqAssocNoInst {width : Nat} [NeZero width]
     (P : WordLangInst (BitVec width) → Bool)
     (first second : WordLangProgHOL (BitVec width))
@@ -56,8 +53,7 @@ theorem seqAssocNoInst {width : Nat} [NeZero width]
       | simp_all [everyInst]
 
 /-- Constant materialization adds only assignments, so the arbitrary instruction predicate is unchanged. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "every_inst_drop_consts"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem everyInstDropConsts {width : Nat} [NeZero width]
     (P : WordLangInst (BitVec width) → Bool) (cs : Spt (BitVec width))
     (names : List Nat) (program : WordLangProgHOL (BitVec width)) :
@@ -97,8 +93,7 @@ private theorem constFpLoopNoInst {width : Nat} [NeZero width]
     all_goals simp
 
 /-- Constant folding preserves every original instruction predicate through the actual native state-threading loop. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "every_inst_const_fp"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem everyInstConstFp {width : Nat} [NeZero width]
     (P : WordLangInst (BitVec width) → Bool) (program : WordLangProgHOL (BitVec width))
     (source : everyInst P program = true) :
@@ -108,8 +103,7 @@ theorem everyInstConstFp {width : Nat} [NeZero width]
 /-- Successful hoisting preserves the three original source predicates. The dummy is unrestricted.
     HOL's universally bound `s` occurs nowhere in the statement (it is vacuous and has an
     unconstrained type), so it is omitted, as for the other `try_if_hoist2` lemmas. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "try_if_hoist2_no_inst"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem tryIfHoist2NoInst {width : Nat} [NeZero width]
     (P : WordLangInst (BitVec width) → Bool) (n : Nat)
     (first interm dummy second out : WordLangProgHOL (BitVec width))
@@ -153,8 +147,7 @@ private theorem tryIfHoist1NoInst {width : Nat} [NeZero width]
   · exact tryIfHoist2NoInst P _ _ _ _ _ _ run firstValid rfl secondValid
 
 /-- Duplicate-condition simplification preserves the original predicate through actual successful hoisting and sequence association. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "simp_duplicate_if_no_inst"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem simpDuplicateIfNoInst {width : Nat} [NeZero width]
     (P : WordLangInst (BitVec width) → Bool) (program : WordLangProgHOL (BitVec width))
     (source : everyInst P program = true) : everyInst P (simpDuplicateIf program) = true := by
@@ -199,16 +192,14 @@ private theorem pushOutIfAuxNoInst {width : Nat} [NeZero width]
       | (apply advance; assumption)
 
 /-- Conditional push-out preserves the source predicate for both exit flags and all original constructors. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "simp_push_out_if_no_inst"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem simpPushOutIfNoInst {width : Nat} [NeZero width]
     (P : WordLangInst (BitVec width) → Bool) (program : WordLangProgHOL (BitVec width))
     (source : everyInst P program = true) : everyInst P (pushOutIf program) = true :=
   pushOutIfAuxNoInst P program source
 
 /-- The complete original compile_exp pipeline preserves an arbitrary instruction predicate, without an output assumption. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "compile_exp_no_inst"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileExpNoInst {width : Nat} [NeZero width]
     (P : WordLangInst (BitVec width) → Bool) (program : WordLangProgHOL (BitVec width))
     (source : everyInst P program = true) : everyInst P (compileExp program) = true := by

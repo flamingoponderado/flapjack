@@ -27,8 +27,7 @@ private theorem memoryFields {width : Nat} [NeZero width] {C F : Type}
 
 /-- HOL `evaluate_apply_colour[Inst]`, Load memory subcase.
 Literal source clauses and original three premises/full existential result. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_InstLoad {width : Nat} [NeZero width] {C F : Type}
     (reg base : Nat) (offset : BitVec width) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)
@@ -76,8 +75,7 @@ theorem evaluateApplyColour_InstLoad {width : Nat} [NeZero width] {C F : Type}
 
 /-- HOL `evaluate_apply_colour[Inst]`, Load8 memory subcase.
 Literal source clauses and original three premises/full existential result. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_InstLoad8 {width : Nat} [NeZero width] {C F : Type}
     (reg base : Nat) (offset : BitVec width) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)
@@ -125,8 +123,7 @@ theorem evaluateApplyColour_InstLoad8 {width : Nat} [NeZero width] {C F : Type}
 
 /-- HOL `evaluate_apply_colour[Inst]`, Load32 memory subcase.
 Literal source clauses and original three premises/full existential result. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_InstLoad32 {width : Nat} [NeZero width] {C F : Type}
     (reg base : Nat) (offset : BitVec width) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)
@@ -174,8 +171,7 @@ theorem evaluateApplyColour_InstLoad32 {width : Nat} [NeZero width] {C F : Type}
 
 /-- HOL `evaluate_apply_colour[Inst]`, Load16 memory subcase.
 Literal source clauses and original three premises/full existential result. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_InstLoad16 {width : Nat} [NeZero width] {C F : Type}
     (reg base : Nat) (offset : BitVec width) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)
@@ -192,8 +188,7 @@ theorem evaluateApplyColour_InstLoad16 {width : Nat} [NeZero width] {C F : Type}
 
 /-- HOL `evaluate_apply_colour[Inst]`, Store16 memory subcase.
 Literal source clauses and original three premises/full existential result. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_InstStore16 {width : Nat} [NeZero width] {C F : Type}
     (reg base : Nat) (offset : BitVec width) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)
@@ -210,8 +205,7 @@ theorem evaluateApplyColour_InstStore16 {width : Nat} [NeZero width] {C F : Type
 
 /-- HOL `evaluate_apply_colour[Inst]`, Store memory subcase.
 Literal source clauses and original three premises/full existential result. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_InstStore {width : Nat} [NeZero width] {C F : Type}
     (reg base : Nat) (offset : BitVec width) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)
@@ -260,8 +254,7 @@ theorem evaluateApplyColour_InstStore {width : Nat} [NeZero width] {C F : Type}
 
 /-- HOL `evaluate_apply_colour[Inst]`, Store8 memory subcase.
 Literal source clauses and original three premises/full existential result. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_InstStore8 {width : Nat} [NeZero width] {C F : Type}
     (reg base : Nat) (offset : BitVec width) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)
@@ -313,8 +306,7 @@ theorem evaluateApplyColour_InstStore8 {width : Nat} [NeZero width] {C F : Type}
 
 /-- HOL `evaluate_apply_colour[Inst]`, Store32 memory subcase.
 Literal source clauses and original three premises/full existential result. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_InstStore32 {width : Nat} [NeZero width] {C F : Type}
     (reg base : Nat) (offset : BitVec width) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)

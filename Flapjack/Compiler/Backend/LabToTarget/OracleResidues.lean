@@ -8,8 +8,7 @@ namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.Semantics.TargetProps
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "oracle_tie_shift_gen"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem oracleTie_shiftGen {width : Nat} [NeZero width] {S Q C : Type} {F : Type}
     (mc mc2 : MachineConfig width S Q) (ms1 : S)
     (s1 : Flapjack.Compiler.Backend.LabSem.State width C F) (ms2 : S) (l : Nat)
@@ -26,8 +25,7 @@ theorem oracleTie_shiftGen {width : Nat} [NeZero width] {S Q C : Type} {F : Type
   exact ⟨ht.1.trans ho.1, ht.2.1.trans ho.2.1, ht.2.2.1.trans ho.2.2.1,
     ht.2.2.2.trans ho.2.2.2⟩
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "oracle_tie_ccache_residues" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem oracleTie_ccacheResidues {width : Nat} [NeZero width] {S Q C : Type} {F : Type}
     (mc mc2 : MachineConfig width S Q) (ms1 : S)
     (s1 : Flapjack.Compiler.Backend.LabSem.State width C F) (ms2 : S) (l : Nat)

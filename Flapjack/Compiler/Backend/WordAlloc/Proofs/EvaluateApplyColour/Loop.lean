@@ -188,8 +188,7 @@ end EvaluateApplyColourLoopWitnesses
 the original colouring/state/local premises and the sole universally quantified
 body induction hypothesis. `applyColourPostDisj` spells the original error
 disjunction; no target success, extra injection, clock, or oracle premise occurs. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour_Loop_helper"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColourLoopHelper {width : Nat} [NeZero width] {C F : Type} :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat)
       (names : NumSet) (body : WordLangProgHOL (BitVec width)) (exitNames live : NumSet)
@@ -209,8 +208,7 @@ theorem evaluateApplyColourLoopHelper {width : Nat} [NeZero width] {C F : Type} 
 
 /-- Genuine Loop constructor case of HOL `evaluate_apply_colour`. Only the
 body induction hypothesis supplements the original three premises. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_Loop {width : Nat} [NeZero width] {C F : Type}
     (names : NumSet) (body : WordLangProgHOL (BitVec width)) (exitNames : NumSet)
     (ihBody : applyColourGoal C F body) :

@@ -12,8 +12,7 @@ open Flapjack.Compiler.Encoders.Asm
 /-- Full original tail Call case. The optional source handler remains arbitrary
 and its original source guard is retained even though this compiler branch
 ignores that handler. No induction hypothesis for ignored code is required. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "comp_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compNoShmemopTailCall {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (destination : Option Nat) (args : List Nat)
@@ -130,8 +129,7 @@ private theorem callDestNoShmemop {width : Nat} [NeZero width]
 /-- Structural-motive returning Call piece without a handler. Bitmap threading
 is preserved; the return-body hypothesis quantifies over all bitmap/frame inputs,
 rather than the argument-specific hypothesis from HOL's `comp_ind`. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "comp_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compNoShmemopReturningCall {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (values : List Nat) (live : WordLangCutsetsHOL)
@@ -168,8 +166,7 @@ theorem compNoShmemopReturningCall {width : Nat} [NeZero width]
 residual bitmap feeds the handler compiler. Both child hypotheses quantify over
 all bitmap/frame inputs, unlike HOL's argument-specific `comp_ind` hypotheses.
 All source handler payloads remain arbitrary. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "comp_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compNoShmemopHandledCall {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (values : List Nat) (live : WordLangCutsetsHOL)

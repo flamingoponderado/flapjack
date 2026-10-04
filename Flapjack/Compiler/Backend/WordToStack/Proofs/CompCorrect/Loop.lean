@@ -469,11 +469,7 @@ induction hypotheses and the complete simulation motive (7767–7922). All
 timeout, recursive, overflow, passthrough and Break-zero branches retained.
 Evaluator closure inherits reals_as_rational_cuts; no independent numerical
 FP agreement is claimed. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_correct" 5756
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectLoop {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (names exitNames : Spt Unit)
     (body : WordLangProgHOL (BitVec width))

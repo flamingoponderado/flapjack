@@ -18,7 +18,6 @@ namespace Flapjack.RiscV.L3.Step
 
 open Flapjack.RiscV.L3
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "SLLI"]
 theorem dfnSLLI (rd rs1 : BitVec 5) (imm : BitVec 6) (s : riscv_state)
     (hleg : ¬ ((s.c_MCSR s.procID).mcpuid.ArchBase = 0 ∧ imm.getLsbD 5))
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1)
@@ -37,7 +36,6 @@ theorem dfnSLLI (rd rs1 : BitVec 5) (imm : BitVec 6) (s : riscv_state)
     simp_all [«write'GPR», «write'gpr», GPR, gpr, beq_iff_eq, ne_eq]
   all_goals by_cases hr : rs1 = 0 <;> simp_all [BitVec.zero_shiftLeft]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "SRLI"]
 theorem dfnSRLI (rd rs1 : BitVec 5) (imm : BitVec 6) (s : riscv_state)
     (hleg : ¬ ((s.c_MCSR s.procID).mcpuid.ArchBase = 0 ∧ imm.getLsbD 5))
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1)
@@ -59,7 +57,6 @@ theorem dfnSRLI (rd rs1 : BitVec 5) (imm : BitVec 6) (s : riscv_state)
     simp_all [«write'GPR», «write'gpr», GPR, gpr, beq_iff_eq, ne_eq]
   all_goals by_cases hr : rs1 = 0 <;> simp_all [holWordExtract, BitVec.zero_ushiftRight]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "SRAI"]
 theorem dfnSRAI (rd rs1 : BitVec 5) (imm : BitVec 6) (s : riscv_state)
     (hleg : ¬ ((s.c_MCSR s.procID).mcpuid.ArchBase = 0 ∧ imm.getLsbD 5))
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1)
@@ -82,7 +79,6 @@ theorem dfnSRAI (rd rs1 : BitVec 5) (imm : BitVec 6) (s : riscv_state)
     simp_all [«write'GPR», «write'gpr», GPR, gpr, beq_iff_eq, ne_eq]
   all_goals by_cases hr : rs1 = 0 <;> simp_all [holWordExtract, BitVec.zero_sshiftRight]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "SLLI_NOP"]
 theorem dfnSLLINop (rd rs1 : BitVec 5) (imm : BitVec 6) (s : riscv_state)
     (hleg : ¬ ((s.c_MCSR s.procID).mcpuid.ArchBase = 0 ∧ imm.getLsbD 5))
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1)
@@ -93,7 +89,6 @@ theorem dfnSLLINop (rd rs1 : BitVec 5) (imm : BitVec 6) (s : riscv_state)
   rcases hcases (s.c_MCSR s.procID).mcpuid.ArchBase with h | h | h | h <;>
     simp_all [in32BitMode, curArch, architecture, MCSR, beq_iff_eq, ne_eq]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "SRLI_NOP"]
 theorem dfnSRLINop (rd rs1 : BitVec 5) (imm : BitVec 6) (s : riscv_state)
     (hleg : ¬ ((s.c_MCSR s.procID).mcpuid.ArchBase = 0 ∧ imm.getLsbD 5))
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1)
@@ -104,7 +99,6 @@ theorem dfnSRLINop (rd rs1 : BitVec 5) (imm : BitVec 6) (s : riscv_state)
   rcases hcases (s.c_MCSR s.procID).mcpuid.ArchBase with h | h | h | h <;>
     simp_all [in32BitMode, curArch, architecture, MCSR, beq_iff_eq, ne_eq]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "SRAI_NOP"]
 theorem dfnSRAINop (rd rs1 : BitVec 5) (imm : BitVec 6) (s : riscv_state)
     (hleg : ¬ ((s.c_MCSR s.procID).mcpuid.ArchBase = 0 ∧ imm.getLsbD 5))
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1)

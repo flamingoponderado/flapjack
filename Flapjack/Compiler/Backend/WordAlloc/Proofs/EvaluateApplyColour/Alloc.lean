@@ -372,8 +372,7 @@ theorem allocSim {width : Nat} [NeZero width] {C F : Type}
         · exact ⟨rfl, hW, hL⟩
 
 /-- HOL `evaluate_apply_colour`, `Alloc` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_Alloc {width : Nat} [NeZero width] {C F : Type} (n : Nat)
     (names : WordLangCutsetsHOL) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)

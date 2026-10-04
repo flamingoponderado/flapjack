@@ -21,8 +21,7 @@ private theorem relatedUnions {α β : Type} {r : α → α → Prop} (f : α �
     simpa only [Set.mem_ofPred_eq, List.mem_cons, exists_eq_or_imp,
       preserves _ _ h] using or_congr Iff.rfl hi
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "code_similar_MAP_Section_num"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem codeSimilar_sectionNumbers {width : Nat} [NeZero width]
     (c1 c2 : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) : codeSimilar c1 c2 →
@@ -45,8 +44,7 @@ private theorem similarExtracted {width : Nat} [NeZero width]
     cases x <;> cases y <;> simp only [lineSimilar] at h <;> try contradiction
     all_goals simp [extractLabels, ih, h]
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "code_similar_extract_labels"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem codeSimilar_extractedLabels {width : Nat} [NeZero width]
     (c1 c2 : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) : codeSimilar c1 c2 →
@@ -61,8 +59,7 @@ theorem codeSimilar_extractedLabels {width : Nat} [NeZero width]
       intro h
       simp only [List.map_cons, similarExtracted h.2.1, ih rest' h.1]
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "line_similar_line_get_code_labels"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem lineSimilar_codeLabels {width : Nat} [NeZero width]
     (l1 l2 : Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)) : lineSimilar l1 l2 →
@@ -84,8 +81,7 @@ private theorem similarSectionCodeLabels {width : Nat} [NeZero width]
   simp only [Set.mem_ofPred_eq]
   simp_rw [hm]
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "code_similar_get_code_labels"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem codeSimilar_codeLabels {width : Nat} [NeZero width]
     (c1 c2 : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) : codeSimilar c1 c2 →
@@ -100,8 +96,7 @@ theorem codeSimilar_codeLabels {width : Nat} [NeZero width]
       rw [getCodeLabels_cons, getCodeLabels_cons,
         similarSectionCodeLabels sec sec' h.2.1 h.2.2, ih rest' h.1]
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "line_similar_line_get_labels"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem lineSimilar_labels {width : Nat} [NeZero width]
     (l1 l2 : Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)) : lineSimilar l1 l2 →
@@ -109,8 +104,7 @@ theorem lineSimilar_labels {width : Nat} [NeZero width]
   cases l1 <;> cases l2 <;> simp only [lineSimilar] <;> intro h <;> try contradiction
   all_goals simp [lineGetLabels, h]
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "code_similar_get_labels"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem codeSimilar_labels {width : Nat} [NeZero width]
     (c1 c2 : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) : codeSimilar c1 c2 →

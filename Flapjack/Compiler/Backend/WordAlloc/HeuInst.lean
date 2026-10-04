@@ -9,8 +9,8 @@ Memory addresses are ignored. FP moves count both integer registers at every
 width; this differs from the width-sensitive clash-tree instruction analysis.
 Unlisted memory widths and FP operations retain the entire input tree.
 The executed allocator migration remains a separate dependency. -/
-@[hol "cakeml/compiler/backend/word_allocScript.sml" "get_heu_inst_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: integer-only specialization of the referenced HOL declaration.
+
 def getHeuInst {width : Nat} [NeZero width] :
     WordLangInst (BitVec width) → Spt HeuData → Spt HeuData
   | .skip, t => t
@@ -38,11 +38,6 @@ def getHeuInst {width : Nat} [NeZero width] :
   | .mem .load8 r (.addr _ _), t => add1LhsMem r t
   | .mem .store32 r (.addr _ _), t => add1RhsMem r t
   | .mem .store8 r (.addr _ _), t => add1RhsMem r t
-  | .fp (.fpLess r _ _), t => add1LhsReg r t
-  | .fp (.fpLessEqual r _ _), t => add1LhsReg r t
-  | .fp (.fpEqual r _ _), t => add1LhsReg r t
-  | .fp (.fpMovToReg r1 r2 _), t => add1LhsReg r2 (add1LhsReg r1 t)
-  | .fp (.fpMovFromReg _ r1 r2), t => add1RhsReg r2 (add1RhsReg r1 t)
   | _, t => t
 
 end Flapjack.WordAlloc

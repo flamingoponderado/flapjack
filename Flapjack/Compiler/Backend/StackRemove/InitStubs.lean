@@ -6,8 +6,7 @@ open Flapjack.Compiler.Backend.StackLang
 /-- Original three initialization sections, including the tail call and both
 word-sized halt results. This definition does not specialize the source start
 label, heap bound, register indices, or positive word width. -/
-@[hol "cakeml/compiler/backend/stack_removeScript.sml" "init_stubs_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def initStubs {width : Nat} [NeZero width] (generateGc : Bool)
     (maximumHeap pointer start : Nat) : List (Nat × HolProg width) :=
   [(0, .seq (initCode generateGc maximumHeap pointer) (.call none (.inl start) none)),

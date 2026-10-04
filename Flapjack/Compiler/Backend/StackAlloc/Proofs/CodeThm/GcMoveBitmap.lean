@@ -1,3 +1,4 @@
+import Mathlib.Data.Nat.Basic
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveList
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.Unroll
 
@@ -118,8 +119,8 @@ theorem gcMoveBitmap_body_move {width : Nat} [NeZero width] {C F : Type} (conf :
       StackSemIntegerInstructions.instInteger, StackSemExpressions.assign,
       StackSemExpressions.wordExp, setVar,
       HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, h7, h1m, h1_le, wordShiftHOL]
-  rw [evaluate_seq_none _ _ _ _ (stackLoadAny_eval S 5 8 j hu h8 hg hbj hj) le_rfl, hv,
-    evaluate_seq_none _ _ _ _ hsh le_rfl]
+  rw [evaluate_seq_none _ _ _ _ (stackLoadAny_eval S 5 8 j hu h8 hg hbj hj) (by simp only [setVar]; exact Nat.le_refl _), hv,
+    evaluate_seq_none _ _ _ _ hsh (by simp only [setVar]; exact Nat.le_refl _)]
 
 /-- HOL's `bit_length_ind` induction, on the bitmap word's value, with the source
 hypotheses. -/
@@ -330,7 +331,7 @@ theorem wordGcMoveBitmapCode_run {width : Nat} [NeZero width] {C F : Type} {conf
       hus h7 h8 hg hlen_le hj x hv hb, hs4,
       evaluate_seq_none _ _ _ _ hadd (by simp [s4, setVar]),
       evaluate_seq_none _ _ _ _ (stackStoreAny_eval _ 5 8 old.length x1 ?_ ?_ ?_ hg hlen_le ?_)
-        le_rfl,
+        (by exact Nat.le_refl _),
       addBytesInWordInst_eval _ 8 (wordSemBytesInWord * BitVec.ofNat width old.length) ?_]
     all_goals first
       | exact hus
@@ -394,8 +395,7 @@ quantified `a1`, which the statement never mentions, is kept. `FLOOKUP s.store
 CurrHeap`, `k IN FDOM s.regs`, `|++` and `get_var` are the canonical carrier's
 lookups, `updateListEq` and `getVar`; `dimindex (:'a) DIV 8` and `dimword (:'a)`
 are `width / 8` and `2 ^ width`; the existentials `ck r0 r1 r2 r5 r6 r7` are kept. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "word_gc_move_bitmap_code_thm"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_gc_move_bitmap_code_thm {width : Nat} [NeZero width] {C F : Type} {conf : Config}
     {init : List (WordLocW width)} :
     ∀ (w : BitVec width) (stack : List (WordLocW width)) (s : StackSemStateFiniteExact width C F)

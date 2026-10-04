@@ -1,3 +1,4 @@
+import Mathlib.Tactic.NormNum
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StoreListCodeThm
 import Flapjack.Compiler.Backend.StackRemove.InitCode
 import Flapjack.Misc.GoodDimindex

@@ -3,8 +3,8 @@ import Flapjack.Compiler.Backend.StackNames.OperandNames
 namespace Flapjack.Compiler.Backend.StackNames
 open Flapjack.Compiler.Encoders.Asm
 
-@[hol "cakeml/compiler/backend/stack_namesScript.sml" "inst_find_name_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: integer-only specialization of the referenced HOL declaration.
+
 def instFindNameHOL {width : Nat} [NeZero width] (names : Flapjack.Spt Nat) :
     HolInst width → HolInst width
   | .skip => .skip
@@ -27,12 +27,6 @@ def instFindNameHOL {width : Nat} [NeZero width] (names : Flapjack.Spt Nat) :
       .arith (.longDiv (findNameSpt names r1) (findNameSpt names r2) (findNameSpt names r3) (findNameSpt names r4) (findNameSpt names r5))
   | .mem operator register (.addr base offset) =>
       .mem operator (findNameSpt names register) (.addr (findNameSpt names base) offset)
-  | .fp (.fpLess r f1 f2) => .fp (.fpLess (findNameSpt names r) f1 f2)
-  | .fp (.fpLessEqual r f1 f2) => .fp (.fpLessEqual (findNameSpt names r) f1 f2)
-  | .fp (.fpEqual r f1 f2) => .fp (.fpEqual (findNameSpt names r) f1 f2)
-  | .fp (.fpMovToReg r1 r2 d) => .fp (.fpMovToReg (findNameSpt names r1) (findNameSpt names r2) d)
-  | .fp (.fpMovFromReg d r1 r2) => .fp (.fpMovFromReg d (findNameSpt names r1) (findNameSpt names r2))
-  | instruction => instruction
 
 /-- Flapjack codec correspondence to the existing lookup-based instruction helper.
 No target equality is assumed. Full production naming migration remains open. -/
@@ -52,8 +46,5 @@ theorem instFindNameHOL_toWord {width : Nat} [NeZero width]
       cases address
       simp only [instFindNameHOL, instFindName, HolInst.toWordLangInst,
         HolAddr.toWordLangAddr, findNameSpt_eq_lookupHelper]
-  | fp operation =>
-      cases operation <;>
-        simp only [instFindNameHOL, instFindName, HolInst.toWordLangInst, findNameSpt_eq_lookupHelper]
 
 end Flapjack.Compiler.Backend.StackNames

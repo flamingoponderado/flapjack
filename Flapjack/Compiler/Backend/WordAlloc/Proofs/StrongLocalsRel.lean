@@ -63,9 +63,7 @@ theorem holFmapAsFiniteSupportRelationWitness_WordSemStateFiniteExact
 end StrongLocalsWitnesses
 
 /-- HOL strong_locals_rel_get_var over the evaluator's actual state carrier. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "strong_locals_rel_get_var"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem strongLocalsRelGetVar {width : Nat} [NeZero width] {C F : Type}
     (f : Nat → Nat) (live : Nat → Prop) (st cst : WordSemStateFiniteExact width C F)
     (n : Nat) (x : WordLocW width)
@@ -76,9 +74,7 @@ theorem strongLocalsRelGetVar {width : Nat} [NeZero width] {C F : Type}
 
 /-- Exact HOL register/immediate lookup transport. The live-set membership
 condition applies only to registers; immediate success needs no local lookup. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "strong_locals_rel_get_var_imm"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem strongLocalsRelGetVarImm {width : Nat} [NeZero width] {C F : Type}
     (f : Nat → Nat) (live : Nat → Prop) (st cst : WordSemStateFiniteExact width C F)
     (n : WordRegImm (BitVec width)) (x : WordLocW width)
@@ -92,9 +88,7 @@ theorem strongLocalsRelGetVarImm {width : Nat} [NeZero width] {C F : Type}
 
 /-- HOL strong_locals_rel_get_vars: every requested live source lookup is
 transported, preserving list order and duplicates. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "strong_locals_rel_get_vars"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem strongLocalsRelGetVars {width : Nat} [NeZero width] {C F : Type} :
     ∀ (ls : List Nat) (y : List (WordLocW width)) (f : Nat → Nat) (live : Nat → Prop)
       (st cst : WordSemStateFiniteExact width C F),

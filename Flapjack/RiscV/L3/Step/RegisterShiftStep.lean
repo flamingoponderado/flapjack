@@ -12,7 +12,6 @@ the low-6-bit count, and `SRL`/`SRA` widen the low word in RV32. -/
 namespace Flapjack.RiscV.L3.Step
 open Flapjack.RiscV.L3
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "SLL"]
 theorem dfnSLL (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd ≠ 0) :
     «dfn'SLL» (rd, (rs1, rs2)) s =
@@ -32,7 +31,6 @@ theorem dfnSLL (rd rs1 rs2 : BitVec 5) (s : riscv_state)
   all_goals by_cases hr : rs1 = 0 <;> by_cases h2 : rs2 = 0 <;>
     simp_all [holWordExtract, BitVec.zero_shiftLeft, BitVec.toNat_setWidth]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "SRL"]
 theorem dfnSRL (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd ≠ 0) :
     «dfn'SRL» (rd, (rs1, rs2)) s =
@@ -53,7 +51,6 @@ theorem dfnSRL (rd rs1 rs2 : BitVec 5) (s : riscv_state)
   all_goals by_cases hr : rs1 = 0 <;> by_cases h2 : rs2 = 0 <;>
     simp_all [holWordExtract, BitVec.zero_ushiftRight, BitVec.toNat_setWidth]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "SRA"]
 theorem dfnSRA (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd ≠ 0) :
     «dfn'SRA» (rd, (rs1, rs2)) s =
@@ -75,7 +72,6 @@ theorem dfnSRA (rd rs1 rs2 : BitVec 5) (s : riscv_state)
   all_goals by_cases hr : rs1 = 0 <;> by_cases h2 : rs2 = 0 <;>
     simp_all [holWordExtract, BitVec.zero_sshiftRight, BitVec.toNat_setWidth]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "SLL_NOP"]
 theorem dfnSLLNop (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd = 0) :
     «dfn'SLL» (rd, (rs1, rs2)) s = s := by
@@ -84,7 +80,6 @@ theorem dfnSLLNop (rd rs1 rs2 : BitVec 5) (s : riscv_state)
   rcases hcases (s.c_MCSR s.procID).mcpuid.ArchBase with h | h | h | h <;>
     simp_all [in32BitMode, curArch, architecture, MCSR, beq_iff_eq, ne_eq]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "SRL_NOP"]
 theorem dfnSRLNop (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd = 0) :
     «dfn'SRL» (rd, (rs1, rs2)) s = s := by
@@ -93,7 +88,6 @@ theorem dfnSRLNop (rd rs1 rs2 : BitVec 5) (s : riscv_state)
   rcases hcases (s.c_MCSR s.procID).mcpuid.ArchBase with h | h | h | h <;>
     simp_all [in32BitMode, curArch, architecture, MCSR, beq_iff_eq, ne_eq]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "SRA_NOP"]
 theorem dfnSRANop (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd = 0) :
     «dfn'SRA» (rd, (rs1, rs2)) s = s := by

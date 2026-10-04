@@ -110,8 +110,7 @@ end ShareInstCase
 evaluate_apply_colour[ShareInst]`, `word_allocProofScript.sml:2207` onward): the
 three HOL premises at `ShareInst op v exp` and the HOL existential conclusion;
 no sub-program, so no induction hypothesis and no extra premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_ShareInst {width : Nat} [NeZero width] {C F : Type}
     (op : WordMemOp) (v : Nat) (exp : WordLangExpHOL (BitVec width)) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)

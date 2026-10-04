@@ -8,8 +8,7 @@ namespace Flapjack
 handler guard and full source label union are retained; external labels are an
 arbitrary HOL-shaped set, with no finiteness or distinct-key requirement. The ignored second row field retains
 HOL's independent generic carrier, rather than specializing it to a number. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml"
-  "good_code_labels_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def goodCodeLabelsHOL {width : Nat} [NeZero width] {α : Type}
     (rows : List (Nat × α × WordLangProgHOL (BitVec width)))
     (externalLabels : Set Nat) : Prop :=

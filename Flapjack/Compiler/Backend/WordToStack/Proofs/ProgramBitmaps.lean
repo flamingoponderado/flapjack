@@ -8,8 +8,7 @@ open Flapjack.Compiler.Encoders.Asm
 
 /-- The source single-program prefix result, with its actual output equation.
 The only carrier translation is the positive HOL word dimension. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "compile_prog_isPREFIX" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileProgIsPrefix {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (program : WordLangProgHOL (BitVec width)) (arguments registers : Nat)
@@ -29,8 +28,7 @@ theorem compileProgIsPrefix {width : Nat} [NeZero width]
 
 /-- The source single-program length bound and bitmap-gap equality.
 No frame convention or compilation-success premise is added. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "compile_prog_LENGTH" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileProgLength {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (program : WordLangProgHOL (BitVec width)) (arguments registers : Nat)
@@ -71,8 +69,7 @@ private theorem compileRowsPrefix {width : Nat} [NeZero width] {β : Type}
 
 /-- Full source list compiler prefix theorem, retaining arbitrary identifiers
 and the actual compiler output equation. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "compile_word_to_stack_isPREFIX" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileWordToStackIsPrefix {width : Nat} [NeZero width] {β : Type}
     (conf : AsmConfigExact width) (perf : Bool) (registers : Nat)
     (rows : List (β × Nat × WordLangProgHOL (BitVec width)))
@@ -106,8 +103,7 @@ private theorem compileRowsLength {width : Nat} [NeZero width] {β : Type}
 
 /-- Complete source list compiler accounting statement. Its only numerical
 premise is the original bound on the initial bitmap length. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "compile_word_to_stack_IMP_LENGTH" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileWordToStackImpLength {width : Nat} [NeZero width] {β : Type}
     (conf : AsmConfigExact width) (perf : Bool) (registers : Nat)
     (rows : List (β × Nat × WordLangProgHOL (BitVec width)))

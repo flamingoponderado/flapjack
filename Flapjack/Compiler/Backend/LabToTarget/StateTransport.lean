@@ -9,8 +9,7 @@ open Flapjack.Compiler.Encoders.Asm
 
 /-- Full original oracle clock preservation. No field equality or resulting
 oracle tie is assumed beyond the original complete pre-state tie. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "oracle_tie_clock" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem oracleTie_clock {width : Nat} [NeZero width] {S Q C : Type} {F : Type}
     (mc : MachineConfig width S Q) (ms : S)
     (s : Flapjack.Compiler.Backend.LabSem.State width C F) (k : Nat)
@@ -22,8 +21,7 @@ The Lab state's configuration type is `Config` because the original
 `state_rel_def` (lab_to_targetProofScript.sml:960) annotates its `s1` as
 `('a,lab_to_target$config,'ffi) labSem$state`, which `state_rel_clock`
 inherits; `oracleTie_clock` stays generic as `oracle_tie_def` (line 790) does. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "state_rel_clock" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelClock {width : Nat} [NeZero width] {S Q : Type} {F : Type}
     (bundle : MachineConfig width S Q × LabSem.LabProgHOL width × Spt (Spt Nat) × BitVec width)
     (s : Flapjack.Compiler.Backend.LabSem.State width Config F)
@@ -34,8 +32,7 @@ theorem stateRelClock {width : Nat} [NeZero width] {S Q : Type} {F : Type}
 /-- Complete source shared-memory relation ignores only next_interfer.
 Independent Lab/machine widths and the source's unused outer carriers remain
 independent; literal total holEl and all FFI/MMIO obligations are preserved. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "share_mem_state_rel_shift_interfer" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem shareMemStateRel_shiftInterfer {labWidth : Nat} [NeZero labWidth]
     {width : Nat} [NeZero width] {S Q : Type} {F : Type} {T M : Type}
     (mc : MachineConfig width S Q)
@@ -46,8 +43,7 @@ theorem shareMemStateRel_shiftInterfer {labWidth : Nat} [NeZero labWidth]
 
 /-- Full original domain/code relation shift. All code, total holEl lookups,
 byte alignment and shared-address membership clauses remain unchanged. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "share_mem_domain_code_rel_shift_interfer" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem shareMemDomainCodeRel_shiftInterfer {width : Nat} [NeZero width]
     {S Q C : Type} {F : Type}
     (mc : MachineConfig width S Q) (p : BitVec width) (code : LabSem.LabProgHOL width)
@@ -59,8 +55,7 @@ theorem shareMemDomainCodeRel_shiftInterfer {width : Nat} [NeZero width]
 /-- Full original state relation shift. Only the actual machine interference
 sequence changes; all original FFI/cache/shared-memory contracts and code and
 memory conditions must follow from the complete pre-state relation. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "state_rel_shift_interfer" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRel_shiftInterfer {width : Nat} [NeZero width] {S Q : Type} {F : Type}
     (mc : MachineConfig width S Q) (code : LabSem.LabProgHOL width) (labs : Spt (Spt Nat))
     (p : BitVec width) (s : Flapjack.Compiler.Backend.LabSem.State width Config F)

@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegister
 import Flapjack.Pancake.WordLang.MaxVarInst
 import Flapjack.Compiler.Backend.RegAlloc
@@ -33,11 +34,7 @@ is constructor-for-constructor Const on WordLangInst, and the compiled Const
 is on HolInst, both at the same positive word width. The evaluators inherit
 reals_as_rational_cuts (SOUNDNESS item 8), without an independent agreement claim.
 The full arbitrary-instruction theorem remains open on its other cases. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_wInst"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateWInstConst {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (register k f frame : Nat) (word : BitVec width)
     (source sourcePost : WordSemStateFiniteExact width (Nat × C) F)

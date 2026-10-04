@@ -17,8 +17,7 @@ HeapLength store word, natural byte-capacity bound and stack-length equality
 are retained. Word construction/multiplication is modular; the capacity
 comparison uses the original natural product and dimword. No dimension,
 register, heap-separation or successful-initializer premise is added. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "stack_heap_limit_ok_def"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def stackHeapLimitOk {width : Nat} [NeZero width] {C F : Type}
     (source : StackSemStateFiniteExact width C F) (limits : Nat × Nat) : Prop :=
   source.store.lookup .heapLength =

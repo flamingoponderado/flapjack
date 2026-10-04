@@ -64,8 +64,7 @@ theorem mmioPcsMinIndex_append (l ffis : List HolFfiName) :
 /-- Full original extraction-index law. Original encoding guards are retained
 although the name-classification proof already suffices; no extra bounds or
 assumed desired MMIO index are added. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "mmio_pcs_min_index_get_shmem_info_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem mmioPcsMinIndex_getShmemInfo {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (labs : Spt (Spt Nat)) (validFfis : List HolFfiName)
     (validPos : Nat)

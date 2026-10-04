@@ -18,8 +18,7 @@ namespace Flapjack.WordSemStateFiniteExact
 all thirteen original fields, arbitrary instructions, and the sole successful
 instruction premise. This structural invariant inherits reals_as_rational_cuts
 from inst; it establishes no cross-language numerical FP correspondence. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "inst_const_full"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem instConstFull {width : Nat} [NeZero width] {C F : Type}
     (i : WordLangInst (BitVec width)) (state next : WordSemStateFiniteExact width C F)
     (h : inst i state = some next) :
@@ -42,8 +41,8 @@ theorem instConstFull {width : Nat} [NeZero width] {C F : Type}
   all_goals (repeat' split at h)
   all_goals first
     | (simp only [reduceCtorEq] at h; done)
-    | (cases h; simp [setVar, setFpVar])
-    | (simp only [Option.some.injEq] at h; subst h; simp [setVar, setFpVar])
+    | (cases h; simp [setVar])
+    | (simp only [Option.some.injEq] at h; subst h; simp [setVar])
     | (unfold assign at h; split at h
        · cases h
        · cases h; simp [setVar])

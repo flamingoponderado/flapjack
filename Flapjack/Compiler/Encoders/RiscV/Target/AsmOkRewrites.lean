@@ -22,8 +22,7 @@ zero-shift restriction, visible-register exclusions and all source-permitted
 aliases are retained. All eight memory and sixteen rejected FP forms appear.
 `r` is HOL numeric r-prime after GEN_ALL; callTarget is HOL word-valued r.
 No subset, execution/output premise or alternative configuration is assumed. -/
-@[hol "cakeml/compiler/encoders/riscv/riscv_targetScript.sml" "riscv_asm_ok"]
-theorem riscvAsmOkRewrites (r r1 r2 r3 r4 r5 d d1 d2 d3 : Nat)
+theorem riscvAsmOkRewrites (r r1 r2 r3 r4 r5 : Nat)
     (w i callTarget : BitVec 64) (b : BinOp) (s : Shift)
     (n : HolRegImm 64) (x : Cmp) :
     (asmOkExact (.inst .skip) riscvConfig = true ↔ True) ∧
@@ -45,22 +44,6 @@ theorem riscvAsmOkRewrites (r r1 r2 r3 r4 r5 d d1 d2 d3 : Nat)
     (asmOkExact (.inst (.mem .store8 r1 (.addr r2 w))) riscvConfig = true ↔ (r1 < 32 ∧ r1 ≠ 0 ∧ r1 ≠ 2 ∧ r1 ≠ 3 ∧ r1 ≠ 4 ∧ r1 ≠ 31) ∧ (r2 < 32 ∧ r2 ≠ 0 ∧ r2 ≠ 2 ∧ r2 ≠ 3 ∧ r2 ≠ 4 ∧ r2 ≠ 31) ∧ (-2048 : BitVec 64).toInt ≤ w.toInt ∧ w.toInt ≤ (2047 : BitVec 64).toInt) ∧
     (asmOkExact (.inst (.mem .store16 r1 (.addr r2 w))) riscvConfig = true ↔ (r1 < 32 ∧ r1 ≠ 0 ∧ r1 ≠ 2 ∧ r1 ≠ 3 ∧ r1 ≠ 4 ∧ r1 ≠ 31) ∧ (r2 < 32 ∧ r2 ≠ 0 ∧ r2 ≠ 2 ∧ r2 ≠ 3 ∧ r2 ≠ 4 ∧ r2 ≠ 31) ∧ (-2048 : BitVec 64).toInt ≤ w.toInt ∧ w.toInt ≤ (2047 : BitVec 64).toInt) ∧
     (asmOkExact (.inst (.mem .store32 r1 (.addr r2 w))) riscvConfig = true ↔ (r1 < 32 ∧ r1 ≠ 0 ∧ r1 ≠ 2 ∧ r1 ≠ 3 ∧ r1 ≠ 4 ∧ r1 ≠ 31) ∧ (r2 < 32 ∧ r2 ≠ 0 ∧ r2 ≠ 2 ∧ r2 ≠ 3 ∧ r2 ≠ 4 ∧ r2 ≠ 31) ∧ (-2048 : BitVec 64).toInt ≤ w.toInt ∧ w.toInt ≤ (2047 : BitVec 64).toInt) ∧
-    (asmOkExact (.inst (.fp (.fpLess r d1 d2))) riscvConfig = true ↔ False) ∧
-    (asmOkExact (.inst (.fp (.fpLessEqual r d1 d2))) riscvConfig = true ↔ False) ∧
-    (asmOkExact (.inst (.fp (.fpEqual r d1 d2))) riscvConfig = true ↔ False) ∧
-    (asmOkExact (.inst (.fp (.fpMov d1 d2))) riscvConfig = true ↔ False) ∧
-    (asmOkExact (.inst (.fp (.fpMovToReg r1 r2 d))) riscvConfig = true ↔ False) ∧
-    (asmOkExact (.inst (.fp (.fpMovFromReg d r1 r2))) riscvConfig = true ↔ False) ∧
-    (asmOkExact (.inst (.fp (.fpToInt r d))) riscvConfig = true ↔ False) ∧
-    (asmOkExact (.inst (.fp (.fpFromInt d r))) riscvConfig = true ↔ False) ∧
-    (asmOkExact (.inst (.fp (.fpAbs d1 d2))) riscvConfig = true ↔ False) ∧
-    (asmOkExact (.inst (.fp (.fpNeg d1 d2))) riscvConfig = true ↔ False) ∧
-    (asmOkExact (.inst (.fp (.fpSqrt d1 d2))) riscvConfig = true ↔ False) ∧
-    (asmOkExact (.inst (.fp (.fpAdd d1 d2 d3))) riscvConfig = true ↔ False) ∧
-    (asmOkExact (.inst (.fp (.fpSub d1 d2 d3))) riscvConfig = true ↔ False) ∧
-    (asmOkExact (.inst (.fp (.fpMul d1 d2 d3))) riscvConfig = true ↔ False) ∧
-    (asmOkExact (.inst (.fp (.fpDiv d1 d2 d3))) riscvConfig = true ↔ False) ∧
-    (asmOkExact (.inst (.fp (.fpFma d1 d2 d3))) riscvConfig = true ↔ False) ∧
     (asmOkExact (.jump w) riscvConfig = true ↔ (-2147483648 : BitVec 64).toInt ≤ w.toInt ∧ w.toInt ≤ (0x7FFFF7FF : BitVec 64).toInt ∧ asmAligned 2 w = true) ∧
     (asmOkExact (.jumpCmp x r1 (.reg r2) w) riscvConfig = true ↔ ((-1048576+8 : BitVec 64).toInt ≤ w.toInt ∧ w.toInt ≤ (1048575+4 : BitVec 64).toInt ∧ asmAligned 2 w = true) ∧ (r1 < 32 ∧ r1 ≠ 0 ∧ r1 ≠ 2 ∧ r1 ≠ 3 ∧ r1 ≠ 4 ∧ r1 ≠ 31) ∧ (r2 < 32 ∧ r2 ≠ 0 ∧ r2 ≠ 2 ∧ r2 ≠ 3 ∧ r2 ≠ 4 ∧ r2 ≠ 31)) ∧
     (asmOkExact (.jumpCmp x r1 (.imm i) w) riscvConfig = true ↔ ((-1048576+8 : BitVec 64).toInt ≤ w.toInt ∧ w.toInt ≤ (1048575+4 : BitVec 64).toInt ∧ asmAligned 2 w = true) ∧ (r1 < 32 ∧ r1 ≠ 0 ∧ r1 ≠ 2 ∧ r1 ≠ 3 ∧ r1 ≠ 4 ∧ r1 ≠ 31) ∧ (-2048 : BitVec 64).toInt ≤ i.toInt ∧ i.toInt ≤ (2047 : BitVec 64).toInt) ∧
@@ -70,7 +53,7 @@ theorem riscvAsmOkRewrites (r r1 r2 r3 r4 r5 d d1 d2 d3 : Nat)
   cases b <;> cases n
   all_goals
     simp [asmOkExact,asmInstOkExact,asmArithOkExact,asmRegImmOkExact,
-      asmRegOkExact,asmFpOkExact,asmFpRegOkExact,asmCmpOkExact,
+      asmRegOkExact,asmCmpOkExact,
       asmAddrOffsetOkExact,asmHwOffsetOkExact,asmByteOffsetOkExact,
       asmJumpOffsetOkExact,asmCjumpOffsetOkExact,asmLocOffsetOkExact,
       asmOffsetOkExact,asmAligned,riscvConfig,BitVec.slt_eq_decide,

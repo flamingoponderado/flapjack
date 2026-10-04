@@ -14,12 +14,6 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstLoad32
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstStore
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstStore8
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstStore32
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPCompare
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPUnary
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPArith
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPInt
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPMovToReg
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPMovFromReg
 
 namespace Flapjack.Compiler.Backend.WordAlloc
 
@@ -43,9 +37,6 @@ result-sensitive locals are retained, with no target evaluation, successful-sour
 post-state or induction premise. Evaluator/FP proofs inherit reals_as_rational_cuts
 (SOUNDNESS item 8), including choice rounding/quiet NaNs. This is the Inst case;
 full program correctness remains separate. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_correct"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
 theorem ssaCcTransCorrectInst {width : Nat} [NeZero width] {C F : Type}
     (source target : WordSemStateFiniteExact width C F)
     (ssa : Spt Nat) (next : Nat) (instruction : WordLangInst (BitVec width))
@@ -80,23 +71,4 @@ theorem ssaCcTransCorrectInst {width : Nat} [NeZero width] {C F : Type}
       | store8 => apply ssaCcTransCorrectInstStore8; exact h
       | store16 => apply ssaCcTransCorrectInstStore16; exact h
       | store32 => apply ssaCcTransCorrectInstStore32; exact h
-  | fp operation =>
-    cases operation with
-    | fpLess arg0 arg1 arg2 => apply ssaCcTransCorrectInstFPLess; exact h
-    | fpLessEqual arg0 arg1 arg2 => apply ssaCcTransCorrectInstFPLessEqual; exact h
-    | fpEqual arg0 arg1 arg2 => apply ssaCcTransCorrectInstFPEqual; exact h
-    | fpAbs arg0 arg1 => apply ssaCcTransCorrectInstFPAbs; exact h
-    | fpNeg arg0 arg1 => apply ssaCcTransCorrectInstFPNeg; exact h
-    | fpSqrt arg0 arg1 => apply ssaCcTransCorrectInstFPSqrt; exact h
-    | fpAdd arg0 arg1 arg2 => apply ssaCcTransCorrectInstFPAdd; exact h
-    | fpSub arg0 arg1 arg2 => apply ssaCcTransCorrectInstFPSub; exact h
-    | fpMul arg0 arg1 arg2 => apply ssaCcTransCorrectInstFPMul; exact h
-    | fpDiv arg0 arg1 arg2 => apply ssaCcTransCorrectInstFPDiv; exact h
-    | fpFma arg0 arg1 arg2 => apply ssaCcTransCorrectInstFPFma; exact h
-    | fpMov arg0 arg1 => apply ssaCcTransCorrectInstFPMov; exact h
-    | fpMovToReg arg0 arg1 arg2 => apply ssaCcTransCorrectInstFPMovToReg; exact h
-    | fpMovFromReg arg0 arg1 arg2 => apply ssaCcTransCorrectInstFPMovFromReg; exact h
-    | fpToInt arg0 arg1 => apply ssaCcTransCorrectInstFPToInt; exact h
-    | fpFromInt arg0 arg1 => apply ssaCcTransCorrectInstFPFromInt; exact h
-
 end Flapjack.Compiler.Backend.WordAlloc

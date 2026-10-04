@@ -18,8 +18,7 @@ actual source-path recursive call. Failed lookup, non-Seq code and timeout
 preserve the tracked fields. The native evaluator closure inherits
 reals_as_rational_cuts; no numeric alignment or floating-point correspondence
 is asserted. This is a case, not the full evaluator assembly. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsRawCall {width : Nat} [NeZero width] {C F : Type}
     (dest : Nat) (source post : StackSemStateFiniteExact width C F)
     (result : Option (StackSemResult width))

@@ -7,8 +7,7 @@ open Flapjack.Compiler.Backend.LabToTarget
 /-- Full original post-FFI state relation, with all source bounds, byte reads,
 length/empty-name promises, entry state and alignment premises. Inherited total
 holEl/holHd retains shared opaque holHdNil/holArb without bounds/fallback. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "ffi_interfer_ok_post_ffi_asm" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ffiInterferOkPostFfiAsm {width : Nat} [NeZero width] {S Q : Type}
     (pc : BitVec width) (mc : MachineConfig width S Q) (index i k : Nat)
     (t1 : AsmState width) (ms2 : S) (bytes bytes2 newBytes : List (BitVec 8))
@@ -41,8 +40,7 @@ theorem ffiInterferOkPostFfiAsm {width : Nat} [NeZero width] {S Q : Type}
 
 /-- Full original post-cache state relation, with the original contract,
 entry-state and link-register-alignment hypotheses only. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "ccache_interfer_ok_post_ccache_asm" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ccacheInterferOkPostCcacheAsm {width : Nat} [NeZero width] {S Q : Type}
     (pc : BitVec width) (mc : MachineConfig width S Q) (t1 : AsmState width)
     (ms2 : S) (k : Nat) (a1 a2 : BitVec width)

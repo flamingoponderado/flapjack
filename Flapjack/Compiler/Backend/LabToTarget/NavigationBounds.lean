@@ -7,8 +7,7 @@ open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabProps
 
 /-- The original sole successful-lookup premise bounds the returned instruction
 index by the number of non-label lines, including the implicit label zero. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "sec_loc_to_pc_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem secLocToPc_bound {width : Nat} [NeZero width] (n : Nat)
     (xs : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) (x : Nat) :
@@ -33,8 +32,7 @@ theorem secLocToPc_bound {width : Nat} [NeZero width] (n : Nat)
 
 /-- Full whole-code bound with the original section-validity and successful
 lookup conjuncts; the count includes every section, including duplicates. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "loc_to_pc_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem locToPc_bound {width : Nat} [NeZero width]
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))

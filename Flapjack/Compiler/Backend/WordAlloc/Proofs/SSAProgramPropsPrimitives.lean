@@ -6,8 +6,7 @@ namespace Flapjack.Compiler.Backend.WordAlloc
 
 /-- Full original Skip primitive case: original native compiler equality,
 map/allocation premise and all three output invariants; no additional premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_props"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransPropsSkip {width : Nat} [NeZero width]
     
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -21,8 +20,7 @@ theorem ssaCcTransPropsSkip {width : Nat} [NeZero width]
 
 /-- Full original StoreConsts primitive case: original native compiler equality,
 map/allocation premise and all three output invariants; no additional premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_props"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransPropsStoreConsts {width : Nat} [NeZero width]
     (a b c d : Nat) (ws : List (Bool × BitVec width))
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -45,8 +43,7 @@ theorem ssaCcTransPropsStoreConsts {width : Nat} [NeZero width]
 
 /-- Full original Inst primitive case: original native compiler equality,
 map/allocation premise and all three output invariants; no additional premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_props"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransPropsInst {width : Nat} [NeZero width]
     (instruction : WordLangInst (BitVec width))
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -58,8 +55,7 @@ theorem ssaCcTransPropsInst {width : Nat} [NeZero width]
 
 /-- Full original Assign primitive case: original native compiler equality,
 map/allocation premise and all three output invariants; no additional premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_props"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransPropsAssign {width : Nat} [NeZero width]
     (name : Nat) (exp : WordLangExpHOL (BitVec width))
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -77,8 +73,7 @@ theorem ssaCcTransPropsAssign {width : Nat} [NeZero width]
 
 /-- Full original Get primitive case: original native compiler equality,
 map/allocation premise and all three output invariants; no additional premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_props"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransPropsGet {width : Nat} [NeZero width]
     (name : Nat) (store : WordStoreHOL)
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -96,8 +91,7 @@ theorem ssaCcTransPropsGet {width : Nat} [NeZero width]
 
 /-- Full original Store primitive case: original native compiler equality,
 map/allocation premise and all three output invariants; no additional premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_props"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransPropsStore {width : Nat} [NeZero width]
     (exp : WordLangExpHOL (BitVec width)) (name : Nat)
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -111,8 +105,7 @@ theorem ssaCcTransPropsStore {width : Nat} [NeZero width]
 
 /-- Full original Raise primitive case: original native compiler equality,
 map/allocation premise and all three output invariants; no additional premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_props"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransPropsRaise {width : Nat} [NeZero width]
     (name : Nat)
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -126,8 +119,7 @@ theorem ssaCcTransPropsRaise {width : Nat} [NeZero width]
 
 /-- Full original OpCurrHeap primitive case: original native compiler equality,
 map/allocation premise and all three output invariants; no additional premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_props"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransPropsOpCurrHeap {width : Nat} [NeZero width]
     (operator : BinOp) (destination source : Nat)
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -145,8 +137,7 @@ theorem ssaCcTransPropsOpCurrHeap {width : Nat} [NeZero width]
 
 /-- Full original Return primitive case: original native compiler equality,
 map/allocation premise and all three output invariants; no additional premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_props"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransPropsReturn {width : Nat} [NeZero width]
     (label : Nat) (values : List Nat)
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -160,8 +151,7 @@ theorem ssaCcTransPropsReturn {width : Nat} [NeZero width]
 
 /-- Full original Tick primitive case: original native compiler equality,
 map/allocation premise and all three output invariants; no additional premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_props"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransPropsTick {width : Nat} [NeZero width]
     
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -175,8 +165,7 @@ theorem ssaCcTransPropsTick {width : Nat} [NeZero width]
 
 /-- Full original Set primitive case: original native compiler equality,
 map/allocation premise and all three output invariants; no additional premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_props"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransPropsSet {width : Nat} [NeZero width]
     (store : WordStoreHOL) (exp : WordLangExpHOL (BitVec width))
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -190,8 +179,7 @@ theorem ssaCcTransPropsSet {width : Nat} [NeZero width]
 
 /-- Full original LocValue primitive case: original native compiler equality,
 map/allocation premise and all three output invariants; no additional premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_props"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransPropsLocValue {width : Nat} [NeZero width]
     (destination label : Nat)
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -209,8 +197,7 @@ theorem ssaCcTransPropsLocValue {width : Nat} [NeZero width]
 
 /-- Full original CodeBufferWrite primitive case: original native compiler equality,
 map/allocation premise and all three output invariants; no additional premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_props"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransPropsCodeBufferWrite {width : Nat} [NeZero width]
     (address value : Nat)
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -224,8 +211,7 @@ theorem ssaCcTransPropsCodeBufferWrite {width : Nat} [NeZero width]
 
 /-- Full original DataBufferWrite primitive case: original native compiler equality,
 map/allocation premise and all three output invariants; no additional premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_props"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransPropsDataBufferWrite {width : Nat} [NeZero width]
     (address value : Nat)
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -239,8 +225,7 @@ theorem ssaCcTransPropsDataBufferWrite {width : Nat} [NeZero width]
 
 /-- Full original ShareInst primitive case: original native compiler equality,
 map/allocation premise and all three output invariants; no additional premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_props"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransPropsShareInst {width : Nat} [NeZero width]
     (operator : WordMemOp) (destination : Nat) (exp : WordLangExpHOL (BitVec width))
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))

@@ -76,7 +76,7 @@ wRegWrite1 g r (k,f,f') =
     Emits the program produced by `g` at the assigned register, spilling the
     frame variable with a `StackStore` when the register is above the live
     window.  Stated over the exact shared-word carrier `ProgM α`. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "wRegWrite1_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wRegWrite1 {α : Type} (g : Nat → ProgM α)
     (r : Nat) (kf : Nat × Nat × Nat) : ProgM α :=
   let r := r / 2
@@ -93,7 +93,7 @@ wRegWrite2 g r (k,f,f') =
 
     As `wRegWrite1` biased to the `k+1` frame slot, over the exact shared-word
     carrier `ProgM α`. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "wRegWrite2_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wRegWrite2 {α : Type} (g : Nat → ProgM α)
     (r : Nat) (kf : Nat × Nat × Nat) : ProgM α :=
   let r := r / 2
@@ -127,7 +127,7 @@ def formatVar (k : Nat) : Option Nat → Sum Nat Nat
 
     Builds the `StackLoad`/`StackStore` chain that moves `n` argument slots,
     over the exact shared-word carrier `ProgM α`. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "stack_move_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def stackMove {α : Type} (n start offset i : Nat) (p : ProgM α) : ProgM α :=
   match n with
   | 0 => p
@@ -146,7 +146,7 @@ StackArgs dest arg_count (k,f,f') =
     Allocates the argument slots and moves the return/argument registers into
     them.  Uses the already-ported `stackArgCount` and `stackMove`, over the
     exact shared-word carrier `ProgM γ`. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "StackArgs_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def stackArgs {α β γ : Type} (dest : Sum α β) (argCount : Nat)
     (kf : Nat × Nat × Nat) : ProgM γ :=
   let n := Flapjack.Compiler.Backend.WordToStack.stackArgCount dest argCount kf.1
@@ -166,7 +166,7 @@ wMoveSingle (x,y) (k,f,f') =
 
     Lowers one formatted move pair to the register-format `stackLang$prog`
     fragment, over the exact shared-word carrier `ProgM α`. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "wMoveSingle_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wMoveSingle {α : Type} (xy : Sum Nat Nat × Sum Nat Nat)
     (kf : Nat × Nat × Nat) : ProgM α :=
   match xy with
@@ -187,7 +187,7 @@ def wMoveSingle {α : Type} (xy : Sum Nat Nat × Sum Nat Nat)
 
     Sequences the register-format fragments of a list of formatted move pairs,
     over the exact shared-word carrier `ProgM α`. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "wMoveAux_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wMoveAux {α : Type} : List (Sum Nat Nat × Sum Nat Nat) → Nat × Nat × Nat → ProgM α
   | [], _ => .skip
   | [xy], kf => wMoveSingle xy kf
@@ -198,8 +198,7 @@ parallel moves, format both optional registers using the same k, and lower
 through wMoveAux with the unchanged (k,f,f') triple. The temporary is NONE and
 is therefore formatted as register k+1. No alternative production scheduler
 or fuel bound is used. Executed compiler migration remains separately tracked. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "wMove_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wMove {width : Nat} [NeZero width] (moves : List (Nat × Nat))
     (kf : Nat × Nat × Nat) : ProgM (BitVec width) :=
   let scheduled := Flapjack.Compiler.Backend.Parmove.parmove
@@ -219,7 +218,7 @@ def wMove {width : Nat} [NeZero width] (moves : List (Nat × Nat))
     Copies `n` return slots from slot `k` down to slot `k+f`, as a
     `list_Seq` of load/store fragments over the exact shared-word carrier
     `ProgM α`. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "copy_ret_aux_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def copyRetAux {α : Type} (k f : Nat) : Nat → ProgM α
   | 0 => .skip
   | n + 1 =>
@@ -244,7 +243,7 @@ copy_ret perf is_handle (k,f,f') vs kont =
     HOL is polymorphic in the return-value list: `num_stack_ret k vs` only
     measures `LENGTH vs`, so `vs : List β` is an INDEPENDENT carrier from the
     `ProgM α` carrier of `kont`, matching the exact HOL statement. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "copy_ret_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def copyRet {α β γ : Type} (perf isHandle : Bool) (kf : Nat × Nat × γ)
     (vs : List β) (kont : ProgM α) : ProgM α :=
   let n := Flapjack.Compiler.Backend.WordToStack.numStackRet kf.1 vs
@@ -296,7 +295,7 @@ StackHandlerArgs perf dest arg_count (k,f,f') =
     generic-`α` statement over the shared-word carrier `ProgM` is exact.
     The two destination payload types are independently quantified by HOL;
     neither is restricted to the output program carrier or to natural numbers. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "StackHandlerArgs_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def stackHandlerArgs {α δ ε : Type} (perf : Bool) (dest : Sum δ ε) (arg_count : Nat)
     (kf : Nat × Nat × Nat) : ProgM α :=
   stackArgs dest arg_count
@@ -314,7 +313,7 @@ PopHandler perf (k,f,f') prog =
 
     The program payload and both unused frame fields are independent HOL type
     variables; none is restricted by the helper's clauses. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "PopHandler_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def popHandler {α β γ : Type} (perf : Bool) (kf : Nat × β × γ) (prog : ProgM α) : ProgM α :=
   .seq (.stackLoad kf.1 2)
     (.seq (.set .handler kf.1)
@@ -345,8 +344,7 @@ PushHandler perf l1 l2 (k,f,f') =
     HOL's `Const k 1w` is word-indexed (`'a word`), so the exact statement is
     the width-indexed `ProgM (BitVec width)` with `[NeZero width]`. The two
     unused frame fields retain their independent HOL type variables. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "PushHandler_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def pushHandlerW {width : Nat} [NeZero width] {β γ : Type}
     (perf : Bool) (l1 l2 : Nat) (kf : Nat × β × γ) : ProgM (BitVec width) :=
   .seq (.stackAlloc (Flapjack.Compiler.Backend.WordToStack.handlerSlots perf))
@@ -377,7 +375,7 @@ def pushHandlerW {width : Nat} [NeZero width] {β γ : Type}
     `wStackLoad`.  HOL is polymorphic in the stack program's word type, so the
     result is `ProgM α` for an arbitrary `α`; the argument list is `num list`
     because HOL's `LAST args` is fed to `wReg2 : num -> ...`. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "call_dest_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def callDest {α : Type} (pos : Option Nat) (args : List Nat)
     (kf : Nat × Nat × Nat) : ProgM α × Sum Nat Nat :=
   match pos with
@@ -395,7 +393,7 @@ def callDest {α : Type} (pos : Option Nat) (args : List Nat)
     old frame pointers relative to `perf_rsp`, and then atomically commits the
     new frame before syncing `perf_rbp`.  The immediates are concrete words, so
     the port is width-indexed. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "perf_call_prefix_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def perfCallPrefixW {width : Nat} [NeZero width]
     (l1 l2 k : Nat) : ProgM (BitVec width) :=
   Flapjack.Compiler.Backend.StackLang.listSeq
@@ -416,7 +414,7 @@ def perfCallPrefixW {width : Nat} [NeZero width]
     (`cakeml/compiler/backend/word_to_stackScript.sml:336-343`): pops the saved
     frame pointer and discards both frame slots in one atomic step.  Width-indexed
     because of the concrete `0w`/`16w` immediates. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "perf_call_suffix_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def perfCallSuffixW {width : Nat} [NeZero width] : ProgM (BitVec width) :=
   Flapjack.Compiler.Backend.StackLang.listSeq
     [ .inst (.mem .load (Flapjack.Compiler.Backend.WordToStack.perfRbp)
@@ -430,7 +428,7 @@ def perfCallSuffixW {width : Nat} [NeZero width] : ProgM (BitVec width) :=
     hands off to the next handler.  HOL is polymorphic in the word type and the
     body contains no word literal, so the port is generic in the carrier
     parameter `α`. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "raise_stub_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def raiseStub {α : Type} (perf : Bool) (k : Nat) : ProgM α :=
   .seq (.get k .handler)
     (.seq (.stackSetSize k)
@@ -453,7 +451,7 @@ def raiseStub {α : Type} (perf : Bool) (k : Nat) : ProgM α :=
 /-- HOL `word_to_stack$store_consts_stub`
     (`cakeml/compiler/backend/word_to_stackScript.sml:578-580`): stores the
     constant pool and returns.  Word-independent, so generic in `α`. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "store_consts_stub_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def storeConstsStub {α : Type} (k : Nat) : ProgM α :=
   .seq (.storeConsts k (k + 1) none) (.ret 0)
 
@@ -476,7 +474,7 @@ def storeConstsStub {α : Type} (k : Nat) : ProgM α :=
     the stored value through `wReg2`), spilling through `wStackLoad`.  HOL is
     polymorphic in the stack word type `'a`, so this is generic in `α` over the
     exact shared-word carrier `ProgM α`. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "wShareInst_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wShareInst {α : Type} (op : WordMemOp) (v : Nat)
     (address : WordLangAddr α) (kf : Nat × Nat × Nat) : ProgM α :=
   match op, address with
@@ -524,8 +522,8 @@ Every clause is mirrored, with `dimindex (:'a) = 64` becoming `width = 64`.
 `Load16`/`Store16` are not handled by HOL and fall to the `Skip` catch-all, as
 in the source. The positive-width BitVec translation is recorded explicitly;
 this helper is not yet wired into the executed compiler (bead 15.3.25). -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "wInst_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: integer-only specialization of the referenced HOL declaration.
+
 def wInst {width : Nat} [NeZero width] (i : WordLangInst (BitVec width))
     (kf : Nat × Nat × Nat) : ProgM (BitVec width) :=
   match i with
@@ -602,25 +600,6 @@ def wInst {width : Nat} [NeZero width] (i : WordLangInst (BitVec width))
       let l2 := wReg2 n1 kf
       Flapjack.Compiler.Backend.WordToStack.wStackLoad (l1.1 ++ l2.1)
         (.inst (.mem .store32 l2.2 (.addr l1.2 offset)))
-  | .fp (.fpLess r f1 f2) =>
-      wRegWrite1 (fun r => .inst (.fp (.fpLess r f1 f2))) r kf
-  | .fp (.fpLessEqual r f1 f2) =>
-      wRegWrite1 (fun r => .inst (.fp (.fpLessEqual r f1 f2))) r kf
-  | .fp (.fpEqual r f1 f2) =>
-      wRegWrite1 (fun r => .inst (.fp (.fpEqual r f1 f2))) r kf
-  | .fp (.fpMovToReg r1 r2 d) =>
-      if width = 64 then
-        wRegWrite1 (fun r1 => .inst (.fp (.fpMovToReg r1 0 d))) r1 kf
-      else
-        wRegWrite2
-          (fun r2 => wRegWrite1 (fun r1 => .inst (.fp (.fpMovToReg r1 r2 d))) r1 kf)
-          r2 kf
-  | .fp (.fpMovFromReg d r1 r2) =>
-      let l := wReg1 r1 kf
-      let l' := if width = 64 then ([], 0) else wReg2 r2 kf
-      Flapjack.Compiler.Backend.WordToStack.wStackLoad (l.1 ++ l'.1)
-        (.inst (.fp (.fpMovFromReg d l.2 l'.2)))
-  | .fp f => .inst (.fp f)
   | _ => .inst .skip
 
 end Flapjack.Compiler.Backend.WordToStackRegFormat

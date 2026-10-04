@@ -7,8 +7,7 @@ open Flapjack.Basis.Pure.MlString
 
 /-- Full original initial-encoder preservation theorem. The encoder is arbitrary
 and independent of the configuration in the sole precondition premise. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "all_enc_ok_pre_enc_sec_list" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem encSecList_pre {width : Nat} [NeZero width]
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))

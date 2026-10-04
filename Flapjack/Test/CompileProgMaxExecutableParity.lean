@@ -11,7 +11,7 @@ def backendFixture : Backend.Config where
   sourceConf := ⟨⟨0,0,0⟩, ⟨.bind [] [],.bind [] []⟩, ⟨0⟩, ⟨0,.ln⟩⟩
   closConf := ClosToBvl.defaultConfig
   bvlConf := BvlToBvi.defaultConfig
-  dataConf := ⟨0,0,0,0,true,true,false,false,false,false,.none⟩
+  dataConf := { tagBits := 0, lenBits := 0, padBits := 0, lenSize := 0, hasDiv := true, hasLongdiv := true, be := false, callEmptyFfi := false, gcKind := .none }
   wordToWordConf := ⟨0,[]⟩
   wordConf := ⟨0,.ln⟩
   stackConf := ⟨.ln,false,false⟩

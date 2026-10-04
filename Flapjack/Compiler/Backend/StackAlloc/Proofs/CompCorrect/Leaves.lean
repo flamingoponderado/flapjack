@@ -102,6 +102,7 @@ theorem goal_tick (s : StackSemStateFiniteExact width C F) :
       simp only [h0, if_true]
       rfl
     · simp [StackBound, emptyEnv]
+      exact Nat.two_pow_pos width
   · simp only [h0, if_false, Prod.mk.injEq] at h
     obtain ⟨rfl, rfl⟩ := h
     refine ⟨0, regs, ?_, hpre.regs, hpre.buf, fun _ => hpre.stack⟩

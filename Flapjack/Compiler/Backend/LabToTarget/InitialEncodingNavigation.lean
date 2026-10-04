@@ -27,8 +27,7 @@ private theorem locToPc_mapEncSec {width : Nat} [NeZero width]
 
 /-- Full original unconditional navigation equality. The encoder is arbitrary;
 there is no successful encoding or section-label validity premise. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "loc_to_pc_enc_sec_list" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem locToPc_encSecList {width : Nat} [NeZero width]
     (sectionId labelId : Nat) (code : List (Section
       (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))

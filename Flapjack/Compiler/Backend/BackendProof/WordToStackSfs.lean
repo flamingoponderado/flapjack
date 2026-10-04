@@ -25,8 +25,7 @@ fromAList (MAP (λkv. (FST kv, (λ(arg_count,prog). FST (SND (compile_prog ac pe
 prog arg_count k (Nil,0)))) (SND kv))) p) =
 fromAList (MAP (λ((i,_),n). (i,n)) (ZIP (progs',fs')))`. The identifiers are
 `num`, as HOL infers from `fromAList`. -/
-@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "compile_word_to_stack_sfs_aux"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileWordToStackSfsAux {width : Nat} [NeZero width] :
     ∀ (ac : AsmConfigExact width) (perf : Bool) (k : Nat)
       (p : List (Nat × Nat × WordLangProgHOL (BitVec width)))

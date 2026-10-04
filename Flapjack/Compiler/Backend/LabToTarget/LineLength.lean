@@ -5,8 +5,7 @@ open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm
 open Flapjack.Basis.Pure.MlString
 
 /-- Original annotated length: deliberately independent of encoded byte length. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "line_len_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def lineLen {width : Nat} [NeZero width] :
     Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width) → Nat

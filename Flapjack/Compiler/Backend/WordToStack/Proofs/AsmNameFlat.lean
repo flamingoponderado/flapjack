@@ -38,8 +38,7 @@ theorem formattedMovesName {width : Nat} [NeZero width] (conf : AsmConfigExact w
 
 /-- Complete original Skip naming case, with all seven source guards and
 actual compiler output. Full naming assembly remains separate open work. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_stack_asm_name_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackStackAsmNameSkip {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -57,8 +56,7 @@ theorem wordToStackStackAsmNameSkip {width : Nat} [NeZero width]
 
 /-- Complete original Move naming case, with all seven source guards and
 actual compiler output. Full naming assembly remains separate open work. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_stack_asm_name_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackStackAsmNameMove {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (priority : Nat) (moves : List (Nat × Nat))
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -77,8 +75,7 @@ theorem wordToStackStackAsmNameMove {width : Nat} [NeZero width]
 
 /-- Complete original Assign naming case, with all seven source guards and
 actual compiler output. Full naming assembly remains separate open work. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_stack_asm_name_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackStackAsmNameAssign {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (v : Nat) (exp : WordLangExpHOL (BitVec width))
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -96,8 +93,7 @@ theorem wordToStackStackAsmNameAssign {width : Nat} [NeZero width]
 
 /-- Complete original Get naming case, with all seven source guards and
 actual compiler output. Full naming assembly remains separate open work. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_stack_asm_name_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackStackAsmNameGet {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (v : Nat) (name : WordStoreHOL)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -115,8 +111,7 @@ theorem wordToStackStackAsmNameGet {width : Nat} [NeZero width]
 
 /-- Complete original Set naming case, with all seven source guards and
 actual compiler output. Full naming assembly remains separate open work. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_stack_asm_name_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackStackAsmNameSet {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (name : WordStoreHOL) (exp : WordLangExpHOL (BitVec width))
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -137,8 +132,7 @@ theorem wordToStackStackAsmNameSet {width : Nat} [NeZero width]
 
 /-- Complete original Store naming case, with all seven source guards and
 actual compiler output. Full naming assembly remains separate open work. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_stack_asm_name_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackStackAsmNameStore {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (exp : WordLangExpHOL (BitVec width)) (v : Nat)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -156,8 +150,7 @@ theorem wordToStackStackAsmNameStore {width : Nat} [NeZero width]
 
 /-- Complete original Alloc naming case, with all seven source guards and
 actual compiler output. Full naming assembly remains separate open work. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_stack_asm_name_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackStackAsmNameAlloc {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (v : Nat) (live : WordLangCutsetsHOL)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -176,8 +169,7 @@ theorem wordToStackStackAsmNameAlloc {width : Nat} [NeZero width]
 
 /-- Complete original StoreConsts naming case, with all seven source guards and
 actual compiler output. Full naming assembly remains separate open work. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_stack_asm_name_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackStackAsmNameStoreConsts {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (r1 r2 r3 r4 : Nat) (ws : List (Bool × BitVec width))
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -197,8 +189,7 @@ theorem wordToStackStackAsmNameStoreConsts {width : Nat} [NeZero width]
 
 /-- Complete original Raise naming case, with all seven source guards and
 actual compiler output. Full naming assembly remains separate open work. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_stack_asm_name_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackStackAsmNameRaise {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (v : Nat)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -216,8 +207,7 @@ theorem wordToStackStackAsmNameRaise {width : Nat} [NeZero width]
 
 /-- Complete original Return naming case, with all seven source guards and
 actual compiler output. Full naming assembly remains separate open work. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_stack_asm_name_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackStackAsmNameReturn {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (v : Nat) (vs : List Nat)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -239,8 +229,7 @@ theorem wordToStackStackAsmNameReturn {width : Nat} [NeZero width]
 
 /-- Complete original Break naming case, with all seven source guards and
 actual compiler output. Full naming assembly remains separate open work. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_stack_asm_name_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackStackAsmNameBreak {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (label : Nat)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -258,8 +247,7 @@ theorem wordToStackStackAsmNameBreak {width : Nat} [NeZero width]
 
 /-- Complete original Continue naming case, with all seven source guards and
 actual compiler output. Full naming assembly remains separate open work. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_stack_asm_name_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackStackAsmNameContinue {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (label : Nat)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -277,8 +265,7 @@ theorem wordToStackStackAsmNameContinue {width : Nat} [NeZero width]
 
 /-- Complete original Tick naming case, with all seven source guards and
 actual compiler output. Full naming assembly remains separate open work. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_stack_asm_name_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackStackAsmNameTick {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -296,8 +283,7 @@ theorem wordToStackStackAsmNameTick {width : Nat} [NeZero width]
 
 /-- Complete original OpCurrHeap naming case, with all seven source guards and
 actual compiler output. Full naming assembly remains separate open work. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_stack_asm_name_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackStackAsmNameOpCurrHeap {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (op : BinOp) (v src : Nat)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -323,8 +309,7 @@ theorem wordToStackStackAsmNameOpCurrHeap {width : Nat} [NeZero width]
 
 /-- Complete original LocValue naming case, with all seven source guards and
 actual compiler output. Full naming assembly remains separate open work. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_stack_asm_name_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackStackAsmNameLocValue {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (v label : Nat)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -342,8 +327,7 @@ theorem wordToStackStackAsmNameLocValue {width : Nat} [NeZero width]
 
 /-- Complete original Install naming case, with all seven source guards and
 actual compiler output. Full naming assembly remains separate open work. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_stack_asm_name_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackStackAsmNameInstall {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (r1 r2 r3 r4 : Nat) (live : WordLangCutsetsHOL)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -367,8 +351,7 @@ theorem wordToStackStackAsmNameInstall {width : Nat} [NeZero width]
 
 /-- Complete original CodeBufferWrite naming case, with all seven source guards and
 actual compiler output. Full naming assembly remains separate open work. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_stack_asm_name_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackStackAsmNameCodeBufferWrite {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (r1 r2 : Nat)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -390,8 +373,7 @@ theorem wordToStackStackAsmNameCodeBufferWrite {width : Nat} [NeZero width]
 
 /-- Complete original DataBufferWrite naming case, with all seven source guards and
 actual compiler output. Full naming assembly remains separate open work. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_stack_asm_name_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackStackAsmNameDataBufferWrite {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (r1 r2 : Nat)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -413,8 +395,7 @@ theorem wordToStackStackAsmNameDataBufferWrite {width : Nat} [NeZero width]
 
 /-- Complete original Ffi naming case, with all seven source guards and
 actual compiler output. Full naming assembly remains separate open work. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_stack_asm_name_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackStackAsmNameFfi {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (name : Basis.Pure.MlString.MlString) (r1 r2 r3 r4 : Nat) (live : WordLangCutsetsHOL)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)

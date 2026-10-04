@@ -27,9 +27,7 @@ and universe-zero native code/FFI host carriers implement the standard word
 translation. No successful getVars result, SSA simulation or locals relation
 is assumed. The distinctness premise is retained even though list induction
 also proves the result without it. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_reconcile_get_vars_lemma"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaReconcileGetVarsLemma {width : Nat} [NeZero width] {C F : Type} :
     ∀ (ls : List Nat) (curSsa : Spt Nat) (cst : WordSemStateFiniteExact width C F),
       ls.Nodup ∧

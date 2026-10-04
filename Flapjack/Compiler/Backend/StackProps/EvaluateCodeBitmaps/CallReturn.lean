@@ -18,8 +18,7 @@ actual code lookup, clock and native intermediate execution. No arbitrary-state
 IH or target/poststate field premise is supplied. Prefix composition retains
 all three original conjuncts. The evaluator inherits reals_as_rational_cuts;
 no numeric alignment/FP correspondence is asserted. Whole assembly is open. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsCallReturn {width : Nat} [NeZero width] {C F : Type}
     (retH : HolProg width) (link l1 l2 : Nat) (dest : Sum Nat Nat)
     (handler : Option (HolProg width × Nat × Nat))

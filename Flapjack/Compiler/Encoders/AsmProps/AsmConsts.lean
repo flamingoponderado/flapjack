@@ -1,12 +1,9 @@
 import Flapjack.Compiler.Encoders.AsmSem.Step
 import Flapjack.Compiler.Encoders.AsmProps.ArithmeticPreservation
-import Flapjack.Compiler.Encoders.AsmProps.FpPreservation
 import Flapjack.Compiler.Encoders.AsmProps.Memory
 
-/-! Original whole-assembly-step field preservation and new-PC independence
-(asmPropsScript.sml:325-408). The statements keep every original field
-conjunct over the native positive-width state; they inherit the IEEE real
-rendering of fpUpd through asmUpd (reals_as_rational_cuts, SOUNDNESS item 8). -/
+/-! Integer-only whole-assembly-step field preservation and PC independence.
+These declarations use the riscv-mi restricted instruction carrier. -/
 namespace Flapjack.Compiler.Encoders.AsmProps
 open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Encoders.AsmSem
 
@@ -42,8 +39,6 @@ theorem memOp_consts {width : Nat} [NeZero width] (m : HolMemop) (r : Nat)
     (memOp m r a s).align = s.align ∧ (memOp m r a s).memDomain = s.memDomain := by
   cases m <;> first | exact memLoad_consts _ _ _ _ | exact memStore_consts _ _ _ _
 
-@[hol "cakeml/compiler/encoders/asm/asmPropsScript.sml" "asm_consts"
-  (words_as_type_indexed_bitvec)]
 theorem asm_consts {width : Nat} [NeZero width] (i : HolAsm width) (w : BitVec width)
     (s : AsmState width) :
     (asmUpd i w s).be = s.be ∧ (asmUpd i w s).lr = s.lr ∧
@@ -57,9 +52,6 @@ theorem asm_consts {width : Nat} [NeZero width] (i : HolAsm width) (w : BitVec w
       have h := arithUpd_consts x s
       exact ⟨h.2.2.2.2, h.2.2.2.1, h.2.1, h.1⟩
     | mem m r a => exact memOp_consts m r a s
-    | fp fp =>
-      have h := fpUpd_consts fp s
-      exact ⟨h.2.2.2.2, h.2.2.2.1, h.2.1, h.1⟩
   | jump l => exact ⟨rfl, rfl, rfl, rfl⟩
   | jumpCmp cmp r ri l =>
     simp only [asmUpd]
@@ -68,15 +60,11 @@ theorem asm_consts {width : Nat} [NeZero width] (i : HolAsm width) (w : BitVec w
   | jumpReg r => exact ⟨rfl, rfl, rfl, rfl⟩
   | loc r l => exact ⟨rfl, rfl, rfl, rfl⟩
 
-@[hol "cakeml/compiler/encoders/asm/asmPropsScript.sml" "asm_failed_ignore_new_pc"
-  (words_as_type_indexed_bitvec)]
 theorem asm_failed_ignore_new_pc {width : Nat} [NeZero width] (i : HolAsm width)
     (v w : BitVec width) (s : AsmState width) :
     (asmUpd i w s).failed = (asmUpd i v s).failed := by
   cases i <;> simp only [asmUpd] <;> (try split) <;> rfl
 
-@[hol "cakeml/compiler/encoders/asm/asmPropsScript.sml" "asm_mem_ignore_new_pc"
-  (words_as_type_indexed_bitvec)]
 theorem asm_mem_ignore_new_pc {width : Nat} [NeZero width] (i : HolAsm width)
     (v w : BitVec width) (s : AsmState width) :
     (asmUpd i w s).mem = (asmUpd i v s).mem := by

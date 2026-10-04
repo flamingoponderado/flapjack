@@ -18,8 +18,7 @@ open Flapjack.Compiler.Backend.StackToLab.Proofs.CodeInstalled
 open Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenHelpers
 
 /-- HOL `MAP_FST_compile_compile` (local). -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "MAP_FST_compile_compile"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem mapFstCompileCompile {width : Nat} [NeZero width] {jump : Bool}
     {off : BitVec width × BitVec width} {gen : Bool} {maxHeap k : Nat}
     {c : DataToWord.Config} {code : List (Nat × HolProg width)} :
@@ -32,8 +31,7 @@ theorem mapFstCompileCompile {width : Nat} [NeZero width] {jump : Bool}
 
 /-- HOL `next_lab_non_zero` (rebound at line 3211): both start labels are
 bounds of the program's next label. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "next_lab_non_zero" 3211
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem nextLabNonZero' {width : Nat} [NeZero width] :
     ∀ p : HolProg width, 1 ≤ StackAlloc.nextLabHOL p 1 ∧ 2 ≤ StackAlloc.nextLabHOL p 2 := by
   intro p
@@ -42,15 +40,13 @@ theorem nextLabNonZero' {width : Nat} [NeZero width] :
 
 /-- HOL `MAP_prog_to_section_FST` (local, rebound at line 3272 with the same
 statement as at line 228). -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "MAP_prog_to_section_FST" 3272
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem mapProgToSectionFst' {width : Nat} [NeZero width] (prog : List (Nat × HolProg width)) :
     (prog.map progToSectionHOL).map (fun s => s.sectionId) = prog.map Prod.fst :=
   mapProgToSectionFst prog
 
 /-- HOL `extract_label_store_list_code` (local). -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "extract_label_store_list_code"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem extractLabelStoreListCode {width : Nat} [NeZero width] :
     ∀ (a t : Nat) (ls : List (BitVec width ⊕ Nat)),
       StackPropsCodeLabels.extractLabels (StackRemove.storeListCode a t ls) = [] := by
@@ -124,8 +120,7 @@ theorem entryLabelsOk_of_nil {width : Nat} [NeZero width] {np : Nat × HolProg w
 the stub locations and each procedure's labels are its own, nonzero, not 1 and
 distinct, the compiled sections are `labels_ok`. The `let labs` binding is
 inlined. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "stack_to_lab_compile_lab_pres"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackToLabCompileLabPres {width : Nat} [NeZero width] {c : StackToLab.Config}
     {c2 : DataToWord.Config} {c3 sp : Nat} {offset : BitVec width × BitVec width}
     {prog : List (Nat × HolProg width)} :

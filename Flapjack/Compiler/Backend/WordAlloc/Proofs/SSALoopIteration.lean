@@ -935,9 +935,7 @@ actual target evaluation premise, existential source permutation, Error
 alternative, frame and all result-sensitive locals conclusions. The original
 EVERY bounds are retained over toAList keys. The constructor test for Skip is
 HOL's reconciliation if/else, as used by the actual compiler. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_Loop_helper"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransLoopHelper {width : Nat} [NeZero width] {C F : Type}
     (source target : WordSemStateFiniteExact width C F)
     (refreshed : Spt Nat) (next : Nat) (names exits : Spt Unit)

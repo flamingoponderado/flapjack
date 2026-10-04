@@ -7,8 +7,7 @@ open Flapjack.Compiler.Backend.StackProps Flapjack.Compiler.Encoders.Asm
 /-- Full original arbitrary-program allocation-argument theorem. All recursive
 case hypotheses are discharged internally, with arbitrary threaded bitmap and
 frame inputs; the only source premise is the original false-performance guard. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_alloc_arg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackAllocArg {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (program : WordLangProgHOL (BitVec width))

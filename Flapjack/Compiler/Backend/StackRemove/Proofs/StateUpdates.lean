@@ -19,10 +19,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 
 /-- Same arbitrary Word or Loc assignment below the original reserved register
 bound preserves every conjunct of the full native state relation. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "state_rel_set_var"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelSetVar {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer register : Nat)
     (value : WordLocW width) (source target : StackSemStateFiniteExact width C F)
@@ -48,10 +45,7 @@ theorem stateRelSetVar {width : Nat} [NeZero width] {C F : Type}
 
 /-- Exact equality of the original fixed-width FP lookup; no integer-register
 bound is needed because the full FP maps are equal in the relation. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "state_rel_get_fp_var"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelGetFpVar {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer register : Nat)
     (source target : StackSemStateFiniteExact width C F)
@@ -62,10 +56,7 @@ theorem stateRelGetFpVar {width : Nat} [NeZero width] {C F : Type}
 
 /-- Same arbitrary fixed 64-bit FP value assignment preserves the complete
 relation. This changes no floating-point execution equation or rounding mode. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "state_rel_set_fp_var"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelSetFpVar {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer register : Nat)
     (value : BitVec 64) (source target : StackSemStateFiniteExact width C F)

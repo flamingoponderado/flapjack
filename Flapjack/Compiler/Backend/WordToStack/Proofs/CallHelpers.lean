@@ -26,8 +26,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
 
 /-- Exact HOL `evaluate_SeqStackFree` (`word_to_stackProofScript.sml:960-972`).
 HOL's free `f`, `p` and `t` are explicit. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_SeqStackFree" 960
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateSeqStackFree {width : Nat} [NeZero width] {C F : Type}
     (f : Nat) (p : HolProg width) (t : StackSemStateFiniteExact width C F) :
     t.useStack = true ∧ t.stackSpace ≤ t.stack.length →
@@ -45,8 +44,7 @@ theorem evaluateSeqStackFree {width : Nat} [NeZero width] {C F : Type}
 
 /-- Exact HOL `evaluate_SeqStackFree` (`word_to_stackProofScript.sml:3286-3293`),
 the script's second, non-local declaration of the same statement. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_SeqStackFree" 3286
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateSeqStackFree' {width : Nat} [NeZero width] {C F : Type}
     (n : Nat) (p : HolProg width) (s : StackSemStateFiniteExact width C F) :
     s.useStack = true ∧ s.stackSpace ≤ s.stack.length →
@@ -66,8 +64,7 @@ theorem compileResultNot2 {width : Nat} [NeZero width] (x : WordSemResult width)
 /-- Exact HOL `compile_prog_stack_size` (`word_to_stackProofScript.sml:7546-7551`).
 HOL's free variables are explicit; `compile_prog` is the native
 `compileProgNative`. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "compile_prog_stack_size"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileProgStackSize {width : Nat} [NeZero width]
     (ac : AsmConfigExact width) (perf : Bool) (wordProg : WordLangProgHOL (BitVec width))
     (x k : Nat) (bs : AppList (BitVec width) × Nat) (stackProg : HolProg width) (fs : Nat)

@@ -16,8 +16,6 @@ and asserts2, code-byte preservation, intermediate PC membership and the full
 final state relation. Source asm_ok supplies bounds/alignment. In the far path,
 the full projection preserves scratch31 across interference; no decoder, native
 Run, post-state relation or successful-target-execution premise is assumed. -/
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml"
-  "riscv_encoder_correct"]
 theorem riscv_encoder_correct_jump (c : BitVec 64) (s1 s2 : AsmState 64) (ms : riscv_state)
     (h : asmStep riscvTarget.config s1 (.jump c) s2 ∧ targetStateRel riscvTarget s1 ms) :
     ∃ n : Nat, ∀ env : Nat → riscv_state → riscv_state,

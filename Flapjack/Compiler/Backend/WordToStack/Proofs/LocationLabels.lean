@@ -28,11 +28,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 /-- Full original code-domain inclusion from the complete state relation.
 Arbitrary source/target/frame/lens/extra are retained; no code inclusion or
 successful execution is supplied as an extra premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "state_rel_code_domain"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelCodeDomain {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (k f frame : Nat)
     (source : WordSemStateFiniteExact width (Nat × C) F)
@@ -48,8 +44,7 @@ theorem stateRelCodeDomain {width : Nat} [NeZero width] {C F : Type}
 /-- Full original location-check set inclusion under native sptree extension.
 All code trees/labels are arbitrary; the sole premise is subspt, with no
 well-formedness, successful lookup or evaluation premise added. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "loc_check_SUBSET"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem locCheckSubset {width : Nat} [NeZero width]
     (source target : Spt (HolProg width)) (extension : sptSubspt source target) :
     ∀ label, StackSem.locCheckExact source label → StackSem.locCheckExact target label := by

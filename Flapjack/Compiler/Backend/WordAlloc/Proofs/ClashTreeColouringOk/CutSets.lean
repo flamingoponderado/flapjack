@@ -44,8 +44,7 @@ theorem readsAfterSet (f : Nat → Nat) (R : List Nat) (t live flive livein fliv
   exact ⟨wl, el, il, dl⟩
 
 /-- HOL `clash_tree_colouring_ok`, `Alloc` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "clash_tree_colouring_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_Alloc {width : Nat} [NeZero width] (n : Nat)
     (names : WordLangCutsetsHOL) :
     clashTreeGoal (.alloc n names : WordLangProgHOL (BitVec width)) := by
@@ -61,8 +60,7 @@ theorem clashTreeColouringOk_Alloc {width : Nat} [NeZero width] (n : Nat)
     (hb.resolve_left (by simp [getWrites, sptDomain])) hab
 
 /-- HOL `clash_tree_colouring_ok`, `FFI` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "clash_tree_colouring_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_FFI {width : Nat} [NeZero width]
     (fi : Flapjack.Basis.Pure.MlString.MlString) (cptr clen ptr len : Nat)
     (names : WordLangCutsetsHOL) :
@@ -83,8 +81,7 @@ theorem clashTreeColouringOk_FFI {width : Nat} [NeZero width]
 /-- HOL `clash_tree_colouring_ok`, `Install` case: the written `r1` is checked
 against the incoming live set, then the cut sets, then the four read
 registers. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "clash_tree_colouring_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_Install {width : Nat} [NeZero width] (r1 r2 r3 r4 : Nat)
     (names : WordLangCutsetsHOL) :
     clashTreeGoal (.install r1 r2 r3 r4 names : WordLangProgHOL (BitVec width)) := by

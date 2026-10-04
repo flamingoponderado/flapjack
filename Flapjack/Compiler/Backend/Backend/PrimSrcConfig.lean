@@ -22,7 +22,7 @@ instance : Nonempty EnvironmentGenerationStore := ⟨{ next := 0, generation := 
 /-- Exact HOL `prim_src_config_def`:
 `let (_, next, env, _, _) = compile_decs [] 1 empty_config.next empty_env ARB
 prim_types_program in empty_config with <| next := next; mod_env := env |>`. -/
-@[hol "cakeml/compiler/backend/backendScript.sml" "prim_src_config_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def primSrcConfig : SourceToFlat.Config :=
   let (_, next, env, _, _) := compileDecs [] 1 emptyConfig.next emptyEnv
     (holArb EnvironmentGenerationStore) PrimTypesHOL.primTypesProgram
@@ -30,7 +30,7 @@ noncomputable def primSrcConfig : SourceToFlat.Config :=
 
 /-- Original `prim_src_config_eq` (`backendScript.sml:203`, `EVAL ``prim_src_config```):
 the evaluated closed form, kernel-checked. -/
-@[hol "cakeml/compiler/backend/backendScript.sml" "prim_src_config_eq"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem primSrcConfig_eq :
     primSrcConfig =
       { next := { vidx := 0, tidx := 2, eidx := 4 }

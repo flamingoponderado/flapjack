@@ -6,8 +6,7 @@ namespace Flapjack
 set_option maxHeartbeats 1200000 in
 /-- Full target evaluator stability after increasing a clock that already
 returned a non-TimeOut result. The only run and side condition are HOL's own. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml" "evaluate_add_clock"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateTargetAddClock {width : Nat} [NeZero width]
     {state projection : Type} {σ : Type} (mc : MachineConfig width state projection)
     (ffi : HolFfiState σ) (k : Nat) (ms : state) (extra : Nat)

@@ -253,9 +253,7 @@ order; HOL's free `conf`, `gs` and `rs` are implicit, and its quantified
 `FLOOKUP s.store`, `k IN FDOM`, `|++` and `get_var` are the canonical carrier's
 lookups, `updateListEq` and `getVar`, and `Temp nw` is `WordStore.temp n`; the
 existentials `ck r0 r1 r2 r5 r6 r7 r8 r9` are kept. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml"
-  "word_gen_gc_partial_move_ref_list_code_thm"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_gen_gc_partial_move_ref_list_code_thm {width : Nat} [NeZero width] {C F : Type}
     {conf : Config} {gs rs : BitVec width} :
     ∀ (k : Nat) (r2a1 r1a1 _r2a2 i1 pa1 _ib1 _pb1 old1 : BitVec width)

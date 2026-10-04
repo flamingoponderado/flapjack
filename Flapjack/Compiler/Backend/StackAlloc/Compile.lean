@@ -18,8 +18,7 @@ open Flapjack.Compiler.Backend.StackLang
 
 /-- Exact HOL `next_lab_def` (`stack_allocScript.sml:649-662`) over the exact
 `HolProg width` carrier: the generic `nextLab` at that carrier. -/
-@[hol "cakeml/compiler/backend/stack_allocScript.sml" "next_lab_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def nextLabHOL {width : Nat} [NeZero width] (p : HolProg width) (aux : Nat) : Nat :=
   nextLab p aux
 
@@ -27,8 +26,7 @@ def nextLabHOL {width : Nat} [NeZero width] (p : HolProg width) (aux : Nat) : Na
 `StoreConsts _ _ (SOME loc)` become returning calls to their stubs with fresh
 return labels `(n, m)`; the exception handler of a non-returning call is
 dropped, as in HOL. -/
-@[hol "cakeml/compiler/backend/stack_allocScript.sml" "comp_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def comp {width : Nat} [NeZero width] (n m : Nat) : HolProg width → HolProg width × Nat
   | .seq p1 p2 =>
       let (q1, m) := comp n m p1
@@ -54,21 +52,18 @@ def comp {width : Nat} [NeZero width] (n m : Nat) : HolProg width → HolProg wi
   | p => (p, m)
 
 /-- Exact HOL `prog_comp_def` (`stack_allocScript.sml:716-718`). -/
-@[hol "cakeml/compiler/backend/stack_allocScript.sml" "prog_comp_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def progComp {width : Nat} [NeZero width] : Nat × HolProg width → Nat × HolProg width
   | (n, p) => (n, (comp n (nextLabHOL p 2) p).1)
 
 /-- Exact HOL `stubs_def` (`stack_allocScript.sml:638-640`). -/
-@[hol "cakeml/compiler/backend/stack_allocScript.sml" "stubs_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def stubs {width : Nat} [NeZero width] (conf : DataToWord.Config) :
     List (Nat × HolProg width) :=
   [(gcStubLocation, .seq (wordGcCode conf) (.ret 0))]
 
 /-- Exact HOL `compile_def` (`stack_allocScript.sml:720-722`). -/
-@[hol "cakeml/compiler/backend/stack_allocScript.sml" "compile_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def compile {width : Nat} [NeZero width] (c : DataToWord.Config)
     (prog : List (Nat × HolProg width)) : List (Nat × HolProg width) :=
   stubs c ++ prog.map progComp

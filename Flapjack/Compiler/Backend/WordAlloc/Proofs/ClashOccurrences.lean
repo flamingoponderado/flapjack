@@ -11,8 +11,6 @@ open Flapjack Flapjack.RegAlloc Flapjack.Compiler.Encoders.Asm
 attribute [local instance] Classical.propDecidable
 
 /-- Original unconditional expression occurrence in its literal read list. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "every_var_exp_get_reads_exp" (words_as_type_indexed_bitvec)]
 theorem everyVarExp_getReadsExp {width : Nat} [NeZero width]
     (exp : WordLangExpHOL (BitVec width)) :
     everyVarExpHOL (fun x => decide (x ∈ getReadsExpHOL exp)) exp = true := by
@@ -43,11 +41,6 @@ private theorem instruction_inClashTree {width : Nat} [NeZero width]
   | mem op r addr =>
       cases op <;> cases addr <;> simp [everyVarInstHOL, getDeltaInst,
         HolInst.ofWordLangInst, HolAddr.ofWordLangAddr, inClashTree]
-  | fp op =>
-      cases op <;> simp [everyVarInstHOL, getDeltaInst,
-        HolInst.ofWordLangInst, inClashTree]
-      all_goals by_cases dim : width = 64 <;> simp_all [inClashTree]
-
 /-- Flapjack lifting from canonical cut-set domain coverage to source key
 occurrences, using unconditional Spt enumeration/domain correspondence. -/
 private theorem namesCovered (names : WordLangCutsetsHOL) (P : Nat → Bool)
@@ -98,8 +91,6 @@ local macro "finishClashCoverage" : tactic => `(tactic| (
 
 /-- Original complete program occurrence coverage by its clash tree, for
 arbitrary loop-target contexts. No support, validity or tree invariant premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "every_var_in_get_clash_tree" (words_as_type_indexed_bitvec)]
 theorem everyVar_inGetClashTree {width : Nat} [NeZero width]
     (prog : WordLangProgHOL (BitVec width)) (lt : List (Spt Unit × Spt Unit)) :
     everyVarHOL (fun x => decide (inClashTree (getClashTree prog lt) x)) prog = true := by

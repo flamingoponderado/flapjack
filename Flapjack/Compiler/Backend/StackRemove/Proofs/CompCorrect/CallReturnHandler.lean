@@ -99,10 +99,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 Only actual source lookup/nonzero-clock guarded callee and actual successful
 return-location and exception-location guarded continuations induction hypotheses are added to the
 original four premises. Intermediate target runs and relations are derived. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectCallReturnHandler {width : Nat} [NeZero width] {C F : Type}
     (body handler : HolProg width) (link l1 l2 hl1 hl2 : Nat) (dest : Sum Nat Nat)
     (source : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))

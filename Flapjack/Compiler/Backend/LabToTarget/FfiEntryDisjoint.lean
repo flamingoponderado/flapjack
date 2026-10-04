@@ -33,8 +33,7 @@ theorem ffiEntryPcsDisjoint_of_line {width : Nat} [NeZero width] {S Q F : Type}
   refine ⟨off, ?_, by omega⟩
   rw [hpc]; ring
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "IMP_ffi_entry_pcs_disjoint_Asm" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem imp_ffiEntryPcsDisjoint_asm {width : Nat} [NeZero width] {S Q F : Type}
     (s1 : LabSem.State width Config F) (mc : MachineConfig width S Q)
     (code2 : LabProgHOL width) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
@@ -65,8 +64,7 @@ theorem imp_ffiEntryPcsDisjoint_asm {width : Nat} [NeZero width] {S Q F : Type}
     simp only [lineSimilar] at hs
     exact hinstr op re a hs
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "IMP_ffi_entry_pcs_disjoint_LabAsm" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem imp_ffiEntryPcsDisjoint_labAsm {width : Nat} [NeZero width] {S Q F : Type}
     (s1 : LabSem.State width Config F) (mc : MachineConfig width S Q)
     (code2 : LabProgHOL width) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)

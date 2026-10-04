@@ -157,8 +157,7 @@ open EvaluateStackSwapSeqWitnesses
 from exactly HOL `evaluate_ind`'s two `Seq` induction hypotheses (the second
 statement from every `NONE`-result state of the first, and the first statement
 at `s`); no extra premise. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_swap"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateStackSwap_Seq {width : Nat} [NeZero width] {C F : Type}
     (c1 c2 : WordLangProgHOL (BitVec width)) :
     ∀ s : WordSemStateFiniteExact width C F,

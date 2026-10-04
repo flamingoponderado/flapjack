@@ -18,10 +18,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 all eight opcodes and the native address carrier. Source failures are excluded
 by its original success premise; successful target runs and full post-state
 relations are derived from the original bounds and separated heap relation. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "state_rel_inst"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelInstMem {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer register : Nat)
     (operator : HolMemop) (address : HolAddr width)

@@ -30,11 +30,7 @@ clock/bitmap/state relation/stack/resource/register/additive expression
 conjunct. The actual source lookup and full relation derive spill bounds;
 only the original wReg2 equation, EVEN, source read and relation are premises.
 No target execution, range or postrelation assumption is introduced. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_wStackLoad_wReg2"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateWStackLoadWReg2 {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (k f frame r reg : Nat) (loads : List (Nat × Nat))
     (source : WordSemStateFiniteExact width (Nat × C) F)

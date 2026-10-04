@@ -49,7 +49,7 @@ program-level declaration is this instantiation.  The production
 `StackCarrier.ProgW` (`String` FFI) is a separate untagged carrier; the
 kernel-checked `String`<->`MlString` bridge between the two lives in
 `Flapjack/Compiler/Backend/MlStringBridge.lean`. -/
-@[hol "cakeml/compiler/backend/stackLangScript.sml" "prog"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 abbrev HolProg (width : Nat) [NeZero width] :=
   Flapjack.Compiler.Backend.StackLang.Prog (HolInst width) HolCmp (HolRegImm width)
     HolBinop HolMemop (HolAddr width) Flapjack.Basis.Pure.MlString.MlString

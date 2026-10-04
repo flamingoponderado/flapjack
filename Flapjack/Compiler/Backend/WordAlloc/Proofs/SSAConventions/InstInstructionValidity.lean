@@ -5,11 +5,9 @@ import Flapjack.Compiler.Backend.WordAlloc.ProductionSSAMemoryGuard
 namespace Flapjack.WordAlloc
 open Flapjack Flapjack.Compiler.Backend.WordAlloc Flapjack.Compiler.Encoders.Asm
 
-/-- Original complete Inst case, including all native instruction constructors,
-FP word-width branches and original fallback clauses. Source map bounds and
+/-- Integer Inst case with the original fallback clauses. Source map bounds and
 allocation class establish the fresh destination constraints. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: integer-only specialization of the referenced HOL declaration.
 theorem ssaCcTrans_fullInstInst {width : Nat} [NeZero width]
     (config : AsmConfigExact width) (instruction : WordLangInst (BitVec width))
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -50,6 +48,5 @@ theorem ssaCcTrans_fullInstInst {width : Nat} [NeZero width]
     · omega
   case case9 => exact Or.inr (lookupNe _)
   case case10 => exact Or.inr (lookupNe _)
-  case case25 => exact Or.inr (lookupNeReverse _)
 
 end Flapjack.WordAlloc

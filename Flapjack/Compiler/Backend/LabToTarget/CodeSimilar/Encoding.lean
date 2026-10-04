@@ -54,8 +54,7 @@ private theorem normal_encLine {width : Nat} [NeZero width]
     normalLine (encLine enc len line) = normalLine line := by
   cases line <;> rfl
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "LIST_REL_enc_line" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem linesRel_encLine {width : Nat} [NeZero width]
     (ls ls' : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))
@@ -69,8 +68,7 @@ theorem linesRel_encLine {width : Nat} [NeZero width]
     exact normal_encLine enc len line
   rw [h]
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "code_similar_enc_sec_list" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem codeSimilar_encSecList {width : Nat} [NeZero width]
     (code1 code2 : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))
@@ -103,8 +101,7 @@ private theorem normal_encLinesAgain {width : Nat} [NeZero width]
         normalLine, List.append_assoc]
     split <;> simp [ih, List.map_append, List.map_reverse, normalLine, List.append_assoc]
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "enc_lines_again_IMP_similar" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem encLinesAgain_implies_similar {width : Nat} [NeZero width]
     (labs : Spt (Spt Nat)) (ffis : List HolFfiName) (pos : Nat)
     (enc : HolAsm width → List (BitVec 8))
@@ -142,8 +139,7 @@ private theorem encSecsAgain_similar {width : Nat} [NeZero width]
           (pos',ok') [] heq .nil
       exact ⟨ih pos', hlines, rfl⟩
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "enc_secs_again_IMP_similar" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem encSecsAgain_implies_similar {width : Nat} [NeZero width]
     (pos : Nat) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (enc : HolAsm width → List (BitVec 8))

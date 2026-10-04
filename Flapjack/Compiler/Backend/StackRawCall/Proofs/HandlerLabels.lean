@@ -7,8 +7,7 @@ open Flapjack Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Backend.Stac
 /-- HOL `stack_get_handler_labels_comp` (`stack_rawcallProofScript.sml:956-975`):
 recursive and top-level raw-call compilation preserve the handler labels of
 every owner. There is no premise. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml"
-  "stack_get_handler_labels_comp" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackGetHandlerLabelsComp {width : Nat} [NeZero width] :
     ∀ (i : Spt Nat) (p : HolProg width) (k : Nat),
       stackGetHandlerLabels k (comp i p) = stackGetHandlerLabels k p ∧

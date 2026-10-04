@@ -6,8 +6,7 @@ open StackLang
 /-- Literal source no-install predicate on the faithful StackLang carrier.
 Both optional Call bodies are checked independently, including a handler on a
 Call whose return continuation is absent. No other fields affect the result. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml"
-  "no_install_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def noInstall {width : Nat} [NeZero width] : HolProg width → Bool
   | .call returnBody _ handler =>
       (match returnBody with
@@ -25,8 +24,7 @@ def noInstall {width : Nat} [NeZero width] : HolProg width → Bool
 /-- Literal source no-shared-memory-operation predicate. Each populated Call
 continuation is traversed regardless of the other continuation's presence;
 ShMemOp alone is forbidden and all other nonrecursive constructors pass. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml"
-  "no_shmemop_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def noShmemop {width : Nat} [NeZero width] : HolProg width → Bool
   | .call returnBody _ handler =>
       (match returnBody with

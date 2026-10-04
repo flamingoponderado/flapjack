@@ -122,8 +122,7 @@ theorem removeDead_induct {width : Nat} [NeZero width]
 
 /-- HOL `remove_dead_not_created_subprogs` (`wordConvsProofScript.sml:1521-1535`);
 HOL's free predicate `P` is the leading binder. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "remove_dead_not_created_subprogs"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem removeDead_notCreatedSubprogs {width : Nat} [NeZero width]
     (P : WordLangProgHOL (BitVec width) → Bool) :
     ∀ (prog : WordLangProgHOL (BitVec width)) (q : NumSet) (r : List WordStoreHOL)
@@ -157,8 +156,7 @@ theorem removeDead_notCreatedSubprogs {width : Nat} [NeZero width]
     exact ⟨⟨h.1.1, ihr h.1.2⟩, h.2.1, ihp h.2.2⟩
 
 /-- HOL `remove_dead_prog_not_created_subprogs` (`wordConvsProofScript.sml:1537-1543`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "remove_dead_prog_not_created_subprogs" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem removeDeadProg_notCreatedSubprogs {width : Nat} [NeZero width]
     (P : WordLangProgHOL (BitVec width) → Bool) (prog : WordLangProgHOL (BitVec width)) :
     notCreatedSubprogsHOL P prog = true →
@@ -169,8 +167,7 @@ theorem removeDeadProg_notCreatedSubprogs {width : Nat} [NeZero width]
 program conventions are preserved and the labels are unchanged. HOL's free
 instruction predicate `P` is the leading binder; HOL's binder `k` does not occur
 in the statement and is omitted. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "remove_dead_conventions"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem removeDeadConventions {width : Nat} [NeZero width]
     (P : WordLangInst (BitVec width) → Bool) :
     ∀ (p : WordLangProgHOL (BitVec width)) (live : NumSet) (nlive : List WordStoreHOL)
@@ -237,8 +234,7 @@ theorem removeDeadConventions {width : Nat} [NeZero width]
 
 /-- HOL `remove_dead_prog_conventions` (`wordConvsProofScript.sml:1563-1565`):
 `remove_dead_conventions` at `LN [] []`, with HOL's free `p`, `c` and `P`. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "remove_dead_prog_conventions"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem removeDeadProgConventions {width : Nat} [NeZero width]
     (P : WordLangInst (BitVec width) → Bool) (p : WordLangProgHOL (BitVec width))
     (c : AsmConfigExact width) :
@@ -251,8 +247,7 @@ theorem removeDeadProgConventions {width : Nat} [NeZero width]
   removeDeadConventions P p .ln [] [] c
 
 /-- HOL `word_get_code_labels_remove_dead` (`wordConvsProofScript.sml:1567-1577`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "word_get_code_labels_remove_dead"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getCodeLabels_removeDead {width : Nat} [NeZero width] :
     ∀ (ps : WordLangProgHOL (BitVec width)) (live : NumSet) (nlive : List WordStoreHOL)
       (lt : List (NumSet × NumSet)),
@@ -269,8 +264,7 @@ theorem getCodeLabels_removeDead {width : Nat} [NeZero width] :
   all_goals aesop
 
 /-- HOL `word_get_code_labels_remove_dead_prog` (`wordConvsProofScript.sml:1579-1584`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "word_get_code_labels_remove_dead_prog" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getCodeLabels_removeDeadProg {width : Nat} [NeZero width]
     (ps : WordLangProgHOL (BitVec width)) :
     getCodeLabelsHOL (removeDeadProg ps) ⊆ getCodeLabelsHOL ps :=
@@ -278,8 +272,7 @@ theorem getCodeLabels_removeDeadProg {width : Nat} [NeZero width]
 
 /-- HOL `word_good_handlers_remove_dead` (`wordConvsProofScript.sml:1586-1596`);
 HOL's free handler label `n` is the leading binder. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "word_good_handlers_remove_dead"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem goodHandlers_removeDead {width : Nat} [NeZero width] (n : Nat) :
     ∀ (ps : WordLangProgHOL (BitVec width)) (live : NumSet) (nlive : List WordStoreHOL)
       (lt : List (NumSet × NumSet)),
@@ -295,8 +288,7 @@ theorem goodHandlers_removeDead {width : Nat} [NeZero width] (n : Nat) :
   all_goals simp_all [goodHandlersHOL]
 
 /-- HOL `word_good_handlers_remove_dead_prog` (`wordConvsProofScript.sml:1598-1603`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "word_good_handlers_remove_dead_prog" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem goodHandlers_removeDeadProg {width : Nat} [NeZero width] (n : Nat)
     (ps : WordLangProgHOL (BitVec width)) :
     goodHandlersHOL n (removeDeadProg ps) = true ↔ goodHandlersHOL n ps = true :=

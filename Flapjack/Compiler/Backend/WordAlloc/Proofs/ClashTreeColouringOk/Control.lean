@@ -17,8 +17,7 @@ open Flapjack.RegAlloc
 
 /-- HOL `clash_tree_colouring_ok`, `Seq` case: the second statement is checked
 first and its output feeds the first. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "clash_tree_colouring_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_Seq {width : Nat} [NeZero width]
     (c1 c2 : WordLangProgHOL (BitVec width)) (ih1 : clashTreeGoal c1) (ih2 : clashTreeGoal c2) :
     clashTreeGoal (.seq c1 c2 : WordLangProgHOL (BitVec width)) := by
@@ -43,8 +42,7 @@ theorem clashTreeColouringOk_Seq {width : Nat} [NeZero width]
   exact ⟨i1, co2, co1⟩
 
 /-- HOL `clash_tree_colouring_ok`, `MustTerminate` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "clash_tree_colouring_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_MustTerminate {width : Nat} [NeZero width]
     (body : WordLangProgHOL (BitVec width)) (ih : clashTreeGoal body) :
     clashTreeGoal (.mustTerminate body : WordLangProgHOL (BitVec width)) := by
@@ -133,8 +131,7 @@ theorem ifCore {width : Nat} [NeZero width] (c1 c2 : WordLangProgHOL (BitVec wid
 /-- HOL `clash_tree_colouring_ok`, `If` case: both branches from the same live
 set, the branch-difference names checked into the first branch's output, then
 the condition registers. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "clash_tree_colouring_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_If {width : Nat} [NeZero width] (cmp : Cmp) (r : Nat)
     (ri : WordRegImm (BitVec width)) (c1 c2 : WordLangProgHOL (BitVec width))
     (ih1 : clashTreeGoal c1) (ih2 : clashTreeGoal c2) :

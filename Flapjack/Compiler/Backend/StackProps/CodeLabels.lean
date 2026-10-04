@@ -7,8 +7,7 @@ open StackLang
 /-- Literal handler-label extraction. A nonreturning Call contributes no
 handler labels, even when its handler field is populated. Returning Calls
 recurse into both bodies and include a handler label only for the named owner. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml"
-  "stack_get_handler_labels_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def stackGetHandlerLabels {width : Nat} [NeZero width] (owner : Nat) :
     HolProg width → Set (Nat × Nat)
   | .call none _ _ => ∅
@@ -28,8 +27,7 @@ def stackGetHandlerLabels {width : Nat} [NeZero width] (owner : Nat) :
 /-- Literal referenced-code label extraction. Call continuations are traversed
 independently: a populated handler contributes code labels even when the return
 field is NONE. RawCall uses entry one; JumpLower and direct Call use entry zero. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml"
-  "get_code_labels_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def getCodeLabels {width : Nat} [NeZero width] : HolProg width → Set (Nat × Nat)
   | .call returnBody target handler =>
       (match target with

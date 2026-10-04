@@ -8,8 +8,7 @@ namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "lines_upd_lab_len_AUX"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem linesUpdLabLen_aux {width : Nat} [NeZero width]
     (l aux : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) (pos : Nat) :
@@ -82,8 +81,7 @@ private theorem normalUpdated {width : Nat} [NeZero width]
 /-- Original unused aux:beta binder is vacuous and omitted after fresh full
 original type capture. The actual native line-list accumulator in the other
 three declarations is retained without restriction. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "line_similar_lines_upd_lab_len"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem linesRel_linesUpdLabLen {width : Nat} [NeZero width]
     (l : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) (pos : Nat) (l1 : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -92,8 +90,7 @@ theorem linesRel_linesUpdLabLen {width : Nat} [NeZero width]
   rw [listSimilarNormal,listSimilarNormal,normalUpdated]
   simp
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "code_similar_upd_lab_len"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem codeSimilar_updLabLen {width : Nat} [NeZero width]
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) (pos : Nat) (code1 : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -109,8 +106,7 @@ theorem codeSimilar_updLabLen {width : Nat} [NeZero width]
       simp only [updLabLen,codeSimilar]
       rw [ih,linesRel_linesUpdLabLen]
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "lines_upd_lab_len_similar"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem linesUpdLabLen_similar {width : Nat} [NeZero width]
     (pos : Nat) (lines aux : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) :

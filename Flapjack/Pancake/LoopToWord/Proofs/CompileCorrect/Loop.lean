@@ -47,11 +47,7 @@ end LoopToWordCompileCorrectLoopWitnesses
 
 /-- Genuine `Loop` case of HOL `compile_correct`
     (`loop_to_wordProofScript.sml:57-97`, resumed at `:571-728`). -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "compile_correct"
-  (fmap_as_finite_support_relation :=
-    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.fpRegs,
-      WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_Loop {width : Nat} [NeZero width] {C F : Type}
     (liveIn : NumSet) (body : HolLoopProg width) (liveOut : NumSet) (s : LoopSemStateFiniteExact width F)
     (ih : (∀ (v4 : Option (LoopSemStateFiniteExact.LoopResultExact width))

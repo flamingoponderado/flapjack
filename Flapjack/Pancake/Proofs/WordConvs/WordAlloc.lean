@@ -41,8 +41,7 @@ private theorem wordAlloc_cases {width : Nat} [NeZero width]
   | some out => exact Or.inr (oracle out h)
 
 /-- Original unconditional label equality, with only the reviewed word translation. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "word_alloc_lab_pres"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordAlloc_labPres {width : Nat} [NeZero width]
     (fc : Nat) (c : AsmConfigExact width) (alg k : Nat)
     (prog : WordLangProgHOL (BitVec width)) (col : Option (Spt Nat)) :
@@ -52,8 +51,7 @@ theorem wordAlloc_labPres {width : Nat} [NeZero width]
   · rw [h]; exact applyColour_labPres f prog
 
 /-- Original implication for arbitrary subprogram predicate; no output premise. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "word_alloc_not_created_subprogs"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordAlloc_notCreatedSubprogs {width : Nat} [NeZero width]
     (P : WordLangProgHOL (BitVec width) → Bool) (prog : WordLangProgHOL (BitVec width))
     (fc : Nat) (c : AsmConfigExact width) (alg k : Nat) (col : Option (Spt Nat)) :
@@ -64,8 +62,7 @@ theorem wordAlloc_notCreatedSubprogs {width : Nat} [NeZero width]
   · rw [h]; exact applyColour_notCreatedSubprogs P prog f
 
 /-- Original unconditional code-label equality. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "word_get_code_labels_word_alloc"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getCodeLabels_wordAlloc {width : Nat} [NeZero width]
     (fc : Nat) (c : AsmConfigExact width) (alg k : Nat)
     (prog : WordLangProgHOL (BitVec width)) (col : Option (Spt Nat)) :
@@ -75,8 +72,7 @@ theorem getCodeLabels_wordAlloc {width : Nat} [NeZero width]
   · rw [h]; exact getCodeLabels_applyColour f prog
 
 /-- Original handler-label equivalence, retaining the arbitrary handler label. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "word_good_handlers_word_alloc"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem goodHandlers_wordAlloc {width : Nat} [NeZero width]
     (n fc : Nat) (c : AsmConfigExact width) (alg k : Nat)
     (prog : WordLangProgHOL (BitVec width)) (col : Option (Spt Nat)) :
@@ -87,8 +83,7 @@ theorem goodHandlers_wordAlloc {width : Nat} [NeZero width]
   · rw [h]; exact goodHandlers_applyColour n f prog
 
 /-- Original flat-expression implication for arbitrary colouring. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "word_alloc_flat_exp_conventions_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem applyColour_flatExpConventions {width : Nat} [NeZero width] (f : Nat → Nat) :
     ∀ prog : WordLangProgHOL (BitVec width),
       flatExpConventions prog = true → flatExpConventions (applyColour f prog) = true
@@ -138,15 +133,12 @@ private theorem twoRegInst_applyColourInst {width : Nat} [NeZero width]
       cases a <;> simp_all [applyColourInst, applyColourInstCore, twoRegInst, beq_iff_eq]
   | mem op r a =>
       cases op <;> cases a <;> simp [applyColourInst, applyColourInstCore, twoRegInst]
-  | fp op =>
-      cases op <;> simp [applyColourInst, applyColourInstCore, twoRegInst]
 
 /-- Original full instruction-convention implication. The positive-width theorem
 uses the constructor-for-constructor instruction carrier and the literal
 `twoRegInst` clauses; its width-general helper admits zero width, but this
 statement retains HOL positivity. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "word_alloc_two_reg_inst_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem applyColour_twoRegInst {width : Nat} [NeZero width] (f : Nat → Nat) :
     ∀ prog : WordLangProgHOL (BitVec width),
       everyInst twoRegInst prog = true → everyInst twoRegInst (applyColour f prog) = true
@@ -178,8 +170,7 @@ theorem applyColour_twoRegInst {width : Nat} [NeZero width] (f : Nat → Nat) :
   | .dataBufferWrite _ _ | .ffi _ _ _ _ _ _ => by simp [applyColour, everyInst]
 
 /-- Original allocator flat-expression implication for every allocator branch. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "word_alloc_flat_exp_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordAlloc_flatExpConventions {width : Nat} [NeZero width]
     (fc : Nat) (c : AsmConfigExact width) (alg k : Nat)
     (prog : WordLangProgHOL (BitVec width)) (col : Option (Spt Nat)) :
@@ -189,8 +180,7 @@ theorem wordAlloc_flatExpConventions {width : Nat} [NeZero width]
   · rw [h]; exact applyColour_flatExpConventions f prog
 
 /-- Original allocator two-register implication for every allocator branch. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "word_alloc_two_reg_inst" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordAlloc_twoRegInst {width : Nat} [NeZero width]
     (fc : Nat) (c : AsmConfigExact width) (alg k : Nat)
     (prog : WordLangProgHOL (BitVec width)) (col : Option (Spt Nat)) :

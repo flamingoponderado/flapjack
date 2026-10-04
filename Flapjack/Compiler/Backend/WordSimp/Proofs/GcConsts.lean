@@ -39,8 +39,7 @@ open Compiler.Backend.WordSimp
 
 /-- Exact HOL local `pop_env_stack_gc` (`word_simpProofScript.sml:430-434`); HOL's
     free post-state `s'` is an explicit binder. -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "pop_env_stack_gc"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem pop_env_stack_gc {width : Nat} [NeZero width] {C : Type} {F : Type}
     (s' : WordSemStateFiniteExact width C F) :
     ∀ s : WordSemStateFiniteExact width C F, popEnv s = some s' → s'.gcFun = s.gcFun :=
@@ -184,15 +183,13 @@ theorem ALOOKUP_ALL_DISTINCT_FST_PERM_SOME {κ β : Type} [DecidableEq κ] :
   rw [← lookupPerm l1 (f l1) ((holPerm_iff _ _).mp hp) hnd k, hl]
 
 /-- Exact HOL `pop_env_gc_fun` (`word_simpProofScript.sml:497-501`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "pop_env_gc_fun"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem pop_env_gc_fun {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ s s' : WordSemStateFiniteExact width C F, popEnv s = some s' → s'.gcFun = s.gcFun :=
   fun s s' h => pop_env_stack_gc s' s h
 
 /-- Exact HOL `pop_env_gc_fun_const_ok` (`word_simpProofScript.sml:503-508`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "pop_env_gc_fun_const_ok"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem pop_env_gc_fun_const_ok {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ s s' : WordSemStateFiniteExact width C F,
       popEnv s = some s' ∧ gcFunConstOk s.gcFun → gcFunConstOk s'.gcFun := by
@@ -200,8 +197,7 @@ theorem pop_env_gc_fun_const_ok {width : Nat} [NeZero width] {C : Type} {F : Typ
   rw [pop_env_gc_fun s s' h]; exact hok
 
 /-- Exact HOL `evaluate_gc_fun_const_ok` (`word_simpProofScript.sml:516-521`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "evaluate_gc_fun_const_ok"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_gc_fun_const_ok {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (p : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F)
       (res : Option (WordSemResult width)) (s' : WordSemStateFiniteExact width C F),
@@ -212,8 +208,7 @@ theorem evaluate_gc_fun_const_ok {width : Nat} [NeZero width] {C : Type} {F : Ty
 /-- Exact HOL `get_above_handler_def` (`word_simpProofScript.sml:523-526`).  HOL's
     `case` has only the handler-frame clause, so every other frame (and an
     out-of-range `EL`) gives HOL's unspecified value. -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "get_above_handler_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def getAboveHandler {width : Nat} [NeZero width] {C : Type} {F : Type}
     (s : WordSemStateFiniteExact width C F) : Nat :=
   match holEl (s.stack.length - (s.handler + 1)) s.stack with
@@ -287,8 +282,7 @@ theorem gc_fun_sf_gc_consts {width : Nat} [NeZero width] :
   exact enc_stack_dec_stack_is_gc_word_const s s' s'l ⟨hok _ _ hg, hd⟩
 
 /-- Exact HOL `gc_sf_gc_consts` (`word_simpProofScript.sml:574-578`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "gc_sf_gc_consts"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem gc_sf_gc_consts {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ s s' : WordSemStateFiniteExact width C F,
       gcFunConstOk s.gcFun ∧ gc s = some s' → List.Forall₂ sfGcConsts s.stack s'.stack := by
@@ -306,15 +300,13 @@ theorem gc_sf_gc_consts {width : Nat} [NeZero width] {C : Type} {F : Type} :
   exact gc_fun_sf_gc_consts s.stack wl stack s.gcFun s.memory m s.mdomain s.store st ⟨hok, hg, hs⟩
 
 /-- Exact HOL `gc_handler` (`word_simpProofScript.sml:580-584`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "gc_handler"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem gc_handler {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ s s' : WordSemStateFiniteExact width C F, gc s = some s' → s'.handler = s.handler :=
   fun s s' h => (gcConst s s' h).2.2.2.2.2.2.2.1
 
 /-- Exact HOL `sf_gc_consts_get_above_handler` (`word_simpProofScript.sml:586-596`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "sf_gc_consts_get_above_handler"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem sf_gc_consts_get_above_handler {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ s s' : WordSemStateFiniteExact width C F,
       List.Forall₂ sfGcConsts s.stack s'.stack ∧ s'.handler = s.handler ∧
@@ -346,8 +338,7 @@ theorem pushEnv_stack_cons {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `LIST_REL_call_Result` (`word_simpProofScript.sml:598-608`); HOL's
     unused binder `s'` is kept. -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "LIST_REL_call_Result"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem LIST_REL_call_Result {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (s _s' s'' s''' : WordSemStateFiniteExact width C F)
       (env : Spt (WordLocW width) × Spt (WordLocW width))
@@ -379,8 +370,7 @@ theorem LIST_REL_call_Result {width : Nat} [NeZero width] {C : Type} {F : Type} 
 
 /-- Exact HOL `get_above_handler_call_env_push_env_dec_clock`
     (`word_simpProofScript.sml:610-618`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "get_above_handler_call_env_push_env_dec_clock"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem get_above_handler_call_env_push_env_dec_clock {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (s s' s'' : WordSemStateFiniteExact width C F) (args : List (WordLocW width))
       (lsz : Option Nat) (env : Spt (WordLocW width) × Spt (WordLocW width)) (x0 : Nat)
@@ -397,8 +387,7 @@ theorem get_above_handler_call_env_push_env_dec_clock {width : Nat} [NeZero widt
 
 /-- Exact HOL `call_env_push_env_dec_clock_handler_length`
     (`word_simpProofScript.sml:620-625`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "call_env_push_env_dec_clock_handler_length"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem call_env_push_env_dec_clock_handler_length {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (s s' : WordSemStateFiniteExact width C F) (args : List (WordLocW width))
       (lsz : Option Nat) (env : Spt (WordLocW width) × Spt (WordLocW width)) (x0 : Nat)
@@ -422,8 +411,7 @@ theorem EVERY2_trans_LASTN_sf_gc_consts {width : Nat} [NeZero width] :
     (listRelLastN sfGcConsts l l' n ⟨hn, h1⟩) h2
 
 /-- Exact HOL `LIST_REL_push_env` (`word_simpProofScript.sml:635-640`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "LIST_REL_push_env"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem LIST_REL_push_env {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (R : WordSemStackFrame width → WordSemStackFrame width → Prop)
       (s s' : WordSemStateFiniteExact width C F) (env : Spt (WordLocW width) × Spt (WordLocW width))
@@ -486,8 +474,7 @@ theorem envToList_alookup {width : Nat} [NeZero width] (e : Spt (WordLocW width)
   rw [← sptAListLookup_perm _ _ hp hnd0, sptAListLookup_toAList]
 
 /-- Exact HOL `push_env_pop_env_locals_thm` (`word_simpProofScript.sml:660-690`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "push_env_pop_env_locals_thm"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem push_env_pop_env_locals_thm {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (s s' s'' s''' : WordSemStateFiniteExact width C F)
       (env : Spt (WordLocW width) × Spt (WordLocW width)) (names : WordLangCutsetsHOL)
@@ -960,8 +947,7 @@ end SfGcConsts
     `s.handler < LENGTH s.stack`, the frames above the handler and
     `get_above_handler`; `T` otherwise), rendered by the untagged `sfMotive`.
     Inherits `reals_as_rational_cuts` through `evaluate`. -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "evaluate_sf_gc_consts"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_sf_gc_consts {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (p : WordLangProgHOL (BitVec width)) (s s' : WordSemStateFiniteExact width C F)
       (res : Option (WordSemResult width)),

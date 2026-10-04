@@ -7,8 +7,7 @@ open Flapjack Flapjack.Compiler.Backend.StackLang
 /-- Original frame-info relation: each recorded size is witnessed by the
 literal first Seq allocation in the original code, including zero sizes.
 The code/info carriers are HOL tree maps, not finite-support function maps. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "state_ok_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def stateOk {width : Nat} [NeZero width] (info : Spt Nat)
     (code : Spt (HolProg width)) : Prop :=
   ∀ n v, sptLookup n info = some v →

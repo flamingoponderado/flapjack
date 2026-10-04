@@ -12,8 +12,7 @@ with the tagged `apply_nummaps_key`, and `Loop` renames its live-in/live-out
 sets with `apply_nummap_key`. Float registers, labels, store names, constant
 lists and the `Set` store are unchanged. HOL's final catch-all (`Break`,
 `Continue`) returns the program unchanged. -/
-@[hol "cakeml/compiler/backend/word_allocScript.sml" "apply_colour_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def applyColour {width : Nat} [NeZero width] (f : Nat → Nat) :
     WordLangProgHOL (BitVec width) → WordLangProgHOL (BitVec width)
   | .skip => .skip

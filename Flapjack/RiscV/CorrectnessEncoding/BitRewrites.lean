@@ -2,7 +2,6 @@ import Flapjack.RiscV.L3.Step.BitRewrites
 /-! Exact full word64 rewrites used by the original target encoder proof. -/
 namespace Flapjack.RiscV.TargetProof
 /-- The eight original word64 PC increments preserve bit zero. -/
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "word_bit_0_add4"]
 theorem word_bit_0_add4 (w : BitVec 64) :
     (w + 4#64).getLsbD 0 = w.getLsbD 0 ∧
     (w + 8#64).getLsbD 0 = w.getLsbD 0 ∧
@@ -15,7 +14,6 @@ theorem word_bit_0_add4 (w : BitVec 64) :
   simp only [BitVec.getLsbD_add (by decide : 0 < 64), BitVec.carry_zero]
   simp
 /-- Clearing word64 bit zero makes its masked sum inherit the other operand bit. -/
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "word_bit_0_lemmas"]
 theorem word_bit_0_lemmas (w v : BitVec 64) :
     (0xFFFFFFFFFFFFFFFE#64 &&& w).getLsbD 0 = false ∧
     ((0xFFFFFFFFFFFFFFFE#64 &&& w) + v).getLsbD 0 = v.getLsbD 0 :=

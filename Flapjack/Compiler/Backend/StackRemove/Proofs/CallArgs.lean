@@ -92,8 +92,7 @@ theorem callArgs_initCode {width : Nat} [NeZero width] (gen : Bool) (maxHeap k :
     addInst, addBytesInWordInst, leftShiftInst, rightShiftInst, constInst, loadInst, storeInst]
 
 /-- HOL `stack_remove_call_args`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "stack_remove_call_args"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackRemoveCallArgs {width : Nat} [NeZero width] {jump : Bool}
     {off : BitVec width × BitVec width} {genGc : Bool} {n k pos : Nat}
     {p p' : List (Nat × HolProg width)} :

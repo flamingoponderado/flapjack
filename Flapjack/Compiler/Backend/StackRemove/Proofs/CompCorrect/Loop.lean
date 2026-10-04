@@ -74,10 +74,7 @@ theorem loopBodyNotError {width : Nat} [NeZero width] {C F : Type}
 /-- Genuine full original Loop induction case, with only the original body and
 actual body-run/continuation/nonzero-clock guarded reentry IHs augmenting the
 four source premises. The native target run and added clock are derived. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectLoop {width : Nat} [NeZero width] {C F : Type}
     (body : HolProg width)
     (source : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))

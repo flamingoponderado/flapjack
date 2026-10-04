@@ -6,8 +6,7 @@ open Flapjack Classical
 /-- Literal source305: increasing the clock limit preserves every successful
 result, including the returned configuration and FFI state. No validity or
 bounds hypothesis is added. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "find_next_interference_mono" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem findNextInterferenceMono {width : Nat} [NeZero width]
     {S Q : Type} {σ : Type} (k : Nat) (mc : MachineConfig width S Q) (ffi : HolFfiState σ)
     (ms : S) (res : InterferenceApp width S × MachineConfig width S Q × HolFfiState σ)
@@ -37,8 +36,7 @@ theorem findNextInterferenceMono {width : Nat} [NeZero width]
 
 /-- Literal source319: successful searches at any two clock limits return the
 same whole application/configuration/FFI tuple. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "find_next_interference_unique" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem findNextInterferenceUnique {width : Nat} [NeZero width]
     {S Q : Type} {σ : Type} (mc : MachineConfig width S Q) (ffi : HolFfiState σ) (ms : S)
     (k1 k2 : Nat)

@@ -6,46 +6,39 @@ import Flapjack.Compiler.Backend.Semantics.WordSem
 namespace Flapjack.Compiler.Backend.LabProps
 open Flapjack Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Encoders.Asm
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "dec_clock_align_sdm"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem decClockAlignSDM {width : Nat} [NeZero width] {C F : Type}
     (s : Flapjack.Compiler.Backend.LabSem.State width C F) :
     decClock (alignSdm s) = alignSdm (decClock s) := by rfl
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "inc_pc_align_sdm"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem incPcAlignSDM {width : Nat} [NeZero width] {C F : Type}
     (s : Flapjack.Compiler.Backend.LabSem.State width C F) :
     incPc (alignSdm s) = alignSdm (incPc s) := by rfl
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "upd_pc_align_sdm"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem updPcAlignSDM {width : Nat} [NeZero width] {C F : Type}
     (p : Nat) (s : Flapjack.Compiler.Backend.LabSem.State width C F) :
     updPc p (alignSdm s) = alignSdm (updPc p s) := by rfl
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "get_pc_value_align_sdm"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getPcValueAlignSDM {width : Nat} [NeZero width] {C F : Type}
     (x : Flapjack.Compiler.Backend.LabLang.Lab) (s : Flapjack.Compiler.Backend.LabSem.State width C F) :
     getPcValue x (alignSdm s) = getPcValue x s := by rfl
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "get_ret_Loc_align_sdm"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getRetLocAlignSDM {width : Nat} [NeZero width] {C F : Type}
     {resultWidth : Nat} [NeZero resultWidth]
     (s : Flapjack.Compiler.Backend.LabSem.State width C F) :
     getRetLoc (resultWidth := resultWidth) (alignSdm s) = getRetLoc (resultWidth := resultWidth) s := by rfl
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "read_bytearray_mem_load_byte_aux_align_sdm"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem readBytearrayMemLoadByteAuxAlignSDM {width : Nat} [NeZero width] {C F : Type}
     (s : Flapjack.Compiler.Backend.LabSem.State width C F) :
     ∀ (length : Nat) (address : BitVec width), readBytearrayWordHOL address length (memLoadByteAuxExact s.memory (alignSdm s).memDomain s.be) =
       readBytearrayWordHOL address length (memLoadByteAuxExact s.memory s.memDomain s.be) := by intros; rfl
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "write_bytearray_align_sdm"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem writeBytearrayAlignSDM {width : Nat} [NeZero width] {C F : Type}
     (s : Flapjack.Compiler.Backend.LabSem.State width C F) :
     ∀ (bytes : List (BitVec 8)) (address : BitVec width), writeBytearrayExact address bytes s.memory (alignSdm s).memDomain s.be =

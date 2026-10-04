@@ -17,8 +17,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
 /-- HOL word_exp: only Word payloads enter arithmetic; Loc and missing
 lookups fail. Every Op operand must succeed before word_op is applied.
 The attach traversal supplies structural recursion evidence only. -/
-@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "word_exp_def"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wordExp {width : Nat} [NeZero width] {C F : Type}
     (s : StackSemStateFiniteExact width C F) :
     WordLangExpHOL (BitVec width) → Option (BitVec width)
@@ -50,8 +49,7 @@ def wordExp {width : Nat} [NeZero width] {C F : Type}
 
 /-- HOL assign: failed expressions return NONE; successful values update
 only the destination register through the reviewed set_var. -/
-@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "assign_def"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def assign {width : Nat} [NeZero width] {C F : Type}
     (reg : Nat) (exp : WordLangExpHOL (BitVec width))
     (s : StackSemStateFiniteExact width C F) : Option (StackSemStateFiniteExact width C F) :=

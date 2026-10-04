@@ -105,8 +105,6 @@ private theorem bytes_from_domain (pc : BitVec 64) (bs : List (BitVec 8))
 
 /-- Full original Const constructor: original source step and initial target
 relation only; every original environment and both assertion predicates retained. -/
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml"
-  "riscv_encoder_correct"]
 theorem riscv_encoder_correct_const (r : Nat) (c : BitVec 64)
     (s1 s2 : AsmState 64) (ms : riscv_state)
     (h : asmStep riscvTarget.config s1 (.inst (.const r c)) s2 ∧

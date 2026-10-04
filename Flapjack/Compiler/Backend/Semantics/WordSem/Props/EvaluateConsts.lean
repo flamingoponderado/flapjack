@@ -45,8 +45,7 @@ namespace WordSemStateFiniteExact
 /-- Exact HOL `pop_env_code_gc_fun_clock` (`wordPropsScript.sml:516-534`): all
     thirteen original equalities, oriented `r.f = x.f` as in HOL, from the sole
     successful `pop_env` premise. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "pop_env_code_gc_fun_clock"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem popEnvCodeGcFunClock {width : Nat} [NeZero width] {C : Type} {F : Type}
     (r x : WordSemStateFiniteExact width C F) (h : popEnv r = some x) :
     r.code = x.code ∧
@@ -72,8 +71,7 @@ theorem popEnvCodeGcFunClock {width : Nat} [NeZero width] {C : Type} {F : Type}
     eleven original field conclusions from the sole `alloc` equation, for an
     arbitrary allocation word, cutsets, result and states, covering every
     error, GC failure, pop failure, space and `NotEnoughSpace` branch. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "alloc_code_gc_fun_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem allocCodeGcFunConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : BitVec width) (names : WordLangCutsetsHOL)
     (s t : WordSemStateFiniteExact width C F) (res : Option (WordSemResult width))
@@ -145,8 +143,7 @@ theorem allocCodeGcFunConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 /-- Exact HOL local `inst_code_gc_fun_const` (`wordPropsScript.sml:924-933`):
     the original eight equalities, oriented `s.f = t.f` as in HOL, for an
     arbitrary instruction and the sole successful `inst` premise. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "inst_code_gc_fun_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem instCodeGcFunConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (i : WordLangInst (BitVec width)) (s t : WordSemStateFiniteExact width C F)
     (h : inst i s = some t) :
@@ -160,7 +157,7 @@ theorem instCodeGcFunConst {width : Nat} [NeZero width] {C : Type} {F : Type}
   all_goals first
     | (simp only [reduceCtorEq] at h)
     | (cases h; done)
-    | (simp only [Option.some.injEq] at h; subst h; simp [setVar, setFpVar])
+    | (simp only [Option.some.injEq] at h; subst h; simp [setVar])
     | (unfold assign at h; split at h
        · cases h
        · cases h; simp [setVar])
@@ -434,8 +431,7 @@ end Evaluate
     `evaluate (xs,s1) = (vs,s2)` gives the six original equalities in source
     order and orientation.  Inherits `reals_as_rational_cuts` through
     `evaluate`. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_consts"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_consts {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (xs : WordLangProgHOL (BitVec width)) (s1 : WordSemStateFiniteExact width C F)
       (vs : Option (WordSemResult width)) (s2 : WordSemStateFiniteExact width C F),

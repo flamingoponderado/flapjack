@@ -9,8 +9,7 @@ comparison is independent of every possible source ARB memory operation; no
 representative or extra premise is assumed. All original constructor inputs and
 shared free variables are retained. HOL Bool equality/conjunction uses Lean
 Bool equality/and, with leaf propositions represented by equality to true. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "no_install_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem noInstallDef {width : Nat} [NeZero width]
     (p p1 p2 c : WordLangProgHOL (BitVec width))
     (names exitNames : Spt Unit) (v0 : Cmp) (v1 : Nat) (v2 : WordRegImm (BitVec width))

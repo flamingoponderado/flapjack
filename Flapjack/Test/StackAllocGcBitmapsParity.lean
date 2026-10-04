@@ -15,7 +15,7 @@ open Flapjack.Compiler.Backend.WordGcFunctions Flapjack.Compiler.Backend.StackAl
 
 private def conf : Config :=
   { tagBits := 1, lenBits := 2, padBits := 3, lenSize := 16, hasDiv := false,
-    hasLongdiv := false, hasFpOps := false, hasFpTern := false, be := false,
+    hasLongdiv := false, be := false,
     callEmptyFfi := false, gcKind := .simple }
 
 private def mem : BitVec 64 → WordLocW 64 :=

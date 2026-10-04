@@ -29,8 +29,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
 end WordCopyStoreWitnesses
 
 /-- Exact HOL `copy_prop_move_model` (`word_copyProofScript.sml:758-806`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "copy_prop_move_model"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem copyPropMoveModel {width : Nat} [NeZero width] {C F : Type} {cs cs' : CopyState}
     {st : WordSemStateFiniteExact width C F} {moves moves' : List (Nat × Nat)}
     {values : List (WordLocW width)} :
@@ -83,8 +82,7 @@ theorem everyNotMemD {tt ss : List Nat} :
   fun h x ⟨h1, h2⟩ => h x h1 h2
 
 /-- Exact HOL `copy_prop_move_correct` (`word_copyProofScript.sml:814-838`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "copy_prop_move_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem copyPropMoveCorrect {width : Nat} [NeZero width] {C F : Type} {cs cs' : CopyState}
     {st st' : WordSemStateFiniteExact width C F} {pri : Nat} {moves : List (Nat × Nat)}
     {prog' : WordLangProgHOL (BitVec width)} {err : Option (WordSemResult width)} :
@@ -119,8 +117,7 @@ theorem copyPropMoveCorrect {width : Nat} [NeZero width] {C F : Type} {cs cs' : 
     exact ⟨he, fun _ => emptyEqModel⟩
 
 /-- Exact HOL `word_exp_cong_Var` (`word_copyProofScript.sml:840-845`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "word_exp_cong_Var"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordExpCongVar {width : Nat} [NeZero width] {C F : Type}
     {st : WordSemStateFiniteExact width C F} {x x' : Nat} :
     WordSemStateFiniteExact.getVar x' st = WordSemStateFiniteExact.getVar x st →
@@ -128,8 +125,7 @@ theorem wordExpCongVar {width : Nat} [NeZero width] {C F : Type}
   intro h; simp only [WordSemStateFiniteExact.wordExp]; exact h
 
 /-- Exact HOL `word_exp_cong_Load` (`word_copyProofScript.sml:847-852`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "word_exp_cong_Load"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordExpCongLoad {width : Nat} [NeZero width] {C F : Type}
     {st : WordSemStateFiniteExact width C F} {addr addr' : WordLangExpHOL (BitVec width)} :
     WordSemStateFiniteExact.wordExp st addr' = WordSemStateFiniteExact.wordExp st addr →
@@ -138,8 +134,7 @@ theorem wordExpCongLoad {width : Nat} [NeZero width] {C F : Type}
   intro h; simp only [WordSemStateFiniteExact.wordExp, h]
 
 /-- Exact HOL `word_exp_cong_Op` (`word_copyProofScript.sml:854-862`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "word_exp_cong_Op"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordExpCongOp {width : Nat} [NeZero width] {C F : Type}
     {st : WordSemStateFiniteExact width C F} {op : BinOp}
     {aa aa' : List (WordLangExpHOL (BitVec width))} :
@@ -155,8 +150,7 @@ theorem wordExpCongOp {width : Nat} [NeZero width] {C F : Type}
   rw [e, e, h]
 
 /-- Exact HOL `word_exp_cong_Shift` (`word_copyProofScript.sml:864-870`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "word_exp_cong_Shift"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordExpCongShift {width : Nat} [NeZero width] {C F : Type}
     {st : WordSemStateFiniteExact width C F} {sh : Shift}
     {e e' e2 e2' : WordLangExpHOL (BitVec width)} :
@@ -174,8 +168,7 @@ theorem removeEqComm {cs : CopyState} {x y : Nat} :
   cases hx : sptLookup x cs.toEq <;> cases hy : sptLookup y cs.toEq <;> simp_all [emptyEq]
 
 /-- Exact HOL `remove_eq_model_unset_var` (`word_copyProofScript.sml:956-965`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "remove_eq_model_unset_var"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem removeEqModelUnsetVar {width : Nat} [NeZero width] {C F : Type} {cs : CopyState}
     {st : WordSemStateFiniteExact width C F} {t : Nat} :
     cpStateInv cs → cpStateModels cs st →
@@ -197,8 +190,7 @@ theorem removeEqModelUnsetVar {width : Nat} [NeZero width] {C F : Type} {cs : Co
         exact m2 s c vrep hsc hc
 
 /-- Exact HOL `CPstate_modelsD_copy_prop_share` (`word_copyProofScript.sml:983-991`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "CPstate_modelsD_copy_prop_share"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem cpStateModelsDCopyPropShare {width : Nat} [NeZero width] {C F : Type} {cs : CopyState}
     {st : WordSemStateFiniteExact width C F} {e : WordLangExpHOL (BitVec width)} :
     cpStateInv cs → cpStateModels cs st →
@@ -212,8 +204,7 @@ theorem cpStateModelsDCopyPropShare {width : Nat} [NeZero width] {C F : Type} {c
   · rfl
 
 /-- Exact HOL `lookup_store_eq_SOME` (`word_copyProofScript.sml:993-1000`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "lookup_store_eq_SOME"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem lookupStoreEqSome {width : Nat} [NeZero width] {C F : Type} {cs : CopyState}
     {st : WordSemStateFiniteExact width C F} {s : WordStoreHOL} {v : Nat} :
     cpStateModels cs st ∧ lookupStoreEq cs s = some v →
@@ -324,8 +315,7 @@ theorem lookupStoreEqSetStoreEq2 {cs : CopyState} {x y : Nat} {s t : WordStoreHO
       exact h
 
 /-- Exact HOL `set_store_eq_model_set_store` (`word_copyProofScript.sml:1046-1069`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "set_store_eq_model_set_store"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem setStoreEqModelSetStore {width : Nat} [NeZero width] {C F : Type} {cs : CopyState}
     {st : WordSemStateFiniteExact width C F} {n : Nat} {w : WordLocW width} {s : WordStoreHOL} :
     cpStateInv cs ∧ cpStateModels cs st ∧ WordSemStateFiniteExact.getVar n st = some w →
@@ -366,8 +356,7 @@ theorem lookupStoreEqSetStoreEqSame {cs : CopyState} {x : Nat} {s : WordStoreHOL
   simp [lookupStoreEq, List.lookup, sptLookupInsert]
 
 /-- Exact HOL `set_store_eq_model_set_var` (`word_copyProofScript.sml:1085-1124`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "set_store_eq_model_set_var"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem setStoreEqModelSetVar {width : Nat} [NeZero width] {C F : Type} {cs : CopyState}
     {st : WordSemStateFiniteExact width C F} {n : Nat} {w : WordLocW width} {s : WordStoreHOL} :
     cpStateInv cs ∧ cpStateModels cs st ∧ lookupStoreEq cs s = none ∧
@@ -395,8 +384,7 @@ theorem setStoreEqModelSetVar {width : Nat} [NeZero width] {C F : Type} {cs : Co
   · rw [setStoreEq_eq, if_neg hx]; exact emptyEqModel
 
 /-- Exact HOL `evaluate_Loop_body_cong_err` (`word_copyProofScript.sml:1129-1156`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "evaluate_Loop_body_cong_err"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateLoopBodyCongErr {width : Nat} [NeZero width] {C F : Type} :
     ∀ (s : WordSemStateFiniteExact width C F) (names : WordLangNumSetHOL)
       (c c' : WordLangProgHOL (BitVec width)) (exitNames : WordLangNumSetHOL)

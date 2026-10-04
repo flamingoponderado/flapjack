@@ -16,10 +16,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 actual source read success and the complete state relation. Word-address
 increment wraps exactly as in HOL; no length, alignment or no-wrap bound is
 added, and successful target reading is the proved conclusion. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "read_bytearray_IMP_read_bytearray"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem readBytearrayImp {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer count : Nat)
     (address : BitVec width) (source target : StackSemStateFiniteExact width C F)

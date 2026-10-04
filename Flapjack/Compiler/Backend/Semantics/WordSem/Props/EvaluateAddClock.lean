@@ -85,10 +85,6 @@ theorem inst_withClock (s : WordSemStateFiniteExact width C F) (k : Nat)
       (repeat' split) <;> first | rfl | (subst_vars; rfl) |
         (simp_all [memLoad, memStore, setVar]; done) |
         (simp_all [memLoad, memStore, setVar]; obtain ⟨_, rfl⟩ := ‹_ ∧ _›; subst_vars; rfl)
-  | fp f =>
-    cases f <;> simp only [inst, getFpVar, getVar] <;>
-      (repeat' split) <;> first | rfl | simp_all
-
 theorem pushEnv_withClock (s : WordSemStateFiniteExact width C F) (k : Nat)
     (envs : Spt (WordLocW width) × Spt (WordLocW width))
     (h : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat)) :
@@ -513,8 +509,6 @@ decreasing_by
     ```
 
     HOL's free variable `extra` is the outermost binder. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_add_clock"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluate_add_clock {width : Nat} [NeZero width] {C : Type} {F : Type} (extra : Nat) :
     ∀ (p : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F)
       (r : Option (WordSemResult width)) (s' : WordSemStateFiniteExact width C F),

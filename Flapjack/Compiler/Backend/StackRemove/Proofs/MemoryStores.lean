@@ -52,10 +52,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 
 /-- Original scalar store helper: its original two successful native stores
 preserve the full relation, including all five separated heap assertions. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "state_rel_mem_store"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelMemStore {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer : Nat)
     (source target postSource postTarget : StackSemStateFiniteExact width C F)
@@ -80,10 +77,7 @@ theorem stateRelMemStore {width : Nat} [NeZero width] {C F : Type}
 
 /-- Complete original source-success store simulation. The target memory and
 full updated state relation are derived, including endianness and old words. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "state_rel_mem_store_32"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelMemStore32 {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer : Nat)
     (source target : StackSemStateFiniteExact width C F) (address : BitVec width)
@@ -122,10 +116,7 @@ theorem stateRelMemStore32 {width : Nat} [NeZero width] {C F : Type}
 
 /-- Complete original source-success store simulation. The target memory and
 full updated state relation are derived, including endianness and old words. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "state_rel_mem_store_byte_aux"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelMemStoreByteAux {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer : Nat)
     (source target : StackSemStateFiniteExact width C F) (address : BitVec width)

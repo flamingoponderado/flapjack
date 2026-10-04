@@ -118,8 +118,7 @@ theorem compHOL_labels {width : Nat} [NeZero width] (ctxt : Spt Nat) :
           · have := b2 a ha; omega
 
 /-- HOL `loop_to_word_comp_extract_labels_len` (`loop_to_wordProofScript.sml:2051-2085`). -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "loop_to_word_comp_extract_labels_len"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loop_to_word_comp_extract_labels_len {width : Nat} [NeZero width] :
     ∀ (ctxt : Spt Nat) (prog : HolLoopProg width) (l : Nat × Nat)
       (p : WordLangProgHOL (BitVec width)) (r : Nat × Nat),
@@ -131,8 +130,7 @@ theorem loop_to_word_comp_extract_labels_len {width : Nat} [NeZero width] :
 
 /-- HOL `loop_to_word_comp_extract_labels` (`loop_to_wordProofScript.sml:2087-2135`); HOL's
     `EVERY (λ(q,r). …)` is `∀ x ∈ …` on the pair's components. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "loop_to_word_comp_extract_labels"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loop_to_word_comp_extract_labels {width : Nat} [NeZero width] :
     ∀ (ctxt : Spt Nat) (prog : HolLoopProg width) (l : Nat × Nat)
       (p : WordLangProgHOL (BitVec width)) (l' : Nat × Nat),
@@ -144,8 +142,7 @@ theorem loop_to_word_comp_extract_labels {width : Nat} [NeZero width] :
   exact this
 
 /-- HOL `loop_to_word_comp_ALL_DISTINCT` (`loop_to_wordProofScript.sml:2137-2195`). -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "loop_to_word_comp_ALL_DISTINCT"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loop_to_word_comp_ALL_DISTINCT {width : Nat} [NeZero width] :
     ∀ (ctxt : Spt Nat) (prog : HolLoopProg width) (l : Nat × Nat)
       (p : WordLangProgHOL (BitVec width)) (r : Nat × Nat),
@@ -157,8 +154,7 @@ theorem loop_to_word_comp_ALL_DISTINCT {width : Nat} [NeZero width] :
 
 /-- HOL `loop_to_word_comp_func_lab_pres` (`loop_to_wordProofScript.sml:2197-2214`); HOL's
     free `n' params body p` are explicit, `EL n l` is `l[n]` under `n < LENGTH l`. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "loop_to_word_comp_func_lab_pres"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loop_to_word_comp_func_lab_pres {width : Nat} [NeZero width] (n' : Nat)
     (params : List Nat) (body : HolLoopProg width) (p : WordLangProgHOL (BitVec width)) :
     loopToWordCompFuncHOL n' params body = p →
@@ -176,8 +172,7 @@ theorem loop_to_word_comp_func_lab_pres {width : Nat} [NeZero width] (n' : Nat)
   omega
 
 /-- HOL `loop_to_word_compile_prog_lab_pres` (`loop_to_wordProofScript.sml:2216-2232`). -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "loop_to_word_compile_prog_lab_pres"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loop_to_word_compile_prog_lab_pres {width : Nat} [NeZero width]
     (prog : List (Nat × List Nat × HolLoopProg width))
     (prog' : List (Nat × Nat × WordLangProgHOL (BitVec width))) :
@@ -193,8 +188,7 @@ theorem loop_to_word_compile_prog_lab_pres {width : Nat} [NeZero width]
   exact h1 n hn
 
 /-- HOL `loop_to_word_compile_prog_FST_eq` (`loop_to_wordProofScript.sml:2236-2245`). -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "loop_to_word_compile_prog_FST_eq"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loop_to_word_compile_prog_FST_eq {width : Nat} [NeZero width]
     (prog : List (Nat × List Nat × HolLoopProg width))
     (prog' : List (Nat × Nat × WordLangProgHOL (BitVec width))) :
@@ -204,8 +198,7 @@ theorem loop_to_word_compile_prog_FST_eq {width : Nat} [NeZero width]
 
 /-- HOL `loop_to_word_compile_prog_lab_min` (`loop_to_wordProofScript.sml:2247-2254`); HOL's free
     `x` is explicit. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "loop_to_word_compile_prog_lab_min"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loop_to_word_compile_prog_lab_min {width : Nat} [NeZero width]
     (prog : List (Nat × List Nat × HolLoopProg width))
     (prog' : List (Nat × Nat × WordLangProgHOL (BitVec width))) (x : Nat) :
@@ -218,8 +211,7 @@ theorem loop_to_word_compile_prog_lab_min {width : Nat} [NeZero width]
   exact hx q hq
 
 /-- HOL `loop_to_word_compile_lab_min` (`loop_to_wordProofScript.sml:2256-2265`). -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "loop_to_word_compile_lab_min"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loop_to_word_compile_lab_min {width : Nat} [NeZero width]
     (prog : List (Nat × List Nat × HolLoopProg width))
     (prog' : List (Nat × Nat × WordLangProgHOL (BitVec width))) (x : Nat) :

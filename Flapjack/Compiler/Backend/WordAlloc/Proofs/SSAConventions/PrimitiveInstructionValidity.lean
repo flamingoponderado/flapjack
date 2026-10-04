@@ -5,8 +5,7 @@ namespace Flapjack.WordAlloc
 open Flapjack Flapjack.Compiler.Backend.WordAlloc Flapjack.Compiler.Encoders.Asm
 
 /-- Original Skip case with the original allocation-class/map hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_fullInstSkip {width : Nat} [NeZero width]
     (config : AsmConfigExact width)
 
@@ -17,8 +16,7 @@ theorem ssaCcTrans_fullInstSkip {width : Nat} [NeZero width]
   simp [ssaCcTrans, fullInstOkLessExact, fullInstOkLessWith]
 
 /-- Original Move case with the original allocation-class/map hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_fullInstMove {width : Nat} [NeZero width]
     (config : AsmConfigExact width)
     (priority : Nat) (moves : List (Nat × Nat))
@@ -31,8 +29,7 @@ theorem ssaCcTrans_fullInstMove {width : Nat} [NeZero width]
   simp [ssaCcTrans, produced, fullInstOkLessExact, fullInstOkLessWith]
 
 /-- Original StoreConsts case with the original allocation-class/map hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_fullInstStoreConsts {width : Nat} [NeZero width]
     (config : AsmConfigExact width)
     (a b c d : Nat) (ws : List (Bool × BitVec width))
@@ -43,8 +40,7 @@ theorem ssaCcTrans_fullInstStoreConsts {width : Nat} [NeZero width]
   simp [ssaCcTrans, fullInstOkLessExact, fullInstOkLessWith]
 
 /-- Original Assign case with the original allocation-class/map hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_fullInstAssign {width : Nat} [NeZero width]
     (config : AsmConfigExact width)
     (name : Nat) (exp : WordLangExpHOL (BitVec width))
@@ -55,8 +51,7 @@ theorem ssaCcTrans_fullInstAssign {width : Nat} [NeZero width]
   simp [ssaCcTrans, fullInstOkLessExact, fullInstOkLessWith]
 
 /-- Original Get case with the original allocation-class/map hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_fullInstGet {width : Nat} [NeZero width]
     (config : AsmConfigExact width)
     (name : Nat) (store : WordStoreHOL)
@@ -67,8 +62,7 @@ theorem ssaCcTrans_fullInstGet {width : Nat} [NeZero width]
   simp [ssaCcTrans, fullInstOkLessExact, fullInstOkLessWith]
 
 /-- Original Store case with the original allocation-class/map hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_fullInstStore {width : Nat} [NeZero width]
     (config : AsmConfigExact width)
     (exp : WordLangExpHOL (BitVec width)) (name : Nat)
@@ -79,8 +73,7 @@ theorem ssaCcTrans_fullInstStore {width : Nat} [NeZero width]
   simp [ssaCcTrans, fullInstOkLessExact, fullInstOkLessWith]
 
 /-- Original Raise case with the original allocation-class/map hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_fullInstRaise {width : Nat} [NeZero width]
     (config : AsmConfigExact width)
     (name : Nat)
@@ -91,8 +84,7 @@ theorem ssaCcTrans_fullInstRaise {width : Nat} [NeZero width]
   simp [ssaCcTrans, fullInstOkLessExact, fullInstOkLessWith]
 
 /-- Original OpCurrHeap case with the original allocation-class/map hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_fullInstOpCurrHeap {width : Nat} [NeZero width]
     (config : AsmConfigExact width)
     (op : BinOp) (dst src : Nat)
@@ -103,8 +95,7 @@ theorem ssaCcTrans_fullInstOpCurrHeap {width : Nat} [NeZero width]
   simp [ssaCcTrans, fullInstOkLessExact, fullInstOkLessWith, HolInst.ofWordLangInst, instOkLessExact]
 
 /-- Original Return case with the original allocation-class/map hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_fullInstReturn {width : Nat} [NeZero width]
     (config : AsmConfigExact width)
     (label : Nat) (values : List Nat)
@@ -115,8 +106,7 @@ theorem ssaCcTrans_fullInstReturn {width : Nat} [NeZero width]
   simp [ssaCcTrans, fullInstOkLessExact, fullInstOkLessWith]
 
 /-- Original Tick case with the original allocation-class/map hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_fullInstTick {width : Nat} [NeZero width]
     (config : AsmConfigExact width)
 
@@ -127,8 +117,7 @@ theorem ssaCcTrans_fullInstTick {width : Nat} [NeZero width]
   simp [ssaCcTrans, fullInstOkLessExact, fullInstOkLessWith]
 
 /-- Original Set case with the original allocation-class/map hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_fullInstSet {width : Nat} [NeZero width]
     (config : AsmConfigExact width)
     (store : WordStoreHOL) (exp : WordLangExpHOL (BitVec width))
@@ -139,8 +128,7 @@ theorem ssaCcTrans_fullInstSet {width : Nat} [NeZero width]
   simp [ssaCcTrans, fullInstOkLessExact, fullInstOkLessWith]
 
 /-- Original LocValue case with the original allocation-class/map hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_fullInstLocValue {width : Nat} [NeZero width]
     (config : AsmConfigExact width)
     (dst src : Nat)
@@ -151,8 +139,7 @@ theorem ssaCcTrans_fullInstLocValue {width : Nat} [NeZero width]
   simp [ssaCcTrans, fullInstOkLessExact, fullInstOkLessWith]
 
 /-- Original CodeBufferWrite case with the original allocation-class/map hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_fullInstCodeBufferWrite {width : Nat} [NeZero width]
     (config : AsmConfigExact width)
     (addr value : Nat)
@@ -163,8 +150,7 @@ theorem ssaCcTrans_fullInstCodeBufferWrite {width : Nat} [NeZero width]
   simp [ssaCcTrans, fullInstOkLessExact, fullInstOkLessWith]
 
 /-- Original DataBufferWrite case with the original allocation-class/map hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_fullInstDataBufferWrite {width : Nat} [NeZero width]
     (config : AsmConfigExact width)
     (addr value : Nat)

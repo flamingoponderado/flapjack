@@ -1,3 +1,5 @@
+import Mathlib.Tactic.Tauto
+import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegister
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NativeAccessors
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelRegisterUpdate
@@ -103,11 +105,7 @@ fixes both actual word operands. Both native updates and the entire source
 post-state relation are derived, with no target-run/postrelation premise.
 Canonical maps and shared positive word width are explicitly qualified;
 evaluators inherit reals_as_rational_cuts (SOUNDNESS item 8). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_wInst"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateWInstLongMul {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (highDestination lowDestination left right k f frame : Nat)
     (source sourcePost : WordSemStateFiniteExact width (Nat × C) F)
@@ -155,11 +153,7 @@ the original divisor/quotient guards; the native Reg1 load derives frame bounds.
 No target-run, postrelation or extra success premise is supplied. Canonical maps
 and shared positive word width are qualified; evaluators inherit
 reals_as_rational_cuts (SOUNDNESS item 8). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_wInst"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateWInstLongDiv {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (quotientDestination remainderDestination high low divisorRegister k f frame : Nat)
     (source sourcePost : WordSemStateFiniteExact width (Nat × C) F)

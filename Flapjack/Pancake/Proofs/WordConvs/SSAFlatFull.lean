@@ -6,8 +6,7 @@ open Flapjack Flapjack.Compiler.Backend.WordAlloc
 
 /-- Original full SSA flat-expression preservation, with the sole original
 source premise and literal executed fullSSA producer. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "full_ssa_cc_trans_flat_exp_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fullSsaCcTrans_flatExpConventions {width : Nat} [NeZero width]
     (program : WordLangProgHOL (BitVec width)) (count : Nat)
     (source : flatExpConventions program = true) :

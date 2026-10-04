@@ -49,9 +49,7 @@ end SemanticCorrectWitnesses
 /-- All native program constructors establish the original evaluator simulation;
 no induction hypothesis or target evaluation is a public premise. Inherits
 reals_as_rational_cuts (SOUNDNESS item 8). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_correct"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransCorrect {width : Nat} [NeZero width] {C F : Type}
     (prog : WordLangProgHOL (BitVec width))
     (source target : WordSemStateFiniteExact width C F) (ssa : Spt Nat) (next : Nat)

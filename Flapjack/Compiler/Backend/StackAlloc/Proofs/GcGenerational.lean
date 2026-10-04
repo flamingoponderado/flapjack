@@ -8,8 +8,7 @@ open Classical in
 /-- Full generational store-level unfolding of original `word_gc_fun_thm_generational`
 (line1731). HOL lambdas become sequential tuple lets; negative-one word products
 become modular subtraction. Both collector branches retain every store update. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "word_gc_fun_thm" 1731
-  (fmap_as_finite_support_relation := [s]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_gc_fun_thm_generational {width : Nat} [NeZero width] {conf : Config}
     {genSizes : List Nat} {roots : List (WordLocW width)}
     {m : BitVec width → WordLocW width} {dm : BitVec width → Bool}
@@ -298,8 +297,7 @@ open Classical in
 collector-function and kind hypotheses. The full statement is explicit rather
 than hidden behind the working expression. The canonical owning StackSem
 carrier uses finite-support regs/fpRegs/store; its codec witness is local. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "gc_thm" 1884
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem gc_thm_generational {width : Nat} [NeZero width] {C F : Type} {conf : Config}
     {genSizes : List Nat} {s : StackSemStateFiniteExact width C F} :
     s.gcFun = wordGcFun conf ∧ conf.gcKind = .generational genSizes →

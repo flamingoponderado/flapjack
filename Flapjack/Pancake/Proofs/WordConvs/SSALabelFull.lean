@@ -101,8 +101,7 @@ private theorem ssaLabels {width : Nat} [NeZero width]
 
 /-- Original unconditional fullSSA label equality for arbitrary source programs
 and counts, including all nested return and exception handlers. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "full_ssa_cc_trans_lab_pres" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fullSsaCcTrans_labPres {width : Nat} [NeZero width]
     (program : WordLangProgHOL (BitVec width)) (count : Nat) :
     extractLabels program = extractLabels (fullSsaCcTrans count program) := by

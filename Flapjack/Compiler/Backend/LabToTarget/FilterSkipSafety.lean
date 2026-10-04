@@ -10,8 +10,7 @@ open Flapjack.Compiler.Backend.LabToTarget.FilterSkip
 /-- Full original safety-disjunction preservation. Both source alternatives
 and every FFI-name witness remain unchanged; actual Install fetches pull back
 to the unfiltered program. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "no_install_or_no_share_mem_filter_skip"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem noInstallOrNoShareMemFilterSkip {width : Nat} [NeZero width]
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString)

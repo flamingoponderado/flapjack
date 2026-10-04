@@ -308,11 +308,7 @@ open LoopToWordStateRelImpSemanticsSupport in
     arbitrary configuration type `C` and the loopSem FFI host `F`.  There is
     no additional premise.  See the module docstring for the proof route and
     for the `FPSqrt` caveat on the wordSem evaluator it relates. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "state_rel_imp_semantics"
-  (fmap_as_finite_support_relation :=
-    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.fpRegs,
-      WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelImpSemantics {width : Nat} [NeZero width] {C F : Type} :
     ∀ (s : LoopSemStateFiniteExact width F) (t : WordSemStateFiniteExact width C F)
       (start : Nat),

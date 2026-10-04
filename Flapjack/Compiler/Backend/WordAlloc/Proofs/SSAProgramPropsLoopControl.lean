@@ -36,8 +36,7 @@ binders and four guard equalities from the specialized native functional
 induction rule, then precisely the original body counter/map property at its
 actual refreshed context. Caller bounds and the output exit-map cut are proved;
 no arbitrary-context body predicate or desired whole-loop invariant is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_props"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransPropsLoop {width : Nat} [NeZero width]
     (names : Spt Unit) (body : WordLangProgHOL (BitVec width)) (exitNames : Spt Unit)
     (ssa : Spt Nat) (next : Nat) (loopTables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -81,8 +80,7 @@ theorem ssaCcTransPropsLoop {width : Nat} [NeZero width]
 branches preserve the original map/counter; no loop-map validity premise or
 induction hypothesis is added to the original compiler equality/map/allocation
 premises. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_props"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransPropsBreak {width : Nat} [NeZero width]
     (label : Nat) (ssa : Spt Nat) (next : Nat)
     (loopTables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -101,8 +99,7 @@ theorem ssaCcTransPropsBreak {width : Nat} [NeZero width]
 branches preserve the original map/counter; no loop-map validity premise or
 induction hypothesis is added to the original compiler equality/map/allocation
 premises. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_props"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransPropsContinue {width : Nat} [NeZero width]
     (label : Nat) (ssa : Spt Nat) (next : Nat)
     (loopTables : List (Spt Nat × Spt Unit × Spt Unit))

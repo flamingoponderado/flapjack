@@ -67,9 +67,7 @@ theorem getVarsLocalsEq {width : Nat} [NeZero width] {C F : Type}
         getVarsLocalsEq s s' h xs]
 
 /-- HOL `evaluate_remove_dead`, `Move` case (Resume 3958). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_remove_dead"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateRemoveDead_Move {width : Nat} [NeZero width] {C F : Type} (pri : Nat)
     (moves : List (Nat × Nat)) :
     removeDeadGoal C F (.move pri moves : WordLangProgHOL (BitVec width)) := by

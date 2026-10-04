@@ -46,10 +46,7 @@ theorem llookupTake {α : Type} (n f : Nat) (xs : List α) :
   rw [List.getElem?_take, if_pos h]
 
 /-- Exact HOL `state_rel_IMP_LENGTH` (`word_to_stackProofScript.sml:5260-5268`). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "state_rel_IMP_LENGTH"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store,
-    StackSemStateFiniteExact.regs, StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelImpLength {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (k f f' : Nat)
     (s : WordSemStateFiniteExact width (Nat × C) F)

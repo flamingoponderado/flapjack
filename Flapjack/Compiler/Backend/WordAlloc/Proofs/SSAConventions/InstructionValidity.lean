@@ -6,8 +6,7 @@ open Flapjack Flapjack.Compiler.Backend.WordAlloc Flapjack.Compiler.Encoders.Asm
 
 /-- Original unconditional fake-sequence instruction validity, with arbitrary
 assembler configuration and source list. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "fake_seq_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fakeSeq_fullInstOkLess {width : Nat} [NeZero width]
     (config : AsmConfigExact width) (names : List Nat) :
     fullInstOkLessExact config
@@ -20,8 +19,7 @@ theorem fakeSeq_fullInstOkLess {width : Nat} [NeZero width]
 
 /-- Original loop setup validity with the actual producer equation as sole
 premise; no SSA map or register-bound assumptions are added. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "loop_setup_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loopSetup_fullInstOkLess {width : Nat} [NeZero width]
     (config : AsmConfigExact width) (names exitNames : Spt Unit) (ssa : Spt Nat) (na : Nat)
     (setupProg : WordLangProgHOL (BitVec width)) (ssaRefreshed : Spt Nat)
@@ -53,8 +51,7 @@ theorem loopSetup_fullInstOkLess {width : Nat} [NeZero width]
 
 /-- Original reconciliation validity and destination-distinctness conclusions,
 with the actual fake-move producer equality as the sole premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "fake_moves_conventions2" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fakeMoves_instructionConventions {width : Nat} [NeZero width]
     (config : AsmConfigExact width) (prio : Option (Unit ⊕ Unit)) (names : List Nat)
     (ssaL ssaR : Spt Nat) (next : Nat)

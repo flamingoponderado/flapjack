@@ -57,9 +57,7 @@ the HOL premises at `Loop names body exit_names`, including `nlivein = []`, and 
 universally quantified body statement for the loop's own context
 (`live = names`, `nlive = []`, `(names, exit_names) :: lt`), give HOL's conclusion.
 `removeDeadPost` spells HOL's result case expression. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_remove_dead_Loop_helper"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateRemoveDeadLoopHelper {width : Nat} [NeZero width] {C F : Type} :
     ∀ (st : WordSemStateFiniteExact width C F) (t : Spt (WordLocW width))
       (tstore : HolFiniteMapExact WordStoreHOL (WordLocW width)) (names : NumSet)

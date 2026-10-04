@@ -53,8 +53,7 @@ private theorem normal_addNop {width : Nat} [NeZero width]
   | cons line lines ih =>
     cases line <;> simp [addNop, normalLine, ih]
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "line_similar_add_nop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem lineSimilar_addNop {width : Nat} [NeZero width]
     (ls ls' : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))
@@ -77,8 +76,7 @@ private theorem normal_padSection {width : Nat} [NeZero width]
         normalLine, List.append_assoc]
     split <;> simp only [normal_addNop]
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "line_similar_pad_section" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem lineSimilar_padSection {width : Nat} [NeZero width]
     (nop : List (BitVec 8))
     (l2 aux l1 : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -90,8 +88,7 @@ theorem lineSimilar_padSection {width : Nat} [NeZero width]
   rw [normal_padSection]
   exact (linesRel_normal_iff _ _).mp rel
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "code_similar_pad_code" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem codeSimilar_padCode {width : Nat} [NeZero width]
     (code1 code2 : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))

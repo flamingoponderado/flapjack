@@ -17,8 +17,7 @@ namespace Flapjack.WordSemStateFiniteExact
 /-- Complete original mem_store_const contract (wordProps794-815): all
 eighteen original conclusions, arbitrary address/value/states, and only the
 successful-store premise. No extra alignment, domain or safety restriction. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "mem_store_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem memStoreConst {width : Nat} [NeZero width] {C F : Type}
     (address : BitVec width) (value : WordLocW width)
     (state next : WordSemStateFiniteExact width C F)

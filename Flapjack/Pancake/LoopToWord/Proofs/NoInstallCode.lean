@@ -20,8 +20,7 @@ open Flapjack Flapjack.WordProps
 
 /-- HOL `loop_to_word_comp_not_created` (`loop_to_wordProofScript.sml:1911-1925`); HOL's free
     predicate `P` is the leading binder. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "loop_to_word_comp_not_created"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loop_to_word_comp_not_created {width : Nat} [NeZero width]
     (P : WordLangProgHOL (BitVec width) → Bool) :
     (∀ x : WordLangProgHOL (BitVec width), (match x with
@@ -64,8 +63,7 @@ theorem loop_to_word_comp_not_created {width : Nat} [NeZero width]
         | (exact sub' _ _ _ _ ‹_› (by simp; omega))
 
 /-- HOL `loop_to_word_comp_func_not_created` (`loop_to_wordProofScript.sml:1927-1938`). -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "loop_to_word_comp_func_not_created"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loop_to_word_comp_func_not_created {width : Nat} [NeZero width]
     (P : WordLangProgHOL (BitVec width) → Bool) :
     (∀ x : WordLangProgHOL (BitVec width), (match x with
@@ -80,8 +78,7 @@ theorem loop_to_word_comp_func_not_created {width : Nat} [NeZero width]
 
 /-- HOL `loop_to_word_compile_not_created` (`loop_to_wordProofScript.sml:1940-1950`); HOL's
     `EVERY` is `∀ x ∈ l` and `SND o SND` is `fun e => e.2.2`. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "loop_to_word_compile_not_created"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loop_to_word_compile_not_created {width : Nat} [NeZero width]
     (P : WordLangProgHOL (BitVec width) → Bool) :
     ∀ (panProg : List (Nat × List Nat × HolLoopProg width)),
@@ -99,8 +96,7 @@ theorem loop_to_word_compile_not_created {width : Nat} [NeZero width]
 
 /-- HOL `loop_to_word_compile_not_created_MEM` (`loop_to_wordProofScript.sml:1952-1963`,
     `[local]`); HOL's free `a b p pan_prog P` are explicit. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "loop_to_word_compile_not_created_MEM"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loop_to_word_compile_not_created_MEM {width : Nat} [NeZero width] (a b : Nat)
     (p : WordLangProgHOL (BitVec width)) (panProg : List (Nat × List Nat × HolLoopProg width))
     (P : WordLangProgHOL (BitVec width) → Bool) :
@@ -133,8 +129,7 @@ theorem loopCompile_lookup_notCreated {width : Nat} [NeZero width]
 
 /-- HOL `loop_compile_no_install_code` (`loop_to_wordProofScript.sml:1966-1975`); HOL's free
     `prog` is explicit. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "loop_compile_no_install_code"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loop_compile_no_install_code {width : Nat} [NeZero width]
     (prog : List (Nat × List Nat × HolLoopProg width)) :
     noInstallCode (sptFromAList (loopToWordCompileHOL prog)) := by
@@ -145,8 +140,7 @@ theorem loop_compile_no_install_code {width : Nat} [NeZero width]
   cases x <;> simp at hx ⊢
 
 /-- HOL `loop_compile_no_alloc_code` (`loop_to_wordProofScript.sml:1977-1986`). -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "loop_compile_no_alloc_code"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loop_compile_no_alloc_code {width : Nat} [NeZero width]
     (prog : List (Nat × List Nat × HolLoopProg width)) :
     noAllocCode (sptFromAList (loopToWordCompileHOL prog)) := by
@@ -157,8 +151,7 @@ theorem loop_compile_no_alloc_code {width : Nat} [NeZero width]
   cases x <;> simp at hx ⊢
 
 /-- HOL `loop_compile_no_mt_code` (`loop_to_wordProofScript.sml:1988-1997`). -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "loop_compile_no_mt_code"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loop_compile_no_mt_code {width : Nat} [NeZero width]
     (prog : List (Nat × List Nat × HolLoopProg width)) :
     noMtCode (sptFromAList (loopToWordCompileHOL prog)) := by

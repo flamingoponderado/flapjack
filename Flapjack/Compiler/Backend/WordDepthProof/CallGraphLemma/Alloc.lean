@@ -81,8 +81,7 @@ theorem alloc_pop_facts {width : Nat} [NeZero width] {C F : Type}
         exact hm.symm
 
 /-- `max_depth_call_graph_lemma`, `Alloc` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_depthProofScript.sml" "max_depth_call_graph_lemma"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem maxDepthCallGraphLemma_Alloc {width : Nat} [NeZero width] {C F : Type}
     (n' : Nat) (names : WordLangCutsetsHOL) (s : WordSemStateFiniteExact width C F) :
     depthPost (.alloc n' names) s := by

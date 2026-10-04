@@ -149,8 +149,6 @@ and initial targetStateRel are premises; actual encoded MULHU then MUL derive
 all existential environment/interference/asserts/asserts2 obligations. Original
 asm_ok supplies high/source nonoverlap; other aliases remain unrestricted.
 Broad native Run/target closure inherits reals_as_rational_cuts, SOUNDNESS8. -/
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml"
-  "riscv_encoder_correct"]
 theorem riscv_encoder_correct_longmul (hi lo rs1 rs2 : Nat) (s1 s2 : AsmState 64) (ms : riscv_state)
     (h : asmStep riscvTarget.config s1 (.inst (.arith (.longMul hi lo rs1 rs2))) s2 ∧
       targetStateRel riscvTarget s1 ms) :

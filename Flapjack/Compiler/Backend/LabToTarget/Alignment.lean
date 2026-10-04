@@ -8,20 +8,17 @@ namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "line_aligned_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def lineAligned {width : Nat} [NeZero width] (m : Nat) (line : Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)) : Prop :=
   lineLen line % m = 0 ∧ lineLength line % m = 0
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "sec_aligned_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def secAligned {width : Nat} [NeZero width] (m : Nat) (sec : Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) : Prop :=
   ∀ line ∈ sec.lines, lineAligned m line
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "all_encd0_aligned"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem allEncd0_aligned {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (enc : HolAsm width → List (BitVec 8))
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -53,8 +50,7 @@ private theorem maxAligned (x y m : Nat) (hx : x % m = 0) (hy : y % m = 0) :
   rw [Nat.max_def]
   split <;> assumption
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "enc_lines_again_simp_aligned"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem encLinesAgainSimp_aligned {width : Nat} [NeZero width]
     (len : Nat) (labs : Spt (Spt Nat)) (ffis : List HolFfiName) (pos : Nat)
     (enc : HolAsm width → List (BitVec 8))
@@ -80,8 +76,7 @@ theorem encLinesAgainSimp_aligned {width : Nat} [NeZero width]
       simp_all [lineAligned,lineLen,lineLength]
       try exact maxAligned _ _ len (henc _) hls.1.1
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "enc_secs_again_aligned"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem encSecsAgain_aligned {width : Nat} [NeZero width]
     (len pos : Nat) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (enc : HolAsm width → List (BitVec 8))

@@ -65,8 +65,7 @@ private theorem assignmentInstructionCase
 
 /-- HOL `evaluate_apply_colour[Inst]`, Const subcase (1228-1233).
 Only the original three premises; the full existential postcondition. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_InstConst {width : Nat} [NeZero width] {C F : Type}
     (r : Nat) (w : BitVec width) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)
@@ -84,8 +83,7 @@ theorem evaluateApplyColour_InstConst {width : Nat} [NeZero width] {C F : Type}
 
 /-- HOL `evaluate_apply_colour[Inst]`, Binop subcase (1234-1248),
 including both register and immediate operands, with no success premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_InstBinop {width : Nat} [NeZero width] {C F : Type}
     (op : BinOp) (dst src : Nat) (ri : WordRegImm (BitVec width)) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)
@@ -107,8 +105,7 @@ theorem evaluateApplyColour_InstBinop {width : Nat} [NeZero width] {C F : Type}
 
 /-- HOL `evaluate_apply_colour[Inst]`, Shift subcase (1249-1263),
 retaining the expression-valued register/immediate shift operand. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_InstShift {width : Nat} [NeZero width] {C F : Type}
     (sh : Shift) (dst src : Nat) (ri : WordRegImm (BitVec width)) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)

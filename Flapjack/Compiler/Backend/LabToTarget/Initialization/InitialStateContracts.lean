@@ -9,16 +9,14 @@ open Flapjack.Compiler.Encoders.Asm Flapjack.Misc
 HOL's concrete config, while machine/state/projection and FFI host are
 independent. The existential contains the whole native relation and whole
 four-function oracle tie, with no restricted witness or added premise. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "init_ok_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def initOk {width : Nat} [NeZero width] {S Q : Type} {F : Type}
     (bundle : MachineConfig width S Q × BitVec width) (s : State width Config F) (ms : S) : Prop :=
   ∃ code2 labs t1, stateRel (bundle.1,code2,labs,bundle.2) s t1 ms ∧ oracleTie bundle.1 ms s
 
 /-- Original unconditional oracle tie for the actual initializer. Arbitrary
 compiler configuration and all twelve source inputs remain independent. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "oracle_tie_make_init"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem oracleTie_makeInit {width : Nat} [NeZero width] {C S Q : Type} {F : Type}
     (mc : MachineConfig width S Q) (ffi : HolFfiState F) (t : AsmState width)
     (m : BitVec width → WordLocW width) (dm sdm : BitVec width → Bool) (ms : S)
@@ -30,8 +28,7 @@ theorem oracleTie_makeInit {width : Nat} [NeZero width] {C S Q : Type} {F : Type
 
 /-- Whole original three-field conjunction: FFI, initial PC and source code,
 with every source input and arbitrary compiler configuration retained. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "make_init_simp"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem makeInit_simp {width : Nat} [NeZero width] {C S Q : Type} {F : Type}
     (mc : MachineConfig width S Q) (ffi : HolFfiState F) (t : AsmState width)
     (m : BitVec width → WordLocW width) (dm sdm : BitVec width → Bool) (ms : S)

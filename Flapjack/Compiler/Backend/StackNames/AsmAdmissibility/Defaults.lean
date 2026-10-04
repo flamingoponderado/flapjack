@@ -24,8 +24,7 @@ theorem stackNamesCompStackAsmOk_Default {width : Nat} [NeZero width]
   cases p <;> simp_all [progCompHOL, stackAsmOkExact]
 
 /-- HOL comp_ind Skip case with exactly the original three guards. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_Skip {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
 
@@ -35,8 +34,7 @@ theorem stackNamesCompStackAsmOk_Skip {width : Nat} [NeZero width]
   exact stackNamesCompStackAsmOk_Default names config (.skip) True.intro h
 
 /-- HOL comp_ind Get case with exactly the original three guards. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_Get {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (destination : Nat) (store : StoreName)
@@ -46,8 +44,7 @@ theorem stackNamesCompStackAsmOk_Get {width : Nat} [NeZero width]
   exact stackNamesCompStackAsmOk_Default names config (.get destination store) True.intro h
 
 /-- HOL comp_ind Set case with exactly the original three guards. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_Set {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (store : StoreName) (source : Nat)
@@ -57,8 +54,7 @@ theorem stackNamesCompStackAsmOk_Set {width : Nat} [NeZero width]
   exact stackNamesCompStackAsmOk_Default names config (.set store source) True.intro h
 
 /-- HOL comp_ind JumpLower case with exactly the original three guards. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_JumpLower {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (left right target : Nat)
@@ -68,8 +64,7 @@ theorem stackNamesCompStackAsmOk_JumpLower {width : Nat} [NeZero width]
   exact stackNamesCompStackAsmOk_Default names config (.jumpLower left right target) True.intro h
 
 /-- HOL comp_ind Alloc case with exactly the original three guards. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_Alloc {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (words : Nat)
@@ -79,8 +74,7 @@ theorem stackNamesCompStackAsmOk_Alloc {width : Nat} [NeZero width]
   exact stackNamesCompStackAsmOk_Default names config (.alloc words) True.intro h
 
 /-- HOL comp_ind StoreConsts case with exactly the original three guards. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_StoreConsts {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (source bitmap : Nat) (stub : Option Nat)
@@ -90,8 +84,7 @@ theorem stackNamesCompStackAsmOk_StoreConsts {width : Nat} [NeZero width]
   exact stackNamesCompStackAsmOk_Default names config (.storeConsts source bitmap stub) True.intro h
 
 /-- HOL comp_ind Break case with exactly the original three guards. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_Break {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (label : Nat)
@@ -101,8 +94,7 @@ theorem stackNamesCompStackAsmOk_Break {width : Nat} [NeZero width]
   exact stackNamesCompStackAsmOk_Default names config (.break label) True.intro h
 
 /-- HOL comp_ind Continue case with exactly the original three guards. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_Continue {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (label : Nat)
@@ -112,8 +104,7 @@ theorem stackNamesCompStackAsmOk_Continue {width : Nat} [NeZero width]
   exact stackNamesCompStackAsmOk_Default names config (.continue label) True.intro h
 
 /-- HOL comp_ind FFI case with exactly the original three guards. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_FFI {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (function : Flapjack.Basis.Pure.MlString.MlString)
@@ -124,8 +115,7 @@ theorem stackNamesCompStackAsmOk_FFI {width : Nat} [NeZero width]
   exact stackNamesCompStackAsmOk_Default names config (.ffi function configuration configurationLength array arrayLength returnAddress) True.intro h
 
 /-- HOL comp_ind Tick case with exactly the original three guards. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_Tick {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
 
@@ -135,8 +125,7 @@ theorem stackNamesCompStackAsmOk_Tick {width : Nat} [NeZero width]
   exact stackNamesCompStackAsmOk_Default names config (.tick) True.intro h
 
 /-- HOL comp_ind LocValue case with exactly the original three guards. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_LocValue {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (destination label entry : Nat)
@@ -146,8 +135,7 @@ theorem stackNamesCompStackAsmOk_LocValue {width : Nat} [NeZero width]
   exact stackNamesCompStackAsmOk_Default names config (.locValue destination label entry) True.intro h
 
 /-- HOL comp_ind Install case with exactly the original three guards. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_Install {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (codeBuffer codeLength dataBuffer dataLength returnAddress : Nat)
@@ -157,8 +145,7 @@ theorem stackNamesCompStackAsmOk_Install {width : Nat} [NeZero width]
   exact stackNamesCompStackAsmOk_Default names config (.install codeBuffer codeLength dataBuffer dataLength returnAddress) True.intro h
 
 /-- HOL comp_ind DataBufferWrite case with exactly the original three guards. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_DataBufferWrite {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (address value : Nat)
@@ -168,8 +155,7 @@ theorem stackNamesCompStackAsmOk_DataBufferWrite {width : Nat} [NeZero width]
   exact stackNamesCompStackAsmOk_Default names config (.dataBufferWrite address value) True.intro h
 
 /-- HOL comp_ind RawCall case with exactly the original three guards. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_RawCall {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (target : Nat)
@@ -179,8 +165,7 @@ theorem stackNamesCompStackAsmOk_RawCall {width : Nat} [NeZero width]
   exact stackNamesCompStackAsmOk_Default names config (.rawCall target) True.intro h
 
 /-- HOL comp_ind StackAlloc case with exactly the original three guards. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_StackAlloc {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (words : Nat)
@@ -190,8 +175,7 @@ theorem stackNamesCompStackAsmOk_StackAlloc {width : Nat} [NeZero width]
   exact stackNamesCompStackAsmOk_Default names config (.stackAlloc words) True.intro h
 
 /-- HOL comp_ind StackFree case with exactly the original three guards. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_StackFree {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (words : Nat)
@@ -201,8 +185,7 @@ theorem stackNamesCompStackAsmOk_StackFree {width : Nat} [NeZero width]
   exact stackNamesCompStackAsmOk_Default names config (.stackFree words) True.intro h
 
 /-- HOL comp_ind StackStore case with exactly the original three guards. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_StackStore {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (offset register : Nat)
@@ -212,8 +195,7 @@ theorem stackNamesCompStackAsmOk_StackStore {width : Nat} [NeZero width]
   exact stackNamesCompStackAsmOk_Default names config (.stackStore offset register) True.intro h
 
 /-- HOL comp_ind StackStoreAny case with exactly the original three guards. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_StackStoreAny {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (register offsetRegister : Nat)
@@ -223,8 +205,7 @@ theorem stackNamesCompStackAsmOk_StackStoreAny {width : Nat} [NeZero width]
   exact stackNamesCompStackAsmOk_Default names config (.stackStoreAny register offsetRegister) True.intro h
 
 /-- HOL comp_ind StackLoad case with exactly the original three guards. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_StackLoad {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (offset register : Nat)
@@ -234,8 +215,7 @@ theorem stackNamesCompStackAsmOk_StackLoad {width : Nat} [NeZero width]
   exact stackNamesCompStackAsmOk_Default names config (.stackLoad offset register) True.intro h
 
 /-- HOL comp_ind StackLoadAny case with exactly the original three guards. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_StackLoadAny {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (register offsetRegister : Nat)
@@ -245,8 +225,7 @@ theorem stackNamesCompStackAsmOk_StackLoadAny {width : Nat} [NeZero width]
   exact stackNamesCompStackAsmOk_Default names config (.stackLoadAny register offsetRegister) True.intro h
 
 /-- HOL comp_ind StackGetSize case with exactly the original three guards. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_StackGetSize {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (register : Nat)
@@ -256,8 +235,7 @@ theorem stackNamesCompStackAsmOk_StackGetSize {width : Nat} [NeZero width]
   exact stackNamesCompStackAsmOk_Default names config (.stackGetSize register) True.intro h
 
 /-- HOL comp_ind StackSetSize case with exactly the original three guards. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_StackSetSize {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (register : Nat)
@@ -267,8 +245,7 @@ theorem stackNamesCompStackAsmOk_StackSetSize {width : Nat} [NeZero width]
   exact stackNamesCompStackAsmOk_Default names config (.stackSetSize register) True.intro h
 
 /-- HOL comp_ind BitmapLoad case with exactly the original three guards. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_BitmapLoad {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (destination address : Nat)
@@ -278,8 +255,7 @@ theorem stackNamesCompStackAsmOk_BitmapLoad {width : Nat} [NeZero width]
   exact stackNamesCompStackAsmOk_Default names config (.bitmapLoad destination address) True.intro h
 
 /-- HOL comp_ind Halt case with exactly the original three guards. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_Halt {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (register : Nat)

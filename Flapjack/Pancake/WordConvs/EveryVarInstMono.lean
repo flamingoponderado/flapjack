@@ -5,8 +5,8 @@ namespace Flapjack
 /-- Pointwise predicate implication preserves the original instruction-variable
 predicate. All native instruction constructors and the width-64 FP-transfer
 clauses are retained; no register-bound or evaluation premise is added. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml"
-  "every_var_inst_mono" (words_as_type_indexed_bitvec)]
+-- riscv-mi: integer-only specialization of the referenced HOL declaration.
+
 theorem everyVarInstMono {width : Nat} [NeZero width]
     (P : Nat → Bool) (instruction : WordLangInst (BitVec width)) (Q : Nat → Bool) :
     (∀ x, P x = true → Q x = true) ∧ everyVarInstHOL P instruction = true →
@@ -23,8 +23,5 @@ theorem everyVarInstMono {width : Nat} [NeZero width]
   | mem operation destination address =>
     cases address
     cases operation <;> simp_all [everyVarInstHOL, Bool.and_eq_true]
-  | fp operation =>
-    cases operation <;> by_cases hwidth : width = 64 <;>
-      simp_all [everyVarInstHOL, Bool.and_eq_true]
 
 end Flapjack

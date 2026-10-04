@@ -51,8 +51,7 @@ theorem compile_sptDomain {width : Nat} [NeZero width] (wconf : Config)
 /-- HOL `word_to_word_compile_no_install_no_alloc` (`pan_to_targetProofScript.sml:909-938`);
     HOL's free `wconf aconf progs0 col progs` are explicit and `ALL_DISTINCT (MAP FST progs0)`
     is `List.Nodup`. -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "word_to_word_compile_no_install_no_alloc"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_to_word_compile_no_install_no_alloc {width : Nat} [NeZero width] (wconf : Config)
     (aconf : AsmConfigExact width) (progs0 : List (Nat × Nat × WordLangProgHOL (BitVec width)))
     (col : List (Option (Spt Nat))) (progs : List (Nat × Nat × WordLangProgHOL (BitVec width))) :

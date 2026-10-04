@@ -1,3 +1,4 @@
+import Mathlib.Tactic.SplitIfs
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.StackAccess
 
 namespace Flapjack.Compiler.Backend.StackRawCall.MemoryFfiCase
@@ -130,10 +131,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 /-- Full original ShMemOp case, retaining the three source premises and both
 existential simulation conclusions. The evaluator inherits the reviewed
 reals_as_rational_cuts assurance limit in SOUNDNESS item 8. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectShMemOp {width : Nat} [NeZero width] {C F : Type}
     (op : Compiler.Encoders.Asm.HolMemop) (r a : Nat) (w : BitVec width) (info : Spt Nat)
     (source target resultState : StackSemStateFiniteExact width C F)
@@ -148,10 +146,7 @@ theorem compCorrectShMemOp {width : Nat} [NeZero width] {C F : Type}
 /-- Full original CodeBufferWrite case, retaining the three source premises and both
 existential simulation conclusions. The evaluator inherits the reviewed
 reals_as_rational_cuts assurance limit in SOUNDNESS item 8. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectCodeBufferWrite {width : Nat} [NeZero width] {C F : Type}
     (r1 r2 : Nat) (info : Spt Nat)
     (source target resultState : StackSemStateFiniteExact width C F)
@@ -166,10 +161,7 @@ theorem compCorrectCodeBufferWrite {width : Nat} [NeZero width] {C F : Type}
 /-- Full original DataBufferWrite case, retaining the three source premises and both
 existential simulation conclusions. The evaluator inherits the reviewed
 reals_as_rational_cuts assurance limit in SOUNDNESS item 8. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectDataBufferWrite {width : Nat} [NeZero width] {C F : Type}
     (r1 r2 : Nat) (info : Spt Nat)
     (source target resultState : StackSemStateFiniteExact width C F)
@@ -184,10 +176,7 @@ theorem compCorrectDataBufferWrite {width : Nat} [NeZero width] {C F : Type}
 /-- Full original Ffi case, retaining the three source premises and both
 existential simulation conclusions. The evaluator inherits the reviewed
 reals_as_rational_cuts assurance limit in SOUNDNESS item 8. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectFfi {width : Nat} [NeZero width] {C F : Type}
     (function : Basis.Pure.MlString.MlString) (ptr len ptr2 len2 ret : Nat) (info : Spt Nat)
     (source target resultState : StackSemStateFiniteExact width C F)

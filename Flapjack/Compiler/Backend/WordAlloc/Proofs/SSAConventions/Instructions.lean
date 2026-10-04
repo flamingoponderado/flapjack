@@ -7,8 +7,7 @@ open Flapjack Flapjack.Compiler.Backend.WordAlloc
 
 /-- Full original instruction case of the SSA convention theorem. All native
 instruction constructors and word-width branches remain in scope. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_preAllocInst {width : Nat} [NeZero width]
     (instruction : WordLangInst (BitVec width))
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))

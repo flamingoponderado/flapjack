@@ -17,8 +17,7 @@ external-prefix search/exclusion and shared-suffix exclusion, and the final
 length equality. Every EL occurs under the original suffix bound; the original
 length equality makes that bound an entry-PC bound. No past-end default is
 observed or chosen, and no extra outer bound is introduced. -/
-@[hol "cakeml/compiler/backend/semantics/targetSemScript.sml" "start_pc_ok_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def startPcOk {width : Nat} [NeZero width] {S Q : Type}
     (mc : MachineConfig width S Q) (pc : BitVec width) : Prop :=
   ¬ mc.progAddresses mc.haltPc ∧
@@ -78,8 +77,7 @@ The actual fixed-word8 byte relation and generic word/location memory remain
 independent. startPcOk supplies the original FFI-list length equality, bounding
 every entry-PC EL in the imported FFI contract; no extra guard or default is
 introduced. byte_align retains the source LOG2(0) at small positive widths. -/
-@[hol "cakeml/compiler/backend/semantics/targetSemScript.sml" "good_init_state_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def goodInitState {width : Nat} [NeZero width] {S Q : Type}
     (mc : MachineConfig width S Q) (ms : S) (bytes : List (BitVec 8))
     (cbspace : Nat) (t : AsmState width) (m : BitVec width → WordLocW width)

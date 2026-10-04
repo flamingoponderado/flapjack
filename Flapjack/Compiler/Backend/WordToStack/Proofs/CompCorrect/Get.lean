@@ -27,11 +27,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 original simulation premise and full resource/result conclusion. Store read,
 even destination and frame bound are derived; target execution is proved.
 Evaluator closure inherits reals_as_rational_cuts; no numerical FP claim. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_correct" 5756
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 
 
 theorem compCorrectGet {width : Nat} [NeZero width] {C F : Type}

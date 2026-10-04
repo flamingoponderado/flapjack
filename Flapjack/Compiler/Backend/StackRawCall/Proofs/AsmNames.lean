@@ -10,8 +10,7 @@ open Flapjack.Compiler.Encoders.Asm
 and top-level raw-call compilation preserve `stack_asm_name` and
 `stack_asm_remove`. HOL's boolean equations are Lean `Prop` equalities; the
 configuration `c` is free in HOL and implicit here. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "stack_asm_name_comp"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackAsmNameComp {width : Nat} [NeZero width] {c : AsmConfigExact width} :
     ∀ (i : Spt Nat) (p : HolProg width),
       (stackAsmName c (comp i p) = stackAsmName c p ∧
@@ -37,8 +36,7 @@ theorem stackAsmNameComp {width : Nat} [NeZero width] {c : AsmConfigExact width}
 raw-call compilation of a whole program preserves `EVERY stack_asm_name` and
 `EVERY stack_asm_remove`. HOL's `EVERY (λ(n,p). P p)` is a membership
 quantifier over the second component. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "stack_alloc_stack_asm_convs"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackAllocStackAsmConvs {width : Nat} [NeZero width] {c : AsmConfigExact width}
     {prog : List (Nat × HolProg width)} :
     (∀ np ∈ compile prog, stackAsmName c np.2) = (∀ np ∈ prog, stackAsmName c np.2) ∧

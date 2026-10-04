@@ -33,11 +33,7 @@ original guards, the actual target existential, complete relation and stack
 resources are retained; the constituent full cases supply the proof.
 Canonical finite maps and positive word dimensions are qualified; evaluator
 closure inherits reals_as_rational_cuts (SOUNDNESS item 8). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_wInst"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateWInstArith {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (arith : HolArith width) (k f frame : Nat)
     (source sourcePost : WordSemStateFiniteExact width (Nat × C) F)

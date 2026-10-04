@@ -32,7 +32,7 @@ theorem panToTargetGoodCodeFromSource {width : Nat} [NeZero width] {S Q β : Typ
         (mc.target.config.regCount - (mc.target.config.avoidRegs.length + 3))
         mc.target.config.addrOffset p) := by
   have hinst := by
-    obtain ⟨-, -, -, -, -, -, -, -, -, -, -, -, -, hao, -, hbo, -⟩ := hcfg
+    obtain ⟨-, -, -, -, -, -, -, -, -, -, -, hao, -, hbo, -⟩ := hcfg
     have ⟨hz8, hm8z⟩ := good_dimindex_0w_8w hgood
     exact PanToWord.panToWordEveryInstOkLess mc.target.config panCode _ rfl
       (hbo 0 ⟨hm8z, hz8⟩) hao hsource

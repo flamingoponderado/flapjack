@@ -1,3 +1,4 @@
+import Batteries.Tactic.PermuteGoals
 import Flapjack.Compiler.Backend.StackRemove.Proofs.FindCode
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
 namespace Flapjack.Compiler.Backend.StackRemove.CompCorrect.JumpLower
@@ -15,10 +16,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 /-- Genuine original JumpLower case: original four premises and only the
 actual source operand/comparison/code-lookup/nonzero-clock guarded callee IH.
 Every original body-simulation quantifier and result alternative is retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectJumpLower {width : Nat} [NeZero width] {C F : Type}
     (first second label : Nat)
     (source : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))

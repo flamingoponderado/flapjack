@@ -15,8 +15,7 @@ namespace Flapjack.Compiler.Backend.WordCopy
 open Flapjack
 
 /-- Exact HOL `CPstate_models_def` (`word_copyProofScript.sml:270-280`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "CPstate_models_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def cpStateModels {width : Nat} [NeZero width] {C F : Type} (cs : CopyState)
     (S : WordSemStateFiniteExact width C F) : Prop :=
   (∀ v c vrep, sptLookup v cs.toEq = some c → sptLookup c cs.fromEq = some vrep →
@@ -38,8 +37,7 @@ end WordCopyModelsWitnesses
 
 /-- Exact HOL `CPstate_models_with_const` (`word_copyProofScript.sml:282-306`): the relation
 reads only `locals` and `store`, so all 21 other record updates leave it unchanged. -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "CPstate_models_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem cpStateModelsWithConst {width : Nat} [NeZero width] {C : Type} {F : Type} {cs : CopyState}
     {s : WordSemStateFiniteExact width C F} {ls : Option Nat}
     {fp : HolFiniteMapExact Nat (BitVec 64)} {xs : List (WordSemStackFrame width)}
@@ -76,8 +74,7 @@ theorem cpStateModelsWithConst {width : Nat} [NeZero width] {C : Type} {F : Type
     rfl, rfl⟩
 
 /-- Exact HOL `CPstate_model` (`word_copyProofScript.sml:308-314`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "CPstate_model"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem cpStateModel {width : Nat} [NeZero width] {C F : Type} {cs : CopyState}
     {st : WordSemStateFiniteExact width C F} {v : Nat} :
     cpStateModels cs st → sptLookup (lookupEq cs v) st.locals = sptLookup v st.locals := by
@@ -87,8 +84,7 @@ theorem cpStateModel {width : Nat} [NeZero width] {C F : Type} {cs : CopyState}
   · rw [hv]; exact (h1 v c r hc hr).symm
 
 /-- Exact HOL `CPstate_modelsI` (`word_copyProofScript.sml:316-335`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "CPstate_modelsI"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem cpStateModelsI {width : Nat} [NeZero width] {C F : Type} {cs : CopyState}
     {st : WordSemStateFiniteExact width C F} :
     cpStateInv cs ∧
@@ -104,8 +100,7 @@ theorem cpStateModelsI {width : Nat} [NeZero width] {C F : Type} {cs : CopyState
   · rw [hrep c vrep hc]; simp [lookupStoreEq, hsc, hc]
 
 /-- Exact HOL `CPstate_modelsD` (`word_copyProofScript.sml:337-350`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "CPstate_modelsD"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem cpStateModelsD {width : Nat} [NeZero width] {C F : Type} {cs : CopyState}
     {st : WordSemStateFiniteExact width C F} :
     cpStateInv cs ∧ cpStateModels cs st →
@@ -127,8 +122,7 @@ theorem emptyEqModels {width : Nat} [NeZero width] {C F : Type}
     fun _ _ _ h => by simp [emptyEq] at h⟩
 
 /-- Exact HOL `remove_eq_model` (`word_copyProofScript.sml:352-358`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "remove_eq_model"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem removeEqModel {width : Nat} [NeZero width] {C F : Type} {cs : CopyState}
     {st : WordSemStateFiniteExact width C F} {t : Nat} :
     cpStateModels cs st → cpStateModels (removeEq cs t) st := by
@@ -139,8 +133,7 @@ theorem removeEqModel {width : Nat} [NeZero width] {C F : Type} {cs : CopyState}
   · exact emptyEqModels st
 
 /-- Exact HOL `remove_eq_model_insert'` (`word_copyProofScript.sml:360-375`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "remove_eq_model_insert'"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem removeEqModelInsert' {width : Nat} [NeZero width] {C F : Type} {cs : CopyState}
     {st st' : WordSemStateFiniteExact width C F} {t : Nat} {val : WordLocW width} :
     cpStateInv cs ∧ cpStateModels cs st ∧ st'.locals = sptInsert t val st.locals ∧
@@ -162,8 +155,7 @@ theorem removeEqModelInsert' {width : Nat} [NeZero width] {C F : Type} {cs : Cop
         exact m2 s c vrep hsc hc
 
 /-- Exact HOL `remove_eq_model_insert` (`word_copyProofScript.sml:377-386`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "remove_eq_model_insert"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem removeEqModelInsert {width : Nat} [NeZero width] {C F : Type} {cs : CopyState}
     {st : WordSemStateFiniteExact width C F} {t : Nat} {val : WordLocW width} :
     cpStateInv cs → cpStateModels cs st →
@@ -171,8 +163,7 @@ theorem removeEqModelInsert {width : Nat} [NeZero width] {C F : Type} {cs : Copy
   fun hinv hm => removeEqModelInsert' ⟨hinv, hm, rfl, rfl⟩
 
 /-- Exact HOL `remove_eq_model_set_var` (`word_copyProofScript.sml:388-397`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "remove_eq_model_set_var"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem removeEqModelSetVar {width : Nat} [NeZero width] {C F : Type} {cs : CopyState}
     {st : WordSemStateFiniteExact width C F} {t : Nat} {val : WordLocW width} :
     cpStateInv cs ∧ cpStateModels cs st →
@@ -181,8 +172,7 @@ theorem removeEqModelSetVar {width : Nat} [NeZero width] {C F : Type} {cs : Copy
 
 /-- Exact HOL `CPstate_models_same` (`word_copyProofScript.sml:399-406`). HOL leaves the
 second state's `'c`/`'ffi` parameters independent of the first's; so does the Lean statement. -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "CPstate_models_same"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem cpStateModelsSame {width : Nat} [NeZero width] {C F C' F' : Type} {cs : CopyState}
     {st : WordSemStateFiniteExact width C F} {st' : WordSemStateFiniteExact width C' F'} :
     cpStateModels cs st ∧ st'.locals = st.locals ∧ st'.store = st.store →
@@ -193,8 +183,7 @@ theorem cpStateModelsSame {width : Nat} [NeZero width] {C F C' F' : Type} {cs : 
   · rw [hl, hs]; exact m2 s c vrep hsc hc
 
 /-- Exact HOL `set_fp_var_model` (`word_copyProofScript.sml:408-416`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "set_fp_var_model"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem setFpVarModel {width : Nat} [NeZero width] {C F : Type} {cs : CopyState}
     {st : WordSemStateFiniteExact width C F} {t : Nat} {val : BitVec 64} :
     cpStateModels cs st → cpStateModels cs (WordSemStateFiniteExact.setFpVar t val st) :=
@@ -214,8 +203,7 @@ theorem sptLookupInterEq_some {a b : Spt Nat} {k v : Nat} :
       · intro h'; cases h'
 
 /-- Exact HOL `merge_eqs_model1` (`word_copyProofScript.sml:418-425`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "merge_eqs_model1"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem mergeEqsModel1 {width : Nat} [NeZero width] {C F : Type} {cs1 cs2 : CopyState}
     {st : WordSemStateFiniteExact width C F} :
     cpStateModels cs1 st → cpStateModels (mergeEqs cs1 cs2) st := by
@@ -227,8 +215,7 @@ theorem mergeEqsModel1 {width : Nat} [NeZero width] {C F : Type} {cs1 cs2 : Copy
     exact m2 s c vrep this.1 (sptLookupInterEq_some hc).1
 
 /-- Exact HOL `merge_eqs_model2` (`word_copyProofScript.sml:427-434`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "merge_eqs_model2"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem mergeEqsModel2 {width : Nat} [NeZero width] {C F : Type} {cs1 cs2 : CopyState}
     {st : WordSemStateFiniteExact width C F} :
     cpStateModels cs2 st → cpStateModels (mergeEqs cs1 cs2) st := by

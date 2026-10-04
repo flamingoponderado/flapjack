@@ -1,3 +1,4 @@
+import Mathlib.Data.List.Infix
 import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
 import Flapjack.Compiler.Backend.StackProps.InstructionConstants
 import Flapjack.Compiler.Backend.StackProps.AllocationConstants
@@ -286,8 +287,7 @@ The original clock-first measure derives every recursive premise; the
 exact call_FFI law handles both external and shared-memory event changes.
 The evaluator closure inherits the reviewed reals_as_rational_cuts carrier
 (SOUNDNESS item 8); event preservation does not assert FP numerical parity. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_io_events_mono"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateIoEventsMono {width : Nat} [NeZero width] {C F : Type}
     (program : HolProg width) (source : StackSemStateFiniteExact width C F)
     (result : Option (StackSemResult width)) (post : StackSemStateFiniteExact width C F)

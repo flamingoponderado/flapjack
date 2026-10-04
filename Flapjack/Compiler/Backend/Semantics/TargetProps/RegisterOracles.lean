@@ -4,8 +4,7 @@ namespace Flapjack.Compiler.Backend.Semantics.TargetProps
 open Flapjack Classical
 
 /-- Literal source253: exact interference position/application selection and native register residue. The IO name argument is retained although unused; FP fallback is fixed word64. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml" "target_io_regs_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def targetIoRegs {width : Nat} [NeZero width] {S Q : Type} {σ : Type}
     (mc : MachineConfig width S Q) (ffi : HolFfiState σ) (ms : S) (k : Nat) (_name : HolFfiName) (r : Nat) : Option (BitVec width) :=
   match interferencePos (fun app => isFfiApp app = true) mc ffi ms k with
@@ -16,8 +15,7 @@ noncomputable def targetIoRegs {width : Nat} [NeZero width] {S Q : Type} {σ : T
     | _ => none
 
 /-- Literal source268: exact interference position/application selection and native register residue. The IO name argument is retained although unused; FP fallback is fixed word64. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml" "target_io_fp_regs_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def targetIoFpRegs {width : Nat} [NeZero width] {S Q : Type} {σ : Type}
     (mc : MachineConfig width S Q) (ffi : HolFfiState σ) (ms : S) (k : Nat) (i : Nat) : BitVec 64 :=
   match interferencePos (fun app => isFfiApp app = true) mc ffi ms k with
@@ -27,8 +25,7 @@ noncomputable def targetIoFpRegs {width : Nat} [NeZero width] {S Q : Type} {σ :
     | _ => 0
 
 /-- Literal source279: exact interference position/application selection and native register residue. The IO name argument is retained although unused; FP fallback is fixed word64. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml" "target_cc_regs_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def targetCcRegs {width : Nat} [NeZero width] {S Q : Type} {σ : Type}
     (mc : MachineConfig width S Q) (ffi : HolFfiState σ) (ms : S) (k : Nat) (r : Nat) : Option (BitVec width) :=
   match interferencePos (fun app => ¬ isFfiApp app = true) mc ffi ms k with
@@ -39,8 +36,7 @@ noncomputable def targetCcRegs {width : Nat} [NeZero width] {S Q : Type} {σ : T
     | _ => none
 
 /-- Literal source294: exact interference position/application selection and native register residue. The IO name argument is retained although unused; FP fallback is fixed word64. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml" "target_cc_fp_regs_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def targetCcFpRegs {width : Nat} [NeZero width] {S Q : Type} {σ : Type}
     (mc : MachineConfig width S Q) (ffi : HolFfiState σ) (ms : S) (k : Nat) (i : Nat) : BitVec 64 :=
   match interferencePos (fun app => ¬ isFfiApp app = true) mc ffi ms k with

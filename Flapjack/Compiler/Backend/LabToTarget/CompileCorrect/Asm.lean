@@ -12,8 +12,7 @@ open Flapjack.Compiler.Encoders.AsmSem Flapjack.Compiler.Encoders.AsmProps
 open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.Semantics.TargetProps
 open Flapjack.Compiler.Backend.LabLang
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "compile_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_asmInst {width : Nat} [NeZero width] {S Q F : Type}
     (s1 : Flapjack.Compiler.Backend.LabSem.State width Config F) (i : HolInst width) (bytes : List (BitVec 8)) (n : Nat)
     (hclock : s1.clock ≠ 0) (hfetch : asmFetch s1 = some (.asm (.asmi (.inst i)) bytes n))
@@ -103,8 +102,7 @@ theorem stateRel_aligned_target {width : Nat} [NeZero width] {S Q F : Type}
   exact allEncOk_aligned_posVal mc labs code2 pc _ ⟨c47, fun ho =>
     hasOddInst_alignment _ labs _ 0 code2 ⟨hec.1.1, c47, ho⟩, hec⟩
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "compile_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_jumpReg {width : Nat} [NeZero width] {S Q F : Type}
     (s1 : Flapjack.Compiler.Backend.LabSem.State width Config F) (r : Nat) (bytes : List (BitVec 8)) (n : Nat)
     (hclock : s1.clock ≠ 0) (hfetch : asmFetch s1 = some (.asm (.asmi (.jumpReg r)) bytes n))

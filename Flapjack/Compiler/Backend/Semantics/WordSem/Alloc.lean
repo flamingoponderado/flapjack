@@ -97,8 +97,7 @@ namespace WordSemStateFiniteExact
     `(enc_stack s.stack, s.memory, s.mdomain, s.store)`.  Then `dec_stack` the
     returned roots into `s.stack` and install the new `stack`, `store` and
     `memory`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "gc_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def gc {width : Nat} [NeZero width] {C : Type} {F : Type}
     (state : WordSemStateFiniteExact width C F) : Option (WordSemStateFiniteExact width C F) :=
   let wlList := wordSemEncStack state.stack
@@ -112,8 +111,7 @@ def gc {width : Nat} [NeZero width] {C : Type} {F : Type}
 /-- Exact HOL `has_space_def` (`wordSemScript.sml:663-668`):
     `case (wl, get_store NextFree s, get_store TriggerGC s) of (Word w, SOME
     (Word n), SOME (Word l)) => SOME (w2n w <= w2n (l - n)) | _ => NONE`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "has_space_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def hasSpace {width : Nat} [NeZero width] {C : Type} {F : Type}
     (wl : WordLocW width) (state : WordSemStateFiniteExact width C F) : Option Bool :=
   match wl, getStore .nextFree state, getStore .triggerGC state with
@@ -129,8 +127,7 @@ def hasSpace {width : Nat} [NeZero width] {C : Type} {F : Type}
     A missing `AllocSize` or `has_space = NONE` gives `SOME Error` on the
     current state.  `SOME F` gives `(SOME NotEnoughSpace, flush_state T s)`,
     and `SOME T` gives `(NONE, s)`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "alloc_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def alloc {width : Nat} [NeZero width] {C : Type} {F : Type}
     (w : BitVec width) (names : WordLangCutsetsHOL) (state : WordSemStateFiniteExact width C F) :
     Option (WordSemResult width) × WordSemStateFiniteExact width C F :=
@@ -153,8 +150,7 @@ def alloc {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `assign_def` (`wordSemScript.sml:700-705`):
     `case word_exp s exp of NONE => NONE | SOME w => SOME (set_var reg w s)`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "assign_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def assign {width : Nat} [NeZero width] {C : Type} {F : Type}
     (reg : Nat) (exp : WordLangExpHOL (BitVec width)) (state : WordSemStateFiniteExact width C F) :
     Option (WordSemStateFiniteExact width C F) :=

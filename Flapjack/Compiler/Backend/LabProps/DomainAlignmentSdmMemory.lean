@@ -7,8 +7,6 @@ open Flapjack Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Encoders.Asm
 operations and both instruction dispatchers. The ordinary memory domain is
 unchanged; no word-dimension guard or transition-success premise is added. -/
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "mem_load_align_sdm"
-  (words_as_type_indexed_bitvec)]
 theorem memLoadAlignSDM {width : Nat} [NeZero width] {C F : Type}
     (n : Nat) (a : HolAddr width) (s : Flapjack.Compiler.Backend.LabSem.State width C F) :
     memLoad n a (alignSdm s) = alignSdm (memLoad n a s) := by
@@ -19,8 +17,6 @@ theorem memLoadAlignSDM {width : Nat} [NeZero width] {C F : Type}
     | split
     | simp_all
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "mem_load32_align_sdm"
-  (words_as_type_indexed_bitvec)]
 theorem memLoad32AlignSDM {width : Nat} [NeZero width] {C F : Type}
     (n : Nat) (a : HolAddr width) (s : Flapjack.Compiler.Backend.LabSem.State width C F) :
     memLoad32 n a (alignSdm s) = alignSdm (memLoad32 n a s) := by
@@ -31,8 +27,6 @@ theorem memLoad32AlignSDM {width : Nat} [NeZero width] {C F : Type}
     | split
     | simp_all
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "mem_load_byte_align_sdm"
-  (words_as_type_indexed_bitvec)]
 theorem memLoadByteAlignSDM {width : Nat} [NeZero width] {C F : Type}
     (n : Nat) (a : HolAddr width) (s : Flapjack.Compiler.Backend.LabSem.State width C F) :
     memLoadByte n a (alignSdm s) = alignSdm (memLoadByte n a s) := by
@@ -43,8 +37,6 @@ theorem memLoadByteAlignSDM {width : Nat} [NeZero width] {C F : Type}
     | split
     | simp_all
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "mem_store_align_sdm"
-  (words_as_type_indexed_bitvec)]
 theorem memStoreAlignSDM {width : Nat} [NeZero width] {C F : Type}
     (n : Nat) (a : HolAddr width) (s : Flapjack.Compiler.Backend.LabSem.State width C F) :
     memStore n a (alignSdm s) = alignSdm (memStore n a s) := by
@@ -55,8 +47,6 @@ theorem memStoreAlignSDM {width : Nat} [NeZero width] {C F : Type}
     | split
     | simp_all
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "mem_store32_align_sdm"
-  (words_as_type_indexed_bitvec)]
 theorem memStore32AlignSDM {width : Nat} [NeZero width] {C F : Type}
     (n : Nat) (a : HolAddr width) (s : Flapjack.Compiler.Backend.LabSem.State width C F) :
     memStore32 n a (alignSdm s) = alignSdm (memStore32 n a s) := by
@@ -67,8 +57,6 @@ theorem memStore32AlignSDM {width : Nat} [NeZero width] {C F : Type}
     | split
     | simp_all
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "mem_store_byte_align_sdm"
-  (words_as_type_indexed_bitvec)]
 theorem memStoreByteAlignSDM {width : Nat} [NeZero width] {C F : Type}
     (n : Nat) (a : HolAddr width) (s : Flapjack.Compiler.Backend.LabSem.State width C F) :
     memStoreByte n a (alignSdm s) = alignSdm (memStoreByte n a s) := by
@@ -79,8 +67,6 @@ theorem memStoreByteAlignSDM {width : Nat} [NeZero width] {C F : Type}
     | split
     | simp_all
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "mem_op_align_sdm"
-  (words_as_type_indexed_bitvec)]
 theorem memOpAlignSDM {width : Nat} [NeZero width] {C F : Type}
     (m : HolMemop) (n : Nat) (a : HolAddr width)
     (s : Flapjack.Compiler.Backend.LabSem.State width C F) :
@@ -88,11 +74,9 @@ theorem memOpAlignSDM {width : Nat} [NeZero width] {C F : Type}
   cases m <;> simp only [memOp,memLoadAlignSDM,memLoad32AlignSDM,memLoadByteAlignSDM,
     memStoreAlignSDM,memStore32AlignSDM,memStoreByteAlignSDM,assertAlignSDM]
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "asm_inst_align_sdm"
-  (words_as_type_indexed_bitvec)]
 theorem asmInstAlignSDM {width : Nat} [NeZero width] {C F : Type}
     (i : HolInst width) (s : Flapjack.Compiler.Backend.LabSem.State width C F) :
     asmInst i (alignSdm s) = alignSdm (asmInst i s) := by
-  cases i <;> simp only [asmInst,arithUpdAlignSDM,fpUpdAlignSDM,memOpAlignSDM,updRegAlignSDM]
+  cases i <;> simp only [asmInst,arithUpdAlignSDM,memOpAlignSDM,updRegAlignSDM]
 
 end Flapjack.Compiler.Backend.LabProps

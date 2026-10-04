@@ -17,8 +17,7 @@ namespace Flapjack.WordAlloc
 open Flapjack Flapjack.Compiler.Backend.WordAlloc Flapjack.Compiler.Encoders.Asm
 
 /-- HOL `fake_seq_every_inst_distinct_tar_reg` (`word_allocProofScript.sml:10442-10447`). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "fake_seq_every_inst_distinct_tar_reg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fakeSeq_distinctTarReg {width : Nat} [NeZero width] (names : List Nat) :
     everyInst (fun i => distinctTarRegExact (HolInst.ofWordLangInst i))
       ((names.map (fakeMove : Nat → WordLangProgHOL (BitVec width))).foldr .seq .skip) = true := by
@@ -29,8 +28,7 @@ theorem fakeSeq_distinctTarReg {width : Nat} [NeZero width] (names : List Nat) :
 
 /-- HOL `loop_setup_every_inst_distinct_tar_reg` (`word_allocProofScript.sml:10483-10493`),
 with the producer equation as sole premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "loop_setup_every_inst_distinct_tar_reg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loopSetup_distinctTarReg {width : Nat} [NeZero width]
     (names exitNames : Spt Unit) (ssa : Spt Nat) (na : Nat)
     (setupProg : WordLangProgHOL (BitVec width)) (ssaRefreshed : Spt Nat)
@@ -63,8 +61,7 @@ theorem loopSetup_distinctTarReg {width : Nat} [NeZero width]
 /-- HOL `fake_moves_distinct_tar_reg` (`word_allocProofScript.sml:10777-10787`); HOL's free
 `prio` is the leading binder. HOL's binder `conf` does not occur in the statement and is
 omitted. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "fake_moves_distinct_tar_reg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fakeMoves_distinctTarReg {width : Nat} [NeZero width] (prio : Option (Unit ⊕ Unit)) :
     ∀ (ls : List Nat) (ssal ssar : Spt Nat) (na : Nat) (l r : WordLangProgHOL (BitVec width))
       (a : Nat) (b c : Spt Nat),
@@ -120,8 +117,8 @@ private theorem distinct_reconcile {width : Nat} [NeZero width] {β : Type}
 
 /-- HOL `ssa_cc_trans_distinct_tar_reg`, `Inst` case: the destination is the
 fresh `na`, above every renamed source register. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_distinct_tar_reg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: integer-only specialization of the referenced HOL declaration.
+
 theorem ssaCcTrans_distinctInst {width : Nat} [NeZero width]
     (instruction : WordLangInst (BitVec width))
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -145,7 +142,7 @@ theorem ssaCcTrans_distinctInst {width : Nat} [NeZero width]
     fun key => (lookupNe key).symm
   have alloc : next % 4 = 1 := by simpa [isAllocVar] using allocated
   simp only [ssaCcTrans]
-  rcases instruction with _ | ⟨reg, w⟩ | a | ⟨op, r, ad⟩ | f
+  rcases instruction with _ | ⟨reg, w⟩ | a | ⟨op, r, ad⟩
   · simp [ssaCcTransInst, everyInst]
   · simp [ssaCcTransInst, nextVarRename, everyInst, HolInst.ofWordLangInst, distinctTarRegExact]
   · cases a with
@@ -167,12 +164,10 @@ theorem ssaCcTrans_distinctInst {width : Nat} [NeZero width]
         distinctTarRegExact] <;> omega
   · cases op <;> cases ad <;> simp +zetaDelta [ssaCcTransInst, nextVarRename, everyInst,
       HolInst.ofWordLangInst, distinctTarRegExact]
-  · cases f <;> simp +zetaDelta only [ssaCcTransInst, nextVarRename] <;> (repeat' split) <;>
-      simp [everyInst, HolInst.ofWordLangInst, distinctTarRegExact]
 
 /-- HOL `ssa_cc_trans_distinct_tar_reg`, `OpCurrHeap` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_distinct_tar_reg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: integer-only specialization of the referenced HOL declaration.
+
 theorem ssaCcTrans_distinctOpCurrHeap {width : Nat} [NeZero width]
     (operator : BinOp) (destination source : Nat)
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -199,8 +194,8 @@ theorem ssaCcTrans_distinctOpCurrHeap {width : Nat} [NeZero width]
 
 /-- HOL `ssa_cc_trans_distinct_tar_reg`, `If` case, with the two structurally
 generalized branch induction hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_distinct_tar_reg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: integer-only specialization of the referenced HOL declaration.
+
 theorem ssaCcTrans_distinctIf {width : Nat} [NeZero width]
     (cmp : Cmp) (condition : Nat) (right : WordRegImm (BitVec width))
     (yes no : WordLangProgHOL (BitVec width))
@@ -240,8 +235,8 @@ theorem ssaCcTrans_distinctIf {width : Nat} [NeZero width]
 
 /-- HOL `ssa_cc_trans_distinct_tar_reg`, `Loop` case (`Resume ...[Loop]`), with a
 structurally generalized body induction hypothesis. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_distinct_tar_reg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: integer-only specialization of the referenced HOL declaration.
+
 theorem ssaCcTrans_distinctLoop {width : Nat} [NeZero width]
     (names exitNames : Spt Unit) (body : WordLangProgHOL (BitVec width))
     (bodyIH : ∀ (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit)),
@@ -281,8 +276,8 @@ theorem ssaCcTrans_distinctLoop {width : Nat} [NeZero width]
 /-- HOL `ssa_cc_trans_distinct_tar_reg`, returning `Call` case with both
 exception-handler options and structurally generalized handler induction
 hypotheses; handler map bounds are derived from the original producers. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_distinct_tar_reg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: integer-only specialization of the referenced HOL declaration.
+
 theorem ssaCcTrans_distinctReturningCall {width : Nat} [NeZero width]
     (ret : List Nat) (cutsets : WordLangCutsetsHOL)
     (retHandler : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
@@ -416,8 +411,8 @@ private def programDistinct {width : Nat} [NeZero width]
 /-- HOL `ssa_cc_trans_distinct_tar_reg` (`word_allocProofScript.sml:10789-10951`, with its `Resume` cases),
 assembled by structural induction including both nested handlers; only HOL's
 allocation-class, source register bound and SSA map premises are assumed. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_distinct_tar_reg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: integer-only specialization of the referenced HOL declaration.
+
 theorem ssaCcTrans_distinctTarReg {width : Nat} [NeZero width] :
     ∀ (prog : WordLangProgHOL (BitVec width)) (ssa : Spt Nat) (na : Nat)
       (lt : List (Spt Nat × Spt Unit × Spt Unit)),
@@ -514,8 +509,7 @@ theorem ssaCcTrans_distinctTarReg {width : Nat} [NeZero width] :
     try (split <;> simp [everyInst])
 
 /-- HOL `full_ssa_cc_trans_distinct_tar_reg` (`word_allocProofScript.sml:10953-10982`). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "full_ssa_cc_trans_distinct_tar_reg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fullSsaCcTrans_distinctTarReg {width : Nat} [NeZero width] :
     ∀ (n : Nat) (prog : WordLangProgHOL (BitVec width)),
       everyInst (fun i => distinctTarRegExact (HolInst.ofWordLangInst i))

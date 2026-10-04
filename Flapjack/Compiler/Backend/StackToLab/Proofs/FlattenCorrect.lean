@@ -89,10 +89,7 @@ theorem flattenPropAll {width : Nat} [NeZero width] {C F : Type}
 
 /-- HOL `flatten_correct`: a non-error StackSem evaluation of `prog` is
 simulated by LabSem execution of its flattening installed at `t1.pc`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenCorrect {width : Nat} [NeZero width] {C F : Type} :
     ∀ (prog : HolProg width) (s1 : StackSemStateFiniteExact width C F) (t : Bool)
       (r : Option (StackSemResult width)) (s2 : StackSemStateFiniteExact width C F)

@@ -23,7 +23,6 @@ theorem wordCseInstruction_production_transport {width : Nat} [NeZero width]
       wordLangProgFromHOL nativeOutput.2 = some executedOutput.1 := by
   cases instruction with
   | skip => simp [wordLangInstFromHOL] at converted
-  | fp operation => simp [wordLangInstFromHOL] at converted
   | const destination word =>
     simp only [wordLangInstFromHOL, Option.some.injEq] at converted
     subst executedInstruction

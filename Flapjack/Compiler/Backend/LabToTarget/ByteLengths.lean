@@ -2,14 +2,12 @@ import Flapjack.Compiler.Backend.LabToTarget.EncodingValidity
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm
 open Flapjack.Basis.Pure.MlString
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "prog_to_bytes_APPEND"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem progToBytes_append {width : Nat} [NeZero width] (c1 c2 : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
     progToBytes (c1 ++ c2) = progToBytes c1 ++ progToBytes c2 := by
   simp [progToBytesMap, List.map_append, List.flatten_append]
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "line_ok_line_byte_length"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem lineOk_lineByteLength {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (labs : Spt (Spt Nat)) (ffi : List HolFfiName)
     (n : Nat) (l : Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)) :
@@ -22,8 +20,7 @@ theorem lineOk_lineByteLength {width : Nat} [NeZero width]
   | asm instruction bytes length => intro _; rfl
   | labAsm instruction word bytes length => intro _; rfl
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "lines_ok_MAP_line_byte_length"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem linesOk_mapLineByteLength {width : Nat} [NeZero width]
     (ls : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) (c : AsmConfigExact width) (labs : Spt (Spt Nat))
     (ffi : List HolFfiName) (n : Nat) :
@@ -42,8 +39,7 @@ theorem linesOk_mapLineByteLength {width : Nat} [NeZero width]
 is absent from every hypothesis and the conclusion, as the fresh original full
 type capture confirms; this vacuous binder is omitted, with no width or position
 specialization. The original start-position and full validity guards remain. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "all_enc_ok_prog_to_bytes_EVEN"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem allEncOk_progToBytes_even {width : Nat} [NeZero width]
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) (c : AsmConfigExact width) (labs : Spt (Spt Nat))
     (ffi : List HolFfiName) (pos : Nat) :

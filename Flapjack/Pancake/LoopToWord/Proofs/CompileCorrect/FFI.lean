@@ -46,11 +46,7 @@ end LoopToWordCompileCorrectFFIWitnesses
     for the cut, and `cut_env_mk_new_cutset_IMP` keeps register 0.  Both sides
     read the same byte arrays from the equal memory and make the same
     `call_FFI`. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "compile_correct"
-  (fmap_as_finite_support_relation :=
-    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.fpRegs,
-      WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_FFI {width : Nat} [NeZero width] {C F : Type}
     (ffiIndex : Flapjack.Basis.Pure.MlString.MlString) (ptr1 len1 ptr2 len2 : Nat) (cutset : NumSet) (s : LoopSemStateFiniteExact width F) :
     ∀ (res : Option (LoopSemStateFiniteExact.LoopResultExact width))

@@ -6,8 +6,7 @@ open Flapjack Flapjack.Compiler.Backend.WordAlloc Flapjack.Compiler.Encoders.Asm
 
 /-- Original complete ShareInst validity case. Source address extraction
 supplies the offset, which the literal SSA expression translation preserves. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_fullInstShareInst {width : Nat} [NeZero width]
     (config : AsmConfigExact width) (operator : HolMemop) (name : Nat)
     (expression : WordLangExpHOL (BitVec width))

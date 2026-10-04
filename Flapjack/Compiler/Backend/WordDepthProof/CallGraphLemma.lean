@@ -80,8 +80,7 @@ option_le s1.stack_max (OPTION_MAP2 MAX s.stack_max (OPTION_MAP2 (+) (stack_size
  s1.stack_size = s.stack_size /\
  ((res = NONE \/ (?k. res = SOME (Break k)) \/ (?k. res = SOME (Continue k))) ==>
   s1.locals_size = s.locals_size))`. -/
-@[hol "cakeml/compiler/backend/proofs/word_depthProofScript.sml" "max_depth_call_graph_lemma"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem maxDepthCallGraphLemma {width : Nat} [NeZero width] {C F : Type} :
     ∀ (prog : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F)
       (res : Option (WordSemResult width)) (s1 : WordSemStateFiniteExact width C F)

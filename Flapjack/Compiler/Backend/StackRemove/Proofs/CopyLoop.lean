@@ -1,3 +1,4 @@
+import Mathlib.Tactic.ByContra
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CopyEach
 import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
 import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateClock
@@ -242,8 +243,7 @@ their true sets. Words and canonical finite maps use only the named reviewed
 translations. The evaluator closure inherits the reviewed
 reals_as_rational_cuts FP carrier (SOUNDNESS item 8), although this program
 executes only integer instructions. No target run or clock law is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "copy_loop_thm"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem copyLoopThm {width : Nat} [NeZero width] {C F : Type}
     (temporary bitmap index _unusedIndex : Nat)
     (address offset finalAddress base : BitVec width)

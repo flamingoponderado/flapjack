@@ -20,8 +20,7 @@ open Classical in
 /-- Exact HOL `word_gc_fun_thm` (`stack_allocProofScript.sml:481-517`), the
 Simple-collector unfolding of `word_gc_fun`; HOL's free `roots m dm s` and
 `conf` are implicit and the store binder `s` is the canonical finite map. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "word_gc_fun_thm" 481
-  (fmap_as_finite_support_relation := [s]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_gc_fun_thm {width : Nat} [NeZero width] {conf : Config}
     {roots : List (WordLocW width)} {m : BitVec width → WordLocW width}
     {dm : BitVec width → Bool} {s : HolFiniteMapExact WordStoreHOL (WordLocW width)} :
@@ -80,8 +79,7 @@ open Classical in
 /-- Exact HOL `gc_thm` (`stack_allocProofScript.sml:554`, the Simple-collector
 declaration), the StackSem `gc` step under `word_gc_fun conf` with
 `conf.gc_kind = Simple`; HOL's free `s` and `conf` are implicit. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "gc_thm" 554
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem gc_thm {width : Nat} [NeZero width] {C F : Type} {conf : Config}
     {s : StackSemStateFiniteExact width C F} :
     s.gcFun = wordGcFun conf ∧ conf.gcKind = .simple →

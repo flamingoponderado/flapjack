@@ -51,10 +51,7 @@ theorem fmap_ext {α β : Type} {m1 m2 : HolFiniteMapExact α β}
 /-- Exact HOL `state_rel_set_store_0` (`word_to_stackProofScript.sml:1600-1611`).
 Both stores receive the same `AllocSize` entry; frame sizes are `0`, while
 `len` and `extra` stay arbitrary. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "state_rel_set_store_0"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store,
-    StackSemStateFiniteExact.regs, StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelSetStore0 {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (k : Nat)
     (s5 : WordSemStateFiniteExact width (Nat × C) F)
@@ -95,8 +92,7 @@ theorem stateRelSetStore0 {width : Nat} [NeZero width] {C F : Type}
 /-- Exact HOL `alloc_alt` (`word_to_stackProofScript.sml:2075-2101`). The
 source configuration carrier is `Nat × C` as in HOL; HOL `push_env env NONE s
 with <|locals := LN; locals_size := SOME 0|>` updates the pushed state. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "alloc_alt"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem allocAlt {width : Nat} [NeZero width] {C F : Type}
     (c : BitVec width) (names : WordLangCutsetsHOL)
     (s : WordSemStateFiniteExact width (Nat × C) F) :

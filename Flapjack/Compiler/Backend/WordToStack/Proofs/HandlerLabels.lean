@@ -10,8 +10,7 @@ open Flapjack.Compiler.Encoders.Asm
 EVERY handler guard and complete actual output equation retain arbitrary
 configuration, register count, input programs, frame list and bitmap state.
 The target safety predicate is proved, with no additional bounds or premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_good_handler_labels_incr" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackGoodHandlerLabelsIncr {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (registers : Nat)
     (rows : List (Nat × Nat × WordLangProgHOL (BitVec width)))

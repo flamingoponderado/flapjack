@@ -11,8 +11,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
 /-- Full original evaluate_cont_loop_handler (7724–7733), retaining the actual
 source evaluation and continuation guard. Evaluator closure inherits
 reals_as_rational_cuts; no independent real-analysis agreement is claimed. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_cont_loop_handler"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateContLoopHandler {width : Nat} [NeZero width] {C F : Type}
     (program : WordLangProgHOL (BitVec width))
     (source post : WordSemStateFiniteExact width C F)

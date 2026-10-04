@@ -52,8 +52,7 @@ theorem compileLab_some {width : Nat} [NeZero width] {asmConf : AsmConfigExact w
 
 /-- Full original compile_lab_LENGTH (`backendProofScript.sml:1215-1221`):
 `compile_lab asm_conf c secs = SOME (bytes, c') ⇒ c'.pos = LENGTH bytes + c.pos`. -/
-@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "compile_lab_LENGTH"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileLabLENGTH {width : Nat} [NeZero width] (asmConf : AsmConfigExact width)
     (c : LabToTarget.Config)
     (secs : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -70,8 +69,7 @@ theorem compileLabLENGTH {width : Nat} [NeZero width] (asmConf : AsmConfigExact 
 `ExtCall`, `compile_lab` returns FFI names whose MMIO minimum index exists.
 HOL `OPTION_ALL P o` is the match `none ↦ True`, `some l ↦ P l`, and `EVERY` is
 list membership quantification. -/
-@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml"
-  "compile_lab_IMP_mmio_pcs_min_index" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileLabIMPMmioPcsMinIndex {width : Nat} [NeZero width]
     (asmConf : AsmConfigExact width) (c : LabToTarget.Config)
     (secList : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))

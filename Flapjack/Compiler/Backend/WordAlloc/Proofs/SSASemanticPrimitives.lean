@@ -21,9 +21,7 @@ locals conclusion are retained. Skip preserves the complete original locals rela
 No target evaluation, successful-clock or post-state relation is assumed. The
 full evaluator inherits reals_as_rational_cuts (SOUNDNESS item 8); this case
 executes no FP operation. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_correct"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransCorrectSkip {width : Nat} [NeZero width] {C F : Type}
     (source target : WordSemStateFiniteExact width C F)
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -42,9 +40,7 @@ locals conclusion are retained. Both zero-clock timeout/flush and positive-clock
 No target evaluation, successful-clock or post-state relation is assumed. The
 full evaluator inherits reals_as_rational_cuts (SOUNDNESS item 8); this case
 executes no FP operation. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_correct"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransCorrectTick {width : Nat} [NeZero width] {C F : Type}
     (source target : WordSemStateFiniteExact width C F)
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))

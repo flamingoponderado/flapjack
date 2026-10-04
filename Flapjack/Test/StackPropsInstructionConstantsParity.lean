@@ -21,13 +21,6 @@ example : (instHOL (.mem .store 2 (.addr 1 0))
     (fun t => (t.clock, t.memory 0)) = some (19, .loc 4 5) := by cbv
 example : (instHOL (.mem .store 2 (.addr 1 0)) (fixture s)).map
     (fun t => t.clock) = none := by cbv
-example : (instHOL (.fp (.fpAbs 1 0)) { fixture s with clock := 0 }).map
-    (fun t => (t.clock, t.fpRegs.lookup 1)) =
-    some (0, some (BitVec.ofNat 64 0x3FF0000000000000)) := by cbv
-example : (instHOL (.fp (.fpMov 1 3)) { fixture s with clock := 0 }).map
-    (fun t => t.clock) = none := by cbv
 example {OtherF : Type} (k : HolFfiState OtherF) : (instHOL (.const 1 12) ({ fixture s with ffi := k } : StackSemStateFiniteExact 8 C OtherF)).map
     (fun t => (t.ffi = k, t.clock, t.regs.lookup 1)) = some (True, 19, some (.word 12)) := by
   cbv
-example {OtherF : Type} (k : HolFfiState OtherF) : (instHOL (.fp (.fpMov 1 3)) ({ fixture s with ffi := k } : StackSemStateFiniteExact 8 C OtherF)).map
-    (fun t => t.ffi = k) = none := by cbv

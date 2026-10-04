@@ -31,8 +31,7 @@ theorem liveAllocArg {width : Nat} [NeZero width]
 
 /-- Full original Skip case of `word_to_stack_alloc_arg`, with all constructor
 fields and only the original false-performance guard; no compiler result premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_alloc_arg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackAllocArgSkip {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -44,8 +43,7 @@ theorem wordToStackAllocArgSkip {width : Nat} [NeZero width]
 
 /-- Full original Move case of `word_to_stack_alloc_arg`, with all constructor
 fields and only the original false-performance guard; no compiler result premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_alloc_arg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackAllocArgMove {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (priority : Nat) (moves : List (Nat × Nat))
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -57,8 +55,7 @@ theorem wordToStackAllocArgMove {width : Nat} [NeZero width]
 
 /-- Full original Assign case of `word_to_stack_alloc_arg`, with all constructor
 fields and only the original false-performance guard; no compiler result premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_alloc_arg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackAllocArgAssign {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (v : Nat) (exp : WordLangExpHOL (BitVec width))
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -70,8 +67,7 @@ theorem wordToStackAllocArgAssign {width : Nat} [NeZero width]
 
 /-- Full original Get case of `word_to_stack_alloc_arg`, with all constructor
 fields and only the original false-performance guard; no compiler result premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_alloc_arg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackAllocArgGet {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (v : Nat) (name : WordStoreHOL)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -83,8 +79,7 @@ theorem wordToStackAllocArgGet {width : Nat} [NeZero width]
 
 /-- Full original Set case of `word_to_stack_alloc_arg`, with all constructor
 fields and only the original false-performance guard; no compiler result premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_alloc_arg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackAllocArgSet {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (name : WordStoreHOL) (exp : WordLangExpHOL (BitVec width))
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -96,8 +91,7 @@ theorem wordToStackAllocArgSet {width : Nat} [NeZero width]
 
 /-- Full original Store case of `word_to_stack_alloc_arg`, with all constructor
 fields and only the original false-performance guard; no compiler result premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_alloc_arg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackAllocArgStore {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (exp : WordLangExpHOL (BitVec width)) (v : Nat)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -109,8 +103,7 @@ theorem wordToStackAllocArgStore {width : Nat} [NeZero width]
 
 /-- Full original Alloc case of `word_to_stack_alloc_arg`, with all constructor
 fields and only the original false-performance guard; no compiler result premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_alloc_arg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackAllocArgAlloc {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (v : Nat) (live : WordLangCutsetsHOL)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -122,8 +115,7 @@ theorem wordToStackAllocArgAlloc {width : Nat} [NeZero width]
 
 /-- Full original StoreConsts case of `word_to_stack_alloc_arg`, with all constructor
 fields and only the original false-performance guard; no compiler result premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_alloc_arg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackAllocArgStoreConsts {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (r1 r2 r3 r4 : Nat) (ws : List (Bool × BitVec width))
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -135,8 +127,7 @@ theorem wordToStackAllocArgStoreConsts {width : Nat} [NeZero width]
 
 /-- Full original Raise case of `word_to_stack_alloc_arg`, with all constructor
 fields and only the original false-performance guard; no compiler result premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_alloc_arg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackAllocArgRaise {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (v : Nat)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -148,8 +139,7 @@ theorem wordToStackAllocArgRaise {width : Nat} [NeZero width]
 
 /-- Full original Return case of `word_to_stack_alloc_arg`, with all constructor
 fields and only the original false-performance guard; no compiler result premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_alloc_arg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackAllocArgReturn {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (v : Nat) (vs : List Nat)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -163,8 +153,7 @@ theorem wordToStackAllocArgReturn {width : Nat} [NeZero width]
 
 /-- Full original Break case of `word_to_stack_alloc_arg`, with all constructor
 fields and only the original false-performance guard; no compiler result premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_alloc_arg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackAllocArgBreak {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (label : Nat)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -176,8 +165,7 @@ theorem wordToStackAllocArgBreak {width : Nat} [NeZero width]
 
 /-- Full original Continue case of `word_to_stack_alloc_arg`, with all constructor
 fields and only the original false-performance guard; no compiler result premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_alloc_arg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackAllocArgContinue {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (label : Nat)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -189,8 +177,7 @@ theorem wordToStackAllocArgContinue {width : Nat} [NeZero width]
 
 /-- Full original Tick case of `word_to_stack_alloc_arg`, with all constructor
 fields and only the original false-performance guard; no compiler result premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_alloc_arg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackAllocArgTick {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -202,8 +189,7 @@ theorem wordToStackAllocArgTick {width : Nat} [NeZero width]
 
 /-- Full original OpCurrHeap case of `word_to_stack_alloc_arg`, with all constructor
 fields and only the original false-performance guard; no compiler result premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_alloc_arg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackAllocArgOpCurrHeap {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (op : BinOp) (v src : Nat)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -216,8 +202,7 @@ theorem wordToStackAllocArgOpCurrHeap {width : Nat} [NeZero width]
 
 /-- Full original LocValue case of `word_to_stack_alloc_arg`, with all constructor
 fields and only the original false-performance guard; no compiler result premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_alloc_arg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackAllocArgLocValue {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (v label : Nat)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -229,8 +214,7 @@ theorem wordToStackAllocArgLocValue {width : Nat} [NeZero width]
 
 /-- Full original Install case of `word_to_stack_alloc_arg`, with all constructor
 fields and only the original false-performance guard; no compiler result premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_alloc_arg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackAllocArgInstall {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (r1 r2 r3 r4 : Nat) (live : WordLangCutsetsHOL)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -242,8 +226,7 @@ theorem wordToStackAllocArgInstall {width : Nat} [NeZero width]
 
 /-- Full original CodeBufferWrite case of `word_to_stack_alloc_arg`, with all constructor
 fields and only the original false-performance guard; no compiler result premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_alloc_arg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackAllocArgCodeBufferWrite {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (r1 r2 : Nat)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -255,8 +238,7 @@ theorem wordToStackAllocArgCodeBufferWrite {width : Nat} [NeZero width]
 
 /-- Full original DataBufferWrite case of `word_to_stack_alloc_arg`, with all constructor
 fields and only the original false-performance guard; no compiler result premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_alloc_arg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackAllocArgDataBufferWrite {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (r1 r2 : Nat)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -268,8 +250,7 @@ theorem wordToStackAllocArgDataBufferWrite {width : Nat} [NeZero width]
 
 /-- Full original Ffi case of `word_to_stack_alloc_arg`, with all constructor
 fields and only the original false-performance guard; no compiler result premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_alloc_arg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackAllocArgFfi {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (name : Basis.Pure.MlString.MlString) (r1 r2 r3 r4 : Nat) (live : WordLangCutsetsHOL)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)

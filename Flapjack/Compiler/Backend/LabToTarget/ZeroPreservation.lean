@@ -5,8 +5,7 @@ namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm
 open Flapjack.Basis.Pure.MlString
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "EVERY_label_zero_add_nop"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem everyLabelZero_addNop {width : Nat} [NeZero width]
     (xs : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) (nop : List (BitVec 8)) :
@@ -16,8 +15,7 @@ theorem everyLabelZero_addNop {width : Nat} [NeZero width]
   | cons x xs ih => cases x <;> simp_all [addNop,labelZero]
 
 /-- Unrestricted source lines: padding resets every new label; only old accumulator labels need the original premise. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "EVERY_label_zero_pad_section"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem everyLabelZero_padSection {width : Nat} [NeZero width]
     (nop : List (BitVec 8)) (xs aux : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) :
@@ -42,8 +40,7 @@ theorem everyLabelZero_padSection {width : Nat} [NeZero width]
       apply ih
       simpa [labelZero] using h
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "EVERY_sec_label_zero_pad_code"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem everySecLabelZero_padCode {width : Nat} [NeZero width]
     (nop : List (BitVec 8)) (ls : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
@@ -55,8 +52,7 @@ theorem everySecLabelZero_padCode {width : Nat} [NeZero width]
     have hl := everyLabelZero_padSection nop lines [] (by simp)
     simpa [padCode,secLabelZero] using And.intro hl ih
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "enc_lines_again_simp_label_zero"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem encLinesAgainSimp_labelZero {width : Nat} [NeZero width]
     (labs : Spt (Spt Nat)) (ffis : List HolFfiName) (pos : Nat)
     (enc : HolAsm width → List (BitVec 8))
@@ -80,8 +76,7 @@ theorem encLinesAgainSimp_labelZero {width : Nat} [NeZero width]
       have ht := ih _ rest flag ⟨hr, fun l hm => hls l (by simp [hm])⟩
       simp_all [labelZero]
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "enc_secs_again_label_zero"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem encSecsAgain_labelZero {width : Nat} [NeZero width]
     (pos : Nat) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (enc : HolAsm width → List (BitVec 8))

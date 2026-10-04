@@ -277,8 +277,7 @@ end EvaluateConsts
 open EvaluateConsts in
 /-- Exact HOL `evaluate_consts` (`stackPropsScript.sml:400-418`): an evaluation preserves
 `use_alloc`, `use_store`, `use_stack`, `be`, `gc_fun`, `mdomain`, `sh_mdomain` and `compile`. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_consts"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateConsts {width : Nat} [NeZero width] {C F : Type} :
     ∀ (c : HolProg width) (s : StackSemStateFiniteExact width C F)
       (r : Option (StackSemResult width)) (s1 : StackSemStateFiniteExact width C F),

@@ -110,8 +110,7 @@ case (proof `wordPropsScript.sml:2449-2460`): the HOL conclusion at
 `MustTerminate p`, from exactly HOL `evaluate_ind`'s `MustTerminate` induction
 hypothesis (the body at the reset clock and decremented termination depth when
 that depth is nonzero); no extra premise. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_swap"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateStackSwap_MustTerminate {width : Nat} [NeZero width] {C F : Type}
     (p : WordLangProgHOL (BitVec width)) :
     ∀ s : WordSemStateFiniteExact width C F,

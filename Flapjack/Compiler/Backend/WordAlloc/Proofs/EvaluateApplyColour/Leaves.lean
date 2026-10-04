@@ -162,8 +162,7 @@ theorem sptDomain_numsetIns (keys : List Nat) (t : NumSet) (k : Nat) :
   rw [domainNumsetListInsert]
 
 /-- HOL `evaluate_apply_colour`, `Skip` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_Skip {width : Nat} [NeZero width] {C F : Type} :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)
       (lt : List (NumSet × NumSet)),
@@ -178,8 +177,7 @@ theorem evaluateApplyColour_Skip {width : Nat} [NeZero width] {C F : Type} :
   exact ⟨rfl, hs, by simpa [getLive, applyColourLocals] using hr⟩
 
 /-- HOL `evaluate_apply_colour`, `Tick` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_Tick {width : Nat} [NeZero width] {C F : Type} :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)
       (lt : List (NumSet × NumSet)),
@@ -199,8 +197,7 @@ theorem evaluateApplyColour_Tick {width : Nat} [NeZero width] {C F : Type} :
     exact ⟨rfl, wsrDecClock hs, by simpa [getLive, applyColourLocals, decClock] using hr⟩
 
 /-- HOL `evaluate_apply_colour`, `Break` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_Break {width : Nat} [NeZero width] {C F : Type} (k : Nat) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)
       (lt : List (NumSet × NumSet)),
@@ -220,8 +217,7 @@ theorem evaluateApplyColour_Break {width : Nat} [NeZero width] {C F : Type} (k :
   | some e => obtain ⟨names, exitNames⟩ := e; simpa [ho] using hr
 
 /-- HOL `evaluate_apply_colour`, `Continue` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_Continue {width : Nat} [NeZero width] {C F : Type} (k : Nat) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)
       (lt : List (NumSet × NumSet)),
@@ -256,8 +252,7 @@ theorem injInsertOfIset {f : Nat → Nat} {n : Nat} {live : NumSet}
     · exact Or.inr hb
 
 /-- HOL `evaluate_apply_colour`, `Assign` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_Assign {width : Nat} [NeZero width] {C F : Type} (v : Nat)
     (exp : WordLangExpHOL (BitVec width)) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)
@@ -285,8 +280,7 @@ theorem evaluateApplyColour_Assign {width : Nat} [NeZero width] {C F : Type} (v 
         (Or.inr ((sptDomain_del _ _ k).mpr ⟨hk.2, hk.1⟩)))
 
 /-- HOL `evaluate_apply_colour`, `Get` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_Get {width : Nat} [NeZero width] {C F : Type} (v : Nat)
     (name : WordStoreHOL) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)
@@ -312,8 +306,7 @@ theorem evaluateApplyColour_Get {width : Nat} [NeZero width] {C F : Type} (v : N
       exact slrMono hr (fun k hk => (sptDomain_del _ _ k).mpr ⟨hk.2, hk.1⟩)
 
 /-- HOL `evaluate_apply_colour`, `Set` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_Set {width : Nat} [NeZero width] {C F : Type} (v : WordStoreHOL)
     (exp : WordLangExpHOL (BitVec width)) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)
@@ -343,8 +336,7 @@ theorem evaluateApplyColour_Set {width : Nat} [NeZero width] {C F : Type} (v : W
       exact slrMono hr (fun k hk => (sptDomain_uni _ _ k).mpr (Or.inr hk))
 
 /-- HOL `evaluate_apply_colour`, `LocValue` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_LocValue {width : Nat} [NeZero width] {C F : Type} (r l1 : Nat) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)
       (lt : List (NumSet × NumSet)),
@@ -368,8 +360,7 @@ theorem evaluateApplyColour_LocValue {width : Nat} [NeZero width] {C F : Type} (
   · rw [if_neg hm] at he; exact absurd rfl he
 
 /-- HOL `evaluate_apply_colour`, `Raise` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_Raise {width : Nat} [NeZero width] {C F : Type} (n : Nat) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)
       (lt : List (NumSet × NumSet)),
@@ -399,8 +390,7 @@ theorem evaluateApplyColour_Raise {width : Nat} [NeZero width] {C F : Type} (n :
           exact ⟨rfl, hst, hloc.symm⟩
 
 /-- HOL `evaluate_apply_colour`, `Store` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_Store {width : Nat} [NeZero width] {C F : Type}
     (exp : WordLangExpHOL (BitVec width)) (v : Nat) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)
@@ -444,8 +434,7 @@ theorem evaluateApplyColour_Store {width : Nat} [NeZero width] {C F : Type}
             (Or.inr ((sptDomain_uni _ _ k).mpr (Or.inr hk))))
 
 /-- HOL `evaluate_apply_colour`, `Return` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_Return {width : Nat} [NeZero width] {C F : Type} (n : Nat)
     (ms : List Nat) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)
@@ -479,8 +468,7 @@ theorem evaluateApplyColour_Return {width : Nat} [NeZero width] {C F : Type} (n 
         exact ⟨rfl, wsrFlush false hs, rfl⟩
 
 /-- HOL `evaluate_apply_colour`, `CodeBufferWrite` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_CodeBufferWrite {width : Nat} [NeZero width] {C F : Type}
     (r1 r2 : Nat) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)
@@ -525,8 +513,7 @@ theorem evaluateApplyColour_CodeBufferWrite {width : Nat} [NeZero width] {C F : 
             · exact slrMono hr (fun k hk => (sptDomain_listIns _ _ _).mpr (Or.inr hk))
 
 /-- HOL `evaluate_apply_colour`, `DataBufferWrite` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_DataBufferWrite {width : Nat} [NeZero width] {C F : Type}
     (r1 r2 : Nat) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)
@@ -571,8 +558,7 @@ theorem evaluateApplyColour_DataBufferWrite {width : Nat} [NeZero width] {C F : 
             · exact slrMono hr (fun k hk => (sptDomain_listIns _ _ _).mpr (Or.inr hk))
 
 /-- HOL `evaluate_apply_colour`, `OpCurrHeap` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_OpCurrHeap {width : Nat} [NeZero width] {C F : Type}
     (b : BinOp) (dst src : Nat) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)

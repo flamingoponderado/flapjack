@@ -17,10 +17,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
   StackSemStateSupport.holFmapAsFiniteSupportWitness
 
 /-- Full original Tick case, with no added successful-run or clock premise. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectTick {width : Nat} [NeZero width] {C F : Type}
     (source : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (postSource target : StackSemStateFiniteExact width C F)
@@ -56,10 +53,7 @@ theorem compCorrectTick {width : Nat} [NeZero width] {C F : Type}
     · exact RelationLaws.stateRelDecClock jump bounds pointer source target relation
 
 /-- Full original Return case, with no added successful-run or clock premise. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectReturn {width : Nat} [NeZero width] {C F : Type}
     (source : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (postSource target : StackSemStateFiniteExact width C F)
@@ -102,10 +96,7 @@ theorem compCorrectReturn {width : Nat} [NeZero width] {C F : Type}
         (StackSemEvaluate.evaluate_ret register target).trans (by rw [targetLookup])
 
 /-- Full original Raise case, with no added successful-run or clock premise. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectRaise {width : Nat} [NeZero width] {C F : Type}
     (source : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (postSource target : StackSemStateFiniteExact width C F)
@@ -148,10 +139,7 @@ theorem compCorrectRaise {width : Nat} [NeZero width] {C F : Type}
         (StackSemEvaluate.evaluate_raise register target).trans (by rw [targetLookup])
 
 /-- Full original Break case, with no added successful-run or clock premise. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectBreak {width : Nat} [NeZero width] {C F : Type}
     (source : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (postSource target : StackSemStateFiniteExact width C F)
@@ -175,10 +163,7 @@ theorem compCorrectBreak {width : Nat} [NeZero width] {C F : Type}
   simp [comp, StackSemEvaluate.evaluate_break]
 
 /-- Full original Continue case, with no added successful-run or clock premise. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectContinue {width : Nat} [NeZero width] {C F : Type}
     (source : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (postSource target : StackSemStateFiniteExact width C F)

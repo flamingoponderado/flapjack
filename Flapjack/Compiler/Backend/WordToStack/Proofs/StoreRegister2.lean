@@ -37,10 +37,7 @@ private theorem evaluateSeqSkip {width : Nat} [NeZero width] {C F : Type}
 
 /-- Full original unconditional second-register write-continuation equation (4672–4686). No callback execution law or successful-result premise. The evaluator inherits
 reals_as_rational_cuts; this law claims no independent real-analysis agreement. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_wRegWrite2_seq"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateWRegWrite2Seq {width : Nat} [NeZero width] {C F : Type}
     (kont : Nat → HolProg width) (register k f frame : Nat)
     (target : StackSemStateFiniteExact width C F) :
@@ -113,11 +110,7 @@ existential actual continuation run and its pre-store relation/resources are
 original HOL premises; no final compiled instruction run or postrelation is
 assumed. Arbitrary continuation, Word/Loc value, aliases and physical/spill
 cases are retained. The evaluator inherits reals_as_rational_cuts. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_wStackStore_wReg2_new"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateWStackStoreWReg2New {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (register physical k f frame : Nat)
     (loads : List (Nat × Nat)) (kont : HolProg width)

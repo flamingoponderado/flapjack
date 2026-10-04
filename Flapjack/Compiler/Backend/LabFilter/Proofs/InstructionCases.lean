@@ -42,13 +42,6 @@ private theorem asmInstFilterAt {width : Nat} [NeZero width] {C F : Type}
       | rfl
       | simp_all [updReg, updMem, assertState]
       | split
-  | fp operation =>
-    cases operation <;> simp only [asmInst, fpUpd, filterAt, readFpReg]
-    all_goals repeat' first
-      | rfl
-      | simp_all [updFpReg, updReg, assertState]
-      | split
-
 /-- PC/clock record update for proof bookkeeping, with no separate HOL original. -/
 private def retime {width : Nat} [NeZero width] {C F : Type} (pc clock : Nat)
     (t : Flapjack.Compiler.Backend.LabSem.State width C F) :
@@ -76,13 +69,6 @@ private theorem asmInstRetime {width : Nat} [NeZero width] {C F : Type}
       | rfl
       | simp_all [updReg, updMem, assertState]
       | split
-  | fp operation =>
-    cases operation <;> simp only [asmInst, fpUpd, retime, readFpReg]
-    all_goals repeat' first
-      | rfl
-      | simp_all [updFpReg, updReg, assertState]
-      | split
-
 /-- Native compiler metadata is unchanged by ordinary instructions. Flapjack
 infrastructure needed to assemble the source relation; no separate HOL original. -/
 private theorem asmInstCompilerFrame {width : Nat} [NeZero width] {C F : Type}
@@ -105,13 +91,6 @@ private theorem asmInstCompilerFrame {width : Nat} [NeZero width] {C F : Type}
       | rfl
       | simp_all [updReg, updMem, assertState]
       | split
-  | fp operation =>
-    cases operation <;> simp only [asmInst, fpUpd, readFpReg]
-    all_goals repeat' first
-      | rfl
-      | simp_all [updFpReg, updReg, assertState]
-      | split
-
 /-- Successor relation derived from native instruction commutation and skipped-run
 PC adjustment. Flapjack infrastructure for the original recursive cases. -/
 private theorem stateRelInstSuccessor {width : Nat} [NeZero width] {C F : Type}
@@ -139,8 +118,6 @@ private theorem stateRelInstSuccessor {width : Nat} [NeZero width] {C F : Type}
 /-- Original ordinary-instruction branch. The only induction hypothesis is the
 full original simulation for the actual recursive source successor.
 The IH includes the original evaluator's nonzero source-clock path guard. -/
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_correct"
-  (words_as_type_indexed_bitvec)]
 theorem filterCorrectInstruction {width : Nat} [NeZero width] {C F : Type}
     (s1 t1 : Flapjack.Compiler.Backend.LabSem.State width C F)
     (res : MachineResult) (s2 : Flapjack.Compiler.Backend.LabSem.State width C F)

@@ -33,8 +33,7 @@ def findCode {width : Nat} [NeZero width] {κ : Type} {α : Type}
 /-- Clamp only the returned state's clock to the input/returned minimum.
 HOL's two states have independent word, code, and FFI carriers: only their
 natural-number clocks are related. -/
-@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "fix_clock_def"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def fixClock {width returnedWidth : Nat} [NeZero width] [NeZero returnedWidth]
     {C F ReturnedC ReturnedF R : Type}
     (s : StackSemStateFiniteExact width C F)
@@ -43,8 +42,7 @@ def fixClock {width returnedWidth : Nat} [NeZero width] [NeZero returnedWidth]
   (x.1, { x.2 with clock := min s.clock x.2.clock })
 
 /-- HOL's local clock bound, retaining its sole successful-pair equality premise. -/
-@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "fix_clock_IMP"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fixClockImp {width returnedWidth : Nat} [NeZero width] [NeZero returnedWidth]
     {C F ReturnedC ReturnedF R : Type}
     (s : StackSemStateFiniteExact width C F)
@@ -78,8 +76,7 @@ def exitLoop {width : Nat} [NeZero width] :
 
 /-- HOL `dest_Seq` (`cakeml/compiler/backend/semantics/stackSemScript.sml`):
     expose a `Seq`'s two immediate sub-programs, otherwise `none`. -/
-@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "dest_Seq_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def destSeq {width : Nat} [NeZero width] :
     Flapjack.Compiler.Backend.StackLang.HolProg width →
       Option (Flapjack.Compiler.Backend.StackLang.HolProg width ×

@@ -87,9 +87,7 @@ original allocation-class and source-domain premises prove all six actual
 native evaluator conclusions. No successful target evaluation or post-state
 relation is assumed. The evaluator inherits `reals_as_rational_cuts` under
 SOUNDNESS item 8; this prologue reads/writes only locals. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "setup_ssa_props"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem setupSSAProps {width : Nat} [NeZero width] {C F : Type}
     (limit count : Nat) (state : WordSemStateFiniteExact width C F)
     (program : WordLangProgHOL (BitVec width))

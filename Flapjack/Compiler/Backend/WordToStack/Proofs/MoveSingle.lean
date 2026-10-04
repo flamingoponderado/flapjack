@@ -128,11 +128,7 @@ observations and both target stack preservation conclusions. Inherited
 reals_as_rational_cuts applies to the evaluator closure, with no new FP
 correspondence claim. All optional
 source/destination and register/spill alternatives remain arbitrary. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "wMoveSingle_thm"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wMoveSingleThm {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (k f frame : Nat)
     (source : WordSemStateFiniteExact width (Nat × C) F)

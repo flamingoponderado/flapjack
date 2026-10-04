@@ -5,8 +5,7 @@ namespace Flapjack.Compiler.Backend.Semantics.TargetProps
 open Flapjack Classical
 
 /-- Literal source599: initial next-interference equality implies all predicate counts are equal. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "interference_count_EQ" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem interferenceCountEq {width : Nat} [NeZero width]
     {S Q : Type} {σ : Type} (P : InterferenceApp width S → Prop)
     (mc1 mc2 : MachineConfig width S Q) (ffi1 ffi2 : HolFfiState σ) (ms1 ms2 : S)
@@ -20,8 +19,7 @@ theorem interferenceCountEq {width : Nat} [NeZero width]
       interferenceAppSeqEq mc1 mc2 ffi1 ffi2 ms1 ms2 h n]
 
 /-- Literal source609: the original four conjuncts imply equality of all four complete oracle functions. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "constructed_oracles_EQ" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem constructedOraclesEq {width : Nat} [NeZero width]
     {S Q : Type} {σ : Type} (mc1 mc2 : MachineConfig width S Q)
     (ffi1 ffi2 : HolFfiState σ) (ms1 ms2 : S)

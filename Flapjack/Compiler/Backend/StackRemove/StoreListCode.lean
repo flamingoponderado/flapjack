@@ -8,8 +8,7 @@ open Flapjack.Compiler.Backend.StackLang
 
 /-- Compile each word or register store initializer in its original order.
 HOL's sum and list carriers remain Lean Sum and List, with no bounds premise. -/
-@[hol "cakeml/compiler/backend/stack_removeScript.sml" "store_list_code_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def storeListCode {width : Nat} [NeZero width] (address temporary : Nat) :
     List (Sum (BitVec width) Nat) → HolProg width
   | [] => .skip

@@ -164,8 +164,7 @@ open EvaluateStackSwapCallWitnesses
 induction hypotheses (the return handler after a returning call's `Result`,
 the exception handler after its `Exception`, the callee of a returning call,
 and the callee of a tail call); no extra premise. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_swap"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateStackSwap_Call {width : Nat} [NeZero width] {C F : Type}
     (ret : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat))
     (dest : Option Nat) (args : List Nat)

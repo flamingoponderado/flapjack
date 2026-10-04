@@ -55,8 +55,7 @@ theorem call_none_bound (m sz l d t : Option Nat)
 lookup n funs = SOME (a,prog) /\ s.locals_size = lookup n s.stack_size /\
 res <> SOME Error ==> option_le s1.stack_max (OPTION_MAP2 MAX s.stack_max
 (OPTION_MAP2 (+) (stack_size s.stack) (max_depth s.stack_size (full_call_graph n funs))))`. -/
-@[hol "cakeml/compiler/backend/proofs/word_depthProofScript.sml" "max_depth_call_graph"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem maxDepthCallGraph {width : Nat} [NeZero width] {C F : Type} :
     ∀ (prog : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F)
       (res : Option (WordSemResult width)) (s1 : WordSemStateFiniteExact width C F)
@@ -81,8 +80,7 @@ theorem maxDepthCallGraph {width : Nat} [NeZero width] {C F : Type} :
 subspt funs s.code ==> option_le s1.stack_max (OPTION_MAP2 MAX s.stack_max
 (OPTION_MAP2 (+) (stack_size s.stack) (max_depth s.stack_size (full_call_graph dest funs))))`,
 with its free variables universally bound. -/
-@[hol "cakeml/compiler/backend/proofs/word_depthProofScript.sml" "max_depth_Call_NONE"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem maxDepthCallNONE {width : Nat} [NeZero width] {C F : Type}
     (dest : Nat) (args : List Nat) (s : WordSemStateFiniteExact width C F)
     (res : Option (WordSemResult width)) (s1 : WordSemStateFiniteExact width C F)

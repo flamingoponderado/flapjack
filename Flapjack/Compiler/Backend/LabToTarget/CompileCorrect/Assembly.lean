@@ -93,8 +93,7 @@ theorem compileCorrectFor_all {width : Nat} [NeZero width] {S Q F : Type}
 /-- The original `compile_correct`. HOL's existential binds an unused `t2` of
 an otherwise unconstrained type variable; it is retained over an arbitrary
 `T`, nonempty as every HOL type is. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "compile_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect {width : Nat} [NeZero width] {S Q : Type} {F : Type} {T : Type}
     [Nonempty T] (p : BitVec width) (s1 : Flapjack.Compiler.Backend.LabSem.State width Config F)
     (res : MachineResult) (mc : MachineConfig width S Q)

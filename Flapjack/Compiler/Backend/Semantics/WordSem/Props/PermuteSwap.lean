@@ -84,10 +84,6 @@ theorem inst_withPermute (s : WordSemStateFiniteExact width C F) (k : Nat → Na
       (repeat' split) <;> first | rfl | (subst_vars; rfl) |
         (simp_all [memLoad, memStore, setVar]; done) |
         (simp_all [memLoad, memStore, setVar]; obtain ⟨_, rfl⟩ := ‹_ ∧ _›; subst_vars; rfl)
-  | fp f =>
-    cases f <;> simp only [inst, getFpVar, getVar] <;>
-      (repeat' split) <;> first | rfl | simp_all
-
 theorem popEnv_withPermute (s : WordSemStateFiniteExact width C F) (k : Nat → Nat → Nat) :
     popEnv { s with permute := k } = (popEnv s).map (fun s' => { s' with permute := k }) := by
   unfold popEnv
@@ -653,8 +649,6 @@ end PermuteSwap
         ∃perm'. evaluate(prog,st with permute := perm') = (res,rst with permute:=perm)
     ```
 -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "permute_swap_lemma"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem permute_swap_lemma {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (prog : WordLangProgHOL (BitVec width)) (st : WordSemStateFiniteExact width C F)
       (perm : Nat → Nat → Nat),

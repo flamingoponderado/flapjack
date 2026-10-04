@@ -237,8 +237,7 @@ end Infrastructure
 
 /-- Exact HOL local `convert_sub_ok` (`word_instProofScript.sml:61-69`); HOL's
     free state `s` is the outer binder. -/
-@[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "convert_sub_ok"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem convert_sub_ok {width : Nat} [NeZero width] {C : Type} {F : Type}
     (s : WordSemStateFiniteExact width C F) :
     ∀ ls : List (WordLangExpHOL (BitVec width)),
@@ -261,8 +260,7 @@ theorem convert_sub_ok {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL local `word_exp_op_permute_lem` (`word_instProofScript.sml:72-93`);
     HOL's free `op` and `s` are the outer binders. -/
-@[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "word_exp_op_permute_lem"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_exp_op_permute_lem {width : Nat} [NeZero width] {C : Type} {F : Type}
     (op : BinOp) (s : WordSemStateFiniteExact width C F) :
     op ≠ .sub →
@@ -316,8 +314,7 @@ theorem pull_ops_simp_pull_ops_perm {width : Nat} [NeZero width] (op : BinOp) :
 
 /-- Exact HOL local `pull_ops_simp_pull_ops_word_exp` (`word_instProofScript.sml:115-123`);
     HOL's free `op`, `s` and `ls` are explicit binders. -/
-@[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "pull_ops_simp_pull_ops_word_exp"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem pull_ops_simp_pull_ops_word_exp {width : Nat} [NeZero width] {C : Type} {F : Type}
     (op : BinOp) (s : WordSemStateFiniteExact width C F) (ls : List (WordLangExpHOL (BitVec width))) :
     op ≠ .sub →
@@ -329,8 +326,7 @@ theorem pull_ops_simp_pull_ops_word_exp {width : Nat} [NeZero width] {C : Type} 
 
 /-- Exact HOL local `word_exp_op_mono` (`word_instProofScript.sml:127-138`); HOL's
     free variables are explicit binders. -/
-@[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "word_exp_op_mono"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_exp_op_mono {width : Nat} [NeZero width] {C : Type} {F : Type}
     (op : BinOp) (s : WordSemStateFiniteExact width C F)
     (ls ls' : List (WordLangExpHOL (BitVec width))) (x : WordLangExpHOL (BitVec width)) :
@@ -372,8 +368,7 @@ theorem the_words_append {width : Nat} [NeZero width] :
 
 /-- Exact HOL local `word_exp_op_op` (`word_instProofScript.sml:157-174`); HOL's
     free `op`, `s` and `l` are the outer binders. -/
-@[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "word_exp_op_op"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_exp_op_op {width : Nat} [NeZero width] {C : Type} {F : Type}
     (op : BinOp) (s : WordSemStateFiniteExact width C F) (l : List (WordLangExpHOL (BitVec width))) :
     op ≠ .sub →
@@ -397,8 +392,7 @@ theorem word_exp_op_op {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL local `pull_ops_ok` (`word_instProofScript.sml:176-189`); HOL's free
     `op` and `s` are the outer binders. -/
-@[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "pull_ops_ok"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem pull_ops_ok {width : Nat} [NeZero width] {C : Type} {F : Type}
     (op : BinOp) (s : WordSemStateFiniteExact width C F) :
     op ≠ .sub →
@@ -424,8 +418,7 @@ theorem pull_ops_ok {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL local `word_exp_swap_head` (`word_instProofScript.sml:193-205`);
     HOL's free `op`, `s`, `A` and `w` are the outer binders. -/
-@[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "word_exp_swap_head"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_exp_swap_head {width : Nat} [NeZero width] {C : Type} {F : Type}
     (op : BinOp) (s : WordSemStateFiniteExact width C F) (A : List (WordLangExpHOL (BitVec width)))
     (w : BitVec width) :
@@ -450,8 +443,7 @@ theorem word_exp_swap_head {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL local `EVERY_is_const_word_exp` (`word_instProofScript.sml:207-212`);
     HOL's free `s` is the outer binder. -/
-@[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "EVERY_is_const_word_exp"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem EVERY_is_const_word_exp {width : Nat} [NeZero width] {C : Type} {F : Type}
     (s : WordSemStateFiniteExact width C F) :
     ∀ ls : List (WordLangExpHOL (BitVec width)),
@@ -463,8 +455,7 @@ theorem EVERY_is_const_word_exp {width : Nat} [NeZero width] {C : Type} {F : Typ
 
 /-- Exact HOL local `all_consts_simp` (`word_instProofScript.sml:214-232`); HOL's
     free `op` and `s` are the outer binders. -/
-@[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "all_consts_simp"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem all_consts_simp {width : Nat} [NeZero width] {C : Type} {F : Type}
     (op : BinOp) (s : WordSemStateFiniteExact width C F) :
     op ≠ .sub →
@@ -486,8 +477,7 @@ theorem all_consts_simp {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL local `word_exp_reduce_const` (`word_instProofScript.sml:234-241`);
     HOL's free variables are explicit binders. -/
-@[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "word_exp_reduce_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_exp_reduce_const {width : Nat} [NeZero width] {C : Type} {F : Type}
     (op : BinOp) (s : WordSemStateFiniteExact width C F) (w : BitVec width)
     (rest : List (WordLangExpHOL (BitVec width))) (x : WordLocW width) :
@@ -550,8 +540,7 @@ theorem word_exp_reduce_const {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL local `optimize_consts_ok` (`word_instProofScript.sml:243-270`); HOL's
     free variables are explicit binders. -/
-@[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "optimize_consts_ok"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem optimize_consts_ok {width : Nat} [NeZero width] {C : Type} {F : Type}
     (op : BinOp) (s : WordSemStateFiniteExact width C F)
     (ls : List (WordLangExpHOL (BitVec width))) (x : WordLocW width) :
@@ -585,8 +574,7 @@ local macro "pull_exp_rw" : tactic =>
 
 /-- Exact HOL local `pull_exp_ok` (`word_instProofScript.sml:272-317`), by
     recursion on the expression as HOL's `pull_exp_ind`. -/
-@[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "pull_exp_ok"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem pull_exp_ok {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (exp : WordLangExpHOL (BitVec width)) (s : WordSemStateFiniteExact width C F)
       (x : WordLocW width),
@@ -820,8 +808,7 @@ theorem flatten_exp_ok_sub {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL local `flatten_exp_ok` (`word_instProofScript.sml:363-394`), by
     recursion on the expression as HOL's `flatten_exp_ind`. -/
-@[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "flatten_exp_ok"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flatten_exp_ok {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (exp : WordLangExpHOL (BitVec width)) (s : WordSemStateFiniteExact width C F)
       (x : WordLocW width),

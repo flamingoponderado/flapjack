@@ -144,9 +144,7 @@ private theorem renameStagesInjective (first second : List Nat) (ssa : Spt Nat)
 /-- Full original Loop entry setup theorem. The original five premises derive
 actual setup execution and all ten state/map/counter/scoped-injection results;
 no target execution, post-state relation or global injection is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "loop_setup_correct"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loopSetupCorrect {width : Nat} [NeZero width] {C F : Type}
     (source target : WordSemStateFiniteExact width C F)
     (ssa : Spt Nat) (next : Nat) (names exitNames : Spt Unit)

@@ -34,9 +34,7 @@ independently of the fallback, as checked above. No THE NONE value is claimed.
 The priority, move list, complete states, and positive word width are arbitrary.
 The evaluator constant closure inherits its documented rational-cut FP boundary;
 this Move branch runs only getVars/setVars, without evaluating an FP instruction. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "mov_eval_head"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem movEvalHead {width : Nat} [NeZero width] {C : Type} {F : Type}
     (priority : Nat) (moves : List (Nat × Nat))
     (state result : WordSemStateFiniteExact width C F) (x y : Nat)

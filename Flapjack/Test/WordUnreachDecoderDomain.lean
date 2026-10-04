@@ -31,7 +31,6 @@ def returningExact (width : Nat) [NeZero width] : Bool :=
 -- Inst Skip and FP have no executed carrier; a nonreturning Call retains its
 -- handler literally in the original definition, including rejected leaves.
 #guard (wordLangProgFromHOL (.inst .skip : WordLangProgHOL (BitVec 64))).isNone
-#guard (wordLangProgFromHOL (.inst (.fp (.fpMov 0 1)) : WordLangProgHOL (BitVec 64))).isNone
 #guard (wordLangProgFromHOL (removeUnreach
   (.call none (some 7) [] (some (9, .inst .skip, 4, 5)) : WordLangProgHOL (BitVec 64)))).isNone
 #guard (wordLangProgFromHOL (removeUnreach

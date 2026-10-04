@@ -40,8 +40,7 @@ end CompileSemantics
 
 /-- Exact HOL `compile_semantics` (`stack_namesProofScript.sml:527-545`). HOL's free `f`, `c`,
 `s` and `start` are the implicit binders. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "compile_semantics"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileSemantics {width : Nat} [NeZero width] {C F : Type}
     {c : C → List (Nat × HolProg width) → Option (List (BitVec 8) × C)} {f : Spt Nat}
     {start : Nat} {s : StackSemStateFiniteExact width C F} :
@@ -54,8 +53,7 @@ theorem compileSemantics {width : Nat} [NeZero width] {C F : Type}
 
 /-- Exact HOL `compile_semantics_alt` (`stack_namesProofScript.sml:545-553`, `[local]`). HOL's
 free `f` and `start` are the implicit binders. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "compile_semantics_alt"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileSemanticsAlt {width : Nat} [NeZero width] {C F : Type} {f : Spt Nat}
     {start : Nat} :
     ∀ (s t : StackSemStateFiniteExact width C F),

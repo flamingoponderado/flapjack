@@ -27,8 +27,7 @@ retains its full native carrier. Its input and output word dimensions are
 independently quantified in HOL and in this definition. Executed list-state
 setup remains tracked
 separately; this definition alone does not complete that route. -/
-@[hol "cakeml/compiler/backend/word_allocScript.sml" "setup_ssa_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def setupSSA {inputWidth : Nat} {outputWidth : Nat}
     [NeZero inputWidth] [NeZero outputWidth] (count limit : Nat)
     (_program : WordLangProgHOL (BitVec inputWidth)) :

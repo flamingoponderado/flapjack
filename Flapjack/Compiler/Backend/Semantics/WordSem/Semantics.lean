@@ -59,8 +59,7 @@ namespace WordSemStateFiniteExact
     `IMAGE f UNIV` is the predicate `fun l => ∃ k, l = f k`.  HOL's `<>` on
     `word_loc` is decided classically.  The definition is noncomputable, as
     HOL's classical definition is. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "semantics_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def semantics {width : Nat} [NeZero width] {C : Type} {F : Type}
     (s : WordSemStateFiniteExact width C F) (start : Nat) : HolBehaviour :=
   let prog : WordLangProgHOL (BitVec width) := .call none (some start) [0] none
@@ -95,8 +94,7 @@ noncomputable def semantics {width : Nat} [NeZero width] {C : Type} {F : Type}
         (∀k res t. wordSem$evaluate (prog, s with clock := k) = (res,t) ==>
           ∃max. t.stack_max = SOME max /\ max <= t.stack_limit)
     ``` -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "word_lang_safe_for_space_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wordLangSafeForSpace {width : Nat} [NeZero width] {C : Type} {F : Type}
     (s : WordSemStateFiniteExact width C F) (start : Nat) : Prop :=
   let prog : WordLangProgHOL (BitVec width) := .call none (some start) [0] none

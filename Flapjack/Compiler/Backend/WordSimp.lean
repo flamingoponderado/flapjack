@@ -11,8 +11,7 @@ irrelevant function-backed payloads of other constructors. Production's distinct
 `WordProg` carrier operation and full folds correspond through the encoder in
 `ProductionSmartSeq`; its measured full-codec performance exception is recorded
 in `docs/benchmarks/smartseq-production/README.md`. -/
-@[hol "cakeml/compiler/backend/word_simpScript.sml" "SmartSeq_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def smartSeqHOL {width : Nat} [NeZero width]
     (first second : WordLangProgHOL (BitVec width)) : WordLangProgHOL (BitVec width) :=
   match first with
@@ -27,8 +26,7 @@ def isGcConst {width : Nat} [NeZero width] (c : BitVec width) : Bool :=
 
 /-- Exact HOL `Seq_assoc_def` (`word_simpScript.sml:21-39`): all seven clauses,
 including the catch-all `SmartSeq p1 other`. -/
-@[hol "cakeml/compiler/backend/word_simpScript.sml" "Seq_assoc_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def seqAssoc {width : Nat} [NeZero width] (p1 : WordLangProgHOL (BitVec width)) :
     WordLangProgHOL (BitVec width) → WordLangProgHOL (BitVec width)
   | .skip => p1
@@ -48,16 +46,14 @@ def seqAssoc {width : Nat} [NeZero width] (p1 : WordLangProgHOL (BitVec width)) 
   | other => smartSeqHOL p1 other
 
 /-- Exact HOL `dest_Seq_def` (`word_simpScript.sml:81-84`). -/
-@[hol "cakeml/compiler/backend/word_simpScript.sml" "dest_Seq_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def destSeq {width : Nat} [NeZero width] :
     WordLangProgHOL (BitVec width) → WordLangProgHOL (BitVec width) × WordLangProgHOL (BitVec width)
   | .seq p1 p2 => (p1, p2)
   | p => (.skip, p)
 
 /-- Exact HOL `dest_If_def` (`word_simpScript.sml:99-102`). -/
-@[hol "cakeml/compiler/backend/word_simpScript.sml" "dest_If_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def destIf {width : Nat} [NeZero width] :
     WordLangProgHOL (BitVec width) →
       Option (Cmp × Nat × WordRegImm (BitVec width) × WordLangProgHOL (BitVec width) ×
@@ -66,8 +62,7 @@ def destIf {width : Nat} [NeZero width] :
   | _ => none
 
 /-- Exact HOL `dest_If_Eq_Imm_def` (`word_simpScript.sml:117-122`). -/
-@[hol "cakeml/compiler/backend/word_simpScript.sml" "dest_If_Eq_Imm_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def destIfEqImm {width : Nat} [NeZero width] (p : WordLangProgHOL (BitVec width)) :
     Option (Nat × BitVec width × WordLangProgHOL (BitVec width) × WordLangProgHOL (BitVec width)) :=
   match destIf p with
@@ -75,8 +70,7 @@ def destIfEqImm {width : Nat} [NeZero width] (p : WordLangProgHOL (BitVec width)
   | _ => none
 
 /-- Exact HOL `dest_Seq_Assign_Const_def` (`word_simpScript.sml:137-143`). -/
-@[hol "cakeml/compiler/backend/word_simpScript.sml" "dest_Seq_Assign_Const_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def destSeqAssignConst {width : Nat} [NeZero width] (n : Nat)
     (p : WordLangProgHOL (BitVec width)) : Option (WordLangProgHOL (BitVec width) × BitVec width) :=
   let (p1, p2) := destSeq p
@@ -150,8 +144,8 @@ def constFpMoveCs {width : Nat} [NeZero width] :
     clause, positionally on the constructor arguments (so `Load16` and the
     remaining instructions fall to the identity clause, as in HOL), with
     `dimindex (:'a) = 64` as `width = 64`. -/
-@[hol "cakeml/compiler/backend/word_simpScript.sml" "const_fp_inst_cs_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: integer-only specialization of the referenced HOL declaration.
+
 def constFpInstCs {width : Nat} [NeZero width] :
     WordLangInst (BitVec width) → Spt (BitVec width) → Spt (BitVec width)
   | .const r _, cs => sptDelete r cs
@@ -166,11 +160,6 @@ def constFpInstCs {width : Nat} [NeZero width] :
   | .mem .load r _, cs => sptDelete r cs
   | .mem .load32 r _, cs => sptDelete r cs
   | .mem .load8 r _, cs => sptDelete r cs
-  | .fp (.fpLess r _ _), cs => sptDelete r cs
-  | .fp (.fpLessEqual r _ _), cs => sptDelete r cs
-  | .fp (.fpEqual r _ _), cs => sptDelete r cs
-  | .fp (.fpMovToReg r1 r2 _), cs =>
-      if width = 64 then sptDelete r1 cs else sptDelete r2 (sptDelete r1 cs)
   | _, cs => cs
 
 /-- Exact HOL `get_var_imm_cs_def` (`word_simpScript.sml:248-251`). -/
@@ -187,8 +176,7 @@ def allNames {α : Type} (names : Spt α × Spt α) : Spt α :=
   sptUnion names.1 names.2
 
 /-- Exact HOL `drop_consts_def` (`word_simpScript.sml:265-271`). -/
-@[hol "cakeml/compiler/backend/word_simpScript.sml" "drop_consts_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def dropConsts {width : Nat} [NeZero width] (cs : Spt (BitVec width)) :
     List Nat → WordLangProgHOL (BitVec width)
   | [] => .skip
@@ -205,8 +193,7 @@ def deleteAll {β : Type} (n : List Nat) (l : Spt β) : Spt β :=
 /-- Exact HOL `const_fp_loop_def` (`word_simpScript.sml:273-340`): every clause
     in source order; the catch-all `(p, cs)` covers `Skip`, `Set`, `Tick`,
     `Raise`, `Return`, `Break`, `Continue` and the buffer writes. -/
-@[hol "cakeml/compiler/backend/word_simpScript.sml" "const_fp_loop_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def constFpLoop {width : Nat} [NeZero width] :
     WordLangProgHOL (BitVec width) → Spt (BitVec width) →
       WordLangProgHOL (BitVec width) × Spt (BitVec width)
@@ -274,8 +261,7 @@ def constFpLoop {width : Nat} [NeZero width] :
   | p, cs => (p, cs)
 
 /-- Exact HOL `const_fp_def` (`word_simpScript.sml:342-344`). -/
-@[hol "cakeml/compiler/backend/word_simpScript.sml" "const_fp_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def constFp {width : Nat} [NeZero width] (p : WordLangProgHOL (BitVec width)) :
     WordLangProgHOL (BitVec width) :=
   (constFpLoop p .ln).1
@@ -285,15 +271,13 @@ def constFp {width : Nat} [NeZero width] (p : WordLangProgHOL (BitVec width)) :
 def rewriteDuplicateIfMaxReassoc : Nat := 8
 
 /-- Exact HOL `dest_Raise_num_pmatch_def` (`word_simpScript.sml:374-376`). -/
-@[hol "cakeml/compiler/backend/word_simpScript.sml" "dest_Raise_num_pmatch_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def destRaiseNum {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) → Nat
   | .raise n => n
   | _ => 0
 
 /-- Exact HOL `is_simple_pmatch_def` (`word_simpScript.sml:381-388`). -/
-@[hol "cakeml/compiler/backend/word_simpScript.sml" "is_simple_pmatch_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def isSimple {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) → Bool
   | .tick => true
   | .skip => true
@@ -304,8 +288,7 @@ def isSimple {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) → B
 /-- Exact HOL `try_if_hoist2_def` (`word_simpScript.sml:393-420`).  HOL's
     `if N = 0n then NONE else ... try_if_hoist2 (N - 1n) ...` is the match on
     `N` with the successor case recursing on its predecessor. -/
-@[hol "cakeml/compiler/backend/word_simpScript.sml" "try_if_hoist2_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def tryIfHoist2 {width : Nat} [NeZero width] :
     Nat → WordLangProgHOL (BitVec width) → WordLangProgHOL (BitVec width) →
       WordLangProgHOL (BitVec width) → WordLangProgHOL (BitVec width) →
@@ -337,8 +320,7 @@ def tryIfHoist2 {width : Nat} [NeZero width] :
       | _ => none
 
 /-- Exact HOL `try_if_hoist1_def` (`word_simpScript.sml:422-430`). -/
-@[hol "cakeml/compiler/backend/word_simpScript.sml" "try_if_hoist1_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def tryIfHoist1 {width : Nat} [NeZero width] (p1 p2 : WordLangProgHOL (BitVec width)) :
     Option (WordLangProgHOL (BitVec width)) :=
   match destIf p2 with
@@ -348,8 +330,7 @@ def tryIfHoist1 {width : Nat} [NeZero width] (p1 p2 : WordLangProgHOL (BitVec wi
       tryIfHoist2 rewriteDuplicateIfMaxReassoc p1 .skip dummy p2
 
 /-- Exact HOL `simp_duplicate_if_def` (`word_simpScript.sml:432-459`). -/
-@[hol "cakeml/compiler/backend/word_simpScript.sml" "simp_duplicate_if_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def simpDuplicateIf {width : Nat} [NeZero width] :
     WordLangProgHOL (BitVec width) → WordLangProgHOL (BitVec width)
   | .mustTerminate q => .mustTerminate (simpDuplicateIf q)
@@ -373,8 +354,7 @@ def simpDuplicateIf {width : Nat} [NeZero width] :
   | p => p
 
 /-- Exact HOL `push_out_if_aux_def` (`word_simpScript.sml:461-483`). -/
-@[hol "cakeml/compiler/backend/word_simpScript.sml" "push_out_if_aux_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def pushOutIfAux {width : Nat} [NeZero width] :
     WordLangProgHOL (BitVec width) → WordLangProgHOL (BitVec width) × Bool
   | .mustTerminate q =>
@@ -399,16 +379,14 @@ def pushOutIfAux {width : Nat} [NeZero width] :
   | p => (p, false)
 
 /-- Exact HOL `push_out_if_def` (`word_simpScript.sml:485-487`). -/
-@[hol "cakeml/compiler/backend/word_simpScript.sml" "push_out_if_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def pushOutIf {width : Nat} [NeZero width] (p : WordLangProgHOL (BitVec width)) :
     WordLangProgHOL (BitVec width) :=
   (pushOutIfAux p).1
 
 /-- Exact HOL `compile_exp_def` (`word_simpScript.sml:491-498`): `Seq_assoc
     Skip`, `const_fp`, `simp_duplicate_if`, then `push_out_if`. -/
-@[hol "cakeml/compiler/backend/word_simpScript.sml" "compile_exp_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def compileExp {width : Nat} [NeZero width] (e : WordLangProgHOL (BitVec width)) :
     WordLangProgHOL (BitVec width) :=
   let e := seqAssoc .skip e

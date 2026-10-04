@@ -50,6 +50,4 @@ theorem ssaCcTransInst_decoderClosure {width : Nat} [NeZero width]
       cases operation <;>
         simp [ssaCcTransInst, nextVarRename, wordLangProgFromHOL, wordLangInstFromHOL]
       all_goals split <;> rfl
-  | fp operation => simp [wordLangInstFromHOL] at accepted
-
 end Flapjack.Compiler.Backend.WordAlloc

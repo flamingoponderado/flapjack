@@ -1,3 +1,4 @@
+import Mathlib.Tactic.Convert
 import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
 import Flapjack.Compiler.Backend.StackProps.ClockSupport
 import Flapjack.Compiler.Backend.StackProps.InstructionConstants
@@ -378,8 +379,6 @@ open EvaluateAddClock in
 /-- HOL `evaluate_add_clock`: a run that does not time out runs identically with
 `extra` more clock, finishing with `extra` more clock. The free HOL variable
 `extra` is the outermost binder; the statement has no other premise. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_add_clock"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluateAddClock {width : Nat} [NeZero width] {C F : Type} (extra : Nat) :
     ∀ (p : HolProg width) (s : StackSemStateFiniteExact width C F)
       (r : Option (StackSemResult width)) (s' : StackSemStateFiniteExact width C F),

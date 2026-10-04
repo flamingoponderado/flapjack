@@ -10,8 +10,7 @@ states. `DecidableEq` implements propositional equality only; no `BEq`, unique
 identifier, frame convention or output lookup assumption is imposed. The
 existing equality-based lookup is the literal empty/cons first-match traversal.
 Only HOL's positive word dimension uses a different carrier representation. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "compile_word_to_stack_IMP_ALOOKUP" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileWordToStackImpALookup {width : Nat} [NeZero width]
     {β : Type} [DecidableEq β]
     (conf : AsmConfigExact width) (perf : Bool) (registers : Nat)

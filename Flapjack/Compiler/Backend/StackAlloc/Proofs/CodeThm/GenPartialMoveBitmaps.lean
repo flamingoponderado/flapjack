@@ -309,9 +309,7 @@ premise, its explicit `clock := s.clock` update and its unused existentials
 canonical carrier's lookups, `updateListEq` and `getVar`, `Temp nw` is
 `WordStore.temp n`, and `dimindex (:'a) DIV 8` and `dimword (:'a)` are
 `width / 8` and `2 ^ width`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml"
-  "word_gen_gc_partial_move_bitmaps_code_thm"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_gen_gc_partial_move_bitmaps_code_thm {width : Nat} [NeZero width] {C F : Type}
     {conf : Config} {init : List (WordLocW width)} {gs rs : BitVec width} :
     ∀ (w : BitVec width) (bitmaps : List (BitVec width)) (z : BitVec width)

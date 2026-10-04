@@ -39,8 +39,7 @@ condition and definition of the compiled target table are the only premises.
 Both lookup preservation and the complete target-domain equality are derived.
 The word carrier translation is the only representation difference: code
 tables use the original Spt and association lists retain first-match lookup. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "IMP_code_rel"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem impCodeRel {width : Nat} [NeZero width]
     (jump : Bool) (bounds : BitVec width × BitVec width) (generateGc : Bool)
     (maximumHeap pointer start : Nat) (source : List (Nat × HolProg width))

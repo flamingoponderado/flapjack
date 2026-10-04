@@ -9,8 +9,7 @@ open Flapjack.Compiler.Backend.LabSem
 private def fetchSize {width : Nat} [NeZero width] (code : LabProgHOL width) : Nat :=
   (code.map (fun sec => sec.lines.length + 1)).sum
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "num_pcs_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def numPcs {width : Nat} [NeZero width] (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) : Nat :=
   match code with
@@ -22,8 +21,7 @@ def numPcs {width : Nat} [NeZero width] (code : List (Section (Line (AsmOrCbw (H
 termination_by fetchSize code
 decreasing_by all_goals simp_wf; simp_all [fetchSize] <;> omega
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "asm_fetch_aux_APPEND1"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem asmFetchAux_append1 {width : Nat} [NeZero width]
     (pc : Nat) (code secList : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
@@ -56,8 +54,7 @@ theorem asmFetchAux_append1 {width : Nat} [NeZero width]
             omega
           simpa [asmFetchAux, isLabelHOL] using ihLines pc hpc
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "asm_fetch_aux_APPEND2"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem asmFetchAux_append2 {width : Nat} [NeZero width]
     (pc : Nat) (code secList : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
@@ -73,8 +70,7 @@ theorem asmFetchAux_append2 {width : Nat} [NeZero width]
       cases line <;>
         simpa [numPcs, asmFetchAux, isLabelHOL, advance] using ihLines
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "asm_fetch_aux_MEM"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem asmFetchAux_mem {width : Nat} [NeZero width] (n : Nat)
     (x : Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)) (lines : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))

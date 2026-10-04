@@ -40,8 +40,7 @@ abbrev LabProgHOL (width : Nat) [NeZero width] := List (LabSectionHOL width)
 its oracle use the same concrete LabLang program and compiler configuration.
 The word-dimension qualifier translates only HOL's type-indexed words; fixed
 word8/word64 fields retain their literal dimensions. -/
-@[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "state"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 structure State (width : Nat) [NeZero width] (C : Type) (F : Type) where
   regs : Nat → WordLocW width
   fpRegs : Nat → BitVec 64

@@ -101,8 +101,7 @@ open Classical in
     HOL's free `tt kk aa co` are the leading binders; `(I ## MAP f) o oracle` is
     `Prod.map id (List.map f) ∘ oracle`; `if res = SOME Error` is decided
     classically. Assembled by HOL's complete induction from the case pieces. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_single_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compile_single_correct {width : Nat} [NeZero width] {C F : Type}
     (tt : Bool) (kk aa : Nat) (co : AsmConfigExact width) :
     ∀ (prog : WordLangProgHOL (BitVec width)) (st : WordSemStateFiniteExact width C F)

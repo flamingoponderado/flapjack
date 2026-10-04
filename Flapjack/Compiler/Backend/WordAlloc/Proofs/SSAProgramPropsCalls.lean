@@ -7,8 +7,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAFixInconsistenciesProps
 namespace Flapjack.Compiler.Backend.WordAlloc
 
 /-- Original tail-Call invariant case, with no recursive induction hypothesis. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_props"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransPropsTailCall {width : Nat} [NeZero width]
     (dest : Option Nat) (args : List Nat)
     (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
@@ -25,8 +24,7 @@ theorem ssaCcTransPropsTailCall {width : Nat} [NeZero width]
 /-- Original returning-Call invariant case. The exception IH precedes the
 return IH, with exactly the native functional-induction binders and guards.
 The actual handler input bounds and final reconciled map are derived. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_props"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransPropsReturningCall {width : Nat} [NeZero width]
     (ret : List Nat) (cutsets : WordLangCutsetsHOL)
     (retHandler : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)

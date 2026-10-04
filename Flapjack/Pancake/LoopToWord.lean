@@ -303,8 +303,7 @@ and the threaded label pair. Clause-for-clause with the HOL definition. This
 total definition is the reviewed tagged port. The executable production route
 is tracked separately (bead `flapjack-pxn.18.5.9.5`); this declaration is the
 HOL-shaped reference definition. -/
-@[hol "cakeml/pancake/loop_to_wordScript.sml" "comp_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def compHOL {width : Nat} [NeZero width] (context : Spt Nat) :
     HolLoopProg width → Nat × Nat → WordLangProgHOL (BitVec width) × (Nat × Nat)
   | .skip, labels => (.skip, labels)

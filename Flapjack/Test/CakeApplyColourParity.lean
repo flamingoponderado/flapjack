@@ -108,12 +108,8 @@ def instructionColourExact : Bool :=
       (.inst (.arith (.cakeAddCarry 1 2 3 4)) : WordProg (BitVec 8)) with
     | .inst (.arith (.cakeAddCarry a b c d)) => a == 11 && b == 12 && c == 13 && d == 14
     | _ => false
-  let fpOK := match WordAlloc.applyColourInst f
-      (.fp (.fpMovFromReg 1 2 3) : WordLangInst (BitVec 8)) with
-    | .fp (.fpMovFromReg a b c) => a == 1 && b == 12 && c == 13
-    | _ => false
   memoryOK .load16 3 5 && memoryOK .store16 3 5 &&
-    memoryOK .load8 13 15 && memoryOK .store32 13 15 && carryOK && fpOK
+    memoryOK .load8 13 15 && memoryOK .store32 13 15 && carryOK
 
 #guard instructionColourExact
 
@@ -128,11 +124,7 @@ def instructionLivenessExact : Bool :=
     keys (.mem .load8 3 (.addr 5 7) : WordLangInst (BitVec 8)) == [1, 9, 5, 4, 2] &&
     keys (.mem .store32 3 (.addr 5 7) : WordLangInst (BitVec 8)) == [3, 1, 9, 5, 4, 2] &&
     keys (.arith (.addCarry 1 2 3 4) : WordLangInst (BitVec 8)) == [3, 9, 4, 2] &&
-    keys (.arith (.addOverflow 1 2 3 4) : WordLangInst (BitVec 8)) == [3, 9, 2] &&
-    keys (.fp (.fpMovToReg 1 2 3) : WordLangInst (BitVec 64)) == [3, 9, 4, 2] &&
-    keys (.fp (.fpMovToReg 1 2 3) : WordLangInst (BitVec 32)) == [3, 9, 4] &&
-    keys (.fp (.fpMovFromReg 1 6 7) : WordLangInst (BitVec 64)) == [3, 1, 9, 4, 2, 6] &&
-    keys (.fp (.fpMovFromReg 1 6 7) : WordLangInst (BitVec 32)) == [7, 3, 1, 9, 4, 2, 6]
+    keys (.arith (.addOverflow 1 2 3 4) : WordLangInst (BitVec 8)) == [3, 9, 2]
 
 example : instructionLivenessExact = true := by
   simp [instructionLivenessExact, WordAlloc.getLiveInst, WordAlloc.getLiveInstCore,
@@ -183,10 +175,8 @@ def instructionRemovalExact : Bool :=
     remove (.mem .load8 1 (.addr 2 7) : WordLangInst (BitVec 8)) [],
     remove (.arith (.addCarry 1 2 3 4) : WordLangInst (BitVec 8)) [4],
     remove (.arith (.addCarry 1 2 3 4) : WordLangInst (BitVec 8)) [],
-    remove (.arith (.longMul 1 2 3 4) : WordLangInst (BitVec 8)) [2],
-    remove (.fp (.fpMovToReg 1 2 3) : WordLangInst (BitVec 32)) [2],
-    remove (.fp (.fpMovToReg 1 2 3) : WordLangInst (BitVec 64)) [2]] ==
-    [true, true, false, false, false, false, true, false, true, false, false, true]
+    remove (.arith (.longMul 1 2 3 4) : WordLangInst (BitVec 8)) [2]] ==
+    [true, true, false, false, false, false, true, false, true, false]
 
 example : instructionRemovalExact = true := by
   simp [instructionRemovalExact, WordAlloc.removeDeadInst, WordAlloc.removeDeadInstCore,

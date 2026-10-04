@@ -60,11 +60,7 @@ All original premises and the complete target clock/run/result/resource
 conclusion are retained; no target run, simulation law or successful-execution
 restriction is assumed. Evaluator closure inherits reals_as_rational_cuts; no
 numerical FP assertion. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_correct" 5756
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectFFI {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (index : Basis.Pure.MlString.MlString)
     (ptr1 len1 ptr2 len2 : Nat) (names : WordLangCutsetsHOL) (k f frame : Nat)

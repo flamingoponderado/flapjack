@@ -58,8 +58,7 @@ private theorem clockTraceChain {width : Nat} [NeZero width] {C F : Type}
 /-- Full original local semantics lift, including fail, optional terminating
 choice and the complete divergence trace LUB. All observation and cofinality
 facts are derived from full evaluator simulation and native clock laws. -/
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "state_rel_IMP_sem_EQ_sem"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelImpSemEqSem {width : Nat} [NeZero width] {C : Type} {F : Type}
     (s t : Flapjack.Compiler.Backend.LabSem.State width C F) :
     stateRel s t → semantics s = semantics t := by
@@ -122,8 +121,7 @@ theorem stateRelImpSemEqSem {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Full original zero-PC filter theorem. Both source nonfailed conjuncts are
 retained, together with the existential compiler/oracle record transformation. -/
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_skip_semantics"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem filterSkipSemantics {width : Nat} [NeZero width] {C : Type} {F : Type}
     (s t : Flapjack.Compiler.Backend.LabSem.State width C F) :
     t.pc = 0 ∧ t.failed = false ∧

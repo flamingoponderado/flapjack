@@ -22,7 +22,7 @@ namespace Flapjack.Compiler.Backend.RiscVConfig
 captured definition body: the evaluated `clos_to_bvl`/`bvl_to_bvi` default records, the
 RISC-V data (`gc_kind := Simple`), word-to-word, word, stack and lab configurations,
 empty symbols/exports and the default tap configuration. -/
-@[hol "cakeml/compiler/backend/riscv/riscv_configScript.sml" "riscv_backend_config_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def riscvBackendConfig : Backend.Config where
   sourceConf := Backend.primSrcConfig
   closConf :=
@@ -37,7 +37,7 @@ noncomputable def riscvBackendConfig : Backend.Config where
       doTailrec := true, doTmc := true, inlines := .ln, bviInlines := .ln }
   dataConf :=
     { tagBits := 4, lenBits := 4, padBits := 2, lenSize := 32,
-      hasDiv := true, hasLongdiv := false, hasFpOps := false, hasFpTern := false,
+      hasDiv := true, hasLongdiv := false,
       be := false, callEmptyFfi := false, gcKind := .simple }
   wordToWordConf := { regAlg := 3, colOracle := [] }
   wordConf := { bitmapsLength := 0, stackFrameSize := .ln }

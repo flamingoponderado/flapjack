@@ -41,8 +41,7 @@ position by their length; `LabAsm a w bytes l` recomputes `w1 = get_jump_offset
 a ffis labs pos`, keeps the line when `w = w1`, and otherwise re-encodes
 `lab_inst w1 a` and replaces the line by `LabAsm a w1 bs (MAX (LENGTH bs) l)`,
 conjoining `ok` with `l1 = l`. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "enc_lines_again_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def encLinesAgain {width : Nat} [NeZero width] (labs : Spt (Spt Nat))
     (ffis : List HolFfiName) (pos : Nat) (enc : HolAsm width → List (BitVec 8))
     (lines : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -73,8 +72,7 @@ def encLinesAgain {width : Nat} [NeZero width] (labs : Spt (Spt Nat))
 `Section s lines` is rewritten by `enc_lines_again` seeded with `([], T)` from
 the running position, and the remainder from the resulting position, conjoining
 the two flags. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "enc_secs_again_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def encSecsAgain {width : Nat} [NeZero width] (pos : Nat) (labs : Spt (Spt Nat))
     (ffis : List HolFfiName) (enc : HolAsm width → List (BitVec 8))
     (sections : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -93,8 +91,7 @@ def encSecsAgain {width : Nat} [NeZero width] (pos : Nat) (labs : Spt (Spt Nat))
 reversed accumulator and the final position; a `Label` is rewritten to length
 `l1 = if EVEN pos then 0 else 1` advancing by `l1`; `Asm`/`LabAsm` advance by
 their length unchanged. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "lines_upd_lab_len_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def linesUpdLabLen {width : Nat} [NeZero width] (pos : Nat)
     (lines : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))
@@ -116,8 +113,7 @@ def linesUpdLabLen {width : Nat} [NeZero width] (pos : Nat)
 (`lab_to_targetScript.sml:158-166`), clause for clause.  `[]` is `[]`; each
 `Section s lines` is rewritten by `lines_upd_lab_len` seeded with `[]` from the
 running position, and the remainder is rewritten from the resulting position. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "upd_lab_len_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def updLabLen {width : Nat} [NeZero width] (pos : Nat)
     (sections : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :

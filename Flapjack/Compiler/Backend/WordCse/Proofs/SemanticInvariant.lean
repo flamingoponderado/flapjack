@@ -24,8 +24,7 @@ conversion, opcode restriction or output relation is added. The imported
 evaluator's declaration closure inherits the existing rational-cut IEEE real
 rendering assumption (docs/SOUNDNESS.md item 8); the manifest records that
 dependency for this predicate and its consumers. -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "sem_inv_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def semInv {width : Nat} [NeZero width] {C : Type} {F : Type}
     (data : Knowledge) (state : WordSemStateFiniteExact width C F) : Prop :=
   (∀ (register value : Nat),
@@ -65,16 +64,14 @@ def semInv {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Original combined invariant, retaining the complete syntactic and
 semantic predicates over the same original word dimension and knowledge. -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "data_inv_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def dataInv {width : Nat} [NeZero width] {C : Type} {F : Type}
     (data : Knowledge) (state : WordSemStateFiniteExact width C F) : Prop :=
   wfData width data ∧ semInv data state
 
 /-- Original non-vacuous initializer: empty knowledge satisfies the complete
 combined invariant for every faithful WordSem state, without run premises. -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "data_inv_empty"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem dataInvEmpty {width : Nat} [NeZero width] {C : Type} {F : Type}
     (state : WordSemStateFiniteExact width C F) : dataInv emptyData state := by
   simp [dataInv, wfData, semInv, emptyData, Misc.BalancedMap.empty, Misc.BalancedMap.lookup,

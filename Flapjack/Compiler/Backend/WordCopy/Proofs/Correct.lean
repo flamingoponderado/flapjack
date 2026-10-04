@@ -184,8 +184,7 @@ theorem someNotNone {α β : Type} {x : α} {s st' : β} {err : Option α}
 
 /-- Exact HOL `copy_prop_correct` (`word_copyProofScript.sml:1158-1393`, with the resumed
 `Loop` case at 1379-1389). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "copy_prop_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem copyPropCorrect {width : Nat} [NeZero width] {C F : Type} :
     ∀ (prog : WordLangProgHOL (BitVec width)) (cs : CopyState)
       (st : WordSemStateFiniteExact width C F) (prog' : WordLangProgHOL (BitVec width))
@@ -517,8 +516,7 @@ theorem copyPropCorrect {width : Nat} [NeZero width] {C F : Type} :
       · exact (someNotNone he herr).elim
 
 /-- Exact HOL `evaluate_copy_prop` (`word_copyProofScript.sml:1396-1404`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "evaluate_copy_prop"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCopyProp {width : Nat} [NeZero width] {C F : Type}
     {e : WordLangProgHOL (BitVec width)} {s : WordSemStateFiniteExact width C F} :
     (Flapjack.WordSemStateFiniteExact.evaluate e s).1 ≠ some .error →

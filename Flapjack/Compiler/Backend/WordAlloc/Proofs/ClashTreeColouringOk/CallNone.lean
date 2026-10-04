@@ -7,8 +7,7 @@ open Flapjack.RegAlloc
 /-- HOL `clash_tree_colouring_ok`, the Call with no return branch. The source
 ignores any exception handler here; its program and labels remain arbitrary.
 All six motive premises and all five conclusions are retained. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "clash_tree_colouring_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_CallNone {width : Nat} [NeZero width]
     (target : Option Nat) (args : List Nat)
     (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat)) :

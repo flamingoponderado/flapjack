@@ -17,8 +17,7 @@ namespace Flapjack.WordSemStateFiniteExact
 /-- Complete original gc_const contract (wordProps612-630), retaining all
 thirteen conclusions and only the successful-collection premise. Arbitrary
 GC callbacks and stack-decoding outcomes are covered without callback laws. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "gc_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem gcConst {width : Nat} [NeZero width] {C F : Type}
     (state next : WordSemStateFiniteExact width C F)
     (h : gc state = some next) :

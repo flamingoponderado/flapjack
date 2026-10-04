@@ -20,8 +20,7 @@ private theorem lineOk_annotationLength {width : Nat} [NeZero width]
   | labAsm _ _ _ _ => simpa [lineLengthOk,lineBytes,lineLen,lineLength] using hl.symm
 
 /-- Full original association-list lookup theorem, with all three source guards. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "lines_ok_section_lab_lookup_even" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem linesOk_sectionLabels_lookup_even {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (pos : Nat) (lines : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -61,8 +60,7 @@ theorem linesOk_sectionLabels_lookup_even {width : Nat} [NeZero width]
       exact ih (pos + len) acc ⟨ht,ha,hl⟩
 
 /-- Full original split at the actual annotated section length. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "all_enc_ok_split" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem allEncOk_split {width : Nat} [NeZero width] (c : AsmConfigExact width)
     (labs : Spt (Spt Nat)) (ffis : List HolFfiName) (pos k : Nat)
     (lines : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -81,8 +79,7 @@ theorem allEncOk_split {width : Nat} [NeZero width] (c : AsmConfigExact width)
   · simpa [hlength] using ht
 
 /-- Full original section-end evenness under actual encoding validity. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "all_enc_ok_even" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem allEncOk_even {width : Nat} [NeZero width] (c : AsmConfigExact width)
     (labs : Spt (Spt Nat)) (ffis : List HolFfiName) (k : Nat)
     (lines : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -96,8 +93,7 @@ theorem allEncOk_even {width : Nat} [NeZero width] (c : AsmConfigExact width)
   simpa [hlength,Nat.add_comm] using he
 /-- Full original computed lookup evenness: validity, the actual returned lookup,
 old same-key lookup parity, and initial evenness are the four source guards. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "all_enc_ok_lab_lookup_even" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem allEncOk_computeLabels_lookup_even {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (pos : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))

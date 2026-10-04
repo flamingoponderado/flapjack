@@ -84,7 +84,7 @@ return-handler's own labels last).
 
 HOL's `wordLang$prog` carries `num_set` and `mlstring` fields exactly in the
 WordLangProgHOL carrier below. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "extract_labels_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def extractLabels {width : Nat} : WordLangProgHOL (BitVec width) → List (Nat × Nat)
   | .call returns _ _ handler =>
       match returns, handler with
@@ -147,7 +147,7 @@ predicate holds on every `Inst` reachable through the program's structural
 positions (`Seq`, `Loop`, `If`, `MustTerminate`, `Call` bodies, and the
 synthetic instruction of `OpCurrHeap`).  Note HOL's `Call` nesting: when the
 return metadata is `NONE` the result is `T` regardless of the handler. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "every_inst_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def everyInst {width : Nat} (P : WordLangInst (BitVec width) → Bool) :
     WordLangProgHOL (BitVec width) → Bool
   | .inst instruction => P instruction
@@ -173,7 +173,7 @@ forbidden in `Assign` and `Store`, allowed only as `Var` in `Set`, and in
 through `Seq`, `Loop`, `If`, `MustTerminate` and both `Call` bodies (the
 return and handler cases are both required, so a `Call` with no return
 metadata but a non-flat handler is rejected). -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "flat_exp_conventions_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def flatExpConventions {width : Nat} : WordLangProgHOL (BitVec width) → Bool
   | .assign _ _ => false
   | .store _ _ => false
@@ -237,42 +237,6 @@ def instOkLess {width : Nat} (config : AsmConfig width) :
         asmHwOffsetOk config offset
        else
         asmByteOffsetOk config offset)
-  | .fp (.fpLess _ left right) => asmFpRegOk config left && asmFpRegOk config right
-  | .fp (.fpLessEqual _ left right) => asmFpRegOk config left && asmFpRegOk config right
-  | .fp (.fpEqual _ left right) => asmFpRegOk config left && asmFpRegOk config right
-  | .fp (.fpAbs destination source) =>
-      (!config.twoRegArith || !(destination == source)) &&
-        asmFpRegOk config destination && asmFpRegOk config source
-  | .fp (.fpNeg destination source) =>
-      (!config.twoRegArith || !(destination == source)) &&
-        asmFpRegOk config destination && asmFpRegOk config source
-  | .fp (.fpSqrt destination source) =>
-      asmFpRegOk config destination && asmFpRegOk config source
-  | .fp (.fpAdd destination left right) =>
-      (!config.twoRegArith || destination == left) && asmFpRegOk config destination &&
-        asmFpRegOk config left && asmFpRegOk config right
-  | .fp (.fpSub destination left right) =>
-      (!config.twoRegArith || destination == left) && asmFpRegOk config destination &&
-        asmFpRegOk config left && asmFpRegOk config right
-  | .fp (.fpMul destination left right) =>
-      (!config.twoRegArith || destination == left) && asmFpRegOk config destination &&
-        asmFpRegOk config left && asmFpRegOk config right
-  | .fp (.fpDiv destination left right) =>
-      (!config.twoRegArith || destination == left) && asmFpRegOk config destination &&
-        asmFpRegOk config left && asmFpRegOk config right
-  | .fp (.fpFma destination left right) =>
-      (config.isa == .armv7) && 2 < config.fpRegCount && asmFpRegOk config destination &&
-        asmFpRegOk config left && asmFpRegOk config right
-  | .fp (.fpMov destination source) =>
-      asmFpRegOk config destination && asmFpRegOk config source
-  | .fp (.fpMovToReg destinationInteger second fpRegister) =>
-      (!(width == 32) || !(destinationInteger == second)) && asmFpRegOk config fpRegister
-  | .fp (.fpMovFromReg fpRegister destinationInteger second) =>
-      (!(width == 32) || !(destinationInteger == second)) && asmFpRegOk config fpRegister
-  | .fp (.fpToInt destination source) =>
-      asmFpRegOk config destination && asmFpRegOk config source
-  | .fp (.fpFromInt destination source) =>
-      asmFpRegOk config destination && asmFpRegOk config source
   | _ => true
 
 /-- Flapjack-only shared program traversal for the broad executed validity
@@ -378,7 +342,7 @@ def callArgConvention {width : Nat} : WordLangProg (BitVec width) -> Bool
 
 /-- Exact HOL `wordConvs$call_arg_convention` over the faithful program
 carrier. `GENLIST f n` is represented by `(List.range n).map f`. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "call_arg_convention_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def callArgConventionHOL {width : Nat} : WordLangProgHOL (BitVec width) → Bool
   | .inst value => instArgConvention value
   | .return _ values => values == (List.range values.length).map (fun x => 2 * (x + 1))
@@ -474,8 +438,7 @@ def noShareInstSubprogs {width : Nat} (program : WordLangProg (BitVec width)) : 
 The positive HOL word dimension is represented by `BitVec width`; the tag
 records that carrier translation. Nat handler-label equality uses the standard
 decidable equality. A Call without a return ignores its handler entirely. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "good_handlers_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def goodHandlersHOL {width : Nat} [NeZero width] (n : Nat) :
     WordLangProgHOL (BitVec width) -> Bool
   | .call returns _ _ handler =>
@@ -507,8 +470,7 @@ def preAllocConventions {width : Nat} (program : WordLangProg (BitVec width)) : 
 (`wordConvsScript.sml:425-429`): every cut-set name is a stack variable and the
 call argument convention holds. The positive-width word translation is the sole
 carrier difference; HOL's `∧` of Booleans is `&&`. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "pre_alloc_conventions_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def preAllocConventionsHOL {width : Nat} [NeZero width]
     (program : WordLangProgHOL (BitVec width)) : Bool :=
   everyStackVarHOL isStackVar program && callArgConventionHOL program
@@ -525,8 +487,7 @@ def postAllocConventions {width : Nat} (k : Nat) (program : WordLangProg (BitVec
 
 /-- Literal post-allocation convention over the faithful Spt-backed program.
 The positive-width word translation is the sole carrier difference. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "post_alloc_conventions_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def postAllocConventionsHOL {width : Nat} [NeZero width]
     (k : Nat) (program : WordLangProgHOL (BitVec width)) : Bool :=
   everyVarHOL isPhyVar program &&
@@ -539,7 +500,7 @@ stated over the exact positive-dimension `HolInst` carrier (HOL's `'a inst`)
 with an explicit `[NeZero width]` binder.  The width-general executed form
 above remains untagged; this declaration is the faithful positive-width
 counterpart tracked by bead flapjack-4ac.6.1. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "distinct_tar_reg_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def distinctTarRegExact {width : Nat} [NeZero width] : HolInst width → Bool
   | .arith (.binop _ r1 _ ri) => match ri with
       | .reg r => decide (r ≠ r1)
@@ -558,7 +519,7 @@ stated over the exact positive-dimension `HolInst` carrier (HOL's `'a inst`)
 with an explicit `[NeZero width]` binder.  The width-general executed form
 above remains untagged; this declaration is the faithful positive-width
 counterpart tracked by bead flapjack-4ac.6.1. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "two_reg_inst_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def twoRegInstExact {width : Nat} [NeZero width] : HolInst width → Bool
   | .arith (.binop _ r1 r2 _) => r1 == r2
   | .arith (.shift _ r1 r2 _) => r1 == r2
@@ -573,7 +534,7 @@ stated over the exact positive-dimension `HolInst` carrier (HOL's `'a inst`)
 with an explicit `[NeZero width]` binder.  The width-general executed form
 above remains untagged; this declaration is the faithful positive-width
 counterpart tracked by bead flapjack-4ac.6.1. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "inst_arg_convention_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def instArgConventionExact {width : Nat} [NeZero width] : HolInst width -> Bool
   | .arith (.addCarry _ _ _ r4) => r4 == 0
   | .arith (.shift _ _ _ (.reg r)) => r == 8
@@ -595,7 +556,8 @@ explicit `[NeZero width]` binder.  The HOL `Mem` branch lists
 `hw_offset_ok` case is only reachable for the remaining memops.  The
 width-general executed form above remains untagged; this declaration is the
 faithful positive-width counterpart tracked by bead flapjack-4ac.6.1.2. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "inst_ok_less_def"]
+-- riscv-mi: integer-only specialization of the referenced HOL declaration.
+
 def instOkLessExact {width : Nat} [NeZero width] (config : AsmConfigExact width) :
     HolInst width → Bool
   | .arith (.binop operator _ _ (.imm value)) => config.validImm (.inl operator) value
@@ -623,47 +585,6 @@ def instOkLessExact {width : Nat} [NeZero width] (config : AsmConfigExact width)
         asmHwOffsetOkExact config offset
        else
         asmByteOffsetOkExact config offset)
-  | .fp (.fpLess _ left right) =>
-      asmFpRegOkExact left config && asmFpRegOkExact right config
-  | .fp (.fpLessEqual _ left right) =>
-      asmFpRegOkExact left config && asmFpRegOkExact right config
-  | .fp (.fpEqual _ left right) =>
-      asmFpRegOkExact left config && asmFpRegOkExact right config
-  | .fp (.fpAbs destination source) =>
-      (!config.twoRegArith || !(destination == source)) &&
-        asmFpRegOkExact destination config && asmFpRegOkExact source config
-  | .fp (.fpNeg destination source) =>
-      (!config.twoRegArith || !(destination == source)) &&
-        asmFpRegOkExact destination config && asmFpRegOkExact source config
-  | .fp (.fpSqrt destination source) =>
-      asmFpRegOkExact destination config && asmFpRegOkExact source config
-  | .fp (.fpAdd destination left right) =>
-      (!config.twoRegArith || destination == left) && asmFpRegOkExact destination config &&
-        asmFpRegOkExact left config && asmFpRegOkExact right config
-  | .fp (.fpSub destination left right) =>
-      (!config.twoRegArith || destination == left) && asmFpRegOkExact destination config &&
-        asmFpRegOkExact left config && asmFpRegOkExact right config
-  | .fp (.fpMul destination left right) =>
-      (!config.twoRegArith || destination == left) && asmFpRegOkExact destination config &&
-        asmFpRegOkExact left config && asmFpRegOkExact right config
-  | .fp (.fpDiv destination left right) =>
-      (!config.twoRegArith || destination == left) && asmFpRegOkExact destination config &&
-        asmFpRegOkExact left config && asmFpRegOkExact right config
-  | .fp (.fpFma destination left right) =>
-      (config.isa == .armv7) && 2 < config.fpRegCount && asmFpRegOkExact destination config &&
-        asmFpRegOkExact left config && asmFpRegOkExact right config
-  | .fp (.fpMov destination source) =>
-      asmFpRegOkExact destination config && asmFpRegOkExact source config
-  | .fp (.fpMovToReg destinationInteger second fpRegister) =>
-      (!(width == 32) || !(destinationInteger == second)) &&
-        asmFpRegOkExact fpRegister config
-  | .fp (.fpMovFromReg fpRegister destinationInteger second) =>
-      (!(width == 32) || !(destinationInteger == second)) &&
-        asmFpRegOkExact fpRegister config
-  | .fp (.fpToInt destination source) =>
-      asmFpRegOkExact destination config && asmFpRegOkExact source config
-  | .fp (.fpFromInt destination source) =>
-      asmFpRegOkExact destination config && asmFpRegOkExact source config
   | _ => true
 
 end Flapjack

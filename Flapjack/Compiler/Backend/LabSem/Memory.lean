@@ -13,8 +13,7 @@ classifier or a prerequisite of any operation below. -/
 namespace Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Encoders.Asm
 
-@[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "addr_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def addrValue {width : Nat} [NeZero width] {C F : Type} (address : HolAddr width)
     (state : Flapjack.Compiler.Backend.LabSem.State width C F) : Option (BitVec width) :=
   match address with
@@ -23,8 +22,7 @@ def addrValue {width : Nat} [NeZero width] {C F : Type} (address : HolAddr width
       | .word value => some (value + offset)
       | .loc _ _ => none
 
-@[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "mem_store_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def memStore {width : Nat} [NeZero width] {C F : Type} (register : Nat)
     (address : HolAddr width) (state : Flapjack.Compiler.Backend.LabSem.State width C F) :
     Flapjack.Compiler.Backend.LabSem.State width C F :=
@@ -34,8 +32,7 @@ def memStore {width : Nat} [NeZero width] {C F : Type} (register : Nat)
       assertState (decide (value.toNat % (width / 8) = 0) && state.memDomain value)
         (updMem value (state.regs register) state)
 
-@[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "mem_load_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def memLoad {width : Nat} [NeZero width] {C F : Type} (register : Nat)
     (address : HolAddr width) (state : Flapjack.Compiler.Backend.LabSem.State width C F) :
     Flapjack.Compiler.Backend.LabSem.State width C F :=
@@ -45,8 +42,7 @@ def memLoad {width : Nat} [NeZero width] {C F : Type} (register : Nat)
       assertState (decide (value.toNat % (width / 8) = 0) && state.memDomain value)
         (updReg register (state.memory value) state)
 
-@[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "mem_load32_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def memLoad32 {width : Nat} [NeZero width] {C F : Type} (register : Nat)
     (address : HolAddr width) (state : Flapjack.Compiler.Backend.LabSem.State width C F) :
     Flapjack.Compiler.Backend.LabSem.State width C F :=
@@ -57,8 +53,7 @@ def memLoad32 {width : Nat} [NeZero width] {C F : Type} (register : Nat)
       | some word => updReg register (.word (word.setWidth width)) state
       | none => assertState false state
 
-@[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "mem_store32_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def memStore32 {width : Nat} [NeZero width] {C F : Type} (register : Nat)
     (address : HolAddr width) (state : Flapjack.Compiler.Backend.LabSem.State width C F) :
     Flapjack.Compiler.Backend.LabSem.State width C F :=
@@ -72,8 +67,7 @@ def memStore32 {width : Nat} [NeZero width] {C F : Type} (register : Nat)
           | none => assertState false state
       | .loc _ _ => assertState false state
 
-@[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "mem_load_byte_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def memLoadByte {width : Nat} [NeZero width] {C F : Type} (register : Nat)
     (address : HolAddr width) (state : Flapjack.Compiler.Backend.LabSem.State width C F) :
     Flapjack.Compiler.Backend.LabSem.State width C F :=
@@ -84,8 +78,7 @@ def memLoadByte {width : Nat} [NeZero width] {C F : Type} (register : Nat)
       | some byte => updReg register (.word (byte.setWidth width)) state
       | none => assertState false state
 
-@[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "mem_store_byte_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def memStoreByte {width : Nat} [NeZero width] {C F : Type} (register : Nat)
     (address : HolAddr width) (state : Flapjack.Compiler.Backend.LabSem.State width C F) :
     Flapjack.Compiler.Backend.LabSem.State width C F :=
@@ -99,8 +92,7 @@ def memStoreByte {width : Nat} [NeZero width] {C F : Type} (register : Nat)
           | none => assertState false state
       | .loc _ _ => assertState false state
 
-@[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "mem_op_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def memOp {width : Nat} [NeZero width] {C F : Type} (operator : HolMemop) (register : Nat)
     (address : HolAddr width) (state : Flapjack.Compiler.Backend.LabSem.State width C F) :
     Flapjack.Compiler.Backend.LabSem.State width C F :=

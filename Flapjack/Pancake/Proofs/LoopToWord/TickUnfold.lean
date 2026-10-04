@@ -35,8 +35,7 @@ namespace WordSemStateFiniteExact
     ```
 
     HOL's free `s` is a parameter. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "evaluate_tick_unfold"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_tick_unfold {width : Nat} [NeZero width] {C : Type} {F : Type}
     (s : WordSemStateFiniteExact width C F) :
     evaluate (.tick) s =
@@ -61,8 +60,7 @@ open Classical in
     HOL's free `t1`, `names`, `body` and `exit_names` are parameters.  The
     paired lambda is a `match` on the pair.  HOL's `res' = NONE` is decided
     classically, because `WordSemResult` has no `DecidableEq`. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "evaluate_tick_loop_tick_unfold"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_tick_loop_tick_unfold {width : Nat} [NeZero width] {C : Type} {F : Type}
     (t1 : WordSemStateFiniteExact width C F) (names : WordLangNumSetHOL)
     (body : WordLangProgHOL (BitVec width)) (exit_names : WordLangNumSetHOL) :

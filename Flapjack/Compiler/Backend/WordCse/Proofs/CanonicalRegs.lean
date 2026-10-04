@@ -23,8 +23,7 @@ in the manifest; no additional theorem hypothesis is introduced. -/
 
 /-- Original canonical-register get_var equality, including a missing binding's
 default register, for arbitrary native knowledge and faithful WordSem state. -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "canonicalRegs_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem canonicalRegsCorrect {width : Nat} [NeZero width] {C : Type} {F : Type}
     (data : Knowledge) (register : Nat) (state : WordSemStateFiniteExact width C F)
     (valid : dataInv data state) :
@@ -37,8 +36,7 @@ theorem canonicalRegsCorrect {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Original avoid-register variant, with no inequality or successful lookup
 premise: both the avoid branch and ordinary canonical branch retain get_var. -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "canonicalRegs'_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem canonicalRegsAvoidCorrect {width : Nat} [NeZero width] {C : Type} {F : Type}
     (avoid : Nat) (data : Knowledge) (register : Nat) (state : WordSemStateFiniteExact width C F)
     (valid : dataInv data state) :
@@ -51,8 +49,7 @@ theorem canonicalRegsAvoidCorrect {width : Nat} [NeZero width] {C : Type} {F : T
 
 /-- Original direct sparse-local lookup equality; this retains complete
 word_loc results, including locations and absent values, without a Word premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "canonicalRegs_correct_bis"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem canonicalRegsCorrectBis {width : Nat} [NeZero width] {C : Type} {F : Type}
     (data : Knowledge) (register : Nat) (state : WordSemStateFiniteExact width C F)
     (valid : dataInv data state) :

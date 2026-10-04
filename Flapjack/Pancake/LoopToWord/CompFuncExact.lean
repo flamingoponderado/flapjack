@@ -22,8 +22,7 @@ open Flapjack.LoopToWord
 /-- Exact HOL `comp_func_def` (`cakeml/pancake/loop_to_wordScript.sml:164-169`):
 `let vs = fromNumSet (difference (acc_vars body LN) (toNumSet params))`;
 `let ctxt = make_ctxt 2 (params ++ vs) LN in FST (comp ctxt body (name,2))`. -/
-@[hol "cakeml/pancake/loop_to_wordScript.sml" "comp_func_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def loopToWordCompFuncHOL {width : Nat} [NeZero width] (name : Nat)
     (params : List Nat) (body : HolLoopProg width) : WordLangProgHOL (BitVec width) :=
   let vs := fromNumSetHOL
@@ -33,8 +32,7 @@ def loopToWordCompFuncHOL {width : Nat} [NeZero width] (name : Nat)
 
 /-- Exact HOL `compile_prog_def` (`cakeml/pancake/loop_to_wordScript.sml:171-174`):
 `MAP (λ(name, params, body). (name, LENGTH params+1, comp_func name params body)) p`. -/
-@[hol "cakeml/pancake/loop_to_wordScript.sml" "compile_prog_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def loopToWordCompileProgHOL {width : Nat} [NeZero width]
     (code : List (Nat × List Nat × HolLoopProg width)) :
     List (Nat × Nat × WordLangProgHOL (BitVec width)) :=
@@ -44,8 +42,7 @@ def loopToWordCompileProgHOL {width : Nat} [NeZero width]
 
 /-- Exact HOL `compile_def` (`cakeml/pancake/loop_to_wordScript.sml:176-177`):
 `compile p = compile_prog p`. -/
-@[hol "cakeml/pancake/loop_to_wordScript.sml" "compile_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def loopToWordCompileHOL {width : Nat} [NeZero width]
     (code : List (Nat × List Nat × HolLoopProg width)) :
     List (Nat × Nat × WordLangProgHOL (BitVec width)) :=

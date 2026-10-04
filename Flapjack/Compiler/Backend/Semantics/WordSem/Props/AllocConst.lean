@@ -19,8 +19,7 @@ namespace Flapjack.WordSemStateFiniteExact
 original field conclusions follow from the sole allocation equation, covering
 GC/error/space-success/NotEnoughSpace branches with arbitrary callback/state.
 No successful-allocation or resource-safety premise is supplied. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "alloc_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem allocConst {width : Nat} [NeZero width] {C F : Type}
     (amount : BitVec width) (names : WordLangCutsetsHOL)
     (state next : WordSemStateFiniteExact width C F) (result : Option (WordSemResult width))

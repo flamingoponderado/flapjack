@@ -82,8 +82,7 @@ theorem compileSingleCorrectAt_leaf {width : Nat} [NeZero width] {C F : Type} (t
   · rw [hco, horacle]; rfl
 
 /-- HOL `compile_single_correct`, `Skip` case (`word_to_wordProofScript.sml:294-296`). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_single_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compile_single_correct_Skip {width : Nat} [NeZero width] {C F : Type} (tt : Bool)
     (kk aa : Nat) (co : AsmConfigExact width)
     (st : WordSemStateFiniteExact width C F) :
@@ -91,8 +90,7 @@ theorem compile_single_correct_Skip {width : Nat} [NeZero width] {C F : Type} (t
   compileSingleCorrectAt_leaf tt kk aa co _ rfl st
 
 /-- HOL `compile_single_correct`, `Move` case (`word_to_wordProofScript.sml:298-301`). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_single_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compile_single_correct_Move {width : Nat} [NeZero width] {C F : Type} (tt : Bool)
     (kk aa : Nat) (co : AsmConfigExact width) (priority : Nat) (moves : List (Nat × Nat))
     (st : WordSemStateFiniteExact width C F) :
@@ -100,8 +98,7 @@ theorem compile_single_correct_Move {width : Nat} [NeZero width] {C F : Type} (t
   compileSingleCorrectAt_leaf tt kk aa co _ rfl st
 
 /-- HOL `compile_single_correct`, `Inst` case (`word_to_wordProofScript.sml:303-306`). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_single_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compile_single_correct_Inst {width : Nat} [NeZero width] {C F : Type} (tt : Bool)
     (kk aa : Nat) (co : AsmConfigExact width) (i : WordLangInst (BitVec width))
     (st : WordSemStateFiniteExact width C F) :
@@ -109,8 +106,7 @@ theorem compile_single_correct_Inst {width : Nat} [NeZero width] {C F : Type} (t
   compileSingleCorrectAt_leaf tt kk aa co _ rfl st
 
 /-- HOL `compile_single_correct`, `Assign` case (`word_to_wordProofScript.sml:308-311`). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_single_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compile_single_correct_Assign {width : Nat} [NeZero width] {C F : Type} (tt : Bool)
     (kk aa : Nat) (co : AsmConfigExact width) (name : Nat) (value : WordLangExpHOL (BitVec width))
     (st : WordSemStateFiniteExact width C F) :
@@ -118,8 +114,7 @@ theorem compile_single_correct_Assign {width : Nat} [NeZero width] {C F : Type} 
   compileSingleCorrectAt_leaf tt kk aa co _ rfl st
 
 /-- HOL `compile_single_correct`, `Get` case (`word_to_wordProofScript.sml:313-316`). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_single_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compile_single_correct_Get {width : Nat} [NeZero width] {C F : Type} (tt : Bool)
     (kk aa : Nat) (co : AsmConfigExact width) (destination : Nat) (store : WordStoreHOL)
     (st : WordSemStateFiniteExact width C F) :
@@ -127,8 +122,7 @@ theorem compile_single_correct_Get {width : Nat} [NeZero width] {C F : Type} (tt
   compileSingleCorrectAt_leaf tt kk aa co _ rfl st
 
 /-- HOL `compile_single_correct`, `Set` case (`word_to_wordProofScript.sml:318-321`). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_single_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compile_single_correct_Set {width : Nat} [NeZero width] {C F : Type} (tt : Bool)
     (kk aa : Nat) (co : AsmConfigExact width) (store : WordStoreHOL) (value : WordLangExpHOL (BitVec width))
     (st : WordSemStateFiniteExact width C F) :
@@ -136,8 +130,7 @@ theorem compile_single_correct_Set {width : Nat} [NeZero width] {C F : Type} (tt
   compileSingleCorrectAt_leaf tt kk aa co _ rfl st
 
 /-- HOL `compile_single_correct`, `Store` case (`word_to_wordProofScript.sml:323-326`). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_single_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compile_single_correct_Store {width : Nat} [NeZero width] {C F : Type} (tt : Bool)
     (kk aa : Nat) (co : AsmConfigExact width) (address : WordLangExpHOL (BitVec width)) (value : Nat)
     (st : WordSemStateFiniteExact width C F) :
@@ -145,8 +138,7 @@ theorem compile_single_correct_Store {width : Nat} [NeZero width] {C F : Type} (
   compileSingleCorrectAt_leaf tt kk aa co _ rfl st
 
 /-- HOL `compile_single_correct`, `Alloc` case (`word_to_wordProofScript.sml:750-765`). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_single_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compile_single_correct_Alloc {width : Nat} [NeZero width] {C F : Type} (tt : Bool)
     (kk aa : Nat) (co : AsmConfigExact width) (destination : Nat) (cutsets : WordLangCutsetsHOL)
     (st : WordSemStateFiniteExact width C F) :
@@ -154,8 +146,7 @@ theorem compile_single_correct_Alloc {width : Nat} [NeZero width] {C F : Type} (
   compileSingleCorrectAt_leaf tt kk aa co _ rfl st
 
 /-- HOL `compile_single_correct`, `StoreConsts` case (`word_to_wordProofScript.sml:767-769`). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_single_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compile_single_correct_StoreConsts {width : Nat} [NeZero width] {C F : Type} (tt : Bool)
     (kk aa : Nat) (co : AsmConfigExact width) (a b c d : Nat) (ws : List (Bool × BitVec width))
     (st : WordSemStateFiniteExact width C F) :
@@ -163,8 +154,7 @@ theorem compile_single_correct_StoreConsts {width : Nat} [NeZero width] {C F : T
   compileSingleCorrectAt_leaf tt kk aa co _ rfl st
 
 /-- HOL `compile_single_correct`, `Raise` case (`word_to_wordProofScript.sml:771-773`). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_single_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compile_single_correct_Raise {width : Nat} [NeZero width] {C F : Type} (tt : Bool)
     (kk aa : Nat) (co : AsmConfigExact width) (exception : Nat)
     (st : WordSemStateFiniteExact width C F) :
@@ -172,8 +162,7 @@ theorem compile_single_correct_Raise {width : Nat} [NeZero width] {C F : Type} (
   compileSingleCorrectAt_leaf tt kk aa co _ rfl st
 
 /-- HOL `compile_single_correct`, `Return` case (`word_to_wordProofScript.sml:775-777`). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_single_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compile_single_correct_Return {width : Nat} [NeZero width] {C F : Type} (tt : Bool)
     (kk aa : Nat) (co : AsmConfigExact width) (label : Nat) (values : List Nat)
     (st : WordSemStateFiniteExact width C F) :
@@ -181,8 +170,7 @@ theorem compile_single_correct_Return {width : Nat} [NeZero width] {C F : Type} 
   compileSingleCorrectAt_leaf tt kk aa co _ rfl st
 
 /-- HOL `compile_single_correct`, `Break` case (`word_to_wordProofScript.sml:779-782`). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_single_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compile_single_correct_Break {width : Nat} [NeZero width] {C F : Type} (tt : Bool)
     (kk aa : Nat) (co : AsmConfigExact width) (label : Nat)
     (st : WordSemStateFiniteExact width C F) :
@@ -190,8 +178,7 @@ theorem compile_single_correct_Break {width : Nat} [NeZero width] {C F : Type} (
   compileSingleCorrectAt_leaf tt kk aa co _ rfl st
 
 /-- HOL `compile_single_correct`, `Continue` case (`word_to_wordProofScript.sml:784-787`). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_single_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compile_single_correct_Continue {width : Nat} [NeZero width] {C F : Type} (tt : Bool)
     (kk aa : Nat) (co : AsmConfigExact width) (label : Nat)
     (st : WordSemStateFiniteExact width C F) :
@@ -199,8 +186,7 @@ theorem compile_single_correct_Continue {width : Nat} [NeZero width] {C F : Type
   compileSingleCorrectAt_leaf tt kk aa co _ rfl st
 
 /-- HOL `compile_single_correct`, `Tick` case (`word_to_wordProofScript.sml:789-791`). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_single_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compile_single_correct_Tick {width : Nat} [NeZero width] {C F : Type} (tt : Bool)
     (kk aa : Nat) (co : AsmConfigExact width)
     (st : WordSemStateFiniteExact width C F) :
@@ -208,8 +194,7 @@ theorem compile_single_correct_Tick {width : Nat} [NeZero width] {C F : Type} (t
   compileSingleCorrectAt_leaf tt kk aa co _ rfl st
 
 /-- HOL `compile_single_correct`, `OpCurrHeap` case (`word_to_wordProofScript.sml:793-795`). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_single_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compile_single_correct_OpCurrHeap {width : Nat} [NeZero width] {C F : Type} (tt : Bool)
     (kk aa : Nat) (co : AsmConfigExact width) (operator : BinOp) (destination source : Nat)
     (st : WordSemStateFiniteExact width C F) :
@@ -217,8 +202,7 @@ theorem compile_single_correct_OpCurrHeap {width : Nat} [NeZero width] {C F : Ty
   compileSingleCorrectAt_leaf tt kk aa co _ rfl st
 
 /-- HOL `compile_single_correct`, `LocValue` case (`word_to_wordProofScript.sml:797-799`). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_single_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compile_single_correct_LocValue {width : Nat} [NeZero width] {C F : Type} (tt : Bool)
     (kk aa : Nat) (co : AsmConfigExact width) (destination source : Nat)
     (st : WordSemStateFiniteExact width C F) :
@@ -226,8 +210,7 @@ theorem compile_single_correct_LocValue {width : Nat} [NeZero width] {C F : Type
   compileSingleCorrectAt_leaf tt kk aa co _ rfl st
 
 /-- HOL `compile_single_correct`, `CodeBufferWrite` case (`word_to_wordProofScript.sml:824-826`). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_single_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compile_single_correct_CodeBufferWrite {width : Nat} [NeZero width] {C F : Type} (tt : Bool)
     (kk aa : Nat) (co : AsmConfigExact width) (address value : Nat)
     (st : WordSemStateFiniteExact width C F) :
@@ -235,8 +218,7 @@ theorem compile_single_correct_CodeBufferWrite {width : Nat} [NeZero width] {C F
   compileSingleCorrectAt_leaf tt kk aa co _ rfl st
 
 /-- HOL `compile_single_correct`, `DataBufferWrite` case (`word_to_wordProofScript.sml:828-830`). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_single_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compile_single_correct_DataBufferWrite {width : Nat} [NeZero width] {C F : Type} (tt : Bool)
     (kk aa : Nat) (co : AsmConfigExact width) (address value : Nat)
     (st : WordSemStateFiniteExact width C F) :
@@ -244,8 +226,7 @@ theorem compile_single_correct_DataBufferWrite {width : Nat} [NeZero width] {C F
   compileSingleCorrectAt_leaf tt kk aa co _ rfl st
 
 /-- HOL `compile_single_correct`, `FFI` case (`word_to_wordProofScript.sml:832-834`). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_single_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compile_single_correct_FFI {width : Nat} [NeZero width] {C F : Type} (tt : Bool)
     (kk aa : Nat) (co : AsmConfigExact width) (function : Flapjack.Basis.Pure.MlString.MlString) (configuration configurationLength array arrayLength : Nat) (live : WordLangCutsetsHOL)
     (st : WordSemStateFiniteExact width C F) :
@@ -253,8 +234,7 @@ theorem compile_single_correct_FFI {width : Nat} [NeZero width] {C F : Type} (tt
   compileSingleCorrectAt_leaf tt kk aa co _ rfl st
 
 /-- HOL `compile_single_correct`, `ShareInst` case (`word_to_wordProofScript.sml:836-847`). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_single_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compile_single_correct_ShareInst {width : Nat} [NeZero width] {C F : Type} (tt : Bool)
     (kk aa : Nat) (co : AsmConfigExact width) (operator : WordMemOp) (name : Nat) (address : WordLangExpHOL (BitVec width))
     (st : WordSemStateFiniteExact width C F) :

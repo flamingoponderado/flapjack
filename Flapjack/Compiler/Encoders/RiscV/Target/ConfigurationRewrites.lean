@@ -13,7 +13,7 @@ open Flapjack Compiler.Encoders.Asm
 /-- Generated HOL `riscv_config` (riscv_targetScript.sml:331): the full source
 field bundle of `riscv_config`, in original order and with the original signed
 `valid_imm`/offset endpoints. -/
-@[hol "cakeml/compiler/encoders/riscv/riscv_targetScript.sml" "riscv_config"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem riscvConfigRewrites :
     riscvConfig.isa = .riscv ∧
     riscvConfig.encode = riscvEnc ∧

@@ -5,8 +5,7 @@ open Flapjack.Compiler.Encoders.Asm
 
 /-- Pre-naming memory-address admissibility. The base uses the logical register
 bound, while offsets retain HOL's signed word comparisons and ISA restriction. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "addr_name_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def addrName {width : Nat} [NeZero width] (operator : HolMemop)
     (address : HolAddr width) (config : AsmConfigExact width) : Prop :=
   match address with

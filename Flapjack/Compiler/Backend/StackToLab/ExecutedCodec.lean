@@ -87,7 +87,6 @@ def instToExecuted? {width : Nat} [NeZero width] :
   | .const r w => some (.word (.const r w))
   | .arith op => (arithToExecuted? op).map (fun a => .word (.arith a))
   | .mem op r (.addr base offset) => some (.word (.memOffset op r base offset))
-  | .fp _ => none
 
 def instFromExecuted? {width : Nat} [NeZero width] :
     LabPlain (BitVec width) → Option (HolInst width)
@@ -124,7 +123,6 @@ theorem inst_recover {width : Nat} [NeZero width]
       simp [instToExecuted?] at encoded
       subst executed
       rfl
-  | fp op => simp [instToExecuted?] at encoded
 
 
 def refToExecuted : Lab → LabRef

@@ -34,7 +34,6 @@ private def mulhOpS128 (rs : BitVec 5) (s : riscv_state) : BitVec 128 :=
     BitVec.signExtend 128 (holWordExtract 32 31 0 (if rs = 0 then 0 else s.c_gpr s.procID rs))
   else BitVec.signExtend 128 (if rs = 0 then 0 else s.c_gpr s.procID rs)
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "MULH"]
 theorem dfnMULH (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd ≠ 0) :
     «dfn'MULH» (rd, (rs1, rs2)) s =
@@ -49,7 +48,6 @@ theorem dfnMULH (rd rs1 rs2 : BitVec 5) (s : riscv_state)
   rcases hcases (s.c_MCSR s.procID).mcpuid.ArchBase with h | h | h | h <;>
     simp_all [in32BitMode, curArch, architecture, MCSR, mulhOpS, GPR, gpr, beq_iff_eq, ne_eq, «write'GPR», «write'gpr»]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "MULHU"]
 theorem dfnMULHU (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd ≠ 0) :
     «dfn'MULHU» (rd, (rs1, rs2)) s =
@@ -64,7 +62,6 @@ theorem dfnMULHU (rd rs1 rs2 : BitVec 5) (s : riscv_state)
   rcases hcases (s.c_MCSR s.procID).mcpuid.ArchBase with h | h | h | h <;>
     simp_all [in32BitMode, curArch, architecture, MCSR, mulhOpZ, GPR, gpr, beq_iff_eq, ne_eq, «write'GPR», «write'gpr»]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "MULHSU"]
 theorem dfnMULHSU (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd ≠ 0) :
     «dfn'MULHSU» (rd, (rs1, rs2)) s =
@@ -79,7 +76,6 @@ theorem dfnMULHSU (rd rs1 rs2 : BitVec 5) (s : riscv_state)
   rcases hcases (s.c_MCSR s.procID).mcpuid.ArchBase with h | h | h | h <;>
     simp_all [in32BitMode, curArch, architecture, MCSR, mulhOpS128, mulhOpZ, GPR, gpr, beq_iff_eq, ne_eq, «write'GPR», «write'gpr»]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "MULH_NOP"]
 theorem dfnMULHNop (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd = 0) :
     «dfn'MULH» (rd, (rs1, rs2)) s = s := by
@@ -88,7 +84,6 @@ theorem dfnMULHNop (rd rs1 rs2 : BitVec 5) (s : riscv_state)
   rcases hcases (s.c_MCSR s.procID).mcpuid.ArchBase with h | h | h | h <;>
     simp_all [in32BitMode, curArch, architecture, MCSR, ne_eq]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "MULHU_NOP"]
 theorem dfnMULHUNop (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd = 0) :
     «dfn'MULHU» (rd, (rs1, rs2)) s = s := by
@@ -97,7 +92,6 @@ theorem dfnMULHUNop (rd rs1 rs2 : BitVec 5) (s : riscv_state)
   rcases hcases (s.c_MCSR s.procID).mcpuid.ArchBase with h | h | h | h <;>
     simp_all [in32BitMode, curArch, architecture, MCSR, ne_eq]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "MULHSU_NOP"]
 theorem dfnMULHSUNop (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd = 0) :
     «dfn'MULHSU» (rd, (rs1, rs2)) s = s := by

@@ -13,8 +13,7 @@ open Flapjack Flapjack.Compiler.Backend.StackLang
 
 /-- HOL `good_code_def`. `EVERY` over a list is a membership quantifier, the
 tuple lambdas are rendered by projections, and `ALL_DISTINCT` is `List.Nodup`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "good_code_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def goodCode {width : Nat} [NeZero width] (sp : Nat) (code : List (Nat × HolProg width)) :
     Prop :=
   (code.map Prod.fst).Nodup ∧

@@ -107,8 +107,7 @@ theorem getFfiIndex_take {α : Type} [DecidableEq α] [Nonempty α] (l : List α
     simp only [Option.some.injEq] at hsplit
     simp [getFfiIndex, ht, hsplit]
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "compile_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_callFFI {width : Nat} [NeZero width] {S Q : Type} {F : Type}
     (s1 : Flapjack.Compiler.Backend.LabSem.State width Config F) (name : MlString)
     (w : BitVec width) (bytes : List (BitVec 8)) (n : Nat)

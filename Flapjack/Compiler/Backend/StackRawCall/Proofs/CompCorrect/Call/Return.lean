@@ -163,10 +163,7 @@ end ReturnRepresentation
 /-- Genuine SOME-return Call branch409-518. The original three source premises
 and exactly guarded callee, return and exception induction hypotheses establish
 both existential simulations. Inherits reals_as_rational_cuts, SOUNDNESS item8. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectCallReturn {width : Nat} [NeZero width] {C F : Type}
     (ret : HolProg width) (link l1 l2 : Nat) (dest : Sum Nat Nat)
     (handler : Option (HolProg width × Nat × Nat)) (info : Spt Nat)

@@ -167,132 +167,100 @@ example : (regBound (.inst (.arith (.subOverflow 1 2 3 4):HolInst 1) : HolProg 1
   simp [regBound, regBoundInst]
 
 -- rbm_inst_28_1_1
-example : (¬ regBound (.inst (.fp (.fpLess 1 99 100):HolInst 1) : HolProg 1) 1) ∧ (regBound (.inst (.fp (.fpLess 1 99 100):HolInst 1) : HolProg 1) 2) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_28_2_1
-example : (regBound (.inst (.fp (.fpLess 1 99 100):HolInst 1) : HolProg 1) 2) ∧ (regBound (.inst (.fp (.fpLess 1 99 100):HolInst 1) : HolProg 1) 3) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_29_1_1
-example : (¬ regBound (.inst (.fp (.fpLessEqual 1 99 100):HolInst 1) : HolProg 1) 1) ∧ (regBound (.inst (.fp (.fpLessEqual 1 99 100):HolInst 1) : HolProg 1) 2) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_29_2_1
-example : (regBound (.inst (.fp (.fpLessEqual 1 99 100):HolInst 1) : HolProg 1) 2) ∧ (regBound (.inst (.fp (.fpLessEqual 1 99 100):HolInst 1) : HolProg 1) 3) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_30_1_1
-example : (¬ regBound (.inst (.fp (.fpEqual 1 99 100):HolInst 1) : HolProg 1) 1) ∧ (regBound (.inst (.fp (.fpEqual 1 99 100):HolInst 1) : HolProg 1) 2) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_30_2_1
-example : (regBound (.inst (.fp (.fpEqual 1 99 100):HolInst 1) : HolProg 1) 2) ∧ (regBound (.inst (.fp (.fpEqual 1 99 100):HolInst 1) : HolProg 1) 3) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_31_0_1
-example : (regBound (.inst (.fp (.fpAbs 100 100):HolInst 1) : HolProg 1) 0) ∧ (regBound (.inst (.fp (.fpAbs 100 100):HolInst 1) : HolProg 1) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_31_100_1
-example : (regBound (.inst (.fp (.fpAbs 100 100):HolInst 1) : HolProg 1) 100) ∧ (regBound (.inst (.fp (.fpAbs 100 100):HolInst 1) : HolProg 1) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_32_0_1
-example : (regBound (.inst (.fp (.fpNeg 100 100):HolInst 1) : HolProg 1) 0) ∧ (regBound (.inst (.fp (.fpNeg 100 100):HolInst 1) : HolProg 1) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_32_100_1
-example : (regBound (.inst (.fp (.fpNeg 100 100):HolInst 1) : HolProg 1) 100) ∧ (regBound (.inst (.fp (.fpNeg 100 100):HolInst 1) : HolProg 1) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_33_0_1
-example : (regBound (.inst (.fp (.fpSqrt 100 100):HolInst 1) : HolProg 1) 0) ∧ (regBound (.inst (.fp (.fpSqrt 100 100):HolInst 1) : HolProg 1) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_33_100_1
-example : (regBound (.inst (.fp (.fpSqrt 100 100):HolInst 1) : HolProg 1) 100) ∧ (regBound (.inst (.fp (.fpSqrt 100 100):HolInst 1) : HolProg 1) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_34_0_1
-example : (regBound (.inst (.fp (.fpAdd 100 100 100):HolInst 1) : HolProg 1) 0) ∧ (regBound (.inst (.fp (.fpAdd 100 100 100):HolInst 1) : HolProg 1) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_34_100_1
-example : (regBound (.inst (.fp (.fpAdd 100 100 100):HolInst 1) : HolProg 1) 100) ∧ (regBound (.inst (.fp (.fpAdd 100 100 100):HolInst 1) : HolProg 1) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_35_0_1
-example : (regBound (.inst (.fp (.fpSub 100 100 100):HolInst 1) : HolProg 1) 0) ∧ (regBound (.inst (.fp (.fpSub 100 100 100):HolInst 1) : HolProg 1) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_35_100_1
-example : (regBound (.inst (.fp (.fpSub 100 100 100):HolInst 1) : HolProg 1) 100) ∧ (regBound (.inst (.fp (.fpSub 100 100 100):HolInst 1) : HolProg 1) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_36_0_1
-example : (regBound (.inst (.fp (.fpMul 100 100 100):HolInst 1) : HolProg 1) 0) ∧ (regBound (.inst (.fp (.fpMul 100 100 100):HolInst 1) : HolProg 1) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_36_100_1
-example : (regBound (.inst (.fp (.fpMul 100 100 100):HolInst 1) : HolProg 1) 100) ∧ (regBound (.inst (.fp (.fpMul 100 100 100):HolInst 1) : HolProg 1) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_37_0_1
-example : (regBound (.inst (.fp (.fpDiv 100 100 100):HolInst 1) : HolProg 1) 0) ∧ (regBound (.inst (.fp (.fpDiv 100 100 100):HolInst 1) : HolProg 1) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_37_100_1
-example : (regBound (.inst (.fp (.fpDiv 100 100 100):HolInst 1) : HolProg 1) 100) ∧ (regBound (.inst (.fp (.fpDiv 100 100 100):HolInst 1) : HolProg 1) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_38_0_1
-example : (regBound (.inst (.fp (.fpFma 100 100 100):HolInst 1) : HolProg 1) 0) ∧ (regBound (.inst (.fp (.fpFma 100 100 100):HolInst 1) : HolProg 1) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_38_100_1
-example : (regBound (.inst (.fp (.fpFma 100 100 100):HolInst 1) : HolProg 1) 100) ∧ (regBound (.inst (.fp (.fpFma 100 100 100):HolInst 1) : HolProg 1) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_39_0_1
-example : (regBound (.inst (.fp (.fpMov 100 100):HolInst 1) : HolProg 1) 0) ∧ (regBound (.inst (.fp (.fpMov 100 100):HolInst 1) : HolProg 1) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_39_100_1
-example : (regBound (.inst (.fp (.fpMov 100 100):HolInst 1) : HolProg 1) 100) ∧ (regBound (.inst (.fp (.fpMov 100 100):HolInst 1) : HolProg 1) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_40_0_1
-example : (regBound (.inst (.fp (.fpToInt 100 100):HolInst 1) : HolProg 1) 0) ∧ (regBound (.inst (.fp (.fpToInt 100 100):HolInst 1) : HolProg 1) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_40_100_1
-example : (regBound (.inst (.fp (.fpToInt 100 100):HolInst 1) : HolProg 1) 100) ∧ (regBound (.inst (.fp (.fpToInt 100 100):HolInst 1) : HolProg 1) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_41_0_1
-example : (regBound (.inst (.fp (.fpFromInt 100 100):HolInst 1) : HolProg 1) 0) ∧ (regBound (.inst (.fp (.fpFromInt 100 100):HolInst 1) : HolProg 1) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_41_100_1
-example : (regBound (.inst (.fp (.fpFromInt 100 100):HolInst 1) : HolProg 1) 100) ∧ (regBound (.inst (.fp (.fpFromInt 100 100):HolInst 1) : HolProg 1) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_42_2_1
-example : (¬ regBound (.inst (.fp (.fpMovToReg 1 2 100):HolInst 1) : HolProg 1) 2) ∧ (regBound (.inst (.fp (.fpMovToReg 1 2 100):HolInst 1) : HolProg 1) 3) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_42_3_1
-example : (regBound (.inst (.fp (.fpMovToReg 1 2 100):HolInst 1) : HolProg 1) 3) ∧ (regBound (.inst (.fp (.fpMovToReg 1 2 100):HolInst 1) : HolProg 1) 4) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_43_2_1
-example : (¬ regBound (.inst (.fp (.fpMovFromReg 100 1 2):HolInst 1) : HolProg 1) 2) ∧ (regBound (.inst (.fp (.fpMovFromReg 100 1 2):HolInst 1) : HolProg 1) 3) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_43_3_1
-example : (regBound (.inst (.fp (.fpMovFromReg 100 1 2):HolInst 1) : HolProg 1) 3) ∧ (regBound (.inst (.fp (.fpMovFromReg 100 1 2):HolInst 1) : HolProg 1) 4) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_prog_44_0_1
 example : (regBound (.skip:HolProg 1) 0) ∧ (regBound (.skip:HolProg 1) 1) := by
@@ -775,132 +743,100 @@ example : (regBound (.inst (.arith (.subOverflow 1 2 3 4):HolInst 64) : HolProg 
   simp [regBound, regBoundInst]
 
 -- rbm_inst_28_1_64
-example : (¬ regBound (.inst (.fp (.fpLess 1 99 100):HolInst 64) : HolProg 64) 1) ∧ (regBound (.inst (.fp (.fpLess 1 99 100):HolInst 64) : HolProg 64) 2) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_28_2_64
-example : (regBound (.inst (.fp (.fpLess 1 99 100):HolInst 64) : HolProg 64) 2) ∧ (regBound (.inst (.fp (.fpLess 1 99 100):HolInst 64) : HolProg 64) 3) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_29_1_64
-example : (¬ regBound (.inst (.fp (.fpLessEqual 1 99 100):HolInst 64) : HolProg 64) 1) ∧ (regBound (.inst (.fp (.fpLessEqual 1 99 100):HolInst 64) : HolProg 64) 2) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_29_2_64
-example : (regBound (.inst (.fp (.fpLessEqual 1 99 100):HolInst 64) : HolProg 64) 2) ∧ (regBound (.inst (.fp (.fpLessEqual 1 99 100):HolInst 64) : HolProg 64) 3) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_30_1_64
-example : (¬ regBound (.inst (.fp (.fpEqual 1 99 100):HolInst 64) : HolProg 64) 1) ∧ (regBound (.inst (.fp (.fpEqual 1 99 100):HolInst 64) : HolProg 64) 2) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_30_2_64
-example : (regBound (.inst (.fp (.fpEqual 1 99 100):HolInst 64) : HolProg 64) 2) ∧ (regBound (.inst (.fp (.fpEqual 1 99 100):HolInst 64) : HolProg 64) 3) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_31_0_64
-example : (regBound (.inst (.fp (.fpAbs 100 100):HolInst 64) : HolProg 64) 0) ∧ (regBound (.inst (.fp (.fpAbs 100 100):HolInst 64) : HolProg 64) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_31_100_64
-example : (regBound (.inst (.fp (.fpAbs 100 100):HolInst 64) : HolProg 64) 100) ∧ (regBound (.inst (.fp (.fpAbs 100 100):HolInst 64) : HolProg 64) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_32_0_64
-example : (regBound (.inst (.fp (.fpNeg 100 100):HolInst 64) : HolProg 64) 0) ∧ (regBound (.inst (.fp (.fpNeg 100 100):HolInst 64) : HolProg 64) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_32_100_64
-example : (regBound (.inst (.fp (.fpNeg 100 100):HolInst 64) : HolProg 64) 100) ∧ (regBound (.inst (.fp (.fpNeg 100 100):HolInst 64) : HolProg 64) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_33_0_64
-example : (regBound (.inst (.fp (.fpSqrt 100 100):HolInst 64) : HolProg 64) 0) ∧ (regBound (.inst (.fp (.fpSqrt 100 100):HolInst 64) : HolProg 64) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_33_100_64
-example : (regBound (.inst (.fp (.fpSqrt 100 100):HolInst 64) : HolProg 64) 100) ∧ (regBound (.inst (.fp (.fpSqrt 100 100):HolInst 64) : HolProg 64) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_34_0_64
-example : (regBound (.inst (.fp (.fpAdd 100 100 100):HolInst 64) : HolProg 64) 0) ∧ (regBound (.inst (.fp (.fpAdd 100 100 100):HolInst 64) : HolProg 64) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_34_100_64
-example : (regBound (.inst (.fp (.fpAdd 100 100 100):HolInst 64) : HolProg 64) 100) ∧ (regBound (.inst (.fp (.fpAdd 100 100 100):HolInst 64) : HolProg 64) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_35_0_64
-example : (regBound (.inst (.fp (.fpSub 100 100 100):HolInst 64) : HolProg 64) 0) ∧ (regBound (.inst (.fp (.fpSub 100 100 100):HolInst 64) : HolProg 64) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_35_100_64
-example : (regBound (.inst (.fp (.fpSub 100 100 100):HolInst 64) : HolProg 64) 100) ∧ (regBound (.inst (.fp (.fpSub 100 100 100):HolInst 64) : HolProg 64) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_36_0_64
-example : (regBound (.inst (.fp (.fpMul 100 100 100):HolInst 64) : HolProg 64) 0) ∧ (regBound (.inst (.fp (.fpMul 100 100 100):HolInst 64) : HolProg 64) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_36_100_64
-example : (regBound (.inst (.fp (.fpMul 100 100 100):HolInst 64) : HolProg 64) 100) ∧ (regBound (.inst (.fp (.fpMul 100 100 100):HolInst 64) : HolProg 64) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_37_0_64
-example : (regBound (.inst (.fp (.fpDiv 100 100 100):HolInst 64) : HolProg 64) 0) ∧ (regBound (.inst (.fp (.fpDiv 100 100 100):HolInst 64) : HolProg 64) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_37_100_64
-example : (regBound (.inst (.fp (.fpDiv 100 100 100):HolInst 64) : HolProg 64) 100) ∧ (regBound (.inst (.fp (.fpDiv 100 100 100):HolInst 64) : HolProg 64) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_38_0_64
-example : (regBound (.inst (.fp (.fpFma 100 100 100):HolInst 64) : HolProg 64) 0) ∧ (regBound (.inst (.fp (.fpFma 100 100 100):HolInst 64) : HolProg 64) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_38_100_64
-example : (regBound (.inst (.fp (.fpFma 100 100 100):HolInst 64) : HolProg 64) 100) ∧ (regBound (.inst (.fp (.fpFma 100 100 100):HolInst 64) : HolProg 64) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_39_0_64
-example : (regBound (.inst (.fp (.fpMov 100 100):HolInst 64) : HolProg 64) 0) ∧ (regBound (.inst (.fp (.fpMov 100 100):HolInst 64) : HolProg 64) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_39_100_64
-example : (regBound (.inst (.fp (.fpMov 100 100):HolInst 64) : HolProg 64) 100) ∧ (regBound (.inst (.fp (.fpMov 100 100):HolInst 64) : HolProg 64) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_40_0_64
-example : (regBound (.inst (.fp (.fpToInt 100 100):HolInst 64) : HolProg 64) 0) ∧ (regBound (.inst (.fp (.fpToInt 100 100):HolInst 64) : HolProg 64) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_40_100_64
-example : (regBound (.inst (.fp (.fpToInt 100 100):HolInst 64) : HolProg 64) 100) ∧ (regBound (.inst (.fp (.fpToInt 100 100):HolInst 64) : HolProg 64) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_41_0_64
-example : (regBound (.inst (.fp (.fpFromInt 100 100):HolInst 64) : HolProg 64) 0) ∧ (regBound (.inst (.fp (.fpFromInt 100 100):HolInst 64) : HolProg 64) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_41_100_64
-example : (regBound (.inst (.fp (.fpFromInt 100 100):HolInst 64) : HolProg 64) 100) ∧ (regBound (.inst (.fp (.fpFromInt 100 100):HolInst 64) : HolProg 64) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_42_2_64
-example : (¬ regBound (.inst (.fp (.fpMovToReg 1 2 100):HolInst 64) : HolProg 64) 2) ∧ (regBound (.inst (.fp (.fpMovToReg 1 2 100):HolInst 64) : HolProg 64) 3) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_42_3_64
-example : (regBound (.inst (.fp (.fpMovToReg 1 2 100):HolInst 64) : HolProg 64) 3) ∧ (regBound (.inst (.fp (.fpMovToReg 1 2 100):HolInst 64) : HolProg 64) 4) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_43_2_64
-example : (¬ regBound (.inst (.fp (.fpMovFromReg 100 1 2):HolInst 64) : HolProg 64) 2) ∧ (regBound (.inst (.fp (.fpMovFromReg 100 1 2):HolInst 64) : HolProg 64) 3) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_43_3_64
-example : (regBound (.inst (.fp (.fpMovFromReg 100 1 2):HolInst 64) : HolProg 64) 3) ∧ (regBound (.inst (.fp (.fpMovFromReg 100 1 2):HolInst 64) : HolProg 64) 4) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_prog_44_0_64
 example : (regBound (.skip:HolProg 64) 0) ∧ (regBound (.skip:HolProg 64) 1) := by
@@ -1383,132 +1319,100 @@ example : (regBound (.inst (.arith (.subOverflow 1 2 3 4):HolInst 80) : HolProg 
   simp [regBound, regBoundInst]
 
 -- rbm_inst_28_1_80
-example : (¬ regBound (.inst (.fp (.fpLess 1 99 100):HolInst 80) : HolProg 80) 1) ∧ (regBound (.inst (.fp (.fpLess 1 99 100):HolInst 80) : HolProg 80) 2) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_28_2_80
-example : (regBound (.inst (.fp (.fpLess 1 99 100):HolInst 80) : HolProg 80) 2) ∧ (regBound (.inst (.fp (.fpLess 1 99 100):HolInst 80) : HolProg 80) 3) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_29_1_80
-example : (¬ regBound (.inst (.fp (.fpLessEqual 1 99 100):HolInst 80) : HolProg 80) 1) ∧ (regBound (.inst (.fp (.fpLessEqual 1 99 100):HolInst 80) : HolProg 80) 2) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_29_2_80
-example : (regBound (.inst (.fp (.fpLessEqual 1 99 100):HolInst 80) : HolProg 80) 2) ∧ (regBound (.inst (.fp (.fpLessEqual 1 99 100):HolInst 80) : HolProg 80) 3) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_30_1_80
-example : (¬ regBound (.inst (.fp (.fpEqual 1 99 100):HolInst 80) : HolProg 80) 1) ∧ (regBound (.inst (.fp (.fpEqual 1 99 100):HolInst 80) : HolProg 80) 2) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_30_2_80
-example : (regBound (.inst (.fp (.fpEqual 1 99 100):HolInst 80) : HolProg 80) 2) ∧ (regBound (.inst (.fp (.fpEqual 1 99 100):HolInst 80) : HolProg 80) 3) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_31_0_80
-example : (regBound (.inst (.fp (.fpAbs 100 100):HolInst 80) : HolProg 80) 0) ∧ (regBound (.inst (.fp (.fpAbs 100 100):HolInst 80) : HolProg 80) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_31_100_80
-example : (regBound (.inst (.fp (.fpAbs 100 100):HolInst 80) : HolProg 80) 100) ∧ (regBound (.inst (.fp (.fpAbs 100 100):HolInst 80) : HolProg 80) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_32_0_80
-example : (regBound (.inst (.fp (.fpNeg 100 100):HolInst 80) : HolProg 80) 0) ∧ (regBound (.inst (.fp (.fpNeg 100 100):HolInst 80) : HolProg 80) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_32_100_80
-example : (regBound (.inst (.fp (.fpNeg 100 100):HolInst 80) : HolProg 80) 100) ∧ (regBound (.inst (.fp (.fpNeg 100 100):HolInst 80) : HolProg 80) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_33_0_80
-example : (regBound (.inst (.fp (.fpSqrt 100 100):HolInst 80) : HolProg 80) 0) ∧ (regBound (.inst (.fp (.fpSqrt 100 100):HolInst 80) : HolProg 80) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_33_100_80
-example : (regBound (.inst (.fp (.fpSqrt 100 100):HolInst 80) : HolProg 80) 100) ∧ (regBound (.inst (.fp (.fpSqrt 100 100):HolInst 80) : HolProg 80) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_34_0_80
-example : (regBound (.inst (.fp (.fpAdd 100 100 100):HolInst 80) : HolProg 80) 0) ∧ (regBound (.inst (.fp (.fpAdd 100 100 100):HolInst 80) : HolProg 80) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_34_100_80
-example : (regBound (.inst (.fp (.fpAdd 100 100 100):HolInst 80) : HolProg 80) 100) ∧ (regBound (.inst (.fp (.fpAdd 100 100 100):HolInst 80) : HolProg 80) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_35_0_80
-example : (regBound (.inst (.fp (.fpSub 100 100 100):HolInst 80) : HolProg 80) 0) ∧ (regBound (.inst (.fp (.fpSub 100 100 100):HolInst 80) : HolProg 80) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_35_100_80
-example : (regBound (.inst (.fp (.fpSub 100 100 100):HolInst 80) : HolProg 80) 100) ∧ (regBound (.inst (.fp (.fpSub 100 100 100):HolInst 80) : HolProg 80) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_36_0_80
-example : (regBound (.inst (.fp (.fpMul 100 100 100):HolInst 80) : HolProg 80) 0) ∧ (regBound (.inst (.fp (.fpMul 100 100 100):HolInst 80) : HolProg 80) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_36_100_80
-example : (regBound (.inst (.fp (.fpMul 100 100 100):HolInst 80) : HolProg 80) 100) ∧ (regBound (.inst (.fp (.fpMul 100 100 100):HolInst 80) : HolProg 80) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_37_0_80
-example : (regBound (.inst (.fp (.fpDiv 100 100 100):HolInst 80) : HolProg 80) 0) ∧ (regBound (.inst (.fp (.fpDiv 100 100 100):HolInst 80) : HolProg 80) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_37_100_80
-example : (regBound (.inst (.fp (.fpDiv 100 100 100):HolInst 80) : HolProg 80) 100) ∧ (regBound (.inst (.fp (.fpDiv 100 100 100):HolInst 80) : HolProg 80) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_38_0_80
-example : (regBound (.inst (.fp (.fpFma 100 100 100):HolInst 80) : HolProg 80) 0) ∧ (regBound (.inst (.fp (.fpFma 100 100 100):HolInst 80) : HolProg 80) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_38_100_80
-example : (regBound (.inst (.fp (.fpFma 100 100 100):HolInst 80) : HolProg 80) 100) ∧ (regBound (.inst (.fp (.fpFma 100 100 100):HolInst 80) : HolProg 80) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_39_0_80
-example : (regBound (.inst (.fp (.fpMov 100 100):HolInst 80) : HolProg 80) 0) ∧ (regBound (.inst (.fp (.fpMov 100 100):HolInst 80) : HolProg 80) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_39_100_80
-example : (regBound (.inst (.fp (.fpMov 100 100):HolInst 80) : HolProg 80) 100) ∧ (regBound (.inst (.fp (.fpMov 100 100):HolInst 80) : HolProg 80) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_40_0_80
-example : (regBound (.inst (.fp (.fpToInt 100 100):HolInst 80) : HolProg 80) 0) ∧ (regBound (.inst (.fp (.fpToInt 100 100):HolInst 80) : HolProg 80) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_40_100_80
-example : (regBound (.inst (.fp (.fpToInt 100 100):HolInst 80) : HolProg 80) 100) ∧ (regBound (.inst (.fp (.fpToInt 100 100):HolInst 80) : HolProg 80) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_41_0_80
-example : (regBound (.inst (.fp (.fpFromInt 100 100):HolInst 80) : HolProg 80) 0) ∧ (regBound (.inst (.fp (.fpFromInt 100 100):HolInst 80) : HolProg 80) 1) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_41_100_80
-example : (regBound (.inst (.fp (.fpFromInt 100 100):HolInst 80) : HolProg 80) 100) ∧ (regBound (.inst (.fp (.fpFromInt 100 100):HolInst 80) : HolProg 80) 101) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_42_2_80
-example : (¬ regBound (.inst (.fp (.fpMovToReg 1 2 100):HolInst 80) : HolProg 80) 2) ∧ (regBound (.inst (.fp (.fpMovToReg 1 2 100):HolInst 80) : HolProg 80) 3) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_42_3_80
-example : (regBound (.inst (.fp (.fpMovToReg 1 2 100):HolInst 80) : HolProg 80) 3) ∧ (regBound (.inst (.fp (.fpMovToReg 1 2 100):HolInst 80) : HolProg 80) 4) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_43_2_80
-example : (¬ regBound (.inst (.fp (.fpMovFromReg 100 1 2):HolInst 80) : HolProg 80) 2) ∧ (regBound (.inst (.fp (.fpMovFromReg 100 1 2):HolInst 80) : HolProg 80) 3) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_inst_43_3_80
-example : (regBound (.inst (.fp (.fpMovFromReg 100 1 2):HolInst 80) : HolProg 80) 3) ∧ (regBound (.inst (.fp (.fpMovFromReg 100 1 2):HolInst 80) : HolProg 80) 4) := by
-  simp [regBound, regBoundInst]
+
 
 -- rbm_prog_44_0_80
 example : (regBound (.skip:HolProg 80) 0) ∧ (regBound (.skip:HolProg 80) 1) := by

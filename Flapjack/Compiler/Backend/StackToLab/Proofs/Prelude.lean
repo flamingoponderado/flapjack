@@ -38,16 +38,14 @@ theorem wordShWordShift {width : Nat} [NeZero width] {a : Flapjack.Shift}
   cases a <;> simp_all [wordShift]
 
 /-- The LabSem assertion of a true condition is the identity. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "assert_T"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem assertT {width : Nat} [NeZero width] {C F : Type}
     (s : Flapjack.Compiler.Backend.LabSem.State width C F) : assertState true s = s := by
   cases s
   simp [assertState]
 
 /-- `asm_fetch_aux` never returns a label line. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "asm_fetch_aux_no_label"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem asmFetchAuxNoLabel {width : Nat} [NeZero width] {l1 l2 : Nat} {x : Nat} :
     ∀ (pc : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
         (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString)
@@ -133,8 +131,7 @@ theorem findCodeLookup {width : Nat} [NeZero width] {β α : Type}
       · simp at h
 
 /-- A compiled jump is never a label. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "not_is_Label_compile_jump"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem notIsLabelCompileJump {width : Nat} [NeZero width] (dest : Nat ⊕ Nat) :
     isLabelHOL (compileJumpHOL dest : Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString)

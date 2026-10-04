@@ -25,13 +25,7 @@ example (conf : AsmConfigExact 64) :
   rfl
 
 -- ci_inst_64
-example (conf : AsmConfigExact 64) :
-    let p : WordLangProgHOL (BitVec 64) := .inst (.fp (.fpMovToReg 999 777 11));
-    (noInstallSubprogsHOL p,noInstall
-      (compNative conf false p (.append (.list [4]) (.list [7]),17) (2,7,9)).1) =
-      (true,true) := by
-  simp only [compNative]
-  rfl
+
 
 -- ci_assign_64
 example (conf : AsmConfigExact 64) :

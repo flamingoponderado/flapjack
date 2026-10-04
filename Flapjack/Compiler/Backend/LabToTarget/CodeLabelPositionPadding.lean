@@ -6,8 +6,7 @@ open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString
 
 /-- Full original code-level padding parity. Both one-byte and arbitrary NOP
 branches retain the source guards and actual annotation-based section positions. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "all_lab_len_pos_ok_pad_code"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem allLabLenPosOk_padCode {width : Nat} [NeZero width]
     (nop : List (BitVec 8))
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))

@@ -15,8 +15,7 @@ branches, with every original universal variable and existential info witness.
 Inherited total holEl/holHd retains shared opaque holHdNil/holArb past the end;
 no bounds or fallback are added. The fixed word8 payload uses BitVec 8 and the
 reviewed native HOL byte decoder, not an alternative byte carrier. -/
-@[hol "cakeml/compiler/backend/semantics/targetSemScript.sml" "ffi_interfer_ok_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def ffiInterferOkHOL {width : Nat} [NeZero width] {S Q : Type}
     (pc : BitVec width) (mc : MachineConfig width S Q) : Prop :=
   ∀ (ms2 : S) (k index : Nat) (newBytes : List (BitVec 8)) (t1 : AsmState width)
@@ -57,8 +56,7 @@ noncomputable def ffiInterferOkHOL {width : Nat} [NeZero width] {S Q : Type}
 /-- Full original cache-clear interference contract, including return PC,
 all program-domain bytes and the saved-or-pointer register promises. This
 retains the literal whole native states and every source antecedent. -/
-@[hol "cakeml/compiler/backend/semantics/targetSemScript.sml" "ccache_interfer_ok_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def ccacheInterferOkHOL {width : Nat} [NeZero width] {S Q : Type}
     (pc : BitVec width) (mc : MachineConfig width S Q) : Prop :=
   ∀ (ms2 : S) (t1 : AsmState width) (k : Nat) (a1 a2 : BitVec width),

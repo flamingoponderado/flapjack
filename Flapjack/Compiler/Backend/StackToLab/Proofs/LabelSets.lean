@@ -19,8 +19,7 @@ attribute [local simp] FlattenCorrect.appListAppendAppend FlattenCorrect.appList
 /-- HOL `complex_get_code_labels_def`. HOL `INSERT` binds looser than
 `UNION`, so the return clause is `(l1,l2) INSERT (labels of r ∪ handler
 labels)`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "complex_get_code_labels_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def complexGetCodeLabels {width : Nat} [NeZero width] : HolProg width → Set (Nat × Nat)
   | .seq p1 p2 => complexGetCodeLabels p1 ∪ complexGetCodeLabels p2
   | .ite _ _ _ p1 p2 => complexGetCodeLabels p1 ∪ complexGetCodeLabels p2
@@ -188,8 +187,7 @@ open Classical in
 /-- HOL `complex_flatten_labels` (local). The `let pp = set (...)` is inlined
 as the membership predicate of the flattened lines; `INSERT`/`UNION`
 association as in HOL (`INSERT` looser than `UNION`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "complex_flatten_labels"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem complexFlattenLabels {width : Nat} [NeZero width] :
     ∀ (t : Bool) (p : HolProg width) (n m : Nat) (cs bs : List Nat),
       ⋃₀ (lineGetLabels '' {ln | ln ∈ appListAppend (flattenHOL t p n m cs bs).1}) ⊆
@@ -306,8 +304,7 @@ termination_by p => sizeOf p
 
 /-- HOL `flatten_labels` (local). HOL's variable names are kept: `m` is the
 program, `n` the section and `p` the next label. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_labels"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLabels {width : Nat} [NeZero width] :
     ∀ (t : Bool) (m : HolProg width) (n p : Nat) (cs bs : List Nat)
       (l : AppList (LabSem.LabLineHOL width)) (x : Bool) (y : Nat),
@@ -445,9 +442,7 @@ termination_by p => sizeOf p
 
 /-- HOL `flatten_preserves_handler_labels`. HOL's names: `m` is the program,
 `n` the section and `p` the next label. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "flatten_preserves_handler_labels"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenPreservesHandlerLabels {width : Nat} [NeZero width] :
     ∀ (t : Bool) (m : HolProg width) (n p : Nat) (cs bs : List Nat)
       (l : AppList (LabSem.LabLineHOL width)) (x : Bool) (y : Nat),
@@ -475,8 +470,7 @@ theorem mem_getCodeLabels_of {width : Nat} [NeZero width]
     lab ∈ getCodeLabels secs := ⟨sec, hs, h⟩
 
 /-- HOL `get_labels_MAP_prog_to_section_SUBSET_code_labels_lemma`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "get_labels_MAP_prog_to_section_SUBSET_code_labels_lemma" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getLabelsMapProgToSectionSubsetCodeLabelsLemma {width : Nat} [NeZero width] :
     ∀ p : List (Nat × HolProg width),
       (∀ sec ∈ p.map progToSectionHOL, LabProps.secLabelsOk sec) →
@@ -502,8 +496,7 @@ theorem getLabelsMapProgToSectionSubsetCodeLabelsLemma {width : Nat} [NeZero wid
   · simp [lineGetLabels] at hlab
 
 /-- HOL `prog_to_section_preserves_MAP_FST` (local). -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "prog_to_section_preserves_MAP_FST" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem progToSectionPreservesMapFst {width : Nat} [NeZero width] :
     ∀ p : List (Nat × HolProg width),
       (fun n => (n, 0)) '' {n | n ∈ p.map Prod.fst} ⊆ getCodeLabels (p.map progToSectionHOL) := by
@@ -515,8 +508,7 @@ theorem progToSectionPreservesMapFst {width : Nat} [NeZero width] :
 
 open Classical in
 /-- HOL `prog_to_section_labels`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "prog_to_section_labels"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem progToSectionLabels {width : Nat} [NeZero width] {n : Nat} {p : HolProg width}
     {pp : Section (LabSem.LabLineHOL width)} :
     progToSectionHOL (n, p) = pp →
@@ -544,8 +536,7 @@ theorem progToSectionLabels {width : Nat} [NeZero width] {n : Nat} {p : HolProg 
   · simp [lineGetLabels] at hlab
 
 /-- HOL `MAP_prog_to_section_preserves_handler_labels`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "MAP_prog_to_section_preserves_handler_labels" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem mapProgToSectionPreservesHandlerLabels {width : Nat} [NeZero width] :
     ∀ p : List (Nat × HolProg width),
       ⋃₀ {s | s ∈ p.map (fun np => StackProps.stackGetHandlerLabels np.1 np.2)} ⊆
@@ -561,8 +552,7 @@ theorem mapProgToSectionPreservesHandlerLabels {width : Nat} [NeZero width] :
   exact secGetCodeLabels_mono (fun z hz => by simp [hz]) this
 
 /-- HOL `one_prog_section`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "one_prog_section"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem oneProgSection {width : Nat} [NeZero width] {p : List (Nat × HolProg width)} :
     (fun n => (n, 1)) '' {n | n ∈ p.map Prod.fst} ⊆ getCodeLabels (p.map progToSectionHOL) := by
   rintro _ ⟨n, hn, rfl⟩
@@ -579,8 +569,7 @@ theorem oneProgSection {width : Nat} [NeZero width] {p : List (Nat × HolProg wi
     simp [hs]
 
 /-- HOL `get_labels_MAP_prog_to_section_SUBSET_code_labels`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "get_labels_MAP_prog_to_section_SUBSET_code_labels" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getLabelsMapProgToSectionSubsetCodeLabels {width : Nat} [NeZero width]
     {elabs : Set Nat} :
     ∀ p : List (Nat × HolProg width),

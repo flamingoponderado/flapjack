@@ -5,8 +5,7 @@ open Flapjack Classical
 
 /-- Literal source354: every successful clocked search preserves the target,
 callee-saved register list and pointer register of the configuration. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "find_next_interference_const" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem findNextInterferenceConst {width : Nat} [NeZero width]
     {S Q : Type} {σ : Type} (k : Nat) (mc : MachineConfig width S Q)
     (ffi : HolFfiState σ) (ms : S) (app : InterferenceApp width S)
@@ -29,8 +28,7 @@ theorem findNextInterferenceConst {width : Nat} [NeZero width]
 
 /-- Literal source370: unbounded next-interference choice preserves the same
 three fields, derived from its actual successful search witness. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "next_interference_const" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem nextInterferenceConst {width : Nat} [NeZero width]
     {S Q : Type} {σ : Type} (mc : MachineConfig width S Q)
     (ffi : HolFfiState σ) (ms : S) (app : InterferenceApp width S)

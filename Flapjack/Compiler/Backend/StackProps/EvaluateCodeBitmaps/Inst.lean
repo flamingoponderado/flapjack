@@ -19,8 +19,7 @@ primitive preserves all three fields by the full original inst_const theorem;
 failure retains source state. No successful instruction premise is exposed.
 The evaluator closure inherits reals_as_rational_cuts; this field-preservation
 case makes no numeric byte-alignment or floating-point correspondence claim. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsInst {width : Nat} [NeZero width] {C F : Type}
     (instruction : HolInst width) (source post : StackSemStateFiniteExact width C F)
     (result : Option (StackSemResult width))

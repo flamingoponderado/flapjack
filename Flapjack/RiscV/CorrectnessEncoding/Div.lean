@@ -46,8 +46,6 @@ asmStep and initial targetStateRel and complete existential/interference/asserti
 conclusion. Nonzero divisor is derived from original source failure guard, never
 added as a premise. Actual signed native DIV emitted by source138-139 is used.
 Native Run/target closure inherits reals_as_rational_cuts, SOUNDNESS item8. -/
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml"
-  "riscv_encoder_correct"]
 theorem riscv_encoder_correct_div (rd rs1 rs2 : Nat) (s1 s2 : AsmState 64) (ms : riscv_state)
     (h : asmStep riscvTarget.config s1 (.inst (.arith (.div rd rs1 rs2))) s2 ∧
       targetStateRel riscvTarget s1 ms) :

@@ -34,8 +34,7 @@ open Flapjack
 lines.  A `Label` with a zero label number is ignored (`if l2 = 0`), otherwise
 its `(label, pos + len)` is prepended to the accumulated list; `Asm` and
 `LabAsm` advance the position by their fixed `len` without recording a label. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "section_labels_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def sectionLabels {width : Nat} [NeZero width] (pos : Nat)
     (lines : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))
@@ -56,8 +55,7 @@ its `(new_pos, sec_labs)` from the running position, and the section id is
 mapped to the `spt` built from `(0, pos) :: sec_labs` via `fromAList`, inserted
 into the accumulator with `insert`.  The start offset `pos` is captured before
 advancing. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "compute_labels_alt_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def computeLabelsAlt {width : Nat} [NeZero width] (pos : Nat)
     (sections : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))

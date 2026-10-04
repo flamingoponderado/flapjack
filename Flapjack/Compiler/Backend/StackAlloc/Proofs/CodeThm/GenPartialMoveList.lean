@@ -158,13 +158,13 @@ theorem wordGenGcPartialMoveListCode_loop {width : Nat} [NeZero width] {C F : Ty
           { s with clock := s.clock + (ck + ck' + 1) }) =
           (none, { t with clock := t.clock + (ck' + 1) }) := by
         rw [evaluate_seq_none _ _ _ _
-            (loadInst_eval { s with clock := s.clock + (ck + ck' + 1) } 5 8 a h8 hda) le_rfl,
+            (loadInst_eval { s with clock := s.clock + (ck + ck' + 1) } 5 8 a h8 hda) (by simp only [setVar]; exact Nat.le_refl _),
           evaluate_seq_none _ _ _ _
             (sub1Inst_eval (setVar 5 (s.memory a) { s with clock := s.clock + (ck + ck' + 1) }) 7
               (BitVec.ofNat width (n + 1))
-              (by simp [setVar, FUPDATE_HOL, HolFiniteMapExact.lookup_updateEq, h7])) le_rfl,
+              (by simp [setVar, FUPDATE_HOL, HolFiniteMapExact.lookup_updateEq, h7])) (by simp only [setVar]; exact Nat.le_refl _),
           hsb, evaluate_seq_none _ _ _ _ hadd (by simp [SB, setVar]),
-          evaluate_seq_none _ _ _ _ (storeInst_eval _ 5 8 a w1 ?_ ?_ ?_) le_rfl,
+          evaluate_seq_none _ _ _ _ (storeInst_eval _ 5 8 a w1 ?_ ?_ ?_) (by exact Nat.le_refl _),
           addBytesInWordInst_eval _ 8 a ?_]
         all_goals first
           | rfl
@@ -230,9 +230,7 @@ end GenPartialMoveListSupport
 curried premise groups. `FLOOKUP s.store`, `k IN FDOM`, `|++` and `get_var` are
 the canonical carrier's lookups, `updateListEq` and `getVar`, and `Temp nw` is
 `WordStore.temp n`; the existentials `ck r0 r1 r2 r5 r6` are kept. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml"
-  "word_gen_gc_partial_move_list_code_thm"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_gen_gc_partial_move_list_code_thm {width : Nat} [NeZero width] {C F : Type} :
     ∀ (l a : BitVec width) (s : StackSemStateFiniteExact width C F) (pa1 pa old : BitVec width)
       (m1 m : BitVec width → WordLocW width) (i1 i : BitVec width) (dm : BitVec width → Bool)

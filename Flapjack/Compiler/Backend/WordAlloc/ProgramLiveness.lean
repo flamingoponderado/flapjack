@@ -17,8 +17,7 @@ handlers are deliberately not traversed by this definition; their cutsets
 and the surrounding loop table supply the required live sets.
 The production route is separately tracked on the inventory bead; this
 proof-side definition alone does not complete executable allocator liveness. -/
-@[hol "cakeml/compiler/backend/word_allocScript.sml" "get_live_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def getLive {width : Nat} [NeZero width] :
     WordLangProgHOL (BitVec width) → NumSet → List (NumSet × NumSet) → NumSet
   | .skip, live, _ => live

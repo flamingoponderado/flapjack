@@ -28,8 +28,7 @@ private theorem lineInfo_entry {width : Nat} [NeZero width]
 /-- Full original entry-PC distinctness. All three source guards remain,
 including the word-dimensional emitted-size bound. Entry PCs and arbitrary
 query/validity starts are Nat, exactly as in the original record carrier. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "get_shmem_info_ALL_DISTINCT" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getShmemInfo_entryDistinct {width : Nat} [NeZero width]
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))

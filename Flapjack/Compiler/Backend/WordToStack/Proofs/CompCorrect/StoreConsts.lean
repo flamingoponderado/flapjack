@@ -252,11 +252,7 @@ original simulation motive. Source nonerror and conventions derive the operands;
 the original bitmap-prefix guards derive the actual slice and bounded index.
 Full native copying proves execution and every postrelation conjunct.
 Evaluator closure inherits reals_as_rational_cuts; no numerical FP claim. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_correct" 5756
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectStoreConsts {width : Nat} [NeZero width] {C F : Type}
     (ac : Compiler.Encoders.Asm.AsmConfigExact width)
     (first second addressRegister offsetRegister : Nat)

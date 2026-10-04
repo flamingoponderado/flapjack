@@ -1,27 +1,24 @@
 import Flapjack.Compiler.Backend.WordCse.InstructionKeys
 
 /-! Native CSE register classifiers. Carry reads its flag register; overflow
-operations omit their output flag from reads. FP writes list only general-purpose
-registers. Production replacement remains on the CSE definition frontier. -/
+operations omit their output flag from reads. Production replacement remains
+on the CSE definition frontier. -/
 namespace Flapjack.Compiler.Backend.WordCse
 open Flapjack Compiler.Encoders.Asm
 
-@[hol "cakeml/compiler/backend/word_cseScript.sml" "firstRegOfArith_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: declaration over the reduced integer carrier.
 def firstRegOfArith {width : Nat} [NeZero width] : HolArith width → Nat
   | .binop _ r _ _ | .shift _ r _ _ | .div r _ _
   | .longMul r _ _ _ | .longDiv r _ _ _ _
   | .addCarry r _ _ _ | .addOverflow r _ _ _ | .subOverflow r _ _ _ => r
 
-@[hol "cakeml/compiler/backend/word_cseScript.sml" "arithWrites_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: declaration over the reduced integer carrier.
 def arithWrites {width : Nat} [NeZero width] : HolArith width → List Nat
   | .binop _ r _ _ | .shift _ r _ _ | .div r _ _ => [r]
   | .longMul r1 r2 _ _ | .longDiv r1 r2 _ _ _ => [r1, r2]
   | .addCarry r1 _ _ r4 | .addOverflow r1 _ _ r4 | .subOverflow r1 _ _ r4 => [r1, r4]
 
-@[hol "cakeml/compiler/backend/word_cseScript.sml" "arithReads_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: declaration over the reduced integer carrier.
 def arithReads {width : Nat} [NeZero width] : HolArith width → List Nat
   | .binop _ _ r2 (.reg r3) | .shift _ _ r2 (.reg r3) => [r2, r3]
   | .binop _ _ r2 (.imm _) | .shift _ _ r2 (.imm _) => [r2]
@@ -30,14 +27,8 @@ def arithReads {width : Nat} [NeZero width] : HolArith width → List Nat
   | .addCarry _ r2 r3 r4 => [r2, r3, r4]
   | .addOverflow _ r2 r3 _ | .subOverflow _ r2 r3 _ => [r2, r3]
 
-@[hol "cakeml/compiler/backend/word_cseScript.sml" "fpWrites_def"]
-def fpWrites : HolFp → List Nat
-  | .fpLess r _ _ | .fpLessEqual r _ _ | .fpEqual r _ _ => [r]
-  | .fpMovToReg r1 r2 _ => [r1, r2]
-  | _ => []
 
-@[hol "cakeml/compiler/backend/word_cseScript.sml" "can_mem_arith_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: declaration over the reduced integer carrier.
 def canMemArith {width : Nat} [NeZero width] : HolArith width → Bool
   | .binop _ _ r1 (.reg r2) | .div _ r1 r2 => r1 % 2 == 1 && r2 % 2 == 1
   | .binop _ _ r1 (.imm _) | .shift _ _ r1 (.imm _) => r1 % 2 == 1

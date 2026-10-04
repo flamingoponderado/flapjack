@@ -43,11 +43,7 @@ end LoopToWordCompileCorrectAssignWitnesses
 
 /-- Genuine `Assign` case of HOL `compile_correct`
     (`loop_to_wordProofScript.sml:57-97`, resumed at `:798-814`). -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "compile_correct"
-  (fmap_as_finite_support_relation :=
-    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.fpRegs,
-      WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_Assign {width : Nat} [NeZero width] {C F : Type}
     (v : Nat) (exp : HolLoopExp width) (s : LoopSemStateFiniteExact width F) :
     ∀ (res : Option (LoopSemStateFiniteExact.LoopResultExact width))
@@ -89,11 +85,7 @@ theorem compileCorrect_Assign {width : Nat} [NeZero width] {C F : Type}
 /-- Genuine `LocValue` case of HOL `compile_correct`
     (`loop_to_wordProofScript.sml:57-97`, resumed at `:855-874`).  `code_rel`
     carries `l1 ∈ domain s.code` to the target code. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "compile_correct"
-  (fmap_as_finite_support_relation :=
-    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.fpRegs,
-      WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_LocValue {width : Nat} [NeZero width] {C F : Type}
     (r l1 : Nat) (s : LoopSemStateFiniteExact width F) :
     ∀ (res : Option (LoopSemStateFiniteExact.LoopResultExact width))
@@ -140,11 +132,7 @@ theorem compileCorrect_LocValue {width : Nat} [NeZero width] {C F : Type}
     (`loop_to_wordProofScript.sml:57-97`, resumed at `:965-977`).  The target
     `Set (Temp dst)` updates the store at `Temp dst`, which keeps `CurrHeap`
     and `HeapLength` and re-establishes `globals_rel`. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "compile_correct"
-  (fmap_as_finite_support_relation :=
-    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.fpRegs,
-      WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_SetGlobal {width : Nat} [NeZero width] {C F : Type}
     (dst : BitVec 5) (exp : HolLoopExp width) (s : LoopSemStateFiniteExact width F) :
     ∀ (res : Option (LoopSemStateFiniteExact.LoopResultExact width))

@@ -35,8 +35,7 @@ open Classical in
     free `st l start` are explicit. HOL's existential `clk : β` is vacuous and
     is erased under the documented vacuous-binder convention: HOL types are
     inhabited and the body never refers to `clk`. It is not specialized to Nat. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "panLang_compile_word_to_word_thm"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem panLang_compile_word_to_word_thm {width : Nat} [NeZero width] {C F : Type}
     (st : WordSemStateFiniteExact width C F) (l : Spt (Nat × WordLangProgHOL (BitVec width)))
     (start : Nat) :
@@ -207,8 +206,7 @@ open Classical in
 /-- HOL `word_to_word_compile_semantics` (`word_to_wordProofScript.sml:2267-2489`). HOL's free
     `wconf acomf wprog0 col wprog s start t` are explicit, in order of appearance; the
     commented-out HOL premises are absent, as in HOL. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "word_to_word_compile_semantics"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_to_word_compile_semantics {width : Nat} [NeZero width] {C F : Type}
     (wconf : Config) (acomf : AsmConfigExact width)
     (wprog0 : List (Nat × Nat × WordLangProgHOL (BitVec width))) (col : List (Option (Spt Nat)))

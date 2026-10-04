@@ -15,8 +15,7 @@ private theorem asmInst_clock {width : Nat} [NeZero width] {C F : Type}
 
 /-- Full original clock extension law; arbitrary native state and extra clock,
 with no success, target execution or event-prefix assumption. -/
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "evaluate_add_clock_io_events_mono"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateAddClockIoEventsMono {width : Nat} [NeZero width] {C : Type} {F : Type}
     (s : Flapjack.Compiler.Backend.LabSem.State width C F) (extra : Nat) :
     (evaluate s).2.ffi.ioEvents <+:

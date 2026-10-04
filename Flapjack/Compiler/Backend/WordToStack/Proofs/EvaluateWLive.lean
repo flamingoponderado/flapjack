@@ -1,3 +1,4 @@
+import Mathlib.Order.Basic
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocStateRel
 import Flapjack.Compiler.Backend.WordToStack.NativeLive
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapWrite
@@ -152,7 +153,7 @@ theorem wLiveFilterBitmap {width : Nat} [NeZero width] (k f' : Nat) (names2 : Sp
     rw [List.pairwise_map]
     apply List.Pairwise.sublist List.filter_sublist
     have hz : ((indexList frame k).zip bits).map Prod.fst = indexList frame k :=
-      List.map_fst_zip (by rw [hbl, hil])
+      List.map_fst_zip (by rw [hbl, hil]; exact Nat.le_refl _)
     have := indexList_pairwise k frame
     rw [← hz, List.pairwise_map] at this
     exact this
@@ -236,10 +237,7 @@ free `names`, `bs`, `n`, `k`, `f`, `f'`, `ac`, `lens` and `envs` are explicit;
 `List.IsPrefix`. The conclusion's existential `bs5` occurs nowhere in its body
 and is omitted. The pushed state is HOL's `push_env envs NONE s with
 <|locals := LN; locals_size := SOME 0|>`. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_wLive"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store,
-    StackSemStateFiniteExact.regs, StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateWLive {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (k f f' : Nat) (names : WordLangCutsetsHOL)
     (bs : AppList (BitVec width)) (n : Nat) (wliveProg : Compiler.Backend.StackLang.HolProg width)

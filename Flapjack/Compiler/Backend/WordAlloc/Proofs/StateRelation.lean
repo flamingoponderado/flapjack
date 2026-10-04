@@ -18,9 +18,7 @@ end StateRelationWitnesses
 /-- Exact HOL word_state_eq_rel: equality of all 21 listed fields, in source
 order. Locals and permutation are deliberately absent; localsSize is present.
 This relation does not assert the allocation simulation itself. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "word_state_eq_rel_def"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wordStateEqRel {width : Nat} [NeZero width] {C F : Type}
     (s t : WordSemStateFiniteExact width C F) : Prop :=
   t.fpRegs = s.fpRegs ∧

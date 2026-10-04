@@ -5,8 +5,7 @@ open Flapjack.Compiler.Encoders.Asm
 
 /-- HOL offset-length monotonicity predicate (asmPropsScript.sml:19-24). Encoding payload and offset word dimension are
 independent of the instruction dimension. Word comparisons are signed, as in HOL. -/
-@[hol "cakeml/compiler/encoders/asm/asmPropsScript.sml" "offset_monotonic_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def offsetMonotonic {width : Nat} {offsetWidth : Nat} [NeZero width] [NeZero offsetWidth]
     {byte : Type} (enc : HolAsm width → List byte) (config : AsmConfigExact width)
     (a1 a2 : BitVec offsetWidth) (i1 i2 : HolAsm width) : Prop :=
@@ -18,8 +17,7 @@ def offsetMonotonic {width : Nat} {offsetWidth : Nat} [NeZero width] [NeZero off
 
 /-- HOL encoder well-formedness predicate (asmPropsScript.sml:27-41).
 All alignment, nonempty output, and four offset-length implications are retained. -/
-@[hol "cakeml/compiler/encoders/asm/asmPropsScript.sml" "enc_ok_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def encOk {width : Nat} [NeZero width] (config : AsmConfigExact width) : Prop :=
   2 ^ config.codeAlignment = (config.encode (.inst .skip)).length ∧
     (∀ instruction, (config.encode instruction).length % 2 ^ config.codeAlignment = 0 ∧
@@ -33,8 +31,7 @@ def encOk {width : Nat} [NeZero width] (config : AsmConfigExact width) : Prop :=
 /-- HOL target projection consistency predicate (asmPropsScript.sml:65-73).
 HOL equality between truth values is expressed as iff between propositions;
 state-ok, PC, and domain-byte equalities retain their separate conjuncts. -/
-@[hol "cakeml/compiler/encoders/asm/asmPropsScript.sml" "target_ok_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def targetOk {width : Nat} [NeZero width] {state projection : Type}
     (target : HolAsmTarget width state projection) : Prop :=
   encOk target.config ∧ ∀ (ms1 ms2 : state) (s : AsmState width),

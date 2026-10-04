@@ -528,8 +528,7 @@ program run from a state with no_alloc/no_install code, replacing the memory by
 a graph-equal one gives the same result and a final state equal up to memory
 (compared by overwriting memory with HOL's ARB, holArb) whose memory is again
 graph-equal. Proof by the WordSem evaluate recursion (swap_evaluate). -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "memory_swap_lemma1"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem memorySwapLemma1 {width : Nat} [NeZero width] {C F : Type} :
     ∀ (prog : WordLangProgHOL (BitVec width)) (st : WordSemStateFiniteExact width C F)
       (res : Option (WordSemResult width)) (rst : WordSemStateFiniteExact width C F)
@@ -552,8 +551,7 @@ theorem memorySwapLemma1 {width : Nat} [NeZero width] {C F : Type} :
 
 /-- Original local memory_swap_lemma (755-770), the rephrased form with an
 explicit final memory. -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "memory_swap_lemma"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem memorySwapLemma {width : Nat} [NeZero width] {C F : Type} :
     ∀ (prog : WordLangProgHOL (BitVec width)) (st : WordSemStateFiniteExact width C F)
       (res : Option (WordSemResult width)) (rst : WordSemStateFiniteExact width C F)
@@ -578,8 +576,7 @@ state equals the semantics of the original state. At every clock the entry
 call runs to the same result and an FFI-equal final state (memory_swap), so
 the fail guard, the termination choice and the divergence trace coincide; the
 non-Fail premise is kept as in HOL. -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "word_semantics_memory_update"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordSemanticsMemoryUpdate {width : Nat} [NeZero width] {C F : Type}
     (s : WordSemStateFiniteExact width C F) (m : BitVec width → WordLocW width) (start : Nat)
     (h : fun2Set (s.memory, fun a => s.mdomain a = true) =

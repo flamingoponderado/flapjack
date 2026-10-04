@@ -16,7 +16,8 @@ lab-state chain with the resource-limit stage concludes.
 
 `PanToTargetCompileSemanticsStatement` is the untagged statement interface; as in HOL,
 `pan_installed` receives `s.memaddrs`/`s.sh_memaddrs` directly on the same predicate
-carrier. The tagged `panToTargetCompileSemantics` below states the HOL theorem itself.
+carrier. The `panToTargetCompileSemantics` below specializes that theorem to the reduced
+integer carriers on `riscv-mi`; it is not an exact full-HOL port.
 -/
 
 namespace Flapjack.Pancake.Proofs.PanToTarget
@@ -27,8 +28,7 @@ open Flapjack.Pancake.PanLang Flapjack.SemanticsPropsHOL
 
 open Classical in
 /-- The statement interface `PanToTargetCompileSemanticsStatement` holds for every input
-(Flapjack proof assembly; the tagged `panToTargetCompileSemantics` below states the HOL
-theorem itself). -/
+(Flapjack proof assembly over the integer-only branch carriers). -/
 theorem panToTargetCompileSemanticsStatement_proof {width : Nat} [NeZero width] {S Q σ : Type}
     (c : Backend.Config) (mc : MachineConfig width S Q) (pan_code : List (DeclHOL width))
     (bytes : List (BitVec 8)) (bitmaps : List (BitVec width)) (c' : Backend.Config)
@@ -45,7 +45,7 @@ theorem panToTargetCompileSemanticsStatement_proof {width : Nat} [NeZero width] 
   obtain ⟨t, m, bitmapPtr, bitmapsDm, sdm, hpm, hgi, hsdm, a1, a2, a3, hle, hbig, hdisj, m0, m1,
     m2, m3, m4, hstar, hffiN, hmmio⟩ := hinst
   -- `pan_to_word_every_inst_ok_less` (stage .20), from `pancake_good_code`
-  obtain ⟨-, -, -, -, -, -, -, -, -, -, -, -, -, hao, -, hbo, -⟩ := id hcfg
+  obtain ⟨-, -, -, -, -, -, -, -, -, -, -, hao, -, hbo, -⟩ := id hcfg
   have hz := good_dimindex_0w_8w hmc.1
   have hevery := PanToWord.panToWordEveryInstOkLess mc.target.config pan_code _ rfl
     (hbo 0 ⟨hz.2, hz.1⟩) hao hgood
@@ -81,10 +81,11 @@ theorem holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact
 
 end TopWitness
 
-/-- HOL `pan_to_target_compile_semantics` (`pan_to_targetProofScript.sml:1256-1300`).
-HOL's free variables are explicit in their order of appearance (typed capture
-`pan_to_target_compile_semantics_statement_replay`); every constituent is its reviewed
-port (`compile_prog_max`, `pancake_good_code`, `backend_config_ok`, `mc_conf_ok`,
+/-- Integer-branch specialization of HOL `pan_to_target_compile_semantics`
+(`pan_to_targetProofScript.sml:1256-1300`). The free variables follow HOL's order
+of appearance (typed capture `pan_to_target_compile_semantics_statement_replay`).
+Its constituents use the reduced branch carriers (`compile_prog_max`,
+`pancake_good_code`, `backend_config_ok`, `mc_conf_ok`,
 `mc_init_ok`, `pan_installed` with the panSem predicate domains, `read_limits`,
 `option_lt`, `extend_with_resource_limit'`, `machine_sem`, `semantics_decls`,
 `bytes_in_word`, ...).  `0w <₊ x` and `x ≤₊ y` are unsigned `BitVec` order, `dimword (:α)`
@@ -92,11 +93,7 @@ is `2 ^ width`, `dimindex (:α)` is `width`, `shift (:α)` is `wordShiftAmount w
 `OPTION_ALL (EVERY P)` is the `Option` match, and `machine_sem ⊆ X` is membership for
 every machine behaviour.  The `panSem` state's `code`/`locals`/`globals`/`eshapes` are the
 reviewed finite-support maps. -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "pan_to_target_compile_semantics"
-  (fmap_as_finite_support_relation :=
-    [PanSemStateFiniteExact.locals, PanSemStateFiniteExact.globals, PanSemStateFiniteExact.code,
-      PanSemStateFiniteExact.eshapes])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: final theorem quantifies reduced instruction carriers, so it is not the full-HOL theorem.
 theorem panToTargetCompileSemantics {width : Nat} [NeZero width] {S Q : Type} {σ : Type}
     (c : Backend.Config) (mc : MachineConfig width S Q) (pan_code : List (DeclHOL width))
     (bytes : List (BitVec 8)) (bitmaps : List (BitVec width)) (c' : Backend.Config)

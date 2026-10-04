@@ -28,10 +28,7 @@ shared field, all bounds and register conditions, and the five separated heap
 assertions. The source's local num_stubs means stackNumStubs, not wordNumStubs.
 No successful evaluation, finite memory domain, heap representation, or stack
 safety hypothesis is substituted for a conjunct of the definition. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "state_rel_def"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def stateRelHOL {width : Nat} [NeZero width] {C : Type} {F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer : Nat)
     (source target : StackSemStateFiniteExact width C F) : Prop :=

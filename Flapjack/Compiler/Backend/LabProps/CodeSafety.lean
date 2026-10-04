@@ -5,8 +5,7 @@ open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabLang
 open Flapjack.Compiler.Encoders.Asm
 
 /-- Literal fetched-Install exclusion. All position and constructor payload quantifiers are retained. -/
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "no_install_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def noInstall {width : Nat} [NeZero width] (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString)
       (BitVec width)))) : Prop :=
@@ -14,8 +13,7 @@ def noInstall {width : Nat} [NeZero width] (code : List (Section (Line (AsmOrCbw
     asmFetchAux p code ≠ some (.labAsm .install w bytes l)
 
 /-- Literal fetched-ShareMem exclusion. All position and constructor payload quantifiers are retained. -/
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "no_share_mem_inst_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def noShareMemInst {width : Nat} [NeZero width] (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString)
       (BitVec width)))) : Prop :=

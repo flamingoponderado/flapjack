@@ -4,8 +4,7 @@ open Flapjack.Compiler.Backend.StackLang
 
 /-- Full original function-level equality: arbitrary section-name carrier,
 all compiler parameters and native programs retained. No hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "prog_comp_eta"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem progCompEta {width : Nat} [NeZero width] {Name : Type} :
     (progComp : Bool → (BitVec width × BitVec width) → Nat →
       (Name × HolProg width) → (Name × HolProg width)) =

@@ -105,8 +105,7 @@ theorem wordGcFun_handler_none {c : Config} {wl wl1 : List (WordLocW width)}
 end Support
 
 /-- HOL `gc_fun_ok_word_gc_fun`. HOL's free `c1` is implicit. -/
-@[hol "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml" "gc_fun_ok_word_gc_fun"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem gcFunOkWordGcFun {width : Nat} [NeZero width] {c1 : Config} :
     wordGcFunOk (wordGcFun c1 : List (WordLocW width) × (BitVec width → WordLocW width) × _ → _) := by
   rintro wl m d s wl1 m1 s1 ⟨hH, hf⟩

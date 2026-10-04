@@ -30,8 +30,7 @@ end PushPopEnvWitnesses
 open PushPopEnvWitnesses
 
 /-- Exact HOL `push_env_s_val_eq` (`word_allocProofScript.sml:515-563`). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "push_env_s_val_eq"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem pushEnvSValEq {width : Nat} [NeZero width] {C F : Type}
     (st cst : WordSemStateFiniteExact width C F) (x x' y y' : Spt (WordLocW width))
     (f : Nat → Nat) (b b' : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat)) :
@@ -102,8 +101,7 @@ private theorem zipFstSnd {α β : Type} (e : List (α × β)) :
   | cons p e ih => simp [ih]
 
 /-- Exact HOL `s_key_eq_val_eq_pop_env` (`word_allocProofScript.sml:596-617`). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "s_key_eq_val_eq_pop_env"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem sKeyEqValEqPopEnv {width : Nat} [NeZero width] {C F : Type}
     (s s' : WordSemStateFiniteExact width C F) (n : Option Nat)
     (lsz ls : List (Nat × WordLocW width)) (opt : Option (Nat × Nat × Nat))
@@ -152,8 +150,7 @@ theorem sKeyEqValEqPopEnv {width : Nat} [NeZero width] {C F : Type}
               exact ⟨by rw [he], hkrest, hvrest, rfl⟩
 
 /-- Exact HOL `pop_env_frame` (`word_allocProofScript.sml:710-722`). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "pop_env_frame"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem popEnvFrame {width : Nat} [NeZero width] {C F : Type}
     (r' y' y'' : WordSemStateFiniteExact width C F) (st' : List (WordSemStackFrame width)) :
     sValEq r'.stack st' ∧
@@ -194,8 +191,7 @@ theorem popEnvFrame {width : Nat} [NeZero width] {C F : Type}
                 rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 /-- Exact HOL `s_key_eq_push_env_imp_MAP_FST` (`word_allocProofScript.sml:892-904`). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "s_key_eq_push_env_imp_MAP_FST"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem sKeyEqPushEnvImpMapFst {width : Nat} [NeZero width] {C F : Type}
     (s : WordSemStateFiniteExact width C F) (x' x'' : Spt (WordLocW width))
     (o0 : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))

@@ -13,7 +13,7 @@ private def originalConsumer : Backend.Config :=
 private def observation : Bool :=
   originalConsumer.dataConf.gcKind == .none &&
   originalConsumer.dataConf.tagBits == 4 &&
-  originalConsumer.dataConf.hasFpOps == false &&
+  originalConsumer.dataConf.hasDiv == true &&
   originalConsumer.sourceConf.next.tidx == 2 &&
   originalConsumer.sourceConf.next.eidx == 4 &&
   originalConsumer.stackConf.jump == false &&

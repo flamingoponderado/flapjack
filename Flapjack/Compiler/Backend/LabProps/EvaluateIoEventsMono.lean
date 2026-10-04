@@ -95,8 +95,7 @@ private theorem evaluate_events {width : Nat} [NeZero width] {C F : Type}
 All state/configuration/FFI carriers and result binders are unrestricted;
 timeout, failure, final FFI outcomes and returning transitions are included.
 The evaluator inherits the reviewed real rendering (SOUNDNESS item 8). -/
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "evaluate_io_events_mono"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateIoEventsMono {width : Nat} [NeZero width] {C : Type} {F : Type}
     (s1 : Flapjack.Compiler.Backend.LabSem.State width C F) (r : MachineResult) (s2 : Flapjack.Compiler.Backend.LabSem.State width C F)
     (heval : evaluate s1 = (r, s2)) : s1.ffi.ioEvents <+: s2.ffi.ioEvents := by

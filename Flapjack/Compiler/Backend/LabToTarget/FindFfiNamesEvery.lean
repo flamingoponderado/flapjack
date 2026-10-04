@@ -5,8 +5,7 @@ open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm
 open Flapjack.Compiler.Backend.LabSem Flapjack.Basis.Pure.MlString
 
 /-- Full original output classification of the actual FFI-name collector. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "find_ffi_names_EVERY"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem findFfiNamesEvery {width : Nat} [NeZero width]
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))

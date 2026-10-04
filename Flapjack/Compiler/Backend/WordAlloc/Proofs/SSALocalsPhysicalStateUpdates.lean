@@ -25,8 +25,7 @@ theorem ssaLocalsPhysicalListUpdate {α : Type} (next : Nat) (ssa : Spt Nat)
 /-- Full native physical-target setVar wrapper. HOL infers independent source
 and target code/FFI carriers, sharing only the word dimension. Only locals are
 traversed; no finite-map state-field translation is used by this statement. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_locals_rel_ignore_set_var"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaLocalsRelIgnoreSetVar {width : Nat} [NeZero width]
     {C₁ F₁ C₂ F₂ : Type} (next : Nat) (ssa : Spt Nat)
     (source : WordSemStateFiniteExact width C₁ F₁)
@@ -41,8 +40,7 @@ theorem ssaLocalsRelIgnoreSetVar {width : Nat} [NeZero width]
 /-- Full native physical-target list wrapper. The original length equality is
 retained despite the stronger list infrastructure above. Source and target
 code/FFI carriers remain independent; only the word dimension is shared. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_locals_rel_ignore_list_insert"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaLocalsRelIgnoreListInsert {width : Nat} [NeZero width]
     {C₁ F₁ C₂ F₂ : Type} (next : Nat) (ssa : Spt Nat)
     (source : WordSemStateFiniteExact width C₁ F₁)

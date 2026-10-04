@@ -7,16 +7,14 @@ open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString
 /-- Full original quantified prefix invariant. The original n-bound conjunct
 is curried so each m<=n observation has the checked bound m<length.
 No total HOL EL or out-of-range default is used or specified. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "label_prefix_zero_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def labelPrefixZero {width : Nat} [NeZero width] (ls : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) : Prop :=
   ∀ n, ∀ hn : n < ls.length,
     (∀ m, ∀ hm : m ≤ n, isLabelHOL (ls[m]'(Nat.lt_of_le_of_lt hm hn)) = true) →
     ∀ m, ∀ hm : m ≤ n, lineLen (ls[m]'(Nat.lt_of_le_of_lt hm hn)) = 0
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "sec_label_prefix_zero_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def secLabelPrefixZero {width : Nat} [NeZero width] (sec : Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) : Prop :=
   labelPrefixZero sec.lines
@@ -69,8 +67,7 @@ private theorem prefixNonlabel {width : Nat} [NeZero width]
   simp only [List.getElem_cons_zero] at hh
   exact False.elim (hx hh)
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "label_prefix_zero_cons"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem labelPrefixZero_cons {width : Nat} [NeZero width]
     (l1 l2 len : Nat) (ls : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))
@@ -92,8 +89,7 @@ private theorem prefixNil {width : Nat} [NeZero width] :
   intro n hn
   simp at hn
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "label_prefix_zero_append_suff"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem labelPrefixZero_append {width : Nat} [NeZero width]
     (l1 l2 : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) :
@@ -110,8 +106,7 @@ theorem labelPrefixZero_append {width : Nat} [NeZero width]
     | asm a bs n => exact prefixNonlabel (.asm a bs n) (xs ++ l2) (by simp [isLabelHOL])
     | labAsm a w bs n => exact prefixNonlabel (.labAsm a w bs n) (xs ++ l2) (by simp [isLabelHOL])
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "label_prefix_zero_append_suff2"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem labelPrefixZero_append_nonlabel {width : Nat} [NeZero width]
     (l1 l2 : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) :

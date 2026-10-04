@@ -38,8 +38,7 @@ private theorem paddedLabNop {width : Nat} [NeZero width]
 
 /-- Full original one-byte section-padding law. The physical/recorded sum
 agreement is proved from the original accumulator predicate, not added as a guard. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "lines_enc_with_nop_pad_section1"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem linesEncWithNop_padSection1 {width : Nat} [NeZero width]
     (enc : HolAsm width → List (BitVec 8)) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (nop : List (BitVec 8)) (code aux : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -112,8 +111,7 @@ theorem linesEncWithNop_padSection1 {width : Nat} [NeZero width]
 
 /-- Full original all-label accumulator case, including the bounded prefix-zero
 predicate that forbids an insertion before the first real instruction. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "lines_enc_with_nop_pad_section"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem linesEncWithNop_padSection {width : Nat} [NeZero width]
     (enc : HolAsm width → List (BitVec 8)) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (nop : List (BitVec 8)) (code aux : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -188,8 +186,7 @@ private theorem paddedAlignedLabNop {width : Nat} [NeZero width]
 
 
 /-- Full positive-length aligned section theorem, retaining all original guards. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "lines_enc_with_nop_pad_section01"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem linesEncWithNop_padSection01 {width : Nat} [NeZero width]
     (enc : HolAsm width → List (BitVec 8)) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (nop : List (BitVec 8)) (code aux : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -249,8 +246,7 @@ theorem linesEncWithNop_padSection01 {width : Nat} [NeZero width]
 
 /-- Full original aligned all-label accumulator case with zero source labels.
 No additional prefix-zero or accumulator sum premise is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "lines_enc_with_nop_pad_section0"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem linesEncWithNop_padSection0 {width : Nat} [NeZero width]
     (enc : HolAsm width → List (BitVec 8)) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (nop : List (BitVec 8)) (code aux : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))

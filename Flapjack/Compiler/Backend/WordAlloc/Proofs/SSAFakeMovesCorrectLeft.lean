@@ -121,9 +121,7 @@ source/target code and FFI dimensions with shared word width. Source-domain
 selector observations are guarded by SOME; Seq restores the actual unchanged
 clock and termdep. The full evaluator inherits reals_as_rational_cuts,
 SOUNDNESS item 8; these paths execute only Move and zero Const instructions. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "fake_moves_correctL"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fakeMovesCorrectL {width : Nat} [NeZero width] {C₁ F₁ C₂ F₂ : Type}
     (prio : Option (Unit ⊕ Unit)) (names : List Nat) (next : Nat)
     (left right : Spt Nat) (source : WordSemStateFiniteExact width C₁ F₁)

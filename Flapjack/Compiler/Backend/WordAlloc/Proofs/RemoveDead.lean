@@ -80,9 +80,7 @@ decreasing_by
 
 /-- Exact HOL `strong_locals_rel_I_get_var` (`word_allocProofScript.sml:3529-3535`);
 HOL `I` is `id` and `x INSERT live` is `fun k => k = x ∨ live k`. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "strong_locals_rel_I_get_var"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem strongLocalsRelIGetVar {width : Nat} [NeZero width] {C F : Type}
     (x : Nat) (live : Nat → Prop) (st : WordSemStateFiniteExact width C F)
     (t : Spt (WordLocW width)) (tstore : HolFiniteMapExact WordStoreHOL (WordLocW width))
@@ -93,9 +91,7 @@ theorem strongLocalsRelIGetVar {width : Nat} [NeZero width] {C F : Type}
   fun ⟨hv, hr⟩ => hr x v ⟨Or.inl rfl, hv⟩
 
 /-- Exact HOL `strong_locals_rel_I_get_var'` (`word_allocProofScript.sml:3537-3543`). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "strong_locals_rel_I_get_var'"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem strongLocalsRelIGetVar' {width : Nat} [NeZero width] {C F : Type}
     (x : Nat) (live : Nat → Prop) (st : WordSemStateFiniteExact width C F)
     (t : Spt (WordLocW width)) (v : WordLocW width) :
@@ -136,9 +132,7 @@ private theorem theWordsSome {width : Nat} [NeZero width] :
 an expression evaluates identically in a target state whose locals agree on its
 live registers and whose store agrees outside the dead stores it does not read.
 HOL's free `t live nlive tstore` are the leading explicit binders. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "strong_locals_rel_I_word_exp"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem strongLocalsRelIWordExp {width : Nat} [NeZero width] {C F : Type}
     (t : Spt (WordLocW width)) (live : NumSet) (nlive : List WordStoreHOL)
     (tstore : HolFiniteMapExact WordStoreHOL (WordLocW width)) :
@@ -235,9 +229,7 @@ theorem strongLocalsRelInsertNotin {α : Type} (f : Nat → Nat) (live : Nat →
     exact h k w ⟨hk, hw⟩
 
 /-- Exact HOL `strong_locals_rel_I_get_vars'` (`word_allocProofScript.sml:3621-3638`). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "strong_locals_rel_I_get_vars'"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem strongLocalsRelIGetVars' {width : Nat} [NeZero width] {C F : Type} :
     ∀ (ls : List Nat) (live : Nat → Prop) (st : WordSemStateFiniteExact width C F)
       (t : Spt (WordLocW width)) (vs : List (WordLocW width)),
@@ -296,9 +288,7 @@ private theorem cutNamesI {β γ : Type} (names : Spt γ) (sloc tloc x : Spt β)
       rw [ht]
 
 /-- Exact HOL `strong_locals_rel_I_cut_envs` (`word_allocProofScript.sml:3640-3654`). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "strong_locals_rel_I_cut_envs"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem strongLocalsRelICutEnvs {width : Nat} [NeZero width] {C F : Type}
     (cutset : WordLangCutsetsHOL) (st : WordSemStateFiniteExact width C F)
     (t : Spt (WordLocW width)) (x : Spt (WordLocW width) × Spt (WordLocW width)) :
@@ -319,9 +309,7 @@ theorem strongLocalsRelICutEnvs {width : Nat} [NeZero width] {C F : Type}
       exact hc
 
 /-- Exact HOL `strong_locals_rel_I_cut_env` (`word_allocProofScript.sml:3656-3666`). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "strong_locals_rel_I_cut_env"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem strongLocalsRelICutEnv {width : Nat} [NeZero width] {C F : Type}
     (cutset : WordLangCutsetsHOL) (st : WordSemStateFiniteExact width C F)
     (t : Spt (WordLocW width)) (x : Spt (WordLocW width)) :
@@ -339,9 +327,7 @@ theorem strongLocalsRelICutEnv {width : Nat} [NeZero width] {C F : Type}
 
 /-- Exact HOL `get_vars_eq` (`word_allocProofScript.sml:3668-3674`); HOL `THE` is the
 tagged `holThe`. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "get_vars_eq"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getVarsEq {width : Nat} [NeZero width] {C F : Type} :
     ∀ (ls : List Nat) (st : WordSemStateFiniteExact width C F),
       (∀ x, x ∈ ls → sptDomain st.locals x) →
@@ -359,9 +345,7 @@ theorem getVarsEq {width : Nat} [NeZero width] {C F : Type} :
       · simp [hv, holThe]
 
 /-- Exact HOL `get_vars_exists` (`word_allocProofScript.sml:3676-3683`). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "get_vars_exists"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getVarsExists {width : Nat} [NeZero width] {C F : Type}
     (st : WordSemStateFiniteExact width C F) :
     ∀ ls : List Nat,
@@ -410,9 +394,7 @@ theorem strongLocalsRelIInsertInsert {α : Type} (live : Nat → Prop) (p : Nat)
     exact h k w ⟨⟨hk, hkp⟩, hw⟩
 
 /-- Exact HOL `st_eq` (`word_allocProofScript.sml:3694-3700`). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "st_eq"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stEq {width : Nat} [NeZero width] {C F : Type} (rst : WordSemStateFiniteExact width C F)
     (t t' : Spt (WordLocW width)) (tstore tstore' : HolFiniteMapExact WordStoreHOL (WordLocW width)) :
     { rst with locals := t, store := tstore } = { rst with locals := t', store := tstore' } ↔
@@ -447,16 +429,12 @@ theorem liveStoreRelRefl {α β : Type} (ls : List α) (sstore : HolFiniteMapExa
   fun _ _ => rfl
 
 /-- Exact HOL `with_same_store` (`word_allocProofScript.sml:3716-3720`). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "with_same_store"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem withSameStore {width : Nat} [NeZero width] {C F : Type}
     (st : WordSemStateFiniteExact width C F) : { st with store := st.store } = st := rfl
 
 /-- Exact HOL `with_same_locals` (`word_allocProofScript.sml:3722-3726`). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "with_same_locals"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem withSameLocals {width : Nat} [NeZero width] {C F : Type}
     (st : WordSemStateFiniteExact width C F) : { st with locals := st.locals } = st := rfl
 

@@ -5,7 +5,7 @@ namespace Flapjack.Compiler.Backend.ClosKnown
 
 /-- Complete original value approximation, retaining the actual closure body
 and recursive tuple payload rather than an arbitrary syntax parameter. -/
-@[hol "cakeml/compiler/backend/clos_knownScript.sml" "val_approx"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 inductive ValApprox where
   | closNoInline : Nat → Nat → ValApprox
   | clos : Nat → Nat → ClosLang.Exp → Nat → ValApprox
@@ -15,14 +15,14 @@ inductive ValApprox where
   | impossible
 
 /-- The original three alternatives include a complete expression for let-inlining. -/
-@[hol "cakeml/compiler/backend/clos_knownScript.sml" "inliningDecision"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 inductive InliningDecision where
   | nothing
   | annotate : Nat → InliningDecision
   | letInline : ClosLang.Exp → InliningDecision
 
 /-- Complete four-field configuration, with the literal spt approximation tree. -/
-@[hol "cakeml/compiler/backend/clos_knownScript.sml" "config"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 structure Config where
   inlineMaxBodySize : Nat
   inlineFactor : Nat
@@ -36,19 +36,19 @@ def defaultInlineFactor : Nat := 8
 def defaultMaxBodySize (maxApp inlineFactor : Nat) : Nat :=
   (maxApp + 1) * inlineFactor
 
-@[hol "cakeml/compiler/backend/clos_knownScript.sml" "mk_config_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def mkConfig (maxBodySize inlineFactor : Nat) : Config :=
   ⟨maxBodySize, inlineFactor, inlineFactor, .ln⟩
 
-@[hol "cakeml/compiler/backend/clos_knownScript.sml" "default_config_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def defaultConfig (maxApp : Nat) : Config :=
   mkConfig (defaultMaxBodySize maxApp defaultInlineFactor) defaultInlineFactor
 
-@[hol "cakeml/compiler/backend/clos_knownScript.sml" "dec_inline_factor_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def decInlineFactor (c : Config) : Config :=
   { c with inlineFactor := c.inlineFactor / 2 }
 
-@[hol "cakeml/compiler/backend/clos_knownScript.sml" "reset_inline_factor_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def resetInlineFactor (c : Config) : Config :=
   { c with inlineFactor := c.initialInlineFactor }
 

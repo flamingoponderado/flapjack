@@ -1,3 +1,4 @@
+import Mathlib.Tactic.Tauto
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
 import Flapjack.Compiler.Backend.StackRemove.Proofs.ProgCompEta
 namespace Flapjack.Compiler.Backend.StackRemove.CompCorrect.Install
@@ -156,10 +157,7 @@ restriction and entire post-relation are derived. No target execution,
 successful compilation, code relation or desired post-state is assumed.
 The evaluator closure inherits the reviewed reals_as_rational_cuts FP
 carrier (SOUNDNESS item 8); this constructor executes no FP instruction. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectInstall {width : Nat} [NeZero width] {C F : Type}
     (first second third fourth fifth : Nat)
     (source : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))

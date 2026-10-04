@@ -52,8 +52,7 @@ private theorem plainAsmErrorCase {width : Nat} [NeZero width] {C F : Type}
 
 /-- Original plain ASM Jump default-error case, not the labAsm Jump branch.
 Retains all original simulation premises and derives the skipped target run. -/
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem filterCorrectPlainJump {width : Nat} [NeZero width] {C F : Type}
     (s1 t1 : Flapjack.Compiler.Backend.LabSem.State width C F)
     (res : MachineResult) (s2 : Flapjack.Compiler.Backend.LabSem.State width C F)
@@ -66,8 +65,7 @@ theorem filterCorrectPlainJump {width : Nat} [NeZero width] {C F : Type}
   plainAsmErrorCase s1 t1 res s2 (.jump offset) bytes len heval hrel hfailed hfetch trivial
 
 /-- Original plain ASM JumpCmp default-error case; no source branch is excluded. -/
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem filterCorrectPlainJumpCmp {width : Nat} [NeZero width] {C F : Type}
     (s1 t1 : Flapjack.Compiler.Backend.LabSem.State width C F)
     (res : MachineResult) (s2 : Flapjack.Compiler.Backend.LabSem.State width C F)
@@ -82,8 +80,7 @@ theorem filterCorrectPlainJumpCmp {width : Nat} [NeZero width] {C F : Type}
     heval hrel hfailed hfetch trivial
 
 /-- Original plain ASM Call default-error case, not the labAsm Call branch. -/
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem filterCorrectPlainCall {width : Nat} [NeZero width] {C F : Type}
     (s1 t1 : Flapjack.Compiler.Backend.LabSem.State width C F)
     (res : MachineResult) (s2 : Flapjack.Compiler.Backend.LabSem.State width C F)
@@ -96,8 +93,7 @@ theorem filterCorrectPlainCall {width : Nat} [NeZero width] {C F : Type}
   plainAsmErrorCase s1 t1 res s2 (.call offset) bytes len heval hrel hfailed hfetch trivial
 
 /-- Original plain ASM Loc default-error case, not the labAsm LocValue branch. -/
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem filterCorrectPlainLoc {width : Nat} [NeZero width] {C F : Type}
     (s1 t1 : Flapjack.Compiler.Backend.LabSem.State width C F)
     (res : MachineResult) (s2 : Flapjack.Compiler.Backend.LabSem.State width C F)

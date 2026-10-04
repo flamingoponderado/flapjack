@@ -8,8 +8,7 @@ open Flapjack.Compiler.Encoders.Asm
 /-- Literal HOL frame sizing and native compilation of one program. The
 argument and variable frame sizes use natural subtraction, including inputs
 outside the calling convention's later correctness hypotheses. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "compile_prog_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def compileProgNative {width : Nat} [NeZero width] (conf : AsmConfigExact width)
     (perf : Bool) (program : WordLangProgHOL (BitVec width))
     (argumentCount registerCount : Nat) (bitmaps : AppList (BitVec width) × Nat) :
@@ -24,8 +23,7 @@ def compileProgNative {width : Nat} [NeZero width] (conf : AsmConfigExact width)
 
 /-- Literal left-to-right list traversal. HOL's identifier type is independent
 of the word dimension; no equality or numeric restriction is imposed on it. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "compile_word_to_stack_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def compileWordToStackNative {width : Nat} [NeZero width] {β : Type}
     (conf : AsmConfigExact width) (perf : Bool) (registerCount : Nat)
     (programs : List (β × Nat × WordLangProgHOL (BitVec width)))

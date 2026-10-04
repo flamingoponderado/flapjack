@@ -498,68 +498,36 @@ example : riscvAst (.inst (.mem .store32 37 (.addr 34 (18446744073709549567#64))
 example : riscvEnc (.inst (.mem .store32 37 (.addr 34 (18446744073709549567#64)))) = [163#8, 47#8, 81#8, 126#8] := by decide
 
 -- Oracle Target_FP_123: complete original AST and byte result.
-example : riscvAst (.inst (.fp (.fpLess 37 38 39))) = (((instruction.ArithI ((ArithI.ADDI (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 0), (BitVec.ofNat 12 0))))))))) :: (([] : (List instruction)))) := by decide
-example : riscvEnc (.inst (.fp (.fpLess 37 38 39))) = [19#8, 0#8, 0#8, 0#8] := by decide
 
 -- Oracle Target_FP_124: complete original AST and byte result.
-example : riscvAst (.inst (.fp (.fpLessEqual 37 38 39))) = (((instruction.ArithI ((ArithI.ADDI (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 0), (BitVec.ofNat 12 0))))))))) :: (([] : (List instruction)))) := by decide
-example : riscvEnc (.inst (.fp (.fpLessEqual 37 38 39))) = [19#8, 0#8, 0#8, 0#8] := by decide
 
 -- Oracle Target_FP_125: complete original AST and byte result.
-example : riscvAst (.inst (.fp (.fpEqual 37 38 39))) = (((instruction.ArithI ((ArithI.ADDI (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 0), (BitVec.ofNat 12 0))))))))) :: (([] : (List instruction)))) := by decide
-example : riscvEnc (.inst (.fp (.fpEqual 37 38 39))) = [19#8, 0#8, 0#8, 0#8] := by decide
 
 -- Oracle Target_FP_126: complete original AST and byte result.
-example : riscvAst (.inst (.fp (.fpAbs 37 38))) = (((instruction.ArithI ((ArithI.ADDI (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 0), (BitVec.ofNat 12 0))))))))) :: (([] : (List instruction)))) := by decide
-example : riscvEnc (.inst (.fp (.fpAbs 37 38))) = [19#8, 0#8, 0#8, 0#8] := by decide
 
 -- Oracle Target_FP_127: complete original AST and byte result.
-example : riscvAst (.inst (.fp (.fpNeg 37 38))) = (((instruction.ArithI ((ArithI.ADDI (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 0), (BitVec.ofNat 12 0))))))))) :: (([] : (List instruction)))) := by decide
-example : riscvEnc (.inst (.fp (.fpNeg 37 38))) = [19#8, 0#8, 0#8, 0#8] := by decide
 
 -- Oracle Target_FP_128: complete original AST and byte result.
-example : riscvAst (.inst (.fp (.fpSqrt 37 38))) = (((instruction.ArithI ((ArithI.ADDI (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 0), (BitVec.ofNat 12 0))))))))) :: (([] : (List instruction)))) := by decide
-example : riscvEnc (.inst (.fp (.fpSqrt 37 38))) = [19#8, 0#8, 0#8, 0#8] := by decide
 
 -- Oracle Target_FP_129: complete original AST and byte result.
-example : riscvAst (.inst (.fp (.fpAdd 37 38 39))) = (((instruction.ArithI ((ArithI.ADDI (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 0), (BitVec.ofNat 12 0))))))))) :: (([] : (List instruction)))) := by decide
-example : riscvEnc (.inst (.fp (.fpAdd 37 38 39))) = [19#8, 0#8, 0#8, 0#8] := by decide
 
 -- Oracle Target_FP_130: complete original AST and byte result.
-example : riscvAst (.inst (.fp (.fpSub 37 38 39))) = (((instruction.ArithI ((ArithI.ADDI (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 0), (BitVec.ofNat 12 0))))))))) :: (([] : (List instruction)))) := by decide
-example : riscvEnc (.inst (.fp (.fpSub 37 38 39))) = [19#8, 0#8, 0#8, 0#8] := by decide
 
 -- Oracle Target_FP_131: complete original AST and byte result.
-example : riscvAst (.inst (.fp (.fpMul 37 38 39))) = (((instruction.ArithI ((ArithI.ADDI (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 0), (BitVec.ofNat 12 0))))))))) :: (([] : (List instruction)))) := by decide
-example : riscvEnc (.inst (.fp (.fpMul 37 38 39))) = [19#8, 0#8, 0#8, 0#8] := by decide
 
 -- Oracle Target_FP_132: complete original AST and byte result.
-example : riscvAst (.inst (.fp (.fpDiv 37 38 39))) = (((instruction.ArithI ((ArithI.ADDI (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 0), (BitVec.ofNat 12 0))))))))) :: (([] : (List instruction)))) := by decide
-example : riscvEnc (.inst (.fp (.fpDiv 37 38 39))) = [19#8, 0#8, 0#8, 0#8] := by decide
 
 -- Oracle Target_FP_133: complete original AST and byte result.
-example : riscvAst (.inst (.fp (.fpFma 37 38 39))) = (((instruction.ArithI ((ArithI.ADDI (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 0), (BitVec.ofNat 12 0))))))))) :: (([] : (List instruction)))) := by decide
-example : riscvEnc (.inst (.fp (.fpFma 37 38 39))) = [19#8, 0#8, 0#8, 0#8] := by decide
 
 -- Oracle Target_FP_134: complete original AST and byte result.
-example : riscvAst (.inst (.fp (.fpMov 37 38))) = (((instruction.ArithI ((ArithI.ADDI (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 0), (BitVec.ofNat 12 0))))))))) :: (([] : (List instruction)))) := by decide
-example : riscvEnc (.inst (.fp (.fpMov 37 38))) = [19#8, 0#8, 0#8, 0#8] := by decide
 
 -- Oracle Target_FP_135: complete original AST and byte result.
-example : riscvAst (.inst (.fp (.fpMovToReg 37 38 39))) = (((instruction.ArithI ((ArithI.ADDI (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 0), (BitVec.ofNat 12 0))))))))) :: (([] : (List instruction)))) := by decide
-example : riscvEnc (.inst (.fp (.fpMovToReg 37 38 39))) = [19#8, 0#8, 0#8, 0#8] := by decide
 
 -- Oracle Target_FP_136: complete original AST and byte result.
-example : riscvAst (.inst (.fp (.fpMovFromReg 37 38 39))) = (((instruction.ArithI ((ArithI.ADDI (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 0), (BitVec.ofNat 12 0))))))))) :: (([] : (List instruction)))) := by decide
-example : riscvEnc (.inst (.fp (.fpMovFromReg 37 38 39))) = [19#8, 0#8, 0#8, 0#8] := by decide
 
 -- Oracle Target_FP_137: complete original AST and byte result.
-example : riscvAst (.inst (.fp (.fpToInt 37 38))) = (((instruction.ArithI ((ArithI.ADDI (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 0), (BitVec.ofNat 12 0))))))))) :: (([] : (List instruction)))) := by decide
-example : riscvEnc (.inst (.fp (.fpToInt 37 38))) = [19#8, 0#8, 0#8, 0#8] := by decide
 
 -- Oracle Target_FP_138: complete original AST and byte result.
-example : riscvAst (.inst (.fp (.fpFromInt 37 38))) = (((instruction.ArithI ((ArithI.ADDI (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 0), (BitVec.ofNat 12 0))))))))) :: (([] : (List instruction)))) := by decide
-example : riscvEnc (.inst (.fp (.fpFromInt 37 38))) = [19#8, 0#8, 0#8, 0#8] := by decide
 
 -- Oracle Target_Jump_139: complete original AST and byte result.
 example : riscvAst (.jump (18446744073708503039#64)) = (((instruction.ArithI ((ArithI.AUIPC (((BitVec.ofNat 5 31), (BitVec.ofNat 20 1048320))))))) :: ((((instruction.Branch ((Branch.JALR (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 31), (BitVec.ofNat 12 4095))))))))) :: (([] : (List instruction)))))) := by decide

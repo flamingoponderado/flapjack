@@ -159,10 +159,7 @@ registers and actual copy result. The target bitmap load, full CopyLoop run,
 clock allowance, final moves and entire framed post-relation are derived.
 The evaluator closure inherits the reviewed reals_as_rational_cuts FP carrier
 (SOUNDNESS item 8); this constructor executes no FP instruction. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectStoreConsts {width : Nat} [NeZero width] {C F : Type}
     (temporary bitmap : Nat) (stub : Option Nat)
     (source : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))

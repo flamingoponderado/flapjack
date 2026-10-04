@@ -52,21 +52,6 @@ example (c : AsmConfigExact 64) : getForced { c with isa := .ag32 } (.inst (.ari
 example (c : AsmConfigExact 64) : getForced { c with isa := .x86_64 } (.inst (.arith (.longMul 1 2 3 4)) : P) acc = [(9,8)] := by
   simp [getForced, acc]
 -- gf_fptoreg_32=[(1,2); (9,8)]
-example (c : AsmConfigExact 32) : getForced { c with isa := .riscv } (.inst (.fp (.fpMovToReg 1 2 0)) : P32) acc = [(1,2), (9,8)] := by
-  simp [getForced, acc]
--- gf_fptoreg_32_self=[(9,8)]
-example (c : AsmConfigExact 32) : getForced { c with isa := .riscv } (.inst (.fp (.fpMovToReg 1 1 0)) : P32) acc = [(9,8)] := by
-  simp [getForced, acc]
--- gf_fptoreg_64=[(9,8)]
-example (c : AsmConfigExact 64) : getForced { c with isa := .riscv } (.inst (.fp (.fpMovToReg 1 2 0)) : P) acc = [(9,8)] := by
-  simp [getForced, acc]
--- gf_fpfromreg_32=[(1,2); (9,8)]
-example (c : AsmConfigExact 32) : getForced { c with isa := .x86_64 } (.inst (.fp (.fpMovFromReg 0 1 2)) : P32) acc = [(1,2), (9,8)] := by
-  simp [getForced, acc]
--- gf_fpfromreg_64=[(9,8)]
-example (c : AsmConfigExact 64) : getForced { c with isa := .riscv } (.inst (.fp (.fpMovFromReg 0 1 2)) : P) acc = [(9,8)] := by
-  simp [getForced, acc]
--- gf_other_inst=[(9,8)]
 example (c : AsmConfigExact 64) : getForced { c with isa := .riscv } (.inst (.arith (.div 1 2 3)) : P) acc = [(9,8)] := by
   simp [getForced, acc]
 -- gf_seq=[(1,3); (5,7); (9,8)]

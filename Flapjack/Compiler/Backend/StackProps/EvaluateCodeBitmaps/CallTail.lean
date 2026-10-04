@@ -18,8 +18,7 @@ actual decClock source after successful lookup, absent handler and nonzero
 clock. fixClock changes clock only. The full evaluator closure inherits
 reals_as_rational_cuts; no numerical alignment/FP equivalence is asserted.
 Returning/exception Call branches and whole evaluator assembly remain open. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsCallTail {width : Nat} [NeZero width] {C F : Type}
     (dest : Sum Nat Nat) (handler : Option (HolProg width × Nat × Nat))
     (source post : StackSemStateFiniteExact width C F)

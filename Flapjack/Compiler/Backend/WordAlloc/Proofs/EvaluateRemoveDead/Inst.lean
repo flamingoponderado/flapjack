@@ -38,7 +38,6 @@ def instReads {width : Nat} : WordLangInst (BitVec width) → List Nat
   | .mem .load _ (.addr a _) | .mem .load8 _ (.addr a _) | .mem .load32 _ (.addr a _) => [a]
   | .mem .store r (.addr a _) | .mem .store8 r (.addr a _) | .mem .store32 r (.addr a _) =>
       [a, r]
-  | .fp (.fpMovFromReg _ r1 r2) => if width = 64 then [r1] else [r1, r2]
   | _ => []
 
 /-- The integer registers an instruction writes (Flapjack infrastructure, no HOL
@@ -50,8 +49,6 @@ def instWrites {width : Nat} : WordLangInst (BitVec width) → List Nat
   | .arith (.subOverflow r1 _ _ r4) => [r1, r4]
   | .arith (.longMul r1 r2 _ _) | .arith (.longDiv r1 r2 _ _ _) => [r1, r2]
   | .mem .load r _ | .mem .load8 r _ | .mem .load32 r _ => [r]
-  | .fp (.fpLess r _ _) | .fp (.fpLessEqual r _ _) | .fp (.fpEqual r _ _) => [r]
-  | .fp (.fpMovToReg r1 r2 _) => if width = 64 then [r1] else [r1, r2]
   | _ => []
 
 /-- `get_live_inst` keeps every register the instruction reads (Flapjack
@@ -518,56 +515,6 @@ theorem getFpVarWith {width : Nat} [NeZero width] {C F : Type} (d : Nat)
     (ts : HolFiniteMapExact WordStoreHOL (WordLocW width)) :
     getFpVar d { s with locals := t, store := ts } = getFpVar d s := rfl
 
-/-- `instCongr` for floating-point instructions (Flapjack infrastructure). -/
-theorem instCongrFp {width : Nat} [NeZero width] {C F : Type} (op : WordLangFp)
-    (s s1 : WordSemStateFiniteExact width C F) (t : Spt (WordLocW width))
-    (ts : HolFiniteMapExact WordStoreHOL (WordLocW width))
-    (hi : inst (.fp op : WordLangInst (BitVec width)) s = some s1)
-    (hr : ∀ x v, x ∈ instReads (.fp op : WordLangInst (BitVec width)) →
-      sptLookup x s.locals = some v → sptLookup x t = some v) :
-    InstCongrPost (.fp op) s s1 t ts := by
-  cases op
-  case fpMovFromReg d r1 r2 =>
-    have gv : ∀ x v, x ∈ instReads (.fp (.fpMovFromReg d r1 r2) : WordLangInst (BitVec width)) →
-        WordSemStateFiniteExact.getVar x s = some v →
-        WordSemStateFiniteExact.getVar x ({ s with locals := t, store := ts } :
-          WordSemStateFiniteExact width C F) = some v := hr
-    simp only [inst] at hi
-    by_cases h64 : width = 64
-    · rw [if_pos h64] at hi
-      split at hi
-      · rename_i w1 h1
-        simp only [Option.some.injEq] at hi; subst hi
-        refine instCongrPostZero _ s _ t ts rfl rfl rfl ?_
-        have h1' := gv r1 _ (by simp [instReads, h64]) h1
-        simp only [inst, if_pos h64, h1']
-        rfl
-      · cases hi
-    · rw [if_neg h64] at hi
-      split at hi
-      · rename_i w1 w2 h1 h2
-        simp only [Option.some.injEq] at hi; subst hi
-        refine instCongrPostZero _ s _ t ts rfl rfl rfl ?_
-        have h1' := gv r1 _ (by simp [instReads, h64]) h1
-        have h2' := gv r2 _ (by simp [instReads, h64]) h2
-        simp only [inst, if_neg h64, h1', h2']
-        rfl
-      · cases hi
-  all_goals simp only [inst] at hi
-  all_goals (repeat' split at hi)
-  all_goals (try (cases hi; done))
-  all_goals (simp only [Option.some.injEq] at hi; subst hi)
-  all_goals first
-    | (refine instCongrPostZero _ s _ t ts rfl rfl rfl ?_
-       simp only [inst, getFpVarWith, *]
-       try rfl)
-    | (refine instCongrPostOne _ s t ts _ _ (by simp [instWrites, *]) ?_
-       simp only [inst, getFpVarWith, *]
-       try rfl)
-    | (refine instCongrPostTwo _ s t ts _ _ _ _ (fun k => by simp [instWrites, *]) ?_
-       simp only [inst, getFpVarWith, *]
-       try rfl)
-
 /-- An instruction runs on related locals and any store with the source effect on
 the written registers (Flapjack infrastructure for HOL's per-instruction
 `strong_locals_rel_I_get_var`/`_insert_insert` reasoning). -/
@@ -585,8 +532,6 @@ theorem instCongr {width : Nat} [NeZero width] {C F : Type} (i : WordLangInst (B
   | mem op r address =>
     cases address with
     | addr a w => exact instCongrMem op r a w s s1 t ts hi hr
-  | fp op => exact instCongrFp op s s1 t ts hi hr
-
 /-- A removable instruction changes only the locals (Flapjack infrastructure). -/
 theorem instRemovedFrame {width : Nat} [NeZero width] {C F : Type}
     (i : WordLangInst (BitVec width)) (live : NumSet) (s s1 : WordSemStateFiniteExact width C F)
@@ -614,19 +559,7 @@ theorem instRemovedFrame {width : Nat} [NeZero width] {C F : Type}
     all_goals first
       | (cases hi; done)
       | (simp only [Option.some.injEq] at hi; subst hi; rfl)
-  | fp op =>
-    cases op
-    all_goals simp [removeDeadInst, removeDeadInstCore] at hrm
-    all_goals simp only [inst] at hi
-    all_goals (repeat' split at hi)
-    all_goals first
-      | (cases hi; done)
-      | (simp only [Option.some.injEq] at hi; subst hi; rfl)
-
 /-- HOL `evaluate_remove_dead`, `Inst` case (Resume 4031). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_remove_dead"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
 theorem evaluateRemoveDead_Inst {width : Nat} [NeZero width] {C F : Type}
     (i : WordLangInst (BitVec width)) :
     removeDeadGoal C F (.inst i : WordLangProgHOL (BitVec width)) := by

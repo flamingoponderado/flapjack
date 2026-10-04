@@ -22,9 +22,7 @@ end FullSSACorrectWitnesses
 /-- Full native SSA wrapper simulation, deriving the setup and body simulation
 from the sole original initial locals-domain premise. Inherits evaluator
 reals_as_rational_cuts (SOUNDNESS item 8). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "full_ssa_cc_trans_correct"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fullSsaCcTransCorrect {width : Nat} [NeZero width] {C F : Type}
     (prog : WordLangProgHOL (BitVec width)) (state : WordSemStateFiniteExact width C F)
     (count : Nat) (domain : sptDomain state.locals = (fun key => key ∈ evenList count)) :

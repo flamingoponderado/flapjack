@@ -1,3 +1,4 @@
+import Mathlib.Tactic.NormNum
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StackMemoryAny
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordAddressArithmetic
 namespace Flapjack.Compiler.Backend.StackRemove.CompCorrect.StackSize
@@ -64,10 +65,7 @@ theorem runGetSize {width : Nat} [NeZero width] {C F : Type}
     StackSemControl.fixClock, BitVec.toNat_ofNat, Nat.mod_eq_of_lt shiftBound, Nat.not_le_of_gt shiftWidth, maps]
 
 /-- Full original StackGetSize case, with precisely the original four premises. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectStackGetSize {width : Nat} [NeZero width] {C F : Type}
     (source : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (postSource target : StackSemStateFiniteExact width C F) (register pointer : Nat)
@@ -174,10 +172,7 @@ theorem setVarCommute {width : Nat} [NeZero width] {C F : Type}
     · by_cases eqSecond : query = second <;> simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, eqFirst, eqSecond, Ne.symm different]
   simp [StackSemStateOps.setVar, maps]
 /-- Full original StackSetSize case, with precisely the original four premises. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectStackSetSize {width : Nat} [NeZero width] {C F : Type}
     (source : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (postSource target : StackSemStateFiniteExact width C F) (register pointer : Nat)

@@ -6,8 +6,7 @@ open Flapjack.Compiler.Encoders.Asm
 
 /-- Literal mapped-read instruction template check. HOL leaves the unused
 return-PC parameter polymorphic; it is retained without a word-type restriction. -/
-@[hol "cakeml/compiler/backend/semantics/targetSemScript.sml" "is_valid_mapped_read_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def isValidMappedRead {width : Nat} [NeZero width] {state projection returnPc : Type}
     (pc : BitVec width) (size : BitVec 8) (address : HolAddr width) (register : Nat)
     (_returnPc : returnPc) (target : HolAsmTarget width state projection) (ms : state)
@@ -28,8 +27,7 @@ def isValidMappedRead {width : Nat} [NeZero width] {state projection returnPc : 
 
 /-- Literal mapped-write instruction template check, including the invalid-size
 False clause and the same unused polymorphic return-PC argument. -/
-@[hol "cakeml/compiler/backend/semantics/targetSemScript.sml" "is_valid_mapped_write_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def isValidMappedWrite {width : Nat} [NeZero width] {state projection returnPc : Type}
     (pc : BitVec width) (size : BitVec 8) (address : HolAddr width) (register : Nat)
     (_returnPc : returnPc) (target : HolAsmTarget width state projection) (ms : state)

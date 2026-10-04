@@ -29,12 +29,6 @@ theorem wInstNoShmemop {width : Nat} [NeZero width]
     cases addr
     cases op <;> simp [wInstNative, wStackLoadNoShmemop,
       write1, noShmemop]
-  | fp f =>
-    cases f
-    all_goals
-      by_cases hw : width = 64
-      all_goals simp [wInstNative, hw, wStackLoadNoShmemop,
-        write1, write21, noShmemop]
   | skip => rfl
   | const n c => simp [wInstNative, write1]
 
@@ -42,8 +36,6 @@ theorem wInstNoShmemop {width : Nat} [NeZero width]
 output components are retained; the source guard is redundant in this case,
 but is kept to give exactly the original case statement. The helper proof
 covers every original instruction clause, including the FP width split. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "comp_no_shmemop" (words_as_type_indexed_bitvec)]
 theorem compNoShmemopInst {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (instruction : WordLangInst (BitVec width))

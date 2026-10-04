@@ -8,8 +8,7 @@ namespace Flapjack.Compiler.Backend.WordAlloc
 an equality for the native compiler definition, not an evaluation hypothesis.
 Allocation and both input map bounds are the original premises; the returned
 counter is monotone, remains allocated, and bounds the returned SSA map. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "fix_inconsistencies_props"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fixInconsistenciesProps {width : Nat} [NeZero width]
     (prio : Option (Unit ⊕ Unit)) (leftMap rightMap : Spt Nat) (next : Nat)
     (leftProg rightProg : WordLangProgHOL (BitVec width)) (nextOut : Nat) (outputMap : Spt Nat)

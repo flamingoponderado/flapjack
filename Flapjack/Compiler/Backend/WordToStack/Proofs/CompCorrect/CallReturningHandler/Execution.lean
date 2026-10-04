@@ -1694,11 +1694,7 @@ strengthened IH is introduced. Source comparison retains all quantifiers and
 conclusions of the motive5719–5751 and the original handler proof9020–10048;
 canonical five fmap fields and positive type-indexed words are the only
 carrier translations. Inherited evaluator real-carrier assurance limits apply. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_correct" 5756
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectCallReturningHandler {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (values : List Nat) (names : WordLangCutsetsHOL)
     (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)

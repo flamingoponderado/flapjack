@@ -9,8 +9,7 @@ Retains the actual compiler-output equality and original map/allocation premises
 all counter/class/map conclusions are derived through the actual rename/cut flow.
 No extra distinctness, tree validity, evaluation or output-map premise is assumed.
 The original loop-table parameter is retained even though this case ignores it. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_props"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransPropsAlloc {width : Nat} [NeZero width]
     (destination : Nat) (cutsets : WordLangCutsetsHOL) (ssa : Spt Nat) (next : Nat)
     (loopTables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -42,8 +41,7 @@ Retains the actual compiler-output equality and original map/allocation premises
 all counter/class/map conclusions are derived through the actual rename/cut flow.
 No extra distinctness, tree validity, evaluation or output-map premise is assumed.
 The original loop-table parameter is retained even though this case ignores it. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_props"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransPropsFFI {width : Nat} [NeZero width]
     (function : Flapjack.Basis.Pure.MlString.MlString)
     (configuration configurationLength array arrayLength : Nat) (cutsets : WordLangCutsetsHOL) (ssa : Spt Nat) (next : Nat)
@@ -76,8 +74,7 @@ Retains the actual compiler-output equality and original map/allocation premises
 all counter/class/map conclusions are derived through the actual rename/cut flow.
 No extra distinctness, tree validity, evaluation or output-map premise is assumed.
 The original loop-table parameter is retained even though this case ignores it. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_props"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransPropsInstall {width : Nat} [NeZero width]
     (codeBuffer codeLength dataBuffer dataLength : Nat) (cutsets : WordLangCutsetsHOL)
     (ssa : Spt Nat) (next : Nat) (loopTables : List (Spt Nat × Spt Unit × Spt Unit))

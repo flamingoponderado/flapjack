@@ -11,8 +11,7 @@ namespace Flapjack.Compiler.Backend.StackRawCall
 open Flapjack Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Backend.StackProps
 
 /-- HOL `reg_bound_comp`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "reg_bound_comp"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem regBoundComp {width : Nat} [NeZero width] {s : Nat} :
     ∀ (i : Spt Nat) (p : HolProg width),
       (regBound (comp i p) s ↔ regBound p s) ∧ (regBound (compTop i p) s ↔ regBound p s) := by
@@ -33,8 +32,7 @@ theorem regBoundComp {width : Nat} [NeZero width] {s : Nat} :
   | _ => simp_all [comp, compTop, regBound]
 
 /-- HOL `call_args_comp`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "call_args_comp"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem callArgsComp {width : Nat} [NeZero width] {r1 r2 r3 r4 r5 : Nat} :
     ∀ (i : Spt Nat) (p : HolProg width),
       (callArgs (comp i p) r1 r2 r3 r4 r5 ↔ callArgs p r1 r2 r3 r4 r5) ∧
@@ -56,8 +54,7 @@ theorem callArgsComp {width : Nat} [NeZero width] {r1 r2 r3 r4 r5 : Nat} :
   | _ => simp_all [comp, compTop, callArgs]
 
 /-- HOL `call_arg_comp` (on `alloc_arg`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "call_arg_comp"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem callArgComp {width : Nat} [NeZero width] :
     ∀ (i : Spt Nat) (p : HolProg width),
       (allocArg (comp i p) ↔ allocArg p) ∧ (allocArg (compTop i p) ↔ allocArg p) := by
@@ -78,8 +75,7 @@ theorem callArgComp {width : Nat} [NeZero width] :
   | _ => simp_all [comp, compTop, allocArg]
 
 /-- HOL `stack_rawcall_reg_bound`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "stack_rawcall_reg_bound"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackRawcallRegBound {width : Nat} [NeZero width] {sp : Nat}
     {prog1 : List (Nat × HolProg width)} :
     (∀ p ∈ (compile prog1).map Prod.snd, regBound p sp) ↔
@@ -92,8 +88,7 @@ theorem stackRawcallRegBound {width : Nat} [NeZero width] {sp : Nat}
     exact (regBoundComp (collectInfo prog1 .ln) q).2.mpr (h q ⟨x, q, hx, rfl⟩)
 
 /-- HOL `stack_alloc_call_args` (of `stack_rawcallProof`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "stack_alloc_call_args"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackRawcallCallArgs {width : Nat} [NeZero width]
     {prog1 : List (Nat × HolProg width)} :
     (∀ p ∈ (compile prog1).map Prod.snd, callArgs p 1 2 3 4 0) ↔
@@ -106,8 +101,7 @@ theorem stackRawcallCallArgs {width : Nat} [NeZero width]
     exact (callArgsComp (collectInfo prog1 .ln) q).2.mpr (h q ⟨x, q, hx, rfl⟩)
 
 /-- HOL `MAP_FST_compile` (of `stack_rawcallProof`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "MAP_FST_compile"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem mapFstCompile {width : Nat} [NeZero width] {code : List (Nat × HolProg width)} :
     (compile code).map Prod.fst = code.map Prod.fst := by
   simp [compile, Function.comp_def]

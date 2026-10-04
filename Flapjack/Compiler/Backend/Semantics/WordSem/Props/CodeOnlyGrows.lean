@@ -395,8 +395,7 @@ theorem evaluate_code_subspt {width : Nat} [NeZero width] {C F : Type}
 
 /-- Full original `evaluate_code_only_grows` (`wordPropsScript.sml:4589-4626`):
 `!p s r t. evaluate (p,s) = (r,t) ==> subspt s.code t.code`. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_code_only_grows"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_code_only_grows {width : Nat} [NeZero width] {C F : Type} :
     ∀ (p : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F)
       (r : Option (WordSemResult width)) (t : WordSemStateFiniteExact width C F),
@@ -414,8 +413,7 @@ open WordSemStateFiniteExact
 
 /-- Full original `evaluate_NONE_stack_size_const` (`wordPropsScript.sml:4628-4634`):
 `!p s t. evaluate (p,s) = (NONE,t) ==> stack_size t.stack = stack_size s.stack`. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_NONE_stack_size_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_NONE_stack_size_const {width : Nat} [NeZero width] {C F : Type} :
     ∀ (p : WordLangProgHOL (BitVec width)) (s t : WordSemStateFiniteExact width C F),
       evaluate p s = (none, t) → wordSemStackSize t.stack = wordSemStackSize s.stack := by

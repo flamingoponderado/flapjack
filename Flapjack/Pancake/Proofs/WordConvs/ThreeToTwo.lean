@@ -7,8 +7,7 @@ open Flapjack Flapjack.Compiler.Backend.WordInst Flapjack.Compiler.Encoders.Asm
 
 /-- Original unconditional label preservation for the entire native optional
 three-to-two register pass, including both call-handler families. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "three_to_two_reg_prog_lab_pres" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem threeToTwoRegProg_labPres {width : Nat} [NeZero width]
     (enabled : Bool) (program : WordLangProgHOL (BitVec width)) :
     extractLabels program = extractLabels (threeToTwoRegProg enabled program) := by
@@ -28,8 +27,7 @@ theorem threeToTwoRegProg_labPres {width : Nat} [NeZero width]
 
 /-- Original flat-convention preservation with the source flat-convention
 premise, for either setting of the native pass flag and all constructors. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "three_to_two_reg_prog_flat_exp_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem threeToTwoRegProg_flatExpConventions {width : Nat} [NeZero width]
     (enabled : Bool) (program : WordLangProgHOL (BitVec width))
     (source : flatExpConventions program = true) :
@@ -51,8 +49,7 @@ theorem threeToTwoRegProg_flatExpConventions {width : Nat} [NeZero width]
 
 /-- Original two-register instruction guarantee, with the original enabled
 flag premise and no source instruction or target validity assumption. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "three_to_two_reg_prog_two_reg_inst" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem threeToTwoRegProg_twoRegInst {width : Nat} [NeZero width]
     (enabled : Bool) (program : WordLangProgHOL (BitVec width))
     (runPass : enabled = true) :
@@ -77,8 +74,7 @@ theorem threeToTwoRegProg_twoRegInst {width : Nat} [NeZero width]
 
 /-- Original full instruction-validity preservation. The configuration is
 arbitrary; the sole premise is validity of the source programme. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "three_to_two_reg_prog_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem threeToTwoRegProg_fullInstOkLess {width : Nat} [NeZero width]
     (enabled : Bool) (config : AsmConfigExact width)
     (program : WordLangProgHOL (BitVec width))
@@ -124,8 +120,7 @@ theorem threeToTwoRegProg_fullInstOkLess {width : Nat} [NeZero width]
 
 /-- Original pre-allocation convention preservation over the faithful native
 cut sets and call argument conventions, with the sole source premise. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "three_to_two_reg_prog_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem threeToTwoRegProg_preAllocConventions {width : Nat} [NeZero width]
     (enabled : Bool) (program : WordLangProgHOL (BitVec width))
     (source : preAllocConventionsHOL program = true) :
@@ -185,8 +180,7 @@ theorem threeToTwoRegProg_preAllocConventions {width : Nat} [NeZero width]
 
 /-- HOL `three_to_two_reg_prog_wf_cutsets` (`wordConvsProofScript.sml:2227-2236`);
 HOL's free flag `b` is the leading binder. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "three_to_two_reg_prog_wf_cutsets" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem threeToTwoRegProg_wfCutsets {width : Nat} [NeZero width] (b : Bool) :
     ∀ prog : WordLangProgHOL (BitVec width), wfCutsets prog → wfCutsets (threeToTwoRegProg b prog) := by
   intro program source

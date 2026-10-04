@@ -155,10 +155,7 @@ theorem compCorrectStack {width : Nat} [NeZero width] {C F : Type}
 
 /-- Literal LocValue case: successful target label checking is derived from
 stateRel and getLabelsComp, rather than supplied as a simulation premise. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectLocValue {width : Nat} [NeZero width] {C F : Type}
     (register first second : Nat) (info : Spt Nat)
     (source target resultState : StackSemStateFiniteExact width C F)
@@ -189,10 +186,7 @@ theorem compCorrectLocValue {width : Nat} [NeZero width] {C F : Type}
 
 /-- Genuine original stackAlloc case: all three source premises and both
 existential conclusions, with no supplied target evaluation or postrelation. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectStackAlloc {width : Nat} [NeZero width] {C F : Type}
     (n : Nat) (info : Spt Nat)
     (source target resultState : StackSemStateFiniteExact width C F)
@@ -206,10 +200,7 @@ theorem compCorrectStackAlloc {width : Nat} [NeZero width] {C F : Type}
 
 /-- Genuine original stackFree case: all three source premises and both
 existential conclusions, with no supplied target evaluation or postrelation. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectStackFree {width : Nat} [NeZero width] {C F : Type}
     (n : Nat) (info : Spt Nat)
     (source target resultState : StackSemStateFiniteExact width C F)
@@ -223,10 +214,7 @@ theorem compCorrectStackFree {width : Nat} [NeZero width] {C F : Type}
 
 /-- Genuine original stackLoad case: all three source premises and both
 existential conclusions, with no supplied target evaluation or postrelation. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectStackLoad {width : Nat} [NeZero width] {C F : Type}
     (r n : Nat) (info : Spt Nat)
     (source target resultState : StackSemStateFiniteExact width C F)
@@ -240,10 +228,7 @@ theorem compCorrectStackLoad {width : Nat} [NeZero width] {C F : Type}
 
 /-- Genuine original stackLoadAny case: all three source premises and both
 existential conclusions, with no supplied target evaluation or postrelation. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectStackLoadAny {width : Nat} [NeZero width] {C F : Type}
     (r rn : Nat) (info : Spt Nat)
     (source target resultState : StackSemStateFiniteExact width C F)
@@ -257,10 +242,7 @@ theorem compCorrectStackLoadAny {width : Nat} [NeZero width] {C F : Type}
 
 /-- Genuine original stackStore case: all three source premises and both
 existential conclusions, with no supplied target evaluation or postrelation. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectStackStore {width : Nat} [NeZero width] {C F : Type}
     (r n : Nat) (info : Spt Nat)
     (source target resultState : StackSemStateFiniteExact width C F)
@@ -274,10 +256,7 @@ theorem compCorrectStackStore {width : Nat} [NeZero width] {C F : Type}
 
 /-- Genuine original stackStoreAny case: all three source premises and both
 existential conclusions, with no supplied target evaluation or postrelation. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectStackStoreAny {width : Nat} [NeZero width] {C F : Type}
     (r rn : Nat) (info : Spt Nat)
     (source target resultState : StackSemStateFiniteExact width C F)
@@ -291,10 +270,7 @@ theorem compCorrectStackStoreAny {width : Nat} [NeZero width] {C F : Type}
 
 /-- Genuine original stackGetSize case: all three source premises and both
 existential conclusions, with no supplied target evaluation or postrelation. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectStackGetSize {width : Nat} [NeZero width] {C F : Type}
     (r : Nat) (info : Spt Nat)
     (source target resultState : StackSemStateFiniteExact width C F)
@@ -308,10 +284,7 @@ theorem compCorrectStackGetSize {width : Nat} [NeZero width] {C F : Type}
 
 /-- Genuine original stackSetSize case: all three source premises and both
 existential conclusions, with no supplied target evaluation or postrelation. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectStackSetSize {width : Nat} [NeZero width] {C F : Type}
     (r : Nat) (info : Spt Nat)
     (source target resultState : StackSemStateFiniteExact width C F)
@@ -325,10 +298,7 @@ theorem compCorrectStackSetSize {width : Nat} [NeZero width] {C F : Type}
 
 /-- Genuine original bitmapLoad case: all three source premises and both
 existential conclusions, with no supplied target evaluation or postrelation. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectBitmapLoad {width : Nat} [NeZero width] {C F : Type}
     (r v : Nat) (info : Spt Nat)
     (source target resultState : StackSemStateFiniteExact width C F)

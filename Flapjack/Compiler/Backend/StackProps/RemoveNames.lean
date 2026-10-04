@@ -10,8 +10,7 @@ field labels. Call checks a handler only inside the SOME-return branch; its
 target and metadata are ignored. The original inferred type is
 `alpha asm_config -> beta stackLang.prog -> bool`: configuration and program
 word dimensions are independent, including when they differ. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "stack_asm_remove_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def stackAsmRemove {configWidth : Nat} {width : Nat} [NeZero configWidth] [NeZero width]
     (config : AsmConfigExact configWidth) :
     HolProg width → Prop

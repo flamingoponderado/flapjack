@@ -52,8 +52,7 @@ def locCheck {α : Type}
 
 /-- Source-shaped label set on the reviewed positive-width HOL program carrier.
 Sets are predicates; ignored instruction payloads remain on the exact carrier. -/
-@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "get_labels_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def getLabelsExact {width : Nat} [NeZero width] : HolProg width → (Nat × Nat) → Prop
   | .seq first second => fun label => getLabelsExact first label ∨ getLabelsExact second label
   | .ite _ _ _ thenBranch elseBranch =>
@@ -77,8 +76,7 @@ decreasing_by all_goals simp_wf <;> omega
 
 /-- Source-shaped location check, retaining the existential successful lookup
 of an actual HolProg and membership in its exact label set. -/
-@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "loc_check_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def locCheckExact {width : Nat} [NeZero width]
     (code : Spt (HolProg width)) (labels : Nat × Nat) : Prop :=
   (labels.2 = 0 ∧ sptMem labels.1 code) ∨

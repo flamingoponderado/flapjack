@@ -36,15 +36,11 @@ theorem self_insert_fresh {tc : Spt Nat} {x y v : Nat} (hx : sptLookup x tc = no
 end Helpers
 
 /-- Exact HOL `wf_data_empty` (`word_cseProof:2294-2298`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "wf_data_empty"
-  (words_as_type_indexed_bitvec)]
 theorem wfData_empty {width : Nat} [NeZero width] : wfData width emptyData := by
   simp [wfData, emptyData, Misc.BalancedMap.empty, Misc.BalancedMap.lookup,
     Misc.BalancedMap.invariant]
 
 /-- Exact HOL `wf_data_loads_wipe` (`word_cseProof:2301-2305`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "wf_data_loads_wipe"
-  (words_as_type_indexed_bitvec)]
 theorem wfData_loads_wipe {width : Nat} [NeZero width] (data : Knowledge)
     (h : wfData width data) : wfData width { data with loadsMem := Misc.BalancedMap.empty } := by
   obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, _, _, _⟩ := h
@@ -52,8 +48,6 @@ theorem wfData_loads_wipe {width : Nat} [NeZero width] (data : Knowledge)
     simp [Misc.BalancedMap.empty, Misc.BalancedMap.lookup, Misc.BalancedMap.invariant]
 
 /-- Exact HOL `wf_data_invalidate` (`word_cseProof:2308-2312`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "wf_data_invalidate"
-  (words_as_type_indexed_bitvec)]
 theorem wfData_invalidate {width : Nat} [NeZero width] (data : Knowledge) (r : Nat)
     (h : wfData width data) : wfData width (invalidateData data r) := by
   unfold invalidateData
@@ -62,16 +56,12 @@ theorem wfData_invalidate {width : Nat} [NeZero width] (data : Knowledge) (r : N
   · exact wfData_empty
 
 /-- Exact HOL `wf_data_invalidate_regs` (`word_cseProof:2314-2318`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "wf_data_invalidate_regs"
-  (words_as_type_indexed_bitvec)]
 theorem wfData_invalidate_regs {width : Nat} [NeZero width] :
     ∀ (rs : List Nat) (data : Knowledge), wfData width data → wfData width (invalidateRegs data rs)
   | [], _, h => h
   | r :: rs, data, h => wfData_invalidate_regs rs _ (wfData_invalidate data r h)
 
 /-- Exact HOL `wf_data_insert_to_canonical` (`word_cseProof:2322-2363`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "wf_data_insert_to_canonical"
-  (words_as_type_indexed_bitvec)]
 theorem wfData_insert_to_canonical {width : Nat} [NeZero width] (data : Knowledge) (x y : Nat)
     (h : wfData width data ∧ sptLookup x data.toCanonical = none ∧
       sptLookup y (sptInsert x y data.toCanonical) = some y ∧ x % 2 = 1 ∧ y % 2 = 1) :
@@ -104,8 +94,6 @@ theorem wfData_insert_to_canonical {width : Nat} [NeZero width] (data : Knowledg
     exact ⟨fun reg hreg => keep reg (hn reg hreg), hc⟩
 
 /-- Exact HOL `wf_data_insert_to_latest` (`word_cseProof:2366-2376`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "wf_data_insert_to_latest"
-  (words_as_type_indexed_bitvec)]
 theorem wfData_insert_to_latest {width : Nat} [NeZero width] (data : Knowledge) (x y : Nat)
     (h : wfData width data ∧ sptDomain data.toCanonical x ∧ sptDomain data.toCanonical y) :
     wfData width { data with toLatest := sptInsert x y data.toLatest } := by
@@ -121,8 +109,6 @@ theorem wfData_insert_to_latest {width : Nat} [NeZero width] (data : Knowledge) 
     exact h2 r v hr
 
 /-- Exact HOL `wf_data_register_read` (`word_cseProof:2378-2382`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "wf_data_register_read"
-  (words_as_type_indexed_bitvec)]
 theorem wfData_register_read {width : Nat} [NeZero width] (data : Knowledge) (r : Nat)
     (h : wfData width data) : wfData width (registerRead data r) := by
   unfold registerRead keepData
@@ -134,8 +120,6 @@ theorem wfData_register_read {width : Nat} [NeZero width] (data : Knowledge) (r 
   · exact h
 
 /-- Exact HOL `wf_data_register_reads` (`word_cseProof:2386-2390`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "wf_data_register_reads"
-  (words_as_type_indexed_bitvec)]
 theorem wfData_register_reads {width : Nat} [NeZero width] :
     ∀ (rs : List Nat) (data : Knowledge), wfData width data → wfData width (registerReads data rs)
   | [], _, h => h
@@ -172,8 +156,6 @@ theorem wfData_insert_instrs_key {width : Nat} [NeZero width] (data : Knowledge)
     · exact h5 op src v hk
 
 /-- Exact HOL local `wf_data_insert_instrs_Const` (`word_cseProof:2396-2410`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "wf_data_insert_instrs_Const"
-  (words_as_type_indexed_bitvec)]
 theorem wfData_insert_instrs_Const {width : Nat} [NeZero width] (data : Knowledge) (r n : Nat)
     (w : BitVec width) (h : wfData width data ∧ sptLookup r data.toCanonical = some r) :
     wfData width { data with instrsMem :=
@@ -183,8 +165,6 @@ theorem wfData_insert_instrs_Const {width : Nat} [NeZero width] (data : Knowledg
     (fun op src hk => by simp [instToNumList, opCurrHeapToNumList] at hk)
 
 /-- Exact HOL local `wf_data_insert_instrs_Arith` (`word_cseProof:2412-2433`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "wf_data_insert_instrs_Arith"
-  (words_as_type_indexed_bitvec)]
 theorem wfData_insert_instrs_Arith {width : Nat} [NeZero width] (data : Knowledge) (r : Nat)
     (a : Compiler.Encoders.Asm.HolArith width)
     (h : wfData width data ∧ sptLookup r data.toCanonical = some r ∧
@@ -199,8 +179,6 @@ theorem wfData_insert_instrs_Arith {width : Nat} [NeZero width] (data : Knowledg
   exact ⟨fun reg hreg => hn reg (hreads ▸ hreg), hc2⟩
 
 /-- Exact HOL local `wf_data_insert_instrs_OpCurrHeap` (`word_cseProof:2435-2450`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "wf_data_insert_instrs_OpCurrHeap"
-  (words_as_type_indexed_bitvec)]
 theorem wfData_insert_instrs_OpCurrHeap {width : Nat} [NeZero width] (data : Knowledge)
     (r : Nat) (op : BinOp) (src : Nat)
     (h : wfData width data ∧ sptLookup r data.toCanonical = some r ∧
@@ -213,8 +191,6 @@ theorem wfData_insert_instrs_OpCurrHeap {width : Nat} [NeZero width] (data : Kno
   rw [hk.2.2]; exact h.2.2
 
 /-- Exact HOL local `wf_data_insert_instrs_LocValue` (`word_cseProof:2452-2465`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "wf_data_insert_instrs_LocValue"
-  (words_as_type_indexed_bitvec)]
 theorem wfData_insert_instrs_LocValue {width : Nat} [NeZero width] (data : Knowledge) (r l : Nat)
     (h : wfData width data ∧ sptLookup r data.toCanonical = some r) :
     wfData width { data with instrsMem :=
@@ -224,8 +200,6 @@ theorem wfData_insert_instrs_LocValue {width : Nat} [NeZero width] (data : Knowl
     (fun op src hk => by simp [opCurrHeapToNumList] at hk)
 
 /-- Exact HOL local `wf_data_insert_loads` (`word_cseProof:2467-2485`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "wf_data_insert_loads"
-  (words_as_type_indexed_bitvec)]
 theorem wfData_insert_loads {width : Nat} [NeZero width] (data : Knowledge) (r : Nat)
     (op : Compiler.Encoders.Asm.HolMemop) (a : Nat) (ofs : BitVec width)
     (h : wfData width data ∧ sptLookup r data.toCanonical = some r ∧
@@ -320,8 +294,6 @@ theorem wfData_repoint {width : Nat} [NeZero width] (data : Knowledge) (r r' : N
   simp [sptDomain, sptLookup_sptInsert_same]
 
 /-- Exact HOL `wf_add_to_data_aux` (`word_cseProof:2487-2539`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "wf_add_to_data_aux"
-  (words_as_type_indexed_bitvec)]
 theorem wf_add_to_data_aux {width : Nat} [NeZero width] (data : Knowledge) (r : Nat)
     (i : List Nat) (p : WordLangProgHOL (BitVec width)) (data' : Knowledge)
     (p' : WordLangProgHOL (BitVec width))
@@ -349,8 +321,6 @@ theorem wf_add_to_data_aux {width : Nat} [NeZero width] (data : Knowledge) (r : 
         by simp [sptDomain, sptLookup_sptInsert_same]⟩
 
 /-- Exact HOL `wf_add_to_data_const` (`word_cseProof:2541-2598`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "wf_add_to_data_const"
-  (words_as_type_indexed_bitvec)]
 theorem wf_add_to_data_const {width : Nat} [NeZero width] (data : Knowledge) (r : Nat)
     (w : BitVec width) (data' : Knowledge) (p' : WordLangProgHOL (BitVec width))
     (h : wfData width data ∧ sptLookup r data.toCanonical = none ∧ ¬ r % 2 = 0 ∧
@@ -371,8 +341,6 @@ theorem wf_add_to_data_const {width : Nat} [NeZero width] (data : Knowledge) (r 
       by simp [sptDomain, sptLookup_sptInsert_same]⟩
 
 /-- Exact HOL `wf_add_to_load_aux` (`word_cseProof:2600-2650`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "wf_add_to_load_aux"
-  (words_as_type_indexed_bitvec)]
 theorem wf_add_to_load_aux {width : Nat} [NeZero width] (data : Knowledge) (r : Nat)
     (i : List Nat) (p : WordLangProgHOL (BitVec width)) (data' : Knowledge)
     (p' : WordLangProgHOL (BitVec width))
@@ -401,8 +369,6 @@ theorem wf_add_to_load_aux {width : Nat} [NeZero width] (data : Knowledge) (r : 
 
 /-- Exact HOL local `wf_data_insert_gets` (`word_cseProof:2652-2668`); HOL
     `ALOOKUP l x` is `List.lookup x l`. -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "wf_data_insert_gets"
-  (words_as_type_indexed_bitvec)]
 theorem wfData_insert_gets {width : Nat} [NeZero width] (data : Knowledge) (name : WordStoreHOL)
     (v : Nat)
     (h : wfData width data ∧ sptLookup v data.toCanonical = none ∧ v % 2 = 1 ∧
@@ -430,8 +396,6 @@ theorem wfData_insert_gets {width : Nat} [NeZero width] (data : Knowledge) (name
     simp at this
 
 /-- Exact HOL local `wf_data_filter_gets` (`word_cseProof:2670-2680`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "wf_data_filter_gets"
-  (words_as_type_indexed_bitvec)]
 theorem wfData_filter_gets {width : Nat} [NeZero width] (data : Knowledge) (x : WordStoreHOL)
     (h : wfData width data) :
     wfData width { data with getsMem := data.getsMem.filter (fun entry => decide (entry.1 ≠ x)) } := by
@@ -442,8 +406,6 @@ theorem wfData_filter_gets {width : Nat} [NeZero width] (data : Knowledge) (x : 
   · exact (List.Sublist.map Prod.fst List.filter_sublist).nodup h7
 
 /-- Exact HOL local `wf_data_cons_gets` (`word_cseProof:2682-2693`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "wf_data_cons_gets"
-  (words_as_type_indexed_bitvec)]
 theorem wfData_cons_gets {width : Nat} [NeZero width] (data : Knowledge) (x : WordStoreHOL)
     (hv : Nat)
     (h : wfData width data ∧ data.getsMem.lookup x = none ∧ sptLookup hv data.toCanonical = some hv) :
@@ -461,8 +423,6 @@ theorem wfData_cons_gets {width : Nat} [NeZero width] (data : Knowledge) (x : Wo
     simp at this
 
 /-- Exact HOL local `wf_data_reinsert_canonical` (`word_cseProof:2695-2712`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "wf_data_reinsert_canonical"
-  (words_as_type_indexed_bitvec)]
 theorem wfData_reinsert_canonical {width : Nat} [NeZero width] (data : Knowledge) (v : Nat)
     (h : wfData width data ∧ v % 2 = 1) :
     wfData width
@@ -480,8 +440,6 @@ theorem wfData_reinsert_canonical {width : Nat} [NeZero width] (data : Knowledge
     · rw [sptLookup_sptInsert_ne _ _ _ _ hk]
 
 /-- Exact HOL `wf_data_merge` (`word_cseProof:2714-2759`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "wf_data_merge"
-  (words_as_type_indexed_bitvec)]
 theorem wfData_merge {width : Nat} [NeZero width] (d1 d2 : Knowledge)
     (h : wfData width d1 ∧ wfData width d2) : wfData width (mergeData d1 d2) := by
   obtain ⟨⟨a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11⟩,
@@ -545,8 +503,6 @@ theorem sptLookup_mapInsert {α : Type} :
 
 /-- Exact HOL local `wf_data_move_pairs` (`word_cseProof:2761-2798`); HOL
     `EVERY (λ(x,y). P x y) ps` is `∀ p ∈ ps, P p.1 p.2`. -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "wf_data_move_pairs"
-  (words_as_type_indexed_bitvec)]
 theorem wfData_move_pairs {width : Nat} [NeZero width] (ps : List (Nat × Nat)) (data : Knowledge)
     (h : wfData width data ∧ ∀ p ∈ ps, sptLookup p.1 data.toCanonical = none ∧
       sptLookup p.2 data.toCanonical = some p.2 ∧ p.1 % 2 = 1 ∧ p.2 % 2 = 1) :
@@ -606,8 +562,6 @@ theorem wfData_move_pairs {width : Nat} [NeZero width] (ps : List (Nat × Nat)) 
     exact ⟨fun reg hreg => keep reg (hn reg hreg), hc⟩
 
 /-- Exact HOL `wf_canonicalMoveRegs` (`word_cseProof:2800-2830`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "wf_canonicalMoveRegs"
-  (words_as_type_indexed_bitvec)]
 theorem wf_canonicalMoveRegs {width : Nat} [NeZero width] (data : Knowledge) (rs : List (Nat × Nat))
     (h : wfData width data) : wfData width (canonicalMoveRegs data rs) := by
   unfold canonicalMoveRegs
@@ -640,8 +594,6 @@ theorem wf_canonicalMoveRegs {width : Nat} [NeZero width] (data : Knowledge) (rs
   · exact wfData_empty
 
 /-- Exact HOL local `canonicalRegs_self_or_fresh_wf` (`word_cseProof:2832-2843`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "canonicalRegs_self_or_fresh_wf"
-  (words_as_type_indexed_bitvec)]
 theorem canonicalRegs_self_or_fresh_wf {width : Nat} [NeZero width] (data : Knowledge) (x : Nat)
     (h : wfData width data) :
     sptLookup (canonicalRegs data x) data.toCanonical = some (canonicalRegs data x) ∨
@@ -652,8 +604,6 @@ theorem canonicalRegs_self_or_fresh_wf {width : Nat} [NeZero width] (data : Know
   | some c => left; simpa using (h.1 x c hx).1
 
 /-- Exact HOL local `canonicalRegs'_self_or_fresh_wf` (`word_cseProof:2846`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "canonicalRegs'_self_or_fresh_wf"
-  (words_as_type_indexed_bitvec)]
 theorem canonicalRegs'_self_or_fresh_wf {width : Nat} [NeZero width] (data : Knowledge)
     (r1 x : Nat) (h : wfData width data ∧ sptLookup r1 data.toCanonical = none) :
     sptLookup (canonicalRegs' r1 data x) data.toCanonical = some (canonicalRegs' r1 data x) ∨
@@ -675,8 +625,6 @@ theorem canonicalRegs'_self_or_fresh_wf {width : Nat} [NeZero width] (data : Kno
   · exact canonicalRegs_self_or_fresh_wf data x hw
 
 /-- Exact HOL local `in_names_set_insert_self` (`word_cseProof:2861-2865`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "in_names_set_insert_self"
-  (words_as_type_indexed_bitvec)]
 theorem inNamesSet_insert_self {width : Nat} [NeZero width] (a : Compiler.Encoders.Asm.HolArith width)
     (tc : Spt Nat) (x : Nat) (h : inNamesSet a tc) : inNamesSet a (sptInsert x x tc) := by
   intro reg hreg
@@ -686,8 +634,6 @@ theorem inNamesSet_insert_self {width : Nat} [NeZero width] (a : Compiler.Encode
 
 /-- Exact HOL local `in_names_set_register_reads` (`word_cseProof:2867-2879`);
     HOL `EVERY P l` is `∀ w ∈ l, P w` and `ODD w` is `w % 2 = 1`. -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "in_names_set_register_reads"
-  (words_as_type_indexed_bitvec)]
 theorem inNamesSet_register_reads {width : Nat} [NeZero width]
     (a : Compiler.Encoders.Asm.HolArith width) (data : Knowledge)
     (h : (∀ w ∈ arithReads a, w % 2 = 1) ∧
@@ -704,8 +650,6 @@ theorem inNamesSet_register_reads {width : Nat} [NeZero width]
     · exact hs
 
 /-- Exact HOL local `canonicalArith_reads_self_or_fresh` (`word_cseProof:2881-2910`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "canonicalArith_reads_self_or_fresh"
-  (words_as_type_indexed_bitvec)]
 theorem canonicalArith_reads_self_or_fresh {width : Nat} [NeZero width] (data : Knowledge)
     (a : Compiler.Encoders.Asm.HolArith width)
     (h : wfData width data ∧ canMemArith (canonicalArith data a) = true ∧
@@ -741,8 +685,6 @@ end Moves
 section WordCse
 
 /-- Exact HOL local `can_mem_arith_ODD_reads` (`word_cseProof:1511-1516`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "can_mem_arith_ODD_reads"
-  (words_as_type_indexed_bitvec)]
 theorem canMemArith_odd_reads {width : Nat} [NeZero width] (a : Compiler.Encoders.Asm.HolArith width)
     (h : canMemArith a = true) : ∀ w ∈ arithReads a, w % 2 = 1 := by
   cases a with
@@ -913,13 +855,9 @@ theorem wfData_wordCseInst {width : Nat} [NeZero width] (data : Knowledge)
             ⟨w2, r2, sptLookup_sptInsert_same _ _ _, by omega, by omega⟩
           exact wfData_insert_loads _ r op a' ofs
             ⟨w3, sptLookup_sptInsert_same _ _ _, self_insert_fresh r2 self2⟩
-  | fp f => exact wfData_invalidate_regs _ data h
-
 set_option linter.unusedSimpArgs false in
 /-- Exact HOL `word_cse_wf_data` (`word_cseProof:2912-3302`), by structural
     recursion on the program as HOL's `Induct`. -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "word_cse_wf_data"
-  (words_as_type_indexed_bitvec)]
 theorem word_cse_wf_data {width : Nat} [NeZero width] :
     ∀ (p : WordLangProgHOL (BitVec width)) (data : Knowledge),
       wfData width data → wfData width (wordCse data p).1

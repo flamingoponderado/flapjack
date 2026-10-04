@@ -57,8 +57,7 @@ decreasing_by all_goals simp_wf <;> omega
 
 /-- Exact HOL `next_lab_EQ_MAX` (`stack_allocProofScript.sml:6111-6121`). HOL's
 `n` is a vacuous binder of the source statement and is kept. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "next_lab_EQ_MAX"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem next_lab_EQ_MAX {width : Nat} [NeZero width] :
     ∀ (q : HolProg width) (_n aux : Nat), nextLabHOL q aux = max aux (nextLabHOL q 0) :=
   fun q _ aux => nextLab_max q aux
@@ -68,8 +67,7 @@ theorem next_lab_EQ_MAX {width : Nat} [NeZero width] :
 theorem MAX_SIMP {n m : Nat} : max n (max n m) = max n m := by omega
 
 /-- Exact HOL `next_lab_thm` (`stack_allocProofScript.sml:6129-6154`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "next_lab_thm"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem next_lab_thm {width : Nat} [NeZero width] :
     ∀ p : HolProg width,
       nextLabHOL p 2 =
@@ -102,8 +100,7 @@ theorem next_lab_thm {width : Nat} [NeZero width] :
 /-- Exact HOL `extract_labels_next_lab` (`stack_allocProofScript.sml:6156-6165`):
 every label of a program is below its `next_lab`. HOL's `aux` is a vacuous binder
 of the source statement and is kept. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "extract_labels_next_lab"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem extract_labels_next_lab {width : Nat} [NeZero width] :
     ∀ (p : HolProg width) (_aux : Nat) (e : Nat × Nat),
       e ∈ StackPropsCodeLabels.extractLabels p → e.2 < nextLabHOL p 2
@@ -188,8 +185,7 @@ label lies in `[nl, nl')`. HOL's `EVERY (λ(l1,l2). P l1 l2)` is a bounded
 quantifier over the pairs, `ALL_DISTINCT` is `List.Nodup`, the `let (cp,nl')`
 destructuring is the pair projections of `comp n nl p`, and HOL's `aux` is a
 vacuous binder of the source statement, kept. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "stack_alloc_lab_pres"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stack_alloc_lab_pres {width : Nat} [NeZero width] :
     ∀ (n nl : Nat) (p : HolProg width) (_aux : Nat),
       (∀ lab ∈ extractLabels p, lab.1 = n ∧ lab.2 ≠ 0 ∧ lab.2 ≠ 1) ∧

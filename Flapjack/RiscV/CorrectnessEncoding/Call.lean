@@ -16,8 +16,6 @@ code-byte preservation, intermediate PC membership and final full state relation
 Source asmStep supplies lr=1, offset bounds and alignment. Far AUIPC writes the
 source register before JALR reads it; JALR then overwrites that same register
 with the return link. No non-alias, decoder, run or post-state premise is added. -/
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml"
-  "riscv_encoder_correct"]
 theorem riscv_encoder_correct_call (c : BitVec 64) (s1 s2 : AsmState 64) (ms : riscv_state)
     (h : asmStep riscvTarget.config s1 (.call c) s2 ∧ targetStateRel riscvTarget s1 ms) :
     ∃ n : Nat, ∀ env : Nat → riscv_state → riscv_state,

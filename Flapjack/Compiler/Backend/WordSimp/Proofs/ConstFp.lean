@@ -57,8 +57,6 @@ end Helpers
 
 /-- Exact HOL `evaluate_drop_consts_1` (`word_simpProofScript.sml:895-904`); HOL's
     unused binder `rest` is kept and its free `cs` is an explicit binder. -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "evaluate_drop_consts_1"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluate_drop_consts_1 {width : Nat} [NeZero width] {C : Type} {F : Type}
     (cs : Spt (BitVec width)) :
     ∀ (vs : List Nat) (_rest : Nat) (s : WordSemStateFiniteExact width C F),
@@ -84,8 +82,6 @@ theorem evaluate_drop_consts_1 {width : Nat} [NeZero width] {C : Type} {F : Type
       rw [this]
 
 /-- Exact HOL `evaluate_drop_consts` (`word_simpProofScript.sml:906-911`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "evaluate_drop_consts"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluate_drop_consts {width : Nat} [NeZero width] {C : Type} {F : Type}
     (cs : Spt (BitVec width)) (s : WordSemStateFiniteExact width C F) (vs : List Nat)
     (p : WordLangProgHOL (BitVec width)) :
@@ -95,7 +91,6 @@ theorem evaluate_drop_consts {width : Nat} [NeZero width] {C : Type} {F : Type}
   rw [evaluate_SmartSeq, evaluate_seq_eq, evaluate_drop_consts_1 cs vs 0 s h]
 
 /-- Exact HOL local `lookup_FOLDR_delete` (`word_simpProofScript.sml:913-919`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "lookup_FOLDR_delete"]
 theorem lookup_FOLDR_delete {β : Type} :
     ∀ (l : List Nat) (m : Spt β) (v : Nat) (w : β),
       sptLookup v (deleteAll l m) = some w → sptLookup v m = some w ∧ v ∉ l := by
@@ -114,8 +109,6 @@ theorem lookup_FOLDR_delete {β : Type} :
 
 /-- Exact HOL `get_var_set_vars_ignore` (`word_simpProofScript.sml:921-927`); HOL's
     free variable `v` is the outer binder. -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "get_var_set_vars_ignore"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem get_var_set_vars_ignore {width : Nat} [NeZero width] {C : Type} {F : Type} (v : Nat) :
     ∀ (xs : List Nat) (l : List (WordLocW width)) (m : WordSemStateFiniteExact width C F),
       v ∉ xs → getVar v (setVars xs l m) = getVar v m := by
@@ -158,9 +151,6 @@ theorem csOk_setVar2_delete' {cs : Spt (BitVec width)} {s : WordSemStateFiniteEx
   rw [if_neg h2, if_neg h1]
   exact h v w hv
 
-theorem csOk_fpUpdate {cs : Spt (BitVec width)} {s : WordSemStateFiniteExact width C F}
-    (h : CsOk cs s) (d : Nat) (f : BitVec 64) : CsOk cs (setFpVar d f s) := h
-
 theorem csOk_memStore {cs : Spt (BitVec width)} {s s1 : WordSemStateFiniteExact width C F}
     (h : CsOk cs s) {a : BitVec width} {x : WordLocW width} (hm : memStore a x s = some s1) :
     CsOk cs s1 := fun v w hv => (get_var_mem_store_thm s1 v a x s hm).trans (h v w hv)
@@ -183,7 +173,7 @@ macro "inst_cs_tac" : tactic => `(tactic| first
 theorem csOk_inst (i : WordLangInst (BitVec width)) (cs : Spt (BitVec width))
     (s s1 : WordSemStateFiniteExact width C F) (h : inst i s = some s1) (hcs : CsOk cs s) :
     CsOk (constFpInstCs i cs) s1 := by
-  rcases i with _ | ⟨r, c⟩ | ⟨a⟩ | ⟨op, r, ⟨b, o⟩⟩ | ⟨f⟩
+  rcases i with _ | ⟨r, c⟩ | ⟨a⟩ | ⟨op, r, ⟨b, o⟩⟩
   · simp only [inst, Option.some.injEq] at h; subst h; exact hcs
   · simp only [inst, assign] at h
     split at h
@@ -196,11 +186,6 @@ theorem csOk_inst (i : WordLangInst (BitVec width)) (cs : Spt (BitVec width))
       inst_cs_tac
   · cases op <;> simp only [inst, constFpInstCs] at h ⊢ <;>
       (repeat' split at h) <;>
-      inst_cs_tac
-  · cases f <;> simp only [inst, constFpInstCs] at h ⊢ <;>
-      (repeat' split at h) <;>
-      (try dsimp only at h) <;>
-      (try split) <;>
       inst_cs_tac
 
 end InstCs
@@ -749,8 +734,6 @@ end ConstFpCases
     termination, a sound returned constant set.  Proved by structural
     recursion on the program as HOL's `const_fp_loop_ind`.  Inherits
     `reals_as_rational_cuts` through `evaluate`. -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "evaluate_const_fp_loop"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluate_const_fp_loop {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (p : WordLangProgHOL (BitVec width)) (cs : Spt (BitVec width))
       (p' : WordLangProgHOL (BitVec width)) (cs' : Spt (BitVec width))
@@ -768,8 +751,6 @@ theorem evaluate_const_fp_loop {width : Nat} [NeZero width] {C : Type} {F : Type
 
 /-- Exact HOL `evaluate_const_fp` (`word_simpProofScript.sml:1160-1167`).  Inherits
     `reals_as_rational_cuts` through `evaluate`. -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "evaluate_const_fp"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluate_const_fp {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (p : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F),
       gcFunConstOk s.gcFun → evaluate (constFp p) s = evaluate p s := by

@@ -52,8 +52,7 @@ def StackSemStateBroad.FiniteSupport {width : Nat} [NeZero width] {C F : Type}
 /-- Exact HOL stackSem state, preserving all 22 source fields. The only
     finite-map fields translated here are regs/fp_regs/store; code is Spt,
     and ffi_save_regs is a set, not a finite-map field. -/
-@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "state"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 structure StackSemStateFiniteExact (width : Nat) [NeZero width] (C : Type) (F : Type) where
   regs : HolFiniteMapExact Nat (WordLocW width)
   fpRegs : HolFiniteMapExact Nat (BitVec 64)

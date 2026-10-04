@@ -30,24 +30,21 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C : Type} {F
 end StackSizeConstCarrier
 
 /-- HOL `inst_stack_size_const_panLang` (`pan_to_targetProofScript.sml:1026-1039`). -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "inst_stack_size_const_panLang"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem inst_stack_size_const_panLang {width : Nat} [NeZero width] {C F : Type} :
     ∀ (i : WordLangInst (BitVec width)) (s t : WordSemStateFiniteExact width C F),
       inst i s = some t → t.stackSize = s.stackSize :=
   fun i s t h => (instConstFull i s t h).2.2.2.2.2.2.2.2.2.2.2.2
 
 /-- HOL `inst_stack_limit_const_panLang` (`pan_to_targetProofScript.sml:1041-1054`). -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "inst_stack_limit_const_panLang"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem inst_stack_limit_const_panLang {width : Nat} [NeZero width] {C F : Type} :
     ∀ (i : WordLangInst (BitVec width)) (s t : WordSemStateFiniteExact width C F),
       inst i s = some t → t.stackLimit = s.stackLimit :=
   fun i s t h => (instConstFull i s t h).2.2.2.2.2.2.2.2.2.2.1
 
 /-- HOL `inst_stack_max_const_panLang` (`pan_to_targetProofScript.sml:1056-1069`). -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "inst_stack_max_const_panLang"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem inst_stack_max_const_panLang {width : Nat} [NeZero width] {C F : Type} :
     ∀ (i : WordLangInst (BitVec width)) (s t : WordSemStateFiniteExact width C F),
       inst i s = some t → t.stackMax = s.stackMax :=
@@ -57,8 +54,7 @@ theorem inst_stack_max_const_panLang {width : Nat} [NeZero width] {C F : Type} :
     instruction changes at most the locals, FFI state, stack, locals size and store. HOL's
     free `op v ad s res t` are explicit. The result word type `rw` is independent of the
     state width, as HOL's `res :α result option` against the `β` state. -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "share_inst_modifies"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem share_inst_modifies {width : Nat} {rw : Nat} [NeZero width] [NeZero rw] {C F : Type}
     (op : WordMemOp) (v : Nat) (ad : BitVec width) (s : WordSemStateFiniteExact width C F)
     (res : Option (WordSemResult rw)) (t : WordSemStateFiniteExact width C F) :
@@ -560,8 +556,7 @@ decreasing_by
 end StackSizeEvaluate
 
 /-- HOL `no_alloc_word_evaluate` (`pan_to_targetProofScript.sml:940-998`). -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "no_alloc_word_evaluate"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem no_alloc_word_evaluate {width : Nat} [NeZero width] {C F : Type} :
     ∀ (prog : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F)
       (res : Option (WordSemResult width)) (t : WordSemStateFiniteExact width C F),
@@ -577,8 +572,7 @@ theorem no_alloc_word_evaluate {width : Nat} [NeZero width] {C F : Type} :
     clocked start call on the code compiled from Pancake never runs out of space. HOL's free
     `start s k res t pan_code c mc col wprog` are explicit; `word_to_word_compile` is the tagged
     `WordToWord.compile` and `pan_to_word_compile_prog` the tagged `panToWordCompileProgHOL`. -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "panLang_wordSem_neq_NotEnoughSpace"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem panLang_wordSem_neq_NotEnoughSpace {width : Nat} [NeZero width] {C F State Projection : Type}
     (start : Nat) (s : WordSemStateFiniteExact width C F) (k : Nat)
     (res : Option (WordSemResult width)) (t : WordSemStateFiniteExact width C F)
@@ -610,8 +604,7 @@ theorem panLang_wordSem_neq_NotEnoughSpace {width : Nat} [NeZero width] {C F Sta
 /-- HOL `evaluate_stack_size_limit_const_panLang` (`pan_to_targetProofScript.sml:1097-1155`).
     The stack limit is constant for every run (`evaluate_consts`); the stack-size map is
     constant without `Install`. -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "evaluate_stack_size_limit_const_panLang"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_stack_size_limit_const_panLang {width : Nat} [NeZero width] {C F : Type} :
     ∀ (prog : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F)
       (res : Option (WordSemResult width)) (t : WordSemStateFiniteExact width C F),

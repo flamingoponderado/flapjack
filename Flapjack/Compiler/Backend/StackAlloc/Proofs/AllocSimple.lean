@@ -1,3 +1,4 @@
+import Batteries.Tactic.PermuteGoals
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcSimple
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveLoop
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveRootsBitmaps
@@ -102,8 +103,7 @@ with the Simple collector, `alloc` is simulated by `word_gc_code`. HOL's free
 `w s r t conf l ret c anything` are implicit; `fromAList`/`toAList` are
 `sptFromAList`/`sptToAList`, `SUBMAP` is `HolFiniteMapExact.submap`, and
 `dimword (:'a)` is `2 ^ width`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "alloc_correct_lemma_Simple"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem alloc_correct_lemma_Simple {width : Nat} [NeZero width] {C F : Type} {conf : Config}
     {c : DataToWord.Config} {w : BitVec width} {s t : StackSemStateFiniteExact width C F}
     {r : Option (StackSemResult width)} {l : HolFiniteMapExact Nat (WordLocW width)}
@@ -325,7 +325,7 @@ theorem alloc_correct_lemma_Simple {width : Nat} [NeZero width] {C F : Type} {co
     rw [evaluate_seq_none _ _ _ _ (stackLoadAny_eval { S2a with clock := k } 9 8 0 rfl
         (by simp [S2a, SG, S1, setVar, setStore, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL,
           HolFiniteMapExact.lookup_updateListEq, FUPDATE_LIST_HOL])
-        hg (by simp) hj) le_rfl]
+        hg (Nat.two_pow_pos width) hj) le_rfl]
     rw [show ({ S2a with clock := k } : StackSemStateFiniteExact width C F).stack[
         ({ S2a with clock := k } : StackSemStateFiniteExact width C F).stackSpace + 0]'hj =
         holHd (s.stack.drop s.stackSpace) from hv]

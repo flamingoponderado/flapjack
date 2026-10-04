@@ -23,8 +23,7 @@ and ISR17 (safety). Every original binder and all fourteen guards remain.
 The conclusion is precisely these conjuncts of stateRel applied to the actual
 makeInit state. This case group does not establish ISR1/2/3/8/12/15/16 or the
 assembling theorem. No output execution or post-state invariant is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "IMP_state_rel_make_init" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem makeInit_stateRel_basicCases {width : Nat} [NeZero width] {S Q : Type} {F : Type}
     (mc : MachineConfig width S Q) (ms : S) (ffi : HolFfiState F)
     (code code2 : LabProgHOL width) (labs : Spt (Spt Nat))

@@ -8,8 +8,7 @@ open Flapjack.Compiler.Backend.StackProps Flapjack.Compiler.Encoders.Asm
 open Flapjack.Compiler.Backend.WordToStackRegFormat
 
 /-- Entire original destination helper implication, which has no count guard. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "call_dest_stack_asm_name" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem callDestStackAsmName {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (dest : Option Nat) (args : List Nat)
     (frame : Nat × Nat × Nat) (setup : HolProg width) (target : Sum Nat Nat)
@@ -29,8 +28,7 @@ theorem callDestStackAsmName {width : Nat} [NeZero width]
 
 /-- Entire original live-bitmap naming implication; its reduced-count guard
 is retained although other configuration fields remain arbitrary. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "wLive_stack_asm_name" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wLiveStackAsmName {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (live : WordLangCutsetsHOL)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -46,8 +44,7 @@ theorem wLiveStackAsmName {width : Nat} [NeZero width]
 
 /-- Full movement equivalence at arbitrary offsets and continuation, with
 no register-name premise in the original naming theorem. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "stack_move_stack_asm_name" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackMoveStackAsmName {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (n start offset i : Nat) (p : HolProg width) :
     stackAsmName conf (stackMoveNative n start offset i p) ↔ stackAsmName conf p := by
@@ -56,8 +53,7 @@ theorem stackMoveStackAsmName {width : Nat} [NeZero width]
   | succ n ih => simpa only [stackMoveNative, stackAsmName, and_true] using ih (start + 1)
 
 /-- Entire auxiliary naming theorem, independent of all register/count guards. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "copy_ret_aux_stack_asm_name" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem copyRetAuxStackAsmName {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (k f n : Nat) :
     stackAsmName conf (copyRetAuxNative k f n : HolProg width) := by
@@ -67,8 +63,7 @@ theorem copyRetAuxStackAsmName {width : Nat} [NeZero width]
 
 /-- Entire return-wrapper naming equivalence, preserving arbitrary performance
 and handler flags and independent original list/frame-tail types. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "copy_ret_stack_asm_name" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem copyRetStackAsmName {width : Nat} [NeZero width] {β γ : Type}
     (conf : AsmConfigExact width) (perf isHandle : Bool) (frame : Nat × Nat × γ)
     (values : List β) (kont : HolProg width) :

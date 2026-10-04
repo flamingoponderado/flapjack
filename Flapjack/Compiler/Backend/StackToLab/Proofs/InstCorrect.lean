@@ -1,3 +1,4 @@
+import Mathlib.Data.List.Forall2
 import Flapjack.Compiler.Backend.StackToLab.Proofs.StateRel
 import Flapjack.Compiler.Backend.StackToLab.Proofs.Prelude
 import Flapjack.Compiler.Backend.Semantics.StackSem.Inst
@@ -24,9 +25,6 @@ variable {width : Nat} [NeZero width] {C F : Type}
 
 theorem regOfLookup (rel : stateRel s t) {r : Nat} {v : WordLocW width}
     (h : s.regs.lookup r = some v) : t.regs r = v := rel.1 r v h
-
-theorem fpRegOfLookup (rel : stateRel s t) {r : Nat} {v : BitVec 64}
-    (h : s.fpRegs.lookup r = some v) : t.fpRegs r = v := rel.2.1 r v h
 
 theorem notFailed (rel : stateRel s t) : t.failed = false := by
   have := rel.2.2.2.2.2.2.2.2.2.2.2.1
@@ -425,213 +423,6 @@ theorem instCorrectMem {s2 : StackSemStateFiniteExact width C F} (rel : stateRel
   | load16 => simp at h
   | store16 => simp at h
 
-omit [NeZero width] in
-theorem extractHigh (v : BitVec 64) :
-    (v.extractLsb' 32 32).setWidth width = holWordExtract 63 32 v width := by
-  apply BitVec.eq_of_toNat_eq
-  simp [holWordExtract, BitVec.extractLsb']
-
-omit [NeZero width] in
-theorem extractLow (v : BitVec 64) :
-    (v.extractLsb' 0 32).setWidth width = holWordExtract 31 0 v width := by
-  apply BitVec.eq_of_toNat_eq
-  simp [holWordExtract, BitVec.extractLsb']
-
-open StackSemFpRegisterInstructions in
-theorem instCorrectFp {s2 : StackSemStateFiniteExact width C F} (rel : stateRel s t)
-    {op : HolFp} (h : StackSemInst.instHOL (.fp op) s = some s2) :
-    stateRel s2 (asmInst (.fp op) t) := by
-  have rd : ∀ {d : Nat} {f : BitVec 64}, getFpVar d s = some f → readFpReg d t = f :=
-    fun hf => fpRegOfLookup rel hf
-  cases op
-  all_goals simp only [StackSemInst.instHOL, StackSemFpInstructions.instFp, instFpRegister,
-    Option.join_some] at h
-  case fpMov d1 d2 =>
-    split at h
-    · rename_i f hf; cases h
-      have step : asmInst (.fp (.fpMov d1 d2)) t = updFpReg d1 f t := by
-        simp [asmInst, fpUpd, rd hf]
-      rw [step]; exact setFpVarUpdFpReg rel
-    · simp at h
-  case fpAbs d1 d2 =>
-    split at h
-    · rename_i f hf; cases h
-      have step : asmInst (.fp (.fpAbs d1 d2)) t = updFpReg d1 (holFp64Abs f) t := by
-        simp [asmInst, fpUpd, rd hf]
-      rw [step]; exact setFpVarUpdFpReg rel
-    · simp at h
-  case fpNeg d1 d2 =>
-    split at h
-    · rename_i f hf; cases h
-      have step : asmInst (.fp (.fpNeg d1 d2)) t = updFpReg d1 (holFp64Negate f) t := by
-        simp [asmInst, fpUpd, rd hf]
-      rw [step]; exact setFpVarUpdFpReg rel
-    · simp at h
-  case fpSqrt d1 d2 =>
-    unfold instFpSqrt at h
-    split at h
-    · rename_i f hf; cases h
-      have step : asmInst (.fp (.fpSqrt d1 d2)) t =
-          updFpReg d1 (holFp64SqrtReal .roundTiesToEven f) t := by
-        simp [asmInst, fpUpd, rd hf, holFp64Sqrt_agreement]
-      rw [step]; exact setFpVarUpdFpReg rel
-    · simp at h
-  case fpLess r d1 d2 =>
-    split at h
-    · rename_i f1 f2 h1 h2; cases h
-      have step : asmInst (.fp (.fpLess r d1 d2)) t = updReg r (.word
-          (if holFp64LessThan f1 f2 then BitVec.ofNat width 1 else BitVec.ofNat width 0)) t := by
-        simp [asmInst, fpUpd, rd h1, rd h2]
-      rw [step]; exact setVarUpdReg rel
-    · simp at h
-  case fpLessEqual r d1 d2 =>
-    split at h
-    · rename_i f1 f2 h1 h2; cases h
-      have step : asmInst (.fp (.fpLessEqual r d1 d2)) t = updReg r (.word
-          (if holFp64LessEqual f1 f2 then BitVec.ofNat width 1 else BitVec.ofNat width 0)) t := by
-        simp [asmInst, fpUpd, rd h1, rd h2]
-      rw [step]; exact setVarUpdReg rel
-    · simp at h
-  case fpEqual r d1 d2 =>
-    split at h
-    · rename_i f1 f2 h1 h2; cases h
-      have step : asmInst (.fp (.fpEqual r d1 d2)) t = updReg r (.word
-          (if holFp64Equal f1 f2 then BitVec.ofNat width 1 else BitVec.ofNat width 0)) t := by
-        simp [asmInst, fpUpd, rd h1, rd h2]
-      rw [step]; exact setVarUpdReg rel
-    · simp at h
-  case fpAdd d1 d2 d3 =>
-    split at h
-    · rename_i f1 f2 h1 h2; cases h
-      have step : asmInst (.fp (.fpAdd d1 d2 d3)) t =
-          updFpReg d1 (holFp64Add .roundTiesToEven f1 f2) t := by
-        simp [asmInst, fpUpd, rd h1, rd h2]
-      rw [step]; exact setFpVarUpdFpReg rel
-    · simp at h
-  case fpSub d1 d2 d3 =>
-    split at h
-    · rename_i f1 f2 h1 h2; cases h
-      have step : asmInst (.fp (.fpSub d1 d2 d3)) t =
-          updFpReg d1 (holFp64Sub .roundTiesToEven f1 f2) t := by
-        simp [asmInst, fpUpd, rd h1, rd h2]
-      rw [step]; exact setFpVarUpdFpReg rel
-    · simp at h
-  case fpMul d1 d2 d3 =>
-    split at h
-    · rename_i f1 f2 h1 h2; cases h
-      have step : asmInst (.fp (.fpMul d1 d2 d3)) t =
-          updFpReg d1 (holFp64Mul .roundTiesToEven f1 f2) t := by
-        simp [asmInst, fpUpd, rd h1, rd h2]
-      rw [step]; exact setFpVarUpdFpReg rel
-    · simp at h
-  case fpDiv d1 d2 d3 =>
-    split at h
-    · rename_i f1 f2 h1 h2; cases h
-      have step : asmInst (.fp (.fpDiv d1 d2 d3)) t =
-          updFpReg d1 (holFp64Div .roundTiesToEven f1 f2) t := by
-        simp [asmInst, fpUpd, rd h1, rd h2]
-      rw [step]; exact setFpVarUpdFpReg rel
-    · simp at h
-  case fpFma d1 d2 d3 =>
-    split at h
-    · rename_i f1 f2 f3 h1 h2 h3; cases h
-      have step : asmInst (.fp (.fpFma d1 d2 d3)) t =
-          updFpReg d1 (holFp64MulAdd .roundTiesToEven f2 f3 f1) t := by
-        simp [asmInst, fpUpd, rd h1, rd h2, rd h3, fpSemFpfma]
-      rw [step]; exact setFpVarUpdFpReg rel
-    · simp at h
-  case fpMovToReg r1 r2 d =>
-    split at h
-    · simp at h
-    · rename_i f hf
-      split_ifs at h with w64
-      · cases h
-        have step : asmInst (.fp (.fpMovToReg r1 r2 d)) t =
-            updReg r1 (.word (f.setWidth width)) t := by
-          simp [asmInst, fpUpd, rd hf, w64]
-        rw [step]; exact setVarUpdReg rel
-      · cases h
-        have step : asmInst (.fp (.fpMovToReg r1 r2 d)) t =
-            updReg r2 (.word ((f.extractLsb' 32 32).setWidth width))
-              (updReg r1 (.word ((f.extractLsb' 0 32).setWidth width)) t) := by
-          simp [asmInst, fpUpd, rd hf, w64, extractHigh, extractLow]
-        rw [step]; exact setVarUpdReg (setVarUpdReg rel)
-  case fpMovFromReg d r1 r2 =>
-    split_ifs at h with w64
-    · split at h
-      · rename_i v hv; cases h
-        have step : asmInst (.fp (.fpMovFromReg d r1 r2)) t =
-            updFpReg d (v.setWidth 64) t := by
-          simp [asmInst, fpUpd, w64, regOfLookup rel hv]
-        rw [step]; exact setFpVarUpdFpReg rel
-      · simp at h
-    · split at h
-      · rename_i lo hi hlo hhi; cases h
-        have step : asmInst (.fp (.fpMovFromReg d r1 r2)) t =
-            updFpReg d ((hi ++ lo).setWidth 64) t := by
-          simp [asmInst, fpUpd, w64, regOfLookup rel hlo, regOfLookup rel hhi]
-        rw [step]; exact setFpVarUpdFpReg rel
-      · simp at h
-  case fpToInt d1 d2 =>
-    unfold instFpToInt at h
-    split at h
-    · simp at h
-    · rename_i f hf
-      split at h
-      · simp at h
-      · rename_i i hi
-        by_cases fits : (BitVec.ofInt 32 i).toInt = i
-        swap
-        · rw [if_neg fits] at h; simp at h
-        rw [if_pos fits] at h
-        by_cases w64 : width = 64
-        · rw [if_pos w64] at h
-          cases h
-          have step : asmInst (.fp (.fpToInt d1 d2)) t =
-              updFpReg d1 ((BitVec.ofInt 32 i).setWidth 64) (assertState true t) := by
-            simp [asmInst, fpUpd, rd hf, hi, fits, w64]
-          rw [step, Prelude.assertT]; exact setFpVarUpdFpReg rel
-        · rw [if_neg w64] at h
-          split at h
-          · simp at h
-          · rename_i g hg
-            by_cases odd : d1 % 2 = 1
-            · simp only [odd, if_true, Option.some.injEq] at h
-              subst h
-              have step : asmInst (.fp (.fpToInt d1 d2)) t =
-                  updFpReg (d1 / 2) (holBitFieldInsert 63 32 (BitVec.ofInt 32 i) g)
-                    (assertState true t) := by
-                simp [asmInst, fpUpd, rd hf, hi, fits, w64, rd hg, odd]
-              rw [step, Prelude.assertT]; exact setFpVarUpdFpReg rel
-            · simp only [odd, if_false, Option.some.injEq] at h
-              subst h
-              have step : asmInst (.fp (.fpToInt d1 d2)) t =
-                  updFpReg (d1 / 2) (holBitFieldInsert 31 0 (BitVec.ofInt 32 i) g)
-                    (assertState true t) := by
-                simp [asmInst, fpUpd, rd hf, hi, fits, w64, rd hg, odd]
-              rw [step, Prelude.assertT]; exact setFpVarUpdFpReg rel
-  case fpFromInt d1 d2 =>
-    unfold instFpFromInt at h
-    by_cases w64 : width = 64
-    · rw [if_pos w64] at h
-      split at h
-      · rename_i f hf; cases h
-        have step : asmInst (.fp (.fpFromInt d1 d2)) t = updFpReg d1
-            (holIntToFp64 .roundTiesToEven (holWordExtract 31 0 f 32).toInt) t := by
-          simp [asmInst, fpUpd, rd hf, w64]
-        rw [step]; exact setFpVarUpdFpReg rel
-      · simp at h
-    · rw [if_neg w64] at h
-      split at h
-      · rename_i f hf; cases h
-        have step : asmInst (.fp (.fpFromInt d1 d2)) t = updFpReg d1
-            (holIntToFp64 .roundTiesToEven (if d2 % 2 = 1 then holWordExtract 63 32 f width
-              else holWordExtract 31 0 f width).toInt) t := by
-          simp only [asmInst, fpUpd, if_neg w64]
-          rw [rd hf]
-        rw [step]; exact setFpVarUpdFpReg rel
-      · simp at h
-
 end
 
 /-- Same-module re-export of the canonical StackSem state roundtrip;
@@ -644,14 +435,8 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
       StackSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
   StackSemStateSupport.holFmapAsFiniteSupportWitness
 
-/-- Complete original instruction simulation: every successful StackSem
-primitive instruction (all integer, memory and sixteen FP opcodes) is
-simulated by LabSem `asm_inst` under `state_rel`. FP results inherit the
-reviewed real-number renderings (SOUNDNESS item 8). -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "inst_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs])
-  (words_as_type_indexed_bitvec)]
+/-- Every successful integer or memory instruction is simulated by LabSem
+under the state relation for the riscv-mi restricted instruction carrier. -/
 theorem instCorrect {width : Nat} [NeZero width] {C F : Type}
     {i : HolInst width} {s1 s2 : StackSemStateFiniteExact width C F}
     {t1 : Flapjack.Compiler.Backend.LabSem.State width C F} :
@@ -671,6 +456,4 @@ theorem instCorrect {width : Nat} [NeZero width] {C F : Type}
     | addOverflow => exact instCorrectAddOverflow rel h
     | subOverflow => exact instCorrectSubOverflow rel h
   | mem op r a => exact instCorrectMem rel h
-  | fp op => exact instCorrectFp rel h
-
 end Flapjack.Compiler.Backend.StackToLab.Proofs.InstCorrect

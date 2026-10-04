@@ -301,9 +301,7 @@ premise and its explicit `clock := s.clock` update are kept, and `HD stack` is
 `holHd stack`. `FLOOKUP s.store CurrHeap`, `k IN FDOM s.regs`, `|++` and
 `get_var` are the canonical carrier's lookups, `updateListEq` and `getVar`;
 `dimindex (:'a) DIV 8` and `dimword (:'a)` are `width / 8` and `2 ^ width`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml"
-  "word_gc_move_roots_bitmaps_code_thm"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_gc_move_roots_bitmaps_code_thm {width : Nat} [NeZero width] {C F : Type}
     {conf : Config} {init stack : List (WordLocW width)} :
     ∀ (bitmaps : List (BitVec width)) (s : StackSemStateFiniteExact width C F)

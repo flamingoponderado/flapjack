@@ -64,27 +64,6 @@ example : (ssaCcTransInst (.mem .store8 9 (.addr 4 1) : WordLangInst (BitVec 64)
 example : (ssaCcTransInst (.mem .load16 2 (.addr 3 8) : WordLangInst (BitVec 64)) m 21) =
     (.inst (.mem .load16 2 (.addr 3 8)),.bn (.bs .ln 10 (.ls 12)) (.bn .ln (.ls 11)),21) := by with_unfolding_all rfl
 -- sti_fpless=(Inst (FP (FPLess 21 1 0)),BN (BS LN 21 (LS 12)) (BN LN (LS 11)),25)
-example : (ssaCcTransInst (.fp (.fpLess 2 1 0) : WordLangInst (BitVec 64)) m 21) =
-    (.inst (.fp (.fpLess 21 1 0)),.bn (.bs .ln 21 (.ls 12)) (.bn .ln (.ls 11)),25) := by with_unfolding_all rfl
--- sti_fpadd=(Inst (FP (FPAdd 2 1 0)),BN (BS LN 10 (LS 12)) (BN LN (LS 11)),21)
-example : (ssaCcTransInst (.fp (.fpAdd 2 1 0) : WordLangInst (BitVec 64)) m 21) =
-    (.inst (.fp (.fpAdd 2 1 0)),.bn (.bs .ln 10 (.ls 12)) (.bn .ln (.ls 11)),21) := by with_unfolding_all rfl
--- sti_movto64=(Inst (FP (FPMovToReg 21 3 1)),BN (BS LN 21 (LS 12)) (BN LN (LS 11)),25)
-example : (ssaCcTransInst (.fp (.fpMovToReg 2 3 1) : WordLangInst (BitVec 64)) m 21) =
-    (.inst (.fp (.fpMovToReg 21 3 1)),.bn (.bs .ln 21 (.ls 12)) (.bn .ln (.ls 11)),25) := by with_unfolding_all rfl
--- sti_movto32=(Inst (FP (FPMovToReg 21 25 1)),BN (BS LN 21 (LS 12)) (BN LN (LS 25)),29)
-example : (ssaCcTransInst (.fp (.fpMovToReg 2 3 1) : WordLangInst (BitVec 32)) m 21) =
-    (.inst (.fp (.fpMovToReg 21 25 1)),.bn (.bs .ln 21 (.ls 12)) (.bn .ln (.ls 25)),29) := by with_unfolding_all rfl
--- sti_movfrom64=(Inst (FP (FPMovFromReg 1 10 0)),BN (BS LN 10 (LS 12)) (BN LN (LS 11)),21)
-example : (ssaCcTransInst (.fp (.fpMovFromReg 1 2 3) : WordLangInst (BitVec 64)) m 21) =
-    (.inst (.fp (.fpMovFromReg 1 10 0)),.bn (.bs .ln 10 (.ls 12)) (.bn .ln (.ls 11)),21) := by with_unfolding_all rfl
--- sti_movfrom32_distinct=(Inst (FP (FPMovFromReg 1 10 11)),BN (BS LN 10 (LS 12)) (BN LN (LS 11)),21)
-example : (ssaCcTransInst (.fp (.fpMovFromReg 1 2 3) : WordLangInst (BitVec 32)) m 21) =
-    (.inst (.fp (.fpMovFromReg 1 10 11)),.bn (.bs .ln 10 (.ls 12)) (.bn .ln (.ls 11)),21) := by with_unfolding_all rfl
--- sti_movfrom32_same=(Seq (Move0 [(21,10)]) (Inst (FP (FPMovFromReg 1 10 21))),BN (BS LN 21 (LS 12)) (BN LN (LS 11)),25)
-example : (ssaCcTransInst (.fp (.fpMovFromReg 1 2 2) : WordLangInst (BitVec 32)) m 21) =
-    (.seq (.move 0 [(21,10)]) (.inst (.fp (.fpMovFromReg 1 10 21))),.bn (.bs .ln 21 (.ls 12)) (.bn .ln (.ls 11)),25) := by with_unfolding_all rfl
--- ste_var=Var 11
 example : ssaCcTransExp m (.var 3 : WordLangExpHOL (BitVec 64)) =
     .var 11 := by
   simp only [ssaCcTransExp]; with_unfolding_all rfl

@@ -15,8 +15,7 @@ open Flapjack.Compiler.Backend.LabFilter Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabProps.LabelSets
 open Flapjack.Compiler.Backend.LabToTarget
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "not_not_skip_IMP_Skip"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem notNotSkipImpSkip {width : Nat} [NeZero width] (line : Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString) (BitVec width)) :
     notSkip line = false → ∃ bytes len, line = .asm (.asmi (.inst .skip)) bytes len := by
   cases line with
@@ -31,8 +30,7 @@ theorem notNotSkipImpSkip {width : Nat} [NeZero width] (line : Line (AsmOrCbw (H
       case inst instruction => cases instruction <;> simp [notSkip]
       all_goals simp [notSkip]
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "MAP_Section_num_filter_skip"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem mapSectionNumFilterSkip {width : Nat} [NeZero width] (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString) (BitVec width)))) :
     (filterSkip code).map Section.sectionId = code.map Section.sectionId := by
   induction code with
@@ -50,8 +48,7 @@ private theorem extractLabels_filter {width : Nat} [NeZero width] (lines : List 
       obtain ⟨bytes, len, rfl⟩ := notNotSkipImpSkip line hn
       simp [notSkip, extractLabels, ih]
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "filter_skip_extract_labels"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem filterSkipExtractLabels {width : Nat} [NeZero width] (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString) (BitVec width)))) :
     (filterSkip code).map (fun sect => extractLabels sect.lines) =
       code.map (fun sect => extractLabels sect.lines) := by
@@ -88,8 +85,7 @@ private theorem secCodeLabels_filter {width : Nat} [NeZero width] (sect : Sectio
     · exact Or.inl h
     · exact Or.inr ⟨n, ⟨line, ⟨hm, lineCodeLabels_notSkip line n hl⟩, hl⟩, he⟩
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "get_labels_filter_skip"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getLabelsFilterSkip {width : Nat} [NeZero width] (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString) (BitVec width)))) :
     getLabels (filterSkip code) = getLabels code := by
   induction code with
@@ -99,8 +95,7 @@ theorem getLabelsFilterSkip {width : Nat} [NeZero width] (code : List (Section (
     simp only [filterSkip, getLabels_cons, ih]
     rw [secLabels_filter ⟨k, lines⟩]
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "get_code_labels_filter_skip"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getCodeLabelsFilterSkip {width : Nat} [NeZero width] (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString) (BitVec width)))) :
     getCodeLabels (filterSkip code) = getCodeLabels code := by
   induction code with
@@ -110,8 +105,7 @@ theorem getCodeLabelsFilterSkip {width : Nat} [NeZero width] (code : List (Secti
     simp only [filterSkip, getCodeLabels_cons, ih]
     rw [secCodeLabels_filter ⟨k, lines⟩]
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "find_ffi_names_filter_skip"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem findFfiNamesFilterSkip {width : Nat} [NeZero width] (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString) (BitVec width)))) :
     findFfiNames (filterSkip code) = findFfiNames code := by
   fun_induction findFfiNames code <;> simp_all only [filterSkip]
@@ -191,8 +185,7 @@ private theorem memFilterSkip {width : Nat} [NeZero width] (code : List (Section
       · exact Or.inl ⟨hm, hn⟩
       · exact Or.inr ⟨hm, hn⟩
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "asm_fetch_aux_filter_skip"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem asmFetchAuxFilterSkip {width : Nat} [NeZero width]
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString) (BitVec width)))) (p : Nat) (line : Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString) (BitVec width)) :
     asmFetchAux p (filterSkip code) = some line ∧ notSkip line = true →
@@ -201,8 +194,7 @@ theorem asmFetchAuxFilterSkip {width : Nat} [NeZero width]
   obtain ⟨hm, hl⟩ := (fetchExists_iff (filterSkip code) line).mp ⟨p, h⟩
   exact (fetchExists_iff code line).mpr ⟨(memFilterSkip code line).mp hm |>.1, hl⟩
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "IMP_asm_fetch_aux_filter_skip"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem impAsmFetchAuxFilterSkip {width : Nat} [NeZero width]
     (p : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString) (BitVec width)))) (line : Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString) (BitVec width)) :
     asmFetchAux p code = some line ∧ notSkip line = true →
@@ -212,8 +204,7 @@ theorem impAsmFetchAuxFilterSkip {width : Nat} [NeZero width]
   exact (fetchExists_iff (filterSkip code) line).mpr
     ⟨(memFilterSkip code line).mpr ⟨hm, hn⟩, hl⟩
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "no_share_mem_filter_skip"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem noShareMemFilterSkip {width : Nat} [NeZero width] (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString) (BitVec width)))) :
     Flapjack.Compiler.Backend.LabProps.noShareMemInst (filterSkip code) ↔
       Flapjack.Compiler.Backend.LabProps.noShareMemInst code := by

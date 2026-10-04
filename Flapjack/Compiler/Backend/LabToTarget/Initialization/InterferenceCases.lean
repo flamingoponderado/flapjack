@@ -30,8 +30,7 @@ original fourteen guards and binders remain, and the actual makeInit state
 appears in the complete original relation clauses. Source boundary/length
 facts discharge every name/entry bound; no past-end EL or extra output premise
 is used. This is not the full seventeen-case assembling theorem. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "IMP_state_rel_make_init" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem makeInit_stateRel_interferenceCases {width : Nat} [NeZero width] {S Q : Type} {F : Type}
     (mc : MachineConfig width S Q) (ms : S) (ffi : HolFfiState F)
     (code code2 : LabProgHOL width) (labs : Spt (Spt Nat))

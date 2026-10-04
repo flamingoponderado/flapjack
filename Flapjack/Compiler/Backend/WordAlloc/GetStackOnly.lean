@@ -8,8 +8,7 @@ namespace Flapjack.WordAlloc
 left; branch and returning-call handlers start from the same initial trees.
 A call without a return preserves those trees, irrespective of its handler.
 The fallback removes temporary keys only when the actual clash tree is Delta. -/
-@[hol "cakeml/compiler/backend/word_allocScript.sml" "get_stack_only_aux_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def getStackOnlyAux {width : Nat} [NeZero width]
     (trees : Spt Unit × Spt Unit) : WordLangProgHOL (BitVec width) → Spt Unit × Spt Unit
   | .move _ moves => moves.foldr mergeStackOnly trees
@@ -39,8 +38,7 @@ def getStackOnlyAux {width : Nat} [NeZero width]
 
 /-- Original entry point: discard the temporary component after analysing
 from the two empty native trees. This does not replace the executed allocator. -/
-@[hol "cakeml/compiler/backend/word_allocScript.sml" "get_stack_only_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def getStackOnly {width : Nat} [NeZero width]
     (program : WordLangProgHOL (BitVec width)) : Spt Unit :=
   (getStackOnlyAux (.ln, .ln) program).2

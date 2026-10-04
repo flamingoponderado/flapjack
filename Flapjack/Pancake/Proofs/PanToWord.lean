@@ -238,8 +238,7 @@ theorem loopStateSimpsHOL {width : Nat} {σ : Type} [NeZero width] :
 /-- Exact HOL `first_compile_prog_all_distinct`
 (`pan_to_wordProofScript.sml:95-103`); `c` is free in the HOL theorem and is
 universally quantified first. -/
-@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "first_compile_prog_all_distinct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem panToWordFirstCompileProgAllDistinctHOL {width : Nat} [NeZero width]
     (c : AsmArchitecture) :
     ∀ (prog : List (DeclHOL width)), ((functionsHOL prog).map Prod.fst).Nodup →

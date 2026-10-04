@@ -26,11 +26,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 store name and Word/Loc value are retained, with the original nonHandler guard.
 Every stateRel conjunct is preserved. This structural relation asserts no
 numerical FP correspondence. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "state_rel_set_store"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 
 theorem stateRelSetStore {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (k f frame : Nat)

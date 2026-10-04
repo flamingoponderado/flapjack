@@ -12,8 +12,7 @@ open Flapjack.Compiler.Backend.LabProps.LabelSets Flapjack.Basis.Pure.MlString
 arbitrary actual nested-map accumulator. The source's final `nop : β` binder is
 retained at its independent generic carrier, even though it occurs in neither
 guards nor conclusion. No word-byte specialization is made. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "lab_lookup_compute_labels_test" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem labLookup_computeLabels_position {width : Nat} [NeZero width]
     (pos : Nat) (code : List (Section
       (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))

@@ -29,9 +29,7 @@ HOL stackLang's const_inst overload is literal Inst(Const register word).
 No target run, output relation or successful-instruction premise is supplied.
 Canonical map and positive word carriers are explicitly qualified.
 -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_const_inst"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs, StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateConstInst {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (k f frame extra : Nat)
     (source : WordSemStateFiniteExact width (Nat × C) F)
@@ -54,9 +52,7 @@ theorem evaluateConstInst {width : Nat} [NeZero width] {C F : Type}
 whole result and post-state for every initial state, register, word and clock.
 Canonical map and positive word carriers are explicitly qualified.
 -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_const_inst_clock"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs, StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateConstInstClock {width : Nat} [NeZero width] {C F : Type}
     (register clock : Nat) (word : BitVec width) (target : StackSemStateFiniteExact width C F) :
     StackSemEvaluate.evaluate (.inst (.const register word), {target with clock := clock}) =

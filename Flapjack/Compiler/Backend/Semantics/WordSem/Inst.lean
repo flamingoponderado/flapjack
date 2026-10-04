@@ -1,40 +1,9 @@
 import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
 import Flapjack.Compiler.Backend.BackendCommon
-import Flapjack.Misc.MachineIeee.Arith
-import Flapjack.Misc.MachineIeee.ConvertInt
-import Flapjack.Misc.BinaryIeeeSqrt
-import Flapjack.FpSemHOL
 
-/-!
-# Exact HOL `wordSem$inst_def`
-
-Counterpart of `cakeml/compiler/backend/semantics/wordSemScript.sml:716-939`
-(bead `flapjack-h29l.6`): the semantics of one `asm$inst`.  It covers `Skip`,
-`Const`, the eight `Arith` forms, the eight `Mem` forms, and the sixteen `FP`
-forms, over the tagged `WordSemStateFiniteExact`.
-
-The binary64 operations are the HOL standard-library renderings:
-* comparisons and sign operations from `Flapjack.Misc.MachineIeee`;
-* `fp64_add`/`sub`/`mul`/`div` from `Flapjack.Misc.BinaryIeeeArith`;
-* the tagged `fpSem` `fpfma` (`fpSemFpfma`);
-* `fp64_sqrt` from `Flapjack.Misc.BinaryIeeeSqrt`, the rational-cut
-  rendering;
-* `fp64_to_int` and `int_to_fp64` from `Flapjack.Misc.BinaryIeeeConvert`.
-
-Their choice-based rounding and unspecified NaN results make `inst`
-`noncomputable`.  The `roundTiesToEven` conformance theorems
-(`holFp64Add_rte` and the others) rewrite every non-NaN result to the
-computable algorithms.  The HOL `words` operations are:
-* `w2w` is `BitVec.setWidth`, `w2i` is `BitVec.toInt`, and `i2w` is
-  `BitVec.ofInt`;
-* `n2w`/`w2n` are `BitVec.ofNat`/`toNat`, and `dimword (:'a)` is
-  `2 ^ width`;
-* word `/` is signed truncating `BitVec.sdiv`, matching the four
-  sign cases of HOL `word_quot_def` (wordsScript.sml:354-366);
-  unsigned word division is HOL `//`, not `/`;
-* `word_extract` is `holWordExtract`, `bit_field_insert` is
-  `holBitFieldInsert`, and `@@` into `word64` is concatenation followed by
-  `setWidth 64`.
+/-! Integer-only instruction semantics for the riscv-mi compiler branch.
+The instruction carrier contains Skip, Const, arithmetic and memory operations.
+This restriction intentionally differs from the original HOL instruction type.
 -/
 
 namespace Flapjack
@@ -71,43 +40,8 @@ def holBitFieldInsert (h l : Nat) {k n : Nat} (a : BitVec k) (w : BitVec n) : Bi
 
 namespace WordSemStateFiniteExact
 
-/-- Rendering of HOL `inst_def` (`wordSemScript.sml:716-939`); see the module
-    docstring for the operation renderings.  Clause by clause:
-    * `Skip` leaves the state unchanged, `Const` assigns `Const w`, and
-      `Binop`/`Shift` assign the `Op`/`Shift` expression over `Var` and the
-      register-or-immediate.
-    * `Div`, `AddCarry`, `AddOverflow`, `SubOverflow`, `LongMul` and
-      `LongDiv` read their operands with `get_vars` and write through
-      `set_var`.  `Div` fails on a zero divisor, and `LongDiv` fails on a
-      zero divisor or a quotient `≥ dimword`.
-    * `Mem` computes the address `Var a + Const w` with `word_exp` and uses
-      `mem_load`/`mem_store` or the byte/32-bit auxiliaries.  `Load16` and
-      `Store16` fail.
-    * `FP` reads and writes the `fp_regs` through `get_fp_var`/`set_fp_var`.
-      Its `dimindex (:'a) = 64` tests are `width = 64`.
-
-    Qualified port (`reals_as_rational_cuts`, PR #1179 review, bead
-    `flapjack-qfld`).  The `FPSqrt` clause calls `holFp64Sqrt`
-    (`BinaryIeeeSqrt`), which decides each comparison of HOL `fp64_sqrt`
-    against the real `sqrt r` by its rational cut; HOL's rounding inspects
-    that real only through such comparisons, so this is a representation of
-    the HOL real, recorded by the qualifier.  Its agreement with HOL remains
-    the external assumption of `docs/SOUNDNESS.md` item 8. The proof-only
-    `WordSem.Inst.RealSqrtAgreement` proves the actual sqrt clause equals
-    the literal Mathlib-real rendering, including missing-register failure;
-    no external cut-criterion premise is required for that kernel equality.
-
-    Every other clause matches HOL clause by clause.  The other FP clauses use
-    the binary64 renderings over `Rat`.  Floats have dyadic rational values,
-    so those renderings reach only rational arguments (see the `fpSem`
-    comparison and arithmetic declarations for the argument).
-    `real_to_float` is reached only through `int_to_fp64` in `FPFromInt`, with
-    an integer argument (`w2i` of an extracted word).  NaN results are HOL's
-    unspecified `float_some_qnan`, rendered by `Classical.epsilon` on the same
-    predicate. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "inst_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)
-  (reals_as_rational_cuts)]
+/-- Execute the integer-only instruction carrier. Missing operands and invalid
+memory operations fail. Compatibility FP register fields are never accessed. -/
 noncomputable def inst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (i : WordLangInst (BitVec width)) (s : WordSemStateFiniteExact width C F) :
     Option (WordSemStateFiniteExact width C F) :=
@@ -202,102 +136,6 @@ noncomputable def inst {width : Nat} [NeZero width] {C : Type} {F : Type}
           | some newM => some { s with memory := newM }
           | none => none
       | _, _ => none
-  | .fp (.fpLess r d1 d2) =>
-      match getFpVar d1 s, getFpVar d2 s with
-      | some f1, some f2 => some (setVar r (.word (if holFp64LessThan f1 f2 then 1 else 0)) s)
-      | _, _ => none
-  | .fp (.fpLessEqual r d1 d2) =>
-      match getFpVar d1 s, getFpVar d2 s with
-      | some f1, some f2 => some (setVar r (.word (if holFp64LessEqual f1 f2 then 1 else 0)) s)
-      | _, _ => none
-  | .fp (.fpEqual r d1 d2) =>
-      match getFpVar d1 s, getFpVar d2 s with
-      | some f1, some f2 => some (setVar r (.word (if holFp64Equal f1 f2 then 1 else 0)) s)
-      | _, _ => none
-  | .fp (.fpMov d1 d2) =>
-      match getFpVar d2 s with
-      | some f => some (setFpVar d1 f s)
-      | _ => none
-  | .fp (.fpAbs d1 d2) =>
-      match getFpVar d2 s with
-      | some f => some (setFpVar d1 (holFp64Abs f) s)
-      | _ => none
-  | .fp (.fpNeg d1 d2) =>
-      match getFpVar d2 s with
-      | some f => some (setFpVar d1 (holFp64Negate f) s)
-      | _ => none
-  | .fp (.fpSqrt d1 d2) =>
-      match getFpVar d2 s with
-      | some f => some (setFpVar d1 (holFp64Sqrt .roundTiesToEven f) s)
-      | _ => none
-  | .fp (.fpAdd d1 d2 d3) =>
-      match getFpVar d2 s, getFpVar d3 s with
-      | some f1, some f2 => some (setFpVar d1 (holFp64Add .roundTiesToEven f1 f2) s)
-      | _, _ => none
-  | .fp (.fpSub d1 d2 d3) =>
-      match getFpVar d2 s, getFpVar d3 s with
-      | some f1, some f2 => some (setFpVar d1 (holFp64Sub .roundTiesToEven f1 f2) s)
-      | _, _ => none
-  | .fp (.fpMul d1 d2 d3) =>
-      match getFpVar d2 s, getFpVar d3 s with
-      | some f1, some f2 => some (setFpVar d1 (holFp64Mul .roundTiesToEven f1 f2) s)
-      | _, _ => none
-  | .fp (.fpDiv d1 d2 d3) =>
-      match getFpVar d2 s, getFpVar d3 s with
-      | some f1, some f2 => some (setFpVar d1 (holFp64Div .roundTiesToEven f1 f2) s)
-      | _, _ => none
-  | .fp (.fpFma d1 d2 d3) =>
-      match getFpVar d1 s, getFpVar d2 s, getFpVar d3 s with
-      | some f1, some f2, some f3 => some (setFpVar d1 (fpSemFpfma f1 f2 f3) s)
-      | _, _, _ => none
-  | .fp (.fpMovToReg r1 r2 d) =>
-      match getFpVar d s with
-      | some v =>
-          if width = 64 then some (setVar r1 (.word (v.setWidth width)) s)
-          else some (setVar r2 (.word (holWordExtract 63 32 v width))
-            (setVar r1 (.word (holWordExtract 31 0 v width)) s))
-      | _ => none
-  | .fp (.fpMovFromReg d r1 r2) =>
-      if width = 64 then
-        match getVar r1 s with
-        | some (.word w1) => some (setFpVar d (w1.setWidth 64) s)
-        | _ => none
-      else
-        match getVar r1 s, getVar r2 s with
-        | some (.word w1), some (.word w2) => some (setFpVar d ((w2 ++ w1).setWidth 64) s)
-        | _, _ => none
-  | .fp (.fpToInt d1 d2) =>
-      match getFpVar d2 s with
-      | none => none
-      | some f =>
-          match holFp64ToInt .roundTiesToEven f with
-          | none => none
-          | some i =>
-              let w : BitVec 32 := BitVec.ofInt 32 i
-              if w.toInt = i then
-                (if width = 64 then some (setFpVar d1 (w.setWidth 64) s)
-                 else
-                  match getFpVar (d1 / 2) s with
-                  | none => none
-                  | some f =>
-                      let (h, l) := if d1 % 2 = 1 then (63, 32) else (31, 0)
-                      some (setFpVar (d1 / 2) (holBitFieldInsert h l w f) s))
-              else none
-  | .fp (.fpFromInt d1 d2) =>
-      if width = 64 then
-        match getFpVar d2 s with
-        | some f =>
-            let i := (holWordExtract 31 0 f 32).toInt
-            some (setFpVar d1 (holIntToFp64 .roundTiesToEven i) s)
-        | none => none
-      else
-        match getFpVar (d2 / 2) s with
-        | some v =>
-            let i := (if d2 % 2 = 1 then holWordExtract 63 32 v width
-              else holWordExtract 31 0 v width).toInt
-            some (setFpVar d1 (holIntToFp64 .roundTiesToEven i) s)
-        | none => none
-
 end WordSemStateFiniteExact
 
 end Flapjack

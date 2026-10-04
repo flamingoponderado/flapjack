@@ -10,8 +10,7 @@ open Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Encoders.Asm
 open Flapjack.Compiler.Backend.WordToStack.Native CallReturnEval
 
 /-- Original non-performance argument frame, with arbitrary destination carriers. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "StackHandlerArgs_F"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackHandlerArgsF {width : Nat} [NeZero width] {α β : Type}
     (dest : Sum α β) (argCount k f f' : Nat) :
     (stackHandlerArgsNative false dest argCount (k, f, f') : HolProg width) =
@@ -19,8 +18,7 @@ theorem stackHandlerArgsF {width : Nat} [NeZero width] {α β : Type}
 
 /-- Original non-performance handler save tree. Unused frame carriers remain
 independent, as in the native HOL definition. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "PushHandler_F"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem pushHandlerF {width : Nat} [NeZero width] {β γ : Type}
     (l1 l2 k : Nat) (f : β) (f' : γ) :
     (pushHandlerNative false l1 l2 (k, f, f') : HolProg width) =
@@ -35,8 +33,7 @@ theorem pushHandlerF {width : Nat} [NeZero width] {β γ : Type}
 
 /-- Original restoration/free tree with arbitrary continuation and independent
 unused frame carriers. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "PopHandler_F"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem popHandlerF {width : Nat} [NeZero width] {β γ : Type}
     (k : Nat) (f : β) (f' : γ) (program : HolProg width) :
     popHandlerNative false (k, f, f') program =
@@ -62,8 +59,7 @@ private theorem clockFreeCtor {width : Nat} [NeZero width] {C F : Type}
 
 /-- Full original unconditional clock replacement law for PushHandler F.
 All source error/success branches and arbitrary clocks are retained. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_PushHandler_clock"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluatePushHandlerClock {width : Nat} [NeZero width] {C F : Type}
     (source : StackSemStateFiniteExact width C F) (a b k f f' clock : Nat) :
     StackSemEvaluate.evaluate (pushHandlerNative false a b (k, f, f'),
@@ -492,11 +488,7 @@ not a premise. Total HOL EL is retained, with no chosen past-end default.
 Canonical maps and positive word/FFI dimensions use only the named translations.
 The state/evaluator closure inherits reals_as_rational_cuts (SOUNDNESS item 8);
 this is handler simulation, not whole compiler or numeric FP correspondence. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_PushHandler"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluatePushHandler {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (register f f' a b retValue : Nat)
     (retProgram : WordLangProgHOL (BitVec width))

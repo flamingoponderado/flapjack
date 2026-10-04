@@ -35,9 +35,7 @@ theorem foldrInsertConstSwap {width : Nat} [NeZero width]
 /-- Full native evaluation of original fake constant chain, without distinctness,
 register bounds or clock premises. Inherits evaluator reals_as_rational_cuts
 (SOUNDNESS item 8). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_fake_const_chain"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateFakeConstChain {width : Nat} [NeZero width] {C F : Type}
     (names : List Nat) (state : WordSemStateFiniteExact width C F) :
     WordSemStateFiniteExact.evaluate ((names.map (fakeMove (width := width))).foldr .seq .skip) state =
@@ -73,9 +71,7 @@ private theorem constFoldLookup {α : Type} (names : List Nat) (value : α)
 /-- Full original fake-chain frame/domain/preserved outside reads/zero inside
 reads result. No new membership, success or allocation hypotheses. Inherits
 evaluator reals_as_rational_cuts (SOUNDNESS item 8). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_fake_const_chain_locals"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateFakeConstChainLocals {width : Nat} [NeZero width] {C F : Type}
     (names : List Nat) (state : WordSemStateFiniteExact width C F) :
     let after := (WordSemStateFiniteExact.evaluate

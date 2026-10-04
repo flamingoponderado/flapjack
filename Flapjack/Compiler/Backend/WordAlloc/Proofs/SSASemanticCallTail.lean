@@ -71,9 +71,7 @@ callee state. Missing arguments/destination/code/handler and bad callee returns
 retain the original Error exemption; timeout flushes and accepted returns have
 the original complete conclusion. The imported total evaluator inherits
 reals_as_rational_cuts (SOUNDNESS item 8). Full SSA assembly remains open. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_correct"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransCorrectCallTail {width : Nat} [NeZero width] {C F : Type}
     (source target : WordSemStateFiniteExact width C F)
     (ssa : Spt Nat) (next : Nat) (dest : Option Nat) (args : List Nat)

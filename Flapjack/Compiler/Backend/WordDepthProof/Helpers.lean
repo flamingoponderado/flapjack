@@ -100,8 +100,7 @@ theorem optionLe_some_zero (x : Option Nat) : optionLe (some 0) x := by
 `!ns name y. MEM name ns /\ lookup name code = SOME y ==>
 option_le (max_depth_graphs ss [name] xs funs code) (max_depth_graphs ss ns xs funs code)`,
 with the free `code`, `ss`, `xs`, `funs` universally bound. -/
-@[hol "cakeml/compiler/backend/proofs/word_depthProofScript.sml" "MEM_max_depth_graphs"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem mem_maxDepthGraphs {width : Nat} [NeZero width] {Metadata : Type}
     (ss : Spt Nat) (xs : List Nat) (funs : Spt (Nat × WordLangProgHOL (BitVec width)))
     (code : Spt (Metadata × WordLangProgHOL (BitVec width))) :
@@ -176,8 +175,7 @@ theorem callGraph_call_ret {width : Nat} [NeZero width]
 /-- Full original `option_le_max_depth_graph`:
 `!funs h ns1 t x1 ns2. set ns2 ⊆ set ns1 /\ LENGTH ns2 <= LENGTH ns1 ==>
 option_le (max_depth ss (call_graph funs h ns1 t x1)) (max_depth ss (call_graph funs h ns2 t x1))`. -/
-@[hol "cakeml/compiler/backend/proofs/word_depthProofScript.sml" "option_le_max_depth_graph"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem optionLe_maxDepth_graph {width : Nat} [NeZero width] (ss : Spt Nat) :
     ∀ (funs : Spt (Nat × WordLangProgHOL (BitVec width))) (h : Nat) (ns1 : List Nat) (t : Nat)
       (x1 : WordLangProgHOL (BitVec width)) (ns2 : List Nat),
@@ -247,8 +245,7 @@ theorem optionLe_maxDepth_graph {width : Nat} [NeZero width] (ss : Spt Nat) :
 /-- Full original `option_le_max_depth_graphs`:
 `!ns ns1 ns2. set ns2 SUBSET set ns1 /\ LENGTH ns2 <= LENGTH ns1 ==>
 option_le (max_depth_graphs ss ns ns1 funs funs2) (max_depth_graphs ss ns ns2 funs funs2)`. -/
-@[hol "cakeml/compiler/backend/proofs/word_depthProofScript.sml" "option_le_max_depth_graphs"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem optionLe_maxDepthGraphs {width : Nat} [NeZero width] {Metadata : Type}
     (ss : Spt Nat) (funs : Spt (Nat × WordLangProgHOL (BitVec width)))
     (funs2 : Spt (Metadata × WordLangProgHOL (BitVec width))) :

@@ -27,10 +27,7 @@ theorem stateRelCodeBuffer {width : Nat} [NeZero width] {C F : Type}
 /-- Genuine original CodeBufferWrite case, retaining the original four
 premises and full existential native target run/post-state relation. Operand
 lookups and buffer success on the target are proved from the source relation. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectCodeBufferWrite {width : Nat} [NeZero width] {C F : Type}
     (first second : Nat)
     (source : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))

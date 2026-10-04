@@ -6,8 +6,7 @@ namespace Flapjack.Compiler.Backend.LabProps
 open Flapjack Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Encoders.Asm
 open Flapjack.Compiler.Backend.LabToTarget
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "align_sdm_aligned"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem alignSdmAligned {width : Nat} [NeZero width] {C F : Type}
     (x : BitVec width) (s : Flapjack.Compiler.Backend.LabSem.State width C F) :
     goodDimindex width →
@@ -60,8 +59,7 @@ private theorem storeProjection {width : Nat} [NeZero width] {C F : Type}
   simp only [alignSdm, sharedGuard hw,incPc,decClock]
   all_goals repeat' first | rfl | split
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "share_mem_load_align_sdm"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem shareMemLoadAlignSDM {width : Nat} [NeZero width] {C F : Type}
     (r : Nat) (a : HolAddr width) (s next : Flapjack.Compiler.Backend.LabSem.State width C F)
     (n : Nat) (res : HolFfiResult F) :
@@ -76,8 +74,7 @@ theorem shareMemLoadAlignSDM {width : Nat} [NeZero width] {C F : Type}
   · intro h
     simp only [h, Option.map_some]
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "share_mem_store_align_sdm"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem shareMemStoreAlignSDM {width : Nat} [NeZero width] {C F : Type}
     (r : Nat) (a : HolAddr width) (s next : Flapjack.Compiler.Backend.LabSem.State width C F)
     (n : Nat) (res : HolFfiResult F) :
@@ -92,8 +89,7 @@ theorem shareMemStoreAlignSDM {width : Nat} [NeZero width] {C F : Type}
   · intro h
     simp only [h, Option.map_some]
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "share_mem_op_align_sdm_simp"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem shareMemOpAlignSDM {width : Nat} [NeZero width] {C F : Type}
     (m : HolMemop) (r : Nat) (a : HolAddr width)
     (s next : Flapjack.Compiler.Backend.LabSem.State width C F) (res : HolFfiResult F) :

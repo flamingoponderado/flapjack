@@ -34,11 +34,6 @@ private def vMemLoadOk : WordLangInst W := .mem .load 2 (.addr 4 0)
 private def vMemLoadBad : WordLangInst W := .mem .load 3 (.addr 4 0)
 private def vMemLoad8Ok : WordLangInst W := .mem .load8 2 (.addr 4 0)
 private def vMemLoad16 : WordLangInst W := .mem .load16 3 (.addr 4 0)
-private def vFpLessOk : WordLangInst W := .fp (.fpLess 2 0 1)
-private def vFpLessBad : WordLangInst W := .fp (.fpLess 3 0 1)
-private def vMove8Ok : WordLangInst W := .fp (.fpMovToReg 2 4 0)
-private def vMove8Bad : WordLangInst W := .fp (.fpMovToReg 2 3 0)
-private def vMove64Ok : WordLangInst (BitVec 64) := .fp (.fpMovToReg 2 3 0)
 private def vSkip : WordLangInst W := .skip
 
 example : everyVarExp even eVar = true := by decide
@@ -63,11 +58,6 @@ example : everyVarInst even vMemLoadOk = true := by decide
 example : everyVarInst even vMemLoadBad = false := by decide
 example : everyVarInst even vMemLoad8Ok = true := by decide
 example : everyVarInst even vMemLoad16 = true := by decide
-example : everyVarInst even vFpLessOk = true := by decide
-example : everyVarInst even vFpLessBad = false := by decide
-example : everyVarInst even vMove8Ok = true := by decide
-example : everyVarInst even vMove8Bad = false := by decide
-example : everyVarInst even vMove64Ok = true := by decide
 example : everyVarInst even vSkip = true := by decide
 
 /-! ## Exact-carrier HOL variants (`flapjack-yuc3`)
@@ -83,49 +73,25 @@ example : everyVarImmHOL (width := 8) even iRegBad = false := by decide
 example : everyVarImmHOL (width := 8) even iImm = true := by decide
 
 private def guardsHOL : List Bool :=
-  [ everyVarImmHOL (width := 8) even iRegOk, everyVarImmHOL (width := 8) even iRegBad,
-    everyVarImmHOL (width := 8) even iImm,
-    everyVarInstHOL (width := 8) even vConstOk, everyVarInstHOL (width := 8) even vBinopOk,
-    everyVarInstHOL (width := 8) even vBinopBad, everyVarInstHOL (width := 8) even vShiftOk,
-    everyVarInstHOL (width := 8) even vDivOk, everyVarInstHOL (width := 8) even vAddCarryBad,
-    everyVarInstHOL (width := 8) even vLongDivOk, everyVarInstHOL (width := 8) even vMemLoadOk,
-    everyVarInstHOL (width := 8) even vMemLoadBad, everyVarInstHOL (width := 8) even vMemLoad8Ok,
-    everyVarInstHOL (width := 8) even vMemLoad16, everyVarInstHOL (width := 8) even vFpLessOk,
-    everyVarInstHOL (width := 8) even vFpLessBad, everyVarInstHOL (width := 8) even vMove8Ok,
-    everyVarInstHOL (width := 8) even vMove8Bad, everyVarInstHOL (width := 64) even vMove64Ok,
-    everyVarInstHOL (width := 8) even vSkip ]
+  [everyVarImmHOL (width := 8) even iRegOk, everyVarImmHOL (width := 8) even iRegBad, everyVarImmHOL (width := 8) even iImm, everyVarInstHOL (width := 8) even vConstOk, everyVarInstHOL (width := 8) even vBinopOk, everyVarInstHOL (width := 8) even vBinopBad, everyVarInstHOL (width := 8) even vShiftOk, everyVarInstHOL (width := 8) even vDivOk, everyVarInstHOL (width := 8) even vAddCarryBad, everyVarInstHOL (width := 8) even vLongDivOk, everyVarInstHOL (width := 8) even vMemLoadOk, everyVarInstHOL (width := 8) even vMemLoadBad, everyVarInstHOL (width := 8) even vMemLoad8Ok, everyVarInstHOL (width := 8) even vMemLoad16, everyVarInstHOL (width := 8) even vSkip]
 
 private def expectedHOL : List Bool :=
-  [ true, false, true,
-    true, true, false, true, true, false, true, true, false, true, true, true, false, true, false,
-    true, true ]
+  [true, false, true, true, true, false, true, true, false, true, true, false, true, true, true]
 
 #guard guardsHOL == expectedHOL
 
 private def guards : List Bool :=
-  [ everyVarExp even eVar, everyVarExp even eVarOdd, everyVarExp even eConst,
-    everyVarExp even eLoad, everyVarExp even eOpOk, everyVarExp even eOpBad,
-    everyVarExp even eShiftBad, everyVarExp even eLookup,
-    everyVarImm even iRegOk, everyVarImm even iRegBad, everyVarImm even iImm,
-    everyVarInst even vConstOk, everyVarInst even vBinopOk, everyVarInst even vBinopBad,
-    everyVarInst even vShiftOk, everyVarInst even vDivOk, everyVarInst even vAddCarryBad,
-    everyVarInst even vLongDivOk, everyVarInst even vMemLoadOk, everyVarInst even vMemLoadBad,
-    everyVarInst even vMemLoad8Ok, everyVarInst even vMemLoad16, everyVarInst even vFpLessOk,
-    everyVarInst even vFpLessBad, everyVarInst even vMove8Ok, everyVarInst even vMove8Bad,
-    everyVarInst even vMove64Ok, everyVarInst even vSkip ]
+  [everyVarExp even eVar, everyVarExp even eVarOdd, everyVarExp even eConst, everyVarExp even eLoad, everyVarExp even eOpOk, everyVarExp even eOpBad, everyVarExp even eShiftBad, everyVarExp even eLookup, everyVarImm even iRegOk, everyVarImm even iRegBad, everyVarImm even iImm, everyVarInst even vConstOk, everyVarInst even vBinopOk, everyVarInst even vBinopBad, everyVarInst even vShiftOk, everyVarInst even vDivOk, everyVarInst even vAddCarryBad, everyVarInst even vLongDivOk, everyVarInst even vMemLoadOk, everyVarInst even vMemLoadBad, everyVarInst even vMemLoad8Ok, everyVarInst even vMemLoad16, everyVarInst even vSkip]
 
 private def expected : List Bool :=
-  [ true, false, true, true, true, false, false, true,
-    true, false, true,
-    true, true, false, true, true, false, true, true, false, true, true, true, false, true, false,
-    true, true ]
+  [true, false, true, true, true, false, false, true, true, false, true, true, true, false, true, true, false, true, true, false, true, true, true]
 
 #guard guards == expected
 
 def runChecks : IO Bool := do
   if guards == expected && guardsHOL == expectedHOL then
-    IO.println "PASS wordLang every_var_exp/every_var_imm/every_var_inst match all 28 oracle rows"
-    IO.println "PASS wordLang exact everyVarImmHOL/everyVarInstHOL match all 20 oracle rows"
+    IO.println "PASS wordLang every_var_exp/every_var_imm/every_var_inst match all 23 retained integer oracle rows"
+    IO.println "PASS wordLang exact everyVarImmHOL/everyVarInstHOL match all 15 retained integer oracle rows"
   else
     IO.println "FAIL wordLang every_var family oracle rows"
   pure (guards == expected && guardsHOL == expectedHOL)

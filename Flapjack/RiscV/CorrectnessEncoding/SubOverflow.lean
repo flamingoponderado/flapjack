@@ -21,8 +21,6 @@ relation only; every original environment and both assertion predicates retained
 The XOR/SUB/XOR/XORI/AND/SRLI list retains source aliases, including r1=r4.
 This native closure inherits the reviewed rational-cut limitation of the broad
 RISC-V target model (SOUNDNESS section8), as the other full native encoder cases. -/
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml"
-  "riscv_encoder_correct"]
 theorem riscv_encoder_correct_suboverflow (r1 r2 r3 r4 : Nat)
     (s1 s2 : AsmState 64) (ms : riscv_state)
     (h : asmStep riscvTarget.config s1 (.inst (.arith (.subOverflow r1 r2 r3 r4))) s2 ∧

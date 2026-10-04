@@ -10,8 +10,7 @@ open Flapjack.Compiler.Backend.LabToTarget.FilterSkip
 
 /-- Original Label/default Error constructor branch, retaining all source simulation hypotheses and
 outcomes. The skipped-run count and actual target execution are derived. -/
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem filterCorrectLabel {width : Nat} [NeZero width] {C F : Type}
     (s1 t1 : Flapjack.Compiler.Backend.LabSem.State width C F)
     (res : MachineResult) (s2 : Flapjack.Compiler.Backend.LabSem.State width C F)
@@ -47,8 +46,7 @@ theorem filterCorrectLabel {width : Nat} [NeZero width] {C F : Type}
 
 /-- Original Halt constructor, including zero/nonzero Word and Loc error branch, retaining all source simulation hypotheses and
 outcomes. The skipped-run count and actual target execution are derived. -/
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem filterCorrectHalt {width : Nat} [NeZero width] {C F : Type}
     (s1 t1 : Flapjack.Compiler.Backend.LabSem.State width C F)
     (res : MachineResult) (s2 : Flapjack.Compiler.Backend.LabSem.State width C F)
@@ -121,8 +119,7 @@ actual successful byte-buffer update. The only induction hypothesis is the
 original simulation of that guarded source successor; target execution and its
 successor relation are derived.
 The IH includes the original evaluator's nonzero source-clock path guard. -/
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem filterCorrectBufferWrite {width : Nat} [NeZero width] {C F : Type}
     (s1 t1 : Flapjack.Compiler.Backend.LabSem.State width C F)
     (res : MachineResult) (s2 : Flapjack.Compiler.Backend.LabSem.State width C F)

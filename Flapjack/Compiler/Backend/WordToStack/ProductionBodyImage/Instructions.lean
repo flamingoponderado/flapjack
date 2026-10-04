@@ -133,7 +133,6 @@ theorem instructionCompilerImage {width : Nat} [NeZero width]
     OutputImage (wInstNative (HolInst.ofWordLangInst instruction) frame) := by
   cases instruction with
   | skip => simp [wordLangInstFromHOL] at decoded
-  | fp operation => simp [wordLangInstFromHOL] at decoded
   | const destination value =>
       simp only [HolInst.ofWordLangInst, wInstNative]
       apply registerWriteImage

@@ -133,16 +133,14 @@ namespace WordSemStateFiniteExact
 
 /-- Exact HOL `dec_clock_def` (`wordSemScript.sml:262-264`):
     `dec_clock s = s with clock := s.clock - 1`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "dec_clock_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def decClock {width : Nat} [NeZero width] {C : Type} {F : Type}
     (state : WordSemStateFiniteExact width C F) : WordSemStateFiniteExact width C F :=
   { state with clock := state.clock - 1 }
 
 /-- Exact HOL `fix_clock_def` (`wordSemScript.sml:266-271`): the new clock is
     the smaller of the two clocks, and `termdep` is restored from `old_s`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "fix_clock_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def fixClock {width : Nat} [NeZero width] {C : Type} {F : Type} {β : Type}
     (old : WordSemStateFiniteExact width C F) (step : β × WordSemStateFiniteExact width C F) :
     β × WordSemStateFiniteExact width C F :=
@@ -153,8 +151,7 @@ def fixClock {width : Nat} [NeZero width] {C : Type} {F : Type} {β : Type}
 /-- Exact HOL `mem_store_def` (`wordSemScript.sml:283-288`):
     `SOME (s with memory := (addr =+ w) s.memory)` when `addr IN s.mdomain`,
     else `NONE`.  `mdomain` uses the reviewed set-as-Bool rendering. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "mem_store_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def memStore {width : Nat} [NeZero width] {C : Type} {F : Type}
     (address : BitVec width) (value : WordLocW width)
     (state : WordSemStateFiniteExact width C F) : Option (WordSemStateFiniteExact width C F) :=
@@ -164,8 +161,7 @@ def memStore {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `mem_load_def` (`wordSemScript.sml:290-295`):
     `SOME (s.memory addr)` when `addr IN s.mdomain`, else `NONE`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "mem_load_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def memLoad {width : Nat} [NeZero width] {C : Type} {F : Type}
     (address : BitVec width) (state : WordSemStateFiniteExact width C F) :
     Option (WordLocW width) :=
@@ -173,16 +169,14 @@ def memLoad {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `get_var_def` (`wordSemScript.sml:305-307`):
     `get_var v s = lookup v s.locals` on the exact `num_map`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "get_var_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def getVar {width : Nat} [NeZero width] {C : Type} {F : Type}
     (name : Nat) (state : WordSemStateFiniteExact width C F) : Option (WordLocW width) :=
   sptLookup name state.locals
 
 /-- Exact HOL `get_vars_def` (`wordSemScript.sml:309-317`): look up each
     variable in turn and fail if any lookup fails. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "get_vars_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def getVars {width : Nat} [NeZero width] {C : Type} {F : Type} :
     List Nat → WordSemStateFiniteExact width C F → Option (List (WordLocW width))
   | [], _ => some []
@@ -196,8 +190,7 @@ def getVars {width : Nat} [NeZero width] {C : Type} {F : Type} :
 
 /-- Exact HOL `set_var_def` (`wordSemScript.sml:319-322`):
     `set_var v x s = s with locals := insert v x s.locals`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "set_var_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def setVar {width : Nat} [NeZero width] {C : Type} {F : Type}
     (name : Nat) (value : WordLocW width) (state : WordSemStateFiniteExact width C F) :
     WordSemStateFiniteExact width C F :=
@@ -205,8 +198,7 @@ def setVar {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `unset_var_def` (`wordSemScript.sml:324-326`):
     `unset_var v s = s with locals := delete v s.locals`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "unset_var_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def unsetVar {width : Nat} [NeZero width] {C : Type} {F : Type}
     (name : Nat) (state : WordSemStateFiniteExact width C F) :
     WordSemStateFiniteExact width C F :=
@@ -214,8 +206,7 @@ def unsetVar {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `set_vars_def` (`wordSemScript.sml:328-331`):
     `set_vars vs xs s = s with locals := alist_insert vs xs s.locals`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "set_vars_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def setVars {width : Nat} [NeZero width] {C : Type} {F : Type}
     (names : List Nat) (values : List (WordLocW width))
     (state : WordSemStateFiniteExact width C F) : WordSemStateFiniteExact width C F :=
@@ -223,8 +214,7 @@ def setVars {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `get_store_def` (`wordSemScript.sml:333-335`):
     `get_store v s = FLOOKUP s.store v`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "get_store_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def getStore {width : Nat} [NeZero width] {C : Type} {F : Type}
     (name : WordStoreHOL) (state : WordSemStateFiniteExact width C F) :
     Option (WordLocW width) :=
@@ -233,8 +223,7 @@ def getStore {width : Nat} [NeZero width] {C : Type} {F : Type}
 /-- Exact HOL `set_store_def` (`wordSemScript.sml:337-339`):
     `set_store v x s = s with store := s.store |+ (v,x)`, with `FUPDATE` at
     HOL equality (`updateEq`). -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "set_store_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def setStore {width : Nat} [NeZero width] {C : Type} {F : Type}
     (name : WordStoreHOL) (value : WordLocW width) (state : WordSemStateFiniteExact width C F) :
     WordSemStateFiniteExact width C F :=
@@ -249,8 +238,7 @@ def setStore {width : Nat} [NeZero width] {C : Type} {F : Type}
 
     HOL's termination measure is `exp_size`; Lean uses the structural size of
     the nested `List`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "word_exp_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wordExp {width : Nat} [NeZero width] {C : Type} {F : Type}
     (state : WordSemStateFiniteExact width C F) :
     WordLangExpHOL (BitVec width) → Option (WordLocW width)
@@ -273,8 +261,7 @@ def wordExp {width : Nat} [NeZero width] {C : Type} {F : Type}
 /-- Exact HOL `flush_state_def` (`wordSemScript.sml:365-372`).  `flush_state T`
     empties `locals`, `stack` and `store` and sets `locals_size := SOME 0`.
     `flush_state F` empties only `locals` and sets `locals_size := SOME 0`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "flush_state_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def flushState {width : Nat} [NeZero width] {C : Type} {F : Type} :
     Bool → WordSemStateFiniteExact width C F → WordSemStateFiniteExact width C F
   | true, state =>
@@ -284,16 +271,14 @@ def flushState {width : Nat} [NeZero width] {C : Type} {F : Type} :
 
 /-- Exact HOL `get_fp_var_def` (`wordSemScript.sml:707-709`):
     `get_fp_var v s = FLOOKUP s.fp_regs v`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "get_fp_var_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def getFpVar {width : Nat} [NeZero width] {C : Type} {F : Type}
     (name : Nat) (state : WordSemStateFiniteExact width C F) : Option (BitVec 64) :=
   state.fpRegs.lookup name
 
 /-- Exact HOL `set_fp_var_def` (`wordSemScript.sml:711-714`):
     `set_fp_var v x s = s with fp_regs := s.fp_regs |+ (v,x)`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "set_fp_var_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def setFpVar {width : Nat} [NeZero width] {C : Type} {F : Type}
     (name : Nat) (value : BitVec 64) (state : WordSemStateFiniteExact width C F) :
     WordSemStateFiniteExact width C F :=
@@ -304,8 +289,7 @@ def setFpVar {width : Nat} [NeZero width] {C : Type} {F : Type}
     (Word w)`.  The `asm$reg_imm` argument uses the carrier `WordRegImm (BitVec
     width)`, the `If` payload of the tagged `WordLangProgHOL` that the evaluator
     passes here.  It has the same two constructors, `Reg num | Imm ('a word)`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "get_var_imm_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def getVarImm {width : Nat} [NeZero width] {C : Type} {F : Type} :
     WordRegImm (BitVec width) → WordSemStateFiniteExact width C F → Option (WordLocW width)
   | .reg n, state => getVar n state

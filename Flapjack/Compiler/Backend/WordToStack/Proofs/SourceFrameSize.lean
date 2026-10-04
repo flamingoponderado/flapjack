@@ -17,8 +17,7 @@ open SourceFrameSizeWitnesses
 
 /-- Full original allocation-store update commutes with pushing a plain frame,
 for arbitrary native environments, state and allocation word. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "push_env_set_store"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem pushEnvSetStore {width : Nat} [NeZero width] {C F : Type}
     (env : Spt (WordLocW width) × Spt (WordLocW width)) (c : BitVec width)
     (s : WordSemStateFiniteExact width C F) :
@@ -48,9 +47,7 @@ theorem decStackStackSize {width : Nat} [NeZero width]
 /-- Full original key-related pushed-frame result. The source size prediction
 and tail-stack size are derived from the actual push and sole key relation;
 no successful size calculation or desired post-state fact is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "s_key_eq_push_env_locals_size"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem sourceKeyEqPushEnvLocalsSize {width : Nat} [NeZero width] {C F : Type}
     (env : Spt (WordLocW width) × Spt (WordLocW width))
     (opt1 : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))

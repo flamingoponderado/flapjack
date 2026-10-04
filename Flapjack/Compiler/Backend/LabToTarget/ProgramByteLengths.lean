@@ -7,8 +7,7 @@ open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString
 
 /-- Complete original physical-byte sum law. The unused n has an independent
 HOL type beta and remains an explicit generic binder without specialization. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "LENGTH_prog_to_bytes2" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem allEncOk_lengthProgToBytes {width : Nat} [NeZero width]
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) {β : Type u} (_n : β)
     (c : AsmConfigExact width) (labs : Spt (Spt Nat))
@@ -32,8 +31,7 @@ theorem allEncOk_lengthProgToBytes {width : Nat} [NeZero width]
 
 /-- Complete original section-fold law, retaining an arbitrary initial Nat
 independently of the encoding-validity start position. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "LENGTH_prog_to_bytes" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem allEncOk_foldSecLength {width : Nat} [NeZero width]
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) (n : Nat)
     (c : AsmConfigExact width) (labs : Spt (Spt Nat))

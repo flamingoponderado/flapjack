@@ -51,42 +51,5 @@ def «reg'sstatus» (x : sstatus) : (BitVec 64) :=
 def isValidVM (vm : (BitVec 5)) : Bool :=
   (((fun (v : (BitVec 5)) => (if ((v == (BitVec.ofNat 5 0))) then true else ((if ((v == (BitVec.ofNat 5 1))) then true else ((if ((v == (BitVec.ofNat 5 2))) then true else ((if ((v == (BitVec.ofNat 5 8))) then true else ((if ((v == (BitVec.ofNat 5 9))) then true else ((if ((v == (BitVec.ofNat 5 10))) then true else ((if ((v == (BitVec.ofNat 5 11))) then true else ((if ((v == (BitVec.ofNat 5 12))) then true else false))))))))))))))))) vm)
 
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "update_mstatus_def"]
-noncomputable def update_mstatus (arg0 : (mstatus × mstatus)) : mstatus :=
-  match arg0 with
-  | (orig, v) =>
-  (let s0 : mstatus := (let r := ((let r := ((let r := ((let r := ((let r := ((let r := ((let r := ((let r := orig; { r with MIE := ((fun (_eta1 : Bool) => v.MIE)) r.MIE })); { r with MPRV := ((fun (_eta1 : (BitVec 2)) => v.MPRV)) r.MPRV })); { r with MIE1 := ((fun (_eta1 : Bool) => v.MIE1)) r.MIE1 })); { r with MPRV1 := ((fun (_eta1 : (BitVec 2)) => v.MPRV1)) r.MPRV1 })); { r with MIE2 := ((fun (_eta1 : Bool) => v.MIE2)) r.MIE2 })); { r with MPRV2 := ((fun (_eta1 : (BitVec 2)) => v.MPRV2)) r.MPRV2 })); { r with MIE3 := ((fun (_eta1 : Bool) => v.MIE3)) r.MIE3 })); { r with MPRV3 := ((fun (_eta1 : (BitVec 2)) => v.MPRV3)) r.MPRV3 }); (let r := ((let r := ((let r := ((let r := ((if (isValidVM v.VM) then ((let r := s0; { r with VM := ((fun (_eta1 : (BitVec 5)) => v.VM)) r.VM })) else s0)); { r with MMPRV := ((fun (_eta1 : Bool) => v.MMPRV)) r.MMPRV })); { r with MFS := ((fun (_eta1 : (BitVec 2)) => v.MFS)) r.MFS })); { r with MXS := ((fun (_eta1 : (BitVec 2)) => v.MXS)) r.MXS })); { r with MSD := ((fun (_eta1 : Bool) => (((((extStatus v.MXS) == ExtStatus.Dirty)) || (((extStatus v.MFS) == ExtStatus.Dirty)))))) r.MSD }))
-
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "lower_sip_mip_def"]
-def lower_sip_mip (arg0 : (sip × mip)) : mip :=
-  match arg0 with
-  | (sip, mip) =>
-  (let r := ((let r := mip; { r with STIP := ((fun (_eta1 : Bool) => sip.STIP)) r.STIP })); { r with SSIP := ((fun (_eta1 : Bool) => sip.SSIP)) r.SSIP })
-
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "lower_sie_mie_def"]
-def lower_sie_mie (arg0 : (sie × mie)) : mie :=
-  match arg0 with
-  | (sie, mie) =>
-  (let r := ((let r := mie; { r with STIE := ((fun (_eta1 : Bool) => sie.STIE)) r.STIE })); { r with SSIE := ((fun (_eta1 : Bool) => sie.SSIE)) r.SSIE })
-
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "lower_sstatus_mstatus_def"]
-noncomputable def lower_sstatus_mstatus (arg0 : (sstatus × mstatus)) : mstatus :=
-  match arg0 with
-  | (sst, mst) =>
-  (update_mstatus ((mst, ((let r := ((let r := ((let r := ((let r := ((let r := ((let r := ((«rec'mstatus» («reg'mstatus» mst))); { r with MMPRV := ((fun (_eta1 : Bool) => sst.SMPRV)) r.MMPRV })); { r with MXS := ((fun (_eta1 : (BitVec 2)) => sst.SXS)) r.MXS })); { r with MFS := ((fun (_eta1 : (BitVec 2)) => sst.SFS)) r.MFS })); { r with MPRV1 := ((fun (_eta1 : (BitVec 2)) => ((privLevel (if sst.SPS then Privilege.Supervisor else Privilege.User))))) r.MPRV1 })); { r with MIE1 := ((fun (_eta1 : Bool) => sst.SPIE)) r.MIE1 })); { r with MIE := ((fun (_eta1 : Bool) => sst.SIE)) r.MIE })))))
-
-/-- Flapjack-only unconditional frame: interrupt lowering changes only SSIP/STIP. -/
-theorem lowerSipFrame (sst : sip) (mst : mip) :
-    { lower_sip_mip (sst,mst) with SSIP := mst.SSIP, STIP := mst.STIP } = mst := by rfl
-
-/-- Flapjack-only unconditional frame: interrupt lowering changes only SSIE/STIE. -/
-theorem lowerSieFrame (sst : sie) (mst : mie) :
-    { lower_sie_mie (sst,mst) with SSIE := mst.SSIE, STIE := mst.STIE } = mst := by rfl
-
-/-- Flapjack-only unconditional reserved-field frame; no separate HOL original. -/
-theorem updateMstatusReserved (orig v : mstatus) :
-    (update_mstatus (orig,v)).«mstatus'rst» = orig.«mstatus'rst» := by
-  simp only [update_mstatus]
-  split <;> rfl
 
 end Flapjack.RiscV.L3

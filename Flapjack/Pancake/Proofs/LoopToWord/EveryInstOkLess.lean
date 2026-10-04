@@ -34,8 +34,7 @@ side conditions, `LLongDiv` x86-64, and every other program is accepted. HOL's s
 membership `c.ISA ∈ {ARMv8; MIPS; RISC_V}` is the three-way disjunction. As in HOL
 (`c : 'a asm_config`, program `: 'b prog`), the configuration and program word
 dimensions are independent. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "loop_inst_ok_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def loopInstOk {width : Nat} [NeZero width] {progWidth : Nat} [NeZero progWidth]
     (c : AsmConfigExact width) : HolLoopProg progWidth → Prop
   | .arith (.div _ _ _) => c.isa = .armv8 ∨ c.isa = .mips ∨ c.isa = .riscv
@@ -77,8 +76,7 @@ theorem accVarsHOL_dom_right {width : Nat} [NeZero width] (p : HolLoopProg width
 
 /-- Full original loop_to_word_comp_every_inst_ok_less
 (`loop_to_wordProofScript.sml:2294-2335`). -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml"
-  "loop_to_word_comp_every_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loopToWordCompEveryInstOkLess {width : Nat} [NeZero width]
     (c : AsmConfigExact width) :
     ∀ (ctxt : Spt Nat) (prog : HolLoopProg width) (l : Nat × Nat),
@@ -174,8 +172,7 @@ theorem loopToWordCompEveryInstOkLess {width : Nat} [NeZero width]
 
 /-- Full original loop_to_word_comp_func_every_inst_ok_less
 (`loop_to_wordProofScript.sml:2337-2353`). -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml"
-  "loop_to_word_comp_func_every_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loopToWordCompFuncEveryInstOkLess {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (n : Nat) (params : List Nat) (body : HolLoopProg width)
     (p : WordLangProgHOL (BitVec width)) :
@@ -202,8 +199,7 @@ theorem loopToWordCompFuncEveryInstOkLess {width : Nat} [NeZero width]
 
 /-- Full original loop_to_word_compile_prog_every_inst_ok_less
 (`loop_to_wordProofScript.sml:2355-2370`). -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml"
-  "loop_to_word_compile_prog_every_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loopToWordCompileProgEveryInstOkLess {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (lprog : List (Nat × List Nat × HolLoopProg width))
     (wprog0 : List (Nat × Nat × WordLangProgHOL (BitVec width))) :
@@ -218,8 +214,7 @@ theorem loopToWordCompileProgEveryInstOkLess {width : Nat} [NeZero width]
 
 /-- Full original loop_to_word_every_inst_ok_less
 (`loop_to_wordProofScript.sml:2372-2380`). -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml"
-  "loop_to_word_every_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loopToWordEveryInstOkLess {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (lprog : List (Nat × List Nat × HolLoopProg width))
     (wprog0 : List (Nat × Nat × WordLangProgHOL (BitVec width))) :

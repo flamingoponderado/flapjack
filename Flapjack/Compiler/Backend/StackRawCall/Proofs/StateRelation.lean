@@ -23,10 +23,7 @@ commented compile/oracle clauses are inactive and impose no obligations.
 The whole-state equality includes regs/fpRegs/store at the imported canonical
 finite-map carrier; code itself is the native Spt, not a finite map. All 22
 state fields, configuration and FFI parameters are retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "state_rel_def"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def stateRel {width : Nat} [NeZero width] {C F : Type} (info : Spt Nat)
     (source target : StackSemStateFiniteExact width C F) : Prop :=
   ∃ code : Spt (HolProg width),

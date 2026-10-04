@@ -78,8 +78,7 @@ private theorem rawShmemEntries_lab {width : Nat} [NeZero width]
 are arbitrary prefixes; queried and encoding-validity starts remain independent.
 The sole original all_enc_ok guard is retained, and no target execution or
 assumed extraction result is supplied. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "get_shmem_info_thm" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getShmemInfo_characterization {width : Nat} [NeZero width]
     (secs : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) (p : Nat) (ffiNames : List HolFfiName)
     (shmemInfo : List ShmemInfoNum) (validPos : Nat) (c : AsmConfigExact width)

@@ -12,7 +12,6 @@ open Flapjack Flapjack.RegAlloc Flapjack.Compiler.Encoders.Asm
 
 /-- Original pairwise forced-colour separation implication. All list and Spt
 carriers are literal, and no word-valued carrier occurs in this statement. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "forced_distinct_col"]
 theorem forcedDistinctCol (spcol : Spt Nat) (ls : List (Nat × Nat)) :
     (∀ m ∈ ls, spDefault spcol m.1 = spDefault spcol m.2 → m.1 = m.2) ∧
       (∀ m ∈ ls, m.1 ≠ m.2) →
@@ -44,16 +43,8 @@ private theorem instructionColour_preserves {width : Nat} [NeZero width]
       cases op <;> cases a <;>
         simp_all [applyColourInst, applyColourInstCore, HolInst.ofWordLangInst,
           HolAddr.ofWordLangAddr, instOkLessExact]
-  | fp op =>
-      cases op <;>
-        simp_all [applyColourInst, applyColourInstCore, HolInst.ofWordLangInst,
-          instOkLessExact, getForced, beq_iff_eq]
-      all_goals by_cases hw : width = 32 <;> simp_all
-
 /-- Original program-colouring instruction-validity implication, retaining both
 source premises: source validity and separation of the source forced pairs. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "word_alloc_full_inst_ok_less_lem" (words_as_type_indexed_bitvec)]
 theorem applyColour_fullInstOkLess {width : Nat} [NeZero width] (f : Nat → Nat) :
     ∀ (prog : WordLangProgHOL (BitVec width)) (c : AsmConfigExact width),
       fullInstOkLessExact c prog = true ∧
@@ -114,8 +105,6 @@ theorem applyColour_fullInstOkLess {width : Nat} [NeZero width] (f : Nat → Nat
 /-- Original full allocator preservation theorem. The source validity is the
 only premise; successful selection and forced-colour separation are derived
 from the existing original allocator correctness theorem and forced-edge facts. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "word_alloc_full_inst_ok_less" (words_as_type_indexed_bitvec)]
 theorem wordAlloc_fullInstOkLess {width : Nat} [NeZero width]
     (fc alg k : Nat) (prog : WordLangProgHOL (BitVec width))
     (col_opt : Option (Spt Nat)) (c : AsmConfigExact width)

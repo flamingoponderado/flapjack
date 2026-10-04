@@ -11,7 +11,6 @@ porting work; this module does not claim those results. -/
 namespace Flapjack.RiscV.L3.Step
 open Flapjack.RiscV.L3
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "MUL"]
 theorem dfnMUL (rd rs1 rs2 : BitVec 5) (s : riscv_state) (hrd : rd ≠ 0) :
     «dfn'MUL» (rd, (rs1, rs2)) s =
       { s with
@@ -23,7 +22,6 @@ theorem dfnMUL (rd rs1 rs2 : BitVec 5) (s : riscv_state) (hrd : rd ≠ 0) :
   by_cases h1 : rs1 = 0 <;> by_cases h2 : rs2 = 0 <;>
     by_cases hz : s.c_gpr s.procID rs2 = 0 <;> simp_all [beq_iff_eq]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "DIV"]
 theorem dfnDIV (rd rs1 rs2 : BitVec 5) (s : riscv_state) (hrd : rd ≠ 0) :
     «dfn'DIV» (rd, (rs1, rs2)) s =
       { s with
@@ -37,7 +35,6 @@ theorem dfnDIV (rd rs1 rs2 : BitVec 5) (s : riscv_state) (hrd : rd ≠ 0) :
   by_cases h1 : rs1 = 0 <;> by_cases h2 : rs2 = 0 <;>
     by_cases hz : s.c_gpr s.procID rs2 = 0 <;> simp_all [beq_iff_eq]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "REM"]
 theorem dfnREM (rd rs1 rs2 : BitVec 5) (s : riscv_state) (hrd : rd ≠ 0) :
     «dfn'REM» (rd, (rs1, rs2)) s =
       { s with
@@ -51,7 +48,6 @@ theorem dfnREM (rd rs1 rs2 : BitVec 5) (s : riscv_state) (hrd : rd ≠ 0) :
   by_cases h1 : rs1 = 0 <;> by_cases h2 : rs2 = 0 <;>
     by_cases hz : s.c_gpr s.procID rs2 = 0 <;> simp_all [beq_iff_eq]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "REMU"]
 theorem dfnREMU (rd rs1 rs2 : BitVec 5) (s : riscv_state) (hrd : rd ≠ 0) :
     «dfn'REMU» (rd, (rs1, rs2)) s =
       { s with
@@ -76,7 +72,6 @@ private theorem ite_holUpdate_gpr (C : Prop) [Decidable C] (s : riscv_state)
           s.c_gpr } := by
   by_cases h : C <;> simp_all
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "DIVU"]
 theorem dfnDIVU (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd ≠ 0) :
     «dfn'DIVU» (rd, (rs1, rs2)) s =
@@ -104,7 +99,6 @@ theorem dfnDIVU (rd rs1 rs2 : BitVec 5) (s : riscv_state)
       ne_eq, «write'GPR», «write'gpr», holWordExtract, ite_holUpdate_gpr] <;>
     by_cases h1 : rs1 = 0 <;> by_cases h2 : rs2 = 0 <;> simp_all
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "DIVU_NOP"]
 theorem dfnDIVUNop (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd = 0) :
     «dfn'DIVU» (rd, (rs1, rs2)) s = s := by
@@ -113,22 +107,18 @@ theorem dfnDIVUNop (rd rs1 rs2 : BitVec 5) (s : riscv_state)
   rcases hcases (s.c_MCSR s.procID).mcpuid.ArchBase with h | h | h | h <;>
     simp_all [in32BitMode, curArch, architecture, MCSR, beq_iff_eq, ne_eq]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "MUL_NOP"]
 theorem dfnMULNop (rd rs1 rs2 : BitVec 5) (s : riscv_state) (hrd : rd = 0) :
     «dfn'MUL» (rd, (rs1, rs2)) s = s := by
   simp [«dfn'MUL», «write'GPR», hrd]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "DIV_NOP"]
 theorem dfnDIVNop (rd rs1 rs2 : BitVec 5) (s : riscv_state) (hrd : rd = 0) :
     «dfn'DIV» (rd, (rs1, rs2)) s = s := by
   simp [«dfn'DIV», «write'GPR», hrd]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "REM_NOP"]
 theorem dfnREMNop (rd rs1 rs2 : BitVec 5) (s : riscv_state) (hrd : rd = 0) :
     «dfn'REM» (rd, (rs1, rs2)) s = s := by
   simp [«dfn'REM», «write'GPR», hrd]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "REMU_NOP"]
 theorem dfnREMUNop (rd rs1 rs2 : BitVec 5) (s : riscv_state) (hrd : rd = 0) :
     «dfn'REMU» (rd, (rs1, rs2)) s = s := by
   simp [«dfn'REMU», «write'GPR», hrd]

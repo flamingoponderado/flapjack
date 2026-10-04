@@ -245,9 +245,7 @@ with HOL's binder order and its three curried premise groups.
 `FLOOKUP s.store`, `k IN FDOM`, `|++` and `get_var` are the canonical carrier's
 lookups, `updateListEq` and `getVar`, and `Temp nw` is `WordStore.temp n`; the
 existentials `ck r0 r1 r2 r5 r6 t0 t1` are kept. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml"
-  "word_gen_gc_move_list_code_thm"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_gen_gc_move_list_code_thm {width : Nat} [NeZero width] {C F : Type} :
     ∀ (l a : BitVec width) (s : StackSemStateFiniteExact width C F) (pa1 pa old : BitVec width)
       (m1 m : BitVec width → WordLocW width) (i1 i : BitVec width) (dm : BitVec width → Bool)

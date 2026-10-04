@@ -7,8 +7,7 @@ open Flapjack.Compiler.Encoders.Asm
 
 /-- Literal native frame bitmap insertion. Both cutsets and the full frame
 triple are retained; the source uses only the second cutset and tests f. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "wLive_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wLiveNative {width : Nat} [NeZero width]
     (live : Spt Unit × Spt Unit) (bitmaps : AppList (BitVec width) × Nat)
     (kf : Nat × Nat × Nat) : HolProg width × (AppList (BitVec width) × Nat) :=

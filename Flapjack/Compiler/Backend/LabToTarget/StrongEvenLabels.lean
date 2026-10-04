@@ -53,8 +53,7 @@ private theorem strengthenSection {width : Nat} [NeZero width] (k : Nat)
 
 /-- Full original weak-to-strong theorem: ending Label and zero annotation
 establish even section ends, with exactly the three original guards. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "even_labels_ends_imp_strong" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evenLabels_ends_imp_strong {width : Nat} [NeZero width] (pos : Nat)
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :

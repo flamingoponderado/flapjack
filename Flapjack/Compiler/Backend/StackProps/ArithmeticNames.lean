@@ -5,8 +5,7 @@ open Flapjack.Compiler.Encoders.Asm
 
 /-- Pre-naming arithmetic admissibility. The x86 fixed registers are logical
 names 4/3, before architecture renaming; asmArithOkExact checks hardware1/2. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "arith_name_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def arithName {width : Nat} [NeZero width] (operation : HolArith width)
     (config : AsmConfigExact width) : Prop :=
   match operation with

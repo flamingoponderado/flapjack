@@ -10,8 +10,7 @@ compiler-output equality and map/allocation premises imply all three output
 properties. Bounds/nonphysicality for filtered force-renaming pairs follow
 from the actual arithmetic generated names; no distinctness or validity premise
 is added. This is the original nonrecursive Move case, with no induction hypothesis. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_props"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransPropsMove {width : Nat} [NeZero width]
     (priority : Nat) (moves : List (Nat × Nat)) (ssa : Spt Nat) (next : Nat)
     (loopTables : List (Spt Nat × Spt Unit × Spt Unit))

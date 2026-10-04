@@ -6,8 +6,7 @@ open Flapjack.Compiler.Encoders.Asm
 
 /-- HOL's logical register-name bound before Stack naming. This retains
 natural subtraction of the entire avoided-register list length. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "reg_name_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def regName {width : Nat} [NeZero width] (register : Nat)
     (config : AsmConfigExact width) : Prop :=
   register < config.regCount - config.avoidRegs.length
@@ -15,8 +14,7 @@ def regName {width : Nat} [NeZero width] (register : Nat)
 /-- HOL pre-naming register/immediate admissibility. Unlike asm reg_imm_ok,
 this definition has no xor-minus-one exception: immediate validity is exactly
 config.validImm, while registers use the reduced logical-register bound. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "reg_imm_name_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def regImmName {width : Nat} [NeZero width] (operator : Sum BinOp Cmp)
     (operand : HolRegImm width) (config : AsmConfigExact width) : Prop :=
   match operand with

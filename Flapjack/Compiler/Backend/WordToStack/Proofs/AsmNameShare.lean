@@ -42,8 +42,7 @@ minimum are retained even though this case needs only offset validity and room.
 This declaration ports the ShareInst piece of `word_to_stack_stack_asm_name_lem`.
 The full naming assembly, `stack_asm_convs`, and `compile_word_to_stack_convs`
 remain open. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_stack_asm_name_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackStackAsmNameShareInst {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (op : HolMemop) (v : Nat)
     (exp : WordLangExpHOL (BitVec width)) (bs : AppList (BitVec width) × Nat)

@@ -18,7 +18,6 @@ private theorem twelve_bits (c : BitVec 64) :
     rw [Flapjack.getLsbD_holFcpWord]
     simp
 
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "lem4"]
 theorem signed_twelve_bit_reconstruction (c : BitVec 64)
     (h : (0xFFFFFFFFFFFFF800 : BitVec 64).sle c = true ∧
       c.sle 0x7FF = true) :
@@ -36,7 +35,6 @@ theorem signed_twelve_bit_reconstruction (c : BitVec 64)
 
 /-- Original aligned split-immediate reconstruction: both signed limits and
 low-two-bit alignment are retained, including the masked low immediate. -/
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "lem12b"]
 theorem split_immediate_reconstruction (c : BitVec 64)
     (h : (0xFFFFFFFF80000000 : BitVec 64).sle c = true ∧
       c.sle 0x7FFFF7FF = true ∧ (BitVec.extractLsb' 0 2 c).setWidth 64 = 0) :

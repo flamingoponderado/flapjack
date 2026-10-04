@@ -23,7 +23,7 @@ set_option maxRecDepth 100000
 open Flapjack.Compiler.Backend.DataToWord in
 private def confOf (k : GcKind) : Config :=
   { tagBits := 1, lenBits := 2, padBits := 3, lenSize := 16, hasDiv := false,
-    hasLongdiv := false, hasFpOps := false, hasFpTern := false, be := false,
+    hasLongdiv := false, be := false,
     callEmptyFfi := false, gcKind := k }
 
 private def prog1 : HolProg 64 :=

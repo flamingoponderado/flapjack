@@ -10,8 +10,7 @@ open Flapjack.Compiler.Encoders.Asm
 safety of the actual fromAList code map imply the source-list convention
 internally; no list-safety premise is substituted for the original map guard.
 Both injected stubs and all four output components are retained. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_compile_no_install" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackCompileNoInstall {width : Nat} [NeZero width]
     (conf : AsmConfigExact width)
     (programs : List (Nat × Nat × WordLangProgHOL (BitVec width)))

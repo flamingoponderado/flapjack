@@ -24,8 +24,6 @@ open Flapjack.Compiler.Encoders.Asm
 /-- Exact HOL `stack_alloc_comp_stack_asm_name`
 (`stack_allocProofScript.sml:6217-6237`). HOL's free `c` is implicit; its
 `'a asm_config` shares the word dimension of the program, as in the source. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml"
-  "stack_alloc_comp_stack_asm_name" (words_as_type_indexed_bitvec)]
 theorem stack_alloc_comp_stack_asm_name {width : Nat} [NeZero width] {c : AsmConfigExact width} :
     ∀ (n m : Nat) (p : HolProg width),
       stackAsmName c p ∧ stackAsmRemove c p →
@@ -278,8 +276,6 @@ open ConventionSupport in
 /-- Exact HOL `stack_alloc_reg_bound` (`stack_allocProofScript.sml:6270-6302`).
 HOL's free `sp prog1 dc` are implicit; `EVERY P (MAP SND l)` is bounded
 quantification over `l.map Prod.snd`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "stack_alloc_reg_bound"
-  (words_as_type_indexed_bitvec)]
 theorem stack_alloc_reg_bound {width : Nat} [NeZero width] {sp : Nat}
     {prog1 : List (Nat × HolProg width)} {dc : DataToWord.Config} :
     10 ≤ sp ∧ (∀ p ∈ prog1.map Prod.snd, regBound p sp) →
@@ -295,8 +291,6 @@ theorem stack_alloc_reg_bound {width : Nat} [NeZero width] {sp : Nat}
 open ConventionSupport in
 /-- Exact HOL `stack_alloc_call_args` (`stack_allocProofScript.sml:6304-6331`).
 HOL's free `prog1 dc` are implicit. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "stack_alloc_call_args"
-  (words_as_type_indexed_bitvec)]
 theorem stack_alloc_call_args {width : Nat} [NeZero width]
     {prog1 : List (Nat × HolProg width)} {dc : DataToWord.Config} :
     (∀ p ∈ prog1.map Prod.snd, callArgs p 1 2 3 4 0) →
@@ -309,15 +303,6 @@ theorem stack_alloc_call_args {width : Nat} [NeZero width]
     exact stub_callArgs dc
   · exact comp_callArgs _ _ q (h q (List.mem_map.2 ⟨(k, q), hq, rfl⟩))
 
-/-- Exact HOL `compile_has_fp_ops` (`stack_allocProofScript.sml:6333-6360`):
-the GC stub, and hence `compile`, ignores the FP-capability flags of the
-configuration. HOL's free `dconf b1 b2 code` are implicit. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "compile_has_fp_ops"
-  (words_as_type_indexed_bitvec)]
-theorem compile_has_fp_ops {width : Nat} [NeZero width] {dconf : DataToWord.Config}
-    {b1 b2 : Bool} {code : List (Nat × HolProg width)} :
-    compile { dconf with hasFpOps := b1, hasFpTern := b2 } code = compile dconf code := rfl
-
 open ConventionSupport in
 /-- Exact HOL `stack_alloc_stack_asm_convs` (`stack_allocProofScript.sml:6239-6268`).
 HOL's free `c prog conf` are implicit; `EVERY (λ(n,p). P p) l` is bounded
@@ -326,8 +311,6 @@ quantification over the pairs of `l`, `conf_ok (:'a)` is `confOk width`,
 `goodDimindex width`, and the `INL Add`/`INL Sub` immediates are
 `Sum.inl .add`/`Sum.inl .sub`. All ten source premises are kept; HOL's
 `'a asm_config` shares the program word dimension. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml"
-  "stack_alloc_stack_asm_convs" (words_as_type_indexed_bitvec)]
 theorem stack_alloc_stack_asm_convs {width : Nat} [NeZero width] {c : AsmConfigExact width}
     {prog : List (Nat × HolProg width)} {conf : DataToWord.Config} :
     (∀ np ∈ prog, stackAsmName c np.2) ∧ (∀ np ∈ prog, stackAsmRemove c np.2) ∧

@@ -10,8 +10,7 @@ open Flapjack.Compiler.Encoders.Asm
 sparse frame map, extra frame entry and the two prepended stubs. Identifier
 keys are natural numbers here, as constrained by the source configuration
 and stub locations; the inner program-list compiler remains polymorphic. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "compile_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def compileNative {width : Nat} [NeZero width] (conf : AsmConfigExact width)
     (perf : Bool) (programs : List (Nat × Nat × WordLangProgHOL (BitVec width))) :
     List (BitVec width) × Config × List Nat × List (Nat × HolProg width) :=

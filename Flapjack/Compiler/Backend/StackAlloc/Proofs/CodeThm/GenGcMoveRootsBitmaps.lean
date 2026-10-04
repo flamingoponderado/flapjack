@@ -314,9 +314,7 @@ its explicit `clock := s.clock` update are kept, and `HD stack` is
 `holHd stack`. `FLOOKUP s.store`, `k IN FDOM`, `|++` and `get_var` are the
 canonical carrier's lookups, `updateListEq` and `getVar`, and `Temp nw` is
 `WordStore.temp n`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml"
-  "word_gen_gc_move_roots_bitmaps_code_thm"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_gen_gc_move_roots_bitmaps_code_thm {width : Nat} [NeZero width] {C F : Type}
     {conf : Config} {init stack : List (WordLocW width)} :
     ∀ (bitmaps : List (BitVec width)) (s : StackSemStateFiniteExact width C F)

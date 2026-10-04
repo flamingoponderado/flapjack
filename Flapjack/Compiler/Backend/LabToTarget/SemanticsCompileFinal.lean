@@ -10,8 +10,7 @@ open Flapjack.Compiler.Encoders.Asm Flapjack.Misc Flapjack.SemanticsPropsHOL
 The target machine, projection and FFI host remain independent. The proof
 inherits the native evaluator's rational-cuts assumption (SOUNDNESS item 8).
 This pass theorem does not establish the still-open whole compiler composition. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "semantics_compile"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem semanticsCompile {width : Nat} [NeZero width] {S Q : Type} {F : Type}
     (mc : MachineConfig width S Q) (ffi : HolFfiState F) (ms : S)
     (code : LabProgHOL width) (asmConf : AsmConfigExact width) (c cNext : Config)

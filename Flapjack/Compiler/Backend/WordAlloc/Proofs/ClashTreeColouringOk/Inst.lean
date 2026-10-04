@@ -131,39 +131,9 @@ theorem instDelta {width : Nat} [NeZero width] (i : WordLangInst (BitVec width))
         | exact ⟨[], [r, a], rfl, fun k => by simp [getWritesInst, sptDomain_ln_iff],
             wfInsertSwap live r a hw⟩
         | exact ⟨[], [], rfl, fun k => by simp [getWritesInst, sptDomain_ln_iff], rfl⟩
-  | fp fo =>
-      cases fo
-      all_goals first
-        | exact ⟨[], [], rfl, fun k => by simp [getWritesInst, sptDomain_ln_iff], rfl⟩
-        | exact ⟨_, [], rfl, fun k => by simp [getWritesInst, sptDomain_sptInsert_iff,
-            sptDomain_ln_iff], rfl⟩
-        | skip
-      case fpMovToReg r1 r2 r3 =>
-        by_cases h64 : width = 64
-        · refine ⟨[r1], [], by simp [getDeltaInst, HolInst.ofWordLangInst, h64], fun k => by
-            simp [getWritesInst, h64, sptDomain_sptInsert_iff, sptDomain_ln_iff], ?_⟩
-          simp [getLiveInst, getLiveInstCore, h64, numsetListInsert, numsetListDelete]
-        · refine ⟨[r1, r2], [], by simp [getDeltaInst, HolInst.ofWordLangInst, h64], fun k => by
-            simp [getWritesInst, h64, sptDomain_sptInsert_iff, sptDomain_ln_iff, or_comm], ?_⟩
-          simp only [getLiveInst, getLiveInstCore, h64, if_false, numsetListInsert,
-            numsetListDelete]
-          exact wfDeleteSwap live _ _ hw
-      case fpMovFromReg r1 r2 r3 =>
-        by_cases h64 : width = 64
-        · refine ⟨[], [r2], by simp [getDeltaInst, HolInst.ofWordLangInst, h64], fun k => by
-            simp [getWritesInst, sptDomain_ln_iff], ?_⟩
-          simp [getLiveInst, getLiveInstCore, h64, numsetListInsert, numsetListDelete]
-        · refine ⟨[], [r2, r3], by simp [getDeltaInst, HolInst.ofWordLangInst, h64], fun k => by
-            simp [getWritesInst, sptDomain_ln_iff], ?_⟩
-          simp only [getLiveInst, getLiveInstCore, h64, if_false, numsetListInsert,
-            numsetListDelete]
-          exact wfInsertSwap live r2 r3 hw
-
 /-- HOL `clash_tree_colouring_ok`, `Inst` case (`word_allocProofScript.sml:2840-2975`):
 the HOL premises at `Inst i` and the five HOL conclusions; no sub-program, no
 IH, no extra premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "clash_tree_colouring_ok"
-  (words_as_type_indexed_bitvec)]
 theorem clashTreeColouringOk_Inst {width : Nat} [NeZero width]
     (i : WordLangInst (BitVec width)) :
     clashTreeGoal (.inst i : WordLangProgHOL (BitVec width)) := by

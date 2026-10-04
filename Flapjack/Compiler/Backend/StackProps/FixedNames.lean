@@ -7,8 +7,7 @@ open Flapjack.Compiler.Encoders.Asm
 /-- HOL fixed-register renaming constraints. Only x86_64 constrains these
 three names; all other ISAs satisfy the predicate without additional premises.
 The exact sparse tree is projected to the existing lookup/default helper. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "fixed_names_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def fixedNames {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width) : Prop :=
   if config.isa = .x86_64 then

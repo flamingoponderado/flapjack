@@ -18,8 +18,7 @@ remain part of the open full native SSA migration.
 namespace Flapjack.Compiler.Backend.WordAlloc
 
 /-- Literal `list_next_var_rename_move` (`word_allocScript.sml:285-290`). -/
-@[hol "cakeml/compiler/backend/word_allocScript.sml" "list_next_var_rename_move_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def listNextVarRenameMove {width : Nat} [NeZero width] (ssa : Spt Nat) (n : Nat)
     (ls : List Nat) : WordLangProgHOL (BitVec width) × Spt Nat × Nat :=
   let curLs := ls.map (optionLookup ssa)
@@ -34,8 +33,7 @@ def forceRename {α : Type} : List (Nat × α) → Spt α → Spt α
 
 /-- Literal `mk_prio` (`word_allocScript.sml:300-305`): prefer the branch that
 is literally `Skip`. -/
-@[hol "cakeml/compiler/backend/word_allocScript.sml" "mk_prio_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def mkPrio {width : Nat} [NeZero width] (el er : WordLangProgHOL (BitVec width)) :
     Option (Unit ⊕ Unit) :=
   match el with
@@ -48,8 +46,7 @@ def mkPrio {width : Nat} [NeZero width] (el er : WordLangProgHOL (BitVec width))
 /-- Literal `ssa_reconcile` (`word_allocScript.sml:318-326`): moves from the
 current to the target renaming for the keys of `ns` present in the current map,
 dropping identity moves. The key set's payload type is arbitrary, as in HOL. -/
-@[hol "cakeml/compiler/backend/word_allocScript.sml" "ssa_reconcile_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def ssaReconcile {width : Nat} [NeZero width] {β : Type} (curSsa tgtSsa : Spt Nat)
     (ns : Spt β) : WordLangProgHOL (BitVec width) :=
   let vars := (sptToAList ns).map Prod.fst
@@ -61,8 +58,7 @@ def ssaReconcile {width : Nat} [NeZero width] {β : Type} (curSsa tgtSsa : Spt N
   if moves = [] then .skip else .move 1 moves
 
 /-- Literal `loop_setup` (`word_allocScript.sml:332-345`). -/
-@[hol "cakeml/compiler/backend/word_allocScript.sml" "loop_setup_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def loopSetup {width : Nat} [NeZero width] (names exitNames : Spt Unit) (ssa : Spt Nat)
     (na : Nat) : WordLangProgHOL (BitVec width) × Spt Nat × Nat :=
   let allVarsLs := (sptToAList (sptUnion names exitNames)).map Prod.fst

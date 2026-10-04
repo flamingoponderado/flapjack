@@ -156,11 +156,7 @@ private theorem compExpPreservesEvalAux {width : Nat} [NeZero width] {C F : Type
 
     The target state `t` is typed at the source FFI host `F`, as `state_rel`
     requires, with an arbitrary compiler-configuration type `C`. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "comp_exp_preserves_eval"
-  (fmap_as_finite_support_relation :=
-    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.fpRegs,
-      WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compExpPreservesEval {width : Nat} [NeZero width] {C F : Type} :
     ∀ (s : LoopSemStateFiniteExact width F) (e : HolLoopExp width) (v : WordLocW width)
       (t : WordSemStateFiniteExact width C F) (ctxt : Spt Nat),

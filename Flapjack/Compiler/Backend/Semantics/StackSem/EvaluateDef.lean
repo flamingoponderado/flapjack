@@ -477,8 +477,7 @@ open Classical in
 `StackSemStateFiniteExact` carriers (`regs`, `fpRegs` and `store` are the
 canonical finite-support maps). Each conjunct is the corresponding
 `evaluate_*` clause theorem above. -/
-@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "evaluate_def" 773
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_def {width : Nat} [NeZero width] {C F : Type} :
     (∀ (s : StackSemStateFiniteExact width C F),
         evaluate ((.skip : HolProg width), s) =

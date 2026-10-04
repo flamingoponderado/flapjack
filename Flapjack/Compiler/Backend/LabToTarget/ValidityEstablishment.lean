@@ -11,8 +11,7 @@ open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Backend.LabProps.Label
 open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString
 
 /-- Full original establishment theorem, retaining all six source guards. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "line_ok_pre_light_imp_line_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem lineOk_pre_light_establishes {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (pos : Nat) (line : Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -99,8 +98,7 @@ private theorem nop_annotationLength {width : Nat} [NeZero width]
 
 /-- Full original code-level establishment with all six source invariants.
 The strong evenness guard includes empty-section end parity. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "all_enc_ok_pre_light_imp_all_enc_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem allEncOk_pre_light_establishes {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (pos : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))

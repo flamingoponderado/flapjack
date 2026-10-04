@@ -16,10 +16,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 
 /-- Full original successful-load implication. The aligned target domain and
 old word are derived from the full separated relation, retaining endianness. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "mem_load_32_IMP"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem memLoad32Imp {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer : Nat)
     (source target : StackSemStateFiniteExact width C F) (address : BitVec width)
@@ -52,10 +49,7 @@ old word are derived from the full separated relation, retaining endianness. -/
 -- The same argument is valid for any common alignment function; the executable
 -- Lean instance retains riscvByteAlignHOL and the full original premises at
 -- every positive width. No equality with HOL's unspecified LOG2 0 is assumed.
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "mem_load_byte_aux_IMP"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem memLoadByteAuxImp {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer : Nat)
     (source target : StackSemStateFiniteExact width C F) (address : BitVec width)

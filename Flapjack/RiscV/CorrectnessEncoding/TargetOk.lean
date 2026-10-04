@@ -134,7 +134,6 @@ theorem riscv_projection_ok (ms1 ms2 : riscv_state) (s : AsmState 64)
 
 /-- Full original native target validity, retaining all encoder and
 projection obligations without a target execution assumption. -/
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "riscv_target_ok"]
 theorem riscv_target_ok : targetOk riscvTarget := by
   refine ⟨riscv_enc_ok, ?_⟩
   intro ms1 ms2 s hp

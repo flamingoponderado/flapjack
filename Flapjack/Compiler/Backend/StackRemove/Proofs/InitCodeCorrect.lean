@@ -1,3 +1,4 @@
+import Mathlib.Tactic.Ring
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodeThm
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitMake
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StateRelation
@@ -235,8 +236,7 @@ heap-end equation), the full `state_rel` to the actual `init_reduce` state,
 FFI and domain preservation, the original `init_prop` at the limits read from
 the input pointers, and agreement of the heap region with the input memory.
 No target run, post-state relation or heap representation is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "init_code_thm"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem initCodeThm {width : Nat} [NeZero width] {C F : Type}
     (generateGc : Bool) (maxHeap pointer : Nat) (bitmaps : List (BitVec width)) (dataSpace : Nat)
     (s : StackSemStateFiniteExact width C F) (jump : Bool) (bounds : BitVec width × BitVec width)

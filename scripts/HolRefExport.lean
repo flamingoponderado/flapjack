@@ -34,12 +34,6 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstLoad32
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstStore
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstStore8
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstStore32
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPCompare
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPUnary
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPArith
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPInt
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPMovToReg
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPMovFromReg
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstCommon
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInst
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticMustTerminate
@@ -182,7 +176,6 @@ import Flapjack
 import Flapjack.Compiler.Backend.WordAlloc.Instructions
 import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConsts
 import Flapjack.Compiler.Backend.Semantics.StackSem.StoreConstsGuard
-import Flapjack.Compiler.Backend.Semantics.StackSem.FpRegisterInstructions
 import Flapjack.Compiler.Encoders.Asm
 import Flapjack.Pancake.CrepInline.Pass
 import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEval.Load

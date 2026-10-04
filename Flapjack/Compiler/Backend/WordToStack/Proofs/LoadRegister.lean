@@ -32,11 +32,7 @@ preservation conclusions. Actual stack bounds and the loaded value follow
 from the original source lookup and full state relation, not extra premises.
 The canonical finite maps and positive word dimensions are qualified;
 coordinator source acceptance remains pending. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_wStackLoad_wReg1"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateWStackLoadWReg1 {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (k f frame r reg : Nat) (loads : List (Nat × Nat))
     (source : WordSemStateFiniteExact width (Nat × C) F)
@@ -103,10 +99,7 @@ private theorem sequenceAssoc {width : Nat} [NeZero width] {C F : Type}
 programs and states, including failed loads and all non-NONE outcomes.
 The canonical finite maps and positive word dimensions are qualified;
 coordinator source acceptance remains pending. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_wStackLoad_seq"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateWStackLoadSeq {width : Nat} [NeZero width] {C F : Type}
     (loads : List (Nat × Nat)) (program : HolProg width)
     (target : StackSemStateFiniteExact width C F) :

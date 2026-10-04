@@ -7,8 +7,7 @@ open Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Encoders.Asm
 /-- HOL stack instruction naming admissibility. If ignores comparison operands;
 Call always checks an indirect target, but checks its handler only when a return
 continuation is present. Call metadata and the remaining constructors are ignored. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "stack_asm_name_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def stackAsmName {width : Nat} [NeZero width] (config : AsmConfigExact width) :
     HolProg width → Prop
   | .inst instruction => instName config instruction

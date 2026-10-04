@@ -9,8 +9,7 @@ open Flapjack.Compiler.Backend.LabProps
 /-- Full original EVERY section-end preservation. The native nonempty reverse
 head implements the guarded LAST predicate, so the proof never fixes LAST on
 an empty list. Labels are retained by the actual skip filter. -/
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "sec_ends_with_label_filter_skip"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem secEndsWithLabelFilterSkip {width : Nat} [NeZero width]
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString)

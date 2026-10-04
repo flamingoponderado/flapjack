@@ -18,8 +18,7 @@ private theorem preAlloc_seq {width : Nat} [NeZero width]
 
 /-- Original tail Call case retains the arbitrary exception handler, which
 the original convention predicate ignores under NONE return. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_preAllocTailCall {width : Nat} [NeZero width]
     (dest : Option Nat) (args : List Nat)
     (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
@@ -31,8 +30,7 @@ theorem ssaCcTrans_preAllocTailCall {width : Nat} [NeZero width]
 /-- Original returning Call case, including both exception-handler options.
 Structurally generalized source subprogram induction hypotheses are added; actual handler
 map bounds and stack classes are derived from the original producers. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_preAllocReturningCall {width : Nat} [NeZero width]
     (ret : List Nat) (cutsets : WordLangCutsetsHOL)
     (retHandler : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)

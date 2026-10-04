@@ -48,10 +48,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 
 /-- Full original single_stack_free simulation with exactly its original
 relation, output-state, stack-safety, nonzero and chunk-bound conjuncts. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "evaluate_single_stack_free"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateSingleStackFree {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer count : Nat)
     (source target postSource : StackSemStateFiniteExact width C F)
@@ -148,10 +145,7 @@ theorem runFree {width : Nat} [NeZero width] {C F : Type}
 /-- Full original arbitrary-count recursive stack_free simulation. Source
 non-error establishes stack safety; all generated chunks are executed and the
 complete post-state relation is derived. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "evaluate_stack_free"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateStackFree {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer count : Nat)
     (source target postSource : StackSemStateFiniteExact width C F)

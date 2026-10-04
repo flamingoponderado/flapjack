@@ -19,9 +19,7 @@ end SemanticLoopWitnesses
 /-- Full native SSA Loop case assembled from setup and inner clock induction.
 Only the original smaller-body induction hypothesis supplements the six original
 premises. All setup/body evaluations and post-state relations are derived. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_correct"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransCorrectLoop {width : Nat} [NeZero width] {C F : Type}
     (names exits : Spt Unit) (body : WordLangProgHOL (BitVec width))
     (source target : WordSemStateFiniteExact width C F) (ssa : Spt Nat) (next : Nat)

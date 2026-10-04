@@ -70,8 +70,8 @@ def removeEqs : CopyState → List Nat → CopyState
 binds `r3'`/`r4'` without using them, so they are omitted. HOL's final `_ => ARB` clause is
 unreachable (every `Arith`, `Mem`-with-`Addr` and `FP` constructor has a clause), so the Lean
 match is exhaustive without it. -/
-@[hol "cakeml/compiler/backend/word_copyScript.sml" "copy_prop_inst_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: integer-only specialization of the referenced HOL declaration.
+
 def copyPropInst {width : Nat} [NeZero width] :
     WordLangInst (BitVec width) → CopyState → WordLangProgHOL (BitVec width) × CopyState
   | .skip, cs => (.skip, cs)
@@ -145,16 +145,6 @@ def copyPropInst {width : Nat} [NeZero width] :
     let a' := lookupEq cs a
     let r' := lookupEq cs r
     (.inst (.mem .store32 r' (.addr a' w)), cs)
-  | .fp (.fpLess r f1 f2), cs => (.inst (.fp (.fpLess r f1 f2)), removeEq cs r)
-  | .fp (.fpLessEqual r f1 f2), cs => (.inst (.fp (.fpLessEqual r f1 f2)), removeEq cs r)
-  | .fp (.fpEqual r f1 f2), cs => (.inst (.fp (.fpEqual r f1 f2)), removeEq cs r)
-  | .fp (.fpMovToReg r1 r2 d), cs => (.inst (.fp (.fpMovToReg r1 r2 d)), removeEqs cs [r1, r2])
-  | .fp (.fpMovFromReg d r1 r2), cs =>
-    let r1' := lookupEq cs r1
-    let r2' := lookupEq cs r2
-    let (r1'', r2'') := if r1' = r2' then (r1, r2) else (r1', r2')
-    (.inst (.fp (.fpMovFromReg d r1'' r2'')), cs)
-  | .fp x, cs => (.inst (.fp x), cs)
 
 /-- Exact HOL `set_eq_def` (`word_copyScript.sml:204-225`). -/
 @[hol "cakeml/compiler/backend/word_copyScript.sml" "set_eq_def"]
@@ -233,8 +223,7 @@ def copyPropShare {width : Nat} [NeZero width] (exp : WordLangExpHOL (BitVec wid
 /-- Exact HOL `copy_prop_prog_def` (`word_copyScript.sml:292-384`). HOL's final catch-all
 `prog => (prog, empty_eq)` covers exactly `Assign` and `Store`, the constructors without an
 earlier clause. -/
-@[hol "cakeml/compiler/backend/word_copyScript.sml" "copy_prop_prog_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def copyPropProg {width : Nat} [NeZero width] :
     WordLangProgHOL (BitVec width) → CopyState → WordLangProgHOL (BitVec width) × CopyState
   | .skip, cs => (.skip, cs)
@@ -311,8 +300,7 @@ def copyPropProg {width : Nat} [NeZero width] :
   | .store e n, _ => (.store e n, emptyEq)
 
 /-- Exact HOL `copy_prop_def` (`word_copyScript.sml:386-388`). -/
-@[hol "cakeml/compiler/backend/word_copyScript.sml" "copy_prop_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def copyProp {width : Nat} [NeZero width] (e : WordLangProgHOL (BitVec width)) :
     WordLangProgHOL (BitVec width) :=
   (copyPropProg e emptyEq).1

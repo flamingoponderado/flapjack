@@ -6,8 +6,7 @@ open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString
 
 /-- Full original unconditional offset establishment: the actual result equality
 is the sole premise and the returned flag is arbitrary, including false. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "enc_lines_again_simp_offset_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem encLinesAgainSimp_offsetOk {width : Nat} [NeZero width]
     (labs : Spt (Spt Nat)) (ffis : List HolFfiName) (pos : Nat)
     (enc : HolAsm width → List (BitVec 8)) (lines res : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -34,8 +33,7 @@ theorem encLinesAgainSimp_offsetOk {width : Nat} [NeZero width]
 
 /-- Full original section establishment uses the actual returned position from
 accumulator/simple encoder agreement, with no successful flag assumption. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "enc_secs_again_offset_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem encSecsAgain_offsetOk {width : Nat} [NeZero width]
     (pos : Nat) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (enc : HolAsm width → List (BitVec 8))

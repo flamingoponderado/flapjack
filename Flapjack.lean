@@ -1,3 +1,4 @@
+import Flapjack.Test.RiscVMiSubset
 import Flapjack.RiscV.SourceRuntimeBackendOutput
 import Flapjack.RiscV.RuntimeImageBackendOutput
 import Flapjack.RiscV.NativeBackendOutput
@@ -73,13 +74,10 @@ import Flapjack.Pancake.PanToTarget.MainFirstSemantics
 import Flapjack.Pancake.PanToTarget.ProductionSourceEntry
 
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelFp
-import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.FpConversions
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Arithmetic
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Binary
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Shift
-import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.FpArith
-import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.FpTransfer
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Division
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.LongArithmetic
 import Flapjack.Pancake.Proofs.PanToWord.InitialComposition
@@ -611,7 +609,6 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Atoms
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Binary
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Arithmetic
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.Memory
-import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation.FloatingPoint
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InstructionSimulation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Atoms
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Locations
@@ -766,12 +763,6 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstLoad32
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstStore
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstStore8
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstStore32
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPCompare
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPUnary
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPArith
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPInt
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPMovToReg
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstFPMovFromReg
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInstCommon
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticInst
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASemanticMustTerminate
@@ -813,10 +804,6 @@ import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateAddClock
 import Flapjack.Compiler.Backend.Semantics.TargetSem.MachineSem
 import Flapjack.Compiler.Backend.StackProps.StackLengths
 import Flapjack.Compiler.Backend.StackProps.SharedMemoryClock
-import Flapjack.FpSemHOL.RealSqrtAgreement
-import Flapjack.Compiler.Backend.Semantics.WordSem.Inst.RealSqrtAgreement
-import Flapjack.Compiler.Backend.Semantics.WordSem.Inst.RealConvertAgreement
-import Flapjack.Compiler.Backend.Semantics.StackSem.FpRegisterInstructions.RealAgreement
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Encoding
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Padding
 import Flapjack.Compiler.Encoders.AsmProps.ArithmeticPreservation
@@ -916,7 +903,6 @@ import Flapjack.Compiler.Backend.WordCse.ProductionConst
 import Flapjack.Compiler.Backend.WordCse.ProductionRegisterData
 import Flapjack.Compiler.Backend.WordCse.CanonicalMove
 import Flapjack.Compiler.Backend.WordCse.CanonicalArith
-import Flapjack.Compiler.Backend.WordCse.CanonicalFp
 import Flapjack.Compiler.Backend.WordCse.ProductionStoreFacts
 import Flapjack.Compiler.Backend.WordCse.ProductionStoreErase
 import Flapjack.Compiler.Backend.WordCse.ProductionGet
@@ -999,8 +985,6 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.LimitVar.Properties
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMovePreserve
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAOptionLookupSubset
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenamePropertyWrappers
-import Flapjack.Misc.BinaryIeeeArithExec
-import Flapjack.Misc.BinaryIeeeSqrtExec
 import Flapjack.Pancake.LoopToWord.Proofs.ProgramNames
 import Flapjack.Pancake.LoopToWord.Proofs.NoInstallCode
 import Flapjack.Pancake.LoopToWord.Proofs.LabPres
@@ -1047,9 +1031,7 @@ import Flapjack.Compiler.Backend.WordAlloc.SSASetup
 import Flapjack.Compiler.Encoders.AsmProps.Assertions
 import Flapjack.Compiler.Backend.StackProps.LabelSafety
 import Flapjack.Compiler.Backend.Parmove.FstepMapInj
-import Flapjack.Compiler.Encoders.AsmProps.FpPreservation
 import Flapjack.Compiler.Encoders.AsmProps.AsmConsts
-import Flapjack.Compiler.Encoders.AsmSem.FpUpdates
 import Flapjack.Pancake.WordConvs.ProgramMonotonicity
 import Flapjack.Pancake.WordConvs.StackOccurrences
 import Flapjack.Compiler.Backend.Parmove.StepMapInj
@@ -1383,7 +1365,6 @@ import Flapjack.Compiler.Backend.Parmove.StepsSem
 import Flapjack.Pancake.WordLang.MaxVarExp
 import Flapjack.Compiler.Backend.Parmove.StepSem
 import Flapjack.Compiler.Backend.Parmove.StepSem.EmitHead
-import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstFp
 import Flapjack.Compiler.Backend.WordToStack.NativeLive
 import Flapjack.Compiler.Backend.WordToStack.NativeStubs
 import Flapjack.Compiler.Backend.WordToStack.NativeHandlers
@@ -1391,7 +1372,6 @@ import Flapjack.Compiler.Backend.WordToStack.NativePerf
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstMemory
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstArith
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EvaluateApplyColour.InstAssign
-import Flapjack.Compiler.Backend.LabSem.FpUpdates
 import Flapjack.Compiler.Backend.LabSem.Arithmetic
 import Flapjack.Compiler.Backend.WordToStack.NativeReturn
 import Flapjack.Compiler.Backend.WordToStack.NativeSharedMemory
@@ -1505,10 +1485,6 @@ import Flapjack.Compiler.Backend.StackProps.ProgramNames
 import Flapjack.Compiler.Backend.StackProps.AllocArg
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationFfi
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationClock
-import Flapjack.Misc.BinaryIeeeSqrt.RealAgreement
-import Flapjack.Misc.BinaryIeeeSqrt.RoundAgreement
-import Flapjack.Misc.BinaryIeeeSqrt.RealCarrier
-import Flapjack.Misc.BinaryIeeeRest
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpLeaves
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Seq
@@ -1563,7 +1539,6 @@ import Flapjack.Compiler.Backend.WordRemove.Proofs.Correct
 import Flapjack.Compiler.Backend.DataToWord.Config
 import Flapjack.Compiler.Backend.WordGcFunctions
 import Flapjack.Compiler.Backend.WordGcFunctions.Roots
-import Flapjack.Compiler.Backend.WordGcFunctions.HasFpOps
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.InitStoreOk
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordLemmas
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunOk
@@ -1615,7 +1590,6 @@ import Flapjack.Misc.BytesInMemory
 import Flapjack.Compiler.Backend.Semantics.TargetSem.PostAsm
 import Flapjack.Compiler.Backend.Semantics.TargetSem.FfiReads
 import Flapjack.Compiler.Backend.Semantics.TargetSem.EncodedBytes
-import Flapjack.Compiler.Backend.StackProps.FloatNames
 import Flapjack.Compiler.Backend.StackProps.AddressNames
 import Flapjack.Compiler.Backend.StackProps.InstructionNames
 import Flapjack.Compiler.Backend.StackProps.ArithmeticNames
@@ -1815,14 +1789,12 @@ import Flapjack.Test.StackSemPatternCopyParity
 import Flapjack.Test.StackSemIntegerInstParity
 import Flapjack.Test.StackSemEvaluateAllocCaseParity
 import Flapjack.Test.StackSemStoreConstsGuardParity
-import Flapjack.Test.StackSemFpRegisterInstParity
 import Flapjack.Test.StackSemJumpLowerParity
 import Flapjack.Test.PanGlobalsFpermCodeParity
 import Flapjack.Test.StackSemAllocationParity
 import Flapjack.Compiler.Backend.Semantics.StackSem.Bitmap
 import Flapjack.Compiler.Backend.Semantics.StackSem.WordBitmap
 import Flapjack.Compiler.Backend.Semantics.StackSem.StackCodec
-import Flapjack.Compiler.Backend.Semantics.StackSem.FpInstructions
 import Flapjack.Compiler.Backend.Semantics.StackSem.Inst
 import Flapjack.Compiler.Backend.Semantics.StackSem.InstCase
 import Flapjack.Compiler.Backend.Semantics.StackSem.Evaluate
@@ -1835,26 +1807,6 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClockIoEvent
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateDecClock
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.LocalsRel
 import Flapjack.Misc.ShiftSeq
-import Flapjack.Misc.BinaryIeee
-import Flapjack.Misc.MachineIeee
-import Flapjack.Misc.MachineIeee.Arith
-import Flapjack.Misc.MachineIeee.ArithReal
-import Flapjack.Misc.BinaryIeeeArith.RealCarrier
-import Flapjack.Misc.MachineIeee.Convert
-import Flapjack.Misc.MachineIeee.ConvertInt
-import Flapjack.Misc.MachineIeee.ConvertReal
-import Flapjack.Misc.MachineIeee.SqrtReal
-import Flapjack.Misc.BinaryIeeeRound
-import Flapjack.Misc.BinaryIeeeArith
-import Flapjack.Misc.BinaryIeeeRoundFp64
-import Flapjack.Misc.BinaryIeeeRoundFp32
-import Flapjack.Misc.BinaryIeeeDirectedFp32
-import Flapjack.Misc.BinaryIeeeDirectedFp64
-import Flapjack.Misc.BinaryIeeeArithFp64
-import Flapjack.Misc.BinaryIeeeConvert
-import Flapjack.Misc.BinaryIeeeSqrt
-import Flapjack.Misc.BinaryIeeeSqrtFp64
-import Flapjack.FpSemHOL
 import Flapjack.Basis.Pure.MlList
 import Flapjack.Basis.Pure.MlList.SortPerm
 import Flapjack.Pancake.PanLang
@@ -1968,7 +1920,6 @@ import Flapjack.Pancake.Semantics.PanSem.MemLoad32Alt
 import Flapjack.Pancake.Semantics.PanSem.MemStore32Alt
 import Flapjack.Pancake.Semantics.PanSem.ByteRoundtrip
 import Flapjack.Misc.GoodDimindex
-import Flapjack.Misc.Fp64NanRefinement
 import Flapjack.Pancake.Semantics.PanSem.MemLoadHOL
 import Flapjack.Pancake.Semantics.PanProps.MemByteArray
 import Flapjack.Pancake.Semantics.PanSem.ShMemExact

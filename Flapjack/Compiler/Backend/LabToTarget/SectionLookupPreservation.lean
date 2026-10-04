@@ -7,8 +7,7 @@ open Flapjack.Basis.Pure.MlString Flapjack.Compiler.Backend.LabProps.LabelSets
 
 /-- The source nonmembership guard preserves the entire accumulator lookup,
 including absence and duplicate accumulator entries, at arbitrary positions. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "ALOOKUP_section_labels_ignore" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem sectionLabels_lookup_ignore {width : Nat} [NeZero width] (pos : Nat)
     (lines : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))

@@ -17,8 +17,7 @@ namespace Flapjack.WordSemStateFiniteExact
 /-- Complete original pop_env_const contract (wordProps475-497). The sole
 successful-pop premise covers arbitrary stacks and both handler branches;
 all nineteen original preserved fields are stated in original order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "pop_env_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem popEnvConst {width : Nat} [NeZero width] {C F : Type}
     (state next : WordSemStateFiniteExact width C F)
     (h : popEnv state = some next) :

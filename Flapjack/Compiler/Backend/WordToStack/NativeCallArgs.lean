@@ -11,8 +11,7 @@ open WordToStackRegFormat (wReg2)
 
 /-- Literal slot movement in the source recursive order; the body is retained
 at zero and the higher slots are copied before the current slot. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "stack_move_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def stackMoveNative {width : Nat} [NeZero width]
     (n start offset i : Nat) (p : HolProg width) : HolProg width :=
   match n with
@@ -22,8 +21,7 @@ def stackMoveNative {width : Nat} [NeZero width]
       (.seq (.stackLoad i (start + offset)) (.stackStore i start))
 
 /-- Literal argument allocation and frame-slot movement on the native carrier. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "StackArgs_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def stackArgsNative {width : Nat} [NeZero width] {α β : Type}
     (dest : Sum α β) (argCount : Nat) (kf : Nat × Nat × Nat) : HolProg width :=
   let n := WordToStack.stackArgCount dest argCount kf.1
@@ -32,8 +30,7 @@ def stackArgsNative {width : Nat} [NeZero width] {α β : Type}
 /-- Literal direct/indirect destination dispatch. HOL explicitly chooses the
 raise stub for empty indirect arguments. LAST is accessed only after the source
 LENGTH=0 guard proves nonemptiness, with no external success or bounds premise. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "call_dest_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def callDestNative {width : Nat} [NeZero width]
     (pos : Option Nat) (args : List Nat) (kf : Nat × Nat × Nat) :
     HolProg width × Sum Nat Nat :=

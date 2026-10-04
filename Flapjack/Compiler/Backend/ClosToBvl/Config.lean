@@ -7,7 +7,7 @@ namespace Flapjack.Compiler.Backend.ClosToBvl
 /-- Complete source configuration, including retained call-state syntax.
 HOL num_set is Spt Unit and the alist is a literal List of key/value pairs;
 the actual closures use ClosLang.Exp, not an arbitrary expression carrier. -/
-@[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "config"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 structure Config where
   nextLoc : Nat
   start : Nat
@@ -18,7 +18,7 @@ structure Config where
   maxApp : Nat
 
 /-- Original full initializer, including the nonempty known-configuration option. -/
-@[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "default_config_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def defaultConfig : Config :=
   ⟨0, 1, true, some (ClosKnown.defaultConfig 10), true, (.ln, []), 10⟩
 

@@ -8,8 +8,7 @@ open Flapjack.StackSemEvaluate
 
 /-- Original store-list neutrality, for arbitrary words, registers and aliases.
 Only the standard positive-width word carrier differs from HOL. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml"
-  "clock_neutral_store_list_code" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clockNeutralStoreListCode {width : Nat} [NeZero width]
     (values : List (Sum (BitVec width) Nat)) (address temporary : Nat) :
     clockNeutralHOL (storeListCode address temporary values) := by
@@ -41,9 +40,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
 the actual source evaluation; replacement-clock execution is proved. The
 native evaluator inherits reals_as_rational_cuts (SOUNDNESS item 8), with no
 new floating-point correspondence claim. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml"
-  "evaluate_init_code_clock" (fmap_as_finite_support := [regs, fpRegs, store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateInitCodeClock {width : Nat} [NeZero width] {C F : Type}
     (generateGc : Bool) (maximumHeap pointer : Nat)
     (source post : StackSemStateFiniteExact width C F)

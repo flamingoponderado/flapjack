@@ -60,7 +60,6 @@ def wordLangInstFromHOL {width : Nat} :
   | .mem operator destination (.addr address offset) =>
       if offset = 0 then some (.mem operator destination address)
       else some (.memOffset operator destination address offset)
-  | .fp _ => none
 
 /-- Flapjack-only carrier adapter (there is no HOL declaration converting the
 exact Spt carrier to this production list pair). It delegates each component

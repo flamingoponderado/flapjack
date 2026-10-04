@@ -7,8 +7,7 @@ open Flapjack.Compiler.Backend.LabToTarget.FilterSkip
 
 /-- The original unused inst binder is retained on an independent arbitrary carrier,
 without constraining its type or specializing it to an instruction datatype. -/
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "asm_fetch_not_skip_adjust_pc"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem asmFetchNotSkipAdjustPc {width : Nat} [NeZero width] {I : Type u} (pc : Nat)
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString)
@@ -25,8 +24,7 @@ theorem asmFetchNotSkipAdjustPc {width : Nat} [NeZero width] {I : Type u} (pc : 
 
 /-- Full source filter simulation relation, retaining the actual compiler/oracle
 transformations and original nonfailed guard. -/
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "state_rel_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def stateRel {width : Nat} [NeZero width] {C : Type} {F : Type}
     (s t : Flapjack.Compiler.Backend.LabSem.State width C F) : Prop :=
   (∃ sourceCompile,
@@ -38,8 +36,7 @@ def stateRel {width : Nat} [NeZero width] {C : Type} {F : Type}
     t.compile = fun config program => sourceCompile config (filterSkip program)) ∧
   t.failed = false
 
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "asm_fetch_aux_eq2"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem asmFetchAuxEq2 {width : Nat} [NeZero width] (pc : Nat)
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString)
@@ -55,8 +52,7 @@ theorem asmFetchAuxEq2 {width : Nat} [NeZero width] (pc : Nat)
 
 /-- Entire result-pair equality from the original skipped-run clock accounting.
 Evaluation inherits the real rendering assumption of SOUNDNESS item 8. -/
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "all_skips_evaluate_rw"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem allSkipsEvaluateRw {width : Nat} [NeZero width] {C : Type} {F : Type}
     (s : Flapjack.Compiler.Backend.LabSem.State width C F) (count clock : Nat)
     (t : Flapjack.Compiler.Backend.LabSem.State width C F) :

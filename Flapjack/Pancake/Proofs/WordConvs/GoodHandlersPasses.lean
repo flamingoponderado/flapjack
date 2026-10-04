@@ -21,8 +21,7 @@ theorem goodHandlers_smartSeq_eq {width : Nat} [NeZero width] (n : Nat)
   cases p <;> simp [smartSeqHOL, goodHandlersHOL]
 
 /-- HOL `word_good_handlers_SmartSeq` (`wordConvsProofScript.sml:657-663`, `[local,simp]`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "word_good_handlers_SmartSeq"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem goodHandlers_smartSeq {width : Nat} [NeZero width] (n : Nat)
     (p q : WordLangProgHOL (BitVec width)) :
     goodHandlersHOL n (smartSeqHOL p q) = true ↔
@@ -67,8 +66,7 @@ theorem goodHandlers_seqAssoc_eq {width : Nat} [NeZero width] (n : Nat) :
       goodHandlers_smartSeq_eq n p1 _
 
 /-- HOL `word_good_handlers_Seq_assoc` (`wordConvsProofScript.sml:694-702`, `[local]`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "word_good_handlers_Seq_assoc"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem goodHandlers_seqAssoc {width : Nat} [NeZero width] (n : Nat) :
     ∀ (p1 p2 : WordLangProgHOL (BitVec width)),
       goodHandlersHOL n (seqAssoc p1 p2) = true ↔
@@ -77,8 +75,7 @@ theorem goodHandlers_seqAssoc {width : Nat} [NeZero width] (n : Nat) :
 
 /-- HOL `word_good_handlers_drop_consts` (`wordConvsProofScript.sml:665-671`, `[local,simp]`);
     HOL's free `n l` are explicit. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "word_good_handlers_drop_consts"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem goodHandlers_dropConsts {width : Nat} [NeZero width] (n : Nat) (l : Spt (BitVec width)) :
     ∀ args : List Nat, goodHandlersHOL n (dropConsts l args) = true
   | [] => by simp [dropConsts, goodHandlersHOL]
@@ -89,8 +86,7 @@ theorem goodHandlers_dropConsts {width : Nat} [NeZero width] (n : Nat) (l : Spt 
       · rw [goodHandlers_smartSeq_eq, goodHandlers_dropConsts n l xs]; simp [goodHandlersHOL]
 
 /-- HOL `word_good_handlers_const_fp_loop` (`wordConvsProofScript.sml:673-692`, `[local]`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "word_good_handlers_const_fp_loop"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem goodHandlers_constFpLoop {width : Nat} [NeZero width] (n : Nat) :
     ∀ (p : WordLangProgHOL (BitVec width)) (l : Spt (BitVec width)),
       goodHandlersHOL n p = true → goodHandlersHOL n (constFpLoop p l).1 = true := by
@@ -101,8 +97,7 @@ theorem goodHandlers_constFpLoop {width : Nat} [NeZero width] (n : Nat) :
 /-- HOL `word_good_handlers_try_if_hoist2` (`wordConvsProofScript.sml:704-722`, `[local]`). HOL's
     free `n p3` lead; HOL's universally bound `s` occurs nowhere in the statement (it is vacuous
     and has an unconstrained type), so it is omitted. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "word_good_handlers_try_if_hoist2"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem goodHandlers_hoist2 {width : Nat} [NeZero width] (n : Nat)
     (p3 : WordLangProgHOL (BitVec width)) :
     ∀ (N : Nat) (p1 interm dummy p2 : WordLangProgHOL (BitVec width)),
@@ -134,8 +129,7 @@ theorem goodHandlers_hoist2 {width : Nat} [NeZero width] (n : Nat)
     exact ih he ⟨h1.1, h2, by simp only [goodHandlersHOL, Bool.and_eq_true]; exact ⟨h1.2, hi⟩⟩
 
 /-- HOL `word_good_handlers_simp_duplicate_if` (`wordConvsProofScript.sml:724-737`, `[local]`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "word_good_handlers_simp_duplicate_if" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem goodHandlers_simpDuplicateIf {width : Nat} [NeZero width] (n : Nat) :
     ∀ p : WordLangProgHOL (BitVec width), goodHandlersHOL n p = true →
       goodHandlersHOL n (simpDuplicateIf p) = true := by
@@ -167,16 +161,14 @@ theorem goodHandlers_pushOutIfAux {width : Nat} [NeZero width] (n : Nat)
     simp_all [goodHandlersHOL, Bool.and_comm]
 
 /-- HOL `word_good_handlers_simp_push_out_if` (`wordConvsProofScript.sml:739-750`, `[local]`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "word_good_handlers_simp_push_out_if" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem goodHandlers_pushOutIf {width : Nat} [NeZero width] (n : Nat) :
     ∀ p : WordLangProgHOL (BitVec width), goodHandlersHOL n p = true →
       goodHandlersHOL n (pushOutIf p) = true :=
   fun p h => (goodHandlers_pushOutIfAux n p).trans h
 
 /-- HOL `word_good_handlers_word_simp` (`wordConvsProofScript.sml:752-760`, `[local]`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "word_good_handlers_word_simp"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem goodHandlers_compileExp {width : Nat} [NeZero width] (n : Nat) :
     ∀ ps : WordLangProgHOL (BitVec width), goodHandlersHOL n ps = true →
       goodHandlersHOL n (compileExp ps) = true := by

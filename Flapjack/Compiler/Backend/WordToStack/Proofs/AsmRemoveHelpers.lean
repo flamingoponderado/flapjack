@@ -44,8 +44,7 @@ decreasing_by
 
 /-- Entire original destination preparation implication, including both output
 components and the original upper bound on the indirect destination register. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "call_dest_stack_asm_remove" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem callDestStackAsmRemove {configWidth : Nat} {width : Nat} [NeZero configWidth] [NeZero width]
     (conf : AsmConfigExact configWidth) (dest : Option Nat) (args : List Nat)
     (frame : Nat × Nat × Nat) (setup : HolProg width) (target : Sum Nat Nat)
@@ -61,8 +60,7 @@ theorem callDestStackAsmRemove {configWidth : Nat} {width : Nat} [NeZero configW
 
 /-- Entire original live-bitmap output implication, retaining arbitrary source
 cutsets, bitmap/frame inputs and the full original compiler output equality. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "wLive_stack_asm_remove" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wLiveStackAsmRemove {configWidth : Nat} {width : Nat} [NeZero configWidth] [NeZero width]
     (conf : AsmConfigExact configWidth) (live : WordLangCutsetsHOL)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -76,8 +74,7 @@ theorem wLiveStackAsmRemove {configWidth : Nat} {width : Nat} [NeZero configWidt
 
 /-- Full original stack movement equivalence, preserving arbitrary continuation
 and all unbounded natural slot offsets, with exactly the temporary-name premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "stack_move_stack_asm_remove" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackMoveStackAsmRemove {configWidth : Nat} {width : Nat} [NeZero configWidth] [NeZero width]
     (conf : AsmConfigExact configWidth) (n start offset i : Nat) (p : HolProg width)
     (named : regName i conf) :
@@ -88,8 +85,7 @@ theorem stackMoveStackAsmRemove {configWidth : Nat} {width : Nat} [NeZero config
 
 /-- Full original descending return-copy auxiliary bound from the sole
 register-name premise; frame offsets and copy counts remain arbitrary. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "copy_ret_aux_stack_asm_remove" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem copyRetAuxStackAsmRemove {configWidth : Nat} {width : Nat} [NeZero configWidth] [NeZero width]
     (conf : AsmConfigExact configWidth) (k f n : Nat) (named : regName k conf) :
     stackAsmRemove conf (copyRetAuxNative k f n : HolProg width) := by
@@ -100,8 +96,7 @@ theorem copyRetAuxStackAsmRemove {configWidth : Nat} {width : Nat} [NeZero confi
 /-- Entire original false-performance return wrapper equivalence. The original
 value-list and unused frame-tail carriers are independent; the continuation is
 arbitrary and no continuation convention is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "copy_ret_stack_asm_remove" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem copyRetStackAsmRemove {configWidth : Nat} {width : Nat} [NeZero configWidth] [NeZero width] {β γ : Type}
     (conf : AsmConfigExact configWidth) (isHandle : Bool) (frame : Nat × Nat × γ)
     (values : List β) (kont : HolProg width) (named : regName frame.1 conf) :

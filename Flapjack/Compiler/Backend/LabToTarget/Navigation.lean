@@ -8,8 +8,7 @@ open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm
 open Flapjack.Basis.Pure.MlString
 open Flapjack.Compiler.Backend.LabSem
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "code_similar_IMP_asm_fetch_aux_line_similar" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem codeSimilar_asmFetchAux {width : Nat} [NeZero width] (pc : Nat)
     (c1 c2 : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
@@ -38,8 +37,7 @@ theorem codeSimilar_asmFetchAux {width : Nat} [NeZero width] (pc : Nat)
             · exact .some hxy
             · exact ihlines (pc - 1)
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "code_similar_loc_to_pc" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem codeSimilar_locToPc {width : Nat} [NeZero width] (sectionId labelId : Nat)
     (c1 c2 : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :

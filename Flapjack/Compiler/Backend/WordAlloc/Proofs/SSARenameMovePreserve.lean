@@ -146,10 +146,7 @@ conclusions. Fresh literal HOL replay confirms the shared source/target word,
 code and FFI dimensions. The full evaluator inherits the documented
 `reals_as_rational_cuts` boundary (SOUNDNESS item 8); this Move path only reads
 and writes locals. No allocation-class or successful-evaluation premise is added. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "list_next_var_rename_move_preserve_weak"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem listNextVarRenameMovePreserveWeak {width : Nat} [NeZero width] {C F : Type}
     (source : WordSemStateFiniteExact width C F) (ssa : Spt Nat)
     (next : Nat) (names : List Nat) (target : WordSemStateFiniteExact width C F)
@@ -188,10 +185,7 @@ Fresh literal HOL replay confirms the complete five-conclusion statement and
 shared word/code/FFI dimensions. Canonical fpRegs/store and positive-width
 word carriers retain the inherited reals_as_rational_cuts assumption of
 SOUNDNESS item 8; this Move branch only reads/writes locals. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "list_next_var_rename_move_preserve"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem listNextVarRenameMovePreserve {width : Nat} [NeZero width] {C F : Type}
     (source : WordSemStateFiniteExact width C F) (ssa : Spt Nat)
     (next : Nat) (names : List Nat) (target : WordSemStateFiniteExact width C F)

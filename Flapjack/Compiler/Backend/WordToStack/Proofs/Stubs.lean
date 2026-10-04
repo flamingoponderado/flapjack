@@ -8,8 +8,7 @@ open Flapjack.Compiler.Backend.WordToStack.Native
 /-- Full original non-instrumented handler-unwind sequence. The original
 arbitrary register and all eight commands are retained; this is a program
 syntax equality and does not assume or assert a target execution. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "raise_stub_F"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem raiseStubFalse {width : Nat} [NeZero width] (k : Nat) :
     @raiseStubNative width _ false k =
       (.seq (.get k .handler)

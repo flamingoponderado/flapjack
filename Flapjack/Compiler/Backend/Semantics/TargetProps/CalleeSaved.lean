@@ -4,8 +4,7 @@ namespace Flapjack.Compiler.Backend.Semantics.TargetProps
 open Flapjack Classical
 
 /-- Literal source634: every callee-saved register receives no oracle override. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "target_io_regs_callee_saved" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem targetIoRegsCalleeSaved {width : Nat} [NeZero width]
     {S Q : Type} {σ : Type} (mc : MachineConfig width S Q) (ffi : HolFfiState σ)
     (ms : S) (k r : Nat) (name : HolFfiName)
@@ -16,8 +15,7 @@ theorem targetIoRegsCalleeSaved {width : Nat} [NeZero width]
   · split <;> simp [h]
 
 /-- Literal source640: every callee-saved register receives no oracle override. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "target_cc_regs_callee_saved" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem targetCcRegsCalleeSaved {width : Nat} [NeZero width]
     {S Q : Type} {σ : Type} (mc : MachineConfig width S Q) (ffi : HolFfiState σ)
     (ms : S) (k r : Nat)

@@ -32,16 +32,14 @@ def priority : Option (Unit ⊕ Unit) → Bool → Nat
   | some (.inr ()), b => if b then 1 else 2
 
 /-- Literal `fake_move` (`word_allocScript.sml:56-58`): `Inst (Const v 0w)`. -/
-@[hol "cakeml/compiler/backend/word_allocScript.sml" "fake_move_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def fakeMove {width : Nat} [NeZero width] (v : Nat) : WordLangProgHOL (BitVec width) :=
   .inst (.const v 0)
 
 /-- Literal `fake_moves` (`word_allocScript.sml:97-114`): the tail first, then
 a name present on exactly one side gets a fresh register on both sides — a
 fake constant move on the missing side and a real move on the present one. -/
-@[hol "cakeml/compiler/backend/word_allocScript.sml" "fake_moves_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def fakeMoves {width : Nat} [NeZero width] (prio : Option (Unit ⊕ Unit)) :
     List Nat → Spt Nat → Spt Nat → Nat →
       WordLangProgHOL (BitVec width) × WordLangProgHOL (BitVec width) × Nat × Spt Nat × Spt Nat
@@ -63,8 +61,7 @@ def fakeMoves {width : Nat} [NeZero width] (prio : Option (Unit ⊕ Unit)) :
 
 /-- Literal `fix_inconsistencies` (`word_allocScript.sml:116-127`): merge moves
 then fake moves over the keys of `union ssa_L ssa_R` in `toAList` order. -/
-@[hol "cakeml/compiler/backend/word_allocScript.sml" "fix_inconsistencies_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def fixInconsistencies {width : Nat} [NeZero width] (prio : Option (Unit ⊕ Unit))
     (ssaL ssaR : Spt Nat) (na : Nat) :
     WordLangProgHOL (BitVec width) × WordLangProgHOL (BitVec width) × Nat × Spt Nat :=

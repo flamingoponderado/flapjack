@@ -5,7 +5,7 @@ open Flapjack.Compiler.Backend.StackLang
 open Flapjack.Compiler.Encoders.Asm
 
 /-- Literal native handler-unwind stub; instrumentation syntax only. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "raise_stub_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def raiseStubNative {width : Nat} [NeZero width] (perf : Bool) (k : Nat) : HolProg width :=
   .seq (.get k .handler)
     (.seq (.stackSetSize k)
@@ -26,7 +26,7 @@ def raiseStubNative {width : Nat} [NeZero width] (perf : Bool) (k : Nat) : HolPr
                 (.raise k)))))))
 
 /-- Literal native constant-pool store-and-return stub. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "store_consts_stub_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def storeConstsStubNative {width : Nat} [NeZero width] (k : Nat) : HolProg width :=
   .seq (.storeConsts k (k + 1) none) (.ret 0)
 

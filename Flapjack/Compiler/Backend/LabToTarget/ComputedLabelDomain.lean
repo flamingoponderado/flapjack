@@ -39,8 +39,7 @@ private theorem sectionLabels_fromAList_domain {width : Nat} [NeZero width]
 
 /-- Full original computed label-domain theorem. Both original guards are
 retained: distinct section numbers and disjointness from the initial outer map. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "labs_domain_compute_labels_alt" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem labsDomain_computeLabelsAlt {width : Nat} [NeZero width] (pos : Nat)
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) (labs : Spt (Spt Nat)) :

@@ -81,10 +81,7 @@ theorem removeDeadGoalAll {width : Nat} [NeZero width] {C F : Type} :
 quantifiers, premises and existential conclusion in HOL order; HOL `I` is `id`,
 HOL `oEL` is `sptOel`, and the conclusion's case expression on `res` is
 `removeDeadPost`. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_remove_dead"
-  (fmap_as_finite_support_relation :=
-    [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store, tstore])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateRemoveDead {width : Nat} [NeZero width] {C F : Type} :
     ∀ (prog : WordLangProgHOL (BitVec width)) (live : NumSet) (nlive : List WordStoreHOL)
       (lt : List (NumSet × NumSet)) (prog' : WordLangProgHOL (BitVec width)) (livein : NumSet)
@@ -107,9 +104,7 @@ theorem evaluateRemoveDead {width : Nat} [NeZero width] {C F : Type} :
 dead-code removal from the empty live set preserves a non-error result, the
 final state except its locals, and the locals for results other than `NONE`,
 `Break` and `Continue`. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_remove_dead_prog"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateRemoveDeadProg {width : Nat} [NeZero width] {C F : Type} :
     ∀ (prog : WordLangProgHOL (BitVec width)) (st rst : WordSemStateFiniteExact width C F)
       (res : Option (WordSemResult width)),

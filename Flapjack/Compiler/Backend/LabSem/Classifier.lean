@@ -8,8 +8,7 @@ open Flapjack.Basis.Pure.MlString
 
 /-- The literal HOL classifier over the actual native LabLang carrier, with
 one shared positive word width and the exact ASM/mlstring payloads. -/
-@[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "is_Label_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def isLabelHOL {width : Nat} [NeZero width]
     (line : Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)) : Bool :=

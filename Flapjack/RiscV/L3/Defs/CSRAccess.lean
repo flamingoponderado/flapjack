@@ -2,21 +2,21 @@ import Flapjack.RiscV.L3.Defs.IntegerLoadMode
 import Flapjack.RiscV.L3.Defs.MMU.Primitives
 namespace Flapjack.RiscV.L3
 
-/-! Complete literal CSR access section. CSR ranges use HOL signed word12
-comparisons; permission privilege uses unsigned word2 comparison. MPRV is
-the original selector. Mode checks forward all returned state, including
-unspecified architecture and pre-existing exceptions. checkCSROp ignores rs1.
-No address-validity, core-bound, architecture or successful-access premise. -/
+/-! Compatibility queries for retained ordinary CSR records. Availability is an
+explicit whitelist that excludes floating-point, hardware timers, interrupts and
+paging. The integer privilege/permission selectors retain their original equations;
+privileged CSR instructions themselves are absent from the riscv-mi AST. -/
 
 @[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "privLevel_def"]
 def privLevel (p : Privilege) : (BitVec 2) :=
   (match p with | .User => (BitVec.ofNat 2 0) | .Supervisor => (BitVec.ofNat 2 1) | .Hypervisor => (BitVec.ofNat 2 2) | .Machine => (BitVec.ofNat 2 3))
 
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "is_CSR_defined_def"]
-noncomputable def is_CSR_defined (csr : (BitVec 12)) : (riscv_state → (Bool × riscv_state)) :=
-  (fun (state : riscv_state) => (if ((((BitVec.sle (BitVec.ofNat 12 1) csr)) && ((BitVec.sle csr (BitVec.ofNat 12 3))))) then (true, state) else ((if ((((BitVec.sle (BitVec.ofNat 12 3072) csr)) && ((BitVec.sle csr (BitVec.ofNat 12 3074))))) then (true, state) else ((match (if ((BitVec.sle (BitVec.ofNat 12 3200) csr)) then ((if ((BitVec.sle csr (BitVec.ofNat 12 3202))) then ((in32BitMode () state)) else (false, state))) else (false, state)) with | (v, s) => (if v then (true, s) else ((if ((((BitVec.sle (BitVec.ofNat 12 256) csr)) && ((BitVec.sle csr (BitVec.ofNat 12 257))))) then (true, s) else ((if ((csr == (BitVec.ofNat 12 260))) then (true, s) else ((if ((csr == (BitVec.ofNat 12 289))) then (true, s) else ((if ((csr == (BitVec.ofNat 12 3329))) then (true, s) else ((match (if ((csr == (BitVec.ofNat 12 3457))) then ((in32BitMode () s)) else (false, s)) with | (v_1, s_1) => (if v_1 then (true, s_1) else ((if ((((BitVec.sle (BitVec.ofNat 12 320) csr)) && ((BitVec.sle csr (BitVec.ofNat 12 321))))) then (true, s_1) else ((if ((csr == (BitVec.ofNat 12 324))) then (true, s_1) else ((if ((((BitVec.sle (BitVec.ofNat 12 3394) csr)) && ((BitVec.sle csr (BitVec.ofNat 12 3395))))) then (true, s_1) else ((if ((((BitVec.sle (BitVec.ofNat 12 384) csr)) && ((BitVec.sle csr (BitVec.ofNat 12 385))))) then (true, s_1) else ((if ((((BitVec.sle (BitVec.ofNat 12 2304) csr)) && ((BitVec.sle csr (BitVec.ofNat 12 2306))))) then (true, s_1) else ((match (if ((BitVec.sle (BitVec.ofNat 12 2432) csr)) then ((if ((BitVec.sle csr (BitVec.ofNat 12 2434))) then ((in32BitMode () s_1)) else (false, s_1))) else (false, s_1)) with | (v, s) => (if v then (true, s) else ((if ((((BitVec.sle (BitVec.ofNat 12 3840) csr)) && ((BitVec.sle csr (BitVec.ofNat 12 3841))))) then (true, s) else ((if ((csr == (BitVec.ofNat 12 3856))) then (true, s) else ((if ((((BitVec.sle (BitVec.ofNat 12 768) csr)) && ((BitVec.sle csr (BitVec.ofNat 12 770))))) then (true, s) else ((if ((csr == (BitVec.ofNat 12 772))) then (true, s) else ((if ((csr == (BitVec.ofNat 12 801))) then (true, s) else ((if ((csr == (BitVec.ofNat 12 1793))) then (true, s) else ((match (if ((csr == (BitVec.ofNat 12 1857))) then ((in32BitMode () s)) else (false, s)) with | (v_1, s_1) => (if v_1 then (true, s_1) else ((if ((((BitVec.sle (BitVec.ofNat 12 832) csr)) && ((BitVec.sle csr (BitVec.ofNat 12 836))))) then (true, s_1) else ((if ((((BitVec.sle (BitVec.ofNat 12 896) csr)) && ((BitVec.sle csr (BitVec.ofNat 12 901))))) then (true, s_1) else ((if ((BitVec.sle (BitVec.ofNat 12 2817) csr)) then (true, s_1) else ((match (if ((csr == (BitVec.ofNat 12 2945))) then ((in32BitMode () s_1)) else (false, s_1)) with | (v, s) => (((v || ((((BitVec.sle (BitVec.ofNat 12 1920) csr)) && ((((BitVec.sle csr (BitVec.ofNat 12 1923))) && ((!((csr == (BitVec.ofNat 12 1922))))))))))), s)))))))))))))))))))))))))))))))))))))))))))))))))))))))
+/-- Availability of the retained ordinary CSR record helpers. Privileged CSR
+instructions have no constructors in riscv-mi; this compatibility query excludes
+floating-point controls, hardware counters/timers, interrupts and paging. -/
+def is_CSR_defined (csr : BitVec 12) (state : riscv_state) : Bool × riscv_state :=
+  (decide (csr.toNat ∈ [256, 257, 320, 321, 3394, 3395, 512, 513, 576, 577, 578, 579, 3840, 3841, 3856, 768, 769, 832, 833, 834, 835, 896, 897, 898, 899, 900, 901, 1920, 1921]), state)
 
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "curPrivilege_def"]
 noncomputable def curPrivilege (_u_ : Unit) : (riscv_state → Privilege) :=
   (fun (state : riscv_state) => (privilege (((MCSR state).mstatus).MPRV)))
 
@@ -34,7 +34,6 @@ def check_CSR_access (arg0 : ((BitVec 2) × ((BitVec 2) × (Privilege × accessT
   | (rw, (pr, (p, a))) =>
   ((((a == accessType.Read) || ((!((rw == (BitVec.ofNat 2 3))))))) && ((!(BitVec.ult (privLevel p) pr))))
 
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "checkCSROp_def"]
 noncomputable def checkCSROp (arg0 : ((BitVec 12) × ((BitVec 5) × accessType))) : (riscv_state → (Bool × riscv_state)) :=
   match arg0 with
   | (csr, (_rs1, a)) =>

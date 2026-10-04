@@ -74,27 +74,23 @@ theorem fun2SetUpdateEq_dec {α β : Type} [DecidableEq α] (m m' : α → β) (
 section Accessors
 
 /-- Full original get_var_const_memory (346-350). -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "get_var_const_memory"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getVarConstMemory {width : Nat} [NeZero width] {C F : Type} (x : Nat) (y : WordSemStateFiniteExact width C F) (m : BitVec width → WordLocW width) :
     WordSemStateFiniteExact.getVar x { y with memory := m } = WordSemStateFiniteExact.getVar x y := rfl
 
 /-- Full original set_var_const_memory (352-356). -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "set_var_const_memory"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem setVarConstMemory {width : Nat} [NeZero width] {C F : Type} (v : Nat) (x : WordLocW width) (y : WordSemStateFiniteExact width C F)
     (m : BitVec width → WordLocW width) :
     WordSemStateFiniteExact.setVar v x { y with memory := m } = { WordSemStateFiniteExact.setVar v x y with memory := m } := rfl
 
 /-- Full original unset_var_const_memory (358-362). -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "unset_var_const_memory"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem unsetVarConstMemory {width : Nat} [NeZero width] {C F : Type} (v : Nat) (y : WordSemStateFiniteExact width C F) (m : BitVec width → WordLocW width) :
     WordSemStateFiniteExact.unsetVar v { y with memory := m } = { WordSemStateFiniteExact.unsetVar v y with memory := m } := rfl
 
 /-- Full original get_vars_const_memory (364-368), by induction on the list. -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "get_vars_const_memory"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getVarsConstMemory {width : Nat} [NeZero width] {C F : Type} (x : List Nat) (y : WordSemStateFiniteExact width C F) (m : BitVec width → WordLocW width) :
     WordSemStateFiniteExact.getVars x { y with memory := m } = WordSemStateFiniteExact.getVars x y := by
   induction x with
@@ -102,23 +98,20 @@ theorem getVarsConstMemory {width : Nat} [NeZero width] {C F : Type} (x : List N
   | cons v vs ih => simp only [WordSemStateFiniteExact.getVars, ih]; rfl
 
 /-- Full original set_vars_const_memory (370-374). -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "set_vars_const_memory"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem setVarsConstMemory {width : Nat} [NeZero width] {C F : Type} (vs : List Nat) (xs : List (WordLocW width)) (y : WordSemStateFiniteExact width C F)
     (m : BitVec width → WordLocW width) :
     WordSemStateFiniteExact.setVars vs xs { y with memory := m } = { WordSemStateFiniteExact.setVars vs xs y with memory := m } := rfl
 
 /-- Full original get_var_imm_const_memory (376-380). -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "get_var_imm_const_memory"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getVarImmConstMemory {width : Nat} [NeZero width] {C F : Type} (ri : WordRegImm (BitVec width)) (s : WordSemStateFiniteExact width C F)
     (m : BitVec width → WordLocW width) :
     WordSemStateFiniteExact.getVarImm ri { s with memory := m } = WordSemStateFiniteExact.getVarImm ri s := by
   cases ri <;> rfl
 
 /-- Full original mem_load_const_memory (382-388). -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "mem_load_const_memory"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem memLoadConstMemory {width : Nat} [NeZero width] {C F : Type} (ad : BitVec width) (s : WordSemStateFiniteExact width C F)
     (m : BitVec width → WordLocW width)
     (h : fun2Set (s.memory, fun a => s.mdomain a = true) =
@@ -132,8 +125,7 @@ theorem memLoadConstMemory {width : Nat} [NeZero width] {C F : Type} (ad : BitVe
 
 /-- Full original mem_store_const_memory (390-398): both the failure and the
 exact success shape transfer between graph-equal memories. -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "mem_store_const_memory"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem memStoreConstMemory {width : Nat} [NeZero width] {C F : Type} (ad : BitVec width) (w : WordLocW width) (s : WordSemStateFiniteExact width C F)
     (m : BitVec width → WordLocW width)
     (_h : fun2Set (s.memory, fun a => s.mdomain a = true) =
@@ -214,8 +206,7 @@ section Expressions
 
 /-- Full original word_exp_const_memory (421-434), by recursion on the
 expression as HOL's word_exp_ind. -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "word_exp_const_memory"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordExpConstMemory {width : Nat} [NeZero width] {C F : Type} (s : WordSemStateFiniteExact width C F) (m : BitVec width → WordLocW width)
     (h : fun2Set (s.memory, fun a => s.mdomain a = true) =
       fun2Set (m, fun a => s.mdomain a = true)) :
@@ -399,8 +390,7 @@ private theorem storeCommutes {width : Nat} [NeZero width] {C F : Type} {rw : Na
 /-- Full original share_inst_const_memory (543-565): shared-memory
 instructions leave memory and its domain unchanged and commute with replacing
 the memory. The result width is the shareInst result carrier. -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "share_inst_const_memory"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem shareInstConstMemory {width : Nat} [NeZero width] {C F : Type} {rw : Nat} [NeZero rw] (res : Option (WordSemResult rw)) :
     ∀ (s : WordSemStateFiniteExact width C F) (op : WordMemOp) (v : Nat) (c : BitVec width)
       (m : BitVec width → WordLocW width) (t : WordSemStateFiniteExact width C F),
@@ -428,8 +418,7 @@ theorem shareInstConstMemory {width : Nat} [NeZero width] {C F : Type} {rw : Nat
 
 /-- Original local push_env_mem_upd (574-584): push_env commutes with
 replacing the memory. -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "push_env_mem_upd"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem pushEnvMemUpd {width : Nat} [NeZero width] {C F : Type} (m : BitVec width → WordLocW width) :
     ∀ (env : Spt (WordLocW width) × Spt (WordLocW width))
       (params : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
@@ -443,8 +432,7 @@ theorem pushEnvMemUpd {width : Nat} [NeZero width] {C F : Type} (m : BitVec widt
 
 /-- Original local push_env_mem_const (586-596): push_env keeps memory and
 domain. -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "push_env_mem_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem pushEnvMemConst {width : Nat} [NeZero width] {C F : Type} :
     ∀ (env : Spt (WordLocW width) × Spt (WordLocW width))
       (params : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
@@ -457,8 +445,7 @@ theorem pushEnvMemConst {width : Nat} [NeZero width] {C F : Type} :
   | some p => rcases p with ⟨_, _, _, _⟩; exact ⟨rfl, rfl⟩
 
 /-- Original local cut_state_with_mem_const (598-605). -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "cut_state_with_mem_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem cutStateWithMemConst {width : Nat} [NeZero width] {C F : Type} (x : WordLangCutsetsHOL) (s : WordSemStateFiniteExact width C F)
     (m : BitVec width → WordLocW width) :
     WordSemStateFiniteExact.cutState x { s with memory := m } =
@@ -468,8 +455,7 @@ theorem cutStateWithMemConst {width : Nat} [NeZero width] {C F : Type} (x : Word
 
 /-- Original local mem_upd_lemma (567-572): states equal after overwriting
 memory by HOL's ARB (rendered holArb) differ only in memory. -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "mem_upd_lemma"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem memUpdLemma {width : Nat} [NeZero width] {C F : Type} (s t : WordSemStateFiniteExact width C F)
     (h : { s with memory := @holArb (BitVec width → WordLocW width) ⟨fun _ => .word 0⟩ } =
       { t with memory := @holArb (BitVec width → WordLocW width) ⟨fun _ => .word 0⟩ }) :
@@ -502,9 +488,6 @@ private theorem agreeMap {width : Nat} [NeZero width] {C F : Type} (s : WordSemS
   · obtain ⟨hm, hd⟩ := frame x rfl
     exact Or.inr ⟨x, m, rfl, rfl, by rw [hm, hd]; exact h⟩
 
-private theorem getFpVarMem {width : Nat} [NeZero width] {C F : Type} (x : Nat) (s : WordSemStateFiniteExact width C F) (m : BitVec width → WordLocW width) :
-    WordSemStateFiniteExact.getFpVar x { s with memory := m } = WordSemStateFiniteExact.getFpVar x s := rfl
-
 /-- Memory-free instructions commute with replacing memory and keep memory
 and domain (Flapjack factoring of inst_const_memory). -/
 private theorem mapCase {width : Nat} [NeZero width] {C F : Type} (i : WordLangInst (BitVec width)) (s : WordSemStateFiniteExact width C F)
@@ -525,7 +508,7 @@ private theorem instAgree {width : Nat} [NeZero width] {C F : Type} (i : WordLan
   have expEq := wordExpConstMemory s m h
   have graph := h
   rw [fun2Set_eq_iff] at graph
-  rcases i with _ | ⟨r, w⟩ | a | ⟨op, r, ⟨ad, off⟩⟩ | f
+  rcases i with _ | ⟨r, w⟩ | a | ⟨op, r, ⟨ad, off⟩⟩
   case mem =>
     have loadEq := fun ad => memLoadConstMemory ad s m h
     have byteEq := fun w => memLoadByteAuxConstMemory s.memory m s.mdomain s.be w h
@@ -593,18 +576,6 @@ private theorem instAgree {width : Nat} [NeZero width] {C F : Type} (i : WordLan
         all_goals (try simp only [Option.some.injEq, reduceCtorEq] at hx)
         all_goals (try subst hx)
         all_goals (try exact ⟨rfl, rfl⟩)
-  case fp =>
-    cases f
-    all_goals
-      apply mapCase _ s m h
-      · simp only [WordSemStateFiniteExact.inst, getFpVarMem, getVarConstMemory]
-        repeat' (first | rfl | split)
-      · intro x hx
-        simp only [WordSemStateFiniteExact.inst] at hx
-        repeat' (split at hx)
-        all_goals (try simp only [Option.some.injEq, reduceCtorEq] at hx)
-        all_goals (try subst hx)
-        all_goals (try exact ⟨rfl, rfl⟩)
   all_goals
     apply mapCase _ s m h
     · simp only [WordSemStateFiniteExact.inst, WordSemStateFiniteExact.assign, expEq]
@@ -621,8 +592,7 @@ instruction fails on both or on neither, and on success the results differ
 only by a graph-equal memory. HOL's THE is holThe (Nonempty from the state
 itself; the arbitrary THE NONE value is unused). The inst rendering's
 reals_as_rational_cuts assumption is inherited (SOUNDNESS item 8). -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "inst_const_memory"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem instConstMemory {width : Nat} [NeZero width] {C F : Type} (i : WordLangInst (BitVec width)) (s : WordSemStateFiniteExact width C F)
     (m : BitVec width → WordLocW width)
     (h : fun2Set (s.memory, fun a => s.mdomain a = true) =

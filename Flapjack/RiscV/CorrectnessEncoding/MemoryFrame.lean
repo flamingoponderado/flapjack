@@ -20,11 +20,8 @@ theorem source_success_native_store_frame (r : Nat) (address : HolAddr 64)
     (x : BitVec 64) (outside : ¬ s.memDomain x) :
     (rawWriteData (addrHOL address s, v, (2 : Nat) ^ k.val) t).MEM8 x = t.MEM8 x := by
   have guards := (source_memstore_success ((2 : Nat) ^ k.val) r address s).mp success
-  have log : holLOG2 ((2 : Nat) ^ k.val) = k.val := by
-    have sizes : k.val = 0 ∨ k.val = 1 ∨ k.val = 2 ∨ k.val = 3 := by
-      have := k.isLt
-      omega
-    rcases sizes with h | h | h | h <;> simp [h, holLOG2_eq_log2]
+  have log : holLOG2 ((2 : Nat) ^ k.val) = k.val :=
+    (holLOG2_eq_log2 (Nat.two_pow_pos k.val)).trans Nat.log2_two_pow
   have aligned : holAligned k.val (addrHOL address s) = true := by
     simpa only [log] using guards.2.2
   have domain : ∀ j, j < (2 : Nat) ^ k.val →

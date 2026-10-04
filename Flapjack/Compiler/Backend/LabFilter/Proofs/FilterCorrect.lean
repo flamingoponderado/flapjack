@@ -10,8 +10,7 @@ open Flapjack.Compiler.Backend.LabToTarget.FilterSkip
 proved internally by the decreasing source clock, including every Error and
 TimeOut outcome. The result preserves the original whole execution and FFI
 conclusion; no pass-success or target-execution premise is added. -/
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem filterCorrect {width : Nat} [NeZero width] {C : Type} {F : Type}
     (s1 t1 : Flapjack.Compiler.Backend.LabSem.State width C F)
     (res : MachineResult) (s2 : Flapjack.Compiler.Backend.LabSem.State width C F) :

@@ -23,8 +23,7 @@ assertion are retained. Memory and save-register domains are the native Bool
 characteristic functions, used through their original membership predicates.
 The left association of the three heap factors is the original STAR syntax.
 No successful execution, initialized output or state relation is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "init_code_pre_def"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def initCodePre {width : Nat} [NeZero width] {C F : Type}
     (pointer : Nat) (bitmaps : List (BitVec width)) (dataSpace : Nat)
     (source : StackSemStateFiniteExact width C F) : Prop :=

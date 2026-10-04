@@ -46,9 +46,7 @@ word, code, and FFI types; the only premises are source expression success,
 full state equality and SSA locals correspondence. The proof factors through
 constructor-identical expression colouring, with its live-local premise derived
 from SSA locals correspondence rather than added to the statement. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_exp_correct"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransExpCorrect {width : Nat} [NeZero width] {C F : Type}
     (source : WordSemStateFiniteExact width C F) (expr : WordLangExpHOL (BitVec width))
     (target : WordSemStateFiniteExact width C F) (ssa : Spt Nat) (next : Nat)

@@ -11,10 +11,8 @@ is the unchanged source counter. -/
 namespace Flapjack.RiscV.L3.Step
 open Flapjack.RiscV.L3
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "Skip"]
 theorem dfnSkip (s : riscv_state) : Skip s = s.c_Skip s.procID := rfl
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "SUBW"]
 theorem dfnSUBW (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     (harch0 : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 0)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd ≠ 0) :
@@ -30,7 +28,6 @@ theorem dfnSUBW (rd rs1 rs2 : BitVec 5) (s : riscv_state)
   simp only [Bool.false_eq_true, reduceIte, «write'GPR», «write'gpr», GPR, gpr]
   by_cases h1 : rs1 = 0 <;> by_cases h2 : rs2 = 0 <;> simp_all [holWordExtract]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "ADDIW"]
 theorem dfnADDIW (rd rs1 : BitVec 5) (imm : BitVec 12) (s : riscv_state)
     (harch0 : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 0)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd ≠ 0) :
@@ -54,7 +51,6 @@ private theorem addw_low_add_eq (a b : BitVec 64) :
   simp only [BitVec.toNat_add, BitVec.toNat_ofNat]
   omega
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "ADDW"]
 theorem dfnADDW (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     (harch0 : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 0)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd ≠ 0) :
@@ -75,7 +71,6 @@ theorem dfnADDW (rd rs1 rs2 : BitVec 5) (s : riscv_state)
   by_cases h1 : rs1 = 0 <;> by_cases h2 : rs2 = 0 <;>
     simp_all [holWordExtract, addw_low_add_eq]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "ADDW_NOP"]
 theorem dfnADDWNop (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     (harch0 : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 0)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd = 0) :
@@ -85,7 +80,6 @@ theorem dfnADDWNop (rd rs1 rs2 : BitVec 5) (s : riscv_state)
   rcases hcases (s.c_MCSR s.procID).mcpuid.ArchBase with h | h | h | h <;>
     simp_all [in32BitMode, curArch, architecture, MCSR, beq_iff_eq, ne_eq]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "SUBW_NOP"]
 theorem dfnSUBWNop (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     (harch0 : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 0)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd = 0) :
@@ -95,7 +89,6 @@ theorem dfnSUBWNop (rd rs1 rs2 : BitVec 5) (s : riscv_state)
   rcases hcases (s.c_MCSR s.procID).mcpuid.ArchBase with h | h | h | h <;>
     simp_all [in32BitMode, curArch, architecture, MCSR, beq_iff_eq, ne_eq]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "ADDIW_NOP"]
 theorem dfnADDIWNop (rd rs1 : BitVec 5) (imm : BitVec 12) (s : riscv_state)
     (harch0 : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 0)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd = 0) :

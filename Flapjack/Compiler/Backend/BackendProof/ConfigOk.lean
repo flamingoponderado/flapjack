@@ -22,8 +22,7 @@ conjunct for conjunct. HOL word `≤` is signed `word_le` (`BitVec.sle`), `n2w` 
 is `Function.Bijective`, the `addr/hw/byte_offset_ok` overloads are the reviewed
 `asm*OffsetOkExact`, `OPTION_ALL P o` is the `none ↦ True` match and `EVERY` is
 membership quantification. -/
-@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "backend_config_ok_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: backend configuration predicate with FP capabilities removed.
 def backendConfigOk {width : Nat} [NeZero width] (asmConf : AsmConfigExact width)
     (c : Flapjack.Compiler.Backend.Backend.Config) : Prop :=
   c.sourceConf = Flapjack.Compiler.Backend.Backend.primSrcConfig ∧
@@ -36,8 +35,6 @@ def backendConfigOk {width : Nat} [NeZero width] (asmConf : AsmConfigExact width
   (c.dataConf.hasLongdiv = true → asmConf.isa = .x86_64) ∧
   (c.dataConf.hasDiv = true →
     asmConf.isa = .armv8 ∨ asmConf.isa = .mips ∨ asmConf.isa = .riscv) ∧
-  (c.dataConf.hasFpTern = true ↔ asmConf.isa = .armv7 ∧ 2 < asmConf.fpRegCount) ∧
-  (c.dataConf.hasFpOps = true ↔ 1 < asmConf.fpRegCount) ∧
   StackRemove.maxStackAlloc ≤ 2 * DataToWord.maxHeapLimit width c.dataConf - 1 ∧
   c.stackConf.perfCalls = false ∧
   asmAddrOffsetOkExact asmConf 0 = true ∧

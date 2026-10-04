@@ -39,8 +39,7 @@ private theorem encLines_pre {width : Nat} [NeZero width]
 
 /-- Full original result equality and both EVERY guards; the returned pair is
 Nat × Bool, not a successful-encoding assumption. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "enc_lines_again_all_enc_ok_pre" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem encLinesAgain_pre {width : Nat} [NeZero width]
     (labs : Spt (Spt Nat)) (ffis : List HolFfiName) (pos : Nat)
     (enc : HolAsm width → List (BitVec 8)) (lines acc : List (LabLineHOL width))
@@ -53,8 +52,7 @@ theorem encLinesAgain_pre {width : Nat} [NeZero width]
   simpa only [he] using encLines_pre labs ffis pos enc lines acc ok c hl ha
 
 /-- Full original section encoder theorem; returned flag remains arbitrary. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "enc_secs_again_all_enc_ok_pre" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem encSecsAgain_pre {width : Nat} [NeZero width]
     (pos : Nat) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (enc : HolAsm width → List (BitVec 8))
@@ -78,8 +76,7 @@ theorem encSecsAgain_pre {width : Nat} [NeZero width]
   simpa only [he] using h hp
 
 /-- Full original add-NOP precondition preservation. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "line_ok_pre_add_nop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem addNop_pre {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (nop : List (BitVec 8)) (xs : List (LabLineHOL width)) :
     (∀ l ∈ xs,lineOkPreHOL c l) → ∀ l ∈ addNop nop xs,lineOkPreHOL c l := by
@@ -95,8 +92,7 @@ theorem addNop_pre {width : Nat} [NeZero width]
     | labAsm _ _ _ _ => simpa [addNop,lineOkPreHOL] using ht
 
 /-- Full original padding theorem, including the accumulator guard. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "line_ok_pre_pad_section" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem padSection_pre {width : Nat} [NeZero width]
     (nop : List (BitVec 8)) (xs acc : List (LabLineHOL width)) (c : AsmConfigExact width) :
     (∀ l ∈ xs,lineOkPreHOL c l) ∧ (∀ l ∈ acc,lineOkPreHOL c l) →
@@ -123,8 +119,7 @@ theorem padSection_pre {width : Nat} [NeZero width]
       exact ⟨ht,by simpa [lineOkPreHOL] using ha⟩
 
 /-- Full original whole-code padding precondition theorem. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "all_enc_ok_pre_pad_code" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem padCode_pre {width : Nat} [NeZero width]
     (nop : List (BitVec 8)) (code : List (Section (LabLineHOL width))) (c : AsmConfigExact width) :
     allEncOkPreHOL c code → allEncOkPreHOL c (padCode nop code) := by
@@ -141,8 +136,7 @@ theorem padCode_pre {width : Nat} [NeZero width]
     · exact ih hr sec hm
 
 /-- Full original label-length update theorem, preserving both input lists. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "all_enc_ok_pre_lines_upd_lab_len" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem linesUpdLabLen_pre {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (n : Nat) (lines acc : List (LabLineHOL width)) :
     (∀ l ∈ lines,lineOkPreHOL c l) ∧ (∀ l ∈ acc,lineOkPreHOL c l) →
@@ -165,8 +159,7 @@ theorem linesUpdLabLen_pre {width : Nat} [NeZero width]
       exact ⟨ht,by simpa [lineOkPreHOL] using ha⟩
 
 /-- Full original whole-code label-length update precondition theorem. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "all_enc_ok_pre_upd_lab_len" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem updLabLen_pre {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (n : Nat) (code : List (Section (LabLineHOL width))) :
     allEncOkPreHOL c code → allEncOkPreHOL c (updLabLen n code) := by

@@ -48,8 +48,6 @@ The source immediate count bound and actual fetched Decode/Run/Next are derived,
 input assumptions. The other Shift cases are sibling pieces, all assembled by
 riscv_encoder_correct_shift (Shift.lean). Native state/Run inherits
 reals_as_rational_cuts, SOUNDNESS item8. -/
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml"
-  "riscv_encoder_correct"]
 theorem riscv_encoder_correct_shiftLsrImmediate (rd rs1 : Nat) (c : BitVec 64) (s1 s2 : AsmState 64) (ms : riscv_state)
     (h : asmStep riscvTarget.config s1 (.inst (.arith (.shift .lsr rd rs1 (.imm c)))) s2 ∧
       targetStateRel riscvTarget s1 ms) :

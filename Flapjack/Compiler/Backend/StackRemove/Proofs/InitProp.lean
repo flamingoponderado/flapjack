@@ -25,8 +25,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
 empty buffers, exact use flags/register zero, word/natural resource bounds,
 heap relation/alignment, symbolic LAST and the two separated heap regions.
 No good-dimension, allocation flag, successful run or post-relation is added. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "init_prop_def"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def initProp {width : Nat} [NeZero width] {C F : Type}
     (generateGc : Bool) (maxHeap dataSpace : Nat) (limits : Nat × Nat)
     (source : StackSemStateFiniteExact width C F) : Prop :=

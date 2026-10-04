@@ -36,8 +36,6 @@ theorem removeEq_self_none (cs : CopyState) (t : Nat) :
   | some _ => rfl
 
 /-- Exact HOL `copy_prop_move_model_aux` (`word_copyProofScript.sml:470-526`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "copy_prop_move_model_aux"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem copyPropMoveModelAux {width : Nat} [NeZero width] {C F : Type} {cs : CopyState}
     {st : WordSemStateFiniteExact width C F} {t s : Nat} {sval : WordLocW width} :
     cpStateInv cs ∧ cpStateModels cs st ∧ bothAllocVars (t, s) ∧
@@ -81,8 +79,6 @@ theorem copyPropMoveModelAux {width : Nat} [NeZero width] {C F : Type} {cs : Cop
       exact d2 x y (hy ▸ e2 hr)
 
 /-- Exact HOL `set_eq_remove_eq_models` (`word_copyProofScript.sml:528-540`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "set_eq_remove_eq_models"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem setEqRemoveEqModels {width : Nat} [NeZero width] {C F : Type} {cs : CopyState}
     {st : WordSemStateFiniteExact width C F} {t s : Nat} {sval : WordLocW width} :
     cpStateInv cs ∧ cpStateModels cs st ∧ sptLookup s st.locals = some sval →
@@ -95,7 +91,6 @@ theorem setEqRemoveEqModels {width : Nat} [NeZero width] {C F : Type} {cs : Copy
     exact removeEqModelInsert hinv hm
 
 /-- Exact HOL `lookup_eq_idempotent` (`word_copyProofScript.sml:542-550`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "lookup_eq_idempotent"]
 theorem lookupEqIdempotent {cs : CopyState} {x : Nat} :
     cpStateInv cs → lookupEq cs (lookupEq cs x) = lookupEq cs x := by
   intro ⟨_, _, _, h4⟩
@@ -104,8 +99,6 @@ theorem lookupEqIdempotent {cs : CopyState} {x : Nat} :
   · rw [hx]; exact lookupEqI cs r r (Or.inr ⟨c, h4 c r hr, hr⟩)
 
 /-- Exact HOL `CPstate_modelsD_get_var` (`word_copyProofScript.sml:552-561`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "CPstate_modelsD_get_var"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem cpStateModelsDGetVar {width : Nat} [NeZero width] {C F : Type} {cs : CopyState}
     {st : WordSemStateFiniteExact width C F} {x : Nat} :
     cpStateInv cs ∧ cpStateModels cs st →
@@ -113,8 +106,6 @@ theorem cpStateModelsDGetVar {width : Nat} [NeZero width] {C F : Type} {cs : Cop
   fun ⟨_, hm⟩ => cpStateModel hm
 
 /-- Exact HOL `CPstate_modelsD_get_vars` (`word_copyProofScript.sml:563-571`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "CPstate_modelsD_get_vars"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem cpStateModelsDGetVars {width : Nat} [NeZero width] {C F : Type} {cs : CopyState}
     {st : WordSemStateFiniteExact width C F} {xs : List Nat} :
     cpStateInv cs ∧ cpStateModels cs st →
@@ -127,8 +118,6 @@ theorem cpStateModelsDGetVars {width : Nat} [NeZero width] {C F : Type} {cs : Co
       simp only [List.map_cons, WordSemStateFiniteExact.getVars, cpStateModelsDGetVar h, ih]
 
 /-- Exact HOL `CPstate_modelsD_get_var_imm` (`word_copyProofScript.sml:573-580`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "CPstate_modelsD_get_var_imm"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem cpStateModelsDGetVarImm {width : Nat} [NeZero width] {C F : Type} {cs : CopyState}
     {st : WordSemStateFiniteExact width C F} {x : WordRegImm (BitVec width)} :
     cpStateInv cs ∧ cpStateModels cs st →
@@ -140,8 +129,6 @@ theorem cpStateModelsDGetVarImm {width : Nat} [NeZero width] {C F : Type} {cs : 
   | reg n => exact cpStateModelsDGetVar h
 
 /-- Exact HOL `CPstate_modelsD_Var` (`word_copyProofScript.sml:582-589`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "CPstate_modelsD_Var"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem cpStateModelsDVar {width : Nat} [NeZero width] {C F : Type} {cs : CopyState}
     {st : WordSemStateFiniteExact width C F} {x : Nat} :
     cpStateInv cs ∧ cpStateModels cs st →
@@ -152,8 +139,6 @@ theorem cpStateModelsDVar {width : Nat} [NeZero width] {C F : Type} {cs : CopySt
   exact cpStateModelsDGetVar h
 
 /-- Exact HOL `CPstate_modelsD_lookup_eq_imm` (`word_copyProofScript.sml:591-600`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "CPstate_modelsD_lookup_eq_imm"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem cpStateModelsDLookupEqImm {width : Nat} [NeZero width] {C F : Type} {cs : CopyState}
     {st : WordSemStateFiniteExact width C F} {x : WordRegImm (BitVec width)} :
     cpStateInv cs → cpStateModels cs st →
@@ -166,8 +151,6 @@ theorem cpStateModelsDLookupEqImm {width : Nat} [NeZero width] {C F : Type} {cs 
   | reg n => exact cpStateModelsDVar ⟨hinv, hm⟩
 
 /-- Exact HOL `MAP_get_var_eqD` (`word_copyProofScript.sml:602-613`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "MAP_get_var_eqD"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem mapGetVarEqD {width : Nat} [NeZero width] {C F : Type}
     {st : WordSemStateFiniteExact width C F} {xx yy : List Nat} :
     xx.map (fun x => WordSemStateFiniteExact.getVar x st) =
@@ -195,8 +178,6 @@ theorem copyPropMove_fst (moves : List (Nat × Nat)) (cs : CopyState) :
       rw [← ih]
 
 /-- Exact HOL `copy_prop_move_eval_aux1` (`word_copyProofScript.sml:615-633`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "copy_prop_move_eval_aux1"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem copyPropMoveEvalAux1 {width : Nat} [NeZero width] {C F : Type} {cs : CopyState}
     {st : WordSemStateFiniteExact width C F} {moves : List (Nat × Nat)} :
     cpStateInv cs → cpStateModels cs st → ∀ (moves' : List (Nat × Nat)) (cs' : CopyState),
@@ -213,8 +194,6 @@ theorem copyPropMoveEvalAux1 {width : Nat} [NeZero width] {C F : Type} {cs : Cop
   exact cpStateModelsDGetVar ⟨hinv, hm⟩
 
 /-- Exact HOL `copy_prop_move_get_vars` (`word_copyProofScript.sml:635-644`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "copy_prop_move_get_vars"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem copyPropMoveGetVars {width : Nat} [NeZero width] {C F : Type} {cs cs' : CopyState}
     {st : WordSemStateFiniteExact width C F} {moves moves' : List (Nat × Nat)} :
     cpStateInv cs → cpStateModels cs st → copyPropMove moves cs = (moves', cs') →
@@ -223,8 +202,6 @@ theorem copyPropMoveGetVars {width : Nat} [NeZero width] {C F : Type} {cs cs' : 
   fun hinv hm h => mapGetVarEqD (copyPropMoveEvalAux1 hinv hm moves' cs' h)
 
 /-- Exact HOL `copy_prop_move_eval_aux2` (`word_copyProofScript.sml:646-652`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "copy_prop_move_eval_aux2"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem copyPropMoveEvalAux2 {width : Nat} [NeZero width] {C F : Type}
     {st : WordSemStateFiniteExact width C F} {moves1 moves2 : List (Nat × Nat)} {pri : Nat} :
     moves1.map Prod.fst = moves2.map Prod.fst →
@@ -237,7 +214,6 @@ theorem copyPropMoveEvalAux2 {width : Nat} [NeZero width] {C F : Type}
     (WordSemStateFiniteExact.evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.1 st pri moves2, h1, h2]
 
 /-- Exact HOL `copy_prop_move_eval_aux3` (`word_copyProofScript.sml:654-665`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "copy_prop_move_eval_aux3"]
 theorem copyPropMoveEvalAux3 {moves : List (Nat × Nat)} {cs : CopyState} :
     ∀ (moves' : List (Nat × Nat)) (cs' : CopyState),
       copyPropMove moves cs = (moves', cs') → moves'.map Prod.fst = moves.map Prod.fst := by
@@ -249,8 +225,6 @@ theorem copyPropMoveEvalAux3 {moves : List (Nat × Nat)} {cs : CopyState} :
   rfl
 
 /-- Exact HOL `copy_prop_move_eval` (`word_copyProofScript.sml:667-679`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "copy_prop_move_eval"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem copyPropMoveEval {width : Nat} [NeZero width] {C F : Type} {cs cs' : CopyState}
     {st st' : WordSemStateFiniteExact width C F} {moves moves' : List (Nat × Nat)} {pri : Nat}
     {err : Option (WordSemResult width)} :
@@ -264,7 +238,6 @@ theorem copyPropMoveEval {width : Nat} [NeZero width] {C F : Type} {cs cs' : Cop
 
 /-- Exact HOL `lookup_alist_insert_same` (`word_copyProofScript.sml:681-687`; the second
 declaration of that name at 741 is commented out in HOL). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "lookup_alist_insert_same" 681]
 theorem lookupAlistInsertSame {α : Type} {s : Nat} {tt : List Nat} {values : List α}
     {locals : Spt α} :
     s ∉ tt →
@@ -290,7 +263,6 @@ theorem copyPropMove_inv2 : ∀ (moves : List (Nat × Nat)) (cs : CopyState),
       setEqInv ⟨removeEqInv _ x (copyPropMove_inv2 moves cs h), removeEq_self_none _ x⟩
 
 /-- Exact HOL `copy_prop_move_inv` (`word_copyProofScript.sml:689-703`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "copy_prop_move_inv"]
 theorem copyPropMoveInv {cs cs' : CopyState} {moves moves' : List (Nat × Nat)} :
     cpStateInv cs → copyPropMove moves cs = (moves', cs') → cpStateInv cs' := by
   intro h hmv
@@ -302,16 +274,13 @@ theorem copyPropMoveInv {cs cs' : CopyState} {moves moves' : List (Nat × Nat)} 
 of `copy_prop_inst_inv`). -/
 theorem copyPropInst_inv2 {width : Nat} [NeZero width] (ins : WordLangInst (BitVec width))
     (cs : CopyState) (h : cpStateInv cs) : cpStateInv (copyPropInst ins cs).2 := by
-  rcases ins with _ | ⟨r, w⟩ | ⟨a⟩ | ⟨m, r, ⟨a, w⟩⟩ | ⟨f⟩
+  rcases ins with _ | ⟨r, w⟩ | ⟨a⟩ | ⟨m, r, ⟨a, w⟩⟩
   · exact h
   · exact removeEqInv _ _ h
   · cases a <;> first | exact removeEqInv _ _ h | exact removeEqsInv _ _ h
   · cases m <;> first | exact h | exact removeEqInv _ _ h
-  · cases f <;> first | exact h | exact removeEqInv _ _ h | exact removeEqsInv _ _ h
 
 /-- Exact HOL `copy_prop_inst_inv` (`word_copyProofScript.sml:705-716`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "copy_prop_inst_inv"
-  (words_as_type_indexed_bitvec)]
 theorem copyPropInstInv {width : Nat} [NeZero width] {cs cs' : CopyState}
     {ins : WordLangInst (BitVec width)} {prog' : WordLangProgHOL (BitVec width)} :
     cpStateInv cs → copyPropInst ins cs = (prog', cs') → cpStateInv cs' := by
@@ -364,8 +333,6 @@ theorem copyPropProg_inv2 {width : Nat} [NeZero width] :
   | .store _ _, _, _ => emptyEqInv
 
 /-- Exact HOL `copy_prop_prog_inv` (`word_copyProofScript.sml:718-739`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "copy_prop_prog_inv"
-  (words_as_type_indexed_bitvec)]
 theorem copyPropProgInv {width : Nat} [NeZero width] {cs cs' : CopyState}
     {prog prog' : WordLangProgHOL (BitVec width)} :
     cpStateInv cs ∧ copyPropProg prog cs = (prog', cs') → cpStateInv cs' := by
@@ -375,8 +342,6 @@ theorem copyPropProgInv {width : Nat} [NeZero width] {cs cs' : CopyState}
   exact this
 
 /-- Exact HOL `empty_eq_model` (`word_copyProofScript.sml:752-756`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "empty_eq_model"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem emptyEqModel {width : Nat} [NeZero width] {C F : Type}
     {st : WordSemStateFiniteExact width C F} : cpStateModels emptyEq st :=
   emptyEqModels st

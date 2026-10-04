@@ -87,8 +87,7 @@ private theorem locToPcFilterMap {width : Nat} [NeZero width] (n1 n2 : Nat)
             cases he : locToPc n1 n2 (⟨k, lines⟩ :: rest) <;>
               simp [adjustPc, hl, hn]
 
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "loc_to_pc_eq_NONE"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem locToPcEqNone {width : Nat} [NeZero width] (n1 n2 : Nat)
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString)
@@ -98,8 +97,7 @@ theorem locToPcEqNone {width : Nat} [NeZero width] (n1 n2 : Nat)
   rw [locToPcFilterMap] at h
   cases he : locToPc n1 n2 code <;> simp_all
 
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "loc_to_pc_eq_SOME"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem locToPcEqSome {width : Nat} [NeZero width] (n1 n2 : Nat)
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString)
@@ -112,8 +110,7 @@ theorem locToPcEqSome {width : Nat} [NeZero width] (n1 n2 : Nat)
   | none => simp [he] at h
   | some originalPc => exact ⟨originalPc, rfl, by simpa only [he, Option.map_some, Option.some.injEq] using h⟩
 
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "loc_to_pc_adjust_pc_append"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem locToPcAdjustPcAppend {width : Nat} [NeZero width] (n1 n2 : Nat)
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString)

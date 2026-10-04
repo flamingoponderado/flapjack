@@ -251,7 +251,6 @@ example (s : AsmState 8) : (readReg 2 (updReg 2 42 { s with regs := fun r => if 
 example (s : AsmState 8) : (readReg 3 (updReg 2 42 { s with regs := fun r => if r = 2 then 13 else 11, fpRegs := fun _ => 7, mem := fun _ => 8, pc := 200, failed := false })).toNat = 11 := rfl
 
 -- Original row asm_upd_fp_reg.
-example (s : AsmState 8) : (readFpReg 2 (updFpReg 2 18446744073709551615 { s with regs := fun r => if r = 2 then 13 else 11, fpRegs := fun _ => 7, mem := fun _ => 8, pc := 200, failed := false })).toNat = 18446744073709551615 := rfl
 
 -- Original row asm_upd_mem.
 example (s : AsmState 8) : (readMem 255 (updMem 255 200 { s with regs := fun r => if r = 2 then 13 else 11, fpRegs := fun _ => 7, mem := fun _ => 8, pc := 200, failed := false })).toNat = 200 := rfl

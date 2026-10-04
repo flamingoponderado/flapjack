@@ -542,11 +542,7 @@ monotonicity laws and word_Call_NONE_not_Break_Continue). HOL's singleton set
 is the predicate fun b => b = semantics s start. Canonical maps and word
 widths are qualified; evaluators inherit reals_as_rational_cuts (SOUNDNESS
 item 8). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "state_rel_IMP_semantics"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelImpSemantics (ac : AsmConfigExact width) (k : Nat)
     (s : WordSemStateFiniteExact width (Nat × C) F) (t : StackSemStateFiniteExact width C F)
     (lens : List Nat) (start : Nat)
@@ -563,11 +559,7 @@ The comp_Call resource-limit branch would give a source stack_max above the
 stack limit, which safe-for-space excludes at every clock. Premises and the
 exact equality conclusion are the original ones. Canonical maps and word widths
 are qualified; evaluators inherit reals_as_rational_cuts (SOUNDNESS item 8). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "state_rel_IMP_semantics'"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelImpSemantics' (ac : AsmConfigExact width) (k : Nat)
     (s : WordSemStateFiniteExact width (Nat × C) F) (t : StackSemStateFiniteExact width C F)
     (lens : List Nat) (start : Nat)

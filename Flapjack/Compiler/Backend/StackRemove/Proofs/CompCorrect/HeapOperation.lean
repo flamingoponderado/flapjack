@@ -17,10 +17,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 /-- Genuine full OpCurrHeap case: both native operands and target execution
 are derived from the original full state relation and register bound. The full
 evaluator closure retains inherited reals_as_rational_cuts. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectOpCurrHeap {width : Nat} [NeZero width] {C F : Type}
     (source : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (postSource target : StackSemStateFiniteExact width C F)

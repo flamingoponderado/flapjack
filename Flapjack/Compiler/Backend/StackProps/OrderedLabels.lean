@@ -11,8 +11,7 @@ open Flapjack.Compiler.Backend.StackLang
 outer Call labels precede labels nested in the return and exception bodies.
 A Call without a return continuation ignores its exception handler. The
 ignored instruction and FFI fields retain their exact carrier types. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "extract_labels_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def extractLabels {width : Nat} [NeZero width] : HolProg width → List (Nat × Nat)
   | .call returns _ handler =>
       match returns with
@@ -35,8 +34,7 @@ decreasing_by all_goals simp_wf <;> omega
 in the returned program. Register keys are arbitrary; register and program
 word dimensions are independent. The only premise is the original successful
 lookup; no domain, branch, target-evaluation or representation premise is added. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "find_code_IMP_get_labels"
-  (fmap_as_finite_support_relation := [regs]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem findCodeImpGetLabels {registerWidth : Nat} {programWidth : Nat}
     [NeZero registerWidth] [NeZero programWidth] {κ : Type}
     (target : Sum Nat κ) (regs : HolFiniteMapExact κ (WordLocW registerWidth))

@@ -115,8 +115,7 @@ the result is `(NONE, ...)`. The result-word carrier is independently
 polymorphic from the state words, exactly as in the full original type;
 only NONE and Error are returned. Same-width evaluator callers infer their
 original specialization from their declared result type. -/
-@[hol "cakeml/compiler/backend/semantics/stackSemScript.sml" "store_const_sem_def"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def storeConstSem {width : Nat} {resultWidth : Nat} [NeZero width] [NeZero resultWidth] {C F : Type}
     (t1 t2 : Nat) (s : StackSemStateFiniteExact width C F) :
     Option (StackSemResult resultWidth) × StackSemStateFiniteExact width C F :=

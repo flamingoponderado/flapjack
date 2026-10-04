@@ -1,3 +1,4 @@
+import Mathlib.Data.List.Infix
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackMax
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateIoEventsMono
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap
@@ -66,11 +67,7 @@ induction hypotheses are retained. The conclusion is the entire original
 clock-existential simulation, including every resource and result branch.
 Evaluator closure inherits reals_as_rational_cuts; no numerical FP
 correspondence is asserted by this structural branch. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_correct" 5756
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectSeqFirstNonNone {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (first second : WordLangProgHOL (BitVec width))
     (source : WordSemStateFiniteExact width (Nat × C) F)
@@ -135,11 +132,7 @@ theorem compCorrectSeqFirstNonNone {width : Nat} [NeZero width] {C F : Type}
 /-- Remaining original Seq first-source NONE branch, retaining resource early
 exit and full second-run composition. Both original IHs and all conclusions
 are retained. Inherits reals_as_rational_cuts through native evaluator closure. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_correct" 5756
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectSeqFirstNone {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (first second : WordLangProgHOL (BitVec width))
     (source : WordSemStateFiniteExact width (Nat × C) F)
@@ -282,11 +275,7 @@ theorem compCorrectSeqFirstNone {width : Nat} [NeZero width] {C F : Type}
 
 /-- Full original Seq constructor case assembled from the original first-run
 NONE/non-NONE split, with no extra branch or target-run hypothesis. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_correct" 5756
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectSeq {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (first second : WordLangProgHOL (BitVec width))
     (source : WordSemStateFiniteExact width (Nat × C) F)

@@ -42,8 +42,7 @@ private theorem twoWritesLocals {α : Type} (f : Nat → Nat) (a b : Nat)
 /-- HOL `evaluate_apply_colour[Inst]`, division subcase of the shared
 get_vars block (1264-1290). The source nonzero divisor guard is retained;
 no successful-evaluation or register-distinctness premise is added. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_InstDiv {width : Nat} [NeZero width] {C F : Type}
     (dst left right : Nat) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)
@@ -89,8 +88,7 @@ theorem evaluateApplyColour_InstDiv {width : Nat} [NeZero width] {C F : Type}
 /-- HOL `evaluate_apply_colour[Inst]`, AddCarry subcase of the shared
 get_vars block1264-1290. Original three premises and full existential result;
 ordered writes preserve all alias cases without a distinctness premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_InstAddCarry {width : Nat} [NeZero width] {C F : Type}
     (a b c d : Nat) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)
@@ -136,8 +134,7 @@ theorem evaluateApplyColour_InstAddCarry {width : Nat} [NeZero width] {C F : Typ
 /-- HOL `evaluate_apply_colour[Inst]`, AddOverflow subcase of the shared
 get_vars block1264-1290. Original three premises and full existential result;
 ordered writes preserve all alias cases without a distinctness premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_InstAddOverflow {width : Nat} [NeZero width] {C F : Type}
     (a b c d : Nat) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)
@@ -183,8 +180,7 @@ theorem evaluateApplyColour_InstAddOverflow {width : Nat} [NeZero width] {C F : 
 /-- HOL `evaluate_apply_colour[Inst]`, SubOverflow subcase of the shared
 get_vars block1264-1290. Original three premises and full existential result;
 ordered writes preserve all alias cases without a distinctness premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_InstSubOverflow {width : Nat} [NeZero width] {C F : Type}
     (a b c d : Nat) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)
@@ -230,8 +226,7 @@ theorem evaluateApplyColour_InstSubOverflow {width : Nat} [NeZero width] {C F : 
 /-- HOL `evaluate_apply_colour[Inst]`, LongMul subcase of the shared
 get_vars block1264-1290. Original three premises and full existential result;
 ordered writes preserve all alias cases without a distinctness premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_InstLongMul {width : Nat} [NeZero width] {C F : Type}
     (a b c d : Nat) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)
@@ -277,8 +272,7 @@ theorem evaluateApplyColour_InstLongMul {width : Nat} [NeZero width] {C F : Type
 /-- HOL `evaluate_apply_colour[Inst]`, LongDiv subcase of the shared
 get_vars block1264-1290. Original three premises and full existential result;
 ordered writes preserve all alias cases without a distinctness premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_InstLongDiv {width : Nat} [NeZero width] {C F : Type}
     (a b c d e : Nat) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)

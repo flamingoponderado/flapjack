@@ -11,8 +11,7 @@ open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabProps
 
 /-- Full original instruction/encoding validity, preserving unsupported Call,
 failed label lookup and every byte-length/assembler-validity conjunct. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "line_ok_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def lineOk {width : Nat} [NeZero width] (c : AsmConfigExact width)
     (labs : Spt (Spt Nat)) (ffis : List HolFfiName) (pos : Nat)
     (line : Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -45,8 +44,7 @@ def lineOk {width : Nat} [NeZero width] (c : AsmConfigExact width)
         encWithNop c.encode (labInst w1 a) bytes ∧ bytes.length = l ∧
           asmOkExact (labInst w1 a) c = true
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "lines_ok_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def linesOk {width : Nat} [NeZero width] (c : AsmConfigExact width)
     (labs : Spt (Spt Nat)) (ffis : List HolFfiName) (pos : Nat)
     (lines : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -55,8 +53,7 @@ def linesOk {width : Nat} [NeZero width] (c : AsmConfigExact width)
   | [] => True
   | y :: ys => lineOk c labs ffis pos y ∧ linesOk c labs ffis (pos + lineLength y) ys
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "all_enc_ok_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def allEncOk {width : Nat} [NeZero width] (c : AsmConfigExact width)
     (labs : Spt (Spt Nat)) (ffis : List HolFfiName) (pos : Nat)
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -69,8 +66,7 @@ def allEncOk {width : Nat} [NeZero width] (c : AsmConfigExact width)
 termination_by code.length + (code.map (fun sec => sec.lines.length)).sum
 decreasing_by all_goals simp_wf
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "all_enc_ok_cons" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem allEncOk_cons {width : Nat} [NeZero width] (c : AsmConfigExact width)
     (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (ls : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -111,8 +107,7 @@ private theorem linesOk_labelsZero {width : Nat} [NeZero width]
     · exact lineOk_labelZero c labs ffis pos line h.1
     · exact ih _ h.2 line hm
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "all_enc_ok_imp_sec_label_zero" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem allEncOk_implies_secLabelZero {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (n : Nat)
@@ -131,8 +126,7 @@ theorem allEncOk_implies_secLabelZero {width : Nat} [NeZero width]
 
 /-- Full original zero-position theorem. The source's unused forall enc binder
 is vacuous (absent from premise and conclusion) and is omitted after source review. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "pos_val_0" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem posVal_zero {width : Nat} [NeZero width]
     (xs : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))
@@ -190,8 +184,7 @@ private theorem posVal_bound_labelsZero {width : Nat} [NeZero width]
 
 /-- Full original position bound. The position being bounded is independent of
 n, the starting position at which the code's encoding validity is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "pos_val_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem posVal_bound {width : Nat} [NeZero width] (i pos : Nat)
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))

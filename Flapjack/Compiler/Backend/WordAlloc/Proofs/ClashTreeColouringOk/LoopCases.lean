@@ -15,8 +15,7 @@ private theorem loopEntryWf (lt : List (NumSet × NumSet)) (index : Nat)
   | some p => simpa using hw p (List.mem_of_getElem? h)
 
 /-- The Break case retains all six original premises and all five conclusions. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "clash_tree_colouring_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_Break {width : Nat} [NeZero width] (index : Nat) :
     clashTreeGoal (.break index : WordLangProgHOL (BitVec width)) := by
   rintro lt f live flive livein flivein ⟨-, -, ht, -, hi, hc⟩
@@ -27,8 +26,7 @@ theorem clashTreeColouringOk_Break {width : Nat} [NeZero width] (index : Nat) :
   simpa only [colouringOk, getLive, getWrites, sptUnion] using And.intro hinj hi
 
 /-- The Continue case retains all six original premises and all five conclusions. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "clash_tree_colouring_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_Continue {width : Nat} [NeZero width] (index : Nat) :
     clashTreeGoal (.continue index : WordLangProgHOL (BitVec width)) := by
   rintro lt f live flive livein flivein ⟨-, -, ht, -, hi, hc⟩
@@ -39,8 +37,7 @@ theorem clashTreeColouringOk_Continue {width : Nat} [NeZero width] (index : Nat)
   simpa only [colouringOk, getLive, getWrites, sptUnion] using And.intro hinj hi
 
 /-- The Loop case uses only the original body induction hypothesis. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "clash_tree_colouring_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_Loop {width : Nat} [NeZero width]
     (names exitNames : NumSet) (body : WordLangProgHOL (BitVec width))
     (ih : clashTreeGoal body) : clashTreeGoal (.loop names body exitNames) := by

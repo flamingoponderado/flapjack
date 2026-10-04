@@ -30,8 +30,7 @@ state updates are literal, including the compile callback and plain oracle,
 natural heap/stack arithmetic, header buffer and ordered finite-map updates.
 The characteristic function for the address set is its exact membership
 decision; no pre-existing or finite memory-domain hypothesis is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "init_reduce_def"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def initReduce {width : Nat} [NeZero width] {C F : Type}
     (generateGc jump : Bool) (bounds : BitVec width × BitVec width) (pointer : Nat)
     (code : Spt (HolProg width)) (bitmaps : List (BitVec width)) (dataSpace : Nat)
@@ -64,8 +63,7 @@ noncomputable def initReduce {width : Nat} [NeZero width] {C F : Type}
 
 /-- Full original local stack-space invariant of the actual initializer
 state construction. No pointer validity or successful execution is required. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "init_reduce_stack_space"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem initReduceStackSpace {width : Nat} [NeZero width] {C F : Type}
     (generateGc jump : Bool) (bounds : BitVec width × BitVec width) (pointer : Nat)
     (code : Spt (HolProg width)) (bitmaps : List (BitVec width)) (dataSpace : Nat)

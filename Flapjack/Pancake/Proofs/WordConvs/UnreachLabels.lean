@@ -88,8 +88,7 @@ private theorem labelsSublistSeqAssocRight {width : Nat} [NeZero width]
       simpa only [extractLabels] using labelsSublistSimpSeq first second
 
 /-- Original SimpSeq label-set inclusion for arbitrary programs and labels. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "extract_labels_SimpSeq"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem extractLabelsSimpSeq {width : Nat} [NeZero width]
     (first second : WordLangProgHOL (BitVec width)) :
     ∀ label, label ∈ extractLabels (simpSeq first second) →
@@ -99,8 +98,7 @@ theorem extractLabelsSimpSeq {width : Nat} [NeZero width]
 
 /-- Original recursive right-association label-set inclusion, including all
 native accumulator drops and returning handlers. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "extract_labels_Seq_assoc_right_lemma"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem extractLabelsSeqAssocRight {width : Nat} [NeZero width]
     (first second : WordLangProgHOL (BitVec width)) :
     ∀ label, label ∈ extractLabels (seqAssocRight first second) →
@@ -109,8 +107,7 @@ theorem extractLabelsSeqAssocRight {width : Nat} [NeZero width]
   exact List.mem_append.mp ((labelsSublistSeqAssocRight first second).subset member)
 
 /-- Original complete remove_unreach label-set inclusion. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "extract_labels_remove_unreach"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem extractLabelsRemoveUnreach {width : Nat} [NeZero width]
     (program : WordLangProgHOL (BitVec width)) :
     ∀ label, label ∈ extractLabels (removeUnreach program) → label ∈ extractLabels program := by
@@ -120,8 +117,7 @@ theorem extractLabelsRemoveUnreach {width : Nat} [NeZero width]
 
 /-- Original membership corollary; HOL's set inclusion and membership disjunction
 have the same pointwise Lean statement, without an additional premise. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "MEM_extract_labels_Seq_assoc_right_lemma"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem memExtractLabelsSeqAssocRight {width : Nat} [NeZero width]
     (first second : WordLangProgHOL (BitVec width)) (label : Nat × Nat)
     (member : label ∈ extractLabels (seqAssocRight first second)) :
@@ -129,8 +125,7 @@ theorem memExtractLabelsSeqAssocRight {width : Nat} [NeZero width]
   extractLabelsSeqAssocRight first second label member
 
 /-- Original whole-label-list distinctness implication for native right association. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "ALL_DISTINCT_extract_labels_Seq_assoc_right_lemma"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem distinctExtractLabelsSeqAssocRight {width : Nat} [NeZero width]
     (first second : WordLangProgHOL (BitVec width))
     (distinct : (extractLabels first ++ extractLabels second).Nodup) :
@@ -138,8 +133,7 @@ theorem distinctExtractLabelsSeqAssocRight {width : Nat} [NeZero width]
   (labelsSublistSeqAssocRight first second).nodup distinct
 
 /-- Original source-distinctness preservation for native remove_unreach. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "ALL_DISTINCT_extract_labels_remove_unreach"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem distinctExtractLabelsRemoveUnreach {width : Nat} [NeZero width]
     (program : WordLangProgHOL (BitVec width)) (distinct : (extractLabels program).Nodup) :
     (extractLabels (removeUnreach program)).Nodup := by
@@ -148,8 +142,7 @@ theorem distinctExtractLabelsRemoveUnreach {width : Nat} [NeZero width]
 
 /-- Full original labels_rel_remove_unreach, preserving both label-set inclusion
 and source-distinctness implication. No desired output relation is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "labels_rel_remove_unreach"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem labelsRelRemoveUnreach {width : Nat} [NeZero width]
     (program : WordLangProgHOL (BitVec width)) :
     labelsRel (extractLabels program) (extractLabels (removeUnreach program)) :=

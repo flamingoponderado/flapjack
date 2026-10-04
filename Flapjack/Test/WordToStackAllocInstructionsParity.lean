@@ -111,114 +111,70 @@ example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.mem
   trivial
 
 -- aai_1_0_fpless
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpLess 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_0_fplessequal
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpLessEqual 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_0_fpequal
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpEqual 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_0_fpabs
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpAbs 999 3))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_0_fpneg
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpNeg 999 3))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_0_fpsqrt
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpSqrt 999 3))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_0_fpadd
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpAdd 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_0_fpsub
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpSub 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_0_fpmul
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpMul 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_0_fpdiv
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpDiv 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_0_fpfma
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpFma 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_0_fpmov
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpMov 999 3))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_0_fpmovtoreg
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_0_fpmovfromreg
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_0_fptoint
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpToInt 999 3))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_0_fpfromint
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpFromInt 999 3))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_0_fpmovtoreg1
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_0_fpmovfromreg1
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_0_fpmovtoreg32
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_0_fpmovfromreg32
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_0_fpmovtoreg80
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_0_fpmovfromreg80
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_0_share_Load_0
 example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.shareInst .load 1180591620717411303427 (.var 999)) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
@@ -441,114 +397,70 @@ example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.mem
   trivial
 
 -- aai_1_1_fpless
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpLess 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_1_fplessequal
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpLessEqual 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_1_fpequal
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpEqual 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_1_fpabs
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpAbs 999 3))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_1_fpneg
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpNeg 999 3))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_1_fpsqrt
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpSqrt 999 3))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_1_fpadd
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpAdd 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_1_fpsub
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpSub 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_1_fpmul
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpMul 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_1_fpdiv
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpDiv 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_1_fpfma
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpFma 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_1_fpmov
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpMov 999 3))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_1_fpmovtoreg
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_1_fpmovfromreg
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_1_fptoint
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpToInt 999 3))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_1_fpfromint
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpFromInt 999 3))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_1_fpmovtoreg1
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_1_fpmovfromreg1
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_1_fpmovtoreg32
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_1_fpmovfromreg32
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_1_fpmovtoreg80
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_1_fpmovfromreg80
-example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_1_1_share_Load_0
 example (conf : AsmConfigExact 1) : allocArg (compNative conf false (.shareInst .load 1180591620717411303427 (.var 999)) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
@@ -771,114 +683,70 @@ example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.mem
   trivial
 
 -- aai_2_0_fpless
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpLess 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_0_fplessequal
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpLessEqual 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_0_fpequal
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpEqual 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_0_fpabs
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpAbs 999 3))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_0_fpneg
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpNeg 999 3))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_0_fpsqrt
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpSqrt 999 3))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_0_fpadd
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpAdd 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_0_fpsub
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpSub 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_0_fpmul
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpMul 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_0_fpdiv
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpDiv 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_0_fpfma
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpFma 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_0_fpmov
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpMov 999 3))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_0_fpmovtoreg
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_0_fpmovfromreg
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_0_fptoint
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpToInt 999 3))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_0_fpfromint
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpFromInt 999 3))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_0_fpmovtoreg1
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_0_fpmovfromreg1
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_0_fpmovtoreg32
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_0_fpmovfromreg32
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_0_fpmovtoreg80
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_0_fpmovfromreg80
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_0_share_Load_0
 example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.shareInst .load 1180591620717411303427 (.var 999)) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
@@ -1101,114 +969,70 @@ example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.mem
   trivial
 
 -- aai_2_1_fpless
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpLess 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_1_fplessequal
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpLessEqual 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_1_fpequal
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpEqual 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_1_fpabs
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpAbs 999 3))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_1_fpneg
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpNeg 999 3))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_1_fpsqrt
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpSqrt 999 3))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_1_fpadd
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpAdd 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_1_fpsub
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpSub 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_1_fpmul
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpMul 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_1_fpdiv
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpDiv 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_1_fpfma
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpFma 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_1_fpmov
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpMov 999 3))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_1_fpmovtoreg
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_1_fpmovfromreg
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_1_fptoint
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpToInt 999 3))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_1_fpfromint
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpFromInt 999 3))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_1_fpmovtoreg1
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_1_fpmovfromreg1
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_1_fpmovtoreg32
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_1_fpmovfromreg32
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_1_fpmovtoreg80
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_1_fpmovfromreg80
-example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_2_1_share_Load_0
 example (conf : AsmConfigExact 2) : allocArg (compNative conf false (.shareInst .load 1180591620717411303427 (.var 999)) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
@@ -1431,114 +1255,70 @@ example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.mem
   trivial
 
 -- aai_8_0_fpless
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpLess 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_0_fplessequal
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpLessEqual 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_0_fpequal
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpEqual 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_0_fpabs
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpAbs 999 3))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_0_fpneg
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpNeg 999 3))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_0_fpsqrt
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpSqrt 999 3))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_0_fpadd
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpAdd 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_0_fpsub
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpSub 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_0_fpmul
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpMul 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_0_fpdiv
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpDiv 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_0_fpfma
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpFma 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_0_fpmov
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpMov 999 3))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_0_fpmovtoreg
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_0_fpmovfromreg
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_0_fptoint
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpToInt 999 3))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_0_fpfromint
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpFromInt 999 3))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_0_fpmovtoreg1
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_0_fpmovfromreg1
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_0_fpmovtoreg32
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_0_fpmovfromreg32
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_0_fpmovtoreg80
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_0_fpmovfromreg80
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_0_share_Load_0
 example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.shareInst .load 1180591620717411303427 (.var 999)) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
@@ -1761,114 +1541,70 @@ example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.mem
   trivial
 
 -- aai_8_1_fpless
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpLess 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_1_fplessequal
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpLessEqual 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_1_fpequal
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpEqual 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_1_fpabs
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpAbs 999 3))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_1_fpneg
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpNeg 999 3))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_1_fpsqrt
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpSqrt 999 3))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_1_fpadd
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpAdd 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_1_fpsub
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpSub 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_1_fpmul
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpMul 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_1_fpdiv
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpDiv 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_1_fpfma
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpFma 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_1_fpmov
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpMov 999 3))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_1_fpmovtoreg
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_1_fpmovfromreg
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_1_fptoint
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpToInt 999 3))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_1_fpfromint
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpFromInt 999 3))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_1_fpmovtoreg1
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_1_fpmovfromreg1
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_1_fpmovtoreg32
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_1_fpmovfromreg32
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_1_fpmovtoreg80
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_1_fpmovfromreg80
-example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_8_1_share_Load_0
 example (conf : AsmConfigExact 8) : allocArg (compNative conf false (.shareInst .load 1180591620717411303427 (.var 999)) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
@@ -2091,114 +1827,70 @@ example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.me
   trivial
 
 -- aai_64_0_fpless
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpLess 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_0_fplessequal
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpLessEqual 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_0_fpequal
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpEqual 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_0_fpabs
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpAbs 999 3))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_0_fpneg
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpNeg 999 3))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_0_fpsqrt
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpSqrt 999 3))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_0_fpadd
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpAdd 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_0_fpsub
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpSub 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_0_fpmul
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpMul 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_0_fpdiv
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpDiv 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_0_fpfma
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpFma 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_0_fpmov
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpMov 999 3))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_0_fpmovtoreg
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_0_fpmovfromreg
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_0_fptoint
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpToInt 999 3))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_0_fpfromint
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpFromInt 999 3))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_0_fpmovtoreg1
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_0_fpmovfromreg1
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_0_fpmovtoreg32
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_0_fpmovfromreg32
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_0_fpmovtoreg80
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_0_fpmovfromreg80
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_0_share_Load_0
 example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.shareInst .load 1180591620717411303427 (.var 999)) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
@@ -2421,114 +2113,70 @@ example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.me
   trivial
 
 -- aai_64_1_fpless
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpLess 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_1_fplessequal
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpLessEqual 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_1_fpequal
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpEqual 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_1_fpabs
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpAbs 999 3))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_1_fpneg
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpNeg 999 3))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_1_fpsqrt
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpSqrt 999 3))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_1_fpadd
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpAdd 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_1_fpsub
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpSub 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_1_fpmul
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpMul 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_1_fpdiv
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpDiv 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_1_fpfma
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpFma 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_1_fpmov
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpMov 999 3))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_1_fpmovtoreg
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_1_fpmovfromreg
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_1_fptoint
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpToInt 999 3))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_1_fpfromint
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpFromInt 999 3))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_1_fpmovtoreg1
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_1_fpmovfromreg1
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_1_fpmovtoreg32
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_1_fpmovfromreg32
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_1_fpmovtoreg80
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_1_fpmovfromreg80
-example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_64_1_share_Load_0
 example (conf : AsmConfigExact 64) : allocArg (compNative conf false (.shareInst .load 1180591620717411303427 (.var 999)) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
@@ -2751,114 +2399,70 @@ example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.me
   trivial
 
 -- aai_80_0_fpless
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpLess 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_0_fplessequal
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpLessEqual 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_0_fpequal
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpEqual 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_0_fpabs
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpAbs 999 3))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_0_fpneg
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpNeg 999 3))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_0_fpsqrt
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpSqrt 999 3))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_0_fpadd
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpAdd 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_0_fpsub
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpSub 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_0_fpmul
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpMul 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_0_fpdiv
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpDiv 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_0_fpfma
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpFma 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_0_fpmov
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpMov 999 3))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_0_fpmovtoreg
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_0_fpmovfromreg
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_0_fptoint
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpToInt 999 3))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_0_fpfromint
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpFromInt 999 3))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_0_fpmovtoreg1
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_0_fpmovfromreg1
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_0_fpmovtoreg32
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_0_fpmovfromreg32
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_0_fpmovtoreg80
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_0_fpmovfromreg80
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_0_share_Load_0
 example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.shareInst .load 1180591620717411303427 (.var 999)) (.append (.list [4]) (.list [7]),17) (0,0,0)).1 := by
@@ -3081,114 +2685,70 @@ example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.me
   trivial
 
 -- aai_80_1_fpless
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpLess 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_1_fplessequal
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpLessEqual 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_1_fpequal
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpEqual 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_1_fpabs
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpAbs 999 3))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_1_fpneg
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpNeg 999 3))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_1_fpsqrt
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpSqrt 999 3))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_1_fpadd
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpAdd 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_1_fpsub
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpSub 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_1_fpmul
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpMul 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_1_fpdiv
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpDiv 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_1_fpfma
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpFma 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_1_fpmov
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpMov 999 3))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_1_fpmovtoreg
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_1_fpmovfromreg
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_1_fptoint
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpToInt 999 3))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_1_fpfromint
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpFromInt 999 3))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_1_fpmovtoreg1
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_1_fpmovfromreg1
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_1_fpmovtoreg32
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_1_fpmovfromreg32
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_1_fpmovtoreg80
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpMovToReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_1_fpmovfromreg80
-example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.inst (.fp (.fpMovFromReg 999 3 5))) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by
-  simp only [compNative]
-  trivial
+
 
 -- aai_80_1_share_Load_0
 example (conf : AsmConfigExact 80) : allocArg (compNative conf false (.shareInst .load 1180591620717411303427 (.var 999)) (.append (.list [4]) (.list [7]),17) (2,7,9)).1 := by

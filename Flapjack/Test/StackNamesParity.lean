@@ -28,13 +28,11 @@ private def iArith (operation : WordLangArith W) : WordLangInst W :=
   WordLangInst.arith operation
 private def iMem (operator : WordMemOp) (destination : Nat) (address : WordLangAddr W) : WordLangInst W :=
   WordLangInst.mem operator destination address
-private def iFp (operation : WordLangFp) : WordLangInst W :=
-  WordLangInst.fp operation
 private def aDiv (a b c : Nat) : WordLangArith W := WordLangArith.div a b c
-private def fFma (a b c : Nat) : WordLangFp := WordLangFp.fpFma a b c
 private def dAddr (base : Nat) (offset : W) : WordLangAddr W := WordLangAddr.addr base offset
 private def riReg (name : Nat) : WordRegImm W := WordRegImm.reg name
 private def riImm (value : W) : WordRegImm W := WordRegImm.imm value
+
 
 /-- Renaming map `3 |-> 7` (HOL oracle `sptree$insert 3 7 (sptree$LN)`). -/
 private def names : FiniteMap Nat Nat := fun k => if k = 3 then some 7 else none
@@ -68,7 +66,6 @@ example : riFindName names (riImm 0) = riImm 0 := rfl
 -- `inst_find_name`
 example : instFindName names (iConst 3 0) = iConst 7 0 := rfl
 example : instFindName names (iArith (aDiv 3 4 5)) = iArith (aDiv 7 4 5) := rfl
-example : instFindName names (iFp (fFma 1 2 3)) = iFp (fFma 1 2 3) := rfl
 example : instFindName names (iMem .load 3 (dAddr 3 8)) = iMem .load 7 (dAddr 7 8) := rfl
 
 -- `dest_find_name`

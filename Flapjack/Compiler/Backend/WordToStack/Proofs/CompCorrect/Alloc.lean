@@ -1,3 +1,5 @@
+import Mathlib.Order.MinMax
+import Mathlib.Data.Nat.Basic
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Control
 import Flapjack.Compiler.Backend.WordToStack.Proofs.EvaluateWLive
 import Flapjack.PanToCrepMaxList
@@ -56,11 +58,7 @@ All original premises and the complete target clock/run/result/resource
 conclusion are retained; no target run, simulation law or successful-execution
 restriction is assumed. Evaluator closure inherits reals_as_rational_cuts; no
 numerical FP assertion. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_correct" 5756
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectAlloc {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (dest : Nat) (names : WordLangCutsetsHOL) (k f frame : Nat)
     (source sourcePost : WordSemStateFiniteExact width (Nat × C) F)

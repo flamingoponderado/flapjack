@@ -6,8 +6,8 @@ namespace Flapjack.WordAlloc
 the source catchall, yielding LN. FP comparisons write integer registers;
 FPMovToReg writes only its first register at width 64 and both otherwise.
 This proof-side port does not replace the executed caller yet. -/
-@[hol "cakeml/compiler/backend/word_allocScript.sml" "get_writes_inst_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: integer-only specialization of the referenced HOL declaration.
+
 def getWritesInst {width : Nat} [NeZero width] :
     WordLangInst (BitVec width) → NumSet
   | .const r _ => sptInsert r () .ln
@@ -22,12 +22,6 @@ def getWritesInst {width : Nat} [NeZero width] :
   | .mem .load r (.addr _ _)
   | .mem .load32 r (.addr _ _)
   | .mem .load8 r (.addr _ _) => sptInsert r () .ln
-  | .fp (.fpLess r _ _)
-  | .fp (.fpLessEqual r _ _)
-  | .fp (.fpEqual r _ _) => sptInsert r () .ln
-  | .fp (.fpMovToReg r1 r2 _) =>
-      if width = 64 then sptInsert r1 () .ln
-      else sptInsert r2 () (sptInsert r1 () .ln)
   | _ => .ln
 
 end Flapjack.WordAlloc

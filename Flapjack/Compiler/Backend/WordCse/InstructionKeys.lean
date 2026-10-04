@@ -35,8 +35,7 @@ def regImmToNumList {width : Nat} [NeZero width] : HolRegImm width → List Nat
   | .reg r => [33, r + 100]
   | .imm word => [34, wordToNum word]
 
-@[hol "cakeml/compiler/backend/word_cseScript.sml" "arithToNumList_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: declaration over the reduced integer carrier.
 def arithToNumList {width : Nat} [NeZero width] : HolArith width → List Nat
   | .binop op _ r2 ri => [25, arithOpToNum op, r2 + 100] ++ regImmToNumList ri
   | .longMul _ _ r3 r4 => [26, r3 + 100, r4 + 100]
@@ -64,31 +63,12 @@ def loadToNumList {width : Nat} [NeZero width] (op : HolMemop) (address : Nat)
     (offset : BitVec width) : List Nat :=
   [memOpToNum op, address + 100, wordToNum offset]
 
-@[hol "cakeml/compiler/backend/word_cseScript.sml" "fpToNumList_def"]
-def fpToNumList : HolFp → List Nat
-  | .fpLess _ r2 r3 => [5, r2 + 100, r3 + 100]
-  | .fpLessEqual _ r2 r3 => [6, r2 + 100, r3 + 100]
-  | .fpEqual _ r2 r3 => [7, r2 + 100, r3 + 100]
-  | .fpAbs _ r2 => [8, r2 + 100]
-  | .fpNeg _ r2 => [9, r2 + 100]
-  | .fpSqrt _ r2 => [10, r2 + 100]
-  | .fpAdd _ r2 r3 => [11, r2 + 100, r3 + 100]
-  | .fpSub _ r2 r3 => [12, r2 + 100, r3 + 100]
-  | .fpMul _ r2 r3 => [13, r2 + 100, r3 + 100]
-  | .fpDiv _ r2 r3 => [14, r2 + 100, r3 + 100]
-  | .fpFma r1 r2 r3 => [15, r1 + 100, r2 + 100, r3 + 100]
-  | .fpMov _ r2 => [16, r2 + 100]
-  | .fpMovToReg _ r2 r3 => [17, r2 + 100, r3 + 100]
-  | .fpMovFromReg _ r2 r3 => [18, r2 + 100, r3 + 100]
-  | .fpToInt _ r2 => [19, r2 + 100]
-  | .fpFromInt _ r2 => [20, r2 + 100]
 
-@[hol "cakeml/compiler/backend/word_cseScript.sml" "instToNumList_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: integer-only specialization of the referenced HOL declaration.
+
 def instToNumList {width : Nat} [NeZero width] : HolInst width → List Nat
   | .const _ word => [2, wordToNum word]
   | .arith operation => 3 :: arithToNumList operation
-  | .fp operation => 4 :: fpToNumList operation
   | _ => [1]
 
 @[hol "cakeml/compiler/backend/word_cseScript.sml" "OpCurrHeapToNumList_def"]

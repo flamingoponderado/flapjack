@@ -66,10 +66,7 @@ compTop preserves the leading Seq, so target dispatch selects the compiled
 callee body directly. Frame preservation is derived from evaluateMono.
 The full evaluator inherits SOUNDNESS item 8 reals_as_rational_cuts; this
 case introduces no real rendering or cross-language equivalence claim. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectRawCall {width : Nat} [NeZero width] {C F : Type}
     (dest : Nat) (info : Spt Nat)
     (source target resultState : StackSemStateFiniteExact width C F)

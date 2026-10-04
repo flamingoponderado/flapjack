@@ -19,8 +19,7 @@ end ClockSupport
 
 /-- All nineteen source conjuncts. The unrelated s and z states have
 independent word/configuration/FFI carriers, not a shared instantiation. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "dec_clock_const"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem decClockConst {width otherWidth : Nat} [NeZero width] [NeZero otherWidth]
     {C F OtherC OtherF : Type} (s : StackSemStateFiniteExact width C F)
     (z : StackSemStateFiniteExact otherWidth OtherC OtherF) :
@@ -84,8 +83,7 @@ theorem contLoopImp {width : Nat} [NeZero width]
     cases result <;> simp_all [contLoop]
 
 /-- Full source clock-update projection statement over the imported state. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "with_clock_ffi"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem withClockFfi {width : Nat} [NeZero width] {C F : Type}
     (s : StackSemStateFiniteExact width C F) (k : Nat) :
     ({ s with clock := k } : StackSemStateFiniteExact width C F).ffi = s.ffi := rfl
@@ -95,8 +93,7 @@ asm instruction/immediate/address fields; the positive-width native carrier
 retains that dependency even though this predicate ignores those payloads.
 Only Seq/If recurse; Skip, Inst, LocValue and Halt are neutral. Every other
 constructor, including Loop and Call, is false. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "clock_neutral_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def clockNeutralHOL {width : Nat} [NeZero width] :
     Flapjack.Compiler.Backend.StackLang.HolProg width → Prop
   | .seq first second => clockNeutralHOL first ∧ clockNeutralHOL second

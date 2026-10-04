@@ -230,10 +230,7 @@ only the body IH at the fixed source and actual guarded body-post reentry IH
 are added. Both original compTop/comp existential conclusions remain intact.
 The full native evaluator inherits its documented real-carrier assurance limit;
 this proof introduces no real rendering. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectLoop {width : Nat} [NeZero width] {C F : Type}
     (body : HolProg width)
     (info : Spt Nat) (source target post : StackSemStateFiniteExact width C F)

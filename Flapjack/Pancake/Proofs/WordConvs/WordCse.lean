@@ -101,8 +101,7 @@ theorem wordCommonSubexpElim_out (p : WordLangProgHOL (BitVec width)) :
 end Shape
 
 /-- HOL `word_cse_extract_labels` (`wordConvsProofScript.sml:1606-1626`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "word_cse_extract_labels"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_cse_extract_labels {width : Nat} [NeZero width] :
     ∀ (p : WordLangProgHOL (BitVec width)) (d d1 : Knowledge) (p1 : WordLangProgHOL (BitVec width)),
       wordCse d p = (d1, p1) → extractLabels p1 = extractLabels p := by
@@ -112,8 +111,7 @@ theorem word_cse_extract_labels {width : Nat} [NeZero width] :
   exact extractLabels_cseOut this
 
 /-- HOL `extract_labels_word_common_subexp_elim` (`wordConvsProofScript.sml:1628-1633`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "extract_labels_word_common_subexp_elim" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem extract_labels_word_common_subexp_elim {width : Nat} [NeZero width]
     (p : WordLangProgHOL (BitVec width)) :
     extractLabels (wordCommonSubexpElim p) = extractLabels p :=
@@ -121,8 +119,7 @@ theorem extract_labels_word_common_subexp_elim {width : Nat} [NeZero width]
 
 /-- HOL `word_cseInst_not_created_subprogs` (`wordConvsProofScript.sml:1635-1648`);
 HOL's free predicate `P` is the leading binder. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "word_cseInst_not_created_subprogs" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_cseInst_not_created_subprogs {width : Nat} [NeZero width]
     (P : WordLangProgHOL (BitVec width) → Bool) :
     ∀ (env : Knowledge) (i : HolInst width), notCreatedSubprogsHOL P (wordCseInst env i).2 = true := by
@@ -131,8 +128,7 @@ theorem word_cseInst_not_created_subprogs {width : Nat} [NeZero width]
 
 /-- HOL `word_cse_not_created_subprogs` (`wordConvsProofScript.sml:1650-1662`);
 HOL's free predicate `P` is the leading binder. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "word_cse_not_created_subprogs"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_cse_not_created_subprogs {width : Nat} [NeZero width]
     (P : WordLangProgHOL (BitVec width) → Bool) :
     ∀ (p : WordLangProgHOL (BitVec width)) (env : Knowledge),
@@ -140,8 +136,7 @@ theorem word_cse_not_created_subprogs {width : Nat} [NeZero width]
   fun p env => notCreatedSubprogs_cseOut P (wordCse_out p env)
 
 /-- HOL `word_common_subexp_elim_not_created_subprogs` (`wordConvsProofScript.sml:1664-1670`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "word_common_subexp_elim_not_created_subprogs" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_common_subexp_elim_not_created_subprogs {width : Nat} [NeZero width]
     (P : WordLangProgHOL (BitVec width) → Bool) (prog : WordLangProgHOL (BitVec width)) :
     notCreatedSubprogsHOL P prog = true →
@@ -149,8 +144,7 @@ theorem word_common_subexp_elim_not_created_subprogs {width : Nat} [NeZero width
   notCreatedSubprogs_cseOut P (wordCommonSubexpElim_out prog)
 
 /-- HOL `word_good_handlers_word_common_subexp_elim` (`wordConvsProofScript.sml:1672-1693`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "word_good_handlers_word_common_subexp_elim" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_good_handlers_word_common_subexp_elim {width : Nat} [NeZero width] (q : Nat)
     (p : WordLangProgHOL (BitVec width)) :
     goodHandlersHOL q (wordCommonSubexpElim p) = true ↔ goodHandlersHOL q p = true := by
@@ -158,8 +152,7 @@ theorem word_good_handlers_word_common_subexp_elim {width : Nat} [NeZero width] 
 
 /-- HOL `word_cse_get_code_labels` (`wordConvsProofScript.sml:1698-1738`): CSE may
 only drop code labels (a repeated `LocValue` becomes a `Move`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "word_cse_get_code_labels"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_cse_get_code_labels {width : Nat} [NeZero width] :
     ∀ (p : WordLangProgHOL (BitVec width)) (data data' : Knowledge) (q : WordLangProgHOL (BitVec width)),
       wordCse data p = (data', q) → getCodeLabelsHOL q ⊆ getCodeLabelsHOL p := by
@@ -169,16 +162,14 @@ theorem word_cse_get_code_labels {width : Nat} [NeZero width] :
   exact getCodeLabels_cseOut this
 
 /-- HOL `word_get_code_labels_word_common_subexp_elim` (`wordConvsProofScript.sml:1740-1747`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "word_get_code_labels_word_common_subexp_elim" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_get_code_labels_word_common_subexp_elim {width : Nat} [NeZero width]
     (p : WordLangProgHOL (BitVec width)) :
     getCodeLabelsHOL (wordCommonSubexpElim p) ⊆ getCodeLabelsHOL p :=
   getCodeLabels_cseOut (wordCommonSubexpElim_out p)
 
 /-- HOL `word_cse_flat_exp_conventions` (`wordConvsProofScript.sml:1749-1790`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "word_cse_flat_exp_conventions"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_cse_flat_exp_conventions {width : Nat} [NeZero width] :
     ∀ (p : WordLangProgHOL (BitVec width)) (data data' : Knowledge) (q : WordLangProgHOL (BitVec width)),
       flatExpConventions p = true ∧ wordCse data p = (data', q) → flatExpConventions q = true := by
@@ -188,16 +179,14 @@ theorem word_cse_flat_exp_conventions {width : Nat} [NeZero width] :
   exact flatExpConventions_cseOut this hp
 
 /-- HOL `flat_exp_conventions_word_common_subexp_elim` (`wordConvsProofScript.sml:1792-1799`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "flat_exp_conventions_word_common_subexp_elim" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flat_exp_conventions_word_common_subexp_elim {width : Nat} [NeZero width]
     (p : WordLangProgHOL (BitVec width)) :
     flatExpConventions p = true → flatExpConventions (wordCommonSubexpElim p) = true :=
   flatExpConventions_cseOut (wordCommonSubexpElim_out p)
 
 /-- HOL `word_cse_wf_cutsets` (`wordConvsProofScript.sml:1801-1841`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "word_cse_wf_cutsets"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_cse_wf_cutsets {width : Nat} [NeZero width] :
     ∀ (p : WordLangProgHOL (BitVec width)) (data data' : Knowledge) (q : WordLangProgHOL (BitVec width)),
       wfCutsets p ∧ wordCse data p = (data', q) → wfCutsets q := by
@@ -207,8 +196,7 @@ theorem word_cse_wf_cutsets {width : Nat} [NeZero width] :
   exact wfCutsets_cseOut this hp
 
 /-- HOL `wf_cutsets_word_common_subexp_elim` (`wordConvsProofScript.sml:1843-1849`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "wf_cutsets_word_common_subexp_elim" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wf_cutsets_word_common_subexp_elim {width : Nat} [NeZero width]
     (p : WordLangProgHOL (BitVec width)) :
     wfCutsets p → wfCutsets (wordCommonSubexpElim p) :=

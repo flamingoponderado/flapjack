@@ -20,9 +20,7 @@ all original premises and all four original conclusions. The proof exhausts
 the original partial selector internally; no case-selection premise remains.
 Canonical regs/fpRegs/store and positive-width words are the only carrier
 translations; total instruction closure inherits the rational-cut limit. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml"
-  "alloc_correct_lemma_Generational"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem alloc_correct_lemma_Generational {width : Nat} [NeZero width] {C F : Type}
     {conf : Config} {genSizes : List Nat} {c : DataToWord.Config}
     {w : BitVec width} {s t : StackSemStateFiniteExact width C F}

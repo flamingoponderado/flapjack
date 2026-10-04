@@ -81,30 +81,6 @@ example : getDeltaInst (.mem .load8 1 (.addr 2 (0 : BitVec 8)) : HolInst 8) =
 example : getDeltaInst (.mem .store8 1 (.addr 2 (0 : BitVec 8)) : HolInst 8) =
     .delta [] [1, 2] := by decide +kernel
 
--- gdi_fpless=T
-example : getDeltaInst (.fp (.fpLess 1 2 3) : HolInst 8) =
-    .delta [1] [] := by decide +kernel
-
--- gdi_fpmovtoreg64=T
-example : getDeltaInst (.fp (.fpMovToReg 1 2 3) : HolInst 64) =
-    .delta [1] [] := by decide +kernel
-
--- gdi_fpmovtoreg32=T
-example : getDeltaInst (.fp (.fpMovToReg 1 2 3) : HolInst 32) =
-    .delta [1, 2] [] := by decide +kernel
-
--- gdi_fpmovfromreg64=T
-example : getDeltaInst (.fp (.fpMovFromReg 3 1 2) : HolInst 64) =
-    .delta [] [1] := by decide +kernel
-
--- gdi_fpmovfromreg32=T
-example : getDeltaInst (.fp (.fpMovFromReg 3 1 2) : HolInst 32) =
-    .delta [] [1, 2] := by decide +kernel
-
--- gdi_fpneg_catchall=T
-example : getDeltaInst (.fp (.fpNeg 1 2) : HolInst 8) =
-    .delta [] [] := by decide +kernel
-
 /-- Runtime PASS lines mirroring `CompilerParity`'s other parity registrations;
 the same propositions are already kernel-checked above. -/
 def runChecks : IO Bool := do
@@ -158,19 +134,7 @@ def runChecks : IO Bool := do
           .delta [1] [2])),
       ("getDeltaInst Store8",
         decide (getDeltaInst (.mem .store8 1 (.addr 2 (0 : BitVec 8)) : HolInst 8) =
-          .delta [] [1, 2])),
-      ("getDeltaInst FPLess",
-        decide (getDeltaInst (.fp (.fpLess 1 2 3) : HolInst 8) = .delta [1] [])),
-      ("getDeltaInst FPMovToReg 64",
-        decide (getDeltaInst (.fp (.fpMovToReg 1 2 3) : HolInst 64) = .delta [1] [])),
-      ("getDeltaInst FPMovToReg 32",
-        decide (getDeltaInst (.fp (.fpMovToReg 1 2 3) : HolInst 32) = .delta [1, 2] [])),
-      ("getDeltaInst FPMovFromReg 64",
-        decide (getDeltaInst (.fp (.fpMovFromReg 3 1 2) : HolInst 64) = .delta [] [1])),
-      ("getDeltaInst FPMovFromReg 32",
-        decide (getDeltaInst (.fp (.fpMovFromReg 3 1 2) : HolInst 32) = .delta [] [1, 2])),
-      ("getDeltaInst FPNeg catchall",
-        decide (getDeltaInst (.fp (.fpNeg 1 2) : HolInst 8) = .delta [] [])) ]
+          .delta [] [1, 2])) ]
   let results ← checks.mapM fun (name, ok) => do
     if ok then
       IO.println s!"PASS {name}"
@@ -179,5 +143,6 @@ def runChecks : IO Bool := do
       IO.println s!"FAIL {name}"
       pure false
   pure (results.all id)
+
 
 end Flapjack.Test.WordAllocGetDeltaInstParity

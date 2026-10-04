@@ -19,8 +19,7 @@ end StateConstants
 
 /-- Full original source statement at line 20, including all conjuncts.
 No additional hypothesis or state-field specialization is introduced. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "set_store_const" 20
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem setStoreConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : WordStoreHOL) (y : WordLocW width) (z : StackSemStateFiniteExact width C F) :
     (setStore x y z).ffi = z.ffi ∧
@@ -46,8 +45,7 @@ theorem setStoreConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Full original source statement at line 43, including all conjuncts.
 No additional hypothesis or state-field specialization is introduced. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "set_store_with_const" 43
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem setStoreWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : WordStoreHOL) (y : WordLocW width) (z : StackSemStateFiniteExact width C F) (a : Nat) :
     setStore x y { z with clock := a } = { setStore x y z with clock := a } := by
@@ -56,8 +54,7 @@ theorem setStoreWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Full original source statement at line 49, including all conjuncts.
 No additional hypothesis or state-field specialization is introduced. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "set_var_const" 49
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem setVarConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : Nat) (y : WordLocW width) (z : StackSemStateFiniteExact width C F) :
     (setVar x y z).ffi = z.ffi ∧
@@ -86,8 +83,7 @@ theorem setVarConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 /-- Full original source statement at line 74, including all conjuncts.
 The updated FFI host is independently polymorphic, as in HOL gamma-to-delta
 state record update; all other updates keep the original input carrier. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "set_var_with_const" 74
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem setVarWithConst {width : Nat} [NeZero width] {C : Type} {F : Type} {OtherF : Type}
     (x : Nat) (y : WordLocW width) (z : StackSemStateFiniteExact width C F)
     (clk : Nat) (m : BitVec width → WordLocW width) (newFfi : HolFfiState OtherF)
@@ -102,8 +98,7 @@ theorem setVarWithConst {width : Nat} [NeZero width] {C : Type} {F : Type} {Othe
 
 /-- Full original source statement at line 84, including all conjuncts.
 No additional hypothesis or state-field specialization is introduced. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "set_fp_var_with_const" 84
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem setFpVarWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : Nat) (y : BitVec 64) (z : StackSemStateFiniteExact width C F) (k : Nat) :
     setFpVar x y { z with clock := k } = { setFpVar x y z with clock := k } := by
@@ -112,8 +107,7 @@ theorem setFpVarWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Full original source statement at line 90, including all conjuncts.
 No additional hypothesis or state-field specialization is introduced. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "set_fp_var_const" 90
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem setFpVarConstFields {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : Nat) (y : BitVec 64) (z : StackSemStateFiniteExact width C F) :
     (setFpVar x y z).ffi = z.ffi ∧
@@ -136,8 +130,7 @@ theorem setFpVarConstFields {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Full original source statement at line 110, including all conjuncts.
 No additional hypothesis or state-field specialization is introduced. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "get_fp_var_with_const" 110
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getFpVarWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : Nat) (y : StackSemStateFiniteExact width C F) (k : Nat) :
     getFpVar x { y with clock := k } = getFpVar x y := by
@@ -146,8 +139,7 @@ theorem getFpVarWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Full original source statement at line 116, including all conjuncts.
 No additional hypothesis or state-field specialization is introduced. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "get_var_with_const" 116
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getVarWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (r : Nat) (t : StackSemStateFiniteExact width C F) (clk stk_space : Nat) :
     getVar r { t with clock := clk } =
@@ -159,8 +151,7 @@ theorem getVarWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Full original source statement at line 125, including all conjuncts.
 No additional hypothesis or state-field specialization is introduced. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "get_vars_with_const" 125
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getVarsWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (xs : List Nat) (y : StackSemStateFiniteExact width C F) (k : Nat) :
     getVars xs { y with clock := k } = getVars xs y := by
@@ -174,8 +165,7 @@ theorem getVarsWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Full original source statement at line 131, including all conjuncts.
 No additional hypothesis or state-field specialization is introduced. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "get_var_imm_with_const" 131
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getVarImmWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : WordRegImm (BitVec width)) (y : StackSemStateFiniteExact width C F) (k : Nat) :
     Flapjack.StackSemStateOps.getVarImm x { y with clock := k } = Flapjack.StackSemStateOps.getVarImm x y := by
@@ -184,8 +174,7 @@ theorem getVarImmWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Full original source statement at line 137, including all conjuncts.
 No additional hypothesis or state-field specialization is introduced. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "set_fp_var_const" 137
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem setFpVarConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : Nat) (y : BitVec 64) (z : StackSemStateFiniteExact width C F) :
     (setFpVar x y z).stackSpace = z.stackSpace ∧
@@ -196,8 +185,7 @@ theorem setFpVarConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 /-- Full source statement at line 144: x and z have independently polymorphic
 word, configuration and FFI carriers, as confirmed by the original full types.
 The first two conjuncts concern x; all remaining thirteen concern z. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "empty_env_const" 144
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem emptyEnvConst {width otherWidth : Nat} [NeZero width] [NeZero otherWidth]
     {C F OtherC OtherF : Type}
     (x : StackSemStateFiniteExact width C F)
@@ -222,8 +210,7 @@ theorem emptyEnvConst {width otherWidth : Nat} [NeZero width] [NeZero otherWidth
 
 /-- Full original source statement at line 164, including all conjuncts.
 No additional hypothesis or state-field specialization is introduced. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "empty_env_with_const" 164
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem emptyEnvWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : StackSemStateFiniteExact width C F) (y : Nat) :
     emptyEnv { x with clock := y } = { emptyEnv x with clock := y } := by

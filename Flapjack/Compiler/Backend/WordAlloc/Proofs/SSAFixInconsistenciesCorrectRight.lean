@@ -87,9 +87,7 @@ Fresh literal HOL replay confirms shared source/target word/code/FFI types.
 Universal states commute across the state-independent allocation/map premises.
 The full evaluator inherits reals_as_rational_cuts (SOUNDNESS item 8); only
 Move and zero Const instructions execute in this returned program. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "fix_inconsistencies_correctR"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fixInconsistenciesCorrectR {width : Nat} [NeZero width] {C F : Type}
     (next : Nat) (left right : Spt Nat) (prio : Option (Unit ⊕ Unit))
     (source target : WordSemStateFiniteExact width C F)

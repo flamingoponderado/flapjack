@@ -66,10 +66,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 direct/indirect lookup, invalid handlers, zero clock and all callee outcomes.
 The three original source premises and guarded callee IH establish both
 existential simulations. Inherits reals_as_rational_cuts, SOUNDNESS item8. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectCallTail {width : Nat} [NeZero width] {C F : Type}
     (dest : Sum Nat Nat) (handler : Option (HolProg width × Nat × Nat))
     (info : Spt Nat) (source target post : StackSemStateFiniteExact width C F)

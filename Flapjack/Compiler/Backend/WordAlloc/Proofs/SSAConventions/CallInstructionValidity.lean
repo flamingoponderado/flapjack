@@ -47,8 +47,7 @@ private theorem ssaRenameMove_fullInst {width : Nat} [NeZero width]
 
 /-- Original tail Call case retains the arbitrary exception handler, which
 the original convention predicate ignores under NONE return. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_fullInstTailCall {width : Nat} [NeZero width]
     (config : AsmConfigExact width)
     (dest : Option Nat) (args : List Nat)
@@ -61,8 +60,7 @@ theorem ssaCcTrans_fullInstTailCall {width : Nat} [NeZero width]
 /-- Original returning Call case, including both exception-handler options.
 Structurally generalized source subprogram induction hypotheses are added; actual handler
 map bounds and stack classes are derived from the original producers. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_fullInstReturningCall {width : Nat} [NeZero width]
     (config : AsmConfigExact width)
     (ret : List Nat) (cutsets : WordLangCutsetsHOL)

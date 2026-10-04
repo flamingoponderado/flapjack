@@ -27,7 +27,6 @@ theorem everyVarInstHOL_eq_everyVarInst {width : Nat} [NeZero width]
         simp only [everyVarInstHOL, everyVarInst, everyVarImmHOL_eq_everyVarImm]
   | mem operation destination address =>
       cases operation <;> cases address <;> rfl
-  | fp operation => cases operation <;> rfl
   | _ => rfl
 
 /-- Flapjack-only consumer boundary: the existing proposition-valued recursor's

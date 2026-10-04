@@ -33,8 +33,7 @@ theorem lineOk_lineLength {width : Nat} [NeZero width] (c : AsmConfigExact width
   | asm _ bytes _ => rfl
   | labAsm _ _ bytes _ => rfl
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "prog_to_bytes_lemma" 1155
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem progToBytes_lemma {width : Nat} [NeZero width] {S Q : Type}
     (mc : MachineConfig width S Q) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (code2 code1 : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -128,8 +127,7 @@ theorem progToBytes_lemma {width : Nat} [NeZero width] {S Q : Type}
           · simpa only [posVal, if_neg hl, Nat.add_one_ne_zero, ↓reduceIte,
               Nat.add_one_sub_one] using h5
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "IMP_bytes_in_memory"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem imp_bytesInMemory {width : Nat} [NeZero width] {S Q : Type}
     (mc : MachineConfig width S Q) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (code1 code2 : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -182,8 +180,7 @@ theorem bytesInMem_encWithNop {width : Nat} [NeZero width] (c : AsmConfigExact w
   obtain ⟨n, rfl⟩ := (encWithNop_iff _ _ _).mp henc
   exact ((bytesInMemory_append _ _ _ _ _).mp (bytesInMem_impliesMemory _ _ _ _ _ hmem)).1
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "IMP_bytes_in_memory_JumpReg" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem imp_bytesInMemory_jumpReg {width : Nat} [NeZero width] {S Q C F : Type}
     (mc : MachineConfig width S Q) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (s1 : LabSem.State width C F) (code2 : LabProgHOL width) (p : BitVec width)
@@ -228,8 +225,7 @@ theorem lineOk_labelTarget {width : Nat} [NeZero width] (c : AsmConfigExact widt
       simp only [getLabel, labLookup_implies_findPos l1 l2 labs x hx]
       exact h
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "IMP_bytes_in_memory_Jump" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem imp_bytesInMemory_jump {width : Nat} [NeZero width] {S Q F : Type}
     (mc : MachineConfig width S Q) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (s1 : LabSem.State width Config F) (code2 : LabProgHOL width) (p : BitVec width)
@@ -257,8 +253,7 @@ theorem imp_bytesInMemory_jump {width : Nat} [NeZero width] {S Q F : Type}
     have hv := lineOk_labelTarget _ _ _ _ _ _ _ _ (Or.inl ⟨jtarget, rfl⟩) hok
     exact ⟨_, _, rfl, rfl, bytesInMem_encWithNop _ _ _ _ _ _ _ hv.1 hmem, hv.2.2⟩
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "IMP_bytes_in_memory_JumpCmp" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem imp_bytesInMemory_jumpCmp {width : Nat} [NeZero width] {S Q F : Type}
     (mc : MachineConfig width S Q) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (s1 : LabSem.State width Config F) (code2 : LabProgHOL width) (p : BitVec width)
@@ -287,8 +282,7 @@ theorem imp_bytesInMemory_jumpCmp {width : Nat} [NeZero width] {S Q F : Type}
       (Or.inr (Or.inl ⟨cmp, rr, ri, jtarget, rfl⟩)) hok
     exact ⟨_, _, rfl, rfl, bytesInMem_encWithNop _ _ _ _ _ _ _ hv.1 hmem, hv.2.2⟩
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "IMP_bytes_in_memory_JumpCmp_1" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem imp_bytesInMemory_jumpCmp_1 {width : Nat} [NeZero width] {S Q F : Type}
     (mc : MachineConfig width S Q) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (s1 : LabSem.State width Config F) (code2 : LabProgHOL width) (p : BitVec width)
@@ -318,8 +312,7 @@ theorem imp_bytesInMemory_jumpCmp_1 {width : Nat} [NeZero width] {S Q F : Type}
       (Or.inr (Or.inl ⟨cmp, rr, ri, jtarget, rfl⟩)) hok
     exact ⟨_, bytes', rfl, hv.1, bytesInMem_impliesMemory _ _ _ _ _ hmem, hpos, hv.2.2⟩
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "IMP_bytes_in_memory_Call" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem imp_bytesInMemory_call {width : Nat} [NeZero width] {S Q F : Type}
     (mc : MachineConfig width S Q) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (s1 : LabSem.State width Config F) (code2 : LabProgHOL width) (p : BitVec width)
@@ -338,8 +331,7 @@ theorem imp_bytesInMemory_call {width : Nat} [NeZero width] {S Q F : Type}
     subst hsim
     simp [lineOk] at hok
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "IMP_bytes_in_memory_LocValue" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem imp_bytesInMemory_locValue {width : Nat} [NeZero width] {S Q F : Type}
     (mc : MachineConfig width S Q) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (s1 : LabSem.State width Config F) (code2 : LabProgHOL width) (p : BitVec width)
@@ -399,8 +391,7 @@ theorem imp_bytesInMemory_asmLine {width : Nat} [NeZero width] {S Q C F : Type}
     simp only [lineOk] at hok
     exact ⟨bytes', hok.1, bytesInMem_impliesMemory _ _ _ _ _ hmem, hmem, hpos, hok.2.2⟩
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "IMP_bytes_in_memory_Inst" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem imp_bytesInMemory_inst {width : Nat} [NeZero width] {S Q F : Type}
     (mc : MachineConfig width S Q) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (s1 : LabSem.State width Config F) (code2 : LabProgHOL width) (p : BitVec width)
@@ -419,8 +410,7 @@ theorem imp_bytesInMemory_inst {width : Nat} [NeZero width] {S Q F : Type}
       asmOkExact (.inst i) mc.target.config = true :=
   fun h => imp_bytesInMemory_asmLine mc labs ffis s1 code2 p t1 _ bytes len h
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "IMP_bytes_in_memory_Cbw" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem imp_bytesInMemory_cbw {width : Nat} [NeZero width] {S Q F : Type}
     (mc : MachineConfig width S Q) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (s1 : LabSem.State width Config F) (code2 : LabProgHOL width) (p : BitVec width)
@@ -439,8 +429,7 @@ theorem imp_bytesInMemory_cbw {width : Nat} [NeZero width] {S Q F : Type}
       asmOkExact (.inst (.mem .store8 r2 (.addr r1 0))) mc.target.config = true :=
   fun h => imp_bytesInMemory_asmLine mc labs ffis s1 code2 p t1 _ bytes len h
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "IMP_bytes_in_memory_CallFFI" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem imp_bytesInMemory_callFFI {width : Nat} [NeZero width] {S Q F : Type}
     (mc : MachineConfig width S Q) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (s1 : LabSem.State width Config F) (code2 : LabProgHOL width) (p : BitVec width)
@@ -468,8 +457,7 @@ theorem imp_bytesInMemory_callFFI {width : Nat} [NeZero width] {S Q F : Type}
     simp only [lineOk] at hok
     exact ⟨_, _, rfl, rfl, bytesInMem_encWithNop _ _ _ _ _ _ _ hok.1 hmem, hok.2.2⟩
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "IMP_bytes_in_memory_Halt" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem imp_bytesInMemory_halt {width : Nat} [NeZero width] {S Q F : Type}
     (mc : MachineConfig width S Q) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (s1 : LabSem.State width Config F) (code2 : LabProgHOL width) (p : BitVec width)
@@ -495,8 +483,7 @@ theorem imp_bytesInMemory_halt {width : Nat} [NeZero width] {S Q F : Type}
     simp only [lineOk] at hok
     exact ⟨_, _, rfl, rfl, bytesInMem_encWithNop _ _ _ _ _ _ _ hok.1 hmem, hok.2.2⟩
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "IMP_bytes_in_memory_Install" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem imp_bytesInMemory_install {width : Nat} [NeZero width] {S Q F : Type}
     (mc : MachineConfig width S Q) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (s1 : LabSem.State width Config F) (code2 : LabProgHOL width) (p : BitVec width)
@@ -522,8 +509,7 @@ theorem imp_bytesInMemory_install {width : Nat} [NeZero width] {S Q F : Type}
     simp only [lineOk] at hok
     exact ⟨_, _, rfl, rfl, bytesInMem_encWithNop _ _ _ _ _ _ _ hok.1 hmem, hok.2.2⟩
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "asm_fetch_aux_pos_val_LENGTH_EQ" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem asmFetchAux_posVal_lengthEq {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (bytes' : List (BitVec 8)) (pc n : Nat) (code2 : LabProgHOL width)
@@ -535,8 +521,7 @@ theorem asmFetchAux_posVal_lengthEq {width : Nat} [NeZero width]
   have := asmFetchAux_posVal_successor pc n code2 n conf labs ffis line ⟨henc, hf⟩
   omega
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "IMP_bytes_in_memory_ShareMem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem imp_bytesInMemory_shareMem {width : Nat} [NeZero width] {S Q F : Type}
     (mc : MachineConfig width S Q) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (s1 : LabSem.State width Config F) (code2 : LabProgHOL width) (p : BitVec width)

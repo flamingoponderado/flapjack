@@ -96,12 +96,6 @@ theorem asmInst_frame {width : Nat} [NeZero width] {C F : Type} (i : HolInst wid
       all_goals repeat' first
         | simp_all [LabSem.updReg, LabSem.updMem, LabSem.assertState]
         | split
-  | fp operation =>
-      cases operation <;> simp only [asmInst, LabSem.fpUpd]
-      all_goals repeat' first
-        | simp_all [LabSem.updFpReg, LabSem.updReg, LabSem.assertState]
-        | split
-
 /-- A successful source instruction followed by the PC and clock steps is a
 record update of the original state. -/
 theorem incPc_decClock_asmInst_eq {width : Nat} [NeZero width] {C F : Type}

@@ -21,8 +21,7 @@ end FfiWitnesses
 premises and full existential postcondition. Input reads and cut success are
 derived from source execution and the scoped relation; no callback, successful
 run, or target-result assumption is added. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_FFI {width : Nat} [NeZero width] {C F : Type}
     (ffiIndex : Flapjack.Basis.Pure.MlString.MlString) (ptr1 len1 ptr2 len2 : Nat)
     (n1 n2 : NumSet) :

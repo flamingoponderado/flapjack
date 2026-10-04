@@ -8,7 +8,6 @@ offset, arbitrary native state. Signed offset is added to GPR rs1 with word64
 wrap. Data/Write translation forwards its returned state to both Store_AMO_Fault
 with the original virtual address and rs2 read/four-byte rawWriteData. No mode
 or alignment guard is added, and no success/core-bound premise is assumed. -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'SW_def"]
 noncomputable def «dfn'SW» (arg0 : ((BitVec 5) × ((BitVec 5) × (BitVec 12)))) : (riscv_state → riscv_state) :=
   match arg0 with
   | (rs1, (rs2, offs)) =>
@@ -29,7 +28,6 @@ theorem swWholeState (rs1 rs2 : BitVec 5) (offs : BitVec 12) (s : riscv_state) :
 signed word12 offset and arbitrary native state. Data/Write forwards its
 returned state to rs2 read/2-byte rawWriteData or Store_AMO_Fault with
 original virtual address. No mode or alignment guard is added. No alignment/success/core premise. -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'SH_def"]
 noncomputable def «dfn'SH» (arg0 : ((BitVec 5) × ((BitVec 5) × (BitVec 12)))) : (riscv_state → riscv_state) :=
   match arg0 with
   | (rs1, (rs2, offs)) =>
@@ -51,7 +49,6 @@ theorem shWholeState (rs1 rs2 : BitVec 5) (offs : BitVec 12) (s : riscv_state) :
 signed word12 offset and arbitrary native state. Data/Write forwards its
 returned state to rs2 read/1-byte rawWriteData or Store_AMO_Fault with
 original virtual address. No mode or alignment guard is added. No alignment/success/core premise. -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'SB_def"]
 noncomputable def «dfn'SB» (arg0 : ((BitVec 5) × ((BitVec 5) × (BitVec 12)))) : (riscv_state → riscv_state) :=
   match arg0 with
   | (rs1, (rs2, offs)) =>
@@ -73,7 +70,6 @@ theorem sbWholeState (rs1 rs2 : BitVec 5) (offs : BitVec 12) (s : riscv_state) :
 signed word12 offset and arbitrary native state. Data/Write forwards its
 returned state to rs2 read/8-byte rawWriteData or Store_AMO_Fault with
 original virtual address. The original mode guard runs first and all later routes use its returned state. No alignment/success/core premise. -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "dfn'SD_def"]
 noncomputable def «dfn'SD» (arg0 : ((BitVec 5) × ((BitVec 5) × (BitVec 12)))) : (riscv_state → riscv_state) :=
   match arg0 with
   | (rs1, (rs2, offs)) =>

@@ -10,8 +10,7 @@ Call with no exception handler discards the return body's collected calls,
 exactly as in the source. Tail calls ignore their handler. Catchall programs
 retain the complete input state. This definition is an analysis prerequisite;
 the executed allocator migration remains separate work. -/
-@[hol "cakeml/compiler/backend/word_allocScript.sml" "get_heu_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def getHeu {width : Nat} [NeZero width] (functionName : Nat) :
     WordLangProgHOL (BitVec width) → Spt HeuData × NumSet → Spt HeuData × NumSet
   | .move _ moves, (tracked, calls) =>

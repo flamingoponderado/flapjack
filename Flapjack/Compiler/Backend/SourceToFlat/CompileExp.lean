@@ -19,7 +19,7 @@ open Flapjack.Compiler.Backend.BackendCommon
 
 mutual
 /-- Exact HOL `compile_exp_def`, `compile_exp` clauses. -/
-@[hol "cakeml/compiler/backend/source_to_flatScript.sml" "compile_exp_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def compileExp (t : List MlString) (env : Environment) : AstHOL.Exp → FlatLang.Exp
   | .raise e => .raise .none (compileExp t env e)
   | .handle e pes => .handle .none (compileExp t env e) (compilePes t env pes)
@@ -72,13 +72,13 @@ def compileExp (t : List MlString) (env : Environment) : AstHOL.Exp → FlatLang
   | .lannot e (.locs _ _) => compileExp t env e
 
 /-- Exact HOL `compile_exp_def`, `compile_exps` clauses. -/
-@[hol "cakeml/compiler/backend/source_to_flatScript.sml" "compile_exp_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def compileExps (t : List MlString) (env : Environment) : List AstHOL.Exp → List FlatLang.Exp
   | [] => []
   | e :: es => compileExp t env e :: compileExps t env es
 
 /-- Exact HOL `compile_exp_def`, `compile_pes` clauses. -/
-@[hol "cakeml/compiler/backend/source_to_flatScript.sml" "compile_exp_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def compilePes (t : List MlString) (env : Environment) :
     List (AstHOL.Pat × AstHOL.Exp) → List (FlatLang.Pat × FlatLang.Exp)
   | [] => []
@@ -89,7 +89,7 @@ def compilePes (t : List MlString) (env : Environment) :
         compilePes t env pes
 
 /-- Exact HOL `compile_exp_def`, `compile_funs` clauses. -/
-@[hol "cakeml/compiler/backend/source_to_flatScript.sml" "compile_exp_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def compileFuns (t : List MlString) (env : Environment) :
     List (MlString × MlString × AstHOL.Exp) → List (MlString × MlString × FlatLang.Exp)
   | [] => []

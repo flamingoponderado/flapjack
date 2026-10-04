@@ -10,8 +10,7 @@ open Flapjack.Compiler.Backend.StackLang
 open WordToStackRegFormat (formatVar)
 
 /-- Literal native wMoveSingle on the shared positive word-width carrier. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "wMoveSingle_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wMoveSingleNative {width : Nat} [NeZero width] (xy : Sum Nat Nat × Sum Nat Nat)
     (kf : Nat × Nat × Nat) : HolProg width :=
   match xy with
@@ -23,16 +22,14 @@ def wMoveSingleNative {width : Nat} [NeZero width] (xy : Sum Nat Nat × Sum Nat 
       (.stackStore kf.1 (kf.2.1 - 1 - (r1 - kf.1)))
 
 /-- Literal native wMoveAux on the shared positive word-width carrier. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "wMoveAux_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wMoveAuxNative {width : Nat} [NeZero width] : List (Sum Nat Nat × Sum Nat Nat) → Nat × Nat × Nat → HolProg width
   | [], _ => .skip
   | [xy], kf => wMoveSingleNative xy kf
   | xy :: xys, kf => .seq (wMoveSingleNative xy kf) (wMoveAuxNative xys kf)
 
 /-- Literal native wMove on the shared positive word-width carrier. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "wMove_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wMoveNative {width : Nat} [NeZero width] (moves : List (Nat × Nat))
     (kf : Nat × Nat × Nat) : HolProg width :=
   let scheduled := Flapjack.Compiler.Backend.Parmove.parmove

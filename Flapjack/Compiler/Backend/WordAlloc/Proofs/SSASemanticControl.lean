@@ -86,9 +86,7 @@ come through evaluateSSAReconcile's bounded filtered-key/value-list indexing
 (original:6660-6704), with bounds and equal lengths derived internally.
 The shared opaque out-of-range holHdNil/holArb convention remains unchanged;
 no extra public index or oracle premise is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_correct"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransCorrectBreak {width : Nat} [NeZero width] {C F : Type}
     (n : Nat) (source target : WordSemStateFiniteExact width C F)
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -135,9 +133,7 @@ come through evaluateSSAReconcile's bounded filtered-key/value-list indexing
 (original:6660-6704), with bounds and equal lengths derived internally.
 The shared opaque out-of-range holHdNil/holArb convention remains unchanged;
 no extra public index or oracle premise is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_correct"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransCorrectContinue {width : Nat} [NeZero width] {C F : Type}
     (n : Nat) (source target : WordSemStateFiniteExact width C F)
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))

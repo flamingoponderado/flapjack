@@ -34,8 +34,7 @@ theorem writeBitmapExact_eq_domain {width : Nat} [NeZero width] {α : Type}
 
 /-- Source wLive retains both cutsets and the complete (k,f,f') tuple; only
 SND live and f determine bitmap insertion, exactly as in the HOL definition. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "wLive_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wLiveExact {width : Nat} [NeZero width]
     (live : Spt Unit × Spt Unit) (bitmaps : AppList (BitVec width) × Nat)
     (kf : Nat × Nat × Nat) : ProgM (BitVec width) × (AppList (BitVec width) × Nat) :=

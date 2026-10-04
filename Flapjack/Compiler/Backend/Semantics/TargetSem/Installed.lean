@@ -21,8 +21,7 @@ namespace Flapjack
     is `n2w (dimindex (:α) DIV 8)` (`StackRemove.bytesInWord`); `GENLIST f n` is
     `(List.range n).map f`; `ZIP` is on equal-length lists; `dimword (:α)` is `2 ^ width`.
     HOL's paired argument `(r1,r2)` is `regs`. -/
-@[hol "cakeml/compiler/backend/semantics/targetSemScript.sml" "installed_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def installed {width : Nat} [NeZero width] {S Q : Type} (bytes : List (BitVec 8)) (cbspace : Nat)
     (bitmaps : List (BitVec width)) (dataSp : Nat) (ffiNames : Option (List HolFfiName))
     (regs : Nat × Nat) (mc : MachineConfig width S Q)

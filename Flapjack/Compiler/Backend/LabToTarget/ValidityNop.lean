@@ -4,8 +4,7 @@ namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "line_ok_line_enc_with_nop"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem lineOk_lineEncWithNop {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (labs : Spt (Spt Nat))
     (ffis : List HolFfiName) (pos : Nat) (line : Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -57,8 +56,7 @@ theorem lineOk_lineEncWithNop {width : Nat} [NeZero width]
           simpa [lineEncWithNop,labInst,BitVec.sub_eq_add_neg,hp] using
             And.intro h.1 h.2.1
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "lines_ok_lines_enc_with_nop"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem linesOk_linesEncWithNop {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (labs : Spt (Spt Nat))
     (ffis : List HolFfiName) (pos : Nat) (lines : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))

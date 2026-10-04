@@ -7,8 +7,7 @@ open Flapjack.Basis.Pure.MlString
 
 /-- Full original enumeration bound.
 Both source guards remain and no desired position bound is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "genlist_line_to_info_entry_pc_max" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem genlistLineToInfo_entryPcMax {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (validPos : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))

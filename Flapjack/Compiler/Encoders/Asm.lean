@@ -10,7 +10,7 @@ the pure Boolean validity predicates that `stackProps$stack_asm_ok_def` and
 `stackProps$addr_ok_def` consume: `reg_ok`, `fp_reg_ok`, `reg_imm_ok`,
 `offset_ok` and its offset overloads, `arith_ok`, `fp_ok`, `cmp_ok`, and
 `inst_ok`, over the faithful `asm` carrier types already present in
-`Flapjack.Pancake.WordLang` (`WordLangInst`/`WordLangArith`/`WordLangFp`/
+`Flapjack.Pancake.WordLang` (`WordLangInst`/`WordLangArith`/
 `WordLangAddr`).
 
 The HOL `asm_config` record is represented with all of its fields so the
@@ -51,7 +51,6 @@ def holAsmSignedLess {width : Nat} (left right : BitVec width) : Bool :=
 `asm$word_cmp_def` (`cakeml/compiler/encoders/asm/asmScript.sml:313-321`).
 The result is Boolean as in HOL; the Crep evaluator separately embeds it as
 a word. -/
-@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "word_cmp_def"]
 def wordCmpHOL [NeZero width] (operator : Cmp)
     (left right : BitVec width) : Bool :=
   match operator with
@@ -72,7 +71,6 @@ def wordCmpResultHOL [NeZero width] (operator : Cmp)
 
 /-- Exact HOL `architecture` (`asmScript.sml:149-151`).  Distinct from the RISC-V
 state-model `Flapjack.RiscV.Architecture`. -/
-@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "architecture"]
 inductive AsmArchitecture where
   | armv7
   | armv8
@@ -97,33 +95,23 @@ Exact HOL `asm$binop` (`cakeml/compiler/encoders/asm/asmScript.sml:78-80`):
 `binop = Add | Sub | And | Or | Xor`.  Monomorphic and width-independent, so
 the Lean mirror is the existing faithful `Flapjack.BinOp`; the alias below is
 the exact-tagged name. -/
-@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "binop"]
 abbrev HolBinop := Flapjack.BinOp
 
 /-- Exact HOL `asm$cmp` (`cakeml/compiler/encoders/asm/asmScript.sml:82-84`):
 `cmp = Equal | Lower | Less | Test | NotEqual | NotLower | NotLess | NotTest`.
 Monomorphic and width-independent; the Lean mirror is the existing faithful
 `Flapjack.Cmp`. -/
-@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "cmp"]
 abbrev HolCmp := Flapjack.Cmp
 
 /-- Exact HOL `asm$memop` (`cakeml/compiler/encoders/asm/asmScript.sml:125-128`):
 `memop = Load | Load8 | Load16 | Load32 | Store | Store8 | Store16 | Store32`.
 Monomorphic and width-independent; the Lean mirror is the existing faithful
 `Flapjack.WordMemOp`. -/
-@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "memop"]
 abbrev HolMemop := Flapjack.WordMemOp
-
-/-- Exact HOL `asm$fp` (`cakeml/compiler/encoders/asm/asmScript.sml:97-119`),
-16 constructors over `reg`/`fp_reg` (`num`).  Monomorphic and width-independent;
-the Lean mirror is the existing faithful `Flapjack.WordLangFp`. -/
-@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "fp"]
-abbrev HolFp := WordLangFp
 
 /-- Exact HOL `asm$reg_imm` (`cakeml/compiler/encoders/asm/asmScript.sml:74-76`):
 `reg_imm = Reg reg | Imm ('a imm)` with `imm = 'a word`.  This is the payload
 type of stackLang's `If`. -/
-@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "reg_imm"]
 inductive HolRegImm (width : Nat) [NeZero width] where
   | reg (name : Nat)
   | imm (value : BitVec width)
@@ -138,7 +126,6 @@ reg reg reg | AddOverflow reg reg reg reg | SubOverflow reg reg reg reg`, with
 carrier (bead flapjack-4ac.6.1.2.2); the production generic mirror
 `WordLangArith (BitVec width)` uses `WordRegImm` and is connected by the checked
 `HolArith.toWordLangArith`/`ofWordLangArith` codecs. -/
-@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "arith"]
 inductive HolArith (width : Nat) [NeZero width] where
   | binop (operator : BinOp) (destination source : Nat) (right : HolRegImm width)
   | shift (operator : Shift) (destination source : Nat) (right : HolRegImm width)
@@ -153,23 +140,20 @@ inductive HolArith (width : Nat) [NeZero width] where
 /-- Exact HOL `asm$addr` (`cakeml/compiler/encoders/asm/asmScript.sml:121-123`):
 `addr = Addr reg ('a word)`.  This is the payload type of stackLang's
 `ShMemOp`. -/
-@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "addr"]
 inductive HolAddr (width : Nat) [NeZero width] where
   | addr (base : Nat) (offset : BitVec width)
   deriving Repr
 
 /-- Exact HOL `asm$inst` (`cakeml/compiler/encoders/asm/asmScript.sml:130-136`):
 `inst = Skip | Const reg ('a word) | Arith ('a arith) | Mem memop reg ('a addr)
-| FP fp`.  This is the payload type of stackLang's `Inst`.  `HolArith`, `HolFp`,
+`.  This is the payload type of stackLang's `Inst`.  `HolArith`,
 `HolRegImm` and `HolAddr` are the exact `arith`/`fp`/`reg_imm`/`addr` mirrors
 (bead flapjack-4ac.6.1.2.2). -/
-@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "inst"]
 inductive HolInst (width : Nat) [NeZero width] where
   | skip
   | const (destination : Nat) (value : BitVec width)
   | arith (operation : HolArith width)
   | mem (operator : HolMemop) (destination : Nat) (address : HolAddr width)
-  | fp (operation : HolFp)
   deriving Repr
 
 namespace HolRegImm
@@ -270,16 +254,12 @@ def toWordLangInst {width : Nat} [NeZero width] : HolInst width → WordLangInst
   | .const destination value => .const destination value
   | .arith operation => .arith (HolArith.toWordLangArith operation)
   | .mem operator destination address => .mem operator destination address.toWordLangAddr
-  | .fp operation => .fp operation
-
 /-- Recover the exact carrier from the production `inst` mirror. -/
 def ofWordLangInst {width : Nat} [NeZero width] : WordLangInst (BitVec width) → HolInst width
   | .skip => .skip
   | .const destination value => .const destination value
   | .arith operation => .arith (HolArith.ofWordLangArith operation)
   | .mem operator destination address => .mem operator destination (HolAddr.ofWordLangAddr address)
-  | .fp operation => .fp operation
-
 set_option linter.unusedSimpArgs false in
 @[simp] theorem of_to {width : Nat} [NeZero width] (carrier : HolInst width) :
     ofWordLangInst (toWordLangInst carrier) = carrier := by
@@ -288,8 +268,6 @@ set_option linter.unusedSimpArgs false in
   | const destination value => rfl
   | arith operation => cases operation <;> simp [toWordLangInst, ofWordLangInst]
   | mem operator destination address => simp [toWordLangInst, ofWordLangInst]
-  | fp operation => rfl
-
 set_option linter.unusedSimpArgs false in
 @[simp] theorem to_of {width : Nat} [NeZero width] (carrier : WordLangInst (BitVec width)) :
     toWordLangInst (ofWordLangInst carrier) = carrier := by
@@ -298,8 +276,6 @@ set_option linter.unusedSimpArgs false in
   | const destination value => rfl
   | arith operation => cases operation <;> simp [toWordLangInst, ofWordLangInst]
   | mem operator destination address => simp [toWordLangInst, ofWordLangInst]
-  | fp operation => rfl
-
 end HolInst
 
 /-- Exact HOL `asm$asm` (`cakeml/compiler/encoders/asm/asmScript.sml:138-145`):
@@ -308,7 +284,6 @@ end HolInst
 mirror uses the exact `HolInst`/`HolRegImm`/`HolCmp` carriers; the production
 `AsmData` below is the generic-field carrier consumed by the assembler's
 `encode` field. -/
-@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "asm"]
 inductive HolAsm (width : Nat) [NeZero width] where
   | inst (value : HolInst width)
   | jump (target : BitVec width)
@@ -347,6 +322,7 @@ structure AsmConfig (width : Nat) where
   linkReg : Option Nat
   avoidRegs : List Nat
   regCount : Nat
+  /-- Compatibility metadata; the restricted instruction type has no FP operations. -/
   fpRegCount : Nat
   twoRegArith : Bool
   validImm : Sum BinOp Cmp → BitVec width → Bool
@@ -369,7 +345,6 @@ HOL `word8` lists, matching the HOL field type `'a asm -> word8 list`.  Every
 other field coincides with `AsmConfig`.  This is the prerequisite carrier for
 restating the `AsmConfig`-taking validity predicates over exact carriers (bead
 flapjack-4ac.6.1.2.1). -/
-@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "asm_config"]
 structure AsmConfigExact (width : Nat) [NeZero width] where
   isa : AsmArchitecture
   encode : HolAsm width → List (BitVec 8)
@@ -378,6 +353,7 @@ structure AsmConfigExact (width : Nat) [NeZero width] where
   linkReg : Option Nat
   avoidRegs : List Nat
   regCount : Nat
+  /-- Compatibility metadata; the restricted instruction type has no FP operations. -/
   fpRegCount : Nat
   twoRegArith : Bool
   validImm : Sum BinOp Cmp → BitVec width → Bool
@@ -393,20 +369,9 @@ structure AsmConfigExact (width : Nat) [NeZero width] where
 Exact port over the exact `AsmConfigExact` carrier (`encode : HolAsm width → word8 list`)
 with the HOL argument order `reg_ok r c`; the width-general executed `asmRegOk`
 remains the untagged production form.  Bead flapjack-4ac.6.1.2. -/
-@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "reg_ok_def"]
 def asmRegOkExact {width : Nat} [NeZero width] (register : Nat)
     (config : AsmConfigExact width) : Bool :=
   register < config.regCount && !config.avoidRegs.contains register
-
-/-- HOL `asmScript.sml:178-179`:
-`fp_reg_ok d c <=> d < c.fp_reg_count`.
-Exact port over the exact `AsmConfigExact` carrier with the HOL argument order
-`fp_reg_ok d c`; the width-general executed `asmFpRegOk` remains the untagged
-production form.  Bead flapjack-4ac.6.1.2. -/
-@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "fp_reg_ok_def"]
-def asmFpRegOkExact {width : Nat} [NeZero width] (register : Nat)
-    (config : AsmConfigExact width) : Bool :=
-  register < config.fpRegCount
 
 /-- HOL `asmScript.sml:182-187`:
 `reg_imm_ok b (Reg r) c = reg_ok r c` /
@@ -414,7 +379,6 @@ def asmFpRegOkExact {width : Nat} [NeZero width] (register : Nat)
 Exact port over the exact `AsmConfigExact` carrier and the exact `HolRegImm`
 (`'a reg_imm`); the `Sum BinOp Cmp` (`binop + cmp`) immediate policy is the
 `validImm` field, and `w = -1w` is `value == -1`.  Bead flapjack-4ac.6.1.2. -/
-@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "reg_imm_ok_def"]
 def asmRegImmOkExact {width : Nat} [NeZero width] (operator : Sum BinOp Cmp)
     (right : HolRegImm width) (config : AsmConfigExact width) : Bool :=
   match right with
@@ -422,65 +386,12 @@ def asmRegImmOkExact {width : Nat} [NeZero width] (operator : Sum BinOp Cmp)
   | .imm value =>
       (operator == .inl .xor && value == -1) || config.validImm operator value
 
-/-- HOL `asmScript$fp_ok_def` (`asmScript.sml:231-268`), exact port over the
-exact `AsmConfigExact` carrier and the exact `HolFp` carrier; `reg_ok`/
-`fp_reg_ok` become `asmRegOkExact`/`asmFpRegOkExact`.  Bead
-flapjack-4ac.6.1.2. -/
-@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "fp_ok_def"]
-def asmFpOkExact {width : Nat} [NeZero width] (operation : WordLangFp)
-    (config : AsmConfigExact width) : Bool :=
-  match operation with
-    | .fpLess destination left right =>
-        asmRegOkExact destination config && asmFpRegOkExact left config && asmFpRegOkExact right config
-    | .fpLessEqual destination left right =>
-        asmRegOkExact destination config && asmFpRegOkExact left config && asmFpRegOkExact right config
-    | .fpEqual destination left right =>
-        asmRegOkExact destination config && asmFpRegOkExact left config && asmFpRegOkExact right config
-    | .fpAbs destination source =>
-        (!config.twoRegArith || !(destination == source)) &&
-          asmFpRegOkExact destination config && asmFpRegOkExact source config
-    | .fpNeg destination source =>
-        (!config.twoRegArith || !(destination == source)) &&
-          asmFpRegOkExact destination config && asmFpRegOkExact source config
-    | .fpSqrt destination source =>
-        asmFpRegOkExact destination config && asmFpRegOkExact source config
-    | .fpAdd destination left right =>
-        (!config.twoRegArith || destination == left) && asmFpRegOkExact destination config &&
-          asmFpRegOkExact left config && asmFpRegOkExact right config
-    | .fpSub destination left right =>
-        (!config.twoRegArith || destination == left) && asmFpRegOkExact destination config &&
-          asmFpRegOkExact left config && asmFpRegOkExact right config
-    | .fpMul destination left right =>
-        (!config.twoRegArith || destination == left) && asmFpRegOkExact destination config &&
-          asmFpRegOkExact left config && asmFpRegOkExact right config
-    | .fpDiv destination left right =>
-        (!config.twoRegArith || destination == left) && asmFpRegOkExact destination config &&
-          asmFpRegOkExact left config && asmFpRegOkExact right config
-    | .fpFma destination left right =>
-        (config.isa == .armv7) && 2 < config.fpRegCount && asmFpRegOkExact destination config &&
-          asmFpRegOkExact left config && asmFpRegOkExact right config
-    | .fpMov destination source =>
-        asmFpRegOkExact destination config && asmFpRegOkExact source config
-    | .fpMovToReg destinationInteger second sourceFloat =>
-        asmRegOkExact destinationInteger config &&
-          (!(width == 32) || (!(destinationInteger == second) && asmRegOkExact second config)) &&
-          asmFpRegOkExact sourceFloat config
-    | .fpMovFromReg destinationFloat destinationInteger second =>
-        asmRegOkExact destinationInteger config &&
-          (!(width == 32) || (!(destinationInteger == second) && asmRegOkExact second config)) &&
-          asmFpRegOkExact destinationFloat config
-    | .fpToInt destination source =>
-        asmFpRegOkExact destination config && asmFpRegOkExact source config
-    | .fpFromInt destination source =>
-        asmFpRegOkExact destination config && asmFpRegOkExact source config
-
 /-- HOL `asmScript$cmp_ok_def` (`asmScript.sml:270-272`):
 `cmp_ok cmp r ri c <=> reg_ok r c /\ reg_imm_ok (INR cmp) ri c`.
 Exact port over the exact `AsmConfigExact` carrier and the exact `HolRegImm`
 (`'a reg_imm`); `reg_ok`/`reg_imm_ok` become `asmRegOkExact`/`asmRegImmOkExact`
 and `INR cmp` is `Sum.inr operator`.  The width-general executed `asmCmpOk`
 remains the untagged production form.  Bead flapjack-4ac.6.1.2. -/
-@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "cmp_ok_def"]
 def asmCmpOkExact {width : Nat} [NeZero width] (operator : Cmp) (register : Nat)
     (right : HolRegImm width) (config : AsmConfigExact width) : Bool :=
   asmRegOkExact register config && asmRegImmOkExact (.inr operator) right config
@@ -491,7 +402,6 @@ exact `AsmConfigExact` carrier and the exact `HolArith`/`HolRegImm` (`'a arith`/
 `INL b` is `Sum.inl operator`, `dimindex(:'a)` is `width`, and `c.ISA = x86_64`
 is `config.isa == .x86_64`.  The width-general executed `asmArithOk` remains the
 untagged production form.  Bead flapjack-4ac.6.1.2. -/
-@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "arith_ok_def"]
 def asmArithOkExact {width : Nat} [NeZero width] (operation : HolArith width)
     (config : AsmConfigExact width) : Bool :=
   match operation with
@@ -550,16 +460,6 @@ def asmArithOkExact {width : Nat} [NeZero width] (operation : HolArith width)
     The HOL tag was withdrawn. -/
 def asmRegOk {width : Nat} (config : AsmConfig width) (register : Nat) : Bool :=
   register < config.regCount && !config.avoidRegs.contains register
-
-/--
-    Not an exact HOL port: this Lean declaration quantifies `width : Nat`
-    without `[NeZero width]`, so `BitVec 0` is admitted, whereas HOL `word`
-    dimensions are positive.  The manifest records this mismatch (bead
-    flapjack-4ac.6); restore the HOL tag only after correcting the width
-    binder and reviewing callers.
-    The HOL tag was withdrawn. -/
-def asmFpRegOk {width : Nat} (config : AsmConfig width) (register : Nat) : Bool :=
-  register < config.fpRegCount
 
 /--
     Not an exact HOL port: this Lean declaration quantifies `width : Nat`
@@ -658,58 +558,6 @@ def asmArithOk {width : Nat} (config : AsmConfig width) :
         asmRegOk config sourceLeft && asmRegOk config sourceRight &&
         (!(config.isa == .mips || config.isa == .riscv) || !(destination == sourceLeft))
 
-/-- HOL `asmScript$fp_ok_def` (`asmScript.sml:231-268`).
-    Not an exact HOL port: this Lean declaration quantifies `width : Nat`
-    without `[NeZero width]`, so `BitVec 0` is admitted, whereas HOL `word`
-    dimensions are positive.  The manifest records this mismatch (bead
-    flapjack-4ac.6); restore the HOL tag only after correcting the width
-    binder and reviewing callers.
-    -/
-def asmFpOk {width : Nat} (config : AsmConfig width) : WordLangFp → Bool
-  | .fpLess destination left right =>
-      asmRegOk config destination && asmFpRegOk config left && asmFpRegOk config right
-  | .fpLessEqual destination left right =>
-      asmRegOk config destination && asmFpRegOk config left && asmFpRegOk config right
-  | .fpEqual destination left right =>
-      asmRegOk config destination && asmFpRegOk config left && asmFpRegOk config right
-  | .fpAbs destination source =>
-      (!config.twoRegArith || !(destination == source)) &&
-        asmFpRegOk config destination && asmFpRegOk config source
-  | .fpNeg destination source =>
-      (!config.twoRegArith || !(destination == source)) &&
-        asmFpRegOk config destination && asmFpRegOk config source
-  | .fpSqrt destination source =>
-      asmFpRegOk config destination && asmFpRegOk config source
-  | .fpAdd destination left right =>
-      (!config.twoRegArith || destination == left) && asmFpRegOk config destination &&
-        asmFpRegOk config left && asmFpRegOk config right
-  | .fpSub destination left right =>
-      (!config.twoRegArith || destination == left) && asmFpRegOk config destination &&
-        asmFpRegOk config left && asmFpRegOk config right
-  | .fpMul destination left right =>
-      (!config.twoRegArith || destination == left) && asmFpRegOk config destination &&
-        asmFpRegOk config left && asmFpRegOk config right
-  | .fpDiv destination left right =>
-      (!config.twoRegArith || destination == left) && asmFpRegOk config destination &&
-        asmFpRegOk config left && asmFpRegOk config right
-  | .fpFma destination left right =>
-      (config.isa == .armv7) && 2 < config.fpRegCount && asmFpRegOk config destination &&
-        asmFpRegOk config left && asmFpRegOk config right
-  | .fpMov destination source =>
-      asmFpRegOk config destination && asmFpRegOk config source
-  | .fpMovToReg destinationInteger second sourceFloat =>
-      asmRegOk config destinationInteger &&
-        (!(width == 32) || (!(destinationInteger == second) && asmRegOk config second)) &&
-        asmFpRegOk config sourceFloat
-  | .fpMovFromReg destinationFloat destinationInteger second =>
-      asmRegOk config destinationInteger &&
-        (!(width == 32) || (!(destinationInteger == second) && asmRegOk config second)) &&
-        asmFpRegOk config destinationFloat
-  | .fpToInt destination source =>
-      asmFpRegOk config destination && asmFpRegOk config source
-  | .fpFromInt destination source =>
-      asmFpRegOk config destination && asmFpRegOk config source
-
 /-- HOL `asmScript$cmp_ok_def` (`asmScript.sml:270-272`).
     Not an exact HOL port: this Lean declaration quantifies `width : Nat`
     without `[NeZero width]`, so `BitVec 0` is admitted, whereas HOL `word`
@@ -732,7 +580,6 @@ def asmInstOk {width : Nat} (config : AsmConfig width) : WordLangInst (BitVec wi
   | .skip => true
   | .const destination _ => asmRegOk config destination
   | .arith operation => asmArithOk config operation
-  | .fp operation => asmFpOk config operation
   | .mem operator destination (.addr base offset) =>
       asmRegOk config destination && asmRegOk config base &&
         (if operator == .load || operator == .store || operator == .load32 ||
@@ -835,7 +682,6 @@ def riscvConfigForChecks : AsmConfig 64 where
     declaration takes no `AsmConfig`, so it carries no production-carrier
     mismatch and is tagged exact (coordinator source review, bead
     flapjack-4ac.6.1.2.1). -/
-@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "offset_ok_def"]
 def asmOffsetOkExact {width : Nat} [NeZero width] (alignment : Nat)
     (bounds : BitVec width × BitVec width) (offset : BitVec width) : Bool :=
   bounds.1.toInt ≤ offset.toInt && offset.toInt ≤ bounds.2.toInt &&
@@ -847,7 +693,7 @@ The offset helpers are the HOL overloads `addr_offset_ok`/`hw_offset_ok`/
 `byte_offset_ok` (`asmScript.sml:279-281`) built on the exact `offset_ok`
 (`asmOffsetOkExact`).  They are placed here because they reference
 `asmOffsetOkExact`, which is declared above; the rest of the exact predicate
-in `inst_ok_def` reads the exact `HolInst`/`HolArith`/`HolFp`/`HolRegImm`
+in `inst_ok_def` reads the exact `HolInst`/`HolArith`/`HolRegImm`
 carriers (bead flapjack-4ac.6.1.2). -/
 
 def asmAddrOffsetOkExact {width : Nat} [NeZero width] (config : AsmConfigExact width)
@@ -867,14 +713,12 @@ def asmByteOffsetOkExact {width : Nat} [NeZero width] (config : AsmConfigExact w
     `arith_ok`/`fp_ok`/`reg_ok` calls read the exact reference resolutions.  The
     production `asmInstOk` differs in its generic `WordLangInst`/`AsmConfig`
     carriers. -/
-@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "inst_ok_def"]
 def asmInstOkExact {width : Nat} [NeZero width] (instruction : HolInst width)
     (config : AsmConfigExact width) : Bool :=
   match instruction with
   | .skip => true
   | .const destination _ => asmRegOkExact destination config
   | .arith operation => asmArithOkExact operation config
-  | .fp operation => asmFpOkExact operation config
   | .mem operator destination (.addr base offset) =>
       asmRegOkExact destination config && asmRegOkExact base config &&
         (if operator == .load || operator == .store || operator == .load32 ||
@@ -908,7 +752,6 @@ def asmLocOffsetOkExact {width : Nat} [NeZero width] (config : AsmConfigExact wi
 /-- HOL `asmScript$asm_ok_def` (`asmScript.sml:301-313`): exact positive-width
     port over the exact `HolAsm` carrier and the exact `AsmConfigExact`.  The
     production `asmOk` differs in its generic `AsmData`/`AsmConfig` carriers. -/
-@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "asm_ok_def"]
 def asmOkExact {width : Nat} [NeZero width] (instruction : HolAsm width)
     (config : AsmConfigExact width) : Bool :=
   match instruction with
@@ -928,7 +771,6 @@ def asmOkExact {width : Nat} [NeZero width] (instruction : HolAsm width)
     `is_load` is true for the four load memory operations.  The carrier
     `HolMemop` is the reviewed exact alias of the eight-constructor
     `Flapjack.WordMemOp` (`memop`), so the clause-for-clause equations match. -/
-@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "is_load_def"]
 def asmIsLoad (operator : HolMemop) : Bool :=
   match operator with
   | .load | .load8 | .load16 | .load32 => true

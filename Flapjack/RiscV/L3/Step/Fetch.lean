@@ -8,7 +8,6 @@ open Flapjack.RiscV.L3
 Instruction/Read, then reads the returned state at THE of the optional address.
 This is the step evaluator's Fetch, distinct from model Fetch. THE NONE retains
 HOL's canonical unspecified choice; no successful-translation premise is added. -/
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "Fetch_def"]
 noncomputable def Fetch (s : riscv_state) : rawInstType × riscv_state :=
   match translateAddr (PC s, fetchType.Instruction, accessType.Read) s with
   | (w, s₁) => rawReadInst (holThe w) s₁

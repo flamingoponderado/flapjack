@@ -10,8 +10,7 @@ open Flapjack.Compiler.Backend.StackLang
 the return-link register of a returning `Call` use the fixed argument registers; `Seq`, `If`,
 `Loop` and the `Call` continuations recurse; every other program satisfies it. HOL's `<=>`
 clauses are a `bool`-valued predicate, rendered as `Prop`. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "call_args_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def callArgs {width : Nat} [NeZero width] :
     HolProg width → Nat → Nat → Nat → Nat → Nat → Prop
   | .seq p1 p2, ptr, len, ptr2, len2, ret =>

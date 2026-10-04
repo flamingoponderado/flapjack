@@ -4,8 +4,7 @@ namespace Flapjack.Compiler.Backend.Semantics.TargetProps
 open Flapjack Classical
 
 /-- Literal source742: the generic shared-memory operator result follows from its two original conditional cases. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "next_interference_SharedMem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem nextInterferenceSharedMem {width : Nat} [NeZero width]
     {S Q : Type} {σ : Type} (mc : MachineConfig width S Q) (ffi : HolFfiState σ)
     (ms : S) (index r reg : Nat) (nb : BitVec 8) (off pc' : BitVec width)

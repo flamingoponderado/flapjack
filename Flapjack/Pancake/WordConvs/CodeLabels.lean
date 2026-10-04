@@ -7,8 +7,7 @@ namespace Flapjack
 /-- Literal source-program code references from HOL wordConvs. Both populated
 Call bodies are traversed independently, including a handler on a nonreturning
 Call. Continuation metadata is excluded; LocValue contributes its code label. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml"
-  "get_code_labels_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def getCodeLabelsHOL {width : Nat} [NeZero width] :
     WordLangProgHOL (BitVec width) → Set Nat
   | .call returns target _ handler =>

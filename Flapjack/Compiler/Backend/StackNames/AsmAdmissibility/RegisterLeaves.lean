@@ -8,8 +8,7 @@ namespace Flapjack.Compiler.Backend.StackNames
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackProps
 
 /-- HOL comp_ind OpCurrHeap case with the original naming and fixed-register guards. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_OpCurrHeap {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (operator : BinOp) (destination source : Nat)
@@ -19,8 +18,7 @@ theorem stackNamesCompStackAsmOk_OpCurrHeap {width : Nat} [NeZero width]
   simp only [progCompHOL, stackAsmOkExact]
 
 /-- HOL comp_ind CodeBufferWrite case with the original naming and fixed-register guards. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_CodeBufferWrite {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (first second : Nat)
@@ -35,8 +33,7 @@ theorem stackNamesCompStackAsmOk_CodeBufferWrite {width : Nat} [NeZero width]
   simp_all [progCompHOL, stackAsmOkExact, asmRegOkExact, findNameSpt_eq_lookupHelper]
 
 /-- HOL comp_ind Raise case with the original naming and fixed-register guards. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_Raise {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (register : Nat)
@@ -48,8 +45,7 @@ theorem stackNamesCompStackAsmOk_Raise {width : Nat} [NeZero width]
   simpa [progCompHOL, stackAsmOkExact, asmRegOkExact, findNameSpt_eq_lookupHelper] using hr
 
 /-- HOL comp_ind Return case with the original naming and fixed-register guards. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_Return {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (register : Nat)
@@ -61,8 +57,7 @@ theorem stackNamesCompStackAsmOk_Return {width : Nat} [NeZero width]
   simpa [progCompHOL, stackAsmOkExact, asmRegOkExact, findNameSpt_eq_lookupHelper] using hr
 
 /-- HOL comp_ind ShMemOp case with the original naming and fixed-register guards. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_ShMemOp {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (operator : HolMemop) (register : Nat) (address : HolAddr width)

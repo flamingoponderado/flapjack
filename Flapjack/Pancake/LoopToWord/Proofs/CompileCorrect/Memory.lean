@@ -56,11 +56,7 @@ private theorem wordExp_addr_zero {width : Nat} [NeZero width] {C F : Type}
 
 /-- Genuine `Store` case of HOL `compile_correct`
     (`loop_to_wordProofScript.sml:57-97`, resumed at `:876-887`). -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "compile_correct"
-  (fmap_as_finite_support_relation :=
-    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.fpRegs,
-      WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_Store {width : Nat} [NeZero width] {C F : Type}
     (exp : HolLoopExp width) (v : Nat) (s : LoopSemStateFiniteExact width F) :
     ∀ (res : Option (LoopSemStateFiniteExact.LoopResultExact width))
@@ -110,11 +106,7 @@ theorem compileCorrect_Store {width : Nat} [NeZero width] {C F : Type}
 
 /-- Genuine `Store32` case of HOL `compile_correct`
     (`loop_to_wordProofScript.sml:57-97`, resumed at `:889-901`). -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "compile_correct"
-  (fmap_as_finite_support_relation :=
-    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.fpRegs,
-      WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_Store32 {width : Nat} [NeZero width] {C F : Type}
     (a w : Nat) (s : LoopSemStateFiniteExact width F) :
     ∀ (res : Option (LoopSemStateFiniteExact.LoopResultExact width))
@@ -157,11 +149,7 @@ theorem compileCorrect_Store32 {width : Nat} [NeZero width] {C F : Type}
 
 /-- Genuine `StoreByte` case of HOL `compile_correct`
     (`loop_to_wordProofScript.sml:57-97`, resumed at `:903-915`). -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "compile_correct"
-  (fmap_as_finite_support_relation :=
-    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.fpRegs,
-      WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_StoreByte {width : Nat} [NeZero width] {C F : Type}
     (a w : Nat) (s : LoopSemStateFiniteExact width F) :
     ∀ (res : Option (LoopSemStateFiniteExact.LoopResultExact width))
@@ -204,11 +192,7 @@ theorem compileCorrect_StoreByte {width : Nat} [NeZero width] {C F : Type}
 
 /-- Genuine `Load32` case of HOL `compile_correct`
     (`loop_to_wordProofScript.sml:57-97`, resumed at `:917-939`). -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "compile_correct"
-  (fmap_as_finite_support_relation :=
-    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.fpRegs,
-      WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_Load32 {width : Nat} [NeZero width] {C F : Type}
     (a v : Nat) (s : LoopSemStateFiniteExact width F) :
     ∀ (res : Option (LoopSemStateFiniteExact.LoopResultExact width))
@@ -255,11 +239,7 @@ theorem compileCorrect_Load32 {width : Nat} [NeZero width] {C F : Type}
 
 /-- Genuine `LoadByte` case of HOL `compile_correct`
     (`loop_to_wordProofScript.sml:57-97`, resumed at `:941-963`). -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "compile_correct"
-  (fmap_as_finite_support_relation :=
-    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.fpRegs,
-      WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_LoadByte {width : Nat} [NeZero width] {C F : Type}
     (a v : Nat) (s : LoopSemStateFiniteExact width F) :
     ∀ (res : Option (LoopSemStateFiniteExact.LoopResultExact width))

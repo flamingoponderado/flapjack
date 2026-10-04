@@ -12,8 +12,7 @@ relation hypotheses are retained. Inherited total holEl/holHd keeps the shared
 opaque holHdNil/holArb past the end, with no additional bounds premise or
 concrete fallback. The exact encoder/assembly predicates transitively inherit
 the reviewed rational-cut real translation from their FP semantics. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "asm_step_IMP_evaluate_step_find_next" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem asmStepImpEvaluate {width : Nat} [NeZero width]
     {S Q : Type} {σ : Type} (c : MachineConfig width S Q) (s1 : AsmState width)
     (ms1 : S) (io : HolFfiState σ) (i : HolAsm width)
@@ -88,8 +87,7 @@ All original hypotheses and the nonzero existential step witness are retained.
 Inherited total holEl/holHd keeps shared opaque holHdNil/holArb without added
 bounds or fallback. The encoder/assembly semantics transitively inherit the
 reviewed rational-cut real translation and SOUNDNESS item 8 assumption. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "asm_step_IMP_evaluate_step" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem asmStepImpEvaluateOnly {width : Nat} [NeZero width]
     {S Q : Type} {σ : Type} (c : MachineConfig width S Q) (s1 : AsmState width)
     (ms1 : S) (io : HolFfiState σ) (i : HolAsm width)

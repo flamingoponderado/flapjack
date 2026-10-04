@@ -7,8 +7,7 @@ open Flapjack.Compiler.Backend.LabProps.LabelSets
 
 /-- Full original unconditional label-existence/domain equivalence, retaining
 an arbitrary independent map value carrier and the native positive word carrier. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "line_labs_exist_get_labels" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem lineLabsExist_iff_labelsSubset {α : Type} {width : Nat} [NeZero width]
     (labs : Spt (Spt α)) (line : Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)) :
     lineLabsExist labs line ↔ lineGetLabels line ⊆ labsDomain labs := by
@@ -25,8 +24,7 @@ theorem lineLabsExist_iff_labelsSubset {α : Type} {width : Nat} [NeZero width]
     · intro h n1 n2 hp
       exact h (n1,n2) hp
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "sec_labs_exist_get_labels" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem secLabsExist_iff_labelsSubset {α : Type} {width : Nat} [NeZero width]
     (labs : Spt (Spt α)) (sec : Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) :
     secLabsExist labs sec ↔ secGetLabels sec ⊆ labsDomain labs := by
@@ -40,8 +38,7 @@ theorem secLabsExist_iff_labelsSubset {α : Type} {width : Nat} [NeZero width]
     exact h ⟨l,hm,hp⟩
 
 /-- HOL binds labs and code freely in this full iff; both remain explicit. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "all_labs_exist_get_labels" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem allLabsExist_iff_labelsSubset {α : Type} {width : Nat} [NeZero width]
     (labs : Spt (Spt α)) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
     allLabsExist labs code ↔ getLabels code ⊆ labsDomain labs := by

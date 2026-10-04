@@ -20,7 +20,7 @@ open Flapjack.Compiler.Encoders.Asm
 field uses its reviewed concrete carrier; symbols and exported names are native
 byte-backed MlStrings and all source lists and sptrees retain their constructors.
 This datatype carries no type-indexed word or arbitrary placeholder field. -/
-@[hol "cakeml/compiler/backend/backendScript.sml" "config"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 structure Config where
   sourceConf : SourceToFlat.Config
   closConf : ClosToBvl.Config
@@ -38,7 +38,7 @@ structure Config where
 byte and bitmap payload types: neither payload is inspected. Only labConf and
 symbols are updated, preserving every other configuration field. Missing names
 use the original literal NOTFOUND through the reviewed lookup_any operation. -/
-@[hol "cakeml/compiler/backend/backendScript.sml" "attach_bitmaps_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def attachBitmaps {Bytes Bitmaps : Type} (names : Spt MlString)
     (config : Config) (bitmaps : Bitmaps) :
     Option (Bytes × LabToTarget.Config) → Option (Bytes × Bitmaps × Config)
@@ -51,8 +51,7 @@ def attachBitmaps {Bytes Bitmaps : Type} (names : Spt MlString)
 
 /-- Original lower laboratory pipeline. The bitmap payload is independently
 polymorphic in HOL and remains arbitrary here; compilation errors are retained. -/
-@[hol "cakeml/compiler/backend/backendScript.sml" "from_lab_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def fromLab {width : Nat} [NeZero width] {Bitmaps : Type}
     (asmConf : AsmConfigExact width) (config : Flapjack.Compiler.Backend.Backend.Config) (names : Spt MlString)
     (program : LabSem.LabProgHOL width) (bitmaps : Bitmaps) :
@@ -62,8 +61,7 @@ def fromLab {width : Nat} [NeZero width] {Bitmaps : Type}
 
 /-- Original stack pipeline, including saturating heap/register subtraction,
 both native address offsets, and the independently quantified bitmap payload. -/
-@[hol "cakeml/compiler/backend/backendScript.sml" "from_stack_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def fromStack {width : Nat} [NeZero width] {Bitmaps : Type}
     (asmConf : AsmConfigExact width) (config : Flapjack.Compiler.Backend.Backend.Config) (names : Spt MlString)
     (program : List (Nat × StackLang.HolProg width)) (bitmaps : Bitmaps) :
@@ -77,8 +75,7 @@ def fromStack {width : Nat} [NeZero width] {Bitmaps : Type}
 `_frames`, although HOL does not use it in this definition. Only wordConf is
 updated before the complete stack/laboratory pipeline; no success premise is
 introduced. The bitmap result here is specifically a list of native words. -/
-@[hol "cakeml/compiler/backend/backendScript.sml" "from_word_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def fromWord {width : Nat} [NeZero width]
     (asmConf : AsmConfigExact width) (config : Flapjack.Compiler.Backend.Backend.Config) (names : Spt MlString)
     (program : List (Nat × Nat × WordLangProgHOL (BitVec width))) :
@@ -92,8 +89,7 @@ def fromWord {width : Nat} [NeZero width]
 both actual WordToWord outputs, update only its colouring oracle, and pass the
 transformed program to fromWord. This source-shaped definition is proof-side;
 executed pipeline routing and machine-semantics correctness remain separate. -/
-@[hol "cakeml/compiler/backend/backendScript.sml" "from_word_0_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def fromWord0 {width : Nat} [NeZero width]
     (asmConf : AsmConfigExact width) (config : Flapjack.Compiler.Backend.Backend.Config)
     (names : Spt MlString) (program : List (Nat × Nat × WordLangProgHOL (BitVec width))) :

@@ -1,3 +1,4 @@
+import Mathlib.Tactic.Set
 import Flapjack.Compiler.Backend.StackToLab.Proofs.CodeInstalled
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.Labels
 import Flapjack.Compiler.Backend.Semantics.StackSem.Control
@@ -16,8 +17,6 @@ open Flapjack.Compiler.Backend.StackToLab.Proofs.CodeInstalled
 open Flapjack.Basis.Pure.MlString
 
 /-- `flatten` never decreases the next free label. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_leq"
-  (words_as_type_indexed_bitvec)]
 theorem flattenLeq {width : Nat} [NeZero width] :
     ∀ (t : Bool) (x : HolProg width) (y z : Nat) (cs bs : List Nat),
       z ≤ (flattenHOL t x y z cs bs).2.2 := by
@@ -32,8 +31,6 @@ theorem flattenLeq {width : Nat} [NeZero width] :
   all_goals (try split_ifs) <;> (try simp_all) <;> omega
 
 /-- A non-bad function return is present. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "NOT_bad_fun_return_IMP_SOME"
-  (words_as_type_indexed_bitvec)]
 theorem notBadFunReturnImpSome {width : Nat} [NeZero width] :
     ∀ q : Option (StackSemResult width), ¬StackSemControl.badFunReturn q = true →
       ∃ n, q = some n := by
@@ -43,8 +40,6 @@ theorem notBadFunReturnImpSome {width : Nat} [NeZero width] :
   | some n => exact ⟨n, rfl⟩
 
 /-- Every program's next label from 2 is at least 2. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "next_lab_non_zero" 1022
-  (words_as_type_indexed_bitvec)]
 theorem nextLabNonZero {width : Nat} [NeZero width] :
     ∀ p : HolProg width, 2 ≤ StackAlloc.nextLabHOL p 2 := by
   intro p
@@ -52,8 +47,6 @@ theorem nextLabNonZero {width : Nat} [NeZero width] :
   omega
 
 /-- The tail flag only affects `Seq`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_T_F"
-  (words_as_type_indexed_bitvec)]
 theorem flattenTF {width : Nat} [NeZero width] {p_2 : HolProg width} {p_1 m : Nat}
     {cs bs : List Nat} :
     ¬isSeqHOL p_2 = true → flattenHOL true p_2 p_1 m cs bs = flattenHOL false p_2 p_1 m cs bs := by
@@ -65,7 +58,6 @@ theorem flattenTF {width : Nat} [NeZero width] {p_2 : HolProg width} {p_1 m : Na
   | _ => simp only [flattenHOL]
 
 /-- An out-of-list `find_lab` result is the default zero. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "NOT_MEM_find_lab_IMP"]
 theorem notMemFindLabImp : ∀ (bs : List Nat) (n : Nat), findLabHOL n bs ∉ bs → findLabHOL n bs = 0 := by
   intro bs n h
   unfold findLabHOL at *
@@ -76,8 +68,6 @@ theorem notMemFindLabImp : ∀ (bs : List Nat) (n : Nat), findLabHOL n bs ∉ bs
     exact absurd (List.mem_of_getElem? hn) h
 
 /-- A defined label position stays defined in an extended program. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "is_some_loc_to_pc_prefix"
-  (words_as_type_indexed_bitvec)]
 theorem isSomeLocToPcPrefix {width : Nat} [NeZero width] {n k : Nat}
     {c1 c2 : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))} :
@@ -88,8 +78,6 @@ theorem isSomeLocToPcPrefix {width : Nat} [NeZero width] {n k : Nat}
   rfl
 
 /-- Pointwise form of `is_some_loc_to_pc_prefix`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "every_is_some_loc_to_pc_prefix"
-  (words_as_type_indexed_bitvec)]
 theorem everyIsSomeLocToPcPrefix {width : Nat} [NeZero width] {n : Nat} {cs : List Nat}
     {c1 c2 : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))} :
@@ -111,10 +99,6 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 result. The quantified native state translates the original `regs`, `fp_regs`
 and `store` finite maps through the canonical finite-support representation;
 the `code` field remains a literal sptree and is not qualified as a finite map. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "no_ret_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
 theorem noRetCorrect {width : Nat} [NeZero width] {C F : Type} :
     ∀ (t : Bool) (p : HolProg width) (y z : Nat) (cs bs : List Nat),
       (flattenHOL t p y z cs bs).2.1 = true →
@@ -490,8 +474,6 @@ termination_by p => sizeOf p
 /-- Non-tail flattening keeps the program's labels, which all belong to the
 section and avoid 0 and 1, distinct, and adds only fresh labels in
 `[nl, nl')`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "stack_to_lab_lab_pres" 1028
-  (words_as_type_indexed_bitvec)]
 theorem stackToLabLabPres {width : Nat} [NeZero width] :
     ∀ (t : Bool) (p : HolProg width) (n nl : Nat) (cs bs : List Nat),
       (∀ l ∈ StackPropsCodeLabels.extractLabels p, l.1 = n ∧ l.2 ≠ 0 ∧ l.2 ≠ 1) ∧
@@ -511,8 +493,6 @@ theorem stackToLabLabPres {width : Nat} [NeZero width] :
 
 /-- Tail flattening keeps the program's labels distinct within the section,
 adding the `Seq` continuation label 1 and fresh labels below `nl'`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "stack_to_lab_lab_pres_T"
-  (words_as_type_indexed_bitvec)]
 theorem stackToLabLabPresT {width : Nat} [NeZero width] :
     ∀ (t : Bool) (p : HolProg width) (n nl : Nat) (cs bs : List Nat),
       (∀ l ∈ StackPropsCodeLabels.extractLabels p, l.1 = n ∧ l.2 ≠ 0 ∧ l.2 ≠ 1) ∧
@@ -578,8 +558,6 @@ theorem stackToLabLabPresT {width : Nat} [NeZero width] :
 
 /-- Every program section produced from well-labelled source programs with
 distinct names satisfies `labels_ok`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "prog_to_section_labels_ok"
-  (words_as_type_indexed_bitvec)]
 theorem progToSectionLabelsOk {width : Nat} [NeZero width] {prog : List (Nat × HolProg width)} :
     (∀ np ∈ prog, (∀ l ∈ StackPropsCodeLabels.extractLabels np.2,
         l.1 = np.1 ∧ l.2 ≠ 0 ∧ l.2 ≠ 1) ∧ (StackPropsCodeLabels.extractLabels np.2).Nodup) ∧
@@ -626,8 +604,6 @@ theorem progToSectionLabelsOk {width : Nat} [NeZero width] {prog : List (Nat × 
 
 /-- A fetched compiled jump to an installed destination takes one LabSem
 step to the destination position. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "compile_jump_correct"
-  (words_as_type_indexed_bitvec)]
 theorem compileJumpCorrect {width : Nat} [NeZero width] {C F : Type}
     {s : Flapjack.Compiler.Backend.LabSem.State width C F} {pc pc' : Nat}
     {code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -650,7 +626,6 @@ theorem compileJumpCorrect {width : Nat} [NeZero width] {C F : Type}
     simp [clk, asmFetch, fetch, compileJumpHOL, hp, loc]
 
 /-- HOL `result_view`: the target-observable shape of a StackSem result. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "result_view"]
 inductive ResultView where
   | vloc (n1 n2 : Nat)
   | vcont (n1 n2 : Nat)
@@ -660,8 +635,6 @@ inductive ResultView where
 
 /-- Complete original view of a StackSem result at section `l` with the
 continue and break label stacks. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "result_view_def"
-  (words_as_type_indexed_bitvec)]
 def resultView {width : Nat} [NeZero width] :
     StackSemResult width → Nat → List Nat → List Nat → ResultView
   | .result (.loc n1 n2), _, _, _ => .vloc n1 n2
@@ -672,15 +645,11 @@ def resultView {width : Nat} [NeZero width] :
   | _, _, _, _ => .verr
 
 /-- Complete original view of a halting word as a machine result. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "halt_word_view_def"
-  (words_as_type_indexed_bitvec)]
 def haltWordView {width : Nat} [NeZero width] : WordLocW width → MachineResult
   | .word w => if w = 0 then .halt .success else .halt .resourceLimitHit
   | .loc _ _ => .error
 
 /-- Complete original view of a halting StackSem result. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "halt_view_def"
-  (words_as_type_indexed_bitvec)]
 def haltView {width : Nat} [NeZero width] : Option (StackSemResult width) → Option MachineResult
   | some (.halt w) => some (haltWordView w)
   | some (.finalFFI outcome) => some (.halt (.ffiOutcome outcome))

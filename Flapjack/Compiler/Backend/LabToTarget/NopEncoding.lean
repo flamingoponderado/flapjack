@@ -8,8 +8,7 @@ word dimension translates to positive-width BitVec through native HolAsm. -/
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack.Compiler.Encoders.Asm
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "enc_with_nop_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def encWithNop {width : Nat} [NeZero width] {Value : Type}
     (encode : HolAsm width → List Value) (instruction : HolAsm width)
     (bytes : List Value) : Prop :=
@@ -19,8 +18,7 @@ def encWithNop {width : Nat} [NeZero width] {Value : Type}
   else let count := (bytes.length - initial.length) / step.length
        bytes = initial ++ (List.replicate count step).flatten
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "enc_with_nop_thm" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem encWithNop_iff {width : Nat} [NeZero width] {Value : Type}
     (encode : HolAsm width → List Value) (instruction : HolAsm width)
     (bytes : List Value) :

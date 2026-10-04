@@ -9,15 +9,13 @@ namespace Flapjack.Compiler.Backend.WordToStack.Native
 open Flapjack.Compiler.Backend.StackLang
 
 /-- Literal zero/nonzero stack-free sequence on the native program carrier. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "SeqStackFree_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def seqStackFreeNative {width : Nat} [NeZero width]
     (n : Nat) (p : HolProg width) : HolProg width :=
   if n = 0 then p else .seq (.stackFree n) p
 
 /-- Literal descending return-slot copies, preserving the source list_Seq tree. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "copy_ret_aux_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def copyRetAuxNative {width : Nat} [NeZero width] (k f : Nat) : Nat → HolProg width
   | 0 => .skip
   | n + 1 => listSeq [.stackLoad k n, .stackStore k (n + f), copyRetAuxNative k f n]
@@ -26,8 +24,7 @@ def copyRetAuxNative {width : Nat} [NeZero width] (k f : Nat) : Nat → HolProg 
 independent carrier, as confirmed by the original full HOL type. The return-value
 list element carrier is independent of the native continuation carrier, as in
 the source length operation. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "copy_ret_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def copyRetNative {width : Nat} [NeZero width] {β γ : Type}
     (perf isHandle : Bool) (kf : Nat × Nat × γ)
     (vs : List β) (kont : HolProg width) : HolProg width :=

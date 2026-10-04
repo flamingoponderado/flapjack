@@ -1,3 +1,4 @@
+import Mathlib.Tactic.Convert
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemVal
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemoryWrites
 import Flapjack.Compiler.Backend.StackRemove.StoreListCode
@@ -114,8 +115,7 @@ arbitrary; all original side conditions are kept, including the equations
 naming the state memory and domain. The conclusion is the original existential
 over the final temporary register value and memory, with the exact framed
 heap of the stored values and the exact normal post-state. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "store_list_code_thm"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem storeListCodeThm {width : Nat} [NeZero width] {C F : Type} (a t : Nat) :
     ∀ (xs : List (BitVec width ⊕ Nat)) (s : StackSemStateFiniteExact width C F)
       (w : BitVec width) (frame : ((BitVec width × WordLocW width) → Prop) → Prop)

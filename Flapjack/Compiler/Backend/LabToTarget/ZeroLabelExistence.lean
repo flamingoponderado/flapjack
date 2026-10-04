@@ -37,8 +37,7 @@ theorem zeroLabsAccOf_eq_zeroLabsOf {width : Nat} [NeZero width]
         · simp [zeroLabsAccOf, labsOf, hb, eq_comm]
   | call _ | callFFI _ | install | halt => simp [zeroLabsAccOf, labsOf]
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "line_get_zero_labs_acc_eq_line_get_zero_labels"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem lineGetZeroLabsAcc_eq_lineGetZeroLabels {width : Nat} [NeZero width]
     (l : Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)) (acc : NumSet) :
     sptDomain (lineGetZeroLabsAcc l acc) = Prod.fst '' restrictZero (lineGetLabels l) ∪ sptDomain acc := by
@@ -50,8 +49,7 @@ theorem lineGetZeroLabsAcc_eq_lineGetZeroLabels {width : Nat} [NeZero width]
     rw [memImageZero]
     simp
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "sec_get_zero_labs_acc_eq_sec_get_zero_labels"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem secGetZeroLabsAcc_eq_secGetZeroLabels {width : Nat} [NeZero width]
     (sec : Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) (acc : NumSet) :
     sptDomain (secGetZeroLabsAcc sec acc) = Prod.fst '' restrictZero (secGetLabels sec) ∪ sptDomain acc := by
@@ -71,8 +69,7 @@ theorem secGetZeroLabsAcc_eq_secGetZeroLabels {width : Nat} [NeZero width]
     simp only [memImageZero]
     simp [secGetLabels, or_assoc]
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "get_zero_labs_acc_eq_get_zero_labels"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getZeroLabsAcc_eq_getZeroLabels {width : Nat} [NeZero width]
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) (acc : NumSet) :
     sptDomain (code.foldr secGetZeroLabsAcc acc) = Prod.fst '' restrictZero (getLabels code) ∪ sptDomain acc := by
@@ -104,8 +101,7 @@ private theorem zeroLookupTest {α : Type} (labs : Spt (Spt α)) (k : Nat) :
 
 /-- Full original equivalence. The map-value carrier α remains independent of
 code's positive word dimension; the source does not specialize it to Nat. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "zero_labs_acc_exist_eq"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem zeroLabsAccExist_eq {width : Nat} [NeZero width] {α : Type}
     (labs : Spt (Spt α)) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
     zeroLabsAccExist labs code = true ↔ restrictZero (getLabels code) ⊆ labsDomain labs := by

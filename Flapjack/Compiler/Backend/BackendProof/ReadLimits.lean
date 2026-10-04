@@ -14,8 +14,7 @@ open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackName
 `get_stack_heap_limit (2 * max_heap_limit (:'a) c.data_conf - 1)` of the three
 registers named 2, 3, 4. HOL's `asm_conf` argument is not used by the body and is
 retained. -/
-@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "read_limits_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def readLimits {width : Nat} [NeZero width] {state projection : Type}
     (_asmConf : AsmConfigExact width) (c : Flapjack.Compiler.Backend.Backend.Config)
     (mc : MachineConfig width state projection) (ms : state) : Nat × Nat :=

@@ -27,11 +27,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 memory replacement preserves every stateRel conjunct for arbitrary extra.
 The original implication is the only premise; no post-state relation is
 assumed. All unrelated fields and compiler/stack obligations are preserved. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "state_rel_with_memory"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelWithMemory {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (k f frame : Nat)
     (source : WordSemStateFiniteExact width (Nat × C) F)
@@ -49,11 +45,7 @@ theorem stateRelWithMemory {width : Nat} [NeZero width] {C F : Type}
 and the full original relation derive the actual target memStore success and
 entire post-state relation. Arbitrary address, Word/Loc payload and extra are
 retained. Domain membership and the target memory update are derived internally. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "state_rel_mem_store"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelMemStore {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (k f frame : Nat)
     (source sourcePost : WordSemStateFiniteExact width (Nat × C) F)

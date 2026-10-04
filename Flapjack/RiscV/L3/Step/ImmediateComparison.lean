@@ -31,7 +31,6 @@ hypotheses, rd<>0 and ArchBase<>1. RV32 reads sign-extend the low32 bits;
 source-zero, all register aliases and the full resulting native record remain.
 This declaration uses only word/register/mode operations and has no inherited
 real arithmetic assumption. -/
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "SLTI"]
 theorem dfnSltI (rd rs1 : BitVec 5) (imm : BitVec 12) (s : riscv_state)
     (h : rd ≠ 0#5) (arch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1#2) :
     «dfn'SLTI» (rd, rs1, imm) s =
@@ -56,7 +55,6 @@ hypotheses, rd<>0 and ArchBase<>1. RV32 reads sign-extend the low32 bits;
 source-zero, all register aliases and the full resulting native record remain.
 This declaration uses only word/register/mode operations and has no inherited
 real arithmetic assumption. -/
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "SLTIU"]
 theorem dfnSltIU (rd rs1 : BitVec 5) (imm : BitVec 12) (s : riscv_state)
     (h : rd ≠ 0#5) (arch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1#2) :
     «dfn'SLTIU» (rd, rs1, imm) s =

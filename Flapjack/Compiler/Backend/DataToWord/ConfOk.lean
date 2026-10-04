@@ -7,8 +7,7 @@ namespace Flapjack.Compiler.Backend.DataToWord
 fits below the word width and covers the word shift, and the length field is
 nonzero and leaves room for a tag byte. The HOL type dimension is observed only
 through `dimindex` and the wordLang `shift` overload (`word_shift`). -/
-@[hol "cakeml/compiler/backend/data_to_wordScript.sml" "conf_ok_def"
-  (word_dimension_as_width := width)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def confOk (width : Nat) [NeZero width] (c : Config) : Prop :=
   shiftLength c < width ∧ Flapjack.wordShiftAmount width ≤ shiftLength c ∧
     c.lenSize ≠ 0 ∧ c.lenSize + 7 < width

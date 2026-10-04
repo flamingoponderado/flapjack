@@ -42,8 +42,7 @@ theorem stackSize_of_cont {width : Nat} [NeZero width] {C F : Type}
   rcases hr with rfl | ⟨k, rfl⟩ <;> exact (sKeyEqStackSize _ _ hs.1).symm
 
 /-- `max_depth_call_graph_lemma`, `Loop` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_depthProofScript.sml" "max_depth_call_graph_lemma"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem maxDepthCallGraphLemma_Loop {width : Nat} [NeZero width] {C F : Type}
     (names : WordLangNumSetHOL) (c : WordLangProgHOL (BitVec width)) (exitNames : WordLangNumSetHOL)
     (s : WordSemStateFiniteExact width C F)

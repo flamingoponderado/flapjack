@@ -9,8 +9,7 @@ open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString
 and the independently supplied fetched line's dimension remain distinct.
 This is the original proof-side definition, not a production replacement for
 get_shmem_info. Unsupported/non-shared-memory constructors produce no entry. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "line_to_info_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def lineToInfo {codeWidth : Nat} {fetchedWidth : Nat} [NeZero codeWidth] [NeZero fetchedWidth]
     (secs : List (Section (Line (AsmOrCbw (HolAsm codeWidth) HolMemop (HolAddr codeWidth)) (AsmWithLab HolCmp (HolRegImm codeWidth) MlString) (BitVec codeWidth)))) (p : Nat) (x : Nat × Option (Line (AsmOrCbw (HolAsm fetchedWidth) HolMemop (HolAddr fetchedWidth)) (AsmWithLab HolCmp (HolRegImm fetchedWidth) MlString) (BitVec fetchedWidth))) :
     List (HolFfiName × ShmemInfoNum) :=
@@ -33,8 +32,7 @@ private theorem lineToInfo_posCongr {codeWidth : Nat} {fetchedWidth : Nat}
 
 /-- Full original conjunction. All FOUR source word dimensions are independent:
 first code, first fetched line, second code and second fetched line. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "line_to_info_next" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem lineToInfo_next {firstCode : Nat} {firstFetched : Nat} {secondCode : Nat} {secondFetched : Nat}
     [NeZero firstCode] [NeZero firstFetched] [NeZero secondCode] [NeZero secondFetched]
     (k1 : Nat) (a : AsmWithLab HolCmp (HolRegImm firstCode) MlString)
@@ -51,8 +49,7 @@ theorem lineToInfo_next {firstCode : Nat} {firstFetched : Nat} {secondCode : Nat
     simp [posVal,isLabelHOL,lineLength]
 
 /-- Full original empty-section equation, retaining independent code/fetch words. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "line_to_info_hd_empty" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem lineToInfo_hdEmpty {codeWidth : Nat} {fetchedWidth : Nat}
     [NeZero codeWidth] [NeZero fetchedWidth] (k : Nat) (rest : List (Section (Line (AsmOrCbw (HolAsm codeWidth) HolMemop (HolAddr codeWidth)) (AsmWithLab HolCmp (HolRegImm codeWidth) MlString) (BitVec codeWidth))))
     (p : Nat) (t : Nat × Option (Line (AsmOrCbw (HolAsm fetchedWidth) HolMemop (HolAddr fetchedWidth)) (AsmWithLab HolCmp (HolRegImm fetchedWidth) MlString) (BitVec fetchedWidth))) :
@@ -63,8 +60,7 @@ theorem lineToInfo_hdEmpty {codeWidth : Nat} {fetchedWidth : Nat}
 
 /-- Full original zero-label equation; the source's literal zero annotation
 is retained instead of a generic label-length or validity assumption. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "line_to_info_hd_Label" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem lineToInfo_hdLabel {codeWidth : Nat} {fetchedWidth : Nat}
     [NeZero codeWidth] [NeZero fetchedWidth] (k a b : Nat)
     (xs : List (LabLineHOL codeWidth)) (rest : List (Section (Line (AsmOrCbw (HolAsm codeWidth) HolMemop (HolAddr codeWidth)) (AsmWithLab HolCmp (HolRegImm codeWidth) MlString) (BitVec codeWidth)))) (p : Nat)
@@ -77,8 +73,7 @@ theorem lineToInfo_hdLabel {codeWidth : Nat} {fetchedWidth : Nat}
 
 /-- Full original fetch enumeration successor, including all n entries even
 past the end of code. The sole source guard excludes a leading Label. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "GENLIST_asm_fetch_aux_next" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem genlist_asmFetchAux_next {width : Nat} [NeZero width]
     (x : Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)) (k : Nat) (xs : List (LabLineHOL width)) (rest : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))
     (n : Nat) :

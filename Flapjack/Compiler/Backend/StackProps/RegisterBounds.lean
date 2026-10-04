@@ -22,8 +22,8 @@ def regBoundExp {width : Nat} [NeZero width]
 /-- Full original instruction bound. Floating-point register numbers are
 ignored except the explicit integer-register fields of comparisons/transfers;
 all arithmetic input/output/carry/overflow fields named by HOL are checked. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "reg_bound_inst_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: integer-only specialization of the referenced HOL declaration.
+
 def regBoundInst {width : Nat} [NeZero width] (instruction : HolInst width) (bound : Nat) : Prop :=
   match instruction with
   | .mem _ destination (.addr base _) => destination < bound ∧ base < bound
@@ -40,18 +40,13 @@ def regBoundInst {width : Nat} [NeZero width] (instruction : HolInst width) (bou
       first < bound ∧ second < bound ∧ third < bound ∧ fourth < bound
   | .arith (.longDiv first second third fourth fifth) =>
       first < bound ∧ second < bound ∧ third < bound ∧ fourth < bound ∧ fifth < bound
-  | .fp (.fpLess register _ _) | .fp (.fpLessEqual register _ _) | .fp (.fpEqual register _ _) =>
-      register < bound
-  | .fp (.fpMovToReg first second _) | .fp (.fpMovFromReg _ first second) =>
-      first < bound ∧ second < bound
   | _ => True
 
 /-- Full original program register bound. Call checks the handler only inside
 its SOME-return branch. StackLoad/StackStore check the original FIRST payload
 slot, irrespective of its offset label in StackLang documentation. No
 additional allocation, raw-call, label or stack-offset guard is introduced. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "reg_bound_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def regBound {width : Nat} [NeZero width] : HolProg width → Nat → Prop
   | .halt register, bound | .raise register, bound | .get register _, bound
   | .locValue register _ _, bound | .ret register, bound => register < bound

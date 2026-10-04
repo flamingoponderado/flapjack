@@ -50,11 +50,7 @@ end LoopToWordCompileCorrectCallAssemblyWitnesses
 
 /-- The `Call` case of HOL `compile_correct`
     (`loop_to_wordProofScript.sml:57-97`, resumed at `:1017-1407`). -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "compile_correct"
-  (fmap_as_finite_support_relation :=
-    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.fpRegs,
-      WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_Call {width : Nat} [NeZero width] {C F : Type}
     (ret : Option (List Nat × NumSet)) (dest : Option Nat) (argvars : List Nat)
     (handler : Option (Nat × HolLoopProg width × HolLoopProg width × NumSet)) (s : LoopSemStateFiniteExact width F)

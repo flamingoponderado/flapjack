@@ -26,21 +26,6 @@ example : everyVarHOL (fun x => decide (x ≤ maxVarHOL mvm_move)) mvm_move = tr
 private def mvm_move_empty : WordLangProgHOL (BitVec 64) :=
   .move 99 []
 example : observe mvm_move_empty = (0, true, true) := by decide +kernel
-example : everyVarHOL (fun x => decide (x ≤ maxVarHOL mvm_move_empty)) mvm_move_empty = true :=
-  maxVarMax mvm_move_empty
-
-private def mvm_inst64 : WordLangProgHOL (BitVec 64) :=
-  .inst (.fp (.fpMovToReg 3 17 99))
-example : observe mvm_inst64 = (3, true, false) := by decide +kernel
-example : everyVarHOL (fun x => decide (x ≤ maxVarHOL mvm_inst64)) mvm_inst64 = true :=
-  maxVarMax mvm_inst64
-
-private def mvm_inst32 : WordLangProgHOL (BitVec 32) :=
-  .inst (.fp (.fpMovToReg 3 17 99))
-example : observe mvm_inst32 = (17, true, false) := by decide +kernel
-example : everyVarHOL (fun x => decide (x ≤ maxVarHOL mvm_inst32)) mvm_inst32 = true :=
-  maxVarMax mvm_inst32
-
 private def mvm_assign : WordLangProgHOL (BitVec 64) :=
   .assign 11 (.load (.var 17))
 example : observe mvm_assign = (17, true, false) := by decide +kernel
@@ -248,15 +233,6 @@ example : everyVarHOL (fun x => decide (x ≤ maxVarHOL mvm_inst_load16_ignored)
 private def mvm_inst_store16_ignored : WordLangProgHOL (BitVec 64) :=
   .inst (.mem .store16 999 (.addr 777 3))
 example : observe mvm_inst_store16_ignored = (0, true, true) := by decide +kernel
-example : everyVarHOL (fun x => decide (x ≤ maxVarHOL mvm_inst_store16_ignored)) mvm_inst_store16_ignored = true :=
-  maxVarMax mvm_inst_store16_ignored
-
-private def mvm_inst_fp80_from : WordLangProgHOL (BitVec 80) :=
-  .inst (.fp (.fpMovFromReg 999 2 101))
-example : observe mvm_inst_fp80_from = (101, true, false) := by decide +kernel
-example : everyVarHOL (fun x => decide (x ≤ maxVarHOL mvm_inst_fp80_from)) mvm_inst_fp80_from = true :=
-  maxVarMax mvm_inst_fp80_from
-
 private def mvm_call_arguments : WordLangProgHOL (BitVec 64) :=
   .call (some ([5],(.ln,.ln),.raise 3,999,999)) none [97] none
 example : observe mvm_call_arguments = (97, true, false) := by decide +kernel
@@ -278,15 +254,6 @@ example : everyVarHOL (fun x => decide (x ≤ maxVarHOL mvm_cutsets_nonwf)) mvm_
 private def mvm_op_list_nested : WordLangProgHOL (BitVec 80) :=
   .set .currHeap (.op .add [.var 3,.load (.var 101),.op .sub [.var 17,.const 3]])
 example : observe mvm_op_list_nested = (101, true, false) := by decide +kernel
-example : everyVarHOL (fun x => decide (x ≤ maxVarHOL mvm_op_list_nested)) mvm_op_list_nested = true :=
-  maxVarMax mvm_op_list_nested
-
-private def mvm_inst_fp_ignored : WordLangProgHOL (BitVec 64) :=
-  .inst (.fp (.fpAdd 100 200 300))
-example : observe mvm_inst_fp_ignored = (0, true, true) := by decide +kernel
-example : everyVarHOL (fun x => decide (x ≤ maxVarHOL mvm_inst_fp_ignored)) mvm_inst_fp_ignored = true :=
-  maxVarMax mvm_inst_fp_ignored
-
 example {width : Nat} [NeZero width] (program : WordLangProgHOL (BitVec width)) :
     everyVarHOL (fun x => decide (x ≤ maxVarHOL program)) program = true :=
   maxVarMax program

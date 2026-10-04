@@ -24,11 +24,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 motive. Source success, actual native scheduling and complete source equality
 are derived internally. No induction hypothesis is needed for this leaf.
 Evaluator closure inherits reals_as_rational_cuts. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_correct" 5756
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectMove {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (priority : Nat) (moves : List (Nat × Nat))
     (source : WordSemStateFiniteExact width (Nat × C) F) :

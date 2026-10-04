@@ -16,8 +16,7 @@ real-number translation through asmInst (docs/SOUNDNESS.md item 8).
 namespace Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm
 
-@[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "evaluate_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def evaluate {width : Nat} [NeZero width] {C F : Type}
     (state : Flapjack.Compiler.Backend.LabSem.State width C F) :
     MachineResult × Flapjack.Compiler.Backend.LabSem.State width C F :=

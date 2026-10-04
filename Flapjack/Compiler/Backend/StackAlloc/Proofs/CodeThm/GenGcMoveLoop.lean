@@ -892,9 +892,7 @@ and Boolean `c1` are implicit universal binders; the unused `c1` premise is
 retained. Complete induction derives both collector success flags and every
 recursive entry fact. No additional dimension, target-run or simulation
 premise is introduced. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml"
-  "word_gen_gc_move_loop_code_thm"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_gen_gc_move_loop_code_thm {width : Nat} [NeZero width] {C F : Type}
     {conf : Config} {c1 : Bool} :
     ∀ (k : Nat) (pax i pa ib pb pbx old : BitVec width)

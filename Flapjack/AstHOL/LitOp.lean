@@ -8,29 +8,29 @@ Counterparts of `cakeml/semantics/astScript.sml` lines 10-188: `lit`, `arith`,
 the name abbreviations `modN`/`varN`/`conN`/`typeN`/`tvarN` (all `mlstring`),
 `prim_type`, `op`, `op_class`, `getOpClass_def` and `lop`. HOL `int` is `Int`,
 `char` is the reviewed 256-element `HolChar`, `word8`/`word64` are `BitVec 8`/
-`BitVec 64` at their fixed widths, and `mlstring` is `MlString`. Constructor order
-and payloads match the source; constructor names are lower camel case.
+`BitVec 64` at their fixed widths, and `mlstring` is `MlString`. The riscv-mi carriers omit floating-point literals, primitive types and
+arithmetic selectors. Retained constructors keep their source order and
+payloads; constructor names are lower camel case.
 -/
 
 namespace Flapjack.AstHOL
 
 open Flapjack.Basis.Pure.MlString
 
-/-- Complete original `lit` (astScript 10-18). -/
-@[hol "cakeml/semantics/astScript.sml" "lit"]
+/-- Integer specialization of `lit` (astScript 10-18), excluding `Float64`. -/
+-- riscv-mi: integer source carrier; floating-point constructors removed.
 inductive Lit where
   | intLit : Int → Lit
   | char : HolChar → Lit
   | strLit : MlString → Lit
   | word8 : BitVec 8 → Lit
   | word64 : BitVec 64 → Lit
-  | float64 : BitVec 64 → Lit
   deriving DecidableEq, Repr
 
-/-- Complete original `arith` (astScript 24-26). -/
-@[hol "cakeml/semantics/astScript.sml" "arith"]
+/-- Integer specialization of `arith` (astScript 24-26), excluding `Sqrt` and `Fma`. -/
+-- riscv-mi: integer source carrier; floating-point constructors removed.
 inductive Arith where
-  | add | sub | mul | div | mod | neg | and | xor | or | not | abs | sqrt | fma
+  | add | sub | mul | div | mod | neg | and | xor | or | not | abs
   deriving DecidableEq, Repr
 
 /-- Original `Type modN = “:mlstring”` (astScript 29). -/
@@ -53,20 +53,19 @@ abbrev TypeN := MlString
 @[hol "cakeml/semantics/astScript.sml" "tvarN"]
 abbrev TvarN := MlString
 
-/-- Complete original `prim_type` (astScript 66-73). -/
-@[hol "cakeml/semantics/astScript.sml" "prim_type"]
+/-- Integer specialization of `prim_type` (astScript 66-73), excluding `Float64T`. -/
+-- riscv-mi: integer source carrier; floating-point constructors removed.
 inductive PrimType where
   | boolT
   | intT
   | charT
   | strT
   | wordT : WordSize → PrimType
-  | float64T
   deriving DecidableEq, Repr
 
-/-- Complete original `op` (astScript 75-137): all 43 constructors in source
-order with their payloads. -/
-@[hol "cakeml/semantics/astScript.sml" "op"]
+/-- The `op` constructors (astScript 75-137) in source order, with their
+`Arith` and `PrimType` payloads specialized to the integer carriers above. -/
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 inductive Op where
   | arith : Arith → PrimType → Op
   | fromTo : PrimType → PrimType → Op
@@ -123,7 +122,7 @@ inductive OpClass where
   deriving DecidableEq, Repr
 
 /-- Exact HOL `getOpClass_def` (astScript 148-155). -/
-@[hol "cakeml/semantics/astScript.sml" "getOpClass_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def getOpClass (op : Op) : OpClass :=
   match op with
   | .opapp => .funApp

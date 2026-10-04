@@ -38,8 +38,7 @@ theorem goodHandlers_fullCompileSingle {width : Nat} [NeZero width] (tra : Bool)
 
 /-- HOL `word_good_handlers_word_to_word_incr_helper` (`wordConvsProofScript.sml:2992-3013`,
     `[local]`); HOL's free `progs tra reg_count1 ralg asm_c` are explicit. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "word_good_handlers_word_to_word_incr_helper" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem goodHandlers_wordToWord_incrHelper {width : Nat} [NeZero width]
     (progs : List (Nat × Nat × WordLangProgHOL (BitVec width))) (tra : Bool) (regCount1 ralg : Nat)
     (asmC : AsmConfigExact width) :
@@ -54,8 +53,7 @@ theorem goodHandlers_wordToWord_incrHelper {width : Nat} [NeZero width]
 
 /-- HOL `word_good_handlers_word_to_word_incr` (`wordConvsProofScript.sml:3015-3023`); HOL's
     free `progs tra reg_count1 ralg asm_c` are explicit. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "word_good_handlers_word_to_word_incr" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem goodHandlers_wordToWord_incr {width : Nat} [NeZero width]
     (progs : List (Nat × Nat × WordLangProgHOL (BitVec width))) (tra : Bool) (regCount1 ralg : Nat)
     (asmC : AsmConfigExact width) :
@@ -69,8 +67,7 @@ theorem goodHandlers_wordToWord_incr {width : Nat} [NeZero width]
 
 /-- HOL `word_good_handlers_word_to_word` (`wordConvsProofScript.sml:3025-3034`); HOL's free
     `progs wc ac` are explicit and `compile` is the tagged `word_to_word$compile`. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "word_good_handlers_word_to_word"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem goodHandlers_wordToWord {width : Nat} [NeZero width]
     (progs : List (Nat × Nat × WordLangProgHOL (BitVec width)))
     (wc : Compiler.Backend.WordToWord.Config) (ac : AsmConfigExact width) :

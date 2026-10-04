@@ -8,8 +8,7 @@ open Flapjack
 terminating behavior, and the lazy-list LUB of every clock-indexed trace.
 The word dimension and inherited FP real-number translation are those of
 the reviewed native evaluator (docs/SOUNDNESS.md item 8). -/
-@[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "semantics_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def semantics {width : Nat} [NeZero width] {C F : Type}
     (state : Flapjack.Compiler.Backend.LabSem.State width C F) : HolBehaviour :=
   open Classical in

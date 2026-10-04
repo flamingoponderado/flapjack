@@ -5,8 +5,6 @@ accepted/rejected constructors and recursive conjunctions, not evaluation. -/
 namespace Flapjack.Test.StackPropsClockSupportParity
 open Flapjack.Compiler.Backend.StackProps Flapjack.Compiler.Backend.StackLang
 example : clockNeutralHOL (.skip : HolProg 64) := by simp [clockNeutralHOL]
-example : clockNeutralHOL (.inst (.fp (.fpSqrt 0 1)) : HolProg 1) := by
-  simp [clockNeutralHOL]
 example : clockNeutralHOL (.halt 2 : HolProg 16) := by simp [clockNeutralHOL]
 example : clockNeutralHOL (.locValue 0 1 2 : HolProg 1) := by simp [clockNeutralHOL]
 example : clockNeutralHOL (.seq .skip (.halt 2) : HolProg 64) := by simp [clockNeutralHOL]

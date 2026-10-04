@@ -54,8 +54,7 @@ theorem ssaRenameMove_preAlloc {width : Nat} [NeZero width]
 
 /-- Original Alloc case: actual stack names are proved from the source
 producer, without assuming target conventions. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_preAllocAlloc {width : Nat} [NeZero width]
     (destination : Nat) (cutsets : WordLangCutsetsHOL)
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -74,8 +73,7 @@ theorem ssaCcTrans_preAllocAlloc {width : Nat} [NeZero width]
   simp [stack, movePre, listNextVarRenameMove, everyStackVarHOL, callArgConventionHOL]
 
 /-- Original Install case with actual whole-cutset stack class derived. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_preAllocInstall {width : Nat} [NeZero width]
     (ptr len dptr dlen : Nat) (cutsets : WordLangCutsetsHOL)
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -96,8 +94,7 @@ theorem ssaCcTrans_preAllocInstall {width : Nat} [NeZero width]
     everyStackVarHOL, callArgConventionHOL]
 
 /-- Original FFI case retains the full arbitrary input operands and cutsets. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_preAllocFFI {width : Nat} [NeZero width]
     (index : Basis.Pure.MlString.MlString) (ptr len ptr2 len2 : Nat) (cutsets : WordLangCutsetsHOL)
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))

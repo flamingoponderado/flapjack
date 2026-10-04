@@ -17,8 +17,7 @@ private def programPre {width : Nat} [NeZero width]
 /-- Complete original SSA pre-convention theorem, assembled by native mutual
 structural induction including both nested return and exception handlers.
 Only the original input allocation class and SSA map invariant are premises. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_preAllocConventions {width : Nat} [NeZero width]
     (prog : WordLangProgHOL (BitVec width)) (ssa : Spt Nat) (next : Nat)
     (tables : List (Spt Nat × Spt Unit × Spt Unit))

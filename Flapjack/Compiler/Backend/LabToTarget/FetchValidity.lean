@@ -7,8 +7,7 @@ open Flapjack.Compiler.Backend.LabSem
 
 /-- Original full validity implication over the native fetched instruction and its physical byte position.
 The original configuration, label map, FFI list, indices, code and fetched line remain quantified. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "all_enc_ok_asm_fetch_aux_IMP_line_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem allEncOk_fetch_lineOk {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (pc n : Nat)

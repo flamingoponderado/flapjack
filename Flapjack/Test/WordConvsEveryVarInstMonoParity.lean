@@ -39,24 +39,6 @@ example : everyVarInstHOL large (.mem .load8 1 (.addr 2 99) : WordLangInst (BitV
 example : everyVarInstHOL large (.mem .load16 99 (.addr 98 0) : WordLangInst (BitVec 1)) = true :=
   weaken _ (by decide +kernel)
 -- Original im_fpless=(T,T); source predicate checked internally.
-example : everyVarInstHOL large (.fp (.fpLess 4 99 100) : WordLangInst (BitVec 8)) = true :=
-  weaken _ (by decide +kernel)
--- Original im_fp64_to=(T,T); source predicate checked internally.
-example : everyVarInstHOL large (.fp (.fpMovToReg 2 99 100) : WordLangInst (BitVec 64)) = true :=
-  weaken _ (by decide +kernel)
--- Original im_fp32_to=(T,T); source predicate checked internally.
-example : everyVarInstHOL large (.fp (.fpMovToReg 2 4 100) : WordLangInst (BitVec 32)) = true :=
-  weaken _ (by decide +kernel)
--- Original im_fp80_from=(T,T); source predicate checked internally.
-example : everyVarInstHOL large (.fp (.fpMovFromReg 100 2 4) : WordLangInst (BitVec 80)) = true :=
-  weaken _ (by decide +kernel)
--- Original im_fpignored=(T,T); source predicate checked internally.
-example : everyVarInstHOL large (.fp (.fpAbs 99 100) : WordLangInst (BitVec 80)) = true :=
-  weaken _ (by decide +kernel)
-
--- Non-64 transfer must inspect the second integer register.
-example : everyVarInstHOL small (.fp (.fpMovToReg 2 99 100) : WordLangInst (BitVec 32)) = false := by decide +kernel
-example : everyVarInstHOL large (.fp (.fpMovToReg 2 99 100) : WordLangInst (BitVec 32)) = false := by decide +kernel
 #print axioms everyVarInstMono
 
 def runChecks : IO Bool := do

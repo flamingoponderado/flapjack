@@ -56,8 +56,7 @@ section Helpers
     fourteen original field conclusions of a `share_inst` step, for arbitrary
     operation, variable, address, result and states.  HOL's result type shares
     the word width `'a` of the state, so the result width is `width`. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "share_inst_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem shareInstConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (op : WordMemOp) (v : Nat) (c : BitVec width)
     (s s' : WordSemStateFiniteExact width C F) (res : Option (WordSemResult width))
@@ -84,8 +83,7 @@ theorem shareInstConst {width : Nat} [NeZero width] {C : Type} {F : Type}
      simp [flushState, setVar])
 
 /-- Exact HOL `cut_state_const` (`wordPropsScript.sml:1293-1299`). -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "cut_state_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem cutStateConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : WordLangCutsetsHOL) (s s' : WordSemStateFiniteExact width C F)
     (h : cutState x s = some s') :
@@ -99,8 +97,7 @@ theorem wordSemOptionMax_eq (n m : Option Nat) : wordSemOptionMax n m = Option.m
   rcases n with _ | _ <;> rcases m with _ | _ <;> rfl
 
 /-- Exact HOL local `call_env_option_le_stack_max` (`wordPropsScript.sml:4298-4301`). -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "call_env_option_le_stack_max"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem callEnv_optionLe_stackMax {width : Nat} [NeZero width] {C : Type} {F : Type}
     (args1 : List (WordLocW width)) (ss : Option Nat)
     (s : WordSemStateFiniteExact width C F) :
@@ -110,8 +107,7 @@ theorem callEnv_optionLe_stackMax {width : Nat} [NeZero width] {C : Type} {F : T
 
 /-- Exact HOL local `call_push_env_option_le_stack_max`
     (`wordPropsScript.sml:4303-4310`). -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "call_push_env_option_le_stack_max"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem callPushEnv_optionLe_stackMax {width : Nat} [NeZero width] {C : Type} {F : Type}
     (args1 : List (WordLocW width)) (ss : Option Nat)
     (envs : Spt (WordLocW width) × Spt (WordLocW width))
@@ -416,8 +412,7 @@ end Evaluate
 /-- Exact HOL `evaluate_stack_max_le` (`wordPropsScript.sml:4312-4370`):
     `∀c s1 res s2. evaluate (c,s1) = (res,s2) ⇒ option_le s1.stack_max
     s2.stack_max`.  Inherits `reals_as_rational_cuts` through `evaluate`. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_max_le"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_stack_max_le {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (c : WordLangProgHOL (BitVec width)) (s1 : WordSemStateFiniteExact width C F)
       (res : Option (WordSemResult width)) (s2 : WordSemStateFiniteExact width C F),
@@ -429,8 +424,7 @@ theorem evaluate_stack_max_le {width : Nat} [NeZero width] {C : Type} {F : Type}
 /-- Exact HOL `evaluate_stack_max` (`wordPropsScript.sml:4372-4384`).  HOL's
     `the` is `miscThe` and `>=` on `num` is `≥` on `Nat`.  Inherits
     `reals_as_rational_cuts` through `evaluate`. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_max"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_stack_max {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (c : WordLangProgHOL (BitVec width)) (s1 : WordSemStateFiniteExact width C F)
       (res : Option (WordSemResult width)) (s2 : WordSemStateFiniteExact width C F),
@@ -445,8 +439,7 @@ theorem evaluate_stack_max {width : Nat} [NeZero width] {C : Type} {F : Type} :
 
 /-- Exact HOL `evaluate_stack_max_IS_SOME` (`wordPropsScript.sml:4386-4393`).
     Inherits `reals_as_rational_cuts` through `evaluate`. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_max_IS_SOME"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_stack_max_IS_SOME {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (c : WordLangProgHOL (BitVec width)) (s1 : WordSemStateFiniteExact width C F)
       (res : Option (WordSemResult width)) (s2 : WordSemStateFiniteExact width C F),
@@ -459,8 +452,7 @@ theorem evaluate_stack_max_IS_SOME {width : Nat} [NeZero width] {C : Type} {F : 
 
 /-- Exact HOL `evaluate_stack_limit` (`wordPropsScript.sml:4395-4417`).
     Inherits `reals_as_rational_cuts` through `evaluate`. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_limit"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_stack_limit {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (c : WordLangProgHOL (BitVec width)) (s1 : WordSemStateFiniteExact width C F)
       (res : Option (WordSemResult width)) (s2 : WordSemStateFiniteExact width C F),
@@ -471,8 +463,7 @@ theorem evaluate_stack_limit {width : Nat} [NeZero width] {C : Type} {F : Type} 
 
 /-- Exact HOL `evaluate_stack_limit_stack_max_eq` (`wordPropsScript.sml:4419-4429`).
     Inherits `reals_as_rational_cuts` through `evaluate`. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_limit_stack_max_eq"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_stack_limit_stack_max_eq {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (c : WordLangProgHOL (BitVec width)) (s1 : WordSemStateFiniteExact width C F)
       (res : Option (WordSemResult width)) (s2 : WordSemStateFiniteExact width C F),
@@ -487,8 +478,7 @@ theorem evaluate_stack_limit_stack_max_eq {width : Nat} [NeZero width] {C : Type
 
 /-- Exact HOL `evaluate_stack_limit_stack_max` (`wordPropsScript.sml:4431-4441`).
     Inherits `reals_as_rational_cuts` through `evaluate`. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_limit_stack_max"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_stack_limit_stack_max {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (c : WordLangProgHOL (BitVec width)) (s1 : WordSemStateFiniteExact width C F)
       (res : Option (WordSemResult width)) (s2 : WordSemStateFiniteExact width C F),

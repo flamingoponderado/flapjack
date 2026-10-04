@@ -20,8 +20,7 @@ precheck accepts all LabAsm lines, including jumps; no stronger target validity
 assumption is inserted here. FFI names use the exact MlString carrier.
 -/
 /-- Full original Inst constructor case; all original premises retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreInst {width : Nat} [NeZero width]
     (tail : Bool) (instruction : HolInst width) (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -37,8 +36,7 @@ theorem flattenLineOkPreInst {width : Nat} [NeZero width]
   simpa [appListAppend, appendAux, lineOkPreHOL, cbwToAsmHOL,
     asmOkExact, stackAsmOkExact] using valid
 /-- Full original Raise constructor case; all original premises retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreRaise {width : Nat} [NeZero width]
     (tail : Bool) (register : Nat) (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -54,8 +52,7 @@ theorem flattenLineOkPreRaise {width : Nat} [NeZero width]
   simpa [appListAppend, appendAux, lineOkPreHOL, cbwToAsmHOL, asmOkExact, stackAsmOkExact, asmRegOkExact] using valid
 
 /-- Full original Return constructor case; all original premises retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreReturn {width : Nat} [NeZero width]
     (tail : Bool) (register : Nat) (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -71,8 +68,7 @@ theorem flattenLineOkPreReturn {width : Nat} [NeZero width]
   simpa [appListAppend, appendAux, lineOkPreHOL, cbwToAsmHOL, asmOkExact, stackAsmOkExact, asmRegOkExact] using valid
 
 /-- Full original CodeBufferWrite constructor case; all original premises retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreCodeBufferWrite {width : Nat} [NeZero width]
     (tail : Bool) (left right : Nat) (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -88,8 +84,7 @@ theorem flattenLineOkPreCodeBufferWrite {width : Nat} [NeZero width]
   simp_all [appListAppend, appendAux, lineOkPreHOL, cbwToAsmHOL, asmOkExact, asmInstOkExact, stackAsmOkExact, asmRegOkExact]
 
 /-- Full original SharedMemory constructor case; all original premises retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreSharedMemory {width : Nat} [NeZero width]
     (tail : Bool) (operator : HolMemop) (register : Nat) (address : HolAddr width) (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -107,8 +102,7 @@ theorem flattenLineOkPreSharedMemory {width : Nat} [NeZero width]
       cases operator <;> simp_all [appListAppend, appendAux, lineOkPreHOL, cbwToAsmHOL, asmOkExact, asmInstOkExact, stackAsmOkExact, asmRegOkExact, asmAddrOkExact]
 
 /-- Full original Tick constructor case; all original premises retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreTick {width : Nat} [NeZero width]
     (tail : Bool)  (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -124,8 +118,7 @@ theorem flattenLineOkPreTick {width : Nat} [NeZero width]
   simp [appListAppend, appendAux, lineOkPreHOL, cbwToAsmHOL, asmOkExact, asmInstOkExact]
 
 /-- Full original Halt constructor case; all original premises retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreHalt {width : Nat} [NeZero width]
     (tail : Bool) (register : Nat) (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -141,8 +134,7 @@ theorem flattenLineOkPreHalt {width : Nat} [NeZero width]
   simp [appListAppend, appendAux, lineOkPreHOL]
 
 /-- Full original Break constructor case; all original premises retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreBreak {width : Nat} [NeZero width]
     (tail : Bool) (index : Nat) (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -158,8 +150,7 @@ theorem flattenLineOkPreBreak {width : Nat} [NeZero width]
   simp [appListAppend, appendAux, lineOkPreHOL]
 
 /-- Full original Continue constructor case; all original premises retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreContinue {width : Nat} [NeZero width]
     (tail : Bool) (index : Nat) (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -175,8 +166,7 @@ theorem flattenLineOkPreContinue {width : Nat} [NeZero width]
   simp [appListAppend, appendAux, lineOkPreHOL]
 
 /-- Full original RawCall constructor case; all original premises retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreRawCall {width : Nat} [NeZero width]
     (tail : Bool) (target : Nat) (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -192,8 +182,7 @@ theorem flattenLineOkPreRawCall {width : Nat} [NeZero width]
   simp [appListAppend, appendAux, lineOkPreHOL]
 
 /-- Full original JumpLower constructor case; all original premises retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreJumpLower {width : Nat} [NeZero width]
     (tail : Bool) (left right target : Nat) (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -209,8 +198,7 @@ theorem flattenLineOkPreJumpLower {width : Nat} [NeZero width]
   simp [appListAppend, appendAux, lineOkPreHOL]
 
 /-- Full original Ffi constructor case; all original premises retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreFfi {width : Nat} [NeZero width]
     (tail : Bool) (name : Flapjack.Basis.Pure.MlString.MlString) (a1 a2 a3 a4 link : Nat) (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -226,8 +214,7 @@ theorem flattenLineOkPreFfi {width : Nat} [NeZero width]
   simp [appListAppend, appendAux, lineOkPreHOL]
 
 /-- Full original LocValue constructor case; all original premises retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreLocValue {width : Nat} [NeZero width]
     (tail : Bool) (register label entry : Nat) (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -243,8 +230,7 @@ theorem flattenLineOkPreLocValue {width : Nat} [NeZero width]
   simp [appListAppend, appendAux, lineOkPreHOL]
 
 /-- Full original Install constructor case; all original premises retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreInstall {width : Nat} [NeZero width]
     (tail : Bool) (a1 a2 a3 a4 link : Nat) (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -260,8 +246,7 @@ theorem flattenLineOkPreInstall {width : Nat} [NeZero width]
   simp [appListAppend, appendAux, lineOkPreHOL]
 
 /-- Full original Skip constructor case; all original premises retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreSkip {width : Nat} [NeZero width]
     (tail : Bool)  (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -277,8 +262,7 @@ theorem flattenLineOkPreSkip {width : Nat} [NeZero width]
   simp [appListAppend, appendAux]
 
 /-- Full original Get constructor case; all original premises retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreGet {width : Nat} [NeZero width]
     (tail : Bool) (destination : Nat) (store : StoreName) (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -294,8 +278,7 @@ theorem flattenLineOkPreGet {width : Nat} [NeZero width]
   simp [appListAppend, appendAux]
 
 /-- Full original Set constructor case; all original premises retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreSet {width : Nat} [NeZero width]
     (tail : Bool) (store : StoreName) (source : Nat) (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -311,8 +294,7 @@ theorem flattenLineOkPreSet {width : Nat} [NeZero width]
   simp [appListAppend, appendAux]
 
 /-- Full original OpCurrHeap constructor case; all original premises retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreOpCurrHeap {width : Nat} [NeZero width]
     (tail : Bool) (operator : HolBinop) (destination source : Nat) (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -328,8 +310,7 @@ theorem flattenLineOkPreOpCurrHeap {width : Nat} [NeZero width]
   simp [appListAppend, appendAux]
 
 /-- Full original Alloc constructor case; all original premises retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreAlloc {width : Nat} [NeZero width]
     (tail : Bool) (words : Nat) (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -345,8 +326,7 @@ theorem flattenLineOkPreAlloc {width : Nat} [NeZero width]
   simp [appListAppend, appendAux]
 
 /-- Full original StoreConsts constructor case; all original premises retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreStoreConsts {width : Nat} [NeZero width]
     (tail : Bool) (source bitmap : Nat) (stub : Option Nat) (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -362,8 +342,7 @@ theorem flattenLineOkPreStoreConsts {width : Nat} [NeZero width]
   simp [appListAppend, appendAux]
 
 /-- Full original DataBufferWrite constructor case; all original premises retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreDataBufferWrite {width : Nat} [NeZero width]
     (tail : Bool) (address value : Nat) (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -379,8 +358,7 @@ theorem flattenLineOkPreDataBufferWrite {width : Nat} [NeZero width]
   simp [appListAppend, appendAux]
 
 /-- Full original StackAlloc constructor case; all original premises retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreStackAlloc {width : Nat} [NeZero width]
     (tail : Bool) (words : Nat) (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -396,8 +374,7 @@ theorem flattenLineOkPreStackAlloc {width : Nat} [NeZero width]
   simp [appListAppend, appendAux]
 
 /-- Full original StackFree constructor case; all original premises retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreStackFree {width : Nat} [NeZero width]
     (tail : Bool) (words : Nat) (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -413,8 +390,7 @@ theorem flattenLineOkPreStackFree {width : Nat} [NeZero width]
   simp [appListAppend, appendAux]
 
 /-- Full original StackStore constructor case; all original premises retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreStackStore {width : Nat} [NeZero width]
     (tail : Bool) (offset register : Nat) (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -430,8 +406,7 @@ theorem flattenLineOkPreStackStore {width : Nat} [NeZero width]
   simp [appListAppend, appendAux]
 
 /-- Full original StackStoreAny constructor case; all original premises retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreStackStoreAny {width : Nat} [NeZero width]
     (tail : Bool) (register offsetRegister : Nat) (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -447,8 +422,7 @@ theorem flattenLineOkPreStackStoreAny {width : Nat} [NeZero width]
   simp [appListAppend, appendAux]
 
 /-- Full original StackLoad constructor case; all original premises retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreStackLoad {width : Nat} [NeZero width]
     (tail : Bool) (offset register : Nat) (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -464,8 +438,7 @@ theorem flattenLineOkPreStackLoad {width : Nat} [NeZero width]
   simp [appListAppend, appendAux]
 
 /-- Full original StackLoadAny constructor case; all original premises retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreStackLoadAny {width : Nat} [NeZero width]
     (tail : Bool) (register offsetRegister : Nat) (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -481,8 +454,7 @@ theorem flattenLineOkPreStackLoadAny {width : Nat} [NeZero width]
   simp [appListAppend, appendAux]
 
 /-- Full original StackGetSize constructor case; all original premises retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreStackGetSize {width : Nat} [NeZero width]
     (tail : Bool) (register : Nat) (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -498,8 +470,7 @@ theorem flattenLineOkPreStackGetSize {width : Nat} [NeZero width]
   simp [appListAppend, appendAux]
 
 /-- Full original StackSetSize constructor case; all original premises retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreStackSetSize {width : Nat} [NeZero width]
     (tail : Bool) (register : Nat) (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -515,8 +486,7 @@ theorem flattenLineOkPreStackSetSize {width : Nat} [NeZero width]
   simp [appListAppend, appendAux]
 
 /-- Full original BitmapLoad constructor case; all original premises retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreBitmapLoad {width : Nat} [NeZero width]
     (tail : Bool) (destination address : Nat) (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -532,8 +502,7 @@ theorem flattenLineOkPreBitmapLoad {width : Nat} [NeZero width]
   simp [appListAppend, appendAux]
 
 /-- Full original TailCall constructor case; all original premises retained. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreTailCall {width : Nat} [NeZero width]
     (tail : Bool) (target : Sum Nat Nat)
     (handler : Option (HolProg width × Nat × Nat)) (sectionId next : Nat)

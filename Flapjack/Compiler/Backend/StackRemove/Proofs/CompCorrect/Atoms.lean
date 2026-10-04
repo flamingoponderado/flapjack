@@ -18,10 +18,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
   StackSemStateSupport.holFmapAsFiniteSupportWitness
 
 /-- Full original Skip case with its unchanged existential result. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectSkip {width : Nat} [NeZero width] {C F : Type}
     (source : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (postSource target : StackSemStateFiniteExact width C F)
@@ -44,10 +41,7 @@ theorem compCorrectSkip {width : Nat} [NeZero width] {C F : Type}
   simp [comp, StackSemEvaluate.evaluate_skip]
 
 /-- Full original Halt case with its unchanged existential result. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectHalt {width : Nat} [NeZero width] {C F : Type}
     (source : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (postSource target : StackSemStateFiniteExact width C F)
@@ -86,10 +80,7 @@ theorem compCorrectHalt {width : Nat} [NeZero width] {C F : Type}
     · exact (RelationLaws.stateRelConst jump bounds pointer source target relation).2.2.2.2.1
 
 /-- Full original Alloc case with its unchanged existential result. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectAlloc {width : Nat} [NeZero width] {C F : Type}
     (source : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (postSource target : StackSemStateFiniteExact width C F)

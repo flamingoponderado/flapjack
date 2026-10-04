@@ -86,9 +86,7 @@ end LoadEvaluationWitness
 
 /-- Full original destination transport. Load16 remains quantified; its
 successful-evaluation premise is impossible under the faithful semantics. -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "evaluate_load_any_dest"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateLoadAnyDest {width : Nat} [NeZero width] {C : Type} {F : Type}
     (op : HolMemop) (r0 a : Nat) (ofs : BitVec width) (w : WordLocW width)
     (s : WordSemStateFiniteExact width C F) (r : Nat)
@@ -102,9 +100,7 @@ theorem evaluateLoadAnyDest {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Full original write-frame equivalence, including `n = r`. The only
 excluded register is the address register, as in HOL. -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "evaluate_load_set_var"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateLoadSetVar {width : Nat} [NeZero width] {C : Type} {F : Type}
     (op : HolMemop) (r a : Nat) (ofs : BitVec width) (n : Nat) (u w : WordLocW width)
     (s : WordSemStateFiniteExact width C F) (h : isStore op = false ∧ a ≠ n) :
@@ -120,9 +116,7 @@ theorem evaluateLoadSetVar {width : Nat} [NeZero width] {C : Type} {F : Type}
 lookups. No word-valued lookup or successful target evaluation is assumed.
 All three load theorems retain the evaluator's existing rational-cut assumption
 through `inst` (SOUNDNESS item 8), with no additional assumption. -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "evaluate_load_change_addr"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateLoadChangeAddr {width : Nat} [NeZero width] {C : Type} {F : Type}
     (op : HolMemop) (r a a' : Nat) (ofs : BitVec width) (w : WordLocW width)
     (s : WordSemStateFiniteExact width C F)

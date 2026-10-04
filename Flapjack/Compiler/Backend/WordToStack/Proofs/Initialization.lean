@@ -31,10 +31,7 @@ threads both the complete bitmap AppList and returned target configuration.
 The canonical finite-map qualifier covers only transferred fp/store fields of
 the imported owners. Source locals/code/frame sizes remain exact Spt trees.
 This definition does not establish init_state_ok or the held state relation. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "make_init_def"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.fpRegs,
-    StackSemStateFiniteExact.store, WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def makeInit {width : Nat} [NeZero width] {C F : Type}
     (conf : AsmConfigExact width) (k : Nat) (t : StackSemStateFiniteExact width C F)
     (code : Spt (Nat × WordLangProgHOL (BitVec width)))

@@ -52,11 +52,7 @@ The actual source word read and calculation derive the actual native load and
 target expression success; no target-run or target-expression premise is used.
 The evaluators inherit reals_as_rational_cuts (SOUNDNESS item 8), without
 an independent agreement claim. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_wStackLoad_wReg1_with_const"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateWStackLoadWReg1WithConst {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (k f frame r reg : Nat) (loads : List (Nat × Nat))
     (source : WordSemStateFiniteExact width (Nat × C) F)

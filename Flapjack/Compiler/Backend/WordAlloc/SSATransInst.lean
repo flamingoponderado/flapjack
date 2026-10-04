@@ -17,8 +17,8 @@ through them.
 namespace Flapjack.Compiler.Backend.WordAlloc
 
 /-- Literal `ssa_cc_trans_inst` (`word_allocScript.sml:129-266`). -/
-@[hol "cakeml/compiler/backend/word_allocScript.sml" "ssa_cc_trans_inst_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: integer-only specialization of the referenced HOL declaration.
+
 def ssaCcTransInst {width : Nat} [NeZero width] :
     WordLangInst (BitVec width) → Spt Nat → Nat →
       WordLangProgHOL (BitVec width) × Spt Nat × Nat
@@ -118,36 +118,6 @@ def ssaCcTransInst {width : Nat} [NeZero width] :
     let a' := optionLookup ssa a
     let r' := optionLookup ssa r
     (.inst (.mem .store8 r' (.addr a' w)), ssa, na)
-  | .fp (.fpLess r f1 f2), ssa, na =>
-    let (r', ssa', na') := nextVarRename r ssa na
-    (.inst (.fp (.fpLess r' f1 f2)), ssa', na')
-  | .fp (.fpLessEqual r f1 f2), ssa, na =>
-    let (r', ssa', na') := nextVarRename r ssa na
-    (.inst (.fp (.fpLessEqual r' f1 f2)), ssa', na')
-  | .fp (.fpEqual r f1 f2), ssa, na =>
-    let (r', ssa', na') := nextVarRename r ssa na
-    (.inst (.fp (.fpEqual r' f1 f2)), ssa', na')
-  | .fp (.fpMovToReg r1 r2 d), ssa, na =>
-    if width = 64 then
-      let (r1', ssa', na') := nextVarRename r1 ssa na
-      (.inst (.fp (.fpMovToReg r1' r2 d)), ssa', na')
-    else
-      let (r1', ssa', na') := nextVarRename r1 ssa na
-      let (r2', ssa'', na'') := nextVarRename r2 ssa' na'
-      (.inst (.fp (.fpMovToReg r1' r2' d)), ssa'', na'')
-  | .fp (.fpMovFromReg d r1 r2), ssa, na =>
-    if width = 64 then
-      let r1' := optionLookup ssa r1
-      (.inst (.fp (.fpMovFromReg d r1' 0)), ssa, na)
-    else
-      let r1' := optionLookup ssa r1
-      let r2' := optionLookup ssa r2
-      if r1' = r2' then
-        let (r2'', ssa', na') := nextVarRename r2 ssa na
-        let movIn := WordLangProgHOL.move 0 [(r2'', r2')]
-        (.seq movIn (.inst (.fp (.fpMovFromReg d r1' r2''))), ssa', na')
-      else
-        (.inst (.fp (.fpMovFromReg d r1' r2')), ssa, na)
   | x, ssa, na => (.inst x, ssa, na)
 
 /-- Literal `ssa_cc_trans_exp` (`word_allocScript.sml:270-283`): rename every

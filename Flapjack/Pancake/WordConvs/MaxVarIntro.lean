@@ -85,10 +85,6 @@ private theorem predicateMaxInst {width : Nat} [NeZero width]
     cases operator <;> cases address <;>
       simp only [everyVarInstHOL, maxVarInstHOL, Bool.and_eq_true] at h ⊢
     all_goals aesop (config := { enableSimp := false }) (add safe apply [predicateMax])
-  | fp operation =>
-    cases operation <;> simp_all [everyVarInstHOL, maxVarInstHOL]
-    all_goals split <;> simp_all
-    all_goals exact predicateMax P _ _ h.1 h.2
 
 /-- Flapjack induction infrastructure on the same two exact Spt key lists
 used by the source cut-set occurrence predicate. -/
@@ -102,8 +98,7 @@ private theorem predicateMaxNames (P : Nat → Bool) (names : WordLangCutsetsHOL
 /-- Full original program maximum introduction, for any predicate P. Calls
 traverse a handler only beneath SOME return, exactly as both source equations
 specify; all operands, cut sets and recursive bodies retain the original scope. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml"
-  "max_var_intro" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem maxVarIntro {width : Nat} [NeZero width]
     (P : Nat → Bool) (program : WordLangProgHOL (BitVec width))
     (hyp : P 0 = true ∧ everyVarHOL P program = true) :

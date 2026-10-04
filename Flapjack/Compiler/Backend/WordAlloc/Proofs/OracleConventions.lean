@@ -24,8 +24,7 @@ private theorem evenColour_fixes (colour : Spt Nat)
 /-- Original oracle acceptance implication with the complete source
 pre-convention and complete target post-convention. Fixation and physical
 output are derived from the literal validator, never supplied by the caller. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "oracle_colour_ok_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem oracleColourOk_conventions {width : Nat} [NeZero width]
     (prog : WordLangProgHOL (BitVec width)) (k : Nat)
     (colOpt : Option (Spt Nat)) (lt : List (Spt Unit × Spt Unit))

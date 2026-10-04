@@ -43,10 +43,7 @@ the full WordSem state, as in HOL's `t.locals` input/result. The premise
 conjunction and result are those of HOL verbatim, using exact Spt `lookup`,
 `find_var`, and state-carried `wordSem$get_var` ports. The target state's
 finite-map translation and word-width translation are spelled out by the tag. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "locals_rel_get_var"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem localsRelHOLGetVar {width : Nat} [NeZero width] {C F : Type}
     (context : Spt Nat) (sourceLocals : Spt (WordLocW width))
     (target : WordSemStateFiniteExact width C F) (name : Nat)
@@ -66,10 +63,7 @@ theorem localsRelHOLGetVar {width : Nat} [NeZero width] {C F : Type}
 This retains HOL's universal quantification over `argvars` and `argvals`, its
 conjunctive relation/evaluation premise, its mapped argument list, and the
 length conclusion. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "locals_rel_get_vars"
-  (fmap_as_finite_support_relation := [LoopSemStateFiniteExact.globals,
-    WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem localsRelHOLGetVars {width : Nat} [NeZero width] {C F : Type}
     (context : Spt Nat) (source : LoopSemStateFiniteExact width F)
     (target : WordSemStateFiniteExact width C F) :

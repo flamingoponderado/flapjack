@@ -88,10 +88,7 @@ theorem stateRelSetStore {width : Nat} [NeZero width] {C F : Type}
 lookup, and the complete state relation derives reserved-register or full-heap
 load execution before establishing the full post-state relation. The total
 evaluator retains inherited reals_as_rational_cuts. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectGet {width : Nat} [NeZero width] {C F : Type}
     (source : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (postSource target : StackSemStateFiniteExact width C F)
@@ -152,10 +149,7 @@ theorem compCorrectGet {width : Nat} [NeZero width] {C F : Type}
 updates the reserved target register; every other name uses the full native
 store heap write law. Target execution and all post-state relation conjuncts
 are derived. The total evaluator retains inherited reals_as_rational_cuts. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectSet {width : Nat} [NeZero width] {C F : Type}
     (source : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (postSource target : StackSemStateFiniteExact width C F)

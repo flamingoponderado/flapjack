@@ -45,8 +45,6 @@ private theorem instCong {s : WordSemStateFiniteExact width C F} {i i' : WordLan
 end
 
 /-- Exact HOL `copy_prop_inst_eval` (`word_copyProofScript.sml:919-929`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "copy_prop_inst_eval"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem copyPropInstEval {width : Nat} [NeZero width] {C F : Type} :
     ∀ (ins : WordLangInst (BitVec width)) (cs : CopyState) (st : WordSemStateFiniteExact width C F)
       (prog' : WordLangProgHOL (BitVec width)) (cs' : CopyState),
@@ -71,7 +69,7 @@ theorem copyPropInstEval {width : Nat} [NeZero width] {C F : Type} :
     intro a b r; split
     · rfl
     · exact gv a
-  rcases ins with _ | ⟨r, w⟩ | ⟨a⟩ | ⟨m, r, ⟨a, w⟩⟩ | ⟨f⟩
+  rcases ins with _ | ⟨r, w⟩ | ⟨a⟩ | ⟨m, r, ⟨a, w⟩⟩
   · simp only [copyPropInst, Prod.mk.injEq] at h
     obtain ⟨rfl, -⟩ := h
     rw [(WordSemStateFiniteExact.evaluate_def_rebound (width := width) (C := C) (F := F)).1 st,
@@ -152,21 +150,6 @@ theorem copyPropInstEval {width : Nat} [NeZero width] {C F : Type} :
         rw [gvs [r2, r3] _ (by simp only [List.map_cons, List.map_nil, gv, hif r3 r3 r1])]
   · cases m <;> simp only [copyPropInst, Prod.mk.injEq] at h <;> obtain ⟨rfl, -⟩ := h <;>
       apply instCong <;> simp only [WordSemStateFiniteExact.inst, gadr, gv]
-  · cases f with
-    | fpMovFromReg d r1 r2 =>
-        by_cases hq : lookupEq cs r1 = lookupEq cs r2
-        · simp only [copyPropInst, hq, if_true, Prod.mk.injEq] at h
-          obtain ⟨rfl, -⟩ := h
-          rfl
-        · simp only [copyPropInst, hq, if_false, Prod.mk.injEq] at h
-          obtain ⟨rfl, -⟩ := h
-          apply instCong
-          simp only [WordSemStateFiniteExact.inst, gv]
-    | _ =>
-        simp only [copyPropInst, Prod.mk.injEq] at h
-        obtain ⟨rfl, -⟩ := h
-        rfl
-
 /-- `mem_store` changes only the memory (Flapjack infrastructure). -/
 theorem memStoreModel {width : Nat} [NeZero width] {C F : Type} {cs : CopyState}
     {st s1 : WordSemStateFiniteExact width C F} {a : BitVec width} {w : WordLocW width}
@@ -184,10 +167,9 @@ theorem copyPropInst_model {width : Nat} [NeZero width] {C F : Type} {cs : CopyS
     (hinv : cpStateInv cs) (hm : cpStateModels cs st)
     (hi : WordSemStateFiniteExact.inst ins st = some s1) :
     cpStateModels (copyPropInst ins cs).2 s1 := by
-  rcases ins with _ | ⟨r, w⟩ | ⟨a⟩ | ⟨m, r, ⟨a, w⟩⟩ | ⟨f⟩
+  rcases ins with _ | ⟨r, w⟩ | ⟨a⟩ | ⟨m, r, ⟨a, w⟩⟩
   all_goals try cases a
   all_goals try cases m
-  all_goals try cases f
   all_goals simp only [WordSemStateFiniteExact.inst, WordSemStateFiniteExact.assign] at hi
   all_goals
     repeat'
@@ -207,8 +189,6 @@ theorem copyPropInst_model {width : Nat} [NeZero width] {C F : Type} {cs : CopyS
     | exact memStoreModel hm (by assumption)
 
 /-- Exact HOL `copy_prop_inst_correct` (`word_copyProofScript.sml:937-954`). -/
-@[hol "cakeml/compiler/backend/proofs/word_copyProofScript.sml" "copy_prop_inst_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem copyPropInstCorrect {width : Nat} [NeZero width] {C F : Type} {cs cs' : CopyState}
     {st st' : WordSemStateFiniteExact width C F} {ins : WordLangInst (BitVec width)}
     {prog' : WordLangProgHOL (BitVec width)} {err : Option (WordSemResult width)} :

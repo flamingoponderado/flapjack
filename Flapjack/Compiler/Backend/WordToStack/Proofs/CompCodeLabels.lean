@@ -83,7 +83,6 @@ private theorem instLabels {width : Nat} [NeZero width]
     getCodeLabels (wInstNative i frame) = ∅ := by
   unfold wInstNative
   split
-  all_goals try split
   all_goals try simp only [*]
   all_goals try simp only [loadLabels]
   all_goals first
@@ -143,8 +142,7 @@ private theorem popHandlers {width : Nat} [NeZero width]
 guard and perf=false hypothesis. Arbitrary assembler config, bitmap state,
 frame tuple and owner are retained; only the positive HOL word dimension is
 translated to the width-indexed native BitVec carrier. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_comp_code_labels" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackCompCodeLabels {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (program : WordLangProgHOL (BitVec width))

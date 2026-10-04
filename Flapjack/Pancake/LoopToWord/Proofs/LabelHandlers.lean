@@ -21,8 +21,7 @@ private theorem compHOLLabelBounds {width : Nat} [NeZero width] (context : Spt N
 
 /-- The original compiler preserves the function-label component for every
 source program and initial label pair, including both Call continuations. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "comp_l_invariant"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loopToWordCompLInvariant {width : Nat} [NeZero width]
     (context : Spt Nat) (source : HolLoopProg width) (labels : Nat × Nat)
     (compiled : WordLangProgHOL (BitVec width)) (finalLabels : Nat × Nat)
@@ -33,8 +32,7 @@ theorem loopToWordCompLInvariant {width : Nat} [NeZero width]
   exact bounds.1
 
 /-- The original compiler never decreases the next-label component. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "loop_to_word_comp_SND_LE"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loopToWordCompSndLE {width : Nat} [NeZero width]
     (context : Spt Nat) (source : HolLoopProg width) (labels : Nat × Nat)
     (compiled : WordLangProgHOL (BitVec width)) (finalLabels : Nat × Nat)
@@ -46,8 +44,7 @@ theorem loopToWordCompSndLE {width : Nat} [NeZero width]
 
 /-- Every compiled handler belongs to the original function-label component.
 There is no premise restricting the source program or its handler bodies. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "good_handlers_comp"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loopToWordGoodHandlersComp {width : Nat} [NeZero width]
     (context : Spt Nat) (source : HolLoopProg width) (labels : Nat × Nat) :
     goodHandlersHOL labels.1 (LoopToWord.compHOL context source labels).1 = true := by
@@ -74,8 +71,7 @@ theorem loopToWordGoodHandlersComp {width : Nat} [NeZero width]
 
 /-- The full compiled program list satisfies the original per-function
 handler-ownership invariant, with precisely HOL's compile_prog equality premise. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "loop_to_word_good_handlers"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loopToWordGoodHandlers {width : Nat} [NeZero width]
     (source : List (Nat × List Nat × HolLoopProg width))
     (compiled : List (Nat × Nat × WordLangProgHOL (BitVec width)))

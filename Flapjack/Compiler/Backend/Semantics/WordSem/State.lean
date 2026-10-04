@@ -136,8 +136,7 @@ def WordSemStateBroad.FiniteSupport {width : Nat} [NeZero width] {C : Type} {F :
     exact `Spt` carrier; `fp_regs` and `store` are the `|->` finite maps, with
     the `fmap_as_finite_support := [fpRegs, store]` qualifier; the word
     dimension is the positive `BitVec width`; `'c` and `'ffi` are `C` and `F`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "state"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 structure WordSemStateFiniteExact (width : Nat) [NeZero width] (C : Type) (F : Type) where
   locals : Spt (WordLocW width)
   localsSize : Option Nat

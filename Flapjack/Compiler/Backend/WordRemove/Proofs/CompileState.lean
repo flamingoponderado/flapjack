@@ -43,8 +43,6 @@ abbrev WordCompileFn (width : Nat) [NeZero width] (C : Type) : Type :=
                 compile := c |>
     ```
 -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "compile_state_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 def compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
     (clk : Nat) (c : WordCompileFn width C)
     (s : WordSemStateFiniteExact width C F) : WordSemStateFiniteExact width C F :=
@@ -58,8 +56,6 @@ def compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
     compile := c }
 
 /-- Exact HOL `compile_state_const` (`word_removeProofScript.sml:21-47`). -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "compile_state_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem compileState_const {width : Nat} [NeZero width] {C : Type} {F : Type}
     (clk : Nat) (c : WordCompileFn width C)
     (s : WordSemStateFiniteExact width C F) :
@@ -95,8 +91,6 @@ theorem compileState_const {width : Nat} [NeZero width] {C : Type} {F : Type}
     `find_code d l (map (I ## f) t) lsz = OPTION_MAP (I ## f ## I) (find_code d l t lsz)`.
     The source and target payloads of `f` and the stack-size payload are three
     independent HOL types; only the argument word-locations share a width. -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "find_code_map_I"
-  (words_as_type_indexed_bitvec)]
 theorem findCode_map_I {width : Nat} [NeZero width]
     {Source Target StackSize : Type} (d : Option Nat) (l : List (WordLocW width))
     (f : Source → Target) (t : Spt (Nat × Source)) (lsz : Spt StackSize) :
@@ -122,8 +116,6 @@ theorem findCode_map_I {width : Nat} [NeZero width]
 
 /-- Exact HOL `compile_state_update` (`word_removeProofScript.sml:57-75`), with
     HOL's repeated `memory` conjunct kept. -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "compile_state_update"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem compileState_update {width : Nat} [NeZero width] {C : Type} {F : Type}
     (clk : Nat) (c : WordCompileFn width C)
     (s : WordSemStateFiniteExact width C F)
@@ -157,24 +149,18 @@ theorem compileState_update {width : Nat} [NeZero width] {C : Type} {F : Type}
   refine ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 /-- Exact HOL `get_var_compile_state` (`word_removeProofScript.sml:77-81`). -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "get_var_compile_state"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem getVar_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : Nat) (clk : Nat) (c : WordCompileFn width C)
     (s : WordSemStateFiniteExact width C F) :
     getVar x (compileState clk c s) = getVar x s := rfl
 
 /-- Exact HOL `get_fp_var_compile_state` (`word_removeProofScript.sml:83-87`). -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "get_fp_var_compile_state"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem getFpVar_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : Nat) (clk : Nat) (c : WordCompileFn width C)
     (s : WordSemStateFiniteExact width C F) :
     getFpVar x (compileState clk c s) = getFpVar x s := rfl
 
 /-- Exact HOL `get_vars_compile_state` (`word_removeProofScript.sml:89-93`). -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "get_vars_compile_state"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem getVars_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
     (xs : List Nat) (clk : Nat) (c : WordCompileFn width C)
     (s : WordSemStateFiniteExact width C F) :
@@ -185,56 +171,42 @@ theorem getVars_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
   | cons x xs ih => simp only [WordSemStateFiniteExact.getVars, ih]; rfl
 
 /-- Exact HOL `set_var_compile_state` (`word_removeProofScript.sml:95-99`). -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "set_var_compile_state"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem setVar_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : Nat) (y : WordLocW width) (clk : Nat)
     (c : WordCompileFn width C) (s : WordSemStateFiniteExact width C F) :
     setVar x y (compileState clk c s) = compileState clk c (setVar x y s) := rfl
 
 /-- Exact HOL `unset_var_compile_state` (`word_removeProofScript.sml:101-105`). -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "unset_var_compile_state"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem unsetVar_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : Nat) (clk : Nat) (c : WordCompileFn width C)
     (s : WordSemStateFiniteExact width C F) :
     unsetVar x (compileState clk c s) = compileState clk c (unsetVar x s) := rfl
 
 /-- Exact HOL `set_fp_var_compile_state` (`word_removeProofScript.sml:107-111`). -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "set_fp_var_compile_state"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem setFpVar_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : Nat) (y : BitVec 64) (clk : Nat)
     (c : WordCompileFn width C) (s : WordSemStateFiniteExact width C F) :
     setFpVar x y (compileState clk c s) = compileState clk c (setFpVar x y s) := rfl
 
 /-- Exact HOL `set_vars_compile_state` (`word_removeProofScript.sml:113-117`). -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "set_vars_compile_state"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem setVars_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
     (xs : List Nat) (ys : List (WordLocW width)) (clk : Nat)
     (c : WordCompileFn width C) (s : WordSemStateFiniteExact width C F) :
     setVars xs ys (compileState clk c s) = compileState clk c (setVars xs ys s) := rfl
 
 /-- Exact HOL `get_store_compile_state` (`word_removeProofScript.sml:119-123`). -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "get_store_compile_state"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem getStore_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : WordStoreHOL) (clk : Nat) (c : WordCompileFn width C)
     (s : WordSemStateFiniteExact width C F) :
     getStore x (compileState clk c s) = getStore x s := rfl
 
 /-- Exact HOL `set_store_compile_state` (`word_removeProofScript.sml:125-129`). -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "set_store_compile_state"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem setStore_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : WordStoreHOL) (y : WordLocW width) (clk : Nat)
     (c : WordCompileFn width C) (s : WordSemStateFiniteExact width C F) :
     setStore x y (compileState clk c s) = compileState clk c (setStore x y s) := rfl
 
 /-- Exact HOL `push_env_compile_state` (`word_removeProofScript.sml:131-135`). -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "push_env_compile_state"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem pushEnv_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
     (env : Spt (WordLocW width) × Spt (WordLocW width))
     (h : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat)) (clk : Nat)
@@ -243,8 +215,6 @@ theorem pushEnv_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
   rcases h with _ | ⟨_, _, _, _⟩ <;> rfl
 
 /-- Exact HOL `pop_env_compile_state` (`word_removeProofScript.sml:137-141`). -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "pop_env_compile_state"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem popEnv_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
     (clk : Nat) (c : WordCompileFn width C)
     (s : WordSemStateFiniteExact width C F) :
@@ -254,8 +224,6 @@ theorem popEnv_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
   split <;> rfl
 
 /-- Exact HOL `call_env_compile_state` (`word_removeProofScript.sml:143-147`). -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "call_env_compile_state"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem callEnv_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : List (WordLocW width)) (lsz : Option Nat) (clk : Nat)
     (c : WordCompileFn width C) (z : WordSemStateFiniteExact width C F) :
@@ -263,8 +231,6 @@ theorem callEnv_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
       compileState clk c (WordSemStateFiniteExact.callEnv x lsz z) := rfl
 
 /-- Exact HOL `flush_state_compile_state` (`word_removeProofScript.sml:149-153`). -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "flush_state_compile_state"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem flushState_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : Bool) (clk : Nat) (c : WordCompileFn width C)
     (z : WordSemStateFiniteExact width C F) :
@@ -272,16 +238,12 @@ theorem flushState_compileState {width : Nat} [NeZero width] {C : Type} {F : Typ
   cases x <;> rfl
 
 /-- Exact HOL `has_space_compile_state` (`word_removeProofScript.sml:155-159`). -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "has_space_compile_state"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem hasSpace_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
     (n : WordLocW width) (clk : Nat) (c : WordCompileFn width C)
     (s : WordSemStateFiniteExact width C F) :
     hasSpace n (compileState clk c s) = hasSpace n s := rfl
 
 /-- Exact HOL `gc_compile_state` (`word_removeProofScript.sml:161-167`). -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "gc_compile_state"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem gc_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
     (clk : Nat) (c : WordCompileFn width C)
     (s : WordSemStateFiniteExact width C F) :
@@ -294,8 +256,6 @@ theorem gc_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `alloc_compile_state` (`word_removeProofScript.sml:169-175`):
     `alloc w names (compile_state clk c s) = (I ## compile_state clk c) (alloc w names s)`. -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "alloc_compile_state"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem alloc_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
     (w : BitVec width) (names : WordLangCutsetsHOL) (clk : Nat)
     (c : WordCompileFn width C) (s : WordSemStateFiniteExact width C F) :
@@ -324,16 +284,12 @@ theorem alloc_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
             simp only [flushState_compileState, Prod.map, id]
 
 /-- Exact HOL `mem_load_compile_state` (`word_removeProofScript.sml:177-181`). -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "mem_load_compile_state"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem memLoad_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
     (w : BitVec width) (clk : Nat) (c : WordCompileFn width C)
     (s : WordSemStateFiniteExact width C F) :
     memLoad w (compileState clk c s) = memLoad w s := rfl
 
 /-- Exact HOL `mem_store_compile_state` (`word_removeProofScript.sml:183-187`). -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "mem_store_compile_state"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem memStore_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : BitVec width) (y : WordLocW width) (clk : Nat)
     (c : WordCompileFn width C) (s : WordSemStateFiniteExact width C F) :
@@ -347,8 +303,6 @@ theorem memStore_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
       Bool.false_eq_true, if_false, Option.map_none]
 
 /-- Exact HOL `word_exp_compile_state` (`word_removeProofScript.sml:189-193`). -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "word_exp_compile_state"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem wordExp_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
     (clk : Nat) (c : WordCompileFn width C) :
     ∀ (s : WordSemStateFiniteExact width C F) (y : WordLangExpHOL (BitVec width)),
@@ -374,8 +328,6 @@ theorem wordExp_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
 termination_by _ e => sizeOf e
 
 /-- Exact HOL `assign_compile_state` (`word_removeProofScript.sml:195-199`). -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "assign_compile_state"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem assign_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : Nat) (y : WordLangExpHOL (BitVec width)) (clk : Nat)
     (c : WordCompileFn width C) (s : WordSemStateFiniteExact width C F) :
@@ -386,8 +338,6 @@ theorem assign_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 set_option linter.unusedSimpArgs false in
 /-- Exact HOL `inst_compile_state` (`word_removeProofScript.sml:201-207`). -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "inst_compile_state"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem inst_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
     (i : WordLangInst (BitVec width)) (clk : Nat)
     (c : WordCompileFn width C) (s : WordSemStateFiniteExact width C F) :
@@ -406,13 +356,7 @@ theorem inst_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
     cases op <;> simp only [inst, wordExp_compileState, getVar_compileState,
       memLoad_compileState, memStore_compileState, hm, hd, hb] <;>
       (repeat' split) <;> first | rfl | simp_all
-  | fp f =>
-    cases f <;> simp only [inst, getFpVar_compileState, getVar_compileState] <;>
-      (repeat' split) <;> first | rfl | simp_all
-
 /-- Exact HOL `cut_state_compile_state` (`word_removeProofScript.sml:209-215`). -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "cut_state_compile_state"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem cutState_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
     (names : WordLangCutsetsHOL) (clk : Nat)
     (c : WordCompileFn width C) (s : WordSemStateFiniteExact width C F) :
@@ -423,9 +367,6 @@ theorem cutState_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL local `evaluate_add_clock_compile_state`
     (`word_removeProofScript.sml:217-227`). -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml"
-  "evaluate_add_clock_compile_state"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluate_add_clock_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
     (p : WordLangProgHOL (BitVec width)) (clk : Nat)
     (c : WordCompileFn width C) (s s' : WordSemStateFiniteExact width C F)
@@ -445,8 +386,6 @@ theorem evaluate_add_clock_compileState {width : Nat} [NeZero width] {C : Type} 
   exact this
 
 /-- Exact HOL `compile_state_dec_clock` (`word_removeProofScript.sml:229-233`). -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "compile_state_dec_clock"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem compileState_decClock {width : Nat} [NeZero width] {C : Type} {F : Type}
     (clk : Nat) (c : WordCompileFn width C)
     (s : WordSemStateFiniteExact width C F) :
@@ -458,8 +397,6 @@ theorem compileState_decClock {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `jump_exc_compile_state` (`word_removeProofScript.sml:235-239`):
     `jump_exc (compile_state clk c s) = OPTION_MAP (compile_state clk c ## I) (jump_exc s)`. -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "jump_exc_compile_state"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem jumpExc_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
     (clk : Nat) (c : WordCompileFn width C)
     (s : WordSemStateFiniteExact width C F) :
@@ -473,8 +410,6 @@ theorem jumpExc_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
   · simp only [hh, hs, h, if_false, Option.map_none]
 
 /-- Exact HOL `get_var_imm_compile_state` (`word_removeProofScript.sml:241-245`). -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "get_var_imm_compile_state"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem getVarImm_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : WordRegImm (BitVec width)) (clk : Nat)
     (c : WordCompileFn width C) (s : WordSemStateFiniteExact width C F) :
@@ -484,8 +419,6 @@ theorem getVarImm_compileState {width : Nat} [NeZero width] {C : Type} {F : Type
 
 /-- Exact HOL `push_env_case_handler` (`word_removeProofScript.sml:247-252`), an
     equation between state transformers as in HOL. -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "push_env_case_handler"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem pushEnv_case_handler {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : Spt (WordLocW width) × Spt (WordLocW width))
     (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
@@ -500,7 +433,6 @@ theorem pushEnv_case_handler {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL local `pair_map_I` (`word_removeProofScript.sml:254-260`), with
     HOL `##` (`PAIR_MAP`) as `Prod.map` and `I` as `id`. -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "pair_map_I"]
 theorem pair_map_I {α β γ δ : Type} (f : β → γ) :
     (fun (p : α × β) => match p with | (k, v) => (k, f v)) = Prod.map id f ∧
     (fun (p : β × δ) => match p with | (k, v) => (f k, v)) = Prod.map f id := by

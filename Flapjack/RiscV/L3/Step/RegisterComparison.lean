@@ -29,7 +29,6 @@ private theorem registerComparisonMode (s : riscv_state)
 /-- Full original SLT register comparison: original destination and ArchBase
 hypotheses, both source-zero reads, RV32 sign extension, and whole state update.
 All aliases and all remaining architecture modes are unrestricted. -/
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "SLT"]
 theorem dfnSlt (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     (h : rd ≠ 0#5) (arch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1#2) :
     «dfn'SLT» (rd, rs1, rs2) s =
@@ -56,7 +55,6 @@ theorem dfnSlt (rd rs1 rs2 : BitVec 5) (s : riscv_state)
 /-- Full original SLTU register comparison: original destination and ArchBase
 hypotheses, both source-zero reads, RV32 zero extension, and whole state update.
 All aliases and all remaining architecture modes are unrestricted. -/
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "SLTU"]
 theorem dfnSltU (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     (h : rd ≠ 0#5) (arch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1#2) :
     «dfn'SLTU» (rd, rs1, rs2) s =
@@ -83,7 +81,6 @@ theorem dfnSltU (rd rs1 rs2 : BitVec 5) (s : riscv_state)
 /-- Original generated SLT_NOP companion. The destination-zero and
 ArchBase exclusions are both retained; the two mode queries have no effect
 under that original guard, and the destination write is suppressed. -/
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "SLT_NOP"]
 theorem dfnSltNop (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     (h : rd = 0#5) (arch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1#2) :
     «dfn'SLT» (rd, rs1, rs2) s = s := by
@@ -92,7 +89,6 @@ theorem dfnSltNop (rd rs1 rs2 : BitVec 5) (s : riscv_state)
 /-- Original generated SLTU_NOP companion. The destination-zero and
 ArchBase exclusions are both retained; the two mode queries have no effect
 under that original guard, and the destination write is suppressed. -/
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "SLTU_NOP"]
 theorem dfnSltUNop (rd rs1 rs2 : BitVec 5) (s : riscv_state)
     (h : rd = 0#5) (arch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1#2) :
     «dfn'SLTU» (rd, rs1, rs2) s = s := by

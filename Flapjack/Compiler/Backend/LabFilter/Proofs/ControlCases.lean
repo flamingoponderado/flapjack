@@ -43,8 +43,7 @@ private theorem relatedJumpSuccessor {width : Nat} [NeZero width] {C F : Type}
 /-- Original labelled-Jump branch with its actual guarded recursive induction
 hypothesis. Missing targets and all result constructors are retained.
 The IH includes the original evaluator's nonzero source-clock path guard. -/
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem filterCorrectJump {width : Nat} [NeZero width] {C F : Type}
     (s1 t1 : Flapjack.Compiler.Backend.LabSem.State width C F)
     (res : MachineResult) (s2 : Flapjack.Compiler.Backend.LabSem.State width C F)
@@ -117,8 +116,7 @@ theorem filterCorrectJump {width : Nat} [NeZero width] {C F : Type}
 /-- Original JumpReg location-valued branch with its actual guarded recursive induction
 hypothesis. Missing targets and all result constructors are retained.
 The IH includes the original evaluator's nonzero source-clock path guard. -/
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem filterCorrectJumpRegLoc {width : Nat} [NeZero width] {C F : Type}
     (s1 t1 : Flapjack.Compiler.Backend.LabSem.State width C F)
     (res : MachineResult) (s2 : Flapjack.Compiler.Backend.LabSem.State width C F)
@@ -192,8 +190,7 @@ theorem filterCorrectJumpRegLoc {width : Nat} [NeZero width] {C F : Type}
 
 /-- Original JumpReg word-valued operand failure branch. No source successor
 is invoked; the original existential target execution and FFI result are derived. -/
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem filterCorrectJumpRegWord {width : Nat} [NeZero width] {C F : Type}
     (s1 t1 : Flapjack.Compiler.Backend.LabSem.State width C F)
     (res : MachineResult) (s2 : Flapjack.Compiler.Backend.LabSem.State width C F)
@@ -247,8 +244,7 @@ private theorem relatedLocValueSuccessor {width : Nat} [NeZero width] {C F : Typ
 /-- Original LocValue branch with its actual guarded recursive induction
 hypothesis. Missing targets and all result constructors are retained.
 The IH includes the original evaluator's nonzero source-clock path guard. -/
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem filterCorrectLocValue {width : Nat} [NeZero width] {C F : Type}
     (s1 t1 : Flapjack.Compiler.Backend.LabSem.State width C F)
     (res : MachineResult) (s2 : Flapjack.Compiler.Backend.LabSem.State width C F)
@@ -352,8 +348,7 @@ private theorem relatedCallSuccessor {width : Nat} [NeZero width] {C F : Type}
 /-- Original Call branch with its actual guarded recursive induction
 hypothesis. Missing targets and all result constructors are retained.
 The IH includes the original evaluator's nonzero source-clock path guard. -/
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem filterCorrectCall {width : Nat} [NeZero width] {C F : Type}
     (s1 t1 : Flapjack.Compiler.Backend.LabSem.State width C F)
     (res : MachineResult) (s2 : Flapjack.Compiler.Backend.LabSem.State width C F)
@@ -476,8 +471,7 @@ private theorem relatedIncSuccessor {width : Nat} [NeZero width] {C F : Type}
 /-- Original JumpCmp taken branch with its actual guarded recursive induction
 hypothesis. Missing targets and all result constructors are retained.
 The IH includes the original evaluator's nonzero source-clock path guard. -/
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem filterCorrectJumpCmpTrue {width : Nat} [NeZero width] {C F : Type}
     (s1 t1 : Flapjack.Compiler.Backend.LabSem.State width C F)
     (res : MachineResult) (s2 : Flapjack.Compiler.Backend.LabSem.State width C F)
@@ -561,8 +555,7 @@ theorem filterCorrectJumpCmpTrue {width : Nat} [NeZero width] {C F : Type}
 
 /-- Original JumpCmp comparison failure branch. No source successor
 is invoked; the original existential target execution and FFI result are derived. -/
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem filterCorrectJumpCmpNone {width : Nat} [NeZero width] {C F : Type}
     (s1 t1 : Flapjack.Compiler.Backend.LabSem.State width C F)
     (res : MachineResult) (s2 : Flapjack.Compiler.Backend.LabSem.State width C F)
@@ -606,8 +599,7 @@ theorem filterCorrectJumpCmpNone {width : Nat} [NeZero width] {C F : Type}
 /-- Original JumpCmp fall-through branch. The only induction hypothesis concerns
 its actual native source successor; no label lookup or success premise is added.
 The IH includes the original evaluator's nonzero source-clock path guard. -/
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem filterCorrectJumpCmpFalse {width : Nat} [NeZero width] {C F : Type}
     (s1 t1 : Flapjack.Compiler.Backend.LabSem.State width C F)
     (res : MachineResult) (s2 : Flapjack.Compiler.Backend.LabSem.State width C F)

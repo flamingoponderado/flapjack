@@ -1,6 +1,4 @@
 import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
-import Flapjack.Misc.BinaryIeeeArithFp64
-import Flapjack.Misc.BinaryIeeeSqrtFp64
 
 /-!
 Direct HOL oracle rows for wordSem `inst_def`
@@ -28,9 +26,7 @@ private def s0 : WordSemStateFiniteExact 64 Unit Unit where
     (20, .word 1), (21, .word 0), (22, .word 3), (23, .word 5),
     (30, .word 16), (31, .word 0xAB), (32, .loc 1 2)]
   localsSize := none
-  fpRegs := ((((HolFiniteMapExact.empty.updateEq (1, 0x3FF0000000000000)).updateEq
-    (2, 0x4000000000000000)).updateEq (4, 0x4010000000000000)).updateEq
-    (5, 0x4004000000000000)).updateEq (6, 0x4415AF1D78B58C40)
+  fpRegs := HolFiniteMapExact.empty
   store := HolFiniteMapExact.empty
   stack := []
   stackLimit := 0
@@ -138,72 +134,8 @@ theorem store : (inst (.mem .store 32 (.addr 30 0)) s0).map (fun t => t.memory 1
 /-- `store16=T` -/
 theorem store16 : inst (.mem .store16 31 (.addr 30 0)) s0 = none := by
   simp only [WordSemStateFiniteExact.inst]
-/-- `fp_less=SOME [SOME (Word 1w)]` -/
-theorem fpLess : (inst (.fp (.fpLess 7 1 2)) s0).map (fun t => [7].map (fun k => sptLookup k t.locals)) =
-    some [some (.word (BitVec.ofNat 64 1))] := by
-  simp only [WordSemStateFiniteExact.inst]
-  decide +kernel
-/-- `fp_equal=SOME [SOME (Word 0w)]` -/
-theorem fpEqual : (inst (.fp (.fpEqual 7 1 2)) s0).map (fun t => [7].map (fun k => sptLookup k t.locals)) =
-    some [some (.word (BitVec.ofNat 64 0))] := by
-  simp only [WordSemStateFiniteExact.inst]
-  decide +kernel
-/-- `fp_add=SOME [SOME 0x4008000000000000w]` -/
-theorem fpAdd : (inst (.fp (.fpAdd 3 1 2)) s0).map (fun t => [3].map (fun k => t.fpRegs.lookup k)) =
-    some [some (BitVec.ofNat 64 0x4008000000000000)] := by
-  simp only [WordSemStateFiniteExact.inst, holFp64Add_rte]
-  decide +kernel
-/-- `fp_div=SOME [SOME 0x3FE0000000000000w]` -/
-theorem fpDiv : (inst (.fp (.fpDiv 3 1 2)) s0).map (fun t => [3].map (fun k => t.fpRegs.lookup k)) =
-    some [some (BitVec.ofNat 64 0x3FE0000000000000)] := by
-  simp only [WordSemStateFiniteExact.inst, holFp64Div_rte]
-  decide +kernel
-/-- `fp_sqrt=SOME [SOME 0x4000000000000000w]` -/
-theorem fpSqrt : (inst (.fp (.fpSqrt 3 4)) s0).map (fun t => [3].map (fun k => t.fpRegs.lookup k)) =
-    some [some (BitVec.ofNat 64 0x4000000000000000)] := by
-  simp only [WordSemStateFiniteExact.inst, holFp64Sqrt_rte]
-  decide +kernel
-/-- `fp_fma=SOME [SOME 0x4022000000000000w]` -/
-theorem fpFma : (inst (.fp (.fpFma 1 2 4)) s0).map (fun t => [1].map (fun k => t.fpRegs.lookup k)) =
-    some [some (BitVec.ofNat 64 0x4022000000000000)] := by
-  simp only [WordSemStateFiniteExact.inst, fpSemFpfma_rte]
-  decide +kernel
-/-- `fp_neg=SOME [SOME 0xC000000000000000w]` -/
-theorem fpNeg : (inst (.fp (.fpNeg 3 2)) s0).map (fun t => [3].map (fun k => t.fpRegs.lookup k)) =
-    some [some (BitVec.ofNat 64 0xC000000000000000)] := by
-  simp only [WordSemStateFiniteExact.inst]
-  decide +kernel
-/-- `fp_mov_to_reg=SOME [SOME (Word 0x3FF0000000000000w)]` -/
-theorem fpMovToReg : (inst (.fp (.fpMovToReg 7 8 1)) s0).map (fun t => [7].map (fun k => sptLookup k t.locals)) =
-    some [some (.word (BitVec.ofNat 64 0x3FF0000000000000))] := by
-  simp only [WordSemStateFiniteExact.inst]
-  decide +kernel
-/-- `fp_mov_from_reg=SOME [SOME 17w]` -/
-theorem fpMovFromReg : (inst (.fp (.fpMovFromReg 3 2 0)) s0).map (fun t => [3].map (fun k => t.fpRegs.lookup k)) =
-    some [some (BitVec.ofNat 64 17)] := by
-  simp only [WordSemStateFiniteExact.inst]
-  decide +kernel
-/-- `fp_to_int=SOME [SOME 2w]` -/
-theorem fpToInt : (inst (.fp (.fpToInt 3 5)) s0).map (fun t => [3].map (fun k => t.fpRegs.lookup k)) =
-    some [some (BitVec.ofNat 64 2)] := by
-  simp only [WordSemStateFiniteExact.inst]
-  decide +kernel
-/-- `fp_to_int_big=T` -/
-theorem fpToIntBig : inst (.fp (.fpToInt 3 6)) s0 = none := by
-  simp only [WordSemStateFiniteExact.inst]
-  decide +kernel
-/-- `fp_from_int=SOME [SOME 0w]` -/
-theorem fpFromInt : (inst (.fp (.fpFromInt 3 2)) s0).map (fun t => [3].map (fun k => t.fpRegs.lookup k)) =
-    some [some (BitVec.ofNat 64 0)] := by
-  simp only [WordSemStateFiniteExact.inst, holIntToFp64_rte]
-  decide +kernel
-/-- `fp_missing=T` -/
-theorem fpMissing : inst (.fp (.fpAdd 3 1 9)) s0 = none := by
-  simp only [WordSemStateFiniteExact.inst, holFp64Add_rte]
-  decide +kernel
-
 def runChecks : IO Bool := do
-  IO.println "PASS wordSem inst_def matches all 32 HOL oracle rows (kernel-checked)"
+  IO.println "PASS wordSem inst_def matches integer HOL oracle rows (kernel-checked)"
   pure true
 
 end Flapjack.Test.WordSemInstParity

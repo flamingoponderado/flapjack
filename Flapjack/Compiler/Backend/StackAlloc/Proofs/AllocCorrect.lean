@@ -24,9 +24,7 @@ all original premises and all four original conclusions. The proof exhausts
 the original garbage collector kinds internally; no case-selection premise remains.
 Canonical regs/fpRegs/store and positive-width words are the only carrier
 translations; total instruction closure inherits the rational-cut limit. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml"
-  "alloc_correct_lemma"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem alloc_correct_lemma {width : Nat} [NeZero width] {C F : Type}
     {conf : Config} {c : DataToWord.Config}
     {w : BitVec width} {s t : StackSemStateFiniteExact width C F}
@@ -78,9 +76,7 @@ five original premises are kept; the repeated `use_alloc := F` update of the
 source record is a single field update. The proof follows HOL: the stub is found
 in the compiled code, its body runs `word_gc_code` by `alloc_correct_lemma`
 started from `l |+ (0, Loc n' m)`, and `Return 0` returns to `Skip`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml"
-  "alloc_correct"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem alloc_correct {width : Nat} [NeZero width] {C F : Type}
     {c : DataToWord.Config} {w : BitVec width} {s t : StackSemStateFiniteExact width C F}
     {r : Option (StackSemResult width)} {l : HolFiniteMapExact Nat (WordLocW width)}
@@ -145,9 +141,7 @@ theorem alloc_correct {width : Nat} [NeZero width] {C F : Type}
 an allocation that does not halt keeps the stack length. HOL's `c` is the
 requested word and `conf` the GC configuration; the `gc_fun` premise is kept
 as in the source although the length argument only uses `dec_stack_length`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml"
-  "alloc_length_stack"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem alloc_length_stack {width : Nat} [NeZero width] {C F : Type}
     {c : BitVec width} {conf : Config} {s t : StackSemStateFiniteExact width C F}
     {r : Option (StackSemResult width)}

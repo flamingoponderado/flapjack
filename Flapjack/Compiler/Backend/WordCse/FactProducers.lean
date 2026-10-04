@@ -11,8 +11,7 @@ full native program carriers. These native definitions do not replace the
 executed Std.TreeMap transitions; their invariant-dependent correspondence
 and the complete CSE simulation remain separate open work. -/
 
-@[hol "cakeml/compiler/backend/word_cseScript.sml" "add_to_data_aux_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def addToDataAux {width : Nat} [NeZero width] (data : Knowledge)
     (destination : Nat) (key : List Nat) (original : WordLangProgHOL (BitVec width)) :
     Knowledge × WordLangProgHOL (BitVec width) :=
@@ -32,8 +31,7 @@ def addToDataAux {width : Nat} [NeZero width] (data : Knowledge)
             toCanonical := sptInsert destination destination data.toCanonical,
             toLatest := sptInsert destination destination data.toLatest }, original)
 
-@[hol "cakeml/compiler/backend/word_cseScript.sml" "add_to_load_aux_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def addToLoadAux {width : Nat} [NeZero width] (data : Knowledge)
     (destination : Nat) (key : List Nat) (original : WordLangProgHOL (BitVec width)) :
     Knowledge × WordLangProgHOL (BitVec width) :=
@@ -62,8 +60,7 @@ reviewed constructor-for-constructor instruction codec supplies the WordLang
 carrier; no constructor, eligibility or destination-parity restriction is
 imposed. Executed producer correspondence remains separate production-path
 work. -/
-@[hol "cakeml/compiler/backend/word_cseScript.sml" "add_to_data_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def addToData {adjWidth : Nat} [NeZero adjWidth] {width : Nat} [NeZero width] (data : Knowledge)
     (destination : Nat) (adjusted : Compiler.Encoders.Asm.HolInst adjWidth)
     (original : Compiler.Encoders.Asm.HolInst width) :
@@ -73,8 +70,7 @@ def addToData {adjWidth : Nat} [NeZero adjWidth] {width : Nat} [NeZero width] (d
 /-- Original constant rematerialization for arbitrary destination parity:
 source callers guard odd registers, but this definition has no such premise.
 Both branches emit the original Const rather than extending a holder lifetime. -/
-@[hol "cakeml/compiler/backend/word_cseScript.sml" "add_to_data_const_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def addToDataConst {width : Nat} [NeZero width] (data : Knowledge)
     (destination : Nat) (word : BitVec width) : Knowledge × WordLangProgHOL (BitVec width) :=
   let key := instToNumList (.const destination word)

@@ -24,8 +24,7 @@ their written register is dead; `Set` of a register to a dead store is removed;
 `Seq` and `If` drop `Skip` children; returning calls reset to the cut-set
 liveness; non-returning calls, `Alloc`, `Raise`, `Return`, `Loop`, `Break` and
 `Continue` reset the dead-store list. -/
-@[hol "cakeml/compiler/backend/word_allocScript.sml" "remove_dead_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def removeDead {width : Nat} [NeZero width] :
     WordLangProgHOL (BitVec width) → NumSet → List WordStoreHOL → List (NumSet × NumSet) →
       WordLangProgHOL (BitVec width) × NumSet × List WordStoreHOL
@@ -115,8 +114,7 @@ termination_by program _ _ _ => sizeOf program
 decreasing_by all_goals decreasing_trivial
 
 /-- Exact HOL `remove_dead_prog_def` (`word_allocScript.sml:1004-1006`). -/
-@[hol "cakeml/compiler/backend/word_allocScript.sml" "remove_dead_prog_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def removeDeadProg {width : Nat} [NeZero width] (prog : WordLangProgHOL (BitVec width)) :
     WordLangProgHOL (BitVec width) :=
   (removeDead prog .ln [] []).1

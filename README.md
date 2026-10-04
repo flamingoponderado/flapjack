@@ -1,5 +1,18 @@
 # Flapjack
 
+The persistent `riscv-mi` branch specializes Flapjack for the integer RISC-V
+target described by the sibling `riscv-zkvm` repository. `main` continues the
+port close to the original CakeML/HOL development; changes specific to this
+branch should stay on `riscv-mi` rather than merge back into `main`.
+The reference repositories `riscv-zkvm`, `cakeml`, and `HOL` are read-only.
+
+This branch removes floating-point language operations, privileged returns,
+hardware timers and interrupts, and instructions that enable page tables.
+Compiler evaluation fuel is distinct from hardware time. Integer compiler
+passes and their applicable reference tests remain part of the build.
+Reduced definitions are branch-specific specifications, not exact ports of
+the full HOL definitions.
+
 > **Warning — work in progress.** Nothing in this repository is ready to be
 > relied upon. Do not use Flapjack for anything of value.
 

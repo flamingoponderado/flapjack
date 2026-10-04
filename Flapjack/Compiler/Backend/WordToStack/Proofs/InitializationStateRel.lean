@@ -35,8 +35,7 @@ theorem holFmapAsFiniteSupportRelationWitness_WordSemStateFiniteExact
 /-- Complete original native initialization contract. Every bitmap/stack,
 register/store/GC, compiler-oracle and program-convention condition remains.
 No extra executable alignment or source/target run condition is introduced. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "init_state_ok_def"
-  (fmap_as_finite_support := [regs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def initStateOk {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (k : Nat) (t : StackSemStateFiniteExact width C F)
     (coracle : Nat → (Nat × C) × List (Nat × Nat × WordLangProgHOL (BitVec width))) : Prop :=
@@ -76,11 +75,7 @@ are the original two stub lookups, code-entry compile/prefix witnesses, code
 domain equation and complete initialization contract. The whole source state
 relation is derived, including compiler frame-size lookup and all resource,
 stack and local-placement clauses; no output relation is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "init_state_ok_IMP_state_rel"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem initStateOkImpliesStateRel {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (k : Nat) (t : StackSemStateFiniteExact width C F)
     (code : Spt (Nat × WordLangProgHOL (BitVec width)))

@@ -1,7 +1,6 @@
 import Flapjack.Compiler.Backend.StackToLab.Proofs.FullMakeInit
 import Flapjack.Compiler.Backend.StackToLab.Proofs.CodeInstalled
 import Flapjack.Compiler.Backend.LabProps.SectionEnd
-import Flapjack.Compiler.Backend.WordGcFunctions.HasFpOps
 import Flapjack.Compiler.Backend.StackToLab.Proofs.Encoding.Full
 import Flapjack.Compiler.Backend.StackNames.AsmAdmissibility.Assembly
 import Flapjack.Compiler.Backend.StackRemove.Proofs.AsmName
@@ -25,8 +24,6 @@ open Flapjack.Compiler.Backend.WordToStack.Native Flapjack.Compiler.Backend.Word
 open Flapjack.Pancake
 
 /-- HOL `EVERY_sec_ends_with_label_MAP_prog_to_section`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "EVERY_sec_ends_with_label_MAP_prog_to_section" (words_as_type_indexed_bitvec)]
 theorem everySecEndsWithLabelMapProgToSection {width : Nat} [NeZero width] :
     ∀ prog : List (Nat × HolProg width),
       ∀ sec ∈ prog.map progToSectionHOL, LabProps.secEndsWithLabelNative sec := by
@@ -35,29 +32,11 @@ theorem everySecEndsWithLabelMapProgToSection {width : Nat} [NeZero width] :
   rw [progToSection_eq]
   simp [LabProps.secEndsWithLabelNative, LabSem.isLabelHOL]
 
-/-- HOL `full_make_init_has_fp_ops`: the floating-point flags of the data
-configuration do not affect `full_make_init`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "full_make_init_has_fp_ops"
-  (words_as_type_indexed_bitvec)]
-theorem fullMakeInitHasFpOps {width : Nat} [NeZero width] {C F : Type}
-    {stackConf : StackToLab.Config} {dconf : DataToWord.Config} {b1 b2 : Bool} {mheap sp : Nat}
-    {offset : BitVec width × BitVec width} {bitmaps : List (BitVec width)}
-    {code : List (Nat × HolProg width)} {s : LabSem.State width C F} {saveRegs : Nat → Bool}
-    {dsp : Nat} {cor : Nat → C × List (Nat × HolProg width) × List (BitVec width)} :
-    fullMakeInit stackConf { dconf with hasFpOps := b1, hasFpTern := b2 } mheap sp offset bitmaps
-        code s saveRegs dsp cor =
-      fullMakeInit stackConf dconf mheap sp offset bitmaps code s saveRegs dsp cor := by
-  unfold fullMakeInit StackAlloc.makeInit
-  rw [WordGcFunctions.wordGcFun_hasFpOps]
-  rfl
-
 /-- HOL `stack_to_lab_compile_all_enc_ok`. HOL's free `c c1 c2 c3 sp prog`
 are implicit; all twenty premises are kept in order. `names_ok`, `fixed_names`,
 `conf_ok (:'a)`, `addr_offset_ok`/`byte_offset_ok c 0w` and `all_enc_ok_pre`
 are the reviewed `namesOkSptHOL`, `fixedNames`, `confOk width`,
 `asmAddrOffsetOkExact`/`asmByteOffsetOkExact c 0` and `allEncOkPreHOL`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "stack_to_lab_compile_all_enc_ok" (words_as_type_indexed_bitvec)]
 theorem stackToLabCompileAllEncOk {width : Nat} [NeZero width] {c : AsmConfigExact width}
     {prog : List (Nat × HolProg width)} {c1 : StackToLab.Config} {c2 : DataToWord.Config}
     {c3 sp : Nat} :
@@ -118,9 +97,6 @@ theorem initProp_of_makeInitOpt {width : Nat} [NeZero width] {C F : Type} {gen :
 /-- HOL `IMP_init_store_ok`. HOL's free `stack_conf c1 sp offset bitmaps code s
 save_regs data_sp coracle fmis xxx` are implicit; `fmis.store \\ Handler` is
 `fmis.store.eraseEq .handler`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "IMP_init_store_ok"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
 theorem impInitStoreOk {width : Nat} [NeZero width] {C F : Type} {maxHeap : Nat}
     {c1 : DataToWord.Config} {stackConf : StackToLab.Config} {sp : Nat}
     {offset : BitVec width × BitVec width} {bitmaps : List (BitVec width)}
@@ -204,10 +180,6 @@ theorem drop_eq_singleton_of_holLast {α : Type} [Nonempty α] :
 over the Boolean conventions is `progs.all P = true`, as in the reviewed
 `init_state_ok`, and `(λy. raise_stub_location ≠ y) ∘ FST` keeps HOL's
 orientation. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "IMP_init_state_ok"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
 theorem impInitStateOk {width : Nat} [NeZero width] {C F : Type} {kkk : Nat}
     {bitmaps t : List (BitVec width)}
     {wordOracle : Nat → (Nat × C) × List (Nat × Nat × WordLangProgHOL (BitVec width))}

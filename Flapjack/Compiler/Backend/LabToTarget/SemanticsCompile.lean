@@ -102,8 +102,7 @@ private theorem bufferNotFfi {width : Nat} [NeZero width] {S Q : Type}
 
 /-- Full original prime compiler-semantics lemma. All sixteen original guards
 and the independently generic empty-label value type are retained. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "semantics_compile_lemma'"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem semanticsCompileLemmaPrime {width : Nat} [NeZero width] {S Q G : Type} {F : Type}
     (mc : MachineConfig width S Q) (ffi : HolFfiState F) (ms : S)
     (code : LabProgHOL width) (asmConf : AsmConfigExact width) (c cNext : Config)
@@ -255,8 +254,7 @@ theorem semanticsCompileLemmaPrime {width : Nat} [NeZero width] {S Q G : Type} {
 
 /-- Full original precise implementation refinement, derived from the prime
 semantics equality with its non-Fail guard discharged inside implements. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "semantics_compile_lemma"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem semanticsCompileLemma {width : Nat} [NeZero width] {S Q G : Type} {F : Type}
     (mc : MachineConfig width S Q) (ffi : HolFfiState F) (ms : S)
     (code : LabProgHOL width) (asmConf : AsmConfigExact width) (c cNext : Config)

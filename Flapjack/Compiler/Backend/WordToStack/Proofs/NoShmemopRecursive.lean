@@ -84,8 +84,7 @@ private theorem recursiveNoShareClauses {width : Nat} [NeZero width]
 /-- Structural-motive MustTerminate piece. Its child hypothesis quantifies over
 all bitmap/frame inputs, unlike the argument-specific IH from HOL's `comp_ind`.
 The source hypotheses and conclusion are otherwise unchanged. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "comp_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compNoShmemopMustTerminate {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (body : WordLangProgHOL (BitVec width))
@@ -106,8 +105,7 @@ theorem compNoShmemopMustTerminate {width : Nat} [NeZero width]
 
 /-- Structural-motive Loop piece. Its child hypothesis quantifies over all
 bitmap/frame inputs, unlike HOL's argument-specific `comp_ind` hypothesis. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "comp_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compNoShmemopLoop {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (liveIn liveOut : Spt Unit) (body : WordLangProgHOL (BitVec width))
@@ -131,8 +129,7 @@ theorem compNoShmemopLoop {width : Nat} [NeZero width]
 
 /-- Structural-motive Seq piece. Child hypotheses quantify over all bitmap/frame
 inputs; HOL's `comp_ind` fixes the second child's bitmap to the first output. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "comp_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compNoShmemopSeq {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (first second : WordLangProgHOL (BitVec width))
@@ -167,8 +164,7 @@ theorem compNoShmemopSeq {width : Nat} [NeZero width]
 /-- Structural-motive If piece. Both child hypotheses quantify over all
 bitmap/frame inputs, rather than HOL's argument-specific `comp_ind` hypotheses.
 Immediate acceptance is split in the proof, not assumed. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "comp_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compNoShmemopIf {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (cmp : Cmp) (reg : Nat) (ri : WordRegImm (BitVec width))

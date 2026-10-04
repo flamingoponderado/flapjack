@@ -164,8 +164,7 @@ private theorem successfulHoistLabels {width : Nat} [NeZero width]
 /-- Full original hoist2 label relation. The unused HOL binder s is vacuous in
 both guards and conclusion and is omitted. All real count, compiler-output,
 destructor, dummy-program and empty-intermediate-label guards are retained. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "labels_rel_hoist2"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem labelsRelHoist2 {width : Nat} [NeZero width]
     (count : Nat) (first interm dummy second out : WordLangProgHOL (BitVec width))
     (cmp : Cmp) (lhs : Nat) (rhs : WordRegImm (BitVec width))
@@ -229,8 +228,7 @@ private theorem hoist1Labels {width : Nat} [NeZero width]
 
 /-- Full original duplicate-if traversal label relation, including every call
 return and exception-handler family. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "labels_rel_simp_duplicate_if"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem labelsRelSimpDuplicateIf {width : Nat} [NeZero width]
     (program : WordLangProgHOL (BitVec width)) :
     labelsRel (extractLabels program) (extractLabels (simpDuplicateIf program)) := by

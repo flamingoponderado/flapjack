@@ -198,8 +198,7 @@ parity test; a kernel-checked bridge between the two carriers already exists via
 /-- HOL `left_shift_inst` (`cakeml/compiler/backend/stackLangScript.sml:80`):
 `λr v. Inst (Arith (Shift Lsl r r (Imm (n2w v))))`, over the exact shared-word
 `stackLang$prog` carrier. -/
-@[hol "cakeml/compiler/backend/stackLangScript.sml" "left_shift_inst"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def leftShiftInst {width : Nat} [NeZero width] (register value : Nat) :
     Flapjack.Compiler.Backend.StackLang.HolProg width :=
   .inst (.arith (.shift .lsl register register (.imm (BitVec.ofNat width value))))
@@ -207,16 +206,14 @@ def leftShiftInst {width : Nat} [NeZero width] (register value : Nat) :
 /-- HOL `right_shift_inst` (`cakeml/compiler/backend/stackLangScript.sml:81`):
 `λr v. Inst (Arith (Shift Lsr r r (Imm (n2w v))))`, over the exact shared-word
 `stackLang$prog` carrier. -/
-@[hol "cakeml/compiler/backend/stackLangScript.sml" "right_shift_inst"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def rightShiftInst {width : Nat} [NeZero width] (register value : Nat) :
     Flapjack.Compiler.Backend.StackLang.HolProg width :=
   .inst (.arith (.shift .lsr register register (.imm (BitVec.ofNat width value))))
 
 /-- HOL `const_inst` (`cakeml/compiler/backend/stackLangScript.sml:82`):
 `λr w. Inst (Const r w)`, over the exact shared-word `stackLang$prog` carrier. -/
-@[hol "cakeml/compiler/backend/stackLangScript.sml" "const_inst"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def constInst {width : Nat} [NeZero width] (register : Nat) (value : BitVec width) :
     Flapjack.Compiler.Backend.StackLang.HolProg width :=
   .inst (.const register value)
@@ -224,8 +221,7 @@ def constInst {width : Nat} [NeZero width] (register : Nat) (value : BitVec widt
 /-- HOL `load_inst` (`cakeml/compiler/backend/stackLangScript.sml:83`):
 `λr a. Inst (Mem Load r (Addr a 0w))`, over the exact shared-word
 `stackLang$prog` carrier. -/
-@[hol "cakeml/compiler/backend/stackLangScript.sml" "load_inst"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def loadInst {width : Nat} [NeZero width] (register address : Nat) :
     Flapjack.Compiler.Backend.StackLang.HolProg width :=
   .inst (.mem .load register (.addr address 0))
@@ -233,8 +229,7 @@ def loadInst {width : Nat} [NeZero width] (register address : Nat) :
 /-- HOL `store_inst` (`cakeml/compiler/backend/stackLangScript.sml:84`):
 `λr a. Inst (Mem Store r (Addr a 0w))`, over the exact shared-word
 `stackLang$prog` carrier. -/
-@[hol "cakeml/compiler/backend/stackLangScript.sml" "store_inst"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def storeInst {width : Nat} [NeZero width] (register address : Nat) :
     Flapjack.Compiler.Backend.StackLang.HolProg width :=
   .inst (.mem .store register (.addr address 0))
@@ -242,8 +237,7 @@ def storeInst {width : Nat} [NeZero width] (register address : Nat) :
 /-- HOL `halt_inst` (`cakeml/compiler/backend/stack_removeScript.sml:58-60`):
 `halt_inst w = Seq (const_inst 1 w) (Halt 1)`, over the exact shared-word
 `stackLang$prog` carrier. -/
-@[hol "cakeml/compiler/backend/stack_removeScript.sml" "halt_inst_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def haltInst {width : Nat} [NeZero width] (value : BitVec width) :
     Flapjack.Compiler.Backend.StackLang.HolProg width :=
   .seq (.inst (.const 1 value)) (.halt 1)

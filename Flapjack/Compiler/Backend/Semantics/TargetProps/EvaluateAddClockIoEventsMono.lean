@@ -8,8 +8,7 @@ set_option maxHeartbeats 1200000 in
 /-- Clock-order event monotonicity over the full literal evaluator.
 The only premise is clock order. Both runs use the same literal machine and FFI
 transitions; the zero-clock case uses input-event prefix preservation. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "evaluate_add_clock_io_events_mono" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateTargetAddClockIoEventsMono {width : Nat} [NeZero width]
     {state projection : Type} {σ : Type} (mc : MachineConfig width state projection)
     (ffi : HolFfiState σ) (k : Nat) (ms : state) (k' : Nat) (hle : k ≤ k') :

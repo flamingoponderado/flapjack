@@ -27,10 +27,6 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 /-- Complete original StackSem/LabSem simulation relation, conjunct for
 conjunct. HOL sets are Bool predicates; `domain s.code = set (MAP Section_num
 t.code)` is pointwise membership equivalence. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "state_rel_def"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs])
-  (words_as_type_indexed_bitvec)]
 def stateRel {width : Nat} [NeZero width] {C F : Type}
     (s : StackSemStateFiniteExact width C F)
     (t : Flapjack.Compiler.Backend.LabSem.State width C F) : Prop :=
@@ -73,10 +69,6 @@ def stateRel {width : Nat} [NeZero width] {C F : Type}
   goodDimindex width
 
 /-- A checked StackSem location resolves to a LabSem program position. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "loc_check_IMP_loc_to_pc"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs])
-  (words_as_type_indexed_bitvec)]
 theorem locCheckImpLocToPc {width : Nat} [NeZero width] {C F : Type}
     {s : StackSemStateFiniteExact width C F}
     {t1 : Flapjack.Compiler.Backend.LabSem.State width C F} {l1 l2 : Nat} :
@@ -94,10 +86,6 @@ theorem locCheckImpLocToPc {width : Nat} [NeZero width] {C F : Type}
     exact CodeInstalled.codeInstalledGetLabelsImp _ _ _ _ _ _ pc ⟨installed, labels⟩
 
 /-- Decrementing both clocks preserves the relation. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "state_rel_dec_clock"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs])
-  (words_as_type_indexed_bitvec)]
 theorem stateRelDecClock {width : Nat} [NeZero width] {C F : Type}
     {s : StackSemStateFiniteExact width C F}
     {t : Flapjack.Compiler.Backend.LabSem.State width C F} :
@@ -109,20 +97,12 @@ theorem stateRelDecClock {width : Nat} [NeZero width] {C F : Type}
     h27, h28, h29⟩
 
 /-- Changing the LabSem program counter preserves the relation. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "state_rel_with_pc"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs])
-  (words_as_type_indexed_bitvec)]
 theorem stateRelWithPc {width : Nat} [NeZero width] {C F : Type}
     {s : StackSemStateFiniteExact width C F}
     {t : Flapjack.Compiler.Backend.LabSem.State width C F} {pc : Nat} :
     stateRel s t → stateRel s (updPc pc t) := id
 
 /-- Setting both clocks to the same value preserves the relation. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "state_rel_with_clock"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs])
-  (words_as_type_indexed_bitvec)]
 theorem stateRelWithClock {width : Nat} [NeZero width] {C F : Type}
     {s : StackSemStateFiniteExact width C F}
     {t : Flapjack.Compiler.Backend.LabSem.State width C F} {k : Nat} :
@@ -134,10 +114,6 @@ theorem stateRelWithClock {width : Nat} [NeZero width] {C F : Type}
 
 /-- Writing the same value to a source variable and target register
 preserves the relation. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "set_var_upd_reg"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs])
-  (words_as_type_indexed_bitvec)]
 theorem setVarUpdReg {width : Nat} [NeZero width] {C F : Type}
     {s : StackSemStateFiniteExact width C F}
     {t : Flapjack.Compiler.Backend.LabSem.State width C F} {a : Nat} {b : WordLocW width} :
@@ -153,10 +129,6 @@ theorem setVarUpdReg {width : Nat} [NeZero width] {C F : Type}
   · exact h1 n v found
 
 /-- The literal-word instance of `set_var_upd_reg`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "set_var_Word_upd_reg"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs])
-  (words_as_type_indexed_bitvec)]
 theorem setVarWordUpdReg {width : Nat} [NeZero width] {C F : Type}
     {s : StackSemStateFiniteExact width C F}
     {t : Flapjack.Compiler.Backend.LabSem.State width C F} {a : Nat} {b : BitVec width} :
@@ -164,32 +136,7 @@ theorem setVarWordUpdReg {width : Nat} [NeZero width] {C F : Type}
       stateRel (StackSemStateOps.setVar a (.word b) s) (updReg a (.word b) t) :=
   setVarUpdReg
 
-/-- Writing the same value to a source and target FP register preserves the
-relation. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "set_fp_var_upd_fp_reg"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs])
-  (words_as_type_indexed_bitvec)]
-theorem setFpVarUpdFpReg {width : Nat} [NeZero width] {C F : Type}
-    {s : StackSemStateFiniteExact width C F}
-    {t : Flapjack.Compiler.Backend.LabSem.State width C F} {a : Nat} {b : BitVec 64} :
-    stateRel s t → stateRel (StackSemStateOps.setFpVar a b s) (updFpReg a b t) := by
-  rintro ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17, h18,
-    h19, h20, h21, h22, h23, h24, h25, h26, h27, h28, h29⟩
-  refine ⟨h1, ?_, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17, h18,
-    h19, h20, h21, h22, h23, h24, h25, h26, h27, h28, h29⟩
-  intro n v found
-  simp only [StackSemStateOps.setFpVar, HolFiniteMapExact.updateEq, FUPDATE_HOL,
-    updFpReg] at found ⊢
-  split_ifs at found ⊢ with eq
-  · cases found; rfl
-  · exact h2 n v found
-
 /-- A successful source memory store is simulated by the target update. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "mem_store_upd_mem"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs])
-  (words_as_type_indexed_bitvec)]
 theorem memStoreUpdMem {width : Nat} [NeZero width] {C F : Type}
     {s s1 : StackSemStateFiniteExact width C F}
     {t : Flapjack.Compiler.Backend.LabSem.State width C F} {x : BitVec width}
@@ -204,11 +151,6 @@ theorem memStoreUpdMem {width : Nat} [NeZero width] {C F : Type}
     h16, h17, h18, h19, h20, h21, h22, h23, h24, h25, h26, h27, h28, h29⟩
 
 /-- A defined source register agrees with the target register. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "state_rel_read_reg_FLOOKUP_regs"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs])
-  (words_as_type_indexed_bitvec)]
 theorem stateRelReadRegFlookupRegs {width : Nat} [NeZero width] {C F : Type}
     {s : StackSemStateFiniteExact width C F}
     {t : Flapjack.Compiler.Backend.LabSem.State width C F} {x : Nat} {y : WordLocW width} :
@@ -216,27 +158,10 @@ theorem stateRelReadRegFlookupRegs {width : Nat} [NeZero width] {C F : Type}
   rintro ⟨rel, found⟩
   exact (rel.1 x y found).symm
 
-/-- A defined source FP register agrees with the target FP register. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
-  "state_rel_read_fp_reg_FLOOKUP_fp_regs"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs])
-  (words_as_type_indexed_bitvec)]
-theorem stateRelReadFpRegFlookupFpRegs {width : Nat} [NeZero width] {C F : Type}
-    {s : StackSemStateFiniteExact width C F}
-    {t : Flapjack.Compiler.Backend.LabSem.State width C F} {n : Nat} {x : BitVec 64} :
-    stateRel s t ∧ StackSemStateOps.getFpVar n s = some x → x = readFpReg n t := by
-  rintro ⟨rel, found⟩
-  exact (rel.2.1 n x found).symm
-
 /-- A defined source register-or-immediate operand agrees with the target
 operand. The StackSem `get_var_imm` mirror reads the accepted
 `WordRegImm` form of the same `asm$reg_imm` operand, through the checked
 `HolRegImm.toWordRegImm` codec used by the StackSem evaluator. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "state_rel_get_var_imm"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs])
-  (words_as_type_indexed_bitvec)]
 theorem stateRelGetVarImm {width : Nat} [NeZero width] {C F : Type}
     {s : StackSemStateFiniteExact width C F}
     {t : Flapjack.Compiler.Backend.LabSem.State width C F} {r : HolRegImm width}

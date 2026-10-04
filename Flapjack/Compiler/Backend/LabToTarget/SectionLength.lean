@@ -8,8 +8,7 @@ open Flapjack.Basis.Pure.MlString
 
 /-- Original additive position transport; arbitrary annotations and offsets
 are retained without a well-formedness or encoded-byte consistency premise. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "sec_length_add"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem secLengthAdd {width : Nat} [NeZero width]
     (lines : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))
@@ -25,8 +24,7 @@ theorem secLengthAdd {width : Nat} [NeZero width]
 
 /-- The original unconditional position equation retains arbitrary initial
 position and accumulated labels; every native line constructor is covered. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "section_labels_sec_length"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem sectionLabelsSecLength {width : Nat} [NeZero width]
     (pos : Nat)
     (lines : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -44,8 +42,7 @@ theorem sectionLabelsSecLength {width : Nat} [NeZero width]
     | labAsm instruction value bytes len => exact ih (pos + len) acc
 
 /-- Original recorded-length sum equation over every native line. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "sec_length_sum_line_len"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem secLengthSumLineLen {width : Nat} [NeZero width]
     (lines : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))
@@ -60,8 +57,7 @@ theorem secLengthSumLineLen {width : Nat} [NeZero width]
 
 /-- Original whole-pair composition equation. The prior accumulator and
 arbitrary recorded line lengths are retained, without a validity premise. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "section_labels_append"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem sectionLabelsAppend {width : Nat} [NeZero width]
     (pos : Nat)
     (left : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))

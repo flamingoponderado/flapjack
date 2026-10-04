@@ -6,8 +6,7 @@ open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString
 
 /-- Full original code padding offset preservation. HOL's free nop variable is
 retained explicitly, alongside all five source guards and actual padded code. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "offset_ok_pad_code"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem offsetOk_padCode {width : Nat} [NeZero width]
     (nop : List (BitVec 8)) (labs : Spt (Spt Nat)) (ffis : List HolFfiName) (pos : Nat)
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))

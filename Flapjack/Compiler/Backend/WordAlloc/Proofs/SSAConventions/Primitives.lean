@@ -8,8 +8,7 @@ namespace Flapjack.WordAlloc
 open Flapjack Flapjack.Compiler.Backend.WordAlloc
 
 /-- Original Skip case with the original allocation-class/map hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_preAllocSkip {width : Nat} [NeZero width]
 
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -20,8 +19,7 @@ theorem ssaCcTrans_preAllocSkip {width : Nat} [NeZero width]
   simp [ssaCcTrans, preAllocConventionsHOL, everyStackVarHOL, callArgConventionHOL]
 
 /-- Original Move case with the original allocation-class/map hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_preAllocMove {width : Nat} [NeZero width]
     (priority : Nat) (moves : List (Nat × Nat))
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -34,8 +32,7 @@ theorem ssaCcTrans_preAllocMove {width : Nat} [NeZero width]
   simp [ssaCcTrans, hr, preAllocConventionsHOL, everyStackVarHOL, callArgConventionHOL]
 
 /-- Original StoreConsts case with the original allocation-class/map hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_preAllocStoreConsts {width : Nat} [NeZero width]
     (a b c d : Nat) (ws : List (Bool × BitVec width))
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -46,8 +43,7 @@ theorem ssaCcTrans_preAllocStoreConsts {width : Nat} [NeZero width]
   simp [ssaCcTrans, preAllocConventionsHOL, everyStackVarHOL, callArgConventionHOL]
 
 /-- Original Assign case with the original allocation-class/map hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_preAllocAssign {width : Nat} [NeZero width]
     (name : Nat) (exp : WordLangExpHOL (BitVec width))
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -58,8 +54,7 @@ theorem ssaCcTrans_preAllocAssign {width : Nat} [NeZero width]
   simp [ssaCcTrans, nextVarRename, preAllocConventionsHOL, everyStackVarHOL, callArgConventionHOL]
 
 /-- Original Get case with the original allocation-class/map hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_preAllocGet {width : Nat} [NeZero width]
     (name : Nat) (store : WordStoreHOL)
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -70,8 +65,7 @@ theorem ssaCcTrans_preAllocGet {width : Nat} [NeZero width]
   simp [ssaCcTrans, nextVarRename, preAllocConventionsHOL, everyStackVarHOL, callArgConventionHOL]
 
 /-- Original Store case with the original allocation-class/map hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_preAllocStore {width : Nat} [NeZero width]
     (exp : WordLangExpHOL (BitVec width)) (name : Nat)
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -82,8 +76,7 @@ theorem ssaCcTrans_preAllocStore {width : Nat} [NeZero width]
   simp [ssaCcTrans, preAllocConventionsHOL, everyStackVarHOL, callArgConventionHOL]
 
 /-- Original Raise case with the original allocation-class/map hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_preAllocRaise {width : Nat} [NeZero width]
     (name : Nat)
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -94,8 +87,7 @@ theorem ssaCcTrans_preAllocRaise {width : Nat} [NeZero width]
   simp [ssaCcTrans, preAllocConventionsHOL, everyStackVarHOL, callArgConventionHOL]
 
 /-- Original OpCurrHeap case with the original allocation-class/map hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_preAllocOpCurrHeap {width : Nat} [NeZero width]
     (op : BinOp) (dst src : Nat)
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -106,8 +98,7 @@ theorem ssaCcTrans_preAllocOpCurrHeap {width : Nat} [NeZero width]
   simp [ssaCcTrans, nextVarRename, preAllocConventionsHOL, everyStackVarHOL, callArgConventionHOL]
 
 /-- Original Return case with the original allocation-class/map hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_preAllocReturn {width : Nat} [NeZero width]
     (label : Nat) (values : List Nat)
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -118,8 +109,7 @@ theorem ssaCcTrans_preAllocReturn {width : Nat} [NeZero width]
   simp [ssaCcTrans, preAllocConventionsHOL, everyStackVarHOL, callArgConventionHOL]
 
 /-- Original Tick case with the original allocation-class/map hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_preAllocTick {width : Nat} [NeZero width]
 
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -130,8 +120,7 @@ theorem ssaCcTrans_preAllocTick {width : Nat} [NeZero width]
   simp [ssaCcTrans, preAllocConventionsHOL, everyStackVarHOL, callArgConventionHOL]
 
 /-- Original Set case with the original allocation-class/map hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_preAllocSet {width : Nat} [NeZero width]
     (store : WordStoreHOL) (exp : WordLangExpHOL (BitVec width))
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -142,8 +131,7 @@ theorem ssaCcTrans_preAllocSet {width : Nat} [NeZero width]
   simp [ssaCcTrans, preAllocConventionsHOL, everyStackVarHOL, callArgConventionHOL]
 
 /-- Original LocValue case with the original allocation-class/map hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_preAllocLocValue {width : Nat} [NeZero width]
     (dst src : Nat)
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -154,8 +142,7 @@ theorem ssaCcTrans_preAllocLocValue {width : Nat} [NeZero width]
   simp [ssaCcTrans, nextVarRename, preAllocConventionsHOL, everyStackVarHOL, callArgConventionHOL]
 
 /-- Original CodeBufferWrite case with the original allocation-class/map hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_preAllocCodeBufferWrite {width : Nat} [NeZero width]
     (addr value : Nat)
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -166,8 +153,7 @@ theorem ssaCcTrans_preAllocCodeBufferWrite {width : Nat} [NeZero width]
   simp [ssaCcTrans, preAllocConventionsHOL, everyStackVarHOL, callArgConventionHOL]
 
 /-- Original DataBufferWrite case with the original allocation-class/map hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_preAllocDataBufferWrite {width : Nat} [NeZero width]
     (addr value : Nat)
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -178,8 +164,7 @@ theorem ssaCcTrans_preAllocDataBufferWrite {width : Nat} [NeZero width]
   simp [ssaCcTrans, preAllocConventionsHOL, everyStackVarHOL, callArgConventionHOL]
 
 /-- Original ShareInst case with the original allocation-class/map hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_preAllocShareInst {width : Nat} [NeZero width]
     (op : WordMemOp) (name : Nat) (exp : WordLangExpHOL (BitVec width))
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))

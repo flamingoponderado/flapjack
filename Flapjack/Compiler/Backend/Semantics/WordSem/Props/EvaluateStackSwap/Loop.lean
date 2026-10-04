@@ -117,8 +117,7 @@ open EvaluateStackSwapLoopWitnesses
 `Loop names c exitNames`, from exactly HOL `evaluate_ind`'s two `Loop`
 induction hypotheses (the next iteration after a continuing body result with a
 nonzero clock, and the body at the cut state); no extra premise. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_swap"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateStackSwap_Loop {width : Nat} [NeZero width] {C F : Type}
     (names : WordLangNumSetHOL) (c : WordLangProgHOL (BitVec width))
     (exitNames : WordLangNumSetHOL) :

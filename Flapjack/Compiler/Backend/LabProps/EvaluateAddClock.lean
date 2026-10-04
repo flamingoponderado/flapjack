@@ -49,8 +49,7 @@ private theorem evaluateClockShift {width : Nat} [NeZero width] {C F : Type}
 Only TimeOut is excluded, as in HOL. Arbitrary compiler configuration and FFI
 carriers remain independent. Evaluation inherits the real rendering assumption
 of SOUNDNESS item 8. -/
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "evaluate_ADD_clock"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateAddClock {width : Nat} [NeZero width] {C : Type} {F : Type}
     (s : Flapjack.Compiler.Backend.LabSem.State width C F) (res : MachineResult)
     (r : Flapjack.Compiler.Backend.LabSem.State width C F) (extra : Nat) :

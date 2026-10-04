@@ -39,8 +39,7 @@ open Classical in
 /-- HOL `compile_word_to_word_thm` (`word_to_wordProofScript.sml:851-904`). HOL's free
     `st l cc coracle tt kk aa co start` are explicit; `map (I ## remove_must_terminate) l`
     is the `sptMap` of the reviewed `compile_state`. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_word_to_word_thm"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compile_word_to_word_thm {width : Nat} [NeZero width] {C F : Type}
     (st : WordSemStateFiniteExact width C F) (l : Spt (Nat × WordLangProgHOL (BitVec width)))
     (cc : C → List (Nat × Nat × WordLangProgHOL (BitVec width)) →

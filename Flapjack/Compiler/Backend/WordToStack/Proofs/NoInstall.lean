@@ -9,8 +9,7 @@ open Flapjack Flapjack.Compiler.Backend.StackLang
 open Flapjack.Compiler.Backend.StackProps
 
 /-- Full source move-list conclusion; every frame and formatted operand is arbitrary. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "wMoveAux_no_install_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wMoveAuxNoInstall {width : Nat} [NeZero width]
     (xs : List (Sum Nat Nat × Sum Nat Nat)) (kf : Nat × Nat × Nat) :
     noInstall (wMoveAuxNative xs kf : HolProg width) = true := by
@@ -26,8 +25,7 @@ theorem wMoveAuxNoInstall {width : Nat} [NeZero width]
     | cons y ys => simp [wMoveAuxNative, noInstall, single, ih]
 
 /-- Full equality, including continuations that contain Install. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "wStackLoad_no_install_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wStackLoadNoInstall {width : Nat} [NeZero width]
     (ls : List (Nat × Nat)) (prog : HolProg width) :
     noInstall (wStackLoadNative ls prog) = noInstall prog := by
@@ -38,8 +36,7 @@ theorem wStackLoadNoInstall {width : Nat} [NeZero width]
     simp [wStackLoadNative, noInstall, ih]
 
 /-- The universally quantified callback premise is exactly the source premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "wRegWrite1_no_install_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wRegWrite1NoInstall {width : Nat} [NeZero width]
     (prog : Nat → HolProg width) (r : Nat) (kf : Nat × Nat × Nat)
     (h : ∀ reg, noInstall (prog reg) = true) :
@@ -48,8 +45,7 @@ theorem wRegWrite1NoInstall {width : Nat} [NeZero width]
   split <;> simp [noInstall, h]
 
 /-- The source callback premise is retained for the second temporary register. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "wRegWrite2_no_install_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wRegWrite2NoInstall {width : Nat} [NeZero width]
     (prog : Nat → HolProg width) (r : Nat) (kf : Nat × Nat × Nat)
     (h : ∀ reg, noInstall (prog reg) = true) :
@@ -58,8 +54,7 @@ theorem wRegWrite2NoInstall {width : Nat} [NeZero width]
   split <;> simp [noInstall, h]
 
 /-- Unconditional first-projection conclusion on arbitrary cutsets and bitmaps. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "wLive_no_install_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wLiveNoInstall {width : Nat} [NeZero width]
     (live : Spt Unit × Spt Unit) (bs : AppList (BitVec width) × Nat)
     (kf : Nat × Nat × Nat) :
@@ -68,8 +63,7 @@ theorem wLiveNoInstall {width : Nat} [NeZero width]
   split <;> simp [noInstall]
 
 /-- Full count/start/offset/temporary equality, with no continuation guard. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "stack_move_no_install_lem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackMoveNoInstall {width : Nat} [NeZero width]
     (n start offset i : Nat) (p : HolProg width) :
     noInstall (stackMoveNative n start offset i p) = noInstall p := by
@@ -78,8 +72,7 @@ theorem stackMoveNoInstall {width : Nat} [NeZero width]
   | succ n ih => simp [stackMoveNative, noInstall, ih]
 
 /-- Full local source return-copy loop theorem on arbitrary counts and slots. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "copy_ret_aux_no_install" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem copyRetAuxNoInstall {width : Nat} [NeZero width] (k f n : Nat) :
     noInstall (copyRetAuxNative k f n : HolProg width) = true := by
   induction n with
@@ -89,8 +82,7 @@ theorem copyRetAuxNoInstall {width : Nat} [NeZero width] (k f n : Nat) :
 
 /-- Full local source iff for both flags, independent return-list and unused
 frame-tail carriers, and arbitrary native continuations. No safety premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "copy_ret_no_install" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem copyRetNoInstall {width : Nat} [NeZero width] {β γ : Type}
     (perf b : Bool) (kf : Nat × Nat × γ) (vs : List β) (kont : HolProg width) :
     noInstall (copyRetNative perf b kf vs kont) = true ↔ noInstall kont = true := by

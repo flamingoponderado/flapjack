@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterOffset
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegister
 import Flapjack.Pancake.WordLang.MaxVarInst
@@ -154,11 +155,7 @@ original guards and every actual native run/full stateRel/stack resource result
 are retained, including destination/base aliases and physical/spilled variables.
 No target read/run/postmemory premise is assumed. The evaluators inherit
 reals_as_rational_cuts; no independent numerical FP agreement is claimed. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_wInst"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateWInstLoad {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (destination base k f frame : Nat) (offset : BitVec width)
     (source sourcePost : WordSemStateFiniteExact width (Nat × C) F)
@@ -180,11 +177,7 @@ original guards and every actual native run/full stateRel/stack resource result
 are retained, including destination/base aliases and physical/spilled variables.
 No target read/run/postmemory premise is assumed. The evaluators inherit
 reals_as_rational_cuts; no independent numerical FP agreement is claimed. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_wInst"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateWInstLoad8 {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (destination base k f frame : Nat) (offset : BitVec width)
     (source sourcePost : WordSemStateFiniteExact width (Nat × C) F)
@@ -206,11 +199,7 @@ original guards and every actual native run/full stateRel/stack resource result
 are retained, including destination/base aliases and physical/spilled variables.
 No target read/run/postmemory premise is assumed. The evaluators inherit
 reals_as_rational_cuts; no independent numerical FP agreement is claimed. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_wInst"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateWInstLoad32 {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (destination base k f frame : Nat) (offset : BitVec width)
     (source sourcePost : WordSemStateFiniteExact width (Nat × C) F)

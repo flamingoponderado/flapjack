@@ -853,9 +853,7 @@ permutation, all successful guard branches, target runs and post-state facts
 are derived internally. The imported evaluator inherits reals_as_rational_cuts
 (SOUNDNESS item 8). The handler-SOME case and full SSA assembly are also
 ported; production migration and end-to-end correctness remain open. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_correct"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransCorrectCallReturningNone {width : Nat} [NeZero width] {C F : Type}
     (source target : WordSemStateFiniteExact width C F) (ssa : Spt Nat) (next : Nat)
     (returns : List Nat) (firstNames secondNames : Spt Unit)
@@ -1129,9 +1127,7 @@ The actual exception binder starts after the return compiler's output counter,
 as in the original producer. Inherits reals_as_rational_cuts (SOUNDNESS item 8).
 The whole returning Call constructor and full SSA assembly are also ported;
 production migration and end-to-end correctness remain open. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_correct"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 
 theorem ssaCcTransCorrectCallReturningSome {width : Nat} [NeZero width] {C F : Type}
     (source target : WordSemStateFiniteExact width C F) (ssa : Spt Nat) (next : Nat)
@@ -1451,9 +1447,7 @@ theorem ssaCcTransCorrectCallReturningSome {width : Nat} [NeZero width] {C F : T
 /-- Complete original returning Call case, with only genuine smaller return and
 optional exception continuation IHs in addition to HOL's six premises.
 Inherits reals_as_rational_cuts (SOUNDNESS item 8). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_correct"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransCorrectCallReturning {width : Nat} [NeZero width] {C F : Type}
     (source target : WordSemStateFiniteExact width C F) (ssa : Spt Nat) (next : Nat)
     (returns : List Nat) (firstNames secondNames : Spt Unit)

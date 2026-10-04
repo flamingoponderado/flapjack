@@ -44,8 +44,7 @@ private theorem evenParity_notLeadingOne {width : Nat} [NeZero width] (pos : Nat
 
 /-- Full original padding offset preservation. Both guarded NULL/HD expressions
 are represented by constructor cases, with no empty-head value or total HD. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "lines_offset_ok_pad_section"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem linesOffsetOk_padSection {width : Nat} [NeZero width]
     (nop : List (BitVec 8))
     (lines aux : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))

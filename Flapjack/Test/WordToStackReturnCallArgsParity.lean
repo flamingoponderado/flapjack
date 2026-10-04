@@ -167,132 +167,100 @@ example : callArgs (.inst (.arith (.subOverflow 1 2 3 4):HolInst 1) : HolProg 1)
   simp [callArgs]
 
 -- rca_pred_inst_28_1_0
-example : callArgs (.inst (.fp (.fpLess 1 99 100):HolInst 1) : HolProg 1) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_28_1_1
-example : callArgs (.inst (.fp (.fpLess 1 99 100):HolInst 1) : HolProg 1) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_29_1_0
-example : callArgs (.inst (.fp (.fpLessEqual 1 99 100):HolInst 1) : HolProg 1) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_29_1_1
-example : callArgs (.inst (.fp (.fpLessEqual 1 99 100):HolInst 1) : HolProg 1) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_30_1_0
-example : callArgs (.inst (.fp (.fpEqual 1 99 100):HolInst 1) : HolProg 1) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_30_1_1
-example : callArgs (.inst (.fp (.fpEqual 1 99 100):HolInst 1) : HolProg 1) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_31_1_0
-example : callArgs (.inst (.fp (.fpAbs 100 100):HolInst 1) : HolProg 1) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_31_1_1
-example : callArgs (.inst (.fp (.fpAbs 100 100):HolInst 1) : HolProg 1) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_32_1_0
-example : callArgs (.inst (.fp (.fpNeg 100 100):HolInst 1) : HolProg 1) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_32_1_1
-example : callArgs (.inst (.fp (.fpNeg 100 100):HolInst 1) : HolProg 1) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_33_1_0
-example : callArgs (.inst (.fp (.fpSqrt 100 100):HolInst 1) : HolProg 1) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_33_1_1
-example : callArgs (.inst (.fp (.fpSqrt 100 100):HolInst 1) : HolProg 1) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_34_1_0
-example : callArgs (.inst (.fp (.fpAdd 100 100 100):HolInst 1) : HolProg 1) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_34_1_1
-example : callArgs (.inst (.fp (.fpAdd 100 100 100):HolInst 1) : HolProg 1) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_35_1_0
-example : callArgs (.inst (.fp (.fpSub 100 100 100):HolInst 1) : HolProg 1) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_35_1_1
-example : callArgs (.inst (.fp (.fpSub 100 100 100):HolInst 1) : HolProg 1) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_36_1_0
-example : callArgs (.inst (.fp (.fpMul 100 100 100):HolInst 1) : HolProg 1) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_36_1_1
-example : callArgs (.inst (.fp (.fpMul 100 100 100):HolInst 1) : HolProg 1) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_37_1_0
-example : callArgs (.inst (.fp (.fpDiv 100 100 100):HolInst 1) : HolProg 1) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_37_1_1
-example : callArgs (.inst (.fp (.fpDiv 100 100 100):HolInst 1) : HolProg 1) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_38_1_0
-example : callArgs (.inst (.fp (.fpFma 100 100 100):HolInst 1) : HolProg 1) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_38_1_1
-example : callArgs (.inst (.fp (.fpFma 100 100 100):HolInst 1) : HolProg 1) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_39_1_0
-example : callArgs (.inst (.fp (.fpMov 100 100):HolInst 1) : HolProg 1) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_39_1_1
-example : callArgs (.inst (.fp (.fpMov 100 100):HolInst 1) : HolProg 1) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_40_1_0
-example : callArgs (.inst (.fp (.fpToInt 100 100):HolInst 1) : HolProg 1) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_40_1_1
-example : callArgs (.inst (.fp (.fpToInt 100 100):HolInst 1) : HolProg 1) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_41_1_0
-example : callArgs (.inst (.fp (.fpFromInt 100 100):HolInst 1) : HolProg 1) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_41_1_1
-example : callArgs (.inst (.fp (.fpFromInt 100 100):HolInst 1) : HolProg 1) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_42_1_0
-example : callArgs (.inst (.fp (.fpMovToReg 1 2 100):HolInst 1) : HolProg 1) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_42_1_1
-example : callArgs (.inst (.fp (.fpMovToReg 1 2 100):HolInst 1) : HolProg 1) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_43_1_0
-example : callArgs (.inst (.fp (.fpMovFromReg 100 1 2):HolInst 1) : HolProg 1) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_43_1_1
-example : callArgs (.inst (.fp (.fpMovFromReg 100 1 2):HolInst 1) : HolProg 1) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_prog_44_1_0
 example : callArgs (.skip:HolProg 1) 1 2 3 4 0 := by
@@ -775,132 +743,100 @@ example : callArgs (.inst (.arith (.subOverflow 1 2 3 4):HolInst 64) : HolProg 6
   simp [callArgs]
 
 -- rca_pred_inst_28_64_0
-example : callArgs (.inst (.fp (.fpLess 1 99 100):HolInst 64) : HolProg 64) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_28_64_1
-example : callArgs (.inst (.fp (.fpLess 1 99 100):HolInst 64) : HolProg 64) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_29_64_0
-example : callArgs (.inst (.fp (.fpLessEqual 1 99 100):HolInst 64) : HolProg 64) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_29_64_1
-example : callArgs (.inst (.fp (.fpLessEqual 1 99 100):HolInst 64) : HolProg 64) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_30_64_0
-example : callArgs (.inst (.fp (.fpEqual 1 99 100):HolInst 64) : HolProg 64) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_30_64_1
-example : callArgs (.inst (.fp (.fpEqual 1 99 100):HolInst 64) : HolProg 64) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_31_64_0
-example : callArgs (.inst (.fp (.fpAbs 100 100):HolInst 64) : HolProg 64) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_31_64_1
-example : callArgs (.inst (.fp (.fpAbs 100 100):HolInst 64) : HolProg 64) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_32_64_0
-example : callArgs (.inst (.fp (.fpNeg 100 100):HolInst 64) : HolProg 64) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_32_64_1
-example : callArgs (.inst (.fp (.fpNeg 100 100):HolInst 64) : HolProg 64) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_33_64_0
-example : callArgs (.inst (.fp (.fpSqrt 100 100):HolInst 64) : HolProg 64) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_33_64_1
-example : callArgs (.inst (.fp (.fpSqrt 100 100):HolInst 64) : HolProg 64) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_34_64_0
-example : callArgs (.inst (.fp (.fpAdd 100 100 100):HolInst 64) : HolProg 64) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_34_64_1
-example : callArgs (.inst (.fp (.fpAdd 100 100 100):HolInst 64) : HolProg 64) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_35_64_0
-example : callArgs (.inst (.fp (.fpSub 100 100 100):HolInst 64) : HolProg 64) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_35_64_1
-example : callArgs (.inst (.fp (.fpSub 100 100 100):HolInst 64) : HolProg 64) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_36_64_0
-example : callArgs (.inst (.fp (.fpMul 100 100 100):HolInst 64) : HolProg 64) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_36_64_1
-example : callArgs (.inst (.fp (.fpMul 100 100 100):HolInst 64) : HolProg 64) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_37_64_0
-example : callArgs (.inst (.fp (.fpDiv 100 100 100):HolInst 64) : HolProg 64) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_37_64_1
-example : callArgs (.inst (.fp (.fpDiv 100 100 100):HolInst 64) : HolProg 64) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_38_64_0
-example : callArgs (.inst (.fp (.fpFma 100 100 100):HolInst 64) : HolProg 64) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_38_64_1
-example : callArgs (.inst (.fp (.fpFma 100 100 100):HolInst 64) : HolProg 64) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_39_64_0
-example : callArgs (.inst (.fp (.fpMov 100 100):HolInst 64) : HolProg 64) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_39_64_1
-example : callArgs (.inst (.fp (.fpMov 100 100):HolInst 64) : HolProg 64) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_40_64_0
-example : callArgs (.inst (.fp (.fpToInt 100 100):HolInst 64) : HolProg 64) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_40_64_1
-example : callArgs (.inst (.fp (.fpToInt 100 100):HolInst 64) : HolProg 64) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_41_64_0
-example : callArgs (.inst (.fp (.fpFromInt 100 100):HolInst 64) : HolProg 64) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_41_64_1
-example : callArgs (.inst (.fp (.fpFromInt 100 100):HolInst 64) : HolProg 64) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_42_64_0
-example : callArgs (.inst (.fp (.fpMovToReg 1 2 100):HolInst 64) : HolProg 64) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_42_64_1
-example : callArgs (.inst (.fp (.fpMovToReg 1 2 100):HolInst 64) : HolProg 64) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_43_64_0
-example : callArgs (.inst (.fp (.fpMovFromReg 100 1 2):HolInst 64) : HolProg 64) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_43_64_1
-example : callArgs (.inst (.fp (.fpMovFromReg 100 1 2):HolInst 64) : HolProg 64) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_prog_44_64_0
 example : callArgs (.skip:HolProg 64) 1 2 3 4 0 := by
@@ -1383,132 +1319,100 @@ example : callArgs (.inst (.arith (.subOverflow 1 2 3 4):HolInst 80) : HolProg 8
   simp [callArgs]
 
 -- rca_pred_inst_28_80_0
-example : callArgs (.inst (.fp (.fpLess 1 99 100):HolInst 80) : HolProg 80) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_28_80_1
-example : callArgs (.inst (.fp (.fpLess 1 99 100):HolInst 80) : HolProg 80) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_29_80_0
-example : callArgs (.inst (.fp (.fpLessEqual 1 99 100):HolInst 80) : HolProg 80) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_29_80_1
-example : callArgs (.inst (.fp (.fpLessEqual 1 99 100):HolInst 80) : HolProg 80) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_30_80_0
-example : callArgs (.inst (.fp (.fpEqual 1 99 100):HolInst 80) : HolProg 80) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_30_80_1
-example : callArgs (.inst (.fp (.fpEqual 1 99 100):HolInst 80) : HolProg 80) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_31_80_0
-example : callArgs (.inst (.fp (.fpAbs 100 100):HolInst 80) : HolProg 80) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_31_80_1
-example : callArgs (.inst (.fp (.fpAbs 100 100):HolInst 80) : HolProg 80) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_32_80_0
-example : callArgs (.inst (.fp (.fpNeg 100 100):HolInst 80) : HolProg 80) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_32_80_1
-example : callArgs (.inst (.fp (.fpNeg 100 100):HolInst 80) : HolProg 80) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_33_80_0
-example : callArgs (.inst (.fp (.fpSqrt 100 100):HolInst 80) : HolProg 80) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_33_80_1
-example : callArgs (.inst (.fp (.fpSqrt 100 100):HolInst 80) : HolProg 80) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_34_80_0
-example : callArgs (.inst (.fp (.fpAdd 100 100 100):HolInst 80) : HolProg 80) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_34_80_1
-example : callArgs (.inst (.fp (.fpAdd 100 100 100):HolInst 80) : HolProg 80) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_35_80_0
-example : callArgs (.inst (.fp (.fpSub 100 100 100):HolInst 80) : HolProg 80) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_35_80_1
-example : callArgs (.inst (.fp (.fpSub 100 100 100):HolInst 80) : HolProg 80) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_36_80_0
-example : callArgs (.inst (.fp (.fpMul 100 100 100):HolInst 80) : HolProg 80) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_36_80_1
-example : callArgs (.inst (.fp (.fpMul 100 100 100):HolInst 80) : HolProg 80) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_37_80_0
-example : callArgs (.inst (.fp (.fpDiv 100 100 100):HolInst 80) : HolProg 80) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_37_80_1
-example : callArgs (.inst (.fp (.fpDiv 100 100 100):HolInst 80) : HolProg 80) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_38_80_0
-example : callArgs (.inst (.fp (.fpFma 100 100 100):HolInst 80) : HolProg 80) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_38_80_1
-example : callArgs (.inst (.fp (.fpFma 100 100 100):HolInst 80) : HolProg 80) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_39_80_0
-example : callArgs (.inst (.fp (.fpMov 100 100):HolInst 80) : HolProg 80) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_39_80_1
-example : callArgs (.inst (.fp (.fpMov 100 100):HolInst 80) : HolProg 80) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_40_80_0
-example : callArgs (.inst (.fp (.fpToInt 100 100):HolInst 80) : HolProg 80) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_40_80_1
-example : callArgs (.inst (.fp (.fpToInt 100 100):HolInst 80) : HolProg 80) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_41_80_0
-example : callArgs (.inst (.fp (.fpFromInt 100 100):HolInst 80) : HolProg 80) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_41_80_1
-example : callArgs (.inst (.fp (.fpFromInt 100 100):HolInst 80) : HolProg 80) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_42_80_0
-example : callArgs (.inst (.fp (.fpMovToReg 1 2 100):HolInst 80) : HolProg 80) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_42_80_1
-example : callArgs (.inst (.fp (.fpMovToReg 1 2 100):HolInst 80) : HolProg 80) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_43_80_0
-example : callArgs (.inst (.fp (.fpMovFromReg 100 1 2):HolInst 80) : HolProg 80) 1 2 3 4 0 := by
-  simp [callArgs]
+
 
 -- rca_pred_inst_43_80_1
-example : callArgs (.inst (.fp (.fpMovFromReg 100 1 2):HolInst 80) : HolProg 80) 7 8 9 10 11 := by
-  simp [callArgs]
+
 
 -- rca_pred_prog_44_80_0
 example : callArgs (.skip:HolProg 80) 1 2 3 4 0 := by

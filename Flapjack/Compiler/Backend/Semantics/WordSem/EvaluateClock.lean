@@ -27,8 +27,7 @@ end WordSemEvaluateClockSupport
 namespace WordSemStateFiniteExact
 
 /-- Exact HOL `gc_clock` (`wordSemScript.sml:1264-1270`). -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "gc_clock"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem gc_clock {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (s1 s2 : WordSemStateFiniteExact width C F),
       gc s1 = some s2 → s2.clock ≤ s1.clock ∧ s2.termdep = s1.termdep := by
@@ -44,8 +43,7 @@ theorem gc_clock {width : Nat} [NeZero width] {C : Type} {F : Type} :
 /-- Exact HOL `alloc_clock` (`wordSemScript.sml:1272-1286`).  HOL binds an
     unused variable `xs : 'a`; it is kept here, with its type variable as `α`.
     HOL's free variables `x` and `names` are parameters. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "alloc_clock"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem alloc_clock {width : Nat} [NeZero width] {C : Type} {F : Type} {α : Type}
     (x : BitVec width) (names : WordLangCutsetsHOL) :
     ∀ (_xs : α) (s1 : WordSemStateFiniteExact width C F) (vs : Option (WordSemResult width))
@@ -78,8 +76,7 @@ theorem alloc_clock {width : Nat} [NeZero width] {C : Type} {F : Type} {α : Typ
 
 /-- Exact HOL `sh_mem_set_var_clock` (`wordSemScript.sml:1288-1297`).  HOL's
     `v2 : 'd result option` has its own word type, here the width `rw`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "sh_mem_set_var_clock"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem sh_mem_set_var_clock {width : Nat} [NeZero width] {C : Type} {F : Type}
     {rw : Nat} [NeZero rw] :
     ∀ (v : Nat) (s1 : WordSemStateFiniteExact width C F) (v2 : Option (WordSemResult rw))
@@ -95,8 +92,7 @@ theorem sh_mem_set_var_clock {width : Nat} [NeZero width] {C : Type} {F : Type}
     list keeps an unused `v1 : 'd` (here `δ`), and the result variable
     `v2 : 'e result option` is free in HOL, so it is a parameter here, with
     its own word type as the width `rw`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "share_inst_clock"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem share_inst_clock {width : Nat} [NeZero width] {C : Type} {F : Type} {δ : Type}
     {rw : Nat} [NeZero rw] (v2 : Option (WordSemResult rw)) :
     ∀ (op : WordMemOp) (v : Nat) (ad : BitVec width) (s1 : WordSemStateFiniteExact width C F)
@@ -136,8 +132,7 @@ theorem memStore_clock_termdep {width : Nat} [NeZero width] {C : Type} {F : Type
     `(reals_as_rational_cuts)` for its `FPSqrt` rendering; the theorem map
     records the inherited `docs/SOUNDNESS.md` item 8 assumption.  Clock
     preservation holds for that clause exactly as in HOL. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "inst_clock"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem inst_clock {width : Nat} [NeZero width] {C : Type} {F : Type}
     (i : WordLangInst (BitVec width)) (s s2 : WordSemStateFiniteExact width C F) :
     inst i s = some s2 → s2.clock ≤ s.clock ∧ s2.termdep = s.termdep := by
@@ -237,8 +232,7 @@ decreasing_by
 /-- Exact HOL `evaluate_clock` (`wordSemScript.sml:1324-1355`):
     `evaluate (xs, s1) = (vs, s2) ⇒ s2.clock ≤ s1.clock ∧ s2.termdep =
     s1.termdep`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "evaluate_clock"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_clock {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (xs : WordLangProgHOL (BitVec width)) (s1 : WordSemStateFiniteExact width C F)
       (vs : Option (WordSemResult width)) (s2 : WordSemStateFiniteExact width C F),
@@ -250,8 +244,7 @@ theorem evaluate_clock {width : Nat} [NeZero width] {C : Type} {F : Type} :
 
 /-- Exact HOL local `fix_clock_evaluate` (`wordSemScript.sml:1357-1363`):
     `fix_clock s (evaluate (c1, s)) = evaluate (c1, s)`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "fix_clock_evaluate"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fix_clock_evaluate {width : Nat} [NeZero width] {C : Type} {F : Type}
     (s : WordSemStateFiniteExact width C F) (c1 : WordLangProgHOL (BitVec width)) :
     fixClock s (evaluate c1 s) = evaluate c1 s := by

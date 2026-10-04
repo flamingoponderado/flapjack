@@ -76,9 +76,7 @@ end SemanticMoveWitnesses
 Error-exempt source permutation, target execution, frame, and locals conclusion
 are retained. The evaluator's duplicate-destination and missing-read branches
 remain present. Inherits reals_as_rational_cuts through the evaluator (SOUNDNESS8). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_correct"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransCorrectMove {width : Nat} [NeZero width] {C F : Type}
     (source target : WordSemStateFiniteExact width C F)
     (ssa : Spt Nat) (next priority : Nat) (moves : List (Nat × Nat))

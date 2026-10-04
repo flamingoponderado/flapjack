@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegisterZero
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterTwo
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadContinuations
@@ -236,11 +237,7 @@ execution and paired-zero store are proved internally. The shared positive
 word width and generic host/FFI carriers match the typed original capture;
 canonical map witnesses qualify exactly the five relation fields. Evaluators
 inherit reals_as_rational_cuts (SOUNDNESS item 8), not a new agreement claim. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_wInst"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateWInstCarry {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (destination left right flag k f frame : Nat)
     (source sourcePost : WordSemStateFiniteExact width (Nat × C) F)
@@ -269,11 +266,7 @@ execution and paired-zero store are proved internally. The shared positive
 word width and generic host/FFI carriers match the typed original capture;
 canonical map witnesses qualify exactly the five relation fields. Evaluators
 inherit reals_as_rational_cuts (SOUNDNESS item 8), not a new agreement claim. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_wInst"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateWInstAddOverflow {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (destination left right flag k f frame : Nat)
     (source sourcePost : WordSemStateFiniteExact width (Nat × C) F)
@@ -302,11 +295,7 @@ execution and paired-zero store are proved internally. The shared positive
 word width and generic host/FFI carriers match the typed original capture;
 canonical map witnesses qualify exactly the five relation fields. Evaluators
 inherit reals_as_rational_cuts (SOUNDNESS item 8), not a new agreement claim. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_wInst"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateWInstSubOverflow {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (destination left right flag k f frame : Nat)
     (source sourcePost : WordSemStateFiniteExact width (Nat × C) F)

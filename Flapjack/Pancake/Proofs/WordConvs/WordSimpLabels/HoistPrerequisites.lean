@@ -5,8 +5,7 @@ namespace Flapjack.WordConvs
 open Flapjack.Compiler.Backend.WordSimp
 
 /-- Original local Seq equation selected from the native constant-folding definition. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "const_fp_loop_Seq"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem constFpLoopSeq {width : Nat} [NeZero width]
     (first second : WordLangProgHOL (BitVec width)) (cs : Spt (BitVec width)) :
     constFpLoop (.seq first second) cs =
@@ -16,8 +15,7 @@ theorem constFpLoopSeq {width : Nat} [NeZero width]
   rw [constFpLoop]
 
 /-- Original full conditional destructor equivalence. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "dest_If_thm"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem destIfIff {width : Nat} [NeZero width]
     (program : WordLangProgHOL (BitVec width)) (cmp : Cmp) (lhs : Nat)
     (rhs : WordRegImm (BitVec width)) (first second : WordLangProgHOL (BitVec width)) :
@@ -27,8 +25,7 @@ theorem destIfIff {width : Nat} [NeZero width]
 
 /-- Full original dummy strategy disjunction, including its universal arbitrary
 branch equations. It proves the strategy from the actual map lookups. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "const_fp_loop_dummy_cases"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem constFpLoopDummyCases {width : Nat} [NeZero width]
     (cmp : Cmp) (lhs : Nat) (rhs : WordRegImm (BitVec width))
     (cs csPost : Spt (BitVec width)) (programPost : WordLangProgHOL (BitVec width))

@@ -4,9 +4,13 @@
 
 Mathlib is a pinned proof dependency. Run `lake exe cache get` after dependency
 updates to fetch its compiled cache; CI explicitly enables the same command via
-Lean Action's `use-mathlib-cache` input. Keep the real-sqrt agreement module
-reachable from the umbrella build. The compiler executable does not depend on
-Mathlib's real-analysis modules.
+Lean Action's `use-mathlib-cache` input. The persistent `main` branch follows
+the HOL original. The persistent `riscv-mi` branch restricts source,
+intermediate, and target instructions to the integer features of the read-only
+`riscv-zkvm` reference. Floating-point modules, including the real-sqrt agreement
+module, are intentionally absent from this branch's umbrella build. Keep
+required build, test, warning, and HOL-reference checks enabled; restricted
+carriers and dependent declarations must not be tagged as exact HOL ports.
 
 For a one-off check of a Lean source file, prefer `lake lean path/to/File.lean`
 over `lake env lean path/to/File.lean`. `lake lean` builds the file's imports

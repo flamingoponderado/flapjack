@@ -5,8 +5,7 @@ open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm
 open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabFilter
 open Flapjack.Compiler.Backend.LabToTarget.FilterSkip
 
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "next_label_filter_skip"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem nextLabelFilterSkip {width : Nat} {resultWidth : Nat} [NeZero width] [NeZero resultWidth]
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString)
@@ -23,8 +22,7 @@ theorem nextLabelFilterSkip {width : Nat} {resultWidth : Nat} [NeZero width] [Ne
       · cases line <;> simp_all [nextLabel, filterSkip]
       · cases line <;> simp_all [nextLabel, filterSkip, notSkip]
 
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "all_skips_get_lab_after"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem allSkipsGetLabAfter {width : Nat} {resultWidth : Nat} [NeZero width] [NeZero resultWidth]
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString)
@@ -69,8 +67,7 @@ theorem allSkipsGetLabAfter {width : Nat} {resultWidth : Nat} [NeZero width] [Ne
 private theorem adjustPcZero {width : Nat} [NeZero width] (code : LabProgHOL width) :
     adjustPc 0 code = 0 := by rw [adjustPc.eq_def]; simp
 
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "get_lab_after_adjust"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getLabAfterAdjust {width : Nat} {resultWidth : Nat} [NeZero width] [NeZero resultWidth] (pc : Nat)
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString)

@@ -14,12 +14,6 @@ example : maxVarHOL (width := 64) (.move 99 [(3,17),(23,5)]) = 23 := by cbv
 example : maxVarHOL (width := 64) (.move 99 []) = 0 := by cbv
 
 -- mv_inst64
-example : maxVarHOL (width := 64) (.inst (.fp (.fpMovToReg 3 17 99))) = 3 := by cbv
-
--- mv_inst32
-example : maxVarHOL (width := 32) (.inst (.fp (.fpMovToReg 3 17 99))) = 17 := by cbv
-
--- mv_assign
 example : maxVarHOL (width := 64) (.assign 11 (.load (.var 17))) = 17 := by cbv
 
 -- mv_get

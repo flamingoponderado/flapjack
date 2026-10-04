@@ -9,8 +9,7 @@ open Flapjack.Compiler.Encoders.Asm
 /-- Complete local HOL flatten validity theorem over the native carrier.
 All subprogram induction hypotheses are discharged by well-founded recursion;
 the public premises and EVERY conclusion are exactly the original statement. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "flatten_line_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flattenLineOkPreHOL {width : Nat} [NeZero width]
     (tail : Bool) (program : HolProg width) (sectionId next : Nat)
     (conts breaks : List Nat) (lines : AppList (LabLineHOL width))
@@ -129,8 +128,7 @@ decreasing_by
 zero byte-offset validity establish every emitted section's line precheck.
 This precheck deliberately preserves HOL's acceptance of all LabAsm lines;
 it is not the stronger all_enc_ok target-encoder theorem. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "compile_all_enc_ok_pre"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileAllEncOkPreHOL {width : Nat} [NeZero width]
     (config : AsmConfigExact width) (programs : List (Nat × HolProg width))
     (zero : asmByteOffsetOkExact config 0 = true)

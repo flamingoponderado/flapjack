@@ -31,10 +31,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 Arbitrary formatted moves, target states and frame tuples, including failures
 and every result, are retained. Inherited reals_as_rational_cuts applies only
 to the evaluator closure; no new FP correspondence is claimed. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "wMoveAux_thm"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs,StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wMoveAuxThm {width : Nat} [NeZero width] {C F : Type}
     (move : Sum Nat Nat × Sum Nat Nat) (moves : List (Sum Nat Nat × Sum Nat Nat))
     (frame : Nat × Nat × Nat) (target : StackSemStateFiniteExact width C F) :

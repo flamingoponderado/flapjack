@@ -29,8 +29,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C : Type} {F
 end CodeRelCarrier
 
 /-- HOL `rm_perm` (`word_to_wordProofScript.sml:159-163`). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "rm_perm"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem rm_perm {width : Nat} [NeZero width] {C F : Type} (s : WordSemStateFiniteExact width C F) :
     ({ s with permute := s.permute } : WordSemStateFiniteExact width C F) = s := rfl
 
@@ -44,8 +43,7 @@ theorem compileSingle_arity {width : Nat} [NeZero width] (t : Bool) (k a : Nat)
     `st.code` and `st.stack_size` of the state occur. Argument words have an
     independent positive dimension; the three ignored return metadata fields
     retain their independent arbitrary HOL types. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "find_code_thm"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem find_code_thm {width : Nat} [NeZero width]
     {argWidth : Nat} [NeZero argWidth]
     {ReturnValue ReturnNames ReturnHandler : Type} {C F : Type}
@@ -106,8 +104,7 @@ theorem find_code_thm {width : Nat} [NeZero width]
       · simp at hfind
 
 /-- HOL `pop_env_termdep` (`word_to_wordProofScript.sml:191-195`). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "pop_env_termdep"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem pop_env_termdep {width : Nat} [NeZero width] {C F : Type}
     (rst x : WordSemStateFiniteExact width C F) (h : popEnv rst = some x) :
     x.termdep = rst.termdep := by
@@ -116,8 +113,7 @@ theorem pop_env_termdep {width : Nat} [NeZero width] {C F : Type}
 
 /-- Exact HOL `code_rel_def` (`word_to_wordProofScript.sml:198-203`): every
     source code entry is compiled by some `compile_single` instance. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "code_rel_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def codeRel {width : Nat} [NeZero width] (stc ttc : Spt (Nat × WordLangProgHOL (BitVec width))) :
     Prop :=
   ∀ n v, sptLookup n stc = some v →
@@ -125,8 +121,7 @@ def codeRel {width : Nat} [NeZero width] (stc ttc : Spt (Nat × WordLangProgHOL 
       sptLookup n ttc = some (compileSingle t k a c ((n, v), col)).2
 
 /-- HOL `compile_single_eta` (`word_to_wordProofScript.sml:205-210`). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_single_eta"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compile_single_eta {width : Nat} [NeZero width] (t : Bool) (k a : Nat)
     (c : AsmConfigExact width) (p : Nat) (x : Nat × WordLangProgHOL (BitVec width))
     (y : Option (Spt Nat)) :
@@ -153,8 +148,7 @@ theorem alistLookup_map_compileSingle {width : Nat} [NeZero width] (t : Bool) (k
 
 /-- HOL `code_rel_union_fromAList` (`word_to_wordProofScript.sml:213-233`);
     HOL's free `t k a c` are the leading binders. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "code_rel_union_fromAList"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem code_rel_union_fromAList {width : Nat} [NeZero width] (t : Bool) (k a : Nat)
     (c : AsmConfigExact width) :
     ∀ (s l : Spt (Nat × WordLangProgHOL (BitVec width)))

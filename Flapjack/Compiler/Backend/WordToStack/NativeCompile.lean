@@ -36,8 +36,7 @@ def storeNameOfWord : WordStoreHOL → StoreName
 /-- Complete literal source traversal. Both recursive continuations and all
 bitmap components are compiled in source order. The exact assembler config
 and word dimension are retained; production routing and correctness remain open. -/
-@[hol "cakeml/compiler/backend/word_to_stackScript.sml" "comp_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def compNative {width : Nat} [NeZero width] (conf : AsmConfigExact width)
     (perf : Bool) (program : WordLangProgHOL (BitVec width))
     (bs : AppList (BitVec width) × Nat) (kf : Nat × Nat × Nat) :

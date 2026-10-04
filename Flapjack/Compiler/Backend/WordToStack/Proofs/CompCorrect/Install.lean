@@ -282,11 +282,7 @@ All original premises and the complete target clock/run/result/resource
 conclusion are retained; the target run, the oracle/compiler agreement on the
 installed programs and the post-state relation are derived. Evaluator closure
 inherits reals_as_rational_cuts; no numerical FP assertion. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_correct" 5756
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectInstall {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (ptr len dptr dlen : Nat) (names : WordLangCutsetsHOL)
     (source : WordSemStateFiniteExact width (Nat × C) F) :

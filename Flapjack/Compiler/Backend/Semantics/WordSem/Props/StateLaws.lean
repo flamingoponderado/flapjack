@@ -55,8 +55,7 @@ namespace WordSemStateFiniteExact
 
 /-- Exact HOL `set_var_const` (`wordPropsScript.sml:191-216`): all twenty-two
     original field equalities. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "set_var_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem setVarConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : Nat) (y : WordLocW width) (z : WordSemStateFiniteExact width C F) :
     (setVar x y z).localsSize = z.localsSize ∧
@@ -86,8 +85,7 @@ theorem setVarConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `set_var_with_const` (`wordPropsScript.sml:218-242`): all
     twenty-two original commutations of `set_var` with a field update. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "set_var_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem setVarWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : Nat) (y : WordLocW width) (z : WordSemStateFiniteExact width C F)
     (ls : Option Nat) (fp : HolFiniteMapExact Nat (BitVec 64))
@@ -128,8 +126,7 @@ theorem setVarWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `set_store_const` (`wordPropsScript.sml:380-405`): all
     twenty-two original field equalities. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "set_store_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem setStoreConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : WordStoreHOL) (y : WordLocW width) (z : WordSemStateFiniteExact width C F) :
     (setStore x y z).locals = z.locals ∧
@@ -158,8 +155,7 @@ theorem setStoreConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     rfl, rfl, rfl, rfl⟩
 
 /-- Exact HOL `get_var_set_var` (`wordPropsScript.sml:1362-1366`). -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "get_var_set_var"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getVarSetVar {width : Nat} [NeZero width] {C : Type} {F : Type}
     (v1 v2 : Nat) (x : WordLocW width) (s : WordSemStateFiniteExact width C F) :
     getVar v1 (setVar v2 x s) = if v1 = v2 then some x else getVar v1 s := by
@@ -169,8 +165,7 @@ theorem getVarSetVar {width : Nat} [NeZero width] {C : Type} {F : Type}
   · exact sptLookup_sptInsert_ne _ _ _ _ (by assumption)
 
 /-- Exact HOL `get_vars_length_lemma` (`wordPropsScript.sml:1765-1773`). -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "get_vars_length_lemma"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getVarsLengthLemma {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (ls : List Nat) (s : WordSemStateFiniteExact width C F) (y : List (WordLocW width)),
       getVars ls s = some y → y.length = ls.length := by

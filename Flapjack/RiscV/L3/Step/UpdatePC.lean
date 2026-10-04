@@ -4,7 +4,6 @@ import Flapjack.RiscV.L3.Defs.WritePC
 namespace Flapjack.RiscV.L3.Step
 open Flapjack.RiscV.L3
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "update_pc_def"]
 def update_pc (v : (BitVec 64)) (s : riscv_state) : (Option riscv_state) :=
   (some («write'PC» v s))
 
@@ -14,7 +13,6 @@ theorem updatePC_some (v : BitVec 64) (s : riscv_state) :
 
 /-- Flapjack full-record regression derived from both source definitions, without
 core bounds, successful-run premises or narrowed state. -/
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "update_pc"]
 theorem updatePC_fullRecord (v : BitVec 64) (s : riscv_state) :
     update_pc v s = some { s with c_PC := holUpdate s.procID v s.c_PC } := rfl
 

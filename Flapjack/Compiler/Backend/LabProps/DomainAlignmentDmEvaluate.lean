@@ -68,8 +68,7 @@ private theorem bytearrayWriteDomain {width : Nat} [NeZero width] (hw : goodDimi
   | nil => rfl
   | cons b bs ih => simp only [writeBytearrayExact,ih,byteStoreDomain hw]
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "evaluate_align_dm"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateAlignDM {width : Nat} [NeZero width] {C F : Type} :
     goodDimindex width → ∀ (s : Flapjack.Compiler.Backend.LabSem.State width C F),
     evaluate (alignDm s) = let (r,next) := evaluate s; (r,alignDm next) := by
@@ -125,8 +124,7 @@ private theorem semanticsProjection {width : Nat} [NeZero width] {C F : Type}
     simp only [evaluateClock hw]
     simp [alignDm, Prod.ext_iff, and_assoc]
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "implements_align_dm"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem implementsAlignDM {width : Nat} [NeZero width] {C F : Type}
     (s : Flapjack.Compiler.Backend.LabSem.State width C F) :
     goodDimindex width → Flapjack.SemanticsPropsHOL.implementsPrimeHOL true

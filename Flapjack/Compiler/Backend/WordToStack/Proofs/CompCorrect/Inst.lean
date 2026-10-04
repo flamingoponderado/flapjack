@@ -28,7 +28,7 @@ convention of its native carrier (Flapjack codec transport, no HOL original). -/
 private theorem instArgConvention_ofWordLangInst {width : Nat} [NeZero width]
     (i : WordLangInst (BitVec width)) :
     instArgConvention i = instArgConventionExact (HolInst.ofWordLangInst i) := by
-  rcases i with _ | ⟨_, _⟩ | ⟨a⟩ | ⟨_, _, _⟩ | ⟨_⟩
+  rcases i with _ | ⟨_, _⟩ | ⟨a⟩ | ⟨_, _, _⟩
   all_goals try rfl
   rcases a with ⟨_, _, _, ri⟩ | ⟨_, _, _, ri⟩ | _ | _ | _ | _ | _ | _
   all_goals try rfl
@@ -43,11 +43,7 @@ max_var_inst bound, and the full original evaluate_wInst supplies the target
 run with ck = 0. The source WordLangInst is compiled through the reviewed
 HolInst codec. Canonical maps and word widths are qualified; the evaluators
 inherit reals_as_rational_cuts (SOUNDNESS item 8). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_correct" 5756
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectInst {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (i : WordLangInst (BitVec width))
     (source : WordSemStateFiniteExact width (Nat × C) F) :

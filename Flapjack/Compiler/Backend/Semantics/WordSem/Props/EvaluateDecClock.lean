@@ -444,8 +444,7 @@ end DecClock
       evaluate(prog,st with clock:=st.clock-rst.clock) = (res,rst with clock:=0)
     ```
 -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_dec_clock"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_dec_clock {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (prog : WordLangProgHOL (BitVec width)) (st : WordSemStateFiniteExact width C F)
       (res : Option (WordSemResult width)) (rst : WordSemStateFiniteExact width C F),

@@ -27,7 +27,7 @@ inductive AstT where
   deriving Repr
 
 /-- Complete original `pat` (astScript 172-184). -/
-@[hol "cakeml/semantics/astScript.sml" "pat"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 inductive Pat where
   | pany
   | pvar : VarN → Pat
@@ -39,7 +39,7 @@ inductive Pat where
   deriving Repr
 
 /-- Complete original `exp` (astScript 192-222). -/
-@[hol "cakeml/semantics/astScript.sml" "exp"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 inductive Exp where
   | raise : Exp → Exp
   | handle : Exp → List (Pat × Exp) → Exp
@@ -63,7 +63,7 @@ inductive Exp where
 abbrev TypeDef := List (List TvarN × TypeN × List (ConN × List AstT))
 
 /-- Complete original `dec` (astScript 227-249). -/
-@[hol "cakeml/semantics/astScript.sml" "dec"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 inductive Dec where
   | dlet : Locs → Pat → Exp → Dec
   | dletrec : Locs → List (VarN × VarN × Exp) → Dec
@@ -77,7 +77,7 @@ inductive Dec where
 
 mutual
 /-- Exact HOL `pat_bindings_def` (astScript 252-262), first conjunct group. -/
-@[hol "cakeml/semantics/astScript.sml" "pat_bindings_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def patBindings : Pat → List VarN
   | .pany => []
   | .pvar n => [n]
@@ -88,7 +88,7 @@ def patBindings : Pat → List VarN
   | .ptannot p _ => patBindings p
 
 /-- The mutual `pats_bindings` clauses of HOL `pat_bindings_def`. -/
-@[hol "cakeml/semantics/astScript.sml" "pat_bindings_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def patsBindings : List Pat → List VarN
   | [] => []
   | p :: ps => patsBindings ps ++ patBindings p

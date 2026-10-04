@@ -1,3 +1,4 @@
+import Mathlib.Data.Nat.Basic
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GcMoveList
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.GcBitmaps
 
@@ -85,7 +86,7 @@ theorem gcMoveLoop_body_skip {width : Nat} [NeZero width] {C F : Type} (conf : C
       rw [and_four_eq_zero_iff x hw2]; simp [hbit]
     have ha : ¬ AndOp.and x (4#width) = 0#width := this
     simpa using ha
-  rw [evaluate_seq_none _ _ _ _ (loadInst_eval S 7 8 pb h8 hdm) le_rfl, evaluate_ite]
+  rw [evaluate_seq_none _ _ _ _ (loadInst_eval S 7 8 pb h8 hdm) (by simp only [setVar]; exact Nat.le_refl _), evaluate_ite]
   simp [getVar, StackSemStateOps.getVarImm, HolRegImm.toWordRegImm, wordSemWordCmp,
     wordCmpHOL, evaluate_seq, evaluate_inst, add1Inst, addInst, rightShiftInst, leftShiftInst,
     StackSemInst.instHOL, StackSemIntegerInstructions.instInteger, StackSemExpressions.assign,
@@ -126,7 +127,7 @@ theorem gcMoveLoop_body_list {width : Nat} [NeZero width] {C F : Type} (conf : C
     have : x &&& 4#width = 0#width := (and_four_eq_zero_iff x hw2).2 hbit
     have ha : AndOp.and x (4#width) = 0#width := this
     simpa using ha
-  rw [evaluate_seq_none _ _ _ _ (loadInst_eval S 7 8 pb h8 hdm) le_rfl, evaluate_ite]
+  rw [evaluate_seq_none _ _ _ _ (loadInst_eval S 7 8 pb h8 hdm) (by simp only [setVar]; exact Nat.le_refl _), evaluate_ite]
   simp [getVar, StackSemStateOps.getVarImm, HolRegImm.toWordRegImm, wordSemWordCmp,
     wordCmpHOL, evaluate_seq, evaluate_inst, addBytesInWordInst, rightShiftInst,
     StackSemInst.instHOL, StackSemIntegerInstructions.instInteger, StackSemExpressions.assign,
@@ -359,8 +360,7 @@ is implicit. `FLOOKUP s.store CurrHeap`, `k IN FDOM s.regs`, `|++` and `get_var`
 are the canonical carrier's lookups, `updateListEq` and `getVar`; the
 existentials `ck r0 r1 r2 r5 r6 r7` are kept. HOL's `conf.len_size + 2 <
 dimindex` premise is retained although this proof does not use it. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "word_gc_move_loop_code_thm"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_gc_move_loop_code_thm {width : Nat} [NeZero width] {C F : Type} {conf : Config} :
     ∀ (k : Nat) (pb1 i1 pa1 old1 : BitVec width) (m1 : BitVec width → WordLocW width)
       (dm1 : BitVec width → Bool) (c1 : Bool) (i2 pa2 : BitVec width)

@@ -17,8 +17,6 @@ state relation are premises; all fetch, alignment and intermediate relations
 are derived. The complete existential/all-environments/both-assertions result
 includes code bytes, PC membership, final state relation and memory frame.
 Inherits reals_as_rational_cuts from the native state (SOUNDNESS section 8). -/
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml"
-  "riscv_encoder_correct"]
 theorem riscv_encoder_correct_jumpCmp (c : Cmp) (r : Nat) (right : HolRegImm 64)
     (a : BitVec 64) (s1 s2 : AsmState 64) (ms : riscv_state)
     (h : asmStep riscvTarget.config s1 (.jumpCmp c r right a) s2 ∧

@@ -23,8 +23,6 @@ private theorem instConvention_colour {width : Nat} [NeZero width]
   | mem op r addr =>
       cases op <;> cases addr <;>
         simp [instArgConvention, applyColourInst, applyColourInstCore]
-  | fp op =>
-      cases op <;> simp [instArgConvention, applyColourInst, applyColourInstCore]
   | arith a =>
       cases a with
       | binop op r1 r2 ri =>
@@ -60,8 +58,6 @@ private theorem canonicalList_colour (f : Nat → Nat) (xs : List Nat) (offset :
 /-- Original two-premise theorem. Physical-register fixation is required only
 at source occurrences; no global fixation or target convention is assumed.
 The positive-width native instruction clauses coincide with the HOL clauses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "call_arg_convention_preservation" (words_as_type_indexed_bitvec)]
 theorem callArgConvention_preservation {width : Nat} [NeZero width]
     (prog : WordLangProgHOL (BitVec width)) (f : Nat → Nat) :
     everyVarHOL (fun x => !isPhyVar x || (f x == x)) prog = true ∧

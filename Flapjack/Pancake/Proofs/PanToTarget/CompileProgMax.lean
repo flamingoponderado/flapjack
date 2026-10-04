@@ -35,8 +35,7 @@ registered probe replays the literal full source definition in a separate HOL
 theory with all original pass dependencies loaded. Its complete inferred type
 and equation are explicitly local source replays, not exported-theory captures
 or a cross-language equivalence proof. -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "compile_prog_max_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def compileProgMax {width : Nat} [NeZero width]
     {State Projection : Type}
     (config : Flapjack.Compiler.Backend.Backend.Config)

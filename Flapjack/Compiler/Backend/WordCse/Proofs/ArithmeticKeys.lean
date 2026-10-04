@@ -133,9 +133,7 @@ codecs only translate corresponding constructors. The state retains the reviewed
 finite-support `fpRegs`/`store` representation and positive-width words. The
 faithful evaluator inherits the IEEE rational-cut assumption (SOUNDNESS item 8);
 this theorem adds no further evaluation, state, or operand hypothesis. -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "arith_keys_eq"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem arithKeysEq {width : Nat} [NeZero width] {C : Type} {F : Type}
     (a1 a2 : HolArith width)
     (h : canMemArith a1 = true ∧ arithToNumList a1 = arithToNumList a2) :

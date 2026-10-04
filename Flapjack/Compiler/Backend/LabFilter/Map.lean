@@ -6,8 +6,7 @@ open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm
 /-- Full original map characterization of skip filtering. The original full
 HOL type is `alpha sec list`; its line/section syntax uses the native word
 carrier, as confirmed together with both direct definitions. -/
-@[hol "cakeml/compiler/backend/lab_filterScript.sml" "filter_skip_MAP"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem filterSkipMap {width : Nat} [NeZero width]
     (program : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString)

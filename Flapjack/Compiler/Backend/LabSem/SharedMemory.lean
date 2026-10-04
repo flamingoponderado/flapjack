@@ -18,8 +18,7 @@ def sharedMemoryWordBytes {width : Nat} (value : BitVec width) : List (BitVec 8)
 /-- Whole-word requests require word alignment and the exact address in the
 shared domain; narrow requests require only its byte-aligned base in that
 domain. A returning load decodes every returned byte, irrespective of size. -/
-@[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "share_mem_load_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def shareMemLoad {width : Nat} [NeZero width] {C F : Type}
     (register : Nat) (address : HolAddr width)
     (state : Flapjack.Compiler.Backend.LabSem.State width C F) (size : Nat) :
@@ -45,8 +44,7 @@ def shareMemLoad {width : Nat} [NeZero width] {C F : Type}
 /-- Stores send the requested prefix of the value bytes followed by the full
 address bytes. Final outcomes preserve the original state; returns advance
 the PC and decrement the clock after replacing only the FFI state. -/
-@[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "share_mem_store_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def shareMemStore {width : Nat} [NeZero width] {C F : Type}
     (register : Nat) (address : HolAddr width)
     (state : Flapjack.Compiler.Backend.LabSem.State width C F) (size : Nat) :
@@ -68,8 +66,7 @@ def shareMemStore {width : Nat} [NeZero width] {C F : Type}
             | .ret ffi bytes => some (.ret ffi bytes, incPc (decClock { state with ffi := ffi }))
           else none
 
-@[hol "cakeml/compiler/backend/semantics/labSemScript.sml" "share_mem_op_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def shareMemOp {width : Nat} [NeZero width] {C F : Type}
     (operator : HolMemop) (register : Nat) (address : HolAddr width)
     (state : Flapjack.Compiler.Backend.LabSem.State width C F) :

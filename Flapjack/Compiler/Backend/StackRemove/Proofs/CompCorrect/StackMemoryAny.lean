@@ -49,10 +49,7 @@ theorem runMoveAdd {width : Nat} [NeZero width] {C F : Type}
 /-- Genuine full original StackLoadAny compiler constructor. The source
 alignment/index guard derives actual native heap access and the complete
 postrelation; no target-access, postheap or pointer-restoration premise is added. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectStackLoadAny {width : Nat} [NeZero width] {C F : Type}
     (source : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (postSource target : StackSemStateFiniteExact width C F) (register index pointer : Nat)
@@ -157,10 +154,7 @@ theorem runSub {width : Nat} [NeZero width] {C F : Type}
 /-- Genuine full original StackStoreAny compiler constructor. The source
 alignment/index guard derives actual native heap access and the complete
 postrelation; no target-access, postheap or pointer-restoration premise is added. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectStackStoreAny {width : Nat} [NeZero width] {C F : Type}
     (source : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (postSource target : StackSemStateFiniteExact width C F) (register index pointer : Nat)

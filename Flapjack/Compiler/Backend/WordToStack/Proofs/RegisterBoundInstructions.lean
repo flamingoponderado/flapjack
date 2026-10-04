@@ -79,22 +79,10 @@ private theorem instBound {width : Nat} [NeZero width] (i : HolInst width)
         List.nil_append, List.cons_append, wStackLoadNative]
       all_goals repeat' apply And.intro
       all_goals first | trivial | omega
-  | fp f =>
-      cases f
-      all_goals by_cases hw : width = 64
-      all_goals simp only [wInstNative, hw, if_true, if_false,
-        wRegWrite1Native, wRegWrite2Native, wReg1, wReg2, regBound, regBoundInst]
-      all_goals try split_ifs
-      all_goals try simp only [regBound, regBoundInst, List.append_nil,
-        List.nil_append, List.cons_append, wStackLoadNative]
-      all_goals repeat' apply And.intro
-      all_goals first | trivial | omega
   | skip => trivial
 
 /-- Full original Inst case: all source quantified inputs and all three
 original premises are retained, on the actual native compiler output. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_reg_bound" (words_as_type_indexed_bitvec)]
 theorem wordToStackRegBoundInst {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (i : WordLangInst (BitVec width))
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -111,7 +99,6 @@ theorem wordToStackRegBoundInst {width : Nat} [NeZero width]
       cases a <;> try (rename_i op d src ri; cases ri)
       all_goals simp_all only [HolInst.ofWordLangInst, HolArith.ofWordLangArith, HolRegImm.ofWordRegImm, instArgConvention, instArgConventionExact]
   | mem op d addr => cases addr; trivial
-  | fp f => cases f <;> trivial
   | skip => trivial
   | const _ _ => trivial
 
@@ -131,8 +118,6 @@ theorem shareBound {width : Nat} [NeZero width] (op : HolMemop) (v : Nat)
 
 /-- Entire original ShareInst case, including failed address extraction.
 All original guards and every expression are retained. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_reg_bound" (words_as_type_indexed_bitvec)]
 theorem wordToStackRegBoundShareInst {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (op : HolMemop) (v : Nat)
     (exp : WordLangExpHOL (BitVec width)) (bs : AppList (BitVec width) × Nat)

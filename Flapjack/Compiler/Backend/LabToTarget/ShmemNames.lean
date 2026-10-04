@@ -43,8 +43,7 @@ private theorem shmemNamesShared {width : Nat} [NeZero width]
 /-- Full original existential classification: the newly appended name suffix
 contains only SharedMem constructors, without validity/encoding assumptions.
 All original inputs and supplied outputs remain quantified. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "get_shmem_info_MappedRead_or_MappedWrite" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getShmemInfo_mappedNames {width : Nat} [NeZero width]
     (secs : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))

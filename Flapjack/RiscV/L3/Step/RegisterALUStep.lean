@@ -17,7 +17,6 @@ namespace Flapjack.RiscV.L3.Step
 
 open Flapjack.RiscV.L3
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "ADD"]
 theorem dfnAdd (rd rs1 rs2 : BitVec 5) (s : riscv_state) (h : rd ≠ 0) :
     «dfn'ADD» (rd, (rs1, rs2)) s =
       { s with
@@ -34,7 +33,6 @@ theorem dfnAdd (rd rs1 rs2 : BitVec 5) (s : riscv_state) (h : rd ≠ 0) :
   by_cases h1 : rs1 = 0 <;> by_cases h2 : rs2 = 0 <;>
     simp_all [beq_iff_eq, BitVec.zero_add, BitVec.add_zero]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "SUB"]
 theorem dfnSub (rd rs1 rs2 : BitVec 5) (s : riscv_state) (h : rd ≠ 0) :
     «dfn'SUB» (rd, (rs1, rs2)) s =
       { s with
@@ -49,7 +47,6 @@ theorem dfnSub (rd rs1 rs2 : BitVec 5) (s : riscv_state) (h : rd ≠ 0) :
   by_cases h1 : rs1 = 0 <;> by_cases h2 : rs2 = 0 <;>
     simp_all [beq_iff_eq, BitVec.zero_sub, BitVec.sub_zero]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "AND"]
 theorem dfnAnd (rd rs1 rs2 : BitVec 5) (s : riscv_state) (h : rd ≠ 0) :
     «dfn'AND» (rd, (rs1, rs2)) s =
       { s with
@@ -65,7 +62,6 @@ theorem dfnAnd (rd rs1 rs2 : BitVec 5) (s : riscv_state) (h : rd ≠ 0) :
   by_cases h1 : rs1 = 0 <;> by_cases h2 : rs2 = 0 <;>
     simp_all [beq_iff_eq, BitVec.zero_and, BitVec.and_zero]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "OR"]
 theorem dfnOr (rd rs1 rs2 : BitVec 5) (s : riscv_state) (h : rd ≠ 0) :
     «dfn'OR» (rd, (rs1, rs2)) s =
       { s with
@@ -82,7 +78,6 @@ theorem dfnOr (rd rs1 rs2 : BitVec 5) (s : riscv_state) (h : rd ≠ 0) :
   by_cases h1 : rs1 = 0 <;> by_cases h2 : rs2 = 0 <;>
     simp_all [beq_iff_eq, BitVec.zero_or, BitVec.or_zero]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "XOR"]
 theorem dfnXor (rd rs1 rs2 : BitVec 5) (s : riscv_state) (h : rd ≠ 0) :
     «dfn'XOR» (rd, (rs1, rs2)) s =
       { s with
@@ -99,31 +94,26 @@ theorem dfnXor (rd rs1 rs2 : BitVec 5) (s : riscv_state) (h : rd ≠ 0) :
   by_cases h1 : rs1 = 0 <;> by_cases h2 : rs2 = 0 <;>
     simp_all [beq_iff_eq, BitVec.zero_xor, BitVec.xor_zero]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "ADD_NOP"]
 theorem dfnAddNop (rd rs1 rs2 : BitVec 5) (s : riscv_state) (h : rd = 0) :
     «dfn'ADD» (rd, (rs1, rs2)) s = s := by
   simp only [«dfn'ADD», «write'GPR», h]
   simp
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "SUB_NOP"]
 theorem dfnSubNop (rd rs1 rs2 : BitVec 5) (s : riscv_state) (h : rd = 0) :
     «dfn'SUB» (rd, (rs1, rs2)) s = s := by
   simp only [«dfn'SUB», «write'GPR», h]
   simp
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "AND_NOP"]
 theorem dfnAndNop (rd rs1 rs2 : BitVec 5) (s : riscv_state) (h : rd = 0) :
     «dfn'AND» (rd, (rs1, rs2)) s = s := by
   simp only [«dfn'AND», «write'GPR», h]
   simp
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "OR_NOP"]
 theorem dfnOrNop (rd rs1 rs2 : BitVec 5) (s : riscv_state) (h : rd = 0) :
     «dfn'OR» (rd, (rs1, rs2)) s = s := by
   simp only [«dfn'OR», «write'GPR», h]
   simp
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "XOR_NOP"]
 theorem dfnXorNop (rd rs1 rs2 : BitVec 5) (s : riscv_state) (h : rd = 0) :
     «dfn'XOR» (rd, (rs1, rs2)) s = s := by
   simp only [«dfn'XOR», «write'GPR», h]

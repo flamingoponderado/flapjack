@@ -64,8 +64,7 @@ namespace WordSemStateFiniteExact
 
 /-- Exact HOL local `termdep_rw` (`wordSemScript.sml:956-962`).  `call_env`,
     `dec_clock`, and `set_var` all preserve `termdep`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "termdep_rw"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem termdep_rw {width : Nat} [NeZero width] {C : Type} {F : Type}
     (p_1 : List (WordLocW width)) (ss : Option Nat) (s : WordSemStateFiniteExact width C F)
     (n : Nat) (v : WordLocW width) :
@@ -76,8 +75,7 @@ theorem termdep_rw {width : Nat} [NeZero width] {C : Type} {F : Type}
 /-- Exact HOL local `fix_clock_IMP_LESS_EQ` (`wordSemScript.sml:964-968`):
     `∀x. fix_clock s x = (res,s1) ⇒ s1.clock ≤ s.clock ∧ s1.termdep =
     s.termdep`, where `res` and `s1` are free in HOL and bound here. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "fix_clock_IMP_LESS_EQ"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fixClock_IMP_LESS_EQ {width : Nat} [NeZero width] {C : Type} {F : Type} {β : Type}
     (s : WordSemStateFiniteExact width C F) (res : β) (s1 : WordSemStateFiniteExact width C F) :
     ∀ x, fixClock s x = (res, s1) → s1.clock ≤ s.clock ∧ s1.termdep = s.termdep := by

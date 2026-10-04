@@ -122,8 +122,7 @@ theorem evalEq_call_handler {e1 e2 : WordLangProgHOL (BitVec width)}
 end Congruence
 
 /-- Exact HOL `evaluate_SmartSeq` (`word_simpProofScript.sml:14-18`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "evaluate_SmartSeq"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_SmartSeq {width : Nat} [NeZero width] {C : Type} {F : Type}
     (p1 p2 : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F) :
     evaluate (Compiler.Backend.WordSimp.smartSeqHOL p1 p2) s = evaluate (.seq p1 p2) s := by
@@ -131,8 +130,7 @@ theorem evaluate_SmartSeq {width : Nat} [NeZero width] {C : Type} {F : Type}
   rw [evaluate_seq_eq, evaluate_skip_eq]
 
 /-- Exact HOL `evaluate_Seq_Skip` (`word_simpProofScript.sml:20-25`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "evaluate_Seq_Skip"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_Seq_Skip {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (p1 : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F),
       evaluate (.seq p1 .skip) s = evaluate p1 s := by
@@ -143,8 +141,7 @@ theorem evaluate_Seq_Skip {width : Nat} [NeZero width] {C : Type} {F : Type} :
   · rfl
 
 /-- Exact HOL `evaluate_Skip_Seq` (`word_simpProofScript.sml:27-31`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "evaluate_Skip_Seq"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_Skip_Seq {width : Nat} [NeZero width] {C : Type} {F : Type}
     (p : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F) :
     evaluate (.seq .skip p) s = evaluate p s := by
@@ -152,8 +149,7 @@ theorem evaluate_Skip_Seq {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `evaluate_Loop_body_cong_gc` (`word_simpProofScript.sml:49-67`):
     HOL's free predicate `R` on the GC function is the outermost binder. -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "evaluate_Loop_body_cong_gc"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_Loop_body_cong_gc {width : Nat} [NeZero width] {C : Type} {F : Type}
     (R : WordSemGcFun width → Prop) :
     ∀ (s : WordSemStateFiniteExact width C F) (names : WordLangNumSetHOL)
@@ -194,8 +190,7 @@ theorem evaluate_Loop_body_cong_gc {width : Nat} [NeZero width] {C : Type} {F : 
     · simp only [hcont, Bool.false_eq_true, if_false]
 
 /-- Exact HOL `evaluate_Loop_body_cong` (`word_simpProofScript.sml:33-47`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "evaluate_Loop_body_cong"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_Loop_body_cong {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (s : WordSemStateFiniteExact width C F) (names : WordLangNumSetHOL)
       (c c' : WordLangProgHOL (BitVec width)) (exitNames : WordLangNumSetHOL),
@@ -206,8 +201,7 @@ theorem evaluate_Loop_body_cong {width : Nat} [NeZero width] {C : Type} {F : Typ
 
 /-- Exact HOL `evaluate_Seq_assoc_lemma` (`word_simpProofScript.sml:69-88`), by
     recursion on `Seq_assoc`'s second argument as HOL's `Seq_assoc_ind`. -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "evaluate_Seq_assoc_lemma"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_Seq_assoc_lemma {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (p1 p2 : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F),
       evaluate (Compiler.Backend.WordSimp.seqAssoc p1 p2) s = evaluate (.seq p1 p2) s
@@ -264,8 +258,7 @@ theorem evaluate_Seq_assoc_lemma {width : Nat} [NeZero width] {C : Type} {F : Ty
       simp only [Compiler.Backend.WordSimp.seqAssoc]; exact evaluate_SmartSeq _ _ s
 
 /-- Exact HOL `evaluate_Seq_assoc` (`word_simpProofScript.sml:90-94`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "evaluate_Seq_assoc"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_Seq_assoc {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (p : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F),
       evaluate (Compiler.Backend.WordSimp.seqAssoc .skip p) s = evaluate p s := by
@@ -273,8 +266,7 @@ theorem evaluate_Seq_assoc {width : Nat} [NeZero width] {C : Type} {F : Type} :
   rw [evaluate_Seq_assoc_lemma, evaluate_Skip_Seq]
 
 /-- Exact HOL `dest_If_Eq_Imm_thm` (`word_simpProofScript.sml:96-102`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "dest_If_Eq_Imm_thm"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem dest_If_Eq_Imm_thm {width : Nat} [NeZero width] (x2 : WordLangProgHOL (BitVec width))
     (n : Nat) (w : BitVec width) (p1 p2 : WordLangProgHOL (BitVec width)) :
     Compiler.Backend.WordSimp.destIfEqImm x2 = some (n, w, p1, p2) ↔
@@ -284,8 +276,7 @@ theorem dest_If_Eq_Imm_thm {width : Nat} [NeZero width] (x2 : WordLangProgHOL (B
   cases cmp <;> cases ri <;> simp
 
 /-- Exact HOL `dest_If_thm` (`word_simpProofScript.sml:104-108`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "dest_If_thm"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem dest_If_thm {width : Nat} [NeZero width] (x2 : WordLangProgHOL (BitVec width))
     (g1 : Cmp) (g2 : Nat) (g3 : WordRegImm (BitVec width)) (g4 g5 : WordLangProgHOL (BitVec width)) :
     Compiler.Backend.WordSimp.destIf x2 = some (g1, g2, g3, g4, g5) ↔
@@ -293,8 +284,7 @@ theorem dest_If_thm {width : Nat} [NeZero width] (x2 : WordLangProgHOL (BitVec w
   cases x2 <;> simp [Compiler.Backend.WordSimp.destIf]
 
 /-- Exact HOL `dest_Seq_IMP` (`word_simpProofScript.sml:110-115`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "dest_Seq_IMP"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem dest_Seq_IMP {width : Nat} [NeZero width] {C : Type} {F : Type}
     (p1 x1 x2 : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F) :
     Compiler.Backend.WordSimp.destSeq p1 = (x1, x2) →
@@ -304,8 +294,7 @@ theorem dest_Seq_IMP {width : Nat} [NeZero width] {C : Type} {F : Type}
     obtain ⟨rfl, rfl⟩ := h <;> first | rfl | exact (evaluate_Skip_Seq _ s).symm
 
 /-- Exact HOL `dest_Seq_Assign_Const_IMP` (`word_simpProofScript.sml:117-124`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "dest_Seq_Assign_Const_IMP"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem dest_Seq_Assign_Const_IMP {width : Nat} [NeZero width] {C : Type} {F : Type}
     (v : Nat) (p q : WordLangProgHOL (BitVec width)) (w : BitVec width)
     (s : WordSemStateFiniteExact width C F) :

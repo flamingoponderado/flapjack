@@ -42,7 +42,6 @@ private theorem ite_holUpdate_not (C : Prop) [Decidable C] (s : riscv_state)
         c_NextFetch := holUpdate s.procID (if C then s.c_NextFetch s.procID else v) s.c_NextFetch } := by
   by_cases h : C <;> simp_all [holUpdate_self]
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "BEQ"]
 theorem dfnBEQ (rs1 rs2 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) :
     «dfn'BEQ» (rs1, (rs2, offs)) s =
@@ -57,7 +56,6 @@ theorem dfnBEQ (rs1 rs2 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     simp_all [branchOperand, branchTo, «write'NextFetch», GPR, gpr, beq_iff_eq, holWordExtract, ite_holUpdate] <;>
     by_cases hr1 : rs1 = 0 <;> by_cases hr2 : rs2 = 0 <;> simp_all
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "BNE"]
 theorem dfnBNE (rs1 rs2 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) :
     «dfn'BNE» (rs1, (rs2, offs)) s =
@@ -72,7 +70,6 @@ theorem dfnBNE (rs1 rs2 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     simp_all [branchOperand, branchTo, «write'NextFetch», GPR, gpr, beq_iff_eq, holWordExtract, ite_holUpdate_not] <;>
     by_cases hr1 : rs1 = 0 <;> by_cases hr2 : rs2 = 0 <;> simp_all
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "BLT"]
 theorem dfnBLT (rs1 rs2 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) :
     «dfn'BLT» (rs1, (rs2, offs)) s =
@@ -87,7 +84,6 @@ theorem dfnBLT (rs1 rs2 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     simp_all [branchOperand, branchTo, «write'NextFetch», GPR, gpr, beq_iff_eq, holWordExtract, ite_holUpdate] <;>
     by_cases hr1 : rs1 = 0 <;> by_cases hr2 : rs2 = 0 <;> simp_all
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "BLTU"]
 theorem dfnBLTU (rs1 rs2 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) :
     «dfn'BLTU» (rs1, (rs2, offs)) s =
@@ -102,7 +98,6 @@ theorem dfnBLTU (rs1 rs2 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     simp_all [branchOperand, branchTo, «write'NextFetch», GPR, gpr, beq_iff_eq, holWordExtract, ite_holUpdate] <;>
     by_cases hr1 : rs1 = 0 <;> by_cases hr2 : rs2 = 0 <;> simp_all
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "BGE"]
 theorem dfnBGE (rs1 rs2 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) :
     «dfn'BGE» (rs1, (rs2, offs)) s =
@@ -117,7 +112,6 @@ theorem dfnBGE (rs1 rs2 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     simp_all [branchOperand, branchTo, «write'NextFetch», GPR, gpr, beq_iff_eq, holWordExtract, ite_holUpdate] <;>
     by_cases hr1 : rs1 = 0 <;> by_cases hr2 : rs2 = 0 <;> simp_all
 
-@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "BGEU"]
 theorem dfnBGEU (rs1 rs2 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) :
     «dfn'BGEU» (rs1, (rs2, offs)) s =

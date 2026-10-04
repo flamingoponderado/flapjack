@@ -4,8 +4,7 @@ namespace Flapjack.Compiler.Backend.StackNames
 open Flapjack.Compiler.Backend.StackLang
 open Flapjack.Compiler.Encoders.Asm
 
-@[hol "cakeml/compiler/backend/stack_namesScript.sml" "comp_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def progCompHOL {width : Nat} [NeZero width] (names : Flapjack.Spt Nat) :
     HolProg width → HolProg width
   | .halt register => .halt (findNameSpt names register)
@@ -68,21 +67,18 @@ theorem progCompHOL_eq_lookupHelper {width : Nat} [NeZero width]
         obtain ⟨body, l1, l2⟩ := h
         simp_all [progCompHOL, progComp, destFindNameHOL_eq_lookupHelper, findNameSpt_eq_lookupHelper]
 
-@[hol "cakeml/compiler/backend/stack_namesScript.sml" "prog_comp_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def progCompEntryHOL {width : Nat} [NeZero width] {Name : Type} (names : Flapjack.Spt Nat)
     (entry : Name × HolProg width) : Name × HolProg width :=
   (entry.1, progCompHOL names entry.2)
 
 /-- HOL's section names are an arbitrary type `'a`; executed callers use `Nat`. -/
-@[hol "cakeml/compiler/backend/stack_namesScript.sml" "compile_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def compileHOL {width : Nat} [NeZero width] {Name : Type} (names : Flapjack.Spt Nat)
     (program : List (Name × HolProg width)) : List (Name × HolProg width) :=
   program.map (progCompEntryHOL names)
 
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "MAP_FST_compile"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem map_fst_compileHOL {width : Nat} [NeZero width] {Name : Type} (names : Flapjack.Spt Nat)
     (program : List (Name × HolProg width)) :
     (compileHOL names program).map Prod.fst = program.map Prod.fst := by

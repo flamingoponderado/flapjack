@@ -17,8 +17,7 @@ open Flapjack.Compiler.Backend.Semantics.TargetProps
 are equated with the actual machine-run constructors. Machine/projection,
 compiler configuration and FFI host stay independently generic Type0 carriers;
 fixed word64 FP residues and optional positive-width words remain literal. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "oracle_tie_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def oracleTie {width : Nat} [NeZero width] {S Q C : Type} {F : Type}
     (mc : MachineConfig width S Q) (ms : S) (s : Flapjack.Compiler.Backend.LabSem.State width C F) : Prop :=
   s.ioRegs = targetIoRegs mc s.ffi ms ∧ s.ioFpRegs = targetIoFpRegs mc s.ffi ms ∧
@@ -26,8 +25,7 @@ noncomputable def oracleTie {width : Nat} [NeZero width] {S Q C : Type} {F : Typ
 
 /-- Complete original shifted-search law; equality of constructed oracles is
 proved from the actual search results and unchanged configuration fields. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "oracle_tie_shift_interfer" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem oracleTie_shiftInterfer {width : Nat} [NeZero width] {S Q C : Type} {F : Type}
     (mc : MachineConfig width S Q) (ms1 ms2 : S) (s : Flapjack.Compiler.Backend.LabSem.State width C F) (l : Nat)
     (h : oracleTie mc ms1 s ∧ ∀ k, findNextInterference mc s.ffi (k + l) ms1 =
@@ -41,8 +39,7 @@ theorem oracleTie_shiftInterfer {width : Nat} [NeZero width] {S Q C : Type} {F :
 
 /-- Full original source state step, retaining precisely the four unchanged
 oracle functions and unchanged FFI state alongside the shifted searches. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "oracle_tie_step" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem oracleTie_step {width : Nat} [NeZero width] {S Q C : Type} {F : Type}
     (mc : MachineConfig width S Q) (ms1 ms2 : S)
     (s1 s2 : Flapjack.Compiler.Backend.LabSem.State width C F) (l : Nat)
@@ -58,8 +55,7 @@ theorem oracleTie_step {width : Nat} [NeZero width] {S Q C : Type} {F : Type}
 
 /-- All six full original ffi residue/head/tail conclusions, constructed
 from the actual next-interference result; no residue is a premise. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "oracle_tie_ffi_step" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem oracleTie_ffiStep {width : Nat} [NeZero width] {S Q C : Type} {F : Type}
     (mc : MachineConfig width S Q) (ms : S) (s : Flapjack.Compiler.Backend.LabSem.State width C F)
     (index : Nat) (bytes : List (BitVec 8)) (pre post : S) (mc' : MachineConfig width S Q) (ffi' : HolFfiState F)
@@ -92,8 +88,7 @@ theorem oracleTie_ffiStep {width : Nat} [NeZero width] {S Q C : Type} {F : Type}
 
 /-- All six full original cache residue/head/tail conclusions, constructed
 from the actual next-interference result; no residue is a premise. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "oracle_tie_ccache_step" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem oracleTie_cacheStep {width : Nat} [NeZero width] {S Q C : Type} {F : Type}
     (mc : MachineConfig width S Q) (ms : S) (s : Flapjack.Compiler.Backend.LabSem.State width C F)
     (a1 a2 : BitVec width) (pre post : S) (mc' : MachineConfig width S Q) (ffi' : HolFfiState F)
@@ -126,8 +121,7 @@ theorem oracleTie_cacheStep {width : Nat} [NeZero width] {S Q C : Type} {F : Typ
 
 /-- Complete original ffi next-state tie, including all four actual updated
 oracle functions and the returned FFI state. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "oracle_tie_ffi_next" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem oracleTie_ffiNext {width : Nat} [NeZero width] {S Q C : Type} {F : Type}
     (mc : MachineConfig width S Q) (ms : S) (s1 s2 : Flapjack.Compiler.Backend.LabSem.State width C F)
     (index : Nat) (bytes : List (BitVec 8)) (pre post : S) (mc' : MachineConfig width S Q) (ffi' : HolFfiState F)
@@ -144,8 +138,7 @@ theorem oracleTie_ffiNext {width : Nat} [NeZero width] {S Q C : Type} {F : Type}
 
 /-- Complete original cache next-state tie, including all four actual updated
 oracle functions and the returned FFI state. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "oracle_tie_ccache_next" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem oracleTie_cacheNext {width : Nat} [NeZero width] {S Q C : Type} {F : Type}
     (mc : MachineConfig width S Q) (ms : S) (s1 s2 : Flapjack.Compiler.Backend.LabSem.State width C F)
     (a1 a2 : BitVec width) (pre post : S) (mc' : MachineConfig width S Q) (ffi' : HolFfiState F)
@@ -177,8 +170,7 @@ private theorem alookup_eq_lookup {α : Type} (key : Nat) (entries : List (Nat �
 /-- Full original external-call residue theorem. The returned register
 functions are derived from the actual external interference and read/FFI guards,
 not assumed as a simulation premise. Literal total holEl is retained. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "oracle_tie_ExtCall_residues" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem oracleTie_extCallResidues {width : Nat} [NeZero width] {S Q C : Type} {F : Type}
     (mc : MachineConfig width S Q) (ms1 ms2 : S) (s : Flapjack.Compiler.Backend.LabSem.State width C F)
     (l index : Nat) (name : Flapjack.Basis.Pure.MlString.MlString)

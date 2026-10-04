@@ -27,8 +27,7 @@ open PermuteSwapWitnesses
 /-- Exact HOL `permute_swap_lemma4` (`word_allocProofScript.sml:836-851`).
 HOL's `(I ## (λs. s with permute := perm))` is the pair map applying the state
 update to the second component. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "permute_swap_lemma4"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem permuteSwapLemma4 {width : Nat} [NeZero width] {C F : Type}
     (prog : WordLangProgHOL (BitVec width)) (st : WordSemStateFiniteExact width C F)
     (P : Option (WordSemResult width) × WordSemStateFiniteExact width C F → Prop) :

@@ -1,3 +1,4 @@
+import Mathlib.Tactic.Conv
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocGenerational.Partial
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMove
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMoveRootsBitmaps
@@ -1959,9 +1960,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
 /-- Original full-selector case of alloc_correct_lemma_Generational.
 Retains all original hypotheses and four conclusions; only the negated
 original partial-selector condition selects this source proof case. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml"
-  "alloc_correct_lemma_Generational"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem alloc_correct_lemma_Generational_full {width : Nat} [NeZero width] {C F : Type}
     {conf : Config} {genSizes : List Nat} {c : DataToWord.Config}
     {w : BitVec width} {s t : StackSemStateFiniteExact width C F}

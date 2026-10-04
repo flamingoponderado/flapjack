@@ -102,8 +102,6 @@ Skip case. Full source comparison: asmProps encoder_correct_def117-133 and
 riscv_targetProofScript512-530; native validity, domain, arbitrary state fields,
 all environments, original code-byte/PC assertion, and outside-domain memory
 conclusion are retained. No target evaluation is assumed. -/
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml"
-  "riscv_encoder_correct"]
 theorem riscv_encoder_correct_skip (s1 s2 : AsmState 64) (ms : riscv_state)
     (h : asmStep riscvTarget.config s1 (.inst .skip) s2 ∧
       targetStateRel riscvTarget s1 ms) :

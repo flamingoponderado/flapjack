@@ -16,8 +16,7 @@ private theorem alignedDomainWord {width : Nat} [NeZero width] (hw : goodDiminde
     simp only [ha,decide_true,halign,Bool.and_true]
   · simp only [ha,decide_false,Bool.false_and]
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "mem_load_align_dm"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem memLoadAlignDM {width : Nat} [NeZero width] {C F : Type}
     (n : Nat) (a : HolAddr width) (s : Flapjack.Compiler.Backend.LabSem.State width C F) :
     goodDimindex width → memLoad n a (alignDm s) = alignDm (memLoad n a s) := by
@@ -28,8 +27,7 @@ theorem memLoadAlignDM {width : Nat} [NeZero width] {C F : Type}
   | some value =>
     simp only [alignDm,updReg,assertState,alignedDomainWord hw]
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "mem_store_align_dm"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem memStoreAlignDM {width : Nat} [NeZero width] {C F : Type}
     (n : Nat) (a : HolAddr width) (s : Flapjack.Compiler.Backend.LabSem.State width C F) :
     goodDimindex width → memStore n a (alignDm s) = alignDm (memStore n a s) := by

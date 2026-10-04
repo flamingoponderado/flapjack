@@ -50,9 +50,7 @@ theorem removeDeadPost_clock {width : Nat} [NeZero width] {C F : Type} (live : N
   | some r => cases r <;> exact Iff.rfl
 
 /-- HOL `evaluate_remove_dead`, `Seq` case (Resume 4137). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_remove_dead"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateRemoveDead_Seq {width : Nat} [NeZero width] {C F : Type}
     (s1 s2 : WordLangProgHOL (BitVec width)) (ih1 : removeDeadGoal C F s1)
     (ih2 : removeDeadGoal C F s2) :
@@ -104,9 +102,7 @@ theorem evaluateRemoveDead_Seq {width : Nat} [NeZero width] {C F : Type}
     · rw [hseq, hT1]
 
 /-- HOL `evaluate_remove_dead`, `MustTerminate` case (Resume 4157). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_remove_dead"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateRemoveDead_MustTerminate {width : Nat} [NeZero width] {C F : Type}
     (p : WordLangProgHOL (BitVec width)) (ih : removeDeadGoal C F p) :
     removeDeadGoal C F (.mustTerminate p) := by
@@ -157,9 +153,7 @@ theorem evaluateRemoveDead_MustTerminate {width : Nat} [NeZero width] {C F : Typ
     | some x => cases x <;> first | rfl | exact absurd rfl hto
 
 /-- HOL `evaluate_remove_dead`, `If` case (Resume 4170). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_remove_dead"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateRemoveDead_If {width : Nat} [NeZero width] {C F : Type} (cmp : Cmp) (r1 : Nat)
     (ri : WordRegImm (BitVec width)) (e2 e3 : WordLangProgHOL (BitVec width))
     (ih2 : removeDeadGoal C F e2) (ih3 : removeDeadGoal C F e3) :
@@ -236,9 +230,7 @@ theorem evaluateRemoveDead_If {width : Nat} [NeZero width] {C F : Type} (cmp : C
 
 /-- HOL `evaluate_remove_dead`, `Loop` case (Resume 4281): the Loop helper at the
 body statement for the loop's own context. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_remove_dead"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateRemoveDead_Loop {width : Nat} [NeZero width] {C F : Type} (names : NumSet)
     (body : WordLangProgHOL (BitVec width)) (exitNames : NumSet) (ih : removeDeadGoal C F body) :
     removeDeadGoal C F (.loop names body exitNames) := by

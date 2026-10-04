@@ -7,8 +7,7 @@ open Flapjack.Compiler.Backend.StackLang Flapjack.StackSem
 
 /-- Full original return-copy recursion conjunction, including the exact
 right-nested `list_Seq` tree. No register, frame, count or width bound is added. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "copy_ret_aux_thm"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem copyRetAuxThm {width : Nat} [NeZero width] (k f n : Nat) :
     (copyRetAuxNative k f 0 : HolProg width) = .skip ∧
     (copyRetAuxNative k f (n + 1) : HolProg width) =
@@ -31,8 +30,7 @@ private theorem copyRetAuxLabels {width : Nat} [NeZero width] (k f n : Nat) :
 copy/free wrapper, for every continuation and both Boolean modes. The original
 return-value and unused third frame-component carriers remain independent of
 each other and of the word-indexed continuation; no extra premise is added. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "get_labels_copy_ret"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getLabelsCopyRet {width : Nat} [NeZero width] {β γ : Type}
     (perf isHandle : Bool) (kf : Nat × Nat × γ) (vs : List β) (q : HolProg width) :
     getLabelsExact (copyRetNative perf isHandle kf vs q) = getLabelsExact q := by

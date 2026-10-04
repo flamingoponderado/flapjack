@@ -41,12 +41,7 @@ these hypotheses; the target code and locals retain native Spt tree maps.
 The word qualifier translates the positive HOL type dimension to BitVec width.
 This proof-side theorem does not route the executed compiler through the
 reviewed pipeline; that production obligation remains on bead .19.3. -/
-@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "state_rel_imp_semantics"
-  (fmap_as_finite_support_relation :=
-    [PanSemStateFiniteExact.locals, PanSemStateFiniteExact.globals,
-      PanSemStateFiniteExact.code, PanSemStateFiniteExact.eshapes,
-      WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem panToWordStateRelImpSemantics {width : Nat} [NeZero width] {C σ : Type}
     (source : PanSemStateFiniteExact width σ) (target : WordSemStateFiniteExact width C σ)
     (arch : AsmArchitecture) (code : List (DeclHOL width)) (start : MlS)

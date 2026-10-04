@@ -18,8 +18,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
 
 /-- Full original mem_load_with_const: this is memory-store commutation,
 including failure when the address is outside the original domain. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "mem_load_with_const"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem memStoreWithClock {width : Nat} [NeZero width] {C F : Type}
     (x : BitVec width) (y : WordLocW width)
     (z : StackSemStateFiniteExact width C F) (k : Nat) :
@@ -31,8 +30,7 @@ theorem memStoreWithClock {width : Nat} [NeZero width] {C F : Type}
 /-- Full original recursive expression clock invariance. Every Op argument
 is covered by the nested expression/list recursor, without any premise about
 successful evaluation or the argument list. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "word_exp_with_const"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordExpWithClock {width : Nat} [NeZero width] {C F : Type}
     (s : StackSemStateFiniteExact width C F)
     (y : WordLangExpHOL (BitVec width)) (k : Nat) :
@@ -66,8 +64,7 @@ theorem wordExpWithClock {width : Nat} [NeZero width] {C F : Type}
 
 /-- Full original OPTION_MAP equation for assignment, preserving both success
 and failure and updating only the original destination register. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "assign_with_const"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem assignWithClock {width : Nat} [NeZero width] {C F : Type}
     (x : Nat) (y : WordLangExpHOL (BitVec width))
     (s : StackSemStateFiniteExact width C F) (k : Nat) :

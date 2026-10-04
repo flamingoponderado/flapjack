@@ -15,8 +15,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
   StackSemShMemSupport.holFmapAsFiniteSupportWitness
 
 /-- Full original clock-update commutation, with arbitrary native state. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "sh_mem_load_with_const"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem shMemLoadWithClock {width : Nat} [NeZero width] {C F : Type}
     (r : Nat) (a : BitVec width) (s : StackSemStateFiniteExact width C F) (k : Nat) :
     shMemLoad r a { s with clock := k } =
@@ -25,8 +24,7 @@ theorem shMemLoadWithClock {width : Nat} [NeZero width] {C F : Type}
   repeat' first | split | simp_all
 
 /-- Full original clock-update commutation, with arbitrary native state. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "sh_mem_store_with_const"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem shMemStoreWithClock {width : Nat} [NeZero width] {C F : Type}
     (r : Nat) (a : BitVec width) (s : StackSemStateFiniteExact width C F) (k : Nat) :
     shMemStore r a { s with clock := k } =
@@ -35,8 +33,7 @@ theorem shMemStoreWithClock {width : Nat} [NeZero width] {C F : Type}
   repeat' first | split | simp_all
 
 /-- Full original clock-update commutation, with arbitrary native state. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "sh_mem_load32_with_const"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem shMemLoad32WithClock {width : Nat} [NeZero width] {C F : Type}
     (r : Nat) (a : BitVec width) (s : StackSemStateFiniteExact width C F) (k : Nat) :
     shMemLoad32 r a { s with clock := k } =
@@ -45,8 +42,7 @@ theorem shMemLoad32WithClock {width : Nat} [NeZero width] {C F : Type}
   repeat' first | split | simp_all
 
 /-- Full original clock-update commutation, with arbitrary native state. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "sh_mem_store32_with_const"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem shMemStore32WithClock {width : Nat} [NeZero width] {C F : Type}
     (r : Nat) (a : BitVec width) (s : StackSemStateFiniteExact width C F) (k : Nat) :
     shMemStore32 r a { s with clock := k } =
@@ -55,8 +51,7 @@ theorem shMemStore32WithClock {width : Nat} [NeZero width] {C F : Type}
   repeat' first | split | simp_all
 
 /-- Full original clock-update commutation, with arbitrary native state. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "sh_mem_load16_with_const"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem shMemLoad16WithClock {width : Nat} [NeZero width] {C F : Type}
     (r : Nat) (a : BitVec width) (s : StackSemStateFiniteExact width C F) (k : Nat) :
     shMemLoad16 r a { s with clock := k } =
@@ -65,8 +60,7 @@ theorem shMemLoad16WithClock {width : Nat} [NeZero width] {C F : Type}
   repeat' first | split | simp_all
 
 /-- Full original clock-update commutation, with arbitrary native state. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "sh_mem_store16_with_const"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem shMemStore16WithClock {width : Nat} [NeZero width] {C F : Type}
     (r : Nat) (a : BitVec width) (s : StackSemStateFiniteExact width C F) (k : Nat) :
     shMemStore16 r a { s with clock := k } =
@@ -75,8 +69,7 @@ theorem shMemStore16WithClock {width : Nat} [NeZero width] {C F : Type}
   repeat' first | split | simp_all
 
 /-- Full original clock-update commutation, with arbitrary native state. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "sh_mem_load_byte_with_const"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem shMemLoadByteWithClock {width : Nat} [NeZero width] {C F : Type}
     (r : Nat) (a : BitVec width) (s : StackSemStateFiniteExact width C F) (k : Nat) :
     shMemLoadByte r a { s with clock := k } =
@@ -85,8 +78,7 @@ theorem shMemLoadByteWithClock {width : Nat} [NeZero width] {C F : Type}
   repeat' first | split | simp_all
 
 /-- Full original clock-update commutation, with arbitrary native state. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "sh_mem_store_byte_with_const"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem shMemStoreByteWithClock {width : Nat} [NeZero width] {C F : Type}
     (r : Nat) (a : BitVec width) (s : StackSemStateFiniteExact width C F) (k : Nat) :
     shMemStoreByte r a { s with clock := k } =
@@ -95,8 +87,7 @@ theorem shMemStoreByteWithClock {width : Nat} [NeZero width] {C F : Type}
   repeat' first | split | simp_all
 
 /-- Full original eight-operator dispatch clock commutation. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "sh_mem_op_with_const"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem shMemOpWithClock {width : Nat} [NeZero width] {C F : Type}
     (op : WordMemOp) (r : Nat) (a : BitVec width)
     (s : StackSemStateFiniteExact width C F) (k : Nat) :
@@ -109,8 +100,7 @@ theorem shMemOpWithClock {width : Nat} [NeZero width] {C F : Type}
 /-- Full original sh_mem_op_const: all twelve preserved fields, including
 arbitrary memory-domain/compile/GC functions. The only premise is the original
 input helper evaluation, and every success, final or error result is allowed. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "sh_mem_op_const"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem shMemOpConst {width : Nat} [NeZero width] {C F : Type}
     (op : WordMemOp) (r : Nat) (a : BitVec width)
     (s t : StackSemStateFiniteExact width C F) (res : Option (StackSemResult width))

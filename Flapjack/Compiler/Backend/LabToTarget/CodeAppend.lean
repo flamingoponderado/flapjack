@@ -21,8 +21,7 @@ theorem listAddIfFresh_thm {α : Type} [DecidableEq α] (s : α) (l : List α) :
     · simp only [listAddIfFresh, h, ↓reduceIte, ih, List.mem_cons, false_or]
       split <;> simp
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "find_ffi_names_append"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem findFfiNames_append {width : Nat} [NeZero width] (l1 l2 : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
     findFfiNames (l1 ++ l2) =
@@ -64,8 +63,7 @@ theorem findFfiNames_append {width : Nat} [NeZero width] (l1 l2 : List (Section 
 
 /-- The original statement also binds `conf labs ffis pos`, which do not
 occur in it; they are omitted here. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "loc_to_pc_append"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem locToPc_append {width : Nat} [NeZero width] (l1 l2 : Nat) (c1 c2 : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
     (∀ sec ∈ c1 ++ c2, secLabelsOk sec) →

@@ -50,8 +50,7 @@ def padBytes {α : Type} (bytes : List α) (len : Nat) (nop : List α) : List α
 clause for clause.  `[]` is `[]`; a `Label` is kept and the rest is recursed; a
 `Asm`/`LabAsm` appends `nop` to its bytes, increments its length by `1` and
 keeps the remaining list `xs` unchanged (the clause does not recurse). -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "add_nop_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def addNop {width : Nat} [NeZero width] (nop : List (BitVec 8))
     (lines : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) :
@@ -68,8 +67,7 @@ def addNop {width : Nat} [NeZero width] (nop : List (BitVec 8))
 `REVERSE aux`; a `Label l1 l2 len` pushes `Label l1 l2 0` and, when `len ≠ 0`,
 prepends `add_nop nop aux`; `Asm`/`LabAsm` pad their bytes with `pad_bytes` and
 push the line unchanged in length. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "pad_section_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def padSection {width : Nat} [NeZero width] (nop : List (BitVec 8))
     (lines : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))
@@ -90,8 +88,7 @@ def padSection {width : Nat} [NeZero width] (nop : List (BitVec 8))
 /-- Exact HOL `lab_to_target$pad_code_def` (`lab_to_targetScript.sml:220-223`),
 clause for clause.  `[]` is `[]`; `Section n xs :: ys` pads the section's lines
 with `pad_section nop xs []` and recurses on the rest. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "pad_code_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def padCode {width : Nat} [NeZero width] (nop : List (BitVec 8))
     (sections : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
@@ -108,8 +105,7 @@ word is translated to positive-width `BitVec width` (words_as_type_indexed_bitve
 HOL proves this function equality with `FUN_EQ_THM` followed by list induction and
 a case split on the section; the Lean proof is the same `funext` plus
 `List`-induction, with no added hypothesis or changed clause. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "pad_code_MAP"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem padCodeMap {width : Nat} [NeZero width] (nop : List (BitVec 8)) :
     padCode nop =
       List.map (fun x : Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -125,8 +121,7 @@ theorem padCodeMap {width : Nat} [NeZero width] (nop : List (BitVec 8)) :
 /-- Exact HOL `lab_to_target$sec_length_def`
 (`lab_to_targetScript.sml:234-239`), clause for clause.  The accumulator `k`
 starts the sum; `Label`/`Asm`/`LabAsm` all add their recorded length. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "sec_length_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def secLength {width : Nat} [NeZero width] :
     List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)) → Nat → Nat
@@ -139,8 +134,7 @@ def secLength {width : Nat} [NeZero width] :
 (`lab_to_targetScript.sml:241-245`), clause for clause.  Each section becomes
 `(k, pos, len)` with `len = sec_length l 0`; the running position advances by
 `len`. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "get_symbols_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def getSymbols {width : Nat} [NeZero width] (pos : Nat)
     (sections : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
@@ -157,8 +151,7 @@ accepted; `Halt`/`Install`/`CallFFI` check `asm_ok (Jump w) c`; `Call` is
 rejected (`F`); every other `LabAsm a w bytes l` checks `asm_ok (lab_inst w a)
 c`.  The `asm_ok` calls read the exact `asmOkExact` over the exact
 `AsmConfigExact` carrier. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "line_ok_light_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def lineOkLight {width : Nat} [NeZero width] (config : AsmConfigExact width) :
     Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width) → Bool
@@ -173,8 +166,7 @@ def lineOkLight {width : Nat} [NeZero width] (config : AsmConfigExact width) :
 /-- Exact HOL `lab_to_target$sec_ok_light_def`
 (`lab_to_targetScript.sml:183-186`), clause for clause.  A `Section k ls` is ok
 when `EVERY (line_ok_light c) ls` holds. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "sec_ok_light_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def secOkLight {width : Nat} [NeZero width] (config : AsmConfigExact width)
     (sec : Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) : Bool :=

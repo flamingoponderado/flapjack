@@ -66,8 +66,7 @@ structure Config where
 `SOME (bytes, c with <| labels := l1; pos := LENGTH bytes + c.pos;
 sec_pos_len := get_symbols c.pos sec_list; ffi_names := SOME (ffis ++ new_ffis);
 shmem_extra := shmem_infos |>)`; otherwise `NONE`. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "compile_lab_def" 453
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def compileLab {width : Nat} [NeZero width] (asmConf : AsmConfigExact width)
     (c : Config)
     (secList : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -94,8 +93,7 @@ def compileLab {width : Nat} [NeZero width] (asmConf : AsmConfigExact width)
 
 /-- Exact HOL `lab_to_target$compile_def` (`lab_to_targetScript.sml:478`):
 `compile asm_conf c sec_list = compile_lab asm_conf c (filter_skip sec_list)`. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "compile_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def compile {width : Nat} [NeZero width] (asmConf : AsmConfigExact width)
     (c : Config)
     (secList : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))

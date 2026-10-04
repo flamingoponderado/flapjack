@@ -69,7 +69,7 @@ theorem panToTargetLabstFacts {width : Nat} [NeZero width] {S Q F C : Type}
   have hgood : goodDimindex width := hmc.1
   have hregs : mc.target.config.avoidRegs.length + 13 ≤ mc.target.config.regCount :=
     hcfg.2.2.2.1
-  have hbij := hcfg.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+  have hbij := hcfg.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
   refine ⟨?_, rfl, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, hbij, by simp [labst, makeInit]⟩
   · simp only [saveRegs, labst, makeInit, decide_eq_true_eq]
     cases hl : mc.target.config.linkReg <;> simp_all

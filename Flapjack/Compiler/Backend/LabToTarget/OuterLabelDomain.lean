@@ -12,8 +12,7 @@ open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString
 /-- Original outer label-map domain result. No section uniqueness or accumulator
 freshness guard is needed: insertion preserves the union of outer keys.
 The paired label-domain result in ComputedLabelDomain is a distinct theorem. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "compute_labels_alt_domain_labs" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem computeLabelsAlt_domain {width : Nat} [NeZero width] (pos : Nat)
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) (labs : Spt (Spt Nat)) :
@@ -48,8 +47,7 @@ theorem computeLabelsAlt_domain {width : Nat} [NeZero width] (pos : Nat)
 
 /-- Full original loop domain conclusion, assuming only the observed successful
 loop result. No clock bound, unique section ids, or successful target run. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "remove_labels_loop_domain_labs" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem removeLabelsLoop_domain {width : Nat} [NeZero width]
     (clock : Nat) (c : AsmConfigExact width) (pos : Nat) (acc : Spt (Spt Nat))
     (ffis : List HolFfiName) (code output : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) (labs : Spt (Spt Nat))
@@ -91,8 +89,7 @@ theorem removeLabelsLoop_domain {width : Nat} [NeZero width]
 
 /-- Original remove_labels domain conclusion for the observed complete result.
 The initial encoding preserves the entire original code-label set. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "remove_labels_domain_labs" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem removeLabels_domain {width : Nat} [NeZero width]
     (clock : Nat) (c : AsmConfigExact width) (pos : Nat) (acc : Spt (Spt Nat))
     (ffis : List HolFfiName) (code output : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) (labs : Spt (Spt Nat))

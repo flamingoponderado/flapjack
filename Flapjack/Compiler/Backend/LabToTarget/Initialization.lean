@@ -11,8 +11,7 @@ independent of target state, projection and FFI host. All 23 state fields and
 the four actual target register oracles are retained. This builds the source
 state for the still-open initialization simulation, not an executed compiler
 replacement; that consumer is tracked by the linked initializer theorem. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "make_init_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def makeInit {width : Nat} [NeZero width] {C S Q : Type} {F : Type}
     (mc : MachineConfig width S Q) (ffi : HolFfiState F) (t : AsmState width)
     (m : BitVec width → WordLocW width) (dm sdm : BitVec width → Bool)

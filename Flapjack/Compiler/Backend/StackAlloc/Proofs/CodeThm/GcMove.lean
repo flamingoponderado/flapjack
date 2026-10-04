@@ -126,8 +126,7 @@ end GcMoveSupport
 free variables are implicit; `FLOOKUP s.store CurrHeap`, `k IN FDOM s.regs`,
 `|++` and `get_var` are the canonical carrier's lookups, `updateListEq` and
 `getVar`; the existentials `ck r0 r1 r2 r6` are kept. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "word_gc_move_code_thm"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_gc_move_code_thm {width : Nat} [NeZero width] {C F : Type} {conf : Config}
     {w : WordLocW width} {i pa old : BitVec width} {m : BitVec width → WordLocW width}
     {dm : BitVec width → Bool} {w1 : WordLocW width} {i1 pa1 : BitVec width}

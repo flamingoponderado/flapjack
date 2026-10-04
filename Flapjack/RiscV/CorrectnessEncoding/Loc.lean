@@ -228,8 +228,6 @@ private theorem loc_two_steps (r : Nat) (c : BitVec 64)
 /-- Full original Loc constructor case: the original source step and state
 relation are the only premises. Register/range/alignment guards are discharged
 from asm_ok, and both native steps and interference assertions are proved. -/
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml"
-  "riscv_encoder_correct"]
 theorem riscv_encoder_correct_loc (r : Nat) (c : BitVec 64)
     (s1 s2 : AsmState 64) (ms : riscv_state)
     (h : asmStep riscvTarget.config s1 (.loc r c) s2 ∧

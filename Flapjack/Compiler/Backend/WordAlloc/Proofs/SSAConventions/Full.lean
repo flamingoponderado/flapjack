@@ -8,8 +8,7 @@ open Flapjack Flapjack.Compiler.Backend.WordAlloc
 /-- Original unconditional full SSA pre-convention theorem. The source limit
 and setup properties establish the input hypotheses of the full recursive
 compiler theorem; no target convention or evaluation is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "full_ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fullSsaCcTrans_preAllocConventions {width : Nat} [NeZero width]
     (count : Nat) (program : WordLangProgHOL (BitVec width)) :
     preAllocConventionsHOL (fullSsaCcTrans count program) = true := by

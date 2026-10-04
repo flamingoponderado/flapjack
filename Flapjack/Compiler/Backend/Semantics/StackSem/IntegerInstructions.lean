@@ -23,7 +23,6 @@ def instInteger {width : Nat} [NeZero width] {C F : Type}
     (i : HolInst width) (s : StackSemStateFiniteExact width C F) :
     Option (Option (StackSemStateFiniteExact width C F)) :=
   match i with
-  | .fp _ => none
   | _ => some (match i with
     | .skip => some s
     | .const reg w => assign reg (.const w) s
@@ -120,8 +119,7 @@ def instInteger {width : Nat} [NeZero width] {C F : Type}
             match memStore32Exact s.memory s.mdomain s.be a (w.setWidth 32) with
             | some newM => some { s with memory := newM }
             | none => none
-        | _, _ => none
-    | .fp _ => none)
+        | _, _ => none)
 
 /-- The executable guard is exactly HOL's bop=Or and ri=Reg r2 test;
 these are constructor and natural-number equalities, not host string keys. -/

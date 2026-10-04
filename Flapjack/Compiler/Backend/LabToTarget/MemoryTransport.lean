@@ -7,8 +7,7 @@ open Flapjack
 remain independent; memory agreement is needed only on the source domain,
 including wrapped addresses. No target execution or global-memory equality is
 assumed. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "bytes_in_memory_eq_mem" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem bytesInMemory_eqMem {width : Nat} [NeZero width]
     {machine projection : Type} (pc : BitVec width) (bytes : List (BitVec 8))
     (mcConf : MachineConfig width machine projection) (ms1 : machine)

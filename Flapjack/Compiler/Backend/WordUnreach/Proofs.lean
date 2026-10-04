@@ -204,16 +204,14 @@ private theorem evSeq (s : WordSemStateFiniteExact width C F) (c1 c2 : WordLangP
 
 /-- Exact HOL `evaluate_Skip_Seq` (`word_unreachProofScript.sml:14-18`); `p` and `s` are free
 in HOL. -/
-@[hol "cakeml/compiler/backend/proofs/word_unreachProofScript.sml" "evaluate_Skip_Seq"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateSkipSeq {width : Nat} [NeZero width] {C F : Type}
     (p : WordLangProgHOL (BitVec width))
     (s : WordSemStateFiniteExact width C F) : evaluate (.seq .skip p) s = evaluate p s := by
   rw [evSeq, evSkip]
 
 /-- Exact HOL `evaluate_Seq_Skip` (`word_unreachProofScript.sml:20-25`). -/
-@[hol "cakeml/compiler/backend/proofs/word_unreachProofScript.sml" "evaluate_Seq_Skip"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateSeqSkip {width : Nat} [NeZero width] {C F : Type} :
     ∀ (p1 : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F),
       evaluate (.seq p1 .skip) s = evaluate p1 s := by
@@ -226,8 +224,7 @@ theorem evaluateSeqSkip {width : Nat} [NeZero width] {C F : Type} :
 
 /-- Exact HOL `evaluate_Seq_assoc` (`word_unreachProofScript.sml:27-31`); `p1`, `p2`, `p3`
 and `s` are free in HOL. -/
-@[hol "cakeml/compiler/backend/proofs/word_unreachProofScript.sml" "evaluate_Seq_assoc"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateSeqAssoc {width : Nat} [NeZero width] {C F : Type}
     (p1 p2 p3 : WordLangProgHOL (BitVec width))
     (s : WordSemStateFiniteExact width C F) :
@@ -267,8 +264,7 @@ private theorem alistInsert_copyVars (s : WordSemStateFiniteExact width C F) :
 
 /-- Exact HOL `evaluate_Move` (`word_unreachProofScript.sml:54-76`); `pri`, `moves` and `s` are
 free in HOL. -/
-@[hol "cakeml/compiler/backend/proofs/word_unreachProofScript.sml" "evaluate_Move"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateMove {width : Nat} [NeZero width] {C F : Type}
     (pri : Nat) (moves : List (Nat × Nat))
     (s : WordSemStateFiniteExact width C F) :
@@ -288,8 +284,7 @@ theorem evaluateMove {width : Nat} [NeZero width] {C F : Type}
   · rfl
 
 /-- Exact HOL `get_vars_IS_SOME_lookup` (`word_unreachProofScript.sml:130-140`). -/
-@[hol "cakeml/compiler/backend/proofs/word_unreachProofScript.sml" "get_vars_IS_SOME_lookup"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getVarsIsSomeLookup {width : Nat} [NeZero width] {C F : Type} :
     ∀ (xs : List Nat) (s : WordSemStateFiniteExact width C F),
       (∃ ws, WordSemStateFiniteExact.getVars xs s = some ws) ↔ ∀ x ∈ xs, (sptLookup x s.locals).isSome = true
@@ -347,8 +342,7 @@ private theorem copyVars_step {V : Type} [Nonempty V] (src : Spt V) (l1 : List (
 
 /-- Exact HOL `merge_moves_Skip` (`word_unreachProofScript.sml:150-199`); `n1`, `n2` and `m`
 are free in HOL. -/
-@[hol "cakeml/compiler/backend/proofs/word_unreachProofScript.sml" "merge_moves_Skip"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem mergeMovesSkip {width : Nat} [NeZero width] {C F : Type}
     (n1 n2 m : Nat) :
     ∀ (l1 l2 : List (Nat × Nat)) (s : WordSemStateFiniteExact width C F)
@@ -401,8 +395,7 @@ theorem mergeMovesSkip {width : Nat} [NeZero width] {C F : Type}
 
 /-- Exact HOL `merge_moves_thm` (`word_unreachProofScript.sml:201-216`); `n1`, `n2` and `m`
 are free in HOL. -/
-@[hol "cakeml/compiler/backend/proofs/word_unreachProofScript.sml" "merge_moves_thm"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem mergeMovesThm {width : Nat} [NeZero width] {C F : Type}
     (n1 n2 m : Nat) :
     ∀ (p : WordLangProgHOL (BitVec width)) (l1 l2 : List (Nat × Nat))
@@ -475,8 +468,7 @@ private theorem destSeqMove_some (p : WordLangProgHOL (BitVec width)) (n : Nat)
 
 /-- Exact HOL `evaluate_SimpSeq` (`word_unreachProofScript.sml:218-242`); `p1`, `p2`, `s`,
 `res` and `s1` are free in HOL. -/
-@[hol "cakeml/compiler/backend/proofs/word_unreachProofScript.sml" "evaluate_SimpSeq"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateSimpSeq {width : Nat} [NeZero width] {C F : Type}
     (p1 p2 : WordLangProgHOL (BitVec width))
     (s : WordSemStateFiniteExact width C F) (res : Option (WordSemResult width))
@@ -518,8 +510,7 @@ theorem evaluateSimpSeq {width : Nat} [NeZero width] {C F : Type}
 
 /-- Exact HOL `push_env_handler` (`word_unreachProofScript.sml:244-253`); `x'`, `handler` and
 `s` are free in HOL. -/
-@[hol "cakeml/compiler/backend/proofs/word_unreachProofScript.sml" "push_env_handler"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem pushEnvHandler {width : Nat} [NeZero width] {C F : Type}
     (x' : Spt (WordLocW width) × Spt (WordLocW width))
     (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
@@ -536,8 +527,7 @@ theorem pushEnvHandler {width : Nat} [NeZero width] {C F : Type}
 
 /-- Exact HOL `evaluate_Loop_body_eq` (`word_unreachProofScript.sml:323-344`); `p1`, `p2`,
 `names` and `exit_names` are free in HOL. -/
-@[hol "cakeml/compiler/backend/proofs/word_unreachProofScript.sml" "evaluate_Loop_body_eq"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateLoopBodyEq {width : Nat} [NeZero width] {C F : Type}
     (p1 p2 : WordLangProgHOL (BitVec width)) (names exitNames : NumSet) :
     (∀ (s : WordSemStateFiniteExact width C F) (res : Option (WordSemResult width))
@@ -747,9 +737,7 @@ private theorem callSomeCongr (x1 : List Nat) (x2 : WordLangCutsetsHOL) (x3 x4 :
 /-- Exact HOL `evaluate_Seq_assoc_right_lemma` (`word_unreachProofScript.sml:255-321`,
 including the suspended `Loop` case of 365-377). HOL proves it by `Seq_assoc_right_ind`;
 the Lean proof recurses structurally on the first program. -/
-@[hol "cakeml/compiler/backend/proofs/word_unreachProofScript.sml"
-  "evaluate_Seq_assoc_right_lemma" (fmap_as_finite_support := [fpRegs, store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateSeqAssocRightLemma {width : Nat} [NeZero width] {C F : Type} :
     ∀ (p1 p2 : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F)
       (res : Option (WordSemResult width)) (s1 : WordSemStateFiniteExact width C F),
@@ -826,8 +814,7 @@ theorem evaluateSeqAssocRightLemma {width : Nat} [NeZero width] {C F : Type} :
   | .shareInst a b c, p2, s, res, s1, hh => evaluateSimpSeq _ p2 s res s1 hh
 
 /-- Exact HOL `evaluate_remove_unreach` (`word_unreachProofScript.sml:368-377`). -/
-@[hol "cakeml/compiler/backend/proofs/word_unreachProofScript.sml" "evaluate_remove_unreach"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateRemoveUnreach {width : Nat} [NeZero width] {C F : Type} :
     ∀ (p : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F)
       (res : Option (WordSemResult width)) (s1 : WordSemStateFiniteExact width C F),

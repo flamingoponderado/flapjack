@@ -36,8 +36,7 @@ open EvaluateStackSwapWitnesses
 program and state, the result-dependent conclusion `stackSwapPost` (HOL's
 `case evaluate (c,s) of ...`). Proved, as in HOL, by `evaluate_ind` from the
 26 tagged per-constructor cases. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_swap"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateStackSwap {width : Nat} [NeZero width] {C F : Type} :
     ∀ (c : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F),
       stackSwapPost c s :=

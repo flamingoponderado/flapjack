@@ -335,31 +335,6 @@ example (s : Flapjack.Compiler.Backend.LabSem.State 64 Nat Nat) :
 -- lab_eval_fp_neg_then_halt
 example (s : Flapjack.Compiler.Backend.LabSem.State 64 Nat Nat) :
     let start : Flapjack.Compiler.Backend.LabSem.State 64 Nat Nat := { s with
-      regs := (fun r => if r=0 then .word 0 else .word 5)
-      memory := fun _ => .word 52
-      fpRegs := fun _ => 9223372036854775808
-      memDomain := fun _ => true
-      sharedMemDomain := fun _ => true
-      be := false
-      failed := false
-      pc := 0
-      clock := 2
-      code := [{ sectionId := 1, lines := [.asm (.asmi (.inst (.fp (.fpNeg 0 1)))) [] 7, .labAsm (.halt) 0 [] 7] }]
-      codeBuffer := { position := 32, buffer := [10], spaceLeft := 2 }
-      ptrReg := 0
-      lenReg := 1
-      ptr2Reg := 2
-      len2Reg := 3
-      linkReg := 4 }
-    match evaluate start with
-    | (.halt .success,t) => t.fpRegs 0=0 ∧ t.clock=1
-    | _ => False := by
-  simp +decide [evaluate, asmFetch, asmFetchAux, asmInst, fpUpd, readFpReg, updFpReg, holFp64Negate, incPc, decClock]
-    <;> decide +kernel
-
--- lab_eval_jumpreg_return
-example (s : Flapjack.Compiler.Backend.LabSem.State 64 Nat Nat) :
-    let start : Flapjack.Compiler.Backend.LabSem.State 64 Nat Nat := { s with
       regs := (fun r => if r=0 then .word 0 else if r=2 then .loc 1 9 else .word 5)
       memory := fun _ => .word 52
       fpRegs := fun _ => 9223372036854775808

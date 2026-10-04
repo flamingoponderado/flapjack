@@ -33,11 +33,6 @@ private def expected_inst_skip : P := .inst .skip
 example : instSelectExecutable WordInstSelectExactParity.cfg 100 input_inst_skip =
     expected_inst_skip := by with_unfolding_all rfl
 
-private def input_inst_fp : P := .inst (.fp (.fpSqrt 1 2))
-private def expected_inst_fp : P := .inst (.fp (.fpSqrt 1 2))
-
-example : instSelectExecutable WordInstSelectExactParity.cfg 100 input_inst_fp =
-    expected_inst_fp := by with_unfolding_all rfl
 
 private def input_assign : P := .assign 5 (.op .add [.var 1, .const 3, .var 2])
 private def expected_assign : P := .seq (.seq (.move 0 [(100,2)]) (.seq (.move 0 [(101,1)]) (.inst (.arith (.binop .add 100 100 (.reg 101)))))) (.inst (.arith (.binop .add 5 100 (.imm 3))))

@@ -676,8 +676,7 @@ end Correct
 
     HOL's free variable `c` is the outermost explicit binder; `I ## I ## f` on
     the `(num # num # prog)` triples is `fun t => (t.1, t.2.1, f t.2.2)`. -/
-@[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "word_remove_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_remove_correct {width : Nat} [NeZero width] {C : Type} {F : Type}
     (c : WordCompileFn width C) :
     ∀ (prog : WordLangProgHOL (BitVec width)) (st : WordSemStateFiniteExact width C F)

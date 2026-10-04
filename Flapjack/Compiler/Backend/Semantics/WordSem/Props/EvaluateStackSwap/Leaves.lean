@@ -73,10 +73,6 @@ theorem inst_withStack (s : WordSemStateFiniteExact width C F)
       (repeat' split) <;> first | rfl | (subst_vars; rfl) |
         (simp_all [memLoad, memStore, setVar]; done) |
         (simp_all [memLoad, memStore, setVar]; obtain ⟨_, rfl⟩ := ‹_ ∧ _›; subst_vars; rfl)
-  | fp f =>
-    cases f <;> simp only [inst, getFpVar, getVar] <;>
-      (repeat' split) <;> first | rfl | simp_all
-
 theorem shMemSetVar_withStack (s : WordSemStateFiniteExact width C F)
     (k : List (WordSemStackFrame width)) (res : Option (HolFfiResult F)) (v : Nat) :
     shMemSetVar (rw := width) res v { s with stack := k } =
@@ -211,10 +207,6 @@ theorem inst_stack_handler (s s1 : WordSemStateFiniteExact width C F)
       | (simp only [Option.some.injEq, reduceCtorEq] at h; done)
       | (simp only [Option.some.injEq] at h; subst h; exact memStore_stack_handler _ _ _ _ ‹memStore _ _ _ = some _›)
       | (simp only [Option.some.injEq] at h; subst h; exact ⟨rfl, rfl⟩)
-  | fp f =>
-    cases f <;> simp only [inst, getFpVar, getVar] at h <;> (repeat' split at h) <;>
-      simp only [Option.some.injEq, reduceCtorEq] at h <;> (try subst h) <;> simp [setFpVar, setVar]
-
 set_option linter.unusedSimpArgs false in
 /-- Result facts of a stack-insensitive statement. -/
 theorem evaluate_stackConst_facts (s : WordSemStateFiniteExact width C F)
@@ -367,8 +359,6 @@ open EvaluateStackSwapLeafWitnesses
 /-- HOL `evaluate_stack_swap` (`wordPropsScript.sml:2316-2363`), `Skip` case:
 the HOL conclusion at `Skip`, for every state; no sub-program, so no induction
 hypothesis and no extra premise. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_swap"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluateStackSwap_Skip {width : Nat} [NeZero width] {C F : Type} :
     ∀ s : WordSemStateFiniteExact width C F,
       stackSwapPost (.skip : WordLangProgHOL (BitVec width)) s :=
@@ -377,8 +367,6 @@ theorem evaluateStackSwap_Skip {width : Nat} [NeZero width] {C F : Type} :
 /-- HOL `evaluate_stack_swap` (`wordPropsScript.sml:2316-2363`), `StoreConsts` case:
 the HOL conclusion at `StoreConsts`, for every state; no sub-program, so no induction
 hypothesis and no extra premise. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_swap"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluateStackSwap_StoreConsts {width : Nat} [NeZero width] {C F : Type} (t1 t2 a o : Nat) (ws : List (Bool × BitVec width)) :
     ∀ s : WordSemStateFiniteExact width C F,
       stackSwapPost (.storeConsts t1 t2 a o ws : WordLangProgHOL (BitVec width)) s :=
@@ -387,8 +375,6 @@ theorem evaluateStackSwap_StoreConsts {width : Nat} [NeZero width] {C F : Type} 
 /-- HOL `evaluate_stack_swap` (`wordPropsScript.sml:2316-2363`), `Move` case:
 the HOL conclusion at `Move`, for every state; no sub-program, so no induction
 hypothesis and no extra premise. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_swap"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluateStackSwap_Move {width : Nat} [NeZero width] {C F : Type} (pri : Nat) (moves : List (Nat × Nat)) :
     ∀ s : WordSemStateFiniteExact width C F,
       stackSwapPost (.move pri moves : WordLangProgHOL (BitVec width)) s :=
@@ -397,8 +383,6 @@ theorem evaluateStackSwap_Move {width : Nat} [NeZero width] {C F : Type} (pri : 
 /-- HOL `evaluate_stack_swap` (`wordPropsScript.sml:2316-2363`), `Inst` case:
 the HOL conclusion at `Inst`, for every state; no sub-program, so no induction
 hypothesis and no extra premise. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_swap"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluateStackSwap_Inst {width : Nat} [NeZero width] {C F : Type} (i : WordLangInst (BitVec width)) :
     ∀ s : WordSemStateFiniteExact width C F,
       stackSwapPost (.inst i : WordLangProgHOL (BitVec width)) s :=
@@ -407,8 +391,6 @@ theorem evaluateStackSwap_Inst {width : Nat} [NeZero width] {C F : Type} (i : Wo
 /-- HOL `evaluate_stack_swap` (`wordPropsScript.sml:2316-2363`), `Assign` case:
 the HOL conclusion at `Assign`, for every state; no sub-program, so no induction
 hypothesis and no extra premise. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_swap"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluateStackSwap_Assign {width : Nat} [NeZero width] {C F : Type} (v : Nat) (e : WordLangExpHOL (BitVec width)) :
     ∀ s : WordSemStateFiniteExact width C F,
       stackSwapPost (.assign v e : WordLangProgHOL (BitVec width)) s :=
@@ -417,8 +399,6 @@ theorem evaluateStackSwap_Assign {width : Nat} [NeZero width] {C F : Type} (v : 
 /-- HOL `evaluate_stack_swap` (`wordPropsScript.sml:2316-2363`), `Get` case:
 the HOL conclusion at `Get`, for every state; no sub-program, so no induction
 hypothesis and no extra premise. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_swap"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluateStackSwap_Get {width : Nat} [NeZero width] {C F : Type} (v : Nat) (name : WordStoreHOL) :
     ∀ s : WordSemStateFiniteExact width C F,
       stackSwapPost (.get v name : WordLangProgHOL (BitVec width)) s :=
@@ -427,8 +407,6 @@ theorem evaluateStackSwap_Get {width : Nat} [NeZero width] {C F : Type} (v : Nat
 /-- HOL `evaluate_stack_swap` (`wordPropsScript.sml:2316-2363`), `Set` case:
 the HOL conclusion at `Set`, for every state; no sub-program, so no induction
 hypothesis and no extra premise. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_swap"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluateStackSwap_Set {width : Nat} [NeZero width] {C F : Type} (name : WordStoreHOL) (e : WordLangExpHOL (BitVec width)) :
     ∀ s : WordSemStateFiniteExact width C F,
       stackSwapPost (.set name e : WordLangProgHOL (BitVec width)) s :=
@@ -437,8 +415,6 @@ theorem evaluateStackSwap_Set {width : Nat} [NeZero width] {C F : Type} (name : 
 /-- HOL `evaluate_stack_swap` (`wordPropsScript.sml:2316-2363`), `OpCurrHeap` case:
 the HOL conclusion at `OpCurrHeap`, for every state; no sub-program, so no induction
 hypothesis and no extra premise. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_swap"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluateStackSwap_OpCurrHeap {width : Nat} [NeZero width] {C F : Type} (op : BinOp) (v1 v2 : Nat) :
     ∀ s : WordSemStateFiniteExact width C F,
       stackSwapPost (.opCurrHeap op v1 v2 : WordLangProgHOL (BitVec width)) s :=
@@ -447,8 +423,6 @@ theorem evaluateStackSwap_OpCurrHeap {width : Nat} [NeZero width] {C F : Type} (
 /-- HOL `evaluate_stack_swap` (`wordPropsScript.sml:2316-2363`), `Store` case:
 the HOL conclusion at `Store`, for every state; no sub-program, so no induction
 hypothesis and no extra premise. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_swap"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluateStackSwap_Store {width : Nat} [NeZero width] {C F : Type} (e : WordLangExpHOL (BitVec width)) (v : Nat) :
     ∀ s : WordSemStateFiniteExact width C F,
       stackSwapPost (.store e v : WordLangProgHOL (BitVec width)) s :=
@@ -457,8 +431,6 @@ theorem evaluateStackSwap_Store {width : Nat} [NeZero width] {C F : Type} (e : W
 /-- HOL `evaluate_stack_swap` (`wordPropsScript.sml:2316-2363`), `Tick` case:
 the HOL conclusion at `Tick`, for every state; no sub-program, so no induction
 hypothesis and no extra premise. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_swap"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluateStackSwap_Tick {width : Nat} [NeZero width] {C F : Type} :
     ∀ s : WordSemStateFiniteExact width C F,
       stackSwapPost (.tick : WordLangProgHOL (BitVec width)) s :=
@@ -467,8 +439,6 @@ theorem evaluateStackSwap_Tick {width : Nat} [NeZero width] {C F : Type} :
 /-- HOL `evaluate_stack_swap` (`wordPropsScript.sml:2316-2363`), `Return` case:
 the HOL conclusion at `Return`, for every state; no sub-program, so no induction
 hypothesis and no extra premise. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_swap"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluateStackSwap_Return {width : Nat} [NeZero width] {C F : Type} (n : Nat) (ms : List Nat) :
     ∀ s : WordSemStateFiniteExact width C F,
       stackSwapPost (.return n ms : WordLangProgHOL (BitVec width)) s :=
@@ -477,8 +447,6 @@ theorem evaluateStackSwap_Return {width : Nat} [NeZero width] {C F : Type} (n : 
 /-- HOL `evaluate_stack_swap` (`wordPropsScript.sml:2316-2363`), `Break` case:
 the HOL conclusion at `Break`, for every state; no sub-program, so no induction
 hypothesis and no extra premise. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_swap"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluateStackSwap_Break {width : Nat} [NeZero width] {C F : Type} (k : Nat) :
     ∀ s : WordSemStateFiniteExact width C F,
       stackSwapPost (.break k : WordLangProgHOL (BitVec width)) s :=
@@ -487,8 +455,6 @@ theorem evaluateStackSwap_Break {width : Nat} [NeZero width] {C F : Type} (k : N
 /-- HOL `evaluate_stack_swap` (`wordPropsScript.sml:2316-2363`), `Continue` case:
 the HOL conclusion at `Continue`, for every state; no sub-program, so no induction
 hypothesis and no extra premise. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_swap"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluateStackSwap_Continue {width : Nat} [NeZero width] {C F : Type} (k : Nat) :
     ∀ s : WordSemStateFiniteExact width C F,
       stackSwapPost (.continue k : WordLangProgHOL (BitVec width)) s :=
@@ -497,8 +463,6 @@ theorem evaluateStackSwap_Continue {width : Nat} [NeZero width] {C F : Type} (k 
 /-- HOL `evaluate_stack_swap` (`wordPropsScript.sml:2316-2363`), `LocValue` case:
 the HOL conclusion at `LocValue`, for every state; no sub-program, so no induction
 hypothesis and no extra premise. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_swap"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluateStackSwap_LocValue {width : Nat} [NeZero width] {C F : Type} (r l1 : Nat) :
     ∀ s : WordSemStateFiniteExact width C F,
       stackSwapPost (.locValue r l1 : WordLangProgHOL (BitVec width)) s :=
@@ -507,8 +471,6 @@ theorem evaluateStackSwap_LocValue {width : Nat} [NeZero width] {C F : Type} (r 
 /-- HOL `evaluate_stack_swap` (`wordPropsScript.sml:2316-2363`), `Install` case:
 the HOL conclusion at `Install`, for every state; no sub-program, so no induction
 hypothesis and no extra premise. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_swap"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluateStackSwap_Install {width : Nat} [NeZero width] {C F : Type} (r1 r2 r3 r4 : Nat) (names : WordLangCutsetsHOL) :
     ∀ s : WordSemStateFiniteExact width C F,
       stackSwapPost (.install r1 r2 r3 r4 names : WordLangProgHOL (BitVec width)) s :=
@@ -517,8 +479,6 @@ theorem evaluateStackSwap_Install {width : Nat} [NeZero width] {C F : Type} (r1 
 /-- HOL `evaluate_stack_swap` (`wordPropsScript.sml:2316-2363`), `CodeBufferWrite` case:
 the HOL conclusion at `CodeBufferWrite`, for every state; no sub-program, so no induction
 hypothesis and no extra premise. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_swap"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluateStackSwap_CodeBufferWrite {width : Nat} [NeZero width] {C F : Type} (r1 r2 : Nat) :
     ∀ s : WordSemStateFiniteExact width C F,
       stackSwapPost (.codeBufferWrite r1 r2 : WordLangProgHOL (BitVec width)) s :=
@@ -527,8 +487,6 @@ theorem evaluateStackSwap_CodeBufferWrite {width : Nat} [NeZero width] {C F : Ty
 /-- HOL `evaluate_stack_swap` (`wordPropsScript.sml:2316-2363`), `DataBufferWrite` case:
 the HOL conclusion at `DataBufferWrite`, for every state; no sub-program, so no induction
 hypothesis and no extra premise. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_swap"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluateStackSwap_DataBufferWrite {width : Nat} [NeZero width] {C F : Type} (r1 r2 : Nat) :
     ∀ s : WordSemStateFiniteExact width C F,
       stackSwapPost (.dataBufferWrite r1 r2 : WordLangProgHOL (BitVec width)) s :=
@@ -537,8 +495,6 @@ theorem evaluateStackSwap_DataBufferWrite {width : Nat} [NeZero width] {C F : Ty
 /-- HOL `evaluate_stack_swap` (`wordPropsScript.sml:2316-2363`), `FFI` case:
 the HOL conclusion at `FFI`, for every state; no sub-program, so no induction
 hypothesis and no extra premise. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_swap"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluateStackSwap_FFI {width : Nat} [NeZero width] {C F : Type} (ffiIndex : Flapjack.Basis.Pure.MlString.MlString) (ptr1 len1 ptr2 len2 : Nat)
     (names : WordLangCutsetsHOL) :
     ∀ s : WordSemStateFiniteExact width C F,
@@ -548,8 +504,6 @@ theorem evaluateStackSwap_FFI {width : Nat} [NeZero width] {C F : Type} (ffiInde
 /-- HOL `evaluate_stack_swap` (`wordPropsScript.sml:2316-2363`), `ShareInst` case:
 the HOL conclusion at `ShareInst`, for every state; no sub-program, so no induction
 hypothesis and no extra premise. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_swap"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluateStackSwap_ShareInst {width : Nat} [NeZero width] {C F : Type} (op : WordMemOp) (v : Nat) (ad : WordLangExpHOL (BitVec width)) :
     ∀ s : WordSemStateFiniteExact width C F,
       stackSwapPost (.shareInst op v ad : WordLangProgHOL (BitVec width)) s :=
@@ -558,8 +512,6 @@ theorem evaluateStackSwap_ShareInst {width : Nat} [NeZero width] {C F : Type} (o
 /-- HOL `evaluate_stack_swap` (`wordPropsScript.sml:2316-2363`), `Raise` case:
 the HOL conclusion at `Raise n`, for every state; no sub-program and no extra
 premise. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_stack_swap"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluateStackSwap_Raise {width : Nat} [NeZero width] {C F : Type} (n : Nat) :
     ∀ s : WordSemStateFiniteExact width C F,
       stackSwapPost (.raise n : WordLangProgHOL (BitVec width)) s :=

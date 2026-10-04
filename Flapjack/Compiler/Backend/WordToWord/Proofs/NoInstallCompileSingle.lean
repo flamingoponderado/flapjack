@@ -342,9 +342,7 @@ open Classical in
     `compile_single_correct` (at an arbitrary `compile_single` configuration, which
     `code_rel` leaves free) and the compile-fields frame; the `no_alloc` premises,
     which HOL's case proof uses, are not needed on this route. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml"
-  "no_install_no_alloc_compile_single_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem no_install_no_alloc_compile_single_correct {width : Nat} [NeZero width] {C F : Type} :
     ∀ (prog : WordLangProgHOL (BitVec width)) (st : WordSemStateFiniteExact width C F)
       (l : Spt (Nat × WordLangProgHOL (BitVec width))),

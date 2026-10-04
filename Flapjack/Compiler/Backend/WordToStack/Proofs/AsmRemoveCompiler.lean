@@ -68,16 +68,6 @@ private theorem instRemove {width : Nat} [NeZero width]
         List.nil_append, List.cons_append, regName]
       all_goals repeat' apply And.intro
       all_goals first | trivial | omega
-  | fp f =>
-      cases f
-      all_goals by_cases hw : width = 64
-      all_goals simp only [wInstNative, hw, if_true, if_false,
-        wRegWrite1Native, wRegWrite2Native, wReg1, wReg2]
-      all_goals try split_ifs
-      all_goals simp only [stackAsmRemove, wStackLoadNative, List.append_nil,
-        List.nil_append, List.cons_append, regName]
-      all_goals repeat' apply And.intro
-      all_goals first | trivial | omega
   | const n w =>
       simp only [wInstNative, wRegWrite1Native]
       split_ifs <;> simp_all [stackAsmRemove, regName] <;> omega
@@ -86,8 +76,6 @@ private theorem instRemove {width : Nat} [NeZero width]
 /-- Entire original compiler removal theorem, with exactly its reduced-count
 room guard and false-performance premise. All recursive hypotheses are internal.
 The original explicitly shares configuration and source-program word dimension. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_stack_asm_remove_lem" (words_as_type_indexed_bitvec)]
 theorem wordToStackStackAsmRemove {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (program : WordLangProgHOL (BitVec width))

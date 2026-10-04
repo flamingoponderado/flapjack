@@ -49,8 +49,7 @@ HOL's `ARB` state; each is the shared opaque `holArb` of its (C/F-free) field
 type. `FEMPTY |++ MAP (λr. (r, read_reg r s)) regs` is `updateListEq` from
 `empty`, with the LabSem overload `read_reg r s = s.regs r`; the `num set`
 `save_regs` is a Bool predicate, as `ffi_save_regs`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "make_init_def"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def makeInit {width : Nat} [NeZero width] {C F : Type}
     (code : Spt (HolProg width))
     (coracle : Nat → C × List (Nat × HolProg width) × List (BitVec width))
@@ -83,10 +82,7 @@ noncomputable def makeInit {width : Nat} [NeZero width] {C F : Type}
 /-- HOL `make_init_semantics` (`val`, line 3047): `flatten_semantics` at
 `s1 := make_init code coracle regs save_regs s`, `s2 := s`, with the built
 state's code evaluated to `code`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "make_init_semantics"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem makeInitSemantics {width : Nat} [NeZero width] {C F : Type}
     {code : Spt (HolProg width)}
     {coracle : Nat → C × List (Nat × HolProg width) × List (BitVec width)}
@@ -103,8 +99,7 @@ theorem makeInitSemantics {width : Nat} [NeZero width] {C F : Type}
 `t.regs r`; `find_name` over the `num_map` of register names is
 `findNameSpt`; `≤₊` is unsigned `BitVec` order; the separating `*` is
 left-associated `SetSep.star`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "memory_assumption_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def memoryAssumption {width : Nat} [NeZero width] {C F : Type}
     (rnames : Spt Nat) (bitmaps : List (BitVec width)) (dataSp : Nat)
     (t : Flapjack.Compiler.Backend.LabSem.State width C F) : Prop :=
@@ -135,8 +130,7 @@ noncomputable def memoryAssumption {width : Nat} [NeZero width] {C F : Type}
 
 /-- HOL `halt_assum_lemma` (local): procedure 1 of the stack_names renaming of
 stack_remove's compiled code halts with `Word 0w`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "halt_assum_lemma"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem haltAssumLemma {width : Nat} [NeZero width] {C F : Type} {f : Spt Nat} {jump : Bool}
     {off : BitVec width × BitVec width} {gen : Bool} {maxHeap k l : Nat}
     {code : List (Nat × HolProg width)} :
@@ -162,8 +156,7 @@ theorem haltAssumLemma {width : Nat} [NeZero width] {C F : Type} {f : Spt Nat} {
 
 /-- HOL `FLOOKUP_regs` (local). The HOL binder `f`, of an unconstrained type
 and not occurring in the statement, is vacuous and omitted. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "FLOOKUP_regs"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flookupRegs {width : Nat} [NeZero width] {C F : Type} :
     ∀ (regs : List Nat) (n : Nat) (v : WordLocW width)
       (s : Flapjack.Compiler.Backend.LabSem.State width C F),
@@ -187,10 +180,7 @@ theorem flookupRegs {width : Nat} [NeZero width] {C F : Type} :
 
 /-- HOL `state_rel_make_init`: `state_rel` of the built state reduces to the
 conjuncts of `state_rel_def` that `make_init` does not establish. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "state_rel_make_init"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelMakeInit {width : Nat} [NeZero width] {C F : Type}
     {code : Spt (HolProg width)}
     {coracle : Nat → C × List (Nat × HolProg width) × List (BitVec width)}

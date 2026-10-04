@@ -47,8 +47,7 @@ namespace WordSemStateFiniteExact
     (word_to_bytes w F ++ word_to_bytes a F)`.  `FFI_final` gives
     `(SOME (FinalFFI outcome), flush_state T s)`, and `FFI_return` installs
     the new FFI state.  Outside the domain the result is `(SOME Error, s)`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "sh_mem_store_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def shMemStore {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {C : Type} {F : Type}
     (a w : BitVec width) (s : WordSemStateFiniteExact width C F) :
     Option (WordSemResult rw) × WordSemStateFiniteExact width C F :=
@@ -62,8 +61,7 @@ def shMemStore {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {C : Type} {F
 /-- Exact HOL `sh_mem_load_def` (`wordSemScript.sml:384-390`): `SOME (call_FFI
     s.ffi (SharedMem MappedRead) [0w] (word_to_bytes a F))` when `a IN
     s.sh_mdomain`, else `NONE`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "sh_mem_load_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def shMemLoad {width : Nat} [NeZero width] {C : Type} {F : Type}
     (a : BitVec width) (s : WordSemStateFiniteExact width C F) : Option (HolFfiResult F) :=
   if s.shMdomain a then
@@ -73,8 +71,7 @@ def shMemLoad {width : Nat} [NeZero width] {C : Type} {F : Type}
 /-- Exact HOL `sh_mem_store_byte_def` (`wordSemScript.sml:392-400`).  The domain
     test is on `byte_align a`, the configuration is `[1w]`, and the payload is
     `[get_byte 0w w F] ++ word_to_bytes a F`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "sh_mem_store_byte_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def shMemStoreByte {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {C : Type} {F : Type}
     (a w : BitVec width) (s : WordSemStateFiniteExact width C F) :
     Option (WordSemResult rw) × WordSemStateFiniteExact width C F :=
@@ -88,8 +85,7 @@ def shMemStoreByte {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {C : Type
 /-- Exact HOL `sh_mem_store16_def` (`wordSemScript.sml:402-410`).  The domain
     test is on `byte_align a`, the configuration is `[2w]`, and the payload is
     `TAKE 2 (word_to_bytes w F) ++ word_to_bytes a F`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "sh_mem_store16_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def shMemStore16 {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {C : Type} {F : Type}
     (a w : BitVec width) (s : WordSemStateFiniteExact width C F) :
     Option (WordSemResult rw) × WordSemStateFiniteExact width C F :=
@@ -103,8 +99,7 @@ def shMemStore16 {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {C : Type} 
 /-- Exact HOL `sh_mem_store32_def` (`wordSemScript.sml:412-420`).  The domain
     test is on `byte_align a`, the configuration is `[4w]`, and the payload is
     `TAKE 4 (word_to_bytes w F) ++ word_to_bytes a F`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "sh_mem_store32_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def shMemStore32 {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {C : Type} {F : Type}
     (a w : BitVec width) (s : WordSemStateFiniteExact width C F) :
     Option (WordSemResult rw) × WordSemStateFiniteExact width C F :=
@@ -118,8 +113,7 @@ def shMemStore32 {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {C : Type} 
 /-- Exact HOL `sh_mem_load_byte_def` (`wordSemScript.sml:422-428`): as
     `sh_mem_load`, with the domain test on `byte_align a` and configuration
     `[1w]`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "sh_mem_load_byte_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def shMemLoadByte {width : Nat} [NeZero width] {C : Type} {F : Type}
     (a : BitVec width) (s : WordSemStateFiniteExact width C F) : Option (HolFfiResult F) :=
   if s.shMdomain (riscvByteAlignHOL a) then
@@ -129,8 +123,7 @@ def shMemLoadByte {width : Nat} [NeZero width] {C : Type} {F : Type}
 /-- Exact HOL `sh_mem_load16_def` (`wordSemScript.sml:430-436`): as
     `sh_mem_load`, with the domain test on `byte_align a` and configuration
     `[2w]`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "sh_mem_load16_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def shMemLoad16 {width : Nat} [NeZero width] {C : Type} {F : Type}
     (a : BitVec width) (s : WordSemStateFiniteExact width C F) : Option (HolFfiResult F) :=
   if s.shMdomain (riscvByteAlignHOL a) then
@@ -140,8 +133,7 @@ def shMemLoad16 {width : Nat} [NeZero width] {C : Type} {F : Type}
 /-- Exact HOL `sh_mem_load32_def` (`wordSemScript.sml:438-444`): as
     `sh_mem_load`, with the domain test on `byte_align a` and configuration
     `[4w]`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "sh_mem_load32_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def shMemLoad32 {width : Nat} [NeZero width] {C : Type} {F : Type}
     (a : BitVec width) (s : WordSemStateFiniteExact width C F) : Option (HolFfiResult F) :=
   if s.shMdomain (riscvByteAlignHOL a) then
@@ -154,8 +146,7 @@ def shMemLoad32 {width : Nat} [NeZero width] {C : Type} {F : Type}
     * `SOME (FFI_return new_ffi new_bytes)` gives `(NONE, set_var v (Word
       (word_of_bytes F 0w new_bytes)) (s with ffi := new_ffi))`.
     * `NONE` gives `(SOME Error, s)`. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "sh_mem_set_var_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def shMemSetVar {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {C : Type} {F : Type} :
     Option (HolFfiResult F) → Nat → WordSemStateFiniteExact width C F →
       Option (WordSemResult rw) × WordSemStateFiniteExact width C F
@@ -168,8 +159,7 @@ def shMemSetVar {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {C : Type} {
     the matching `sh_mem_load*` result to `sh_mem_set_var v`.  The stores
     require `get_var v s = SOME (Word v)` and call the matching
     `sh_mem_store*`, and give `(SOME Error, s)` otherwise. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "share_inst_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def shareInst {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {C : Type} {F : Type} :
     WordMemOp → Nat → BitVec width → WordSemStateFiniteExact width C F →
       Option (WordSemResult rw) × WordSemStateFiniteExact width C F

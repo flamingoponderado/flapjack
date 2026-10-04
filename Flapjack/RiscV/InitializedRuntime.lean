@@ -27,7 +27,7 @@ def initializedRuntimeDataConfig : Flapjack.Compiler.Backend.DataToWord.Config :
 This is a Flapjack adoption check, not a separately named HOL theorem. -/
 theorem initializedRuntimeDataConfig_defaults : initializedRuntimeDataConfig =
     { tagBits := 4, lenBits := 4, padBits := 2, lenSize := 32,
-      hasDiv := true, hasLongdiv := false, hasFpOps := false, hasFpTern := false,
+      hasDiv := true, hasLongdiv := false,
       be := false, callEmptyFfi := false, gcKind := .none } := rfl
 
 /-- RV64 Pancake runtime composition, including the original three entry stubs.

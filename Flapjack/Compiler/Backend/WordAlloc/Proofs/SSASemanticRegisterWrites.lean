@@ -21,9 +21,7 @@ end SemanticRegisterWriteWitnesses
 existential source-permutation/result/frame/locals conclusion. Source error and
 success branches are derived; no target execution or success premise is added.
 The full evaluator inherits reals_as_rational_cuts (SOUNDNESS item 8). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_correct"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransCorrectGet {width : Nat} [NeZero width] {C F : Type}
     (source target : WordSemStateFiniteExact width C F)
     (ssa : Spt Nat) (next name : Nat) (store : WordStoreHOL)
@@ -50,9 +48,7 @@ theorem ssaCcTransCorrectGet {width : Nat} [NeZero width] {C F : Type}
 existential source-permutation/result/frame/locals conclusion. Source error and
 success branches are derived; no target execution or success premise is added.
 The full evaluator inherits reals_as_rational_cuts (SOUNDNESS item 8). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_correct"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransCorrectLocValue {width : Nat} [NeZero width] {C F : Type}
     (source target : WordSemStateFiniteExact width C F)
     (ssa : Spt Nat) (next name : Nat) (label : Nat)
@@ -79,9 +75,7 @@ theorem ssaCcTransCorrectLocValue {width : Nat} [NeZero width] {C F : Type}
 existential source-permutation/result/frame/locals conclusion. Source error and
 success branches are derived; no target execution or success premise is added.
 The full evaluator inherits reals_as_rational_cuts (SOUNDNESS item 8). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_correct"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransCorrectAssign {width : Nat} [NeZero width] {C F : Type}
     (source target : WordSemStateFiniteExact width C F)
     (ssa : Spt Nat) (next name : Nat) (expr : WordLangExpHOL (BitVec width))

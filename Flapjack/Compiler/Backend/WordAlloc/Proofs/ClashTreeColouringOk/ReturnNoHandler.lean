@@ -7,8 +7,7 @@ open Flapjack.RegAlloc
 
 /-- Exact returning Call with no exception handler. The only induction
 hypothesis is the full original motive for the return program. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "clash_tree_colouring_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk_ReturnNoHandler {width : Nat} [NeZero width]
     (vs : List Nat) (cuts : WordLangCutsetsHOL)
     (ret : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)

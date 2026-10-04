@@ -1,3 +1,4 @@
+import Mathlib.Tactic.ByContra
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StackSpace
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeapWrites
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeap
@@ -29,10 +30,7 @@ theorem runLoad {width : Nat} [NeZero width] {C F : Type}
 /-- Genuine full original StackLoad compiler constructor: direct and large-offset
 paths derive native execution and the complete postrelation from the original
 four premises. There is no successful target-load or target-state premise. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectStackLoad {width : Nat} [NeZero width] {C F : Type}
     (source : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (postSource target : StackSemStateFiniteExact width C F) (register count pointer : Nat)
@@ -121,10 +119,7 @@ theorem runStore {width : Nat} [NeZero width] {C F : Type}
 /-- Genuine full original StackStore constructor, including direct store and
 upshift/store/downshift fallback. The actual target memory update and exact
 pointer restoration establish the full post-state relation. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectStackStore {width : Nat} [NeZero width] {C F : Type}
     (source : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (postSource target : StackSemStateFiniteExact width C F) (register count pointer : Nat)

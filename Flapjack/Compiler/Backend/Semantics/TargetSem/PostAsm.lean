@@ -29,8 +29,7 @@ open Flapjack.Compiler.Encoders.Asm
     Caller-saved registers and all FP registers come from the machine state;
     the returned bytes are written with `asm_write_bytearray`; the pc is the
     link-register value. -/
-@[hol "cakeml/compiler/backend/semantics/targetSemScript.sml" "post_ffi_asm_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def postFfiAsmHOL {width : Nat} [NeZero width] {state projection : Type}
     (mcConf : MachineConfig width state projection) (t1 : AsmState width)
     (newBytes : List (BitVec 8)) (ms' : state) : AsmState width :=
@@ -49,8 +48,7 @@ def postFfiAsmHOL {width : Nat} [NeZero width] {state projection : Type}
 /-- Exact HOL `post_ccache_asm_def` (`cakeml/compiler/backend/semantics/targetSemScript.sml:410-423`).
     Like `postFfiAsmHOL` but additionally preserving the pointer register and
     not touching memory. -/
-@[hol "cakeml/compiler/backend/semantics/targetSemScript.sml" "post_ccache_asm_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def postCcacheAsmHOL {width : Nat} [NeZero width] {state projection : Type}
     (mcConf : MachineConfig width state projection) (t1 : AsmState width)
     (ms' : state) : AsmState width :=

@@ -15,8 +15,7 @@ program and its exact compiled target lookup; the target domain is exactly the
 source domain together with the three initializer stub names. HOL sets are
 rendered as predicates, so union and the literal three-element set are written
 pointwise. No well-formedness, fresh-name or evaluation premise is added. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "code_rel_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def codeRelHOL {width : Nat} [NeZero width] (jump : Bool)
     (bounds : BitVec width × BitVec width) (pointer : Nat)
     (source target : Spt (HolProg width)) : Prop :=

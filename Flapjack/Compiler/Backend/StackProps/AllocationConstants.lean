@@ -15,8 +15,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
   StackSemStateSupport.holFmapAsFiniteSupportWitness
 
 /-- Full original Option-map clock commutation, including every GC failure. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "gc_with_const"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem gcWithClock {width : Nat} [NeZero width] {C F : Type}
     (s : StackSemStateFiniteExact width C F) (k : Nat) :
     gc { s with clock := k } = (gc s).map (fun s => { s with clock := k }) := by
@@ -48,8 +47,7 @@ private theorem gcConst {width : Nat} [NeZero width] {C F : Type}
 
 /-- Full original fifteen-field allocation preservation, with the sole
 original returned-pair equality premise. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "alloc_const"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem allocConst {width : Nat} [NeZero width] {C F : Type}
     (w : BitVec width) (s t : StackSemStateFiniteExact width C F)
     (result : Option (StackSemResult width)) (h : alloc w s = (result,t)) :
@@ -81,8 +79,7 @@ theorem allocConst {width : Nat} [NeZero width] {C F : Type}
 
 /-- Full original sixteen-field constant-store preservation, including
 all error outcomes and the optional register-zero removal. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "store_const_sem_const"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem storeConstSemConst {width : Nat} {resultWidth : Nat}
     [NeZero width] [NeZero resultWidth] {C F : Type}
     (t1 t2 : Nat) (s t : StackSemStateFiniteExact width C F)
@@ -107,8 +104,7 @@ theorem storeConstSemConst {width : Nat} {resultWidth : Nat}
   repeat' first | split at h | (simp only [Prod.mk.injEq] at h; rcases h with ⟨_, rfl⟩; simp [unsetVarZero, setVar])
 
 /-- Full original allocation clock commutation, retaining result and state. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "alloc_with_const"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem allocWithClock {width : Nat} [NeZero width] {C F : Type}
     (w : BitVec width) (s : StackSemStateFiniteExact width C F) (k : Nat) :
     alloc w { s with clock := k } =
@@ -122,8 +118,7 @@ theorem allocWithClock {width : Nat} [NeZero width] {C F : Type}
 
 /-- Full original constant-store clock commutation, without domain or
 successful-copy assumptions. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "store_const_sem_with_const"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem storeConstSemWithClock {width : Nat} {resultWidth : Nat}
     [NeZero width] [NeZero resultWidth] {C F : Type}
     (t1 t2 : Nat) (s : StackSemStateFiniteExact width C F) (k : Nat) :

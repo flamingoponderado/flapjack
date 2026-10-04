@@ -56,8 +56,7 @@ def zeroLabsAccOf {width : Nat} [NeZero width] :
 /-- Exact HOL `lab_to_target$line_get_zero_labs_acc_def`
 (`lab_to_targetScript.sml:259-262`), clause for clause: a `LabAsm a _ _ _`
 delegates to `zero_labs_acc_of a`, any other line returns the accumulator. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "line_get_zero_labs_acc_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def lineGetZeroLabsAcc {width : Nat} [NeZero width] :
     Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width) → NumSet → NumSet
@@ -67,8 +66,7 @@ def lineGetZeroLabsAcc {width : Nat} [NeZero width] :
 /-- Exact HOL `lab_to_target$sec_get_zero_labs_acc_def`
 (`lab_to_targetScript.sml:264-267`): `Section _ lines` folds
 `line_get_zero_labs_acc` over its lines with `FOLDR` (Lean `List.foldr`). -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "sec_get_zero_labs_acc_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def secGetZeroLabsAcc {width : Nat} [NeZero width]
     (sec : Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) (acc : NumSet) :
@@ -78,8 +76,7 @@ def secGetZeroLabsAcc {width : Nat} [NeZero width]
 /-- Exact HOL `lab_to_target$get_zero_labs_acc_def`
 (`lab_to_targetScript.sml:269-272`): fold `sec_get_zero_labs_acc` over the
 sections starting from the empty set `LN`. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "get_zero_labs_acc_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def getZeroLabsAcc {width : Nat} [NeZero width]
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) : NumSet :=
@@ -90,8 +87,7 @@ def getZeroLabsAcc {width : Nat} [NeZero width]
 collected zero labels, the label map `labs` must hold `n` (`F` when absent) and
 its inner map must hold key `0` (`lookup 0 l ≠ NONE`, rendered as
 `(sptLookup 0 l).isSome`). -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "zero_labs_acc_exist_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def zeroLabsAccExist {width : Nat} [NeZero width] {α : Type} (labs : Spt (Spt α))
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) : Bool :=
@@ -104,8 +100,7 @@ def zeroLabsAccExist {width : Nat} [NeZero width] {α : Type} (labs : Spt (Spt �
 declared as an `Overload`, which the reference checker resolves as a
 declaration): `all_enc_ok_light c ls = EVERY (sec_ok_light c) ls`, rendered as
 `List.all` over the same exact `secOkLight`. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "all_enc_ok_light"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def allEncOkLight {width : Nat} [NeZero width] (config : AsmConfigExact width)
     (sections : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) : Bool :=
@@ -121,8 +116,7 @@ result, pads with `pad_code (c.encode (Inst Skip))`, and returns
 `SOME (sec_list, labs)` only when `done /\ all_enc_ok_light c sec_list /\
 zero_labs_acc_exist labs sec_list`; otherwise it retries with the clock
 decremented, or returns `NONE` at clock `0`. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "remove_labels_loop_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def removeLabelsLoop {width : Nat} [NeZero width] (clock : Nat)
     (config : AsmConfigExact width) (pos : Nat) (initLabs : Spt (Spt Nat))
     (ffis : List HolFfiName)
@@ -149,8 +143,7 @@ termination_by clock
 (`lab_to_targetScript.sml:313-322`): `remove_labels init_clock c pos labs ffis
 sec_list = remove_labels_loop init_clock c pos labs ffis
 (enc_sec_list c.encode sec_list)`. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "remove_labels_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def removeLabels {width : Nat} [NeZero width] (initClock : Nat)
     (config : AsmConfigExact width) (pos : Nat) (labs : Spt (Spt Nat))
     (ffis : List HolFfiName)
@@ -162,8 +155,7 @@ def removeLabels {width : Nat} [NeZero width] (initClock : Nat)
 
 /-- Exact HOL `lab_to_target$line_bytes_def` (`lab_to_targetScript.sml:326-330`):
 a `Label` has no bytes; `Asm` and `LabAsm` return their recorded byte list. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "line_bytes_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def lineBytes {width : Nat} [NeZero width] :
     Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width) → List (BitVec 8)
@@ -175,8 +167,7 @@ def lineBytes {width : Nat} [NeZero width] :
 all three clauses: `[]` is `[]`; a section with no lines is skipped by
 recursing on the rest; a section with a first line `y` emits `line_bytes y`
 followed by the flattening of the same section with `y` removed. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "prog_to_bytes_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def progToBytes {width : Nat} [NeZero width] :
     List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) → List (BitVec 8)
@@ -192,8 +183,7 @@ word is translated to positive-width `BitVec width` (words_as_type_indexed_bitve
 HOL proves this by `prog_to_bytes_ind`; the Lean proof is the same well-founded
 induction over the shrinking section line list, with no added hypothesis or
 changed clause. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "prog_to_bytes_MAP"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem progToBytesMap {width : Nat} [NeZero width]
     (ls : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :

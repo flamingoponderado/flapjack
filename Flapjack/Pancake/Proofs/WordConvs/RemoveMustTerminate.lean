@@ -75,8 +75,7 @@ theorem removeMustTerminate_induct {width : Nat} [NeZero width]
 /-- HOL `remove_must_terminate_conventions` (`wordConvsProofScript.sml:2929-2949`):
 the program conventions are preserved and the labels are unchanged. HOL's free
 instruction predicate `P` is the leading binder. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "remove_must_terminate_conventions"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem removeMustTerminateConventions {width : Nat} [NeZero width]
     (P : WordLangInst (BitVec width) → Bool) :
     ∀ (p : WordLangProgHOL (BitVec width)) (c : AsmConfigExact width) (k : Nat),
@@ -124,8 +123,7 @@ theorem removeMustTerminateConventions {width : Nat} [NeZero width]
 
 /-- HOL `word_get_code_labels_remove_must_terminate`
 (`wordConvsProofScript.sml:2951-2959`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "word_get_code_labels_remove_must_terminate" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getCodeLabels_removeMustTerminate {width : Nat} [NeZero width] :
     ∀ ps : WordLangProgHOL (BitVec width),
       getCodeLabelsHOL (removeMustTerminate ps) = getCodeLabelsHOL ps := by
@@ -138,8 +136,7 @@ theorem getCodeLabels_removeMustTerminate {width : Nat} [NeZero width] :
 /-- HOL `word_good_handlers_remove_must_terminate`
 (`wordConvsProofScript.sml:2961-2969`); HOL's free handler label `n` is the
 leading binder. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "word_good_handlers_remove_must_terminate" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem goodHandlers_removeMustTerminate {width : Nat} [NeZero width] (n : Nat) :
     ∀ ps : WordLangProgHOL (BitVec width),
       goodHandlersHOL n (removeMustTerminate ps) = true ↔ goodHandlersHOL n ps = true := by

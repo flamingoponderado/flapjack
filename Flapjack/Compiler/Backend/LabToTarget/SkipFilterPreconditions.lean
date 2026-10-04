@@ -9,8 +9,7 @@ open Flapjack.Compiler.Backend.LabFilter
 /-- Full original pre-encoding preservation under the actual skip filter.
 Every surviving line retains its original precondition; no successful
 compilation or post-encoding condition is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "all_enc_ok_pre_filter_skip"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem allEncOkPreFilterSkip {width : Nat} [NeZero width]
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString)

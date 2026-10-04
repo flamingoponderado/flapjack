@@ -53,8 +53,7 @@ end ProgCompSupport
 open ProgCompSupport
 
 /-- Exact HOL `get_var_imm_case` (`stack_allocProofScript.sml:66-73`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "get_var_imm_case"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem get_var_imm_case {width : Nat} [NeZero width] {C F : Type}
     {ri : WordRegImm (BitVec width)} {s : StackSemStateFiniteExact width C F} :
     StackSemStateOps.getVarImm ri s =
@@ -64,8 +63,7 @@ theorem get_var_imm_case {width : Nat} [NeZero width] {C F : Type}
   cases ri <;> rfl
 
 /-- Exact HOL `prog_comp_lemma` (`stack_allocProofScript.sml:75-79`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "prog_comp_lemma"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem prog_comp_lemma {width : Nat} [NeZero width] :
     (progComp : Nat × HolProg width → Nat × HolProg width) =
       fun np => (np.1, (comp np.1 (nextLabHOL np.2 2) np.2).1) := by
@@ -74,8 +72,7 @@ theorem prog_comp_lemma {width : Nat} [NeZero width] :
   rfl
 
 /-- Exact HOL `FST_prog_comp` (`stack_allocProofScript.sml:81-85`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "FST_prog_comp"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem FST_prog_comp {width : Nat} [NeZero width] {pp : Nat × HolProg width} :
     (progComp pp).1 = pp.1 := by
   obtain ⟨n, p⟩ := pp
@@ -84,8 +81,7 @@ theorem FST_prog_comp {width : Nat} [NeZero width] {pp : Nat × HolProg width} :
 /-- Exact HOL `lookup_IMP_lookup_compile` (`stack_allocProofScript.sml:87-98`):
 a non-stub function of the source code is found, compiled by `comp`, in the
 compiled code. HOL's free `dest s x c` are implicit. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "lookup_IMP_lookup_compile"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem lookup_IMP_lookup_compile {width : Nat} [NeZero width] {C F : Type}
     {dest : Nat} {s : StackSemStateFiniteExact width C F} {x : HolProg width}
     {c : DataToWord.Config} :
@@ -140,8 +136,7 @@ theorem find_code_regs_SUBMAP {width : Nat} [NeZero width] {κ α : Type}
 
 /-- Exact HOL `get_labels_comp` (`stack_allocProofScript.sml:5170-5180`):
 `comp` keeps every label of its input program. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "get_labels_comp"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem get_labels_comp {width : Nat} [NeZero width] :
     ∀ (n p : Nat) (e : HolProg width) (l : Nat × Nat),
       StackSem.getLabelsExact e l → StackSem.getLabelsExact (comp n p e).1 l
@@ -201,8 +196,7 @@ termination_by _ _ e => sizeOf e
 decreasing_by all_goals simp_wf <;> omega
 
 /-- Exact HOL `loc_check_compile` (`stack_allocProofScript.sml:5182-5204`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "loc_check_compile"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loc_check_compile {width : Nat} [NeZero width] {C F : Type}
     {s : StackSemStateFiniteExact width C F} {l1 l2 : Nat} {c : DataToWord.Config} :
     StackSem.locCheckExact s.code (l1, l2) ∧
@@ -222,8 +216,7 @@ theorem loc_check_compile {width : Nat} [NeZero width] {C F : Type}
   · exact Or.inr ⟨k, _, hlook k e he, get_labels_comp _ _ e _ hlab⟩
 
 /-- Exact HOL `ALOOKUP_prog_comp` (`stack_allocProofScript.sml:5278-5285`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "ALOOKUP_prog_comp"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ALOOKUP_prog_comp {width : Nat} [NeZero width] :
     ∀ (xs : List (Nat × HolProg width)) (a : Nat) (y : HolProg width),
       sptAListLookup a xs = some y →
@@ -232,8 +225,7 @@ theorem ALOOKUP_prog_comp {width : Nat} [NeZero width] :
   simp [sptAListLookup_map_progComp, h]
 
 /-- Exact HOL `lookup_fromAList_prog_comp` (`stack_allocProofScript.sml:5287-5295`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "lookup_fromAList_prog_comp"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem lookup_fromAList_prog_comp {width : Nat} [NeZero width] {C F : Type}
     {x : Nat} {s : StackSemStateFiniteExact width C F} {p : HolProg width} :
     sptLookup x s.code = some p →

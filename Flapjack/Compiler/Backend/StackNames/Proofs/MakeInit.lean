@@ -30,8 +30,7 @@ is `holLinv (findNameSpt f) (fun _ => True)`, `MAP_KEYS` the choice rendering
 `HolFiniteMapExact.mapKeys`, and `IMAGE` over the Boolean `ffi_save_regs` set the decided
 existential, as in `rename_state_def`. The commented-out buffer resets of the HOL source are
 not part of the definition. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "make_init_def"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def makeInit {width : Nat} [NeZero width] {C F : Type} (f : Spt Nat)
     (code : Spt (HolProg width))
     (oracle : Nat → C × List (Nat × HolProg width) × List (BitVec width))
@@ -64,8 +63,7 @@ end MakeInit
 /-- Exact HOL `make_init_semantics` (`stack_namesProofScript.sml:571-587`). HOL's free `s`,
 `f`, `code`, `oracle` and `start` are the implicit binders; `ALL_DISTINCT` is `List.Nodup`,
 `I ## compile f ## I` is `Prod.map id (Prod.map (compileHOL f) id)`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "make_init_semantics"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem makeInitSemantics {width : Nat} [NeZero width] {C F : Type}
     {s : StackSemStateFiniteExact width C F} {f : Spt Nat} {code : List (Nat × HolProg width)}
     {oracle : Nat → C × List (Nat × HolProg width) × List (BitVec width)} {start : Nat} :

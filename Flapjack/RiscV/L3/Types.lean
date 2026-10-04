@@ -77,13 +77,6 @@ inductive ExtStatus where
   | Dirty
   deriving DecidableEq, Repr, Inhabited
 
-/-- HOL L3 datatype `Interrupt` (`riscvScript.sml:27`). -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "Interrupt"]
-inductive Interrupt where
-  | Software
-  | Timer
-  deriving DecidableEq, Repr, Inhabited
-
 /-- HOL L3 datatype `ExceptionType` (`riscvScript.sml:29`). -/
 @[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "ExceptionType"]
 inductive ExceptionType where
@@ -177,7 +170,6 @@ structure mcause where
   deriving DecidableEq, Repr, Inhabited
 
 /-- HOL L3 record `MachineCSR` (`riscvScript.sml:64`). -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "MachineCSR"]
 structure MachineCSR where
   mbadaddr : (BitVec 64)
   mbase : (BitVec 64)
@@ -197,14 +189,11 @@ structure MachineCSR where
   mscratch : (BitVec 64)
   mstatus : mstatus
   mtdeleg : mtdeleg
-  mtime_delta : (BitVec 64)
-  mtimecmp : (BitVec 64)
   mtohost : (BitVec 64)
   mtvec : (BitVec 64)
   deriving DecidableEq, Repr, Inhabited
 
 /-- HOL L3 record `HypervisorCSR` (`riscvScript.sml:73`). -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "HypervisorCSR"]
 structure HypervisorCSR where
   hbadaddr : (BitVec 64)
   hcause : mcause
@@ -212,8 +201,6 @@ structure HypervisorCSR where
   hscratch : (BitVec 64)
   hstatus : mstatus
   htdeleg : mtdeleg
-  htime_delta : (BitVec 64)
-  htimecmp : (BitVec 64)
   htvec : (BitVec 64)
   deriving DecidableEq, Repr, Inhabited
 
@@ -247,7 +234,6 @@ structure sie where
   deriving DecidableEq, Repr, Inhabited
 
 /-- HOL L3 record `SupervisorCSR` (`riscvScript.sml:88`). -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "SupervisorCSR"]
 structure SupervisorCSR where
   sasid : (BitVec 64)
   sbadaddr : (BitVec 64)
@@ -255,238 +241,43 @@ structure SupervisorCSR where
   sepc : (BitVec 64)
   sptbr : (BitVec 64)
   sscratch : (BitVec 64)
-  stime_delta : (BitVec 64)
-  stimecmp : (BitVec 64)
   stvec : (BitVec 64)
   deriving DecidableEq, Repr, Inhabited
 
-/-- HOL L3 record `FPCSR` (`riscvScript.sml:94`). -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "FPCSR"]
-structure FPCSR where
-  DZ : Bool
-  FRM : (BitVec 3)
-  NV : Bool
-  NX : Bool
-  OF : Bool
-  UF : Bool
-  «fpcsr'rst» : (BitVec 24)
-  deriving DecidableEq, Repr, Inhabited
-
-/-- HOL L3 record `UserCSR` (`riscvScript.sml:99`). -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "UserCSR"]
-structure UserCSR where
-  cycle_delta : (BitVec 64)
-  fpcsr : FPCSR
-  instret_delta : (BitVec 64)
-  time_delta : (BitVec 64)
-  deriving DecidableEq, Repr, Inhabited
-
 /-- HOL L3 record `SynchronousTrap` (`riscvScript.sml:104`). -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "SynchronousTrap"]
 structure SynchronousTrap where
   badaddr : (Option (BitVec 64))
   trap : ExceptionType
   deriving DecidableEq, Repr, Inhabited
 
 /-- HOL L3 datatype `TransferControl` (`riscvScript.sml:107`). -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "TransferControl"]
 inductive TransferControl where
   | BranchTo (a0 : (BitVec 64))
-  | Ereturn
-  | Mrts
   | Trap (a0 : SynchronousTrap)
   deriving DecidableEq, Repr, Inhabited
 
-/-- HOL L3 datatype `Rounding` (`riscvScript.sml:112`). -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "Rounding"]
-inductive Rounding where
-  | RNE
-  | RTZ
-  | RDN
-  | RUP
-  | RMM
-  | RDYN
-  deriving DecidableEq, Repr, Inhabited
-
 /-- HOL L3 record `StateDelta` (`riscvScript.sml:116`). -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "StateDelta"]
 structure StateDelta where
   addr : (Option (BitVec 64))
   data1 : (Option (BitVec 64))
   data2 : (Option (BitVec 64))
   exc_taken : Bool
   fetch_exc : Bool
-  fp_data : (Option (BitVec 64))
   pc : (BitVec 64)
   rinstr : rawInstType
   st_width : (Option (BitVec 32))
   deriving DecidableEq, Repr, Inhabited
 
-/-- HOL L3 record `SV_PTE` (`riscvScript.sml:122`). -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "SV_PTE"]
-structure SV_PTE where
-  PTE_D : Bool
-  PTE_PPNi : (BitVec 38)
-  PTE_R : Bool
-  PTE_SW : (BitVec 3)
-  PTE_T : (BitVec 4)
-  PTE_V : Bool
-  «sv_pte'rst» : (BitVec 16)
-  deriving DecidableEq, Repr, Inhabited
-
-/-- HOL L3 record `SV_Vaddr` (`riscvScript.sml:127`). -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "SV_Vaddr"]
-structure SV_Vaddr where
-  Sv_PgOfs : (BitVec 12)
-  Sv_VPNi : (BitVec 36)
-  «sv_vaddr'rst» : (BitVec 16)
-  deriving DecidableEq, Repr, Inhabited
-
-/-- HOL L3 record `TLBEntry` (`riscvScript.sml:131`). -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "TLBEntry"]
-structure TLBEntry where
-  age : (BitVec 64)
-  asid : (BitVec 6)
-  global : Bool
-  pAddr : (BitVec 64)
-  pte : SV_PTE
-  pteAddr : (BitVec 64)
-  vAddr : (BitVec 64)
-  vAddrMask : (BitVec 64)
-  vMatchMask : (BitVec 64)
-  deriving DecidableEq, Repr, Inhabited
-
 /-- HOL L3 datatype `Internal` (`riscvScript.sml:137`). -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "Internal"]
 inductive Internal where
   | FETCH_FAULT (a0 : (BitVec 64))
   | FETCH_MISALIGNED (a0 : (BitVec 64))
   deriving DecidableEq, Repr, Inhabited
 
 /-- HOL L3 datatype `System` (`riscvScript.sml:140`). -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "System"]
 inductive System where
-  | CSRRC (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 12))))
-  | CSRRCI (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 12))))
-  | CSRRS (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 12))))
-  | CSRRSI (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 12))))
-  | CSRRW (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 12))))
-  | CSRRWI (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 12))))
   | EBREAK
   | ECALL
-  | ERET
-  | MRTS
-  | SFENCE_VM (a0 : (BitVec 5))
-  | WFI
-  deriving DecidableEq, Repr, Inhabited
-
-/-- HOL L3 datatype `FConv` (`riscvScript.sml:150`). -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "FConv"]
-inductive FConv where
-  | FCLASS_D (a0 : ((BitVec 5) × (BitVec 5)))
-  | FCLASS_S (a0 : ((BitVec 5) × (BitVec 5)))
-  | FCVT_D_L (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 3))))
-  | FCVT_D_LU (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 3))))
-  | FCVT_D_S (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 3))))
-  | FCVT_D_W (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 3))))
-  | FCVT_D_WU (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 3))))
-  | FCVT_LU_D (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 3))))
-  | FCVT_LU_S (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 3))))
-  | FCVT_L_D (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 3))))
-  | FCVT_L_S (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 3))))
-  | FCVT_S_D (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 3))))
-  | FCVT_S_L (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 3))))
-  | FCVT_S_LU (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 3))))
-  | FCVT_S_W (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 3))))
-  | FCVT_S_WU (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 3))))
-  | FCVT_WU_D (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 3))))
-  | FCVT_WU_S (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 3))))
-  | FCVT_W_D (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 3))))
-  | FCVT_W_S (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 3))))
-  | FMV_D_X (a0 : ((BitVec 5) × (BitVec 5)))
-  | FMV_S_X (a0 : ((BitVec 5) × (BitVec 5)))
-  | FMV_X_D (a0 : ((BitVec 5) × (BitVec 5)))
-  | FMV_X_S (a0 : ((BitVec 5) × (BitVec 5)))
-  | FSGNJN_D (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
-  | FSGNJN_S (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
-  | FSGNJX_D (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
-  | FSGNJX_S (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
-  | FSGNJ_D (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
-  | FSGNJ_S (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
-  deriving DecidableEq, Repr, Inhabited
-
-/-- HOL L3 datatype `FArith` (`riscvScript.sml:180`). -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "FArith"]
-inductive FArith where
-  | FADD_D (a0 : ((BitVec 5) × ((BitVec 5) × ((BitVec 5) × (BitVec 3)))))
-  | FADD_S (a0 : ((BitVec 5) × ((BitVec 5) × ((BitVec 5) × (BitVec 3)))))
-  | FDIV_D (a0 : ((BitVec 5) × ((BitVec 5) × ((BitVec 5) × (BitVec 3)))))
-  | FDIV_S (a0 : ((BitVec 5) × ((BitVec 5) × ((BitVec 5) × (BitVec 3)))))
-  | FEQ_D (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
-  | FEQ_S (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
-  | FLE_D (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
-  | FLE_S (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
-  | FLT_D (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
-  | FLT_S (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
-  | FMADD_D (a0 : ((BitVec 5) × ((BitVec 5) × ((BitVec 5) × ((BitVec 5) × (BitVec 3))))))
-  | FMADD_S (a0 : ((BitVec 5) × ((BitVec 5) × ((BitVec 5) × ((BitVec 5) × (BitVec 3))))))
-  | FMAX_D (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
-  | FMAX_S (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
-  | FMIN_D (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
-  | FMIN_S (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
-  | FMSUB_D (a0 : ((BitVec 5) × ((BitVec 5) × ((BitVec 5) × ((BitVec 5) × (BitVec 3))))))
-  | FMSUB_S (a0 : ((BitVec 5) × ((BitVec 5) × ((BitVec 5) × ((BitVec 5) × (BitVec 3))))))
-  | FMUL_D (a0 : ((BitVec 5) × ((BitVec 5) × ((BitVec 5) × (BitVec 3)))))
-  | FMUL_S (a0 : ((BitVec 5) × ((BitVec 5) × ((BitVec 5) × (BitVec 3)))))
-  | FNMADD_D (a0 : ((BitVec 5) × ((BitVec 5) × ((BitVec 5) × ((BitVec 5) × (BitVec 3))))))
-  | FNMADD_S (a0 : ((BitVec 5) × ((BitVec 5) × ((BitVec 5) × ((BitVec 5) × (BitVec 3))))))
-  | FNMSUB_D (a0 : ((BitVec 5) × ((BitVec 5) × ((BitVec 5) × ((BitVec 5) × (BitVec 3))))))
-  | FNMSUB_S (a0 : ((BitVec 5) × ((BitVec 5) × ((BitVec 5) × ((BitVec 5) × (BitVec 3))))))
-  | FSQRT_D (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 3))))
-  | FSQRT_S (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 3))))
-  | FSUB_D (a0 : ((BitVec 5) × ((BitVec 5) × ((BitVec 5) × (BitVec 3)))))
-  | FSUB_S (a0 : ((BitVec 5) × ((BitVec 5) × ((BitVec 5) × (BitVec 3)))))
-  deriving DecidableEq, Repr, Inhabited
-
-/-- HOL L3 datatype `FPStore` (`riscvScript.sml:211`). -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "FPStore"]
-inductive FPStore where
-  | FSD (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 12))))
-  | FSW (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 12))))
-  deriving DecidableEq, Repr, Inhabited
-
-/-- HOL L3 datatype `FPLoad` (`riscvScript.sml:216`). -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "FPLoad"]
-inductive FPLoad where
-  | FLD (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 12))))
-  | FLW (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 12))))
-  deriving DecidableEq, Repr, Inhabited
-
-/-- HOL L3 datatype `AMO` (`riscvScript.sml:221`). -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "AMO"]
-inductive AMO where
-  | AMOADD_D (a0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))
-  | AMOADD_W (a0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))
-  | AMOAND_D (a0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))
-  | AMOAND_W (a0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))
-  | AMOMAXU_D (a0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))
-  | AMOMAXU_W (a0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))
-  | AMOMAX_D (a0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))
-  | AMOMAX_W (a0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))
-  | AMOMINU_D (a0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))
-  | AMOMINU_W (a0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))
-  | AMOMIN_D (a0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))
-  | AMOMIN_W (a0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))
-  | AMOOR_D (a0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))
-  | AMOOR_W (a0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))
-  | AMOSWAP_D (a0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))
-  | AMOSWAP_W (a0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))
-  | AMOXOR_D (a0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))
-  | AMOXOR_W (a0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))
-  | LR_D (a0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × (BitVec 5)))))
-  | LR_W (a0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × (BitVec 5)))))
-  | SC_D (a0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))
-  | SC_W (a0 : ((BitVec 1) × ((BitVec 1) × ((BitVec 5) × ((BitVec 5) × (BitVec 5))))))
   deriving DecidableEq, Repr, Inhabited
 
 /-- HOL L3 datatype `Store` (`riscvScript.sml:246`). -/
@@ -573,7 +364,6 @@ inductive ArithR where
   deriving DecidableEq, Repr, Inhabited
 
 /-- HOL L3 datatype `ArithI` (`riscvScript.sml:316`). -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "ArithI"]
 inductive ArithI where
   | ADDI (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 12))))
   | ADDIW (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 12))))
@@ -587,18 +377,11 @@ inductive ArithI where
   deriving DecidableEq, Repr, Inhabited
 
 /-- HOL L3 datatype `instruction` (`riscvScript.sml:327`). -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "instruction"]
 inductive instruction where
-  | AMO (a0 : AMO)
   | ArithI (a0 : ArithI)
   | ArithR (a0 : ArithR)
   | Branch (a0 : Branch)
-  | FArith (a0 : FArith)
-  | FConv (a0 : FConv)
   | FENCE (a0 : ((BitVec 5) × ((BitVec 5) × ((BitVec 4) × (BitVec 4)))))
-  | FENCE_I (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 12))))
-  | FPLoad (a0 : FPLoad)
-  | FPStore (a0 : FPStore)
   | Internal (a0 : Internal)
   | Load (a0 : Load)
   | MulDiv (a0 : MulDiv)
@@ -609,7 +392,6 @@ inductive instruction where
   deriving DecidableEq, Repr, Inhabited
 
 /-- HOL L3 datatype `FetchResult` (`riscvScript.sml:338`). -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "FetchResult"]
 inductive FetchResult where
   | F_Error (a0 : instruction)
   | F_Result (a0 : rawInstType)
@@ -623,7 +405,6 @@ inductive rvc where
   deriving DecidableEq, Repr, Inhabited
 
 /-- HOL L3 datatype `exception` (`riscvScript.sml:344`). -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "exception"]
 inductive exception where
   | INTERNAL_ERROR (a0 : List HolChar)
   | NoException
@@ -631,7 +412,6 @@ inductive exception where
   deriving DecidableEq, Repr, Inhabited
 
 /-- HOL L3 record `riscv_state` (`riscvScript.sml:348`). -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "riscv_state"]
 structure riscv_state where
   MEM8 : ((BitVec 64) → (BitVec 8))
   c_ExitCode : ((BitVec 8) → (BitVec 64))
@@ -639,17 +419,10 @@ structure riscv_state where
   c_MCSR : ((BitVec 8) → MachineCSR)
   c_NextFetch : ((BitVec 8) → (Option TransferControl))
   c_PC : ((BitVec 8) → (BitVec 64))
-  c_ReserveLoad : ((BitVec 8) → (Option (BitVec 64)))
   c_SCSR : ((BitVec 8) → SupervisorCSR)
   c_Skip : ((BitVec 8) → (BitVec 64))
-  c_UCSR : ((BitVec 8) → UserCSR)
-  c_cycles : ((BitVec 8) → (BitVec 64))
-  c_fpr : ((BitVec 8) → ((BitVec 5) → (BitVec 64)))
   c_gpr : ((BitVec 8) → ((BitVec 5) → (BitVec 64)))
-  c_instret : ((BitVec 8) → (BitVec 64))
-  c_tlb : ((BitVec 8) → ((BitVec 4) → (Option TLBEntry)))
   c_update : ((BitVec 8) → StateDelta)
-  clock : (BitVec 64)
   «done» : Bool
   exception : exception
   log : (List (Nat × List HolChar))

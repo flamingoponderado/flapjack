@@ -138,8 +138,6 @@ come only from the original asmOk guard. Source nonfailure derives alignment,
 actual native Fetch/DecodeAny/Run/Next derives execution, and original targetOk
 transports the full post-relation under every interference environment. The
 original zero assertion witness retains both full assertion predicates. -/
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml"
-  "riscv_encoder_correct"]
 theorem riscv_encoder_correct_jumpReg (r : Nat) (s1 s2 : AsmState 64) (ms : riscv_state)
     (h : asmStep riscvTarget.config s1 (.jumpReg r) s2 ∧
       targetStateRel riscvTarget s1 ms) :

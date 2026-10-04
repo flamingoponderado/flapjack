@@ -53,10 +53,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 /-- Complete original single_stack_alloc simulation, including both native
 jump and conditional overflow modes and the original FFI/full-relation split.
 Every original conjunct is retained and no target evaluation is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "evaluate_single_stack_alloc"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateSingleStackAlloc {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer count : Nat)
     (source target postSource : StackSemStateFiniteExact width C F)
@@ -235,10 +232,7 @@ theorem runAlloc {width : Nat} [NeZero width] {C F : Type}
 attribute [local instance] Classical.propDecidable
 /-- Full original arbitrary-count stack allocation simulation, including both
 native overflow modes and the original universally quantified non-Halt branch. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "evaluate_stack_alloc"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateStackAlloc {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer count : Nat)
     (source target postSource : StackSemStateFiniteExact width C F)

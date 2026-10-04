@@ -15,8 +15,7 @@ open Flapjack.Compiler.Backend.LabLang Flapjack.Basis.Pure.MlString Flapjack.Mis
 open Flapjack.HolByte
 
 /-- Exact HOL `has_io_name_def`: some line of the code is a `CallFFI index`. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "has_io_name_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def hasIoName {width : Nat} [NeZero width] (index : MlString) :
     List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) → Prop
@@ -28,8 +27,7 @@ def hasIoName {width : Nat} [NeZero width] (index : MlString) :
         | .labAsm (.callFFI i) _ _ _ => i = index
         | _ => False
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "IMP_has_io_name"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem imp_hasIoName {width : Nat} [NeZero width] {C F : Type}
     (s1 : Flapjack.Compiler.Backend.LabSem.State width C F) (index : MlString)
     (l : BitVec width) (bytes : List (BitVec 8)) (n : Nat) :
@@ -55,8 +53,7 @@ theorem imp_hasIoName {width : Nat} [NeZero width] {C F : Type}
     rw [hasIoName.eq_def]; exact Or.inl (ih h)
 
 open Classical in
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "read_bytearray_state_rel"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem readBytearray_stateRel {width : Nat} [NeZero width] {S Q F : Type}
     (mc : MachineConfig width S Q) (code2 : LabProgHOL width) (labs : Spt (Spt Nat))
     (p : BitVec width) (s1 : Flapjack.Compiler.Backend.LabSem.State width Config F)
@@ -145,8 +142,7 @@ theorem asmWriteBytearray_outside {width : Nat} [NeZero width]
 `riscvByteAlignHOL`, the same rendering that `memLoadByteAuxExact` (HOL
 `mem_load_byte_aux`) uses in the read premise; at a good dimension it equals
 `holByteAlign` (`riscvByteAlignHOL_eq`). -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "bytes_in_mem_asm_write_bytearray" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem bytesInMem_asmWriteBytearray {width : Nat} [NeZero width] {C F : Type}
     (s1 : Flapjack.Compiler.Backend.LabSem.State width C F) (t1 : AsmState width)
     (c1 : BitVec width) (newBytes x : List (BitVec 8)) (p : BitVec width)
@@ -162,8 +158,7 @@ theorem bytesInMem_asmWriteBytearray {width : Nat} [NeZero width] {C F : Type}
     (asmWriteBytearray_outside s1.memory s1.memDomain s1.be t1.mem hdom newBytes c1 x hrd
       a ha).symm
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "write_bytearray_NOT_Loc"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem writeBytearray_not_loc {width : Nat} [NeZero width] {C F : Type} (n n0 : Nat) :
     ∀ (xs : List (BitVec 8)) (c1 : BitVec width) (s1 : Flapjack.Compiler.Backend.LabSem.State width C F)
       (a c : BitVec width),
@@ -185,8 +180,7 @@ theorem writeBytearray_not_loc {width : Nat} [NeZero width] {C F : Type} (n n0 :
       · simp [h]
     · simp [h]
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "CallFFI_bytearray_lemma"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem callFFI_bytearray_lemma {width : Nat} [NeZero width] {mw : Nat} [NeZero mw]
     {S Q C F : Type}
     (mc : MachineConfig mw S Q) (p : BitVec width) (labs : Spt (Spt Nat))
@@ -317,8 +311,7 @@ theorem mem_findFfiNames_of_hasIoName {width : Nat} [NeZero width] (s : MlString
         · exact h.elim
     · exact hx
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "has_io_name_find_index"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem hasIoName_findIndex {width : Nat} [NeZero width] :
     ∀ (l : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) (s : MlString),

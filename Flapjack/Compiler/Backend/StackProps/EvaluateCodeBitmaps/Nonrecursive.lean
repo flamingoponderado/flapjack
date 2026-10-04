@@ -15,8 +15,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
 
 /-- Full native skip induction case: the sole premise is actual source
 execution; all three original existential conclusions are retained. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsSkip {width : Nat} [NeZero width] {C F : Type} (s : StackSemStateFiniteExact width C F)
     (post : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (execution : StackSemEvaluate.evaluate ((.skip : HolProg width), s) = (result, post)) :
@@ -35,8 +34,7 @@ theorem evaluateCodeBitmapsSkip {width : Nat} [NeZero width] {C F : Type} (s : S
 
 /-- Full native halt induction case: the sole premise is actual source
 execution; all three original existential conclusions are retained. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsHalt {width : Nat} [NeZero width] {C F : Type} (v : Nat) (s : StackSemStateFiniteExact width C F)
     (post : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (execution : StackSemEvaluate.evaluate ((.halt v : HolProg width), s) = (result, post)) :
@@ -55,8 +53,7 @@ theorem evaluateCodeBitmapsHalt {width : Nat} [NeZero width] {C F : Type} (v : N
 
 /-- Full native ret induction case: the sole premise is actual source
 execution; all three original existential conclusions are retained. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsRet {width : Nat} [NeZero width] {C F : Type} (n : Nat) (s : StackSemStateFiniteExact width C F)
     (post : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (execution : StackSemEvaluate.evaluate ((.ret n : HolProg width), s) = (result, post)) :
@@ -75,8 +72,7 @@ theorem evaluateCodeBitmapsRet {width : Nat} [NeZero width] {C F : Type} (n : Na
 
 /-- Full native raise induction case: the sole premise is actual source
 execution; all three original existential conclusions are retained. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsRaise {width : Nat} [NeZero width] {C F : Type} (n : Nat) (s : StackSemStateFiniteExact width C F)
     (post : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (execution : StackSemEvaluate.evaluate ((.raise n : HolProg width), s) = (result, post)) :
@@ -95,8 +91,7 @@ theorem evaluateCodeBitmapsRaise {width : Nat} [NeZero width] {C F : Type} (n : 
 
 /-- Full native break induction case: the sole premise is actual source
 execution; all three original existential conclusions are retained. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsBreak {width : Nat} [NeZero width] {C F : Type} (n : Nat) (s : StackSemStateFiniteExact width C F)
     (post : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (execution : StackSemEvaluate.evaluate ((.break n : HolProg width), s) = (result, post)) :
@@ -115,8 +110,7 @@ theorem evaluateCodeBitmapsBreak {width : Nat} [NeZero width] {C F : Type} (n : 
 
 /-- Full native continue induction case: the sole premise is actual source
 execution; all three original existential conclusions are retained. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsContinue {width : Nat} [NeZero width] {C F : Type} (n : Nat) (s : StackSemStateFiniteExact width C F)
     (post : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (execution : StackSemEvaluate.evaluate ((.continue n : HolProg width), s) = (result, post)) :
@@ -135,8 +129,7 @@ theorem evaluateCodeBitmapsContinue {width : Nat} [NeZero width] {C F : Type} (n
 
 /-- Full native get induction case: the sole premise is actual source
 execution; all three original existential conclusions are retained. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsGet {width : Nat} [NeZero width] {C F : Type} (v : Nat) (name : StoreName) (s : StackSemStateFiniteExact width C F)
     (post : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (execution : StackSemEvaluate.evaluate ((.get v name : HolProg width), s) = (result, post)) :
@@ -155,8 +148,7 @@ theorem evaluateCodeBitmapsGet {width : Nat} [NeZero width] {C F : Type} (v : Na
 
 /-- Full native set induction case: the sole premise is actual source
 execution; all three original existential conclusions are retained. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsSet {width : Nat} [NeZero width] {C F : Type} (name : StoreName) (v : Nat) (s : StackSemStateFiniteExact width C F)
     (post : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (execution : StackSemEvaluate.evaluate ((.set name v : HolProg width), s) = (result, post)) :
@@ -175,8 +167,7 @@ theorem evaluateCodeBitmapsSet {width : Nat} [NeZero width] {C F : Type} (name :
 
 /-- Full native opCurrHeap induction case: the sole premise is actual source
 execution; all three original existential conclusions are retained. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsOpCurrHeap {width : Nat} [NeZero width] {C F : Type} (binop : HolBinop) (v src : Nat) (s : StackSemStateFiniteExact width C F)
     (post : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (execution : StackSemEvaluate.evaluate ((.opCurrHeap binop v src : HolProg width), s) = (result, post)) :
@@ -195,8 +186,7 @@ theorem evaluateCodeBitmapsOpCurrHeap {width : Nat} [NeZero width] {C F : Type} 
 
 /-- Full native tick induction case: the sole premise is actual source
 execution; all three original existential conclusions are retained. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsTick {width : Nat} [NeZero width] {C F : Type} (s : StackSemStateFiniteExact width C F)
     (post : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (execution : StackSemEvaluate.evaluate ((.tick : HolProg width), s) = (result, post)) :
@@ -215,8 +205,7 @@ theorem evaluateCodeBitmapsTick {width : Nat} [NeZero width] {C F : Type} (s : S
 
 /-- Full native locValue induction case: the sole premise is actual source
 execution; all three original existential conclusions are retained. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsLocValue {width : Nat} [NeZero width] {C F : Type} (r l1 l2 : Nat) (s : StackSemStateFiniteExact width C F)
     (post : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (execution : StackSemEvaluate.evaluate ((.locValue r l1 l2 : HolProg width), s) = (result, post)) :
@@ -235,8 +224,7 @@ theorem evaluateCodeBitmapsLocValue {width : Nat} [NeZero width] {C F : Type} (r
 
 /-- Full native stackAlloc induction case: the sole premise is actual source
 execution; all three original existential conclusions are retained. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsStackAlloc {width : Nat} [NeZero width] {C F : Type} (n : Nat) (s : StackSemStateFiniteExact width C F)
     (post : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (execution : StackSemEvaluate.evaluate ((.stackAlloc n : HolProg width), s) = (result, post)) :
@@ -255,8 +243,7 @@ theorem evaluateCodeBitmapsStackAlloc {width : Nat} [NeZero width] {C F : Type} 
 
 /-- Full native stackFree induction case: the sole premise is actual source
 execution; all three original existential conclusions are retained. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsStackFree {width : Nat} [NeZero width] {C F : Type} (n : Nat) (s : StackSemStateFiniteExact width C F)
     (post : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (execution : StackSemEvaluate.evaluate ((.stackFree n : HolProg width), s) = (result, post)) :
@@ -275,8 +262,7 @@ theorem evaluateCodeBitmapsStackFree {width : Nat} [NeZero width] {C F : Type} (
 
 /-- Full native stackLoad induction case: the sole premise is actual source
 execution; all three original existential conclusions are retained. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsStackLoad {width : Nat} [NeZero width] {C F : Type} (r n : Nat) (s : StackSemStateFiniteExact width C F)
     (post : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (execution : StackSemEvaluate.evaluate ((.stackLoad r n : HolProg width), s) = (result, post)) :
@@ -295,8 +281,7 @@ theorem evaluateCodeBitmapsStackLoad {width : Nat} [NeZero width] {C F : Type} (
 
 /-- Full native stackLoadAny induction case: the sole premise is actual source
 execution; all three original existential conclusions are retained. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsStackLoadAny {width : Nat} [NeZero width] {C F : Type} (r rn : Nat) (s : StackSemStateFiniteExact width C F)
     (post : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (execution : StackSemEvaluate.evaluate ((.stackLoadAny r rn : HolProg width), s) = (result, post)) :
@@ -315,8 +300,7 @@ theorem evaluateCodeBitmapsStackLoadAny {width : Nat} [NeZero width] {C F : Type
 
 /-- Full native stackStore induction case: the sole premise is actual source
 execution; all three original existential conclusions are retained. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsStackStore {width : Nat} [NeZero width] {C F : Type} (r n : Nat) (s : StackSemStateFiniteExact width C F)
     (post : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (execution : StackSemEvaluate.evaluate ((.stackStore r n : HolProg width), s) = (result, post)) :
@@ -335,8 +319,7 @@ theorem evaluateCodeBitmapsStackStore {width : Nat} [NeZero width] {C F : Type} 
 
 /-- Full native stackStoreAny induction case: the sole premise is actual source
 execution; all three original existential conclusions are retained. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsStackStoreAny {width : Nat} [NeZero width] {C F : Type} (r rn : Nat) (s : StackSemStateFiniteExact width C F)
     (post : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (execution : StackSemEvaluate.evaluate ((.stackStoreAny r rn : HolProg width), s) = (result, post)) :
@@ -355,8 +338,7 @@ theorem evaluateCodeBitmapsStackStoreAny {width : Nat} [NeZero width] {C F : Typ
 
 /-- Full native stackGetSize induction case: the sole premise is actual source
 execution; all three original existential conclusions are retained. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsStackGetSize {width : Nat} [NeZero width] {C F : Type} (r : Nat) (s : StackSemStateFiniteExact width C F)
     (post : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (execution : StackSemEvaluate.evaluate ((.stackGetSize r : HolProg width), s) = (result, post)) :
@@ -375,8 +357,7 @@ theorem evaluateCodeBitmapsStackGetSize {width : Nat} [NeZero width] {C F : Type
 
 /-- Full native stackSetSize induction case: the sole premise is actual source
 execution; all three original existential conclusions are retained. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsStackSetSize {width : Nat} [NeZero width] {C F : Type} (r : Nat) (s : StackSemStateFiniteExact width C F)
     (post : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (execution : StackSemEvaluate.evaluate ((.stackSetSize r : HolProg width), s) = (result, post)) :
@@ -395,8 +376,7 @@ theorem evaluateCodeBitmapsStackSetSize {width : Nat} [NeZero width] {C F : Type
 
 /-- Full native bitmapLoad induction case: the sole premise is actual source
 execution; all three original existential conclusions are retained. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsBitmapLoad {width : Nat} [NeZero width] {C F : Type} (r v : Nat) (s : StackSemStateFiniteExact width C F)
     (post : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (execution : StackSemEvaluate.evaluate ((.bitmapLoad r v : HolProg width), s) = (result, post)) :
@@ -415,8 +395,7 @@ theorem evaluateCodeBitmapsBitmapLoad {width : Nat} [NeZero width] {C F : Type} 
 
 /-- Full native codeBufferWrite induction case: the sole premise is actual source
 execution; all three original existential conclusions are retained. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsCodeBufferWrite {width : Nat} [NeZero width] {C F : Type} (r1 r2 : Nat) (s : StackSemStateFiniteExact width C F)
     (post : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (execution : StackSemEvaluate.evaluate ((.codeBufferWrite r1 r2 : HolProg width), s) = (result, post)) :
@@ -435,8 +414,7 @@ theorem evaluateCodeBitmapsCodeBufferWrite {width : Nat} [NeZero width] {C F : T
 
 /-- Full native dataBufferWrite induction case: the sole premise is actual source
 execution; all three original existential conclusions are retained. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsDataBufferWrite {width : Nat} [NeZero width] {C F : Type} (r1 r2 : Nat) (s : StackSemStateFiniteExact width C F)
     (post : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))
     (execution : StackSemEvaluate.evaluate ((.dataBufferWrite r1 r2 : HolProg width), s) = (result, post)) :
@@ -456,8 +434,7 @@ theorem evaluateCodeBitmapsDataBufferWrite {width : Nat} [NeZero width] {C F : T
 /-- Full shared-memory induction case, including helper failures, timeouts,
 loads, stores and final FFI results. Preservation is derived from the actual
 shared-memory helper execution, never supplied as a premise. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsShMemOp {width : Nat} [NeZero width] {C F : Type}
     (op : HolMemop) (r a : Nat) (w : BitVec width)
     (s post : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))

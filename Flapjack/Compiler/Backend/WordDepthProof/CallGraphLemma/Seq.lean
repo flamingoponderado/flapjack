@@ -48,8 +48,7 @@ theorem seq_bound_left (m ss g d1 d2 m1 : Option Nat)
   all_goals omega
 
 /-- `max_depth_call_graph_lemma`, `Seq` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_depthProofScript.sml" "max_depth_call_graph_lemma"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem maxDepthCallGraphLemma_Seq {width : Nat} [NeZero width] {C F : Type}
     (c1 c2 : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F)
     (ih : (∀ res s1, (res, s1) = evaluate c1 s ∧ res = none → depthPost c2 s1) ∧

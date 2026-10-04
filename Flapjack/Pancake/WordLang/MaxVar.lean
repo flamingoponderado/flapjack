@@ -7,8 +7,7 @@ namespace Flapjack
 /-- Complete source program maximum. A Call handler contributes only under
 SOME return, as in HOL. All source operands, cut sets and recursive bodies
 are retained; there is no well-formedness or successful compilation premise. -/
-@[hol "cakeml/compiler/backend/wordLangScript.sml" "max_var_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def maxVarHOL {width : Nat} [NeZero width] (program : WordLangProgHOL (BitVec width)) : Nat :=
   match program with
   | .skip => 0

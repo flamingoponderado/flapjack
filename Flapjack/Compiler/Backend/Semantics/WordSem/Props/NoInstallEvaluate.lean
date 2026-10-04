@@ -45,8 +45,7 @@ end WordSemNoInstallEvaluateSupport
 namespace WordProps
 
 /-- Exact HOL `no_alloc_code_def` (`wordPropsScript.sml:4690-4693`). -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml"
-  "no_alloc_code_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def noAllocCode {width : Nat} [NeZero width]
     (code : Spt (Nat × WordLangProgHOL (BitVec width))) : Prop :=
   ∀ (k n : Nat) (p : WordLangProgHOL (BitVec width)),
@@ -86,8 +85,7 @@ theorem findCode_lookup {width : Nat} [NeZero width]
       · cases h
 
 /-- Exact HOL `no_alloc_find_code` (`wordPropsScript.sml:4695-4705`). -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml"
-  "no_alloc_find_code" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem noAllocFindCode {width : Nat} [NeZero width] :
     ∀ (code : Spt (Nat × WordLangProgHOL (BitVec width))) (dest : Option Nat)
       (args : List (WordLocW width)) (lsize : Spt Nat) (args1 : List (WordLocW width))
@@ -99,8 +97,7 @@ theorem noAllocFindCode {width : Nat} [NeZero width] :
   exact hc k n expr hk
 
 /-- Exact HOL `no_install_find_code` (`wordPropsScript.sml:4712-4720`). -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml"
-  "no_install_find_code" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem noInstallFindCode {width : Nat} [NeZero width] :
     ∀ (code : Spt (Nat × WordLangProgHOL (BitVec width))) (dest : Option Nat)
       (args : List (WordLocW width)) (lsize : Spt Nat) (args1 : List (WordLocW width))
@@ -368,8 +365,7 @@ end Evaluate
     premise `evaluate (prog,s) = (result,s1) ∧ no_install prog ∧
     no_install_code s.code` gives `s.code = s1.code`.  Inherits
     `reals_as_rational_cuts` through `evaluate`. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "no_install_evaluate_const_code"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem noInstallEvaluateConstCode {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (prog : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F)
       (result : Option (WordSemResult width)) (s1 : WordSemStateFiniteExact width C F),

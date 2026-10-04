@@ -51,8 +51,7 @@ theorem popHandlerBound {width : Nat} [NeZero width] {β γ : Type}
 
 /-- Full original MustTerminate case, retaining all original inputs and guards;
 only genuine proper-subprogram induction hypotheses are added. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_reg_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackRegBoundMustTerminate {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (body : WordLangProgHOL (BitVec width))
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -68,8 +67,7 @@ theorem wordToStackRegBoundMustTerminate {width : Nat} [NeZero width]
 
 /-- Full original Loop case, retaining all original inputs and guards;
 only genuine proper-subprogram induction hypotheses are added. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_reg_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackRegBoundLoop {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (liveIn liveOut : WordLangNumSetHOL)
     (body : WordLangProgHOL (BitVec width)) (bs : AppList (BitVec width) × Nat)
@@ -85,8 +83,7 @@ theorem wordToStackRegBoundLoop {width : Nat} [NeZero width]
 
 /-- Full original Seq case, retaining all original inputs and guards;
 only genuine proper-subprogram induction hypotheses are added. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_reg_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackRegBoundSeq {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (first second : WordLangProgHOL (BitVec width)) (bs : AppList (BitVec width) × Nat)
@@ -109,8 +106,7 @@ theorem wordToStackRegBoundSeq {width : Nat} [NeZero width]
 
 /-- Full original If case, retaining all original inputs and guards;
 only genuine proper-subprogram induction hypotheses are added. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_reg_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackRegBoundIf {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (cmp : Cmp) (reg : Nat)
     (ri : WordRegImm (BitVec width)) (first second : WordLangProgHOL (BitVec width))
@@ -138,8 +134,7 @@ theorem wordToStackRegBoundIf {width : Nat} [NeZero width]
 
 /-- Full original CallTail case, retaining all original inputs and guards;
 only genuine proper-subprogram induction hypotheses are added. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_reg_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackRegBoundCallTail {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (dest : Option Nat) (args : List Nat)
     (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
@@ -154,8 +149,7 @@ theorem wordToStackRegBoundCallTail {width : Nat} [NeZero width]
 
 /-- Full original CallReturn case, retaining all original inputs and guards;
 only genuine proper-subprogram induction hypotheses are added. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_reg_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackRegBoundCallReturn {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (values : List Nat)
     (live : WordLangCutsetsHOL) (retCode : WordLangProgHOL (BitVec width))
@@ -187,8 +181,7 @@ theorem wordToStackRegBoundCallReturn {width : Nat} [NeZero width]
 
 /-- Full original CallHandler case, retaining all original inputs and guards;
 only genuine proper-subprogram induction hypotheses are added. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_reg_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackRegBoundCallHandler {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (values : List Nat)
     (live : WordLangCutsetsHOL) (retCode handleCode : WordLangProgHOL (BitVec width))

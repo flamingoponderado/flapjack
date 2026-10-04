@@ -7,8 +7,7 @@ open Flapjack Flapjack.Compiler.Backend.StackLang Flapjack.StackPropsCodeLabels
 /-- HOL `extract_labels_comp` (`stack_rawcallProofScript.sml:818-832`):
 recursive and top-level raw-call compilation preserve the ordered extracted
 labels. There is no premise. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "extract_labels_comp"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem extractLabelsComp {width : Nat} [NeZero width] :
     ∀ (i : Spt Nat) (p : HolProg width),
       extractLabels (comp i p) = extractLabels p ∧

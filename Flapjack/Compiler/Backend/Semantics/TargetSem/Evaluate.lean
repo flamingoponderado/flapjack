@@ -23,8 +23,7 @@ elements; past the end, `holHdNil` is the shared opaque `holArb HolFfiName`.
 The private Nonempty instance proves inhabitation only and selects no concrete
 missing name. There is no names/entry-PC length premise, bounds guard, Option
 fallback, or assumption that a selected name exists. -/
-@[hol "cakeml/compiler/backend/semantics/targetSemScript.sml" "evaluate_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def evaluateTargetHOL {width : Nat} [NeZero width]
     {state projection : Type} {σ : Type} (mc : MachineConfig width state projection)
     (ffi : HolFfiState σ) : Nat → state → MachineResult × state × HolFfiState σ

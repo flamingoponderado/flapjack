@@ -11,14 +11,12 @@ namespace Flapjack.RiscV.TargetProof
 open Flapjack.RiscV.L3
 
 /-- Full original low/high32 bit11 and complemented-high32 conjunction. -/
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "lem6"]
 theorem slice_bit_eleven (c : BitVec 64) :
     ((BitVec.extractLsb' 0 32 c).getLsbD 11 = c.getLsbD 11) ∧
     ((BitVec.extractLsb' 32 32 c).getLsbD 11 = c.getLsbD 43) ∧
     ((~~~(BitVec.extractLsb' 32 32 c)).getLsbD 11 = !(c.getLsbD 43)) := by
   simp
 
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "lem5"]
 theorem aligned_bit_one (c : BitVec 64) (h : Flapjack.holAligned 2 c = true) :
     c.getLsbD 1 = false := by
   have eq : Flapjack.holAlign 2 c = c := of_decide_eq_true h
@@ -27,14 +25,12 @@ theorem aligned_bit_one (c : BitVec 64) (h : Flapjack.holAligned 2 c = true) :
   rw [Flapjack.getLsbD_holFcpWord] at bit
   simpa using bit.symm
 
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "lem8"]
 theorem singleton_or (b x y : Bool) :
     ((if b then (1 : BitVec 64) else 0) = (holV2w 64 [x] ||| holV2w 64 [y])) ↔
       b = (x || y) := by
   set_option maxRecDepth 4096 in
     cases b <;> cases x <;> cases y <;> decide
 
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "lem9"]
 theorem carry_widen (r2 r3 : BitVec 64) :
     (18446744073709551616 ≤ r2.toNat + (r3.toNat + 1) ↔
       (18446744073709551616 : BitVec 65).ule
@@ -55,7 +51,6 @@ theorem carry_widen (r2 r3 : BitVec 64) :
     18446744073709551616 ≤ (r2.toNat + r3.toNat) % 36893488147419103232)
   omega
 
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "mul_long"]
 theorem mul_long (a b : BitVec 64) :
     BitVec.ofNat 64 ((a.toNat * b.toNat) / 18446744073709551616) =
       BitVec.extractLsb' 64 64 (a.setWidth 128 * b.setWidth 128) := by
@@ -67,7 +62,6 @@ theorem mul_long (a b : BitVec 64) :
   simp only [BitVec.extractLsb', BitVec.toNat_ofNat, BitVec.toNat_mul,
     ea, eb, Nat.mod_eq_of_lt bound, Nat.shiftRight_eq_div_pow]
 
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "ror"]
 theorem ror (w : BitVec 64) (n : Nat) (h : n < 64) :
     ((w <<< (64 - n)) ||| (w >>> n)) = w.rotateRight n := by
   rw [BitVec.rotateRight_eq_rotateRightAux_of_lt h]

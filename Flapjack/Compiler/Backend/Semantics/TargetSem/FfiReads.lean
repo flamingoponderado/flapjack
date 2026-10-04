@@ -17,8 +17,7 @@ open Flapjack.Compiler.Encoders.Asm
     `w2n (target.get_reg ms len_reg)` bytes from `target.get_reg ms ptr_reg`,
     restricted to the program addresses.  HOL `'a word` renders as
     `BitVec width` and `word8` as `BitVec 8`, so the words qualifier applies. -/
-@[hol "cakeml/compiler/backend/semantics/targetSemScript.sml" "read_ffi_bytearray_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def readFfiBytearrayHOL {width : Nat} [NeZero width]
     {state projection : Type}
     (mc : MachineConfig width state projection) (ptrReg lenReg : Nat) (ms : state) :
@@ -32,8 +31,7 @@ noncomputable def readFfiBytearrayHOL {width : Nat} [NeZero width]
 /-- Exact HOL `read_ffi_bytearrays_def`
     (`cakeml/compiler/backend/semantics/targetSemScript.sml:70-74`): the pair of
     the first and second FFI read. -/
-@[hol "cakeml/compiler/backend/semantics/targetSemScript.sml" "read_ffi_bytearrays_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def readFfiBytearraysHOL {width : Nat} [NeZero width]
     {state projection : Type}
     (mc : MachineConfig width state projection) (ms : state) :

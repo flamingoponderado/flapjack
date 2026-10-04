@@ -26,8 +26,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
 original oracle, code and halt-label premises, the native initializer returns
 normally, `make_init_opt` yields a state in the original `state_rel` to the
 post-state, and the FFI state is preserved. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "evaluate_init_code"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateInitCode {width : Nat} [NeZero width] {C F : Type}
     (generateGc : Bool) (maxHeap : Nat) (bitmaps : List (BitVec width)) (dataSpace : Nat)
     (pointer start : Nat) (s : StackSemStateFiniteExact width C F)
@@ -140,8 +139,7 @@ theorem callZeroFfi {width : Nat} [NeZero width] {C F : Type} (dest : Nat)
 premises the initializer returns normally, the semantics of the entry call
 from label 0 equals that of `start` from the post-state, and `make_init_opt`
 yields a state in the original `state_rel`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "init_semantics"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem initSemantics {width : Nat} [NeZero width] {C F : Type}
     (generateGc : Bool) (maxHeap : Nat) (bitmaps : List (BitVec width)) (dataSpace : Nat)
     (pointer start : Nat) (s : StackSemStateFiniteExact width C F)
@@ -198,8 +196,7 @@ theorem initSemantics {width : Nat} [NeZero width] {C F : Type}
 /-- Complete original optional-initialization semantics theorem: the initial
 state yields an initialized state whose non-failing semantics from `start` is
 the semantics of the whole program from label 0. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "make_init_opt_SOME_semantics"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem makeInitOptSomeSemantics {width : Nat} [NeZero width] {C F : Type}
     (generateGc : Bool) (maxHeap : Nat) (bitmaps : List (BitVec width)) (dataSpace : Nat)
     (pointer start : Nat) (s2 : StackSemStateFiniteExact width C F)
@@ -237,8 +234,7 @@ compiler-side `discharge_these` and machine-side `propagate_these` bundles,
 the optional initialization of the compiled program succeeds and the
 semantics from label 0 equals the non-failing semantics of the initialized
 state from `start`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "make_init_semantics"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem makeInitSemantics {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (generateGc : Bool)
     (maxHeap pointer start : Nat)

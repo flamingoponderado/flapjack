@@ -24,10 +24,7 @@ The optimized target Call execution is derived from the second IH; no extra
 callee IH, target-run law, successful optimization or final relation is assumed.
 The original timeout/Halt Word2 stackspace exceptions remain unchanged.
 Inherits reals_as_rational_cuts, SOUNDNESS item8. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectSeq {width : Nat} [NeZero width] {C F : Type}
     (first second : HolProg width) (info : Spt Nat)
     (source target post : StackSemStateFiniteExact width C F)

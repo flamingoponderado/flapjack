@@ -12,8 +12,7 @@ attribute [local instance] Classical.propDecidable
 /-- Original allocator pre/post convention theorem, with only the original
 source pre-convention premise. Native allocator success, occurrence support,
 physical fixation and stack bounds are proved from the original algorithms. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "pre_post_conventions_word_alloc" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem prePostConventions_wordAlloc {width : Nat} [NeZero width]
     (fc : Nat) (c : AsmConfigExact width) (alg : Nat)
     (prog : WordLangProgHOL (BitVec width)) (k : Nat) (colOpt : Option (Spt Nat)) :

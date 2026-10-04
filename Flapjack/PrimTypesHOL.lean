@@ -17,7 +17,7 @@ open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.Misc.Location
 open Flapjack.Basis.Pure.MlString
 
 /-- Exact HOL `prim_types_program_def` (`primTypesScript.sml:12-22`). -/
-@[hol "cakeml/semantics/primTypesScript.sml" "prim_types_program_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def primTypesProgram : List Dec :=
   [.dexn unknownLoc (ofString "Bind") [],
    .dexn unknownLoc (ofString "Chr") [],

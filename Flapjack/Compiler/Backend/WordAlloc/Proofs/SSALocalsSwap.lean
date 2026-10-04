@@ -7,8 +7,7 @@ namespace Flapjack.Compiler.Backend.WordAlloc
 `st : (α, β, γ) state` and `cst : (α, δ, ε) state`: only the word
 dimension is shared. The four code/FFI carrier types stay independent.
 No finite-map state field is traversed by this relation. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_eq_rel_swap"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaEqRelSwap {width : Nat} [NeZero width]
     {C₁ F₁ C₂ F₂ : Type} (next : Nat) (ssaLeft ssaRight : Spt Nat)
     (source : WordSemStateFiniteExact width C₁ F₁)

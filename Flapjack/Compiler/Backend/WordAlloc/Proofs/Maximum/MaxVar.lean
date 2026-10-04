@@ -90,8 +90,7 @@ private theorem programBound {width : Nat} [NeZero width]
 /-- Every register observed by the complete native occurrence predicate is
 bounded by the actual program maximum. This is the original unconditional
 program result, including return-dependent Call handler traversal. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "max_var_max" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem maxVarMax {width : Nat} [NeZero width]
     (program : WordLangProgHOL (BitVec width)) :
     everyVarHOL (fun x => decide (x ≤ maxVarHOL program)) program = true :=

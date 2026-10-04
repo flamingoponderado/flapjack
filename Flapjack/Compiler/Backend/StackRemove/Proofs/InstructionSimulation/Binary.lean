@@ -37,10 +37,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
   StackSemStateSupport.holFmapAsFiniteSupportWitness
 
 /-- Genuine full Shift instruction case for every shift and Reg/Imm operand. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "state_rel_inst"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelInstShift {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer destination input : Nat)
     (operator : Shift) (right : HolRegImm width)
@@ -58,10 +55,7 @@ theorem stateRelInstShift {width : Nat} [NeZero width] {C F : Type}
 
 /-- Genuine full Binop case, retaining the special Or register-copy path for
 both Word and Loc values and all general binary operations. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "state_rel_inst"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelInstBinop {width : Nat} [NeZero width] {C F : Type}
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer destination input : Nat)
     (operator : BinOp) (right : HolRegImm width)

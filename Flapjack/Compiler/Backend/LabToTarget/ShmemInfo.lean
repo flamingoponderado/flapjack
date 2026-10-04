@@ -59,8 +59,7 @@ def listAddIfFresh {α : Type} [DecidableEq α] (e : α) : List α → List α
 with no lines is skipped; a section whose first line is
 `LabAsm (CallFFI s) _ _ _` adds `ExtCall s` (when fresh) after the names
 found in the remaining lines; every other line is skipped. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "find_ffi_names_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def findFfiNames {width : Nat} [NeZero width] :
     List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) → List HolFfiName
@@ -97,8 +96,7 @@ skipped without advancing `pos`; an `Asm (ShareMem m r ad) bytes _` looks up
 addr_off := (case ad of Addr r off => w2n off); reg := r;
 exit_pc := pos + LENGTH bytes|>` and recurses at `pos + LENGTH bytes`; every
 other `LabAsm`/`Asm` line recurses at `pos + LENGTH bytes` recording nothing. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "get_shmem_info_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def getShmemInfo {width : Nat} [NeZero width]
     (secs : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))

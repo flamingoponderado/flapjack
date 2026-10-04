@@ -1,3 +1,4 @@
+import Mathlib.Data.Nat.Basic
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Seq.Standard
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.RawCall
 
@@ -62,6 +63,7 @@ theorem successfulOptimization {width : Nat} [NeZero width] {C F : Type}
     have allocationSafe : ¬ s.stackSpace + released < released := by omega
     simp [optimizedSeq, StackSemEvaluate.evaluate_rawCall, entry, destSeq,
       useStack, nonzero, allocationSafe, decClock]
+    rfl
   · by_cases less : allocated < released
     · have releaseSafe : ¬ s.stack.length < s.stackSpace + (released - allocated) := by omega
       have finalSpace : s.stackSpace + released - allocated =
@@ -70,6 +72,7 @@ theorem successfulOptimization {width : Nat} [NeZero width] {C F : Type}
         evaluateSeqUnclamped, StackSemEvaluate.evaluate_stackFree,
         StackSemEvaluate.evaluate_rawCall, entry, destSeq, useStack, releaseSafe,
         nonzero, show ¬ s.stackSpace + released < allocated by omega, decClock, finalSpace]
+      rfl
     · have greater : released < allocated := by omega
       have allocateSafe : ¬ s.stackSpace < allocated - released := by omega
       have finalSpace : s.stackSpace + released - allocated =
@@ -78,6 +81,7 @@ theorem successfulOptimization {width : Nat} [NeZero width] {C F : Type}
         StackSemEvaluate.evaluate_tick, StackSemEvaluate.evaluate_stackAlloc,
         StackSemEvaluate.evaluate_rawCall, entry, destSeq, useStack, allocateSafe,
         nonzero, show ¬ s.stackSpace + released < allocated by omega, decClock, finalSpace]
+      rfl
 
 /-- Native zero-clock optimized outcomes. EmptyEnv retains stackSpace: the
 original timeout exception permits the resulting space to differ. Infrastructure

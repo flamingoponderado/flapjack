@@ -79,9 +79,7 @@ end DeletionFramesWitness
 
 /-- Full original arithmetic deletion equivalence under exactly eligibility and
 absence from the arithmetic read list. Deleted register may be the destination. -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "evaluate_arith_unset_var"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateArithUnsetVar {width : Nat} [NeZero width] {C : Type} {F : Type}
     (a : HolArith width) (r : Nat) (w : WordLocW width) (s : WordSemStateFiniteExact width C F)
     (h : canMemArith a = true ∧ r ∉ arithReads a) :
@@ -96,9 +94,7 @@ theorem evaluateArithUnsetVar {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Full original load deletion equivalence. Only the original non-store and
 address-register distinction guards constrain the operation and deletion. -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "evaluate_load_unset_var"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateLoadUnsetVar {width : Nat} [NeZero width] {C : Type} {F : Type}
     (op : HolMemop) (r a : Nat) (ofs : BitVec width) (n : Nat) (w : WordLocW width)
     (s : WordSemStateFiniteExact width C F) (h : isStore op = false ∧ a ≠ n) :

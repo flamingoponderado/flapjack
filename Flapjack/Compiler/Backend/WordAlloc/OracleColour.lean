@@ -9,8 +9,7 @@ namespace Flapjack.WordAlloc
 /-- Literal native oracle validator. All rejection branches remain explicit;
 the checker accepts a colouring before applying it and checking stack bounds
 and forced endpoint disequalities. Executed allocator migration is separate. -/
-@[hol "cakeml/compiler/backend/word_allocScript.sml" "oracle_colour_ok_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def oracleColourOk {width : Nat} [NeZero width] (k : Nat)
     (colourOption : Option (Spt Nat)) (tree : RegAlloc.ClashTree)
     (program : WordLangProgHOL (BitVec width)) (forced : List (Nat × Nat)) :

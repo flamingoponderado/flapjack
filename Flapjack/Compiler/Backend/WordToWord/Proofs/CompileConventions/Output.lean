@@ -120,8 +120,7 @@ theorem compileOutputConventions {width : Nat} [NeZero width] (wc : Config)
 /-- Whole original958–1065 theorem, all original conjuncts. Original
 input guard and conditional output guards retained. Actual native compiler
 pipeline determines every result; no target-run or output relation premise. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml"
-  "compile_to_word_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileToWordConventions {width : Nat} [NeZero width] (wc : Config)
     (ac : AsmConfigExact width)
     (programs : List (Nat × Nat × WordLangProgHOL (BitVec width)))

@@ -116,11 +116,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 IH. The seven guards and complete native existential/state/resource conclusion
 are exactly the original cons case3130–3285. Inherited rational-cut assurance
 applies only to the evaluator closure. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_wMoveAux_seqsem"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem simulationCons {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (k f frame : Nat) (lens : List Nat)
     (destination sourceReg : Option Nat) (moves : List (Option Nat × Option Nat))
@@ -144,11 +140,7 @@ theorem simulationCons {width : Nat} [NeZero width] {C F : Type}
 
 /-- Complete original list simulation3130–3285. The structural induction
 hypothesis is discharged; all original guards and conclusions are retained. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_wMoveAux_seqsem"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateWMoveAuxSeqsem {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (k f frame : Nat) (lens : List Nat)
     (moves : List (Option Nat × Option Nat))

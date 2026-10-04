@@ -63,11 +63,7 @@ FFI/clock branches. Canonical finite maps and the common positive machine
 word dimension are qualified. The evaluator closure inherits
 reals_as_rational_cuts (SOUNDNESS item8); this structural assembly does not
 establish a new numerical FP agreement or whole compiler refinement. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_correct" 5756
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrect {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) :
     ∀ (program : WordLangProgHOL (BitVec width))

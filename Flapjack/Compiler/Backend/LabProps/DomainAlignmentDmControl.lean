@@ -6,32 +6,27 @@ import Flapjack.Compiler.Backend.LabSem.SharedMemory
 namespace Flapjack.Compiler.Backend.LabProps
 open Flapjack Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Encoders.Asm
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "dec_clock_align_dm"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem decClockAlignDM {width : Nat} [NeZero width] {C : Type} {F : Type}
     (s : Flapjack.Compiler.Backend.LabSem.State width C F) :
     decClock (alignDm s) = alignDm (decClock s) := by rfl
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "inc_pc_align_dm"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem incPcAlignDM {width : Nat} [NeZero width] {C : Type} {F : Type}
     (s : Flapjack.Compiler.Backend.LabSem.State width C F) :
     incPc (alignDm s) = alignDm (incPc s) := by rfl
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "upd_pc_align_dm"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem updPcAlignDM {width : Nat} [NeZero width] {C : Type} {F : Type}
     (p : Nat) (s : Flapjack.Compiler.Backend.LabSem.State width C F) :
     updPc p (alignDm s) = alignDm (updPc p s) := by rfl
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "get_pc_value_align_dm"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getPcValueAlignDM {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : Flapjack.Compiler.Backend.LabLang.Lab) (s : Flapjack.Compiler.Backend.LabSem.State width C F) :
     getPcValue x (alignDm s) = getPcValue x s := by rfl
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "get_ret_Loc_align_dm"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getRetLocAlignDM {width : Nat} [NeZero width] {C : Type} {F : Type}
     {resultWidth : Nat} [NeZero resultWidth]
     (s : Flapjack.Compiler.Backend.LabSem.State width C F) :
@@ -46,8 +41,7 @@ private theorem sharedProjection {width : Nat} [NeZero width] {C : Type} {F : Ty
   cases m <;> simp only [shareMemOp,shareMemLoad,shareMemStore,addrValue,alignDm,incPc,decClock]
   all_goals repeat' first | rfl | split | simp_all
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "share_mem_op_align_dm_simp"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem shareMemOpAlignDM {width : Nat} [NeZero width] {C : Type} {F : Type}
     (m : HolMemop) (r : Nat) (a : HolAddr width)
     (s next : Flapjack.Compiler.Backend.LabSem.State width C F)

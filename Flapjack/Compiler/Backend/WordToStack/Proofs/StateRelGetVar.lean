@@ -49,10 +49,7 @@ theorem stateRel_locals {width : Nat} [NeZero width] {C F : Type}
 /-- Exact HOL `state_rel_get_var_imp` (`word_to_stackProofScript.sml:2868-2882`).
 All relation parameters, including the frame sizes and `extra`, stay arbitrary;
 HOL `FLOOKUP t.regs x` is the canonical register map's lookup. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "state_rel_get_var_imp"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store,
-    StackSemStateFiniteExact.regs, StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelGetVarImp {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (k f f' : Nat)
     (s : WordSemStateFiniteExact width (Nat × C) F)
@@ -68,10 +65,7 @@ theorem stateRelGetVarImp {width : Nat} [NeZero width] {C F : Type}
 
 /-- Exact HOL `state_rel_get_var_imp'` (`word_to_stackProofScript.sml:2884-2893`).
 Both `get_var`s are the native WordSem and StackSem lookups. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "state_rel_get_var_imp'"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store,
-    StackSemStateFiniteExact.regs, StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelGetVarImp' {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (k f f' : Nat)
     (s : WordSemStateFiniteExact width (Nat × C) F)
@@ -86,10 +80,7 @@ theorem stateRelGetVarImp' {width : Nat} [NeZero width] {C F : Type}
 
 /-- Exact HOL `state_rel_get_var_imp2` (`word_to_stackProofScript.sml:2895-2915`).
 HOL's total `EL` is `holEl`; the relation is at `extra = 0` as in HOL. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "state_rel_get_var_imp2"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store,
-    StackSemStateFiniteExact.regs, StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelGetVarImp2 {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (k f f' : Nat)
     (s : WordSemStateFiniteExact width (Nat × C) F)

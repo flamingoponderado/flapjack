@@ -20,9 +20,7 @@ five actual native evaluator conclusions. Fresh HOL replay confirms independent
 source/target code/FFI dimensions and shared word width. The full evaluator
 inherits reals_as_rational_cuts (SOUNDNESS item 8); only Move and zero Const
 paths execute here. Seq restores the unchanged clock/termdep from the relation. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "fake_moves_correctR"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fakeMovesCorrectR {width : Nat} [NeZero width] {C₁ F₁ C₂ F₂ : Type}
     (prio : Option (Unit ⊕ Unit)) (names : List Nat) (next : Nat)
     (left right : Spt Nat) (source : WordSemStateFiniteExact width C₁ F₁)

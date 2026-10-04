@@ -6,8 +6,7 @@ open Flapjack Flapjack.Compiler.Backend.StackLang
 /-- The original bitmap accounting result over the actual native frame insertion.
 The full output equation and input bound are retained; cutsets and frames are
 arbitrary. Only HOL's type-indexed positive word dimension is translated. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "wLive_LENGTH"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wLiveLength {width : Nat} [NeZero width]
     (live : Spt Unit × Spt Unit) (bitmaps : AppList (BitVec width) × Nat)
     (frame : Nat × Nat × Nat) (program : HolProg width)

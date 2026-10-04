@@ -31,11 +31,7 @@ end IfWitnesses
 /-- Genuine If induction case of HOL `compile_correct`, resumed at line 982.
 The sole IH is conditional on the exact source operand lookups and comparison;
 it retains every original goal premise and the full existential conclusion. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "compile_correct"
-  (fmap_as_finite_support_relation :=
-    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.fpRegs,
-      WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_If {width : Nat} [NeZero width] {C F : Type}
     (cmp : Cmp) (r1 : Nat) (ri : RegImm (BitVec width)) (c1 c2 : HolLoopProg width)
     (live : NumSet) (s : LoopSemStateFiniteExact width F)

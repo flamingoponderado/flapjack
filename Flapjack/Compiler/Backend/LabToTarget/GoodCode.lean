@@ -13,8 +13,7 @@ open Flapjack.Basis.Pure.MlString
 value carrier is the independently generic source β, not the word dimension
 and not a specialization to natural offsets. Source EVERY/ALL_DISTINCT
 are universal list membership and Nodup with ordinary equality. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "good_code_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def goodCode {width : Nat} [NeZero width] {β : Type}
     (c : AsmConfigExact width) (labs : Spt (Spt β)) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) : Prop :=
   (∀ sec ∈ code, LabProps.secEndsWithLabelNative sec) ∧

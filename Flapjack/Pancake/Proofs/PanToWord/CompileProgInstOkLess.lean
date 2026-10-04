@@ -13,8 +13,7 @@ All six native passes are composed under the original compile equation,
 byte/addr zero-offset guards and source good_panops guard. The conclusion
 concerns every instruction of the actual compiled word program; it assumes
 neither target execution nor desired instruction validity. -/
-@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml"
-  "pan_to_word_every_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem panToWordEveryInstOkLess {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (pan_code : List (DeclHOL width))
     (wprog0 : List (Nat × Nat × WordLangProgHOL (BitVec width)))

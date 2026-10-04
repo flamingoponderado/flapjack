@@ -8,8 +8,7 @@ open Flapjack.Compiler.Backend.LabToTarget.FilterSkip
 
 /-- Original evaluate-induction clock-zero case. All simulation hypotheses and
 existential execution/FFI conclusions are retained; full assembly remains open. -/
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem filterCorrectClockZero {width : Nat} [NeZero width] {C F : Type}
     (s1 t1 : Flapjack.Compiler.Backend.LabSem.State width C F)
     (res : MachineResult) (s2 : Flapjack.Compiler.Backend.LabSem.State width C F)
@@ -27,8 +26,7 @@ theorem filterCorrectClockZero {width : Nat} [NeZero width] {C F : Type}
 
 /-- Original absent-fetch branch, preserving all original simulation hypotheses
 and outcomes. The actual skipped-run count is derived from native fetch alignment. -/
-@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem filterCorrectAbsentFetch {width : Nat} [NeZero width] {C F : Type}
     (s1 t1 : Flapjack.Compiler.Backend.LabSem.State width C F)
     (res : MachineResult) (s2 : Flapjack.Compiler.Backend.LabSem.State width C F)

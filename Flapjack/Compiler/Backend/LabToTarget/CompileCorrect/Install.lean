@@ -323,8 +323,7 @@ theorem stateRel_install {width : Nat} [NeZero width] {S Q F : Type}
   -- 53: no shared memory in the extended code
   · exact Or.inl ⟨hnsmAll, (c53.resolve_right hnoInst).2⟩
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "compile_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_install {width : Nat} [NeZero width] {S Q : Type} {F : Type}
     (s1 : Flapjack.Compiler.Backend.LabSem.State width Config F)
     (w : BitVec width) (bytes : List (BitVec 8)) (n : Nat)

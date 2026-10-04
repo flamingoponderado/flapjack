@@ -9,8 +9,7 @@ open Flapjack Flapjack.Compiler.Backend.StackLang
 uses the unsigned byte-stride word before constructing its word-sized limit.
 All register aliases, natural register indices, and word dimensions remain
 unrestricted apart from the standard positive-width word translation. -/
-@[hol "cakeml/compiler/backend/stack_removeScript.sml" "init_code_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def initCode {width : Nat} [NeZero width] (generateGc : Bool)
     (maximumHeap pointer : Nat) : HolProg width :=
   let maximumHeapWord :=

@@ -4,7 +4,7 @@ namespace Flapjack.Compiler.Backend.Bvi
 
 /-- Complete original expression syntax; the operation payload is the actual
 ClosLang.Op carrier. Every recursive List/Option and numeric payload is retained. -/
-@[hol "cakeml/compiler/backend/bviScript.sml" "exp"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 inductive Exp where
   | var : Nat → Exp
   | ifThenElse : Exp → Exp → Exp → Exp

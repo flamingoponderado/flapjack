@@ -12,8 +12,7 @@ open Flapjack.Compiler.Encoders.Asm
 /-- Full original compiler preservation for every source constructor. The
 original source guard and actual compiler equality are the only hypotheses;
 constructor induction hypotheses are discharged by terminating recursion. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "comp_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compNoShmemop {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (program : WordLangProgHOL (BitVec width))

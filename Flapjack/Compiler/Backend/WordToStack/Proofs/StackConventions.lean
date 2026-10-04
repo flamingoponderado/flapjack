@@ -54,8 +54,7 @@ both prepended stubs. Source EVERY is rendered through Bool-valued List.all;
 conclusion EVERY predicates use their equivalent membership quantifiers on
 MAP SND. Every compiler output field is arbitrary under the original tuple
 equality. No target convention, target evaluation or successful pass is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_stack_convs" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackStackConvs {width : Nat} [NeZero width]
     (conf : AsmConfigExact width)
     (programs : List (Nat × Nat × WordLangProgHOL (BitVec width)))

@@ -14,8 +14,7 @@ not in the knowledge carrier. The word qualifier records precisely those
 positive-width carriers; no dummy word argument, successful evaluation,
 flatness or output relation is added. Sparse domains, ordered store-list
 distinctness and both complete native tree invariants are retained. -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "wf_data_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def wfData (width : Nat) [NeZero width] (data : Knowledge) : Prop :=
   (∀ (register value : Nat),
     sptLookup register data.toCanonical = some value →

@@ -86,8 +86,7 @@ theorem clockFree_seq {width : Nat} [NeZero width] {C F : Type} (a b : HolProg w
 /-- Exact HOL `evaluate_call_dest_clock` (`word_to_stackProofScript.sml:5234-5242`).
 HOL's free variables are explicit; `I ## (λt. t with clock := clk)` is
 `Prod.map id`. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_call_dest_clock"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCallDestClock {width : Nat} [NeZero width] {C F : Type}
     (dest : Option Nat) (args : List Nat) (k f f' : Nat) (q0 : HolProg width)
     (dest' : Sum Nat Nat) (t : StackSemStateFiniteExact width C F) (clk : Nat) :
@@ -111,8 +110,7 @@ theorem evaluateCallDestClock {width : Nat} [NeZero width] {C F : Type}
 
 /-- Exact HOL `evaluate_wLive_clock` (`word_to_stackProofScript.sml:5244-5258`).
 HOL's free `kf` and `clk` are explicit. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_wLive_clock"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateWLiveClock {width : Nat} [NeZero width] {C F : Type}
     (kf : Nat × Nat × Nat) (clk : Nat) :
     ∀ (x : Spt Unit × Spt Unit) (t : StackSemStateFiniteExact width C F) (q : HolProg width)
@@ -131,8 +129,7 @@ theorem evaluateWLiveClock {width : Nat} [NeZero width] {C F : Type}
     exact clockFree_seq _ _ (clockFree_const _ _) (clockFree_stackStore _ _)
 
 /-- Exact HOL `evaluate_stack_move_seq` (`word_to_stackProofScript.sml:5330-5348`). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_stack_move_seq"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateStackMoveSeq {width : Nat} [NeZero width] {C F : Type} :
     ∀ (a b c d : Nat) (prog : HolProg width) (t : StackSemStateFiniteExact width C F),
       StackSemEvaluate.evaluate (stackMoveNative a b c d prog, t) =
@@ -173,8 +170,7 @@ theorem seq_skip_left {width : Nat} [NeZero width] {C F : Type} (b : HolProg wid
 
 /-- Exact HOL `evaluate_copy_ret_aux_clock` (`word_to_stackProofScript.sml:7706-7718`).
 HOL's free `k`, `f`, `n` and `clk` are explicit. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_copy_ret_aux_clock"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCopyRetAuxClock {width : Nat} [NeZero width] {C F : Type}
     (k f n clk : Nat) :
     ∀ t : StackSemStateFiniteExact width C F,
@@ -193,8 +189,7 @@ theorem evaluateCopyRetAuxClock {width : Nat} [NeZero width] {C F : Type}
 /-- Exact HOL `evaluate_copy_ret_Seq` (`word_to_stackProofScript.sml:7611-7641`).
 HOL's free variables are explicit; the return-value and unused frame-component
 carriers are independent, as in `copy_ret_def`. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_copy_ret_Seq"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCopyRetSeq {width : Nat} [NeZero width] {C F β γ : Type}
     (perf b : Bool) (kf : Nat × Nat × γ) (vs : List β) (k0 : HolProg width)
     (t : StackSemStateFiniteExact width C F) :
@@ -223,8 +218,7 @@ theorem getElem_of_drop_eq {α : Type} {l l' : List α} {m i : Nat}
 
 /-- Exact HOL `evaluate_stack_move` (`word_to_stackProofScript.sml:5270-5328`). HOL's
 free `k` is explicit; its total `EL` is `holEl`. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_stack_move"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateStackMove {width : Nat} [NeZero width] {C F : Type} (k : Nat) :
     ∀ (n tar : Nat) (t : StackSemStateFiniteExact width C F) (offset : Nat),
       t.useStack = true ∧ t.stackSpace + tar + n + offset ≤ t.stack.length ∧ n ≤ offset →
@@ -297,8 +291,7 @@ theorem holEl_drop {α : Type} [Nonempty α] (l : List α) (m i : Nat) (h : m + 
 
 /-- Exact HOL `evaluate_copy_ret_aux` (`word_to_stackProofScript.sml:7643-7704`).
 HOL's total `EL` is `holEl`. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_copy_ret_aux"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCopyRetAux {width : Nat} [NeZero width] {C F : Type} :
     ∀ (k f n : Nat) (t : StackSemStateFiniteExact width C F),
       t.useStack = true ∧ f ≠ 0 ∧ f ≤ t.stack.length - (t.stackSpace + n) →

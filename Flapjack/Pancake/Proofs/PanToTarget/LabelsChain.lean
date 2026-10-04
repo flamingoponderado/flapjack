@@ -62,8 +62,7 @@ theorem labels_of_labelsRel {width : Nat} [NeZero width] :
 
 /-- HOL `pan_to_stack_first_ALL_DISTINCT` (`pan_to_targetProofScript.sml:89-114`). HOL's free
     `mc pan_code wprog0 c col wprog bitmaps c'' fs p` are explicit. -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "pan_to_stack_first_ALL_DISTINCT"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem pan_to_stack_first_ALL_DISTINCT {width : Nat} [NeZero width] {State Projection : Type}
     (mc : MachineConfig width State Projection) (panCode : List (DeclHOL width))
     (wprog0 : List (Nat × Nat × WordLangProgHOL (BitVec width)))
@@ -97,8 +96,7 @@ theorem pan_to_stack_first_ALL_DISTINCT {width : Nat} [NeZero width] {State Proj
 /-- HOL `pan_to_stack_compile_lab_pres` (`pan_to_targetProofScript.sml:116-175`). HOL's free
     variables are explicit as in `pan_to_stack_first_ALL_DISTINCT`; `extract_labels` on the
     stack programs is the tagged stackProps `extractLabels`. -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "pan_to_stack_compile_lab_pres"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem pan_to_stack_compile_lab_pres {width : Nat} [NeZero width] {State Projection : Type}
     (mc : MachineConfig width State Projection) (panCode : List (DeclHOL width))
     (wprog0 : List (Nat × Nat × WordLangProgHOL (BitVec width)))
@@ -141,8 +139,7 @@ theorem pan_to_stack_compile_lab_pres {width : Nat} [NeZero width] {State Projec
 
 /-- HOL `pan_to_lab_labels_ok` (`pan_to_targetProofScript.sml:177-191`). HOL's free
     `max_heap sp lprog` follow the variables of `pan_to_stack_compile_lab_pres`. -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "pan_to_lab_labels_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem pan_to_lab_labels_ok {width : Nat} [NeZero width] {State Projection : Type}
     (mc : MachineConfig width State Projection) (panCode : List (DeclHOL width))
     (wprog0 : List (Nat × Nat × WordLangProgHOL (BitVec width)))
@@ -169,8 +166,7 @@ theorem pan_to_lab_labels_ok {width : Nat} [NeZero width] {State Projection : Ty
 /-- HOL `word_to_stack_good_code_lemma` (`pan_to_targetProofScript.sml:193-247`). HOL's free
     `c mc pan_code col wprog bitmaps c'' fs p` are explicit; `good_code` is the tagged
     stack_to_labProof `good_code_def`. -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "word_to_stack_good_code_lemma"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem word_to_stack_good_code_lemma {width : Nat} [NeZero width] {State Projection : Type}
     (c : Compiler.Backend.Backend.Config) (mc : MachineConfig width State Projection)
     (panCode : List (DeclHOL width)) (col : List (Option (Spt Nat)))
@@ -218,8 +214,7 @@ theorem word_to_stack_good_code_lemma {width : Nat} [NeZero width] {State Projec
     `pan_code ac isa wprog0 wc col wprog bm c fs p scc dc lim regc off` are explicit (the Pancake
     program is compiled for an arbitrary `isa`, independent of `ac.ISA`), and `no_install` on lab
     programs is the tagged labProps `noInstall`. -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "from_pan_to_lab_no_install"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem from_pan_to_lab_no_install {width : Nat} [NeZero width] (panCode : List (DeclHOL width))
     (ac : AsmConfigExact width) (isa : AsmArchitecture)
     (wprog0 : List (Nat × Nat × WordLangProgHOL (BitVec width)))
@@ -272,8 +267,7 @@ theorem stackToLab_compile_secEndsWithLabel {width : Nat} [NeZero width]
     `word_to_stack$compile`, `word_to_word$compile` and `pan_to_word_compile_prog` are the tagged
     compilers, `labels_ok` the tagged stack_to_labProof `labels_ok_def`, `all_enc_ok_pre` the tagged
     labProps `allEncOkPreHOL` and `good_code` the tagged lab_to_targetProof `good_code_def`. -/
-@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "pan_to_lab_good_code_lemma"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem pan_to_lab_good_code_lemma {width : Nat} [NeZero width] {β : Type}
     (c : Compiler.Backend.Backend.Config) (lim1 lim2 : Nat) (offs : BitVec width × BitVec width)
     (stackProg : List (Nat × Compiler.Backend.StackLang.HolProg width))

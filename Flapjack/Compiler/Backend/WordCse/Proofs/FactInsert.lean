@@ -155,8 +155,7 @@ theorem data_inv_fresh (data : Knowledge) (s : WordSemStateFiniteExact width C F
 end Helpers
 
 /-- Exact HOL local `data_inv_insert_instrs_Const` (`word_cseProof:1204-1250`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "data_inv_insert_instrs_Const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem data_inv_insert_instrs_Const {width : Nat} [NeZero width] {C : Type} {F : Type}
     (data : Knowledge) (s : WordSemStateFiniteExact width C F) (r n : Nat) (w : BitVec width)
     (h : dataInv data s ∧ sptLookup r data.toCanonical = some r ∧ sptLookup r s.locals = some (.word w)) :
@@ -172,8 +171,7 @@ theorem data_inv_insert_instrs_Const {width : Nat} [NeZero width] {C : Type} {F 
   rw [BitVec.eq_of_toNat_eq hk]; exact hl
 
 /-- Exact HOL local `data_inv_insert_instrs_Arith` (`word_cseProof:1252-1314`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "data_inv_insert_instrs_Arith"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem data_inv_insert_instrs_Arith {width : Nat} [NeZero width] {C : Type} {F : Type}
     (data : Knowledge) (s : WordSemStateFiniteExact width C F) (r : Nat) (a : HolArith width)
     (w : WordLocW width)
@@ -192,8 +190,7 @@ theorem data_inv_insert_instrs_Arith {width : Nat} [NeZero width] {C : Type} {F 
   exact ⟨w, hg, (arithKeysEq a a2 ⟨hc, hk.symm⟩).2.2 s w he⟩
 
 /-- Exact HOL local `data_inv_insert_instrs_OpCurrHeap` (`word_cseProof:1316-1362`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "data_inv_insert_instrs_OpCurrHeap"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem data_inv_insert_instrs_OpCurrHeap {width : Nat} [NeZero width] {C : Type} {F : Type}
     (data : Knowledge) (s : WordSemStateFiniteExact width C F) (r : Nat) (op : BinOp) (src : Nat)
     (w : WordLocW width)
@@ -215,8 +212,7 @@ theorem data_inv_insert_instrs_OpCurrHeap {width : Nat} [NeZero width] {C : Type
   exact ⟨w, he, hg⟩
 
 /-- Exact HOL local `data_inv_insert_instrs_LocValue` (`word_cseProof:1364-1414`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "data_inv_insert_instrs_LocValue"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem data_inv_insert_instrs_LocValue {width : Nat} [NeZero width] {C : Type} {F : Type}
     (data : Knowledge) (s : WordSemStateFiniteExact width C F) (r l : Nat)
     (h : dataInv data s ∧ sptLookup r data.toCanonical = some r ∧
@@ -231,8 +227,7 @@ theorem data_inv_insert_instrs_LocValue {width : Nat} [NeZero width] {C : Type} 
   rw [hk]; exact hl
 
 /-- Exact HOL `add_to_data_aux_correct` (`word_cseProof:1416-1477`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "add_to_data_aux_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem add_to_data_aux_correct {width : Nat} [NeZero width] {C : Type} {F : Type}
     (data : Knowledge) (s : WordSemStateFiniteExact width C F) (r : Nat) (i : List Nat)
     (p : WordLangProgHOL (BitVec width)) (w : WordLocW width) (data' : Knowledge)
@@ -266,8 +261,7 @@ theorem add_to_data_aux_correct {width : Nat} [NeZero width] {C : Type} {F : Typ
         simp [sptDomain, sptLookup_sptInsert_same]
 
 /-- Exact HOL local `canonicalRegs_self_or_fresh` (`word_cseProof:1479-1494`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "canonicalRegs_self_or_fresh"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem canonicalRegs_self_or_fresh {width : Nat} [NeZero width] {C : Type} {F : Type}
     (data : Knowledge) (s : WordSemStateFiniteExact width C F) (x : Nat) (h : dataInv data s) :
     sptLookup (canonicalRegs data x) data.toCanonical = some (canonicalRegs data x) ∨
@@ -275,8 +269,7 @@ theorem canonicalRegs_self_or_fresh {width : Nat} [NeZero width] {C : Type} {F :
   canonicalRegs_self_or_fresh_wf data x h.1
 
 /-- Exact HOL local `canonicalRegs'_self_or_fresh` (`word_cseProof:1496-1509`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "canonicalRegs'_self_or_fresh"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem canonicalRegs'_self_or_fresh {width : Nat} [NeZero width] {C : Type} {F : Type}
     (data : Knowledge) (s : WordSemStateFiniteExact width C F) (r1 x : Nat)
     (h : dataInv data s ∧ sptLookup r1 data.toCanonical = none) :
@@ -285,8 +278,7 @@ theorem canonicalRegs'_self_or_fresh {width : Nat} [NeZero width] {C : Type} {F 
   canonicalRegs'_self_or_fresh_wf data r1 x ⟨h.1.1, h.2⟩
 
 /-- Exact HOL `add_to_data_const_correct` (`word_cseProof:1523-1574`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "add_to_data_const_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem add_to_data_const_correct {width : Nat} [NeZero width] {C : Type} {F : Type}
     (data : Knowledge) (s : WordSemStateFiniteExact width C F) (r : Nat) (w : BitVec width)
     (data' : Knowledge) (p' : WordLangProgHOL (BitVec width))
@@ -312,8 +304,7 @@ theorem add_to_data_const_correct {width : Nat} [NeZero width] {C : Type} {F : T
 
 /-- Exact HOL `add_to_data_LocValue_correct` (`word_cseProof:1591`); HOL
     `l ∈ domain s.code` is `sptMem l s.code`. -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "add_to_data_LocValue_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem add_to_data_LocValue_correct {width : Nat} [NeZero width] {C : Type} {F : Type}
     (data : Knowledge) (s : WordSemStateFiniteExact width C F) (r l : Nat) (data' : Knowledge)
     (p' : WordLangProgHOL (BitVec width))
@@ -329,8 +320,7 @@ theorem add_to_data_LocValue_correct {width : Nat} [NeZero width] {C : Type} {F 
       sptLookup_sptInsert_same _ _ _⟩
 
 /-- Exact HOL `add_to_data_OpCurrHeap_correct` (`word_cseProof:1626`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "add_to_data_OpCurrHeap_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem add_to_data_OpCurrHeap_correct {width : Nat} [NeZero width] {C : Type} {F : Type}
     (data : Knowledge) (s : WordSemStateFiniteExact width C F) (b : BinOp) (r1 r2 r2' : Nat)
     (w : WordLocW width) (data' : Knowledge) (p' : WordLangProgHOL (BitVec width))
@@ -362,8 +352,7 @@ theorem add_to_data_OpCurrHeap_correct {width : Nat} [NeZero width] {C : Type} {
     exact exp'
 
 /-- Exact HOL `add_to_data_Arith_correct` (`word_cseProof:1691`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "add_to_data_Arith_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem add_to_data_Arith_correct {width : Nat} [NeZero width] {C : Type} {F : Type}
     (data : Knowledge) (s : WordSemStateFiniteExact width C F) (a a' : HolArith width) (r : Nat)
     (w : WordLocW width) (data' : Knowledge) (p' : WordLangProgHOL (BitVec width))
@@ -403,8 +392,7 @@ theorem add_to_data_Arith_correct {width : Nat} [NeZero width] {C : Type} {F : T
     exact this
 
 /-- Exact HOL local `data_inv_insert_loads` (`word_cseProof:1785`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "data_inv_insert_loads"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem data_inv_insert_loads {width : Nat} [NeZero width] {C : Type} {F : Type}
     (data : Knowledge) (s : WordSemStateFiniteExact width C F) (r : Nat) (op : HolMemop) (a : Nat)
     (ofs : BitVec width) (w : WordLocW width)
@@ -422,8 +410,7 @@ theorem data_inv_insert_loads {width : Nat} [NeZero width] {C : Type} {F : Type}
   exact ⟨w, hg, he⟩
 
 /-- Exact HOL `add_to_load_aux_correct` (`word_cseProof:1816`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "add_to_load_aux_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem add_to_load_aux_correct {width : Nat} [NeZero width] {C : Type} {F : Type}
     (data : Knowledge) (s : WordSemStateFiniteExact width C F) (r : Nat) (i : List Nat)
     (p : WordLangProgHOL (BitVec width)) (w : WordLocW width) (data' : Knowledge)
@@ -458,8 +445,7 @@ theorem add_to_load_aux_correct {width : Nat} [NeZero width] {C : Type} {F : Typ
         simp [sptDomain, sptLookup_sptInsert_same]
 
 /-- Exact HOL `add_to_load_correct` (`word_cseProof:1879`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "add_to_load_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem add_to_load_correct {width : Nat} [NeZero width] {C : Type} {F : Type}
     (data : Knowledge) (s : WordSemStateFiniteExact width C F) (op : HolMemop) (r a a' : Nat)
     (ofs : BitVec width) (w : WordLocW width) (data' : Knowledge) (p' : WordLangProgHOL (BitVec width))

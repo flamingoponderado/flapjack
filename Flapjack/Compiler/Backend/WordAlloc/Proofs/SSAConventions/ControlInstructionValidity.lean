@@ -28,8 +28,7 @@ private theorem fullInst_seq {width : Nat} [NeZero width]
   rfl
 
 /-- Original Seq case with only the structurally generalized source-subprogram IH. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_fullInstSeq {width : Nat} [NeZero width]
     (config : AsmConfigExact width) (first second : WordLangProgHOL (BitVec width))
     (firstIH : ∀ (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit)),
@@ -62,8 +61,7 @@ theorem ssaCcTrans_fullInstSeq {width : Nat} [NeZero width]
   simpa only [ssaCcTrans, firstEq, secondEq] using fullInst_seq config a b ha hb
 
 /-- Original MustTerminate case with a structurally generalized body IH. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_fullInstMustTerminate {width : Nat} [NeZero width]
     (config : AsmConfigExact width) (body : WordLangProgHOL (BitVec width))
     (bodyIH : ∀ (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit)),
@@ -100,8 +98,7 @@ private theorem fix_fullInst {width : Nat} [NeZero width]
   simpa [hm, hf, fullInstOkLessExact, fullInstOkLessWith] using And.intro facts.1 facts.2.1
 
 /-- Original If case with the two structurally generalized source-branch induction hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_fullInstIf {width : Nat} [NeZero width]
     (config : AsmConfigExact width) (cmp : Cmp) (condition : Nat) (right : WordRegImm (BitVec width))
     (yes no : WordLangProgHOL (BitVec width))
@@ -151,8 +148,7 @@ private theorem fullInst_reconcile {width : Nat} [NeZero width] {β : Type}
   split <;> simp [fullInstOkLessExact, fullInstOkLessWith]
 
 /-- Original Loop case with full source hypotheses and a structurally generalized body IH. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_fullInstLoop {width : Nat} [NeZero width]
     (config : AsmConfigExact width)
     (names exitNames : Spt Unit) (body : WordLangProgHOL (BitVec width))
@@ -187,8 +183,7 @@ theorem ssaCcTrans_fullInstLoop {width : Nat} [NeZero width]
     first | exact ⟨setupPre, bodyPre⟩ | exact ⟨setupPre, bodyPre, backPre⟩
 
 /-- Original Break case with full source hypotheses and a structurally generalized body IH. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_fullInstBreak {width : Nat} [NeZero width]
     (config : AsmConfigExact width) (index : Nat)
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
@@ -205,8 +200,7 @@ theorem ssaCcTrans_fullInstBreak {width : Nat} [NeZero width]
       cases back <;> first | rfl | exact fullInst_seq config _ _ pre (by rfl)
 
 /-- Original Continue case with full source hypotheses and a structurally generalized body IH. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "ssa_cc_trans_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTrans_fullInstContinue {width : Nat} [NeZero width]
     (config : AsmConfigExact width) (index : Nat)
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))

@@ -12,14 +12,12 @@ the native HOL set intersection.
 No word-width guard beyond the reviewed positive-width carrier is added.
 -/
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "align_dm_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def alignDm {width : Nat} [NeZero width] {C F : Type} (s : Flapjack.Compiler.Backend.LabSem.State width C F) : Flapjack.Compiler.Backend.LabSem.State width C F :=
   {s with memDomain := fun address => s.memDomain address && Flapjack.holByteAligned address}
 
 /-- The complete original eighteen unchanged fields, in source order. -/
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "align_dm_const"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem alignDmConst {width : Nat} [NeZero width] {C F : Type} (s : Flapjack.Compiler.Backend.LabSem.State width C F) :
     (alignDm s).clock = s.clock ∧
     (alignDm s).pc = s.pc ∧
@@ -41,19 +39,16 @@ theorem alignDmConst {width : Nat} [NeZero width] {C F : Type} (s : Flapjack.Com
     (alignDm s).failed = s.failed := by
   exact ⟨rfl,rfl,rfl,rfl,rfl,rfl,rfl,rfl,rfl,rfl,rfl,rfl,rfl,rfl,rfl,rfl,rfl,rfl⟩
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "align_dm_with_clock"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem alignDmWithClock {width : Nat} [NeZero width] {C F : Type} (s : Flapjack.Compiler.Backend.LabSem.State width C F) (k : Nat) :
     alignDm {s with clock := k} = {alignDm s with clock := k} := rfl
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "align_sdm_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def alignSdm {width : Nat} [NeZero width] {C F : Type} (s : Flapjack.Compiler.Backend.LabSem.State width C F) : Flapjack.Compiler.Backend.LabSem.State width C F :=
   {s with sharedMemDomain := fun address => s.sharedMemDomain address && Flapjack.holByteAligned address}
 
 /-- The complete original eighteen unchanged fields, in source order. -/
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "align_sdm_const"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem alignSdmConst {width : Nat} [NeZero width] {C F : Type} (s : Flapjack.Compiler.Backend.LabSem.State width C F) :
     (alignSdm s).clock = s.clock ∧
     (alignSdm s).pc = s.pc ∧
@@ -75,8 +70,7 @@ theorem alignSdmConst {width : Nat} [NeZero width] {C F : Type} (s : Flapjack.Co
     (alignSdm s).failed = s.failed := by
   exact ⟨rfl,rfl,rfl,rfl,rfl,rfl,rfl,rfl,rfl,rfl,rfl,rfl,rfl,rfl,rfl,rfl,rfl,rfl⟩
 
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "align_sdm_with_clock"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem alignSdmWithClock {width : Nat} [NeZero width] {C F : Type} (s : Flapjack.Compiler.Backend.LabSem.State width C F) (k : Nat) :
     alignSdm {s with clock := k} = {alignSdm s with clock := k} := rfl
 

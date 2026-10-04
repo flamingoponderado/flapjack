@@ -67,8 +67,7 @@ theorem evaluate_mustTerminate_run {width : Nat} [NeZero width] {C F : Type}
 
 open Classical in
 /-- HOL `compile_single_correct`, `MustTerminate` case (`word_to_wordProofScript.sml:328-341`). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_single_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compile_single_correct_MustTerminate {width : Nat} [NeZero width] {C F : Type}
     (tt : Bool) (kk aa : Nat) (co : AsmConfigExact width) (p : WordLangProgHOL (BitVec width))
     (st : WordSemStateFiniteExact width C F) (ih : CompileSingleCorrectLowerIH tt kk aa co st) :
@@ -134,8 +133,7 @@ theorem evaluate_ite_read {width : Nat} [NeZero width] {C F : Type} (cmp : Cmp) 
 open Classical in
 /-- HOL `compile_single_correct`, `If` case (`word_to_wordProofScript.sml:644-653`), with the
     induction hypotheses of both branches. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_single_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compile_single_correct_If {width : Nat} [NeZero width] {C F : Type}
     (tt : Bool) (kk aa : Nat) (co : AsmConfigExact width) (cmp : Cmp) (r : Nat)
     (ri : WordRegImm (BitVec width)) (c1 c2 : WordLangProgHOL (BitVec width))
@@ -183,8 +181,7 @@ open Classical in
 /-- HOL `compile_single_correct`, `Seq` case (`word_to_wordProofScript.sml:592-642`), with the
     first statement's induction hypothesis at the same `termdep`/`clock`, the second's at a
     state with the same `termdep` and `clock` (size) or HOL's outer hypotheses (smaller clock). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_single_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compile_single_correct_Seq {width : Nat} [NeZero width] {C F : Type}
     (tt : Bool) (kk aa : Nat) (co : AsmConfigExact width) (c1 c2 : WordLangProgHOL (BitVec width))
     (st : WordSemStateFiniteExact width C F)
@@ -288,8 +285,7 @@ open Classical in
 /-- HOL `compile_single_correct`, `Loop` case (`word_to_wordProofScript.sml:655-748`), with the
     body's induction hypothesis at the same `termdep`/`clock` and HOL's outer hypotheses for the
     next iteration at a smaller clock. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_single_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compile_single_correct_Loop {width : Nat} [NeZero width] {C F : Type}
     (tt : Bool) (kk aa : Nat) (co : AsmConfigExact width) (names : WordLangNumSetHOL)
     (body : WordLangProgHOL (BitVec width)) (exitNames : WordLangNumSetHOL)

@@ -34,8 +34,7 @@ theorem findIndex_holEl {α : Type} [DecidableEq α] [Nonempty α] (x : α) (l :
       rw [this]
       simpa [holEl] using h2
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "ffi_entry_pcs_NOT_ccache_OR_halt_pc" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ffiEntryPcs_not_ccache_or_halt {width : Nat} [NeZero width] {S Q : Type}
     (pc : BitVec width) (mc : MachineConfig width S Q) (index : Nat) :
     findIndex pc mc.ffiEntryPcs 0 = some index ∧
@@ -60,8 +59,7 @@ theorem holEl_mem {α : Type} [Nonempty α] (l : List α) (i : Nat) (h : i < l.l
 
 private instance : Nonempty HolFfiName := ⟨.sharedMem .mappedRead⟩
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "no_share_mem_lemma"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem noShareMem_lemma {width : Nat} [NeZero width] (ffiNames : List HolFfiName)
     (i pc : Nat) (code : LabProgHOL width) (c : BitVec width) (l : List (BitVec 8)) (n : Nat) :
     mmioPcsMinIndex ffiNames = some i ∧
@@ -107,8 +105,7 @@ theorem ffiName_not_mapped (ffiNames : List HolFfiName) (i : Nat) (s : HolFfiNam
     rw [hel] at hop
     cases hop
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "no_share_mem_APPEND"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem noShareMem_append {width : Nat} [NeZero width] (code secs : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
     noShareMemInst code ∧ noShareMemInst secs → noShareMemInst (code ++ secs) := by
@@ -120,8 +117,7 @@ theorem noShareMem_append {width : Nat} [NeZero width] (code secs : List (Sectio
     rw [this, asmFetchAux_append2] at hf
     exact hs _ op re a inst len hf
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "no_install_APPEND_IMP"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem noInstall_append_imp {width : Nat} [NeZero width] (code secs : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
     noInstall (code ++ secs) → noInstall code ∧ noInstall secs := by
@@ -141,8 +137,7 @@ theorem noShareMemInst_tail {width : Nat} [NeZero width] (k : Nat) (x : LabLineH
   · exact h p op re a inst len (by simpa [asmFetchAux, hl] using hf)
   · exact h (p + 1) op re a inst len (by simpa [asmFetchAux, hl] using hf)
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "no_share_mem_IMP_get_shmem_info" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem noShareMem_getShmemInfo {width : Nat} [NeZero width] (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))
     (p : Nat) (ffiNames : List HolFfiName) (shmemInfo : List ShmemInfoNum) :

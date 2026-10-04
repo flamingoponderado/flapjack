@@ -19,8 +19,7 @@ optional exception handler), `MustTerminate`, `Loop` (both live sets and the
 body under the extended loop table) and the catch-all, which requires
 injectivity on the live-before set and on the writes together with the
 live-after set. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "colouring_ok_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def colouringOk {width : Nat} [NeZero width] (f : Nat → Nat) :
     WordLangProgHOL (BitVec width) → NumSet → List (NumSet × NumSet) → Prop
   | .seq s1 s2, live, lt =>

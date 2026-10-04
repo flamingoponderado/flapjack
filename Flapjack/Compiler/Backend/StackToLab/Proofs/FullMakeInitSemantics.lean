@@ -504,10 +504,7 @@ code is the non-failing StackSem semantics of the source from
 identity; `BIJ f UNIV UNIV` is `Function.Bijective f`; HOL sets are Bool
 predicates; `EVERY P [2;3;4]` is a membership quantifier; the `let (c,p,b)` of
 the oracle equation is rendered by projections. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "full_make_init_semantics" 3365
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fullMakeInitSemantics {width : Nat} [NeZero width] {C F : Type}
     {stackConf : StackToLab.Config} {dataConf : DataToWord.Config} {maxHeap sp : Nat}
     {offset : BitVec width × BitVec width} {bitmaps : List (BitVec width)}
@@ -547,10 +544,7 @@ theorem fullMakeInitSemantics {width : Nat} [NeZero width] {C F : Type}
 
 /-- HOL `full_make_init_semantics` rebound at line 3617 with `Abbrev`
 rewritten away: the same statement. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "full_make_init_semantics" 3617
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fullMakeInitSemantics' {width : Nat} [NeZero width] {C F : Type}
     {stackConf : StackToLab.Config} {dataConf : DataToWord.Config} {maxHeap sp : Nat}
     {offset : BitVec width × BitVec width} {bitmaps : List (BitVec width)}

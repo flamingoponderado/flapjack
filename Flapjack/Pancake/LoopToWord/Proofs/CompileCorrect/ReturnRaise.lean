@@ -64,11 +64,7 @@ theorem wordSemJumpExc_some_restore {width : Nat} [NeZero width] {C F : Type}
     (`loop_to_wordProofScript.sml:57-97`, resumed at `:736-745`).  There is no
     induction hypothesis.  The compiled `Return 0 (MAP (find_var ctxt) ns)`
     reads `retv` from register 0; `~isWord retv` makes it a `Loc`. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "compile_correct"
-  (fmap_as_finite_support_relation :=
-    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.fpRegs,
-      WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_Return {width : Nat} [NeZero width] {C F : Type}
     (ns : List Nat) (s : LoopSemStateFiniteExact width F) :
     ∀ (res : Option (LoopSemStateFiniteExact.LoopResultExact width))
@@ -109,11 +105,7 @@ theorem compileCorrect_Return {width : Nat} [NeZero width] {C F : Type}
     (`loop_to_wordProofScript.sml:57-97`, resumed at `:747-760`).  There is no
     induction hypothesis.  When the target `jump_exc` fails, the target
     result is `Error`, which the `Exception` arm of HOL's goal allows. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "compile_correct"
-  (fmap_as_finite_support_relation :=
-    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.fpRegs,
-      WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_Raise {width : Nat} [NeZero width] {C F : Type}
     (n : Nat) (s : LoopSemStateFiniteExact width F) :
     ∀ (res : Option (LoopSemStateFiniteExact.LoopResultExact width))

@@ -644,8 +644,7 @@ open Classical in
 /-- HOL `compile_single_correct`, `Call` case (`word_to_wordProofScript.sml:347-589`), with HOL's
     outer `termdep`/`clock` induction hypothesis (used for the callee body and for the return
     and exception handlers, all run at a smaller clock). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_single_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compile_single_correct_Call {width : Nat} [NeZero width] {C F : Type}
     (tt : Bool) (kk aa : Nat) (co : AsmConfigExact width)
     (ret : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat))

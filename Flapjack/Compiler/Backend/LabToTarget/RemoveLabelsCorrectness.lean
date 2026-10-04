@@ -11,8 +11,7 @@ open Flapjack.Basis.Pure.MlString
 guards and all six conclusions. Initial encoding establishes the genuine loop
 preconditions; the complete loop theorem supplies actual output validity and
 every returned-label property. No simulation or returned-state facts are assumed. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "remove_labels_thm" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem removeLabels_correct {width : Nat} [NeZero width]
     (clock : Nat) (c : AsmConfigExact width) (pos : Nat) (acc : Spt (Spt Nat))
     (ffis : List HolFfiName)

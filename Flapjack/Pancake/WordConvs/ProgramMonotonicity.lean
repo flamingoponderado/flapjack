@@ -7,8 +7,7 @@ namespace Flapjack
 
 /-- Pointwise implication preserves the complete native program occurrence
 predicate, including its return-dependent traversal of Call handlers. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml"
-  "every_var_mono" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem everyVarMono {width : Nat} [NeZero width] (P : Nat → Bool)
     (program : WordLangProgHOL (BitVec width)) (Q : Nat → Bool) :
     ((∀ x, P x = true → Q x = true) ∧ everyVarHOL P program = true) →

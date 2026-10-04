@@ -25,10 +25,7 @@ theorem operandLookup {width : Nat} [NeZero width] {C F : Type}
 /-- Genuine original If induction case: original four premises and complete
 existential target/result relation, augmented only by the original actual
 lookup/comparison-guarded branch induction hypotheses. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectIf {width : Nat} [NeZero width] {C F : Type}
     (comparison : Cmp) (register : Nat) (operand : HolRegImm width)
     (first second : HolProg width)

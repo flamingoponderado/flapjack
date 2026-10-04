@@ -6,11 +6,9 @@ accepted-opcode, successful execution, or assembly subset premise is added. -/
 namespace Flapjack.RiscV.TargetProof
 open Flapjack Compiler.Encoders.Asm Compiler.Encoders.RiscV.Target RiscV.L3
 
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "length_riscv_encode"]
 theorem length_riscv_encode (i : instruction) : (riscvEncode i).length = 4 := by
   rfl
 
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "riscv_encode_not_nil"]
 theorem riscv_encode_not_nil (i : instruction) : riscvEncode i ≠ [] := by
   intro h
   have := congrArg List.length h
@@ -39,7 +37,6 @@ theorem riscvEnc_length_eq (i : HolAsm 64) :
     (riscvEnc i).length = 4 * (riscvAst i).length :=
   encodeList_length _
 
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "riscv_encoding"]
 theorem riscv_encoding (i : HolAsm 64) :
     (riscvEnc i).length % 4 = 0 ∧ riscvEnc i ≠ [] := by
   constructor

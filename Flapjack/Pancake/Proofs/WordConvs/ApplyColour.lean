@@ -18,8 +18,7 @@ namespace Flapjack.WordConvs
 open Flapjack.WordAlloc
 
 /-- HOL `apply_colour_lab_pres` (`wordConvsProofScript.sml:2782-2789`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "apply_colour_lab_pres"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem applyColour_labPres {width : Nat} [NeZero width] (col : Nat → Nat) :
     ∀ prog : WordLangProgHOL (BitVec width),
       extractLabels prog = extractLabels (applyColour col prog)
@@ -73,8 +72,7 @@ theorem notCreatedSubprogs_applyColour_eq {width : Nat} [NeZero width]
 
 /-- HOL `apply_colour_not_created_subprogs` (`wordConvsProofScript.sml:2855-2864`);
 HOL's free `P`, `prog` and `f` are the binders. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "apply_colour_not_created_subprogs"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem applyColour_notCreatedSubprogs {width : Nat} [NeZero width]
     (P : WordLangProgHOL (BitVec width) → Bool) (prog : WordLangProgHOL (BitVec width))
     (f : Nat → Nat) :
@@ -82,8 +80,7 @@ theorem applyColour_notCreatedSubprogs {width : Nat} [NeZero width]
   rw [notCreatedSubprogs_applyColour_eq]; exact id
 
 /-- HOL `word_get_code_labels_apply_colour` (`wordConvsProofScript.sml:2880-2888`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "word_get_code_labels_apply_colour"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getCodeLabels_applyColour {width : Nat} [NeZero width] (col : Nat → Nat) :
     ∀ ps : WordLangProgHOL (BitVec width),
       getCodeLabelsHOL (applyColour col ps) = getCodeLabelsHOL ps
@@ -111,8 +108,7 @@ theorem getCodeLabels_applyColour {width : Nat} [NeZero width] (col : Nat → Na
 
 /-- HOL `word_good_handlers_apply_colour` (`wordConvsProofScript.sml:2890-2898`);
 HOL's free handler label `n` is the leading binder. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "word_good_handlers_apply_colour"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem goodHandlers_applyColour {width : Nat} [NeZero width] (n : Nat) (col : Nat → Nat) :
     ∀ ps : WordLangProgHOL (BitVec width),
       goodHandlersHOL n (applyColour col ps) = true ↔ goodHandlersHOL n ps = true

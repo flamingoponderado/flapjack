@@ -44,8 +44,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
 /-- Full original exception-unwinding local-frame constructor. Empty locals,
 SOME 0 size and the frame holding the old size/both cutsets/absent handler are
 updated together; every other actual native state field is unchanged. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "push_locals_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def pushLocals {width : Nat} [NeZero width] {C F : Type}
     (nonGc gc : List (Nat × WordLocW width)) (source : WordSemStateFiniteExact width C F) :
     WordSemStateFiniteExact width C F :=

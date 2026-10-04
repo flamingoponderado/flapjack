@@ -20,8 +20,7 @@ no global arbitrary-state IH, target execution or poststate field premise.
 All three original existential conjuncts remain literal CodeBitmaps.
 The evaluator closure inherits reals_as_rational_cuts; no numerical alignment
 or FP correspondence is asserted. Whole evaluator assembly remains open. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCodeBitmapsCall {width : Nat} [NeZero width] {C F : Type}
     (ret : Option (HolProg width × Nat × Nat × Nat)) (dest : Sum Nat Nat)
     (handler : Option (HolProg width × Nat × Nat))

@@ -13,8 +13,7 @@ initial bitmap [4w] is a prefix of the output (compile_word_to_stack_isPREFIX)
 and the original accounting preserves the zero gap
 (compile_word_to_stack_IMP_LENGTH). The only carrier translation is the
 positive HOL word dimension. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "compile_word_to_stack_bitmaps" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileWordToStackBitmaps {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (p : List (Nat × Nat × WordLangProgHOL (BitVec width)))
     (bitmaps : List (BitVec width)) (c2 : Config)

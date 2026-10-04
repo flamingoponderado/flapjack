@@ -1,3 +1,4 @@
+import Mathlib.Tactic.Tauto
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegister
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NativeAccessors
 
@@ -30,11 +31,7 @@ All native runs, full post-state relation and resource equalities are derived
 under exactly the original six guards, for arbitrary word-or-label values.
 The evaluator inherits reals_as_rational_cuts (SOUNDNESS item 8); this theorem
 claims no independent real-analysis agreement. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_wStackStore_wReg1_0"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateWStackStoreWReg1Zero {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (register physical k f frame : Nat)
     (loads : List (Nat × Nat))

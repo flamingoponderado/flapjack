@@ -8,7 +8,6 @@ a word64 offset. Both retain all original conclusions and premises. -/
 namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3 Compiler.Encoders.RiscV.Target
 
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "bytes_in_memory_thm"]
 theorem bytes_in_memory_thm {α : Type} (_w : α) (s : AsmState 64) (state : riscv_state)
     (a b c d : BitVec 8)
     (h : targetStateRel riscvTarget s state ∧
@@ -47,7 +46,6 @@ theorem bytes_in_memory_thm {α : Type} (_w : α) (s : AsmState 64) (state : ris
   · rw [hp]; exact db
   · rw [hp]; exact da
 
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "bytes_in_memory_thm2"]
 theorem bytes_in_memory_thm2 (w : BitVec 64) (s : AsmState 64) (state : riscv_state)
     (a b c d : BitVec 8)
     (h : targetStateRel riscvTarget s state ∧
@@ -80,8 +78,6 @@ theorem bytes_in_memory_thm2 (w : BitVec 64) (s : AsmState 64) (state : riscv_st
   · rw [hp]; exact da
 
 /-- Full original domain-to-all-instruction-byte environment agreement. -/
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml"
-  "bytes_in_memory_IMP_all_pcs_MEM8"]
 theorem bytes_in_memory_IMP_all_pcs_MEM8
     (env : Nat → riscv_state → riscv_state) (a : BitVec 64)
     (xs : List (BitVec 8)) (m : BitVec 64 → BitVec 8) (dm : BitVec 64 → Prop)

@@ -1,3 +1,4 @@
+import Batteries.Tactic.PermuteGoals
 import Flapjack.Compiler.Backend.StackRemove.Proofs.FindCode
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
 namespace Flapjack.Compiler.Backend.StackRemove.CompCorrect.RawCall
@@ -16,10 +17,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 and only the actual source Seq-code lookup/nonzero-clock guarded body IH.
 The target callee lookup, body bound, clock allowance and all original
 post-state/result alternatives are established here. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectRawCall {width : Nat} [NeZero width] {C F : Type}
     (label : Nat)
     (source : StackSemStateFiniteExact width C F) (result : Option (StackSemResult width))

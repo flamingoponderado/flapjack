@@ -178,8 +178,7 @@ theorem sptAlistInsertRelLive {α : Type} (f : Nat → Nat) (ns : List Nat) (vs 
     exact hdst
 
 /-- HOL `evaluate_apply_colour`, `Move` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_Move {width : Nat} [NeZero width] {C F : Type} (pri : Nat)
     (moves : List (Nat × Nat)) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)
@@ -251,8 +250,7 @@ theorem evaluateApplyColour_Move {width : Nat} [NeZero width] {C F : Type} (pri 
     hnd hlen hinj hns hbase hr
 
 /-- HOL `evaluate_apply_colour`, `StoreConsts` case. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_StoreConsts {width : Nat} [NeZero width] {C F : Type}
     (a b c d : Nat) (words : List (Bool × BitVec width)) :
     ∀ (st cst : WordSemStateFiniteExact width C F) (f : Nat → Nat) (live : NumSet)

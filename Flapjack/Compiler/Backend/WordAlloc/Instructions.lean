@@ -37,20 +37,13 @@ def applyColourInstCore {α : Type u} (f : Nat → Nat) :
   | .mem .store32 r (.addr a w) => .mem .store32 (f r) (.addr (f a) w)
   | .mem .load8 r (.addr a w) => .mem .load8 (f r) (.addr (f a) w)
   | .mem .store8 r (.addr a w) => .mem .store8 (f r) (.addr (f a) w)
-  | .fp (.fpLess r f1 f2) => .fp (.fpLess (f r) f1 f2)
-  | .fp (.fpLessEqual r f1 f2) => .fp (.fpLessEqual (f r) f1 f2)
-  | .fp (.fpEqual r f1 f2) => .fp (.fpEqual (f r) f1 f2)
-  | .fp (.fpMovToReg r1 r2 d) => .fp (.fpMovToReg (f r1) (f r2) d)
-  | .fp (.fpMovFromReg d r1 r2) => .fp (.fpMovFromReg d (f r1) (f r2))
   | instruction => instruction
 
 
-/-- Exact HOL instruction colouring. The literal six memory clauses omit
-Load16/Store16, which retain the whole instruction through HOL's catchall.
-FP comparison/move integer registers alone are renamed; float registers are
-unchanged. The executed instruction route uses this same generic recursion. -/
-@[hol "cakeml/compiler/backend/word_allocScript.sml" "apply_colour_inst_def"
-  (words_as_type_indexed_bitvec)]
+/-- Integer instruction colouring. The six memory clauses omit Load16/Store16,
+which retain the whole instruction through the original catchall. The executed
+instruction route uses this same generic recursion. -/
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def applyColourInst {width : Nat} [NeZero width] (f : Nat → Nat) :
     WordLangInst (BitVec width) → WordLangInst (BitVec width) :=
   applyColourInstCore f
@@ -58,7 +51,7 @@ def applyColourInst {width : Nat} [NeZero width] (f : Nat → Nat) :
 /-- Shared instruction-liveness recursion. This Flapjack implementation
 infrastructure accepts an explicit numeric word width; the HOL port below
 binds that dimension through its positive-width word carrier. -/
-def getLiveInstCore {α : Type u} (width : Nat) : WordLangInst α → NumSet → NumSet
+def getLiveInstCore {α : Type u} (_width : Nat) : WordLangInst α → NumSet → NumSet
   | .skip, live => live
   | .const r _, live => sptDelete r live
   | .arith (.binop _ r1 r2 (.reg r3)), live
@@ -82,20 +75,11 @@ def getLiveInstCore {α : Type u} (width : Nat) : WordLangInst α → NumSet →
   | .mem .store r (.addr a _), live
   | .mem .store32 r (.addr a _), live
   | .mem .store8 r (.addr a _), live => sptInsert a () (sptInsert r () live)
-  | .fp (.fpLess r _ _), live
-  | .fp (.fpLessEqual r _ _), live
-  | .fp (.fpEqual r _ _), live => sptDelete r live
-  | .fp (.fpMovToReg r1 r2 _), live =>
-      if width = 64 then sptDelete r1 live else sptDelete r1 (sptDelete r2 live)
-  | .fp (.fpMovFromReg _ r1 r2), live =>
-      if width = 64 then sptInsert r1 () live else sptInsert r2 () (sptInsert r1 () live)
   | _, live => live
 
-/-- Exact HOL instruction liveness, retaining insertion/deletion order and
-all constructor clauses. Load16/Store16 and FP-only operations use the literal
-HOL catchall; integer FP moves distinguish 64-bit from other word dimensions. -/
-@[hol "cakeml/compiler/backend/word_allocScript.sml" "get_live_inst_def"
-  (words_as_type_indexed_bitvec)]
+/-- Integer instruction liveness, retaining the original insertion/deletion
+order. Load16/Store16 use the original catchall. -/
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def getLiveInst {width : Nat} [NeZero width] :
     WordLangInst (BitVec width) → NumSet → NumSet :=
   getLiveInstCore width
@@ -103,7 +87,7 @@ def getLiveInst {width : Nat} [NeZero width] :
 /-- Shared removal decision with an explicit numeric word dimension.
 Flapjack implementation infrastructure; the tagged wrapper retains HOL's
 positive-width word carrier. -/
-def removeDeadInstCore {α : Type u} (width : Nat) : WordLangInst α → NumSet → Bool
+def removeDeadInstCore {α : Type u} (_width : Nat) : WordLangInst α → NumSet → Bool
   | .skip, _ => true
   | .const r _, live => (sptLookup r live).isNone
   | .arith (.binop _ r _ _), live
@@ -119,18 +103,11 @@ def removeDeadInstCore {α : Type u} (width : Nat) : WordLangInst α → NumSet 
   | .mem .load r _, live
   | .mem .load32 r _, live
   | .mem .load8 r _, live => (sptLookup r live).isNone
-  | .fp (.fpLess r _ _), live
-  | .fp (.fpLessEqual r _ _), live
-  | .fp (.fpEqual r _ _), live => (sptLookup r live).isNone
-  | .fp (.fpMovToReg r1 r2 _), live =>
-      if width = 64 then (sptLookup r1 live).isNone
-      else (sptLookup r1 live).isNone && (sptLookup r2 live).isNone
   | _, _ => false
 
 /-- Exact HOL dead-instruction decision. Stores, 16-bit loads and all
 unlisted operations are retained by the literal catchall clause. -/
-@[hol "cakeml/compiler/backend/word_allocScript.sml" "remove_dead_inst_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def removeDeadInst {width : Nat} [NeZero width] :
     WordLangInst (BitVec width) → NumSet → Bool :=
   removeDeadInstCore width

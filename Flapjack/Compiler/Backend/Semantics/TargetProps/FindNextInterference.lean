@@ -19,8 +19,7 @@ interference returns its pre/post application and updated configuration/FFI.
 Total holEl uses the in-range list element and holHdNil/shared holArb
 HolFfiName past the end, matching original EL/TL/HD. No added index or
 list-length premise, bounds guard, or concrete missing-name choice is used. -/
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "find_next_interference_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def findNextInterference {width : Nat} [NeZero width]
     {state projection : Type} {σ : Type} (mc : MachineConfig width state projection)
     (ffi : HolFfiState σ) : Nat → state → Option (InterferenceApp width state × MachineConfig width state projection × HolFfiState σ)

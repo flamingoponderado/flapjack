@@ -59,11 +59,6 @@ example : wordLangProgFromHOL ffiExact =
     wordCutsetsFromHOL, toNumSetHOL, fromNumSetHOL,
     toStringOfBytes, ofString, sptInsert, sptToAList, sptFoldi, lrNext]
 
-private def unsupportedFp : WordLangProgHOL (BitVec 8) :=
-  .inst (.fp (.fpAdd 1 2 3))
-
-example : wordLangProgFromHOL unsupportedFp = none := by
-  simp [unsupportedFp, wordLangProgFromHOL, wordLangInstFromHOL]
 
 private def generatedOverflow : WordLangProgHOL (BitVec 8) :=
   .inst (.arith (.addOverflow 1 2 3 4))

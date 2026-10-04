@@ -429,8 +429,7 @@ end CallCase
 the three HOL premises at `Call ret dest args handler` and the HOL existential
 conclusion; the only additional hypotheses are the induction hypotheses for the
 two sub-programs, the return handler and the exception handler. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour_Call {width : Nat} [NeZero width] {C F : Type}
     (ret : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat))
     (dest : Option Nat) (args : List Nat)

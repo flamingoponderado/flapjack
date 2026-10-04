@@ -43,21 +43,6 @@ theorem instInteger_codeUpdate {width : Nat} [NeZero width] {C F : Type}
       getVars_codeUpdate, wordExp_codeUpdate, getVar, memLoad, memStore, setVar]
   all_goals repeat' (first | rfl | (split <;> try simp_all))
 
-theorem instFp_codeUpdate {width : Nat} [NeZero width] {C F : Type}
-    (operation : Compiler.Encoders.Asm.HolFp)
-    (source : StackSemStateFiniteExact width C F) (code : Spt (HolProg width)) :
-    StackSemFpInstructions.instFp operation { source with code := code } =
-      (StackSemFpInstructions.instFp operation source).map
-        (fun state => { state with code := code }) := by
-  cases operation <;>
-    simp only [StackSemFpInstructions.instFp,
-      StackSemFpRegisterInstructions.instFpRegister,
-      StackSemFpRegisterInstructions.instFpSqrt,
-      StackSemFpRegisterInstructions.instFpToInt,
-      StackSemFpRegisterInstructions.instFpFromInt,
-      getFpVar, setFpVar, getVar, setVar]
-  all_goals repeat' (first | rfl | (split <;> try simp_all))
-
 theorem instHOL_codeUpdate {width : Nat} [NeZero width] {C F : Type}
     (instruction : Compiler.Encoders.Asm.HolInst width)
     (source : StackSemStateFiniteExact width C F) (code : Spt (HolProg width)) :
@@ -65,7 +50,7 @@ theorem instHOL_codeUpdate {width : Nat} [NeZero width] {C F : Type}
       (StackSemInst.instHOL instruction source).map
         (fun state => { state with code := code }) := by
   cases instruction <;>
-    simp only [StackSemInst.instHOL, instFp_codeUpdate, instInteger_codeUpdate]
+    simp only [StackSemInst.instHOL, instInteger_codeUpdate]
   all_goals cases StackSemIntegerInstructions.instInteger _ source <;> simp
 
 theorem instHOL_code_eq {width : Nat} [NeZero width] {C F : Type}

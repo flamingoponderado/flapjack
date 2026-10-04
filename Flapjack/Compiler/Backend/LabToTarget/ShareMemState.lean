@@ -30,8 +30,7 @@ private instance : Nonempty HolFfiName := ⟨.sharedMem .mappedRead⟩
 
 /-- Exact HOL `share_mem_state_rel_def` (`lab_to_targetProofScript.sml:720-774`), with the
 original binders `ms2 k index new_bytes t1 nb ad offs re pc' ad' st new_st i` and `index i`. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "share_mem_state_rel_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def shareMemStateRel {labWidth : Nat} [NeZero labWidth] {width : Nat} [NeZero width]
     {γ δ : Type} {F : Type} {ε ζ : Type}
     (mcConf : MachineConfig width γ δ) (s1 : Flapjack.Compiler.Backend.LabSem.State labWidth Config F)

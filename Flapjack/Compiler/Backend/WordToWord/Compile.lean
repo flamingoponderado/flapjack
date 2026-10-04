@@ -27,8 +27,7 @@ open Flapjack Flapjack.Compiler.Encoders.Asm
 function body through word_simp, inst_select, SSA, remove_dead, CSE, copy
 propagation, three-to-two registers, remove_unreach, remove_dead and the
 register allocator. -/
-@[hol "cakeml/compiler/backend/word_to_wordScript.sml" "compile_single_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def compileSingle {width : Nat} [NeZero width] (twoRegArith : Bool)
     (regCount alg : Nat) (c : AsmConfigExact width)
     (p : (Nat × Nat × WordLangProgHOL (BitVec width)) × Option (Spt Nat)) :
@@ -49,8 +48,7 @@ noncomputable def compileSingle {width : Nat} [NeZero width] (twoRegArith : Bool
 
 /-- Exact HOL `full_compile_single_def` (`word_to_wordScript.sml:37-41`):
 `compile_single` followed by `remove_must_terminate`. -/
-@[hol "cakeml/compiler/backend/word_to_wordScript.sml" "full_compile_single_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def fullCompileSingle {width : Nat} [NeZero width] (twoRegArith : Bool)
     (regCount alg : Nat) (c : AsmConfigExact width)
     (p : (Nat × Nat × WordLangProgHOL (BitVec width)) × Option (Spt Nat)) :
@@ -62,8 +60,7 @@ noncomputable def fullCompileSingle {width : Nat} [NeZero width] (twoRegArith : 
 specified only on equal-length lists; `nextNOracle_length` gives exactly that
 here, where `List.zip` coincides with it. The register count is HOL's
 truncated `num` subtraction. -/
-@[hol "cakeml/compiler/backend/word_to_wordScript.sml" "compile_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def compile {width : Nat} [NeZero width] (wordConf : Config)
     (asmConf : AsmConfigExact width) (progs : List (Nat × Nat × WordLangProgHOL (BitVec width))) :
     List (Option (Spt Nat)) × List (Nat × Nat × WordLangProgHOL (BitVec width)) :=

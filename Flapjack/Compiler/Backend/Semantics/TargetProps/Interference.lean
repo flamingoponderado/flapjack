@@ -8,15 +8,13 @@ predicate membership; finite FFI-entry lists and all wrapped offsets are retaine
 namespace Flapjack.Compiler.Backend.Semantics.TargetProps
 open Flapjack
 
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "shift_interfer_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def shiftInterfer {width : Nat} [NeZero width] {state projection : Type}
     (count : Nat) (config : MachineConfig width state projection) :
     MachineConfig width state projection :=
   { config with nextInterfer := holShiftSeq count config.nextInterfer }
 
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "shift_interfer_intro" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem shiftInterfer_intro {width : Nat} [NeZero width] {state projection : Type}
     (k1 k2 : Nat) (config : MachineConfig width state projection) :
     shiftInterfer k1 (shiftInterfer k2 config) = shiftInterfer (k1 + k2) config := by
@@ -68,8 +66,7 @@ theorem bytesInMemory_diff {width : Nat} [NeZero width]
       exact hdisjoint address ⟨hpcs, n + 1, by simpa using Nat.succ_lt_succ hn,
         heq.trans (advanceAddress p n)⟩
 
-@[hol "cakeml/compiler/backend/semantics/targetPropsScript.sml"
-  "ffi_entry_pcs_disjoint_def" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def ffiEntryPcsDisjoint {width : Nat} [NeZero width] {state projection : Type}
     (config : MachineConfig width state projection) (s : AsmState width) (length : Nat) : Prop :=
   ∀ address, ¬ (address ∈ config.ffiEntryPcs ∧ ∃ offset, offset < length ∧

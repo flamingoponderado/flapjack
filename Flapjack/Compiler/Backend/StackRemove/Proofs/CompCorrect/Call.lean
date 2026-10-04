@@ -22,10 +22,7 @@ exception handler. They retain the fixed original source state and all original
 simulation quantifiers. No target execution or post-state fact is assumed.
 The native evaluator closure inherits reals_as_rational_cuts (SOUNDNESS item 8),
 including arbitrary callee programs; no evaluator-carrier independence is claimed. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectCall {width : Nat} [NeZero width] {C F : Type}
     (ret : Option (HolProg width × Nat × Nat × Nat)) (dest : Sum Nat Nat)
     (handler : Option (HolProg width × Nat × Nat))

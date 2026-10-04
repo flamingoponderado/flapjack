@@ -91,8 +91,7 @@ every program, related states, colour and live set satisfying `colouring_ok`,
 `word_state_eq_rel` and `strong_locals_rel` on `get_live`, some source
 permutation oracle makes the source run either fail or agree with the coloured
 run on the result, `word_state_eq_rel` and the live-scoped locals relation. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_apply_colour"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateApplyColour {width : Nat} [NeZero width] {C F : Type} :
     ∀ (prog : WordLangProgHOL (BitVec width)) (st cst : WordSemStateFiniteExact width C F)
       (f : Nat → Nat) (live : NumSet) (lt : List (NumSet × NumSet)),

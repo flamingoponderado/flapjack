@@ -6,8 +6,7 @@ open Flapjack Flapjack.Compiler.Backend.WordInst Flapjack.Compiler.Encoders.Asm
 
 /-- Original instruction-selection expression label emptiness for every native
 expression and arbitrary source registers/configuration. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "inst_select_exp_no_lab" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem instSelectExp_noLabels {width : Nat} [NeZero width]
     (config : AsmConfigExact width) (target temporary : Nat)
     (expression : WordLangExpHOL (BitVec width)) :
@@ -31,8 +30,7 @@ theorem instSelectExp_noLabels {width : Nat} [NeZero width]
 
 /-- Original unconditional expression-output flat conventions, including every
 load, arithmetic, shift, and fallback branch. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "inst_select_exp_flat_exp_conventions" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem instSelectExp_flatExpConventions {width : Nat} [NeZero width]
     (config : AsmConfigExact width) (target temporary : Nat)
     (expression : WordLangExpHOL (BitVec width)) :
@@ -56,8 +54,7 @@ theorem instSelectExp_flatExpConventions {width : Nat} [NeZero width]
 
 /-- Original expression instruction validity with the sole source hypothesis
 that address offset zero is allowed by the assembler configuration. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "inst_select_exp_full_inst_ok_less" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem instSelectExp_fullInstOkLess {width : Nat} [NeZero width]
     (config : AsmConfigExact width) (target temporary : Nat)
     (expression : WordLangExpHOL (BitVec width))

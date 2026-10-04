@@ -21,77 +21,65 @@ open Flapjack.Compiler.Encoders.Asm
 
 /-- HOL `While` (`stackLangScript.sml:68`):
 `λcmp r ri c. Loop (If cmp r ri c (Break 0))`. -/
-@[hol "cakeml/compiler/backend/stackLangScript.sml" "While"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def whileHOL {width : Nat} [NeZero width] (cmp : HolCmp) (r : Nat) (ri : HolRegImm width)
     (c : HolProg width) : HolProg width :=
   .loop (.ite cmp r ri c (.break 0))
 
 /-- HOL `move` (`stackLangScript.sml:70`):
 `λdest src. Inst (Arith (Binop Or dest src (Reg src)))`. -/
-@[hol "cakeml/compiler/backend/stackLangScript.sml" "move"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def moveHOL {width : Nat} [NeZero width] (dest src : Nat) : HolProg width :=
   .inst (.arith (.binop .or dest src (.reg src)))
 
 /-- HOL `sub_1_inst` (`stackLangScript.sml:71`). -/
-@[hol "cakeml/compiler/backend/stackLangScript.sml" "sub_1_inst"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def sub1Inst {width : Nat} [NeZero width] (r1 : Nat) : HolProg width :=
   .inst (.arith (.binop .sub r1 r1 (.imm (1 : BitVec width))))
 
 /-- HOL `sub_inst` (`stackLangScript.sml:72`). -/
-@[hol "cakeml/compiler/backend/stackLangScript.sml" "sub_inst"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def subInst {width : Nat} [NeZero width] (r1 r2 : Nat) : HolProg width :=
   .inst (.arith (.binop .sub r1 r1 (.reg r2)))
 
 /-- HOL `add_inst` (`stackLangScript.sml:73`). -/
-@[hol "cakeml/compiler/backend/stackLangScript.sml" "add_inst"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def addInst {width : Nat} [NeZero width] (r1 r2 : Nat) : HolProg width :=
   .inst (.arith (.binop .add r1 r1 (.reg r2)))
 
 /-- HOL `and_inst` (`stackLangScript.sml:74`). -/
-@[hol "cakeml/compiler/backend/stackLangScript.sml" "and_inst"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def andInst {width : Nat} [NeZero width] (r1 r2 : Nat) : HolProg width :=
   .inst (.arith (.binop .and r1 r1 (.reg r2)))
 
 /-- HOL `xor_inst` (`stackLangScript.sml:75`). -/
-@[hol "cakeml/compiler/backend/stackLangScript.sml" "xor_inst"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def xorInst {width : Nat} [NeZero width] (r1 r2 : Nat) : HolProg width :=
   .inst (.arith (.binop .xor r1 r1 (.reg r2)))
 
 /-- HOL `add_1_inst` (`stackLangScript.sml:76`). -/
-@[hol "cakeml/compiler/backend/stackLangScript.sml" "add_1_inst"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def add1Inst {width : Nat} [NeZero width] (r1 : Nat) : HolProg width :=
   .inst (.arith (.binop .add r1 r1 (.imm (1 : BitVec width))))
 
 /-- HOL `or_inst` (`stackLangScript.sml:77`). -/
-@[hol "cakeml/compiler/backend/stackLangScript.sml" "or_inst"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def orInst {width : Nat} [NeZero width] (r1 r2 : Nat) : HolProg width :=
   .inst (.arith (.binop .or r1 r1 (.reg r2)))
 
 /-- HOL `add_bytes_in_word_inst` (`stackLangScript.sml:78`). -/
-@[hol "cakeml/compiler/backend/stackLangScript.sml" "add_bytes_in_word_inst"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def addBytesInWordInst {width : Nat} [NeZero width] (r1 : Nat) : HolProg width :=
   .inst (.arith (.binop .add r1 r1 (.imm wordSemBytesInWord)))
 
 /-- HOL `div2_inst` (`stackLangScript.sml:79`). -/
-@[hol "cakeml/compiler/backend/stackLangScript.sml" "div2_inst"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def div2Inst {width : Nat} [NeZero width] (r : Nat) : HolProg width :=
   .inst (.arith (.shift .lsr r r (.imm (1 : BitVec width))))
 
 /-- Exact HOL `list_Seq_def` (`stackLangScript.sml:86-90`) over the exact carrier:
 the generic `listSeq` at `HolProg width`. -/
-@[hol "cakeml/compiler/backend/stackLangScript.sml" "list_Seq_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def listSeqHOL {width : Nat} [NeZero width] : List (HolProg width) → HolProg width
   | [] => .skip
   | [x] => x

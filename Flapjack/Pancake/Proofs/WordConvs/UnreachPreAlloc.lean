@@ -36,8 +36,7 @@ private theorem callArgConvention_simpSeq {width : Nat} [NeZero width]
 
 /-- Original source pre-allocation component preservation for right association,
 with both source-programme premises, including all returning call handlers. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "call_arg_convention_Seq_assoc_right_lemma" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem callArgConvention_seqAssocRight {width : Nat} [NeZero width]
     (first second : WordLangProgHOL (BitVec width))
     (firstValid : callArgConventionHOL first = true)
@@ -58,8 +57,7 @@ theorem callArgConvention_seqAssocRight {width : Nat} [NeZero width]
         | constructor
 
 /-- Original remove_unreach preservation of the source call_arg_convention component. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "call_arg_convention_remove_unreach" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem callArgConvention_removeUnreach {width : Nat} [NeZero width]
     (program : WordLangProgHOL (BitVec width))
     (source : callArgConventionHOL program = true) :
@@ -97,8 +95,7 @@ private theorem stackVarConvention_simpSeq {width : Nat} [NeZero width]
 
 /-- Original source pre-allocation component preservation for right association,
 with both source-programme premises, including all returning call handlers. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "every_stack_var_is_stack_var_Seq_assoc_right_lemma" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackVarConvention_seqAssocRight {width : Nat} [NeZero width]
     (first second : WordLangProgHOL (BitVec width))
     (firstValid : everyStackVarHOL isStackVar first = true)
@@ -119,8 +116,7 @@ theorem stackVarConvention_seqAssocRight {width : Nat} [NeZero width]
         | constructor
 
 /-- Original remove_unreach preservation of the source every_stack_var_is_stack_var component. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "every_stack_var_is_stack_var_remove_unreach" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackVarConvention_removeUnreach {width : Nat} [NeZero width]
     (program : WordLangProgHOL (BitVec width))
     (source : everyStackVarHOL isStackVar program = true) :
@@ -129,8 +125,7 @@ theorem stackVarConvention_removeUnreach {width : Nat} [NeZero width]
 
 /-- Original whole pre-allocation convention preservation; exactly the source
 convention premise, with no target assumptions or restricted constructors. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "pre_alloc_conventions_remove_unreach" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem preAllocConventions_removeUnreach {width : Nat} [NeZero width]
     (program : WordLangProgHOL (BitVec width))
     (source : preAllocConventionsHOL program = true) :

@@ -10,16 +10,14 @@ open Flapjack.Compiler.Backend.StackLang
 
 /-- One native immediate Add at HOL's numeric word offset; pointer and count
 remain arbitrary naturals, with no added register-range or word-fit premise. -/
-@[hol "cakeml/compiler/backend/stack_removeScript.sml" "single_stack_free_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def singleStackFree {width : Nat} [NeZero width] (pointer count : Nat) : HolProg width :=
   .inst (.arith (.binop .add pointer pointer (.imm (wordOffset count))))
 
 /-- Complete HOL recursion, including Skip at zero, the exact 255-word chunk
 boundary and the ordered Seq for every larger count. Width wrapping happens
 only through the original word_offset, before native instruction emission. -/
-@[hol "cakeml/compiler/backend/stack_removeScript.sml" "stack_free_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def stackFree {width : Nat} [NeZero width] (pointer count : Nat) : HolProg width :=
   if count = 0 then .skip
   else if count ≤ maxStackAlloc then singleStackFree pointer count

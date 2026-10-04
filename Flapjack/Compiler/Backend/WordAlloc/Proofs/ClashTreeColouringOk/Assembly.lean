@@ -80,8 +80,7 @@ definitionally the identity. Predicate sets express `IMAGE` and `INJ ... UNIV`.
 Only the standard positive-width word translation is qualified. This theorem
 does not route the checker into the executed allocator or establish allocation
 semantics/compiler correctness; those remain separate dependencies. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
-  "clash_tree_colouring_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem clashTreeColouringOk {width : Nat} [NeZero width]
     (prog : WordLangProgHOL (BitVec width)) (lt : List (NumSet × NumSet))
     (f : Nat → Nat) (live flive livein flivein : NumSet)

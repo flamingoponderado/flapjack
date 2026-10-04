@@ -15,8 +15,7 @@ open Flapjack Flapjack.WordProps Flapjack.LoopToWord Flapjack.Compiler.Encoders.
 
 /-- HOL `pan_to_word_compile_prog_no_install_code` (`pan_to_wordProofScript.sml:671-677`); HOL's
     free `c prog prog'` are explicit. -/
-@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "pan_to_word_compile_prog_no_install_code"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem pan_to_word_compile_prog_no_install_code {width : Nat} [NeZero width] (c : AsmArchitecture)
     (prog : List (Pancake.PanLang.DeclHOL width))
     (prog' : List (Nat × Nat × WordLangProgHOL (BitVec width))) :
@@ -25,8 +24,7 @@ theorem pan_to_word_compile_prog_no_install_code {width : Nat} [NeZero width] (c
   exact loop_compile_no_install_code _
 
 /-- HOL `pan_to_word_compile_prog_no_alloc_code` (`pan_to_wordProofScript.sml:679-685`). -/
-@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "pan_to_word_compile_prog_no_alloc_code"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem pan_to_word_compile_prog_no_alloc_code {width : Nat} [NeZero width] (c : AsmArchitecture)
     (prog : List (Pancake.PanLang.DeclHOL width))
     (prog' : List (Nat × Nat × WordLangProgHOL (BitVec width))) :
@@ -35,8 +33,7 @@ theorem pan_to_word_compile_prog_no_alloc_code {width : Nat} [NeZero width] (c :
   exact loop_compile_no_alloc_code _
 
 /-- HOL `pan_to_word_compile_prog_no_mt_code` (`pan_to_wordProofScript.sml:687-693`). -/
-@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "pan_to_word_compile_prog_no_mt_code"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem pan_to_word_compile_prog_no_mt_code {width : Nat} [NeZero width] (c : AsmArchitecture)
     (prog : List (Pancake.PanLang.DeclHOL width))
     (prog' : List (Nat × Nat × WordLangProgHOL (BitVec width))) :

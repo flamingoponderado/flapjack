@@ -40,7 +40,6 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C : Type} {F
 end WordSemStateConstSupport
 
 /-- Exact HOL `PAIR_MAP_EQ_PAIR` (`wordPropsScript.sml:112-116`). -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "PAIR_MAP_EQ_PAIR"]
 theorem prodMap_eq_pair {α β γ δ : Type} (f : α → γ) (g : β → δ) (p : α × β) (a : γ) (b : δ) :
     Prod.map f g p = (a, b) ↔ ∃ x y, p = (x, y) ∧ f x = a ∧ g y = b := by
   obtain ⟨x, y⟩ := p
@@ -53,13 +52,11 @@ theorem prodMap_eq_pair {α β γ δ : Type} (f : α → γ) (g : β → δ) (p 
 
 /-- Exact HOL `OPTION_CASE_OPTION_MAP` (`wordPropsScript.sml:122-128`);
     HOL's `option_CASE x e g` is `Option.elim x e g`. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "OPTION_CASE_OPTION_MAP"]
 theorem optionElim_map {α β γ : Type} (f : α → β) (a : Option α) (e : γ) (g : β → γ) :
     (a.map f).elim e g = a.elim e (fun x => g (f x)) := by
   cases a <;> rfl
 
 /-- Exact HOL `OPTION_CASE_MAP` (`wordPropsScript.sml:130-134`). -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "OPTION_CASE_MAP"]
 theorem optionElim_some {α β : Type} (f : α → β) (x : Option α) :
     x.elim none (fun x => some (f x)) = x.map f := by
   cases x <;> rfl
@@ -155,10 +152,6 @@ theorem inst_frame {f : WordSemStateFiniteExact width C F → WordSemStateFinite
     cases a
     cases op <;> simp only [inst, wE, gv, ms, ml, hm, hd, hb, sm] <;>
       (repeat' split) <;> first | rfl | simp_all
-  | fp f =>
-    cases f <;> simp only [inst, gf, gv] <;>
-      (repeat' split) <;> first | rfl | simp_all
-
 theorem assign_frame {f : WordSemStateFiniteExact width C F → WordSemStateFiniteExact width C F}
     (hf : InstFrame f) (x : Nat) (e : WordLangExpHOL (BitVec width))
     (s : WordSemStateFiniteExact width C F) :
@@ -289,8 +282,6 @@ macro_rules
 
 /-- Exact HOL `get_var_with_const` (`wordPropsScript.sml:137-160`): all 22
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "get_var_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem getVarWithConst {width : Nat} [NeZero width] {C : Type} {F : Type} {OtherF : Type}
     (ls : Option Nat) (x : Nat) (y : WordSemStateFiniteExact width C F) (fp : HolFiniteMapExact Nat (BitVec 64)) (store : HolFiniteMapExact WordStoreHOL (WordLocW width)) (xs : List (WordSemStackFrame width)) (sl : Nat) (sm : Option Nat) (ssize : Spt Nat) (m : BitVec width → WordLocW width) (md : BitVec width → Bool) (smd : BitVec width → Bool) (p : Nat → Nat → Nat) (c : C → List (Nat × Nat × WordLangProgHOL (BitVec width)) → Option (List (BitVec 8) × List (BitVec width) × C)) (co : Nat → C × List (Nat × Nat × WordLangProgHOL (BitVec width))) (cb : WordSemBuffer width 8) (db : WordSemBuffer width width) (g : WordSemGcFun width) (hd : Nat) (clk : Nat) (tdep : Nat) (cd : Spt (Nat × WordLangProgHOL (BitVec width))) (b : Bool) (ffi : HolFfiState OtherF) :
     getVar x { y with localsSize := ls } = getVar x y ∧
@@ -320,8 +311,6 @@ theorem getVarWithConst {width : Nat} [NeZero width] {C : Type} {F : Type} {Othe
 
 /-- Exact HOL `get_vars_with_const` (`wordPropsScript.sml:164-187`): all 22
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "get_vars_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem getVarsWithConst {width : Nat} [NeZero width] {C : Type} {F : Type} {OtherF : Type}
     (ls : Option Nat) (x : List Nat) (y : WordSemStateFiniteExact width C F) (fp : HolFiniteMapExact Nat (BitVec 64)) (store : HolFiniteMapExact WordStoreHOL (WordLocW width)) (xs : List (WordSemStackFrame width)) (sl : Nat) (sm : Option Nat) (ssize : Spt Nat) (m : BitVec width → WordLocW width) (md : BitVec width → Bool) (smd : BitVec width → Bool) (p : Nat → Nat → Nat) (c : C → List (Nat × Nat × WordLangProgHOL (BitVec width)) → Option (List (BitVec 8) × List (BitVec width) × C)) (co : Nat → C × List (Nat × Nat × WordLangProgHOL (BitVec width))) (cb : WordSemBuffer width 8) (db : WordSemBuffer width width) (g : WordSemGcFun width) (hd : Nat) (clk : Nat) (tdep : Nat) (cd : Spt (Nat × WordLangProgHOL (BitVec width))) (b : Bool) (ffi : HolFfiState OtherF) :
     WordSemStateFiniteExact.getVars x { y with localsSize := ls } = WordSemStateFiniteExact.getVars x y ∧
@@ -351,8 +340,6 @@ theorem getVarsWithConst {width : Nat} [NeZero width] {C : Type} {F : Type} {Oth
 
 /-- Exact HOL `unset_var_with_const` (`wordPropsScript.sml:272-295`): all 22
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "unset_var_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem unsetVarWithConst {width : Nat} [NeZero width] {C : Type} {F : Type} {OtherF : Type}
     (ls : Option Nat) (x : Nat) (z : WordSemStateFiniteExact width C F) (fp : HolFiniteMapExact Nat (BitVec 64)) (store : HolFiniteMapExact WordStoreHOL (WordLocW width)) (xs : List (WordSemStackFrame width)) (sl : Nat) (sm : Option Nat) (ssize : Spt Nat) (m : BitVec width → WordLocW width) (md : BitVec width → Bool) (smd : BitVec width → Bool) (p : Nat → Nat → Nat) (c : C → List (Nat × Nat × WordLangProgHOL (BitVec width)) → Option (List (BitVec 8) × List (BitVec width) × C)) (co : Nat → C × List (Nat × Nat × WordLangProgHOL (BitVec width))) (cb : WordSemBuffer width 8) (db : WordSemBuffer width width) (g : WordSemGcFun width) (hd : Nat) (clk : Nat) (tdep : Nat) (cd : Spt (Nat × WordLangProgHOL (BitVec width))) (b : Bool) (ffi : HolFfiState OtherF) :
     unsetVar x { z with localsSize := ls } = { unsetVar x z with localsSize := ls } ∧
@@ -382,8 +369,6 @@ theorem unsetVarWithConst {width : Nat} [NeZero width] {C : Type} {F : Type} {Ot
 
 /-- Exact HOL `set_vars_with_const` (`wordPropsScript.sml:326-349`): all 22
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "set_vars_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem setVarsWithConst {width : Nat} [NeZero width] {C : Type} {F : Type} {OtherF : Type}
     (ls : Option Nat) (x : List Nat) (y : List (WordLocW width)) (z : WordSemStateFiniteExact width C F) (fp : HolFiniteMapExact Nat (BitVec 64)) (store : HolFiniteMapExact WordStoreHOL (WordLocW width)) (xs : List (WordSemStackFrame width)) (sl : Nat) (sm : Option Nat) (ssize : Spt Nat) (m : BitVec width → WordLocW width) (md : BitVec width → Bool) (smd : BitVec width → Bool) (p : Nat → Nat → Nat) (c : C → List (Nat × Nat × WordLangProgHOL (BitVec width)) → Option (List (BitVec 8) × List (BitVec width) × C)) (co : Nat → C × List (Nat × Nat × WordLangProgHOL (BitVec width))) (cb : WordSemBuffer width 8) (db : WordSemBuffer width width) (g : WordSemGcFun width) (hd : Nat) (clk : Nat) (tdep : Nat) (cd : Spt (Nat × WordLangProgHOL (BitVec width))) (b : Bool) (ffi : HolFfiState OtherF) :
     setVars x y { z with localsSize := ls } = { setVars x y z with localsSize := ls } ∧
@@ -413,8 +398,6 @@ theorem setVarsWithConst {width : Nat} [NeZero width] {C : Type} {F : Type} {Oth
 
 /-- Exact HOL `get_store_with_const` (`wordPropsScript.sml:353-376`): all 22
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "get_store_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem getStoreWithConst {width : Nat} [NeZero width] {C : Type} {F : Type} {OtherF : Type}
     (l : Spt (WordLocW width)) (x : WordStoreHOL) (y : WordSemStateFiniteExact width C F) (ls : Option Nat) (fp : HolFiniteMapExact Nat (BitVec 64)) (xs : List (WordSemStackFrame width)) (sl : Nat) (sm : Option Nat) (ssize : Spt Nat) (m : BitVec width → WordLocW width) (md : BitVec width → Bool) (smd : BitVec width → Bool) (p : Nat → Nat → Nat) (c : C → List (Nat × Nat × WordLangProgHOL (BitVec width)) → Option (List (BitVec 8) × List (BitVec width) × C)) (co : Nat → C × List (Nat × Nat × WordLangProgHOL (BitVec width))) (cb : WordSemBuffer width 8) (db : WordSemBuffer width width) (g : WordSemGcFun width) (hd : Nat) (clk : Nat) (tdep : Nat) (cd : Spt (Nat × WordLangProgHOL (BitVec width))) (b : Bool) (ffi : HolFfiState OtherF) :
     getStore x { y with locals := l } = getStore x y ∧
@@ -444,8 +427,6 @@ theorem getStoreWithConst {width : Nat} [NeZero width] {C : Type} {F : Type} {Ot
 
 /-- Exact HOL `set_store_with_const` (`wordPropsScript.sml:407-430`): all 22
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "set_store_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem setStoreWithConst {width : Nat} [NeZero width] {C : Type} {F : Type} {OtherF : Type}
     (l : Spt (WordLocW width)) (x : WordStoreHOL) (y : WordLocW width) (z : WordSemStateFiniteExact width C F) (ls : Option Nat) (fp : HolFiniteMapExact Nat (BitVec 64)) (xs : List (WordSemStackFrame width)) (sl : Nat) (sm : Option Nat) (ssize : Spt Nat) (m : BitVec width → WordLocW width) (md : BitVec width → Bool) (smd : BitVec width → Bool) (p : Nat → Nat → Nat) (c : C → List (Nat × Nat × WordLangProgHOL (BitVec width)) → Option (List (BitVec 8) × List (BitVec width) × C)) (co : Nat → C × List (Nat × Nat × WordLangProgHOL (BitVec width))) (cb : WordSemBuffer width 8) (db : WordSemBuffer width width) (g : WordSemGcFun width) (hd : Nat) (clk : Nat) (tdep : Nat) (cd : Spt (Nat × WordLangProgHOL (BitVec width))) (b : Bool) (ffi : HolFfiState OtherF) :
     setStore x y { z with locals := l } = { setStore x y z with locals := l } ∧
@@ -475,8 +456,6 @@ theorem setStoreWithConst {width : Nat} [NeZero width] {C : Type} {F : Type} {Ot
 
 /-- Exact HOL `push_env_with_const` (`wordPropsScript.sml:461-468`): all 6
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "push_env_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem pushEnvWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (k : Nat) (x : Spt (WordLocW width) × Spt (WordLocW width)) (y : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat)) (z : WordSemStateFiniteExact width C F) (c : C → List (Nat × Nat × WordLangProgHOL (BitVec width)) → Option (List (BitVec 8) × List (BitVec width) × C)) (co : Nat → C × List (Nat × Nat × WordLangProgHOL (BitVec width))) (code : Spt (Nat × WordLangProgHOL (BitVec width))) (termdep : Nat) (l : Spt (WordLocW width)) :
     pushEnv x y { z with clock := k } = { pushEnv x y z with clock := k } ∧
@@ -490,8 +469,6 @@ theorem pushEnvWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `pop_env_with_const` (`wordPropsScript.sml:501-510`): all 8
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "pop_env_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem popEnvWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (k : Nat) (z : WordSemStateFiniteExact width C F) (c : C → List (Nat × Nat × WordLangProgHOL (BitVec width)) → Option (List (BitVec 8) × List (BitVec width) × C)) (co : Nat → C × List (Nat × Nat × WordLangProgHOL (BitVec width))) (code : Spt (Nat × WordLangProgHOL (BitVec width))) (termdep : Nat) (perm : Nat → Nat → Nat) (l : Spt (WordLocW width)) (ls : Option Nat) :
     popEnv { z with clock := k } = (popEnv z).map (fun s => { s with clock := k }) ∧
@@ -507,8 +484,6 @@ theorem popEnvWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `call_env_with_const` (`wordPropsScript.sml:558-567`): all 8
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "call_env_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem callEnvWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (l : Spt (WordLocW width)) (x : List (WordLocW width)) (ss : Option Nat) (y : WordSemStateFiniteExact width C F) (k : Nat) (termdep : Nat) (c : C → List (Nat × Nat × WordLangProgHOL (BitVec width)) → Option (List (BitVec 8) × List (BitVec width) × C)) (co : Nat → C × List (Nat × Nat × WordLangProgHOL (BitVec width))) (code : Spt (Nat × WordLangProgHOL (BitVec width))) (perm : Nat → Nat → Nat) :
     WordSemStateFiniteExact.callEnv x ss { y with locals := l } = WordSemStateFiniteExact.callEnv x ss y ∧
@@ -524,8 +499,6 @@ theorem callEnvWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `flush_state_with_const` (`wordPropsScript.sml:588-595`): all 6
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "flush_state_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem flushStateWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (l : Spt (WordLocW width)) (b : Bool) (y : WordSemStateFiniteExact width C F) (ls : Option Nat) (xs : List (WordSemStackFrame width)) (p : Nat → Nat → Nat) (sm : Option Nat) (k : Nat) :
     flushState b { y with locals := l } = flushState b y ∧
@@ -539,8 +512,6 @@ theorem flushStateWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `has_space_with_const` (`wordPropsScript.sml:599-608`): all 8
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "has_space_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem hasSpaceWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (k : Nat) (x : WordLocW width) (y : WordSemStateFiniteExact width C F) (c : C → List (Nat × Nat × WordLangProgHOL (BitVec width)) → Option (List (BitVec 8) × List (BitVec width) × C)) (co : Nat → C × List (Nat × Nat × WordLangProgHOL (BitVec width))) (code : Spt (Nat × WordLangProgHOL (BitVec width))) (termdep : Nat) (l : Spt (WordLocW width)) (ls : Option Nat) (xs : List (WordSemStackFrame width)) :
     hasSpace x { y with clock := k } = hasSpace x y ∧
@@ -556,8 +527,6 @@ theorem hasSpaceWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `gc_with_const` (`wordPropsScript.sml:632-641`): all 8
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "gc_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem gcWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (k : Nat) (x : WordSemStateFiniteExact width C F) (c : C → List (Nat × Nat × WordLangProgHOL (BitVec width)) → Option (List (BitVec 8) × List (BitVec width) × C)) (co : Nat → C × List (Nat × Nat × WordLangProgHOL (BitVec width))) (code : Spt (Nat × WordLangProgHOL (BitVec width))) (perm : Nat → Nat → Nat) (t : Nat) (l : Spt (WordLocW width)) (ls : Option Nat) :
     gc { x with clock := k } = (gc x).map (fun s => { s with clock := k }) ∧
@@ -573,8 +542,6 @@ theorem gcWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `alloc_with_const` (`wordPropsScript.sml:690-696`): all 5
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "alloc_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem allocWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (k : Nat) (c : BitVec width) (names : WordLangCutsetsHOL) (s : WordSemStateFiniteExact width C F) (t : Nat) (code : Spt (Nat × WordLangProgHOL (BitVec width))) (compile_oracle : Nat → C × List (Nat × Nat × WordLangProgHOL (BitVec width))) (comp : C → List (Nat × Nat × WordLangProgHOL (BitVec width)) → Option (List (BitVec 8) × List (BitVec width) × C)) :
     alloc c names { s with clock := k } = Prod.map id (fun s => { s with clock := k }) (alloc c names s) ∧
@@ -587,8 +554,6 @@ theorem allocWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `get_fp_var_with_const` (`wordPropsScript.sml:700-723`): all 22
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "get_fp_var_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem getFpVarWithConst {width : Nat} [NeZero width] {C : Type} {F : Type} {OtherF : Type}
     (l : Spt (WordLocW width)) (x : Nat) (y : WordSemStateFiniteExact width C F) (ls : Option Nat) (store : HolFiniteMapExact WordStoreHOL (WordLocW width)) (xs : List (WordSemStackFrame width)) (sl : Nat) (sm : Option Nat) (ssize : Spt Nat) (m : BitVec width → WordLocW width) (md : BitVec width → Bool) (smd : BitVec width → Bool) (p : Nat → Nat → Nat) (c : C → List (Nat × Nat × WordLangProgHOL (BitVec width)) → Option (List (BitVec 8) × List (BitVec width) × C)) (co : Nat → C × List (Nat × Nat × WordLangProgHOL (BitVec width))) (cb : WordSemBuffer width 8) (db : WordSemBuffer width width) (g : WordSemGcFun width) (hd : Nat) (clk : Nat) (tdep : Nat) (cd : Spt (Nat × WordLangProgHOL (BitVec width))) (b : Bool) (ffi : HolFfiState OtherF) :
     getFpVar x { y with locals := l } = getFpVar x y ∧
@@ -618,8 +583,6 @@ theorem getFpVarWithConst {width : Nat} [NeZero width] {C : Type} {F : Type} {Ot
 
 /-- Exact HOL `set_fp_var_with_const` (`wordPropsScript.sml:754-777`): all 22
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "set_fp_var_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem setFpVarWithConst {width : Nat} [NeZero width] {C : Type} {F : Type} {OtherF : Type}
     (l : Spt (WordLocW width)) (x : Nat) (y : BitVec 64) (z : WordSemStateFiniteExact width C F) (ls : Option Nat) (store : HolFiniteMapExact WordStoreHOL (WordLocW width)) (xs : List (WordSemStackFrame width)) (sl : Nat) (sm : Option Nat) (ssize : Spt Nat) (m : BitVec width → WordLocW width) (md : BitVec width → Bool) (smd : BitVec width → Bool) (p : Nat → Nat → Nat) (c : C → List (Nat × Nat × WordLangProgHOL (BitVec width)) → Option (List (BitVec 8) × List (BitVec width) × C)) (co : Nat → C × List (Nat × Nat × WordLangProgHOL (BitVec width))) (cb : WordSemBuffer width 8) (db : WordSemBuffer width width) (g : WordSemGcFun width) (hd : Nat) (clk : Nat) (tdep : Nat) (cd : Spt (Nat × WordLangProgHOL (BitVec width))) (b : Bool) (ffi : HolFfiState OtherF) :
     setFpVar x y { z with locals := l } = { setFpVar x y z with locals := l } ∧
@@ -649,8 +612,6 @@ theorem setFpVarWithConst {width : Nat} [NeZero width] {C : Type} {F : Type} {Ot
 
 /-- Exact HOL `mem_load_with_const` (`wordPropsScript.sml:781-790`): all 8
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "mem_load_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem memLoadWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (l : Spt (WordLocW width)) (x : BitVec width) (y : WordSemStateFiniteExact width C F) (td : Nat) (k : Nat) (xs : List (WordSemStackFrame width)) (perm : Nat → Nat → Nat) (c : Spt (Nat × WordLangProgHOL (BitVec width))) (co : Nat → C × List (Nat × Nat × WordLangProgHOL (BitVec width))) (cc : C → List (Nat × Nat × WordLangProgHOL (BitVec width)) → Option (List (BitVec 8) × List (BitVec width) × C)) :
     memLoad x { y with locals := l } = memLoad x y ∧
@@ -666,8 +627,6 @@ theorem memLoadWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `mem_store_with_const` (`wordPropsScript.sml:819-827`): all 7
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "mem_store_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem memStoreWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (l : Spt (WordLocW width)) (x : BitVec width) (z : WordLocW width) (y : WordSemStateFiniteExact width C F) (k : Nat) (code : Spt (Nat × WordLangProgHOL (BitVec width))) (c : C → List (Nat × Nat × WordLangProgHOL (BitVec width)) → Option (List (BitVec 8) × List (BitVec width) × C)) (co : Nat → C × List (Nat × Nat × WordLangProgHOL (BitVec width))) (perm : Nat → Nat → Nat) (xs : List (WordSemStackFrame width)) :
     memStore x z { y with locals := l } = (memStore x z y).map (fun s => { s with locals := l }) ∧
@@ -682,8 +641,6 @@ theorem memStoreWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `word_exp_with_const` (`wordPropsScript.sml:831-840`): all 7
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "word_exp_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem wordExpWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (k : Nat) (y : WordLangExpHOL (BitVec width)) (x : WordSemStateFiniteExact width C F) (xs : List (WordSemStackFrame width)) (perm : Nat → Nat → Nat) (termdep : Nat) (c : Spt (Nat × WordLangProgHOL (BitVec width))) (co : Nat → C × List (Nat × Nat × WordLangProgHOL (BitVec width))) (cc : C → List (Nat × Nat × WordLangProgHOL (BitVec width)) → Option (List (BitVec 8) × List (BitVec width) × C)) :
     wordExp { x with clock := k } y = wordExp x y ∧
@@ -698,8 +655,6 @@ theorem wordExpWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `assign_with_const` (`wordPropsScript.sml:877-884`): all 6
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "assign_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem assignWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (k : Nat) (x : Nat) (y : WordLangExpHOL (BitVec width)) (z : WordSemStateFiniteExact width C F) (code : Spt (Nat × WordLangProgHOL (BitVec width))) (c : C → List (Nat × Nat × WordLangProgHOL (BitVec width)) → Option (List (BitVec 8) × List (BitVec width) × C)) (co : Nat → C × List (Nat × Nat × WordLangProgHOL (BitVec width))) (perm : Nat → Nat → Nat) (xs : List (WordSemStackFrame width)) :
     assign x y { z with clock := k } = (assign x y z).map (fun s => { s with clock := k }) ∧
@@ -713,8 +668,6 @@ theorem assignWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `inst_with_const` (`wordPropsScript.sml:888-895`): all 6
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "inst_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem instWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (k : Nat) (i : WordLangInst (BitVec width)) (s : WordSemStateFiniteExact width C F) (code : Spt (Nat × WordLangProgHOL (BitVec width))) (c : C → List (Nat × Nat × WordLangProgHOL (BitVec width)) → Option (List (BitVec 8) × List (BitVec width) × C)) (co : Nat → C × List (Nat × Nat × WordLangProgHOL (BitVec width))) (perm : Nat → Nat → Nat) (xs : List (WordSemStackFrame width)) :
     inst i { s with clock := k } = (inst i s).map (fun s => { s with clock := k }) ∧
@@ -728,8 +681,6 @@ theorem instWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `jump_exc_with_const` (`wordPropsScript.sml:963-966`): all 2
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "jump_exc_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem jumpExcWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (k : Nat) (s : WordSemStateFiniteExact width C F) (perm : Nat → Nat → Nat) :
     jumpExc { s with clock := k } = (jumpExc s).map (fun p => ({ p.1 with clock := k }, p.2)) ∧
@@ -739,8 +690,6 @@ theorem jumpExcWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `get_var_imm_with_const` (`wordPropsScript.sml:970-978`): all 7
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "get_var_imm_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem getVarImmWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (k : Nat) (x : WordRegImm (BitVec width)) (y : WordSemStateFiniteExact width C F) (code : Spt (Nat × WordLangProgHOL (BitVec width))) (compile : C → List (Nat × Nat × WordLangProgHOL (BitVec width)) → Option (List (BitVec 8) × List (BitVec width) × C)) (compile_oracle : Nat → C × List (Nat × Nat × WordLangProgHOL (BitVec width))) (td : Nat) (xs : List (WordSemStackFrame width)) (perm : Nat → Nat → Nat) :
     WordSemStateFiniteExact.getVarImm x { y with clock := k } = WordSemStateFiniteExact.getVarImm x y ∧
@@ -755,8 +704,6 @@ theorem getVarImmWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `sh_mem_set_var_with_const` (`wordPropsScript.sml:1187-1192`): all 2
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "sh_mem_set_var_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem shMemSetVarWithConst {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {clockRw : Nat} [NeZero clockRw] {C : Type} {F : Type}
     (p : Nat → Nat → Nat) (res : Option (HolFfiResult F)) (v : Nat) (s : WordSemStateFiniteExact width C F) (k : Nat) :
     shMemSetVar (rw := rw) res v { s with permute := p } = Prod.map id (fun s => { s with permute := p }) (shMemSetVar (rw := rw) res v s) ∧
@@ -766,8 +713,6 @@ theorem shMemSetVarWithConst {width : Nat} [NeZero width] {rw : Nat} [NeZero rw]
 
 /-- Exact HOL `sh_mem_load_with_const` (`wordPropsScript.sml:1200-1205`): all 4
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "sh_mem_load_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem shMemLoadWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (l : Spt (WordLocW width)) (a : BitVec width) (s : WordSemStateFiniteExact width C F) (p : Nat → Nat → Nat) (k : Nat) (xs : List (WordSemStackFrame width)) :
     shMemLoad a { s with locals := l } = shMemLoad a s ∧
@@ -779,8 +724,6 @@ theorem shMemLoadWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `sh_mem_load_byte_with_const` (`wordPropsScript.sml:1209-1214`): all 4
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "sh_mem_load_byte_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem shMemLoadByteWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (l : Spt (WordLocW width)) (a : BitVec width) (s : WordSemStateFiniteExact width C F) (p : Nat → Nat → Nat) (k : Nat) (xs : List (WordSemStackFrame width)) :
     shMemLoadByte a { s with locals := l } = shMemLoadByte a s ∧
@@ -792,8 +735,6 @@ theorem shMemLoadByteWithConst {width : Nat} [NeZero width] {C : Type} {F : Type
 
 /-- Exact HOL `sh_mem_load16_with_const` (`wordPropsScript.sml:1218-1223`): all 4
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "sh_mem_load16_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem shMemLoad16WithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (l : Spt (WordLocW width)) (a : BitVec width) (s : WordSemStateFiniteExact width C F) (p : Nat → Nat → Nat) (k : Nat) (xs : List (WordSemStackFrame width)) :
     shMemLoad16 a { s with locals := l } = shMemLoad16 a s ∧
@@ -805,8 +746,6 @@ theorem shMemLoad16WithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `sh_mem_load32_with_const` (`wordPropsScript.sml:1227-1232`): all 4
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "sh_mem_load32_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem shMemLoad32WithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (l : Spt (WordLocW width)) (a : BitVec width) (s : WordSemStateFiniteExact width C F) (p : Nat → Nat → Nat) (k : Nat) (xs : List (WordSemStackFrame width)) :
     shMemLoad32 a { s with locals := l } = shMemLoad32 a s ∧
@@ -818,8 +757,6 @@ theorem shMemLoad32WithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `sh_mem_store_with_const` (`wordPropsScript.sml:1236-1241`): all 2
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "sh_mem_store_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem shMemStoreWithConst {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {clockRw : Nat} [NeZero clockRw] {C : Type} {F : Type}
     (p : Nat → Nat → Nat) (a : BitVec width) (w : BitVec width) (s : WordSemStateFiniteExact width C F) (k : Nat) :
     shMemStore (rw := rw) a w { s with permute := p } = Prod.map id (fun s => { s with permute := p }) (shMemStore (rw := rw) a w s) ∧
@@ -829,8 +766,6 @@ theorem shMemStoreWithConst {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] 
 
 /-- Exact HOL `sh_mem_store_byte_with_const` (`wordPropsScript.sml:1245-1250`): all 2
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "sh_mem_store_byte_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem shMemStoreByteWithConst {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {clockRw : Nat} [NeZero clockRw] {C : Type} {F : Type}
     (p : Nat → Nat → Nat) (a : BitVec width) (w : BitVec width) (s : WordSemStateFiniteExact width C F) (k : Nat) :
     shMemStoreByte (rw := rw) a w { s with permute := p } = Prod.map id (fun s => { s with permute := p }) (shMemStoreByte (rw := rw) a w s) ∧
@@ -840,8 +775,6 @@ theorem shMemStoreByteWithConst {width : Nat} [NeZero width] {rw : Nat} [NeZero 
 
 /-- Exact HOL `sh_mem_store16_with_const` (`wordPropsScript.sml:1254-1259`): all 2
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "sh_mem_store16_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem shMemStore16WithConst {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {clockRw : Nat} [NeZero clockRw] {C : Type} {F : Type}
     (p : Nat → Nat → Nat) (a : BitVec width) (w : BitVec width) (s : WordSemStateFiniteExact width C F) (k : Nat) :
     shMemStore16 (rw := rw) a w { s with permute := p } = Prod.map id (fun s => { s with permute := p }) (shMemStore16 (rw := rw) a w s) ∧
@@ -851,8 +784,6 @@ theorem shMemStore16WithConst {width : Nat} [NeZero width] {rw : Nat} [NeZero rw
 
 /-- Exact HOL `sh_mem_store32_with_const` (`wordPropsScript.sml:1263-1268`): all 2
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "sh_mem_store32_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem shMemStore32WithConst {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {clockRw : Nat} [NeZero clockRw] {C : Type} {F : Type}
     (p : Nat → Nat → Nat) (a : BitVec width) (w : BitVec width) (s : WordSemStateFiniteExact width C F) (k : Nat) :
     shMemStore32 (rw := rw) a w { s with permute := p } = Prod.map id (fun s => { s with permute := p }) (shMemStore32 (rw := rw) a w s) ∧
@@ -862,8 +793,6 @@ theorem shMemStore32WithConst {width : Nat} [NeZero width] {rw : Nat} [NeZero rw
 
 /-- Exact HOL `share_inst_with_const` (`wordPropsScript.sml:1272-1277`): all 2
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "share_inst_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem shareInstWithConst {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {clockRw : Nat} [NeZero clockRw] {C : Type} {F : Type}
     (p : Nat → Nat → Nat) (op : WordMemOp) (v : Nat) (c : BitVec width) (s : WordSemStateFiniteExact width C F) (k : Nat) :
     shareInst (rw := rw) op v c { s with permute := p } = Prod.map id (fun s => { s with permute := p }) (shareInst (rw := rw) op v c s) ∧
@@ -873,8 +802,6 @@ theorem shareInstWithConst {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {
 
 /-- Exact HOL `cut_state_with_const` (`wordPropsScript.sml:1281-1288`): all 6
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "cut_state_with_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem cutStateWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (k : Nat) (x : WordLangCutsetsHOL) (z : WordSemStateFiniteExact width C F) (code : Spt (Nat × WordLangProgHOL (BitVec width))) (c : C → List (Nat × Nat × WordLangProgHOL (BitVec width)) → Option (List (BitVec 8) × List (BitVec width) × C)) (co : Nat → C × List (Nat × Nat × WordLangProgHOL (BitVec width))) (perm : Nat → Nat → Nat) (xs : List (WordSemStackFrame width)) :
     cutState x { z with clock := k } = (cutState x z).map (fun s => { s with clock := k }) ∧
@@ -888,8 +815,6 @@ theorem cutStateWithConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `unset_var_const` (`wordPropsScript.sml:245-268`): all 22
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "unset_var_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem unsetVarConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : Nat) (z : WordSemStateFiniteExact width C F) :
     (unsetVar x z).localsSize = z.localsSize ∧
@@ -919,8 +844,6 @@ theorem unsetVarConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `set_vars_const` (`wordPropsScript.sml:299-322`): all 22
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "set_vars_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem setVarsConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : List Nat) (y : List (WordLocW width)) (z : WordSemStateFiniteExact width C F) :
     (setVars x y z).localsSize = z.localsSize ∧
@@ -950,8 +873,6 @@ theorem setVarsConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `push_env_const` (`wordPropsScript.sml:435-454`): all 18
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "push_env_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem pushEnvConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : Spt (WordLocW width) × Spt (WordLocW width)) (y : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat)) (z : WordSemStateFiniteExact width C F) :
     (pushEnv x y z).clock = z.clock ∧
@@ -977,8 +898,6 @@ theorem pushEnvConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `call_env_const` (`wordPropsScript.sml:535-554`): all 18
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "call_env_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem callEnvConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : List (WordLocW width)) (ss : Option Nat) (y : WordSemStateFiniteExact width C F) :
     (WordSemStateFiniteExact.callEnv x ss y).store = y.store ∧
@@ -1004,8 +923,6 @@ theorem callEnvConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `flush_state_const` (`wordPropsScript.sml:571-584`): all 12
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "flush_state_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem flushStateConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (b : Bool) (y : WordSemStateFiniteExact width C F) :
     (flushState b y).clock = y.clock ∧
@@ -1025,8 +942,6 @@ theorem flushStateConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `set_fp_var_const` (`wordPropsScript.sml:727-750`): all 22
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "set_fp_var_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem setFpVarConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : Nat) (y : BitVec 64) (z : WordSemStateFiniteExact width C F) :
     (setFpVar x y z).locals = z.locals ∧
@@ -1055,8 +970,6 @@ theorem setFpVarConst {width : Nat} [NeZero width] {C : Type} {F : Type}
   all_goals constConj_tac
 
 /-- Exact HOL `state_const` (`wordPropsScript.sml:103-110`). -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "state_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem stateConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (s : WordSemStateFiniteExact width C F) (l l' : Spt (WordLocW width)) (p p' : Nat → Nat → Nat)
     (clk clk' : Nat) (xs xs' : List (WordSemStackFrame width)) :
@@ -1073,8 +986,6 @@ theorem stateConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `dec_clock_const` (`wordPropsScript.sml:982-1009`): all 24
     original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "dec_clock_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem decClockConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (s : WordSemStateFiniteExact width C F) (locs : Spt (WordLocW width)) (p : Nat → Nat → Nat) :
     (decClock s).locals = s.locals ∧
@@ -1105,8 +1016,6 @@ theorem decClockConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     rfl, rfl, rfl, rfl⟩
 
 /-- Exact HOL `assign_const_full` (`wordPropsScript.sml:850-867`). -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "assign_const_full"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem assignConstFull {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : Nat) (y : WordLangExpHOL (BitVec width)) (z a : WordSemStateFiniteExact width C F)
     (h : assign x y z = some a) :
@@ -1130,8 +1039,6 @@ theorem assignConstFull {width : Nat} [NeZero width] {C : Type} {F : Type}
     exact ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 /-- Exact HOL `assign_const` (`wordPropsScript.sml:869-875`). -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "assign_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem assignConst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (x : Nat) (y : WordLangExpHOL (BitVec width)) (z a : WordSemStateFiniteExact width C F)
     (h : assign x y z = some a) :
@@ -1142,8 +1049,6 @@ theorem assignConst {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 /-- Exact HOL `sh_mem_set_var_const` (`wordPropsScript.sml:1011-1043`): all
     22 original conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "sh_mem_set_var_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem shMemSetVarConst {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {C : Type} {F : Type}
     (r : Option (HolFfiResult F)) (v : Nat) (s s' : WordSemStateFiniteExact width C F)
     (x : Option (WordSemResult rw)) (outcome : HolFinalEvent) (f : HolFfiState F)
@@ -1177,8 +1082,6 @@ theorem shMemSetVarConst {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {C 
 
 /-- Exact HOL `sh_mem_store_const` (`wordPropsScript.sml:1045-1072`): all 20 original
     conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "sh_mem_store_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem shMemStoreConst {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {C : Type} {F : Type}
     (ad v : BitVec width) (s s' : WordSemStateFiniteExact width C F) (res : Option (WordSemResult rw))
     (h : shMemStore (rw := rw) ad v s = (res, s')) :
@@ -1213,8 +1116,6 @@ theorem shMemStoreConst {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {C :
 
 /-- Exact HOL `sh_mem_store_byte_const` (`wordPropsScript.sml:1074-1101`): all 20 original
     conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "sh_mem_store_byte_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem shMemStoreByteConst {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {C : Type} {F : Type}
     (ad v : BitVec width) (s s' : WordSemStateFiniteExact width C F) (res : Option (WordSemResult rw))
     (h : shMemStoreByte (rw := rw) ad v s = (res, s')) :
@@ -1249,8 +1150,6 @@ theorem shMemStoreByteConst {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] 
 
 /-- Exact HOL `sh_mem_store16_const` (`wordPropsScript.sml:1103-1130`): all 20 original
     conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "sh_mem_store16_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem shMemStore16Const {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {C : Type} {F : Type}
     (ad v : BitVec width) (s s' : WordSemStateFiniteExact width C F) (res : Option (WordSemResult rw))
     (h : shMemStore16 (rw := rw) ad v s = (res, s')) :
@@ -1285,8 +1184,6 @@ theorem shMemStore16Const {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {C
 
 /-- Exact HOL `sh_mem_store32_const` (`wordPropsScript.sml:1132-1159`): all 20 original
     conjuncts in source order. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "sh_mem_store32_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem shMemStore32Const {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {C : Type} {F : Type}
     (ad v : BitVec width) (s s' : WordSemStateFiniteExact width C F) (res : Option (WordSemResult rw))
     (h : shMemStore32 (rw := rw) ad v s = (res, s')) :
@@ -1320,29 +1217,21 @@ theorem shMemStore32Const {width : Nat} [NeZero width] {rw : Nat} [NeZero rw] {C
       first | rfl | (intro _; rfl) | (intro hr; cases hr)
 
 /-- Exact HOL `get_var_set_store` (`wordPropsScript.sml:1350-1354`). -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "get_var_set_store"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem getVarSetStore {width : Nat} [NeZero width] {C : Type} {F : Type}
     (v1 : Nat) (v2 : WordStoreHOL) (x : WordLocW width) (s : WordSemStateFiniteExact width C F) :
     getVar v1 (setStore v2 x s) = getVar v1 s := rfl
 
 /-- Exact HOL `get_var_set_fp_var` (`wordPropsScript.sml:1356-1360`). -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "get_var_set_fp_var"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem getVarSetFpVar {width : Nat} [NeZero width] {C : Type} {F : Type}
     (v1 v2 : Nat) (x : BitVec 64) (s : WordSemStateFiniteExact width C F) :
     getVar v1 (setFpVar v2 x s) = getVar v1 s := rfl
 
 /-- Exact HOL `get_store_set_store` (`wordPropsScript.sml:1368-1373`). -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "get_store_set_store"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem getStoreSetStore {width : Nat} [NeZero width] {C : Type} {F : Type}
     (v1 v2 : WordStoreHOL) (x : WordLocW width) (s : WordSemStateFiniteExact width C F) :
     getStore v1 (setStore v2 x s) = if v1 = v2 then some x else getStore v1 s := rfl
 
 /-- Exact HOL `get_fp_var_set_fp_var` (`wordPropsScript.sml:1375-1380`). -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "get_fp_var_set_fp_var"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem getFpVarSetFpVar {width : Nat} [NeZero width] {C : Type} {F : Type}
     (v1 v2 : Nat) (x : BitVec 64) (s : WordSemStateFiniteExact width C F) :
     getFpVar v1 (setFpVar v2 x s) = if v1 = v2 then some x else getFpVar v1 s := rfl

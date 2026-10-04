@@ -96,8 +96,7 @@ namespace WordSemStateFiniteExact
 open Compiler.Backend.WordSimp
 
 /-- Exact HOL `strip_const_thm` (`word_simpProofScript.sml:172-176`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "strip_const_thm"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem strip_const_thm {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (xs : List (WordLangExpHOL (BitVec width))) (x : List (BitVec width))
       (s : WordSemStateFiniteExact width C F),
@@ -137,8 +136,7 @@ theorem wordExp_op_eq {width : Nat} [NeZero width] {C : Type} {F : Type}
   rfl
 
 /-- Exact HOL `const_fp_exp_word_exp` (`word_simpProofScript.sml:184-201`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "const_fp_exp_word_exp"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem const_fp_exp_word_exp {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (e : WordLangExpHOL (BitVec width)) (cs : Spt (BitVec width))
       (s : WordSemStateFiniteExact width C F),
@@ -199,8 +197,7 @@ theorem const_fp_exp_word_exp {width : Nat} [NeZero width] {C : Type} {F : Type}
 termination_by e => sizeOf e
 
 /-- Exact HOL `const_fp_exp_word_exp_const` (`word_simpProofScript.sml:203-228`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "const_fp_exp_word_exp_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem const_fp_exp_word_exp_const {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (e : WordLangExpHOL (BitVec width)) (cs : Spt (BitVec width))
       (s : WordSemStateFiniteExact width C F) (c : BitVec width),
@@ -222,8 +219,7 @@ theorem getVar_setVars_eq {width : Nat} [NeZero width] {C : Type} {F : Type}
   rfl
 
 /-- Exact HOL `set_vars_move_NONE` (`word_simpProofScript.sml:232-242`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "set_vars_move_NONE"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem set_vars_move_NONE {width : Nat} [NeZero width] {C : Type} {F : Type} {α : Type} :
     ∀ (moves : List (Nat × α)) (x : List (WordLocW width)) (s s' : WordSemStateFiniteExact width C F)
       (v : Nat),
@@ -247,8 +243,7 @@ theorem set_vars_move_NONE {width : Nat} [NeZero width] {C : Type} {F : Type} {�
       exact ih ys s _ v ⟨rfl, hl⟩
 
 /-- Exact HOL `set_vars_move_SOME` (`word_simpProofScript.sml:244-254`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "set_vars_move_SOME"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem set_vars_move_SOME {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (moves : List (Nat × Nat)) (x : List (WordLocW width)) (v w : Nat)
       (s s' : WordSemStateFiniteExact width C F),
@@ -285,8 +280,7 @@ theorem set_vars_move_SOME {width : Nat} [NeZero width] {C : Type} {F : Type} :
       exact ih ys v w s _ ⟨rfl, hys, hl⟩
 
 /-- Exact HOL `get_var_move_thm` (`word_simpProofScript.sml:256-265`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "get_var_move_thm"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem get_var_move_thm {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (s s' : WordSemStateFiniteExact width C F) (moves : List (Nat × Nat))
       (x : List (WordLocW width)) (v : Nat),
@@ -388,8 +382,7 @@ theorem lookup_const_fp_move_cs {width : Nat} [NeZero width] :
   · exact lookup_const_fp_move_cs_SOME moves v w cs cs ⟨hl, hnd, rfl⟩
 
 /-- Exact HOL `get_var_imm_cs_imp_get_var_imm` (`word_simpProofScript.sml:338-344`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "get_var_imm_cs_imp_get_var_imm"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem get_var_imm_cs_imp_get_var_imm {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (x : WordRegImm (BitVec width)) (y : BitVec width) (s : WordSemStateFiniteExact width C F)
       (cs : Spt (BitVec width)),
@@ -401,8 +394,7 @@ theorem get_var_imm_cs_imp_get_var_imm {width : Nat} [NeZero width] {C : Type} {
   | imm i => simp only [getVarImmCs, Option.some.injEq] at hx; subst hx; rfl
 
 /-- Exact HOL `get_var_set_var_thm` (`word_simpProofScript.sml:348-353`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "get_var_set_var_thm"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem get_var_set_var_thm {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (k1 k2 : Nat) (v : WordLocW width) (s : WordSemStateFiniteExact width C F),
       getVar k1 (setVar k2 v s) = if k1 = k2 then some v else getVar k1 s := by
@@ -411,8 +403,7 @@ theorem get_var_set_var_thm {width : Nat} [NeZero width] {C : Type} {F : Type} :
 
 /-- Exact HOL `get_var_mem_store_thm` (`word_simpProofScript.sml:355-360`); HOL's
     free post-state `s'` is an explicit binder. -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "get_var_mem_store_thm"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem get_var_mem_store_thm {width : Nat} [NeZero width] {C : Type} {F : Type}
     (s' : WordSemStateFiniteExact width C F) :
     ∀ (v : Nat) (addr : BitVec width) (x : WordLocW width) (s : WordSemStateFiniteExact width C F),
@@ -422,8 +413,7 @@ theorem get_var_mem_store_thm {width : Nat} [NeZero width] {C : Type} {F : Type}
   simp only [getVar, this]
 
 /-- Exact HOL `cs_delete_if_set` (`word_simpProofScript.sml:362-369`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "cs_delete_if_set"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem cs_delete_if_set {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (x : WordLocW width) (v1 v2 : Nat) (s : WordSemStateFiniteExact width C F)
       (cs : Spt (BitVec width)) (w : BitVec width),
@@ -440,8 +430,7 @@ theorem cs_delete_if_set {width : Nat} [NeZero width] {C : Type} {F : Type} :
     exact h v2 w hl
 
 /-- Exact HOL `cs_delete_if_set_x2` (`word_simpProofScript.sml:371-378`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "cs_delete_if_set_x2"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem cs_delete_if_set_x2 {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (x1 x2 : WordLocW width) (v1 v2 v3 : Nat) (s : WordSemStateFiniteExact width C F)
       (cs : Spt (BitVec width)) (w : BitVec width),
@@ -532,8 +521,7 @@ theorem LIST_REL_append_left {α β : Type} :
       exact ⟨by simpa using ⟨h.1, this.1⟩, by simpa using this.2⟩
 
 /-- Exact HOL `push_env_set_store_stack` (`word_simpProofScript.sml:423-428`). -/
-@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "push_env_set_store_stack"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem push_env_set_store_stack {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (x1 : Spt (WordLocW width) × Spt (WordLocW width))
       (x2 : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat)) (x3 : WordStoreHOL)

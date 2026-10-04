@@ -64,8 +64,7 @@ theorem extractLabels_downshift (register : Nat) :
 end
 
 /-- HOL `stack_remove_lab_pres`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "stack_remove_lab_pres"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackRemoveLabPres {width : Nat} [NeZero width] :
     ∀ (jump : Bool) (off : BitVec width × BitVec width) (k : Nat) (p : HolProg width),
       extractLabels p = extractLabels (comp jump off k p) := by

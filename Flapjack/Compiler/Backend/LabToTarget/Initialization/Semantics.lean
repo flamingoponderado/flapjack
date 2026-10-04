@@ -23,8 +23,7 @@ initializer supplies the full initOk witnesses through the checked seventeen
 state-relation cases and unconditional oracle tie; full machineSemEqSem then
 derives the exact behavior singleton. Existing evaluator real-rendering
 assurance is inherited (SOUNDNESS item8). -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "semantics_make_init"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem semanticsMakeInit {width : Nat} [NeZero width] {S Q G : Type} {F : Type}
     (mc : MachineConfig width S Q) (ms : S) (ffi : HolFfiState F)
     (code code2 : LabProgHOL width) (labs : Spt (Spt Nat))
@@ -74,8 +73,7 @@ theorem semanticsMakeInit {width : Nat} [NeZero width] {S Q G : Type} {F : Type}
 /-- Full original skip-filter initialization semantics equality. The actual
 compileLab and complete memory, domain, machine, buffer and oracle arguments
 are retained; both initial states discharge the original filter guards. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "make_init_filter_skip"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem makeInitFilterSkip {width : Nat} [NeZero width] {S Q : Type} {F : Type}
     (mc : MachineConfig width S Q) (ffi : HolFfiState F) (t : AsmState width)
     (m : BitVec width → WordLocW width) (dm sdm : BitVec width → Bool)

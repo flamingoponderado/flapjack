@@ -151,8 +151,7 @@ theorem shmemInfo_nonSharedDisjoint {width : Nat} [NeZero width]
 both quantified conclusion families remain, with arbitrary FFI prefixes and
 independent query/validity starts. All EL uses are proved bounded; no total
 default, assumed search result, target execution or extra bound is used. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "get_shmem_info_ok_lemma" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getShmemInfo_ok {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (labs : Spt (Spt Nat)) (validFfis : List HolFfiName)
     (validPos : Nat)

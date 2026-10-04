@@ -56,7 +56,7 @@ theorem panToTargetGoodCode {width : Nat} [NeZero width] {S Q β : Type}
       (StackToLab.compile c.stackConf c.dataConf (2 * DataToWord.maxHeapLimit width c.dataConf - 1)
         (mc.target.config.regCount - (mc.target.config.avoidRegs.length + 3))
         mc.target.config.addrOffset p) := by
-  obtain ⟨-, -, -, hregs, -, -, hconf, -, -, -, -, -, -, hao, hho, hbo, h8, h4, h1, hs1, -, -,
+  obtain ⟨-, -, -, hregs, -, -, hconf, -, -, -, -, hao, hho, hbo, h8, h4, h1, hs1, -, -,
     hnames, hfixed, hstore, -, himm⟩ := hcfg
   have ⟨hz8, hm8z⟩ := good_dimindex_0w_8w hgood
   have hbyte : asmByteOffsetOkExact mc.target.config 0 = true := hbo 0 ⟨hm8z, hz8⟩

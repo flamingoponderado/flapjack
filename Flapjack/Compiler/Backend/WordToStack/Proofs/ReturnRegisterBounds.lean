@@ -8,8 +8,7 @@ open Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Backend.StackProps
 
 /-- Full original stack movement bound implication, retaining the temporary
 register bound and arbitrary continuation, offsets and number of moves. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "stack_move_reg_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackMoveRegBound {width : Nat} [NeZero width]
     (n start offset i : Nat) (p : HolProg width) (bound : Nat)
     (register : i < bound) (continuation : regBound p bound) :
@@ -22,8 +21,7 @@ theorem stackMoveRegBound {width : Nat} [NeZero width]
 
 /-- Full original descending return-copy bound, without a count, offset,
 frame-size or word-width lower bound beyond HOL's positive word dimension. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "copy_ret_aux_reg_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem copyRetAuxRegBound {width : Nat} [NeZero width] (k f n : Nat) :
     regBound (copyRetAuxNative k f n : HolProg width) (k + 2) := by
   induction n with
@@ -34,8 +32,7 @@ theorem copyRetAuxRegBound {width : Nat} [NeZero width] (k f n : Nat) :
 
 /-- Full original return-copy/free wrapper implication. Both Boolean modes
 and independent return-value and unused frame-tail carriers are retained. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "copy_ret_reg_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem copyRetRegBound {width : Nat} [NeZero width] {β γ : Type}
     (perf isHandle : Bool) (k f : Nat) (tail : γ) (vs : List β)
     (kont : HolProg width) (continuation : regBound kont (k + 2)) :

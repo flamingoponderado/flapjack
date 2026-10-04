@@ -9,8 +9,7 @@ open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString
 retained, including the dimensional emitted-length bound; all positions and
 the final inequality remain Nat. The proof uses native natural-position order,
 without assuming a successful target execution or the desired separation. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "pos_val_asm_fetch_aux_distinct" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem posVal_asmFetchAux_distinct {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (validPos : Nat)

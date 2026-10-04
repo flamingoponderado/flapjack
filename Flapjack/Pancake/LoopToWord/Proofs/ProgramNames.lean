@@ -9,8 +9,7 @@ private theorem compiledNames {width : Nat} [NeZero width]
   simp [loopToWordCompileProgHOL, List.map_map]
 
 /-- Source-shaped preservation of distinct function names over the native compiler. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml"
-  "first_compile_prog_all_distinct" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loopToWordFirstCompileProgAllDistinct {width : Nat} [NeZero width]
     (source : List (Nat × List Nat × HolLoopProg width))
     (h : (source.map Prod.fst).Nodup) :
@@ -19,8 +18,7 @@ theorem loopToWordFirstCompileProgAllDistinct {width : Nat} [NeZero width]
   exact h
 
 /-- The compile wrapper retains precisely the original distinct-name premise. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml"
-  "first_compile_all_distinct" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loopToWordFirstCompileAllDistinct {width : Nat} [NeZero width]
     (source : List (Nat × List Nat × HolLoopProg width))
     (h : (source.map Prod.fst).Nodup) :
@@ -28,8 +26,7 @@ theorem loopToWordFirstCompileAllDistinct {width : Nat} [NeZero width]
   loopToWordFirstCompileProgAllDistinct source h
 
 /-- Compilation maps a present source triple to its whole compiled triple. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml"
-  "mem_prog_mem_compile_prog" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loopToWordMemProgMemCompileProg {width : Nat} [NeZero width]
     (source : List (Nat × List Nat × HolLoopProg width)) (name : Nat)
     (params : List Nat) (body : HolLoopProg width)
@@ -39,8 +36,7 @@ theorem loopToWordMemProgMemCompileProg {width : Nat} [NeZero width]
   exact List.mem_map.mpr ⟨(name, params, body), h, rfl⟩
 
 /-- First-match native Spt lookup commutes with compilation, even for duplicate names. -/
-@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml"
-  "lookup_prog_some_lookup_compile_prog" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem loopToWordLookupProgSomeLookupCompileProg {width : Nat} [NeZero width]
     (source : List (Nat × List Nat × HolLoopProg width)) (name : Nat)
     (params : List Nat) (body : HolLoopProg width)

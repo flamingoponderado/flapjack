@@ -13,8 +13,7 @@ Assign and Store use the literal original impossible-constructor fallback;
 ShareInst is excluded by the original source guard rather than target safety. -/
 
 /-- Full original Skip constructor case with all original common inputs. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "comp_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compNoShmemopSkip {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -28,8 +27,7 @@ theorem compNoShmemopSkip {width : Nat} [NeZero width]
   rfl
 
 /-- Full original Assign constructor case with all original common inputs. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "comp_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compNoShmemopAssign {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (name : Nat) (value : WordLangExpHOL (BitVec width))
@@ -44,8 +42,7 @@ theorem compNoShmemopAssign {width : Nat} [NeZero width]
   rfl
 
 /-- Full original Store constructor case with all original common inputs. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "comp_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compNoShmemopStore {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (address : WordLangExpHOL (BitVec width)) (value : Nat)
@@ -60,8 +57,7 @@ theorem compNoShmemopStore {width : Nat} [NeZero width]
   rfl
 
 /-- Full original Raise constructor case with all original common inputs. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "comp_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compNoShmemopRaise {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (value : Nat)
@@ -76,8 +72,7 @@ theorem compNoShmemopRaise {width : Nat} [NeZero width]
   rfl
 
 /-- Full original Break constructor case with all original common inputs. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "comp_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compNoShmemopBreak {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (label : Nat)
@@ -92,8 +87,7 @@ theorem compNoShmemopBreak {width : Nat} [NeZero width]
   rfl
 
 /-- Full original Continue constructor case with all original common inputs. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "comp_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compNoShmemopContinue {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (label : Nat)
@@ -108,8 +102,7 @@ theorem compNoShmemopContinue {width : Nat} [NeZero width]
   rfl
 
 /-- Full original Tick constructor case with all original common inputs. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "comp_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compNoShmemopTick {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat)
@@ -123,8 +116,7 @@ theorem compNoShmemopTick {width : Nat} [NeZero width]
   rfl
 
 /-- Full original ShareInst constructor case with all original common inputs. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "comp_no_shmemop" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compNoShmemopShareInst {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (operator : WordMemOp) (name : Nat) (address : WordLangExpHOL (BitVec width))

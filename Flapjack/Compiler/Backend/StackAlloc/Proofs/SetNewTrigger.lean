@@ -133,8 +133,7 @@ end SetNewTriggerSupport
 
 /-- Full original evaluation inversion, retaining all guards, binder order,
 three existential word_loc witnesses and ordered register/store updates. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "evaluate_SetNewTrigger"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_SetNewTrigger {width : Nat} [NeZero width] {C F : Type}
     {endhReg ibReg : Nat} {gs : List Nat}
     {s newState : StackSemStateFiniteExact width C F} {res : Option (StackSemResult width)} :

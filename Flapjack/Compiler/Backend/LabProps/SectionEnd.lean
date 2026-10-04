@@ -11,8 +11,7 @@ The reverse-head cases implement nonempty plus classification of LAST, whose
 unspecified empty-list value is irrelevant behind the nonempty conjunct.
 Encoded bytes retain the original fixed8 carrier and names the native MlString.
 Only the positive polymorphic HOL word dimension uses the reviewed translation. -/
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "sec_ends_with_label_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def secEndsWithLabelNative {width : Nat} [NeZero width]
     (sec : Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) : Prop :=

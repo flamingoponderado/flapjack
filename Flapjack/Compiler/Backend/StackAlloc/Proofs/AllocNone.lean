@@ -38,8 +38,7 @@ with the `None` collector, `alloc` is simulated by `word_gc_code`. HOL's free
 `w s r t conf l ret c anything` are implicit; `fromAList`/`toAList` are
 `sptFromAList`/`sptToAList`, `SUBMAP` is `HolFiniteMapExact.submap`, and
 `dimword (:'a)` is `2 ^ width`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "alloc_correct_lemma_None"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem alloc_correct_lemma_None {width : Nat} [NeZero width] {C F : Type} {conf : Config}
     {c : DataToWord.Config} {w : BitVec width} {s t : StackSemStateFiniteExact width C F}
     {r : Option (StackSemResult width)} {l : HolFiniteMapExact Nat (WordLocW width)}

@@ -156,10 +156,7 @@ Canonical finite maps and positive-width words use the named translations;
 Spt code/info and native lists retain their original carriers. The evaluator
 inherits reals_as_rational_cuts (SOUNDNESS item 8); this establishes the rawcall
 pass simulation, not numeric FP correspondence or whole compiler correctness. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "comp_correct"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrect {width : Nat} [NeZero width] {C F : Type}
     (program : HolProg width) (source target : StackSemStateFiniteExact width C F)
     (info : Spt Nat) (result : Option (StackSemResult width))

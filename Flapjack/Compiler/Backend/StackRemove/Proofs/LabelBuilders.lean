@@ -10,8 +10,7 @@ open Flapjack.Compiler.Backend.StackRemove
 open Flapjack.Compiler.Backend.StackLang
 open Flapjack.StackSem
 /-- Freeing any number of stack words introduces no continuation labels. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "get_labels_stack_free"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem labelsStackFree {width : Nat} [NeZero width] (pointer count : Nat) :
     getLabelsExact (stackFree pointer count : HolProg width) = (fun _ => False) := by
   induction count using Nat.strongRecOn with
@@ -25,8 +24,7 @@ theorem labelsStackFree {width : Nat} [NeZero width] (pointer count : Nat) :
         rw [ih (count - maxStackAlloc) (by simp only [maxStackAlloc] at *; omega)]
         simp
 /-- Both allocation overflow-check forms introduce no continuation labels. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "get_labels_stack_alloc"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem labelsStackAlloc {width : Nat} [NeZero width] (jump : Bool) (pointer count : Nat) :
     getLabelsExact (stackAlloc jump pointer count : HolProg width) = (fun _ => False) := by
   have single (n : Nat) : getLabelsExact (singleStackAlloc (width := width) jump pointer n) = (fun _ => False) := by
@@ -42,8 +40,7 @@ theorem labelsStackAlloc {width : Nat} [NeZero width] (jump : Bool) (pointer cou
         rw [single, ih (count - maxStackAlloc) (by simp only [maxStackAlloc] at *; omega)]
         simp
 /-- The full chunked upward address shift introduces no continuation labels. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "get_labels_upshift"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem labelsUpshift {width : Nat} [NeZero width] (register count : Nat) :
     getLabelsExact (upshift register count : HolProg width) = (fun _ => False) := by
   induction count using Nat.strongRecOn with
@@ -55,8 +52,7 @@ theorem labelsUpshift {width : Nat} [NeZero width] (register count : Nat) :
       rw [ih (count - maxStackAlloc) (by simp only [maxStackAlloc] at *; omega)]
       simp
 /-- The full chunked downward address shift introduces no continuation labels. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "get_labels_downshift"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem labelsDownshift {width : Nat} [NeZero width] (register count : Nat) :
     getLabelsExact (downshift register count : HolProg width) = (fun _ => False) := by
   induction count using Nat.strongRecOn with

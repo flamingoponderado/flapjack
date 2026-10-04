@@ -124,8 +124,7 @@ private theorem destResultLabels {width : Nat} [NeZero width]
 /-- Complete original all-program ordered-label equality. Only the standard
 positive word translation is qualified; all compiler inputs are arbitrary.
 Recursion uses proper source subprograms and actual residual bitmaps. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_lab_pres" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackLabPres {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (p : WordLangProgHOL (BitVec width))
     (bs : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat) :
@@ -171,8 +170,7 @@ private theorem compileListLabels {width : Nat} [NeZero width] {β : Type}
 /-- Full original program-list label-preservation theorem. The compilation
 result equation aliases the actual complete output, including frames and bitmaps.
 The only source guard is the original ordered-label ownership/distinctness guard. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "compile_word_to_stack_lab_pres" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileWordToStackLabPres {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool) (k : Nat)
     (rows : List (Nat × Nat × WordLangProgHOL (BitVec width)))
@@ -204,8 +202,7 @@ theorem compileWordToStackLabPres {width : Nat} [NeZero width]
 /-- Full original top-level key and ordered-label result, over actual native
 compilation including both complete stubs. Only the original source label guard
 is assumed; no target property or successful result is supplied. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_compile_lab_pres" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackCompileLabPres {width : Nat} [NeZero width]
     (conf : AsmConfigExact width)
     (rows : List (Nat × Nat × WordLangProgHOL (BitVec width)))

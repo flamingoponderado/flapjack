@@ -7,8 +7,7 @@ namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "line_encd0_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def lineEncd0 {width : Nat} [NeZero width]
     (enc : HolAsm width → List (BitVec 8)) (line : Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)) : Prop :=
@@ -18,15 +17,13 @@ def lineEncd0 {width : Nat} [NeZero width]
       ∃ w' : BitVec width, len = (enc (labInst w' a)).length
   | .label _ _ _ => True
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "sec_encd0_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def secEncd0 {width : Nat} [NeZero width]
     (enc : HolAsm width → List (BitVec 8)) (sec : Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) : Prop :=
   ∀ line ∈ sec.lines, lineEncd0 enc line
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "all_encd0"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def allEncd0 {width : Nat} [NeZero width]
     (enc : HolAsm width → List (BitVec 8)) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) : Prop :=
@@ -41,8 +38,7 @@ private theorem encodedLine {width : Nat} [NeZero width]
   | asm => exact ⟨rfl,rfl⟩
   | labAsm => exact ⟨rfl,Nat.le_refl _,0,rfl⟩
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "enc_sec_list_encd0"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem encSecList_encd0 {width : Nat} [NeZero width]
     (enc : HolAsm width → List (BitVec 8)) (ls : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
@@ -103,8 +99,7 @@ private theorem encodedLinesInvariant {width : Nat} [NeZero width]
       · apply ih _ _ _ ht
         simpa using And.intro (updatedLabAsm enc a w _ bytes len hx) ha
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "enc_lines_again_encd0"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem encLinesAgain_encd0 {width : Nat} [NeZero width]
     (labs : Spt (Spt Nat)) (ffis : List HolFfiName) (pos : Nat)
     (enc : HolAsm width → List (BitVec 8))
@@ -136,8 +131,7 @@ private theorem encodedSecsInvariant {width : Nat} [NeZero width]
     have ho := encodedLinesInvariant labs ffis enc lines pos [] true hl (by simp)
     simpa [encSecsAgain,allEncd0,secEncd0] using And.intro ho hr
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "enc_secs_again_encd0"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem encSecsAgain_encd0 {width : Nat} [NeZero width]
     (pos : Nat) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (enc : HolAsm width → List (BitVec 8)) (ls res : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -149,8 +143,7 @@ theorem encSecsAgain_encd0 {width : Nat} [NeZero width]
   rw [h.1] at hi
   exact hi
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "lines_upd_lab_len_encd0"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem linesUpdLabLen_encd0 {width : Nat} [NeZero width]
     (pos : Nat) (ls acc : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))
@@ -184,8 +177,7 @@ theorem linesUpdLabLen_encd0 {width : Nat} [NeZero width]
       apply ih
       exact ⟨ht, by simpa only [List.mem_cons, forall_eq_or_imp] using And.intro hx h.2⟩
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "upd_lab_len_encd0"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem updLabLen_encd0 {width : Nat} [NeZero width]
     (pos : Nat) (ss : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))

@@ -504,11 +504,7 @@ clock existential and complete exception/resource result relation. The actual
 handler run and cleared state relation are derived from the original premises.
 Evaluator closure inherits reals_as_rational_cuts; this structural case makes
 no numerical FP correspondence claim. The original hypotheses and entire conclusion are retained. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_correct" 5756
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectRaise {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (name : Nat)
     (source : WordSemStateFiniteExact width (Nat × C) F) :

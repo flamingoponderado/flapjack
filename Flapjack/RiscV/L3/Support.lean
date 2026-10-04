@@ -6,8 +6,8 @@ import Flapjack.Misc.Option
 import Flapjack.Misc.Alignment
 import Flapjack.HolArb
 
-/-! Flapjack library-rendering infrastructure required by the complete L3 FP
-section and source-reviewed MMU primitives. These helpers implement UPDATE and the guarded in-range word operations
+/-! Flapjack library-rendering infrastructure required by integer L3
+instructions and physical-memory primitives. These helpers implement UPDATE and the guarded in-range word operations
 used by the original equations. ARB uses the single canonical Flapjack constant; no
 arbitrary record field is replaced with a chosen default. Each caller retains its original operation bounds; helper availability does not
 certify unreviewed model equations. -/
@@ -30,7 +30,7 @@ def holBitFieldInsert {m n : Nat} (h l : Nat) (a : BitVec m) (w : BitVec n) : Bi
   Flapjack.holFcpWord fun i => if l ≤ i ∧ i ≤ h then a.getLsbD (i - l) else w.getLsbD i
 
 /-- Library rendering of `bitstring$v2w_def`: FCP of `testbit`, whose list
-is most-significant-bit first. FCLASS uses singleton Boolean lists at width1.
+is most-significant-bit first. Boolean field codecs use singleton lists at width1.
 This helper is untagged infrastructure, not a claim about the whole model. -/
 def holV2w (a : Nat) (v : List Bool) : BitVec a :=
   Flapjack.holFcpWord fun i => decide (i < v.length) && v.getD (v.length - 1 - i) false

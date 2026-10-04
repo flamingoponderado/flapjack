@@ -152,7 +152,7 @@ the cited name occurs in one of the two syntactic forms.
 | `semantics/crepPropsScript.sml` | `Flapjack/Pancake/Semantics/CrepProps.lean` |
 | `semantics/loopSemScript.sml` | `Flapjack/Pancake/Semantics/LoopSem.lean`; exact width-indexed `state` carrier + production bridge in `Flapjack/Pancake/Semantics/LoopSemState.lean` (untagged pending exact sub-carriers) |
 | `semantics/ffi/ffiScript.sml` | `Flapjack/Ffi.lean` (production FFI state/events), `Flapjack/FfiHOL.lean` (exact ffi_outcome/oracle_result/shmem_op/ffiname/oracle/oracle_function/io_event/final_event/ffi_state/ffi_result carriers + call_FFI) |
-| `semantics/fpSemScript.sml` | `Flapjack/FpSemHOL.lean` (tagged `fpfma_def`, over the HOL `binary_ieee`/`machine_ieee` renderings in `Flapjack/Misc/BinaryIeee*.lean` and `Flapjack/Misc/MachineIeee*.lean`) |
+| `semantics/fpSemScript.sml` | Absent on `riscv-mi`; floating-point operations are excluded. |
 | `semantics/proofs/evaluatePropsScript.sml` | `Flapjack/EvaluateProps.lean` |
 | `semantics/proofs/semanticsPropsScript.sml` | `Flapjack/SemanticsProps.lean` (structural behavior and `implements'` analogue; HOL `llist` representation bridge remains open) |
 | `proofs/pan_simpProofScript.sml` | `Flapjack/Pancake/Proofs/PanSimp.lean`, `PanSimp/Evaluate.lean` |
@@ -219,15 +219,10 @@ The pinned external `HOL/src/sort/mergesortScript.sml` counterpart is
 sortedness, and the tail-recursive correctness lemmas over the untagged tail rendering in
 `Flapjack/Basis/Pure/MlList.lean`).
 
-The pinned external `HOL/src/floating-point/binary_ieeeScript.sml` counterpart is
-`Flapjack/Misc/BinaryIeee.lean` with its rendering family `BinaryIeeeRound.lean`,
-`BinaryIeeeArith.lean`, `BinaryIeeeConvert.lean` and `BinaryIeeeSqrt.lean`; the
-arbitrary-real (Mathlib `ℝ`) ports of its real-argument declarations are in
-`Flapjack/Misc/BinaryIeeeSqrt/RealCarrier.lean`. `HOL/src/floating-point/machine_ieeeScript.sml`,
-including the declarations `machine_ieeeLib` generates at its fp32/fp64 encoding calls,
-maps to `Flapjack/Misc/MachineIeee.lean` with submodules `Arith.lean`, `Convert.lean`,
-`ConvertInt.lean`, `ConvertReal.lean` and `SqrtReal.lean` under `Flapjack/Misc/MachineIeee/`.
-
+The floating-point counterparts of `HOL/src/floating-point/binary_ieeeScript.sml`,
+`HOL/src/floating-point/machine_ieeeScript.sml`, and CakeML `fpSemScript.sml`
+are intentionally absent from `riscv-mi`. They belong to the full development
+on `main`.
 
 ### Computed finite-map result observations
 

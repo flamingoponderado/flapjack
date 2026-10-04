@@ -17,8 +17,7 @@ def stackNamesAsmGoal {width : Nat} [NeZero width]
     fixedNames names config → stackAsmOkExact config (progCompHOL names p)
 
 /-- Original HOL comp_ind Seq case; hypotheses are only child motives. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_Seq {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (first second : HolProg width)
@@ -29,8 +28,7 @@ theorem stackNamesCompStackAsmOk_Seq {width : Nat} [NeZero width]
   exact ⟨ihFirst ⟨hfirst, hn, hf⟩, ihSecond ⟨hsecond, hn, hf⟩⟩
 
 /-- Original HOL comp_ind If case; hypotheses are only child motives. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_If {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (operator : Cmp) (register : Nat) (right : HolRegImm width)
@@ -42,8 +40,7 @@ theorem stackNamesCompStackAsmOk_If {width : Nat} [NeZero width]
   exact ⟨ihFirst ⟨hfirst, hn, hf⟩, ihSecond ⟨hsecond, hn, hf⟩⟩
 
 /-- Original HOL comp_ind Loop case; hypotheses are only child motives. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_Loop {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (body : HolProg width)
@@ -53,8 +50,7 @@ theorem stackNamesCompStackAsmOk_Loop {width : Nat} [NeZero width]
 
 /-- HOL Call case with induction hypotheses only for structural return and
 handler bodies. Handler obligations stay nested under a SOME return. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml"
-  "stack_names_comp_stack_asm_ok" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stackNamesCompStackAsmOk_Call {width : Nat} [NeZero width]
     (names : Flapjack.Spt Nat) (config : AsmConfigExact width)
     (returns : Option (HolProg width × Nat × Nat × Nat)) (target : Sum Nat Nat)

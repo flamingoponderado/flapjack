@@ -19,8 +19,7 @@ def canonicalImmReg' {width : Nat} [NeZero width] (avoid : Nat) (data : Knowledg
 /-- All eight original arithmetic equations. Destinations and fourth
 carry/overflow fields are retained; the original avoid-destination guards
 apply only to Binop, Shift and the three carry/overflow constructors. -/
-@[hol "cakeml/compiler/backend/word_cseScript.sml" "canonicalArith_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: declaration over the reduced integer carrier.
 def canonicalArith {width : Nat} [NeZero width] (data : Knowledge) : HolArith width → HolArith width
   | .binop operator destination left right =>
       .binop operator destination (canonicalRegs' destination data left)

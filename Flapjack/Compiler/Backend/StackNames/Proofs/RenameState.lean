@@ -1,3 +1,4 @@
+import Mathlib.Logic.Function.Defs
 import Flapjack.Compiler.Backend.StackNames.ProgramNames
 import Flapjack.Compiler.Backend.Semantics.StackSem.Evaluate
 import Flapjack.FiniteMap.MapKeys
@@ -30,8 +31,6 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
 end StackNamesRenameWitnesses
 
 /-- Exact HOL `rename_state_def` (`stack_namesProofScript.sml:15-24`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "rename_state_def"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 noncomputable def renameState {width : Nat} [NeZero width] {C F : Type}
     (compileRest : C → List (Nat × HolProg width) → Option (List (BitVec 8) × C))
     (f : Spt Nat) (s : StackSemStateFiniteExact width C F) : StackSemStateFiniteExact width C F :=
@@ -44,8 +43,6 @@ noncomputable def renameState {width : Nat} [NeZero width] {C F : Type}
     ffiSaveRegs := fun y => decide (∃ x, s.ffiSaveRegs x = true ∧ y = findNameSpt f x) }
 
 /-- Exact HOL `rename_state_with_clock` (`stack_namesProofScript.sml:26-30`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "rename_state_with_clock"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem renameState_withClock {width : Nat} [NeZero width] {C F : Type}
     {c : C → List (Nat × HolProg width) → Option (List (BitVec 8) × C)} {f : Spt Nat}
     {s : StackSemStateFiniteExact width C F} {k : Nat} :
@@ -53,8 +50,6 @@ theorem renameState_withClock {width : Nat} [NeZero width] {C F : Type}
 
 /-- Exact HOL `rename_state_const` (`stack_namesProofScript.sml:32-44`): the nine unchanged
 fields. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "rename_state_const"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem renameState_const {width : Nat} [NeZero width] {C F : Type}
     {c : C → List (Nat × HolProg width) → Option (List (BitVec 8) × C)} {f : Spt Nat}
     {s : StackSemStateFiniteExact width C F} :
@@ -66,32 +61,24 @@ theorem renameState_const {width : Nat} [NeZero width] {C F : Type}
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 /-- Exact HOL `rename_state_with_memory` (`stack_namesProofScript.sml:46-50`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "rename_state_with_memory"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem renameState_withMemory {width : Nat} [NeZero width] {C F : Type}
     {c : C → List (Nat × HolProg width) → Option (List (BitVec 8) × C)} {f : Spt Nat}
     {s : StackSemStateFiniteExact width C F} {k : BitVec width → WordLocW width} :
     renameState c f { s with memory := k } = { renameState c f s with memory := k } := rfl
 
 /-- Exact HOL `dec_clock_rename_state` (`stack_namesProofScript.sml:52-56`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "dec_clock_rename_state"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem decClock_renameState {width : Nat} [NeZero width] {C F : Type}
     {c : C → List (Nat × HolProg width) → Option (List (BitVec 8) × C)} {x : Spt Nat}
     {y : StackSemStateFiniteExact width C F} :
     decClock (renameState c x y) = renameState c x (decClock y) := rfl
 
 /-- Exact HOL `mem_load_rename_state` (`stack_namesProofScript.sml:58-62`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "mem_load_rename_state"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem memLoad_renameState {width : Nat} [NeZero width] {C F : Type}
     {c : C → List (Nat × HolProg width) → Option (List (BitVec 8) × C)} {f : Spt Nat}
     {s : StackSemStateFiniteExact width C F} {x : BitVec width} :
     memLoad x (renameState c f s) = memLoad x s := rfl
 
 /-- Exact HOL `mem_store_rename_state` (`stack_namesProofScript.sml:64-68`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "mem_store_rename_state"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem memStore_renameState {width : Nat} [NeZero width] {C F : Type}
     {c : C → List (Nat × HolProg width) → Option (List (BitVec 8) × C)} {f : Spt Nat}
     {s : StackSemStateFiniteExact width C F} {x : BitVec width} {y : WordLocW width} :
@@ -105,8 +92,6 @@ theorem memStore_renameState {width : Nat} [NeZero width] {C F : Type}
     simp [memStore, h', h'']
 
 /-- Exact HOL `get_var_find_name` (`stack_namesProofScript.sml:70-79`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "get_var_find_name"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem getVar_findName {width : Nat} [NeZero width] {C F : Type}
     {c : C → List (Nat × HolProg width) → Option (List (BitVec 8) × C)} {f : Spt Nat}
     {s : StackSemStateFiniteExact width C F} {v : Nat} :
@@ -117,8 +102,6 @@ theorem getVar_findName {width : Nat} [NeZero width] {C F : Type}
 /-- Exact HOL `get_var_imm_find_name` (`stack_namesProofScript.sml:81-92`). The `reg_imm`
 operand is the stack_names `HolRegImm` carrier, read by StackSem through the same
 `HolRegImm.toWordRegImm` codec as its `If` clause. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "get_var_imm_find_name"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem getVarImm_findName {width : Nat} [NeZero width] {C F : Type}
     {c : C → List (Nat × HolProg width) → Option (List (BitVec 8) × C)} {f : Spt Nat}
     {s : StackSemStateFiniteExact width C F} {ri : Flapjack.Compiler.Encoders.Asm.HolRegImm width} :
@@ -131,8 +114,6 @@ theorem getVarImm_findName {width : Nat} [NeZero width] {C F : Type}
   | imm w => rfl
 
 /-- Exact HOL `FLOOKUP_rename_state_find_name` (`stack_namesProofScript.sml:94-101`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "FLOOKUP_rename_state_find_name"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem lookup_renameState_findName {width : Nat} [NeZero width] {C F : Type}
     {c : C → List (Nat × HolProg width) → Option (List (BitVec 8) × C)} {f : Spt Nat}
     {s : StackSemStateFiniteExact width C F} {k : Nat} :
@@ -219,8 +200,6 @@ local macro "shstore_tac" : tactic =>
          · rfl)))
 
 /-- Exact HOL `sh_mem_load_rename_state` (`stack_namesProofScript.sml:103-112`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "sh_mem_load_rename_state"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem shMemLoad_renameState {width : Nat} [NeZero width] {C F : Type} {c : C → List (Nat × HolProg width) → Option (List (BitVec 8) × C)} {f : Spt Nat} {s : StackSemStateFiniteExact width C F} {x : Nat} {y : BitVec width} :
     Function.Bijective (findNameSpt f) →
       shMemLoad (findNameSpt f x) y (renameState c f s) =
@@ -228,8 +207,6 @@ theorem shMemLoad_renameState {width : Nat} [NeZero width] {C F : Type} {c : C �
   unfold shMemLoad; shload_tac
 
 /-- Exact HOL `sh_mem_store_rename_state` (`stack_namesProofScript.sml:114-122`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "sh_mem_store_rename_state"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem shMemStore_renameState {width : Nat} [NeZero width] {C F : Type} {c : C → List (Nat × HolProg width) → Option (List (BitVec 8) × C)} {f : Spt Nat} {s : StackSemStateFiniteExact width C F} {x : Nat} {y : BitVec width} :
     Function.Bijective (findNameSpt f) →
       shMemStore (findNameSpt f x) y (renameState c f s) =
@@ -237,8 +214,6 @@ theorem shMemStore_renameState {width : Nat} [NeZero width] {C F : Type} {c : C 
   unfold shMemStore; shstore_tac
 
 /-- Exact HOL `sh_mem_load_byte_rename_state` (`stack_namesProofScript.sml:124-133`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "sh_mem_load_byte_rename_state"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem shMemLoadByte_renameState {width : Nat} [NeZero width] {C F : Type} {c : C → List (Nat × HolProg width) → Option (List (BitVec 8) × C)} {f : Spt Nat} {s : StackSemStateFiniteExact width C F} {x : Nat}
     {y : BitVec width} :
     Function.Bijective (findNameSpt f) →
@@ -247,8 +222,6 @@ theorem shMemLoadByte_renameState {width : Nat} [NeZero width] {C F : Type} {c :
   unfold shMemLoadByte; shload_tac
 
 /-- Exact HOL `sh_mem_store_byte_rename_state` (`stack_namesProofScript.sml:135-142`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "sh_mem_store_byte_rename_state"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem shMemStoreByte_renameState {width : Nat} [NeZero width] {C F : Type} {c : C → List (Nat × HolProg width) → Option (List (BitVec 8) × C)} {f : Spt Nat} {s : StackSemStateFiniteExact width C F} {x : Nat}
     {y : BitVec width} :
     Function.Bijective (findNameSpt f) →
@@ -257,8 +230,6 @@ theorem shMemStoreByte_renameState {width : Nat} [NeZero width] {C F : Type} {c 
   unfold shMemStoreByte; shstore_tac
 
 /-- Exact HOL `sh_mem_load16_rename_state` (`stack_namesProofScript.sml:144-153`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "sh_mem_load16_rename_state"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem shMemLoad16_renameState {width : Nat} [NeZero width] {C F : Type} {c : C → List (Nat × HolProg width) → Option (List (BitVec 8) × C)} {f : Spt Nat} {s : StackSemStateFiniteExact width C F} {x : Nat}
     {y : BitVec width} :
     Function.Bijective (findNameSpt f) →
@@ -267,8 +238,6 @@ theorem shMemLoad16_renameState {width : Nat} [NeZero width] {C F : Type} {c : C
   unfold shMemLoad16; shload_tac
 
 /-- Exact HOL `sh_mem_store16_rename_state` (`stack_namesProofScript.sml:155-162`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "sh_mem_store16_rename_state"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem shMemStore16_renameState {width : Nat} [NeZero width] {C F : Type} {c : C → List (Nat × HolProg width) → Option (List (BitVec 8) × C)} {f : Spt Nat} {s : StackSemStateFiniteExact width C F} {x : Nat}
     {y : BitVec width} :
     Function.Bijective (findNameSpt f) →
@@ -277,8 +246,6 @@ theorem shMemStore16_renameState {width : Nat} [NeZero width] {C F : Type} {c : 
   unfold shMemStore16; shstore_tac
 
 /-- Exact HOL `sh_mem_load32_rename_state` (`stack_namesProofScript.sml:164-173`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "sh_mem_load32_rename_state"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem shMemLoad32_renameState {width : Nat} [NeZero width] {C F : Type} {c : C → List (Nat × HolProg width) → Option (List (BitVec 8) × C)} {f : Spt Nat} {s : StackSemStateFiniteExact width C F} {x : Nat}
     {y : BitVec width} :
     Function.Bijective (findNameSpt f) →
@@ -287,8 +254,6 @@ theorem shMemLoad32_renameState {width : Nat} [NeZero width] {C F : Type} {c : C
   unfold shMemLoad32; shload_tac
 
 /-- Exact HOL `sh_mem_store32_rename_state` (`stack_namesProofScript.sml:175-182`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "sh_mem_store32_rename_state"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem shMemStore32_renameState {width : Nat} [NeZero width] {C F : Type} {c : C → List (Nat × HolProg width) → Option (List (BitVec 8) × C)} {f : Spt Nat} {s : StackSemStateFiniteExact width C F} {x : Nat}
     {y : BitVec width} :
     Function.Bijective (findNameSpt f) →
@@ -297,8 +262,6 @@ theorem shMemStore32_renameState {width : Nat} [NeZero width] {C F : Type} {c : 
   unfold shMemStore32; shstore_tac
 
 /-- Exact HOL `sh_mem_op_rename_store` (`stack_namesProofScript.sml:184-190`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "sh_mem_op_rename_store"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem shMemOp_renameState {width : Nat} [NeZero width] {C F : Type} {c : C → List (Nat × HolProg width) → Option (List (BitVec 8) × C)} {f : Spt Nat} {s : StackSemStateFiniteExact width C F} {op : WordMemOp} {r : Nat}
     {a : BitVec width} :
     Function.Bijective (findNameSpt f) →
@@ -321,8 +284,6 @@ section Code
 
 
 /-- Exact HOL `prog_comp_eta` (`stack_namesProofScript.sml:192-196`, `[local]`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "prog_comp_eta"
-  (words_as_type_indexed_bitvec)]
 theorem progComp_eta {width : Nat} [NeZero width] {f : Spt Nat} :
     (progCompEntryHOL f : Nat × HolProg width → Nat × HolProg width) =
       fun p => (p.1, progCompHOL f p.2) := by
@@ -349,8 +310,6 @@ theorem sptLookup_renameState_code {width : Nat} [NeZero width] {C F : Type} {c 
     sptLookup_sptFromAList_sptToAList]
 
 /-- Exact HOL `find_code_rename_state` (`stack_namesProofScript.sml:198-219`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "find_code_rename_state"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem findCode_renameState {width : Nat} [NeZero width] {C F : Type} {c : C → List (Nat × HolProg width) → Option (List (BitVec 8) × C)} {f : Spt Nat} {s : StackSemStateFiniteExact width C F} {dest : Sum Nat Nat} :
     Function.Bijective (findNameSpt f) →
       StackSemControl.findCode (destFindNameHOL f dest) (renameState c f s).regs (renameState c f s).code =
@@ -372,8 +331,6 @@ theorem findCode_renameState {width : Nat} [NeZero width] {C F : Type} {c : C �
           | succ n => rfl
 
 /-- Exact HOL `set_var_find_name` (`stack_namesProofScript.sml:221-229`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "set_var_find_name"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem setVar_findName {width : Nat} [NeZero width] {C F : Type} {c : C → List (Nat × HolProg width) → Option (List (BitVec 8) × C)} {f : Spt Nat} {x : Nat} {y : WordLocW width} {z : StackSemStateFiniteExact width C F} :
     Function.Bijective (findNameSpt f) →
       renameState c f (setVar x y z) = setVar (findNameSpt f x) y (renameState c f z) := by
@@ -382,14 +339,10 @@ theorem setVar_findName {width : Nat} [NeZero width] {C F : Type} {c : C → Lis
   rfl
 
 /-- Exact HOL `set_fp_var_find_name` (`stack_namesProofScript.sml:231-236`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "set_fp_var_find_name"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem setFpVar_findName {width : Nat} [NeZero width] {C F : Type} {c : C → List (Nat × HolProg width) → Option (List (BitVec 8) × C)} {f : Spt Nat} {x : Nat} {y : BitVec 64} {z : StackSemStateFiniteExact width C F} :
     renameState c f (setFpVar x y z) = setFpVar x y (renameState c f z) := rfl
 
 /-- Exact HOL `domain_rename_state_code` (`stack_namesProofScript.sml:274-278`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "domain_rename_state_code"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem domain_renameState_code {width : Nat} [NeZero width] {C F : Type} {c : C → List (Nat × HolProg width) → Option (List (BitVec 8) × C)} {f : Spt Nat} {s : StackSemStateFiniteExact width C F} :
     sptDomain (renameState c f s).code = sptDomain s.code := by
   funext k
@@ -397,14 +350,10 @@ theorem domain_renameState_code {width : Nat} [NeZero width] {C F : Type} {c : C
 
 /-- Exact HOL `comp_STOP_Loop` (`stack_namesProofScript.sml:280-285`, `[local]`); HOL `STOP` is
 the identity (`stackSemScript.sml:663-664`), which the Lean program carrier does not render. -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "comp_STOP_Loop"
-  (words_as_type_indexed_bitvec)]
 theorem comp_STOP_Loop {width : Nat} [NeZero width] {f : Spt Nat} {c1 : HolProg width} :
     progCompHOL f (.loop c1) = .loop (progCompHOL f c1) := rfl
 
 /-- Exact HOL `get_labels_comp` (`stack_namesProofScript.sml:287-293`, `[local]`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "get_labels_comp"
-  (words_as_type_indexed_bitvec)]
 theorem getLabels_comp {width : Nat} [NeZero width] : ∀ (f : Spt Nat) (p : HolProg width),
     StackSem.getLabelsExact (progCompHOL f p) = StackSem.getLabelsExact p
   | f, .seq a b => by
@@ -463,8 +412,6 @@ theorem getLabels_comp {width : Nat} [NeZero width] : ∀ (f : Spt Nat) (p : Hol
   | f, .halt _ => by simp only [progCompHOL, StackSem.getLabelsExact]
 
 /-- Exact HOL `loc_check_rename_state` (`stack_namesProofScript.sml:295-302`, `[local]`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "loc_check_rename_state"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem locCheck_renameState {width : Nat} [NeZero width] {C F : Type} {c : C → List (Nat × HolProg width) → Option (List (BitVec 8) × C)} {f : Spt Nat} {s : StackSemStateFiniteExact width C F} {l1 l2 : Nat} :
     StackSem.locCheckExact (renameState c f s).code (l1, l2) =
       StackSem.locCheckExact s.code (l1, l2) := by
@@ -542,8 +489,8 @@ theorem renameState_withMemory' {width : Nat} [NeZero width] {C F : Type} {c : C
 end InstHelpers
 
 section InstRename
-open StackSemExpressions StackSemInst StackSemIntegerInstructions StackSemFpInstructions
-open StackSemFpRegisterInstructions Flapjack.Compiler.Encoders.Asm
+open StackSemExpressions StackSemInst StackSemIntegerInstructions
+open Flapjack.Compiler.Encoders.Asm
 
 
 theorem assign_renameState {width : Nat} [NeZero width] {C F : Type} {c : C → List (Nat × HolProg width) → Option (List (BitVec 8) × C)} {f : Spt Nat} (hf : Function.Bijective (findNameSpt f))
@@ -575,13 +522,11 @@ local macro "ir_tac" : tactic =>
       setFpVar_findName, renameState_withMemory']))
 
 /-- Exact HOL `inst_rename` (`stack_namesProofScript.sml:238-266`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_namesProofScript.sml" "inst_rename"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem instRename {width : Nat} [NeZero width] {C F : Type} {c : C → List (Nat × HolProg width) → Option (List (BitVec 8) × C)} {f : Spt Nat} {s : StackSemStateFiniteExact width C F} {i : HolInst width} :
     Function.Bijective (findNameSpt f) →
       instHOL (instFindNameHOL f i) (renameState c f s) = (instHOL i s).map (renameState c f) := by
   intro hf
-  rcases i with _ | ⟨r, w⟩ | ⟨a⟩ | ⟨m, r, ⟨a, w⟩⟩ | ⟨op⟩
+  rcases i with _ | ⟨r, w⟩ | ⟨a⟩ | ⟨m, r, ⟨a, w⟩⟩
   · rfl
   · simp only [instHOL, instInteger, instFindNameHOL, Option.join_some]
     exact assign_renameState hf s r (by simp only [wordExp])
@@ -596,10 +541,10 @@ theorem instRename {width : Nat} [NeZero width] {C F : Type} {c : C → List (Na
         | reg r3 =>
             simp only [instHOL, instInteger, instFindNameHOL, riFindNameHOL, Option.join_some]
             have hb : (findNameSpt f r3 == findNameSpt f r2) = (r3 == r2) := by
-              by_cases h : r3 = r2
-              · simp [h]
-              · simp [h, hf.1.ne h]
-            simp only [hb]
+              apply Bool.eq_iff_iff.mpr
+              rw [Nat.beq_eq_true_eq, Nat.beq_eq_true_eq]
+              exact hf.1.eq_iff
+            rw [hb]
             split
             · rw [lookup_renameState_findName hf]
               cases s.regs.lookup r2 with
@@ -645,9 +590,6 @@ theorem instRename {width : Nat} [NeZero width] {C F : Type} {c : C → List (Na
       wordExp_addr_renameState hf, getVar_findName hf, memLoad_renameState,
       renameState_memory, renameState_mdomain, renameState_be] <;> ir_tac
     all_goals try simp_all [memStore_renameState]
-  · cases op <;> simp only [instHOL, instFp, instFpRegister, instFindNameHOL, instFpSqrt,
-      instFpToInt, instFpFromInt, Option.join_some, getFpVar_renameState, getVar_findName hf] <;>
-      ir_tac
 
 end InstRename
 

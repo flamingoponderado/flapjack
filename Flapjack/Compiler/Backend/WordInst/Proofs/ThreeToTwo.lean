@@ -35,8 +35,6 @@ open WordSemStateFiniteExact Flapjack.Compiler.Encoders.Asm
 
 /-- Exact HOL local `locals_rel_cut_envs_local` (`word_instProofScript.sml:985-1004`),
     the same statement as wordProps `locals_rel_cut_envs`. -/
-@[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "locals_rel_cut_envs_local"
-  (words_as_type_indexed_bitvec)]
 theorem locals_rel_cut_envs_local {width : Nat} [NeZero width] (temp : Nat)
     (loc loc' : Spt (WordLocW width)) (names : WordLangCutsetsHOL)
     (x : Spt (WordLocW width) × Spt (WordLocW width)) :
@@ -48,8 +46,6 @@ theorem locals_rel_cut_envs_local {width : Nat} [NeZero width] (temp : Nat)
 set_option linter.unusedSimpArgs false in
 /-- Exact HOL `three_to_two_reg_Loop` (`word_instProofScript.sml:1144-1169`), by
     strong induction on the clock as HOL. -/
-@[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "three_to_two_reg_Loop"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem three_to_two_reg_Loop {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (s : WordSemStateFiniteExact width C F) (names : WordLangNumSetHOL)
       (prog : WordLangProgHOL (BitVec width)) (exit_names : WordLangNumSetHOL)
@@ -345,8 +341,6 @@ set_option linter.unusedSimpArgs false in
     `every_inst distinct_tar_reg prog ∧ evaluate (prog,s) = (res,s') ∧ res ≠ SOME Error
     ⇒ evaluate (three_to_two_reg prog,s) = (res,s')`, by recursion on the program
     (HOL `three_to_two_reg_ind`). -/
-@[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "three_to_two_reg_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem three_to_two_reg_correct {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (prog : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F)
       (res : Option (WordSemResult width)) (s' : WordSemStateFiniteExact width C F),
@@ -386,7 +380,6 @@ theorem three_to_two_reg_correct {width : Nat} [NeZero width] {C : Type} {F : Ty
       | skip => exact he
       | const r w => exact he
       | mem op r a => exact he
-      | fp f => exact he
   | .opCurrHeap bop r1 r2, s, res, s', ⟨_, he, herr⟩ => by
       have hoc := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.1
       rw [hoc] at he
@@ -500,8 +493,6 @@ decreasing_by
 
 /-- Exact HOL `evaluate_three_to_two_reg_prog` (`word_instProofScript.sml:1245-1254`);
     HOL's free variables are explicit binders. -/
-@[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "evaluate_three_to_two_reg_prog"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluate_three_to_two_reg_prog {width : Nat} [NeZero width] {C : Type} {F : Type}
     (prog : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F)
     (res : Option (WordSemResult width)) (s' : WordSemStateFiniteExact width C F) (t : Bool) :

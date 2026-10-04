@@ -20,10 +20,7 @@ relation are derived from the actual primitive; no target result, clock bound
 or postrelation is assumed. All integer/memory and sixteen FP constructors are
 covered. Native FP retains the inherited reals_as_rational_cuts external
 assumption; this transport proof does not establish HOL/Lean real equivalence. -/
-@[hol "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml" "evaluate_comp_Inst"
-  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateCompInst {width : Nat} [NeZero width] {C F : Type}
     (instruction : Compiler.Encoders.Asm.HolInst width) (info : Spt Nat)
     (source target resultState : StackSemStateFiniteExact width C F)

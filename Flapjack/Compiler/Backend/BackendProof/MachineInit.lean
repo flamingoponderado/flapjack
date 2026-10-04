@@ -23,8 +23,7 @@ the data endianness is the target's, the link register is distinct from the four
 pointer registers and not callee saved, and `asm_conf` is the target
 configuration. HOL's `EVERY` over `[2;3;4]` is a membership quantifier and its
 `case link_reg of NONE => 0 | SOME n => n` is kept as a match. -/
-@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "mc_init_ok_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def mcInitOk {width : Nat} [NeZero width] {state projection : Type}
     (asmConf : AsmConfigExact width) (c : Flapjack.Compiler.Backend.Backend.Config)
     (mc : MachineConfig width state projection) : Prop :=

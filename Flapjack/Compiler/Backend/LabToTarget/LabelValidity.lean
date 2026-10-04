@@ -17,8 +17,7 @@ private theorem selfRelated {width : Nat} [NeZero width]
   | nil => exact .nil
   | cons x xs ih => exact .cons (lineSimilar_refl x) ih
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "enc_sec_list_sec_labels_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem encSecList_secLabelsOk {width : Nat} [NeZero width]
     (enc : HolAsm width → List (BitVec 8)) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
@@ -29,8 +28,7 @@ theorem encSecList_secLabelsOk {width : Nat} [NeZero width]
   exact ⟨h, codeSimilar_sym _ _ ((codeSimilar_encSecList code code enc).mpr
     (codeSimilar_refl code))⟩
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "enc_lines_again_sec_labels_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem encLinesAgain_secLabelOk {width : Nat} [NeZero width]
     (labs : Spt (Spt Nat)) (ffis : List HolFfiName) (pos : Nat)
     (enc : HolAsm width → List (BitVec 8))
@@ -53,8 +51,7 @@ theorem encLinesAgain_secLabelOk {width : Nat} [NeZero width]
 /-- Source's unused k:beta is vacuous and omitted after full type review.
 The source binder named ffis actually carries the label map, and labs the FFI
 names; the argument positions and full operation are retained. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "enc_secs_again_sec_labels_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem encSecsAgain_secLabelsOk {width : Nat} [NeZero width]
     (pos : Nat) (labels : Spt (Spt Nat)) (ffis : List HolFfiName)
     (enc : HolAsm width → List (BitVec 8))
@@ -67,8 +64,7 @@ theorem encSecsAgain_secLabelsOk {width : Nat} [NeZero width]
   exact codeSimilar_secLabelsOk ls res
     ⟨h.2, encSecsAgain_implies_similar pos labels ffis enc ls res ok h.1⟩
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "lines_upd_lab_len_sec_label_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem linesUpdLabLen_secLabelOk {width : Nat} [NeZero width]
     (pos : Nat) (lines acc : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) (k : Nat) :
@@ -78,8 +74,7 @@ theorem linesUpdLabLen_secLabelOk {width : Nat} [NeZero width]
   fun_induction linesUpdLabLen pos lines acc <;>
     simp_all [secLabelOk]
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "upd_lab_len_sec_labels_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem updLabLen_secLabelsOk {width : Nat} [NeZero width]
     (n : Nat) (ls : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
@@ -97,8 +92,7 @@ theorem updLabLen_secLabelsOk {width : Nat} [NeZero width]
       ⟨hs, by simp⟩
     simpa [updLabLen, secLabelsOk] using And.intro hl hr
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "add_nop_sec_label_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem addNop_secLabelOk {width : Nat} [NeZero width]
     (nop : List (BitVec 8)) (aux : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) (k : Nat) :
@@ -108,8 +102,7 @@ theorem addNop_secLabelOk {width : Nat} [NeZero width]
   exact lineSimilar_secLabelOk k aux (addNop nop aux)
     ⟨h, lineSimilar_addNop aux aux nop (selfRelated _)⟩
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "pad_section_sec_label_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem padSection_secLabelOk {width : Nat} [NeZero width]
     (nop : List (BitVec 8)) (xs acc : List (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) (k : Nat) :
@@ -123,8 +116,7 @@ theorem padSection_secLabelOk {width : Nat} [NeZero width]
   simp only [List.mem_append, List.mem_reverse] at hm
   exact hm.elim (h.2 line) (h.1 line)
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "pad_code_sec_labels_ok"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem padCode_secLabelsOk {width : Nat} [NeZero width]
     (nop : List (BitVec 8)) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :

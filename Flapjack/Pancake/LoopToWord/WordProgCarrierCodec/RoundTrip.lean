@@ -40,7 +40,6 @@ theorem wordLangInstToHOL_of_fromHOL {width : Nat}
     (h : wordLangInstFromHOL a = some b) : wordLangInstToHOL b = some a := by
   cases a with
   | skip => simp [wordLangInstFromHOL] at h
-  | fp _ => simp [wordLangInstFromHOL] at h
   | const dest value =>
       simp [wordLangInstFromHOL] at h
       subst b

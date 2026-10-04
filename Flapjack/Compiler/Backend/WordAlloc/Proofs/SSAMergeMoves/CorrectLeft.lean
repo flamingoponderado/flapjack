@@ -20,9 +20,7 @@ five conclusions. Only the word dimension is shared between source and target;
 their code/FFI carriers remain independent. Guarded SOME lookups determine the
 selector payload. The evaluator inherits its rational-cut FP boundary, although
 this Move branch only reads and writes locals. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "merge_moves_correctL"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem mergeMovesCorrectL {width : Nat} [NeZero width]
     {C₁ F₁ C₂ F₂ : Type} (names : List Nat) (next : Nat)
     (left right : Spt Nat) (source : WordSemStateFiniteExact width C₁ F₁)

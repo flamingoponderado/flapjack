@@ -97,8 +97,7 @@ open Classical in
     does not use a real rendering itself and records the inherited
     `docs/SOUNDNESS.md` item 8 assumption in the theorem map.  Every other clause
     follows HOL clause by clause. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "evaluate_def" 1016
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def evaluate {width : Nat} [NeZero width] {C : Type} {F : Type}
     (p : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F) :
     Option (WordSemResult width) × WordSemStateFiniteExact width C F :=

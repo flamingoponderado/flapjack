@@ -18,8 +18,7 @@ domain/existence condition and actual makeInit buffer exclusion are proved.
 DROP entries come from the original extraction and accepted strict entry bound;
 canonical words cancel the initial PC with only the original size guard.
 No EL, default, target exclusion or additional successful search is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "IMP_state_rel_make_init" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem makeInit_stateRel_memorySeparationCases {width : Nat} [NeZero width] {S Q : Type} {F : Type}
     (mc : MachineConfig width S Q) (ms : S) (ffi : HolFfiState F)
     (code code2 : LabProgHOL width) (labs : Spt (Spt Nat))

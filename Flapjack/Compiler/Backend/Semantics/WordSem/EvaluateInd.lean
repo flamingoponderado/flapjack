@@ -199,8 +199,7 @@ end Ind
     `REWRITE_RULE [fix_clock_evaluate] evaluate_ind`): the 26 clause
     hypotheses of HOL's statement, in HOL order, imply `P` for every program
     and state. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "evaluate_ind" 1367
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_ind {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (P : WordLangProgHOL (BitVec width) → WordSemStateFiniteExact width C F → Prop),
       ((∀ s, P .skip s) ∧
@@ -298,8 +297,7 @@ open Classical in
     does not use a real rendering itself and records the inherited
     `docs/SOUNDNESS.md` item 8 assumption in the theorem map.  Every other
     conjunct follows HOL clause by clause. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "evaluate_def" 1369
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluate_def_rebound {width : Nat} [NeZero width] {C : Type} {F : Type} :
     (∀ (s : WordSemStateFiniteExact width C F), evaluate (.skip) s =
       (

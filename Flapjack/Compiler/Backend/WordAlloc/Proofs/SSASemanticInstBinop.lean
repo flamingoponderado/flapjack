@@ -24,9 +24,7 @@ proved using the original expression/setVar helpers. The literal compiler reads
 operands from the original SSA map before extending it. No target evaluation,
 success, post-state relation, or induction hypothesis is assumed. The native
 Inst/evaluator boundary inherits reals_as_rational_cuts (SOUNDNESS item 8). -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "ssa_cc_trans_correct"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem ssaCcTransCorrectInstBinop {width : Nat} [NeZero width] {C F : Type}
     (source target : WordSemStateFiniteExact width C F)
     (ssa : Spt Nat) (next dst src : Nat) (operator : BinOp)

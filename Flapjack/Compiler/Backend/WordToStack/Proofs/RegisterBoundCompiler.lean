@@ -14,8 +14,7 @@ compilation. All proper-subprogram hypotheses are discharged internally at the
 actual threaded bitmap states. The premises are exactly the source conventions,
 original minimum frame bound and false-performance guard; no target result or
 safety predicate is assumed. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
-  "word_to_stack_reg_bound" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordToStackRegBound {width : Nat} [NeZero width]
     (conf : AsmConfigExact width) (perf : Bool)
     (program : WordLangProgHOL (BitVec width))

@@ -59,8 +59,6 @@ asmStep/initial relation premise, and full existential/interference/assertion
 conclusion are retained. Actual native Next is derived from all four emitted
 bytes and literal Decode/Run, never supplied as a premise. The Imm operand case is
 riscv_encoder_correct_binopImmediate; riscv_encoder_correct_binop (Binop.lean) assembles both. Native state/Run inherits SOUNDNESS item8. -/
-@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml"
-  "riscv_encoder_correct"]
 theorem riscv_encoder_correct_binopRegister (op : HolBinop) (rd rs1 rs2 : Nat) (s1 s2 : AsmState 64) (ms : riscv_state)
     (h : asmStep riscvTarget.config s1 (.inst (.arith (.binop op rd rs1 (.reg rs2)))) s2 ∧
       targetStateRel riscvTarget s1 ms) :

@@ -8,8 +8,7 @@ open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString
 /-- Full original paired-extraction membership. Successful source fetch and
 memory-operation pair equality are retained, with the exact original exit-PC
 position expression and no assumption about the desired membership. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "MEM_get_shmem_info" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getShmemInfo_mem {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (validPos : Nat)
@@ -41,8 +40,7 @@ theorem getShmemInfo_mem {width : Nat} [NeZero width]
 
 /-- Full original paired output-length law: retains the source's sole complete
 encoding-validity guard and independent query/validity starts. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "get_shmem_info_EMPTY_LENGTH_EQ" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem getShmemInfo_emptyLengthEq {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (validPos : Nat)

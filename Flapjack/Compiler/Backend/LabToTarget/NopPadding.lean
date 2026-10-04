@@ -5,8 +5,7 @@ namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack.Compiler.Encoders.Asm Flapjack.Misc
 
 /-- The source's encoded-element carrier remains independent of its word dimension. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "enc_with_nop_pad_bytes_length"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem encWithNop_padBytes_length {width : Nat} [NeZero width] {Value : Type}
     (enc : HolAsm width → List Value) (x : HolAsm width) :
     encWithNop enc x (padBytes (enc x) (enc x).length (enc (.inst .skip))) := by
@@ -14,8 +13,7 @@ theorem encWithNop_padBytes_length {width : Nat} [NeZero width] {Value : Type}
   exact ⟨0, by simp [padBytes]⟩
 
 /-- All original NOP identity, bound, divisibility and positivity guards are retained. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "enc_with_nop_pad_bytes"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem encWithNop_padBytes {width : Nat} [NeZero width] {Value : Type}
     (nop : List Value) (enc : HolAsm width → List Value) (x : HolAsm width) (len : Nat) :
     nop = enc (.inst .skip) ∧ (enc x).length ≤ len ∧

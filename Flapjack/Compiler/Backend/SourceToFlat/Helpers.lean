@@ -24,14 +24,14 @@ open Flapjack.NamespaceHOL Flapjack.Basis.Pure.MlString Flapjack.AstHOL
 open Flapjack.Compiler.Backend.BackendCommon
 
 /-- Exact HOL `compile_var_def`. -/
-@[hol "cakeml/compiler/backend/source_to_flatScript.sml" "compile_var_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def compileVar (t : Tra) : VarName → FlatLang.Exp
   | .glob _ i => .app t (.globalVarLookup i) []
   | .localName _ s => .varLocal t s
 
 /-- Exact HOL `compile_pat_def`: `OPTION_JOIN (OPTION_MAP (nsLookup env.c) id)`
 is `Option.bind`, and the type annotation of `Ptannot` is dropped. -/
-@[hol "cakeml/compiler/backend/source_to_flatScript.sml" "compile_pat_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def compilePat (env : Environment) : AstHOL.Pat → FlatLang.Pat
   | .pvar v => .pvar v
   | .pany => .pany
@@ -50,7 +50,7 @@ def patTups (t : Tra) : List VarN → List (VarN × VarName)
       (x, .localName t' x) :: patTups t xs
 
 /-- Exact HOL `astOp_to_flatOp_def`. -/
-@[hol "cakeml/compiler/backend/source_to_flatScript.sml" "astOp_to_flatOp_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def astOpToFlatOp (op : AstHOL.Op) : FlatLang.Op :=
   match op with
   | .opderef => .el 0
@@ -97,7 +97,7 @@ def allocDefs {α : Type} : Nat → Nat → List α → List (α × VarName)
 
 /-- Exact HOL `make_varls_def`; the singleton clause precedes the general cons
 clause, as in HOL's clause order. -/
-@[hol "cakeml/compiler/backend/source_to_flatScript.sml" "make_varls_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def makeVarls : Nat → Tra → Nat → List VarN → FlatLang.Exp
   | _, _, _, [] => .con .none none []
   | _, _, idx, [x] => .app .none (.globalVarInit idx) [.varLocal .none x]
@@ -149,12 +149,12 @@ def allocTags {ModuleName Name Arg TypeIdent : Type} (tid : TypeIdent)
   (nsMap (fun tag => (tag, data)) conNs, cidSpt)
 
 /-- Exact HOL `env_id_tuple_def`; `&` is the `Nat`-to-`Int` injection. -/
-@[hol "cakeml/compiler/backend/source_to_flatScript.sml" "env_id_tuple_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def envIdTuple (gen id : Nat) : FlatLang.Exp :=
   .con .none none [.lit .none (.intLit (gen : Int)), .lit .none (.intLit (id : Int))]
 
 /-- Exact HOL `simple_dlet_def`. -/
-@[hol "cakeml/compiler/backend/source_to_flatScript.sml" "simple_dlet_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def simpleDlet (p : AstHOL.Pat) (e : AstHOL.Exp) : Option (VarN × Ident ModN VarN) :=
   match p with
   | .pvar pv =>

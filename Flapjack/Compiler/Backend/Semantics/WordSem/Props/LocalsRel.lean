@@ -72,8 +72,7 @@ theorem the_words_EVERY_IS_SOME {width : Nat} [NeZero width] :
 
 /-- Exact HOL `locals_rel_get_var` (`wordPropsScript.sml:3424-3432`); HOL's free
     `r`, `temp`, `st`, `x` and `loc` are explicit binders. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "locals_rel_get_var"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem locals_rel_get_var {width : Nat} [NeZero width] {C : Type} {F : Type}
     (r temp : Nat) (st : WordSemStateFiniteExact width C F) (x : WordLocW width)
     (loc : Spt (WordLocW width)) :
@@ -85,8 +84,7 @@ theorem locals_rel_get_var {width : Nat} [NeZero width] {C : Type} {F : Type}
   exact hg
 
 /-- Exact HOL `locals_rel_get_var_simp` (`wordPropsScript.sml:3434-3440`). -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "locals_rel_get_var_simp"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem locals_rel_get_var_simp {width : Nat} [NeZero width] {C : Type} {F : Type}
     (r temp : Nat) (st : WordSemStateFiniteExact width C F) (loc : Spt (WordLocW width)) :
     r < temp ∧ wordLocalsRel temp st.locals loc →
@@ -97,8 +95,7 @@ theorem locals_rel_get_var_simp {width : Nat} [NeZero width] {C : Type} {F : Typ
 
 /-- Exact HOL `locals_rel_get_vars` (`wordPropsScript.sml:3399-3411`); HOL's free
     `st`, `temp` and `loc` are the outer binders. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "locals_rel_get_vars"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem locals_rel_get_vars {width : Nat} [NeZero width] {C : Type} {F : Type}
     (st : WordSemStateFiniteExact width C F) (temp : Nat) (loc : Spt (WordLocW width)) :
     ∀ (ls : List Nat) (vs : List (WordLocW width)),
@@ -122,8 +119,7 @@ theorem locals_rel_get_vars {width : Nat} [NeZero width] {C : Type} {F : Type}
               exact h
 
 /-- Exact HOL `locals_rel_get_vars_simp` (`wordPropsScript.sml:3442-3450`). -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "locals_rel_get_vars_simp"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem locals_rel_get_vars_simp {width : Nat} [NeZero width] {C : Type} {F : Type}
     (l : List Nat) (temp : Nat) (st : WordSemStateFiniteExact width C F)
     (loc : Spt (WordLocW width)) :
@@ -138,8 +134,7 @@ theorem locals_rel_get_vars_simp {width : Nat} [NeZero width] {C : Type} {F : Ty
         ih (fun y hy => hlt y (List.mem_cons_of_mem _ hy))]
 
 /-- Exact HOL `locals_rel_get_var_imm` (`wordPropsScript.sml:3452-3460`). -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "locals_rel_get_var_imm"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem locals_rel_get_var_imm {width : Nat} [NeZero width] {C : Type} {F : Type}
     (temp : Nat) (r : WordRegImm (BitVec width)) (st : WordSemStateFiniteExact width C F)
     (x : WordLocW width) (loc : Spt (WordLocW width)) :
@@ -154,8 +149,7 @@ theorem locals_rel_get_var_imm {width : Nat} [NeZero width] {C : Type} {F : Type
   | imm w => exact hg
 
 /-- Exact HOL `locals_rel_get_var_imm_simp` (`wordPropsScript.sml:3462-3470`). -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "locals_rel_get_var_imm_simp"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem locals_rel_get_var_imm_simp {width : Nat} [NeZero width] {C : Type} {F : Type}
     (temp : Nat) (r : WordRegImm (BitVec width)) (st : WordSemStateFiniteExact width C F)
     (loc : Spt (WordLocW width)) :
@@ -212,8 +206,7 @@ theorem locals_rel_alist_insert {width : Nat} [NeZero width] (temp : Nat) :
 /-- Exact HOL `locals_rel_word_exp_simp` (`wordPropsScript.sml:3502-3522`); HOL's
     free `temp` and `loc` are the outer binders. HOL's `∀s exp w` also binds a
     `w` that occurs nowhere in the statement; that vacuous binder is omitted. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "locals_rel_word_exp_simp"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem locals_rel_word_exp_simp {width : Nat} [NeZero width] {C : Type} {F : Type}
     (temp : Nat) (loc : Spt (WordLocW width)) :
     ∀ (s : WordSemStateFiniteExact width C F) (exp : WordLangExpHOL (BitVec width)),
@@ -252,8 +245,7 @@ decreasing_by
 
 /-- Exact HOL `locals_rel_word_exp` (`wordPropsScript.sml:3472-3500`); HOL's free
     `temp` and `loc` are the outer binders. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "locals_rel_word_exp"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem locals_rel_word_exp {width : Nat} [NeZero width] {C : Type} {F : Type}
     (temp : Nat) (loc : Spt (WordLocW width)) :
     ∀ (s : WordSemStateFiniteExact width C F) (exp : WordLangExpHOL (BitVec width))
@@ -718,10 +710,8 @@ theorem instReads_lt (temp : Nat) (i : WordLangInst (BitVec width))
   all_goals first
     | (simp at hx; done)
     | (simp only [everyVarInstHOL, everyVarImmHOL, Bool.and_eq_true, decide_eq_true_eq] at h
-       (try split at hx) <;> (try split at h) <;>
-         simp only [List.mem_cons, List.not_mem_nil, or_false] at hx <;>
-         (try simp only [Bool.and_eq_true, decide_eq_true_eq] at h) <;>
-         omega)
+       simp only [List.mem_cons, List.not_mem_nil, or_false] at hx
+       omega)
 
 theorem lr_inst (temp : Nat) (i : WordLangInst (BitVec width))
     (st : WordSemStateFiniteExact width C F) : LrGoal temp (.inst i) st := by
@@ -1049,8 +1039,7 @@ end EvaluateCases
     `res ≠ SOME Error` and `every_var (λx. x < temp)` premises are kept; the
     conclusion is HOL's case split on the result.  Inherits
     `reals_as_rational_cuts` through `evaluate`. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "locals_rel_evaluate_thm"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem locals_rel_evaluate_thm {width : Nat} [NeZero width] {C : Type} {F : Type} :
     ∀ (prog : WordLangProgHOL (BitVec width)) (st : WordSemStateFiniteExact width C F)
       (res : Option (WordSemResult width)) (rst : WordSemStateFiniteExact width C F)

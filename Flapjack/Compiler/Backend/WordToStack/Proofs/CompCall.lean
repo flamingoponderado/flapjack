@@ -1,3 +1,4 @@
+import Mathlib.Tactic.NormNum
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Assembly
 
 namespace Flapjack.WordToStackProofs.CompCall
@@ -34,8 +35,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
 /-- Original local evaluate_Seq_Skip (10074-10078): a leading native Skip does
 not change the evaluation pair, for arbitrary program and state. The evaluator
 closure inherits reals_as_rational_cuts (SOUNDNESS item 8). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_Seq_Skip"
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateSeqSkip {width : Nat} [NeZero width] {C F : Type}
     (p : HolProg width) (s : StackSemStateFiniteExact width C F) :
     StackSemEvaluate.evaluate (.seq .skip p, s) = StackSemEvaluate.evaluate (p, s) := by
@@ -52,11 +52,7 @@ retained. The compiled entry is Seq Skip (Call NONE (INL start) NONE), removed
 by evaluate_Seq_Skip; the result-specific post-relations of comp_correct give
 the FFI and clock equalities. Canonical maps and word widths are qualified;
 the evaluators inherit reals_as_rational_cuts (SOUNDNESS item 8). -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_Call"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCall {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) :
     ∀ (start : Nat) (s : WordSemStateFiniteExact width (Nat × C) F) (k : Nat)

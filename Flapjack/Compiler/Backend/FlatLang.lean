@@ -26,7 +26,7 @@ open Flapjack.Compiler.Backend.BackendCommon
 
 /-- Complete original flatLang `op`: source operators via `src`, then the seven
 flatLang-specific operators in source order. -/
-@[hol "cakeml/compiler/backend/flatLangScript.sml" "op"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 inductive Op where
   | src : AstHOL.Op → Op
   | globalVarAlloc : Nat → Op
@@ -53,7 +53,7 @@ abbrev TypeId := Option Nat
 abbrev TypeGroupId := Option (Nat × List (CtorId × Nat))
 
 /-- Complete original flatLang `pat`. -/
-@[hol "cakeml/compiler/backend/flatLangScript.sml" "pat"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 inductive Pat where
   | pany
   | pvar : VarN → Pat
@@ -64,7 +64,7 @@ inductive Pat where
 
 mutual
 /-- Exact HOL `pat_bindings_def` (the `pat_bindings` clauses). -/
-@[hol "cakeml/compiler/backend/flatLangScript.sml" "pat_bindings_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def patBindings : Pat → List VarN
   | .pany => []
   | .pvar n => [n]
@@ -75,14 +75,14 @@ def patBindings : Pat → List VarN
 
 /-- Exact HOL `pat_bindings_def` (the mutual `pats_bindings` clauses); note
 that the tail's bindings precede the head's, as in the source. -/
-@[hol "cakeml/compiler/backend/flatLangScript.sml" "pat_bindings_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def patsBindings : List Pat → List VarN
   | [] => []
   | p :: ps => patsBindings ps ++ patBindings p
 end
 
 /-- Complete original flatLang `exp`. -/
-@[hol "cakeml/compiler/backend/flatLangScript.sml" "exp"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 inductive Exp where
   | raise : Tra → Exp → Exp
   | handle : Tra → Exp → List (Pat × Exp) → Exp
@@ -101,13 +101,13 @@ inductive Exp where
 def boolId : Nat := 0
 
 /-- Exact HOL `Bool_def`. -/
-@[hol "cakeml/compiler/backend/flatLangScript.sml" "Bool_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def mkBool (t : Tra) (b : Bool) : Exp :=
   .con t (some (boolToTag b, some boolId)) []
 
 /-- Exact HOL `SmartIf_def`; the source `case` has a single specific pattern
 and a catch-all, rendered as the same two-way match. -/
-@[hol "cakeml/compiler/backend/flatLangScript.sml" "SmartIf_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def smartIf (t : Tra) (e p q : Exp) : Exp :=
   match e with
   | .con _ (some (tag, some id)) [] =>

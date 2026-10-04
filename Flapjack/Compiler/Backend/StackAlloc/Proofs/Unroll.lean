@@ -110,8 +110,7 @@ theorem drop_succ_of_drop_eq_cons {α : Type} {l ys : List α} {y : α} {k : Nat
   rw [← List.drop_drop, h]; rfl
 
 /-- Exact HOL `word_gc_move_bitmap_unroll` (`stack_allocProofScript.sml:823-873`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "word_gc_move_bitmap_unroll"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordGcMoveBitmap_unroll {descWidth : Nat} {width : Nat} [NeZero descWidth]
     [NeZero width] {conf : Config} {w : BitVec descWidth} {stack : List (WordLocW width)}
     {i1 pa1 curr : BitVec width} {m : BitVec width → WordLocW width} {dm : BitVec width → Bool} :
@@ -169,8 +168,7 @@ theorem wordGcMoveBitmap_unroll {descWidth : Nat} {width : Nat} [NeZero descWidt
           rcases mapBitmap (getBits (w >>> (1 : Nat))) wl xs with _ | ⟨a, b, c⟩ <;> rfl
 
 /-- Exact HOL `word_gen_gc_move_bitmap_unroll` (`stack_allocProofScript.sml:2414-2467`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml"
-  "word_gen_gc_move_bitmap_unroll" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordGenGcMoveBitmap_unroll {descWidth : Nat} {width : Nat} [NeZero descWidth]
     [NeZero width] {conf : Config} {w : BitVec descWidth} {stack : List (WordLocW width)}
     {i1 pa1 ib1 pb1 curr : BitVec width} {m : BitVec width → WordLocW width}
@@ -234,8 +232,7 @@ theorem wordGenGcMoveBitmap_unroll {descWidth : Nat} {width : Nat} [NeZero descW
           rcases mapBitmap (getBits (w >>> (1 : Nat))) wl xs with _ | ⟨a, b, c⟩ <;> rfl
 
 /-- Exact HOL `word_gen_gc_partial_move_bitmap_unroll` (`stack_allocProofScript.sml:2469-2524`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml"
-  "word_gen_gc_partial_move_bitmap_unroll" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordGenGcPartialMoveBitmap_unroll {descWidth : Nat} {width : Nat} [NeZero descWidth]
     [NeZero width] {conf : Config} {w : BitVec descWidth} {stack : List (WordLocW width)}
     {i1 pa1 curr : BitVec width} {m : BitVec width → WordLocW width}
@@ -300,8 +297,7 @@ theorem wordGenGcPartialMoveBitmap_unroll {descWidth : Nat} {width : Nat} [NeZer
           rcases mapBitmap (getBits (w >>> (1 : Nat))) wl xs with _ | ⟨a, b, c⟩ <;> rfl
 
 /-- Exact HOL `word_gc_move_bitmaps_unroll` (`stack_allocProofScript.sml:746-821`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "word_gc_move_bitmaps_unroll"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordGcMoveBitmaps_unroll {descWidth : Nat} {width : Nat} {bitmapWidth : Nat}
     [NeZero descWidth] [NeZero width] [NeZero bitmapWidth] {conf : Config}
     {w : BitVec descWidth} {stack : List (WordLocW width)} {bitmaps : List (BitVec bitmapWidth)}
@@ -404,9 +400,7 @@ theorem wordGcMoveBitmaps_unroll {descWidth : Nat} {width : Nat} {bitmapWidth : 
           _ | ⟨a, b, c⟩ <;> rfl
 
 /-- Exact HOL `word_gen_gc_move_bitmaps_unroll` (`stack_allocProofScript.sml:2257-2332`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml"
-  "word_gen_gc_move_bitmaps_unroll"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordGenGcMoveBitmaps_unroll {descWidth : Nat} {width : Nat} {bitmapWidth : Nat}
     [NeZero descWidth] [NeZero width] [NeZero bitmapWidth] {conf : Config}
     {w : BitVec descWidth} {stack : List (WordLocW width)} {bitmaps : List (BitVec bitmapWidth)}
@@ -509,8 +503,7 @@ theorem wordGenGcMoveBitmaps_unroll {descWidth : Nat} {width : Nat} {bitmapWidth
           _ | ⟨a, b, c⟩ <;> rfl
 
 /-- Exact HOL `word_gen_gc_partial_move_bitmaps_unroll` (`stack_allocProofScript.sml:2334-2412`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml"
-  "word_gen_gc_partial_move_bitmaps_unroll" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordGenGcPartialMoveBitmaps_unroll {descWidth : Nat} {width : Nat} {bitmapWidth : Nat}
     [NeZero descWidth] [NeZero width] [NeZero bitmapWidth] {conf : Config}
     {w : BitVec descWidth} {stack : List (WordLocW width)} {bitmaps : List (BitVec bitmapWidth)}
@@ -653,8 +646,7 @@ theorem decStack_cons_ne {bitmapWidth : Nat} {width : Nat} [NeZero bitmapWidth] 
       rcases decStack bitmaps rr rem <;> rfl
 
 /-- Exact HOL `word_gc_move_roots_bitmaps` (`stack_allocProofScript.sml:656-704`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "word_gc_move_roots_bitmaps"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordGcMoveRootsBitmaps_unroll {width : Nat} {bitmapWidth : Nat} [NeZero width]
     [NeZero bitmapWidth] {conf : Config} {bitmaps : List (BitVec bitmapWidth)}
     {curr : BitVec width} {dm : BitVec width → Bool} :
@@ -732,9 +724,7 @@ theorem wordGcMoveRootsBitmaps_unroll {width : Nat} {bitmapWidth : Nat} [NeZero 
     simp [wordGcMoveRootsBitmaps, henc, hroots, hdec, he, hR2, hd2]
 
 /-- Exact HOL `word_gen_gc_move_roots_bitmaps` (`stack_allocProofScript.sml:2091-2142`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml"
-  "word_gen_gc_move_roots_bitmaps"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordGenGcMoveRootsBitmaps_unroll {width : Nat} {bitmapWidth : Nat} [NeZero width]
     [NeZero bitmapWidth] {conf : Config} {bitmaps : List (BitVec bitmapWidth)}
     {curr : BitVec width} {dm : BitVec width → Bool} {ib1 pb1 ib2 pb2 : BitVec width} :
@@ -812,9 +802,7 @@ theorem wordGenGcMoveRootsBitmaps_unroll {width : Nat} {bitmapWidth : Nat} [NeZe
     simp [wordGenGcMoveRootsBitmaps, henc, hroots, hdec, he, hR2, hd2]
 
 /-- Exact HOL `word_gen_gc_partial_move_roots_bitmaps` (`stack_allocProofScript.sml:2144-2197`). -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml"
-  "word_gen_gc_partial_move_roots_bitmaps"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wordGenGcPartialMoveRootsBitmaps_unroll {width : Nat} {bitmapWidth : Nat} [NeZero width]
     [NeZero bitmapWidth] {conf : Config} {bitmaps : List (BitVec bitmapWidth)}
     {curr : BitVec width} {dm : BitVec width → Bool} {gs rs : BitVec width} :

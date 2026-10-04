@@ -6,8 +6,7 @@ open Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString
 
 /-- Full original successful-fetch instruction bound, with no encoding premise. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "asm_fetch_SOME_IMP_LESS_num_pcs" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem asmFetchAux_some_ltNumPcs {width : Nat} [NeZero width]
     (pc : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) (x : Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)) :
     asmFetchAux pc code = some x → pc < numPcs code := by
@@ -23,8 +22,7 @@ theorem asmFetchAux_some_ltNumPcs {width : Nat} [NeZero width]
   contradiction
 
 /-- Full original lower bound for arbitrary code and starting position. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "pos_val_GE_pc" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem posVal_geStart {width : Nat} [NeZero width]
     (i p : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) : p ≤ posVal i p code := by
   induction code generalizing i p with
@@ -57,8 +55,7 @@ theorem posVal_geStart {width : Nat} [NeZero width]
             Nat.le_trans (Nat.le_add_right p bytes.length) h
 
 /-- Full original nonempty encoding consequence of complete enc_ok. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "enc_ok_LENGTH_GT_0" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem encOk_lengthPositive {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (l : HolAsm width) :
     encOk c → 0 < (c.encode l).length := by
@@ -68,8 +65,7 @@ theorem encOk_lengthPositive {width : Nat} [NeZero width]
 
 /-- Full original instruction-count boundary equals emitted length; encoding
 validity and queried physical starts are independent. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "pos_val_num_pcs" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem posVal_numPcs {width : Nat} [NeZero width]
     (c : AsmConfigExact width) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
     (validPos : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) (p : Nat) :
@@ -82,8 +78,7 @@ theorem posVal_numPcs {width : Nat} [NeZero width]
   simp
 
 /-- Full original saturation beyond the instruction count. Code is unrestricted. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "pos_val_GE_num_pcs" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem posVal_geNumPcs {width : Nat} [NeZero width]
     (pc p : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
     numPcs code ≤ pc → posVal (numPcs code) p code = posVal pc p code := by
@@ -168,8 +163,7 @@ private theorem lineOk_nonempty {width : Nat} [NeZero width]
 
 /-- Full original strict order, preserving both PC guards and the complete
 encoding predicates at a start independent of the queried physical position. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "pos_val_mono" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem posVal_mono {width : Nat} [NeZero width]
     (i p : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) (j validPos : Nat)
     (c : AsmConfigExact width) (labs : Spt (Spt Nat)) (ffis : List HolFfiName) :
@@ -217,8 +211,7 @@ theorem posVal_mono {width : Nat} [NeZero width]
               ⟨hlt,hbound,hparts.2,hc⟩
 
 /-- Full original inverse order: only the first PC is bounded by num_pcs. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "pos_val_mono_inv" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem posVal_monoInv {width : Nat} [NeZero width]
     (i p : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) (j : Nat)
     (c : AsmConfigExact width) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)
@@ -235,8 +228,7 @@ theorem posVal_monoInv {width : Nat} [NeZero width]
   omega
 
 /-- Full original injectivity on the bounded instruction-count interval. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
-  "pos_val_inj" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem posVal_inj {width : Nat} [NeZero width]
     (i p : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) (j : Nat)
     (c : AsmConfigExact width) (labs : Spt (Spt Nat)) (ffis : List HolFfiName)

@@ -207,224 +207,70 @@ example (conf : AsmConfigExact 64) :
   exact ⟨rfl, rfl, True.intro⟩
 
 -- ci_fpless
-example (conf : AsmConfigExact 64) :
-    let p : WordLangProgHOL (BitVec 64) := .inst (.fp (.fpLess 999 3 5));
-    let bs : AppList (BitVec 64) × Nat := (.list [4, 7], 17);
-    noShareInstSubprogsHOL p = true ∧
-      noShmemop (compNative conf false p bs (0,0,0)).1 = true ∧
-      (compNative conf false p bs (0,0,0)).2 = bs := by
-  simp only [compNative]
-  exact ⟨rfl, rfl, True.intro⟩
+
 
 -- ci_fplessequal
-example (conf : AsmConfigExact 64) :
-    let p : WordLangProgHOL (BitVec 64) := .inst (.fp (.fpLessEqual 999 3 5));
-    let bs : AppList (BitVec 64) × Nat := (.list [4, 7], 17);
-    noShareInstSubprogsHOL p = true ∧
-      noShmemop (compNative conf true p bs (2,7,9)).1 = true ∧
-      (compNative conf true p bs (2,7,9)).2 = bs := by
-  simp only [compNative]
-  exact ⟨rfl, rfl, True.intro⟩
+
 
 -- ci_fpequal
-example (conf : AsmConfigExact 64) :
-    let p : WordLangProgHOL (BitVec 64) := .inst (.fp (.fpEqual 999 3 5));
-    let bs : AppList (BitVec 64) × Nat := (.list [4, 7], 17);
-    noShareInstSubprogsHOL p = true ∧
-      noShmemop (compNative conf false p bs (0,0,0)).1 = true ∧
-      (compNative conf false p bs (0,0,0)).2 = bs := by
-  simp only [compNative]
-  exact ⟨rfl, rfl, True.intro⟩
+
 
 -- ci_fpabs
-example (conf : AsmConfigExact 64) :
-    let p : WordLangProgHOL (BitVec 64) := .inst (.fp (.fpAbs 999 3));
-    let bs : AppList (BitVec 64) × Nat := (.list [4, 7], 17);
-    noShareInstSubprogsHOL p = true ∧
-      noShmemop (compNative conf true p bs (2,7,9)).1 = true ∧
-      (compNative conf true p bs (2,7,9)).2 = bs := by
-  simp only [compNative]
-  exact ⟨rfl, rfl, True.intro⟩
+
 
 -- ci_fpneg
-example (conf : AsmConfigExact 64) :
-    let p : WordLangProgHOL (BitVec 64) := .inst (.fp (.fpNeg 999 3));
-    let bs : AppList (BitVec 64) × Nat := (.list [4, 7], 17);
-    noShareInstSubprogsHOL p = true ∧
-      noShmemop (compNative conf false p bs (0,0,0)).1 = true ∧
-      (compNative conf false p bs (0,0,0)).2 = bs := by
-  simp only [compNative]
-  exact ⟨rfl, rfl, True.intro⟩
+
 
 -- ci_fpsqrt
-example (conf : AsmConfigExact 64) :
-    let p : WordLangProgHOL (BitVec 64) := .inst (.fp (.fpSqrt 999 3));
-    let bs : AppList (BitVec 64) × Nat := (.list [4, 7], 17);
-    noShareInstSubprogsHOL p = true ∧
-      noShmemop (compNative conf true p bs (2,7,9)).1 = true ∧
-      (compNative conf true p bs (2,7,9)).2 = bs := by
-  simp only [compNative]
-  exact ⟨rfl, rfl, True.intro⟩
+
 
 -- ci_fpadd
-example (conf : AsmConfigExact 64) :
-    let p : WordLangProgHOL (BitVec 64) := .inst (.fp (.fpAdd 999 3 5));
-    let bs : AppList (BitVec 64) × Nat := (.list [4, 7], 17);
-    noShareInstSubprogsHOL p = true ∧
-      noShmemop (compNative conf false p bs (0,0,0)).1 = true ∧
-      (compNative conf false p bs (0,0,0)).2 = bs := by
-  simp only [compNative]
-  exact ⟨rfl, rfl, True.intro⟩
+
 
 -- ci_fpsub
-example (conf : AsmConfigExact 64) :
-    let p : WordLangProgHOL (BitVec 64) := .inst (.fp (.fpSub 999 3 5));
-    let bs : AppList (BitVec 64) × Nat := (.list [4, 7], 17);
-    noShareInstSubprogsHOL p = true ∧
-      noShmemop (compNative conf true p bs (2,7,9)).1 = true ∧
-      (compNative conf true p bs (2,7,9)).2 = bs := by
-  simp only [compNative]
-  exact ⟨rfl, rfl, True.intro⟩
+
 
 -- ci_fpmul
-example (conf : AsmConfigExact 64) :
-    let p : WordLangProgHOL (BitVec 64) := .inst (.fp (.fpMul 999 3 5));
-    let bs : AppList (BitVec 64) × Nat := (.list [4, 7], 17);
-    noShareInstSubprogsHOL p = true ∧
-      noShmemop (compNative conf false p bs (0,0,0)).1 = true ∧
-      (compNative conf false p bs (0,0,0)).2 = bs := by
-  simp only [compNative]
-  exact ⟨rfl, rfl, True.intro⟩
+
 
 -- ci_fpdiv
-example (conf : AsmConfigExact 64) :
-    let p : WordLangProgHOL (BitVec 64) := .inst (.fp (.fpDiv 999 3 5));
-    let bs : AppList (BitVec 64) × Nat := (.list [4, 7], 17);
-    noShareInstSubprogsHOL p = true ∧
-      noShmemop (compNative conf true p bs (2,7,9)).1 = true ∧
-      (compNative conf true p bs (2,7,9)).2 = bs := by
-  simp only [compNative]
-  exact ⟨rfl, rfl, True.intro⟩
+
 
 -- ci_fpfma
-example (conf : AsmConfigExact 64) :
-    let p : WordLangProgHOL (BitVec 64) := .inst (.fp (.fpFma 999 3 5));
-    let bs : AppList (BitVec 64) × Nat := (.list [4, 7], 17);
-    noShareInstSubprogsHOL p = true ∧
-      noShmemop (compNative conf false p bs (0,0,0)).1 = true ∧
-      (compNative conf false p bs (0,0,0)).2 = bs := by
-  simp only [compNative]
-  exact ⟨rfl, rfl, True.intro⟩
+
 
 -- ci_fpmov
-example (conf : AsmConfigExact 64) :
-    let p : WordLangProgHOL (BitVec 64) := .inst (.fp (.fpMov 999 3));
-    let bs : AppList (BitVec 64) × Nat := (.list [4, 7], 17);
-    noShareInstSubprogsHOL p = true ∧
-      noShmemop (compNative conf true p bs (2,7,9)).1 = true ∧
-      (compNative conf true p bs (2,7,9)).2 = bs := by
-  simp only [compNative]
-  exact ⟨rfl, rfl, True.intro⟩
+
 
 -- ci_fpmovtoreg
-example (conf : AsmConfigExact 64) :
-    let p : WordLangProgHOL (BitVec 64) := .inst (.fp (.fpMovToReg 999 3 5));
-    let bs : AppList (BitVec 64) × Nat := (.list [4, 7], 17);
-    noShareInstSubprogsHOL p = true ∧
-      noShmemop (compNative conf false p bs (0,0,0)).1 = true ∧
-      (compNative conf false p bs (0,0,0)).2 = bs := by
-  simp only [compNative]
-  exact ⟨rfl, rfl, True.intro⟩
+
 
 -- ci_fpmovfromreg
-example (conf : AsmConfigExact 64) :
-    let p : WordLangProgHOL (BitVec 64) := .inst (.fp (.fpMovFromReg 999 3 5));
-    let bs : AppList (BitVec 64) × Nat := (.list [4, 7], 17);
-    noShareInstSubprogsHOL p = true ∧
-      noShmemop (compNative conf true p bs (2,7,9)).1 = true ∧
-      (compNative conf true p bs (2,7,9)).2 = bs := by
-  simp only [compNative]
-  exact ⟨rfl, rfl, True.intro⟩
+
 
 -- ci_fptoint
-example (conf : AsmConfigExact 64) :
-    let p : WordLangProgHOL (BitVec 64) := .inst (.fp (.fpToInt 999 3));
-    let bs : AppList (BitVec 64) × Nat := (.list [4, 7], 17);
-    noShareInstSubprogsHOL p = true ∧
-      noShmemop (compNative conf false p bs (0,0,0)).1 = true ∧
-      (compNative conf false p bs (0,0,0)).2 = bs := by
-  simp only [compNative]
-  exact ⟨rfl, rfl, True.intro⟩
+
 
 -- ci_fpfromint
-example (conf : AsmConfigExact 64) :
-    let p : WordLangProgHOL (BitVec 64) := .inst (.fp (.fpFromInt 999 3));
-    let bs : AppList (BitVec 64) × Nat := (.list [4, 7], 17);
-    noShareInstSubprogsHOL p = true ∧
-      noShmemop (compNative conf true p bs (2,7,9)).1 = true ∧
-      (compNative conf true p bs (2,7,9)).2 = bs := by
-  simp only [compNative]
-  exact ⟨rfl, rfl, True.intro⟩
+
 
 -- ci_fpmovtoreg1
-example (conf : AsmConfigExact 1) :
-    let p : WordLangProgHOL (BitVec 1) := .inst (.fp (.fpMovToReg 999 3 5));
-    let bs : AppList (BitVec 1) × Nat := (.list [4, 7], 17);
-    noShareInstSubprogsHOL p = true ∧
-      noShmemop (compNative conf false p bs (0,0,0)).1 = true ∧
-      (compNative conf false p bs (0,0,0)).2 = bs := by
-  simp only [compNative]
-  exact ⟨rfl, rfl, True.intro⟩
+
 
 -- ci_fpmovfromreg1
-example (conf : AsmConfigExact 1) :
-    let p : WordLangProgHOL (BitVec 1) := .inst (.fp (.fpMovFromReg 999 3 5));
-    let bs : AppList (BitVec 1) × Nat := (.list [4, 7], 17);
-    noShareInstSubprogsHOL p = true ∧
-      noShmemop (compNative conf true p bs (2,7,9)).1 = true ∧
-      (compNative conf true p bs (2,7,9)).2 = bs := by
-  simp only [compNative]
-  exact ⟨rfl, rfl, True.intro⟩
+
 
 -- ci_fpmovtoreg32
-example (conf : AsmConfigExact 32) :
-    let p : WordLangProgHOL (BitVec 32) := .inst (.fp (.fpMovToReg 999 3 5));
-    let bs : AppList (BitVec 32) × Nat := (.list [4, 7], 17);
-    noShareInstSubprogsHOL p = true ∧
-      noShmemop (compNative conf false p bs (0,0,0)).1 = true ∧
-      (compNative conf false p bs (0,0,0)).2 = bs := by
-  simp only [compNative]
-  exact ⟨rfl, rfl, True.intro⟩
+
 
 -- ci_fpmovfromreg32
-example (conf : AsmConfigExact 32) :
-    let p : WordLangProgHOL (BitVec 32) := .inst (.fp (.fpMovFromReg 999 3 5));
-    let bs : AppList (BitVec 32) × Nat := (.list [4, 7], 17);
-    noShareInstSubprogsHOL p = true ∧
-      noShmemop (compNative conf true p bs (2,7,9)).1 = true ∧
-      (compNative conf true p bs (2,7,9)).2 = bs := by
-  simp only [compNative]
-  exact ⟨rfl, rfl, True.intro⟩
+
 
 -- ci_fpmovtoreg80
-example (conf : AsmConfigExact 80) :
-    let p : WordLangProgHOL (BitVec 80) := .inst (.fp (.fpMovToReg 999 3 5));
-    let bs : AppList (BitVec 80) × Nat := (.list [4, 7], 17);
-    noShareInstSubprogsHOL p = true ∧
-      noShmemop (compNative conf false p bs (0,0,0)).1 = true ∧
-      (compNative conf false p bs (0,0,0)).2 = bs := by
-  simp only [compNative]
-  exact ⟨rfl, rfl, True.intro⟩
+
 
 -- ci_fpmovfromreg80
-example (conf : AsmConfigExact 80) :
-    let p : WordLangProgHOL (BitVec 80) := .inst (.fp (.fpMovFromReg 999 3 5));
-    let bs : AppList (BitVec 80) × Nat := (.list [4, 7], 17);
-    noShareInstSubprogsHOL p = true ∧
-      noShmemop (compNative conf true p bs (2,7,9)).1 = true ∧
-      (compNative conf true p bs (2,7,9)).2 = bs := by
-  simp only [compNative]
-  exact ⟨rfl, rfl, True.intro⟩
+
 
 example {width : Nat} [NeZero width] (conf : AsmConfigExact width)
     (perf : Bool) (i : WordLangInst (BitVec width))

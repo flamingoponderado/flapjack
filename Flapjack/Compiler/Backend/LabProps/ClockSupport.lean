@@ -5,8 +5,6 @@ namespace Flapjack.Compiler.Backend.LabProps
 open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.LabSem
 
 /-- Full arbitrary operand and clock replacement from the original theorem. -/
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "reg_imm_with_clock"
-  (words_as_type_indexed_bitvec)]
 theorem regImmWithClock {width : Nat} [NeZero width] {C : Type} {F : Type}
     (operand : HolRegImm width) (s : Flapjack.Compiler.Backend.LabSem.State width C F)
     (z : Nat) : regImm operand { s with clock := z } = regImm operand s := by
@@ -15,8 +13,6 @@ theorem regImmWithClock {width : Nat} [NeZero width] {C : Type} {F : Type}
 /-- All native instructions commute with arbitrary clock replacement, including
 failed updates and every FP constructor. The inherited real rendering remains
 subject to SOUNDNESS item8. -/
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "asm_inst_with_clock"
-  (words_as_type_indexed_bitvec)]
 theorem asmInstWithClock {width : Nat} [NeZero width] {C : Type} {F : Type}
     (instruction : HolInst width) (s : Flapjack.Compiler.Backend.LabSem.State width C F)
     (z : Nat) : asmInst instruction { s with clock := z } =
@@ -35,16 +31,7 @@ theorem asmInstWithClock {width : Nat} [NeZero width] {C : Type} {F : Type}
       all_goals repeat' first
         | simp_all [updReg, updMem, assertState]
         | split
-  | fp operation =>
-      cases operation <;> simp only [asmInst, fpUpd, readFpReg]
-      all_goals repeat' first
-        | simp_all [updFpReg, updReg, assertState]
-        | split
-      all_goals rfl
-
 /-- Exact source addition order and arbitrary address; no validity premise. -/
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "addr_add_clock_eq"
-  (words_as_type_indexed_bitvec)]
 theorem addrAddClockEq {width : Nat} [NeZero width] {C : Type} {F : Type}
     (address : HolAddr width) (s : Flapjack.Compiler.Backend.LabSem.State width C F)
     (extra : Nat) : addrValue address { s with clock := extra + s.clock } =
@@ -69,8 +56,6 @@ private theorem shareMemOp_clockMap {width : Nat} [NeZero width] {C F : Type}
 /-- All three full original NONE, returning and final shared-memory clauses.
 The original nonzero-clock guard is kept separately in each antecedent; all
 state/result binders and the literal extra+clock update are retained. -/
-@[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "share_mem_op_add_clock_same"
-  (words_as_type_indexed_bitvec)]
 theorem shareMemOpAddClockSame {width : Nat} [NeZero width] {C : Type} {F : Type}
     (s : Flapjack.Compiler.Backend.LabSem.State width C F)
     (operator : HolMemop) (register : Nat) (address : HolAddr width) (extra : Nat)

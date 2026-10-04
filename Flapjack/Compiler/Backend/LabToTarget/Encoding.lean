@@ -35,8 +35,7 @@ every labelled instruction becomes the corresponding unconditional `asm`
 transfer through the supplied target word, with `Halt`, `Install` and
 `CallFFI` all collapsing to `Jump`.  Only HOL's `'a word` is translated to
 `BitVec width`; the `Lab` payloads are discarded exactly as in the source. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "lab_inst_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def labInst {width : Nat} [NeZero width] (w : BitVec width)
     (instruction : AsmWithLab HolCmp (HolRegImm width) MlString) : HolAsm width :=
   match instruction with
@@ -58,8 +57,7 @@ a `Label` keeps its identity and takes the supplied `skip_len` as length; an
 byte-list length; a `LabAsm` re-encodes `lab_inst 0w` at position `0w`.
 The encoder `enc` is the HOL parameter, not the production assembler's
 encoder. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "enc_line_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def encLine {width : Nat} [NeZero width] (enc : HolAsm width → List (BitVec 8))
     (skipLen : Nat)
     (line : Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -77,8 +75,7 @@ def encLine {width : Nat} [NeZero width] (enc : HolAsm width → List (BitVec 8)
 
 /-- Exact HOL `lab_to_target$enc_sec_def` (`lab_to_targetScript.sml:49-52`):
 `Section k xs` keeps its section id and maps `enc_line` over its lines. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "enc_sec_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def encSec {width : Nat} [NeZero width] (enc : HolAsm width → List (BitVec 8))
     (skipLen : Nat)
     (sec : Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
@@ -90,8 +87,7 @@ def encSec {width : Nat} [NeZero width] (enc : HolAsm width → List (BitVec 8))
 /-- Exact HOL `lab_to_target$enc_sec_list_def` (`lab_to_targetScript.sml:54-57`):
 `skip_len` is the length of the encoding of `Inst Skip`; each section is
 encoded with that fixed length. -/
-@[hol "cakeml/compiler/backend/lab_to_targetScript.sml" "enc_sec_list_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def encSecList {width : Nat} [NeZero width] (enc : HolAsm width → List (BitVec 8))
     (sections : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :

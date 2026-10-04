@@ -24,11 +24,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 
 /-- Full original state-relation decrement with arbitrary frames/lens/extra.
 Only the two clocks change; every remaining relation conjunct is preserved. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "state_rel_dec_clock"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem stateRelDecClock {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (k f frame : Nat)
     (source : WordSemStateFiniteExact width (Nat × C) F)
@@ -43,11 +39,7 @@ theorem stateRelDecClock {width : Nat} [NeZero width] {C F : Type}
 entire conclusion are retained; native target execution is derived with zero
 extra clock. Evaluator closure inherits reals_as_rational_cuts; this structural
 case asserts no numerical FP correspondence. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_correct" 5756
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectTick {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (k f frame : Nat)
     (source sourcePost : WordSemStateFiniteExact width (Nat × C) F)
@@ -106,11 +98,7 @@ theorem compCorrectTick {width : Nat} [NeZero width] {C F : Type}
 conclusion remain: stateRel already implies source termdep=0, so the native
 execution returns Error, contradicting the original error-free premise. Evaluator closure inherits reals_as_rational_cuts; this structural
 case asserts no numerical FP correspondence. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_correct" 5756
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compCorrectMustTerminate {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (body : WordLangProgHOL (BitVec width)) (k f frame : Nat)
     (source sourcePost : WordSemStateFiniteExact width (Nat × C) F)

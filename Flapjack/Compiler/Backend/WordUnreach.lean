@@ -30,8 +30,7 @@ instance decEqSkip {α : Type} (p : WordLangProgHOL α) : Decidable (p = .skip) 
   decidable_of_iff _ (isSkip_iff p)
 
 /-- Exact HOL `dest_Seq_Move_def` (`word_unreachScript.sml:12-16`). -/
-@[hol "cakeml/compiler/backend/word_unreachScript.sml" "dest_Seq_Move_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def destSeqMove {width : Nat} [NeZero width] :
     WordLangProgHOL (BitVec width) →
       Option (Nat × List (Nat × Nat) × WordLangProgHOL (BitVec width))
@@ -50,8 +49,7 @@ def mergeMoves (l1 l2 : List (Nat × Nat)) : List (Nat × Nat) :=
 
 /-- Exact HOL `SimpSeq_def` (`word_unreachScript.sml:26-46`), including the commented-out
 `n1 ≠ n2` guard being absent. -/
-@[hol "cakeml/compiler/backend/word_unreachScript.sml" "SimpSeq_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def simpSeq {width : Nat} [NeZero width] (p1 p2 : WordLangProgHOL (BitVec width)) : WordLangProgHOL (BitVec width) :=
   let default := WordLangProgHOL.seq p1 p2
   if p2 = .skip then p1 else
@@ -72,8 +70,7 @@ def simpSeq {width : Nat} [NeZero width] (p1 p2 : WordLangProgHOL (BitVec width)
 
 /-- Exact HOL `Seq_assoc_right_def` (`word_unreachScript.sml:48-68`); a `Call` without a
 return continuation drops the accumulator, as in HOL. -/
-@[hol "cakeml/compiler/backend/word_unreachScript.sml" "Seq_assoc_right_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def seqAssocRight {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) → WordLangProgHOL (BitVec width) →
     WordLangProgHOL (BitVec width)
   | .skip, acc => acc
@@ -94,8 +91,7 @@ def seqAssocRight {width : Nat} [NeZero width] : WordLangProgHOL (BitVec width) 
   | p1, acc => simpSeq p1 acc
 
 /-- Exact HOL `remove_unreach_def` (`word_unreachScript.sml:70-73`). -/
-@[hol "cakeml/compiler/backend/word_unreachScript.sml" "remove_unreach_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def removeUnreach {width : Nat} [NeZero width] (e : WordLangProgHOL (BitVec width)) : WordLangProgHOL (BitVec width) :=
   seqAssocRight e .skip
 

@@ -74,9 +74,7 @@ theorem holFmapAsFiniteSupportRelationWitness_WordSemStateFiniteExact
 
 end UpdateWitnesses
 
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "strong_locals_rel_set_vars_dom"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem strongLocalsRelSetVarsDom {width : Nat} [NeZero width] {C F : Type}
     (ns : List Nat) (ls : List (WordLocW width)) (f : Nat → Nat) (X d : Nat → Prop)
     (s t : WordSemStateFiniteExact width C F)
@@ -88,9 +86,7 @@ theorem strongLocalsRelSetVarsDom {width : Nat} [NeZero width] {C F : Type}
       (WordSemStateFiniteExact.setVars (ns.map f) ls t).locals :=
   alistInsertRel ns ls f X d s.locals t.locals h.2.1 h.2.2.1 h.2.2.2.1 h.2.2.2.2
 
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "strong_locals_rel_set_var_dom"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store])
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem strongLocalsRelSetVarDom {width : Nat} [NeZero width] {C F : Type}
     (f : Nat → Nat) (X d : Nat → Prop) (n : Nat) (l : WordLocW width)
     (s t : WordSemStateFiniteExact width C F)

@@ -23,8 +23,7 @@ private theorem everyInst_ofDestSeqMove {width : Nat} [NeZero width]
 
 /-- Original generic instruction-predicate preservation for literal SimpSeq,
 with the original two source-programme premises. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "every_inst_SimpSeq" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem everyInst_simpSeq {width : Nat} [NeZero width]
     (predicate : WordLangInst (BitVec width) → Bool)
     (first second : WordLangProgHOL (BitVec width))
@@ -54,8 +53,7 @@ private theorem flatExpConventions_ofDestSeqMove {width : Nat} [NeZero width]
 
 /-- Original flat-expression preservation for literal SimpSeq, retaining both
 original source flat-convention premises and every move-merging branch. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "flat_exp_conventions_SimpSeq" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flatExpConventions_simpSeq {width : Nat} [NeZero width]
     (first second : WordLangProgHOL (BitVec width))
     (firstValid : flatExpConventions first = true)
@@ -69,8 +67,7 @@ theorem flatExpConventions_simpSeq {width : Nat} [NeZero width]
 
 /-- Original generic instruction-predicate preservation for right association,
 with both source-programme premises, including all returning call handlers. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "every_inst_Seq_assoc_right_lemma" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem everyInst_seqAssocRight {width : Nat} [NeZero width]
     (predicate : WordLangInst (BitVec width) → Bool)
     (first second : WordLangProgHOL (BitVec width))
@@ -93,8 +90,7 @@ theorem everyInst_seqAssocRight {width : Nat} [NeZero width]
 
 /-- Original flat-expression convention preservation for right association,
 with both source-programme premises, including all returning call handlers. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "flat_exp_conventions_Seq_assoc_right_lemma" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flatExpConventions_seqAssocRight {width : Nat} [NeZero width]
     (first second : WordLangProgHOL (BitVec width))
     (firstValid : flatExpConventions first = true)
@@ -115,8 +111,7 @@ theorem flatExpConventions_seqAssocRight {width : Nat} [NeZero width]
         | constructor
 
 /-- Original source instruction-predicate preservation for remove_unreach. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "every_inst_remove_unreach" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem everyInst_removeUnreach {width : Nat} [NeZero width]
     (predicate : WordLangInst (BitVec width) → Bool)
     (program : WordLangProgHOL (BitVec width))
@@ -125,8 +120,7 @@ theorem everyInst_removeUnreach {width : Nat} [NeZero width]
   everyInst_seqAssocRight predicate program .skip source rfl
 
 /-- Original source flat-convention preservation for remove_unreach. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "flat_exp_conventions_remove_unreach" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem flatExpConventions_removeUnreach {width : Nat} [NeZero width]
     (program : WordLangProgHOL (BitVec width))
     (source : flatExpConventions program = true) :
@@ -149,8 +143,7 @@ private theorem wfCutsets_ofDestSeqMove {width : Nat} [NeZero width]
     cases first <;> simp_all [wfCutsets]
 
 /-- HOL `wf_cutsets_SimpSeq` (`wordConvsProofScript.sml:2668-2679`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "wf_cutsets_SimpSeq" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wfCutsets_simpSeq {width : Nat} [NeZero width]
     (p1 p2 : WordLangProgHOL (BitVec width)) (h : wfCutsets p1 ∧ wfCutsets p2) :
     wfCutsets (simpSeq p1 p2) := by
@@ -162,8 +155,7 @@ theorem wfCutsets_simpSeq {width : Nat} [NeZero width]
     | simp_all +zetaDelta [wfCutsets]
 
 /-- HOL `wf_cutsets_Seq_assoc_right_lemma` (`wordConvsProofScript.sml:2681-2695`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "wf_cutsets_Seq_assoc_right_lemma" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wfCutsets_seqAssocRight {width : Nat} [NeZero width] :
     ∀ (p1 p2 : WordLangProgHOL (BitVec width)),
       wfCutsets p1 ∧ wfCutsets p2 → wfCutsets (seqAssocRight p1 p2) := by
@@ -183,8 +175,7 @@ theorem wfCutsets_seqAssocRight {width : Nat} [NeZero width] :
         | constructor
 
 /-- HOL `wf_cutsets_remove_unreach` (`wordConvsProofScript.sml:2697-2703`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "wf_cutsets_remove_unreach" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wfCutsets_removeUnreach {width : Nat} [NeZero width]
     (p : WordLangProgHOL (BitVec width)) :
     wfCutsets p → wfCutsets (removeUnreach p) :=
@@ -225,8 +216,7 @@ private theorem fullInstPolicy_simpSeq {width : Nat} [NeZero width]
 
 /-- Original full instruction-validity preservation for right association,
 with both source-programme premises, including all returning call handlers. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "full_inst_ok_less_Seq_assoc_right_lemma" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fullInstOkLess_seqAssocRight {width : Nat} [NeZero width]
     (config : AsmConfigExact width)
     (first second : WordLangProgHOL (BitVec width))
@@ -249,8 +239,7 @@ theorem fullInstOkLess_seqAssocRight {width : Nat} [NeZero width]
         | constructor
 
 /-- Original full instruction-validity preservation for remove_unreach. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "full_inst_ok_less_remove_unreach" (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem fullInstOkLess_removeUnreach {width : Nat} [NeZero width]
     (config : AsmConfigExact width) (program : WordLangProgHOL (BitVec width))
     (source : fullInstOkLessExact config program = true) :

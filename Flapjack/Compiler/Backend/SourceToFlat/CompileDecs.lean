@@ -18,7 +18,7 @@ open Flapjack.Compiler.Backend.BackendCommon
 cases; its final `d::ds` clause is reached only when `ds` is non-empty (every
 singleton is matched earlier), so it is written `d :: d2 :: ds`. Termination is
 HOL's measure, the size of the declaration list. -/
-@[hol "cakeml/compiler/backend/source_to_flatScript.sml" "compile_decs_def"]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def compileDecs (t : List MlString) (n : Nat) (next : NextIndices) (env : Environment)
     (envs : EnvironmentGenerationStore) :
     List AstHOL.Dec →

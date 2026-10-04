@@ -181,8 +181,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
 `memcpy_code` loop simulates `memcpy (n2w n)` with `n` extra clock ticks. HOL
 `1 IN FDOM s.regs` is `(s.regs.lookup 1).isSome`, `|++` is `updateListEq` and
 `dimword (:'a)` is `2 ^ width`. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "memcpy_code_thm" 390
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem memcpy_code_thm_n {width : Nat} [NeZero width] {C F : Type} :
     ∀ (n : Nat) (a b : BitVec width) (m : BitVec width → WordLocW width)
       (dm : BitVec width → Bool) (b1 : BitVec width) (m1 : BitVec width → WordLocW width)
@@ -201,8 +200,7 @@ theorem memcpy_code_thm_n {width : Nat} [NeZero width] {C F : Type} :
 
 /-- Exact HOL `memcpy_code_thm` (`stack_allocProofScript.sml:444-463`): the
 `memcpy_code` loop simulates `memcpy w` with `w2n w` extra clock ticks. -/
-@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "memcpy_code_thm" 444
-  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem memcpy_code_thm {width : Nat} [NeZero width] {C F : Type} :
     ∀ (w a b : BitVec width) (m : BitVec width → WordLocW width)
       (dm : BitVec width → Bool) (b1 : BitVec width) (m1 : BitVec width → WordLocW width)

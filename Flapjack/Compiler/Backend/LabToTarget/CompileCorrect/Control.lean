@@ -25,8 +25,7 @@ theorem findPos_of_getPcValue {width : Nat} [NeZero width] {S Q F : Type}
   rcases jt with ⟨l1, l2⟩
   exact ⟨labLookup_implies_findPos l1 l2 labs _ (c28 l1 l2 pc hpc), rfl⟩
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "compile_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_jump {width : Nat} [NeZero width] {S Q F : Type}
     (s1 : LabSem.State width Config F) (jt : Lab) (w : BitVec width)
     (bytes : List (BitVec 8)) (n : Nat) (hclock : s1.clock ≠ 0)
@@ -60,8 +59,7 @@ theorem compileCorrect_jump {width : Nat} [NeZero width] {S Q F : Type}
       (fun k => ⟨(hl k).1, (hl k).2.1⟩) (hl 0).2.2.2
       ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩ hrel' hev hres (ih pc hpc)
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "compile_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_jumpCmp {width : Nat} [NeZero width] {S Q F : Type}
     (s1 : LabSem.State width Config F) (cmp : HolCmp) (rr : Nat) (ri : HolRegImm width)
     (jt : Lab) (w : BitVec width) (bytes : List (BitVec 8)) (n : Nat) (hclock : s1.clock ≠ 0)
@@ -126,8 +124,7 @@ theorem compileCorrect_jumpCmp {width : Nat} [NeZero width] {S Q F : Type}
 /-- The source `Call` case: a related source state never fetches `Call`
 (`line_ok` rejects it), so the original proof closes it from
 `IMP_bytes_in_memory_Call`; its induction hypothesis is unused. -/
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "compile_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_call {width : Nat} [NeZero width] {S Q F : Type}
     (s1 : LabSem.State width Config F) (lab : Lab) (w : BitVec width)
     (bytes : List (BitVec 8)) (n : Nat) (_hclock : s1.clock ≠ 0)
@@ -139,8 +136,7 @@ theorem compileCorrect_call {width : Nat} [NeZero width] {S Q F : Type}
   obtain ⟨w', bytes', len', hok, -⟩ := fetchedLabAsmLine hrel hfetch
   simp [lineOk] at hok
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "compile_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_locValue {width : Nat} [NeZero width] {S Q F : Type}
     (s1 : LabSem.State width Config F) (reg : Nat) (lab : Lab) (w : BitVec width)
     (bytes : List (BitVec 8)) (n : Nat) (hclock : s1.clock ≠ 0)
@@ -189,8 +185,7 @@ theorem compileCorrect_locValue {width : Nat} [NeZero width] {S Q F : Type}
       ht hec hclock (fun k => ⟨(hl k).1, (hl k).2.1⟩) (hl 0).2.2.2
       ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩ hrel' hev hres (ih (by simp [hpc]))
 
-@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "compile_correct"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem compileCorrect_halt {width : Nat} [NeZero width] {S Q F : Type}
     (s1 : LabSem.State width Config F) (w : BitVec width) (bytes : List (BitVec 8)) (n : Nat)
     (hclock : s1.clock ≠ 0) (hfetch : asmFetch s1 = some (.labAsm .halt w bytes n)) :

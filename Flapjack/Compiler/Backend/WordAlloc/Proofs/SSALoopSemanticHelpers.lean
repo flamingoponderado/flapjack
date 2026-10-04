@@ -20,9 +20,7 @@ end LoopSemanticHelperWitnesses
 successful first evaluation; the native evaluator's fix_clock law supplies
 exact continuation execution without a new clock/frame premise. Inherits the
 evaluator reals_as_rational_cuts assumption, SOUNDNESS item 8. -/
-@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "evaluate_seq_collapse"
-  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
-    WordSemStateFiniteExact.store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem evaluateSeqCollapse {width : Nat} [NeZero width] {C F : Type}
     (first second : WordLangProgHOL (BitVec width))
     (source after : WordSemStateFiniteExact width C F)

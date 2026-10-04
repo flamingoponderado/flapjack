@@ -44,8 +44,7 @@ def getRegValue {key value : Type} (argument : Option key) (fallback : value)
     `read_bytearray (mc.target.get_pc ms) (LENGTH bytes)
        (\a. if a IN mc.prog_addresses then SOME (mc.target.get_byte ms a) else NONE)
      = SOME bytes`. -/
-@[hol "cakeml/compiler/backend/semantics/targetSemScript.sml" "code_loaded_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 noncomputable def codeLoaded {width : Nat} [NeZero width] {state projection : Type}
     (bytes : List (BitVec 8)) (mc : MachineConfig width state projection) (ms : state) :
     Prop :=
@@ -59,8 +58,7 @@ noncomputable def codeLoaded {width : Nat} [NeZero width] {state projection : Ty
     (`cakeml/compiler/backend/semantics/targetSemScript.sml:247-261`): the
     assembler state `t` is compatible with the machine configuration
     `mc_conf`. -/
-@[hol "cakeml/compiler/backend/semantics/targetSemScript.sml" "target_configured_def"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 def targetConfigured {width : Nat} [NeZero width] {state projection : Type}
     (t : AsmState width) (mcConf : MachineConfig width state projection) : Prop :=
   t.failed = false ∧

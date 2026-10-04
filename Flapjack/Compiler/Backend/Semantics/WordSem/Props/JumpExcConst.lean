@@ -18,8 +18,7 @@ namespace Flapjack.WordSemStateFiniteExact
 fourteen preserved fields and the sole successful exception-jump premise,
 with arbitrary source/post states and returned label pair. No handler-validity
 or frame-shape premise is added. -/
-@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "jump_exc_const"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem jumpExcConst {width : Nat} [NeZero width] {C F : Type}
     (state next : WordSemStateFiniteExact width C F) (label : Nat × Nat)
     (h : jumpExc state = some (next, label)) :

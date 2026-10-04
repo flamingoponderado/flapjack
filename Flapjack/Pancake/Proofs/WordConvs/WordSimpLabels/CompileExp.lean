@@ -7,8 +7,7 @@ open Flapjack Flapjack.Compiler.Backend.WordSimp
 /-- Full original compile_exp label relation for every native program. Every
 stage is the actual reviewed compiler operation; label containment and the
 source-distinctness implication are derived without an output property premise. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "extract_labels_compile_exp"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem extractLabelsCompileExp {width : Nat} [NeZero width]
     (program : WordLangProgHOL (BitVec width)) :
     labelsRel (extractLabels program) (extractLabels (compileExp program)) := by

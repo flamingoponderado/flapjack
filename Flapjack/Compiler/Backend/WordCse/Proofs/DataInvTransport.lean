@@ -36,15 +36,13 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C : Type} {F
 end DataInvTransportCarrier
 
 /-- Exact HOL `data_inv_locals` (`word_cseProof:160-165`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "data_inv_locals"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem data_inv_locals {width : Nat} [NeZero width] {C : Type} {F : Type}
     (s : WordSemStateFiniteExact width C F) :
     ({ s with locals := s.locals } : WordSemStateFiniteExact width C F) = s := rfl
 
 /-- Exact HOL `wf_data_untracked` (`word_cseProof:289-312`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "wf_data_untracked"
-  (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem wf_data_untracked {width : Nat} [NeZero width] (data : Knowledge) (n : Nat)
     (h : wfData width data ∧ sptLookup n data.toCanonical = none) :
     (∀ r v, sptLookup r data.toCanonical = some v → r ≠ n ∧ v ≠ n) ∧
@@ -130,8 +128,7 @@ theorem semInv_transport {width : Nat} [NeZero width] {C : Type} {F : Type}
       fun r => load op a ofs v r w hk.1 hk.2 (w10 op a ofs v hk.2) (he r)⟩
 
 /-- Exact HOL `data_inv_set_var` (`word_cseProof:314-339`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "data_inv_set_var"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem data_inv_set_var {width : Nat} [NeZero width] {C : Type} {F : Type}
     (data : Knowledge) (s : WordSemStateFiniteExact width C F) (n : Nat) (v : WordLocW width)
     (h : sptLookup n data.toCanonical = none) :
@@ -159,8 +156,7 @@ theorem data_inv_set_var {width : Nat} [NeZero width] {C : Type} {F : Type}
       exact (evaluateLoadSetVar op r a ofs n v w s ⟨hst, ne a (by simp [sptDomain, ha])⟩).mpr he
 
 /-- Exact HOL `data_inv_unset_var` (`word_cseProof:402-421`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "data_inv_unset_var"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem data_inv_unset_var {width : Nat} [NeZero width] {C : Type} {F : Type}
     (data : Knowledge) (s : WordSemStateFiniteExact width C F) (n : Nat)
     (h : sptLookup n data.toCanonical = none) :
@@ -188,8 +184,7 @@ theorem data_inv_unset_var {width : Nat} [NeZero width] {C : Type} {F : Type}
       exact (evaluateLoadUnsetVar op r a ofs n w s ⟨hst, ne a (by simp [sptDomain, ha])⟩).mpr he
 
 /-- Exact HOL `not_seen_data_inv_alist_insert` (`word_cseProof:423-433`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "not_seen_data_inv_alist_insert"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem not_seen_data_inv_alist_insert {width : Nat} [NeZero width] {C : Type} {F : Type}
     (data : Knowledge) (s : WordSemStateFiniteExact width C F) (l : Spt (WordLocW width)) (r : Nat)
     (v : WordLocW width) (h : sptLookup r data.toCanonical = none)
@@ -198,8 +193,7 @@ theorem not_seen_data_inv_alist_insert {width : Nat} [NeZero width] {C : Type} {
   exact (data_inv_set_var data ({ s with locals := l } : WordSemStateFiniteExact width C F) r v h).mpr hl
 
 /-- Exact HOL `data_inv_memory` (`word_cseProof:507-519`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "data_inv_memory"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem data_inv_memory {width : Nat} [NeZero width] {C : Type} {F : Type}
     (data : Knowledge) (s : WordSemStateFiniteExact width C F) (m : BitVec width → WordLocW width)
     (h : dataInv data s) :
@@ -218,8 +212,7 @@ theorem data_inv_memory {width : Nat} [NeZero width] {C : Type} {F : Type}
     (fun op a ofs v r w _ hk _ _ => absurd hk (noLoad _ v)) hs0⟩
 
 /-- Exact HOL `data_inv_state_agree` (`word_cseProof:555-575`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "data_inv_state_agree"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem data_inv_state_agree {width : Nat} [NeZero width] {C : Type} {F : Type}
     (data : Knowledge) (s1 s2 : WordSemStateFiniteExact width C F)
     (h : dataInv data s1 ∧ s2.locals = s1.locals ∧ s2.store = s1.store ∧ s2.memory = s1.memory ∧
@@ -233,8 +226,7 @@ theorem data_inv_state_agree {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 set_option linter.unusedSimpArgs false in
 /-- Exact HOL `canonicalArith_correct` (`word_cseProof:118-130`). -/
-@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "canonicalArith_correct"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+-- riscv-mi: depends on reduced integer-only carriers; not an exact full-HOL port.
 theorem canonicalArith_correct {width : Nat} [NeZero width] {C : Type} {F : Type}
     (data : Knowledge) (s : WordSemStateFiniteExact width C F) (a : HolArith width)
     (h : dataInv data s) :
