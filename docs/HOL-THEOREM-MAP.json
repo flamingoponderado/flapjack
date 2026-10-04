@@ -99162,5 +99162,13 @@
     "lean_name": "ffinamesToStringList",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus3 source comparison 2026-10-04 (bead flapjack-native-cli-default-adapter): backendScript.sml 675-681, three clauses: [] -> []; ExtCall s :: rest -> s :: rec; SharedMem _ :: rest -> rec. Lean over HolFfiName (extCall MlString / sharedMem) returning List MlString, clause-for-clause."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileProgMaxDepth.lean",
+    "lean_name": "compileProgMaxAsmDepthExecutable_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack executable infrastructure (flapjack-sol; bead flapjack-native-word-depth-executable): unconditional complete Option(bytes,bitmaps,Backend.Config) paired with Option stack-bound equality to compileProgMaxAsmFast. Only depth analysis uses constructor-preserving Spt.map slimCode and fused analysis; kernel callGraph_slim_eq preserves the entire original call tree for arbitrary maps, callee deletion, return/handler programs, unknown/indirect calls, alloc/install and cycle conditions. Original Word program still feeds backend; original tagged declarations are unchanged."
   }
 ]
