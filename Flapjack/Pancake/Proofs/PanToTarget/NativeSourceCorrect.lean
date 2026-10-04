@@ -110,7 +110,7 @@ theorem nativeSourceCompile_correct {σ : Type} {source : String}
   rw [parsedEq] at parsedEq'
   cases Except.ok.inj parsedEq'
   rw [declsEq] at rest
-  rw [resultEq, RiscV.NativeSource.compileDeclarations, compileProgMaxAsmFast_eq] at hcomp
+  rw [resultEq, RiscV.NativeSource.compileDeclarations_eq] at hcomp
   exact panToTargetCompileSemanticsRiscVSource mc (parsed.map declToHOL) bytes bitmaps c'
     stack_max s ms globals_size heap_len adj_ptr2 adj_ptr4 ffi cbspace data_sp start hmc hasMain
     ⟨hcomp, rest⟩
