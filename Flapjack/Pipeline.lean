@@ -287,45 +287,61 @@ termination_by declarations => sizeOf declarations
     front of the Pancake list (`pan_passesScript.sml:20-37`).  Keeping this
     source-order operation explicit is important because the linked section
     order is observable in the RISC-V artifact. -/
+/-- First-match split for the anonymous source-list operation in
+    `pan_to_target_all`; this is not a port of the whole declaration. -/
+def panTargetSplitStart [BEq String] (start : FunName) :
+    List (Decl α) → List (Decl α) × List (Decl α)
+  | [] => ([], [])
+  | declaration :: declarations =>
+      if (match declaration with
+          | .function function => function.name == start
+          | _ => false) then
+        ([], declaration :: declarations)
+      else
+        let split := panTargetSplitStart start declarations
+        (declaration :: split.1, split.2)
+
+/-- Move only the first entry; default-main insertion is handled separately. -/
 def panTargetMoveStartToFront [BEq String]
     (start : FunName) (declarations : List (Decl α)) : List (Decl α) :=
-  globalDeclsFilter (fun declaration =>
-      match declaration with
-      | .function function => function.name == start
-      | _ => false) declarations ++
-    globalDeclsFilter (fun declaration =>
-      match declaration with
-      | .function function => function.name != start
-      | _ => true) declarations
+  let split := panTargetSplitStart start declarations
+  match split.2 with
+  | [] => split.1
+  | declaration :: suffix => declaration :: (split.1 ++ suffix)
 
-private theorem mem_of_mem_globalDeclsFilter {α : Type} {predicate : Decl α → Bool}
-    {declaration : Decl α} {declarations : List (Decl α)}
-    (hmem : declaration ∈ globalDeclsFilter predicate declarations) :
-    declaration ∈ declarations := by
+/-- Splitting preserves every declaration and its original order. -/
+theorem panTargetSplitStart_append [BEq String]
+    (start : FunName) (declarations : List (Decl α)) :
+    (panTargetSplitStart start declarations).1 ++
+      (panTargetSplitStart start declarations).2 = declarations := by
   induction declarations with
-  | nil => rw [globalDeclsFilter.eq_def] at hmem; simp at hmem
+  | nil => rfl
   | cons head tail ih =>
-      simp only [globalDeclsFilter] at hmem
-      by_cases hpred : predicate head = true
-      · simp [hpred] at hmem
-        rcases hmem with heq | htail
-        · subst heq; exact List.mem_cons_self ..
-        · exact List.mem_cons_of_mem head (ih htail)
-      · simp [hpred] at hmem
-        exact List.mem_cons_of_mem head (ih hmem)
+      cases head <;> simp_all [panTargetSplitStart]
+      split <;> simp_all
 
-/-- Entry relocation preserves the declaration byte-range invariant because
-    both output lists are filters of the input list. -/
+/-- Relocation preserves byte ranges by moving an existing declaration. -/
 theorem panTargetMoveStartToFront_byteRanged [BEq String] {width : Nat}
     (start : FunName) (declarations : List (Decl (BitVec width)))
     (h : ∀ d ∈ declarations, DeclByteRanged d) :
     ∀ d ∈ panTargetMoveStartToFront start declarations, DeclByteRanged d := by
   intro d hd
-  unfold panTargetMoveStartToFront at hd
-  rw [List.mem_append] at hd
-  rcases hd with hd | hd
-  · exact h d (mem_of_mem_globalDeclsFilter hd)
-  · exact h d (mem_of_mem_globalDeclsFilter hd)
+  have partition := panTargetSplitStart_append start declarations
+  simp only [panTargetMoveStartToFront] at hd
+  cases suffix : (panTargetSplitStart start declarations).2 with
+  | nil =>
+      simp only [suffix, List.append_nil] at partition
+      simp only [suffix] at hd
+      exact h d (partition ▸ hd)
+  | cons head tail =>
+      simp only [suffix, List.mem_cons, List.mem_append] at hd
+      apply h d
+      rw [← partition, suffix]
+      simp only [List.mem_append, List.mem_cons]
+      rcases hd with rfl | hp | ht
+      · exact Or.inr (Or.inl rfl)
+      · exact Or.inl hp
+      · exact Or.inr (Or.inr ht)
 
 /-! Source-shaped port of CakeML Pancake's `exports_def`
     (`cakeml/pancake/pan_to_targetScript.sml:10`).  Export collection walks
