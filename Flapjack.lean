@@ -8,6 +8,7 @@ import Flapjack.Pancake.PanToTarget
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelFp
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.FpConversions
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Arithmetic
+import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Binary
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Shift
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.FpArith
@@ -76,6 +77,7 @@ import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Control
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Call
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Assembly
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileWordToWord
+import Flapjack.Compiler.Backend.WordToWord.Proofs.Syntactic
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsShort
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ChunkBitsMsb
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsPattern
@@ -143,6 +145,7 @@ import Flapjack.RiscV.L3.Step.AvoidSignalAddressException
 import Flapjack.RiscV.L3.Step.RegisterALUStep
 import Flapjack.RiscV.L3.Step.ImmediateALUStep
 import Flapjack.RiscV.L3.Step.ImmediateComparison
+import Flapjack.RiscV.L3.Step.UpperImmediateStep
 import Flapjack.RiscV.L3.Step.DecodeAny
 import Flapjack.RiscV.L3.Defs.WritePC
 import Flapjack.Test.L3DecodeParity
@@ -761,6 +764,7 @@ import Flapjack.Compiler.Backend.WordCse.ProductionStoreFacts
 import Flapjack.Compiler.Backend.WordCse.ProductionStoreErase
 import Flapjack.Compiler.Backend.WordCse.ProductionGet
 import Flapjack.Compiler.Backend.WordCse.ProductionSet
+import Flapjack.Compiler.Backend.WordCse.ProductionJoin
 import Flapjack.Compiler.Backend.WordCse.FactProducers
 import Flapjack.Compiler.Backend.WordCse.Join
 import Flapjack.Compiler.Backend.WordCse.Proofs.InNamesSet
@@ -788,6 +792,7 @@ import Flapjack.Compiler.Backend.WordCse.Proofs.KeyInjectivity
 import Flapjack.Compiler.Backend.WordCse.InstructionKeys
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstallTop
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.NoInstallCode
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.NoMtCode
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstallPrograms
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstallCompiler
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopTop
@@ -1349,6 +1354,7 @@ import Flapjack.Pancake.Proofs.WordConvs.InstSelectExp
 import Flapjack.Pancake.Proofs.WordConvs.InstSelectProgram
 import Flapjack.Pancake.Proofs.WordConvs.ThreeToTwo
 import Flapjack.Pancake.Proofs.WordConvs.Unreach
+import Flapjack.Pancake.Proofs.WordConvs.UnreachLabels
 import Flapjack.Pancake.Proofs.WordConvs.WordCse
 import Flapjack.Pancake.Proofs.WordConvs.CopyProp
 import Flapjack.Pancake.Proofs.WordConvs.SSAWfCutsets
