@@ -91676,5 +91676,23 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Source-reviewed against word_to_stackProofScript.sml evaluate_wInst FPFromInt case5100-5125: all original five guards, actual wInst/evaluate existential, complete state_rel, stack length and space; arbitrary positive width, width64 and all non64 odd/even packed branches, original partial conversion/range guards and roundTiesToEven. Target reads/updates derived by full state relation. Canonical source fpRegs/store and target regs/fpRegs/store codecs are genuine; locals/code retain native Spt. Both faithful evaluators inherit reals_as_rational_cuts (SOUNDNESS item 8); no numeric agreement or target-run hypothesis.",
     "hol_line": 4688
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InstSimulation/Arithmetic.lean",
+    "lean_name": "evaluateWInstArith",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-04: original evaluate_wInst4688-4699 specialized to arbitrary asm Arith, retaining all five original guards and entire actual native wInst/evaluate existential, full state_rel, stack length/space. Exhausts every one of eight native HolArith constructors and both register/immediate forms using accepted full constituent cases, including arbitrary aliases/spills/positive widths and original operand/division/overflow guards. Source uses reviewed constructor-for-constructor HolArith.toWordLangArith codec, no narrowed arith carrier. Full source/target canonical codecs re-exported in owning module; only source fpRegs/store and target regs/fpRegs/store are finite maps, native locals/code remain Spt. Standard word/Type0 host translation only, independent C/F retained. Faithful evaluators inherit reals_as_rational_cuts (SOUNDNESS item8). No supplied target execution/result, case simulation or postrelation premise. Actual original closed generic typed Arith specialization kernel captured. Whole Inst/comp_correct/compiler composition remains open.",
+    "hol_line": 4688
   }
 ]

@@ -8138,3 +8138,8 @@ The `word_to_word_install` probe captures the complete original closed typed
 specialization. `GEN_ALL` closes every binder; the specialization has zero
 hypotheses. These are original-theory captures, not a local replay or an
 independent cross-language equivalence proof.
+
+`word_to_stack_inst_arith_probeScript.sml` captures the original fully typed,
+closed, kernel-proved `evaluate_wInst` specialization for an arbitrary Arith
+opcode, retaining every guard and the full target existential. This is source
+statement evidence, not cross-assistant equivalence.

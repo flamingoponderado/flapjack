@@ -107,6 +107,9 @@ run_probe() {
   done
 }
 
+run_probe word_to_stack_inst_arith_probeScript.sml word_to_stack_inst_arith_probe.out \
+  arith_typed arith_proved arith_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_to_stack_fp_conversions_probeScript.sml word_to_stack_fp_conversions_probe.out \
   fpToInt_typed fpToInt_proved fpToInt_hypotheses fpFromInt_typed fpFromInt_proved fpFromInt_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
