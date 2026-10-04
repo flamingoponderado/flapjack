@@ -96295,5 +96295,53 @@
     "hol_name": "concat_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus3 source comparison 2026-10-04: concat l = implode (FLAT (MAP explode-case l)) over the implode list-of-char carrier. Typed capture source_to_flat_helpers probe (show_types, no hypotheses); inferred type variables compared."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/CompileExp.lean",
+    "lean_name": "compileExp",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "compile_exp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original source_to_flatScript 120-228 mutual compile_exp_def, compile_exp clauses Raise..Lannot (Lannot (Locs st en) pattern), App special cases AallocEmpty FOLDR Let over REVERSE, Eval Mat with Pcon NONE [Pany x4; Pvar bytes; Pvar words], Env_id singleton/otherwise El 0, else astOp_to_flatOp; Log via If/Bool None; trace None is Tra.none, OPTION_JOIN (OPTION_MAP (type_group_id_type o nsLookup env.c) cn) is cn.bind, mlstring literals ofString ASCII. Typed capture source_to_flat_compile probe."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/CompileExp.lean",
+    "lean_name": "compileExps",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "compile_exp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original source_to_flatScript 120-228 mutual compile_exp_def, compile_exps clauses; trace None is Tra.none, OPTION_JOIN (OPTION_MAP (type_group_id_type o nsLookup env.c) cn) is cn.bind, mlstring literals ofString ASCII. Typed capture source_to_flat_compile probe."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/CompileExp.lean",
+    "lean_name": "compilePes",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "compile_exp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original source_to_flatScript 120-228 mutual compile_exp_def, compile_pes clauses with pat_bindings/pat_tups None/nsBindList; trace None is Tra.none, OPTION_JOIN (OPTION_MAP (type_group_id_type o nsLookup env.c) cn) is cn.bind, mlstring literals ofString ASCII. Typed capture source_to_flat_compile probe."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/CompileExp.lean",
+    "lean_name": "compileFuns",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "compile_exp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original source_to_flatScript 120-228 mutual compile_exp_def, compile_funs clauses with f::t and nsBind x (Local None x); trace None is Tra.none, OPTION_JOIN (OPTION_MAP (type_group_id_type o nsLookup env.c) cn) is cn.bind, mlstring literals ofString ASCII. Typed capture source_to_flat_compile probe."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/CompileDecs.lean",
+    "lean_name": "compileDecs",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "compile_decs_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original source_to_flatScript 342-411: all eight singleton clauses (Dlet with simple_dlet, Dletrec, Dtype MAPi alloc_tags with FOLDL nsAppend, Dtabbrev, Dexn, Dmod lift_env, Dlocal, Denv with sptree insert), [] and d::ds; the last written d :: d2 :: ds since every singleton matches earlier; termination by list size as HOL. Replay: Flapjack/Test/SourceToFlatPrimConfigParity evaluates compile_decs on prim_types_program and matches the probe's prim_src_config_eq closed form. Typed capture source_to_flat_compile probe."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/CompileDecs.lean",
+    "lean_name": "emptyConfig",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "empty_config_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 421-428: next 0/0/0, mod_env empty_env, pattern_cfg init_config 0, envs next 0 env_gens LN. Typed capture source_to_flat_compile probe."
   }
 ]
