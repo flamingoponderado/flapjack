@@ -8670,3 +8670,25 @@ source/link alias, arithmetic shift, return-link value and original evidence.
 These regression checks supplement source review and Lean kernel checking;
 full encoder assembly and compiler correctness remain separate open work.
 No executed compiler definition changes in this delivery.
+
+
+### Source/native store post-memory correspondence
+
+`riscv_memory_store_value_probeScript.sml` compares all selected bytes and
+three untouched addresses for 1/2/4/8-byte source and native stores, at zero
+and aligned end-of-address-space addresses. Both initial memories use
+`w2w (p + 128w)` and the value is `0x8877665544332211`. It also checks source
+frames and success, and failed-domain writes with independently sized 64-bit
+and 1-bit values. Both literal source/native clauses, types and zero
+hypotheses are captured. Kernel fixtures in `MemoryStore.lean` match every
+source byte constant and both failure observations.
+
+The generic source selected-byte proof keeps independent positive word widths,
+with a count bound only to prevent a second traversal of the modular address
+space. All four RV64 sizes discharge that bound. The actual post-memory
+relation derives selected bytes and both outside-region frames from the
+initial target relation; memStore success supplies its own alignment guard,
+and the conclusion uses its actual post-domain. These untagged compositions
+have no separately named original HOL theorems. Full Mem still requires
+source register/address extraction, native interference, complete postrelation
+and assertion assembly.
