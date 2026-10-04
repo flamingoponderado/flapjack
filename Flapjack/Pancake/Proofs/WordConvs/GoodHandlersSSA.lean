@@ -57,14 +57,22 @@ private theorem fixGood {width : Nat} [NeZero width] (n : Nat)
   have facts := goodHandlers_fakeMoves n prio _ left right count a b final leftOut rightOut hf
   simpa [hm, hf, goodHandlersHOL] using facts
 
-private theorem reconcileGood {width : Nat} [NeZero width] (n : Nat) {β : Type}
+/-- HOL `ssa_reconcile_good_handlers` (`wordConvsProofScript.sml:1029-1033`, `[local]`). HOL's free
+    `n cur_ssa tgt_ssa ns` are explicit; `ns` keeps its independent value type `β`. -/
+@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "ssa_reconcile_good_handlers"
+  (words_as_type_indexed_bitvec)]
+theorem reconcileGood {width : Nat} [NeZero width] (n : Nat) {β : Type}
     (current target : Spt Nat) (names : Spt β) :
     goodHandlersHOL n (ssaReconcile current target names : WordLangProgHOL (BitVec width)) = true := by
   unfold ssaReconcile
   dsimp only
   split <;> simp [goodHandlersHOL]
 
-private theorem fakeSeqGood {width : Nat} [NeZero width] (n : Nat) :
+/-- HOL `fake_seq_good_handlers` (`wordConvsProofScript.sml:999-1003`, `[local]`). HOL's free `n`
+    leads; `ls` stays universally quantified. -/
+@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "fake_seq_good_handlers"
+  (words_as_type_indexed_bitvec)]
+theorem fakeSeqGood {width : Nat} [NeZero width] (n : Nat) :
     ∀ ls : List Nat, goodHandlersHOL n
       ((ls.map (fakeMove : Nat → WordLangProgHOL (BitVec width))).foldr .seq .skip) = true := by
   intro ls
@@ -72,7 +80,11 @@ private theorem fakeSeqGood {width : Nat} [NeZero width] (n : Nat) :
   | nil => simp [goodHandlersHOL]
   | cons name names ih => simpa [goodHandlersHOL, fakeMove] using ih
 
-private theorem loopSetupGood {width : Nat} [NeZero width] (n : Nat)
+/-- HOL `loop_setup_good_handlers` (`wordConvsProofScript.sml:1069-1078`, `[local]`). HOL's free
+    variables are explicit (`n` first); the premise and conclusion are kept. -/
+@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "loop_setup_good_handlers"
+  (words_as_type_indexed_bitvec)]
+theorem loopSetupGood {width : Nat} [NeZero width] (n : Nat)
     (names exitNames : Spt Unit) (ssa : Spt Nat) (na : Nat)
     (setupProg : WordLangProgHOL (BitVec width)) (ssaRefreshed : Spt Nat) (naRefreshed : Nat)
     (setup : loopSetup names exitNames ssa na = (setupProg, ssaRefreshed, naRefreshed)) :

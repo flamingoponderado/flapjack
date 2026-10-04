@@ -42,12 +42,26 @@ theorem fun2Set_eq_iff {α β : Type} (m m' : α → β) (md : α → Prop) :
     · rintro ⟨b, hb, eq⟩
       exact ⟨b, hb, by simpa [h b hb] using eq⟩
 
+open Classical in
 /-- Full original fun2set_update_eq (337-344) for arbitrary address/value
 types: updating two memories with the same graph at the same address keeps
-their graphs equal. HOL's `m⦇x ↦ a⦈` is the pointwise `if` update used by
-the WordSem carrier. -/
+their graphs equal. HOL's `m⦇x ↦ a⦈` is the pointwise `if` update, decided
+classically as HOL equality is; no decidable-equality hypothesis is added. -/
 @[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "fun2set_update_eq"]
-theorem fun2SetUpdateEq {α β : Type} [DecidableEq α] (m m' : α → β) (md : α → Prop)
+theorem fun2SetUpdateEq {α β : Type} (m m' : α → β) (md : α → Prop)
+    (x : α) (a : β) (h : fun2Set (m, md) = fun2Set (m', md)) :
+    fun2Set ((fun y => if y = x then a else m y), md) =
+      fun2Set ((fun y => if y = x then a else m' y), md) := by
+  rw [fun2Set_eq_iff] at h ⊢
+  intro b hb
+  by_cases hbx : b = x
+  · simp [hbx]
+  · simp [hbx, h b hb]
+
+/-- `fun2SetUpdateEq` with the pointwise update decided by a `DecidableEq` instance
+(Flapjack infrastructure for concrete address types such as `BitVec`; the tagged
+HOL form above decides the update classically). -/
+theorem fun2SetUpdateEq_dec {α β : Type} [DecidableEq α] (m m' : α → β) (md : α → Prop)
     (x : α) (a : β) (h : fun2Set (m, md) = fun2Set (m', md)) :
     fun2Set ((fun y => if y = x then a else m y), md) =
       fun2Set ((fun y => if y = x then a else m' y), md) := by
@@ -536,7 +550,7 @@ private theorem instAgree {width : Nat} [NeZero width] {C F : Type} (i : WordLan
         unfold WordSemStateFiniteExact.memStore
         by_cases hd : s.mdomain a = true
         · simp only [hd, if_true]
-          exact Or.inr ⟨_, _, rfl, rfl, fun2SetUpdateEq s.memory m _ a w h⟩
+          exact Or.inr ⟨_, _, rfl, rfl, fun2SetUpdateEq_dec s.memory m _ a w h⟩
         · simp only [hd, Bool.false_eq_true, if_false]
           exact Or.inl ⟨rfl, rfl⟩
       · exact Or.inl ⟨rfl, rfl⟩

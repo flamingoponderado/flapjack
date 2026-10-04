@@ -44,8 +44,120 @@ def samples():
         for n in [0,2047,2048,-2048,-2049,-2**63,2**63-1]:add('Loc',f'Loc {r} {w(n)}',f'.loc {r} ({l(n)})')
     return rows
 
+
+# Source inventory, not a universal correctness proof. Match the actual reviewed
+# carriers (including aliases), and require every constructor in both sample
+# terms. Nested Reg/Imm modes must be represented for each operator.
+CARRIER_SOURCES = {
+    "asm": ("HolAsm", "Flapjack/Compiler/Encoders/Asm.lean"),
+    "inst": ("HolInst", "Flapjack/Compiler/Encoders/Asm.lean"),
+    "arith": ("HolArith", "Flapjack/Compiler/Encoders/Asm.lean"),
+    "addr": ("HolAddr", "Flapjack/Compiler/Encoders/Asm.lean"),
+    "reg_imm": ("HolRegImm", "Flapjack/Compiler/Encoders/Asm.lean"),
+    "binop": ("BinOp", "Flapjack/Pancake/PanLang.lean"),
+    "cmp": ("Cmp", "Flapjack/Pancake/PanLang.lean"),
+    "memop": ("WordMemOp", "Flapjack/MemOp.lean"),
+    "fp": ("WordLangFp", "Flapjack/Pancake/WordLang.lean"),
+    "shift": ("Shift", "Flapjack/AstHOL.lean"),
+}
+ALIASES = {"HolBinop": "Flapjack.BinOp", "HolCmp": "Flapjack.Cmp",
+           "HolMemop": "Flapjack.WordMemOp", "HolFp": "WordLangFp"}
+CONTRACTS = runpy.run_path(str(ROOT / "scripts/l3/lean_contracts.py"))
+
+def hol_without_comments(text):
+    # The inventories are datatype blocks and sample terms, not SML programs.
+    # Preserve newlines and token separation while ignoring nested comments.
+    result = []
+    depth = 0
+    index = 0
+    while index < len(text):
+        if text.startswith("(*", index):
+            depth += 1
+            result.append("  ")
+            index += 2
+        elif depth and text.startswith("*)", index):
+            depth -= 1
+            result.append("  ")
+            index += 2
+        else:
+            result.append(text[index] if not depth or text[index] == "\n" else " ")
+            index += 1
+    if depth:
+        raise ValueError("unterminated HOL inventory comment")
+    return "".join(result)
+
+def lean_constructor(name):
+    return "fp" + name[2:] if name.startswith("FP") else name[0].lower() + name[1:]
+
+def source_inventory(root=ROOT):
+    asm = CONTRACTS["strip_comments"]((root / "Flapjack/Compiler/Encoders/Asm.lean").read_text())
+    for alias, owner in ALIASES.items():
+        declarations = re.findall(r"(?m)^abbrev\s+" + alias + r"\s*:=\s*(\S+)", asm)
+        if declarations != [owner]:
+            raise ValueError("native assembler alias drift: " + alias)
+    result = {}
+    for family, (owner, path) in CARRIER_SOURCES.items():
+        original = root / ("cakeml/semantics/astScript.sml" if family == "shift"
+                           else "cakeml/compiler/encoders/asm/asmScript.sml")
+        source = hol_without_comments(original.read_text())
+        blocks = re.findall(r"(?ms)^Datatype:\s*" + family + r"\s*=(.*?)^End\b", source)
+        if len(blocks) != 1:
+            raise ValueError("missing/duplicate original datatype: " + family)
+        hol = [part.strip().split()[0] for part in blocks[0].split("|")]
+        lean = CONTRACTS["strip_comments"]((root / path).read_text())
+        blocks = re.findall(r"(?ms)^inductive\s+" + owner + r"\b[^\n]*\n(.*?)^\s*deriving\b", lean)
+        if len(blocks) != 1:
+            raise ValueError("missing/duplicate Lean carrier: " + owner)
+        constructors = re.findall(r"(?m)^\s*\|\s*([A-Za-z_]\w*)", blocks[0])
+        expected = [lean_constructor(name) for name in hol]
+        if not hol or len(set(hol)) != len(hol) or constructors != expected:
+            raise ValueError("HOL/Lean constructor inventory drift: " + family)
+        result[family] = hol
+    return result
+
+def check_constructor_inventory(rows=None, root=ROOT):
+    rows = samples() if rows is None else rows
+    inventory = source_inventory(root)
+    all_hol = {name for names in inventory.values() for name in names}
+    all_lean = {lean_constructor(name) for name in all_hol}
+    observed_hol, observed_lean = set(), set()
+    row_tokens = []
+    for row in rows:
+        hol = set(re.findall(r"\b[A-Z][A-Za-z_0-9]*\b", hol_without_comments(row["hol"]))) & all_hol
+        lean = set(re.findall(r"(?<!\w)\.([A-Za-z_]\w*)", CONTRACTS["strip_comments"](row["lean"]))) & all_lean
+        if {lean_constructor(name) for name in hol} != lean:
+            raise ValueError("HOL/Lean sample constructors disagree: " + row["label"])
+        observed_hol.update(hol)
+        observed_lean.update(lean)
+        row_tokens.append(hol)
+    if observed_hol != all_hol or observed_lean != all_lean:
+        raise ValueError("missing native constructor observations: " + repr(sorted(all_hol - observed_hol)))
+    for constructor, family in [("Binop", "binop"), ("Shift", "shift"), ("JumpCmp", "cmp")]:
+        for operator in inventory[family]:
+            for mode in inventory["reg_imm"]:
+                if not any({constructor, operator, mode} <= terms for terms in row_tokens):
+                    raise ValueError("missing native operand mode: " + constructor + "/" + operator + "/" + mode)
+    return inventory
+
+def check_probe_samples(rows=None, root=ROOT):
+    rows = samples() if rows is None else rows
+    probe = (root / "scripts/hol-probes/l3_target_encoder_probeScript.sml").read_text()
+    observed = [line.strip() for line in probe.splitlines()
+                if re.match(r'\s*val _ = (?:ast|bytes) "Target_', line)]
+    expected = []
+    quote = chr(96) * 2
+    for row in rows:
+        label, term = row["label"], row["hol"]
+        expected.extend([
+            f'val _ = ast "{label}_ast" {quote}riscv_ast ({term}){quote};',
+            f'val _ = bytes "{label}_bytes" {quote}MAP w2n (riscv_enc ({term})){quote};'])
+    if observed != expected:
+        raise ValueError("original native target probe/sample input drift")
+
 HEADERS=['riscv_encode_fail_type=:instruction list', 'riscv_encode_fail_hypotheses=0', 'riscv_encode_type=:instruction -> word8 list', 'riscv_encode_hypotheses=0', 'riscv_bop_r_type=:binop -> word5 # word5 # word5 -> ArithR', 'riscv_bop_r_hypotheses=0', 'riscv_bop_i_type=:binop -> word5 # word5 # word12 -> ArithI', 'riscv_bop_i_hypotheses=0', 'riscv_sh_type=:shift -> word5 # word5 # word6 -> Shift', 'riscv_sh_hypotheses=0', 'riscv_shv_type=:shift -> word5 # word5 # word5 -> Shift', 'riscv_shv_hypotheses=0', 'riscv_memop_type=:memop -> (word5 # word5 # word12 -> Load) + (word5 # word5 # word12 -> Store)', 'riscv_memop_hypotheses=0', 'riscv_const32_type=:word5 -> word32 -> instruction list', 'riscv_const32_hypotheses=0', 'riscv_ast_type=:64 asm -> instruction list', 'riscv_ast_hypotheses=0', 'riscv_enc_type=:64 asm -> word8 list', 'riscv_enc_hypotheses=0', 'riscv_bop_i_clauses=riscv_bop_i Add = ADDI ∧ riscv_bop_i And = ANDI ∧ riscv_bop_i Or = ORI ∧ riscv_bop_i Xor = XORI', 'riscv_sh_clauses=riscv_sh Lsl = SLLI ∧ riscv_sh Lsr = SRLI ∧ riscv_sh Asr = SRAI', 'riscv_shv_clauses=riscv_shv Lsl = SLL ∧ riscv_shv Lsr = SRL ∧ riscv_shv Asr = SRA', 'bop_i_undefined=riscv_bop_i Sub', 'sh_undefined=riscv_sh Ror', 'shv_undefined=riscv_shv Ror']
 def capture(text):
+    check_constructor_inventory()
+    check_probe_samples()
     lines=text.splitlines()
     if lines[:len(HEADERS)]!=HEADERS:raise ValueError('original target types/hypotheses/unspecified clauses drift')
     rows={}
@@ -92,4 +204,4 @@ if __name__=='__main__':
     p=ROOT/'Flapjack/Test/RiscVNativeTargetParity.lean'
     if sys.argv[1:]==['--update']:p.write_text(result)
     elif sys.argv[1:] or p.read_text()!=result:raise SystemExit('native target fixture drift')
-    print(f'PASS {len(samples())} complete original target AST lists and byte lists/kernel replay fixtures')
+    print(f'PASS {len(samples())} complete original target AST/byte fixtures; all source constructors and operand modes inventoried')

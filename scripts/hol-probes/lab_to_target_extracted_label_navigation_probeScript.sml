@@ -1,0 +1,22 @@
+(* Full original navigation existence statement and direct definition types. *)
+load "bossLib";
+load "preamble";
+load "lab_to_targetProofTheory";
+open HolKernel Parse bossLib;
+val _ = set_trace "types" 1;
+val th = DB.fetch "lab_to_targetProof" "extract_labels_loc_to_pc";
+val _ = print "extract_labels_loc_to_pc_statement_typed=";
+val _ = print_term (concl th);
+val _ = print "\n";
+val _ = print "extract_labels_loc_to_pc_hyp_count=";
+val _ = print (Int.toString (length (hyp th)));
+val _ = print "\n";
+val _ = print "loc_to_pc_definition_typed=";
+val _ = print_term (concl (DB.fetch "labSem" "loc_to_pc_def"));
+val _ = print "\n";
+val _ = print "sec_labels_ok_definition_typed=";
+val _ = print_term (concl (DB.fetch "labProps" "sec_labels_ok_def"));
+val _ = print "\n";
+val _ = print "extract_labels_definition_typed=";
+val _ = print_term (concl (DB.fetch "labProps" "extract_labels_def"));
+val _ = print "\n";
