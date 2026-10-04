@@ -107,6 +107,9 @@ run_probe() {
   done
 }
 
+run_probe l3_step_jump_probeScript.sml l3_step_jump_probe.out \
+  jal_hypotheses jal_statement jal_gen jal_hypothesis_count jalr_hypotheses jalr_statement jalr_gen jalr_hypothesis_count jal_nop_hypotheses jal_nop_statement jal_nop_gen jal_nop_hypothesis_count jalr_nop_hypotheses jalr_nop_statement jalr_nop_gen jalr_nop_hypothesis_count \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_convs_simp_const_fp_labels_probeScript.sml word_convs_simp_const_fp_labels_probe.out \
   extract_labels_const_fp_loop_typed extract_labels_const_fp_loop_proved extract_labels_const_fp_loop_hypotheses extract_labels_const_fp_typed extract_labels_const_fp_proved extract_labels_const_fp_hypotheses \
   "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" "$cake_dir/compiler/backend/proofs"
