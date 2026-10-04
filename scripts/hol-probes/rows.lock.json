@@ -663,6 +663,7 @@
     {"bytes": 278, "out": "monad_base_probe.out", "rows": 10, "sha256": "676b6f2fa69d0482ac1fd8f7b2e0d5bfa5eeacc973929d93562f31086cb58e56"},
     {"bytes": 456, "out": "monad_list_primitives_probe.out", "rows": 25, "sha256": "564bd5d118f7cd0746d109b86fc758358e2a313a34352b2638a56a1d4a9dbc62"},
     {"bytes": 609, "out": "namespace_carrier_probe.out", "rows": 5, "sha256": "f9a102f5a220866a4776ae35fdff947b3146c4720ff9b722ea58748023b35536"},
+    {"bytes": 2916, "out": "namespace_source_to_flat_ops_probe.out", "rows": 22, "sha256": "418974237d05378ab3ee4325f936411fc7df1c9890d1f56a443bba263a592de5"},
     {"bytes": 251, "out": "native_alist_insert_reverse_probe.out", "rows": 3, "sha256": "71d67c1b2811105c6adae83900a2522c56acab0bf683eaf9726591b62a1686de"},
     {"bytes": 319, "out": "num_set_audit_probe.out", "rows": 16, "sha256": "ab1cf111a588d2a04174ae550b4a2a035ab537b3d86ab69d795e182755a8285b"},
     {"bytes": 152, "out": "num_set_spt_probe.out", "rows": 11, "sha256": "e6d7df80a2aed661f16a32c880c7ff784dfd0eb203a84ddba006d56e16c4d928"},

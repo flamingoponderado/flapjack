@@ -1,0 +1,22 @@
+id_type=:(ξ, ν) id
+id_constructors_typed=(∀(a :ξ) (f :ξ -> α) (f1 :ν -> (ν, ξ) id -> α). (id_CASE (Short a :(ν, ξ) id) f f1 :α) = f a) ∧ ∀(a0 :ν) (a1 :(ν, ξ) id) (f :ξ -> α) (f1 :ν -> (ν, ξ) id -> α). (id_CASE (Long a0 a1) f f1 :α) = f1 a0 a1
+mk_id_def_statement=(∀n. mk_id [] n = Short n) ∧ ∀mn mns n. mk_id (mn::mns) n = Long mn (mk_id mns n)
+mk_id_def_typed=(∀(n :β). mk_id ([] :α list) n = (Short n :(α, β) id)) ∧ ∀(mn :α) (mns :α list) (n :β). mk_id (mn::mns) n = Long mn (mk_id mns n)
+nsLookup_def_statement=(∀v n m. nsLookup (Bind v m) (Short n) = ALOOKUP v n) ∧ ∀v mn m id. nsLookup (Bind v m) (Long mn id) = case ALOOKUP m mn of NONE => NONE | SOME env => nsLookup env id
+nsLookup_def_typed=(∀(v :(ξ # φ) list) (n :ξ) (m :(ν # (ν, ξ, φ) namespace) list). nsLookup (Bind v m) (Short n :(ν, ξ) id) = ALOOKUP v n) ∧ ∀(v :(ξ # φ) list) (mn :ν) (m :(ν # (ν, ξ, φ) namespace) list) (id :(ν, ξ) id). nsLookup (Bind v m) (Long mn id) = case ALOOKUP m mn of (NONE :(ν, ξ, φ) namespace option) => (NONE :φ option) | SOME env => nsLookup env id
+nsEmpty_def_statement=nsEmpty = Bind [] []
+nsEmpty_def_typed=(nsEmpty :(α, β, γ) namespace) = Bind ([] :(β # γ) list) ([] :(α # (α, β, γ) namespace) list)
+nsAppend_def_statement=nsAppend (Bind v1 m1) (Bind v2 m2) = Bind (v1 ++ v2) (m1 ++ m2)
+nsAppend_def_typed=nsAppend (Bind (v1 :(β # γ) list) (m1 :(α # (α, β, γ) namespace) list)) (Bind (v2 :(β # γ) list) (m2 :(α # (α, β, γ) namespace) list)) = Bind (v1 ++ v2) (m1 ++ m2)
+nsLift_def_statement=∀mn env. nsLift mn env = Bind [] [(mn,env)]
+nsLift_def_typed=∀(mn :α) (env :(α, β, γ) namespace). nsLift mn env = Bind ([] :(β # γ) list) [(mn,env)]
+alist_to_ns_def_statement=∀a. alist_to_ns a = Bind a []
+alist_to_ns_def_typed=∀(a :(β # γ) list). (alist_to_ns a :(α, β, γ) namespace) = Bind a ([] :(α # (α, β, γ) namespace) list)
+nsBind_def_statement=nsBind k x (Bind v m) = Bind ((k,x)::v) m
+nsBind_def_typed=nsBind (k :β) (x :γ) (Bind (v :(β # γ) list) (m :(α # (α, β, γ) namespace) list)) = Bind ((k,x)::v) m
+nsBindList_def_statement=∀l e. nsBindList l e = FOLDR (λ(x,v) e. nsBind x v e) e l
+nsBindList_def_typed=∀(l :(β # γ) list) (e :(α, β, γ) namespace). nsBindList l e = FOLDR (λ((x :β),(v :γ)) (e :(α, β, γ) namespace). nsBind x v e) e l
+nsSing_def_statement=∀n x. nsSing n x = Bind [(n,x)] []
+nsSing_def_typed=∀(n :β) (x :γ). (nsSing n x :(α, β, γ) namespace) = Bind [(n,x)] ([] :(α # (α, β, γ) namespace) list)
+nsMap_def_statement=∀v m f. nsMap f (Bind v m) = Bind (MAP (λ(n,x). (n,f x)) v) (MAP (λ(mn,e). (mn,nsMap f e)) m)
+nsMap_def_typed=∀(v :(ξ # φ) list) (m :(ν # (ν, ξ, φ) namespace) list) (f :φ -> χ). nsMap f (Bind v m) = Bind (MAP (λ((n :ξ),(x :φ)). (n,f x)) v) (MAP (λ((mn :ν),(e :(ν, ξ, φ) namespace)). (mn,nsMap f e)) m)
