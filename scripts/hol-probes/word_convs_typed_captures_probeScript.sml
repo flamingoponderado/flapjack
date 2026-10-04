@@ -138,3 +138,6 @@ val _ = capture "word_good_handlers_word_simp_source_statement_typed" "word_good
 val _ = capture_thm "word_good_handlers_word_to_word_statement" word_good_handlers_word_to_word;
 val _ = capture_thm "word_good_handlers_word_to_word_incr_statement" word_good_handlers_word_to_word_incr;
 val _ = capture "word_good_handlers_word_to_word_incr_helper_source_statement_typed" "word_good_handlers_word_to_word_incr_helper";
+val _ = capture "fake_seq_good_handlers_source_statement_typed" "fake_seq_good_handlers";
+val _ = capture "ssa_reconcile_good_handlers_source_statement_typed" "ssa_reconcile_good_handlers";
+val _ = capture "loop_setup_good_handlers_source_statement_typed" "loop_setup_good_handlers";
