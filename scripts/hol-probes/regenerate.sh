@@ -7395,6 +7395,10 @@ run_probe pan_to_target_library_lemmas_probeScript.sml pan_to_target_library_lem
   fun2set_disjoint_union_typed word_arith_lemma2_typed aligned_add_sub_typed \
   "$cake_dir/misc/miscScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe ast_syntax_probeScript.sml ast_syntax_probe.out \
+  ast_t_datatype_typed pat_datatype_typed exp_datatype_typed dec_datatype_typed type_def_abbrev pat_bindings_def_typed \
+  "$cake_dir/semantics/astScript.sml" "$cake_dir/semantics"
+
 run_probe ast_lit_op_probeScript.sml ast_lit_op_probe.out \
   lit_datatype_typed arith_datatype_typed prim_type_datatype_typed op_datatype_typed op_class_datatype_typed lop_datatype_typed modN_abbrev varN_abbrev conN_abbrev typeN_abbrev tvarN_abbrev locn_datatype_typed locs_datatype_typed getOpClass_def_typed default_loc_def_typed start_locs_def_typed unknown_loc_def_typed \
   "$cake_dir/semantics/astScript.sml" "$cake_dir/semantics"

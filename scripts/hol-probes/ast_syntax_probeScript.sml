@@ -1,0 +1,10 @@
+load "astTheory";
+open HolKernel Parse boolLib bossLib astTheory;
+val _ = Globals.linewidth := 1000000;
+val _ = (print "ast_t_datatype_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (TypeBase.case_def_of ``:ast$ast_t``)); print "\n");
+val _ = (print "pat_datatype_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (TypeBase.case_def_of ``:ast$pat``)); print "\n");
+val _ = (print "exp_datatype_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (TypeBase.case_def_of ``:ast$exp``)); print "\n");
+val _ = (print "dec_datatype_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (TypeBase.case_def_of ``:ast$dec``)); print "\n");
+val _ = (print "type_def_abbrev="; print (type_to_string ``:type_def``); print "\n");
+val _ = if null (hyp (pat_bindings_def)) then () else raise Fail "hypotheses: pat_bindings_def";
+val _ = (print "pat_bindings_def_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (pat_bindings_def)); print "\n");

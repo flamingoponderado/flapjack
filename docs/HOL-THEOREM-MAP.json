@@ -95762,5 +95762,61 @@
     "hol_name": "unknown_loc_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus4 source comparison 2026-10-04: original unknown_loc_def: Locs UNKNOWNpt UNKNOWNpt. Typed capture ast_lit_op probe (show_types; datatype case theorems)."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/Syntax.lean",
+    "lean_name": "AstT",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "ast_t",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original ast_t: Atvar tvarN | Atfun | Attup (ast_t list) | Atapp (ast_t list) ((modN,typeN) id); id is NamespaceHOL.Ident, locs is Misc.Location.Locs. Typed capture ast_syntax probe (show_types)."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/Syntax.lean",
+    "lean_name": "Pat",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "pat",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pat: seven constructors, Pcon over ((modN,conN) id) option; id is NamespaceHOL.Ident, locs is Misc.Location.Locs. Typed capture ast_syntax probe (show_types)."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/Syntax.lean",
+    "lean_name": "Exp",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "exp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original exp: 14 constructors in order including Handle/Mat (pat # exp) list, Letrec (varN # varN # exp) list, Lannot exp locs; id is NamespaceHOL.Ident, locs is Misc.Location.Locs. Typed capture ast_syntax probe (show_types)."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/Syntax.lean",
+    "lean_name": "TypeDef",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "type_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original type_def: Type abbreviation (tvarN list # typeN # (conN # ast_t list) list) list; id is NamespaceHOL.Ident, locs is Misc.Location.Locs. Typed capture ast_syntax probe (show_types)."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/Syntax.lean",
+    "lean_name": "Dec",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "dec",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original dec: eight constructors Dlet..Denv with locs payloads; id is NamespaceHOL.Ident, locs is Misc.Location.Locs. Typed capture ast_syntax probe (show_types)."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/Syntax.lean",
+    "lean_name": "patBindings",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "pat_bindings_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pat_bindings_def: pat_bindings clauses (mutual pats_bindings is patsBindings); id is NamespaceHOL.Ident, locs is Misc.Location.Locs. Typed capture ast_syntax probe (show_types)."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/Syntax.lean",
+    "lean_name": "patsBindings",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "pat_bindings_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pat_bindings_def: pats_bindings clauses of the same mutual definition: [] and pats_bindings ps ++ pat_bindings p; id is NamespaceHOL.Ident, locs is Misc.Location.Locs. Typed capture ast_syntax probe (show_types)."
   }
 ]
