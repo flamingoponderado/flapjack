@@ -806,6 +806,7 @@ import Flapjack.Compiler.Backend.WordCse.ProductionArithmetic
 import Flapjack.Compiler.Backend.WordCse.ProductionHeapLoc
 import Flapjack.Compiler.Backend.WordCse.ProductionAssign
 import Flapjack.Compiler.Backend.WordCse.ProductionProgram
+import Flapjack.Compiler.Backend.WordCse.ProductionAllocatorInput
 import Flapjack.Compiler.Backend.WordCse.FactProducers
 import Flapjack.Compiler.Backend.WordCse.Join
 import Flapjack.Compiler.Backend.WordCse.Proofs.InNamesSet

@@ -1,0 +1,22 @@
+{
+  "method": "lake lean scripts/CseProductionProfile.lean; noinline IO barriers; complete program and five-field entry equality outside timing",
+  "corpus_sha256": "8bf644779eb27ede66100f626966224538c8dc68903cc37c18d11abac286c71b",
+  "profile_sha256": "596f92d5257380af209d0652c7f4ebe27002f6916a56c153814a556017ff7a31",
+  "source_base": "c0eb5534f",
+  "runs": [
+    {
+      "run": 1,
+      "corpus_entries": 166,
+      "functions": 863,
+      "native_decode_ms": 540.959452,
+      "actual_ms": 120.569785
+    },
+    {
+      "run": 2,
+      "corpus_entries": 166,
+      "functions": 863,
+      "native_decode_ms": 538.267288,
+      "actual_ms": 118.84392
+    }
+  ]
+}
