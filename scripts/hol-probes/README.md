@@ -8534,3 +8534,5 @@ slot-to-bit index arithmetic, and allocator stack-colour transport. Full GC
 caller and whole-body production correspondence remain open. Pancake's
 LoopToWord Call/FFI producers use empty GC cutsets, so the source artifact
 corpus does not distinguish this nonempty-GC regression.
+
+`pan_simp_validity_probe.out` captures all four fully quantified original PanSimp binary-Panop validity theorems (ret_to_tail, seq_assoc, compile, compile_prog) with show_types enabled and no open hypotheses/free variables. Lean retains the original equivalences/implications over exact positive-width syntax. These captures are source-review evidence, not a cross-language equivalence proof.

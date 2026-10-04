@@ -96682,5 +96682,81 @@
     "lean_name": "accVarsHOL_dom_right",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only: domain l is contained in domain(acc_vars p l), from acc_vars_acc."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_ret_to_tail",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanSimpValidity.lean",
+    "lean_name": "everyInstOkLess_retToTail",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-pxn.18.5.14.23: original HOL lines1161-1236 and regenerated fully quantified typed four-theorem capture. Exact ProgHOL/DeclHOL/ExpHOL positive BitVec width with MlString names; only words_as_type_indexed_bitvec translation. Binary Panop predicate is existing panopArityTwoHOL, EVERY every_exp rendered by existing everyExpListHOL/everyExpHOL over exact expsOfHOL. ret_to_tail and seq_assoc retain both directions (iff on Bool=true); seq_assoc retains appended expression list; compile retains sole source validity hypothesis; compile_prog retains arbitrary complete declaration lists and sole EVERY good_panops hypothesis. No added target evaluation, pass success, output validity or source byte-range guard. Recursive proofs cover handlers and original tail-call optimization; removed return is a Var satisfying the binary predicate vacuously."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_seq_assoc",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanSimpValidity.lean",
+    "lean_name": "everyInstOkLess_seqAssoc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-pxn.18.5.14.23: original HOL lines1161-1236 and regenerated fully quantified typed four-theorem capture. Exact ProgHOL/DeclHOL/ExpHOL positive BitVec width with MlString names; only words_as_type_indexed_bitvec translation. Binary Panop predicate is existing panopArityTwoHOL, EVERY every_exp rendered by existing everyExpListHOL/everyExpHOL over exact expsOfHOL. ret_to_tail and seq_assoc retain both directions (iff on Bool=true); seq_assoc retains appended expression list; compile retains sole source validity hypothesis; compile_prog retains arbitrary complete declaration lists and sole EVERY good_panops hypothesis. No added target evaluation, pass success, output validity or source byte-range guard. Recursive proofs cover handlers and original tail-call optimization; removed return is a Var satisfying the binary predicate vacuously."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_pan_simp_compile",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanSimpValidity.lean",
+    "lean_name": "everyInstOkLess_panSimpCompile",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-pxn.18.5.14.23: original HOL lines1161-1236 and regenerated fully quantified typed four-theorem capture. Exact ProgHOL/DeclHOL/ExpHOL positive BitVec width with MlString names; only words_as_type_indexed_bitvec translation. Binary Panop predicate is existing panopArityTwoHOL, EVERY every_exp rendered by existing everyExpListHOL/everyExpHOL over exact expsOfHOL. ret_to_tail and seq_assoc retain both directions (iff on Bool=true); seq_assoc retains appended expression list; compile retains sole source validity hypothesis; compile_prog retains arbitrary complete declaration lists and sole EVERY good_panops hypothesis. No added target evaluation, pass success, output validity or source byte-range guard. Recursive proofs cover handlers and original tail-call optimization; removed return is a Var satisfying the binary predicate vacuously."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_pan_simp_compile_prog",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanSimpValidity.lean",
+    "lean_name": "everyInstOkLess_panSimpCompileProg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-pxn.18.5.14.23: original HOL lines1161-1236 and regenerated fully quantified typed four-theorem capture. Exact ProgHOL/DeclHOL/ExpHOL positive BitVec width with MlString names; only words_as_type_indexed_bitvec translation. Binary Panop predicate is existing panopArityTwoHOL, EVERY every_exp rendered by existing everyExpListHOL/everyExpHOL over exact expsOfHOL. ret_to_tail and seq_assoc retain both directions (iff on Bool=true); seq_assoc retains appended expression list; compile retains sole source validity hypothesis; compile_prog retains arbitrary complete declaration lists and sole EVERY good_panops hypothesis. No added target evaluation, pass success, output validity or source byte-range guard. Recursive proofs cover handlers and original tail-call optimization; removed return is a Var satisfying the binary predicate vacuously."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanSimpValidity.lean",
+    "lean_name": "binary_append",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific Boolean factoring for the four original PanSimp validity theorem ports in this module; no independent HOL declaration. List append fold, smart-sequence/tail-call support and Bool equality recursion assemble the separately tagged full original iff/implication results without additional premises."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanSimpValidity.lean",
+    "lean_name": "binary_seqCallRet",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific Boolean factoring for the four original PanSimp validity theorem ports in this module; no independent HOL declaration. List append fold, smart-sequence/tail-call support and Bool equality recursion assemble the separately tagged full original iff/implication results without additional premises."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanSimpValidity.lean",
+    "lean_name": "binary_smartSeq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific Boolean factoring for the four original PanSimp validity theorem ports in this module; no independent HOL declaration. List append fold, smart-sequence/tail-call support and Bool equality recursion assemble the separately tagged full original iff/implication results without additional premises."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanSimpValidity.lean",
+    "lean_name": "panBinary_retToTail_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific Boolean factoring for the four original PanSimp validity theorem ports in this module; no independent HOL declaration. List append fold, smart-sequence/tail-call support and Bool equality recursion assemble the separately tagged full original iff/implication results without additional premises."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanSimpValidity.lean",
+    "lean_name": "panBinary_seqAssoc_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific Boolean factoring for the four original PanSimp validity theorem ports in this module; no independent HOL declaration. List append fold, smart-sequence/tail-call support and Bool equality recursion assemble the separately tagged full original iff/implication results without additional premises."
   }
 ]
