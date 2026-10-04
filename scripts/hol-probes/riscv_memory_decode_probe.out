@@ -1,0 +1,48 @@
+ld_decode_zero=T
+ld_decode_all_ones=T
+ld_decode_mixed_sign=T
+ld_encode_source_clause=Encode (Load (LD (r1v,r2v,immv))) = Itype (opc 0w,3w,r1v,r2v,immv)
+ld_encode_source_hypotheses=0
+ld_carrier_types=immv : :word12, r2v : :word5, r1v : :word5
+lwu_decode_zero=T
+lwu_decode_all_ones=T
+lwu_decode_mixed_sign=T
+lwu_encode_source_clause=Encode (Load (LWU (r1v,r2v,immv))) = Itype (opc 0w,6w,r1v,r2v,immv)
+lwu_encode_source_hypotheses=0
+lwu_carrier_types=immv : :word12, r2v : :word5, r1v : :word5
+lhu_decode_zero=T
+lhu_decode_all_ones=T
+lhu_decode_mixed_sign=T
+lhu_encode_source_clause=Encode (Load (LHU (r1v,r2v,immv))) = Itype (opc 0w,5w,r1v,r2v,immv)
+lhu_encode_source_hypotheses=0
+lhu_carrier_types=immv : :word12, r2v : :word5, r1v : :word5
+lbu_decode_zero=T
+lbu_decode_all_ones=T
+lbu_decode_mixed_sign=T
+lbu_encode_source_clause=Encode (Load (LBU (r1v,r2v,immv))) = Itype (opc 0w,4w,r1v,r2v,immv)
+lbu_encode_source_hypotheses=0
+lbu_carrier_types=immv : :word12, r2v : :word5, r1v : :word5
+sd_decode_zero=T
+sd_decode_all_ones=T
+sd_decode_mixed_sign=T
+sd_encode_source_clause=Encode (Store (SD (r1v,r2v,immv))) = Stype (opc 8w,3w,r1v,r2v,immv)
+sd_encode_source_hypotheses=0
+sd_carrier_types=immv : :word12, r2v : :word5, r1v : :word5
+sw_decode_zero=T
+sw_decode_all_ones=T
+sw_decode_mixed_sign=T
+sw_encode_source_clause=Encode (Store (SW (r1v,r2v,immv))) = Stype (opc 8w,2w,r1v,r2v,immv)
+sw_encode_source_hypotheses=0
+sw_carrier_types=immv : :word12, r2v : :word5, r1v : :word5
+sh_decode_zero=T
+sh_decode_all_ones=T
+sh_decode_mixed_sign=T
+sh_encode_source_clause=Encode (Store (SH (r1v,r2v,immv))) = Stype (opc 8w,1w,r1v,r2v,immv)
+sh_encode_source_hypotheses=0
+sh_carrier_types=immv : :word12, r2v : :word5, r1v : :word5
+sb_decode_zero=T
+sb_decode_all_ones=T
+sb_decode_mixed_sign=T
+sb_encode_source_clause=Encode (Store (SB (r1v,r2v,immv))) = Stype (opc 8w,0w,r1v,r2v,immv)
+sb_encode_source_hypotheses=0
+sb_carrier_types=immv : :word12, r2v : :word5, r1v : :word5
