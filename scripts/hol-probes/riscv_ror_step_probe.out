@@ -1,0 +1,20 @@
+ror_run_srli_clause=Run (Shift (SRLI (rdv,rs1v,amtv))) ms = (let (v,s) = in32BitMode () ms in if v ∧ word_bit 5 amtv then signalException Illegal_Instr s else (let (v,s) = in32BitMode () s in write'GPR ((if v then w2w ((31 >< 0) (GPR rs1v s)) else GPR rs1v s) ⋙ w2n amtv,rdv) s))
+ror_run_srli_types=ms : :riscv_state, amtv : :word6, rs1v : :word5, rdv : :word5
+ror_run_srli_hypotheses=0
+ror_run_sll_clause=Run (Shift (SLL (rdv,rs1v,rs2v))) ms = (let (v,s) = in32BitMode () ms in if v then write'GPR (GPR rs1v s <<~ w2w ((4 >< 0) (GPR rs2v s)),rdv) s else write'GPR (GPR rs1v s <<~ w2w ((5 >< 0) (GPR rs2v s)),rdv) s)
+ror_run_sll_types=ms : :riscv_state, rs2v : :word5, rs1v : :word5, rdv : :word5
+ror_run_sll_hypotheses=0
+ror_run_srl_clause=Run (Shift (SRL (rdv,rs1v,rs2v))) ms = (let (v,s) = in32BitMode () ms in if v then write'GPR (w2w ((31 >< 0) (GPR rs1v s) >>>~ w2w ((4 >< 0) (GPR rs2v s))),rdv) s else write'GPR (GPR rs1v s >>>~ w2w ((5 >< 0) (GPR rs2v s)),rdv) s)
+ror_run_srl_types=ms : :riscv_state, rs2v : :word5, rs1v : :word5, rdv : :word5
+ror_run_srl_hypotheses=0
+ror_run_sub_clause=Run (ArithR (SUB (rdv,rs1v,rs2v))) ms = write'GPR (GPR rs1v ms + -1w * GPR rs2v ms,rdv) ms
+ror_run_sub_types=ms : :riscv_state, rs2v : :word5, rs1v : :word5, rdv : :word5
+ror_run_sub_hypotheses=0
+ror_next_srli_zero=T
+ror_next_srli_all_ones=T
+ror_next_sll_zero=T
+ror_next_sll_all_ones=T
+ror_next_srl_zero=T
+ror_next_srl_all_ones=T
+ror_next_sub_zero=T
+ror_next_sub_all_ones=T

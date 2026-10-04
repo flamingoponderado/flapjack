@@ -1,3 +1,9 @@
+`riscv_sltu_decode_probe.out` freshly kernel-proves the unrestricted original SLTU DecodeAny(Word(Encode instruction)) identity for every word5 register tuple, with typed universal statement and zero hypotheses. It also captures the actual Rtype source clause (funct3=011/funct7=0000000), word5 carriers and zero/all-ones31/high-bit/alias evaluations. Lean proves the same full native composition. This untagged infrastructure supplies the real decoder prerequisite for the full six-instruction AddCarry encoder, including source-zero and temporary31 operands; it does not prove that constructor simulation alone. The local shape/capture pin is a regression check and does not independently establish HOL-to-Lean correspondence.
+
+`riscv_target_longmul_probe.out` captures the fully typed original LongMul specialization of the complete `riscv_encoder_correct` theorem, with binder carriers, hypothesis count zero and kernel proof result T. The Lean port preserves only asmStep plus the initial targetStateRel as hypotheses, proves n=1 with both actual MULHU/MUL byte-fetch/decode/Run/Next steps, and retains all environments, both assertions, code-byte preservation and intermediate PC membership. Original asm_ok supplies the high-destination/source exclusions; destination equality and other permitted aliases remain. Counter order is env0 after MULHU, env1 after MUL. Native broad Run/target closure inherits SOUNDNESS item8. The local statement/evidence pin is a syntactic regression check, not an independent HOL-to-Lean equivalence proof; whole encoder/compiler assembly remains open.
+
+`riscv_longmul_decode_probe.out` freshly proves both unrestricted original MULHU/MUL DecodeAny(Word(Encode instruction)) identities for every word5 register tuple, retaining zero registers and aliases. Each universal kernel theorem has no hypotheses; typed full conclusions and source Encode clauses/carriers accompany eight explicit zero/all-ones/high-bit/alias evaluations. Lean proves the same two unrestricted compositions through actual native definitions. These are untagged evaluator-composition infrastructure for the dependency-linked full original LongMul encoder constructor; byte-fetch/Run/interference/asserts obligations remain on that consumer. The local proof/capture pin detects drift and does not independently establish cross-language correspondence.
+
 `l3_step_register_comparison_probe.out` records all four original SLT/SLTU write/NOP equations, their actual two hypotheses and typed closed forms. Destination nonzero/zero and ArchBase != 1 are retained, including both source-zero reads, arbitrary aliases, full register-bank updates and both RV32 mode queries. SLT signextends low32; SLTU zeroextends low32. These primitive equations support actual AddCarry lowering; they do not claim whole encoder/compiler correctness. The local shape/capture guard detects drift and does not establish HOL-to-Lean equivalence.
 
 `l3_step_jump_probe.out` captures all four complete original evaluated JAL/JALR write and zero-destination companion statements, each actual Thm.hyp and count, and its closed fully typed GEN_ALL(DISCH_ALL) form. The sole write guard is rd <> 0; the sole companion guard is rd = 0. Full record updates retain address-exception/NextFetch effects, original rs1-zero read, JALR mask and source PC + Skip link before destination writes. Zero-destination companions suppress the link write and still jump or trap. These are primitive step-library equations, not whole encoder/compiler correctness.
@@ -8303,6 +8309,23 @@ knowledge on codec-representable unselected inputs. Kernel regressions retain
 that boundary, and 56 runtime cases compare all complete map entries and the
 full returned program rendering. These local proofs and original probes do
 not assert cross-language equivalence or complete whole-pass adoption.
+
+`word_cse_production_program_probe.out` captures the full typed original
+program/wrapper definitions and fifteen complete whole-program equality replays,
+with five-field state observations and cardinalities. The fixture key lists
+cover every stored entry, checked against the original cardinalities. Seq,
+MustTerminate, equal/unequal If facts, Loop reset/body transformation, all four
+Call return/handler combinations, Move, memory, heap, Assign, Get/Set and the
+flat memory/control family are covered. Kernel fixtures replay state tuples;
+executed program and wrapper checks compare the complete transformed program
+rendering against the expected program checked by original EVAL. ProductionProgram
+proves the complete instruction, recursive program and wrapper correspondence
+using input KnowledgeRel, original wfData and the existing input codec only.
+Every recursive output and join invariant is derived; there is no output/run
+or callback premise. The codec's rejected native Skip/FP instruction carriers
+remain an explicit representation boundary, with a kernel Skip rejection test.
+No tagged HOL compiler theorem is narrowed and no cross-language equivalence
+or entire compiler adoption claim is made.
 ## Native signed DIV decoding prerequisite
 
 `DecodeDiv.lean` proves unrestricted actual Encode/DecodeAny composition for
@@ -8361,3 +8384,32 @@ Fresh original theorem specialization includes complete statement, typed
 quantifiers, hyp0 and provedT. These captures are regression evidence, not a
 cross-assistant equivalence proof. The full target closure retains inherited
 reals_as_rational_cuts (SOUNDNESS item8). Other Shift/Ror cases remain open.
+
+## Full original register Lsr and Asr encoder cases
+
+`ShiftLsrRegister.lean` and `ShiftAsrRegister.lean` preserve the original
+sole source-step/initial-state premise and complete existential interference
+and asserts/asserts2 conclusions. Logical SRL and signed arithmetic SRA are
+kept distinct. Source count bounds, actual native masked counts, fetched
+bytes/Decode/Run/Next and whole post-state preservation are derived. Both
+fresh complete original theorem specializations have typed quantifiers, hyp0
+and provedT. Captures are source regression evidence, not equivalence proofs.
+The target closures retain inherited reals_as_rational_cuts (SOUNDNESS item8);
+immediate shifts and both Ror routes remain open.
+
+## Full original immediate Lsl/Lsr/Asr encoder cases
+
+The three `Shift*Immediate.lean` modules retain arbitrary word64 immediate
+inputs, natural registers, the sole original source-step/initial-relation
+premise and complete existential/all-environment asserts/asserts2 conclusion.
+The six-bit native amount is derived from source validity; source zero-count
+conditions remain inside the unchanged asmStep premise (zero allowed for Lsl
+only). Actual SLLI/SRLI/SRAI bytes/Decode/Run/Next and whole post-state facts are
+proved. Fresh full original theorem specializations capture typed word64
+quantifiers, hyp0 and provedT; these are regression evidence, not equivalence
+proofs. Target closures retain inherited reals_as_rational_cuts (SOUNDNESS8).
+Both Ror sequences remain open.
+
+`riscv_ror_step_probe.out` captures full original SRLI/SLL/SRL/SUB Run clauses, all inferred word/state types and zero open hypotheses, plus eight ground low-two-bit instruction-width observations. RorStep derives actual Next, complete native frames/validity and full original projection congruence, including scratch register31. It is untagged case-local infrastructure; the probe is regression evidence, not an equivalence proof. Full Ror immediate/register encoder traces and assertions remain open.
+
+`RorExecution.lean` composes the same actual native target iterator over the complete Ror instruction family. Generic kernel proofs derive emitted-byte fetch/Next, remaining byte regions, full projection congruence under the original environment interference, native validity, PC increment and original asserts2 outside-domain memory frame. It adds no target-run premise or scratch restriction and remains untagged local infrastructure. The fresh native clause/width capture remains `riscv_ror_step_probe.out`; full source postrelations/asserts for both Ror encoder cases remain open.
