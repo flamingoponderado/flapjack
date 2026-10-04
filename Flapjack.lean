@@ -1,3 +1,5 @@
+import Flapjack.RiscV.CorrectnessEncoding.Div
+import Flapjack.RiscV.CorrectnessEncoding.DecodeDiv
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Install
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterOffset
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelMemory
@@ -18,9 +20,11 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.LongArithmeti
 import Flapjack.Pancake.Proofs.PanToWord.InitialComposition
 import Flapjack.Pancake.Proofs.PanToTarget
 import Flapjack.Pancake.Proofs.PanToTarget.CompileProgEq
+import Flapjack.Pancake.Proofs.PanToTarget.WordToWordNoInstall
 import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMax
 import Flapjack.Compiler.Backend.WordDepth
 import Flapjack.Pancake.Proofs.PanToWord.StateRelImpSemantics
+import Flapjack.Pancake.Proofs.PanToWord.NoInstallCode
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.CarryOverflow
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegisterZero
 import Flapjack.RiscV.CorrectnessEncoding.ConstNext
@@ -79,6 +83,7 @@ import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Assembly
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileWordToWord
 import Flapjack.Compiler.Backend.WordToWord.Proofs.Syntactic
 import Flapjack.Compiler.Backend.WordToWord.Proofs.NoInstallCompileSingle
+import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSemantics
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsShort
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ChunkBitsMsb
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsPattern
@@ -109,6 +114,10 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.DataBufferWrite
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CodeBufferWrite
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Install
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Inst
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCall
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelSemantics
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileSemantics
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Assembly
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.ShareInst
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Set
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelStoreUpdate
@@ -148,6 +157,11 @@ import Flapjack.RiscV.L3.Step.RegisterALUStep
 import Flapjack.RiscV.L3.Step.ImmediateALUStep
 import Flapjack.RiscV.L3.Step.ImmediateComparison
 import Flapjack.RiscV.L3.Step.UpperImmediateStep
+import Flapjack.RiscV.L3.Step.ImmediateShiftStep
+import Flapjack.RiscV.L3.Step.RegisterShiftStep
+import Flapjack.RiscV.L3.Step.WShiftStep
+import Flapjack.RiscV.L3.Step.LoadStep
+import Flapjack.RiscV.L3.Step.StoreStep
 import Flapjack.RiscV.L3.Step.DecodeAny
 import Flapjack.RiscV.L3.Defs.WritePC
 import Flapjack.Test.L3DecodeParity
@@ -842,6 +856,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenamePropertyWrappers
 import Flapjack.Misc.BinaryIeeeArithExec
 import Flapjack.Misc.BinaryIeeeSqrtExec
 import Flapjack.Pancake.LoopToWord.Proofs.ProgramNames
+import Flapjack.Pancake.LoopToWord.Proofs.NoInstallCode
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocationLimit
 import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSAAllocation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSAOutputCodec
@@ -1360,7 +1375,9 @@ import Flapjack.Pancake.Proofs.WordConvs.InstSelectProgram
 import Flapjack.Pancake.Proofs.WordConvs.ThreeToTwo
 import Flapjack.Pancake.Proofs.WordConvs.Unreach
 import Flapjack.Pancake.Proofs.WordConvs.UnreachLabels
+import Flapjack.Pancake.Proofs.WordConvs.WordSimpInstructions
 import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.Sequence
+import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.PushOut
 import Flapjack.Pancake.Proofs.WordConvs.WordCse
 import Flapjack.Pancake.Proofs.WordConvs.CopyProp
 import Flapjack.Pancake.Proofs.WordConvs.SSAWfCutsets
