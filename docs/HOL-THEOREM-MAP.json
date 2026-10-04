@@ -96568,5 +96568,33 @@
     "hol_name": "LENGTH_LESS_size",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus3 source comparison 2026-10-04: ∀name ns funs y. ¬MEM name ns ∧ set ns ⊆ domain funs ∧ ALL_DISTINCT ns ∧ lookup name funs = SOME y ⇒ LENGTH ns < size funs over polymorphic alpha num_map (Spt); domain membership is a successful lookup, ALL_DISTINCT is List.Nodup. OPTION_MAP2 is WordDepth.optionMap₂, option_le is BackendProps.optionLe. Typed capture word_depth_helpers probe (show_types, no hypotheses; [local] lemmas by literal source replay with the original tactics)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/CodeOnlyGrows.lean",
+    "lean_name": "evaluate_code_only_grows",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_code_only_grows",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: original 4589-4626, all four binders !p s r t; evaluate (p,s) = (r,t) ⇒ subspt s.code t.code (sptSubspt); proved as in HOL by evaluate_ind over the 26 clauses with alloc/inst/mem_store/jump_exc/share_inst/cut_state/pop_env const lemmas, Install by subspt-union. State carrier WordSemStateFiniteExact width C F (alpha word width, independent beta/gamma as C/F) with the reviewed fmap_as_finite_support [fpRegs, store] and words qualifiers. Inherits the reals_as_rational_cuts assumption (SOUNDNESS item 8) through evaluate/inst. Typed capture word_props_code_grows probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/CodeOnlyGrows.lean",
+    "lean_name": "evaluate_NONE_stack_size_const",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_NONE_stack_size_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: original 4628-4634, binders !p s t; evaluate (p,s) = (NONE,t) ⇒ stack_size t.stack = stack_size s.stack; from evaluate_stack_swap and s_key_eq_stack_size as in HOL. State carrier WordSemStateFiniteExact width C F (alpha word width, independent beta/gamma as C/F) with the reviewed fmap_as_finite_support [fpRegs, store] and words qualifiers. Inherits the reals_as_rational_cuts assumption (SOUNDNESS item 8) through evaluate/inst. Typed capture word_props_code_grows probe (show_types, no hypotheses)."
   }
 ]

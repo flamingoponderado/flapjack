@@ -1,0 +1,2 @@
+evaluate_code_only_grows_typed=∀(p :α prog) (s :(α, β, γ) state) (r :α result option) (t :(α, β, γ) state). evaluate (p,s) = (r,t) ⇒ subspt s.code t.code
+evaluate_NONE_stack_size_const_typed=∀(p :α prog) (s :(α, β, γ) state) (t :(α, β, γ) state). evaluate (p,s) = ((NONE :α result option),t) ⇒ stack_size t.stack = stack_size s.stack
