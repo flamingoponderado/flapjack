@@ -38,6 +38,7 @@ jobs:
           python3 scripts/check-hol-refs.py
           python3 scripts/check_hol_theorem_map.py
           python3 scripts/check_hol_ref_export.py
+          python3 scripts/hol-probes/check-readme-coverage.py
 
       - name: Check native RISC-V encoder regression guards
         # These guards read original sources from the initialized CakeML submodule.
