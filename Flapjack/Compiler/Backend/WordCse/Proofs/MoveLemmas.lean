@@ -149,11 +149,11 @@ theorem get_set_vars_in_2 {width : Nat} [NeZero width] {C : Type} {F : Type}
   simp [canonicalRegs, hl]
 
 /-- Exact HOL local `lookup_set_vars_not_in` (`word_cseProof:2049-2056`); the
-    unused HOL binder `data` is retained. -/
+    unused HOL binder `data` is retained at its independent arbitrary type. -/
 @[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "lookup_set_vars_not_in"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem lookup_set_vars_not_in {width : Nat} [NeZero width] {C : Type} {F : Type} {β : Type}
-    (s : WordSemStateFiniteExact width C F) (moves : List (Nat × β)) (v : Nat) (_data : Knowledge)
+theorem lookup_set_vars_not_in {width : Nat} [NeZero width] {C : Type} {F : Type} {β δ : Type}
+    (s : WordSemStateFiniteExact width C F) (moves : List (Nat × β)) (v : Nat) (_data : δ)
     (c : BitVec width) (x : List (WordLocW width))
     (hv : v ∉ moves.map Prod.fst) (hl : sptLookup v s.locals = some (.word c)) :
     sptLookup v (setVars (moves.map Prod.fst) x s).locals = some (.word c) := by
