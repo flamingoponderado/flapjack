@@ -8718,3 +8718,26 @@ source address and store-value inputs; emitted-AST membership selects the
 instruction and assumes no target execution/result. These local compositions
 have no separately named HOL originals and remain untagged. Full Mem still
 needs interference, complete postrelation and assertion assembly.
+
+### Full byte-driven native conditional branch transitions
+
+`riscv_conditional_next_probeScript.sml` evaluates the original full
+`NextRISCV` against independently computed complete post-records for all six
+conditional instructions. Its 30 observations exercise zero registers,
+maximum aliased registers, negative and odd halfword payloads, both operand
+orders, and the signed/unsigned 64-bit boundary. Taken paths clear the
+pending branch transfer and update PC; fallthrough advances by four bytes.
+Both paths retain every other field apart from the fetched instruction size.
+The probe proves the redundant update of a constant function before comparing
+records, so a taken branch returning `NONE` has the same full map as the
+initial constant `NONE` map. The capture also records complete original
+primitive equations and `NextRISCV_def`, their actual hypothesis counts,
+and typed statements, rather than relying on the fixture names alone.
+
+`Flapjack/RiscV/CorrectnessEncoding/JumpCmp/Native.lean` proves the unrestricted
+byte-driven transitions for every intrinsic word5 register and word12
+halfword payload from `riscvOk` and four actual emitted bytes. It is untagged
+local composition infrastructure; full `JumpCmp` correctness is a dependent
+task. `check-riscv-conditional-next.py` and its mutation tests guard the
+statement, complete evidence and registration; source comparison and kernel
+checking remain required.
