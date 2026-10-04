@@ -55,13 +55,14 @@ theorem inst_stack_max_const_panLang {width : Nat} [NeZero width] {C F : Type} :
 
 /-- HOL `share_inst_modifies` (`pan_to_targetProofScript.sml:1071-1095`): a shared-memory
     instruction changes at most the locals, FFI state, stack, locals size and store. HOL's
-    free `op v ad s res t` are explicit. -/
+    free `op v ad s res t` are explicit. The result word type `rw` is independent of the
+    state width, as HOL's `res :α result option` against the `β` state. -/
 @[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "share_inst_modifies"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem share_inst_modifies {width : Nat} [NeZero width] {C F : Type} (op : WordMemOp) (v : Nat)
-    (ad : BitVec width) (s : WordSemStateFiniteExact width C F) (res : Option (WordSemResult width))
-    (t : WordSemStateFiniteExact width C F) :
-    shareInst (rw := width) op v ad s = (res, t) →
+theorem share_inst_modifies {width : Nat} {rw : Nat} [NeZero width] [NeZero rw] {C F : Type}
+    (op : WordMemOp) (v : Nat) (ad : BitVec width) (s : WordSemStateFiniteExact width C F)
+    (res : Option (WordSemResult rw)) (t : WordSemStateFiniteExact width C F) :
+    shareInst (rw := rw) op v ad s = (res, t) →
     ∃ (ls : Spt (WordLocW width)) (ffi : HolFfiState F) (stk : List (WordSemStackFrame width))
       (lsz : Option Nat) (st : HolFiniteMapExact WordStoreHOL (WordLocW width)),
       t = { s with locals := ls, ffi := ffi, stack := stk, localsSize := lsz, store := st } := by
