@@ -94,6 +94,7 @@ the cited name occurs in one of the two syntactic forms.
 | `compiler/backend/semantics/labSemScript.sml` | `Flapjack/Compiler/Backend/LabSem.lean` (`is_Label`) |
 | `semantics/astScript.sml` | `Flapjack/AstHOL.lean` (exact `ast$shift`, `opb`), `Flapjack/AstHOL/BackendOperators.lean` (`word_size`, `thunk_mode`, `thunk_op`, `test`), `Flapjack/AstHOL/LitOp.lean` (`lit`, `arith`, name abbreviations, `prim_type`, `op`, `op_class`, `getOpClass_def`, `lop`), `Flapjack/AstHOL/Syntax.lean` (`ast_t`, `pat`, `exp`, `type_def`, `dec`, `pat_bindings_def`) |
 | `semantics/namespaceScript.sml` | `Flapjack/NamespaceHOL.lean` (`alist`, `namespace`, `id` and every namespace operation of lines 14-117) |
+| `semantics/primTypesScript.sml` | `Flapjack/PrimTypesHOL.lean` (`prim_types_program_def`) |
 | `compiler/backend/stack_namesScript.sml` | `Flapjack/Compiler/Backend/StackNames.lean` |
 | `compiler/backend/proofs/stack_namesProofScript.sml` | `Flapjack/Compiler/Backend/StackNames/` (`NamesOk.lean` names_ok lemmas, `AsmAdmissibility/` stack_asm_ok, `Proofs/RenameState.lean` rename_state group over the MAP_KEYS rendering in `Flapjack/FiniteMap/MapKeys.lean`, `Proofs/CompCorrect.lean` comp_correct, `Proofs/CompileSemantics.lean` compile_semantics(_alt), `Proofs/MakeInit.lean` make_init_def/make_init_semantics, `Proofs/LabelsCallArgs.lean` stack_names_lab_pres/stack_names_call_args) |
 | `compiler/backend/riscv/riscv_configScript.sml` | `Flapjack/Compiler/Backend/RiscVConfig/Names.lean` |

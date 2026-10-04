@@ -999,6 +999,7 @@
     {"bytes": 234, "out": "parmove_wf_steps_probe.out", "rows": 14, "sha256": "6a94d9036f78c45a406e743107453195e659fd6e3c8971df41a550767ed55506"},
     {"bytes": 1467, "out": "parse_statement_probe.out", "rows": 2, "sha256": "78464aedbb34b041a2ef04eea0fd0d2842de25f576e6165dc7b6524ab93c667c"},
     {"bytes": 353, "out": "pres_lang_config_probe.out", "rows": 7, "sha256": "da093b2f718e09a2b47b42423dc02af873560656d84178e48aaf54d4566a9853"},
+    {"bytes": 500, "out": "prim_types_program_probe.out", "rows": 1, "sha256": "62ff383d60af839aa71cedf6e8cf21647186a4b9ac555a388c5003ff8e4b4b0e"},
     {"bytes": 182, "out": "prog_if_probe.out", "rows": 2, "sha256": "86056be1950303f8195fa52dcbf2c23c065d52323da492bb4fede3d8b1af899e"},
     {"bytes": 285, "out": "real_sqrt_round_agreement_special_probe.out", "rows": 8, "sha256": "6fd8527fe04c4f4319075b5c007e1b868916d6dc6c04f93319d699343c6c225d"},
     {"bytes": 550, "out": "reg_alloc_accessors_probe.out", "rows": 18, "sha256": "2b23be3b225229409f3801c21545ae63eeb80a0cc7d44f106358da834767d3f1"},
