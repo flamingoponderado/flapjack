@@ -98387,5 +98387,21 @@
     "lean_name": "panToTargetGoodCode",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Stage A2 of the single HOL proof of pan_to_target_compile_semantics (pan_to_targetProofScript.sml 1376-1428): good_code mc.target.config LN lprog via pan_to_lab_good_code_lemma, pan_to_lab_labels_ok and the all_enc_ok_pre chain; premise hinst is the conclusion of pan_to_word_every_inst_ok_less (stage .20); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyResourceStage.lean",
+    "lean_name": "wordNoErrorOfSemanticsNotFail",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Word semantics not Fail implies no Error on the entry call for any clock (pan_to_targetProofScript.sml 1724-1727 via wordSem semantics_def); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyResourceStage.lean",
+    "lean_name": "panToTargetResourceLimitOfSemantics",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage G with no_install/no_alloc discharged by word_to_word_compile_no_install_no_alloc on the pan_to_word output and no-Error from semantics wst <> Fail (pan_to_targetProofScript.sml 1716-1736, 2285-2312); intermediate proof step, not a HOL theorem."
   }
 ]
