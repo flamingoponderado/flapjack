@@ -26,10 +26,21 @@ private def writes : W × W × W :=
   let m := wordSemConstWrites (8 : BitVec 64) 100 [(true, 1), (false, 2)] (fun _ => .loc 0 0)
   (m 8, m 16, m 24)
 
+/-- Original independent-metadata carrier replay: three arbitrary metadata
+fields, including a different word dimension from the argument list. -/
+example : wordSemAddRetLoc
+    (some (true, ((9 : Nat), (10 : Nat)), BitVec.ofNat 32 17, 5, 6))
+    [(.word 7 : WordLocW 8)] = [.loc 5 6, .word 7] := rfl
+
+/-- Original NONE replay retains its independent phantom metadata types. -/
+example : wordSemAddRetLoc
+    (none : Option (Bool × (Nat × Nat) × BitVec 32 × Nat × Nat))
+    [(.word 7 : WordLocW 8)] = [.word 7] := rfl
+
 /-- All 25 rows of the probe output, in order. -/
 def rows : List (String × Bool) :=
-  [("add_ret_loc_none", wordSemAddRetLoc none [(.word 1 : W)] == [.word 1]),
-   ("add_ret_loc_some", wordSemAddRetLoc (some ([1, 2], (.ln, .ln), .skip, 5, 6)) [(.word 1 : W)]
+  [("add_ret_loc_none", wordSemAddRetLoc (ReturnValue := Unit) (ReturnNames := Unit) (ReturnHandler := Unit) none [(.word 1 : W)] == [.word 1]),
+   ("add_ret_loc_some", wordSemAddRetLoc (some ([1, 2], ((.ln, .ln) : WordLangCutsetsHOL), (.skip : WordLangProgHOL (BitVec 64)), 5, 6)) [(.word 1 : W)]
       == [.loc 5 6, .word 1]),
    ("bad_dest_args_nil", wordSemBadDestArgs none [] == true),
    ("bad_dest_args_dest", wordSemBadDestArgs (some 3) [] == false),

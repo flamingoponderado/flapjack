@@ -2147,6 +2147,17 @@ run_probe word_sem_call_helpers_probeScript.sml word_sem_call_helpers_probe.out 
   "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
+# Frozen PR1213 carrier repair: independent ignored add_ret_loc metadata.
+run_probe word_to_word_find_code_carriers_probeScript.sml word_to_word_find_code_carriers_probe.out \
+  find_code_independent_carriers_typed find_code_independent_carriers_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+run_probe word_sem_add_ret_loc_carriers_probeScript.sml word_sem_add_ret_loc_carriers_probe.out \
+  add_ret_loc_independent_metadata_typed add_ret_loc_independent_metadata_hypotheses \
+  add_ret_loc_independent_metadata_some add_ret_loc_independent_metadata_none \
+  "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
 # The wordSem code/GC/alloc probe observes find_code, enc_stack/dec_stack, gc
 # with a supplied gc_fun, has_space, alloc (success, NotEnoughSpace, cut and gc
 # failure) and assign (bead flapjack-h29l.5).
@@ -4676,6 +4687,9 @@ run_probe word_cse_moves_probeScript.sml word_cse_moves_probe.out \
   lookup_map_insert0_statement lookup_map_insert0_hypotheses get_set_vars_lemma_statement get_set_vars_lemma_hypotheses MEM_FST_reduc_statement \
   MEM_FST_reduc_hypotheses canonicalMoveRegs_lemma_statement canonicalMoveRegs_lemma_hypotheses data_inv_clock_statement data_inv_clock_hypotheses \
   canonicalMoveRegs_lemma_typed \
+  "$cake_dir/compiler/backend/proofs/word_cseProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_cse_move_locals_typed_probeScript.sml word_cse_move_locals_typed_probe.out \
+  MAP_FST_lemma_source_statement_typed MAP_SND_lemma_source_statement_typed get_set_vars_not_in_source_statement_typed get_set_vars_in_source_statement_typed get_set_vars_in_2_source_statement_typed lookup_set_vars_not_in_source_statement_typed list_insert_insert_source_statement_typed data_inv_insert_canonical_pair_source_statement_typed data_inv_insert_pair_source_statement_typed data_inv_move_pairs_source_statement_typed if_eq_rw_source_statement_typed evaluate_arith_clock_source_statement_typed evaluate_load_clock_source_statement_typed \
   "$cake_dir/compiler/backend/proofs/word_cseProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_cse_comp_correct_probeScript.sml word_cse_comp_correct_probe.out \
   comp_correct_statement comp_correct_hypotheses word_common_subexp_elim_correct_statement word_common_subexp_elim_correct_hypotheses comp_correct_typed \
@@ -8377,5 +8391,10 @@ run_probe word_to_stack_store_consts_caller_probeScript.sml word_to_stack_store_
 
 run_probe riscv_target_mem_probeScript.sml riscv_target_mem_probe.out \
   riscv_encoder_correct_mem_statement riscv_encoder_correct_mem_types riscv_encoder_correct_mem_hypotheses riscv_encoder_correct_mem_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe riscv_target_jumpcmp_probeScript.sml riscv_target_jumpcmp_probe.out \
+  riscv_encoder_correct_jumpcmp_statement riscv_encoder_correct_jumpcmp_types riscv_encoder_correct_jumpcmp_hypotheses riscv_encoder_correct_jumpcmp_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"

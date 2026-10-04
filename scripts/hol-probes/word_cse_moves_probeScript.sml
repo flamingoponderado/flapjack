@@ -1,6 +1,7 @@
 load "word_cseProofTheory";
 open HolKernel Parse bossLib word_cseProofTheory;
 val _ = Globals.linewidth := 1000000;
+val _ = show_types := true;
 val _ = (print "lookup_map_insert0_statement="; print_term(concl lookup_map_insert0));
 val _ = print("lookup_map_insert0_hypotheses=" ^ Int.toString(length(hyp lookup_map_insert0)) ^ "\n");
 val _ = (print "get_set_vars_lemma_statement="; print_term(concl get_set_vars_lemma));

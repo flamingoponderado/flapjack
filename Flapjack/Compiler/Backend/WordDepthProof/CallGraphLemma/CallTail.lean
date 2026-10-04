@@ -58,7 +58,7 @@ theorem depthPost_call_tail {width : Nat} [NeZero width] {C F : Type}
     (s : WordSemStateFiniteExact width C F)
     (htail : ∀ xs v3 args1 v10 prog ss,
       WordSemStateFiniteExact.getVars args s = some xs ∧ ¬ wordSemBadDestArgs dest args = true ∧
-        wordSemFindCode dest (wordSemAddRetLoc none xs) s.code s.stackSize = some v3 ∧
+        wordSemFindCode dest (wordSemAddRetLoc (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat)) xs) s.code s.stackSize = some v3 ∧
         v3 = (args1, v10) ∧ v10 = (prog, ss) ∧
         (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat))
           = none ∧ handler = none ∧ s.clock ≠ 0 →
@@ -72,7 +72,7 @@ theorem depthPost_call_tail {width : Nat} [NeZero width] {C F : Type}
   rcases hg : WordSemStateFiniteExact.getVars args s with _ | xs
   · exact absurd (by rw [ht]; simp only [hg]) herr
   have hbad : ¬ wordSemBadDestArgs (some d) args = true := by simp [wordSemBadDestArgs]
-  rcases hf : wordSemFindCode (some d) (wordSemAddRetLoc none xs) s.code s.stackSize with
+  rcases hf : wordSemFindCode (some d) (wordSemAddRetLoc (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat)) xs) s.code s.stackSize with
     _ | ⟨args1, prog, ss⟩
   · exact absurd (by rw [ht]; simp only [hg, hbad, Bool.false_eq_true, if_false, hf]) herr
   obtain ⟨⟨a, hcd⟩, hss, hargs⟩ := findCode_some_dest hf

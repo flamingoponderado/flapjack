@@ -50,9 +50,9 @@ correspondence additionally covers arbitrary partner lists.
 `word_cse_data_inv_transport_probe.out` captures the full zero-hypothesis statements of word_cseProof `canonicalArith_correct`, `data_inv_locals`, `wf_data_untracked`, `data_inv_set_var`, `data_inv_unset_var`, `not_seen_data_inv_alist_insert`, `data_inv_memory` and `data_inv_state_agree` (also typed: one state type for s1 and s2). Statement evidence for source review only.
 `word_cse_data_inv_updates_probe.out` captures the full zero-hypothesis statements of the 12 exported word_cseProof `data_inv` knowledge-update theorems ported in `WordCse/Proofs/DataInvUpdates.lean` (`data_inv_merge_l` through `evaluate_Move1`, with `data_inv_set_store` also typed); the 10 local ones are not exported. Statement evidence for source review only.
 `word_cse_fact_insert_probe.out` captures the full zero-hypothesis statements of the 7 exported word_cseProof fact-producer correctness theorems in `WordCse/Proofs/FactInsert.lean` (`add_to_data_aux_correct` through `add_to_load_correct`, with `add_to_data_Arith_correct` also typed); the 7 local ones are not exported. Statement evidence for source review only.
-`word_cse_moves_probe.out` captures the full zero-hypothesis statements of the 5 exported word_cseProof move/clock theorems in `WordCse/Proofs/MoveLemmas.lean` (`lookup_map_insert0`, `get_set_vars_lemma`, `MEM_FST_reduc`, `canonicalMoveRegs_lemma` (also typed), `data_inv_clock`); the 13 local ones are not exported. Statement evidence for source review only.
-`word_cse_comp_correct_probe.out` captures the full zero-hypothesis statements of word_cseProof `comp_correct` (also typed) and `word_common_subexp_elim_correct`. Statement evidence for source review only.
-`word_cse_conventions_probe.out` captures the full zero-hypothesis statements of the seven word_cseProof syntactic-convention theorems in `WordCse/Proofs/Conventions.lean` (also typed `word_cse_full_inst_ok_less`). Statement evidence for source review only.
+`word_cse_moves_probe.out` captures, with `show_types`, the full zero-hypothesis statements of the 5 exported word_cseProof move/clock theorems in `WordCse/Proofs/MoveLemmas.lean` (`lookup_map_insert0`, `get_set_vars_lemma`, `MEM_FST_reduc`, `canonicalMoveRegs_lemma`, `data_inv_clock`). `word_cse_move_locals_typed_probe.out` covers the 13 local ones, which are not exported: each statement is read literally from the pinned source and parsed with `show_types` in the loaded word_cseProofTheory context (a typed source parse; it is not re-proved). Statement evidence for source review only.
+`word_cse_comp_correct_probe.out` captures, with `show_types`, the full zero-hypothesis statements of word_cseProof `comp_correct` and `word_common_subexp_elim_correct`. Statement evidence for source review only.
+`word_cse_conventions_probe.out` captures, with `show_types`, the full zero-hypothesis statements of the seven word_cseProof syntactic-convention theorems in `WordCse/Proofs/Conventions.lean`. Statement evidence for source review only.
 `word_to_word_code_rel_probe.out` captures the zero-hypothesis `code_rel_def` of word_to_wordProof (also typed) for `WordToWord/Proofs/CodeRel.lean`; its `[local]` helpers are compared against the script. Statement evidence for source review only.
 `word_to_word_compile_thm_probe.out` captures the zero-hypothesis `compile_word_to_word_thm` of word_to_wordProof (also typed) for `WordToWord/Proofs/CompileWordToWord.lean`; `compile_single_correct` is `[local]` and compared against the script. Statement evidence for source review only.
 `word_to_word_compile_single_probe.out` captures the zero-hypothesis `FST_compile_single` and `compile_single_lem` of word_to_wordProof, each also fully typed, for `WordToWord/Proofs/CompileSingle.lean`. Statement evidence for source review only.
@@ -8817,3 +8817,19 @@ its source-step/initial-relation premise derives actual native Next and both
 original all-environment assertions. The local guard pins the complete public
 statement and original evidence; it is a regression check, not an equivalence
 proof or acceptance of the whole encoder.
+### Independent `add_ret_loc` metadata (PR1213 carrier repair)
+
+`word_sem_add_ret_loc_carriers_probeScript.sml` captures the original generic
+`wordSem$add_ret_loc_def` principal type and zero hypotheses. Its first three
+metadata fields are independent arbitrary types, separate from the argument
+word dimension. The concrete SOME/NONE rows use Boolean, numeric-pair and
+32-bit-word metadata with an 8-bit `word_loc` argument list.
+Capture regenerated from the pinned original source; it is regression evidence,
+not a HOL-to-Lean equivalence proof.
+
+`word_to_word_find_code_carriers_probe.out` replays the literal local `find_code_thm` statement and proof from the pinned source. Its typed, zero-hypothesis result records independent code/config, argument-word, and three return-metadata carriers. This is source-review regression evidence, not a HOL-to-Lean equivalence proof.
+`riscv_target_jumpcmp_probeScript.sml` specializes the full original native
+encoder correctness theorem to arbitrary JumpCmp operands and comparison.
+Four fresh typed rows retain the complete statement, carrier annotations,
+zero hypotheses and proof T; the Lean root covers all near/far Reg/Imm cases.
+The statement/evidence guard detects drift but does not replace source review.

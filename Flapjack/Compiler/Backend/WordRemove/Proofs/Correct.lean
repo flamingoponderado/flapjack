@@ -400,7 +400,7 @@ theorem word_remove_correct_aux (c : WordCompileFn width C) :
       · simp only [hbad, if_true, Prod.mk.injEq] at h
         exact absurd h.1.symm hne
       simp only [hbad, Bool.false_eq_true, if_false] at h
-      rcases hf : wordSemFindCode dest (wordSemAddRetLoc none xs) s.code s.stackSize with
+      rcases hf : wordSemFindCode dest (wordSemAddRetLoc (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat)) xs) s.code s.stackSize with
         _ | ⟨args1, prog, ss⟩
       · simp only [hf, Prod.mk.injEq] at h
         exact absurd h.1.symm hne
