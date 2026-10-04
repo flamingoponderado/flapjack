@@ -2,6 +2,8 @@ import Flapjack.Pancake.Proofs.PanToTarget.AssemblyMemory
 import Flapjack.Pancake.Proofs.PanToTarget.InitHelpers
 import Flapjack.Compiler.Backend.WordToStack.Proofs.Initialization
 import Flapjack.Pancake.Proofs.PanToWord.StateRelImpSemantics
+import Mathlib.Data.BitVec
+import Mathlib.Tactic.Abel
 
 /-!
 # `pan_to_target_compile_semantics` assembly, pan_to_word stage
