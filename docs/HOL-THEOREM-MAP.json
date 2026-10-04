@@ -93854,5 +93854,89 @@
     "lean_name": "holFmapAsFiniteSupportWitness",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only same-module re-export of the existing WordSemStateExact toBroad/ofBroad finite-support roundtrip, required by the fmap_as_finite_support qualifiers on the tagged pan_to_targetProof stack-size group ports. It introduces no carrier and has no separate HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "word_to_stack_compile_FST",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/InitHelpers.lean",
+    "lean_name": "word_to_stack_compile_FST",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.1): compared with the literal-source replay pan_to_target_init_helpers_source_replay (statement re-proved there with HOL's own tactic; pan_to_targetProofTheory is unbuilt). HOL's free variables are explicit binders in order of appearance. word_to_stack_compile (script overload) is the tagged word_to_stack compile_def (compileNative) with literal F; mc is the tagged MachineConfig with independent state/projection carriers; raise_stub_location/store_consts_stub_location are the tagged constants. Positive word dimension via [NeZero width].",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "good_dimindex_0w_8w",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/InitHelpers.lean",
+    "lean_name": "good_dimindex_0w_8w",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.1): compared with the literal-source replay pan_to_target_init_helpers_source_replay (statement re-proved there with HOL's own tactic; pan_to_targetProofTheory is unbuilt). HOL's free variables are explicit binders in order of appearance. good_dimindex (:α) is the tagged goodDimindex width; HOL's ≤ on words is the signed word_le, rendered as BitVec.sle (two's-complement comparison) with Bool = true. Positive word dimension via [NeZero width].",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "full_make_init_be",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/InitHelpers.lean",
+    "lean_name": "full_make_init_be",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.1): compared with the literal-source replay pan_to_target_init_helpers_source_replay (statement re-proved there with HOL's own tactic; pan_to_targetProofTheory is unbuilt). HOL's free variables are explicit binders in order of appearance. full_make_init is the tagged fullMakeInit with the same binders a…k as the tagged full_make_init_ffi; HOL's Boolean ⇔ on be is Bool equality. fmap_as_finite_support records the StackSem state carrier's regs/fpRegs/store; positive word dimension via [NeZero width]. Proof follows HOL (evaluate_consts on the stack_remove init code). Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration through the StackSem evaluation in full_make_init's initializer, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "n2w_sub_alt",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/InitHelpers.lean",
+    "lean_name": "n2w_sub_alt",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.1): compared with the literal-source replay pan_to_target_init_helpers_source_replay (statement re-proved there with HOL's own tactic; pan_to_targetProofTheory is unbuilt). HOL's free variables are explicit binders in order of appearance. HOL [local]; n2w is BitVec.ofNat width, -1w * x is (-1) * x. Positive word dimension via [NeZero width].",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "aligned_n2w_IMP",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/InitHelpers.lean",
+    "lean_name": "aligned_n2w_IMP",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.1): compared with the literal-source replay pan_to_target_init_helpers_source_replay (statement re-proved there with HOL's own tactic; pan_to_targetProofTheory is unbuilt). HOL's free variables are explicit binders in order of appearance. HOL [local]; aligned is the tagged holAligned (Bool = true), n2w is BitVec.ofNat width, dimword (:α) is 2 ^ width, divides is ∣ and ** is ^. Positive word dimension via [NeZero width].",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "good_dimindex_div_mul",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/InitHelpers.lean",
+    "lean_name": "good_dimindex_div_mul",
+    "statement_status": "reviewed_word_dimension_as_width",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.1): compared with the literal-source replay pan_to_target_init_helpers_source_replay (statement re-proved there with HOL's own tactic; pan_to_targetProofTheory is unbuilt). HOL's free variables are explicit binders in order of appearance. The HOL dimension (:α) is word-free and used only through dimindex, so it is the explicit Nat width with [NeZero width]; HOL's a * dimindex (:α) DIV 8 associates as (a * width) / 8, matching Lean's left-associative * and /. Replay confirms both sides' parse.",
+    "word_dimension_as_width": "width"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "InitGlobals_location_eq_first_name",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/InitHelpers.lean",
+    "lean_name": "InitGlobals_location_eq_first_name",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.1): compared with the literal-source replay pan_to_target_init_helpers_source_replay (statement re-proved there with HOL's own tactic; pan_to_targetProofTheory is unbuilt). HOL's free variables are explicit binders in order of appearance. InitGlobals_location and first_name are the tagged initGlobalsLocation and firstLoopName."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/InitHelpers.lean",
+    "lean_name": "makeInitAny_be",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for pan_to_targetProof full_make_init_be: stack_remove's total initializer keeps the endianness flag (HOL unfolds make_init_any_def/make_init_opt_def inline); no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/InitHelpers.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module re-export of the existing StackSemStateOps toBroad/ofBroad finite-support roundtrip, required by the fmap_as_finite_support qualifier on the tagged full_make_init_be. It introduces no carrier and has no separate HOL declaration."
   }
 ]
