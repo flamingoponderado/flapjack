@@ -98553,5 +98553,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison 2026-10-04: HOL/src/n-bit/byteScript.sml 193-195 bytes_in_word = n2w (dimindex (:'a) DIV 8) : 'a word, typed capture bytes_in_word_def_typed in pan_to_target_compile_semantics_statement_replay. Lean BitVec.ofNat width (width / 8) at positive width (NeZero); words qualifier only."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/SubOverflow.lean",
+    "lean_name": "riscv_encoder_correct_suboverflow",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3: compared original full SubOverflow constructor at riscv_targetProof658-663, original riscv_target158-164 XOR31/SUB/XOR/XORI(-1)/AND/SRLI63 expansion, asmSem arith_upd (r1 := w2-w3, r4 := signed-overflow flag, flag write last) and asm arith_ok (only r1<>r3), and full encoder_correct_def. Typed specialization riscv_target_suboverflow_probe: hypotheses 0, proved T; HOL specialization and Lean statement identical to the reviewed AddOverflow case modulo the constructor. Only original asmStep plus initial targetStateRel; complete existential n, every environment with original interferenceOk, both assertions, code bytes, PC range and final full relation. Every native fetch/decode/Run/Next derived from literal encoded bytes; untagged arithmetic shows the circuit equals HOL signed subtraction overflow for all word64 pairs. Broad native Run/target closure inherits reals_as_rational_cuts, the rational-cut assurance limit SOUNDNESS8; no executed route change."
   }
 ]
