@@ -1,0 +1,10 @@
+UPDATE_LIST_def_typed=($=++ :(α -> β) -> (α # β) list -> α -> β) = FOLDL (flip (UNCURRY (UPDATE :α -> β -> (α -> β) -> α -> β)))
+APPLY_UPDATE_LIST_ALOOKUP_typed=∀(ls :(α # β) list) (f :α -> β) (x :α). (f =++ ls) x = case ALOOKUP (REVERSE ls) x of (NONE :β option) => f x | SOME y => y
+MOD_SUB_LEMMA_typed=(n :num) MOD (k :num) = (0 :num) ∧ (m :num) MOD k = (0 :num) ∧ (0 :num) < k ⇒ (n − m) MOD k = (0 :num)
+DISJOINT_INTER_typed=DISJOINT (b :α -> bool) (c :α -> bool) ⇒ DISJOINT ((a :α -> bool) ∩ b) (a ∩ c)
+IMP_MULT_DIV_LESS_typed=(m :num) ≠ (0 :num) ∧ (d :num) < (k :num) ⇒ m * (d DIV m) < k
+DIV_LESS_DIV_typed=(n :num) MOD (k :num) = (0 :num) ∧ (m :num) MOD k = (0 :num) ∧ n < m ∧ (0 :num) < k ⇒ n DIV k < m DIV k
+WORD_LS_IMP_typed=(a :α word) ≤₊ (b :α word) ⇒ ∃(k :num). Abbrev (b = a + (n2w k :α word)) ∧ w2n (b − a) = k ∧ ∀(w :α word). a ≤₊ w ∧ w <₊ b ⇔ ∃(i :num). w = a + (n2w i :α word) ∧ i < k
+lsr_lsl_typed=∀(w :α word) (n :num). aligned n w ⇒ w ⋙ n ≪ n = w
+Saved theorem _______ "byte_aligned_mult"
+byte_aligned_mult_typed=good_dimindex (:α) ⇒ (byte_aligned ((a :α word) + (bytes_in_word :α word) * (n2w (i :num) :α word)) ⇔ byte_aligned a)

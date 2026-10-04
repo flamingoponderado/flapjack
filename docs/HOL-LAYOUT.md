@@ -90,7 +90,7 @@ the cited name occurs in one of the two syntactic forms.
 | `misc/miscScript.sml` (`list_subset`) | `Flapjack/Misc/ListSubset.lean` |
 | `compiler/backend/proofs/lab_filterProofScript.sml` | `Flapjack/Compiler/Backend/LabFilter/Proofs.lean` (submodules in `LabFilter/Proofs/`) |
 | `compiler/backend/proofs/lab_to_targetProofScript.sml` | `Flapjack/Compiler/Backend/LabToTarget/` (code similarity and structural preservation; `ShareMemDomain.lean` share_mem_domain_code_rel, `ShareMemState.lean` share_mem_state_rel) |
-| `compiler/backend/proofs/backendProofScript.sml` | `Flapjack/Compiler/Backend/BackendProof/` (`MachineInit.lean` mc_init_ok_def, heap_regs_def, byte_aligned_MOD, word_list_exists_imp; `CompileLab.lean` compile_lab_LENGTH, compile_lab_IMP_mmio_pcs_min_index) |
+| `compiler/backend/proofs/backendProofScript.sml` | `Flapjack/Compiler/Backend/BackendProof/` (`MachineInit.lean` mc_init_ok_def, heap_regs_def, byte_aligned_mult, byte_aligned_MOD, word_list_exists_imp; `CompileLab.lean` compile_lab_LENGTH, compile_lab_IMP_mmio_pcs_min_index) |
 | `compiler/backend/semantics/labPropsScript.sml` | `Flapjack/Compiler/Backend/LabProps.lean` (`line_ok_pre`, `sec_ok_pre`, and `all_enc_ok_pre`; asm/config carrier bridge remains explicit) |
 | `compiler/backend/semantics/labPropsScript.sml` | `Flapjack/Compiler/Backend/LabProps.lean` (`line_ok_pre`, `sec_ok_pre`, and `all_enc_ok_pre`; asm/config carrier bridge remains explicit) |
 | `compiler/backend/semantics/labSemScript.sml` | `Flapjack/Compiler/Backend/LabSem.lean` (`is_Label`) |
@@ -137,6 +137,11 @@ the cited name occurs in one of the two syntactic forms.
 | `misc/miscScript.sml` (`app_list`/`append`) | `Flapjack/Misc/AppList.lean` |
 | `misc/miscScript.sml` (`good_dimindex`) | `Flapjack/Misc/GoodDimindex.lean` (exact `good_dimindex` predicate) |
 | `misc/miscScript.sml` (`fun2set_disjoint_union`) | `Flapjack/Misc/Fun2SetUnion.lean` |
+| `misc/miscScript.sml` (`UPDATE_LIST`/`=++`, `APPLY_UPDATE_LIST_ALOOKUP`) | `Flapjack/Misc/UpdateList.lean` |
+| `misc/miscScript.sml` (`MOD_SUB_LEMMA`, `IMP_MULT_DIV_LESS`, `DIV_LESS_DIV`) | `Flapjack/Misc/DivModLemmas.lean` |
+| `misc/miscScript.sml` (`DISJOINT_INTER`) | `Flapjack/Misc/DisjointInter.lean` |
+| `misc/miscScript.sml` (`WORD_LS_IMP`) | `Flapjack/Misc/WordLsImp.lean` |
+| `compiler/backend/proofs/data_to_word_gcProofScript.sml` | `Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/` (`WordLemmas.lean` opening word lemmas: `lsr_lsl`; `InitStoreOk.lean`, `GcFunOk.lean`, `GcFunConstOk.lean`) |
 | `semantics/panPropsScript.sml` | `Flapjack/Pancake/Semantics/PanProps.lean`, `PanProps/EvalInvariant.lean`, `PanProps/MemByteArray.lean` (exact `write_bytearray_update_byte` / `read_write_bytearray_lemma`), `PanProps/LocalisedExpSimps.lean`, `PanProps/NamelessExpSimps.lean`, `PanProps/EvaluateAddClockIoEventsMono.lean` |
 | `semantics/crepSemScript.sml` | `Flapjack/Pancake/Semantics/CrepSem.lean`, `CrepSem/Eval.lean`, `CrepSem/TotalEval.lean`, `CrepSem/Primop.lean`, `CrepSem/LookupCode.lean` |
 | `semantics/crepPropsScript.sml` | `Flapjack/Pancake/Semantics/CrepProps.lean` |
