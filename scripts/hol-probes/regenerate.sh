@@ -107,6 +107,10 @@ run_probe() {
   done
 }
 
+run_probe l3_step_register_comparison_probeScript.sml l3_step_register_comparison_probe.out \
+  slt_hypotheses slt_statement slt_gen slt_hypothesis_count sltu_hypotheses sltu_statement sltu_gen sltu_hypothesis_count slt_nop_hypotheses slt_nop_statement slt_nop_gen slt_nop_hypothesis_count sltu_nop_hypotheses sltu_nop_statement sltu_nop_gen sltu_nop_hypothesis_count \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe l3_step_jump_probeScript.sml l3_step_jump_probe.out \
   jal_hypotheses jal_statement jal_gen jal_hypothesis_count jalr_hypotheses jalr_statement jalr_gen jalr_hypothesis_count jal_nop_hypotheses jal_nop_statement jal_nop_gen jal_nop_hypothesis_count jalr_nop_hypotheses jalr_nop_statement jalr_nop_gen jalr_nop_hypothesis_count \
   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$cake_dir/compiler/backend/proofs"

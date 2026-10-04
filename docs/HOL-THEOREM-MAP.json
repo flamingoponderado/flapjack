@@ -94599,5 +94599,37 @@
     "hol_name": "Mupdate_exn_eq",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.11.1.1): original 171-178, accepted exact Exc value/exception carrier with arbitrary independent universe-0 value and exception types, HOL list as Lean List and unbounded num as Nat. Msub empty-list failure and zero-success/nonzero recursive index subtraction retained; Mupdate retains full prefix only on recursive success and propagates original failure unchanged. Original n >= LENGTH l premise translates to values.length <= index, no validity, source-success, DecidableEq, exception classification or fixed-width restriction. Both generic failure-bound theorems prove original exact equality by list induction and index cases, with no added premises; kernel axioms propext/Classical.choice/Quot.sound only. Twenty-five fresh original observations and identical registered kernel replay cover head/middle/last/empty/boundary/large indices, duplicate values, independent Nat/Bool/tuple types and theorem applications at six failing boundaries. No total EL/LUPDATE claim is made; successful equations and state-array accessors remain parent frontier. Pure primitives/proofs; executed allocator migration and whole compiler correctness remain open. Coordinator source comparison completed against the original clauses and generic carriers; unified integration gates and publication are checked separately."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/RegisterComparison.lean",
+    "lean_name": "dfnSlt",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "SLT",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol: compared the full original riscv_stepScript862-863 arithr/class_rd0 exported equation and fresh typed per-theorem Thm.hyp/GEN_ALL(DISCH_ALL) capture. Original two guards retained: rd nonzero for writes / zero for NOP, ArchBase != 1 for all four. Full state c_gpr update, current procID, both source-zero reads and both mode branches preserved; SLT signextends low32, SLTU zeroextends low32. Fixed original word5/word64/word2 carriers, arbitrary aliases, no target-run/extra mode premise. Mode rewrite is untagged local support; no FP/real interpretation. Actual AddCarry lowering riscv_targetScript144-149 consumes SLTU; overflow uses XOR/AND/Shift and is not claimed dependent. Source shape/capture pins are regression checks, not cross-language equivalence proofs."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/RegisterComparison.lean",
+    "lean_name": "dfnSltU",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "SLTU",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol: compared the full original riscv_stepScript862-863 arithr/class_rd0 exported equation and fresh typed per-theorem Thm.hyp/GEN_ALL(DISCH_ALL) capture. Original two guards retained: rd nonzero for writes / zero for NOP, ArchBase != 1 for all four. Full state c_gpr update, current procID, both source-zero reads and both mode branches preserved; SLT signextends low32, SLTU zeroextends low32. Fixed original word5/word64/word2 carriers, arbitrary aliases, no target-run/extra mode premise. Mode rewrite is untagged local support; no FP/real interpretation. Actual AddCarry lowering riscv_targetScript144-149 consumes SLTU; overflow uses XOR/AND/Shift and is not claimed dependent. Source shape/capture pins are regression checks, not cross-language equivalence proofs."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/RegisterComparison.lean",
+    "lean_name": "dfnSltNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "SLT_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol: compared the full original riscv_stepScript862-863 arithr/class_rd0 exported equation and fresh typed per-theorem Thm.hyp/GEN_ALL(DISCH_ALL) capture. Original two guards retained: rd nonzero for writes / zero for NOP, ArchBase != 1 for all four. Full state c_gpr update, current procID, both source-zero reads and both mode branches preserved; SLT signextends low32, SLTU zeroextends low32. Fixed original word5/word64/word2 carriers, arbitrary aliases, no target-run/extra mode premise. Mode rewrite is untagged local support; no FP/real interpretation. Actual AddCarry lowering riscv_targetScript144-149 consumes SLTU; overflow uses XOR/AND/Shift and is not claimed dependent. Source shape/capture pins are regression checks, not cross-language equivalence proofs."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/RegisterComparison.lean",
+    "lean_name": "dfnSltUNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "SLTU_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol: compared the full original riscv_stepScript862-863 arithr/class_rd0 exported equation and fresh typed per-theorem Thm.hyp/GEN_ALL(DISCH_ALL) capture. Original two guards retained: rd nonzero for writes / zero for NOP, ArchBase != 1 for all four. Full state c_gpr update, current procID, both source-zero reads and both mode branches preserved; SLT signextends low32, SLTU zeroextends low32. Fixed original word5/word64/word2 carriers, arbitrary aliases, no target-run/extra mode premise. Mode rewrite is untagged local support; no FP/real interpretation. Actual AddCarry lowering riscv_targetScript144-149 consumes SLTU; overflow uses XOR/AND/Shift and is not claimed dependent. Source shape/capture pins are regression checks, not cross-language equivalence proofs."
   }
 ]
