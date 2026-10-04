@@ -8256,13 +8256,17 @@ run_probe riscv_target_addoverflow_probeScript.sml riscv_target_addoverflow_prob
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
 run_probe riscv_config_proof_replay_probeScript.sml riscv_config_proof_replay_probe.out \
-  is_riscv_machine_config_def_typed riscv_init_ok_typed riscv_init_ok_hypotheses \
+  riscv_backend_config_ok_typed riscv_backend_config_ok_hypotheses is_riscv_machine_config_def_typed riscv_init_ok_typed riscv_init_ok_hypotheses \
   "$cake_dir/compiler/backend/riscv/proofs/riscv_configProofScript.sml" \
   "$cake_dir/compiler/backend/riscv/proofs"
 run_probe riscv_backend_config_probeScript.sml riscv_backend_config_probe.out \
   riscv_backend_config_def_statement riscv_backend_config_def_typed riscv_backend_config_def_hypotheses \
   "$cake_dir/compiler/backend/riscv/riscv_configScript.sml" \
   "$cake_dir/compiler/backend/riscv"
+run_probe pancake_backend_conf_probeScript.sml pancake_backend_conf_probe.out \
+  pancake_backend_conf_def_statement pancake_backend_conf_def_typed pancake_backend_conf_def_hypotheses \
+  "$cake_dir/compiler/compilerScript.sml" \
+  "$cake_dir/compiler"
 run_probe riscv_target_suboverflow_probeScript.sml riscv_target_suboverflow_probe.out \
   riscv_encoder_correct_suboverflow_statement riscv_encoder_correct_suboverflow_types riscv_encoder_correct_suboverflow_hypotheses riscv_encoder_correct_suboverflow_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
@@ -8417,5 +8421,15 @@ run_probe riscv_target_jumpcmp_probeScript.sml riscv_target_jumpcmp_probe.out \
 
 run_probe riscv_target_mem_probeScript.sml riscv_target_mem_probe.out \
   riscv_encoder_correct_mem_statement riscv_encoder_correct_mem_types riscv_encoder_correct_mem_hypotheses riscv_encoder_correct_mem_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe riscv_target_bit_rewrites_probeScript.sml riscv_target_bit_rewrites_probe.out \
+  word_bit_0_add4_statement word_bit_0_add4_types word_bit_0_add4_hypotheses word_bit_0_add4_proved word_bit_0_lemmas_statement word_bit_0_lemmas_types word_bit_0_lemmas_hypotheses word_bit_0_lemmas_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe riscv_target_complete_probeScript.sml riscv_target_complete_probe.out \
+  riscv_encoder_correct_statement riscv_encoder_correct_expanded riscv_encoder_correct_hypotheses riscv_encoder_correct_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"

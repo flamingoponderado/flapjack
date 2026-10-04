@@ -98831,6 +98831,7 @@
     "reviewer": "Flapjack-specific actual allocator dispatch equation, no independent HOL declaration. Accepted inputs route to the explicit wordCopyPropViaHOL/full-SSA consumer, preserving every output/failure branch. Source variants discharge input acceptance from compiler closure; no allocation availability/output-codec or target-run premise. Legacy routed-limit lemmas remain separately described as legacy API facts."
   },
   {
+<<<<<<< HEAD
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Compiler/Backend/WordSimp/ProductionSmartSeq.lean",
@@ -98853,5 +98854,46 @@
     "lean_name": "smartSeqLeftSeq_production",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack production encoder correspondence for the complete reviewed native SmartSeq and prefix folds; input carrier encodings identify the source image, output correspondence is derived. No separate HOL original or HOL-to-Lean equivalence proof. Optimized executed constructor operation retained under documented real-source measured full-codec performance exception; broader rejected instruction extension and whole WordSimp/compiler simulation remain separate."
+=======
+    "hol_path": "cakeml/compiler/backend/riscv/proofs/riscv_configProofScript.sml",
+    "hol_name": "riscv_backend_config_ok",
+    "lean_path": "Flapjack/Compiler/Backend/RiscVConfig/Proofs.lean",
+    "lean_name": "riscvBackendConfigOk",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04 (bead flapjack-0qkg6): riscv_configProofScript 27-52 against the literal replay riscv_config_proof_replay (backend_config_ok_def and names_tac replayed verbatim, riscv_backend_config_ok re-proved there with its own HOL proof, 0 hypotheses): backend_config_ok riscv_config riscv_backend_config over the tagged backendConfigOk, riscvConfig and riscvBackendConfig. All 27 conjuncts proved: literal ones by rfl/decide, conf_ok and max_heap_limit by evaluation, byte-offset range via toInt/omega, find_name bijectivity from riscvRegisterName injectivity/surjectivity, names_ok via riscvNames_lookup_eq, store offsets by store-name enumeration (incl. all 32 temps), immediate ranges via toInt. No native_decide/bv_decide."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "word_bit_0_add4",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/BitRewrites.lean",
+    "lean_name": "word_bit_0_add4",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol: Compared all eight original word64 increments 4,8,12,16,20,24,28,32 and each bit-zero equality; no hypotheses or narrowing. Complete eight-conjunct theorem."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "word_bit_0_lemmas",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/BitRewrites.lean",
+    "lean_name": "word_bit_0_lemmas",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol: Compared original quantified word64 mask conjunction: Boolean negation becomes = false and masked-add bit equality retained. Reuses kernel proof of identical riscv_step declaration; separate targetProof declaration tagged here."
+  },
+  {
+    "hol_path": "cakeml/compiler/compilerScript.sml",
+    "hol_name": "pancake_backend_conf_def",
+    "lean_path": "Flapjack/Compiler/Compiler.lean",
+    "lean_name": "pancakeBackendConf",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04 (bead flapjack-2gyxm): compilerScript.sml 744-747 and exported capture pancake_backend_conf_probe (typed: \u2200(c :backend$config). pancake_backend_conf c = c with data_conf := c.data_conf with gc_kind := None; hypotheses 0). Lean updates exactly dataConf.gcKind := .none (GcKind.none = HOL None) on the reviewed Backend.Config carrier, all other fields unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Complete.lean",
+    "lean_name": "riscv_encoder_correct",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c2026-10-04 source comparison: original unconditional riscv_targetProof512 encoder_correct riscv_target and complete asmProps encoder_correct_def117-133 equal the reviewed native target/encoderCorrect contract. Exhaustive six outer asm constructors, five Inst constructors, eight Arith constructors and Addr destructuring cover17 leaf groups. targetOk proved; no extra simulation, target-run/result, postrelation or successful-pass premise. Complete existential n/all interference environments/code bytes/PC predicate/final relation/outside-source-domain asserts2 retained through exact definition. All kernel-checked native constructor proofs consumed; no finite-fixture universality claim. Inherits reals_as_rational_cuts native model assurance limit SOUNDNESS8. Whole production compiler routing and final Pancake-to-RISC-V theorem remain separate open obligations."
+>>>>>>> origin/fleet-integration-post-1213-stack
   }
 ]
