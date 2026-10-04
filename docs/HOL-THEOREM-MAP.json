@@ -54094,7 +54094,7 @@
       "eids"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-b (source comparison, bead flapjack-pxn.18.3.5.8.13.4; pan_to_crepScript.sml:39-101): checked every compile_exp equation against direct EVAL rows in scripts/hol-probes/compile_exp_probe.out. Const and address leaves, Local FLOOKUP, Global/missing-local zero fallback, RStruct flattening, RField Comb selection and non-Comb fallback, NStruct/NField fallbacks, Load/load_shape, Load32/LoadByte One-shape side conditions and fallback, Op/Panop cexp_heads behavior, Cmp/Shift nonempty-head behavior, and BytesInWord n2w (width DIV 8) match. ExpHOL width/ShapeHOL/MlS and CrepExpHOL width are exact with [NeZero width] for positive word dimensions. Context maps are the sole representation difference: CompileExpContextExact owns vars/funcs/eids as HolFiniteMapExact and same-module holFmapAsFiniteSupportWitness proves the toBroad/ofBroad roundtrip. The qualifier records only finite-support map representation. The direct String-backed production compileExp helper remains untagged; with parser-proved DeclByteRanged evidence, compileProgTopHOLProductionExact executes compileProgExactHOLW and this exact compile_exp dependency. compileProgTopHOLProductionExact_eq records output preservation for that parser-backed route, while callers without the evidence use the compatibility path. The exact compile_inl_top carrier and full compile_prog theorem remain separate gaps tracked under flapjack-e7w.2. flapjack-ds5 review (2026-09-27, bead flapjack-pxn.18.3.5.8.13.31): HOL pan_to_crep$compile_exp_def is polymorphic in the type-indexed 'a word (compile_exp returns Const ('a word) etc.), while the Lean carrier fixes the dimension at ExpHOL width/CrepExpHOL width with [NeZero width]; the words_as_type_indexed_bitvec qualifier is therefore required alongside fmap_as_finite_support (combined status). The width-indexed carrier resolves through PanToCrepContextExact width (header [NeZero width], field eids : HolFiniteMapExact MlS (BitVec width)); no quantifier, hypothesis, side condition, or conclusion changes."
+    "reviewer": "flapjack-luna-b (source comparison, bead flapjack-pxn.18.3.5.8.13.4; pan_to_crepScript.sml:39-101): checked every compile_exp equation against direct EVAL rows in scripts/hol-probes/compile_exp_probe.out. Const and address leaves, Local FLOOKUP, Global/missing-local zero fallback, RStruct flattening, RField Comb selection and non-Comb fallback, NStruct/NField fallbacks, Load/load_shape, Load32/LoadByte One-shape side conditions and fallback, Op/Panop cexp_heads behavior, Cmp/Shift nonempty-head behavior, and BytesInWord n2w (width DIV 8) match. ExpHOL width/ShapeHOL/MlS and CrepExpHOL width are exact with [NeZero width] for positive word dimensions. Context maps are the sole representation difference: CompileExpContextExact owns vars/funcs/eids as HolFiniteMapExact and same-module holFmapAsFiniteSupportWitness proves the toBroad/ofBroad roundtrip. The qualifier records only finite-support map representation. The direct String-backed production compileExp helper remains untagged; with parser-proved DeclByteRanged evidence, compileProgTopHOLProductionExact executes compileProgExactHOLW and this exact compile_exp dependency. compileProgTopHOLProductionExact_eq records output preservation for that parser-backed route, while callers without the evidence use the compatibility path. The exact compile_inl_top carrier and full compile_prog theorem remain separate gaps tracked under flapjack-e7w.2. flapjack-ds5 review (2026-09-27, bead flapjack-pxn.18.3.5.8.13.31): HOL pan_to_crep$compile_exp_def is polymorphic in the type-indexed 'a word (compile_exp returns Const ('a word) etc.), while the Lean carrier fixes the dimension at ExpHOL width/CrepExpHOL width with [NeZero width]; the words_as_type_indexed_bitvec qualifier is therefore required alongside fmap_as_finite_support (combined status). The width-indexed carrier resolves through PanToCrepContextExact width (header [NeZero width], field eids : HolFiniteMapExact MlS (BitVec width)); no quantifier, hypothesis, side condition, or conclusion changes. Source type repair flapjack-sol3 2026-10-04: original context alpha and expression beta dimensions are independent. Native compileExpExactHOLW and its mutual list helper now quantify contextWidth independently of expression width; only vars is read. All same-width production callers retain identical clauses/results. Original full typed theorem and compile_exp_def captured in pan_to_crep_compile_exp_validity_probe.out."
   },
   {
     "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
@@ -97773,6 +97773,15 @@
     "reviewer": "Projection form of exps_of_unreach_elim (first component of unreachElimHOLExact) used to prove the tagged crepInline_expsOfUnreachElim; no independent HOL declaration."
   },
   {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Jump.lean",
+    "lean_name": "riscv_encoder_correct_jump",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol: compared original Jump constructor riscv_targetProof682-687 and riscv_target170-175, source asmStep/jumpToOffset/asmJumpOffsetOkExact and full encoder_correct_def. Only original source step plus initial targetStateRel; complete existential/all interference environments/both asserts/code bytes/PC membership/final full relation. Actual near JALrd0 uses source signed21 guard and arithmetic halfword shift, witness0; far AUIPC31/JALRrd0 uses original low12/high20 signed split, witness1 with intermediate PC4 and env0/env1. Four/eight literal emitted bytes supply full native fetch/decode/Run/Next; no target run, decoder or post-state premise. Scratch31 preservation across interference derives the full original projection, not the source relation that excludes31; original source guards discharge all bounds/alignment/masks. Memory/frame/all allowed registers retained. Same-counterpart helper modules are untagged local compositions without separate HOL originals. Inherits reviewed reals_as_rational_cuts assurance limit SOUNDNESS8 via native Run; no production-path change or full encoder/compiler completion claim."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyLabToTarget.lean",
@@ -97835,6 +97844,156 @@
     "lean_name": "panToTargetMemoryAssumption",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1486-1550): memory_assumption of full_make_init_semantics for the make_init lab state from the pan_installed components, via fun2set_disjoint_union and word_list_exists_imp."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileExpValidity.lean",
+    "lean_name": "compileList_length",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal list-length or mutual-induction proof factoring for the separately tagged full original expression compiler validity theorem in the same module; no standalone HOL declaration or completed port claim."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileExpValidity.lean",
+    "lean_name": "heads_length",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal list-length or mutual-induction proof factoring for the separately tagged full original expression compiler validity theorem in the same module; no standalone HOL declaration or completed port claim."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileExpValidity.lean",
+    "lean_name": "compile_valid",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal list-length or mutual-induction proof factoring for the separately tagged full original expression compiler validity theorem in the same module; no standalone HOL declaration or completed port claim."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_pan_to_crep_compile_exp",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileExpValidity.lean",
+    "lean_name": "everyInstOkLess_panToCrepCompileExp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs",
+      "eids"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-pantocrep-compile-exp-validity: full original974-1007 and regenerated typed original capture. All context/expression/output list/shape binders; source EVERY every_exp binary Panop predicate and actual compile_exp pair equation curried as the sole two premises; full output EVERY binary Crepop predicate. Existing Pan Boolean everyExpHOL/panopArityTwoHOL constructor traversal exactly renders source equality implication; shared native crepEveryExpHOL literal Prop predicate and membership EVERY used on output. Imported PanToCrepContextExact canonical finite-support maps vars/funcs/eids with same-module roundtrip witness; words_as_type_indexed_bitvec only positive dimension translation, exact ExpHOL/ShapeHOL/CrepExpHOL constructors and MlString names. All native compileExpExactHOLW fallback cases and mutual list equations proved; successful cexpHeads and compiled argument list length establish binary Panop output arity without extra premise. Original compField/loadShape/cexpHeads full helpers reused. No target-run/output-validity premise, source byte restriction or specialized context. Full program/compiler/inlining validity remains open. Full typed source has independent alpha context/beta expressions: contextWidth and width are independently quantified; no arbitrary specialization to one dimension."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileExpValidity.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific canonical imported context toBroad/ofBroad roundtrip witness for the finite-support qualifier of the full original theorem in the same module; no separate HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "exps_of_inst_inline",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionProvenance.lean",
+    "lean_name": "crepInline_expsOfInstInline",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "inl_fs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04 bead flapjack-crep-inline-exps-inst: original 3128-3233 and typed capture crep_inline_inst_inline. Binders inl_fs prog crep_code e in HOL order; premises inl_fs SUBMAP alist_to_fmap crep_code and MEM e (exps_of (inline_prog inl_fs prog)) with inline_prog the tagged inlineProgHOLExact; all four conclusion disjuncts retained (caller exps, Const c with c : alpha word, Var v, MEM (name,params,body) crep_code and callee body exps). No output provenance premise. Proved by functional induction over every clause of the support-certified core inlineProgHOLCoreExact, which unfolds inlineProgHOLExact. fmap_as_finite_support_relation names only the standalone HOL |-> binder inl_fs (canonical HolFiniteMapExact); SUBMAP is HolFiniteMapExact.submap and alist_to_fmap the reviewed alistToFmapCodeExact, as in state_rel_imp_semantics_local. Word qualifier: alpha word/exp/prog to BitVec width/CrepExpHOL/CrepProgHOL with NeZero width. No other statement difference."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "every_inst_crep_inline",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionProvenance.lean",
+    "lean_name": "crepInline_everyInstCrepInline",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "inl_fs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04 bead flapjack-crep-inline-every-inst: original 3235-3260 and typed capture crep_inline_inst_inline. Binders crep_code inl_fs in HOL order; paired abstraction over (name,params,body) rendered as a Lean pattern lambda over the same triple; every_exp is the tagged crepEveryExpHOL with the literal predicate (forall op es. x = Crepop op es implies LENGTH es = 2); compile_inl_prog is the tagged compileInlProgHOLExact; the SUBMAP premise and the full per-function conclusion retained. fmap_as_finite_support_relation names only the standalone HOL |-> binder inl_fs (canonical HolFiniteMapExact); SUBMAP is HolFiniteMapExact.submap and alist_to_fmap the reviewed alistToFmapCodeExact, as in state_rel_imp_semantics_local. Word qualifier: alpha word/exp/prog to BitVec width/CrepExpHOL/CrepProgHOL with NeZero width. No other statement difference."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionProvenance.lean",
+    "lean_name": "crepInlineInstProv_of_callee",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Callee-body case of exps_of_inst_inline: lookup in an inl_fs SUBMAP alist_to_fmap crep_code gives crep_code membership (HOL inlines this SUBMAP_FLOOKUP_EQN/ALOOKUP_MEM step); no HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionProvenance.lean",
+    "lean_name": "crepInlineInstProv_mono",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Monotonicity of the exps_of_inst_inline conclusion in the caller expression list; no HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionProvenance.lean",
+    "lean_name": "expsOf_nestedSeq_assignVar",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Return-copy sequence of inline_nontail mentions only Var expressions (instance of exps_of_nested_seq_assign with MAP Var, inlined in the HOL proof); no HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionProvenance.lean",
+    "lean_name": "submap_erase_left",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "inl \\\\ name SUBMAP m from inl SUBMAP m (HOL uses SUBMAP_TRANS with SUBMAP_DOMSUB inline); no HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionProvenance.lean",
+    "lean_name": "crepInline_instInlineCore_exps",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Generalisation of exps_of_inst_inline to the support-certified core inlineProgHOLCoreExact, proved by its functional induction; assembled into the tagged crepInline_expsOfInstInline."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyResourceLimit.lean",
+    "lean_name": "panToTargetSafeForSpaceOfDepth",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage G depth half of the single HOL proof of pan_to_target_compile_semantics (pan_to_targetProofScript.sml 2292-2312: max_depth_Call_NONE + evaluate_stack_size_limit_const_panLang); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyResourceLimit.lean",
+    "lean_name": "panToTargetStackSizeEqFrameSize",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage G frame-size identification (pan_to_targetProofScript.sml 2336-2365: compile_word_to_stack_sfs_aux, mapi_Alist, map_fromAList); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyResourceLimit.lean",
+    "lean_name": "panToTargetSafeForSpaceOfLimit",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage G over the word make_init state (pan_to_targetProofScript.sml 2285-2365): option_lt stack_max (SOME lim) with lim <= LENGTH sst.stack implies word_lang_safe_for_space; intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyResourceLimit.lean",
+    "lean_name": "panToTargetStackLimitLeLength",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage G limit arithmetic (pan_to_targetProofScript.sml 2311-2335, 2366-2506): FST (get_stack_heap_limit max_heap (w2,w3,w4)) <= stack length read by init_reduce from the init_code_thm pointer facts; intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyResourceLimit.lean",
+    "lean_name": "sptAListLookup_map_snd",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Association-list lookup commutes with a value map; Flapjack sptree infrastructure for stage G, no HOL declaration."
   },
   {
     "hol_path": null,
