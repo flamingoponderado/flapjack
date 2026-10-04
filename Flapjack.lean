@@ -1218,6 +1218,7 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionProgramMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionFrame
 import Flapjack.Compiler.Backend.WordToStack.ProductionFrameCaller
 import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.Instructions
+import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.TopStubs
 import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.MoveHelpers
 import Flapjack.Compiler.Backend.WordToStack.ProductionLocations
 import Flapjack.Compiler.Backend.WordToStack.ProductionConfiguration
@@ -1297,6 +1298,7 @@ import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeDeadEvaluation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeUnreachEvaluation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeCleanupSuffixEvaluation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeCleanupChainEvaluation
+import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeAllocatorEvaluation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeSsaFirstDeadEvaluation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionSourceSsaFirstDeadEvaluation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSACanonicalImage
