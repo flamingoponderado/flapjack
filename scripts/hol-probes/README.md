@@ -8368,3 +8368,16 @@ fresh complete original theorem specializations have typed quantifiers, hyp0
 and provedT. Captures are source regression evidence, not equivalence proofs.
 The target closures retain inherited reals_as_rational_cuts (SOUNDNESS item8);
 immediate shifts and both Ror routes remain open.
+
+## Full original immediate Lsl/Lsr/Asr encoder cases
+
+The three `Shift*Immediate.lean` modules retain arbitrary word64 immediate
+inputs, natural registers, the sole original source-step/initial-relation
+premise and complete existential/all-environment asserts/asserts2 conclusion.
+The six-bit native amount is derived from source validity; source zero-count
+conditions remain inside the unchanged asmStep premise (zero allowed for Lsl
+only). Actual SLLI/SRLI/SRAI bytes/Decode/Run/Next and whole post-state facts are
+proved. Fresh full original theorem specializations capture typed word64
+quantifiers, hyp0 and provedT; these are regression evidence, not equivalence
+proofs. Target closures retain inherited reals_as_rational_cuts (SOUNDNESS8).
+Both Ror sequences remain open.
