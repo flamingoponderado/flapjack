@@ -8519,3 +8519,18 @@ field in the five source-preparation observations already captured by
 `pan_target_entry_first_match_probe.out`. The general source-entry codec theorem
 uses the existing native `mainFirstHOL`, with no distinct-name or target-run
 premise. Parsing/static errors and downstream whole-CLI wiring stay separate.
+
+`riscv_memory_bytes_probe.out` freshly evaluates ten varied-byte raw reads and sixteen raw stores at zero, word-edge, wrapping and cross-word addresses, including selected bytes, nearby untouched bytes and complete non-memory state frames. Twelve additional rows capture the four literal original memory clauses, zero hypotheses and full carriers. These finite observations are regression evidence, not universal equivalence. `MemoryBytes.lean` kernel-proves the byte read/write and complete outside-written-region frame needed by all four original aligned source access sizes; alignment-to-region bounds are derived from original alignment. It also proves unrestricted raw low-byte/LBU correspondence. No helper is tagged as a separately named HOL theorem, and full Mem fetch/Next/source-state/assertion assembly remains open.
+
+### Production physical spill bitmap index
+
+The `word_stack_frame_probe` rows `one_spill_physical_slot=1` and
+`one_spill_bitmap=[3w]` directly evaluate original `wReg1 44 (22,2,1)`
+and `write_bitmap` at k22/fprime1. `CakeFramePolicy` checks the executed
+location-derived builder with physical slot1 against the original bitmap3,
+including the existing source goldens8/12/14 with actual physical input slots.
+`ProductionBitmapTransport` kernel checks initial/insertion/packing, physical
+slot-to-bit index arithmetic, and allocator stack-colour transport. Full GC
+caller and whole-body production correspondence remain open. Pancake's
+LoopToWord Call/FFI producers use empty GC cutsets, so the source artifact
+corpus does not distinguish this nonempty-GC regression.
