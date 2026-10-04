@@ -179,7 +179,7 @@ theorem panToTargetWordInitMemory {k : Nat} {ac : AsmConfigExact width}
       ∀ a, (WordToStack.Native.Initialization.makeInit ac k sst wcode worac).mdomain a = true →
         (WordToStack.Native.Initialization.makeInit ac k sst wcode worac).memory a =
           t.memory a := by
-  obtain ⟨t', -, -, -, hev, -, -, -, -, -, -, -, -, -, hffi, -, hsmd, hmem⟩ :=
+  obtain ⟨t', -, -, -, hev, -, -, -, -, -, -, -, -, -, -, hffi, -, hsmd, hmem⟩ :=
     panToTargetInitCodeRun hA
   obtain ⟨hx, -⟩ := panToTargetFullMakeInitReduce hfmi hev
   obtain ⟨hs, -⟩ := panToTargetFullMakeInitState hfmi hev
