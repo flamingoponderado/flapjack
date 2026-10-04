@@ -4736,6 +4736,9 @@ run_probe target_sem_installed_probeScript.sml target_sem_installed_probe.out \
 run_probe pan_to_target_pan_installed_source_replay_probeScript.sml pan_to_target_pan_installed_source_replay_probe.out \
   pan_installed_def_replay_statement pan_installed_imp_installed_replay_typed \
   "$cake_dir/pancake/proofs/pan_to_targetProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe pan_to_target_compile_semantics_statement_replay_probeScript.sml pan_to_target_compile_semantics_statement_replay_probe.out \
+  pan_to_target_compile_semantics_statement pan_to_target_compile_semantics_typed pan_to_target_compile_semantics_free_vars bytes_in_word_def_typed \
+  "$cake_dir/pancake/proofs/pan_to_targetProofScript.sml" "$cake_dir/pancake/proofs"
 run_probe pan_to_target_init_helpers_source_replay_probeScript.sml pan_to_target_init_helpers_source_replay_probe.out \
   word_to_stack_compile_FST_replay_statement InitGlobals_location_eq_first_name_replay_typed \
   "$cake_dir/pancake/proofs/pan_to_targetProofScript.sml" "$cake_dir/pancake/proofs"
