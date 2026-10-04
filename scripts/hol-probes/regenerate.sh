@@ -8263,6 +8263,10 @@ run_probe riscv_backend_config_probeScript.sml riscv_backend_config_probe.out \
   riscv_backend_config_def_statement riscv_backend_config_def_typed riscv_backend_config_def_hypotheses \
   "$cake_dir/compiler/backend/riscv/riscv_configScript.sml" \
   "$cake_dir/compiler/backend/riscv"
+run_probe pancake_backend_conf_probeScript.sml pancake_backend_conf_probe.out \
+  pancake_backend_conf_def_statement pancake_backend_conf_def_typed pancake_backend_conf_def_hypotheses \
+  "$cake_dir/compiler/compilerScript.sml" \
+  "$cake_dir/compiler"
 run_probe riscv_target_suboverflow_probeScript.sml riscv_target_suboverflow_probe.out \
   riscv_encoder_correct_suboverflow_statement riscv_encoder_correct_suboverflow_types riscv_encoder_correct_suboverflow_hypotheses riscv_encoder_correct_suboverflow_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \

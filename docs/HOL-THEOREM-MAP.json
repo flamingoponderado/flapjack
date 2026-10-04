@@ -98853,5 +98853,13 @@
     "lean_name": "word_bit_0_lemmas",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol: Compared original quantified word64 mask conjunction: Boolean negation becomes = false and masked-add bit equality retained. Reuses kernel proof of identical riscv_step declaration; separate targetProof declaration tagged here."
+  },
+  {
+    "hol_path": "cakeml/compiler/compilerScript.sml",
+    "hol_name": "pancake_backend_conf_def",
+    "lean_path": "Flapjack/Compiler/Compiler.lean",
+    "lean_name": "pancakeBackendConf",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04 (bead flapjack-2gyxm): compilerScript.sml 744-747 and exported capture pancake_backend_conf_probe (typed: \u2200(c :backend$config). pancake_backend_conf c = c with data_conf := c.data_conf with gc_kind := None; hypotheses 0). Lean updates exactly dataConf.gcKind := .none (GcKind.none = HOL None) on the reviewed Backend.Config carrier, all other fields unchanged."
   }
 ]
