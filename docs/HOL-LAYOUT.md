@@ -90,7 +90,7 @@ the cited name occurs in one of the two syntactic forms.
 | `misc/miscScript.sml` (`list_subset`) | `Flapjack/Misc/ListSubset.lean` |
 | `compiler/backend/proofs/lab_filterProofScript.sml` | `Flapjack/Compiler/Backend/LabFilter/Proofs.lean` (submodules in `LabFilter/Proofs/`) |
 | `compiler/backend/proofs/lab_to_targetProofScript.sml` | `Flapjack/Compiler/Backend/LabToTarget/` (code similarity and structural preservation; `ShareMemDomain.lean` share_mem_domain_code_rel, `ShareMemState.lean` share_mem_state_rel) |
-| `compiler/backend/proofs/backendProofScript.sml` | `Flapjack/Compiler/Backend/BackendProof/` (`MachineInit.lean`, `WordToStackSfs.lean`, `CompileLab.lean`, and `ConfigOk.lean`) |
+| `compiler/backend/proofs/backendProofScript.sml` | `Flapjack/Compiler/Backend/BackendProof/` (`MachineInit.lean`, `WordToStackSfs.lean`, `CompileLab.lean`, `ConfigOk.lean`, and `ReadLimits.lean`) |
 | `compiler/backend/semantics/labPropsScript.sml` | `Flapjack/Compiler/Backend/LabProps.lean` (`line_ok_pre`, `sec_ok_pre`, and `all_enc_ok_pre`; asm/config carrier bridge remains explicit) |
 | `compiler/backend/semantics/labPropsScript.sml` | `Flapjack/Compiler/Backend/LabProps.lean` (`line_ok_pre`, `sec_ok_pre`, and `all_enc_ok_pre`; asm/config carrier bridge remains explicit) |
 | `compiler/backend/semantics/labSemScript.sml` | `Flapjack/Compiler/Backend/LabSem.lean` (`is_Label`) |
