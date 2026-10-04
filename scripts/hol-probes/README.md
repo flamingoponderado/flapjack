@@ -8451,3 +8451,10 @@ labels and introduces no idempotence, rebasing, desired-output or target-run
 assumption. These output observations do not prove HOL-to-Lean equivalence.
 The actual CLI and native WordToStack entry/stub/config consumer route remains
 open; this checked source-premise/producer slice alone does not close it.
+
+`pan_target_entry_first_match_probeScript.sml` extracts the first LET argument
+from original `pan_to_target$compile_prog_def` and evaluates entire declaration
+lists, preserving flags and bodies for duplicate entries, missing/empty/head
+entries and an intervening exception declaration. The anonymous operation is
+not tagged as a port of the whole compiler. Regenerate with
+`HOL_PROBE_ONLY=pan_target_entry_first_match_probeScript.sml`.

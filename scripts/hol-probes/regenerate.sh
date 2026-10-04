@@ -8094,3 +8094,7 @@ run_probe riscv_target_shift_ror_immediate_probeScript.sml riscv_target_shift_ro
 run_probe crep_to_loop_native_declarations_probeScript.sml crep_to_loop_native_declarations_probe.out \
   native_crep native_loop done \
   "$cake_dir/pancake/crep_to_loopScript.sml" "$cake_dir/pancake"
+
+run_probe pan_target_entry_first_match_probeScript.sml pan_target_entry_first_match_probe.out \
+  empty missing head duplicates nonfunction \
+  "$cake_dir/pancake/pan_to_targetScript.sml" "$cake_dir/pancake"
