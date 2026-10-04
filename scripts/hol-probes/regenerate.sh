@@ -7029,7 +7029,7 @@ run_probe l3_step_shift_probeScript.sml l3_step_shift_probe.out \
     slliw_hypotheses slliw_statement srliw_hypotheses srliw_statement sraiw_hypotheses sraiw_statement sllw_hypotheses sllw_statement srlw_hypotheses srlw_statement sraw_hypotheses sraw_statement slliw_nop_hypotheses slliw_nop_statement srliw_nop_hypotheses srliw_nop_statement sraiw_nop_hypotheses sraiw_nop_statement sllw_nop_hypotheses sllw_nop_statement srlw_nop_hypotheses srlw_nop_statement sraw_nop_hypotheses sraw_nop_statement source \
     "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
   run_probe l3_step_load_probeScript.sml l3_step_load_probe.out \
-    ld_hypotheses ld_statement lw_hypotheses lw_statement lh_hypotheses lh_statement lb_hypotheses lb_statement lwu_hypotheses lwu_statement lhu_hypotheses lhu_statement ld_nop_hypotheses ld_nop_statement lw_nop_hypotheses lw_nop_statement lh_nop_hypotheses lh_nop_statement lb_nop_hypotheses lb_nop_statement lwu_nop_hypotheses lwu_nop_statement lhu_nop_hypotheses lhu_nop_statement source \
+    ld_hypotheses ld_statement lw_hypotheses lw_statement lh_hypotheses lh_statement lb_hypotheses lb_statement lwu_hypotheses lwu_statement lhu_hypotheses lhu_statement ld_nop_hypotheses ld_nop_statement lw_nop_hypotheses lw_nop_statement lh_nop_hypotheses lh_nop_statement lb_nop_hypotheses lb_nop_statement lwu_nop_hypotheses lwu_nop_statement lhu_nop_hypotheses lhu_nop_statement lbu_hypotheses lbu_statement lbu_nop_hypotheses lbu_nop_statement source \
     "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
   run_probe l3_step_store_probeScript.sml l3_step_store_probe.out \
     sd_hypotheses sd_statement sw_hypotheses sw_statement sh_hypotheses sh_statement sb_hypotheses sb_statement source \
@@ -7038,7 +7038,11 @@ run_probe l3_step_shift_probeScript.sml l3_step_shift_probe.out \
     mul_hypotheses mul_statement div_hypotheses div_statement rem_hypotheses rem_statement remu_hypotheses remu_statement source \
     "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
   run_probe l3_step_warith_probeScript.sml l3_step_warith_probe.out \
-    skip_statement addw_hypotheses addw_statement subw_hypotheses subw_statement addiw_hypotheses addiw_statement source \
+    skip_statement addw_hypotheses addw_statement subw_hypotheses subw_statement addiw_hypotheses addiw_statement \
+    addw_nop_hypotheses addw_nop_statement subw_nop_hypotheses subw_nop_statement addiw_nop_hypotheses addiw_nop_statement source \
+    "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
+  run_probe l3_step_branch_probeScript.sml l3_step_branch_probe.out \
+    beq_hypotheses beq_statement bne_hypotheses bne_statement blt_hypotheses blt_statement bltu_hypotheses bltu_statement bge_hypotheses bge_statement bgeu_hypotheses bgeu_statement source \
     "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
   run_probe pan_structs_mmap_faithful_probeScript.sml pan_structs_mmap_faithful_probe.out \
   compile_exp_correct_mmap_helper_statement compile_exp_correct_mmap_helper_types compile_exp_correct_mmap_helper_hypotheses compile_exp_correct_mmap_helper_proved \
