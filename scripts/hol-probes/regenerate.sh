@@ -8223,6 +8223,10 @@ run_probe riscv_target_addoverflow_probeScript.sml riscv_target_addoverflow_prob
   riscv_encoder_correct_addoverflow_statement riscv_encoder_correct_addoverflow_types riscv_encoder_correct_addoverflow_hypotheses riscv_encoder_correct_addoverflow_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+run_probe riscv_target_suboverflow_probeScript.sml riscv_target_suboverflow_probe.out \
+  riscv_encoder_correct_suboverflow_statement riscv_encoder_correct_suboverflow_types riscv_encoder_correct_suboverflow_hypotheses riscv_encoder_correct_suboverflow_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
 
 run_probe riscv_control_decode_probeScript.sml riscv_control_decode_probe.out \
   jal_decode_universal jal_decode_hypotheses jalr_decode_universal jalr_decode_hypotheses jal_zero jal_all_ones jal_link_sign jal_scattered_bits jalr_zero jalr_all_ones jalr_link_alias jalr_mixed jal_source_clause jal_carrier_types jalr_source_clause jalr_carrier_types \
