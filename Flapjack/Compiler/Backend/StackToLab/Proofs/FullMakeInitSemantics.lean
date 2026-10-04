@@ -20,7 +20,9 @@ open Flapjack Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Backend.LabL
 open Flapjack.Compiler.Backend.StackToLab.Proofs
 open Flapjack.Compiler.Backend.StackToLab.Proofs.FullMakeInit
 
-/-- Canonical owning-state roundtrip; Flapjack representation infrastructure. -/
+/-- Canonical owning-state roundtrip; Flapjack representation infrastructure.
+The roundtrip covers all three HOL finite-map fields: registers,
+floating-point registers, and the populated initialization store. -/
 theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
     {width : Nat} [NeZero width] {C F : Type} :
     (∀ (state : StackSemStateBroad width C F) (h : state.FiniteSupport),
@@ -504,7 +506,7 @@ predicates; `EVERY P [2;3;4]` is a membership quantifier; the `let (c,p,b)` of
 the oracle equation is rendered by projections. -/
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "full_make_init_semantics" 3365
   (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs])
+    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
   (words_as_type_indexed_bitvec)]
 theorem fullMakeInitSemantics {width : Nat} [NeZero width] {C F : Type}
     {stackConf : StackToLab.Config} {dataConf : DataToWord.Config} {maxHeap sp : Nat}
@@ -547,7 +549,7 @@ theorem fullMakeInitSemantics {width : Nat} [NeZero width] {C F : Type}
 rewritten away: the same statement. -/
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "full_make_init_semantics" 3617
   (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
-    StackSemStateFiniteExact.fpRegs])
+    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
   (words_as_type_indexed_bitvec)]
 theorem fullMakeInitSemantics' {width : Nat} [NeZero width] {C F : Type}
     {stackConf : StackToLab.Config} {dataConf : DataToWord.Config} {maxHeap sp : Nat}
