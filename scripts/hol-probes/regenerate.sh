@@ -997,7 +997,7 @@ run_probe word_to_stack_selector_prelude_probeScript.sml word_to_stack_selector_
   "$cake_dir/compiler/backend/word_instScript.sml" "$cake_dir/compiler/backend"
 run_probe word_stack_frame_probeScript.sml word_stack_frame_probe.out \
   maxvar_skip limit_seq later_pair_f later_pair_alloc later_pair_slot_44 \
-  later_pair_slot_46 later_pair_bounded \
+  later_pair_slot_46 later_pair_bounded one_spill_physical_slot one_spill_bitmap \
   "$cake_dir/compiler/backend/word_to_stackScript.sml"
 run_probe word_stack_max_var_probeScript.sml word_stack_max_var_probe.out \
   maxvar_inst_mem maxvar_return "$cake_dir/compiler/backend/word_allocScript.sml" \
@@ -7469,6 +7469,18 @@ run_probe backend_config_ok_probeScript.sml backend_config_ok_probe.out \
   backend_config_ok_def_typed \
   "$cake_dir/compiler/backend/proofs/backendProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe backend_read_limits_probeScript.sml backend_read_limits_probe.out \
+  read_limits_def_typed \
+  "$cake_dir/compiler/backend/proofs/backendProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe data_to_word_option_le_probeScript.sml data_to_word_option_le_probe.out \
+  option_le_SOME_typed \
+  "$cake_dir/compiler/backend/proofs/data_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe loop_to_word_every_inst_ok_less_probeScript.sml loop_to_word_every_inst_ok_less_probe.out \
+  loop_inst_ok_def_typed loop_to_word_comp_every_inst_ok_less_typed loop_to_word_comp_func_every_inst_ok_less_typed loop_to_word_compile_prog_every_inst_ok_less_typed loop_to_word_every_inst_ok_less_typed \
+  "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+
 run_probe backend_compile_lab_probeScript.sml backend_compile_lab_probe.out \
   compile_lab_LENGTH_typed compile_lab_IMP_mmio_pcs_min_index_typed \
   "$cake_dir/compiler/backend/proofs/backendProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -8197,6 +8209,11 @@ run_probe riscv_target_addoverflow_probeScript.sml riscv_target_addoverflow_prob
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
 
+run_probe riscv_control_decode_probeScript.sml riscv_control_decode_probe.out \
+  jal_decode_universal jal_decode_hypotheses jalr_decode_universal jalr_decode_hypotheses jal_zero jal_all_ones jal_link_sign jal_scattered_bits jalr_zero jalr_all_ones jalr_link_alias jalr_mixed jal_source_clause jal_carrier_types jalr_source_clause jalr_carrier_types \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+
 run_probe riscv_memory_decode_probeScript.sml riscv_memory_decode_probe.out \
   ld_decode_zero ld_decode_all_ones ld_decode_mixed_sign ld_encode_source_clause ld_encode_source_hypotheses ld_carrier_types lwu_decode_zero lwu_decode_all_ones lwu_decode_mixed_sign lwu_encode_source_clause lwu_encode_source_hypotheses lwu_carrier_types lhu_decode_zero lhu_decode_all_ones lhu_decode_mixed_sign lhu_encode_source_clause lhu_encode_source_hypotheses lhu_carrier_types lbu_decode_zero lbu_decode_all_ones lbu_decode_mixed_sign lbu_encode_source_clause lbu_encode_source_hypotheses lbu_carrier_types sd_decode_zero sd_decode_all_ones sd_decode_mixed_sign sd_encode_source_clause sd_encode_source_hypotheses sd_carrier_types sw_decode_zero sw_decode_all_ones sw_decode_mixed_sign sw_encode_source_clause sw_encode_source_hypotheses sw_carrier_types sh_decode_zero sh_decode_all_ones sh_decode_mixed_sign sh_encode_source_clause sh_encode_source_hypotheses sh_carrier_types sb_decode_zero sb_decode_all_ones sb_decode_mixed_sign sb_encode_source_clause sb_encode_source_hypotheses sb_carrier_types \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
@@ -8216,3 +8233,15 @@ run_probe riscv_memory_run_probeScript.sml riscv_memory_run_probe.out \
 run_probe pan_source_entry_word_probeScript.sml pan_source_entry_word_probe.out \
   empty_word missing_word \
   "$cake_dir/pancake/pan_to_targetScript.sml" "$cake_dir/pancake"
+
+run_probe riscv_memory_bytes_probeScript.sml riscv_memory_bytes_probe.out \
+  read_offset0 read_offset1 read_offset2 read_offset3 read_offset4 read_offset5 read_offset6 read_offset7 read_wrap_last read_wrap_cross write1_zero write1_edge write1_wrap write1_cross write2_zero write2_edge write2_wrap write2_cross write4_zero write4_edge write4_wrap write4_cross write8_zero write8_edge write8_wrap write8_cross read_source_clause read_source_hypotheses read_carrier_types write_source_clause write_source_hypotheses write_carrier_types word_read_source_clause word_read_source_hypotheses word_read_carrier_types word_write_source_clause word_write_source_hypotheses word_write_carrier_types \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe pan_simp_validity_probeScript.sml pan_simp_validity_probe.out \
+  every_inst_ok_less_ret_to_tail every_inst_ok_less_seq_assoc every_inst_ok_less_pan_simp_compile every_inst_ok_less_pan_simp_compile_prog \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe riscv_memory_step_probeScript.sml riscv_memory_step_probe.out \
+  ld_next_sign ld_next_zero lwu_next_sign lwu_next_zero lhu_next_sign lhu_next_zero lbu_next_sign lbu_next_zero sd_next_sign sd_next_zero sw_next_sign sw_next_zero sh_next_sign sh_next_zero sb_next_sign sb_next_zero next_source_clause next_source_hypotheses next_carrier_types pc_source_clause pc_source_hypotheses pc_carrier_types \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"

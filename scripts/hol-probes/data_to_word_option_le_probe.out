@@ -1,0 +1,1 @@
+option_le_SOME_typed=option_le (x :num option) (SOME (n :num)) ⇔ ∃(m :num). x = SOME m ∧ m ≤ n

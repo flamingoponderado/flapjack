@@ -96463,6 +96463,15 @@
     "reviewer": "flapjack-opus4 source comparison 2026-10-04: original backendProofScript 53-88, all 28 conjuncts in order: source_conf = prim_src_config (reviewed primSrcConfig), max_app, next_name2 = bvl_num_stubs + 2, register budget, lab pos 0 and labels LN, conf_ok (:a) (confOk width), has_longdiv/has_div/has_fp_tern/has_fp_ops ISA conditions, max_stack_alloc bound with max_heap_limit (:a) and truncated subtraction, perf_calls F, addr/hw_offset_ok 0w, byte_offset_ok on signed word_le range [-8w,8w] (BitVec.sle), four valid_imm facts, OPTION_ALL EVERY ExtCall as the none/some match, find_name PERMUTES UNIV as Function.Bijective findNameSpt, names_ok, fixed_names, store_offset offset conditions for all store names, and the max_stack_alloc valid_imm range with n2w (n * (dimindex DIV 8)). Typed capture backend_config_ok probe (literal source replay)."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProof/ReadLimits.lean",
+    "lean_name": "readLimits",
+    "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml",
+    "hol_name": "read_limits_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original backendProofScript 2871-2878: read_limits asm_conf c mc ms = get_stack_heap_limit (2 * max_heap_limit (:a) c.data_conf - 1) (get_reg (find_name reg_names 2), ... 3, ... 4); asm_conf retained though unused; independent machine state/projection types as (a,b,c) machine_config. Typed capture backend_read_limits probe (literal replay)."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/BackendProps.lean",
     "lean_name": "optionLe_max",
     "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
@@ -96596,6 +96605,159 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus3 source comparison 2026-10-04: original 4628-4634, binders !p s t; evaluate (p,s) = (NONE,t) ⇒ stack_size t.stack = stack_size s.stack; from evaluate_stack_swap and s_key_eq_stack_size as in HOL. State carrier WordSemStateFiniteExact width C F (alpha word width, independent beta/gamma as C/F) with the reviewed fmap_as_finite_support [fpRegs, store] and words qualifiers. Inherits the reals_as_rational_cuts assumption (SOUNDNESS item 8) through evaluate/inst. Typed capture word_props_code_grows probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/OptionLe.lean",
+    "lean_name": "optionLe_SOME",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+    "hol_name": "option_le_SOME",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original data_to_wordProofScript 1779-1783: option_le x (SOME n) <=> ?m. x = SOME m /\\ m <= n over num option, with the reviewed BackendProps.optionLe; free x n explicit. Typed capture data_to_word_option_le probe (literal replay)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/EveryInstOkLess.lean",
+    "lean_name": "loopInstOk",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_inst_ok_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original loop_to_wordProofScript 2285-2292 all clauses: LDiv ISA in {ARMv8;MIPS;RISC_V} as disjunction, LLongMul both register implications, LLongDiv x86_64, otherwise T; independent asm_config/prog word dimensions kept as separate width binders. every_inst (inst_ok_less c) is everyInst over instOkLessExact c . HolInst.ofWordLangInst (as reviewed compile_to_word_conventions2); addr/byte_offset_ok 0w are asm*OffsetOkExact c 0. Typed capture loop_to_word_every_inst_ok_less probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/EveryInstOkLess.lean",
+    "lean_name": "loopToWordCompEveryInstOkLess",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_to_word_comp_every_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original loop_to_wordProofScript 2294-2302: forall ctxt prog l with conjunct order byte, addr, every_prog, domain(acc_vars prog LN) subset domain ctxt (pointwise sptDomain), INJ find_var on domain ctxt (pairwise injectivity on sptDomain as in locals_rel_def), lookup values nonzero and EVEN (m % 2 = 0); conclusion on FST (comp ctxt prog l). every_inst (inst_ok_less c) is everyInst over instOkLessExact c . HolInst.ofWordLangInst (as reviewed compile_to_word_conventions2); addr/byte_offset_ok 0w are asm*OffsetOkExact c 0. Typed capture loop_to_word_every_inst_ok_less probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/EveryInstOkLess.lean",
+    "lean_name": "loopToWordCompFuncEveryInstOkLess",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_to_word_comp_func_every_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original loop_to_wordProofScript 2337-2341: comp_func n params body = p, every_prog, addr, byte (order kept). every_inst (inst_ok_less c) is everyInst over instOkLessExact c . HolInst.ofWordLangInst (as reviewed compile_to_word_conventions2); addr/byte_offset_ok 0w are asm*OffsetOkExact c 0. Typed capture loop_to_word_every_inst_ok_less probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/EveryInstOkLess.lean",
+    "lean_name": "loopToWordCompileProgEveryInstOkLess",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_to_word_compile_prog_every_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original loop_to_wordProofScript 2355-2360: compile_prog lprog = wprog0, byte, addr, EVERY over lprog bodies; conclusion EVERY over wprog0 as membership quantification. every_inst (inst_ok_less c) is everyInst over instOkLessExact c . HolInst.ofWordLangInst (as reviewed compile_to_word_conventions2); addr/byte_offset_ok 0w are asm*OffsetOkExact c 0. Typed capture loop_to_word_every_inst_ok_less probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/EveryInstOkLess.lean",
+    "lean_name": "loopToWordEveryInstOkLess",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_to_word_every_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original loop_to_wordProofScript 2372-2376: compile lprog = wprog0, byte, addr, EVERY; same conclusion. every_inst (inst_ok_less c) is everyInst over instOkLessExact c . HolInst.ofWordLangInst (as reviewed compile_to_word_conventions2); addr/byte_offset_ok 0w are asm*OffsetOkExact c 0. Typed capture loop_to_word_every_inst_ok_less probe."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/EveryInstOkLess.lean",
+    "lean_name": "findVarHOL_ne_of_mem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only: find_var of an in-domain variable differs from that of any other variable (HOL INJ_DEF/lookup_NONE_domain case split inside loop_to_word_comp_every_inst_ok_less)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/EveryInstOkLess.lean",
+    "lean_name": "accVarsHOL_dom_left",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only: domain(acc_vars p LN) is contained in domain(acc_vars p l), from acc_vars_acc."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/EveryInstOkLess.lean",
+    "lean_name": "accVarsHOL_dom_right",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only: domain l is contained in domain(acc_vars p l), from acc_vars_acc."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_ret_to_tail",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanSimpValidity.lean",
+    "lean_name": "everyInstOkLess_retToTail",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-pxn.18.5.14.23: original HOL lines1161-1236 and regenerated fully quantified typed four-theorem capture. Exact ProgHOL/DeclHOL/ExpHOL positive BitVec width with MlString names; only words_as_type_indexed_bitvec translation. Binary Panop predicate is existing panopArityTwoHOL, EVERY every_exp rendered by existing everyExpListHOL/everyExpHOL over exact expsOfHOL. ret_to_tail and seq_assoc retain both directions (iff on Bool=true); seq_assoc retains appended expression list; compile retains sole source validity hypothesis; compile_prog retains arbitrary complete declaration lists and sole EVERY good_panops hypothesis. No added target evaluation, pass success, output validity or source byte-range guard. Recursive proofs cover handlers and original tail-call optimization; removed return is a Var satisfying the binary predicate vacuously."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_seq_assoc",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanSimpValidity.lean",
+    "lean_name": "everyInstOkLess_seqAssoc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-pxn.18.5.14.23: original HOL lines1161-1236 and regenerated fully quantified typed four-theorem capture. Exact ProgHOL/DeclHOL/ExpHOL positive BitVec width with MlString names; only words_as_type_indexed_bitvec translation. Binary Panop predicate is existing panopArityTwoHOL, EVERY every_exp rendered by existing everyExpListHOL/everyExpHOL over exact expsOfHOL. ret_to_tail and seq_assoc retain both directions (iff on Bool=true); seq_assoc retains appended expression list; compile retains sole source validity hypothesis; compile_prog retains arbitrary complete declaration lists and sole EVERY good_panops hypothesis. No added target evaluation, pass success, output validity or source byte-range guard. Recursive proofs cover handlers and original tail-call optimization; removed return is a Var satisfying the binary predicate vacuously."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_pan_simp_compile",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanSimpValidity.lean",
+    "lean_name": "everyInstOkLess_panSimpCompile",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-pxn.18.5.14.23: original HOL lines1161-1236 and regenerated fully quantified typed four-theorem capture. Exact ProgHOL/DeclHOL/ExpHOL positive BitVec width with MlString names; only words_as_type_indexed_bitvec translation. Binary Panop predicate is existing panopArityTwoHOL, EVERY every_exp rendered by existing everyExpListHOL/everyExpHOL over exact expsOfHOL. ret_to_tail and seq_assoc retain both directions (iff on Bool=true); seq_assoc retains appended expression list; compile retains sole source validity hypothesis; compile_prog retains arbitrary complete declaration lists and sole EVERY good_panops hypothesis. No added target evaluation, pass success, output validity or source byte-range guard. Recursive proofs cover handlers and original tail-call optimization; removed return is a Var satisfying the binary predicate vacuously."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_pan_simp_compile_prog",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanSimpValidity.lean",
+    "lean_name": "everyInstOkLess_panSimpCompileProg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-pxn.18.5.14.23: original HOL lines1161-1236 and regenerated fully quantified typed four-theorem capture. Exact ProgHOL/DeclHOL/ExpHOL positive BitVec width with MlString names; only words_as_type_indexed_bitvec translation. Binary Panop predicate is existing panopArityTwoHOL, EVERY every_exp rendered by existing everyExpListHOL/everyExpHOL over exact expsOfHOL. ret_to_tail and seq_assoc retain both directions (iff on Bool=true); seq_assoc retains appended expression list; compile retains sole source validity hypothesis; compile_prog retains arbitrary complete declaration lists and sole EVERY good_panops hypothesis. No added target evaluation, pass success, output validity or source byte-range guard. Recursive proofs cover handlers and original tail-call optimization; removed return is a Var satisfying the binary predicate vacuously."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanSimpValidity.lean",
+    "lean_name": "binary_append",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific Boolean factoring for the four original PanSimp validity theorem ports in this module; no independent HOL declaration. List append fold, smart-sequence/tail-call support and Bool equality recursion assemble the separately tagged full original iff/implication results without additional premises."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanSimpValidity.lean",
+    "lean_name": "binary_seqCallRet",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific Boolean factoring for the four original PanSimp validity theorem ports in this module; no independent HOL declaration. List append fold, smart-sequence/tail-call support and Bool equality recursion assemble the separately tagged full original iff/implication results without additional premises."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanSimpValidity.lean",
+    "lean_name": "binary_smartSeq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific Boolean factoring for the four original PanSimp validity theorem ports in this module; no independent HOL declaration. List append fold, smart-sequence/tail-call support and Bool equality recursion assemble the separately tagged full original iff/implication results without additional premises."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanSimpValidity.lean",
+    "lean_name": "panBinary_retToTail_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific Boolean factoring for the four original PanSimp validity theorem ports in this module; no independent HOL declaration. List append fold, smart-sequence/tail-call support and Bool equality recursion assemble the separately tagged full original iff/implication results without additional premises."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanSimpValidity.lean",
+    "lean_name": "panBinary_seqAssoc_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific Boolean factoring for the four original PanSimp validity theorem ports in this module; no independent HOL declaration. List append fold, smart-sequence/tail-call support and Bool equality recursion assemble the separately tagged full original iff/implication results without additional premises."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/CallGraphLemma/Leaves.lean",
