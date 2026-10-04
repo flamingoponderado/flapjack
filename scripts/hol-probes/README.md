@@ -8817,5 +8817,7 @@ cross-language proof.
 `riscv_config_proof_replay_probe.out` is a literal source replay (both
 `backendProof` and `riscv_configProof` are unbuilt here): `mc_init_ok_def` and
 `is_riscv_machine_config_def` are replayed verbatim (guarded) and `riscv_init_ok`
-is re-proved with its own HOL tactic; typed statements and the hypothesis count
-are captured for `Flapjack/Compiler/Backend/RiscVConfig/Proofs.lean`.
+is re-proved with its own HOL tactic; `backend_config_ok_def` and `names_tac` are
+likewise replayed and `riscv_backend_config_ok` re-proved with its HOL proof;
+typed statements and hypothesis counts are captured for
+`Flapjack/Compiler/Backend/RiscVConfig/Proofs.lean`.
