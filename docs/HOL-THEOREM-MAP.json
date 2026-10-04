@@ -98837,5 +98837,21 @@
     "lean_name": "riscvBackendConfigOk",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus3 source comparison 2026-10-04 (bead flapjack-0qkg6): riscv_configProofScript 27-52 against the literal replay riscv_config_proof_replay (backend_config_ok_def and names_tac replayed verbatim, riscv_backend_config_ok re-proved there with its own HOL proof, 0 hypotheses): backend_config_ok riscv_config riscv_backend_config over the tagged backendConfigOk, riscvConfig and riscvBackendConfig. All 27 conjuncts proved: literal ones by rfl/decide, conf_ok and max_heap_limit by evaluation, byte-offset range via toInt/omega, find_name bijectivity from riscvRegisterName injectivity/surjectivity, names_ok via riscvNames_lookup_eq, store offsets by store-name enumeration (incl. all 32 temps), immediate ranges via toInt. No native_decide/bv_decide."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "word_bit_0_add4",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/BitRewrites.lean",
+    "lean_name": "word_bit_0_add4",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol: Compared all eight original word64 increments 4,8,12,16,20,24,28,32 and each bit-zero equality; no hypotheses or narrowing. Complete eight-conjunct theorem."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "word_bit_0_lemmas",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/BitRewrites.lean",
+    "lean_name": "word_bit_0_lemmas",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol: Compared original quantified word64 mask conjunction: Boolean negation becomes = false and masked-add bit equality retained. Reuses kernel proof of identical riscv_step declaration; separate targetProof declaration tagged here."
   }
 ]
