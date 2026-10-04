@@ -7790,3 +7790,7 @@ run_probe pan_to_target_compile_prog_eq_probeScript.sml pan_to_target_compile_pr
 run_probe word_to_stack_inst_skip_probeScript.sml word_to_stack_inst_skip_probe.out \
   instSkip_typed instSkip_proved instSkip_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_convs_unreach_labels_probeScript.sml word_convs_unreach_labels_probe.out \
+  unreachLabels1_typed unreachLabels1_proved unreachLabels1_hypotheses unreachLabels2_typed unreachLabels2_proved unreachLabels2_hypotheses unreachLabels3_typed unreachLabels3_proved unreachLabels3_hypotheses unreachLabels4_typed unreachLabels4_proved unreachLabels4_hypotheses unreachLabels5_typed unreachLabels5_proved unreachLabels5_hypotheses unreachLabels6_typed unreachLabels6_proved unreachLabels6_hypotheses unreachLabels7_typed unreachLabels7_proved unreachLabels7_hypotheses \
+  "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" "$cake_dir/compiler/backend/proofs"
