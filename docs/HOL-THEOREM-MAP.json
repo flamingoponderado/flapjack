@@ -91260,5 +91260,19 @@
     "hol_name": "refs_to_addresses_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flap-rv source comparison (2026-10-04; bead flapjack-pxn.18.5.15.5.11): HOL refs_to_addresses_def (word_gcFunctionsScript.sml:244-251) is the three equations refs_to_addresses [] = []; refs_to_addresses (DataElement ptrs _ _ :: refs) = ptrs ++ refs_to_addresses refs; refs_to_addresses (_ :: refs) = refs_to_addresses refs, returning ('a heap_address) list from ('a,'b) heap_element list. Lean refs_to_addresses {α β : Type} has the same three clauses one for one over the tagged HeapElement α β and HeapAddress α carriers, HOL list as Lean List, HOL ++ as List.append, and the same wildcard clause for every non-DataElement head. No branch was restricted and no success or well-formedness premise was added. Original value oracle rows gc_refs_to_addresses_empty/basic/skip are captured in scripts/hol-probes/word_gc_functions_probeScript.sml and locked in scripts/hol-probes/rows.lock.json."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSingleCorrect/Call.lean",
+    "lean_name": "compile_single_correct_Call",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.51): HOL compile_single_correct, Resume Call case (word_to_wordProofScript.sml:347-589). Case piece of the full statement (235-256) at Call ret dest args handler with arbitrary arguments and state via CompileSingleCorrectAt, with exactly HOL's outer termdep/clock induction hypothesis (CompileSingleCorrectLowerIH), used for the compiled callee body at call_env (dec_clock) and for the return/exception handlers at a smaller clock. Proof follows HOL: find_code_thm locates the compiled callee prog' (SND compile_single = (LENGTH args, prog')), the IH runs prog' on both code tables, compile_single_lem relates the source callee to prog', permute_swap_lemma aligns the final permutation, HOL's witness λn. if n = 0 then st.permute 0 else perm (n-1) restores the frame permutation consumed by push_env (pushEnv_shift), and the Result/Exception continuations use pop_env/set_vars/set_var commuting with the replaced fields; bad returns, failed guards and errors are errors on both sides. fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
   }
 ]
