@@ -98861,5 +98861,14 @@
     "lean_name": "pancakeBackendConf",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus3 source comparison 2026-10-04 (bead flapjack-2gyxm): compilerScript.sml 744-747 and exported capture pancake_backend_conf_probe (typed: \u2200(c :backend$config). pancake_backend_conf c = c with data_conf := c.data_conf with gc_kind := None; hypotheses 0). Lean updates exactly dataConf.gcKind := .none (GcKind.none = HOL None) on the reviewed Backend.Config carrier, all other fields unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Complete.lean",
+    "lean_name": "riscv_encoder_correct",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c2026-10-04 source comparison: original unconditional riscv_targetProof512 encoder_correct riscv_target and complete asmProps encoder_correct_def117-133 equal the reviewed native target/encoderCorrect contract. Exhaustive six outer asm constructors, five Inst constructors, eight Arith constructors and Addr destructuring cover17 leaf groups. targetOk proved; no extra simulation, target-run/result, postrelation or successful-pass premise. Complete existential n/all interference environments/code bytes/PC predicate/final relation/outside-source-domain asserts2 retained through exact definition. All kernel-checked native constructor proofs consumed; no finite-fixture universality claim. Inherits reals_as_rational_cuts native model assurance limit SOUNDNESS8. Whole production compiler routing and final Pancake-to-RISC-V theorem remain separate open obligations."
   }
 ]
