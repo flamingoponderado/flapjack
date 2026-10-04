@@ -8142,3 +8142,8 @@ run_probe riscv_target_shift_probeScript.sml riscv_target_shift_probe.out \
 run_probe pan_target_entry_first_match_probeScript.sml pan_target_entry_first_match_probe.out \
   empty missing head duplicates nonfunction \
   "$cake_dir/pancake/pan_to_targetScript.sml" "$cake_dir/pancake"
+
+run_probe riscv_target_addoverflow_probeScript.sml riscv_target_addoverflow_probe.out \
+  riscv_encoder_correct_addoverflow_statement riscv_encoder_correct_addoverflow_types riscv_encoder_correct_addoverflow_hypotheses riscv_encoder_correct_addoverflow_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"

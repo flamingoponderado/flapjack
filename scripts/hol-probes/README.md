@@ -8480,3 +8480,16 @@ lists, preserving flags and bodies for duplicate entries, missing/empty/head
 entries and an intervening exception declaration. The anonymous operation is
 not tagged as a port of the whole compiler. Regenerate with
 `HOL_PROBE_ONLY=pan_target_entry_first_match_probeScript.sml`.
+
+`riscv_target_addoverflow_probe.out` captures the fully typed original full
+AddOverflow specialization of `riscv_encoder_correct`, with actual hypothesis
+count zero and HOL kernel result T. Lean retains only the original source step
+and initial relation, derives all six XOR/XORI/ADD/XOR/AND/SRLI native steps
+from encoded bytes, preserves arbitrary original interference and both
+assertions, and establishes PC24, code bytes and the complete signed-overflow
+post relation. Only original r1!=r3 is required; r1=r4 and other source-valid
+aliases remain. The full projection includes scratch31. Untagged arithmetic
+proves the native circuit equals HOL signed addition overflow for every word64
+pair. The full native target closure inherits SOUNDNESS8. The statement and
+capture pin is a syntactic regression check, not a cross-language proof or full
+compiler theorem.

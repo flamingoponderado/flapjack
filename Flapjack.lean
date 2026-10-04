@@ -19,6 +19,7 @@ import Flapjack.RiscV.CorrectnessEncoding.DecodeShift
 import Flapjack.RiscV.CorrectnessEncoding.Div
 import Flapjack.RiscV.CorrectnessEncoding.LongMul
 import Flapjack.RiscV.CorrectnessEncoding.AddCarry
+import Flapjack.RiscV.CorrectnessEncoding.AddOverflow
 import Flapjack.Compiler.Encoders.RiscV.Target.AsmOkRewrites
 import Flapjack.RiscV.CorrectnessEncoding.DecodeDiv
 import Flapjack.RiscV.CorrectnessEncoding.DecodeLongMul
