@@ -6,9 +6,10 @@ import Flapjack.RiscV.CorrectnessEncoding.ShiftAsrImmediate
 import Flapjack.RiscV.CorrectnessEncoding.ShiftLsrRegister
 import Flapjack.RiscV.CorrectnessEncoding.ShiftAsrRegister
 import Flapjack.RiscV.CorrectnessEncoding.ShiftLslRegister
-import Flapjack.RiscV.CorrectnessEncoding.ShiftRun
-import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileConventions.Labels
+import Flapjack.Pancake.Proofs.WordConvs.HandlerPasses
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileConventions.Output
+import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileConventions.Labels
+import Flapjack.RiscV.CorrectnessEncoding.ShiftRun
 import Flapjack.RiscV.CorrectnessEncoding.DecodeShift
 import Flapjack.RiscV.CorrectnessEncoding.Div
 import Flapjack.RiscV.CorrectnessEncoding.LongMul
@@ -67,6 +68,7 @@ import Flapjack.RiscV.CorrectnessEncoding.BinopImmediate
 import Flapjack.RiscV.CorrectnessEncoding.Binop
 import Flapjack.RiscV.CorrectnessEncoding.Const32
 import Flapjack.Compiler.Backend.Backend
+import Flapjack.Compiler.Backend.BackendProof.MachineInit
 import Flapjack.RiscV.CorrectnessEncoding.ConstWide
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxSimulation
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxReconstruction
