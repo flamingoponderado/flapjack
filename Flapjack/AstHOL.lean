@@ -6,9 +6,10 @@ abstract syntax).
 
 Only the exact `ast$shift` carrier used by the Pancake source syntax and the
 assembly/wordLang shift operations, and the exact `ast$opb` comparison carrier
-consumed by `fpSem`'s `fp_cmp_def`, are ported here so far. The remaining
-declarations of the script (`lit`, `arith`, `exp`, `dec`, ...) are an open
-inventory item and are not modelled by this module.
+consumed by `fpSem`'s `fp_cmp_def`, are ported here. The other selector
+carriers are in `AstHOL/BackendOperators.lean`, and `lit`, `arith`, the name
+abbreviations, `prim_type`, `op`, `op_class`, `getOpClass` and `lop` are in
+`AstHOL/LitOp.lean`; `ast_t`, `pat`, `exp` and `dec` are an open inventory item.
 -/
 
 namespace Flapjack
