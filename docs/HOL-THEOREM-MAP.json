@@ -95997,5 +95997,143 @@
     "hol_name": "pat_bindings_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pat_bindings_def: pats_bindings clauses of the same mutual definition: [] and pats_bindings ps ++ pat_bindings p; id is NamespaceHOL.Ident, locs is Misc.Location.Locs. Typed capture ast_syntax probe (show_types)."
+  },
+  {
+    "lean_path": "Flapjack/PrimTypesHOL.lean",
+    "lean_name": "primTypesProgram",
+    "hol_path": "cakeml/semantics/primTypesScript.sml",
+    "hol_name": "prim_types_program_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original primTypesScript 12-22: the six declarations Dexn Bind/Chr/Div/Subscript, Dtype bool [False;True], Dtype 'a list [[]; :: (Atvar 'a, Atapp [Atvar 'a] (Short list))] in order, all at unknown_loc; mlstring literals as MlString.ofString of ASCII text (identical implode byte lists). Typed capture prim_types_program probe."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatLang.lean",
+    "lean_name": "Op",
+    "hol_path": "cakeml/compiler/backend/flatLangScript.sml",
+    "hol_name": "op",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: original flatLang op: Src ast$op (AstHOL.Op), GlobalVarAlloc/GlobalVarInit/GlobalVarLookup num, TagLenEq num num, LenEq num, El num, Id; eight constructors in source order. Typed capture flat_lang probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatLang.lean",
+    "lean_name": "CtorId",
+    "hol_path": "cakeml/compiler/backend/flatLangScript.sml",
+    "hol_name": "ctor_id",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: Type abbreviation ctor_id = num. Typed capture flat_lang probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatLang.lean",
+    "lean_name": "TypeId",
+    "hol_path": "cakeml/compiler/backend/flatLangScript.sml",
+    "hol_name": "type_id",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: Type abbreviation type_id = num option. Typed capture flat_lang probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatLang.lean",
+    "lean_name": "TypeGroupId",
+    "hol_path": "cakeml/compiler/backend/flatLangScript.sml",
+    "hol_name": "type_group_id",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: Type abbreviation type_group_id = (num # (ctor_id # num) list) option. Typed capture flat_lang probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatLang.lean",
+    "lean_name": "Pat",
+    "hol_path": "cakeml/compiler/backend/flatLangScript.sml",
+    "hol_name": "pat",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: original flatLang pat: Pany, Pvar varN, Plit lit, Pcon ((ctor_id # type_group_id) option) (pat list), Pas pat varN, Pref pat; varN is AstHOL.VarN (mlstring) as in ast. Typed capture flat_lang probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatLang.lean",
+    "lean_name": "patBindings",
+    "hol_path": "cakeml/compiler/backend/flatLangScript.sml",
+    "hol_name": "pat_bindings_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: pat_bindings clauses of the mutual pat_bindings_def, clause for clause (Pas appends [i]). Typed capture flat_lang probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatLang.lean",
+    "lean_name": "patsBindings",
+    "hol_path": "cakeml/compiler/backend/flatLangScript.sml",
+    "hol_name": "pat_bindings_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: pats_bindings clauses of the mutual pat_bindings_def; the cons clause is pats_bindings ps ++ pat_bindings p (tail first), as in the source. Typed capture flat_lang probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatLang.lean",
+    "lean_name": "Exp",
+    "hol_path": "cakeml/compiler/backend/flatLangScript.sml",
+    "hol_name": "exp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: original flatLang exp: eleven constructors Raise/Handle/Lit/Con/Var_local/Fun/App/If/Mat/Let/Letrec with tra (BackendCommon.Tra), lit, (ctor_id # type_id) option, varN, op payloads in source order. Typed capture flat_lang probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatLang.lean",
+    "lean_name": "boolId",
+    "hol_path": "cakeml/compiler/backend/flatLangScript.sml",
+    "hol_name": "bool_id_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: bool_id = 0. Typed capture flat_lang probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatLang.lean",
+    "lean_name": "mkBool",
+    "hol_path": "cakeml/compiler/backend/flatLangScript.sml",
+    "hol_name": "Bool_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: Bool t b = Con t (SOME (bool_to_tag b, SOME bool_id)) []. Typed capture flat_lang probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatLang.lean",
+    "lean_name": "smartIf",
+    "hol_path": "cakeml/compiler/backend/flatLangScript.sml",
+    "hol_name": "SmartIf_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: SmartIf: Con _ (SOME (tag, SOME id)) [] tests id = bool_id, then tag = true_tag / false_tag, else If t e p q; every other shape gives If t e p q (the captured expanded case agrees). Typed capture flat_lang probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendCommon/BoolTags.lean",
+    "lean_name": "falseTag",
+    "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
+    "hol_name": "false_tag_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: false_tag = 0. Typed capture flat_lang probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendCommon/BoolTags.lean",
+    "lean_name": "trueTag",
+    "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
+    "hol_name": "true_tag_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: true_tag = 1. Typed capture flat_lang probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendCommon/BoolTags.lean",
+    "lean_name": "boolToTag",
+    "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
+    "hol_name": "bool_to_tag_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: bool_to_tag b = if b then true_tag else false_tag. Typed capture flat_lang probe (show_types, no hypotheses)."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "good_panops_def",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "goodPanopsHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "fs9 source comparison (bead flapjack-cnum): HOL pan_to_wordProofScript.sml:1108-1113 good_panops (Function fi) = EVERY (every_exp (\\x. !op es. x = Panop op es ==> LENGTH es = 2)) (exps_of fi.body); good_panops (Decl sh v exp) = every_exp (...) exp; good_panops _ = T. Lean goodPanopsHOL matches clause-for-clause over the exact DeclHOL width / FunDeclHOL width / ExpHOL width carriers, rendering EVERY as the reviewed exact everyExpListHOL, every_exp as everyExpHOL, exps_of as expsOfHOL, and the predicate as a computable Bool (Panop arity two, else true). Positive width-indexed carrier only, so the words qualifier records the translation. flapjack-sol canonical recovery review (2026-10-04): ordinary merge of DS9 7df7282a0/source61facc591; rechecked both original definitions and the current unique tagged DeclHOL -> FunDeclHOL -> ProgHOL -> ExpHOL -> BitVec width carrier chain, retaining NeZero width at every owner and actual MlS names. No new hypotheses, executable route replacement, or whole compiler theorem is claimed. Fresh original HOL nine-row replay and current kernel/full gates passed."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "pancake_good_code_def",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget.lean",
+    "lean_name": "pancakeGoodCodeHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "fs9 source comparison (bead flapjack-cnum): HOL pan_to_targetProofScript.sml:22 pancake_good_code pan_code = EVERY good_panops pan_code. Lean pancakeGoodCodeHOL code = code.all goodPanopsHOL over the exact width-indexed DeclHOL width list carrier; same shape, no extra hypothesis; words qualifier records only the width-indexed carrier translation. flapjack-sol canonical recovery review (2026-10-04): ordinary merge of DS9 7df7282a0/source61facc591; rechecked both original definitions and the current unique tagged DeclHOL -> FunDeclHOL -> ProgHOL -> ExpHOL -> BitVec width carrier chain, retaining NeZero width at every owner and actual MlS names. No new hypotheses, executable route replacement, or whole compiler theorem is claimed. Fresh original HOL nine-row replay and current kernel/full gates passed."
   }
 ]
