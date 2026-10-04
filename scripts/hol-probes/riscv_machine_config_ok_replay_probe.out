@@ -1,2 +1,0 @@
-riscv_machine_config_ok_typed=is_riscv_machine_config (mc :(64, riscv_state, word5 # word2 # TransferControl option # exception # (word5 -> word64) # (word64 # word8 -> bool) # word64) machine_config) ⇒ mc_conf_ok mc
-riscv_machine_config_ok_hypotheses=0

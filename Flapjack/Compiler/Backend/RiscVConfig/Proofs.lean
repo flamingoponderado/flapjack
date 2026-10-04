@@ -4,8 +4,6 @@ import Flapjack.Compiler.Backend.BackendProof.MachineInit
 import Flapjack.Compiler.Backend.BackendProof.ConfigOk
 import Flapjack.Compiler.Encoders.RiscV.Target.State
 import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
-import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
-import Flapjack.RiscV.CorrectnessEncoding.Complete
 
 /-!
 # `riscv_configProofScript.sml`
@@ -31,22 +29,6 @@ def isRiscvMachineConfig (mc : MachineConfig 64 RiscV.L3.riscv_state RiscVProjec
   mc.len2Reg = 13 ∧
   mc.ptr2Reg = 12 ∧
   mc.calleeSavedRegs = [24, 25, 26]
-
-/-- HOL `riscv_machine_config_ok` (`riscv_configProofScript.sml:54-66`):
-`is_riscv_machine_config mc ⇒ mc_conf_ok mc`. `encoder_correct` is the assembled
-`riscv_encoder_correct`, `enc_ok` comes from `riscv_target_ok`, and the remaining
-conjuncts (`good_dimindex (:64)` and `reg_ok` of the four heap registers and the
-link register) are decided on the concrete configuration. -/
-@[hol "cakeml/compiler/backend/riscv/proofs/riscv_configProofScript.sml"
-  "riscv_machine_config_ok"]
-theorem riscvMachineConfigOk (mc : MachineConfig 64 RiscV.L3.riscv_state RiscVProjection) :
-    isRiscvMachineConfig mc → LabToTarget.mcConfOk mc := by
-  rintro ⟨htarget, hlen, hptr, hlen2, hptr2, -⟩
-  refine ⟨.inr rfl, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · rw [htarget]; exact RiscV.TargetProof.riscv_encoder_correct
-  all_goals first
-    | (rw [htarget]; exact RiscV.TargetProof.riscv_target_ok.1)
-    | (simp only [htarget, hlen, hptr, hlen2, hptr2]; decide)
 
 /-- HOL `riscv_init_ok` (`riscv_configProofScript.sml:68-75`):
 `is_riscv_machine_config mc ⇒ mc_init_ok riscv_config riscv_backend_config mc`. -/
