@@ -8433,3 +8433,21 @@ separate open dependencies coordinated with Sol2.
 `RorExecution.lean` composes the same actual native target iterator over the complete Ror instruction family. Generic kernel proofs derive emitted-byte fetch/Next, remaining byte regions, full projection congruence under the original environment interference, native validity, PC increment and original asserts2 outside-domain memory frame. It adds no target-run premise or scratch restriction and remains untagged local infrastructure. The fresh native clause/width capture remains `riscv_ror_step_probe.out`; full source postrelations/asserts for both Ror encoder cases remain open.
 
 `riscv_target_shift_ror_immediate_probe.out` freshly specializes the full original encoder theorem at the word64 immediate Ror constructor, capturing the full statement/types, zero hypotheses and provedT. The kernel port retains sole original source-step/initial relation and every environment, derives original count/avoid-register guards, actual SRLI31/SLLIrd/ORrd trace and complete scratch effect, and proves both original assertions. Full register Ror and whole encoder/compiler correctness remain open. The capture is statement regression evidence, not a cross-language equivalence proof; inherited real-carrier limit is SOUNDNESS8.
+
+## Raw native declaration-to-Loop composition
+
+`crep_to_loop_native_declarations_probe.out` freshly evaluates the complete
+original Pan-to-Crep table and then the complete original Crep-to-Loop table
+for two declarations. The fixture matches every name, parameter, body, operand
+and direct call in both results. The declaration byte boundary is proved;
+compiler-result success is not supplied as a premise.
+
+`ProductionDeclarations` proves the complete raw native metadata payload is
+the decoded original table, derives all top/nested name support, recovers the
+original native input, and derives the complete two-pass native Loop result.
+The producer uses raw metadata before generic crepSimpFunctions: original
+compile_prog runs its own original simplification once. It preserves original
+labels and introduces no idempotence, rebasing, desired-output or target-run
+assumption. These output observations do not prove HOL-to-Lean equivalence.
+The actual CLI and native WordToStack entry/stub/config consumer route remains
+open; this checked source-premise/producer slice alone does not close it.
