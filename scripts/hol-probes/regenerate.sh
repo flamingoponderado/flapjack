@@ -7748,3 +7748,7 @@ run_probe word_to_stack_inst_memory_store_probeScript.sml word_to_stack_inst_mem
 run_probe word_to_stack_inst_memory_probeScript.sml word_to_stack_inst_memory_probe.out \
   memoryWhole_typed memoryWhole_proved memoryWhole_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_inst_skip_probeScript.sml word_to_stack_inst_skip_probe.out \
+  instSkip_typed instSkip_proved instSkip_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
