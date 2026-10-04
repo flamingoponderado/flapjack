@@ -1763,6 +1763,8 @@ INFRASTRUCTURE_THEOREMS = {
     ('Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileValidity.lean', 'holFmapAsFiniteSupportWitness'): 'Flapjack-specific internal expression/list/nested-declaration/sequence/assignment/generated-global/handler/store and native induction proof factoring, or canonical context representation witness, for the separately tagged full original PanToCrep compile validity in the same module. No standalone HOL declaration or completed port claim; all original source hypotheses are discharged by the final theorem.',
 
     ('Flapjack/Pancake/Proofs/PanToWord/PanToCrepTableValidity.lean', 'functions_valid'): 'Flapjack-specific internal function-projection membership factoring for the separately tagged full original compiler table validity theorem; no separate HOL declaration or completed port claim.',
+    ("Flapjack/Compiler/Backend/WordToStack/ProductionPreSsaDomain.lean", "acceptedAllocatorInput_usesNativeCopy"):
+        "Actual accepted-input native-copy SSA dispatch equation retaining output and failure branches; no separate HOL declaration.",
     ("Flapjack/Compiler/Backend/WordAlloc/ProductionNativeFormals.lean", "allocatorWithSsaAndCopy_metadata"):
         "Actual copy/SSA consumer retains its observed producer state and formal list; no separate HOL declaration.",
     ("Flapjack/Compiler/Backend/WordAlloc/ProductionNativeSpillState.lean", "allocatorWithSsaAndCopy_spillState"):
