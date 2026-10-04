@@ -97421,5 +97421,13 @@
     "lean_name": "compileProgMax_some",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1300-1314): inversion of a successful compile_prog_max through from_stack/from_lab/attach_bitmaps."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyStackToLab.lean",
+    "lean_name": "panToTargetLabstFacts",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1460-1484): make_init lab-state facts required by full_make_init_semantics (callee-saved link/io/cc registers, aligned memory domains, good_code of stack program and empty oracle program, 10 <= sp, register names, bijective find_name, not failed) from backend_config_ok, mc_conf_ok, mc_init_ok and the pipeline equations; not a separate HOL theorem."
   }
 ]

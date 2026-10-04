@@ -71,6 +71,7 @@ import Flapjack.Pancake.Proofs.PanToWord.LabPres
 import Flapjack.Pancake.Proofs.PanToWord.EveryInstOkLess
 import Flapjack.Pancake.Proofs.PanToTarget.CompileSemanticsStatement
 import Flapjack.Pancake.Proofs.PanToTarget.AssemblyLabToTarget
+import Flapjack.Pancake.Proofs.PanToTarget.AssemblyStackToLab
 import Flapjack.Pancake.Semantics.CrepProps.EveryExpHOL
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.CarryOverflow
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegisterZero
