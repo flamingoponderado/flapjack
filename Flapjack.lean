@@ -101,6 +101,7 @@ import Flapjack.Pancake.Proofs.PanToTarget.RiscVInstanceExecutable
 import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMaxAsm
 import Flapjack.Pancake.Proofs.PanToTarget.RiscVSource
 import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMaxAsmWith
+import Flapjack.Pancake.Proofs.PanToTarget.NativeSourceCorrect
 import Flapjack.Pancake.Proofs.PanToTarget.InitHelpers
 import Flapjack.Pancake.Proofs.PanToTarget.PanInstalled
 import Flapjack.Pancake.Proofs.PanToTarget.LabelsChain
