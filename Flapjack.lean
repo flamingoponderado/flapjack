@@ -1,4 +1,5 @@
 import Flapjack.RiscV.CorrectnessEncoding.MemoryRun
+import Flapjack.RiscV.CorrectnessEncoding.MemoryBytes
 import Flapjack.RiscV.CorrectnessEncoding.DecodeMemory
 import Flapjack.RiscV.CorrectnessEncoding.Shift
 import Flapjack.RiscV.CorrectnessEncoding.ShiftRorRegister
