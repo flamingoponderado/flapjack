@@ -7790,3 +7790,6 @@ run_probe word_to_stack_inst_memory_probeScript.sml word_to_stack_inst_memory_pr
 run_probe pan_to_target_compile_prog_eq_probeScript.sml pan_to_target_compile_prog_eq_probe.out \
   compile_prog_eq_statement compile_prog_eq_hypotheses compile_prog_eq_proved \
   "$cake_dir/pancake/pan_to_targetScript.sml" "$cake_dir/pancake"
+run_probe word_to_stack_inst_skip_probeScript.sml word_to_stack_inst_skip_probe.out \
+  instSkip_typed instSkip_proved instSkip_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

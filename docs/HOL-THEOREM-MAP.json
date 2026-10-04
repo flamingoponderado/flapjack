@@ -91988,5 +91988,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison: full original pan_to_targetScript55-90 theorem, fresh actual original closed GEN_ALL typed theorem/hyp0/EQT_INTRO T in pan_to_target_compile_prog_eq_probe.out. Arbitrary native source declaration list, complete asm configuration and backend configuration share the original word dimension, with standard positive-width BitVec/NeZero translation only. Exact existing mainFirstHOL factors the literal SPLITP three branches including empty staying empty and nonempty missing main receiving the exact zero-returning declaration. Original native PanToWord, strict native mllist sort of all function numbers, ZIP with generated_main and native original function names, complete left-biased three-stub Spt union, original-program exports update and full native fromWord0 result retained. No word-program, successful pass, target evaluation or desired result premise. Only independent LET bindings/record field updates commute, giving a kernel definitional proof. Source equation correspondence, not final compiler-machine semantics or production routing."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InstSimulation/Skip.lean",
+    "lean_name": "evaluateWInstSkip",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison: original evaluate_wInst4688-4707 initial inst/wInst/evaluate simplification discharges Skip. Full five guards retained with explicit common word dimension for payload-free constructor; actual source success gives identical source poststate, native Skip execution gives identical target poststate and full relation/stack resources unchanged. No target-run or postrelation premise. Canonical five fmap fields/positive-width carriers/independent host and FFI match original. inherits_reals_as_rational_cuts from faithful evaluator dependency, no numerical claim. Fresh complete typed original Skip kernel specialization instSkip T/hyp0, not literal local proof replay or cross-language equivalence.",
+    "hol_line": 4688
   }
 ]
