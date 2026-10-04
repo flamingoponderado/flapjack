@@ -98164,5 +98164,21 @@
     "lean_name": "panToTargetResourceLimit",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Stage G of the single HOL proof of pan_to_target_compile_semantics (pan_to_targetProofScript.sml 2285-2506): option_lt stack_max (SOME (FST (read_limits ...))) implies word_lang_safe_for_space wst InitGlobals_location; pointer premises are the top theorem's own, the rest earlier-stage facts; intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyGoodCode.lean",
+    "lean_name": "twoRegInst_eq_exact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Bridge between the wordLang and exact-asm spellings of wordConvs two_reg_inst; Flapjack infrastructure, no HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyGoodCode.lean",
+    "lean_name": "panToTargetGoodCode",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage A2 of the single HOL proof of pan_to_target_compile_semantics (pan_to_targetProofScript.sml 1376-1428): good_code mc.target.config LN lprog via pan_to_lab_good_code_lemma, pan_to_lab_labels_ok and the all_enc_ok_pre chain; premise hinst is the conclusion of pan_to_word_every_inst_ok_less (stage .20); intermediate proof step, not a HOL theorem."
   }
 ]
