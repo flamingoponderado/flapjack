@@ -4741,6 +4741,9 @@ run_probe target_sem_installed_probeScript.sml target_sem_installed_probe.out \
 run_probe pan_to_target_pan_installed_source_replay_probeScript.sml pan_to_target_pan_installed_source_replay_probe.out \
   pan_installed_def_replay_statement pan_installed_imp_installed_replay_typed \
   "$cake_dir/pancake/proofs/pan_to_targetProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe pan_to_target_compile_semantics_statement_replay_probeScript.sml pan_to_target_compile_semantics_statement_replay_probe.out \
+  pan_to_target_compile_semantics_statement pan_to_target_compile_semantics_typed pan_to_target_compile_semantics_free_vars bytes_in_word_def_typed \
+  "$cake_dir/pancake/proofs/pan_to_targetProofScript.sml" "$cake_dir/pancake/proofs"
 run_probe pan_to_target_init_helpers_source_replay_probeScript.sml pan_to_target_init_helpers_source_replay_probe.out \
   word_to_stack_compile_FST_replay_statement InitGlobals_location_eq_first_name_replay_typed \
   "$cake_dir/pancake/proofs/pan_to_targetProofScript.sml" "$cake_dir/pancake/proofs"
@@ -8223,6 +8226,10 @@ run_probe pan_target_entry_first_match_probeScript.sml pan_target_entry_first_ma
 
 run_probe riscv_target_addoverflow_probeScript.sml riscv_target_addoverflow_probe.out \
   riscv_encoder_correct_addoverflow_statement riscv_encoder_correct_addoverflow_types riscv_encoder_correct_addoverflow_hypotheses riscv_encoder_correct_addoverflow_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+run_probe riscv_target_suboverflow_probeScript.sml riscv_target_suboverflow_probe.out \
+  riscv_encoder_correct_suboverflow_statement riscv_encoder_correct_suboverflow_types riscv_encoder_correct_suboverflow_hypotheses riscv_encoder_correct_suboverflow_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
 
