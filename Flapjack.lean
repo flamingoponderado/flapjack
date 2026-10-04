@@ -101,6 +101,7 @@ import Flapjack.Compiler.Backend.ClosLang.Syntax
 import Flapjack.AstHOL.BackendOperators
 import Flapjack.AstHOL.LitOp
 import Flapjack.AstHOL.Syntax
+import Flapjack.PrimTypesHOL
 import Flapjack.Misc.Location
 import Flapjack.Compiler.Backend.BackendCommon.Operators
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsCorrect
