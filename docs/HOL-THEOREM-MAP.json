@@ -98058,5 +98058,45 @@
     "lean_name": "panToTargetStackLimitLeInitStack",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Stages E/G: FST (get_stack_heap_limit max_heap (w2,w3,w4)) <= LENGTH sst.stack for the full_make_init stack state (pan_to_targetProofScript.sml 2311-2335 with init_code_thm facts); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyInitMemory.lean",
+    "lean_name": "panToTargetFullMakeInitState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage E2: full_make_init = (sst, SOME x) gives sst = stack_alloc make_init of x and init_prop of x (pan_to_targetProofScript.sml 1567-1585, 1756-1797); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyInitMemory.lean",
+    "lean_name": "panToTargetInitPointerBounds",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage E2: init_code_pre size facts w2 <= w4, 1024*bytes_in_word <= w4 - w2 of the lab len/len2 registers from memory_assumption (pan_to_targetProofScript.sml 1883-1906, 2048-2060); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyInitMemory.lean",
+    "lean_name": "panToTargetWordInitStore",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage E2: CurrHeap/HeapLength store entries of the word initial state (pan_to_targetProofScript.sml 2117-2140); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyInitMemory.lean",
+    "lean_name": "panToTargetWordInitMdomain",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage E2: memory domain of the word initial state = addresses w2 ((w3-w2) DIV d), incl. the heap-length equation (pan_to_targetProofScript.sml 1916-2102); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyInitMemory.lean",
+    "lean_name": "panToTargetWordInitMemory",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage E2: ffi/be/sh_mdomain of the word initial state are the lab state's and its memory agrees with the lab memory on the heap domain (pan_to_targetProofScript.sml 1737-1755, 1916-2102 memory shift); intermediate proof step, not a HOL theorem."
   }
 ]
