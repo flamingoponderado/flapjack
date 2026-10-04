@@ -99082,5 +99082,13 @@
     "lean_name": "panToTargetCompileSemanticsRiscVAsmExecutable",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific corollary (bead flapjack-qb5v7) of panToTargetCompileSemanticsRiscV with compiler premise compileProgMaxAsmExecutable (pancakeBackendConf riscvBackendConfig) riscvConfig; other premises/conclusion unchanged. CLI interface; does not establish the CLI computes it."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/SourceRuntimeBackendOutput.lean",
+    "lean_name": "sourceRuntimeImage_fullBackendOutput",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific full actual RV64 source runtime diagnostic wrapper composition through checked complete backend output; no independent HOL declaration. All original parse/static/entry/allocation/codec/FFI error branches retained, with original config component equalities and no successful-output premise. Unused original service extension retained as _services; RV64 callback ignores this legacy context. Native original-label frontend adoption is separate."
   }
 ]

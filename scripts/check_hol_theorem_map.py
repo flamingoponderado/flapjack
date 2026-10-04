@@ -1743,6 +1743,8 @@ DOCUMENTED_MISMATCHES = {
 # Proofs/ and are inventoried automatically; counterpart-side witnesses and
 # induction helpers belong beside their semantic definitions instead.
 INFRASTRUCTURE_THEOREMS = {
+    ("Flapjack/RiscV/SourceRuntimeBackendOutput.lean", "sourceRuntimeImage_fullBackendOutput"):
+        "Full actual source runtime wrapper composition; Flapjack infrastructure with no HOL original.",
     ("Flapjack/RiscV/RuntimeImageBackendOutput.lean", "stackToRiscV_fullBackendOutput"):
         "Flapjack full backend output composition infrastructure; no independent HOL declaration.",
     ("Flapjack/RiscV/RuntimeImageBackendOutput.lean", "checkedSections_fullBackendOutput"):

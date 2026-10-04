@@ -1,3 +1,4 @@
+import Flapjack.RiscV.SourceRuntimeBackendOutput
 import Flapjack.RiscV.RuntimeImageBackendOutput
 import Flapjack.RiscV.NativeBackendOutput
 import Flapjack.Compiler.Backend.RiscVConfig.Executable
@@ -1226,6 +1227,7 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.Instructions
 import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.TopStubs
 import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.SourceDomain
 import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.RemoveMustTerminate
+import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.SourceOutput
 import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.MoveHelpers
 import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.Traversal
 import Flapjack.Compiler.Backend.WordToStack.ProductionLocations
