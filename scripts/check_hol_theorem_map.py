@@ -1743,6 +1743,10 @@ DOCUMENTED_MISMATCHES = {
 # Proofs/ and are inventoried automatically; counterpart-side witnesses and
 # induction helpers belong beside their semantic definitions instead.
 INFRASTRUCTURE_THEOREMS = {
+    ("Flapjack/Compiler/Backend/WordAlloc/ProductionNativeFormals.lean", "allocatorWithSsaAndCopy_metadata"):
+        "Actual copy/SSA consumer retains its observed producer state and formal list; no separate HOL declaration.",
+    ("Flapjack/Compiler/Backend/WordAlloc/ProductionNativeSpillState.lean", "allocatorWithSsaAndCopy_spillState"):
+        "Actual copy/SSA consumer constructs its observed spill state from final program and colouring; no separate HOL declaration.",
     ("Flapjack/Compiler/Backend/WordAlloc/ProductionNativeCopyMemoryGuard.lean", "nativeCopyInstructionMemoryGuard"):
         "Flapjack runtime memory-domain invariant of native copy instructions; no separate HOL declaration.",
     ("Flapjack/Compiler/Backend/WordAlloc/ProductionNativeCopyMemoryGuard.lean", "nativeCopyProgramMemoryGuard"):

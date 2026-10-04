@@ -98210,5 +98210,21 @@
     "reviewer": "flapjack-sol3: Flapjack-specific production memory-domain invariant, no independent HOL declaration. The full reviewed native copyProp instruction/program clauses preserve memory opcodes; the actual wordCopyPropViaHOL adapter preserves allocatorMemorySupported unconditionally, including rejected-input fallback. Reviewed input/output codec and cutset normalization guard lemmas discharge carrier correspondence. No successful allocator, output support or target execution premise; no HOL port or whole production allocator correctness claim.",
     "hol_path": null,
     "hol_name": null
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/ProductionNativeFormals.lean",
+    "lean_name": "allocatorWithSsaAndCopy_metadata",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific observed-output retention invariant for arbitrary copy, SSA and cleanup producers. Derived from the actual WithSsaAndCopy consumer; no desired metadata/spill equality assumption, target execution or independent HOL declaration. Actual native-copy witnesses instantiate this invariant; legacy helper compatibility remains explicit."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/ProductionNativeSpillState.lean",
+    "lean_name": "allocatorWithSsaAndCopy_spillState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific observed-output retention invariant for arbitrary copy, SSA and cleanup producers. Derived from the actual WithSsaAndCopy consumer; no desired metadata/spill equality assumption, target execution or independent HOL declaration. Actual native-copy witnesses instantiate this invariant; legacy helper compatibility remains explicit."
   }
 ]
