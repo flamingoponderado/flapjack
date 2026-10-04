@@ -8308,6 +8308,23 @@ knowledge on codec-representable unselected inputs. Kernel regressions retain
 that boundary, and 56 runtime cases compare all complete map entries and the
 full returned program rendering. These local proofs and original probes do
 not assert cross-language equivalence or complete whole-pass adoption.
+
+`word_cse_production_program_probe.out` captures the full typed original
+program/wrapper definitions and fifteen complete whole-program equality replays,
+with five-field state observations and cardinalities. The fixture key lists
+cover every stored entry, checked against the original cardinalities. Seq,
+MustTerminate, equal/unequal If facts, Loop reset/body transformation, all four
+Call return/handler combinations, Move, memory, heap, Assign, Get/Set and the
+flat memory/control family are covered. Kernel fixtures replay state tuples;
+executed program and wrapper checks compare the complete transformed program
+rendering against the expected program checked by original EVAL. ProductionProgram
+proves the complete instruction, recursive program and wrapper correspondence
+using input KnowledgeRel, original wfData and the existing input codec only.
+Every recursive output and join invariant is derived; there is no output/run
+or callback premise. The codec's rejected native Skip/FP instruction carriers
+remain an explicit representation boundary, with a kernel Skip rejection test.
+No tagged HOL compiler theorem is narrowed and no cross-language equivalence
+or entire compiler adoption claim is made.
 ## Native signed DIV decoding prerequisite
 
 `DecodeDiv.lean` proves unrestricted actual Encode/DecodeAny composition for
@@ -8378,3 +8395,16 @@ fresh complete original theorem specializations have typed quantifiers, hyp0
 and provedT. Captures are source regression evidence, not equivalence proofs.
 The target closures retain inherited reals_as_rational_cuts (SOUNDNESS item8);
 immediate shifts and both Ror routes remain open.
+
+## Full original immediate Lsl/Lsr/Asr encoder cases
+
+The three `Shift*Immediate.lean` modules retain arbitrary word64 immediate
+inputs, natural registers, the sole original source-step/initial-relation
+premise and complete existential/all-environment asserts/asserts2 conclusion.
+The six-bit native amount is derived from source validity; source zero-count
+conditions remain inside the unchanged asmStep premise (zero allowed for Lsl
+only). Actual SLLI/SRLI/SRAI bytes/Decode/Run/Next and whole post-state facts are
+proved. Fresh full original theorem specializations capture typed word64
+quantifiers, hyp0 and provedT; these are regression evidence, not equivalence
+proofs. Target closures retain inherited reals_as_rational_cuts (SOUNDNESS8).
+Both Ror sequences remain open.
