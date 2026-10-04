@@ -107,6 +107,9 @@ run_probe() {
   done
 }
 
+run_probe word_to_stack_inst_arith_probeScript.sml word_to_stack_inst_arith_probe.out \
+  arith_typed arith_proved arith_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_to_stack_fp_conversions_probeScript.sml word_to_stack_fp_conversions_probe.out \
   fpToInt_typed fpToInt_proved fpToInt_hypotheses fpFromInt_typed fpFromInt_proved fpFromInt_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -7780,6 +7783,8 @@ run_probe riscv_binop_decode_probeScript.sml riscv_binop_decode_probe.out \
 run_probe word_to_word_install_probeScript.sml word_to_word_install_probe.out \
   compile_single_correct_typed compile_single_correct_install_typed compile_single_correct_install_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+
 
 run_probe word_to_stack_inst_memory_load_probeScript.sml word_to_stack_inst_memory_load_probe.out \
   memoryLoad_typed memoryLoad_proved memoryLoad_hypotheses memoryLoad8_typed memoryLoad8_proved memoryLoad8_hypotheses memoryLoad32_typed memoryLoad32_proved memoryLoad32_hypotheses \

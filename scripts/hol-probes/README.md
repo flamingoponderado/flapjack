@@ -8085,7 +8085,6 @@ not a cross-language equivalence proof. `check-riscv-target-const.py` pins the
 full Lean statement, original assertion definition and all four probe rows;
 its mutation tests reject extra premises, false oracle evidence and lost rows.
 
-
 `pan_to_target_source_probeScript.sml` captures the full typed original
 exports and compile_prog definitions/types, actual library ZIP/SPLITP clauses,
 and the original compiler definition's extracted first LET argument. Eight
@@ -8154,3 +8153,7 @@ independent cross-language equivalence proof.
 fully typed specializations of original `evaluate_wInst` to FPToInt and
 FPFromInt. These retain the original guards and full target existential;
 they are source review evidence, not a cross-assistant equivalence proof.
+`word_to_stack_inst_arith_probeScript.sml` captures the original fully typed,
+closed, kernel-proved `evaluate_wInst` specialization for an arbitrary Arith
+opcode, retaining every guard and the full target existential. This is source
+statement evidence, not cross-assistant equivalence.
