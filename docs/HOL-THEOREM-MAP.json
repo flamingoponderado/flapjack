@@ -99114,5 +99114,29 @@
     "lean_name": "compileProgMaxAsmWith_eq_compileProgMax",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack infrastructure (bead flapjack-48pn5): compileProgMaxAsmWith ra cfg mc.target.config = compile_prog_max cfg mc when ra = regAlloc."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileProgMaxAsmWith.lean",
+    "lean_name": "regAllocExecutable_fun_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure (bead flapjack-48pn5): funext of Sol's unconditional regAllocExecutable_eq."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileProgMaxAsmWith.lean",
+    "lean_name": "compileProgMaxAsmFast_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure (bead flapjack-48pn5): compileProgMaxAsmFast (= compileProgMaxAsmWith regAllocExecutable) equals compileProgMaxAsmExecutable, whole result incl. bytes/bitmaps/config/stack bound, no premise."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileProgMaxAsmWith.lean",
+    "lean_name": "compileProgMaxAsmFast_eq_compileProgMax",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure (bead flapjack-48pn5): compileProgMaxAsmFast cfg mc.target.config = compile_prog_max cfg mc."
   }
 ]
