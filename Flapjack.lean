@@ -124,6 +124,7 @@ import Flapjack.RiscV.L3.Step.Next
 import Flapjack.RiscV.L3.Step.UpdatePC
 import Flapjack.RiscV.L3.Step.AvoidSignalAddressException
 import Flapjack.RiscV.L3.Step.RegisterALUStep
+import Flapjack.RiscV.L3.Step.ImmediateALUStep
 import Flapjack.RiscV.L3.Step.DecodeAny
 import Flapjack.RiscV.L3.Defs.WritePC
 import Flapjack.Test.L3DecodeParity

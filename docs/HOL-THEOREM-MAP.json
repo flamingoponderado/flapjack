@@ -91316,5 +91316,37 @@
     "hol_name": "XOR",
     "statement_status": "reviewed_exact",
     "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9): original riscv_stepScript.sml:866 `val XOR = arithr [] \"XOR\"`, the saved `XOR` theorem produced by the riscv_step `class` evaluator over dfn'XOR_def (riscvScript.sml). Sole original hypothesis rd <> 0w; conclusion is the evaluated c_gpr update rd |-> nested if rs1=0/rs2=0 read of rs1 ^^ rs2 with zero source registers still reading zero and source reads preceding the destination write. Native fixed word5/word64/native-state equation retained; no extra hypothesis, no state narrowing, no success/alignment premise; kernel checked; original typed statement/types captured in scripts/hol-probes/check-l3-step-register-alu.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/ImmediateALUStep.lean",
+    "lean_name": "dfnAddI",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "ADDI",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.1): original riscv_stepScript.sml:837 `val ADDI = arithi [] \"ADDI\"`, the saved `ADDI` theorem produced by the riscv_step `class_rd0`/`class` evaluator over dfn'ADDI_def (riscvScript.sml). Sole original hypothesis rd <> 0w; conclusion is the evaluated c_gpr update rd |-> if rs1=0 then signExtend64(imm) else gpr(rs1) + signExtend64(imm), zero source register still reading zero and source read preceding the destination write. Native word5/word12/word64/native-state equation retained; no extra hypothesis, no state narrowing, no mode/success/alignment premise; kernel checked; original typed statement/hypothesis/type captured in scripts/hol-probes/check-l3-step-arithi.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/ImmediateALUStep.lean",
+    "lean_name": "dfnAndI",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "ANDI",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.1): original riscv_stepScript.sml:841 `val ANDI = arithi [] \"ANDI\"`, the saved `ANDI` theorem produced by the riscv_step `class_rd0`/`class` evaluator over dfn'ANDI_def (riscvScript.sml). Sole original hypothesis rd <> 0w; conclusion is the evaluated c_gpr update rd |-> if rs1=0 then 0 else gpr(rs1) &&& signExtend64(imm), zero source register still reading zero and source read preceding the destination write. Native word5/word12/word64/native-state equation retained; no extra hypothesis, no state narrowing, no mode/success/alignment premise; kernel checked; original typed statement/hypothesis/type captured in scripts/hol-probes/check-l3-step-arithi.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/ImmediateALUStep.lean",
+    "lean_name": "dfnOrI",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "ORI",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.1): original riscv_stepScript.sml:842 `val ORI = arithi [] \"ORI\"`, the saved `ORI` theorem produced by the riscv_step `class_rd0`/`class` evaluator over dfn'ORI_def (riscvScript.sml). Sole original hypothesis rd <> 0w; conclusion is the evaluated c_gpr update rd |-> if rs1=0 then signExtend64(imm) else gpr(rs1) ||| signExtend64(imm), zero source register still reading zero and source read preceding the destination write. Native word5/word12/word64/native-state equation retained; no extra hypothesis, no state narrowing, no mode/success/alignment premise; kernel checked; original typed statement/hypothesis/type captured in scripts/hol-probes/check-l3-step-arithi.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/ImmediateALUStep.lean",
+    "lean_name": "dfnXorI",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "XORI",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.1): original riscv_stepScript.sml:843 `val XORI = arithi [] \"XORI\"`, the saved `XORI` theorem produced by the riscv_step `class_rd0`/`class` evaluator over dfn'XORI_def (riscvScript.sml). Sole original hypothesis rd <> 0w; conclusion is the evaluated c_gpr update rd |-> if rs1=0 then signExtend64(imm) else gpr(rs1) ^^^ signExtend64(imm), zero source register still reading zero and source read preceding the destination write. Native word5/word12/word64/native-state equation retained; no extra hypothesis, no state narrowing, no mode/success/alignment premise; kernel checked; original typed statement/hypothesis/type captured in scripts/hol-probes/check-l3-step-arithi.py."
   }
 ]

@@ -6948,6 +6948,9 @@ run_probe l3_step_avoid_probeScript.sml l3_step_avoid_probe.out \
 run_probe l3_step_register_alu_probeScript.sml l3_step_register_alu_probe.out \
   add_hypotheses add_statement sub_statement and_statement or_statement xor_statement gpr_op_type source \
   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
+run_probe l3_step_arithi_probeScript.sml l3_step_arithi_probe.out \
+  addi_hypotheses addi_statement slti_statement sltiu_statement andi_statement ori_statement xori_statement imm12_type source \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
 run_probe pan_structs_mmap_faithful_probeScript.sml pan_structs_mmap_faithful_probe.out \
   compile_exp_correct_mmap_helper_statement compile_exp_correct_mmap_helper_types compile_exp_correct_mmap_helper_hypotheses compile_exp_correct_mmap_helper_proved \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
