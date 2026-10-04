@@ -8511,3 +8511,16 @@ The general kernel theorem composes all six original passes from source
 byte ranges; actual downstream CLI/WordToStack routing remains separate.
 
 `riscv_memory_run_probe.out` records actual original RV64/bare Run observations for all four unsigned/full loads and four stores: zero-register no-op, aliases, signed offsets, unaligned addresses permitted by the literal model, full register/core frames and whole-state memory-update frames. Literal original Run clauses and full word5/word12/native-state carriers are also captured with zero source hypotheses. These are finite regression observations, not equivalence. Lean proves each arbitrary-field Run equation using only original riscvOk; full Mem source obligations, fetch/Next, interference and assertions remain open.
+
+### Production physical spill bitmap index
+
+The `word_stack_frame_probe` rows `one_spill_physical_slot=1` and
+`one_spill_bitmap=[3w]` directly evaluate original `wReg1 44 (22,2,1)`
+and `write_bitmap` at k22/fprime1. `CakeFramePolicy` checks the executed
+location-derived builder with physical slot1 against the original bitmap3,
+including the existing source goldens8/12/14 with actual physical input slots.
+`ProductionBitmapTransport` kernel checks initial/insertion/packing, physical
+slot-to-bit index arithmetic, and allocator stack-colour transport. Full GC
+caller and whole-body production correspondence remain open. Pancake's
+LoopToWord Call/FFI producers use empty GC cutsets, so the source artifact
+corpus does not distinguish this nonempty-GC regression.

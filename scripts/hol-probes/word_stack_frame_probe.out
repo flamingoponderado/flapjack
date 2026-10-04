@@ -27,3 +27,5 @@ later_pair_alloc=Seq (StackAlloc 3) (Seq Skip (Seq Skip Skip))
 later_pair_slot_44=2
 later_pair_slot_46=1
 later_pair_bounded=T
+one_spill_physical_slot=1
+one_spill_bitmap=[3w]
