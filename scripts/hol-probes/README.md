@@ -8473,3 +8473,5 @@ lists, preserving flags and bodies for duplicate entries, missing/empty/head
 entries and an intervening exception declaration. The anonymous operation is
 not tagged as a port of the whole compiler. Regenerate with
 `HOL_PROBE_ONLY=pan_target_entry_first_match_probeScript.sml`.
+
+`riscv_memory_run_probe.out` records actual original RV64/bare Run observations for all four unsigned/full loads and four stores: zero-register no-op, aliases, signed offsets, unaligned addresses permitted by the literal model, full register/core frames and whole-state memory-update frames. Literal original Run clauses and full word5/word12/native-state carriers are also captured with zero source hypotheses. These are finite regression observations, not equivalence. Lean proves each arbitrary-field Run equation using only original riscvOk; full Mem source obligations, fetch/Next, interference and assertions remain open.
