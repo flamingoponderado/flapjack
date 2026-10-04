@@ -4598,6 +4598,9 @@ run_probe word_cse_wf_data_preservation_probeScript.sml word_cse_wf_data_preserv
   wf_add_to_load_aux_statement wf_add_to_load_aux_hypotheses wf_data_merge_statement wf_data_merge_hypotheses wf_canonicalMoveRegs_statement \
   wf_canonicalMoveRegs_hypotheses wf_add_to_data_aux_typed \
   "$cake_dir/compiler/backend/proofs/word_cseProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_cse_production_join_probeScript.sml word_cse_production_join_probe.out \
+  join_type join_definition join_wf_definition join_wf_preservation join_fields join_empty join_duplicate_boundary \
+  "$cake_dir/compiler/backend/proofs/word_cseProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_cse_transform_probeScript.sml word_cse_transform_probe.out \
   word_cseInst_type word_cse_type word_common_subexp_elim_type word_cseInst_def_statement \
   word_cse_def_clauses word_common_subexp_elim_def_statement word_cse_wf_data_statement word_cse_wf_data_hypotheses \

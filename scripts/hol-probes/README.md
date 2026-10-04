@@ -8117,3 +8117,13 @@ The `word_to_word_install` probe captures the complete original closed typed
 specialization. `GEN_ALL` closes every binder; the specialization has zero
 hypotheses. These are original-theory captures, not a local replay or an
 independent cross-language equivalence proof.
+
+`word_cse_production_join_probe.out` captures the full original five-field
+merge_data definition, knowledge-to-knowledge type, full typed wf_data and
+whole-program preservation theorem. Original EVAL observes all five joined
+fields at equal/conflicting/missing keys, latest reset and empty join.
+The duplicate-store fixture deliberately lies outside wf_data: filtering
+reveals a later value hidden by first-match lookup. The executed map drops
+that conflicting key. ProductionJoin derives the actual If knowledge join
+from arm induction hypotheses and original well-formedness preservation;
+it does not establish whole-pass production adoption or HOL/Lean equivalence.

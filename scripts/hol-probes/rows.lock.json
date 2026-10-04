@@ -9440,6 +9440,12 @@
       "sha256": "19d9a37892d40353839a02f0dbd3862d1f639c0c8db2c5b3e7aedacea74558ae"
     },
     {
+      "bytes": 2238,
+      "out": "word_cse_production_join_probe.out",
+      "rows": 7,
+      "sha256": "24ba6d2dfd04df150dfa408e34cf3a57dcff70faca3efc88aa65153220f4cc85"
+    },
+    {
       "bytes": 6572,
       "out": "word_cse_register_keys_probe.out",
       "rows": 124,
