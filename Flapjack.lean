@@ -1,3 +1,5 @@
+import Flapjack.RiscV.CorrectnessEncoding.MemoryRelation
+import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.Arithmetic
 import Flapjack.RiscV.CorrectnessEncoding.Rejected
 import Flapjack.RiscV.CorrectnessEncoding.MemoryStore
 import Flapjack.RiscV.CorrectnessEncoding.MemoryInputs
@@ -75,6 +77,7 @@ import Flapjack.Pancake.Proofs.PanToTarget.AssemblyResourceStage
 import Flapjack.Pancake.Proofs.PanToTarget.AssemblyGoodCode
 import Flapjack.Pancake.Proofs.PanToTarget.AssemblyTopResource
 import Flapjack.Pancake.Proofs.PanToTarget.AssemblyGoodCodeSource
+import Flapjack.Pancake.Proofs.PanToTarget.AssemblyTop
 import Flapjack.Pancake.Proofs.PanToTarget.InitHelpers
 import Flapjack.Pancake.Proofs.PanToTarget.PanInstalled
 import Flapjack.Pancake.Proofs.PanToTarget.LabelsChain
