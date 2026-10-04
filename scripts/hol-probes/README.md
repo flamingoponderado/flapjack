@@ -3680,6 +3680,19 @@ arbitrary payload, trees and counters.
 proof and inferred free-variable types. Source and target states share only
 the word dimension; their code and FFI carriers are independent. The generic
 `SSALocalsParity` fixture applies the actual theorem at arbitrary native states.
+`pan_to_word_good_code_probe.out` records direct HOL `EVAL` observations of
+the original `good_panops_def` (`pan_to_wordProofScript.sml:1108`) and its
+consumer `pancake_good_code_def` (`pan_to_targetProofScript.sml:22`) on
+concrete 64-bit `panLang$decl` values.
+Declarations free of `Panop` reduce to the Bool literals `T` (`good_panops`
+of an `ExnDecl`/`Name`, and `EVERY good_panops [] / [ExnDecl] / [Name]`); the
+`Panop` arity cases leave HOL's universally quantified arity predicate
+`Mul = op ∧ [args] = es ⇒ LENGTH es = 2` as the normal form, because `EVAL`
+does not case-split the constructor equality under the `!op es` binder.
+`PanToWordGoodCodeParity.lean` kernel-decides the corresponding computable
+Lean `goodPanopsHOL`/`pancakeGoodCodeHOL` on the same inputs
+(`decide +kernel`). Select
+`HOL_PROBE_ONLY=pan_to_word_good_code_probeScript.sml`.
 ### SSA renaming properties
 
 `ssa_rename_properties_probeScript.sml` replays the complete local
@@ -8421,8 +8434,6 @@ Both Ror sequences remain open.
 `RorExecution.lean` composes the same actual native target iterator over the complete Ror instruction family. Generic kernel proofs derive emitted-byte fetch/Next, remaining byte regions, full projection congruence under the original environment interference, native validity, PC increment and original asserts2 outside-domain memory frame. It adds no target-run premise or scratch restriction and remains untagged local infrastructure. The fresh native clause/width capture remains `riscv_ror_step_probe.out`; full source postrelations/asserts for both Ror encoder cases remain open.
 
 `riscv_target_shift_ror_immediate_probe.out` freshly specializes the full original encoder theorem at the word64 immediate Ror constructor, capturing the full statement/types, zero hypotheses and provedT. The kernel port retains sole original source-step/initial relation and every environment, derives original count/avoid-register guards, actual SRLI31/SLLIrd/ORrd trace and complete scratch effect, and proves both original assertions. Full register Ror and whole encoder/compiler correctness remain open. The capture is statement regression evidence, not a cross-language equivalence proof; inherited real-carrier limit is SOUNDNESS8.
-
-`riscv_target_shift_ror_register_probe.out` freshly specializes the full original encoder theorem at Reg/Ror with unrestricted natural registers, full word64 source states, hyp0/provedT. The kernel port derives the complete ORI31/SUB31/SLL31/SRLrd/ORrd trace and original all-environment assertions from source step/initial relation alone. It preserves zero count and all allowed register aliases, derives source count/avoid guards and full scratch31 effect, and adds no target-run or postrelation premise. Capture is statement regression evidence, not cross-language equivalence. Native closure inherits SOUNDNESS8; full Shift/encoder/compiler assembly remains open.
 ## Original-label whole Crep-to-Loop production producer
 
 `crep_to_loop_original_names_program_probe.out` freshly evaluates the complete
@@ -8442,10 +8453,6 @@ compile_prog input. This producer slice does not yet connect the CLI: native
 WordToStack entry/stub/config consumers and the whole executed route remain
 separate open dependencies coordinated with Sol2.
 
-`riscv_target_shift_probe.out` freshly specializes the full original theorem to all Shift operators and Reg/Imm forms, retaining unrestricted Nat registers, word64 states, source step/initial relation, all environments and both assertions. Capture is regression evidence, not equivalence. Eight full kernel cases supply the assembly; SOUNDNESS8 and other encoder constructors remain tracked.
-`riscv_target_shift_ror_register_probe.out` freshly specializes the full original encoder theorem at Reg/Ror with unrestricted natural registers, full word64 source states, hyp0/provedT. The kernel port derives the complete ORI31/SUB31/SLL31/SRLrd/ORrd trace and original all-environment assertions from source step/initial relation alone. It preserves zero count and all allowed register aliases, derives source count/avoid guards and full scratch31 effect, and adds no target-run or postrelation premise. Capture is statement regression evidence, not cross-language equivalence. Native closure inherits SOUNDNESS8; full Shift/encoder/compiler assembly remains open.
-
-`riscv_memory_decode_probe.out` records each literal LD/LWU/LHU/LBU/SD/SW/SH/SB original Encode clause and intrinsic word5/word12 carriers, zero source hypotheses, and Decode/Encode evaluations at all-zero, all-one, and mixed-register/sign-offset inputs. Lean proves unrestricted roundtrips including zero registers and all offsets; finite probes are regression evidence, not universal equivalence. Full memory encoder correctness remains a dependency-linked open task.
 `riscv_target_shift_ror_register_probe.out` freshly specializes the full original encoder theorem at Reg/Ror with unrestricted natural registers, full word64 source states, hyp0/provedT. The kernel port derives the complete ORI31/SUB31/SLL31/SRLrd/ORrd trace and original all-environment assertions from source step/initial relation alone. It preserves zero count and all allowed register aliases, derives source count/avoid guards and full scratch31 effect, and adds no target-run or postrelation premise. Capture is statement regression evidence, not cross-language equivalence. Native closure inherits SOUNDNESS8; full Shift/encoder/compiler assembly remains open.
 
 ## Raw native declaration-to-Loop composition
@@ -8474,7 +8481,43 @@ entries and an intervening exception declaration. The anonymous operation is
 not tagged as a port of the whole compiler. Regenerate with
 `HOL_PROBE_ONLY=pan_target_entry_first_match_probeScript.sml`.
 
-`riscv_memory_run_probe.out` records actual original RV64/bare Run observations for all four unsigned/full loads and four stores: zero-register no-op, aliases, signed offsets, unaligned addresses permitted by the literal model, full register/core frames and whole-state memory-update frames. Literal original Run clauses and full word5/word12/native-state carriers are also captured with zero source hypotheses. These are finite regression observations, not equivalence. Lean proves each arbitrary-field Run equation using only original riscvOk; full Mem source obligations, fetch/Next, interference and assertions remain open.
+`riscv_target_addoverflow_probe.out` captures the fully typed original full
+AddOverflow specialization of `riscv_encoder_correct`, with actual hypothesis
+count zero and HOL kernel result T. Lean retains only the original source step
+and initial relation, derives all six XOR/XORI/ADD/XOR/AND/SRLI native steps
+from encoded bytes, preserves arbitrary original interference and both
+assertions, and establishes PC24, code bytes and the complete signed-overflow
+post relation. Only original r1!=r3 is required; r1=r4 and other source-valid
+aliases remain. The full projection includes scratch31. Untagged arithmetic
+proves the native circuit equals HOL signed addition overflow for every word64
+pair. The full native target closure inherits SOUNDNESS8. The statement and
+capture pin is a syntactic regression check, not a cross-language proof or full
+compiler theorem.
+
 `riscv_memory_decode_probe.out` records each literal LD/LWU/LHU/LBU/SD/SW/SH/SB original Encode clause and intrinsic word5/word12 carriers, zero source hypotheses, and Decode/Encode evaluations at all-zero, all-one, and mixed-register/sign-offset inputs. Lean proves unrestricted roundtrips including zero registers and all offsets; finite probes are regression evidence, not universal equivalence. Full memory encoder correctness remains a dependency-linked open task.
+
+`pan_native_frontend_prefix_probeScript.sml` evaluates the complete source
+prefix (original first LET, pan_simp, pan_structs, pan_globals), raw Pan-to-Crep
+metadata payload and original Crep-to-Loop rows for a forward source call.
+It preserves original generated names and row labels; no generic Crep
+simplification or relabel bridge is inserted. This is regression evidence,
+not a whole-CLI execution-equivalence proof.
+
+`pan_native_word_prefix_probeScript.sml` evaluates the complete original
+`pan_to_word$compile_prog` after the extracted original first-main LET.
+The native Word prefix fixture compares all three rows, argument counts,
+call arguments/continuations and complete bodies against this capture.
+The general kernel theorem composes all six original passes from source
+byte ranges; actual downstream CLI/WordToStack routing remains separate.
+
+`riscv_memory_run_probe.out` records actual original RV64/bare Run observations for all four unsigned/full loads and four stores: zero-register no-op, aliases, signed offsets, unaligned addresses permitted by the literal model, full register/core frames and whole-state memory-update frames. Literal original Run clauses and full word5/word12/native-state carriers are also captured with zero source hypotheses. These are finite regression observations, not equivalence. Lean proves each arbitrary-field Run equation using only original riscvOk; full Mem source obligations, fetch/Next, interference and assertions remain open.
+
+`pan_source_entry_word_probeScript.sml` evaluates the original extracted first
+LET and full PanToWord compiler for empty and missing-main source input.
+`PanSourceEntryParity` checks complete native Word rows and every declaration
+field in the five source-preparation observations already captured by
+`pan_target_entry_first_match_probe.out`. The general source-entry codec theorem
+uses the existing native `mainFirstHOL`, with no distinct-name or target-run
+premise. Parsing/static errors and downstream whole-CLI wiring stay separate.
 
 `riscv_memory_bytes_probe.out` freshly evaluates ten varied-byte raw reads and sixteen raw stores at zero, word-edge, wrapping and cross-word addresses, including selected bytes, nearby untouched bytes and complete non-memory state frames. Twelve additional rows capture the four literal original memory clauses, zero hypotheses and full carriers. These finite observations are regression evidence, not universal equivalence. `MemoryBytes.lean` kernel-proves the byte read/write and complete outside-written-region frame needed by all four original aligned source access sizes; alignment-to-region bounds are derived from original alignment. It also proves unrestricted raw low-byte/LBU correspondence. No helper is tagged as a separately named HOL theorem, and full Mem fetch/Next/source-state/assertion assembly remains open.

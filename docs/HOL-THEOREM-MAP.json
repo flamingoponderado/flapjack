@@ -96117,5 +96117,349 @@
     "hol_name": "bool_to_tag_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus3 source comparison 2026-10-04: bool_to_tag b = if b then true_tag else false_tag. Typed capture flat_lang probe (show_types, no hypotheses)."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "good_panops_def",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "goodPanopsHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "fs9 source comparison (bead flapjack-cnum): HOL pan_to_wordProofScript.sml:1108-1113 good_panops (Function fi) = EVERY (every_exp (\\x. !op es. x = Panop op es ==> LENGTH es = 2)) (exps_of fi.body); good_panops (Decl sh v exp) = every_exp (...) exp; good_panops _ = T. Lean goodPanopsHOL matches clause-for-clause over the exact DeclHOL width / FunDeclHOL width / ExpHOL width carriers, rendering EVERY as the reviewed exact everyExpListHOL, every_exp as everyExpHOL, exps_of as expsOfHOL, and the predicate as a computable Bool (Panop arity two, else true). Positive width-indexed carrier only, so the words qualifier records the translation. flapjack-sol canonical recovery review (2026-10-04): ordinary merge of DS9 7df7282a0/source61facc591; rechecked both original definitions and the current unique tagged DeclHOL -> FunDeclHOL -> ProgHOL -> ExpHOL -> BitVec width carrier chain, retaining NeZero width at every owner and actual MlS names. No new hypotheses, executable route replacement, or whole compiler theorem is claimed. Fresh original HOL nine-row replay and current kernel/full gates passed."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "pancake_good_code_def",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget.lean",
+    "lean_name": "pancakeGoodCodeHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "fs9 source comparison (bead flapjack-cnum): HOL pan_to_targetProofScript.sml:22 pancake_good_code pan_code = EVERY good_panops pan_code. Lean pancakeGoodCodeHOL code = code.all goodPanopsHOL over the exact width-indexed DeclHOL width list carrier; same shape, no extra hypothesis; words qualifier records only the width-indexed carrier translation. flapjack-sol canonical recovery review (2026-10-04): ordinary merge of DS9 7df7282a0/source61facc591; rechecked both original definitions and the current unique tagged DeclHOL -> FunDeclHOL -> ProgHOL -> ExpHOL -> BitVec width carrier chain, retaining NeZero width at every owner and actual MlS names. No new hypotheses, executable route replacement, or whole compiler theorem is claimed. Fresh original HOL nine-row replay and current kernel/full gates passed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Helpers.lean",
+    "lean_name": "compileVar",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "compile_var_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: Glob _ i -> App t (GlobalVarLookup i) []; Local _ s -> Var_local t s. Typed capture source_to_flat_helpers probe (show_types, no hypotheses); inferred type variables compared."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Helpers.lean",
+    "lean_name": "compilePat",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "compile_pat_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: all seven ast pat clauses; Pcon uses OPTION_JOIN (OPTION_MAP (nsLookup env.c) id) = Option.bind, MAP compile_pat; Ptannot drops the annotation. Typed capture source_to_flat_helpers probe (show_types, no hypotheses); inferred type variables compared."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Helpers.lean",
+    "lean_name": "patTups",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "pat_tups_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: x::xs -> (x, Local (mk_cons t (LENGTH xs + 1)) x) :: pat_tups t xs; mlstring names. Typed capture source_to_flat_helpers probe (show_types, no hypotheses); inferred type variables compared."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Helpers.lean",
+    "lean_name": "astOpToFlatOp",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "astOp_to_flatOp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: Opderef -> El 0, every other op -> Src op (captured case expansion agrees). Typed capture source_to_flat_helpers probe (show_types, no hypotheses); inferred type variables compared."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Helpers.lean",
+    "lean_name": "typeGroupIdType",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "type_group_id_type_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: three clauses; HOL type (a # (b # c) option) option -> (a # b option) option kept polymorphic. Typed capture source_to_flat_helpers probe (show_types, no hypotheses); inferred type variables compared."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Helpers.lean",
+    "lean_name": "strSep",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "str_sep_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: the one-character mlstring «_» = implode [CHR 95]. Typed capture source_to_flat_helpers probe (show_types, no hypotheses); inferred type variables compared."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Helpers.lean",
+    "lean_name": "joinAllNamesAux",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "join_all_names_aux_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: empty ys -> x::ys, otherwise x::str_sep::ys, tail-recursive on xs. Typed capture source_to_flat_helpers probe (show_types, no hypotheses); inferred type variables compared."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Helpers.lean",
+    "lean_name": "joinAllNames",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "join_all_names_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: [x] -> x, all other lists -> concat (join_all_names_aux xs []). Typed capture source_to_flat_helpers probe (show_types, no hypotheses); inferred type variables compared."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Helpers.lean",
+    "lean_name": "omTra",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "om_tra_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: Cons orphan_trace 1. Typed capture source_to_flat_helpers probe (show_types, no hypotheses); inferred type variables compared."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Helpers.lean",
+    "lean_name": "allocDefs",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "alloc_defs_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: (x, Glob om_tra next) per element, n and next incremented; name type polymorphic alpha as inferred. Typed capture source_to_flat_helpers probe (show_types, no hypotheses); inferred type variables compared."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Helpers.lean",
+    "lean_name": "makeVarls",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "make_varls_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: [] -> Con None NONE []; [x] -> App None (GlobalVarInit idx) [Var_local None x]; x::v8::v9 -> Let None NONE (...) (make_varls (n+1) None (idx+1) (v8::v9)); clause order resolves the overlap identically. Typed capture source_to_flat_helpers probe (show_types, no hypotheses); inferred type variables compared."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Helpers.lean",
+    "lean_name": "emptyEnv",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "empty_env_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: v and c both nsEmpty. Typed capture source_to_flat_helpers probe (show_types, no hypotheses); inferred type variables compared."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Helpers.lean",
+    "lean_name": "extendEnv",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "extend_env_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: fieldwise nsAppend e1 e2. Typed capture source_to_flat_helpers probe (show_types, no hypotheses); inferred type variables compared."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Helpers.lean",
+    "lean_name": "liftEnv",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "lift_env_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: fieldwise nsLift mn. Typed capture source_to_flat_helpers probe (show_types, no hypotheses); inferred type variables compared."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Helpers.lean",
+    "lean_name": "lookupInc",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "lookup_inc_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: lookup NONE -> (0, insert i 1 t); SOME n -> (n, insert i (n+1) t) on num num_map (Spt, sptLookup/sptInsert). Typed capture source_to_flat_helpers probe (show_types, no hypotheses); inferred type variables compared."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Helpers.lean",
+    "lean_name": "allocTags1",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "alloc_tags1_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: [] -> (nsEmpty, LN, []); cons clause with lookup_inc on LENGTH ts and nsBind; independent type variables alpha (module), beta (name), gamma (argument) kept. Typed capture source_to_flat_helpers probe (show_types, no hypotheses); inferred type variables compared."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Helpers.lean",
+    "lean_name": "allocTags",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "alloc_tags_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: alloc_tags1 (REVERSE ctors), data = SOME (tid, REVERSE tag_list), nsMap (tag, data); independent alpha/beta/gamma/delta kept. Typed capture source_to_flat_helpers probe (show_types, no hypotheses); inferred type variables compared."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Helpers.lean",
+    "lean_name": "envIdTuple",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "env_id_tuple_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: Con None NONE [Lit None (IntLit &gen); Lit None (IntLit &id)]. Typed capture source_to_flat_helpers probe (show_types, no hypotheses); inferred type variables compared."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Helpers.lean",
+    "lean_name": "simpleDlet",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "simple_dlet_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: Pvar pv with Var v -> SOME (pv, v); every other shape NONE. Typed capture source_to_flat_helpers probe (show_types, no hypotheses); inferred type variables compared."
+  },
+  {
+    "lean_path": "Flapjack/Basis/Pure/MlString.lean",
+    "lean_name": "concat",
+    "hol_path": "cakeml/basis/pure/mlstringScript.sml",
+    "hol_name": "concat_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: concat l = implode (FLAT (MAP explode-case l)) over the implode list-of-char carrier. Typed capture source_to_flat_helpers probe (show_types, no hypotheses); inferred type variables compared."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/AddOverflow.lean",
+    "lean_name": "riscv_encoder_correct_addoverflow",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol: compared original full AddOverflow constructor at riscv_targetProof651-656, original riscv_target151-157 XOR31/XORI31(-1)/ADD/XOR/AND/SRLI63 expansion, asmSem arith_upd and asm arith_ok, and full encoder_correct_def. Only original asmStep plus initial targetStateRel; complete existential n, every environment with original interferenceOk, both assertions, code bytes, PC range and final full relation. Every actual native fetch/decode/Run/Next is derived from literal emitted bytes, including scratch31, n=5 and environment indices0..5. Only source r1!=r3 exclusion; r1=r4 flag-overwrites-sum, r1=r2, flag/input aliases retained. Zero/scratch31 exclusions derive original asm_ok; no extra register premise. Kernel proof of arbitrary word64 signed overflow equals the native sign-bit circuit; actual final state PC24, domain memory, all original observable registers and no FP registers retained. Same-counterpart submodules are untagged local compositions with no separately named HOL original. Broad native Run/target closure inherits reals_as_rational_cuts, the rational-cut assurance limit SOUNDNESS8; no executed route change, full encoder assembly or whole compiler correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/CompileExp.lean",
+    "lean_name": "compileExp",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "compile_exp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original source_to_flatScript 120-228 mutual compile_exp_def, compile_exp clauses Raise..Lannot (Lannot (Locs st en) pattern), App special cases AallocEmpty FOLDR Let over REVERSE, Eval Mat with Pcon NONE [Pany x4; Pvar bytes; Pvar words], Env_id singleton/otherwise El 0, else astOp_to_flatOp; Log via If/Bool None; trace None is Tra.none, OPTION_JOIN (OPTION_MAP (type_group_id_type o nsLookup env.c) cn) is cn.bind, mlstring literals ofString ASCII. Typed capture source_to_flat_compile probe."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/CompileExp.lean",
+    "lean_name": "compileExps",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "compile_exp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original source_to_flatScript 120-228 mutual compile_exp_def, compile_exps clauses; trace None is Tra.none, OPTION_JOIN (OPTION_MAP (type_group_id_type o nsLookup env.c) cn) is cn.bind, mlstring literals ofString ASCII. Typed capture source_to_flat_compile probe."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/CompileExp.lean",
+    "lean_name": "compilePes",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "compile_exp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original source_to_flatScript 120-228 mutual compile_exp_def, compile_pes clauses with pat_bindings/pat_tups None/nsBindList; trace None is Tra.none, OPTION_JOIN (OPTION_MAP (type_group_id_type o nsLookup env.c) cn) is cn.bind, mlstring literals ofString ASCII. Typed capture source_to_flat_compile probe."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/CompileExp.lean",
+    "lean_name": "compileFuns",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "compile_exp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original source_to_flatScript 120-228 mutual compile_exp_def, compile_funs clauses with f::t and nsBind x (Local None x); trace None is Tra.none, OPTION_JOIN (OPTION_MAP (type_group_id_type o nsLookup env.c) cn) is cn.bind, mlstring literals ofString ASCII. Typed capture source_to_flat_compile probe."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/CompileDecs.lean",
+    "lean_name": "compileDecs",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "compile_decs_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original source_to_flatScript 342-411: all eight singleton clauses (Dlet with simple_dlet, Dletrec, Dtype MAPi alloc_tags with FOLDL nsAppend, Dtabbrev, Dexn, Dmod lift_env, Dlocal, Denv with sptree insert), [] and d::ds; the last written d :: d2 :: ds since every singleton matches earlier; termination by list size as HOL. Replay: Flapjack/Test/SourceToFlatPrimConfigParity evaluates compile_decs on prim_types_program and matches the probe's prim_src_config_eq closed form. Typed capture source_to_flat_compile probe."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/CompileDecs.lean",
+    "lean_name": "emptyConfig",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "empty_config_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 421-428: next 0/0/0, mod_env empty_env, pattern_cfg init_config 0, envs next 0 env_gens LN. Typed capture source_to_flat_compile probe."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Backend/PrimSrcConfig.lean",
+    "lean_name": "primSrcConfig",
+    "hol_path": "cakeml/compiler/backend/backendScript.sml",
+    "hol_name": "prim_src_config_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original backendScript 196-201: let (_,next,env,_,_) = compile_decs [] 1 empty_config.next empty_env ARB prim_types_program in empty_config with <|next; mod_env := env|>; HOL ARB is the shared opaque holArb at environment_generation_store. Typed capture backend_prim_src_config probe."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Backend/PrimSrcConfig.lean",
+    "lean_name": "primSrcConfig_eq",
+    "hol_path": "cakeml/compiler/backend/backendScript.sml",
+    "hol_name": "prim_src_config_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original backendScript 203 EVAL closed form: next vidx 0 tidx 2 eidx 4, mod_env c the eight constructor bindings in order, v Bind [] [], pattern_cfg pat_heuristic 0, envs next 0 env_gens LN; kernel-proved by unfolding compile_decs. Typed capture backend_prim_src_config probe."
+  },
+  {
+    "lean_path": "Flapjack/Misc/UpdateList.lean",
+    "lean_name": "updateList",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "UPDATE_LIST_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: FOLDL (flip (UNCURRY UPDATE)) with UPDATE a b f = (λx. if a = x then b else f x) written inline; polymorphic alpha/beta, decidable key equality renders HOL equality. Typed capture pan_target_root_leaves probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Misc/UpdateList.lean",
+    "lean_name": "applyUpdateListALookup",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "APPLY_UPDATE_LIST_ALOOKUP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: ∀ls f x. (f =++ ls) x = case ALOOKUP (REVERSE ls) x of NONE => f x | SOME y => y; ALOOKUP is List.lookup. Typed capture pan_target_root_leaves probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Misc/DivModLemmas.lean",
+    "lean_name": "modSubLemma",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "MOD_SUB_LEMMA",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: num hypotheses n MOD k = 0 ∧ m MOD k = 0 ∧ 0 < k, conclusion (n − m) MOD k = 0 with truncated subtraction. Typed capture pan_target_root_leaves probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Misc/DisjointInter.lean",
+    "lean_name": "disjointInter",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "DISJOINT_INTER",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: DISJOINT b c ⇒ DISJOINT (a ∩ b) (a ∩ c) over alpha -> bool sets as predicates, DISJOINT as pointwise non-overlap (set_sep convention). Typed capture pan_target_root_leaves probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Misc/DivModLemmas.lean",
+    "lean_name": "impMultDivLess",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "IMP_MULT_DIV_LESS",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: m ≠ 0 ∧ d < k ⇒ m * (d DIV m) < k. Typed capture pan_target_root_leaves probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Misc/DivModLemmas.lean",
+    "lean_name": "divLessDiv",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "DIV_LESS_DIV",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: n MOD k = 0 ∧ m MOD k = 0 ∧ n < m ∧ 0 < k ⇒ n DIV k < m DIV k. Typed capture pan_target_root_leaves probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Misc/WordLsImp.lean",
+    "lean_name": "wordLsImp",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "WORD_LS_IMP",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: a ≤₊ b ⇒ ∃k. Abbrev (b = a + n2w k) ∧ w2n (b − a) = k ∧ ∀w. a ≤₊ w ∧ w <₊ b ⇔ ∃i. w = a + n2w i ∧ i < k; ≤₊/<₊ are BitVec ≤/< (toNat order), Abbrev is the logical identity marker. Word translation only: HOL alpha word is BitVec width with [NeZero width]; no other difference. Typed capture pan_target_root_leaves probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/WordLemmas.lean",
+    "lean_name": "lsrLsl",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+    "hol_name": "lsr_lsl",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: ∀w n. aligned n w ⇒ w >>> n << n = w with BitVec logical shifts. Word translation only: HOL alpha word is BitVec width with [NeZero width]; no other difference. Typed capture pan_target_root_leaves probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProof/MachineInit.lean",
+    "lean_name": "byteAlignedMult",
+    "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml",
+    "hol_name": "byte_aligned_mult",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: good_dimindex (:a) ⇒ (byte_aligned (a + bytes_in_word * n2w i) ⇔ byte_aligned a); bytes_in_word is n2w (dimindex DIV 8); literal-source replay (backendProofTheory unbuilt) proves it with the original tactic. Word translation only: HOL alpha word is BitVec width with [NeZero width]; no other difference. Typed capture pan_target_root_leaves probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProof/WordToStackSfs.lean",
+    "lean_name": "compileWordToStackSfsAux",
+    "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml",
+    "hol_name": "compile_word_to_stack_sfs_aux",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: original 2788-2809, all eight binders; premise compile_word_to_stack ac perf k p bm = (progs',fs',bitmaps) ∧ perf = F; conclusion fromAList of per-program FST (SND (compile_prog ... (Nil,0))) equals fromAList (MAP (λ((i,_),n).(i,n)) (ZIP (progs',fs'))); identifiers num as HOL infers; fromAList is the external-library sptFromAList rendering, Nil is AppList.nil. Word translation only: alpha word is BitVec width with [NeZero width]. Typed capture pan_target_root_leaves probe (literal source replay with the original tactic; backendProofTheory not built in probe env)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProof/ConfigOk.lean",
+    "lean_name": "backendConfigOk",
+    "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml",
+    "hol_name": "backend_config_ok_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original backendProofScript 53-88, all 28 conjuncts in order: source_conf = prim_src_config (reviewed primSrcConfig), max_app, next_name2 = bvl_num_stubs + 2, register budget, lab pos 0 and labels LN, conf_ok (:a) (confOk width), has_longdiv/has_div/has_fp_tern/has_fp_ops ISA conditions, max_stack_alloc bound with max_heap_limit (:a) and truncated subtraction, perf_calls F, addr/hw_offset_ok 0w, byte_offset_ok on signed word_le range [-8w,8w] (BitVec.sle), four valid_imm facts, OPTION_ALL EVERY ExtCall as the none/some match, find_name PERMUTES UNIV as Function.Bijective findNameSpt, names_ok, fixed_names, store_offset offset conditions for all store names, and the max_stack_alloc valid_imm range with n2w (n * (dimindex DIV 8)). Typed capture backend_config_ok probe (literal source replay)."
   }
 ]

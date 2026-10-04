@@ -4,6 +4,7 @@ import Flapjack.RiscV.CorrectnessEncoding.DecodeMemory
 import Flapjack.RiscV.CorrectnessEncoding.Shift
 import Flapjack.RiscV.CorrectnessEncoding.ShiftRorRegister
 import Flapjack.Compiler.Backend.WordToStack.ProductionMoveDomain
+import Flapjack.Compiler.Backend.WordToStack.ProductionMoveMaterialization
 import Flapjack.RiscV.CorrectnessEncoding.ShiftRorImmediate
 import Flapjack.RiscV.CorrectnessEncoding.RorExecution
 import Flapjack.RiscV.CorrectnessEncoding.RorStep
@@ -22,6 +23,7 @@ import Flapjack.RiscV.CorrectnessEncoding.DecodeShift
 import Flapjack.RiscV.CorrectnessEncoding.Div
 import Flapjack.RiscV.CorrectnessEncoding.LongMul
 import Flapjack.RiscV.CorrectnessEncoding.AddCarry
+import Flapjack.RiscV.CorrectnessEncoding.AddOverflow
 import Flapjack.Compiler.Encoders.RiscV.Target.AsmOkRewrites
 import Flapjack.RiscV.CorrectnessEncoding.DecodeDiv
 import Flapjack.RiscV.CorrectnessEncoding.DecodeLongMul
@@ -32,6 +34,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelMemory
 
 import Flapjack.Test.PanToTargetSourceParity
 import Flapjack.Pancake.PanToTarget
+import Flapjack.Pancake.PanToTarget.ProductionSourceEntry
 
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelFp
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.FpConversions
@@ -74,6 +77,10 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.MoveSourceState
 import Flapjack.Misc.Sptree.AlistInsertReverse
 import Flapjack.Misc.Address
 import Flapjack.Misc.Fun2SetUnion
+import Flapjack.Misc.UpdateList
+import Flapjack.Misc.DivModLemmas
+import Flapjack.Misc.DisjointInter
+import Flapjack.Misc.WordLsImp
 import Flapjack.RiscV.CorrectnessEncoding.DecodeConst
 import Flapjack.RiscV.CorrectnessEncoding.DecodeBinop
 import Flapjack.RiscV.CorrectnessEncoding.BinopRun
@@ -83,7 +90,9 @@ import Flapjack.RiscV.CorrectnessEncoding.Binop
 import Flapjack.RiscV.CorrectnessEncoding.Const32
 import Flapjack.Compiler.Backend.Backend
 import Flapjack.Compiler.Backend.BackendProof.MachineInit
+import Flapjack.Compiler.Backend.BackendProof.WordToStackSfs
 import Flapjack.Compiler.Backend.BackendProof.CompileLab
+import Flapjack.Compiler.Backend.BackendProof.ConfigOk
 import Flapjack.RiscV.CorrectnessEncoding.ConstWide
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxSimulation
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxReconstruction
@@ -105,6 +114,9 @@ import Flapjack.AstHOL.BackendOperators
 import Flapjack.AstHOL.LitOp
 import Flapjack.AstHOL.Syntax
 import Flapjack.PrimTypesHOL
+import Flapjack.Compiler.Backend.SourceToFlat.CompileExp
+import Flapjack.Compiler.Backend.SourceToFlat.CompileDecs
+import Flapjack.Compiler.Backend.Backend.PrimSrcConfig
 import Flapjack.Misc.Location
 import Flapjack.Compiler.Backend.BackendCommon.Operators
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsCorrect
@@ -130,6 +142,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.ChunkBitsMsb
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsPattern
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ChunkBits
 import Flapjack.Compiler.Backend.SourceToFlat.Config
+import Flapjack.Compiler.Backend.SourceToFlat.Helpers
 import Flapjack.Compiler.Backend.FlatPattern.Config
 import Flapjack.Compiler.Backend.BackendCommon.Trace
 import Flapjack.Compiler.Backend.BackendCommon.BoolTags
@@ -1460,6 +1473,7 @@ import Flapjack.Compiler.Backend.WordGcFunctions
 import Flapjack.Compiler.Backend.WordGcFunctions.Roots
 import Flapjack.Compiler.Backend.WordGcFunctions.HasFpOps
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.InitStoreOk
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordLemmas
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunOk
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunConstOk
 import Flapjack.Compiler.Backend.WordSimp.Proofs.GcWordConst
@@ -1949,6 +1963,7 @@ import Flapjack.PanHProgAssign
 import Flapjack.PanHProgWhile
 import Flapjack.Pancake.PanSimp
 import Flapjack.Pancake.PanToWord
+import Flapjack.Pancake.PanToWord.ProductionPrefix
 import Flapjack.Pancake.PanLang.ProgHOLInduction
 import Flapjack.Pancake.Proofs.PanSimp.ProgOfHOL
 import Flapjack.PanLocalised
@@ -2044,6 +2059,7 @@ import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.ShMemLoad
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.ExtCall
 import Flapjack.Pancake.Proofs.PanToCrep.NotMemContextAssignedMemGt
 import Flapjack.Pancake.Proofs.PanToWord
+import Flapjack.Pancake.Proofs.PanToTarget
 import Flapjack.Pipeline
 import Flapjack.Pipeline.Proofs.SourceLoopState
 import Flapjack.RiscV.PipelineDiagnostics
