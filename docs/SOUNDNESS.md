@@ -212,6 +212,30 @@ regressions use `native_decide`; their locations are audited by
 engineering policy and should not be confused with an independent review of
 the theorem statements or a proof of semantic equivalence to HOL.
 
+## The correctness theorem cannot be summarized faithfully
+
+The compiler correctness theorem is the top-level source-to-target result. Its
+statement is large by construction: it names every definition the result
+recursively depends on — the parser, lowering, the abstract CakeML semantics,
+each compiler pass, the RISC-V machine semantics, the assembly rendering, and
+the machine, memory-layout, and resource premises. Reading the statement
+therefore means following every one of those definitions; the statement is not
+a short claim but the whole ported development written out.
+
+No natural-language summary of the theorem is accurate. Every paraphrase,
+including the ones in this document and in commit messages, issue trackers, and
+beads, omits or simplifies something the kernel actually checks, and can mislead
+a reader who trusts the prose instead of the statement. Treat such summaries as
+pointers to the theorem, never as the theorem itself.
+
+To know what Flapjack actually proves, read the Lean statement and confirm that
+the kernel checks it. `lake build` and `lake test` show only that a statement
+elaborates and its proof term type-checks; neither reviews whether the
+elaborated statement is the result its author intended, whether it matches the
+HOL original, or whether the statement is what the reader wants. See
+"Trust and reproducibility notes" for how elaboration can expand the written
+statement beyond what the author typed.
+
 ## Required next evidence for a stronger claim
 
 Before describing Flapjack as a Pancake-equivalent compiler, the project needs
