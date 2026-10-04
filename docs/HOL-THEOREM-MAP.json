@@ -98080,6 +98080,14 @@
   {
     "hol_path": null,
     "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyWordToStack.lean",
+    "lean_name": "panToTargetFullMakeInitAssumptions",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1440-1550): all hypotheses of full_make_init_semantics for labst = lab_to_target make_init mc ffi t m ((heap_stack_dm UNION bitmaps_dm) INTER byte_aligned) (sdm INTER byte_aligned) ms lprog ... with HOL's constant oracles, from stage A3a (panToTargetLabstFacts), stage A3b (panToTargetMemoryAssumption over pan_installed's components) and backend_config_ok's max_stack_alloc bound."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyPanToWord.lean",
     "lean_name": "heapLengthShift",
     "statement_status": "no_hol_reference_pending_classification",
