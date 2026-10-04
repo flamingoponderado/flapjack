@@ -13,7 +13,7 @@ import Flapjack.Compiler.Backend.WordRemove.Production
 import Flapjack.RiscV.WordInstSelect
 import Flapjack.RiscV.WordSimp
 import Flapjack.RiscV.WordUnreach
-import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSAAllocation
+import Flapjack.Compiler.Backend.WordAlloc.ProductionCopyAllocation
 
 /-!
 # Checked pipeline Word-to-Stack diagnostics
@@ -206,7 +206,7 @@ def pipelineWordFunctionsAllocatedWithSpillsAndFullSsaChecked [NeZero width] :
          doing it here changes the fresh-name bound used by SSA. -/
       let unallocatedBody :=
         wordBeforeSsaAllocatorBody (LoopToWord.loopToWordCompFunc label parameters body)
-      match RiscV.CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedSSA
+      match RiscV.CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedSSAWithNativeCopy
           label wordParameters unallocatedBody with
       | none => .error (.allocationFailure label)
       | some (_, renamedParameters, renamedProgram, allocation) =>
@@ -270,7 +270,7 @@ def pipelineWordFunctionsAllocatedWithSpillsAndFullSsaAndBitmapsCheckedAux
       let wordParameters := wordSsaAbiParameters parameters.length
       let unallocatedBody :=
           wordBeforeSsaAllocatorBody (LoopToWord.loopToWordCompFunc label parameters body)
-      match RiscV.CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedSSA
+      match RiscV.CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedSSAWithNativeCopy
           label wordParameters unallocatedBody with
       | none => .error (.allocationFailure label)
       | some (_, renamedParameters, renamedProgram, allocation) =>
@@ -343,7 +343,7 @@ def pipelineWordFunctionsAllocatedWithSpillsAndFullSsaAndBitmapsFromWordCheckedA
       let wordParameters := wordSsaAbiParameters arity
       let unallocatedBody :=
         wordBeforeSsaAllocatorBody body
-      match RiscV.CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedSSA
+      match RiscV.CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedSSAWithNativeCopy
           label wordParameters unallocatedBody with
       | none => .error (.allocationFailure label)
       | some (_, _renamedParameters, allocatedProgram, allocation) =>
