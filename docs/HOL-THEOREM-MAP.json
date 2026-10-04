@@ -92805,5 +92805,110 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Source compared full Binop branch550-559 and original encoder_correct_def: every BinOp and both original RegImm constructors, same sole asmStep plus initialtargetStateRel premise and full existential/all-env/asserts/asserts2 conclusion. Accepted full Reg/Imm proofs assembled along literal source case split, no target-run/range/finalrelation premise. Fresh full typed original source theorem capture retains unrestricted num registers, word64 RegImm and full native state, hypotheses0/provedT. Inherited reals_as_rational_cuts assumption on full native target/Run closure, SOUNDNESS item8, retained."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpInstructions.lean",
+    "lean_name": "everyInstSmartSeq",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "every_inst_SmartSeq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison of original wordConvsProof395-513: arbitrary HOL word dimension translated to positive-width BitVec with [NeZero width], exact native instruction/program constructor fields, Spt cutsets and native MlString names retained. Arbitrary P : inst -> bool and all original source hypotheses/results preserved; Call without a return ignores its handler exactly as HOL, returning handlers, Loop and OpCurrHeap covered. Pure syntactic preservation interprets no numeric FP operation and needs no real-carrier translation. Smart sequencing preserves exactly the conjunction of the two source predicates. Fresh literal original local proof/typed statement replay in word_convs_simp_instructions_probe.out; no output-validity, target-run, desired relation or dummy-validity premise. This source comparison and kernel evidence do not independently prove HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpInstructions.lean",
+    "lean_name": "destSeqNoInst",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "dest_Seq_no_inst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison of original wordConvsProof395-513: arbitrary HOL word dimension translated to positive-width BitVec with [NeZero width], exact native instruction/program constructor fields, Spt cutsets and native MlString names retained. Arbitrary P : inst -> bool and all original source hypotheses/results preserved; Call without a return ignores its handler exactly as HOL, returning handlers, Loop and OpCurrHeap covered. Pure syntactic preservation interprets no numeric FP operation and needs no real-carrier translation. Both actual sequence-destructor components satisfy the source instruction predicate. Fresh literal original local proof/typed statement replay in word_convs_simp_instructions_probe.out; no output-validity, target-run, desired relation or dummy-validity premise. This source comparison and kernel evidence do not independently prove HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpInstructions.lean",
+    "lean_name": "seqAssocNoInst",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "Seq_assoc_no_inst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison of original wordConvsProof395-513: arbitrary HOL word dimension translated to positive-width BitVec with [NeZero width], exact native instruction/program constructor fields, Spt cutsets and native MlString names retained. Arbitrary P : inst -> bool and all original source hypotheses/results preserved; Call without a return ignores its handler exactly as HOL, returning handlers, Loop and OpCurrHeap covered. Pure syntactic preservation interprets no numeric FP operation and needs no real-carrier translation. Sequence association preserves the two original source predicates, including all recursive handlers. Fresh literal original local proof/typed statement replay in word_convs_simp_instructions_probe.out; no output-validity, target-run, desired relation or dummy-validity premise. This source comparison and kernel evidence do not independently prove HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpInstructions.lean",
+    "lean_name": "everyInstDropConsts",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "every_inst_drop_consts",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison of original wordConvsProof395-513: arbitrary HOL word dimension translated to positive-width BitVec with [NeZero width], exact native instruction/program constructor fields, Spt cutsets and native MlString names retained. Arbitrary P : inst -> bool and all original source hypotheses/results preserved; Call without a return ignores its handler exactly as HOL, returning handlers, Loop and OpCurrHeap covered. Pure syntactic preservation interprets no numeric FP operation and needs no real-carrier translation. Constant materialization adds only assignments, so the arbitrary instruction predicate is unchanged. Fresh literal original local proof/typed statement replay in word_convs_simp_instructions_probe.out; no output-validity, target-run, desired relation or dummy-validity premise. This source comparison and kernel evidence do not independently prove HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpInstructions.lean",
+    "lean_name": "everyInstConstFp",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "every_inst_const_fp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison of original wordConvsProof395-513: arbitrary HOL word dimension translated to positive-width BitVec with [NeZero width], exact native instruction/program constructor fields, Spt cutsets and native MlString names retained. Arbitrary P : inst -> bool and all original source hypotheses/results preserved; Call without a return ignores its handler exactly as HOL, returning handlers, Loop and OpCurrHeap covered. Pure syntactic preservation interprets no numeric FP operation and needs no real-carrier translation. Constant folding preserves every original instruction predicate through the actual native state-threading loop. Fresh literal original local proof/typed statement replay in word_convs_simp_instructions_probe.out; no output-validity, target-run, desired relation or dummy-validity premise. This source comparison and kernel evidence do not independently prove HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpInstructions.lean",
+    "lean_name": "tryIfHoist2NoInst",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "try_if_hoist2_no_inst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison of original wordConvsProof395-513: arbitrary HOL word dimension translated to positive-width BitVec with [NeZero width], exact native instruction/program constructor fields, Spt cutsets and native MlString names retained. Arbitrary P : inst -> bool and all original source hypotheses/results preserved; Call without a return ignores its handler exactly as HOL, returning handlers, Loop and OpCurrHeap covered. Pure syntactic preservation interprets no numeric FP operation and needs no real-carrier translation. Successful hoisting preserves the three original source predicates. The dummy is unrestricted; the unused HOL variable s retains an independent arbitrary carrier. Fresh literal original local proof/typed statement replay in word_convs_simp_instructions_probe.out; no output-validity, target-run, desired relation or dummy-validity premise. This source comparison and kernel evidence do not independently prove HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpInstructions.lean",
+    "lean_name": "simpDuplicateIfNoInst",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "simp_duplicate_if_no_inst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison of original wordConvsProof395-513: arbitrary HOL word dimension translated to positive-width BitVec with [NeZero width], exact native instruction/program constructor fields, Spt cutsets and native MlString names retained. Arbitrary P : inst -> bool and all original source hypotheses/results preserved; Call without a return ignores its handler exactly as HOL, returning handlers, Loop and OpCurrHeap covered. Pure syntactic preservation interprets no numeric FP operation and needs no real-carrier translation. Duplicate-condition simplification preserves the original predicate through actual successful hoisting and sequence association. Fresh literal original local proof/typed statement replay in word_convs_simp_instructions_probe.out; no output-validity, target-run, desired relation or dummy-validity premise. This source comparison and kernel evidence do not independently prove HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpInstructions.lean",
+    "lean_name": "simpPushOutIfNoInst",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "simp_push_out_if_no_inst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison of original wordConvsProof395-513: arbitrary HOL word dimension translated to positive-width BitVec with [NeZero width], exact native instruction/program constructor fields, Spt cutsets and native MlString names retained. Arbitrary P : inst -> bool and all original source hypotheses/results preserved; Call without a return ignores its handler exactly as HOL, returning handlers, Loop and OpCurrHeap covered. Pure syntactic preservation interprets no numeric FP operation and needs no real-carrier translation. Conditional push-out preserves the source predicate for both exit flags and all original constructors. Fresh literal original local proof/typed statement replay in word_convs_simp_instructions_probe.out; no output-validity, target-run, desired relation or dummy-validity premise. This source comparison and kernel evidence do not independently prove HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpInstructions.lean",
+    "lean_name": "compileExpNoInst",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "compile_exp_no_inst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison of original wordConvsProof395-513: arbitrary HOL word dimension translated to positive-width BitVec with [NeZero width], exact native instruction/program constructor fields, Spt cutsets and native MlString names retained. Arbitrary P : inst -> bool and all original source hypotheses/results preserved; Call without a return ignores its handler exactly as HOL, returning handlers, Loop and OpCurrHeap covered. Pure syntactic preservation interprets no numeric FP operation and needs no real-carrier translation. The complete original compile_exp pipeline preserves an arbitrary instruction predicate, without an output assumption. Fresh literal original local proof/typed statement replay in word_convs_simp_instructions_probe.out; no output-validity, target-run, desired relation or dummy-validity premise. This source comparison and kernel evidence do not independently prove HOL-to-Lean equivalence."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpInstructions.lean",
+    "lean_name": "constFpLoopNoInst",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only generalized induction support for arbitrary incoming constant maps. The original every_inst_const_fp proof generalizes the loop internally; it does not name a separate theorem with this signature."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpInstructions.lean",
+    "lean_name": "tryIfHoist1NoInst",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only wrapper exposing the literal successful tryIfHoist1 branch to the original try_if_hoist2_no_inst theorem. No separate HOL theorem has this signature."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpInstructions.lean",
+    "lean_name": "pushOutIfAuxNoInst",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only projection induction support covering both native exit flags. The original simp_push_out_if_no_inst proof establishes this fact internally, without a separate named declaration."
   }
 ]
