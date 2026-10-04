@@ -94041,5 +94041,14 @@
     "hol_name": "Mupdate_exn_eq",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.11.1.1): original 171-178, accepted exact Exc value/exception carrier with arbitrary independent universe-0 value and exception types, HOL list as Lean List and unbounded num as Nat. Msub empty-list failure and zero-success/nonzero recursive index subtraction retained; Mupdate retains full prefix only on recursive success and propagates original failure unchanged. Original n >= LENGTH l premise translates to values.length <= index, no validity, source-success, DecidableEq, exception classification or fixed-width restriction. Both generic failure-bound theorems prove original exact equality by list induction and index cases, with no added premises; kernel axioms propext/Classical.choice/Quot.sound only. Twenty-five fresh original observations and identical registered kernel replay cover head/middle/last/empty/boundary/large indices, duplicate values, independent Nat/Bool/tuple types and theorem applications at six failing boundaries. No total EL/LUPDATE claim is made; successful equations and state-array accessors remain parent frontier. Pure primitives/proofs; executed allocator migration and whole compiler correctness remain open. Coordinator source comparison completed against the original clauses and generic carriers; unified integration gates and publication are checked separately."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/ShiftLslRegister.lean",
+    "lean_name": "riscv_encoder_correct_shiftLslRegister",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-04: original riscv_targetProofScript Shift560-620 Reg/Lsl case; encoder_correct_def117-132 whole shape. Arbitrary Nat rd/rs1/rs2 and original sole asmStep/initial targetStateRel; full existential n/allenv/asserts/asserts2. Count<64 derived from source failed=false, native low6/widen64 count equality from that bound. Four emitted bytes, unrestricted SLL Decode/Run and complete Next are derived. No target-run, output-relation, extra range or alias premise. Native target closure inherits reals_as_rational_cuts SOUNDNESS item8; other Shift and Ror cases remain open."
   }
 ]

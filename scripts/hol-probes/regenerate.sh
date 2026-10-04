@@ -7955,3 +7955,8 @@ run_probe riscv_shift_run_probeScript.sml riscv_shift_run_probe.out \
   source_shift_clause source_shift_types source_shift_hypotheses target_ok_clause target_ok_types target_ok_hypotheses run_sll_clause run_sll_types run_sll_hypotheses run_srl_clause run_srl_types run_srl_hypotheses run_sra_clause run_sra_types run_sra_hypotheses run_slli_clause run_slli_types run_slli_hypotheses run_srli_clause run_srli_types run_srli_hypotheses run_srai_clause run_srai_types run_srai_hypotheses \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe riscv_target_shift_lsl_register_probeScript.sml riscv_target_shift_lsl_register_probe.out \
+  riscv_encoder_correct_shiftLslRegister_statement riscv_encoder_correct_shiftLslRegister_types riscv_encoder_correct_shiftLslRegister_hypotheses riscv_encoder_correct_shiftLslRegister_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
