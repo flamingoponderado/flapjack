@@ -94759,29 +94759,5 @@
     "hol_name": "SLTU_NOP",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol: compared the full original riscv_stepScript862-863 arithr/class_rd0 exported equation and fresh typed per-theorem Thm.hyp/GEN_ALL(DISCH_ALL) capture. Original two guards retained: rd nonzero for writes / zero for NOP, ArchBase != 1 for all four. Full state c_gpr update, current procID, both source-zero reads and both mode branches preserved; SLT signextends low32, SLTU zeroextends low32. Fixed original word5/word64/word2 carriers, arbitrary aliases, no target-run/extra mode premise. Mode rewrite is untagged local support; no FP/real interpretation. Actual AddCarry lowering riscv_targetScript144-149 consumes SLTU; overflow uses XOR/AND/Shift and is not claimed dependent. Source shape/capture pins are regression checks, not cross-language equivalence proofs."
-  },
-  {
-    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/DecodeLongMul.lean",
-    "lean_name": "reconstruct5",
-    "hol_path": null,
-    "hol_name": null,
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack native proof infrastructure for the full original riscv_targetProof LongMul case630-634 and actual riscv_targetScript140-142 lowering. No separately named HOL declaration states this evaluator composition. Full intrinsic word5 registers, no premise or narrowed aliases; actual Encode Rtype opcode0110011/funct7=0000001 and funct3=011(MULHU)/000(MUL) feed full native DecodeAny Word path. reconstruct5 derives exact variable register recovery. Explicit true dependency from full LongMul remains; these identities alone do not prove the constructor simulation/interference/asserts result."
-  },
-  {
-    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/DecodeLongMul.lean",
-    "lean_name": "decode_encode_mulhu",
-    "hol_path": null,
-    "hol_name": null,
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack native proof infrastructure for the full original riscv_targetProof LongMul case630-634 and actual riscv_targetScript140-142 lowering. No separately named HOL declaration states this evaluator composition. Full intrinsic word5 registers, no premise or narrowed aliases; actual Encode Rtype opcode0110011/funct7=0000001 and funct3=011(MULHU)/000(MUL) feed full native DecodeAny Word path. reconstruct5 derives exact variable register recovery. Explicit true dependency from full LongMul remains; these identities alone do not prove the constructor simulation/interference/asserts result."
-  },
-  {
-    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/DecodeLongMul.lean",
-    "lean_name": "decode_encode_mul",
-    "hol_path": null,
-    "hol_name": null,
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack native proof infrastructure for the full original riscv_targetProof LongMul case630-634 and actual riscv_targetScript140-142 lowering. No separately named HOL declaration states this evaluator composition. Full intrinsic word5 registers, no premise or narrowed aliases; actual Encode Rtype opcode0110011/funct7=0000001 and funct3=011(MULHU)/000(MUL) feed full native DecodeAny Word path. reconstruct5 derives exact variable register recovery. Explicit true dependency from full LongMul remains; these identities alone do not prove the constructor simulation/interference/asserts result."
   }
 ]
