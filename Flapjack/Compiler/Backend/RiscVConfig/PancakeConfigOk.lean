@@ -37,6 +37,22 @@ theorem riscvPancakeBackendConfigOk :
     backendConfigOk riscvConfig (Flapjack.Compiler.pancakeBackendConf riscvBackendConfig) :=
   (backendConfigOk_pancakeBackendConf_iff riscvConfig riscvBackendConfig).2 riscvBackendConfigOk
 
+/-- `mc_init_ok` reads only the register names and endianness of the backend configuration,
+so it is unchanged by `pancake_backend_conf` (Flapjack-specific; no HOL original). -/
+theorem mcInitOk_pancakeBackendConf_iff {width : Nat} [NeZero width] {S Q : Type}
+    (asmConf : AsmConfigExact width) (c : Backend.Config) (mc : MachineConfig width S Q) :
+    mcInitOk asmConf (Flapjack.Compiler.pancakeBackendConf c) mc ↔ mcInitOk asmConf c mc :=
+  Iff.rfl
+
+/-- `is_riscv_machine_config mc ⇒ mc_init_ok riscv_config (pancake_backend_conf
+riscv_backend_config) mc`: HOL `riscv_init_ok` transported to the GC-free configuration that
+Pancake compiles with (Flapjack-specific; no HOL original). -/
+theorem riscvPancakeInitOk (mc : MachineConfig 64 RiscV.L3.riscv_state RiscVProjection) :
+    isRiscvMachineConfig mc →
+      mcInitOk riscvConfig (Flapjack.Compiler.pancakeBackendConf riscvBackendConfig) mc :=
+  fun h => (mcInitOk_pancakeBackendConf_iff riscvConfig riscvBackendConfig mc).2
+    (riscvInitOk mc h)
+
 /-- The configuration Pancake compiles with is the GC-free one (sanity check). -/
 theorem riscvPancakeBackendConfig_gcKind :
     (Flapjack.Compiler.pancakeBackendConf riscvBackendConfig).dataConf.gcKind = .none :=
