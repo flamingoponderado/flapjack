@@ -1,3 +1,5 @@
+`word_convs_simp_instructions_probe.out` freshly replays all nine literal original instruction-preservation proofs from wordConvsProof395-513 and prints their complete closed typed statements, kernel T and zero open hypotheses. The local dest_If_thm proof is replayed solely as a hoisting prerequisite, and the final compile_exp_no_inst result is compared with the exported original theorem. Native kernel proofs preserve arbitrary predicates through all actual constructors, unrestricted hoisting dummy, independent unused s carrier, returning handlers, Loop and OpCurrHeap. This supports the instruction-validity conjunct of compile_to_word_conventions; the enclosing convention theorem and whole compiler correctness remain open.
+
 `backend_config_attach_bitmaps_probe.out` captures the full original eleven-field backend config equality/field types and the independently generic byte/bitmap payload signature and both attach_bitmaps clauses. Native fields retain every frontend/backend carrier, byte-backed MlString names, literal lists and sptrees. The kernel regression checks ordered duplicate symbols, missing-name fallback and all nine unchanged configuration fields. This support group does not establish full backend composition, production routing or whole compiler correctness.
 
 `bvl_to_bvi_default_probe.out` captures the complete original ten-field default initializer, both BVL stub/namespace definitions, the zero-hypothesis namespace-alignment theorem, full default type and original evaluated counts/counters. The native default uses the checked shared data-stub chain and distinct literal BVL/BVI inline trees. This support group does not establish whole compiler correctness or production routing of the backend configuration.
@@ -8230,3 +8232,24 @@ and the original selected native table invariant, retaining unrelated fields.
 Successful input codec conversion is an explicit representation boundary;
 unsupported native program carriers and whole-pass adoption remain separate.
 No tagged original theorem is narrowed or cross-language equivalence claimed.
+
+## Native signed DIV decoding prerequisite
+
+`DecodeDiv.lean` proves unrestricted actual Encode/DecodeAny composition for
+all three word5 registers. Literal original Div encoder emits `MulDiv DIV`,
+with opcode0110011, funct3=100 and funct7=1. This local composition has no
+separately named HOL theorem and remains untagged infrastructure. Original
+zero/all-ones/mixed EVAL cases and the full typed Encode clause are regression
+evidence; they do not establish whole encoder correctness or cross-language equivalence.
+`word_to_stack_comp_correct_full_probeScript.sml` captures the closed original whole `comp_correct` theorem, its full typed statement and zero hypotheses. It is stored-theorem regression evidence, not a replay of the giant local proof or a HOL-to-Lean equivalence proof. The Lean assembly retains all original guards and result branches.
+
+## Full original native Div encoder case
+
+`CorrectnessEncoding/Div.lean` retains the full original sole asmStep/initial
+relation premise and existential interference/assertion result. It derives
+source divisor nonzero from the original failure guard and uses literal signed
+MulDiv DIV, preserving aliases, register restrictions, fetched bytes and full
+native state. The original typed theorem specialization is captured in
+`riscv_target_div_probe.out`; hyp0/provedT is regression evidence, not a
+cross-assistant equivalence proof. The full target closure retains inherited
+reals_as_rational_cuts (SOUNDNESS item8); other encoder cases remain open.
