@@ -1,4 +1,5 @@
 import Flapjack.RiscV.CorrectnessEncoding.MemoryRelation
+import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.Arithmetic
 import Flapjack.RiscV.CorrectnessEncoding.Rejected
 import Flapjack.RiscV.CorrectnessEncoding.MemoryStore
 import Flapjack.RiscV.CorrectnessEncoding.MemoryInputs

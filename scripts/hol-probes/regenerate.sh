@@ -8354,3 +8354,7 @@ run_probe riscv_target_rejected_probeScript.sml riscv_target_rejected_probe.out 
 run_probe pan_to_word_inst_ok_less_probeScript.sml pan_to_word_inst_ok_less_probe.out \
   pan_to_word_every_inst_ok_less \
   "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe riscv_jumpcmp_offsets_probeScript.sml riscv_jumpcmp_offsets_probe.out \
+  near0_statement near0_types near0_hypotheses near0_proved near0_boundary0 near0_boundary1 near0_boundary2 near0_boundary3 near0_boundary4 near4_statement near4_types near4_hypotheses near4_proved near4_boundary0 near4_boundary1 near4_boundary2 near4_boundary3 near4_boundary4 far4_statement far4_types far4_hypotheses far4_proved far4_boundary0 far4_boundary1 far4_boundary2 far4_boundary3 far4_boundary4 far8_statement far8_types far8_hypotheses far8_proved far8_boundary0 far8_boundary1 far8_boundary2 far8_boundary3 far8_boundary4 pc_bias_statement pc_bias_hypotheses pc_bias_proved reg_equal_source reg_equal_hypotheses reg_test_source reg_test_hypotheses imm_equal_source imm_equal_hypotheses imm_test_source imm_test_hypotheses \
+  "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
