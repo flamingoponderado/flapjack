@@ -2497,6 +2497,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterClock
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.If
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.MemoryLoad
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.MemoryStore
+import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Memory
 
 -- Tagged modules required by the HOL reference coverage gate.
 
