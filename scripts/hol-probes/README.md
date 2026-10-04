@@ -8845,6 +8845,7 @@ literal record; untagged `rfl` lemmas tie the two evaluated default records to
 the tagged `default_config` ports. Syntactic evidence only, not a
 cross-language proof.
 
+`riscv_machine_config_ok_replay_probe.out` replays riscv_configProofScript `is_riscv_machine_config_def` and `riscv_machine_config_ok` verbatim (source-guarded; riscv_configProofTheory is unbuilt), re-proving the theorem with its own HOL tactic over the loaded lab_to_targetProof/riscv_targetProof/asmProps theories, and prints its typed conclusion (0 hypotheses). Statement evidence for source review only.
 `riscv_config_proof_replay_probe.out` is a literal source replay (both
 `backendProof` and `riscv_configProof` are unbuilt here): `mc_init_ok_def` and
 `is_riscv_machine_config_def` are replayed verbatim (guarded) and `riscv_init_ok`
