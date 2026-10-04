@@ -8813,3 +8813,9 @@ spliced, including the evaluated `clos_to_bvl`/`bvl_to_bvi` default records.
 literal record; untagged `rfl` lemmas tie the two evaluated default records to
 the tagged `default_config` ports. Syntactic evidence only, not a
 cross-language proof.
+
+`riscv_config_proof_replay_probe.out` is a literal source replay (both
+`backendProof` and `riscv_configProof` are unbuilt here): `mc_init_ok_def` and
+`is_riscv_machine_config_def` are replayed verbatim (guarded) and `riscv_init_ok`
+is re-proved with its own HOL tactic; typed statements and the hypothesis count
+are captured for `Flapjack/Compiler/Backend/RiscVConfig/Proofs.lean`.
