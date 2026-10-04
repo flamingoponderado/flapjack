@@ -93015,5 +93015,14 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack proof infrastructure for pan_to_targetProof word_to_word_compile_no_install_no_alloc: transfer of no_alloc_code along code_rel with equal domains, or domain preservation of word_to_word$compile (HOL's inline domain_fromAList/MAP_ZIP step); no independent HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+    "hol_name": "gc_fun_const_ok_word_gc_fun",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GcFunConstOk.lean",
+    "lean_name": "gcFunConstOkWordGcFun",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.8): original data_to_word_gcProofScript.sml:6409-6417, captured by the data_to_word_gc_fun_const_ok probe: gc_fun_const_ok (word_gc_fun c) with c : data_to_word$config implicit, over the reviewed word_simpProof gc_fun_const_ok (WordSimp.gcFunConstOk) and word_gcFunctions word_gc_fun (wordGcFun); the type ascription on wordGcFun only fixes the word width. Proof follows HOL: word_gc_IMP_EVERY2 then LIST_REL_mono (ListRel to List.Forall₂). No added premise."
   }
 ]
