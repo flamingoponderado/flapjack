@@ -32,6 +32,7 @@ import Flapjack.RiscV.CorrectnessEncoding.DecodeConst
 import Flapjack.RiscV.CorrectnessEncoding.DecodeBinop
 import Flapjack.RiscV.CorrectnessEncoding.BinopRun
 import Flapjack.RiscV.CorrectnessEncoding.BinopRegister
+import Flapjack.RiscV.CorrectnessEncoding.BinopImmediate
 import Flapjack.RiscV.CorrectnessEncoding.Const32
 import Flapjack.Compiler.Backend.Backend
 import Flapjack.RiscV.CorrectnessEncoding.ConstWide

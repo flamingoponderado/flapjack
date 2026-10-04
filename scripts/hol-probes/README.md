@@ -8149,3 +8149,16 @@ The `word_to_word_install` probe captures the complete original closed typed
 specialization. `GEN_ALL` closes every binder; the specialization has zero
 hypotheses. These are original-theory captures, not a local replay or an
 independent cross-language equivalence proof.
+
+## Full native immediate Binop constructor
+
+`CorrectnessEncoding/BinopImmediate.lean` proves the original Imm operand case
+(riscv_targetProofScript.sml:550-559) for all five operators. It retains the
+original sole asmStep/initial relation premise and full interference/assertion
+conclusion. The source Xor -1 exception is discharged through the original
+inclusive range; Sub's strict lower bound proves negated signed12 reconstruction.
+Actual native Next follows the emitted bytes, unrestricted decoder equations,
+and literal Run. The typed original specialization in
+`riscv_target_binop_immediate_probe.out` is regression evidence; kernel checking
+and source comparison establish the port. Native state/Run inherits SOUNDNESS
+item 8. The encompassing encoder theorem remains open.

@@ -91325,5 +91325,14 @@
     "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileWordToWord.lean",
     "lean_name": "compile_word_to_word_thm",
     "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.52): HOL compile_word_to_word_thm (word_to_wordProofScript.sml:851-904). Full statement kept: free st l cc coracle tt kk aa co start explicit; premises code_rel st.code l, domain equality, st.compile = λconf progs. cc conf (MAP (λp. full_compile_single tt kk aa co (p,NONE)) progs), coracle = (I ## MAP (λp. full_compile_single …)) o st.compile_oracle, gc_fun_const_ok; conclusion ∃perm' clk with prog = Call NONE (SOME start) [0] NONE, if res = SOME Error then T else the run on st with code := map (I ## remove_must_terminate) l (the sptMap of the reviewed compile_state), clock := st.clock + clk, termdep := 0, compile := cc, compile_oracle := coracle gives res1 = res, equal clock, ffi and stack_max. Proof follows HOL: compile_single_correct with cc' = λconf. cc conf o MAP (I ## I ## remove_must_terminate), then word_remove_correct, identifying compile_state clk cc with the target state (full_compile_single = (I ## I ## remove_must_terminate) o compile_single). fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Typed capture in word_to_word_compile_thm. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/BinopImmediate.lean",
+    "lean_name": "riscv_encoder_correct_binopImmediate",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source compared riscv_targetProofScript.sml:550-559 Imm branch and full encoder_correct_def: all five operators; sole asmStep and initial targetStateRel premise; complete existential/interference/asserts/asserts2 conclusion. Original signed12 guard and Xor -1 exception retained, Sub strict -2048 lower bound derives exact negation. Native Next derived from four emitted bytes, universal decode and literal Run. Full original typed specialization captured. Native state/Run inherits SOUNDNESS item 8 real-cut representation. Inherited reals_as_rational_cuts assumption on the full native state/Run closure is retained."
   }
 ]

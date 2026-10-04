@@ -7727,6 +7727,7 @@ run_probe riscv_binop_run_probeScript.sml riscv_binop_run_probe.out \
 run_probe riscv_target_binop_register_probeScript.sml riscv_target_binop_register_probe.out \
   riscv_encoder_correct_binop_register_statement riscv_encoder_correct_binop_register_types riscv_encoder_correct_binop_register_hypotheses riscv_encoder_correct_binop_register_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
 
 run_probe word_to_stack_fp_relations_probeScript.sml word_to_stack_fp_relations_probe.out \
   fpRelationRead_typed fpRelationRead_proved fpRelationRead_hypotheses fpRelationUpdate_typed fpRelationUpdate_proved fpRelationUpdate_hypotheses \
@@ -7739,3 +7740,8 @@ run_probe word_to_stack_store_register2_probeScript.sml word_to_stack_store_regi
 run_probe word_to_word_install_probeScript.sml word_to_word_install_probe.out \
   compile_single_correct_typed compile_single_correct_install_typed compile_single_correct_install_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe riscv_target_binop_immediate_probeScript.sml riscv_target_binop_immediate_probe.out \
+  riscv_encoder_correct_binop_immediate_statement riscv_encoder_correct_binop_immediate_types riscv_encoder_correct_binop_immediate_hypotheses riscv_encoder_correct_binop_immediate_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
