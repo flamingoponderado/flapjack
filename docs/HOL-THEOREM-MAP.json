@@ -98057,46 +98057,6 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyWordToStack.lean",
-    "lean_name": "panPropsALookupEq_eq_none",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only: ALOOKUP misses a key absent from the keys (HOL ALOOKUP_NONE)."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyWordToStack.lean",
-    "lean_name": "panToTargetStubLocationsFree",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1606-1622): ALOOKUP wprog raise_stub_location = NONE and store_consts_stub_location = NONE via pan_to_word_compile_prog_lab_min and compile_to_word_conventions2."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyWordToStack.lean",
-    "lean_name": "fullMakeInit_bitmaps_code",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1563-1585): a successful full_make_init keeps the given bitmaps and installs fromAList code."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyWordToStack.lean",
-    "lean_name": "panToTargetInitStateOk",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1624-1647): init_state_ok of the full_make_init stack state with the empty word oracle, via IMP_init_state_ok and compile_word_to_stack_bitmaps."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyWordToStack.lean",
-    "lean_name": "panToTargetWordStateFacts",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1686-1716): the word make_init state on a successful full_make_init stack state has gc_fun_const_ok gc_fun (gc_fun_const_ok_word_gc_fun), empty stack, the given code and lookup 0 locals = SOME (Loc 1 0)."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyWordToStack.lean",
     "lean_name": "extendPrime_singleton_ne_fail",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only: a behaviour in extend_with_resource_limit' b {w} is Fail only if w is (HOL proof lines 1653-1667, elim stackSem <> Fail)."
