@@ -89,9 +89,8 @@ private theorem singleTwo {width : Nat} [NeZero width] (two : Bool)
 
 /-- Original1014–1065 full EVERY output-convention section: all five conditions,
 including global input instruction and three zero-offset guards, retained.
-No target conventions, pass success or evaluation are assumed. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml"
-  "compile_to_word_conventions" (words_as_type_indexed_bitvec)]
+No target conventions, pass success or evaluation are assumed. This untagged
+supporting lemma proves only the output section; the full theorem follows below. -/
 theorem compileOutputConventions {width : Nat} [NeZero width] (wc : Config)
     (ac : AsmConfigExact width)
     (programs : List (Nat × Nat × WordLangProgHOL (BitVec width)))

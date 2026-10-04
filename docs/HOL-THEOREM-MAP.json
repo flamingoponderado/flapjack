@@ -25667,7 +25667,7 @@
     "lean_name": "inGetCodeLabelsCompTop",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original stack_to_labProofScript.sml:4464-4474. Statement as captured by the probe: (p_1,p_2) ∈ get_code_labels (comp_top (collect_info prog LN) q) ⇒ ∃k. (p_1,k) ∈ get_code_labels q ∧ (p_2 ≠ k ⇒ p_2 = 1 ∧ k = 0 ∧ MEM p_1 (MAP FST prog)). HOL sets are Lean Set (set l is list membership, IMAGE f s is f '' s, BIGUNION is ⋃₀, MEM is ∈, EVERY is a membership quantifier, domain t is sptMem); 'a prog is HolProg width with [NeZero width]; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original stack_to_labProofScript.sml:4464-4474. Statement as captured by the probe: (p_1,p_2) ∈ get_code_labels (comp_top (collect_info prog LN) q) ⇒ ∃k. (p_1,k) ∈ get_code_labels q ∧ (p_2 ≠ k ⇒ p_2 = 1 ∧ k = 0 ∧ MEM p_1 (MAP FST prog)). HOL sets are Lean Set (set l is list membership, IMAGE f s is f '' s, BIGUNION is ⋃₀, MEM is ∈, EVERY is a membership quantifier, domain t is sptMem); the two independent HOL word types of the typed capture IN_get_code_labels_comp_top_statement_typed in stack_to_lab_good_code_labels_probe.out (prog :(num # β prog) list, q :α prog) are independent Lean widths progWidth and width, each with its own NeZero, linked only by the width-free collect_info table (review 1213 blocker 2 repair); free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -25739,7 +25739,7 @@
     "lean_name": "stackNamesGetCodeLabels",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original stack_to_labProofScript.sml:4099-4107. Statement as captured by the probe: LIST_REL R (MAP SND (stack_names$compile f prog)) (MAP SND prog) as List.Forall₂ with the same relation. HOL sets are Lean Set (set l is list membership, IMAGE f s is f '' s, BIGUNION is ⋃₀, MEM is ∈, EVERY is a membership quantifier, domain t is sptMem); 'a prog is HolProg width with [NeZero width]; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original stack_to_labProofScript.sml:4099-4107. Statement as captured by the probe: LIST_REL R (MAP SND (stack_names$compile f prog)) (MAP SND prog) as List.Forall₂ with the same relation. HOL sets are Lean Set (set l is list membership, IMAGE f s is f '' s, BIGUNION is ⋃₀, MEM is ∈, EVERY is a membership quantifier, domain t is sptMem); 'a prog is HolProg width with [NeZero width]; the program-name type is a generic Name : Type, as the typed capture stack_names_get_code_labels_statement_typed in stack_to_lab_good_code_labels_probe.out gives prog :(β # α prog) list (review 1213 blocker 2 repair); free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -35358,7 +35358,7 @@
       "store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-12s83): HOL lookup_set_vars_not_in (word_cseProof:2054). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion; HOL's polymorphic pair components stay generic type parameters, as in the typed source. It is stated over the reviewed dataInv, canonicalMoveRegs/canonicalRegs/mapInsert and the faithful WordSemStateFiniteExact. Renderings: set_vars/get_vars as setVars/getVars; alist_insert as sptAlistInsert; ALOOKUP as List.lookup; ALL_DISTINCT as Nodup; EVERY as a forall-over-membership; MEM as list membership; ODD/EVEN as % 2; with clock/termdep updates as structure updates. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text."
+    "reviewer": "PR1213 source comparison: local word_cseProofScript.sml:2054 quantifies moves v data c x; data is unused and has independent arbitrary HOL type (typed replay in review5978345241). Lean retains data at independent delta, not Knowledge. All lookup/set_vars premises and full result unchanged. Additional dedicated typed capture tracked by review1213-typedcaptures; no cross-language proof claimed."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/SemanticInvariant.lean",
@@ -44983,18 +44983,16 @@
     "lean_name": "compileNamesLabels",
     "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
     "hol_name": "compile_to_word_conventions",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "reviewer": "flapjack-sol2 source comparison original958-1014: genuine first two CONJ_TAC sections retain original whole-list no_share_inst-or-ISA-not-Ag32 guard, arbitrary configs and full list. Native compile/fullCompileSingle eleven-stage pipeline names equality and EVERY2 labels_rel (Lean List.Forall₂) derived from actual pass output laws and equal-length oracle ZIP. Arbitrary positive-width BitVec translates HOL type-indexed word; exact native program/config/map carriers retained. Guard unused only in these structural sections and remains a premise. No assumed output relation/evaluation or extra IH. Remaining five output convention conjuncts are outside this section and not claimed; full theorem tracked separately. Fresh original section tactics replayed, with only the split for the omitted third conjunct removed; full typed closed HOL section capture is regression/source-shape evidence, not cross-language equivalence.",
-    "words_as_type_indexed_bitvec": true
+    "statement_status": "documented_mismatch",
+    "reviewer": "PR1213 review repair: untagged supporting conjunct only, not the complete cited HOL theorem. Full conjunction is separately tagged in the counterpart module."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileConventions/Output.lean",
     "lean_name": "compileOutputConventions",
     "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
     "hol_name": "compile_to_word_conventions",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol2 source comparison. Literal final EVERY conjunction section1014-1065: every actual output body satisfies all five output conditions. Original arbitrary config/list and input EVERY(no_share_inst or ISA not Ag32) retained. Native compile/fullCompileSingle eleven-pass pipeline used. Flat/post-allocation results unconditional under original guard; instruction validity keeps whole input EVERY(inst_ok_less) and all three zero-offset guards inside the output implication; enabled two-register and no-share-or-ISA conclusions retained. Canonical native wordLang/config/oracle tree carriers and truncated Nat register-count subtraction match source; List.Forall₂/EVERY translations constructor-for-constructor, arbitrary positive-width BitVec is the named word translation. Actual native pass proofs discharge all target properties, no output invariant/success/evaluation/callback premises. Fresh whole unchanged original local proof replay provides full typed closed/T/zero-hypothesis capture, not cross-language equivalence or production-route adoption."
+    "statement_status": "documented_mismatch",
+    "reviewer": "PR1213 review repair: untagged supporting conjunct only, not the complete cited HOL theorem. Full conjunction is separately tagged in the counterpart module."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileConventions/Output.lean",
@@ -45017,7 +45015,7 @@
     "inherits_reals_as_rational_cuts": true,
     "hol_name": "panLang_compile_word_to_word_thm",
     "lean_name": "panLang_compile_word_to_word_thm",
-    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.56): HOL panLang_compile_word_to_word_thm (word_to_wordProofScript.sml:2219-2265), compared with the typed capture word_to_word_compile_semantics. Full statement kept: free st l start explicit; premises code_rel st.code l (codeRel), no_install_code/no_alloc_code/no_mt_code st.code (tagged noInstallCode/noAllocCode/noMtCode), domain st.code = domain l (sptDomain), gc_fun_const_ok st.gc_fun; conclusion ∃perm' clk (clk is unused in HOL's body and kept) with prog = Call NONE (SOME start) [0] NONE, if res = SOME Error then T (classical) else the run on st with code := l gives equal result, clock, ffi and stack_max. Proof follows HOL via no_install_no_alloc_compile_single_correct (prog's no_install/no_alloc by computation). fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+    "reviewer": "PR1213 source comparison: original word_to_wordProofScript.sml:2219 and word_to_word_compile_semantics_probe.out typed row quantify unused existential clk : beta. Erased this vacuous existential uniformly under the documented inhabited HOL type convention, not specialized to Nat. All actual quantified state/code/FFI carriers, six guards and full semantic conclusion unchanged. The existing inherited reals_as_rational_cuts assumption remains: WordSem IEEE operations use the documented rational-cut rendering, not a new assurance claim."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
@@ -65068,9 +65066,8 @@
     "lean_name": "shapeValLocalised",
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "localised_exp_shape_val",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "reviewer": "flapjack-sol source comparison 2026-10-03: original pan_globalsProofScript3207-3212 localised_exp_shape_val, both original universal conjuncts and no hypotheses, native HOL ShapeHOL/list and exact ExpHOL width with positive NeZero width. Uses reviewed mutual shapeValHOL/shapeValsHOL directly; localisedExpHOL Boolean true and List.all= true are the literal localised_exp/EVERY interpretation. Standard words_as_type_indexed_bitvec only translates original alpha word dimension; no generic production Exp substitution or added bound. Fresh closed typed original statement/proof/mutual expression types in pan_globals_shape_localised_probe.out. Existing helper is the genuine first conjunct, full localisedExpShapeValHOL proves both. Corrects the previous inaccurate no-HOL-original infrastructure classification. This row is the first genuine conjunct only.",
-    "words_as_type_indexed_bitvec": true
+    "statement_status": "documented_mismatch",
+    "reviewer": "PR1213 review repair: untagged supporting conjunct only, not the complete cited HOL theorem. Full conjunction is separately tagged in the counterpart module."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopNames.lean",
@@ -82509,7 +82506,7 @@
       "store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.6): compared with the literal-source replay pan_to_target_stack_size_source_replay (statement re-proved there with HOL's own tactic; pan_to_targetProofTheory is unbuilt). HOL's free variables are explicit binders in order of appearance; no_install/no_alloc are the tagged noInstallSubprogsHOL/noAllocSubprogsHOL, no_*_code the tagged WordProps.no*Code, wordSem evaluate/inst/share_inst the tagged evaluate/inst/shareInst (result width = state width), word_to_word_compile/pan_to_word_compile_prog (script overloads) the tagged WordToWord.compile/panToWordCompileProgHOL, functions the tagged functionsHOL over the reviewed MlS names, ALL_DISTINCT (MAP FST) is List.Nodup, fromAList is sptFromAList, c : backend$config the tagged Backend.Config and mc the tagged MachineConfig with independent state/projection carriers. fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. HOL record update with five fields as the Lean structure update; existential carriers Spt (WordLocW width), HolFfiState F, stack frames, Option Nat locals size and the canonical HolFiniteMapExact store."
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.6): compared with the literal-source replay pan_to_target_stack_size_source_replay (statement re-proved there with HOL's own tactic; pan_to_targetProofTheory is unbuilt). HOL's free variables are explicit binders in order of appearance; no_install/no_alloc are the tagged noInstallSubprogsHOL/noAllocSubprogsHOL, no_*_code the tagged WordProps.no*Code, wordSem evaluate/inst/share_inst the tagged evaluate/inst/shareInst, with share_inst's result word type independent of the state width as in the typed capture share_inst_modifies_replay_typed of pan_to_target_stack_size_source_replay_probe.out (res :α result option against the (β,γ,δ) state; Lean res : Option (WordSemResult rw) with its own [NeZero rw], review 1213 blocker 2 repair), word_to_word_compile/pan_to_word_compile_prog (script overloads) the tagged WordToWord.compile/panToWordCompileProgHOL, functions the tagged functionsHOL over the reviewed MlS names, ALL_DISTINCT (MAP FST) is List.Nodup, fromAList is sptFromAList, c : backend$config the tagged Backend.Config and mc the tagged MachineConfig with independent state/projection carriers. fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. HOL record update with five fields as the Lean structure update; existential carriers Spt (WordLocW width), HolFfiState F, stack frames, Option Nat locals size and the canonical HolFiniteMapExact store."
   },
   {
     "hol_path": null,
