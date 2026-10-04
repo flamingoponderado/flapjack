@@ -4,7 +4,10 @@ import Flapjack.Pancake.LoopToWord.ProductionAllocatorMemoryImage
 namespace Flapjack.WordAlloc
 open RiscV RiscV.CakeRegAlloc RegAlloc Flapjack.Compiler.Encoders.Asm
 
-/-- Every exact Loop-to-Word function image obtains the actual routed allocator
+/-- This witness uses the executed native-copy (`wordCopyPropViaHOL`) cleanup
+consumer. It does not describe the legacy copy-propagation route.
+
+ Every exact Loop-to-Word function image obtains the actual routed allocator
 result and a matching native IRC colouring/coloured encoder. All decoder,
 encoder, memory-domain, SSA and allocator availability facts are source-derived;
 no desired target execution, output support or allocator success is assumed.

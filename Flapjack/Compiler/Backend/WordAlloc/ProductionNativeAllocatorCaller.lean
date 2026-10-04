@@ -7,7 +7,10 @@ import Flapjack.Compiler.Backend.WordAlloc.ProductionCopyOutputCodec
 namespace Flapjack.WordAlloc
 open RiscV RiscV.CakeRegAlloc RegAlloc Flapjack.Compiler.Encoders.Asm
 
-/-- Construct the actual native-SSA allocator result from accepted source
+/-- This witness uses the executed native-copy (`wordCopyPropViaHOL`) cleanup
+consumer. It does not describe the legacy copy-propagation route.
+
+ Construct the actual native-SSA allocator result from accepted source
 encoding and the explicit existing production memory domain. SSA availability,
 cleanup domains and IRC success are derived, not assumed as target results.
 This implementation theorem has no HOL original. Source-image discharge of

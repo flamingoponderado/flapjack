@@ -16,7 +16,10 @@ theorem allocatorSetsWf_cutsets {width : Nat} [NeZero width]
     split at valid <;> simp_all [wfCutsets]
     split at valid <;> simp_all [wfCutsets, wfNames]
 
-/-- The actual native SSA allocator returns a colouring valid for its actual
+/-- This witness uses the executed native-copy (`wordCopyPropViaHOL`) cleanup
+consumer. It does not describe the legacy copy-propagation route.
+
+ The actual native SSA allocator returns a colouring valid for its actual
 cleanup program. Cutset validity is derived from that program's real encoder;
 checker success is derived from native allocation. Neither is assumed as an
 output property. This has no separate HOL original; full state/evaluation

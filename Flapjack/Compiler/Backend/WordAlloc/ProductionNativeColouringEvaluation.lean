@@ -6,7 +6,10 @@ open WordSemStateFiniteExact
 open Compiler.Backend.WordAlloc.Proofs (evenStartingLocals)
 
 open Classical in
-/-- The actual native SSA allocator's colour phase satisfies the full native
+/-- This witness uses the executed native-copy (`wordCopyPropViaHOL`) cleanup
+consumer. It does not describe the legacy copy-propagation route.
+
+ The actual native SSA allocator's colour phase satisfies the full native
 evaluation conclusion, including the source permutation, error alternative,
 state relation and non-Break/Continue locals equality. Its actual result and
 both program encodings are constructed from the source; the original physical
