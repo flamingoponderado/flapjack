@@ -8672,3 +8672,5 @@ source/link alias, arithmetic shift, return-link value and original evidence.
 These regression checks supplement source review and Lean kernel checking;
 full encoder assembly and compiler correctness remain separate open work.
 No executed compiler definition changes in this delivery.
+
+`pan_to_crep_compile_validity_probe.out` captures the complete original typed body-compiler validity and compile_def. The context/body dimensions coincide, while the unrelated quantified e binder is explicitly vacuous. Native proof covers all32 compiler induction cases, every Call fallback/handler branch and changed Dec/DecCall contexts, retaining only the original source guard. This supplies body validity, not complete declaration/program validity or end-to-end compiler correctness.

@@ -8315,3 +8315,7 @@ run_probe riscv_target_call_probeScript.sml riscv_target_call_probe.out \
   riscv_encoder_correct_call_statement riscv_encoder_correct_call_types riscv_encoder_correct_call_hypotheses riscv_encoder_correct_call_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe pan_to_crep_compile_validity_probeScript.sml pan_to_crep_compile_validity_probe.out \
+  every_inst_ok_less_pan_to_crep_compile compile_def \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"

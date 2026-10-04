@@ -98037,5 +98037,115 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol: compared original Call riscv_targetProof723-730/riscv_target258-263, source asmStep/call/jumpToOffset/asm_ok and full encoder_correct_def. Tagged root has only original source step plus initial targetStateRel and full existential/allenv/bothassertions/code-byte/PC/finalrelation conclusion. Near JALrd1 uses source arithmetic halfword shift/signed21 bounds and witness0; far AUIPCrd1/JALRrd1=rs1 uses original signed split, witness1/env0-env1/intermediatePC4. Literal four/eight emitted bytes derive full native fetch/decode/Run/Next. Source configuration supplies lr=1 and original offset/alignment/reg guards. Actual aliased JALR reads old register1 before link overwrite; near/far final link values sourcePC+4/sourcePC+8. No non-alias, decoder, target-run or post-state premise; full native projection preserves source register across interference, memory/frame/all original registers retained. Same-counterpart helpers are untagged local compositions with no separate HOL originals. Inherits reviewed reals_as_rational_cuts assurance limit SOUNDNESS8 through native Run; no production-route or full encoder/compiler completion claim."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileValidity.lean",
+    "lean_name": "expr_valid",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal expression/list/nested-declaration/sequence/assignment/generated-global/handler/store and native induction proof factoring, or canonical context representation witness, for the separately tagged full original PanToCrep compile validity in the same module. No standalone HOL declaration or completed port claim; all original source hypotheses are discharged by the final theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileValidity.lean",
+    "lean_name": "exprs_valid",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal expression/list/nested-declaration/sequence/assignment/generated-global/handler/store and native induction proof factoring, or canonical context representation witness, for the separately tagged full original PanToCrep compile validity in the same module. No standalone HOL declaration or completed port claim; all original source hypotheses are discharged by the final theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileValidity.lean",
+    "lean_name": "nested_valid",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal expression/list/nested-declaration/sequence/assignment/generated-global/handler/store and native induction proof factoring, or canonical context representation witness, for the separately tagged full original PanToCrep compile validity in the same module. No standalone HOL declaration or completed port claim; all original source hypotheses are discharged by the final theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileValidity.lean",
+    "lean_name": "seqs_valid",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal expression/list/nested-declaration/sequence/assignment/generated-global/handler/store and native induction proof factoring, or canonical context representation witness, for the separately tagged full original PanToCrep compile validity in the same module. No standalone HOL declaration or completed port claim; all original source hypotheses are discharged by the final theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileValidity.lean",
+    "lean_name": "assigns_valid",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal expression/list/nested-declaration/sequence/assignment/generated-global/handler/store and native induction proof factoring, or canonical context representation witness, for the separately tagged full original PanToCrep compile validity in the same module. No standalone HOL declaration or completed port claim; all original source hypotheses are discharged by the final theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileValidity.lean",
+    "lean_name": "vars_valid",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal expression/list/nested-declaration/sequence/assignment/generated-global/handler/store and native induction proof factoring, or canonical context representation witness, for the separately tagged full original PanToCrep compile validity in the same module. No standalone HOL declaration or completed port claim; all original source hypotheses are discharged by the final theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileValidity.lean",
+    "lean_name": "zeros_valid",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal expression/list/nested-declaration/sequence/assignment/generated-global/handler/store and native induction proof factoring, or canonical context representation witness, for the separately tagged full original PanToCrep compile validity in the same module. No standalone HOL declaration or completed port claim; all original source hypotheses are discharged by the final theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileValidity.lean",
+    "lean_name": "globals_valid",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal expression/list/nested-declaration/sequence/assignment/generated-global/handler/store and native induction proof factoring, or canonical context representation witness, for the separately tagged full original PanToCrep compile validity in the same module. No standalone HOL declaration or completed port claim; all original source hypotheses are discharged by the final theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileValidity.lean",
+    "lean_name": "handler_valid",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal expression/list/nested-declaration/sequence/assignment/generated-global/handler/store and native induction proof factoring, or canonical context representation witness, for the separately tagged full original PanToCrep compile validity in the same module. No standalone HOL declaration or completed port claim; all original source hypotheses are discharged by the final theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileValidity.lean",
+    "lean_name": "stores_valid",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal expression/list/nested-declaration/sequence/assignment/generated-global/handler/store and native induction proof factoring, or canonical context representation witness, for the separately tagged full original PanToCrep compile validity in the same module. No standalone HOL declaration or completed port claim; all original source hypotheses are discharged by the final theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileValidity.lean",
+    "lean_name": "compile_valid",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal expression/list/nested-declaration/sequence/assignment/generated-global/handler/store and native induction proof factoring, or canonical context representation witness, for the separately tagged full original PanToCrep compile validity in the same module. No standalone HOL declaration or completed port claim; all original source hypotheses are discharged by the final theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileValidity.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal expression/list/nested-declaration/sequence/assignment/generated-global/handler/store and native induction proof factoring, or canonical context representation witness, for the separately tagged full original PanToCrep compile validity in the same module. No standalone HOL declaration or completed port claim; all original source hypotheses are discharged by the final theorem."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_pan_to_crep_compile",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileValidity.lean",
+    "lean_name": "everyInstOkLess_panToCrepCompile",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs",
+      "eids"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-pantocrep-compile-validity: original1057-1105 and regenerated full typed theorem+compile_def capture. Fulltype binds ctxt alpha-context/body alpha-program and e beta; e occurs nowhere else and only this source-vacuous binder is documented omitted. Context/body/output retain original shared positive word dimension (unlike compile_exp independent context/expression dimensions). Sole original EVERY binary-Panop source expression traversal guard, full EVERY binary-Crepop expression traversal on actual native compile output; membership EVERY and shared native literal Crep predicate, existing exact Pan Boolean traversal. Canonical imported PanToCrepContextExact vars/funcs/eids with same-module nonvacuous toBroad/ofBroad roundtrip witness; only these finite maps and word dimension translated. Native compileProgExactHOLW induction has32 equation cases, all original constructors, shape/list/lookup fallbacks and Call no-return/initialized/result-wrapped/missing-or-found-EID branches; Dec/DecCall and handler bodies proved in all actual constructed contexts. Accepted full compile_exp, nested_seq, stores/store_globals, load_globals_alt helpers reused. Original fixed global word5 retained. No source byte/default/context specialization/output/successful-target or post-state premise; no held HD/EL dependency introduced. Full declaration-table/program/source composition remains open."
   }
 ]
