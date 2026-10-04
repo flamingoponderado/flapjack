@@ -63,9 +63,8 @@ theorem compileExpListEveryLocalised {width : Nat} [NeZero width]
 /-- First genuine conjunct of HOL `localised_exp_shape_val`
 (`pan_globalsProofScript.sml:3207-3212`): arbitrary shapes build localised
 expressions at the original positive word dimension. The complete conjunction
-is assembled below as `localisedExpShapeValHOL`. -/
-@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "localised_exp_shape_val"
-  (words_as_type_indexed_bitvec)]
+is assembled below as `localisedExpShapeValHOL`. This untagged supporting
+lemma is not a port of the full two-conjunct theorem. -/
 theorem shapeValLocalised {width : Nat} [NeZero width] :
     ∀ sh : ShapeHOL, localisedExpHOL (shapeValHOL sh : ExpHOL width) = true := by
   intro sh
