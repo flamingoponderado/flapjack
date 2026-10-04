@@ -1,6 +1,6 @@
 # Soundness status
 
-This list is not exhaustive. Items have been are added occasionally as they
+This list is not exhaustive. Items are added occasionally as they
 are noted down rather than as a complete inventory of every open question.
 
 Flapjack is an in-progress Lean 4 port of the CakeML Pancake compiler. This
