@@ -8250,3 +8250,16 @@ native state. The original typed theorem specialization is captured in
 `riscv_target_div_probe.out`; hyp0/provedT is regression evidence, not a
 cross-assistant equivalence proof. The full target closure retains inherited
 reals_as_rational_cuts (SOUNDNESS item8); other encoder cases remain open.
+
+## Complete native Shift decoding prerequisites
+
+`DecodeShift.lean` proves actual unrestricted Encode/DecodeAny composition for
+SLL, SRL, SRA, SRLI and SRAI. SLLI is reused from accepted DecodeConst. All
+word5 registers and every word6 immediate are retained, with no successful
+execution or extra range premise. These local compositions have no separately
+named HOL theorem and remain untagged infrastructure. Fresh original captures
+contain20ground EVAL rowsT, typed literal Encode clauses and unrestricted
+printed queries; the printed queries are not asserted original HOL theorems.
+The Lean kernel proofs establish the universal local compositions. Evidence is
+regression/source review, not cross-assistant equivalence or full Shift encoder
+correctness. Full state/run/assertions and both Ror routes remain on the parent.
