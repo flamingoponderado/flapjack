@@ -10316,6 +10316,12 @@
       "rows": 6
     },
     {
+      "out": "word_to_stack_inst_memory_load_probe.out",
+      "sha256": "ae34e9a5491b5ac0d567f2a4a89321fa68d56db3a0f7e522c27ba5d871c92b80",
+      "bytes": 3084,
+      "rows": 9
+    },
+    {
       "out": "word_to_stack_inst_shift_probe.out",
       "sha256": "a43fe13b1418d449db8b0c15b1b102193f11c9d3805fcf5b59d2d0336588d72d",
       "bytes": 2568,

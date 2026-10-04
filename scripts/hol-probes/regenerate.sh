@@ -7667,3 +7667,7 @@ run_probe word_to_stack_fp_relations_probeScript.sml word_to_stack_fp_relations_
 run_probe word_to_stack_store_register2_probeScript.sml word_to_stack_store_register2_probe.out \
   storeReg2Continuation_typed storeReg2Continuation_proved storeReg2Continuation_hypotheses writeReg2Sequence_typed writeReg2Sequence_proved writeReg2Sequence_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_inst_memory_load_probeScript.sml word_to_stack_inst_memory_load_probe.out \
+  memoryLoad_typed memoryLoad_proved memoryLoad_hypotheses memoryLoad8_typed memoryLoad8_proved memoryLoad8_hypotheses memoryLoad32_typed memoryLoad32_proved memoryLoad32_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
