@@ -389,6 +389,23 @@ with the other finite-map qualifiers. Its syntactic checker and Lean witness
 do not prove HOL-to-Lean equivalence; review the entire function domain,
 codomain, and surrounding word/set carriers against HOL before tagging.
 
+One narrow, source-reviewed exception is allowed for a unary HOL predicate over
+this exact abbreviation: the single argument and the `Prop` result must be the
+reviewed alias itself (`f : 'a gc_fun_type -> bool`, rendered in Lean as
+`f : WordSemGcFun width -> Prop`), it must carry both
+`(fmap_as_finite_support_function := [argument_4, result_3])` and
+`(words_as_type_indexed_bitvec)`, bind `(width : Nat)` with `[NeZero width]`
+and no ambient `variable`/`variables`/`include`/`omit`, and use the unique
+source-reviewed `WordSemGcFun` alias. Exactly two predicates have been
+source-reviewed: HOL `wordProps` `gc_fun_ok_def` (wordPropsScript.sml) and
+`word_simpProof` `gc_fun_const_ok_def` (word_simpProofScript.sml:135-139); each
+is listed separately in `GC_FUNCTION_PREDICATE_REFERENCES` in
+`scripts/check-hol-refs.py`. Any further predicate, for example a new-stack
+`gc_fun_const_ok` extension, needs its own source review and entry; this is not
+a general predicate allowance. The exception inherits only the alias's map-slot
+and word-width translation and does not review the predicate's clauses or
+authorize an arbitrary higher-order predicate.
+
 **Qualify a heterogeneous finite-map function.** Use
 `(fmap_as_finite_support_heterogeneous_function := [argument_N, result_M])`
 only for a direct function definition with a typed result whose named explicit
