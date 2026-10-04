@@ -849,10 +849,8 @@ def main : IO Unit := do
                 let ti4 ← stage "image:initialLabel" ti3 initialLabel
                 match RiscV.compileStackProgramNatListLinkedWithSimpleGcAndStoreConstsToRiscVCakeChecked
                     (width := 64) { services := services } perfRemoveConfig
-                    { gcStubLocation := stackGcStubLocation, returnLabel := 0,
-                      firstFreshLabel := stackFunctionFirstLabel }
-                    { } stackStoreConstsStubLocation RiscV.CakeRegAlloc.cakeRiscVRegisterCount
-                    0 initialLabel
+                    RiscV.CakeRegAlloc.cakeRiscVRegisterCount
+                    0
                     (functions.map (fun (label, _, body) => (label, body))) with
                 | .error _ => IO.println "PERF image:lab FAILED"
                 | .ok sections =>

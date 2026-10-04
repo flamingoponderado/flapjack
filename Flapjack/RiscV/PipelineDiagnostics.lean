@@ -696,13 +696,10 @@ def compileFlapjackRiscVSourceRuntimeImageChecked [NeZero width]
                   .error (sourceRiscVImageErrorOfLowering stackFunctionFirstLabel
                     pipeline.crepe error)
               | .ok (functions, bitmaps) =>
-                  let initialLabel := fullSsaInitialLabLabel functions
                   match RiscV.compileStackProgramNatListLinkedWithSimpleGcAndStoreConstsToRiscVCakeChecked
                       { services := services } removeConfig
-                      { gcStubLocation := stackGcStubLocation, returnLabel := 0,
-                        firstFreshLabel := stackFunctionFirstLabel }
-                      { } stackStoreConstsStubLocation RiscV.CakeRegAlloc.cakeRiscVRegisterCount
-                      0 initialLabel
+                      RiscV.CakeRegAlloc.cakeRiscVRegisterCount
+                      0
                       (functions.map (fun (label, _, body) => (label, body))) with
                   | .error error =>
                       .error (sourceRiscVImageErrorOfLowering stackFunctionFirstLabel

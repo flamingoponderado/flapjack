@@ -355,11 +355,14 @@ def compileStackProgramNatListLinkedWithSimpleGcAndStoreConstsToRiscVChecked
       | some sections => .ok sections
       | none => .error { sectionId := 0, position := 0, feature := .loweringFailure }
 
+/-- Executed production checked route for the runtime image.  Unlike the
+`...ToRiscVChecked` variant above, this native path does not consume legacy
+allocation/GC/store-consts configuration: `initializedRuntimeLab?` fixes the
+stub layout itself (see the comment below), so no caller-supplied
+`StackAllocConfig`, `StackGcConfig` or store-consts location is accepted. -/
 def compileStackProgramNatListLinkedWithSimpleGcAndStoreConstsToRiscVCakeChecked
     [NeZero width] (context : WordFfiContext) (removeConfig : StackRemoveConfig)
-    (_allocConfig : StackAllocConfig) (_gcConfig : StackGcConfig)
-    (_storeConstsLocation registerCount : Nat)
-    (entryLabel _initialLabel : Nat)
+    (registerCount entryLabel : Nat)
     (programs : List (Nat × StackProg Nat)) :
     Except LabLoweringError
       (List (Nat × Word width × List (Instruction width))) :=
