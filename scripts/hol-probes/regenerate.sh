@@ -7703,6 +7703,10 @@ run_probe pan_to_word_semantics_probeScript.sml pan_to_word_semantics_probe.out 
   state_rel_imp_semantics_statement state_rel_imp_semantics_proved state_rel_imp_semantics_types \
   "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
 
+run_probe word_to_stack_inst_fp_probeScript.sml word_to_stack_inst_fp_probe.out \
+  fpLess_typed fpLess_proved fpLess_hypotheses fpLessEqual_typed fpLessEqual_proved fpLessEqual_hypotheses fpEqual_typed fpEqual_proved fpEqual_hypotheses fpMov_typed fpMov_proved fpMov_hypotheses fpAbs_typed fpAbs_proved fpAbs_hypotheses fpNeg_typed fpNeg_proved fpNeg_hypotheses fpSqrt_typed fpSqrt_proved fpSqrt_hypotheses fpAdd_typed fpAdd_proved fpAdd_hypotheses fpSub_typed fpSub_proved fpSub_hypotheses fpMul_typed fpMul_proved fpMul_hypotheses fpDiv_typed fpDiv_proved fpDiv_hypotheses fpFma_typed fpFma_proved fpFma_hypotheses fpMovToReg_typed fpMovToReg_proved fpMovToReg_hypotheses fpMovFromReg_typed fpMovFromReg_proved fpMovFromReg_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe word_to_stack_inst_shift_probeScript.sml word_to_stack_inst_shift_probe.out \
   shiftReg_typed shiftReg_proved shiftReg_hypotheses shiftImm_typed shiftImm_proved shiftImm_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

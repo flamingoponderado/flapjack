@@ -10412,6 +10412,12 @@
       "rows": 3
     },
     {
+      "bytes": 11820,
+      "out": "word_to_stack_inst_fp_probe.out",
+      "rows": 42,
+      "sha256": "4b4e2da7d2696565ea6412a9e8d55165aece45d1b116a0e200ec6ab9c87b7bda"
+    },
+    {
       "out": "word_to_stack_inst_long_arithmetic_probe.out",
       "sha256": "7615f314589ad1834f14791f519e32e55ee303d144ffbb38ffacff83051b65c2",
       "bytes": 2651,
