@@ -8320,3 +8320,7 @@ run_probe riscv_target_call_probeScript.sml riscv_target_call_probe.out \
 run_probe riscv_memory_store_value_probeScript.sml riscv_memory_store_value_probe.out \
   store1_zero store1_wrap store2_zero store2_wrap store4_zero store4_wrap store8_zero store8_wrap source_failure_writes source_narrow_value source_clause source_hypotheses source_types native_clause native_hypotheses native_types \
   "$cake_dir/compiler/encoders/asm/asmSemScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe pan_to_crep_inline_table_validity_probeScript.sml pan_to_crep_inline_table_validity_probe.out \
+  every_inst_w_inline \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"

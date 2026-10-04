@@ -8692,3 +8692,5 @@ and the conclusion uses its actual post-domain. These untagged compositions
 have no separately named original HOL theorems. Full Mem still requires
 source register/address extraction, native interference, complete postrelation
 and assertion assembly.
+
+`pan_to_crep_inline_table_validity_probe.out` captures the complete original typed every_inst_w_inline implication. Native proof derives the actual filtered name-map SUBMAP internally, including duplicate keys, and consumes the accepted full inlining theorem. It assumes only the original compile_to_crep table validity, with no output/target-run or added distinctness premise; full source-program/body validity remains separate.
