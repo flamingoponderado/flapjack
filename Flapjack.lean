@@ -103,6 +103,7 @@ import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMaxAsmWith
 import Flapjack.RiscV.NativeSource
 import Flapjack.RiscV.NativeCLIAdapter
 import Flapjack.Pancake.Proofs.PanToTarget.NativeSourceCorrect
+import Flapjack.Pancake.Proofs.PanToTarget.NativeCLICorrect
 import Flapjack.Pancake.Proofs.PanToTarget.InitHelpers
 import Flapjack.Pancake.Proofs.PanToTarget.PanInstalled
 import Flapjack.Pancake.Proofs.PanToTarget.LabelsChain

@@ -1,5 +1,6 @@
 import Flapjack.RiscV.NativeSource
 import Flapjack.RiscV.ArtifactFormat
+import Flapjack.RiscV.LabToTargetRoute
 
 /-! Rendering the parser-backed native whole compiler result as CLI output.
 
@@ -61,12 +62,6 @@ def assembly (prog1 : List (DeclHOL 64)) (bytes : List (BitVec 8)) (bitmaps : Li
     bytes (bitmaps.map BitVec.toNat)
     (symbolLines (exportSymbols (compileProgNames prog1) config))
 
-/-- The code bytes of each section, from `sec_pos_len`. -/
-def sections (bytes : List (BitVec 8)) (config : Backend.Config) :
-    List (Nat × Nat × List (BitVec 8)) :=
-  config.labConf.secPosLen.map fun (name, position, length) =>
-    (name, position, (bytes.drop position).take length)
-
 def hexDigit (value : Nat) : Char :=
   if value < 10 then
     Char.ofNat ('0'.toNat + value)
@@ -94,8 +89,9 @@ def render (format : Format) (declarations : List (DeclHOL 64)) (bytes : List (B
   match format with
   | .assembly => assembly declarations bytes bitmaps config
   | .hex => hexBytes bytes ++ "\n"
-  | .sections => String.join ((sections bytes config).map fun (label, position, sectionBytes) =>
-      s!"{label} {position} " ++ hexBytes sectionBytes ++ "\n")
+  | .sections =>
+      String.join ((RiscV.sectionsOfSymbols (width := 64) bytes config.labConf.secPosLen).map
+        fun entry => s!"{entry.label} {entry.address.toNat} " ++ hexBytes entry.bytes ++ "\n")
 
 /-- The whole native CLI run on source text: the warnings and standard output, or the error
 message. Parse and static errors and backend failure are errors. -/

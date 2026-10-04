@@ -99162,5 +99162,13 @@
     "lean_name": "ffinamesToStringList",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus3 source comparison 2026-10-04 (bead flapjack-native-cli-default-adapter): backendScript.sml 675-681, three clauses: [] -> []; ExtCall s :: rest -> s :: rec; SharedMem _ :: rest -> rec. Lean over HolFfiName (extCall MlString / sharedMem) returning List MlString, clause-for-clause."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/NativeCLICorrect.lean",
+    "lean_name": "nativeCLIOutput_correct",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific default-CLI theorem (bead flapjack-native-cli-default-adapter): every successful RiscV.NativeCLI.output format source = ok (warnings, text) (the default flapjack-compile route, all modes) comes from a successful parse and NativeSource.compile with compiled tuple (bytes,bitmaps,config), text = render of that tuple (emitted code = bytes), and NativeRiscVCorrectness parsed out (the nativeSourceCompile_correct conclusion for the parsed program)."
   }
 ]
