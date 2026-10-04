@@ -1,0 +1,24 @@
+find_ffi_names_ALL_DISTINCT_statement_typed=∀(code :α sec list). ALL_DISTINCT (find_ffi_names code)
+find_ffi_names_ALL_DISTINCT_hyp_count=0
+find_ffi_names_definition_typed=find_ffi_names ([] :α sec list) = ([] :ffiname list) ∧
+(∀(rest :α sec list) (k :num).
+   find_ffi_names (Section k ([] :α line list)::rest) = find_ffi_names rest) ∧
+∀(xs :α line list) (x :α line) (rest :α sec list) (k :num).
+  find_ffi_names (Section k (x::xs)::rest) =
+  case x of
+    (Label v10 v11 v12 :α line) => find_ffi_names (Section k xs::rest)
+  | Asm v13 v14 v15 => find_ffi_names (Section k xs::rest)
+  | LabAsm (Jump v29 :α asm_with_lab) v17 v18 v19 =>
+    find_ffi_names (Section k xs::rest)
+  | LabAsm (JumpCmp v30 v31 v32 v33 :α asm_with_lab) v17 v18 v19 =>
+    find_ffi_names (Section k xs::rest)
+  | LabAsm (Call v34 :α asm_with_lab) v17 v18 v19 =>
+    find_ffi_names (Section k xs::rest)
+  | LabAsm (LocValue v35 v36 :α asm_with_lab) v17 v18 v19 =>
+    find_ffi_names (Section k xs::rest)
+  | LabAsm (CallFFI s :α asm_with_lab) v17 v18 v19 =>
+    list_add_if_fresh (ExtCall s) (find_ffi_names (Section k xs::rest))
+  | LabAsm (Install :α asm_with_lab) v17 v18 v19 =>
+    find_ffi_names (Section k xs::rest)
+  | LabAsm (Halt :α asm_with_lab) v17 v18 v19 =>
+    find_ffi_names (Section k xs::rest)
