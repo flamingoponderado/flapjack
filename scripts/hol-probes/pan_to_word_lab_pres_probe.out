@@ -1,0 +1,33 @@
+loop_to_word_comp_extract_labels_len_statement=∀ctxt prog l p r. comp ctxt prog l = (p,r) ⇒ LENGTH (extract_labels p) = SND r − SND l
+loop_to_word_comp_extract_labels_len_hypotheses=0
+loop_to_word_comp_extract_labels_len_typed=∀(ctxt :num sptree$num_map) (prog :α loopLang$prog) (l :num # num) (p :α wordLang$prog) (r :num # num). (comp ctxt prog l :α wordLang$prog # num # num) = (p,r) ⇒ LENGTH (extract_labels p) = SND r − SND l
+loop_to_word_comp_extract_labels_statement=∀ctxt prog l p l'. comp ctxt prog l = (p,l') ⇒ EVERY (λ(q,r). q = FST l ∧ SND l ≤ r ∧ r < SND l') (extract_labels p)
+loop_to_word_comp_extract_labels_hypotheses=0
+loop_to_word_comp_extract_labels_typed=∀(ctxt :num sptree$num_map) (prog :α loopLang$prog) (l :num # num) (p :α wordLang$prog) (l' :num # num). (comp ctxt prog l :α wordLang$prog # num # num) = (p,l') ⇒ EVERY (λ((q :num),(r :num)). q = FST l ∧ SND l ≤ r ∧ r < SND l') (extract_labels p)
+loop_to_word_comp_ALL_DISTINCT_statement=∀ctxt prog l p r. comp ctxt prog l = (p,r) ⇒ ALL_DISTINCT (extract_labels p)
+loop_to_word_comp_ALL_DISTINCT_hypotheses=0
+loop_to_word_comp_ALL_DISTINCT_typed=∀(ctxt :num sptree$num_map) (prog :α loopLang$prog) (l :num # num) (p :α wordLang$prog) (r :num # num). (comp ctxt prog l :α wordLang$prog # num # num) = (p,r) ⇒ ALL_DISTINCT (extract_labels p)
+loop_to_word_comp_func_lab_pres_statement=comp_func n' params body = p ⇒ (∀n. n < LENGTH (extract_labels p) ⇒ (λ(l1,l2). l1 = n' ∧ l2 ≠ 0 ∧ l2 ≠ 1) (extract_labels p)❲n❳) ∧ ALL_DISTINCT (extract_labels p)
+loop_to_word_comp_func_lab_pres_hypotheses=0
+loop_to_word_comp_func_lab_pres_typed=(comp_func (n' :num) (params :num list) (body :α loopLang$prog) :α wordLang$prog) = (p :α wordLang$prog) ⇒ (∀(n :num). n < LENGTH (extract_labels p) ⇒ (λ((l1 :num),(l2 :num)). l1 = n' ∧ l2 ≠ (0 :num) ∧ l2 ≠ (1 :num)) (extract_labels p)❲n❳) ∧ ALL_DISTINCT (extract_labels p)
+loop_to_word_compile_prog_lab_pres_statement=compile_prog prog = prog' ⇒ EVERY (λ(n,m,p). (let labs = extract_labels p in EVERY (λ(l1,l2). l1 = n ∧ l2 ≠ 0 ∧ l2 ≠ 1) labs ∧ ALL_DISTINCT labs)) prog'
+loop_to_word_compile_prog_lab_pres_hypotheses=0
+loop_to_word_compile_prog_lab_pres_typed=(compile_prog (prog :(num # num list # α loopLang$prog) list) :(num # num # α wordLang$prog) list) = (prog' :(num # num # α wordLang$prog) list) ⇒ EVERY (λ((n :num),(m :num),(p :α wordLang$prog)). (let (labs :(num # num) list) = extract_labels p in EVERY (λ((l1 :num),(l2 :num)). l1 = n ∧ l2 ≠ (0 :num) ∧ l2 ≠ (1 :num)) labs ∧ ALL_DISTINCT labs)) prog'
+loop_to_word_compile_prog_FST_eq_statement=compile_prog prog = prog' ⇒ MAP FST prog' = MAP FST prog
+loop_to_word_compile_prog_FST_eq_hypotheses=0
+loop_to_word_compile_prog_FST_eq_typed=(compile_prog (prog :(num # num list # α loopLang$prog) list) :(num # num # α wordLang$prog) list) = (prog' :(num # num # α wordLang$prog) list) ⇒ MAP (FST :num # num # α wordLang$prog -> num) prog' = MAP (FST :num # num list # α loopLang$prog -> num) prog
+loop_to_word_compile_prog_lab_min_statement=compile_prog prog = prog' ∧ EVERY (λp. x ≤ FST p) prog ⇒ EVERY (λp. x ≤ FST p) prog'
+loop_to_word_compile_prog_lab_min_hypotheses=0
+loop_to_word_compile_prog_lab_min_typed=(compile_prog (prog :(num # num list # α loopLang$prog) list) :(num # num # α wordLang$prog) list) = (prog' :(num # num # α wordLang$prog) list) ∧ EVERY (λ(p :num # num list # α loopLang$prog). (x :num) ≤ FST p) prog ⇒ EVERY (λ(p :num # num # α wordLang$prog). x ≤ FST p) prog'
+loop_to_word_compile_lab_min_statement=compile prog = prog' ∧ EVERY (λp. x ≤ FST p) prog ⇒ EVERY (λp. x ≤ FST p) prog'
+loop_to_word_compile_lab_min_hypotheses=0
+loop_to_word_compile_lab_min_typed=(compile (prog :(num # num list # α loopLang$prog) list) :(num # num # α wordLang$prog) list) = (prog' :(num # num # α wordLang$prog) list) ∧ EVERY (λ(p :num # num list # α loopLang$prog). (x :num) ≤ FST p) prog ⇒ EVERY (λ(p :num # num # α wordLang$prog). x ≤ FST p) prog'
+pan_to_word_good_handlers_statement=compile_prog c prog = prog' ⇒ EVERY (λ(n,m,pp). word_good_handlers n pp) prog'
+pan_to_word_good_handlers_hypotheses=0
+pan_to_word_good_handlers_typed=(compile_prog (c :architecture) (prog :α decl list) :(num # num # α wordLang$prog) list) = (prog' :(num # num # α wordLang$prog) list) ⇒ EVERY (λ((n :num),(m :num),(pp :α wordLang$prog)). word_good_handlers n pp) prog'
+pan_to_word_compile_lab_pres_statement=compile_prog c prog = prog' ⇒ EVERY (λ(n,m,p). (let labs = extract_labels p in EVERY (λ(l1,l2). l1 = n ∧ l2 ≠ 0 ∧ l2 ≠ 1) labs ∧ ALL_DISTINCT labs)) prog'
+pan_to_word_compile_lab_pres_hypotheses=0
+pan_to_word_compile_lab_pres_typed=(compile_prog (c :architecture) (prog :α decl list) :(num # num # α wordLang$prog) list) = (prog' :(num # num # α wordLang$prog) list) ⇒ EVERY (λ((n :num),(m :num),(p :α wordLang$prog)). (let (labs :(num # num) list) = extract_labels p in EVERY (λ((l1 :num),(l2 :num)). l1 = n ∧ l2 ≠ (0 :num) ∧ l2 ≠ (1 :num)) labs ∧ ALL_DISTINCT labs)) prog'
+pan_to_word_compile_prog_lab_min_statement=compile_prog c pprog = wprog ⇒ EVERY (λprog. 60 ≤ FST prog) wprog
+pan_to_word_compile_prog_lab_min_hypotheses=0
+pan_to_word_compile_prog_lab_min_typed=(compile_prog (c :architecture) (pprog :α decl list) :(num # num # α wordLang$prog) list) = (wprog :(num # num # α wordLang$prog) list) ⇒ EVERY (λ(prog :num # num # α wordLang$prog). (60 :num) ≤ FST prog) wprog

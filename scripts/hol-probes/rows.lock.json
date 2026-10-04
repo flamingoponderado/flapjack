@@ -931,6 +931,7 @@
     {"bytes": 301, "out": "pan_to_word_derived_probe.out", "rows": 1, "sha256": "68e3ddc230bf210517b23a7327c5ceb8b75d08cc704417622cbe7315ef26f790"},
     {"bytes": 2803, "out": "pan_to_word_exp_ids_probe.out", "rows": 8, "sha256": "49dc60256590456746587157815c7ab89a0c00a31e929292a93c8bd16a58bc2c"},
     {"bytes": 2693, "out": "pan_to_word_get_eids_probe.out", "rows": 8, "sha256": "8923750584cbb914a7a47b57a57b8bcb1496a0c763d043d9c1eaa00e49b1efc2"},
+    {"bytes": 5591, "out": "pan_to_word_lab_pres_probe.out", "rows": 33, "sha256": "6fcd737ce2a8581c6ef1c3c4b05468bd1e29a3f9e89d1218104f96b1dd0c85d6"},
     {"bytes": 8746, "out": "pan_to_word_no_install_code_probe.out", "rows": 27, "sha256": "cd04a026812d88dfe5c78c8d2062db60be0cd228c811b352d31b9bc20f3ba7a7"},
     {"bytes": 867, "out": "pan_to_word_probe.out", "rows": 7, "sha256": "6557188c43bb7a9c3afcdc04d107679f43e67c77b43844f134072457fdd724d0"},
     {"bytes": 2177, "out": "pan_to_word_semantics_probe.out", "rows": 3, "sha256": "258b57880f9c0d856727ef4a75c66f51eb8e82756bad2ba8325f0ffa7ba4c7ea"},
