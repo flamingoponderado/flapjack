@@ -95096,6 +95096,41 @@
     "reviewer": "flapjack-sol-c source comparison2026-10-04: original riscv_targetProofScript Shift560-620 Imm/Asr case; complete encoder_correct_def117-132 shape. Arbitrary Nat rd/rs1 and word64 immediate c, original sole asmStep/initial targetStateRel; full existential n/allenv/asserts/asserts2. Original asmArithOk immediate range and nonzero condition remain inside unchanged asmStep (zero allowed for Lsl only). Count<64 derived from source validity, word6 native amount identity proved from that bound. Actual SRAI four emitted bytes, unrestricted Decode/Run and complete Next derived; no added range/nonzero/target-run/output premise. Native target closure inherits reals_as_rational_cuts SOUNDNESS item8; both Ror routes remain open."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProof/MachineInit.lean",
+    "lean_name": "mcInitOk",
+    "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml",
+    "hol_name": "mc_init_ok_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 113-131, every conjunct in order: EVERY over [2;3;4] as membership quantifier with find_name (tlookup = findNameSpt) at r + reg_count - (LENGTH avoid_regs + 5) (left-associated, Nat truncation as HOL), the five find_name register equations, data_conf.be ⇔ big_endian (Bool equality), four link-register disequalities, link ∉ callee_saved_regs, asm_conf = mc.target.config; the case on link_reg is a match (let-bound once); asm_conf and machine_config share the type-indexed width, machine state/projection types independent. Typed capture backend_machine_init probe (literal source replay; backendProofTheory not built in probe env). No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProof/MachineInit.lean",
+    "lean_name": "heapRegs",
+    "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml",
+    "hol_name": "heap_regs_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 170-173, heap_regs reg_names = (find_name reg_names 2, find_name reg_names 4) over the num_map Spt rendering. Typed capture backend_machine_init probe (literal source replay; backendProofTheory not built in probe env). No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProof/MachineInit.lean",
+    "lean_name": "byteAlignedMOD",
+    "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml",
+    "hol_name": "byte_aligned_MOD",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 39-47: good_dimindex ⇒ ∀x. x ∈ byte_aligned ⇒ w2n x MOD (dimindex DIV 8) = 0; set membership is the reviewed Bool predicate holByteAligned. Typed capture backend_machine_init probe (literal source replay; backendProofTheory not built in probe env). No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProof/MachineInit.lean",
+    "lean_name": "wordListExistsImp",
+    "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml",
+    "hol_name": "word_list_exists_imp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 300-306: dm = addresses a n ∧ dimindex DIV 8 * n < dimword ∧ good_dimindex ⇒ word_list_exists a n (fun2set (m1, dm)) with independent value type β; dimword is 2 ^ width; proof by the ported stack_removeProof word_list_exists_addresses as in HOL. Typed capture backend_machine_init probe (literal source replay; backendProofTheory not built in probe env). No added premise."
+  },
+  {
     "lean_path": "Flapjack/Pancake/Proofs/WordConvs/HandlerPasses.lean",
     "lean_name": "goodHandlers_instSelectExp",
     "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
@@ -95156,50 +95191,6 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack infrastructure: native move-descriptor case factoring used inline in original word_good_handlers_SimpSeq proof; no standalone HOL declaration. Removes only handler-free moves, proves actual descriptor rest from source guard without output premise."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/Proofs/WordConventions.lean",
-    "lean_name": "compileToWordConventions2",
-    "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml",
-    "hol_name": "compile_to_word_conventions2",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "Source compared whole backendProof1284-1307: actual native compile equation and input guard, all names/labels/five output conditions and nested original guards retained; positive-width word translation only."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/BackendProof/MachineInit.lean",
-    "lean_name": "mcInitOk",
-    "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml",
-    "hol_name": "mc_init_ok_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 113-131, every conjunct in order: EVERY over [2;3;4] as membership quantifier with find_name (tlookup = findNameSpt) at r + reg_count - (LENGTH avoid_regs + 5) (left-associated, Nat truncation as HOL), the five find_name register equations, data_conf.be ⇔ big_endian (Bool equality), four link-register disequalities, link ∉ callee_saved_regs, asm_conf = mc.target.config; the case on link_reg is a match (let-bound once); asm_conf and machine_config share the type-indexed width, machine state/projection types independent. Typed capture backend_machine_init probe (literal source replay; backendProofTheory not built in probe env). No added premise."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/BackendProof/MachineInit.lean",
-    "lean_name": "heapRegs",
-    "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml",
-    "hol_name": "heap_regs_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 170-173, heap_regs reg_names = (find_name reg_names 2, find_name reg_names 4) over the num_map Spt rendering. Typed capture backend_machine_init probe (literal source replay; backendProofTheory not built in probe env). No added premise."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/BackendProof/MachineInit.lean",
-    "lean_name": "byteAlignedMOD",
-    "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml",
-    "hol_name": "byte_aligned_MOD",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 39-47: good_dimindex ⇒ ∀x. x ∈ byte_aligned ⇒ w2n x MOD (dimindex DIV 8) = 0; set membership is the reviewed Bool predicate holByteAligned. Typed capture backend_machine_init probe (literal source replay; backendProofTheory not built in probe env). No added premise."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/BackendProof/MachineInit.lean",
-    "lean_name": "wordListExistsImp",
-    "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml",
-    "hol_name": "word_list_exists_imp",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 300-306: dm = addresses a n ∧ dimindex DIV 8 * n < dimword ∧ good_dimindex ⇒ word_list_exists a n (fun2set (m1, dm)) with independent value type β; dimword is 2 ^ width; proof by the ported stack_removeProof word_list_exists_addresses as in HOL. Typed capture backend_machine_init probe (literal source replay; backendProofTheory not built in probe env). No added premise."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
@@ -95422,6 +95413,219 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack proof infrastructure for the wordConvsProof word_good_handlers group: a Boolean-equation form of a cited HOL ⇔ lemma, an auxiliary-pass or SSA-state fact factored out of the HOL proofs, or the per-element full_compile_single step of word_good_handlers_word_to_word_incr_helper; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Proofs/WordConventions.lean",
+    "lean_name": "compileToWordConventions2",
+    "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml",
+    "hol_name": "compile_to_word_conventions2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source compared whole backendProof1284-1307: actual native compile equation and input guard, all names/labels/five output conditions and nested original guards retained; positive-width word translation only."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Fun2SetUnion.lean",
+    "lean_name": "fun2SetDisjointUnion",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "fun2set_disjoint_union",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original miscScript 4262-4274: DISJOINT d1 d2 ∧ p (fun2set (m,d1)) ∧ q (fun2set (m,d2)) ⇒ (p * q) (fun2set (m, d1 ∪ d2)) over arbitrary α, β with predicate sets as in the reviewed set_sep port (DISJOINT pointwise, ∪ pointwise disjunction, * = star). Typed capture pan_to_target_library_lemmas probe (show_types, no hypotheses). No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Address.lean",
+    "lean_name": "wordArithLemma2",
+    "hol_path": "HOL/examples/machine-code/hoare-triple/addressScript.sml",
+    "hol_name": "word_arith_lemma2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original addressScript 413-422: ∀n m. n2w n - n2w m = if n < m then -(n2w (m - n)) else n2w (n - m), n2w = BitVec.ofNat. Typed capture pan_to_target_library_lemmas probe (show_types, no hypotheses). No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Alignment.lean",
+    "lean_name": "alignedAddSub",
+    "hol_path": "HOL/src/n-bit/alignmentScript.sml",
+    "hol_name": "aligned_add_sub",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original alignmentScript 182-196: ∀p a b. aligned p b ⇒ (aligned p (a + b) ⇔ aligned p a) ∧ (aligned p (a − b) ⇔ aligned p a), for every p including p ≥ dimindex; Bool aligned with ⇔ as Bool equality. Typed capture pan_to_target_library_lemmas probe (show_types, no hypotheses). No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProof/CompileLab.lean",
+    "lean_name": "compileLabLENGTH",
+    "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml",
+    "hol_name": "compile_lab_LENGTH",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 1215-1221: compile_lab asm_conf c secs = SOME (bytes,c') ⇒ c'.pos = LENGTH bytes + c.pos, all variables universally quantified as explicit binders. Typed capture backend_compile_lab probe (literal source replay, show_types, no hypotheses); carriers are the reviewed LabToTarget.compileLab ones. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProof/CompileLab.lean",
+    "lean_name": "compileLabIMPMmioPcsMinIndex",
+    "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml",
+    "hol_name": "compile_lab_IMP_mmio_pcs_min_index",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 3500-3519: compile_lab ... = SOME (bytes,c') ∧ OPTION_ALL (EVERY (λx. ∃s. x = ExtCall s)) c.ffi_names ⇒ ∃ffi_names. c'.ffi_names = SOME ffi_names ∧ ∃x. mmio_pcs_min_index ffi_names = SOME x; OPTION_ALL rendered as the none ↦ True / some l ↦ P l match and EVERY as membership quantification. Typed capture backend_compile_lab probe (literal source replay, show_types, no hypotheses); carriers are the reviewed LabToTarget.compileLab ones. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "Ident",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "id",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript id: Datatype id = Short 'n | Long 'm id with independent ('m,'n) parameters; constructor order and arity retained. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "mkId",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "mk_id_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript mk_id_def: both clauses. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "idToN",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "id_to_n_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript id_to_n_def: both clauses. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "idToMods",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "id_to_mods_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript id_to_mods_def: both clauses. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsLookup",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsLookup_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsLookup_def: both clauses; ALOOKUP is List.lookup under DecidableEq (HOL equality); recursion on the identifier. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsLookupMod",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsLookupMod_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsLookupMod_def: both clauses; ALOOKUP is List.lookup. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsEmpty",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsEmpty_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsEmpty_def: Bind [] []. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsAppend",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsAppend_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsAppend_def: single clause. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsLift",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsLift_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsLift_def: single clause. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "alistToNs",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "alist_to_ns_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript alist_to_ns_def: single clause. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsBind",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsBind_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsBind_def: single clause. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsBindList",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsBindList_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsBindList_def: FOLDR with paired lambda as foldr over pair projections. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsOptBind",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsOptBind_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsOptBind_def: option case. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsSing",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsSing_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsSing_def: single clause. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsSub",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsSub_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsSub_def: both conjuncts, independent value types γ δ. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsAll",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsAll_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsAll_def: single clause. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsAll2",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsAll2_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsAll2_def: both nsSub conjuncts with flipped relation. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsDom",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsDom_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsDom_def: HOL set {n | ∃v. nsLookup env n = SOME v} (universe conjuncts trivial) as membership predicate. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsDomMod",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsDomMod_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsDomMod_def: HOL set {n | ∃v. nsLookupMod env n = SOME v} as membership predicate. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsMap",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsMap_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsMap_def: single clause, nested MAP; well-founded on the nested carrier. Typed capture namespace_ops probe (show_types, no hypotheses)."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
