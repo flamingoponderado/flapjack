@@ -8476,3 +8476,10 @@ metadata payload and original Crep-to-Loop rows for a forward source call.
 It preserves original generated names and row labels; no generic Crep
 simplification or relabel bridge is inserted. This is regression evidence,
 not a whole-CLI execution-equivalence proof.
+
+`pan_native_word_prefix_probeScript.sml` evaluates the complete original
+`pan_to_word$compile_prog` after the extracted original first-main LET.
+The native Word prefix fixture compares all three rows, argument counts,
+call arguments/continuations and complete bodies against this capture.
+The general kernel theorem composes all six original passes from source
+byte ranges; actual downstream CLI/WordToStack routing remains separate.

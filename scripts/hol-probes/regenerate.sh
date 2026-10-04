@@ -8155,3 +8155,7 @@ run_probe riscv_memory_decode_probeScript.sml riscv_memory_decode_probe.out \
 run_probe pan_native_frontend_prefix_probeScript.sml pan_native_frontend_prefix_probe.out \
   cake_declarations raw_crep original_loop \
   "$cake_dir/pancake/pan_to_targetScript.sml" "$cake_dir/pancake"
+
+run_probe pan_native_word_prefix_probeScript.sml pan_native_word_prefix_probe.out \
+  original_word \
+  "$cake_dir/pancake/pan_to_targetScript.sml" "$cake_dir/pancake"

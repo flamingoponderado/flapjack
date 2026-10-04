@@ -772,6 +772,7 @@
     {"bytes": 448, "out": "pan_mem_load_probe.out", "rows": 9, "sha256": "646becd626ff96e7a035a9009c9aece0eb37bebc3c11edc255d03d09ebebf36d"},
     {"bytes": 87, "out": "pan_mrec_probe.out", "rows": 5, "sha256": "5d18df9d62c662aafed1873bcb669928f2a9b4a83b4ac02522736c0e9c4b3c35"},
     {"bytes": 1656, "out": "pan_native_frontend_prefix_probe.out", "rows": 3, "sha256": "45eb7f81ff6be32092a0ed96e1e9bba11c0e499c8358bbb4b69c67197c9ed755"},
+    {"bytes": 708, "out": "pan_native_word_prefix_probe.out", "rows": 1, "sha256": "8d3e0a33b5d98ffcd9b8e718fd9f0fcd11ef720027114a2d6c50751c49e40734"},
     {"bytes": 29, "out": "pan_nb_op_probe.out", "rows": 4, "sha256": "1c29dd06203860bcc3d0e5b80d9a218a4a5479506c94ed9722b6a1e0fd9737a3"},
     {"bytes": 72, "out": "pan_op_probe.out", "rows": 3, "sha256": "6b5af7846a705a437650dd20a9b400fce7526a70bbaba5ec354f040009686979"},
     {"bytes": 1180, "out": "pan_peg_try_default_probe.out", "rows": 2, "sha256": "927ceca3e6721ce8801a052015008bfd145d5c24acbbe434cbba0553a4dac647"},

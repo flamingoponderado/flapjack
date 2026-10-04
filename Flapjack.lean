@@ -1948,6 +1948,7 @@ import Flapjack.PanHProgAssign
 import Flapjack.PanHProgWhile
 import Flapjack.Pancake.PanSimp
 import Flapjack.Pancake.PanToWord
+import Flapjack.Pancake.PanToWord.ProductionPrefix
 import Flapjack.Pancake.PanLang.ProgHOLInduction
 import Flapjack.Pancake.Proofs.PanSimp.ProgOfHOL
 import Flapjack.PanLocalised
