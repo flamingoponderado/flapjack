@@ -349,6 +349,7 @@
     {"bytes": 5360, "out": "l3_step_store_probe.out", "rows": 9, "sha256": "9fe3b1bd8a13c0cf3a7f65a3131270ac13142cf968a98b8661ec17ccf997f749"},
     {"bytes": 1416, "out": "l3_step_upper_probe.out", "rows": 8, "sha256": "f609f3b6ab7ecc93bb97ecf78711a09a6526df4c7de497a52f17c59972115c4c"},
     {"bytes": 3509, "out": "l3_step_warith_probe.out", "rows": 14, "sha256": "005af0fe118bb3408a551b7f8d2c39dfec0198139e2fa1e73daefdba32412844"},
+    {"bytes": 6880, "out": "l3_step_wmuldiv_probe.out", "rows": 21, "sha256": "8594b753f26d42f4c400e1881f00a4765455aade26743744a3486d186f79a3c5"},
     {"bytes": 5758, "out": "l3_step_wshift_probe.out", "rows": 25, "sha256": "8f0c3ede2d4a9379fa5754485d59cdd0c6ce95709a2e7587c4cfcb47eb381497"},
     {"bytes": 50495, "out": "l3_supervisor_csr_probe.out", "rows": 877, "sha256": "79016f37fed542b36c8125afbebc4834b904919a83d37c49e4a61f5ef695dbfb"},
     {"bytes": 4778, "out": "l3_system_signals_probe.out", "rows": 90, "sha256": "c9f78cdabc2d185359ee04a4d53843d48a37118404f8eaaa2e1d6a2bc3b97fdd"},

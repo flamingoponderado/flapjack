@@ -6982,6 +6982,10 @@ run_probe l3_step_shift_probeScript.sml l3_step_shift_probe.out \
   run_probe l3_step_branch_probeScript.sml l3_step_branch_probe.out \
     beq_hypotheses beq_statement bne_hypotheses bne_statement blt_hypotheses blt_statement bltu_hypotheses bltu_statement bge_hypotheses bge_statement bgeu_hypotheses bgeu_statement source \
     "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
+  run_probe l3_step_wmuldiv_probeScript.sml l3_step_wmuldiv_probe.out \
+    mulw_hypotheses mulw_statement divw_hypotheses divw_statement divuw_hypotheses divuw_statement remw_hypotheses remw_statement remuw_hypotheses remuw_statement \
+    mulw_nop_hypotheses mulw_nop_statement divw_nop_hypotheses divw_nop_statement divuw_nop_hypotheses divuw_nop_statement remw_nop_hypotheses remw_nop_statement remuw_nop_hypotheses remuw_nop_statement source \
+    "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
   run_probe pan_structs_mmap_faithful_probeScript.sml pan_structs_mmap_faithful_probe.out \
   compile_exp_correct_mmap_helper_statement compile_exp_correct_mmap_helper_types compile_exp_correct_mmap_helper_hypotheses compile_exp_correct_mmap_helper_proved \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
