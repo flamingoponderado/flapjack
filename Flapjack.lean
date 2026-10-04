@@ -70,6 +70,7 @@ import Flapjack.Pancake.Proofs.PanToTarget.AssemblyInitCode
 import Flapjack.Pancake.Proofs.PanToTarget.AssemblyInitMemory
 import Flapjack.Pancake.Proofs.PanToTarget.AssemblyResourceStage
 import Flapjack.Pancake.Proofs.PanToTarget.AssemblyGoodCode
+import Flapjack.Pancake.Proofs.PanToTarget.AssemblyGoodCodeSource
 import Flapjack.Pancake.Proofs.PanToTarget.InitHelpers
 import Flapjack.Pancake.Proofs.PanToTarget.PanInstalled
 import Flapjack.Pancake.Proofs.PanToTarget.LabelsChain
@@ -2105,6 +2106,8 @@ import Flapjack.Pancake.Proofs.PanToWord.PanToCrepValidity
 import Flapjack.Pancake.Proofs.PanToWord.PanToCrepCompileExpValidity
 import Flapjack.Pancake.Proofs.PanToWord.PanToCrepCompileValidity
 import Flapjack.Pancake.Proofs.PanToWord.PanToCrepTableValidity
+import Flapjack.Pancake.Proofs.PanToWord.PanToCrepProgramValidity
+import Flapjack.Pancake.Proofs.PanToWord.CompileProgInstOkLess
 import Flapjack.Pancake.Proofs.PanToWord.LoadGlobalsValidity
 import Flapjack.Pancake.Proofs.PanToWord.PanToCrepInlineTableValidity
 import Flapjack.Pancake.Proofs.CrepInline.ExpressionProvenance
