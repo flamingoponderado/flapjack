@@ -8553,3 +8553,13 @@ compositions in the original HOL kernel with zero hypotheses. Eight boundary
 EVALs include zero, all ones, sign bits, scattered offsets, and rd=rs1; captured
 source clauses and carrier types supplement the universal proofs. These are
 prerequisites for Jump, Call and far JumpCmp, not full encoder correctness.
+
+### Native memory Next composition
+
+`riscv_memory_step_probeScript.sml` evaluates actual original NextRISCV for all
+eight emitted memory families, with signed-offset and zero-register fixtures.
+It also captures the literal original Next and PC-update equations, zero open
+hypotheses, and their carrier types. These finite observations accompany the
+unrestricted Lean native Next/control/validity proofs in `MemoryStep.lean`;
+they do not establish full Mem encoder correctness or discharge its original
+source/initial-relation, environment, memory-domain and assertion obligations.
