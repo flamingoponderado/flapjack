@@ -8288,3 +8288,15 @@ printed queries; the printed queries are not asserted original HOL theorems.
 The Lean kernel proofs establish the universal local compositions. Evidence is
 regression/source review, not cross-assistant equivalence or full Shift encoder
 correctness. Full state/run/assertions and both Ror routes remain on the parent.
+
+## Shift source post-state and RV64 runtime compositions
+
+`ShiftRun.lean` derives the register count guard and complete source update
+from original asmStep for all four operators and both operands. Six native
+Run compositions use the original riscvOk RV64 restriction and preserve
+masked register counts and whole native post-states. These are untagged local
+composition infrastructure, not a full Shift encoder correctness port.
+The fresh 24 original clause/type/hypothesis rows retain all literal RV32/RV64
+and illegal-immediate branches. They provide source regression evidence, not
+a cross-assistant equivalence proof. Full state relation, assertions and both
+Ror instruction sequences remain on the parent bead.
