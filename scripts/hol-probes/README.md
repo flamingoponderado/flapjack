@@ -8631,3 +8631,19 @@ Lean kernel checking; full encoder assembly and whole compiler correctness
 remain separate open work. No executed compiler path changes here.
 
 `load_globals_alt_probe.out` captures the complete original typed arbitrary-address/count GENLIST equality. The address is fixed word5; native expression dimension remains independently quantified. This prerequisite supports Call-handler compiler validity, not full source-pass or compiler correctness.
+### Source/native load value correspondence
+
+`riscv_memory_read_value_probeScript.sml` checks eight matched original
+`read_mem_word`/`rawReadData` values at counts 1, 2, 4 and 8, at zero and
+end-of-address-space aligned positions. Both memories use the byte function
+`w2w (p + 128w)`; every source and native truncated value is checked against
+the same constant, also kernel-checked in `CorrectnessEncoding/MemoryRead.lean`.
+The probe captures both original clauses, free-variable types and zero hypotheses.
+
+The generic source value recursion retains independent positive word widths,
+arbitrary counts, both endian modes and value extraction on assertion failure.
+The native RV64 correspondence derives selected bytes from initial target state
+relation and source success. The memLoad wrapper derives its domain and LOG2
+alignment guards; no target-run or desired postrelation premise is added. These
+untagged compositions have no separately named HOL originals. Full Mem encoder
+assertions, interference and store post-state correspondence remain open.

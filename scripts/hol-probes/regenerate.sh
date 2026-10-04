@@ -8284,14 +8284,14 @@ run_probe pan_to_crep_validity_helpers_probeScript.sml pan_to_crep_validity_help
 run_probe crep_inline_exps_provenance_probeScript.sml crep_inline_exps_provenance_probe.out \
   exps_of_nested_seq_assign_typed exps_of_arg_load_typed exps_of_unreach_elim_typed exps_of_transform_eoc_typed exps_of_transform_branch_typed \
   "$cake_dir/pancake/proofs/crep_inlineProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe crep_inline_inst_inline_probeScript.sml crep_inline_inst_inline_probe.out \
+  exps_of_inst_inline_typed every_inst_crep_inline_typed \
+  "$cake_dir/pancake/proofs/crep_inlineProofScript.sml" "$cake_dir/pancake/proofs"
 
 run_probe crep_inline_nested_decs_provenance_probeScript.sml crep_inline_nested_decs_provenance_probe.out \
   nested_decs_provenance \
   "$cake_dir/pancake/proofs/crep_inlineProofScript.sml" "$cake_dir/pancake/proofs"
 
-run_probe pan_to_crep_compile_exp_validity_probeScript.sml pan_to_crep_compile_exp_validity_probe.out \
-  every_inst_ok_less_pan_to_crep_compile_exp compile_exp_def \
-  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
 run_probe riscv_target_jump_probeScript.sml riscv_target_jump_probe.out \
   riscv_encoder_correct_jump_statement riscv_encoder_correct_jump_types riscv_encoder_correct_jump_hypotheses riscv_encoder_correct_jump_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
@@ -8300,3 +8300,9 @@ run_probe riscv_target_jump_probeScript.sml riscv_target_jump_probe.out \
 run_probe load_globals_alt_probeScript.sml load_globals_alt_probe.out \
   load_globals_alt \
   "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe pan_to_crep_compile_exp_validity_probeScript.sml pan_to_crep_compile_exp_validity_probe.out \
+  every_inst_ok_less_pan_to_crep_compile_exp compile_exp_def \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe riscv_memory_read_value_probeScript.sml riscv_memory_read_value_probe.out \
+  read1_zero read1_wrap read2_zero read2_wrap read4_zero read4_wrap read8_zero read8_wrap source_clause source_hypotheses source_types native_clause native_hypotheses native_types \
+  "$cake_dir/compiler/encoders/asm/asmSemScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
