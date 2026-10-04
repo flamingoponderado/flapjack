@@ -8860,3 +8860,20 @@ The native model retains reals_as_rational_cuts (SOUNDNESS section 8).
 This regression evidence does not prove cross-language equivalence or establish
 production compiler routing or the whole Pancake-to-RISC-V correctness theorem.
 `word_to_word_locals_typed_probe.out` supplies typed, zero-hypothesis original proof replays for all seven reviewed local helpers: rm_perm, find_code_thm, pop_env_termdep, compile_single_eta, code_rel_union_fromAList, code_rel_no_alloc and code_rel_no_install. Source guards cover the five literal statements/proofs and the original two specialization derivations. The row checker requires each typed statement; this does not prove HOL-to-Lean equivalence.
+
+### Two-sided native config/fetch and constructor regression checks
+The native config checker compares both the original full config capture and
+the reviewed Lean record body, including all fields, signed immediate policy
+and native encoder. Fetch16/Fetch32 compare the original universal captures
+and the complete reviewed Lean signatures; comments, formatting and theorem
+proof changes are outside those signature checks. Source changes require
+source review before updating the expected contracts.
+
+The target fixture checker inventories all ten original assembler carrier
+families against their actual Lean owners/aliases, requires every constructor
+and every Binop/Shift/JumpCmp Reg/Imm mode in both sample terms, and checks the
+sample inputs against the original probe. The existing 300 AST/byte fixtures
+remain finite regression evidence, not a universal equivalence proof. Missing
+constructors, mode omissions, source/Lean carrier drift and probe-input drift
+have negative tests. Lake, original capture regeneration and manual source
+comparison remain separate required gates.
