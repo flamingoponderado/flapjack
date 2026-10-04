@@ -7,6 +7,9 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.EncodingInitState
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileBitmaps
 import Flapjack.Compiler.Backend.WordToStack.Proofs.Initialization
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunConstOk
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileSemantics
+import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSemantics
+import Flapjack.SemanticsProps.Implements
 
 /-!
 # `pan_to_target_compile_semantics` assembly, word-to-stack stage facts
@@ -144,5 +147,63 @@ theorem panToTargetWordStateFacts {width : Nat} [NeZero width] {C F : Type}
   refine ⟨?_, rfl, rfl, ?_⟩
   · exact DataToWord.Proofs.Gc.gcFunConstOkWordGcFun
   · simp [WordToStack.Native.Initialization.makeInit]; rfl
+
+/-- A behaviour in `extend_with_resource_limit' b {w}` is `Fail` only when `w` is
+(Flapjack infrastructure for the HOL proof's "elim stackSem ≠ Fail" steps,
+lines 1653-1667). -/
+theorem extendPrime_singleton_ne_fail (precise : Bool) (w r : HolBehaviour)
+    (h : SemanticsPropsHOL.extendWithResourceLimitPrimeHOL precise (fun b => b = w) r)
+    (hw : w ≠ .fail) : r ≠ .fail := by
+  unfold SemanticsPropsHOL.extendWithResourceLimitPrimeHOL at h
+  split at h
+  · rw [h]; exact hw
+  · rcases h with h | ⟨_, _, _, rfl, _, _⟩ | ⟨_, _, rfl, _, _⟩
+    · rw [h]; exact hw
+    · exact HolBehaviour.noConfusion
+    · exact HolBehaviour.noConfusion
+
+open Classical in
+/-- The word-to-stack and word-to-word links of the HOL proof (lines 1649-1736): when
+the source word semantics (code `wprog0`) is not `Fail`, the stack semantics of the
+initial stack state lies in `extend_with_resource_limit'` of that word behaviour,
+with the safe-for-space flag of the compiled word state. The premises are those of
+`word_to_stackProof$compile_semantics` and `word_to_word_compile_semantics`. -/
+theorem panToTargetWordChain {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (wconf : WordToWord.Config)
+    (wprog0 wprog : List (Nat × Nat × WordLangProgHOL (BitVec width)))
+    (col : List (Option (Spt Nat))) (sst : StackSemStateFiniteExact width C F)
+    (worac : Nat → (Nat × C) × List (Nat × Nat × WordLangProgHOL (BitVec width)))
+    (start : Nat)
+    (hwtw : WordToWord.compile wconf ac wprog0 = (col, wprog))
+    (hgc : WordSimp.gcFunConstOk sst.gcFun)
+    (hni0 : WordProps.noInstallCode (sptFromAList wprog0))
+    (hna0 : WordProps.noAllocCode (sptFromAList wprog0))
+    (hnm0 : WordProps.noMtCode (sptFromAList wprog0))
+    (hnodup0 : (wprog0.map Prod.fst).Nodup)
+    (hcode : sst.code = sptFromAList (WordToStack.Native.compileNative ac false wprog).2.2.2)
+    (hinit : WordToStackProofs.InitializationStateRel.initStateOk ac
+      (ac.regCount - (5 + ac.avoidRegs.length)) sst worac)
+    (hraise : panPropsALookupEq raiseStubLocation wprog = none)
+    (hstore : panPropsALookupEq storeConstsStubLocation wprog = none)
+    (hbm : (WordToStack.Native.compileNative ac false wprog).1 <+: sst.bitmaps)
+    (hconv : ∀ entry ∈ wprog, flatExpConventions entry.2.2 = true ∧
+      postAllocConventionsHOL (ac.regCount - (5 + ac.avoidRegs.length)) entry.2.2 = true) :
+    let wst := WordToStack.Native.Initialization.makeInit ac
+      (ac.regCount - (5 + ac.avoidRegs.length)) sst (sptFromAList wprog) worac
+    let wst0 := { wst with code := sptFromAList wprog0 }
+    WordSemStateFiniteExact.semantics wst0 start ≠ .fail →
+    SemanticsPropsHOL.extendWithResourceLimitPrimeHOL
+      (decide (WordSemStateFiniteExact.wordLangSafeForSpace wst start))
+      (fun b => b = WordSemStateFiniteExact.semantics wst0 start)
+      (StackSemEvaluate.semantics start sst) := by
+  intro wst wst0 hnf
+  have heq : WordSemStateFiniteExact.semantics wst0 start =
+      WordSemStateFiniteExact.semantics wst start :=
+    WordToWord.word_to_word_compile_semantics wconf ac wprog0 col wprog wst0 start wst
+      ⟨hwtw, hgc, hni0, hna0, hni0, hna0, hnm0, hnodup0, rfl, rfl, by
+        simp [wst, WordToStack.Native.Initialization.makeInit]; rfl, rfl, rfl, hnf⟩
+  rw [heq]
+  exact WordToStackProofs.CompileSemantics.compileSemantics ac wprog sst _ worac start
+    ⟨hcode, rfl, hinit, hraise, hstore, hbm, hconv, heq ▸ hnf⟩
 
 end Flapjack.Pancake.Proofs.PanToTarget

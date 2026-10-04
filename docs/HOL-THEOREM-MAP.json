@@ -97875,5 +97875,21 @@
     "lean_name": "panToTargetWordStateFacts",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1686-1716): the word make_init state on a successful full_make_init stack state has gc_fun_const_ok gc_fun (gc_fun_const_ok_word_gc_fun), empty stack, the given code and lookup 0 locals = SOME (Loc 1 0)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyWordToStack.lean",
+    "lean_name": "extendPrime_singleton_ne_fail",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only: a behaviour in extend_with_resource_limit' b {w} is Fail only if w is (HOL proof lines 1653-1667, elim stackSem <> Fail)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyWordToStack.lean",
+    "lean_name": "panToTargetWordChain",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1649-1736): word_to_word_compile_semantics then word_to_stack compile_semantics, from their own premises: stack semantics of sst lies in extend_with_resource_limit' (safe_for_space wst) {word semantics of the source-code word state}."
   }
 ]
