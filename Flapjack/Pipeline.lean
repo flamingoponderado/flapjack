@@ -10,6 +10,7 @@ import Flapjack.Pancake.CrepInline.Pass
 import Flapjack.Pancake.CrepArith
 import Flapjack.Pancake.CrepToLoop
 import Flapjack.Pancake.CrepToLoop.Optimise
+import Flapjack.Pancake.CrepToLoop.ProductionDeclarations
 import Flapjack.Pancake.LoopToWord
 import Flapjack.Pancake.LoopToWord.CompFuncProductionRoute
 import Flapjack.Word
@@ -1241,17 +1242,21 @@ def panCompileTap [CakeDisplayWord α]
     tested alternatives only, until their output equality is proved.
     The optional proof preserves this helper's source compatibility
     for callers that do not carry the codec invariant. -/
-def compileFlapjackEntryCake {width : Nat} [NeZero width]
+/-- Shared executed source prefix, ending at raw native Crep metadata.
+    The original whole Crep-to-Loop compiler performs its own arithmetic pass;
+    consumers of this prefix must not feed it the later simplified Crep tap.
+    This is Flapjack caller infrastructure, not a separately named HOL port. -/
+def compileFlapjackFrontendCake {width : Nat} [NeZero width]
     [BEq (BitVec width)] [OfNat (BitVec width) 0]
     [OfNat (BitVec width) 1] [Add (BitVec width)] [Mul (BitVec width)]
     [AndOp (BitVec width)] [ShiftRight (BitVec width)]
     [PanShiftWidth (BitVec width)]
-    (architecture : RiscV.Architecture) (bytesInWord : BitVec width)
-    (fromNat : Nat → BitVec width) (start : FunName)
+    (start : FunName)
     (declarations : List (Decl (BitVec width)))
     (hdeclarations : Option (Decidable
       (∀ declaration ∈ declarations, DeclByteRanged declaration)) := none) :
-    Option (FlapjackPipelineResult (BitVec width)) :=
+    List (Decl (BitVec width)) × List (Decl (BitVec width)) ×
+      (List (Decl (BitVec width)) × List (CompiledFunction (BitVec width))) :=
   let moved := panTargetMoveStartToFront start declarations
   -- PanSimp runs once: the reviewed routed pass when the parser proof is
   -- present (equal to `panSimpDecls` by `panSimpDeclsRouted_eq`), and its
@@ -1289,6 +1294,80 @@ def compileFlapjackEntryCake {width : Nat} [NeZero width]
     | _ =>
         let cakeDeclarations := globalCompileTopCake structured start
         (cakeDeclarations, compileProgTopHOLWithMetadata cakeDeclarations)
+  (simplified, structured, compiled)
+
+/-- Source declaration view of the shared executed prefix, before Pan-to-Crep.
+    This caller view has no separate HOL declaration. -/
+def frontendCakeDeclarations {width : Nat} [NeZero width]
+    (start : FunName) (declarations : List (Decl (BitVec width))) :
+    List (Decl (BitVec width)) :=
+  globalCompileTopCake (structCompileTop
+    (panSimpDecls (panTargetMoveStartToFront start declarations))) start
+
+/-- Source byte ranges discharge every intermediate prefix codec premise. -/
+theorem frontendCakeDeclarations_byteRanged {width : Nat} [NeZero width]
+    (start : FunName) (declarations : List (Decl (BitVec width)))
+    (source : ∀ d ∈ declarations, DeclByteRanged d) :
+    ∀ d ∈ frontendCakeDeclarations start declarations, DeclByteRanged d :=
+  globalCompileTopCake_byteRanged _ start
+    (structCompileTop_byteRanged _
+      (panSimpDecls_byteRanged _
+        (panTargetMoveStartToFront_byteRanged start declarations source)))
+
+/-- The actual shared prefix supplies raw native metadata, without running a
+    second arithmetic simplification or assuming its compiled payload. -/
+theorem compileFlapjackFrontendCake_raw {width : Nat} [NeZero width]
+    (start : FunName)
+    (declarations : List (Decl (BitVec width)))
+    (source : ∀ d ∈ declarations, DeclByteRanged d) :
+    (compileFlapjackFrontendCake start declarations (some (.isTrue source))).2.2.2 =
+      compileProgNativeWithMetadata (frontendCakeDeclarations start declarations)
+        (frontendCakeDeclarations_byteRanged start declarations source) := by
+  unfold compileFlapjackFrontendCake frontendCakeDeclarations
+  simp only [panSimpDeclsRouted_eq, structCompileTopHOLExact_eq_legacyOfByteRanged,
+    globalCompileTopCakeRouted_eq, compileProgNativeWithMetadataRouted_native]
+
+/-- Native original-label consumer of the raw prefix shared by the executed
+    frontend. Downstream CLI/WordToStack assembly is tracked separately. -/
+def compileFlapjackFrontendLoopNative? {width : Nat} [NeZero width]
+    (start : FunName)
+    (declarations : List (Decl (BitVec width)))
+    (source : ∀ d ∈ declarations, DeclByteRanged d) :
+    Option (List (Nat × List Nat × HolLoopProg width)) :=
+  CrepToLoopProduction.compileProgFromProduction?
+    (compileFlapjackFrontendCake start declarations (some (.isTrue source))).2.2.2
+
+/-- Real source inputs discharge the full native producer guard. The result
+    retains original 64+n labels and every original payload field. -/
+theorem compileFlapjackFrontendLoopNative_original {width : Nat} [NeZero width]
+    (start : FunName)
+    (declarations : List (Decl (BitVec width)))
+    (source : ∀ d ∈ declarations, DeclByteRanged d) :
+    compileFlapjackFrontendLoopNative? start declarations source =
+      some (compileProgHOLExact .riscv
+        (compileProgDeclsHOLW ((frontendCakeDeclarations start declarations).map
+          Pancake.PanLang.declToHOL))) := by
+  unfold compileFlapjackFrontendLoopNative?
+  rw [compileFlapjackFrontendCake_raw]
+  exact CrepToLoopProduction.compileDeclarationsToLoopNative_original
+    (frontendCakeDeclarations start declarations)
+    (frontendCakeDeclarations_byteRanged start declarations source)
+
+def compileFlapjackEntryCake {width : Nat} [NeZero width]
+    [BEq (BitVec width)] [OfNat (BitVec width) 0]
+    [OfNat (BitVec width) 1] [Add (BitVec width)] [Mul (BitVec width)]
+    [AndOp (BitVec width)] [ShiftRight (BitVec width)]
+    [PanShiftWidth (BitVec width)]
+    (architecture : RiscV.Architecture) (bytesInWord : BitVec width)
+    (fromNat : Nat → BitVec width) (start : FunName)
+    (declarations : List (Decl (BitVec width)))
+    (hdeclarations : Option (Decidable
+      (∀ declaration ∈ declarations, DeclByteRanged declaration)) := none) :
+    Option (FlapjackPipelineResult (BitVec width)) :=
+  let frontend := compileFlapjackFrontendCake start declarations hdeclarations
+  let simplified := frontend.1
+  let structured := frontend.2.1
+  let compiled := frontend.2.2
   let cakeDeclarations := compiled.1
   match cakeDeclarations with
   | [] => none
@@ -1319,7 +1398,7 @@ theorem compileFlapjackEntryCake_ofExact_eq {width : Nat} [NeZero width]
     compileFlapjackEntryCake architecture bytesInWord fromNat start declarations
         (some (.isTrue h)) =
       compileFlapjackEntryCake architecture bytesInWord fromNat start declarations none := by
-  unfold compileFlapjackEntryCake
+  unfold compileFlapjackEntryCake compileFlapjackFrontendCake
   simp only [panSimpDeclsRouted_eq, structCompileTopHOLExact_eq_legacyOfByteRanged,
     globalCompileTopCakeRouted_eq, compileProgNativeWithMetadataRouted_eq]
 

@@ -8469,3 +8469,10 @@ not tagged as a port of the whole compiler. Regenerate with
 `HOL_PROBE_ONLY=pan_target_entry_first_match_probeScript.sml`.
 
 `riscv_memory_decode_probe.out` records each literal LD/LWU/LHU/LBU/SD/SW/SH/SB original Encode clause and intrinsic word5/word12 carriers, zero source hypotheses, and Decode/Encode evaluations at all-zero, all-one, and mixed-register/sign-offset inputs. Lean proves unrestricted roundtrips including zero registers and all offsets; finite probes are regression evidence, not universal equivalence. Full memory encoder correctness remains a dependency-linked open task.
+
+`pan_native_frontend_prefix_probeScript.sml` evaluates the complete source
+prefix (original first LET, pan_simp, pan_structs, pan_globals), raw Pan-to-Crep
+metadata payload and original Crep-to-Loop rows for a forward source call.
+It preserves original generated names and row labels; no generic Crep
+simplification or relabel bridge is inserted. This is regression evidence,
+not a whole-CLI execution-equivalence proof.

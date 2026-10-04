@@ -1091,6 +1091,7 @@ import Flapjack.Test.CrepArithExtCallParity
 import Flapjack.Test.CrepArithIfParity
 import Flapjack.Test.CrepToLoopCompileProgParity
 import Flapjack.Test.CrepToLoopOriginalNamesProductionParity
+import Flapjack.Test.PanNativeFrontendPrefixParity
 import Flapjack.Test.PanTargetEntryParity
 import Flapjack.Test.CrepToLoopNativeDeclarationsParity
 import Flapjack.Test.LoopCallEnvParity
@@ -1941,6 +1942,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.CrepArithExactParity.runChecks,
     Flapjack.Test.CrepToLoopCompileProgParity.runChecks,
     Flapjack.Test.CrepToLoopOriginalNamesProductionParity.runChecks,
+    Flapjack.Test.PanNativeFrontendPrefixParity.runChecks,
     Flapjack.Test.PanTargetEntryParity.runChecks,
     Flapjack.Test.CrepToLoopNativeDeclarationsParity.runChecks,
     Flapjack.Test.LoopCallEnvParity.runChecks,
