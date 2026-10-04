@@ -28,6 +28,8 @@ import Flapjack.Pancake.Proofs.PanToTarget.CompileProgEq
 import Flapjack.Pancake.Proofs.PanToTarget.WordToWordNoInstall
 import Flapjack.Pancake.Proofs.PanToTarget.StackSizeConst
 import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMax
+import Flapjack.Pancake.Proofs.PanToTarget.ConstMemory
+import Flapjack.Pancake.Proofs.PanToTarget.MemorySwap
 import Flapjack.Compiler.Backend.WordDepth
 import Flapjack.Pancake.Proofs.PanToWord.StateRelImpSemantics
 import Flapjack.Pancake.Proofs.PanToWord.NoInstallCode
@@ -164,6 +166,7 @@ import Flapjack.RiscV.L3.Step.ImmediateALUStep
 import Flapjack.RiscV.L3.Step.ImmediateComparison
 import Flapjack.RiscV.L3.Step.UpperImmediateStep
 import Flapjack.RiscV.L3.Step.JumpStep
+import Flapjack.RiscV.L3.Step.RegisterComparison
 import Flapjack.RiscV.L3.Step.ImmediateShiftStep
 import Flapjack.RiscV.L3.Step.RegisterShiftStep
 import Flapjack.RiscV.L3.Step.WShiftStep
@@ -795,6 +798,7 @@ import Flapjack.Compiler.Backend.WordCse.ProductionFactAux
 import Flapjack.Compiler.Backend.WordCse.ProductionMemory
 import Flapjack.Compiler.Backend.WordCse.ProductionArithmetic
 import Flapjack.Compiler.Backend.WordCse.ProductionHeapLoc
+import Flapjack.Compiler.Backend.WordCse.ProductionAssign
 import Flapjack.Compiler.Backend.WordCse.FactProducers
 import Flapjack.Compiler.Backend.WordCse.Join
 import Flapjack.Compiler.Backend.WordCse.Proofs.InNamesSet
