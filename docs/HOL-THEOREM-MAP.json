@@ -98544,5 +98544,37 @@
     "lean_name": "panToTargetMachineLabSource",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1316-1440, stage A4): panToTargetMachineLabOfGoodCode with good_code from the source-level stage A2 (panToTargetGoodCodeFromSource, via pan_to_word_every_inst_ok_less and the configuration's zero offsets) over the top theorem's pancake_good_code; all premises are compile_prog_max results, configuration hypotheses, pan_installed components and top-theorem hypotheses."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/ProductionStoreConsts.lean",
+    "lean_name": "actualCaller",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific production StoreConsts caller/nativecode/fullprojectedstate/macroboundary transport, no separate HOL declaration. Originalword_to_stack comp532-534 consumes constWordsToBitmapW(constants,LENGTH), index register1 n2w wrapping, fixedsource storeConstsStubLocation6; StackRemove203-209 reads indexreg1 and ignoresstub. Nativecode equality through actual WordPayloads includes arbitrary storedcounts/index and all original inputregisters/configurations; nativeAppList observed via flatten and fullcount retained. Actual typed fusedconsumer supplies nativeproducer; legacygenericNathelper remains separate. No manufactured bound/scratchconfiguration/targetrun/desiredoutput premise; whole WordToStack/nativeproduction remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/ProductionStoreConsts.lean",
+    "lean_name": "code",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific production StoreConsts caller/nativecode/fullprojectedstate/macroboundary transport, no separate HOL declaration. Originalword_to_stack comp532-534 consumes constWordsToBitmapW(constants,LENGTH), index register1 n2w wrapping, fixedsource storeConstsStubLocation6; StackRemove203-209 reads indexreg1 and ignoresstub. Nativecode equality through actual WordPayloads includes arbitrary storedcounts/index and all original inputregisters/configurations; nativeAppList observed via flatten and fullcount retained. Actual typed fusedconsumer supplies nativeproducer; legacygenericNathelper remains separate. No manufactured bound/scratchconfiguration/targetrun/desiredoutput premise; whole WordToStack/nativeproduction remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/ProductionStoreConsts.lean",
+    "lean_name": "state",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific production StoreConsts caller/nativecode/fullprojectedstate/macroboundary transport, no separate HOL declaration. Originalword_to_stack comp532-534 consumes constWordsToBitmapW(constants,LENGTH), index register1 n2w wrapping, fixedsource storeConstsStubLocation6; StackRemove203-209 reads indexreg1 and ignoresstub. Nativecode equality through actual WordPayloads includes arbitrary storedcounts/index and all original inputregisters/configurations; nativeAppList observed via flatten and fullcount retained. Actual typed fusedconsumer supplies nativeproducer; legacygenericNathelper remains separate. No manufactured bound/scratchconfiguration/targetrun/desiredoutput premise; whole WordToStack/nativeproduction remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/ProductionStoreConsts.lean",
+    "lean_name": "macroBoundary",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific production StoreConsts caller/nativecode/fullprojectedstate/macroboundary transport, no separate HOL declaration. Originalword_to_stack comp532-534 consumes constWordsToBitmapW(constants,LENGTH), index register1 n2w wrapping, fixedsource storeConstsStubLocation6; StackRemove203-209 reads indexreg1 and ignoresstub. Nativecode equality through actual WordPayloads includes arbitrary storedcounts/index and all original inputregisters/configurations; nativeAppList observed via flatten and fullcount retained. Actual typed fusedconsumer supplies nativeproducer; legacygenericNathelper remains separate. No manufactured bound/scratchconfiguration/targetrun/desiredoutput premise; whole WordToStack/nativeproduction remains open."
   }
 ]

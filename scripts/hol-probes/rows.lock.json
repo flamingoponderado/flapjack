@@ -1966,6 +1966,7 @@
     {"bytes": 119, "out": "word_to_stack_stack_size_rel_probe.out", "rows": 8, "sha256": "0c0b6449bd3c8e10dff7f05a9c8aaebe75adcf9bdd78408199b81cc78e61eef1"},
     {"bytes": 147, "out": "word_to_stack_stack_slots_probe.out", "rows": 7, "sha256": "6b8a06b9e040f3573e0718815ed12b532021e757261c59e8a2132aa9ea7d1a05"},
     {"bytes": 2943, "out": "word_to_stack_state_rel_probe.out", "rows": 3, "sha256": "9b00ec0c1397fb539f863cc07988721d158d6d296f641d3f06e566319289e9e9"},
+    {"bytes": 2751, "out": "word_to_stack_store_consts_caller_probe.out", "rows": 9, "sha256": "9436a40258be87813d66b887da17aa69ef5e56a6ceeea64d3b91d28d0ea1bd77"},
     {"bytes": 896, "out": "word_to_stack_store_reg1_zero_probe.out", "rows": 3, "sha256": "34aa99890779e1e8b4390791107477cd6adedf1d1f851e2f17b6951d8092d833"},
     {"bytes": 1533, "out": "word_to_stack_store_register2_probe.out", "rows": 6, "sha256": "833dc4fd2d1387940992243820dec0f7db2d8acb5fcac4b2604d0becf307a539"},
     {"bytes": 675, "out": "word_to_stack_store_register_probe.out", "rows": 6, "sha256": "4ebfb4ed266feefa89a3f171150cd9784e280d3e1e72f4ce1ca0795352a1f155"},
