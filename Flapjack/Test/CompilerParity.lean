@@ -288,6 +288,7 @@ import Flapjack.Test.LabToTargetPaddingParity
 import Flapjack.Test.LabToTargetRemoveLabelsParity
 import Flapjack.Test.LabToTargetShmemInfoParity
 import Flapjack.Test.LabToTargetCompileParity
+import Flapjack.Test.SourceToFlatPrimConfigParity
 import Flapjack.Test.MiscLookupAnyFindIndexParity
 import Flapjack.Test.StackPropsClockSupportParity
 import Flapjack.Test.StackToLabExecutedCodecParity
@@ -1581,6 +1582,7 @@ def main : IO Unit := do
     Flapjack.Test.LabToTargetRemoveLabelsParity.runChecks,
     Flapjack.Test.LabToTargetShmemInfoParity.runChecks,
     Flapjack.Test.LabToTargetCompileParity.runChecks,
+    Flapjack.Test.SourceToFlatPrimConfigParity.runChecks,
     Flapjack.Test.MiscLookupAnyFindIndexParity.runChecks,
 
     checkEq "Cake return 0 generated words"

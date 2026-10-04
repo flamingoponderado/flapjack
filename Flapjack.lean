@@ -76,6 +76,10 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.MoveSourceState
 import Flapjack.Misc.Sptree.AlistInsertReverse
 import Flapjack.Misc.Address
 import Flapjack.Misc.Fun2SetUnion
+import Flapjack.Misc.UpdateList
+import Flapjack.Misc.DivModLemmas
+import Flapjack.Misc.DisjointInter
+import Flapjack.Misc.WordLsImp
 import Flapjack.RiscV.CorrectnessEncoding.DecodeConst
 import Flapjack.RiscV.CorrectnessEncoding.DecodeBinop
 import Flapjack.RiscV.CorrectnessEncoding.BinopRun
@@ -85,7 +89,10 @@ import Flapjack.RiscV.CorrectnessEncoding.Binop
 import Flapjack.RiscV.CorrectnessEncoding.Const32
 import Flapjack.Compiler.Backend.Backend
 import Flapjack.Compiler.Backend.BackendProof.MachineInit
+import Flapjack.Compiler.Backend.BackendProof.WordToStackSfs
 import Flapjack.Compiler.Backend.BackendProof.CompileLab
+import Flapjack.Compiler.Backend.BackendProof.ConfigOk
+import Flapjack.Compiler.Backend.BackendProof.ReadLimits
 import Flapjack.RiscV.CorrectnessEncoding.ConstWide
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxSimulation
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxReconstruction
@@ -107,6 +114,9 @@ import Flapjack.AstHOL.BackendOperators
 import Flapjack.AstHOL.LitOp
 import Flapjack.AstHOL.Syntax
 import Flapjack.PrimTypesHOL
+import Flapjack.Compiler.Backend.SourceToFlat.CompileExp
+import Flapjack.Compiler.Backend.SourceToFlat.CompileDecs
+import Flapjack.Compiler.Backend.Backend.PrimSrcConfig
 import Flapjack.Misc.Location
 import Flapjack.Compiler.Backend.BackendCommon.Operators
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsCorrect
@@ -1464,6 +1474,7 @@ import Flapjack.Compiler.Backend.WordGcFunctions
 import Flapjack.Compiler.Backend.WordGcFunctions.Roots
 import Flapjack.Compiler.Backend.WordGcFunctions.HasFpOps
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.InitStoreOk
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordLemmas
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunOk
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunConstOk
 import Flapjack.Compiler.Backend.WordSimp.Proofs.GcWordConst

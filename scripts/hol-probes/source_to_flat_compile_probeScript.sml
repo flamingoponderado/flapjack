@@ -1,0 +1,10 @@
+load "source_to_flatTheory"; load "backendTheory";
+open HolKernel Parse boolLib bossLib source_to_flatTheory;
+val _ = Globals.linewidth := 1000000;
+val _ = if null (hyp (compile_exp_def)) then () else raise Fail "hypotheses: compile_exp_def";
+val _ = (print "compile_exp_def_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (compile_exp_def)); print "\n");
+val _ = if null (hyp (compile_decs_def)) then () else raise Fail "hypotheses: compile_decs_def";
+val _ = (print "compile_decs_def_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (compile_decs_def)); print "\n");
+val _ = if null (hyp (empty_config_def)) then () else raise Fail "hypotheses: empty_config_def";
+val _ = (print "empty_config_def_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (empty_config_def)); print "\n");
+val _ = (print "prim_src_config_eq="; print_term (concl backendTheory.prim_src_config_eq); print "\n");
