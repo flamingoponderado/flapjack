@@ -93440,5 +93440,198 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.8): original data_to_word_gcProofScript.sml:6409-6417, captured by the data_to_word_gc_fun_const_ok probe: gc_fun_const_ok (word_gc_fun c) with c : data_to_word$config implicit, over the reviewed word_simpProof gc_fun_const_ok (WordSimp.gcFunConstOk) and word_gcFunctions word_gc_fun (wordGcFun); the type ascription on wordGcFun only fixes the word width. Proof follows HOL: word_gc_IMP_EVERY2 then LIST_REL_mono (ListRel to List.Forall₂). No added premise."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "no_alloc_word_evaluate",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/StackSizeConst.lean",
+    "lean_name": "no_alloc_word_evaluate",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.6): compared with the literal-source replay pan_to_target_stack_size_source_replay (statement re-proved there with HOL's own tactic; pan_to_targetProofTheory is unbuilt). HOL's free variables are explicit binders in order of appearance; no_install/no_alloc are the tagged noInstallSubprogsHOL/noAllocSubprogsHOL, no_*_code the tagged WordProps.no*Code, wordSem evaluate/inst/share_inst the tagged evaluate/inst/shareInst (result width = state width), word_to_word_compile/pan_to_word_compile_prog (script overloads) the tagged WordToWord.compile/panToWordCompileProgHOL, functions the tagged functionsHOL over the reviewed MlS names, ALL_DISTINCT (MAP FST) is List.Nodup, fromAList is sptFromAList, c : backend$config the tagged Backend.Config and mc the tagged MachineConfig with independent state/projection carriers. fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Proof by an untagged recursion on HOL's termination measure (as code_evaluate), not HOL's evaluate_ind script; only Alloc yields NotEnoughSpace. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate/inst, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "panLang_wordSem_neq_NotEnoughSpace",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/StackSizeConst.lean",
+    "lean_name": "panLang_wordSem_neq_NotEnoughSpace",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.6): compared with the literal-source replay pan_to_target_stack_size_source_replay (statement re-proved there with HOL's own tactic; pan_to_targetProofTheory is unbuilt). HOL's free variables are explicit binders in order of appearance; no_install/no_alloc are the tagged noInstallSubprogsHOL/noAllocSubprogsHOL, no_*_code the tagged WordProps.no*Code, wordSem evaluate/inst/share_inst the tagged evaluate/inst/shareInst (result width = state width), word_to_word_compile/pan_to_word_compile_prog (script overloads) the tagged WordToWord.compile/panToWordCompileProgHOL, functions the tagged functionsHOL over the reviewed MlS names, ALL_DISTINCT (MAP FST) is List.Nodup, fromAList is sptFromAList, c : backend$config the tagged Backend.Config and mc the tagged MachineConfig with independent state/projection carriers. fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Proof follows HOL: first_compile_prog_all_distinct, pan_to_word_compile_prog_no_*_code, word_to_word_compile_no_install_no_alloc and no_alloc_word_evaluate. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate/inst, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "inst_stack_size_const_panLang",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/StackSizeConst.lean",
+    "lean_name": "inst_stack_size_const_panLang",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.6): compared with the literal-source replay pan_to_target_stack_size_source_replay (statement re-proved there with HOL's own tactic; pan_to_targetProofTheory is unbuilt). HOL's free variables are explicit binders in order of appearance; no_install/no_alloc are the tagged noInstallSubprogsHOL/noAllocSubprogsHOL, no_*_code the tagged WordProps.no*Code, wordSem evaluate/inst/share_inst the tagged evaluate/inst/shareInst (result width = state width), word_to_word_compile/pan_to_word_compile_prog (script overloads) the tagged WordToWord.compile/panToWordCompileProgHOL, functions the tagged functionsHOL over the reviewed MlS names, ALL_DISTINCT (MAP FST) is List.Nodup, fromAList is sptFromAList, c : backend$config the tagged Backend.Config and mc the tagged MachineConfig with independent state/projection carriers. fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Projection of the tagged inst_const_full. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate/inst, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "inst_stack_limit_const_panLang",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/StackSizeConst.lean",
+    "lean_name": "inst_stack_limit_const_panLang",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.6): compared with the literal-source replay pan_to_target_stack_size_source_replay (statement re-proved there with HOL's own tactic; pan_to_targetProofTheory is unbuilt). HOL's free variables are explicit binders in order of appearance; no_install/no_alloc are the tagged noInstallSubprogsHOL/noAllocSubprogsHOL, no_*_code the tagged WordProps.no*Code, wordSem evaluate/inst/share_inst the tagged evaluate/inst/shareInst (result width = state width), word_to_word_compile/pan_to_word_compile_prog (script overloads) the tagged WordToWord.compile/panToWordCompileProgHOL, functions the tagged functionsHOL over the reviewed MlS names, ALL_DISTINCT (MAP FST) is List.Nodup, fromAList is sptFromAList, c : backend$config the tagged Backend.Config and mc the tagged MachineConfig with independent state/projection carriers. fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Projection of the tagged inst_const_full. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate/inst, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "inst_stack_max_const_panLang",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/StackSizeConst.lean",
+    "lean_name": "inst_stack_max_const_panLang",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.6): compared with the literal-source replay pan_to_target_stack_size_source_replay (statement re-proved there with HOL's own tactic; pan_to_targetProofTheory is unbuilt). HOL's free variables are explicit binders in order of appearance; no_install/no_alloc are the tagged noInstallSubprogsHOL/noAllocSubprogsHOL, no_*_code the tagged WordProps.no*Code, wordSem evaluate/inst/share_inst the tagged evaluate/inst/shareInst (result width = state width), word_to_word_compile/pan_to_word_compile_prog (script overloads) the tagged WordToWord.compile/panToWordCompileProgHOL, functions the tagged functionsHOL over the reviewed MlS names, ALL_DISTINCT (MAP FST) is List.Nodup, fromAList is sptFromAList, c : backend$config the tagged Backend.Config and mc the tagged MachineConfig with independent state/projection carriers. fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Projection of the tagged inst_const_full. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate/inst, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "share_inst_modifies",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/StackSizeConst.lean",
+    "lean_name": "share_inst_modifies",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.6): compared with the literal-source replay pan_to_target_stack_size_source_replay (statement re-proved there with HOL's own tactic; pan_to_targetProofTheory is unbuilt). HOL's free variables are explicit binders in order of appearance; no_install/no_alloc are the tagged noInstallSubprogsHOL/noAllocSubprogsHOL, no_*_code the tagged WordProps.no*Code, wordSem evaluate/inst/share_inst the tagged evaluate/inst/shareInst (result width = state width), word_to_word_compile/pan_to_word_compile_prog (script overloads) the tagged WordToWord.compile/panToWordCompileProgHOL, functions the tagged functionsHOL over the reviewed MlS names, ALL_DISTINCT (MAP FST) is List.Nodup, fromAList is sptFromAList, c : backend$config the tagged Backend.Config and mc the tagged MachineConfig with independent state/projection carriers. fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. HOL record update with five fields as the Lean structure update; existential carriers Spt (WordLocW width), HolFfiState F, stack frames, Option Nat locals size and the canonical HolFiniteMapExact store."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "evaluate_stack_size_limit_const_panLang",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/StackSizeConst.lean",
+    "lean_name": "evaluate_stack_size_limit_const_panLang",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.6): compared with the literal-source replay pan_to_target_stack_size_source_replay (statement re-proved there with HOL's own tactic; pan_to_targetProofTheory is unbuilt). HOL's free variables are explicit binders in order of appearance; no_install/no_alloc are the tagged noInstallSubprogsHOL/noAllocSubprogsHOL, no_*_code the tagged WordProps.no*Code, wordSem evaluate/inst/share_inst the tagged evaluate/inst/shareInst (result width = state width), word_to_word_compile/pan_to_word_compile_prog (script overloads) the tagged WordToWord.compile/panToWordCompileProgHOL, functions the tagged functionsHOL over the reviewed MlS names, ALL_DISTINCT (MAP FST) is List.Nodup, fromAList is sptFromAList, c : backend$config the tagged Backend.Config and mc the tagged MachineConfig with independent state/projection carriers. fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Stack limit from the tagged evaluate_consts; stack size by an untagged recursion on HOL's termination measure (as code_evaluate). no_alloc premises retained, unused on this route. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate/inst, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "option_lt_SOME",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/StackSizeConst.lean",
+    "lean_name": "option_lt_SOME",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.6): option_lt x (SOME n) = (∃m. x = SOME m ∧ m < n) over the tagged option_lt_def (optionLt, HOL bool as Lean Bool); HOL's Boolean equation as ↔ on optionLt … = true; compared with the literal-source replay pan_to_target_stack_size_source_replay."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/StackSizeConst.lean",
+    "lean_name": "memStore_stackSize",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for pan_to_targetProof no_alloc_word_evaluate / evaluate_stack_size_limit_const_panLang: a leaf constancy fact (memStore, jumpExc, alloc, shareInst, popEnv keep the stack-size map; shareInst never returns NotEnoughSpace) or an untagged recursion on HOL's evaluate termination measure replacing HOL's evaluate_ind script; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/StackSizeConst.lean",
+    "lean_name": "jumpExc_stackSize",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for pan_to_targetProof no_alloc_word_evaluate / evaluate_stack_size_limit_const_panLang: a leaf constancy fact (memStore, jumpExc, alloc, shareInst, popEnv keep the stack-size map; shareInst never returns NotEnoughSpace) or an untagged recursion on HOL's evaluate termination measure replacing HOL's evaluate_ind script; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/StackSizeConst.lean",
+    "lean_name": "alloc_stackSize",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for pan_to_targetProof no_alloc_word_evaluate / evaluate_stack_size_limit_const_panLang: a leaf constancy fact (memStore, jumpExc, alloc, shareInst, popEnv keep the stack-size map; shareInst never returns NotEnoughSpace) or an untagged recursion on HOL's evaluate termination measure replacing HOL's evaluate_ind script; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/StackSizeConst.lean",
+    "lean_name": "shareInst_stackSize",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for pan_to_targetProof no_alloc_word_evaluate / evaluate_stack_size_limit_const_panLang: a leaf constancy fact (memStore, jumpExc, alloc, shareInst, popEnv keep the stack-size map; shareInst never returns NotEnoughSpace) or an untagged recursion on HOL's evaluate termination measure replacing HOL's evaluate_ind script; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/StackSizeConst.lean",
+    "lean_name": "popEnv_stackSize",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for pan_to_targetProof no_alloc_word_evaluate / evaluate_stack_size_limit_const_panLang: a leaf constancy fact (memStore, jumpExc, alloc, shareInst, popEnv keep the stack-size map; shareInst never returns NotEnoughSpace) or an untagged recursion on HOL's evaluate termination measure replacing HOL's evaluate_ind script; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/StackSizeConst.lean",
+    "lean_name": "stackSize_evaluate_const",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for pan_to_targetProof no_alloc_word_evaluate / evaluate_stack_size_limit_const_panLang: a leaf constancy fact (memStore, jumpExc, alloc, shareInst, popEnv keep the stack-size map; shareInst never returns NotEnoughSpace) or an untagged recursion on HOL's evaluate termination measure replacing HOL's evaluate_ind script; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/StackSizeConst.lean",
+    "lean_name": "stackSize_evaluate",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for pan_to_targetProof no_alloc_word_evaluate / evaluate_stack_size_limit_const_panLang: a leaf constancy fact (memStore, jumpExc, alloc, shareInst, popEnv keep the stack-size map; shareInst never returns NotEnoughSpace) or an untagged recursion on HOL's evaluate termination measure replacing HOL's evaluate_ind script; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/StackSizeConst.lean",
+    "lean_name": "shareInst_ne_notEnoughSpace",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for pan_to_targetProof no_alloc_word_evaluate / evaluate_stack_size_limit_const_panLang: a leaf constancy fact (memStore, jumpExc, alloc, shareInst, popEnv keep the stack-size map; shareInst never returns NotEnoughSpace) or an untagged recursion on HOL's evaluate termination measure replacing HOL's evaluate_ind script; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/StackSizeConst.lean",
+    "lean_name": "noSpace_evaluate_const",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for pan_to_targetProof no_alloc_word_evaluate / evaluate_stack_size_limit_const_panLang: a leaf constancy fact (memStore, jumpExc, alloc, shareInst, popEnv keep the stack-size map; shareInst never returns NotEnoughSpace) or an untagged recursion on HOL's evaluate termination measure replacing HOL's evaluate_ind script; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/StackSizeConst.lean",
+    "lean_name": "noSpace_evaluate",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for pan_to_targetProof no_alloc_word_evaluate / evaluate_stack_size_limit_const_panLang: a leaf constancy fact (memStore, jumpExc, alloc, shareInst, popEnv keep the stack-size map; shareInst never returns NotEnoughSpace) or an untagged recursion on HOL's evaluate termination measure replacing HOL's evaluate_ind script; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/StackSizeConst.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module re-export of the existing WordSemStateExact toBroad/ofBroad finite-support roundtrip, required by the fmap_as_finite_support qualifiers on the tagged pan_to_targetProof stack-size group ports. It introduces no carrier and has no separate HOL declaration."
   }
 ]
