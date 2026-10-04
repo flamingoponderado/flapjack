@@ -7,8 +7,10 @@ namespace Flapjack.Compiler.Backend.WordSimp
 
 /-- HOL's left-Skip elimination over the exact WordLang carrier.
 Pattern matching implements the source's `p1 = Skip` test without comparing
-irrelevant function-backed payloads of other constructors. Production still uses
-the distinct broad `WordProg` carrier; routing is tracked on .15.1.6. -/
+irrelevant function-backed payloads of other constructors. Production's distinct
+`WordProg` carrier operation and full folds correspond through the encoder in
+`ProductionSmartSeq`; its measured full-codec performance exception is recorded
+in `docs/benchmarks/smartseq-production/README.md`. -/
 @[hol "cakeml/compiler/backend/word_simpScript.sml" "SmartSeq_def"
   (words_as_type_indexed_bitvec)]
 def smartSeqHOL {width : Nat} [NeZero width]

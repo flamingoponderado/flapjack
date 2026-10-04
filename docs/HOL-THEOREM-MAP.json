@@ -98737,5 +98737,29 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus3: compared original full SubOverflow constructor at riscv_targetProof658-663, original riscv_target158-164 XOR31/SUB/XOR/XORI(-1)/AND/SRLI63 expansion, asmSem arith_upd (r1 := w2-w3, r4 := signed-overflow flag, flag write last) and asm arith_ok (only r1<>r3), and full encoder_correct_def. Typed specialization riscv_target_suboverflow_probe: hypotheses 0, proved T; HOL specialization and Lean statement identical to the reviewed AddOverflow case modulo the constructor. Only original asmStep plus initial targetStateRel; complete existential n, every environment with original interferenceOk, both assertions, code bytes, PC range and final full relation. Every native fetch/decode/Run/Next derived from literal encoded bytes; untagged arithmetic shows the circuit equals HOL signed subtraction overflow for all word64 pairs. Broad native Run/target closure inherits reals_as_rational_cuts, the rational-cut assurance limit SOUNDNESS8; no executed route change."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/ProductionSmartSeq.lean",
+    "lean_name": "smartSeq_production",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack production encoder correspondence for the complete reviewed native SmartSeq and prefix folds; input carrier encodings identify the source image, output correspondence is derived. No separate HOL original or HOL-to-Lean equivalence proof. Optimized executed constructor operation retained under documented real-source measured full-codec performance exception; broader rejected instruction extension and whole WordSimp/compiler simulation remain separate."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/ProductionSmartSeq.lean",
+    "lean_name": "smartSeqFold_production",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack production encoder correspondence for the complete reviewed native SmartSeq and prefix folds; input carrier encodings identify the source image, output correspondence is derived. No separate HOL original or HOL-to-Lean equivalence proof. Optimized executed constructor operation retained under documented real-source measured full-codec performance exception; broader rejected instruction extension and whole WordSimp/compiler simulation remain separate."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/ProductionSmartSeq.lean",
+    "lean_name": "smartSeqLeftSeq_production",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack production encoder correspondence for the complete reviewed native SmartSeq and prefix folds; input carrier encodings identify the source image, output correspondence is derived. No separate HOL original or HOL-to-Lean equivalence proof. Optimized executed constructor operation retained under documented real-source measured full-codec performance exception; broader rejected instruction extension and whole WordSimp/compiler simulation remain separate."
   }
 ]
