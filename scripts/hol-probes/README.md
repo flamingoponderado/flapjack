@@ -8511,3 +8511,20 @@ The general kernel theorem composes all six original passes from source
 byte ranges; actual downstream CLI/WordToStack routing remains separate.
 
 `riscv_memory_run_probe.out` records actual original RV64/bare Run observations for all four unsigned/full loads and four stores: zero-register no-op, aliases, signed offsets, unaligned addresses permitted by the literal model, full register/core frames and whole-state memory-update frames. Literal original Run clauses and full word5/word12/native-state carriers are also captured with zero source hypotheses. These are finite regression observations, not equivalence. Lean proves each arbitrary-field Run equation using only original riscvOk; full Mem source obligations, fetch/Next, interference and assertions remain open.
+
+### Universal native JAL and JALR decoder prerequisites
+
+`CorrectnessEncoding/DecodeControl.lean` proves unconditional compositions of
+actual `Encode` and `Step.DecodeAny` for all JAL word5 destinations and word20
+logical halfword offsets, and all JALR word5 destinations/sources and word12
+byte offsets. The original model has the same carriers and layouts:
+`riscvScript.sml` UJtype lines 19025–19033 and Encode clauses 19099/19107.
+The scattered JAL immediate reconstructs all twenty bits; JALR retains aliased
+link/source registers. These untagged local composition lemmas have no separately
+named original theorem and introduce no decoder or target-execution premise.
+
+`riscv_control_decode_probeScript.sml` proves both universally quantified
+compositions in the original HOL kernel with zero hypotheses. Eight boundary
+EVALs include zero, all ones, sign bits, scattered offsets, and rd=rs1; captured
+source clauses and carrier types supplement the universal proofs. These are
+prerequisites for Jump, Call and far JumpCmp, not full encoder correctness.
