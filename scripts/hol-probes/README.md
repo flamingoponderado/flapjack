@@ -8094,3 +8094,9 @@ prebuilt original theory cache. This is original theorem regression evidence,
 not a cross-language equivalence proof. `check-riscv-target-const.py` pins the
 full Lean statement, original assertion definition and all four probe rows;
 its mutation tests reject extra premises, false oracle evidence and lost rows.
+
+The `word_to_word_install` probe captures the complete original closed typed
+`compile_single_correct` theorem and its original kernel-proved Install
+specialization. `GEN_ALL` closes every binder; the specialization has zero
+hypotheses. These are original-theory captures, not a local replay or an
+independent cross-language equivalence proof.

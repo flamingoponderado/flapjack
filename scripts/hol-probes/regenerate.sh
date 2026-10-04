@@ -7708,3 +7708,7 @@ run_probe pan_to_target_source_probeScript.sml pan_to_target_source_probe.out \
   exports_def compile_prog_def exports_type compile_prog_type zip_def splitp_def compile_prog_main_binding \
   main_empty_names main_missing_names main_already_first_names main_later_names main_nonempty_missing_names main_first_only_duplicates_names exports_empty exports_flags_duplicates \
   "$cake_dir/pancake/pan_to_targetScript.sml" "$cake_dir/pancake"
+
+run_probe word_to_word_install_probeScript.sml word_to_word_install_probe.out \
+  compile_single_correct_typed compile_single_correct_install_typed compile_single_correct_install_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
