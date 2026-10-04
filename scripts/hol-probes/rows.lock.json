@@ -9464,6 +9464,12 @@
       "sha256": "aa3a2e5d92c472ac664129a1be69cc13d5d3fba2270c969df0c5ac88baf03c95"
     },
     {
+      "bytes": 13136,
+      "out": "word_inst_selector_executable_probe.out",
+      "rows": 39,
+      "sha256": "04ad8f0e5e66fafeae121d04e9dbd05d92ed4d313929984efdddb205f4098088"
+    },
+    {
       "bytes": 1127,
       "out": "word_inst_three_to_two_probe.out",
       "rows": 7,

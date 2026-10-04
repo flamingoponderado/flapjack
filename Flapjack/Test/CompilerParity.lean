@@ -1179,6 +1179,7 @@ import Flapjack.Test.WordGcFunOkParity
 import Flapjack.Test.WordSimpCompileExpParity
 import Flapjack.Test.WordInstSelectExactParity
 import Flapjack.Test.WordInstPullExpExecutableParity
+import Flapjack.Test.WordInstSelectorExecutableParity
 
 
 
@@ -1940,6 +1941,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.RiscVMemOpParity.runChecks,
     Flapjack.Test.WordInstNormalizeParity.runChecks,
     Flapjack.Test.WordInstPullExpExecutableParity.runChecks,
+    Flapjack.Test.WordInstSelectorExecutableParity.runChecks,
     Flapjack.Test.CakeForcedParity.runChecks,
     Flapjack.Test.CakeMkBijParity.runChecks,
     Flapjack.Test.CakeSsaSetupParity.runChecks,

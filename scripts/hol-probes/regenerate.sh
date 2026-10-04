@@ -6653,6 +6653,10 @@ run_probe word_inst_pull_exp_executable_probeScript.sml word_inst_pull_exp_execu
   pull_exp_definition optimize_consts_definition word_op_definition pull_exp_type add_empty and_empty or_empty xor_empty sub_empty sub_single sub_pair sub_var_const sub_three add_constants add_mixed add_no_constants nested_add xor_cancel and_zero and_all_ones or_constants xor_constants load_nested shift_nested lookup width1_wrap width32_wrap width64_wrap \
   "$cake_dir/compiler/backend/word_instScript.sml" "$cake_dir/compiler/backend"
 
+run_probe word_inst_selector_executable_probeScript.sml word_inst_selector_executable_probe.out \
+  inst_select_definition inst_select_type skip move inst_skip inst_fp assign get set store must_terminate call_none call_both seq if loop alloc store_consts raise return break continue tick curr_heap loc_value install code_write data_write ffi share_load8 store_hi store_above store_lo store_below share_load16 share_load32 share_store share_above nested_call \
+  "$cake_dir/compiler/backend/word_instScript.sml" "$cake_dir/compiler/backend"
+
 run_probe word_inst_select_probeScript.sml word_inst_select_probe.out \
   add3 sub_const big_imm store_off load_off shifts curr_heap share_load8 set_and const_fold two_reg \
   "$cake_dir/compiler/backend/word_instScript.sml" "$cake_dir/compiler/backend"
