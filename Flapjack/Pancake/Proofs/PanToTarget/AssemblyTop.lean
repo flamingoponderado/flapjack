@@ -25,6 +25,7 @@ open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend
 open Flapjack.Compiler.Backend.BackendProof Flapjack.Basis.Pure.MlString
 open Flapjack.Pancake.PanLang Flapjack.SemanticsPropsHOL
 
+open Classical in
 /-- `pan_to_target_compile_semantics` over the reviewed carriers: the hypotheses and
 conclusion of `PanToTargetCompileSemanticsStatement` hold for every input. -/
 theorem panToTargetCompileSemantics {width : Nat} [NeZero width] {S Q σ : Type}
@@ -55,7 +56,8 @@ theorem panToTargetCompileSemantics {width : Nat} [NeZero width] {S Q σ : Type}
   have hres := panToTargetLabSemanticsResource (C := LabToTarget.Config) c mc ffi t m bitmapPtr
     bitmapsDm sdm ms (LabToTarget.compile mc.target.config) bytes cbspace ltconf pan_code col wprog
     bitmaps wconf fs p data_sp s start globals_size heap_len stack_max hcfg hmc hinit hisa hwtw
-    hwts hmax hnodup hpm hgi hsdm ⟨a1, a2, a3, hle, hbig, hdisj, m0, m1, m2, m3, m4, hstar⟩ hbase
+    hwts hmax hnodup (fun a h => hpm a (of_decide_eq_true h)) hgi
+    (by funext a; rw [hsdm]; simp only [Bool.decide_and, Bool.decide_eq_true]) ⟨a1, a2, a3, hle, hbig, hdisj, m0, m1, m2, m3, m4, hstar⟩ hbase
     hlt hlo hhi hheap hheapLt halign hbe hffi hheapLen hglobLe hmemaddrs htop hstart hsize hparams
     halloc hcode hglobals hlocals heids heshapes hfail
   have hlabne := extendPrime_singleton_ne_fail _ _ _ hres hfail
