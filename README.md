@@ -90,3 +90,8 @@ untagged candidates in a script; `--goal HOL_NAME` limits the list to earlier
 declarations, and `--kind Theorem` includes theorem candidates. Check the
 source, Lean analogues, and issue claims before choosing a target: tags are
 navigation aids, not evidence of equivalence or of a missing port.
+
+## Acknowledgements
+
+Flapjack was started with the support of [zkSecurity](https://zksecurity.xyz)
+and the [Ethereum Foundation](https://ethereum.foundation).
