@@ -4039,6 +4039,17 @@ class L3RiscvStepNopDeclarationsTest(unittest.TestCase):
             "val BEQ = cbranch \"BEQ\"\nval SW = store [] \"SW\""))
         self.assertEqual(found, {})
 
+    def test_generated_name_follows_instruction_string_not_binder(self):
+        source = "\n".join([
+            "val FAKE = arithi [] \"ADD\"",
+            "val arithr = class_rd0 `(rd, rs1, rs2)`",
+            "val MISPICK = arithr [] \"OR\"",
+        ])
+        found = dict(CHECKER["l3_riscv_step_nop_declarations"](source))
+        self.assertEqual(set(found), {"ADD_NOP", "OR_NOP"})
+        self.assertNotIn("FAKE_NOP", found)
+        self.assertNotIn("MISPICK_NOP", found)
+
 
 if __name__ == "__main__":
     unittest.main()

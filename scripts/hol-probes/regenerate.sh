@@ -6946,13 +6946,13 @@ run_probe l3_step_avoid_probeScript.sml l3_step_avoid_probe.out \
   avoid_statement avoid_signalAddressException_type avoid_source update_pc_statement update_pc_def_type update_pc_source \
   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
 run_probe l3_step_register_alu_probeScript.sml l3_step_register_alu_probe.out \
-  add_hypotheses add_statement sub_statement and_statement or_statement xor_statement gpr_op_type source \
+  add_hypotheses add_statement add_gen sub_hypotheses sub_statement sub_gen and_hypotheses and_statement and_gen or_hypotheses or_statement or_gen xor_hypotheses xor_statement xor_gen gpr_op_type source \
   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
 run_probe l3_step_arithi_probeScript.sml l3_step_arithi_probe.out \
-  addi_hypotheses addi_statement slti_statement sltiu_statement andi_statement ori_statement xori_statement imm12_type source \
+  addi_hypotheses addi_statement addi_gen slti_hypotheses slti_statement slti_gen sltiu_hypotheses sltiu_statement sltiu_gen andi_hypotheses andi_statement andi_gen ori_hypotheses ori_statement ori_gen xori_hypotheses xori_statement xori_gen imm12_type source \
   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
 run_probe l3_step_upper_probeScript.sml l3_step_upper_probe.out \
-  lui_hypotheses lui_statement auipc_statement imm20_type source \
+  lui_hypotheses lui_statement lui_gen auipc_hypotheses auipc_statement auipc_gen imm20_type source \
   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
 run_probe l3_step_nop_probeScript.sml l3_step_nop_probe.out \
   add_nop_statement add_nop_hypotheses sub_nop_statement sub_nop_hypotheses and_nop_statement and_nop_hypotheses or_nop_statement or_nop_hypotheses xor_nop_statement xor_nop_hypotheses addi_nop_statement addi_nop_hypotheses andi_nop_statement andi_nop_hypotheses ori_nop_statement ori_nop_hypotheses xori_nop_statement xori_nop_hypotheses lui_nop_statement lui_nop_hypotheses auipc_nop_statement auipc_nop_hypotheses source \
