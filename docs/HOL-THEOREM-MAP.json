@@ -98403,5 +98403,22 @@
     "lean_name": "panToTargetResourceLimitOfSemantics",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Stage G with no_install/no_alloc discharged by word_to_word_compile_no_install_no_alloc on the pan_to_word output and no-Error from semantics wst <> Fail (pan_to_targetProofScript.sml 1716-1736, 2285-2312); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepTableValidity.lean",
+    "lean_name": "functions_valid",
+    "hol_path": null,
+    "hol_name": null,
+    "reviewer": "Flapjack-specific internal function-projection membership factoring for the separately tagged full original compiler table validity theorem; no separate HOL declaration or completed port claim.",
+    "statement_status": "no_hol_reference_pending_classification"
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepTableValidity.lean",
+    "lean_name": "everyInstOkLess_panToCrepCompileToCrep",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_pan_to_crep_compile_to_crep",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source1116-1134 full typed original capture reviewed: original EVERY good_panops pan_code guard and EVERY tuple-body expression validity conclusion over unrestricted original names/params/native syntax. Membership renders EVERY; internal function projection lemma derives source body guard without extra premises; accepted full compiler theorem supplies actual compiled body at actual generated context. Only positive word dimension translates to BitVec width with NeZero; maps internal to compiler do not occur in signature. No target-run/output/byte-range/distinctness premise; full compiler correctness remains open.",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec"
   }
 ]
