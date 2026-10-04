@@ -271,6 +271,7 @@ import Flapjack.RiscV.L3.Step.AvoidSignalAddressException
 import Flapjack.RiscV.L3.Step.RegisterALUStep
 import Flapjack.RiscV.L3.Step.ImmediateALUStep
 import Flapjack.RiscV.L3.Step.ImmediateComparison
+import Flapjack.RiscV.L3.Step.ImmediateComparisonNop
 import Flapjack.RiscV.L3.Step.UpperImmediateStep
 import Flapjack.RiscV.L3.Step.JumpStep
 import Flapjack.RiscV.L3.Step.RegisterComparison
