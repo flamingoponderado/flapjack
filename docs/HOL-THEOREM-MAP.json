@@ -97996,24 +97996,6 @@
     "reviewer": "Association-list lookup commutes with a value map; Flapjack sptree infrastructure for stage G, no HOL declaration."
   },
   {
-    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
-    "hol_name": "load_globals_alt",
-    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/LoadGlobalsValidity.lean",
-    "lean_name": "loadGlobalsAlt",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-crep-load-globals-alt: original1050-1055 full forall address count equality and regenerated full typed original capture; loadGlobalsHOL exactly follows native load_globals_def zero/successor clauses. GENLIST represented constructor-for-constructor by List.range count mapped at every Nat index, same order/length. Original global address carrier remains fixed BitVec5, expression dimension width independent and positive. Word dimension qualifier covers only the native CrepExpHOL dimension, not fixed word5 specialization. BitVec.ofNat5 implements original n2w index and modular addition. No guards/output assumptions/scope narrowing. Required by full PanToCrep compile Call handlers; full compile/inline/source composition remain open."
-  },
-  {
-    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
-    "hol_name": "riscv_encoder_correct",
-    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Call.lean",
-    "lean_name": "riscv_encoder_correct_call",
-    "statement_status": "reviewed_exact",
-    "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-sol: compared original Call riscv_targetProof723-730/riscv_target258-263, source asmStep/call/jumpToOffset/asm_ok and full encoder_correct_def. Tagged root has only original source step plus initial targetStateRel and full existential/allenv/bothassertions/code-byte/PC/finalrelation conclusion. Near JALrd1 uses source arithmetic halfword shift/signed21 bounds and witness0; far AUIPCrd1/JALRrd1=rs1 uses original signed split, witness1/env0-env1/intermediatePC4. Literal four/eight emitted bytes derive full native fetch/decode/Run/Next. Source configuration supplies lr=1 and original offset/alignment/reg guards. Actual aliased JALR reads old register1 before link overwrite; near/far final link values sourcePC+4/sourcePC+8. No non-alias, decoder, target-run or post-state premise; full native projection preserves source register across interference, memory/frame/all original registers retained. Same-counterpart helpers are untagged local compositions with no separate HOL originals. Inherits reviewed reals_as_rational_cuts assurance limit SOUNDNESS8 through native Run; no production-route or full encoder/compiler completion claim."
-  },
-  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyWordToStack.lean",
@@ -98052,6 +98034,64 @@
     "lean_name": "panToTargetWordStateFacts",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1686-1716): the word make_init state on a successful full_make_init stack state has gc_fun_const_ok gc_fun (gc_fun_const_ok_word_gc_fun), empty stack, the given code and lookup 0 locals = SOME (Loc 1 0)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyWordToStack.lean",
+    "lean_name": "extendPrime_singleton_ne_fail",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only: a behaviour in extend_with_resource_limit' b {w} is Fail only if w is (HOL proof lines 1653-1667, elim stackSem <> Fail)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyWordToStack.lean",
+    "lean_name": "panToTargetWordChain",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1649-1736): word_to_word_compile_semantics then word_to_stack compile_semantics, from their own premises: stack semantics of sst lies in extend_with_resource_limit' (safe_for_space wst) {word semantics of the source-code word state}."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyWordToStack.lean",
+    "lean_name": "panToTargetLabStackLink",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1552-1560): full_make_init_semantics applied under its own restated premises (not its conclusion) transfers an extend_with_resource_limit' membership of the non-Fail stack semantics to the lab semantics, and gives opt <> NONE."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyPanToWord.lean",
+    "lean_name": "heapLengthShift",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only arithmetic step of pan_to_target_compile_semantics (HOL proof lines 2041-2054): w2n (-1w*w2 + w3 + bytes_in_word * n2w len) DIV (dimindex DIV 8) - len = w2n (-1w*w2 + w3) DIV (dimindex DIV 8) when the extended span does not wrap."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyPanToWord.lean",
+    "lean_name": "panToTargetPanToWordStage",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 2103-2284): pan_to_word state_rel_imp_semantics applied to wst0 = make_init ... sst with code := fromAList (compile_prog isa pan_code); make_init projections discharged, stack-state memory/store facts as hypotheses supplied by the memory-setup stage (.31.2), remaining hypotheses those of the top theorem."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "load_globals_alt",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/LoadGlobalsValidity.lean",
+    "lean_name": "loadGlobalsAlt",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-crep-load-globals-alt: original1050-1055 full forall address count equality and regenerated full typed original capture; loadGlobalsHOL exactly follows native load_globals_def zero/successor clauses. GENLIST represented constructor-for-constructor by List.range count mapped at every Nat index, same order/length. Original global address carrier remains fixed BitVec5, expression dimension width independent and positive. Word dimension qualifier covers only the native CrepExpHOL dimension, not fixed word5 specialization. BitVec.ofNat5 implements original n2w index and modular addition. No guards/output assumptions/scope narrowing. Required by full PanToCrep compile Call handlers; full compile/inline/source composition remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Call.lean",
+    "lean_name": "riscv_encoder_correct_call",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol: compared original Call riscv_targetProof723-730/riscv_target258-263, source asmStep/call/jumpToOffset/asm_ok and full encoder_correct_def. Tagged root has only original source step plus initial targetStateRel and full existential/allenv/bothassertions/code-byte/PC/finalrelation conclusion. Near JALrd1 uses source arithmetic halfword shift/signed21 bounds and witness0; far AUIPCrd1/JALRrd1=rs1 uses original signed split, witness1/env0-env1/intermediatePC4. Literal four/eight emitted bytes derive full native fetch/decode/Run/Next. Source configuration supplies lr=1 and original offset/alignment/reg guards. Actual aliased JALR reads old register1 before link overwrite; near/far final link values sourcePC+4/sourcePC+8. No non-alias, decoder, target-run or post-state premise; full native projection preserves source register across interference, memory/frame/all original registers retained. Same-counterpart helpers are untagged local compositions with no separate HOL originals. Inherits reviewed reals_as_rational_cuts assurance limit SOUNDNESS8 through native Run; no production-route or full encoder/compiler completion claim."
   },
   {
     "hol_path": null,

@@ -7,6 +7,10 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.EncodingInitState
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileBitmaps
 import Flapjack.Compiler.Backend.WordToStack.Proofs.Initialization
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunConstOk
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileSemantics
+import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSemantics
+import Flapjack.SemanticsProps.Implements
+import Flapjack.Compiler.Backend.StackToLab.Proofs.FullMakeInitSemantics
 
 /-!
 # `pan_to_target_compile_semantics` assembly, word-to-stack stage facts
@@ -144,5 +148,109 @@ theorem panToTargetWordStateFacts {width : Nat} [NeZero width] {C F : Type}
   refine ⟨?_, rfl, rfl, ?_⟩
   · exact DataToWord.Proofs.Gc.gcFunConstOkWordGcFun
   · simp [WordToStack.Native.Initialization.makeInit]; rfl
+
+/-- A behaviour in `extend_with_resource_limit' b {w}` is `Fail` only when `w` is
+(Flapjack infrastructure for the HOL proof's "elim stackSem ≠ Fail" steps,
+lines 1653-1667). -/
+theorem extendPrime_singleton_ne_fail (precise : Bool) (w r : HolBehaviour)
+    (h : SemanticsPropsHOL.extendWithResourceLimitPrimeHOL precise (fun b => b = w) r)
+    (hw : w ≠ .fail) : r ≠ .fail := by
+  unfold SemanticsPropsHOL.extendWithResourceLimitPrimeHOL at h
+  split at h
+  · rw [h]; exact hw
+  · rcases h with h | ⟨_, _, _, rfl, _, _⟩ | ⟨_, _, rfl, _, _⟩
+    · rw [h]; exact hw
+    · exact HolBehaviour.noConfusion
+    · exact HolBehaviour.noConfusion
+
+open Classical in
+/-- The word-to-stack and word-to-word links of the HOL proof (lines 1649-1736): when
+the source word semantics (code `wprog0`) is not `Fail`, the stack semantics of the
+initial stack state lies in `extend_with_resource_limit'` of that word behaviour,
+with the safe-for-space flag of the compiled word state. The premises are those of
+`word_to_stackProof$compile_semantics` and `word_to_word_compile_semantics`. -/
+theorem panToTargetWordChain {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (wconf : WordToWord.Config)
+    (wprog0 wprog : List (Nat × Nat × WordLangProgHOL (BitVec width)))
+    (col : List (Option (Spt Nat))) (sst : StackSemStateFiniteExact width C F)
+    (worac : Nat → (Nat × C) × List (Nat × Nat × WordLangProgHOL (BitVec width)))
+    (start : Nat)
+    (hwtw : WordToWord.compile wconf ac wprog0 = (col, wprog))
+    (hgc : WordSimp.gcFunConstOk sst.gcFun)
+    (hni0 : WordProps.noInstallCode (sptFromAList wprog0))
+    (hna0 : WordProps.noAllocCode (sptFromAList wprog0))
+    (hnm0 : WordProps.noMtCode (sptFromAList wprog0))
+    (hnodup0 : (wprog0.map Prod.fst).Nodup)
+    (hcode : sst.code = sptFromAList (WordToStack.Native.compileNative ac false wprog).2.2.2)
+    (hinit : WordToStackProofs.InitializationStateRel.initStateOk ac
+      (ac.regCount - (5 + ac.avoidRegs.length)) sst worac)
+    (hraise : panPropsALookupEq raiseStubLocation wprog = none)
+    (hstore : panPropsALookupEq storeConstsStubLocation wprog = none)
+    (hbm : (WordToStack.Native.compileNative ac false wprog).1 <+: sst.bitmaps)
+    (hconv : ∀ entry ∈ wprog, flatExpConventions entry.2.2 = true ∧
+      postAllocConventionsHOL (ac.regCount - (5 + ac.avoidRegs.length)) entry.2.2 = true) :
+    let wst := WordToStack.Native.Initialization.makeInit ac
+      (ac.regCount - (5 + ac.avoidRegs.length)) sst (sptFromAList wprog) worac
+    let wst0 := { wst with code := sptFromAList wprog0 }
+    WordSemStateFiniteExact.semantics wst0 start ≠ .fail →
+    SemanticsPropsHOL.extendWithResourceLimitPrimeHOL
+      (decide (WordSemStateFiniteExact.wordLangSafeForSpace wst start))
+      (fun b => b = WordSemStateFiniteExact.semantics wst0 start)
+      (StackSemEvaluate.semantics start sst) := by
+  intro wst wst0 hnf
+  have heq : WordSemStateFiniteExact.semantics wst0 start =
+      WordSemStateFiniteExact.semantics wst start :=
+    WordToWord.word_to_word_compile_semantics wconf ac wprog0 col wprog wst0 start wst
+      ⟨hwtw, hgc, hni0, hna0, hni0, hna0, hnm0, hnodup0, rfl, rfl, by
+        simp [wst, WordToStack.Native.Initialization.makeInit]; rfl, rfl, rfl, hnf⟩
+  rw [heq]
+  exact WordToStackProofs.CompileSemantics.compileSemantics ac wprog sst _ worac start
+    ⟨hcode, rfl, hinit, hraise, hstore, hbm, hconv, heq ▸ hnf⟩
+
+/-- The stack-to-lab link of the HOL proof (lines 1552-1560): under the premises of
+`stack_to_labProof$full_make_init_semantics`, a stack behaviour that is not `Fail`
+is the lab behaviour of the initial lab state, so the lab semantics inherits any
+`extend_with_resource_limit'` membership whose source behaviour is not `Fail`. -/
+theorem panToTargetLabStackLink {width : Nat} [NeZero width] {C F : Type}
+    {stackConf : StackToLab.Config} {dataConf : DataToWord.Config} {maxHeap sp : Nat}
+    {offset : BitVec width × BitVec width} {bitmaps : List (BitVec width)}
+    {code : List (Nat × StackLang.HolProg width)} {t : LabSem.State width C F}
+    {saveRegs : Nat → Bool} {dataSp : Nat}
+    {coracle : Nat → C × List (Nat × StackLang.HolProg width) × List (BitVec width)}
+    {s : StackSemStateFiniteExact width C F} {opt : Option (StackSemStateFiniteExact width C F)}
+    (precise : Bool) (w : HolBehaviour) (hw : w ≠ .fail)
+    (hpre : StackToLab.Proofs.FullMakeInit.fullMakeInit stackConf dataConf maxHeap sp offset
+        bitmaps code t saveRegs dataSp coracle = (s, opt) ∧
+      goodDimindex width ∧
+      t.code = StackToLab.compile stackConf dataConf maxHeap sp offset code ∧
+      t.compileOracle = (fun n => ((coracle n).1,
+        StackToLab.compileNoStubs stackConf.regNames stackConf.jump offset sp (coracle n).2.1)) ∧
+      ¬t.failed = true ∧
+      StackToLab.Proofs.MakeInit.memoryAssumption stackConf.regNames bitmaps dataSp t ∧
+      StackRemove.maxStackAlloc ≤ maxHeap ∧
+      ¬saveRegs t.linkReg = true ∧ t.pc = 0 ∧
+      (∀ k i n, saveRegs k = true → t.ioRegs n i k = none) ∧
+      (∀ k n, saveRegs k = true → t.ccRegs n k = none) ∧
+      (∀ x : BitVec width, t.memDomain x = true → x.toNat % (width / 8) = 0) ∧
+      (∀ x : BitVec width, t.sharedMemDomain x = true → x.toNat % (width / 8) = 0) ∧
+      StackToLab.Proofs.GoodCode.goodCode sp code ∧
+      (∀ n, StackToLab.Proofs.GoodCode.goodCode sp (coracle n).2.1) ∧
+      10 ≤ sp ∧
+      (∀ r ∈ [2, 3, 4], saveRegs (StackNames.findNameSpt stackConf.regNames (r + sp - 2)) = true) ∧
+      StackNames.findNameSpt stackConf.regNames 4 = t.len2Reg ∧
+      StackNames.findNameSpt stackConf.regNames 3 = t.ptr2Reg ∧
+      StackNames.findNameSpt stackConf.regNames 2 = t.lenReg ∧
+      StackNames.findNameSpt stackConf.regNames 1 = t.ptrReg ∧
+      StackNames.findNameSpt stackConf.regNames 0 = t.linkReg ∧
+      Function.Bijective (StackNames.findNameSpt stackConf.regNames))
+    (hstack : SemanticsPropsHOL.extendWithResourceLimitPrimeHOL precise (fun b => b = w)
+      (StackSemEvaluate.semantics BvlToBvi.initGlobalsLocation s)) :
+    opt ≠ none ∧
+      SemanticsPropsHOL.extendWithResourceLimitPrimeHOL precise (fun b => b = w)
+        (LabSem.semantics t) := by
+  obtain ⟨hopt, hsem⟩ := StackToLab.Proofs.FullMakeInitSemantics.fullMakeInitSemantics hpre
+  refine ⟨hopt, ?_⟩
+  rw [hsem (extendPrime_singleton_ne_fail precise w _ hstack hw)]
+  exact hstack
 
 end Flapjack.Pancake.Proofs.PanToTarget
