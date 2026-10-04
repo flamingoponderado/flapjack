@@ -4620,6 +4620,9 @@ run_probe word_cse_wf_data_preservation_probeScript.sml word_cse_wf_data_preserv
   wf_add_to_load_aux_statement wf_add_to_load_aux_hypotheses wf_data_merge_statement wf_data_merge_hypotheses wf_canonicalMoveRegs_statement \
   wf_canonicalMoveRegs_hypotheses wf_add_to_data_aux_typed \
   "$cake_dir/compiler/backend/proofs/word_cseProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_cse_production_program_probeScript.sml word_cse_production_program_probe.out \
+  program_source_type program_source_definition program_wrapper_type program_wrapper_definition program_seq state_seq program_must state_must program_if_same state_if_same program_if_different state_if_different program_loop state_loop program_move state_move program_memory state_memory program_heap state_heap program_assign state_assign program_get_set state_get_set program_call_0_0 state_call_0_0 program_call_0_1 state_call_0_1 program_call_1_0 state_call_1_0 program_call_1_1 state_call_1_1 program_flat_controls state_flat_controls \
+  "$cake_dir/compiler/backend/word_cseScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_cse_production_assign_probeScript.sml word_cse_production_assign_probe.out \
   assign_source_type assign_source_definition assign_empty_load assign_even_load assign_alias_load assign_seeded_load assign_large_load assign_const assign_var assign_lookup assign_op assign_shift assign_nested_load \
   "$cake_dir/compiler/backend/word_cseScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -4711,6 +4714,15 @@ run_probe word_to_word_no_install_compile_single_probeScript.sml word_to_word_no
 run_probe data_to_word_gc_fun_const_ok_probeScript.sml data_to_word_gc_fun_const_ok_probe.out \
   gc_fun_const_ok_word_gc_fun_statement gc_fun_const_ok_word_gc_fun_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_gcProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe pan_to_word_lab_pres_probeScript.sml pan_to_word_lab_pres_probe.out \
+  loop_to_word_comp_extract_labels_len_statement pan_to_word_compile_prog_lab_min_typed \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe target_sem_installed_probeScript.sml target_sem_installed_probe.out \
+  installed_def_statement installed_def_typed \
+  "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe pan_to_target_pan_installed_source_replay_probeScript.sml pan_to_target_pan_installed_source_replay_probe.out \
+  pan_installed_def_replay_statement pan_installed_imp_installed_replay_typed \
+  "$cake_dir/pancake/proofs/pan_to_targetProofScript.sml" "$cake_dir/pancake/proofs"
 run_probe pan_to_target_init_helpers_source_replay_probeScript.sml pan_to_target_init_helpers_source_replay_probe.out \
   word_to_stack_compile_FST_replay_statement InitGlobals_location_eq_first_name_replay_typed \
   "$cake_dir/pancake/proofs/pan_to_targetProofScript.sml" "$cake_dir/pancake/proofs"
@@ -7955,6 +7967,10 @@ run_probe word_convs_simp_sequence_labels_probeScript.sml word_convs_simp_sequen
   simpSequenceLabels1_typed simpSequenceLabels1_proved simpSequenceLabels1_hypotheses simpSequenceLabels2_typed simpSequenceLabels2_proved simpSequenceLabels2_hypotheses simpSequenceLabels3_typed simpSequenceLabels3_proved simpSequenceLabels3_hypotheses simpSequenceLabels4_typed simpSequenceLabels4_proved simpSequenceLabels4_hypotheses simpSequenceLabels5_typed simpSequenceLabels5_proved simpSequenceLabels5_hypotheses simpSequenceLabels6_typed simpSequenceLabels6_proved simpSequenceLabels6_hypotheses \
   "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe riscv_longmul_decode_probeScript.sml riscv_longmul_decode_probe.out \
+  mulhu_decode_universal mulhu_decode_hypotheses mulhu_decode_zero mulhu_decode_all_ones mulhu_decode_high_bit mulhu_decode_alias mulhu_encode_source_clause mulhu_carrier_types mul_decode_universal mul_decode_hypotheses mul_decode_zero mul_decode_all_ones mul_decode_high_bit mul_decode_alias mul_encode_source_clause mul_carrier_types \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe riscv_div_decode_probeScript.sml riscv_div_decode_probe.out \
   div_decode_zero div_decode_all_ones div_decode_mixed div_encode_source_clause div_encode_source_hypotheses div_carrier_types \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
@@ -7962,6 +7978,11 @@ run_probe riscv_div_decode_probeScript.sml riscv_div_decode_probe.out \
 run_probe word_to_stack_comp_correct_full_probeScript.sml word_to_stack_comp_correct_full_probe.out \
   comp_correct_full_statement comp_correct_full_proved comp_correct_full_hypotheses comp_correct_full_statement_typed \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe riscv_target_longmul_probeScript.sml riscv_target_longmul_probe.out \
+  riscv_encoder_correct_longmul_statement riscv_encoder_correct_longmul_types riscv_encoder_correct_longmul_hypotheses riscv_encoder_correct_longmul_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
 
 run_probe riscv_target_div_probeScript.sml riscv_target_div_probe.out \
   riscv_encoder_correct_div_statement riscv_encoder_correct_div_types riscv_encoder_correct_div_hypotheses riscv_encoder_correct_div_proved \
