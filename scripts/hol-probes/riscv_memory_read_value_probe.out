@@ -1,0 +1,14 @@
+read1_zero=T
+read1_wrap=T
+read2_zero=T
+read2_wrap=T
+read4_zero=T
+read4_wrap=T
+read8_zero=T
+read8_wrap=T
+source_clause=read_mem_word p (SUC n) s = (let (w,s1) = read_mem_word (if s.be then p + -1w else (p + 1w)) n s in (w2w (read_mem p s1) ‖ w ≪ 8,assert (p ∈ s1.mem_domain) s1))
+source_hypotheses=0
+source_types=s : :64 asm_state, n : :num, p : :word64
+native_clause=rawReadData p t = (let pAddrIdx = (63 >< 3) p; align = w2n ((2 >< 0) p) in if align = 0 then MEM pAddrIdx t else (63 >< 0) (MEM (pAddrIdx + 1w) t @@ MEM pAddrIdx t ≫ (align * 8)))
+native_hypotheses=0
+native_types=t : :riscv_state, p : :word64

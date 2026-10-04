@@ -8284,3 +8284,7 @@ run_probe pan_to_crep_validity_helpers_probeScript.sml pan_to_crep_validity_help
 run_probe crep_inline_nested_decs_provenance_probeScript.sml crep_inline_nested_decs_provenance_probe.out \
   nested_decs_provenance \
   "$cake_dir/pancake/proofs/crep_inlineProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe riscv_memory_read_value_probeScript.sml riscv_memory_read_value_probe.out \
+  read1_zero read1_wrap read2_zero read2_wrap read4_zero read4_wrap read8_zero read8_wrap source_clause source_hypotheses source_types native_clause native_hypotheses native_types \
+  "$cake_dir/compiler/encoders/asm/asmSemScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
