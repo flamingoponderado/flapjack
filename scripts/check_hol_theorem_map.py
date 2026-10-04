@@ -1735,6 +1735,9 @@ DOCUMENTED_MISMATCHES = {
 # Proofs/ and are inventoried automatically; counterpart-side witnesses and
 # induction helpers belong beside their semantic definitions instead.
 INFRASTRUCTURE_THEOREMS = {
+    ('Flapjack/Pancake/Proofs/PanToWord/PanToCrepInlineTableValidity.lean', 'filter_lookup'): 'Flapjack-specific internal key-filter lookup and native wrapper proof factoring for the separately tagged full original every_inst_w_inline in the same module; no standalone HOL declaration or completed port claim.',
+    ('Flapjack/Pancake/Proofs/PanToWord/PanToCrepInlineTableValidity.lean', 'inline_top_valid'): 'Flapjack-specific internal key-filter lookup and native wrapper proof factoring for the separately tagged full original every_inst_w_inline in the same module; no standalone HOL declaration or completed port claim.',
+
     ('Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileExpValidity.lean', 'holFmapAsFiniteSupportWitness'): 'Flapjack-specific canonical imported context toBroad/ofBroad roundtrip witness for the finite-support qualifier of the full original theorem in the same module; no separate HOL declaration.',
     ('Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileExpValidity.lean', 'compileList_length'): 'Flapjack-specific internal list-length or mutual-induction proof factoring for the separately tagged full original expression compiler validity theorem in the same module; no standalone HOL declaration or completed port claim.',
     ('Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileExpValidity.lean', 'heads_length'): 'Flapjack-specific internal list-length or mutual-induction proof factoring for the separately tagged full original expression compiler validity theorem in the same module; no standalone HOL declaration or completed port claim.',
