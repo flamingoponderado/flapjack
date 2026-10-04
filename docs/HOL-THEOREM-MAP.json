@@ -99018,5 +99018,13 @@
     "lean_name": "dfnSltIUNop",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c source comparison 2026-10-04, flapjack-slti-nop-pair: original class_rd0 exported companion generated at 840. Fresh GEN_ALL(DISCH_ALL) original capture retains BOTH rd=0 and ArchBase<>1, typed native riscv_state/word5/word12, entire unchanged state; arbitrary source/immediate. Lean retains exactly these hypotheses. Kernel checked; only word/register/mode closure, no rational-cut assumption. Companion source registration already supported; these unused residual exports do not block completed encoder or production routing."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/RiscVInstanceExecutable.lean",
+    "lean_name": "panToTargetCompileSemanticsRiscVExecutable",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific corollary (bead flapjack-z9g67) of panToTargetCompileSemanticsRiscV with the compiler premise on the callable compileProgMaxExecutable (= compile_prog_max by compileProgMaxExecutable_eq) at pancakeBackendConf riscvBackendConfig; all other premises and the conclusion unchanged. Does not establish the CLI computes this function."
   }
 ]
