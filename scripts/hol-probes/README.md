@@ -8746,4 +8746,25 @@ checking remain required.
 
 `pan_to_crep_program_validity_probe.out` captures the complete original typed compile_prog arity invariant. The native proof composes full table validity with full actual inlining validity under the sole original good_panops declaration-list guard. This supplies the source-validity prerequisite, not full compiler correctness.
 
+### Full original LongDiv and FP encoder cases
+
+`riscv_target_rejected_probeScript.sml` specializes the original complete
+`riscv_encoder_correct` theorem to `Inst (Arith (LongDiv ...))` and
+`Inst (FP f)`. Eight rows retain both complete typed statements, bound
+carrier types, actual zero-hypothesis counts and kernel-proved status.
+
+`Flapjack/RiscV/CorrectnessEncoding/Rejected.lean` states both full cases,
+including the existential step count, every interference environment, both
+assertion families, code bytes, PC membership and final state relation.
+The proofs derive contradiction from the actual seventh `asmStep` conjunct.
+Original LongDiv requires the x86-64 ISA; original RISC-V config rejects it.
+The original zero FP register count rejects every one of the sixteen FP
+forms. No rejection hypothesis or restricted FP carrier is added.
+
+`check-riscv-target-rejected.py` pins the full source and statement evidence;
+its mutation tests cover original configuration and guards, full carriers,
+quantifiers, assertions and typed captures. Native target statements retain
+the reviewed `reals_as_rational_cuts` assurance limit; no executable compiler
+definition changes here. Whole encoder and compiler assembly remain open.
+
 `pan_to_word_inst_ok_less_probe.out` captures the complete original typed six-pass instruction-validity theorem. Source declarations, asm_config and output word programs share one word dimension. The native proof composes reviewed source invariants and full LoopToWord instruction validity under the actual compile equation, both zero-offset guards and original good_panops guard. No target-run or desired-result premise is added; whole semantic compiler correctness remains open.
