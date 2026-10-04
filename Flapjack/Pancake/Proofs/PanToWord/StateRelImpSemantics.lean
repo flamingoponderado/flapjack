@@ -30,7 +30,7 @@ theorem holFmapAsFiniteSupportRelationWitness_WordSemStateFiniteExact
       WordSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
   WordSemStateExact.holFmapAsFiniteSupportWitness
 
-/-- Full original `state_rel_imp_semantics` (source lines 529-684): all 24
+/-- Full original `state_rel_imp_semantics` (source lines 529-667): all 24
 conjuncts, the native word heap length, independent configuration and FFI
 carriers, and faithful Word/Pan declaration semantics are retained. The proof
 composes the reviewed PanSimp, PanStructs, PanGlobals, PanToCrep, CrepToLoop,

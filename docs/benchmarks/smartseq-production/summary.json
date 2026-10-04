@@ -1,0 +1,22 @@
+{
+  "corpus_sha256": "8bf644779eb27ede66100f626966224538c8dc68903cc37c18d11abac286c71b",
+  "runs": [
+    {
+      "run": 1,
+      "functions": 863,
+      "sources": 166,
+      "native_codec_ns": 4959500964,
+      "actual_ns": 11490256,
+      "ratio": 431.6266725475916
+    },
+    {
+      "run": 2,
+      "functions": 863,
+      "sources": 166,
+      "native_codec_ns": 3969969942,
+      "actual_ns": 8667588,
+      "ratio": 458.02476329054866
+    }
+  ],
+  "scope": "Actual wordSimpLeftSeq sequence-building inputs from physical source Word functions; full-codec native alternative; not whole-compiler throughput."
+}
