@@ -1,12 +1,13 @@
 import Flapjack.RiscV.CorrectnessEncoding.RorExecution
 import Flapjack.RiscV.CorrectnessEncoding.RorStep
+import Flapjack.Compiler.Backend.Proofs.WordConventions
+import Flapjack.Pancake.Proofs.WordConvs.HandlerPasses
 import Flapjack.RiscV.CorrectnessEncoding.ShiftLslImmediate
 import Flapjack.RiscV.CorrectnessEncoding.ShiftLsrImmediate
 import Flapjack.RiscV.CorrectnessEncoding.ShiftAsrImmediate
 import Flapjack.RiscV.CorrectnessEncoding.ShiftLsrRegister
 import Flapjack.RiscV.CorrectnessEncoding.ShiftAsrRegister
 import Flapjack.RiscV.CorrectnessEncoding.ShiftLslRegister
-import Flapjack.Pancake.Proofs.WordConvs.HandlerPasses
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileConventions.Output
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileConventions.Labels
 import Flapjack.RiscV.CorrectnessEncoding.ShiftRun
@@ -1428,6 +1429,9 @@ import Flapjack.Pancake.Proofs.WordConvs.SSAWfCutsets
 import Flapjack.Pancake.Proofs.WordConvs.NotCreatedPasses
 import Flapjack.Pancake.Proofs.WordConvs.NotCreatedSSA
 import Flapjack.Pancake.Proofs.WordConvs.NotCreatedTail
+import Flapjack.Pancake.Proofs.WordConvs.GoodHandlersPasses
+import Flapjack.Pancake.Proofs.WordConvs.GoodHandlersSSA
+import Flapjack.Pancake.Proofs.WordConvs.GoodHandlersTail
 import Flapjack.Pancake.Proofs.WordConvs.UnreachPreAlloc
 import Flapjack.Compiler.Backend.WordRemove
 import Flapjack.Compiler.Backend.WordRemove.Production
