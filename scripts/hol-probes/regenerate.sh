@@ -8208,3 +8208,7 @@ run_probe pan_source_entry_word_probeScript.sml pan_source_entry_word_probe.out 
 run_probe pan_simp_validity_probeScript.sml pan_simp_validity_probe.out \
   every_inst_ok_less_ret_to_tail every_inst_ok_less_seq_assoc every_inst_ok_less_pan_simp_compile every_inst_ok_less_pan_simp_compile_prog \
   "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_to_crep_validity_helpers_probeScript.sml pan_to_crep_validity_helpers_probe.out \
+  exps_of_nested_seq every_inst_ok_nested_decs every_inst_ok_less_pan_to_crep_comp_field every_inst_ok_less_pan_to_crep_load_shape every_inst_ok_less_pan_to_crep_cexp_heads every_inst_ok_less_stores every_inst_ok_less_store_globals \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"

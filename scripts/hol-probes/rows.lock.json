@@ -937,6 +937,7 @@
     {"bytes": 705, "out": "pan_to_crep_ret_inst2_probe.out", "rows": 7, "sha256": "45ccf2032cc1545e90e6ff2b0c948a78896c10478ba41783d3b5a053344a56f9"},
     {"bytes": 295, "out": "pan_to_crep_slc_tlc_probe.out", "rows": 10, "sha256": "c3ff76e4a35b9c4782043fb2556dbe03565c65baa552673530ffae2590b013cd"},
     {"bytes": 251, "out": "pan_to_crep_state_rel_carrier_probe.out", "rows": 6, "sha256": "d824a765fcab77cb2ffd58283740edfd9e6e43d48f0e4b2941f0c05185de330c"},
+    {"bytes": 3057, "out": "pan_to_crep_validity_helpers_probe.out", "rows": 7, "sha256": "8cd67319c255c52e234c9debdbb4364d5ee38e95892ff93a07362f51851ef4cc"},
     {"bytes": 1296, "out": "pan_to_target_compile_prog_eq_probe.out", "rows": 3, "sha256": "a59c0664924a4b18b9d3a817730050f21b3c8f34095c5d35638b027bb3d415d3"},
     {"bytes": 1162, "out": "pan_to_target_compile_prog_max_source_replay_probe.out", "rows": 2, "sha256": "0c7eff257ed8c68cc82f9e5e0053f0edbf7c936137c7375b695e6c919d9a65f6"},
     {"bytes": 6140, "out": "pan_to_target_const_memory_probe.out", "rows": 23, "sha256": "bf358ada651578372f6c46ddb6264657c8ed0942dc83321fb17360b959be9a25"},
