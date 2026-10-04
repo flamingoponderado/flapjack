@@ -1566,6 +1566,7 @@ import Flapjack.Compiler.Backend.WordSimp.ProductionPushOutIf
 import Flapjack.Compiler.Backend.WordSimp.ProductionSeqAssoc
 import Flapjack.Compiler.Backend.WordSimp.ProductionConstFp
 import Flapjack.Compiler.Backend.WordSimp.ProductionDuplicateIf
+import Flapjack.Compiler.Backend.WordSimp.ProductionCompileExp
 import Flapjack.Compiler.Backend.WordSimp.Proofs.SeqAssoc
 import Flapjack.Compiler.Backend.WordSimp.Proofs.ConstFpLemmas
 import Flapjack.Compiler.Backend.WordSimp.Proofs.GcConsts
