@@ -96297,6 +96297,15 @@
     "reviewer": "flapjack-opus3 source comparison 2026-10-04: concat l = implode (FLAT (MAP explode-case l)) over the implode list-of-char carrier. Typed capture source_to_flat_helpers probe (show_types, no hypotheses); inferred type variables compared."
   },
   {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/AddOverflow.lean",
+    "lean_name": "riscv_encoder_correct_addoverflow",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol: compared original full AddOverflow constructor at riscv_targetProof651-656, original riscv_target151-157 XOR31/XORI31(-1)/ADD/XOR/AND/SRLI63 expansion, asmSem arith_upd and asm arith_ok, and full encoder_correct_def. Only original asmStep plus initial targetStateRel; complete existential n, every environment with original interferenceOk, both assertions, code bytes, PC range and final full relation. Every actual native fetch/decode/Run/Next is derived from literal emitted bytes, including scratch31, n=5 and environment indices0..5. Only source r1!=r3 exclusion; r1=r4 flag-overwrites-sum, r1=r2, flag/input aliases retained. Zero/scratch31 exclusions derive original asm_ok; no extra register premise. Kernel proof of arbitrary word64 signed overflow equals the native sign-bit circuit; actual final state PC24, domain memory, all original observable registers and no FP registers retained. Same-counterpart submodules are untagged local compositions with no separately named HOL original. Broad native Run/target closure inherits reals_as_rational_cuts, the rational-cut assurance limit SOUNDNESS8; no executed route change, full encoder assembly or whole compiler correctness claim."
+  },
+  {
     "lean_path": "Flapjack/Misc/UpdateList.lean",
     "lean_name": "updateList",
     "hol_path": "cakeml/misc/miscScript.sml",
