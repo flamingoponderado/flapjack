@@ -40,6 +40,7 @@ correspondence additionally covers arbitrary partner lists.
 `word_to_word_compile_single_probe.out` captures the zero-hypothesis `FST_compile_single` and `compile_single_lem` of word_to_wordProof, each also fully typed, for `WordToWord/Proofs/CompileSingle.lean`. Statement evidence for source review only.
 `word_to_word_compile_probe.out` captures the zero-hypothesis `compile_single_def`, `full_compile_single_def` and `compile_def` of `word_to_wordScript.sml`, each also fully typed, for `WordToWord/Compile.lean`. Statement evidence for source review only.
 `word_alloc_distinct_tar_reg_probe.out` captures the full zero-hypothesis statements (also typed) of the exported word_allocProof `ssa_cc_trans_distinct_tar_reg` and `full_ssa_cc_trans_distinct_tar_reg` for `WordAlloc/Proofs/SSAConventions/DistinctTarReg.lean`; its `[local]` helpers are reviewed against the script. Statement evidence for source review only.
+`word_convs_compile_single_not_created_probe.out` captures the zero-hypothesis `compile_single_not_created_subprogs` of wordConvsProof (also typed) for `Pancake/Proofs/WordConvs/NotCreatedTail.lean`; the per-pass `not_created_subprogs` lemmas in `NotCreatedPasses.lean`/`NotCreatedSSA.lean` are `[local]` and compared against the script. Statement evidence for source review only.
 `word_convs_cse_copy_probe.out` captures the full zero-hypothesis statements of the twelve exported wordConvsProof theorems of `WordCse.lean`, `CopyProp.lean`, `SSAWfCutsets.lean` and the `wf_cutsets` additions to `Unreach.lean`/`ThreeToTwo.lean` (also typed `pre_alloc_conventions_copy_prop` and `full_ssa_cc_trans_wf_cutsets`); the `[local]` theorems of those sections are not exported and are reviewed against the script. Statement evidence for source review only.
 `word_inst_three_to_two_probe.out` captures the full zero-hypothesis statements of the exported word_instProof `three_to_two_reg_Loop`, `three_to_two_reg_correct` (also fully typed) and `evaluate_three_to_two_reg_prog`; the local `locals_rel_cut_envs_local` is not exported. Statement evidence for source review only.
 
@@ -8108,6 +8109,37 @@ replay queries. The replay queries are printed statements, not claimed original
 proved theorems. Boundary oracles supplement the universal kernel proofs and
 source comparison; they do not establish cross-language equivalence.
 
+`pan_to_target_source_probeScript.sml` captures the full typed original
+exports and compile_prog definitions/types, actual library ZIP/SPLITP clauses,
+and the original compiler definition's extracted first LET argument. Eight
+kernel observations cover empty/default/already-first/later main, first-only
+relocation with duplicate names, and exported flags/duplicates. Regenerate with
+`HOL_PROBE_ONLY=pan_to_target_source_probeScript.sml`.
+
+### Full Binop source and native register Run compositions
+
+`CorrectnessEncoding/BinopRun.lean` derives the full source post-state from
+original asm_step for every operator and Reg/Imm operand, and proves all five
+native register Run equations over arbitrary registers and the entire state.
+The untagged local compositions retain original zero-register and alias behavior
+and have no target-run premise. Fresh `riscv_binop_run_probe.out` captures five
+complete original source definitions and five arbitrary native Run compositions,
+all with zero stored hypotheses and original inferred carrier types. The
+capture supplements kernel checking and source review; it is not cross-language
+equivalence evidence. The full encoder assertion case remains open.
+
+### Full original register Binop encoder case
+
+`CorrectnessEncoding/BinopRegister.lean` ports the original Reg operand case
+for all five Binop operators, with the original sole asmStep/initial state
+relation premise and complete existential/every-environment/asserts/asserts2
+conclusion. Native Fetch/Decode/Run/Next follows the actual emitted bytes;
+register guards and alias behavior follow the source. Fresh typed original
+`riscv_target_binop_register_probe.out` specializes the full source theorem
+only to this constructor, with zero stored hypotheses and proved T. It is
+regression evidence, not cross-language equivalence. The full parent still
+requires the separate immediate case; native Run's SOUNDNESS8 boundary remains.
+
 The `backend_lower_pipeline` probe also captures the complete original closed
 `from_word_0_def` and its inferred type, including the actual WordToWord tuple
 and oracle update before `from_word`. This is definition evidence, not an
@@ -8127,3 +8159,24 @@ reveals a later value hidden by first-match lookup. The executed map drops
 that conflicting key. ProductionJoin derives the actual If knowledge join
 from arm induction hypotheses and original well-formedness preservation;
 it does not establish whole-pass production adoption or HOL/Lean equivalence.
+## Full native immediate Binop constructor
+
+`CorrectnessEncoding/BinopImmediate.lean` proves the original Imm operand case
+(riscv_targetProofScript.sml:550-559) for all five operators. It retains the
+original sole asmStep/initial relation premise and full interference/assertion
+conclusion. The source Xor -1 exception is discharged through the original
+inclusive range; Sub's strict lower bound proves negated signed12 reconstruction.
+Actual native Next follows the emitted bytes, unrestricted decoder equations,
+and literal Run. The typed original specialization in
+`riscv_target_binop_immediate_probe.out` is regression evidence; kernel checking
+and source comparison establish the port. Native state/Run inherits SOUNDNESS
+item 8. The encompassing encoder theorem remains open.
+
+`word_to_stack_fp_conversions_probeScript.sml` captures closed, kernel-proved,
+fully typed specializations of original `evaluate_wInst` to FPToInt and
+FPFromInt. These retain the original guards and full target existential;
+they are source review evidence, not a cross-assistant equivalence proof.
+`word_to_stack_inst_arith_probeScript.sml` captures the original fully typed,
+closed, kernel-proved `evaluate_wInst` specialization for an arbitrary Arith
+opcode, retaining every guard and the full target existential. This is source
+statement evidence, not cross-assistant equivalence.
