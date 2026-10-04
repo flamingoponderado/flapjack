@@ -4680,6 +4680,9 @@ run_probe word_convs_compile_single_not_created_probeScript.sml word_convs_compi
 run_probe word_to_word_syntactic_probeScript.sml word_to_word_syntactic_probe.out \
   cond16bit_inst_select_exp_prime_statement no_mt_code_def_typed \
   "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_to_word_no_install_compile_single_probeScript.sml word_to_word_no_install_compile_single_probe.out \
+  no_install_no_alloc_compile_single_correct_statement no_install_no_alloc_compile_single_correct_typed \
+  "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_to_word_compile_probeScript.sml word_to_word_compile_probe.out \
   compile_single compile_single_typed compile_single_hypotheses full_compile_single full_compile_single_typed full_compile_single_hypotheses \
   compile compile_typed compile_hypotheses \
