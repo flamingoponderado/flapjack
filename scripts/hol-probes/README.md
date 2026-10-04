@@ -8272,3 +8272,16 @@ the existing wordLangInstFromHOL codec: zero offset projects to mem, nonzero
 to memOffset. Identity for a redundant raw memOffset0 input is not claimed.
 This representation infrastructure does not narrow a tagged HOL theorem,
 prove cross-language equivalence, or complete whole-pass production adoption.
+
+## Complete native Shift decoding prerequisites
+
+`DecodeShift.lean` proves actual unrestricted Encode/DecodeAny composition for
+SLL, SRL, SRA, SRLI and SRAI. SLLI is reused from accepted DecodeConst. All
+word5 registers and every word6 immediate are retained, with no successful
+execution or extra range premise. These local compositions have no separately
+named HOL theorem and remain untagged infrastructure. Fresh original captures
+contain20ground EVAL rowsT, typed literal Encode clauses and unrestricted
+printed queries; the printed queries are not asserted original HOL theorems.
+The Lean kernel proofs establish the universal local compositions. Evidence is
+regression/source review, not cross-assistant equivalence or full Shift encoder
+correctness. Full state/run/assertions and both Ror routes remain on the parent.
