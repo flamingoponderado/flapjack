@@ -8345,3 +8345,8 @@ run_probe pan_to_crep_table_validity_probeScript.sml pan_to_crep_table_validity_
 run_probe pan_to_crep_program_validity_probeScript.sml pan_to_crep_program_validity_probe.out \
   every_inst_ok_less_pan_to_crep_compile_prog \
   "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe riscv_target_rejected_probeScript.sml riscv_target_rejected_probe.out \
+  riscv_encoder_correct_longdiv_statement riscv_encoder_correct_longdiv_types riscv_encoder_correct_longdiv_hypotheses riscv_encoder_correct_longdiv_proved riscv_encoder_correct_fp_statement riscv_encoder_correct_fp_types riscv_encoder_correct_fp_hypotheses riscv_encoder_correct_fp_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
