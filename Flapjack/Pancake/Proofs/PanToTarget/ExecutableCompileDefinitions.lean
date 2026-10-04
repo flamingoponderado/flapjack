@@ -14,6 +14,8 @@ open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend
 open Flapjack.Pancake.PanLang
 set_option autoImplicit false
 
+/-- Full compiler and logical maximum-stack bound using only the assembler configuration.
+The bound is computed from the lowered Word program and returned frame sizes. -/
 def compileProgMaxAsmExecutable {width : Nat} [NeZero width]
     (config : Flapjack.Compiler.Backend.Backend.Config) (asmConf : AsmConfigExact width)
     (program : List (DeclHOL width)) :
@@ -29,6 +31,7 @@ def compileProgMaxAsmExecutable {width : Nat} [NeZero width]
   (Flapjack.Compiler.Backend.Backend.fromStack asmConf config .ln stackProgram bitmaps,
     maximum)
 
+/-- Full compiler and logical bound with an explicitly supplied allocator. -/
 def compileProgMaxAsmWith (ra : WordToWord.RegAllocFn) {width : Nat} [NeZero width]
     (config : Flapjack.Compiler.Backend.Backend.Config) (asmConf : AsmConfigExact width)
     (program : List (DeclHOL width)) :
@@ -44,6 +47,8 @@ def compileProgMaxAsmWith (ra : WordToWord.RegAllocFn) {width : Nat} [NeZero wid
   (Flapjack.Compiler.Backend.Backend.fromStack asmConf config .ln stackProgram bitmaps,
     maximum)
 
+/-- Bound-computing API with the proved executable allocator. Ordinary drivers use
+`compileProgAsmFast` instead; the artifact projection agrees unconditionally. -/
 def compileProgMaxAsmFast {width : Nat} [NeZero width]
     (config : Flapjack.Compiler.Backend.Backend.Config) (asmConf : AsmConfigExact width)
     (program : List (DeclHOL width)) :
@@ -51,6 +56,8 @@ def compileProgMaxAsmFast {width : Nat} [NeZero width]
       Flapjack.Compiler.Backend.Backend.Config) × Option Nat :=
   compileProgMaxAsmWith Flapjack.RegAlloc.regAllocExecutable config asmConf program
 
+/-- Allocator-parametric artifact-only compilation. The Word-to-Stack outputs feed
+`fromStack` directly, without constructing a call graph or computing depth. -/
 def compileProgAsmWith (ra : WordToWord.RegAllocFn) {width : Nat} [NeZero width]
     (config : Flapjack.Compiler.Backend.Backend.Config) (asmConf : AsmConfigExact width)
     (program : List (DeclHOL width)) :

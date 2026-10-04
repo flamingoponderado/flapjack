@@ -4,8 +4,8 @@ import Flapjack.Pancake.PanToTarget
 import Flapjack.Compiler.Backend.RiscVConfig.Executable
 import Flapjack.RiscV.PipelineDiagnostics
 
-/-! Parser-backed native whole-compiler interface. The complete compiler result
-is retained, including failure and final configuration, without computing a stack bound.
+/-! Parser-backed native artifact interface. The artifact retains failure and final
+configuration; the stack bound is kept on the separate logical correctness API.
 This is Flapjack driver infrastructure, not a separate HOL declaration. -/
 namespace Flapjack.RiscV.NativeSource
 open Flapjack Flapjack.Pancake.PanLang
@@ -27,8 +27,8 @@ def compileDeclarations (declarations : List (Decl (BitVec 64))) : Artifact :=
   compileProgAsmFast Compiler.Backend.RiscVConfig.pancakeRiscVBackendConfig riscvConfig
     (Pancake.PanToTarget.mainFirstHOL (declarations.map declToHOL))
 
-/-- Parse and static-check the source before invoking the native whole compiler.
-A backend failure remains in the tuple, rather than being projected or discarded. -/
+/-- Parse and static-check the source before invoking the native artifact compiler.
+The artifact retains backend failure. -/
 def compile (source : String) : Except SourceRiscVImageError Output :=
   match Parser.parseTopDecs (fun value => BitVec.ofInt 64 value) source with
   | .error errors => .error (.parse errors)
@@ -42,6 +42,5 @@ def compile (source : String) : Except SourceRiscVImageError Output :=
             artifact := compileDeclarations declarations
             warnings := checked.2
           }
-
 
 end Flapjack.RiscV.NativeSource
