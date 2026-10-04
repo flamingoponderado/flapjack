@@ -8824,6 +8824,7 @@ encoder correctness theorem to arbitrary JumpCmp operands and comparison.
 Four fresh typed rows retain the complete statement, carrier annotations,
 zero hypotheses and proof T; the Lean root covers all near/far Reg/Imm cases.
 The statement/evidence guard detects drift but does not replace source review.
+`word_to_stack_store_consts_caller_probe.out` captures the original full typed StoreConsts comp clause and actual native outputs below/at 8-bit wrapping, at 64-bit wrapping, at the exact chunk boundary and at width1. Three w2n observations normalize the printed word literals. The source register is1 and original stub6; native code, complete flattened bitmap state/count and unconditional macro acceptance are kernel-checked against the repaired executed word-facing producer. The generic Nat macro helper is retained separately. This does not establish full WordToStack simulation or whole compiler correctness.
 
 ### Full native Mem correctness case
 
@@ -8837,6 +8838,7 @@ original all-environment assertions. The local guard pins the complete public
 statement and original evidence; it is a regression check, not an equivalence
 proof or acceptance of the whole encoder.
 
+`riscv_target_bit_rewrites_probeScript.sml` replays the unchanged original local `word_bit_0_add4` and exported `word_bit_0_lemmas` statements with their original `BBLAST_TAC` proofs. Each complete theorem is captured with typed binders, zero hypotheses and proved `T`; this is universal theorem evidence, not selected inputs. `DecodeAny_encode` at targetProof line 162 is commented out and is not a declaration to port.
 `riscv_backend_config_probe.out` captures the exported original
 `riscv_backend_config_def` (no hypotheses) with HOL's SML quotations already
 spliced, including the evaluated `clos_to_bvl`/`bvl_to_bvi` default records.
@@ -8848,6 +8850,8 @@ cross-language proof.
 `riscv_config_proof_replay_probe.out` is a literal source replay (both
 `backendProof` and `riscv_configProof` are unbuilt here): `mc_init_ok_def` and
 `is_riscv_machine_config_def` are replayed verbatim (guarded) and `riscv_init_ok`
+is re-proved with its own HOL tactic; typed statements and the hypothesis count
+are captured for `Flapjack/Compiler/Backend/RiscVConfig/Proofs.lean`.
 is re-proved with its own HOL tactic; `backend_config_ok_def` and `names_tac` are
 likewise replayed and `riscv_backend_config_ok` re-proved with its HOL proof;
 `riscv_machine_config_ok` is re-proved with its HOL proof over the built
@@ -8887,3 +8891,9 @@ remain finite regression evidence, not a universal equivalence proof. Missing
 constructors, mode omissions, source/Lean carrier drift and probe-input drift
 have negative tests. Lake, original capture regeneration and manual source
 comparison remain separate required gates.
+
+`lab_to_target_ffi_distinct_probe.out` captures the full original unconditional FFI-name distinctness theorem, hypothesis count and actual collector definition with full carriers. Lean proves List.Nodup through original fresh insertion. Captures provide source-review evidence, not HOL-to-Lean equivalence or whole compiler completion.
+
+`lab_to_target_ffi_read_interference_probe.out` captures all three original whole FFI-read function equalities with full machine/oracle types and zero hypotheses. Lean retains arbitrary next/FFI oracle replacement and shift. Captures are source-review evidence, not cross-language equivalence or full compiler completion.
+
+`l3_step_immediate_comparison_nop_probe.out` captures both original exported SLTI_NOP/SLTIU_NOP statements, typed binders, two original hypotheses (destination zero AND ArchBase<>1), and HOL kernel result T. The exact Lean pair preserves whole native-state equality and unrestricted source/immediate. These residual exports are unused by the accepted encoder; they add no production-route dependency. Captured statements and scoped checker are regression evidence, not cross-language equivalence proofs.

@@ -1,3 +1,4 @@
+import Flapjack.Test.RiscVBackendConfigExecutable
 import Flapjack.Test.WordToStackStoreConstsCaller
 import Flapjack.Test.PanToWordGoodCodeParity
 import Flapjack.Test.CompileProgMaxExecutableParity
@@ -1921,6 +1922,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.SptreeParity.runChecks,
     Flapjack.Test.MlStringCodecParity.runChecks,
     Flapjack.Test.StackLangInstOverloadsParity.runChecks,
+    Flapjack.Test.RiscVBackendConfigExecutable.runChecks,
     Flapjack.Test.RiscvConfigParity.runChecks,
     Flapjack.Test.MiscAppListParity.runChecks,
     Flapjack.Test.StackToLabFlattenOpsParity.runChecks,

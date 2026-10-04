@@ -1,0 +1,12 @@
+read_ffi_bytearrays_with_next_interfer_statement_typed=read_ffi_bytearrays
+  ((mc :(β, α, γ) machine_config) with next_interfer := (foo :num -> α -> α)) =
+read_ffi_bytearrays mc
+read_ffi_bytearrays_with_next_interfer_hyp_count=0
+read_ffi_bytearrays_shift_interfer_statement_typed=read_ffi_bytearrays (shift_interfer (x :num) (y :(β, α, γ) machine_config)) =
+read_ffi_bytearrays y
+read_ffi_bytearrays_shift_interfer_hyp_count=0
+read_ffi_bytearrays_ffi_interfer_statement_typed=read_ffi_bytearrays
+  ((mc :(β, α, γ) machine_config) with
+   ffi_interfer := (ffi :num -> num # word8 list # α -> α)) =
+read_ffi_bytearrays mc
+read_ffi_bytearrays_ffi_interfer_hyp_count=0

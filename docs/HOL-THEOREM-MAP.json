@@ -98966,5 +98966,57 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 original source6382-6410 and freshly loaded typed original theorem/direct loc_to_pc, sec_labels_ok, extract_labels definitions in lab_to_target_extracted_label_navigation_probe.out. Retains all l1/l2/code binders, original EVERY section validity and MEM pair in FLAT MAP extract_labels Section_lines conjunction, and existential Nat actual locToPc result. Lean flatMap is literal FLAT MAP. Native alpha sec/line alias retains HolAsm/AsmOrCbw/HolMemop/HolAddr/AsmWithLab/HolCmp/HolRegImm/MlString and fixed word8 byte payloads; sole positive word-dimension translation NeZero BitVec width. No stronger validity, label uniqueness, result/search/target execution/codec premise. Nested code/line induction derives actual search and all nonlabel PC increments; label-zero rejection derived from original secLabelOk. Captures are source-review regression evidence, not cross-language equivalence or whole compiler completion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/FfiNameDistinctness.lean",
+    "lean_name": "findFfiNames_nodup",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "find_ffi_names_ALL_DISTINCT",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source10627-10635 and fresh loaded fulltyped theorem hyp0/direct find_ffi_names definition in lab_to_target_ffi_distinct_probe.out. Full forall native code alpha sec and unconditional ALL_DISTINCT conclusion translated to List.Nodup. Sole positive word-dimension NeZero BitVec width translation; canonical HolAsm/AsmOrCbw/HolMemop/HolAddr/AsmWithLab/HolCmp/HolRegImm/MlString/HolFfiName and fixed word8 bytes retained. Actual collector recursion and reviewed listAddIfFresh derive full result; no name range, input validity, encoding success, target execution or output premise. Original capture is regression/source-review evidence, not cross-language equivalence or whole compiler completion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/FfiReadInterference.lean",
+    "lean_name": "readFfiBytearrays_withNextInterfer",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "read_ffi_bytearrays_with_next_interfer",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source6551-6570 and freshly loaded fulltyped original theorem hyp0 in lab_to_target_ffi_read_interference_probe.out. Whole original read_ffi_bytearrays function equality retained, arbitrary positive word dimension/state/projection MachineConfig and replacement next oracle Nat→state→state or FFI oracle Nat→Nat×List(BitVec8)×state→state, arbitrary Nat shift. Sole reviewed positive HOL word-dimension translation NeZero BitVec width; fixed byte8 and canonical native machine record/read function unchanged. No input validity, read success, target evaluation/result, memory relation or narrowed carrier premise. Proof unfolds actual FFI read and shift definitions; only target/addresses/register fields are read. Capture is source-review regression evidence, not HOL-to-Lean equivalence or full compiler completion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/FfiReadInterference.lean",
+    "lean_name": "readFfiBytearrays_shiftInterfer",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "read_ffi_bytearrays_shift_interfer",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source6551-6570 and freshly loaded fulltyped original theorem hyp0 in lab_to_target_ffi_read_interference_probe.out. Whole original read_ffi_bytearrays function equality retained, arbitrary positive word dimension/state/projection MachineConfig and replacement next oracle Nat→state→state or FFI oracle Nat→Nat×List(BitVec8)×state→state, arbitrary Nat shift. Sole reviewed positive HOL word-dimension translation NeZero BitVec width; fixed byte8 and canonical native machine record/read function unchanged. No input validity, read success, target evaluation/result, memory relation or narrowed carrier premise. Proof unfolds actual FFI read and shift definitions; only target/addresses/register fields are read. Capture is source-review regression evidence, not HOL-to-Lean equivalence or full compiler completion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/FfiReadInterference.lean",
+    "lean_name": "readFfiBytearrays_withFfiInterfer",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "read_ffi_bytearrays_ffi_interfer",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source6551-6570 and freshly loaded fulltyped original theorem hyp0 in lab_to_target_ffi_read_interference_probe.out. Whole original read_ffi_bytearrays function equality retained, arbitrary positive word dimension/state/projection MachineConfig and replacement next oracle Nat→state→state or FFI oracle Nat→Nat×List(BitVec8)×state→state, arbitrary Nat shift. Sole reviewed positive HOL word-dimension translation NeZero BitVec width; fixed byte8 and canonical native machine record/read function unchanged. No input validity, read success, target evaluation/result, memory relation or narrowed carrier premise. Proof unfolds actual FFI read and shift definitions; only target/addresses/register fields are read. Capture is source-review regression evidence, not HOL-to-Lean equivalence or full compiler completion."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "SLTI_NOP",
+    "lean_path": "Flapjack/RiscV/L3/Step/ImmediateComparisonNop.lean",
+    "lean_name": "dfnSltINop",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison 2026-10-04, flapjack-slti-nop-pair: original class_rd0 exported companion generated at 839. Fresh GEN_ALL(DISCH_ALL) original capture retains BOTH rd=0 and ArchBase<>1, typed native riscv_state/word5/word12, entire unchanged state; arbitrary source/immediate. Lean retains exactly these hypotheses. Kernel checked; only word/register/mode closure, no rational-cut assumption. Companion source registration already supported; these unused residual exports do not block completed encoder or production routing."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "SLTIU_NOP",
+    "lean_path": "Flapjack/RiscV/L3/Step/ImmediateComparisonNop.lean",
+    "lean_name": "dfnSltIUNop",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison 2026-10-04, flapjack-slti-nop-pair: original class_rd0 exported companion generated at 840. Fresh GEN_ALL(DISCH_ALL) original capture retains BOTH rd=0 and ArchBase<>1, typed native riscv_state/word5/word12, entire unchanged state; arbitrary source/immediate. Lean retains exactly these hypotheses. Kernel checked; only word/register/mode closure, no rational-cut assumption. Companion source registration already supported; these unused residual exports do not block completed encoder or production routing."
   }
 ]

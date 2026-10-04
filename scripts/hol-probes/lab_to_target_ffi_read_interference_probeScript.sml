@@ -1,0 +1,27 @@
+(* Full original machine-config interference invariance captures. *)
+load "bossLib";
+load "preamble";
+load "lab_to_targetProofTheory";
+open HolKernel Parse bossLib;
+val _ = set_trace "types" 1;
+val th = DB.fetch "lab_to_targetProof" "read_ffi_bytearrays_with_next_interfer";
+val _ = print "read_ffi_bytearrays_with_next_interfer_statement_typed=";
+val _ = print_term (concl th);
+val _ = print "\n";
+val _ = print "read_ffi_bytearrays_with_next_interfer_hyp_count=";
+val _ = print (Int.toString (length (hyp th)));
+val _ = print "\n";
+val th = DB.fetch "lab_to_targetProof" "read_ffi_bytearrays_shift_interfer";
+val _ = print "read_ffi_bytearrays_shift_interfer_statement_typed=";
+val _ = print_term (concl th);
+val _ = print "\n";
+val _ = print "read_ffi_bytearrays_shift_interfer_hyp_count=";
+val _ = print (Int.toString (length (hyp th)));
+val _ = print "\n";
+val th = DB.fetch "lab_to_targetProof" "read_ffi_bytearrays_ffi_interfer";
+val _ = print "read_ffi_bytearrays_ffi_interfer_statement_typed=";
+val _ = print_term (concl th);
+val _ = print "\n";
+val _ = print "read_ffi_bytearrays_ffi_interfer_hyp_count=";
+val _ = print (Int.toString (length (hyp th)));
+val _ = print "\n";
