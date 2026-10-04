@@ -5,6 +5,8 @@ import Flapjack.Pancake.Semantics.PanProps
 import Flapjack.Compiler.Backend.StackToLab.Proofs.FullMakeInit
 import Flapjack.Compiler.Backend.StackToLab.Proofs.EncodingInitState
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileBitmaps
+import Flapjack.Compiler.Backend.WordToStack.Proofs.Initialization
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunConstOk
 
 /-!
 # `pan_to_target_compile_semantics` assembly, word-to-stack stage facts
@@ -116,5 +118,31 @@ theorem panToTargetInitStateOk {width : Nat} [NeZero width] {C F : Type}
   · simp
   · funext n
     simp [WordToStack.Native.compileWordToStackNative, appListAppend, appendAux]
+
+/-- The word-level initial state `wst = word_to_stack$make_init ... sst` built on the
+stack state of a successful `full_make_init` satisfies the state premises of
+`word_to_word_compile_semantics` (HOL proof lines 1686-1716: `gc_fun_const_ok` via
+`gc_fun_const_ok_word_gc_fun`, empty stack, its code, and `lookup 0 locals`). -/
+theorem panToTargetWordStateFacts {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k : Nat)
+    (code : Spt (Nat × WordLangProgHOL (BitVec width)))
+    (worac : Nat → (Nat × C) × List (Nat × Nat × WordLangProgHOL (BitVec width)))
+    (scc : StackToLab.Config) (dc : DataToWord.Config) (maxHeap stk : Nat)
+    (stoff : BitVec width × BitVec width) (bitmaps : List (BitVec width))
+    (p : List (Nat × StackLang.HolProg width)) (labSt : LabSem.State width C F)
+    (saveRegs : Nat → Bool) (dataSp : Nat)
+    (soracle : Nat → C × List (Nat × StackLang.HolProg width) × List (BitVec width))
+    (sst xxx : StackSemStateFiniteExact width C F)
+    (hfmi : StackToLab.Proofs.FullMakeInit.fullMakeInit scc dc maxHeap stk stoff bitmaps p labSt
+      saveRegs dataSp soracle = (sst, some xxx)) :
+    let wst := WordToStack.Native.Initialization.makeInit ac k sst code worac
+    WordSimp.gcFunConstOk wst.gcFun ∧ wst.stack = [] ∧ wst.code = code ∧
+      sptLookup 0 wst.locals = some (.loc 1 0) := by
+  unfold StackToLab.Proofs.FullMakeInit.fullMakeInit at hfmi
+  simp only [Prod.mk.injEq] at hfmi
+  obtain ⟨rfl, -⟩ := hfmi
+  refine ⟨?_, rfl, rfl, ?_⟩
+  · exact DataToWord.Proofs.Gc.gcFunConstOkWordGcFun
+  · simp [WordToStack.Native.Initialization.makeInit]; rfl
 
 end Flapjack.Pancake.Proofs.PanToTarget
