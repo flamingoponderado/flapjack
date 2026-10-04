@@ -1,3 +1,4 @@
+import Flapjack.Test.CompileProgMaxExecutableParity
 import Flapjack.Test.WordToWordExecutableParity
 import Flapjack.Test.PanToTargetOptionLtParity
 import Flapjack.Test.WordDepthParity
@@ -1944,6 +1945,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.WordInstPullExpExecutableParity.runChecks,
     Flapjack.Test.WordInstSelectorExecutableParity.runChecks,
     Flapjack.Test.WordToWordExecutableParity.runChecks,
+    Flapjack.Test.CompileProgMaxExecutableParity.runChecks,
     Flapjack.Test.CakeForcedParity.runChecks,
     Flapjack.Test.CakeMkBijParity.runChecks,
     Flapjack.Test.CakeSsaSetupParity.runChecks,

@@ -90761,5 +90761,13 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison 2026-10-03: original pan_to_targetScript10-50 and fresh complete typed original definitions/types in pan_to_target_source_probe.out, no local replay. Positive native DeclHOL width retains the reviewed exact syntax family and native byte-backed MlString names; no String or unrestricted-map substitute. Standard word dimension/positive NeZero translation only. Full original main SPLITP three branches, including empty input staying empty and default main only for nonempty missing-main programs, Return(Const0), One, no params/inline/export. Native complement List.span mirrors actual rich_listTheory.SPLITP clauses; extracted actual original first LET captured and six kernel main observations replayed. Actual panToWordCompileProgHOL ISA and WordToWord.compile, returned col_oracle update only within wordToWordConf; native mllist sort strict Nat comparison, original prog2 labels zipped with generated_main::original prog1 function names, left-biased native Spt union of three stub lists; exports from original program, full backend fromWord with original Option/list-byte/native-word/config result and no supplied pass result/stack-bound premise. Actual listTheory.ZIP_def fresh capture has both arbitrary-list empty clauses, so native List.zip is faithful even for unequal lengths; no unsupported equal-length guard. Production main/exports and full wrapper path are separate source-audited routing work, not claimed executed here."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileProgMax.lean",
+    "lean_name": "compileProgMaxExecutable_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-sol3: Flapjack-only computation replacement agreement, no separately named HOL declaration. Unconditional equality of full native compiler-result/bound pair, preserving all original inputs, actual generated frames and unknown outcomes. Original tagged compileProgMax remains unchanged; this kernel equality is not HOL-to-Lean equivalence."
   }
 ]

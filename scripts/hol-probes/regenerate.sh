@@ -7718,3 +7718,8 @@ run_probe word_to_word_executable_probeScript.sml word_to_word_executable_probe.
   compile_single_definition full_compile_single_definition compile_definition \
   skip_alg0 skip_alg2 return_alg0 return_alg2 assign_return_alg0 assign_return_alg2 must_terminate_alg0 must_terminate_alg2 tail_call_alg0 tail_call_alg2 branch_alg0 branch_alg2 empty oracle_remainder oracle_short \
   "$cake_dir/compiler/backend/word_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe pan_compile_max_executable_probeScript.sml pan_compile_max_executable_probe.out \
+  compile_prog_max_local_replay_type compile_prog_max_local_replay_def_typed \
+  empty leaf tail_recursive recursive call_leaf branch missing call_frames \
+  "$cake_dir/pancake/proofs/pan_to_targetProofScript.sml" "$cake_dir/pancake"
