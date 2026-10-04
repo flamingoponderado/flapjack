@@ -263,8 +263,15 @@ def wordSimpInstConstants {α : Type} (constants : NatInfoMap α) :
   | .arith (.shift _ destination _ _) =>
       wordSimpMapDelete constants destination
   | .const destination _ => wordSimpMapDelete constants destination
-  | .mem _ destination _ => wordSimpMapDelete constants destination
-  | .memOffset _ destination _ _ => wordSimpMapDelete constants destination
+  /- HOL deletes only for `Load`, `Load32` and `Load8`; stores (whose first
+     operand is the stored value) and the sixteen-bit operations fall to the
+     identity clause. -/
+  | .mem .load destination _ | .mem .load8 destination _
+  | .mem .load32 destination _ => wordSimpMapDelete constants destination
+  | .mem _ _ _ => constants
+  | .memOffset .load destination _ _ | .memOffset .load8 destination _ _
+  | .memOffset .load32 destination _ _ => wordSimpMapDelete constants destination
+  | .memOffset _ _ _ _ => constants
 
 /-! `get_var_imm_cs` (`word_simpScript.sml:251-253`). -/
 def wordSimpGetVarImm [DecidableEq α] (constants : NatInfoMap α) :
