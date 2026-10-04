@@ -1,0 +1,3 @@
+EVERY_sec_label_ok_statement=EVERY (λ(l1,l2). l1 = n ∧ l2 ≠ 0) (extract_labels l) ⇔ EVERY (sec_label_ok n) l
+EVERY_sec_label_ok_hypotheses=0
+EVERY_sec_label_ok_typed=EVERY (λ((l1 :num),(l2 :num)). l1 = (n :num) ∧ l2 ≠ (0 :num)) (extract_labels (l :α line list)) ⇔ EVERY (sec_label_ok n :α line -> bool) l

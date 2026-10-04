@@ -1,3 +1,7 @@
+import Flapjack.RiscV.CorrectnessEncoding.Shift
+import Flapjack.RiscV.CorrectnessEncoding.ShiftRorRegister
+import Flapjack.Compiler.Backend.WordToStack.ProductionMoveDomain
+import Flapjack.RiscV.CorrectnessEncoding.ShiftRorImmediate
 import Flapjack.RiscV.CorrectnessEncoding.RorExecution
 import Flapjack.RiscV.CorrectnessEncoding.RorStep
 import Flapjack.Compiler.Backend.Proofs.WordConventions
@@ -14,6 +18,8 @@ import Flapjack.RiscV.CorrectnessEncoding.ShiftRun
 import Flapjack.RiscV.CorrectnessEncoding.DecodeShift
 import Flapjack.RiscV.CorrectnessEncoding.Div
 import Flapjack.RiscV.CorrectnessEncoding.LongMul
+import Flapjack.RiscV.CorrectnessEncoding.AddCarry
+import Flapjack.Compiler.Encoders.RiscV.Target.AsmOkRewrites
 import Flapjack.RiscV.CorrectnessEncoding.DecodeDiv
 import Flapjack.RiscV.CorrectnessEncoding.DecodeLongMul
 import Flapjack.RiscV.CorrectnessEncoding.DecodeSltu
@@ -41,6 +47,7 @@ import Flapjack.Pancake.Proofs.PanToTarget.WordToWordNoInstall
 import Flapjack.Pancake.Proofs.PanToTarget.StackSizeConst
 import Flapjack.Pancake.Proofs.PanToTarget.InitHelpers
 import Flapjack.Pancake.Proofs.PanToTarget.PanInstalled
+import Flapjack.Pancake.Proofs.PanToTarget.LabelsChain
 import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMax
 import Flapjack.Pancake.Proofs.PanToTarget.ConstMemory
 import Flapjack.Pancake.Proofs.PanToTarget.MemorySwap
@@ -125,6 +132,7 @@ import Flapjack.Compiler.Backend.BackendCommon.Trace
 import Flapjack.NamespaceHOL
 import Flapjack.Compiler.Backend.PresLang.Config
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmEvaluate
+import Flapjack.Compiler.Backend.LabProps.SecLabelOk
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmMemory
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmControl
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Loop
@@ -175,6 +183,7 @@ import Flapjack.Test.L3EncodeParity
 import Flapjack.Compiler.Encoders.RiscV.Target
 import Flapjack.Test.RiscVNativeTargetParity
 import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
+import Flapjack.Compiler.Encoders.RiscV.Target.ConfigurationRewrites
 import Flapjack.Compiler.Encoders.RiscV.Target.State
 import Flapjack.Compiler.Encoders.RiscV.Target.HelperLinks
 import Flapjack.Test.RiscVNativeConfigParity
@@ -2243,6 +2252,8 @@ import Flapjack.Pancake.LoopLang
 import Flapjack.NatDedup
 import Flapjack.Pancake.CrepToLoop
 import Flapjack.Pancake.CrepToLoop.ContextExact
+import Flapjack.Pancake.CrepToLoop.ProductionCompileProg
+import Flapjack.Pancake.CrepToLoop.ProductionDeclarations
 import Flapjack.Pancake.CrepToLoop.Proofs.LocValueFree
 import Flapjack.Pancake.CrepToLoop.Proofs.AssignedVars
 import Flapjack.Pancake.CrepToLoop.Proofs.SurvivesMapiAssign

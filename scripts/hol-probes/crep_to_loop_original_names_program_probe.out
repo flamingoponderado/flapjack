@@ -1,0 +1,11 @@
+full_program=[(64,[],
+  Mark
+    (Seq (Mark (Assign 1 (Const 7w)))
+       (Mark (Seq (Mark (Call NONE (SOME 65) [1] NONE)) (Mark Skip)))));
+ (65,[0],
+  Mark
+    (Seq (Mark (Assign 1 (Var 0)))
+       (Mark (Seq (Mark (Return [1])) (Mark Skip)))))]
+row_names=[64; 65]
+parameters=[[]; [0]]
+done=T

@@ -1,0 +1,11 @@
+load "bossLib";
+load "preamble";
+load "crep_to_loopTheory";
+open bossLib HolKernel Parse preamble crep_to_loopTheory;
+fun emit label q = let val th = EVAL q in print (label ^ "="); print_term (rconc th); print "\n" end;
+val program = ``[(«f», ([] : num list), crepLang$Call NONE «g» [crepLang$Const (7w : 8 word)]);
+                («g», [0], crepLang$Return [crepLang$Var 0])]``;
+val _ = emit "full_program" ``compile_prog RISC_V ^program``;
+val _ = emit "row_names" ``MAP FST (compile_prog RISC_V ^program)``;
+val _ = emit "parameters" ``MAP (FST o SND) (compile_prog RISC_V ^program)``;
+val _ = emit "done" ``T``;
