@@ -1,3 +1,4 @@
+import Flapjack.RiscV.CorrectnessEncoding.Shift
 import Flapjack.RiscV.CorrectnessEncoding.ShiftRorRegister
 import Flapjack.Compiler.Backend.WordToStack.ProductionMoveDomain
 import Flapjack.RiscV.CorrectnessEncoding.ShiftRorImmediate

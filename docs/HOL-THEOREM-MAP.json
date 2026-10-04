@@ -95868,5 +95868,14 @@
     "hol_name": "unknown_loc_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus4 source comparison 2026-10-04: original unknown_loc_def: Locs UNKNOWNpt UNKNOWNpt. Typed capture ast_lit_op probe (show_types; datatype case theorems)."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Shift.lean",
+    "lean_name": "riscv_encoder_correct_shift",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source compared original Shift560-620, all four operators and Reg/Imm forms, sole source-step/initial target relation, complete original existential allenv/asserts/asserts2. Assembled eight full kernel cases without extra premises. Fresh full typed original specialization hyp0/provedT. Inherits reals_as_rational_cuts through full native target closure, SOUNDNESS item8."
   }
 ]

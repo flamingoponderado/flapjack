@@ -8457,3 +8457,5 @@ labels and introduces no idempotence, rebasing, desired-output or target-run
 assumption. These output observations do not prove HOL-to-Lean equivalence.
 The actual CLI and native WordToStack entry/stub/config consumer route remains
 open; this checked source-premise/producer slice alone does not close it.
+
+`riscv_target_shift_probe.out` freshly specializes the full original theorem to all Shift operators and Reg/Imm forms, retaining unrestricted Nat registers, word64 states, source step/initial relation, all environments and both assertions. Capture is regression evidence, not equivalence. Eight full kernel cases supply the assembly; SOUNDNESS8 and other encoder constructors remain tracked.
