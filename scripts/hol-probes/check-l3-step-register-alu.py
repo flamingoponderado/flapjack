@@ -1,0 +1,80 @@
+"""Reject drift in original HOL register-ALU evaluated instruction captures."""
+from pathlib import Path
+
+EXPECTED = [
+    'add_hypotheses=(rd :word5) ≠ (0w :word5)',
+    "add_statement=dfn'ADD ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) =",
+    's with',
+    'c_gpr :=',
+    '  s.c_gpr⦇',
+    '    s.procID ↦',
+    '      (s.c_gpr s.procID)⦇',
+    '        rd ↦',
+    '          (if rs1 = (0w :word5) then',
+    '             if rs2 = (0w :word5) then (0w :word64) else s.c_gpr s.procID rs2',
+    '           else if rs2 = (0w :word5) then s.c_gpr s.procID rs1',
+    '           else s.c_gpr s.procID rs1 + s.c_gpr s.procID rs2)',
+    '      ⦈',
+    '  ⦈',
+    "sub_statement=dfn'SUB ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) =",
+    's with',
+    'c_gpr :=',
+    '  s.c_gpr⦇',
+    '    s.procID ↦',
+    '      (s.c_gpr s.procID)⦇',
+    '        rd ↦',
+    '          (if rs1 = (0w :word5) then (0w :word64) else s.c_gpr s.procID rs1) −',
+    '          (if rs2 = (0w :word5) then (0w :word64) else s.c_gpr s.procID rs2)',
+    '      ⦈',
+    '  ⦈',
+    "and_statement=dfn'AND ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) =",
+    's with',
+    'c_gpr :=',
+    '  s.c_gpr⦇',
+    '    s.procID ↦',
+    '      (s.c_gpr s.procID)⦇',
+    '        rd ↦',
+    '          (if rs1 = (0w :word5) then (0w :word64)',
+    '           else if rs2 = (0w :word5) then (0w :word64)',
+    '           else s.c_gpr s.procID rs1 && s.c_gpr s.procID rs2)',
+    '      ⦈',
+    '  ⦈',
+    "or_statement=dfn'OR ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) =",
+    's with',
+    'c_gpr :=',
+    '  s.c_gpr⦇',
+    '    s.procID ↦',
+    '      (s.c_gpr s.procID)⦇',
+    '        rd ↦',
+    '          (if rs1 = (0w :word5) then',
+    '             if rs2 = (0w :word5) then (0w :word64) else s.c_gpr s.procID rs2',
+    '           else if rs2 = (0w :word5) then s.c_gpr s.procID rs1',
+    '           else s.c_gpr s.procID rs1 ‖ s.c_gpr s.procID rs2)',
+    '      ⦈',
+    '  ⦈',
+    "xor_statement=dfn'XOR ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) =",
+    's with',
+    'c_gpr :=',
+    '  s.c_gpr⦇',
+    '    s.procID ↦',
+    '      (s.c_gpr s.procID)⦇',
+    '        rd ↦',
+    '          (if rs1 = (0w :word5) then',
+    '             if rs2 = (0w :word5) then (0w :word64) else s.c_gpr s.procID rs2',
+    '           else if rs2 = (0w :word5) then s.c_gpr s.procID rs1',
+    '           else s.c_gpr s.procID rs1 ⊕ s.c_gpr s.procID rs2)',
+    '      ⦈',
+    '  ⦈',
+    'gpr_op_type=:word64 -> word64 -> word64',
+    "source=HOL riscv_stepScript.sml:858-866 class evaluator over dfn'ADD/SUB/AND/OR/XOR_def; sole hypothesis rd <> 0w",
+]
+
+
+def check(text):
+    if text.splitlines() != EXPECTED:
+        raise ValueError("original HOL register-ALU capture differs from reviewed statements")
+
+
+if __name__ == "__main__":
+    check(Path(__file__).with_name("l3_step_register_alu_probe.out").read_text())
+    print("step_register_alu: exact original HOL statements, hypothesis and types PASS")
