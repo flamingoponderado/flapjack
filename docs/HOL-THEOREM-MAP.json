@@ -98427,6 +98427,22 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyMachineToLab.lean",
     "lean_name": "panToTargetMachineLab",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1316-1440, stage A4): lab_to_target semantics_compile instantiated at labst = make_init mc ffi t m (dm INTER byte_aligned) (sdm INTER byte_aligned) ms lprog (compile mc.target.config) ... with HOL's constant oracle; no_install_or_no_share_mem and compiler_oracle_ok from stage A1, good_code from stage A2 (panToTargetGoodCode), mmio index from compile_lab_IMP_mmio_pcs_min_index, good_init_state/MMIO/bound facts from pan_installed's components. hinst (the conclusion of pan_to_word_every_inst_ok_less, bead .14.20) is a stage-local premise to be discharged in the top theorem, not a top-theorem premise."
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1316-1440, stage A4): panToTargetMachineLabOfGoodCode with good_code from the A2 helper panToTargetGoodCode over hinst (the conclusion of pan_to_word_every_inst_ok_less, bead .14.20), a stage-local premise discharged in the top theorem from pancake_good_code."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyMachineToLab.lean",
+    "lean_name": "panToTargetMachineLabOfGoodCode",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1316-1440, stage A4): lab_to_target semantics_compile instantiated at labst = make_init mc ffi t m (dm INTER byte_aligned) (sdm INTER byte_aligned) ms lprog (compile mc.target.config) ... with HOL's constant oracle; no_install_or_no_share_mem and compiler_oracle_ok from stage A1, mmio index from compile_lab_IMP_mmio_pcs_min_index, good_init_state/MMIO/bound facts from pan_installed's components; good_code mc.target.config LN lprog (stage A2's conclusion) is a stage-local premise discharged by the source-level A2 stage, not a top-theorem premise."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyMachineToLab.lean",
+    "lean_name": "panToTargetMachineSemExtend",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only composition step of pan_to_target_compile_semantics (HOL proof line 1316, SUBSET_TRANS with implements' and extend_with_resource_limit' unfolded): implements' T machine {lab} and lab IN extend_with_resource_limit' prec {w} with w <> Fail give every machine behaviour in extend_with_resource_limit' prec {w}."
   }
 ]
