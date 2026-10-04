@@ -8117,3 +8117,8 @@ The `word_to_word_install` probe captures the complete original closed typed
 specialization. `GEN_ALL` closes every binder; the specialization has zero
 hypotheses. These are original-theory captures, not a local replay or an
 independent cross-language equivalence proof.
+
+`word_to_stack_fp_conversions_probeScript.sml` captures closed, kernel-proved,
+fully typed specializations of original `evaluate_wInst` to FPToInt and
+FPFromInt. These retain the original guards and full target existential;
+they are source review evidence, not a cross-assistant equivalence proof.

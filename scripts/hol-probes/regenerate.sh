@@ -107,6 +107,9 @@ run_probe() {
   done
 }
 
+run_probe word_to_stack_fp_conversions_probeScript.sml word_to_stack_fp_conversions_probe.out \
+  fpToInt_typed fpToInt_proved fpToInt_hypotheses fpFromInt_typed fpFromInt_proved fpFromInt_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe sptree_subspt_union_probeScript.sml sptree_subspt_union_probe.out \
   subspt_def_statement subspt_def_hypotheses subspt_lookup_statement subspt_lookup_hypotheses subspt_trans_statement subspt_trans_hypotheses subspt_union_statement subspt_union_hypotheses subspt_foldl_union_statement subspt_foldl_union_hypotheses \
   "$hol_dir/src/finite_maps/sptreeScript.sml" "$cake_dir/compiler/backend/proofs"
