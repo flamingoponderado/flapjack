@@ -1,14 +1,26 @@
 load "preamble"; load "riscv_stepTheory";
 open HolKernel Parse bossLib preamble riscvTheory riscv_stepTheory;
 val _ = Globals.linewidth := 1000000;
-fun capture label defs tm = let val th = SIMP_CONV (srw_ss()) defs tm in
- (print(label ^ "_clause="); print_term(concl th); print "\n";
- print(label ^ "_types="); print(String.concatWith ", " (map (fn v => term_to_string v ^ " : " ^ type_to_string(type_of v)) (free_vars tm))); print "\n";
- print(label ^ "_hypotheses=" ^ Int.toString(length(hyp th)) ^ "\n")) end;
-val _ = capture "ror_run_srli" [Run_def, dfn'SRLI_def] ``Run (riscv$Shift (SRLI (rdv,rs1v,amtv))) ms``;
-val _ = capture "ror_run_sll" [Run_def, dfn'SLL_def] ``Run (riscv$Shift (SLL (rdv,rs1v,rs2v))) ms``;
-val _ = capture "ror_run_srl" [Run_def, dfn'SRL_def] ``Run (riscv$Shift (SRL (rdv,rs1v,rs2v))) ms``;
-val _ = capture "ror_run_sub" [Run_def, dfn'SUB_def] ``Run (riscv$ArithR (SUB (rdv,rs1v,rs2v))) ms``;
+val srli_term = ``Run (riscv$Shift (SRLI (rdv,rs1v,amtv))) ms``;
+val srli_clause = SIMP_CONV (srw_ss()) [Run_def, dfn'SRLI_def] srli_term;
+val _ = (print "ror_run_srli_clause="; print_term(concl srli_clause); print "\n");
+val _ = (print "ror_run_srli_types="; print(String.concatWith ", " (map (fn v => term_to_string v ^ " : " ^ type_to_string(type_of v)) (free_vars srli_term))); print "\n");
+val _ = print("ror_run_srli_hypotheses=" ^ Int.toString(length(hyp srli_clause)) ^ "\n");
+val sll_term = ``Run (riscv$Shift (SLL (rdv,rs1v,rs2v))) ms``;
+val sll_clause = SIMP_CONV (srw_ss()) [Run_def, dfn'SLL_def] sll_term;
+val _ = (print "ror_run_sll_clause="; print_term(concl sll_clause); print "\n");
+val _ = (print "ror_run_sll_types="; print(String.concatWith ", " (map (fn v => term_to_string v ^ " : " ^ type_to_string(type_of v)) (free_vars sll_term))); print "\n");
+val _ = print("ror_run_sll_hypotheses=" ^ Int.toString(length(hyp sll_clause)) ^ "\n");
+val srl_term = ``Run (riscv$Shift (SRL (rdv,rs1v,rs2v))) ms``;
+val srl_clause = SIMP_CONV (srw_ss()) [Run_def, dfn'SRL_def] srl_term;
+val _ = (print "ror_run_srl_clause="; print_term(concl srl_clause); print "\n");
+val _ = (print "ror_run_srl_types="; print(String.concatWith ", " (map (fn v => term_to_string v ^ " : " ^ type_to_string(type_of v)) (free_vars srl_term))); print "\n");
+val _ = print("ror_run_srl_hypotheses=" ^ Int.toString(length(hyp srl_clause)) ^ "\n");
+val sub_term = ``Run (riscv$ArithR (SUB (rdv,rs1v,rs2v))) ms``;
+val sub_clause = SIMP_CONV (srw_ss()) [Run_def, dfn'SUB_def] sub_term;
+val _ = (print "ror_run_sub_clause="; print_term(concl sub_clause); print "\n");
+val _ = (print "ror_run_sub_types="; print(String.concatWith ", " (map (fn v => term_to_string v ^ " : " ^ type_to_string(type_of v)) (free_vars sub_term))); print "\n");
+val _ = print("ror_run_sub_hypotheses=" ^ Int.toString(length(hyp sub_clause)) ^ "\n");
 val _ = computeLib.add_funs [Encode_def, Itype_def, Rtype_def, opc_def];
 fun out label tm = let val th = EVAL tm val rhs = rhs(concl th) in
  if null(hyp th) andalso aconv rhs ``T`` then (print(label ^ "="); print_term rhs; print "\n")
