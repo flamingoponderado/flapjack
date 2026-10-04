@@ -8437,3 +8437,5 @@ The return-shape metadata is consumed before this stage and is not an original
 compile_prog input. This producer slice does not yet connect the CLI: native
 WordToStack entry/stub/config consumers and the whole executed route remain
 separate open dependencies coordinated with Sol2.
+
+`riscv_target_shift_ror_register_probe.out` freshly specializes the full original encoder theorem at Reg/Ror with unrestricted natural registers, full word64 source states, hyp0/provedT. The kernel port derives the complete ORI31/SUB31/SLL31/SRLrd/ORrd trace and original all-environment assertions from source step/initial relation alone. It preserves zero count and all allowed register aliases, derives source count/avoid guards and full scratch31 effect, and adds no target-run or postrelation premise. Capture is statement regression evidence, not cross-language equivalence. Native closure inherits SOUNDNESS8; full Shift/encoder/compiler assembly remains open.
