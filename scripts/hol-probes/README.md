@@ -8704,3 +8704,5 @@ word dimension. The concrete SOME/NONE rows use Boolean, numeric-pair and
 32-bit-word metadata with an 8-bit `word_loc` argument list.
 Capture regenerated from the pinned original source; it is regression evidence,
 not a HOL-to-Lean equivalence proof.
+
+`word_to_word_find_code_carriers_probe.out` replays the literal local `find_code_thm` statement and proof from the pinned source. Its typed, zero-hypothesis result records independent code/config, argument-word, and three return-metadata carriers. This is source-review regression evidence, not a HOL-to-Lean equivalence proof.
