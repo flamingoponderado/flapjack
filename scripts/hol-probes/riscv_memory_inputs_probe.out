@@ -1,0 +1,31 @@
+load_endpoints=T
+load_registers=T
+load_offsets=T
+load8_endpoints=T
+load8_registers=T
+load8_offsets=T
+load16_endpoints=T
+load16_registers=T
+load16_offsets=T
+load32_endpoints=T
+load32_registers=T
+load32_offsets=T
+store_endpoints=T
+store_registers=T
+store_offsets=T
+store8_endpoints=T
+store8_registers=T
+store8_offsets=T
+store16_endpoints=T
+store16_registers=T
+store16_offsets=T
+store32_endpoints=T
+store32_registers=T
+store32_offsets=T
+alias_wrap=T
+source_clause=asm_ok (Inst (Mem m r (Addr base w))) riscv_config ⇔ reg_ok r riscv_config ∧ reg_ok base riscv_config ∧ if m = Load ∨ m = Store ∨ m = Load32 ∨ m = Store32 then addr_offset_ok riscv_config w else if m = Load16 ∨ m = Store16 then hw_offset_ok riscv_config w ∧ riscv_config.ISA ≠ Ag32 else byte_offset_ok riscv_config w
+source_hypotheses=0
+source_types=w : :word64, base : :num, r : :num, m : :memop
+native_clause=riscv_ast (Inst (Mem m r (Addr base w))) = case riscv_memop m of INL f => [Load (f (n2w r,n2w base,w2w w))] | INR f' => [Store (f' (n2w base,n2w r,w2w w))]
+native_hypotheses=0
+native_types=w : :word64, base : :num, r : :num, m : :memop

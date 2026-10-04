@@ -1,0 +1,47 @@
+near0_statement=∀(a :word64). -(4092w :word64) ≤ a ∧ a ≤ (4095w :word64) ∧ aligned (2 :num) a ⇒ (sw2sw ((w2w (a ⋙ (1 :num)) :word12) − (0w :word12)) :word64) ≪ (1 :num) = a − (0w :word64)
+near0_types=(a :word64) : :word64
+near0_hypotheses=0
+near0_proved=T
+near0_boundary0=T
+near0_boundary1=T
+near0_boundary2=T
+near0_boundary3=T
+near0_boundary4=T
+near4_statement=∀(a :word64). -(4092w :word64) ≤ a ∧ a ≤ (4095w :word64) ∧ aligned (2 :num) a ⇒ (sw2sw ((w2w (a ⋙ (1 :num)) :word12) − (2w :word12)) :word64) ≪ (1 :num) = a − (4w :word64)
+near4_types=(a :word64) : :word64
+near4_hypotheses=0
+near4_proved=T
+near4_boundary0=T
+near4_boundary1=T
+near4_boundary2=T
+near4_boundary3=T
+near4_boundary4=T
+far4_statement=∀(a :word64). -(0xFFFF8w :word64) ≤ a ∧ a ≤ (0x100003w :word64) ∧ aligned (2 :num) a ⇒ (sw2sw ((w2w (a ⋙ (1 :num)) :word20) − (2w :word20)) :word64) ≪ (1 :num) = a − (4w :word64)
+far4_types=(a :word64) : :word64
+far4_hypotheses=0
+far4_proved=T
+far4_boundary0=T
+far4_boundary1=T
+far4_boundary2=T
+far4_boundary3=T
+far4_boundary4=T
+far8_statement=∀(a :word64). -(0xFFFF8w :word64) ≤ a ∧ a ≤ (0x100003w :word64) ∧ aligned (2 :num) a ⇒ (sw2sw ((w2w (a ⋙ (1 :num)) :word20) − (4w :word20)) :word64) ≪ (1 :num) = a − (8w :word64)
+far8_types=(a :word64) : :word64
+far8_hypotheses=0
+far8_proved=T
+far8_boundary0=T
+far8_boundary1=T
+far8_boundary2=T
+far8_boundary3=T
+far8_boundary4=T
+pc_bias_statement=∀(pc :word64) (a :word64) (bias :word64). pc + bias + (a − bias) = pc + a
+pc_bias_hypotheses=0
+pc_bias_proved=T
+reg_equal_source=riscv_ast (JumpCmp Equal (r1 :num) (Reg (r2 :num) :64 reg_imm) (a :word64)) = if (0xFFFFFFFFFFFFF004w :word64) ≤ a ∧ a ≤ (4095w :word64) then (let (off12 :word12) = (w2w (a ⋙ (1 :num)) :word12) in [Branch (BEQ ((n2w r1 :word5),(n2w r2 :word5),off12))]) else (let (off20 :word20) = (w2w (a ⋙ (1 :num)) :word20) + (0xFFFFEw :word20) in [Branch (BNE ((n2w r1 :word5),(n2w r2 :word5),(4w :word12))); Branch (JAL ((0w :word5),off20))])
+reg_equal_hypotheses=0
+reg_test_source=riscv_ast (JumpCmp Test (r1 :num) (Reg (r2 :num) :64 reg_imm) (a :word64)) = if (0xFFFFFFFFFFFFF004w :word64) ≤ a ∧ a ≤ (4095w :word64) then (let (off12 :word12) = (w2w (a ⋙ (1 :num)) :word12) in [ArithR (AND ((31w :word5),(n2w r1 :word5),(n2w r2 :word5))); Branch (BEQ ((31w :word5),(0w :word5),off12 + (4094w :word12)))]) else (let (off20 :word20) = (w2w (a ⋙ (1 :num)) :word20) + (0xFFFFEw :word20) in [ArithR (AND ((31w :word5),(n2w r1 :word5),(n2w r2 :word5))); Branch (BNE ((31w :word5),(0w :word5),(4w :word12))); Branch (JAL ((0w :word5),off20 + (0xFFFFEw :word20)))])
+reg_test_hypotheses=0
+imm_equal_source=riscv_ast (JumpCmp Equal (r1 :num) (Imm (i :word64)) (a :word64)) = if (0xFFFFFFFFFFFFF004w :word64) ≤ a ∧ a ≤ (4095w :word64) then (let (off12 :word12) = (w2w (a ⋙ (1 :num)) :word12) + (4094w :word12) in [ArithI (ORI ((31w :word5),(0w :word5),(w2w i :word12))); Branch (BEQ ((n2w r1 :word5),(31w :word5),off12))]) else (let (off20 :word20) = (w2w (a ⋙ (1 :num)) :word20) + (0xFFFFCw :word20) in [ArithI (ORI ((31w :word5),(0w :word5),(w2w i :word12))); Branch (BNE ((n2w r1 :word5),(31w :word5),(4w :word12))); Branch (JAL ((0w :word5),off20))])
+imm_equal_hypotheses=0
+imm_test_source=riscv_ast (JumpCmp Test (r1 :num) (Imm (i :word64)) (a :word64)) = if (0xFFFFFFFFFFFFF004w :word64) ≤ a ∧ a ≤ (4095w :word64) then (let (off12 :word12) = (w2w (a ⋙ (1 :num)) :word12) + (4094w :word12) in [ArithI (ANDI ((31w :word5),(n2w r1 :word5),(w2w i :word12))); Branch (BEQ ((31w :word5),(0w :word5),off12))]) else (let (off20 :word20) = (w2w (a ⋙ (1 :num)) :word20) + (0xFFFFCw :word20) in [ArithI (ANDI ((31w :word5),(n2w r1 :word5),(w2w i :word12))); Branch (BNE ((31w :word5),(0w :word5),(4w :word12))); Branch (JAL ((0w :word5),off20))])
+imm_test_hypotheses=0

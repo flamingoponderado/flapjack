@@ -8497,6 +8497,19 @@ pair. The full native target closure inherits SOUNDNESS8. The statement and
 capture pin is a syntactic regression check, not a cross-language proof or full
 compiler theorem.
 
+`riscv_target_suboverflow_probe.out` captures the fully typed original full
+SubOverflow specialization of `riscv_encoder_correct`, with actual hypothesis
+count zero and HOL kernel result T. Lean retains only the original source step
+and initial relation, derives all six XOR/SUB/XOR/XORI/AND/SRLI native steps
+from encoded bytes, preserves arbitrary original interference and both
+assertions, and establishes PC24, code bytes and the complete signed-overflow
+post relation. Only original r1!=r3 is required; r1=r4 and other source-valid
+aliases remain. The full projection includes scratch31. Untagged arithmetic
+proves the native circuit equals HOL signed subtraction overflow for every word64
+pair. The full native target closure inherits SOUNDNESS8. The statement and
+capture pin is a syntactic regression check, not a cross-language proof or full
+compiler theorem.
+
 `riscv_memory_decode_probe.out` records each literal LD/LWU/LHU/LBU/SD/SW/SH/SB original Encode clause and intrinsic word5/word12 carriers, zero source hypotheses, and Decode/Encode evaluations at all-zero, all-one, and mixed-register/sign-offset inputs. Lean proves unrestricted roundtrips including zero registers and all offsets; finite probes are regression evidence, not universal equivalence. Full memory encoder correctness remains a dependency-linked open task.
 
 `pan_native_frontend_prefix_probeScript.sml` evaluates the complete source
@@ -8675,6 +8688,28 @@ full encoder assembly and compiler correctness remain separate open work.
 No executed compiler definition changes in this delivery.
 
 
+### Original JumpCmp halfword payload and prefix-PC arithmetic
+
+`riscv_jumpcmp_offsets_probeScript.sml` kernel-proves the four original
+shift/narrow/subtract/sign-extend/shift equations: near word12 with zero or
+four prefix bytes, and far word20 with four or eight prefix bytes. The 47-row
+capture contains all four typed universal statements, carrier types, actual
+zero-hypothesis counts and proved status; twenty boundary observations;
+a general full word64 PC-bias cancellation proof; and four typed original
+Reg/Imm Equal/Test lowering clauses with their actual hypothesis counts.
+
+`Flapjack/RiscV/CorrectnessEncoding/JumpCmp/Arithmetic.lean` proves the same
+payload equations and the four resulting source-PC equations. Only original
+near `[-4092,4095]` or global `[-1048568,1048579]` guards and four-byte source
+alignment occur. The lower endpoints retain correction through negative
+signed payloads; the aligned far upper endpoint is 1048576. No new offset,
+target execution, decoder or post-state assumption is introduced.
+
+These are untagged local compositions without a separately named original
+HOL theorem. `check-riscv-jumpcmp-offsets.py` and mutation tests guard the
+exact original arithmetic and evidence. Full JumpCmp encoder correctness
+remains separate dependent work; no executed compiler definition changes.
+
 ### Source/native store post-memory correspondence
 
 `riscv_memory_store_value_probeScript.sml` compares all selected bytes and
@@ -8698,6 +8733,81 @@ and assertion assembly.
 
 `pan_to_crep_inline_table_validity_probe.out` captures the complete original typed every_inst_w_inline implication. Native proof derives the actual filtered name-map SUBMAP internally, including duplicate keys, and consumes the accepted full inlining theorem. It assumes only the original compile_to_crep table validity, with no output/target-run or added distinctness premise; full source-program/body validity remains separate.
 
+`pan_to_crep_compile_validity_probe.out` captures the complete original typed body-compiler validity and compile_def. The context/body dimensions coincide, while the unrelated quantified e binder is explicitly vacuous. Native proof covers all32 compiler induction cases, every Call fallback/handler branch and changed Dec/DecCall contexts, retaining only the original source guard. This supplies body validity, not complete declaration/program validity or end-to-end compiler correctness.
+
+### Source-to-native memory instruction inputs
+
+`riscv_memory_inputs_probeScript.sml` replays all eight original memory
+constructors at both signed12 endpoints; architectural exclusions and register
+overflow are rejected on both register positions, and both just-outside offsets
+are rejected. A matched source/native alias fixture wraps the address to word64
+minus one. Original literal `inst_ok` and `riscv_ast` equations retain their
+free-variable types and zero hypothesis counts. These are regression evidence,
+not a cross-language equivalence proof.
+
+`CorrectnessEncoding/MemoryInputs.lean` source-compares `asmScript.sml:286–299`,
+`riscv_targetScript.sml:165–168`, `asmSem$addr/read_reg`, native `GPR`, and the
+original Mem constructor at `riscv_targetProofScript.sml:661–669`. All eight
+constructors derive their register and signed-offset guards from actual
+`asmOkExact`; the initial target relation discharges native register values,
+including architectural zero exclusion. Original aliases are admitted. The
+actual emitted instruction's Run is derived under the initial relation, with
+source address and store-value inputs; emitted-AST membership selects the
+instruction and assumes no target execution/result. These local compositions
+have no separately named HOL originals and remain untagged. Full Mem still
+needs interference, complete postrelation and assertion assembly.
+
+### Full byte-driven native conditional branch transitions
+
+`riscv_conditional_next_probeScript.sml` evaluates the original full
+`NextRISCV` against independently computed complete post-records for all six
+conditional instructions. Its 30 observations exercise zero registers,
+maximum aliased registers, negative and odd halfword payloads, both operand
+orders, and the signed/unsigned 64-bit boundary. Taken paths clear the
+pending branch transfer and update PC; fallthrough advances by four bytes.
+Both paths retain every other field apart from the fetched instruction size.
+The probe proves the redundant update of a constant function before comparing
+records, so a taken branch returning `NONE` has the same full map as the
+initial constant `NONE` map. The capture also records complete original
+primitive equations and `NextRISCV_def`, their actual hypothesis counts,
+and typed statements, rather than relying on the fixture names alone.
+
+`Flapjack/RiscV/CorrectnessEncoding/JumpCmp/Native.lean` proves the unrestricted
+byte-driven transitions for every intrinsic word5 register and word12
+halfword payload from `riscvOk` and four actual emitted bytes. It is untagged
+local composition infrastructure; full `JumpCmp` correctness is a dependent
+task. `check-riscv-conditional-next.py` and its mutation tests guard the
+statement, complete evidence and registration; source comparison and kernel
+checking remain required.
+
+`pan_to_crep_table_validity_probe.out` captures the complete original typed declaration-list compiler validity theorem. The native proof preserves its sole good_panops input guard and derives each projected function body guard internally before applying the full body compiler theorem. Names and parameters are unrestricted; no target-run, byte-range or desired-output premise is added. This is table validity, not full compiler correctness.
+
+`pan_to_crep_program_validity_probe.out` captures the complete original typed compile_prog arity invariant. The native proof composes full table validity with full actual inlining validity under the sole original good_panops declaration-list guard. This supplies the source-validity prerequisite, not full compiler correctness.
+
+### Full original LongDiv and FP encoder cases
+
+`riscv_target_rejected_probeScript.sml` specializes the original complete
+`riscv_encoder_correct` theorem to `Inst (Arith (LongDiv ...))` and
+`Inst (FP f)`. Eight rows retain both complete typed statements, bound
+carrier types, actual zero-hypothesis counts and kernel-proved status.
+
+`Flapjack/RiscV/CorrectnessEncoding/Rejected.lean` states both full cases,
+including the existential step count, every interference environment, both
+assertion families, code bytes, PC membership and final state relation.
+The proofs derive contradiction from the actual seventh `asmStep` conjunct.
+Original LongDiv requires the x86-64 ISA; original RISC-V config rejects it.
+The original zero FP register count rejects every one of the sixteen FP
+forms. No rejection hypothesis or restricted FP carrier is added.
+
+`check-riscv-target-rejected.py` pins the full source and statement evidence;
+its mutation tests cover original configuration and guards, full carriers,
+quantifiers, assertions and typed captures. Native target statements retain
+the reviewed `reals_as_rational_cuts` assurance limit; no executable compiler
+definition changes here. Whole encoder and compiler assembly remain open.
+
+`pan_to_word_inst_ok_less_probe.out` captures the complete original typed six-pass instruction-validity theorem. Source declarations, asm_config and output word programs share one word dimension. The native proof composes reviewed source invariants and full LoopToWord instruction validity under the actual compile equation, both zero-offset guards and original good_panops guard. No target-run or desired-result premise is added; whole semantic compiler correctness remains open.
+
+`word_to_stack_store_consts_caller_probe.out` captures the original full typed StoreConsts comp clause and actual native outputs below/at 8-bit wrapping, at 64-bit wrapping, at the exact chunk boundary and at width1. Three w2n observations normalize the printed word literals. The source register is1 and original stub6; native code, complete flattened bitmap state/count and unconditional macro acceptance are kernel-checked against the repaired executed word-facing producer. The generic Nat macro helper is retained separately. This does not establish full WordToStack simulation or whole compiler correctness.
 ### Independent `add_ret_loc` metadata (PR1213 carrier repair)
 
 `word_sem_add_ret_loc_carriers_probeScript.sml` captures the original generic
@@ -8709,5 +8819,36 @@ Capture regenerated from the pinned original source; it is regression evidence,
 not a HOL-to-Lean equivalence proof.
 
 `word_to_word_find_code_carriers_probe.out` replays the literal local `find_code_thm` statement and proof from the pinned source. Its typed, zero-hypothesis result records independent code/config, argument-word, and three return-metadata carriers. This is source-review regression evidence, not a HOL-to-Lean equivalence proof.
+`riscv_target_jumpcmp_probeScript.sml` specializes the full original native
+encoder correctness theorem to arbitrary JumpCmp operands and comparison.
+Four fresh typed rows retain the complete statement, carrier annotations,
+zero hypotheses and proof T; the Lean root covers all near/far Reg/Imm cases.
+The statement/evidence guard detects drift but does not replace source review.
+
+### Full native Mem correctness case
+
+`riscv_target_mem_probeScript.sml` specializes the original full encoder theorem
+to `Inst (Mem m r (Addr base w))` with arbitrary original registers, word64
+offset and all eight memory operations. It captures the complete assertion
+conclusion, inferred types, zero open hypotheses and the original proved result.
+The matching Lean theorem is in `CorrectnessEncoding/MemoryAssertions.lean`;
+its source-step/initial-relation premise derives actual native Next and both
+original all-environment assertions. The local guard pins the complete public
+statement and original evidence; it is a regression check, not an equivalence
+proof or acceptance of the whole encoder.
+
+`riscv_backend_config_probe.out` captures the exported original
+`riscv_backend_config_def` (no hypotheses) with HOL's SML quotations already
+spliced, including the evaluated `clos_to_bvl`/`bvl_to_bvi` default records.
+`Flapjack/Compiler/Backend/RiscVConfig/BackendConfig.lean` states the same
+literal record; untagged `rfl` lemmas tie the two evaluated default records to
+the tagged `default_config` ports. Syntactic evidence only, not a
+cross-language proof.
+
+`riscv_config_proof_replay_probe.out` is a literal source replay (both
+`backendProof` and `riscv_configProof` are unbuilt here): `mc_init_ok_def` and
+`is_riscv_machine_config_def` are replayed verbatim (guarded) and `riscv_init_ok`
+is re-proved with its own HOL tactic; typed statements and the hypothesis count
+are captured for `Flapjack/Compiler/Backend/RiscVConfig/Proofs.lean`.
 
 `word_to_word_locals_typed_probe.out` supplies typed, zero-hypothesis original proof replays for all seven reviewed local helpers: rm_perm, find_code_thm, pop_env_termdep, compile_single_eta, code_rel_union_fromAList, code_rel_no_alloc and code_rel_no_install. Source guards cover the five literal statements/proofs and the original two specialization derivations. The row checker requires each typed statement; this does not prove HOL-to-Lean equivalence.

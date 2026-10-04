@@ -1,0 +1,1 @@
+pan_to_word_every_inst_ok_less=∀(wprog0 :(num # num # α prog) list) (pan_code :α decl list) (c :α asm_config). (compile_prog c.ISA pan_code :(num # num # α prog) list) = wprog0 ∧ byte_offset_ok c (0w :α word) ∧ addr_offset_ok c (0w :α word) ∧ EVERY (good_panops :α decl -> bool) pan_code ⇒ EVERY (λ((n :num),(m :num),(p :α prog)). every_inst (inst_ok_less c) p) wprog0

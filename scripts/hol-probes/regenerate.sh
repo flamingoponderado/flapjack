@@ -1562,6 +1562,11 @@ run_probe binary_ieee_real_probeScript.sml binary_ieee_real_probe.out \
 run_probe binary_ieee_convert_probeScript.sml binary_ieee_convert_probe.out \
   float_to_int_def real_to_float_def \
   "$repo_dir/HOL/src/floating-point/binary_ieeeScript.sml" "$repo_dir/HOL/src/floating-point"
+run_probe binary_ieee_rest_probeScript.sml binary_ieee_rest_probe.out \
+  is_integral_def float_is_integral_def ULP_def ulp_def integral_round_def \
+  float_round_to_integral_def float_mul_sub_def float_unordered_def \
+  exponent_boundary_def float_ulp_def next_hi_def next_lo_def \
+  "$repo_dir/HOL/src/floating-point/binary_ieeeScript.sml" "$repo_dir/HOL/src/floating-point"
 run_probe machine_ieee_fp64_defs_probeScript.sml machine_ieee_fp64_defs_probe.out \
   fp64_to_float_def fp64_isSignallingNan_def \
   "$repo_dir/HOL/src/floating-point/machine_ieeeScript.sml" "$repo_dir/HOL/src/floating-point"
@@ -4762,6 +4767,9 @@ run_probe target_sem_installed_probeScript.sml target_sem_installed_probe.out \
   "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe pan_to_target_pan_installed_source_replay_probeScript.sml pan_to_target_pan_installed_source_replay_probe.out \
   pan_installed_def_replay_statement pan_installed_imp_installed_replay_typed \
+  "$cake_dir/pancake/proofs/pan_to_targetProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe pan_to_target_compile_semantics_statement_replay_probeScript.sml pan_to_target_compile_semantics_statement_replay_probe.out \
+  pan_to_target_compile_semantics_statement pan_to_target_compile_semantics_typed pan_to_target_compile_semantics_free_vars bytes_in_word_def_typed \
   "$cake_dir/pancake/proofs/pan_to_targetProofScript.sml" "$cake_dir/pancake/proofs"
 run_probe pan_to_target_init_helpers_source_replay_probeScript.sml pan_to_target_init_helpers_source_replay_probe.out \
   word_to_stack_compile_FST_replay_statement InitGlobals_location_eq_first_name_replay_typed \
@@ -8247,6 +8255,18 @@ run_probe riscv_target_addoverflow_probeScript.sml riscv_target_addoverflow_prob
   riscv_encoder_correct_addoverflow_statement riscv_encoder_correct_addoverflow_types riscv_encoder_correct_addoverflow_hypotheses riscv_encoder_correct_addoverflow_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+run_probe riscv_config_proof_replay_probeScript.sml riscv_config_proof_replay_probe.out \
+  is_riscv_machine_config_def_typed riscv_init_ok_typed riscv_init_ok_hypotheses \
+  "$cake_dir/compiler/backend/riscv/proofs/riscv_configProofScript.sml" \
+  "$cake_dir/compiler/backend/riscv/proofs"
+run_probe riscv_backend_config_probeScript.sml riscv_backend_config_probe.out \
+  riscv_backend_config_def_statement riscv_backend_config_def_typed riscv_backend_config_def_hypotheses \
+  "$cake_dir/compiler/backend/riscv/riscv_configScript.sml" \
+  "$cake_dir/compiler/backend/riscv"
+run_probe riscv_target_suboverflow_probeScript.sml riscv_target_suboverflow_probe.out \
+  riscv_encoder_correct_suboverflow_statement riscv_encoder_correct_suboverflow_types riscv_encoder_correct_suboverflow_hypotheses riscv_encoder_correct_suboverflow_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
 
 run_probe riscv_control_decode_probeScript.sml riscv_control_decode_probe.out \
   jal_decode_universal jal_decode_hypotheses jalr_decode_universal jalr_decode_hypotheses jal_zero jal_all_ones jal_link_sign jal_scattered_bits jalr_zero jalr_all_ones jalr_link_alias jalr_mixed jal_source_clause jal_carrier_types jalr_source_clause jalr_carrier_types \
@@ -8351,3 +8371,51 @@ run_probe riscv_memory_store_value_probeScript.sml riscv_memory_store_value_prob
 run_probe pan_to_crep_inline_table_validity_probeScript.sml pan_to_crep_inline_table_validity_probe.out \
   every_inst_w_inline \
   "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_to_crep_compile_validity_probeScript.sml pan_to_crep_compile_validity_probe.out \
+  every_inst_ok_less_pan_to_crep_compile compile_def \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe riscv_memory_inputs_probeScript.sml riscv_memory_inputs_probe.out \
+  load_endpoints load_registers load_offsets load8_endpoints load8_registers load8_offsets load16_endpoints load16_registers load16_offsets load32_endpoints load32_registers load32_offsets store_endpoints store_registers store_offsets store8_endpoints store8_registers store8_offsets store16_endpoints store16_registers store16_offsets store32_endpoints store32_registers store32_offsets alias_wrap source_clause source_hypotheses source_types native_clause native_hypotheses native_types \
+  "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe riscv_conditional_next_probeScript.sml riscv_conditional_next_probe.out \
+  beq_next_zero beq_next_alias_sign beq_next_odd_taken beq_next_odd_reverse beq_next_signed_boundary bne_next_zero bne_next_alias_sign bne_next_odd_taken bne_next_odd_reverse bne_next_signed_boundary blt_next_zero blt_next_alias_sign blt_next_odd_taken blt_next_odd_reverse blt_next_signed_boundary bltu_next_zero bltu_next_alias_sign bltu_next_odd_taken bltu_next_odd_reverse bltu_next_signed_boundary bge_next_zero bge_next_alias_sign bge_next_odd_taken bge_next_odd_reverse bge_next_signed_boundary bgeu_next_zero bgeu_next_alias_sign bgeu_next_odd_taken bgeu_next_odd_reverse bgeu_next_signed_boundary beq_source beq_hypotheses beq_typed_source bne_source bne_hypotheses bne_typed_source blt_source blt_hypotheses blt_typed_source bltu_source bltu_hypotheses bltu_typed_source bge_source bge_hypotheses bge_typed_source bgeu_source bgeu_hypotheses bgeu_typed_source next_source next_hypotheses next_typed_source \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe pan_to_crep_table_validity_probeScript.sml pan_to_crep_table_validity_probe.out \
+  every_inst_ok_less_pan_to_crep_compile_to_crep \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_to_crep_program_validity_probeScript.sml pan_to_crep_program_validity_probe.out \
+  every_inst_ok_less_pan_to_crep_compile_prog \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe riscv_target_rejected_probeScript.sml riscv_target_rejected_probe.out \
+  riscv_encoder_correct_longdiv_statement riscv_encoder_correct_longdiv_types riscv_encoder_correct_longdiv_hypotheses riscv_encoder_correct_longdiv_proved riscv_encoder_correct_fp_statement riscv_encoder_correct_fp_types riscv_encoder_correct_fp_hypotheses riscv_encoder_correct_fp_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe pan_to_word_inst_ok_less_probeScript.sml pan_to_word_inst_ok_less_probe.out \
+  pan_to_word_every_inst_ok_less \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe riscv_jumpcmp_offsets_probeScript.sml riscv_jumpcmp_offsets_probe.out \
+  near0_statement near0_types near0_hypotheses near0_proved near0_boundary0 near0_boundary1 near0_boundary2 near0_boundary3 near0_boundary4 near4_statement near4_types near4_hypotheses near4_proved near4_boundary0 near4_boundary1 near4_boundary2 near4_boundary3 near4_boundary4 far4_statement far4_types far4_hypotheses far4_proved far4_boundary0 far4_boundary1 far4_boundary2 far4_boundary3 far4_boundary4 far8_statement far8_types far8_hypotheses far8_proved far8_boundary0 far8_boundary1 far8_boundary2 far8_boundary3 far8_boundary4 pc_bias_statement pc_bias_hypotheses pc_bias_proved reg_equal_source reg_equal_hypotheses reg_test_source reg_test_hypotheses imm_equal_source imm_equal_hypotheses imm_test_source imm_test_hypotheses \
+  "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe word_to_stack_store_consts_caller_probeScript.sml word_to_stack_store_consts_caller_probe.out \
+  source_clause below8 wrap8 wrap64 exact_chunk8 width1 index_below8 index_wrap8 index_wrap64 \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe riscv_target_jumpcmp_probeScript.sml riscv_target_jumpcmp_probe.out \
+  riscv_encoder_correct_jumpcmp_statement riscv_encoder_correct_jumpcmp_types riscv_encoder_correct_jumpcmp_hypotheses riscv_encoder_correct_jumpcmp_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe riscv_target_mem_probeScript.sml riscv_target_mem_probe.out \
+  riscv_encoder_correct_mem_statement riscv_encoder_correct_mem_types riscv_encoder_correct_mem_hypotheses riscv_encoder_correct_mem_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"

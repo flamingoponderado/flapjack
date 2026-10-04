@@ -94946,7 +94946,7 @@
     "lean_name": "panInstalled",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.4): pan_to_targetProof pan_installed_def (290-326), compared with the literal-source replay pan_to_target_pan_installed_source_replay; the installed_def clauses plus (∀a. a ∈ p_dom ⇒ m a = p_mem a) and sdm' = sdm ∩ byte_aligned (p_dom, sdm' Boolean domains, ∩ as &&), in HOL order. Address sets are α word -> bool in HOL (typed capture), rendered as Boolean domains as in the tagged good_init_state_def: set-builder {w | t.regs r1 <=+ w ∧ w <+ t.regs r2} as the decided unsigned range, ∪ as ||, DISJOINT as pointwise exclusion, byte_aligned ∩ bitmaps_dm as the conjunction; unsigned <=+/<+/≤₊ as BitVec ≤/<; bytes_in_word as n2w (dimindex DIV 8) (StackRemove.bytesInWord); word_list/word_list_exists/fun2set/STAR as the tagged Misc.wordList/Misc.wordListExists/SetSep.fun2Set/SetSep.star; ffi_names : ffiname list option as Option (List HolFfiName); shmem_info_num as the tagged ShmemInfoNum; mmio_pcs_min_index, ffi_offset, Addr as the tagged mmioPcsMinIndex, ffiOffset, HolAddr.addr; GENLIST f n as (List.range n).map f, ZIP on equal-length lists, DROP as List.drop, w2n as toNat, dimword (:α) as 2 ^ width; HOL's paired argument (r1,r2) is the pair regs. Positive word dimension via [NeZero width]."
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.4): pan_to_targetProof pan_installed_def (290-326), compared with the literal-source replay pan_to_target_pan_installed_source_replay; the installed_def clauses plus (∀a. a ∈ p_dom ⇒ m a = p_mem a) and sdm' = sdm ∩ byte_aligned (p_dom, sdm' Boolean domains, ∩ as &&), in HOL order. Address sets are α word -> bool in HOL (typed capture), rendered as Boolean domains as in the tagged good_init_state_def: set-builder {w | t.regs r1 <=+ w ∧ w <+ t.regs r2} as the decided unsigned range, ∪ as ||, DISJOINT as pointwise exclusion, byte_aligned ∩ bitmaps_dm as the conjunction; unsigned <=+/<+/≤₊ as BitVec ≤/<; bytes_in_word as n2w (dimindex DIV 8) (StackRemove.bytesInWord); word_list/word_list_exists/fun2set/STAR as the tagged Misc.wordList/Misc.wordListExists/SetSep.fun2Set/SetSep.star; ffi_names : ffiname list option as Option (List HolFfiName); shmem_info_num as the tagged ShmemInfoNum; mmio_pcs_min_index, ffi_offset, Addr as the tagged mmioPcsMinIndex, ffiOffset, HolAddr.addr; GENLIST f n as (List.range n).map f, ZIP on equal-length lists, DROP as List.drop, w2n as toNat, dimword (:α) as 2 ^ width; HOL's paired argument (r1,r2) is the pair regs. Positive word dimension via [NeZero width]. Re-compared 2026-10-04 (bead flapjack-top-installed-domain): HOL p_dom and sdm' are 'a word set, the same type as panSem state memaddrs/sh_memaddrs which pan_to_target_compile_semantics passes directly; the Lean parameters now use the PanSem predicate carrier (BitVec width -> Prop): a IN p_dom is pDom a, sdm' = sdm INTER byte_aligned is sdm' = fun a => sdm a = true AND holByteAligned a = true over the Bool-backed existential sdm of good_init_state. No other clause changed."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
@@ -94955,7 +94955,7 @@
     "lean_name": "pan_installed_imp_installed",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.4): pan_to_targetProof pan_installed_imp_installed (328-334), compared with the literal-source replay pan_to_target_pan_installed_source_replay (re-proved with HOL's tactic); HOL's free variables explicit in order of appearance with (r1,r2) as the pair. Positive word dimension via [NeZero width]."
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.4): pan_to_targetProof pan_installed_imp_installed (328-334), compared with the literal-source replay pan_to_target_pan_installed_source_replay (re-proved with HOL's tactic); HOL's free variables explicit in order of appearance with (r1,r2) as the pair. Positive word dimension via [NeZero width]. Re-checked 2026-10-04: p_dom/sdm parameters now on the predicate carrier (flapjack-top-installed-domain); statement otherwise unchanged."
   },
   {
     "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
@@ -98104,6 +98104,22 @@
   {
     "hol_path": null,
     "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyWordToStack.lean",
+    "lean_name": "panToTargetFullMakeInitAssumptions",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1440-1550): all hypotheses of full_make_init_semantics for labst = lab_to_target make_init mc ffi t m ((heap_stack_dm UNION bitmaps_dm) INTER byte_aligned) (sdm INTER byte_aligned) ms lprog ... with HOL's constant oracles, from stage A3a (panToTargetLabstFacts), stage A3b (panToTargetMemoryAssumption over pan_installed's components) and backend_config_ok's max_stack_alloc bound."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyLabChain.lean",
+    "lean_name": "panToTargetLabSemantics",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1440-2284): composition of full_make_init_semantics (Assumptions from panToTargetFullMakeInitAssumptions, opt <> NONE), word_to_stack compile_semantics and word_to_word_compile_semantics (premises from full_make_init, compile_to_word_conventions2, pan_to_word no_install/no_alloc/no_mt and first_compile_prog_all_distinct), and the pan_to_word stage (panToTargetPanToWordStageLab): for labst over pan_installed's components, LabSem semantics labst is in extend_with_resource_limit' (safe_for_space wst InitGlobals_location) {semantics_decls s start pan_code} when the latter is not Fail. Hypotheses are compile_prog_max results, configuration hypotheses, pan_installed components and top-theorem hypotheses in original form. Also concludes semantics wst InitGlobals_location = semantics_decls s start pan_code (word_to_word_compile_semantics with the pan_to_word stage) and that full_make_init returns (sst, SOME x)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyPanToWord.lean",
     "lean_name": "heapLengthShift",
     "statement_status": "no_hol_reference_pending_classification",
@@ -98191,6 +98207,541 @@
     "reviewer": "Stage G of the single HOL proof of pan_to_target_compile_semantics (pan_to_targetProofScript.sml 2285-2506): option_lt stack_max (SOME (FST (read_limits ...))) implies word_lang_safe_for_space wst InitGlobals_location; pointer premises are the top theorem's own, the rest earlier-stage facts; intermediate proof step, not a HOL theorem."
   },
   {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyPanToWord.lean",
+    "lean_name": "addressesSplitGlobals",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only arithmetic step of pan_to_target_compile_semantics (HOL proof lines 2161-2216, SET_EQ with addresses_thm and word_arith_lemma2): addresses a n = addresses a (n - g) UNION addresses (a + bytes_in_word * n2w n - n2w (g * dimindex DIV 8)) g when g <= n under good_dimindex."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyPanToWord.lean",
+    "lean_name": "panToTargetHeapLimitSnd",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only arithmetic step of pan_to_target_compile_semantics (HOL proof lines 2216-2240, init_prop heap length against heap_len): under init_code_thm's pointer bounds, w2 < w3 (top hypothesis len_reg < ptr2_reg) and the shift+1 alignment of w3 - w2, 2 * SND (get_stack_heap_limit max_heap (w2,w3,w4)) = w2n (-1w*w2 + w3) DIV (dimindex DIV 8)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyPanToWord.lean",
+    "lean_name": "panGlobalsByteAligned_of_mod",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only infrastructure: under good_dimindex a word whose value is a multiple of dimindex DIV 8 is byte_aligned in Pancake's byte_align fixed-point form."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyPanToWord.lean",
+    "lean_name": "addresses_mod",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only infrastructure (addresses_thm with byte_aligned_mult): every word of addresses base n from a word-aligned base is word aligned under good_dimindex."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyPanToWord.lean",
+    "lean_name": "readPointers_s2",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only step of pan_to_target_compile_semantics (HOL proof lines 1924-1929): under full_make_init_semantics' register-name facts, read_pointers of the stack-names state s2 are the lab state's initial len/ptr2/len2 register words."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyPanToWord.lean",
+    "lean_name": "panToTargetPanToWordFromInit",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 2103-2284 including its impl_tac): pan_to_word state_rel_imp_semantics for wst0 = make_init over the full_make_init state, with every stack-state premise discharged from full_make_init_semantics' hypotheses (opus3 E2 exports), the lab-state register and make_init/pan_installed memory facts, and top-theorem hypotheses; HeapLength value and byte_aligned top_addr derived as in HOL."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyPanToWord.lean",
+    "lean_name": "panToTargetPanToWordStageLab",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 2103-2284): panToTargetPanToWordFromInit instantiated at labst = lab_to_target make_init mc ffi t m (dm INTER byte_aligned) (sdm INTER byte_aligned) ...; the lab-state facts are derived from pan_installed's memory agreement, good_init_state (target_state_rel registers, word memory) and shared-domain equation, mc_conf_ok reg_ok of len/ptr2/len2, and the top theorem's register, bound, endianness, FFI and memory hypotheses in their original form."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileValidity.lean",
+    "lean_name": "expr_valid",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal expression/list/nested-declaration/sequence/assignment/generated-global/handler/store and native induction proof factoring, or canonical context representation witness, for the separately tagged full original PanToCrep compile validity in the same module. No standalone HOL declaration or completed port claim; all original source hypotheses are discharged by the final theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileValidity.lean",
+    "lean_name": "exprs_valid",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal expression/list/nested-declaration/sequence/assignment/generated-global/handler/store and native induction proof factoring, or canonical context representation witness, for the separately tagged full original PanToCrep compile validity in the same module. No standalone HOL declaration or completed port claim; all original source hypotheses are discharged by the final theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileValidity.lean",
+    "lean_name": "nested_valid",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal expression/list/nested-declaration/sequence/assignment/generated-global/handler/store and native induction proof factoring, or canonical context representation witness, for the separately tagged full original PanToCrep compile validity in the same module. No standalone HOL declaration or completed port claim; all original source hypotheses are discharged by the final theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileValidity.lean",
+    "lean_name": "seqs_valid",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal expression/list/nested-declaration/sequence/assignment/generated-global/handler/store and native induction proof factoring, or canonical context representation witness, for the separately tagged full original PanToCrep compile validity in the same module. No standalone HOL declaration or completed port claim; all original source hypotheses are discharged by the final theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileValidity.lean",
+    "lean_name": "assigns_valid",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal expression/list/nested-declaration/sequence/assignment/generated-global/handler/store and native induction proof factoring, or canonical context representation witness, for the separately tagged full original PanToCrep compile validity in the same module. No standalone HOL declaration or completed port claim; all original source hypotheses are discharged by the final theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileValidity.lean",
+    "lean_name": "vars_valid",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal expression/list/nested-declaration/sequence/assignment/generated-global/handler/store and native induction proof factoring, or canonical context representation witness, for the separately tagged full original PanToCrep compile validity in the same module. No standalone HOL declaration or completed port claim; all original source hypotheses are discharged by the final theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileValidity.lean",
+    "lean_name": "zeros_valid",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal expression/list/nested-declaration/sequence/assignment/generated-global/handler/store and native induction proof factoring, or canonical context representation witness, for the separately tagged full original PanToCrep compile validity in the same module. No standalone HOL declaration or completed port claim; all original source hypotheses are discharged by the final theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileValidity.lean",
+    "lean_name": "globals_valid",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal expression/list/nested-declaration/sequence/assignment/generated-global/handler/store and native induction proof factoring, or canonical context representation witness, for the separately tagged full original PanToCrep compile validity in the same module. No standalone HOL declaration or completed port claim; all original source hypotheses are discharged by the final theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileValidity.lean",
+    "lean_name": "handler_valid",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal expression/list/nested-declaration/sequence/assignment/generated-global/handler/store and native induction proof factoring, or canonical context representation witness, for the separately tagged full original PanToCrep compile validity in the same module. No standalone HOL declaration or completed port claim; all original source hypotheses are discharged by the final theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileValidity.lean",
+    "lean_name": "stores_valid",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal expression/list/nested-declaration/sequence/assignment/generated-global/handler/store and native induction proof factoring, or canonical context representation witness, for the separately tagged full original PanToCrep compile validity in the same module. No standalone HOL declaration or completed port claim; all original source hypotheses are discharged by the final theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileValidity.lean",
+    "lean_name": "compile_valid",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal expression/list/nested-declaration/sequence/assignment/generated-global/handler/store and native induction proof factoring, or canonical context representation witness, for the separately tagged full original PanToCrep compile validity in the same module. No standalone HOL declaration or completed port claim; all original source hypotheses are discharged by the final theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileValidity.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal expression/list/nested-declaration/sequence/assignment/generated-global/handler/store and native induction proof factoring, or canonical context representation witness, for the separately tagged full original PanToCrep compile validity in the same module. No standalone HOL declaration or completed port claim; all original source hypotheses are discharged by the final theorem."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_pan_to_crep_compile",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileValidity.lean",
+    "lean_name": "everyInstOkLess_panToCrepCompile",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs",
+      "eids"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-pantocrep-compile-validity: original1057-1105 and regenerated full typed theorem+compile_def capture. Fulltype binds ctxt alpha-context/body alpha-program and e beta; e occurs nowhere else and only this source-vacuous binder is documented omitted. Context/body/output retain original shared positive word dimension (unlike compile_exp independent context/expression dimensions). Sole original EVERY binary-Panop source expression traversal guard, full EVERY binary-Crepop expression traversal on actual native compile output; membership EVERY and shared native literal Crep predicate, existing exact Pan Boolean traversal. Canonical imported PanToCrepContextExact vars/funcs/eids with same-module nonvacuous toBroad/ofBroad roundtrip witness; only these finite maps and word dimension translated. Native compileProgExactHOLW induction has32 equation cases, all original constructors, shape/list/lookup fallbacks and Call no-return/initialized/result-wrapped/missing-or-found-EID branches; Dec/DecCall and handler bodies proved in all actual constructed contexts. Accepted full compile_exp, nested_seq, stores/store_globals, load_globals_alt helpers reused. Original fixed global word5 retained. No source byte/default/context specialization/output/successful-target or post-state premise; no held HD/EL dependency introduced. Full declaration-table/program/source composition remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyGoodCode.lean",
+    "lean_name": "twoRegInst_eq_exact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Bridge between the wordLang and exact-asm spellings of wordConvs two_reg_inst; Flapjack infrastructure, no HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyGoodCode.lean",
+    "lean_name": "panToTargetGoodCode",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage A2 of the single HOL proof of pan_to_target_compile_semantics (pan_to_targetProofScript.sml 1376-1428): good_code mc.target.config LN lprog via pan_to_lab_good_code_lemma, pan_to_lab_labels_ok and the all_enc_ok_pre chain; premise hinst is the conclusion of pan_to_word_every_inst_ok_less (stage .20); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyResourceStage.lean",
+    "lean_name": "wordNoErrorOfSemanticsNotFail",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Word semantics not Fail implies no Error on the entry call for any clock (pan_to_targetProofScript.sml 1724-1727 via wordSem semantics_def); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyResourceStage.lean",
+    "lean_name": "panToTargetResourceLimitOfSemantics",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage G with no_install/no_alloc discharged by word_to_word_compile_no_install_no_alloc on the pan_to_word output and no-Error from semantics wst <> Fail (pan_to_targetProofScript.sml 1716-1736, 2285-2312); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepTableValidity.lean",
+    "lean_name": "functions_valid",
+    "hol_path": null,
+    "hol_name": null,
+    "reviewer": "Flapjack-specific internal function-projection membership factoring for the separately tagged full original compiler table validity theorem; no separate HOL declaration or completed port claim.",
+    "statement_status": "no_hol_reference_pending_classification"
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepTableValidity.lean",
+    "lean_name": "everyInstOkLess_panToCrepCompileToCrep",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_pan_to_crep_compile_to_crep",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source1116-1134 full typed original capture reviewed: original EVERY good_panops pan_code guard and EVERY tuple-body expression validity conclusion over unrestricted original names/params/native syntax. Membership renders EVERY; internal function projection lemma derives source body guard without extra premises; accepted full compiler theorem supplies actual compiled body at actual generated context. Only positive word dimension translates to BitVec width with NeZero; maps internal to compiler do not occur in signature. No target-run/output/byte-range/distinctness premise; full compiler correctness remains open.",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_pan_to_crep_compile_prog",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepProgramValidity.lean",
+    "lean_name": "everyInstOkLess_panToCrepCompileProg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source1153-1159 and original full typed capture compared: original EVERY good_panops declaration-list guard implies EVERY binary-Crepop traversal of each actual compile_prog body. Membership renders EVERY, complete native declarations/name/parameter/body carriers retained, sole positive word dimension translated to BitVec width with NeZero. Proof composes complete original compile_to_crep validity and accepted every_inst_w_inline, exactly as HOL; no desired-output/target-run/byte-boundary/default or distinctness premise. Full source simulation and compiler correctness remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Rejected.lean",
+    "lean_name": "riscv_encoder_correct_longdiv",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol: compared original full LongDiv637-642 case and complete encoder_correct_def with original asmSem asm_step seventh conjunct, asm arith_ok/fp_ok and riscv_config/asm_ok. Only original source asmStep plus initial targetStateRel; full existential n/all interference environments/both asserts/outside-domain asserts2/code bytes/PC membership/final full relation. Derives impossible original source step from actual RISC-V config, not an assumed rejection or target-output premise. All five unrestricted natural register names retained; original LongDiv requires x86_64 ISA, whereas reviewed config is riscv. Original theorem specialized to this exact complete source constructor in fresh typed/hyp0/proved captures. Statement inherits reals_as_rational_cuts assurance limit SOUNDNESS8 through native target carrier; no instruction executes in these contradiction proofs. No production-route or full encoder/compiler completion claim."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Rejected.lean",
+    "lean_name": "riscv_encoder_correct_fp",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol: compared original full FP673-677 case and complete encoder_correct_def with original asmSem asm_step seventh conjunct, asm arith_ok/fp_ok and riscv_config/asm_ok. Only original source asmStep plus initial targetStateRel; full existential n/all interference environments/both asserts/outside-domain asserts2/code bytes/PC membership/final full relation. Derives impossible original source step from actual RISC-V config, not an assumed rejection or target-output premise. Entire original sixteen-constructor HolFp carrier retained. Original riscv_config fp_reg_count=0 rejects every form, including integer move/conversion and armv7-only FMA; kernel proof cases all sixteen forms. Original theorem specialized to this exact complete source constructor in fresh typed/hyp0/proved captures. Statement inherits reals_as_rational_cuts assurance limit SOUNDNESS8 through native target carrier; no instruction executes in these contradiction proofs. No production-route or full encoder/compiler completion claim."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "pan_to_word_every_inst_ok_less",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/CompileProgInstOkLess.lean",
+    "lean_name": "panToWordEveryInstOkLess",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source1410-1424 and regenerated full typed capture compared2026-10-04: wprog0 alpha-word-program triples, pan_code alpha-declarations and c alpha-asm_config share same dimension. Original compile_prog c.ISA pan_code=wprog0, byte_offset_ok c 0w, addr_offset_ok c 0w, EVERY good_panops pan_code retained as four hypotheses; full EVERY tuple every_inst(inst_ok_less c) output conclusion. Actual native panToWordCompileProgHOL composes PanSimp/PanStructs/PanGlobals/PanToCrep/CrepToLoop/LoopToWord once in original order. Existing Bool EVERY/membership translations and HolInst.ofWordLangInst constructor translation reused. Only positive width translates to BitVec width with NeZero. No target evaluation, desired-output, source-byte/default or extra pass-success premise; full semantic compilation theorem remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyMachineToLab.lean",
+    "lean_name": "panToTargetMachineLab",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1316-1440, stage A4): lab_to_target semantics_compile instantiated at labst = make_init mc ffi t m (dm INTER byte_aligned) (sdm INTER byte_aligned) ms lprog (compile mc.target.config) ... with HOL's constant oracle; no_install_or_no_share_mem and compiler_oracle_ok from stage A1, good_code from stage A2 (panToTargetGoodCode), mmio index from compile_lab_IMP_mmio_pcs_min_index, good_init_state/MMIO/bound facts from pan_installed's components. hinst (the conclusion of pan_to_word_every_inst_ok_less, bead .14.20) is a stage-local premise to be discharged in the top theorem, not a top-theorem premise."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyResourceStage.lean",
+    "lean_name": "panToTargetLabRegWord",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lab make_init register r holds .word (get_reg ms r) for reg_ok r under target_state_rel (pan_to_targetProofScript.sml 1956-1990); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyResourceStage.lean",
+    "lean_name": "extendPrime_flag_mono",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "extend_with_resource_limit' is antitone in its flag (pan_to_targetProofScript.sml 1673 inline lemma); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyTopResource.lean",
+    "lean_name": "panToTargetLabSemanticsResource",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lab chain with stage G of the single HOL proof of pan_to_target_compile_semantics (pan_to_targetProofScript.sml 1440-2506): lab semantics of the initial lab state in extend_with_resource_limit' (option_lt stack_max (SOME (FST (read_limits ...)))) of semantics_decls, from the top hypotheses, pan_installed components and compile_prog_max results only; intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyTopResource.lean",
+    "lean_name": "panToTargetInitStage",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage E of the single HOL proof of pan_to_target_compile_semantics over the top theorem's inputs (pan_to_targetProofScript.sml 1737-1929): full_make_init returns SOME and init_code runs on its stack-names state with init_code_thm's register facts; intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyGoodCodeSource.lean",
+    "lean_name": "panToTargetGoodCodeFromSource",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific intermediate original top-proof A2 factoring1376-1428, no separately named HOL declaration: derives full PanToWord instruction invariant and both zerooffsets from original pancakeGoodCodeHOL/backendConfigOk/goodDimindex, then applies accepted panToTargetGoodCode at actual WordToWord/WordToStack intermediate equations. Final top assembly still supplies these equations from full compile equation; no target-run or desired-goodCode premise; full semantic theorem remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyGoodCodeSource.lean",
+    "lean_name": "panToTargetGoodCodeSource",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific unnamed stageA2 original top-proof1376-1428: original backendConfigOk/goodDimindex/nonag32/distinctfunctionnames/pancakeGoodCodeHOL hypotheses only; computes both actual WordToWord and WordToStack intermediate tuples internally with no compileeq/hinst/targetrun/desiredgoodCode premise. Applies full source instruction validity and accepted backend admissibility/labels chain. Final top still identifies this exact lab program with fullcompile result and assembles remaining semantic/resource stages; no named HOL port or wholecompiler completion claimed."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "pan_to_target_compile_semantics",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyTop.lean",
+    "lean_name": "panToTargetCompileSemantics",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04 (bead flapjack-top-installed-domain / .14): pan_to_targetProofScript 1256-1300 against the typed literal-source statement replay pan_to_target_compile_semantics_statement_replay (backendProof/pan_to_targetProof definitions replayed, guarded). All 35 hypotheses and the conclusion in HOL order; the 17 free variables explicit in HOL order of appearance (c mc pan_code bytes bitmaps c' stack_max s ms globals_size heap_len adj_ptr2 adj_ptr4 ffi cbspace data_sp start) with carriers alpha word = BitVec width [NeZero], beta/gamma = S/Q, 'ffi = sigma : Type, (alpha,'ffi) panSem$state = PanSemStateFiniteExact, mlstring = MlS. Every constituent is its reviewed port; bytes_in_word is the newly tagged bytes_in_word_def (wordSemBytesInWord); pan_installed receives memaddrs/sh_memaddrs directly (domain repair). <+ / <=+ are unsigned BitVec order, dimword = 2^width, shift = wordShiftAmount, OPTION_ALL EVERY = Option match, machine_sem SUBSET = forall-membership. Finite maps: panSem code/locals/globals/eshapes (relation witness TopWitness). Inherits the reals_as_rational_cuts assumption (SOUNDNESS item 8) through the word semantics. Proof: panToTargetCompileSemanticsStatement_proof, standard axioms only."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyMachineToLab.lean",
+    "lean_name": "panToTargetMachineLabOfGoodCode",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1316-1440, stage A4): lab_to_target semantics_compile instantiated at labst = make_init mc ffi t m (dm INTER byte_aligned) (sdm INTER byte_aligned) ms lprog (compile mc.target.config) ... with HOL's constant oracle; no_install_or_no_share_mem and compiler_oracle_ok from stage A1, mmio index from compile_lab_IMP_mmio_pcs_min_index, good_init_state/MMIO/bound facts from pan_installed's components; good_code mc.target.config LN lprog (stage A2's conclusion) is a stage-local premise discharged by the source-level A2 stage, not a top-theorem premise."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyMachineToLab.lean",
+    "lean_name": "panToTargetMachineSemExtend",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only composition step of pan_to_target_compile_semantics (HOL proof line 1316, SUBSET_TRANS with implements' and extend_with_resource_limit' unfolded): implements' T machine {lab} and lab IN extend_with_resource_limit' prec {w} with w <> Fail give every machine behaviour in extend_with_resource_limit' prec {w}."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyMachineToLab.lean",
+    "lean_name": "panToTargetMachineLabSource",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1316-1440, stage A4): panToTargetMachineLabOfGoodCode with good_code from the source-level stage A2 (panToTargetGoodCodeFromSource, via pan_to_word_every_inst_ok_less and the configuration's zero offsets) over the top theorem's pancake_good_code; all premises are compile_prog_max results, configuration hypotheses, pan_installed components and top-theorem hypotheses."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/ProductionStoreConsts.lean",
+    "lean_name": "actualCaller",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific production StoreConsts caller/nativecode/fullprojectedstate/macroboundary transport, no separate HOL declaration. Originalword_to_stack comp532-534 consumes constWordsToBitmapW(constants,LENGTH), index register1 n2w wrapping, fixedsource storeConstsStubLocation6; StackRemove203-209 reads indexreg1 and ignoresstub. Nativecode equality through actual WordPayloads includes arbitrary storedcounts/index and all original inputregisters/configurations; nativeAppList observed via flatten and fullcount retained. Actual typed fusedconsumer supplies nativeproducer; legacygenericNathelper remains separate. No manufactured bound/scratchconfiguration/targetrun/desiredoutput premise; whole WordToStack/nativeproduction remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/ProductionStoreConsts.lean",
+    "lean_name": "code",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific production StoreConsts caller/nativecode/fullprojectedstate/macroboundary transport, no separate HOL declaration. Originalword_to_stack comp532-534 consumes constWordsToBitmapW(constants,LENGTH), index register1 n2w wrapping, fixedsource storeConstsStubLocation6; StackRemove203-209 reads indexreg1 and ignoresstub. Nativecode equality through actual WordPayloads includes arbitrary storedcounts/index and all original inputregisters/configurations; nativeAppList observed via flatten and fullcount retained. Actual typed fusedconsumer supplies nativeproducer; legacygenericNathelper remains separate. No manufactured bound/scratchconfiguration/targetrun/desiredoutput premise; whole WordToStack/nativeproduction remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/ProductionStoreConsts.lean",
+    "lean_name": "state",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific production StoreConsts caller/nativecode/fullprojectedstate/macroboundary transport, no separate HOL declaration. Originalword_to_stack comp532-534 consumes constWordsToBitmapW(constants,LENGTH), index register1 n2w wrapping, fixedsource storeConstsStubLocation6; StackRemove203-209 reads indexreg1 and ignoresstub. Nativecode equality through actual WordPayloads includes arbitrary storedcounts/index and all original inputregisters/configurations; nativeAppList observed via flatten and fullcount retained. Actual typed fusedconsumer supplies nativeproducer; legacygenericNathelper remains separate. No manufactured bound/scratchconfiguration/targetrun/desiredoutput premise; whole WordToStack/nativeproduction remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/ProductionStoreConsts.lean",
+    "lean_name": "macroBoundary",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific production StoreConsts caller/nativecode/fullprojectedstate/macroboundary transport, no separate HOL declaration. Originalword_to_stack comp532-534 consumes constWordsToBitmapW(constants,LENGTH), index register1 n2w wrapping, fixedsource storeConstsStubLocation6; StackRemove203-209 reads indexreg1 and ignoresstub. Nativecode equality through actual WordPayloads includes arbitrary storedcounts/index and all original inputregisters/configurations; nativeAppList observed via flatten and fullcount retained. Actual typed fusedconsumer supplies nativeproducer; legacygenericNathelper remains separate. No manufactured bound/scratchconfiguration/targetrun/desiredoutput premise; whole WordToStack/nativeproduction remains open."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRest.lean",
+    "lean_name": "holIsIntegralR",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "is_integral_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison (2026-10-04; flapjack-h29l.6.2.11) against the pinned HOL source and the definition captured with types by binary_ieee_rest_probe; reals_as_rational_cuts and SOUNDNESS item 8 apply (HOL real as Mathlib R or the reviewed Rat rendering). is_integral r <=> ?n:num. abs r = &n over Mathlib R; no word carrier."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRest.lean",
+    "lean_name": "holFloatIsIntegralR",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "float_is_integral_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison (2026-10-04; flapjack-h29l.6.2.11) against the pinned HOL source and the definition captured with types by binary_ieee_rest_probe; reals_as_rational_cuts and SOUNDNESS item 8 apply (HOL real as Mathlib R or the reviewed Rat rendering). case float_value x of Float r => is_integral r | Infinity => F | NaN => F, with float_value over R (holFloatValueR)."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRest.lean",
+    "lean_name": "holULP",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "ULP_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison (2026-10-04; flapjack-h29l.6.2.11) against the pinned HOL source and the definition captured with types by binary_ieee_rest_probe; reals_as_rational_cuts and SOUNDNESS item 8 apply (HOL real as Mathlib R or the reviewed Rat rendering). ULP (e:'w word,(:'t)) = 2 pow (if e = 0w then 1 else w2n e) / 2 pow (INT_MAX (:'w) + dimindex (:'t)); INT_MAX is holFloatBias w, dimindex (:'t) is t (precision overload)."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRest.lean",
+    "lean_name": "holUlp",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "ulp_def",
+    "statement_status": "reviewed_word_dimensions_as_widths",
+    "word_dimensions_as_widths": [
+      "t",
+      "w"
+    ],
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison (2026-10-04; flapjack-h29l.6.2.11) against the pinned HOL source and the definition captured with types by binary_ieee_rest_probe; reals_as_rational_cuts and SOUNDNESS item 8 apply (HOL real as Mathlib R or the reviewed Rat rendering). ulp (:'t # 'w) = ULP (0w:'w word,(:'t)); HOL (:'t # 'w) -> real has two independent word-free dimensions; word_dimensions_as_widths maps precision dimindex(:t) to explicit t:Nat/NeZero t and exponent dimension (:w) to independent w:Nat/NeZero w, used through holULP (t := t) (0 : BitVec w); arbitrary Mathlib Real result, no fixed dimension or added bound."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRest.lean",
+    "lean_name": "holIntegralRound",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "integral_round_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison (2026-10-04; flapjack-h29l.6.2.11) against the pinned HOL source and the definition captured with types by binary_ieee_rest_probe; reals_as_rational_cuts and SOUNDNESS item 8 apply (HOL real as Mathlib R or the reviewed Rat rendering). all four modes over R: roundTiesToEven threshold bounds then closest_such (EVEN n /\\ abs (float_to_real a) = &n) float_is_integral x; other modes largest bounds with float_bottom/float_top(FLT_MAX)/infinities and closest over the float_is_integral candidate sets, as captured."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRest.lean",
+    "lean_name": "holFloatRoundToIntegral",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "float_round_to_integral_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison (2026-10-04; flapjack-h29l.6.2.11) against the pinned HOL source and the definition captured with types by binary_ieee_rest_probe; reals_as_rational_cuts and SOUNDNESS item 8 apply (HOL real as Mathlib R or the reviewed Rat rendering). case float_value x of Float r => integral_round mode r | Infinity => x | NaN => x."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRest.lean",
+    "lean_name": "holFloatMulSub",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "float_mul_sub_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison (2026-10-04; flapjack-h29l.6.2.11) against the pinned HOL source and the definition captured with types by binary_ieee_rest_probe; reals_as_rational_cuts and SOUNDNESS item 8 apply (HOL real as Mathlib R or the reviewed Rat rendering). clause for clause: NaN -> check_for_signalling, FP_MulSub; invalid (inf*0, 0*inf, infinite z with infP and signP = z.Sign) -> invalidop_flags with FP_MulAdd (literal HOL); +inf when infinite z with z.Sign = 1w or infP with signP = 0w; -inf symmetric; else float_round_with_flags mode (if r1 = 0 /\\ r2 = 0 /\\ signP <> z.Sign then signP = 1w else mode = roundTowardNegative) (r1 - r2) over the Rat rendering as in the tagged float_mul_add port."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRest.lean",
+    "lean_name": "holFloatUnordered",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "float_unordered_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison (2026-10-04; flapjack-h29l.6.2.11) against the pinned HOL source and the definition captured with types by binary_ieee_rest_probe; reals_as_rational_cuts and SOUNDNESS item 8 apply (HOL real as Mathlib R or the reviewed Rat rendering). float_unordered x y <=> float_compare x y = UN over the tagged holFloatCompare."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRest.lean",
+    "lean_name": "holExponentBoundary",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "exponent_boundary_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison (2026-10-04; flapjack-h29l.6.2.11) against the pinned HOL source and the definition captured with types by binary_ieee_rest_probe; reals_as_rational_cuts and SOUNDNESS item 8 apply (HOL real as Mathlib R or the reviewed Rat rendering). x.Sign = y.Sign /\\ w2n x.Exponent = w2n y.Exponent + 1 /\\ x.Exponent <> 1w /\\ y.Significand = -1w /\\ x.Significand = 0w, argument order (y, x) kept."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRest.lean",
+    "lean_name": "holFloatUlp",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "float_ulp_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison (2026-10-04; flapjack-h29l.6.2.11) against the pinned HOL source and the definition captured with types by binary_ieee_rest_probe; reals_as_rational_cuts and SOUNDNESS item 8 apply (HOL real as Mathlib R or the reviewed Rat rendering). float_ulp f = ULP (f.Exponent,(:'t)) via holULP."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRest.lean",
+    "lean_name": "holNextHi",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "next_hi_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison (2026-10-04; flapjack-h29l.6.2.11) against the pinned HOL source and the definition captured with types by binary_ieee_rest_probe; reals_as_rational_cuts and SOUNDNESS item 8 apply (HOL real as Mathlib R or the reviewed Rat rendering). if x.Significand <+ UINT_MAXw then Significand + 1w else <|Sign; Exponent + 1w; Significand 0w|>; UINT_MAXw is BitVec.allOnes t, <+ unsigned <."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRest.lean",
+    "lean_name": "holNextLo",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "next_lo_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison (2026-10-04; flapjack-h29l.6.2.11) against the pinned HOL source and the definition captured with types by binary_ieee_rest_probe; reals_as_rational_cuts and SOUNDNESS item 8 apply (HOL real as Mathlib R or the reviewed Rat rendering). if 0w <+ x.Significand then Significand - 1w else <|Sign; Exponent - 1w; Significand UINT_MAXw|>."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyTop.lean",
+    "lean_name": "panToTargetCompileSemanticsStatement_proof",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Proof of the untagged statement interface PanToTargetCompileSemanticsStatement; used for the tagged panToTargetCompileSemantics."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyTop.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Re-export of the reviewed PanSemStateFiniteExact finite-support witness for the tagged panToTargetCompileSemantics relation qualifier; no HOL declaration."
+  },
+  {
+    "hol_path": "HOL/src/n-bit/byteScript.sml",
+    "hol_name": "bytes_in_word_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/CallHelpers.lean",
+    "lean_name": "wordSemBytesInWord",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: HOL/src/n-bit/byteScript.sml 193-195 bytes_in_word = n2w (dimindex (:'a) DIV 8) : 'a word, typed capture bytes_in_word_def_typed in pan_to_target_compile_semantics_statement_replay. Lean BitVec.ofNat width (width / 8) at positive width (NeZero); words qualifier only."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/SubOverflow.lean",
+    "lean_name": "riscv_encoder_correct_suboverflow",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3: compared original full SubOverflow constructor at riscv_targetProof658-663, original riscv_target158-164 XOR31/SUB/XOR/XORI(-1)/AND/SRLI63 expansion, asmSem arith_upd (r1 := w2-w3, r4 := signed-overflow flag, flag write last) and asm arith_ok (only r1<>r3), and full encoder_correct_def. Typed specialization riscv_target_suboverflow_probe: hypotheses 0, proved T; HOL specialization and Lean statement identical to the reviewed AddOverflow case modulo the constructor. Only original asmStep plus initial targetStateRel; complete existential n, every environment with original interferenceOk, both assertions, code bytes, PC range and final full relation. Every native fetch/decode/Run/Next derived from literal encoded bytes; untagged arithmetic shows the circuit equals HOL signed subtraction overflow for all word64 pairs. Broad native Run/target closure inherits reals_as_rational_cuts, the rational-cut assurance limit SOUNDNESS8; no executed route change."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/ProductionNativeCopyMemoryGuard.lean",
     "lean_name": "nativeCopyInstructionMemoryGuard",
     "statement_status": "no_hol_reference_pending_classification",
@@ -98229,6 +98780,50 @@
     "lean_name": "allocatorWithSsaAndCopy_spillState",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific observed-output retention invariant for arbitrary copy, SSA and cleanup producers. Derived from the actual WithSsaAndCopy consumer; no desired metadata/spill equality assumption, target execution or independent HOL declaration. Actual native-copy witnesses instantiate this invariant; legacy helper compatibility remains explicit."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/JumpCmp.lean",
+    "lean_name": "riscv_encoder_correct_jumpCmp",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol: source-compared JumpCmp original riscv_targetProof690-720 and riscv_target176-257, asmStep/word_cmp/asm_ok and encoder_correct_def. Full Reg/Imm/all8 comparisons/nearfar, only original source step and initial relation, complete existential/allenv/bothasserts/codebytes/PC/finalrelation/frame. Native bytes derive Fetch/Decode/Run/Next internally. Original scratch31 AND/ANDI/ORI and inverse branches preserved, source registers exclude scratch, full native projection preserves its value across interference; operand aliasing permitted. Actual arithmetic shift/truncate/subtract/sign-extension offsets corrected by prefix4/8 under original global/near/alignment guards; JAL target alignment derived. False paths skip JAL with source full encoding-length fallthrough. No target-run/result/postrelation premise or successful-pass assumption. Local same-counterpart helpers untagged. Inherits reals_as_rational_cuts assurance limit SOUNDNESS8; no full compiler or production-route completion claim."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/MemoryAssertions.lean",
+    "lean_name": "riscv_encoder_correct_mem",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-04: full original Mem case661-669, riscv_target Mem emitter178-181 and all8 literal asmSem mem_op clauses. Fresh typed riscv_target_mem_probe specialization has0 hypotheses and proved T. Original word64 offset, independent Nat source register/base, native riscv_state and all8 memop constructors retained. Lean premise is only original asmStep plus initial targetStateRel; conclusion retains existential n, every original projection-preserving environment, code/PC/state intermediate predicate, complete final targetStateRel and asserts2 outside original source domain. Witness0 comes from actual singleton encoder, never narrows conclusion. Actual native Next derives from source encoded bytes, Decode/Run and validity. Accepted pure postrelation plus unconditional source postdomain frame and original targetOk transport prove final environment relation; actual memory Run frame yields original outside-domain assertion. No target execution/result, extra alignment/address/register/domain or successful-pass premise. Native target closure inherits reals_as_rational_cuts rational-cut rendering assurance limitation SOUNDNESS8. No executed compiler change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/riscv/riscv_configScript.sml",
+    "hol_name": "riscv_backend_config_def",
+    "lean_path": "Flapjack/Compiler/Backend/RiscVConfig/BackendConfig.lean",
+    "lean_name": "riscvBackendConfig",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04 (bead flapjack-x6sx8): riscv_configScript.sml 46-70 and the exported theory capture riscv_backend_config_probe (hypotheses 0), whose body has the SML quotations spliced: source_conf prim_src_config; clos_conf the evaluated clos_to_bvl default record (next_loc 0, start 1, do_mti T, known_conf SOME <|inline_max_body_size 88; inline_factor 8; initial_inline_factor 8; val_approx_spt LN|>, do_call T, call_state (LN,[]), max_app 10); bvl_conf the evaluated bvl_to_bvi default (10, 1000, T, 73, 74, 75, T, T, LN, LN); data_conf tag 4/len 4/pad 2/len_size 32, has_div T, longdiv/fp_ops/fp_tern/be/call_empty_ffi F, gc_kind Simple; word_to_word reg_alg 3 col_oracle []; word_conf bitmaps_length 0 stack_frame_size LN; stack_conf jump F reg_names riscv_names perf_calls F; lab_conf pos 0 ffi_names NONE labels LN sec_pos_len [] init_clock 5 hash_size 104729 shmem_extra []; symbols []; tap_conf default_tap_config; exported []. Every field literal over the reviewed config carriers; rfl sanity lemmas tie the clos/bvl literals to the tagged default_config ports. Note: Pancake's driver uses pancake_backend_conf (gc_kind None) on top of this, see flapjack-nlgac."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/riscv/proofs/riscv_configProofScript.sml",
+    "hol_name": "is_riscv_machine_config_def",
+    "lean_path": "Flapjack/Compiler/Backend/RiscVConfig/Proofs.lean",
+    "lean_name": "isRiscvMachineConfig",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04 (bead flapjack-034pg): riscv_configProofScript 12-19 and typed literal replay riscv_config_proof_replay (mc : (64, riscv_state, riscv projection tuple) machine_config = MachineConfig 64 riscv_state RiscVProjection): mc.target = riscv_target, len 11, ptr 10, len2 13, ptr2 12, callee_saved [24;25;26]; all six conjuncts in HOL order. Through riscv_target (the L3 RISC-V model) the closure inherits reals_as_rational_cuts, the rational-cut assurance limit SOUNDNESS8.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/riscv/proofs/riscv_configProofScript.sml",
+    "hol_name": "riscv_init_ok",
+    "lean_path": "Flapjack/Compiler/Backend/RiscVConfig/Proofs.lean",
+    "lean_name": "riscvInitOk",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04 (bead flapjack-034pg): riscv_configProofScript 68-75 against the typed literal replay (re-proved there with HOL's own tactic, 0 hypotheses): is_riscv_machine_config mc => mc_init_ok riscv_config riscv_backend_config mc over the tagged isRiscvMachineConfig, mcInitOk, riscvConfig and riscvBackendConfig. Proof evaluates the concrete names through riscvNames_lookup_eq; no native_decide. Through riscv_target (the L3 RISC-V model) the closure inherits reals_as_rational_cuts, the rational-cut assurance limit SOUNDNESS8.",
+    "inherits_reals_as_rational_cuts": true
   },
   {
     "hol_path": null,

@@ -46,6 +46,9 @@ theorem panToTargetInitCodeRun {width : Nat} [NeZero width] {C F : Type}
           some (.word ((((w3 + -1 * w2) >>> (wordShiftAmount width + 1)) <<<
             (wordShiftAmount width + 1)) + w2 +
             bytesInWord width * BitVec.ofNat width storeList.length))) ∧
+      stateRelHOL stackConf.jump offset sp
+        (InitReduce.initReduce (StackToLab.isGenGc dataConf.gcKind) stackConf.jump offset sp
+          (sptFromAList (code1 dataConf code)) bitmaps dataSp (coracle1 coracle) t') t' ∧
       t'.ffi = (s2 stackConf dataConf maxHeap sp offset code t saveRegs coracle).ffi ∧
       (s2 stackConf dataConf maxHeap sp offset code t saveRegs coracle).mdomain = t'.mdomain ∧
       (s2 stackConf dataConf maxHeap sp offset code t saveRegs coracle).shMdomain =
@@ -79,7 +82,7 @@ theorem panToTargetInitCodeRun {width : Nat} [NeZero width] {C F : Type}
   revert main
   rcases hev : StackSemEvaluate.evaluate (initCode (StackToLab.isGenGc dataConf.gcKind) maxHeap
       sp, s2 stackConf dataConf maxHeap sp offset code t saveRegs coracle) with ⟨_ | _, t'⟩
-  · rintro ⟨⟨w2, w3, w4, s2r2, a2, t2, s2r4, a4, lt, tsp, bound, s2r3⟩, -, hffi, -, hmd,
+  · rintro ⟨⟨w2, w3, w4, s2r2, a2, t2, s2r4, a4, lt, tsp, bound, s2r3⟩, hrel, hffi, -, hmd,
       hsmd, hmem⟩
     have lk : ∀ i, (i = 2 ∨ i = 3 ∨ i = 4) →
         (s2 stackConf dataConf maxHeap sp offset code t saveRegs coracle).regs.lookup i =
@@ -89,7 +92,7 @@ theorem panToTargetInitCodeRun {width : Nat} [NeZero width] {C F : Type}
     rw [lk 3 (.inr (.inl rfl)), h3] at s2r3
     rw [lk 4 (.inr (.inr rfl)), h4] at s2r4
     exact ⟨t', w2, w3, w4, rfl, Option.some.inj s2r2, Option.some.inj s2r3,
-      Option.some.inj s2r4, a2, a4, lt, t2, tsp, bound, hffi, hmd, hsmd, hmem⟩
+      Option.some.inj s2r4, a2, a4, lt, t2, tsp, bound, hrel, hffi, hmd, hsmd, hmem⟩
   · simp
 
 /-- A successful `full_make_init` (`opt = SOME x`, as `full_make_init_semantics`

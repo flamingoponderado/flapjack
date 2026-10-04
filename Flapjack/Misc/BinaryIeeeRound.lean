@@ -19,8 +19,10 @@ Tagged (source-reviewed against the pinned HOL): the float constants, `flags`,
   That restricts HOL's arbitrary-real domain to rationals, so they are not
   exact ports.  Their tagged arbitrary-real ports over Mathlib `ℝ` are in
   `Flapjack.Misc.BinaryIeeeSqrt.RealCarrier`.
-* `largest` and `threshold` are word-free reals indexed by two HOL type
-  dimensions; no reviewed qualifier covers a two-dimension numeric use.
+* `largest` and `threshold` are rendered here as `Rat`; their tagged ports over
+  Mathlib `ℝ` (`holFloatLargestR`, `holFloatThresholdR`, under
+  `word_dimensions_as_widths := [t, w]`) are also in
+  `Flapjack.Misc.BinaryIeeeSqrt.RealCarrier`.
 * `holRatAbs`, `holUintMax`, `holIntMin` render HOL library constants, not
   `binary_ieee` declarations.
 
