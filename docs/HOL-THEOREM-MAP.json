@@ -93992,5 +93992,135 @@
     "lean_name": "holFmapAsFiniteSupportWitness",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Canonical WordSem codec re-export for the fmap_as_finite_support qualifier; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "memorySwapLemma1",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "memory_swap_lemma1",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original local memory_swap_lemma1 (607-736): all six premises and the ∃st' conclusion (same result, equality after overwriting memory by ARB, graph equality). Typed capture by the pan_to_target_memory_swap probe (literal source replay of 336-908, show_types, no hypotheses). no_alloc/no_install are the reviewed noAllocSubprogsHOL/noInstallSubprogsHOL renderings, no_alloc_code/no_install_code the tagged wordProps predicates, fun2set domains are the Prop reading of the Bool mdomain, ARB is holArb. Proof by the WordSem evaluate recursion (swap_evaluate, HOL recInduct evaluate_ind). No added premise. Inherits reals_as_rational_cuts through the WordSem evaluator closure (SOUNDNESS item 8)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "memorySwapLemma",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "memory_swap_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original local memory_swap_lemma (743-760): same premises, ∃m' with evaluate (prog, st with memory := m) = (res, rst with memory := m') and graph equality. Typed capture by the pan_to_target_memory_swap probe (literal source replay of 336-908, show_types, no hypotheses). no_alloc/no_install are the reviewed noAllocSubprogsHOL/noInstallSubprogsHOL renderings, no_alloc_code/no_install_code the tagged wordProps predicates, fun2set domains are the Prop reading of the Bool mdomain, ARB is holArb. Proof by the WordSem evaluate recursion (swap_evaluate, HOL recInduct evaluate_ind). No added premise. Inherits reals_as_rational_cuts through the WordSem evaluator closure (SOUNDNESS item 8)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "wordSemanticsMemoryUpdate",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "word_semantics_memory_update",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original word_semantics_memory_update (772-907): graph/no_alloc_code/no_install_code premise, then semantics (s with memory := m) start ≠ Fail ⇒ semantics s start = semantics (s with memory := m) start (HOL's curried implication kept; the non-Fail premise is retained though the Lean proof does not need it). Typed capture by the pan_to_target_memory_swap probe (literal source replay of 336-908, show_types, no hypotheses). no_alloc/no_install are the reviewed noAllocSubprogsHOL/noInstallSubprogsHOL renderings, no_alloc_code/no_install_code the tagged wordProps predicates, fun2set domains are the Prop reading of the Bool mdomain, ARB is holArb. Proof by the WordSem evaluate recursion (swap_evaluate, HOL recInduct evaluate_ind). No added premise. Inherits reals_as_rational_cuts through the WordSem evaluator closure (SOUNDNESS item 8)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "memEq_iff",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only conversion between pointwise memory agreement and the fun2set graph equality."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "swap_map",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only constructor of the evaluation agreement for unchanged memory."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "swap_const",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only non-recursive cases of memory_swap_lemma1."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "swap_evaluate",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only recursive core of memory_swap_lemma1 (HOL recInduct evaluate_ind)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "popEnvMem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only commutation of pop_env with memory replacement."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "popEnvFrame",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only frame facts of pop_env."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "getStoreMem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only definitional unfolding (get_store ignores memory)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "jumpExcMem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only commutation of jump_exc with memory replacement."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "callRetSub",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only extraction of the returning-call handler sub-program condition."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "callHandlerSub",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only extraction of the exception handler sub-program condition."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Canonical WordSem codec re-export for the fmap_as_finite_support qualifier; no HOL original."
   }
 ]
