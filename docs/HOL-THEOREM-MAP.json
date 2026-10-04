@@ -93629,5 +93629,37 @@
     "lean_name": "constFpLoopLabelsSublist",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only stronger internal invariant over the actual native constant-folding loop projection. The original proof handles containment/distinctness inline; no separate named sublist theorem."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/JumpStep.lean",
+    "lean_name": "dfnJal",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "JAL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison of original class_rd0 JAL/JALR bindings888-889 and actual exported generated companions: full fresh typed statements and original per-theorem Thm.hyp captured in l3_step_jump_probe.out. JAL/JALR retain sole rd<>0; JAL_NOP/JALR_NOP retain sole rd=0, without extra alignment/mode/run premises. Fixed original word5 registers, word20/word12 immediates and word64 machine/state dimensions match native BitVec carriers exactly. Entire conditional base record and original c_NextFetch/c_gpr updates retained, including misaligned target signalAddressException, rs1=0 read, literal JALR mask FFFFFFFFFFFFFFFE and source PC+Skip link before destination update. Zero-destination companions omit only the link write; they do not leave NextFetch unchanged. Kernel proofs unfold the actual native reviewed dfn/branch/write definitions and derive full normal forms for arbitrary states, register aliasing and exception outcomes. No target run or poststate assumed, no model/rendering/golden changes. Source capture checker pins reviewed statement shapes/hypotheses but does not independently prove cross-language equivalence; source review and Lean kernel checks remain required. Whole encoder/compiler chain remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/JumpStep.lean",
+    "lean_name": "dfnJalr",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "JALR",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison of original class_rd0 JAL/JALR bindings888-889 and actual exported generated companions: full fresh typed statements and original per-theorem Thm.hyp captured in l3_step_jump_probe.out. JAL/JALR retain sole rd<>0; JAL_NOP/JALR_NOP retain sole rd=0, without extra alignment/mode/run premises. Fixed original word5 registers, word20/word12 immediates and word64 machine/state dimensions match native BitVec carriers exactly. Entire conditional base record and original c_NextFetch/c_gpr updates retained, including misaligned target signalAddressException, rs1=0 read, literal JALR mask FFFFFFFFFFFFFFFE and source PC+Skip link before destination update. Zero-destination companions omit only the link write; they do not leave NextFetch unchanged. Kernel proofs unfold the actual native reviewed dfn/branch/write definitions and derive full normal forms for arbitrary states, register aliasing and exception outcomes. No target run or poststate assumed, no model/rendering/golden changes. Source capture checker pins reviewed statement shapes/hypotheses but does not independently prove cross-language equivalence; source review and Lean kernel checks remain required. Whole encoder/compiler chain remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/JumpStep.lean",
+    "lean_name": "dfnJalNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "JAL_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison of original class_rd0 JAL/JALR bindings888-889 and actual exported generated companions: full fresh typed statements and original per-theorem Thm.hyp captured in l3_step_jump_probe.out. JAL/JALR retain sole rd<>0; JAL_NOP/JALR_NOP retain sole rd=0, without extra alignment/mode/run premises. Fixed original word5 registers, word20/word12 immediates and word64 machine/state dimensions match native BitVec carriers exactly. Entire conditional base record and original c_NextFetch/c_gpr updates retained, including misaligned target signalAddressException, rs1=0 read, literal JALR mask FFFFFFFFFFFFFFFE and source PC+Skip link before destination update. Zero-destination companions omit only the link write; they do not leave NextFetch unchanged. Kernel proofs unfold the actual native reviewed dfn/branch/write definitions and derive full normal forms for arbitrary states, register aliasing and exception outcomes. No target run or poststate assumed, no model/rendering/golden changes. Source capture checker pins reviewed statement shapes/hypotheses but does not independently prove cross-language equivalence; source review and Lean kernel checks remain required. Whole encoder/compiler chain remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/JumpStep.lean",
+    "lean_name": "dfnJalrNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "JALR_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison of original class_rd0 JAL/JALR bindings888-889 and actual exported generated companions: full fresh typed statements and original per-theorem Thm.hyp captured in l3_step_jump_probe.out. JAL/JALR retain sole rd<>0; JAL_NOP/JALR_NOP retain sole rd=0, without extra alignment/mode/run premises. Fixed original word5 registers, word20/word12 immediates and word64 machine/state dimensions match native BitVec carriers exactly. Entire conditional base record and original c_NextFetch/c_gpr updates retained, including misaligned target signalAddressException, rs1=0 read, literal JALR mask FFFFFFFFFFFFFFFE and source PC+Skip link before destination update. Zero-destination companions omit only the link write; they do not leave NextFetch unchanged. Kernel proofs unfold the actual native reviewed dfn/branch/write definitions and derive full normal forms for arbitrary states, register aliasing and exception outcomes. No target run or poststate assumed, no model/rendering/golden changes. Source capture checker pins reviewed statement shapes/hypotheses but does not independently prove cross-language equivalence; source review and Lean kernel checks remain required. Whole encoder/compiler chain remains open."
   }
 ]
