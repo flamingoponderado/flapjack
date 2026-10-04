@@ -1,3 +1,4 @@
+import Flapjack.RiscV.CorrectnessEncoding.ShiftRorImmediate
 import Flapjack.RiscV.CorrectnessEncoding.RorExecution
 import Flapjack.RiscV.CorrectnessEncoding.RorStep
 import Flapjack.Compiler.Backend.Proofs.WordConventions

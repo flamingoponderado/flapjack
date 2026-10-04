@@ -8073,3 +8073,8 @@ run_probe riscv_ror_step_probeScript.sml riscv_ror_step_probe.out \
 run_probe backend_word_conventions2_probeScript.sml backend_word_conventions2_probe.out \
   fullConventions_typed fullConventions_proved fullConventions_hypotheses \
   "$cake_dir/compiler/backend/proofs/backendProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe riscv_target_shift_ror_immediate_probeScript.sml riscv_target_shift_ror_immediate_probe.out \
+  riscv_encoder_correct_shiftRorImmediate_statement riscv_encoder_correct_shiftRorImmediate_types riscv_encoder_correct_shiftRorImmediate_hypotheses riscv_encoder_correct_shiftRorImmediate_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
