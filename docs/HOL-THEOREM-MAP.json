@@ -91163,5 +91163,69 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.50): HOL compile_single_correct, Resume Loop case (word_to_wordProofScript.sml:655-748). Case piece of the full statement (235-256) at the Loop constructor via CompileSingleCorrectAt (same premises/conclusion as the leaf pieces), with exactly HOL's outer termdep/clock hypothesis (for the next iteration at dec_clock) and the body's size hypothesis at the same termdep/clock. HOL proves the theorem by completeInduct on termdep, clock and prog_size; the size component is used here only for the immediate sub-programs, which the case structure requires. Proof follows HOL: the inner run's permutation from the hypothesis, permute_swap_lemma to restart the second statement/iteration, evaluate_clock/evaluate_consts for the clock, termdep, compile and gc_fun constancy, and cut_state reading only the locals. fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StateRelFp.lean",
+    "lean_name": "stateRelGetFpVar",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "state_rel_get_fp_var",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: Original4402-4407 full stateRel implies actual getFpVar equality at arbitrary register, including absent lookup. Relation fpRegs equality derived internally; no desired read premise. Positive machine width/common source-target words, independent source host Nat×C/target C and FFI F retained; FP payload remains fixed word64. Canonical source fpRegs/store and target regs/fpRegs/store qualified with genuine same-module codec witnesses, sptree locals/code unchanged. Structural relation has no numerical FP agreement claim; these structural declarations have no inherited real-arithmetic assumption, as confirmed by elaborated declaration closure. Fresh literal unchanged original local proof blocks and full typed symbolic statements replayed and reviewed: both T/hypotheses0, source/target common machine dimension with independent host/FFI and fixed word64 update payload. Regression evidence, no HOL-to-Lean equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StateRelFp.lean",
+    "lean_name": "stateRelSetFpVar",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "state_rel_set_fp_var",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: Original4409-4415 full stateRel implies entire relation after actual simultaneous setFpVar update at arbitrary register/value/extra. All38 full relation conjuncts retained; only fpRegs conjunct changes by congruence of the same canonical map update, no desired postrelation premise. Positive machine width/common source-target words, independent source host Nat×C/target C and FFI F retained; FP payload remains fixed word64. Canonical source fpRegs/store and target regs/fpRegs/store qualified with genuine same-module codec witnesses, sptree locals/code unchanged. Structural relation has no numerical FP agreement claim; these structural declarations have no inherited real-arithmetic assumption, as confirmed by elaborated declaration closure. Fresh literal unchanged original local proof blocks and full typed symbolic statements replayed and reviewed: both T/hypotheses0, source/target common machine dimension with independent host/FFI and fixed word64 update payload. Regression evidence, no HOL-to-Lean equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StoreRegister2.lean",
+    "lean_name": "evaluateWRegWrite2Seq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wRegWrite2_seq",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: Original4672-4686 whole evaluation-pair equality for arbitrary callbacks/register/state and ALL outcomes, actual native second scratch k+1/ordered stack store. No callback run or success premise. Common positive word dimension, original source Nat×C/target C host and independent FFI F retained. Canonical maps qualified, genuine same-module codec witnesses; native sptree locals/code preserved. Evaluators inherit reals_as_rational_cuts, no independent numerical agreement or cross-language equivalence claim. Fresh literal unchanged original local store-continuation proof and whole write-sequence proof replayed and full typed statements reviewed: both T/hypotheses0, common word/program/result dimension, independent host/FFI and every original premise/result retained; regression evidence not cross-language equivalence.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StoreRegister2.lean",
+    "lean_name": "evaluateWStackStoreWReg2New",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wStackStore_wReg2_new",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: Original4603-4628 compiled wReg2/even/range and original existential continuation execution/pre-store fullrelation/stack naming equalities imply actual native Seq continuation/store run, whole source setVar relation/resources. The continuation-run premise occurs in the original HOL theorem and is not an assumed final compiled instruction run. All actual physical/spilled slots derived internally, scratchk+1, arbitrary Word/Loc value/index/aliases/continuation/resources retained. Common positive word dimension, original source Nat×C/target C host and independent FFI F retained. Canonical maps qualified, genuine same-module codec witnesses; native sptree locals/code preserved. Evaluators inherit reals_as_rational_cuts, no independent numerical agreement or cross-language equivalence claim. Fresh literal unchanged original local store-continuation proof and whole write-sequence proof replayed and full typed statements reviewed: both T/hypotheses0, common word/program/result dimension, independent host/FFI and every original premise/result retained; regression evidence not cross-language equivalence.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
