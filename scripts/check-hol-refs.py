@@ -234,7 +234,8 @@ def l3_boolify_source_error(root: Path) -> str | None:
 # through a `class`/`class_rd0` factory.  `class_rd0` calls `utilsLib.save_thms`
 # a second time with `[rd0]` in the avoidance list, producing a companion named
 # `NAME^"_NOP"` with `rd = 0w`, retaining any mode or legality hypotheses,
-# whose conclusion leaves the state unchanged. Only `NAME` appears as a literal
+# whose destination write is suppressed, retaining other effects (for example
+# JAL/JALR NextFetch and address exceptions). Only `NAME` appears as a literal
 # `val` binding, so the
 # companion is registered here narrowly (for the reviewed script only) so that
 # its `@[hol]` tag resolves to the generating source line.  Names bound by the
