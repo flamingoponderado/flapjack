@@ -98879,5 +98879,13 @@
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus3 source comparison 2026-10-04 (bead flapjack-jybcz): riscv_configProofScript 54-66 against the typed literal replay riscv_config_proof_replay (re-proved there with HOL's own proof over the built lab_to_targetProof/riscv_targetProof theories, 0 hypotheses): is_riscv_machine_config mc => mc_conf_ok mc, mc at (64, riscv_state, projection) machine_config, over the tagged isRiscvMachineConfig and mcConfOk. Lean proof: good_dimindex by 64, encoder_correct from the assembled tagged TargetProof.riscv_encoder_correct (peer sol-c a49949bc3), the four heap registers 10/11/12/13 and link register reg_ok by decide, enc_ok from target_ok, as HOL's metis step. No extra premises; no native_decide. Through riscv_target (the L3 RISC-V model) the closure inherits reals_as_rational_cuts, the rational-cut assurance limit SOUNDNESS8.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/RiscVInstance.lean",
+    "lean_name": "panToTargetCompileSemanticsRiscV",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific RISC-V instantiation (bead flapjack-nlgac) of the tagged panToTargetCompileSemantics with c := pancakeBackendConf riscvBackendConfig (Pancake's GC-None config, compilerScript 744-747) and is_riscv_machine_config mc; backend_config_ok/mc_conf_ok/mc_init_ok discharged by riscvPancakeBackendConfigOk, riscvMachineConfigOk and riscvPancakeInitOk, ISA and ffi_names premises decided; all other premises unchanged. HOL has no Pancake RISC-V theorem. Inherits reals_as_rational_cuts through riscv_target (SOUNDNESS8)."
   }
 ]
