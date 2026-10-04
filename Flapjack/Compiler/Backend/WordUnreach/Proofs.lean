@@ -654,7 +654,7 @@ private theorem callNoneIsSome (dest : Option Nat) (args : List Nat)
   by_cases hb : wordSemBadDestArgs dest args = true
   · rw [if_pos hb]; rfl
   rw [if_neg hb]
-  cases hf : wordSemFindCode dest (wordSemAddRetLoc none xs) s.code s.stackSize with
+  cases hf : wordSemFindCode dest (wordSemAddRetLoc (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat)) xs) s.code s.stackSize with
   | none => rfl
   | some f =>
   obtain ⟨args1, prog, ss⟩ := f

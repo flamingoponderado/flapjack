@@ -42,12 +42,14 @@ def wordSemBytesInWord {width : Nat} [NeZero width] : BitVec width :=
 /-- Exact HOL `add_ret_loc_def` (`wordSemScript.sml:946-949`):
     `add_ret_loc NONE xs = xs` and
     `add_ret_loc (SOME (n,names,ret_handler,l1,l2)) xs = Loc l1 l2 :: xs`.  The
-    return information is the `Call` returns carrier of the tagged
-    `WordLangProgHOL`. -/
+    first three return-metadata fields have independent arbitrary HOL types;
+    the function observes only the two numeric labels. These metadata types
+    are independent of the word dimension carried by `xs`. -/
 @[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "add_ret_loc_def"
   (words_as_type_indexed_bitvec)]
-def wordSemAddRetLoc {width : Nat} [NeZero width] :
-    Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat) →
+def wordSemAddRetLoc {width : Nat} [NeZero width]
+    {ReturnValue ReturnNames ReturnHandler : Type} :
+    Option (ReturnValue × ReturnNames × ReturnHandler × Nat × Nat) →
       List (WordLocW width) → List (WordLocW width)
   | none, xs => xs
   | some (_, _, _, l1, l2), xs => .loc l1 l2 :: xs

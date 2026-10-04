@@ -193,7 +193,7 @@ private theorem tailCall_code {width : Nat} [NeZero width] {C F : Type}
     (dest : Option Nat) (args : List Nat) (s : WordSemStateFiniteExact width C F)
     (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width)) (ss : Option Nat)
     (hg : getVars args s = some xs) (hbad : ¬ wordSemBadDestArgs dest args = true)
-    (hf : wordSemFindCode dest (wordSemAddRetLoc none xs) s.code s.stackSize =
+    (hf : wordSemFindCode dest (wordSemAddRetLoc (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat)) xs) s.code s.stackSize =
       some (args1, prog, ss)) (hz : s.clock ≠ 0)
     (hcallee : sptSubspt (callEnv args1 ss (decClock s)).code
       (evaluate prog (callEnv args1 ss (decClock s))).2.code) :

@@ -1,0 +1,4 @@
+add_ret_loc_independent_metadata_typed=add_ret_loc (NONE :(β # γ # δ # num # num) option) (xs :α word_loc list) = xs ∧ add_ret_loc (SOME ((n :β),(names :γ),(ret_handler :δ),(l1 :num),(l2 :num))) xs = (Loc l1 l2 :α word_loc)::xs
+add_ret_loc_independent_metadata_hypotheses=0
+add_ret_loc_independent_metadata_some=[Loc 5 6; Word 7w]
+add_ret_loc_independent_metadata_none=[Word 7w]
