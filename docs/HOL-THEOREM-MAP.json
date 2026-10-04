@@ -97773,15 +97773,6 @@
     "reviewer": "Projection form of exps_of_unreach_elim (first component of unreachElimHOLExact) used to prove the tagged crepInline_expsOfUnreachElim; no independent HOL declaration."
   },
   {
-    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
-    "hol_name": "riscv_encoder_correct",
-    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Jump.lean",
-    "lean_name": "riscv_encoder_correct_jump",
-    "statement_status": "reviewed_exact",
-    "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-sol: compared original Jump constructor riscv_targetProof682-687 and riscv_target170-175, source asmStep/jumpToOffset/asmJumpOffsetOkExact and full encoder_correct_def. Only original source step plus initial targetStateRel; complete existential/all interference environments/both asserts/code bytes/PC membership/final full relation. Actual near JALrd0 uses source signed21 guard and arithmetic halfword shift, witness0; far AUIPC31/JALRrd0 uses original low12/high20 signed split, witness1 with intermediate PC4 and env0/env1. Four/eight literal emitted bytes supply full native fetch/decode/Run/Next; no target run, decoder or post-state premise. Scratch31 preservation across interference derives the full original projection, not the source relation that excludes31; original source guards discharge all bounds/alignment/masks. Memory/frame/all allowed registers retained. Same-counterpart helper modules are untagged local compositions without separate HOL originals. Inherits reviewed reals_as_rational_cuts assurance limit SOUNDNESS8 via native Run; no production-path change or full encoder/compiler completion claim."
-  },
-  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyLabToTarget.lean",
@@ -97844,6 +97835,55 @@
     "lean_name": "panToTargetMemoryAssumption",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1486-1550): memory_assumption of full_make_init_semantics for the make_init lab state from the pan_installed components, via fun2set_disjoint_union and word_list_exists_imp."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyWordToStack.lean",
+    "lean_name": "panPropsALookupEq_eq_none",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only: ALOOKUP misses a key absent from the keys (HOL ALOOKUP_NONE)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyWordToStack.lean",
+    "lean_name": "panToTargetStubLocationsFree",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1606-1622): ALOOKUP wprog raise_stub_location = NONE and store_consts_stub_location = NONE via pan_to_word_compile_prog_lab_min and compile_to_word_conventions2."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyWordToStack.lean",
+    "lean_name": "fullMakeInit_bitmaps_code",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1563-1585): a successful full_make_init keeps the given bitmaps and installs fromAList code."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyWordToStack.lean",
+    "lean_name": "panToTargetInitStateOk",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1624-1647): init_state_ok of the full_make_init stack state with the empty word oracle, via IMP_init_state_ok and compile_word_to_stack_bitmaps."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyWordToStack.lean",
+    "lean_name": "panToTargetWordStateFacts",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1686-1716): the word make_init state on a successful full_make_init stack state has gc_fun_const_ok gc_fun (gc_fun_const_ok_word_gc_fun), empty stack, the given code and lookup 0 locals = SOME (Loc 1 0)."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Jump.lean",
+    "lean_name": "riscv_encoder_correct_jump",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol: compared original Jump constructor riscv_targetProof682-687 and riscv_target170-175, source asmStep/jumpToOffset/asmJumpOffsetOkExact and full encoder_correct_def. Only original source step plus initial targetStateRel; complete existential/all interference environments/both asserts/code bytes/PC membership/final full relation. Actual near JALrd0 uses source signed21 guard and arithmetic halfword shift, witness0; far AUIPC31/JALRrd0 uses original low12/high20 signed split, witness1 with intermediate PC4 and env0/env1. Four/eight literal emitted bytes supply full native fetch/decode/Run/Next; no target run, decoder or post-state premise. Scratch31 preservation across interference derives the full original projection, not the source relation that excludes31; original source guards discharge all bounds/alignment/masks. Memory/frame/all allowed registers retained. Same-counterpart helper modules are untagged local compositions without separate HOL originals. Inherits reviewed reals_as_rational_cuts assurance limit SOUNDNESS8 via native Run; no production-path change or full encoder/compiler completion claim."
   },
   {
     "hol_path": null,
