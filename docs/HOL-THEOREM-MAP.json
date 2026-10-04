@@ -92900,5 +92900,23 @@
     "hol_name": "word_to_word_compile_semantics",
     "lean_name": "word_to_word_compile_semantics",
     "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.56): HOL word_to_word_compile_semantics (word_to_wordProofScript.sml:2267-2489), compared with the typed capture word_to_word_compile_semantics. Full statement kept: free wconf acomf wprog0 col wprog s start t explicit in order of appearance; all 14 conjunctive premises in HOL order (compile = tagged compile_def; fromAList = sptFromAList; ALL_DISTINCT (MAP FST) = List.Nodup of map Prod.fst; lookup 0 t.locals = SOME (Loc 1 0); t = s with code := t.code; semantics s start ≠ Fail with the tagged wordSem semantics_def); HOL's commented-out start/EL premises are absent as in HOL; s and t share the carrier types (α, β, 'ffi). Conclusion semantics s start = semantics t start. Proof route differs from HOL's clock-by-clock case analysis with evaluate_add_clock: every clocked start-call run that does not fail agrees on result and FFI state (panLang_compile_word_to_word_thm + permute_swap_lemma3, as in each HOL case), and an untagged congruence lemma shows semantics reads runs only through these (semantics_eq_body is rfl against semantics_def). code_rel/domain from code_rel_ext_word_to_word, no_mt_code_rel_ext and the key-preservation of full_compile_single. fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/Assembly.lean",
+    "lean_name": "compCorrect",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_correct",
+    "hol_line": 5756,
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-04: full original comp_correct5756 and motive5719-5751, every26 rebound evaluate_ind constructor. All quantified source/target host types (source Nat x C, target C, FFI F Type0), common arbitrary positive width, programs, clocks, frames, bitmaps and lens retained. Eleven original guards: actual source evaluation, nonError, full stateRel, postAlloc, flatness, actual comp false output, both bitmap bounds, output prefix, labels subset and maxVar bound. Conclusion existential actual compiled native target run at clock+extra, transparent entire compCorrectResult: mismatch Halt Word2/IO prefix/stack-max overflow; NONE relation; Result relation and every guarded return-value physical register/stack lookup; Exception restored pushLocals/LASTN/locals union and reg1; Break/Continue relation; residual FFI/clock equality. holEl only under original return index bound. Proof applies actual evaluate_ind with all26 actual constructor theorems; actual Inst.compCorrectInst replaces draft callback, no new premise or targetrun assumption. Same-module AssemblyCodec witnesses re-export genuine canonical broad/exact roundtrips for imported owning source/target carriers; only listed HOL finite maps qualified, Spt locals/code excluded. Common positive BitVec/NeZero translation reviewed. Full evaluator closure inherits reals_as_rational_cuts (SOUNDNESS item8), no new FP agreement claim. Fresh original closed stored whole theorem and full typed capture, hypotheses0; this is not a local giant proof replay or HOL-to-Lean equivalence proof. Full compiler composition remains separate."
   }
 ]
