@@ -8,3 +8,5 @@ WORD_LS_IMP_typed=(a :α word) ≤₊ (b :α word) ⇒ ∃(k :num). Abbrev (b = 
 lsr_lsl_typed=∀(w :α word) (n :num). aligned n w ⇒ w ⋙ n ≪ n = w
 Saved theorem _______ "byte_aligned_mult"
 byte_aligned_mult_typed=good_dimindex (:α) ⇒ (byte_aligned ((a :α word) + (bytes_in_word :α word) * (n2w (i :num) :α word)) ⇔ byte_aligned a)
+Saved theorem _______ "compile_word_to_stack_sfs_aux"
+compile_word_to_stack_sfs_aux_typed=∀(ac :α asm_config) (perf :bool) (k :num) (p :(num # num # α wordLang$prog) list) (bm :α word app_list # num) (progs' :(num # α stackLang$prog) list) (fs' :num list) (bitmaps :α word app_list # num). compile_word_to_stack ac perf k p bm = (progs',fs',bitmaps) ∧ (perf ⇔ F) ⇒ fromAList (MAP (λ(kv :num # num # α wordLang$prog). (FST kv,(λ((arg_count :num),(prog :α wordLang$prog)). FST (SND (compile_prog ac perf prog arg_count k ((Nil :α word app_list),(0 :num)) :α stackLang$prog # num # α word app_list # num))) (SND kv))) p) = fromAList (MAP (λ(((i :num),(_0 :α stackLang$prog)),(n :num)). (i,n)) (ZIP (progs',fs')))

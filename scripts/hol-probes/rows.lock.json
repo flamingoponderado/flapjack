@@ -924,7 +924,7 @@
     {"bytes": 1183, "out": "pan_structs_value_shape_conversion_probe.out", "rows": 10, "sha256": "3554ff69c11f86edb398d21eaf8541ce818d3386dc6d0b9df20ed6fd91258023"},
     {"bytes": 411, "out": "pan_structs_value_validity_probe.out", "rows": 15, "sha256": "5920bd2c77b143b184fac5b81524e62d8e3d1dbcefee1ae5e7fcd0f3b2acdf2a"},
     {"bytes": 2799, "out": "pan_target_entry_first_match_probe.out", "rows": 5, "sha256": "5d33ac84e2d34dd61e30f8444a66d3740feff8771780117d5199a65e679ff903"},
-    {"bytes": 1255, "out": "pan_target_root_leaves_probe.out", "rows": 9, "sha256": "a21e99aaab6d7d60556af633899d3c77dc03881ca9ebd3803f3cfdafa6801e5d"},
+    {"bytes": 1987, "out": "pan_target_root_leaves_probe.out", "rows": 10, "sha256": "0d512d2aa232fba85cc53bfd84d816f760c234c4e7beba0bcf5b2a891197b5f4"},
     {"bytes": 120, "out": "pan_to_crep_comp_func_probe.out", "rows": 3, "sha256": "2fead1ae3b94458488de41606f67d5ed979e9253f3f52fd78177dd5cb52d7d9f"},
     {"bytes": 43, "out": "pan_to_crep_first_compile_oracle_probe.out", "rows": 2, "sha256": "d7fb5d36d231faff2e08867856413ea44c3e4a5296aab6045010ca20ca7962e3"},
     {"bytes": 290, "out": "pan_to_crep_first_compile_probe.out", "rows": 1, "sha256": "28f6aa3feba662177a1096cefe40596bf32624ff7553b4ffa45530aa3e5a267e"},

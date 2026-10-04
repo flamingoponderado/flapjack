@@ -96370,5 +96370,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison 2026-10-04: good_dimindex (:a) ⇒ (byte_aligned (a + bytes_in_word * n2w i) ⇔ byte_aligned a); bytes_in_word is n2w (dimindex DIV 8); literal-source replay (backendProofTheory unbuilt) proves it with the original tactic. Word translation only: HOL alpha word is BitVec width with [NeZero width]; no other difference. Typed capture pan_target_root_leaves probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProof/WordToStackSfs.lean",
+    "lean_name": "compileWordToStackSfsAux",
+    "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml",
+    "hol_name": "compile_word_to_stack_sfs_aux",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: original 2788-2809, all eight binders; premise compile_word_to_stack ac perf k p bm = (progs',fs',bitmaps) ∧ perf = F; conclusion fromAList of per-program FST (SND (compile_prog ... (Nil,0))) equals fromAList (MAP (λ((i,_),n).(i,n)) (ZIP (progs',fs'))); identifiers num as HOL infers; fromAList is the external-library sptFromAList rendering, Nil is AppList.nil. Word translation only: alpha word is BitVec width with [NeZero width]. Typed capture pan_target_root_leaves probe (literal source replay with the original tactic; backendProofTheory not built in probe env)."
   }
 ]

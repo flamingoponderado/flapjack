@@ -1,5 +1,5 @@
-load "preamble"; load "miscTheory"; load "alignmentTheory"; load "data_to_word_gcProofTheory";
-open HolKernel Parse bossLib preamble miscTheory alignmentTheory;
+load "preamble"; load "miscTheory"; load "alignmentTheory"; load "data_to_word_gcProofTheory"; load "word_to_stackTheory";
+open HolKernel Parse bossLib preamble miscTheory alignmentTheory word_to_stackTheory;
 val _ = new_theory "flapjack_pan_target_root_leaves_replay";
 val _ = Globals.linewidth := 1000000;
 val _ = if null (hyp (miscTheory.UPDATE_LIST_def)) then () else raise Fail "hypotheses: UPDATE_LIST_def";
@@ -30,3 +30,30 @@ Proof
 QED
 val _ = if null (hyp (byte_aligned_mult)) then () else raise Fail "hypotheses: byte_aligned_mult";
 val _ = (print "byte_aligned_mult_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (byte_aligned_mult)); print "\n");
+(* Literal source replay of backendProofScript 2788-2809 (backendProofTheory is not built here). *)
+Theorem compile_word_to_stack_sfs_aux:
+∀ac perf k p bm progs' fs' bitmaps.
+  compile_word_to_stack ac perf k p bm = (progs',fs',bitmaps) ∧ perf = F ⇒
+   fromAList
+     (MAP
+        (λkv.
+             (FST kv,
+              (λ(arg_count,prog).
+                   FST (SND (compile_prog ac perf prog arg_count k (Nil,0)))) (SND kv))) p)
+   = fromAList (MAP (λ((i,_),n). (i,n)) (ZIP (progs',fs')))
+Proof
+  ho_match_mp_tac compile_word_to_stack_ind
+  \\ rw [fromAList_def,compile_word_to_stack_def] \\ fs [fromAList_def]
+  \\ rpt (pairarg_tac \\ fs []) \\ rveq \\ fs []
+  \\ rw [fromAList_def] \\ rveq \\ rfs []
+  \\ Cases_on `compile_prog ac F p n k (Nil,0)`
+  \\ PairCases_on `r` \\ rfs [] \\ rveq \\ fs []
+  \\  `f = r0` suffices_by fs []
+  \\ fs [compile_prog_def]
+  \\ qmatch_asmsub_abbrev_tac `_ p0 = (q,_,_)`
+  \\ qmatch_asmsub_abbrev_tac `_ p1 = (prog,_,_)`
+  \\ pairarg_tac \\ rveq \\ rfs [] \\ rveq
+  \\ pairarg_tac \\ rveq \\ rfs [] \\ rveq
+QED
+val _ = if null (hyp (compile_word_to_stack_sfs_aux)) then () else raise Fail "hypotheses: compile_word_to_stack_sfs_aux";
+val _ = (print "compile_word_to_stack_sfs_aux_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (compile_word_to_stack_sfs_aux)); print "\n");
