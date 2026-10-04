@@ -8582,6 +8582,17 @@ These decoder prerequisites do not prove the full JumpCmp case or compiler
 correctness. Regenerate through the registered `HOL_PROBE_ONLY` driver and
 run `check-riscv-branch-decode.py` to detect source/evidence drift.
 
+### Generic source memory byte-shift repair
+
+`asm_memory_shift_probeScript.sml` executes original `read_mem_word` and
+`write_mem_word` with address width 8 and independent result/value widths
+1, 2, 3 and 64. The matched Lean kernel regressions live in
+`AsmSem/MemoryByteShift.lean`. Original shifts use a Nat count of eight;
+a homogeneous BitVec count truncates the numeral to zero at widths 1–3.
+The source definitions and companion proofs now explicitly use `(8 : Nat)`.
+No positivity restriction or error guard changes. These observations supplement
+the generic source-domain proofs; they do not complete native Mem correctness.
+
 `pan_to_crep_validity_helpers_probe.out` captures seven complete original typed list/field/head/store/load validity statements from pan_to_wordProofScript. Guards retain matched declaration lengths, actual pair/Option results, and the stores nonempty conditional; global addresses remain word5. Native kernel proofs retain the original equivalences/implications. Full arithmetic/compiler/inlining validity remains separate; captures support source review, not cross-language equivalence.
 
 ### Source memory traversal domains
@@ -8596,3 +8607,25 @@ original memLoad/memStore guards. It does not prove the full native Mem encoder.
 `crep_inline_nested_decs_provenance_probe.out` captures the full typed original nested-declaration expression-provenance implication. All list lengths, including mismatches, remain admitted; the conclusion retains the original argument-list or original body alternatives. This prerequisite does not establish complete inlining validity.
 
 `pan_to_crep_compile_exp_validity_probe.out` captures the complete original typed expression compiler validity theorem (974–1007), retaining context/expression/output-list/shape binders, source binary-Panop guard and actual compile pair equation. The native proof covers every expression and mutual list constructor and uses the shared Prop-valued Crep predicate. Captures support source review, not cross-language equivalence.
+### Full original native Jump encoder case
+
+`CorrectnessEncoding/Jump.lean` assembles both original riscv_target170–175
+paths and the complete riscv_targetProof682–687 constructor conclusion. Near
+JAL rd0 uses witness0. Far AUIPC31/JALR rd0 uses witness1, intermediate PC4,
+and env0/env1. All signed guards and alignment come from the original source
+step; actual native Fetch/Decode/Run/Next comes from the four/eight emitted bytes.
+The source relation excludes scratch31, so the far proof preserves it across
+interference through the full original projection. Both paths retain every
+environment, both assertions, code-byte equality, PC membership, memory outside
+the source domain, and the final full relation. Native Run inherits the reviewed
+`reals_as_rational_cuts` assurance limit (SOUNDNESS item8).
+
+`riscv_target_jump_probeScript.sml` freshly specializes the full original HOL
+encoder theorem only to `Jump c`, recording the complete typed statement,
+carrier binders, zero hypotheses and kernel proof marker. The statement and
+actual source/proof-side paths are pinned by `check-riscv-target-jump.py`, with
+mutation tests rejecting extra near/target-poststate premises, lost universal
+environments/assertions, missing AUIPC, changed scratch projection/shift, and
+missing original evidence. These syntactic checks supplement source review and
+Lean kernel checking; full encoder assembly and whole compiler correctness
+remain separate open work. No executed compiler path changes here.

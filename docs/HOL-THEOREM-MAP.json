@@ -46546,7 +46546,7 @@
     "lean_name": "readMemWord",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.25.1) against cakeml/compiler/encoders/asm/asmSemScript.sml:182-189 read_mem_word_def: count 0 returns (0w,s); SUC n recurses at (if s.be then a-1w else a+1w) then word_or (w<<8) (w2w (read_mem a s1)) with assert (a IN s1.mem_domain). HOL type read_mem_word : 'b word -> num -> 'b asm_state -> 'a word # 'b asm_state, so the read-result word dimension is INDEPENDENT of the address/state dimension; Lean readMemWord binds both (width for address/state, resultWidth for the result) and w2w to word8 is BitVec.setWidth resultWidth. Assert is assertState, the same rendering used by the accepted asmSem arithmetic primitives."
+    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.25.1) against cakeml/compiler/encoders/asm/asmSemScript.sml:182-189 read_mem_word_def: count 0 returns (0w,s); SUC n recurses at (if s.be then a-1w else a+1w) then word_or (w<<8) (w2w (read_mem a s1)) with assert (a IN s1.mem_domain). HOL type read_mem_word : 'b word -> num -> 'b asm_state -> 'a word # 'b asm_state, so the read-result word dimension is INDEPENDENT of the address/state dimension; Lean readMemWord binds both (width for address/state, resultWidth for the result) and w2w to word8 is BitVec.setWidth resultWidth. Assert is assertState, the same rendering used by the accepted asmSem arithmetic primitives. flapjack-sol-c correction review (flapjack-pxn.18.5.13.6.10.7): original asmSemScript.sml:183-189/199-204 shifts use Nat eight, independent of word dimension. Explicit (8 : Nat) repairs prior homogeneous numeral truncation at widths 1/2/3; original count-zero, byte traversal, memory assertions and independent positive dimensions are unchanged. Fresh asm_memory_shift_probe covers widths 1/2/3/64 with exactly matched Lean state/input/value/memory observations."
   },
   {
     "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",
@@ -46555,7 +46555,7 @@
     "lean_name": "writeMemWord",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.25.1) against cakeml/compiler/encoders/asm/asmSemScript.sml:191-... write_mem_word_def: count 0 returns s; SUC n recurses at (if s.be then a-1w else a+1w) on (w>>>8), then assert (a IN s1.mem_domain) (upd_mem a (w2w w) s1). HOL type write_mem_word : 'a word -> num -> 'b word -> 'a asm_state -> 'a asm_state, so the written-value word dimension is INDEPENDENT of the address/state dimension; Lean writeMemWord binds both (width for address/state, valueWidth for the value) and w2w to word8 is BitVec.setWidth 8."
+    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.25.1) against cakeml/compiler/encoders/asm/asmSemScript.sml:191-... write_mem_word_def: count 0 returns s; SUC n recurses at (if s.be then a-1w else a+1w) on (w>>>8), then assert (a IN s1.mem_domain) (upd_mem a (w2w w) s1). HOL type write_mem_word : 'a word -> num -> 'b word -> 'a asm_state -> 'a asm_state, so the written-value word dimension is INDEPENDENT of the address/state dimension; Lean writeMemWord binds both (width for address/state, valueWidth for the value) and w2w to word8 is BitVec.setWidth 8. flapjack-sol-c correction review (flapjack-pxn.18.5.13.6.10.7): original asmSemScript.sml:183-189/199-204 shifts use Nat eight, independent of word dimension. Explicit (8 : Nat) repairs prior homogeneous numeral truncation at widths 1/2/3; original count-zero, byte traversal, memory assertions and independent positive dimensions are unchanged. Fresh asm_memory_shift_probe covers widths 1/2/3/64 with exactly matched Lean state/input/value/memory observations."
   },
   {
     "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",
@@ -97680,5 +97680,151 @@
     "lean_name": "holFmapAsFiniteSupportWitness",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific canonical imported context toBroad/ofBroad roundtrip witness for the finite-support qualifier of the full original theorem in the same module; no separate HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanStructs.lean",
+    "lean_name": "every_inst_ok_less_pan_structs_compile_exp",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_pan_structs_compile_exp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: all three conjuncts: compile_exp, compile_exps with LENGTH preservation, compile_fields over MAP SND; ctxt : pan_structs$context = ContextExact. Renderings as the pan_globals group (everyExpHOL panopArityTwoHOL / everyExpListHOL / List.all goodPanopsHOL; MAP SND as List.map Prod.snd); compilers are the reviewed exact pan_structs ports over ContextExact. Word translation only. Typed capture pan_structs_inst_ok probe (pan_to_wordProofTheory, show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanStructs.lean",
+    "lean_name": "every_inst_ok_less_pan_structs_compile",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_pan_structs_compile",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: ∀ctxt p. EVERY (every_exp P) (exps_of p) ⇒ same for exps_of (compile ctxt p); by compile_ind (context-changing). Renderings as the pan_globals group (everyExpHOL panopArityTwoHOL / everyExpListHOL / List.all goodPanopsHOL; MAP SND as List.map Prod.snd); compilers are the reviewed exact pan_structs ports over ContextExact. Word translation only. Typed capture pan_structs_inst_ok probe (pan_to_wordProofTheory, show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanStructs.lean",
+    "lean_name": "every_inst_ok_less_pan_structs_compile_decs",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_pan_structs_compile_decs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: ∀ctxt pan_code. EVERY good_panops pan_code ⇒ EVERY good_panops (FST (compile_decs ctxt pan_code)). Renderings as the pan_globals group (everyExpHOL panopArityTwoHOL / everyExpListHOL / List.all goodPanopsHOL; MAP SND as List.map Prod.snd); compilers are the reviewed exact pan_structs ports over ContextExact. Word translation only. Typed capture pan_structs_inst_ok probe (pan_to_wordProofTheory, show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanStructs.lean",
+    "lean_name": "every_inst_ok_less_pan_structs_compile_top",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_pan_structs_compile_top",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: ∀ctxt pan_code. ... ⇒ EVERY good_panops (compile_top pan_code); HOL ctxt is an unused binder at a free type alpha independent of the decl word type, retained as (_ctxt : β). Renderings as the pan_globals group (everyExpHOL panopArityTwoHOL / everyExpListHOL / List.all goodPanopsHOL; MAP SND as List.map Prod.snd); compilers are the reviewed exact pan_structs ports over ContextExact. Word translation only. Typed capture pan_structs_inst_ok probe (pan_to_wordProofTheory, show_types, no hypotheses)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanStructs.lean",
+    "lean_name": "everyExpListHOL_iff",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Membership form of EVERY (every_exp P); Flapjack support for the tagged pan_structs every_inst_ok_less ports, no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanStructs.lean",
+    "lean_name": "everyExpFieldListHOL_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "The field-list every_exp traversal equals EVERY (every_exp P) (MAP SND flds); Flapjack support, no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanStructs.lean",
+    "lean_name": "findSome_snd_mem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "ALOOKUP_MEM-style fact for the name-keyed findSome? rendering; Flapjack support for the NStruct case, no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanStructs.lean",
+    "lean_name": "structsExp_every",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Mutual compile_exp half assembled into the tagged every_inst_ok_less_pan_structs_compile_exp; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanStructs.lean",
+    "lean_name": "structsExps_every",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Mutual compile_exps half (with length) assembled into the tagged every_inst_ok_less_pan_structs_compile_exp; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanStructs.lean",
+    "lean_name": "structsFields_every",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Mutual compile_fields half assembled into the tagged every_inst_ok_less_pan_structs_compile_exp; no independent HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "exps_of_nested_seq_assign",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionProvenance.lean",
+    "lean_name": "crepInline_expsOfNestedSeqAssign",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04 bead flapjack-crep-inline-exps-seq-assign: original 3042-3049 and typed capture crep_inline_exps_provenance (ns:num list, es: alpha exp list). ns/es/e retained; MAP2 Assign rendered as List.zipWith (.assign n v), which truncates at the shorter list exactly as HOL MAP2 (unequal lengths retained, no length premise). Sole premise MEM e (exps_of (nested_seq ...)); conclusion MEM e es. Canonical syntax MlString/BitVec; words qualifier only. This is original expression provenance, not complete inline/compiler correctness."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "exps_of_arg_load",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionProvenance.lean",
+    "lean_name": "crepInline_expsOfArgLoad",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04 bead flapjack-crep-inline-exps-arg-load: original 3060-3068 and typed capture. Binders e/tmp_vars/args/args_vname/p retained at native carriers; argLoadHOLExact is the native arg_load. Full three-way disjunction retained: MEM e args OR (exists c. MEM c tmp_vars and e = Var c) OR MEM e (exps_of p). No length premise. Canonical syntax MlString/BitVec; words qualifier only. This is original expression provenance, not complete inline/compiler correctness."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "exps_of_unreach_elim",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionProvenance.lean",
+    "lean_name": "crepInline_expsOfUnreachElim",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04 bead flapjack-crep-inline-exps-unreach: original 3082-3091 and typed capture (r: early_exit option, rt: free type beta). Binders p q r e retained; HOL rt does not occur in the body and is retained as an unused explicit binder at a free universe-0 type beta. Premise unreach_elim p = (q,r) and MEM e (exps_of q); conclusion MEM e (exps_of p). Proved via Flapjack helper crepInline_unreachElim_exps over all unreachElimHOLExact clauses. Canonical syntax MlString/BitVec; words qualifier only. This is original expression provenance, not complete inline/compiler correctness."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "exps_of_transform_eoc",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionProvenance.lean",
+    "lean_name": "crepInline_expsOfTransformEoc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04 bead flapjack-crep-inline-exps-eoc: original 3093-3108 and typed capture. Binders rts p e retained; native transformEocHOLExact; induction covers every transform_eoc clause. Premise MEM e (exps_of (transform_eoc rts p)); conclusion MEM e (exps_of p). Canonical syntax MlString/BitVec; words qualifier only. This is original expression provenance, not complete inline/compiler correctness."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "exps_of_transform_branch",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionProvenance.lean",
+    "lean_name": "crepInline_expsOfTransformBranch",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04 bead flapjack-crep-inline-exps-branch: original 3110-3125 and typed capture. Binders ld rts p e retained; native transformBranchHOLExact; induction covers every transform_branch clause. Premise MEM e (exps_of (transform_branch ld rts p)); conclusion MEM e (exps_of p). Canonical syntax MlString/BitVec; words qualifier only. This is original expression provenance, not complete inline/compiler correctness."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionProvenance.lean",
+    "lean_name": "crepInline_unreachElim_exps",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Projection form of exps_of_unreach_elim (first component of unreachElimHOLExact) used to prove the tagged crepInline_expsOfUnreachElim; no independent HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Jump.lean",
+    "lean_name": "riscv_encoder_correct_jump",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol: compared original Jump constructor riscv_targetProof682-687 and riscv_target170-175, source asmStep/jumpToOffset/asmJumpOffsetOkExact and full encoder_correct_def. Only original source step plus initial targetStateRel; complete existential/all interference environments/both asserts/code bytes/PC membership/final full relation. Actual near JALrd0 uses source signed21 guard and arithmetic halfword shift, witness0; far AUIPC31/JALRrd0 uses original low12/high20 signed split, witness1 with intermediate PC4 and env0/env1. Four/eight literal emitted bytes supply full native fetch/decode/Run/Next; no target run, decoder or post-state premise. Scratch31 preservation across interference derives the full original projection, not the source relation that excludes31; original source guards discharge all bounds/alignment/masks. Memory/frame/all allowed registers retained. Same-counterpart helper modules are untagged local compositions without separate HOL originals. Inherits reviewed reals_as_rational_cuts assurance limit SOUNDNESS8 via native Run; no production-path change or full encoder/compiler completion claim."
   }
 ]
