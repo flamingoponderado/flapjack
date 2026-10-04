@@ -97227,5 +97227,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-pantocrep-validity-helpers: source928-1048 and regenerated full typed original seven-row capture; original fixed word5 address retained; arbitrary source expression list; full iff. Exact native CrepProgHOL/CrepExpHOL positive width and ShapeHOL/MlString where applicable. words_as_type_indexed_bitvec records only dimension translation, fixed global address remains BitVec5. crepBinaryExp renders original every_exp through constructor-for-constructor crepExpOfHOL and existing reviewed traversal, constraining ONLY Crepop argument length2; Op BinOp remains unconstrained. EVERY rendered by List.all=true. Original helpers nestedDecsHOL/crepNestedSeqHOL/storesHOL/storeGlobalsHOL/loadShapeBytesHOLW/cexpHeads/compFieldHOL source clauses compared; no additional guard/output validity/target run premise. Full source compiler and inline assembly remain open on .14.22."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "exps_of_nested_decs",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionProvenance.lean",
+    "lean_name": "crepInline_expsOfNestedDecs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison2026-10-04 bead flapjack-crep-inline-exps-nested-decs: original3051-3058 and freshly regenerated fully typed capture. All e/vs/es/p binders retained at exact native CrepExpHOL/CrepProgHOL positive word dimension. Sole original premise is membership in exps_of(nested_decs vs es p); full conclusion original value-list membership OR original body-expression membership. No length equality or output provenance hypothesis. Native nestedDecsHOL mismatch clauses give Skip and native crepExpsOfHOL Skip is empty, so unequal name/value lengths retained. Canonical syntax MlString/BitVec; words qualifier only. Induction covers every list clause; this is original expression provenance, not complete inline/compiler correctness."
   }
 ]

@@ -2074,6 +2074,7 @@ import Flapjack.Pancake.Proofs.PanToCrep.NotMemContextAssignedMemGt
 import Flapjack.Pancake.Proofs.PanToWord
 import Flapjack.Pancake.Proofs.PanToWord.PanSimpValidity
 import Flapjack.Pancake.Proofs.PanToWord.PanToCrepValidity
+import Flapjack.Pancake.Proofs.CrepInline.ExpressionProvenance
 import Flapjack.Pancake.Proofs.PanToTarget
 import Flapjack.Pipeline
 import Flapjack.Pipeline.Proofs.SourceLoopState
@@ -2669,4 +2670,3 @@ The library currently contains the first Lean representation of Flapjack's
 front-end language. The source of truth used while porting is the CakeML HOL
 development in `cakeml/pancake`.
 -/
-

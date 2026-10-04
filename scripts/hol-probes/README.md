@@ -8593,3 +8593,4 @@ previous failures persist even at zero count. Captured successor and wrapper
 clauses retain original assertions and alignment guards. `MemorySource.lean`
 proves arbitrary-count source success/domain characterizations and extracts
 original memLoad/memStore guards. It does not prove the full native Mem encoder.
+`crep_inline_nested_decs_provenance_probe.out` captures the full typed original nested-declaration expression-provenance implication. All list lengths, including mismatches, remain admitted; the conclusion retains the original argument-list or original body alternatives. This prerequisite does not establish complete inlining validity.
