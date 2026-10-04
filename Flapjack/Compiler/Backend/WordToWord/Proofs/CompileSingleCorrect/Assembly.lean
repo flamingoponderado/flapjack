@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Call
+import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Install
 
 /-!
 # `word_to_wordProof` `compile_single_correct`: the induction
@@ -78,5 +79,53 @@ theorem compileSingleCorrectAt_of_install {width : Nat} [NeZero width] {C F : Ty
   | dataBufferWrite a b => exact compile_single_correct_DataBufferWrite tt kk aa co a b st
   | ffi f a b c d live => exact compile_single_correct_FFI tt kk aa co f a b c d live st
   | shareInst op v e => exact compile_single_correct_ShareInst tt kk aa co op v e st
+
+namespace CompileSingleCorrectAssemblyCarrier
+
+/-- Same-module canonical finite-support witness for the `fpRegs`/`store`
+    fields named by the tagged theorem of this module. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C : Type} {F : Type} :
+    (∀ (state : WordSemStateBroad width C F) (h : state.FiniteSupport),
+        (WordSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : WordSemStateFiniteExact width C F,
+        WordSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  WordSemStateExact.holFmapAsFiniteSupportWitness
+
+end CompileSingleCorrectAssemblyCarrier
+
+open Classical in
+/-- HOL `compile_single_correct` (`word_to_wordProofScript.sml:235-850`): running a
+    program on the code table compiled entry-wise by `compile_single`, with the
+    compiled oracle and `compile`, reproduces every non-error source run from some
+    permutation oracle, with related code tables and otherwise the same state.
+    HOL's free `tt kk aa co` are the leading binders; `(I ## MAP f) o oracle` is
+    `Prod.map id (List.map f) ∘ oracle`; `if res = SOME Error` is decided
+    classically. Assembled by HOL's complete induction from the case pieces. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_single_correct"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem compile_single_correct {width : Nat} [NeZero width] {C F : Type}
+    (tt : Bool) (kk aa : Nat) (co : AsmConfigExact width) :
+    ∀ (prog : WordLangProgHOL (BitVec width)) (st : WordSemStateFiniteExact width C F)
+      (l : Spt (Nat × WordLangProgHOL (BitVec width)))
+      (coracle : Nat → C × List (Nat × Nat × WordLangProgHOL (BitVec width)))
+      (cc : C → List (Nat × Nat × WordLangProgHOL (BitVec width)) →
+        Option (List (BitVec 8) × List (BitVec width) × C)),
+      codeRel st.code l ∧ sptDomain st.code = sptDomain l ∧
+        st.compile = (fun conf progs => cc conf (progs.map (fun p => compileSingle tt kk aa co (p, none)))) ∧
+        coracle = Prod.map id (List.map (fun p => compileSingle tt kk aa co (p, none))) ∘ st.compileOracle ∧
+        Compiler.Backend.WordSimp.gcFunConstOk st.gcFun →
+      ∃ perm' : Nat → Nat → Nat,
+        let (res, rst) := evaluate prog { st with permute := perm' }
+        if res = some .error then True
+        else
+          let (res1, rst1) := evaluate prog { st with code := l, compileOracle := coracle, compile := cc }
+          res1 = res ∧ codeRel rst.code rst1.code ∧ sptDomain rst.code = sptDomain rst1.code ∧
+            rst1 = { rst with
+              code := rst1.code
+              compileOracle :=
+                Prod.map id (List.map (fun p => compileSingle tt kk aa co (p, none))) ∘ rst.compileOracle
+              compile := cc } :=
+  fun prog st => compileSingleCorrectAt_of_install tt kk aa co
+    (compile_single_correct_Install tt kk aa co) prog st
 
 end Flapjack.Compiler.Backend.WordToWord
