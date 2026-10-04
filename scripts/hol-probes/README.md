@@ -40,6 +40,8 @@ correspondence additionally covers arbitrary partner lists.
 `word_to_word_compile_single_probe.out` captures the zero-hypothesis `FST_compile_single` and `compile_single_lem` of word_to_wordProof, each also fully typed, for `WordToWord/Proofs/CompileSingle.lean`. Statement evidence for source review only.
 `word_to_word_compile_probe.out` captures the zero-hypothesis `compile_single_def`, `full_compile_single_def` and `compile_def` of `word_to_wordScript.sml`, each also fully typed, for `WordToWord/Compile.lean`. Statement evidence for source review only.
 `word_alloc_distinct_tar_reg_probe.out` captures the full zero-hypothesis statements (also typed) of the exported word_allocProof `ssa_cc_trans_distinct_tar_reg` and `full_ssa_cc_trans_distinct_tar_reg` for `WordAlloc/Proofs/SSAConventions/DistinctTarReg.lean`; its `[local]` helpers are reviewed against the script. Statement evidence for source review only.
+`word_convs_compile_single_not_created_probe.out` captures the zero-hypothesis `compile_single_not_created_subprogs` of wordConvsProof (also typed) for `Pancake/Proofs/WordConvs/NotCreatedTail.lean`; the per-pass `not_created_subprogs` lemmas in `NotCreatedPasses.lean`/`NotCreatedSSA.lean` are `[local]` and compared against the script. Statement evidence for source review only.
+`word_to_word_syntactic_probe.out` captures the statement, hypothesis count and typed form of the word_to_wordProof syntactic group (`cond16bit_inst_select_exp'` as `cond16bit_inst_select_exp_prime`, `cond16bit_inst_select`, the `no_share_inst`/`no_mt` lemmas, `code_rel_not_created_subprogs`, `code_rel_ext_def`, `code_rel_ext_word_to_word`, `no_mt_code_rel_ext`, `code_rel_no_share_inst`) and wordProps `no_mt_code_def`, for `Compiler/Backend/WordToWord/Proofs/Syntactic.lean` and `WordSem/Props/NoMtCode.lean`. The `[local]` `code_rel_no_alloc`/`code_rel_no_install` are compared against the script. Statement evidence for source review only.
 `word_convs_cse_copy_probe.out` captures the full zero-hypothesis statements of the twelve exported wordConvsProof theorems of `WordCse.lean`, `CopyProp.lean`, `SSAWfCutsets.lean` and the `wf_cutsets` additions to `Unreach.lean`/`ThreeToTwo.lean` (also typed `pre_alloc_conventions_copy_prop` and `full_ssa_cc_trans_wf_cutsets`); the `[local]` theorems of those sections are not exported and are reviewed against the script. Statement evidence for source review only.
 `word_inst_three_to_two_probe.out` captures the full zero-hypothesis statements of the exported word_instProof `three_to_two_reg_Loop`, `three_to_two_reg_correct` (also fully typed) and `evaluate_three_to_two_reg_prog`; the local `locals_rel_cut_envs_local` is not exported. Statement evidence for source review only.
 
@@ -8085,7 +8087,6 @@ not a cross-language equivalence proof. `check-riscv-target-const.py` pins the
 full Lean statement, original assertion definition and all four probe rows;
 its mutation tests reject extra premises, false oracle evidence and lost rows.
 
-
 `pan_to_target_source_probeScript.sml` captures the full typed original
 exports and compile_prog definitions/types, actual library ZIP/SPLITP clauses,
 and the original compiler definition's extracted first LET argument. Eight
@@ -8150,7 +8151,39 @@ specialization. `GEN_ALL` closes every binder; the specialization has zero
 hypotheses. These are original-theory captures, not a local replay or an
 independent cross-language equivalence proof.
 
+## Full native immediate Binop constructor
+
+`CorrectnessEncoding/BinopImmediate.lean` proves the original Imm operand case
+(riscv_targetProofScript.sml:550-559) for all five operators. It retains the
+original sole asmStep/initial relation premise and full interference/assertion
+conclusion. The source Xor -1 exception is discharged through the original
+inclusive range; Sub's strict lower bound proves negated signed12 reconstruction.
+Actual native Next follows the emitted bytes, unrestricted decoder equations,
+and literal Run. The typed original specialization in
+`riscv_target_binop_immediate_probe.out` is regression evidence; kernel checking
+and source comparison establish the port. Native state/Run inherits SOUNDNESS
+item 8. The encompassing encoder theorem remains open.
+
 `word_to_stack_fp_conversions_probeScript.sml` captures closed, kernel-proved,
 fully typed specializations of original `evaluate_wInst` to FPToInt and
 FPFromInt. These retain the original guards and full target existential;
 they are source review evidence, not a cross-assistant equivalence proof.
+`word_to_stack_inst_arith_probeScript.sml` captures the original fully typed,
+closed, kernel-proved `evaluate_wInst` specialization for an arbitrary Arith
+opcode, retaining every guard and the full target existential. This is source
+statement evidence, not cross-assistant equivalence.
+`word_cse_production_join_probe.out` captures the full original five-field
+merge_data definition, knowledge-to-knowledge type, full typed wf_data and
+whole-program preservation theorem. Original EVAL observes all five joined
+fields at equal/conflicting/missing keys, latest reset and empty join.
+The duplicate-store fixture deliberately lies outside wf_data: filtering
+reveals a later value hidden by first-match lookup. The executed map drops
+that conflicting key. ProductionJoin derives the actual If knowledge join
+from arm induction hypotheses and original well-formedness preservation;
+it does not establish whole-pass production adoption or HOL/Lean equivalence.
+
+`word_to_stack_inst_full_probeScript.sml` captures the original complete
+`evaluate_wInst` and its whole FP-family specialization, with full types,
+closed quantification, zero hypotheses and kernel-proved statements. Source
+review evidence covers the original guards and complete target existential;
+it does not assert cross-assistant equivalence or whole compiler correctness.
