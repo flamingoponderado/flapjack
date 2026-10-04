@@ -59,6 +59,13 @@ def explode : MlString → List HolChar
   cases s
   rfl
 
+/-- Exact HOL `concat_def`: `concat l = strlit (FLAT (MAP (λs. case s of
+strlit x => x) l))`; `strlit` is the constructor (now `implode`) and the case
+expression is `explode`. -/
+@[hol "cakeml/basis/pure/mlstringScript.sml" "concat_def"]
+def concat (l : List MlString) : MlString :=
+  .implode (l.map fun s => match s with | .implode x => x).flatten
+
 end MlString
 
 

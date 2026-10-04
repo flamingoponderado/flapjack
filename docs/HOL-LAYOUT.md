@@ -54,10 +54,11 @@ the cited name occurs in one of the two syntactic forms.
 | `compiler/backend/backendScript.sml` | `Flapjack/Compiler/Backend/Backend.lean` |
 | `compiler/backend/backend_commonScript.sml` | `Flapjack/Compiler/Backend/BackendCommon.lean` and its `BackendCommon/BvlStubs.lean` submodule (`BackendCommon/BoolTags.lean`: `false_tag`, `true_tag`, `bool_to_tag`) |
 | `compiler/backend/flatLangScript.sml` | `Flapjack/Compiler/Backend/FlatLang.lean` (`op`, `ctor_id`, `type_id`, `type_group_id`, `pat`, `pat_bindings_def`, `exp`, `bool_id_def`, `Bool_def`, `SmartIf_def`; the script has no `dec` datatype) |
+| `compiler/backend/source_to_flatScript.sml` | `Flapjack/Compiler/Backend/SourceToFlat/Config.lean` (carriers `var_name`, `environment`, stores, `next_indices`, `config`), `SourceToFlat/Helpers.lean` (`compile_var` .. `simple_dlet`, lines 46-340 except `compile_exp`) |
 | `compiler/backend/bvl_to_bviScript.sml` | `Flapjack/Compiler/Backend/BvlToBvi.lean` and its `BvlToBvi/Config.lean` submodule |
 | `compiler/backend/semantics/wordConvsScript.sml` | `Flapjack/Pancake/WordConvs.lean` |
 | `compiler/backend/stackLangScript.sml` | `Flapjack/Compiler/Backend/StackLang.lean`, `Flapjack/Compiler/Encoders/Asm.lean`, `Flapjack/Compiler/Backend/StackLang/Prog.lean`, `Flapjack/Compiler/Backend/StackLang/Overloads.lean` (`While`/`move`/arithmetic overloads, `list_Seq`, `gc_stub_location`), `Flapjack/Compiler/Backend/StackCarrier.lean`, `Flapjack/Compiler/Backend/MlStringBridge.lean` |
-| `basis/pure/mlstringScript.sml` | `Flapjack/Basis/Pure/MlString.lean` (`mlstring = implode string`, `string = char list`; HOL `char` modeled by `HolChar = BitVec 8`, the canonical 256-element carrier); kernel-checked `String`<->`mlstring` bridge and stack-program embedding in `Flapjack/Compiler/Backend/MlStringBridge.lean` |
+| `basis/pure/mlstringScript.sml` | `Flapjack/Basis/Pure/MlString.lean` (`mlstring = implode string`, `string = char list`; HOL `char` modeled by `HolChar = BitVec 8`, the canonical 256-element carrier; `concat_def`); kernel-checked `String`<->`mlstring` bridge and stack-program embedding in `Flapjack/Compiler/Backend/MlStringBridge.lean` |
 | `basis/pure/mllistScript.sml` (`sort`) | `Flapjack/Basis/Pure/MlList.lean` (tagged `sort_def`, with an untagged clause-for-clause rendering of HOL `mergesort_tail`) |
 | `compiler/backend/word_allocScript.sml` | `Flapjack/Compiler/Backend/WordAlloc/` (`Expressions.lean` exact expression renaming and live sets) |
 | `compiler/backend/word_removeScript.sml` | `Flapjack/Compiler/Backend/WordRemove.lean` |
@@ -146,6 +147,7 @@ the cited name occurs in one of the two syntactic forms.
 | `semantics/proofs/semanticsPropsScript.sml` | `Flapjack/SemanticsProps.lean` (structural behavior and `implements'` analogue; HOL `llist` representation bridge remains open) |
 | `proofs/pan_simpProofScript.sml` | `Flapjack/Pancake/Proofs/PanSimp.lean`, `PanSimp/Evaluate.lean` |
 | `proofs/pan_to_wordProofScript.sml` | `Flapjack/Pancake/Proofs/PanToWord.lean` |
+| `proofs/pan_to_targetProofScript.sml` | `Flapjack/Pancake/Proofs/PanToTarget.lean` |
 
 Placement under `Proofs` does not imply that a whole pass correctness theorem
 has been established. For declaration-level provenance, use

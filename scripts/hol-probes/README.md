@@ -3680,6 +3680,19 @@ arbitrary payload, trees and counters.
 proof and inferred free-variable types. Source and target states share only
 the word dimension; their code and FFI carriers are independent. The generic
 `SSALocalsParity` fixture applies the actual theorem at arbitrary native states.
+`pan_to_word_good_code_probe.out` records direct HOL `EVAL` observations of
+the original `good_panops_def` (`pan_to_wordProofScript.sml:1108`) and its
+consumer `pancake_good_code_def` (`pan_to_targetProofScript.sml:22`) on
+concrete 64-bit `panLang$decl` values.
+Declarations free of `Panop` reduce to the Bool literals `T` (`good_panops`
+of an `ExnDecl`/`Name`, and `EVERY good_panops [] / [ExnDecl] / [Name]`); the
+`Panop` arity cases leave HOL's universally quantified arity predicate
+`Mul = op ∧ [args] = es ⇒ LENGTH es = 2` as the normal form, because `EVAL`
+does not case-split the constructor equality under the `!op es` binder.
+`PanToWordGoodCodeParity.lean` kernel-decides the corresponding computable
+Lean `goodPanopsHOL`/`pancakeGoodCodeHOL` on the same inputs
+(`decide +kernel`). Select
+`HOL_PROBE_ONLY=pan_to_word_good_code_probeScript.sml`.
 ### SSA renaming properties
 
 `ssa_rename_properties_probeScript.sml` replays the complete local
@@ -8468,6 +8481,21 @@ entries and an intervening exception declaration. The anonymous operation is
 not tagged as a port of the whole compiler. Regenerate with
 `HOL_PROBE_ONLY=pan_target_entry_first_match_probeScript.sml`.
 
+`riscv_target_addoverflow_probe.out` captures the fully typed original full
+AddOverflow specialization of `riscv_encoder_correct`, with actual hypothesis
+count zero and HOL kernel result T. Lean retains only the original source step
+and initial relation, derives all six XOR/XORI/ADD/XOR/AND/SRLI native steps
+from encoded bytes, preserves arbitrary original interference and both
+assertions, and establishes PC24, code bytes and the complete signed-overflow
+post relation. Only original r1!=r3 is required; r1=r4 and other source-valid
+aliases remain. The full projection includes scratch31. Untagged arithmetic
+proves the native circuit equals HOL signed addition overflow for every word64
+pair. The full native target closure inherits SOUNDNESS8. The statement and
+capture pin is a syntactic regression check, not a cross-language proof or full
+compiler theorem.
+
+`riscv_memory_decode_probe.out` records each literal LD/LWU/LHU/LBU/SD/SW/SH/SB original Encode clause and intrinsic word5/word12 carriers, zero source hypotheses, and Decode/Encode evaluations at all-zero, all-one, and mixed-register/sign-offset inputs. Lean proves unrestricted roundtrips including zero registers and all offsets; finite probes are regression evidence, not universal equivalence. Full memory encoder correctness remains a dependency-linked open task.
+
 `pan_native_frontend_prefix_probeScript.sml` evaluates the complete source
 prefix (original first LET, pan_simp, pan_structs, pan_globals), raw Pan-to-Crep
 metadata payload and original Crep-to-Loop rows for a forward source call.
@@ -8481,7 +8509,6 @@ The native Word prefix fixture compares all three rows, argument counts,
 call arguments/continuations and complete bodies against this capture.
 The general kernel theorem composes all six original passes from source
 byte ranges; actual downstream CLI/WordToStack routing remains separate.
-`riscv_memory_decode_probe.out` records each literal LD/LWU/LHU/LBU/SD/SW/SH/SB original Encode clause and intrinsic word5/word12 carriers, zero source hypotheses, and Decode/Encode evaluations at all-zero, all-one, and mixed-register/sign-offset inputs. Lean proves unrestricted roundtrips including zero registers and all offsets; finite probes are regression evidence, not universal equivalence. Full memory encoder correctness remains a dependency-linked open task.
 
 `pan_source_entry_word_probeScript.sml` evaluates the original extracted first
 LET and full PanToWord compiler for empty and missing-main source input.
@@ -8490,3 +8517,5 @@ field in the five source-preparation observations already captured by
 `pan_target_entry_first_match_probe.out`. The general source-entry codec theorem
 uses the existing native `mainFirstHOL`, with no distinct-name or target-run
 premise. Parsing/static errors and downstream whole-CLI wiring stay separate.
+
+`riscv_memory_run_probe.out` records actual original RV64/bare Run observations for all four unsigned/full loads and four stores: zero-register no-op, aliases, signed offsets, unaligned addresses permitted by the literal model, full register/core frames and whole-state memory-update frames. Literal original Run clauses and full word5/word12/native-state carriers are also captured with zero source hypotheses. These are finite regression observations, not equivalence. Lean proves each arbitrary-field Run equation using only original riscvOk; full Mem source obligations, fetch/Next, interference and assertions remain open.

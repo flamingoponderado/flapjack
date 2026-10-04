@@ -1,7 +1,9 @@
+import Flapjack.RiscV.CorrectnessEncoding.MemoryRun
 import Flapjack.RiscV.CorrectnessEncoding.DecodeMemory
 import Flapjack.RiscV.CorrectnessEncoding.Shift
 import Flapjack.RiscV.CorrectnessEncoding.ShiftRorRegister
 import Flapjack.Compiler.Backend.WordToStack.ProductionMoveDomain
+import Flapjack.Compiler.Backend.WordToStack.ProductionMoveMaterialization
 import Flapjack.RiscV.CorrectnessEncoding.ShiftRorImmediate
 import Flapjack.RiscV.CorrectnessEncoding.RorExecution
 import Flapjack.RiscV.CorrectnessEncoding.RorStep
@@ -20,6 +22,7 @@ import Flapjack.RiscV.CorrectnessEncoding.DecodeShift
 import Flapjack.RiscV.CorrectnessEncoding.Div
 import Flapjack.RiscV.CorrectnessEncoding.LongMul
 import Flapjack.RiscV.CorrectnessEncoding.AddCarry
+import Flapjack.RiscV.CorrectnessEncoding.AddOverflow
 import Flapjack.Compiler.Encoders.RiscV.Target.AsmOkRewrites
 import Flapjack.RiscV.CorrectnessEncoding.DecodeDiv
 import Flapjack.RiscV.CorrectnessEncoding.DecodeLongMul
@@ -129,6 +132,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.ChunkBitsMsb
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsPattern
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ChunkBits
 import Flapjack.Compiler.Backend.SourceToFlat.Config
+import Flapjack.Compiler.Backend.SourceToFlat.Helpers
 import Flapjack.Compiler.Backend.FlatPattern.Config
 import Flapjack.Compiler.Backend.BackendCommon.Trace
 import Flapjack.Compiler.Backend.BackendCommon.BoolTags
@@ -2044,6 +2048,7 @@ import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.ShMemLoad
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.ExtCall
 import Flapjack.Pancake.Proofs.PanToCrep.NotMemContextAssignedMemGt
 import Flapjack.Pancake.Proofs.PanToWord
+import Flapjack.Pancake.Proofs.PanToTarget
 import Flapjack.Pipeline
 import Flapjack.Pipeline.Proofs.SourceLoopState
 import Flapjack.RiscV.PipelineDiagnostics
