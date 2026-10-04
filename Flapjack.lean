@@ -3,6 +3,8 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelMemory
 
 import Flapjack.Test.PanToTargetSourceParity
 import Flapjack.Pancake.PanToTarget
+
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelFp
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Binary
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Shift
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Division
@@ -56,7 +58,11 @@ import Flapjack.RiscV.CorrectnessEncoding.JumpReg
 import Flapjack.RiscV.CorrectnessEncoding.Skip
 import Flapjack.Compiler.Backend.WordToWord.Config
 import Flapjack.Compiler.Backend.WordToWord.Compile
+import Flapjack.Compiler.Backend.WordToWord.Proofs.CodeRel
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingle
+import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Frame
+import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Leaf
+import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Control
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsShort
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ChunkBitsMsb
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsPattern
@@ -74,6 +80,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.LoopHandler
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelCutState
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.OpCurrHeap
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegister
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegister2
 import Flapjack.Compiler.Backend.WordToStack.NativeStackStore
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmEvaluate
 import Flapjack.RiscV.CorrectnessEncoding.TargetOk

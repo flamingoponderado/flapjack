@@ -35,6 +35,7 @@ correspondence additionally covers arbitrary partner lists.
 `word_cse_moves_probe.out` captures the full zero-hypothesis statements of the 5 exported word_cseProof move/clock theorems in `WordCse/Proofs/MoveLemmas.lean` (`lookup_map_insert0`, `get_set_vars_lemma`, `MEM_FST_reduc`, `canonicalMoveRegs_lemma` (also typed), `data_inv_clock`); the 13 local ones are not exported. Statement evidence for source review only.
 `word_cse_comp_correct_probe.out` captures the full zero-hypothesis statements of word_cseProof `comp_correct` (also typed) and `word_common_subexp_elim_correct`. Statement evidence for source review only.
 `word_cse_conventions_probe.out` captures the full zero-hypothesis statements of the seven word_cseProof syntactic-convention theorems in `WordCse/Proofs/Conventions.lean` (also typed `word_cse_full_inst_ok_less`). Statement evidence for source review only.
+`word_to_word_code_rel_probe.out` captures the zero-hypothesis `code_rel_def` of word_to_wordProof (also typed) for `WordToWord/Proofs/CodeRel.lean`; its `[local]` helpers are compared against the script. Statement evidence for source review only.
 `word_to_word_compile_single_probe.out` captures the zero-hypothesis `FST_compile_single` and `compile_single_lem` of word_to_wordProof, each also fully typed, for `WordToWord/Proofs/CompileSingle.lean`. Statement evidence for source review only.
 `word_to_word_compile_probe.out` captures the zero-hypothesis `compile_single_def`, `full_compile_single_def` and `compile_def` of `word_to_wordScript.sml`, each also fully typed, for `WordToWord/Compile.lean`. Statement evidence for source review only.
 `word_alloc_distinct_tar_reg_probe.out` captures the full zero-hypothesis statements (also typed) of the exported word_allocProof `ssa_cc_trans_distinct_tar_reg` and `full_ssa_cc_trans_distinct_tar_reg` for `WordAlloc/Proofs/SSAConventions/DistinctTarReg.lean`; its `[local]` helpers are reviewed against the script. Statement evidence for source review only.
@@ -8004,8 +8005,8 @@ set_sep `fun2set_def`/`fun2set_thm`, asmProps `interference_ok_def`/`asserts2_de
 riscv_target `riscv_encode_def`/`riscv_proj_def`/`riscv_next_def`, and the existing
 seven original native Next clause derivations. Existing scoped original captures
 remain evidence for their own declarations; no new oracle or original named
-list theorem is invented. These composition helpers stay untagged. The full
-Const `asserts` intermediate/final source-state relation remains open.
+list theorem is invented. These composition helpers stay untagged and support
+the full Const constructor documented below.
 
 `check-riscv-const-execution.py` pins actual target iteration and the full public
 statements. Mutation tests reject a pure replacement iterator, wrong index or
@@ -8032,8 +8033,8 @@ write. No target execution or post-state relation is assumed.
 These are untagged composition lemmas, not separately named HOL declarations.
 Source comparison uses the literal seven register clauses and Const lowering
 at `riscv_targetScript.sml:103-126`; the full original Const constructor at
-`riscv_targetProofScript.sml:533-545` remains open until its intermediate and
-final source-state assertions are assembled. Existing oracle captures retain
+`riscv_targetProofScript.sml:533-545` is assembled in `ConstAssertions.lean`
+using these intermediate and final source-state facts. Existing oracle captures retain
 their original scope; this addition does not claim a new full-Next oracle.
 
 `CorrectnessEncoding/ConstRelation.lean` derives the literal source Const
@@ -8043,8 +8044,8 @@ assumes only original `asmStep` and the initial `targetStateRel`. Register
 bounds and nonzero destination follow from `asm_ok`; scratch31 is retained in
 the native post-state and excluded from source observations by the original
 `avoidRegs`. The memory domain and exact PC increment are preserved. These
-untagged composition lemmas have no separately named HOL original; the full
-original interference/assertions constructor remains open.
+untagged composition lemmas have no separately named HOL original; they are
+used by the full original interference/assertions constructor documented below.
 
 ## Full typed Word-to-Stack proof captures
 
@@ -8082,6 +8083,14 @@ prebuilt original theory cache. This is original theorem regression evidence,
 not a cross-language equivalence proof. `check-riscv-target-const.py` pins the
 full Lean statement, original assertion definition and all four probe rows;
 its mutation tests reject extra premises, false oracle evidence and lost rows.
+
+
+`pan_to_target_source_probeScript.sml` captures the full typed original
+exports and compile_prog definitions/types, actual library ZIP/SPLITP clauses,
+and the original compiler definition's extracted first LET argument. Eight
+kernel observations cover empty/default/already-first/later main, first-only
+relocation with duplicate names, and exported flags/duplicates. Regenerate with
+`HOL_PROBE_ONLY=pan_to_target_source_probeScript.sml`.
 
 ### Universal native Binop decode prerequisites
 
@@ -8129,3 +8138,8 @@ register guards and alias behavior follow the source. Fresh typed original
 only to this constructor, with zero stored hypotheses and proved T. It is
 regression evidence, not cross-language equivalence. The full parent still
 requires the separate immediate case; native Run's SOUNDNESS8 boundary remains.
+
+The `backend_lower_pipeline` probe also captures the complete original closed
+`from_word_0_def` and its inferred type, including the actual WordToWord tuple
+and oracle update before `from_word`. This is definition evidence, not an
+executed-route or complete compiler-correctness result.
