@@ -83861,7 +83861,8 @@
       "WordSemStateFiniteExact.store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 7186-7205: evaluate (ShareInst op v (Var ad), s) = evaluate (ShareInst op v (Op Add [Var ad; Const 0w]), s), arbitrary state types. Typed capture: word_to_stack_comp_shareinst probe (show_types rows). No added premise."
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 7186-7205: evaluate (ShareInst op v (Var ad), s) = evaluate (ShareInst op v (Op Add [Var ad; Const 0w]), s), arbitrary state types. Typed capture: word_to_stack_comp_shareinst probe (show_types rows). No added premise. Inherits reals_as_rational_cuts through the evaluator closure (SOUNDNESS item 8)."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/ShareInst.lean",
@@ -83941,7 +83942,8 @@
       "StackSemStateFiniteExact.store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 7386-7445: evaluate (ShareInst op (2v) (Op Add [Var (2ad); Const offset]), s) = (res,s1), res ≠ SOME Error, state_rel, v < f'+k, ad < f'+k, load op ⇒ ∃ck t1. evaluate (wShareInst op (2v) (Addr (2ad) offset) (k,f,f'), t with clock := ck + t.clock) = (OPTION_MAP compile_result res, t1) with the FinalFFI or NONE ∧ state_rel disjunction in HOL's order; wShareInst is the reviewed wShareInstNative. Typed capture: word_to_stack_comp_shareinst probe (show_types rows). No added premise."
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 7386-7445: evaluate (ShareInst op (2v) (Op Add [Var (2ad); Const offset]), s) = (res,s1), res ≠ SOME Error, state_rel, v < f'+k, ad < f'+k, load op ⇒ ∃ck t1. evaluate (wShareInst op (2v) (Addr (2ad) offset) (k,f,f'), t with clock := ck + t.clock) = (OPTION_MAP compile_result res, t1) with the FinalFFI or NONE ∧ state_rel disjunction in HOL's order; wShareInst is the reviewed wShareInstNative. Typed capture: word_to_stack_comp_shareinst probe (show_types rows). No added premise. Inherits reals_as_rational_cuts through the evaluator closure (SOUNDNESS item 8)."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/ShareInst.lean",
@@ -83957,7 +83959,8 @@
       "StackSemStateFiniteExact.store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 7447-7499: same shape as evaluate_ShareInst_Load with HOL's premise order (state_rel, bounds, res ≠ SOME Error, store op). The Lean proof composes the accepted wReg1/wReg2 load laws with a Flapjack helper shareStoreGeneric instead of share_store_lemma1/2; the statement is unchanged. Typed capture: word_to_stack_comp_shareinst probe (show_types rows). No added premise."
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 7447-7499: same shape as evaluate_ShareInst_Load with HOL's premise order (state_rel, bounds, res ≠ SOME Error, store op). The Lean proof composes the accepted wReg1/wReg2 load laws with a Flapjack helper shareStoreGeneric instead of share_store_lemma1/2; the statement is unchanged. Typed capture: word_to_stack_comp_shareinst probe (show_types rows). No added premise. Inherits reals_as_rational_cuts through the evaluator closure (SOUNDNESS item 8)."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/ShareInst.lean",
@@ -83973,7 +83976,8 @@
       "StackSemStateFiniteExact.store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 7501-7526: the combined load/store statement with HOL's disjunct order (NONE ∧ state_rel first, then FinalFFI). Typed capture: word_to_stack_comp_shareinst probe (show_types rows). No added premise."
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 7501-7526: the combined load/store statement with HOL's disjunct order (NONE ∧ state_rel first, then FinalFFI). Typed capture: word_to_stack_comp_shareinst probe (show_types rows). No added premise. Inherits reals_as_rational_cuts through the evaluator closure (SOUNDNESS item 8)."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/ShareInst.lean",
@@ -83989,7 +83993,8 @@
       "StackSemStateFiniteExact.store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original ShareInst case 7528-7545 of comp_correct5756/motive5719-5751, captured with inferred types (case obligation and whole specialization, full_proved=T): full Seq.Simulation over arbitrary op/v/exp/source, all original hypotheses and the full existential target-run/resource/result conclusion retained. post_alloc_conventions give even variables, flat_exp_conventions the two address shapes (a bare Var is rewritten by evaluate_ShareInst_Var_eq_Op_Add), max_var bounds give v,ad < f'+k, and evaluate_ShareInst_correct_lemma supplies the run (clock ck + t.clock commuted to the motive's t.clock + ck). No added premise. Typed capture: word_to_stack_comp_shareinst probe (show_types rows).",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original ShareInst case 7528-7545 of comp_correct5756/motive5719-5751, captured with inferred types (case obligation and whole specialization, full_proved=T): full Seq.Simulation over arbitrary op/v/exp/source, all original hypotheses and the full existential target-run/resource/result conclusion retained. post_alloc_conventions give even variables, flat_exp_conventions the two address shapes (a bare Var is rewritten by evaluate_ShareInst_Var_eq_Op_Add), max_var bounds give v,ad < f'+k, and evaluate_ShareInst_correct_lemma supplies the run (clock ck + t.clock commuted to the motive's t.clock + ck). No added premise. Typed capture: word_to_stack_comp_shareinst probe (show_types rows). Inherits reals_as_rational_cuts through the evaluator closure (SOUNDNESS item 8).",
     "hol_line": 5756
   },
   {
