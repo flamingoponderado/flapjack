@@ -132,6 +132,7 @@ the cited name occurs in one of the two syntactic forms.
 | `pan_commonScript.sml` | `Flapjack/Pancake/PanCommon.lean` |
 | `misc/miscScript.sml` (`app_list`/`append`) | `Flapjack/Misc/AppList.lean` |
 | `misc/miscScript.sml` (`good_dimindex`) | `Flapjack/Misc/GoodDimindex.lean` (exact `good_dimindex` predicate) |
+| `misc/miscScript.sml` (`fun2set_disjoint_union`) | `Flapjack/Misc/Fun2SetUnion.lean` |
 | `semantics/panPropsScript.sml` | `Flapjack/Pancake/Semantics/PanProps.lean`, `PanProps/EvalInvariant.lean`, `PanProps/MemByteArray.lean` (exact `write_bytearray_update_byte` / `read_write_bytearray_lemma`), `PanProps/LocalisedExpSimps.lean`, `PanProps/NamelessExpSimps.lean`, `PanProps/EvaluateAddClockIoEventsMono.lean` |
 | `semantics/crepSemScript.sml` | `Flapjack/Pancake/Semantics/CrepSem.lean`, `CrepSem/Eval.lean`, `CrepSem/TotalEval.lean`, `CrepSem/Primop.lean`, `CrepSem/LookupCode.lean` |
 | `semantics/crepPropsScript.sml` | `Flapjack/Pancake/Semantics/CrepProps.lean` |
@@ -168,8 +169,11 @@ declarations remain in `Flapjack/Misc/LprefixLub.lean`.
 The pinned external `HOL/src/n-bit/byteScript.sml` counterpart is
 `Flapjack/Byte.lean` (byte extraction and arbitrary-count word serialization).
 
+The pinned external `HOL/examples/machine-code/hoare-triple/addressScript.sml` counterpart is
+`Flapjack/Misc/Address.lean` (`word_arith_lemma2`).
+
 The pinned external `HOL/src/n-bit/alignmentScript.sml` counterpart is
-`Flapjack/Misc/Alignment.lean` (`align`, `aligned`, `byte_align`, `byte_aligned`, and
+`Flapjack/Misc/Alignment.lean` (`align`, `aligned`, `byte_align`, `byte_aligned`, `aligned_add_sub`, and
 `wordsScript.sml`'s `word_slice`), with production bridges in `Flapjack/Misc/Alignment/Production.lean`.
 
 The pinned external `HOL/examples/l3-machine-code/riscv/model/riscvScript.sml` (the L3-generated

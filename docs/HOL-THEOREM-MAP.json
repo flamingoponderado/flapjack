@@ -94931,5 +94931,31 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 300-306: dm = addresses a n ∧ dimindex DIV 8 * n < dimword ∧ good_dimindex ⇒ word_list_exists a n (fun2set (m1, dm)) with independent value type β; dimword is 2 ^ width; proof by the ported stack_removeProof word_list_exists_addresses as in HOL. Typed capture backend_machine_init probe (literal source replay; backendProofTheory not built in probe env). No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Fun2SetUnion.lean",
+    "lean_name": "fun2SetDisjointUnion",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "fun2set_disjoint_union",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original miscScript 4262-4274: DISJOINT d1 d2 ∧ p (fun2set (m,d1)) ∧ q (fun2set (m,d2)) ⇒ (p * q) (fun2set (m, d1 ∪ d2)) over arbitrary α, β with predicate sets as in the reviewed set_sep port (DISJOINT pointwise, ∪ pointwise disjunction, * = star). Typed capture pan_to_target_library_lemmas probe (show_types, no hypotheses). No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Address.lean",
+    "lean_name": "wordArithLemma2",
+    "hol_path": "HOL/examples/machine-code/hoare-triple/addressScript.sml",
+    "hol_name": "word_arith_lemma2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original addressScript 413-422: ∀n m. n2w n - n2w m = if n < m then -(n2w (m - n)) else n2w (n - m), n2w = BitVec.ofNat. Typed capture pan_to_target_library_lemmas probe (show_types, no hypotheses). No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Alignment.lean",
+    "lean_name": "alignedAddSub",
+    "hol_path": "HOL/src/n-bit/alignmentScript.sml",
+    "hol_name": "aligned_add_sub",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original alignmentScript 182-196: ∀p a b. aligned p b ⇒ (aligned p (a + b) ⇔ aligned p a) ∧ (aligned p (a − b) ⇔ aligned p a), for every p including p ≥ dimindex; Bool aligned with ⇔ as Bool equality. Typed capture pan_to_target_library_lemmas probe (show_types, no hypotheses). No added premise."
   }
 ]
