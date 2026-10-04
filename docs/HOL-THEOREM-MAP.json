@@ -35358,7 +35358,7 @@
       "store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-12s83): HOL lookup_set_vars_not_in (word_cseProof:2054). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion; HOL's polymorphic pair components stay generic type parameters, as in the typed source. It is stated over the reviewed dataInv, canonicalMoveRegs/canonicalRegs/mapInsert and the faithful WordSemStateFiniteExact. Renderings: set_vars/get_vars as setVars/getVars; alist_insert as sptAlistInsert; ALOOKUP as List.lookup; ALL_DISTINCT as Nodup; EVERY as a forall-over-membership; MEM as list membership; ODD/EVEN as % 2; with clock/termdep updates as structure updates. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text."
+    "reviewer": "PR1213 source comparison: local word_cseProofScript.sml:2054 quantifies moves v data c x; data is unused and has independent arbitrary HOL type (typed replay in review5978345241). Lean retains data at independent delta, not Knowledge. All lookup/set_vars premises and full result unchanged. Additional dedicated typed capture tracked by review1213-typedcaptures; no cross-language proof claimed."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/SemanticInvariant.lean",
@@ -45015,7 +45015,7 @@
     "inherits_reals_as_rational_cuts": true,
     "hol_name": "panLang_compile_word_to_word_thm",
     "lean_name": "panLang_compile_word_to_word_thm",
-    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.56): HOL panLang_compile_word_to_word_thm (word_to_wordProofScript.sml:2219-2265), compared with the typed capture word_to_word_compile_semantics. Full statement kept: free st l start explicit; premises code_rel st.code l (codeRel), no_install_code/no_alloc_code/no_mt_code st.code (tagged noInstallCode/noAllocCode/noMtCode), domain st.code = domain l (sptDomain), gc_fun_const_ok st.gc_fun; conclusion ∃perm' clk (clk is unused in HOL's body and kept) with prog = Call NONE (SOME start) [0] NONE, if res = SOME Error then T (classical) else the run on st with code := l gives equal result, clock, ffi and stack_max. Proof follows HOL via no_install_no_alloc_compile_single_correct (prog's no_install/no_alloc by computation). fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+    "reviewer": "PR1213 source comparison: original word_to_wordProofScript.sml:2219 and word_to_word_compile_semantics_probe.out typed row quantify unused existential clk : beta. Erased this vacuous existential uniformly under the documented inhabited HOL type convention, not specialized to Nat. All actual quantified state/code/FFI carriers, six guards and full semantic conclusion unchanged."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
