@@ -8647,3 +8647,5 @@ relation and source success. The memLoad wrapper derives its domain and LOG2
 alignment guards; no target-run or desired postrelation premise is added. These
 untagged compositions have no separately named HOL originals. Full Mem encoder
 assertions, interference and store post-state correspondence remain open.
+
+`pan_to_crep_inline_table_validity_probe.out` captures the complete original typed every_inst_w_inline implication. Native proof derives the actual filtered name-map SUBMAP internally, including duplicate keys, and consumes the accepted full inlining theorem. It assumes only the original compile_to_crep table validity, with no output/target-run or added distinctness premise; full source-program/body validity remains separate.

@@ -97963,5 +97963,30 @@
     "lean_name": "crepInline_instInlineCore_exps",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Generalisation of exps_of_inst_inline to the support-certified core inlineProgHOLCoreExact, proved by its functional induction; assembled into the tagged crepInline_expsOfInstInline."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepInlineTableValidity.lean",
+    "lean_name": "filter_lookup",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal key-filter lookup and native wrapper proof factoring for the separately tagged full original every_inst_w_inline in the same module; no standalone HOL declaration or completed port claim."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepInlineTableValidity.lean",
+    "lean_name": "inline_top_valid",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal key-filter lookup and native wrapper proof factoring for the separately tagged full original every_inst_w_inline in the same module; no standalone HOL declaration or completed port claim."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_w_inline",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepInlineTableValidity.lean",
+    "lean_name": "everyInstWInline",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-pantocrep-inline-table-validity: original full1135-1152 implication and regenerated fully typed original capture. Original source declaration list, sole EVERY binary-Crepop validity premise on actual compile_to_crep, full EVERY body-expression validity conclusion on actual compile_prog. Shared native crepEveryExpHOL literal Prop predicate and membership EVERY, exact MlString/ListNat/CrepProgHOL table carriers. Source compileProgDeclsHOLW selects original inlinable function names and actual compileToCrepExactHOLW table. Canonical compileInlTopHOLExact_eq_compileInlProgHOLExact unconditional wrapper equality and accepted crepInline_everyInstCrepInline used. Original SUBMAP derived internally by name-filtered association-list lookup; all duplicate names admitted, first-binding source behavior preserved. Only word dimension translated; no finite map in final signature or added source byte/distinctness/SUBMAP/output/target-run premise. Full body/declaration guard-to-table assembly remains open."
   }
 ]
