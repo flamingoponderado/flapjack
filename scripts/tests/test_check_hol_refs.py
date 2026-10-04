@@ -4004,5 +4004,41 @@ class NoRetCorrectFmapRegressionTest(unittest.TestCase):
         self.assertTrue(row["inherits_reals_as_rational_cuts"])
 
 
+class L3RiscvStepNopDeclarationsTest(unittest.TestCase):
+    """`class_rd0` companions are registered narrowly for the reviewed script."""
+
+    def test_generated_names_from_factory_bindings(self):
+        source = "\n".join([
+            "val arithi = class_rd0 `(rd, rs1, imm)`",
+            "val ADDI  = arithi [] \"ADDI\"",
+            "val ADD   = arithr [] \"ADD\"",
+            "val JAL   = class_rd0 `(rd, imm)` [] \"JAL\"",
+            "val load = class_rd0 `(rd, rs1, offs)`",
+            "val LD    = load [[``^archbase <> 0w``, aligned_d]] \"LD\"",
+            "val cbranch = class `(rs1, rs2, offs)` []",
+            "val BEQ  = cbranch \"BEQ\"",
+        ])
+        found = dict(CHECKER["l3_riscv_step_nop_declarations"](source))
+        self.assertEqual(set(found), {"ADDI_NOP", "ADD_NOP", "JAL_NOP", "LD_NOP"})
+        self.assertEqual(found["ADDI_NOP"], 2)
+        self.assertEqual(found["JAL_NOP"], 4)
+        self.assertEqual(found["LD_NOP"], 6)
+
+    def test_real_script_names_resolve(self):
+        path = Path(CHECKER["ROOT"]) / CHECKER["L3_RISCV_STEP_SCRIPT"]
+        if not path.exists():
+            self.skipTest("pinned HOL submodule not initialized")
+        cache = {}
+        for name in ("ADD_NOP", "SUB_NOP", "AND_NOP", "OR_NOP", "XOR_NOP",
+                     "ADDI_NOP", "ANDI_NOP", "ORI_NOP", "XORI_NOP",
+                     "LUI_NOP", "AUIPC_NOP"):
+            self.assertIsNone(REF_ERROR(path, name, None, cache), name)
+
+    def test_unrelated_name_not_generated(self):
+        found = dict(CHECKER["l3_riscv_step_nop_declarations"](
+            "val BEQ = cbranch \"BEQ\"\nval SW = store [] \"SW\""))
+        self.assertEqual(found, {})
+
+
 if __name__ == "__main__":
     unittest.main()
