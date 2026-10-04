@@ -255,6 +255,7 @@
     {"bytes": 144, "out": "find_index_probe.out", "rows": 8, "sha256": "1f97680b6c19dfc24cbe2cf479bc0bef927388faf6358531c0a22afbe958d4f7"},
     {"bytes": 225, "out": "finite_map_card_update_probe.out", "rows": 5, "sha256": "6bb864cfc83cfa17651ffab5b0e9d6f10098214704efb39753e7f8e0aec72d6c"},
     {"bytes": 228, "out": "finite_map_union_probe.out", "rows": 8, "sha256": "9df93e08f2137b5180c972581a77fa17b58b34a87053825d96ce587699361820"},
+    {"bytes": 11498, "out": "flat_lang_probe.out", "rows": 13, "sha256": "177f1d35c7eb8d487a25533bd3fb0d389736a23e12a698457e52ee7e515327d3"},
     {"bytes": 324, "out": "flat_pattern_config_probe.out", "rows": 7, "sha256": "35fe497e7d2febc3a1371ca4a9bf51fcdee1685065191b2a062c9f49d0d7f476"},
     {"bytes": 81, "out": "fm_empty_zip_alist_probe.out", "rows": 4, "sha256": "37c2430b9e311fcd750f7e841f55ff858ad624eff05232358404effeb9e42b06"},
     {"bytes": 124, "out": "fp_sem_fp_cmp_probe.out", "rows": 6, "sha256": "5542b7030041c2441ab4a7fef05d2ce6dcc257cfd2988d96348e5f419fc1b650"},

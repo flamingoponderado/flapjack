@@ -95841,5 +95841,117 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3): labProps EVERY_sec_label_ok (1279-1286), compared with the typed capture lab_props_every_sec_label_ok: EVERY (λ(l1,l2). l1 = n ∧ l2 ≠ 0) (extract_labels l) ⇔ EVERY (sec_label_ok n) l, with HOL's free n l explicit, EVERY as ∀ x ∈ l, ⇔ as ↔, extract_labels the tagged labProps LabelSets.extractLabels and sec_label_ok the tagged secLabelOk. Positive word dimension via [NeZero width]."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatLang.lean",
+    "lean_name": "Op",
+    "hol_path": "cakeml/compiler/backend/flatLangScript.sml",
+    "hol_name": "op",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: original flatLang op: Src ast$op (AstHOL.Op), GlobalVarAlloc/GlobalVarInit/GlobalVarLookup num, TagLenEq num num, LenEq num, El num, Id; eight constructors in source order. Typed capture flat_lang probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatLang.lean",
+    "lean_name": "CtorId",
+    "hol_path": "cakeml/compiler/backend/flatLangScript.sml",
+    "hol_name": "ctor_id",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: Type abbreviation ctor_id = num. Typed capture flat_lang probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatLang.lean",
+    "lean_name": "TypeId",
+    "hol_path": "cakeml/compiler/backend/flatLangScript.sml",
+    "hol_name": "type_id",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: Type abbreviation type_id = num option. Typed capture flat_lang probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatLang.lean",
+    "lean_name": "TypeGroupId",
+    "hol_path": "cakeml/compiler/backend/flatLangScript.sml",
+    "hol_name": "type_group_id",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: Type abbreviation type_group_id = (num # (ctor_id # num) list) option. Typed capture flat_lang probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatLang.lean",
+    "lean_name": "Pat",
+    "hol_path": "cakeml/compiler/backend/flatLangScript.sml",
+    "hol_name": "pat",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: original flatLang pat: Pany, Pvar varN, Plit lit, Pcon ((ctor_id # type_group_id) option) (pat list), Pas pat varN, Pref pat; varN is AstHOL.VarN (mlstring) as in ast. Typed capture flat_lang probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatLang.lean",
+    "lean_name": "patBindings",
+    "hol_path": "cakeml/compiler/backend/flatLangScript.sml",
+    "hol_name": "pat_bindings_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: pat_bindings clauses of the mutual pat_bindings_def, clause for clause (Pas appends [i]). Typed capture flat_lang probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatLang.lean",
+    "lean_name": "patsBindings",
+    "hol_path": "cakeml/compiler/backend/flatLangScript.sml",
+    "hol_name": "pat_bindings_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: pats_bindings clauses of the mutual pat_bindings_def; the cons clause is pats_bindings ps ++ pat_bindings p (tail first), as in the source. Typed capture flat_lang probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatLang.lean",
+    "lean_name": "Exp",
+    "hol_path": "cakeml/compiler/backend/flatLangScript.sml",
+    "hol_name": "exp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: original flatLang exp: eleven constructors Raise/Handle/Lit/Con/Var_local/Fun/App/If/Mat/Let/Letrec with tra (BackendCommon.Tra), lit, (ctor_id # type_id) option, varN, op payloads in source order. Typed capture flat_lang probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatLang.lean",
+    "lean_name": "boolId",
+    "hol_path": "cakeml/compiler/backend/flatLangScript.sml",
+    "hol_name": "bool_id_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: bool_id = 0. Typed capture flat_lang probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatLang.lean",
+    "lean_name": "mkBool",
+    "hol_path": "cakeml/compiler/backend/flatLangScript.sml",
+    "hol_name": "Bool_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: Bool t b = Con t (SOME (bool_to_tag b, SOME bool_id)) []. Typed capture flat_lang probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatLang.lean",
+    "lean_name": "smartIf",
+    "hol_path": "cakeml/compiler/backend/flatLangScript.sml",
+    "hol_name": "SmartIf_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: SmartIf: Con _ (SOME (tag, SOME id)) [] tests id = bool_id, then tag = true_tag / false_tag, else If t e p q; every other shape gives If t e p q (the captured expanded case agrees). Typed capture flat_lang probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendCommon/BoolTags.lean",
+    "lean_name": "falseTag",
+    "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
+    "hol_name": "false_tag_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: false_tag = 0. Typed capture flat_lang probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendCommon/BoolTags.lean",
+    "lean_name": "trueTag",
+    "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
+    "hol_name": "true_tag_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: true_tag = 1. Typed capture flat_lang probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendCommon/BoolTags.lean",
+    "lean_name": "boolToTag",
+    "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
+    "hol_name": "bool_to_tag_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: bool_to_tag b = if b then true_tag else false_tag. Typed capture flat_lang probe (show_types, no hypotheses)."
   }
 ]
