@@ -61,6 +61,7 @@ import Flapjack.Pancake.Proofs.PanToTarget.CompileProgEq
 import Flapjack.Pancake.Proofs.PanToTarget.WordToWordNoInstall
 import Flapjack.Pancake.Proofs.PanToTarget.StackSizeConst
 import Flapjack.Pancake.Proofs.PanToTarget.AssemblyResourceLimit
+import Flapjack.Pancake.Proofs.PanToTarget.AssemblyInitCode
 import Flapjack.Pancake.Proofs.PanToTarget.InitHelpers
 import Flapjack.Pancake.Proofs.PanToTarget.PanInstalled
 import Flapjack.Pancake.Proofs.PanToTarget.LabelsChain
@@ -78,6 +79,8 @@ import Flapjack.Pancake.Proofs.PanToTarget.CompileSemanticsStatement
 import Flapjack.Pancake.Proofs.PanToTarget.AssemblyLabToTarget
 import Flapjack.Pancake.Proofs.PanToTarget.AssemblyStackToLab
 import Flapjack.Pancake.Proofs.PanToTarget.AssemblyMemory
+import Flapjack.Pancake.Proofs.PanToTarget.AssemblyWordToStack
+import Flapjack.Pancake.Proofs.PanToTarget.AssemblyPanToWord
 import Flapjack.Pancake.Semantics.CrepProps.EveryExpHOL
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.CarryOverflow
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegisterZero
@@ -143,6 +146,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsCorrect
 import Flapjack.RiscV.CorrectnessEncoding.DecodeAddi
 import Flapjack.RiscV.CorrectnessEncoding.JumpReg
 import Flapjack.RiscV.CorrectnessEncoding.Jump
+import Flapjack.RiscV.CorrectnessEncoding.Call
 import Flapjack.RiscV.CorrectnessEncoding.Skip
 import Flapjack.Compiler.Backend.WordToWord.Config
 import Flapjack.Compiler.Backend.WordToWord.Compile
