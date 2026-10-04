@@ -83,6 +83,7 @@ import Flapjack.RiscV.CorrectnessEncoding.Const32
 import Flapjack.Compiler.Backend.Backend
 import Flapjack.Compiler.Backend.BackendProof.MachineInit
 import Flapjack.Compiler.Backend.BackendProof.CompileLab
+import Flapjack.Compiler.Backend.BackendProof.ConfigOk
 import Flapjack.RiscV.CorrectnessEncoding.ConstWide
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxSimulation
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxReconstruction
