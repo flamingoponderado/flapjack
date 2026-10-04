@@ -1,5 +1,5 @@
 import Flapjack.Compiler.Backend.RegAlloc.Executable
-import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMaxAsmWith
+import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMaxDepth
 import Flapjack.Pancake.PanToTarget
 import Flapjack.Compiler.Backend.RiscVConfig.Executable
 import Flapjack.RiscV.PipelineDiagnostics
@@ -24,7 +24,7 @@ structure Output where
 
 /-- The exact native whole compiler on already parsed declarations. -/
 def compileDeclarations (declarations : List (Decl (BitVec 64))) : WholeResult :=
-  compileProgMaxAsmFast Compiler.Backend.RiscVConfig.pancakeRiscVBackendConfig riscvConfig
+  compileProgMaxAsmDepthExecutable Compiler.Backend.RiscVConfig.pancakeRiscVBackendConfig riscvConfig
     (Pancake.PanToTarget.mainFirstHOL (declarations.map declToHOL))
 
 /-- Parse and static-check the source before invoking the native whole compiler.
@@ -48,6 +48,6 @@ theorem compileDeclarations_eq (declarations : List (Decl (BitVec 64))) :
       compileProgMaxAsmExecutable Compiler.Backend.RiscVConfig.pancakeRiscVBackendConfig riscvConfig
         (Pancake.PanToTarget.mainFirstHOL (declarations.map declToHOL)) := by
   unfold compileDeclarations
-  rw [compileProgMaxAsmFast_eq]
+  rw [compileProgMaxAsmDepthExecutable_eq, compileProgMaxAsmFast_eq]
 
 end Flapjack.RiscV.NativeSource

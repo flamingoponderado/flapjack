@@ -99170,5 +99170,13 @@
     "lean_name": "nativeCLIOutput_correct",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific default-CLI theorem (bead flapjack-native-cli-default-adapter): every successful RiscV.NativeCLI.output format source = ok (warnings, text) (the default flapjack-compile route, all modes) comes from a successful parse and NativeSource.compile with compiled tuple (bytes,bitmaps,config), text = render of that tuple (emitted code = bytes), and NativeRiscVCorrectness parsed out (the nativeSourceCompile_correct conclusion for the parsed program)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileProgMaxDepth.lean",
+    "lean_name": "compileProgMaxAsmDepthExecutable_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack executable infrastructure (flapjack-sol; bead flapjack-native-word-depth-executable): unconditional complete Option(bytes,bitmaps,Backend.Config) paired with Option stack-bound equality to compileProgMaxAsmFast. Only depth analysis uses constructor-preserving Spt.map slimCode and fused analysis; kernel callGraph_slim_eq preserves the entire original call tree for arbitrary maps, callee deletion, return/handler programs, unknown/indirect calls, alloc/install and cycle conditions. Original Word program still feeds backend; original tagged declarations are unchanged."
   }
 ]
