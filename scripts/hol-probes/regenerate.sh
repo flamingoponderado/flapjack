@@ -7616,7 +7616,7 @@ run_probe riscv_const_wide_value_probeScript.sml riscv_const_wide_value_probe.ou
   "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
 run_probe backend_lower_pipeline_probeScript.sml backend_lower_pipeline_probe.out \
-  from_lab_type from_lab_def_typed from_stack_type from_stack_def_typed from_word_type from_word_def_typed \
+  from_lab_type from_lab_def_typed from_stack_type from_stack_def_typed from_word_type from_word_def_typed from_word_0_type from_word_0_def_typed \
   "$cake_dir/compiler/backend/backendScript.sml" "$cake_dir/compiler/backend"
 run_probe word_to_stack_inst_const_probeScript.sml word_to_stack_inst_const_probe.out \
   evaluateWInstConst_typed evaluateWInstConst_proved evaluateWInstConst_hypotheses \

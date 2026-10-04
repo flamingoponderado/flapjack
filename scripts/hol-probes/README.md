@@ -8106,3 +8106,8 @@ original inferred register/immediate types, and explicitly labeled symbolic
 replay queries. The replay queries are printed statements, not claimed original
 proved theorems. Boundary oracles supplement the universal kernel proofs and
 source comparison; they do not establish cross-language equivalence.
+
+The `backend_lower_pipeline` probe also captures the complete original closed
+`from_word_0_def` and its inferred type, including the actual WordToWord tuple
+and oracle update before `from_word`. This is definition evidence, not an
+executed-route or complete compiler-correctness result.
