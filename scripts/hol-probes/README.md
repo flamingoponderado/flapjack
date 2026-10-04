@@ -8406,3 +8406,5 @@ proved. Fresh full original theorem specializations capture typed word64
 quantifiers, hyp0 and provedT; these are regression evidence, not equivalence
 proofs. Target closures retain inherited reals_as_rational_cuts (SOUNDNESS8).
 Both Ror sequences remain open.
+
+`riscv_ror_step_probe.out` captures full original SRLI/SLL/SRL/SUB Run clauses, all inferred word/state types and zero open hypotheses, plus eight ground low-two-bit instruction-width observations. RorStep derives actual Next, complete native frames/validity and full original projection congruence, including scratch register31. It is untagged case-local infrastructure; the probe is regression evidence, not an equivalence proof. Full Ror immediate/register encoder traces and assertions remain open.
