@@ -1,5 +1,5 @@
 import Flapjack.Compiler.Backend.WordRemove.Production
-import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSAOutputCodec
+import Flapjack.Compiler.Backend.WordAlloc.ProductionCopyOutputCodec
 import Flapjack.Compiler.Backend.WordToStack.ProductionSourceFlat
 
 /-! Codec closure at the actual retained allocator-to-WordRemove boundary.
@@ -15,13 +15,9 @@ theorem routedAllocator_programCodec {width : Nat} [NeZero width]
     (name : Nat) (parameters : List Nat) (program : WordProg (BitVec width))
     (output : WordSsaState × List Nat × WordProg (BitVec width) × WordSpillState)
     (source : (wordLangProgToHOL program).isSome = true)
-    (allocated : cakeAllocateWordFunctionAfterDeadRoutedSSA name parameters program = some output) :
+    (allocated : cakeAllocateWordFunctionAfterDeadRoutedSSAWithNativeCopy name parameters program = some output) :
     (wordLangProgToHOL output.2.2.1).isSome = true := by
-  rw [cakeAllocateWordFunctionAfterDeadRoutedSSA_native name parameters program source] at allocated
-  unfold cakeAllocateWordFunctionAfterDeadNativeSSA at allocated
-  obtain ⟨retained, produced, same⟩ := Option.map_eq_some_iff.mp allocated
-  subst output
-  exact nativeSsaRetainedAllocator_programCodec name parameters program retained produced
+  exact routedNativeCopyAllocator_programCodec name parameters program output source allocated
 
 /-- Every executed Loop source function supplies the input codec itself, so
 legacy allocator fallback is unreachable for this source-provenance route.
@@ -30,7 +26,7 @@ theorem sourceAllocator_programCodec {width : Nat} [NeZero width]
     (name : Nat) (parameters allocatorParameters : List Nat)
     (body : LoopProg (BitVec width))
     (output : WordSsaState × List Nat × WordProg (BitVec width) × WordSpillState)
-    (allocated : cakeAllocateWordFunctionAfterDeadRoutedSSA name allocatorParameters
+    (allocated : cakeAllocateWordFunctionAfterDeadRoutedSSAWithNativeCopy name allocatorParameters
       (wordBeforeSsaAllocatorBody (LoopToWord.loopToWordCompFunc name parameters body)) = some output) :
     (wordLangProgToHOL output.2.2.1).isSome = true :=
   routedAllocator_programCodec name allocatorParameters _ output
@@ -43,7 +39,7 @@ theorem sourceAllocator_wordRemove_isSome {width : Nat} [NeZero width]
     (name : Nat) (parameters allocatorParameters : List Nat)
     (body : LoopProg (BitVec width))
     (output : WordSsaState × List Nat × WordProg (BitVec width) × WordSpillState)
-    (allocated : cakeAllocateWordFunctionAfterDeadRoutedSSA name allocatorParameters
+    (allocated : cakeAllocateWordFunctionAfterDeadRoutedSSAWithNativeCopy name allocatorParameters
       (wordBeforeSsaAllocatorBody (LoopToWord.loopToWordCompFunc name parameters body)) = some output) :
     (wordRemoveMustTerminateViaHOL? output.2.2.1).isSome = true :=
   wordRemoveMustTerminateViaHOL?_isSome _
@@ -56,7 +52,7 @@ theorem decodedSourceAllocator_wordRemove_isSome {width : Nat} [NeZero width]
     (native : WordLangProgHOL (BitVec width)) (body : WordProg (BitVec width))
     (decoded : wordLangProgFromHOL native = some body)
     (output : WordSsaState × List Nat × WordProg (BitVec width) × WordSpillState)
-    (allocated : cakeAllocateWordFunctionAfterDeadRoutedSSA name parameters
+    (allocated : cakeAllocateWordFunctionAfterDeadRoutedSSAWithNativeCopy name parameters
       (wordBeforeSsaAllocatorBody body) = some output) :
     (wordRemoveMustTerminateViaHOL? output.2.2.1).isSome = true := by
   have accepted : (wordLangProgToHOL body).isSome = true := by

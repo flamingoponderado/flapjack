@@ -98821,5 +98821,13 @@
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus3 source comparison 2026-10-04 (bead flapjack-034pg): riscv_configProofScript 68-75 against the typed literal replay (re-proved there with HOL's own tactic, 0 hypotheses): is_riscv_machine_config mc => mc_init_ok riscv_config riscv_backend_config mc over the tagged isRiscvMachineConfig, mcInitOk, riscvConfig and riscvBackendConfig. Proof evaluates the concrete names through riscvNames_lookup_eq; no native_decide. Through riscv_target (the L3 RISC-V model) the closure inherits reals_as_rational_cuts, the rational-cut assurance limit SOUNDNESS8.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/ProductionPreSsaDomain.lean",
+    "lean_name": "acceptedAllocatorInput_usesNativeCopy",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific actual allocator dispatch equation, no independent HOL declaration. Accepted inputs route to the explicit wordCopyPropViaHOL/full-SSA consumer, preserving every output/failure branch. Source variants discharge input acceptance from compiler closure; no allocation availability/output-codec or target-run premise. Legacy routed-limit lemmas remain separately described as legacy API facts."
   }
 ]

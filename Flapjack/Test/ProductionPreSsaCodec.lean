@@ -54,10 +54,13 @@ example {width : Nat} [NeZero width] (name : Nat) (parameters wordParameters : L
 -- rather than the separate loopToWordCompFuncRouted variant.
 example {width : Nat} [NeZero width] (name : Nat) (parameters wordParameters : List Nat)
     (body : LoopProg (BitVec width)) :
-    CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedSSA name wordParameters
+    CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedSSAWithNativeCopy name wordParameters
         (wordBeforeSsaAllocatorBody (LoopToWord.loopToWordCompFunc name parameters body)) =
-      CakeRegAlloc.cakeAllocateWordFunctionAfterDeadNativeSSA name wordParameters
-        (wordBeforeSsaAllocatorBody (LoopToWord.loopToWordCompFunc name parameters body)) :=
+      (CakeRegAlloc.cakeAllocateWordFunctionAfterDeadWithColourWithSsaAndCopy
+        wordCopyPropViaHOL wordRemoveDeadProgramViaHOL wordRemoveUnreachViaHOL?
+        wordFullSsaCcTransNativeWithState name wordParameters
+          (wordBeforeSsaAllocatorBody (LoopToWord.loopToWordCompFunc name parameters body))).map
+            CakeRegAlloc.CakeAllocationWithColour.toLegacy :=
   executedSourceAllocatorInput_usesNativeSSA name parameters body wordParameters
 
 example {width : Nat} [NeZero width] (name : Nat) (parameters wordParameters : List Nat)

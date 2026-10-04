@@ -171,7 +171,7 @@ theorem wordLangProgToHOL_sourceAllocatorInput_isSome
   wordLangProgToHOL_wordBeforeSsaAllocatorBody_isSome _
     (wordLangProgToHOL_loopToWordCompFuncRouted_isSome name parameters body)
 
-/-- The executed allocation boundary uses native full-program limit for every
+/-- The legacy routed-limit API uses native full-program limit for every
 routed source function. There is no caller-supplied codec or successful
 allocation premise: source closure discharges the native branch condition.
 This establishes routing, not allocation/evaluation correctness. -/
@@ -185,17 +185,40 @@ theorem sourceAllocatorInput_usesNativeLimit
   CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedLimit_native _ _ _
     (wordLangProgToHOL_sourceAllocatorInput_isSome name parameters body)
 
+/-- Accepted allocator inputs select the actual native-copy/full-SSA consumer.
+All output and failure branches are retained; no allocation availability is
+assumed. This production routing fact has no separate HOL declaration. -/
+theorem acceptedAllocatorInput_usesNativeCopy
+    {width : Nat} [NeZero width] (name : Nat) (parameters : List Nat)
+    (body : WordProg (BitVec width))
+    (accepted : (wordLangProgToHOL body).isSome = true) :
+    CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedSSAWithNativeCopy name parameters body =
+      (CakeRegAlloc.cakeAllocateWordFunctionAfterDeadWithColourWithSsaAndCopy
+        wordCopyPropViaHOL wordRemoveDeadProgramViaHOL wordRemoveUnreachViaHOL?
+        wordFullSsaCcTransNativeWithState name parameters body).map
+          CakeRegAlloc.CakeAllocationWithColour.toLegacy := by
+  cases encoded : wordLangProgToHOL body with
+  | none => simp [encoded] at accepted
+  | some native =>
+      simp only [CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedSSAWithNativeCopy,
+        encoded, CakeRegAlloc.cakeAllocateWordFunctionAfterDeadWithColourWithSsaAndCopy,
+        wordFullSsaCcTransNativeWithState]
+      rfl
+
 /-- Every actual routed source input uses native full SSA, with its input
 condition discharged by source compiler closure. This is routing infrastructure,
 not allocation/evaluation correctness. -/
 theorem sourceAllocatorInput_usesNativeSSA
     {width : Nat} [NeZero width] (name : Nat) (parameters : List Nat)
     (body : LoopProg (BitVec width)) (wordParameters : List Nat) :
-    CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedSSA name wordParameters
+    CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedSSAWithNativeCopy name wordParameters
         (wordBeforeSsaAllocatorBody (loopToWordCompFuncRouted name parameters body)) =
-      CakeRegAlloc.cakeAllocateWordFunctionAfterDeadNativeSSA name wordParameters
-        (wordBeforeSsaAllocatorBody (loopToWordCompFuncRouted name parameters body)) :=
-  CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedSSA_native _ _ _
+      (CakeRegAlloc.cakeAllocateWordFunctionAfterDeadWithColourWithSsaAndCopy
+        wordCopyPropViaHOL wordRemoveDeadProgramViaHOL wordRemoveUnreachViaHOL?
+        wordFullSsaCcTransNativeWithState name wordParameters
+          (wordBeforeSsaAllocatorBody (loopToWordCompFuncRouted name parameters body))).map
+            CakeRegAlloc.CakeAllocationWithColour.toLegacy :=
+  acceptedAllocatorInput_usesNativeCopy _ _ _
     (wordLangProgToHOL_sourceAllocatorInput_isSome name parameters body)
 
 
@@ -213,7 +236,7 @@ theorem executedSourceAllocatorInput_isSome
   wordLangProgToHOL_wordBeforeSsaAllocatorBody_isSome _
     (wordLangProgToHOL_loopToWordCompFunc_isSome name parameters body)
 
-/-- Native full-program limit routing for the actual compatibility function
+/-- Legacy routed-limit API correspondence for the compatibility function
 body consumed by production diagnostics. This is routing infrastructure,
 without an independent HOL theorem, and makes no evaluation-correctness claim. -/
 theorem executedSourceAllocatorInput_usesNativeLimit
@@ -228,16 +251,19 @@ theorem executedSourceAllocatorInput_usesNativeLimit
 
 /-- The exact source function input at the actual allocator caller executes
 native SSA. Its input condition is proved from source syntax, not assumed;
-allocation may still fail. Arbitrary Word extensions remain governed by
-cakeAllocateWordFunctionAfterDeadRoutedSSA_rejected. Flapjack infrastructure. -/
+allocation may still fail. Arbitrary Word extensions retain the allocator encoder-rejection fallback.
+Flapjack infrastructure. -/
 theorem executedSourceAllocatorInput_usesNativeSSA
     {width : Nat} [NeZero width] (name : Nat) (parameters : List Nat)
     (body : LoopProg (BitVec width)) (wordParameters : List Nat) :
-    CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedSSA name wordParameters
+    CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedSSAWithNativeCopy name wordParameters
         (wordBeforeSsaAllocatorBody (LoopToWord.loopToWordCompFunc name parameters body)) =
-      CakeRegAlloc.cakeAllocateWordFunctionAfterDeadNativeSSA name wordParameters
-        (wordBeforeSsaAllocatorBody (LoopToWord.loopToWordCompFunc name parameters body)) :=
-  CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedSSA_native _ _ _
+      (CakeRegAlloc.cakeAllocateWordFunctionAfterDeadWithColourWithSsaAndCopy
+        wordCopyPropViaHOL wordRemoveDeadProgramViaHOL wordRemoveUnreachViaHOL?
+        wordFullSsaCcTransNativeWithState name wordParameters
+          (wordBeforeSsaAllocatorBody (LoopToWord.loopToWordCompFunc name parameters body))).map
+            CakeRegAlloc.CakeAllocationWithColour.toLegacy :=
+  acceptedAllocatorInput_usesNativeCopy _ _ _
     (executedSourceAllocatorInput_isSome name parameters body)
 
 end Flapjack
