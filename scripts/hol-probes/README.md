@@ -8872,3 +8872,5 @@ production compiler routing or the whole Pancake-to-RISC-V correctness theorem.
 `lab_to_target_extracted_label_navigation_probe.out` captures the full original navigation existence theorem and direct navigation/section-validity/extraction definition types. The port retains EVERY section validity and FLAT MAP label membership and derives the existential PC. Captures are source-review evidence, not cross-language equivalence or whole compiler completion.
 
 `lab_to_target_ffi_distinct_probe.out` captures the full original unconditional FFI-name distinctness theorem, hypothesis count and actual collector definition with full carriers. Lean proves List.Nodup through original fresh insertion. Captures provide source-review evidence, not HOL-to-Lean equivalence or whole compiler completion.
+
+`lab_to_target_ffi_read_interference_probe.out` captures all three original whole FFI-read function equalities with full machine/oracle types and zero hypotheses. Lean retains arbitrary next/FFI oracle replacement and shift. Captures are source-review evidence, not cross-language equivalence or full compiler completion.
