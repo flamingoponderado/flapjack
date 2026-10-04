@@ -32,8 +32,9 @@ end CompileSemanticsCarrier
 
 open Classical in
 /-- HOL `panLang_compile_word_to_word_thm` (`word_to_wordProofScript.sml:2219-2265`). HOL's
-    free `st l start` are explicit; HOL's existential `clk` does not occur in the body and
-    is kept. -/
+    free `st l start` are explicit. HOL's existential `clk : β` is vacuous and
+    is erased under the documented vacuous-binder convention: HOL types are
+    inhabited and the body never refers to `clk`. It is not specialized to Nat. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "panLang_compile_word_to_word_thm"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem panLang_compile_word_to_word_thm {width : Nat} [NeZero width] {C F : Type}
@@ -41,7 +42,7 @@ theorem panLang_compile_word_to_word_thm {width : Nat} [NeZero width] {C F : Typ
     (start : Nat) :
     codeRel st.code l ∧ noInstallCode st.code ∧ noAllocCode st.code ∧ noMtCode st.code ∧
       sptDomain st.code = sptDomain l ∧ Compiler.Backend.WordSimp.gcFunConstOk st.gcFun →
-    ∃ (perm' : Nat → Nat → Nat) (_clk : Nat),
+    ∃ (perm' : Nat → Nat → Nat),
       let prog : WordLangProgHOL (BitVec width) := .call none (some start) [0] none
       let (res, rst) := evaluate prog { st with permute := perm' }
       if res = some .error then True
@@ -52,7 +53,7 @@ theorem panLang_compile_word_to_word_thm {width : Nat} [NeZero width] {C F : Typ
   let prog : WordLangProgHOL (BitVec width) := .call none (some start) [0] none
   obtain ⟨perm', H⟩ := no_install_no_alloc_compile_single_correct prog st l
     ⟨hrel, rfl, rfl, hnic, hnac, hdom, hgc⟩
-  refine ⟨perm', 0, ?_⟩
+  refine ⟨perm', ?_⟩
   dsimp only at H ⊢
   rcases hS : evaluate prog { st with permute := perm' } with ⟨res, rst⟩
   rw [hS] at H
@@ -83,7 +84,7 @@ theorem compile_runs_agree {width : Nat} [NeZero width] {C F : Type}
         (evaluate (.call none (some start) [0] none) { s with clock := k }).2.ffi := by
   let prog : WordLangProgHOL (BitVec width) := .call none (some start) [0] none
   let sk : WordSemStateFiniteExact width C F := { s with clock := k }
-  obtain ⟨perm', -, H⟩ := panLang_compile_word_to_word_thm sk l start
+  obtain ⟨perm', H⟩ := panLang_compile_word_to_word_thm sk l start
     ⟨hrel, hnic, hnac, hnmc, hdom, hgc⟩
   have P3 := permute_swap_lemma3 prog sk perm' []
   rcases hE : evaluate prog sk with ⟨q, r⟩

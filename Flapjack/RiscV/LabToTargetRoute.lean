@@ -121,6 +121,18 @@ theorem labProgramToRiscVSections_rv64 (context : WordFfiContext)
         sectionsOfSymbols bytes config.secPosLen := by
   simp [labProgramToRiscVSections]
 
+/-- Frame metadata must use the same ordered byte names as the final native
+code. This production boundary check has no separate HOL declaration. -/
+def frameFfiNamesAgree (config : LabToTarget.Config) (names : List String) : Bool :=
+  match config.ffiNames with
+  | none => false
+  | some actual =>
+      actual.take names.length ==
+        names.map (fun name => HolFfiName.extCall (Basis.Pure.MlString.ofString name)) &&
+      (actual.drop names.length).all (fun name => match name with
+        | .sharedMem _ => true
+        | .extCall _ => false)
+
 /-- Executed Stack-to-RISC-V sections. At width 64 the reviewed
 `stackToRiscV` (the `from_stack` body: `stack_to_lab$compile` then
 `lab_to_target$compile`) is split by its `sec_pos_len`; other widths keep the
@@ -132,14 +144,18 @@ def compileStackProgramNatListToRiscVSectionsCakeChecked
     (_allocConfig : StackAllocConfig) (_gcConfig : StackGcConfig)
     (_storeConstsLocation registerCount : Nat)
     (entryLabel _initialLabel : Nat)
-    (programs : List (Nat × StackProg Nat)) :
+    (programs : List (Nat × StackProg Nat))
+    (expectedFfiNames : Option (List String) := none) :
     Except LabLoweringError (List (EncodedRiscVSection width)) :=
   if entryLabel ≠ 0 || removeConfig.bytesInWord ≠ width / 8 then
     .error { sectionId := 0, position := 0, feature := .loweringFailure }
   else if h : width = 64 then by
     subst h
     exact match stackToRiscV registerCount programs with
-      | some (bytes, config) => .ok (sectionsOfSymbols bytes config.secPosLen)
+      | some (bytes, config) =>
+          if expectedFfiNames.all (frameFfiNamesAgree config) then
+            .ok (sectionsOfSymbols bytes config.secPosLen)
+          else .error { sectionId := 0, position := 0, feature := .loweringFailure }
       | none => .error { sectionId := 0, position := 0, feature := .loweringFailure }
   else
     let removeConfig := cakeStackRemoveConfig removeConfig
