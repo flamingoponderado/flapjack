@@ -8709,3 +8709,5 @@ Capture regenerated from the pinned original source; it is regression evidence,
 not a HOL-to-Lean equivalence proof.
 
 `word_to_word_find_code_carriers_probe.out` replays the literal local `find_code_thm` statement and proof from the pinned source. Its typed, zero-hypothesis result records independent code/config, argument-word, and three return-metadata carriers. This is source-review regression evidence, not a HOL-to-Lean equivalence proof.
+
+`word_to_word_locals_typed_probe.out` supplies typed, zero-hypothesis original proof replays for all seven reviewed local helpers: rm_perm, find_code_thm, pop_env_termdep, compile_single_eta, code_rel_union_fromAList, code_rel_no_alloc and code_rel_no_install. Source guards cover the five literal statements/proofs and the original two specialization derivations. The row checker requires each typed statement; this does not prove HOL-to-Lean equivalence.
