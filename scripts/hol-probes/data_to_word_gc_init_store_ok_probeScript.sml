@@ -19,3 +19,6 @@ fun type_list label th =
 val _ = checked "init_store_ok_def_statement" init_store_ok_def;
 val _ = typed_statement "init_store_ok_def_statement_typed" init_store_ok_def;
 val _ = type_list "init_store_ok_def_statement_types" init_store_ok_def;
+val _ = checked "gc_fun_ok_word_gc_fun_statement" gc_fun_ok_word_gc_fun;
+val _ = typed_statement "gc_fun_ok_word_gc_fun_statement_typed" gc_fun_ok_word_gc_fun;
+val _ = type_list "gc_fun_ok_word_gc_fun_statement_types" gc_fun_ok_word_gc_fun;
