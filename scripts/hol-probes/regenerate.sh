@@ -1562,6 +1562,11 @@ run_probe binary_ieee_real_probeScript.sml binary_ieee_real_probe.out \
 run_probe binary_ieee_convert_probeScript.sml binary_ieee_convert_probe.out \
   float_to_int_def real_to_float_def \
   "$repo_dir/HOL/src/floating-point/binary_ieeeScript.sml" "$repo_dir/HOL/src/floating-point"
+run_probe binary_ieee_rest_probeScript.sml binary_ieee_rest_probe.out \
+  is_integral_def float_is_integral_def ULP_def ulp_def integral_round_def \
+  float_round_to_integral_def float_mul_sub_def float_unordered_def \
+  exponent_boundary_def float_ulp_def next_hi_def next_lo_def \
+  "$repo_dir/HOL/src/floating-point/binary_ieeeScript.sml" "$repo_dir/HOL/src/floating-point"
 run_probe machine_ieee_fp64_defs_probeScript.sml machine_ieee_fp64_defs_probe.out \
   fp64_to_float_def fp64_isSignallingNan_def \
   "$repo_dir/HOL/src/floating-point/machine_ieeeScript.sml" "$repo_dir/HOL/src/floating-point"

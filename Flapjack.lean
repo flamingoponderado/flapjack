@@ -1459,6 +1459,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.StateRelationClock
 import Flapjack.Misc.BinaryIeeeSqrt.RealAgreement
 import Flapjack.Misc.BinaryIeeeSqrt.RoundAgreement
 import Flapjack.Misc.BinaryIeeeSqrt.RealCarrier
+import Flapjack.Misc.BinaryIeeeRest
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpLeaves
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Seq
