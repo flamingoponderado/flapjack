@@ -7,11 +7,12 @@ import Flapjack.RiscV.LabToTargetRoute
 CakeML's Pancake driver (`compilerScript.sml` `compile_pancake_64`) exports the result of
 `pan_to_target$compile_prog` with `export_riscv` (`riscv_export` with `ret = F` by default):
 the FFI names `ffinames_to_string_list c.lab_conf.ffi_names`, the code bytes, the bitmap
-words and `c.symbols`. `compile_prog` computes the same code and bitmaps as
+words and `c.symbols`. Source inspection suggests `compile_prog` computes the same code and bitmaps as
 `compile_prog_max` (`from_word` on Pancake's `perf_calls = F` configuration is
 `compile_prog_max`'s word-to-stack and `from_stack`); it differs only in the names it
 gives `from_lab`, which become `c.symbols`, and in configuration fields the exporter does not
-print. These renderers therefore take the native whole tuple and rebuild `c.symbols` from
+print; no theorem here proves that comparison with tagged `compileProgHOL`.
+These renderers take the native whole tuple and rebuild `c.symbols` from
 `lab_conf.sec_pos_len` with `compile_prog`'s names table. Flapjack driver infrastructure;
 no separate HOL declaration. -/
 
@@ -107,9 +108,9 @@ def output (format : Format) (source : String) : Except String (List String × S
 
 /-- Adapter projection: a successful native CLI run comes from a successful
 `NativeSource.compile` whose whole tuple is compiled, and its output is that tuple's
-rendering. In particular the emitted code is exactly the tuple's bytes: `--hex` prints
-`hexBytes bytes` and the assembly frame's code lines are `bytes`, the bytes of
-`nativeSourceCompile_correct` (Flapjack infrastructure). -/
+rendering. `--hex` prints `hexBytes bytes`; this theorem does not prove the
+assembly renderer emits those bytes or establishes installation premises
+(Flapjack infrastructure). -/
 theorem output_ok {format : Format} {source : String} {warnings : List String} {text : String}
     (succeeded : output format source = .ok (warnings, text)) :
     ∃ (out : RiscV.NativeSource.Output) (bytes : List (BitVec 8)) (bitmaps : List (BitVec 64))

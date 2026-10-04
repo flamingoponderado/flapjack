@@ -6,10 +6,11 @@ import Flapjack.RiscV.NativeCLIAdapter
 # Flapjack compiler command
 
 This command-line wrapper compiles Pancake source with the parser-backed native whole
-compiler `RiscV.NativeSource.compile` (proved correct by
-`Pancake.Proofs.PanToTarget.nativeSourceCompile_correct`) and renders its whole result as a
-Pancake-compatible assembly frame, raw bytes, or linked sections (`RiscV.NativeCLI.output`,
-whose emitted code is the compiled tuple's bytes by `RiscV.NativeCLI.output_ok`). Assembly
+compiler `RiscV.NativeSource.compile` and renders its result as a Pancake-compatible
+assembly frame, raw bytes, or linked sections. `nativeCLIOutput_correct` connects
+successful output to source correctness under explicit source/main, machine,
+installation and resource premises. It identifies the rendering of the compiled
+tuple, not correctness of assembly rendering or startup installation. Assembly
 is the default and `--assembly` is retained as a compatibility alias for `--pancake`. A
 leading `--legacy` selects the previous checked runtime-image route.
 -/

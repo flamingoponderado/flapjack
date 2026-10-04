@@ -6,9 +6,10 @@ import Flapjack.RiscV.WordToStack
 Flapjack diagnostic infrastructure (no HOL counterpart; HOL `word_to_stack$compile` is
 total). The executed bitmap-aware Word-to-Stack lowering
 `wordToStackProgWordWithBitmapBuilder` is `Option`-valued: each leaf helper may reject its
-input. `wordToStackFirstFailure` walks the program in the same order as the lowering,
-without its bitmap state (no failure depends on that state), and returns the sequence path
-and kind of the first rejecting leaf. `wordToStackFirstFailure_complete` proves that every
+input. `wordToStackFirstFailure` searches the program without its bitmap state
+(no failure depends on that state), and returns a sequence path and failure kind.
+The proof does not establish that this is the lowering's first rejecting leaf.
+`wordToStackFirstFailure_complete` proves that every
 failed lowering is located, so pipeline callers report a precise path and kind instead of an
 empty-path fallback (GitHub issue #1158).
 -/
@@ -22,9 +23,10 @@ inductive WordToStackFailureKind where
   | opCurrHeap | install | bufferWrite | ffi | shareInst
   deriving DecidableEq, Repr
 
-/-- The first leaf rejected by `wordToStackProgWordWithBitmapBuilder`, with its sequence
+/-- A failure located by diagnostic traversal, with its sequence
 path (`0`/`1` for `Seq` first/second, `If` then/else, call return/handler program; `0` for
-`Loop`/`MustTerminate` bodies). It mirrors the lowering's traversal order and leaf helpers. -/
+`Loop`/`MustTerminate` bodies). Completeness, not agreement on the first failure
+or traversal order, is proved below. -/
 def wordToStackFirstFailure [NeZero width] (config : WordStackConfig) :
     WordProg (Word width) → Option (List Nat × WordToStackFailureKind)
   | .skip => none

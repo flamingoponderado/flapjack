@@ -1,11 +1,13 @@
-# Executed SmartSeq performance exception
+# Legacy SmartSeq interpreter benchmark
 
-The production `RiscV.wordSimpSmartSeq` retains its constant-time constructor
+The legacy `RiscV.wordSimpSmartSeq` retains its constant-time constructor
 operation. Encoding the accumulated prefix and next statement, applying the
 reviewed native `WordSimp.smartSeqHOL`, and decoding the result repeatedly
 traverses the entire growing prefix. Two paired runs on real compiler-produced
 sequence inputs measured 4959.50/3969.97 ms for this full-codec route versus
-11.49/8.67 ms for the executed builder: approximately 432/458 times its cost.
+11.49/8.67 ms for the benchmark builder: approximately 432/458 times its cost.
+These timings use `#eval` in the interpreter. The measured `wordSimpLeftSeq`
+builder is used by the legacy `wordSimpSeqAssocItemsFuel`, not the native default route.
 These are sequence-building measurements on this host, not whole-compiler
 throughput estimates or a comparison with a shared native representation.
 
@@ -37,12 +39,13 @@ The relationship is kernel-checked in
 `Flapjack/Compiler/Backend/WordSimp/ProductionSmartSeq.lean`:
 `smartSeq_production` proves the whole actual operation's encoder result;
 `smartSeqFold_production` composes every represented statement and accumulator;
-`smartSeqLeftSeq_production` covers the actual builder, including empty and
+`smartSeqLeftSeq_production` covers the benchmark builder, including empty and
 all-Skip lists. The input encodings identify the carrier image; none assumes
 the output encoding, a desired fold relation or target execution.
 
 This exception covers the native codec image. Unsupported broader instruction
 forms remain governed by the existing partial encoder; this does not turn them
-into exact HOL instructions. No compiler behavior changes in this delivery.
+into exact HOL instructions. This benchmark does not describe the default
+compiler change in PR1215 or the legacy constant-propagation repair across stores.
 The measurements and carrier proofs do not establish HOL-to-Lean equivalence
 or complete WordSimp or whole-compiler semantic simulation.

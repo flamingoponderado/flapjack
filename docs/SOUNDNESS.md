@@ -69,11 +69,20 @@ The following are open review or verification obligations:
    fixture, comparison boundary, and regeneration command.
 4. The compiler does not yet cover every Pancake construct or emit the same
    complete runtime/ELF artifacts as CakeML. The current command emits a
-   Pancake-shaped checked RV64I assembly image for its supported source subset;
+   Pancake-compatible RISC-V assembly, including M-extension multiplication and division;
    `--hex` is the raw-byte compatibility view.
 5. The ported correctness results retain explicit source, machine, installation,
    FFI, and resource premises. They do not establish correctness of every driver
    mode, parser behavior, runtime installation, or configuration.
+   The theorem concerns `parsed.map declToHOL`: the parser and `declToHOL`
+   are trusted. It requires a `main` function and source premises such as
+   `good_code` and distinct parameters; compilation does not check all these
+   premises. No witness establishes that the machine, memory-layout and
+   `panInstalled` premises are jointly satisfiable, so vacuity remains a risk.
+   Assembly rendering and startup code are also trusted: the output theorem
+   identifies a rendering of the compiled tuple, but does not prove that the
+   assembly frame emits those bytes or establishes installation. Only `--hex`
+   directly renders `hexBytes bytes`.
 6. Passing `lake build`, `lake test`, or CI proves only the checked repository
    state and selected regressions. It does not review the mathematical
    adequacy of the specifications or prove untested source programs compile
@@ -190,7 +199,7 @@ complete-trace preservation guarantee for such programs; it permits RISC-V
 resource exhaustion. Recursion alone is not a proof of exhaustion, and a known
 bound must also fit the configured stack. A faithful Lean port must retain
 this distinction, not silently strengthen the theorem to exclude out-of-memory
-behavior. Flapjack's assembled end-to-end theorem is still unfinished.
+behavior. The assembled theorem retains this resource-limit condition.
 
 ## Trust and reproducibility notes
 
@@ -215,6 +224,6 @@ all of the following:
 - differential tests over a substantially representative Pancake corpus,
   comparing parse results, intermediate programs, and final artifacts with
   documented name/label normalization;
-- completed source-to-RISC-V and runtime-image correctness proofs for the
-  supported RISC-V configuration; and
+- validation of the ported source-to-RISC-V theorem's assumptions, and proofs
+  connecting assembly rendering and runtime installation to its premises; and
 - explicit coverage/error behavior for every remaining unsupported construct.
