@@ -1,3 +1,4 @@
+import Flapjack.RiscV.CorrectnessEncoding.MemoryStore
 import Flapjack.RiscV.CorrectnessEncoding.MemoryRead
 import Flapjack.Compiler.Encoders.AsmSem.MemoryByteShift
 import Flapjack.RiscV.CorrectnessEncoding.MemorySource
@@ -11,6 +12,9 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionMoveDomain
 import Flapjack.Compiler.Backend.WordToStack.ProductionMoveMaterialization
 import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapTransport
 import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapCaller
+import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapWrite
+import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapState
+import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapWritePair
 import Flapjack.RiscV.CorrectnessEncoding.ShiftRorImmediate
 import Flapjack.RiscV.CorrectnessEncoding.RorExecution
 import Flapjack.RiscV.CorrectnessEncoding.RorStep
@@ -2096,6 +2100,7 @@ import Flapjack.Pancake.Proofs.PanToWord.PanSimpValidity
 import Flapjack.Pancake.Proofs.PanToWord.PanToCrepValidity
 import Flapjack.Pancake.Proofs.PanToWord.PanToCrepCompileExpValidity
 import Flapjack.Pancake.Proofs.PanToWord.LoadGlobalsValidity
+import Flapjack.Pancake.Proofs.PanToWord.PanToCrepInlineTableValidity
 import Flapjack.Pancake.Proofs.CrepInline.ExpressionProvenance
 import Flapjack.Pancake.Proofs.PanToTarget
 import Flapjack.Pipeline
