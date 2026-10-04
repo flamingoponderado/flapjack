@@ -92735,6 +92735,54 @@
     "reviewer": "flapjack-sol-c source comparison2026-10-03 original line559: arbitrary word64 x/w and exact low bit of x plus (w shifted left1), preserving original operator associativity. Complete original no-premise statement, no restricted opcode/state or concrete-fixture replacement. holV2w compared with original bitstring testbit_def/v2w_def: in-range i indexes list at LENGTH-1-i and false outside list length, full FCP width. getLsbD renders in-range word_bit; fixed theorem indices are within original word widths. Fresh generic HOL proofs/types/hyp0 captured and native Lean kernel proof checked without trusted bit tactics."
   },
   {
+    "lean_path": "Flapjack/RiscV/L3/Step/ConditionalBranchStep.lean",
+    "lean_name": "dfnBEQ",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "BEQ",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.10): original evaluated conditional-branch theorem BEQ over dfn'BEQ_def (riscv_stepScript.sml:893-898, plain class/cbranch, avoid []). Single original hypothesis ArchBase <> 1w. The set-less operands are the literal evaluated HOL operand `branchOperand` (if rs=0 then 0 else ArchBase=0 ? signExtend 64 (low32 gpr) : gpr); the branch taken/fall-through writes only c_NextFetch with SOME (BranchTo (PC + sw2sw offs << 1)) or the original s.c_NextFetch procID. No added ArchBase/range/success premise. Kernel checked; original typed statement and exact hypotheses captured in scripts/hol-probes/check-l3-step-branch.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/ConditionalBranchStep.lean",
+    "lean_name": "dfnBGE",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "BGE",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.10): original evaluated conditional-branch theorem BGE over dfn'BGE_def (riscv_stepScript.sml:893-898, plain class/cbranch, avoid []). Single original hypothesis ArchBase <> 1w. The set-less operands are the literal evaluated HOL operand `branchOperand` (if rs=0 then 0 else ArchBase=0 ? signExtend 64 (low32 gpr) : gpr); the branch taken/fall-through writes only c_NextFetch with SOME (BranchTo (PC + sw2sw offs << 1)) or the original s.c_NextFetch procID. No added ArchBase/range/success premise. Kernel checked; original typed statement and exact hypotheses captured in scripts/hol-probes/check-l3-step-branch.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/ConditionalBranchStep.lean",
+    "lean_name": "dfnBGEU",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "BGEU",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.10): original evaluated conditional-branch theorem BGEU over dfn'BGEU_def (riscv_stepScript.sml:893-898, plain class/cbranch, avoid []). Single original hypothesis ArchBase <> 1w. The set-less operands are the literal evaluated HOL operand `branchOperand` (if rs=0 then 0 else ArchBase=0 ? signExtend 64 (low32 gpr) : gpr); the branch taken/fall-through writes only c_NextFetch with SOME (BranchTo (PC + sw2sw offs << 1)) or the original s.c_NextFetch procID. No added ArchBase/range/success premise. Kernel checked; original typed statement and exact hypotheses captured in scripts/hol-probes/check-l3-step-branch.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/ConditionalBranchStep.lean",
+    "lean_name": "dfnBLT",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "BLT",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.10): original evaluated conditional-branch theorem BLT over dfn'BLT_def (riscv_stepScript.sml:893-898, plain class/cbranch, avoid []). Single original hypothesis ArchBase <> 1w. The set-less operands are the literal evaluated HOL operand `branchOperand` (if rs=0 then 0 else ArchBase=0 ? signExtend 64 (low32 gpr) : gpr); the branch taken/fall-through writes only c_NextFetch with SOME (BranchTo (PC + sw2sw offs << 1)) or the original s.c_NextFetch procID. No added ArchBase/range/success premise. Kernel checked; original typed statement and exact hypotheses captured in scripts/hol-probes/check-l3-step-branch.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/ConditionalBranchStep.lean",
+    "lean_name": "dfnBLTU",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "BLTU",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.10): original evaluated conditional-branch theorem BLTU over dfn'BLTU_def (riscv_stepScript.sml:893-898, plain class/cbranch, avoid []). Single original hypothesis ArchBase <> 1w. The set-less operands are the literal evaluated HOL operand `branchOperand` (if rs=0 then 0 else ArchBase=0 ? signExtend 64 (low32 gpr) : gpr); the branch taken/fall-through writes only c_NextFetch with SOME (BranchTo (PC + sw2sw offs << 1)) or the original s.c_NextFetch procID. No added ArchBase/range/success premise. Kernel checked; original typed statement and exact hypotheses captured in scripts/hol-probes/check-l3-step-branch.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/ConditionalBranchStep.lean",
+    "lean_name": "dfnBNE",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "BNE",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.10): original evaluated conditional-branch theorem BNE over dfn'BNE_def (riscv_stepScript.sml:893-898, plain class/cbranch, avoid []). Single original hypothesis ArchBase <> 1w. The set-less operands are the literal evaluated HOL operand `branchOperand` (if rs=0 then 0 else ArchBase=0 ? signExtend 64 (low32 gpr) : gpr); the branch taken/fall-through writes only c_NextFetch with SOME (BranchTo (PC + sw2sw offs << 1)) or the original s.c_NextFetch procID. No added ArchBase/range/success premise. Kernel checked; original typed statement and exact hypotheses captured in scripts/hol-probes/check-l3-step-branch.py."
+  },
+  {
     "lean_path": "Flapjack/RiscV/L3/Step/DecodeAny.lean",
     "lean_name": "DecodeAny",
     "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
@@ -92984,6 +93032,22 @@
     "hol_name": "LB_NOP",
     "statement_status": "reviewed_exact",
     "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.5): original riscv_stepScript.sml:902-907 memory-load `class_rd0 (rd,rs1,offs)` saved theorem over the native load definition. Original hypotheses: rd = 0w, mstatus.VM = 0w. Companion conclusion dfn'LB ((rd,rs1,offs)) s = s. Native word5/word12/word64/native-state equation retained with the original hypotheses (the source `aligned` premise rendered as the tagged `Flapjack.holAligned p addr = true`) and no success premise; kernel checked; original typed statement and hypotheses captured in scripts/hol-probes/check-l3-step-load.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/LoadStep.lean",
+    "lean_name": "dfnLBU",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "LBU",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.9): original riscv_stepScript.sml:902-908 memory-load `class_rd0 (rd,rs1,offs)` saved theorem for LBU over the native load definition. Original hypotheses: rd <> 0w and mstatus.VM = 0w only (no ArchBase, no aligned). Conclusion writes rd |-> zeroExtend 64 (low 8 of the addressed word). Native word5/word12/word64/native-state equation retained with the original hypotheses and no success premise; kernel checked; original typed statement and hypotheses captured in scripts/hol-probes/check-l3-step-load.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/LoadStep.lean",
+    "lean_name": "dfnLBUNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "LBU_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.9): generated rd = 0w companion LBU_NOP over dfn'LBU. Original hypotheses: rd = 0w and mstatus.VM = 0w only (same mode guard as the write theorem, no ArchBase, no aligned). Conclusion: dfn'LBU (rd,rs1,offs) s = s. Kernel checked; captured in scripts/hol-probes/check-l3-step-load.py."
   },
   {
     "lean_path": "Flapjack/RiscV/L3/Step/LoadStep.lean",
@@ -93420,6 +93484,14 @@
   },
   {
     "lean_path": "Flapjack/RiscV/L3/Step/WordArithmeticStep.lean",
+    "lean_name": "dfnADDIWNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "ADDIW_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml ADDIW = arithi [] over dfn'ADDIW_def with the rd = 0w companion ADDIW_NOP; actual hyp capture ArchBase <> 0w, ArchBase <> 1w, rd = 0w; conclusion dfn'ADDIW (...) s = s. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/WordArithmeticStep.lean",
     "lean_name": "dfnADDW",
     "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
     "hol_name": "ADDW",
@@ -93428,11 +93500,27 @@
   },
   {
     "lean_path": "Flapjack/RiscV/L3/Step/WordArithmeticStep.lean",
+    "lean_name": "dfnADDWNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "ADDW_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source word_gc? No: HOL riscv_stepScript.sml ADDW = arithr [] over dfn'ADDW_def with the rd = 0w companion ADDW_NOP; actual Thm.hyp captured in scripts/hol-probes/check-l3-step-warith.py are ArchBase <> 0w, ArchBase <> 1w, rd = 0w; conclusion is the identity dfn'ADDW (...) s = s. No extra premise; full record unchanged."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/WordArithmeticStep.lean",
     "lean_name": "dfnSUBW",
     "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
     "hol_name": "SUBW",
     "statement_status": "reviewed_exact",
     "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.8): original riscv_stepScript.sml:859/861 `arithr [] \"SUBW\"` saved theorem over dfn'SUBW_def. Original hypotheses: ArchBase <> 0w, ArchBase <> 1w, rd <> 0w. Native word5/word5/word5/native-state equation with the evaluated normal form (low-32 extraction before the word32 subtraction); no success premise; kernel checked; original typed statement and hypotheses captured in scripts/hol-probes/check-l3-step-warith.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/WordArithmeticStep.lean",
+    "lean_name": "dfnSUBWNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "SUBW_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml SUBW = arithr [] over dfn'SUBW_def with the rd = 0w companion SUBW_NOP; actual hyp capture ArchBase <> 0w, ArchBase <> 1w, rd = 0w; conclusion dfn'SUBW (...) s = s. No added premise."
   },
   {
     "lean_path": "Flapjack/RiscV/L3/Step/WordArithmeticStep.lean",
