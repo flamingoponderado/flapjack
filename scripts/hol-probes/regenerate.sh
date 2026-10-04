@@ -8374,3 +8374,8 @@ run_probe riscv_jumpcmp_offsets_probeScript.sml riscv_jumpcmp_offsets_probe.out 
 run_probe word_to_stack_store_consts_caller_probeScript.sml word_to_stack_store_consts_caller_probe.out \
   source_clause below8 wrap8 wrap64 exact_chunk8 width1 index_below8 index_wrap8 index_wrap64 \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe riscv_target_mem_probeScript.sml riscv_target_mem_probe.out \
+  riscv_encoder_correct_mem_statement riscv_encoder_correct_mem_types riscv_encoder_correct_mem_hypotheses riscv_encoder_correct_mem_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
