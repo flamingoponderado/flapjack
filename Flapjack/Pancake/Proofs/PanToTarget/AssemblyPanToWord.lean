@@ -8,6 +8,9 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordLemmas
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitLimits
 import Flapjack.Compiler.Backend.BackendProof.MachineInit
 import Flapjack.Pancake.Proofs.PanToTarget.AssemblyInitMemory
+import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
+import Flapjack.Compiler.Backend.Semantics.TargetSem.InitializationContracts
+import Flapjack.Compiler.Backend.LabToTarget.InstMem
 
 /-!
 # `pan_to_target_compile_semantics` assembly, pan_to_word stage
@@ -348,5 +351,109 @@ theorem panToTargetPanToWordFromInit {width : Nat} [NeZero width] {C σ : Type}
         panBytesInWord width * BitVec.ofNat width globalsSize := by
       rw [BitVec.ofNat_mul, BitVec.mul_comm]; rfl
     rw [e1, e2]
+
+open Classical StackToLab.Proofs.FullMakeInitSemantics in
+/-- The pan_to_word stage of the HOL proof (lines 2103-2284) on the initial lab state
+`labst = lab_to_target$make_init mc ffi t m (dm ∩ byte_aligned) (sdm ∩ byte_aligned) ...`:
+every lab-state fact of `panToTargetPanToWordFromInit` is derived from
+`pan_installed`'s components (its memory agreement on `s.memaddrs`,
+`good_init_state` and the shared-domain equation), `mc_conf_ok`'s register
+validity and the top theorem's register, bound and memory hypotheses. -/
+theorem panToTargetPanToWordStageLab {width : Nat} [NeZero width] {S Q C σ : Type}
+    {stackConf : StackToLab.Config} {dataConf : DataToWord.Config} {maxHeap sp : Nat}
+    {offset : BitVec width × BitVec width} {bitmaps : List (BitVec width)}
+    {code : List (Nat × StackLang.HolProg width)} {saveRegs : Nat → Bool} {dataSp : Nat}
+    {coracle : Nat → C × List (Nat × StackLang.HolProg width) × List (BitVec width)}
+    {sst x : StackSemStateFiniteExact width C σ}
+    (mc : MachineConfig width S Q) (ffi : HolFfiState σ) (tAsm : AsmState width)
+    (m : BitVec width → WordLocW width) (dm dm' sdm : BitVec width → Bool) (ms : S)
+    (lcode : LabSem.LabProgHOL width)
+    (comp : C → LabSem.LabProgHOL width → Option (List (BitVec 8) × C))
+    (cbpos : BitVec width) (cbspace : Nat) (lorac : Nat → C × LabSem.LabProgHOL width)
+    (bytes : List (BitVec 8))
+    (ac : AsmConfigExact width) (k : Nat) (wcode : Spt (Nat × WordLangProgHOL (BitVec width)))
+    (worac : Nat → (Nat × C) × List (Nat × Nat × WordLangProgHOL (BitVec width)))
+    (s : PanSemStateFiniteExact width σ) (isa : AsmArchitecture)
+    (panCode : List (DeclHOL width)) (start : MlS) (globalsSize heapLen : Nat)
+    (hA : Assumptions stackConf dataConf maxHeap sp offset bitmaps code
+      (LabToTarget.makeInit (C := C) mc ffi tAsm m (fun a => dm a && holByteAligned a)
+        (fun a => sdm a && holByteAligned a) ms lcode comp cbpos cbspace lorac)
+      saveRegs dataSp coracle)
+    (hfmi : StackToLab.Proofs.FullMakeInit.fullMakeInit stackConf dataConf maxHeap sp offset
+      bitmaps code
+      (LabToTarget.makeInit (C := C) mc ffi tAsm m (fun a => dm a && holByteAligned a)
+        (fun a => sdm a && holByteAligned a) ms lcode comp cbpos cbspace lorac)
+      saveRegs dataSp coracle = (sst, some x))
+    (hmc : LabToTarget.mcConfOk mc)
+    (hpm : ∀ a, decide (s.memaddrs a) = true → m a = wlabWlocExact (s.memory a))
+    (hgi : goodInitState mc ms bytes cbspace tAsm m dm' sdm)
+    (hsdm : (fun a => decide (s.shMemaddrs a)) = fun a => sdm a && holByteAligned a)
+    (hbase : mc.target.getReg ms mc.lenReg = s.baseAddr)
+    (hlt : mc.target.getReg ms mc.lenReg < mc.target.getReg ms mc.ptr2Reg)
+    (hlo : mc.target.getReg ms mc.lenReg +
+      StackRemove.bytesInWord width * BitVec.ofNat width StackRemove.maxStackAlloc ≤
+        mc.target.getReg ms mc.ptr2Reg)
+    (hhi : mc.target.getReg ms mc.ptr2Reg ≤ mc.target.getReg ms mc.len2Reg -
+      StackRemove.bytesInWord width * BitVec.ofNat width StackRemove.maxStackAlloc)
+    (hheap : (mc.target.getReg ms mc.ptr2Reg + -1 * mc.target.getReg ms mc.lenReg).toNat ≤
+      (StackRemove.bytesInWord width).toNat * maxHeap)
+    (hheapLt : (StackRemove.bytesInWord width).toNat * maxHeap < 2 ^ width)
+    (halign : holAligned (wordShiftAmount width + 1)
+      (mc.target.getReg ms mc.ptr2Reg + -1 * mc.target.getReg ms mc.lenReg) = true)
+    (hbe : mc.target.config.bigEndian = s.be) (hffi : s.ffi = ffi)
+    (hheapLen : heapLen = (mc.target.getReg ms mc.ptr2Reg + -1 * s.baseAddr).toNat / (width / 8))
+    (hglobLe : globalsSize ≤ heapLen)
+    (hmemaddrs : s.memaddrs =
+      StackRemove.addresses (mc.target.getReg ms mc.lenReg) (heapLen - globalsSize))
+    (htop : s.topAddr = s.baseAddr + StackRemove.bytesInWord width * BitVec.ofNat width heapLen -
+      BitVec.ofNat width (globalsSize * width / 8))
+    (hstart : start = ofString "main")
+    (hsize : globalsSize = ((decShapesHOL panCode).map
+      (sizeOfShapeWithContextHOL (holThe (decsStcnamesHOLExact [] panCode)))).sum)
+    (hparams : distinctParamsHOL (functionsHOL panCode))
+    (hnodup : ((functionsHOL panCode).map Prod.fst).Nodup)
+    (halloc : globalsAllocatableHOL s panCode) (hcode : s.code = HolFiniteMapExact.empty)
+    (hglobals : s.globals = HolFiniteMapExact.empty)
+    (hlocals : s.locals = HolFiniteMapExact.empty) (heids : sizeOfEidsHOL panCode < 2 ^ width)
+    (heshapes : s.eshapes = HolFiniteMapExact.empty)
+    (hfail : PanSemStateFiniteExact.semanticsDecls s start panCode ≠ .fail) :
+    let wst := WordToStack.Native.Initialization.makeInit ac k sst wcode worac
+    let wst0 := { wst with code := sptFromAList (panToWordCompileProgHOL isa panCode) }
+    WordSemStateFiniteExact.semantics wst0 BvlToBvi.initGlobalsLocation =
+      PanSemStateFiniteExact.semanticsDecls s start panCode := by
+  have good : goodDimindex width := hmc.1
+  have hregs := hgi.1.2.2.2.1
+  have hreg : ∀ r, asmRegOkExact r mc.target.config = true →
+      tAsm.regs r = mc.target.getReg ms r := by
+    intro r hr
+    simp only [asmRegOkExact, Bool.and_eq_true, decide_eq_true_eq, Bool.not_eq_true'] at hr
+    exact (hregs r hr).symm
+  have r2 := hreg _ hmc.2.2.2.1
+  have r3 := hreg _ hmc.2.2.2.2.1
+  have r4 := hreg _ hmc.2.2.2.2.2.1
+  have hmword := hgi.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+  refine panToTargetPanToWordFromInit ac k wcode worac s isa panCode start globalsSize heapLen
+    (mc.target.getReg ms mc.ptr2Reg) (mc.target.getReg ms mc.len2Reg) hA hfmi
+    ?_ ?_ ?_ (hbase ▸ hlt) ?_ ?_ ?_ hheapLt (hbase ▸ halign) ?_ ?_ ?_ ?_ ?_ hheapLen hglobLe
+    (hbase ▸ hmemaddrs) htop hstart hsize hparams hnodup halloc hcode hglobals hlocals heids
+    heshapes hfail
+  · simp [LabToTarget.makeInit, r2, hbase]
+  · simp [LabToTarget.makeInit, r3]
+  · simp [LabToTarget.makeInit, r4]
+  · rw [← hbase, BitVec.mul_comm]; exact hlo
+  · rw [BitVec.mul_comm]; exact hhi
+  · rw [← hbase, BitVec.add_comm, Nat.mul_comm]; exact hheap
+  · intro a ha
+    exact hpm a (decide_eq_true ha)
+  · intro a ha
+    obtain ⟨w, -, hw⟩ := hmword a
+    rw [Compiler.Backend.LabToTarget.holByteAlign_of_aligned good a ha] at hw
+    exact ⟨w, hw⟩
+  · funext a
+    have := congrFun hsdm a
+    simp only [LabToTarget.makeInit] at this ⊢
+    rw [← this, decide_eq_true_eq]
+  · exact hbe
+  · exact hffi.symm
 
 end Flapjack.Pancake.Proofs.PanToTarget

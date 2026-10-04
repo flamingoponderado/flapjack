@@ -98144,6 +98144,14 @@
   {
     "hol_path": null,
     "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyPanToWord.lean",
+    "lean_name": "panToTargetPanToWordStageLab",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 2103-2284): panToTargetPanToWordFromInit instantiated at labst = lab_to_target make_init mc ffi t m (dm INTER byte_aligned) (sdm INTER byte_aligned) ...; the lab-state facts are derived from pan_installed's memory agreement, good_init_state (target_state_rel registers, word memory) and shared-domain equation, mc_conf_ok reg_ok of len/ptr2/len2, and the top theorem's register, bound, endianness, FFI and memory hypotheses in their original form."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyInitCode.lean",
     "lean_name": "panToTargetInitCodeRun",
     "statement_status": "no_hol_reference_pending_classification",
