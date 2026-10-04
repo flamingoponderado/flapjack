@@ -70177,6 +70177,89 @@
     "reviewer": "flapjack-opus4 source comparison 2026-10-04: original Inst case 6315-6326 of comp_correct5756/motive5719-5751, captured with inferred types by the word_to_stack_comp_inst probe (case obligation and whole specialization, full_proved=T, hypotheses=0; i:'a inst, source config num # 'c, target 'c, shared 'a word/'ffi). Full Seq.Simulation over arbitrary instruction/source; all original hypotheses and the full existential target-run/resource/result conclusion retained. As in HOL: the source Inst run succeeds with NONE (the NONE inst result is the excluded Error), post_alloc_conventions gives every_var_inst is_phy_var and call_arg_convention = inst_arg_convention (transported to the exact HolInst carrier through the reviewed codec), max_var (Inst i) = max_var_inst i, and the full original evaluate_wInst (flapjack-sol da79ec9f3) gives the target run with ck = 0 and the NONE-branch state_rel. No added premise. Five canonical finite-map fields/positive words qualified; inherits reals_as_rational_cuts through the evaluator closure (SOUNDNESS item 8)."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCall.lean",
+    "lean_name": "evaluateSeqSkip",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_Seq_Skip",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original local evaluate_Seq_Skip 10074-10078 (replayed with its original proof in the probe): stackSem evaluate (Seq Skip p, s) = evaluate (p, s) for arbitrary p and ('a,'b,'c) state; Lean quantifies the two free variables. Typed capture word_to_stack_semantics_chain probe (show_types, hypotheses=0). Canonical regs/fpRegs/store carrier and positive word width qualified; the evaluator closure inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCall.lean",
+    "lean_name": "compCall",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_Call",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original local comp_Call 10090-10114 (replayed with comp_Call_lemma and its original proof in the probe). ∀start s k res s1 t lens with free ac: the actual source Call NONE (SOME start) [0] NONE run, res ≠ SOME Error and state_rel ac k 0 0 s t lens 0 imply ∃ck t1 res1. stackSem evaluate (Call NONE (INL start) NONE, t with clock := t.clock + ck) = (res1,t1) ∧ 1w ≠ 0w ∧ 2w ≠ 0w ∧ (if OPTION_MAP compile_result res = res1 then s1.ffi = t1.ffi ∧ s1.clock = t1.clock else res1 = SOME (Halt (Word 2w)) ∧ t1.ffi.io_events ≼ s1.ffi.io_events ∧ the (s1.stack_limit + 1) s1.stack_max > s1.stack_limit), with `the d o` as Option.getD and the conditional decided classically. Proof: comp_correct at Call NONE (SOME start) [0] NONE with frame 0/0, bitmap position LENGTH t.bitmaps and Nil, compiled entry Seq Skip (Call NONE (INL start) NONE) removed by evaluate_Seq_Skip; result post-relations supply FFI/clock equality; 8 ≤ dimindex gives the word facts. No added premise. Typed capture word_to_stack_semantics_chain probe (show_types, hypotheses=0). Five canonical relation maps and positive words qualified; inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StateRelSemantics.lean",
+    "lean_name": "stateRelImpSemantics",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "state_rel_IMP_semantics",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 10154-10372: state_rel ac k 0 0 s t lens 0 ∧ semantics s start ≠ Fail ⇒ semantics start t ∈ extend_with_resource_limit {semantics s start}; the singleton set is the predicate fun b => b = semantics s start over the reviewed SemanticsPropsHOL.extendWithResourceLimitHOL. Proof via comp_Call at every clock (state_rel_with_clock): target Fail excluded, target termination is either the source termination (termination-choice uniqueness by evaluate_add_clock) or a Halt-2 resource-limit prefix of a source termination/divergence trace, and target divergence yields source divergence with equal lprefix-lub (both clock families prefix chains by the io-events monotonicity laws). No added premise. Typed capture word_to_stack_semantics_chain probe (show_types, hypotheses=0). Five canonical relation maps and positive words qualified; inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StateRelSemantics.lean",
+    "lean_name": "stateRelImpSemantics'",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "state_rel_IMP_semantics'",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 10473-10708: state_rel ac k 0 0 s t lens 0 ∧ semantics s start ≠ Fail ∧ word_lang_safe_for_space s start ⇒ semantics start t = semantics s start (exact equality). The comp_Call resource-limit branch would give stack_max above stack_limit at that source clock, excluded by safe_for_space; otherwise as state_rel_IMP_semantics. No added premise. Typed capture word_to_stack_semantics_chain probe (show_types, hypotheses=0). Five canonical relation maps and positive words qualified; inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompileSemantics.lean",
+    "lean_name": "compileSemantics",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "compile_semantics",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 10709-10758: all eight original premises (t.code = fromAList of the native compile output's code list, k = reg_count - (5 + LENGTH avoid_regs), init_state_ok, both stub ALOOKUPs NONE, FST compile ≼ t.bitmaps, EVERY over code as a membership quantifier on (n,m,prog) with flat_exp_conventions and post_alloc_conventions, non-Fail make_init semantics) and the conclusion semantics start t ∈ extend_with_resource_limit' (word_lang_safe_for_space (make_init ...) start) {semantics (make_init ...) start}; the Bool flag is the classical decision of the Prop wordLangSafeForSpace. Proof as HOL: init_state_ok_IMP_state_rel with code premises from compile_word_to_stack_IMP_ALOOKUP / MAP_FST_compile_word_to_stack / domain_fromAList, then state_rel_IMP_semantics' or state_rel_IMP_semantics by the safe-for-space case. No added premise. Typed capture word_to_stack_semantics_chain probe (show_types, hypotheses=0). Five canonical relation maps and positive words qualified; inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  },
+  {
     "lean_path": "Flapjack/RiscV/L3/Defs/SystemSignals.lean",
     "lean_name": "signalEnvCall",
     "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
