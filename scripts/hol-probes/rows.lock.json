@@ -5990,6 +5990,12 @@
       "sha256": "8c979e259abedf2de19f1d7f93869163fc86b0423fb02b4aad80dde4cdffea69"
     },
     {
+      "bytes": 1549,
+      "out": "riscv_binop_decode_probe.out",
+      "rows": 32,
+      "sha256": "23d00fd6ff06f1a963d4c97fa6b66d421fe0b42d699c157e9357ca55ea917fbe"
+    },
+    {
       "bytes": 553,
       "out": "riscv_config_probe.out",
       "rows": 19,
@@ -9464,10 +9470,10 @@
       "sha256": "e220eb6ced34b0339d264b959455db5c2eafda675e0be2533f216bd2481af2a0"
     },
     {
-      "bytes": 1029,
+      "bytes": 1155,
       "out": "word_gc_functions_probe.out",
-      "rows": 28,
-      "sha256": "64def3712489e37f43d55a0370f63b527cfff6d049b4f2360c94536a0174fa0b"
+      "rows": 31,
+      "sha256": "a2a7bf6ae6f8f3ac065c0ce723c5040601e673fc795ff44f003f48bbd8b85422"
     },
     {
       "bytes": 11121,
@@ -10232,6 +10238,12 @@
       "sha256": "7364122716d1243179325eaf6ce3c41d4b43dcdd94ebc9509a4e102173fce9db"
     },
     {
+      "bytes": 651,
+      "out": "word_to_stack_fp_relations_probe.out",
+      "rows": 6,
+      "sha256": "a29763f87ec7191f55b6071bfe221d99a520fd846f21783d14bf1de33483aa7c"
+    },
+    {
       "bytes": 69584,
       "out": "word_to_stack_frame_offsets_probe.out",
       "rows": 321,
@@ -10848,6 +10860,12 @@
       "out": "word_to_stack_store_reg1_zero_probe.out",
       "rows": 3,
       "sha256": "34aa99890779e1e8b4390791107477cd6adedf1d1f851e2f17b6951d8092d833"
+    },
+    {
+      "bytes": 1533,
+      "out": "word_to_stack_store_register2_probe.out",
+      "rows": 6,
+      "sha256": "833dc4fd2d1387940992243820dec0f7db2d8acb5fcac4b2604d0becf307a539"
     },
     {
       "bytes": 675,
