@@ -63,7 +63,7 @@ the cited name occurs in one of the two syntactic forms.
 | `compiler/backend/word_unreachScript.sml` | `Flapjack/Compiler/Backend/WordUnreach.lean` |
 | `compiler/backend/word_copyScript.sml` | `Flapjack/Compiler/Backend/WordCopy.lean` |
 | `compiler/backend/word_to_wordScript.sml` | `Flapjack/Compiler/Backend/WordToWord/` (`Config.lean` config and `next_n_oracle`; `Compile.lean` `compile_single`, `full_compile_single` and `compile`) |
-| `compiler/backend/proofs/word_to_wordProofScript.sml` | `Flapjack/Compiler/Backend/WordToWord/Proofs/` (`CompileSingle.lean` `FST_compile_single` and `compile_single_lem`) |
+| `compiler/backend/proofs/word_to_wordProofScript.sml` | `Flapjack/Compiler/Backend/WordToWord/Proofs/` (`CodeRel.lean` `code_rel` and its helpers; `CompileSingle.lean` `FST_compile_single` and `compile_single_lem`) |
 | `misc/miscScript.sml` (`anub`) | `Flapjack/Misc/Anub.lean` |
 | `compiler/backend/data_to_wordScript.sml` | `Flapjack/Compiler/Backend/DataToWord/` (`Config.lean` gc_kind/config and pointer-layout helpers) |
 | `compiler/backend/proofs/word_gcFunctionsScript.sml` | `Flapjack/Compiler/Backend/WordGcFunctions.lean` (copying, generational and partial GC definitions and `word_gc_fun`); `WordGcFunctions/Roots.lean` (root `EVERY2`/`LENGTH` theorems) |
