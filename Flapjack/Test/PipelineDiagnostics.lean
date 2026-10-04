@@ -501,4 +501,20 @@ example :
   sourceRiscVCompileErrorDescription .entryNotFound =
     "no entry point named 'main'"
 
+/-! GitHub #1158 regression: a Word-to-Stack rejection outside expression
+    lowering (a move from an unallocated name) is located by
+    `wordToStackFirstFailure`, where the old expression-only locator returned
+    no path. -/
+private def unlocatedMoveProgram : WordProg (RiscV.Word 64) :=
+  .seq .skip (.move 0 [(0, 9)])
+
+#guard (RiscV.wordProgFirstExpressionLoweringFailure pipelineDiagnosticsConfig
+  (RiscV.wordProgToNat unlocatedMoveProgram)).isNone
+
+#guard RiscV.wordToStackFirstFailure pipelineDiagnosticsConfig unlocatedMoveProgram =
+  some ([1], .move)
+
+#guard (RiscV.wordToStackProgWordWithLocationBitmapsFused pipelineDiagnosticsConfig 4 31 0 64
+  none (RiscV.wordStackInitialBitmaps false) unlocatedMoveProgram).isNone
+
 end Flapjack

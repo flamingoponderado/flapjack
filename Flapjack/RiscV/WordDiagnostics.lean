@@ -211,9 +211,10 @@ def wordToStackProgNatChecked [BEq Nat]
     expression without changing executable lowering.  Stateful failures that
     are not expression-related intentionally fall back to an empty path.
     Assignment and shared-memory leaves check their actual executed producer,
-    including its optimizations. This is still not a complete locator for
-    moves, instructions, calls, FFI or the whole source pipeline; that remaining
-    obligation is tracked by GitHub issue #1158. -/
+    including its optimizations. It only locates expressions; the pipeline
+    reports Word-to-Stack failures through the complete classified locator
+    `wordToStackFirstFailure` (`Flapjack/RiscV/WordToStackFailure.lean`,
+    GitHub issue #1158). -/
 def wordProgFirstExpressionLoweringFailure (config : WordStackConfig) :
     WordProg Nat → Option (List Nat)
   | .seq first second =>
