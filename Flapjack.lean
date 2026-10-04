@@ -1378,6 +1378,7 @@ import Flapjack.Pancake.Proofs.WordConvs.WordSimpInstructions
 import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.Sequence
 import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.PushOut
 import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.HoistPrerequisites
+import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.ConstFp
 import Flapjack.Pancake.Proofs.WordConvs.WordCse
 import Flapjack.Pancake.Proofs.WordConvs.CopyProp
 import Flapjack.Pancake.Proofs.WordConvs.SSAWfCutsets
