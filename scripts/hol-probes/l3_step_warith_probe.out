@@ -64,4 +64,16 @@ c_gpr :=
               word64))
       ⦈
   ⦈
-source=HOL riscv_stepScript.sml:637 Skip = save_thm over Skip_def, and 838/859/861 ADDW/ADDIW/SUBW = arithr/arithi [] over dfn'ADDW/ADDIW/SUBW_def with the rd = 0w companion avoided; per-theorem Thm.hyp captured above; the word forms keep the RV32-exclusion, invalid-selector and rd <> 0w hypotheses
+addw_nop_hypotheses=((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+(rd :word5) = (0w :word5)
+addw_nop_statement=dfn'ADDW ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s
+subw_nop_hypotheses=((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+(rd :word5) = (0w :word5)
+subw_nop_statement=dfn'SUBW ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s
+addiw_nop_hypotheses=((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (0w :word2)
+((s :riscv_state).c_MCSR s.procID).mcpuid.ArchBase ≠ (1w :word2)
+(rd :word5) = (0w :word5)
+addiw_nop_statement=dfn'ADDIW ((rd :word5),(rs1 :word5),(imm :word12)) (s :riscv_state) = s
+source=HOL riscv_stepScript.sml:637 Skip = save_thm over Skip_def, and 838/859/861 ADDW/ADDIW/SUBW = arithr/arithi [] over dfn'ADDW/ADDIW/SUBW_def with the rd = 0w companion avoided; per-theorem Thm.hyp captured above; the word forms keep the RV32-exclusion, invalid-selector and rd <> 0w hypotheses, and the ADDW_NOP/ADDIW_NOP/SUBW_NOP companions add rd = 0w

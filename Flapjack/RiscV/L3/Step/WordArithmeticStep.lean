@@ -75,4 +75,34 @@ theorem dfnADDW (rd rs1 rs2 : BitVec 5) (s : riscv_state)
   by_cases h1 : rs1 = 0 <;> by_cases h2 : rs2 = 0 <;>
     simp_all [holWordExtract, addw_low_add_eq]
 
+@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "ADDW_NOP"]
+theorem dfnADDWNop (rd rs1 rs2 : BitVec 5) (s : riscv_state)
+    (harch0 : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 0)
+    (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd = 0) :
+    «dfn'ADDW» (rd, (rs1, rs2)) s = s := by
+  simp only [«dfn'ADDW», «write'GPR», hrd]
+  have hcases : ∀ b : BitVec 2, b = 0 ∨ b = 1 ∨ b = 2 ∨ b = 3 := by decide
+  rcases hcases (s.c_MCSR s.procID).mcpuid.ArchBase with h | h | h | h <;>
+    simp_all [in32BitMode, curArch, architecture, MCSR, beq_iff_eq, ne_eq]
+
+@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "SUBW_NOP"]
+theorem dfnSUBWNop (rd rs1 rs2 : BitVec 5) (s : riscv_state)
+    (harch0 : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 0)
+    (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd = 0) :
+    «dfn'SUBW» (rd, (rs1, rs2)) s = s := by
+  simp only [«dfn'SUBW», «write'GPR», hrd]
+  have hcases : ∀ b : BitVec 2, b = 0 ∨ b = 1 ∨ b = 2 ∨ b = 3 := by decide
+  rcases hcases (s.c_MCSR s.procID).mcpuid.ArchBase with h | h | h | h <;>
+    simp_all [in32BitMode, curArch, architecture, MCSR, beq_iff_eq, ne_eq]
+
+@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "ADDIW_NOP"]
+theorem dfnADDIWNop (rd rs1 : BitVec 5) (imm : BitVec 12) (s : riscv_state)
+    (harch0 : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 0)
+    (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd = 0) :
+    «dfn'ADDIW» (rd, (rs1, imm)) s = s := by
+  simp only [«dfn'ADDIW», «write'GPR», hrd]
+  have hcases : ∀ b : BitVec 2, b = 0 ∨ b = 1 ∨ b = 2 ∨ b = 3 := by decide
+  rcases hcases (s.c_MCSR s.procID).mcpuid.ArchBase with h | h | h | h <;>
+    simp_all [in32BitMode, curArch, architecture, MCSR, beq_iff_eq, ne_eq]
+
 end Flapjack.RiscV.L3.Step
