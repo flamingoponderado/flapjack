@@ -17,21 +17,6 @@ open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend
 open Flapjack.Pancake.PanLang
 set_option autoImplicit false
 
-/-- `compileProgMaxAsmExecutable` with the graph-colouring allocator supplied as `ra`. -/
-def compileProgMaxAsmWith (ra : WordToWord.RegAllocFn) {width : Nat} [NeZero width]
-    (config : Flapjack.Compiler.Backend.Backend.Config) (asmConf : AsmConfigExact width)
-    (program : List (DeclHOL width)) :
-    Option (List (BitVec 8) × List (BitVec width) ×
-      Flapjack.Compiler.Backend.Backend.Config) × Option Nat :=
-  let program := panToWordCompileProgHOL asmConf.isa program
-  let (_coloring, wordProgram) :=
-    WordToWord.compileWith ra config.wordToWordConf asmConf program
-  let (bitmaps, wordConfig, _frames, stackProgram) :=
-    WordToStack.Native.compileNative asmConf false wordProgram
-  let maximum := WordDepth.maxDepth wordConfig.stackFrameSize
-    (WordDepth.fullCallGraph BvlToBvi.initGlobalsLocation (sptFromAList wordProgram))
-  (Flapjack.Compiler.Backend.Backend.fromStack asmConf config .ln stackProgram bitmaps,
-    maximum)
 
 /-- With `ra = regAlloc` the allocator-parametric callable compiler is
 `compileProgMaxAsmExecutable` (whole-function kernel equality; Flapjack infrastructure). -/
@@ -58,14 +43,6 @@ theorem regAllocExecutable_fun_eq :
   funext algorithm costs limit moves tree forced stackOnly
   exact Flapjack.RegAlloc.regAllocExecutable_eq algorithm costs limit moves tree forced stackOnly
 
-/-- The callable compiler running the executable allocator in its word-to-word stage
-(Flapjack computation infrastructure). -/
-def compileProgMaxAsmFast {width : Nat} [NeZero width]
-    (config : Flapjack.Compiler.Backend.Backend.Config) (asmConf : AsmConfigExact width)
-    (program : List (DeclHOL width)) :
-    Option (List (BitVec 8) × List (BitVec width) ×
-      Flapjack.Compiler.Backend.Backend.Config) × Option Nat :=
-  compileProgMaxAsmWith Flapjack.RegAlloc.regAllocExecutable config asmConf program
 
 /-- The fast callable compiler is `compileProgMaxAsmExecutable`: the whole result, including
 bytes, bitmaps, updated configuration and stack bound, with no premise (Flapjack
@@ -85,5 +62,15 @@ theorem compileProgMaxAsmFast_eq_compileProgMax {width : Nat} [NeZero width]
     compileProgMaxAsmFast config machine.target.config program =
       compileProgMax config machine program := by
   rw [compileProgMaxAsmFast_eq, compileProgMaxAsmExecutable_eq]
+
+/-- Unconditional artifact equality. The left side never evaluates the bound;
+the right side is a logical projection of the full compiler (Flapjack infrastructure). -/
+theorem compileProgAsmFast_eq_fst {width : Nat} [NeZero width]
+    (config : Backend.Config) (asmConf : AsmConfigExact width)
+    (program : List (DeclHOL width)) :
+    compileProgAsmFast config asmConf program =
+      (compileProgMaxAsmExecutable config asmConf program).1 := by
+  rw [← compileProgMaxAsmFast_eq]
+  rfl
 
 end Flapjack.Pancake.Proofs.PanToTarget

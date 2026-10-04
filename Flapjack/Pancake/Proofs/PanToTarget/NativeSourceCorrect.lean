@@ -1,13 +1,14 @@
 import Flapjack.RiscV.NativeSource
+import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMaxAsmWith
 import Flapjack.Pancake.Proofs.PanToTarget.RiscVSource
 
 /-!
 # Correctness of the parser-backed native RISC-V compiler
 
 `Flapjack.RiscV.NativeSource.compile` parses and statically checks Pancake source text,
-then compiles `mainFirstHOL` of the parsed declarations with `compileProgMaxAsmFast` at
-`pancake_backend_conf riscv_backend_config` and `riscv_config`, keeping the whole compiler
-tuple. This module derives the concrete RISC-V correctness theorem for that driver: when
+then compiles `mainFirstHOL` of the parsed declarations with `compileProgAsmFast` at
+`pancake_backend_conf riscv_backend_config` and `riscv_config`, keeping only the compiled
+artifact. This module derives the concrete RISC-V correctness theorem for that driver: when
 it succeeds with a compiled tuple and the parsed program has a `main` function, every
 machine behaviour of the installed code is, up to the original resource-limit relaxation,
 the Pancake semantics of the parsed declarations. Parse and static errors are separate
@@ -15,7 +16,7 @@ driver outcomes with no correctness claim; the default-`main` case (no `main` fu
 excluded because `mainFirstHOL` then inserts a function. The remaining premises are the
 original non-configuration premises of `pan_to_target_compile_semantics` on the compiled
 declarations `out.declarations`. Untagged Flapjack theorem; HOL has no Pancake RISC-V
-driver theorem. It does not establish which entry point the default CLI uses.
+driver theorem. The CLI linkage is in `NativeCLICorrect`.
 -/
 
 namespace Flapjack.Pancake.Proofs.PanToTarget
@@ -26,15 +27,30 @@ open Flapjack.Pancake.PanLang Flapjack.SemanticsPropsHOL
 open Flapjack.Compiler.Backend.RiscVConfig Flapjack.Compiler.Encoders.RiscV.Target
 open Flapjack.Pancake.PanToTarget (mainFirstHOL)
 
+/-- The logical stack bound of the full compiler on the recorded declarations.
+This proof API is separate from `NativeSource.Output`: ordinary compilation does not
+compute it. Flapjack infrastructure, not a new HOL declaration. -/
+def nativeSourceLogicalBound (out : RiscV.NativeSource.Output) : Option Nat :=
+  (compileProgMaxAsmExecutable pancakeRiscVBackendConfig riscvConfig out.declarations).2
+
+/-- The no-depth driver artifact is the first projection of the full logical compiler,
+for every parsed input, including failure (Flapjack infrastructure). -/
+theorem nativeSourceCompileDeclarations_eq (parsed : List (Decl (BitVec 64))) :
+    RiscV.NativeSource.compileDeclarations parsed =
+      (compileProgMaxAsmExecutable pancakeRiscVBackendConfig riscvConfig
+        (mainFirstHOL (parsed.map declToHOL))).1 := by
+  unfold RiscV.NativeSource.compileDeclarations
+  exact compileProgAsmFast_eq_fst _ _ _
+
 /-- A successful driver run comes from a successful parse and static check, records
-`mainFirstHOL` of the parsed declarations and the native whole compiler's result on them
+`mainFirstHOL` of the parsed declarations and the native artifact compiler's result on them
 (Flapjack infrastructure). -/
 theorem nativeSourceCompile_ok {source : String} {out : RiscV.NativeSource.Output}
     (compiled : RiscV.NativeSource.compile source = .ok out) :
     ∃ parsed : List (Decl (BitVec 64)),
       Parser.parseTopDecs (fun value => BitVec.ofInt 64 value) source = .ok parsed ∧
       out.declarations = mainFirstHOL (parsed.map declToHOL) ∧
-      out.wholeResult = RiscV.NativeSource.compileDeclarations parsed := by
+      out.artifact = RiscV.NativeSource.compileDeclarations parsed := by
   unfold RiscV.NativeSource.compile at compiled
   split at compiled
   · simp at compiled
@@ -45,9 +61,22 @@ theorem nativeSourceCompile_ok {source : String} {out : RiscV.NativeSource.Outpu
     · simp only [Except.ok.injEq] at compiled
       exact ⟨parsed, parsedEq, by rw [← compiled], by rw [← compiled]⟩
 
+/-- Every successful artifact has the full logical compiler result with its logical
+bound. This links emitted bytes to the full compiler without evaluating depth in the
+CLI (Flapjack infrastructure). -/
+theorem nativeSourceCompile_full_result {source : String} {out : RiscV.NativeSource.Output}
+    (compiled : RiscV.NativeSource.compile source = .ok out) :
+    compileProgMaxAsmExecutable pancakeRiscVBackendConfig riscvConfig out.declarations =
+      (out.artifact, nativeSourceLogicalBound out) := by
+  obtain ⟨parsed, _, declsEq, resultEq⟩ := nativeSourceCompile_ok compiled
+  apply Prod.ext
+  · rw [resultEq, nativeSourceCompileDeclarations_eq, declsEq]
+  · rfl
+
 /-- Concrete RISC-V correctness of the parser-backed native compiler: if
-`NativeSource.compile source` succeeds with compiled bytes, bitmaps, configuration and stack
-bound, the parsed program has a `main` function, and the original non-configuration
+`NativeSource.compile source` succeeds with compiled bytes, bitmaps and configuration,
+`stack_max` is its full compiler's logical bound, the parsed program has a `main` function,
+and the original non-configuration
 premises hold of the compiled declarations, then every behaviour of the installed machine
 code relates to the Pancake semantics of the parsed declarations (Flapjack-specific; no HOL
 original). -/
@@ -62,7 +91,8 @@ theorem nativeSourceCompile_correct {σ : Type} {source : String}
     (ffi : HolFfiState σ) (cbspace data_sp : Nat) (start : MlS) :
     isRiscvMachineConfig mc →
     (∃ fi : FunDeclHOL 64, .function fi ∈ parsed.map declToHOL ∧ fi.name = ofString "main") →
-    out.wholeResult = (some (bytes, bitmaps, c'), stack_max) ∧
+    out.artifact = some (bytes, bitmaps, c') ∧
+    stack_max = nativeSourceLogicalBound out ∧
     pancakeGoodCodeHOL out.declarations = true ∧
     distinctParamsHOL (functionsHOL out.declarations) ∧
     ((functionsHOL out.declarations).map Prod.fst).Nodup ∧
@@ -105,12 +135,17 @@ theorem nativeSourceCompile_correct {σ : Type} {source : String}
       extendWithResourceLimitPrimeHOL
         (optionLt stack_max (some (readLimits mc.target.config pancakeRiscVBackendConfig mc ms).1))
         (fun b' => b' = PanSemStateFiniteExact.semanticsDecls s start (parsed.map declToHOL)) b := by
-  intro hmc hasMain ⟨hcomp, rest⟩
+  intro hmc hasMain ⟨hartifact, hbound, rest⟩
   obtain ⟨parsed', parsedEq', declsEq, resultEq⟩ := nativeSourceCompile_ok compiled
   rw [parsedEq] at parsedEq'
   cases Except.ok.inj parsedEq'
   rw [declsEq] at rest
-  rw [resultEq, RiscV.NativeSource.compileDeclarations_eq] at hcomp
+  rw [resultEq, nativeSourceCompileDeclarations_eq] at hartifact
+  have hcomp : compileProgMaxAsmExecutable pancakeRiscVBackendConfig riscvConfig
+      (mainFirstHOL (parsed.map declToHOL)) = (some (bytes, bitmaps, c'), stack_max) := by
+    apply Prod.ext
+    · exact hartifact
+    · simpa only [nativeSourceLogicalBound, declsEq] using hbound.symm
   exact panToTargetCompileSemanticsRiscVSource mc (parsed.map declToHOL) bytes bitmaps c'
     stack_max s ms globals_size heap_len adj_ptr2 adj_ptr4 ffi cbspace data_sp start hmc hasMain
     ⟨hcomp, rest⟩

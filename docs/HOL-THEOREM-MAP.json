@@ -99153,7 +99153,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/NativeSourceCorrect.lean",
     "lean_name": "nativeSourceCompile_correct",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific final driver theorem (bead flapjack-executed-cli-correctness): NativeSource.compile source = ok out with parse result parsed (having a main function), out.wholeResult = (some (bytes,bitmaps,c'), stack_max), isRiscvMachineConfig mc and the original non-configuration premises on out.declarations ⇒ every machine behaviour relates (extend_with_resource_limit') to semanticsDecls s main (parsed.map declToHOL). Via compileProgMaxAsmFast_eq, semanticsDecls_mainFirstHOL and panToTargetCompileSemantics (HOL pan_to_target_compile_semantics at RISC-V). Parse/static errors and default-main case excluded; default CLI entry point separate."
+    "reviewer": "Flapjack-specific final driver theorem (bead flapjack-executed-cli-correctness): NativeSource.compile source = ok out with parse result parsed (having a main function), out.artifact = some (bytes,bitmaps,c') and stack_max = nativeSourceLogicalBound out, isRiscvMachineConfig mc and the original non-configuration premises on out.declarations ⇒ every machine behaviour relates (extend_with_resource_limit') to semanticsDecls s main (parsed.map declToHOL). Via nativeSourceCompile_full_result, compileProgAsmFast_eq_fst and compileProgMaxAsmFast_eq, semanticsDecls_mainFirstHOL and panToTargetCompileSemantics (HOL pan_to_target_compile_semantics at RISC-V). Parse/static errors and default-main case excluded; default CLI entry point separate."
   },
   {
     "hol_path": "cakeml/compiler/backend/backendScript.sml",
@@ -99169,7 +99169,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/NativeCLICorrect.lean",
     "lean_name": "nativeCLIOutput_correct",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific default-CLI theorem (bead flapjack-native-cli-default-adapter): every successful RiscV.NativeCLI.output format source = ok (warnings, text) (the default flapjack-compile route, all modes) comes from a successful parse and NativeSource.compile with compiled tuple (bytes,bitmaps,config), text = render of that tuple (emitted code = bytes), and NativeRiscVCorrectness parsed out (the nativeSourceCompile_correct conclusion for the parsed program)."
+    "reviewer": "Flapjack-specific default-CLI theorem (bead flapjack-native-cli-default-adapter): every successful RiscV.NativeCLI.output format source = ok (warnings, text) (the default flapjack-compile route, all modes) comes from a successful parse and NativeSource.compile with compiled tuple (bytes,bitmaps,config), text = render of that tuple (emitted code = bytes), and NativeRiscVCorrectness parsed out (the nativeSourceCompile_correct conclusion for the parsed program). P0 depth repair: additionally establishes full logical compile tuple equality at the emitted artifact and nativeSourceLogicalBound out; the default executable computes no bound."
   },
   {
     "hol_path": null,
@@ -99178,5 +99178,29 @@
     "lean_name": "compileProgMaxAsmDepthExecutable_eq",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack executable infrastructure (flapjack-sol; bead flapjack-native-word-depth-executable): unconditional complete Option(bytes,bitmaps,Backend.Config) paired with Option stack-bound equality to compileProgMaxAsmFast. Only depth analysis uses constructor-preserving Spt.map slimCode and fused analysis; kernel callGraph_slim_eq preserves the entire original call tree for arbitrary maps, callee deletion, return/handler programs, unknown/indirect calls, alloc/install and cycle conditions. Original Word program still feeds backend; original tagged declarations are unchanged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileProgMaxAsmWith.lean",
+    "lean_name": "compileProgAsmFast_eq_fst",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure (flapjack-sol; bead flapjack-pr1215-depth-blocker): Unconditional equality of the no-depth artifact API to the first projection of the full logical compiler; allocator equality followed by definitional projection."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/NativeSourceCorrect.lean",
+    "lean_name": "nativeSourceCompileDeclarations_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure (flapjack-sol; bead flapjack-pr1215-depth-blocker): No-depth native source artifact equals the full logical compiler first projection on main-first parsed declarations, including failures."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/NativeSourceCorrect.lean",
+    "lean_name": "nativeSourceCompile_full_result",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure (flapjack-sol; bead flapjack-pr1215-depth-blocker): Every successful source driver run supplies the full logical compiler tuple (out.artifact, nativeSourceLogicalBound out); Prod.ext and artifact equality establish this without evaluating depth in the driver."
   }
 ]

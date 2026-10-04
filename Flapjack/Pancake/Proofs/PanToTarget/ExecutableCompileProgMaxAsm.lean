@@ -1,4 +1,5 @@
 import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMax
+import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileDefinitions
 import Flapjack.Pancake.Proofs.PanToTarget.RiscVInstanceExecutable
 
 /-! Assembler-only callable compiler interface.
@@ -17,24 +18,6 @@ open Flapjack.Compiler.Backend.BackendProof Flapjack.Basis.Pure.MlString
 open Flapjack.Pancake.PanLang Flapjack.SemanticsPropsHOL
 open Flapjack.Compiler.Backend.RiscVConfig Flapjack.Compiler.Encoders.RiscV.Target
 
-/-- `compileProgMaxExecutable` with its machine configuration replaced by the assembler
-configuration it reads: the native pan-to-word compiler, the executable word-to-word
-composition, native word-to-stack, the original maximum-depth bound and `from_stack`.
-Flapjack computation infrastructure. -/
-def compileProgMaxAsmExecutable {width : Nat} [NeZero width]
-    (config : Flapjack.Compiler.Backend.Backend.Config) (asmConf : AsmConfigExact width)
-    (program : List (DeclHOL width)) :
-    Option (List (BitVec 8) × List (BitVec width) ×
-      Flapjack.Compiler.Backend.Backend.Config) × Option Nat :=
-  let program := panToWordCompileProgHOL asmConf.isa program
-  let (_coloring, wordProgram) :=
-    WordToWord.compileExecutable config.wordToWordConf asmConf program
-  let (bitmaps, wordConfig, _frames, stackProgram) :=
-    WordToStack.Native.compileNative asmConf false wordProgram
-  let maximum := WordDepth.maxDepth wordConfig.stackFrameSize
-    (WordDepth.fullCallGraph BvlToBvi.initGlobalsLocation (sptFromAList wordProgram))
-  (Flapjack.Compiler.Backend.Backend.fromStack asmConf config .ln stackProgram bitmaps,
-    maximum)
 
 /-- The callable compiler depends on the machine configuration only through its assembler
 configuration (kernel definitional equality; Flapjack infrastructure). -/
