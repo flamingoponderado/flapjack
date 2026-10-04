@@ -8391,5 +8391,7 @@ run_probe word_to_stack_store_consts_caller_probeScript.sml word_to_stack_store_
 
 run_probe riscv_target_jumpcmp_probeScript.sml riscv_target_jumpcmp_probe.out \
   riscv_encoder_correct_jumpcmp_statement riscv_encoder_correct_jumpcmp_types riscv_encoder_correct_jumpcmp_hypotheses riscv_encoder_correct_jumpcmp_proved \
+run_probe riscv_target_mem_probeScript.sml riscv_target_mem_probe.out \
+  riscv_encoder_correct_mem_statement riscv_encoder_correct_mem_types riscv_encoder_correct_mem_hypotheses riscv_encoder_correct_mem_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
