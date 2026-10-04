@@ -8805,3 +8805,11 @@ definition changes here. Whole encoder and compiler assembly remain open.
 `pan_to_word_inst_ok_less_probe.out` captures the complete original typed six-pass instruction-validity theorem. Source declarations, asm_config and output word programs share one word dimension. The native proof composes reviewed source invariants and full LoopToWord instruction validity under the actual compile equation, both zero-offset guards and original good_panops guard. No target-run or desired-result premise is added; whole semantic compiler correctness remains open.
 
 `word_to_stack_store_consts_caller_probe.out` captures the original full typed StoreConsts comp clause and actual native outputs below/at 8-bit wrapping, at 64-bit wrapping, at the exact chunk boundary and at width1. Three w2n observations normalize the printed word literals. The source register is1 and original stub6; native code, complete flattened bitmap state/count and unconditional macro acceptance are kernel-checked against the repaired executed word-facing producer. The generic Nat macro helper is retained separately. This does not establish full WordToStack simulation or whole compiler correctness.
+
+`riscv_backend_config_probe.out` captures the exported original
+`riscv_backend_config_def` (no hypotheses) with HOL's SML quotations already
+spliced, including the evaluated `clos_to_bvl`/`bvl_to_bvi` default records.
+`Flapjack/Compiler/Backend/RiscVConfig/BackendConfig.lean` states the same
+literal record; untagged `rfl` lemmas tie the two evaluated default records to
+the tagged `default_config` ports. Syntactic evidence only, not a
+cross-language proof.

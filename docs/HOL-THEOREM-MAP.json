@@ -98737,5 +98737,13 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus3: compared original full SubOverflow constructor at riscv_targetProof658-663, original riscv_target158-164 XOR31/SUB/XOR/XORI(-1)/AND/SRLI63 expansion, asmSem arith_upd (r1 := w2-w3, r4 := signed-overflow flag, flag write last) and asm arith_ok (only r1<>r3), and full encoder_correct_def. Typed specialization riscv_target_suboverflow_probe: hypotheses 0, proved T; HOL specialization and Lean statement identical to the reviewed AddOverflow case modulo the constructor. Only original asmStep plus initial targetStateRel; complete existential n, every environment with original interferenceOk, both assertions, code bytes, PC range and final full relation. Every native fetch/decode/Run/Next derived from literal encoded bytes; untagged arithmetic shows the circuit equals HOL signed subtraction overflow for all word64 pairs. Broad native Run/target closure inherits reals_as_rational_cuts, the rational-cut assurance limit SOUNDNESS8; no executed route change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/riscv/riscv_configScript.sml",
+    "hol_name": "riscv_backend_config_def",
+    "lean_path": "Flapjack/Compiler/Backend/RiscVConfig/BackendConfig.lean",
+    "lean_name": "riscvBackendConfig",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04 (bead flapjack-x6sx8): riscv_configScript.sml 46-70 and the exported theory capture riscv_backend_config_probe (hypotheses 0), whose body has the SML quotations spliced: source_conf prim_src_config; clos_conf the evaluated clos_to_bvl default record (next_loc 0, start 1, do_mti T, known_conf SOME <|inline_max_body_size 88; inline_factor 8; initial_inline_factor 8; val_approx_spt LN|>, do_call T, call_state (LN,[]), max_app 10); bvl_conf the evaluated bvl_to_bvi default (10, 1000, T, 73, 74, 75, T, T, LN, LN); data_conf tag 4/len 4/pad 2/len_size 32, has_div T, longdiv/fp_ops/fp_tern/be/call_empty_ffi F, gc_kind Simple; word_to_word reg_alg 3 col_oracle []; word_conf bitmaps_length 0 stack_frame_size LN; stack_conf jump F reg_names riscv_names perf_calls F; lab_conf pos 0 ffi_names NONE labels LN sec_pos_len [] init_clock 5 hash_size 104729 shmem_extra []; symbols []; tap_conf default_tap_config; exported []. Every field literal over the reviewed config carriers; rfl sanity lemmas tie the clos/bvl literals to the tagged default_config ports. Note: Pancake's driver uses pancake_backend_conf (gc_kind None) on top of this, see flapjack-nlgac."
   }
 ]
