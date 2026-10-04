@@ -8005,8 +8005,8 @@ set_sep `fun2set_def`/`fun2set_thm`, asmProps `interference_ok_def`/`asserts2_de
 riscv_target `riscv_encode_def`/`riscv_proj_def`/`riscv_next_def`, and the existing
 seven original native Next clause derivations. Existing scoped original captures
 remain evidence for their own declarations; no new oracle or original named
-list theorem is invented. These composition helpers stay untagged. The full
-Const `asserts` intermediate/final source-state relation remains open.
+list theorem is invented. These composition helpers stay untagged and support
+the full Const constructor documented below.
 
 `check-riscv-const-execution.py` pins actual target iteration and the full public
 statements. Mutation tests reject a pure replacement iterator, wrong index or
@@ -8033,8 +8033,8 @@ write. No target execution or post-state relation is assumed.
 These are untagged composition lemmas, not separately named HOL declarations.
 Source comparison uses the literal seven register clauses and Const lowering
 at `riscv_targetScript.sml:103-126`; the full original Const constructor at
-`riscv_targetProofScript.sml:533-545` remains open until its intermediate and
-final source-state assertions are assembled. Existing oracle captures retain
+`riscv_targetProofScript.sml:533-545` is assembled in `ConstAssertions.lean`
+using these intermediate and final source-state facts. Existing oracle captures retain
 their original scope; this addition does not claim a new full-Next oracle.
 
 `CorrectnessEncoding/ConstRelation.lean` derives the literal source Const
@@ -8044,8 +8044,8 @@ assumes only original `asmStep` and the initial `targetStateRel`. Register
 bounds and nonzero destination follow from `asm_ok`; scratch31 is retained in
 the native post-state and excluded from source observations by the original
 `avoidRegs`. The memory domain and exact PC increment are preserved. These
-untagged composition lemmas have no separately named HOL original; the full
-original interference/assertions constructor remains open.
+untagged composition lemmas have no separately named HOL original; they are
+used by the full original interference/assertions constructor documented below.
 
 ## Full typed Word-to-Stack proof captures
 
