@@ -4711,6 +4711,9 @@ run_probe word_to_word_no_install_compile_single_probeScript.sml word_to_word_no
 run_probe data_to_word_gc_fun_const_ok_probeScript.sml data_to_word_gc_fun_const_ok_probe.out \
   gc_fun_const_ok_word_gc_fun_statement gc_fun_const_ok_word_gc_fun_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_gcProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe pan_to_target_init_helpers_source_replay_probeScript.sml pan_to_target_init_helpers_source_replay_probe.out \
+  word_to_stack_compile_FST_replay_statement InitGlobals_location_eq_first_name_replay_typed \
+  "$cake_dir/pancake/proofs/pan_to_targetProofScript.sml" "$cake_dir/pancake/proofs"
 run_probe pan_to_target_stack_size_source_replay_probeScript.sml pan_to_target_stack_size_source_replay_probe.out \
   no_alloc_word_evaluate_replay_statement option_lt_SOME_replay_typed \
   "$cake_dir/pancake/proofs/pan_to_targetProofScript.sml" "$cake_dir/pancake/proofs"
@@ -7056,6 +7059,14 @@ run_probe l3_step_shift_probeScript.sml l3_step_shift_probe.out \
     "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
   run_probe l3_step_branch_probeScript.sml l3_step_branch_probe.out \
     beq_hypotheses beq_statement bne_hypotheses bne_statement blt_hypotheses blt_statement bltu_hypotheses bltu_statement bge_hypotheses bge_statement bgeu_hypotheses bgeu_statement source \
+    "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
+  run_probe l3_step_wmuldiv_probeScript.sml l3_step_wmuldiv_probe.out \
+    mulw_hypotheses mulw_statement divw_hypotheses divw_statement divuw_hypotheses divuw_statement remw_hypotheses remw_statement remuw_hypotheses remuw_statement \
+    mulw_nop_hypotheses mulw_nop_statement divw_nop_hypotheses divw_nop_statement divuw_nop_hypotheses divuw_nop_statement remw_nop_hypotheses remw_nop_statement remuw_nop_hypotheses remuw_nop_statement source \
+    "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
+  run_probe l3_step_mulh_probeScript.sml l3_step_mulh_probe.out \
+    mulh_hypotheses mulh_statement mulhu_hypotheses mulhu_statement mulhsu_hypotheses mulhsu_statement \
+    mulh_nop_hypotheses mulh_nop_statement mulhu_nop_hypotheses mulhu_nop_statement mulhsu_nop_hypotheses mulhsu_nop_statement source \
     "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
   run_probe pan_structs_mmap_faithful_probeScript.sml pan_structs_mmap_faithful_probe.out \
   compile_exp_correct_mmap_helper_statement compile_exp_correct_mmap_helper_types compile_exp_correct_mmap_helper_hypotheses compile_exp_correct_mmap_helper_proved \
