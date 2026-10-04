@@ -105,12 +105,14 @@ theorem everyInstConstFp {width : Nat} [NeZero width]
     everyInst P (constFp program) = true :=
   constFpLoopNoInst P program .ln source
 
-/-- Successful hoisting preserves the three original source predicates. The dummy is unrestricted; the unused HOL variable s retains an independent arbitrary carrier. -/
+/-- Successful hoisting preserves the three original source predicates. The dummy is unrestricted.
+    HOL's universally bound `s` occurs nowhere in the statement (it is vacuous and has an
+    unconstrained type), so it is omitted, as for the other `try_if_hoist2` lemmas. -/
 @[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "try_if_hoist2_no_inst"
   (words_as_type_indexed_bitvec)]
-theorem tryIfHoist2NoInst {width : Nat} [NeZero width] {δ : Type}
+theorem tryIfHoist2NoInst {width : Nat} [NeZero width]
     (P : WordLangInst (BitVec width) → Bool) (n : Nat)
-    (first interm dummy second out : WordLangProgHOL (BitVec width)) (_s : δ)
+    (first interm dummy second out : WordLangProgHOL (BitVec width))
     (run : tryIfHoist2 n first interm dummy second = some out)
     (firstValid : everyInst P first = true) (intermValid : everyInst P interm = true)
     (secondValid : everyInst P second = true) : everyInst P out = true := by
@@ -148,7 +150,7 @@ private theorem tryIfHoist1NoInst {width : Nat} [NeZero width]
   unfold tryIfHoist1 at run
   split at run
   · contradiction
-  · exact tryIfHoist2NoInst P _ _ _ _ _ _ () run firstValid rfl secondValid
+  · exact tryIfHoist2NoInst P _ _ _ _ _ _ run firstValid rfl secondValid
 
 /-- Duplicate-condition simplification preserves the original predicate through actual successful hoisting and sequence association. -/
 @[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "simp_duplicate_if_no_inst"
