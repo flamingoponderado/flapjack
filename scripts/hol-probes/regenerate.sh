@@ -7391,6 +7391,14 @@ run_probe word_to_stack_comp_shareinst_probeScript.sml word_to_stack_comp_sharei
   comp_correct_shareinst_full_statement comp_correct_shareinst_full_proved comp_correct_shareinst_full_hypotheses comp_correct_shareinst_whole_statement comp_correct_shareinst_whole_proved comp_correct_shareinst_whole_hypotheses comp_correct_shareinst_full_statement_typed state_rel_set_var_k_typed word_exp_Op_SOME_Word_typed flat_exp_conventions_ShareInst_exp_simp_typed word_exp_Op_Add_0_typed evaluate_ShareInst_Var_eq_Op_Add_typed share_load_lemma1_typed share_load_lemma2_typed share_store_lemma1_typed share_store_lemma2_typed evaluate_ShareInst_Load_typed evaluate_ShareInst_Store_typed evaluate_ShareInst_correct_lemma_typed \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe pan_to_target_library_lemmas_probeScript.sml pan_to_target_library_lemmas_probe.out \
+  fun2set_disjoint_union_typed word_arith_lemma2_typed aligned_add_sub_typed \
+  "$cake_dir/misc/miscScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe backend_compile_lab_probeScript.sml backend_compile_lab_probe.out \
+  compile_lab_LENGTH_typed compile_lab_IMP_mmio_pcs_min_index_typed \
+  "$cake_dir/compiler/backend/proofs/backendProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe backend_machine_init_probeScript.sml backend_machine_init_probe.out \
   mc_init_ok_def_typed heap_regs_def_typed byte_aligned_MOD_typed word_list_exists_imp_typed \
   "$cake_dir/compiler/backend/proofs/backendProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -8070,6 +8078,9 @@ run_probe riscv_ror_step_probeScript.sml riscv_ror_step_probe.out \
   ror_run_srli_clause ror_run_srli_types ror_run_srli_hypotheses ror_run_sll_clause ror_run_sll_types ror_run_sll_hypotheses ror_run_srl_clause ror_run_srl_types ror_run_srl_hypotheses ror_run_sub_clause ror_run_sub_types ror_run_sub_hypotheses ror_next_srli_zero ror_next_srli_all_ones ror_next_sll_zero ror_next_sll_all_ones ror_next_srl_zero ror_next_srl_all_ones ror_next_sub_zero ror_next_sub_all_ones \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+run_probe backend_word_conventions2_probeScript.sml backend_word_conventions2_probe.out \
+  fullConventions_typed fullConventions_proved fullConventions_hypotheses \
+  "$cake_dir/compiler/backend/proofs/backendProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe riscv_target_shift_ror_immediate_probeScript.sml riscv_target_shift_ror_immediate_probe.out \
   riscv_encoder_correct_shiftRorImmediate_statement riscv_encoder_correct_shiftRorImmediate_types riscv_encoder_correct_shiftRorImmediate_hypotheses riscv_encoder_correct_shiftRorImmediate_proved \
