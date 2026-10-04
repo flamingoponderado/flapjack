@@ -94932,5 +94932,131 @@
     "hol_name": "Mupdate_exn_eq",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-a source comparison (2026-10-01; bead flapjack-pxn.18.5.11.5.11.1.1): original 171-178, accepted exact Exc value/exception carrier with arbitrary independent universe-0 value and exception types, HOL list as Lean List and unbounded num as Nat. Msub empty-list failure and zero-success/nonzero recursive index subtraction retained; Mupdate retains full prefix only on recursive success and propagates original failure unchanged. Original n >= LENGTH l premise translates to values.length <= index, no validity, source-success, DecidableEq, exception classification or fixed-width restriction. Both generic failure-bound theorems prove original exact equality by list induction and index cases, with no added premises; kernel axioms propext/Classical.choice/Quot.sound only. Twenty-five fresh original observations and identical registered kernel replay cover head/middle/last/empty/boundary/large indices, duplicate values, independent Nat/Bool/tuple types and theorem applications at six failing boundaries. No total EL/LUPDATE claim is made; successful equations and state-array accessors remain parent frontier. Pure primitives/proofs; executed allocator migration and whole compiler correctness remain open. Coordinator source comparison completed against the original clauses and generic carriers; unified integration gates and publication are checked separately."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+    "hol_name": "installed_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/Installed.lean",
+    "lean_name": "installed",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.4): targetSem installed_def (477-510), compared clause by clause with the typed capture target_sem_installed; all binders and all clauses in HOL order. Address sets are α word -> bool in HOL (typed capture), rendered as Boolean domains as in the tagged good_init_state_def: set-builder {w | t.regs r1 <=+ w ∧ w <+ t.regs r2} as the decided unsigned range, ∪ as ||, DISJOINT as pointwise exclusion, byte_aligned ∩ bitmaps_dm as the conjunction; unsigned <=+/<+/≤₊ as BitVec ≤/<; bytes_in_word as n2w (dimindex DIV 8) (StackRemove.bytesInWord); word_list/word_list_exists/fun2set/STAR as the tagged Misc.wordList/Misc.wordListExists/SetSep.fun2Set/SetSep.star; ffi_names : ffiname list option as Option (List HolFfiName); shmem_info_num as the tagged ShmemInfoNum; mmio_pcs_min_index, ffi_offset, Addr as the tagged mmioPcsMinIndex, ffiOffset, HolAddr.addr; GENLIST f n as (List.range n).map f, ZIP on equal-length lists, DROP as List.drop, w2n as toNat, dimword (:α) as 2 ^ width; HOL's paired argument (r1,r2) is the pair regs. Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "pan_installed_def",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/PanInstalled.lean",
+    "lean_name": "panInstalled",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.4): pan_to_targetProof pan_installed_def (290-326), compared with the literal-source replay pan_to_target_pan_installed_source_replay; the installed_def clauses plus (∀a. a ∈ p_dom ⇒ m a = p_mem a) and sdm' = sdm ∩ byte_aligned (p_dom, sdm' Boolean domains, ∩ as &&), in HOL order. Address sets are α word -> bool in HOL (typed capture), rendered as Boolean domains as in the tagged good_init_state_def: set-builder {w | t.regs r1 <=+ w ∧ w <+ t.regs r2} as the decided unsigned range, ∪ as ||, DISJOINT as pointwise exclusion, byte_aligned ∩ bitmaps_dm as the conjunction; unsigned <=+/<+/≤₊ as BitVec ≤/<; bytes_in_word as n2w (dimindex DIV 8) (StackRemove.bytesInWord); word_list/word_list_exists/fun2set/STAR as the tagged Misc.wordList/Misc.wordListExists/SetSep.fun2Set/SetSep.star; ffi_names : ffiname list option as Option (List HolFfiName); shmem_info_num as the tagged ShmemInfoNum; mmio_pcs_min_index, ffi_offset, Addr as the tagged mmioPcsMinIndex, ffiOffset, HolAddr.addr; GENLIST f n as (List.range n).map f, ZIP on equal-length lists, DROP as List.drop, w2n as toNat, dimword (:α) as 2 ^ width; HOL's paired argument (r1,r2) is the pair regs. Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "pan_installed_imp_installed",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/PanInstalled.lean",
+    "lean_name": "pan_installed_imp_installed",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.4): pan_to_targetProof pan_installed_imp_installed (328-334), compared with the literal-source replay pan_to_target_pan_installed_source_replay (re-proved with HOL's tactic); HOL's free variables explicit in order of appearance with (r1,r2) as the pair. Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_to_word_comp_extract_labels_len",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/LabPres.lean",
+    "lean_name": "loop_to_word_comp_extract_labels_len",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.2.1): compared with the typed capture pan_to_word_lab_pres. HOL's free variables are explicit binders in order of appearance; comp/comp_func/compile_prog/compile are the tagged compHOL/loopToWordCompFuncHOL/loopToWordCompileProgHOL/loopToWordCompileHOL, pan_to_word compile_prog the tagged panToWordCompileProgHOL, extract_labels the tagged extractLabels, (word_)good_handlers the tagged goodHandlersHOL (Bool = true); EVERY (λ(…). P) l is ∀ x ∈ l on the components, ALL_DISTINCT is List.Nodup, MAP FST is map Prod.fst, LENGTH is length, EL n l under n < LENGTH l is l[n], SND l − … is Nat subtraction. Positive word dimension via [NeZero width]. The three comp label theorems are projections of one untagged invariant (compHOL_labels) proved by induction over comp."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_to_word_comp_extract_labels",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/LabPres.lean",
+    "lean_name": "loop_to_word_comp_extract_labels",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.2.1): compared with the typed capture pan_to_word_lab_pres. HOL's free variables are explicit binders in order of appearance; comp/comp_func/compile_prog/compile are the tagged compHOL/loopToWordCompFuncHOL/loopToWordCompileProgHOL/loopToWordCompileHOL, pan_to_word compile_prog the tagged panToWordCompileProgHOL, extract_labels the tagged extractLabels, (word_)good_handlers the tagged goodHandlersHOL (Bool = true); EVERY (λ(…). P) l is ∀ x ∈ l on the components, ALL_DISTINCT is List.Nodup, MAP FST is map Prod.fst, LENGTH is length, EL n l under n < LENGTH l is l[n], SND l − … is Nat subtraction. Positive word dimension via [NeZero width]. The three comp label theorems are projections of one untagged invariant (compHOL_labels) proved by induction over comp."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_to_word_comp_ALL_DISTINCT",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/LabPres.lean",
+    "lean_name": "loop_to_word_comp_ALL_DISTINCT",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.2.1): compared with the typed capture pan_to_word_lab_pres. HOL's free variables are explicit binders in order of appearance; comp/comp_func/compile_prog/compile are the tagged compHOL/loopToWordCompFuncHOL/loopToWordCompileProgHOL/loopToWordCompileHOL, pan_to_word compile_prog the tagged panToWordCompileProgHOL, extract_labels the tagged extractLabels, (word_)good_handlers the tagged goodHandlersHOL (Bool = true); EVERY (λ(…). P) l is ∀ x ∈ l on the components, ALL_DISTINCT is List.Nodup, MAP FST is map Prod.fst, LENGTH is length, EL n l under n < LENGTH l is l[n], SND l − … is Nat subtraction. Positive word dimension via [NeZero width]. The three comp label theorems are projections of one untagged invariant (compHOL_labels) proved by induction over comp."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_to_word_comp_func_lab_pres",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/LabPres.lean",
+    "lean_name": "loop_to_word_comp_func_lab_pres",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.2.1): compared with the typed capture pan_to_word_lab_pres. HOL's free variables are explicit binders in order of appearance; comp/comp_func/compile_prog/compile are the tagged compHOL/loopToWordCompFuncHOL/loopToWordCompileProgHOL/loopToWordCompileHOL, pan_to_word compile_prog the tagged panToWordCompileProgHOL, extract_labels the tagged extractLabels, (word_)good_handlers the tagged goodHandlersHOL (Bool = true); EVERY (λ(…). P) l is ∀ x ∈ l on the components, ALL_DISTINCT is List.Nodup, MAP FST is map Prod.fst, LENGTH is length, EL n l under n < LENGTH l is l[n], SND l − … is Nat subtraction. Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_to_word_compile_prog_lab_pres",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/LabPres.lean",
+    "lean_name": "loop_to_word_compile_prog_lab_pres",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.2.1): compared with the typed capture pan_to_word_lab_pres. HOL's free variables are explicit binders in order of appearance; comp/comp_func/compile_prog/compile are the tagged compHOL/loopToWordCompFuncHOL/loopToWordCompileProgHOL/loopToWordCompileHOL, pan_to_word compile_prog the tagged panToWordCompileProgHOL, extract_labels the tagged extractLabels, (word_)good_handlers the tagged goodHandlersHOL (Bool = true); EVERY (λ(…). P) l is ∀ x ∈ l on the components, ALL_DISTINCT is List.Nodup, MAP FST is map Prod.fst, LENGTH is length, EL n l under n < LENGTH l is l[n], SND l − … is Nat subtraction. Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_to_word_compile_prog_FST_eq",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/LabPres.lean",
+    "lean_name": "loop_to_word_compile_prog_FST_eq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.2.1): compared with the typed capture pan_to_word_lab_pres. HOL's free variables are explicit binders in order of appearance; comp/comp_func/compile_prog/compile are the tagged compHOL/loopToWordCompFuncHOL/loopToWordCompileProgHOL/loopToWordCompileHOL, pan_to_word compile_prog the tagged panToWordCompileProgHOL, extract_labels the tagged extractLabels, (word_)good_handlers the tagged goodHandlersHOL (Bool = true); EVERY (λ(…). P) l is ∀ x ∈ l on the components, ALL_DISTINCT is List.Nodup, MAP FST is map Prod.fst, LENGTH is length, EL n l under n < LENGTH l is l[n], SND l − … is Nat subtraction. Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_to_word_compile_prog_lab_min",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/LabPres.lean",
+    "lean_name": "loop_to_word_compile_prog_lab_min",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.2.1): compared with the typed capture pan_to_word_lab_pres. HOL's free variables are explicit binders in order of appearance; comp/comp_func/compile_prog/compile are the tagged compHOL/loopToWordCompFuncHOL/loopToWordCompileProgHOL/loopToWordCompileHOL, pan_to_word compile_prog the tagged panToWordCompileProgHOL, extract_labels the tagged extractLabels, (word_)good_handlers the tagged goodHandlersHOL (Bool = true); EVERY (λ(…). P) l is ∀ x ∈ l on the components, ALL_DISTINCT is List.Nodup, MAP FST is map Prod.fst, LENGTH is length, EL n l under n < LENGTH l is l[n], SND l − … is Nat subtraction. Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_to_word_compile_lab_min",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/LabPres.lean",
+    "lean_name": "loop_to_word_compile_lab_min",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.2.1): compared with the typed capture pan_to_word_lab_pres. HOL's free variables are explicit binders in order of appearance; comp/comp_func/compile_prog/compile are the tagged compHOL/loopToWordCompFuncHOL/loopToWordCompileProgHOL/loopToWordCompileHOL, pan_to_word compile_prog the tagged panToWordCompileProgHOL, extract_labels the tagged extractLabels, (word_)good_handlers the tagged goodHandlersHOL (Bool = true); EVERY (λ(…). P) l is ∀ x ∈ l on the components, ALL_DISTINCT is List.Nodup, MAP FST is map Prod.fst, LENGTH is length, EL n l under n < LENGTH l is l[n], SND l − … is Nat subtraction. Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "pan_to_word_good_handlers",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/LabPres.lean",
+    "lean_name": "pan_to_word_good_handlers",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.2): compared with the typed capture pan_to_word_lab_pres. HOL's free variables are explicit binders in order of appearance; comp/comp_func/compile_prog/compile are the tagged compHOL/loopToWordCompFuncHOL/loopToWordCompileProgHOL/loopToWordCompileHOL, pan_to_word compile_prog the tagged panToWordCompileProgHOL, extract_labels the tagged extractLabels, (word_)good_handlers the tagged goodHandlersHOL (Bool = true); EVERY (λ(…). P) l is ∀ x ∈ l on the components, ALL_DISTINCT is List.Nodup, MAP FST is map Prod.fst, LENGTH is length, EL n l under n < LENGTH l is l[n], SND l − … is Nat subtraction. Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "pan_to_word_compile_lab_pres",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/LabPres.lean",
+    "lean_name": "pan_to_word_compile_lab_pres",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.2): compared with the typed capture pan_to_word_lab_pres. HOL's free variables are explicit binders in order of appearance; comp/comp_func/compile_prog/compile are the tagged compHOL/loopToWordCompFuncHOL/loopToWordCompileProgHOL/loopToWordCompileHOL, pan_to_word compile_prog the tagged panToWordCompileProgHOL, extract_labels the tagged extractLabels, (word_)good_handlers the tagged goodHandlersHOL (Bool = true); EVERY (λ(…). P) l is ∀ x ∈ l on the components, ALL_DISTINCT is List.Nodup, MAP FST is map Prod.fst, LENGTH is length, EL n l under n < LENGTH l is l[n], SND l − … is Nat subtraction. Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "pan_to_word_compile_prog_lab_min",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/LabPres.lean",
+    "lean_name": "pan_to_word_compile_prog_lab_min",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.2): compared with the typed capture pan_to_word_lab_pres. HOL's free variables are explicit binders in order of appearance; comp/comp_func/compile_prog/compile are the tagged compHOL/loopToWordCompFuncHOL/loopToWordCompileProgHOL/loopToWordCompileHOL, pan_to_word compile_prog the tagged panToWordCompileProgHOL, extract_labels the tagged extractLabels, (word_)good_handlers the tagged goodHandlersHOL (Bool = true); EVERY (λ(…). P) l is ∀ x ∈ l on the components, ALL_DISTINCT is List.Nodup, MAP FST is map Prod.fst, LENGTH is length, EL n l under n < LENGTH l is l[n], SND l − … is Nat subtraction. Positive word dimension via [NeZero width]."
   }
 ]
