@@ -4714,9 +4714,6 @@ run_probe word_to_word_no_install_compile_single_probeScript.sml word_to_word_no
 run_probe data_to_word_gc_fun_const_ok_probeScript.sml data_to_word_gc_fun_const_ok_probe.out \
   gc_fun_const_ok_word_gc_fun_statement gc_fun_const_ok_word_gc_fun_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_gcProofScript.sml" "$cake_dir/compiler/backend/proofs"
-run_probe namespace_source_to_flat_ops_probeScript.sml namespace_source_to_flat_ops_probe.out \
-  id_type nsMap_def_typed \
-  "$cake_dir/semantics/namespaceScript.sml" "$cake_dir/semantics"
 run_probe lab_props_every_sec_label_ok_probeScript.sml lab_props_every_sec_label_ok_probe.out \
   EVERY_sec_label_ok_statement EVERY_sec_label_ok_typed \
   "$cake_dir/compiler/backend/semantics/labPropsScript.sml" "$cake_dir/compiler/backend/semantics"
