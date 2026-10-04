@@ -1,0 +1,44 @@
+ld_run_zero=T
+ld_run_alias_sign=T
+ld_run_basezero_unaligned=T
+lwu_run_zero=T
+lwu_run_alias_sign=T
+lwu_run_basezero_unaligned=T
+lhu_run_zero=T
+lhu_run_alias_sign=T
+lhu_run_basezero_unaligned=T
+lbu_run_zero=T
+lbu_run_alias_sign=T
+lbu_run_basezero_unaligned=T
+sd_run_basezero_sign=T
+sd_run_alias=T
+sw_run_basezero_sign=T
+sw_run_alias=T
+sh_run_basezero_sign=T
+sh_run_alias=T
+sb_run_basezero_sign=T
+sb_run_alias=T
+ld_run_source_clause=Run (Load (LD (r1v,r2v,offs))) ms = dfn'LD (r1v,r2v,offs) ms
+ld_run_source_hypotheses=0
+ld_run_carrier_types=ms : :riscv_state, offs : :word12, r2v : :word5, r1v : :word5
+lwu_run_source_clause=Run (Load (LWU (r1v,r2v,offs))) ms = dfn'LWU (r1v,r2v,offs) ms
+lwu_run_source_hypotheses=0
+lwu_run_carrier_types=ms : :riscv_state, offs : :word12, r2v : :word5, r1v : :word5
+lhu_run_source_clause=Run (Load (LHU (r1v,r2v,offs))) ms = dfn'LHU (r1v,r2v,offs) ms
+lhu_run_source_hypotheses=0
+lhu_run_carrier_types=ms : :riscv_state, offs : :word12, r2v : :word5, r1v : :word5
+lbu_run_source_clause=Run (Load (LBU (r1v,r2v,offs))) ms = dfn'LBU (r1v,r2v,offs) ms
+lbu_run_source_hypotheses=0
+lbu_run_carrier_types=ms : :riscv_state, offs : :word12, r2v : :word5, r1v : :word5
+sd_run_source_clause=Run (Store (SD (r1v,r2v,offs))) ms = dfn'SD (r1v,r2v,offs) ms
+sd_run_source_hypotheses=0
+sd_run_carrier_types=ms : :riscv_state, offs : :word12, r2v : :word5, r1v : :word5
+sw_run_source_clause=Run (Store (SW (r1v,r2v,offs))) ms = dfn'SW (r1v,r2v,offs) ms
+sw_run_source_hypotheses=0
+sw_run_carrier_types=ms : :riscv_state, offs : :word12, r2v : :word5, r1v : :word5
+sh_run_source_clause=Run (Store (SH (r1v,r2v,offs))) ms = dfn'SH (r1v,r2v,offs) ms
+sh_run_source_hypotheses=0
+sh_run_carrier_types=ms : :riscv_state, offs : :word12, r2v : :word5, r1v : :word5
+sb_run_source_clause=Run (Store (SB (r1v,r2v,offs))) ms = dfn'SB (r1v,r2v,offs) ms
+sb_run_source_hypotheses=0
+sb_run_carrier_types=ms : :riscv_state, offs : :word12, r2v : :word5, r1v : :word5

@@ -1,6 +1,9 @@
+import Flapjack.RiscV.CorrectnessEncoding.MemoryRun
+import Flapjack.RiscV.CorrectnessEncoding.DecodeMemory
 import Flapjack.RiscV.CorrectnessEncoding.Shift
 import Flapjack.RiscV.CorrectnessEncoding.ShiftRorRegister
 import Flapjack.Compiler.Backend.WordToStack.ProductionMoveDomain
+import Flapjack.Compiler.Backend.WordToStack.ProductionMoveMaterialization
 import Flapjack.RiscV.CorrectnessEncoding.ShiftRorImmediate
 import Flapjack.RiscV.CorrectnessEncoding.RorExecution
 import Flapjack.RiscV.CorrectnessEncoding.RorStep
@@ -101,6 +104,8 @@ import Flapjack.Compiler.Backend.ClosKnown.Config
 import Flapjack.Compiler.Backend.ClosLang.Syntax
 import Flapjack.AstHOL.BackendOperators
 import Flapjack.AstHOL.LitOp
+import Flapjack.AstHOL.Syntax
+import Flapjack.PrimTypesHOL
 import Flapjack.Misc.Location
 import Flapjack.Compiler.Backend.BackendCommon.Operators
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsCorrect
@@ -128,6 +133,8 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.ChunkBits
 import Flapjack.Compiler.Backend.SourceToFlat.Config
 import Flapjack.Compiler.Backend.FlatPattern.Config
 import Flapjack.Compiler.Backend.BackendCommon.Trace
+import Flapjack.Compiler.Backend.BackendCommon.BoolTags
+import Flapjack.Compiler.Backend.FlatLang
 import Flapjack.NamespaceHOL
 import Flapjack.Compiler.Backend.PresLang.Config
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmEvaluate
@@ -1943,6 +1950,7 @@ import Flapjack.PanHProgAssign
 import Flapjack.PanHProgWhile
 import Flapjack.Pancake.PanSimp
 import Flapjack.Pancake.PanToWord
+import Flapjack.Pancake.PanToWord.ProductionPrefix
 import Flapjack.Pancake.PanLang.ProgHOLInduction
 import Flapjack.Pancake.Proofs.PanSimp.ProgOfHOL
 import Flapjack.PanLocalised

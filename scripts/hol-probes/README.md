@@ -8493,3 +8493,21 @@ proves the native circuit equals HOL signed addition overflow for every word64
 pair. The full native target closure inherits SOUNDNESS8. The statement and
 capture pin is a syntactic regression check, not a cross-language proof or full
 compiler theorem.
+
+`riscv_memory_decode_probe.out` records each literal LD/LWU/LHU/LBU/SD/SW/SH/SB original Encode clause and intrinsic word5/word12 carriers, zero source hypotheses, and Decode/Encode evaluations at all-zero, all-one, and mixed-register/sign-offset inputs. Lean proves unrestricted roundtrips including zero registers and all offsets; finite probes are regression evidence, not universal equivalence. Full memory encoder correctness remains a dependency-linked open task.
+
+`pan_native_frontend_prefix_probeScript.sml` evaluates the complete source
+prefix (original first LET, pan_simp, pan_structs, pan_globals), raw Pan-to-Crep
+metadata payload and original Crep-to-Loop rows for a forward source call.
+It preserves original generated names and row labels; no generic Crep
+simplification or relabel bridge is inserted. This is regression evidence,
+not a whole-CLI execution-equivalence proof.
+
+`pan_native_word_prefix_probeScript.sml` evaluates the complete original
+`pan_to_word$compile_prog` after the extracted original first-main LET.
+The native Word prefix fixture compares all three rows, argument counts,
+call arguments/continuations and complete bodies against this capture.
+The general kernel theorem composes all six original passes from source
+byte ranges; actual downstream CLI/WordToStack routing remains separate.
+
+`riscv_memory_run_probe.out` records actual original RV64/bare Run observations for all four unsigned/full loads and four stores: zero-register no-op, aliases, signed offsets, unaligned addresses permitted by the literal model, full register/core frames and whole-state memory-update frames. Literal original Run clauses and full word5/word12/native-state carriers are also captured with zero source hypotheses. These are finite regression observations, not equivalence. Lean proves each arbitrary-field Run equation using only original riscvOk; full Mem source obligations, fetch/Next, interference and assertions remain open.
