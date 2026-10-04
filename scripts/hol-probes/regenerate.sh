@@ -4672,6 +4672,12 @@ run_probe word_cse_moves_probeScript.sml word_cse_moves_probe.out \
   MEM_FST_reduc_hypotheses canonicalMoveRegs_lemma_statement canonicalMoveRegs_lemma_hypotheses data_inv_clock_statement data_inv_clock_hypotheses \
   canonicalMoveRegs_lemma_typed \
   "$cake_dir/compiler/backend/proofs/word_cseProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_to_word_locals_typed_probeScript.sml word_to_word_locals_typed_probe.out \
+  rm_perm_source_statement_typed find_code_thm_source_statement_typed pop_env_termdep_source_statement_typed compile_single_eta_source_statement_typed code_rel_union_fromAList_source_statement_typed code_rel_no_alloc_replay_statement_typed code_rel_no_install_replay_statement_typed cond16bit_inst_select_exp_prime_statement \
+  "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe backend_heap_typed_probeScript.sml backend_heap_typed_probe.out \
+  heap_address_Pointer_type heap_address_Data_type heap_element_Unused_type heap_element_ForwardPointer_type heap_element_DataElement_type refs_to_addresses_def_statement compile_to_word_conventions2_source_statement_typed compile_to_word_conventions2_compile_constant \
+  "$cake_dir/compiler/backend/proofs/backendProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_cse_comp_correct_probeScript.sml word_cse_comp_correct_probe.out \
   comp_correct_statement comp_correct_hypotheses word_common_subexp_elim_correct_statement word_common_subexp_elim_correct_hypotheses comp_correct_typed \
   "$cake_dir/compiler/backend/proofs/word_cseProofScript.sml" "$cake_dir/compiler/backend/proofs"
