@@ -1,9 +1,10 @@
-(* Literal source-statement replay of pan_to_targetProof pan_to_stack_first_ALL_DISTINCT,
-   pan_to_stack_compile_lab_pres, pan_to_lab_labels_ok, word_to_stack_good_code_lemma and
-   from_pan_to_lab_no_install. The original proof theory and its backendProof ancestor are
-   unbuilt, so HOL's proofs are not re-run: the script fails if the pinned source text of any
-   statement, proof or used overload changes, then type-checks each statement over the loaded
-   original theories and prints it. This is not an exported original-theory capture. *)
+(* Literal source-statement replay of pan_to_targetProof pan_to_lab_good_code_lemma,
+   pan_to_stack_first_ALL_DISTINCT, pan_to_stack_compile_lab_pres, pan_to_lab_labels_ok,
+   word_to_stack_good_code_lemma and from_pan_to_lab_no_install. The original proof theory and
+   its backendProof ancestor are unbuilt, so HOL's proofs are not re-run: the script fails if the
+   pinned source text of any statement, proof or used overload changes, then type-checks each
+   statement over the loaded original theories and prints it. This is not an exported
+   original-theory capture. *)
 load "bossLib"; load "preamble"; load "pan_to_wordProofTheory"; load "word_to_wordProofTheory";
 load "word_to_stackProofTheory"; load "stack_to_labProofTheory"; load "lab_to_targetProofTheory";
 load "pan_to_targetTheory"; load "targetSemTheory"; load "labPropsTheory";
@@ -30,6 +31,17 @@ val _ = overload_on ("pan_to_word_compile_prog", ``pan_to_word$compile_prog``);
 fun pr_typed label tm = (print (label ^ "="); Lib.with_flag (Globals.show_types, true) print_term tm; print "\n");
 fun pr_stmt label tm = (print (label ^ "="); print_term tm; print "\n");
 val _ = Globals.linewidth := 1000000;
+val _ = guard "pan_to_lab_good_code_lemma" "Theorem pan_to_lab_good_code_lemma:\n  stack_to_lab$compile c.stack_conf c.data_conf lim1 lim2 offs stack_prog = code \226\136\167\n  word_to_stack$compile asm_conf3 F word_prog = (bm, wc, fs, stack_prog) \226\136\167\n  word_to_word$compile word_conf asm_conf3 word_prog0 = (col, word_prog) \226\136\167\n  pan_to_word_compile_prog asm_conf3.ISA pan_prog = word_prog0 \226\136\167\n  stack_to_labProof$labels_ok code \226\136\167\n  all_enc_ok_pre conf code\n  \226\135\146\n  lab_to_targetProof$good_code conf LN code\nProof\n  (* start of 'good_code' proof for initial compilation *)\n  rw []\n  \\\\ qmatch_asmsub_abbrev_tac `stack_to_labProof$labels_ok lab_prog`\n  \\\\ fs[lab_to_targetProofTheory.good_code_def]\n  \\\\ CONJ_TAC >- fs[Abbr `lab_prog`, stack_to_labTheory.compile_def]\n  \\\\ CONJ_ASM1_TAC >- (\n  fs [stack_to_labProofTheory.labels_ok_def]\n  \\\\ qpat_x_assum `all_enc_ok_pre _ _` kall_tac\n  \\\\ first_x_assum (fn t => mp_tac t \\\\ match_mp_tac EVERY_MONOTONIC)\n  \\\\ simp[] \\\\ Cases \\\\ simp[]\n  \\\\ metis_tac [labPropsTheory.EVERY_sec_label_ok]\n  )\n  \\\\ CONJ_TAC >- (\n  fs [stack_to_labProofTheory.labels_ok_def]\n  \\\\ qmatch_asmsub_abbrev_tac `ALL_DISTINCT (MAP ff _)`\n  \\\\ `ff = Section_num` by\n    (simp[Abbr`ff`,FUN_EQ_THM]>>Cases>>simp[])\n  \\\\ fs [])\n  \\\\ CONJ_TAC >- (\n  fs [stack_to_labProofTheory.labels_ok_def]\n  \\\\ first_x_assum (fn t => mp_tac t \\\\ match_mp_tac EVERY_MONOTONIC\n  \\\\ simp[] \\\\ Cases \\\\ simp[] \\\\ NO_TAC)\n  )\n  \\\\ qpat_x_assum`Abbrev(lab_prog = _)` mp_tac\n  \\\\ simp[markerTheory.Abbrev_def]\n  \\\\disch_then (assume_tac o SYM)\n  \\\\ drule stack_to_labProofTheory.stack_to_lab_stack_good_handler_labels\n  \\\\ simp []\n  \\\\ disch_then match_mp_tac\n  \\\\ qmatch_asmsub_abbrev_tac \226\128\152word_to_word$compile _ _ wprog\226\128\153\n  \\\\ pop_assum $ (assume_tac o GSYM o REWRITE_RULE [markerTheory.Abbrev_def])\n  \\\\ drule pan_to_word_good_handlers\n  \\\\ disch_tac\n  \\\\ drule word_good_handlers_word_to_word\n  \\\\ disch_then (qspecl_then [\226\128\152word_conf\226\128\153, \226\128\152asm_conf3\226\128\153] assume_tac)\n  \\\\ drule (INST_TYPE [beta|->alpha] word_to_stackProofTheory.word_to_stack_good_handler_labels)\n  \\\\ strip_tac\n  \\\\ pop_assum $ irule\n  \\\\ simp []\n  \\\\ qexists_tac \226\128\152asm_conf3\226\128\153>>gs[]\nQED";
+val pan_to_lab_good_code_lemma_tm = ``  stack_to_lab$compile c.stack_conf c.data_conf lim1 lim2 offs stack_prog = code ∧
+  word_to_stack$compile asm_conf3 F word_prog = (bm, wc, fs, stack_prog) ∧
+  word_to_word$compile word_conf asm_conf3 word_prog0 = (col, word_prog) ∧
+  pan_to_word_compile_prog asm_conf3.ISA pan_prog = word_prog0 ∧
+  stack_to_labProof$labels_ok code ∧
+  all_enc_ok_pre conf code
+  ⇒
+  lab_to_targetProof$good_code conf LN code``;
+val _ = pr_stmt "pan_to_lab_good_code_lemma_replay_statement" pan_to_lab_good_code_lemma_tm;
+val _ = pr_typed "pan_to_lab_good_code_lemma_replay_typed" pan_to_lab_good_code_lemma_tm;
 val _ = guard "pan_to_stack_first_ALL_DISTINCT" "Theorem pan_to_stack_first_ALL_DISTINCT:\n  pan_to_word_compile_prog mc.target.config.ISA pan_code = wprog0 \226\136\167\n  word_to_word_compile c.word_to_word_conf mc.target.config wprog0 = (col,wprog) \226\136\167 mc.target.config.ISA \226\137\160 Ag32 \226\136\167\n  word_to_stack_compile mc.target.config F wprog = (bitmaps,c'',fs,p) \226\136\167\n  ALL_DISTINCT (MAP FST (functions pan_code)) \226\135\146\n  ALL_DISTINCT (MAP FST p)\nProof\n  strip_tac>>drule pan_to_wordProofTheory.first_compile_prog_all_distinct>>\n  strip_tac>>\n  drule backendProofTheory.compile_to_word_conventions2>>\n  impl_tac\n  >- (irule_at Any EVERY_MONOTONIC>>\n      qexists \226\128\152\206\187_. mc.target.config.ISA \226\137\160 Ag32\226\128\153>>\n      simp[FORALL_PROD])>>\n  strip_tac>>\n  gs[]>>\n  qpat_x_assum \226\128\152MAP FST wprog = _\226\128\153 $ assume_tac o GSYM>>gs[]>>\n  drule word_to_stack_compile_FST>>\n  strip_tac>>gs[]>>\n  drule pan_to_wordProofTheory.pan_to_word_compile_prog_lab_min>>\n  strip_tac>>\n  gs[GSYM EVERY_MAP]>>EVAL_TAC>>gs[EVERY_MEM]>>\n  rw[]>- (first_x_assum $ qspec_then \226\128\1525\226\128\153 assume_tac>>gs[])>>\n  first_x_assum $ qspec_then \226\128\1526\226\128\153 assume_tac>>gs[]>>\n  metis_tac[FST,SND,PAIR]\nQED";
 val pan_to_stack_first_ALL_DISTINCT_tm = ``  pan_to_word_compile_prog mc.target.config.ISA pan_code = wprog0 ∧
   word_to_word_compile c.word_to_word_conf mc.target.config wprog0 = (col,wprog) ∧ mc.target.config.ISA ≠ Ag32 ∧

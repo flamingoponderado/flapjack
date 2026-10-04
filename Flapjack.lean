@@ -119,6 +119,7 @@ import Flapjack.Compiler.Backend.BackendCommon.Trace
 import Flapjack.NamespaceHOL
 import Flapjack.Compiler.Backend.PresLang.Config
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmEvaluate
+import Flapjack.Compiler.Backend.LabProps.SecLabelOk
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmMemory
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmControl
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Loop

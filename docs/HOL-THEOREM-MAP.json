@@ -95475,5 +95475,31 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack proof infrastructure for pan_to_targetProof pan_to_stack_compile_lab_pres: per-row label facts carried across wordConvs labels_rel between programs with equal names (HOL's inline EVERY2/EL_ZIP step); no independent HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "pan_to_lab_good_code_lemma",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/LabelsChain.lean",
+    "lean_name": "pan_to_lab_good_code_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3): pan_to_targetProof pan_to_lab_good_code_lemma (26-77), compared with the typed literal-source statement replay pan_to_target_labels_chain_source_replay (proofs not re-run: backendProof is unbuilt). HOL's free c lim1 lim2 offs stack_prog code asm_conf3 word_prog bm wc fs word_conf word_prog0 col pan_prog conf are explicit; LN : β num_map num_map (typed capture) is .ln : Spt (Spt β) with generic β; stack_to_lab$compile/word_to_stack$compile (F = false)/word_to_word$compile/pan_to_word_compile_prog are the tagged compilers; stack_to_labProof$labels_ok and lab_to_targetProof$good_code are the tagged labels_ok_def/good_code_def; all_enc_ok_pre is the tagged labProps allEncOkPreHOL; c's stack_conf/data_conf are Backend.Config fields. Proof follows HOL: sections end with labels (prog_to_section), EVERY_sec_label_ok, labels_ok, and the handler chain pan_to_word_good_handlers → word_good_handlers_word_to_word → word_to_stack_good_handler_labels → stack_to_lab_stack_good_handler_labels; the LN domain is empty. Positive word dimension via [NeZero width]."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/LabelsChain.lean",
+    "lean_name": "stackToLab_compile_secEndsWithLabel",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for pan_to_targetProof pan_to_lab_good_code_lemma: every section of stack_to_lab$compile ends with a label (HOL discharges this conjunct inline by unfolding compile_def/prog_to_section_def); no independent HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "EVERY_sec_label_ok",
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/SecLabelOk.lean",
+    "lean_name": "EVERY_sec_label_ok",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3): labProps EVERY_sec_label_ok (1279-1286), compared with the typed capture lab_props_every_sec_label_ok: EVERY (λ(l1,l2). l1 = n ∧ l2 ≠ 0) (extract_labels l) ⇔ EVERY (sec_label_ok n) l, with HOL's free n l explicit, EVERY as ∀ x ∈ l, ⇔ as ↔, extract_labels the tagged labProps LabelSets.extractLabels and sec_label_ok the tagged secLabelOk. Positive word dimension via [NeZero width]."
   }
 ]

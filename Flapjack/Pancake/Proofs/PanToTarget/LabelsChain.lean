@@ -11,6 +11,12 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.CompileLabPres
 import Flapjack.Compiler.Backend.StackToLab.Proofs.NoInstall
 import Flapjack.Compiler.Backend.StackToLab.Proofs.GoodCode
 import Flapjack.Compiler.Backend.Backend
+import Flapjack.Compiler.Backend.LabToTarget.GoodCode
+import Flapjack.Compiler.Backend.LabToTarget.LabsDomain
+import Flapjack.Compiler.Backend.LabProps.SecLabelOk
+import Flapjack.Compiler.Backend.StackToLab.Proofs.GoodHandlerLabels
+import Flapjack.Compiler.Backend.WordToStack.Proofs.TopLabelSafety
+import Flapjack.Pancake.Proofs.WordConvs.GoodHandlersTail
 
 /-!
 # `pan_to_targetProof`: labels, `good_code` and `no_install` of the compiled stack/lab code
@@ -242,5 +248,67 @@ theorem from_pan_to_lab_no_install {width : Nat} [NeZero width] (panCode : List 
     hd1 hni hs
   exact Compiler.Backend.StackToLab.Proofs.NoInstall.compileNoInstall p _
     ⟨fun ap h => List.all_eq_true.mp hall ap h, rfl⟩
+
+/-- Every section produced by `stack_to_lab$compile` ends with a label (Flapjack infrastructure:
+    HOL discharges this conjunct by unfolding `compile_def`/`prog_to_section_def`). -/
+theorem stackToLab_compile_secEndsWithLabel {width : Nat} [NeZero width]
+    (sc : Compiler.Backend.StackToLab.Config) (dc : Compiler.Backend.DataToWord.Config)
+    (lim1 lim2 : Nat) (offs : BitVec width × BitVec width)
+    (prog : List (Nat × Compiler.Backend.StackLang.HolProg width)) :
+    ∀ sec ∈ Compiler.Backend.StackToLab.compile sc dc lim1 lim2 offs prog,
+      Compiler.Backend.LabProps.secEndsWithLabelNative sec := by
+  intro sec hsec
+  simp only [Compiler.Backend.StackToLab.compile, List.mem_map] at hsec
+  obtain ⟨⟨n, q⟩, -, rfl⟩ := hsec
+  simp only [Compiler.Backend.StackToLab.progToSectionHOL,
+    Compiler.Backend.LabProps.secEndsWithLabelNative]
+  rw [Compiler.Backend.StackToLab.Proofs.FlattenCorrect.appListAppendAppend,
+    Compiler.Backend.StackToLab.Proofs.FlattenCorrect.appListAppendList]
+  simp [Compiler.Backend.LabSem.isLabelHOL]
+
+/-- HOL `pan_to_lab_good_code_lemma` (`pan_to_targetProofScript.sml:26-77`). HOL's free
+    `c lim1 lim2 offs stack_prog code asm_conf3 word_prog bm wc fs word_conf word_prog0 col pan_prog
+    conf` are explicit (the `LN` label map's value type is the generic `β`); `stack_to_lab$compile`,
+    `word_to_stack$compile`, `word_to_word$compile` and `pan_to_word_compile_prog` are the tagged
+    compilers, `labels_ok` the tagged stack_to_labProof `labels_ok_def`, `all_enc_ok_pre` the tagged
+    labProps `allEncOkPreHOL` and `good_code` the tagged lab_to_targetProof `good_code_def`. -/
+@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "pan_to_lab_good_code_lemma"
+  (words_as_type_indexed_bitvec)]
+theorem pan_to_lab_good_code_lemma {width : Nat} [NeZero width] {β : Type}
+    (c : Compiler.Backend.Backend.Config) (lim1 lim2 : Nat) (offs : BitVec width × BitVec width)
+    (stackProg : List (Nat × Compiler.Backend.StackLang.HolProg width))
+    (code : Compiler.Backend.LabSem.LabProgHOL width) (asmConf3 : AsmConfigExact width)
+    (wordProg : List (Nat × Nat × WordLangProgHOL (BitVec width))) (bm : List (BitVec width))
+    (wc : Compiler.Backend.WordToStack.Native.Config) (fs : List Nat)
+    (wordConf : Compiler.Backend.WordToWord.Config)
+    (wordProg0 : List (Nat × Nat × WordLangProgHOL (BitVec width)))
+    (col : List (Option (Spt Nat))) (panProg : List (DeclHOL width)) (conf : AsmConfigExact width) :
+    Compiler.Backend.StackToLab.compile c.stackConf c.dataConf lim1 lim2 offs stackProg = code ∧
+      Compiler.Backend.WordToStack.Native.compileNative asmConf3 false wordProg =
+        (bm, wc, fs, stackProg) ∧
+      Compiler.Backend.WordToWord.compile wordConf asmConf3 wordProg0 = (col, wordProg) ∧
+      panToWordCompileProgHOL asmConf3.isa panProg = wordProg0 ∧
+      Compiler.Backend.StackToLab.Proofs.CodeInstalled.labelsOk code ∧
+      Compiler.Backend.LabProps.allEncOkPreHOL conf code →
+    Compiler.Backend.LabToTarget.goodCode conf (.ln : Spt (Spt β)) code := by
+  rintro ⟨hcode, hs, hw, h0, ⟨hids, hsecs⟩, henc⟩
+  have hlab : ∀ sec ∈ code, Compiler.Backend.LabProps.secLabelsOk sec := fun sec hsec =>
+    (Compiler.Backend.LabProps.EVERY_sec_label_ok sec.sectionId sec.lines).mp
+      (fun x hx => ⟨((hsecs sec hsec).1 x hx).1, ((hsecs sec hsec).1 x hx).2⟩)
+  have hgood0 := PanToWord.pan_to_word_good_handlers asmConf3.isa panProg wordProg0 h0
+  have hgood1 := goodHandlers_wordToWord wordProg0 wordConf asmConf3 hgood0
+  rw [hw] at hgood1
+  have hstack := Compiler.Backend.WordToStack.Native.wordToStackGoodHandlerLabels asmConf3 wordProg
+    bm wc fs stackProg (List.all_eq_true.mpr fun row hr => hgood1 row hr) hs
+  have hsub := Compiler.Backend.StackToLab.Proofs.GoodHandlerLabels.stackToLabStackGoodHandlerLabels
+    ⟨hcode, hstack, hlab⟩
+  refine ⟨?_, hlab, hids, fun sec hsec => (hsecs sec hsec).2, ?_, ?_, henc⟩
+  · rw [← hcode]
+    exact stackToLab_compile_secEndsWithLabel _ _ _ _ _ _
+  · refine Set.disjoint_left.mpr fun x hx _ => ?_
+    change (sptLookup x (Spt.ln : Spt (Spt β))).isSome = true at hx
+    simp [sptLookup] at hx
+  · rw [Compiler.Backend.LabToTarget.labsDomain_ln, Set.union_empty]
+    exact hsub
 
 end Flapjack.Pancake.Proofs.PanToTarget
