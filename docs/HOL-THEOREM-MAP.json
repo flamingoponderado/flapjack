@@ -98397,5 +98397,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source1153-1159 and original full typed capture compared: original EVERY good_panops declaration-list guard implies EVERY binary-Crepop traversal of each actual compile_prog body. Membership renders EVERY, complete native declarations/name/parameter/body carriers retained, sole positive word dimension translated to BitVec width with NeZero. Proof composes complete original compile_to_crep validity and accepted every_inst_w_inline, exactly as HOL; no desired-output/target-run/byte-boundary/default or distinctness premise. Full source simulation and compiler correctness remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "pan_to_word_every_inst_ok_less",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/CompileProgInstOkLess.lean",
+    "lean_name": "panToWordEveryInstOkLess",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source1410-1424 and regenerated full typed capture compared2026-10-04: wprog0 alpha-word-program triples, pan_code alpha-declarations and c alpha-asm_config share same dimension. Original compile_prog c.ISA pan_code=wprog0, byte_offset_ok c 0w, addr_offset_ok c 0w, EVERY good_panops pan_code retained as four hypotheses; full EVERY tuple every_inst(inst_ok_less c) output conclusion. Actual native panToWordCompileProgHOL composes PanSimp/PanStructs/PanGlobals/PanToCrep/CrepToLoop/LoopToWord once in original order. Existing Bool EVERY/membership translations and HolInst.ofWordLangInst constructor translation reused. Only positive width translates to BitVec width with NeZero. No target evaluation, desired-output, source-byte/default or extra pass-success premise; full semantic compilation theorem remains open."
   }
 ]

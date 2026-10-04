@@ -972,6 +972,7 @@
     {"bytes": 2803, "out": "pan_to_word_exp_ids_probe.out", "rows": 8, "sha256": "49dc60256590456746587157815c7ab89a0c00a31e929292a93c8bd16a58bc2c"},
     {"bytes": 2693, "out": "pan_to_word_get_eids_probe.out", "rows": 8, "sha256": "8923750584cbb914a7a47b57a57b8bcb1496a0c763d043d9c1eaa00e49b1efc2"},
     {"bytes": 504, "out": "pan_to_word_good_code_probe.out", "rows": 9, "sha256": "076ae3096cd492e6190f1581138d4634e326d3aba0a24821705eb5ada13f6092"},
+    {"bytes": 388, "out": "pan_to_word_inst_ok_less_probe.out", "rows": 1, "sha256": "291916476c4a45faf8a0768831fe5f87acb90087d4ed2192ad2c96a5d0afb522"},
     {"bytes": 5591, "out": "pan_to_word_lab_pres_probe.out", "rows": 33, "sha256": "6fcd737ce2a8581c6ef1c3c4b05468bd1e29a3f9e89d1218104f96b1dd0c85d6"},
     {"bytes": 703, "out": "pan_to_word_loop_inst_ok_probe.out", "rows": 3, "sha256": "3b6989478de0a23089e241f750c6e108fcc297eaf7149a5873efbc3118321787"},
     {"bytes": 8746, "out": "pan_to_word_no_install_code_probe.out", "rows": 27, "sha256": "cd04a026812d88dfe5c78c8d2062db60be0cd228c811b352d31b9bc20f3ba7a7"},

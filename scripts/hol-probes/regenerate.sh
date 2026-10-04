@@ -8345,3 +8345,7 @@ run_probe pan_to_crep_table_validity_probeScript.sml pan_to_crep_table_validity_
 run_probe pan_to_crep_program_validity_probeScript.sml pan_to_crep_program_validity_probe.out \
   every_inst_ok_less_pan_to_crep_compile_prog \
   "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_to_word_inst_ok_less_probeScript.sml pan_to_word_inst_ok_less_probe.out \
+  pan_to_word_every_inst_ok_less \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
