@@ -1,6 +1,7 @@
 load "word_cseProofTheory";
 open HolKernel Parse bossLib word_cseProofTheory;
 val _ = Globals.linewidth := 1000000;
+val _ = show_types := true;
 val _ = (print "word_cse_full_inst_ok_less_statement="; print_term(concl word_cse_full_inst_ok_less));
 val _ = print("word_cse_full_inst_ok_less_hypotheses=" ^ Int.toString(length(hyp word_cse_full_inst_ok_less)) ^ "\n");
 val _ = (print "word_cse_pre_alloc_conventions_statement="; print_term(concl word_cse_pre_alloc_conventions));
