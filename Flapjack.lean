@@ -1,5 +1,6 @@
 import Flapjack.RiscV.CorrectnessEncoding.ShiftLslRegister
 import Flapjack.RiscV.CorrectnessEncoding.ShiftRun
+import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileConventions.Labels
 import Flapjack.RiscV.CorrectnessEncoding.DecodeShift
 import Flapjack.RiscV.CorrectnessEncoding.Div
 import Flapjack.RiscV.CorrectnessEncoding.DecodeDiv
@@ -26,6 +27,7 @@ import Flapjack.Pancake.Proofs.PanToTarget
 import Flapjack.Pancake.Proofs.PanToTarget.CompileProgEq
 import Flapjack.Pancake.Proofs.PanToTarget.WordToWordNoInstall
 import Flapjack.Pancake.Proofs.PanToTarget.StackSizeConst
+import Flapjack.Pancake.Proofs.PanToTarget.InitHelpers
 import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMax
 import Flapjack.Pancake.Proofs.PanToTarget.ConstMemory
 import Flapjack.Pancake.Proofs.PanToTarget.MemorySwap
@@ -2576,7 +2578,8 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.MemoryLoad
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.MemoryStore
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Memory
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Skip
-import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.ConstFp
+import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.Hoist
+import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.CompileExp
 
 -- Tagged modules required by the HOL reference coverage gate.
 
