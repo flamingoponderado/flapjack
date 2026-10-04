@@ -6087,6 +6087,21 @@ register/status/delta/flag/other-core/trap observations retain original semantic
 These finite/infinity rows do not fix arbitrary NaN output payloads or establish
 full model/compiler correctness. SOUNDNESS item8 remains inherited.
 
+### Machine IEEE widen/narrow cross-format probe
+
+`machine_ieee_cross_format_probeScript.sml` and its `.out` capture the literal
+original `convert_def` theorem statement (the `source_convert` row, printed via
+`print_thm`) followed by14 direct observations of the original `machine_ieee`
+widen/narrow format conversions: `widen_pinf`/`widen_ninf`/`widen_qnan`/
+`widen_snan`, `narrow_pinf`/`narrow_ninf`/`narrow_qnan`/`narrow_snan`,
+`widen_zero`/`widen_one`/`widen_min_subnormal` and
+`narrow_zero`/`narrow_one`/`narrow_tie_even`. The `.out` records the
+source-level conversion statement plus numeric result observations. It is
+original kernel-observation evidence, not an executable oracle replay or
+HOL-to-Lean equivalence; the source `machine_ieeeScript.sml` is not edited.
+Regenerate with
+`HOL_PROBE_ONLY=machine_ieee_cross_format_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 ### Full native L3 single/double arithmetic equations
 
 `l3_riscv_arithmetic_probeScript.sml` captures140 original FADD/FSUB/FMUL/FDIV

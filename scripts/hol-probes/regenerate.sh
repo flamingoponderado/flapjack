@@ -40,7 +40,8 @@ probe_needs_refresh() {
   local probe="$2"
   local source="$3"
   [[ ! -f "$output" || "$probe" -nt "$output" || "$source" -nt "$output" ]] ||
-    [[ "$(basename "$probe")" == l3_riscv_int_to_fp_probeScript.sml &&
+    [[ ( "$(basename "$probe")" == l3_riscv_int_to_fp_probeScript.sml ||
+         "$(basename "$probe")" == l3_riscv_cross_format_probeScript.sml ) &&
        "$probe_dir/binary_ieee_directed_certificates.sml" -nt "$output" ]]
 }
 
@@ -5566,6 +5567,27 @@ run_probe l3_riscv_int_to_fp_probeScript.sml l3_riscv_int_to_fp_probe.out \
   fcvt_s_w_dynamic_illegal fcvt_s_wu_dynamic_illegal fcvt_s_l_dynamic_illegal fcvt_s_lu_dynamic_illegal \
   fcvt_d_w_dynamic_illegal fcvt_d_wu_dynamic_illegal fcvt_d_l_dynamic_illegal fcvt_d_lu_dynamic_illegal \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+run_probe l3_riscv_cross_format_probeScript.sml l3_riscv_cross_format_probe.out \
+  fcvt_s_d_zero_rte fcvt_s_d_negative_zero_rte fcvt_s_d_negative_zero_rtz \
+  fcvt_s_d_negative_zero_down fcvt_s_d_negative_zero_up \
+  fcvt_s_d_one_rte fcvt_s_d_one_rtz fcvt_s_d_one_down fcvt_s_d_one_up \
+  fcvt_s_d_one_dynamic_up fcvt_s_d_one_invalid_static fcvt_s_d_one_invalid_dynamic \
+  fcvt_s_d_tie_rte fcvt_s_d_tie_rtz fcvt_s_d_tie_down fcvt_s_d_tie_up \
+  fcvt_s_d_pinf_rte fcvt_s_d_ninf_rte \
+  fcvt_d_s_zero_rte fcvt_d_s_negative_zero_rte fcvt_d_s_negative_zero_rtz \
+  fcvt_d_s_negative_zero_down fcvt_d_s_negative_zero_up \
+  fcvt_d_s_one_rte fcvt_d_s_one_rtz fcvt_d_s_one_down fcvt_d_s_one_up \
+  fcvt_d_s_one_dynamic_up fcvt_d_s_one_invalid_static fcvt_d_s_one_invalid_dynamic \
+  fcvt_d_s_min_subnormal_rte fcvt_d_s_pinf_rte fcvt_d_s_ninf_rte \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+run_probe machine_ieee_cross_format_probeScript.sml machine_ieee_cross_format_probe.out \
+  source_convert widen_pinf widen_ninf widen_qnan widen_snan \
+  narrow_pinf narrow_ninf narrow_qnan narrow_snan \
+  widen_zero widen_one widen_min_subnormal narrow_zero narrow_one narrow_tie_even \
+  "$hol_dir/src/floating-point/machine_ieeeScript.sml" "$hol_dir/src/floating-point"
+run_probe stack_alloc_generational_alloc_statement_probeScript.sml stack_alloc_generational_alloc_statement_probe.out \
+  gen_alloc_typed_statement gen_alloc_free_vars \
+  "$cake_dir/compiler/backend/proofs/stack_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe lab_to_target_code_offset_padding_probeScript.sml lab_to_target_code_offset_padding_probe.out \
   offset_ok_pad_code offset_ok_pad_code_types original_five_guards mixed_full_tuple mixed_output_offsets zero_original_guards empty_nop_offsets multibyte_nop_offsets prefix_guard_necessary input_offset_necessary empty_width1 \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
