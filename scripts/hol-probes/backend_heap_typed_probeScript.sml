@@ -47,3 +47,4 @@ val compile_consts = HOLset.listItems (HOLset.filter (fn c => #1 (dest_const c) 
 val _ = (print "compile_to_word_conventions2_compile_constant=";
   List.app (fn c => let val {Thy, Name, ...} = dest_thy_const c in print (Thy ^ "$" ^ Name ^ " ") end) compile_consts;
   print "\n");
+val _ = capture_thm "cond16bit_inst_select_exp_prime_statement" cond16bit_inst_select_exp';

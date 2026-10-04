@@ -158,12 +158,9 @@ TYPED_CAPTURE_CONTRACTS = {
     'stack_to_lab_compile_lab_pres_probe.out': (
         ('MAP_FST_compile_compile_statement', 'next_lab_non_zero_3211_statement', 'MAP_prog_to_section_FST_3272_statement', 'extract_label_store_list_code_statement', 'stack_to_lab_compile_lab_pres_statement'),
         ()),
-    # PR1213 word_to_word locals and heap/conventions2 rows (review 5978345241 should-fix 7).
-    'word_to_word_locals_typed_probe.out': (
-        ('rm_perm_source_statement_typed', 'find_code_thm_source_statement_typed', 'pop_env_termdep_source_statement_typed', 'compile_single_eta_source_statement_typed', 'code_rel_union_fromAList_source_statement_typed', 'code_rel_no_alloc_replay_statement_typed', 'code_rel_no_install_replay_statement_typed', "cond16bit_inst_select_exp_prime_statement"),
-        ()),
+    # PR1213 heap/refs/conventions2/cond16bit rows (review 5978345241 should-fix 7).
     'backend_heap_typed_probe.out': (
-        ('refs_to_addresses_def_statement', 'compile_to_word_conventions2_source_statement_typed'),
+        ('refs_to_addresses_def_statement', 'compile_to_word_conventions2_source_statement_typed', 'cond16bit_inst_select_exp_prime_statement'),
         ('heap_address_Pointer_type', 'heap_address_Data_type', 'heap_element_Unused_type', 'heap_element_ForwardPointer_type', 'heap_element_DataElement_type')),
 }
 
