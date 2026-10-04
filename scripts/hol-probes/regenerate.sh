@@ -7726,3 +7726,7 @@ run_probe riscv_binop_decode_probeScript.sml riscv_binop_decode_probe.out \
 run_probe word_to_stack_inst_memory_load_probeScript.sml word_to_stack_inst_memory_load_probe.out \
   memoryLoad_typed memoryLoad_proved memoryLoad_hypotheses memoryLoad8_typed memoryLoad8_proved memoryLoad8_hypotheses memoryLoad32_typed memoryLoad32_proved memoryLoad32_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_inst_memory_store_probeScript.sml word_to_stack_inst_memory_store_probe.out \
+  memoryStore_typed memoryStore_proved memoryStore_hypotheses memoryStore8_typed memoryStore8_proved memoryStore8_hypotheses memoryStore32_typed memoryStore32_proved memoryStore32_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
