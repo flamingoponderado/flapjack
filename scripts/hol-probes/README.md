@@ -8227,3 +8227,12 @@ and the original selected native table invariant, retaining unrelated fields.
 Successful input codec conversion is an explicit representation boundary;
 unsupported native program carriers and whole-pass adoption remain separate.
 No tagged original theorem is narrowed or cross-language equivalence claimed.
+
+## Native signed DIV decoding prerequisite
+
+`DecodeDiv.lean` proves unrestricted actual Encode/DecodeAny composition for
+all three word5 registers. Literal original Div encoder emits `MulDiv DIV`,
+with opcode0110011, funct3=100 and funct7=1. This local composition has no
+separately named HOL theorem and remains untagged infrastructure. Original
+zero/all-ones/mixed EVAL cases and the full typed Encode clause are regression
+evidence; they do not establish whole encoder correctness or cross-language equivalence.

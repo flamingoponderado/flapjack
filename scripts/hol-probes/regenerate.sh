@@ -7869,3 +7869,8 @@ run_probe word_to_stack_inst_full_probeScript.sml word_to_stack_inst_full_probe.
 run_probe word_convs_simp_sequence_labels_probeScript.sml word_convs_simp_sequence_labels_probe.out \
   simpSequenceLabels1_typed simpSequenceLabels1_proved simpSequenceLabels1_hypotheses simpSequenceLabels2_typed simpSequenceLabels2_proved simpSequenceLabels2_hypotheses simpSequenceLabels3_typed simpSequenceLabels3_proved simpSequenceLabels3_hypotheses simpSequenceLabels4_typed simpSequenceLabels4_proved simpSequenceLabels4_hypotheses simpSequenceLabels5_typed simpSequenceLabels5_proved simpSequenceLabels5_hypotheses simpSequenceLabels6_typed simpSequenceLabels6_proved simpSequenceLabels6_hypotheses \
   "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe riscv_div_decode_probeScript.sml riscv_div_decode_probe.out \
+  div_decode_zero div_decode_all_ones div_decode_mixed div_encode_source_clause div_encode_source_hypotheses div_carrier_types \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
