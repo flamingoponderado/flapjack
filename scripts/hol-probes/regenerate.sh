@@ -7705,3 +7705,7 @@ run_probe pan_to_target_source_probeScript.sml pan_to_target_source_probe.out \
   exports_def compile_prog_def exports_type compile_prog_type zip_def splitp_def compile_prog_main_binding \
   main_empty_names main_missing_names main_already_first_names main_later_names main_nonempty_missing_names main_first_only_duplicates_names exports_empty exports_flags_duplicates \
   "$cake_dir/pancake/pan_to_targetScript.sml" "$cake_dir/pancake"
+
+run_probe word_inst_sub_probeScript.sml word_inst_sub_probe.out \
+  pull_sub_empty pull_sub_unary_var pull_sub_unary_const norm_sub_empty norm_sub_unary_var pull_sub_binary_const norm_sub_binary_const \
+  "$cake_dir/compiler/backend/word_instScript.sml" "$cake_dir/compiler/backend"
