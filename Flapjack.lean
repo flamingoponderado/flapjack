@@ -131,6 +131,7 @@ import Flapjack.RiscV.L3.Step.RegisterShiftStep
 import Flapjack.RiscV.L3.Step.WShiftStep
 import Flapjack.RiscV.L3.Step.LoadStep
 import Flapjack.RiscV.L3.Step.StoreStep
+import Flapjack.RiscV.L3.Step.MulDivStep
 import Flapjack.RiscV.L3.Step.DecodeAny
 import Flapjack.RiscV.L3.Defs.WritePC
 import Flapjack.Test.L3DecodeParity
