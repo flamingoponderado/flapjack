@@ -95156,5 +95156,14 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack infrastructure: native move-descriptor case factoring used inline in original word_good_handlers_SimpSeq proof; no standalone HOL declaration. Removes only handler-free moves, proves actual descriptor rest from source guard without output premise."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Proofs/WordConventions.lean",
+    "lean_name": "compileToWordConventions2",
+    "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml",
+    "hol_name": "compile_to_word_conventions2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source compared whole backendProof1284-1307: actual native compile equation and input guard, all names/labels/five output conditions and nested original guards retained; positive-width word translation only."
   }
 ]
