@@ -1,0 +1,16 @@
+load "binary_ieeeTheory";
+open HolKernel Parse boolLib binary_ieeeTheory;
+val _ = show_types := true;
+fun capture label th = (print(label ^ "=");print_term(concl th);print "\n");
+val _ = capture "is_integral_def" is_integral_def;
+val _ = capture "float_is_integral_def" float_is_integral_def;
+val _ = capture "ULP_def" ULP_def;
+val _ = capture "ulp_def" ulp_def;
+val _ = capture "integral_round_def" integral_round_def;
+val _ = capture "float_round_to_integral_def" float_round_to_integral_def;
+val _ = capture "float_mul_sub_def" float_mul_sub_def;
+val _ = capture "float_unordered_def" float_unordered_def;
+val _ = capture "exponent_boundary_def" exponent_boundary_def;
+val _ = capture "float_ulp_def" float_ulp_def;
+val _ = capture "next_hi_def" next_hi_def;
+val _ = capture "next_lo_def" next_lo_def;
