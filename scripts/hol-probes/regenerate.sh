@@ -7421,6 +7421,10 @@ run_probe word_props_code_grows_probeScript.sml word_props_code_grows_probe.out 
   evaluate_code_only_grows_typed evaluate_NONE_stack_size_const_typed \
   "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 
+run_probe word_depth_call_graph_probeScript.sml word_depth_call_graph_probe.out \
+  max_depth_call_graph_lemma_typed max_depth_call_graph_typed max_depth_Call_NONE_typed \
+  "$cake_dir/compiler/backend/proofs/word_depthProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe pan_target_root_leaves_probeScript.sml pan_target_root_leaves_probe.out \
   UPDATE_LIST_def_typed APPLY_UPDATE_LIST_ALOOKUP_typed MOD_SUB_LEMMA_typed DISJOINT_INTER_typed IMP_MULT_DIV_LESS_typed DIV_LESS_DIV_typed WORD_LS_IMP_typed lsr_lsl_typed byte_aligned_mult_typed compile_word_to_stack_sfs_aux_typed \
   "$cake_dir/misc/miscScript.sml" "$cake_dir/compiler/backend/proofs"

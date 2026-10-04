@@ -96758,5 +96758,411 @@
     "lean_name": "panBinary_seqAssoc_eq",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific Boolean factoring for the four original PanSimp validity theorem ports in this module; no independent HOL declaration. List append fold, smart-sequence/tail-call support and Bool equality recursion assemble the separately tagged full original iff/implication results without additional premises."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/CallGraphLemma/Leaves.lean",
+    "lean_name": "maxDepthCallGraphLemma_Skip",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "max_depth_call_graph_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: max_depth_call_graph_lemma (147-788) at the Skip case of evaluate_ind: the genuine case of the untagged depthPost (the lemma conclusion with all original premises over funs n ns funs2), with exactly the evaluate_ind induction hypotheses for Skip and nothing else. State carrier WordSemStateFiniteExact width C F with fmap_as_finite_support [fpRegs, store] and words qualifiers; OPTION_MAP2 is WordDepth.optionMap2, set ns SUBSET domain funs2 is successful lookup for each element, ALL_DISTINCT is Nodup. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through evaluate/inst. Typed capture word_depth_call_graph probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/CallGraphLemma/Leaves.lean",
+    "lean_name": "maxDepthCallGraphLemma_StoreConsts",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "max_depth_call_graph_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: max_depth_call_graph_lemma (147-788) at the StoreConsts case of evaluate_ind: the genuine case of the untagged depthPost (the lemma conclusion with all original premises over funs n ns funs2), with exactly the evaluate_ind induction hypotheses for StoreConsts and nothing else. State carrier WordSemStateFiniteExact width C F with fmap_as_finite_support [fpRegs, store] and words qualifiers; OPTION_MAP2 is WordDepth.optionMap2, set ns SUBSET domain funs2 is successful lookup for each element, ALL_DISTINCT is Nodup. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through evaluate/inst. Typed capture word_depth_call_graph probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/CallGraphLemma/Leaves.lean",
+    "lean_name": "maxDepthCallGraphLemma_Move",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "max_depth_call_graph_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: max_depth_call_graph_lemma (147-788) at the Move case of evaluate_ind: the genuine case of the untagged depthPost (the lemma conclusion with all original premises over funs n ns funs2), with exactly the evaluate_ind induction hypotheses for Move and nothing else. State carrier WordSemStateFiniteExact width C F with fmap_as_finite_support [fpRegs, store] and words qualifiers; OPTION_MAP2 is WordDepth.optionMap2, set ns SUBSET domain funs2 is successful lookup for each element, ALL_DISTINCT is Nodup. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through evaluate/inst. Typed capture word_depth_call_graph probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/CallGraphLemma/Leaves.lean",
+    "lean_name": "maxDepthCallGraphLemma_Inst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "max_depth_call_graph_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: max_depth_call_graph_lemma (147-788) at the Inst case of evaluate_ind: the genuine case of the untagged depthPost (the lemma conclusion with all original premises over funs n ns funs2), with exactly the evaluate_ind induction hypotheses for Inst and nothing else. State carrier WordSemStateFiniteExact width C F with fmap_as_finite_support [fpRegs, store] and words qualifiers; OPTION_MAP2 is WordDepth.optionMap2, set ns SUBSET domain funs2 is successful lookup for each element, ALL_DISTINCT is Nodup. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through evaluate/inst. Typed capture word_depth_call_graph probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/CallGraphLemma/Leaves.lean",
+    "lean_name": "maxDepthCallGraphLemma_Assign",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "max_depth_call_graph_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: max_depth_call_graph_lemma (147-788) at the Assign case of evaluate_ind: the genuine case of the untagged depthPost (the lemma conclusion with all original premises over funs n ns funs2), with exactly the evaluate_ind induction hypotheses for Assign and nothing else. State carrier WordSemStateFiniteExact width C F with fmap_as_finite_support [fpRegs, store] and words qualifiers; OPTION_MAP2 is WordDepth.optionMap2, set ns SUBSET domain funs2 is successful lookup for each element, ALL_DISTINCT is Nodup. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through evaluate/inst. Typed capture word_depth_call_graph probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/CallGraphLemma/Leaves.lean",
+    "lean_name": "maxDepthCallGraphLemma_Get",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "max_depth_call_graph_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: max_depth_call_graph_lemma (147-788) at the Get case of evaluate_ind: the genuine case of the untagged depthPost (the lemma conclusion with all original premises over funs n ns funs2), with exactly the evaluate_ind induction hypotheses for Get and nothing else. State carrier WordSemStateFiniteExact width C F with fmap_as_finite_support [fpRegs, store] and words qualifiers; OPTION_MAP2 is WordDepth.optionMap2, set ns SUBSET domain funs2 is successful lookup for each element, ALL_DISTINCT is Nodup. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through evaluate/inst. Typed capture word_depth_call_graph probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/CallGraphLemma/Leaves.lean",
+    "lean_name": "maxDepthCallGraphLemma_Set",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "max_depth_call_graph_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: max_depth_call_graph_lemma (147-788) at the Set case of evaluate_ind: the genuine case of the untagged depthPost (the lemma conclusion with all original premises over funs n ns funs2), with exactly the evaluate_ind induction hypotheses for Set and nothing else. State carrier WordSemStateFiniteExact width C F with fmap_as_finite_support [fpRegs, store] and words qualifiers; OPTION_MAP2 is WordDepth.optionMap2, set ns SUBSET domain funs2 is successful lookup for each element, ALL_DISTINCT is Nodup. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through evaluate/inst. Typed capture word_depth_call_graph probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/CallGraphLemma/Leaves.lean",
+    "lean_name": "maxDepthCallGraphLemma_OpCurrHeap",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "max_depth_call_graph_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: max_depth_call_graph_lemma (147-788) at the OpCurrHeap case of evaluate_ind: the genuine case of the untagged depthPost (the lemma conclusion with all original premises over funs n ns funs2), with exactly the evaluate_ind induction hypotheses for OpCurrHeap and nothing else. State carrier WordSemStateFiniteExact width C F with fmap_as_finite_support [fpRegs, store] and words qualifiers; OPTION_MAP2 is WordDepth.optionMap2, set ns SUBSET domain funs2 is successful lookup for each element, ALL_DISTINCT is Nodup. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through evaluate/inst. Typed capture word_depth_call_graph probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/CallGraphLemma/Leaves.lean",
+    "lean_name": "maxDepthCallGraphLemma_Tick",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "max_depth_call_graph_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: max_depth_call_graph_lemma (147-788) at the Tick case of evaluate_ind: the genuine case of the untagged depthPost (the lemma conclusion with all original premises over funs n ns funs2), with exactly the evaluate_ind induction hypotheses for Tick and nothing else. State carrier WordSemStateFiniteExact width C F with fmap_as_finite_support [fpRegs, store] and words qualifiers; OPTION_MAP2 is WordDepth.optionMap2, set ns SUBSET domain funs2 is successful lookup for each element, ALL_DISTINCT is Nodup. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through evaluate/inst. Typed capture word_depth_call_graph probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/CallGraphLemma/Leaves.lean",
+    "lean_name": "maxDepthCallGraphLemma_Break",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "max_depth_call_graph_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: max_depth_call_graph_lemma (147-788) at the Break case of evaluate_ind: the genuine case of the untagged depthPost (the lemma conclusion with all original premises over funs n ns funs2), with exactly the evaluate_ind induction hypotheses for Break and nothing else. State carrier WordSemStateFiniteExact width C F with fmap_as_finite_support [fpRegs, store] and words qualifiers; OPTION_MAP2 is WordDepth.optionMap2, set ns SUBSET domain funs2 is successful lookup for each element, ALL_DISTINCT is Nodup. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through evaluate/inst. Typed capture word_depth_call_graph probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/CallGraphLemma/Leaves.lean",
+    "lean_name": "maxDepthCallGraphLemma_Continue",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "max_depth_call_graph_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: max_depth_call_graph_lemma (147-788) at the Continue case of evaluate_ind: the genuine case of the untagged depthPost (the lemma conclusion with all original premises over funs n ns funs2), with exactly the evaluate_ind induction hypotheses for Continue and nothing else. State carrier WordSemStateFiniteExact width C F with fmap_as_finite_support [fpRegs, store] and words qualifiers; OPTION_MAP2 is WordDepth.optionMap2, set ns SUBSET domain funs2 is successful lookup for each element, ALL_DISTINCT is Nodup. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through evaluate/inst. Typed capture word_depth_call_graph probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/CallGraphLemma/Leaves.lean",
+    "lean_name": "maxDepthCallGraphLemma_Return",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "max_depth_call_graph_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: max_depth_call_graph_lemma (147-788) at the Return case of evaluate_ind: the genuine case of the untagged depthPost (the lemma conclusion with all original premises over funs n ns funs2), with exactly the evaluate_ind induction hypotheses for Return and nothing else. State carrier WordSemStateFiniteExact width C F with fmap_as_finite_support [fpRegs, store] and words qualifiers; OPTION_MAP2 is WordDepth.optionMap2, set ns SUBSET domain funs2 is successful lookup for each element, ALL_DISTINCT is Nodup. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through evaluate/inst. Typed capture word_depth_call_graph probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/CallGraphLemma/Leaves.lean",
+    "lean_name": "maxDepthCallGraphLemma_LocValue",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "max_depth_call_graph_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: max_depth_call_graph_lemma (147-788) at the LocValue case of evaluate_ind: the genuine case of the untagged depthPost (the lemma conclusion with all original premises over funs n ns funs2), with exactly the evaluate_ind induction hypotheses for LocValue and nothing else. State carrier WordSemStateFiniteExact width C F with fmap_as_finite_support [fpRegs, store] and words qualifiers; OPTION_MAP2 is WordDepth.optionMap2, set ns SUBSET domain funs2 is successful lookup for each element, ALL_DISTINCT is Nodup. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through evaluate/inst. Typed capture word_depth_call_graph probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/CallGraphLemma/Leaves.lean",
+    "lean_name": "maxDepthCallGraphLemma_CodeBufferWrite",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "max_depth_call_graph_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: max_depth_call_graph_lemma (147-788) at the CodeBufferWrite case of evaluate_ind: the genuine case of the untagged depthPost (the lemma conclusion with all original premises over funs n ns funs2), with exactly the evaluate_ind induction hypotheses for CodeBufferWrite and nothing else. State carrier WordSemStateFiniteExact width C F with fmap_as_finite_support [fpRegs, store] and words qualifiers; OPTION_MAP2 is WordDepth.optionMap2, set ns SUBSET domain funs2 is successful lookup for each element, ALL_DISTINCT is Nodup. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through evaluate/inst. Typed capture word_depth_call_graph probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/CallGraphLemma/Leaves.lean",
+    "lean_name": "maxDepthCallGraphLemma_DataBufferWrite",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "max_depth_call_graph_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: max_depth_call_graph_lemma (147-788) at the DataBufferWrite case of evaluate_ind: the genuine case of the untagged depthPost (the lemma conclusion with all original premises over funs n ns funs2), with exactly the evaluate_ind induction hypotheses for DataBufferWrite and nothing else. State carrier WordSemStateFiniteExact width C F with fmap_as_finite_support [fpRegs, store] and words qualifiers; OPTION_MAP2 is WordDepth.optionMap2, set ns SUBSET domain funs2 is successful lookup for each element, ALL_DISTINCT is Nodup. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through evaluate/inst. Typed capture word_depth_call_graph probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/CallGraphLemma/Leaves.lean",
+    "lean_name": "maxDepthCallGraphLemma_Store",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "max_depth_call_graph_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: max_depth_call_graph_lemma (147-788) at the Store case of evaluate_ind: the genuine case of the untagged depthPost (the lemma conclusion with all original premises over funs n ns funs2), with exactly the evaluate_ind induction hypotheses for Store and nothing else. State carrier WordSemStateFiniteExact width C F with fmap_as_finite_support [fpRegs, store] and words qualifiers; OPTION_MAP2 is WordDepth.optionMap2, set ns SUBSET domain funs2 is successful lookup for each element, ALL_DISTINCT is Nodup. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through evaluate/inst. Typed capture word_depth_call_graph probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/CallGraphLemma/Leaves.lean",
+    "lean_name": "maxDepthCallGraphLemma_Raise",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "max_depth_call_graph_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: max_depth_call_graph_lemma (147-788) at the Raise case of evaluate_ind: the genuine case of the untagged depthPost (the lemma conclusion with all original premises over funs n ns funs2), with exactly the evaluate_ind induction hypotheses for Raise and nothing else. State carrier WordSemStateFiniteExact width C F with fmap_as_finite_support [fpRegs, store] and words qualifiers; OPTION_MAP2 is WordDepth.optionMap2, set ns SUBSET domain funs2 is successful lookup for each element, ALL_DISTINCT is Nodup. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through evaluate/inst. Typed capture word_depth_call_graph probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/CallGraphLemma/Leaves.lean",
+    "lean_name": "maxDepthCallGraphLemma_FFI",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "max_depth_call_graph_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: max_depth_call_graph_lemma (147-788) at the FFI case of evaluate_ind: the genuine case of the untagged depthPost (the lemma conclusion with all original premises over funs n ns funs2), with exactly the evaluate_ind induction hypotheses for FFI and nothing else. State carrier WordSemStateFiniteExact width C F with fmap_as_finite_support [fpRegs, store] and words qualifiers; OPTION_MAP2 is WordDepth.optionMap2, set ns SUBSET domain funs2 is successful lookup for each element, ALL_DISTINCT is Nodup. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through evaluate/inst. Typed capture word_depth_call_graph probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/CallGraphLemma/Leaves.lean",
+    "lean_name": "maxDepthCallGraphLemma_ShareInst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "max_depth_call_graph_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: max_depth_call_graph_lemma (147-788) at the ShareInst case of evaluate_ind: the genuine case of the untagged depthPost (the lemma conclusion with all original premises over funs n ns funs2), with exactly the evaluate_ind induction hypotheses for ShareInst and nothing else. State carrier WordSemStateFiniteExact width C F with fmap_as_finite_support [fpRegs, store] and words qualifiers; OPTION_MAP2 is WordDepth.optionMap2, set ns SUBSET domain funs2 is successful lookup for each element, ALL_DISTINCT is Nodup. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through evaluate/inst. Typed capture word_depth_call_graph probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/CallGraphLemma/Leaves.lean",
+    "lean_name": "maxDepthCallGraphLemma_Install",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "max_depth_call_graph_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: max_depth_call_graph_lemma (147-788) at the Install case of evaluate_ind: the genuine case of the untagged depthPost (the lemma conclusion with all original premises over funs n ns funs2), with exactly the evaluate_ind induction hypotheses for Install and nothing else. State carrier WordSemStateFiniteExact width C F with fmap_as_finite_support [fpRegs, store] and words qualifiers; OPTION_MAP2 is WordDepth.optionMap2, set ns SUBSET domain funs2 is successful lookup for each element, ALL_DISTINCT is Nodup. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through evaluate/inst. Typed capture word_depth_call_graph probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/CallGraphLemma/Alloc.lean",
+    "lean_name": "maxDepthCallGraphLemma_Alloc",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "max_depth_call_graph_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: max_depth_call_graph_lemma (147-788) at the Alloc case of evaluate_ind: the genuine case of the untagged depthPost (the lemma conclusion with all original premises over funs n ns funs2), with exactly the evaluate_ind induction hypotheses for Alloc and nothing else. State carrier WordSemStateFiniteExact width C F with fmap_as_finite_support [fpRegs, store] and words qualifiers; OPTION_MAP2 is WordDepth.optionMap2, set ns SUBSET domain funs2 is successful lookup for each element, ALL_DISTINCT is Nodup. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through evaluate/inst. Typed capture word_depth_call_graph probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/CallGraphLemma/Seq.lean",
+    "lean_name": "maxDepthCallGraphLemma_Seq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "max_depth_call_graph_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: max_depth_call_graph_lemma (147-788) at the Seq case of evaluate_ind: the genuine case of the untagged depthPost (the lemma conclusion with all original premises over funs n ns funs2), with exactly the evaluate_ind induction hypotheses for Seq and nothing else. State carrier WordSemStateFiniteExact width C F with fmap_as_finite_support [fpRegs, store] and words qualifiers; OPTION_MAP2 is WordDepth.optionMap2, set ns SUBSET domain funs2 is successful lookup for each element, ALL_DISTINCT is Nodup. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through evaluate/inst. Typed capture word_depth_call_graph probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/CallGraphLemma/If.lean",
+    "lean_name": "maxDepthCallGraphLemma_If",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "max_depth_call_graph_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: max_depth_call_graph_lemma (147-788) at the If case of evaluate_ind: the genuine case of the untagged depthPost (the lemma conclusion with all original premises over funs n ns funs2), with exactly the evaluate_ind induction hypotheses for If and nothing else. State carrier WordSemStateFiniteExact width C F with fmap_as_finite_support [fpRegs, store] and words qualifiers; OPTION_MAP2 is WordDepth.optionMap2, set ns SUBSET domain funs2 is successful lookup for each element, ALL_DISTINCT is Nodup. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through evaluate/inst. Typed capture word_depth_call_graph probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/CallGraphLemma/If.lean",
+    "lean_name": "maxDepthCallGraphLemma_MustTerminate",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "max_depth_call_graph_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: max_depth_call_graph_lemma (147-788) at the MustTerminate case of evaluate_ind: the genuine case of the untagged depthPost (the lemma conclusion with all original premises over funs n ns funs2), with exactly the evaluate_ind induction hypotheses for MustTerminate and nothing else. State carrier WordSemStateFiniteExact width C F with fmap_as_finite_support [fpRegs, store] and words qualifiers; OPTION_MAP2 is WordDepth.optionMap2, set ns SUBSET domain funs2 is successful lookup for each element, ALL_DISTINCT is Nodup. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through evaluate/inst. Typed capture word_depth_call_graph probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/CallGraphLemma/Loop.lean",
+    "lean_name": "maxDepthCallGraphLemma_Loop",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "max_depth_call_graph_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: max_depth_call_graph_lemma (147-788) at the Loop case of evaluate_ind: the genuine case of the untagged depthPost (the lemma conclusion with all original premises over funs n ns funs2), with exactly the evaluate_ind induction hypotheses for Loop and nothing else. State carrier WordSemStateFiniteExact width C F with fmap_as_finite_support [fpRegs, store] and words qualifiers; OPTION_MAP2 is WordDepth.optionMap2, set ns SUBSET domain funs2 is successful lookup for each element, ALL_DISTINCT is Nodup. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through evaluate/inst. Typed capture word_depth_call_graph probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/CallGraphLemma/Call.lean",
+    "lean_name": "maxDepthCallGraphLemma_Call",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "max_depth_call_graph_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: max_depth_call_graph_lemma (147-788) at the Call case of evaluate_ind: the genuine case of the untagged depthPost (the lemma conclusion with all original premises over funs n ns funs2), with exactly the evaluate_ind induction hypotheses for Call and nothing else. State carrier WordSemStateFiniteExact width C F with fmap_as_finite_support [fpRegs, store] and words qualifiers; OPTION_MAP2 is WordDepth.optionMap2, set ns SUBSET domain funs2 is successful lookup for each element, ALL_DISTINCT is Nodup. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through evaluate/inst. Typed capture word_depth_call_graph probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/CallGraphLemma.lean",
+    "lean_name": "maxDepthCallGraphLemma",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "max_depth_call_graph_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: original 147-788 itself: all eight binders, the eight premises and both conclusion conjuncts verbatim; assembled by evaluate_ind from the 26 cases as in HOL (recInduct evaluate_ind). State carrier WordSemStateFiniteExact width C F with fmap_as_finite_support [fpRegs, store] and words qualifiers; OPTION_MAP2 is WordDepth.optionMap2, set ns SUBSET domain funs2 is successful lookup for each element, ALL_DISTINCT is Nodup. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through evaluate/inst. Typed capture word_depth_call_graph probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/CallGraph.lean",
+    "lean_name": "maxDepthCallGraph",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "max_depth_call_graph",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: original 790-806: binders !prog s res s1 funs n a, five premises, option_le conclusion over full_call_graph n funs; from the lemma at ns = [n], funs2 = funs as in HOL. State carrier WordSemStateFiniteExact width C F with fmap_as_finite_support [fpRegs, store] and words qualifiers; OPTION_MAP2 is WordDepth.optionMap2, set ns SUBSET domain funs2 is successful lookup for each element, ALL_DISTINCT is Nodup. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through evaluate/inst. Typed capture word_depth_call_graph probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/CallGraph.lean",
+    "lean_name": "maxDepthCallNONE",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "max_depth_Call_NONE",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: original 857-880: free dest args s res s1 funs bound explicitly; premise evaluate (Call NONE (SOME dest) args NONE, s) = (res,s1) /\\ res <> SOME Error /\\ subspt funs s.code; conclusion over full_call_graph dest funs; via max_depth_call_graph on the callee as in HOL. State carrier WordSemStateFiniteExact width C F with fmap_as_finite_support [fpRegs, store] and words qualifiers; OPTION_MAP2 is WordDepth.optionMap2, set ns SUBSET domain funs2 is successful lookup for each element, ALL_DISTINCT is Nodup. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through evaluate/inst. Typed capture word_depth_call_graph probe (show_types, no hypotheses)."
   }
 ]
