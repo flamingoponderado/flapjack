@@ -98181,5 +98181,13 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-pantocrep-inline-table-validity: original full1135-1152 implication and regenerated fully typed original capture. Original source declaration list, sole EVERY binary-Crepop validity premise on actual compile_to_crep, full EVERY body-expression validity conclusion on actual compile_prog. Shared native crepEveryExpHOL literal Prop predicate and membership EVERY, exact MlString/ListNat/CrepProgHOL table carriers. Source compileProgDeclsHOLW selects original inlinable function names and actual compileToCrepExactHOLW table. Canonical compileInlTopHOLExact_eq_compileInlProgHOLExact unconditional wrapper equality and accepted crepInline_everyInstCrepInline used. Original SUBMAP derived internally by name-filtered association-list lookup; all duplicate names admitted, first-binding source behavior preserved. Only word dimension translated; no finite map in final signature or added source byte/distinctness/SUBMAP/output/target-run premise. Full body/declaration guard-to-table assembly remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyResourceStage.lean",
+    "lean_name": "panToTargetResourceLimit",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage G of the single HOL proof of pan_to_target_compile_semantics (pan_to_targetProofScript.sml 2285-2506): option_lt stack_max (SOME (FST (read_limits ...))) implies word_lang_safe_for_space wst InitGlobals_location; pointer premises are the top theorem's own, the rest earlier-stage facts; intermediate proof step, not a HOL theorem."
   }
 ]
