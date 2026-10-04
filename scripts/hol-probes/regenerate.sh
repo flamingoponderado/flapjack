@@ -107,9 +107,6 @@ run_probe() {
   done
 }
 
-run_probe word_to_stack_inst_full_probeScript.sml word_to_stack_inst_full_probe.out \
-  inst_typed inst_proved inst_hypotheses fp_typed fp_proved fp_hypotheses \
-  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_to_stack_inst_arith_probeScript.sml word_to_stack_inst_arith_probe.out \
   arith_typed arith_proved arith_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -7862,3 +7859,10 @@ run_probe riscv_target_binop_full_probeScript.sml riscv_target_binop_full_probe.
   riscv_encoder_correct_binop_full_statement riscv_encoder_correct_binop_full_types riscv_encoder_correct_binop_full_hypotheses riscv_encoder_correct_binop_full_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+run_probe word_to_stack_inst_full_probeScript.sml word_to_stack_inst_full_probe.out \
+  inst_typed inst_proved inst_hypotheses fp_typed fp_proved fp_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_convs_simp_sequence_labels_probeScript.sml word_convs_simp_sequence_labels_probe.out \
+  simpSequenceLabels1_typed simpSequenceLabels1_proved simpSequenceLabels1_hypotheses simpSequenceLabels2_typed simpSequenceLabels2_proved simpSequenceLabels2_hypotheses simpSequenceLabels3_typed simpSequenceLabels3_proved simpSequenceLabels3_hypotheses simpSequenceLabels4_typed simpSequenceLabels4_proved simpSequenceLabels4_hypotheses simpSequenceLabels5_typed simpSequenceLabels5_proved simpSequenceLabels5_hypotheses simpSequenceLabels6_typed simpSequenceLabels6_proved simpSequenceLabels6_hypotheses \
+  "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" "$cake_dir/compiler/backend/proofs"

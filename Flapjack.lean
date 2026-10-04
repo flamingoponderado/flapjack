@@ -1359,6 +1359,7 @@ import Flapjack.Pancake.Proofs.WordConvs.InstSelectProgram
 import Flapjack.Pancake.Proofs.WordConvs.ThreeToTwo
 import Flapjack.Pancake.Proofs.WordConvs.Unreach
 import Flapjack.Pancake.Proofs.WordConvs.UnreachLabels
+import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.Sequence
 import Flapjack.Pancake.Proofs.WordConvs.WordCse
 import Flapjack.Pancake.Proofs.WordConvs.CopyProp
 import Flapjack.Pancake.Proofs.WordConvs.SSAWfCutsets
