@@ -98226,5 +98226,13 @@
     "lean_name": "allocatorWithSsaAndCopy_spillState",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific observed-output retention invariant for arbitrary copy, SSA and cleanup producers. Derived from the actual WithSsaAndCopy consumer; no desired metadata/spill equality assumption, target execution or independent HOL declaration. Actual native-copy witnesses instantiate this invariant; legacy helper compatibility remains explicit."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/ProductionPreSsaDomain.lean",
+    "lean_name": "acceptedAllocatorInput_usesNativeCopy",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific actual allocator dispatch equation, no independent HOL declaration. Accepted inputs route to the explicit wordCopyPropViaHOL/full-SSA consumer, preserving every output/failure branch. Source variants discharge input acceptance from compiler closure; no allocation availability/output-codec or target-run premise. Legacy routed-limit lemmas remain separately described as legacy API facts."
   }
 ]
