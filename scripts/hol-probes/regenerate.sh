@@ -8423,3 +8423,8 @@ run_probe riscv_target_mem_probeScript.sml riscv_target_mem_probe.out \
   riscv_encoder_correct_mem_statement riscv_encoder_correct_mem_types riscv_encoder_correct_mem_hypotheses riscv_encoder_correct_mem_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe riscv_target_complete_probeScript.sml riscv_target_complete_probe.out \
+  riscv_encoder_correct_statement riscv_encoder_correct_expanded riscv_encoder_correct_hypotheses riscv_encoder_correct_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"

@@ -8854,3 +8854,12 @@ typed statements and hypothesis counts are captured for
 `Flapjack/Compiler/Backend/RiscVConfig/Proofs.lean`.
 
 `word_to_word_locals_typed_probe.out` supplies typed, zero-hypothesis original proof replays for all seven reviewed local helpers: rm_perm, find_code_thm, pop_env_termdep, compile_single_eta, code_rel_union_fromAList, code_rel_no_alloc and code_rel_no_install. Source guards cover the five literal statements/proofs and the original two specialization derivations. The row checker requires each typed statement; this does not prove HOL-to-Lean equivalence.
+
+### Full native encoder theorem
+`riscv_target_complete_probeScript.sml` captures the unconditional original
+`encoder_correct riscv_target`, its complete definition expansion, zero open
+hypotheses and proved T. `CorrectnessEncoding/Complete.lean` assembles all
+seventeen original constructor groups and target_ok without extra premises.
+The native model retains reals_as_rational_cuts (SOUNDNESS section 8).
+This regression evidence does not prove cross-language equivalence or establish
+production compiler routing or the whole Pancake-to-RISC-V correctness theorem.
