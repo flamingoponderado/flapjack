@@ -1,7 +1,13 @@
 import Flapjack.Pancake.Proofs.PanToWord
 import Flapjack.Pancake.Semantics.CrepProps
 import Flapjack.Pancake.PanToCrep.CompileExact
+import Flapjack.Pancake.Semantics.CrepProps.EveryExpCodec
 import Flapjack.Pancake.CrepArith
+
+/-! The tagged statements use the shared native Prop-valued every_exp and
+membership form of EVERY. Earlier Boolean recursion is retained privately as
+proof factoring, not as separate HOL declarations. The unconditional syntax
+codec theorem transports all expression/list constructors without guards. -/
 
 namespace Flapjack
 
@@ -29,9 +35,7 @@ theorem crepExpsOfNestedSeqHOL {width : Nat} [NeZero width]
       List.flatten_cons, ih]
 
 /-- Original matched-length guard and full iff of nested declarations. -/
-@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "every_inst_ok_nested_decs"
-  (words_as_type_indexed_bitvec)]
-theorem everyInstOk_nestedDecs {width : Nat} [NeZero width]
+private theorem everyInstOk_nestedDecsCodec {width : Nat} [NeZero width]
     (ns : List Nat) (ps : List (CrepExpHOL width)) (p : CrepProgHOL width)
     (lengths : ns.length = ps.length) :
     crepBinaryProg (nestedDecsHOL ns ps p) = true ↔
@@ -51,9 +55,7 @@ theorem everyInstOk_nestedDecs {width : Nat} [NeZero width]
           simp only [crepBinaryList, and_assoc]
 
 /-- Original store_globals iff; the fixed five-bit global address is retained. -/
-@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "every_inst_ok_less_store_globals"
-  (words_as_type_indexed_bitvec)]
-theorem everyInstOkLess_storeGlobals {width : Nat} [NeZero width]
+private theorem everyInstOkLess_storeGlobalsCodec {width : Nat} [NeZero width]
     (w : BitVec 5) (es : List (CrepExpHOL width)) :
     (storeGlobalsHOL w es).all crepBinaryProg = true ↔ crepBinaryList es = true := by
   induction es generalizing w with
@@ -63,9 +65,7 @@ theorem everyInstOkLess_storeGlobals {width : Nat} [NeZero width]
 
 
 /-- Original ordinary stores iff, including the empty-list conditional. -/
-@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "every_inst_ok_less_stores"
-  (words_as_type_indexed_bitvec)]
-theorem everyInstOkLess_stores {width : Nat} [NeZero width]
+private theorem everyInstOkLess_storesCodec {width : Nat} [NeZero width]
     (e : CrepExpHOL width) (es : List (CrepExpHOL width)) (a : BitVec width) :
     (storesHOL e es a).all crepBinaryProg = true ↔
       (es ≠ [] → crepBinaryExp e = true) ∧ crepBinaryList es = true := by
@@ -78,9 +78,7 @@ theorem everyInstOkLess_stores {width : Nat} [NeZero width]
         intro he _ _ _ <;> exact he
 
 /-- Original shape-load input validity implication, arbitrary word offset/count. -/
-@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "every_inst_ok_less_pan_to_crep_load_shape"
-  (words_as_type_indexed_bitvec)]
-theorem everyInstOkLess_loadShape {width : Nat} [NeZero width]
+private theorem everyInstOkLess_loadShapeCodec {width : Nat} [NeZero width]
     (w : BitVec width) (n : Nat) (e : CrepExpHOL width)
     (valid : crepBinaryExp e = true) :
     crepBinaryList (loadShapeBytesHOLW w n e) = true := by
@@ -94,9 +92,7 @@ theorem everyInstOkLess_loadShape {width : Nat} [NeZero width]
 
 
 /-- Original successful head extraction preserves every nested binary condition. -/
-@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "every_inst_ok_less_pan_to_crep_cexp_heads"
-  (words_as_type_indexed_bitvec)]
-theorem everyInstOkLess_cexpHeads {width : Nat} [NeZero width]
+private theorem everyInstOkLess_cexpHeadsCodec {width : Nat} [NeZero width]
     (ces : List (List (CrepExpHOL width))) (es : List (CrepExpHOL width))
     (valid : ces.all crepBinaryList = true) (heads : cexpHeads ces = some es) :
     crepBinaryList es = true := by
@@ -125,9 +121,7 @@ theorem everyInstOkLess_cexpHeads {width : Nat} [NeZero width]
 
 /-- Original field-selection result, retaining the source list guard and actual
 pair equation over the exact shape carrier. -/
-@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "every_inst_ok_less_pan_to_crep_comp_field"
-  (words_as_type_indexed_bitvec)]
-theorem everyInstOkLess_compField {width : Nat} [NeZero width]
+private theorem everyInstOkLess_compFieldCodec {width : Nat} [NeZero width]
     (index : Nat) (shapes : List Flapjack.Pancake.PanLang.ShapeHOL)
     (es es' : List (CrepExpHOL width)) (sh : Flapjack.Pancake.PanLang.ShapeHOL)
     (valid : crepBinaryList es = true) (compiled : compFieldHOL index shapes es = (es', sh)) :
@@ -148,5 +142,99 @@ theorem everyInstOkLess_compField {width : Nat} [NeZero width]
         simp only [crepBinaryList, List.all_eq_true] at valid ⊢
         intro e he
         exact valid e (List.mem_of_mem_drop he)
+
+
+/-- Shared literal HOL predicate used by the complete source-pass composition. -/
+abbrev crepBinaryExpNative {width : Nat} [NeZero width] (e : CrepExpHOL width) : Prop :=
+  crepEveryExpHOL (fun x => ∀ op es, x = .crepOp op es → es.length = 2) e
+abbrev crepBinaryListNative {width : Nat} [NeZero width] (es : List (CrepExpHOL width)) : Prop :=
+  ∀ e ∈ es, crepBinaryExpNative e
+abbrev crepBinaryProgNative {width : Nat} [NeZero width] (p : CrepProgHOL width) : Prop :=
+  crepBinaryListNative (crepExpsOfHOL p)
+
+/-- Internal predicate translation, no separate HOL original; the exact decoder
+preserves constructors and argument lengths unconditionally. -/
+private theorem binaryExpNative_iff {width : Nat} [NeZero width] (e : CrepExpHOL width) :
+    crepBinaryExpNative e ↔ crepBinaryExp e = true := by
+  have predicates :
+      (fun x : CrepExpHOL width => ∀ op es, x = .crepOp op es → es.length = 2) =
+      (fun x => (match crepExpOfHOL x with
+        | .crepOp _ es => decide (es.length = 2)
+        | _ => true) = true) := by
+    funext x
+    apply propext
+    cases x <;> simp [crepExpOfHOL]
+    constructor
+    · intro h; exact h .mul
+    · intro h op; exact h
+  unfold crepBinaryExpNative crepBinaryExp
+  rw [predicates]
+  exact crepEveryExpHOL_codec (fun x => match x with
+    | .crepOp _ es => decide (es.length = 2)
+    | _ => true) e
+
+private theorem binaryListNative_iff {width : Nat} [NeZero width]
+    (es : List (CrepExpHOL width)) :
+    crepBinaryListNative es ↔ crepBinaryList es = true := by
+  simp only [crepBinaryListNative, crepBinaryList, List.all_eq_true, binaryExpNative_iff]
+
+private theorem binaryProgNative_iff {width : Nat} [NeZero width] (p : CrepProgHOL width) :
+    crepBinaryProgNative p ↔ crepBinaryProg p = true :=
+  binaryListNative_iff _
+
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "every_inst_ok_nested_decs"
+  (words_as_type_indexed_bitvec)]
+theorem everyInstOk_nestedDecs {width : Nat} [NeZero width]
+    (ns : List Nat) (ps : List (CrepExpHOL width)) (p : CrepProgHOL width)
+    (lengths : ns.length = ps.length) :
+    crepBinaryProgNative (nestedDecsHOL ns ps p) ↔
+      crepBinaryListNative ps ∧ crepBinaryProgNative p := by
+  simpa only [binaryListNative_iff, binaryProgNative_iff] using
+    everyInstOk_nestedDecsCodec ns ps p lengths
+
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "every_inst_ok_less_store_globals"
+  (words_as_type_indexed_bitvec)]
+theorem everyInstOkLess_storeGlobals {width : Nat} [NeZero width]
+    (w : BitVec 5) (es : List (CrepExpHOL width)) :
+    (∀ p ∈ storeGlobalsHOL w es, crepBinaryProgNative p) ↔ crepBinaryListNative es := by
+  simpa only [List.all_eq_true, binaryListNative_iff, binaryProgNative_iff] using
+    everyInstOkLess_storeGlobalsCodec w es
+
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "every_inst_ok_less_stores"
+  (words_as_type_indexed_bitvec)]
+theorem everyInstOkLess_stores {width : Nat} [NeZero width]
+    (e : CrepExpHOL width) (es : List (CrepExpHOL width)) (a : BitVec width) :
+    (∀ p ∈ storesHOL e es a, crepBinaryProgNative p) ↔
+      (es ≠ [] → crepBinaryExpNative e) ∧ crepBinaryListNative es := by
+  simpa only [List.all_eq_true, binaryListNative_iff, binaryProgNative_iff,
+    binaryExpNative_iff] using everyInstOkLess_storesCodec e es a
+
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "every_inst_ok_less_pan_to_crep_load_shape"
+  (words_as_type_indexed_bitvec)]
+theorem everyInstOkLess_loadShape {width : Nat} [NeZero width]
+    (w : BitVec width) (n : Nat) (e : CrepExpHOL width) (valid : crepBinaryExpNative e) :
+    crepBinaryListNative (loadShapeBytesHOLW w n e) :=
+  (binaryListNative_iff _).2 (everyInstOkLess_loadShapeCodec w n e
+    ((binaryExpNative_iff e).1 valid))
+
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "every_inst_ok_less_pan_to_crep_cexp_heads"
+  (words_as_type_indexed_bitvec)]
+theorem everyInstOkLess_cexpHeads {width : Nat} [NeZero width]
+    (ces : List (List (CrepExpHOL width))) (es : List (CrepExpHOL width))
+    (valid : ∀ cs ∈ ces, crepBinaryListNative cs) (heads : cexpHeads ces = some es) :
+    crepBinaryListNative es := by
+  apply (binaryListNative_iff es).2
+  apply everyInstOkLess_cexpHeadsCodec ces es _ heads
+  simpa only [List.all_eq_true, binaryListNative_iff] using valid
+
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "every_inst_ok_less_pan_to_crep_comp_field"
+  (words_as_type_indexed_bitvec)]
+theorem everyInstOkLess_compField {width : Nat} [NeZero width]
+    (index : Nat) (shapes : List Flapjack.Pancake.PanLang.ShapeHOL)
+    (es es' : List (CrepExpHOL width)) (sh : Flapjack.Pancake.PanLang.ShapeHOL)
+    (valid : crepBinaryListNative es) (compiled : compFieldHOL index shapes es = (es', sh)) :
+    crepBinaryListNative es' :=
+  (binaryListNative_iff es').2 (everyInstOkLess_compFieldCodec index shapes es es' sh
+    ((binaryListNative_iff es).1 valid) compiled)
 
 end Flapjack
