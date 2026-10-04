@@ -7877,3 +7877,7 @@ run_probe word_to_stack_comp_correct_full_probeScript.sml word_to_stack_comp_cor
 run_probe word_convs_push_out_labels_probeScript.sml word_convs_push_out_labels_probe.out \
   pushOutLabelsHelper_typed pushOutLabelsHelper_proved pushOutLabelsHelper_hypotheses pushOutLabels_typed pushOutLabels_proved pushOutLabels_hypotheses \
   "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_convs_hoist_prerequisites_probeScript.sml word_convs_hoist_prerequisites_probe.out \
+  hoistPrerequisite1_typed hoistPrerequisite1_proved hoistPrerequisite1_hypotheses hoistPrerequisite2_typed hoistPrerequisite2_proved hoistPrerequisite2_hypotheses hoistPrerequisite3_typed hoistPrerequisite3_proved hoistPrerequisite3_hypotheses \
+  "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" "$cake_dir/compiler/backend/proofs"

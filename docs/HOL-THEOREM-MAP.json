@@ -92927,5 +92927,32 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison2026-10-04 original local labels_rel_push_out_if364-376: arbitrary native program at arbitrary positive common word width. Exact native pushOutIfAux structural induction retains return/raise/tail-call terminal cases, recursive MustTerminate, all four If branch Boolean combinations, both Seq branches including untouched second program when first terminates, Loop and all unchanged constructors. Conclusion full labelsRel source/output (membership containment and source distinctness implies output distinctness), no extra distinct-output premise. Reordered If branch uses accepted generic labelsRelAppendImp and actual labelsRel_append; original generic labels_rel binder translated by positive BitVec/NeZero only. Literal unchanged original local theorem proof and append-helper replay with full inferred types, T/hyp0; probes regression evidence, not cross-language equivalence. No evaluator or reals qualifier inherited."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/HoistPrerequisites.lean",
+    "lean_name": "constFpLoopSeq",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "const_fp_loop_Seq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-04 original wordConvsProof262-287: native WordLangProgHOL positive arbitrary BitVec width/NeZero, exact List/Spt carriers, no evaluator or numerical FP rendering. Fresh original local derivation/unchanged proof replay full inferred types, T/hyp0; not HOL-to-Lean equivalence. Original BODY_CONJUNCTS filter Seq selects the sole Seq clause of const_fp_loop_def; full arbitrary first/second program and knowledge tree, dependent intermediate map threading and exact program/map result retained. Lean let pair destructuring matches original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/HoistPrerequisites.lean",
+    "lean_name": "constFpLoopDummyCases",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "const_fp_loop_dummy_cases",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-04 original wordConvsProof262-287: native WordLangProgHOL positive arbitrary BitVec width/NeZero, exact List/Spt carriers, no evaluator or numerical FP rendering. Fresh original local derivation/unchanged proof replay full inferred types, T/hyp0; not HOL-to-Lean equivalence. Full actual compile guard for If with Raise1/Raise2, arbitrary cs and csPost/programPost. All three disjuncts retained: destRaiseNum1 and universal equality selecting arbitrary first branch; destRaiseNum2 and universal equality selecting arbitrary second; or destRaiseNum0. Actual lookup/getVarImmCs and original wordCmp decide strategy, no successful strategy assumption or narrowed payload."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/HoistPrerequisites.lean",
+    "lean_name": "destIfIff",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "dest_If_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-04 original wordConvsProof262-287: native WordLangProgHOL positive arbitrary BitVec width/NeZero, exact List/Spt carriers, no evaluator or numerical FP rendering. Fresh original local derivation/unchanged proof replay full inferred types, T/hyp0; not HOL-to-Lean equivalence. Entire iff between native destructor Some five-tuple and exact If constructor, arbitrary program/cmp/register/RegImm and both subprograms. No projection-only weakening. All constructor arities and tuple order retained."
   }
 ]
