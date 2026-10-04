@@ -1549,6 +1549,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunOk
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunConstOk
 import Flapjack.Compiler.Backend.WordSimp.Proofs.GcWordConst
 import Flapjack.Compiler.Backend.WordSimp.ProductionSmartSeq
+import Flapjack.Compiler.Backend.WordSimp.ProductionSeqAssoc
 import Flapjack.Compiler.Backend.WordSimp.Proofs.SeqAssoc
 import Flapjack.Compiler.Backend.WordSimp.Proofs.ConstFpLemmas
 import Flapjack.Compiler.Backend.WordSimp.Proofs.GcConsts
