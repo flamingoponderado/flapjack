@@ -7713,3 +7713,8 @@ run_probe pan_to_target_source_probeScript.sml pan_to_target_source_probe.out \
   exports_def compile_prog_def exports_type compile_prog_type zip_def splitp_def compile_prog_main_binding \
   main_empty_names main_missing_names main_already_first_names main_later_names main_nonempty_missing_names main_first_only_duplicates_names exports_empty exports_flags_duplicates \
   "$cake_dir/pancake/pan_to_targetScript.sml" "$cake_dir/pancake"
+
+run_probe word_to_word_executable_probeScript.sml word_to_word_executable_probe.out \
+  compile_single_definition full_compile_single_definition compile_definition \
+  skip_alg0 skip_alg2 return_alg0 return_alg2 assign_return_alg0 assign_return_alg2 must_terminate_alg0 must_terminate_alg2 tail_call_alg0 tail_call_alg2 branch_alg0 branch_alg2 empty oracle_remainder oracle_short \
+  "$cake_dir/compiler/backend/word_to_wordScript.sml" "$cake_dir/compiler/backend"

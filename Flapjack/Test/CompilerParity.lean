@@ -1,3 +1,4 @@
+import Flapjack.Test.WordToWordExecutableParity
 import Flapjack.Test.PanToTargetOptionLtParity
 import Flapjack.Test.WordDepthParity
 import Flapjack.Test.WordFindCodeGenericCarriers
@@ -1942,6 +1943,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.WordInstNormalizeParity.runChecks,
     Flapjack.Test.WordInstPullExpExecutableParity.runChecks,
     Flapjack.Test.WordInstSelectorExecutableParity.runChecks,
+    Flapjack.Test.WordToWordExecutableParity.runChecks,
     Flapjack.Test.CakeForcedParity.runChecks,
     Flapjack.Test.CakeMkBijParity.runChecks,
     Flapjack.Test.CakeSsaSetupParity.runChecks,
