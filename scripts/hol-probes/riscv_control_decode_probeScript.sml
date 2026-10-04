@@ -16,11 +16,10 @@ val jalr_decode = Q.prove(
   `!rd rs imm. DecodeAny (Word (Encode (Branch (JALR (rd,rs,imm))))) = Branch (JALR (rd,rs,imm))`,
   rpt gen_tac >> simp defs >>
   CONV_TAC (DEPTH_CONV blastLib.BBLAST_CONV) >> simp [LET_THM] >> blastLib.BBLAST_TAC);
-fun print_thm label th =
-  (print (label ^ "_universal="); print_term (concl th); print "\n";
-   print (label ^ "_hypotheses=" ^ Int.toString (length (hyp th)) ^ "\n"));
-val _ = print_thm "jal_decode" jal_decode;
-val _ = print_thm "jalr_decode" jalr_decode;
+val _ = (print "jal_decode_universal="; print_term (concl jal_decode); print "\n");
+val _ = print ("jal_decode_hypotheses=" ^ Int.toString (length (hyp jal_decode)) ^ "\n");
+val _ = (print "jalr_decode_universal="; print_term (concl jalr_decode); print "\n");
+val _ = print ("jalr_decode_hypotheses=" ^ Int.toString (length (hyp jalr_decode)) ^ "\n");
 fun observation label q =
   let val th = EVAL q in
     if aconv (rhs (concl th)) T then () else raise Fail label;
@@ -42,12 +41,14 @@ val _ = observation "jalr_link_alias"
   ``DecodeAny (Word (Encode (Branch (JALR (1w,1w,0x800w))))) = Branch (JALR (1w,1w,0x800w))``;
 val _ = observation "jalr_mixed"
   ``DecodeAny (Word (Encode (Branch (JALR (7w,16w,0x57Fw))))) = Branch (JALR (7w,16w,0x57Fw))``;
-fun source label q =
-  let val th = SIMP_CONV (srw_ss()) [Encode_def] q in
-    print (label ^ "_source_clause="); print_term (concl th); print "\n";
-    print (label ^ "_carrier_types=" ^ String.concatWith ", "
-      (map (fn v => term_to_string v ^ " : " ^ type_to_string (type_of v)) (free_vars q)) ^ "\n")
-  end;
-val _ = source "jal" ``Encode (Branch (JAL (rdv,immv)))``;
-val _ = source "jalr" ``Encode (Branch (JALR (rdv,rsv,immv)))``;
+val jal_term = ``Encode (Branch (JAL (rdv,immv)))``;
+val jal_source = SIMP_CONV (srw_ss()) [Encode_def] jal_term;
+val _ = (print "jal_source_clause="; print_term (concl jal_source); print "\n");
+val _ = print ("jal_carrier_types=" ^ String.concatWith ", "
+  (map (fn v => term_to_string v ^ " : " ^ type_to_string (type_of v)) (free_vars jal_term)) ^ "\n");
+val jalr_term = ``Encode (Branch (JALR (rdv,rsv,immv)))``;
+val jalr_source = SIMP_CONV (srw_ss()) [Encode_def] jalr_term;
+val _ = (print "jalr_source_clause="; print_term (concl jalr_source); print "\n");
+val _ = print ("jalr_carrier_types=" ^ String.concatWith ", "
+  (map (fn v => term_to_string v ^ " : " ^ type_to_string (type_of v)) (free_vars jalr_term)) ^ "\n");
 val _ = OS.Process.exit OS.Process.success;
