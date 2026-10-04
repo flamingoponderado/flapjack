@@ -1,0 +1,1 @@
+load_globals_alt=∀(ad :word5) (n :num). (load_globals ad n :α crepLang$exp list) = GENLIST (λ(n :num). (LoadGlob (ad + (n2w n :word5)) :α crepLang$exp)) n

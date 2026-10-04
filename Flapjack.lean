@@ -61,6 +61,7 @@ import Flapjack.Pancake.Proofs.PanToTarget.WordToWordNoInstall
 import Flapjack.Pancake.Proofs.PanToTarget.StackSizeConst
 import Flapjack.Pancake.Proofs.PanToTarget.AssemblyResourceLimit
 import Flapjack.Pancake.Proofs.PanToTarget.AssemblyInitCode
+import Flapjack.Pancake.Proofs.PanToTarget.AssemblyInitMemory
 import Flapjack.Pancake.Proofs.PanToTarget.InitHelpers
 import Flapjack.Pancake.Proofs.PanToTarget.PanInstalled
 import Flapjack.Pancake.Proofs.PanToTarget.LabelsChain
@@ -145,6 +146,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsCorrect
 import Flapjack.RiscV.CorrectnessEncoding.DecodeAddi
 import Flapjack.RiscV.CorrectnessEncoding.JumpReg
 import Flapjack.RiscV.CorrectnessEncoding.Jump
+import Flapjack.RiscV.CorrectnessEncoding.Call
 import Flapjack.RiscV.CorrectnessEncoding.Skip
 import Flapjack.Compiler.Backend.WordToWord.Config
 import Flapjack.Compiler.Backend.WordToWord.Compile
@@ -2091,6 +2093,7 @@ import Flapjack.Pancake.Proofs.PanToWord.EveryInstOkLess.PanStructs
 import Flapjack.Pancake.Proofs.PanToWord.PanSimpValidity
 import Flapjack.Pancake.Proofs.PanToWord.PanToCrepValidity
 import Flapjack.Pancake.Proofs.PanToWord.PanToCrepCompileExpValidity
+import Flapjack.Pancake.Proofs.PanToWord.LoadGlobalsValidity
 import Flapjack.Pancake.Proofs.CrepInline.ExpressionProvenance
 import Flapjack.Pancake.Proofs.PanToTarget
 import Flapjack.Pipeline

@@ -97996,6 +97996,64 @@
     "reviewer": "Association-list lookup commutes with a value map; Flapjack sptree infrastructure for stage G, no HOL declaration."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "load_globals_alt",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/LoadGlobalsValidity.lean",
+    "lean_name": "loadGlobalsAlt",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-crep-load-globals-alt: original1050-1055 full forall address count equality and regenerated full typed original capture; loadGlobalsHOL exactly follows native load_globals_def zero/successor clauses. GENLIST represented constructor-for-constructor by List.range count mapped at every Nat index, same order/length. Original global address carrier remains fixed BitVec5, expression dimension width independent and positive. Word dimension qualifier covers only the native CrepExpHOL dimension, not fixed word5 specialization. BitVec.ofNat5 implements original n2w index and modular addition. No guards/output assumptions/scope narrowing. Required by full PanToCrep compile Call handlers; full compile/inline/source composition remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Call.lean",
+    "lean_name": "riscv_encoder_correct_call",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol: compared original Call riscv_targetProof723-730/riscv_target258-263, source asmStep/call/jumpToOffset/asm_ok and full encoder_correct_def. Tagged root has only original source step plus initial targetStateRel and full existential/allenv/bothassertions/code-byte/PC/finalrelation conclusion. Near JALrd1 uses source arithmetic halfword shift/signed21 bounds and witness0; far AUIPCrd1/JALRrd1=rs1 uses original signed split, witness1/env0-env1/intermediatePC4. Literal four/eight emitted bytes derive full native fetch/decode/Run/Next. Source configuration supplies lr=1 and original offset/alignment/reg guards. Actual aliased JALR reads old register1 before link overwrite; near/far final link values sourcePC+4/sourcePC+8. No non-alias, decoder, target-run or post-state premise; full native projection preserves source register across interference, memory/frame/all original registers retained. Same-counterpart helpers are untagged local compositions with no separate HOL originals. Inherits reviewed reals_as_rational_cuts assurance limit SOUNDNESS8 through native Run; no production-route or full encoder/compiler completion claim."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyWordToStack.lean",
+    "lean_name": "panPropsALookupEq_eq_none",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only: ALOOKUP misses a key absent from the keys (HOL ALOOKUP_NONE)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyWordToStack.lean",
+    "lean_name": "panToTargetStubLocationsFree",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1606-1622): ALOOKUP wprog raise_stub_location = NONE and store_consts_stub_location = NONE via pan_to_word_compile_prog_lab_min and compile_to_word_conventions2."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyWordToStack.lean",
+    "lean_name": "fullMakeInit_bitmaps_code",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1563-1585): a successful full_make_init keeps the given bitmaps and installs fromAList code."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyWordToStack.lean",
+    "lean_name": "panToTargetInitStateOk",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1624-1647): init_state_ok of the full_make_init stack state with the empty word oracle, via IMP_init_state_ok and compile_word_to_stack_bitmaps."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyWordToStack.lean",
+    "lean_name": "panToTargetWordStateFacts",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1686-1716): the word make_init state on a successful full_make_init stack state has gc_fun_const_ok gc_fun (gc_fun_const_ok_word_gc_fun), empty stack, the given code and lookup 0 locals = SOME (Loc 1 0)."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyWordToStack.lean",
@@ -98114,5 +98172,45 @@
     "lean_name": "panToTargetStackLimitLeInitStack",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Stages E/G: FST (get_stack_heap_limit max_heap (w2,w3,w4)) <= LENGTH sst.stack for the full_make_init stack state (pan_to_targetProofScript.sml 2311-2335 with init_code_thm facts); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyInitMemory.lean",
+    "lean_name": "panToTargetFullMakeInitState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage E2: full_make_init = (sst, SOME x) gives sst = stack_alloc make_init of x and init_prop of x (pan_to_targetProofScript.sml 1567-1585, 1756-1797); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyInitMemory.lean",
+    "lean_name": "panToTargetInitPointerBounds",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage E2: init_code_pre size facts w2 <= w4, 1024*bytes_in_word <= w4 - w2 of the lab len/len2 registers from memory_assumption (pan_to_targetProofScript.sml 1883-1906, 2048-2060); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyInitMemory.lean",
+    "lean_name": "panToTargetWordInitStore",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage E2: CurrHeap/HeapLength store entries of the word initial state (pan_to_targetProofScript.sml 2117-2140); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyInitMemory.lean",
+    "lean_name": "panToTargetWordInitMdomain",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage E2: memory domain of the word initial state = addresses w2 ((w3-w2) DIV d), incl. the heap-length equation (pan_to_targetProofScript.sml 1916-2102); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyInitMemory.lean",
+    "lean_name": "panToTargetWordInitMemory",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage E2: ffi/be/sh_mdomain of the word initial state are the lab state's and its memory agrees with the lab memory on the heap domain (pan_to_targetProofScript.sml 1737-1755, 1916-2102 memory shift); intermediate proof step, not a HOL theorem."
   }
 ]
