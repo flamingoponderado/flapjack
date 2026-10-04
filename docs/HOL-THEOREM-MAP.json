@@ -84359,6 +84359,15 @@
     "reviewer": "flapjack-sol source comparison of original wordConvsProof395-513: arbitrary HOL word dimension translated to positive-width BitVec with [NeZero width], exact native instruction/program constructor fields, Spt cutsets and native MlString names retained. Arbitrary P : inst -> bool and all original source hypotheses/results preserved; Call without a return ignores its handler exactly as HOL, returning handlers, Loop and OpCurrHeap covered. Pure syntactic preservation interprets no numeric FP operation and needs no real-carrier translation. Successful hoisting preserves the three original source predicates. The dummy is unrestricted; the unused HOL variable s retains an independent arbitrary carrier. Fresh literal original local proof/typed statement replay in word_convs_simp_instructions_probe.out; no output-validity, target-run, desired relation or dummy-validity premise. This source comparison and kernel evidence do not independently prove HOL-to-Lean equivalence."
   },
   {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/CompileExp.lean",
+    "lean_name": "extractLabelsCompileExp",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "extract_labels_compile_exp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-04 original378-391: full arbitrary positive-width native WordLangProgHOL program, exact original full labelsRel source/output (containment and source-Nodup implies output-Nodup). Actual compileExp definition is four original stages Seq_assoc Skip, constFp, simpDuplicateIf, pushOutIf in original order; accepted/checked full stage theorems and original transitivity construct whole conclusion, no output relation premise or weakened output. Native programs, optional return/handler carriers, Spt and lists unchanged; common positive BitVec/NeZero translation only. Fresh unchanged original global theorem proof replayed with exact original local helper proofs and full inferred types/T/hyp0. Probe is regression evidence, not cross-language equivalence. Full WordToWord conventions and compiler semantics composition remain separate."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/ConstFp.lean",
@@ -84391,6 +84400,120 @@
     "lean_name": "labelsRelOfSublist",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only generic list support: derive both labelsRel conjuncts from an ordered sublist; no separate HOL original with this stronger premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/Hoist.lean",
+    "lean_name": "dummyAfterPrefix",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only internal factoring for full original hoisting: actual dummy/map/label operations, conditional step and exact list permutation consequences derived without assuming desired output relation. No separate HOL declaration; not claimed as an exact port. Public original theorem alone carries reviewed tag."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/Hoist.lean",
+    "lean_name": "dummySelectBranch",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only internal factoring for full original hoisting: actual dummy/map/label operations, conditional step and exact list permutation consequences derived without assuming desired output relation. No separate HOL declaration; not claimed as an exact port. Public original theorem alone carries reviewed tag."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/Hoist.lean",
+    "lean_name": "dummyTagCases",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only internal factoring for full original hoisting: actual dummy/map/label operations, conditional step and exact list permutation consequences derived without assuming desired output relation. No separate HOL declaration; not claimed as an exact port. Public original theorem alone carries reviewed tag."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/Hoist.lean",
+    "lean_name": "foldedIfLabels",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only internal factoring for full original hoisting: actual dummy/map/label operations, conditional step and exact list permutation consequences derived without assuming desired output relation. No separate HOL declaration; not claimed as an exact port. Public original theorem alone carries reviewed tag."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/Hoist.lean",
+    "lean_name": "hoist1Labels",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only internal factoring for full original hoisting: actual dummy/map/label operations, conditional step and exact list permutation consequences derived without assuming desired output relation. No separate HOL declaration; not claimed as an exact port. Public original theorem alone carries reviewed tag."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/Hoist.lean",
+    "lean_name": "labelsRelHoist2",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "labels_rel_hoist2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-04: exact native WordLangProgHOL common arbitrary positive BitVec width/NeZero; List/Spt and every constructor, actual constant-folding map threading preserved. Fresh unchanged original local proof with all original local helpers full inferred types/T/hyp0; regression evidence not HOL-to-Lean equivalence. Full original289-343: all count/source/intermediate/dummy/second/output/cmp/register/RegImm/branch binders; actual tryIfHoist2 Some guard, full destIf five-tuple, exact Raise1/Raise2 dummy, intermediate labels empty. The source s:beta binder is independently quantified but unused in all guards/conclusion, confirmed typed capture and explicitly documented omission. Full labelsRel (source first++second) actual output, not desired-output property premise. Fuel induction eliminates impossible constructors; actual dummy observations thread both maps, original dummy strategy proves tags1/2 complementary, folded branch relations composed with exact four-block permutation; both containment and source-Nodup implies output-Nodup proved. Recursive Seq case uses actual original simple/no-label prefix; successful If and Seq-if full cases preserved."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/Hoist.lean",
+    "lean_name": "labelsRelLeft",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only internal factoring for full original hoisting: actual dummy/map/label operations, conditional step and exact list permutation consequences derived without assuming desired output relation. No separate HOL declaration; not claimed as an exact port. Public original theorem alone carries reviewed tag."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/Hoist.lean",
+    "lean_name": "labelsRelRight",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only internal factoring for full original hoisting: actual dummy/map/label operations, conditional step and exact list permutation consequences derived without assuming desired output relation. No separate HOL declaration; not claimed as an exact port. Public original theorem alone carries reviewed tag."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/Hoist.lean",
+    "lean_name": "labelsRelSimpDuplicateIf",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "labels_rel_simp_duplicate_if",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-04: exact native WordLangProgHOL common arbitrary positive BitVec width/NeZero; List/Spt and every constructor, actual constant-folding map threading preserved. Fresh unchanged original local proof with all original local helpers full inferred types/T/hyp0; regression evidence not HOL-to-Lean equivalence. Full original345-362 arbitrary native program relation; all MustTerminate/Call none/some return and both exception-handler families/If/Seq/Loop/residual constructors. Uses real recursive IHs, entire native tryIfHoist1 actual Some wrapper internally derived from full labelsRelHoist2 and accepted Seq_assoc label equality. Original labelsRel-trans/append/cons gives full result; no target property or strengthened assumption."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/Hoist.lean",
+    "lean_name": "prefixSelectedLabels",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only internal factoring for full original hoisting: actual dummy/map/label operations, conditional step and exact list permutation consequences derived without assuming desired output relation. No separate HOL declaration; not claimed as an exact port. Public original theorem alone carries reviewed tag."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/Hoist.lean",
+    "lean_name": "relatedNil",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only internal factoring for full original hoisting: actual dummy/map/label operations, conditional step and exact list permutation consequences derived without assuming desired output relation. No separate HOL declaration; not claimed as an exact port. Public original theorem alone carries reviewed tag."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/Hoist.lean",
+    "lean_name": "shuffleLabels",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only internal factoring for full original hoisting: actual dummy/map/label operations, conditional step and exact list permutation consequences derived without assuming desired output relation. No separate HOL declaration; not claimed as an exact port. Public original theorem alone carries reviewed tag."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/Hoist.lean",
+    "lean_name": "simpleLabelsEmpty",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only internal factoring for full original hoisting: actual dummy/map/label operations, conditional step and exact list permutation consequences derived without assuming desired output relation. No separate HOL declaration; not claimed as an exact port. Public original theorem alone carries reviewed tag."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/Hoist.lean",
+    "lean_name": "successfulHoistLabels",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only internal factoring for full original hoisting: actual dummy/map/label operations, conditional step and exact list permutation consequences derived without assuming desired output relation. No separate HOL declaration; not claimed as an exact port. Public original theorem alone carries reviewed tag."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/HoistPrerequisites.lean",

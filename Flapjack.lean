@@ -1385,6 +1385,8 @@ import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.Sequence
 import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.PushOut
 import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.HoistPrerequisites
 import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.ConstFp
+import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.Hoist
+import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.CompileExp
 import Flapjack.Pancake.Proofs.WordConvs.WordCse
 import Flapjack.Pancake.Proofs.WordConvs.CopyProp
 import Flapjack.Pancake.Proofs.WordConvs.SSAWfCutsets
@@ -2562,6 +2564,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.MemoryLoad
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.MemoryStore
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Memory
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Skip
+import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.ConstFp
 
 -- Tagged modules required by the HOL reference coverage gate.
 
