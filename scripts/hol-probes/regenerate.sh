@@ -8029,3 +8029,8 @@ run_probe riscv_target_shift_asr_immediate_probeScript.sml riscv_target_shift_as
   riscv_encoder_correct_shiftAsrImmediate_statement riscv_encoder_correct_shiftAsrImmediate_types riscv_encoder_correct_shiftAsrImmediate_hypotheses riscv_encoder_correct_shiftAsrImmediate_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe riscv_ror_step_probeScript.sml riscv_ror_step_probe.out \
+  ror_run_srli_clause ror_run_srli_types ror_run_srli_hypotheses ror_run_sll_clause ror_run_sll_types ror_run_sll_hypotheses ror_run_srl_clause ror_run_srl_types ror_run_srl_hypotheses ror_run_sub_clause ror_run_sub_types ror_run_sub_hypotheses ror_next_srli_zero ror_next_srli_all_ones ror_next_sll_zero ror_next_sll_all_ones ror_next_srl_zero ror_next_srl_all_ones ror_next_sub_zero ror_next_sub_all_ones \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
