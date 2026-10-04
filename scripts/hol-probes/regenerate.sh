@@ -7967,6 +7967,11 @@ run_probe word_to_stack_comp_correct_full_probeScript.sml word_to_stack_comp_cor
   comp_correct_full_statement comp_correct_full_proved comp_correct_full_hypotheses comp_correct_full_statement_typed \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe riscv_target_longmul_probeScript.sml riscv_target_longmul_probe.out \
+  riscv_encoder_correct_longmul_statement riscv_encoder_correct_longmul_types riscv_encoder_correct_longmul_hypotheses riscv_encoder_correct_longmul_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+
 run_probe riscv_target_div_probeScript.sml riscv_target_div_probe.out \
   riscv_encoder_correct_div_statement riscv_encoder_correct_div_types riscv_encoder_correct_div_hypotheses riscv_encoder_correct_div_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
