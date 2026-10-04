@@ -73,9 +73,8 @@ private theorem zipSections {width : Nat} [NeZero width] (two : Bool)
 
 /-- Original958–1014 first two conjunction sections: whole names and EVERY2 labels.
 Retains original no-share-or-ISA input guard, unused in these structural sections.
-The remaining five output conventions are a separate unfinished assembly. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml"
-  "compile_to_word_conventions" (words_as_type_indexed_bitvec)]
+This untagged supporting lemma proves only part of the conjunction; the full
+tagged theorem is assembled in `CompileConventions.Output`. -/
 theorem compileNamesLabels {width : Nat} [NeZero width] (wc : Config)
     (ac : AsmConfigExact width)
     (programs : List (Nat × Nat × WordLangProgHOL (BitVec width)))
