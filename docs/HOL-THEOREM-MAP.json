@@ -98086,6 +98086,14 @@
   {
     "hol_path": null,
     "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyPanToWord.lean",
+    "lean_name": "panToTargetHeapLimitSnd",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only arithmetic step of pan_to_target_compile_semantics (HOL proof lines 2216-2240, init_prop heap length against heap_len): under init_code_thm's pointer bounds, w2 < w3 (top hypothesis len_reg < ptr2_reg) and the shift+1 alignment of w3 - w2, 2 * SND (get_stack_heap_limit max_heap (w2,w3,w4)) = w2n (-1w*w2 + w3) DIV (dimindex DIV 8)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyInitCode.lean",
     "lean_name": "panToTargetInitCodeRun",
     "statement_status": "no_hol_reference_pending_classification",

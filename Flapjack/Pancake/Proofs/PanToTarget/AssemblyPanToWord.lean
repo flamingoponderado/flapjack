@@ -4,6 +4,9 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.Initialization
 import Flapjack.Pancake.Proofs.PanToWord.StateRelImpSemantics
 import Mathlib.Data.BitVec
 import Mathlib.Tactic.Abel
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordLemmas
+import Flapjack.Compiler.Backend.StackRemove.Proofs.InitLimits
+import Flapjack.Compiler.Backend.BackendProof.MachineInit
 
 /-!
 # `pan_to_target_compile_semantics` assembly, pan_to_word stage
@@ -125,5 +128,50 @@ theorem addressesSplitGlobals {width : Nat} [NeZero width] (good : goodDimindex 
     · exact .inl ⟨i, him, rfl⟩
     · refine .inr ⟨i - m, by omega, ?_⟩
       rw [key, show m + (i - m) = i by omega]
+
+open Flapjack.Compiler.Backend.StackRemove Flapjack.Compiler.Backend.StackRemove.Proofs in
+/-- The heap limit of `get_stack_heap_limit` under `init_code_thm`'s pointer facts
+(HOL proof lines 2216-2240, `init_prop`'s heap length against the top theorem's
+`heap_len`): twice the heap component is the heap span in words. -/
+theorem panToTargetHeapLimitSnd {width : Nat} [NeZero width]
+    (hgood : goodDimindex width) (maxHeap : Nat) (w2 w3 w4 : BitVec width)
+    (hw2 : holByteAligned w2 = true) (hlt : w2 < w3)
+    (hlo : w2 + BitVec.ofNat width maxStackAlloc * bytesInWord width ≤ w3)
+    (hhi : w3 ≤ w4 - BitVec.ofNat width maxStackAlloc * bytesInWord width)
+    (hheap : (-1 * w2 + w3).toNat ≤ maxHeap * (bytesInWord width).toNat)
+    (hheapLt : (bytesInWord width).toNat * maxHeap < 2 ^ width)
+    (halign : holAligned (wordShiftAmount width + 1) (w3 + -1 * w2) = true) :
+    2 * (InitLimits.getStackHeapLimit maxHeap (w2, w3, w4)).2 =
+      (-1 * w2 + w3).toNat / (width / 8) := by
+  have h2 := Compiler.Backend.BackendProof.byteAlignedMOD hgood w2 hw2
+  have hal := (holAligned_iff _ _).1 halign
+  have hcomm : -1 * w2 + w3 = w3 + -1 * w2 := BitVec.add_comm _ _
+  simp only [InitLimits.getStackHeapLimit, InitLimits.getStackHeapLimitPrime,
+    InitLimitsDouble.getStackHeapLimitDouble, BitVec.ofNat_toNat, BitVec.setWidth_eq]
+  have hlo' : w2 + bytesInWord width * BitVec.ofNat width maxStackAlloc ≤ w3 := by
+    rwa [BitVec.mul_comm]
+  have hhi' : w3 ≤ w4 - bytesInWord width * BitVec.ofNat width maxStackAlloc := by
+    rwa [BitVec.mul_comm]
+  have hmh : maxHeap * (bytesInWord width).toNat < 2 ^ width := by
+    rwa [Nat.mul_comm] at hheapLt
+  simp only [hlo', hhi', and_self, if_true, hmh]
+  have hnlt : ¬ bytesInWord width * BitVec.ofNat width maxHeap < -1 * w2 + w3 := by
+    rw [BitVec.lt_def, BitVec.toNat_mul, BitVec.toNat_ofNat, Nat.mod_eq_of_lt (a := maxHeap)
+      (by rcases hgood with h | h <;> subst h <;> simp [bytesInWord] at hheapLt ⊢ <;> omega),
+      Nat.mod_eq_of_lt (by rwa [Nat.mul_comm] at hheapLt ⊢)]
+    rw [Nat.mul_comm] at hheap
+    omega
+  simp only [hnlt, if_false]
+  rw [hcomm, Compiler.Backend.DataToWord.Proofs.Gc.lsrLsl _ _ halign]
+  have hneg : -1 * w2 = -w2 := by
+    rw [BitVec.neg_mul]; exact congrArg _ (BitVec.one_mul w2)
+  have hw3 : w2 + (w3 + -w2) = w3 := by
+    rw [BitVec.add_comm w3, ← BitVec.add_assoc, BitVec.add_right_neg, BitVec.zero_add]
+  rw [hneg, hw3]
+  rw [hneg] at hal
+  have hle : w2.toNat ≤ w3.toNat := Nat.le_of_lt hlt
+  clear hlo hhi hheap hheapLt halign hlo' hhi' hmh hnlt hcomm hneg hw3 hw2 hlt
+  rcases hgood with h | h <;> subst h <;>
+    simp [wordShiftAmount, BitVec.toNat_add, BitVec.toNat_neg] at hal h2 ⊢ <;> omega
 
 end Flapjack.Pancake.Proofs.PanToTarget
