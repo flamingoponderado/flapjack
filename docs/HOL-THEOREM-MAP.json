@@ -90803,7 +90803,6 @@
       "StackSemStateFiniteExact.store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "inherits_reals_as_rational_cuts": true,
     "reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-04: original evaluate_wInst4688-5140 FP branch5025-5130, FPLess case (generic tail): FP reads via state_rel_get_fp_var, the 1w/0w comparison bit written through wRegWrite1 (evaluate_wRegWrite1_seq, evaluate_wStackStore_wReg1); fp64_lessThan on identical word64 operands. All five original guards (inst success, every_var_inst is_phy_var, max_var_inst < 2f'+2k, inst_arg_convention, state_rel ... 0) are retained even where vacuous for the opcode, and the full existential actual native wInst run (NONE result), entire state_rel and both stack length/space equations are concluded; source success and every read are derived internally, no target-run/postrelation premise. Typed capture word_to_stack_inst_fp probe (show_types; source config num # 'b, target 'b, shared 'a word/'c ffi; hypotheses=0). Canonical fpRegs/store/regs maps and positive type-indexed words qualified with genuine codecs; the proof names the reviewed binary64 renderings, so the declaration carries reals_as_rational_cuts (Rat-cut rendering of HOL reals; SOUNDNESS item 8).",
     "hol_line": 4688
@@ -90822,7 +90821,6 @@
       "StackSemStateFiniteExact.store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "inherits_reals_as_rational_cuts": true,
     "reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-04: original evaluate_wInst4688-5140 FP branch5025-5130, FPLessEqual case (generic tail): as FPLess with fp64_lessEqual. All five original guards (inst success, every_var_inst is_phy_var, max_var_inst < 2f'+2k, inst_arg_convention, state_rel ... 0) are retained even where vacuous for the opcode, and the full existential actual native wInst run (NONE result), entire state_rel and both stack length/space equations are concluded; source success and every read are derived internally, no target-run/postrelation premise. Typed capture word_to_stack_inst_fp probe (show_types; source config num # 'b, target 'b, shared 'a word/'c ffi; hypotheses=0). Canonical fpRegs/store/regs maps and positive type-indexed words qualified with genuine codecs; the proof names the reviewed binary64 renderings, so the declaration carries reals_as_rational_cuts (Rat-cut rendering of HOL reals; SOUNDNESS item 8).",
     "hol_line": 4688
@@ -90841,7 +90839,6 @@
       "StackSemStateFiniteExact.store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "inherits_reals_as_rational_cuts": true,
     "reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-04: original evaluate_wInst4688-5140 FP branch5025-5130, FPEqual case (generic tail): as FPLess with fp64_equal. All five original guards (inst success, every_var_inst is_phy_var, max_var_inst < 2f'+2k, inst_arg_convention, state_rel ... 0) are retained even where vacuous for the opcode, and the full existential actual native wInst run (NONE result), entire state_rel and both stack length/space equations are concluded; source success and every read are derived internally, no target-run/postrelation premise. Typed capture word_to_stack_inst_fp probe (show_types; source config num # 'b, target 'b, shared 'a word/'c ffi; hypotheses=0). Canonical fpRegs/store/regs maps and positive type-indexed words qualified with genuine codecs; the proof names the reviewed binary64 renderings, so the declaration carries reals_as_rational_cuts (Rat-cut rendering of HOL reals; SOUNDNESS item 8).",
     "hol_line": 4688
@@ -90914,7 +90911,6 @@
       "StackSemStateFiniteExact.store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "inherits_reals_as_rational_cuts": true,
     "reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-04: original evaluate_wInst4688-5140 FP branch5025-5130, FPSqrt case (generic tail): pass-through, fp64_sqrt roundTiesToEven; the wordSem rendering holFp64Sqrt and stackSem rendering holFp64SqrtReal are identified by the reviewed holFp64Sqrt_agreement (both Lean renderings of the one HOL fp64_sqrt), then state_rel_set_fp_var. All five original guards (inst success, every_var_inst is_phy_var, max_var_inst < 2f'+2k, inst_arg_convention, state_rel ... 0) are retained even where vacuous for the opcode, and the full existential actual native wInst run (NONE result), entire state_rel and both stack length/space equations are concluded; source success and every read are derived internally, no target-run/postrelation premise. Typed capture word_to_stack_inst_fp probe (show_types; source config num # 'b, target 'b, shared 'a word/'c ffi; hypotheses=0). Canonical fpRegs/store/regs maps and positive type-indexed words qualified with genuine codecs; the proof names the reviewed binary64 renderings, so the declaration carries reals_as_rational_cuts (Rat-cut rendering of HOL reals; SOUNDNESS item 8).",
     "hol_line": 4688
@@ -90933,7 +90929,6 @@
       "StackSemStateFiniteExact.store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "inherits_reals_as_rational_cuts": true,
     "reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-04: original evaluate_wInst4688-5140 FP branch5025-5130, FPAdd case (generic tail): pass-through, fp64_add roundTiesToEven of identical reads, state_rel_set_fp_var. All five original guards (inst success, every_var_inst is_phy_var, max_var_inst < 2f'+2k, inst_arg_convention, state_rel ... 0) are retained even where vacuous for the opcode, and the full existential actual native wInst run (NONE result), entire state_rel and both stack length/space equations are concluded; source success and every read are derived internally, no target-run/postrelation premise. Typed capture word_to_stack_inst_fp probe (show_types; source config num # 'b, target 'b, shared 'a word/'c ffi; hypotheses=0). Canonical fpRegs/store/regs maps and positive type-indexed words qualified with genuine codecs; the proof names the reviewed binary64 renderings, so the declaration carries reals_as_rational_cuts (Rat-cut rendering of HOL reals; SOUNDNESS item 8).",
     "hol_line": 4688
@@ -90952,7 +90947,6 @@
       "StackSemStateFiniteExact.store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "inherits_reals_as_rational_cuts": true,
     "reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-04: original evaluate_wInst4688-5140 FP branch5025-5130, FPSub case (generic tail): pass-through, fp64_sub roundTiesToEven, state_rel_set_fp_var. All five original guards (inst success, every_var_inst is_phy_var, max_var_inst < 2f'+2k, inst_arg_convention, state_rel ... 0) are retained even where vacuous for the opcode, and the full existential actual native wInst run (NONE result), entire state_rel and both stack length/space equations are concluded; source success and every read are derived internally, no target-run/postrelation premise. Typed capture word_to_stack_inst_fp probe (show_types; source config num # 'b, target 'b, shared 'a word/'c ffi; hypotheses=0). Canonical fpRegs/store/regs maps and positive type-indexed words qualified with genuine codecs; the proof names the reviewed binary64 renderings, so the declaration carries reals_as_rational_cuts (Rat-cut rendering of HOL reals; SOUNDNESS item 8).",
     "hol_line": 4688
@@ -90971,7 +90965,6 @@
       "StackSemStateFiniteExact.store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "inherits_reals_as_rational_cuts": true,
     "reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-04: original evaluate_wInst4688-5140 FP branch5025-5130, FPMul case (generic tail): pass-through, fp64_mul roundTiesToEven, state_rel_set_fp_var. All five original guards (inst success, every_var_inst is_phy_var, max_var_inst < 2f'+2k, inst_arg_convention, state_rel ... 0) are retained even where vacuous for the opcode, and the full existential actual native wInst run (NONE result), entire state_rel and both stack length/space equations are concluded; source success and every read are derived internally, no target-run/postrelation premise. Typed capture word_to_stack_inst_fp probe (show_types; source config num # 'b, target 'b, shared 'a word/'c ffi; hypotheses=0). Canonical fpRegs/store/regs maps and positive type-indexed words qualified with genuine codecs; the proof names the reviewed binary64 renderings, so the declaration carries reals_as_rational_cuts (Rat-cut rendering of HOL reals; SOUNDNESS item 8).",
     "hol_line": 4688
@@ -90990,7 +90983,6 @@
       "StackSemStateFiniteExact.store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "inherits_reals_as_rational_cuts": true,
     "reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-04: original evaluate_wInst4688-5140 FP branch5025-5130, FPDiv case (generic tail): pass-through, fp64_div roundTiesToEven, state_rel_set_fp_var. All five original guards (inst success, every_var_inst is_phy_var, max_var_inst < 2f'+2k, inst_arg_convention, state_rel ... 0) are retained even where vacuous for the opcode, and the full existential actual native wInst run (NONE result), entire state_rel and both stack length/space equations are concluded; source success and every read are derived internally, no target-run/postrelation premise. Typed capture word_to_stack_inst_fp probe (show_types; source config num # 'b, target 'b, shared 'a word/'c ffi; hypotheses=0). Canonical fpRegs/store/regs maps and positive type-indexed words qualified with genuine codecs; the proof names the reviewed binary64 renderings, so the declaration carries reals_as_rational_cuts (Rat-cut rendering of HOL reals; SOUNDNESS item 8).",
     "hol_line": 4688
