@@ -2142,6 +2142,13 @@ run_probe word_sem_call_helpers_probeScript.sml word_sem_call_helpers_probe.out 
   "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
+# Frozen PR1213 carrier repair: independent ignored add_ret_loc metadata.
+run_probe word_sem_add_ret_loc_carriers_probeScript.sml word_sem_add_ret_loc_carriers_probe.out \
+  add_ret_loc_independent_metadata_typed add_ret_loc_independent_metadata_hypotheses \
+  add_ret_loc_independent_metadata_some add_ret_loc_independent_metadata_none \
+  "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
 # The wordSem code/GC/alloc probe observes find_code, enc_stack/dec_stack, gc
 # with a supplied gc_fun, has_space, alloc (success, NotEnoughSpace, cut and gc
 # failure) and assign (bead flapjack-h29l.5).
