@@ -7409,6 +7409,10 @@ run_probe pan_to_target_library_lemmas_probeScript.sml pan_to_target_library_lem
   fun2set_disjoint_union_typed word_arith_lemma2_typed aligned_add_sub_typed \
   "$cake_dir/misc/miscScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe prim_types_program_probeScript.sml prim_types_program_probe.out \
+  prim_types_program_def_typed \
+  "$cake_dir/semantics/primTypesScript.sml" "$cake_dir/semantics"
+
 run_probe ast_syntax_probeScript.sml ast_syntax_probe.out \
   ast_t_datatype_typed pat_datatype_typed exp_datatype_typed dec_datatype_typed type_def_abbrev pat_bindings_def_typed \
   "$cake_dir/semantics/astScript.sml" "$cake_dir/semantics"
@@ -7420,6 +7424,10 @@ run_probe ast_lit_op_probeScript.sml ast_lit_op_probe.out \
 run_probe namespace_ops_probeScript.sml namespace_ops_probe.out \
   id_datatype_typed mk_id_def_typed id_to_n_def_typed id_to_mods_def_typed nsLookup_def_typed nsLookupMod_def_typed nsEmpty_def_typed nsAppend_def_typed nsLift_def_typed alist_to_ns_def_typed nsBind_def_typed nsBindList_def_typed nsOptBind_def_typed nsSing_def_typed nsSub_def_typed nsAll_def_typed nsAll2_def_typed nsDom_def_typed nsDomMod_def_typed nsMap_def_typed \
   "$cake_dir/semantics/namespaceScript.sml" "$cake_dir/semantics"
+
+run_probe flat_lang_probeScript.sml flat_lang_probe.out \
+  flat_op_datatype_typed flat_pat_datatype_typed flat_exp_datatype_typed ctor_id_abbrev type_id_abbrev type_group_id_abbrev pat_bindings_def_typed bool_id_def_typed Bool_def_typed SmartIf_def_typed false_tag_def_typed true_tag_def_typed bool_to_tag_def_typed \
+  "$cake_dir/compiler/backend/flatLangScript.sml" "$cake_dir/compiler/backend"
 
 run_probe backend_compile_lab_probeScript.sml backend_compile_lab_probe.out \
   compile_lab_LENGTH_typed compile_lab_IMP_mmio_pcs_min_index_typed \
@@ -8150,3 +8158,7 @@ run_probe pan_native_frontend_prefix_probeScript.sml pan_native_frontend_prefix_
 run_probe pan_native_word_prefix_probeScript.sml pan_native_word_prefix_probe.out \
   original_word \
   "$cake_dir/pancake/pan_to_targetScript.sml" "$cake_dir/pancake"
+
+run_probe riscv_memory_decode_probeScript.sml riscv_memory_decode_probe.out \
+  ld_decode_zero ld_decode_all_ones ld_decode_mixed_sign ld_encode_source_clause ld_encode_source_hypotheses ld_carrier_types lwu_decode_zero lwu_decode_all_ones lwu_decode_mixed_sign lwu_encode_source_clause lwu_encode_source_hypotheses lwu_carrier_types lhu_decode_zero lhu_decode_all_ones lhu_decode_mixed_sign lhu_encode_source_clause lhu_encode_source_hypotheses lhu_carrier_types lbu_decode_zero lbu_decode_all_ones lbu_decode_mixed_sign lbu_encode_source_clause lbu_encode_source_hypotheses lbu_carrier_types sd_decode_zero sd_decode_all_ones sd_decode_mixed_sign sd_encode_source_clause sd_encode_source_hypotheses sd_carrier_types sw_decode_zero sw_decode_all_ones sw_decode_mixed_sign sw_encode_source_clause sw_encode_source_hypotheses sw_carrier_types sh_decode_zero sh_decode_all_ones sh_decode_mixed_sign sh_encode_source_clause sh_encode_source_hypotheses sh_carrier_types sb_decode_zero sb_decode_all_ones sb_decode_mixed_sign sb_encode_source_clause sb_encode_source_hypotheses sb_carrier_types \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"

@@ -8481,3 +8481,4 @@ The native Word prefix fixture compares all three rows, argument counts,
 call arguments/continuations and complete bodies against this capture.
 The general kernel theorem composes all six original passes from source
 byte ranges; actual downstream CLI/WordToStack routing remains separate.
+`riscv_memory_decode_probe.out` records each literal LD/LWU/LHU/LBU/SD/SW/SH/SB original Encode clause and intrinsic word5/word12 carriers, zero source hypotheses, and Decode/Encode evaluations at all-zero, all-one, and mixed-register/sign-offset inputs. Lean proves unrestricted roundtrips including zero registers and all offsets; finite probes are regression evidence, not universal equivalence. Full memory encoder correctness remains a dependency-linked open task.

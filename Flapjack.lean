@@ -1,3 +1,4 @@
+import Flapjack.RiscV.CorrectnessEncoding.DecodeMemory
 import Flapjack.RiscV.CorrectnessEncoding.Shift
 import Flapjack.RiscV.CorrectnessEncoding.ShiftRorRegister
 import Flapjack.Compiler.Backend.WordToStack.ProductionMoveDomain
@@ -101,6 +102,7 @@ import Flapjack.Compiler.Backend.ClosLang.Syntax
 import Flapjack.AstHOL.BackendOperators
 import Flapjack.AstHOL.LitOp
 import Flapjack.AstHOL.Syntax
+import Flapjack.PrimTypesHOL
 import Flapjack.Misc.Location
 import Flapjack.Compiler.Backend.BackendCommon.Operators
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsCorrect
@@ -128,6 +130,8 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.ChunkBits
 import Flapjack.Compiler.Backend.SourceToFlat.Config
 import Flapjack.Compiler.Backend.FlatPattern.Config
 import Flapjack.Compiler.Backend.BackendCommon.Trace
+import Flapjack.Compiler.Backend.BackendCommon.BoolTags
+import Flapjack.Compiler.Backend.FlatLang
 import Flapjack.NamespaceHOL
 import Flapjack.Compiler.Backend.PresLang.Config
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmEvaluate
