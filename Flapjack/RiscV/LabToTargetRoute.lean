@@ -3,6 +3,8 @@ import Flapjack.RiscV.InitializedRuntime
 import Flapjack.RiscV.Encoding
 import Flapjack.Compiler.Backend.LabToTarget.Compile
 import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
+import Flapjack.Compiler.Backend.StackToLab.Compile
+import Flapjack.Compiler.Backend.Backend
 
 /-!
 # Executed Lab-to-target route through the reviewed `lab_to_target$compile`
@@ -50,6 +52,54 @@ def labToTargetRiscV (program : LabProgram (Word 64)) :
   let native ← StackToLab.ExecutedCodec.programFromExecuted? program
   LabToTarget.compile Compiler.Encoders.RiscV.Target.riscvConfig riscvLabConf native
 
+/-- The literal `riscv_stack_conf` quotation of `riscv_configScript.sml:53`
+(`<|jump:=F; reg_names:=riscv_names; perf_calls:=F|>`). An SML value, not a
+HOL declaration, so the projection is untagged. -/
+def riscvStackConf : StackToLab.Config :=
+  { regNames := RiscVConfig.riscvNames, jump := false, perfCalls := false }
+
+/-- RV64 Stack-to-target through the reviewed passes: the native Stack sections
+(Word-to-Stack bodies with the native Raise/StoreConsts stubs, as
+`initializedRuntimeLab?`) are compiled by the reviewed `stack_to_lab$compile`
+with `riscv_stack_conf`, the Pancake data configuration and exactly the heap,
+stack-pointer and address-offset arguments of `from_stack`, then by
+`lab_to_target$compile` with `riscv_lab_conf`. This is the body of the reviewed
+`Backend.fromStack` before bitmap attachment (see `stackToRiscV_fromStack`). -/
+def stackToRiscV (registerCount : Nat) (programs : List (Nat × StackProg Nat)) :
+    Option (List (BitVec 8) × LabToTarget.Config) := do
+  let native ← StackToLab.InitializedProduction.nativeInputs? (width := 64) programs
+  let source := StackToLab.RuntimeLabels.originalInputs (native.filter (fun entry => entry.1 >= 3))
+  let support :=
+    [(Flapjack.raiseStubLocation, WordToStack.Native.raiseStubNative false registerCount),
+     (Flapjack.storeConstsStubLocation, WordToStack.Native.storeConstsStubNative registerCount)]
+  let asmConf := Compiler.Encoders.RiscV.Target.riscvConfig
+  LabToTarget.compile asmConf riscvLabConf
+    (StackToLab.compile riscvStackConf initializedRuntimeDataConfig
+      (2 * DataToWord.maxHeapLimit 64 initializedRuntimeDataConfig - 1)
+      (asmConf.regCount - (asmConf.avoidRegs.length + 3)) asmConf.addrOffset (support ++ source))
+
+/-- The executed RV64 bytes are the bytes of the reviewed `from_stack` for every
+backend configuration whose stack, data and lab components are the RISC-V/Pancake
+ones used here (Flapjack routing fact; no HOL original). -/
+theorem stackToRiscV_fromStack (config : Backend.Config) (names : Spt Basis.Pure.MlString.MlString)
+    {Bitmaps : Type} (bitmaps : Bitmaps)
+    (hStack : config.stackConf = riscvStackConf)
+    (hData : config.dataConf = initializedRuntimeDataConfig)
+    (hLab : config.labConf = riscvLabConf)
+    (registerCount : Nat) (programs : List (Nat × StackProg Nat))
+    (native : List (Nat × StackLang.HolProg 64))
+    (hNative : StackToLab.InitializedProduction.nativeInputs? (width := 64) programs = some native) :
+    (stackToRiscV registerCount programs).map Prod.fst =
+      (Backend.fromStack Compiler.Encoders.RiscV.Target.riscvConfig config names
+        ([(Flapjack.raiseStubLocation, WordToStack.Native.raiseStubNative false registerCount),
+          (Flapjack.storeConstsStubLocation, WordToStack.Native.storeConstsStubNative registerCount)] ++
+          StackToLab.RuntimeLabels.originalInputs (native.filter (fun entry => entry.1 >= 3)))
+        bitmaps).map Prod.fst := by
+  simp only [stackToRiscV, hNative, Option.bind_eq_bind, Option.bind_some, Backend.fromStack,
+    Backend.fromLab, hStack, hData, hLab]
+  generalize LabToTarget.compile (width := 64) _ _ _ = out
+  rcases out with _ | ⟨bytes, lab⟩ <;> rfl
+
 /-- Executed sections of a Lab program: at width 64 the reviewed
 `labToTargetRiscV` image split by its `sec_pos_len`; at other widths the
 existing stored-length linker and instruction encoder. -/
@@ -71,9 +121,11 @@ theorem labProgramToRiscVSections_rv64 (context : WordFfiContext)
         sectionsOfSymbols bytes config.secPosLen := by
   simp [labProgramToRiscVSections]
 
-/-- Executed Stack-to-RISC-V sections: the native Stack-to-Lab composition of
-`initializedRuntimeLab?` followed by `labProgramToRiscVSections`. Arguments and
-error behaviour match
+/-- Executed Stack-to-RISC-V sections. At width 64 the reviewed
+`stackToRiscV` (the `from_stack` body: `stack_to_lab$compile` then
+`lab_to_target$compile`) is split by its `sec_pos_len`; other widths keep the
+native Stack-to-Lab composition of `initializedRuntimeLab?` and the existing
+linker. Arguments and error behaviour match
 `compileStackProgramNatListLinkedWithSimpleGcAndStoreConstsToRiscVCakeChecked`. -/
 def compileStackProgramNatListToRiscVSectionsCakeChecked
     [NeZero width] (context : WordFfiContext) (removeConfig : StackRemoveConfig)
@@ -84,6 +136,11 @@ def compileStackProgramNatListToRiscVSectionsCakeChecked
     Except LabLoweringError (List (EncodedRiscVSection width)) :=
   if entryLabel ≠ 0 || removeConfig.bytesInWord ≠ width / 8 then
     .error { sectionId := 0, position := 0, feature := .loweringFailure }
+  else if h : width = 64 then by
+    subst h
+    exact match stackToRiscV registerCount programs with
+      | some (bytes, config) => .ok (sectionsOfSymbols bytes config.secPosLen)
+      | none => .error { sectionId := 0, position := 0, feature := .loweringFailure }
   else
     let removeConfig := cakeStackRemoveConfig removeConfig
     let bounds := (BitVec.ofInt width (-2048), BitVec.ofNat width 2047)
