@@ -44983,18 +44983,16 @@
     "lean_name": "compileNamesLabels",
     "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
     "hol_name": "compile_to_word_conventions",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "reviewer": "flapjack-sol2 source comparison original958-1014: genuine first two CONJ_TAC sections retain original whole-list no_share_inst-or-ISA-not-Ag32 guard, arbitrary configs and full list. Native compile/fullCompileSingle eleven-stage pipeline names equality and EVERY2 labels_rel (Lean List.Forall₂) derived from actual pass output laws and equal-length oracle ZIP. Arbitrary positive-width BitVec translates HOL type-indexed word; exact native program/config/map carriers retained. Guard unused only in these structural sections and remains a premise. No assumed output relation/evaluation or extra IH. Remaining five output convention conjuncts are outside this section and not claimed; full theorem tracked separately. Fresh original section tactics replayed, with only the split for the omitted third conjunct removed; full typed closed HOL section capture is regression/source-shape evidence, not cross-language equivalence.",
-    "words_as_type_indexed_bitvec": true
+    "statement_status": "documented_mismatch",
+    "reviewer": "PR1213 review repair: untagged supporting conjunct only, not the complete cited HOL theorem. Full conjunction is separately tagged in the counterpart module."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileConventions/Output.lean",
     "lean_name": "compileOutputConventions",
     "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
     "hol_name": "compile_to_word_conventions",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol2 source comparison. Literal final EVERY conjunction section1014-1065: every actual output body satisfies all five output conditions. Original arbitrary config/list and input EVERY(no_share_inst or ISA not Ag32) retained. Native compile/fullCompileSingle eleven-pass pipeline used. Flat/post-allocation results unconditional under original guard; instruction validity keeps whole input EVERY(inst_ok_less) and all three zero-offset guards inside the output implication; enabled two-register and no-share-or-ISA conclusions retained. Canonical native wordLang/config/oracle tree carriers and truncated Nat register-count subtraction match source; List.Forall₂/EVERY translations constructor-for-constructor, arbitrary positive-width BitVec is the named word translation. Actual native pass proofs discharge all target properties, no output invariant/success/evaluation/callback premises. Fresh whole unchanged original local proof replay provides full typed closed/T/zero-hypothesis capture, not cross-language equivalence or production-route adoption."
+    "statement_status": "documented_mismatch",
+    "reviewer": "PR1213 review repair: untagged supporting conjunct only, not the complete cited HOL theorem. Full conjunction is separately tagged in the counterpart module."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileConventions/Output.lean",
@@ -65068,9 +65066,8 @@
     "lean_name": "shapeValLocalised",
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "localised_exp_shape_val",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "reviewer": "flapjack-sol source comparison 2026-10-03: original pan_globalsProofScript3207-3212 localised_exp_shape_val, both original universal conjuncts and no hypotheses, native HOL ShapeHOL/list and exact ExpHOL width with positive NeZero width. Uses reviewed mutual shapeValHOL/shapeValsHOL directly; localisedExpHOL Boolean true and List.all= true are the literal localised_exp/EVERY interpretation. Standard words_as_type_indexed_bitvec only translates original alpha word dimension; no generic production Exp substitution or added bound. Fresh closed typed original statement/proof/mutual expression types in pan_globals_shape_localised_probe.out. Existing helper is the genuine first conjunct, full localisedExpShapeValHOL proves both. Corrects the previous inaccurate no-HOL-original infrastructure classification. This row is the first genuine conjunct only.",
-    "words_as_type_indexed_bitvec": true
+    "statement_status": "documented_mismatch",
+    "reviewer": "PR1213 review repair: untagged supporting conjunct only, not the complete cited HOL theorem. Full conjunction is separately tagged in the counterpart module."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopNames.lean",
