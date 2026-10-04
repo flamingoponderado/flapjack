@@ -57,8 +57,8 @@ private theorem reg_read (r : Nat) (s : AsmState 64) (ms : riscv_state)
 (550-559). All five operators, unrestricted natural registers, original sole
 asmStep/initial relation premise, and full existential/interference/assertion
 conclusion are retained. Actual native Next is derived from all four emitted
-bytes and literal Decode/Run, never supplied as a premise. The separate Imm
-operand case remains open. Native state/Run inherits SOUNDNESS item8. -/
+bytes and literal Decode/Run, never supplied as a premise. The Imm operand case is
+riscv_encoder_correct_binopImmediate; riscv_encoder_correct_binop (Binop.lean) assembles both. Native state/Run inherits SOUNDNESS item8. -/
 @[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml"
   "riscv_encoder_correct"]
 theorem riscv_encoder_correct_binopRegister (op : HolBinop) (rd rs1 rs2 : Nat) (s1 s2 : AsmState 64) (ms : riscv_state)

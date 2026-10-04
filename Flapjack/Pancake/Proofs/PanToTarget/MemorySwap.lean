@@ -160,7 +160,7 @@ theorem swap_const (s : WordSemStateFiniteExact width C F) (m : BitVec width →
       by_cases hd : s.mdomain a = true
       · simp only [hd, if_true]
         refine ⟨fun x => if x = a then w else m x, rfl, ?_⟩
-        exact (fun2Set_eq_iff _ _ _).mp (fun2SetUpdateEq s.memory m _ a w h)
+        exact (fun2Set_eq_iff _ _ _).mp (fun2SetUpdateEq_dec s.memory m _ a w h)
       · simp only [hd, Bool.false_eq_true, if_false]
         exact swap_map _ _ m hm
     · exact swap_map _ _ m hm
@@ -550,7 +550,7 @@ theorem memorySwapLemma1 {width : Nat} [NeZero width] {C F : Type} :
   rw [run] at eq mem
   exact ⟨_, eq, rfl, (memEq_iff rst m').mp mem⟩
 
-/-- Original local memory_swap_lemma (743-760), the rephrased form with an
+/-- Original local memory_swap_lemma (755-770), the rephrased form with an
 explicit final memory. -/
 @[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "memory_swap_lemma"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
