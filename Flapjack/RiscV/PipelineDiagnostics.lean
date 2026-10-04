@@ -241,17 +241,15 @@ def pipelineWordFunctionsAllocatedWithSpillsAndFullSsaChecked [NeZero width] :
                 (RiscV.wordStackInitialBitmaps false) renamedProgram
           match hlower : lower with
           | none =>
-              match hfailure : RiscV.wordToStackFirstFailure config renamedProgram with
-              | some (path, kind) => .error (.wordToStackFailure label path kind)
-              | none => absurd hlower (by
-                  simp only [lower]
-                  split <;> intro hnone
-                  · simpa [hfailure] using
-                      (RiscV.wordToStackFirstFailure_complete_function config _
-                        wordRiscVAbiSourceRegister _ _ frameSlots _ _ renamedProgram).2.2.1 hnone
-                  · simpa [hfailure] using
-                      (RiscV.wordToStackFirstFailure_complete_function config _
-                        wordRiscVAbiSourceRegister _ _ frameSlots _ _ renamedProgram).2.2.2 hnone)
+              let failure := (RiscV.wordToStackFirstFailure config renamedProgram).get (by
+                revert hlower
+                simp only [lower]
+                split <;> intro hnone
+                · exact (RiscV.wordToStackFirstFailure_complete_function config _
+                    wordRiscVAbiSourceRegister _ _ frameSlots _ _ renamedProgram).2.2.1 hnone
+                · exact (RiscV.wordToStackFirstFailure_complete_function config _
+                    wordRiscVAbiSourceRegister _ _ frameSlots _ _ renamedProgram).2.2.2 hnone)
+              .error (.wordToStackFailure label failure.1 failure.2)
           | some (stackBody, _) =>
               match pipelineWordFunctionsAllocatedWithSpillsAndFullSsaChecked functions with
               | .error error => .error error
@@ -313,17 +311,15 @@ def pipelineWordFunctionsAllocatedWithSpillsAndFullSsaAndBitmapsCheckedAux
                 (some 1) localState renamedProgram
           match hlower : lower with
           | none =>
-              match hfailure : RiscV.wordToStackFirstFailure config renamedProgram with
-              | some (path, kind) => .error (.wordToStackFailure label path kind)
-              | none => absurd hlower (by
-                  simp only [lower]
-                  split <;> intro hnone
-                  · simpa [hfailure] using
-                      (RiscV.wordToStackFirstFailure_complete_function config _
-                        wordRiscVAbiSourceRegister _ _ frameSlots _ _ renamedProgram).2.2.1 hnone
-                  · simpa [hfailure] using
-                      (RiscV.wordToStackFirstFailure_complete_function config _
-                        wordRiscVAbiSourceRegister _ _ frameSlots _ _ renamedProgram).2.2.2 hnone)
+              let failure := (RiscV.wordToStackFirstFailure config renamedProgram).get (by
+                revert hlower
+                simp only [lower]
+                split <;> intro hnone
+                · exact (RiscV.wordToStackFirstFailure_complete_function config _
+                    wordRiscVAbiSourceRegister _ _ frameSlots _ _ renamedProgram).2.2.1 hnone
+                · exact (RiscV.wordToStackFirstFailure_complete_function config _
+                    wordRiscVAbiSourceRegister _ _ frameSlots _ _ renamedProgram).2.2.2 hnone)
+              .error (.wordToStackFailure label failure.1 failure.2)
           | some (stackBody, nextBitmaps) =>
               match pipelineWordFunctionsAllocatedWithSpillsAndFullSsaAndBitmapsCheckedAux
                   nextBitmaps (nextBitmaps.data :: chunks) functions with
@@ -398,17 +394,15 @@ def pipelineWordFunctionsAllocatedWithSpillsAndFullSsaAndBitmapsFromWordCheckedA
                 frameSlots (some 1) localState renamedProgram
           match hlower : lower with
           | none =>
-              match hfailure : RiscV.wordToStackFirstFailure config renamedProgram with
-              | some (path, kind) => .error (.wordToStackFailure label path kind)
-              | none => absurd hlower (by
-                  simp only [lower]
-                  split <;> intro hnone
-                  · simpa [hfailure] using
-                      (RiscV.wordToStackFirstFailure_complete_function config _
-                        wordRiscVAbiSourceRegister _ _ frameSlots _ _ renamedProgram).1 hnone
-                  · simpa [hfailure] using
-                      (RiscV.wordToStackFirstFailure_complete_function config _
-                        wordRiscVAbiSourceRegister _ _ frameSlots _ _ renamedProgram).2.1 hnone)
+              let failure := (RiscV.wordToStackFirstFailure config renamedProgram).get (by
+                revert hlower
+                simp only [lower]
+                split <;> intro hnone
+                · exact (RiscV.wordToStackFirstFailure_complete_function config _
+                    wordRiscVAbiSourceRegister _ _ frameSlots _ _ renamedProgram).1 hnone
+                · exact (RiscV.wordToStackFirstFailure_complete_function config _
+                    wordRiscVAbiSourceRegister _ _ frameSlots _ _ renamedProgram).2.1 hnone)
+              .error (.wordToStackFailure label failure.1 failure.2)
           | some (stackBody, nextBitmaps) =>
               let stackBody := RiscV.stackNormalizeCakeFfi stackBody
               match pipelineWordFunctionsAllocatedWithSpillsAndFullSsaAndBitmapsFromWordCheckedAux
