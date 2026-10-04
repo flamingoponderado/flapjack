@@ -6975,6 +6975,9 @@ run_probe l3_step_shift_probeScript.sml l3_step_shift_probe.out \
   run_probe l3_step_muldiv_probeScript.sml l3_step_muldiv_probe.out \
     mul_hypotheses mul_statement div_hypotheses div_statement rem_hypotheses rem_statement remu_hypotheses remu_statement source \
     "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
+  run_probe l3_step_divu_probeScript.sml l3_step_divu_probe.out \
+    divu_hypotheses divu_statement divu_nop_hypotheses divu_nop_statement source \
+    "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
   run_probe l3_step_warith_probeScript.sml l3_step_warith_probe.out \
     skip_statement addw_hypotheses addw_statement subw_hypotheses subw_statement addiw_hypotheses addiw_statement \
     addw_nop_hypotheses addw_nop_statement subw_nop_hypotheses subw_nop_statement addiw_nop_hypotheses addiw_nop_statement source \
