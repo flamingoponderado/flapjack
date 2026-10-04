@@ -8582,6 +8582,17 @@ These decoder prerequisites do not prove the full JumpCmp case or compiler
 correctness. Regenerate through the registered `HOL_PROBE_ONLY` driver and
 run `check-riscv-branch-decode.py` to detect source/evidence drift.
 
+### Generic source memory byte-shift repair
+
+`asm_memory_shift_probeScript.sml` executes original `read_mem_word` and
+`write_mem_word` with address width 8 and independent result/value widths
+1, 2, 3 and 64. The matched Lean kernel regressions live in
+`AsmSem/MemoryByteShift.lean`. Original shifts use a Nat count of eight;
+a homogeneous BitVec count truncates the numeral to zero at widths 1–3.
+The source definitions and companion proofs now explicitly use `(8 : Nat)`.
+No positivity restriction or error guard changes. These observations supplement
+the generic source-domain proofs; they do not complete native Mem correctness.
+
 `pan_to_crep_validity_helpers_probe.out` captures seven complete original typed list/field/head/store/load validity statements from pan_to_wordProofScript. Guards retain matched declaration lengths, actual pair/Option results, and the stores nonempty conditional; global addresses remain word5. Native kernel proofs retain the original equivalences/implications. Full arithmetic/compiler/inlining validity remains separate; captures support source review, not cross-language equivalence.
 
 ### Source memory traversal domains
@@ -8617,6 +8628,23 @@ environments/assertions, missing AUIPC, changed scratch projection/shift, and
 missing original evidence. These syntactic checks supplement source review and
 Lean kernel checking; full encoder assembly and whole compiler correctness
 remain separate open work. No executed compiler path changes here.
+`pan_to_crep_compile_exp_validity_probe.out` captures the complete original typed expression compiler validity theorem (974–1007), retaining context/expression/output-list/shape binders, source binary-Panop guard and actual compile pair equation. The native proof covers every expression and mutual list constructor and uses the shared Prop-valued Crep predicate. Captures support source review, not cross-language equivalence.
+### Source/native load value correspondence
+
+`riscv_memory_read_value_probeScript.sml` checks eight matched original
+`read_mem_word`/`rawReadData` values at counts 1, 2, 4 and 8, at zero and
+end-of-address-space aligned positions. Both memories use the byte function
+`w2w (p + 128w)`; every source and native truncated value is checked against
+the same constant, also kernel-checked in `CorrectnessEncoding/MemoryRead.lean`.
+The probe captures both original clauses, free-variable types and zero hypotheses.
+
+The generic source value recursion retains independent positive word widths,
+arbitrary counts, both endian modes and value extraction on assertion failure.
+The native RV64 correspondence derives selected bytes from initial target state
+relation and source success. The memLoad wrapper derives its domain and LOG2
+alignment guards; no target-run or desired postrelation premise is added. These
+untagged compositions have no separately named HOL originals. Full Mem encoder
+assertions, interference and store post-state correspondence remain open.
 
 ### Full original native Call encoder case
 
