@@ -3901,6 +3901,33 @@ class FmapResultObservationQualifiedTest(unittest.TestCase):
         self.assertTrue(any("shadowed" in error for error in errors))
 
 
+class MutualScopedProducerResolutionTest(unittest.TestCase):
+    """A `mutual`/`section` bare `end` must not close the enclosing namespace."""
+
+    def test_namespace_prefix_tracks_mutual_section_and_end(self):
+        prefix = CHECKER["lean_namespace_prefix"]
+        self.assertEqual("Flapjack.Foo", prefix(
+            ["namespace Flapjack", "namespace Foo", "mutual", "def a := 1",
+             "end", "def b := 2", "end Foo", "end Flapjack"], 6))
+        self.assertEqual("Flapjack", prefix(
+            ["namespace Flapjack", "section S", "theorem t : True := by trivial",
+             "end", "def d := 0", "end Flapjack"], 4))
+        self.assertEqual("", prefix(
+            ["namespace Flapjack", "end Flapjack", "def c := 0"], 3))
+        self.assertEqual("", prefix(
+            ["namespace A", "mutual", "section S", "end", "end", "end A",
+             "def c := 0"], 7))
+
+    def test_qualified_producer_after_mutual_resolves(self):
+        root, records = FmapResultObservationTest().fixture()
+        producer = "Flapjack.crepToLoopMakeFuncsExactHOL"
+        errors = CHECKER["fmap_result_observation_errors"](
+            ["import Flapjack.Pancake.CrepToLoop.ContextExact"], "Fixture",
+            f"theorem observer : ({producer} prog).lookup key ≠ none → True",
+            (producer,), records, root)
+        self.assertEqual([], errors)
+
+
 class FmapResultObservationAmbiguityTest(unittest.TestCase):
     def test_unqualified_imported_shadow_rejected(self):
         root, records = FmapResultObservationTest().fixture()
