@@ -8246,3 +8246,8 @@ run_probe pan_simp_validity_probeScript.sml pan_simp_validity_probe.out \
 run_probe riscv_memory_step_probeScript.sml riscv_memory_step_probe.out \
   ld_next_sign ld_next_zero lwu_next_sign lwu_next_zero lhu_next_sign lhu_next_zero lbu_next_sign lbu_next_zero sd_next_sign sd_next_zero sw_next_sign sw_next_zero sh_next_sign sh_next_zero sb_next_sign sb_next_zero next_source_clause next_source_hypotheses next_carrier_types pc_source_clause pc_source_hypotheses pc_carrier_types \
   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe riscv_target_jump_probeScript.sml riscv_target_jump_probe.out \
+  riscv_encoder_correct_jump_statement riscv_encoder_correct_jump_types riscv_encoder_correct_jump_hypotheses riscv_encoder_correct_jump_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"

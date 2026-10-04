@@ -8581,3 +8581,26 @@ hypotheses, and their carrier types. These finite observations accompany the
 unrestricted Lean native Next/control/validity proofs in `MemoryStep.lean`;
 they do not establish full Mem encoder correctness or discharge its original
 source/initial-relation, environment, memory-domain and assertion obligations.
+
+### Full original native Jump encoder case
+
+`CorrectnessEncoding/Jump.lean` assembles both original riscv_target170–175
+paths and the complete riscv_targetProof682–687 constructor conclusion. Near
+JAL rd0 uses witness0. Far AUIPC31/JALR rd0 uses witness1, intermediate PC4,
+and env0/env1. All signed guards and alignment come from the original source
+step; actual native Fetch/Decode/Run/Next comes from the four/eight emitted bytes.
+The source relation excludes scratch31, so the far proof preserves it across
+interference through the full original projection. Both paths retain every
+environment, both assertions, code-byte equality, PC membership, memory outside
+the source domain, and the final full relation. Native Run inherits the reviewed
+`reals_as_rational_cuts` assurance limit (SOUNDNESS item8).
+
+`riscv_target_jump_probeScript.sml` freshly specializes the full original HOL
+encoder theorem only to `Jump c`, recording the complete typed statement,
+carrier binders, zero hypotheses and kernel proof marker. The statement and
+actual source/proof-side paths are pinned by `check-riscv-target-jump.py`, with
+mutation tests rejecting extra near/target-poststate premises, lost universal
+environments/assertions, missing AUIPC, changed scratch projection/shift, and
+missing original evidence. These syntactic checks supplement source review and
+Lean kernel checking; full encoder assembly and whole compiler correctness
+remain separate open work. No executed compiler path changes here.

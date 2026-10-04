@@ -96758,5 +96758,14 @@
     "lean_name": "panBinary_seqAssoc_eq",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific Boolean factoring for the four original PanSimp validity theorem ports in this module; no independent HOL declaration. List append fold, smart-sequence/tail-call support and Bool equality recursion assemble the separately tagged full original iff/implication results without additional premises."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Jump.lean",
+    "lean_name": "riscv_encoder_correct_jump",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol: compared original Jump constructor riscv_targetProof682-687 and riscv_target170-175, source asmStep/jumpToOffset/asmJumpOffsetOkExact and full encoder_correct_def. Only original source step plus initial targetStateRel; complete existential/all interference environments/both asserts/code bytes/PC membership/final full relation. Actual near JALrd0 uses source signed21 guard and arithmetic halfword shift, witness0; far AUIPC31/JALRrd0 uses original low12/high20 signed split, witness1 with intermediate PC4 and env0/env1. Four/eight literal emitted bytes supply full native fetch/decode/Run/Next; no target run, decoder or post-state premise. Scratch31 preservation across interference derives the full original projection, not the source relation that excludes31; original source guards discharge all bounds/alignment/masks. Memory/frame/all allowed registers retained. Same-counterpart helper modules are untagged local compositions without separate HOL originals. Inherits reviewed reals_as_rational_cuts assurance limit SOUNDNESS8 via native Run; no production-path change or full encoder/compiler completion claim."
   }
 ]
