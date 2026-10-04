@@ -8544,3 +8544,13 @@ hypotheses, and their carrier types. These finite observations accompany the
 unrestricted Lean native Next/control/validity proofs in `MemoryStep.lean`;
 they do not establish full Mem encoder correctness or discharge its original
 source/initial-relation, environment, memory-domain and assertion obligations.
+
+### Source memory traversal domains
+
+`riscv_memory_source_probeScript.sml` checks literal original read/write success
+and failure at zero,1,2,4,8,12 bytes, both endian modes,8-bit wrapping addresses
+and16-bit independent read/value widths. Missing final-byte domains fail;
+previous failures persist even at zero count. Captured successor and wrapper
+clauses retain original assertions and alignment guards. `MemorySource.lean`
+proves arbitrary-count source success/domain characterizations and extracts
+original memLoad/memStore guards. It does not prove the full native Mem encoder.

@@ -8232,3 +8232,7 @@ run_probe riscv_memory_bytes_probeScript.sml riscv_memory_bytes_probe.out \
 run_probe riscv_memory_step_probeScript.sml riscv_memory_step_probe.out \
   ld_next_sign ld_next_zero lwu_next_sign lwu_next_zero lhu_next_sign lhu_next_zero lbu_next_sign lbu_next_zero sd_next_sign sd_next_zero sw_next_sign sw_next_zero sh_next_sign sh_next_zero sb_next_sign sb_next_zero next_source_clause next_source_hypotheses next_carrier_types pc_source_clause pc_source_hypotheses pc_carrier_types \
   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe riscv_memory_source_probeScript.sml riscv_memory_source_probe.out \
+  le0_wrap le1_wrap le1_missing le2_wrap le2_missing le4_wrap le4_missing le8_wrap le8_missing le12_wrap le12_missing be0_wrap be1_wrap be1_missing be2_wrap be2_missing be4_wrap be4_missing be8_wrap be8_missing be12_wrap be12_missing previous_failure_zero read_clause read_hypotheses read_types write_clause write_hypotheses write_types load_clause load_hypotheses load_types store_clause store_hypotheses store_types \
+  "$cake_dir/compiler/encoders/asm/asmSemScript.sml" "$cake_dir/compiler/encoders/asm"
