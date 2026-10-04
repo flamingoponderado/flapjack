@@ -96547,5 +96547,48 @@
     "lean_name": "accVarsHOL_dom_right",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only: domain l is contained in domain(acc_vars p l), from acc_vars_acc."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess.lean",
+    "lean_name": "everyInstOkLoopCall",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_loop_call",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_wordProofScript 738-742: forall l prog, every_prog ... prog ==> every_prog ... (FST (loop_call$comp l prog)). every_prog (loop_inst_ok c) is everyProgHOL (LoopToWord.loopInstOk c); c : 'b asm_config has its own width binder independent of the program word dimension, as in HOL. Typed capture pan_to_word_loop_inst_ok probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess.lean",
+    "lean_name": "everyInstOkLoopLive",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_loop_live",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_wordProofScript 756-759: forall prog, every_prog ... prog ==> every_prog ... (loop_live$comp prog). every_prog (loop_inst_ok c) is everyProgHOL (LoopToWord.loopInstOk c); c : 'b asm_config has its own width binder independent of the program word dimension, as in HOL. Typed capture pan_to_word_loop_inst_ok probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess.lean",
+    "lean_name": "everyInstOkLessOptimise",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_optimise",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_wordProofScript 795-797: every_prog ... prog ==> every_prog ... (optimise prog), free prog explicit. every_prog (loop_inst_ok c) is everyProgHOL (LoopToWord.loopInstOk c); c : 'b asm_config has its own width binder independent of the program word dimension, as in HOL. Typed capture pan_to_word_loop_inst_ok probe."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess.lean",
+    "lean_name": "shrinkHOL_everyProg_loopInstOk",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only: the shrink/fixedpoint conjunct proved inside every_inst_ok_loop_live by shrink_ind (fixedpoint OPTION_ALL rendered as: any some result satisfies every_prog)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess.lean",
+    "lean_name": "markAllHOL_everyProg_loopInstOk",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only: the mark_all conjunct proved inside every_inst_ok_loop_live by mark_all_ind."
   }
 ]
