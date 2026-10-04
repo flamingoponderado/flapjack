@@ -7425,6 +7425,10 @@ run_probe namespace_ops_probeScript.sml namespace_ops_probe.out \
   id_datatype_typed mk_id_def_typed id_to_n_def_typed id_to_mods_def_typed nsLookup_def_typed nsLookupMod_def_typed nsEmpty_def_typed nsAppend_def_typed nsLift_def_typed alist_to_ns_def_typed nsBind_def_typed nsBindList_def_typed nsOptBind_def_typed nsSing_def_typed nsSub_def_typed nsAll_def_typed nsAll2_def_typed nsDom_def_typed nsDomMod_def_typed nsMap_def_typed \
   "$cake_dir/semantics/namespaceScript.sml" "$cake_dir/semantics"
 
+run_probe flat_lang_probeScript.sml flat_lang_probe.out \
+  flat_op_datatype_typed flat_pat_datatype_typed flat_exp_datatype_typed ctor_id_abbrev type_id_abbrev type_group_id_abbrev pat_bindings_def_typed bool_id_def_typed Bool_def_typed SmartIf_def_typed false_tag_def_typed true_tag_def_typed bool_to_tag_def_typed \
+  "$cake_dir/compiler/backend/flatLangScript.sml" "$cake_dir/compiler/backend"
+
 run_probe backend_compile_lab_probeScript.sml backend_compile_lab_probe.out \
   compile_lab_LENGTH_typed compile_lab_IMP_mmio_pcs_min_index_typed \
   "$cake_dir/compiler/backend/proofs/backendProofScript.sml" "$cake_dir/compiler/backend/proofs"
