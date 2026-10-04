@@ -8834,3 +8834,5 @@ its source-step/initial-relation premise derives actual native Next and both
 original all-environment assertions. The local guard pins the complete public
 statement and original evidence; it is a regression check, not an equivalence
 proof or acceptance of the whole encoder.
+
+`riscv_target_bit_rewrites_probeScript.sml` replays the unchanged original local `word_bit_0_add4` and exported `word_bit_0_lemmas` statements with their original `BBLAST_TAC` proofs. Each complete theorem is captured with typed binders, zero hypotheses and proved `T`; this is universal theorem evidence, not selected inputs. `DecodeAny_encode` at targetProof line 162 is commented out and is not a declaration to port.

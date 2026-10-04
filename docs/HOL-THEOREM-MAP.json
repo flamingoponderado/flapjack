@@ -98795,5 +98795,21 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol: source-compared JumpCmp original riscv_targetProof690-720 and riscv_target176-257, asmStep/word_cmp/asm_ok and encoder_correct_def. Full Reg/Imm/all8 comparisons/nearfar, only original source step and initial relation, complete existential/allenv/bothasserts/codebytes/PC/finalrelation/frame. Native bytes derive Fetch/Decode/Run/Next internally. Original scratch31 AND/ANDI/ORI and inverse branches preserved, source registers exclude scratch, full native projection preserves its value across interference; operand aliasing permitted. Actual arithmetic shift/truncate/subtract/sign-extension offsets corrected by prefix4/8 under original global/near/alignment guards; JAL target alignment derived. False paths skip JAL with source full encoding-length fallthrough. No target-run/result/postrelation premise or successful-pass assumption. Local same-counterpart helpers untagged. Inherits reals_as_rational_cuts assurance limit SOUNDNESS8; no full compiler or production-route completion claim."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "word_bit_0_add4",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/BitRewrites.lean",
+    "lean_name": "word_bit_0_add4",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol: Compared all eight original word64 increments 4,8,12,16,20,24,28,32 and each bit-zero equality; no hypotheses or narrowing. Complete eight-conjunct theorem."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "word_bit_0_lemmas",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/BitRewrites.lean",
+    "lean_name": "word_bit_0_lemmas",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol: Compared original quantified word64 mask conjunction: Boolean negation becomes = false and masked-add bit equality retained. Reuses kernel proof of identical riscv_step declaration; separate targetProof declaration tagged here."
   }
 ]
