@@ -18,7 +18,7 @@ open Flapjack.Pancake.PanLang
 @[simp] theorem compileExpExactHOLW_localVar_vars {width : Nat} [NeZero width]
     (context : PanToCrepContextExact width)
     (sourceName : MlS) :
-    (compileExpExactHOLW context (.var .local sourceName)).1.flatMap
+    (compileExpExactHOLW (width := width) context (.var .local sourceName)).1.flatMap
       crepExpVarsHOL =
       match context.vars.lookup sourceName with
       | some (_, slots) => slots
@@ -130,11 +130,11 @@ private theorem loadShapeBytesHOLW_vars_subset {width : Nat} [NeZero width]
     remain outside this statement. -/
 theorem compileExpExactHOLW_vars_from_context {width : Nat} [NeZero width]
     (context : PanToCrepContextExact width) :
-    (∀ expression name,
+    (∀ (expression : ExpHOL width) name,
       name ∈ (compileExpExactHOLW context expression).1.flatMap crepExpVarsHOL →
       ∃ sourceName shape slots,
         context.vars.lookup sourceName = some (shape, slots) ∧ name ∈ slots) ∧
-    (∀ expressions name,
+    (∀ (expressions : List (ExpHOL width)) name,
       name ∈ ((compileExpExactHOLWList context expressions).flatMap Prod.fst).flatMap
         crepExpVarsHOL →
       ∃ sourceName shape slots,

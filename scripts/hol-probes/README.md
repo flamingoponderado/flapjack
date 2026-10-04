@@ -8606,22 +8606,6 @@ proves arbitrary-count source success/domain characterizations and extracts
 original memLoad/memStore guards. It does not prove the full native Mem encoder.
 `crep_inline_nested_decs_provenance_probe.out` captures the full typed original nested-declaration expression-provenance implication. All list lengths, including mismatches, remain admitted; the conclusion retains the original argument-list or original body alternatives. This prerequisite does not establish complete inlining validity.
 
-### Source/native load value correspondence
-
-`riscv_memory_read_value_probeScript.sml` checks eight matched original
-`read_mem_word`/`rawReadData` values at counts 1, 2, 4 and 8, at zero and
-end-of-address-space aligned positions. Both memories use the byte function
-`w2w (p + 128w)`; every source and native truncated value is checked against
-the same constant, also kernel-checked in `CorrectnessEncoding/MemoryRead.lean`.
-The probe captures both original clauses, free-variable types and zero hypotheses.
-
-The generic source value recursion retains independent positive word widths,
-arbitrary counts, both endian modes and value extraction on assertion failure.
-The native RV64 correspondence derives selected bytes from initial target state
-relation and source success. The memLoad wrapper derives its domain and LOG2
-alignment guards; no target-run or desired postrelation premise is added. These
-untagged compositions have no separately named HOL originals. Full Mem encoder
-assertions, interference and store post-state correspondence remain open.
 ### Full original native Jump encoder case
 
 `CorrectnessEncoding/Jump.lean` assembles both original riscv_target170–175
@@ -8665,3 +8649,22 @@ and the conclusion uses its actual post-domain. These untagged compositions
 have no separately named original HOL theorems. Full Mem still requires
 source register/address extraction, native interference, complete postrelation
 and assertion assembly.
+`pan_to_crep_compile_exp_validity_probe.out` captures the complete original typed expression compiler validity theorem (974–1007), retaining context/expression/output-list/shape binders, source binary-Panop guard and actual compile pair equation. The native proof covers every expression and mutual list constructor and uses the shared Prop-valued Crep predicate. Captures support source review, not cross-language equivalence.
+### Source/native load value correspondence
+
+`riscv_memory_read_value_probeScript.sml` checks eight matched original
+`read_mem_word`/`rawReadData` values at counts 1, 2, 4 and 8, at zero and
+end-of-address-space aligned positions. Both memories use the byte function
+`w2w (p + 128w)`; every source and native truncated value is checked against
+the same constant, also kernel-checked in `CorrectnessEncoding/MemoryRead.lean`.
+The probe captures both original clauses, free-variable types and zero hypotheses.
+
+The generic source value recursion retains independent positive word widths,
+arbitrary counts, both endian modes and value extraction on assertion failure.
+The native RV64 correspondence derives selected bytes from initial target state
+relation and source success. The memLoad wrapper derives its domain and LOG2
+alignment guards; no target-run or desired postrelation premise is added. These
+untagged compositions have no separately named HOL originals. Full Mem encoder
+assertions, interference and store post-state correspondence remain open.
+
+`load_globals_alt_probe.out` captures the complete original typed arbitrary-address/count GENLIST equality. The address is fixed word5; native expression dimension remains independently quantified. This prerequisite supports Call-handler compiler validity, not full source-pass or compiler correctness.

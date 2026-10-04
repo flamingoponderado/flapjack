@@ -40,6 +40,11 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width]
 
 /-! ### Exact-carrier `compile_exp_def`
 
+The context word dimension and expression word dimension are independent, as
+in the original polymorphic compile_exp type: expression lowering reads only
+vars, never the context-width eids. Existing program callers instantiate them
+at the same width.
+
 The function below uses the HOL `ExpHOL`/`ShapeHOL` syntax, the finite-support
 `PanToCrepContextExact`, and `CrepExpHOL` at the same positive word width. Its
 equations follow `pan_to_crepScript.sml:39-101`: local lookup reads the exact
@@ -55,8 +60,8 @@ mutual
   @[hol "cakeml/pancake/pan_to_crepScript.sml" "compile_exp_def"
     (fmap_as_finite_support := [vars, funcs, eids])
     (words_as_type_indexed_bitvec)]
-  def compileExpExactHOLW {width : Nat} [NeZero width]
-      (context : PanToCrepContextExact width) :
+  def compileExpExactHOLW {width : Nat} {contextWidth : Nat} [NeZero width] [NeZero contextWidth]
+      (context : PanToCrepContextExact contextWidth) :
       Flapjack.Pancake.PanLang.ExpHOL width →
         List (CrepExpHOL width) × Flapjack.Pancake.PanLang.ShapeHOL
     | .const value => ([.const value], .one)
@@ -113,8 +118,8 @@ mutual
     all_goals first | sizeOf_list_dec | decreasing_trivial
 
   /-- `MAP (compile_exp ctxt)` in HOL's RStruct/Op/Panop equations. -/
-  def compileExpExactHOLWList {width : Nat} [NeZero width]
-      (context : PanToCrepContextExact width) :
+  def compileExpExactHOLWList {width : Nat} {contextWidth : Nat} [NeZero width] [NeZero contextWidth]
+      (context : PanToCrepContextExact contextWidth) :
       List (Flapjack.Pancake.PanLang.ExpHOL width) →
         List (List (CrepExpHOL width) × Flapjack.Pancake.PanLang.ShapeHOL)
     | [] => []
