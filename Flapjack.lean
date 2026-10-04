@@ -2,6 +2,7 @@ import Flapjack.RiscV.CorrectnessEncoding.ShiftRun
 import Flapjack.RiscV.CorrectnessEncoding.DecodeShift
 import Flapjack.RiscV.CorrectnessEncoding.Div
 import Flapjack.RiscV.CorrectnessEncoding.DecodeDiv
+import Flapjack.RiscV.CorrectnessEncoding.DecodeLongMul
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Install
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterOffset
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelMemory
