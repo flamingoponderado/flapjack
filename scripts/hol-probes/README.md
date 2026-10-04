@@ -8168,3 +8168,12 @@ item 8. The encompassing encoder theorem remains open.
 fully typed specializations of original `evaluate_wInst` to FPToInt and
 FPFromInt. These retain the original guards and full target existential;
 they are source review evidence, not a cross-assistant equivalence proof.
+
+## Native signed DIV decoding prerequisite
+
+`DecodeDiv.lean` proves unrestricted actual Encode/DecodeAny composition for
+all three word5 registers. Literal original Div encoder emits `MulDiv DIV`,
+with opcode0110011, funct3=100 and funct7=1. This local composition has no
+separately named HOL theorem and remains untagged infrastructure. Original
+zero/all-ones/mixed EVAL cases and the full typed Encode clause are regression
+evidence; they do not establish whole encoder correctness or cross-language equivalence.
