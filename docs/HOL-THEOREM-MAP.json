@@ -98478,5 +98478,13 @@
     "lean_name": "panToTargetGoodCodeSource",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific unnamed stageA2 original top-proof1376-1428: original backendConfigOk/goodDimindex/nonag32/distinctfunctionnames/pancakeGoodCodeHOL hypotheses only; computes both actual WordToWord and WordToStack intermediate tuples internally with no compileeq/hinst/targetrun/desiredgoodCode premise. Applies full source instruction validity and accepted backend admissibility/labels chain. Final top still identifies this exact lab program with fullcompile result and assembles remaining semantic/resource stages; no named HOL port or wholecompiler completion claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyMachineToLab.lean",
+    "lean_name": "panToTargetMachineLabSource",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1316-1440, stage A4): panToTargetMachineLabOfGoodCode with good_code from the source-level stage A2 (panToTargetGoodCodeFromSource, via pan_to_word_every_inst_ok_less and the configuration's zero offsets) over the top theorem's pancake_good_code; all premises are compile_prog_max results, configuration hypotheses, pan_installed components and top-theorem hypotheses."
   }
 ]
