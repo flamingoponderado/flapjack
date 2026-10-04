@@ -1,13 +1,14 @@
 import Flapjack.RiscV.CorrectnessEncoding.ShiftRorImmediate
 import Flapjack.RiscV.CorrectnessEncoding.RorExecution
 import Flapjack.RiscV.CorrectnessEncoding.RorStep
+import Flapjack.Compiler.Backend.Proofs.WordConventions
+import Flapjack.Pancake.Proofs.WordConvs.HandlerPasses
 import Flapjack.RiscV.CorrectnessEncoding.ShiftLslImmediate
 import Flapjack.RiscV.CorrectnessEncoding.ShiftLsrImmediate
 import Flapjack.RiscV.CorrectnessEncoding.ShiftAsrImmediate
 import Flapjack.RiscV.CorrectnessEncoding.ShiftLsrRegister
 import Flapjack.RiscV.CorrectnessEncoding.ShiftAsrRegister
 import Flapjack.RiscV.CorrectnessEncoding.ShiftLslRegister
-import Flapjack.Pancake.Proofs.WordConvs.HandlerPasses
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileConventions.Output
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileConventions.Labels
 import Flapjack.RiscV.CorrectnessEncoding.ShiftRun
@@ -16,6 +17,7 @@ import Flapjack.RiscV.CorrectnessEncoding.Div
 import Flapjack.RiscV.CorrectnessEncoding.LongMul
 import Flapjack.RiscV.CorrectnessEncoding.DecodeDiv
 import Flapjack.RiscV.CorrectnessEncoding.DecodeLongMul
+import Flapjack.RiscV.CorrectnessEncoding.DecodeSltu
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Install
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterOffset
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelMemory
@@ -818,6 +820,7 @@ import Flapjack.Compiler.Backend.WordCse.ProductionArithmetic
 import Flapjack.Compiler.Backend.WordCse.ProductionHeapLoc
 import Flapjack.Compiler.Backend.WordCse.ProductionAssign
 import Flapjack.Compiler.Backend.WordCse.ProductionProgram
+import Flapjack.Compiler.Backend.WordCse.ProductionAllocatorInput
 import Flapjack.Compiler.Backend.WordCse.FactProducers
 import Flapjack.Compiler.Backend.WordCse.Join
 import Flapjack.Compiler.Backend.WordCse.Proofs.InNamesSet
@@ -1424,6 +1427,9 @@ import Flapjack.Pancake.Proofs.WordConvs.SSAWfCutsets
 import Flapjack.Pancake.Proofs.WordConvs.NotCreatedPasses
 import Flapjack.Pancake.Proofs.WordConvs.NotCreatedSSA
 import Flapjack.Pancake.Proofs.WordConvs.NotCreatedTail
+import Flapjack.Pancake.Proofs.WordConvs.GoodHandlersPasses
+import Flapjack.Pancake.Proofs.WordConvs.GoodHandlersSSA
+import Flapjack.Pancake.Proofs.WordConvs.GoodHandlersTail
 import Flapjack.Pancake.Proofs.WordConvs.UnreachPreAlloc
 import Flapjack.Compiler.Backend.WordRemove
 import Flapjack.Compiler.Backend.WordRemove.Production
