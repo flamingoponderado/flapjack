@@ -97238,7 +97238,6 @@
     "reviewer": "flapjack-sol3 source comparison2026-10-04 bead flapjack-crep-inline-exps-nested-decs: original3051-3058 and freshly regenerated fully typed capture. All e/vs/es/p binders retained at exact native CrepExpHOL/CrepProgHOL positive word dimension. Sole original premise is membership in exps_of(nested_decs vs es p); full conclusion original value-list membership OR original body-expression membership. No length equality or output provenance hypothesis. Native nestedDecsHOL mismatch clauses give Skip and native crepExpsOfHOL Skip is empty, so unequal name/value lengths retained. Canonical syntax MlString/BitVec; words qualifier only. Induction covers every list clause; this is original expression provenance, not complete inline/compiler correctness."
   },
   {
-<<<<<<< HEAD
     "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess.lean",
     "lean_name": "everyInstOkLoopCall",
     "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
@@ -97409,8 +97408,6 @@
     "reviewer": "Flapjack-only: membership in List.zipWith (HOL MAP2_MAP/EVERY_MAP step)."
   },
   {
-=======
->>>>>>> 7f05bb6d4
     "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
     "lean_name": "every_inst_ok_less_pan_globals_compile_exp",
     "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
@@ -97567,14 +97564,78 @@
     "reviewer": "Parameter variables (MAP (Var Local o FST)) satisfy the Panop arity predicate; Flapjack support for the tagged every_inst_ok_less_pan_globals_compile_top, no independent HOL declaration."
   },
   {
-<<<<<<< HEAD
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean",
     "lean_name": "everyInstOk_nestedDecsCodec",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises."
-=======
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean",
+    "lean_name": "everyInstOkLess_storeGlobalsCodec",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean",
+    "lean_name": "everyInstOkLess_storesCodec",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean",
+    "lean_name": "everyInstOkLess_loadShapeCodec",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean",
+    "lean_name": "everyInstOkLess_cexpHeadsCodec",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean",
+    "lean_name": "everyInstOkLess_compFieldCodec",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean",
+    "lean_name": "binaryExpNative_iff",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean",
+    "lean_name": "binaryListNative_iff",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean",
+    "lean_name": "binaryProgNative_iff",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises."
+  },
+  {
     "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanStructs.lean",
     "lean_name": "every_inst_ok_less_pan_structs_compile_exp",
     "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
@@ -97617,105 +97678,45 @@
     "lean_name": "everyExpListHOL_iff",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Membership form of EVERY (every_exp P); Flapjack support for the tagged pan_structs every_inst_ok_less ports, no independent HOL declaration."
->>>>>>> 7f05bb6d4
   },
   {
     "hol_path": null,
     "hol_name": null,
-<<<<<<< HEAD
-    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean",
-    "lean_name": "everyInstOkLess_storeGlobalsCodec",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises."
-=======
     "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanStructs.lean",
     "lean_name": "everyExpFieldListHOL_eq",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "The field-list every_exp traversal equals EVERY (every_exp P) (MAP SND flds); Flapjack support, no independent HOL declaration."
->>>>>>> 7f05bb6d4
   },
   {
     "hol_path": null,
     "hol_name": null,
-<<<<<<< HEAD
-    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean",
-    "lean_name": "everyInstOkLess_storesCodec",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises."
-=======
     "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanStructs.lean",
     "lean_name": "findSome_snd_mem",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "ALOOKUP_MEM-style fact for the name-keyed findSome? rendering; Flapjack support for the NStruct case, no independent HOL declaration."
->>>>>>> 7f05bb6d4
   },
   {
     "hol_path": null,
     "hol_name": null,
-<<<<<<< HEAD
-    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean",
-    "lean_name": "everyInstOkLess_loadShapeCodec",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises."
-=======
     "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanStructs.lean",
     "lean_name": "structsExp_every",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Mutual compile_exp half assembled into the tagged every_inst_ok_less_pan_structs_compile_exp; no independent HOL declaration."
->>>>>>> 7f05bb6d4
   },
   {
     "hol_path": null,
     "hol_name": null,
-<<<<<<< HEAD
-    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean",
-    "lean_name": "everyInstOkLess_cexpHeadsCodec",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises."
-=======
     "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanStructs.lean",
     "lean_name": "structsExps_every",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Mutual compile_exps half (with length) assembled into the tagged every_inst_ok_less_pan_structs_compile_exp; no independent HOL declaration."
->>>>>>> 7f05bb6d4
   },
   {
     "hol_path": null,
     "hol_name": null,
-<<<<<<< HEAD
-    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean",
-    "lean_name": "everyInstOkLess_compFieldCodec",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean",
-    "lean_name": "binaryExpNative_iff",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean",
-    "lean_name": "binaryListNative_iff",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean",
-    "lean_name": "binaryProgNative_iff",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises."
-=======
     "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanStructs.lean",
     "lean_name": "structsFields_every",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Mutual compile_fields half assembled into the tagged every_inst_ok_less_pan_structs_compile_exp; no independent HOL declaration."
->>>>>>> 7f05bb6d4
   }
 ]
