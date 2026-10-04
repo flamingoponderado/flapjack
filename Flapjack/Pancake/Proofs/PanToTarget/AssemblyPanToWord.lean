@@ -125,6 +125,39 @@ theorem addressesSplitGlobals {width : Nat} [NeZero width] (good : goodDimindex 
     · refine .inr ⟨i - m, by omega, ?_⟩
       rw [key, show m + (i - m) = i by omega]
 
+/-- The memory domain of `init_reduce` after `init_code` (HOL proof lines 1924-2054):
+with `init_code_thm`'s heap pointer `w2` in register `sp + 2` and its base pointer
+in register `sp + 1`, an aligned heap span `w3 - w2` and no wrap past the
+`store_list` words, the domain is the `w2n (w3 - w2) DIV (dimindex DIV 8)` heap
+words from `w2`. -/
+theorem initReduce_mdomain {width : Nat} [NeZero width] {C F : Type}
+    (good : goodDimindex width) (generateGc jump : Bool) (bounds : BitVec width × BitVec width)
+    (sp : Nat) (code : Spt (StackLang.HolProg width)) (bitmaps : List (BitVec width))
+    (dataSpace : Nat)
+    (oracle : Nat → C × List (Nat × StackLang.HolProg width) × List (BitVec width))
+    (t' : StackSemStateFiniteExact width C F) (w2 w3 : BitVec width)
+    (h2 : t'.regs.lookup (sp + 2) = some (.word w2))
+    (h1 : t'.regs.lookup (sp + 1) =
+      some (.word ((((w3 + -1 * w2) >>> (wordShiftAmount width + 1)) <<<
+        (wordShiftAmount width + 1)) + w2 +
+        StackRemove.bytesInWord width * BitVec.ofNat width StackRemove.storeList.length)))
+    (halign : holAligned (wordShiftAmount width + 1) (w3 + -1 * w2) = true)
+    (hbound : (-1 * w2 + w3).toNat + StackRemove.storeList.length * (width / 8) < 2 ^ width) :
+    (fun a => (StackRemove.Proofs.InitReduce.initReduce generateGc jump bounds sp code bitmaps
+        dataSpace oracle t').mdomain a = true) =
+      StackRemove.addresses w2 ((-1 * w2 + w3).toNat / (width / 8)) := by
+  have e2 : holFapply t'.regs (sp + 2) = .word w2 := holFapply_of_lookup h2
+  have e1 := holFapply_of_lookup h1
+  rw [Compiler.Backend.DataToWord.Proofs.Gc.lsrLsl _ _ halign] at e1
+  simp only [StackRemove.Proofs.InitReduce.initReduce, e1, e2, decide_eq_true_eq]
+  simp only [wordSemTheWord]
+  have hspan : w3 + -1 * w2 + w2 +
+      StackRemove.bytesInWord width * BitVec.ofNat width StackRemove.storeList.length - w2 =
+      -1 * w2 + w3 +
+        StackRemove.bytesInWord width * BitVec.ofNat width StackRemove.storeList.length := by
+    rw [BitVec.add_comm w3]; abel
+  rw [hspan, heapLengthShift good w2 w3 _ hbound]
+
 /-- The stack state returned by a successful `full_make_init` (`opt = SOME x`) shares
 `x`'s memory, memory domains, store, endianness and FFI state: `stack_alloc`'s
 `make_init` only replaces code, flags, GC function and compiler fields. -/
