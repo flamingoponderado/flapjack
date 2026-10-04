@@ -59,6 +59,7 @@ import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Frame
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Leaf
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Control
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Call
+import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Assembly
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsShort
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ChunkBitsMsb
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsPattern
