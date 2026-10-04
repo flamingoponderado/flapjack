@@ -8519,3 +8519,5 @@ field in the five source-preparation observations already captured by
 `pan_target_entry_first_match_probe.out`. The general source-entry codec theorem
 uses the existing native `mainFirstHOL`, with no distinct-name or target-run
 premise. Parsing/static errors and downstream whole-CLI wiring stay separate.
+
+`riscv_memory_bytes_probe.out` freshly evaluates ten varied-byte raw reads and sixteen raw stores at zero, word-edge, wrapping and cross-word addresses, including selected bytes, nearby untouched bytes and complete non-memory state frames. Twelve additional rows capture the four literal original memory clauses, zero hypotheses and full carriers. These finite observations are regression evidence, not universal equivalence. `MemoryBytes.lean` kernel-proves the byte read/write and complete outside-written-region frame needed by all four original aligned source access sizes; alignment-to-region bounds are derived from original alignment. It also proves unrestricted raw low-byte/LBU correspondence. No helper is tagged as a separately named HOL theorem, and full Mem fetch/Next/source-state/assertion assembly remains open.
