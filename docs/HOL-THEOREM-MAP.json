@@ -93298,5 +93298,14 @@
     "lean_name": "pushOutIfAuxNoInst",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only projection induction support covering both native exit flags. The original simp_push_out_if_no_inst proof establishes this fact internally, without a separate named declaration."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Div.lean",
+    "lean_name": "riscv_encoder_correct_div",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source compared full original Div constructor621-628, riscv_ast138-139 and encoder_correct_def. Arbitrary natural registers and full original asmStep plus initial targetStateRel premise retained with complete existential all-env asserts/asserts2 conclusion. Nonzero divisor derived solely from original source failed=false guard; literal signed MulDiv DIV native emitted instruction, all four fetched bytes and actual Encode/DecodeAny/Run/Next, original register config guards, aliases and whole final state relation retained. No target-run, range, divisor or post-state premise added. Source word quotient is signed words word_quot, matching reviewed BitVec.sdiv. Fresh complete typed original specialization hyp0/provedT is regression evidence, not cross-assistant equivalence. Full target/Run closure inherits reals_as_rational_cuts, SOUNDNESS item8."
   }
 ]

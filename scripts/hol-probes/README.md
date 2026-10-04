@@ -8239,3 +8239,14 @@ separately named HOL theorem and remains untagged infrastructure. Original
 zero/all-ones/mixed EVAL cases and the full typed Encode clause are regression
 evidence; they do not establish whole encoder correctness or cross-language equivalence.
 `word_to_stack_comp_correct_full_probeScript.sml` captures the closed original whole `comp_correct` theorem, its full typed statement and zero hypotheses. It is stored-theorem regression evidence, not a replay of the giant local proof or a HOL-to-Lean equivalence proof. The Lean assembly retains all original guards and result branches.
+
+## Full original native Div encoder case
+
+`CorrectnessEncoding/Div.lean` retains the full original sole asmStep/initial
+relation premise and existential interference/assertion result. It derives
+source divisor nonzero from the original failure guard and uses literal signed
+MulDiv DIV, preserving aliases, register restrictions, fetched bytes and full
+native state. The original typed theorem specialization is captured in
+`riscv_target_div_probe.out`; hyp0/provedT is regression evidence, not a
+cross-assistant equivalence proof. The full target closure retains inherited
+reals_as_rational_cuts (SOUNDNESS item8); other encoder cases remain open.
