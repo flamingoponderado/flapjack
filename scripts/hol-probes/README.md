@@ -8833,3 +8833,17 @@ its source-step/initial-relation premise derives actual native Next and both
 original all-environment assertions. The local guard pins the complete public
 statement and original evidence; it is a regression check, not an equivalence
 proof or acceptance of the whole encoder.
+
+`riscv_backend_config_probe.out` captures the exported original
+`riscv_backend_config_def` (no hypotheses) with HOL's SML quotations already
+spliced, including the evaluated `clos_to_bvl`/`bvl_to_bvi` default records.
+`Flapjack/Compiler/Backend/RiscVConfig/BackendConfig.lean` states the same
+literal record; untagged `rfl` lemmas tie the two evaluated default records to
+the tagged `default_config` ports. Syntactic evidence only, not a
+cross-language proof.
+
+`riscv_config_proof_replay_probe.out` is a literal source replay (both
+`backendProof` and `riscv_configProof` are unbuilt here): `mc_init_ok_def` and
+`is_riscv_machine_config_def` are replayed verbatim (guarded) and `riscv_init_ok`
+is re-proved with its own HOL tactic; typed statements and the hypothesis count
+are captured for `Flapjack/Compiler/Backend/RiscVConfig/Proofs.lean`.
