@@ -7824,3 +7824,5 @@ run_probe word_convs_unreach_labels_probeScript.sml word_convs_unreach_labels_pr
   "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe word_to_stack_inst_full_probeScript.sml word_to_stack_inst_full_probe.out \
+  inst_typed inst_proved inst_hypotheses fp_typed fp_proved fp_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
