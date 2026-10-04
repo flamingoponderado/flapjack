@@ -98739,15 +98739,6 @@
     "reviewer": "flapjack-opus3: compared original full SubOverflow constructor at riscv_targetProof658-663, original riscv_target158-164 XOR31/SUB/XOR/XORI(-1)/AND/SRLI63 expansion, asmSem arith_upd (r1 := w2-w3, r4 := signed-overflow flag, flag write last) and asm arith_ok (only r1<>r3), and full encoder_correct_def. Typed specialization riscv_target_suboverflow_probe: hypotheses 0, proved T; HOL specialization and Lean statement identical to the reviewed AddOverflow case modulo the constructor. Only original asmStep plus initial targetStateRel; complete existential n, every environment with original interferenceOk, both assertions, code bytes, PC range and final full relation. Every native fetch/decode/Run/Next derived from literal encoded bytes; untagged arithmetic shows the circuit equals HOL signed subtraction overflow for all word64 pairs. Broad native Run/target closure inherits reals_as_rational_cuts, the rational-cut assurance limit SOUNDNESS8; no executed route change."
   },
   {
-    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
-    "hol_name": "riscv_encoder_correct",
-    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/MemoryAssertions.lean",
-    "lean_name": "riscv_encoder_correct_mem",
-    "statement_status": "reviewed_exact",
-    "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-sol-c source comparison2026-10-04: full original Mem case661-669, riscv_target Mem emitter178-181 and all8 literal asmSem mem_op clauses. Fresh typed riscv_target_mem_probe specialization has0 hypotheses and proved T. Original word64 offset, independent Nat source register/base, native riscv_state and all8 memop constructors retained. Lean premise is only original asmStep plus initial targetStateRel; conclusion retains existential n, every original projection-preserving environment, code/PC/state intermediate predicate, complete final targetStateRel and asserts2 outside original source domain. Witness0 comes from actual singleton encoder, never narrows conclusion. Actual native Next derives from source encoded bytes, Decode/Run and validity. Accepted pure postrelation plus unconditional source postdomain frame and original targetOk transport prove final environment relation; actual memory Run frame yields original outside-domain assertion. No target execution/result, extra alignment/address/register/domain or successful-pass premise. Native target closure inherits reals_as_rational_cuts rational-cut rendering assurance limitation SOUNDNESS8. No executed compiler change."
-  },
-  {
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/ProductionNativeCopyMemoryGuard.lean",
     "lean_name": "nativeCopyInstructionMemoryGuard",
     "statement_status": "no_hol_reference_pending_classification",
@@ -98795,5 +98786,40 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol: source-compared JumpCmp original riscv_targetProof690-720 and riscv_target176-257, asmStep/word_cmp/asm_ok and encoder_correct_def. Full Reg/Imm/all8 comparisons/nearfar, only original source step and initial relation, complete existential/allenv/bothasserts/codebytes/PC/finalrelation/frame. Native bytes derive Fetch/Decode/Run/Next internally. Original scratch31 AND/ANDI/ORI and inverse branches preserved, source registers exclude scratch, full native projection preserves its value across interference; operand aliasing permitted. Actual arithmetic shift/truncate/subtract/sign-extension offsets corrected by prefix4/8 under original global/near/alignment guards; JAL target alignment derived. False paths skip JAL with source full encoding-length fallthrough. No target-run/result/postrelation premise or successful-pass assumption. Local same-counterpart helpers untagged. Inherits reals_as_rational_cuts assurance limit SOUNDNESS8; no full compiler or production-route completion claim."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/MemoryAssertions.lean",
+    "lean_name": "riscv_encoder_correct_mem",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-04: full original Mem case661-669, riscv_target Mem emitter178-181 and all8 literal asmSem mem_op clauses. Fresh typed riscv_target_mem_probe specialization has0 hypotheses and proved T. Original word64 offset, independent Nat source register/base, native riscv_state and all8 memop constructors retained. Lean premise is only original asmStep plus initial targetStateRel; conclusion retains existential n, every original projection-preserving environment, code/PC/state intermediate predicate, complete final targetStateRel and asserts2 outside original source domain. Witness0 comes from actual singleton encoder, never narrows conclusion. Actual native Next derives from source encoded bytes, Decode/Run and validity. Accepted pure postrelation plus unconditional source postdomain frame and original targetOk transport prove final environment relation; actual memory Run frame yields original outside-domain assertion. No target execution/result, extra alignment/address/register/domain or successful-pass premise. Native target closure inherits reals_as_rational_cuts rational-cut rendering assurance limitation SOUNDNESS8. No executed compiler change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/riscv/riscv_configScript.sml",
+    "hol_name": "riscv_backend_config_def",
+    "lean_path": "Flapjack/Compiler/Backend/RiscVConfig/BackendConfig.lean",
+    "lean_name": "riscvBackendConfig",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04 (bead flapjack-x6sx8): riscv_configScript.sml 46-70 and the exported theory capture riscv_backend_config_probe (hypotheses 0), whose body has the SML quotations spliced: source_conf prim_src_config; clos_conf the evaluated clos_to_bvl default record (next_loc 0, start 1, do_mti T, known_conf SOME <|inline_max_body_size 88; inline_factor 8; initial_inline_factor 8; val_approx_spt LN|>, do_call T, call_state (LN,[]), max_app 10); bvl_conf the evaluated bvl_to_bvi default (10, 1000, T, 73, 74, 75, T, T, LN, LN); data_conf tag 4/len 4/pad 2/len_size 32, has_div T, longdiv/fp_ops/fp_tern/be/call_empty_ffi F, gc_kind Simple; word_to_word reg_alg 3 col_oracle []; word_conf bitmaps_length 0 stack_frame_size LN; stack_conf jump F reg_names riscv_names perf_calls F; lab_conf pos 0 ffi_names NONE labels LN sec_pos_len [] init_clock 5 hash_size 104729 shmem_extra []; symbols []; tap_conf default_tap_config; exported []. Every field literal over the reviewed config carriers; rfl sanity lemmas tie the clos/bvl literals to the tagged default_config ports. Note: Pancake's driver uses pancake_backend_conf (gc_kind None) on top of this, see flapjack-nlgac."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/riscv/proofs/riscv_configProofScript.sml",
+    "hol_name": "is_riscv_machine_config_def",
+    "lean_path": "Flapjack/Compiler/Backend/RiscVConfig/Proofs.lean",
+    "lean_name": "isRiscvMachineConfig",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04 (bead flapjack-034pg): riscv_configProofScript 12-19 and typed literal replay riscv_config_proof_replay (mc : (64, riscv_state, riscv projection tuple) machine_config = MachineConfig 64 riscv_state RiscVProjection): mc.target = riscv_target, len 11, ptr 10, len2 13, ptr2 12, callee_saved [24;25;26]; all six conjuncts in HOL order. Through riscv_target (the L3 RISC-V model) the closure inherits reals_as_rational_cuts, the rational-cut assurance limit SOUNDNESS8.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/riscv/proofs/riscv_configProofScript.sml",
+    "hol_name": "riscv_init_ok",
+    "lean_path": "Flapjack/Compiler/Backend/RiscVConfig/Proofs.lean",
+    "lean_name": "riscvInitOk",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04 (bead flapjack-034pg): riscv_configProofScript 68-75 against the typed literal replay (re-proved there with HOL's own tactic, 0 hypotheses): is_riscv_machine_config mc => mc_init_ok riscv_config riscv_backend_config mc over the tagged isRiscvMachineConfig, mcInitOk, riscvConfig and riscvBackendConfig. Proof evaluates the concrete names through riscvNames_lookup_eq; no native_decide. Through riscv_target (the L3 RISC-V model) the closure inherits reals_as_rational_cuts, the rational-cut assurance limit SOUNDNESS8.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]

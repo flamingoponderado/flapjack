@@ -8805,18 +8805,6 @@ definition changes here. Whole encoder and compiler assembly remain open.
 `pan_to_word_inst_ok_less_probe.out` captures the complete original typed six-pass instruction-validity theorem. Source declarations, asm_config and output word programs share one word dimension. The native proof composes reviewed source invariants and full LoopToWord instruction validity under the actual compile equation, both zero-offset guards and original good_panops guard. No target-run or desired-result premise is added; whole semantic compiler correctness remains open.
 
 `word_to_stack_store_consts_caller_probe.out` captures the original full typed StoreConsts comp clause and actual native outputs below/at 8-bit wrapping, at 64-bit wrapping, at the exact chunk boundary and at width1. Three w2n observations normalize the printed word literals. The source register is1 and original stub6; native code, complete flattened bitmap state/count and unconditional macro acceptance are kernel-checked against the repaired executed word-facing producer. The generic Nat macro helper is retained separately. This does not establish full WordToStack simulation or whole compiler correctness.
-
-### Full native Mem correctness case
-
-`riscv_target_mem_probeScript.sml` specializes the original full encoder theorem
-to `Inst (Mem m r (Addr base w))` with arbitrary original registers, word64
-offset and all eight memory operations. It captures the complete assertion
-conclusion, inferred types, zero open hypotheses and the original proved result.
-The matching Lean theorem is in `CorrectnessEncoding/MemoryAssertions.lean`;
-its source-step/initial-relation premise derives actual native Next and both
-original all-environment assertions. The local guard pins the complete public
-statement and original evidence; it is a regression check, not an equivalence
-proof or acceptance of the whole encoder.
 ### Independent `add_ret_loc` metadata (PR1213 carrier repair)
 
 `word_sem_add_ret_loc_carriers_probeScript.sml` captures the original generic
@@ -8833,3 +8821,29 @@ encoder correctness theorem to arbitrary JumpCmp operands and comparison.
 Four fresh typed rows retain the complete statement, carrier annotations,
 zero hypotheses and proof T; the Lean root covers all near/far Reg/Imm cases.
 The statement/evidence guard detects drift but does not replace source review.
+
+### Full native Mem correctness case
+
+`riscv_target_mem_probeScript.sml` specializes the original full encoder theorem
+to `Inst (Mem m r (Addr base w))` with arbitrary original registers, word64
+offset and all eight memory operations. It captures the complete assertion
+conclusion, inferred types, zero open hypotheses and the original proved result.
+The matching Lean theorem is in `CorrectnessEncoding/MemoryAssertions.lean`;
+its source-step/initial-relation premise derives actual native Next and both
+original all-environment assertions. The local guard pins the complete public
+statement and original evidence; it is a regression check, not an equivalence
+proof or acceptance of the whole encoder.
+
+`riscv_backend_config_probe.out` captures the exported original
+`riscv_backend_config_def` (no hypotheses) with HOL's SML quotations already
+spliced, including the evaluated `clos_to_bvl`/`bvl_to_bvi` default records.
+`Flapjack/Compiler/Backend/RiscVConfig/BackendConfig.lean` states the same
+literal record; untagged `rfl` lemmas tie the two evaluated default records to
+the tagged `default_config` ports. Syntactic evidence only, not a
+cross-language proof.
+
+`riscv_config_proof_replay_probe.out` is a literal source replay (both
+`backendProof` and `riscv_configProof` are unbuilt here): `mc_init_ok_def` and
+`is_riscv_machine_config_def` are replayed verbatim (guarded) and `riscv_init_ok`
+is re-proved with its own HOL tactic; typed statements and the hypothesis count
+are captured for `Flapjack/Compiler/Backend/RiscVConfig/Proofs.lean`.

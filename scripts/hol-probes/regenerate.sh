@@ -8242,6 +8242,14 @@ run_probe riscv_target_addoverflow_probeScript.sml riscv_target_addoverflow_prob
   riscv_encoder_correct_addoverflow_statement riscv_encoder_correct_addoverflow_types riscv_encoder_correct_addoverflow_hypotheses riscv_encoder_correct_addoverflow_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+run_probe riscv_config_proof_replay_probeScript.sml riscv_config_proof_replay_probe.out \
+  is_riscv_machine_config_def_typed riscv_init_ok_typed riscv_init_ok_hypotheses \
+  "$cake_dir/compiler/backend/riscv/proofs/riscv_configProofScript.sml" \
+  "$cake_dir/compiler/backend/riscv/proofs"
+run_probe riscv_backend_config_probeScript.sml riscv_backend_config_probe.out \
+  riscv_backend_config_def_statement riscv_backend_config_def_typed riscv_backend_config_def_hypotheses \
+  "$cake_dir/compiler/backend/riscv/riscv_configScript.sml" \
+  "$cake_dir/compiler/backend/riscv"
 run_probe riscv_target_suboverflow_probeScript.sml riscv_target_suboverflow_probe.out \
   riscv_encoder_correct_suboverflow_statement riscv_encoder_correct_suboverflow_types riscv_encoder_correct_suboverflow_hypotheses riscv_encoder_correct_suboverflow_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
@@ -8389,12 +8397,12 @@ run_probe word_to_stack_store_consts_caller_probeScript.sml word_to_stack_store_
   source_clause below8 wrap8 wrap64 exact_chunk8 width1 index_below8 index_wrap8 index_wrap64 \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
 
-run_probe riscv_target_mem_probeScript.sml riscv_target_mem_probe.out \
-  riscv_encoder_correct_mem_statement riscv_encoder_correct_mem_types riscv_encoder_correct_mem_hypotheses riscv_encoder_correct_mem_proved \
+run_probe riscv_target_jumpcmp_probeScript.sml riscv_target_jumpcmp_probe.out \
+  riscv_encoder_correct_jumpcmp_statement riscv_encoder_correct_jumpcmp_types riscv_encoder_correct_jumpcmp_hypotheses riscv_encoder_correct_jumpcmp_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
 
-run_probe riscv_target_jumpcmp_probeScript.sml riscv_target_jumpcmp_probe.out \
-  riscv_encoder_correct_jumpcmp_statement riscv_encoder_correct_jumpcmp_types riscv_encoder_correct_jumpcmp_hypotheses riscv_encoder_correct_jumpcmp_proved \
+run_probe riscv_target_mem_probeScript.sml riscv_target_mem_probe.out \
+  riscv_encoder_correct_mem_statement riscv_encoder_correct_mem_types riscv_encoder_correct_mem_hypotheses riscv_encoder_correct_mem_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
