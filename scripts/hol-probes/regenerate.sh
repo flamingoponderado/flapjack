@@ -8434,6 +8434,18 @@ run_probe riscv_target_complete_probeScript.sml riscv_target_complete_probe.out 
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
 
+run_probe lab_to_target_outer_domain_probeScript.sml lab_to_target_outer_domain_probe.out \
+  compute_labels_alt_domain_labs_statement_typed compute_labels_alt_domain_labs_hyp_count remove_labels_loop_domain_labs_statement_typed remove_labels_loop_domain_labs_hyp_count remove_labels_domain_labs_statement_typed remove_labels_domain_labs_hyp_count \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_extracted_label_navigation_probeScript.sml lab_to_target_extracted_label_navigation_probe.out \
+  extract_labels_loc_to_pc_statement_typed extract_labels_loc_to_pc_hyp_count loc_to_pc_definition_typed sec_labels_ok_definition_typed extract_labels_definition_typed \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_ffi_distinct_probeScript.sml lab_to_target_ffi_distinct_probe.out \
+  find_ffi_names_ALL_DISTINCT_statement_typed find_ffi_names_ALL_DISTINCT_hyp_count find_ffi_names_definition_typed \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe l3_step_immediate_comparison_nop_probeScript.sml l3_step_immediate_comparison_nop_probe.out \
   slti_nop_statement slti_nop_types slti_nop_source_hypotheses slti_nop_proved sltiu_nop_statement sltiu_nop_types sltiu_nop_source_hypotheses sltiu_nop_proved \
   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" \

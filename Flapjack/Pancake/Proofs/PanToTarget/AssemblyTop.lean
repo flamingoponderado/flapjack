@@ -14,9 +14,9 @@ instruction validity, the machine-to-lab stage (`lab_to_target` `semantics_compi
 relates the machine semantics to the lab semantics of the initial lab state, and the
 lab-state chain with the resource-limit stage concludes.
 
-Untagged: `PanToTargetCompileSemanticsStatement` is the untagged statement interface
-(see its docstring for the recorded `pan_installed` memory-domain carrier gap); the
-tag decision for the final theorem belongs to its statement review.
+`PanToTargetCompileSemanticsStatement` is the untagged statement interface; as in HOL,
+`pan_installed` receives `s.memaddrs`/`s.sh_memaddrs` directly on the same predicate
+carrier. The tagged `panToTargetCompileSemantics` below states the HOL theorem itself.
 -/
 
 namespace Flapjack.Pancake.Proofs.PanToTarget

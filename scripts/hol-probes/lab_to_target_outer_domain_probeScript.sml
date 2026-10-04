@@ -1,0 +1,27 @@
+(* Full original outer-domain theorem captures; statement evidence only. *)
+load "bossLib";
+load "preamble";
+load "lab_to_targetProofTheory";
+open HolKernel Parse bossLib;
+val _ = set_trace "types" 1;
+val th = DB.fetch "lab_to_targetProof" "compute_labels_alt_domain_labs";
+val _ = print "compute_labels_alt_domain_labs_statement_typed=";
+val _ = print_term (concl th);
+val _ = print "\n";
+val _ = print "compute_labels_alt_domain_labs_hyp_count=";
+val _ = print (Int.toString (length (hyp th)));
+val _ = print "\n";
+val th = DB.fetch "lab_to_targetProof" "remove_labels_loop_domain_labs";
+val _ = print "remove_labels_loop_domain_labs_statement_typed=";
+val _ = print_term (concl th);
+val _ = print "\n";
+val _ = print "remove_labels_loop_domain_labs_hyp_count=";
+val _ = print (Int.toString (length (hyp th)));
+val _ = print "\n";
+val th = DB.fetch "lab_to_targetProof" "remove_labels_domain_labs";
+val _ = print "remove_labels_domain_labs_statement_typed=";
+val _ = print_term (concl th);
+val _ = print "\n";
+val _ = print "remove_labels_domain_labs_hyp_count=";
+val _ = print (Int.toString (length (hyp th)));
+val _ = print "\n";
