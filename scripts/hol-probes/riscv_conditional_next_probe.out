@@ -1,0 +1,51 @@
+beq_next_zero=T
+beq_next_alias_sign=T
+beq_next_odd_taken=T
+beq_next_odd_reverse=T
+beq_next_signed_boundary=T
+bne_next_zero=T
+bne_next_alias_sign=T
+bne_next_odd_taken=T
+bne_next_odd_reverse=T
+bne_next_signed_boundary=T
+blt_next_zero=T
+blt_next_alias_sign=T
+blt_next_odd_taken=T
+blt_next_odd_reverse=T
+blt_next_signed_boundary=T
+bltu_next_zero=T
+bltu_next_alias_sign=T
+bltu_next_odd_taken=T
+bltu_next_odd_reverse=T
+bltu_next_signed_boundary=T
+bge_next_zero=T
+bge_next_alias_sign=T
+bge_next_odd_taken=T
+bge_next_odd_reverse=T
+bge_next_signed_boundary=T
+bgeu_next_zero=T
+bgeu_next_alias_sign=T
+bgeu_next_odd_taken=T
+bgeu_next_odd_reverse=T
+bgeu_next_signed_boundary=T
+beq_source=∀rs1 rs2 offs. dfn'BEQ (rs1,rs2,offs) = (λstate. (let (v,s) = in32BitMode () state; (v0,s0) = in32BitMode () s in if (if v then sw2sw ((31 >< 0) (GPR rs1 s)) else GPR rs1 s) = if v0 then sw2sw ((31 >< 0) (GPR rs2 s0)) else GPR rs2 s0 then branchTo (PC s0 + sw2sw offs ≪ 1) s0 else s0))
+beq_hypotheses=0
+beq_typed_source=∀(rs1 :word5) (rs2 :word5) (offs :word12). dfn'BEQ (rs1,rs2,offs) = (λ(state :riscv_state). (let ((v :bool),(s :riscv_state)) = in32BitMode () state; ((v0 :bool),(s0 :riscv_state)) = in32BitMode () s in if (if v then (sw2sw (((31 :num) >< (0 :num)) (GPR rs1 s) :word32) :word64) else GPR rs1 s) = if v0 then (sw2sw (((31 :num) >< (0 :num)) (GPR rs2 s0) :word32) :word64) else GPR rs2 s0 then branchTo (PC s0 + (sw2sw offs :word64) ≪ (1 :num)) s0 else s0))
+bne_source=∀rs1 rs2 offs. dfn'BNE (rs1,rs2,offs) = (λstate. (let (v,s) = in32BitMode () state; (v0,s0) = in32BitMode () s in if (if v then sw2sw ((31 >< 0) (GPR rs1 s)) else GPR rs1 s) ≠ if v0 then sw2sw ((31 >< 0) (GPR rs2 s0)) else GPR rs2 s0 then branchTo (PC s0 + sw2sw offs ≪ 1) s0 else s0))
+bne_hypotheses=0
+bne_typed_source=∀(rs1 :word5) (rs2 :word5) (offs :word12). dfn'BNE (rs1,rs2,offs) = (λ(state :riscv_state). (let ((v :bool),(s :riscv_state)) = in32BitMode () state; ((v0 :bool),(s0 :riscv_state)) = in32BitMode () s in if (if v then (sw2sw (((31 :num) >< (0 :num)) (GPR rs1 s) :word32) :word64) else GPR rs1 s) ≠ if v0 then (sw2sw (((31 :num) >< (0 :num)) (GPR rs2 s0) :word32) :word64) else GPR rs2 s0 then branchTo (PC s0 + (sw2sw offs :word64) ≪ (1 :num)) s0 else s0))
+blt_source=∀rs1 rs2 offs. dfn'BLT (rs1,rs2,offs) = (λstate. (let (v,s) = in32BitMode () state; (v0,s0) = in32BitMode () s in if (if v then sw2sw ((31 >< 0) (GPR rs1 s)) else GPR rs1 s) < if v0 then sw2sw ((31 >< 0) (GPR rs2 s0)) else GPR rs2 s0 then branchTo (PC s0 + sw2sw offs ≪ 1) s0 else s0))
+blt_hypotheses=0
+blt_typed_source=∀(rs1 :word5) (rs2 :word5) (offs :word12). dfn'BLT (rs1,rs2,offs) = (λ(state :riscv_state). (let ((v :bool),(s :riscv_state)) = in32BitMode () state; ((v0 :bool),(s0 :riscv_state)) = in32BitMode () s in if (if v then (sw2sw (((31 :num) >< (0 :num)) (GPR rs1 s) :word32) :word64) else GPR rs1 s) < if v0 then (sw2sw (((31 :num) >< (0 :num)) (GPR rs2 s0) :word32) :word64) else GPR rs2 s0 then branchTo (PC s0 + (sw2sw offs :word64) ≪ (1 :num)) s0 else s0))
+bltu_source=∀rs1 rs2 offs. dfn'BLTU (rs1,rs2,offs) = (λstate. (let (v,s) = in32BitMode () state; (v0,s0) = in32BitMode () s in if (if v then sw2sw ((31 >< 0) (GPR rs1 s)) else GPR rs1 s) <₊ if v0 then sw2sw ((31 >< 0) (GPR rs2 s0)) else GPR rs2 s0 then branchTo (PC s0 + sw2sw offs ≪ 1) s0 else s0))
+bltu_hypotheses=0
+bltu_typed_source=∀(rs1 :word5) (rs2 :word5) (offs :word12). dfn'BLTU (rs1,rs2,offs) = (λ(state :riscv_state). (let ((v :bool),(s :riscv_state)) = in32BitMode () state; ((v0 :bool),(s0 :riscv_state)) = in32BitMode () s in if (if v then (sw2sw (((31 :num) >< (0 :num)) (GPR rs1 s) :word32) :word64) else GPR rs1 s) <₊ if v0 then (sw2sw (((31 :num) >< (0 :num)) (GPR rs2 s0) :word32) :word64) else GPR rs2 s0 then branchTo (PC s0 + (sw2sw offs :word64) ≪ (1 :num)) s0 else s0))
+bge_source=∀rs1 rs2 offs. dfn'BGE (rs1,rs2,offs) = (λstate. (let (v,s) = in32BitMode () state; (v0,s0) = in32BitMode () s in if (if v then sw2sw ((31 >< 0) (GPR rs1 s)) else GPR rs1 s) ≥ if v0 then sw2sw ((31 >< 0) (GPR rs2 s0)) else GPR rs2 s0 then branchTo (PC s0 + sw2sw offs ≪ 1) s0 else s0))
+bge_hypotheses=0
+bge_typed_source=∀(rs1 :word5) (rs2 :word5) (offs :word12). dfn'BGE (rs1,rs2,offs) = (λ(state :riscv_state). (let ((v :bool),(s :riscv_state)) = in32BitMode () state; ((v0 :bool),(s0 :riscv_state)) = in32BitMode () s in if (if v then (sw2sw (((31 :num) >< (0 :num)) (GPR rs1 s) :word32) :word64) else GPR rs1 s) ≥ if v0 then (sw2sw (((31 :num) >< (0 :num)) (GPR rs2 s0) :word32) :word64) else GPR rs2 s0 then branchTo (PC s0 + (sw2sw offs :word64) ≪ (1 :num)) s0 else s0))
+bgeu_source=∀rs1 rs2 offs. dfn'BGEU (rs1,rs2,offs) = (λstate. (let (v,s) = in32BitMode () state; (v0,s0) = in32BitMode () s in if (if v then sw2sw ((31 >< 0) (GPR rs1 s)) else GPR rs1 s) ≥₊ if v0 then sw2sw ((31 >< 0) (GPR rs2 s0)) else GPR rs2 s0 then branchTo (PC s0 + sw2sw offs ≪ 1) s0 else s0))
+bgeu_hypotheses=0
+bgeu_typed_source=∀(rs1 :word5) (rs2 :word5) (offs :word12). dfn'BGEU (rs1,rs2,offs) = (λ(state :riscv_state). (let ((v :bool),(s :riscv_state)) = in32BitMode () state; ((v0 :bool),(s0 :riscv_state)) = in32BitMode () s in if (if v then (sw2sw (((31 :num) >< (0 :num)) (GPR rs1 s) :word32) :word64) else GPR rs1 s) ≥₊ if v0 then (sw2sw (((31 :num) >< (0 :num)) (GPR rs2 s0) :word32) :word64) else GPR rs2 s0 then branchTo (PC s0 + (sw2sw offs :word64) ≪ (1 :num)) s0 else s0))
+next_source=∀s. NextRISCV s = (let (f,s) = Fetch s; s = Run (DecodeAny f) s in if s.exception ≠ NoException then NONE else (let pc = PC s in case NextFetch s of NONE => update_pc (pc + Skip s) s | SOME (BranchTo a) => update_pc a (write'NextFetch NONE s) | SOME Ereturn => NONE | SOME Mrts => NONE | SOME (Trap v5) => NONE))
+next_hypotheses=0
+next_typed_source=∀(s :riscv_state). NextRISCV s = (let ((f :rawInstType),(s :riscv_state)) = (Fetch s :rawInstType # riscv_state); (s :riscv_state) = Run (DecodeAny f) s in if s.exception ≠ NoException then (NONE :riscv_state option) else (let (pc :word64) = PC s in case NextFetch s of (NONE :TransferControl option) => update_pc (pc + Skip s) s | SOME (BranchTo a) => update_pc a (write'NextFetch (NONE :TransferControl option) s) | SOME Ereturn => (NONE :riscv_state option) | SOME Mrts => (NONE :riscv_state option) | SOME (Trap v5) => (NONE :riscv_state option)))
