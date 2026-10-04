@@ -1,4 +1,3 @@
-import Flapjack.RiscV.NativeSource
 import Flapjack.RiscV.SourceRuntimeBackendOutput
 import Flapjack.RiscV.RuntimeImageBackendOutput
 import Flapjack.RiscV.NativeBackendOutput
@@ -102,6 +101,7 @@ import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMaxAsm
 import Flapjack.Pancake.Proofs.PanToTarget.RiscVSource
 import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMaxAsmWith
 import Flapjack.RiscV.NativeSource
+import Flapjack.RiscV.NativeCLIAdapter
 import Flapjack.Pancake.Proofs.PanToTarget.NativeSourceCorrect
 import Flapjack.Pancake.Proofs.PanToTarget.InitHelpers
 import Flapjack.Pancake.Proofs.PanToTarget.PanInstalled
