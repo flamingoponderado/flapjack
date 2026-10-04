@@ -8850,6 +8850,8 @@ cross-language proof.
 `is_riscv_machine_config_def` are replayed verbatim (guarded) and `riscv_init_ok`
 is re-proved with its own HOL tactic; `backend_config_ok_def` and `names_tac` are
 likewise replayed and `riscv_backend_config_ok` re-proved with its HOL proof;
+`riscv_machine_config_ok` is re-proved with its HOL proof over the built
+`lab_to_targetProof` and `riscv_targetProof` theories;
 typed statements and hypothesis counts are captured for
 `Flapjack/Compiler/Backend/RiscVConfig/Proofs.lean`.
 
