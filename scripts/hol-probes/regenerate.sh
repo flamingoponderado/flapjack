@@ -8349,3 +8349,7 @@ run_probe pan_to_crep_program_validity_probeScript.sml pan_to_crep_program_valid
 run_probe pan_to_word_inst_ok_less_probeScript.sml pan_to_word_inst_ok_less_probe.out \
   pan_to_word_every_inst_ok_less \
   "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe word_to_stack_store_consts_caller_probeScript.sml word_to_stack_store_consts_caller_probe.out \
+  source_clause below8 wrap8 wrap64 exact_chunk8 width1 index_below8 index_wrap8 index_wrap64 \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"

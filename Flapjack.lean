@@ -13,6 +13,7 @@ import Flapjack.RiscV.CorrectnessEncoding.ShiftRorRegister
 import Flapjack.Compiler.Backend.WordToStack.ProductionMoveDomain
 import Flapjack.Compiler.Backend.WordToStack.ProductionMoveMaterialization
 import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapTransport
+import Flapjack.Compiler.Backend.WordToStack.ProductionStoreConsts
 import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapCaller
 import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapWrite
 import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapState
