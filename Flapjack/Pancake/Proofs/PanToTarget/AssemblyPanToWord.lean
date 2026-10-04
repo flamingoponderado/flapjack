@@ -1,0 +1,91 @@
+import Flapjack.Pancake.Proofs.PanToTarget.AssemblyMemory
+import Flapjack.Pancake.Proofs.PanToTarget.InitHelpers
+import Flapjack.Compiler.Backend.WordToStack.Proofs.Initialization
+import Flapjack.Pancake.Proofs.PanToWord.StateRelImpSemantics
+
+/-!
+# `pan_to_target_compile_semantics` assembly, pan_to_word stage
+
+The step of the HOL proof of `pan_to_target_compile_semantics`
+(`pan_to_targetProofScript.sml:2041-2284`) that applies
+`pan_to_wordProof$state_rel_imp_semantics` to the source-code word state
+`wst0 = (make_init ... sss ...) with code := fromAList (pan_to_word$compile_prog ...)`,
+and the heap-length shift arithmetic it uses. Intermediate steps of the single HOL
+proof, so untagged; the facts about the stack state are stated as hypotheses that the
+memory-setup stage derives from the original premises.
+-/
+
+namespace Flapjack.Pancake.Proofs.PanToTarget
+
+open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend
+open Flapjack.Pancake.PanLang Flapjack.Basis.Pure.MlString
+
+/-- The heap-length shift of the HOL proof (lines 2041-2054): adding the
+`store_list` words to the heap span and subtracting their count after division by
+the word size, provided the extended span does not wrap. -/
+theorem heapLengthShift {width : Nat} [NeZero width] (good : goodDimindex width)
+    (w2 w3 : BitVec width) (len : Nat)
+    (hbound : (-1 * w2 + w3).toNat + len * (width / 8) < 2 ^ width) :
+    (-1 * w2 + w3 + StackRemove.bytesInWord width * BitVec.ofNat width len).toNat /
+        (width / 8) - len =
+      (-1 * w2 + w3).toNat / (width / 8) := by
+  have hd : 0 < width / 8 := by rcases good with h | h <;> subst h <;> decide
+  have hlen : (StackRemove.bytesInWord width * BitVec.ofNat width len).toNat =
+      len * (width / 8) := by
+    rw [BitVec.toNat_mul, bytesInWord_toNat good, BitVec.toNat_ofNat]
+    have : len < 2 ^ width := by
+      have := Nat.le_mul_of_pos_right len hd; omega
+    rw [Nat.mod_eq_of_lt this, Nat.mul_comm, Nat.mod_eq_of_lt (by omega)]
+  rw [BitVec.toNat_add, hlen, Nat.mod_eq_of_lt hbound, Nat.add_mul_div_right _ _ hd,
+    Nat.add_sub_cancel]
+
+/-- The pan_to_word stage of the HOL proof (lines 2103-2284): `state_rel_imp_semantics`
+for the source-code word state built by `word_to_stackProof$make_init` from the stack
+state `sst`. The `make_init` projections (memory, domains, `be`, `ffi`, the store
+without `Handler`, `locals = insert 0 (Loc 1 0)`) are discharged here; the
+stack-state memory and store facts are the hypotheses the memory-setup stage
+provides, and the remaining hypotheses are those of the top theorem. -/
+theorem panToTargetPanToWordStage {width : Nat} [NeZero width] {C σ : Type}
+    (ac : AsmConfigExact width) (k : Nat) (sst : StackSemStateFiniteExact width C σ)
+    (wcode : Spt (Nat × WordLangProgHOL (BitVec width)))
+    (worac : Nat → (Nat × C) × List (Nat × Nat × WordLangProgHOL (BitVec width)))
+    (s : PanSemStateFiniteExact width σ) (isa : AsmArchitecture)
+    (panCode : List (DeclHOL width)) (start : MlS) (globalsSize : Nat)
+    (heapLen : BitVec width)
+    (hmem : ∀ a, s.memaddrs a → sst.memory a = wlabWlocExact (s.memory a))
+    (hnolab : noLabelsHOL sst.memory (fun a => sst.mdomain a = true))
+    (hmdomain : (fun a => sst.mdomain a = true) =
+      (fun a => s.memaddrs a ∨ StackRemove.addresses s.topAddr globalsSize a))
+    (hshmdomain : (fun a => sst.shMdomain a = true) = s.shMemaddrs)
+    (hbe : sst.be = s.be) (hffi : sst.ffi = s.ffi)
+    (hcurr : sst.store.lookup .currHeap = some (.word s.baseAddr))
+    (hheap : sst.store.lookup .heapLength = some (.word heapLen))
+    (hstart : start = ofString "main")
+    (hsize : globalsSize = ((decShapesHOL panCode).map
+      (sizeOfShapeWithContextHOL (holThe (decsStcnamesHOLExact [] panCode)))).sum)
+    (hparams : distinctParamsHOL (functionsHOL panCode))
+    (htop : s.topAddr = s.baseAddr + (2 : BitVec width) * heapLen -
+      panBytesInWord width * BitVec.ofNat width globalsSize)
+    (hnodup : ((functionsHOL panCode).map Prod.fst).Nodup)
+    (halign : panGlobalsByteAlignedHOL s.topAddr)
+    (halloc : globalsAllocatableHOL s panCode) (hcode : s.code = HolFiniteMapExact.empty)
+    (hglobals : s.globals = HolFiniteMapExact.empty)
+    (hlocals : s.locals = HolFiniteMapExact.empty) (heids : sizeOfEidsHOL panCode < 2 ^ width)
+    (heshapes : s.eshapes = HolFiniteMapExact.empty) (good : goodDimindex width)
+    (hfail : PanSemStateFiniteExact.semanticsDecls s start panCode ≠ .fail) :
+    let wst := WordToStack.Native.Initialization.makeInit ac k sst wcode worac
+    let wst0 := { wst with code := sptFromAList (panToWordCompileProgHOL isa panCode) }
+    WordSemStateFiniteExact.semantics wst0 BvlToBvi.initGlobalsLocation =
+      PanSemStateFiniteExact.semanticsDecls s start panCode := by
+  intro wst wst0
+  rw [InitGlobals_location_eq_first_name]
+  exact PanToWord.StateRelImpSemantics.panToWordStateRelImpSemantics s wst0 isa panCode start
+    globalsSize heapLen
+    ⟨hmem, hnolab, hstart, hsize, hparams, hmdomain, hshmdomain, hbe, hffi,
+      by simpa [wst0, wst, WordToStack.Native.Initialization.makeInit, FDOMSUB_HOL] using hcurr,
+      by simpa [wst0, wst, WordToStack.Native.Initialization.makeInit, FDOMSUB_HOL] using hheap,
+      htop, hnodup, halign, halloc, hcode, rfl, hglobals, hlocals, heids, heshapes,
+      by simp [wst0, wst, WordToStack.Native.Initialization.makeInit, sptLookup],
+      good, hfail⟩
+
+end Flapjack.Pancake.Proofs.PanToTarget

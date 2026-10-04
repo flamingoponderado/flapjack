@@ -8647,3 +8647,26 @@ untagged compositions have no separately named HOL originals. Full Mem encoder
 assertions, interference and store post-state correspondence remain open.
 
 `load_globals_alt_probe.out` captures the complete original typed arbitrary-address/count GENLIST equality. The address is fixed word5; native expression dimension remains independently quantified. This prerequisite supports Call-handler compiler validity, not full source-pass or compiler correctness.
+
+### Full original native Call encoder case
+
+`CorrectnessEncoding/Call.lean` assembles the original riscv_target258–263
+near JALrd1 and far AUIPCrd1/JALRrd1=rs1 paths, preserving the complete
+riscv_targetProof723–730 conclusion. Source asmStep supplies lr=1 and the
+original offset/alignment guards. Near witness0 returns PC+4; far witness1
+returns PC+8 with intermediate PC4 and env0/env1. Actual four/eight encoded
+bytes derive full native Fetch/Decode/Run/Next. The aliased JALR target uses
+old register1 before its link write; no non-alias or target-run premise is added.
+All environments, both assertions, code-byte preservation, PC membership,
+source-domain memory frames and the complete final state relation remain.
+Native Run retains the reviewed reals_as_rational_cuts limit (SOUNDNESS item8).
+
+`riscv_target_call_probeScript.sml` specializes the full original theorem only
+to Call, capturing the complete typed statement, carrier binders, zero proof
+hypotheses and kernel marker. `check-riscv-target-call.py` pins the reviewed
+statement and actual paths/evidence; twelve mutation checks cover added range
+or post-state premises, lost universal environments/assertions, changed AUIPC,
+source/link alias, arithmetic shift, return-link value and original evidence.
+These regression checks supplement source review and Lean kernel checking;
+full encoder assembly and compiler correctness remain separate open work.
+No executed compiler definition changes in this delivery.
