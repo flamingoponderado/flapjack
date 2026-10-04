@@ -8628,3 +8628,4 @@ environments/assertions, missing AUIPC, changed scratch projection/shift, and
 missing original evidence. These syntactic checks supplement source review and
 Lean kernel checking; full encoder assembly and whole compiler correctness
 remain separate open work. No executed compiler path changes here.
+`pan_to_crep_compile_exp_validity_probe.out` captures the complete original typed expression compiler validity theorem (974–1007), retaining context/expression/output-list/shape binders, source binary-Panop guard and actual compile pair equation. The native proof covers every expression and mutual list constructor and uses the shared Prop-valued Crep predicate. Captures support source review, not cross-language equivalence.

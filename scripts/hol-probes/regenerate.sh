@@ -8293,3 +8293,6 @@ run_probe riscv_target_jump_probeScript.sml riscv_target_jump_probe.out \
   riscv_encoder_correct_jump_statement riscv_encoder_correct_jump_types riscv_encoder_correct_jump_hypotheses riscv_encoder_correct_jump_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+run_probe pan_to_crep_compile_exp_validity_probeScript.sml pan_to_crep_compile_exp_validity_probe.out \
+  every_inst_ok_less_pan_to_crep_compile_exp compile_exp_def \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
