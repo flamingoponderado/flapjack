@@ -99050,5 +99050,13 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific complete backend output/adapter composition infrastructure, no independent HOL declaration. Reuses tagged original fromStack/fromWord/attachBitmaps. Retains input rejection, None/guards/arbitrary bitmap payload/full config/symbol attachment without successful-output or target premise. Native path has no relabel/filter/stub injection. Source diagnostic wrapper and whole producer/body correctness remain open on z6zwp."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/SourceRuntimeBackendOutput.lean",
+    "lean_name": "sourceRuntimeImage_fullBackendOutput",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific full actual RV64 source runtime diagnostic wrapper composition through checked complete backend output; no independent HOL declaration. All original parse/static/entry/allocation/codec/FFI error branches retained, with original config component equalities and no successful-output premise. Unused original service extension retained as _services; RV64 callback ignores this legacy context. Native original-label frontend adoption is separate."
   }
 ]
