@@ -4,6 +4,9 @@ word_to_stack_compile_FST_replay_typed=word_to_stack_compile (mc :(α, β, γ) m
 good_dimindex_0w_8w_replay_statement=good_dimindex (:α) ⇒ 0w ≤ 8w ∧ -8w ≤ 0w
 good_dimindex_0w_8w_replay_hypotheses=0
 good_dimindex_0w_8w_replay_typed=good_dimindex (:α) ⇒ (0w :α word) ≤ (8w :α word) ∧ -(8w :α word) ≤ (0w :α word)
+FLOOKUP_MAP_KEYS_LINV_replay_statement=f PERMUTES 𝕌(:α) ⇒ FLOOKUP (MAP_KEYS (LINV f 𝕌(:α)) m) i = FLOOKUP m (f i)
+FLOOKUP_MAP_KEYS_LINV_replay_hypotheses=0
+FLOOKUP_MAP_KEYS_LINV_replay_typed=(f :α -> α) PERMUTES 𝕌(:α) ⇒ FLOOKUP (MAP_KEYS (LINV f 𝕌(:α)) (m :α |-> β)) (i :α) = FLOOKUP m (f i)
 full_make_init_be_replay_statement=(FST (full_make_init a b c d e f g h i j k)).be ⇔ h.be
 full_make_init_be_replay_hypotheses=0
 full_make_init_be_replay_typed=(FST (full_make_init (a :stack_to_lab$config) (b :data_to_word$config) (c :num) (d :num) (e :α word # α word) (f :α word list) (g :(num # α stack_rawcallProof$prog) list) (h :(α, β, γ) labSem$state) (i :num -> bool) (j :num) (k :num -> β # (num # α stack_rawcallProof$prog) list # α word list))).be ⇔ h.be

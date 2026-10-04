@@ -7,6 +7,8 @@ import Flapjack.Misc.GoodDimindex
 import Flapjack.Misc.Alignment
 import Flapjack.Pancake.CrepToLoop
 import Flapjack.Compiler.Backend.BvlToBvi
+import Flapjack.FiniteMap.MapKeys
+import Flapjack.Misc.PredSet
 
 /-!
 # `pan_to_targetProof`: arithmetic and initialization helpers
@@ -114,6 +116,39 @@ theorem full_make_init_be {width : Nat} [NeZero width] {C F : Type}
       StackSemStateFiniteExact width C F).be = h.be := by
   simp only [Compiler.Backend.StackToLab.Proofs.FullMakeInit.fullMakeInit, Compiler.Backend.StackAlloc.makeInit,
     makeInitAny_be, Compiler.Backend.StackNames.makeInit, Compiler.Backend.StackToLab.Proofs.MakeInit.makeInit]
+
+private def holFiniteMaptoBroadlookup {κ β : Type} (m : HolFiniteMapExact κ β) : κ → Option β :=
+  m.lookup
+
+private def holFiniteMapofBroad {κ β : Type} (lookup : κ → Option β)
+    (finiteSupport : ∃ keys : List κ, ∀ key, lookup key ≠ none → key ∈ keys) :
+    HolFiniteMapExact κ β := ⟨lookup, finiteSupport⟩
+
+/-- Canonical standalone-map witness for the `m` parameter of `FLOOKUP_MAP_KEYS_LINV`: the
+    finite-support map roundtrips through its lookup and support proof. -/
+theorem holFmapAsFiniteSupportParamWitness_FLOOKUP_MAP_KEYS_LINV_m {κ β : Type}
+    (m : HolFiniteMapExact κ β) :
+    holFiniteMapofBroad (holFiniteMaptoBroadlookup m) m.finiteSupport = m := by
+  cases m
+  rfl
+
+/-- HOL `FLOOKUP_MAP_KEYS_LINV` (`pan_to_targetProofScript.sml:258-275`). HOL's free `f m i` are
+    explicit; `f PERMUTES 𝕌(:α)` (`BIJ f UNIV UNIV`) is `Function.Bijective f`, `LINV` the tagged
+    `holLinv` on `UNIV` (whose `[Nonempty α]` is HOL's type inhabitedness), `MAP_KEYS` the
+    finite-support rendering `mapKeys`, and `FLOOKUP` is `lookup`. -/
+@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "FLOOKUP_MAP_KEYS_LINV"
+  (fmap_as_finite_support_parameters := [m])]
+theorem FLOOKUP_MAP_KEYS_LINV {α β : Type} [Nonempty α] (f : α → α) (m : HolFiniteMapExact α β)
+    (i : α) :
+    Function.Bijective f →
+      (HolFiniteMapExact.mapKeys (holLinv f (fun _ => True)) m).lookup i = m.lookup (f i) := by
+  intro hf
+  have hinv : ∀ y, f (holLinv f (fun _ => True) y) = y := apply_holLinv_of_surjective hf.2
+  have hlinj : Function.Injective (holLinv f (fun _ => True)) := fun x y h => by
+    rw [← hinv x, ← hinv y, h]
+  have hli : holLinv f (fun _ => True) (f i) = i := holLinv_apply_of_injective hf.1 i
+  conv_lhs => rw [← hli]
+  exact HolFiniteMapExact.lookup_mapKeys_of_injective hlinj m (f i)
 
 /-- HOL `n2w_sub_alt` (`pan_to_targetProofScript.sml:1193-1201`, `[local]`). -/
 @[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "n2w_sub_alt"

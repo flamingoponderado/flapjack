@@ -93963,5 +93963,24 @@
     "lean_name": "wordList_addresses_length",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack proof infrastructure for pan_to_targetProof word_list_exists_addresses: the HOL proof's induction on the word list, or the distinctness of the first address of a short range; no independent HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "FLOOKUP_MAP_KEYS_LINV",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/InitHelpers.lean",
+    "lean_name": "FLOOKUP_MAP_KEYS_LINV",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "m"
+    ],
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.1): pan_to_targetProof FLOOKUP_MAP_KEYS_LINV (258-275), compared with the typed literal-source replay pan_to_target_init_helpers_source_replay (re-proved there with HOL's tactic). HOL's free f m i explicit with f : α → α, m : α |-> β, i : α; f PERMUTES 𝕌(:α) (BIJ f UNIV UNIV) is Function.Bijective f as in the tagged stack_names make_init; LINV f 𝕌(:α) is the tagged holLinv on fun _ => True (its [Nonempty α] is HOL type inhabitedness); MAP_KEYS is the finite-support Hilbert-choice rendering mapKeys; FLOOKUP is lookup. The map parameter m is the canonical HolFiniteMapExact carrier with the same-module witness holFmapAsFiniteSupportParamWitness_FLOOKUP_MAP_KEYS_LINV_m; no other statement difference."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/InitHelpers.lean",
+    "lean_name": "holFmapAsFiniteSupportParamWitness_FLOOKUP_MAP_KEYS_LINV_m",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only canonical standalone-map witness for the fmap_as_finite_support_parameters qualifier on the tagged FLOOKUP_MAP_KEYS_LINV: the HolFiniteMapExact parameter roundtrips through its lookup and finite-support proof. It introduces no carrier and has no separate HOL declaration."
   }
 ]

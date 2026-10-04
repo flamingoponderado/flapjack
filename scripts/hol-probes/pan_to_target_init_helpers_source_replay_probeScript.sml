@@ -1,6 +1,6 @@
-(* Literal source-theorem replay of pan_to_targetProof helper theorems (79-87, 249-256,
-   277-288, 1193-1254). The original proof theory is unbuilt; every statement and HOL's own
-   proof are replayed in source order over the loaded original theories, with the script's
+(* Literal source-theorem replay of pan_to_targetProof helper theorems (79-87, 249-288,
+   1193-1254). The original proof theory is unbuilt; every statement and HOL's own proof are
+   replayed in source order over the loaded original theories, with the script's
    word_to_stack_compile overload. This is not an exported original-theory capture. *)
 load "bossLib"; load "preamble"; load "word_to_stackProofTheory"; load "stack_to_labProofTheory";
 load "stack_allocProofTheory"; load "stack_removeProofTheory"; load "stackPropsTheory";
@@ -36,6 +36,22 @@ val good_dimindex_0w_8w = store_thm("good_dimindex_0w_8w",
   strip_tac>>
   fs[WORD_LE,miscTheory.good_dimindex_def,word_2comp_n2w,
      dimword_def,word_msb_n2w]);
+val _ = guard "FLOOKUP_MAP_KEYS_LINV" "Theorem FLOOKUP_MAP_KEYS_LINV:\n  f PERMUTES \240\157\149\140(:\206\177) \226\135\146\n  FLOOKUP (MAP_KEYS (LINV f \240\157\149\140(:\206\177)) m) (i:\206\177) = FLOOKUP m (f i)\nProof\n  strip_tac>>\n  drule BIJ_LINV_INV>>strip_tac>>\n  drule BIJ_LINV_BIJ>>strip_tac>>\n  gs[BIJ_DEF]>>\n  mp_tac (GEN_ALL $ INST_TYPE [beta|->alpha,gamma|->beta] FLOOKUP_MAP_KEYS_MAPPED)>>\n  disch_then $ qspecl_then [\226\128\152m\226\128\153, \226\128\152f i\226\128\153, \226\128\152LINV f \240\157\149\140(:\206\177)\226\128\153] mp_tac>>\n  gs[]>>\n  last_x_assum assume_tac>>\n  drule LINV_DEF>>\n  disch_then $ qspec_then \226\128\152i\226\128\153 mp_tac>>\n  impl_tac >- gs[]>>\n  strip_tac>>pop_assum (fn h => rewrite_tac[h])\nQED";
+val FLOOKUP_MAP_KEYS_LINV = store_thm("FLOOKUP_MAP_KEYS_LINV",
+``  f PERMUTES 𝕌(:α) ⇒
+  FLOOKUP (MAP_KEYS (LINV f 𝕌(:α)) m) (i:α) = FLOOKUP m (f i)``,
+  strip_tac>>
+  drule BIJ_LINV_INV>>strip_tac>>
+  drule BIJ_LINV_BIJ>>strip_tac>>
+  gs[BIJ_DEF]>>
+  mp_tac (GEN_ALL $ INST_TYPE [beta|->alpha,gamma|->beta] FLOOKUP_MAP_KEYS_MAPPED)>>
+  disch_then $ qspecl_then [‘m’, ‘f i’, ‘LINV f 𝕌(:α)’] mp_tac>>
+  gs[]>>
+  last_x_assum assume_tac>>
+  drule LINV_DEF>>
+  disch_then $ qspec_then ‘i’ mp_tac>>
+  impl_tac >- gs[]>>
+  strip_tac>>pop_assum (fn h => rewrite_tac[h]));
 val _ = guard "full_make_init_be" "Theorem full_make_init_be:\n  (FST(full_make_init a b c d e f g h i j k)).be \226\135\148 h.be\nProof\n  fs[stack_to_labProofTheory.full_make_init_def]>>\n  fs[stack_allocProofTheory.make_init_def]>>\n  simp[stack_removeProofTheory.make_init_any_def,\n       stack_removeProofTheory.make_init_opt_def]>>\n  every_case_tac>>fs[]>>\n  imp_res_tac stackPropsTheory.evaluate_consts>>\n  EVAL_TAC>>fs[]>>\n  EVAL_TAC>>fs[]\nQED";
 val full_make_init_be = store_thm("full_make_init_be",
 ``  (FST(full_make_init a b c d e f g h i j k)).be ⇔ h.be``,
@@ -109,6 +125,9 @@ val _ = pr_typed "word_to_stack_compile_FST_replay_typed" word_to_stack_compile_
 val _ = pr_stmt "good_dimindex_0w_8w_replay_statement" good_dimindex_0w_8w;
 val _ = pr_hyps "good_dimindex_0w_8w_replay_hypotheses" good_dimindex_0w_8w;
 val _ = pr_typed "good_dimindex_0w_8w_replay_typed" good_dimindex_0w_8w;
+val _ = pr_stmt "FLOOKUP_MAP_KEYS_LINV_replay_statement" FLOOKUP_MAP_KEYS_LINV;
+val _ = pr_hyps "FLOOKUP_MAP_KEYS_LINV_replay_hypotheses" FLOOKUP_MAP_KEYS_LINV;
+val _ = pr_typed "FLOOKUP_MAP_KEYS_LINV_replay_typed" FLOOKUP_MAP_KEYS_LINV;
 val _ = pr_stmt "full_make_init_be_replay_statement" full_make_init_be;
 val _ = pr_hyps "full_make_init_be_replay_hypotheses" full_make_init_be;
 val _ = pr_typed "full_make_init_be_replay_typed" full_make_init_be;
