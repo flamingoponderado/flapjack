@@ -72,7 +72,8 @@ theorem nativeAllocatorCaller_production {width : Nat} [NeZero width]
           have allocated : cakeAllocateWordFunctionAfterDeadWithColourNativeSSA label parameters source =
               some output := by
             simp [cakeAllocateWordFunctionAfterDeadWithColourNativeSSA,
-              cakeAllocateWordFunctionAfterDeadWithColourWithSsa, encoded, supported, produced,
+              cakeAllocateWordFunctionAfterDeadWithColourWithSsa,
+              cakeAllocateWordFunctionAfterDeadWithColourWithSsaAndCopy, encoded, supported, produced,
               bodySupported, unreachRun, beforeSupported, cleanupSupported, cleanup, output,
               actualRun]
           refine ⟨output, cleanupNative, allocated, cleanupEncoded, nativeRun, ?_⟩
