@@ -8847,3 +8847,12 @@ cross-language proof.
 `is_riscv_machine_config_def` are replayed verbatim (guarded) and `riscv_init_ok`
 is re-proved with its own HOL tactic; typed statements and the hypothesis count
 are captured for `Flapjack/Compiler/Backend/RiscVConfig/Proofs.lean`.
+
+### Full native encoder theorem
+`riscv_target_complete_probeScript.sml` captures the unconditional original
+`encoder_correct riscv_target`, its complete definition expansion, zero open
+hypotheses and proved T. `CorrectnessEncoding/Complete.lean` assembles all
+seventeen original constructor groups and target_ok without extra premises.
+The native model retains reals_as_rational_cuts (SOUNDNESS section 8).
+This regression evidence does not prove cross-language equivalence or establish
+production compiler routing or the whole Pancake-to-RISC-V correctness theorem.
