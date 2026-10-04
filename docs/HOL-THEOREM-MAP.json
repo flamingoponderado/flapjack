@@ -98186,5 +98186,29 @@
     "lean_name": "panToTargetResourceLimit",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Stage G of the single HOL proof of pan_to_target_compile_semantics (pan_to_targetProofScript.sml 2285-2506): option_lt stack_max (SOME (FST (read_limits ...))) implies word_lang_safe_for_space wst InitGlobals_location; pointer premises are the top theorem's own, the rest earlier-stage facts; intermediate proof step, not a HOL theorem."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/ProductionNativeCopyMemoryGuard.lean",
+    "lean_name": "nativeCopyInstructionMemoryGuard",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-sol3: Flapjack-specific production memory-domain invariant, no independent HOL declaration. The full reviewed native copyProp instruction/program clauses preserve memory opcodes; the actual wordCopyPropViaHOL adapter preserves allocatorMemorySupported unconditionally, including rejected-input fallback. Reviewed input/output codec and cutset normalization guard lemmas discharge carrier correspondence. No successful allocator, output support or target execution premise; no HOL port or whole production allocator correctness claim.",
+    "hol_path": null,
+    "hol_name": null
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/ProductionNativeCopyMemoryGuard.lean",
+    "lean_name": "nativeCopyProgramMemoryGuard",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-sol3: Flapjack-specific production memory-domain invariant, no independent HOL declaration. The full reviewed native copyProp instruction/program clauses preserve memory opcodes; the actual wordCopyPropViaHOL adapter preserves allocatorMemorySupported unconditionally, including rejected-input fallback. Reviewed input/output codec and cutset normalization guard lemmas discharge carrier correspondence. No successful allocator, output support or target execution premise; no HOL port or whole production allocator correctness claim.",
+    "hol_path": null,
+    "hol_name": null
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/ProductionNativeCopyMemoryGuard.lean",
+    "lean_name": "nativeCopyWrapperMemoryGuard",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-sol3: Flapjack-specific production memory-domain invariant, no independent HOL declaration. The full reviewed native copyProp instruction/program clauses preserve memory opcodes; the actual wordCopyPropViaHOL adapter preserves allocatorMemorySupported unconditionally, including rejected-input fallback. Reviewed input/output codec and cutset normalization guard lemmas discharge carrier correspondence. No successful allocator, output support or target execution premise; no HOL port or whole production allocator correctness claim.",
+    "hol_path": null,
+    "hol_name": null
   }
 ]

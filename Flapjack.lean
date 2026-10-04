@@ -1249,6 +1249,7 @@ import Flapjack.Compiler.Backend.WordAlloc.ProductionDeadFallbackMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionDeadNativeMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionCseMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionCopyMemoryGuard
+import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeCopyMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionThreeToTwoMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionThreeToTwoIdentity
 import Flapjack.Compiler.Backend.WordAlloc.ProductionUnreachMemoryGuard
