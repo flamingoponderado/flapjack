@@ -97780,5 +97780,69 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol: compared original Jump constructor riscv_targetProof682-687 and riscv_target170-175, source asmStep/jumpToOffset/asmJumpOffsetOkExact and full encoder_correct_def. Only original source step plus initial targetStateRel; complete existential/all interference environments/both asserts/code bytes/PC membership/final full relation. Actual near JALrd0 uses source signed21 guard and arithmetic halfword shift, witness0; far AUIPC31/JALRrd0 uses original low12/high20 signed split, witness1 with intermediate PC4 and env0/env1. Four/eight literal emitted bytes supply full native fetch/decode/Run/Next; no target run, decoder or post-state premise. Scratch31 preservation across interference derives the full original projection, not the source relation that excludes31; original source guards discharge all bounds/alignment/masks. Memory/frame/all allowed registers retained. Same-counterpart helper modules are untagged local compositions without separate HOL originals. Inherits reviewed reals_as_rational_cuts assurance limit SOUNDNESS8 via native Run; no production-path change or full encoder/compiler completion claim."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyLabToTarget.lean",
+    "lean_name": "panToTargetNoInstallOrNoShareMem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1331-1338): no_install_or_no_share_mem of the pipeline lab program via from_pan_to_lab_no_install; not a separate HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyLabToTarget.lean",
+    "lean_name": "panToTargetCompilerOracleOk",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1340-1368): compiler_oracle_ok for the proof's constant oracle (final lab config, empty compile_no_stubs program), stated unconditionally (HOL derives it under no_share_mem_inst lprog)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyLabToTarget.lean",
+    "lean_name": "compileProgMax_some",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1300-1314): inversion of a successful compile_prog_max through from_stack/from_lab/attach_bitmaps."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyStackToLab.lean",
+    "lean_name": "panToTargetLabstFacts",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1460-1484): make_init lab-state facts required by full_make_init_semantics (callee-saved link/io/cc registers, aligned memory domains, good_code of stack program and empty oracle program, 10 <= sp, register names, bijective find_name, not failed) from backend_config_ok, mc_conf_ok, mc_init_ok and the pipeline equations; not a separate HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyMemory.lean",
+    "lean_name": "holByteAligned_iff_mod",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only: under good_dimindex byte_aligned is divisibility by dimindex DIV 8 (HOL aligned_w2n with 2 ** LOG2 (dimindex DIV 8))."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyMemory.lean",
+    "lean_name": "bytesInWord_toNat",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only: w2n bytes_in_word = dimindex DIV 8 under good_dimindex."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyMemory.lean",
+    "lean_name": "alignedInterval_eq_addresses",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1513-1545): byte-aligned words of [a,b) between aligned bounds equal addresses a (w2n (-1w*a+b) DIV (dimindex DIV 8))."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyMemory.lean",
+    "lean_name": "panToTargetMemoryAssumption",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1486-1550): memory_assumption of full_make_init_semantics for the make_init lab state from the pan_installed components, via fun2set_disjoint_union and word_list_exists_imp."
   }
 ]
