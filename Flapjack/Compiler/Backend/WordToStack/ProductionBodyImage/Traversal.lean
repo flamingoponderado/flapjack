@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.Instructions
+import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.MoveHelpers
 import Flapjack.Compiler.Backend.WordToStack.NativeCompile
 
 /-! Native `compNative` body output in the actual production decoder image.
@@ -365,5 +366,27 @@ theorem compNativeRoundtrip {width : Nat} [NeZero width] (conf : AsmConfigExact 
   obtain ⟨body, image⟩ :=
     compNativeImage conf perf moveImage native production decoded supported bs kf
   exact ⟨body, image, productionToHolProg_of_holProgToProduction _ body image⟩
+
+/-- Complete native body image on the actual source domain, with the move
+helper discharged by `moveCompilerImage`: no callback or output premise. -/
+theorem compNativeOutputImage {width : Nat} [NeZero width] (conf : AsmConfigExact width)
+    (perf : Bool) (native : WordLangProgHOL (BitVec width))
+    (production : WordProg (BitVec width))
+    (decoded : wordLangProgFromHOL native = some production)
+    (supported : allocatorMemorySupported production = true)
+    (bs : AppList (BitVec width) × Nat) (kf : Nat × Nat × Nat) :
+    OutputImage (compNative conf perf native bs kf).1 :=
+  compNativeImage conf perf moveCompilerImage native production decoded supported bs kf
+
+/-- Complete native body roundtrip on the actual source domain, with no callback. -/
+theorem compNativeOutputRoundtrip {width : Nat} [NeZero width] (conf : AsmConfigExact width)
+    (perf : Bool) (native : WordLangProgHOL (BitVec width))
+    (production : WordProg (BitVec width))
+    (decoded : wordLangProgFromHOL native = some production)
+    (supported : allocatorMemorySupported production = true)
+    (bs : AppList (BitVec width) × Nat) (kf : Nat × Nat × Nat) :
+    ∃ body, holProgToProduction (compNative conf perf native bs kf).1 = some body ∧
+      productionToHolProg body = some (compNative conf perf native bs kf).1 :=
+  compNativeRoundtrip conf perf moveCompilerImage native production decoded supported bs kf
 
 end Flapjack.ProductionBodyImage
