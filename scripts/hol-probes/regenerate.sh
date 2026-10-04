@@ -8086,3 +8086,7 @@ run_probe riscv_target_shift_ror_immediate_probeScript.sml riscv_target_shift_ro
   riscv_encoder_correct_shiftRorImmediate_statement riscv_encoder_correct_shiftRorImmediate_types riscv_encoder_correct_shiftRorImmediate_hypotheses riscv_encoder_correct_shiftRorImmediate_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe crep_to_loop_original_names_program_probeScript.sml crep_to_loop_original_names_program_probe.out \
+  full_program row_names parameters done \
+  "$cake_dir/pancake/crep_to_loopScript.sml"

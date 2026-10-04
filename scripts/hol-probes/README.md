@@ -8415,3 +8415,21 @@ Both Ror sequences remain open.
 `RorExecution.lean` composes the same actual native target iterator over the complete Ror instruction family. Generic kernel proofs derive emitted-byte fetch/Next, remaining byte regions, full projection congruence under the original environment interference, native validity, PC increment and original asserts2 outside-domain memory frame. It adds no target-run premise or scratch restriction and remains untagged local infrastructure. The fresh native clause/width capture remains `riscv_ror_step_probe.out`; full source postrelations/asserts for both Ror encoder cases remain open.
 
 `riscv_target_shift_ror_immediate_probe.out` freshly specializes the full original encoder theorem at the word64 immediate Ror constructor, capturing the full statement/types, zero hypotheses and provedT. The kernel port retains sole original source-step/initial relation and every environment, derives original count/avoid-register guards, actual SRLI31/SLLIrd/ORrd trace and complete scratch effect, and proves both original assertions. Full register Ror and whole encoder/compiler correctness remain open. The capture is statement regression evidence, not a cross-language equivalence proof; inherited real-carrier limit is SOUNDNESS8.
+## Original-label whole Crep-to-Loop production producer
+
+`crep_to_loop_original_names_program_probe.out` freshly evaluates the complete
+original two-function program, including all rows, parameters, body constructors
+and direct Call65 under original row names64/65. The production fixture matches
+that complete result and tests rejection of unsupported top-level, nested Call
+and ExtCall names. Latin-1 byte255 remains supported. These are original output
+regression observations, not HOL-to-Lean equivalence or runtime code-table proof.
+
+`ProductionCompileProg.compileProgFromProduction?` calls native compile_prog
+on the entire supported source list and returns native Loop rows unchanged.
+Kernel proofs derive all name/body support conditions, preserve the entire
+original input payload on roundtrip, and retain arbitrary original row names
+64+n. It introduces no target-run/output/context callback or legacy rebasing.
+The return-shape metadata is consumed before this stage and is not an original
+compile_prog input. This producer slice does not yet connect the CLI: native
+WordToStack entry/stub/config consumers and the whole executed route remain
+separate open dependencies coordinated with Sol2.
