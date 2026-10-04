@@ -1,4 +1,7 @@
+import Flapjack.RiscV.CorrectnessEncoding.Rejected
 import Flapjack.RiscV.CorrectnessEncoding.MemoryStore
+import Flapjack.RiscV.CorrectnessEncoding.MemoryInputs
+import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.Native
 import Flapjack.RiscV.CorrectnessEncoding.MemoryRead
 import Flapjack.Compiler.Encoders.AsmSem.MemoryByteShift
 import Flapjack.RiscV.CorrectnessEncoding.MemorySource
@@ -2101,6 +2104,9 @@ import Flapjack.Pancake.Proofs.PanToWord.EveryInstOkLess.PanStructs
 import Flapjack.Pancake.Proofs.PanToWord.PanSimpValidity
 import Flapjack.Pancake.Proofs.PanToWord.PanToCrepValidity
 import Flapjack.Pancake.Proofs.PanToWord.PanToCrepCompileExpValidity
+import Flapjack.Pancake.Proofs.PanToWord.PanToCrepCompileValidity
+import Flapjack.Pancake.Proofs.PanToWord.PanToCrepTableValidity
+import Flapjack.Pancake.Proofs.PanToWord.PanToCrepProgramValidity
 import Flapjack.Pancake.Proofs.PanToWord.LoadGlobalsValidity
 import Flapjack.Pancake.Proofs.PanToWord.PanToCrepInlineTableValidity
 import Flapjack.Pancake.Proofs.CrepInline.ExpressionProvenance
