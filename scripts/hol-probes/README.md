@@ -1,3 +1,7 @@
+`word_convs_simp_const_fp_labels_probe.out` freshly replays the two full original constant-folding label theorems from wordConvsProof221-266 and their five unchanged sequence/drop-constant prerequisites. Both closed typed statements have kernel T and zero open hypotheses. Native generic proofs derive label containment and distinctness preservation from the actual output's ordered-sublist invariant, including chosen/unresolved conditionals, state-threaded sequences, every Call/handler branch and Loop. This is the constant-folding prerequisite of the full compile_exp label relation; hoisting, push-out and whole compiler correctness remain separate.
+
+`word_convs_simp_instructions_probe.out` freshly replays all nine literal original instruction-preservation proofs from wordConvsProof395-513 and prints their complete closed typed statements, kernel T and zero open hypotheses. The local dest_If_thm proof is replayed solely as a hoisting prerequisite, and the final compile_exp_no_inst result is compared with the exported original theorem. Native kernel proofs preserve arbitrary predicates through all actual constructors, unrestricted hoisting dummy, independent unused s carrier, returning handlers, Loop and OpCurrHeap. This supports the instruction-validity conjunct of compile_to_word_conventions; the enclosing convention theorem and whole compiler correctness remain open.
+
 `backend_config_attach_bitmaps_probe.out` captures the full original eleven-field backend config equality/field types and the independently generic byte/bitmap payload signature and both attach_bitmaps clauses. Native fields retain every frontend/backend carrier, byte-backed MlString names, literal lists and sptrees. The kernel regression checks ordered duplicate symbols, missing-name fallback and all nine unchanged configuration fields. This support group does not establish full backend composition, production routing or whole compiler correctness.
 
 `bvl_to_bvi_default_probe.out` captures the complete original ten-field default initializer, both BVL stub/namespace definitions, the zero-hypothesis namespace-alignment theorem, full default type and original evaluated counts/counters. The native default uses the checked shared data-stub chain and distinct literal BVL/BVI inline trees. This support group does not establish whole compiler correctness or production routing of the backend configuration.
@@ -42,6 +46,9 @@ correspondence additionally covers arbitrary partner lists.
 `word_alloc_distinct_tar_reg_probe.out` captures the full zero-hypothesis statements (also typed) of the exported word_allocProof `ssa_cc_trans_distinct_tar_reg` and `full_ssa_cc_trans_distinct_tar_reg` for `WordAlloc/Proofs/SSAConventions/DistinctTarReg.lean`; its `[local]` helpers are reviewed against the script. Statement evidence for source review only.
 `word_convs_compile_single_not_created_probe.out` captures the zero-hypothesis `compile_single_not_created_subprogs` of wordConvsProof (also typed) for `Pancake/Proofs/WordConvs/NotCreatedTail.lean`; the per-pass `not_created_subprogs` lemmas in `NotCreatedPasses.lean`/`NotCreatedSSA.lean` are `[local]` and compared against the script. Statement evidence for source review only.
 `word_to_word_syntactic_probe.out` captures the statement, hypothesis count and typed form of the word_to_wordProof syntactic group (`cond16bit_inst_select_exp'` as `cond16bit_inst_select_exp_prime`, `cond16bit_inst_select`, the `no_share_inst`/`no_mt` lemmas, `code_rel_not_created_subprogs`, `code_rel_ext_def`, `code_rel_ext_word_to_word`, `no_mt_code_rel_ext`, `code_rel_no_share_inst`) and wordProps `no_mt_code_def`, for `Compiler/Backend/WordToWord/Proofs/Syntactic.lean` and `WordSem/Props/NoMtCode.lean`. The `[local]` `code_rel_no_alloc`/`code_rel_no_install` are compared against the script. Statement evidence for source review only.
+`data_to_word_gc_fun_const_ok_probe.out` captures the statement, hypothesis count and typed form of `gc_fun_const_ok_word_gc_fun` for `Compiler/Backend/DataToWord/Proofs/Gc/GcFunConstOk.lean`. Statement evidence for source review only.
+`pan_to_word_no_install_code_probe.out` captures the statement, hypothesis count and typed form of the loop_to_wordProof no_install/no_alloc/no_mt section (`loop_to_word_comp_not_created` through `loop_compile_no_mt_code`; the `[local]` `loop_to_word_compile_not_created_MEM` is compared against the script) and the three `pan_to_word_compile_prog_no_*_code` lemmas, for `Pancake/LoopToWord/Proofs/NoInstallCode.lean` and `Pancake/Proofs/PanToWord/NoInstallCode.lean`. Statement evidence for source review only.
+`pan_to_target_word_to_word_no_install_source_replay_probe.out` is a literal source replay of pan_to_targetProof `word_to_word_compile_no_install_no_alloc` (the original proof theory is unbuilt): the script fails if the pinned source text changes, then re-proves the statement with HOL's own tactic over the loaded original theories and prints it, for `Pancake/Proofs/PanToTarget/WordToWordNoInstall.lean`. Not an exported original-theory capture.
 `word_to_word_compile_semantics_probe.out` captures the statement, hypothesis count and typed form of `panLang_compile_word_to_word_thm` and `word_to_word_compile_semantics` for `Compiler/Backend/WordToWord/Proofs/CompileSemantics.lean`. Statement evidence for source review only.
 `word_to_word_no_install_compile_single_probe.out` captures the statement, hypothesis count and typed form of `no_install_no_alloc_compile_single_correct` for `Compiler/Backend/WordToWord/Proofs/NoInstallCompileSingle.lean`. Statement evidence for source review only.
 `word_convs_cse_copy_probe.out` captures the full zero-hypothesis statements of the twelve exported wordConvsProof theorems of `WordCse.lean`, `CopyProp.lean`, `SSAWfCutsets.lean` and the `wf_cutsets` additions to `Unreach.lean`/`ThreeToTwo.lean` (also typed `pre_alloc_conventions_copy_prop` and `full_ssa_cc_trans_wf_cutsets`); the `[local]` theorems of those sections are not exported and are reviewed against the script. Statement evidence for source review only.
@@ -8228,4 +8235,53 @@ Successful input codec conversion is an explicit representation boundary;
 unsupported native program carriers and whole-pass adoption remain separate.
 No tagged original theorem is narrowed or cross-language equivalence claimed.
 
+## Native signed DIV decoding prerequisite
+
+`DecodeDiv.lean` proves unrestricted actual Encode/DecodeAny composition for
+all three word5 registers. Literal original Div encoder emits `MulDiv DIV`,
+with opcode0110011, funct3=100 and funct7=1. This local composition has no
+separately named HOL theorem and remains untagged infrastructure. Original
+zero/all-ones/mixed EVAL cases and the full typed Encode clause are regression
+evidence; they do not establish whole encoder correctness or cross-language equivalence.
 `word_to_stack_comp_correct_full_probeScript.sml` captures the closed original whole `comp_correct` theorem, its full typed statement and zero hypotheses. It is stored-theorem regression evidence, not a replay of the giant local proof or a HOL-to-Lean equivalence proof. The Lean assembly retains all original guards and result branches.
+
+## Full original native Div encoder case
+
+`CorrectnessEncoding/Div.lean` retains the full original sole asmStep/initial
+relation premise and existential interference/assertion result. It derives
+source divisor nonzero from the original failure guard and uses literal signed
+MulDiv DIV, preserving aliases, register restrictions, fetched bytes and full
+native state. The original typed theorem specialization is captured in
+`riscv_target_div_probe.out`; hyp0/provedT is regression evidence, not a
+cross-assistant equivalence proof. The full target closure retains inherited
+reals_as_rational_cuts (SOUNDNESS item8); other encoder cases remain open.
+`word_cse_production_memory_probe.out` captures the complete original typed
+word_cseInst definition/type, exact word_cse Inst caller clause and wf_data
+definition, plus 256 fully evaluated memory transition observations. Every memory opcode is covered with source
+store invalidation, fresh/shared loads, even destination/address guards,
+destination/address alias invalidation, and canonical-address hit/miss.
+Widths1/8/64/80 and zero/maximal offsets retain the full offset and original
+emitted address. Kernel and actual executed fixtures run both full program
+Inst callers and check all five knowledge fields and complete Mem/Move
+payloads against the original numeric tuples;
+residual oracle terms are rejected when transcribing fixtures.
+ProductionMemory derives the full native memory constructor correspondence
+from input KnowledgeRel and original wfData only, using original invariant
+preservation and the checked producer transport. Actual constructor choice is
+the existing wordLangInstFromHOL codec: zero offset projects to mem, nonzero
+to memOffset. Identity for a redundant raw memOffset0 input is not claimed.
+This representation infrastructure does not narrow a tagged HOL theorem,
+prove cross-language equivalence, or complete whole-pass production adoption.
+
+## Complete native Shift decoding prerequisites
+
+`DecodeShift.lean` proves actual unrestricted Encode/DecodeAny composition for
+SLL, SRL, SRA, SRLI and SRAI. SLLI is reused from accepted DecodeConst. All
+word5 registers and every word6 immediate are retained, with no successful
+execution or extra range premise. These local compositions have no separately
+named HOL theorem and remain untagged infrastructure. Fresh original captures
+contain20ground EVAL rowsT, typed literal Encode clauses and unrestricted
+printed queries; the printed queries are not asserted original HOL theorems.
+The Lean kernel proofs establish the universal local compositions. Evidence is
+regression/source review, not cross-assistant equivalence or full Shift encoder
+correctness. Full state/run/assertions and both Ror routes remain on the parent.
