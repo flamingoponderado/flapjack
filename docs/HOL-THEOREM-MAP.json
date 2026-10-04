@@ -99028,6 +99028,38 @@
     "reviewer": "Flapjack-specific corollary (bead flapjack-z9g67) of panToTargetCompileSemanticsRiscV with the compiler premise on the callable compileProgMaxExecutable (= compile_prog_max by compileProgMaxExecutable_eq) at pancakeBackendConf riscvBackendConfig; all other premises and the conclusion unchanged. Does not establish the CLI computes this function."
   },
   {
+    "lean_path": "Flapjack/RiscV/RuntimeImageBackendOutput.lean",
+    "lean_name": "stackToRiscV_fullBackendOutput",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific complete backend output/adapter composition infrastructure, no independent HOL declaration. Reuses tagged original fromStack/fromWord/attachBitmaps. Retains input rejection, None/guards/arbitrary bitmap payload/full config/symbol attachment without successful-output or target premise. Native path has no relabel/filter/stub injection. Source diagnostic wrapper and whole producer/body correctness remain open on z6zwp."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/RuntimeImageBackendOutput.lean",
+    "lean_name": "checkedSections_fullBackendOutput",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific complete backend output/adapter composition infrastructure, no independent HOL declaration. Reuses tagged original fromStack/fromWord/attachBitmaps. Retains input rejection, None/guards/arbitrary bitmap payload/full config/symbol attachment without successful-output or target premise. Native path has no relabel/filter/stub injection. Source diagnostic wrapper and whole producer/body correctness remain open on z6zwp."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/RuntimeImageBackendOutput.lean",
+    "lean_name": "runtimeSectionsFromBackend_actual",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific complete backend output/adapter composition infrastructure, no independent HOL declaration. Reuses tagged original fromStack/fromWord/attachBitmaps. Retains input rejection, None/guards/arbitrary bitmap payload/full config/symbol attachment without successful-output or target premise. Native path has no relabel/filter/stub injection. Source diagnostic wrapper and whole producer/body correctness remain open on z6zwp."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/NativeBackendOutput.lean",
+    "lean_name": "fromWord_runtimeImage",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific complete backend output/adapter composition infrastructure, no independent HOL declaration. Reuses tagged original fromStack/fromWord/attachBitmaps. Retains input rejection, None/guards/arbitrary bitmap payload/full config/symbol attachment without successful-output or target premise. Native path has no relabel/filter/stub injection. Source diagnostic wrapper and whole producer/body correctness remain open on z6zwp."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileProgMaxAsm.lean",
