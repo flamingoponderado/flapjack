@@ -3,6 +3,8 @@ import Flapjack.Compiler.Backend.BackendProof.ReadLimits
 import Flapjack.Pancake.Proofs.PanToTarget.WordToWordNoInstall
 import Flapjack.Pancake.Proofs.PanToWord.NoInstallCode
 import Flapjack.Pancake.Proofs.PanToWord
+import Flapjack.Compiler.Backend.LabToTarget.Initialization
+import Flapjack.SemanticsProps.Implements
 
 /-!
 # `pan_to_target_compile_semantics` assembly, stage G (resource-limit implication)
@@ -88,6 +90,44 @@ theorem panToTargetResourceLimit {width : Nat} [NeZero width] {C F S Q : Type}
   rw [hrl]
   exact panToTargetSafeForSpaceOfLimit mc.target.config sst wprog worac _ _ stackMax
     (by rw [hmax, hwts]) hle hni hna hnoerr
+
+/-- The lab initial state `make_init mc ffi t ...` holds, in each `reg_ok` register, the
+word that `target_state_rel` relates to the machine state (HOL lines 1956-1990,
+`target_state_rel_def` with `reg_ok_def`); with `mc_conf_ok` this gives the
+`len`/`ptr2`/`len2` register words of the stage-G premises. -/
+theorem panToTargetLabRegWord {width : Nat} [NeZero width] {C S Q F : Type}
+    (mc : MachineConfig width S Q) (ffi : HolFfiState F) (t : AsmState width)
+    (m : BitVec width → WordLocW width) (dm sdm : BitVec width → Bool) (ms : S)
+    (code : Flapjack.Compiler.Backend.LabSem.LabProgHOL width)
+    (comp : C → Flapjack.Compiler.Backend.LabSem.LabProgHOL width →
+      Option (List (BitVec 8) × C))
+    (cbpos : BitVec width) (cbspace : Nat)
+    (coracle : Nat → C × Flapjack.Compiler.Backend.LabSem.LabProgHOL width)
+    (hrel : targetStateRel mc.target t ms) (r : Nat)
+    (hr : asmRegOkExact r mc.target.config = true) :
+    (LabToTarget.makeInit mc ffi t m dm sdm ms code comp cbpos cbspace coracle).regs r =
+      .word (mc.target.getReg ms r) := by
+  simp only [asmRegOkExact, Bool.and_eq_true, decide_eq_true_eq, Bool.not_eq_true'] at hr
+  simp only [LabToTarget.makeInit]
+  rw [hrel.2.2.2.1 r hr]
+
+/-- `extend_with_resource_limit'` is antitone in its flag (HOL line 1673:
+`(b ⇒ a) ∧ (∀x. x ⊆ f x) ⇒ (if a then x else f x) ⊆ (if b then x else f x)` with
+`extend_with_resource_limit_def`'s `SUBSET_UNION`). -/
+theorem extendPrime_flag_mono (a b : Bool) (hba : b = true → a = true)
+    (X : SemanticsPropsHOL.BehaviourSetHOL) (r : HolBehaviour)
+    (h : SemanticsPropsHOL.extendWithResourceLimitPrimeHOL a X r) :
+    SemanticsPropsHOL.extendWithResourceLimitPrimeHOL b X r := by
+  unfold SemanticsPropsHOL.extendWithResourceLimitPrimeHOL at h ⊢
+  cases b with
+  | true => simp only [hba rfl, if_true] at h; simpa using h
+  | false =>
+    simp only [Bool.false_eq_true, if_false]
+    cases a with
+    | true =>
+      simp only [if_true] at h
+      exact Or.inl h
+    | false => simpa using h
 
 /-- A word state whose `semantics` from `start` is not `Fail` never reaches `Error` on
 the entry call, for any clock (HOL lines 1724-1727, from `wordSem$semantics_def`). -/

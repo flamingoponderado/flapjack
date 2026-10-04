@@ -98464,5 +98464,29 @@
     "lean_name": "panToTargetMachineLab",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1316-1440, stage A4): lab_to_target semantics_compile instantiated at labst = make_init mc ffi t m (dm INTER byte_aligned) (sdm INTER byte_aligned) ms lprog (compile mc.target.config) ... with HOL's constant oracle; no_install_or_no_share_mem and compiler_oracle_ok from stage A1, good_code from stage A2 (panToTargetGoodCode), mmio index from compile_lab_IMP_mmio_pcs_min_index, good_init_state/MMIO/bound facts from pan_installed's components. hinst (the conclusion of pan_to_word_every_inst_ok_less, bead .14.20) is a stage-local premise to be discharged in the top theorem, not a top-theorem premise."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyResourceStage.lean",
+    "lean_name": "panToTargetLabRegWord",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lab make_init register r holds .word (get_reg ms r) for reg_ok r under target_state_rel (pan_to_targetProofScript.sml 1956-1990); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyResourceStage.lean",
+    "lean_name": "extendPrime_flag_mono",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "extend_with_resource_limit' is antitone in its flag (pan_to_targetProofScript.sml 1673 inline lemma); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyTopResource.lean",
+    "lean_name": "panToTargetLabSemanticsResource",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lab chain with stage G of the single HOL proof of pan_to_target_compile_semantics (pan_to_targetProofScript.sml 1440-2506): lab semantics of the initial lab state in extend_with_resource_limit' (option_lt stack_max (SOME (FST (read_limits ...)))) of semantics_decls, from the top hypotheses, pan_installed components and compile_prog_max results only; intermediate proof step, not a HOL theorem."
   }
 ]
