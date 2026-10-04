@@ -8883,3 +8883,5 @@ remain finite regression evidence, not a universal equivalence proof. Missing
 constructors, mode omissions, source/Lean carrier drift and probe-input drift
 have negative tests. Lake, original capture regeneration and manual source
 comparison remain separate required gates.
+
+`l3_step_immediate_comparison_nop_probe.out` captures both original exported SLTI_NOP/SLTIU_NOP statements, typed binders, two original hypotheses (destination zero AND ArchBase<>1), and HOL kernel result T. The exact Lean pair preserves whole native-state equality and unrestricted source/immediate. These residual exports are unused by the accepted encoder; they add no production-route dependency. Captured statements and scoped checker are regression evidence, not cross-language equivalence proofs.
