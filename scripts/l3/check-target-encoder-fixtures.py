@@ -57,11 +57,18 @@ CARRIER_SOURCES = {
     "binop": ("BinOp", "Flapjack/Pancake/PanLang.lean"),
     "cmp": ("Cmp", "Flapjack/Pancake/PanLang.lean"),
     "memop": ("WordMemOp", "Flapjack/MemOp.lean"),
-    "fp": ("WordLangFp", "Flapjack/Pancake/WordLang.lean"),
     "shift": ("Shift", "Flapjack/AstHOL.lean"),
 }
 ALIASES = {"HolBinop": "Flapjack.BinOp", "HolCmp": "Flapjack.Cmp",
-           "HolMemop": "Flapjack.WordMemOp", "HolFp": "WordLangFp"}
+           "HolMemop": "Flapjack.WordMemOp"}
+# riscv-mi restricts the native assembler to the riscv-zkvm integer subset:
+# the original `inst` constructor `FP` and its whole `fp` datatype are absent
+# from the Lean carriers. The original capture still observes the FP samples;
+# they are validated but not replayed. Each exclusion is exact and fail-closed.
+EXCLUDED_HOL_CONSTRUCTORS = {"inst": ("FP",)}
+EXCLUDED_FAMILIES = ("fp",)
+EXCLUDED_ALIASES = ("HolFp",)
+EXCLUDED_GROUPS = ("FP",)
 CONTRACTS = runpy.run_path(str(ROOT / "scripts/l3/lean_contracts.py"))
 
 def hol_without_comments(text):
@@ -95,7 +102,14 @@ def source_inventory(root=ROOT):
         declarations = re.findall(r"(?m)^abbrev\s+" + alias + r"\s*:=\s*(\S+)", asm)
         if declarations != [owner]:
             raise ValueError("native assembler alias drift: " + alias)
+    for alias in EXCLUDED_ALIASES:
+        if re.search(r"(?m)^abbrev\s+" + alias + r"\b", asm):
+            raise ValueError("excluded riscv-mi assembler alias restored: " + alias)
     result = {}
+    for family in EXCLUDED_FAMILIES:
+        source = hol_without_comments((root / "cakeml/compiler/encoders/asm/asmScript.sml").read_text())
+        if len(re.findall(r"(?ms)^Datatype:\s*" + family + r"\s*=(.*?)^End\b", source)) != 1:
+            raise ValueError("missing/duplicate excluded original datatype: " + family)
     for family, (owner, path) in CARRIER_SOURCES.items():
         original = root / ("cakeml/semantics/astScript.sml" if family == "shift"
                            else "cakeml/compiler/encoders/asm/asmScript.sml")
@@ -104,6 +118,10 @@ def source_inventory(root=ROOT):
         if len(blocks) != 1:
             raise ValueError("missing/duplicate original datatype: " + family)
         hol = [part.strip().split()[0] for part in blocks[0].split("|")]
+        excluded = EXCLUDED_HOL_CONSTRUCTORS.get(family, ())
+        if not set(excluded) <= set(hol):
+            raise ValueError("stale riscv-mi constructor exclusion: " + family)
+        hol = [name for name in hol if name not in excluded]
         lean = CONTRACTS["strip_comments"]((root / path).read_text())
         blocks = re.findall(r"(?ms)^inductive\s+" + owner + r"\b[^\n]*\n(.*?)^\s*deriving\b", lean)
         if len(blocks) != 1:
@@ -115,8 +133,11 @@ def source_inventory(root=ROOT):
         result[family] = hol
     return result
 
+def retained(rows):
+    return [row for row in rows if row["group"] not in EXCLUDED_GROUPS]
+
 def check_constructor_inventory(rows=None, root=ROOT):
-    rows = samples() if rows is None else rows
+    rows = retained(samples() if rows is None else rows)
     inventory = source_inventory(root)
     all_hol = {name for names in inventory.values() for name in names}
     all_lean = {lean_constructor(name) for name in all_hol}
@@ -194,7 +215,7 @@ def fixture(text):
     rows=capture(text)
     renderer=m['Renderer']({},m['parse_types']((ROOT/'Flapjack/RiscV/L3/Types.lean').read_text()))
     out='import Flapjack.Compiler.Encoders.RiscV.Target\n\n/-! Original complete native target AST lists and byte lists. Finite regression\nevidence, not universal HOL-to-Lean equivalence. -/\nnamespace Flapjack.Test.RiscVNativeTargetParity\nopen Flapjack.Compiler.Encoders.RiscV.Target Flapjack.RiscV.L3\n\n'
-    for row in samples():
+    for row in retained(samples()):
         label=row['label'];ast=renderer.tm(ast_term(rows[label+'_ast']),{});bs=byte_values(rows[label+'_bytes']);encoded='['+', '.join(f'{v}#8' for v in bs)+']'
         out+=f'-- Oracle {label}: complete original AST and byte result.\nexample : riscvAst ({row["lean"]}) = {ast} := by decide\nexample : riscvEnc ({row["lean"]}) = {encoded} := by decide\n\n'
     return out+'end Flapjack.Test.RiscVNativeTargetParity\n'
@@ -204,4 +225,4 @@ if __name__=='__main__':
     p=ROOT/'Flapjack/Test/RiscVNativeTargetParity.lean'
     if sys.argv[1:]==['--update']:p.write_text(result)
     elif sys.argv[1:] or p.read_text()!=result:raise SystemExit('native target fixture drift')
-    print(f'PASS {len(samples())} complete original target AST/byte fixtures; all source constructors and operand modes inventoried')
+    print(f'PASS {len(retained(samples()))} retained of {len(samples())} complete original target AST/byte fixtures; all source constructors and operand modes inventoried')

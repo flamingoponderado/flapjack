@@ -2,6 +2,7 @@
 import importlib.util
 from pathlib import Path
 import unittest
+from unittest import mock
 ROOT = Path(__file__).resolve().parents[2]
 SPEC = importlib.util.spec_from_file_location("native_decode_fixtures", ROOT / "scripts/l3/check-decode-fixtures.py")
 CHECK = importlib.util.module_from_spec(SPEC)
@@ -49,3 +50,16 @@ class DecodeSourceFixtures(unittest.TestCase):
         value = '(a (c "riscv" "Load" (ty "min" "fun" (ty "riscv" "Load") (ty "riscv" "instruction"))) (c "bitstring" "v2w" (ty "riscv" "Load")))'
         with self.assertRaises(ValueError):
             CHECK.value_term(value, "Load")
+
+    def test_riscv_mi_rejections_are_exact(self):
+        fixture = CHECK.fixture(self.text)
+        self.assertEqual(fixture.count("riscv-mi rejects the original removed instruction"), 418)
+        self.assertNotIn("FArith", fixture)
+        rows = CHECK.capture_rows(self.text)
+        names = CHECK.constructor_names()
+        with mock.patch.object(CHECK, "constructor_names", lambda: names | {"FMADD_S"}):
+            with self.assertRaisesRegex(ValueError, "restored"):
+                CHECK.check_exclusions(rows)
+        with mock.patch.object(CHECK, "EXCLUDED_CONSTRUCTORS", CHECK.EXCLUDED_CONSTRUCTORS | {"Bogus"}):
+            with self.assertRaisesRegex(ValueError, "stale"):
+                CHECK.check_exclusions(rows)

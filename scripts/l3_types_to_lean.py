@@ -1,18 +1,24 @@
 """Render the L3 Import Construct/Record declarations of an L3 model script as Lean.
 
-Usage: scripts/l3_types_to_lean.py MODEL_SCRIPT HOL_PATH
+Usage: scripts/l3_types_to_lean.py MODEL_SCRIPT HOL_PATH [RESTRICTION_JSON]
 
 Prints, in source order, one tagged Lean `inductive` per `Construct` type and one tagged
 `structure` per `Record`, with the type renderings documented in
 `Flapjack/RiscV/L3/Types.lean`. `scripts/tests/test_hol_l3_types_to_lean.py` checks that the
 committed RISC-V carriers are exactly this output. This is a mechanical transcription aid;
 it does not establish HOL-to-Lean equivalence.
+
+With a restriction (the riscv-mi `scripts/l3/riscv-mi-restriction.json` `types`
+section), whole types, constructors and record fields named there are omitted and the
+reduced types, plus any explicitly listed additional types, are emitted without their
+`@[hol]` tag. Every named entry must exist in the model script; a reduced type that is
+not listed as untagged is rejected.
 """
 import re, sys, runpy
 from pathlib import Path
 
 
-def render(text: str, HOLPATH: str) -> str:
+def render(text: str, HOLPATH: str, restriction: dict | None = None) -> str:
     decls = runpy.run_path(str(Path(__file__).with_name('hol_sml_declarations.py')))['l3_type_declarations'](text)
     lines = text.splitlines(keepends=True)
     KW = {'done','at','by','fun','have','show','from','let','in','if','then','else','do','match','with','end',
@@ -78,23 +84,63 @@ def render(text: str, HOLPATH: str) -> str:
                 p.eat(']'); p.eat(')')
                 out.append(('Construct',n,cons,start))
                 if p.peek(','): p.eat(',')
+    if restriction is not None:
+        out=restrict(out, restriction)
+    untagged=set() if restriction is None else set(restriction['untagged'])
     def hasfun(t): return '→' in t
     res=[]
     for kind,n,items,start in out:
         tag='@[hol "%s" "%s" %d]'%(HOLPATH,n,start) if False else '@[hol "%s" "%s"]'%(HOLPATH,n)
+        if n in untagged:
+            tag=None
         if kind=='Record':
             fun=any(hasfun(t) for _,t in items)
-            res.append('/-- HOL L3 record `%s` (`riscvScript.sml:%d`). -/\n%s\nstructure %s where\n'%(n,start,tag,ident(n)))
+            res.append('/-- HOL L3 record `%s` (`riscvScript.sml:%d`). -/\n%sstructure %s where\n'%(n,start,tag+'\n' if tag else '',ident(n)))
             for f,t in items: res.append('  %s : %s\n'%(ident(f),t))
             res.append('  deriving Inhabited\n\n' if fun else '  deriving DecidableEq, Repr, Inhabited\n\n')
         else:
             fun=any(hasfun(t) for _,a in items for t in a)
-            res.append('/-- HOL L3 datatype `%s` (`riscvScript.sml:%d`). -/\n%s\ninductive %s where\n'%(n,start,tag,ident(n)))
+            res.append('/-- HOL L3 datatype `%s` (`riscvScript.sml:%d`). -/\n%sinductive %s where\n'%(n,start,tag+'\n' if tag else '',ident(n)))
             for c,args in items:
                 res.append('  | %s%s\n'%(ident(c),''.join(' (a%d : %s)'%(k,t) for k,t in enumerate(args))))
             res.append('  deriving Inhabited\n\n' if fun else '  deriving DecidableEq, Repr, Inhabited\n\n')
     return ''.join(res)
 
 
+def restrict(out, restriction):
+    """Apply a fail-closed type restriction to parsed declarations."""
+    keys={'removed','removed_constructors','removed_fields','untagged','review_note'}
+    if set(restriction)!=keys:
+        raise ValueError('type restriction keys: '+repr(sorted(set(restriction)^keys)))
+    kinds={n:kind for kind,n,_,_ in out}
+    items={n:[i for i,_ in its] for _,n,its,_ in out}
+    removed=set(restriction['removed'])
+    ctors=restriction['removed_constructors']
+    fields=restriction['removed_fields']
+    untagged=set(restriction['untagged'])
+    for n in removed|set(ctors)|set(fields)|untagged:
+        if n not in kinds:
+            raise ValueError('restriction names unknown L3 type: '+n)
+    for table,kind in ((ctors,'Construct'),(fields,'Record')):
+        for n,names in table.items():
+            if kinds[n]!=kind or n in removed or not names or len(set(names))!=len(names):
+                raise ValueError('invalid restriction entry: '+n)
+            if not set(names)<set(items[n]):
+                raise ValueError('restriction removes unknown or all members of '+n)
+    if removed&untagged:
+        raise ValueError('removed type listed as untagged')
+    if not (set(ctors)|set(fields))<=untagged:
+        raise ValueError('reduced type keeps its exact @[hol] tag: '+repr(sorted((set(ctors)|set(fields))-untagged)))
+    result=[]
+    for kind,n,its,start in out:
+        if n in removed:
+            continue
+        drop=set(ctors.get(n,[]))|set(fields.get(n,[]))
+        result.append((kind,n,[i for i in its if i[0] not in drop],start))
+    return result
+
+
 if __name__ == "__main__":
-    print(render(Path(sys.argv[1]).read_text(), sys.argv[2]))
+    import json
+    restriction=json.loads(Path(sys.argv[3]).read_text())['types'] if len(sys.argv)>3 else None
+    print(render(Path(sys.argv[1]).read_text(), sys.argv[2], restriction))

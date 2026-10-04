@@ -20,7 +20,8 @@ class TargetHelperLinkTests(unittest.TestCase):
 
     def test_all_non_encode_fields_are_related(self):
         source = (ROOT / "Flapjack/Compiler/Encoders/Asm.lean").read_text()
-        carrier = source.split("structure AsmConfig (width : Nat) where",1)[1].split("/--",1)[0]
+        carrier = source.split("structure AsmConfig (width : Nat) where",1)[1].split("\n\n",1)[0]
+        carrier = re.sub(r"/--.*?-/", "", carrier, flags=re.S)
         fields = re.findall(r"^  (\w+) :",carrier,re.M)
         relation = (ROOT / "Flapjack/Compiler/Encoders/RiscV/Target/HelperLinks.lean").read_text()
         theorem = relation.split("theorem riscvConfig_checks_projections :",1)[1].split(":= by",1)[0]

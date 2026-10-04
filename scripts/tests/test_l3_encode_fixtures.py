@@ -25,6 +25,14 @@ class EncodeCapture(unittest.TestCase):
     def test_original_carrier_and_hypotheses(self):
         for old,new in [('word32','word64'),('Encode_hypotheses=0','Encode_hypotheses=1')]:
             with self.subTest(old=old),self.assertRaises(ValueError):CHECK.parse(self.text.replace(old,new))
+    def test_riscv_mi_exclusions_are_exact(self):
+        source=(ROOT / "Flapjack/RiscV/L3/Types.lean").read_text()
+        # Restoring an excluded original clause is drift, not silent coverage.
+        restored=source.replace('  | EBREAK\n  | ECALL\n','  | EBREAK\n  | ECALL\n  | WFI\n',1)
+        self.assertNotEqual(restored,source)
+        with self.assertRaises(ValueError):CHECK.check_inventory(restored)
+        self.assertNotIn('Encode_FADD_S_0',CHECK.fixture(self.text))
+        self.assertEqual(len(CHECK.retained_clauses()),68)
     def test_payload_width_and_missing_constructor(self):
         source=(ROOT / "Flapjack/RiscV/L3/Types.lean").read_text()
         for mutated in [source.replace('  | UnknownInstruction\n',''),source.replace('FETCH_FAULT (a0 : (BitVec 64))','FETCH_FAULT (a0 : (BitVec 32))')]:
@@ -34,6 +42,8 @@ class EncodeCapture(unittest.TestCase):
         self.assertEqual(data['Encode_UnknownInstruction_0'],0)
         for ctor in ['FETCH_FAULT','FETCH_MISALIGNED']:
             for profile in range(4):self.assertEqual(data[f'Encode_{ctor}_{profile}'],0)
-        first=self.text.splitlines()[20]
+        # Mutate the first observation retained by riscv-mi; excluded clauses
+        # are captured but intentionally not replayed.
+        first=next(row for row in self.text.splitlines() if row.startswith('Encode_ADDI_0='))
         modified=self.text.replace(first,first.split('=')[0]+'=1')
         self.assertNotEqual(CHECK.fixture(modified),CHECK.fixture(self.text))

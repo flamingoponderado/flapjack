@@ -6,7 +6,6 @@ captures. Lean checks the proofs; this does not establish HOL-to-Lean equivalenc
 """
 from pathlib import Path
 import hashlib
-import re
 ROOT = Path(__file__).resolve().parents[2]
 LEAN = "Flapjack/RiscV/L3/Step/JumpStep.lean"
 CHECKS = {'scripts/hol-probes/l3_step_jump_probeScript.sml': 'a475f46082f84125c366e7634de95661702b98f6097b10f24313d9591beb70fb', 'scripts/hol-probes/l3_step_jump_probe.out': '45e273694c4ba22e8bbeea1cc834d92a24e6feb344441a68ecff9b34f63151eb'}
@@ -25,9 +24,12 @@ def check(root=ROOT):
         signature = source.split(marker, 1)[1].split(" := by", 1)[0]
         if hashlib.sha256(" ".join(signature.split()).encode()).hexdigest() != expected:
             raise ValueError("full original jump statement drift: " + name)
-        tag = r'@\[hol\s+"HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml"\s+"' + NAMES[name] + r'"\]\s*theorem\s+' + name + r'\b'
-        if not re.search(tag, source):
-            raise ValueError("original jump declaration reference drift: " + name)
+        # riscv-mi restricts the native `riscv_state` carrier, so these step
+        # equations must stay untagged: an exact HOL reference would claim the
+        # full original carrier.
+        preceding = source.split(marker, 1)[0].rsplit("-/", 1)[-1]
+        if "@[hol" in preceding:
+            raise ValueError("restricted-carrier jump theorem must not carry an exact HOL tag: " + name)
     driver = (root / "scripts/hol-probes/regenerate.sh").read_text()
     commands = driver.replace(chr(92) + chr(10), " ").splitlines()
     registered = [c for c in commands if c.startswith("run_probe l3_step_jump_probeScript.sml ")]

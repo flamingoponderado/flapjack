@@ -56,5 +56,9 @@ class JumpGuard(unittest.TestCase):
     def test_all_companion_capture_rows_registered(self):
         self.mutate("scripts/hol-probes/regenerate.sh", "jalr_nop_hypotheses", "")
 
+    def test_restricted_carrier_stays_untagged(self):
+        self.mutate(guard.LEAN, "theorem dfnJal ",
+                    '@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "JAL"]\ntheorem dfnJal ')
+
 if __name__ == "__main__":
     unittest.main()

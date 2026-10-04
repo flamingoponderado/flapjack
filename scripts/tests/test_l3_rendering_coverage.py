@@ -58,8 +58,11 @@ class NativeRenderingCoverage(unittest.TestCase):
         rendered,_=m.rendered_for(key,self.generated)
         self.assertIn("Fetch s",rendered)
         self.assertNotIn("riscv_Fetch",rendered)
-        for constructor in ("BranchTo", "Ereturn", "Mrts", "Trap"):
+        for constructor in ("BranchTo", "Trap"):
             self.assertIn("."+constructor,self.actual[key])
+        # riscv-mi removes privileged returns (scripts/l3/riscv-mi-restriction.json).
+        for constructor in ("Ereturn", "Mrts"):
+            self.assertNotIn("."+constructor,self.actual[key])
         actual=dict(self.actual)
         actual[key]=actual[key].replace("Fetch s", "riscv_Fetch s",1)
         with self.assertRaises(ValueError):m.check(actual,self.generated,self.lock)

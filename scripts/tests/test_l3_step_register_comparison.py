@@ -59,5 +59,9 @@ class RegisterComparisonGuard(unittest.TestCase):
     def test_companion_evidence_registered(self):
         self.mutate("scripts/hol-probes/regenerate.sh", "sltu_nop_hypotheses", "")
 
+    def test_restricted_carrier_stays_untagged(self):
+        self.mutate(guard.LEAN, "theorem dfnSlt ",
+                    '@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "SLT"]\ntheorem dfnSlt ')
+
 if __name__ == "__main__":
     unittest.main()

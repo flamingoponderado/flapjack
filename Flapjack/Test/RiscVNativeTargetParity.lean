@@ -497,38 +497,6 @@ example : riscvEnc (.inst (.mem .store32 37 (.addr 34 (18446744073709549568#64))
 example : riscvAst (.inst (.mem .store32 37 (.addr 34 (18446744073709549567#64)))) = (((instruction.Store ((Store.SW (((BitVec.ofNat 5 34), (((BitVec.ofNat 5 37), (BitVec.ofNat 12 2047))))))))) :: (([] : (List instruction)))) := by decide
 example : riscvEnc (.inst (.mem .store32 37 (.addr 34 (18446744073709549567#64)))) = [163#8, 47#8, 81#8, 126#8] := by decide
 
--- Oracle Target_FP_123: complete original AST and byte result.
-
--- Oracle Target_FP_124: complete original AST and byte result.
-
--- Oracle Target_FP_125: complete original AST and byte result.
-
--- Oracle Target_FP_126: complete original AST and byte result.
-
--- Oracle Target_FP_127: complete original AST and byte result.
-
--- Oracle Target_FP_128: complete original AST and byte result.
-
--- Oracle Target_FP_129: complete original AST and byte result.
-
--- Oracle Target_FP_130: complete original AST and byte result.
-
--- Oracle Target_FP_131: complete original AST and byte result.
-
--- Oracle Target_FP_132: complete original AST and byte result.
-
--- Oracle Target_FP_133: complete original AST and byte result.
-
--- Oracle Target_FP_134: complete original AST and byte result.
-
--- Oracle Target_FP_135: complete original AST and byte result.
-
--- Oracle Target_FP_136: complete original AST and byte result.
-
--- Oracle Target_FP_137: complete original AST and byte result.
-
--- Oracle Target_FP_138: complete original AST and byte result.
-
 -- Oracle Target_Jump_139: complete original AST and byte result.
 example : riscvAst (.jump (18446744073708503039#64)) = (((instruction.ArithI ((ArithI.AUIPC (((BitVec.ofNat 5 31), (BitVec.ofNat 20 1048320))))))) :: ((((instruction.Branch ((Branch.JALR (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 31), (BitVec.ofNat 12 4095))))))))) :: (([] : (List instruction)))))) := by decide
 example : riscvEnc (.jump (18446744073708503039#64)) = [151#8, 15#8, 240#8, 255#8, 103#8, 128#8, 255#8, 255#8] := by decide

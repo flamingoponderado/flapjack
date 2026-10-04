@@ -6,7 +6,6 @@ captures. Lean checks the proofs; this does not establish HOL-to-Lean equivalenc
 """
 from pathlib import Path
 import hashlib
-import re
 ROOT = Path(__file__).resolve().parents[2]
 LEAN = "Flapjack/RiscV/L3/Step/RegisterComparison.lean"
 CHECKS = {'scripts/hol-probes/l3_step_register_comparison_probeScript.sml': 'ead66796b16c8052f78af8dcf6d4ad034944ec8eec3d292c9f6c8f8777097371', 'scripts/hol-probes/l3_step_register_comparison_probe.out': '1a076e9fba4e2a4310218ebef45e10e836d157ac569ca923716303c3c44ab9f4'}
@@ -25,9 +24,12 @@ def check(root=ROOT):
         signature = source.split(marker, 1)[1].split(" := by", 1)[0]
         if hashlib.sha256(" ".join(signature.split()).encode()).hexdigest() != expected:
             raise ValueError("full original register-comparison statement drift: " + name)
-        tag = r'@\[hol\s+"HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml"\s+"' + NAMES[name] + r'"\]\s*theorem\s+' + name + r'\b'
-        if not re.search(tag, source):
-            raise ValueError("original register-comparison declaration reference drift: " + name)
+        # riscv-mi restricts the native `riscv_state` carrier, so these step
+        # equations must stay untagged: an exact HOL reference would claim the
+        # full original carrier.
+        preceding = source.split(marker, 1)[0].rsplit("-/", 1)[-1]
+        if "@[hol" in preceding:
+            raise ValueError("restricted-carrier register-comparison theorem must not carry an exact HOL tag: " + name)
     driver = (root / "scripts/hol-probes/regenerate.sh").read_text()
     commands = driver.replace(chr(92) + chr(10), " ").splitlines()
     registered = [c for c in commands if c.startswith("run_probe l3_step_register_comparison_probeScript.sml ")]

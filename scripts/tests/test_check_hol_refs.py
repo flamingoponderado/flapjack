@@ -27,6 +27,83 @@ def repo_reals_rendering_names():
     return _REPO_REALS_RENDERING_NAMES
 
 
+# The riscv-mi branch has no IEEE modules, so the bit-only/rounding exemption
+# logic is exercised on a synthetic tree: the pinned forms verbatim plus
+# real-dependent renderings that must still require the qualifier.
+IEEE_REAL_DEPENDENT = {
+    "Flapjack/Misc/BinaryIeee.lean":
+        "noncomputable def holFloatToReal {t : Nat} {w : Nat} [NeZero t] [NeZero w]"
+        " (x : HolFloat t w) : Rat := 0\n",
+    "Flapjack/Misc/MachineIeee.lean":
+        "noncomputable def holFp64Add (a b : BitVec 64) : BitVec 64 := a\n"
+        "noncomputable def holFp64Sqrt (a : BitVec 64) : BitVec 64 := a\n",
+}
+IEEE_ROUNDING = """namespace Flapjack
+inductive HolRounding where
+  | roundTiesToEven
+  | roundTowardPositive
+  | roundTowardNegative
+  | roundTowardZero
+  deriving DecidableEq, Repr
+
+noncomputable def holRound (m : HolRounding) (x : Rat) : HolFloat 52 11 := default
+end Flapjack
+"""
+
+
+ASM_TAG = '@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "{}"]\n'
+WORD_CSE_PROOF = "cakeml/compiler/backend/proofs/word_cseProofScript.sml"
+# riscv-mi untags these reduced live carriers/predicates. Word-carrier
+# resolution tests copy them into a fixture with the reviewed tags restored,
+# so the checker's resolution logic stays exercised; this asserts nothing
+# about the live branch annotations.
+RETAGGED_WORD_CARRIERS = {
+    "Flapjack/Compiler/Encoders/Asm.lean": [
+        ("inductive HolRegImm", ASM_TAG.format("reg_imm")),
+        ("inductive HolArith", ASM_TAG.format("arith")),
+    ],
+    "Flapjack/Compiler/Backend/WordCse/InstructionKeys.lean": [],
+    "Flapjack/Compiler/Backend/WordCse/Proofs/WellFormedData.lean": [
+        ("def wfData", f'@[hol "{WORD_CSE_PROOF}" "wf_data_def"\n'
+                       "  (words_as_type_indexed_bitvec)]\n"),
+    ],
+    "Flapjack/Compiler/Backend/WordCse/Proofs/SemanticInvariant.lean": [],
+}
+
+
+def retagged_word_carrier_fixture(root):
+    live = CHECKER["ROOT"]
+    for relative, tags in RETAGGED_WORD_CARRIERS.items():
+        text = (live / relative).read_text()
+        for declaration, tag in tags:
+            assert text.count("\n" + declaration) == 1, (relative, declaration)
+            text = text.replace("\n" + declaration, "\n" + tag + declaration)
+        target = root / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(text)
+
+
+def ieee_fixture(root):
+    files = {}
+    for (relative, _), form in CHECKER["REAL_FREE_IEEE_FORMS"].items():
+        files.setdefault(relative, []).append(form)
+    for relative, text in IEEE_REAL_DEPENDENT.items():
+        files.setdefault(relative, []).append(text)
+    for relative, parts in files.items():
+        target = root / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text("namespace Flapjack\n" + "\n".join(parts) + "\nend Flapjack\n")
+    nested = root / "Flapjack/Misc/BinaryIeeeSqrt"
+    nested.mkdir(parents=True, exist_ok=True)
+    (nested / "RoundAgreement.lean").write_text(
+        "namespace Flapjack\nnoncomputable def holFp64SqrtReal : Nat := 0\nend Flapjack\n")
+    (root / "Flapjack/Misc/BinaryIeeeRound.lean").write_text(IEEE_ROUNDING)
+    original = root / "HOL/src/floating-point/binary_ieeeScript.sml"
+    original.parent.mkdir(parents=True, exist_ok=True)
+    original.write_text("Datatype:\n  rounding = roundTiesToEven | roundTowardPositive\n"
+                        "           | roundTowardNegative | roundTowardZero\nEnd\n")
+
+
 class ExternalHolSourcesTest(unittest.TestCase):
     def fixture(self, root):
         import hashlib
@@ -656,11 +733,21 @@ noncomputable def cmp : FpCmp -> Bool
 """
         self.assertEqual(check(datatype, False, names), [])
 
-    def test_rounding_enum_is_source_bound_and_real_free(self):
+    def test_riscv_mi_tree_has_no_ieee_renderings(self):
+        # riscv-mi removes IEEE FP entirely: nothing to exempt or qualify.
         root = CHECKER["ROOT"]
-        self.assertTrue(CHECKER["source_bound_rounding_enum"](root))
-        names = repo_reals_rendering_names()
+        self.assertEqual(repo_reals_rendering_names(), set())
+        self.assertEqual(CHECKER["real_free_ieee_names"](root), set())
+        self.assertFalse(CHECKER["source_bound_rounding_enum"](root))
+
+    def test_rounding_enum_is_source_bound_and_real_free(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            ieee_fixture(root)
+            self.assertTrue(CHECKER["source_bound_rounding_enum"](root))
+            names = CHECKER["reals_rendering_names"](root)
         self.assertNotIn("HolRounding", names)
+        self.assertIn("holRound", names)
         check = CHECKER["reals_as_rational_cuts_errors"]
         enum = "def modes : Option HolRounding := some HolRounding.roundTiesToEven"
         self.assertEqual(check(enum, False, names), [])
@@ -720,11 +807,13 @@ End
             self.assertFalse(check(root))
 
     def test_bit_only_ieee_forms_do_not_require_real_qualifier(self):
-        root = CHECKER["ROOT"]
-        names = repo_reals_rendering_names()
         forms = CHECKER["REAL_FREE_IEEE_FORMS"]
-        self.assertEqual(len(CHECKER["real_free_ieee_names"](root)),
-                         len(CHECKER["REAL_FREE_IEEE_FORMS"]))
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            ieee_fixture(root)
+            names = CHECKER["reals_rendering_names"](root)
+            self.assertEqual(len(CHECKER["real_free_ieee_names"](root)),
+                             len(CHECKER["REAL_FREE_IEEE_FORMS"]))
         for (_, name), form in forms.items():
             self.assertNotIn(name, names)
             self.assertEqual(CHECKER["reals_as_rational_cuts_errors"](form, False, names), [])
@@ -737,10 +826,7 @@ End
     def test_bit_only_ieee_dependency_changes_fail_closed(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            for relative in {path for path, _ in CHECKER["REAL_FREE_IEEE_FORMS"]}:
-                target = root / relative
-                target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_text((CHECKER["ROOT"] / relative).read_text())
+            ieee_fixture(root)
             self.assertEqual(len(CHECKER["real_free_ieee_names"](root)),
                          len(CHECKER["REAL_FREE_IEEE_FORMS"]))
             target = root / "Flapjack/Misc/BinaryIeee.lean"
@@ -756,10 +842,7 @@ End
                        "missing_binder"):
             with self.subTest(change=change), tempfile.TemporaryDirectory() as tmp:
                 root = Path(tmp)
-                for relative in {path for path, _ in CHECKER["REAL_FREE_IEEE_FORMS"]}:
-                    target = root / relative
-                    target.parent.mkdir(parents=True, exist_ok=True)
-                    target.write_text((CHECKER["ROOT"] / relative).read_text())
+                ieee_fixture(root)
                 target = root / "Flapjack/Misc/MachineIeee.lean"
                 if change == "width":
                     target.write_text(target.read_text().replace("extractLsb' 52 11", "extractLsb' 51 12"))
@@ -793,10 +876,7 @@ End
         for change in (*changes, "attribute_command", "imported_attribute"):
             with self.subTest(change=change), tempfile.TemporaryDirectory() as tmp:
                 root = Path(tmp)
-                for relative in {path for path, _ in CHECKER["REAL_FREE_IEEE_FORMS"]}:
-                    target = root / relative
-                    target.parent.mkdir(parents=True, exist_ok=True)
-                    target.write_text((CHECKER["ROOT"] / relative).read_text())
+                ieee_fixture(root)
                 target = root / "Flapjack/Misc/MachineIeee.lean"
                 if change in changes:
                     target.write_text(target.read_text().replace(
@@ -2296,6 +2376,14 @@ class HolProgWordAliasTest(unittest.TestCase):
             destination = root / relative
             destination.parent.mkdir(parents=True, exist_ok=True)
             destination.write_text((CHECKER["ROOT"] / relative).read_text())
+        # riscv-mi leaves the reduced live alias untagged; the fixture restores
+        # the reviewed tag so the alias-resolution logic is still exercised.
+        prog = root / "Flapjack/Compiler/Backend/StackLang/Prog.lean"
+        untagged = ("-- riscv-mi: depends on reduced integer-only carriers; "
+                    "not an exact full-HOL port.\nabbrev HolProg")
+        assert untagged in prog.read_text()
+        prog.write_text(prog.read_text().replace(untagged,
+            '@[hol "cakeml/compiler/backend/stackLangScript.sml" "prog"]\nabbrev HolProg'))
         (root / "Flapjack/AliasProbe.lean").write_text(
             "import Flapjack.Compiler.Backend.StackLang.Prog\n" + self.SIGNATURE)
 
@@ -2377,6 +2465,18 @@ class WordsAsTypeIndexedBitvecQualifierTest(unittest.TestCase):
 
     ERRORS = staticmethod(CHECKER["words_as_type_indexed_bitvec_errors"])
 
+    @classmethod
+    def setUpClass(cls):
+        cls._word_carrier_tmp = tempfile.TemporaryDirectory()
+        retagged_word_carrier_fixture(Path(cls._word_carrier_tmp.name))
+
+    @classmethod
+    def tearDownClass(cls):
+        cls._word_carrier_tmp.cleanup()
+
+    def word_carrier_root(self):
+        return Path(self._word_carrier_tmp.name)
+
     PREDICATE = """def wordPredicate (width : Nat) [NeZero width] : Prop :=
   (∀ register (value : BitVec width), value.toNat = register) ∧
   (∃ (offset : BitVec width), offset.toNat = 0)
@@ -2423,7 +2523,7 @@ class WordsAsTypeIndexedBitvecQualifierTest(unittest.TestCase):
         self.assertTrue(self.ERRORS(text, "wordPredicate"))
 
     def test_internal_predicate_resolves_imported_word_carrier_and_its_width(self):
-        root = Path(__file__).resolve().parents[2]
+        root = self.word_carrier_root()
         module = "Flapjack/Compiler/Backend/WordCse/InstructionKeys.lean"
         lines = (root / module).read_text().splitlines()
         text = """def wordPredicate (width : Nat) [NeZero width] : Prop :=
@@ -2438,7 +2538,7 @@ class WordsAsTypeIndexedBitvecQualifierTest(unittest.TestCase):
                 self.assertTrue(self.ERRORS(mutation, "wordPredicate", module, str(root), lines))
 
     def test_internal_direct_word_does_not_hide_another_carrier_width(self):
-        root = Path(__file__).resolve().parents[2]
+        root = self.word_carrier_root()
         module = "Flapjack/Compiler/Backend/WordCse/InstructionKeys.lean"
         lines = (root / module).read_text().splitlines()
         text = self.PREDICATE + " ∧ (∀ (operation : HolArith other), True)"
@@ -2448,7 +2548,7 @@ class WordsAsTypeIndexedBitvecQualifierTest(unittest.TestCase):
     (h : wfData width data) : wfData width data := h"""
 
     def predicate_user_errors(self, text, extra_lines=()):
-        root = Path(__file__).resolve().parents[2]
+        root = self.word_carrier_root()
         module = "Flapjack/Compiler/Backend/WordCse/Proofs/SemanticInvariant.lean"
         lines = (root / module).read_text().splitlines() + list(extra_lines)
         return self.ERRORS(text, "keep", module, str(root), lines)
@@ -3970,9 +4070,19 @@ class NoRetCorrectFmapRegressionTest(unittest.TestCase):
 
     MODULE = "Flapjack/Compiler/Backend/StackToLab/Proofs/FlattenHelpers.lean"
 
+    TAG = ['@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "no_ret_correct"',
+           "  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,",
+           "    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])",
+           "  (words_as_type_indexed_bitvec)]"]
+
     def test_native_state_maps_have_explicit_relation_qualifier_and_witness(self):
+        # riscv-mi leaves noRetCorrect untagged (reduced carriers); check the
+        # live statement still satisfies the relation qualifier once retagged.
         root = CHECKER["ROOT"]
-        lines = (root / self.MODULE).read_text().splitlines()
+        live = (root / self.MODULE).read_text().splitlines()
+        self.assertEqual([site for site in SITES(live) if site[2] == "no_ret_correct"], [])
+        index = next(i for i, line in enumerate(live) if line.startswith("theorem noRetCorrect "))
+        lines = live[:index] + self.TAG + live[index:]
         sites = [site for site in SITES(lines) if site[2] == "no_ret_correct"]
         self.assertEqual(len(sites), 1)
         site = sites[0]
@@ -3987,21 +4097,14 @@ class NoRetCorrectFmapRegressionTest(unittest.TestCase):
         self.assertEqual(CHECKER["fmap_as_finite_support_relation_errors"](
             lines, required, self.MODULE, signature), [])
 
-    def test_manifest_retains_combined_qualifier_and_inherited_assumption(self):
+    def test_manifest_has_no_reviewed_row_on_riscv_mi(self):
+        # The untagged reduced theorem must not keep a reviewed manifest row.
         import json
         root = CHECKER["ROOT"]
         records = json.loads((root / "docs/HOL-THEOREM-MAP.json").read_text())
         rows = [row for row in records if row.get("lean_path") == self.MODULE
                 and row.get("lean_name") == "noRetCorrect"]
-        self.assertEqual(len(rows), 1)
-        row = rows[0]
-        self.assertEqual(row["statement_status"],
-                         "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec")
-        self.assertEqual(row["fmap_as_finite_support_relation"],
-                         ["StackSemStateFiniteExact.regs", "StackSemStateFiniteExact.fpRegs",
-                          "StackSemStateFiniteExact.store"])
-        self.assertTrue(row["words_as_type_indexed_bitvec"])
-        self.assertTrue(row["inherits_reals_as_rational_cuts"])
+        self.assertEqual(rows, [])
 
 
 class L3RiscvStepNopDeclarationsTest(unittest.TestCase):

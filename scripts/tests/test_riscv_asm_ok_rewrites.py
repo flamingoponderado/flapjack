@@ -1,4 +1,4 @@
-"""Regression mutations for full original AddCarry guard/effect/evidence preservation."""
+"""Regression mutations for the restricted integer asm_ok bundle and original evidence."""
 import importlib.util
 from pathlib import Path
 import tempfile
@@ -37,8 +37,19 @@ class FullAsmOkGuard(unittest.TestCase):
 
     def test_no_added_source_alias_premise(self):
         self.mutate('Flapjack/Compiler/Encoders/RiscV/Target/AsmOkRewrites.lean',
-                    '(r r1 r2 r3 r4 r5 d d1 d2 d3 : Nat)',
-                    '(r r1 r2 r3 r4 r5 d d1 d2 d3 : Nat) (extra : r1 ≠ r2)')
+                    '(r r1 r2 r3 r4 r5 : Nat)',
+                    '(r r1 r2 r3 r4 r5 : Nat) (extra : r1 ≠ r2)')
+
+    def test_no_fp_binders(self):
+        self.mutate('Flapjack/Compiler/Encoders/RiscV/Target/AsmOkRewrites.lean',
+                    '(r r1 r2 r3 r4 r5 : Nat)',
+                    '(r r1 r2 r3 r4 r5 d d1 d2 d3 : Nat)')
+
+    def test_not_tagged_exact(self):
+        self.mutate('Flapjack/Compiler/Encoders/RiscV/Target/AsmOkRewrites.lean',
+                    'theorem riscvAsmOkRewrites',
+                    '@[hol "cakeml/compiler/encoders/riscv/riscv_targetScript.sml" "riscv_asm_ok"]\n'
+                    'theorem riscvAsmOkRewrites')
 
     def test_strict_sub_lower_bound(self):
         self.mutate('Flapjack/Compiler/Encoders/RiscV/Target/AsmOkRewrites.lean',
@@ -49,10 +60,15 @@ class FullAsmOkGuard(unittest.TestCase):
         self.mutate('Flapjack/Compiler/Encoders/RiscV/Target/AsmOkRewrites.lean',
                     '.mem .load16 r1', '.mem .load8 r1')
 
-    def test_fp_fma_rejection(self):
+    def test_fp_forms_absent(self):
+        # Same conjunct count, so only the FP-absence check can reject it.
         self.mutate('Flapjack/Compiler/Encoders/RiscV/Target/AsmOkRewrites.lean',
-                    '(.inst (.fp (.fpFma d1 d2 d3))) riscvConfig = true ↔ False',
-                    '(.inst (.fp (.fpFma d1 d2 d3))) riscvConfig = true ↔ True')
+                    '(asmOkExact (.inst .skip) riscvConfig = true ↔ True)',
+                    '(asmOkExact (.inst (.fp (.fpFma r1 r2 r3))) riscvConfig = true ↔ False)')
+
+    def test_integer_form_count(self):
+        self.mutate('Flapjack/Compiler/Encoders/RiscV/Target/AsmOkRewrites.lean',
+                    '    (asmOkExact (.inst .skip) riscvConfig = true ↔ True) ∧\n', '')
 
     def test_cjump_exact_lower_endpoint(self):
         self.mutate('Flapjack/Compiler/Encoders/RiscV/Target/AsmOkRewrites.lean',

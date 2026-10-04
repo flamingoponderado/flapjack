@@ -29,8 +29,10 @@ class ExpandedMemoryTests(unittest.TestCase):
                 self.assertIn("mstatus.VM = 0#5", stmt)
                 self.assertEqual("haligned :" in stmt, count != 1)
                 self.assertEqual(stmt.count("mcpuid.ArchBase ≠"), 2 if op in ("LD", "LWU") else 0)
-                self.assertIn('@[hol "' + HOL + '" "' + op + '"]\ntheorem dfn' + op + ' ', source)
-                self.assertNotIn('@[hol "' + HOL + '" "' + op + '"]\ntheorem dfn' + op + 'Raw', source)
+                # riscv-mi restricts the native riscv_state carrier, so the
+                # step equations must not claim an exact HOL reference.
+                self.assertIn('theorem dfn' + op + ' ', source)
+                self.assertNotIn('@[hol "' + HOL + '" "' + op + '"]', source)
 
     def test_store_conclusions(self):
         source = (ROOT / "Flapjack/RiscV/L3/Step/StoreStep.lean").read_text()
@@ -48,8 +50,10 @@ class ExpandedMemoryTests(unittest.TestCase):
                 self.assertIn("mstatus.VM = 0#5", stmt)
                 self.assertEqual("haligned :" in stmt, count != 1)
                 self.assertEqual(stmt.count("mcpuid.ArchBase ≠"), 2 if op == "SD" else 0)
-                self.assertIn('@[hol "' + HOL + '" "' + op + '"]\ntheorem dfn' + op + ' ', source)
-                self.assertNotIn('@[hol "' + HOL + '" "' + op + '"]\ntheorem dfn' + op + 'Raw', source)
+                # riscv-mi restricts the native riscv_state carrier, so the
+                # step equations must not claim an exact HOL reference.
+                self.assertIn('theorem dfn' + op + ' ', source)
+                self.assertNotIn('@[hol "' + HOL + '" "' + op + '"]', source)
 
 
 if __name__ == "__main__":

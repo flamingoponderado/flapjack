@@ -1,26 +1,10 @@
 import Flapjack.RiscV.L3.Defs.Encode
 
-/-! Original HOL numeric Encode observations over every constructor, including
-zero/max/nonuniform/sign-bit payloads. Finite fixtures are not universal equivalence. -/
+/-! Original HOL numeric Encode observations over every retained riscv-mi constructor,
+including zero/max/nonuniform/sign-bit payloads. Finite fixtures are not universal equivalence. -/
 namespace Flapjack.Test.L3EncodeParity
 open Flapjack.RiscV.L3
 
--- Oracle Encode_LR_D_0
--- Oracle Encode_LR_D_1
--- Oracle Encode_LR_D_2
--- Oracle Encode_LR_D_3
--- Oracle Encode_LR_W_0
--- Oracle Encode_LR_W_1
--- Oracle Encode_LR_W_2
--- Oracle Encode_LR_W_3
--- Oracle Encode_SC_D_0
--- Oracle Encode_SC_D_1
--- Oracle Encode_SC_D_2
--- Oracle Encode_SC_D_3
--- Oracle Encode_SC_W_0
--- Oracle Encode_SC_W_1
--- Oracle Encode_SC_W_2
--- Oracle Encode_SC_W_3
 -- Oracle Encode_ADDI_0
 example : Encode (.ArithI (.ADDI ((0#5, (0#5, 0#12))))) = 19#32 := by decide
 -- Oracle Encode_ADDI_1

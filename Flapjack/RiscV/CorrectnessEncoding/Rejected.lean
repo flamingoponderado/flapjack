@@ -2,13 +2,12 @@ import Flapjack.HolRef
 import Flapjack.RiscV.CorrectnessEncoding.Skip
 import Flapjack.Compiler.Encoders.RiscV.Target.AsmOkRewrites
 /-! Integer LongDiv encoder-correctness case for the reduced branch. The original
-RISC-V configuration rejects LongDiv and every FP constructor in asm_ok.
-The contradiction is derived from the actual source asmStep seventh conjunct;
-it is not a new rejection premise. Both full existential/interference/assertion
-conclusions are retained exactly. The native target statement retains the
-reviewed reals_as_rational_cuts assurance limit (SOUNDNESS section 8), although
-these proofs do not execute an instruction. Whole encoder/compiler correctness
-remains separate assembling work. -/
+RISC-V configuration rejects LongDiv in asm_ok; the original FP rejected case is
+absent because riscv-mi removes the `FP` instruction constructor. The
+contradiction is derived from the actual source asmStep seventh conjunct; it is
+not a new rejection premise. The full existential/interference/assertion
+conclusion is retained exactly. The proof does not execute an instruction.
+Whole encoder/compiler correctness remains separate assembling work. -/
 namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.Asm Compiler.Encoders.AsmProps Compiler.Encoders.AsmSem Compiler.Encoders.RiscV.Target
 /-- Original LongDiv637-642: all five registers remain arbitrary; the actual

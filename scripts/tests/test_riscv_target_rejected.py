@@ -1,4 +1,4 @@
-"""Mutations protect full original case scope and source rejection premises."""
+"""Mutations protect the LongDiv case scope, FP absence and source rejection premises."""
 import importlib.util
 from pathlib import Path
 import tempfile
@@ -22,9 +22,11 @@ class RejectedGuard(unittest.TestCase):
             with self.assertRaises(ValueError): guard.check(root)
     def test_accepted(self): self.assertTrue(guard.check())
     def test_no_assumed_rejection(self):
-        self.mutate('Flapjack/RiscV/CorrectnessEncoding/Rejected.lean','(f : HolFp)','(f : HolFp) (rejected : asmOkExact (.inst (.fp f)) riscvConfig = false)')
-    def test_full_fp_carrier(self):
-        self.mutate('Flapjack/RiscV/CorrectnessEncoding/Rejected.lean','(f : HolFp)','(f : WordLangFp)')
+        self.mutate('Flapjack/RiscV/CorrectnessEncoding/Rejected.lean','(r1 r2 r3 r4 r5 : Nat)','(r1 r2 r3 r4 r5 : Nat) (rejected : False)')
+    def test_fp_case_absent(self):
+        self.mutate('Flapjack/RiscV/CorrectnessEncoding/Rejected.lean','end Flapjack.RiscV.TargetProof','theorem riscv_encoder_correct_fp (f : HolFp) : True := trivial\nend Flapjack.RiscV.TargetProof')
+    def test_not_tagged_exact(self):
+        self.mutate('Flapjack/RiscV/CorrectnessEncoding/Rejected.lean','theorem riscv_encoder_correct_longdiv','@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "riscv_encoder_correct"]\ntheorem riscv_encoder_correct_longdiv')
     def test_five_longdiv_regs(self):
         self.mutate('Flapjack/RiscV/CorrectnessEncoding/Rejected.lean','(r1 r2 r3 r4 r5 : Nat)','(r1 r2 r3 r4 : Nat)')
     def test_every_environment(self):

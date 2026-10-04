@@ -122,7 +122,47 @@ def constructor_names():
     return names
 
 
-def value_term(value, outer):
+# riscv-mi restricts the native decoders to the riscv-zkvm RV64IM subset. The
+# compressed decoder rejects every input, and a Decode input whose original HOL
+# value uses one of these removed constructors must decode to
+# UnknownInstruction. The original captures are still validated in full; the
+# lists are exact and fail closed against restored or stale constructors.
+REJECTING_DECODERS = ("DecodeRVC",)
+EXCLUDED_CONSTRUCTORS = frozenset("""
+AMO AMOADD_D AMOADD_W AMOAND_D AMOAND_W AMOMAXU_D AMOMAXU_W AMOMAX_D AMOMAX_W
+AMOMINU_D AMOMINU_W AMOMIN_D AMOMIN_W AMOOR_D AMOOR_W AMOSWAP_D AMOSWAP_W
+AMOXOR_D AMOXOR_W LR_D LR_W SC_D SC_W
+FArith FADD_D FADD_S FDIV_D FDIV_S FEQ_D FEQ_S FLE_D FLE_S FLT_D FLT_S FMADD_D
+FMADD_S FMAX_D FMAX_S FMIN_D FMIN_S FMSUB_D FMSUB_S FMUL_D FMUL_S FNMADD_D
+FNMADD_S FNMSUB_D FNMSUB_S FSQRT_D FSQRT_S FSUB_D FSUB_S
+FConv FCLASS_D FCLASS_S FCVT_D_L FCVT_D_LU FCVT_D_S FCVT_D_W FCVT_D_WU
+FCVT_LU_D FCVT_LU_S FCVT_L_D FCVT_L_S FCVT_S_D FCVT_S_L FCVT_S_LU FCVT_S_W
+FCVT_S_WU FCVT_WU_D FCVT_WU_S FCVT_W_D FCVT_W_S FMV_D_X FMV_S_X FMV_X_D FMV_X_S
+FSGNJN_D FSGNJN_S FSGNJX_D FSGNJX_S FSGNJ_D FSGNJ_S
+FPLoad FLD FLW FPStore FSD FSW
+CSRRC CSRRCI CSRRS CSRRSI CSRRW CSRRWI SFENCE_VM FENCE_I ERET MRTS WFI
+""".split())
+
+
+def rejected(row, value):
+    if row["decoder"] in REJECTING_DECODERS:
+        return True
+    used = set(re.findall(r'"riscv" "(\w+)"', value))
+    return bool(used & EXCLUDED_CONSTRUCTORS)
+
+
+def check_exclusions(rows):
+    restored = EXCLUDED_CONSTRUCTORS & constructor_names()
+    if restored:
+        raise ValueError("excluded riscv-mi decoder constructor restored: " + repr(sorted(restored)))
+    observed = set()
+    for row in sample_inputs():
+        observed |= set(re.findall(r'"riscv" "(\w+)"', rows[row["label"]]))
+    if not EXCLUDED_CONSTRUCTORS <= observed:
+        raise ValueError("stale riscv-mi decoder exclusion: " + repr(sorted(EXCLUDED_CONSTRUCTORS - observed)))
+
+
+def value_term(value, outer, allowed=None):
     parsed = m["read_sexps"](value)
     if len(parsed) != 1:
         raise ValueError("expected exactly one original value term")
@@ -134,7 +174,7 @@ def value_term(value, outer):
         raise ValueError("changed original result carrier")
     canonical = {("arithmetic", "BIT1"), ("arithmetic", "BIT2"), ("arithmetic", "NUMERAL"), ("arithmetic", "ZERO"), ("num", "0"), ("pair", ","), ("words", "n2w")}
     for const in m["constants_of"](term):
-        if (const.thy, const.name) not in canonical and not (const.thy == "riscv" and const.name in constructor_names()):
+        if (const.thy, const.name) not in canonical and not (const.thy == "riscv" and const.name in (allowed or constructor_names())):
             raise ValueError(f"unreduced/noncanonical source payload {const.thy}${const.name}")
     todo = [term]
     while todo:
@@ -148,19 +188,28 @@ def value_term(value, outer):
 
 def fixture(text):
     rows = capture_rows(text)
+    check_exclusions(rows)
     renderer = m["Renderer"]({}, m["parse_types"]((ROOT / "Flapjack/RiscV/L3/Types.lean").read_text()))
     result = """import Flapjack.RiscV.L3.Defs.Decode
 
-/-! Original complete native decoded instructions, including numeric payloads.
-All feasible source guard leaves sampled; finite regression evidence, not
-universal word32 equivalence. Expected values come from original HOL EVAL. -/
+/-! Integer decoder acceptance rows use the original HOL oracle values.
+Inputs that formerly selected FP, atomic, privileged, CSR or compressed
+instructions now assert UnknownInstruction as branch-specific rejection tests.
+These rejection results deliberately differ from the full HOL model.
+-/
 set_option maxRecDepth 200000
 namespace Flapjack.Test.L3DecodeParity
 open Flapjack.RiscV.L3
 
 """
     for row in sample_inputs():
-        expr = renderer.tm(value_term(rows[row["label"]], row["outer"]), {})
+        value = rows[row["label"]]
+        if rejected(row, value):
+            # The original value must still be a concrete, reduced source result.
+            value_term(value, row["outer"], constructor_names() | EXCLUDED_CONSTRUCTORS)
+            result += f"-- Oracle {row['label']}: riscv-mi rejects the original removed instruction.\nexample : {row['decoder']} (BitVec.ofNat {row['width']} {row['word']}) = instruction.UnknownInstruction := by decide\n\n"
+            continue
+        expr = renderer.tm(value_term(value, row["outer"]), {})
         result += f"-- Oracle {row['label']}: original complete instruction including all payloads.\nexample : {row['decoder']} (BitVec.ofNat {row['width']} {row['word']}) = {expr} := by decide\n\n"
     return result + "end Flapjack.Test.L3DecodeParity\n"
 
@@ -173,7 +222,7 @@ if __name__ == "__main__":
             target.write_text(generated)
         elif sys.argv[1:] or target.read_text() != generated:
             raise ValueError("decoder fixture differs from original full-value capture (use --update)")
-        print("PASS 621 original complete numeric decoder values, all213 feasible source leaves, matching Lean kernel fixtures")
+        print("PASS 621 original complete numeric decoder values, all213 feasible source leaves, riscv-mi rejections and matching Lean kernel fixtures")
     except (OSError, ValueError, AssertionError) as error:
         print(error, file=sys.stderr)
         sys.exit(1)

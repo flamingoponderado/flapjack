@@ -21,8 +21,12 @@ class TargetEncoderCapture(unittest.TestCase):
         self.assertTrue(any('18446744073709551615w' in r['hol'] and r['group']=='ShiftImm' for r in rows))
     def test_all_source_carrier_constructors_are_observed(self):
         inventory=CHECK.check_constructor_inventory()
-        self.assertEqual(len(inventory),10)
-        self.assertEqual(sum(map(len,inventory.values())),63)
+        # riscv-mi: the original `fp` datatype and `inst` constructor `FP` are
+        # excluded (10 families/63 constructors in the full original).
+        self.assertEqual(len(inventory),9)
+        self.assertEqual(sum(map(len,inventory.values())),46)
+        self.assertNotIn("fp",inventory)
+        self.assertNotIn("FP",inventory["inst"])
         rows=CHECK.samples()
         for family,names in inventory.items():
             for name in names:
@@ -53,11 +57,12 @@ class TargetEncoderCapture(unittest.TestCase):
             p=root/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_text((ROOT/name).read_text())
         return root
     def test_source_lean_carrier_drift(self):
-        for old,new in [("| store32","| store32Extra"),("abbrev HolFp := WordLangFp","abbrev HolFp := OtherFp")]:
+        for old,new in [("| store32","| store32Extra"),("abbrev HolMemop := Flapjack.WordMemOp","abbrev HolMemop := Flapjack.WordMemOp\nabbrev HolFp := WordLangFp"),
+                        ("  | mem (operator : HolMemop) (destination : Nat) (address : HolAddr width)\n","  | mem (operator : HolMemop) (destination : Nat) (address : HolAddr width)\n  | fp (operation : Nat)\n")]:
             with self.subTest(old=old),tempfile.TemporaryDirectory() as directory:
                 root=self.source_root(directory)
                 name="Flapjack/MemOp.lean" if old.startswith("|") else "Flapjack/Compiler/Encoders/Asm.lean"
-                p=root/name;p.write_text(p.read_text().replace(old,new,1))
+                p=root/name;text=p.read_text();self.assertIn(old,text);p.write_text(text.replace(old,new,1))
                 with self.assertRaises(ValueError):CHECK.check_constructor_inventory(root=root)
     def test_new_matching_original_and_lean_constructor_requires_observation(self):
         with tempfile.TemporaryDirectory() as directory:

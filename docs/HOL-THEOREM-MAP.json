@@ -49607,6 +49607,14 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+    "hol_name": "flookup_res_var_distinct_zip_eq",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+    "lean_name": "flookup_res_var_distinct_zip_eq_hol",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-pxn.18.5.5.19): FLAPJACK-SPECIFIC / not an exact HOL port. DecidableEq is Lean's encoding of HOL equality and removes the [BEq]/[LawfulBEq] side conditions, but the statement still quantifies the raw function carrier FiniteMap alpha beta := alpha -> Option beta (Flapjack/FiniteMap/Basic.lean:19), which admits infinite-support inhabitants whereas HOL alpha |-> beta is finite-support. The @[hol] tag is withdrawn; faithful port over HolFiniteMapExact (Flapjack/Pancake/Semantics/CrepSem/HOLState.lean) tracked by bead flapjack-pxn.18.3.7.1.3.1.1.3.1. HOL: flookup_res_var_distinct_zip_eq."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
     "hol_name": "FLOOKUP_set_globals",
     "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
     "lean_name": "flookupSetGlobalsCrepSemHOL_locals",

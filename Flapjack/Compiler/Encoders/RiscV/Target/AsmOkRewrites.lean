@@ -14,14 +14,17 @@ private theorem inr_xor (x : Cmp) :
     ((Sum.inr x : Sum BinOp Cmp) == Sum.inl .xor) = false := rfl
 attribute [local simp] inl_xor inr_xor BitVec.slt_eq_decide BitVec.sle_eq_decide
   decide_eq_true_iff Bool.and_eq_true and_assoc Nat.mod_one
-/-- Complete generated original per-form asm_ok bundle: all 41 conjuncts in
-source order, all original free variables universally bound, fixed word64,
-exact asm carriers and current reviewed riscvConfig. HOL word comparisons are
-signed toInt comparisons; the strict Sub lower bound, XOR -1 exception,
-zero-shift restriction, visible-register exclusions and all source-permitted
-aliases are retained. All eight memory and sixteen rejected FP forms appear.
-`r` is HOL numeric r-prime after GEN_ALL; callTarget is HOL word-valued r.
-No subset, execution/output premise or alternative configuration is assumed. -/
+/-- Integer subset of the generated original per-form asm_ok bundle: the 25
+non-FP conjuncts of the original 41, in source order, all their free variables
+universally bound, fixed word64, the restricted riscv-mi asm carriers and the
+current riscvConfig. The sixteen original FP rejection conjuncts are absent
+because riscv-mi removes the `FP` instruction constructor, so this is not an
+exact HOL port and carries no `@[hol]` tag. HOL word comparisons are signed
+toInt comparisons; the strict Sub lower bound, XOR -1 exception, zero-shift
+restriction, visible-register exclusions and all source-permitted aliases are
+retained, and all eight memory forms appear. `r` is HOL numeric r-prime after
+GEN_ALL; callTarget is HOL word-valued r. No execution/output premise or
+alternative configuration is assumed. -/
 theorem riscvAsmOkRewrites (r r1 r2 r3 r4 r5 : Nat)
     (w i callTarget : BitVec 64) (b : BinOp) (s : Shift)
     (n : HolRegImm 64) (x : Cmp) :
