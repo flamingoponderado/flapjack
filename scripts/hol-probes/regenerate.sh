@@ -107,6 +107,9 @@ run_probe() {
   done
 }
 
+run_probe word_to_stack_inst_arith_probeScript.sml word_to_stack_inst_arith_probe.out \
+  arith_typed arith_proved arith_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_to_stack_fp_conversions_probeScript.sml word_to_stack_fp_conversions_probe.out \
   fpToInt_typed fpToInt_proved fpToInt_hypotheses fpFromInt_typed fpFromInt_proved fpFromInt_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -4662,6 +4665,9 @@ run_probe word_to_word_compile_single_probeScript.sml word_to_word_compile_singl
   FST_compile_single_statement FST_compile_single_hypotheses FST_compile_single_typed \
   compile_single_lem_statement compile_single_lem_hypotheses compile_single_lem_typed \
   "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_convs_compile_single_not_created_probeScript.sml word_convs_compile_single_not_created_probe.out \
+  compile_single_not_created_subprogs_statement compile_single_not_created_subprogs_hypotheses compile_single_not_created_subprogs_typed \
+  "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_to_word_compile_probeScript.sml word_to_word_compile_probe.out \
   compile_single compile_single_typed compile_single_hypotheses full_compile_single full_compile_single_typed full_compile_single_hypotheses \
   compile compile_typed compile_hypotheses \
@@ -7811,3 +7817,7 @@ run_probe l3_step_immediate_comparison_probeScript.sml l3_step_immediate_compari
   slti_statement slti_types slti_source_hypotheses slti_proved sltiu_statement sltiu_types sltiu_source_hypotheses sltiu_proved \
   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe word_inst_sub_probeScript.sml word_inst_sub_probe.out \
+  pull_sub_empty pull_sub_unary_var pull_sub_unary_const norm_sub_empty norm_sub_unary_var pull_sub_binary_const norm_sub_binary_const \
+  "$cake_dir/compiler/backend/word_instScript.sml" "$cake_dir/compiler/backend"

@@ -7,6 +7,7 @@ import Flapjack.Pancake.PanToTarget
 
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelFp
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.FpConversions
+import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Arithmetic
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Binary
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Shift
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.FpArith
@@ -1350,6 +1351,9 @@ import Flapjack.Pancake.Proofs.WordConvs.Unreach
 import Flapjack.Pancake.Proofs.WordConvs.WordCse
 import Flapjack.Pancake.Proofs.WordConvs.CopyProp
 import Flapjack.Pancake.Proofs.WordConvs.SSAWfCutsets
+import Flapjack.Pancake.Proofs.WordConvs.NotCreatedPasses
+import Flapjack.Pancake.Proofs.WordConvs.NotCreatedSSA
+import Flapjack.Pancake.Proofs.WordConvs.NotCreatedTail
 import Flapjack.Pancake.Proofs.WordConvs.UnreachPreAlloc
 import Flapjack.Compiler.Backend.WordRemove
 import Flapjack.Compiler.Backend.WordRemove.Production
