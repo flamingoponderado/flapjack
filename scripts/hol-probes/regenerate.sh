@@ -8241,3 +8241,8 @@ run_probe pan_simp_validity_probeScript.sml pan_simp_validity_probe.out \
 run_probe riscv_memory_step_probeScript.sml riscv_memory_step_probe.out \
   ld_next_sign ld_next_zero lwu_next_sign lwu_next_zero lhu_next_sign lhu_next_zero lbu_next_sign lbu_next_zero sd_next_sign sd_next_zero sw_next_sign sw_next_zero sh_next_sign sh_next_zero sb_next_sign sb_next_zero next_source_clause next_source_hypotheses next_carrier_types pc_source_clause pc_source_hypotheses pc_carrier_types \
   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe riscv_branch_decode_probeScript.sml riscv_branch_decode_probe.out \
+  beq_decode_universal beq_decode_hypotheses beq_zero beq_all_ones beq_alias_sign beq_mixed beq_source_clause beq_carrier_types bne_decode_universal bne_decode_hypotheses bne_zero bne_all_ones bne_alias_sign bne_mixed bne_source_clause bne_carrier_types blt_decode_universal blt_decode_hypotheses blt_zero blt_all_ones blt_alias_sign blt_mixed blt_source_clause blt_carrier_types bltu_decode_universal bltu_decode_hypotheses bltu_zero bltu_all_ones bltu_alias_sign bltu_mixed bltu_source_clause bltu_carrier_types bge_decode_universal bge_decode_hypotheses bge_zero bge_all_ones bge_alias_sign bge_mixed bge_source_clause bge_carrier_types bgeu_decode_universal bgeu_decode_hypotheses bgeu_zero bgeu_all_ones bgeu_alias_sign bgeu_mixed bgeu_source_clause bgeu_carrier_types \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
