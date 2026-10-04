@@ -8482,3 +8482,11 @@ call arguments/continuations and complete bodies against this capture.
 The general kernel theorem composes all six original passes from source
 byte ranges; actual downstream CLI/WordToStack routing remains separate.
 `riscv_memory_decode_probe.out` records each literal LD/LWU/LHU/LBU/SD/SW/SH/SB original Encode clause and intrinsic word5/word12 carriers, zero source hypotheses, and Decode/Encode evaluations at all-zero, all-one, and mixed-register/sign-offset inputs. Lean proves unrestricted roundtrips including zero registers and all offsets; finite probes are regression evidence, not universal equivalence. Full memory encoder correctness remains a dependency-linked open task.
+
+`pan_source_entry_word_probeScript.sml` evaluates the original extracted first
+LET and full PanToWord compiler for empty and missing-main source input.
+`PanSourceEntryParity` checks complete native Word rows and every declaration
+field in the five source-preparation observations already captured by
+`pan_target_entry_first_match_probe.out`. The general source-entry codec theorem
+uses the existing native `mainFirstHOL`, with no distinct-name or target-run
+premise. Parsing/static errors and downstream whole-CLI wiring stay separate.
