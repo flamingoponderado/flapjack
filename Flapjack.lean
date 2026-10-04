@@ -1,5 +1,6 @@
 import Flapjack.RiscV.CorrectnessEncoding.BitRewrites
 import Flapjack.RiscV.CorrectnessEncoding.JumpCmp
+import Flapjack.RiscV.CorrectnessEncoding.Complete
 import Flapjack.RiscV.CorrectnessEncoding.MemoryAssertions
 import Flapjack.RiscV.CorrectnessEncoding.MemoryFetch
 import Flapjack.RiscV.CorrectnessEncoding.MemoryFrame
@@ -1208,6 +1209,7 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionInstructionMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionColourDomain
 import Flapjack.Compiler.Backend.WordToStack.ProductionProgramMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionFrame
+import Flapjack.Compiler.Backend.WordToStack.ProductionFrameCaller
 import Flapjack.Compiler.Backend.WordToStack.ProductionLocations
 import Flapjack.Compiler.Backend.WordToStack.ProductionConfiguration
 import Flapjack.Compiler.Backend.WordToStack.ProductionScheduler
@@ -1583,6 +1585,8 @@ import Flapjack.Compiler.Backend.StackProps.ArithmeticNames
 import Flapjack.Compiler.Backend.RiscVConfig.RegisterNames
 import Flapjack.Compiler.Backend.RiscVConfig.BackendConfig
 import Flapjack.Compiler.Backend.RiscVConfig.Proofs
+import Flapjack.Compiler.Backend.RiscVConfig.PancakeConfigOk
+import Flapjack.Compiler.Compiler
 import Flapjack.Compiler.Backend.StackNames.CallLinkProjection
 import Flapjack.Compiler.Backend.StackNames.ProgramNames
 import Flapjack.Compiler.Backend.StackNames.InstructionNames

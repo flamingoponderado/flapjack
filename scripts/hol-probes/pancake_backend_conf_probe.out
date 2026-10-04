@@ -1,0 +1,3 @@
+pancake_backend_conf_def_statement=∀c. pancake_backend_conf c = c with data_conf := c.data_conf with gc_kind := None
+pancake_backend_conf_def_typed=∀(c :backend$config). pancake_backend_conf c = c with data_conf := c.data_conf with gc_kind := None
+pancake_backend_conf_def_hypotheses=0
