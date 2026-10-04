@@ -4683,6 +4683,12 @@ run_probe word_convs_compile_single_not_created_probeScript.sml word_convs_compi
 run_probe word_to_word_syntactic_probeScript.sml word_to_word_syntactic_probe.out \
   cond16bit_inst_select_exp_prime_statement no_mt_code_def_typed \
   "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_to_word_no_install_compile_single_probeScript.sml word_to_word_no_install_compile_single_probe.out \
+  no_install_no_alloc_compile_single_correct_statement no_install_no_alloc_compile_single_correct_typed \
+  "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_to_word_compile_semantics_probeScript.sml word_to_word_compile_semantics_probe.out \
+  panLang_compile_word_to_word_thm_statement word_to_word_compile_semantics_typed \
+  "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_to_word_compile_probeScript.sml word_to_word_compile_probe.out \
   compile_single compile_single_typed compile_single_hypotheses full_compile_single full_compile_single_typed full_compile_single_hypotheses \
   compile compile_typed compile_hypotheses \
@@ -7862,3 +7868,7 @@ run_probe riscv_target_binop_full_probeScript.sml riscv_target_binop_full_probe.
   riscv_encoder_correct_binop_full_statement riscv_encoder_correct_binop_full_types riscv_encoder_correct_binop_full_hypotheses riscv_encoder_correct_binop_full_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe word_convs_simp_sequence_labels_probeScript.sml word_convs_simp_sequence_labels_probe.out \
+  simpSequenceLabels1_typed simpSequenceLabels1_proved simpSequenceLabels1_hypotheses simpSequenceLabels2_typed simpSequenceLabels2_proved simpSequenceLabels2_hypotheses simpSequenceLabels3_typed simpSequenceLabels3_proved simpSequenceLabels3_hypotheses simpSequenceLabels4_typed simpSequenceLabels4_proved simpSequenceLabels4_hypotheses simpSequenceLabels5_typed simpSequenceLabels5_proved simpSequenceLabels5_hypotheses simpSequenceLabels6_typed simpSequenceLabels6_proved simpSequenceLabels6_hypotheses \
+  "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" "$cake_dir/compiler/backend/proofs"
