@@ -91274,5 +91274,41 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison 2026-10-04: original full compile_single_correct235-256 specialized to Install, source Resume801-822. Complete arbitrary positive word dimension and independent C/FFI host carriers retained through CompileSingleCorrectAt; all original code_rel/domain/compile-map/oracle-map/gc premises and full existential permutation, source-error conditional, result/code relation/domain/exact post-state update conclusion retained. Install has no recursive subprogram and needs no IH. Identity existing source permutation; every cut-env/variable/buffer/compiler/list/config failure retained, actual oracle source list passed through compileSingle internally, successful actual outputs checked against flushed byte/data buffers and next config. Original left-biased code union proven using source code_rel_union_fromAList; domain equality from exact domain_union/domain_fromAList and original FST_compile_single; entry label preserved and actual shift_seq/oracle-map commutation. No target evaluation/result/post-relation premise. fpRegs/store only canonical finite-map fields, locals/code remain native Spt; same-module two-way witness actual owner; words qualifier only standard positive word dimension. Inherits reals_as_rational_cuts through full evaluate closure, SOUNDNESS item8 applies; no added real operation. Original full theorem and kernel-proved Install specialization captured with show_types and GEN_ALL, not a literal replay or independent HOL-to-Lean equivalence. Final assembly/compiler theorem and executed routing stay separate."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InstSimulation/FpConversions.lean",
+    "lean_name": "evaluateWInstFpToInt",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source-reviewed against word_to_stackProofScript.sml evaluate_wInst FPToInt case5100-5125: all original five guards, actual wInst/evaluate existential, complete state_rel, stack length and space; arbitrary positive width, width64 and all non64 odd/even packed branches, original partial conversion/range guards and roundTiesToEven. Target reads/updates derived by full state relation. Canonical source fpRegs/store and target regs/fpRegs/store codecs are genuine; locals/code retain native Spt. Both faithful evaluators inherit reals_as_rational_cuts (SOUNDNESS item 8); no numeric agreement or target-run hypothesis.",
+    "hol_line": 4688
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InstSimulation/FpConversions.lean",
+    "lean_name": "evaluateWInstFpFromInt",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source-reviewed against word_to_stackProofScript.sml evaluate_wInst FPFromInt case5100-5125: all original five guards, actual wInst/evaluate existential, complete state_rel, stack length and space; arbitrary positive width, width64 and all non64 odd/even packed branches, original partial conversion/range guards and roundTiesToEven. Target reads/updates derived by full state relation. Canonical source fpRegs/store and target regs/fpRegs/store codecs are genuine; locals/code retain native Spt. Both faithful evaluators inherit reals_as_rational_cuts (SOUNDNESS item 8); no numeric agreement or target-run hypothesis.",
+    "hol_line": 4688
   }
 ]

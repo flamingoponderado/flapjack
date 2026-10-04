@@ -8127,3 +8127,8 @@ The `backend_lower_pipeline` probe also captures the complete original closed
 `from_word_0_def` and its inferred type, including the actual WordToWord tuple
 and oracle update before `from_word`. This is definition evidence, not an
 executed-route or complete compiler-correctness result.
+
+`word_to_stack_fp_conversions_probeScript.sml` captures closed, kernel-proved,
+fully typed specializations of original `evaluate_wInst` to FPToInt and
+FPFromInt. These retain the original guards and full target existential;
+they are source review evidence, not a cross-assistant equivalence proof.
