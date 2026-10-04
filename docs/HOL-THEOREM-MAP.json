@@ -91316,5 +91316,113 @@
     "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileWordToWord.lean",
     "lean_name": "compile_word_to_word_thm",
     "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.52): HOL compile_word_to_word_thm (word_to_wordProofScript.sml:851-904). Full statement kept: free st l cc coracle tt kk aa co start explicit; premises code_rel st.code l, domain equality, st.compile = λconf progs. cc conf (MAP (λp. full_compile_single tt kk aa co (p,NONE)) progs), coracle = (I ## MAP (λp. full_compile_single …)) o st.compile_oracle, gc_fun_const_ok; conclusion ∃perm' clk with prog = Call NONE (SOME start) [0] NONE, if res = SOME Error then T else the run on st with code := map (I ## remove_must_terminate) l (the sptMap of the reviewed compile_state), clock := st.clock + clk, termdep := 0, compile := cc, compile_oracle := coracle gives res1 = res, equal clock, ffi and stack_max. Proof follows HOL: compile_single_correct with cc' = λconf. cc conf o MAP (I ## I ## remove_must_terminate), then word_remove_correct, identifying compile_state clk cc with the target state (full_compile_single = (I ## I ## remove_must_terminate) o compile_single). fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Typed capture in word_to_word_compile_thm. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InstSimulation/MemoryLoad.lean",
+    "lean_name": "evaluateWInstLoad",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison: original evaluate_wInst Load memory case4919-4969. All five original guards and complete existential actual native wInst run/whole sourcepost targetpost stateRel/stack length and space retained. Actual source inst success internally yields offset expression, actual memory result and entire source poststate. Full checked offset load law gives actual native prelude/target expression/full relation; target memory/domain/endian equalities derived internally from that relation; actual native instruction and first-register physical/spill write/store complete execution. Arbitrary positive machine width, address offset/domain/endian, destination-base aliases and physical/spill combinations; Load permits Word or Loc payload, byte/32-bit variants use identical actual original memory functions and setWidth conversion. Internal selector chooses three cases but each public case has only original guards; no targetread/run/postmemory or desired relation assumption. Canonical five finite-map relation fields qualified with genuine same-module codecs; native sptree locals/code unchanged, common word dimension/independent host Nat×C vs C and FFI F retained. Evaluators inherit reals_as_rational_cuts (SOUNDNESS item8), no new numerical FP agreement or cross-language equivalence claim. Fresh complete typed original kernel specialization for arbitrary destination/base/offset regenerated and source reviewed: T/hypotheses0, all five guards/full run/relation/resource conclusion and same alpha word/program/result dimension with independent host/FFI retained. Not literal local proof replay or HOL-to-Lean equivalence.",
+    "hol_line": 4688
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InstSimulation/MemoryLoad.lean",
+    "lean_name": "evaluateWInstLoad8",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison: original evaluate_wInst Load8 memory case4919-4969. All five original guards and complete existential actual native wInst run/whole sourcepost targetpost stateRel/stack length and space retained. Actual source inst success internally yields offset expression, actual memory result and entire source poststate. Full checked offset load law gives actual native prelude/target expression/full relation; target memory/domain/endian equalities derived internally from that relation; actual native instruction and first-register physical/spill write/store complete execution. Arbitrary positive machine width, address offset/domain/endian, destination-base aliases and physical/spill combinations; Load permits Word or Loc payload, byte/32-bit variants use identical actual original memory functions and setWidth conversion. Internal selector chooses three cases but each public case has only original guards; no targetread/run/postmemory or desired relation assumption. Canonical five finite-map relation fields qualified with genuine same-module codecs; native sptree locals/code unchanged, common word dimension/independent host Nat×C vs C and FFI F retained. Evaluators inherit reals_as_rational_cuts (SOUNDNESS item8), no new numerical FP agreement or cross-language equivalence claim. Fresh complete typed original kernel specialization for arbitrary destination/base/offset regenerated and source reviewed: T/hypotheses0, all five guards/full run/relation/resource conclusion and same alpha word/program/result dimension with independent host/FFI retained. Not literal local proof replay or HOL-to-Lean equivalence.",
+    "hol_line": 4688
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InstSimulation/MemoryLoad.lean",
+    "lean_name": "evaluateWInstLoad32",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison: original evaluate_wInst Load32 memory case4919-4969. All five original guards and complete existential actual native wInst run/whole sourcepost targetpost stateRel/stack length and space retained. Actual source inst success internally yields offset expression, actual memory result and entire source poststate. Full checked offset load law gives actual native prelude/target expression/full relation; target memory/domain/endian equalities derived internally from that relation; actual native instruction and first-register physical/spill write/store complete execution. Arbitrary positive machine width, address offset/domain/endian, destination-base aliases and physical/spill combinations; Load permits Word or Loc payload, byte/32-bit variants use identical actual original memory functions and setWidth conversion. Internal selector chooses three cases but each public case has only original guards; no targetread/run/postmemory or desired relation assumption. Canonical five finite-map relation fields qualified with genuine same-module codecs; native sptree locals/code unchanged, common word dimension/independent host Nat×C vs C and FFI F retained. Evaluators inherit reals_as_rational_cuts (SOUNDNESS item8), no new numerical FP agreement or cross-language equivalence claim. Fresh complete typed original kernel specialization for arbitrary destination/base/offset regenerated and source reviewed: T/hypotheses0, all five guards/full run/relation/resource conclusion and same alpha word/program/result dimension with independent host/FFI retained. Not literal local proof replay or HOL-to-Lean equivalence.",
+    "hol_line": 4688
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InstSimulation/MemoryStore.lean",
+    "lean_name": "evaluateWInstStore",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison: original evaluate_wInst Store memory case4969-5024. All five original guards and complete existential actual native wInst run/whole sourcepost targetpost stateRel/stack length and space retained. Actual source inst success internally yields offset expression, payload read, actual memory update and entire source poststate. Full accepted offset load and Reg2 load laws give actual two native preludes/full relation/payload, and original register-not-k+1 conjunct preserves actual target address expression through the second load. Target memory/domain/endian equality derived internally, actual native memory store is proved and arbitrary simultaneous memory replacement preserves all38 full relation conjuncts. Arbitrary positive machine width/address offsets/endian/domain/payload-register-base aliases/physical-spill combinations; Store permits Word or Loc payload, byte/32-bit variants use identical actual original memory functions and source word setWidth conversion. Internal selector chooses three cases but public cases have only original guards; no targetread/run/postmemory/desired relation premise. Original maxVar/argument-convention premises retained even though memory-only preservation needs no extra register-write bound. Canonical five finite-map fields qualified with genuine same-module codecs; native sptree locals/code unchanged, common word dimension/independent host Nat×C vs C and FFI F retained. Evaluators inherit reals_as_rational_cuts (SOUNDNESS item8), no new numerical FP agreement or cross-language equivalence claim. Fresh complete typed original theorem kernel specialization for arbitrary payload register/base/offset regenerated and source reviewed: T/hypotheses0, all five guards and full run/relation/resource conclusion, shared alpha word/program/result dimension with independent host/FFI. Not literal local proof replay or HOL-to-Lean equivalence.",
+    "hol_line": 4688
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InstSimulation/MemoryStore.lean",
+    "lean_name": "evaluateWInstStore8",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison: original evaluate_wInst Store8 memory case4969-5024. All five original guards and complete existential actual native wInst run/whole sourcepost targetpost stateRel/stack length and space retained. Actual source inst success internally yields offset expression, payload read, actual memory update and entire source poststate. Full accepted offset load and Reg2 load laws give actual two native preludes/full relation/payload, and original register-not-k+1 conjunct preserves actual target address expression through the second load. Target memory/domain/endian equality derived internally, actual native memory store is proved and arbitrary simultaneous memory replacement preserves all38 full relation conjuncts. Arbitrary positive machine width/address offsets/endian/domain/payload-register-base aliases/physical-spill combinations; Store permits Word or Loc payload, byte/32-bit variants use identical actual original memory functions and source word setWidth conversion. Internal selector chooses three cases but public cases have only original guards; no targetread/run/postmemory/desired relation premise. Original maxVar/argument-convention premises retained even though memory-only preservation needs no extra register-write bound. Canonical five finite-map fields qualified with genuine same-module codecs; native sptree locals/code unchanged, common word dimension/independent host Nat×C vs C and FFI F retained. Evaluators inherit reals_as_rational_cuts (SOUNDNESS item8), no new numerical FP agreement or cross-language equivalence claim. Fresh complete typed original theorem kernel specialization for arbitrary payload register/base/offset regenerated and source reviewed: T/hypotheses0, all five guards and full run/relation/resource conclusion, shared alpha word/program/result dimension with independent host/FFI. Not literal local proof replay or HOL-to-Lean equivalence.",
+    "hol_line": 4688
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InstSimulation/MemoryStore.lean",
+    "lean_name": "evaluateWInstStore32",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison: original evaluate_wInst Store32 memory case4969-5024. All five original guards and complete existential actual native wInst run/whole sourcepost targetpost stateRel/stack length and space retained. Actual source inst success internally yields offset expression, payload read, actual memory update and entire source poststate. Full accepted offset load and Reg2 load laws give actual two native preludes/full relation/payload, and original register-not-k+1 conjunct preserves actual target address expression through the second load. Target memory/domain/endian equality derived internally, actual native memory store is proved and arbitrary simultaneous memory replacement preserves all38 full relation conjuncts. Arbitrary positive machine width/address offsets/endian/domain/payload-register-base aliases/physical-spill combinations; Store permits Word or Loc payload, byte/32-bit variants use identical actual original memory functions and source word setWidth conversion. Internal selector chooses three cases but public cases have only original guards; no targetread/run/postmemory/desired relation premise. Original maxVar/argument-convention premises retained even though memory-only preservation needs no extra register-write bound. Canonical five finite-map fields qualified with genuine same-module codecs; native sptree locals/code unchanged, common word dimension/independent host Nat×C vs C and FFI F retained. Evaluators inherit reals_as_rational_cuts (SOUNDNESS item8), no new numerical FP agreement or cross-language equivalence claim. Fresh complete typed original theorem kernel specialization for arbitrary payload register/base/offset regenerated and source reviewed: T/hypotheses0, all five guards and full run/relation/resource conclusion, shared alpha word/program/result dimension with independent host/FFI. Not literal local proof replay or HOL-to-Lean equivalence.",
+    "hol_line": 4688
   }
 ]
