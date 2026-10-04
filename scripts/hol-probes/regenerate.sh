@@ -7980,3 +7980,7 @@ run_probe riscv_shift_run_probeScript.sml riscv_shift_run_probe.out \
 run_probe word_to_word_conventions_labels_probeScript.sml word_to_word_conventions_labels_probe.out \
   namesLabelsSections_typed namesLabelsSections_proved namesLabelsSections_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_word_full_conventions_probeScript.sml word_to_word_full_conventions_probe.out \
+  fullConventions_typed fullConventions_proved fullConventions_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
