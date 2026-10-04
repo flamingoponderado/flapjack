@@ -1,3 +1,5 @@
+`l3_step_jump_probe.out` captures all four complete original evaluated JAL/JALR write and zero-destination companion statements, each actual Thm.hyp and count, and its closed fully typed GEN_ALL(DISCH_ALL) form. The sole write guard is rd <> 0; the sole companion guard is rd = 0. Full record updates retain address-exception/NextFetch effects, original rs1-zero read, JALR mask and source PC + Skip link before destination writes. Zero-destination companions suppress the link write and still jump or trap. These are primitive step-library equations, not whole encoder/compiler correctness.
+
 `word_convs_simp_const_fp_labels_probe.out` freshly replays the two full original constant-folding label theorems from wordConvsProof221-266 and their five unchanged sequence/drop-constant prerequisites. Both closed typed statements have kernel T and zero open hypotheses. Native generic proofs derive label containment and distinctness preservation from the actual output's ordered-sublist invariant, including chosen/unresolved conditionals, state-threaded sequences, every Call/handler branch and Loop. This is the constant-folding prerequisite of the full compile_exp label relation; hoisting, push-out and whole compiler correctness remain separate.
 
 `word_convs_simp_instructions_probe.out` freshly replays all nine literal original instruction-preservation proofs from wordConvsProof395-513 and prints their complete closed typed statements, kernel T and zero open hypotheses. The local dest_If_thm proof is replayed solely as a hoisting prerequisite, and the final compile_exp_no_inst result is compared with the exported original theorem. Native kernel proofs preserve arbitrary predicates through all actual constructors, unrestricted hoisting dummy, independent unused s carrier, returning handlers, Loop and OpCurrHeap. This supports the instruction-validity conjunct of compile_to_word_conventions; the enclosing convention theorem and whole compiler correctness remain open.
@@ -8328,3 +8330,15 @@ printed queries; the printed queries are not asserted original HOL theorems.
 The Lean kernel proofs establish the universal local compositions. Evidence is
 regression/source review, not cross-assistant equivalence or full Shift encoder
 correctness. Full state/run/assertions and both Ror routes remain on the parent.
+
+## Shift source post-state and RV64 runtime compositions
+
+`ShiftRun.lean` derives the register count guard and complete source update
+from original asmStep for all four operators and both operands. Six native
+Run compositions use the original riscvOk RV64 restriction and preserve
+masked register counts and whole native post-states. These are untagged local
+composition infrastructure, not a full Shift encoder correctness port.
+The fresh 24 original clause/type/hypothesis rows retain all literal RV32/RV64
+and illegal-immediate branches. They provide source regression evidence, not
+a cross-assistant equivalence proof. Full state relation, assertions and both
+Ror instruction sequences remain on the parent bead.

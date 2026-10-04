@@ -107,6 +107,9 @@ run_probe() {
   done
 }
 
+run_probe l3_step_jump_probeScript.sml l3_step_jump_probe.out \
+  jal_hypotheses jal_statement jal_gen jal_hypothesis_count jalr_hypotheses jalr_statement jalr_gen jalr_hypothesis_count jal_nop_hypotheses jal_nop_statement jal_nop_gen jal_nop_hypothesis_count jalr_nop_hypotheses jalr_nop_statement jalr_nop_gen jalr_nop_hypothesis_count \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_convs_simp_const_fp_labels_probeScript.sml word_convs_simp_const_fp_labels_probe.out \
   extract_labels_const_fp_loop_typed extract_labels_const_fp_loop_proved extract_labels_const_fp_loop_hypotheses extract_labels_const_fp_typed extract_labels_const_fp_proved extract_labels_const_fp_hypotheses \
   "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -7035,7 +7038,7 @@ run_probe l3_step_shift_probeScript.sml l3_step_shift_probe.out \
     slliw_hypotheses slliw_statement srliw_hypotheses srliw_statement sraiw_hypotheses sraiw_statement sllw_hypotheses sllw_statement srlw_hypotheses srlw_statement sraw_hypotheses sraw_statement slliw_nop_hypotheses slliw_nop_statement srliw_nop_hypotheses srliw_nop_statement sraiw_nop_hypotheses sraiw_nop_statement sllw_nop_hypotheses sllw_nop_statement srlw_nop_hypotheses srlw_nop_statement sraw_nop_hypotheses sraw_nop_statement source \
     "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
   run_probe l3_step_load_probeScript.sml l3_step_load_probe.out \
-    ld_hypotheses ld_statement lw_hypotheses lw_statement lh_hypotheses lh_statement lb_hypotheses lb_statement lwu_hypotheses lwu_statement lhu_hypotheses lhu_statement ld_nop_hypotheses ld_nop_statement lw_nop_hypotheses lw_nop_statement lh_nop_hypotheses lh_nop_statement lb_nop_hypotheses lb_nop_statement lwu_nop_hypotheses lwu_nop_statement lhu_nop_hypotheses lhu_nop_statement source \
+    ld_hypotheses ld_statement lw_hypotheses lw_statement lh_hypotheses lh_statement lb_hypotheses lb_statement lwu_hypotheses lwu_statement lhu_hypotheses lhu_statement ld_nop_hypotheses ld_nop_statement lw_nop_hypotheses lw_nop_statement lh_nop_hypotheses lh_nop_statement lb_nop_hypotheses lb_nop_statement lwu_nop_hypotheses lwu_nop_statement lhu_nop_hypotheses lhu_nop_statement lbu_hypotheses lbu_statement lbu_nop_hypotheses lbu_nop_statement source \
     "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
   run_probe l3_step_store_probeScript.sml l3_step_store_probe.out \
     sd_hypotheses sd_statement sw_hypotheses sw_statement sh_hypotheses sh_statement sb_hypotheses sb_statement source \
@@ -7044,7 +7047,11 @@ run_probe l3_step_shift_probeScript.sml l3_step_shift_probe.out \
     mul_hypotheses mul_statement div_hypotheses div_statement rem_hypotheses rem_statement remu_hypotheses remu_statement source \
     "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
   run_probe l3_step_warith_probeScript.sml l3_step_warith_probe.out \
-    skip_statement addw_hypotheses addw_statement subw_hypotheses subw_statement addiw_hypotheses addiw_statement source \
+    skip_statement addw_hypotheses addw_statement subw_hypotheses subw_statement addiw_hypotheses addiw_statement \
+    addw_nop_hypotheses addw_nop_statement subw_nop_hypotheses subw_nop_statement addiw_nop_hypotheses addiw_nop_statement source \
+    "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
+  run_probe l3_step_branch_probeScript.sml l3_step_branch_probe.out \
+    beq_hypotheses beq_statement bne_hypotheses bne_statement blt_hypotheses blt_statement bltu_hypotheses bltu_statement bge_hypotheses bge_statement bgeu_hypotheses bgeu_statement source \
     "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
   run_probe pan_structs_mmap_faithful_probeScript.sml pan_structs_mmap_faithful_probe.out \
   compile_exp_correct_mmap_helper_statement compile_exp_correct_mmap_helper_types compile_exp_correct_mmap_helper_hypotheses compile_exp_correct_mmap_helper_proved \
@@ -7948,4 +7955,16 @@ run_probe word_convs_hoist_prerequisites_probeScript.sml word_convs_hoist_prereq
 run_probe riscv_shift_decode_probeScript.sml riscv_shift_decode_probe.out \
   sll_decode_zero sll_decode_all_ones sll_decode_high_bit sll_decode_alias sll_encode_source_clause sll_carrier_types sll_symbolic_query sll_source_hypotheses srl_decode_zero srl_decode_all_ones srl_decode_high_bit srl_decode_alias srl_encode_source_clause srl_carrier_types srl_symbolic_query srl_source_hypotheses sra_decode_zero sra_decode_all_ones sra_decode_high_bit sra_decode_alias sra_encode_source_clause sra_carrier_types sra_symbolic_query sra_source_hypotheses srli_decode_zero srli_decode_all_ones srli_decode_high_bit srli_decode_alias srli_encode_source_clause srli_carrier_types srli_symbolic_query srli_source_hypotheses srai_decode_zero srai_decode_all_ones srai_decode_high_bit srai_decode_alias srai_encode_source_clause srai_carrier_types srai_symbolic_query srai_source_hypotheses \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+run_probe word_convs_hoist_labels_probeScript.sml word_convs_hoist_labels_probe.out \
+  hoistLabels_typed hoistLabels_proved hoistLabels_hypotheses duplicateIfLabels_typed duplicateIfLabels_proved duplicateIfLabels_hypotheses \
+  "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_convs_compile_exp_labels_probeScript.sml word_convs_compile_exp_labels_probe.out \
+  compileExpLabels_typed compileExpLabels_proved compileExpLabels_hypotheses \
+  "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe riscv_shift_run_probeScript.sml riscv_shift_run_probe.out \
+  source_shift_clause source_shift_types source_shift_hypotheses target_ok_clause target_ok_types target_ok_hypotheses run_sll_clause run_sll_types run_sll_hypotheses run_srl_clause run_srl_types run_srl_hypotheses run_sra_clause run_sra_types run_sra_hypotheses run_slli_clause run_slli_types run_slli_hypotheses run_srli_clause run_srli_types run_srli_hypotheses run_srai_clause run_srai_types run_srai_hypotheses \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"

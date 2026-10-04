@@ -1,3 +1,4 @@
+import Flapjack.RiscV.CorrectnessEncoding.ShiftRun
 import Flapjack.RiscV.CorrectnessEncoding.DecodeShift
 import Flapjack.RiscV.CorrectnessEncoding.Div
 import Flapjack.RiscV.CorrectnessEncoding.DecodeDiv
@@ -159,6 +160,7 @@ import Flapjack.RiscV.L3.Step.RegisterALUStep
 import Flapjack.RiscV.L3.Step.ImmediateALUStep
 import Flapjack.RiscV.L3.Step.ImmediateComparison
 import Flapjack.RiscV.L3.Step.UpperImmediateStep
+import Flapjack.RiscV.L3.Step.JumpStep
 import Flapjack.RiscV.L3.Step.ImmediateShiftStep
 import Flapjack.RiscV.L3.Step.RegisterShiftStep
 import Flapjack.RiscV.L3.Step.WShiftStep
@@ -166,6 +168,7 @@ import Flapjack.RiscV.L3.Step.LoadStep
 import Flapjack.RiscV.L3.Step.StoreStep
 import Flapjack.RiscV.L3.Step.MulDivStep
 import Flapjack.RiscV.L3.Step.WordArithmeticStep
+import Flapjack.RiscV.L3.Step.ConditionalBranchStep
 import Flapjack.RiscV.L3.Step.DecodeAny
 import Flapjack.RiscV.L3.Defs.WritePC
 import Flapjack.Test.L3DecodeParity
@@ -1387,6 +1390,8 @@ import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.Sequence
 import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.PushOut
 import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.HoistPrerequisites
 import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.ConstFp
+import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.Hoist
+import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.CompileExp
 import Flapjack.Pancake.Proofs.WordConvs.WordCse
 import Flapjack.Pancake.Proofs.WordConvs.CopyProp
 import Flapjack.Pancake.Proofs.WordConvs.SSAWfCutsets
@@ -2564,6 +2569,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.MemoryLoad
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.MemoryStore
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Memory
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Skip
+import Flapjack.Pancake.Proofs.WordConvs.WordSimpLabels.ConstFp
 
 -- Tagged modules required by the HOL reference coverage gate.
 
