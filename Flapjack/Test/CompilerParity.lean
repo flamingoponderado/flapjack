@@ -1,3 +1,4 @@
+import Flapjack.Test.WordToStackStoreConstsCaller
 import Flapjack.Test.PanToWordGoodCodeParity
 import Flapjack.Test.CompileProgMaxExecutableParity
 import Flapjack.Test.WordToWordExecutableParity
@@ -20,6 +21,7 @@ import Flapjack.Test.L3ImmediateShiftParity
 import Flapjack.Test.StackRawCallCompileSemanticsParity
 import Flapjack.Test.WordToStackCallReturnHandlerParity
 import Flapjack.Test.StackRawCallCompCorrectParity
+import Flapjack.Test.FrameFfiNames
 import Flapjack.Test.LabToTargetInitializerFullStateRelParity
 import Flapjack.Test.LabToTargetInitializerDomainParity
 import Flapjack.Test.L3RegisterShiftParity

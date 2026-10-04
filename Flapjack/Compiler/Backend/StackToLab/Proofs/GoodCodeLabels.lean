@@ -121,11 +121,12 @@ theorem complexGetCodeLabelsStackNamesComp {width : Nat} [NeZero width] :
       rcases target with t | t <;>
       simp_all [StackNames.progCompHOL, complexGetCodeLabels, StackNames.destFindNameHOL]
 
-/-- HOL `stack_names_get_code_labels`. -/
+/-- HOL `stack_names_get_code_labels`. The program-name type stays generic, as HOL's
+`prog :(β # α prog) list`. -/
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "stack_names_get_code_labels"
   (words_as_type_indexed_bitvec)]
-theorem stackNamesGetCodeLabels {width : Nat} [NeZero width] {f : Spt Nat}
-    {prog : List (Nat × HolProg width)} :
+theorem stackNamesGetCodeLabels {width : Nat} [NeZero width] {Name : Type} {f : Spt Nat}
+    {prog : List (Name × HolProg width)} :
     List.Forall₂ (fun cp p => complexGetCodeLabels cp = complexGetCodeLabels p)
       ((StackNames.compileHOL f prog).map Prod.snd) (prog.map Prod.snd) := by
   simp only [StackNames.compileHOL, List.map_map]
@@ -822,11 +823,13 @@ theorem inDomainCollectInfo {width : Nat} [NeZero width] :
         · exact .inl (List.mem_cons_self ..)
         · exact .inr h
 
-/-- HOL `IN_get_code_labels_comp_top`. -/
+/-- HOL `IN_get_code_labels_comp_top`. The program list and the compiled body keep
+HOL's two independent word types (`prog :(num # β prog) list`, `q :α prog`); only
+the width-free `collect_info` table links them. -/
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "IN_get_code_labels_comp_top"
   (words_as_type_indexed_bitvec)]
-theorem inGetCodeLabelsCompTop {width : Nat} [NeZero width] {p_1 p_2 : Nat}
-    {prog : List (Nat × HolProg width)} {q : HolProg width} :
+theorem inGetCodeLabelsCompTop {width : Nat} {progWidth : Nat} [NeZero width] [NeZero progWidth]
+    {p_1 p_2 : Nat} {prog : List (Nat × HolProg progWidth)} {q : HolProg width} :
     (p_1, p_2) ∈ getCodeLabels (StackRawCall.compTop (StackRawCall.collectInfo prog .ln) q) →
       ∃ k, (p_1, k) ∈ getCodeLabels q ∧ (p_2 ≠ k → p_2 = 1 ∧ k = 0 ∧ p_1 ∈ prog.map Prod.fst) := by
   intro h

@@ -714,7 +714,8 @@ def compileFlapjackRiscVSourceRuntimeImageChecked [NeZero width]
                         firstFreshLabel := stackFunctionFirstLabel }
                       { } stackStoreConstsStubLocation RiscV.CakeRegAlloc.cakeRiscVRegisterCount
                       0 initialLabel
-                      (functions.map (fun (label, _, body) => (label, body))) with
+                      (functions.map (fun (label, _, body) => (label, body)))
+                      (some discoveredNames) with
                   | .error error =>
                       .error (sourceRiscVImageErrorOfLowering stackFunctionFirstLabel
                         pipeline.crepe (.labToRiscV error))

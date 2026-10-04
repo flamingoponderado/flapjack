@@ -1,3 +1,5 @@
+import Flapjack.RiscV.CorrectnessEncoding.MemoryFetch
+import Flapjack.RiscV.CorrectnessEncoding.MemoryFrame
 import Flapjack.RiscV.CorrectnessEncoding.MemoryRelation
 import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.Arithmetic
 import Flapjack.RiscV.CorrectnessEncoding.Rejected
@@ -16,6 +18,7 @@ import Flapjack.RiscV.CorrectnessEncoding.ShiftRorRegister
 import Flapjack.Compiler.Backend.WordToStack.ProductionMoveDomain
 import Flapjack.Compiler.Backend.WordToStack.ProductionMoveMaterialization
 import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapTransport
+import Flapjack.Compiler.Backend.WordToStack.ProductionStoreConsts
 import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapCaller
 import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapWrite
 import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapState
@@ -41,6 +44,7 @@ import Flapjack.RiscV.CorrectnessEncoding.Div
 import Flapjack.RiscV.CorrectnessEncoding.LongMul
 import Flapjack.RiscV.CorrectnessEncoding.AddCarry
 import Flapjack.RiscV.CorrectnessEncoding.AddOverflow
+import Flapjack.RiscV.CorrectnessEncoding.SubOverflow
 import Flapjack.Compiler.Encoders.RiscV.Target.AsmOkRewrites
 import Flapjack.RiscV.CorrectnessEncoding.DecodeDiv
 import Flapjack.RiscV.CorrectnessEncoding.DecodeLongMul
@@ -1463,6 +1467,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.StateRelationClock
 import Flapjack.Misc.BinaryIeeeSqrt.RealAgreement
 import Flapjack.Misc.BinaryIeeeSqrt.RoundAgreement
 import Flapjack.Misc.BinaryIeeeSqrt.RealCarrier
+import Flapjack.Misc.BinaryIeeeRest
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpLeaves
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Seq

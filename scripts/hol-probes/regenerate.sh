@@ -1562,6 +1562,11 @@ run_probe binary_ieee_real_probeScript.sml binary_ieee_real_probe.out \
 run_probe binary_ieee_convert_probeScript.sml binary_ieee_convert_probe.out \
   float_to_int_def real_to_float_def \
   "$repo_dir/HOL/src/floating-point/binary_ieeeScript.sml" "$repo_dir/HOL/src/floating-point"
+run_probe binary_ieee_rest_probeScript.sml binary_ieee_rest_probe.out \
+  is_integral_def float_is_integral_def ULP_def ulp_def integral_round_def \
+  float_round_to_integral_def float_mul_sub_def float_unordered_def \
+  exponent_boundary_def float_ulp_def next_hi_def next_lo_def \
+  "$repo_dir/HOL/src/floating-point/binary_ieeeScript.sml" "$repo_dir/HOL/src/floating-point"
 run_probe machine_ieee_fp64_defs_probeScript.sml machine_ieee_fp64_defs_probe.out \
   fp64_to_float_def fp64_isSignallingNan_def \
   "$repo_dir/HOL/src/floating-point/machine_ieeeScript.sml" "$repo_dir/HOL/src/floating-point"
@@ -4735,6 +4740,9 @@ run_probe target_sem_installed_probeScript.sml target_sem_installed_probe.out \
   "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe pan_to_target_pan_installed_source_replay_probeScript.sml pan_to_target_pan_installed_source_replay_probe.out \
   pan_installed_def_replay_statement pan_installed_imp_installed_replay_typed \
+  "$cake_dir/pancake/proofs/pan_to_targetProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe pan_to_target_compile_semantics_statement_replay_probeScript.sml pan_to_target_compile_semantics_statement_replay_probe.out \
+  pan_to_target_compile_semantics_statement pan_to_target_compile_semantics_typed pan_to_target_compile_semantics_free_vars bytes_in_word_def_typed \
   "$cake_dir/pancake/proofs/pan_to_targetProofScript.sml" "$cake_dir/pancake/proofs"
 run_probe pan_to_target_init_helpers_source_replay_probeScript.sml pan_to_target_init_helpers_source_replay_probe.out \
   word_to_stack_compile_FST_replay_statement InitGlobals_location_eq_first_name_replay_typed \
@@ -8220,6 +8228,10 @@ run_probe riscv_target_addoverflow_probeScript.sml riscv_target_addoverflow_prob
   riscv_encoder_correct_addoverflow_statement riscv_encoder_correct_addoverflow_types riscv_encoder_correct_addoverflow_hypotheses riscv_encoder_correct_addoverflow_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+run_probe riscv_target_suboverflow_probeScript.sml riscv_target_suboverflow_probe.out \
+  riscv_encoder_correct_suboverflow_statement riscv_encoder_correct_suboverflow_types riscv_encoder_correct_suboverflow_hypotheses riscv_encoder_correct_suboverflow_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
 
 run_probe riscv_control_decode_probeScript.sml riscv_control_decode_probe.out \
   jal_decode_universal jal_decode_hypotheses jalr_decode_universal jalr_decode_hypotheses jal_zero jal_all_ones jal_link_sign jal_scattered_bits jalr_zero jalr_all_ones jalr_link_alias jalr_mixed jal_source_clause jal_carrier_types jalr_source_clause jalr_carrier_types \
@@ -8358,3 +8370,7 @@ run_probe riscv_jumpcmp_offsets_probeScript.sml riscv_jumpcmp_offsets_probe.out 
   near0_statement near0_types near0_hypotheses near0_proved near0_boundary0 near0_boundary1 near0_boundary2 near0_boundary3 near0_boundary4 near4_statement near4_types near4_hypotheses near4_proved near4_boundary0 near4_boundary1 near4_boundary2 near4_boundary3 near4_boundary4 far4_statement far4_types far4_hypotheses far4_proved far4_boundary0 far4_boundary1 far4_boundary2 far4_boundary3 far4_boundary4 far8_statement far8_types far8_hypotheses far8_proved far8_boundary0 far8_boundary1 far8_boundary2 far8_boundary3 far8_boundary4 pc_bias_statement pc_bias_hypotheses pc_bias_proved reg_equal_source reg_equal_hypotheses reg_test_source reg_test_hypotheses imm_equal_source imm_equal_hypotheses imm_test_source imm_test_hypotheses \
   "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe word_to_stack_store_consts_caller_probeScript.sml word_to_stack_store_consts_caller_probe.out \
+  source_clause below8 wrap8 wrap64 exact_chunk8 width1 index_below8 index_wrap8 index_wrap64 \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"

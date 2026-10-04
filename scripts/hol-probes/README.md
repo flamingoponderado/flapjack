@@ -8494,6 +8494,19 @@ pair. The full native target closure inherits SOUNDNESS8. The statement and
 capture pin is a syntactic regression check, not a cross-language proof or full
 compiler theorem.
 
+`riscv_target_suboverflow_probe.out` captures the fully typed original full
+SubOverflow specialization of `riscv_encoder_correct`, with actual hypothesis
+count zero and HOL kernel result T. Lean retains only the original source step
+and initial relation, derives all six XOR/SUB/XOR/XORI/AND/SRLI native steps
+from encoded bytes, preserves arbitrary original interference and both
+assertions, and establishes PC24, code bytes and the complete signed-overflow
+post relation. Only original r1!=r3 is required; r1=r4 and other source-valid
+aliases remain. The full projection includes scratch31. Untagged arithmetic
+proves the native circuit equals HOL signed subtraction overflow for every word64
+pair. The full native target closure inherits SOUNDNESS8. The statement and
+capture pin is a syntactic regression check, not a cross-language proof or full
+compiler theorem.
+
 `riscv_memory_decode_probe.out` records each literal LD/LWU/LHU/LBU/SD/SW/SH/SB original Encode clause and intrinsic word5/word12 carriers, zero source hypotheses, and Decode/Encode evaluations at all-zero, all-one, and mixed-register/sign-offset inputs. Lean proves unrestricted roundtrips including zero registers and all offsets; finite probes are regression evidence, not universal equivalence. Full memory encoder correctness remains a dependency-linked open task.
 
 `pan_native_frontend_prefix_probeScript.sml` evaluates the complete source
@@ -8790,3 +8803,5 @@ the reviewed `reals_as_rational_cuts` assurance limit; no executable compiler
 definition changes here. Whole encoder and compiler assembly remain open.
 
 `pan_to_word_inst_ok_less_probe.out` captures the complete original typed six-pass instruction-validity theorem. Source declarations, asm_config and output word programs share one word dimension. The native proof composes reviewed source invariants and full LoopToWord instruction validity under the actual compile equation, both zero-offset guards and original good_panops guard. No target-run or desired-result premise is added; whole semantic compiler correctness remains open.
+
+`word_to_stack_store_consts_caller_probe.out` captures the original full typed StoreConsts comp clause and actual native outputs below/at 8-bit wrapping, at 64-bit wrapping, at the exact chunk boundary and at width1. Three w2n observations normalize the printed word literals. The source register is1 and original stub6; native code, complete flattened bitmap state/count and unconditional macro acceptance are kernel-checked against the repaired executed word-facing producer. The generic Nat macro helper is retained separately. This does not establish full WordToStack simulation or whole compiler correctness.
