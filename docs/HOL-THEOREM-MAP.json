@@ -96725,5 +96725,81 @@
     "lean_name": "markAllHOL_everyProg_loopInstOk",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only: the mark_all conjunct proved inside every_inst_ok_loop_live by mark_all_ind."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess.lean",
+    "lean_name": "everyInstOkLessCrepToLoopCompileExp",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_crep_to_loop_compile_exp",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_wordProofScript 803-814 both conjuncts: compile_exp and the mutual compile_exps (Lean compileExpsHOLExact), ctxt.target = c.ISA and every_exp premise, EVERY (every_prog (loop_inst_ok c)) of FST. The HOL predicate λx. ∀op es. x = Crepop op es ⇒ LENGTH es = 2 is stated literally through the Prop-valued crepEveryExpHOL; EVERY over exps_of/es as membership quantification; c : 'b asm_config has its own width binder independent of the program word dimension. Typed capture pan_to_word_crep_inst_ok probe.",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ]
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess.lean",
+    "lean_name": "everyProgLoopInstOkNestedSeq",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_prog_loop_inst_ok_nested_seq",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_wordProofScript 840-842: forall c ps, every_prog (loop_inst_ok c) (nested_seq ps) = EVERY ... ps as iff; independent c/prog widths. The HOL predicate λx. ∀op es. x = Crepop op es ⇒ LENGTH es = 2 is stated literally through the Prop-valued crepEveryExpHOL; EVERY over exps_of/es as membership quantification; c : 'b asm_config has its own width binder independent of the program word dimension. Typed capture pan_to_word_crep_inst_ok probe.",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec"
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess.lean",
+    "lean_name": "everyInstOkLessCrepToLoopCompile",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_crep_to_loop_compile",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_wordProofScript 849-854: forall ctxt ns body, ctxt.target = c.ISA /\\ EVERY (every_exp ...) (exps_of body) ==> every_prog (loop_inst_ok c) (compile ctxt ns body); proved by size induction since Lean cannot derive compileHOLExact's functional induction. The HOL predicate λx. ∀op es. x = Crepop op es ⇒ LENGTH es = 2 is stated literally through the Prop-valued crepEveryExpHOL; EVERY over exps_of/es as membership quantification; c : 'b asm_config has its own width binder independent of the program word dimension. Typed capture pan_to_word_crep_inst_ok probe.",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ]
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess.lean",
+    "lean_name": "everyInstOkLessCompFunc",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_comp_func",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_wordProofScript 886-888: EVERY (every_exp ...) (exps_of body) ==> every_prog (loop_inst_ok c) (comp_func c.ISA (make_funcs prog) params body), make_funcs the reviewed generic crepToLoopMakeFuncsExactHOL with independent γ δ. The HOL predicate λx. ∀op es. x = Crepop op es ⇒ LENGTH es = 2 is stated literally through the Prop-valued crepEveryExpHOL; EVERY over exps_of/es as membership quantification; c : 'b asm_config has its own width binder independent of the program word dimension. Typed capture pan_to_word_crep_inst_ok probe.",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess.lean",
+    "lean_name": "compileExpsHOLExact_values_length",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only: compile_exps returns one value per argument (HOL proves the analogue inline via LENGTH_1/compile_exps_alt)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess.lean",
+    "lean_name": "everyProg_zipWith_assign",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only: assignments of zipped registers/values satisfy every_prog (loop_inst_ok c) (HOL MAP2_ZIP/EVERY_MEM step)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only: same-module re-export of the reviewed CrepToLoopContextExact roundtrip witness for the fmap_as_finite_support qualifier."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps/EveryExpHOL.lean",
+    "lean_name": "crepEveryExpHOL",
+    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+    "hol_name": "every_exp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original crepPropsScript 1300-1312, all twelve clauses over the exact CrepExpHOL carrier (crepLang$exp); EVERY (every_exp P) es is the mutual list helper crepEveryExpListHOL (crepEveryExpListHOL_iff gives the membership form); HOL bool-valued P and result rendered as Prop. Typed capture pan_to_word_crep_inst_ok probe (crep_every_exp_def_typed)."
   }
 ]

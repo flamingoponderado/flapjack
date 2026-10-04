@@ -64,6 +64,7 @@ import Flapjack.Pancake.Proofs.PanToWord.StateRelImpSemantics
 import Flapjack.Pancake.Proofs.PanToWord.NoInstallCode
 import Flapjack.Pancake.Proofs.PanToWord.LabPres
 import Flapjack.Pancake.Proofs.PanToWord.EveryInstOkLess
+import Flapjack.Pancake.Semantics.CrepProps.EveryExpHOL
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.CarryOverflow
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegisterZero
 import Flapjack.RiscV.CorrectnessEncoding.ConstNext

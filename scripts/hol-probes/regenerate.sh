@@ -7473,6 +7473,10 @@ run_probe data_to_word_option_le_probeScript.sml data_to_word_option_le_probe.ou
   option_le_SOME_typed \
   "$cake_dir/compiler/backend/proofs/data_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe pan_to_word_crep_inst_ok_probeScript.sml pan_to_word_crep_inst_ok_probe.out \
+  crep_every_exp_def_typed every_inst_ok_less_crep_to_loop_compile_exp_typed every_prog_loop_inst_ok_nested_seq_typed every_inst_ok_less_crep_to_loop_compile_typed every_inst_ok_less_comp_func_typed \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+
 run_probe pan_to_word_loop_inst_ok_probeScript.sml pan_to_word_loop_inst_ok_probe.out \
   every_inst_ok_loop_call_typed every_inst_ok_loop_live_typed every_inst_ok_less_optimise_typed \
   "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"

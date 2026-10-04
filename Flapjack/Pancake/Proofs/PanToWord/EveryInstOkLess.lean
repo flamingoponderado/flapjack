@@ -1,6 +1,8 @@
 import Flapjack.Pancake.Proofs.LoopToWord.EveryInstOkLess
 import Flapjack.Pancake.LoopCall
 import Flapjack.Pancake.LoopLive
+import Flapjack.Pancake.CrepToLoop.ContextExact
+import Flapjack.Pancake.Semantics.CrepProps.EveryExpHOL
 
 /-!
 # `pan_to_wordProof`: `loop_inst_ok` preservation through the loop optimisations
@@ -13,7 +15,7 @@ Counterparts of `cakeml/pancake/proofs/pan_to_wordProofScript.sml` 738-801:
 
 namespace Flapjack.PanToWord
 
-open Flapjack Flapjack.LoopToWord Flapjack.Compiler.Encoders.Asm
+open Flapjack Flapjack.LoopToWord Flapjack.Compiler.Encoders.Asm Flapjack.Basis.Pure.MlString
 
 /-- Full original every_inst_ok_loop_call (`pan_to_wordProofScript.sml:738-752`). -/
 @[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "every_inst_ok_loop_call"
@@ -157,5 +159,340 @@ theorem everyInstOkLessOptimise {width : Nat} [NeZero width] {cWidth : Nat} [NeZ
     everyProgHOL (loopInstOk c) prog → everyProgHOL (loopInstOk c) (optimiseHOL prog) := by
   intro h
   exact everyInstOkLoopLive c _ (everyInstOkLoopCall c .ln prog h)
+
+/-- `compile_exps` returns one value per argument (Flapjack infrastructure). -/
+theorem compileExpsHOLExact_values_length {width : Nat} [NeZero width]
+    (ctxt : CrepToLoopContextExact) :
+    ∀ (n : Nat) (ns : NumSet) (es : List (CrepExpHOL width)),
+      (compileExpsHOLExact ctxt n ns es).2.1.length = es.length := by
+  intro n ns es
+  induction es generalizing n ns with
+  | nil => simp [compileExpsHOLExact]
+  | cons e es ih =>
+    rw [compileExpsHOLExact]
+    simp only [List.length_cons, ih]
+
+/-- Full original every_inst_ok_less_crep_to_loop_compile_exp
+(`pan_to_wordProofScript.sml:803-838`), both conjuncts: for `compile_exp` and for
+the mutual `compile_exps`. -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml"
+  "every_inst_ok_less_crep_to_loop_compile_exp"
+  (fmap_as_finite_support := [vars, funcs]) (words_as_type_indexed_bitvec)]
+theorem everyInstOkLessCrepToLoopCompileExp {width : Nat} [NeZero width]
+    {cWidth : Nat} [NeZero cWidth] (c : AsmConfigExact cWidth) :
+    (∀ (ctxt : CrepToLoopContextExact) (n : Nat) (ns : NumSet) (e : CrepExpHOL width),
+      ctxt.target = c.isa ∧
+        crepEveryExpHOL (fun x => ∀ op es, x = .crepOp op es → es.length = 2) e →
+      ∀ p ∈ (compileExpHOLExact ctxt n ns e).1, everyProgHOL (loopInstOk c) p) ∧
+    (∀ (ctxt : CrepToLoopContextExact) (n : Nat) (ns : NumSet) (es : List (CrepExpHOL width)),
+      ctxt.target = c.isa ∧
+        (∀ e ∈ es, crepEveryExpHOL (fun x => ∀ op es, x = .crepOp op es → es.length = 2) e) →
+      ∀ p ∈ (compileExpsHOLExact ctxt n ns es).1, everyProgHOL (loopInstOk c) p) := by
+  have key : ∀ (ctxt : CrepToLoopContextExact), ctxt.target = c.isa →
+      (∀ n ns (e : CrepExpHOL width),
+        crepEveryExpHOL (fun x => ∀ op es, x = .crepOp op es → es.length = 2) e →
+        ∀ p ∈ (compileExpHOLExact ctxt n ns e).1, everyProgHOL (loopInstOk c) p) ∧
+      (∀ n ns (es : List (CrepExpHOL width)),
+        (∀ e ∈ es, crepEveryExpHOL (fun x => ∀ op es, x = .crepOp op es → es.length = 2) e) →
+        ∀ p ∈ (compileExpsHOLExact ctxt n ns es).1, everyProgHOL (loopInstOk c) p) := by
+    intro ctxt ht
+    apply compileExpHOLExact.mutual_induct ctxt
+    all_goals intros
+    case case1 | case2 | case3 | case4 | case8 =>
+      rename_i hp; rw [compileExpHOLExact] at hp; simp at hp
+    case case13 =>
+      rename_i hp; rw [compileExpsHOLExact] at hp; simp at hp
+    case case5 hx ih he p hp =>
+      rw [compileExpHOLExact] at hp; simp only [hx] at hp
+      unfold crepEveryExpHOL at he
+      have := ih he.2; rw [hx] at this; exact this p hp
+    case case6 hx ih he p hp =>
+      rw [compileExpHOLExact] at hp; simp only [hx] at hp
+      unfold crepEveryExpHOL at he
+      have := ih he.2; rw [hx] at this
+      rcases List.mem_append.mp hp with hp | hp
+      · exact this p hp
+      · simp only [List.mem_cons, List.not_mem_nil, or_false] at hp
+        rcases hp with rfl | rfl <;> (unfold everyProgHOL; simp [loopInstOk])
+    case case7 hx ih he p hp =>
+      rw [compileExpHOLExact] at hp; simp only [hx] at hp
+      unfold crepEveryExpHOL at he
+      have := ih he.2; rw [hx] at this
+      rcases List.mem_append.mp hp with hp | hp
+      · exact this p hp
+      · simp only [List.mem_cons, List.not_mem_nil, or_false] at hp
+        rcases hp with rfl | rfl <;> (unfold everyProgHOL; simp [loopInstOk])
+    case case9 hx ih he p hp =>
+      rw [compileExpHOLExact] at hp; simp only [hx] at hp
+      unfold crepEveryExpHOL at he
+      have := ih ((crepEveryExpListHOL_iff _ _).mp he.2); rw [hx] at this; exact this p hp
+    case case12 hx1 _ _ _ _ hx2 ih2 ih1 he p hp =>
+      rw [compileExpHOLExact] at hp; simp only [hx1, hx2] at hp
+      unfold crepEveryExpHOL at he
+      have e1 := ih2 he.2.1; rw [hx1] at e1
+      have e2 := ih1 he.2.2; rw [hx2] at e2
+      rcases List.mem_append.mp hp with hp | hp
+      · exact e1 p hp
+      · exact e2 p hp
+    case case14 hx1 _ _ _ _ hx2 ih2 ih1 he p hp =>
+      rw [compileExpsHOLExact] at hp; simp only [hx1, hx2] at hp
+      have e1 := ih2 (he _ List.mem_cons_self); rw [hx1] at e1
+      have e2 := ih1 (fun e h => he e (List.mem_cons_of_mem _ h)); rw [hx2] at e2
+      rcases List.mem_append.mp hp with hp | hp
+      · exact e1 p hp
+      · exact e2 p hp
+    case case11 hx1 _ _ _ _ hx2 ih2 ih1 he p hp =>
+      rw [compileExpHOLExact] at hp; simp only [hx1, hx2, progIfHOLExact] at hp
+      unfold crepEveryExpHOL at he
+      have e1 := ih2 he.2.1; rw [hx1] at e1
+      have e2 := ih1 he.2.2; rw [hx2] at e2
+      simp only [List.mem_append, List.mem_cons, List.not_mem_nil, or_false] at hp
+      rcases hp with (hp | hp) | hp | hp | hp
+      · exact e1 p hp
+      · exact e2 p hp
+      all_goals (subst hp; unfold everyProgHOL; simp only [loopInstOk, true_and])
+      all_goals (try trivial)
+      exact ⟨by unfold everyProgHOL; trivial, by unfold everyProgHOL; trivial⟩
+    case case10 tmp live op es _ vals nxt _ hx1 opc dst hx2 ih he p hp =>
+      rw [compileExpHOLExact] at hp; simp only [hx1, hx2] at hp
+      unfold crepEveryExpHOL at he
+      have hlen : es.length = 2 := he.1 op es rfl
+      have hvl := compileExpsHOLExact_values_length ctxt tmp live es
+      rw [hx1] at hvl; simp only at hvl
+      have e1 := ih ((crepEveryExpListHOL_iff _ _).mp he.2); rw [hx1] at e1
+      rcases List.mem_append.mp hp with hp | hp
+      · rcases List.mem_append.mp hp with hp | hp
+        · exact e1 p hp
+        · have hz : ∀ (l : List Nat) (vs : List (HolLoopExp width)),
+              p ∈ List.zipWith (fun o v => HolLoopProg.assign (nxt + o) v) l vs →
+              ∃ a b, p = HolLoopProg.assign a b := by
+            intro l
+            induction l with
+            | nil => intro vs h; simp at h
+            | cons x xs ihl =>
+              intro vs h
+              cases vs with
+              | nil => simp at h
+              | cons v vs =>
+                simp only [List.zipWith_cons_cons, List.mem_cons] at h
+                rcases h with rfl | h
+                · exact ⟨_, _, rfl⟩
+                · exact ihl vs h
+          obtain ⟨a, b, rfl⟩ := hz _ _ hp
+          unfold everyProgHOL; simp [loopInstOk]
+      · cases op
+        rw [hvl, hlen] at hx2
+        unfold compileCrepopHOLExact at hx2
+        by_cases h7 : ctxt.target = .armv7
+        · simp only [h7, if_true, Prod.mk.injEq] at hx2
+          obtain ⟨rfl, -⟩ := hx2
+          simp only [List.mem_singleton] at hp; subst hp
+          unfold everyProgHOL
+          simp only [loopInstOk]
+          exact ⟨fun _ => by omega, fun _ => ⟨by omega, by omega⟩⟩
+        · simp only [h7, if_false, Prod.mk.injEq] at hx2
+          obtain ⟨rfl, -⟩ := hx2
+          simp only [List.mem_singleton] at hp; subst hp
+          unfold everyProgHOL
+          simp only [loopInstOk]
+          exact ⟨fun h => absurd (ht.trans h) h7, fun _ => ⟨by omega, by omega⟩⟩
+  exact ⟨fun ctxt n ns e h => (key ctxt h.1).1 n ns e h.2,
+    fun ctxt n ns es h => (key ctxt h.1).2 n ns es h.2⟩
+
+/-- Full original every_prog_loop_inst_ok_nested_seq
+(`pan_to_wordProofScript.sml:840-847`); HOL's Boolean equation is `↔`. -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "every_prog_loop_inst_ok_nested_seq"
+  (words_as_type_indexed_bitvec)]
+theorem everyProgLoopInstOkNestedSeq {cWidth : Nat} [NeZero cWidth] {width : Nat} [NeZero width] :
+    ∀ (c : AsmConfigExact cWidth) (ps : List (HolLoopProg width)),
+      everyProgHOL (loopInstOk c) (loopNestedSeqHOL ps) ↔ ∀ p ∈ ps, everyProgHOL (loopInstOk c) p := by
+  intro c ps
+  induction ps with
+  | nil => simp [loopNestedSeqHOL, everyProgHOL, loopInstOk]
+  | cons p ps ih =>
+    simp [loopNestedSeqHOL, everyProgHOL, loopInstOk, ih]
+
+/-- Every assignment produced by zipping registers with values satisfies
+`every_prog (loop_inst_ok c)` (Flapjack infrastructure). -/
+theorem everyProg_zipWith_assign {width : Nat} [NeZero width] {cWidth : Nat} [NeZero cWidth]
+    (c : AsmConfigExact cWidth) :
+    ∀ (ns : List Nat) (vs : List (HolLoopExp width)),
+      ∀ p ∈ List.zipWith HolLoopProg.assign ns vs, everyProgHOL (loopInstOk c) p := by
+  intro ns
+  induction ns with
+  | nil => intro vs p h; simp at h
+  | cons n ns ih =>
+    intro vs p h
+    cases vs with
+    | nil => simp at h
+    | cons v vs =>
+      simp only [List.zipWith_cons_cons, List.mem_cons] at h
+      rcases h with rfl | h
+      · simp [everyProgHOL, loopInstOk]
+      · exact ih vs p h
+
+namespace CrepToLoopContextWitness
+
+/-- Same-module witness for the `fmap_as_finite_support := [vars, funcs]`
+qualifier of `every_inst_ok_less_crep_to_loop_compile`, re-exporting the
+reviewed `CrepToLoopContextExact` roundtrip. -/
+theorem holFmapAsFiniteSupportWitness (context : CrepToLoopContextExact) :
+    CrepToLoopContextExact.ofBroad (CrepToLoopContextExact.toBroad context) = context :=
+  CrepToLoopContextExact.holFmapAsFiniteSupportWitness context
+
+end CrepToLoopContextWitness
+
+/-- Full original every_inst_ok_less_crep_to_loop_compile
+(`pan_to_wordProofScript.sml:849-884`). -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml"
+  "every_inst_ok_less_crep_to_loop_compile"
+  (fmap_as_finite_support := [vars, funcs]) (words_as_type_indexed_bitvec)]
+theorem everyInstOkLessCrepToLoopCompile {width : Nat} [NeZero width]
+    {cWidth : Nat} [NeZero cWidth] (c : AsmConfigExact cWidth) :
+    ∀ (ctxt : CrepToLoopContextExact) (ns : NumSet) (body : CrepProgHOL width),
+      ctxt.target = c.isa ∧
+        (∀ e ∈ crepExpsOfHOL body,
+          crepEveryExpHOL (fun x => ∀ op es, x = .crepOp op es → es.length = 2) e) →
+      everyProgHOL (loopInstOk c) (compileHOLExact ctxt ns body) := by
+  intro ctxt ns body
+  induction hs : sizeOf body using Nat.strongRecOn generalizing ctxt ns body with
+  | _ k ih =>
+  rintro ⟨ht, he⟩
+  have hexp := fun n ns e h => (everyInstOkLessCrepToLoopCompileExp (width := width) c).1 ctxt n ns e ⟨ht, h⟩
+  have hexps := fun n ns es h => (everyInstOkLessCrepToLoopCompileExp (width := width) c).2 ctxt n ns es ⟨ht, h⟩
+  cases body
+  case skip | «break» | «continue» | tick | raise =>
+    rw [compileHOLExact.eq_def]; simp [everyProgHOL, loopInstOk]
+  case primitive =>
+    rw [compileHOLExact.eq_def]; dsimp only; split <;> simp [everyProgHOL, loopInstOk]
+  case extCall =>
+    rw [compileHOLExact.eq_def]; dsimp only; split <;> simp [everyProgHOL, loopInstOk]
+  case assign name value =>
+    have hv := he value (by rw [crepExpsOfHOL]; simp)
+    rw [compileHOLExact.eq_def]; dsimp only
+    split
+    · simp [everyProgHOL, loopInstOk]
+    · rw [everyProgLoopInstOkNestedSeq]
+      simp only [List.forall_mem_append, List.forall_mem_cons]
+      exact ⟨hexp _ _ _ hv, by simp [everyProgHOL, loopInstOk], by simp⟩
+  case store a v =>
+    have ha := he a (by rw [crepExpsOfHOL]; simp)
+    have hv := he v (by rw [crepExpsOfHOL]; simp)
+    rw [compileHOLExact.eq_def]; dsimp only
+    rw [everyProgLoopInstOkNestedSeq]
+    simp only [List.forall_mem_append, List.forall_mem_cons]
+    exact ⟨⟨hexp _ _ _ ha, hexp _ _ _ hv⟩, by simp [everyProgHOL, loopInstOk],
+      by simp [everyProgHOL, loopInstOk], by simp⟩
+  case store32 a v | storeByte a v =>
+    have ha := he a (by rw [crepExpsOfHOL]; simp)
+    have hv := he v (by rw [crepExpsOfHOL]; simp)
+    rw [compileHOLExact.eq_def]; dsimp only
+    rw [everyProgLoopInstOkNestedSeq]
+    simp only [List.forall_mem_append, List.forall_mem_cons]
+    exact ⟨⟨hexp _ _ _ ha, hexp _ _ _ hv⟩, by simp [everyProgHOL, loopInstOk],
+      by simp [everyProgHOL, loopInstOk], by simp [everyProgHOL, loopInstOk], by simp⟩
+  case storeGlob a v =>
+    have hv := he v (by rw [crepExpsOfHOL]; simp)
+    rw [compileHOLExact.eq_def]; dsimp only
+    rw [everyProgLoopInstOkNestedSeq]
+    simp only [List.forall_mem_append, List.forall_mem_cons]
+    exact ⟨hexp _ _ _ hv, by simp [everyProgHOL, loopInstOk], by simp⟩
+  case shMem op n a =>
+    have ha := he a (by rw [crepExpsOfHOL]; simp)
+    rw [compileHOLExact.eq_def]; dsimp only
+    split
+    · simp [everyProgHOL, loopInstOk]
+    · rw [everyProgLoopInstOkNestedSeq]
+      simp only [List.forall_mem_append, List.forall_mem_cons]
+      exact ⟨hexp _ _ _ ha, by simp [everyProgHOL, loopInstOk], by simp⟩
+  case «return» vs =>
+    have hvs : ∀ e ∈ vs, _ := fun e h => he e (by rw [crepExpsOfHOL]; exact h)
+    rw [compileHOLExact.eq_def]; dsimp only
+    rw [everyProgLoopInstOkNestedSeq]
+    simp only [List.forall_mem_append, List.forall_mem_cons]
+    exact ⟨⟨hexps _ _ _ hvs, everyProg_zipWith_assign c _ _⟩,
+      by simp [everyProgHOL, loopInstOk], by simp⟩
+  case seq f g =>
+    have hf := ih (sizeOf f) (by rw [← hs]; simp; omega) ctxt ns f rfl
+      ⟨ht, fun e h => he e (by rw [crepExpsOfHOL]; simp [h])⟩
+    have hg := ih (sizeOf g) (by rw [← hs]; simp; omega) ctxt ns g rfl
+      ⟨ht, fun e h => he e (by rw [crepExpsOfHOL]; simp [h])⟩
+    rw [compileHOLExact.eq_def]; dsimp only
+    unfold everyProgHOL
+    exact ⟨by simp [loopInstOk], hf, hg⟩
+  case dec n v b =>
+    have hv := he v (by rw [crepExpsOfHOL]; simp)
+    rw [compileHOLExact.eq_def]; dsimp only
+    have hb := ih (sizeOf b) (by rw [← hs]; simp; omega)
+      { ctxt with vars := ctxt.vars.updateEq (n, (compileExpHOLExact ctxt (ctxt.vmax + 1) ns v).2.2.1),
+                  vmax := (compileExpHOLExact ctxt (ctxt.vmax + 1) ns v).2.2.1 }
+      (sptInsert (compileExpHOLExact ctxt (ctxt.vmax + 1) ns v).2.2.1 () ns) b rfl
+      ⟨ht, fun e h => he e (by rw [crepExpsOfHOL]; simp [h])⟩
+    unfold everyProgHOL
+    refine ⟨by simp [loopInstOk], (everyProgLoopInstOkNestedSeq c _).mpr (hexp _ _ _ hv), ?_⟩
+    unfold everyProgHOL
+    exact ⟨by simp [loopInstOk], by simp [everyProgHOL, loopInstOk], hb⟩
+  case ite cond t f =>
+    have hc := he cond (by rw [crepExpsOfHOL]; simp)
+    have hT := ih (sizeOf t) (by rw [← hs]; simp; omega) ctxt ns t rfl
+      ⟨ht, fun e h => he e (by rw [crepExpsOfHOL]; simp [h])⟩
+    have hF := ih (sizeOf f) (by rw [← hs]; simp; omega) ctxt ns f rfl
+      ⟨ht, fun e h => he e (by rw [crepExpsOfHOL]; simp [h])⟩
+    rw [compileHOLExact.eq_def]; dsimp only
+    rw [everyProgLoopInstOkNestedSeq]
+    simp only [List.forall_mem_append, List.forall_mem_cons]
+    refine ⟨hexp _ _ _ hc, by simp [everyProgHOL, loopInstOk], ?_, by simp⟩
+    unfold everyProgHOL
+    exact ⟨by simp [loopInstOk], hT, hF⟩
+  case «while» cond b =>
+    have hc := he cond (by rw [crepExpsOfHOL]; simp)
+    have hb := ih (sizeOf b) (by rw [← hs]; simp; omega) ctxt ns b rfl
+      ⟨ht, fun e h => he e (by rw [crepExpsOfHOL]; simp [h])⟩
+    rw [compileHOLExact.eq_def]; dsimp only
+    unfold everyProgHOL
+    refine ⟨by simp [loopInstOk], ?_⟩
+    rw [everyProgLoopInstOkNestedSeq]
+    simp only [List.forall_mem_append, List.forall_mem_cons]
+    refine ⟨hexp _ _ _ hc, by simp [everyProgHOL, loopInstOk], ?_, by simp⟩
+    unfold everyProgHOL
+    refine ⟨by simp [loopInstOk], ?_, by simp [everyProgHOL, loopInstOk]⟩
+    unfold everyProgHOL
+    exact ⟨by simp [loopInstOk], hb, by simp [everyProgHOL, loopInstOk]⟩
+  case call ri name args =>
+    have hargs : ∀ e ∈ args, _ := fun e h => he e (by
+      rcases ri with _ | ⟨_, _ | ⟨_, _⟩⟩ <;> rw [crepExpsOfHOL] <;> simp [h])
+    rw [compileHOLExact.eq_def]; dsimp only
+    rw [everyProgLoopInstOkNestedSeq]
+    simp only [List.forall_mem_append, List.forall_mem_cons]
+    refine ⟨⟨hexps _ _ _ hargs, everyProg_zipWith_assign c _ _⟩, ?_, by simp⟩
+    rcases ri with _ | ⟨rv, _ | ⟨exn, hp⟩⟩
+    · simp [everyProgHOL, loopInstOk]
+    · simp [everyProgHOL, loopInstOk]
+    · have hh := ih (sizeOf hp) (by rw [← hs]; simp; omega) ctxt ns hp rfl
+        ⟨ht, fun e h => he e (by rw [crepExpsOfHOL]; simp [h])⟩
+      dsimp only
+      unfold everyProgHOL
+      refine ⟨by simp [loopInstOk], ?_, by simp [everyProgHOL, loopInstOk]⟩
+      unfold everyProgHOL
+      refine ⟨by simp [loopInstOk], by simp [everyProgHOL, loopInstOk], ?_⟩
+      unfold everyProgHOL
+      exact ⟨by simp [loopInstOk], by simp [everyProgHOL, loopInstOk], hh⟩
+
+/-- Full original every_inst_ok_less_comp_func (`pan_to_wordProofScript.sml:886-893`):
+`comp_func c.ISA (make_funcs prog) params body`, with `make_funcs` the reviewed
+generic `crepToLoopMakeFuncsExactHOL` over the independent `γ`, `δ` of HOL's
+`prog : (mlstring # γ list # δ) list`. -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "every_inst_ok_less_comp_func"
+  (words_as_type_indexed_bitvec)]
+theorem everyInstOkLessCompFunc {width : Nat} [NeZero width] {cWidth : Nat} [NeZero cWidth]
+    {γ δ : Type} (c : AsmConfigExact cWidth) (prog : List (MlString × List γ × δ))
+    (params : List Nat) (body : CrepProgHOL width) :
+    (∀ e ∈ crepExpsOfHOL body,
+      crepEveryExpHOL (fun x => ∀ op es, x = .crepOp op es → es.length = 2) e) →
+    everyProgHOL (loopInstOk c)
+      (compFuncHOLExact c.isa (crepToLoopMakeFuncsExactHOL prog) params body) := by
+  intro h
+  unfold compFuncHOLExact
+  exact everyInstOkLessCrepToLoopCompile c _ _ body ⟨rfl, h⟩
 
 end Flapjack.PanToWord
