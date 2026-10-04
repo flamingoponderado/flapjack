@@ -577,6 +577,7 @@
     {"bytes": 368, "out": "list_last_probe.out", "rows": 9, "sha256": "e9fdfae3d2017a699a58270047c628dbceb196bc28a80f1a0e914ba19eb352ab"},
     {"bytes": 44351, "out": "list_lookup_probe.out", "rows": 486, "sha256": "9799fff1f34eade059c21d752556314d34cb6bcff19a23f5e7bb7d7dc0afe9e3"},
     {"bytes": 985, "out": "list_next_var_rename_lemma1_probe.out", "rows": 9, "sha256": "c9790cbf4f3cc71fbed4ef5081511a37d24c63f04d5c05a6bc92eb04c8136429"},
+    {"bytes": 160, "out": "load_globals_alt_probe.out", "rows": 1, "sha256": "5667b70821d5145e4d08249a14b1f17ecf8be1bdbe33324508081d04b7178d4e"},
     {"bytes": 359, "out": "logroot_log_spec_probe.out", "rows": 8, "sha256": "5cf619f4ed1260f0f44d1fd9811776080f9c6bd5d8d2c15ca74482e492c464ea"},
     {"bytes": 2466, "out": "longdiv_code_probe.out", "rows": 3, "sha256": "bd61a29e95403e5a53ca9682d3632f3a7320454ecf635d5dd451501d3e923ede"},
     {"bytes": 531, "out": "loop_call_comp_probe.out", "rows": 21, "sha256": "3f7c5941d190013edf8116670109e1ff824c1465ae886b4c246b34fa8855c32b"},

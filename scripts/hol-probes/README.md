@@ -8629,3 +8629,5 @@ environments/assertions, missing AUIPC, changed scratch projection/shift, and
 missing original evidence. These syntactic checks supplement source review and
 Lean kernel checking; full encoder assembly and whole compiler correctness
 remain separate open work. No executed compiler path changes here.
+
+`load_globals_alt_probe.out` captures the complete original typed arbitrary-address/count GENLIST equality. The address is fixed word5; native expression dimension remains independently quantified. This prerequisite supports Call-handler compiler validity, not full source-pass or compiler correctness.
