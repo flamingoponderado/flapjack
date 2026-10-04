@@ -98003,5 +98003,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-crep-load-globals-alt: original1050-1055 full forall address count equality and regenerated full typed original capture; loadGlobalsHOL exactly follows native load_globals_def zero/successor clauses. GENLIST represented constructor-for-constructor by List.range count mapped at every Nat index, same order/length. Original global address carrier remains fixed BitVec5, expression dimension width independent and positive. Word dimension qualifier covers only the native CrepExpHOL dimension, not fixed word5 specialization. BitVec.ofNat5 implements original n2w index and modular addition. No guards/output assumptions/scope narrowing. Required by full PanToCrep compile Call handlers; full compile/inline/source composition remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Call.lean",
+    "lean_name": "riscv_encoder_correct_call",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol: compared original Call riscv_targetProof723-730/riscv_target258-263, source asmStep/call/jumpToOffset/asm_ok and full encoder_correct_def. Tagged root has only original source step plus initial targetStateRel and full existential/allenv/bothassertions/code-byte/PC/finalrelation conclusion. Near JALrd1 uses source arithmetic halfword shift/signed21 bounds and witness0; far AUIPCrd1/JALRrd1=rs1 uses original signed split, witness1/env0-env1/intermediatePC4. Literal four/eight emitted bytes derive full native fetch/decode/Run/Next. Source configuration supplies lr=1 and original offset/alignment/reg guards. Actual aliased JALR reads old register1 before link overwrite; near/far final link values sourcePC+4/sourcePC+8. No non-alias, decoder, target-run or post-state premise; full native projection preserves source register across interference, memory/frame/all original registers retained. Same-counterpart helpers are untagged local compositions with no separate HOL originals. Inherits reviewed reals_as_rational_cuts assurance limit SOUNDNESS8 through native Run; no production-route or full encoder/compiler completion claim."
   }
 ]
