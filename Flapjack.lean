@@ -63,6 +63,9 @@ import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingle
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Frame
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Leaf
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Control
+import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Call
+import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Assembly
+import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileWordToWord
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsShort
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ChunkBitsMsb
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsPattern
@@ -91,6 +94,8 @@ import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmMemory
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentWordMemory
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.DataBufferWrite
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CodeBufferWrite
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Install
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.ShareInst
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Set
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelStoreUpdate
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.LocValue
@@ -2497,6 +2502,8 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionSourceFlat
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ConstantInstruction
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterClock
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.If
+import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.MemoryLoad
+import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.MemoryStore
 
 -- Tagged modules required by the HOL reference coverage gate.
 
