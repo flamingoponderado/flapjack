@@ -1,0 +1,34 @@
+extract_labels_loc_to_pc_statement_typed=∀(l1 :num) (l2 :num) (code :α sec list).
+  EVERY (sec_labels_ok :α sec -> bool) code ∧
+  MEM (l1,l2)
+    (FLAT
+       (MAP
+          ((extract_labels :α line list -> (num # num) list) ∘
+           (Section_lines :α sec -> α line list)) code)) ⇒
+  ∃(y :num). loc_to_pc l1 l2 code = SOME y
+extract_labels_loc_to_pc_hyp_count=0
+loc_to_pc_definition_typed=(∀(n2 :num) (n1 :num). loc_to_pc n1 n2 ([] :α sec list) = (NONE :num option)) ∧
+∀(ys :α sec list) (xs :α line list) (n2 :num) (n1 :num) (k :num).
+  loc_to_pc n1 n2 (Section k xs::ys) =
+  if k = n1 ∧ n2 = (0 :num) then SOME (0 :num)
+  else
+    case xs of
+      ([] :α line list) => loc_to_pc n1 n2 ys
+    | z::zs =>
+      if (∃(k :num). z = (Label n1 n2 k :α line)) ∧ n2 ≠ (0 :num) then
+        SOME (0 :num)
+      else if is_Label z then loc_to_pc n1 n2 (Section k zs::ys)
+      else
+        case loc_to_pc n1 n2 (Section k zs::ys) of
+          (NONE :num option) => (NONE :num option)
+        | SOME pos' => SOME (pos' + (1 :num))
+sec_labels_ok_definition_typed=∀(k :num) (ls :α line list).
+  sec_labels_ok (Section k ls) ⇔ EVERY (sec_label_ok k :α line -> bool) ls
+extract_labels_definition_typed=extract_labels ([] :α line list) = ([] :(num # num) list) ∧
+(∀(xs :α line list) (v0 :num) (l2 :num) (l1 :num).
+   extract_labels ((Label l1 l2 v0 :α line)::xs) = (l1,l2)::extract_labels xs) ∧
+(∀(xs :α line list) (v7 :num) (v6 :word8 list) (v5 :α asm_or_cbw).
+   extract_labels (Asm v5 v6 v7::xs) = extract_labels xs) ∧
+∀(xs :α line list) (v9 :α word) (v8 :α asm_with_lab) (v11 :num)
+    (v10 :word8 list).
+  extract_labels (LabAsm v8 v9 v10 v11::xs) = extract_labels xs

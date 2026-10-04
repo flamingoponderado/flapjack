@@ -1,0 +1,20 @@
+compute_labels_alt_domain_labs_statement_typed=∀(pos :num) (code :α sec list) (labs :num sptree$num_map sptree$num_map).
+  (domain (compute_labels_alt pos code labs) :num -> bool) =
+  IMAGE (FST :num # num -> num) (get_code_labels code) ∪
+  (domain labs :num -> bool)
+compute_labels_alt_domain_labs_hyp_count=0
+remove_labels_loop_domain_labs_statement_typed=∀(a :num) (b :α asm_config) (c :num) (d :num sptree$num_map sptree$num_map)
+    (e :ffiname list) (f :α sec list) (g :α sec list)
+    (h :num sptree$num_map sptree$num_map).
+  remove_labels_loop a b c d e f = SOME (g,h) ⇒
+  (domain h :num -> bool) =
+  IMAGE (FST :num # num -> num) (get_code_labels f) ∪ (domain d :num -> bool)
+remove_labels_loop_domain_labs_hyp_count=0
+remove_labels_domain_labs_statement_typed=remove_labels (c :num) (t :α asm_config) (k :num)
+  (init_labs :num sptree$num_map sptree$num_map) (f :ffiname list)
+  (p :α sec list) =
+SOME ((q :α sec list),(labs :num sptree$num_map sptree$num_map)) ⇒
+(domain labs :num -> bool) =
+IMAGE (FST :num # num -> num) (get_code_labels p) ∪
+(domain init_labs :num -> bool)
+remove_labels_domain_labs_hyp_count=0

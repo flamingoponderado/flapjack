@@ -75,7 +75,7 @@ correspondence additionally covers arbitrary partner lists.
 `pan_to_target_word_to_word_no_install_source_replay_probe.out` is a literal source replay of pan_to_targetProof `word_to_word_compile_no_install_no_alloc` (the original proof theory is unbuilt): the script fails if the pinned source text changes, then re-proves the statement with HOL's own tactic over the loaded original theories and prints it, for `Pancake/Proofs/PanToTarget/WordToWordNoInstall.lean`. Not an exported original-theory capture.
 `word_to_word_compile_semantics_probe.out` captures the statement, hypothesis count and typed form of `panLang_compile_word_to_word_thm` and `word_to_word_compile_semantics` for `Compiler/Backend/WordToWord/Proofs/CompileSemantics.lean`. Statement evidence for source review only.
 `word_to_word_no_install_compile_single_probe.out` captures the statement, hypothesis count and typed form of `no_install_no_alloc_compile_single_correct` for `Compiler/Backend/WordToWord/Proofs/NoInstallCompileSingle.lean`. Statement evidence for source review only.
-`word_convs_typed_captures_probe.out` captures, with `show_types`, the 96 PR1213 wordConvsProof rows (including the `notCreated_*` family) that had no typed capture: 12 exported theorems printed from the loaded wordConvsProofTheory, 83 `[local]` theorems as typed source parses (literal source statement parsed in that context; not re-proved), and the `const_fp_loop_Seq` alias as a guarded replay of its literal derivation. Statement evidence for source review only.
+`word_convs_typed_captures_probe.out` captures, with `show_types`, the 96 PR1213 wordConvsProof rows (including the `notCreated_*` family) that had no typed capture: 12 exported theorems printed from the loaded wordConvsProofTheory, 83 `[local]` theorems as typed source parses (literal source statement parsed in that context; not re-proved), and the `const_fp_loop_Seq` alias as a guarded replay of its literal derivation. It also carries typed source parses of the three `[local]` good_handlers SSA lemmas `fake_seq_good_handlers`, `ssa_reconcile_good_handlers` and `loop_setup_good_handlers`, which justify the `fakeSeqGood`/`reconcileGood`/`loopSetupGood` tags in `WordConvs/GoodHandlersSSA.lean`. Statement evidence for source review only.
 `word_convs_cse_copy_probe.out` captures, with `show_types`, the full zero-hypothesis statements of the twelve exported wordConvsProof theorems of `WordCse.lean`, `CopyProp.lean`, `SSAWfCutsets.lean` and the `wf_cutsets` additions to `Unreach.lean`/`ThreeToTwo.lean`; the `[local]` theorems of those sections are not exported (the `CopyProp.lean` ones have a typed source parse in `word_convs_copy_prop_locals_typed_probe.out`). Statement evidence for source review only.
 `word_inst_three_to_two_probe.out` captures the full zero-hypothesis statements of the exported word_instProof `three_to_two_reg_Loop`, `three_to_two_reg_correct` (also fully typed) and `evaluate_three_to_two_reg_prog`; the local `locals_rel_cut_envs_local` is not exported. Statement evidence for source review only.
 
@@ -8850,6 +8850,8 @@ cross-language proof.
 `is_riscv_machine_config_def` are replayed verbatim (guarded) and `riscv_init_ok`
 is re-proved with its own HOL tactic; `backend_config_ok_def` and `names_tac` are
 likewise replayed and `riscv_backend_config_ok` re-proved with its HOL proof;
+`riscv_machine_config_ok` is re-proved with its HOL proof over the built
+`lab_to_targetProof` and `riscv_targetProof` theories;
 typed statements and hypothesis counts are captured for
 `Flapjack/Compiler/Backend/RiscVConfig/Proofs.lean`.
 
@@ -8864,3 +8866,24 @@ seventeen original constructor groups and target_ok without extra premises.
 The native model retains reals_as_rational_cuts (SOUNDNESS section 8).
 This regression evidence does not prove cross-language equivalence or establish
 production compiler routing or the whole Pancake-to-RISC-V correctness theorem.
+
+`lab_to_target_outer_domain_probe.out` captures the three full original outer-map domain theorems with full types and zero hypotheses. These preserve IMAGE FST of code labels union the initial outer Spt domain, distinct from the guarded paired-label domain theorem. Captures are statement-review evidence, not HOL-to-Lean equivalence or whole compiler completion.
+
+`lab_to_target_extracted_label_navigation_probe.out` captures the full original navigation existence theorem and direct navigation/section-validity/extraction definition types. The port retains EVERY section validity and FLAT MAP label membership and derives the existential PC. Captures are source-review evidence, not cross-language equivalence or whole compiler completion.
+
+### Two-sided native config/fetch and constructor regression checks
+The native config checker compares both the original full config capture and
+the reviewed Lean record body, including all fields, signed immediate policy
+and native encoder. Fetch16/Fetch32 compare the original universal captures
+and the complete reviewed Lean signatures; comments, formatting and theorem
+proof changes are outside those signature checks. Source changes require
+source review before updating the expected contracts.
+
+The target fixture checker inventories all ten original assembler carrier
+families against their actual Lean owners/aliases, requires every constructor
+and every Binop/Shift/JumpCmp Reg/Imm mode in both sample terms, and checks the
+sample inputs against the original probe. The existing 300 AST/byte fixtures
+remain finite regression evidence, not a universal equivalence proof. Missing
+constructors, mode omissions, source/Lean carrier drift and probe-input drift
+have negative tests. Lake, original capture regeneration and manual source
+comparison remain separate required gates.

@@ -90,6 +90,7 @@ import Flapjack.Pancake.Proofs.PanToTarget.AssemblyGoodCode
 import Flapjack.Pancake.Proofs.PanToTarget.AssemblyTopResource
 import Flapjack.Pancake.Proofs.PanToTarget.AssemblyGoodCodeSource
 import Flapjack.Pancake.Proofs.PanToTarget.AssemblyTop
+import Flapjack.Pancake.Proofs.PanToTarget.RiscVInstance
 import Flapjack.Pancake.Proofs.PanToTarget.InitHelpers
 import Flapjack.Pancake.Proofs.PanToTarget.PanInstalled
 import Flapjack.Pancake.Proofs.PanToTarget.LabelsChain
@@ -455,6 +456,8 @@ import Flapjack.Compiler.Backend.LabToTarget.ZeroPositionEvenLabels
 import Flapjack.Compiler.Backend.LabToTarget.EvenLabels
 import Flapjack.Compiler.Backend.LabToTarget.OddInstructionAlignment
 import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelPreservation
+import Flapjack.Compiler.Backend.LabToTarget.ExtractedLabelNavigation
+import Flapjack.Compiler.Backend.LabToTarget.OuterLabelDomain
 import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelDomain
 import Flapjack.Compiler.Backend.LabToTarget.SectionLabelExtraction
 import Flapjack.Compiler.Backend.LabToTarget.LabelExistenceDomain
@@ -1538,6 +1541,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordLemmas
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunOk
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunConstOk
 import Flapjack.Compiler.Backend.WordSimp.Proofs.GcWordConst
+import Flapjack.Compiler.Backend.WordSimp.ProductionSmartSeq
 import Flapjack.Compiler.Backend.WordSimp.Proofs.SeqAssoc
 import Flapjack.Compiler.Backend.WordSimp.Proofs.ConstFpLemmas
 import Flapjack.Compiler.Backend.WordSimp.Proofs.GcConsts

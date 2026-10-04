@@ -2,8 +2,9 @@ import Flapjack.Compiler.Backend.WordToStackRegFormat
 import Flapjack.Misc.Sptree
 
 /-! Exact Spt/cutsets bitmap boundary for the Word-to-Stack compiler.
-The full comp/compile_prog/compile_semantics port and production routing remain
-open. Existing list-domain helpers are retained as infrastructure, not exact
+comp_correct and compile_semantics are ported separately (WordToStack/Proofs/
+CompCorrect/Assembly.lean, WordToStack/Proofs/CompileSemantics.lean); production
+routing through these carriers is tracked separately. Existing list-domain helpers are retained as infrastructure, not exact
 HOL ports; the equations below connect them to the literal source carriers. -/
 namespace Flapjack.Compiler.Backend.WordToStack
 open Flapjack Flapjack.Compiler.Backend.StackLang

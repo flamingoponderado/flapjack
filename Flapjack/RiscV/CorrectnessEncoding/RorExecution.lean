@@ -4,7 +4,8 @@ import Flapjack.RiscV.CorrectnessEncoding.ConstExecution
 /-! Ror case-local native list composition, not a named HOL port.
 The actual target iterator is reused unchanged. Every fetch/Next transition and
 full interference/memory assertion follows from emitted bytes and original
-validity; no target execution is assumed. Full Ror encoder cases remain open. -/
+validity; no target execution is assumed. The full Ror encoder cases are
+riscv_encoder_correct_shiftRorRegister and riscv_encoder_correct_shiftRorImmediate. -/
 namespace Flapjack.RiscV.TargetProof
 open Flapjack RiscV.L3 RiscV.L3.Step Compiler.Encoders.RiscV.Target
   Compiler.Encoders.AsmProps
@@ -60,7 +61,8 @@ theorem ror_interleaved_step_projection (d : BitVec 64 → Prop)
 
 /-- Complete pure-list native frame and total PC increment, for arbitrary
 length and every intrinsic operand. The emitted-byte execution connection is
-proved per instruction above; full encoded-list assertions remain open. -/
+proved per instruction above; the full encoded-list assertions are derived by the Ror
+case theorems (ShiftRorRegister.lean, ShiftRorImmediate.lean). -/
 theorem ror_step_list_frame (is : List instruction)
     (kinds : ∀ i ∈ is, RorInstruction i) (ms : riscv_state)
     (ok : riscvOk ms = true) :
