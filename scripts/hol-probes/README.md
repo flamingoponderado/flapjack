@@ -8180,3 +8180,15 @@ they are source review evidence, not a cross-assistant equivalence proof.
 closed, kernel-proved `evaluate_wInst` specialization for an arbitrary Arith
 opcode, retaining every guard and the full target existential. This is source
 statement evidence, not cross-assistant equivalence.
+
+`word_cse_production_fact_aux_probe.out` captures both full original typed
+add_to_data_aux/add_to_load_aux definitions and inferred types, with twelve
+complete output observations. Instruction and load producers each cover
+lookup miss/hit, even/odd destinations, latest-holder presence and missing
+holder fallback. All five returned knowledge fields and the complete
+Move/Tick program are replayed by kernel fixtures and actual executed runtime
+checks. ProductionFactAux derives these transitions from input representation
+and the original selected native table invariant, retaining unrelated fields.
+Successful input codec conversion is an explicit representation boundary;
+unsupported native program carriers and whole-pass adoption remain separate.
+No tagged original theorem is narrowed or cross-language equivalence claimed.
