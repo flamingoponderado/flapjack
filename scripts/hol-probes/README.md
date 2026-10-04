@@ -8180,3 +8180,9 @@ independent cross-language equivalence proof.
 closed, kernel-proved `evaluate_wInst` specialization for an arbitrary Arith
 opcode, retaining every guard and the full target existential. This is source
 statement evidence, not cross-assistant equivalence.
+
+`word_to_stack_inst_full_probeScript.sml` captures the original complete
+`evaluate_wInst` and its whole FP-family specialization, with full types,
+closed quantification, zero hypotheses and kernel-proved statements. Source
+review evidence covers the original guards and complete target existential;
+it does not assert cross-assistant equivalence or whole compiler correctness.
