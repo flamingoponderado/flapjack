@@ -8204,3 +8204,7 @@ run_probe riscv_memory_run_probeScript.sml riscv_memory_run_probe.out \
 run_probe pan_source_entry_word_probeScript.sml pan_source_entry_word_probe.out \
   empty_word missing_word \
   "$cake_dir/pancake/pan_to_targetScript.sml" "$cake_dir/pancake"
+
+run_probe pan_simp_validity_probeScript.sml pan_simp_validity_probe.out \
+  every_inst_ok_less_ret_to_tail every_inst_ok_less_seq_assoc every_inst_ok_less_pan_simp_compile every_inst_ok_less_pan_simp_compile_prog \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs" "$cake_dir/pancake"
