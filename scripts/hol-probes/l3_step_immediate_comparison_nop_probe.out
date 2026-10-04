@@ -1,0 +1,8 @@
+slti_nop_statement=∀s rs1 rd imm. rd = 0w ⇒ (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1w ⇒ dfn'SLTI (rd,rs1,imm) s = s
+slti_nop_types=s : :riscv_state, rs1 : :word5, rd : :word5, imm : :word12
+slti_nop_source_hypotheses=2
+slti_nop_proved=T
+sltiu_nop_statement=∀s rs1 rd imm. rd = 0w ⇒ (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1w ⇒ dfn'SLTIU (rd,rs1,imm) s = s
+sltiu_nop_types=s : :riscv_state, rs1 : :word5, rd : :word5, imm : :word12
+sltiu_nop_source_hypotheses=2
+sltiu_nop_proved=T

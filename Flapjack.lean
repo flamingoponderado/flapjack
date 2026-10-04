@@ -271,6 +271,7 @@ import Flapjack.RiscV.L3.Step.AvoidSignalAddressException
 import Flapjack.RiscV.L3.Step.RegisterALUStep
 import Flapjack.RiscV.L3.Step.ImmediateALUStep
 import Flapjack.RiscV.L3.Step.ImmediateComparison
+import Flapjack.RiscV.L3.Step.ImmediateComparisonNop
 import Flapjack.RiscV.L3.Step.UpperImmediateStep
 import Flapjack.RiscV.L3.Step.JumpStep
 import Flapjack.RiscV.L3.Step.RegisterComparison
@@ -457,6 +458,7 @@ import Flapjack.Compiler.Backend.LabToTarget.ZeroPositionEvenLabels
 import Flapjack.Compiler.Backend.LabToTarget.EvenLabels
 import Flapjack.Compiler.Backend.LabToTarget.OddInstructionAlignment
 import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelPreservation
+import Flapjack.Compiler.Backend.LabToTarget.FfiReadInterference
 import Flapjack.Compiler.Backend.LabToTarget.FfiNameDistinctness
 import Flapjack.Compiler.Backend.LabToTarget.ExtractedLabelNavigation
 import Flapjack.Compiler.Backend.LabToTarget.OuterLabelDomain
@@ -1293,6 +1295,8 @@ import Flapjack.Compiler.Backend.WordAlloc.ProductionCallEntryEvaluation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeSSAEvaluation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeDeadEvaluation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeUnreachEvaluation
+import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeCleanupSuffixEvaluation
+import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeCleanupChainEvaluation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeSsaFirstDeadEvaluation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionSourceSsaFirstDeadEvaluation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSACanonicalImage
@@ -2608,6 +2612,7 @@ import Flapjack.Lab
 import Flapjack.RiscV.Lab
 import Flapjack.RiscV.LabDiagnostics
 import Flapjack.RiscV.WordDiagnostics
+import Flapjack.RiscV.WordToStackFailure
 import Flapjack.FfiHOL
 import Flapjack.FfiBridge
 import Flapjack.Compiler.Backend.RegAlloc.StateForeach
