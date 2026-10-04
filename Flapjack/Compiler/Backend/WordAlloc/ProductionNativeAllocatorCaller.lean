@@ -1,6 +1,8 @@
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorCleanupMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSAOutputCodec
 import Flapjack.Compiler.Backend.WordAlloc.ProductionTotalColourOutput
+import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeCopyMemoryGuard
+import Flapjack.Compiler.Backend.WordAlloc.ProductionCopyOutputCodec
 
 namespace Flapjack.WordAlloc
 open RiscV RiscV.CakeRegAlloc RegAlloc Flapjack.Compiler.Encoders.Asm
@@ -19,7 +21,9 @@ theorem nativeAllocatorCaller_production {width : Nat} [NeZero width]
     (config : AsmConfigExact width) (target : config.isa = .riscv) :
     ∃ (output : CakeAllocationWithColour (BitVec width))
         (nativeOutput : WordLangProgHOL (BitVec width)),
-      cakeAllocateWordFunctionAfterDeadWithColourNativeSSA label parameters source = some output ∧
+      cakeAllocateWordFunctionAfterDeadWithColourWithSsaAndCopy
+        wordCopyPropViaHOL wordRemoveDeadProgramViaHOL wordRemoveUnreachViaHOL?
+        wordFullSsaCcTransNativeWithState label parameters source = some output ∧
       wordLangProgToHOL output.program = some nativeOutput ∧
       regAlloc .IRC (getHeuristics 3 label nativeOutput).2 cakeRiscVRegisterCount
         (getHeuristics 3 label nativeOutput).1 (getClashTree nativeOutput [])
@@ -38,14 +42,15 @@ theorem nativeAllocatorCaller_production {width : Nat} [NeZero width]
       have bodyAccepted := wordFullSsaCcTransNativeWithStateFromHOL_outputCodec
         parameters.length native (state, formals, body) produced
       have threeTwoSupported : allocatorMemorySupported (wordThreeToTwoReg
-          (wordCopyProp (wordCseProp (wordRemoveDeadProgramViaHOL body)))) = true := by
-        rw [threeToTwoMemoryGuard, copyWrapperMemoryGuard]
+          (wordCopyPropViaHOL (wordCseProp (wordRemoveDeadProgramViaHOL body)))) = true := by
+        rw [threeToTwoMemoryGuard, nativeCopyWrapperMemoryGuard]
         apply cseWrapperMemoryGuard
         exact routedRemoveDeadMemoryGuard body bodySupported
       have threeTwoAccepted : (wordLangProgToHOL (wordThreeToTwoReg
-          (wordCopyProp (wordCseProp (wordRemoveDeadProgramViaHOL body))))).isSome = true := by
-        rw [wordLangProgToHOL_wordThreeToTwoReg_isSome, wordCopyProp_codecDomain,
-          wordLangProgToHOL_wordCseProp_isSome]
+          (wordCopyPropViaHOL (wordCseProp (wordRemoveDeadProgramViaHOL body))))).isSome = true := by
+        rw [wordLangProgToHOL_wordThreeToTwoReg_isSome]
+        apply wordCopyPropViaHOL_outputCodec
+        rw [wordLangProgToHOL_wordCseProp_isSome]
         exact wordRemoveDeadProgramViaHOL_outputCodec body bodyAccepted
       obtain ⟨beforeDead, unreachRun⟩ :=
         Option.isSome_iff_exists.mp (wordRemoveUnreachViaHOL?_isSome _ threeTwoAccepted)
@@ -69,11 +74,12 @@ theorem nativeAllocatorCaller_production {width : Nat} [NeZero width]
           let output : CakeAllocationWithColour (BitVec width) :=
             ⟨state, formals, cleanup,
               cakeColourWordSpillState cakeRiscVRegisterCount parameters cleanup colours, colours⟩
-          have allocated : cakeAllocateWordFunctionAfterDeadWithColourNativeSSA label parameters source =
+          have allocated : cakeAllocateWordFunctionAfterDeadWithColourWithSsaAndCopy
+              wordCopyPropViaHOL wordRemoveDeadProgramViaHOL wordRemoveUnreachViaHOL?
+              wordFullSsaCcTransNativeWithState label parameters source =
               some output := by
-            simp [cakeAllocateWordFunctionAfterDeadWithColourNativeSSA,
-              cakeAllocateWordFunctionAfterDeadWithColourWithSsa,
-              cakeAllocateWordFunctionAfterDeadWithColourWithSsaAndCopy, encoded, supported, produced,
+            simp [cakeAllocateWordFunctionAfterDeadWithColourWithSsaAndCopy,
+              wordFullSsaCcTransNativeWithState, encoded, supported, produced,
               bodySupported, unreachRun, beforeSupported, cleanupSupported, cleanup, output,
               actualRun]
           refine ⟨output, cleanupNative, allocated, cleanupEncoded, nativeRun, ?_⟩

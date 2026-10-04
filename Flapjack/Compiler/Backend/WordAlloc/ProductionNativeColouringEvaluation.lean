@@ -22,7 +22,9 @@ theorem nativeAllocator_colouringEvaluation {width : Nat} [NeZero width] {C F : 
     (st : WordSemStateFiniteExact width C F) (physical : evenStartingLocals st.locals) :
     ∃ (output : CakeAllocationWithColour (BitVec width))
         (nativeOutput colouredNative : WordLangProgHOL (BitVec width)),
-      cakeAllocateWordFunctionAfterDeadWithColourNativeSSA label parameters source = some output ∧
+      cakeAllocateWordFunctionAfterDeadWithColourWithSsaAndCopy
+        wordCopyPropViaHOL wordRemoveDeadProgramViaHOL wordRemoveUnreachViaHOL?
+        wordFullSsaCcTransNativeWithState label parameters source = some output ∧
       wordLangProgToHOL output.program = some nativeOutput ∧
       wordLangProgToHOL output.colouredProgram = some colouredNative ∧
       ∃ perm',

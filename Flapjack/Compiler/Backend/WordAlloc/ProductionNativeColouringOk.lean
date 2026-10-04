@@ -29,7 +29,9 @@ theorem nativeAllocator_colouringOk {width : Nat} [NeZero width]
     (config : AsmConfigExact width) (target : config.isa = .riscv) :
     ∃ (output : CakeAllocationWithColour (BitVec width))
         (nativeOutput : WordLangProgHOL (BitVec width)),
-      cakeAllocateWordFunctionAfterDeadWithColourNativeSSA label parameters source = some output ∧
+      cakeAllocateWordFunctionAfterDeadWithColourWithSsaAndCopy
+        wordCopyPropViaHOL wordRemoveDeadProgramViaHOL wordRemoveUnreachViaHOL?
+        wordFullSsaCcTransNativeWithState label parameters source = some output ∧
       wordLangProgToHOL output.program = some nativeOutput ∧
       wordLangProgToHOL output.colouredProgram =
         some (applyColour (totalColour (sptFromAList output.colouring)) nativeOutput) ∧
