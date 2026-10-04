@@ -70,6 +70,19 @@ class ProbeRowCheckerTest(unittest.TestCase):
         rows[-1] = (rows[-1][0], "not an inferred type")
         self.assertTrue(ROWS.check_typed_capture(name, script, rows))
 
+    def test_word_to_word_locals_require_each_typed_original_statement(self):
+        name = "word_to_word_locals_typed_probe.out"
+        script = "val _ = Globals.show_types := true; fun emit x = print_term x;"
+        rows = self._typed_rows(name)
+        self.assertEqual(ROWS.check_typed_capture(name, script, rows), [])
+        for index, (label, _) in enumerate(rows):
+            with self.subTest(label=label):
+                self.assertTrue(ROWS.check_typed_capture(
+                    name, script, rows[:index] + rows[index + 1:]))
+                untyped = rows.copy()
+                untyped[index] = (label, "P x")
+                self.assertTrue(ROWS.check_typed_capture(name, script, untyped))
+
     def test_unrelated_probe_has_no_added_type_contract(self):
         self.assertEqual(ROWS.check_typed_capture("demo_probe.out", "", [("alpha", "1")]), [])
 

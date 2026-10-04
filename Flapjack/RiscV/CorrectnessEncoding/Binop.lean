@@ -11,7 +11,8 @@ only the original asmStep/initial relation premise and complete existential,
 interference and assertion conclusion. The reviewed cases derive actual native
 Next from emitted bytes; no target run or range fact is an added premise.
 Inherited reals_as_rational_cuts assumption of the full native target/Run
-closure is retained (SOUNDNESS item8). Other encoder constructors remain open. -/
+closure is retained (SOUNDNESS item8). `CorrectnessEncoding.Complete`
+assembles the full encoder correctness theorem. -/
 @[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml"
   "riscv_encoder_correct"]
 theorem riscv_encoder_correct_binop (op : HolBinop) (rd rs1 : Nat) (right : HolRegImm 64) (s1 s2 : AsmState 64) (ms : riscv_state)

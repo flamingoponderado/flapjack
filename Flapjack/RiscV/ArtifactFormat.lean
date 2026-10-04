@@ -199,11 +199,12 @@ def initializedRuntimeSymbolLines (crepe : List (CompiledFunction (RiscV.Word 64
   sections.zipIdx.map (fun (entry, ordinal) =>
     s!"    makesym({initializedRuntimeSymbolName crepe ordinal entry.label}, {entry.address.toNat}, {entry.bytes.length})")
 
-def pancakeRuntimeAssembly
-    (crepe : List (CompiledFunction (RiscV.Word 64)))
-    (image : Flapjack.SourceRiscVRuntimeImage 64) : String :=
-  let bytes := image.sections.flatMap (fun entry => entry.bytes)
-  let ffiStubLines := image.ffiNames.reverse.flatMap (fun name =>
+/-- The Pancake assembly frame of `export_riscv`'s `riscv_export` with `ret = F`: preamble,
+data and bitmap words, startup code, FFI stubs (in reversed collector order), the code
+bytes, the code buffer and the given `makesym` symbol lines. -/
+def pancakeAssemblyFrame (ffiNames : List String) (bytes : List (BitVec 8))
+    (bitmapData : List Nat) (symbolLines : List String) : String :=
+  let ffiStubLines := ffiNames.reverse.flatMap (fun name =>
     [s!"cake_ffi{name}:", s!"     tail cdecl(ffi{name})", "     .p2align 4", ""])
   String.intercalate "\n"
     (pancakePrologue ++
@@ -211,7 +212,7 @@ def pancakeRuntimeAssembly
        "     .p2align 3", "cdecl(cml_heap): .quad 0",
        "cdecl(cml_stack): .quad 0", "cdecl(cml_stackend): .quad 0",
        "     .p2align 3", "cake_bitmaps:"] ++
-      assemblyBitmapLines (pancakeBitmapData image.bitmaps) ++
+      assemblyBitmapLines bitmapData ++
       [
        "     .globl cdecl(cake_bitmaps_buffer_begin)",
         "cdecl(cake_bitmaps_buffer_begin):", "#if defined(EVAL)",
@@ -237,7 +238,13 @@ def pancakeRuntimeAssembly
           "     .space CODE_BUFFER_SIZE", "#endif", "     .p2align 12",
           "     .globl cdecl(cake_codebuffer_end)",
           "cdecl(cake_codebuffer_end):", "     .space 4096"]
-      ++ initializedRuntimeSymbolLines crepe image.sections
+      ++ symbolLines
       ++ [""])
+
+def pancakeRuntimeAssembly
+    (crepe : List (CompiledFunction (RiscV.Word 64)))
+    (image : Flapjack.SourceRiscVRuntimeImage 64) : String :=
+  pancakeAssemblyFrame image.ffiNames (image.sections.flatMap (fun entry => entry.bytes))
+    (pancakeBitmapData image.bitmaps) (initializedRuntimeSymbolLines crepe image.sections)
 
 end Flapjack.RiscV

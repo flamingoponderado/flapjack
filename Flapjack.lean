@@ -1,4 +1,23 @@
+import Flapjack.RiscV.SourceRuntimeBackendOutput
+import Flapjack.RiscV.RuntimeImageBackendOutput
+import Flapjack.RiscV.NativeBackendOutput
+import Flapjack.Compiler.Backend.RiscVConfig.Executable
+import Flapjack.RiscV.CorrectnessEncoding.BitRewrites
+import Flapjack.RiscV.CorrectnessEncoding.JumpCmp
+import Flapjack.RiscV.CorrectnessEncoding.Complete
+import Flapjack.RiscV.CorrectnessEncoding.MemoryAssertions
+import Flapjack.RiscV.CorrectnessEncoding.MemoryFetch
+import Flapjack.RiscV.CorrectnessEncoding.MemoryFrame
+import Flapjack.RiscV.CorrectnessEncoding.MemoryRelation
+import Flapjack.RiscV.CorrectnessEncoding.MemoryFetch
+import Flapjack.RiscV.CorrectnessEncoding.MemoryFrame
+import Flapjack.RiscV.CorrectnessEncoding.MemoryRelation
+import Flapjack.RiscV.CorrectnessEncoding.JumpCmp
+import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.Arithmetic
+import Flapjack.RiscV.CorrectnessEncoding.Rejected
 import Flapjack.RiscV.CorrectnessEncoding.MemoryStore
+import Flapjack.RiscV.CorrectnessEncoding.MemoryInputs
+import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.Native
 import Flapjack.RiscV.CorrectnessEncoding.MemoryRead
 import Flapjack.Compiler.Encoders.AsmSem.MemoryByteShift
 import Flapjack.RiscV.CorrectnessEncoding.MemorySource
@@ -11,10 +30,13 @@ import Flapjack.RiscV.CorrectnessEncoding.ShiftRorRegister
 import Flapjack.Compiler.Backend.WordToStack.ProductionMoveDomain
 import Flapjack.Compiler.Backend.WordToStack.ProductionMoveMaterialization
 import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapTransport
+import Flapjack.Compiler.Backend.WordToStack.ProductionStoreConsts
 import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapCaller
 import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapWrite
 import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapState
 import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapWritePair
+import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapConsumption
+import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapTraversal
 import Flapjack.RiscV.CorrectnessEncoding.ShiftRorImmediate
 import Flapjack.RiscV.CorrectnessEncoding.RorExecution
 import Flapjack.RiscV.CorrectnessEncoding.RorStep
@@ -34,6 +56,7 @@ import Flapjack.RiscV.CorrectnessEncoding.Div
 import Flapjack.RiscV.CorrectnessEncoding.LongMul
 import Flapjack.RiscV.CorrectnessEncoding.AddCarry
 import Flapjack.RiscV.CorrectnessEncoding.AddOverflow
+import Flapjack.RiscV.CorrectnessEncoding.SubOverflow
 import Flapjack.Compiler.Encoders.RiscV.Target.AsmOkRewrites
 import Flapjack.RiscV.CorrectnessEncoding.DecodeDiv
 import Flapjack.RiscV.CorrectnessEncoding.DecodeLongMul
@@ -46,6 +69,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelMemory
 
 import Flapjack.Test.PanToTargetSourceParity
 import Flapjack.Pancake.PanToTarget
+import Flapjack.Pancake.PanToTarget.MainFirstSemantics
 import Flapjack.Pancake.PanToTarget.ProductionSourceEntry
 
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelFp
@@ -67,6 +91,19 @@ import Flapjack.Pancake.Proofs.PanToTarget.AssemblyResourceLimit
 import Flapjack.Pancake.Proofs.PanToTarget.AssemblyInitCode
 import Flapjack.Pancake.Proofs.PanToTarget.AssemblyInitMemory
 import Flapjack.Pancake.Proofs.PanToTarget.AssemblyResourceStage
+import Flapjack.Pancake.Proofs.PanToTarget.AssemblyGoodCode
+import Flapjack.Pancake.Proofs.PanToTarget.AssemblyTopResource
+import Flapjack.Pancake.Proofs.PanToTarget.AssemblyGoodCodeSource
+import Flapjack.Pancake.Proofs.PanToTarget.AssemblyTop
+import Flapjack.Pancake.Proofs.PanToTarget.RiscVInstance
+import Flapjack.Pancake.Proofs.PanToTarget.RiscVInstanceExecutable
+import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMaxAsm
+import Flapjack.Pancake.Proofs.PanToTarget.RiscVSource
+import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMaxAsmWith
+import Flapjack.RiscV.NativeSource
+import Flapjack.RiscV.NativeCLIAdapter
+import Flapjack.Pancake.Proofs.PanToTarget.NativeSourceCorrect
+import Flapjack.Pancake.Proofs.PanToTarget.NativeCLICorrect
 import Flapjack.Pancake.Proofs.PanToTarget.InitHelpers
 import Flapjack.Pancake.Proofs.PanToTarget.PanInstalled
 import Flapjack.Pancake.Proofs.PanToTarget.LabelsChain
@@ -86,6 +123,8 @@ import Flapjack.Pancake.Proofs.PanToTarget.AssemblyStackToLab
 import Flapjack.Pancake.Proofs.PanToTarget.AssemblyMemory
 import Flapjack.Pancake.Proofs.PanToTarget.AssemblyWordToStack
 import Flapjack.Pancake.Proofs.PanToTarget.AssemblyPanToWord
+import Flapjack.Pancake.Proofs.PanToTarget.AssemblyLabChain
+import Flapjack.Pancake.Proofs.PanToTarget.AssemblyMachineToLab
 import Flapjack.Pancake.Semantics.CrepProps.EveryExpHOL
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.CarryOverflow
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegisterZero
@@ -156,6 +195,7 @@ import Flapjack.RiscV.CorrectnessEncoding.Skip
 import Flapjack.Compiler.Backend.WordToWord.Config
 import Flapjack.Compiler.Backend.WordToWord.Compile
 import Flapjack.Compiler.Backend.WordToWord.ExecutableCompile
+import Flapjack.Compiler.Backend.WordToWord.FastCompile
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CodeRel
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingle
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Frame
@@ -244,6 +284,7 @@ import Flapjack.RiscV.L3.Step.AvoidSignalAddressException
 import Flapjack.RiscV.L3.Step.RegisterALUStep
 import Flapjack.RiscV.L3.Step.ImmediateALUStep
 import Flapjack.RiscV.L3.Step.ImmediateComparison
+import Flapjack.RiscV.L3.Step.ImmediateComparisonNop
 import Flapjack.RiscV.L3.Step.UpperImmediateStep
 import Flapjack.RiscV.L3.Step.JumpStep
 import Flapjack.RiscV.L3.Step.RegisterComparison
@@ -430,6 +471,10 @@ import Flapjack.Compiler.Backend.LabToTarget.ZeroPositionEvenLabels
 import Flapjack.Compiler.Backend.LabToTarget.EvenLabels
 import Flapjack.Compiler.Backend.LabToTarget.OddInstructionAlignment
 import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelPreservation
+import Flapjack.Compiler.Backend.LabToTarget.FfiReadInterference
+import Flapjack.Compiler.Backend.LabToTarget.FfiNameDistinctness
+import Flapjack.Compiler.Backend.LabToTarget.ExtractedLabelNavigation
+import Flapjack.Compiler.Backend.LabToTarget.OuterLabelDomain
 import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelDomain
 import Flapjack.Compiler.Backend.LabToTarget.SectionLabelExtraction
 import Flapjack.Compiler.Backend.LabToTarget.LabelExistenceDomain
@@ -1184,6 +1229,14 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionInstructionMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionColourDomain
 import Flapjack.Compiler.Backend.WordToStack.ProductionProgramMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionFrame
+import Flapjack.Compiler.Backend.WordToStack.ProductionFrameCaller
+import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.Instructions
+import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.TopStubs
+import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.SourceDomain
+import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.RemoveMustTerminate
+import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.SourceOutput
+import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.MoveHelpers
+import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.Traversal
 import Flapjack.Compiler.Backend.WordToStack.ProductionLocations
 import Flapjack.Compiler.Backend.WordToStack.ProductionConfiguration
 import Flapjack.Compiler.Backend.WordToStack.ProductionScheduler
@@ -1222,6 +1275,7 @@ import Flapjack.Compiler.Backend.RegAlloc.ProductionInitTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionNumSet
 import Flapjack.Compiler.Backend.RegAlloc.ProductionBijection
 import Flapjack.Compiler.Backend.RegAlloc.ProductionInputCodec
+import Flapjack.Compiler.Backend.RegAlloc.ProductionInputGuard
 import Flapjack.Compiler.Backend.RegAlloc.ProductionGraphRows
 import Flapjack.Compiler.Backend.RegAlloc.ProductionCliqueBatch
 import Flapjack.Compiler.Backend.RegAlloc.ProductionForcedGraph
@@ -1260,6 +1314,9 @@ import Flapjack.Compiler.Backend.WordAlloc.ProductionCallEntryEvaluation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeSSAEvaluation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeDeadEvaluation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeUnreachEvaluation
+import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeCleanupSuffixEvaluation
+import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeCleanupChainEvaluation
+import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeAllocatorEvaluation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeSsaFirstDeadEvaluation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionSourceSsaFirstDeadEvaluation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSACanonicalImage
@@ -1451,6 +1508,7 @@ import Flapjack.Pancake.Proofs.PanGlobals.StateRelationClock
 import Flapjack.Misc.BinaryIeeeSqrt.RealAgreement
 import Flapjack.Misc.BinaryIeeeSqrt.RoundAgreement
 import Flapjack.Misc.BinaryIeeeSqrt.RealCarrier
+import Flapjack.Misc.BinaryIeeeRest
 import Flapjack.Pancake.Proofs.PanGlobals.CompileExpLeaves
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Base
 import Flapjack.Pancake.Proofs.PanGlobals.CompileCorrect.Seq
@@ -1499,6 +1557,7 @@ import Flapjack.Pancake.Proofs.WordConvs.UnreachPreAlloc
 import Flapjack.Compiler.Backend.WordRemove
 import Flapjack.Compiler.Backend.WordRemove.Production
 import Flapjack.Compiler.Backend.WordRemove.ProductionAllocatorImage
+import Flapjack.Compiler.Backend.WordRemove.ProductionCallerErrors
 import Flapjack.Compiler.Backend.WordRemove.Proofs.CompileState
 import Flapjack.Compiler.Backend.WordRemove.Proofs.Correct
 import Flapjack.Compiler.Backend.DataToWord.Config
@@ -1510,6 +1569,12 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordLemmas
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunOk
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunConstOk
 import Flapjack.Compiler.Backend.WordSimp.Proofs.GcWordConst
+import Flapjack.Compiler.Backend.WordSimp.ProductionSmartSeq
+import Flapjack.Compiler.Backend.WordSimp.ProductionPushOutIf
+import Flapjack.Compiler.Backend.WordSimp.ProductionSeqAssoc
+import Flapjack.Compiler.Backend.WordSimp.ProductionConstFp
+import Flapjack.Compiler.Backend.WordSimp.ProductionDuplicateIf
+import Flapjack.Compiler.Backend.WordSimp.ProductionCompileExp
 import Flapjack.Compiler.Backend.WordSimp.Proofs.SeqAssoc
 import Flapjack.Compiler.Backend.WordSimp.Proofs.ConstFpLemmas
 import Flapjack.Compiler.Backend.WordSimp.Proofs.GcConsts
@@ -1555,6 +1620,10 @@ import Flapjack.Compiler.Backend.StackProps.AddressNames
 import Flapjack.Compiler.Backend.StackProps.InstructionNames
 import Flapjack.Compiler.Backend.StackProps.ArithmeticNames
 import Flapjack.Compiler.Backend.RiscVConfig.RegisterNames
+import Flapjack.Compiler.Backend.RiscVConfig.BackendConfig
+import Flapjack.Compiler.Backend.RiscVConfig.Proofs
+import Flapjack.Compiler.Backend.RiscVConfig.PancakeConfigOk
+import Flapjack.Compiler.Compiler
 import Flapjack.Compiler.Backend.StackNames.CallLinkProjection
 import Flapjack.Compiler.Backend.StackNames.ProgramNames
 import Flapjack.Compiler.Backend.StackNames.InstructionNames
@@ -2099,6 +2168,10 @@ import Flapjack.Pancake.Proofs.PanToWord.EveryInstOkLess.PanStructs
 import Flapjack.Pancake.Proofs.PanToWord.PanSimpValidity
 import Flapjack.Pancake.Proofs.PanToWord.PanToCrepValidity
 import Flapjack.Pancake.Proofs.PanToWord.PanToCrepCompileExpValidity
+import Flapjack.Pancake.Proofs.PanToWord.PanToCrepCompileValidity
+import Flapjack.Pancake.Proofs.PanToWord.PanToCrepTableValidity
+import Flapjack.Pancake.Proofs.PanToWord.PanToCrepProgramValidity
+import Flapjack.Pancake.Proofs.PanToWord.CompileProgInstOkLess
 import Flapjack.Pancake.Proofs.PanToWord.LoadGlobalsValidity
 import Flapjack.Pancake.Proofs.PanToWord.PanToCrepInlineTableValidity
 import Flapjack.Pancake.Proofs.CrepInline.ExpressionProvenance
@@ -2564,6 +2637,7 @@ import Flapjack.Lab
 import Flapjack.RiscV.Lab
 import Flapjack.RiscV.LabDiagnostics
 import Flapjack.RiscV.WordDiagnostics
+import Flapjack.RiscV.WordToStackFailure
 import Flapjack.FfiHOL
 import Flapjack.FfiBridge
 import Flapjack.Compiler.Backend.RegAlloc.StateForeach

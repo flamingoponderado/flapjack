@@ -1,3 +1,5 @@
+import Flapjack.Test.RiscVBackendConfigExecutable
+import Flapjack.Test.WordToStackStoreConstsCaller
 import Flapjack.Test.PanToWordGoodCodeParity
 import Flapjack.Test.CompileProgMaxExecutableParity
 import Flapjack.Test.WordToWordExecutableParity
@@ -1156,6 +1158,7 @@ import Flapjack.Test.WordSemSemanticsParity
 import Flapjack.Test.LoopPropsEvalExactParity
 import Flapjack.Test.SptreeSetOpsParity
 import Flapjack.Test.WordSimpSeqAssocParity
+import Flapjack.Test.WordSimpConstFpMemParity
 import Flapjack.Test.WordSimpDuplicateIfParity
 import Flapjack.Test.RiscVFarTransferParity
 import Flapjack.Test.FfiHOLParity
@@ -1920,6 +1923,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.SptreeParity.runChecks,
     Flapjack.Test.MlStringCodecParity.runChecks,
     Flapjack.Test.StackLangInstOverloadsParity.runChecks,
+    Flapjack.Test.RiscVBackendConfigExecutable.runChecks,
     Flapjack.Test.RiscvConfigParity.runChecks,
     Flapjack.Test.MiscAppListParity.runChecks,
     Flapjack.Test.StackToLabFlattenOpsParity.runChecks,

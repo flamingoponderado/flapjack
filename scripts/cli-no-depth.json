@@ -1,0 +1,18 @@
+{
+  "original_command": "cake --pancake --target=riscv < source.pnk",
+  "original_executable_sha256": "4768e33f6b280bfb1096beefdef96b3e6c6a69af6331e46af0d219df5f9c9c98",
+  "cases": [
+    {
+      "depth": 26,
+      "source_sha256": "2979f25824ef5842f168ead8fe5e8aa3a2d870114372260560c4f48308ed89c4",
+      "cake_stdout_sha256": "c326028708c446211fc8025923caaa93aecd4676c8949aa728024874ec323a8c",
+      "cake_stdout_bytes": 46540
+    },
+    {
+      "depth": 30,
+      "source_sha256": "7db2d01646d12f60f535efbbd748772964ca135c95804cb4d3e289c505b2fc49",
+      "cake_stdout_sha256": "4ce0413b64ac65d5133d969ba280456827e41d04b8405d52bf084ea78ba95192",
+      "cake_stdout_bytes": 52438
+    }
+  ]
+}

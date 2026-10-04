@@ -1,0 +1,8 @@
+mem_store=Seq (Assign 2 (Const 7w)) (Seq (Inst (Mem Store 2 (Addr 3 0w))) (Assign 4 (Const 10w)))
+mem_store8=Seq (Assign 2 (Const 7w)) (Seq (Inst (Mem Store8 2 (Addr 3 0w))) (Assign 4 (Const 10w)))
+mem_store16=Seq (Assign 2 (Const 7w)) (Seq (Inst (Mem Store16 2 (Addr 3 0w))) (Assign 4 (Const 10w)))
+mem_store32=Seq (Assign 2 (Const 7w)) (Seq (Inst (Mem Store32 2 (Addr 3 0w))) (Assign 4 (Const 10w)))
+mem_load=Seq (Assign 2 (Const 7w)) (Seq (Inst (Mem Load 2 (Addr 3 0w))) (Assign 4 (Op Add [Var 2; Const 3w])))
+mem_load8=Seq (Assign 2 (Const 7w)) (Seq (Inst (Mem Load8 2 (Addr 3 0w))) (Assign 4 (Op Add [Var 2; Const 3w])))
+mem_load16=Seq (Assign 2 (Const 7w)) (Seq (Inst (Mem Load16 2 (Addr 3 0w))) (Assign 4 (Const 10w)))
+mem_load32=Seq (Assign 2 (Const 7w)) (Seq (Inst (Mem Load32 2 (Addr 3 0w))) (Assign 4 (Op Add [Var 2; Const 3w])))

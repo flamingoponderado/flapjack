@@ -1,13 +1,18 @@
 import Flapjack.RiscV.PipelineDiagnostics
 import Flapjack.RiscV.ArtifactFormat
+import Flapjack.RiscV.NativeCLIAdapter
 
 /-!
 # Flapjack compiler command
 
-This command-line wrapper exposes the checked source-facing RV64I pipeline as
-a Pancake-compatible assembly frame, raw bytes, or linked sections.  Assembly
-is the default and `--assembly` is retained as a compatibility alias for
-`--pancake`; code and layout differences remain tracked by the parity beads.
+This command-line wrapper compiles Pancake source with the parser-backed native whole
+compiler `RiscV.NativeSource.compile` and renders its result as a Pancake-compatible
+assembly frame, raw bytes, or linked sections. `nativeCLIOutput_correct` connects
+successful output to source correctness under explicit source/main, machine,
+installation and resource premises. It identifies the rendering of the compiled
+tuple, not correctness of assembly rendering or startup installation. Assembly
+is the default and `--assembly` is retained as a compatibility alias for `--pancake`. A
+leading `--legacy` selects the previous checked runtime-image route.
 -/
 
 namespace Flapjack
@@ -23,18 +28,7 @@ def compileRemoveConfig : StackRemoveConfig :=
     wordShift := 3
     jump := false }
 
-def hexDigit (value : Nat) : Char :=
-  if value < 10 then
-    Char.ofNat ('0'.toNat + value)
-  else
-    Char.ofNat ('a'.toNat + value - 10)
-
-def hexByte (value : BitVec 8) : String :=
-  let n := value.toNat
-  String.ofList [hexDigit (n / 16), hexDigit (n % 16)]
-
-def hexBytes (values : List (BitVec 8)) : String :=
-  String.intercalate " " (values.map hexByte)
+open RiscV.NativeCLI (hexBytes)
 
 inductive OutputFormat where
   | pancake
@@ -43,11 +37,13 @@ inductive OutputFormat where
   deriving DecidableEq
 
 def usage : String :=
-  "Usage: lake exe flapjack-compile [--assembly|--pancake|--hex|--sections] " ++
+  "Usage: lake exe flapjack-compile [--legacy] [--assembly|--pancake|--hex|--sections] " ++
   "[SOURCE.pnk]\nRead Pancake source from SOURCE.pnk or stdin. The default, " ++
   "--assembly, and --pancake modes emit the Pancake-compatible assembly " ++
   "frame; --hex emits that frame's code bytes as one lowercase line; " ++
-  "--sections emits its sections as <label> <address> <bytes> lines."
+  "--sections emits its sections as <label> <address> <bytes> lines. " ++
+  "--legacy selects the previous runtime-image route instead of the native " ++
+  "whole compiler."
 
 def parseArguments (arguments : List String) : IO (Option (OutputFormat × Option String)) := do
   match arguments with
@@ -89,7 +85,27 @@ def printSections (sections : List (RiscV.EncodedRiscVSection width)) : IO Unit 
   for entry in sections do
     IO.println (s!"{entry.label} {entry.address.toNat} " ++ hexBytes entry.bytes)
 
-def compileMain (arguments : List String) : IO UInt32 := do
+/-- The parser-backed native whole compiler (`RiscV.NativeSource.compile`), rendered from its
+whole tuple by `RiscV.NativeCLI`. This is the default route for every output mode. -/
+def compileMainNative (outputFormat : OutputFormat) (path : Option String) : IO UInt32 := do
+  let source ← readSource path
+  let format : RiscV.NativeCLI.Format :=
+    match outputFormat with
+    | .pancake => .assembly
+    | .hex => .hex
+    | .sections => .sections
+  match RiscV.NativeCLI.output format source with
+  | .error message =>
+      IO.eprintln s!"flapjack-compile: {message}"
+      return 1
+  | .ok (warnings, text) =>
+      for warning in warnings do
+        IO.eprintln s!"warning: {warning}"
+      IO.print text
+      return 0
+
+/-- The previous checked runtime-image route, selected by a leading `--legacy`. -/
+def compileMainLegacy (arguments : List String) : IO UInt32 := do
   let some (outputFormat, path) ← parseArguments arguments | return 0
   let source ← readSource path
   if outputFormat == .pancake then
@@ -121,6 +137,18 @@ def compileMain (arguments : List String) : IO UInt32 := do
     | .error error =>
         IO.eprintln s!"flapjack-compile: {sourceRiscVImageErrorDescription error}"
         return 1
+
+/-- The command: the native whole compiler by default (`--native` is accepted as an
+explicit alias), or the previous route after a leading `--legacy`. -/
+def compileMain (arguments : List String) : IO UInt32 := do
+  match arguments with
+  | "--legacy" :: rest => compileMainLegacy rest
+  | "--native" :: rest =>
+      let some (outputFormat, path) ← parseArguments rest | return 0
+      compileMainNative outputFormat path
+  | _ =>
+      let some (outputFormat, path) ← parseArguments arguments | return 0
+      compileMainNative outputFormat path
 
 end Flapjack
 

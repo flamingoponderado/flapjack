@@ -10,7 +10,8 @@ import Flapjack.Pancake.Proofs.WordConvs.UnreachLabels
 import Flapjack.Pancake.Proofs.WordConvs.WordAlloc
 import Flapjack.Pancake.Proofs.WordConvs.RemoveMustTerminate
 
-/-! First two original conjunction sections; remaining five conventions stay open. -/
+/-! First two original conjunction sections (names and labels). The remaining five
+conventions and the full tagged theorem are assembled in `CompileConventions.Output`. -/
 namespace Flapjack.Compiler.Backend.WordToWord.CompileConventions
 open Flapjack Flapjack.WordConvs Flapjack.Compiler.Encoders.Asm
 open Flapjack.Compiler.Backend.WordToWord

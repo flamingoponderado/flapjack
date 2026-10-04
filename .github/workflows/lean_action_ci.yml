@@ -50,6 +50,7 @@ jobs:
         run: |
           lake build flapjack-compile
           python3 scripts/check-parity-goldens.py
+          python3 scripts/check-cli-no-depth.py
 
       - name: Check Pan-to-Crep intermediate fixture coverage
         run: python3 scripts/pan-to-crep-coverage-report.py --check

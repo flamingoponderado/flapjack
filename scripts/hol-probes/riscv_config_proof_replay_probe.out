@@ -1,0 +1,7 @@
+riscv_backend_config_ok_typed=backend_config_ok riscv_config riscv_backend_config
+riscv_backend_config_ok_hypotheses=0
+is_riscv_machine_config_def_typed=∀(mc :(64, riscv_state, word5 # word2 # TransferControl option # exception # (word5 -> word64) # (word64 # word8 -> bool) # word64) machine_config). is_riscv_machine_config mc ⇔ mc.target = riscv_target ∧ mc.len_reg = (11 :num) ∧ mc.ptr_reg = (10 :num) ∧ mc.len2_reg = (13 :num) ∧ mc.ptr2_reg = (12 :num) ∧ mc.callee_saved_regs = [(24 :num); (25 :num); (26 :num)]
+riscv_init_ok_typed=is_riscv_machine_config (mc :(64, riscv_state, word5 # word2 # TransferControl option # exception # (word5 -> word64) # (word64 # word8 -> bool) # word64) machine_config) ⇒ mc_init_ok riscv_config riscv_backend_config mc
+riscv_init_ok_hypotheses=0
+riscv_machine_config_ok_typed=is_riscv_machine_config (mc :(64, riscv_state, word5 # word2 # TransferControl option # exception # (word5 -> word64) # (word64 # word8 -> bool) # word64) machine_config) ⇒ mc_conf_ok mc
+riscv_machine_config_ok_hypotheses=0

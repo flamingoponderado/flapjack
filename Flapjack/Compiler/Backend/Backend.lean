@@ -102,4 +102,12 @@ noncomputable def fromWord0 {width : Nat} [NeZero width]
   let config := { config with wordToWordConf := { config.wordToWordConf with colOracle := col } }
   fromWord asmConf config names program
 
+/-- Exact HOL `ffinames_to_string_list_def` (`backendScript.sml:675-681`): the external-call
+FFI names in order, dropping shared-memory entries. -/
+@[hol "cakeml/compiler/backend/backendScript.sml" "ffinames_to_string_list_def"]
+def ffinamesToStringList : List HolFfiName → List MlString
+  | [] => []
+  | .extCall s :: rest => s :: ffinamesToStringList rest
+  | .sharedMem _ :: rest => ffinamesToStringList rest
+
 end Flapjack.Compiler.Backend.Backend

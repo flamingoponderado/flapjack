@@ -45,7 +45,8 @@ private theorem reg_read (r : Nat) (s : AsmState 64) (ms : riscv_state)
 /-- Original Shift Imm/Lsr case560-620. Sole original asmStep/initial relation
 and full existential/interference/asserts/asserts2 conclusion are retained.
 The source immediate count bound and actual fetched Decode/Run/Next are derived, never
-input assumptions. Other Shift cases remain open. Native state/Run inherits
+input assumptions. The other Shift cases are sibling pieces, all assembled by
+riscv_encoder_correct_shift (Shift.lean). Native state/Run inherits
 reals_as_rational_cuts, SOUNDNESS item8. -/
 @[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml"
   "riscv_encoder_correct"]

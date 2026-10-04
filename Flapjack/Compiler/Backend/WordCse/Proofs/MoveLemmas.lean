@@ -53,13 +53,13 @@ theorem getVars_cons_some (s : WordSemStateFiniteExact width C F) (n : Nat) (ns 
 
 end Helpers
 
-/-- Exact HOL local `MAP_FST_lemma` (`word_cseProof:1953-1957`). -/
+/-- Exact HOL local `MAP_FST_lemma` (`word_cseProof:1953-1958`). -/
 @[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "MAP_FST_lemma"]
 theorem MAP_FST_lemma {α : Type} (data : Knowledge) (moves : List (α × Nat)) :
     (moves.map (fun p => (p.1, canonicalRegs data p.2))).map Prod.fst = moves.map Prod.fst := by
   simp [List.map_map, Function.comp_def]
 
-/-- Exact HOL local `MAP_SND_lemma` (`word_cseProof:1959-1969`). -/
+/-- Exact HOL local `MAP_SND_lemma` (`word_cseProof:1960-1970`). -/
 @[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "MAP_SND_lemma"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem MAP_SND_lemma {width : Nat} [NeZero width] {C : Type} {F : Type} {α : Type}
@@ -73,7 +73,7 @@ theorem MAP_SND_lemma {width : Nat} [NeZero width] {C : Type} {F : Type} {α : T
   rw [hm, getVars_map_congr s _ (fun n => canonicalRegsCorrect data n s h.2)]
   exact h.1
 
-/-- Exact HOL `lookup_map_insert0` (`word_cseProof:1971-1981`); HOL `ALOOKUP l x`
+/-- Exact HOL `lookup_map_insert0` (`word_cseProof:1972-1981`); HOL `ALOOKUP l x`
     is `List.lookup x l`. -/
 @[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "lookup_map_insert0"]
 theorem lookup_map_insert0 {α : Type} (m : Spt α) (xs : List (Nat × α)) (r : Nat) :
@@ -95,7 +95,7 @@ theorem get_set_vars_lemma {width : Nat} [NeZero width] {C : Type} {F : Type}
     WordAlloc.sptLookup_sptAlistInsert_notMem _ _ _ _ h.2]
   exact hxy
 
-/-- Exact HOL local `get_set_vars_not_in` (`word_cseProof:1996-2013`). -/
+/-- Exact HOL local `get_set_vars_not_in` (`word_cseProof:1996-2004`). -/
 @[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "get_set_vars_not_in"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem get_set_vars_not_in {width : Nat} [NeZero width] {C : Type} {F : Type}
@@ -103,7 +103,7 @@ theorem get_set_vars_not_in {width : Nat} [NeZero width] {C : Type} {F : Type}
     (h : r ∉ rs) : getVar r (setVars rs vs s) = getVar r s := by
   simp only [getVar, setVars, WordAlloc.sptLookup_sptAlistInsert_notMem _ _ _ _ h]
 
-/-- Exact HOL `MEM_FST_reduc` (`word_cseProof:2008-2013`). -/
+/-- Exact HOL `MEM_FST_reduc` (`word_cseProof:2006-2013`). -/
 @[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "MEM_FST_reduc"]
 theorem MEM_FST_reduc {α β : Type} (moves : List (α × β)) (r : α) (p_2 : β)
     (h : (r, p_2) ∈ moves) : r ∈ moves.map Prod.fst :=
@@ -130,7 +130,7 @@ theorem get_set_vars_in {width : Nat} [NeZero width] {C : Type} {F : Type} :
         rw [sptLookup_sptInsert_ne _ _ _ _ hra]
         exact get_set_vars_in ms r p_2 vs s hm' hnd.2 hms
 
-/-- Exact HOL local `get_set_vars_in_2` (`word_cseProof:2034-2047`). -/
+/-- Exact HOL local `get_set_vars_in_2` (`word_cseProof:2034-2052`). -/
 @[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "get_set_vars_in_2"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem get_set_vars_in_2 {width : Nat} [NeZero width] {C : Type} {F : Type}
@@ -148,7 +148,7 @@ theorem get_set_vars_in_2 {width : Nat} [NeZero width] {C : Type} {F : Type}
   rw [this]
   simp [canonicalRegs, hl]
 
-/-- Exact HOL local `lookup_set_vars_not_in` (`word_cseProof:2049-2056`); the
+/-- Exact HOL local `lookup_set_vars_not_in` (`word_cseProof:2054-2065`); the
     unused HOL binder `data` is retained at its independent arbitrary type. -/
 @[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "lookup_set_vars_not_in"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
@@ -160,7 +160,7 @@ theorem lookup_set_vars_not_in {width : Nat} [NeZero width] {C : Type} {F : Type
   simp only [setVars, WordAlloc.sptLookup_sptAlistInsert_notMem _ _ _ _ hv]
   exact hl
 
-/-- Exact HOL local `list_insert_insert` (`word_cseProof:2058-2064`), over the
+/-- Exact HOL local `list_insert_insert` (`word_cseProof:2067-2075`), over the
     rendering `sptListInsert` of HOL sptree `list_insert`. -/
 @[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "list_insert_insert"]
 theorem list_insert_insert :
@@ -174,7 +174,7 @@ theorem list_insert_insert :
       · rw [sptInsert_swap k n () () an hk]
         exact list_insert_insert l n (sptInsert k () an)
 
-/-- Exact HOL local `data_inv_insert_canonical_pair` (`word_cseProof:2066-2087`). -/
+/-- Exact HOL local `data_inv_insert_canonical_pair` (`word_cseProof:2079-2096`). -/
 @[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "data_inv_insert_canonical_pair"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem data_inv_insert_canonical_pair {width : Nat} [NeZero width] {C : Type} {F : Type}
@@ -184,7 +184,7 @@ theorem data_inv_insert_canonical_pair {width : Nat} [NeZero width] {C : Type} {
     dataInv { data with toCanonical := sptInsert x y tc, toLatest := tl } s :=
   data_inv_insert_to_canonical { data with toCanonical := tc, toLatest := tl } s x y h
 
-/-- Exact HOL local `data_inv_insert_pair` (`word_cseProof:2089-2106`). -/
+/-- Exact HOL local `data_inv_insert_pair` (`word_cseProof:2100-2122`). -/
 @[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "data_inv_insert_pair"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem data_inv_insert_pair {width : Nat} [NeZero width] {C : Type} {F : Type}
@@ -198,7 +198,7 @@ theorem data_inv_insert_pair {width : Nat} [NeZero width] {C : Type} {F : Type}
   exact data_inv_insert_to_latest _ s y x
     ⟨d1, by simp [sptDomain, hy'], by simp [sptDomain, sptLookup_sptInsert_same], hg.symm⟩
 
-/-- Exact HOL local `data_inv_move_pairs` (`word_cseProof:2108-2141`). -/
+/-- Exact HOL local `data_inv_move_pairs` (`word_cseProof:2126-2158`). -/
 @[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "data_inv_move_pairs"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem data_inv_move_pairs {width : Nat} [NeZero width] {C : Type} {F : Type} :
@@ -234,7 +234,7 @@ theorem data_inv_move_pairs {width : Nat} [NeZero width] {C : Type} {F : Type} :
       exact data_inv_insert_pair data s x y _ _
         ⟨ih, hx', hy', ox, (hd.1.1 y y hy).2.2, hg⟩
 
-/-- Exact HOL `canonicalMoveRegs_lemma` (`word_cseProof:2143-2234`). -/
+/-- Exact HOL `canonicalMoveRegs_lemma` (`word_cseProof:2163-2216`). -/
 @[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "canonicalMoveRegs_lemma"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem canonicalMoveRegs_lemma {width : Nat} [NeZero width] {C : Type} {F : Type}
@@ -281,12 +281,14 @@ theorem canonicalMoveRegs_lemma {width : Nat} [NeZero width] {C : Type} {F : Typ
         canonicalRegsCorrect d1 q.2 s dd1]
   · exact dataInvEmpty _
 
-/-- Exact HOL local `if_eq_rw` (`word_cseProof:2236-2239`). -/
+open Classical in
+/-- Exact HOL local `if_eq_rw` (`word_cseProof:2227-2231`). The `if` is decided
+classically, as HOL equality is; no decidable-equality hypothesis is added. -/
 @[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "if_eq_rw"]
-theorem if_eq_rw {α : Type} [DecidableEq α] (x y : α) : (if x = y then y else x) = x := by
+theorem if_eq_rw {α : Type} (x y : α) : (if x = y then y else x) = x := by
   split <;> simp_all
 
-/-- Exact HOL local `evaluate_arith_clock` (`word_cseProof:2241-2253`). -/
+/-- Exact HOL local `evaluate_arith_clock` (`word_cseProof:2236-2249`). -/
 @[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "evaluate_arith_clock"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluate_arith_clock {width : Nat} [NeZero width] {C : Type} {F : Type}
@@ -300,7 +302,7 @@ theorem evaluate_arith_clock {width : Nat} [NeZero width] {C : Type} {F : Type}
   ⟨fun he => evaluateArithAgree a w _ s ⟨he, h, rfl⟩,
     fun he => evaluateArithAgree a w s _ ⟨he, h, rfl⟩⟩
 
-/-- Exact HOL local `evaluate_load_clock` (`word_cseProof:2255-2271`). -/
+/-- Exact HOL local `evaluate_load_clock` (`word_cseProof:2251-2270`). -/
 @[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "evaluate_load_clock"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluate_load_clock {width : Nat} [NeZero width] {C : Type} {F : Type}
@@ -314,7 +316,7 @@ theorem evaluate_load_clock {width : Nat} [NeZero width] {C : Type} {F : Type}
   exact ⟨fun he => evaluateLoadAgree op r a ofs w _ s ⟨he, hs, rfl, rfl, rfl, rfl⟩,
     fun he => evaluateLoadAgree op r a ofs w s _ ⟨he, hs, rfl, rfl, rfl, rfl⟩⟩
 
-/-- Exact HOL `data_inv_clock` (`word_cseProof:2273-2292`). -/
+/-- Exact HOL `data_inv_clock` (`word_cseProof:2273-2282`). -/
 @[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "data_inv_clock"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem data_inv_clock {width : Nat} [NeZero width] {C : Type} {F : Type}

@@ -164,7 +164,8 @@ theorem const_interleaved_step_projection (d : BitVec 64 → Prop)
 
 /-- Complete pure-list native frame and total PC increment, for arbitrary
 length and every intrinsic operand. The emitted-byte execution connection is
-proved per instruction above; full encoded-list assertions remain open. -/
+proved per instruction above; the full encoded-list assertions are derived by
+riscv_encoder_correct_const (ConstAssertions.lean). -/
 theorem const_step_list_frame (is : List instruction)
     (kinds : ∀ i ∈ is, ConstRegisterInstruction i) (ms : riscv_state)
     (ok : riscvOk ms = true) :

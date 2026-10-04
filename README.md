@@ -3,11 +3,17 @@
 > **Warning — work in progress.** Nothing in this repository is ready to be
 > relied upon. Do not use Flapjack for anything of value.
 
-Flapjack is an in-progress Lean 4 port of the formally verified Pancake
-compiler; the original HOL sources are in the [`cakeml/pancake`](cakeml/pancake)
-submodule. It has an executable RV64I compiler path for a growing subset of
-Pancake, but is not yet a complete replacement and does not yet prove
-whole-compiler correctness. See
+Flapjack is an in-progress Lean 4 port of the formally verified Pancake compiler.
+
+- A compiler correctness theorem from Pancake to a vibe-ported RISC-V semantics
+  has been proven, under explicit assumptions: [Lean theorem](https://github.com/flamingoponderado/flapjack/blob/4e120dd7303f7e66a13f04ad60404273a9d90e9c/Flapjack/Pancake/Proofs/PanToTarget/RiscVInstance.lean#L45),
+  [corresponding original CakeML theorem](https://github.com/CakeML/cakeml/blob/857f0d98da8f8a3580f34423338e697809308ede/pancake/proofs/pan_to_targetProofScript.sml#L1257).
+- The vibe-ported RISC-V semantics has not been validated. Comparison against
+  the Lean extraction of the Sail RISC-V model is future work.
+- Other backends, including ARM and x86, have not yet been ported to Lean.
+- The CakeML front end has not been ported to Lean.
+
+The Lean specifications and their implications still require independent review. See
 [`docs/SOUNDNESS.md`](docs/SOUNDNESS.md) for limitations and
 [`docs/PARITY-TESTING.md`](docs/PARITY-TESTING.md) for reference comparisons.
 

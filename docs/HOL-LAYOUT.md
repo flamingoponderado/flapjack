@@ -101,7 +101,9 @@ the cited name occurs in one of the two syntactic forms.
 | `semantics/primTypesScript.sml` | `Flapjack/PrimTypesHOL.lean` (`prim_types_program_def`) |
 | `compiler/backend/stack_namesScript.sml` | `Flapjack/Compiler/Backend/StackNames.lean` |
 | `compiler/backend/proofs/stack_namesProofScript.sml` | `Flapjack/Compiler/Backend/StackNames/` (`NamesOk.lean` names_ok lemmas, `AsmAdmissibility/` stack_asm_ok, `Proofs/RenameState.lean` rename_state group over the MAP_KEYS rendering in `Flapjack/FiniteMap/MapKeys.lean`, `Proofs/CompCorrect.lean` comp_correct, `Proofs/CompileSemantics.lean` compile_semantics(_alt), `Proofs/MakeInit.lean` make_init_def/make_init_semantics, `Proofs/LabelsCallArgs.lean` stack_names_lab_pres/stack_names_call_args) |
-| `compiler/backend/riscv/riscv_configScript.sml` | `Flapjack/Compiler/Backend/RiscVConfig/Names.lean` |
+| `compiler/backend/riscv/riscv_configScript.sml` | `Flapjack/Compiler/Backend/RiscVConfig/Names.lean` (submodules in `RiscVConfig/`, e.g. `BackendConfig.lean`) |
+| `compiler/compilerScript.sml` | `Flapjack/Compiler/Compiler.lean` (`pancake_backend_conf_def`; the GC-free RISC-V `backend_config_ok` corollary is untagged in `Flapjack/Compiler/Backend/RiscVConfig/PancakeConfigOk.lean`) |
+| `compiler/backend/riscv/proofs/riscv_configProofScript.sml` | `Flapjack/Compiler/Backend/RiscVConfig/Proofs.lean` |
 | `compiler/backend/stackLangScript.sml` (shared-word `prog`) | `Flapjack/Compiler/Backend/StackCarrier.lean` |
 | `compiler/backend/stack_removeScript.sml` | `Flapjack/Compiler/Backend/StackRemove.lean` (`max_stack_alloc`, `word_offset`, `store_list`, `store_length`, `stack_err_lab`, `halt_inst`; also the tagged stackLang instruction overloads `left_shift_inst`/`right_shift_inst`/`const_inst`/`load_inst`/`store_inst` over the exact `HolProg` carrier) |
 | `compiler/backend/proofs/stack_removeProofScript.sml` | `Flapjack/Compiler/Backend/StackRemove.lean` (`is_SOME_Word`, `read_mem`/`LENGTH_read_mem`, `addresses`/`IN_addresses`; `names_ok` Prop-shaped tag); full native code relation in `Flapjack/Compiler/Backend/StackRemove/Proofs/CodeRelation.lean` |
@@ -155,7 +157,6 @@ the cited name occurs in one of the two syntactic forms.
 | `semantics/proofs/semanticsPropsScript.sml` | `Flapjack/SemanticsProps.lean` (structural behavior and `implements'` analogue; HOL `llist` representation bridge remains open) |
 | `proofs/pan_simpProofScript.sml` | `Flapjack/Pancake/Proofs/PanSimp.lean`, `PanSimp/Evaluate.lean` |
 | `proofs/pan_to_wordProofScript.sml` | `Flapjack/Pancake/Proofs/PanToWord.lean` (submodules in `Pancake/Proofs/PanToWord/`, e.g. `EveryInstOkLess.lean` for the `inst_ok_less` section) |
-| `proofs/pan_to_targetProofScript.sml` | `Flapjack/Pancake/Proofs/PanToTarget.lean` |
 
 Placement under `Proofs` does not imply that a whole pass correctness theorem
 has been established. For declaration-level provenance, use
