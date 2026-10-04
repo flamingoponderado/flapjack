@@ -95191,5 +95191,289 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack infrastructure: native move-descriptor case factoring used inline in original word_good_handlers_SimpSeq proof; no standalone HOL declaration. Removes only handler-free moves, proves actual descriptor rest from source guard without output premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_good_handlers_SmartSeq",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/GoodHandlersPasses.lean",
+    "lean_name": "goodHandlers_smartSeq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3.1): wordConvsProof word_good_handlers group through the word_to_word passes. Statement compared with the source (HOL [local] theorems) or the typed capture word_convs_good_handlers_word_to_word (the exported _word_to_word_incr and _word_to_word). HOL's free label n and other free variables are explicit leading binders; HOL bool word_good_handlers is the tagged goodHandlersHOL with = true, ⇔ as ↔, Boolean = as =; the pass definitions are the tagged smartSeqHOL/seqAssoc/dropConsts/constFpLoop/tryIfHoist2/simpDuplicateIf/pushOutIf/compileExp, instSelectExp/instSelect, fakeMoves/ssaCcTrans/fullSsaCcTrans, threeToTwoRegProg, simpSeq/seqAssocRight/removeUnreach, fullCompileSingle and word_to_word compile; EVERY (λ(n,m,pp). …) l is ∀ x ∈ l on the components; ZIP on equal-length lists. Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_good_handlers_Seq_assoc",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/GoodHandlersPasses.lean",
+    "lean_name": "goodHandlers_seqAssoc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3.1): wordConvsProof word_good_handlers group through the word_to_word passes. Statement compared with the source (HOL [local] theorems) or the typed capture word_convs_good_handlers_word_to_word (the exported _word_to_word_incr and _word_to_word). HOL's free label n and other free variables are explicit leading binders; HOL bool word_good_handlers is the tagged goodHandlersHOL with = true, ⇔ as ↔, Boolean = as =; the pass definitions are the tagged smartSeqHOL/seqAssoc/dropConsts/constFpLoop/tryIfHoist2/simpDuplicateIf/pushOutIf/compileExp, instSelectExp/instSelect, fakeMoves/ssaCcTrans/fullSsaCcTrans, threeToTwoRegProg, simpSeq/seqAssocRight/removeUnreach, fullCompileSingle and word_to_word compile; EVERY (λ(n,m,pp). …) l is ∀ x ∈ l on the components; ZIP on equal-length lists. Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_good_handlers_drop_consts",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/GoodHandlersPasses.lean",
+    "lean_name": "goodHandlers_dropConsts",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3.1): wordConvsProof word_good_handlers group through the word_to_word passes. Statement compared with the source (HOL [local] theorems) or the typed capture word_convs_good_handlers_word_to_word (the exported _word_to_word_incr and _word_to_word). HOL's free label n and other free variables are explicit leading binders; HOL bool word_good_handlers is the tagged goodHandlersHOL with = true, ⇔ as ↔, Boolean = as =; the pass definitions are the tagged smartSeqHOL/seqAssoc/dropConsts/constFpLoop/tryIfHoist2/simpDuplicateIf/pushOutIf/compileExp, instSelectExp/instSelect, fakeMoves/ssaCcTrans/fullSsaCcTrans, threeToTwoRegProg, simpSeq/seqAssocRight/removeUnreach, fullCompileSingle and word_to_word compile; EVERY (λ(n,m,pp). …) l is ∀ x ∈ l on the components; ZIP on equal-length lists. Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_good_handlers_const_fp_loop",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/GoodHandlersPasses.lean",
+    "lean_name": "goodHandlers_constFpLoop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3.1): wordConvsProof word_good_handlers group through the word_to_word passes. Statement compared with the source (HOL [local] theorems) or the typed capture word_convs_good_handlers_word_to_word (the exported _word_to_word_incr and _word_to_word). HOL's free label n and other free variables are explicit leading binders; HOL bool word_good_handlers is the tagged goodHandlersHOL with = true, ⇔ as ↔, Boolean = as =; the pass definitions are the tagged smartSeqHOL/seqAssoc/dropConsts/constFpLoop/tryIfHoist2/simpDuplicateIf/pushOutIf/compileExp, instSelectExp/instSelect, fakeMoves/ssaCcTrans/fullSsaCcTrans, threeToTwoRegProg, simpSeq/seqAssocRight/removeUnreach, fullCompileSingle and word_to_word compile; EVERY (λ(n,m,pp). …) l is ∀ x ∈ l on the components; ZIP on equal-length lists. Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_good_handlers_try_if_hoist2",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/GoodHandlersPasses.lean",
+    "lean_name": "goodHandlers_hoist2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3.1): wordConvsProof word_good_handlers group through the word_to_word passes. Statement compared with the source (HOL [local] theorems) or the typed capture word_convs_good_handlers_word_to_word (the exported _word_to_word_incr and _word_to_word). HOL's free label n and other free variables are explicit leading binders; HOL bool word_good_handlers is the tagged goodHandlersHOL with = true, ⇔ as ↔, Boolean = as =; the pass definitions are the tagged smartSeqHOL/seqAssoc/dropConsts/constFpLoop/tryIfHoist2/simpDuplicateIf/pushOutIf/compileExp, instSelectExp/instSelect, fakeMoves/ssaCcTrans/fullSsaCcTrans, threeToTwoRegProg, simpSeq/seqAssocRight/removeUnreach, fullCompileSingle and word_to_word compile; EVERY (λ(n,m,pp). …) l is ∀ x ∈ l on the components; ZIP on equal-length lists. Positive word dimension via [NeZero width]. HOL's universally bound s occurs nowhere in the statement (vacuous, unconstrained type) and is omitted, as documented beside the declaration."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_good_handlers_simp_duplicate_if",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/GoodHandlersPasses.lean",
+    "lean_name": "goodHandlers_simpDuplicateIf",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3.1): wordConvsProof word_good_handlers group through the word_to_word passes. Statement compared with the source (HOL [local] theorems) or the typed capture word_convs_good_handlers_word_to_word (the exported _word_to_word_incr and _word_to_word). HOL's free label n and other free variables are explicit leading binders; HOL bool word_good_handlers is the tagged goodHandlersHOL with = true, ⇔ as ↔, Boolean = as =; the pass definitions are the tagged smartSeqHOL/seqAssoc/dropConsts/constFpLoop/tryIfHoist2/simpDuplicateIf/pushOutIf/compileExp, instSelectExp/instSelect, fakeMoves/ssaCcTrans/fullSsaCcTrans, threeToTwoRegProg, simpSeq/seqAssocRight/removeUnreach, fullCompileSingle and word_to_word compile; EVERY (λ(n,m,pp). …) l is ∀ x ∈ l on the components; ZIP on equal-length lists. Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_good_handlers_simp_push_out_if",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/GoodHandlersPasses.lean",
+    "lean_name": "goodHandlers_pushOutIf",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3.1): wordConvsProof word_good_handlers group through the word_to_word passes. Statement compared with the source (HOL [local] theorems) or the typed capture word_convs_good_handlers_word_to_word (the exported _word_to_word_incr and _word_to_word). HOL's free label n and other free variables are explicit leading binders; HOL bool word_good_handlers is the tagged goodHandlersHOL with = true, ⇔ as ↔, Boolean = as =; the pass definitions are the tagged smartSeqHOL/seqAssoc/dropConsts/constFpLoop/tryIfHoist2/simpDuplicateIf/pushOutIf/compileExp, instSelectExp/instSelect, fakeMoves/ssaCcTrans/fullSsaCcTrans, threeToTwoRegProg, simpSeq/seqAssocRight/removeUnreach, fullCompileSingle and word_to_word compile; EVERY (λ(n,m,pp). …) l is ∀ x ∈ l on the components; ZIP on equal-length lists. Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_good_handlers_word_simp",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/GoodHandlersPasses.lean",
+    "lean_name": "goodHandlers_compileExp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3.1): wordConvsProof word_good_handlers group through the word_to_word passes. Statement compared with the source (HOL [local] theorems) or the typed capture word_convs_good_handlers_word_to_word (the exported _word_to_word_incr and _word_to_word). HOL's free label n and other free variables are explicit leading binders; HOL bool word_good_handlers is the tagged goodHandlersHOL with = true, ⇔ as ↔, Boolean = as =; the pass definitions are the tagged smartSeqHOL/seqAssoc/dropConsts/constFpLoop/tryIfHoist2/simpDuplicateIf/pushOutIf/compileExp, instSelectExp/instSelect, fakeMoves/ssaCcTrans/fullSsaCcTrans, threeToTwoRegProg, simpSeq/seqAssocRight/removeUnreach, fullCompileSingle and word_to_word compile; EVERY (λ(n,m,pp). …) l is ∀ x ∈ l on the components; ZIP on equal-length lists. Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_good_handlers_fake_moves",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/GoodHandlersSSA.lean",
+    "lean_name": "goodHandlers_fakeMoves",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3.1): wordConvsProof word_good_handlers group through the word_to_word passes. Statement compared with the source (HOL [local] theorems) or the typed capture word_convs_good_handlers_word_to_word (the exported _word_to_word_incr and _word_to_word). HOL's free label n and other free variables are explicit leading binders; HOL bool word_good_handlers is the tagged goodHandlersHOL with = true, ⇔ as ↔, Boolean = as =; the pass definitions are the tagged smartSeqHOL/seqAssoc/dropConsts/constFpLoop/tryIfHoist2/simpDuplicateIf/pushOutIf/compileExp, instSelectExp/instSelect, fakeMoves/ssaCcTrans/fullSsaCcTrans, threeToTwoRegProg, simpSeq/seqAssocRight/removeUnreach, fullCompileSingle and word_to_word compile; EVERY (λ(n,m,pp). …) l is ∀ x ∈ l on the components; ZIP on equal-length lists. Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_good_handlers_ssa_cc_trans",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/GoodHandlersSSA.lean",
+    "lean_name": "goodHandlers_ssaCcTrans",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3.1): wordConvsProof word_good_handlers group through the word_to_word passes. Statement compared with the source (HOL [local] theorems) or the typed capture word_convs_good_handlers_word_to_word (the exported _word_to_word_incr and _word_to_word). HOL's free label n and other free variables are explicit leading binders; HOL bool word_good_handlers is the tagged goodHandlersHOL with = true, ⇔ as ↔, Boolean = as =; the pass definitions are the tagged smartSeqHOL/seqAssoc/dropConsts/constFpLoop/tryIfHoist2/simpDuplicateIf/pushOutIf/compileExp, instSelectExp/instSelect, fakeMoves/ssaCcTrans/fullSsaCcTrans, threeToTwoRegProg, simpSeq/seqAssocRight/removeUnreach, fullCompileSingle and word_to_word compile; EVERY (λ(n,m,pp). …) l is ∀ x ∈ l on the components; ZIP on equal-length lists. Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_good_handlers_full_ssa_cc_trans",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/GoodHandlersSSA.lean",
+    "lean_name": "goodHandlers_fullSsaCcTrans",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3.1): wordConvsProof word_good_handlers group through the word_to_word passes. Statement compared with the source (HOL [local] theorems) or the typed capture word_convs_good_handlers_word_to_word (the exported _word_to_word_incr and _word_to_word). HOL's free label n and other free variables are explicit leading binders; HOL bool word_good_handlers is the tagged goodHandlersHOL with = true, ⇔ as ↔, Boolean = as =; the pass definitions are the tagged smartSeqHOL/seqAssoc/dropConsts/constFpLoop/tryIfHoist2/simpDuplicateIf/pushOutIf/compileExp, instSelectExp/instSelect, fakeMoves/ssaCcTrans/fullSsaCcTrans, threeToTwoRegProg, simpSeq/seqAssocRight/removeUnreach, fullCompileSingle and word_to_word compile; EVERY (λ(n,m,pp). …) l is ∀ x ∈ l on the components; ZIP on equal-length lists. Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_good_handlers_word_to_word_incr_helper",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/GoodHandlersTail.lean",
+    "lean_name": "goodHandlers_wordToWord_incrHelper",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3.1): wordConvsProof word_good_handlers group through the word_to_word passes. Statement compared with the source (HOL [local] theorems) or the typed capture word_convs_good_handlers_word_to_word (the exported _word_to_word_incr and _word_to_word). HOL's free label n and other free variables are explicit leading binders; HOL bool word_good_handlers is the tagged goodHandlersHOL with = true, ⇔ as ↔, Boolean = as =; the pass definitions are the tagged smartSeqHOL/seqAssoc/dropConsts/constFpLoop/tryIfHoist2/simpDuplicateIf/pushOutIf/compileExp, instSelectExp/instSelect, fakeMoves/ssaCcTrans/fullSsaCcTrans, threeToTwoRegProg, simpSeq/seqAssocRight/removeUnreach, fullCompileSingle and word_to_word compile; EVERY (λ(n,m,pp). …) l is ∀ x ∈ l on the components; ZIP on equal-length lists. Positive word dimension via [NeZero width]. HOL [local]."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_good_handlers_word_to_word_incr",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/GoodHandlersTail.lean",
+    "lean_name": "goodHandlers_wordToWord_incr",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3.1): wordConvsProof word_good_handlers group through the word_to_word passes. Statement compared with the source (HOL [local] theorems) or the typed capture word_convs_good_handlers_word_to_word (the exported _word_to_word_incr and _word_to_word). HOL's free label n and other free variables are explicit leading binders; HOL bool word_good_handlers is the tagged goodHandlersHOL with = true, ⇔ as ↔, Boolean = as =; the pass definitions are the tagged smartSeqHOL/seqAssoc/dropConsts/constFpLoop/tryIfHoist2/simpDuplicateIf/pushOutIf/compileExp, instSelectExp/instSelect, fakeMoves/ssaCcTrans/fullSsaCcTrans, threeToTwoRegProg, simpSeq/seqAssocRight/removeUnreach, fullCompileSingle and word_to_word compile; EVERY (λ(n,m,pp). …) l is ∀ x ∈ l on the components; ZIP on equal-length lists. Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_good_handlers_word_to_word",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/GoodHandlersTail.lean",
+    "lean_name": "goodHandlers_wordToWord",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3.1): wordConvsProof word_good_handlers group through the word_to_word passes. Statement compared with the source (HOL [local] theorems) or the typed capture word_convs_good_handlers_word_to_word (the exported _word_to_word_incr and _word_to_word). HOL's free label n and other free variables are explicit leading binders; HOL bool word_good_handlers is the tagged goodHandlersHOL with = true, ⇔ as ↔, Boolean = as =; the pass definitions are the tagged smartSeqHOL/seqAssoc/dropConsts/constFpLoop/tryIfHoist2/simpDuplicateIf/pushOutIf/compileExp, instSelectExp/instSelect, fakeMoves/ssaCcTrans/fullSsaCcTrans, threeToTwoRegProg, simpSeq/seqAssocRight/removeUnreach, fullCompileSingle and word_to_word compile; EVERY (λ(n,m,pp). …) l is ∀ x ∈ l on the components; ZIP on equal-length lists. Positive word dimension via [NeZero width]."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/GoodHandlersPasses.lean",
+    "lean_name": "goodHandlers_seqAssoc_eq",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof word_good_handlers group: a Boolean-equation form of a cited HOL ⇔ lemma, an auxiliary-pass or SSA-state fact factored out of the HOL proofs, or the per-element full_compile_single step of word_good_handlers_word_to_word_incr_helper; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/GoodHandlersSSA.lean",
+    "lean_name": "loopSetupGood'",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof word_good_handlers group: a Boolean-equation form of a cited HOL ⇔ lemma, an auxiliary-pass or SSA-state fact factored out of the HOL proofs, or the per-element full_compile_single step of word_good_handlers_word_to_word_incr_helper; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/GoodHandlersSSA.lean",
+    "lean_name": "loopSetupGood",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof word_good_handlers group: a Boolean-equation form of a cited HOL ⇔ lemma, an auxiliary-pass or SSA-state fact factored out of the HOL proofs, or the per-element full_compile_single step of word_good_handlers_word_to_word_incr_helper; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/GoodHandlersSSA.lean",
+    "lean_name": "fixGood",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof word_good_handlers group: a Boolean-equation form of a cited HOL ⇔ lemma, an auxiliary-pass or SSA-state fact factored out of the HOL proofs, or the per-element full_compile_single step of word_good_handlers_word_to_word_incr_helper; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/GoodHandlersSSA.lean",
+    "lean_name": "fakeSeqGood",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof word_good_handlers group: a Boolean-equation form of a cited HOL ⇔ lemma, an auxiliary-pass or SSA-state fact factored out of the HOL proofs, or the per-element full_compile_single step of word_good_handlers_word_to_word_incr_helper; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/GoodHandlersSSA.lean",
+    "lean_name": "fixGood1",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof word_good_handlers group: a Boolean-equation form of a cited HOL ⇔ lemma, an auxiliary-pass or SSA-state fact factored out of the HOL proofs, or the per-element full_compile_single step of word_good_handlers_word_to_word_incr_helper; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/GoodHandlersSSA.lean",
+    "lean_name": "fixGood2",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof word_good_handlers group: a Boolean-equation form of a cited HOL ⇔ lemma, an auxiliary-pass or SSA-state fact factored out of the HOL proofs, or the per-element full_compile_single step of word_good_handlers_word_to_word_incr_helper; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/GoodHandlersPasses.lean",
+    "lean_name": "goodHandlers_pushOutIfAux",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof word_good_handlers group: a Boolean-equation form of a cited HOL ⇔ lemma, an auxiliary-pass or SSA-state fact factored out of the HOL proofs, or the per-element full_compile_single step of word_good_handlers_word_to_word_incr_helper; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/GoodHandlersSSA.lean",
+    "lean_name": "reconcileGood",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof word_good_handlers group: a Boolean-equation form of a cited HOL ⇔ lemma, an auxiliary-pass or SSA-state fact factored out of the HOL proofs, or the per-element full_compile_single step of word_good_handlers_word_to_word_incr_helper; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/GoodHandlersTail.lean",
+    "lean_name": "goodHandlers_fullCompileSingle",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof word_good_handlers group: a Boolean-equation form of a cited HOL ⇔ lemma, an auxiliary-pass or SSA-state fact factored out of the HOL proofs, or the per-element full_compile_single step of word_good_handlers_word_to_word_incr_helper; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/GoodHandlersPasses.lean",
+    "lean_name": "goodHandlers_smartSeq_eq",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof word_good_handlers group: a Boolean-equation form of a cited HOL ⇔ lemma, an auxiliary-pass or SSA-state fact factored out of the HOL proofs, or the per-element full_compile_single step of word_good_handlers_word_to_word_incr_helper; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/GoodHandlersSSA.lean",
+    "lean_name": "goodHandlers_ssaCcTrans_fst",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof word_good_handlers group: a Boolean-equation form of a cited HOL ⇔ lemma, an auxiliary-pass or SSA-state fact factored out of the HOL proofs, or the per-element full_compile_single step of word_good_handlers_word_to_word_incr_helper; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Proofs/WordConventions.lean",
+    "lean_name": "compileToWordConventions2",
+    "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml",
+    "hol_name": "compile_to_word_conventions2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source compared whole backendProof1284-1307: actual native compile equation and input guard, all names/labels/five output conditions and nested original guards retained; positive-width word translation only."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/ShiftRorImmediate.lean",
+    "lean_name": "riscv_encoder_correct_shiftRorImmediate",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source comparison (2026-10-04; bead flapjack-pxn.18.5.13.6.9.9): full original riscv_encoder_correct Shift Imm/Ror case560-620, full theorem specialized at Inst(Arith(Shift Ror rd rs (Imm(c:word64)))). Arbitrary Nat register indices and word64 count, sole original asmStep plus initial targetStateRel, existential count and every original interference environment, complete asserts/stateOk/emitted-byte memory/all-PC and targetStateRel result plus asserts2 outside-domain native memory frame retained. Derives rd/rs asmRegOk, c.toNat<64 and positive count from unchanged asmOk; no explicit new bound/nonzero premise. Actual literal SRLI31/SLLIrd/ORrd three-step execution derives every fetch/Decode/Run/Next from emitted bytes; complete native scratch31 effect retained, excluded from source relation only by original avoidRegs. Arbitrary rd=rs aliases retained. Source poststate PC+12 and native result derive rotateRight using original ror lemma and source-derived complementary count. Every intermediate original PC coverage/memory/validity and original environment/counter recurrence follows through RorExecution; no target run/output relation premise. Fresh original full typed specialization prints word64 and unrestricted num registers, hyp0/provedT. Native state and actual Run/Next closures inherit reals_as_rational_cuts, SOUNDNESS8; this is one full constructor case, register Ror and full encoder/compiler theorem remain open. Kernel/full delivery checks recorded on bead."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Fun2SetUnion.lean",
+    "lean_name": "fun2SetDisjointUnion",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "fun2set_disjoint_union",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original miscScript 4262-4274: DISJOINT d1 d2 ∧ p (fun2set (m,d1)) ∧ q (fun2set (m,d2)) ⇒ (p * q) (fun2set (m, d1 ∪ d2)) over arbitrary α, β with predicate sets as in the reviewed set_sep port (DISJOINT pointwise, ∪ pointwise disjunction, * = star). Typed capture pan_to_target_library_lemmas probe (show_types, no hypotheses). No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Address.lean",
+    "lean_name": "wordArithLemma2",
+    "hol_path": "HOL/examples/machine-code/hoare-triple/addressScript.sml",
+    "hol_name": "word_arith_lemma2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original addressScript 413-422: ∀n m. n2w n - n2w m = if n < m then -(n2w (m - n)) else n2w (n - m), n2w = BitVec.ofNat. Typed capture pan_to_target_library_lemmas probe (show_types, no hypotheses). No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Alignment.lean",
+    "lean_name": "alignedAddSub",
+    "hol_path": "HOL/src/n-bit/alignmentScript.sml",
+    "hol_name": "aligned_add_sub",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original alignmentScript 182-196: ∀p a b. aligned p b ⇒ (aligned p (a + b) ⇔ aligned p a) ∧ (aligned p (a − b) ⇔ aligned p a), for every p including p ≥ dimindex; Bool aligned with ⇔ as Bool equality. Typed capture pan_to_target_library_lemmas probe (show_types, no hypotheses). No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProof/CompileLab.lean",
+    "lean_name": "compileLabLENGTH",
+    "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml",
+    "hol_name": "compile_lab_LENGTH",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 1215-1221: compile_lab asm_conf c secs = SOME (bytes,c') ⇒ c'.pos = LENGTH bytes + c.pos, all variables universally quantified as explicit binders. Typed capture backend_compile_lab probe (literal source replay, show_types, no hypotheses); carriers are the reviewed LabToTarget.compileLab ones. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProof/CompileLab.lean",
+    "lean_name": "compileLabIMPMmioPcsMinIndex",
+    "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml",
+    "hol_name": "compile_lab_IMP_mmio_pcs_min_index",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 3500-3519: compile_lab ... = SOME (bytes,c') ∧ OPTION_ALL (EVERY (λx. ∃s. x = ExtCall s)) c.ffi_names ⇒ ∃ffi_names. c'.ffi_names = SOME ffi_names ∧ ∃x. mmio_pcs_min_index ffi_names = SOME x; OPTION_ALL rendered as the none ↦ True / some l ↦ P l match and EVERY as membership quantification. Typed capture backend_compile_lab probe (literal source replay, show_types, no hypotheses); carriers are the reviewed LabToTarget.compileLab ones. No added premise."
   }
 ]
