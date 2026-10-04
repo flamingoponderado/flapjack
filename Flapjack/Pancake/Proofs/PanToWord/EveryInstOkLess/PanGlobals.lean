@@ -179,6 +179,185 @@ theorem every_inst_ok_less_pan_globals_compile {width : Nat} [NeZero width] :
     try split <;> simp_all [expsOfHOL, everyExpListHOL, everyExpListHOL_append, everyExpHOL,
       panopArityTwoHOL, shapeVal_every]
 
+/-- Full original `every_inst_ok_less_pan_globals_compile_decs`:
+`∀ctxt pan_code. EVERY good_panops pan_code ⇒
+EVERY good_panops (FST (SND (pan_globals$compile_decs ctxt pan_code)))`. -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "every_inst_ok_less_pan_globals_compile_decs"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
+theorem every_inst_ok_less_pan_globals_compile_decs {width : Nat} [NeZero width] :
+    ∀ (ctxt : PanGlobalsContextExact width) (pan_code : List (DeclHOL width)),
+      pan_code.all goodPanopsHOL = true →
+        (compileDecsExactHOL ctxt pan_code).2.1.all goodPanopsHOL = true := by
+  intro ctxt pan_code
+  induction pan_code generalizing ctxt with
+  | nil => simp [compileDecsExactHOL]
+  | cons d ds ih =>
+      intro h
+      simp only [List.all_cons, Bool.and_eq_true] at h
+      cases d with
+      | decl sh v e =>
+          simp only [compileDecsExactHOL]
+          exact ih _ h.2
+      | function fi =>
+          simp only [compileDecsExactHOL, List.all_cons, Bool.and_eq_true]
+          refine ⟨?_, ih _ h.2⟩
+          simp only [goodPanopsHOL] at h ⊢
+          exact every_inst_ok_less_pan_globals_compile ctxt fi.body h.1
+      | exnDecl eid sh =>
+          simp only [compileDecsExactHOL]
+          exact ih _ h.2
+      | name nm flds =>
+          simp only [compileDecsExactHOL]
+          exact ih _ h.2
+
+/-- Full original `every_inst_ok_less_pan_globals_compile_decs_init`:
+`∀ctxt pan_code. EVERY good_panops pan_code ⇒
+EVERY (EVERY (every_exp P)) (MAP exps_of (FST (pan_globals$compile_decs ctxt pan_code)))`. -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml"
+  "every_inst_ok_less_pan_globals_compile_decs_init"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
+theorem every_inst_ok_less_pan_globals_compile_decs_init {width : Nat} [NeZero width] :
+    ∀ (ctxt : PanGlobalsContextExact width) (pan_code : List (DeclHOL width)),
+      pan_code.all goodPanopsHOL = true →
+        ((compileDecsExactHOL ctxt pan_code).1.map expsOfHOL).all
+          (everyExpListHOL panopArityTwoHOL) = true := by
+  intro ctxt pan_code
+  induction pan_code generalizing ctxt with
+  | nil => simp [compileDecsExactHOL]
+  | cons d ds ih =>
+      intro h
+      simp only [List.all_cons, Bool.and_eq_true] at h
+      cases d with
+      | decl sh v e =>
+          simp only [compileDecsExactHOL, List.map_cons, List.all_cons, Bool.and_eq_true]
+          refine ⟨?_, ih _ h.2⟩
+          simp only [goodPanopsHOL] at h
+          simp [expsOfHOL, everyExpListHOL, everyExpHOL, panopArityTwoHOL,
+            compileExp_every ctxt e h.1]
+      | function fi =>
+          simp only [compileDecsExactHOL]
+          exact ih _ h.2
+      | exnDecl eid sh =>
+          simp only [compileDecsExactHOL]
+          exact ih _ h.2
+      | name nm flds =>
+          simp only [compileDecsExactHOL]
+          exact ih _ h.2
+
+/-- Full original `every_inst_ok_less_fperm`:
+`∀f g code. EVERY (every_exp P) (exps_of code) ⇒ EVERY (every_exp P) (exps_of (fperm f g code))`;
+`fperm` renames functions only and leaves every expression in place. -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "every_inst_ok_less_fperm"
+  (words_as_type_indexed_bitvec)]
+theorem every_inst_ok_less_fperm {width : Nat} [NeZero width] :
+    ∀ (f g : MlS) (code : ProgHOL width),
+      everyExpListHOL panopArityTwoHOL (expsOfHOL code) = true →
+        everyExpListHOL panopArityTwoHOL (expsOfHOL (fpermHOL f g code)) = true := by
+  intro f g code
+  induction code using fpermHOL.induct
+  case case7 =>
+    rename_i p _ _ _ _ _ _
+    cases p <;> first
+      | (simp_all [fpermHOL, expsOfHOL]; done)
+      | (rename_i h _ _ _ _ _ _; exact (h _ _ _ _ rfl).elim)
+  case case5 info _ _ ih =>
+    rcases info with _ | ⟨k, _ | ⟨e, b, h⟩⟩ <;>
+      simp_all [fpermHOL, expsOfHOL, everyExpListHOL_append]
+  all_goals
+    rw [fpermHOL]
+    try simp_all [expsOfHOL, everyExpListHOL, everyExpListHOL_append]
+
+/-- Full original `every_inst_ok_less_fperm_decs`:
+`∀f g pan_code. EVERY good_panops pan_code ⇒ EVERY good_panops (fperm_decs f g pan_code)`. -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "every_inst_ok_less_fperm_decs"
+  (words_as_type_indexed_bitvec)]
+theorem every_inst_ok_less_fperm_decs {width : Nat} [NeZero width] :
+    ∀ (f g : MlS) (pan_code : List (DeclHOL width)),
+      pan_code.all goodPanopsHOL = true → (fpermDecsHOL f g pan_code).all goodPanopsHOL = true := by
+  intro f g pan_code
+  induction pan_code with
+  | nil => simp [fpermDecsHOL]
+  | cons d ds ih =>
+      intro h
+      simp only [List.all_cons, Bool.and_eq_true] at h
+      cases d with
+      | function fi =>
+          simp only [fpermDecsHOL, List.all_cons, Bool.and_eq_true]
+          refine ⟨?_, ih h.2⟩
+          simp only [goodPanopsHOL] at h ⊢
+          exact every_inst_ok_less_fperm f g fi.body h.1
+      | decl sh v e =>
+          simp only [fpermDecsHOL, List.all_cons, Bool.and_eq_true]
+          exact ⟨h.1, ih h.2⟩
+      | exnDecl eid sh =>
+          simp only [fpermDecsHOL, List.all_cons, Bool.and_eq_true]
+          exact ⟨h.1, ih h.2⟩
+      | name nm flds =>
+          simp only [fpermDecsHOL, List.all_cons, Bool.and_eq_true]
+          exact ⟨h.1, ih h.2⟩
+
+/-- `EVERY (every_exp P)` over a `FLAT` (Flapjack infrastructure). -/
+theorem everyExpListHOL_flatten {width : Nat} [NeZero width] (P : ExpHOL width → Bool)
+    (L : List (List (ExpHOL width))) :
+    everyExpListHOL P L.flatten = L.all (everyExpListHOL P) := by
+  induction L with
+  | nil => simp [everyExpListHOL]
+  | cons l L ih => simp [everyExpListHOL_append, ih]
+
+/-- `resort_decls` keeps every declaration of a good list good
+(Flapjack infrastructure; `resort_decls` is four `FILTER`s). -/
+theorem resortDecls_all_good {width : Nat} [NeZero width] (l : List (DeclHOL width))
+    (h : l.all goodPanopsHOL = true) : (resortDeclsHOL l).all goodPanopsHOL = true := by
+  rw [List.all_eq_true] at h ⊢
+  intro x hx
+  simp only [resortDeclsHOL, List.mem_append, List.mem_filter] at hx
+  rcases hx with ((⟨hx, _⟩ | ⟨hx, _⟩) | ⟨hx, _⟩) | ⟨hx, _⟩ <;> exact h x hx
+
+/-- Parameter variables contain no `Panop` (Flapjack infrastructure). -/
+theorem params_every {width : Nat} [NeZero width] :
+    ∀ args : List (MlS × ShapeHOL),
+      everyExpListHOL panopArityTwoHOL
+        (args.map (fun entry => (ExpHOL.var .local entry.1 : ExpHOL width))) = true
+  | [] => rfl
+  | a :: as => by
+      simp [everyExpListHOL, everyExpHOL, panopArityTwoHOL, params_every as]
+
+/-- Full original `every_inst_ok_less_pan_globals_compile_top`:
+`∀pan_code main. EVERY good_panops pan_code ⇒
+EVERY good_panops (pan_globals$compile_top pan_code main)`. -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml"
+  "every_inst_ok_less_pan_globals_compile_top" (words_as_type_indexed_bitvec)]
+theorem every_inst_ok_less_pan_globals_compile_top {width : Nat} [NeZero width] :
+    ∀ (pan_code : List (DeclHOL width)) (main : MlS),
+      pan_code.all goodPanopsHOL = true →
+        (compileTopExactHOL pan_code main).all goodPanopsHOL = true := by
+  intro pan_code main h
+  unfold compileTopExactHOL
+  split
+  · rfl
+  rename_i arguments _body returnShape _
+  dsimp only
+  have hren := every_inst_ok_less_fperm_decs main (newMainNameHOL pan_code)
+    (resortDeclsHOL pan_code) (resortDecls_all_good pan_code h)
+  generalize fpermDecsHOL main (newMainNameHOL pan_code) (resortDeclsHOL pan_code) = renamed at hren ⊢
+  generalize ({ globals := HolFiniteMapExact.empty, globalsSize := 0, maxGlobalsSize := cakeBytesInWord width * BitVec.ofNat width ((decShapesHOL renamed).map sizeOfShapeHOL).sum } : PanGlobalsContextExact width) = initial
+  have hfuns := every_inst_ok_less_pan_globals_compile_decs initial renamed hren
+  have hinits := every_inst_ok_less_pan_globals_compile_decs_init initial renamed hren
+  have hexns : (compileDecsExactHOL initial renamed).2.2.1.all goodPanopsHOL = true := by
+    rcases hc : compileDecsExactHOL initial renamed with ⟨a, b, c, e⟩
+    rw [PanGlobalsCompileDecsStructural.compile_decs_exns_are_exnsHOL initial renamed a b c e hc]
+    rw [List.all_eq_true] at hren ⊢
+    intro x hx
+    exact hren x (List.mem_filter.mp hx).1
+  rcases hc : compileDecsExactHOL initial renamed with ⟨inits, funs, exns, ctxt'⟩
+  rw [hc] at hfuns hinits hexns
+  dsimp only at hfuns hinits hexns ⊢
+  simp only [List.all_append, List.all_cons, Bool.and_eq_true]
+  refine ⟨hexns, ?_, hfuns⟩
+  simp only [goodPanopsHOL, expsOfHOL, panExpsOfNestedSeqHOL, everyExpListHOL_append,
+    everyExpListHOL_flatten, hinits, Bool.true_and]
+  exact params_every arguments
+
 end PanToWordEveryInstOkLessPanGlobals
 
 end Flapjack
