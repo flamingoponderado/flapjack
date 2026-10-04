@@ -98086,22 +98086,6 @@
   {
     "hol_path": null,
     "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyPanToWord.lean",
-    "lean_name": "fullMakeInit_fields",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only projection step of pan_to_target_compile_semantics (HOL proof lines 1756-1797, unfolding full_make_init and stack_alloc make_init): when full_make_init returns (sst, SOME x), sst has x's memory, mdomain, sh_mdomain, store, be and ffi."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyPanToWord.lean",
-    "lean_name": "initReduce_mdomain",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only step of pan_to_target_compile_semantics (HOL proof lines 1924-2054, init_reduce_def with lsr_lsl and the heap-length shift): with init_code_thm's register facts for sp+2 and sp+1, aligned w3 - w2 and no wrap past store_list, init_reduce's mdomain is addresses w2 (w2n (-1w*w2 + w3) DIV (dimindex DIV 8))."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyInitCode.lean",
     "lean_name": "panToTargetInitCodeRun",
     "statement_status": "no_hol_reference_pending_classification",

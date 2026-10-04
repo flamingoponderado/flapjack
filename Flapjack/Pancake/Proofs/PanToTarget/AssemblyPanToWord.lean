@@ -2,7 +2,6 @@ import Flapjack.Pancake.Proofs.PanToTarget.AssemblyMemory
 import Flapjack.Pancake.Proofs.PanToTarget.InitHelpers
 import Flapjack.Compiler.Backend.WordToStack.Proofs.Initialization
 import Flapjack.Pancake.Proofs.PanToWord.StateRelImpSemantics
-import Flapjack.Pancake.Proofs.PanToTarget.AssemblyInitCode
 
 /-!
 # `pan_to_target_compile_semantics` assembly, pan_to_word stage
@@ -124,61 +123,5 @@ theorem addressesSplitGlobals {width : Nat} [NeZero width] (good : goodDimindex 
     · exact .inl ⟨i, him, rfl⟩
     · refine .inr ⟨i - m, by omega, ?_⟩
       rw [key, show m + (i - m) = i by omega]
-
-/-- The memory domain of `init_reduce` after `init_code` (HOL proof lines 1924-2054):
-with `init_code_thm`'s heap pointer `w2` in register `sp + 2` and its base pointer
-in register `sp + 1`, an aligned heap span `w3 - w2` and no wrap past the
-`store_list` words, the domain is the `w2n (w3 - w2) DIV (dimindex DIV 8)` heap
-words from `w2`. -/
-theorem initReduce_mdomain {width : Nat} [NeZero width] {C F : Type}
-    (good : goodDimindex width) (generateGc jump : Bool) (bounds : BitVec width × BitVec width)
-    (sp : Nat) (code : Spt (StackLang.HolProg width)) (bitmaps : List (BitVec width))
-    (dataSpace : Nat)
-    (oracle : Nat → C × List (Nat × StackLang.HolProg width) × List (BitVec width))
-    (t' : StackSemStateFiniteExact width C F) (w2 w3 : BitVec width)
-    (h2 : t'.regs.lookup (sp + 2) = some (.word w2))
-    (h1 : t'.regs.lookup (sp + 1) =
-      some (.word ((((w3 + -1 * w2) >>> (wordShiftAmount width + 1)) <<<
-        (wordShiftAmount width + 1)) + w2 +
-        StackRemove.bytesInWord width * BitVec.ofNat width StackRemove.storeList.length)))
-    (halign : holAligned (wordShiftAmount width + 1) (w3 + -1 * w2) = true)
-    (hbound : (-1 * w2 + w3).toNat + StackRemove.storeList.length * (width / 8) < 2 ^ width) :
-    (fun a => (StackRemove.Proofs.InitReduce.initReduce generateGc jump bounds sp code bitmaps
-        dataSpace oracle t').mdomain a = true) =
-      StackRemove.addresses w2 ((-1 * w2 + w3).toNat / (width / 8)) := by
-  have e2 : holFapply t'.regs (sp + 2) = .word w2 := holFapply_of_lookup h2
-  have e1 := holFapply_of_lookup h1
-  rw [Compiler.Backend.DataToWord.Proofs.Gc.lsrLsl _ _ halign] at e1
-  simp only [StackRemove.Proofs.InitReduce.initReduce, e1, e2, decide_eq_true_eq]
-  simp only [wordSemTheWord]
-  have hspan : w3 + -1 * w2 + w2 +
-      StackRemove.bytesInWord width * BitVec.ofNat width StackRemove.storeList.length - w2 =
-      -1 * w2 + w3 +
-        StackRemove.bytesInWord width * BitVec.ofNat width StackRemove.storeList.length := by
-    rw [BitVec.add_comm w3]; abel
-  rw [hspan, heapLengthShift good w2 w3 _ hbound]
-
-/-- The stack state returned by a successful `full_make_init` (`opt = SOME x`) shares
-`x`'s memory, memory domains, store, endianness and FFI state: `stack_alloc`'s
-`make_init` only replaces code, flags, GC function and compiler fields. -/
-theorem fullMakeInit_fields {width : Nat} [NeZero width] {C F : Type}
-    {stackConf : StackToLab.Config} {dataConf : DataToWord.Config} {maxHeap sp : Nat}
-    {offset : BitVec width × BitVec width} {bitmaps : List (BitVec width)}
-    {code : List (Nat × StackLang.HolProg width)} {t : LabSem.State width C F}
-    {saveRegs : Nat → Bool} {dataSp : Nat}
-    {coracle : Nat → C × List (Nat × StackLang.HolProg width) × List (BitVec width)}
-    {sst x : StackSemStateFiniteExact width C F}
-    (hfmi : StackToLab.Proofs.FullMakeInit.fullMakeInit stackConf dataConf maxHeap sp offset
-      bitmaps code t saveRegs dataSp coracle = (sst, some x)) :
-    sst.memory = x.memory ∧ sst.mdomain = x.mdomain ∧ sst.shMdomain = x.shMdomain ∧
-      sst.store = x.store ∧ sst.be = x.be ∧ sst.ffi = x.ffi := by
-  rw [StackToLab.Proofs.FullMakeInitSemantics.fullMakeInit_eq] at hfmi
-  simp only [Prod.mk.injEq] at hfmi
-  obtain ⟨hs, hopt⟩ := hfmi
-  rw [← hs]
-  simp only [StackAlloc.makeInit, StackRemove.Proofs.InitMake.makeInitAny]
-  unfold StackRemove.Proofs.InitMake.makeInitOpt at hopt ⊢
-  rw [hopt]
-  exact ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 end Flapjack.Pancake.Proofs.PanToTarget
