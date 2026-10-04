@@ -98112,6 +98112,38 @@
   {
     "hol_path": null,
     "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyPanToWord.lean",
+    "lean_name": "panGlobalsByteAligned_of_mod",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only infrastructure: under good_dimindex a word whose value is a multiple of dimindex DIV 8 is byte_aligned in Pancake's byte_align fixed-point form."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyPanToWord.lean",
+    "lean_name": "addresses_mod",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only infrastructure (addresses_thm with byte_aligned_mult): every word of addresses base n from a word-aligned base is word aligned under good_dimindex."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyPanToWord.lean",
+    "lean_name": "readPointers_s2",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only step of pan_to_target_compile_semantics (HOL proof lines 1924-1929): under full_make_init_semantics' register-name facts, read_pointers of the stack-names state s2 are the lab state's initial len/ptr2/len2 register words."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyPanToWord.lean",
+    "lean_name": "panToTargetPanToWordFromInit",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 2103-2284 including its impl_tac): pan_to_word state_rel_imp_semantics for wst0 = make_init over the full_make_init state, with every stack-state premise discharged from full_make_init_semantics' hypotheses (opus3 E2 exports), the lab-state register and make_init/pan_installed memory facts, and top-theorem hypotheses; HeapLength value and byte_aligned top_addr derived as in HOL."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyInitCode.lean",
     "lean_name": "panToTargetInitCodeRun",
     "statement_status": "no_hol_reference_pending_classification",
