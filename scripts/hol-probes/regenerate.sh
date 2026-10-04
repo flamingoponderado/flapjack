@@ -4652,6 +4652,9 @@ run_probe word_alloc_distinct_tar_reg_probeScript.sml word_alloc_distinct_tar_re
 run_probe word_to_word_code_rel_probeScript.sml word_to_word_code_rel_probe.out \
   code_rel_def_statement code_rel_def_hypotheses code_rel_def_typed \
   "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_to_word_compile_thm_probeScript.sml word_to_word_compile_thm_probe.out \
+  compile_word_to_word_thm_statement compile_word_to_word_thm_hypotheses compile_word_to_word_thm_typed \
+  "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_to_word_compile_single_probeScript.sml word_to_word_compile_single_probe.out \
   FST_compile_single_statement FST_compile_single_hypotheses FST_compile_single_typed \
   compile_single_lem_statement compile_single_lem_hypotheses compile_single_lem_typed \
