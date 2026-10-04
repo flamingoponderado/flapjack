@@ -8646,6 +8646,8 @@ alignment guards; no target-run or desired postrelation premise is added. These
 untagged compositions have no separately named HOL originals. Full Mem encoder
 assertions, interference and store post-state correspondence remain open.
 
+`load_globals_alt_probe.out` captures the complete original typed arbitrary-address/count GENLIST equality. The address is fixed word5; native expression dimension remains independently quantified. This prerequisite supports Call-handler compiler validity, not full source-pass or compiler correctness.
+
 ### Full original native Call encoder case
 
 `CorrectnessEncoding/Call.lean` assembles the original riscv_target258–263
@@ -8691,3 +8693,26 @@ local composition infrastructure; full `JumpCmp` correctness is a dependent
 task. `check-riscv-conditional-next.py` and its mutation tests guard the
 statement, complete evidence and registration; source comparison and kernel
 checking remain required.
+
+### Source/native store post-memory correspondence
+
+`riscv_memory_store_value_probeScript.sml` compares all selected bytes and
+three untouched addresses for 1/2/4/8-byte source and native stores, at zero
+and aligned end-of-address-space addresses. Both initial memories use
+`w2w (p + 128w)` and the value is `0x8877665544332211`. It also checks source
+frames and success, and failed-domain writes with independently sized 64-bit
+and 1-bit values. Both literal source/native clauses, types and zero
+hypotheses are captured. Kernel fixtures in `MemoryStore.lean` match every
+source byte constant and both failure observations.
+
+The generic source selected-byte proof keeps independent positive word widths,
+with a count bound only to prevent a second traversal of the modular address
+space. All four RV64 sizes discharge that bound. The actual post-memory
+relation derives selected bytes and both outside-region frames from the
+initial target relation; memStore success supplies its own alignment guard,
+and the conclusion uses its actual post-domain. These untagged compositions
+have no separately named original HOL theorems. Full Mem still requires
+source register/address extraction, native interference, complete postrelation
+and assertion assembly.
+
+`pan_to_crep_inline_table_validity_probe.out` captures the complete original typed every_inst_w_inline implication. Native proof derives the actual filtered name-map SUBMAP internally, including duplicate keys, and consumes the accepted full inlining theorem. It assumes only the original compile_to_crep table validity, with no output/target-run or added distinctness premise; full source-program/body validity remains separate.

@@ -1,0 +1,16 @@
+store1_zero=T
+store1_wrap=T
+store2_zero=T
+store2_wrap=T
+store4_zero=T
+store4_wrap=T
+store8_zero=T
+store8_wrap=T
+source_failure_writes=T
+source_narrow_value=T
+source_clause=write_mem_word p (SUC n) v s = (let s1 = write_mem_word (if s.be then p + -1w else (p + 1w)) n (v ⋙ 8) s in assert (p ∈ s1.mem_domain) (upd_mem p (w2w v) s1))
+source_hypotheses=0
+source_types=s : :64 asm_state, v : :word64, n : :num, p : :word64
+native_clause=rawWriteData (p,v,n) t = (let mask = 1w ≪ (n * 8) + -1w; pAddrIdx = (63 >< 3) p; align = w2n ((2 >< 0) p); v' = MEM pAddrIdx t in if align = 0 then write'MEM (mask && v ‖ v' && ¬mask,pAddrIdx) t else if align + n ≤ 8 then write'MEM (v' && ¬(mask ≪ (align * 8)) ‖ mask ≪ (align * 8) && v ≪ (align * 8),pAddrIdx) t else (let dw_mask = w2w mask ≪ (align * 8); dw_new = dw_mask && w2w v ≪ (align * 8) ‖ ¬dw_mask && MEM (pAddrIdx + 1w) t @@ v' in write'MEM ((63 >< 0) dw_new,pAddrIdx) (write'MEM ((127 >< 64) dw_new,pAddrIdx + 1w) t)))
+native_hypotheses=0
+native_types=t : :riscv_state, n : :num, v : :word64, p : :word64
