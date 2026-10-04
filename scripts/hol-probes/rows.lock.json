@@ -855,6 +855,7 @@
     {"bytes": 58, "out": "pan_shape_of_probe.out", "rows": 3, "sha256": "f35fc544576dcbc4b3d1425049b137c57d91e4caf5a53974f66bc818f2efbb06"},
     {"bytes": 57, "out": "pan_simp_compile_probe.out", "rows": 3, "sha256": "708dacc3619cc46ad86d4235939dd5b298634a2bc3671437474baf80ed0d9a80"},
     {"bytes": 3520, "out": "pan_simp_semantics_statement_probe.out", "rows": 11, "sha256": "0ff7532c92695be4ddc283e20ed413e86a457c726925ebd5a23872134782b9d9"},
+    {"bytes": 687, "out": "pan_source_entry_word_probe.out", "rows": 2, "sha256": "007079f25718e8beaf06234f8e331617b3643abcebf87249c08d7a0f5da16f89"},
     {"bytes": 285, "out": "pan_store32_endian_probe.out", "rows": 7, "sha256": "f1f71a31dd360a90c4c2c829af7e5cb98920a3169b4fc9453abb269bff3e1dae"},
     {"bytes": 88, "out": "pan_structs_afindi_append_probe.out", "rows": 3, "sha256": "0bee69b780cf1ab4aa6c733092234f0b6caadecb1ce5dad3a653a272dff6bbf5"},
     {"bytes": 54, "out": "pan_structs_afindi_el_probe.out", "rows": 3, "sha256": "7744c720a3605395b6de72e983567d8830d5faf8aeae3eab8ce8645d7b7f83d8"},
