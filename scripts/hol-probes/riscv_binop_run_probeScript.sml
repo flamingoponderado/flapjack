@@ -3,7 +3,7 @@ open HolKernel Parse bossLib preamble riscvTheory asmSemTheory riscv_targetTheor
 val _ = Globals.linewidth := 1000000;
 fun clause label th = (print(label ^ "="); print_term(concl th); print "\n");
 fun hypotheses label th = print(label ^ "=" ^ Int.toString(length(hyp th)) ^ "\n");
-fun types label tm = (print(label ^ "="); print_type(type_of tm); print " ; "; print(String.concatWith ", " (map (fn v => term_to_string v ^ " : " ^ type_to_string(type_of v)) (free_vars tm))); print "\n");
+fun types label tm = (print(label ^ "="); print_type(type_of tm); print " ;"; if null(free_vars tm) then () else print(" " ^ String.concatWith ", " (map (fn v => term_to_string v ^ " : " ^ type_to_string(type_of v)) (free_vars tm))); print "\n");
 val _ = clause "source_reg_imm_clause" asmSemTheory.reg_imm_def;
 val _ = hypotheses "source_reg_imm_hypotheses" asmSemTheory.reg_imm_def;
 val _ = types "source_reg_imm_types" ``asmSem$reg_imm``;
