@@ -1218,6 +1218,7 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionProgramMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionFrame
 import Flapjack.Compiler.Backend.WordToStack.ProductionFrameCaller
 import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.Instructions
+import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.TopStubs
 import Flapjack.Compiler.Backend.WordToStack.ProductionLocations
 import Flapjack.Compiler.Backend.WordToStack.ProductionConfiguration
 import Flapjack.Compiler.Backend.WordToStack.ProductionScheduler
