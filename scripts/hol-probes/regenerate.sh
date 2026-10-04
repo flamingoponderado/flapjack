@@ -7898,3 +7898,6 @@ run_probe riscv_target_div_probeScript.sml riscv_target_div_probe.out \
   riscv_encoder_correct_div_statement riscv_encoder_correct_div_types riscv_encoder_correct_div_hypotheses riscv_encoder_correct_div_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+run_probe word_convs_push_out_labels_probeScript.sml word_convs_push_out_labels_probe.out \
+  pushOutLabelsHelper_typed pushOutLabelsHelper_proved pushOutLabelsHelper_hypotheses pushOutLabels_typed pushOutLabels_proved pushOutLabels_hypotheses \
+  "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" "$cake_dir/compiler/backend/proofs"

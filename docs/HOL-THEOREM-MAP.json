@@ -93307,5 +93307,14 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Source compared full original Div constructor621-628, riscv_ast138-139 and encoder_correct_def. Arbitrary natural registers and full original asmStep plus initial targetStateRel premise retained with complete existential all-env asserts/asserts2 conclusion. Nonzero divisor derived solely from original source failed=false guard; literal signed MulDiv DIV native emitted instruction, all four fetched bytes and actual Encode/DecodeAny/Run/Next, original register config guards, aliases and whole final state relation retained. No target-run, range, divisor or post-state premise added. Source word quotient is signed words word_quot, matching reviewed BitVec.sdiv. Fresh complete typed original specialization hyp0/provedT is regression evidence, not cross-assistant equivalence. Full target/Run closure inherits reals_as_rational_cuts, SOUNDNESS item8."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/PushOut.lean",
+    "lean_name": "labelsRelPushOutIf",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "labels_rel_push_out_if",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-04 original local labels_rel_push_out_if364-376: arbitrary native program at arbitrary positive common word width. Exact native pushOutIfAux structural induction retains return/raise/tail-call terminal cases, recursive MustTerminate, all four If branch Boolean combinations, both Seq branches including untouched second program when first terminates, Loop and all unchanged constructors. Conclusion full labelsRel source/output (membership containment and source distinctness implies output distinctness), no extra distinct-output premise. Reordered If branch uses accepted generic labelsRelAppendImp and actual labelsRel_append; original generic labels_rel binder translated by positive BitVec/NeZero only. Literal unchanged original local theorem proof and append-helper replay with full inferred types, T/hyp0; probes regression evidence, not cross-language equivalence. No evaluator or reals qualifier inherited."
   }
 ]
