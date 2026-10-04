@@ -4714,12 +4714,6 @@ run_probe word_to_word_no_install_compile_single_probeScript.sml word_to_word_no
 run_probe data_to_word_gc_fun_const_ok_probeScript.sml data_to_word_gc_fun_const_ok_probe.out \
   gc_fun_const_ok_word_gc_fun_statement gc_fun_const_ok_word_gc_fun_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_gcProofScript.sml" "$cake_dir/compiler/backend/proofs"
-run_probe lab_props_every_sec_label_ok_probeScript.sml lab_props_every_sec_label_ok_probe.out \
-  EVERY_sec_label_ok_statement EVERY_sec_label_ok_typed \
-  "$cake_dir/compiler/backend/semantics/labPropsScript.sml" "$cake_dir/compiler/backend/semantics"
-run_probe pan_to_target_labels_chain_source_replay_probeScript.sml pan_to_target_labels_chain_source_replay_probe.out \
-  pan_to_lab_good_code_lemma_replay_statement from_pan_to_lab_no_install_replay_typed \
-  "$cake_dir/pancake/proofs/pan_to_targetProofScript.sml" "$cake_dir/pancake/proofs"
 run_probe word_convs_good_handlers_word_to_word_probeScript.sml word_convs_good_handlers_word_to_word_probe.out \
   word_good_handlers_word_to_word_incr_statement word_good_handlers_word_to_word_typed \
   "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -8080,3 +8074,23 @@ run_probe riscv_target_shift_asr_immediate_probeScript.sml riscv_target_shift_as
   riscv_encoder_correct_shiftAsrImmediate_statement riscv_encoder_correct_shiftAsrImmediate_types riscv_encoder_correct_shiftAsrImmediate_hypotheses riscv_encoder_correct_shiftAsrImmediate_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+run_probe word_convs_handler_simple_passes_probeScript.sml word_convs_handler_simple_passes_probe.out \
+  goodHandlers_instSelectExp_typed goodHandlers_instSelectExp_proved goodHandlers_instSelectExp_hypotheses goodHandlers_instSelect_typed goodHandlers_instSelect_proved goodHandlers_instSelect_hypotheses goodHandlers_threeToTwoRegProg_typed goodHandlers_threeToTwoRegProg_proved goodHandlers_threeToTwoRegProg_hypotheses goodHandlers_simpSeq_typed goodHandlers_simpSeq_proved goodHandlers_simpSeq_hypotheses goodHandlers_seqAssocRight_typed goodHandlers_seqAssocRight_proved goodHandlers_seqAssocRight_hypotheses goodHandlers_removeUnreach_typed goodHandlers_removeUnreach_proved goodHandlers_removeUnreach_hypotheses \
+  "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe riscv_ror_step_probeScript.sml riscv_ror_step_probe.out \
+  ror_run_srli_clause ror_run_srli_types ror_run_srli_hypotheses ror_run_sll_clause ror_run_sll_types ror_run_sll_hypotheses ror_run_srl_clause ror_run_srl_types ror_run_srl_hypotheses ror_run_sub_clause ror_run_sub_types ror_run_sub_hypotheses ror_next_srli_zero ror_next_srli_all_ones ror_next_sll_zero ror_next_sll_all_ones ror_next_srl_zero ror_next_srl_all_ones ror_next_sub_zero ror_next_sub_all_ones \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+run_probe backend_word_conventions2_probeScript.sml backend_word_conventions2_probe.out \
+  fullConventions_typed fullConventions_proved fullConventions_hypotheses \
+  "$cake_dir/compiler/backend/proofs/backendProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe riscv_target_shift_ror_immediate_probeScript.sml riscv_target_shift_ror_immediate_probe.out \
+  riscv_encoder_correct_shiftRorImmediate_statement riscv_encoder_correct_shiftRorImmediate_types riscv_encoder_correct_shiftRorImmediate_hypotheses riscv_encoder_correct_shiftRorImmediate_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe crep_to_loop_original_names_program_probeScript.sml crep_to_loop_original_names_program_probe.out \
+  full_program row_names parameters done \
+  "$cake_dir/pancake/crep_to_loopScript.sml"
