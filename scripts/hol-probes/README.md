@@ -42,6 +42,8 @@ correspondence additionally covers arbitrary partner lists.
 `word_alloc_distinct_tar_reg_probe.out` captures the full zero-hypothesis statements (also typed) of the exported word_allocProof `ssa_cc_trans_distinct_tar_reg` and `full_ssa_cc_trans_distinct_tar_reg` for `WordAlloc/Proofs/SSAConventions/DistinctTarReg.lean`; its `[local]` helpers are reviewed against the script. Statement evidence for source review only.
 `word_convs_compile_single_not_created_probe.out` captures the zero-hypothesis `compile_single_not_created_subprogs` of wordConvsProof (also typed) for `Pancake/Proofs/WordConvs/NotCreatedTail.lean`; the per-pass `not_created_subprogs` lemmas in `NotCreatedPasses.lean`/`NotCreatedSSA.lean` are `[local]` and compared against the script. Statement evidence for source review only.
 `word_to_word_syntactic_probe.out` captures the statement, hypothesis count and typed form of the word_to_wordProof syntactic group (`cond16bit_inst_select_exp'` as `cond16bit_inst_select_exp_prime`, `cond16bit_inst_select`, the `no_share_inst`/`no_mt` lemmas, `code_rel_not_created_subprogs`, `code_rel_ext_def`, `code_rel_ext_word_to_word`, `no_mt_code_rel_ext`, `code_rel_no_share_inst`) and wordProps `no_mt_code_def`, for `Compiler/Backend/WordToWord/Proofs/Syntactic.lean` and `WordSem/Props/NoMtCode.lean`. The `[local]` `code_rel_no_alloc`/`code_rel_no_install` are compared against the script. Statement evidence for source review only.
+`word_to_word_compile_semantics_probe.out` captures the statement, hypothesis count and typed form of `panLang_compile_word_to_word_thm` and `word_to_word_compile_semantics` for `Compiler/Backend/WordToWord/Proofs/CompileSemantics.lean`. Statement evidence for source review only.
+`word_to_word_no_install_compile_single_probe.out` captures the statement, hypothesis count and typed form of `no_install_no_alloc_compile_single_correct` for `Compiler/Backend/WordToWord/Proofs/NoInstallCompileSingle.lean`. Statement evidence for source review only.
 `word_convs_cse_copy_probe.out` captures the full zero-hypothesis statements of the twelve exported wordConvsProof theorems of `WordCse.lean`, `CopyProp.lean`, `SSAWfCutsets.lean` and the `wf_cutsets` additions to `Unreach.lean`/`ThreeToTwo.lean` (also typed `pre_alloc_conventions_copy_prop` and `full_ssa_cc_trans_wf_cutsets`); the `[local]` theorems of those sections are not exported and are reviewed against the script. Statement evidence for source review only.
 `word_inst_three_to_two_probe.out` captures the full zero-hypothesis statements of the exported word_instProof `three_to_two_reg_Loop`, `three_to_two_reg_correct` (also fully typed) and `evaluate_three_to_two_reg_prog`; the local `locals_rel_cut_envs_local` is not exported. Statement evidence for source review only.
 
@@ -8200,3 +8202,28 @@ RV32 sign extension of low32 source bits, including literal SLTIU asymmetry.
 The proof uses the actual reviewed definitions and kernel-checked finite-word
 case analysis. Captures are regression evidence, not cross-language equivalence.
 The elaborated declaration closure contains no inherited real-cut operation.
+
+## Full native Binop constructor assembly
+
+`CorrectnessEncoding/Binop.lean` assembles the accepted Reg and Imm equations
+into the full original constructor at source550-559. All five operators and
+both operand forms retain the sole original asmStep/initial relation premise
+and full existential/interference/assertion conclusion.
+`riscv_target_binop_full_probe.out` captures the unrestricted original theorem,
+including typed word64 RegImm and natural registers, zero source hypotheses
+and provedT. These captures are regression evidence; the accepted case proofs
+and kernel-checked source case assembly establish the result. The full target
+closure retains inherited reals_as_rational_cuts (SOUNDNESS item8). Other
+encoder constructors and the encompassing compiler theorem remain open.
+
+`word_cse_production_fact_aux_probe.out` captures both full original typed
+add_to_data_aux/add_to_load_aux definitions and inferred types, with twelve
+complete output observations. Instruction and load producers each cover
+lookup miss/hit, even/odd destinations, latest-holder presence and missing
+holder fallback. All five returned knowledge fields and the complete
+Move/Tick program are replayed by kernel fixtures and actual executed runtime
+checks. ProductionFactAux derives these transitions from input representation
+and the original selected native table invariant, retaining unrelated fields.
+Successful input codec conversion is an explicit representation boundary;
+unsupported native program carriers and whole-pass adoption remain separate.
+No tagged original theorem is narrowed or cross-language equivalence claimed.

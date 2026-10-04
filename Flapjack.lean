@@ -40,6 +40,7 @@ import Flapjack.RiscV.CorrectnessEncoding.DecodeBinop
 import Flapjack.RiscV.CorrectnessEncoding.BinopRun
 import Flapjack.RiscV.CorrectnessEncoding.BinopRegister
 import Flapjack.RiscV.CorrectnessEncoding.BinopImmediate
+import Flapjack.RiscV.CorrectnessEncoding.Binop
 import Flapjack.RiscV.CorrectnessEncoding.Const32
 import Flapjack.Compiler.Backend.Backend
 import Flapjack.RiscV.CorrectnessEncoding.ConstWide
@@ -77,6 +78,8 @@ import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Call
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Assembly
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileWordToWord
 import Flapjack.Compiler.Backend.WordToWord.Proofs.Syntactic
+import Flapjack.Compiler.Backend.WordToWord.Proofs.NoInstallCompileSingle
+import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSemantics
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsShort
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ChunkBitsMsb
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsPattern
@@ -765,6 +768,7 @@ import Flapjack.Compiler.Backend.WordCse.ProductionStoreErase
 import Flapjack.Compiler.Backend.WordCse.ProductionGet
 import Flapjack.Compiler.Backend.WordCse.ProductionSet
 import Flapjack.Compiler.Backend.WordCse.ProductionJoin
+import Flapjack.Compiler.Backend.WordCse.ProductionFactAux
 import Flapjack.Compiler.Backend.WordCse.FactProducers
 import Flapjack.Compiler.Backend.WordCse.Join
 import Flapjack.Compiler.Backend.WordCse.Proofs.InNamesSet
