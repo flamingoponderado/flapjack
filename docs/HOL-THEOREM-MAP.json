@@ -93343,5 +93343,39 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison2026-10-04 original wordConvsProof262-287: native WordLangProgHOL positive arbitrary BitVec width/NeZero, exact List/Spt carriers, no evaluator or numerical FP rendering. Fresh original local derivation/unchanged proof replay full inferred types, T/hyp0; not HOL-to-Lean equivalence. Entire iff between native destructor Some five-tuple and exact If constructor, arbitrary program/cmp/register/RegImm and both subprograms. No projection-only weakening. All constructor arities and tuple order retained."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/ConstFp.lean",
+    "lean_name": "extractLabelsConstFpLoop",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "extract_labels_const_fp_loop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison of original wordConvsProof221-266: full original arbitrary program, native Spt word knowledge and actual returned program/map pair retained, with the loop equation as the sole original premise; the wrapper is unconditional. Positive HOL word dimension translated to BitVec width with [NeZero width]; native instruction/program constructors, exact Spt cutsets and MlString names unchanged. Kernel stronger internal ordered-sublist proof covers every native constFpLoop clause, both chosen conditional branches, unresolved conditionals, state-threaded sequences, all Call/return/handler combinations, Loop and OpCurrHeap. It derives both original labels_rel clauses (source-containment and source-distinctness implication), without assuming output labels or an output relation; no evaluator, real/FP semantics or production-path claim. Both literal original statements/proofs freshly replayed with full typed T/hyp0 in word_convs_simp_const_fp_labels_probe.out; five original sequence/dropConsts prerequisites replayed unchanged. Source review and kernel checks do not independently prove HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/ConstFp.lean",
+    "lean_name": "extractLabelsConstFp",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "extract_labels_const_fp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison of original wordConvsProof221-266: full original arbitrary program, native Spt word knowledge and actual returned program/map pair retained, with the loop equation as the sole original premise; the wrapper is unconditional. Positive HOL word dimension translated to BitVec width with [NeZero width]; native instruction/program constructors, exact Spt cutsets and MlString names unchanged. Kernel stronger internal ordered-sublist proof covers every native constFpLoop clause, both chosen conditional branches, unresolved conditionals, state-threaded sequences, all Call/return/handler combinations, Loop and OpCurrHeap. It derives both original labels_rel clauses (source-containment and source-distinctness implication), without assuming output labels or an output relation; no evaluator, real/FP semantics or production-path claim. Both literal original statements/proofs freshly replayed with full typed T/hyp0 in word_convs_simp_const_fp_labels_probe.out; five original sequence/dropConsts prerequisites replayed unchanged. Source review and kernel checks do not independently prove HOL-to-Lean equivalence."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/ConstFp.lean",
+    "lean_name": "labelsRelOfSublist",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only generic list support: derive both labelsRel conjuncts from an ordered sublist; no separate HOL original with this stronger premise."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/ConstFp.lean",
+    "lean_name": "constFpLoopLabelsSublist",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only stronger internal invariant over the actual native constant-folding loop projection. The original proof handles containment/distinctness inline; no separate named sublist theorem."
   }
 ]
