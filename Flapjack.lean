@@ -1297,6 +1297,7 @@ import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeDeadEvaluation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeUnreachEvaluation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeCleanupSuffixEvaluation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeCleanupChainEvaluation
+import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeAllocatorEvaluation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeSsaFirstDeadEvaluation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionSourceSsaFirstDeadEvaluation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSACanonicalImage
