@@ -97,7 +97,7 @@ reviewed finite-support maps. -/
     [PanSemStateFiniteExact.locals, PanSemStateFiniteExact.globals, PanSemStateFiniteExact.code,
       PanSemStateFiniteExact.eshapes])
   (words_as_type_indexed_bitvec)]
-theorem panToTargetCompileSemantics {width : Nat} [NeZero width] {S Q σ : Type}
+theorem panToTargetCompileSemantics {width : Nat} [NeZero width] {S Q : Type} {σ : Type}
     (c : Backend.Config) (mc : MachineConfig width S Q) (pan_code : List (DeclHOL width))
     (bytes : List (BitVec 8)) (bitmaps : List (BitVec width)) (c' : Backend.Config)
     (stack_max : Option Nat) (s : PanSemStateFiniteExact width σ) (ms : S)
