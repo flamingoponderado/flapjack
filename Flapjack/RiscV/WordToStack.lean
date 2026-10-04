@@ -2,6 +2,7 @@ import Flapjack.Stack
 import Flapjack.RiscV.Allocator
 import Flapjack.RiscV.RegAlloc
 import Flapjack.RiscV.CakeAllocatorCore
+import Flapjack.Compiler.Backend.WordToStack
 
 /-!
 # Word-to-Stack spill moves
@@ -1270,6 +1271,23 @@ def wordStackStoreConstsWithBitmaps (_config : WordStackConfig)
   let (newState, index) := wordStackInsertBitmap state bitmap
   (.seq (.const specialScratch index)
       (.storeConsts registerCount (registerCount + 1) storeConstsStub), newState)
+
+/-- Source-word StoreConsts producer. The reviewed bitmap definition consumes
+the original width-indexed constants and their actual length. The index is an
+instruction word constant in original register 1: the later Nat-to-word boundary
+applies n2w, including wrapping, without a macro immediate bound. StackRemove's
+StoreConsts clause reads register 1 when adding the bitmap base. The original
+stub location is retained literally, even though StackRemove ignores that
+field. No scratch configuration is assumed.
+The generic Nat helper above retains its historical macro behavior. -/
+def wordStackStoreConstsNativeWithBitmaps {width : Nat} [NeZero width]
+    (registerCount : Nat) (state : WordStackBitmapState)
+    (constants : List (Bool × BitVec width)) : StackProg Nat × WordStackBitmapState :=
+  let bitmap := (Compiler.Backend.WordToStack.constWordsToBitmapW
+    constants constants.length).map BitVec.toNat
+  let (newState, index) := wordStackInsertBitmap state bitmap
+  (.seq (.inst (.const 1 index))
+      (.storeConsts registerCount (registerCount + 1) (some storeConstsStubLocation)), newState)
 
 def wordStackGet {α : Type} (config : WordStackConfig) (destination : Nat)
     (store : WordStore α) : Option (StackProg α) := do
@@ -4332,9 +4350,8 @@ def wordToStackProgWordWithBitmapBuilder [BEq Nat] [NeZero width]
         state live bitmapBuilder
       some (code, state)
   | .storeConsts _ _ _ _ constants =>
-      let constants := constants.map (fun (isByte, value) => (isByte, value.toNat))
-      let (code, state) := wordStackStoreConstsWithBitmaps config registerCount
-        config.specialScratch wordBits storeConstsStub state constants
+      let (code, state) := wordStackStoreConstsNativeWithBitmaps registerCount
+        state constants
       some (code, state)
   | .opCurrHeap operator destination source =>
       (wordStackOpCurrHeap config operator destination source).map (fun code => (code, state))

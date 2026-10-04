@@ -330,7 +330,15 @@ def pipelineWordFunctionsAllocatedWithSpillsAndFullSsaAndBitmapsChecked
     `loop_to_word$compile_prog` has already assigned the dense Word names and
     has retained the extra entry slot in the function arity.  Re-running
     `loopToWordCompFunc` from the loop-facing pipeline loses that distinction,
-    so the source runtime path must allocate this Word program directly. -/
+    so the source runtime path must allocate this Word program directly.
+
+    This diagnostic API also accepts arbitrary raw Word rows. A raw row outside
+    `WordProgCarrierCodec.supportsCodec` may enter the historical allocator
+    extension; no original HOL correspondence is claimed for that input. Actual
+    source-produced rows satisfy the codec domain before allocation. The proofs
+    in `WordRemove/ProductionCallerErrors` show their allocation diagnostic
+    identifies a real allocator None, rather than post-allocation codec rejection.
+    Raw extension errors and other lowering errors retain their executed behavior. -/
 def pipelineWordFunctionsAllocatedWithSpillsAndFullSsaAndBitmapsFromWordCheckedAux
     [NeZero width] (bitmaps : RiscV.WordStackBitmapState)
     (chunks : List (List Nat)) :
@@ -706,7 +714,8 @@ def compileFlapjackRiscVSourceRuntimeImageChecked [NeZero width]
                         firstFreshLabel := stackFunctionFirstLabel }
                       { } stackStoreConstsStubLocation RiscV.CakeRegAlloc.cakeRiscVRegisterCount
                       0 initialLabel
-                      (functions.map (fun (label, _, body) => (label, body))) with
+                      (functions.map (fun (label, _, body) => (label, body)))
+                      (some discoveredNames) with
                   | .error error =>
                       .error (sourceRiscVImageErrorOfLowering stackFunctionFirstLabel
                         pipeline.crepe (.labToRiscV error))

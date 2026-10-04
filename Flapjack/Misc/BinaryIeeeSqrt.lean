@@ -22,9 +22,12 @@ replaced by its exact rational criterion:
   `B < A ∧ (A + B) / 2 ≤ s` (`holSqrtDistLe`);
 * `abs s = s`.
 
-These are standard facts about the real square root.  Flapjack has no real
-numbers, so they are not proved in Lean.  Their agreement with HOL is an
-explicit external assurance assumption, recorded in `docs/SOUNDNESS.md`.  The
+These are standard facts about the real square root.  They are proved against
+Mathlib `ℝ` in `Flapjack.Misc.BinaryIeeeSqrt.RealAgreement`, and
+`Flapjack.Misc.BinaryIeeeSqrt.RealCarrier` proves `holFloatSqrt` equal to the
+tagged real-carrier `float_sqrt` port `holFloatSqrtR`
+(`holFloatSqrt_eq_holFloatSqrtR`).  Agreement of that real carrier with HOL's
+reals remains the external assumption of `docs/SOUNDNESS.md` item 8.  The
 rendering is not an exact `@[hol]` port.  Everything else follows HOL clause
 for clause: the Hilbert choice (as `Classical.epsilon`), the tie-to-even
 preference, the flags, and the NaN, `-0` and negative cases.  A computable
