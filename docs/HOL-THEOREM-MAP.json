@@ -44979,6 +44979,33 @@
     "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.48): HOL rm_perm (159-163): s with permute := s.permute = s over WordSemStateFiniteExact width C F; structure update; rfl. HOL [local]: not exported, compared against the script text. Positive HOL word dimension is the sole carrier translation."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileConventions/Labels.lean",
+    "lean_name": "compileNamesLabels",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_to_word_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 source comparison original958-1014: genuine first two CONJ_TAC sections retain original whole-list no_share_inst-or-ISA-not-Ag32 guard, arbitrary configs and full list. Native compile/fullCompileSingle eleven-stage pipeline names equality and EVERY2 labels_rel (Lean List.Forall₂) derived from actual pass output laws and equal-length oracle ZIP. Arbitrary positive-width BitVec translates HOL type-indexed word; exact native program/config/map carriers retained. Guard unused only in these structural sections and remains a premise. No assumed output relation/evaluation or extra IH. Remaining five output convention conjuncts are outside this section and not claimed; full theorem tracked separately. Fresh original section tactics replayed, with only the split for the omitted third conjunct removed; full typed closed HOL section capture is regression/source-shape evidence, not cross-language equivalence.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileConventions/Output.lean",
+    "lean_name": "compileOutputConventions",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_to_word_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison. Literal final EVERY conjunction section1014-1065: every actual output body satisfies all five output conditions. Original arbitrary config/list and input EVERY(no_share_inst or ISA not Ag32) retained. Native compile/fullCompileSingle eleven-pass pipeline used. Flat/post-allocation results unconditional under original guard; instruction validity keeps whole input EVERY(inst_ok_less) and all three zero-offset guards inside the output implication; enabled two-register and no-share-or-ISA conclusions retained. Canonical native wordLang/config/oracle tree carriers and truncated Nat register-count subtraction match source; List.Forall₂/EVERY translations constructor-for-constructor, arbitrary positive-width BitVec is the named word translation. Actual native pass proofs discharge all target properties, no output invariant/success/evaluation/callback premises. Fresh whole unchanged original local proof replay provides full typed closed/T/zero-hypothesis capture, not cross-language equivalence or production-route adoption."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileConventions/Output.lean",
+    "lean_name": "compileToWordConventions",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_to_word_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison. Whole original theorem958-1065: names equality, whole EVERY2 labels relation and whole EVERY of all five output conventions; no original conjunct omitted. Original arbitrary config/list and input EVERY(no_share_inst or ISA not Ag32) retained. Native compile/fullCompileSingle eleven-pass pipeline used. Flat/post-allocation results unconditional under original guard; instruction validity keeps whole input EVERY(inst_ok_less) and all three zero-offset guards inside the output implication; enabled two-register and no-share-or-ISA conclusions retained. Canonical native wordLang/config/oracle tree carriers and truncated Nat register-count subtraction match source; List.Forall₂/EVERY translations constructor-for-constructor, arbitrary positive-width BitVec is the named word translation. Actual native pass proofs discharge all target properties, no output invariant/success/evaluation/callback premises. Fresh whole unchanged original local proof replay provides full typed closed/T/zero-hypothesis capture, not cross-language equivalence or production-route adoption."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
     "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSemantics.lean",
     "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
@@ -81713,10 +81740,599 @@
   {
     "hol_path": null,
     "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "agreeMap",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only factoring of inst_const_memory for memory-free instructions."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "constWritesConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "const_writes_const_memory",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript const_writes_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "cutStateWithMemConst",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "cut_state_with_mem_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript cut_state_with_mem_const (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "fun2SetUpdateEq",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "fun2set_update_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript fun2set_update_eq (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "fun2Set_eq_iff",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only graph-equality characterisation (HOL uses set_sep$fun2set_eq inline)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "getFpVarMem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only definitional unfolding (get_fp_var ignores memory) used in inst_const_memory."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "getVarConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "get_var_const_memory",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript get_var_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "getVarImmConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "get_var_imm_const_memory",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript get_var_imm_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "getVarsConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "get_vars_const_memory",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript get_vars_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Canonical WordSem codec re-export for the fmap_as_finite_support qualifier; no HOL original."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "instAgree",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only case factoring of inst_const_memory over every instruction constructor."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "instConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "inst_const_memory",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript inst_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise. Inherits reals_as_rational_cuts through the WordSem evaluator closure (SOUNDNESS item 8)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "mapCase",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only factoring of inst_const_memory for memory-free instructions."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "memLoad32ConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "mem_load_32_const_memory",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript mem_load_32_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "memLoadByteAuxConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "mem_load_byte_aux_const_memory",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript mem_load_byte_aux_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "memLoadConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "mem_load_const_memory",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript mem_load_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "memStore32ConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "mem_store_32_const_memory",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript mem_store_32_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "memStoreByteAuxConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "mem_store_byte_aux_const_memory",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript mem_store_byte_aux_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "memStoreConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "mem_store_const_memory",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript mem_store_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "memUpdLemma",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "mem_upd_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript mem_upd_lemma (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "pushEnvMemConst",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "push_env_mem_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript push_env_mem_const (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "pushEnvMemUpd",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "push_env_mem_upd",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript push_env_mem_upd (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "readBytearrayConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "read_bytearray_const_memory",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript read_bytearray_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "setVarCommutes",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only case factoring of share_inst_const_memory (shared-memory set_var commutes with memory replacement)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "setVarConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "set_var_const_memory",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript set_var_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "setVarsConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "set_vars_const_memory",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript set_vars_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "shareInstConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "share_inst_const_memory",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript share_inst_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "storeCommutes",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only case factoring of share_inst_const_memory (shared-memory stores commute with memory replacement)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "unsetVarConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "unset_var_const_memory",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript unset_var_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "wordExpConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "word_exp_const_memory",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript word_exp_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "writeBytearrayConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "write_bytearray_const_memory",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript write_bytearray_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileProgMax.lean",
     "lean_name": "compileProgMaxExecutable_eq",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-sol3: Flapjack-only computation replacement agreement, no separately named HOL declaration. Unconditional equality of full native compiler-result/bound pair, preserving all original inputs, actual generated frames and unknown outcomes. Original tagged compileProgMax remains unchanged; this kernel equality is not HOL-to-Lean equivalence."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "FLOOKUP_MAP_KEYS_LINV",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/InitHelpers.lean",
+    "lean_name": "FLOOKUP_MAP_KEYS_LINV",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "m"
+    ],
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.1): pan_to_targetProof FLOOKUP_MAP_KEYS_LINV (258-275), compared with the typed literal-source replay pan_to_target_init_helpers_source_replay (re-proved there with HOL's tactic). HOL's free f m i explicit with f : α → α, m : α |-> β, i : α; f PERMUTES 𝕌(:α) (BIJ f UNIV UNIV) is Function.Bijective f as in the tagged stack_names make_init; LINV f 𝕌(:α) is the tagged holLinv on fun _ => True (its [Nonempty α] is HOL type inhabitedness); MAP_KEYS is the finite-support Hilbert-choice rendering mapKeys; FLOOKUP is lookup. The map parameter m is the canonical HolFiniteMapExact carrier with the same-module witness holFmapAsFiniteSupportParamWitness_FLOOKUP_MAP_KEYS_LINV_m; no other statement difference."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "InitGlobals_location_eq_first_name",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/InitHelpers.lean",
+    "lean_name": "InitGlobals_location_eq_first_name",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.1): compared with the literal-source replay pan_to_target_init_helpers_source_replay (statement re-proved there with HOL's own tactic; pan_to_targetProofTheory is unbuilt). HOL's free variables are explicit binders in order of appearance. InitGlobals_location and first_name are the tagged initGlobalsLocation and firstLoopName."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "aligned_n2w_IMP",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/InitHelpers.lean",
+    "lean_name": "aligned_n2w_IMP",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.1): compared with the literal-source replay pan_to_target_init_helpers_source_replay (statement re-proved there with HOL's own tactic; pan_to_targetProofTheory is unbuilt). HOL's free variables are explicit binders in order of appearance. HOL [local]; aligned is the tagged holAligned (Bool = true), n2w is BitVec.ofNat width, dimword (:α) is 2 ^ width, divides is ∣ and ** is ^. Positive word dimension via [NeZero width].",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "full_make_init_be",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/InitHelpers.lean",
+    "lean_name": "full_make_init_be",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.1): compared with the literal-source replay pan_to_target_init_helpers_source_replay (statement re-proved there with HOL's own tactic; pan_to_targetProofTheory is unbuilt). HOL's free variables are explicit binders in order of appearance. full_make_init is the tagged fullMakeInit with the same binders a…k as the tagged full_make_init_ffi; HOL's Boolean ⇔ on be is Bool equality. fmap_as_finite_support records the StackSem state carrier's regs/fpRegs/store; positive word dimension via [NeZero width]. Proof follows HOL (evaluate_consts on the stack_remove init code). Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration through the StackSem evaluation in full_make_init's initializer, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "good_dimindex_0w_8w",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/InitHelpers.lean",
+    "lean_name": "good_dimindex_0w_8w",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.1): compared with the literal-source replay pan_to_target_init_helpers_source_replay (statement re-proved there with HOL's own tactic; pan_to_targetProofTheory is unbuilt). HOL's free variables are explicit binders in order of appearance. good_dimindex (:α) is the tagged goodDimindex width; HOL's ≤ on words is the signed word_le, rendered as BitVec.sle (two's-complement comparison) with Bool = true. Positive word dimension via [NeZero width].",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "good_dimindex_div_mul",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/InitHelpers.lean",
+    "lean_name": "good_dimindex_div_mul",
+    "statement_status": "reviewed_word_dimension_as_width",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.1): compared with the literal-source replay pan_to_target_init_helpers_source_replay (statement re-proved there with HOL's own tactic; pan_to_targetProofTheory is unbuilt). HOL's free variables are explicit binders in order of appearance. The HOL dimension (:α) is word-free and used only through dimindex, so it is the explicit Nat width with [NeZero width]; HOL's a * dimindex (:α) DIV 8 associates as (a * width) / 8, matching Lean's left-associative * and /. Replay confirms both sides' parse.",
+    "word_dimension_as_width": "width"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/InitHelpers.lean",
+    "lean_name": "holFmapAsFiniteSupportParamWitness_FLOOKUP_MAP_KEYS_LINV_m",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only canonical standalone-map witness for the fmap_as_finite_support_parameters qualifier on the tagged FLOOKUP_MAP_KEYS_LINV: the HolFiniteMapExact parameter roundtrips through its lookup and finite-support proof. It introduces no carrier and has no separate HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/InitHelpers.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module re-export of the existing StackSemStateOps toBroad/ofBroad finite-support roundtrip, required by the fmap_as_finite_support qualifier on the tagged full_make_init_be. It introduces no carrier and has no separate HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/InitHelpers.lean",
+    "lean_name": "makeInitAny_be",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for pan_to_targetProof full_make_init_be: stack_remove's total initializer keeps the endianness flag (HOL unfolds make_init_any_def/make_init_opt_def inline); no independent HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "n2w_sub_alt",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/InitHelpers.lean",
+    "lean_name": "n2w_sub_alt",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.1): compared with the literal-source replay pan_to_target_init_helpers_source_replay (statement re-proved there with HOL's own tactic; pan_to_targetProofTheory is unbuilt). HOL's free variables are explicit binders in order of appearance. HOL [local]; n2w is BitVec.ofNat width, -1w * x is (-1) * x. Positive word dimension via [NeZero width].",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/InitHelpers.lean",
+    "lean_name": "not_mem_addresses_succ",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for pan_to_targetProof word_list_exists_addresses: the HOL proof's induction on the word list, or the distinctness of the first address of a short range; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/InitHelpers.lean",
+    "lean_name": "wordList_addresses_length",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for pan_to_targetProof word_list_exists_addresses: the HOL proof's induction on the word list, or the distinctness of the first address of a short range; no independent HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "word_list_exists_addresses",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/InitHelpers.lean",
+    "lean_name": "word_list_exists_addresses",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.1): pan_to_targetProof's own word_list_exists_addresses (1211-1240, the uniqueness form n = m; distinct from the tagged stack_removeProof existence theorem of the same name), compared with the literal-source replay pan_to_target_init_helpers_source_replay (re-proved there with HOL's tactic). HOL's free a n d m explicit with d : α word → β generic; word_list_exists/fun2set/addresses are the tagged Misc.wordListExists/SetSep.fun2Set/StackRemove.addresses; good_dimindex is goodDimindex; dimword (:α) DIV w2n bytes_in_word is 2 ^ width / (bytesInWord width).toNat (bytes_in_word = n2w (dimindex DIV 8)). Proof: HOL-style induction on the list (Flapjack helpers wordList_addresses_length, not_mem_addresses_succ). Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "word_to_stack_compile_FST",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/InitHelpers.lean",
+    "lean_name": "word_to_stack_compile_FST",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.1): compared with the literal-source replay pan_to_target_init_helpers_source_replay (statement re-proved there with HOL's own tactic; pan_to_targetProofTheory is unbuilt). HOL's free variables are explicit binders in order of appearance. word_to_stack_compile (script overload) is the tagged word_to_stack compile_def (compileNative) with literal F; mc is the tagged MachineConfig with independent state/projection carriers; raise_stub_location/store_consts_stub_location are the tagged constants. Positive word dimension via [NeZero width].",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "callHandlerSub",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only extraction of the exception handler sub-program condition."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "callRetSub",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only extraction of the returning-call handler sub-program condition."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "getStoreMem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only definitional unfolding (get_store ignores memory)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Canonical WordSem codec re-export for the fmap_as_finite_support qualifier; no HOL original."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "jumpExcMem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only commutation of jump_exc with memory replacement."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "memEq_iff",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only conversion between pointwise memory agreement and the fun2set graph equality."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "memorySwapLemma",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "memory_swap_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original local memory_swap_lemma (743-760): same premises, ∃m' with evaluate (prog, st with memory := m) = (res, rst with memory := m') and graph equality. Typed capture by the pan_to_target_memory_swap probe (literal source replay of 336-908, show_types, no hypotheses). no_alloc/no_install are the reviewed noAllocSubprogsHOL/noInstallSubprogsHOL renderings, no_alloc_code/no_install_code the tagged wordProps predicates, fun2set domains are the Prop reading of the Bool mdomain, ARB is holArb. Proof by the WordSem evaluate recursion (swap_evaluate, HOL recInduct evaluate_ind). No added premise. Inherits reals_as_rational_cuts through the WordSem evaluator closure (SOUNDNESS item 8)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "memorySwapLemma1",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "memory_swap_lemma1",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original local memory_swap_lemma1 (607-736): all six premises and the ∃st' conclusion (same result, equality after overwriting memory by ARB, graph equality). Typed capture by the pan_to_target_memory_swap probe (literal source replay of 336-908, show_types, no hypotheses). no_alloc/no_install are the reviewed noAllocSubprogsHOL/noInstallSubprogsHOL renderings, no_alloc_code/no_install_code the tagged wordProps predicates, fun2set domains are the Prop reading of the Bool mdomain, ARB is holArb. Proof by the WordSem evaluate recursion (swap_evaluate, HOL recInduct evaluate_ind). No added premise. Inherits reals_as_rational_cuts through the WordSem evaluator closure (SOUNDNESS item 8)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "popEnvFrame",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only frame facts of pop_env."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "popEnvMem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only commutation of pop_env with memory replacement."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "swap_const",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only non-recursive cases of memory_swap_lemma1."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "swap_evaluate",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only recursive core of memory_swap_lemma1 (HOL recInduct evaluate_ind)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "swap_map",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only constructor of the evaluation agreement for unchanged memory."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "wordSemanticsMemoryUpdate",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "word_semantics_memory_update",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original word_semantics_memory_update (772-907): graph/no_alloc_code/no_install_code premise, then semantics (s with memory := m) start ≠ Fail ⇒ semantics s start = semantics (s with memory := m) start (HOL's curried implication kept; the non-Fail premise is retained though the Lean proof does not need it). Typed capture by the pan_to_target_memory_swap probe (literal source replay of 336-908, show_types, no hypotheses). no_alloc/no_install are the reviewed noAllocSubprogsHOL/noInstallSubprogsHOL renderings, no_alloc_code/no_install_code the tagged wordProps predicates, fun2set domains are the Prop reading of the Bool mdomain, ARB is holArb. Proof by the WordSem evaluate recursion (swap_evaluate, HOL recInduct evaluate_ind). No added premise. Inherits reals_as_rational_cuts through the WordSem evaluator closure (SOUNDNESS item 8)."
   },
   {
     "hol_path": null,
@@ -90213,6 +90829,33 @@
   {
     "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
     "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/ShiftAsrRegister.lean",
+    "lean_name": "riscv_encoder_correct_shiftAsrRegister",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-04: original riscv_targetProofScript Shift560-620 Reg/Asr case; encoder_correct_def117-132 whole shape. Arbitrary Nat rd/rs1/rs2 and original sole asmStep/initial targetStateRel; full existential n/allenv/asserts/asserts2. Count<64 derived from source failed=false, native SRA signed arithmetic right and low6/widen64 count equality from that bound. Four emitted bytes, unrestricted SRA Decode/Run and complete Next are derived. No target-run, output-relation, extra range or alias premise. Native target closure inherits reals_as_rational_cuts SOUNDNESS item8; other Shift and Ror cases remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/ShiftLslRegister.lean",
+    "lean_name": "riscv_encoder_correct_shiftLslRegister",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-04: original riscv_targetProofScript Shift560-620 Reg/Lsl case; encoder_correct_def117-132 whole shape. Arbitrary Nat rd/rs1/rs2 and original sole asmStep/initial targetStateRel; full existential n/allenv/asserts/asserts2. Count<64 derived from source failed=false, native low6/widen64 count equality from that bound. Four emitted bytes, unrestricted SLL Decode/Run and complete Next are derived. No target-run, output-relation, extra range or alias premise. Native target closure inherits reals_as_rational_cuts SOUNDNESS item8; other Shift and Ror cases remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/ShiftLsrRegister.lean",
+    "lean_name": "riscv_encoder_correct_shiftLsrRegister",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-04: original riscv_targetProofScript Shift560-620 Reg/Lsr case; encoder_correct_def117-132 whole shape. Arbitrary Nat rd/rs1/rs2 and original sole asmStep/initial targetStateRel; full existential n/allenv/asserts/asserts2. Count<64 derived from source failed=false, native SRL logical right and low6/widen64 count equality from that bound. Four emitted bytes, unrestricted SRL Decode/Run and complete Next are derived. No target-run, output-relation, extra range or alias premise. Native target closure inherits reals_as_rational_cuts SOUNDNESS item8; other Shift and Ror cases remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
     "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Skip.lean",
     "lean_name": "riscv_encoder_correct_skip",
     "statement_status": "reviewed_exact",
@@ -93162,6 +93805,54 @@
     "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.7): original riscv_stepScript.sml:874-886 `arithr []` saved theorem over the native definition. Original hypothesis: rd <> 0w. Native word5/word5/word5/native-state equation with the evaluated normal form; no success premise; kernel checked; original typed statement and hypotheses captured in scripts/hol-probes/check-l3-step-muldiv.py. Unsigned remainder (word_mod / BitVec.umod); zero divisor returns the dividend."
   },
   {
+    "lean_path": "Flapjack/RiscV/L3/Step/MulHStep.lean",
+    "lean_name": "dfnMULH",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "MULH",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml high-multiply family via arithr [] over the corresponding dfn'-def; actual Thm.hyp captured in scripts/hol-probes/check-l3-step-mulh.py are ArchBase <> 1w and rd <> 0w; three mode queries collapse to one ArchBase read, 128-bit signed product, RV32 selects (63><32) then sign-extend, RV64 selects (127><64)."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/MulHStep.lean",
+    "lean_name": "dfnMULHNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "MULH_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml high-multiply family via arithr [] over the corresponding dfn'-def; actual Thm.hyp captured in scripts/hol-probes/check-l3-step-mulh.py are ArchBase <> 1w and rd = 0w; companion retains the mode hypothesis, conclusion identity."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/MulHStep.lean",
+    "lean_name": "dfnMULHSU",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "MULHSU",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml high-multiply family via arithr [] over the corresponding dfn'-def; actual Thm.hyp captured in scripts/hol-probes/check-l3-step-mulh.py are ArchBase <> 1w and rd <> 0w; rs1 sign-extended, rs2 zero-extended, RV32 ((63><32),sw2sw), RV64 ((127><64))."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/MulHStep.lean",
+    "lean_name": "dfnMULHSUNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "MULHSU_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml high-multiply family via arithr [] over the corresponding dfn'-def; actual Thm.hyp captured in scripts/hol-probes/check-l3-step-mulh.py are ArchBase <> 1w and rd = 0w; companion retains the mode hypothesis, conclusion identity."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/MulHStep.lean",
+    "lean_name": "dfnMULHU",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "MULHU",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml high-multiply family via arithr [] over the corresponding dfn'-def; actual Thm.hyp captured in scripts/hol-probes/check-l3-step-mulh.py are ArchBase <> 1w and rd <> 0w; 128-bit unsigned product, RV32 ((63><32),w2w), RV64 ((127><64))."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/MulHStep.lean",
+    "lean_name": "dfnMULHUNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "MULHU_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml high-multiply family via arithr [] over the corresponding dfn'-def; actual Thm.hyp captured in scripts/hol-probes/check-l3-step-mulh.py are ArchBase <> 1w and rd = 0w; companion retains the mode hypothesis, conclusion identity."
+  },
+  {
     "lean_path": "Flapjack/RiscV/L3/Step/Next.lean",
     "lean_name": "NextRISCV",
     "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
@@ -93249,6 +93940,38 @@
     "hol_name": "XOR_NOP",
     "statement_status": "reviewed_exact",
     "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9): original riscv_stepScript.sml:866 `val XOR = arithr [] \"XOR\"`; companion `XOR_NOP` generated by the `class_rd0` factory through `utilsLib.save_thms` (riscv_stepScript.sml:807-833). Sole original hypothesis (rd = 0w); conclusion dfn'XOR ((rd,rs1,rs2)) s = s. Exact native word5/word64 equation, no extra premise; generated-name registration is narrow (scripts/check-hol-refs.py l3_riscv_step_nop_declarations). Kernel checked; original typed statement/hypothesis captured in scripts/hol-probes/check-l3-step-nop.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/RegisterComparison.lean",
+    "lean_name": "dfnSlt",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "SLT",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol: compared the full original riscv_stepScript862-863 arithr/class_rd0 exported equation and fresh typed per-theorem Thm.hyp/GEN_ALL(DISCH_ALL) capture. Original two guards retained: rd nonzero for writes / zero for NOP, ArchBase != 1 for all four. Full state c_gpr update, current procID, both source-zero reads and both mode branches preserved; SLT signextends low32, SLTU zeroextends low32. Fixed original word5/word64/word2 carriers, arbitrary aliases, no target-run/extra mode premise. Mode rewrite is untagged local support; no FP/real interpretation. Actual AddCarry lowering riscv_targetScript144-149 consumes SLTU; overflow uses XOR/AND/Shift and is not claimed dependent. Source shape/capture pins are regression checks, not cross-language equivalence proofs."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/RegisterComparison.lean",
+    "lean_name": "dfnSltNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "SLT_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol: compared the full original riscv_stepScript862-863 arithr/class_rd0 exported equation and fresh typed per-theorem Thm.hyp/GEN_ALL(DISCH_ALL) capture. Original two guards retained: rd nonzero for writes / zero for NOP, ArchBase != 1 for all four. Full state c_gpr update, current procID, both source-zero reads and both mode branches preserved; SLT signextends low32, SLTU zeroextends low32. Fixed original word5/word64/word2 carriers, arbitrary aliases, no target-run/extra mode premise. Mode rewrite is untagged local support; no FP/real interpretation. Actual AddCarry lowering riscv_targetScript144-149 consumes SLTU; overflow uses XOR/AND/Shift and is not claimed dependent. Source shape/capture pins are regression checks, not cross-language equivalence proofs."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/RegisterComparison.lean",
+    "lean_name": "dfnSltU",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "SLTU",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol: compared the full original riscv_stepScript862-863 arithr/class_rd0 exported equation and fresh typed per-theorem Thm.hyp/GEN_ALL(DISCH_ALL) capture. Original two guards retained: rd nonzero for writes / zero for NOP, ArchBase != 1 for all four. Full state c_gpr update, current procID, both source-zero reads and both mode branches preserved; SLT signextends low32, SLTU zeroextends low32. Fixed original word5/word64/word2 carriers, arbitrary aliases, no target-run/extra mode premise. Mode rewrite is untagged local support; no FP/real interpretation. Actual AddCarry lowering riscv_targetScript144-149 consumes SLTU; overflow uses XOR/AND/Shift and is not claimed dependent. Source shape/capture pins are regression checks, not cross-language equivalence proofs."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/RegisterComparison.lean",
+    "lean_name": "dfnSltUNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "SLTU_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol: compared the full original riscv_stepScript862-863 arithr/class_rd0 exported equation and fresh typed per-theorem Thm.hyp/GEN_ALL(DISCH_ALL) capture. Original two guards retained: rd nonzero for writes / zero for NOP, ArchBase != 1 for all four. Full state c_gpr update, current procID, both source-zero reads and both mode branches preserved; SLT signextends low32, SLTU zeroextends low32. Fixed original word5/word64/word2 carriers, arbitrary aliases, no target-run/extra mode premise. Mode rewrite is untagged local support; no FP/real interpretation. Actual AddCarry lowering riscv_targetScript144-149 consumes SLTU; overflow uses XOR/AND/Shift and is not claimed dependent. Source shape/capture pins are regression checks, not cross-language equivalence proofs."
   },
   {
     "lean_path": "Flapjack/RiscV/L3/Step/RegisterShiftStep.lean",
@@ -93377,6 +94100,86 @@
     "hol_name": "LUI_NOP",
     "statement_status": "reviewed_exact",
     "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.2): original riscv_stepScript.sml:853 `val LUI = arithi \"LUI\"`; companion `LUI_NOP` generated by the `class_rd0` factory through `utilsLib.save_thms` (riscv_stepScript.sml:807-833). Sole original hypothesis (rd = 0w); conclusion dfn'LUI ((rd,imm)) s = s. Exact native word5/word20/word64 equation, no extra premise; generated-name registration is narrow (scripts/check-hol-refs.py l3_riscv_step_nop_declarations). Kernel checked; original typed statement/hypothesis captured in scripts/hol-probes/check-l3-step-nop.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/WMulDivStep.lean",
+    "lean_name": "dfnDIVUW",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "DIVUW",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml W mul/div family via arithr [[ArchBase<>0]] over the corresponding dfn'W-def; actual Thm.hyp captured in scripts/hol-probes/check-l3-step-wmuldiv.py are ArchBase <> 0w, ArchBase <> 1w and rd <> 0w; low-32 unsigned quotient with zero-divisor -1, RV32 signals Illegal_Instr."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/WMulDivStep.lean",
+    "lean_name": "dfnDIVUWNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "DIVUW_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml W mul/div family via arithr [[ArchBase<>0]] over the corresponding dfn'W-def; actual Thm.hyp captured in scripts/hol-probes/check-l3-step-wmuldiv.py are ArchBase <> 0w, ArchBase <> 1w and rd = 0w; companion retains mode hypotheses, conclusion identity."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/WMulDivStep.lean",
+    "lean_name": "dfnDIVW",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "DIVW",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml W mul/div family via arithr [[ArchBase<>0]] over the corresponding dfn'W-def; actual Thm.hyp captured in scripts/hol-probes/check-l3-step-wmuldiv.py are ArchBase <> 0w, ArchBase <> 1w and rd <> 0w; low-32 signed quotient with zero-divisor -1, RV32 signals Illegal_Instr."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/WMulDivStep.lean",
+    "lean_name": "dfnDIVWNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "DIVW_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml W mul/div family via arithr [[ArchBase<>0]] over the corresponding dfn'W-def; actual Thm.hyp captured in scripts/hol-probes/check-l3-step-wmuldiv.py are ArchBase <> 0w, ArchBase <> 1w and rd = 0w; companion retains mode hypotheses, conclusion identity."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/WMulDivStep.lean",
+    "lean_name": "dfnMULW",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "MULW",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml W mul/div family via arithr [[ArchBase<>0]] over the corresponding dfn'W-def; actual Thm.hyp captured in scripts/hol-probes/check-l3-step-wmuldiv.py are ArchBase <> 0w, ArchBase <> 1w and rd <> 0w; low-32 product then sign-extension, RV32 signals Illegal_Instr."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/WMulDivStep.lean",
+    "lean_name": "dfnMULWNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "MULW_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml W mul/div family via arithr [[ArchBase<>0]] over the corresponding dfn'W-def; actual Thm.hyp captured in scripts/hol-probes/check-l3-step-wmuldiv.py are ArchBase <> 0w, ArchBase <> 1w and rd = 0w; companion retains mode hypotheses, conclusion identity."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/WMulDivStep.lean",
+    "lean_name": "dfnREMUW",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "REMUW",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml W mul/div family via arithr [[ArchBase<>0]] over the corresponding dfn'W-def; actual Thm.hyp captured in scripts/hol-probes/check-l3-step-wmuldiv.py are ArchBase <> 0w, ArchBase <> 1w and rd <> 0w; low-32 unsigned remainder (dividend on zero divisor), RV32 signals Illegal_Instr."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/WMulDivStep.lean",
+    "lean_name": "dfnREMUWNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "REMUW_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml W mul/div family via arithr [[ArchBase<>0]] over the corresponding dfn'W-def; actual Thm.hyp captured in scripts/hol-probes/check-l3-step-wmuldiv.py are ArchBase <> 0w, ArchBase <> 1w and rd = 0w; companion retains mode hypotheses, conclusion identity."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/WMulDivStep.lean",
+    "lean_name": "dfnREMW",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "REMW",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml W mul/div family via arithr [[ArchBase<>0]] over the corresponding dfn'W-def; actual Thm.hyp captured in scripts/hol-probes/check-l3-step-wmuldiv.py are ArchBase <> 0w, ArchBase <> 1w and rd <> 0w; low-32 signed remainder (dividend on zero divisor), RV32 signals Illegal_Instr."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/WMulDivStep.lean",
+    "lean_name": "dfnREMWNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "REMW_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml W mul/div family via arithr [[ArchBase<>0]] over the corresponding dfn'W-def; actual Thm.hyp captured in scripts/hol-probes/check-l3-step-wmuldiv.py are ArchBase <> 0w, ArchBase <> 1w and rd = 0w; companion retains mode hypotheses, conclusion identity."
   },
   {
     "lean_path": "Flapjack/RiscV/L3/Step/WShiftStep.lean",
