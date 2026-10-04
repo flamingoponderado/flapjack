@@ -7700,6 +7700,10 @@ run_probe pan_to_word_semantics_probeScript.sml pan_to_word_semantics_probe.out 
   state_rel_imp_semantics_statement state_rel_imp_semantics_proved state_rel_imp_semantics_types \
   "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
 
+run_probe word_sem_safe_for_space_probeScript.sml word_sem_safe_for_space_probe.out \
+  word_lang_safe_for_space_def_typed word_lang_safe_for_space_def_hypotheses \
+  "$cake_dir/compiler/backend/semantics/wordSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe word_to_stack_compile_bitmaps_probeScript.sml word_to_stack_compile_bitmaps_probe.out \
   compile_word_to_stack_bitmaps_typed compile_word_to_stack_bitmaps_hypotheses compile_word_to_stack_bitmaps_free \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

@@ -25347,6 +25347,20 @@
     "inherits_reals_as_rational_cuts": true
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Semantics.lean",
+    "lean_name": "wordLangSafeForSpace",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "word_lang_safe_for_space_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original wordSemScript.sml 1403-1408. Typed capture word_sem_safe_for_space probe (show_types, hypotheses=0): for (s:('a,'c,'ffi) state) start, with prog = Call NONE (SOME start) [0] NONE, ∀k res t. evaluate (prog, s with clock := k) = (res,t) ⇒ ∃max. t.stack_max = SOME max ∧ max ≤ t.stack_limit. Lean: same let-bound entry call over the reviewed exact WordSem evaluate, clock-updated state, stackMax : Option Nat and stackLimit : Nat; binder order k res t retained. Canonical fpRegs/store carrier and positive type-indexed word width qualified; evaluator closure inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  },
+  {
     "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/TickUnfold.lean",
     "lean_name": "evaluate_tick_unfold",
     "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
