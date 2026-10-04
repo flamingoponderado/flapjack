@@ -1,4 +1,5 @@
 import Flapjack.RiscV.CorrectnessEncoding.MemoryStore
+import Flapjack.RiscV.CorrectnessEncoding.MemoryInputs
 import Flapjack.RiscV.CorrectnessEncoding.MemoryRead
 import Flapjack.Compiler.Encoders.AsmSem.MemoryByteShift
 import Flapjack.RiscV.CorrectnessEncoding.MemorySource

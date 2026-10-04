@@ -8691,3 +8691,25 @@ source/link alias, arithmetic shift, return-link value and original evidence.
 These regression checks supplement source review and Lean kernel checking;
 full encoder assembly and compiler correctness remain separate open work.
 No executed compiler definition changes in this delivery.
+
+### Source-to-native memory instruction inputs
+
+`riscv_memory_inputs_probeScript.sml` replays all eight original memory
+constructors at both signed12 endpoints; architectural exclusions and register
+overflow are rejected on both register positions, and both just-outside offsets
+are rejected. A matched source/native alias fixture wraps the address to word64
+minus one. Original literal `inst_ok` and `riscv_ast` equations retain their
+free-variable types and zero hypothesis counts. These are regression evidence,
+not a cross-language equivalence proof.
+
+`CorrectnessEncoding/MemoryInputs.lean` source-compares `asmScript.sml:286–299`,
+`riscv_targetScript.sml:165–168`, `asmSem$addr/read_reg`, native `GPR`, and the
+original Mem constructor at `riscv_targetProofScript.sml:661–669`. All eight
+constructors derive their register and signed-offset guards from actual
+`asmOkExact`; the initial target relation discharges native register values,
+including architectural zero exclusion. Original aliases are admitted. The
+actual emitted instruction's Run is derived under the initial relation, with
+source address and store-value inputs; emitted-AST membership selects the
+instruction and assumes no target execution/result. These local compositions
+have no separately named HOL originals and remain untagged. Full Mem still
+needs interference, complete postrelation and assertion assembly.
