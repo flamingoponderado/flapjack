@@ -13,6 +13,9 @@ n2w_sub_alt_replay_typed=∀(a :num) (b :num). b ≤ a ⇒ (n2w (a − b) :α wo
 aligned_n2w_IMP_replay_statement=aligned k (n2w n) ∧ n < dimword (:α) ⇒ divides (2 ** k) n
 aligned_n2w_IMP_replay_hypotheses=0
 aligned_n2w_IMP_replay_typed=aligned (k :num) (n2w (n :num) :α word) ∧ n < dimword (:α) ⇒ divides ((2 :num) ** k) n
+word_list_exists_addresses_replay_statement=word_list_exists a n (fun2set (d,addresses a m)) ∧ good_dimindex (:α) ∧ m < dimword (:α) DIV w2n bytes_in_word ⇒ n = m
+word_list_exists_addresses_replay_hypotheses=0
+word_list_exists_addresses_replay_typed=word_list_exists (a :α word) (n :num) (fun2set ((d :α word -> β),addresses a (m :num))) ∧ good_dimindex (:α) ∧ m < dimword (:α) DIV w2n (bytes_in_word :α word) ⇒ n = m
 good_dimindex_div_mul_replay_statement=good_dimindex (:α) ⇒ a * dimindex (:α) DIV 8 = a * (dimindex (:α) DIV 8)
 good_dimindex_div_mul_replay_hypotheses=0
 good_dimindex_div_mul_replay_typed=good_dimindex (:α) ⇒ (a :num) * dimindex (:α) DIV (8 :num) = a * (dimindex (:α) DIV (8 :num))

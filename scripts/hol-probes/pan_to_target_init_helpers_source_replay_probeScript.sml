@@ -1,10 +1,11 @@
 (* Literal source-theorem replay of pan_to_targetProof helper theorems (79-87, 249-256,
-   277-288, 1193-1209, 1242-1254). The original proof theory is unbuilt; every statement and
-   HOL's own proof are replayed in source order over the loaded original theories, with the
-   script's word_to_stack_compile overload. This is not an exported original-theory capture. *)
+   277-288, 1193-1254). The original proof theory is unbuilt; every statement and HOL's own
+   proof are replayed in source order over the loaded original theories, with the script's
+   word_to_stack_compile overload. This is not an exported original-theory capture. *)
 load "bossLib"; load "preamble"; load "word_to_stackProofTheory"; load "stack_to_labProofTheory";
 load "stack_allocProofTheory"; load "stack_removeProofTheory"; load "stackPropsTheory";
 load "targetSemTheory"; load "miscTheory"; load "crep_to_loopTheory"; load "bvl_to_bviTheory";
+load "data_to_word_gcProofTheory"; load "set_sepTheory"; load "addressTheory";
 open bossLib HolKernel Parse preamble;
 val source_cake = case OS.Process.getEnv "CAKEML" of
     SOME p => p
@@ -20,7 +21,7 @@ fun guard name lit = if String.isSubstring lit source_text then ()
 val _ = guard "overloads" "Overload word_to_stack_compile[local] = ``word_to_stack$compile``";
 val _ = new_theory "flapjack_pan_to_target_init_helpers_source_replay";
 val _ = overload_on ("word_to_stack_compile", ``word_to_stack$compile``);
-open miscTheory alignmentTheory crep_to_loopTheory bvl_to_bviTheory;
+open miscTheory alignmentTheory crep_to_loopTheory bvl_to_bviTheory stack_removeProofTheory;
 val _ = guard "word_to_stack_compile_FST" "Theorem word_to_stack_compile_FST:\n  word_to_stack_compile mc.target.config F wprog = (bitmaps,c'',fs,p) \226\135\146\n  MAP FST p =\n  raise_stub_location::store_consts_stub_location::MAP FST wprog\nProof\n  strip_tac>>gs[word_to_stackTheory.compile_def]>>\n  pairarg_tac>>gs[]>>rveq>>gs[]>>\n  drule_then irule word_to_stackProofTheory.MAP_FST_compile_word_to_stack\nQED";
 val word_to_stack_compile_FST = store_thm("word_to_stack_compile_FST",
 ``  word_to_stack_compile mc.target.config F wprog = (bitmaps,c'',fs,p) ⇒
@@ -59,6 +60,35 @@ val aligned_n2w_IMP = store_thm("aligned_n2w_IMP",
 ``  aligned k ((n2w n):'a word) ∧ n < dimword(:'a) ⇒ divides (2**k) n``,
   rw[aligned_w2n,dimword_def] >>
   gvs[dividesTheory.DIVIDES_MOD_0]);
+val _ = guard "word_list_exists_addresses" "Theorem word_list_exists_addresses:\n  (word_list_exists a n) (fun2set (d, addresses (a:'a word) m)) \226\136\167 good_dimindex(:'a) \226\136\167 m < dimword(:'a) DIV w2n(bytes_in_word:'a word) \226\135\146 n = m\nProof\n  rw[word_list_exists_def,set_sepTheory.SEP_EXISTS_THM] >>\n  imp_res_tac data_to_word_gcProofTheory.word_list_IMP_limit >>\n  gvs[word_list_exists_def,set_sepTheory.SEP_EXISTS_THM,set_sepTheory.fun2set_def,\n     set_sepTheory.STAR_def,set_sepTheory.SPLIT_def,set_sepTheory.cond_def] >>\n  rpt $ pop_assum mp_tac >>\n  qid_spec_tac \226\128\152xs\226\128\153 >>\n  qid_spec_tac \226\128\152a\226\128\153 >>\n  qid_spec_tac \226\128\152m\226\128\153 >>\n  Induct_on \226\128\152xs\226\128\153 >>\n  Cases_on \226\128\152m\226\128\153 >>\n  rw[miscTheory.word_list_def,stack_removeProofTheory.addresses_def]\n  >- (gvs[set_sepTheory.emp_def,FUN_EQ_THM, SF DNF_ss])\n  >- gvs[set_sepTheory.STAR_def,set_sepTheory.SPLIT_def,set_sepTheory.one_def, SF DNF_ss] >>\n  gvs[set_sepTheory.STAR_def,set_sepTheory.one_def,set_sepTheory.SPLIT_def] >>\n  \226\128\152v = {(a', d a') | a' \226\136\136 addresses (a + bytes_in_word) n}\226\128\153\n    by(gvs[SET_EQ_SUBSET,SUBSET_DEF] >>\n       rw[] >>\n       fs[SF DNF_ss] >>\n       res_tac >>\n       gvs[] >>\n       gvs[stack_removeProofTheory.addresses_thm] >>\n       FULL_SIMP_TAC std_ss [GSYM WORD_ADD_ASSOC, addressTheory.WORD_EQ_ADD_CANCEL] >>\n       gvs[good_dimindex_def,bytes_in_word_def,dimword_def,word_add_n2w,word_mul_n2w]) >>\n  rveq >>\n  first_x_assum drule >>\n  simp[]\nQED";
+val word_list_exists_addresses = store_thm("word_list_exists_addresses",
+``  (word_list_exists a n) (fun2set (d, addresses (a:'a word) m)) ∧ good_dimindex(:'a) ∧ m < dimword(:'a) DIV w2n(bytes_in_word:'a word) ⇒ n = m``,
+  rw[word_list_exists_def,set_sepTheory.SEP_EXISTS_THM] >>
+  imp_res_tac data_to_word_gcProofTheory.word_list_IMP_limit >>
+  gvs[word_list_exists_def,set_sepTheory.SEP_EXISTS_THM,set_sepTheory.fun2set_def,
+     set_sepTheory.STAR_def,set_sepTheory.SPLIT_def,set_sepTheory.cond_def] >>
+  rpt $ pop_assum mp_tac >>
+  qid_spec_tac ‘xs’ >>
+  qid_spec_tac ‘a’ >>
+  qid_spec_tac ‘m’ >>
+  Induct_on ‘xs’ >>
+  Cases_on ‘m’ >>
+  rw[miscTheory.word_list_def,stack_removeProofTheory.addresses_def]
+  >- (gvs[set_sepTheory.emp_def,FUN_EQ_THM, SF DNF_ss])
+  >- gvs[set_sepTheory.STAR_def,set_sepTheory.SPLIT_def,set_sepTheory.one_def, SF DNF_ss] >>
+  gvs[set_sepTheory.STAR_def,set_sepTheory.one_def,set_sepTheory.SPLIT_def] >>
+  ‘v = {(a', d a') | a' ∈ addresses (a + bytes_in_word) n}’
+    by(gvs[SET_EQ_SUBSET,SUBSET_DEF] >>
+       rw[] >>
+       fs[SF DNF_ss] >>
+       res_tac >>
+       gvs[] >>
+       gvs[stack_removeProofTheory.addresses_thm] >>
+       FULL_SIMP_TAC std_ss [GSYM WORD_ADD_ASSOC, addressTheory.WORD_EQ_ADD_CANCEL] >>
+       gvs[good_dimindex_def,bytes_in_word_def,dimword_def,word_add_n2w,word_mul_n2w]) >>
+  rveq >>
+  first_x_assum drule >>
+  simp[]);
 val _ = guard "good_dimindex_div_mul" "Theorem good_dimindex_div_mul:\n  good_dimindex(:\206\177) \226\135\146 a * dimindex(:\206\177) DIV 8 = a * (dimindex (:\206\177) DIV 8)\nProof\n  rw[good_dimindex_def] >>\n  rw[] >>\n  intLib.COOPER_TAC\nQED";
 val good_dimindex_div_mul = store_thm("good_dimindex_div_mul",
 ``  good_dimindex(:α) ⇒ a * dimindex(:α) DIV 8 = a * (dimindex (:α) DIV 8)``,
@@ -88,6 +118,9 @@ val _ = pr_typed "n2w_sub_alt_replay_typed" n2w_sub_alt;
 val _ = pr_stmt "aligned_n2w_IMP_replay_statement" aligned_n2w_IMP;
 val _ = pr_hyps "aligned_n2w_IMP_replay_hypotheses" aligned_n2w_IMP;
 val _ = pr_typed "aligned_n2w_IMP_replay_typed" aligned_n2w_IMP;
+val _ = pr_stmt "word_list_exists_addresses_replay_statement" word_list_exists_addresses;
+val _ = pr_hyps "word_list_exists_addresses_replay_hypotheses" word_list_exists_addresses;
+val _ = pr_typed "word_list_exists_addresses_replay_typed" word_list_exists_addresses;
 val _ = pr_stmt "good_dimindex_div_mul_replay_statement" good_dimindex_div_mul;
 val _ = pr_hyps "good_dimindex_div_mul_replay_hypotheses" good_dimindex_div_mul;
 val _ = pr_typed "good_dimindex_div_mul_replay_typed" good_dimindex_div_mul;

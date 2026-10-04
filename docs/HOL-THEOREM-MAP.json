@@ -93938,5 +93938,30 @@
     "lean_name": "holFmapAsFiniteSupportWitness",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only same-module re-export of the existing StackSemStateOps toBroad/ofBroad finite-support roundtrip, required by the fmap_as_finite_support qualifier on the tagged full_make_init_be. It introduces no carrier and has no separate HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "word_list_exists_addresses",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/InitHelpers.lean",
+    "lean_name": "word_list_exists_addresses",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.1): pan_to_targetProof's own word_list_exists_addresses (1211-1240, the uniqueness form n = m; distinct from the tagged stack_removeProof existence theorem of the same name), compared with the literal-source replay pan_to_target_init_helpers_source_replay (re-proved there with HOL's tactic). HOL's free a n d m explicit with d : α word → β generic; word_list_exists/fun2set/addresses are the tagged Misc.wordListExists/SetSep.fun2Set/StackRemove.addresses; good_dimindex is goodDimindex; dimword (:α) DIV w2n bytes_in_word is 2 ^ width / (bytesInWord width).toNat (bytes_in_word = n2w (dimindex DIV 8)). Proof: HOL-style induction on the list (Flapjack helpers wordList_addresses_length, not_mem_addresses_succ). Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/InitHelpers.lean",
+    "lean_name": "not_mem_addresses_succ",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for pan_to_targetProof word_list_exists_addresses: the HOL proof's induction on the word list, or the distinctness of the first address of a short range; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/InitHelpers.lean",
+    "lean_name": "wordList_addresses_length",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for pan_to_targetProof word_list_exists_addresses: the HOL proof's induction on the word list, or the distinctness of the first address of a short range; no independent HOL declaration."
   }
 ]

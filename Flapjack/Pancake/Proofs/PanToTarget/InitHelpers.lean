@@ -143,6 +143,121 @@ theorem aligned_n2w_IMP {width : Nat} [NeZero width] (k n : Nat) :
   rw [Nat.mod_eq_of_lt (Nat.lt_of_le_of_lt hle hn)] at h
   exact ⟨n / 2 ^ k, by rw [Nat.mul_comm]; exact h.symm⟩
 
+/-- The first address of a short range does not recur later in it (Flapjack
+    infrastructure for `word_list_exists_addresses`). -/
+theorem not_mem_addresses_succ {width : Nat} [NeZero width] (good : goodDimindex width)
+    (a : BitVec width) (m : Nat) (hb : (m + 1) * (width / 8) < 2 ^ width) :
+    ¬ Compiler.Backend.StackRemove.addresses (a + Compiler.Backend.StackRemove.bytesInWord width) m a := by
+  rw [Compiler.Backend.StackRemove.mem_addresses]
+  rintro ⟨i, hi, eq⟩
+  have pos : 0 < width / 8 := by rcases good with rfl | rfl <;> decide
+  have zero : BitVec.ofNat width ((i + 1) * (width / 8)) = 0 := by
+    have h := congrArg (fun z => z - a) eq
+    simp only [BitVec.sub_self] at h
+    rw [BitVec.add_assoc, BitVec.add_comm a, BitVec.add_sub_cancel] at h
+    refine Eq.trans ?_ h.symm
+    rw [Compiler.Backend.StackRemove.bytesInWord, ← BitVec.ofNat_mul_ofNat, BitVec.ofNat_add,
+      BitVec.add_mul, BitVec.add_comm]
+    simp
+  have lt : (i + 1) * (width / 8) < 2 ^ width :=
+    Nat.lt_of_le_of_lt (Nat.mul_le_mul_right _ (by omega)) hb
+  have := congrArg BitVec.toNat zero
+  simp only [BitVec.toNat_ofNat, Nat.mod_eq_of_lt lt] at this
+  simp at this
+  have : 0 < (i + 1) * (width / 8) := Nat.mul_pos (by omega) pos
+  omega
+
+/-- A forward word list exactly covering a short address range has the range's length
+    (Flapjack infrastructure; HOL's induction on the list in `word_list_exists_addresses`). -/
+theorem wordList_addresses_length {width : Nat} [NeZero width] {β : Type}
+    (good : goodDimindex width) (d : BitVec width → β) :
+    ∀ (xs : List β) (a : BitVec width) (m : Nat), m * (width / 8) < 2 ^ width →
+      Misc.wordList a xs (SetSep.fun2Set (d, Compiler.Backend.StackRemove.addresses a m)) →
+      xs.length = m := by
+  intro xs
+  induction xs with
+  | nil =>
+    intro a m _ h
+    cases m with
+    | zero => rfl
+    | succ m =>
+      have := congrFun h (a, d a)
+      simp only [SetSep.fun2Set, eq_iff_iff, iff_false, not_exists, not_and] at this
+      exact absurd (this a (Or.inl rfl)) (by simp)
+  | cons x xs ih =>
+    intro a m hb h
+    obtain ⟨s1, s2, ⟨hunion, hdisj⟩, hs1, hw2⟩ := h
+    simp only [SetSep.one] at hs1
+    subst hs1
+    have memS : ∀ e, SetSep.fun2Set (d, Compiler.Backend.StackRemove.addresses a m) e ↔
+        (e = (a, x) ∨ s2 e) := fun e => by rw [← hunion]
+    cases m with
+    | zero =>
+      have := (memS (a, x)).mpr (Or.inl rfl)
+      obtain ⟨_, hmem, _⟩ := this
+      exact absurd hmem (by simp [Compiler.Backend.StackRemove.addresses])
+    | succ m =>
+      have hx : x = d a := by
+        obtain ⟨addr, hmem, he⟩ := (memS (a, x)).mpr (Or.inl rfl)
+        simp only [Prod.mk.injEq] at he
+        obtain ⟨rfl, rfl⟩ := he
+        rfl
+      subst hx
+      have hnot := not_mem_addresses_succ good a m hb
+      have hs2 : s2 = SetSep.fun2Set (d, Compiler.Backend.StackRemove.addresses
+          (a + Compiler.Backend.StackRemove.bytesInWord width) m) := by
+        funext e
+        apply propext
+        constructor
+        · intro he
+          have hS := (memS e).mpr (Or.inr he)
+          obtain ⟨addr, hmem, rfl⟩ := hS
+          rcases hmem with rfl | hmem
+          · exact absurd ⟨rfl, he⟩ (hdisj (addr, d addr))
+          · exact ⟨addr, hmem, rfl⟩
+        · rintro ⟨addr, hmem, rfl⟩
+          have hS : SetSep.fun2Set (d, Compiler.Backend.StackRemove.addresses a (m + 1))
+              (addr, d addr) := ⟨addr, Or.inr hmem, rfl⟩
+          rcases (memS _).mp hS with heq | h2
+          · simp only [Prod.mk.injEq] at heq
+            obtain ⟨rfl, -⟩ := heq
+            exact absurd hmem hnot
+          · exact h2
+      rw [hs2] at hw2
+      have hb' : m * (width / 8) < 2 ^ width :=
+        Nat.lt_of_le_of_lt (Nat.mul_le_mul_right _ (by omega)) hb
+      simp only [List.length_cons]
+      rw [ih _ m hb' hw2]
+
+/-- HOL `word_list_exists_addresses` (`pan_to_targetProofScript.sml:1211-1240`), the pan_to_target
+    uniqueness form (distinct from stack_removeProof's existence theorem of the same name): a word
+    list exactly covering a short address range has the range's length. HOL's free `a n d m` are
+    explicit; `dimword (:α)` is `2 ^ width`, `w2n bytes_in_word` is `(bytesInWord width).toNat` and
+    `good_dimindex` the tagged `goodDimindex`. -/
+@[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "word_list_exists_addresses"
+  (words_as_type_indexed_bitvec)]
+theorem word_list_exists_addresses {width : Nat} [NeZero width] {β : Type} (a : BitVec width)
+    (n : Nat) (d : BitVec width → β) (m : Nat) :
+    Misc.wordListExists a n (SetSep.fun2Set (d, Compiler.Backend.StackRemove.addresses a m)) ∧
+      goodDimindex width ∧ m < 2 ^ width / (Compiler.Backend.StackRemove.bytesInWord width).toNat →
+    n = m := by
+  rintro ⟨⟨xs, s1, s2, ⟨hunion, -⟩, hw, hc, hlen⟩, good, hm⟩
+  have hb : (Compiler.Backend.StackRemove.bytesInWord width).toNat = width / 8 := by
+    rcases good with rfl | rfl <;> rfl
+  have pos : 0 < width / 8 := by rcases good with rfl | rfl <;> decide
+  rw [hb] at hm
+  have bound : m * (width / 8) < 2 ^ width := by
+    have := Nat.mul_le_of_le_div (width / 8) (m + 1) (2 ^ width) hm
+    rw [Nat.succ_mul] at this
+    omega
+  have hs : s1 = SetSep.fun2Set (d, Compiler.Backend.StackRemove.addresses a m) := by
+    rw [← hunion, hc]
+    funext e
+    simp
+  rw [hs] at hw
+  rw [← hlen]
+  exact wordList_addresses_length good d xs a m bound hw
+
 /-- HOL `good_dimindex_div_mul` (`pan_to_targetProofScript.sml:1242-1248`); HOL's free `a` is
     explicit and `dimindex (:α)` is the word width. -/
 @[hol "cakeml/pancake/proofs/pan_to_targetProofScript.sml" "good_dimindex_div_mul"
