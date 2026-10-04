@@ -98058,5 +98058,21 @@
     "lean_name": "panToTargetLabStackLink",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1552-1560): full_make_init_semantics applied under its own restated premises (not its conclusion) transfers an extend_with_resource_limit' membership of the non-Fail stack semantics to the lab semantics, and gives opt <> NONE."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyPanToWord.lean",
+    "lean_name": "heapLengthShift",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only arithmetic step of pan_to_target_compile_semantics (HOL proof lines 2041-2054): w2n (-1w*w2 + w3 + bytes_in_word * n2w len) DIV (dimindex DIV 8) - len = w2n (-1w*w2 + w3) DIV (dimindex DIV 8) when the extended span does not wrap."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyPanToWord.lean",
+    "lean_name": "panToTargetPanToWordStage",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 2103-2284): pan_to_word state_rel_imp_semantics applied to wst0 = make_init ... sst with code := fromAList (compile_prog isa pan_code); make_init projections discharged, stack-state memory/store facts as hypotheses supplied by the memory-setup stage (.31.2), remaining hypotheses those of the top theorem."
   }
 ]
