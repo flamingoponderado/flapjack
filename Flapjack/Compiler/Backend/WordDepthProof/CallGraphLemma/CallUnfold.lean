@@ -46,7 +46,7 @@ theorem evaluate_call_tail {width : Nat} [NeZero width] {C F : Type}
     {dest : Option Nat} {args : List Nat} {s : WordSemStateFiniteExact width C F}
     {xs args1 : List (WordLocW width)} {prog : WordLangProgHOL (BitVec width)} {ss : Option Nat}
     (hg : WordSemStateFiniteExact.getVars args s = some xs) (hbad : ¬ wordSemBadDestArgs dest args = true)
-    (hf : wordSemFindCode dest (wordSemAddRetLoc none xs) s.code s.stackSize =
+    (hf : wordSemFindCode dest (wordSemAddRetLoc (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat)) xs) s.code s.stackSize =
       some (args1, prog, ss)) (hz : s.clock ≠ 0) :
     evaluate (.call none dest args none) s =
       (if wordSemBadFunReturn (evaluate prog (WordSemStateFiniteExact.callEnv args1 ss (decClock s))).1 then
