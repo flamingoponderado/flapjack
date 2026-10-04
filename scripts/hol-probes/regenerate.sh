@@ -7409,6 +7409,10 @@ run_probe pan_to_target_library_lemmas_probeScript.sml pan_to_target_library_lem
   fun2set_disjoint_union_typed word_arith_lemma2_typed aligned_add_sub_typed \
   "$cake_dir/misc/miscScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe flat_lang_probeScript.sml flat_lang_probe.out \
+  flat_op_datatype_typed flat_pat_datatype_typed flat_exp_datatype_typed ctor_id_abbrev type_id_abbrev type_group_id_abbrev pat_bindings_def_typed bool_id_def_typed Bool_def_typed SmartIf_def_typed false_tag_def_typed true_tag_def_typed bool_to_tag_def_typed \
+  "$cake_dir/compiler/backend/flatLangScript.sml" "$cake_dir/compiler/backend"
+
 run_probe prim_types_program_probeScript.sml prim_types_program_probe.out \
   prim_types_program_def_typed \
   "$cake_dir/semantics/primTypesScript.sml" "$cake_dir/semantics"
