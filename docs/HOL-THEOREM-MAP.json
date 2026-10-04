@@ -95572,5 +95572,301 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-c source comparison (2026-10-04; bead flapjack-pxn.18.5.13.6.9.10): full original riscv_encoder_correct Shift Reg/Ror case560-620 specialized at Inst(Arith(Shift Ror rd rs (Reg rc))). Unrestricted Nat rd/rs/rc and arbitrary word64 source register values, sole original asmStep plus initial targetStateRel, existential counter and every original interference environment, complete asserts/stateOk/emitted-byte memory/all-PC/targetStateRel and asserts2 outside-domain frame retained. All source asmRegOk/avoid/count<64 guards follow internally from unchanged source step, with no explicit extra bound, nonzero-count or distinct-register premise. Literal ORI31/SUB31/SLL31/SRLrd/ORrd five-step trace derives every fetch/Decode/Run/Next from original emitted bytes and original RV64 validity. Full scratch31 state is retained, excluded from source register relation only by original avoidRegs. Derives masked complementary count from exact 64 minus source word; count0 remains allowed and is explicitly proved using OR idempotence/rotateRight0, nonzero case reuses original ror lemma. Arbitrary source/destination/count register aliases retained. Proves source rotateRight poststate/PC20, every intermediate PC coverage/byte memory/validity and all environment/assertion counters; no target-run/output-relation assumption. Fresh original typed full specialization has unrestricted num registers and word64 state, hyp0/provedT. Native state and actual Run/Next closure inherit reals_as_rational_cuts, SOUNDNESS8. Full Shift assembly, remaining encoder constructors and overall compiler theorem remain separate open work. Kernel/delivery checks recorded on bead."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "Ident",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "id",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript id: Datatype id = Short 'n | Long 'm id with independent ('m,'n) parameters; constructor order and arity retained. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "mkId",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "mk_id_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript mk_id_def: both clauses. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "idToN",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "id_to_n_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript id_to_n_def: both clauses. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "idToMods",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "id_to_mods_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript id_to_mods_def: both clauses. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsLookup",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsLookup_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsLookup_def: both clauses; ALOOKUP is List.lookup under DecidableEq (HOL equality); recursion on the identifier. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsLookupMod",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsLookupMod_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsLookupMod_def: both clauses; ALOOKUP is List.lookup. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsEmpty",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsEmpty_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsEmpty_def: Bind [] []. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsAppend",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsAppend_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsAppend_def: single clause. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsLift",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsLift_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsLift_def: single clause. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "alistToNs",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "alist_to_ns_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript alist_to_ns_def: single clause. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsBind",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsBind_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsBind_def: single clause. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsBindList",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsBindList_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsBindList_def: FOLDR with paired lambda as foldr over pair projections. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsOptBind",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsOptBind_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsOptBind_def: option case. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsSing",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsSing_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsSing_def: single clause. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsSub",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsSub_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsSub_def: both conjuncts, independent value types γ δ. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsAll",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsAll_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsAll_def: single clause. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsAll2",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsAll2_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsAll2_def: both nsSub conjuncts with flipped relation. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsDom",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsDom_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsDom_def: HOL set {n | ∃v. nsLookup env n = SOME v} (universe conjuncts trivial) as membership predicate. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsDomMod",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsDomMod_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsDomMod_def: HOL set {n | ∃v. nsLookupMod env n = SOME v} as membership predicate. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsMap",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsMap_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsMap_def: single clause, nested MAP; well-founded on the nested carrier. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/LitOp.lean",
+    "lean_name": "Lit",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "lit",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original lit: six constructors IntLit int, Char char (reviewed HolChar 256-element carrier as in mlstring), StrLit mlstring, Word8 word8, Word64 word64, Float64 word64 at fixed BitVec widths 8/64/64. Typed capture ast_lit_op probe (show_types; datatype case theorems)."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/LitOp.lean",
+    "lean_name": "Arith",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "arith",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original arith: 13 nullary constructors in order. Typed capture ast_lit_op probe (show_types; datatype case theorems)."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/LitOp.lean",
+    "lean_name": "ModN",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "modN",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original modN: Type abbreviation to mlstring. Typed capture ast_lit_op probe (show_types; datatype case theorems)."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/LitOp.lean",
+    "lean_name": "VarN",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "varN",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original varN: Type abbreviation to mlstring. Typed capture ast_lit_op probe (show_types; datatype case theorems)."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/LitOp.lean",
+    "lean_name": "ConN",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "conN",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original conN: Type abbreviation to mlstring. Typed capture ast_lit_op probe (show_types; datatype case theorems)."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/LitOp.lean",
+    "lean_name": "TypeN",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "typeN",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original typeN: Type abbreviation to mlstring. Typed capture ast_lit_op probe (show_types; datatype case theorems)."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/LitOp.lean",
+    "lean_name": "TvarN",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "tvarN",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original tvarN: Type abbreviation to mlstring. Typed capture ast_lit_op probe (show_types; datatype case theorems)."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/LitOp.lean",
+    "lean_name": "PrimType",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "prim_type",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original prim_type: six constructors with WordT word_size. Typed capture ast_lit_op probe (show_types; datatype case theorems)."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/LitOp.lean",
+    "lean_name": "Op",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "op",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original op: all 43 constructors in order with payloads (Arith arith prim_type, FromTo, Shift word_size shift num, Test test prim_type, ThunkOp thunk_op, FFI mlstring). Typed capture ast_lit_op probe (show_types; datatype case theorems)."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/LitOp.lean",
+    "lean_name": "OpClass",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "op_class",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original op_class: four nullary constructors. Typed capture ast_lit_op probe (show_types; datatype case theorems)."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/LitOp.lean",
+    "lean_name": "getOpClass",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "getOpClass_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original getOpClass_def: Opapp FunApp, Eval EvalOp, ThunkOp t by t = ForceThunk, otherwise Simple. Typed capture ast_lit_op probe (show_types; datatype case theorems)."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/LitOp.lean",
+    "lean_name": "Lop",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "lop",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original lop: Andalso | Orelse. Typed capture ast_lit_op probe (show_types; datatype case theorems)."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Location.lean",
+    "lean_name": "Locn",
+    "hol_path": "HOL/examples/formal-languages/context-free/locationScript.sml",
+    "hol_name": "locn",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original locn: UNKNOWNpt | EOFpt | POSN num num. Typed capture ast_lit_op probe (show_types; datatype case theorems)."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Location.lean",
+    "lean_name": "Locs",
+    "hol_path": "HOL/examples/formal-languages/context-free/locationScript.sml",
+    "hol_name": "locs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original locs: Locs locn locn. Typed capture ast_lit_op probe (show_types; datatype case theorems)."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Location.lean",
+    "lean_name": "defaultLoc",
+    "hol_path": "HOL/examples/formal-languages/context-free/locationScript.sml",
+    "hol_name": "default_loc_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original default_loc_def: POSN 0 0. Typed capture ast_lit_op probe (show_types; datatype case theorems)."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Location.lean",
+    "lean_name": "startLocs",
+    "hol_path": "HOL/examples/formal-languages/context-free/locationScript.sml",
+    "hol_name": "start_locs_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original start_locs_def: Locs default_loc default_loc. Typed capture ast_lit_op probe (show_types; datatype case theorems)."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Location.lean",
+    "lean_name": "unknownLoc",
+    "hol_path": "HOL/examples/formal-languages/context-free/locationScript.sml",
+    "hol_name": "unknown_loc_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original unknown_loc_def: Locs UNKNOWNpt UNKNOWNpt. Typed capture ast_lit_op probe (show_types; datatype case theorems)."
   }
 ]

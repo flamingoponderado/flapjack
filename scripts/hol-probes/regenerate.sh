@@ -7401,6 +7401,14 @@ run_probe pan_to_target_library_lemmas_probeScript.sml pan_to_target_library_lem
   fun2set_disjoint_union_typed word_arith_lemma2_typed aligned_add_sub_typed \
   "$cake_dir/misc/miscScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe ast_lit_op_probeScript.sml ast_lit_op_probe.out \
+  lit_datatype_typed arith_datatype_typed prim_type_datatype_typed op_datatype_typed op_class_datatype_typed lop_datatype_typed modN_abbrev varN_abbrev conN_abbrev typeN_abbrev tvarN_abbrev locn_datatype_typed locs_datatype_typed getOpClass_def_typed default_loc_def_typed start_locs_def_typed unknown_loc_def_typed \
+  "$cake_dir/semantics/astScript.sml" "$cake_dir/semantics"
+
+run_probe namespace_ops_probeScript.sml namespace_ops_probe.out \
+  id_datatype_typed mk_id_def_typed id_to_n_def_typed id_to_mods_def_typed nsLookup_def_typed nsLookupMod_def_typed nsEmpty_def_typed nsAppend_def_typed nsLift_def_typed alist_to_ns_def_typed nsBind_def_typed nsBindList_def_typed nsOptBind_def_typed nsSing_def_typed nsSub_def_typed nsAll_def_typed nsAll2_def_typed nsDom_def_typed nsDomMod_def_typed nsMap_def_typed \
+  "$cake_dir/semantics/namespaceScript.sml" "$cake_dir/semantics"
+
 run_probe backend_compile_lab_probeScript.sml backend_compile_lab_probe.out \
   compile_lab_LENGTH_typed compile_lab_IMP_mmio_pcs_min_index_typed \
   "$cake_dir/compiler/backend/proofs/backendProofScript.sml" "$cake_dir/compiler/backend/proofs"
