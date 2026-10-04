@@ -96,6 +96,7 @@ import Flapjack.Compiler.Backend.BackendProof.WordToStackSfs
 import Flapjack.Compiler.Backend.BackendProof.CompileLab
 import Flapjack.Compiler.Backend.BackendProof.ConfigOk
 import Flapjack.Compiler.Backend.BackendProof.ReadLimits
+import Flapjack.Compiler.Backend.DataToWord.Proofs.OptionLe
 import Flapjack.RiscV.CorrectnessEncoding.ConstWide
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxSimulation
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxReconstruction
@@ -1931,6 +1932,7 @@ import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelUpdates
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelLookups
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelAllDistinct
 import Flapjack.Pancake.Proofs.LoopToWord.FindVar
+import Flapjack.Pancake.Proofs.LoopToWord.EveryInstOkLess
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelIntro
 import Flapjack.Pancake.Proofs.LoopToWord.CutsetDomain
 import Flapjack.Pancake.Proofs.LoopToWord.LastNAddCons
