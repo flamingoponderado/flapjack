@@ -1,0 +1,3 @@
+fun2set_disjoint_union_typed=DISJOINT (d1 :α -> bool) (d2 :α -> bool) ∧ (p :(α # β -> bool) -> bool) (fun2set ((m :α -> β),d1)) ∧ (q :(α # β -> bool) -> bool) (fun2set (m,d2)) ⇒ (p * q) (fun2set (m,d1 ∪ d2))
+word_arith_lemma2_typed=∀(n :num) (m :num). (n2w n :α word) − (n2w m :α word) = if n < m then -(n2w (m − n) :α word) else (n2w (n − m) :α word)
+aligned_add_sub_typed=∀(p :num) (a :α word) (b :α word). aligned p b ⇒ (aligned p (a + b) ⇔ aligned p a) ∧ (aligned p (a − b) ⇔ aligned p a)

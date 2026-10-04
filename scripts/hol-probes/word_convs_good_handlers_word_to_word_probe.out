@@ -1,0 +1,6 @@
+word_good_handlers_word_to_word_incr_statement=EVERY (λ(n,m,pp). word_good_handlers n pp) progs ⇒ EVERY (λ(n,m,pp). word_good_handlers n pp) (MAP (λp. full_compile_single tra reg_count1 ralg asm_c (p,NONE)) progs)
+word_good_handlers_word_to_word_incr_hypotheses=0
+word_good_handlers_word_to_word_incr_typed=EVERY (λ((n :num),(m :num),(pp :α prog)). word_good_handlers n pp) (progs :(num # num # α prog) list) ⇒ EVERY (λ((n :num),(m :num),(pp :α prog)). word_good_handlers n pp) (MAP (λ(p :num # num # α prog). full_compile_single (tra :bool) (reg_count1 :num) (ralg :num) (asm_c :α asm_config) (p,(NONE :num sptree$num_map option))) progs)
+word_good_handlers_word_to_word_statement=EVERY (λ(n,m,pp). word_good_handlers n pp) progs ⇒ EVERY (λ(n,m,pp). word_good_handlers n pp) (SND (compile wc ac progs))
+word_good_handlers_word_to_word_hypotheses=0
+word_good_handlers_word_to_word_typed=EVERY (λ((n :num),(m :num),(pp :α prog)). word_good_handlers n pp) (progs :(num # num # α prog) list) ⇒ EVERY (λ((n :num),(m :num),(pp :α prog)). word_good_handlers n pp) (SND (compile (wc :config) (ac :α asm_config) progs))
