@@ -2,11 +2,11 @@ import Flapjack.Pancake.Proofs.WordConvs.NotCreatedPasses
 import Flapjack.Pancake.WordConvs
 
 /-!
-# `wordConvsProof`: `word_good_handlers` through the word_simp and inst_select passes
+# `wordConvsProof`: `word_good_handlers` through the word_simp passes
 
 The `word_good_handlers` preservation theorems of
-`cakeml/compiler/backend/proofs/wordConvsProofScript.sml` for `word_simp` (657-760) and
-`inst_select` (955-972). HOL's free label `n` (and the other free variables) are leading
+`cakeml/compiler/backend/proofs/wordConvsProofScript.sml` for `word_simp` (657-760); the
+`inst_select` laws are in `HandlerPasses.lean`. HOL's free label `n` (and the other free variables) are leading
 binders; HOL's Boolean `word_good_handlers` is the tagged `goodHandlersHOL` with `= true`.
 -/
 
@@ -187,59 +187,5 @@ theorem goodHandlers_compileExp {width : Nat} [NeZero width] (n : Nat) :
   apply goodHandlers_constFpLoop
   rw [goodHandlers_seqAssoc_eq, h]
   rfl
-
-section InstSelect
-
-open Flapjack.Compiler.Backend.WordInst Flapjack.Compiler.Encoders.Asm
-
-/-- HOL `word_good_handlers_inst_select_exp` (`wordConvsProofScript.sml:955-962`, `[local]`);
-    HOL's free `n` leads. -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml"
-  "word_good_handlers_inst_select_exp" (words_as_type_indexed_bitvec)]
-theorem goodHandlers_instSelectExp {width : Nat} [NeZero width] (n : Nat) :
-    ∀ (a : AsmConfigExact width) (b c : Nat) (exp : WordLangExpHOL (BitVec width)),
-      goodHandlersHOL n (instSelectExp a b c exp) = true := by
-  intro a b c exp
-  induction exp using (measure (fun e : WordLangExpHOL (BitVec width) => sizeOf e)).wf.induction
-      generalizing b c with
-  | h exp ih =>
-    fun_cases instSelectExp a b c exp <;>
-      simp_all +zetaDelta [instSelectExp, goodHandlersHOL]
-    all_goals
-      repeat' first
-        | (apply ih; simp_wf; omega)
-        | simp_all +zetaDelta [goodHandlersHOL, isLookupCurrHeap]
-        | split
-        | constructor
-    case case3 =>
-      rename_i child notAddress
-      apply ih child
-      change sizeOf child < sizeOf (WordLangExpHOL.load child)
-      simp
-
-/-- Boolean form of `word_good_handlers_inst_select` (Flapjack infrastructure). -/
-theorem goodHandlers_instSelect_eq {width : Nat} [NeZero width] (n : Nat)
-    (ac : AsmConfigExact width) (v : Nat) (ps : WordLangProgHOL (BitVec width)) :
-    goodHandlersHOL n (instSelect ac v ps) = goodHandlersHOL n ps := by
-  induction ps using
-      (measure (fun p : WordLangProgHOL (BitVec width) => sizeOf p)).wf.induction with
-  | h ps ih =>
-    fun_cases instSelect ac v ps <;>
-      simp_all +zetaDelta [goodHandlersHOL, goodHandlers_instSelectExp]
-    all_goals
-      repeat' first
-        | (rw [ih _ (by change sizeOf _ < sizeOf _; simp <;> omega)])
-        | simp_all +zetaDelta [goodHandlersHOL]
-        | split
-
-/-- HOL `word_good_handlers_inst_select` (`wordConvsProofScript.sml:964-972`, `[local]`). -/
-@[hol "cakeml/compiler/backend/proofs/wordConvsProofScript.sml" "word_good_handlers_inst_select"
-  (words_as_type_indexed_bitvec)]
-theorem goodHandlers_instSelect {width : Nat} [NeZero width] (n : Nat) :
-    ∀ (ac : AsmConfigExact width) (v : Nat) (ps : WordLangProgHOL (BitVec width)),
-      goodHandlersHOL n (instSelect ac v ps) = true ↔ goodHandlersHOL n ps = true :=
-  fun ac v ps => by rw [goodHandlers_instSelect_eq]
-
-end InstSelect
 
 end Flapjack.WordConvs
