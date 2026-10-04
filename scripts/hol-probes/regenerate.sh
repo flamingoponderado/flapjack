@@ -7429,6 +7429,10 @@ run_probe namespace_ops_probeScript.sml namespace_ops_probe.out \
   id_datatype_typed mk_id_def_typed id_to_n_def_typed id_to_mods_def_typed nsLookup_def_typed nsLookupMod_def_typed nsEmpty_def_typed nsAppend_def_typed nsLift_def_typed alist_to_ns_def_typed nsBind_def_typed nsBindList_def_typed nsOptBind_def_typed nsSing_def_typed nsSub_def_typed nsAll_def_typed nsAll2_def_typed nsDom_def_typed nsDomMod_def_typed nsMap_def_typed \
   "$cake_dir/semantics/namespaceScript.sml" "$cake_dir/semantics"
 
+run_probe source_to_flat_helpers_probeScript.sml source_to_flat_helpers_probe.out \
+  compile_var_def_typed compile_pat_def_typed pat_tups_def_typed astOp_to_flatOp_def_typed type_group_id_type_def_typed str_sep_def_typed join_all_names_aux_def_typed join_all_names_def_typed om_tra_def_typed alloc_defs_def_typed make_varls_def_typed empty_env_def_typed extend_env_def_typed lift_env_def_typed lookup_inc_def_typed alloc_tags1_def_typed alloc_tags_def_typed env_id_tuple_def_typed simple_dlet_def_typed concat_def_typed \
+  "$cake_dir/compiler/backend/source_to_flatScript.sml" "$cake_dir/compiler/backend"
+
 run_probe backend_compile_lab_probeScript.sml backend_compile_lab_probe.out \
   compile_lab_LENGTH_typed compile_lab_IMP_mmio_pcs_min_index_typed \
   "$cake_dir/compiler/backend/proofs/backendProofScript.sml" "$cake_dir/compiler/backend/proofs"
