@@ -99,6 +99,7 @@ import Flapjack.Pancake.Proofs.PanToTarget.RiscVInstance
 import Flapjack.Pancake.Proofs.PanToTarget.RiscVInstanceExecutable
 import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMaxAsm
 import Flapjack.Pancake.Proofs.PanToTarget.RiscVSource
+import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMaxAsmWith
 import Flapjack.Pancake.Proofs.PanToTarget.InitHelpers
 import Flapjack.Pancake.Proofs.PanToTarget.PanInstalled
 import Flapjack.Pancake.Proofs.PanToTarget.LabelsChain
@@ -190,6 +191,7 @@ import Flapjack.RiscV.CorrectnessEncoding.Skip
 import Flapjack.Compiler.Backend.WordToWord.Config
 import Flapjack.Compiler.Backend.WordToWord.Compile
 import Flapjack.Compiler.Backend.WordToWord.ExecutableCompile
+import Flapjack.Compiler.Backend.WordToWord.FastCompile
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CodeRel
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingle
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Frame
