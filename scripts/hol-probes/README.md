@@ -8870,3 +8870,20 @@ production compiler routing or the whole Pancake-to-RISC-V correctness theorem.
 `lab_to_target_outer_domain_probe.out` captures the three full original outer-map domain theorems with full types and zero hypotheses. These preserve IMAGE FST of code labels union the initial outer Spt domain, distinct from the guarded paired-label domain theorem. Captures are statement-review evidence, not HOL-to-Lean equivalence or whole compiler completion.
 
 `lab_to_target_extracted_label_navigation_probe.out` captures the full original navigation existence theorem and direct navigation/section-validity/extraction definition types. The port retains EVERY section validity and FLAT MAP label membership and derives the existential PC. Captures are source-review evidence, not cross-language equivalence or whole compiler completion.
+
+### Two-sided native config/fetch and constructor regression checks
+The native config checker compares both the original full config capture and
+the reviewed Lean record body, including all fields, signed immediate policy
+and native encoder. Fetch16/Fetch32 compare the original universal captures
+and the complete reviewed Lean signatures; comments, formatting and theorem
+proof changes are outside those signature checks. Source changes require
+source review before updating the expected contracts.
+
+The target fixture checker inventories all ten original assembler carrier
+families against their actual Lean owners/aliases, requires every constructor
+and every Binop/Shift/JumpCmp Reg/Imm mode in both sample terms, and checks the
+sample inputs against the original probe. The existing 300 AST/byte fixtures
+remain finite regression evidence, not a universal equivalence proof. Missing
+constructors, mode omissions, source/Lean carrier drift and probe-input drift
+have negative tests. Lake, original capture regeneration and manual source
+comparison remain separate required gates.
