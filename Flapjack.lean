@@ -1269,6 +1269,7 @@ import Flapjack.Compiler.Backend.RegAlloc.ProductionInitTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionNumSet
 import Flapjack.Compiler.Backend.RegAlloc.ProductionBijection
 import Flapjack.Compiler.Backend.RegAlloc.ProductionInputCodec
+import Flapjack.Compiler.Backend.RegAlloc.ProductionInputGuard
 import Flapjack.Compiler.Backend.RegAlloc.ProductionGraphRows
 import Flapjack.Compiler.Backend.RegAlloc.ProductionCliqueBatch
 import Flapjack.Compiler.Backend.RegAlloc.ProductionForcedGraph
