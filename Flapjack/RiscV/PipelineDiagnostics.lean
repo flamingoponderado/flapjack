@@ -6,6 +6,7 @@ import Flapjack.RiscV.Encoding
 import Flapjack.RiscV.LabDiagnostics
 import Flapjack.RiscV.LabToTargetRoute
 import Flapjack.RiscV.WordDiagnostics
+import Flapjack.RiscV.WordToStackFailure
 import Flapjack.RiscV.CakeRegAlloc
 import Flapjack.RiscV.WordFuseConditions
 import Flapjack.RiscV.WordDeadCode
@@ -143,6 +144,7 @@ inductive PipelineRiscVLoweringError where
   | wordToStack (error : RiscV.PipelineWordLoweringError)
   | allocationFailure (sectionId : Nat)
   | wordToStackFailure (sectionId : Nat) (path : List Nat)
+      (kind : RiscV.WordToStackFailureKind)
   | labToRiscV (error : RiscV.LabLoweringError)
   | stackToRiscV
   deriving DecidableEq, Repr
@@ -237,11 +239,19 @@ def pipelineWordFunctionsAllocatedWithSpillsAndFullSsaChecked [NeZero width] :
                 renamedParameters RiscV.CakeRegAlloc.cakeRiscVRegisterCount config.scratch
                 frameSlots (some 1)
                 (RiscV.wordStackInitialBitmaps false) renamedProgram
-          match lower with
+          match hlower : lower with
           | none =>
-              let path := (RiscV.wordProgFirstExpressionLoweringFailure config
-                (RiscV.wordProgToNat renamedProgram)).getD []
-              .error (.wordToStackFailure label path)
+              match hfailure : RiscV.wordToStackFirstFailure config renamedProgram with
+              | some (path, kind) => .error (.wordToStackFailure label path kind)
+              | none => absurd hlower (by
+                  simp only [lower]
+                  split <;> intro hnone
+                  · simpa [hfailure] using
+                      (RiscV.wordToStackFirstFailure_complete_function config _
+                        wordRiscVAbiSourceRegister _ _ frameSlots _ _ renamedProgram).2.2.1 hnone
+                  · simpa [hfailure] using
+                      (RiscV.wordToStackFirstFailure_complete_function config _
+                        wordRiscVAbiSourceRegister _ _ frameSlots _ _ renamedProgram).2.2.2 hnone)
           | some (stackBody, _) =>
               match pipelineWordFunctionsAllocatedWithSpillsAndFullSsaChecked functions with
               | .error error => .error error
@@ -301,11 +311,19 @@ def pipelineWordFunctionsAllocatedWithSpillsAndFullSsaAndBitmapsCheckedAux
                 renamedParameters RiscV.CakeRegAlloc.cakeRiscVRegisterCount config.scratch
                 frameSlots
                 (some 1) localState renamedProgram
-          match lower with
+          match hlower : lower with
           | none =>
-              let path := (RiscV.wordProgFirstExpressionLoweringFailure config
-                (RiscV.wordProgToNat renamedProgram)).getD []
-              .error (.wordToStackFailure label path)
+              match hfailure : RiscV.wordToStackFirstFailure config renamedProgram with
+              | some (path, kind) => .error (.wordToStackFailure label path kind)
+              | none => absurd hlower (by
+                  simp only [lower]
+                  split <;> intro hnone
+                  · simpa [hfailure] using
+                      (RiscV.wordToStackFirstFailure_complete_function config _
+                        wordRiscVAbiSourceRegister _ _ frameSlots _ _ renamedProgram).2.2.1 hnone
+                  · simpa [hfailure] using
+                      (RiscV.wordToStackFirstFailure_complete_function config _
+                        wordRiscVAbiSourceRegister _ _ frameSlots _ _ renamedProgram).2.2.2 hnone)
           | some (stackBody, nextBitmaps) =>
               match pipelineWordFunctionsAllocatedWithSpillsAndFullSsaAndBitmapsCheckedAux
                   nextBitmaps (nextBitmaps.data :: chunks) functions with
@@ -378,11 +396,19 @@ def pipelineWordFunctionsAllocatedWithSpillsAndFullSsaAndBitmapsFromWordCheckedA
                 config wordParameters wordRiscVAbiSourceRegister
                 RiscV.CakeRegAlloc.cakeRiscVRegisterCount config.scratch
                 frameSlots (some 1) localState renamedProgram
-          match lower with
+          match hlower : lower with
           | none =>
-              let path := (RiscV.wordProgFirstExpressionLoweringFailure config
-                (RiscV.wordProgToNat renamedProgram)).getD []
-              .error (.wordToStackFailure label path)
+              match hfailure : RiscV.wordToStackFirstFailure config renamedProgram with
+              | some (path, kind) => .error (.wordToStackFailure label path kind)
+              | none => absurd hlower (by
+                  simp only [lower]
+                  split <;> intro hnone
+                  · simpa [hfailure] using
+                      (RiscV.wordToStackFirstFailure_complete_function config _
+                        wordRiscVAbiSourceRegister _ _ frameSlots _ _ renamedProgram).1 hnone
+                  · simpa [hfailure] using
+                      (RiscV.wordToStackFirstFailure_complete_function config _
+                        wordRiscVAbiSourceRegister _ _ frameSlots _ _ renamedProgram).2.1 hnone)
           | some (stackBody, nextBitmaps) =>
               let stackBody := RiscV.stackNormalizeCakeFfi stackBody
               match pipelineWordFunctionsAllocatedWithSpillsAndFullSsaAndBitmapsFromWordCheckedAux
@@ -427,7 +453,7 @@ inductive SourceRiscVImageError where
 def pipelineLoweringSectionId : PipelineRiscVLoweringError → Option Nat
   | .wordToStack error => some error.sectionId
   | .allocationFailure sectionId => some sectionId
-  | .wordToStackFailure sectionId _ => some sectionId
+  | .wordToStackFailure sectionId _ _ => some sectionId
   | .labToRiscV error => some error.sectionId
   | .stackToRiscV => none
 
@@ -465,7 +491,7 @@ def sourceRiscVImageErrorOfLowering (firstLabel : Nat)
 def pipelineRiscVLoweringPassName : PipelineRiscVLoweringError → String
   | .wordToStack _ => "word-to-stack"
   | .allocationFailure _ => "register allocation"
-  | .wordToStackFailure _ _ => "word-to-stack"
+  | .wordToStackFailure _ _ _ => "word-to-stack"
   | .labToRiscV _ => "lab-to-riscv"
   | .stackToRiscV => "stack-to-riscv"
 

@@ -2600,6 +2600,7 @@ import Flapjack.Lab
 import Flapjack.RiscV.Lab
 import Flapjack.RiscV.LabDiagnostics
 import Flapjack.RiscV.WordDiagnostics
+import Flapjack.RiscV.WordToStackFailure
 import Flapjack.FfiHOL
 import Flapjack.FfiBridge
 import Flapjack.Compiler.Backend.RegAlloc.StateForeach
