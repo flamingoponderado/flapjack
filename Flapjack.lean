@@ -782,6 +782,7 @@ import Flapjack.Compiler.Backend.WordCse.ProductionGet
 import Flapjack.Compiler.Backend.WordCse.ProductionSet
 import Flapjack.Compiler.Backend.WordCse.ProductionJoin
 import Flapjack.Compiler.Backend.WordCse.ProductionFactAux
+import Flapjack.Compiler.Backend.WordCse.ProductionMemory
 import Flapjack.Compiler.Backend.WordCse.FactProducers
 import Flapjack.Compiler.Backend.WordCse.Join
 import Flapjack.Compiler.Backend.WordCse.Proofs.InNamesSet
