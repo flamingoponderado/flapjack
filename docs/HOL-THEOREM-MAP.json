@@ -97397,5 +97397,29 @@
     "lean_name": "mem_zipWith_exists",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only: membership in List.zipWith (HOL MAP2_MAP/EVERY_MAP step)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyLabToTarget.lean",
+    "lean_name": "panToTargetNoInstallOrNoShareMem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1331-1338): no_install_or_no_share_mem of the pipeline lab program via from_pan_to_lab_no_install; not a separate HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyLabToTarget.lean",
+    "lean_name": "panToTargetCompilerOracleOk",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1340-1368): compiler_oracle_ok for the proof's constant oracle (final lab config, empty compile_no_stubs program), stated unconditionally (HOL derives it under no_share_mem_inst lprog)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyLabToTarget.lean",
+    "lean_name": "compileProgMax_some",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1300-1314): inversion of a successful compile_prog_max through from_stack/from_lab/attach_bitmaps."
   }
 ]
