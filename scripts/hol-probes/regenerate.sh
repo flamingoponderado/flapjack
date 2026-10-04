@@ -8441,3 +8441,7 @@ run_probe lab_to_target_outer_domain_probeScript.sml lab_to_target_outer_domain_
 run_probe lab_to_target_extracted_label_navigation_probeScript.sml lab_to_target_extracted_label_navigation_probe.out \
   extract_labels_loc_to_pc_statement_typed extract_labels_loc_to_pc_hyp_count loc_to_pc_definition_typed sec_labels_ok_definition_typed extract_labels_definition_typed \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_ffi_distinct_probeScript.sml lab_to_target_ffi_distinct_probe.out \
+  find_ffi_names_ALL_DISTINCT_statement_typed find_ffi_names_ALL_DISTINCT_hyp_count find_ffi_names_definition_typed \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"

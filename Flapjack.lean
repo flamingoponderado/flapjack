@@ -455,6 +455,7 @@ import Flapjack.Compiler.Backend.LabToTarget.ZeroPositionEvenLabels
 import Flapjack.Compiler.Backend.LabToTarget.EvenLabels
 import Flapjack.Compiler.Backend.LabToTarget.OddInstructionAlignment
 import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelPreservation
+import Flapjack.Compiler.Backend.LabToTarget.FfiNameDistinctness
 import Flapjack.Compiler.Backend.LabToTarget.ExtractedLabelNavigation
 import Flapjack.Compiler.Backend.LabToTarget.OuterLabelDomain
 import Flapjack.Compiler.Backend.LabToTarget.ComputedLabelDomain
