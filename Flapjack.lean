@@ -1,3 +1,4 @@
+import Flapjack.RiscV.CorrectnessEncoding.MemorySource
 import Flapjack.RiscV.CorrectnessEncoding.MemoryRun
 import Flapjack.RiscV.CorrectnessEncoding.MemoryBytes
 import Flapjack.RiscV.CorrectnessEncoding.MemoryStep
@@ -2074,6 +2075,7 @@ import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.ExtCall
 import Flapjack.Pancake.Proofs.PanToCrep.NotMemContextAssignedMemGt
 import Flapjack.Pancake.Proofs.PanToWord
 import Flapjack.Pancake.Proofs.PanToWord.PanSimpValidity
+import Flapjack.Pancake.Proofs.PanToWord.PanToCrepValidity
 import Flapjack.Pancake.Proofs.PanToTarget
 import Flapjack.Pipeline
 import Flapjack.Pipeline.Proofs.SourceLoopState

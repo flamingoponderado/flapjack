@@ -1,0 +1,35 @@
+le0_wrap=T
+le1_wrap=T
+le1_missing=T
+le2_wrap=T
+le2_missing=T
+le4_wrap=T
+le4_missing=T
+le8_wrap=T
+le8_missing=T
+le12_wrap=T
+le12_missing=T
+be0_wrap=T
+be1_wrap=T
+be1_missing=T
+be2_wrap=T
+be2_missing=T
+be4_wrap=T
+be4_missing=T
+be8_wrap=T
+be8_missing=T
+be12_wrap=T
+be12_missing=T
+previous_failure_zero=T
+read_clause=read_mem_word a (SUC n) s = (let (w,s1) = read_mem_word (if s.be then a + -1w else (a + 1w)) n s in (w2w (read_mem a s1) ‖ w ≪ 8,assert (a ∈ s1.mem_domain) s1))
+read_hypotheses=0
+read_types=s : :8 asm_state, n : :num, a : :word8
+write_clause=write_mem_word a (SUC n) v s = (let s1 = write_mem_word (if s.be then a + -1w else (a + 1w)) n (v ⋙ 8) s in assert (a ∈ s1.mem_domain) (upd_mem a (w2w v) s1))
+write_hypotheses=0
+write_types=s : :8 asm_state, v : :word16, n : :num, a : :word8
+load_clause=mem_load n r (Addr rb off) s = (let a = addr (Addr rb off) s; (w,s) = read_mem_word (if s.be then a + n2w (n − 1) else a) n s; s = upd_reg r w s in assert (aligned (LOG2 n) a) s)
+load_hypotheses=0
+load_types=s : :8 asm_state, off : :word8, rb : :num, r : :num, n : :num
+store_clause=mem_store n r (Addr rb off) s = (let a = addr (Addr rb off) s; w = read_reg r s; s = write_mem_word (if s.be then a + n2w (n − 1) else a) n w s in assert (aligned (LOG2 n) a) s)
+store_hypotheses=0
+store_types=s : :8 asm_state, off : :word8, rb : :num, r : :num, n : :num

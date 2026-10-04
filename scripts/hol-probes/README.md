@@ -8581,3 +8581,15 @@ The original Encode clauses and word5/word12 carriers are also captured.
 These decoder prerequisites do not prove the full JumpCmp case or compiler
 correctness. Regenerate through the registered `HOL_PROBE_ONLY` driver and
 run `check-riscv-branch-decode.py` to detect source/evidence drift.
+
+`pan_to_crep_validity_helpers_probe.out` captures seven complete original typed list/field/head/store/load validity statements from pan_to_wordProofScript. Guards retain matched declaration lengths, actual pair/Option results, and the stores nonempty conditional; global addresses remain word5. Native kernel proofs retain the original equivalences/implications. Full arithmetic/compiler/inlining validity remains separate; captures support source review, not cross-language equivalence.
+
+### Source memory traversal domains
+
+`riscv_memory_source_probeScript.sml` checks literal original read/write success
+and failure at zero,1,2,4,8,12 bytes, both endian modes,8-bit wrapping addresses
+and16-bit independent read/value widths. Missing final-byte domains fail;
+previous failures persist even at zero count. Captured successor and wrapper
+clauses retain original assertions and alignment guards. `MemorySource.lean`
+proves arbitrary-count source success/domain characterizations and extracts
+original memLoad/memStore guards. It does not prove the full native Mem encoder.
