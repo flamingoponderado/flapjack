@@ -96,6 +96,7 @@ import Flapjack.Pancake.Proofs.PanToTarget.AssemblyGoodCodeSource
 import Flapjack.Pancake.Proofs.PanToTarget.AssemblyTop
 import Flapjack.Pancake.Proofs.PanToTarget.RiscVInstance
 import Flapjack.Pancake.Proofs.PanToTarget.RiscVInstanceExecutable
+import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMaxAsm
 import Flapjack.Pancake.Proofs.PanToTarget.InitHelpers
 import Flapjack.Pancake.Proofs.PanToTarget.PanInstalled
 import Flapjack.Pancake.Proofs.PanToTarget.LabelsChain
@@ -1225,6 +1226,7 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.Instructions
 import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.TopStubs
 import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.SourceDomain
 import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.RemoveMustTerminate
+import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.SourceOutput
 import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.MoveHelpers
 import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.Traversal
 import Flapjack.Compiler.Backend.WordToStack.ProductionLocations
@@ -1559,6 +1561,7 @@ import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunOk
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunConstOk
 import Flapjack.Compiler.Backend.WordSimp.Proofs.GcWordConst
 import Flapjack.Compiler.Backend.WordSimp.ProductionSmartSeq
+import Flapjack.Compiler.Backend.WordSimp.ProductionPushOutIf
 import Flapjack.Compiler.Backend.WordSimp.ProductionSeqAssoc
 import Flapjack.Compiler.Backend.WordSimp.ProductionConstFp
 import Flapjack.Compiler.Backend.WordSimp.Proofs.SeqAssoc
