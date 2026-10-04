@@ -92499,5 +92499,58 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison 2026-10-04: original evaluate_wInst4688-4699 complete statement over every native asm instruction, all five top constructors. All original five guards (actual source inst success/every_var_inst/max_var_inst/inst_arg_convention/full state_rel), generic positive word width and independent C/F hosts, actual compiled wInst target evaluation existential, entire state relation and stack length/space retained. Source instruction codec is reviewed constructor-for-constructor HolInst.toWordLangInst (HolArith/HolRegImm/HolAddr payload codecs), no changed carrier fields or opcode/width restriction. Internal exhaustive native constructor dispatch consumes full source cases, retaining aliases/spills, arithmetic guards, unsupported16 memory contradiction from actual source success, FP partial/numeric/range guards, width64 and non64 packed/transfer odd-even branches and fixed FP64. No source-case simulation, target execution/result, numeric oracle or postrelation premise. Same-module genuine source/target canonical roundtrip witnesses; source fpRegs/store and target regs/fpRegs/store only, locals/code remain native Spt. Standard words/Type0 host representation only; faithful evaluators inherit reals_as_rational_cuts (SOUNDNESS item8). Original full generic theorem and whole FP typed specialization kernel captured with GEN_ALL/hyp0/T. comp_correct/WordToStack semantics/final compiler composition remain open.",
     "hol_line": 4688
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/Sequence.lean",
+    "lean_name": "extractLabelsSmartSeq",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "extract_labels_SmartSeq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 source comparison: complete original local extract_labels_SmartSeq in sequence/materialized-constant label section175-240. Literal native SmartSeq/Seq_assoc/drop_consts over arbitrary programs, accumulators, both optional handler families and arbitrary Spt positive-width word knowledge/register list; preserves actual whole label-list equality without output or desired label premise. Recursive equality derived from actual native algorithms. Last list-only append permutation implication is generic beta List with no word-program binder, original source guard retained. First five use reviewed common positive-width BitVec translation, native Spt carriers unchanged. Fresh unchanged literal original statement/proof replays in word_convs_simp_sequence_labels_probe.out, full typed symbolic kernel T/hyp0; no HOL-to-Lean equivalence or full compile conventions claim.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/Sequence.lean",
+    "lean_name": "extractLabelsSeqAssocLemma",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "extract_labels_Seq_assoc_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 source comparison: complete original local extract_labels_Seq_assoc_lemma in sequence/materialized-constant label section175-240. Literal native SmartSeq/Seq_assoc/drop_consts over arbitrary programs, accumulators, both optional handler families and arbitrary Spt positive-width word knowledge/register list; preserves actual whole label-list equality without output or desired label premise. Recursive equality derived from actual native algorithms. Last list-only append permutation implication is generic beta List with no word-program binder, original source guard retained. First five use reviewed common positive-width BitVec translation, native Spt carriers unchanged. Fresh unchanged literal original statement/proof replays in word_convs_simp_sequence_labels_probe.out, full typed symbolic kernel T/hyp0; no HOL-to-Lean equivalence or full compile conventions claim.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/Sequence.lean",
+    "lean_name": "extractLabelsSeqAssoc",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "extract_labels_Seq_assoc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 source comparison: complete original local extract_labels_Seq_assoc in sequence/materialized-constant label section175-240. Literal native SmartSeq/Seq_assoc/drop_consts over arbitrary programs, accumulators, both optional handler families and arbitrary Spt positive-width word knowledge/register list; preserves actual whole label-list equality without output or desired label premise. Recursive equality derived from actual native algorithms. Last list-only append permutation implication is generic beta List with no word-program binder, original source guard retained. First five use reviewed common positive-width BitVec translation, native Spt carriers unchanged. Fresh unchanged literal original statement/proof replays in word_convs_simp_sequence_labels_probe.out, full typed symbolic kernel T/hyp0; no HOL-to-Lean equivalence or full compile conventions claim.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/Sequence.lean",
+    "lean_name": "extractLabelsDropConsts1",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "extract_labels_drop_consts_1",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 source comparison: complete original local extract_labels_drop_consts_1 in sequence/materialized-constant label section175-240. Literal native SmartSeq/Seq_assoc/drop_consts over arbitrary programs, accumulators, both optional handler families and arbitrary Spt positive-width word knowledge/register list; preserves actual whole label-list equality without output or desired label premise. Recursive equality derived from actual native algorithms. Last list-only append permutation implication is generic beta List with no word-program binder, original source guard retained. First five use reviewed common positive-width BitVec translation, native Spt carriers unchanged. Fresh unchanged literal original statement/proof replays in word_convs_simp_sequence_labels_probe.out, full typed symbolic kernel T/hyp0; no HOL-to-Lean equivalence or full compile conventions claim.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/Sequence.lean",
+    "lean_name": "extractLabelsDropConsts",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "extract_labels_drop_consts",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol2 source comparison: complete original local extract_labels_drop_consts in sequence/materialized-constant label section175-240. Literal native SmartSeq/Seq_assoc/drop_consts over arbitrary programs, accumulators, both optional handler families and arbitrary Spt positive-width word knowledge/register list; preserves actual whole label-list equality without output or desired label premise. Recursive equality derived from actual native algorithms. Last list-only append permutation implication is generic beta List with no word-program binder, original source guard retained. First five use reviewed common positive-width BitVec translation, native Spt carriers unchanged. Fresh unchanged literal original statement/proof replays in word_convs_simp_sequence_labels_probe.out, full typed symbolic kernel T/hyp0; no HOL-to-Lean equivalence or full compile conventions claim.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/Sequence.lean",
+    "lean_name": "labelsRelAppendImp",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "labels_rel_append_imp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison: complete original local labels_rel_append_imp in sequence/materialized-constant label section175-240. Literal native SmartSeq/Seq_assoc/drop_consts over arbitrary programs, accumulators, both optional handler families and arbitrary Spt positive-width word knowledge/register list; preserves actual whole label-list equality without output or desired label premise. Recursive equality derived from actual native algorithms. Last list-only append permutation implication is generic beta List with no word-program binder, original source guard retained. First five use reviewed common positive-width BitVec translation, native Spt carriers unchanged. Fresh unchanged literal original statement/proof replays in word_convs_simp_sequence_labels_probe.out, full typed symbolic kernel T/hyp0; no HOL-to-Lean equivalence or full compile conventions claim."
   }
 ]
