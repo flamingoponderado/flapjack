@@ -81713,10 +81713,471 @@
   {
     "hol_path": null,
     "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "agreeMap",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only factoring of inst_const_memory for memory-free instructions."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "constWritesConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "const_writes_const_memory",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript const_writes_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "cutStateWithMemConst",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "cut_state_with_mem_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript cut_state_with_mem_const (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "fun2SetUpdateEq",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "fun2set_update_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript fun2set_update_eq (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "fun2Set_eq_iff",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only graph-equality characterisation (HOL uses set_sep$fun2set_eq inline)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "getFpVarMem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only definitional unfolding (get_fp_var ignores memory) used in inst_const_memory."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "getVarConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "get_var_const_memory",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript get_var_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "getVarImmConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "get_var_imm_const_memory",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript get_var_imm_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "getVarsConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "get_vars_const_memory",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript get_vars_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Canonical WordSem codec re-export for the fmap_as_finite_support qualifier; no HOL original."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "instAgree",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only case factoring of inst_const_memory over every instruction constructor."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "instConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "inst_const_memory",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript inst_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise. Inherits reals_as_rational_cuts through the WordSem evaluator closure (SOUNDNESS item 8)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "mapCase",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only factoring of inst_const_memory for memory-free instructions."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "memLoad32ConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "mem_load_32_const_memory",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript mem_load_32_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "memLoadByteAuxConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "mem_load_byte_aux_const_memory",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript mem_load_byte_aux_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "memLoadConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "mem_load_const_memory",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript mem_load_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "memStore32ConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "mem_store_32_const_memory",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript mem_store_32_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "memStoreByteAuxConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "mem_store_byte_aux_const_memory",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript mem_store_byte_aux_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "memStoreConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "mem_store_const_memory",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript mem_store_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "memUpdLemma",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "mem_upd_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript mem_upd_lemma (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "pushEnvMemConst",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "push_env_mem_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript push_env_mem_const (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "pushEnvMemUpd",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "push_env_mem_upd",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript push_env_mem_upd (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "readBytearrayConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "read_bytearray_const_memory",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript read_bytearray_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "setVarCommutes",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only case factoring of share_inst_const_memory (shared-memory set_var commutes with memory replacement)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "setVarConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "set_var_const_memory",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript set_var_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "setVarsConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "set_vars_const_memory",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript set_vars_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "shareInstConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "share_inst_const_memory",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript share_inst_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "storeCommutes",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only case factoring of share_inst_const_memory (shared-memory stores commute with memory replacement)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "unsetVarConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "unset_var_const_memory",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript unset_var_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "wordExpConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "word_exp_const_memory",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript word_exp_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ConstMemory.lean",
+    "lean_name": "writeBytearrayConstMemory",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "write_bytearray_const_memory",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_targetProofScript write_bytearray_const_memory (336-605 const_memory group), typed capture by the pan_to_target_const_memory probe (literal source replay of 336-605; show_types, no hypotheses). Same quantifiers, premises and conclusion. HOL sets: WordSem mdomain is the reviewed Bool-predicate rendering and set_sep fun2set takes the Prop predicate, so the graph domain is fun a => md a = true; HOL m(|x |-> a|) is the pointwise if-update; THE is holThe; ARB is holArb; share_inst keeps its independent result width. No added premise."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileProgMax.lean",
     "lean_name": "compileProgMaxExecutable_eq",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-sol3: Flapjack-only computation replacement agreement, no separately named HOL declaration. Unconditional equality of full native compiler-result/bound pair, preserving all original inputs, actual generated frames and unknown outcomes. Original tagged compileProgMax remains unchanged; this kernel equality is not HOL-to-Lean equivalence."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "callHandlerSub",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only extraction of the exception handler sub-program condition."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "callRetSub",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only extraction of the returning-call handler sub-program condition."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "getStoreMem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only definitional unfolding (get_store ignores memory)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Canonical WordSem codec re-export for the fmap_as_finite_support qualifier; no HOL original."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "jumpExcMem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only commutation of jump_exc with memory replacement."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "memEq_iff",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only conversion between pointwise memory agreement and the fun2set graph equality."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "memorySwapLemma",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "memory_swap_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original local memory_swap_lemma (743-760): same premises, ∃m' with evaluate (prog, st with memory := m) = (res, rst with memory := m') and graph equality. Typed capture by the pan_to_target_memory_swap probe (literal source replay of 336-908, show_types, no hypotheses). no_alloc/no_install are the reviewed noAllocSubprogsHOL/noInstallSubprogsHOL renderings, no_alloc_code/no_install_code the tagged wordProps predicates, fun2set domains are the Prop reading of the Bool mdomain, ARB is holArb. Proof by the WordSem evaluate recursion (swap_evaluate, HOL recInduct evaluate_ind). No added premise. Inherits reals_as_rational_cuts through the WordSem evaluator closure (SOUNDNESS item 8)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "memorySwapLemma1",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "memory_swap_lemma1",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original local memory_swap_lemma1 (607-736): all six premises and the ∃st' conclusion (same result, equality after overwriting memory by ARB, graph equality). Typed capture by the pan_to_target_memory_swap probe (literal source replay of 336-908, show_types, no hypotheses). no_alloc/no_install are the reviewed noAllocSubprogsHOL/noInstallSubprogsHOL renderings, no_alloc_code/no_install_code the tagged wordProps predicates, fun2set domains are the Prop reading of the Bool mdomain, ARB is holArb. Proof by the WordSem evaluate recursion (swap_evaluate, HOL recInduct evaluate_ind). No added premise. Inherits reals_as_rational_cuts through the WordSem evaluator closure (SOUNDNESS item 8)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "popEnvFrame",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only frame facts of pop_env."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "popEnvMem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only commutation of pop_env with memory replacement."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "swap_const",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only non-recursive cases of memory_swap_lemma1."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "swap_evaluate",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only recursive core of memory_swap_lemma1 (HOL recInduct evaluate_ind)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "swap_map",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only constructor of the evaluation agreement for unchanged memory."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/MemorySwap.lean",
+    "lean_name": "wordSemanticsMemoryUpdate",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "word_semantics_memory_update",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original word_semantics_memory_update (772-907): graph/no_alloc_code/no_install_code premise, then semantics (s with memory := m) start ≠ Fail ⇒ semantics s start = semantics (s with memory := m) start (HOL's curried implication kept; the non-Fail premise is retained though the Lean proof does not need it). Typed capture by the pan_to_target_memory_swap probe (literal source replay of 336-908, show_types, no hypotheses). no_alloc/no_install are the reviewed noAllocSubprogsHOL/noInstallSubprogsHOL renderings, no_alloc_code/no_install_code the tagged wordProps predicates, fun2set domains are the Prop reading of the Bool mdomain, ARB is holArb. Proof by the WordSem evaluate recursion (swap_evaluate, HOL recInduct evaluate_ind). No added premise. Inherits reals_as_rational_cuts through the WordSem evaluator closure (SOUNDNESS item 8)."
   },
   {
     "hol_path": null,
@@ -90209,6 +90670,15 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-c author source comparison2026-10-03: original riscv_encoder_correct statement at riscv_targetProofScript.sml:512, Loc proof branch at737-742, and encoder_correct_def117-133: full Loc constructor with unrestricted natural destination and word64 offset, exact native source/state carriers, original asmStep+targetStateRel premise and existential/every-env/interference/asserts/asserts2 conclusion. Original asmOk discharges register32/avoid-zero and signed offset [-2147483648,2147481599]/align4 guards internally. Literal AUIPC then ADDI byte fetch/unrestricted universal decode/Run/Next derive two real steps; original lem12b reconstructs immediate using only original alignment/range. Projection-preserving env0 and env1 transport complete relations, native writes preserve all memory, intermediate validity/code bytes/PC coverage proved, full source post-state including overwritten register equality retained. Original witness n=1. No target execution/output premise, extra public range or alignment bound, simplified evaluator, or narrowed conclusion. Inherited reals_as_rational_cuts assumption from reviewed native state/Run closure (SOUNDNESS8); no added real assumption. Fresh original Loc specialization captures arbitrary r:num/c:word64, zero stored hypotheses/provedT; capture is not cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/ShiftLslRegister.lean",
+    "lean_name": "riscv_encoder_correct_shiftLslRegister",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-04: original riscv_targetProofScript Shift560-620 Reg/Lsl case; encoder_correct_def117-132 whole shape. Arbitrary Nat rd/rs1/rs2 and original sole asmStep/initial targetStateRel; full existential n/allenv/asserts/asserts2. Count<64 derived from source failed=false, native low6/widen64 count equality from that bound. Four emitted bytes, unrestricted SLL Decode/Run and complete Next are derived. No target-run, output-relation, extra range or alias premise. Native target closure inherits reals_as_rational_cuts SOUNDNESS item8; other Shift and Ror cases remain open."
   },
   {
     "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",

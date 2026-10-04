@@ -8287,6 +8287,19 @@ payloads. ProductionHeapLoc derives complete knowledge/program correspondence
 from input KnowledgeRel and original wfData, preserving raw emitted source
 registers and using existing invariant/producer proofs. These are representation
 theorems, not narrowed tagged HOL ports or whole-pass adoption/equivalence claims.
+
+`word_cse_production_assign_probe.out` captures the full typed original
+word_cse definition/type and eleven ground full-pair identity equations.
+Assign preserves knowledge and expression unconditionally, including nested
+loads, seeded load facts, even/alias destinations, and large registers/words.
+ProductionAssign proves the all-expression native-to-executed transition with
+only the input knowledge relation. The executed CSE now retains the literal
+original Assign identity: instruction selection already emits actual memory
+loads through mem/memOffset; its old load-expression special case changed
+knowledge on codec-representable unselected inputs. Kernel regressions retain
+that boundary, and 56 runtime cases compare all complete map entries and the
+full returned program rendering. These local proofs and original probes do
+not assert cross-language equivalence or complete whole-pass adoption.
 ## Native signed DIV decoding prerequisite
 
 `DecodeDiv.lean` proves unrestricted actual Encode/DecodeAny composition for
@@ -8307,6 +8320,7 @@ native state. The original typed theorem specialization is captured in
 `riscv_target_div_probe.out`; hyp0/provedT is regression evidence, not a
 cross-assistant equivalence proof. The full target closure retains inherited
 reals_as_rational_cuts (SOUNDNESS item8); other encoder cases remain open.
+
 
 
 ## Complete native Shift decoding prerequisites
@@ -8333,3 +8347,14 @@ The fresh 24 original clause/type/hypothesis rows retain all literal RV32/RV64
 and illegal-immediate branches. They provide source regression evidence, not
 a cross-assistant equivalence proof. Full state relation, assertions and both
 Ror instruction sequences remain on the parent bead.
+
+## Full original register Lsl encoder case
+
+`ShiftLslRegister.lean` proves the genuine original Reg/Lsl case with the
+sole source asmStep and initial targetStateRel premise and complete existential
+interference/assertion conclusion. The count bound follows from failed=false;
+actual fetched SLL Decode/Run/Next and masked-count equality are derived.
+Fresh original theorem specialization includes complete statement, typed
+quantifiers, hyp0 and provedT. These captures are regression evidence, not a
+cross-assistant equivalence proof. The full target closure retains inherited
+reals_as_rational_cuts (SOUNDNESS item8). Other Shift/Ror cases remain open.
