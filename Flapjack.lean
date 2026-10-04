@@ -76,6 +76,7 @@ import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Call
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Assembly
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileWordToWord
 import Flapjack.Compiler.Backend.WordToWord.Proofs.Syntactic
+import Flapjack.Compiler.Backend.WordToWord.Proofs.NoInstallCompileSingle
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsShort
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ChunkBitsMsb
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsPattern

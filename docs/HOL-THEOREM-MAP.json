@@ -92512,5 +92512,19 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.54): word_to_wordProof syntactic group. HOL statement compared clause by clause against the probe word_to_word_syntactic (statement/hypotheses/typed); HOL's free variables are explicit leading binders in source order, HOL bool predicates as Lean Bool = true, no_share_inst/no_mt/no_alloc/no_install as the tagged noShareInstSubprogsHOL/noMtSubprogsHOL/noAllocSubprogsHOL/noInstallSubprogsHOL, find_code as tagged wordSemFindCode, code_rel as tagged codeRel, fromAList/ALOOKUP as sptFromAList/sptAListLookup, ALL_DISTINCT as List.Nodup, ZIP on equal-length lists as List.zip. Positive HOL word dimension is the sole carrier translation. Definition over Spt lookup as in no_install_code_def."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "no_install_no_alloc_compile_single_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/NoInstallCompileSingle.lean",
+    "lean_name": "no_install_no_alloc_compile_single_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.55): HOL no_install_no_alloc_compile_single_correct (word_to_wordProofScript.sml:1092-1690), compared with the typed capture word_to_word_no_install_compile_single. Full statement kept: ∀prog st l; premises code_rel st.code l (tagged codeRel), no_install prog, no_alloc prog (tagged noInstallSubprogsHOL/noAllocSubprogsHOL), no_install_code/no_alloc_code st.code (tagged noInstallCode/noAllocCode), domain st.code = domain l (sptDomain), gc_fun_const_ok st.gc_fun; conclusion ∃perm' with if res = SOME Error then T (decided classically) else the run on st with code := l gives res1 = res, code_rel and domain equality of the final code tables and rst1 = rst with code := rst1.code. Proof differs from HOL's per-case induction: it instantiates the ported compile_single_correct at an arbitrary compile_single configuration and replaced compile fields, and transfers both runs with an untagged frame lemma (a no_install run on a no_install code table commutes with replacing compile_oracle/compile and keeps them); the no_alloc premises are retained but unused on this route. fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
   }
 ]
