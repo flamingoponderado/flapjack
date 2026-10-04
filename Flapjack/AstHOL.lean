@@ -9,7 +9,8 @@ assembly/wordLang shift operations, and the exact `ast$opb` comparison carrier
 consumed by `fpSem`'s `fp_cmp_def`, are ported here. The other selector
 carriers are in `AstHOL/BackendOperators.lean`, and `lit`, `arith`, the name
 abbreviations, `prim_type`, `op`, `op_class`, `getOpClass` and `lop` are in
-`AstHOL/LitOp.lean`; `ast_t`, `pat`, `exp` and `dec` are an open inventory item.
+`AstHOL/LitOp.lean`; `ast_t`, `pat`, `exp`, `dec` and `pat_bindings` are in
+`AstHOL/Syntax.lean`.
 -/
 
 namespace Flapjack
