@@ -45,6 +45,7 @@ import Flapjack.Pancake.Proofs.PanToTarget.WordToWordNoInstall
 import Flapjack.Pancake.Proofs.PanToTarget.StackSizeConst
 import Flapjack.Pancake.Proofs.PanToTarget.InitHelpers
 import Flapjack.Pancake.Proofs.PanToTarget.PanInstalled
+import Flapjack.Pancake.Proofs.PanToTarget.LabelsChain
 import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMax
 import Flapjack.Pancake.Proofs.PanToTarget.ConstMemory
 import Flapjack.Pancake.Proofs.PanToTarget.MemorySwap
@@ -125,6 +126,7 @@ import Flapjack.Compiler.Backend.BackendCommon.Trace
 import Flapjack.NamespaceHOL
 import Flapjack.Compiler.Backend.PresLang.Config
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmEvaluate
+import Flapjack.Compiler.Backend.LabProps.SecLabelOk
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmMemory
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmControl
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Loop
