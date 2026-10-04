@@ -96452,5 +96452,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison 2026-10-04: original 2788-2809, all eight binders; premise compile_word_to_stack ac perf k p bm = (progs',fs',bitmaps) ∧ perf = F; conclusion fromAList of per-program FST (SND (compile_prog ... (Nil,0))) equals fromAList (MAP (λ((i,_),n).(i,n)) (ZIP (progs',fs'))); identifiers num as HOL infers; fromAList is the external-library sptFromAList rendering, Nil is AppList.nil. Word translation only: alpha word is BitVec width with [NeZero width]. Typed capture pan_target_root_leaves probe (literal source replay with the original tactic; backendProofTheory not built in probe env)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProof/ConfigOk.lean",
+    "lean_name": "backendConfigOk",
+    "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml",
+    "hol_name": "backend_config_ok_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original backendProofScript 53-88, all 28 conjuncts in order: source_conf = prim_src_config (reviewed primSrcConfig), max_app, next_name2 = bvl_num_stubs + 2, register budget, lab pos 0 and labels LN, conf_ok (:a) (confOk width), has_longdiv/has_div/has_fp_tern/has_fp_ops ISA conditions, max_stack_alloc bound with max_heap_limit (:a) and truncated subtraction, perf_calls F, addr/hw_offset_ok 0w, byte_offset_ok on signed word_le range [-8w,8w] (BitVec.sle), four valid_imm facts, OPTION_ALL EVERY ExtCall as the none/some match, find_name PERMUTES UNIV as Function.Bijective findNameSpt, names_ok, fixed_names, store_offset offset conditions for all store names, and the max_stack_alloc valid_imm range with n2w (n * (dimindex DIV 8)). Typed capture backend_config_ok probe (literal source replay)."
   }
 ]
