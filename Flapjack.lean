@@ -1,3 +1,4 @@
+import Flapjack.RiscV.CorrectnessEncoding.MemoryFetch
 import Flapjack.RiscV.CorrectnessEncoding.MemoryFrame
 import Flapjack.RiscV.CorrectnessEncoding.MemoryRelation
 import Flapjack.RiscV.CorrectnessEncoding.Rejected
