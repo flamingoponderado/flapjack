@@ -1,0 +1,8 @@
+sltu_decode_universal=∀(rd :word5) (rs1 :word5) (rs2 :word5). DecodeAny (Word (Encode (ArithR (SLTU (rd,rs1,rs2))))) = ArithR (SLTU (rd,rs1,rs2))
+sltu_decode_hypotheses=0
+sltu_decode_zero=T
+sltu_decode_all_ones=T
+sltu_decode_high_bit=T
+sltu_decode_alias=T
+sltu_encode_source_clause=Encode (ArithR (SLTU ((rdv :word5),(rs1v :word5),(rs2v :word5)))) = Rtype (opc (12w :word8),(3w :word3),rdv,rs1v,rs2v,(0w :word7))
+sltu_carrier_types=(rs2v :word5) : :word5, (rs1v :word5) : :word5, (rdv :word5) : :word5
