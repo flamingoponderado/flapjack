@@ -107,6 +107,9 @@ run_probe() {
   done
 }
 
+run_probe word_to_stack_inst_full_probeScript.sml word_to_stack_inst_full_probe.out \
+  inst_typed inst_proved inst_hypotheses fp_typed fp_proved fp_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_to_stack_inst_arith_probeScript.sml word_to_stack_inst_arith_probe.out \
   arith_typed arith_proved arith_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -4674,6 +4677,9 @@ run_probe word_to_word_compile_single_probeScript.sml word_to_word_compile_singl
 run_probe word_convs_compile_single_not_created_probeScript.sml word_convs_compile_single_not_created_probe.out \
   compile_single_not_created_subprogs_statement compile_single_not_created_subprogs_hypotheses compile_single_not_created_subprogs_typed \
   "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_to_word_syntactic_probeScript.sml word_to_word_syntactic_probe.out \
+  cond16bit_inst_select_exp_prime_statement no_mt_code_def_typed \
+  "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_to_word_compile_probeScript.sml word_to_word_compile_probe.out \
   compile_single compile_single_typed compile_single_hypotheses full_compile_single full_compile_single_typed full_compile_single_hypotheses \
   compile compile_typed compile_hypotheses \
@@ -6972,10 +6978,16 @@ run_probe l3_step_avoid_probeScript.sml l3_step_avoid_probe.out \
   avoid_statement avoid_signalAddressException_type avoid_source update_pc_statement update_pc_def_type update_pc_source \
   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
 run_probe l3_step_register_alu_probeScript.sml l3_step_register_alu_probe.out \
-  add_hypotheses add_statement sub_statement and_statement or_statement xor_statement gpr_op_type source \
+  add_hypotheses add_statement add_gen sub_hypotheses sub_statement sub_gen and_hypotheses and_statement and_gen or_hypotheses or_statement or_gen xor_hypotheses xor_statement xor_gen gpr_op_type source \
   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
 run_probe l3_step_arithi_probeScript.sml l3_step_arithi_probe.out \
-  addi_hypotheses addi_statement slti_statement sltiu_statement andi_statement ori_statement xori_statement imm12_type source \
+  addi_hypotheses addi_statement addi_gen slti_hypotheses slti_statement slti_gen sltiu_hypotheses sltiu_statement sltiu_gen andi_hypotheses andi_statement andi_gen ori_hypotheses ori_statement ori_gen xori_hypotheses xori_statement xori_gen imm12_type source \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
+run_probe l3_step_upper_probeScript.sml l3_step_upper_probe.out \
+  lui_hypotheses lui_statement lui_gen auipc_hypotheses auipc_statement auipc_gen imm20_type source \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
+run_probe l3_step_nop_probeScript.sml l3_step_nop_probe.out \
+  add_nop_statement add_nop_hypotheses sub_nop_statement sub_nop_hypotheses and_nop_statement and_nop_hypotheses or_nop_statement or_nop_hypotheses xor_nop_statement xor_nop_hypotheses addi_nop_statement addi_nop_hypotheses andi_nop_statement andi_nop_hypotheses ori_nop_statement ori_nop_hypotheses xori_nop_statement xori_nop_hypotheses lui_nop_statement lui_nop_hypotheses auipc_nop_statement auipc_nop_hypotheses source \
   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
 run_probe pan_structs_mmap_faithful_probeScript.sml pan_structs_mmap_faithful_probe.out \
   compile_exp_correct_mmap_helper_statement compile_exp_correct_mmap_helper_types compile_exp_correct_mmap_helper_hypotheses compile_exp_correct_mmap_helper_proved \
@@ -7821,3 +7833,12 @@ run_probe word_to_stack_inst_skip_probeScript.sml word_to_stack_inst_skip_probe.
 run_probe word_inst_sub_probeScript.sml word_inst_sub_probe.out \
   pull_sub_empty pull_sub_unary_var pull_sub_unary_const norm_sub_empty norm_sub_unary_var pull_sub_binary_const norm_sub_binary_const \
   "$cake_dir/compiler/backend/word_instScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_convs_unreach_labels_probeScript.sml word_convs_unreach_labels_probe.out \
+  unreachLabels1_typed unreachLabels1_proved unreachLabels1_hypotheses unreachLabels2_typed unreachLabels2_proved unreachLabels2_hypotheses unreachLabels3_typed unreachLabels3_proved unreachLabels3_hypotheses unreachLabels4_typed unreachLabels4_proved unreachLabels4_hypotheses unreachLabels5_typed unreachLabels5_proved unreachLabels5_hypotheses unreachLabels6_typed unreachLabels6_proved unreachLabels6_hypotheses unreachLabels7_typed unreachLabels7_proved unreachLabels7_hypotheses \
+  "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe l3_step_immediate_comparison_probeScript.sml l3_step_immediate_comparison_probe.out \
+  slti_statement slti_types slti_source_hypotheses slti_proved sltiu_statement sltiu_types sltiu_source_hypotheses sltiu_proved \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
