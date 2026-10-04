@@ -3893,6 +3893,10 @@ run_probe stackprops_forbidden_operations_probeScript.sml stackprops_forbidden_o
 run_probe word_alloc_limit_var_probeScript.sml word_alloc_limit_var_probe.out \
   lv_original_definition lv_original_type lv_residue0 lv_residue1 lv_residue2 lv_residue3 lv_residue4 lv_skip1 lv_seven lv_eight lv_ignored16 lv_tail_handler lv_call_body lv_huge \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe pan_to_word_good_code_probeScript.sml pan_to_word_good_code_probe.out \
+  GoodPanopsExn GoodPanopsName GoodCodeNil GoodCodeExn GoodCodeName GoodPanopsDeclGood GoodPanopsDeclBad GoodPanopsFunGood GoodPanopsFunBad \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
 run_probe ssa_rename_properties_probeScript.sml ssa_rename_properties_probe.out \
   rp_empty_alloc rp_empty_stack rp_alloc_duplicates rp_stack_duplicates rp_existing rp_overwrite rp_invalid rp_huge rp_full_source_replay \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -8151,6 +8155,7 @@ run_probe crep_to_loop_native_declarations_probeScript.sml crep_to_loop_native_d
 run_probe riscv_target_shift_probeScript.sml riscv_target_shift_probe.out \
   riscv_encoder_correct_shift_statement riscv_encoder_correct_shift_types riscv_encoder_correct_shift_hypotheses riscv_encoder_correct_shift_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
+
 run_probe pan_target_entry_first_match_probeScript.sml pan_target_entry_first_match_probe.out \
   empty missing head duplicates nonfunction \
   "$cake_dir/pancake/pan_to_targetScript.sml" "$cake_dir/pancake"
@@ -8158,3 +8163,11 @@ run_probe pan_target_entry_first_match_probeScript.sml pan_target_entry_first_ma
 run_probe riscv_memory_decode_probeScript.sml riscv_memory_decode_probe.out \
   ld_decode_zero ld_decode_all_ones ld_decode_mixed_sign ld_encode_source_clause ld_encode_source_hypotheses ld_carrier_types lwu_decode_zero lwu_decode_all_ones lwu_decode_mixed_sign lwu_encode_source_clause lwu_encode_source_hypotheses lwu_carrier_types lhu_decode_zero lhu_decode_all_ones lhu_decode_mixed_sign lhu_encode_source_clause lhu_encode_source_hypotheses lhu_carrier_types lbu_decode_zero lbu_decode_all_ones lbu_decode_mixed_sign lbu_encode_source_clause lbu_encode_source_hypotheses lbu_carrier_types sd_decode_zero sd_decode_all_ones sd_decode_mixed_sign sd_encode_source_clause sd_encode_source_hypotheses sd_carrier_types sw_decode_zero sw_decode_all_ones sw_decode_mixed_sign sw_encode_source_clause sw_encode_source_hypotheses sw_carrier_types sh_decode_zero sh_decode_all_ones sh_decode_mixed_sign sh_encode_source_clause sh_encode_source_hypotheses sh_carrier_types sb_decode_zero sb_decode_all_ones sb_decode_mixed_sign sb_encode_source_clause sb_encode_source_hypotheses sb_carrier_types \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe pan_native_frontend_prefix_probeScript.sml pan_native_frontend_prefix_probe.out \
+  cake_declarations raw_crep original_loop \
+  "$cake_dir/pancake/pan_to_targetScript.sml" "$cake_dir/pancake"
+
+run_probe pan_native_word_prefix_probeScript.sml pan_native_word_prefix_probe.out \
+  original_word \
+  "$cake_dir/pancake/pan_to_targetScript.sml" "$cake_dir/pancake"

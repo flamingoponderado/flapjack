@@ -1,0 +1,11 @@
+GoodPanopsExn=T
+GoodPanopsName=T
+GoodCodeNil=T
+GoodCodeExn=T
+GoodCodeName=T
+GoodPanopsDeclGood=(∀op es. Mul = op ∧ [Const 1w; Const 2w] = es ⇒ LENGTH es = 2) ∧
+(∀op es. T) ∧ ∀op es. T
+GoodPanopsDeclBad=(∀op es. Mul = op ∧ [Const 1w] = es ⇒ LENGTH es = 2) ∧ ∀op es. T
+GoodPanopsFunGood=(∀op es. Mul = op ∧ [Const 1w; Const 2w] = es ⇒ LENGTH es = 2) ∧
+(∀op es. T) ∧ ∀op es. T
+GoodPanopsFunBad=(∀op es. Mul = op ∧ [Const 1w] = es ⇒ LENGTH es = 2) ∧ ∀op es. T

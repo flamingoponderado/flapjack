@@ -3680,6 +3680,19 @@ arbitrary payload, trees and counters.
 proof and inferred free-variable types. Source and target states share only
 the word dimension; their code and FFI carriers are independent. The generic
 `SSALocalsParity` fixture applies the actual theorem at arbitrary native states.
+`pan_to_word_good_code_probe.out` records direct HOL `EVAL` observations of
+the original `good_panops_def` (`pan_to_wordProofScript.sml:1108`) and its
+consumer `pancake_good_code_def` (`pan_to_targetProofScript.sml:22`) on
+concrete 64-bit `panLang$decl` values.
+Declarations free of `Panop` reduce to the Bool literals `T` (`good_panops`
+of an `ExnDecl`/`Name`, and `EVERY good_panops [] / [ExnDecl] / [Name]`); the
+`Panop` arity cases leave HOL's universally quantified arity predicate
+`Mul = op ∧ [args] = es ⇒ LENGTH es = 2` as the normal form, because `EVAL`
+does not case-split the constructor equality under the `!op es` binder.
+`PanToWordGoodCodeParity.lean` kernel-decides the corresponding computable
+Lean `goodPanopsHOL`/`pancakeGoodCodeHOL` on the same inputs
+(`decide +kernel`). Select
+`HOL_PROBE_ONLY=pan_to_word_good_code_probeScript.sml`.
 ### SSA renaming properties
 
 `ssa_rename_properties_probeScript.sml` replays the complete local
@@ -8469,3 +8482,17 @@ not tagged as a port of the whole compiler. Regenerate with
 `HOL_PROBE_ONLY=pan_target_entry_first_match_probeScript.sml`.
 
 `riscv_memory_decode_probe.out` records each literal LD/LWU/LHU/LBU/SD/SW/SH/SB original Encode clause and intrinsic word5/word12 carriers, zero source hypotheses, and Decode/Encode evaluations at all-zero, all-one, and mixed-register/sign-offset inputs. Lean proves unrestricted roundtrips including zero registers and all offsets; finite probes are regression evidence, not universal equivalence. Full memory encoder correctness remains a dependency-linked open task.
+
+`pan_native_frontend_prefix_probeScript.sml` evaluates the complete source
+prefix (original first LET, pan_simp, pan_structs, pan_globals), raw Pan-to-Crep
+metadata payload and original Crep-to-Loop rows for a forward source call.
+It preserves original generated names and row labels; no generic Crep
+simplification or relabel bridge is inserted. This is regression evidence,
+not a whole-CLI execution-equivalence proof.
+
+`pan_native_word_prefix_probeScript.sml` evaluates the complete original
+`pan_to_word$compile_prog` after the extracted original first-main LET.
+The native Word prefix fixture compares all three rows, argument counts,
+call arguments/continuations and complete bodies against this capture.
+The general kernel theorem composes all six original passes from source
+byte ranges; actual downstream CLI/WordToStack routing remains separate.
