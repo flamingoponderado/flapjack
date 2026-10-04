@@ -98277,5 +98277,13 @@
     "lean_name": "panToTargetResourceLimitOfSemantics",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Stage G with no_install/no_alloc discharged by word_to_word_compile_no_install_no_alloc on the pan_to_word output and no-Error from semantics wst <> Fail (pan_to_targetProofScript.sml 1716-1736, 2285-2312); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyResourceStage.lean",
+    "lean_name": "panToTargetLabRegWord",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lab make_init register r holds .word (get_reg ms r) for reg_ok r under target_state_rel (pan_to_targetProofScript.sml 1956-1990); intermediate proof step, not a HOL theorem."
   }
 ]

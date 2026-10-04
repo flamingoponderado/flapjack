@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.BackendProof.ReadLimits
 import Flapjack.Pancake.Proofs.PanToTarget.WordToWordNoInstall
 import Flapjack.Pancake.Proofs.PanToWord.NoInstallCode
 import Flapjack.Pancake.Proofs.PanToWord
+import Flapjack.Compiler.Backend.LabToTarget.Initialization
 
 /-!
 # `pan_to_target_compile_semantics` assembly, stage G (resource-limit implication)
@@ -88,6 +89,26 @@ theorem panToTargetResourceLimit {width : Nat} [NeZero width] {C F S Q : Type}
   rw [hrl]
   exact panToTargetSafeForSpaceOfLimit mc.target.config sst wprog worac _ _ stackMax
     (by rw [hmax, hwts]) hle hni hna hnoerr
+
+/-- The lab initial state `make_init mc ffi t ...` holds, in each `reg_ok` register, the
+word that `target_state_rel` relates to the machine state (HOL lines 1956-1990,
+`target_state_rel_def` with `reg_ok_def`); with `mc_conf_ok` this gives the
+`len`/`ptr2`/`len2` register words of the stage-G premises. -/
+theorem panToTargetLabRegWord {width : Nat} [NeZero width] {C S Q F : Type}
+    (mc : MachineConfig width S Q) (ffi : HolFfiState F) (t : AsmState width)
+    (m : BitVec width → WordLocW width) (dm sdm : BitVec width → Bool) (ms : S)
+    (code : Flapjack.Compiler.Backend.LabSem.LabProgHOL width)
+    (comp : C → Flapjack.Compiler.Backend.LabSem.LabProgHOL width →
+      Option (List (BitVec 8) × C))
+    (cbpos : BitVec width) (cbspace : Nat)
+    (coracle : Nat → C × Flapjack.Compiler.Backend.LabSem.LabProgHOL width)
+    (hrel : targetStateRel mc.target t ms) (r : Nat)
+    (hr : asmRegOkExact r mc.target.config = true) :
+    (LabToTarget.makeInit mc ffi t m dm sdm ms code comp cbpos cbspace coracle).regs r =
+      .word (mc.target.getReg ms r) := by
+  simp only [asmRegOkExact, Bool.and_eq_true, decide_eq_true_eq, Bool.not_eq_true'] at hr
+  simp only [LabToTarget.makeInit]
+  rw [hrel.2.2.2.1 r hr]
 
 /-- A word state whose `semantics` from `start` is not `Fail` never reaches `Error` on
 the entry call, for any clock (HOL lines 1724-1727, from `wordSem$semantics_def`). -/
