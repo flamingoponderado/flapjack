@@ -8328,3 +8328,7 @@ run_probe pan_to_crep_inline_table_validity_probeScript.sml pan_to_crep_inline_t
 run_probe pan_to_crep_compile_validity_probeScript.sml pan_to_crep_compile_validity_probe.out \
   every_inst_ok_less_pan_to_crep_compile compile_def \
   "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe riscv_memory_inputs_probeScript.sml riscv_memory_inputs_probe.out \
+  load_endpoints load_registers load_offsets load8_endpoints load8_registers load8_offsets load16_endpoints load16_registers load16_offsets load32_endpoints load32_registers load32_offsets store_endpoints store_registers store_offsets store8_endpoints store8_registers store8_offsets store16_endpoints store16_registers store16_offsets store32_endpoints store32_registers store32_offsets alias_wrap source_clause source_hypotheses source_types native_clause native_hypotheses native_types \
+  "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"

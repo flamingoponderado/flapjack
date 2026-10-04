@@ -8696,3 +8696,25 @@ and assertion assembly.
 `pan_to_crep_inline_table_validity_probe.out` captures the complete original typed every_inst_w_inline implication. Native proof derives the actual filtered name-map SUBMAP internally, including duplicate keys, and consumes the accepted full inlining theorem. It assumes only the original compile_to_crep table validity, with no output/target-run or added distinctness premise; full source-program/body validity remains separate.
 
 `pan_to_crep_compile_validity_probe.out` captures the complete original typed body-compiler validity and compile_def. The context/body dimensions coincide, while the unrelated quantified e binder is explicitly vacuous. Native proof covers all32 compiler induction cases, every Call fallback/handler branch and changed Dec/DecCall contexts, retaining only the original source guard. This supplies body validity, not complete declaration/program validity or end-to-end compiler correctness.
+
+### Source-to-native memory instruction inputs
+
+`riscv_memory_inputs_probeScript.sml` replays all eight original memory
+constructors at both signed12 endpoints; architectural exclusions and register
+overflow are rejected on both register positions, and both just-outside offsets
+are rejected. A matched source/native alias fixture wraps the address to word64
+minus one. Original literal `inst_ok` and `riscv_ast` equations retain their
+free-variable types and zero hypothesis counts. These are regression evidence,
+not a cross-language equivalence proof.
+
+`CorrectnessEncoding/MemoryInputs.lean` source-compares `asmScript.sml:286–299`,
+`riscv_targetScript.sml:165–168`, `asmSem$addr/read_reg`, native `GPR`, and the
+original Mem constructor at `riscv_targetProofScript.sml:661–669`. All eight
+constructors derive their register and signed-offset guards from actual
+`asmOkExact`; the initial target relation discharges native register values,
+including architectural zero exclusion. Original aliases are admitted. The
+actual emitted instruction's Run is derived under the initial relation, with
+source address and store-value inputs; emitted-AST membership selects the
+instruction and assumes no target execution/result. These local compositions
+have no separately named HOL originals and remain untagged. Full Mem still
+needs interference, complete postrelation and assertion assembly.
