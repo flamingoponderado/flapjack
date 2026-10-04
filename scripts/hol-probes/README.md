@@ -8645,3 +8645,5 @@ relation and source success. The memLoad wrapper derives its domain and LOG2
 alignment guards; no target-run or desired postrelation premise is added. These
 untagged compositions have no separately named HOL originals. Full Mem encoder
 assertions, interference and store post-state correspondence remain open.
+
+`load_globals_alt_probe.out` captures the complete original typed arbitrary-address/count GENLIST equality. The address is fixed word5; native expression dimension remains independently quantified. This prerequisite supports Call-handler compiler validity, not full source-pass or compiler correctness.

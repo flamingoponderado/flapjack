@@ -97994,5 +97994,14 @@
     "lean_name": "sptAListLookup_map_snd",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Association-list lookup commutes with a value map; Flapjack sptree infrastructure for stage G, no HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "load_globals_alt",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/LoadGlobalsValidity.lean",
+    "lean_name": "loadGlobalsAlt",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-crep-load-globals-alt: original1050-1055 full forall address count equality and regenerated full typed original capture; loadGlobalsHOL exactly follows native load_globals_def zero/successor clauses. GENLIST represented constructor-for-constructor by List.range count mapped at every Nat index, same order/length. Original global address carrier remains fixed BitVec5, expression dimension width independent and positive. Word dimension qualifier covers only the native CrepExpHOL dimension, not fixed word5 specialization. BitVec.ofNat5 implements original n2w index and modular addition. No guards/output assumptions/scope narrowing. Required by full PanToCrep compile Call handlers; full compile/inline/source composition remain open."
   }
 ]
