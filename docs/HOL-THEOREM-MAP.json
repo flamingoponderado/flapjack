@@ -98301,5 +98301,13 @@
     "lean_name": "panToTargetLabRegWord",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Lab make_init register r holds .word (get_reg ms r) for reg_ok r under target_state_rel (pan_to_targetProofScript.sml 1956-1990); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyResourceStage.lean",
+    "lean_name": "extendPrime_flag_mono",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "extend_with_resource_limit' is antitone in its flag (pan_to_targetProofScript.sml 1673 inline lemma); intermediate proof step, not a HOL theorem."
   }
 ]

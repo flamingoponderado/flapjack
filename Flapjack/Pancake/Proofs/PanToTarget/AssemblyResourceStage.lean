@@ -4,6 +4,7 @@ import Flapjack.Pancake.Proofs.PanToTarget.WordToWordNoInstall
 import Flapjack.Pancake.Proofs.PanToWord.NoInstallCode
 import Flapjack.Pancake.Proofs.PanToWord
 import Flapjack.Compiler.Backend.LabToTarget.Initialization
+import Flapjack.SemanticsProps.Implements
 
 /-!
 # `pan_to_target_compile_semantics` assembly, stage G (resource-limit implication)
@@ -109,6 +110,24 @@ theorem panToTargetLabRegWord {width : Nat} [NeZero width] {C S Q F : Type}
   simp only [asmRegOkExact, Bool.and_eq_true, decide_eq_true_eq, Bool.not_eq_true'] at hr
   simp only [LabToTarget.makeInit]
   rw [hrel.2.2.2.1 r hr]
+
+/-- `extend_with_resource_limit'` is antitone in its flag (HOL line 1673:
+`(b ⇒ a) ∧ (∀x. x ⊆ f x) ⇒ (if a then x else f x) ⊆ (if b then x else f x)` with
+`extend_with_resource_limit_def`'s `SUBSET_UNION`). -/
+theorem extendPrime_flag_mono (a b : Bool) (hba : b = true → a = true)
+    (X : SemanticsPropsHOL.BehaviourSetHOL) (r : HolBehaviour)
+    (h : SemanticsPropsHOL.extendWithResourceLimitPrimeHOL a X r) :
+    SemanticsPropsHOL.extendWithResourceLimitPrimeHOL b X r := by
+  unfold SemanticsPropsHOL.extendWithResourceLimitPrimeHOL at h ⊢
+  cases b with
+  | true => simp only [hba rfl, if_true] at h; simpa using h
+  | false =>
+    simp only [Bool.false_eq_true, if_false]
+    cases a with
+    | true =>
+      simp only [if_true] at h
+      exact Or.inl h
+    | false => simpa using h
 
 /-- A word state whose `semantics` from `start` is not `Fail` never reaches `Error` on
 the entry call, for any clock (HOL lines 1724-1727, from `wordSem$semantics_def`). -/
