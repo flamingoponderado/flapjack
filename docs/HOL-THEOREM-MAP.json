@@ -91006,5 +91006,61 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.49): HOL compile_single_correct, Resume ShareInst case (word_to_wordProofScript.sml:836-847). Case piece of the full statement (word_to_wordProofScript.sml:235-256) at the ShareInst constructor with arbitrary arguments and state, via CompileSingleCorrectAt: free tt kk aa co as parameters; ∀ l coracle cc; premises code_rel st.code l (tagged codeRel), domain equality, st.compile = λconf progs. cc conf (MAP (λp. compile_single tt kk aa co (p,NONE)) progs), coracle = (I ## MAP …) o st.compile_oracle (Prod.map id (List.map …) ∘), gc_fun_const_ok; conclusion ∃perm' with HOL's let-pairs, if res = SOME Error then T (classical) else res1 = res ∧ code_rel ∧ domain equality ∧ rst1 = rst with <|code; compile_oracle; compile|>, over the faithful wordSem evaluate. No induction hypothesis is needed for a leaf. Proof: identity permutation (HOL picks it via state_component_equality), and a leaf runs the same on the state with replaced code table/oracle/compile (Flapjack evaluate_tgt_frame built on the accepted InstFrame/AllocFrame/ShMemFrame lemmas, the domain equality covering LocValue). fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSingleCorrect/Control.lean",
+    "lean_name": "compile_single_correct_MustTerminate",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.50): HOL compile_single_correct, Resume MustTerminate case (word_to_wordProofScript.sml:328-341). Case piece of the full statement (235-256) at the MustTerminate constructor via CompileSingleCorrectAt (same premises/conclusion as the leaf pieces), with exactly HOL's outer termdep/clock induction hypothesis (CompileSingleCorrectLowerIH), used at termdep - 1. HOL proves the theorem by completeInduct on termdep, clock and prog_size; the size component is used here only for the immediate sub-programs, which the case structure requires. Proof follows HOL: the inner run's permutation from the hypothesis, permute_swap_lemma to restart the second statement/iteration, evaluate_clock/evaluate_consts for the clock, termdep, compile and gc_fun constancy, and cut_state reading only the locals. fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSingleCorrect/Control.lean",
+    "lean_name": "compile_single_correct_If",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.50): HOL compile_single_correct, Resume If case (word_to_wordProofScript.sml:644-653). Case piece of the full statement (235-256) at the If constructor via CompileSingleCorrectAt (same premises/conclusion as the leaf pieces), with exactly the size induction hypotheses of both branches at the same termdep/clock (CompileSingleCorrectSubIH). HOL proves the theorem by completeInduct on termdep, clock and prog_size; the size component is used here only for the immediate sub-programs, which the case structure requires. Proof follows HOL: the inner run's permutation from the hypothesis, permute_swap_lemma to restart the second statement/iteration, evaluate_clock/evaluate_consts for the clock, termdep, compile and gc_fun constancy, and cut_state reading only the locals. fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSingleCorrect/Control.lean",
+    "lean_name": "compile_single_correct_Seq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.50): HOL compile_single_correct, Resume Seq case (word_to_wordProofScript.sml:592-642). Case piece of the full statement (235-256) at the Seq constructor via CompileSingleCorrectAt (same premises/conclusion as the leaf pieces), with exactly HOL's outer termdep/clock hypothesis (for the second statement after a clock decrease) and the size hypotheses of both statements at the same termdep/clock. HOL proves the theorem by completeInduct on termdep, clock and prog_size; the size component is used here only for the immediate sub-programs, which the case structure requires. Proof follows HOL: the inner run's permutation from the hypothesis, permute_swap_lemma to restart the second statement/iteration, evaluate_clock/evaluate_consts for the clock, termdep, compile and gc_fun constancy, and cut_state reading only the locals. fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSingleCorrect/Control.lean",
+    "lean_name": "compile_single_correct_Loop",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.50): HOL compile_single_correct, Resume Loop case (word_to_wordProofScript.sml:655-748). Case piece of the full statement (235-256) at the Loop constructor via CompileSingleCorrectAt (same premises/conclusion as the leaf pieces), with exactly HOL's outer termdep/clock hypothesis (for the next iteration at dec_clock) and the body's size hypothesis at the same termdep/clock. HOL proves the theorem by completeInduct on termdep, clock and prog_size; the size component is used here only for the immediate sub-programs, which the case structure requires. Proof follows HOL: the inner run's permutation from the hypothesis, permute_swap_lemma to restart the second statement/iteration, evaluate_clock/evaluate_consts for the clock, termdep, compile and gc_fun constancy, and cut_state reading only the locals. fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
   }
 ]
