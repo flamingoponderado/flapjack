@@ -7718,7 +7718,15 @@ run_probe pan_to_target_source_probeScript.sml pan_to_target_source_probe.out \
   main_empty_names main_missing_names main_already_first_names main_later_names main_nonempty_missing_names main_first_only_duplicates_names exports_empty exports_flags_duplicates \
   "$cake_dir/pancake/pan_to_targetScript.sml" "$cake_dir/pancake"
 
+run_probe word_to_word_executable_probeScript.sml word_to_word_executable_probe.out \
+  compile_single_definition full_compile_single_definition compile_definition \
+  skip_alg0 skip_alg2 return_alg0 return_alg2 assign_return_alg0 assign_return_alg2 must_terminate_alg0 must_terminate_alg2 tail_call_alg0 tail_call_alg2 branch_alg0 branch_alg2 empty oracle_remainder oracle_short \
+  "$cake_dir/compiler/backend/word_to_wordScript.sml" "$cake_dir/compiler/backend"
 
+run_probe pan_compile_max_executable_probeScript.sml pan_compile_max_executable_probe.out \
+  compile_prog_max_local_replay_type compile_prog_max_local_replay_def_typed \
+  empty leaf tail_recursive recursive call_leaf branch missing call_frames \
+  "$cake_dir/pancake/proofs/pan_to_targetProofScript.sml" "$cake_dir/pancake"
 run_probe word_to_stack_fp_relations_probeScript.sml word_to_stack_fp_relations_probe.out \
   fpRelationRead_typed fpRelationRead_proved fpRelationRead_hypotheses fpRelationUpdate_typed fpRelationUpdate_proved fpRelationUpdate_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
