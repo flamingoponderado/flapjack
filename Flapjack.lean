@@ -1,3 +1,4 @@
+import Flapjack.Pancake.Proofs.WordConvs.HandlerPasses
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileConventions.Output
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileConventions.Labels
 import Flapjack.RiscV.CorrectnessEncoding.ShiftRun
