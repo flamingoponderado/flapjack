@@ -99026,5 +99026,29 @@
     "lean_name": "panToTargetCompileSemanticsRiscVExecutable",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific corollary (bead flapjack-z9g67) of panToTargetCompileSemanticsRiscV with the compiler premise on the callable compileProgMaxExecutable (= compile_prog_max by compileProgMaxExecutable_eq) at pancakeBackendConf riscvBackendConfig; all other premises and the conclusion unchanged. Does not establish the CLI computes this function."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileProgMaxAsm.lean",
+    "lean_name": "compileProgMaxExecutable_eq_asm",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack interface infrastructure (bead flapjack-qb5v7): compileProgMaxExecutable reads the machine configuration only through machine.target.config; definitional equality with the assembler-only compileProgMaxAsmExecutable."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileProgMaxAsm.lean",
+    "lean_name": "compileProgMaxAsmExecutable_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack interface infrastructure (bead flapjack-qb5v7): compileProgMaxAsmExecutable cfg mc.target.config = compile_prog_max cfg mc, via compileProgMaxExecutable_eq."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileProgMaxAsm.lean",
+    "lean_name": "panToTargetCompileSemanticsRiscVAsmExecutable",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific corollary (bead flapjack-qb5v7) of panToTargetCompileSemanticsRiscV with compiler premise compileProgMaxAsmExecutable (pancakeBackendConf riscvBackendConfig) riscvConfig; other premises/conclusion unchanged. CLI interface; does not establish the CLI computes it."
   }
 ]
