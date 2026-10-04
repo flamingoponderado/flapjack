@@ -7,6 +7,7 @@
     {"bytes": 75, "out": "arith_vars_probe.out", "rows": 3, "sha256": "6039a92875434374d668473ed65cc52591a7d30d8e94c6b63a481cf60eb92e7d"},
     {"bytes": 671, "out": "asm_config_checks_probe.out", "rows": 46, "sha256": "dc6ea82d857a94d23fb468eb30c36618ef7f1c089e539752f07a96420fc7c76e"},
     {"bytes": 251, "out": "asm_inst_fragment_probe.out", "rows": 20, "sha256": "fb00053f44698704d47ad72155116e228341abdc8a31fca36f84735d31fe6183"},
+    {"bytes": 126, "out": "asm_memory_shift_probe.out", "rows": 8, "sha256": "4127bc37122a7ca758123fa08ca515b75dff3b9cbd6b4fcced2fe7800703b78c"},
     {"bytes": 1369, "out": "asm_props_encoder_correct_probe.out", "rows": 3, "sha256": "52271f08372005d4a4d0de5588704a15c46b8db7fdd73e5ed7908dfd70c833ac"},
     {"bytes": 520, "out": "asm_sem_mem_ops_probe.out", "rows": 14, "sha256": "aa65a4253cb8aaa1b827be5a3ff97b1c8208dba666b64111eafad722c4fcea9d"},
     {"bytes": 164, "out": "asm_sem_mem_word_probe.out", "rows": 15, "sha256": "d2c433230958dbc3bdfe4abd9baf8ec6e871987e98709ca900c8c536b8dfd4b4"},

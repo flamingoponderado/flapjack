@@ -48,7 +48,7 @@ theorem source_write_success {width valueWidth : Nat} [NeZero width] [NeZero val
   | succ n ih =>
     rw [writeMemWord_succ]
     have dom := writeMemWord_mem_domain (valueWidth := valueWidth) n
-      (if s.be then a - 1 else a + 1) (v >>> 8) s
+      (if s.be then a - 1 else a + 1) (v >>> (8 : Nat)) s
     simp only [assertState, updMem, Bool.or_eq_false_iff, Bool.not_eq_false', dom,
       decide_eq_true_eq, ih, sourceMemoryDomain]
     tauto

@@ -8266,18 +8266,21 @@ run_probe riscv_memory_step_probeScript.sml riscv_memory_step_probe.out \
   ld_next_sign ld_next_zero lwu_next_sign lwu_next_zero lhu_next_sign lhu_next_zero lbu_next_sign lbu_next_zero sd_next_sign sd_next_zero sw_next_sign sw_next_zero sh_next_sign sh_next_zero sb_next_sign sb_next_zero next_source_clause next_source_hypotheses next_carrier_types pc_source_clause pc_source_hypotheses pc_carrier_types \
   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
 
+run_probe riscv_memory_source_probeScript.sml riscv_memory_source_probe.out \
+  le0_wrap le1_wrap le1_missing le2_wrap le2_missing le4_wrap le4_missing le8_wrap le8_missing le12_wrap le12_missing be0_wrap be1_wrap be1_missing be2_wrap be2_missing be4_wrap be4_missing be8_wrap be8_missing be12_wrap be12_missing previous_failure_zero read_clause read_hypotheses read_types write_clause write_hypotheses write_types load_clause load_hypotheses load_types store_clause store_hypotheses store_types \
+  "$cake_dir/compiler/encoders/asm/asmSemScript.sml" "$cake_dir/compiler/encoders/asm"
+
 run_probe riscv_branch_decode_probeScript.sml riscv_branch_decode_probe.out \
   beq_decode_universal beq_decode_hypotheses beq_zero beq_all_ones beq_alias_sign beq_mixed beq_source_clause beq_carrier_types bne_decode_universal bne_decode_hypotheses bne_zero bne_all_ones bne_alias_sign bne_mixed bne_source_clause bne_carrier_types blt_decode_universal blt_decode_hypotheses blt_zero blt_all_ones blt_alias_sign blt_mixed blt_source_clause blt_carrier_types bltu_decode_universal bltu_decode_hypotheses bltu_zero bltu_all_ones bltu_alias_sign bltu_mixed bltu_source_clause bltu_carrier_types bge_decode_universal bge_decode_hypotheses bge_zero bge_all_ones bge_alias_sign bge_mixed bge_source_clause bge_carrier_types bgeu_decode_universal bgeu_decode_hypotheses bgeu_zero bgeu_all_ones bgeu_alias_sign bgeu_mixed bgeu_source_clause bgeu_carrier_types \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
 
+run_probe asm_memory_shift_probeScript.sml asm_memory_shift_probe.out read_width_1 write_width_1 read_width_2 write_width_2 read_width_3 write_width_3 read_width_64 write_width_64 \
+  "$cake_dir/compiler/encoders/asm/asmSemScript.sml" "$cake_dir/compiler/encoders/asm"
 run_probe pan_to_crep_validity_helpers_probeScript.sml pan_to_crep_validity_helpers_probe.out \
   exps_of_nested_seq every_inst_ok_nested_decs every_inst_ok_less_pan_to_crep_comp_field every_inst_ok_less_pan_to_crep_load_shape every_inst_ok_less_pan_to_crep_cexp_heads every_inst_ok_less_stores every_inst_ok_less_store_globals \
   "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
 
-run_probe riscv_memory_source_probeScript.sml riscv_memory_source_probe.out \
-  le0_wrap le1_wrap le1_missing le2_wrap le2_missing le4_wrap le4_missing le8_wrap le8_missing le12_wrap le12_missing be0_wrap be1_wrap be1_missing be2_wrap be2_missing be4_wrap be4_missing be8_wrap be8_missing be12_wrap be12_missing previous_failure_zero read_clause read_hypotheses read_types write_clause write_hypotheses write_types load_clause load_hypotheses load_types store_clause store_hypotheses store_types \
-  "$cake_dir/compiler/encoders/asm/asmSemScript.sml" "$cake_dir/compiler/encoders/asm"
 run_probe crep_inline_nested_decs_provenance_probeScript.sml crep_inline_nested_decs_provenance_probe.out \
   nested_decs_provenance \
   "$cake_dir/pancake/proofs/crep_inlineProofScript.sml" "$cake_dir/pancake/proofs"
