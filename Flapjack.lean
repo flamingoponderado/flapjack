@@ -76,6 +76,7 @@ import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Control
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Call
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Assembly
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileWordToWord
+import Flapjack.Compiler.Backend.WordToWord.Proofs.Syntactic
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsShort
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ChunkBitsMsb
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsPattern
@@ -788,6 +789,7 @@ import Flapjack.Compiler.Backend.WordCse.Proofs.KeyInjectivity
 import Flapjack.Compiler.Backend.WordCse.InstructionKeys
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstallTop
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.NoInstallCode
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.NoMtCode
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstallPrograms
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoInstallCompiler
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopTop
