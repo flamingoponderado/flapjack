@@ -99098,5 +99098,21 @@
     "lean_name": "panToTargetCompileSemanticsRiscVSource",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific corollary (bead flapjack-kfgjp): RISC-V correctness for the CLI call compileProgMaxAsmExecutable pancakeRiscVBackendConfig riscvConfig (mainFirstHOL decls); compiler-input premises on mainFirstHOL decls, semantics premise/conclusion on original decls (requires a main function; via semanticsDecls_mainFirstHOL and panToTargetCompileSemanticsRiscVAsmExecutable). Does not establish the CLI performs this call."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileProgMaxAsmWith.lean",
+    "lean_name": "compileProgMaxAsmWith_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure (bead flapjack-48pn5): allocator-parametric compileProgMaxAsmWith ra equals compileProgMaxAsmExecutable when ra = RegAlloc.regAlloc (whole-function kernel equality incl. WordToWord colouring-oracle table)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileProgMaxAsmWith.lean",
+    "lean_name": "compileProgMaxAsmWith_eq_compileProgMax",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure (bead flapjack-48pn5): compileProgMaxAsmWith ra cfg mc.target.config = compile_prog_max cfg mc when ra = regAlloc."
   }
 ]
