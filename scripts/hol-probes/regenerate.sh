@@ -8032,3 +8032,18 @@ run_probe riscv_target_shift_asr_register_probeScript.sml riscv_target_shift_asr
   riscv_encoder_correct_shiftAsrRegister_statement riscv_encoder_correct_shiftAsrRegister_types riscv_encoder_correct_shiftAsrRegister_hypotheses riscv_encoder_correct_shiftAsrRegister_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe riscv_target_shift_lsl_immediate_probeScript.sml riscv_target_shift_lsl_immediate_probe.out \
+  riscv_encoder_correct_shiftLslImmediate_statement riscv_encoder_correct_shiftLslImmediate_types riscv_encoder_correct_shiftLslImmediate_hypotheses riscv_encoder_correct_shiftLslImmediate_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe riscv_target_shift_lsr_immediate_probeScript.sml riscv_target_shift_lsr_immediate_probe.out \
+  riscv_encoder_correct_shiftLsrImmediate_statement riscv_encoder_correct_shiftLsrImmediate_types riscv_encoder_correct_shiftLsrImmediate_hypotheses riscv_encoder_correct_shiftLsrImmediate_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe riscv_target_shift_asr_immediate_probeScript.sml riscv_target_shift_asr_immediate_probe.out \
+  riscv_encoder_correct_shiftAsrImmediate_statement riscv_encoder_correct_shiftAsrImmediate_types riscv_encoder_correct_shiftAsrImmediate_hypotheses riscv_encoder_correct_shiftAsrImmediate_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
