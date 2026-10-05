@@ -1,7 +1,6 @@
 # Flapjack
 
-> **Warning — work in progress.** Nothing in this repository is ready to be
-> relied upon. Do not use Flapjack for anything of value.
+> **Warning** Although there is a Lean theorem about the Flapjack compiler, it might not mean anything. Flapjack is very young, and nobody has examined it carefully. Distributed “as is” under the BSD-3-Clause license.
 
 Flapjack is an in-progress Lean 4 port of the formally verified Pancake compiler.
 
