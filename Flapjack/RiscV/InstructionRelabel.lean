@@ -28,8 +28,6 @@ turning internal Cake stack register numbers into hardware register numbers. -/
 def relabelInstruction : Instruction width → Instruction width
   | .add d l r => .add (riscvForward d) (riscvForward l) (riscvForward r)
   | .sub d l r => .sub (riscvForward d) (riscvForward l) (riscvForward r)
-  | .addW d l r => .addW (riscvForward d) (riscvForward l) (riscvForward r)
-  | .subW d l r => .subW (riscvForward d) (riscvForward l) (riscvForward r)
   | .and d l r => .and (riscvForward d) (riscvForward l) (riscvForward r)
   | .or d l r => .or (riscvForward d) (riscvForward l) (riscvForward r)
   | .xor d l r => .xor (riscvForward d) (riscvForward l) (riscvForward r)
@@ -39,20 +37,13 @@ def relabelInstruction : Instruction width → Instruction width
   | .ori d s i => .ori (riscvForward d) (riscvForward s) i
   | .xori d s i => .xori (riscvForward d) (riscvForward s) i
   | .mul d l r => .mul (riscvForward d) (riscvForward l) (riscvForward r)
-  | .mulW d l r => .mulW (riscvForward d) (riscvForward l) (riscvForward r)
   | .mulHU d l r => .mulHU (riscvForward d) (riscvForward l) (riscvForward r)
   | .sll d l r => .sll (riscvForward d) (riscvForward l) (riscvForward r)
   | .srl d l r => .srl (riscvForward d) (riscvForward l) (riscvForward r)
   | .sra d l r => .sra (riscvForward d) (riscvForward l) (riscvForward r)
-  | .sllW d l r => .sllW (riscvForward d) (riscvForward l) (riscvForward r)
-  | .srlW d l r => .srlW (riscvForward d) (riscvForward l) (riscvForward r)
-  | .sraW d l r => .sraW (riscvForward d) (riscvForward l) (riscvForward r)
   | .slli d s a => .slli (riscvForward d) (riscvForward s) a
   | .srli d s a => .srli (riscvForward d) (riscvForward s) a
   | .srai d s a => .srai (riscvForward d) (riscvForward s) a
-  | .slliW d s a => .slliW (riscvForward d) (riscvForward s) a
-  | .srliW d s a => .srliW (riscvForward d) (riscvForward s) a
-  | .sraiW d s a => .sraiW (riscvForward d) (riscvForward s) a
   | .slt d l r => .slt (riscvForward d) (riscvForward l) (riscvForward r)
   | .slti d s i => .slti (riscvForward d) (riscvForward s) i
   | .sltu d l r => .sltu (riscvForward d) (riscvForward l) (riscvForward r)
@@ -100,15 +91,13 @@ def relabelInstruction : Instruction width → Instruction width
 /-- The destination registers written by an instruction (empty for pure reads,
 branches, stores and `ecall`). -/
 def instructionWrites : Instruction width → List (Fin 32)
-  | .add d _ _ => [d] | .sub d _ _ => [d] | .addW d _ _ => [d] | .subW d _ _ => [d]
+  | .add d _ _ => [d] | .sub d _ _ => [d]
   | .and d _ _ => [d] | .or d _ _ => [d] | .xor d _ _ => [d]
   | .addi d _ _ => [d] | .addiW d _ _ => [d] | .andi d _ _ => [d]
   | .ori d _ _ => [d] | .xori d _ _ => [d]
-  | .mul d _ _ => [d] | .mulW d _ _ => [d] | .mulHU d _ _ => [d]
+  | .mul d _ _ => [d] | .mulHU d _ _ => [d]
   | .sll d _ _ => [d] | .srl d _ _ => [d] | .sra d _ _ => [d]
-  | .sllW d _ _ => [d] | .srlW d _ _ => [d] | .sraW d _ _ => [d]
   | .slli d _ _ => [d] | .srli d _ _ => [d] | .srai d _ _ => [d]
-  | .slliW d _ _ => [d] | .srliW d _ _ => [d] | .sraiW d _ _ => [d]
   | .slt d _ _ => [d] | .slti d _ _ => [d] | .sltu d _ _ => [d] | .sltiu d _ _ => [d]
   | .lui d _ => [d] | .auipc d _ => [d]
   | .divU d _ _ => [d] | .remU d _ _ => [d]

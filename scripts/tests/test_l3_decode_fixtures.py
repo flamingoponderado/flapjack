@@ -53,8 +53,10 @@ class DecodeSourceFixtures(unittest.TestCase):
 
     def test_riscv_mi_rejections_are_exact(self):
         fixture = CHECK.fixture(self.text)
-        self.assertEqual(fixture.count("riscv-mi rejects the original removed instruction"), 418)
+        self.assertEqual(fixture.count("riscv-mi rejects the original removed instruction"), 457)
         self.assertNotIn("FArith", fixture)
+        self.assertNotIn("ADDW", fixture)
+        self.assertIn("ADDIW", fixture)
         rows = CHECK.capture_rows(self.text)
         names = CHECK.constructor_names()
         with mock.patch.object(CHECK, "constructor_names", lambda: names | {"FMADD_S"}):

@@ -32,7 +32,9 @@ class EncodeCapture(unittest.TestCase):
         self.assertNotEqual(restored,source)
         with self.assertRaises(ValueError):CHECK.check_inventory(restored)
         self.assertNotIn('Encode_FADD_S_0',CHECK.fixture(self.text))
-        self.assertEqual(len(CHECK.retained_clauses()),68)
+        self.assertNotIn('Encode_MULW_0',CHECK.fixture(self.text))
+        self.assertIn('Encode_ADDIW_0',CHECK.fixture(self.text))
+        self.assertEqual(len(CHECK.retained_clauses()),55)
     def test_payload_width_and_missing_constructor(self):
         source=(ROOT / "Flapjack/RiscV/L3/Types.lean").read_text()
         for mutated in [source.replace('  | UnknownInstruction\n',''),source.replace('FETCH_FAULT (a0 : (BitVec 64))','FETCH_FAULT (a0 : (BitVec 32))')]:

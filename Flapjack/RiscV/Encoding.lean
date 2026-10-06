@@ -13,16 +13,13 @@ the `word8 list` produced by the HOL target encoder.
 namespace Flapjack.RiscV
 
 /-- Generic diagnostic emission uses reviewed native bit-field formats.
-Six immediate shifts carry arbitrary generic-width shift amounts through
+Three immediate shifts carry arbitrary generic-width shift amounts through
 Itype directly, preserving existing diagnostic behavior even outside RV64.
 This is not a tagged HOL instruction port at other widths. -/
 def encodeInstructionDiagnostic {width : Nat} [NeZero width] : Instruction width → BitVec 32
   | .slli d a i => L3.Itype (0x13,1,nativeRegister d,nativeRegister a,BitVec.ofNat 12 (shiftAmount i))
   | .srli d a i => L3.Itype (0x13,5,nativeRegister d,nativeRegister a,BitVec.ofNat 12 (shiftAmount i))
   | .srai d a i => L3.Itype (0x13,5,nativeRegister d,nativeRegister a,BitVec.ofNat 12 (1024 + shiftAmount i))
-  | .slliW d a i => L3.Itype (0x1b,1,nativeRegister d,nativeRegister a,BitVec.ofNat 12 (i.toNat % 32))
-  | .srliW d a i => L3.Itype (0x1b,5,nativeRegister d,nativeRegister a,BitVec.ofNat 12 (i.toNat % 32))
-  | .sraiW d a i => L3.Itype (0x1b,5,nativeRegister d,nativeRegister a,BitVec.ofNat 12 (1024 + i.toNat % 32))
   | i => L3.Encode (nativeInstructionAtWidth i)
 
 /-- Actual RV64 words use the reviewed native encoder. Other diagnostic widths

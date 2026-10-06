@@ -277,6 +277,7 @@ import Flapjack.RiscV.L3.Step.BitRewrites
 import Flapjack.RiscV.L3.Step.DecoderTransport
 import Flapjack.RiscV.L3.Step.Evaluation
 import Flapjack.RiscV.L3.Step.Next
+import Flapjack.RiscV.L3.Step.NoCompressed
 import Flapjack.RiscV.L3.Step.UpdatePC
 import Flapjack.RiscV.L3.Step.AvoidSignalAddressException
 import Flapjack.RiscV.L3.Step.RegisterALUStep
@@ -288,13 +289,11 @@ import Flapjack.RiscV.L3.Step.JumpStep
 import Flapjack.RiscV.L3.Step.RegisterComparison
 import Flapjack.RiscV.L3.Step.ImmediateShiftStep
 import Flapjack.RiscV.L3.Step.RegisterShiftStep
-import Flapjack.RiscV.L3.Step.WShiftStep
 import Flapjack.RiscV.L3.Step.LoadStep
 import Flapjack.RiscV.L3.Step.StoreStep
 import Flapjack.RiscV.L3.Step.MulDivStep
 import Flapjack.RiscV.L3.Step.WordArithmeticStep
 import Flapjack.RiscV.L3.Step.ConditionalBranchStep
-import Flapjack.RiscV.L3.Step.WMulDivStep
 import Flapjack.RiscV.L3.Step.MulHStep
 import Flapjack.RiscV.L3.Step.DecodeAny
 import Flapjack.RiscV.L3.Defs.WritePC

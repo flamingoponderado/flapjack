@@ -1,8 +1,9 @@
 import Flapjack.RiscV.L3.Defs.Decode
 
 /-! Integer decoder acceptance rows use the original HOL oracle values.
-Inputs that formerly selected FP, atomic, privileged, CSR or compressed
-instructions now assert UnknownInstruction as branch-specific rejection tests.
+Inputs that formerly selected FP, atomic, privileged, CSR, compressed or
+RV64 word-operation (other than ADDIW) instructions now assert
+UnknownInstruction as branch-specific rejection tests.
 These rejection results deliberately differ from the full HOL model.
 -/
 set_option maxRecDepth 200000
@@ -897,77 +898,77 @@ example : Decode (BitVec.ofNat 32 4294938523) = (instruction.ArithI ((ArithI.ADD
 -- Oracle Decode_path101_sample2: original complete instruction including all payloads.
 example : Decode (BitVec.ofNat 32 2863303323) = (instruction.ArithI ((ArithI.ADDIW (((BitVec.ofNat 5 21), (((BitVec.ofNat 5 21), (BitVec.ofNat 12 2730)))))))) := by decide
 
--- Oracle Decode_path102_sample0: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 4123) = (instruction.Shift ((Shift.SLLIW (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 0), (BitVec.ofNat 5 0)))))))) := by decide
+-- Oracle Decode_path102_sample0: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 4123) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path102_sample1: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 33529755) = (instruction.Shift ((Shift.SLLIW (((BitVec.ofNat 5 31), (((BitVec.ofNat 5 31), (BitVec.ofNat 5 31)))))))) := by decide
+-- Oracle Decode_path102_sample1: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 33529755) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path102_sample2: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 11180699) = (instruction.Shift ((Shift.SLLIW (((BitVec.ofNat 5 21), (((BitVec.ofNat 5 21), (BitVec.ofNat 5 10)))))))) := by decide
+-- Oracle Decode_path102_sample2: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 11180699) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path103_sample0: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 20507) = (instruction.Shift ((Shift.SRLIW (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 0), (BitVec.ofNat 5 0)))))))) := by decide
+-- Oracle Decode_path103_sample0: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 20507) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path103_sample1: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 33546139) = (instruction.Shift ((Shift.SRLIW (((BitVec.ofNat 5 31), (((BitVec.ofNat 5 31), (BitVec.ofNat 5 31)))))))) := by decide
+-- Oracle Decode_path103_sample1: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 33546139) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path103_sample2: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 11197083) = (instruction.Shift ((Shift.SRLIW (((BitVec.ofNat 5 21), (((BitVec.ofNat 5 21), (BitVec.ofNat 5 10)))))))) := by decide
+-- Oracle Decode_path103_sample2: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 11197083) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path104_sample0: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 1073762331) = (instruction.Shift ((Shift.SRAIW (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 0), (BitVec.ofNat 5 0)))))))) := by decide
+-- Oracle Decode_path104_sample0: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 1073762331) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path104_sample1: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 1107287963) = (instruction.Shift ((Shift.SRAIW (((BitVec.ofNat 5 31), (((BitVec.ofNat 5 31), (BitVec.ofNat 5 31)))))))) := by decide
+-- Oracle Decode_path104_sample1: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 1107287963) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path104_sample2: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 1084938907) = (instruction.Shift ((Shift.SRAIW (((BitVec.ofNat 5 21), (((BitVec.ofNat 5 21), (BitVec.ofNat 5 10)))))))) := by decide
+-- Oracle Decode_path104_sample2: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 1084938907) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path105_sample0: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 59) = (instruction.ArithR ((ArithR.ADDW (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 0), (BitVec.ofNat 5 0)))))))) := by decide
+-- Oracle Decode_path105_sample0: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 59) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path105_sample1: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 33525691) = (instruction.ArithR ((ArithR.ADDW (((BitVec.ofNat 5 31), (((BitVec.ofNat 5 31), (BitVec.ofNat 5 31)))))))) := by decide
+-- Oracle Decode_path105_sample1: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 33525691) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path105_sample2: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 11176635) = (instruction.ArithR ((ArithR.ADDW (((BitVec.ofNat 5 21), (((BitVec.ofNat 5 21), (BitVec.ofNat 5 10)))))))) := by decide
+-- Oracle Decode_path105_sample2: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 11176635) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path106_sample0: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 1073741883) = (instruction.ArithR ((ArithR.SUBW (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 0), (BitVec.ofNat 5 0)))))))) := by decide
+-- Oracle Decode_path106_sample0: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 1073741883) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path106_sample1: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 1107267515) = (instruction.ArithR ((ArithR.SUBW (((BitVec.ofNat 5 31), (((BitVec.ofNat 5 31), (BitVec.ofNat 5 31)))))))) := by decide
+-- Oracle Decode_path106_sample1: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 1107267515) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path106_sample2: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 1084918459) = (instruction.ArithR ((ArithR.SUBW (((BitVec.ofNat 5 21), (((BitVec.ofNat 5 21), (BitVec.ofNat 5 10)))))))) := by decide
+-- Oracle Decode_path106_sample2: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 1084918459) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path107_sample0: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 4155) = (instruction.Shift ((Shift.SLLW (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 0), (BitVec.ofNat 5 0)))))))) := by decide
+-- Oracle Decode_path107_sample0: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 4155) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path107_sample1: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 33529787) = (instruction.Shift ((Shift.SLLW (((BitVec.ofNat 5 31), (((BitVec.ofNat 5 31), (BitVec.ofNat 5 31)))))))) := by decide
+-- Oracle Decode_path107_sample1: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 33529787) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path107_sample2: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 11180731) = (instruction.Shift ((Shift.SLLW (((BitVec.ofNat 5 21), (((BitVec.ofNat 5 21), (BitVec.ofNat 5 10)))))))) := by decide
+-- Oracle Decode_path107_sample2: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 11180731) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path108_sample0: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 20539) = (instruction.Shift ((Shift.SRLW (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 0), (BitVec.ofNat 5 0)))))))) := by decide
+-- Oracle Decode_path108_sample0: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 20539) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path108_sample1: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 33546171) = (instruction.Shift ((Shift.SRLW (((BitVec.ofNat 5 31), (((BitVec.ofNat 5 31), (BitVec.ofNat 5 31)))))))) := by decide
+-- Oracle Decode_path108_sample1: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 33546171) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path108_sample2: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 11197115) = (instruction.Shift ((Shift.SRLW (((BitVec.ofNat 5 21), (((BitVec.ofNat 5 21), (BitVec.ofNat 5 10)))))))) := by decide
+-- Oracle Decode_path108_sample2: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 11197115) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path109_sample0: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 1073762363) = (instruction.Shift ((Shift.SRAW (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 0), (BitVec.ofNat 5 0)))))))) := by decide
+-- Oracle Decode_path109_sample0: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 1073762363) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path109_sample1: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 1107287995) = (instruction.Shift ((Shift.SRAW (((BitVec.ofNat 5 31), (((BitVec.ofNat 5 31), (BitVec.ofNat 5 31)))))))) := by decide
+-- Oracle Decode_path109_sample1: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 1107287995) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path109_sample2: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 1084938939) = (instruction.Shift ((Shift.SRAW (((BitVec.ofNat 5 21), (((BitVec.ofNat 5 21), (BitVec.ofNat 5 10)))))))) := by decide
+-- Oracle Decode_path109_sample2: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 1084938939) = instruction.UnknownInstruction := by decide
 
 -- Oracle Decode_path110_sample0: original complete instruction including all payloads.
 example : Decode (BitVec.ofNat 32 33554483) = (instruction.MulDiv ((MulDiv.MUL (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 0), (BitVec.ofNat 5 0)))))))) := by decide
@@ -1041,50 +1042,50 @@ example : Decode (BitVec.ofNat 32 67108787) = (instruction.MulDiv ((MulDiv.REMU 
 -- Oracle Decode_path117_sample2: original complete instruction including all payloads.
 example : Decode (BitVec.ofNat 32 44759731) = (instruction.MulDiv ((MulDiv.REMU (((BitVec.ofNat 5 21), (((BitVec.ofNat 5 21), (BitVec.ofNat 5 10)))))))) := by decide
 
--- Oracle Decode_path118_sample0: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 33554491) = (instruction.MulDiv ((MulDiv.MULW (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 0), (BitVec.ofNat 5 0)))))))) := by decide
+-- Oracle Decode_path118_sample0: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 33554491) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path118_sample1: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 67080123) = (instruction.MulDiv ((MulDiv.MULW (((BitVec.ofNat 5 31), (((BitVec.ofNat 5 31), (BitVec.ofNat 5 31)))))))) := by decide
+-- Oracle Decode_path118_sample1: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 67080123) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path118_sample2: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 44731067) = (instruction.MulDiv ((MulDiv.MULW (((BitVec.ofNat 5 21), (((BitVec.ofNat 5 21), (BitVec.ofNat 5 10)))))))) := by decide
+-- Oracle Decode_path118_sample2: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 44731067) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path119_sample0: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 33570875) = (instruction.MulDiv ((MulDiv.DIVW (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 0), (BitVec.ofNat 5 0)))))))) := by decide
+-- Oracle Decode_path119_sample0: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 33570875) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path119_sample1: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 67096507) = (instruction.MulDiv ((MulDiv.DIVW (((BitVec.ofNat 5 31), (((BitVec.ofNat 5 31), (BitVec.ofNat 5 31)))))))) := by decide
+-- Oracle Decode_path119_sample1: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 67096507) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path119_sample2: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 44747451) = (instruction.MulDiv ((MulDiv.DIVW (((BitVec.ofNat 5 21), (((BitVec.ofNat 5 21), (BitVec.ofNat 5 10)))))))) := by decide
+-- Oracle Decode_path119_sample2: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 44747451) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path120_sample0: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 33574971) = (instruction.MulDiv ((MulDiv.DIVUW (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 0), (BitVec.ofNat 5 0)))))))) := by decide
+-- Oracle Decode_path120_sample0: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 33574971) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path120_sample1: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 67100603) = (instruction.MulDiv ((MulDiv.DIVUW (((BitVec.ofNat 5 31), (((BitVec.ofNat 5 31), (BitVec.ofNat 5 31)))))))) := by decide
+-- Oracle Decode_path120_sample1: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 67100603) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path120_sample2: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 44751547) = (instruction.MulDiv ((MulDiv.DIVUW (((BitVec.ofNat 5 21), (((BitVec.ofNat 5 21), (BitVec.ofNat 5 10)))))))) := by decide
+-- Oracle Decode_path120_sample2: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 44751547) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path121_sample0: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 33579067) = (instruction.MulDiv ((MulDiv.REMW (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 0), (BitVec.ofNat 5 0)))))))) := by decide
+-- Oracle Decode_path121_sample0: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 33579067) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path121_sample1: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 67104699) = (instruction.MulDiv ((MulDiv.REMW (((BitVec.ofNat 5 31), (((BitVec.ofNat 5 31), (BitVec.ofNat 5 31)))))))) := by decide
+-- Oracle Decode_path121_sample1: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 67104699) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path121_sample2: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 44755643) = (instruction.MulDiv ((MulDiv.REMW (((BitVec.ofNat 5 21), (((BitVec.ofNat 5 21), (BitVec.ofNat 5 10)))))))) := by decide
+-- Oracle Decode_path121_sample2: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 44755643) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path122_sample0: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 33583163) = (instruction.MulDiv ((MulDiv.REMUW (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 0), (BitVec.ofNat 5 0)))))))) := by decide
+-- Oracle Decode_path122_sample0: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 33583163) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path122_sample1: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 67108795) = (instruction.MulDiv ((MulDiv.REMUW (((BitVec.ofNat 5 31), (((BitVec.ofNat 5 31), (BitVec.ofNat 5 31)))))))) := by decide
+-- Oracle Decode_path122_sample1: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 67108795) = instruction.UnknownInstruction := by decide
 
--- Oracle Decode_path122_sample2: original complete instruction including all payloads.
-example : Decode (BitVec.ofNat 32 44759739) = (instruction.MulDiv ((MulDiv.REMUW (((BitVec.ofNat 5 21), (((BitVec.ofNat 5 21), (BitVec.ofNat 5 10)))))))) := by decide
+-- Oracle Decode_path122_sample2: riscv-mi rejects the original removed instruction.
+example : Decode (BitVec.ofNat 32 44759739) = instruction.UnknownInstruction := by decide
 
 -- Oracle Decode_path123_sample0: original complete instruction including all payloads.
 example : Decode (BitVec.ofNat 32 3) = (instruction.Load ((Load.LB (((BitVec.ofNat 5 0), (((BitVec.ofNat 5 0), (BitVec.ofNat 12 0)))))))) := by decide
