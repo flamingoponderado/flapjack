@@ -8,6 +8,13 @@ name = "mathlib"
 scope = "leanprover-community"
 rev = "v4.33.1"
 
+# Ziren's executable MIPS32r2 model (`ZirenDet.Isa`), the semantics of the MIPS32 backend.
+[[require]]
+name = "ZirenDet"
+git = "https://github.com/ProjectZKM/Ziren"
+rev = "e08a98236d033f940160ccfe244dec12df0dddb0"
+subDir = "crates/fv/lean4"
+
 [[lean_lib]]
 name = "Flapjack"
 
