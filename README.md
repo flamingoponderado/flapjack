@@ -25,6 +25,10 @@ Flapjack is an in-progress Lean 4 port of the formally verified Pancake compiler
 > the original Pancake compiler's choices about RISC-V semantics. Where L3 and
 > Sail differ, `main` keeps the L3 behaviour instead of changing the model to
 > match Sail.
+- An experimental MIPS32 backend targets the [Ziren](https://github.com/ProjectZKM/Ziren)
+  zkVM. Its correctness theorem is stated against Ziren's own executable Lean model of
+  MIPS32r2 (`ZirenDet.Isa`, a Lake dependency), not against L3 or Sail; see
+  [`docs/MIPS32.md`](docs/MIPS32.md) and [`docs/SOUNDNESS.md`](docs/SOUNDNESS.md) item 9.
 - Other backends, including ARM and x86, have not yet been ported to Lean.
 - The CakeML front end has not been ported to Lean.
 
@@ -67,6 +71,14 @@ the historical raw byte artifact, use:
 
 ```sh
 lake exe flapjack-compile --hex program.pnk > program.riscv.hex
+```
+
+For the MIPS32 (Ziren) target, pass `--target=mips32` first; the output modes are the
+same, and the assembly frame is a `mipsel` GNU assembler file
+(see [`docs/MIPS32.md`](docs/MIPS32.md)):
+
+```sh
+lake exe flapjack-compile --target=mips32 program.pnk > program.mips32.S
 ```
 
 The original reference compiler can be run locally with:

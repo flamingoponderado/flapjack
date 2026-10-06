@@ -11977,6 +11977,15 @@
     "reviewer": "flapjack-luna-b source comparison riscv_config10-43: exact Spt Nat (num num_map), thirteen inserts in identical outer-to-inner order and values on LN; no finite-map qualifier. Universal kernel lookup/getD theorem matches existing production mapper for all Nat, including missing/out-of-range identity default. Actual RiscV/Lab five and LabDiagnostics six checked source-facing naming sites routed to exact map lookup. Original HOL table/default row replayed; full StackProg/HolProg carrier relation remains open."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/Mips32Config/Names.lean",
+    "lean_name": "mipsNames",
+    "hol_path": "cakeml/compiler/backend/mips/mips_configScript.sml",
+    "hol_name": "mips_names_def",
+    "hol_line": 10,
+    "statement_status": "reviewed_exact",
+    "reviewer": "MIPS32 backend source comparison 2026-10-06 against mips_configScript.sml:10-35: exact Spt Nat (num num_map), the ten inserts insert 0 31, 1 4, 2 5, 3 6, 4 7, 7 2, 5 24, 6 3, 24 0, 31 1 in identical outer-to-inner order on LN; no finite-map qualifier. mipsNames_lookup_eq relates the identity-default lookup to the explicit mipsNameMap for every Nat (kernel-checked, interval cases below 32, sptLookup_sptInsert_ne above). Reused unchanged by the Flapjack-specific MIPS32 (Ziren) backend configuration; the configuration itself (little-endian, 32-bit data layout) is not mips_backend_config and is untagged."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/stackSemScript.sml",
     "hol_name": "alloc_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/StackSem/Allocation.lean",
@@ -99098,6 +99107,102 @@
     "lean_name": "panToTargetCompileSemanticsRiscVSource",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific corollary (bead flapjack-kfgjp): RISC-V correctness for the CLI call compileProgMaxAsmExecutable pancakeRiscVBackendConfig riscvConfig (mainFirstHOL decls); compiler-input premises on mainFirstHOL decls, semantics premise/conclusion on original decls (requires a main function; via semanticsDecls_mainFirstHOL and panToTargetCompileSemanticsRiscVAsmExecutable). Does not establish the CLI performs this call."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/Mips32Source.lean",
+    "lean_name": "panToTargetCompileSemanticsMips32AsmExecutable",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific corollary: the MIPS32 theorem with the compiler premise on the assembler-only callable compileProgMaxAsmExecutable pancakeMips32BackendConfig mips32Config (compileProgMaxExecutable_eq_asm); every other premise and the conclusion unchanged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/Mips32Instance.lean",
+    "lean_name": "mips32PancakeInitOk",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific: isMips32MachineConfig mc => mc_init_ok mips32Config (pancakeBackendConf mips32BackendConfig) mc, definitionally mips32InitOk (mc_init_ok reads only register names and endianness). No HOL original."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/Mips32NativeSourceCorrect.lean",
+    "lean_name": "mips32NativeSourceCompile_full_result",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure: every Mips32.NativeSource.compile artifact equals the full logical compiler result with its logical stack bound mips32NativeSourceLogicalBound."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/Mips32Instance.lean",
+    "lean_name": "mips32PancakeHeapLimit_lt",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific: the top theorem's configuration-only heap bound bytes_in_word * (2 * max_heap_limit (:32) c.data_conf - 1) < dimword (:32), decided for pancakeBackendConf mips32BackendConfig (MIPS32/Ziren backend)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/Mips32Instance.lean",
+    "lean_name": "mips32PancakeBackendConfigOk",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific: backend_config_ok mips32Config (pancakeBackendConf mips32BackendConfig), definitionally mips32BackendConfigOk since no backend_config_ok conjunct reads data_conf.gc_kind. No HOL original: CakeML has no MIPS32 target."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/Mips32NativeSourceCorrect.lean",
+    "lean_name": "mips32NativeSourceCompileDeclarations_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure: Mips32.NativeSource.compileDeclarations is the first projection of compileProgMaxAsmExecutable pancakeMips32BackendConfig mips32Config on mainFirstHOL of the parsed declarations."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/Mips32NativeSourceCorrect.lean",
+    "lean_name": "mips32NativeSourceCompile_ok",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure: a successful Mips32.NativeSource.compile comes from a successful 32-bit parse and static check and records mainFirstHOL of the parsed declarations and the artifact compiler's result."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/Mips32Instance.lean",
+    "lean_name": "panToTargetCompileSemanticsMips32",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific MIPS32 (Ziren) instantiation of the tagged panToTargetCompileSemantics with c := pancakeBackendConf mips32BackendConfig and isMips32MachineConfig mc (target mips32Target over Ziren's ZirenDet.Isa model); backend_config_ok/mc_conf_ok/mc_init_ok discharged by mips32PancakeBackendConfigOk, mips32MachineConfigOk (from mips32_encoder_correct) and mips32PancakeInitOk, ISA, ffi_names and config-only heap bound (mips32PancakeHeapLimit_lt) premises decided; all other premises unchanged. No HOL original (CakeML's MIPS target is MIPS64/L3); trust base in SOUNDNESS item 9."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/Mips32NativeSourceCorrect.lean",
+    "lean_name": "mips32NativeSourceCompile_correct",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific: concrete MIPS32 correctness of the parser-backed Mips32.NativeSource.compile driver, from panToTargetCompileSemanticsMips32Source; mirrors nativeSourceCompile_correct with the original non-configuration premises on the compiled declarations."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/Mips32InstanceExecutable.lean",
+    "lean_name": "panToTargetCompileSemanticsMips32Executable",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific corollary: panToTargetCompileSemanticsMips32 with the compiler premise on the callable compileProgMaxExecutable (compileProgMaxExecutable_eq); every other premise and the conclusion unchanged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/Mips32NativeCLICorrect.lean",
+    "lean_name": "mips32CLIOutput_correct",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific CLI theorem for flapjack-compile --target=mips32: every successful Mips32.NativeCLI.output format source = ok (warnings, text) comes from a successful parse and Mips32.NativeSource.compile with compiled tuple (bytes, bitmaps, config), text = render of that tuple, full logical compile tuple equality at the emitted artifact, and NativeMips32Correctness parsed out. Assembly rendering and startup/FFI stubs remain trusted (SOUNDNESS items 5 and 9)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/Mips32Source.lean",
+    "lean_name": "panToTargetCompileSemanticsMips32Source",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific corollary: MIPS32 correctness for the CLI compiler call on mainFirstHOL decls, stated against the source semantics of decls (which must contain main) via semanticsDecls_mainFirstHOL; mirrors panToTargetCompileSemanticsRiscVSource."
   },
   {
     "hol_path": null,

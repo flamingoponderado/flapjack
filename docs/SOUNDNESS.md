@@ -11,8 +11,9 @@ HOL development or ready for production use.
 
 ## Scope
 
-The intended target is Pancake source compiled to RISC-V. Backends other than
-RISC-V are out of scope. The CakeML checkout in `cakeml` is the reference for
+The intended target is Pancake source compiled to RISC-V. An experimental second
+backend compiles to MIPS32 (little-endian MIPS32r2) for the Ziren zkVM; item 9
+describes its separate trust base. Other backends are out of scope. The CakeML checkout in `cakeml` is the reference for
 the ASTs, pass ordering, semantics, compiler, and correctness theorem. The
 current source-facing command is documented in the repository README and is
 implemented by `Flapjack.CompileMain`.
@@ -232,6 +233,46 @@ The following are open review or verification obligations:
    `Classical.epsilon` over the same predicate; their payload is unspecified
    in both systems, and this choice rendering is not covered by the
    qualifier.
+
+9. The MIPS32 (Ziren) backend has a different machine model and no HOL original.
+   - **Machine model.** Its correctness theorem
+     (`panToTargetCompileSemanticsMips32` and the CLI corollary
+     `mips32CLIOutput_correct`) is stated against `mips32Next`. That function
+     fetches each instruction word from machine memory and runs it with Ziren's
+     `ZirenDet.Isa.decode`/`exec`, a Lake dependency pinned to Ziren commit
+     `e08a982`. A branch is run together with its delay slot, as in CakeML's
+     MIPS64 `mips_next`.
+   - **What Ziren's model is.** Ziren checks `ZirenDet.Isa` against QEMU oracle
+     vectors and its executor's decoder; it is not a proof. Ziren's own
+     `Isa.run` fetches from a separate program image rather than from memory.
+     Whether the model agrees with Ziren's executor and circuits is outside
+     Flapjack.
+   - **Known model gaps.** At the pinned commit, the model has:
+     - no `SYSCALL`, `MOD` or `MODU`;
+     - no alignment faults;
+     - a default result, not an error, for division by zero;
+     - an always-successful `SC`;
+     - `J`/`JAL` targets computed from the `pc` region bits.
+
+     The backend emits none of `SYSCALL`, `MOD`, `J`, `JAL` or `SC`. Under the
+     theorem's premises it makes only aligned accesses and only divides by
+     nonzero values, because the asm semantics asserts both.
+   - **Halts and FFI calls.** As for RISC-V, these are handled at addresses
+     outside the code by the machine semantics and its interference oracle. The
+     FFI stubs, startup code and any mapping of FFI calls to Ziren syscalls are
+     trusted and unverified.
+   - **What is proved.** `mips32_encoder_correct` (CakeML's `encoder_correct`
+     for this target) is kernel-checked using only the standard axioms
+     `propext`, `Classical.choice` and `Quot.sound`.
+   - **No HOL original.** The encoder, target, configuration and proofs are
+     Flapjack-specific and untagged. CakeML's MIPS target is MIPS64 big-endian
+     over the L3 model. The backend configuration also departs from HOL's
+     `mips_backend_config`: it is little-endian and uses CakeML's 32-bit data
+     layout. Only `mips_names` is reused unchanged.
+   - **Testing.** The emitted instruction encodings are checked against
+     `llvm-mc`. Compiled programs are run end to end on Ziren's model with
+     simulated FFI calls. Nothing is compared with Ziren's Rust executor or the
+     original Pancake compiler, which has no MIPS32 target.
 
 ## Stack bounds and liveness
 

@@ -2764,6 +2764,28 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Skip
    the faithful `findLoopVar` lowering and is intentionally not in this
    umbrella until its old identity-map assumptions are repaired. -/
 
+import Flapjack.Compiler.Encoders.Mips32.Encode
+import Flapjack.Compiler.Encoders.Mips32.Target
+import Flapjack.Compiler.Backend.Mips32Config.Names
+import Flapjack.Compiler.Backend.Mips32Config.BackendConfig
+import Flapjack.Compiler.Backend.Mips32Config.Proofs
+import Flapjack.Mips32.NativeSource
+import Flapjack.Mips32.NativeCLIAdapter
+import Flapjack.Mips32.Run
+import Flapjack.Mips32.TargetProof.Memory
+import Flapjack.Mips32.TargetProof.Agree
+import Flapjack.Mips32.TargetProof.Simulate
+import Flapjack.Mips32.TargetProof.Step
+import Flapjack.Mips32.TargetProof.Branch
+import Flapjack.Mips32.TargetProof.Arith
+import Flapjack.Mips32.TargetProof.Mem
+import Flapjack.Mips32.TargetProof.Control
+import Flapjack.Mips32.TargetProof.Complete
+import Flapjack.Pancake.Proofs.PanToTarget.Mips32Instance
+import Flapjack.Pancake.Proofs.PanToTarget.Mips32InstanceExecutable
+import Flapjack.Pancake.Proofs.PanToTarget.Mips32Source
+import Flapjack.Pancake.Proofs.PanToTarget.Mips32NativeSourceCorrect
+import Flapjack.Pancake.Proofs.PanToTarget.Mips32NativeCLICorrect
 /-!
 # Flapjack in Lean
 
