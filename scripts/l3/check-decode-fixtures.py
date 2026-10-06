@@ -122,10 +122,10 @@ def constructor_names():
     return names
 
 
-# riscv-mi restricts the native decoders to the riscv-zkvm RV64IM subset. The
-# compressed decoder rejects every input, and a Decode input whose original HOL
-# value uses one of these removed constructors must decode to
-# UnknownInstruction. The original captures are still validated in full; the
+# riscv-mi restricts the native decoders to the riscv-zkvm RV64IM subset, which
+# has no RV64 word operations other than ADDIW. The compressed decoder rejects
+# every input, and a Decode input whose original HOL value uses one of these
+# removed constructors must decode to UnknownInstruction. The original captures are still validated in full; the
 # lists are exact and fail closed against restored or stale constructors.
 REJECTING_DECODERS = ("DecodeRVC",)
 EXCLUDED_CONSTRUCTORS = frozenset("""
@@ -141,6 +141,7 @@ FCVT_S_WU FCVT_WU_D FCVT_WU_S FCVT_W_D FCVT_W_S FMV_D_X FMV_S_X FMV_X_D FMV_X_S
 FSGNJN_D FSGNJN_S FSGNJX_D FSGNJX_S FSGNJ_D FSGNJ_S
 FPLoad FLD FLW FPStore FSD FSW
 CSRRC CSRRCI CSRRS CSRRSI CSRRW CSRRWI SFENCE_VM FENCE_I ERET MRTS WFI
+ADDW SUBW SLLW SRLW SRAW SLLIW SRLIW SRAIW MULW DIVW DIVUW REMW REMUW
 """.split())
 
 
@@ -193,8 +194,9 @@ def fixture(text):
     result = """import Flapjack.RiscV.L3.Defs.Decode
 
 /-! Integer decoder acceptance rows use the original HOL oracle values.
-Inputs that formerly selected FP, atomic, privileged, CSR or compressed
-instructions now assert UnknownInstruction as branch-specific rejection tests.
+Inputs that formerly selected FP, atomic, privileged, CSR, compressed or
+RV64 word-operation (other than ADDIW) instructions now assert
+UnknownInstruction as branch-specific rejection tests.
 These rejection results deliberately differ from the full HOL model.
 -/
 set_option maxRecDepth 200000

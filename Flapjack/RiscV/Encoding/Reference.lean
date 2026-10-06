@@ -74,10 +74,6 @@ noncomputable def encodeInstructionWeighted [NeZero width] : Instruction width â
       encodeR 0x33 0 0 destination sourceLeft sourceRight
   | .sub destination sourceLeft sourceRight =>
       encodeR 0x33 0 0x20 destination sourceLeft sourceRight
-  | .addW destination sourceLeft sourceRight =>
-      encodeR 0x3b 0 0 destination sourceLeft sourceRight
-  | .subW destination sourceLeft sourceRight =>
-      encodeR 0x3b 0 0x20 destination sourceLeft sourceRight
   | .and destination sourceLeft sourceRight =>
       encodeR 0x33 7 0 destination sourceLeft sourceRight
   | .or destination sourceLeft sourceRight =>
@@ -91,8 +87,6 @@ noncomputable def encodeInstructionWeighted [NeZero width] : Instruction width â
   | .xori destination source immediate => encodeI 0x13 4 destination source immediate
   | .mul destination sourceLeft sourceRight =>
       encodeR 0x33 0 1 destination sourceLeft sourceRight
-  | .mulW destination sourceLeft sourceRight =>
-      encodeR 0x3b 0 1 destination sourceLeft sourceRight
   | .mulHU destination sourceLeft sourceRight =>
       encodeR 0x33 3 1 destination sourceLeft sourceRight
   | .sll destination sourceLeft sourceRight =>
@@ -101,24 +95,12 @@ noncomputable def encodeInstructionWeighted [NeZero width] : Instruction width â
       encodeR 0x33 5 0 destination sourceLeft sourceRight
   | .sra destination sourceLeft sourceRight =>
       encodeR 0x33 5 0x20 destination sourceLeft sourceRight
-  | .sllW destination sourceLeft sourceRight =>
-      encodeR 0x3b 1 0 destination sourceLeft sourceRight
-  | .srlW destination sourceLeft sourceRight =>
-      encodeR 0x3b 5 0 destination sourceLeft sourceRight
-  | .sraW destination sourceLeft sourceRight =>
-      encodeR 0x3b 5 0x20 destination sourceLeft sourceRight
   | .slli destination source amount =>
       encodeIValue 0x13 1 destination source (shiftAmount amount)
   | .srli destination source amount =>
       encodeIValue 0x13 5 destination source (shiftAmount amount)
   | .srai destination source amount =>
       encodeIValue 0x13 5 destination source (0x20 * 2 ^ 5 + shiftAmount amount)
-  | .slliW destination source amount =>
-      encodeIValue 0x1b 1 destination source (amount.toNat % 32)
-  | .srliW destination source amount =>
-      encodeIValue 0x1b 5 destination source (amount.toNat % 32)
-  | .sraiW destination source amount =>
-      encodeIValue 0x1b 5 destination source (0x20 * 2 ^ 5 + amount.toNat % 32)
   | .slt destination sourceLeft sourceRight =>
       encodeR 0x33 2 0 destination sourceLeft sourceRight
   | .slti destination source immediate => encodeI 0x13 2 destination source immediate

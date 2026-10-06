@@ -249,7 +249,8 @@ cannot be performed; the RISC-V regression keeps the successful prefix visible.
   call checks (issue #387).
 - [x] Port the HOL RV64 word-width arithmetic and shift transitions
   (`ADDW`, `SUBW`, `ADDIW`, `MULW`, and W-shifts), including sign-extension
-  back to the architectural register width.
+  back to the architectural register width. On `riscv-mi` only `ADDIW`
+  remains; the others are absent, as in `riscv-zkvm`.
 - [x] Add executable `ADD`/`ADDI` transitions with PC-advance and
   zero-register preservation theorems.
 - [x] Port HOL's signed `LB`/`LH` load value paths alongside the existing

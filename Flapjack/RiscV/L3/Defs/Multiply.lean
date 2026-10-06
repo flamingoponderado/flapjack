@@ -3,13 +3,8 @@ import Flapjack.RiscV.L3.Defs.SystemSignals
 
 /-! Full multiplication equations. High products preserve three mode queries,
 128-bit intermediate widths and the literal per-operand signedness. MUL uses
-full64 without a mode query; MULW retains the RV32 illegal route. -/
+full64 without a mode query. MULW is absent on riscv-mi. -/
 namespace Flapjack.RiscV.L3
-
-noncomputable def «dfn'MULW» (arg0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) : (riscv_state → riscv_state) :=
-  match arg0 with
-  | (rd, (rs1, rs2)) =>
-  (fun (state : riscv_state) => (match (in32BitMode () state) with | (v, s) => (if v then (signalException ExceptionType.Illegal_Instr s) else ((«write'GPR» ((((BitVec.signExtend 64 ((holWordExtract 32 31 0 ((BitVec.signExtend 64 ((((holWordExtract 32 31 0 (GPR rs1 s))) * ((holWordExtract 32 31 0 (GPR rs2 s))))))))))), rd)) s)))))
 
 noncomputable def «dfn'MULHU» (arg0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) : (riscv_state → riscv_state) :=
   match arg0 with

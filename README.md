@@ -8,6 +8,12 @@ The reference repositories `riscv-zkvm`, `cakeml`, and `HOL` are read-only.
 
 This branch removes floating-point language operations, privileged returns,
 hardware timers and interrupts, and instructions that enable page tables.
+Its RISC-V models also omit every instruction that `riscv-zkvm` does not
+model: atomics, CSR instructions, `FENCE.I`, and the RV64 word operations
+other than `ADDIW` (`ADDW`, `SUBW`, `SLLW`, `SRLW`, `SRAW`, `SLLIW`, `SRLIW`,
+`SRAIW`, `MULW`, `DIVW`, `DIVUW`, `REMW`, `REMUW`). Compressed instructions
+are unsupported: every 16-bit parcel decodes to an unknown instruction, and
+the step function provably fails on it.
 Compiler evaluation fuel is distinct from hardware time. Integer compiler
 passes and their applicable reference tests remain part of the build.
 Reduced definitions are branch-specific specifications, not exact ports of

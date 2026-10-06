@@ -2,18 +2,9 @@ import Flapjack.RiscV.L3.Defs.IntegerLoadMode
 import Flapjack.RiscV.L3.Defs.SystemSignals
 
 /-! Complete native division/remainder equations, including explicit zero
-divisors, signed truncation, DIVU two mode checks and W sign extension. -/
+divisors, signed truncation and DIVU two mode checks. The RV64 W forms are
+absent on riscv-mi. -/
 namespace Flapjack.RiscV.L3
-
-noncomputable def «dfn'REMW» (arg0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) : (riscv_state → riscv_state) :=
-  match arg0 with
-  | (rd, (rs1, rs2)) =>
-  (fun (state : riscv_state) => (match (in32BitMode () state) with | (v, s) => (if v then (signalException ExceptionType.Illegal_Instr s) else ((let v_1 : (BitVec 32) := (holWordExtract 32 31 0 (GPR rs1 s)); (let v0 : (BitVec 32) := (holWordExtract 32 31 0 (GPR rs2 s)); (if ((v0 == (BitVec.ofNat 32 0))) then ((«write'GPR» (((BitVec.signExtend 64 v_1), rd)) s)) else ((«write'GPR» ((((BitVec.signExtend 64 (BitVec.srem v_1 v0))), rd)) s)))))))))
-
-noncomputable def «dfn'REMUW» (arg0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) : (riscv_state → riscv_state) :=
-  match arg0 with
-  | (rd, (rs1, rs2)) =>
-  (fun (state : riscv_state) => (match (in32BitMode () state) with | (v, s) => (if v then (signalException ExceptionType.Illegal_Instr s) else ((let v_1 : (BitVec 32) := (holWordExtract 32 31 0 (GPR rs1 s)); (let v0 : (BitVec 32) := (holWordExtract 32 31 0 (GPR rs2 s)); (if ((v0 == (BitVec.ofNat 32 0))) then ((«write'GPR» (((BitVec.signExtend 64 v_1), rd)) s)) else ((«write'GPR» ((((BitVec.signExtend 64 (BitVec.umod v_1 v0))), rd)) s)))))))))
 
 def «dfn'REMU» (arg0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) : (riscv_state → riscv_state) :=
   match arg0 with
@@ -24,16 +15,6 @@ def «dfn'REM» (arg0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) : (riscv_sta
   match arg0 with
   | (rd, (rs1, rs2)) =>
   (fun (state : riscv_state) => (if (((GPR rs2 state) == (BitVec.ofNat 64 0))) then ((«write'GPR» (((GPR rs1 state), rd)) state)) else ((«write'GPR» ((((BitVec.srem (GPR rs1 state) (GPR rs2 state))), rd)) state))))
-
-noncomputable def «dfn'DIVW» (arg0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) : (riscv_state → riscv_state) :=
-  match arg0 with
-  | (rd, (rs1, rs2)) =>
-  (fun (state : riscv_state) => (match (in32BitMode () state) with | (v, s) => (if v then (signalException ExceptionType.Illegal_Instr s) else ((let v0 : (BitVec 32) := (holWordExtract 32 31 0 (GPR rs2 s)); (if ((v0 == (BitVec.ofNat 32 0))) then ((«write'GPR» ((((BitVec.signExtend 64 (BitVec.ofNat 1 1))), rd)) s)) else ((«write'GPR» ((((BitVec.signExtend 64 ((BitVec.sdiv ((holWordExtract 32 31 0 (GPR rs1 s))) v0)))), rd)) s))))))))
-
-noncomputable def «dfn'DIVUW» (arg0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) : (riscv_state → riscv_state) :=
-  match arg0 with
-  | (rd, (rs1, rs2)) =>
-  (fun (state : riscv_state) => (match (in32BitMode () state) with | (v, s) => (if v then (signalException ExceptionType.Illegal_Instr s) else ((let v0 : (BitVec 32) := (holWordExtract 32 31 0 (GPR rs2 s)); (if ((v0 == (BitVec.ofNat 32 0))) then ((«write'GPR» ((((BitVec.signExtend 64 (BitVec.ofNat 1 1))), rd)) s)) else ((«write'GPR» ((((BitVec.signExtend 64 ((BitVec.udiv ((holWordExtract 32 31 0 (GPR rs1 s))) v0)))), rd)) s))))))))
 
 noncomputable def «dfn'DIVU» (arg0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) : (riscv_state → riscv_state) :=
   match arg0 with

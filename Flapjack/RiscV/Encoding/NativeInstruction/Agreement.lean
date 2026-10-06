@@ -182,8 +182,6 @@ theorem encodeInstructionWeighted_native (i : Instruction 64) :
   cases i with
   | add d a b => exact encodeRNative 51 0 0 d a b
   | sub d a b => exact encodeRNative 51 0 32 d a b
-  | addW d a b => exact encodeRNative 59 0 0 d a b
-  | subW d a b => exact encodeRNative 59 0 32 d a b
   | and d a b => exact encodeRNative 51 7 0 d a b
   | or d a b => exact encodeRNative 51 6 0 d a b
   | xor d a b => exact encodeRNative 51 4 0 d a b
@@ -193,14 +191,10 @@ theorem encodeInstructionWeighted_native (i : Instruction 64) :
   | ori d a i => exact encodeINative 19 6 d a i
   | xori d a i => exact encodeINative 19 4 d a i
   | mul d a b => exact encodeRNative 51 0 1 d a b
-  | mulW d a b => exact encodeRNative 59 0 1 d a b
   | mulHU d a b => exact encodeRNative 51 3 1 d a b
   | sll d a b => exact encodeRNative 51 1 0 d a b
   | srl d a b => exact encodeRNative 51 5 0 d a b
   | sra d a b => exact encodeRNative 51 5 32 d a b
-  | sllW d a b => exact encodeRNative 59 1 0 d a b
-  | srlW d a b => exact encodeRNative 59 5 0 d a b
-  | sraW d a b => exact encodeRNative 59 5 32 d a b
   | slt d a b => exact encodeRNative 51 2 0 d a b
   | sltu d a b => exact encodeRNative 51 3 0 d a b
   | divU d a b => exact encodeRNative 51 4 1 d a b
@@ -236,8 +230,7 @@ theorem encodeInstructionWeighted_native (i : Instruction 64) :
   | storeHalfOffset d a i => exact encodeSNative 1 d a i
   | load32Offset d a i => exact encodeINative 3 6 d a i
   | store32Offset d a i => exact encodeSNative 2 d a i
-  | slli d a i | srli d a i | srai d a i
-  | slliW d a i | srliW d a i | sraiW d a i =>
+  | slli d a i | srli d a i | srai d a i =>
       apply BitVec.eq_of_toNat_eq
       simp [nativeInstruction, nativeInstructionAtWidth, EncodingReference.encodeInstructionWeighted, L3.Encode, itypeNumeric,
         EncodingReference.encodeIValue, EncodingReference.encodeWord32, shiftAmount, EncodingReference.registerBits, nativeRegister_toNat,
@@ -254,8 +247,6 @@ theorem encodeInstructionDiagnostic_eq_weighted {width : Nat} [NeZero width]
   cases i with
   | add d a b => exact (encodeRNative 51 0 0 d a b).symm
   | sub d a b => exact (encodeRNative 51 0 32 d a b).symm
-  | addW d a b => exact (encodeRNative 59 0 0 d a b).symm
-  | subW d a b => exact (encodeRNative 59 0 32 d a b).symm
   | and d a b => exact (encodeRNative 51 7 0 d a b).symm
   | or d a b => exact (encodeRNative 51 6 0 d a b).symm
   | xor d a b => exact (encodeRNative 51 4 0 d a b).symm
@@ -265,14 +256,10 @@ theorem encodeInstructionDiagnostic_eq_weighted {width : Nat} [NeZero width]
   | ori d a i => exact (encodeINative 19 6 d a i).symm
   | xori d a i => exact (encodeINative 19 4 d a i).symm
   | mul d a b => exact (encodeRNative 51 0 1 d a b).symm
-  | mulW d a b => exact (encodeRNative 59 0 1 d a b).symm
   | mulHU d a b => exact (encodeRNative 51 3 1 d a b).symm
   | sll d a b => exact (encodeRNative 51 1 0 d a b).symm
   | srl d a b => exact (encodeRNative 51 5 0 d a b).symm
   | sra d a b => exact (encodeRNative 51 5 32 d a b).symm
-  | sllW d a b => exact (encodeRNative 59 1 0 d a b).symm
-  | srlW d a b => exact (encodeRNative 59 5 0 d a b).symm
-  | sraW d a b => exact (encodeRNative 59 5 32 d a b).symm
   | slt d a b => exact (encodeRNative 51 2 0 d a b).symm
   | sltu d a b => exact (encodeRNative 51 3 0 d a b).symm
   | divU d a b => exact (encodeRNative 51 4 1 d a b).symm
@@ -338,8 +325,7 @@ theorem encodeInstructionDiagnostic_eq_weighted {width : Nat} [NeZero width]
   | storeHalfOffset d a i => exact (encodeSNative 1 d a i).symm
   | load32Offset d a i => exact (encodeINative 3 6 d a i).symm
   | store32Offset d a i => exact (encodeSNative 2 d a i).symm
-  | slli d a i | srli d a i | srai d a i
-  | slliW d a i | srliW d a i | sraiW d a i =>
+  | slli d a i | srli d a i | srai d a i =>
       simp only [encodeInstructionDiagnostic, EncodingReference.encodeInstructionWeighted]
       rw [itypeNumeric]
       simp [EncodingReference.encodeIValue, EncodingReference.encodeWord32,

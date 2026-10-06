@@ -315,51 +315,35 @@ inductive Branch where
   deriving DecidableEq, Repr, Inhabited
 
 /-- HOL L3 datatype `MulDiv` (`riscvScript.sml:273`). -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "MulDiv"]
 inductive MulDiv where
   | DIV (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
   | DIVU (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
-  | DIVUW (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
-  | DIVW (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
   | MUL (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
   | MULH (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
   | MULHSU (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
   | MULHU (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
-  | MULW (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
   | REM (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
   | REMU (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
-  | REMUW (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
-  | REMW (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
   deriving DecidableEq, Repr, Inhabited
 
 /-- HOL L3 datatype `Shift` (`riscvScript.sml:289`). -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "Shift"]
 inductive Shift where
   | SLL (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
   | SLLI (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 6))))
-  | SLLIW (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
-  | SLLW (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
   | SRA (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
   | SRAI (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 6))))
-  | SRAIW (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
-  | SRAW (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
   | SRL (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
   | SRLI (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 6))))
-  | SRLIW (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
-  | SRLW (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
   deriving DecidableEq, Repr, Inhabited
 
 /-- HOL L3 datatype `ArithR` (`riscvScript.sml:304`). -/
-@[hol "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml" "ArithR"]
 inductive ArithR where
   | ADD (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
-  | ADDW (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
   | AND (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
   | OR (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
   | SLT (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
   | SLTU (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
   | SUB (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
-  | SUBW (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
   | XOR (a0 : ((BitVec 5) × ((BitVec 5) × (BitVec 5))))
   deriving DecidableEq, Repr, Inhabited
 

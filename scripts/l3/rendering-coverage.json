@@ -42,13 +42,9 @@
     "Flapjack/RiscV/L3/Defs/DecodeImmediates.lean:asImm12",
     "Flapjack/RiscV/L3/Defs/DecodeImmediates.lean:asImm20",
     "Flapjack/RiscV/L3/Defs/DecodeImmediates.lean:asSImm12",
-    "Flapjack/RiscV/L3/Defs/Divide.lean:«dfn'DIVUW»",
     "Flapjack/RiscV/L3/Defs/Divide.lean:«dfn'DIVU»",
-    "Flapjack/RiscV/L3/Defs/Divide.lean:«dfn'DIVW»",
     "Flapjack/RiscV/L3/Defs/Divide.lean:«dfn'DIV»",
-    "Flapjack/RiscV/L3/Defs/Divide.lean:«dfn'REMUW»",
     "Flapjack/RiscV/L3/Defs/Divide.lean:«dfn'REMU»",
-    "Flapjack/RiscV/L3/Defs/Divide.lean:«dfn'REMW»",
     "Flapjack/RiscV/L3/Defs/Divide.lean:«dfn'REM»",
     "Flapjack/RiscV/L3/Defs/Encode.lean:Encode",
     "Flapjack/RiscV/L3/Defs/EncodeFormats.lean:Itype",
@@ -65,11 +61,8 @@
     "Flapjack/RiscV/L3/Defs/ImmediateALU.lean:«dfn'ANDI»",
     "Flapjack/RiscV/L3/Defs/ImmediateALU.lean:«dfn'ORI»",
     "Flapjack/RiscV/L3/Defs/ImmediateALU.lean:«dfn'XORI»",
-    "Flapjack/RiscV/L3/Defs/ImmediateShift.lean:«dfn'SLLIW»",
     "Flapjack/RiscV/L3/Defs/ImmediateShift.lean:«dfn'SLLI»",
-    "Flapjack/RiscV/L3/Defs/ImmediateShift.lean:«dfn'SRAIW»",
     "Flapjack/RiscV/L3/Defs/ImmediateShift.lean:«dfn'SRAI»",
-    "Flapjack/RiscV/L3/Defs/ImmediateShift.lean:«dfn'SRLIW»",
     "Flapjack/RiscV/L3/Defs/ImmediateShift.lean:«dfn'SRLI»",
     "Flapjack/RiscV/L3/Defs/IntegerLoad.lean:«dfn'LBU»",
     "Flapjack/RiscV/L3/Defs/IntegerLoad.lean:«dfn'LB»",
@@ -110,7 +103,6 @@
     "Flapjack/RiscV/L3/Defs/Multiply.lean:«dfn'MULHSU»",
     "Flapjack/RiscV/L3/Defs/Multiply.lean:«dfn'MULHU»",
     "Flapjack/RiscV/L3/Defs/Multiply.lean:«dfn'MULH»",
-    "Flapjack/RiscV/L3/Defs/Multiply.lean:«dfn'MULW»",
     "Flapjack/RiscV/L3/Defs/Multiply.lean:«dfn'MUL»",
     "Flapjack/RiscV/L3/Defs/ReadInst.lean:PC",
     "Flapjack/RiscV/L3/Defs/ReadInst.lean:rawReadInst",
@@ -120,11 +112,8 @@
     "Flapjack/RiscV/L3/Defs/RegisterALU.lean:«dfn'OR»",
     "Flapjack/RiscV/L3/Defs/RegisterALU.lean:«dfn'SUB»",
     "Flapjack/RiscV/L3/Defs/RegisterALU.lean:«dfn'XOR»",
-    "Flapjack/RiscV/L3/Defs/RegisterShift.lean:«dfn'SLLW»",
     "Flapjack/RiscV/L3/Defs/RegisterShift.lean:«dfn'SLL»",
-    "Flapjack/RiscV/L3/Defs/RegisterShift.lean:«dfn'SRAW»",
     "Flapjack/RiscV/L3/Defs/RegisterShift.lean:«dfn'SRA»",
-    "Flapjack/RiscV/L3/Defs/RegisterShift.lean:«dfn'SRLW»",
     "Flapjack/RiscV/L3/Defs/RegisterShift.lean:«dfn'SRL»",
     "Flapjack/RiscV/L3/Defs/Run.lean:Run",
     "Flapjack/RiscV/L3/Defs/SetLess.lean:«dfn'SLTIU»",
@@ -153,8 +142,6 @@
     "Flapjack/RiscV/L3/Defs/UpperJump.lean:«dfn'JAL»",
     "Flapjack/RiscV/L3/Defs/UpperJump.lean:«dfn'LUI»",
     "Flapjack/RiscV/L3/Defs/WordArithmetic.lean:«dfn'ADDIW»",
-    "Flapjack/RiscV/L3/Defs/WordArithmetic.lean:«dfn'ADDW»",
-    "Flapjack/RiscV/L3/Defs/WordArithmetic.lean:«dfn'SUBW»",
     "Flapjack/RiscV/L3/Defs/WritePC.lean:«write'PC»",
     "Flapjack/RiscV/L3/Step/DecodeAny.lean:DecodeAny",
     "Flapjack/RiscV/L3/Step/Fetch.lean:Fetch",
@@ -178,9 +165,9 @@
       "review_note": "riscv-mi restriction: HOL write'CSRMap restricted to the retained ordinary CSR records. Write cases for FP control, counters/timers, interrupt enable/pending/delegation, page-table base/ASID, hypervisor, IPI and the status/edge cases that update those fields (25 literal addresses, including 256 and 768) differ from HOL; this equation is a handwritten reduction pinned by hash, not a transcription."
     },
     "Flapjack/RiscV/L3/Defs/Decode.lean:Decode": {
-      "lean_sha256": "30499644defc336199f437419e9ab772bffde0a948abea73b2c46021b1568f4b",
+      "lean_sha256": "fa700ed47f8af6eb9ca29dcffae52d4dd8f42b353f0768673b3df0307198c3f4",
       "rendered_sha256": "959587041179f3bb15f8cdb61d3dcf442650d35aa6f3eeb39fcba131c0c69c50",
-      "review_note": "riscv-mi restriction: HOL Decode with every FP, AMO/LR/SC, CSR, ERET/MRTS/WFI/SFENCE.VM and FENCE.I branch mapped to UnknownInstruction; the RV64IM branches retain their original predicates and constructors."
+      "review_note": "riscv-mi restriction: HOL Decode with every FP, AMO/LR/SC, CSR, ERET/MRTS/WFI/SFENCE.VM, FENCE.I and RV64 word-operation branch other than ADDIW mapped to UnknownInstruction; the RV64IM branches retain their original predicates and constructors."
     },
     "Flapjack/RiscV/L3/Defs/Decode.lean:DecodeRVC": {
       "lean_sha256": "cc866dabbd5ea148ae491f82ec9e2881d3b9b405e22ca1d8e3744e591490ea61",
@@ -188,9 +175,9 @@
       "review_note": "riscv-mi restriction: compressed instructions are unsupported; every 16-bit encoding decodes to UnknownInstruction instead of HOL's RVC decoder."
     },
     "Flapjack/RiscV/L3/Defs/Encode.lean:Encode": {
-      "lean_sha256": "d61fb599169b5532f3170cad0c872df2854ac2aab689970a9032c5765aa35594",
+      "lean_sha256": "214620fe7dd28fe6aac3631cd3e3229d8d58169b2e8293a669c8598808733d2a",
       "rendered_sha256": "d684ad03eb9e661136346f1b2ea8acea4436f706004291451c3b540f02d86e85",
-      "review_note": "riscv-mi restriction: HOL Encode restricted to the retained instruction constructors; the clauses for removed FP, AMO, CSR, privileged and FENCE_I constructors are absent and the retained clauses are unchanged."
+      "review_note": "riscv-mi restriction: HOL Encode restricted to the retained instruction constructors; the clauses for removed FP, AMO, CSR, privileged, FENCE_I and RV64 word-operation (other than ADDIW) constructors are absent and the retained clauses are unchanged."
     },
     "Flapjack/RiscV/L3/Defs/Fetch.lean:Fetch": {
       "lean_sha256": "2680e32c72b9bfb2a6261ae86b874ed92fe84a353c1c2c92177ef388b06a7a9b",
@@ -223,9 +210,9 @@
       "review_note": "Original riscvScript626-635 factory is not reached by NextRISCV/Fetch export roots. Handwritten complete fixedword64 record codec pins RVImpl63:16 and RVSource15:0; original l3_machine_csr_codec probe captures its whole definition and 70 numeric rows."
     },
     "Flapjack/RiscV/L3/Defs/Run.lean:Run": {
-      "lean_sha256": "72dd2ac75abc8b593b2e1a3234bb78ee76639e4c100638f90eafcdb7353cf6bf",
+      "lean_sha256": "875911f89adab78c0307cf4f66660b32d0e86a2f9bd518735c707c0528e75598",
       "rendered_sha256": "754dc9b0295bd8ecefeb31b15310eda24d2c26a7f358888d2592554f94f4e8bd",
-      "review_note": "riscv-mi restriction: HOL Run dispatcher restricted to the retained RV64IM constructors; removed FP, AMO/LR/SC, CSR, privileged and FENCE_I handler branches are absent and retained branches call the same handlers."
+      "review_note": "riscv-mi restriction: HOL Run dispatcher restricted to the retained RV64IM constructors; removed FP, AMO/LR/SC, CSR, privileged, FENCE_I and RV64 word-operation (other than ADDIW) handler branches are absent and retained branches call the same handlers."
     },
     "Flapjack/RiscV/L3/Step/DecodeAny.lean:DecodeAny": {
       "lean_sha256": "2c4bd154084ef0aa1a62b2eb72dec0a5f31580a40b167df8f01f054c41fcea43",

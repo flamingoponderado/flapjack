@@ -152,7 +152,10 @@ The following are open review or verification obligations:
    are branch-specific results; they are not exact ports of the original
    full-HOL statements. Independent HOL declarations keep their applicable
    reference annotations. Rejection tests establish the unsupported-opcode
-   boundary, not semantic equivalence with `riscv-zkvm`.
+   boundary, not semantic equivalence with `riscv-zkvm`. The RV64 word
+   operations other than `ADDIW` are absent, as in `riscv-zkvm`. Compressed
+   parcels decode to `UnknownInstruction`; `NextRISCV_half_none` proves that
+   no step fetching one succeeds.
 
 ## Stack bounds and liveness
 

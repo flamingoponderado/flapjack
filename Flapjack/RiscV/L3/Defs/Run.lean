@@ -31,13 +31,11 @@ noncomputable def Run (v0 : instruction) : (riscv_state → riscv_state) :=
     | .XORI v33 => («dfn'XORI» v33 state))
     | .ArithR v173 => (match v173 with
     | .ADD v35 => («dfn'ADD» v35 state)
-    | .ADDW v36 => («dfn'ADDW» v36 state)
     | .AND v37 => («dfn'AND» v37 state)
     | .OR v38 => («dfn'OR» v38 state)
     | .SLT v39 => («dfn'SLT» v39 state)
     | .SLTU v40 => («dfn'SLTU» v40 state)
     | .SUB v41 => («dfn'SUB» v41 state)
-    | .SUBW v42 => («dfn'SUBW» v42 state)
     | .XOR v43 => («dfn'XOR» v43 state))
     | .Branch v174 => (match v174 with
     | .BEQ v45 => («dfn'BEQ» v45 state)
@@ -63,30 +61,19 @@ noncomputable def Run (v0 : instruction) : (riscv_state → riscv_state) :=
     | .MulDiv v183 => (match v183 with
     | .DIV v131 => («dfn'DIV» v131 state)
     | .DIVU v132 => («dfn'DIVU» v132 state)
-    | .DIVUW v133 => («dfn'DIVUW» v133 state)
-    | .DIVW v134 => («dfn'DIVW» v134 state)
     | .MUL v135 => («dfn'MUL» v135 state)
     | .MULH v136 => («dfn'MULH» v136 state)
     | .MULHSU v137 => («dfn'MULHSU» v137 state)
     | .MULHU v138 => («dfn'MULHU» v138 state)
-    | .MULW v139 => («dfn'MULW» v139 state)
     | .REM v140 => («dfn'REM» v140 state)
-    | .REMU v141 => («dfn'REMU» v141 state)
-    | .REMUW v142 => («dfn'REMUW» v142 state)
-    | .REMW v143 => («dfn'REMW» v143 state))
+    | .REMU v141 => («dfn'REMU» v141 state))
     | .Shift v184 => (match v184 with
     | .SLL v145 => («dfn'SLL» v145 state)
     | .SLLI v146 => («dfn'SLLI» v146 state)
-    | .SLLIW v147 => («dfn'SLLIW» v147 state)
-    | .SLLW v148 => («dfn'SLLW» v148 state)
     | .SRA v149 => («dfn'SRA» v149 state)
     | .SRAI v150 => («dfn'SRAI» v150 state)
-    | .SRAIW v151 => («dfn'SRAIW» v151 state)
-    | .SRAW v152 => («dfn'SRAW» v152 state)
     | .SRL v153 => («dfn'SRL» v153 state)
-    | .SRLI v154 => («dfn'SRLI» v154 state)
-    | .SRLIW v155 => («dfn'SRLIW» v155 state)
-    | .SRLW v156 => («dfn'SRLW» v156 state))
+    | .SRLI v154 => («dfn'SRLI» v154 state))
     | .Store v185 => (match v185 with
     | .SB v158 => («dfn'SB» v158 state)
     | .SD v159 => («dfn'SD» v159 state)
@@ -139,10 +126,6 @@ theorem Run_ADD_equation (x : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) (s : r
     Run (instruction.ArithR (ArithR.ADD x)) s = «dfn'ADD» x s := rfl
 
 /-- Flapjack kernel check of the complete original dispatch clause; not a separate named HOL theorem. -/
-theorem Run_ADDW_equation (x : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) (s : riscv_state) :
-    Run (instruction.ArithR (ArithR.ADDW x)) s = «dfn'ADDW» x s := rfl
-
-/-- Flapjack kernel check of the complete original dispatch clause; not a separate named HOL theorem. -/
 theorem Run_AND_equation (x : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) (s : riscv_state) :
     Run (instruction.ArithR (ArithR.AND x)) s = «dfn'AND» x s := rfl
 
@@ -161,10 +144,6 @@ theorem Run_SLTU_equation (x : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) (s : 
 /-- Flapjack kernel check of the complete original dispatch clause; not a separate named HOL theorem. -/
 theorem Run_SUB_equation (x : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) (s : riscv_state) :
     Run (instruction.ArithR (ArithR.SUB x)) s = «dfn'SUB» x s := rfl
-
-/-- Flapjack kernel check of the complete original dispatch clause; not a separate named HOL theorem. -/
-theorem Run_SUBW_equation (x : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) (s : riscv_state) :
-    Run (instruction.ArithR (ArithR.SUBW x)) s = «dfn'SUBW» x s := rfl
 
 /-- Flapjack kernel check of the complete original dispatch clause; not a separate named HOL theorem. -/
 theorem Run_XOR_equation (x : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) (s : riscv_state) :
@@ -251,14 +230,6 @@ theorem Run_DIVU_equation (x : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) (s : 
     Run (instruction.MulDiv (MulDiv.DIVU x)) s = «dfn'DIVU» x s := rfl
 
 /-- Flapjack kernel check of the complete original dispatch clause; not a separate named HOL theorem. -/
-theorem Run_DIVUW_equation (x : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) (s : riscv_state) :
-    Run (instruction.MulDiv (MulDiv.DIVUW x)) s = «dfn'DIVUW» x s := rfl
-
-/-- Flapjack kernel check of the complete original dispatch clause; not a separate named HOL theorem. -/
-theorem Run_DIVW_equation (x : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) (s : riscv_state) :
-    Run (instruction.MulDiv (MulDiv.DIVW x)) s = «dfn'DIVW» x s := rfl
-
-/-- Flapjack kernel check of the complete original dispatch clause; not a separate named HOL theorem. -/
 theorem Run_MUL_equation (x : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) (s : riscv_state) :
     Run (instruction.MulDiv (MulDiv.MUL x)) s = «dfn'MUL» x s := rfl
 
@@ -275,24 +246,12 @@ theorem Run_MULHU_equation (x : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) (s :
     Run (instruction.MulDiv (MulDiv.MULHU x)) s = «dfn'MULHU» x s := rfl
 
 /-- Flapjack kernel check of the complete original dispatch clause; not a separate named HOL theorem. -/
-theorem Run_MULW_equation (x : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) (s : riscv_state) :
-    Run (instruction.MulDiv (MulDiv.MULW x)) s = «dfn'MULW» x s := rfl
-
-/-- Flapjack kernel check of the complete original dispatch clause; not a separate named HOL theorem. -/
 theorem Run_REM_equation (x : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) (s : riscv_state) :
     Run (instruction.MulDiv (MulDiv.REM x)) s = «dfn'REM» x s := rfl
 
 /-- Flapjack kernel check of the complete original dispatch clause; not a separate named HOL theorem. -/
 theorem Run_REMU_equation (x : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) (s : riscv_state) :
     Run (instruction.MulDiv (MulDiv.REMU x)) s = «dfn'REMU» x s := rfl
-
-/-- Flapjack kernel check of the complete original dispatch clause; not a separate named HOL theorem. -/
-theorem Run_REMUW_equation (x : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) (s : riscv_state) :
-    Run (instruction.MulDiv (MulDiv.REMUW x)) s = «dfn'REMUW» x s := rfl
-
-/-- Flapjack kernel check of the complete original dispatch clause; not a separate named HOL theorem. -/
-theorem Run_REMW_equation (x : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) (s : riscv_state) :
-    Run (instruction.MulDiv (MulDiv.REMW x)) s = «dfn'REMW» x s := rfl
 
 /-- Flapjack kernel check of the complete original dispatch clause; not a separate named HOL theorem. -/
 theorem Run_SLL_equation (x : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) (s : riscv_state) :
@@ -303,14 +262,6 @@ theorem Run_SLLI_equation (x : ((BitVec 5) × ((BitVec 5) × (BitVec 6)))) (s : 
     Run (instruction.Shift (Shift.SLLI x)) s = «dfn'SLLI» x s := rfl
 
 /-- Flapjack kernel check of the complete original dispatch clause; not a separate named HOL theorem. -/
-theorem Run_SLLIW_equation (x : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) (s : riscv_state) :
-    Run (instruction.Shift (Shift.SLLIW x)) s = «dfn'SLLIW» x s := rfl
-
-/-- Flapjack kernel check of the complete original dispatch clause; not a separate named HOL theorem. -/
-theorem Run_SLLW_equation (x : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) (s : riscv_state) :
-    Run (instruction.Shift (Shift.SLLW x)) s = «dfn'SLLW» x s := rfl
-
-/-- Flapjack kernel check of the complete original dispatch clause; not a separate named HOL theorem. -/
 theorem Run_SRA_equation (x : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) (s : riscv_state) :
     Run (instruction.Shift (Shift.SRA x)) s = «dfn'SRA» x s := rfl
 
@@ -319,28 +270,12 @@ theorem Run_SRAI_equation (x : ((BitVec 5) × ((BitVec 5) × (BitVec 6)))) (s : 
     Run (instruction.Shift (Shift.SRAI x)) s = «dfn'SRAI» x s := rfl
 
 /-- Flapjack kernel check of the complete original dispatch clause; not a separate named HOL theorem. -/
-theorem Run_SRAIW_equation (x : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) (s : riscv_state) :
-    Run (instruction.Shift (Shift.SRAIW x)) s = «dfn'SRAIW» x s := rfl
-
-/-- Flapjack kernel check of the complete original dispatch clause; not a separate named HOL theorem. -/
-theorem Run_SRAW_equation (x : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) (s : riscv_state) :
-    Run (instruction.Shift (Shift.SRAW x)) s = «dfn'SRAW» x s := rfl
-
-/-- Flapjack kernel check of the complete original dispatch clause; not a separate named HOL theorem. -/
 theorem Run_SRL_equation (x : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) (s : riscv_state) :
     Run (instruction.Shift (Shift.SRL x)) s = «dfn'SRL» x s := rfl
 
 /-- Flapjack kernel check of the complete original dispatch clause; not a separate named HOL theorem. -/
 theorem Run_SRLI_equation (x : ((BitVec 5) × ((BitVec 5) × (BitVec 6)))) (s : riscv_state) :
     Run (instruction.Shift (Shift.SRLI x)) s = «dfn'SRLI» x s := rfl
-
-/-- Flapjack kernel check of the complete original dispatch clause; not a separate named HOL theorem. -/
-theorem Run_SRLIW_equation (x : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) (s : riscv_state) :
-    Run (instruction.Shift (Shift.SRLIW x)) s = «dfn'SRLIW» x s := rfl
-
-/-- Flapjack kernel check of the complete original dispatch clause; not a separate named HOL theorem. -/
-theorem Run_SRLW_equation (x : ((BitVec 5) × ((BitVec 5) × (BitVec 5)))) (s : riscv_state) :
-    Run (instruction.Shift (Shift.SRLW x)) s = «dfn'SRLW» x s := rfl
 
 /-- Flapjack kernel check of the complete original dispatch clause; not a separate named HOL theorem. -/
 theorem Run_SB_equation (x : ((BitVec 5) × ((BitVec 5) × (BitVec 12)))) (s : riscv_state) :

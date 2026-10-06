@@ -85,14 +85,6 @@ example : Encode (.ArithR (.ADD ((31#5, (31#5, 31#5))))) = 33525683#32 := by dec
 example : Encode (.ArithR (.ADD ((30#5, (7#5, 16#5))))) = 17010483#32 := by decide
 -- Oracle Encode_ADD_3
 example : Encode (.ArithR (.ADD ((18#5, (21#5, 24#5))))) = 25856307#32 := by decide
--- Oracle Encode_ADDW_0
-example : Encode (.ArithR (.ADDW ((0#5, (0#5, 0#5))))) = 59#32 := by decide
--- Oracle Encode_ADDW_1
-example : Encode (.ArithR (.ADDW ((31#5, (31#5, 31#5))))) = 33525691#32 := by decide
--- Oracle Encode_ADDW_2
-example : Encode (.ArithR (.ADDW ((17#5, (26#5, 3#5))))) = 3999931#32 := by decide
--- Oracle Encode_ADDW_3
-example : Encode (.ArithR (.ADDW ((19#5, (22#5, 25#5))))) = 26937787#32 := by decide
 -- Oracle Encode_AND_0
 example : Encode (.ArithR (.AND ((0#5, (0#5, 0#5))))) = 28723#32 := by decide
 -- Oracle Encode_AND_1
@@ -133,14 +125,6 @@ example : Encode (.ArithR (.SUB ((31#5, (31#5, 31#5))))) = 1107267507#32 := by d
 example : Encode (.ArithR (.SUB ((16#5, (25#5, 2#5))))) = 1076660275#32 := by decide
 -- Oracle Encode_SUB_3
 example : Encode (.ArithR (.SUB ((24#5, (27#5, 30#5))))) = 1106086963#32 := by decide
--- Oracle Encode_SUBW_0
-example : Encode (.ArithR (.SUBW ((0#5, (0#5, 0#5))))) = 1073741883#32 := by decide
--- Oracle Encode_SUBW_1
-example : Encode (.ArithR (.SUBW ((31#5, (31#5, 31#5))))) = 1107267515#32 := by decide
--- Oracle Encode_SUBW_2
-example : Encode (.ArithR (.SUBW ((3#5, (12#5, 21#5))))) = 1096155579#32 := by decide
--- Oracle Encode_SUBW_3
-example : Encode (.ArithR (.SUBW ((25#5, (28#5, 31#5))))) = 1107168443#32 := by decide
 -- Oracle Encode_XOR_0
 example : Encode (.ArithR (.XOR ((0#5, (0#5, 0#5))))) = 16435#32 := by decide
 -- Oracle Encode_XOR_1
@@ -309,22 +293,6 @@ example : Encode (.MulDiv (.DIVU ((31#5, (31#5, 31#5))))) = 67100595#32 := by de
 example : Encode (.MulDiv (.DIVU ((31#5, (8#5, 17#5))))) = 51666867#32 := by decide
 -- Oracle Encode_DIVU_3
 example : Encode (.MulDiv (.DIVU ((13#5, (16#5, 19#5))))) = 54023859#32 := by decide
--- Oracle Encode_DIVUW_0
-example : Encode (.MulDiv (.DIVUW ((0#5, (0#5, 0#5))))) = 33574971#32 := by decide
--- Oracle Encode_DIVUW_1
-example : Encode (.MulDiv (.DIVUW ((31#5, (31#5, 31#5))))) = 67100603#32 := by decide
--- Oracle Encode_DIVUW_2
-example : Encode (.MulDiv (.DIVUW ((18#5, (27#5, 4#5))))) = 38656315#32 := by decide
--- Oracle Encode_DIVUW_3
-example : Encode (.MulDiv (.DIVUW ((14#5, (17#5, 20#5))))) = 55105339#32 := by decide
--- Oracle Encode_DIVW_0
-example : Encode (.MulDiv (.DIVW ((0#5, (0#5, 0#5))))) = 33570875#32 := by decide
--- Oracle Encode_DIVW_1
-example : Encode (.MulDiv (.DIVW ((31#5, (31#5, 31#5))))) = 67096507#32 := by decide
--- Oracle Encode_DIVW_2
-example : Encode (.MulDiv (.DIVW ((5#5, (14#5, 23#5))))) = 58147515#32 := by decide
--- Oracle Encode_DIVW_3
-example : Encode (.MulDiv (.DIVW ((15#5, (18#5, 21#5))))) = 56182715#32 := by decide
 -- Oracle Encode_MUL_0
 example : Encode (.MulDiv (.MUL ((0#5, (0#5, 0#5))))) = 33554483#32 := by decide
 -- Oracle Encode_MUL_1
@@ -357,14 +325,6 @@ example : Encode (.MulDiv (.MULHU ((31#5, (31#5, 31#5))))) = 67092403#32 := by d
 example : Encode (.MulDiv (.MULHU ((17#5, (26#5, 3#5))))) = 37566643#32 := by decide
 -- Oracle Encode_MULHU_3
 example : Encode (.MulDiv (.MULHU ((19#5, (22#5, 25#5))))) = 60504499#32 := by decide
--- Oracle Encode_MULW_0
-example : Encode (.MulDiv (.MULW ((0#5, (0#5, 0#5))))) = 33554491#32 := by decide
--- Oracle Encode_MULW_1
-example : Encode (.MulDiv (.MULW ((31#5, (31#5, 31#5))))) = 67080123#32 := by decide
--- Oracle Encode_MULW_2
-example : Encode (.MulDiv (.MULW ((4#5, (13#5, 22#5))))) = 57049659#32 := by decide
--- Oracle Encode_MULW_3
-example : Encode (.MulDiv (.MULW ((20#5, (23#5, 26#5))))) = 61573691#32 := by decide
 -- Oracle Encode_REM_0
 example : Encode (.MulDiv (.REM ((0#5, (0#5, 0#5))))) = 33579059#32 := by decide
 -- Oracle Encode_REM_1
@@ -381,22 +341,6 @@ example : Encode (.MulDiv (.REMU ((31#5, (31#5, 31#5))))) = 67108787#32 := by de
 example : Encode (.MulDiv (.REMU ((10#5, (19#5, 28#5))))) = 63567155#32 := by decide
 -- Oracle Encode_REMU_3
 example : Encode (.MulDiv (.REMU ((22#5, (25#5, 28#5))))) = 63765299#32 := by decide
--- Oracle Encode_REMUW_0
-example : Encode (.MulDiv (.REMUW ((0#5, (0#5, 0#5))))) = 33583163#32 := by decide
--- Oracle Encode_REMUW_1
-example : Encode (.MulDiv (.REMUW ((31#5, (31#5, 31#5))))) = 67108795#32 := by decide
--- Oracle Encode_REMUW_2
-example : Encode (.MulDiv (.REMUW ((29#5, (6#5, 15#5))))) = 49512123#32 := by decide
--- Oracle Encode_REMUW_3
-example : Encode (.MulDiv (.REMUW ((23#5, (26#5, 29#5))))) = 64846779#32 := by decide
--- Oracle Encode_REMW_0
-example : Encode (.MulDiv (.REMW ((0#5, (0#5, 0#5))))) = 33579067#32 := by decide
--- Oracle Encode_REMW_1
-example : Encode (.MulDiv (.REMW ((31#5, (31#5, 31#5))))) = 67104699#32 := by decide
--- Oracle Encode_REMW_2
-example : Encode (.MulDiv (.REMW ((16#5, (25#5, 2#5))))) = 36497467#32 := by decide
--- Oracle Encode_REMW_3
-example : Encode (.MulDiv (.REMW ((24#5, (27#5, 30#5))))) = 65924155#32 := by decide
 -- Oracle Encode_SLL_0
 example : Encode (.Shift (.SLL ((0#5, (0#5, 0#5))))) = 4147#32 := by decide
 -- Oracle Encode_SLL_1
@@ -413,22 +357,6 @@ example : Encode (.Shift (.SLLI ((31#5, (31#5, 63#6))))) = 67084179#32 := by dec
 example : Encode (.Shift (.SLLI ((22#5, (31#5, 25#6))))) = 27237139#32 := by decide
 -- Oracle Encode_SLLI_3
 example : Encode (.Shift (.SLLI ((26#5, (29#5, 48#6))))) = 51289363#32 := by decide
--- Oracle Encode_SLLIW_0
-example : Encode (.Shift (.SLLIW ((0#5, (0#5, 0#5))))) = 4123#32 := by decide
--- Oracle Encode_SLLIW_1
-example : Encode (.Shift (.SLLIW ((31#5, (31#5, 31#5))))) = 33529755#32 := by decide
--- Oracle Encode_SLLIW_2
-example : Encode (.Shift (.SLLIW ((9#5, (18#5, 27#5))))) = 28906651#32 := by decide
--- Oracle Encode_SLLIW_3
-example : Encode (.Shift (.SLLIW ((27#5, (30#5, 1#5))))) = 2039195#32 := by decide
--- Oracle Encode_SLLW_0
-example : Encode (.Shift (.SLLW ((0#5, (0#5, 0#5))))) = 4155#32 := by decide
--- Oracle Encode_SLLW_1
-example : Encode (.Shift (.SLLW ((31#5, (31#5, 31#5))))) = 33529787#32 := by decide
--- Oracle Encode_SLLW_2
-example : Encode (.Shift (.SLLW ((28#5, (5#5, 14#5))))) = 14851643#32 := by decide
--- Oracle Encode_SLLW_3
-example : Encode (.Shift (.SLLW ((28#5, (31#5, 2#5))))) = 3120699#32 := by decide
 -- Oracle Encode_SRA_0
 example : Encode (.Shift (.SRA ((0#5, (0#5, 0#5))))) = 1073762355#32 := by decide
 -- Oracle Encode_SRA_1
@@ -445,22 +373,6 @@ example : Encode (.Shift (.SRAI ((31#5, (31#5, 63#6))))) = 1140842387#32 := by d
 example : Encode (.Shift (.SRAI ((2#5, (11#5, 37#6))))) = 1112920339#32 := by decide
 -- Oracle Encode_SRAI_3
 example : Encode (.Shift (.SRAI ((30#5, (1#5, 52#6))))) = 1128324883#32 := by decide
--- Oracle Encode_SRAIW_0
-example : Encode (.Shift (.SRAIW ((0#5, (0#5, 0#5))))) = 1073762331#32 := by decide
--- Oracle Encode_SRAIW_1
-example : Encode (.Shift (.SRAIW ((31#5, (31#5, 31#5))))) = 1107287963#32 := by decide
--- Oracle Encode_SRAIW_2
-example : Encode (.Shift (.SRAIW ((21#5, (30#5, 7#5))))) = 1082088091#32 := by decide
--- Oracle Encode_SRAIW_3
-example : Encode (.Shift (.SRAIW ((31#5, (2#5, 5#5))))) = 1079074715#32 := by decide
--- Oracle Encode_SRAW_0
-example : Encode (.Shift (.SRAW ((0#5, (0#5, 0#5))))) = 1073762363#32 := by decide
--- Oracle Encode_SRAW_1
-example : Encode (.Shift (.SRAW ((31#5, (31#5, 31#5))))) = 1107287995#32 := by decide
--- Oracle Encode_SRAW_2
-example : Encode (.Shift (.SRAW ((8#5, (17#5, 26#5))))) = 1101583419#32 := by decide
--- Oracle Encode_SRAW_3
-example : Encode (.Shift (.SRAW ((0#5, (3#5, 6#5))))) = 1080152123#32 := by decide
 -- Oracle Encode_SRL_0
 example : Encode (.Shift (.SRL ((0#5, (0#5, 0#5))))) = 20531#32 := by decide
 -- Oracle Encode_SRL_1
@@ -477,22 +389,6 @@ example : Encode (.Shift (.SRLI ((31#5, (31#5, 63#6))))) = 67100563#32 := by dec
 example : Encode (.Shift (.SRLI ((14#5, (23#5, 49#6))))) = 52156179#32 := by decide
 -- Oracle Encode_SRLI_3
 example : Encode (.Shift (.SRLI ((2#5, (5#5, 56#6))))) = 58904851#32 := by decide
--- Oracle Encode_SRLIW_0
-example : Encode (.Shift (.SRLIW ((0#5, (0#5, 0#5))))) = 20507#32 := by decide
--- Oracle Encode_SRLIW_1
-example : Encode (.Shift (.SRLIW ((31#5, (31#5, 31#5))))) = 33546139#32 := by decide
--- Oracle Encode_SRLIW_2
-example : Encode (.Shift (.SRLIW ((1#5, (10#5, 19#5))))) = 20271259#32 := by decide
--- Oracle Encode_SRLIW_3
-example : Encode (.Shift (.SRLIW ((3#5, (6#5, 9#5))))) = 9654683#32 := by decide
--- Oracle Encode_SRLW_0
-example : Encode (.Shift (.SRLW ((0#5, (0#5, 0#5))))) = 20539#32 := by decide
--- Oracle Encode_SRLW_1
-example : Encode (.Shift (.SRLW ((31#5, (31#5, 31#5))))) = 33546171#32 := by decide
--- Oracle Encode_SRLW_2
-example : Encode (.Shift (.SRLW ((20#5, (29#5, 6#5))))) = 7264827#32 := by decide
--- Oracle Encode_SRLW_3
-example : Encode (.Shift (.SRLW ((4#5, (7#5, 10#5))))) = 10736187#32 := by decide
 -- Oracle Encode_SB_0
 example : Encode (.Store (.SB ((0#5, (0#5, 0#12))))) = 35#32 := by decide
 -- Oracle Encode_SB_1
