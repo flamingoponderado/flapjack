@@ -1,5 +1,6 @@
 import Flapjack.Misc.Sptree
 import Flapjack.HolRef
+import Mathlib.Tactic.IntervalCases
 
 namespace Flapjack.Compiler.Backend.Mips32Config
 
@@ -18,5 +19,29 @@ def mipsNames : Flapjack.Spt Nat :=
 /-- Identity-default lookup in `mipsNames` (Flapjack infrastructure). -/
 def mips32NameLookup (register : Nat) : Nat :=
   (Flapjack.sptLookup register mipsNames).getD register
+
+end Flapjack.Compiler.Backend.Mips32Config
+
+namespace Flapjack.Compiler.Backend.Mips32Config
+
+/-- `mipsNames` as an explicit function (Flapjack infrastructure for deciding facts about
+the names). -/
+def mipsNameMap (register : Nat) : Nat :=
+  match register with
+  | 0 => 31 | 1 => 4 | 2 => 5 | 3 => 6 | 4 => 7 | 5 => 24 | 6 => 3 | 7 => 2 | 24 => 0
+  | 31 => 1 | r => r
+
+theorem mipsNames_lookup_eq (register : Nat) :
+    (Flapjack.sptLookup register mipsNames).getD register = mipsNameMap register := by
+  by_cases h : register < 32
+  · interval_cases register <;>
+      simp [mipsNames, Flapjack.sptInsert, Flapjack.sptLookup, mipsNameMap]
+  · have hnone : Flapjack.sptLookup register mipsNames = none := by
+      unfold mipsNames
+      repeat rw [Flapjack.sptLookup_sptInsert_ne _ _ _ _ (by omega)]
+      rfl
+    rw [hnone]
+    unfold mipsNameMap
+    split <;> first | rfl | omega
 
 end Flapjack.Compiler.Backend.Mips32Config

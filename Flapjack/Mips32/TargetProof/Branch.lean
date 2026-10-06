@@ -25,7 +25,7 @@ theorem seq_of_sequential (i : Insn) (h : insnSequential i = true) : Seq i := by
   cases i <;> simp [insnSequential] at h <;>
     simp only [exec, setReg_pc, setReg_nextPc, setReg_trapped, setHiLo] <;>
     (try split) <;> (try simp only [setReg_pc, setReg_nextPc, setReg_trapped]) <;>
-    refine ⟨?_, ?_, ?_⟩ <;> first | trivial | rfl
+    refine ⟨?_, ?_, ?_⟩ <;> trivial
 
 theorem Seq.plain {i : Insn} (h : Seq i) : Plain i := by
   intro s hs
@@ -67,7 +67,7 @@ theorem branchCase (i : HolAsm 32) (s1 s2 : AsmState 32) (ms : State)
     (hbr : decode (encodeInsn br) = some br)
     (hbrPc : ∀ t : State, (exec t br).pc = t.nextPc ∧ (exec t br).trapped = t.trapped ∧
       (exec t br).mem = t.mem ∧ touched t br = [])
-    (hds : Seq ds) (hdsw : NoWrite ds) (hdsm : insnNoMem ds = true)
+    (hds : Seq ds) (hdsm : insnNoMem ds = true)
     (hdsd : decode (encodeInsn ds) = some ds)
     (hpc : (exec (exec (pre.foldl exec ms) br) ds).pc = s2.pc)
     (hal : holAligned 2 s2.pc = true)

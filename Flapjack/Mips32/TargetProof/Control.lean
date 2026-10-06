@@ -18,8 +18,7 @@ theorem boff_branchOffset (a : W) (k : Nat) (hk : k ≤ 2) (ha : a.toNat % 4 = 0
   have hA := a.isLt
   rw [BitVec.toInt_eq_toNat_cond] at h1 h2
   simp only [boff, branchOffset, BitVec.toNat_shiftLeft, BitVec.toNat_signExtend,
-    BitVec.msb_eq_decide, BitVec.toNat_sub, BitVec.toNat_setWidth, BitVec.toNat_ushiftRight,
-    BitVec.toNat_ofNat, Nat.shiftLeft_eq, Nat.shiftRight_eq_div_pow]
+    BitVec.msb_eq_decide, BitVec.toNat_sub, BitVec.toNat_setWidth, BitVec.toNat_ofNat, Nat.shiftLeft_eq]
   split at h1 <;> split at h2 <;> split <;> simp_all <;> omega
 
 
@@ -39,7 +38,7 @@ theorem case_jumpReg (r : Nat) (s1 s2 : AsmState 32) (ms : State)
     simp [hal] at hfail; exact hfail.1
   have hv := st.reg _ o.lt o.avoid
   apply branchCase _ _ _ _ st [] (.jr (regOf r)) nop rfl rfl (by simp) (by simp) (decode_jr _)
-    (fun t => by simp [exec, touched]) seq_nop noWrite_nop rfl decode_nop
+    (fun t => by simp [exec, touched]) seq_nop rfl decode_nop
   · simp [exec, nop, State.setReg, hv]
   · exact hal'
   · intro a ha; simp [exec, nop, State.setReg]; exact st.mem a ha
@@ -73,7 +72,7 @@ theorem case_jump (a : W) (s1 s2 : AsmState 32) (ms : State)
     simp only [shortRange, Bool.and_eq_true, decide_eq_true_eq] at hs
     have hoff := boff_branchOffset a 1 (by decide) ha (by omega) (by omega)
     apply branchCase _ _ _ _ st [] _ nop hast rfl (by simp) (by simp) (decode_beq _ _ _)
-      (fun t => branch_exec t _ _ _) seq_nop noWrite_nop rfl decode_nop
+      (fun t => branch_exec t _ _ _) seq_nop rfl decode_nop
     · simp [exec, nop, State.setReg, st.nextPc, st.pc]
       rw [hoff]; bv_omega
     · exact hal
@@ -102,7 +101,6 @@ theorem case_jump (a : W) (s1 s2 : AsmState 32) (ms : State)
     · exact hdec _ (by simp)
     · intro t; simp [exec, touched]
     · exact seq_of_sequential _ rfl
-    · exact noWrite_of_writes _ rfl
     · rfl
     · exact hdec _ (by simp)
     · have f1 : tmp ≠ 0 := by decide
@@ -112,23 +110,23 @@ theorem case_jump (a : W) (s1 s2 : AsmState 32) (ms : State)
       have f5 : tmp ≠ tmp2 := by decide
       have f6 : ra ≠ tmp2 := by decide
       simp only [List.foldl_cons, List.foldl_nil, exec, setReg_pc, setReg_nextPc, reg_setReg,
-        reg_mk_gpr, alu_or, alu_add, if_true, if_false, f1, f2, f3, f4, f5, f6, f4.symm, f5.symm,
-        f6.symm, boff, st.nextPc, show (ra = 31) ↔ True from iff_true_intro rfl]
+        reg_mk_gpr, alu_or, alu_add, if_true, if_false, f1, f2, f3, f5, f6, f4.symm, f5.symm,
+        boff, st.nextPc, show (ra = 31) ↔ True from iff_true_intro rfl]
       erw [e]; rw [st.pc]
       bv_omega
     · exact hal
-    · intro x hx; simp [exec, State.setReg, setReg_mem]; exact st.mem x hx
+    · intro x hx; simp [exec, State.setReg]; exact st.mem x hx
     · intro r hr
       have hr' := st.reg _ hr.lt hr.avoid
       have n1 : regOf r ≠ 1 := hr.ne_tmp
       have n30 : regOf r ≠ 30 := hr.ne_tmp2
       simp only [List.foldl_cons, List.foldl_nil, exec, reg_setReg, reg_mk_gpr, alu_or, alu_add,
-        tmp, tmp2, ra, hr.regOf_ne_zero, n1, n30, if_false]
+        tmp, tmp2, ra, hr.regOf_ne_zero, n1, if_false]
       by_cases e31 : regOf r = 31
       · have : r = 31 := (regOf_inj hr.lt (by decide)).1 e31
         subst this
-        simp [e31, ← hra, ra, zext16]
-      · simp [e31, hr', hr.regOf_ne_zero, n30, n1, zext16]
+        simp [e31, ← hra, zext16]
+      · simp [e31, hr', hr.regOf_ne_zero, n30, zext16]
 
 theorem bal_exec (t : State) (off : BitVec 16) :
     (exec t (.bal off)).pc = t.nextPc ∧ (exec t (.bal off)).trapped = t.trapped ∧
@@ -161,9 +159,9 @@ theorem case_call (a : W) (s1 s2 : AsmState 32) (ms : State)
     have hoff := boff_branchOffset a 1 (by decide) ha (by omega) (by omega)
     have hlen : (mips32Enc (.call a)).length = 8 := by rw [mips32Enc_length, hast]; rfl
     apply branchCase _ _ _ _ st [] _ nop hast rfl (by simp) (by simp) (decode_bal _)
-      (fun t => bal_exec t _) seq_nop noWrite_nop rfl decode_nop
+      (fun t => bal_exec t _) seq_nop rfl decode_nop
     · rw [List.foldl_nil, exec_nop]
-      simp only [exec, setReg_nextPc, st.nextPc, if_true, ↓reduceIte]
+      simp only [exec, setReg_nextPc, st.nextPc, ↓reduceIte]
       erw [hoff]; rw [st.pc]; bv_omega
     · exact hal
     · intro x hx; rw [List.foldl_nil, exec_nop]; simp [exec, setReg_mem]; exact st.mem x hx
@@ -197,12 +195,11 @@ theorem case_call (a : W) (s1 s2 : AsmState 32) (ms : State)
     · exact hdec _ (by simp)
     · exact fun t => jalr_exec t _ _
     · exact seq_nop
-    · exact noWrite_nop
     · rfl
     · exact decode_nop
     · rw [exec_nop]
       simp only [List.foldl_cons, List.foldl_nil, exec, setReg_pc, setReg_nextPc, reg_setReg,
-        reg_mk_gpr, alu_or, alu_add, tmp, ra, if_true, if_false, ↓reduceIte, boff, st.nextPc]
+        reg_mk_gpr, alu_or, alu_add, tmp, ra, ↓reduceIte, boff, st.nextPc]
       simp
       erw [e]; rw [st.pc]
       bv_omega
@@ -281,7 +278,7 @@ theorem cmpCase (c : Cmp) (r1 : Nat) (ri : HolRegImm 32) (a : W) (s1 s2 : AsmSta
   by_cases hc : wordCmpHOL c (s1.regs r1) (regImm ri s1) = true
   · simp only [hc, if_true] at hs2
     subst hs2
-    apply branchCase _ _ _ _ st pre br nop hsplit rfl hp' ht' hbrd hbrPc seq_nop noWrite_nop rfl
+    apply branchCase _ _ _ _ st pre br nop hsplit rfl hp' ht' hbrd hbrPc seq_nop rfl
       decode_nop
     · rw [exec_nop, hbr]; simp only [hcond, hc, if_true]; rw [f1, htarget]
     · exact hal
@@ -290,7 +287,7 @@ theorem cmpCase (c : Cmp) (r1 : Nat) (ri : HolRegImm 32) (a : W) (s1 s2 : AsmSta
       exact st.reg _ hr.lt hr.avoid
   · simp only [hc, if_false, Bool.false_eq_true] at hs2
     subst hs2
-    apply branchCase _ _ _ _ st pre br nop hsplit rfl hp' ht' hbrd hbrPc seq_nop noWrite_nop rfl
+    apply branchCase _ _ _ _ st pre br nop hsplit rfl hp' ht' hbrd hbrPc seq_nop rfl
       decode_nop
     · rw [exec_nop, hbr]; simp only [hcond, hc, if_false, Bool.false_eq_true]
       rw [f2, f1, st.pc, hlen]
@@ -362,16 +359,14 @@ theorem case_jumpCmp_reg (c : Cmp) (r1 r2 : Nat) (a : W) (s1 s2 : AsmState 32) (
       (fun t => t.reg tmp != t.reg 0) _
       (by simp [mips32Ast, cmpBranch]) (pre1 _ rfl rfl rfl (by simp [mips32Ast]))
       (fun r hr => by simp [exec, reg_tmp_write _ _ _ hr])
-      (by simp) (fun _ => by simp [touched]) (fun t => by first | exact exec_bne t _ _ _ | exact exec_beq t _ _ _)
-      (by simp [exec, wordCmpHOL, regImm, readReg, v1, v2, tmp, BitVec.ult, BitVec.lt_def,
-        holAsmSignedLess_eq, AndOp.and]) tgt1 hal
+      (by simp) (fun _ => by simp [touched]) (fun t => by exact exec_bne t _ _ _)
+      (by simp [exec, wordCmpHOL, regImm, readReg, v1, v2, tmp, holAsmSignedLess_eq]) tgt1 hal
   · exact cmpCase _ _ _ _ _ _ _ st [.and tmp (regOf r1) (regOf r2)] (.beq tmp 0 (branchOffset a 2))
       (fun t => t.reg tmp == t.reg 0) _
       (by simp [mips32Ast, cmpBranch]) (pre1 _ rfl rfl rfl (by simp [mips32Ast]))
       (fun r hr => by simp [exec, reg_tmp_write _ _ _ hr])
-      (by simp) (fun _ => by simp [touched]) (fun t => by first | exact exec_bne t _ _ _ | exact exec_beq t _ _ _)
-      (by simp [exec, wordCmpHOL, regImm, readReg, v1, v2, tmp, BitVec.ult, BitVec.lt_def,
-        holAsmSignedLess_eq, AndOp.and]) tgt1 hal
+      (by simp) (fun _ => by simp [touched]) (fun t => by exact exec_beq t _ _ _)
+      (by simp [exec, wordCmpHOL, regImm, readReg, v1, v2, tmp, AndOp.and]) tgt1 hal
   · exact cmpCase _ _ _ _ _ _ _ st [] (.bne (regOf r1) (regOf r2) (branchOffset a 2 + 1))
       (fun t => t.reg (regOf r1) != t.reg (regOf r2)) _
       (by simp [mips32Ast]) (by simp) (fun _ _ => rfl) (decode_bne _ _ _) (fun _ => by simp [touched])
@@ -380,23 +375,20 @@ theorem case_jumpCmp_reg (c : Cmp) (r1 r2 : Nat) (a : W) (s1 s2 : AsmState 32) (
       (fun t => t.reg tmp == t.reg 0) _
       (by simp [mips32Ast, cmpBranch]) (pre1 _ rfl rfl rfl (by simp [mips32Ast]))
       (fun r hr => by simp [exec, reg_tmp_write _ _ _ hr])
-      (by simp) (fun _ => by simp [touched]) (fun t => by first | exact exec_bne t _ _ _ | exact exec_beq t _ _ _)
-      (by simp [exec, wordCmpHOL, regImm, readReg, v1, v2, tmp, BitVec.ult, BitVec.lt_def,
-        holAsmSignedLess_eq, AndOp.and]) tgt1 hal
+      (by simp) (fun _ => by simp [touched]) (fun t => by exact exec_beq t _ _ _)
+      (by simp [exec, wordCmpHOL, regImm, readReg, v1, v2, tmp, BitVec.ult, BitVec.lt_def]) tgt1 hal
   · exact cmpCase _ _ _ _ _ _ _ st [.slt tmp (regOf r1) (regOf r2)] (.beq tmp 0 (branchOffset a 2))
       (fun t => t.reg tmp == t.reg 0) _
       (by simp [mips32Ast, cmpBranch]) (pre1 _ rfl rfl rfl (by simp [mips32Ast]))
       (fun r hr => by simp [exec, reg_tmp_write _ _ _ hr])
-      (by simp) (fun _ => by simp [touched]) (fun t => by first | exact exec_bne t _ _ _ | exact exec_beq t _ _ _)
-      (by simp [exec, wordCmpHOL, regImm, readReg, v1, v2, tmp, BitVec.ult, BitVec.lt_def,
-        holAsmSignedLess_eq, AndOp.and]) tgt1 hal
+      (by simp) (fun _ => by simp [touched]) (fun t => by exact exec_beq t _ _ _)
+      (by simp [exec, wordCmpHOL, regImm, readReg, v1, v2, tmp, holAsmSignedLess_eq]) tgt1 hal
   · exact cmpCase _ _ _ _ _ _ _ st [.and tmp (regOf r1) (regOf r2)] (.bne tmp 0 (branchOffset a 2))
       (fun t => t.reg tmp != t.reg 0) _
       (by simp [mips32Ast, cmpBranch]) (pre1 _ rfl rfl rfl (by simp [mips32Ast]))
       (fun r hr => by simp [exec, reg_tmp_write _ _ _ hr])
-      (by simp) (fun _ => by simp [touched]) (fun t => by first | exact exec_bne t _ _ _ | exact exec_beq t _ _ _)
-      (by simp [exec, wordCmpHOL, regImm, readReg, v1, v2, tmp, BitVec.ult, BitVec.lt_def,
-        holAsmSignedLess_eq, AndOp.and]) tgt1 hal
+      (by simp) (fun _ => by simp [touched]) (fun t => by exact exec_bne t _ _ _)
+      (by simp [exec, wordCmpHOL, regImm, readReg, v1, v2, tmp, AndOp.and]) tgt1 hal
 
 theorem case_jumpCmp_imm (c : Cmp) (r1 : Nat) (i : W) (a : W) (s1 s2 : AsmState 32) (ms : State)
     (h : asmStep mips32Target.config s1 (.jumpCmp c r1 (.imm i) a) s2 ∧
@@ -434,11 +426,10 @@ theorem case_jumpCmp_imm (c : Cmp) (r1 : Nat) (i : W) (a : W) (s1 s2 : AsmState 
     have e := sext_lo16 i hv.1 hv.2
     exact cmpCase _ _ _ _ _ _ _ st [.addiu tmp 0 (lo16 i)] (.beq (regOf r1) tmp (branchOffset a 2))
       (fun t => t.reg (regOf r1) == t.reg tmp) _
-      (by simp [mips32Ast, cmpBranch]) (pre1 _ rfl rfl rfl (by simp [mips32Ast]))
+      (by simp [mips32Ast]) (pre1 _ rfl rfl rfl (by simp [mips32Ast]))
       (fun r hr => by simp [exec, reg_tmp_write _ _ _ hr])
-      (by simp) (fun _ => by simp [touched]) (fun t => by first | exact exec_bne t _ _ _ | exact exec_beq t _ _ _)
-      (by simp [exec, wordCmpHOL, regImm, readReg, v1, tmp, BitVec.ult, BitVec.lt_def,
-        holAsmSignedLess_eq, AndOp.and, e, bne, o1.regOf_ne_zero,
+      (by simp) (fun _ => by simp [touched]) (fun t => by exact exec_beq t _ _ _)
+      (by simp [exec, wordCmpHOL, regImm, v1, tmp, e, o1.regOf_ne_zero,
         show regOf r1 ≠ 1 from o1.ne_tmp]) tgt1 hal
   · have hv : (-32768 : W).sle i = true ∧ i.sle 32767 = true := by
       simp only [Bool.or_eq_true, Bool.and_eq_true, beq_iff_eq] at himm
@@ -450,10 +441,9 @@ theorem case_jumpCmp_imm (c : Cmp) (r1 : Nat) (i : W) (a : W) (s1 s2 : AsmState 
       (fun t => t.reg tmp != t.reg 0) _
       (by simp [mips32Ast, cmpBranch]) (pre1 _ rfl rfl rfl (by simp [mips32Ast]))
       (fun r hr => by simp [exec, reg_tmp_write _ _ _ hr])
-      (by simp) (fun _ => by simp [touched]) (fun t => by first | exact exec_bne t _ _ _ | exact exec_beq t _ _ _)
-      (by simp [exec, wordCmpHOL, regImm, readReg, v1, tmp, BitVec.ult, BitVec.lt_def,
-        holAsmSignedLess_eq, AndOp.and, e, bne, o1.regOf_ne_zero,
-        show regOf r1 ≠ 1 from o1.ne_tmp]) tgt1 hal
+      (by simp) (fun _ => by simp [touched]) (fun t => by exact exec_bne t _ _ _)
+      (by simp [exec, wordCmpHOL, regImm, v1, tmp, BitVec.ult, BitVec.lt_def,
+        e, bne]) tgt1 hal
   · have hv : (-32768 : W).sle i = true ∧ i.sle 32767 = true := by
       simp only [Bool.or_eq_true, Bool.and_eq_true, beq_iff_eq] at himm
       rcases himm with ⟨hx, -⟩ | hv
@@ -464,10 +454,8 @@ theorem case_jumpCmp_imm (c : Cmp) (r1 : Nat) (i : W) (a : W) (s1 s2 : AsmState 
       (fun t => t.reg tmp != t.reg 0) _
       (by simp [mips32Ast, cmpBranch]) (pre1 _ rfl rfl rfl (by simp [mips32Ast]))
       (fun r hr => by simp [exec, reg_tmp_write _ _ _ hr])
-      (by simp) (fun _ => by simp [touched]) (fun t => by first | exact exec_bne t _ _ _ | exact exec_beq t _ _ _)
-      (by simp [exec, wordCmpHOL, regImm, readReg, v1, tmp, BitVec.ult, BitVec.lt_def,
-        holAsmSignedLess_eq, AndOp.and, e, bne, o1.regOf_ne_zero,
-        show regOf r1 ≠ 1 from o1.ne_tmp]) tgt1 hal
+      (by simp) (fun _ => by simp [touched]) (fun t => by exact exec_bne t _ _ _)
+      (by simp [exec, wordCmpHOL, regImm, v1, tmp, holAsmSignedLess_eq, e, bne]) tgt1 hal
   · have hv : (0 : W).sle i = true ∧ i.sle 0xFFFF = true := by
       simp only [Bool.or_eq_true, Bool.and_eq_true, beq_iff_eq] at himm
       rcases himm with ⟨hx, -⟩ | hv
@@ -478,10 +466,8 @@ theorem case_jumpCmp_imm (c : Cmp) (r1 : Nat) (i : W) (a : W) (s1 s2 : AsmState 
       (fun t => t.reg tmp == t.reg 0) _
       (by simp [mips32Ast, cmpBranch]) (pre1 _ rfl rfl rfl (by simp [mips32Ast]))
       (fun r hr => by simp [exec, reg_tmp_write _ _ _ hr])
-      (by simp) (fun _ => by simp [touched]) (fun t => by first | exact exec_bne t _ _ _ | exact exec_beq t _ _ _)
-      (by simp [exec, wordCmpHOL, regImm, readReg, v1, tmp, BitVec.ult, BitVec.lt_def,
-        holAsmSignedLess_eq, AndOp.and, e, bne, o1.regOf_ne_zero,
-        show regOf r1 ≠ 1 from o1.ne_tmp]) tgt1 hal
+      (by simp) (fun _ => by simp [touched]) (fun t => by exact exec_beq t _ _ _)
+      (by simp [exec, wordCmpHOL, regImm, v1, tmp, AndOp.and, e]) tgt1 hal
   · have hv : (-32768 : W).sle i = true ∧ i.sle 32767 = true := by
       simp only [Bool.or_eq_true, Bool.and_eq_true, beq_iff_eq] at himm
       rcases himm with ⟨hx, -⟩ | hv
@@ -490,11 +476,10 @@ theorem case_jumpCmp_imm (c : Cmp) (r1 : Nat) (i : W) (a : W) (s1 s2 : AsmState 
     have e := sext_lo16 i hv.1 hv.2
     exact cmpCase _ _ _ _ _ _ _ st [.addiu tmp 0 (lo16 i)] (.bne (regOf r1) tmp (branchOffset a 2))
       (fun t => t.reg (regOf r1) != t.reg tmp) _
-      (by simp [mips32Ast, cmpBranch]) (pre1 _ rfl rfl rfl (by simp [mips32Ast]))
+      (by simp [mips32Ast]) (pre1 _ rfl rfl rfl (by simp [mips32Ast]))
       (fun r hr => by simp [exec, reg_tmp_write _ _ _ hr])
-      (by simp) (fun _ => by simp [touched]) (fun t => by first | exact exec_bne t _ _ _ | exact exec_beq t _ _ _)
-      (by simp [exec, wordCmpHOL, regImm, readReg, v1, tmp, BitVec.ult, BitVec.lt_def,
-        holAsmSignedLess_eq, AndOp.and, e, bne, o1.regOf_ne_zero,
+      (by simp) (fun _ => by simp [touched]) (fun t => by exact exec_bne t _ _ _)
+      (by simp [exec, wordCmpHOL, regImm, v1, tmp, e, bne, o1.regOf_ne_zero,
         show regOf r1 ≠ 1 from o1.ne_tmp]) tgt1 hal
   · have hv : (-32768 : W).sle i = true ∧ i.sle 32767 = true := by
       simp only [Bool.or_eq_true, Bool.and_eq_true, beq_iff_eq] at himm
@@ -506,10 +491,9 @@ theorem case_jumpCmp_imm (c : Cmp) (r1 : Nat) (i : W) (a : W) (s1 s2 : AsmState 
       (fun t => t.reg tmp == t.reg 0) _
       (by simp [mips32Ast, cmpBranch]) (pre1 _ rfl rfl rfl (by simp [mips32Ast]))
       (fun r hr => by simp [exec, reg_tmp_write _ _ _ hr])
-      (by simp) (fun _ => by simp [touched]) (fun t => by first | exact exec_bne t _ _ _ | exact exec_beq t _ _ _)
-      (by simp [exec, wordCmpHOL, regImm, readReg, v1, tmp, BitVec.ult, BitVec.lt_def,
-        holAsmSignedLess_eq, AndOp.and, e, bne, o1.regOf_ne_zero,
-        show regOf r1 ≠ 1 from o1.ne_tmp]) tgt1 hal
+      (by simp) (fun _ => by simp [touched]) (fun t => by exact exec_beq t _ _ _)
+      (by simp [exec, wordCmpHOL, regImm, v1, tmp, BitVec.ult, BitVec.lt_def,
+        e]) tgt1 hal
   · have hv : (-32768 : W).sle i = true ∧ i.sle 32767 = true := by
       simp only [Bool.or_eq_true, Bool.and_eq_true, beq_iff_eq] at himm
       rcases himm with ⟨hx, -⟩ | hv
@@ -520,10 +504,8 @@ theorem case_jumpCmp_imm (c : Cmp) (r1 : Nat) (i : W) (a : W) (s1 s2 : AsmState 
       (fun t => t.reg tmp == t.reg 0) _
       (by simp [mips32Ast, cmpBranch]) (pre1 _ rfl rfl rfl (by simp [mips32Ast]))
       (fun r hr => by simp [exec, reg_tmp_write _ _ _ hr])
-      (by simp) (fun _ => by simp [touched]) (fun t => by first | exact exec_bne t _ _ _ | exact exec_beq t _ _ _)
-      (by simp [exec, wordCmpHOL, regImm, readReg, v1, tmp, BitVec.ult, BitVec.lt_def,
-        holAsmSignedLess_eq, AndOp.and, e, bne, o1.regOf_ne_zero,
-        show regOf r1 ≠ 1 from o1.ne_tmp]) tgt1 hal
+      (by simp) (fun _ => by simp [touched]) (fun t => by exact exec_beq t _ _ _)
+      (by simp [exec, wordCmpHOL, regImm, v1, tmp, holAsmSignedLess_eq, e]) tgt1 hal
   · have hv : (0 : W).sle i = true ∧ i.sle 0xFFFF = true := by
       simp only [Bool.or_eq_true, Bool.and_eq_true, beq_iff_eq] at himm
       rcases himm with ⟨hx, -⟩ | hv
@@ -534,10 +516,8 @@ theorem case_jumpCmp_imm (c : Cmp) (r1 : Nat) (i : W) (a : W) (s1 s2 : AsmState 
       (fun t => t.reg tmp != t.reg 0) _
       (by simp [mips32Ast, cmpBranch]) (pre1 _ rfl rfl rfl (by simp [mips32Ast]))
       (fun r hr => by simp [exec, reg_tmp_write _ _ _ hr])
-      (by simp) (fun _ => by simp [touched]) (fun t => by first | exact exec_bne t _ _ _ | exact exec_beq t _ _ _)
-      (by simp [exec, wordCmpHOL, regImm, readReg, v1, tmp, BitVec.ult, BitVec.lt_def,
-        holAsmSignedLess_eq, AndOp.and, e, bne, o1.regOf_ne_zero,
-        show regOf r1 ≠ 1 from o1.ne_tmp]) tgt1 hal
+      (by simp) (fun _ => by simp [touched]) (fun t => by exact exec_bne t _ _ _)
+      (by simp [exec, wordCmpHOL, regImm, v1, tmp, AndOp.and, e, bne]) tgt1 hal
 
 theorem case_loc (r : Nat) (i : W) (s1 s2 : AsmState 32) (ms : State)
     (h : asmStep mips32Target.config s1 (.loc r i) s2 ∧ targetStateRel mips32Target s1 ms) :
@@ -565,10 +545,9 @@ theorem case_loc (r : Nat) (i : W) (s1 s2 : AsmState 32) (ms : State)
     · intro x hx; simp [mips32Ast, exec, setReg_mem]; exact st.mem x hx
     · intro r' hr
       have hr' := st.reg _ hr.lt hr.avoid
-      simp only [mips32Ast, if_true, List.foldl_cons, List.foldl_nil, exec, reg_setReg,
+      simp only [mips32Ast, List.foldl_cons, List.foldl_nil, exec, reg_setReg,
         reg_mk_gpr, alu_or, alu_add, tmp, ra, hr.regOf_ne_zero, show regOf r' ≠ 1 from hr.ne_tmp,
-        if_false, setReg_pc, setReg_nextPc, if_true, ↓reduceIte, hbal,
-        show (1 : Fin 32) ≠ 0 by decide, show (31 : Fin 32) ≠ 0 by decide,
+        setReg_nextPc, ↓reduceIte, show (1 : Fin 32) ≠ 0 by decide, show (31 : Fin 32) ≠ 0 by decide,
         show (31 : Fin 32) ≠ 1 by decide]
       by_cases e31 : r' = 31
       · subst e31
@@ -592,19 +571,18 @@ theorem case_loc (r : Nat) (i : W) (s1 s2 : AsmState 32) (ms : State)
     · intro x hx; simp [mips32Ast, h31, exec, setReg_mem]; exact st.mem x hx
     · intro r' hr
       have hr' := st.reg _ hr.lt hr.avoid
-      simp only [mips32Ast, h31, if_false, List.foldl_cons, List.foldl_nil, exec, reg_setReg,
+      simp only [mips32Ast, h31, List.foldl_cons, List.foldl_nil, exec, reg_setReg,
         reg_mk_gpr, alu_or, alu_add, tmp, ra, hr.regOf_ne_zero,
-        show regOf r' ≠ 1 from hr.ne_tmp, setReg_pc, setReg_nextPc, if_true, ↓reduceIte, hbal,
-        show (1 : Fin 32) ≠ 0 by decide, show (31 : Fin 32) ≠ 0 by decide,
-        show (31 : Fin 32) ≠ 1 by decide, nr, nr1, nr0, Ne.symm nr, Ne.symm nr1]
+        show regOf r' ≠ 1 from hr.ne_tmp, setReg_pc, setReg_nextPc, ↓reduceIte, show (1 : Fin 32) ≠ 0 by decide, show (31 : Fin 32) ≠ 0 by decide,
+        nr0, Ne.symm nr, Ne.symm nr1]
       by_cases e31 : r' = 31
       · subst e31
         have hra' : ms.reg 31 = s1.regs 31 := hra
         simp [show regOf 31 = 31 by rfl, hra', Ne.symm h31, zext16]
       by_cases er : r' = r
       · subst er
-        simp only [show regOf r' = regOf r' ↔ True from iff_true_intro rfl, nr, if_true, if_false]
-        simp [e31]
+        simp only [nr, if_true, if_false]
+        simp []
         erw [e]; rw [st.nextPc, st.pc]; bv_omega
       · have : regOf r' ≠ 31 := fun h => e31 ((regOf_inj hr.lt (by decide)).1 h)
         have : regOf r' ≠ regOf r := regOf_ne hr o er

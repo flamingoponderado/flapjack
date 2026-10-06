@@ -154,7 +154,7 @@ theorem run_plain (d : W → Prop) :
         · rw [e1, e2]; bv_omega
         · rw [e3, ht]
         · intro x hx; exact hp x (List.mem_cons_of_mem _ hx)
-        · intro x hx; exact hw x (by simp only [List.dropLast_cons₂]; exact List.mem_cons_of_mem _ hx)
+        · intro x hx; exact hw x (by simp only [List.dropLast_cons_cons]; exact List.mem_cons_of_mem _ hx)
         · simpa using hk
 
 end Flapjack.Mips32.TargetProof
@@ -213,7 +213,7 @@ theorem mips32Enc_length (i : HolAsm 32) : (mips32Enc i).length = 4 * (mips32Ast
     List.length_nil]
   induction mips32Ast i with
   | nil => rfl
-  | cons _ _ ih => simp [ih] <;> omega
+  | cons _ _ ih => simp [ih]; omega
 
 theorem mem_allPcs (pc : W) (len k : Nat) (hk : k < len) :
     pc + BitVec.ofNat 32 (4 * k) ∈ allPcs (4 * len) pc 2 := by

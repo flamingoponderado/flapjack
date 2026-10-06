@@ -10,9 +10,12 @@ import Flapjack.Compiler.Compiler
 /-!
 # The MIPS32 (Ziren) backend configuration
 
-CakeML's `mips_backend_config` (`cakeml/compiler/backend/mips/mips_configScript.sml`) with
-little-endian data (`be := false`), because Ziren's guest is `mipsel`. Every other field is
-CakeML's MIPS value. Not HOL's `mips_backend_config` (which is big-endian), so untagged.
+CakeML's `mips_backend_config` (`cakeml/compiler/backend/mips/mips_configScript.sml`), which
+is for MIPS64, adapted to Ziren's 32-bit little-endian guest: little-endian data
+(`be := false`) and the data-layout fields of CakeML's 32-bit targets (`arm7`/`ag32`:
+`tag_bits := 0`, `len_bits := 0`, `pad_bits := 1`, `len_size := 20`), which
+`data_to_word$conf_ok` requires at word width 32. Every other field is CakeML's MIPS value.
+Not HOL's `mips_backend_config`, so untagged.
 -/
 
 namespace Flapjack.Compiler.Backend.Mips32Config
@@ -32,7 +35,7 @@ def mips32BackendConfigWith (sourceConf : SourceToFlat.Config) : Backend.Config 
       nextName1 := 73, nextName2 := 74, nextName3 := 75,
       doTailrec := true, doTmc := true, inlines := .ln, bviInlines := .ln }
   dataConf :=
-    { tagBits := 4, lenBits := 4, padBits := 2, lenSize := 32,
+    { tagBits := 0, lenBits := 0, padBits := 1, lenSize := 20,
       hasDiv := true, hasLongdiv := false, hasFpOps := false, hasFpTern := false,
       be := false, callEmptyFfi := false, gcKind := .simple }
   wordToWordConf := { regAlg := 2, colOracle := [] }

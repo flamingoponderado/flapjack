@@ -104,6 +104,7 @@ the cited name occurs in one of the two syntactic forms.
 | `compiler/backend/riscv/riscv_configScript.sml` | `Flapjack/Compiler/Backend/RiscVConfig/Names.lean` (submodules in `RiscVConfig/`, e.g. `BackendConfig.lean`) |
 | `compiler/compilerScript.sml` | `Flapjack/Compiler/Compiler.lean` (`pancake_backend_conf_def`; the GC-free RISC-V `backend_config_ok` corollary is untagged in `Flapjack/Compiler/Backend/RiscVConfig/PancakeConfigOk.lean`) |
 | `compiler/backend/riscv/proofs/riscv_configProofScript.sml` | `Flapjack/Compiler/Backend/RiscVConfig/Proofs.lean` |
+| `compiler/backend/mips/mips_configScript.sml` | `Flapjack/Compiler/Backend/Mips32Config/Names.lean` (`mips_names_def` only; the MIPS32 backend configuration, its proofs and the MIPS32 target are Flapjack-specific, see `docs/MIPS32.md`) |
 | `compiler/backend/stackLangScript.sml` (shared-word `prog`) | `Flapjack/Compiler/Backend/StackCarrier.lean` |
 | `compiler/backend/stack_removeScript.sml` | `Flapjack/Compiler/Backend/StackRemove.lean` (`max_stack_alloc`, `word_offset`, `store_list`, `store_length`, `stack_err_lab`, `halt_inst`; also the tagged stackLang instruction overloads `left_shift_inst`/`right_shift_inst`/`const_inst`/`load_inst`/`store_inst` over the exact `HolProg` carrier) |
 | `compiler/backend/proofs/stack_removeProofScript.sml` | `Flapjack/Compiler/Backend/StackRemove.lean` (`is_SOME_Word`, `read_mem`/`LENGTH_read_mem`, `addresses`/`IN_addresses`; `names_ok` Prop-shaped tag); full native code relation in `Flapjack/Compiler/Backend/StackRemove/Proofs/CodeRelation.lean` |

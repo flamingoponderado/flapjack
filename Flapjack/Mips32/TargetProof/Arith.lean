@@ -102,7 +102,8 @@ theorem case_binop_imm (bop : BinOp) (r1 r2 : Nat) (i : W) (s1 s2 : AsmState 32)
   subst hs2
   apply straightCase' _ _ _ _ st rfl
   · cases bop <;> simp only [mips32Ast] <;> (try split) <;> simp <;> exact plain_of_sequential _ rfl
-  · cases bop <;> simp [mips32Ast] <;> (try split) <;> simp
+  · cases bop <;> simp [mips32Ast]
+    split <;> simp
   · cases bop <;> simp [mips32Ast] <;> (try split) <;> simp [touched]
   · rfl
   · intro a _
@@ -171,8 +172,7 @@ theorem const_lo (i : W) (h : hi16 i = 0) : 0 ||| zext16 (lo16 i) = i := by
 theorem const_full (i : W) : (zext16 (hi16 i) <<< 16) ||| zext16 (lo16 i) = i := by
   apply BitVec.eq_of_getLsbD_eq
   intro j hj
-  simp only [zext16, hi16, lo16, BitVec.getLsbD_or, BitVec.getLsbD_shiftLeft,
-    BitVec.getLsbD_setWidth, BitVec.getLsbD_extractLsb']
+  simp only [zext16, hi16, lo16, BitVec.getLsbD_or, BitVec.getLsbD_setWidth, BitVec.getLsbD_extractLsb']
   by_cases h16 : j < 16
   · simp [h16, hj]
   · simp [h16, hj, show j - 16 < 16 by omega, show 16 + (j - 16) = j by omega]
@@ -233,7 +233,9 @@ theorem case_const (r : Nat) (i : W) (s1 s2 : AsmState 32) (ms : State)
       have e := const_full i
       simp only [List.foldl_cons, List.foldl_nil, exec, reg_setReg, reg_mk_gpr, hr.regOf_ne_zero,
         regOf_inj hr.lt o.lt, hr', o.regOf_ne_zero, alu_or, if_false, if_true]
-      by_cases hrr : r' = r <;> simp [hrr] <;> exact e
+      by_cases hrr : r' = r
+      · simp [hrr]; exact e
+      · simp [hrr]
 
 theorem shamt_imm (i : W) (h : i.toNat < 32) :
     (((i.setWidth 5).zeroExtend 32).extractLsb' 0 5).toNat = i.toNat := by
@@ -335,8 +337,8 @@ theorem mul64u_hi (a b : W) :
     calc a.toNat * b.toNat < 2 ^ 32 * 2 ^ 32 := Nat.mul_lt_mul'' ha hb
       _ = 2 ^ 64 := by rfl
   have hm : (mul64u a b).toNat = a.toNat * b.toNat := by
-    simp only [mul64u, BitVec.toNat_mul, BitVec.toNat_setWidth, BitVec.toNat_signExtend]
-    simp [Nat.mod_eq_of_lt ha, Nat.mod_eq_of_lt hb]
+    simp only [mul64u, BitVec.toNat_mul, BitVec.toNat_setWidth]
+    simp
     omega
   rw [BitVec.extractLsb'_toNat, hm, BitVec.toNat_ofNat, Nat.shiftRight_eq_div_pow]
 
@@ -349,7 +351,7 @@ theorem mul64u_lo (a b : W) :
       _ = 2 ^ 64 := by rfl
   have hm : (mul64u a b).toNat = a.toNat * b.toNat := by
     simp only [mul64u, BitVec.toNat_mul, BitVec.toNat_setWidth]
-    simp [Nat.mod_eq_of_lt ha, Nat.mod_eq_of_lt hb]
+    simp
     omega
   rw [BitVec.extractLsb'_toNat, hm, BitVec.toNat_ofNat, Nat.shiftRight_zero]
 
@@ -415,7 +417,7 @@ theorem carry_sum (b c d : W) :
   rw [carryIn]
   apply BitVec.eq_of_toNat_eq
   have hb := b.isLt; have hc := c.isLt
-  split <;> simp <;> omega
+  split <;> simp
 
 theorem carry_flag (b c d : W) :
     ((if (b + c).ult c = true then 1#32 else 0#32) |||
@@ -457,8 +459,8 @@ theorem case_addCarry (r1 r2 r3 r4 : Nat) (s1 s2 : AsmState 32) (ms : State)
     have h4 := st.reg _ o4.lt o4.avoid
     simp [mips32Ast, exec, reg_setReg, hr.regOf_ne_zero, regOf_inj hr.lt o1.lt,
       regOf_inj hr.lt o4.lt, hr', h2, h3, h4, o1.regOf_ne_zero, o2.regOf_ne_zero, o3.regOf_ne_zero,
-      o4.regOf_ne_zero, o1.tmp_ne, o2.tmp_ne, o3.tmp_ne, o4.tmp_ne, o1.ne_tmp, o2.ne_tmp, o3.ne_tmp,
-      o4.ne_tmp, hr.ne_tmp, n13, n14, n13.symm, n14.symm, show tmp ≠ 0 by decide]
+      o4.regOf_ne_zero, o1.tmp_ne, o4.tmp_ne, o2.ne_tmp, o3.ne_tmp,
+      o4.ne_tmp, hr.ne_tmp, n14, n13.symm, n14.symm, show tmp ≠ 0 by decide]
     rw [carry_flag, carry_sum]
     have n14n : r1 ≠ r4 := hok.2.2
     by_cases e4 : r = r4 <;> by_cases e1 : r = r1 <;> simp [e4, e1] <;>
@@ -563,8 +565,8 @@ theorem case_addOverflow (r1 r2 r3 r4 : Nat) (s1 s2 : AsmState 32) (ms : State)
     have h3 := st.reg _ o3.lt o3.avoid
     simp [mips32Ast, exec, reg_setReg, hr.regOf_ne_zero, regOf_inj hr.lt o1.lt,
       regOf_inj hr.lt o4.lt, hr', h2, h3, o1.regOf_ne_zero, o2.regOf_ne_zero, o3.regOf_ne_zero,
-      o4.regOf_ne_zero, o1.tmp_ne, o2.tmp_ne, o3.tmp_ne, o4.tmp_ne, o1.ne_tmp, o2.ne_tmp,
-      o3.ne_tmp, o4.ne_tmp, hr.ne_tmp, n13, n13.symm, show tmp ≠ 0 by decide]
+      o4.regOf_ne_zero, o1.tmp_ne, o4.tmp_ne, o2.ne_tmp,
+      o3.ne_tmp, hr.ne_tmp, n13.symm, show tmp ≠ 0 by decide]
     rw [add_flag]
     by_cases e4 : r = r4 <;> by_cases e1 : r = r1 <;> simp [e4, e1, BitVec.toInt_add]
     all_goals (by_cases e14 : r1 = r4 <;> simp [e14])
@@ -596,8 +598,8 @@ theorem case_subOverflow (r1 r2 r3 r4 : Nat) (s1 s2 : AsmState 32) (ms : State)
     have h3 := st.reg _ o3.lt o3.avoid
     simp [mips32Ast, exec, reg_setReg, hr.regOf_ne_zero, regOf_inj hr.lt o1.lt,
       regOf_inj hr.lt o4.lt, hr', h2, h3, o1.regOf_ne_zero, o2.regOf_ne_zero, o3.regOf_ne_zero,
-      o4.regOf_ne_zero, o1.tmp_ne, o2.tmp_ne, o3.tmp_ne, o4.tmp_ne, o1.ne_tmp, o2.ne_tmp,
-      o3.ne_tmp, o4.ne_tmp, hr.ne_tmp, n13, n13.symm, show tmp ≠ 0 by decide]
+      o4.regOf_ne_zero, o1.tmp_ne, o4.tmp_ne, o2.ne_tmp,
+      o3.ne_tmp, hr.ne_tmp, n13.symm, show tmp ≠ 0 by decide]
     rw [sub_flag]
     by_cases e4 : r = r4 <;> by_cases e1 : r = r1 <;> simp [e4, e1, BitVec.toInt_sub]
     all_goals (by_cases e14 : r1 = r4 <;> simp [e14])
