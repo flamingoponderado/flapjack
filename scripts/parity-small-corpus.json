@@ -688,8 +688,8 @@
     },
     {
       "path": "Flapjack/Test/OriginalPancake/input_blob_load_selector.pnk",
-      "source_reference": "Reduced independent P0 witness flapjack-8tb.5.15: Cake's ShareInst Load materializes a non-address-sized base-plus-offset expression through the selector temporary before the shared load, preserving allocator-visible temporaries and exact RISC-V bytes.",
-      "cake_sha256": "319f18cd709b82c61c9c6a96f5d81293f798e4ae0e039fb1675b396dd5712406",
+      "source_reference": "Reduced independent P0 witness flapjack-8tb.5.15: Cake's ShareInst Load materializes a non-address-sized base-plus-offset expression through the selector temporary before the shared load, preserving allocator-visible temporaries and exact RISC-V bytes. The guest's input-length rejection (init-e PR #25: lengths above 134,217,712 trap with code 8 before allocation) is carried here so the witness keeps compiling the shape the guest actually has; it leaves both shared loads, and the parity, unchanged.",
+      "cake_sha256": "b68fd94a5359f6366793a6e9c6ce73a91fb50a912348f97711eb32972334eedc",
       "tracked_beads": [
         "flapjack-8tb.5.15"
       ]
