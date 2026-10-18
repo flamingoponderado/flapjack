@@ -58,15 +58,20 @@ and including the `makesym` symbol lines.
 
 `Flapjack/Compiler/Encoders/Arm8/TargetProof.lean` ports the structural length
 lemmas at the start of `arm8_targetProofScript.sml`
-(`length_arm8_encode`, `length_arm8_enc`, `arm8_encode_not_nil`). They are not
-tagged as exact HOL ports because HOL ranges over the full L3
-`arm8$instruction` datatype while the Lean `Insn` is the subset emitted by
-`arm8_ast`.
+(`length_arm8_encode`, `length_arm8_enc`, `arm8_encode_not_nil`) and the first
+semantic helpers: the word64 conjunct of `Decode_EncodeBitMask`, `mul_long`,
+and the `length mod 4 = 0` half of `arm8_encoding`. They are not tagged as exact
+HOL ports because HOL ranges over the full L3 `arm8$instruction` datatype and
+uses HOL word/bitstring carriers, while the Lean encoder is fixed at width 64
+with `Nat`/`BitVec` carriers.
+
+The remaining helpers `lsl`, `lsr`, `asr2` and `ror` are stated with HOL's
+`bitstring`/FCP rotate operations (`#>>`, `v2w`, `w2v`, `shiftr`), which
+Flapjack does not yet have; porting them is a separate library task and does not
+need the machine semantics.  `asr` is just HOL's library theorem
+`word_asr_n2w` specialized to word64, with no ARM8-specific proof content.
 
 The main theorem, `arm8_encoder_correct`, needs CakeML's ARMv8 L3 machine model
 (`HOL/examples/l3-machine-code/arm8/model/arm8Script.sml` and
 `step/arm8_stepScript.sml`). That model and its next-state function are not yet
-in Flapjack, so the proof port remains future work. The pure arithmetic lemmas
-in `arm8_targetProofScript.sml` (`Decode_EncodeBitMask`, `lsl`, `lsr`, `asr`,
-`asr2`, `ror`, `mul_long`) are the natural next pieces; they do not need the
-machine semantics.
+in Flapjack, so the proof port remains future work.

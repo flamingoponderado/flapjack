@@ -285,9 +285,14 @@ The following are open review or verification obligations:
       for this target. The compiled output therefore has no machine-level
       guarantee beyond the parity tests and the shared Pancake-to-labLang
       pipeline.
-    - **Proof port status.** Only the structural length lemmas at the start of
-      `arm8_targetProofScript.sml` are ported. The pure arithmetic and bitmask
-      lemmas and the full `arm8_encoder_correct` proof remain future work.
+    - **Proof port status.** The structural length lemmas at the start of
+      `arm8_targetProofScript.sml`, the word64 conjunct of
+      `Decode_EncodeBitMask`, `mul_long`, and the length half of
+      `arm8_encoding` are ported. The remaining meaningful helpers (`lsl`,
+      `lsr`, `asr2`, `ror`) need HOL bitstring/FCP operations that Flapjack does
+      not yet provide; `asr` is only a word64 specialization of HOL's library
+      `word_asr_n2w`. The full `arm8_encoder_correct` proof remains future
+      work.
 
 ## Stack bounds and liveness
 
