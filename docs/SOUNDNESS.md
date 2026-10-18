@@ -274,6 +274,21 @@ The following are open review or verification obligations:
      simulated FFI calls. Nothing is compared with Ziren's Rust executor or the
      original Pancake compiler, which has no MIPS32 target.
 
+10. The ARMv8 (AArch64) backend is parity-tested only.
+    - **What is checked.** `flapjack-compile --target=arm8` emits the same GNU
+      AArch64 assembly as `cake --pancake --target=arm8` for the checked-in
+      corpus in `scripts/arm8/parity/`, including the code bytes, frame and
+      `makesym` symbol lines. During development the comparison covered all 244
+      standalone Pancake programs embedded in `cakeml/pancake/**/*.sml`.
+    - **What is not checked.** There is no ARMv8 semantics in Flapjack, no
+      `arm8_encoder_correct` port, and no end-to-end source-correctness theorem
+      for this target. The compiled output therefore has no machine-level
+      guarantee beyond the parity tests and the shared Pancake-to-labLang
+      pipeline.
+    - **Proof port status.** Only the structural length lemmas at the start of
+      `arm8_targetProofScript.sml` are ported. The pure arithmetic and bitmask
+      lemmas and the full `arm8_encoder_correct` proof remain future work.
+
 ## Stack bounds and liveness
 
 Compiler correctness does not unconditionally preserve source liveness on a

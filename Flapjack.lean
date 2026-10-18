@@ -2764,6 +2764,14 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Skip
    the faithful `findLoopVar` lowering and is intentionally not in this
    umbrella until its old identity-map assumptions are repaired. -/
 
+import Flapjack.Compiler.Encoders.Arm8.Encode
+import Flapjack.Compiler.Encoders.Arm8.Target
+import Flapjack.Compiler.Encoders.Arm8.Configuration
+import Flapjack.Compiler.Encoders.Arm8.TargetProof
+import Flapjack.Compiler.Backend.Arm8Config.Names
+import Flapjack.Compiler.Backend.Arm8Config.BackendConfig
+import Flapjack.Arm8.NativeSource
+import Flapjack.Arm8.NativeCLIAdapter
 import Flapjack.Compiler.Encoders.Mips32.Encode
 import Flapjack.Compiler.Encoders.Mips32.Target
 import Flapjack.Compiler.Backend.Mips32Config.Names

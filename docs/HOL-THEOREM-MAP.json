@@ -11977,6 +11977,15 @@
     "reviewer": "flapjack-luna-b source comparison riscv_config10-43: exact Spt Nat (num num_map), thirteen inserts in identical outer-to-inner order and values on LN; no finite-map qualifier. Universal kernel lookup/getD theorem matches existing production mapper for all Nat, including missing/out-of-range identity default. Actual RiscV/Lab five and LabDiagnostics six checked source-facing naming sites routed to exact map lookup. Original HOL table/default row replayed; full StackProg/HolProg carrier relation remains open."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/Arm8Config/Names.lean",
+    "lean_name": "arm8Names",
+    "hol_path": "cakeml/compiler/backend/arm8/arm8_configScript.sml",
+    "hol_name": "arm8_names_def",
+    "hol_line": 10,
+    "statement_status": "reviewed_exact",
+    "reviewer": "ARMv8 backend source comparison 2026-10-19 against arm8_configScript.sml:10-32: exact Spt Nat (num num_map), the ten inserts insert 0 30, 1 0, 2 1, 3 2, 4 3, 18 4, 25 29, 26 25, 29 18, 30 26 in identical outer-to-inner order on LN; no finite-map qualifier. arm8Names_lookup_eq relates the identity-default lookup to the explicit arm8NameMap for every Nat (kernel-checked, interval cases below 32, sptLookup_sptInsert_ne above). The surrounding ARMv8 backend configuration is Flapjack infrastructure and untagged."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/Mips32Config/Names.lean",
     "lean_name": "mipsNames",
     "hol_path": "cakeml/compiler/backend/mips/mips_configScript.sml",

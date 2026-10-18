@@ -1,5 +1,6 @@
 import Flapjack.Test.RiscVBackendConfigExecutable
 import Flapjack.Test.Mips32Encoding
+import Flapjack.Test.Arm8Parity
 import Flapjack.Test.Mips32Run
 import Flapjack.Test.WordToStackStoreConstsCaller
 import Flapjack.Test.PanToWordGoodCodeParity
@@ -1928,6 +1929,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.RiscVBackendConfigExecutable.runChecks,
     Flapjack.Test.Mips32Encoding.runChecks,
     Flapjack.Test.Mips32Run.runChecks,
+    Flapjack.Test.Arm8Parity.runChecks,
     Flapjack.Test.RiscvConfigParity.runChecks,
     Flapjack.Test.MiscAppListParity.runChecks,
     Flapjack.Test.StackToLabFlattenOpsParity.runChecks,

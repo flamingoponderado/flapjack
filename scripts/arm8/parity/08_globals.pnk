@@ -1,0 +1,5 @@
+var 1 g1 = 1;
+var 1 g2 = 2;
+var 1 g3 = 305419896;
+fun 1 bump() { g1 = g1 + g2; return g1; }
+fun 1 main() { var 1 b = bump(); return b + g3; }
