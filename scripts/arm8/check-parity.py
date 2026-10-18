@@ -23,7 +23,7 @@ def payload(assembly: str) -> str:
     for line in assembly.splitlines():
         if line.strip().startswith(".byte"):
             data.extend(re.findall(r"0x([0-9A-Fa-f]{2})", line))
-    return "".join(byte.lower() for byte in data) + "\n"
+    return " ".join(byte.lower() for byte in data) + "\n"
 
 
 def main() -> int:
