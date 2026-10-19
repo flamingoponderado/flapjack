@@ -2774,6 +2774,7 @@ import Flapjack.Compiler.Encoders.Arm8.Machine.Execute
 import Flapjack.Compiler.Encoders.Arm8.Machine.DecodeProof
 import Flapjack.Compiler.Encoders.Arm8.Machine.DecodeProofSimple
 import Flapjack.Compiler.Encoders.Arm8.Machine.DecodeProofSimple2
+import Flapjack.Compiler.Encoders.Arm8.Machine.DecodeProofConditional
 import Flapjack.Compiler.Encoders.Arm8.Machine.Target
 import Flapjack.Compiler.Encoders.Arm8.Machine.TargetProof
 import Flapjack.Compiler.Encoders.Arm8.Machine.ExecuteProof
