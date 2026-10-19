@@ -128,7 +128,7 @@ def execInsn (s : Arm8State) : Insn → Arm8State
   | .extractRegister imms _rm rn rd =>
       writeReg s rd (ror64 (readReg s rn) imms)
   | .shift shift rm rn rd =>
-      writeReg s rd (shiftValue (readReg s rm) shift (readReg s rn).toNat)
+      writeReg s rd (shiftValue (readReg s rn) shift (readReg s rm).toNat)
   | .division unsigned rm rn rd =>
       let x := readReg s rn
       let y := readReg s rm
