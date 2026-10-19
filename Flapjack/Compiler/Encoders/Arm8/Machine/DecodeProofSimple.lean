@@ -68,7 +68,7 @@ theorem decode_extract_word (rm : BitVec 5) (imms : BitVec 6) (rn : BitVec 5) (r
     have hb := congrArg (fun x : BitVec 32 => x.getLsbD 27) h
     simp only [extractWord] at hb
     simp at hb
-  have h7 : bitMatches (extractWord rm imms rn rd) 0x9FE00000 0x93400000 = false := by
+  have h7 : bitMatches (extractWord rm imms rn rd) 0x9FC00000 0x93400000 = false := by
     rw [bitMatches, decide_eq_false_iff_not]
     intro h
     have hb := congrArg (fun x : BitVec 32 => x.getLsbD 23) h

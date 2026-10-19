@@ -944,8 +944,7 @@ theorem fields_bitfieldMove (opc immr imms rn rd : Nat) :
 `immr` field to zero, hence the bound on the rotated width. -/
 theorem decode_bitfieldMove_word (inzero extend : Bool) (opc : BitVec 2)
     (immr6 imms : BitVec 6) (rn rd : BitVec 5)
-    (hopc : decodeBitfieldOp opc.toNat = some (inzero, extend))
-    (himmr : immr6.toNat < 32) :
+    (hopc : decodeBitfieldOp opc.toNat = some (inzero, extend)) :
     decodeInsn32 (bitfieldMoveWord opc immr6 imms rn rd)
       = some (.bitfieldMove inzero extend immr6.toNat imms.toNat rn.toNat rd.toNat) := by
   simp only [decodeInsn32]
@@ -991,17 +990,14 @@ theorem decode_bitfieldMove_word (inzero extend : Bool) (opc : BitVec 2)
     have hb := congrArg (fun x : BitVec 32 => x.getLsbD 28) h
     simp only [bitfieldMoveWord] at hb
     simp at hb
-  have hK : bitMatches (bitfieldMoveWord opc immr6 imms rn rd) 0x9FE00000
+  have hK : bitMatches (bitfieldMoveWord opc immr6 imms rn rd) 0x9FC00000
       0x93400000 = true := by
     rw [bitMatches, decide_eq_true_eq]
     apply BitVec.eq_of_getLsbD_eq
     intro i hi
-    have h21 : immr6[5] = false := by
-      show immr6.toNat.testBit 5 = false
-      exact Nat.testBit_lt_two_pow himmr
     simp only [bitfieldMoveWord]
     simp
-    interval_cases i <;> simp [h21]
+    interval_cases i <;> simp
   simp only [h1, h2, h3, h4, h5, h6, hK, Bool.false_eq_true, if_true, if_false]
   have f29 : part (bitfieldMoveWord opc immr6 imms rn rd) 29 2 = opc.toNat := by
     apply part_eq_of_setWidth
@@ -1043,7 +1039,7 @@ theorem decode_bitfieldMove_word (inzero extend : Bool) (opc : BitVec 2)
 rotated width fits in five bits. -/
 theorem decode_encode_bitfieldMove32 (inzero extend : Bool) (immr imms rn rd : Nat)
     (opc : Nat) (hbits : bitfieldOpBits inzero extend = some opc)
-    (himmr : immr < 32) (himms : imms < 64) (hrn : rn < 32) (hrd : rd < 32) :
+    (himmr : immr < 64) (himms : imms < 64) (hrn : rn < 32) (hrd : rd < 32) :
     decodeInsn32 (fields [(1, 1), (2, opc), (6, 0b100110), (1, 1), (6, immr),
       (6, imms), (5, rn), (5, rd)])
       = some (.bitfieldMove inzero extend immr imms rn rd) := by
@@ -1058,8 +1054,7 @@ theorem decode_encode_bitfieldMove32 (inzero extend : Bool) (immr imms rn rd : N
   rw [fields_bitfieldMove opc immr imms rn rd,
     decode_bitfieldMove_word inzero extend (BitVec.ofNat 2 opc) (BitVec.ofNat 6 immr)
       (BitVec.ofNat 6 imms) (BitVec.ofNat 5 rn) (BitVec.ofNat 5 rd)
-      (by rw [hopc2]; exact decodeBitfieldOp_bitfieldOpBits inzero extend opc hbits)
-      (by rw [himmr6]; omega)]
+      (by rw [hopc2]; exact decodeBitfieldOp_bitfieldOpBits inzero extend opc hbits)]
   simp only [himmr6, himms6, BitVec.toNat_ofNat, Nat.mod_eq_of_lt hrn,
     Nat.mod_eq_of_lt hrd]
 
@@ -1077,7 +1072,7 @@ theorem encodeInsn_bitfieldMove (inzero extend : Bool) (immr imms rn rd : Nat)
 a `bitfieldMove`. -/
 theorem decode_encode_bitfieldMove (inzero extend : Bool) (immr imms rn rd : Nat)
     (opc : Nat) (hbits : bitfieldOpBits inzero extend = some opc)
-    (himmr : immr < 32) (himms : imms < 64) (hrn : rn < 32) (hrd : rd < 32) :
+    (himmr : immr < 64) (himms : imms < 64) (hrn : rn < 32) (hrd : rd < 32) :
     decodeInsn ((fields [(1, 1), (2, opc), (6, 0b100110), (1, 1), (6, immr),
       (6, imms), (5, rn), (5, rd)]).setWidth 64)
       = some (.bitfieldMove inzero extend immr imms rn rd) := by
@@ -1093,7 +1088,7 @@ theorem decode_encode_bitfieldMove (inzero extend : Bool) (immr imms rn rd : Nat
 in five bits. -/
 theorem decode_encode_bitfieldMoveInsn (inzero extend : Bool) (immr imms rn rd : Nat)
     (opc : Nat) (hbits : bitfieldOpBits inzero extend = some opc)
-    (himmr : immr < 32) (himms : imms < 64) (hrn : rn < 32) (hrd : rd < 32) :
+    (himmr : immr < 64) (himms : imms < 64) (hrn : rn < 32) (hrd : rd < 32) :
     decodeInsn ((encodeInsn (.bitfieldMove inzero extend immr imms rn rd)).getD 0)
       = some (.bitfieldMove inzero extend immr imms rn rd) := by
   rw [encodeInsn_bitfieldMove inzero extend immr imms rn rd opc hbits, Option.getD_some]
@@ -1104,7 +1099,7 @@ theorem decode_encode_bitfieldMoveInsn (inzero extend : Bool) (immr imms rn rd :
 theorem arm8Next_bitfieldMove (s : Arm8State) (d : BitVec 64 → Prop)
     (inzero extend : Bool) (immr imms rn rd : Nat) (opc : Nat)
     (hbits : bitfieldOpBits inzero extend = some opc)
-    (himmr : immr < 32) (himms : imms < 64) (hrn : rn < 32) (hrd : rd < 32)
+    (himmr : immr < 64) (himms : imms < 64) (hrn : rn < 32) (hrd : rd < 32)
     (hbytes : bytesInMemoryHOL s.pc
       (encodeBytes (.bitfieldMove inzero extend immr imms rn rd)) s.mem d) :
     arm8Next s = execInsn { s with pc := s.pc + 4 }

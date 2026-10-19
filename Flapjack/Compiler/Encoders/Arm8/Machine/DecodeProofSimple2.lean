@@ -73,7 +73,7 @@ theorem decode_shift_word (sh : BitVec 2) (rm rn rd : BitVec 5) :
     have hb := congrArg (fun x : BitVec 32 => x.getLsbD 24) h
     simp only [shiftWord] at hb
     simp at hb
-  have h7 : bitMatches (shiftWord sh rm rn rd) 0x9FE00000 0x93400000 = false := by
+  have h7 : bitMatches (shiftWord sh rm rn rd) 0x9FC00000 0x93400000 = false := by
     rw [bitMatches, decide_eq_false_iff_not]
     intro h
     have hb := congrArg (fun x : BitVec 32 => x.getLsbD 23) h
@@ -225,7 +225,7 @@ theorem decode_division_word (o1 : BitVec 1) (rm rn rd : BitVec 5) :
     have hb := congrArg (fun x : BitVec 32 => x.getLsbD 24) h
     simp only [divisionWord] at hb
     simp at hb
-  have h7 : bitMatches (divisionWord o1 rm rn rd) 0x9FE00000 0x93400000 = false := by
+  have h7 : bitMatches (divisionWord o1 rm rn rd) 0x9FC00000 0x93400000 = false := by
     rw [bitMatches, decide_eq_false_iff_not]
     intro h
     have hb := congrArg (fun x : BitVec 32 => x.getLsbD 23) h
@@ -385,7 +385,7 @@ theorem decode_multiplyHigh_word (u : BitVec 1) (rm rn rd : BitVec 5) :
     have hb := congrArg (fun x : BitVec 32 => x.getLsbD 28) h
     simp only [multiplyHighWord] at hb
     simp at hb
-  have h7 : bitMatches (multiplyHighWord u rm rn rd) 0x9FE00000 0x93400000 = false := by
+  have h7 : bitMatches (multiplyHighWord u rm rn rd) 0x9FC00000 0x93400000 = false := by
     rw [bitMatches, decide_eq_false_iff_not]
     intro h
     have hb := congrArg (fun x : BitVec 32 => x.getLsbD 27) h
@@ -551,7 +551,7 @@ theorem decode_multiplyAddSub_word (o0 : BitVec 1) (rm ra rn rd : BitVec 5) :
     have hb := congrArg (fun x : BitVec 32 => x.getLsbD 28) h
     simp only [multiplyAddSubWord] at hb
     simp at hb
-  have h7 : bitMatches (multiplyAddSubWord o0 rm ra rn rd) 0x9FE00000 0x93400000 = false := by
+  have h7 : bitMatches (multiplyAddSubWord o0 rm ra rn rd) 0x9FC00000 0x93400000 = false := by
     rw [bitMatches, decide_eq_false_iff_not]
     intro h
     have hb := congrArg (fun x : BitVec 32 => x.getLsbD 22) h
@@ -907,7 +907,7 @@ theorem decode_addSubCarry_word (sub : BitVec 1) (sf : BitVec 1) (rm rn rd : Bit
     have hb := congrArg (fun x : BitVec 32 => x.getLsbD 24) h
     simp only [addSubCarryWord] at hb
     simp at hb
-  have h7 : bitMatches (addSubCarryWord sub sf rm rn rd) 0x9FE00000 0x93400000 = false := by
+  have h7 : bitMatches (addSubCarryWord sub sf rm rn rd) 0x9FC00000 0x93400000 = false := by
     rw [bitMatches, decide_eq_false_iff_not]
     intro h
     have hb := congrArg (fun x : BitVec 32 => x.getLsbD 22) h
@@ -1109,7 +1109,7 @@ theorem decode_conditionalSelect_word (op : BitVec 1) (rm : BitVec 5) (cd : BitV
     have hb := congrArg (fun x : BitVec 32 => x.getLsbD 24) h
     simp only [conditionalSelectWord] at hb
     simp at hb
-  have h7 : bitMatches (conditionalSelectWord op rm cd o2 rn rd) 0x9FE00000 0x93400000 = false := by
+  have h7 : bitMatches (conditionalSelectWord op rm cd o2 rn rd) 0x9FC00000 0x93400000 = false := by
     rw [bitMatches, decide_eq_false_iff_not]
     intro h
     have hb := congrArg (fun x : BitVec 32 => x.getLsbD 22) h
@@ -1319,7 +1319,7 @@ theorem decode_conditionalCompareImmediate_word (opc : BitVec 1) (imm : BitVec 5
     have hb := congrArg (fun x : BitVec 32 => x.getLsbD 24) h
     simp only [conditionalCompareImmediateWord] at hb
     simp at hb
-  have h7 : bitMatches (conditionalCompareImmediateWord opc imm cd rn nzcv) 0x9FE00000 0x93400000 = false := by
+  have h7 : bitMatches (conditionalCompareImmediateWord opc imm cd rn nzcv) 0x9FC00000 0x93400000 = false := by
     rw [bitMatches, decide_eq_false_iff_not]
     intro h
     have hb := congrArg (fun x : BitVec 32 => x.getLsbD 24) h
@@ -1568,7 +1568,7 @@ theorem decode_branchRegister_word (opc : BitVec 2) (rn : BitVec 5)
     have hb := congrArg (fun x : BitVec 32 => x.getLsbD 24) h
     simp only [branchRegisterWord] at hb
     simp at hb
-  have h7 : bitMatches (branchRegisterWord opc rn) 0x9FE00000 0x93400000 = false := by
+  have h7 : bitMatches (branchRegisterWord opc rn) 0x9FC00000 0x93400000 = false := by
     rw [bitMatches, decide_eq_false_iff_not]
     intro h
     have hb := congrArg (fun x : BitVec 32 => x.getLsbD 24) h

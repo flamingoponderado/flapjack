@@ -271,7 +271,7 @@ theorem decode_branchImmediate_word (call : BitVec 1) (imm26 : BitVec 26) :
     have hb := congrArg (fun x : BitVec 32 => x.getLsbD 26) h
     simp only [branchImmediateWord] at hb
     simp at hb
-  have h7 : bitMatches (branchImmediateWord call imm26) 0x9FE00000 0x93400000 = false := by
+  have h7 : bitMatches (branchImmediateWord call imm26) 0x9FC00000 0x93400000 = false := by
     rw [bitMatches, decide_eq_false_iff_not]
     intro h
     have hb := congrArg (fun x : BitVec 32 => x.getLsbD 26) h
@@ -477,7 +477,7 @@ theorem decode_branchConditional_word (imm19 : BitVec 19) (cond : BitVec 4) :
     have hb := congrArg (fun x : BitVec 32 => x.getLsbD 24) h
     simp only [branchConditionalWord] at hb
     simp at hb
-  have h7 : bitMatches (branchConditionalWord imm19 cond) 0x9FE00000 0x93400000 = false := by
+  have h7 : bitMatches (branchConditionalWord imm19 cond) 0x9FC00000 0x93400000 = false := by
     rw [bitMatches, decide_eq_false_iff_not]
     intro h
     have hb := congrArg (fun x : BitVec 32 => x.getLsbD 24) h
@@ -692,7 +692,7 @@ theorem decode_addressFalse_word (imm2 : BitVec 2) (imm19 : BitVec 19) (rd : Bit
     have hb := congrArg (fun x : BitVec 32 => x.getLsbD 31) h
     simp only [addressFalseWord] at hb
     simp at hb
-  have h7 : bitMatches (addressFalseWord imm2 imm19 rd) 0x9FE00000 0x93400000 = false := by
+  have h7 : bitMatches (addressFalseWord imm2 imm19 rd) 0x9FC00000 0x93400000 = false := by
     rw [bitMatches, decide_eq_false_iff_not]
     intro h
     have hb := congrArg (fun x : BitVec 32 => x.getLsbD 31) h
@@ -935,7 +935,7 @@ theorem decode_loadStoreImmediateUnsigned_word (size : BitVec 2) (opc : BitVec 2
     have hb := congrArg (fun x : BitVec 32 => x.getLsbD 25) h
     simp only [loadStoreUnsignedWord] at hb
     simp at hb
-  have h7 : bitMatches (loadStoreUnsignedWord size opc imm12 rn rt) 0x9FE00000 0x93400000 = false := by
+  have h7 : bitMatches (loadStoreUnsignedWord size opc imm12 rn rt) 0x9FC00000 0x93400000 = false := by
     rw [bitMatches, decide_eq_false_iff_not]
     intro h
     have hb := congrArg (fun x : BitVec 32 => x.getLsbD 25) h
@@ -1190,7 +1190,7 @@ theorem decode_loadStoreImmediateSigned_word (size : BitVec 2) (opc : BitVec 2)
     have hb := congrArg (fun x : BitVec 32 => x.getLsbD 24) h
     simp only [loadStoreSignedWord] at hb
     simp at hb
-  have h7 : bitMatches (loadStoreSignedWord size opc imm9 rn rt) 0x9FE00000 0x93400000 = false := by
+  have h7 : bitMatches (loadStoreSignedWord size opc imm9 rn rt) 0x9FC00000 0x93400000 = false := by
     rw [bitMatches, decide_eq_false_iff_not]
     intro h
     have hb := congrArg (fun x : BitVec 32 => x.getLsbD 24) h

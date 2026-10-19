@@ -142,7 +142,9 @@ def decodeBitMasks (immN : Nat) (imms immr : Nat) (immediate : Bool) :
     if immediate && S = levels then none
     else
       let welem := rotateRightWidth esize (ones (S + 1)) R
-      let onesCount := ((S - R) % 2 ^ len) + 1
+      -- HOL's `DecodeBitMasks` uses the wrapping six-bit `EX (S - R) (len-1) 0`;
+      -- plain `Nat` subtraction truncates for `S < R` and would collapse the mask.
+      let onesCount := ((S + 2 ^ len - R) % 2 ^ len) + 1
       let telem := ones onesCount
       let multiplier := (2 ^ 64 - 1) / (2 ^ esize - 1)
       some (welem * multiplier, telem * multiplier)

@@ -96,7 +96,7 @@ def decodeInsn32 (w : BitVec 32) : Option Insn :=
   else if bitMatches w 0x9F200000 0x8B000000 then
     some (.addSubShiftedRegister (b 30 1 = 1) (b 29 1 = 1)
       (decodeShift (b 22 2)) (b 16 5) (b 10 6) (b 5 5) (b 0 5))
-  else if bitMatches w 0x9FE00000 0x93400000 then
+  else if bitMatches w 0x9FC00000 0x93400000 then
     match decodeBitfieldOp (b 29 2) with
     | some (inzero, extend) =>
         some (.bitfieldMove inzero extend (b 16 6) (b 10 6) (b 5 5) (b 0 5))
