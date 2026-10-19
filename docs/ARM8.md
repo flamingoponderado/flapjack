@@ -94,9 +94,14 @@ closed ARMv8 execution model for exactly the instruction subset that
 - `ExecuteProof.lean`: kernel-checked byte reassembly and one-step execution
   from the encoded bytes plus the per-instruction decoder inverse.
 - `DecodeProof.lean`: kernel-checked `noOp` and `moveWide` decoder inverses.
+- `DecodeProofSimple.lean`: kernel-checked `extractRegister` decoder inverse.
+- `DecodeProofSimple2.lean`: kernel-checked decoder inverses for `shift`, `division`,
+  `multiplyHigh`, `multiplyAddSub`, `addSubShiftedRegister`, `addSubCarry`,
+  `conditionalSelect`, `conditionalCompareImmediate`, and `branchRegister`.
 
 The model is deliberately closed: unknown instruction words set `failed`
 instead of being interpreted by the full L3 decoder. Consequently these
-modules carry no `@[hol]` tags. Only `noOp` and `moveWide` have kernel-checked decoder
-inverses; the remaining per-instruction decoder inverses, `encoderCorrect`, and
-the `pan_to_target_compile_semantics` instantiation are still future work. The parity fixtures remain the executable evidence.
+modules carry no `@[hol]` tags. Twelve of the twenty instruction forms have kernel-checked decoder
+inverses. The conditional data-processing forms, loads/stores, immediate and
+conditional branches, `address`, `encoderCorrect`, and the
+`pan_to_target_compile_semantics` instantiation remain future work. The parity fixtures remain the executable evidence.
