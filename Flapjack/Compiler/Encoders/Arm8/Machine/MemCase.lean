@@ -1097,4 +1097,42 @@ theorem case_store8 (r base : Nat) (off : BitVec 64) (s1 s2 : AsmState 64) (ms :
       rw [hast0, htrue, hdec]
     exact case_memStoreOne .store8 r base off s1 s2 ms 0 rfl (by decide) (Or.inl hshape) hast h
 
+
+/-- The emitted word of a signed-offset memory instruction does not depend on
+the unsigned-offset flag when the offset is not its own scaled form. -/
+theorem encodeInsn_loadStoreImmediateSignedAny (size : Nat) (rg : Bool) (memop : MemOp)
+    (u : Bool) (c : W) (rn rt : Nat) (hfits : fitsSigned 9 c = true)
+    (hne : c ≠ scaledOff size c) :
+    encodeInsn (.loadStoreImmediate size rg memop false u c rn rt) =
+      some ((fields [(2, size), (6, 56), (2, loadStoreOpc memop), (1, 0),
+        (9, c.toNat % 512), (1, 0), (1, 0), (5, rn), (5, rt)]).setWidth 64) := by
+  have hp : decide (c = scaledOff size c) = false := by
+    rw [decide_eq_false_iff_not]
+    exact hne
+  unfold encodeInsn
+  rw [show encodeInsn32 (.loadStoreImmediate size rg memop false u c rn rt)
+      = some (fields [(2, size), (6, 56), (2, loadStoreOpc memop), (1, 0),
+          (9, c.toNat % 512), (1, 0), (1, 0), (5, rn), (5, rt)]) by
+    simp only [encodeInsn32, loadStoreOpc, hp, Bool.and_false, Bool.false_eq_true,
+      ↓reduceIte, hfits]
+    cases memop <;> rfl]
+  rfl
+
+/-- The emitted bytes of a signed-offset memory instruction do not depend on the
+unsigned-offset flag when the offset is not its own scaled form. -/
+theorem encodeBytes_loadStoreImmediate_flag (size : Nat) (memop : MemOp) (u : Bool)
+    (c : W) (rn rt : Nat) (hfits : fitsSigned 9 c = true) (hne : c ≠ scaledOff size c) :
+    encodeBytes (.loadStoreImmediate size false memop false u c rn rt) =
+      encodeBytes (.loadStoreImmediate size false memop false false c rn rt) := by
+  rw [show encodeBytes (.loadStoreImmediate size false memop false u c rn rt) =
+      wordBytes ((fields [(2, size), (6, 56), (2, loadStoreOpc memop), (1, 0),
+        (9, c.toNat % 512), (1, 0), (1, 0), (5, rn), (5, rt)]).setWidth 64) from by
+    simp only [encodeBytes, encodeInsn_loadStoreImmediateSignedAny size false memop u c rn rt
+      hfits hne],
+    show encodeBytes (.loadStoreImmediate size false memop false false c rn rt) =
+      wordBytes ((fields [(2, size), (6, 56), (2, loadStoreOpc memop), (1, 0),
+        (9, c.toNat % 512), (1, 0), (1, 0), (5, rn), (5, rt)]).setWidth 64) from by
+      simp only [encodeBytes, encodeInsn_loadStoreImmediateSigned size false memop c rn rt hfits]]
+
+
 end Flapjack.Compiler.Encoders.Arm8
