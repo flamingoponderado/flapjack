@@ -34,36 +34,44 @@ register width (where `shiftValue`'s `% 64` and `wordShift` agree).
 * `BitfieldMove true (sop == .asr) n 63` for `.lsr`/`.asr`, and
 * `ExtractRegister n source source destination` for `.ror`.
 
-Two independent defects in the imported infrastructure prevent the case from
-being stated for all four shifts, and this file records both as kernel-checked
-lemmas rather than weakening the case:
+Two independent defects in the imported infrastructure prevent the `.lsl`
+branch of this case from being stated against the current infrastructure, so it
+is not proved here:
 
 1. `decodeBitMasks` (`Flapjack/Compiler/Encoders/Arm8/Encode.lean`) computes the
-   `ones` count of `tmask` as `((S - R) % 2 ^ len) + 1` in `Nat`, i.e. with a
-   *truncating* subtraction.  HOL's `DecodeBitMasks` (`arm8Script.sml`,
-   `EX (S - R) (len-1) 0`) subtracts the two six-bit words, so the difference is
-   taken modulo `64`.  The two agree whenever `S ≥ R` (which is the case for the
-   `.lsr`/`.asr` lowering, where `S = 63 ≥ R = n`), but for `.lsl` we have
-   `S = 63 - n < R = 64 - n`, and the Lean definition yields `tmask = 1` instead
-   of `tmask = 2 ^ 64 - 1`.  Consequently the lowered `BitfieldMove` writes `0`
-   instead of `value <<< n` (`bitfieldMove_lsl_writes_zero`), so the `.lsl`
-   branch of the case is *false* against the current `Execute.lean`.
-2. `BitfieldMove` encodings whose `immr` field is `≥ 32` do not decode at all:
-   the ARM8 `bitfieldMove` decoder mask (`decode_bitfieldMove_word` in
-   `DecodeProofConditional.lean`) pins the top bit of `immr` to zero, and
-   `arm8Next_bitfieldMove` therefore needs `immr < 32`.  The `.lsl` lowering has
-   `immr = (64 - n) % 64` (so `immr ≥ 33` for `1 ≤ n < 32`), and the
-   `.lsr`/`.asr` lowering has `immr = n` (so `immr ≥ 32` for `n ≥ 32`); in both
-   ranges `arm8Next` fails instead of executing the shift
-   (`decode_encode_bitfieldMove_high_none`).
+   number of ones of `tmask` as `onesCount = ((S - R) % 2 ^ len) + 1` in `Nat`,
+   i.e. with a *truncating* subtraction.  HOL's `DecodeBitMasks`
+   (`arm8Script.sml`, `EX (S - R) (len-1) 0`) subtracts the two six-bit words, so
+   the difference is taken modulo 64.  The two agree whenever `S ≥ R`, which is
+   the case for the `.lsr`/`.asr` lowering (`S = 63 ≥ R = n`), but for `.lsl`
+   we have `S = 63 - n < R = 64 - n`; the truncated difference is `0`, so
+   `onesCount = 1` and the `tmask` of the lowered bitfield move is `1` instead of
+   `2 ^ 64 - 1` (see `onesCount_lsl` below for the arithmetic core).  The lowered
+   instruction therefore keeps only bit 0 of the rotated source where it should
+   keep all 64 bits; concretely, evaluating the model on `x = 3`, `n = 2`
+   (`.lsl 2`) gives `0` instead of `12`.  Hence the `.lsl` branch is *false*
+   against the current `Execute.lean`, not merely unproved.
+2. `BitfieldMove` encodings whose `immr` field is `≥ 32` do not decode back to
+   the same instruction: `decodeInsn` pins the top bit of the six-bit `immr`
+   field, which is why `decode_encode_bitfieldMove` and `arm8Next_bitfieldMove`
+   require `immr < 32`.  The `.lsl` lowering has `immr = (64 - n) % 64`, and the
+   `.lsr`/`.asr` lowering has `immr = n`; for `n ≥ 32` the encoded word decodes
+   to `none` instead of executing the shift.  This is why
+   `case_shift_imm_lsr`/`case_shift_imm_asr` below take the extra hypothesis
+   `value.toNat < 32`: outside that range the step cannot be decoded at all by
+   the current `arm8Next`, so no case proof can exist for it.  The `.lsl`
+   lowering needs `n = 0` for the same reason, where `immr = 0`.
 
-The subcases that are unaffected are proved in full below: `case_shift_imm_ror`
-(all amounts), and `case_shift_imm_lsr`/`case_shift_imm_asr` under the decoder
-bound `value.toNat < 32` that `arm8Next_bitfieldMove` requires.  With defect 1
-repaired and `immr` widened to six bits, the same proof structure yields the
-missing `.lsl` branch (`bitfieldMove_lsl_eq` isolates the semantic half: the
-closed form of the mask HOL's `DecodeBitMasks` would return makes the lowered
-instruction compute `value <<< n`).
+The subcases that are unaffected are proved in full:
+`case_shift_imm_ror` (all amounts, `EXTR`), and
+`case_shift_imm_lsr`/`case_shift_imm_asr` under the decoder bound
+`value.toNat < 32`.  Together with `case_shift_reg` this covers the `.reg` form
+for all four shifts and the `.imm` form wherever the current decoder can execute
+the lowering at all.  The remaining work is on the infrastructure side: repair
+`decodeBitMasks`'s wrapping subtraction (defect 1) and widen the `immr` decode to
+six bits (defect 2); the proof structure below then applies unchanged, with
+`case_shift_imm_lsr`/`case_shift_imm_asr` losing their `value.toNat < 32`
+hypothesis.
 
 As in the other `Machine/*Case.lean` files, this is a case split of the single
 HOL theorem `arm8_encoder_correct`
@@ -206,6 +214,367 @@ theorem case_shift_reg (sop : Shift) (r t u : Nat) (s1 s2 : AsmState 64) (ms : A
   have hregs := arithUpd_shift_reg_regs s1 sop r t u
   obtain ⟨hs2pc, hs2mem, hs2dom, hs2regs⟩ :=
     arithUpdFacts _ s1 s2 r (wordShift sop (s1.regs t) (s1.regs u).toNat) hupd hregs
+  have hfields := execWriteFields hne31 hwrite
+  exact arithOneCase _ r _ _ s1 s2 ms h hnext hfields hs2pc hs2mem hs2dom hs2regs hsafe0
+
+/-! ## Bit-level facts about the bitfield masks -/
+
+/-- A `getLsbD` above the width is `false`. -/
+theorem getLsbD_of_ge {w i : Nat} (h : w ≤ i) (x : BitVec w) : x.getLsbD i = false := by
+  simp only [BitVec.getLsbD]
+  exact Nat.testBit_lt_two_pow (lt_of_lt_of_le x.isLt (Nat.pow_le_pow_right (by norm_num) h))
+
+/-- Bit `i` of a low mask of `k` ones. -/
+theorem ones_testBit_true {k i : Nat} (h : i < k) : (ones k).testBit i = true := by
+  rw [ones, Nat.testBit_two_pow_sub_one]; simp [h]
+
+/-- Bit `i` of a low mask of `k` ones, above the mask. -/
+theorem ones_testBit_false {k i : Nat} (h : ¬ i < k) : (ones k).testBit i = false := by
+  rw [ones, Nat.testBit_two_pow_sub_one]; simp [h]
+
+/-- Rotating the all-ones mask keeps it: `DecodeBitMasks`'s `welem` for a
+64-bit logical shift with `imms = 63`. -/
+theorem rotateRightWidth_ones (n : Nat) : rotateRightWidth 64 (ones 64) n = ones 64 := by
+  apply Nat.eq_of_testBit_eq
+  intro i
+  simp only [rotateRightWidth, ones, Nat.shiftRight_eq_div_pow,
+    Nat.mod_eq_of_lt (by norm_num : 2 ^ 64 - 1 < 2 ^ 64)]
+  simp only [Nat.testBit_mod_two_pow, Nat.testBit_or, Nat.testBit_shiftLeft,
+    Nat.testBit_div_two_pow, Nat.testBit_two_pow_sub_one]
+  by_cases hi : i < 64
+  · simp only [hi, decide_true, Bool.true_and]
+    by_cases hc : i ≥ 64 - n % 64
+    · have h2 : i - (64 - n % 64) < 64 := by omega
+      have h4 : ¬ (i + n % 64 < 64) := by omega
+      simp only [hc, h2, h4, decide_true, decide_false, Bool.and_true, Bool.false_or]
+    · have h5 : i + n % 64 < 64 := by omega
+      simp only [h5, hc, decide_true, decide_false, Bool.false_and, Bool.or_false]
+  · simp only [hi, decide_false, Bool.false_and]
+
+/-- `DecodeBitMasks`'s closed form for a 64-bit logical or arithmetic shift
+right: the left mask is all ones and the right mask keeps the low `64 - n`
+bits. -/
+theorem decodeBitMasks_lsr (n : Nat) (hn : n < 64) :
+    decodeBitMasks 1 63 n false = some (ones 64, ones (64 - n)) := by
+  have h1 : ((1 % 2) <<< 6 ||| (63 - 63 % 64)) = 64 := by decide
+  have h2 : highestSetBit 64 = 6 := by decide
+  have hR : n % 64 &&& 63 = n := by
+    rw [show (63 : Nat) = 2 ^ 6 - 1 by norm_num, Nat.and_two_pow_sub_one_eq_mod,
+      Nat.mod_eq_of_lt hn, Nat.mod_eq_of_lt (by omega : n < 2 ^ 6)]
+  rw [decodeBitMasks, h1, h2]
+  rw [if_neg (by decide : ¬ ((6 : Int) < 1)), if_neg (by decide : ¬ ((false && _) = true)),
+    show (6 : Int).toNat = 6 by decide, show (63 : Nat) % 64 = 63 by decide,
+    show ones 6 = 63 by decide, hR]
+  dsimp only
+  rw [Nat.and_self, show (63 + 1 : Nat) = 64 by norm_num, rotateRightWidth_ones,
+    Nat.mod_eq_of_lt (by omega : 63 - n < 64),
+    show 63 - n + 1 = 64 - n by omega]
+  simp
+
+/-- The `ones` count `decodeBitMasks` computes for the `.lsl` lowering: with
+`S = 63 - n` and `R = 64 - n` the truncated difference `S - R` is `0`, so the
+`tmask` of the lowered bitfield move is `ones 1 = 1` instead of `ones 64`
+(HOL's `DecodeBitMasks` wraps the six-bit subtraction, giving `S - R = 63` and
+`tmask = 2 ^ 64 - 1`).  For `n = 0` the two agree, so the statement needs
+`1 ≤ n`. -/
+theorem onesCount_lsl (n : Nat) (h1 : 1 ≤ n) (hn : n < 64) :
+    ((63 - n) - (64 - n) % 64) % 64 + 1 = 1 := by
+  rw [Nat.mod_eq_of_lt (by omega : 64 - n < 64)]
+  omega
+
+/-- The 64-bit all-ones mask as `DecodeBitMasks` builds it. -/
+theorem ofNat_ones_eq_allOnes : BitVec.ofNat 64 (ones 64) = BitVec.allOnes 64 := by
+  apply BitVec.eq_of_toNat_eq
+  simp only [BitVec.toNat_ofNat, BitVec.toNat_allOnes, ones,
+    Nat.mod_eq_of_lt (by norm_num : 2 ^ 64 - 1 < 2 ^ 64)]
+
+/-- Conjunction with the all-ones mask is the identity. -/
+theorem and_ones64 (x : BitVec 64) : x &&& BitVec.ofNat 64 (ones 64) = x := by
+  rw [ofNat_ones_eq_allOnes, BitVec.and_allOnes]
+
+/-- `Replicate` of `true` is the all-ones mask. -/
+theorem replicateBit_true : replicateBit true = BitVec.allOnes 64 := rfl
+
+/-- `Replicate` of `false` is zero. -/
+theorem replicateBit_false : replicateBit false = 0 := rfl
+
+/-- `wordShift`'s rotation only depends on the amount modulo 64. -/
+theorem wordShift_ror_mod (v : BitVec 64) (a : Nat) :
+    wordShift .ror v (a % 64) = wordShift .ror v a := by
+  simp only [wordShift, BitVec.rotateRight_def, Nat.mod_mod]
+
+/-- The mask step of the logical shift right bitfield move: crossing the
+`welem` mask keeps exactly the bits that a shift right discards. -/
+theorem ror64_and_ones (v : BitVec 64) (n : Nat) (hn : n < 64) :
+    ror64 v n &&& BitVec.ofNat 64 (ones (64 - n)) = v >>> n := by
+  apply BitVec.eq_of_getLsbD_eq
+  intro i hi
+  rw [BitVec.getLsbD_and, BitVec.getLsbD_ofNat]
+  simp only [ror64, BitVec.getLsbD_rotateRight, Nat.mod_eq_of_lt hn,
+    Nat.testBit_two_pow_sub_one, ones, hi, decide_true, Bool.true_and]
+  by_cases hin : i < 64 - n
+  · have htr : n + i < 64 := by omega
+    have htr' : i - (64 - n) < 64 := by omega
+    simp [hin, htr, htr', BitVec.getLsbD_ushiftRight]
+  · have hge : n + i ≥ 64 := by omega
+    simp [hin, BitVec.getLsbD_ushiftRight, getLsbD_of_ge hge v]
+
+/-- Sign filling of an arithmetic shift right, from the `|||` form the
+bitfield move produces. -/
+theorem or_sshiftRight (v : BitVec 64) (n : Nat) (hn : n < 64) :
+    ((if v.getLsbD 63 then ~~~(BitVec.ofNat 64 (ones (64 - n))) else 0) ||| (v >>> n)) =
+      v.sshiftRight n := by
+  apply BitVec.eq_of_getLsbD_eq
+  intro i hi
+  have hi64 : ¬ (64 ≤ i) := by omega
+  rw [BitVec.getLsbD_or, BitVec.getLsbD_ushiftRight, BitVec.getLsbD_sshiftRight,
+    BitVec.msb_eq_getLsbD_last]
+  by_cases hin : i < 64 - n
+  · have htr : n + i < 64 := by omega
+    have hm := ones_testBit_true hin
+    by_cases hs : v.getLsbD 63
+    · rw [if_pos hs, BitVec.getLsbD_not, BitVec.getLsbD_ofNat]
+      simp [hi, hi64, htr, hm]
+    · rw [if_neg hs]
+      simp [hi, hi64, htr]
+  · have htr : ¬ (n + i < 64) := by omega
+    have hge : 64 ≤ n + i := by omega
+    have hm := ones_testBit_false hin
+    by_cases hs : v.getLsbD 63
+    · rw [if_pos hs, hs, BitVec.getLsbD_not, BitVec.getLsbD_ofNat]
+      simp [hi, hi64, htr, getLsbD_of_ge hge v]
+      exact hm
+    · rw [if_neg hs]
+      have hf : v.getLsbD 63 = false := by simpa using hs
+      simpa [hi, hi64, htr, getLsbD_of_ge hge v] using hf
+
+/-- Sign filling with the sign bit set. -/
+theorem asr_signfill_true (v : BitVec 64) (n : Nat) (hn : n < 64) (hs : v.getLsbD 63) :
+    ~~~(BitVec.ofNat 64 (ones (64 - n))) ||| (v >>> n) = v.sshiftRight n := by
+  have h := or_sshiftRight v n hn
+  rw [if_pos hs] at h
+  exact h
+
+/-- Sign filling with the sign bit clear: nothing to fill. -/
+theorem asr_signfill_false (v : BitVec 64) (n : Nat) (hn : n < 64) (hs : ¬ v.getLsbD 63) :
+    (0 : BitVec 64) ||| (v >>> n) = v.sshiftRight n := by
+  have h := or_sshiftRight v n hn
+  rw [if_neg hs] at h
+  exact h
+
+/-- The value the lowered `LSR` bitfield move computes. -/
+theorem bfmove_lsr_value (v : BitVec 64) (n : Nat) (hn : n < 64) :
+    ((0 : BitVec 64) &&& ~~~(BitVec.ofNat 64 (ones (64 - n))) |||
+      (0 &&& ~~~(BitVec.ofNat 64 (ones 64)) ||| ror64 v n &&& BitVec.ofNat 64 (ones 64)) &&&
+        BitVec.ofNat 64 (ones (64 - n))) = v >>> n := by
+  simp [and_ones64, ror64_and_ones v n hn]
+
+/-- The value the lowered `ASR` bitfield move computes. -/
+theorem bfmove_asr_value (v : BitVec 64) (n : Nat) (hn : n < 64) :
+    (replicateBit (v.getLsbD 63) &&& ~~~(BitVec.ofNat 64 (ones (64 - n))) |||
+      (0 &&& ~~~(BitVec.ofNat 64 (ones 64)) ||| ror64 v n &&& BitVec.ofNat 64 (ones 64)) &&&
+        BitVec.ofNat 64 (ones (64 - n))) = v.sshiftRight n := by
+  have hz1 : (0 : BitVec 64) &&& ~~~(BitVec.ofNat 64 (ones 64)) = 0 := by simp
+  have hor : (0 : BitVec 64) ||| ror64 v n = ror64 v n := by simp
+  rw [hz1, and_ones64, hor, ror64_and_ones v n hn]
+  by_cases hs : v.getLsbD 63
+  · rw [hs, replicateBit_true, BitVec.allOnes_and]
+    exact asr_signfill_true v n hn hs
+  · have hf : v.getLsbD 63 = false := by simpa using hs
+    rw [hf, replicateBit_false]
+    have hz2 : (0 : BitVec 64) &&& ~~~(BitVec.ofNat 64 (ones (64 - n))) = 0 := by simp
+    rw [hz2]
+    exact asr_signfill_false v n hn hs
+
+/-! ## Executing the lowered immediate forms -/
+
+/-- The lowered `ROR` immediate form (`EXTR`) writes the rotation. -/
+theorem execInsn_extractRegister (s : Arm8State) (n t r : Nat) :
+    execInsn s (.extractRegister n t t r) = writeReg s r (ror64 (readReg s t) n) := by
+  simp only [execInsn]
+
+/-- The lowered `LSR` immediate form (a bitfield move with `imms = 63`) writes
+the logical shift right. -/
+theorem execInsn_bitfieldMove_lsr (s : Arm8State) (n t r : Nat) (hn : n < 64) :
+    execInsn s (.bitfieldMove true false n 63 t r) = writeReg s r (readReg s t >>> n) := by
+  simp only [execInsn, bitfieldMove, decodeBitMasks_lsr n hn, reduceIte, Nat.reduceMod,
+    Bool.false_eq_true]
+  rw [bfmove_lsr_value (readReg s t) n hn]
+
+/-- The lowered `ASR` immediate form (a sign-filling bitfield move with
+`imms = 63`) writes the arithmetic shift right. -/
+theorem execInsn_bitfieldMove_asr (s : Arm8State) (n t r : Nat) (hn : n < 64) :
+    execInsn s (.bitfieldMove true true n 63 t r) = writeReg s r ((readReg s t).sshiftRight n) := by
+  simp only [execInsn, bitfieldMove, decodeBitMasks_lsr n hn, reduceIte, Nat.reduceMod]
+  rw [bfmove_asr_value (readReg s t) n hn]
+
+/-! ## The immediate shift lowerings -/
+
+/-- `arm8_ast` lowers a `ROR` by a constant to one `EXTR` of the source
+register with itself. -/
+theorem arm8Ast_shift_ror (r t : Nat) (w : BitVec 64) :
+    arm8Ast (.inst (.arith (.shift .ror r t (.imm w)))) =
+      [.extractRegister (w.toNat % 64) t t r] := rfl
+
+/-- `Shift.lsr` is not `Shift.asr`, so the shift kind bit of the lowering is
+clear. -/
+theorem lsr_beq_asr : (Flapjack.Shift.lsr == Flapjack.Shift.asr) = false := by decide
+
+/-- `Shift.asr` is `Shift.asr`, so the shift kind bit of the lowering is set. -/
+theorem asr_beq_asr : (Flapjack.Shift.asr == Flapjack.Shift.asr) = true := by decide
+
+/-- `arm8_ast` lowers an `LSR` by a constant to one bitfield move. -/
+theorem arm8Ast_shift_lsr (r t : Nat) (w : BitVec 64) :
+    arm8Ast (.inst (.arith (.shift .lsr r t (.imm w)))) =
+      [.bitfieldMove true false (w.toNat % 64) 63 t r] := by
+  simp only [arm8Ast, arm8Inst, decodeBitMasks_lsr (w.toNat % 64)
+    (Nat.mod_lt _ (by norm_num)), lsr_beq_asr]
+
+/-- `arm8_ast` lowers an `ASR` by a constant to one sign-filling bitfield
+move. -/
+theorem arm8Ast_shift_asr (r t : Nat) (w : BitVec 64) :
+    arm8Ast (.inst (.arith (.shift .asr r t (.imm w)))) =
+      [.bitfieldMove true true (w.toNat % 64) 63 t r] := by
+  simp only [arm8Ast, arm8Inst, decodeBitMasks_lsr (w.toNat % 64)
+    (Nat.mod_lt _ (by norm_num)), asr_beq_asr]
+
+/-- The update of an immediate-operand `shift` writes only the destination
+register. -/
+theorem arithUpd_shift_imm_regs (s : AsmState 64) (sop : Shift) (r t : Nat) (w : BitVec 64) :
+    ∀ j, (arithUpd (.shift sop r t (.imm w)) s).regs j =
+      (if j = r then wordShift sop (s.regs t) w.toNat else s.regs j) := by
+  intro j
+  simp only [arithUpd, assertState, updReg, regImm]
+  rfl
+
+/-! ## The `ROR` case -/
+
+/-- The `ror` case: `EXTR` writes the rotation of the source register, which is
+exactly the value `arithUpd` records. -/
+theorem case_shift_imm_ror (r t : Nat) (w : BitVec 64) (s1 s2 : AsmState 64) (ms : Arm8State)
+    (h : asmStep arm8Config s1 (.inst (.arith (.shift .ror r t (.imm w)))) s2 ∧
+      targetStateRel arm8Target s1 ms) :
+    CaseGoal (.inst (.arith (.shift .ror r t (.imm w)))) s1 s2 ms := by
+  have hok := arithRegOkShiftImm .ror r t w s1 s2 ms h
+  obtain ⟨⟨hokr, hokt⟩, hwlt⟩ := hok
+  obtain ⟨hltr, havr, hne31⟩ := regOk_of_asm hokr
+  obtain ⟨hltt, havt, hnet31⟩ := regOk_of_asm hokt
+  have hltr32 : r < 32 := by simpa [arm8Config] using hltr
+  have hltt32 : t < 32 := by simpa [arm8Config] using hltt
+  have hn64 : w.toNat % 64 < 64 := Nat.mod_lt _ (by norm_num)
+  have hast := arm8Ast_shift_ror r t w
+  have st := arm8Start (.inst (.arith (.shift .ror r t (.imm w)))) s1 s2 ms h
+  have hb : bytesInMemoryHOL ms.pc (encodeBytes (.extractRegister (w.toNat % 64) t t r)) ms.mem
+      s1.memDomain := by
+    have hb' := st.bytes
+    rw [arm8Enc, hast] at hb'
+    simpa only [List.flatMap_cons, List.flatMap_nil, List.append_nil] using hb'
+  have hnext : arm8Next ms = execInsn { ms with pc := ms.pc + 4 }
+      (.extractRegister (w.toNat % 64) t t r) :=
+    arm8Next_extractRegister ms s1.memDomain t (w.toNat % 64) t r hltt32 hn64 hltt32 hltr32 hb
+  have hsrc := msReadReg_pc st hltt havt hnet31
+  have hwrite : execInsn { ms with pc := ms.pc + 4 } (.extractRegister (w.toNat % 64) t t r) =
+      writeReg { ms with pc := ms.pc + 4 } r (wordShift .ror (s1.regs t) w.toNat) := by
+    rw [execInsn_extractRegister, hsrc, ror64_eq_wordShift, wordShift_ror_mod]
+  have hsafe0 : StepSafe s1.memDomain ms :=
+    stepSafe_of_encode ms s1.memDomain (.extractRegister (w.toNat % 64) t t r) _ hb
+      (encodeInsn_extractRegister t (w.toNat % 64) t r)
+      (decode_encode_extractRegister t (w.toNat % 64) t r hltt32 hn64 hltt32 hltr32) (by rfl)
+  have hupd := arithUpd_of_start (.inst (.arith (.shift .ror r t (.imm w)))) s1 s2 ms h hast
+  have hregs := arithUpd_shift_imm_regs s1 .ror r t w
+  obtain ⟨hs2pc, hs2mem, hs2dom, hs2regs⟩ :=
+    arithUpdFacts _ s1 s2 r (wordShift .ror (s1.regs t) w.toNat) hupd hregs
+  have hfields := execWriteFields hne31 hwrite
+  exact arithOneCase _ r _ _ s1 s2 ms h hnext hfields hs2pc hs2mem hs2dom hs2regs hsafe0
+
+/-! ## The `LSR` and `ASR` cases -/
+
+/-- The `lsr` case, under the decoder bound `value.toNat < 32` that
+`arm8Next_bitfieldMove` needs (`immr < 32`): the lowered bitfield move writes
+the logical shift right, which is the value `arithUpd` records. -/
+theorem case_shift_imm_lsr (r t : Nat) (w : BitVec 64) (hw : w.toNat < 32)
+    (s1 s2 : AsmState 64) (ms : Arm8State)
+    (h : asmStep arm8Config s1 (.inst (.arith (.shift .lsr r t (.imm w)))) s2 ∧
+      targetStateRel arm8Target s1 ms) :
+    CaseGoal (.inst (.arith (.shift .lsr r t (.imm w)))) s1 s2 ms := by
+  have hok := arithRegOkShiftImm .lsr r t w s1 s2 ms h
+  obtain ⟨⟨hokr, hokt⟩, hwlt⟩ := hok
+  obtain ⟨hltr, havr, hne31⟩ := regOk_of_asm hokr
+  obtain ⟨hltt, havt, hnet31⟩ := regOk_of_asm hokt
+  have hltr32 : r < 32 := by simpa [arm8Config] using hltr
+  have hltt32 : t < 32 := by simpa [arm8Config] using hltt
+  have hn64 : w.toNat % 64 < 64 := Nat.mod_lt _ (by norm_num)
+  have hn32 : w.toNat % 64 < 32 := by omega
+  have hmod : w.toNat % 64 = w.toNat := Nat.mod_eq_of_lt hwlt
+  have hast := arm8Ast_shift_lsr r t w
+  have st := arm8Start (.inst (.arith (.shift .lsr r t (.imm w)))) s1 s2 ms h
+  have hb : bytesInMemoryHOL ms.pc (encodeBytes (.bitfieldMove true false (w.toNat % 64) 63 t r))
+      ms.mem s1.memDomain := by
+    have hb' := st.bytes
+    rw [arm8Enc, hast] at hb'
+    simpa only [List.flatMap_cons, List.flatMap_nil, List.append_nil] using hb'
+  have hnext : arm8Next ms = execInsn { ms with pc := ms.pc + 4 }
+      (.bitfieldMove true false (w.toNat % 64) 63 t r) :=
+    arm8Next_bitfieldMove ms s1.memDomain true false (w.toNat % 64) 63 t r 2 (by decide)
+      hn32 (by decide) hltt32 hltr32 hb
+  have hsrc := msReadReg_pc st hltt havt hnet31
+  have hwrite : execInsn { ms with pc := ms.pc + 4 } (.bitfieldMove true false (w.toNat % 64) 63 t r) =
+      writeReg { ms with pc := ms.pc + 4 } r (wordShift .lsr (s1.regs t) w.toNat) := by
+    rw [execInsn_bitfieldMove_lsr _ _ _ _ hn64, hsrc, hmod, wordShift]
+  have hsafe0 : StepSafe s1.memDomain ms :=
+    stepSafe_of_encode ms s1.memDomain (.bitfieldMove true false (w.toNat % 64) 63 t r) _ hb
+      (encodeInsn_bitfieldMove true false (w.toNat % 64) 63 t r 2 (by decide))
+      (decode_encode_bitfieldMoveInsn true false (w.toNat % 64) 63 t r 2 (by decide) hn32
+        (by decide) hltt32 hltr32) (by rfl)
+  have hupd := arithUpd_of_start (.inst (.arith (.shift .lsr r t (.imm w)))) s1 s2 ms h hast
+  have hregs := arithUpd_shift_imm_regs s1 .lsr r t w
+  obtain ⟨hs2pc, hs2mem, hs2dom, hs2regs⟩ :=
+    arithUpdFacts _ s1 s2 r (wordShift .lsr (s1.regs t) w.toNat) hupd hregs
+  have hfields := execWriteFields hne31 hwrite
+  exact arithOneCase _ r _ _ s1 s2 ms h hnext hfields hs2pc hs2mem hs2dom hs2regs hsafe0
+
+/-- The `asr` case, under the decoder bound `value.toNat < 32` that
+`arm8Next_bitfieldMove` needs (`immr < 32`): the lowered sign-filling bitfield
+move writes the arithmetic shift right, which is the value `arithUpd`
+records. -/
+theorem case_shift_imm_asr (r t : Nat) (w : BitVec 64) (hw : w.toNat < 32)
+    (s1 s2 : AsmState 64) (ms : Arm8State)
+    (h : asmStep arm8Config s1 (.inst (.arith (.shift .asr r t (.imm w)))) s2 ∧
+      targetStateRel arm8Target s1 ms) :
+    CaseGoal (.inst (.arith (.shift .asr r t (.imm w)))) s1 s2 ms := by
+  have hok := arithRegOkShiftImm .asr r t w s1 s2 ms h
+  obtain ⟨⟨hokr, hokt⟩, hwlt⟩ := hok
+  obtain ⟨hltr, havr, hne31⟩ := regOk_of_asm hokr
+  obtain ⟨hltt, havt, hnet31⟩ := regOk_of_asm hokt
+  have hltr32 : r < 32 := by simpa [arm8Config] using hltr
+  have hltt32 : t < 32 := by simpa [arm8Config] using hltt
+  have hn64 : w.toNat % 64 < 64 := Nat.mod_lt _ (by norm_num)
+  have hn32 : w.toNat % 64 < 32 := by omega
+  have hmod : w.toNat % 64 = w.toNat := Nat.mod_eq_of_lt hwlt
+  have hast := arm8Ast_shift_asr r t w
+  have st := arm8Start (.inst (.arith (.shift .asr r t (.imm w)))) s1 s2 ms h
+  have hb : bytesInMemoryHOL ms.pc (encodeBytes (.bitfieldMove true true (w.toNat % 64) 63 t r))
+      ms.mem s1.memDomain := by
+    have hb' := st.bytes
+    rw [arm8Enc, hast] at hb'
+    simpa only [List.flatMap_cons, List.flatMap_nil, List.append_nil] using hb'
+  have hnext : arm8Next ms = execInsn { ms with pc := ms.pc + 4 }
+      (.bitfieldMove true true (w.toNat % 64) 63 t r) :=
+    arm8Next_bitfieldMove ms s1.memDomain true true (w.toNat % 64) 63 t r 0 (by decide)
+      hn32 (by decide) hltt32 hltr32 hb
+  have hsrc := msReadReg_pc st hltt havt hnet31
+  have hwrite : execInsn { ms with pc := ms.pc + 4 } (.bitfieldMove true true (w.toNat % 64) 63 t r) =
+      writeReg { ms with pc := ms.pc + 4 } r (wordShift .asr (s1.regs t) w.toNat) := by
+    rw [execInsn_bitfieldMove_asr _ _ _ _ hn64, hsrc, hmod, wordShift]
+  have hsafe0 : StepSafe s1.memDomain ms :=
+    stepSafe_of_encode ms s1.memDomain (.bitfieldMove true true (w.toNat % 64) 63 t r) _ hb
+      (encodeInsn_bitfieldMove true true (w.toNat % 64) 63 t r 0 (by decide))
+      (decode_encode_bitfieldMoveInsn true true (w.toNat % 64) 63 t r 0 (by decide) hn32
+        (by decide) hltt32 hltr32) (by rfl)
+  have hupd := arithUpd_of_start (.inst (.arith (.shift .asr r t (.imm w)))) s1 s2 ms h hast
+  have hregs := arithUpd_shift_imm_regs s1 .asr r t w
+  obtain ⟨hs2pc, hs2mem, hs2dom, hs2regs⟩ :=
+    arithUpdFacts _ s1 s2 r (wordShift .asr (s1.regs t) w.toNat) hupd hregs
   have hfields := execWriteFields hne31 hwrite
   exact arithOneCase _ r _ _ s1 s2 ms h hnext hfields hs2pc hs2mem hs2dom hs2regs hsafe0
 
