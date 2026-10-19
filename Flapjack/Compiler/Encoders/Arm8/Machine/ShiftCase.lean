@@ -34,44 +34,14 @@ register width (where `shiftValue`'s `% 64` and `wordShift` agree).
 * `BitfieldMove true (sop == .asr) n 63` for `.lsr`/`.asr`, and
 * `ExtractRegister n source source destination` for `.ror`.
 
-Two independent defects in the imported infrastructure prevent the `.lsl`
-branch of this case from being stated against the current infrastructure, so it
-is not proved here:
-
-1. `decodeBitMasks` (`Flapjack/Compiler/Encoders/Arm8/Encode.lean`) computes the
-   number of ones of `tmask` as `onesCount = ((S - R) % 2 ^ len) + 1` in `Nat`,
-   i.e. with a *truncating* subtraction.  HOL's `DecodeBitMasks`
-   (`arm8Script.sml`, `EX (S - R) (len-1) 0`) subtracts the two six-bit words, so
-   the difference is taken modulo 64.  The two agree whenever `S ≥ R`, which is
-   the case for the `.lsr`/`.asr` lowering (`S = 63 ≥ R = n`), but for `.lsl`
-   we have `S = 63 - n < R = 64 - n`; the truncated difference is `0`, so
-   `onesCount = 1` and the `tmask` of the lowered bitfield move is `1` instead of
-   `2 ^ 64 - 1` (see `onesCount_lsl` below for the arithmetic core).  The lowered
-   instruction therefore keeps only bit 0 of the rotated source where it should
-   keep all 64 bits; concretely, evaluating the model on `x = 3`, `n = 2`
-   (`.lsl 2`) gives `0` instead of `12`.  Hence the `.lsl` branch is *false*
-   against the current `Execute.lean`, not merely unproved.
-2. `BitfieldMove` encodings whose `immr` field is `≥ 32` do not decode back to
-   the same instruction: `decodeInsn` pins the top bit of the six-bit `immr`
-   field, which is why `decode_encode_bitfieldMove` and `arm8Next_bitfieldMove`
-   require `immr < 32`.  The `.lsl` lowering has `immr = (64 - n) % 64`, and the
-   `.lsr`/`.asr` lowering has `immr = n`; for `n ≥ 32` the encoded word decodes
-   to `none` instead of executing the shift.  This is why
-   `case_shift_imm_lsr`/`case_shift_imm_asr` below take the extra hypothesis
-   `value.toNat < 32`: outside that range the step cannot be decoded at all by
-   the current `arm8Next`, so no case proof can exist for it.  The `.lsl`
-   lowering needs `n = 0` for the same reason, where `immr = 0`.
-
-The subcases that are unaffected are proved in full:
-`case_shift_imm_ror` (all amounts, `EXTR`), and
-`case_shift_imm_lsr`/`case_shift_imm_asr` under the decoder bound
-`value.toNat < 32`.  Together with `case_shift_reg` this covers the `.reg` form
-for all four shifts and the `.imm` form wherever the current decoder can execute
-the lowering at all.  The remaining work is on the infrastructure side: repair
-`decodeBitMasks`'s wrapping subtraction (defect 1) and widen the `immr` decode to
-six bits (defect 2); the proof structure below then applies unchanged, with
-`case_shift_imm_lsr`/`case_shift_imm_asr` losing their `value.toNat < 32`
-hypothesis.
+Earlier versions of this file documented two decoder defects here: truncating
+`onesCount` in `decodeBitMasks`, and a pinned top bit of the `immr` field.  Both
+were repaired in the infrastructure (`Encode.lean`, `Machine/Decode.lean` and
+their decoder proofs), so the `.lsl` branch is now provable and the `.lsr`/`.asr`
+branches no longer need the former `value.toNat < 32` bound.  The unconditional
+`case_shift_imm` for all four shifts is proved in `ShiftCaseFull.lean`; the
+bounded `case_shift_imm_lsr`/`case_shift_imm_asr` below are kept as the earlier
+reusable sub-proofs.
 
 As in the other `Machine/*Case.lean` files, this is a case split of the single
 HOL theorem `arm8_encoder_correct`

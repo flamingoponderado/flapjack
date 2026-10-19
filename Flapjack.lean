@@ -2787,6 +2787,7 @@ import Flapjack.Compiler.Encoders.Arm8.Machine.JumpCmpCase
 import Flapjack.Compiler.Encoders.Arm8.Machine.ConstCase
 import Flapjack.Compiler.Encoders.Arm8.Machine.ArithCase
 import Flapjack.Compiler.Encoders.Arm8.Machine.ShiftCase
+import Flapjack.Compiler.Encoders.Arm8.Machine.ShiftCaseFull
 import Flapjack.Compiler.Encoders.Arm8.Machine.TargetProof
 import Flapjack.Compiler.Encoders.Arm8.Machine.ExecuteProof
 import Flapjack.Compiler.Backend.Arm8Config.Names
