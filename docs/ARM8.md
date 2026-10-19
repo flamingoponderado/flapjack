@@ -98,10 +98,19 @@ closed ARMv8 execution model for exactly the instruction subset that
 - `DecodeProofSimple2.lean`: kernel-checked decoder inverses for `shift`, `division`,
   `multiplyHigh`, `multiplyAddSub`, `addSubShiftedRegister`, `addSubCarry`,
   `conditionalSelect`, `conditionalCompareImmediate`, and `branchRegister`.
+- `DecodeProofConditional.lean`: kernel-checked inverses for the conditional
+  data-processing encodings (`addSubImmediate`, `logicalShiftedRegister`,
+  `logicalImmediate`, `bitfieldMove`).
+- `DecodeProofControl.lean`: kernel-checked inverses for `branchImmediate`,
+  `branchConditional`, `address false`, and load/store. Two documented limits:
+  `address true` is not emitted by `arm8Ast` and its decoder returns only the page
+  field, and `regsizeWord := true` is not recoverable from emitted bytes (the
+  lowering's loads use `opc = 1`), so load/store inverses use the byte-identical
+  `regsizeWord := false` representative.
 
 The model is deliberately closed: unknown instruction words set `failed`
 instead of being interpreted by the full L3 decoder. Consequently these
-modules carry no `@[hol]` tags. Twelve of the twenty instruction forms have kernel-checked decoder
-inverses. The conditional data-processing forms, loads/stores, immediate and
-conditional branches, `address`, `encoderCorrect`, and the
+modules carry no `@[hol]` tags. All twenty instruction forms now have kernel-checked decoder inverses on the
+emitted shapes, with the two documented load/address limits above.
+`encoderCorrect`, the machine-step simulation of `asmStep`, and the
 `pan_to_target_compile_semantics` instantiation remain future work. The parity fixtures remain the executable evidence.

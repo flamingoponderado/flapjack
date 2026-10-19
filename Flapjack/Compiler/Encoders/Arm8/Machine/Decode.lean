@@ -121,16 +121,20 @@ def decodeInsn32 (w : BitVec 32) : Option Insn :=
     some (.addSubCarry (b 30 1 = 1) (b 29 1 = 1) (b 16 5) (b 5 5) (b 0 5))
   else if bitMatches w 0x3D000000 0x39000000 then
     let size := b 30 2
-    let load := b 22 2 ≠ 0
+    let opc := b 22 2
+    let load := opc ≠ 0
+    let regsizeWord := opc = 3
     let off := (b 10 12) <<< size
-    some (.loadStoreImmediate size false (if load then .load else .store) false true
+    some (.loadStoreImmediate size regsizeWord (if load then .load else .store) false true
       (BitVec.ofNat 64 off) (b 5 5) (b 0 5))
   else if bitMatches w 0x3F000000 0x38000000 then
     let size := b 30 2
-    let load := b 22 2 ≠ 0
+    let opc := b 22 2
+    let load := opc ≠ 0
+    let regsizeWord := opc = 3
     let imm9 := b 12 9
     let signed := sextToWord 9 (BitVec.ofNat 64 imm9)
-    some (.loadStoreImmediate size false (if load then .load else .store) false false
+    some (.loadStoreImmediate size regsizeWord (if load then .load else .store) false false
       signed (b 5 5) (b 0 5))
   else if bitMatches w 0x7C000000 0x14000000 then
     let imm26 := b 0 26
