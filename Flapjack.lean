@@ -2776,6 +2776,7 @@ import Flapjack.Compiler.Encoders.Arm8.Machine.TargetProof
 import Flapjack.Compiler.Encoders.Arm8.Machine.ExecuteProof
 import Flapjack.Compiler.Backend.Arm8Config.Names
 import Flapjack.Compiler.Backend.Arm8Config.BackendConfig
+import Flapjack.Compiler.Backend.Arm8Config.Proofs
 import Flapjack.Arm8.NativeSource
 import Flapjack.Arm8.NativeCLIAdapter
 import Flapjack.Compiler.Encoders.Mips32.Encode
