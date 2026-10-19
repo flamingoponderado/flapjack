@@ -112,4 +112,13 @@ theorem decode_encode_moveWideInsn (op : MoveWideOp) (hw imm16 rd : Nat)
   rw [encodeInsn_moveWide, Option.getD_some]
   exact decode_encode_moveWide op hw imm16 rd hh hi hr
 
+/-- The 32-bit encoding of `noOp`. -/
+theorem decode_encode_noOp32 :
+    decodeInsn32 (fields [(24, 0xD50320), (3, 0), (5, 31)]) = some .noOp := by
+  native_decide
+
+/-- The 64-bit carrier encoding of `noOp`. -/
+theorem encodeInsn_noOp :
+    encodeInsn .noOp = some ((fields [(24, 0xD50320), (3, 0), (5, 31)]).setWidth 64) := rfl
+
 end Flapjack.Compiler.Encoders.Arm8
