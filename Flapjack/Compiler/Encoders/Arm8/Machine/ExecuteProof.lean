@@ -48,4 +48,20 @@ theorem arm8Next_encodeBytes (s : Arm8State) (i : Insn) (w : W)
   have hdec' : decodeInsn32 (w.setWidth 32) = some i := hdec
   rw [hdec']
 
+/-- `noOp` decodes back to itself.  This is the first concrete slice of the
+per-instruction decoder inverse; the remaining emitted forms are future work. -/
+theorem decode_encode_noOp :
+    decodeInsn ((encodeInsn .noOp).getD 0) = some .noOp := by
+  native_decide
+
+/-- `arm8Next` on the encoding of `noOp` only advances the PC. -/
+theorem arm8Next_noOp (s : Arm8State) (d : BitVec 64 → Prop)
+    (h : bytesInMemoryHOL s.pc (encodeBytes .noOp) s.mem d) :
+    arm8Next s = { s with pc := s.pc + 4 } := by
+  have henc : encodeInsn .noOp = some ((encodeInsn .noOp).getD 0) := by
+    unfold encodeInsn
+    rfl
+  rw [arm8Next_encodeBytes s .noOp ((encodeInsn .noOp).getD 0) d henc decode_encode_noOp h]
+  rfl
+
 end Flapjack.Compiler.Encoders.Arm8
