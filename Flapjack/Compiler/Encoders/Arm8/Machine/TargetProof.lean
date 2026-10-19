@@ -116,7 +116,7 @@ theorem arm8Loc_len_neg (register : Nat) (a1 a2 : BitVec 64)
 /-- `enc_ok` for the closed ARMv8 configuration. -/
 theorem arm8EncOk : encOk arm8Config := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
-  · native_decide
+  · decide
   · intro instruction
     refine ⟨?_, ?_⟩
     · simpa [arm8Config] using length_arm8Enc_mod instruction
