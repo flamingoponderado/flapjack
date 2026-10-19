@@ -1569,4 +1569,21 @@ theorem case_memStoreTwo (op : HolMemop) (r base : Nat) (off : BitVec 64) (s1 s2
     · intro pc hpc
       exact ht1mem pc
 
+
+/-- The `regsizeWord` field of an `loadStoreImmediate` does not change its
+encoding when the instruction is not a signed load: the `opc` field is then
+`1` for loads and `0` for stores either way. -/
+theorem encodeInsn_loadStoreImmediate_regsize (size : Nat) (memop : MemOp) (u : Bool)
+    (off : W) (rn rt : Nat) :
+    encodeInsn (.loadStoreImmediate size true memop false u off rn rt) =
+      encodeInsn (.loadStoreImmediate size false memop false u off rn rt) := by
+  cases memop <;> rfl
+
+/-- The same for the emitted bytes. -/
+theorem encodeBytes_loadStoreImmediate_regsize (size : Nat) (memop : MemOp) (u : Bool)
+    (off : W) (rn rt : Nat) :
+    encodeBytes (.loadStoreImmediate size true memop false u off rn rt) =
+      encodeBytes (.loadStoreImmediate size false memop false u off rn rt) := by
+  simp only [encodeBytes, encodeInsn_loadStoreImmediate_regsize]
+
 end Flapjack.Compiler.Encoders.Arm8
