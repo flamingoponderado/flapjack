@@ -99340,5 +99340,21 @@
     "lean_name": "MoveWideOp",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack source comparison (2026-10-19): L3 `Construct \"MoveWideOp\"` at arm8Script.sml:61 declares three nullary constructors, `MoveWideOp_N`, `MoveWideOp_Z`, `MoveWideOp_K`. Lean `MoveWideOp` has exactly `n`, `z`, `k` in that order, no payload, width parameter, or side condition. Exact constructor-for-constructor datatype port."
+    },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/Arm8Instance.lean",
+    "lean_name": "arm8PancakeHeapLimit_lt",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure (ARM8 closed-model instance, 2026-10-19): this is the concrete heap-limit side condition for `pancakeBackendConf arm8BackendConfig`, discharged by kernel `decide`. It has no HOL original because the closed ARM8 `arm8BackendConfig` is Flapjack-specific; the full L3 ARM8 configuration is tracked separately in #1229."
+    },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/Arm8Instance.lean",
+    "lean_name": "panToTargetCompileSemanticsArm8",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure (ARM8 closed-model instance, 2026-10-19): instantiates the generic `panToTargetCompileSemantics` theorem at the closed `arm8Target`, supplying `arm8MachineConfigOk` and `arm8EncoderCorrect`. It has no single HOL original: the CakeML analogue depends on the unported L3 `arm8_encoder_correct` and the full `arm8_config` carrier, tracked in #1229."
   }
 ]
