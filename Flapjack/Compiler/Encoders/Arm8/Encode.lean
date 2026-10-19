@@ -1,3 +1,4 @@
+import Flapjack.HolRef
 import Flapjack.Compiler.Encoders.Asm
 import Flapjack.Compiler.Encoders.AsmSem.Arithmetic
 
@@ -51,7 +52,8 @@ inductive LogicalOp where
   | eor
   deriving DecidableEq, Repr
 
-/-- The `ShiftType` constructors of `arm8Script.sml`. -/
+/-- HOL L3 datatype `ShiftType` (`arm8Script.sml:38`). -/
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "ShiftType"]
 inductive ShiftType where
   | lsl
   | lsr

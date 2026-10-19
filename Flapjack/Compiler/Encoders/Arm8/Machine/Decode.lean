@@ -132,8 +132,9 @@ def decodeInsn32 (w : BitVec 32) : Option Insn :=
   -- `arm8_ast` emits.  Both load/store masks are permissive, but differently:
   -- the unsigned-offset mask above (which requires bit 24) also accepts signed
   -- loads, PRFM, and bits 25:24 = 11; the unscaled mask below accepts
-  -- register-offset and pre/post-index forms (bits 25:24 = 00).  No correctness
-  -- claim is made for any of those words.
+  -- register-offset and pre/post-index forms (bits 25:24 = 00), signed loads,
+  -- unprivileged LDTR/STTR, and LSE atomics (bit 21 = 1, bits 11:10 = 00).
+  -- No correctness claim is made for any of those words.
   else if bitMatches w 0x3F000000 0x38000000 then
     let size := b 30 2
     let opc := b 22 2

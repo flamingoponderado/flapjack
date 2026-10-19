@@ -3,7 +3,8 @@ import Flapjack.Compiler.Encoders.Arm8.Machine.Execute
 
 /-! Concrete round-trip checks for ARMv8 instruction encodings that are not on
 the emitted `arm8_ast` path, in particular the `ADRP` (`address true`) field
-geometry.  These are kernel `decide` checks, with no native decision procedure. -/
+geometry.  These are kernel-checked by `decide` or `simp`, with no native
+decision procedure. -/
 
 namespace Flapjack.Test.Arm8Encoding
 open Flapjack.Compiler.Encoders.Arm8
@@ -36,7 +37,7 @@ theorem adrp_rejects_unaligned :
 
 theorem adrp_exec_page_offset :
     let s : Arm8State :=
-      { regs := fun _ => 0, pc := 0x1004, n := false, z := false, c := false, v := false,
+      { regs := fun _ => 0, pc := 0x1238, n := false, z := false, c := false, v := false,
         mem := fun _ => 0, memDomain := fun _ => True, failed := false }
     readReg (execInsn s (.address true 0x12345000 7)) 7 = 0x12346000 := by
   simp [execInsn, writeReg, readReg]

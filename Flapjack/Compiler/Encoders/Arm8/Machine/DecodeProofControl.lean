@@ -143,18 +143,6 @@ theorem ofInt_sextValue_field_shift_add (k : Nat) (imm : W)
   rw [hcongr, ← hfits]
   exact BitVec.ofInt_toInt
 
-/-- A multiple of four is the special case of `nat_field_mod_shift_add` with
-zero low bits. -/
-theorem nat_field_mod_shift (k a : Nat) (hmod : a % 4 = 0) :
-    (a / 4 % 2 ^ k) * 4 % 2 ^ (k + 2) = a % 2 ^ (k + 2) := by
-  simpa [hmod] using nat_field_mod_shift_add k a
-
-/-- The field `(imm >>> 2) % 2^k` written back as `(... <<< 2)` reconstructs the
-low `k + 2` bits of `imm` whenever `imm` is a multiple of four. -/
-theorem field_mod_shift (k : Nat) (imm : W) (hmod : imm.toNat % 4 = 0) :
-    ((((imm >>> 2).toNat % 2 ^ k) <<< 2)) % 2 ^ (k + 2) = imm.toNat % 2 ^ (k + 2) := by
-  simpa [hmod] using field_mod_shift_add k imm
-
 /-- The shifted `k`-bit field sign-extends back to the original word, provided
 the word fits in `k + 2` signed bits and is a multiple of four. -/
 theorem ofInt_sextValue_field_shift (k : Nat) (imm : W)

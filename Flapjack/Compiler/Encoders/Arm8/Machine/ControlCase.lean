@@ -128,15 +128,6 @@ theorem ofDecideTrue {p : Prop} (inst : Decidable p) (h : @decide p inst = true)
   | isTrue hp => exact hp
   | isFalse _ => exact Bool.noConfusion h
 
-/-- The `loc` offset window of `arm8Config` gives the four-byte alignment of the
-offset.  It does *not* give `fitsSigned 20`: a `loc` offset outside the
-twenty-bit range lowers to the five-instruction form of `arm8_ast`, which the
-`loc` case splits on. -/
-theorem locAligned_of_asm (l : W) (h : asmLocOffsetOkExact arm8Config l = true) :
-    l.toNat % 4 = 0 := by
-  simp only [asmLocOffsetOkExact, asmOffsetOkExact, arm8Config, Bool.and_eq_true] at h
-  simpa [asmAligned] using h.2
-
 /-- The `jump`/`call` offset window of `arm8Config` gives the encoder's
 twenty-eight-bit branch guard and the four-byte alignment. -/
 theorem jumpOk_of_asm (a : W) (h : asmJumpOffsetOkExact arm8Config a = true) :

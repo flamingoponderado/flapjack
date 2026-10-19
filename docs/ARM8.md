@@ -113,9 +113,10 @@ that `arm8_ast`/`encodeInsn` emit; no claim is made about other accepted words.
 - `DecodeProofControl.lean`: kernel-checked inverses for `branchImmediate`,
   `branchConditional`, `address false`, and load/store.  `address false` now
   decodes both `immlo` bits, and `Encode` accepts L3's signed 21-bit ADR range;
-  the page (`address true`) form reconstructs the full page-relative offset; it
-  is not emitted by `arm8Ast`, has no step case, and is covered by concrete
-  round-trip checks in `Flapjack/Test/Arm8Encoding.lean`.  `regsizeWord := true`
+  the page (`address true`) form reconstructs the full page-relative offset,
+  but only concrete positive, negative, boundary, unaligned, and executor
+  checks cover it (`Flapjack/Test/Arm8Encoding.lean`); there is no general
+  inverse lemma and no step case because `arm8Ast` does not emit it.  `regsizeWord := true`
   is not recoverable from emitted bytes, so load/store inverses use the
   byte-identical `regsizeWord := false` representative.  The decoder also
   accepts sign-extending load encodings but represents every load with
@@ -128,12 +129,16 @@ instead of being interpreted by the full L3 decoder.  The executor now uses
 ADR/ADRP field geometry.  It does not model the stack-pointer role of `r31`
 anywhere: `readReg`/`writeReg` treat `r31` as XZR in every operand position,
 including ADD/SUB-immediate, base-register, and ORR-immediate positions where
-AArch64 would use SP.  Emitted code avoids `r31` in those positions.
-Because the decoder is still a permissive subset recognizer, it can also treat
-a CCMP-register word as ADCS, register-offset or pre/post-index loads and stores
-as unscaled, and other multiply-high variants as `MULH`; these words are never
-emitted.  The closed machine modules (`Decode.lean`, `Execute.lean`, `Machine/`)
-therefore carry no `@[hol]` tags.
+AArch64 would use SP.  Emitted code uses `r31` only in slots where AArch64
+treats it as XZR (CMP's `Rd` and ORR-immediate's `Rn`), not where AArch64 would
+select SP; that per-slot fact is not checked by the model.
+Because the decoder is still a permissive subset recognizer, it can also accept
+non-emitted words: the unsigned-offset mask can treat a CCMP-register word as
+ADCS and accepts signed loads, PRFM, and bits 25:24 = 11 as unsigned loads; the
+unscaled mask accepts register-offset and pre/post-index forms, signed loads,
+LDTR/STTR, and LSE atomics; and the multiply-high mask accepts other variants as
+`MULH`.  These words are never emitted, so the closed machine modules
+(`Decode.lean`, `Execute.lean`, `Machine/`) carry no `@[hol]` tags.
 All twenty instruction forms now have kernel-checked decoder inverses on the
 emitted shapes.  The load-shape limits above are the only remaining gaps on
 that path.
