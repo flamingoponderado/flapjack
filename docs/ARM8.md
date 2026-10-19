@@ -7,7 +7,7 @@ width 64 and adds an ARMv8 assembler target.
 This is a **parity-first** port. Source-to-assembly output is checked
 byte-for-byte against the original CakeML compiler. On top of that, Flapjack
 proves `encoderCorrect arm8Target` for a closed ARMv8 execution model covering
-exactly the emitted instruction subset, and instantiates the full
+the emitted instruction subset, and instantiates the full
 Pancake-to-target theorem at that model. This is **not** a port of CakeML's full
 L3 ARMv8 semantics; the closed model and its limits are described below and in
 `docs/SOUNDNESS.md`.
@@ -113,17 +113,28 @@ that `arm8_ast`/`encodeInsn` emit; no claim is made about other accepted words.
 - `DecodeProofControl.lean`: kernel-checked inverses for `branchImmediate`,
   `branchConditional`, `address false`, and load/store.  `address false` now
   decodes both `immlo` bits, and `Encode` accepts L3's signed 21-bit ADR range;
-  the page (`address true`) form reconstructs the full page-relative offset but
-  is not emitted by `arm8Ast` and has no step case.  `regsizeWord := true` is
-  not recoverable from emitted bytes, so load/store inverses use the
-  byte-identical `regsizeWord := false` representative.
+  the page (`address true`) form reconstructs the full page-relative offset; it
+  is not emitted by `arm8Ast`, has no step case, and is covered by concrete
+  round-trip checks in `Flapjack/Test/Arm8Encoding.lean`.  `regsizeWord := true`
+  is not recoverable from emitted bytes, so load/store inverses use the
+  byte-identical `regsizeWord := false` representative.  The decoder also
+  accepts sign-extending load encodings but represents every load with
+  `signed := false`, so such words execute zero-extending; emitted loads are
+  zero-extending.
 
 The model is deliberately closed: unknown instruction words set `failed`
 instead of being interpreted by the full L3 decoder.  The executor now uses
 `rm` in `EXTR`, treats condition code 15 (NV) as always true, and follows L3's
-ADR/ADRP field geometry.  Because the decoder is still a permissive subset
-recognizer, these modules carry no `@[hol]` tags. All twenty instruction forms now have kernel-checked decoder inverses on the
-emitted shapes, with the two documented load/address limits above.
+ADR/ADRP field geometry.  It does not model `r31` as the stack pointer outside
+data-processing operands: `readReg`/`writeReg` always treat `r31` as XZR.
+Because the decoder is still a permissive subset recognizer, it can also treat
+a CCMP-register word as ADCS, register-offset or pre/post-index loads and stores
+as unscaled, and other multiply-high variants as `MULH`; these words are never
+emitted.  The closed machine modules (`Decode.lean`, `Execute.lean`, `Machine/`)
+therefore carry no `@[hol]` tags.
+All twenty instruction forms now have kernel-checked decoder inverses on the
+emitted shapes.  The load-shape limits above are the only remaining gaps on
+that path.
 `Flapjack/Compiler/Backend/Arm8Config/BackendProof.lean` proves
 `backendConfigOk arm8Config pancakeArm8BackendConfig`, and
 `Flapjack/Compiler/Encoders/Arm8/Machine/Complete.lean` proves

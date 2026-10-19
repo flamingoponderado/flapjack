@@ -289,7 +289,11 @@ The following are open review or verification obligations:
     - **What is not checked.** The closed model is not CakeML's full L3 ARMv8
       semantics.  The decoder is a permissive recognizer and can also accept
       non-emitted AArch64 words with closed-model (not L3) semantics; only
-      emitted forms have inversion and simulation proofs.  Unknown instruction
+      emitted forms have inversion and simulation proofs.  In particular it can
+      accept sign-extending loads but executes them as zero-extending (the
+      emitted loads are all zero-extending), and it treats `r31` as XZR rather
+      than the context-dependent stack pointer (emitted code avoids `r31` as a
+      base or destination where SP semantics would apply).  Unknown instruction
       words set `failed`; there is no L3
       `arm8_encoder_correct` port, no proof about arbitrary ARMv8 code, and no
       theorem that the model agrees with real AArch64 hardware or with L3.

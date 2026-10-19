@@ -1,5 +1,4 @@
 import Flapjack.Compiler.Backend.Arm8Config.BackendConfig
-import Flapjack.HolRef
 import Flapjack.Compiler.Encoders.Arm8.Machine.Complete
 import Flapjack.Compiler.Backend.BackendProof.MachineInit
 import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
@@ -18,8 +17,10 @@ namespace Flapjack.Compiler.Backend.Arm8Config
 open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Encoders.AsmProps Flapjack.Compiler.Encoders.Arm8
 open Flapjack.Compiler.Backend.BackendProof
 
-/-- CakeML's `is_arm8_machine_config`. -/
-@[hol "cakeml/compiler/backend/arm8/proofs/arm8_configProofScript.sml" "is_arm8_machine_config_def"]
+/-- Flapjack's closed-model instance of CakeML's `is_arm8_machine_config`.
+Deliberately untagged: HOL's predicate takes `arm8_state`/`arm8_proj`, while
+this one is stated for `MachineConfig 64 Arm8State Arm8Projection`; the carriers
+are not the same, so it is not an exact HOL port. -/
 def isArm8MachineConfig
     (mc : MachineConfig 64 Arm8State Arm8Projection) : Prop :=
   mc.target = arm8Target ∧

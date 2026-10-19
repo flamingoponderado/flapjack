@@ -2,6 +2,7 @@
 Copyright (c) 2025 Flapjack contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
+import Mathlib.Tactic
 import Mathlib.Tactic.IntervalCases
 import Flapjack.Compiler.Encoders.Arm8.Machine.DecodeProofConditional
 
@@ -30,13 +31,8 @@ hypotheses under which its guard succeeds:
   the field, so no emitted behaviour is lost.
 * `branchImmediate` needs `fitsSigned 28 imm` and `imm.toNat % 4 = 0`.
 * `branchConditional` needs `fitsSigned 21 imm` and `imm.toNat % 4 = 0`.
-* `address false` needs the encoder's `fitsSigned 20 imm` and
-  `imm.toNat % 4 = 0`.  The decoder sign-extends twenty-one bits, so the decoder
-  side (`decode_encode_addressFalse32`, `decode_encode_addressFalse`) is stated
-  under `fitsSigned 21 imm`; `fitsSigned20_imp_21` shows the encoder's twenty-bit
-  guard lies inside that range, which lets the instruction-level inverse
-  (`decode_encode_addressFalseInsn`, `arm8Next_addressFalse`) keep the encoder's
-  own `fitsSigned 20 imm` hypothesis.
+* `address false` needs `fitsSigned 21 imm`, the encoder's own guard; the
+  decoder sign-extends the same twenty-one bits.
 
 Each family supplies the same chain: the width-typed carrier word, its `fields`
 composition (`fields_*`), the decoder on that word (`decode_*_word`), the
@@ -45,12 +41,11 @@ instruction-level inverse on the emitted fields (`decode_encode_*32` and its
 (`encodeInsn_*`), the composed inverse (`decode_encode_*Insn`) and the step
 theorem `arm8Next_*`.
 
-The `address true` (page) form is deliberately **not** covered.  `decodeInsn32`
-returns only the page-relative field `imm % 4` for it (the low two bits of the
-immediate), so it is not an inverse of `encodeInsn32`; and no lowering path emits
-`.address true`: `arm8_ast`'s `Loc` case only produces `.address false`.  Proving
-an inverse for the page form would need a decoder that reconstructs the full
-twenty-one-bit page offset.
+The `address true` (page) form is decoded faithfully from bits 32:14 and 13:12,
+but no lowering path emits it: `arm8_ast`'s `Loc` case only produces
+`.address false`.  It therefore has no step theorem here; concrete positive,
+negative, and bit-32 round trips are checked in
+`Flapjack/Test/Arm8Encoding.lean`.
 
 Bit facts are proved by extensionality over `getLsbD` and `interval_cases`, and
 every `Nat`/`Int` fact is a kernel proof; no native decision procedure is used.
@@ -124,6 +119,68 @@ theorem ofInt_sextValue_field_shift (k : Nat) (imm : W)
   rw [hcongr, ← hfits]
   exact BitVec.ofInt_toInt
 
+/-- The low `k + 2` bits of a `Nat` are reconstructed from its `k`-bit field
+above bit 1 together with its low two bits. -/
+theorem nat_field_mod_shift_add (k a : Nat) :
+    ((a / 4 % 2 ^ k) * 4 + a % 4) % 2 ^ (k + 2) = a % 2 ^ (k + 2) := by
+  have hpow : 2 ^ (k + 2) = 2 ^ k * 4 := by rw [pow_add]; norm_num
+  let x := a / 4 % 2 ^ k
+  let y := a / 4 / 2 ^ k
+  let r := a % 4
+  have hq : a / 4 = x + 2 ^ k * y := by
+    have h := Nat.div_add_mod (a / 4) (2 ^ k)
+    dsimp [x, y]
+    omega
+  have ha : a = x * 4 + (2 ^ k * y) * 4 + r := by
+    calc
+      a = a / 4 * 4 + a % 4 := by
+        simpa [Nat.mul_comm] using (Nat.div_add_mod a 4).symm
+      _ = (x + 2 ^ k * y) * 4 + r := by rw [hq]
+      _ = x * 4 + (2 ^ k * y) * 4 + r := by ring
+  have hx : x < 2 ^ k := by
+    dsimp [x]
+    exact Nat.mod_lt _ (Nat.two_pow_pos k)
+  have hr : r < 4 := by
+    dsimp [r]
+    exact Nat.mod_lt _ (by norm_num)
+  have hx4 : x * 4 < 2 ^ k * 4 := Nat.mul_lt_mul_of_pos_right hx (by norm_num)
+  have hlt : x * 4 + r < 2 ^ k * 4 := by omega
+  rw [hpow]
+  change (x * 4 + r) % (2 ^ k * 4) = a % (2 ^ k * 4)
+  calc
+    (x * 4 + r) % (2 ^ k * 4) = x * 4 + r := Nat.mod_eq_of_lt hlt
+    _ = a % (2 ^ k * 4) := by
+      rw [ha]
+      rw [show x * 4 + (2 ^ k * y) * 4 + r = (x * 4 + r) + (2 ^ k * 4) * y by ring]
+      rw [Nat.add_mul_mod_self_left, Nat.mod_eq_of_lt hlt]
+
+/-- The `k`-bit field `(imm >>> 2) % 2^k` together with the low two bits of
+`imm` reconstructs the low `k + 2` bits of `imm`. -/
+theorem field_mod_shift_add (k : Nat) (imm : W) :
+    ((((imm >>> 2).toNat % 2 ^ k) <<< 2) + imm.toNat % 4) % 2 ^ (k + 2)
+      = imm.toNat % 2 ^ (k + 2) := by
+  have hshift : (imm >>> 2).toNat = imm.toNat / 4 :=
+    (BitVec.toNat_ushiftRight imm 2).trans (Nat.shiftRight_eq_div_pow _ _)
+  rw [hshift, Nat.shiftLeft_eq]
+  have h4 : (2 : Nat) ^ 2 = 4 := by norm_num
+  rw [h4]
+  exact nat_field_mod_shift_add k imm.toNat
+
+/-- The shifted `k`-bit field plus the low two bits sign-extends back to the
+original word when the word fits in `k + 2` signed bits. -/
+theorem ofInt_sextValue_field_shift_add (k : Nat) (imm : W)
+    (hfits : fitsSigned (k + 2) imm = true) :
+    BitVec.ofInt 64 (sextValue (k + 2)
+      ((((imm >>> 2).toNat % 2 ^ k) <<< 2) + imm.toNat % 4)) = imm := by
+  unfold fitsSigned at hfits
+  rw [decide_eq_true_eq] at hfits
+  have hcongr : sextValue (k + 2)
+      ((((imm >>> 2).toNat % 2 ^ k) <<< 2) + imm.toNat % 4)
+      = sextValue (k + 2) imm.toNat :=
+    sextValue_congr (k + 2) _ _ (field_mod_shift_add k imm)
+  rw [hcongr, ← hfits]
+  exact BitVec.ofInt_toInt
+
 /-- Sign-extending the low `bits` bits of a `Nat` and widening the result to a
 sixty-four-bit word. -/
 theorem sextToWord_ofNat (bits : Nat) (hbits : bits ≤ 64) (x : Nat) :
@@ -149,12 +206,12 @@ theorem ofNat_shiftLeft (x n : Nat) (hx : x < 2 ^ 64) :
   rw [BitVec.toNat_shiftLeft, BitVec.toNat_ofNat, BitVec.toNat_ofNat,
     Nat.mod_eq_of_lt hx]
 
-/-! ## The decoder's twenty-one-bit range covers the encoder's twenty-bit guard
+/-! ## The lowering's twenty-bit range sits inside the encoder's twenty-one-bit range
 
-`encodeInsn32` emits `.address false imm` only under `fitsSigned 20 imm`, while
-`decodeInsn32` sign-extends twenty-one bits of the branch displacement.  The
-range of a twenty-bit signed value is inside the twenty-one-bit range, so the
-decoder's wider extension still recovers `imm`. -/
+`arm8_ast` emits `.address false imm` only under `fitsSigned 20 imm`, while
+`encodeInsn32` accepts `fitsSigned 21 imm`.  The range of a twenty-bit signed
+value is inside the twenty-one-bit range, so the `Loc` case can use the wider
+encoder guard. -/
 
 /-- The low twenty-one bits of `2^64 - d` for `0 < d ≤ 2^21`. -/
 theorem nat_mod_pow_sub_21 (d : Nat) (hd : 0 < d) (hdb : d ≤ 2 ^ 21) :
@@ -210,7 +267,7 @@ theorem fitsSigned21_of_range (v : W)
     rw [hmod, if_neg hneg, htoInt, hc21, hcD]
     norm_num
 
-/-- The encoder's twenty-bit guard implies the decoder's twenty-one-bit
+/-- The lowering's twenty-bit guard implies the encoder's twenty-one-bit
 range. -/
 theorem fitsSigned20_imp_21 (v : W) (h : fitsSigned 20 v = true) : fitsSigned 21 v = true :=
   fitsSigned21_of_range v ((fitsSigned20_toInt v).1 h)
@@ -654,7 +711,7 @@ theorem fields_addressFalse (imm2 imm19 rd : Nat) :
 theorem decode_addressFalse_word (imm2 : BitVec 2) (imm19 : BitVec 19) (rd : BitVec 5) :
     decodeInsn32 (addressFalseWord imm2 imm19 rd)
       = some (.address false
-          (BitVec.ofInt 64 (sextValue 21 (imm19.toNat <<< 2 ||| imm2.toNat)))
+          (BitVec.ofInt 64 (sextValue 21 (imm19.toNat <<< 2 + imm2.toNat)))
           rd.toNat) := by
   simp only [decodeInsn32]
   have h1 : bitMatches (addressFalseWord imm2 imm19 rd) 0xFFFFFFFF 0xD503201F = false := by
@@ -809,9 +866,9 @@ theorem decode_addressFalse_word (imm2 : BitVec 2) (imm19 : BitVec 19) (rd : Bit
   simp only [f5, f29, f0]
 
 /-- The `address false` word decodes back to the encoded immediate, provided the
-immediate is a multiple of four inside the decoder's twenty-one-bit range. -/
+immediate lies inside the decoder's twenty-one-bit range. -/
 theorem decode_encode_addressFalse32 (imm : W) (rd : Nat)
-    (hfits : fitsSigned 21 imm = true) (hmod : imm.toNat % 4 = 0) (hrd : rd < 32) :
+    (hfits : fitsSigned 21 imm = true) (hrd : rd < 32) :
     decodeInsn32 (fields [(1, 0), (2, imm.toNat % 4), (5, 16),
       (19, (imm >>> 2).toNat % 2 ^ 19), (5, rd)])
       = some (.address false imm rd) := by
@@ -823,13 +880,13 @@ theorem decode_encode_addressFalse32 (imm : W) (rd : Nat)
     rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt (Nat.mod_lt _ (by norm_num))]
   have h5 : (BitVec.ofNat 5 rd).toNat = rd := by
     rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt hrd]
-  have h2 : (BitVec.ofNat 2 (imm.toNat % 4)).toNat = 0 := by
-    rw [BitVec.toNat_ofNat, hmod]
-  rw [h19, h5, h2, Nat.or_zero]
-  rw [ofInt_sextValue_field_shift 19 imm hmod hfits]
+  have h2 : (BitVec.ofNat 2 (imm.toNat % 4)).toNat = imm.toNat % 4 := by
+    rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt (Nat.mod_lt _ (by norm_num))]
+  rw [h19, h5, h2]
+  rw [ofInt_sextValue_field_shift_add 19 imm hfits]
 
 /-- The 64-bit carrier word emitted for an `address false`. -/
-theorem encodeInsn_addressFalse (imm : W) (rd : Nat) (hfits : fitsSigned 20 imm = true) :
+theorem encodeInsn_addressFalse (imm : W) (rd : Nat) (hfits : fitsSigned 21 imm = true) :
     encodeInsn (.address false imm rd) =
       some ((fields [(1, 0), (2, imm.toNat % 4), (5, 16),
         (19, (imm >>> 2).toNat % 2 ^ 19), (5, rd)]).setWidth 64) := by
@@ -838,12 +895,12 @@ theorem encodeInsn_addressFalse (imm : W) (rd : Nat) (hfits : fitsSigned 20 imm 
       = some (fields [(1, 0), (2, imm.toNat % 4), (5, 16),
           (19, (imm >>> 2).toNat % 2 ^ 19), (5, rd)]) by
     simp only [encodeInsn32]
-    rw [if_neg (by simp), if_pos (fitsSigned20_imp_21 imm hfits)]]
+    rw [if_neg (by simp), if_pos hfits]]
   rfl
 
 /-- The 64-bit carrier form of the decoder inverts the encoder's carrier form. -/
 theorem decode_encode_addressFalse (imm : W) (rd : Nat)
-    (hfits : fitsSigned 21 imm = true) (hmod : imm.toNat % 4 = 0) (hrd : rd < 32) :
+    (hfits : fitsSigned 21 imm = true) (hrd : rd < 32) :
     decodeInsn ((fields [(1, 0), (2, imm.toNat % 4), (5, 16),
       (19, (imm >>> 2).toNat % 2 ^ 19), (5, rd)]).setWidth 64)
       = some (.address false imm rd) := by
@@ -852,19 +909,18 @@ theorem decode_encode_addressFalse (imm : W) (rd : Nat)
       = decodeInsn32 (fields [(1, 0), (2, imm.toNat % 4), (5, 16),
           (19, (imm >>> 2).toNat % 2 ^ 19), (5, rd)]) by
     simp [decodeInsn]]
-  exact decode_encode_addressFalse32 imm rd hfits hmod hrd
+  exact decode_encode_addressFalse32 imm rd hfits hrd
 
-/-- `decodeInsn` inverts `encodeInsn` on an `address false` instruction.  The
-encoder's twenty-bit guard implies the decoder's twenty-one-bit range. -/
+/-- `decodeInsn` inverts `encodeInsn` on an `address false` instruction. -/
 theorem decode_encode_addressFalseInsn (imm : W) (rd : Nat)
-    (hfits : fitsSigned 20 imm = true) (hmod : imm.toNat % 4 = 0) (hrd : rd < 32) :
+    (hfits : fitsSigned 21 imm = true) (hrd : rd < 32) :
     decodeInsn ((encodeInsn (.address false imm rd)).getD 0) = some (.address false imm rd) := by
   rw [encodeInsn_addressFalse imm rd hfits, Option.getD_some]
-  exact decode_encode_addressFalse imm rd (fitsSigned20_imp_21 imm hfits) hmod hrd
+  exact decode_encode_addressFalse imm rd hfits hrd
 
 /-- One machine step executes an `address false` whose bytes are at the PC. -/
 theorem arm8Next_addressFalse (s : Arm8State) (d : BitVec 64 → Prop)
-    (imm : W) (rd : Nat) (hfits : fitsSigned 20 imm = true) (hmod : imm.toNat % 4 = 0)
+    (imm : W) (rd : Nat) (hfits : fitsSigned 21 imm = true)
     (hrd : rd < 32)
     (hbytes : bytesInMemoryHOL s.pc (encodeBytes (.address false imm rd)) s.mem d) :
     arm8Next s = execInsn { s with pc := s.pc + 4 } (.address false imm rd) := by
@@ -872,7 +928,7 @@ theorem arm8Next_addressFalse (s : Arm8State) (d : BitVec 64 → Prop)
     ((fields [(1, 0), (2, imm.toNat % 4), (5, 16),
       (19, (imm >>> 2).toNat % 2 ^ 19), (5, rd)]).setWidth 64) d
     (encodeInsn_addressFalse imm rd hfits)
-    (decode_encode_addressFalse imm rd (fitsSigned20_imp_21 imm hfits) hmod hrd) hbytes]
+    (decode_encode_addressFalse imm rd hfits hrd) hbytes]
 
 
 /-! ## `loadStoreImmediate`: unsigned offset -/

@@ -811,7 +811,7 @@ theorem case_loc (r : Nat) (l : BitVec 64) (s1 s2 : AsmState 64) (ms : Arm8State
         s1.memDomain := by
       rw [← arm8Enc_loc_short r l hfits]; exact st.bytes
     have hnext : arm8Next ms = execInsn { ms with pc := ms.pc + 4 } (.address false l r) :=
-      arm8Next_addressFalse ms s1.memDomain l r hfits hmod hlt hbytes
+      arm8Next_addressFalse ms s1.memDomain l r (fitsSigned20_imp_21 l hfits) hlt hbytes
     have hdom4 := bytesInMemoryHOL_domain hbytes
     have hlen4 : (encodeBytes (.address false l r)).length = 4 := encodeBytes_length _
     have hfetch : FetchSafe s1.memDomain ms := by
@@ -826,12 +826,12 @@ theorem case_loc (r : Nat) (l : BitVec 64) (s1 s2 : AsmState 64) (ms : Arm8State
         ((fields [(1, 0), (2, l.toNat % 4), (5, 16), (19, (l >>> 2).toNat % 2 ^ 19),
           (5, r)]).setWidth 64).setWidth 32 :=
       fetchWord_encodeBytes ms (.address false l r) _ s1.memDomain
-        (encodeInsn_addressFalse l r hfits) hbytes
+        (encodeInsn_addressFalse l r (fitsSigned20_imp_21 l hfits)) hbytes
     have hdec : decodeInsn32 (fetchWord ms) = some (.address false l r) := by
       rw [hfetchword]
       show decodeInsn ((fields [(1, 0), (2, l.toNat % 4), (5, 16),
         (19, (l >>> 2).toNat % 2 ^ 19), (5, r)]).setWidth 64) = some (.address false l r)
-      exact decode_encode_addressFalse l r (fitsSigned20_imp_21 l hfits) hmod hlt
+      exact decode_encode_addressFalse l r (fitsSigned20_imp_21 l hfits) hlt
     have hsafe0 : StepSafe s1.memDomain ms := by
       refine ⟨hfetch, ?_⟩
       intro i hi x hx
@@ -919,7 +919,7 @@ theorem case_loc (r : Nat) (l : BitVec 64) (s1 s2 : AsmState 64) (ms : Arm8State
     let t6 : Arm8State :=
       { t5 with regs := (fun j => if j = r then t5.regs r + t5.regs temp else t5.regs j), pc := t5.pc + 4 }
     have hstep1 : arm8Next ms = t1 := by
-      rw [arm8Next_addressFalse ms s1.memDomain 0 r (by decide) (by decide) hlt hb1]
+      rw [arm8Next_addressFalse ms s1.memDomain 0 r (by decide) hlt hb1]
       have h0 : (ms.pc + 4 : BitVec 64) - 4 + 0 = ms.pc := by bv_omega
       simp only [execInsn_addressFalse, writeReg, if_neg hne31, h0, t1]
     have hstep2 : arm8Next t1 = t2 := by
@@ -974,8 +974,7 @@ theorem case_loc (r : Nat) (l : BitVec 64) (s1 s2 : AsmState 64) (ms : Arm8State
     have hstepSafe1 : StepSafe s1.memDomain ms :=
       stepSafe_of_encode ms s1.memDomain (.address false 0 r)
         ((encodeInsn (.address false 0 r)).getD 0) hb1 rfl
-        (decode_encode_addressFalse 0 r (fitsSigned20_imp_21 0 (by decide))
-          (by decide) hlt) (by rfl)
+        (decode_encode_addressFalse 0 r (fitsSigned20_imp_21 0 (by decide)) hlt) (by rfl)
     have hstepSafe2 : StepSafe s1.memDomain t1 :=
       stepSafe_of_encode t1 s1.memDomain (.moveWide .k 0 (l.toNat % 65536) temp)
         ((encodeInsn (.moveWide .k 0 (l.toNat % 65536) temp)).getD 0) hb2 rfl

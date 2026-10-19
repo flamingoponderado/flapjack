@@ -29,7 +29,7 @@ def bopEnc : BinOp → Option LogicalOp
   | .xor => some .eor
   | _ => none
 
-/-- `arm8_shv`. -/
+/-- `arm8_shv`, translated constructor-for-constructor. -/
 @[hol "cakeml/compiler/encoders/arm8/arm8_targetScript.sml" "arm8_shv_def"]
 def arm8Shv : Shift → ShiftType
   | .lsl => .lsl

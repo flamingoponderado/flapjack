@@ -1,6 +1,7 @@
 import Flapjack.Test.RiscVBackendConfigExecutable
 import Flapjack.Test.Mips32Encoding
 import Flapjack.Test.Arm8Parity
+import Flapjack.Test.Arm8Encoding
 import Flapjack.Test.Mips32Run
 import Flapjack.Test.WordToStackStoreConstsCaller
 import Flapjack.Test.PanToWordGoodCodeParity

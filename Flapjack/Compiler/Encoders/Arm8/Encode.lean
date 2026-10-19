@@ -266,7 +266,9 @@ def encodeInsn32 : Insn → Option (BitVec 32)
       match bitfieldOpBits inzero extend with
       | some opc =>
           -- L3's `Encode` casts `immr`/`imms` to `word6` and rejects a value
-          -- that does not fit; it does not silently truncate.
+          -- that does not fit; it does not silently truncate.  The Lean
+          -- instruction omits L3's wmask/tmask payload, so this checks the
+          -- range only; `arm8_ast` builds the fields from `decodeBitMasks`.
           if immr < 64 && imms < 64 then
             some (fields [(1, 1), (2, opc), (6, 0b100110), (1, 1),
               (6, immr), (6, imms), (5, rn), (5, rd)])
@@ -326,7 +328,7 @@ def encodeInsn32 : Insn → Option (BitVec 32)
         -- 33 bits.
         let immlo := (imm >>> 12).toNat % 4
         let immhi := (imm >>> 14).toNat % 2 ^ 19
-        let raw := ((immhi <<< 2) ||| immlo) <<< 12
+        let raw := ((immhi <<< 2) + immlo) <<< 12
         if BitVec.ofInt 64 (sextValue 33 raw) = imm then
           some (fields [(1, 1), (2, immlo), (5, 16), (19, immhi), (5, rd)])
         else none
