@@ -1135,4 +1135,438 @@ theorem encodeBytes_loadStoreImmediate_flag (size : Nat) (memop : MemOp) (u : Bo
       simp only [encodeBytes, encodeInsn_loadStoreImmediateSigned size false memop c rn rt hfits]]
 
 
+
+/-- A state whose bytes hold an `addSubImmediate` is step-safe for it. -/
+theorem stepSafe_memFirst (s : Arm8State) (d : BitVec 64 → Prop) (u : Bool) (b : W)
+    (base : Nat) (himm : b.toNat < 4096) (hb32 : base < 32) (htemp32 : temp < 32)
+    (hbytes : bytesInMemoryHOL s.pc
+      (encodeBytes (.addSubImmediate (!u) false b base temp)) s.mem d) : StepSafe d s :=
+  stepSafe_of_encode s d (.addSubImmediate (!u) false b base temp)
+    ((fields [(1, 1), (1, bit (!u)), (1, bit false), (7, 0b1000100),
+      (12, b.toNat % 4096), (5, base), (5, temp)]).setWidth 64)
+    hbytes (encodeInsn_addSubImmediate (!u) false b base temp himm)
+    (decode_encode_addSubImmediate (!u) false b base temp himm hb32 htemp32)
+    (by simp [arm8Touched])
+
+/-- A load lowered to an `add` of the offset into the temporary register
+followed by a small load. -/
+theorem case_memLoadTwo (op : HolMemop) (r base : Nat) (off : BitVec 64) (s1 s2 : AsmState 64)
+    (ms : Arm8State) (size : Nat) (u : Bool) (b c : W)
+    (hspec : memOp (width := 64) op = memLoad (width := 64) (2 ^ size))
+    (hsize : size < 4)
+    (himm : b.toNat < 4096)
+    (hfitsc : fitsSigned 9 c = true)
+    (hnec : c ≠ scaledOff size c)
+    (haddr : ∀ x : W, (if u then x + b else x - b) + c = x + off)
+    (hast : arm8Enc (.inst (.mem op r (.addr base off))) =
+      ([.addSubImmediate (!u) false b base temp,
+        .loadStoreImmediate size false .load false u c temp r].flatMap encodeBytes))
+    (hdom : ∀ k, k < 2 ^ size → s1.memDomain (s1.regs base + off + BitVec.ofNat 64 k))
+    (h : asmStep arm8Config s1 (.inst (.mem op r (.addr base off))) s2 ∧
+      targetStateRel arm8Target s1 ms) :
+    CaseGoal (.inst (.mem op r (.addr base off))) s1 s2 ms := by
+  have st := arm8Start _ s1 s2 ms h
+  obtain ⟨hokr, hokb⟩ := memRegOk_of_asm op r base off st.asmOk
+  obtain ⟨hrlt, hrav, hrne⟩ := regOk_of_asm hokr
+  obtain ⟨hblt, hbav, hbne⟩ := regOk_of_asm hokb
+  have hr32 : r < 32 := by simpa [arm8Config] using hrlt
+  have hb32 : base < 32 := by simpa [arm8Config] using hblt
+  have htemp31 : temp ≠ 31 := by decide
+  have htemp32 : temp < 32 := by decide
+  have hbdom : base < arm8Target.config.regCount ∧
+      arm8Target.config.avoidRegs.contains base = false := by
+    simpa [arm8Target_config] using (show base < arm8Config.regCount ∧
+      arm8Config.avoidRegs.contains base = false from ⟨hblt, hbav⟩)
+  have hrdom : r < arm8Target.config.regCount ∧
+      arm8Target.config.avoidRegs.contains r = false := by
+    simpa [arm8Target_config] using (show r < arm8Config.regCount ∧
+      arm8Config.avoidRegs.contains r = false from ⟨hrlt, hrav⟩)
+  have hlen : (arm8Enc (.inst (.mem op r (.addr base off)))).length = 8 := by
+    rw [hast]
+    simp [List.flatMap_cons, encodeBytes_length]
+  have hupd : asmUpd (.inst (.mem op r (.addr base off))) (s1.pc + BitVec.ofNat 64 8) s1 = s2 := by
+    rw [← st.upd, hlen]
+  have hs2pc : s2.pc = s1.pc + 8 := by rw [← hupd]; rfl
+  have hs2mem : ∀ x, s2.mem x = s1.mem x := by
+    rw [← hupd]
+    intro x
+    simp only [asmUpd, instUpd, hspec, memLoad, addrHOL, updPc, updReg, assertState,
+      readMemWord_mem_eq_direct]
+  have hs2dom : s2.memDomain = s1.memDomain := by
+    rw [← hupd]
+    simp only [asmUpd, instUpd, hspec, memLoad, addrHOL, updPc, updReg, assertState,
+      readMemWord_memDomain]
+  have hs2regs : ∀ i, s2.regs i =
+      (if i = r then (readMemWord (s1.regs base + off) (2 ^ size) s1).1 else s1.regs i) := by
+    intro i
+    rw [← hupd]
+    simp only [asmUpd, instUpd, hspec, memLoad, addrHOL, updPc, updReg, assertState,
+      readMemWord_regs, Flapjack.Compiler.Encoders.AsmSem.readReg, st.be,
+      Bool.false_eq_true, if_false]
+  have hsplit : bytesInMemoryHOL ms.pc (encodeBytes (.addSubImmediate (!u) false b base temp))
+        ms.mem s1.memDomain ∧
+      bytesInMemoryHOL (ms.pc + 4)
+        (encodeBytes (.loadStoreImmediate size false .load false u c temp r)) ms.mem
+        s1.memDomain := by
+    refine (bytesInMemory_two _ _ _ _ _).1 ?_
+    rw [← hast]
+    exact st.bytes
+  obtain ⟨hb1, hb2⟩ := hsplit
+  have hbv : ms.regs base = s1.regs base := st.reg base hbdom
+  have hstep1 : arm8Next ms = writeReg { ms with pc := ms.pc + 4 } temp
+      (if u then s1.regs base + b else s1.regs base - b) := by
+    rw [arm8Next_addSubImmediate ms s1.memDomain (!u) false b base temp himm hb32 htemp32 hb1]
+    have hrd : readReg { ms with pc := ms.pc + 4 } base = s1.regs base := by
+      rw [readReg_pcUpdate, readReg, if_neg hbne, hbv]
+    cases u with
+    | true =>
+        rw [show (!true : Bool) = false from rfl]
+        rw [execInsn_addSubImmediate_add { ms with pc := ms.pc + 4 } b base temp]
+        rw [if_pos rfl, hrd]
+    | false =>
+        rw [show (!false : Bool) = true from rfl]
+        rw [execInsn_addSubImmediate_sub { ms with pc := ms.pc + 4 } b base temp]
+        rw [if_neg (by decide : ¬((false : Bool) = true)), hrd]
+  set t1 : Arm8State := writeReg { ms with pc := ms.pc + 4 } temp
+    (if u then s1.regs base + b else s1.regs base - b) with ht1
+  obtain ⟨ht1pc, ht1mem, ht1regs, ht1failed, ht1temp⟩ := execWriteFields htemp31 ht1
+  have ht1addr : t1.regs temp + c = s1.regs base + off := by
+    rw [ht1temp]
+    exact haddr _
+  have hbytes2C : bytesInMemoryHOL t1.pc
+      (encodeBytes (.loadStoreImmediate size false .load false
+        (decide (c = scaledOff size c)) c temp r)) t1.mem s1.memDomain := by
+    have hp : decide (c = scaledOff size c) = false := by
+      rw [decide_eq_false_iff_not]
+      exact hnec
+    rw [ht1pc, hp, ← encodeBytes_loadStoreImmediate_flag size .load u c temp r hfitsc hnec,
+      funext ht1mem]
+    exact hb2
+  have hdec2 : decodeInsn ((encodeInsn (.loadStoreImmediate size false .load false
+      (decide (c = scaledOff size c)) c temp r)).getD 0)
+      = some (.loadStoreImmediate size false .load false
+        (decide (c = scaledOff size c)) c temp r) :=
+    decode_encode_loadStoreImmediate size false .load c temp r hsize rfl htemp32 hr32
+      (Or.inr hfitsc)
+  have htouch2 : ∀ a, a ∈ arm8Touched t1
+      (.loadStoreImmediate size false .load false (decide (c = scaledOff size c)) c temp r) →
+      s1.memDomain a := by
+    intro a ha
+    have ha' : a ∈ bytesAt (readReg t1 temp + c) (2 ^ size) := by
+      simpa only [arm8Touched] using ha
+    simp only [bytesAt, List.mem_map, List.mem_range] at ha'
+    obtain ⟨j, hj, rfl⟩ := ha'
+    simp only [readReg, if_neg htemp31]
+    rw [ht1addr]
+    exact hdom j hj
+  have hnext2 : arm8Next t1 = execInsn { t1 with pc := t1.pc + 4 }
+      (.loadStoreImmediate size false .load false (decide (c = scaledOff size c)) c temp r) :=
+    arm8Next_memCanonical t1 s1.memDomain size .load c temp r hsize htemp32 hr32
+      (Or.inr hfitsc) hbytes2C
+  have hsafe0 : StepSafe s1.memDomain ms :=
+    stepSafe_memFirst ms s1.memDomain u b base himm hb32 htemp32 hb1
+  have hsafe1 : StepSafe s1.memDomain t1 :=
+    stepSafe_mem t1 s1.memDomain size .load c temp r hbytes2C hdec2 htouch2
+  have hal4 : holAligned 2 (4 : BitVec 64) = true := aligned_of_mod 4 (by decide)
+  have hal : holAligned 2 (ms.pc + 4) = true := by
+    rw [(alignedAddSub 2 ms.pc 4 hal4).1, st.aligned]
+  have hal2 : holAligned 2 (t1.pc + 4) = true := by
+    rw [ht1pc]
+    exact (alignedAddSub 2 (ms.pc + 4) 4 hal4).1.trans (by rw [hal])
+  have hq1 : targetStateRel arm8Target s2 (arm8Next t1) := by
+    rw [hnext2, execInsn_loadStoreImmediate_load]
+    refine ⟨?_, ?_, ?_, ?_, ?_⟩
+    · simp only [arm8Target_stateOk, writeReg, if_neg hrne]
+      exact arm8StateOk_set _ hal2 (ht1failed.trans st.msFailed)
+    · simp only [arm8Target_getPc, writeReg, if_neg hrne]
+      show t1.pc + 4 = s2.pc
+      rw [ht1pc, st.pc, hs2pc]
+      bv_omega
+    · intro x hx
+      simp only [arm8Target_getByte, writeReg, if_neg hrne]
+      rw [hs2mem x]
+      exact (ht1mem x).trans (st.mem x (hs2dom ▸ hx))
+    · intro i hi
+      simp only [arm8Target_getReg, writeReg, if_neg hrne]
+      by_cases hir : i = r
+      · subst hir
+        rw [if_pos rfl, hs2regs i, if_pos rfl]
+        show readMemN t1 (2 ^ size) (readReg t1 temp + c) =
+          (readMemWord (s1.regs base + off) (2 ^ size) s1).1
+        have haddr' : readReg t1 temp + c = s1.regs base + off := by
+          simp only [readReg, if_neg htemp31]
+          exact ht1addr
+        rw [haddr']
+        refine (readValue_agree (s1.regs base + off) size hsize s1 t1 st.be hdom ?_).symm
+        intro x hx
+        rw [ht1mem x]
+        exact st.mem x hx
+      · rw [if_neg hir, hs2regs i, if_neg hir]
+        have hne26 : i ≠ temp := by
+          intro h26
+          subst h26
+          have hc : arm8Target.config.avoidRegs.contains temp = false := hi.2
+          rw [show arm8Target.config.avoidRegs.contains temp = true from by decide] at hc
+          exact Bool.noConfusion hc
+        rw [ht1regs i hne26]
+        exact st.reg i hi
+    · intro i hi
+      simp only [arm8Target_config, arm8Config] at hi
+      omega
+  have hcode : allPcs (arm8Target.config.encode (.inst (.mem op r (.addr base off)))).length
+      s1.pc 0 ⊆ s1.memDomain := by
+    rw [arm8Target_config, arm8Config_encode, ← st.pc]
+    exact bytesInMemory_allPcs _ _ _ _ 0 st.bytes
+  have hposT : t1.pc ∈
+      allPcs (arm8Target.config.encode (.inst (.mem op r (.addr base off)))).length
+        s1.pc arm8Target.config.codeAlignment := by
+    rw [ht1pc, st.pc, show arm8Target.config.codeAlignment = 2 from rfl,
+      arm8Target_config, arm8Config_encode, hlen]
+    simpa using mem_allPcs_step4 8 1 s1.pc (by decide)
+  have hiter : arm8Next^[1] ms = t1 := by
+    rw [Function.iterate_one]
+    exact hstep1.trans ht1.symm
+  have hq : targetStateRel arm8Target s2 (arm8Next^[1 + 1] ms) := by
+    have hi : arm8Next^[1 + 1] ms = arm8Next t1 := by
+      rw [Function.iterate_succ_apply', Function.iterate_one]
+      exact congrArg arm8Next hiter
+    rw [hi]
+    exact hq1
+  refine encoderCaseStep (.inst (.mem op r (.addr base off))) s1 s2 ms 1 hs2dom hcode ?_ ?_ hq
+  · intro k hk
+    rcases k with _ | k
+    · simpa using hsafe0
+    · have hk1 : k = 0 := by omega
+      subst hk1
+      rw [Function.iterate_succ_apply', Function.iterate_zero, id, hstep1]
+      exact hsafe1
+  · intro k h1 h2
+    have hk1 : k = 1 := by omega
+    subst hk1
+    have h1eq : arm8Next^[1] ms = t1 := hiter
+    rw [h1eq]
+    refine ⟨?_, ?_, hposT⟩
+    · refine arm8StateOk_set t1 ?_ ?_
+      · rw [ht1pc]
+        exact hal
+      · exact ht1failed.trans st.msFailed
+    · intro pc hpc
+      exact ht1mem pc
+
+
+/-- A store lowered to an `add` of the offset into the temporary register
+followed by a small store. -/
+theorem case_memStoreTwo (op : HolMemop) (r base : Nat) (off : BitVec 64) (s1 s2 : AsmState 64)
+    (ms : Arm8State) (size : Nat) (u : Bool) (b c : W)
+    (hspec : memOp (width := 64) op = memStore (width := 64) (2 ^ size))
+    (hsize : size < 4)
+    (himm : b.toNat < 4096)
+    (hfitsc : fitsSigned 9 c = true)
+    (hnec : c ≠ scaledOff size c)
+    (haddr : ∀ x : W, (if u then x + b else x - b) + c = x + off)
+    (hast : arm8Enc (.inst (.mem op r (.addr base off))) =
+      ([.addSubImmediate (!u) false b base temp,
+        .loadStoreImmediate size false .store false u c temp r].flatMap encodeBytes))
+    (h : asmStep arm8Config s1 (.inst (.mem op r (.addr base off))) s2 ∧
+      targetStateRel arm8Target s1 ms) :
+    CaseGoal (.inst (.mem op r (.addr base off))) s1 s2 ms := by
+  have st := arm8Start _ s1 s2 ms h
+  obtain ⟨hokr, hokb⟩ := memRegOk_of_asm op r base off st.asmOk
+  obtain ⟨hrlt, hrav, hrne⟩ := regOk_of_asm hokr
+  obtain ⟨hblt, hbav, hbne⟩ := regOk_of_asm hokb
+  have hr32 : r < 32 := by simpa [arm8Config] using hrlt
+  have hb32 : base < 32 := by simpa [arm8Config] using hblt
+  have htemp31 : temp ≠ 31 := by decide
+  have htemp32 : temp < 32 := by decide
+  have hbdom : base < arm8Target.config.regCount ∧
+      arm8Target.config.avoidRegs.contains base = false := by
+    simpa [arm8Target_config] using (show base < arm8Config.regCount ∧
+      arm8Config.avoidRegs.contains base = false from ⟨hblt, hbav⟩)
+  have hrdom : r < arm8Target.config.regCount ∧
+      arm8Target.config.avoidRegs.contains r = false := by
+    simpa [arm8Target_config] using (show r < arm8Config.regCount ∧
+      arm8Config.avoidRegs.contains r = false from ⟨hrlt, hrav⟩)
+  have hrne26 : r ≠ temp := by
+    intro h26
+    have hc : arm8Target.config.avoidRegs.contains r = false := hrdom.2
+    rw [h26, show arm8Target.config.avoidRegs.contains temp = true from by decide] at hc
+    exact Bool.noConfusion hc
+  have hlen : (arm8Enc (.inst (.mem op r (.addr base off)))).length = 8 := by
+    rw [hast]
+    simp [List.flatMap_cons, encodeBytes_length]
+  have hupd : asmUpd (.inst (.mem op r (.addr base off))) (s1.pc + BitVec.ofNat 64 8) s1 = s2 := by
+    rw [← st.upd, hlen]
+  have hs2pc : s2.pc = s1.pc + 8 := by rw [← hupd]; rfl
+  have hs2dom : s2.memDomain = s1.memDomain := by
+    rw [← hupd]
+    simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
+      writeMemWord_memDomain]
+  have hs2regs : ∀ i, s2.regs i = s1.regs i := by
+    intro i
+    rw [← hupd]
+    simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
+      writeMemWord_regs]
+  have hs2memWord : ∀ x, s2.mem x =
+      (writeMemWord (valueWidth := 64) (s1.regs base + off) (2 ^ size) (s1.regs r) s1).mem x := by
+    intro x
+    rw [← hupd]
+    simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
+      Flapjack.Compiler.Encoders.AsmSem.readReg, st.be, Bool.false_eq_true, if_false]
+  have hfail : s2.failed = false := boolOfNotTrue st.ok
+  have hfailW : (writeMemWord (valueWidth := 64) (s1.regs base + off) (2 ^ size) (s1.regs r)
+      s1).failed = false := by
+    rw [← hupd] at hfail
+    simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
+      Flapjack.Compiler.Encoders.AsmSem.readReg, st.be, Bool.false_eq_true, if_false] at hfail
+    obtain ⟨-, hf⟩ := (Bool.or_eq_false_iff).1 hfail
+    exact hf
+  have hdomW := writeMemWord_domain (s1.regs base + off) (2 ^ size) (s1.regs r) s1 st.be
+    (not_of_eq_false hfailW)
+  have hsplit : bytesInMemoryHOL ms.pc (encodeBytes (.addSubImmediate (!u) false b base temp))
+        ms.mem s1.memDomain ∧
+      bytesInMemoryHOL (ms.pc + 4)
+        (encodeBytes (.loadStoreImmediate size false .store false u c temp r)) ms.mem
+        s1.memDomain := by
+    refine (bytesInMemory_two _ _ _ _ _).1 ?_
+    rw [← hast]
+    exact st.bytes
+  obtain ⟨hb1, hb2⟩ := hsplit
+  have hbv : ms.regs base = s1.regs base := st.reg base hbdom
+  have hstep1 : arm8Next ms = writeReg { ms with pc := ms.pc + 4 } temp
+      (if u then s1.regs base + b else s1.regs base - b) := by
+    rw [arm8Next_addSubImmediate ms s1.memDomain (!u) false b base temp himm hb32 htemp32 hb1]
+    have hrd : readReg { ms with pc := ms.pc + 4 } base = s1.regs base := by
+      rw [readReg_pcUpdate, readReg, if_neg hbne, hbv]
+    cases u with
+    | true =>
+        rw [show (!true : Bool) = false from rfl]
+        rw [execInsn_addSubImmediate_add { ms with pc := ms.pc + 4 } b base temp]
+        rw [if_pos rfl, hrd]
+    | false =>
+        rw [show (!false : Bool) = true from rfl]
+        rw [execInsn_addSubImmediate_sub { ms with pc := ms.pc + 4 } b base temp]
+        rw [if_neg (by decide : ¬((false : Bool) = true)), hrd]
+  set t1 : Arm8State := writeReg { ms with pc := ms.pc + 4 } temp
+    (if u then s1.regs base + b else s1.regs base - b) with ht1
+  obtain ⟨ht1pc, ht1mem, ht1regs, ht1failed, ht1temp⟩ := execWriteFields htemp31 ht1
+  have ht1addr : t1.regs temp + c = s1.regs base + off := by
+    rw [ht1temp]
+    exact haddr _
+  have hbytes2C : bytesInMemoryHOL t1.pc
+      (encodeBytes (.loadStoreImmediate size false .store false
+        (decide (c = scaledOff size c)) c temp r)) t1.mem s1.memDomain := by
+    have hp : decide (c = scaledOff size c) = false := by
+      rw [decide_eq_false_iff_not]
+      exact hnec
+    rw [ht1pc, hp, ← encodeBytes_loadStoreImmediate_flag size .store u c temp r hfitsc hnec,
+      funext ht1mem]
+    exact hb2
+  have hdec2 : decodeInsn ((encodeInsn (.loadStoreImmediate size false .store false
+      (decide (c = scaledOff size c)) c temp r)).getD 0)
+      = some (.loadStoreImmediate size false .store false
+        (decide (c = scaledOff size c)) c temp r) :=
+    decode_encode_loadStoreImmediate size false .store c temp r hsize rfl htemp32 hr32
+      (Or.inr hfitsc)
+  have htouch2 : ∀ a, a ∈ arm8Touched t1
+      (.loadStoreImmediate size false .store false (decide (c = scaledOff size c)) c temp r) →
+      s1.memDomain a := by
+    intro a ha
+    have ha' : a ∈ bytesAt (readReg t1 temp + c) (2 ^ size) := by
+      simpa only [arm8Touched] using ha
+    simp only [bytesAt, List.mem_map, List.mem_range] at ha'
+    obtain ⟨j, hj, rfl⟩ := ha'
+    simp only [readReg, if_neg htemp31]
+    rw [ht1addr]
+    exact hdomW j hj
+  have hnext2 : arm8Next t1 = execInsn { t1 with pc := t1.pc + 4 }
+      (.loadStoreImmediate size false .store false (decide (c = scaledOff size c)) c temp r) :=
+    arm8Next_memCanonical t1 s1.memDomain size .store c temp r hsize htemp32 hr32
+      (Or.inr hfitsc) hbytes2C
+  have hsafe0 : StepSafe s1.memDomain ms :=
+    stepSafe_memFirst ms s1.memDomain u b base himm hb32 htemp32 hb1
+  have hsafe1 : StepSafe s1.memDomain t1 :=
+    stepSafe_mem t1 s1.memDomain size .store c temp r hbytes2C hdec2 htouch2
+  have hal4 : holAligned 2 (4 : BitVec 64) = true := aligned_of_mod 4 (by decide)
+  have hal : holAligned 2 (ms.pc + 4) = true := by
+    rw [(alignedAddSub 2 ms.pc 4 hal4).1, st.aligned]
+  have hal2 : holAligned 2 (t1.pc + 4) = true := by
+    rw [ht1pc]
+    exact (alignedAddSub 2 (ms.pc + 4) 4 hal4).1.trans (by rw [hal])
+  have hq1 : targetStateRel arm8Target s2 (arm8Next t1) := by
+    rw [hnext2, execInsn_loadStoreImmediate_store]
+    refine ⟨?_, ?_, ?_, ?_, ?_⟩
+    · simp only [arm8Target_stateOk, arm8StateOk_writeMemN]
+      exact arm8StateOk_set _ hal2 (ht1failed.trans st.msFailed)
+    · simp only [arm8Target_getPc, writeMemN_pc]
+      show t1.pc + 4 = s2.pc
+      rw [ht1pc, st.pc, hs2pc]
+      bv_omega
+    · intro x hx
+      simp only [arm8Target_getByte, readReg_pcUpdate]
+      rw [hs2memWord x]
+      have haddr2 : readReg t1 temp + c = s1.regs base + off := by
+        simp only [readReg, if_neg htemp31]
+        exact ht1addr
+      have hval2 : readReg t1 r = s1.regs r := by
+        simp only [readReg, if_neg hrne]
+        rw [ht1regs r hrne26]
+        exact st.reg r hrdom
+      rw [haddr2, hval2]
+      rw [writeMemWord_memSize s1 ms.mem size hsize (s1.regs base + off) (s1.regs r) x st.be
+        (st.mem x (hs2dom ▸ hx)).symm]
+      exact writeMemN_mem_of_mem (s := { t1 with pc := t1.pc + 4 }) (t := memState ms.mem)
+        rfl (2 ^ size) (s1.regs base + off) (s1.regs r) x
+    · intro i hi
+      simp only [arm8Target_getReg, writeMemN_regs]
+      have hne26 : i ≠ temp := by
+        intro h26
+        subst h26
+        have hc : arm8Target.config.avoidRegs.contains temp = false := hi.2
+        rw [show arm8Target.config.avoidRegs.contains temp = true from by decide] at hc
+        exact Bool.noConfusion hc
+      rw [ht1regs i hne26, hs2regs i]
+      exact st.reg i hi
+    · intro i hi
+      simp only [arm8Target_config, arm8Config] at hi
+      omega
+  have hcode : allPcs (arm8Target.config.encode (.inst (.mem op r (.addr base off)))).length
+      s1.pc 0 ⊆ s1.memDomain := by
+    rw [arm8Target_config, arm8Config_encode, ← st.pc]
+    exact bytesInMemory_allPcs _ _ _ _ 0 st.bytes
+  have hposT : t1.pc ∈
+      allPcs (arm8Target.config.encode (.inst (.mem op r (.addr base off)))).length
+        s1.pc arm8Target.config.codeAlignment := by
+    rw [ht1pc, st.pc, show arm8Target.config.codeAlignment = 2 from rfl,
+      arm8Target_config, arm8Config_encode, hlen]
+    simpa using mem_allPcs_step4 8 1 s1.pc (by decide)
+  have hiter : arm8Next^[1] ms = t1 := by
+    rw [Function.iterate_one]
+    exact hstep1.trans ht1.symm
+  have hq : targetStateRel arm8Target s2 (arm8Next^[1 + 1] ms) := by
+    have hi : arm8Next^[1 + 1] ms = arm8Next t1 := by
+      rw [Function.iterate_succ_apply', Function.iterate_one]
+      exact congrArg arm8Next hiter
+    rw [hi]
+    exact hq1
+  refine encoderCaseStep (.inst (.mem op r (.addr base off))) s1 s2 ms 1 hs2dom hcode ?_ ?_ hq
+  · intro k hk
+    rcases k with _ | k
+    · simpa using hsafe0
+    · have hk1 : k = 0 := by omega
+      subst hk1
+      rw [Function.iterate_succ_apply', Function.iterate_zero, id, hstep1]
+      exact hsafe1
+  · intro k h1 h2
+    have hk1 : k = 1 := by omega
+    subst hk1
+    have h1eq : arm8Next^[1] ms = t1 := hiter
+    rw [h1eq]
+    refine ⟨?_, ?_, hposT⟩
+    · refine arm8StateOk_set t1 ?_ ?_
+      · rw [ht1pc]
+        exact hal
+      · exact ht1failed.trans st.msFailed
+    · intro pc hpc
+      exact ht1mem pc
+
 end Flapjack.Compiler.Encoders.Arm8
