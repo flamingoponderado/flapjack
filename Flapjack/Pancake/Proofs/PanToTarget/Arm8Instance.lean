@@ -6,11 +6,9 @@ import Flapjack.Compiler.Backend.Arm8Config.Proofs
 # `pan_to_target_compile_semantics` at the closed ARMv8 target
 
 The tagged `panToTargetCompileSemantics` instantiated at the closed ARMv8 machine
-model with Pancake's backend configuration.  `backend_config_ok` and `mc_init_ok`
-are discharged unconditionally.  `mc_conf_ok` still takes the encoder-correctness
-premise `encoderCorrect arm8Target`; that premise is not yet proved for the closed
-model and is therefore explicit here.  Once `encoderCorrect arm8Target` is
-kernel-checked, this theorem can drop the premise.
+model with Pancake's backend configuration.  `backend_config_ok`, `mc_conf_ok`
+and `mc_init_ok` are discharged unconditionally; the encoder-correctness
+obligation is `arm8EncoderCorrect` from `Machine/Complete.lean`.
 
 This is a statement about the logical compiler `compile_prog_max`; it does not
 establish that the executed `flapjack-compile` route computes that function.
@@ -35,11 +33,9 @@ theorem arm8PancakeHeapLimit_lt :
   decide
 
 /-- `pan_to_target_compile_semantics` for ARMv8 with `pancake_backend_conf
-arm8_backend_config` and `is_arm8_machine_config mc`, relative to
-`encoderCorrect arm8Target`. -/
+arm8_backend_config` and `is_arm8_machine_config mc`. -/
 theorem panToTargetCompileSemanticsArm8 {σ : Type}
     (mc : MachineConfig 64 Arm8State Arm8Projection)
-    (henc : encoderCorrect arm8Target)
     (pan_code : List (DeclHOL 64)) (bytes : List (BitVec 8)) (bitmaps : List (BitVec 64))
     (c' : Backend.Config) (stack_max : Option Nat) (s : PanSemStateFiniteExact 64 σ)
     (ms : Arm8State) (globals_size heap_len : Nat) (adj_ptr2 adj_ptr4 : BitVec 64)
@@ -102,7 +98,7 @@ theorem panToTargetCompileSemanticsArm8 {σ : Type}
   exact panToTargetCompileSemantics _ mc pan_code bytes bitmaps c' stack_max s ms globals_size
     heap_len adj_ptr2 adj_ptr4 ffi cbspace data_sp start
     ⟨hcomp, hgood, hparams, hnodup, hcode, hlocals, hglobals, heids, heshapes, hcfg,
-      arm8MachineConfigOk mc hmc henc, hinit, by rw [hconfig]; decide, hpos, hsize, hlt, hbase,
+      arm8MachineConfigOk mc hmc, hinit, by rw [hconfig]; decide, hpos, hsize, hlt, hbase,
       halloc, hheapLen, htop, hglobLe, hmemaddrs, halign, hadj2, hadj4, hlo, hhi, hheap,
       arm8PancakeHeapLimit_lt, hffi, hbe, trivial, hinst, hstart, hfail⟩
 

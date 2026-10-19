@@ -1,5 +1,5 @@
 import Flapjack.Compiler.Backend.Arm8Config.BackendConfig
-import Flapjack.Compiler.Encoders.Arm8.Machine.TargetProof
+import Flapjack.Compiler.Encoders.Arm8.Machine.Complete
 import Flapjack.Compiler.Backend.BackendProof.MachineInit
 import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
 import Mathlib.Tactic.IntervalCases
@@ -8,8 +8,8 @@ import Mathlib.Tactic.IntervalCases
 # ARMv8 machine-configuration facts
 
 Counterpart of `cakeml/compiler/backend/arm8/proofs/arm8_configProofScript.sml`
-for the closed ARMv8 target.  The encoder-correctness premise is explicit here;
-the full `encoderCorrect arm8Target` proof is tracked separately.
+for the closed ARMv8 target.  The encoder-correctness obligation is discharged
+by `arm8EncoderCorrect` in `Machine/Complete.lean`.
 -/
 
 namespace Flapjack.Compiler.Backend.Arm8Config
@@ -27,16 +27,15 @@ def isArm8MachineConfig
   mc.ptr2Reg = 2 ∧
   mc.calleeSavedRegs = [19, 20, 21, 22, 23, 24, 25, 26, 27, 28]
 
-/-- `is_arm8_machine_config mc ⇒ mc_conf_ok mc`, relative to encoder
-correctness of the closed target. -/
+/-- `is_arm8_machine_config mc ⇒ mc_conf_ok mc` for the closed target. -/
 theorem arm8MachineConfigOk
     (mc : MachineConfig 64 Arm8State Arm8Projection)
-    (h : isArm8MachineConfig mc) (henc : encoderCorrect arm8Target) :
+    (h : isArm8MachineConfig mc) :
     LabToTarget.mcConfOk mc := by
   rcases h with ⟨htarget, hlen, hptr, hlen2, hptr2, _⟩
   unfold LabToTarget.mcConfOk
   rw [htarget] at ⊢
-  refine ⟨Or.inr rfl, henc, ?_, ?_, ?_, ?_, ?_, arm8EncOk⟩
+  refine ⟨Or.inr rfl, arm8EncoderCorrect, ?_, ?_, ?_, ?_, ?_, arm8EncOk⟩
   all_goals
     simp only [arm8Target_config, hlen, hptr, hlen2, hptr2, arm8Config]
     decide

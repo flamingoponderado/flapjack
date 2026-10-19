@@ -5,10 +5,12 @@ Flapjack can compile Pancake to little-endian ARMv8 (AArch64), using CakeML's
 width 64 and adds an ARMv8 assembler target.
 
 This is a **parity-first** port. Source-to-assembly output is checked
-byte-for-byte against the original CakeML compiler. The ARMv8 L3 machine
-semantics and `arm8_encoder_correct` are not ported yet, so the backend has no
-end-to-end source-correctness theorem and is not part of the trusted compiler
-claim in `docs/SOUNDNESS.md`.
+byte-for-byte against the original CakeML compiler. On top of that, Flapjack
+proves `encoderCorrect arm8Target` for a closed ARMv8 execution model covering
+exactly the emitted instruction subset, and instantiates the full
+Pancake-to-target theorem at that model. This is **not** a port of CakeML's full
+L3 ARMv8 semantics; the closed model and its limits are described below and in
+`docs/SOUNDNESS.md`.
 
 ## Code generation
 
@@ -71,10 +73,12 @@ Flapjack does not yet have; porting them is a separate library task and does not
 need the machine semantics.  `asr` is just HOL's library theorem
 `word_asr_n2w` specialized to word64, with no ARM8-specific proof content.
 
-The main theorem, `arm8_encoder_correct`, needs CakeML's ARMv8 L3 machine model
-(`HOL/examples/l3-machine-code/arm8/model/arm8Script.sml` and
-`step/arm8_stepScript.sml`). That model and its next-state function are not yet
-in Flapjack, so the proof port remains future work.
+The main HOL theorem `arm8_encoder_correct` is stated about CakeML's full L3
+ARMv8 model (`HOL/examples/l3-machine-code/arm8/model/arm8Script.sml` and
+`step/arm8_stepScript.sml`). Flapjack does not port that L3 model. Instead, the
+closed subset model below proves the corresponding `encoderCorrect arm8Target`
+obligation for the instructions the backend emits; the Flapjack theorem is
+therefore infrastructure, not a port of the HOL theorem.
 
 ## Closed ARMv8 machine model (new)
 
@@ -114,7 +118,13 @@ modules carry no `@[hol]` tags. All twenty instruction forms now have kernel-che
 emitted shapes, with the two documented load/address limits above.
 `Flapjack/Compiler/Backend/Arm8Config/BackendProof.lean` proves
 `backendConfigOk arm8Config pancakeArm8BackendConfig`, and
-`Flapjack/Pancake/Proofs/PanToTarget/Arm8Instance.lean` instantiates
-`panToTargetCompileSemantics` for ARM8. The instance still takes the explicit
-premise `encoderCorrect arm8Target`; proving that premise (the machine-step
-simulation of `asmStep`) is the remaining work. The parity fixtures remain the executable evidence.
+`Flapjack/Compiler/Encoders/Arm8/Machine/Complete.lean` proves
+`arm8EncoderCorrect : encoderCorrect arm8Target`. The case split is in
+`Machine/SkipCase.lean`, `ControlCase.lean`, `JumpCmpCase.lean`,
+`ConstCase.lean`, `ArithCase.lean`, `ShiftCase.lean`/`ShiftCaseFull.lean`,
+`MulCarryCase.lean`, and `MemCase.lean`/`MemCaseFull.lean`.
+`Flapjack/Pancake/Proofs/PanToTarget/Arm8Instance.lean` then instantiates
+`panToTargetCompileSemantics` for ARM8 unconditionally: `backendConfigOk`,
+`mcConfOk`, `mcInitOk` and encoder correctness are all discharged, so the
+Pancake-to-ARM-machine-code theorem no longer takes an encoder premise. The
+parity fixtures remain the executable evidence.

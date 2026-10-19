@@ -274,25 +274,32 @@ The following are open review or verification obligations:
      simulated FFI calls. Nothing is compared with Ziren's Rust executor or the
      original Pancake compiler, which has no MIPS32 target.
 
-10. The ARMv8 (AArch64) backend is parity-tested only.
+10. The ARMv8 (AArch64) backend proves a closed-subset machine theorem, not an
+    L3 port.
     - **What is checked.** `flapjack-compile --target=arm8` emits the same GNU
       AArch64 assembly as `cake --pancake --target=arm8` for the checked-in
       corpus in `scripts/arm8/parity/`, including the code bytes, frame and
       `makesym` symbol lines. During development the comparison covered all 244
       standalone Pancake programs embedded in `cakeml/pancake/**/*.sml`.
-    - **What is not checked.** There is no ARMv8 semantics in Flapjack, no
-      `arm8_encoder_correct` port, and no end-to-end source-correctness theorem
-      for this target. The compiled output therefore has no machine-level
-      guarantee beyond the parity tests and the shared Pancake-to-labLang
-      pipeline.
+      In addition, `Flapjack/Compiler/Encoders/Arm8/Machine/Complete.lean`
+      proves `encoderCorrect arm8Target` for a closed ARMv8 model that decodes
+      and executes exactly the instruction forms `arm8_ast` emits, and
+      `Flapjack/Pancake/Proofs/PanToTarget/Arm8Instance.lean` instantiates the
+      Pancake-to-machine-code theorem at that model with no encoder premise.
+    - **What is not checked.** The closed model is not CakeML's full L3 ARMv8
+      semantics. Unknown instruction words set `failed`; there is no L3
+      `arm8_encoder_correct` port, no proof about arbitrary ARMv8 code, and no
+      theorem that the model agrees with real AArch64 hardware or with L3.
+      The trusted compiler claim therefore rests on the closed model plus the
+      parity evidence, not on an L3 refinement.
     - **Proof port status.** The structural length lemmas at the start of
       `arm8_targetProofScript.sml`, the word64 conjunct of
       `Decode_EncodeBitMask`, `mul_long`, and the length half of
       `arm8_encoding` are ported. The remaining meaningful helpers (`lsl`,
       `lsr`, `asr2`, `ror`) need HOL bitstring/FCP operations that Flapjack does
       not yet provide; `asr` is only a word64 specialization of HOL's library
-      `word_asr_n2w`. The full `arm8_encoder_correct` proof remains future
-      work.
+      `word_asr_n2w`. The Flapjack `encoderCorrect arm8Target` theorem is a
+      closed-subset analogue, not the HOL L3 theorem.
 
 ## Stack bounds and liveness
 
