@@ -35,11 +35,14 @@ theorem adrp_roundtrip_nonzero_rd :
 theorem adrp_rejects_unaligned :
     encodeInsn (.address true 0x12345001 0) = none := by decide
 
+/-- `pc = 0x1000` makes `pc - 4 = 0xFFC` fall on page 0, so this distinguishes
+the page-base computation from dropping the `-4`, using `pc`, or omitting the
+page mask. -/
 theorem adrp_exec_page_offset :
     let s : Arm8State :=
-      { regs := fun _ => 0, pc := 0x1238, n := false, z := false, c := false, v := false,
+      { regs := fun _ => 0, pc := 0x1000, n := false, z := false, c := false, v := false,
         mem := fun _ => 0, memDomain := fun _ => True, failed := false }
-    readReg (execInsn s (.address true 0x12345000 7)) 7 = 0x12346000 := by
+    readReg (execInsn s (.address true 0x12345000 7)) 7 = 0x12345000 := by
   simp [execInsn, writeReg, readReg]
 
 end Flapjack.Test.Arm8Encoding

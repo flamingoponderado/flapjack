@@ -291,10 +291,15 @@ The following are open review or verification obligations:
       non-emitted AArch64 words with closed-model (not L3) semantics; only
       emitted forms have inversion and simulation proofs.  In particular it can
       accept sign-extending loads but executes them as zero-extending (the
-      emitted loads are all zero-extending), and it treats `r31` as XZR rather
-      than the context-dependent stack pointer (emitted code avoids `r31` as a
-      base or destination where SP semantics would apply).  Unknown instruction
-      words set `failed`; there is no L3
+      emitted loads are all zero-extending), and it treats `r31` as XZR in every
+      operand position rather than as the context-dependent stack pointer.
+      The emitted subset passes `r31` only in slots where AArch64 defines ZR
+      (ORR-immediate and ORR-shifted `Rn`, MADD/MSUB `Ra`, ADC `Rm`, CSINC
+      `Rn`/`Rm`, CMP `Rd`, TST/ANDS-shifted `Rd`, SUBS-shifted `Rd`, and
+      ANDS-immediate `Rd`); the ANDS-immediate case relies on `setflags = true`,
+      since the non-flag-setting logical-immediate slot means SP.  That per-slot
+      AArch64 fact is an external assumption, not checked by the model.  Unknown
+      instruction words set `failed`; there is no L3
       `arm8_encoder_correct` port, no proof about arbitrary ARMv8 code, and no
       theorem that the model agrees with real AArch64 hardware or with L3.
       The trusted compiler claim therefore rests on the closed model plus the

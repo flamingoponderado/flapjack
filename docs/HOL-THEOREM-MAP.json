@@ -99332,5 +99332,13 @@
     "lean_name": "ShiftType",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack source comparison (2026-10-19): L3 `Construct \"ShiftType\"` at arm8Script.sml:38 declares four nullary constructors, `ShiftType_LSL`, `ShiftType_LSR`, `ShiftType_ASR`, `ShiftType_ROR`. Lean `ShiftType` has exactly the same four nullary constructors in that order, no payload, width parameter, or side condition. Exact constructor-for-constructor datatype port."
+    },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
+    "hol_name": "MoveWideOp",
+    "lean_path": "Flapjack/Compiler/Encoders/Arm8/Encode.lean",
+    "lean_name": "MoveWideOp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack source comparison (2026-10-19): L3 `Construct \"MoveWideOp\"` at arm8Script.sml:61 declares three nullary constructors, `MoveWideOp_N`, `MoveWideOp_Z`, `MoveWideOp_K`. Lean `MoveWideOp` has exactly `n`, `z`, `k` in that order, no payload, width parameter, or side condition. Exact constructor-for-constructor datatype port."
   }
 ]

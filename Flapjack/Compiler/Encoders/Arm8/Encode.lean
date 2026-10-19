@@ -38,7 +38,8 @@ def fields (fs : List (Nat × Nat)) : BitVec 32 :=
 /-- `n2w` of a Boolean field. -/
 def bit (value : Bool) : Nat := if value then 1 else 0
 
-/-- The `MoveWideOp` constructors of `arm8Script.sml`. -/
+/-- HOL L3 datatype `MoveWideOp` (`arm8Script.sml:61`). -/
+@[hol "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml" "MoveWideOp"]
 inductive MoveWideOp where
   | n
   | z
