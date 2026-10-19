@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Encoders.Arm8.Encode
+import Flapjack.HolRef
 
 /-!
 # ARMv8 target lowering
@@ -19,7 +20,9 @@ namespace Flapjack.Compiler.Encoders.Arm8
 
 open Flapjack Compiler.Encoders.Asm Compiler.Encoders.AsmSem
 
-/-- `bop_enc`. -/
+/-- `bop_enc`.  HOL specifies only the `And`/`Or`/`Xor` cases; this total Lean
+function additionally returns `none` for the other binops, so it is not claimed
+as an exact `@[hol]` port. -/
 def bopEnc : BinOp → Option LogicalOp
   | .and => some .and
   | .or => some .orr
@@ -27,13 +30,15 @@ def bopEnc : BinOp → Option LogicalOp
   | _ => none
 
 /-- `arm8_shv`. -/
+@[hol "cakeml/compiler/encoders/arm8/arm8_targetScript.sml" "arm8_shv_def"]
 def arm8Shv : Shift → ShiftType
   | .lsl => .lsl
   | .lsr => .lsr
   | .asr => .asr
   | .ror => .ror
 
-/-- `cmp_cond`. -/
+/-- `cmp_cond`.  HOL returns a `word4`; this Lean version stores the same
+four-bit value as a `Nat`, so it is not tagged as an exact `@[hol]` port. -/
 def cmpCond : Cmp → Nat
   | .less => 0b1011
   | .lower => 0b0011
@@ -102,7 +107,11 @@ def arm8Inst : HolInst 64 → List Insn
           | some op => [.logicalImmediate op false value source destination]
           | none => [.noOp]
   | .arith (.shift shift destination source (.imm value)) =>
-      let n := value.toNat % 64
+      -- HOL's `n = w2n i`.  LSL truncates through the `word6` rotation fields;
+      -- ROR truncates through `n2w n`; LSR/ASR pass `n` itself as `immr`, so
+      -- `Encode` returns BadCode when `n >= 64`.
+      let raw := value.toNat
+      let n := raw % 64
       match shift with
       | .lsl =>
           let r := (64 - n) % 64
@@ -114,7 +123,7 @@ def arm8Inst : HolInst 64 → List Insn
       | .lsr | .asr =>
           match decodeBitMasks 1 63 n false with
           | some _ =>
-              [.bitfieldMove true (shift == .asr) n 63 source destination]
+              [.bitfieldMove true (shift == .asr) raw 63 source destination]
           | none => [.noOp]
   | .arith (.shift shift destination source (.reg right)) =>
       [.shift (arm8Shv shift) right source destination]

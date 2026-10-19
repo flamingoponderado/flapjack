@@ -265,8 +265,12 @@ def encodeInsn32 : Insn → Option (BitVec 32)
   | .bitfieldMove inzero extend immr imms rn rd =>
       match bitfieldOpBits inzero extend with
       | some opc =>
-          some (fields [(1, 1), (2, opc), (6, 0b100110), (1, 1),
-            (6, immr), (6, imms), (5, rn), (5, rd)])
+          -- L3's `Encode` casts `immr`/`imms` to `word6` and rejects a value
+          -- that does not fit; it does not silently truncate.
+          if immr < 64 && imms < 64 then
+            some (fields [(1, 1), (2, opc), (6, 0b100110), (1, 1),
+              (6, immr), (6, imms), (5, rn), (5, rd)])
+          else none
       | none => none
   | .extractRegister imms rm rn rd =>
       some (fields [(11, 1182), (5, rm), (6, imms), (5, rn), (5, rd)])
@@ -317,12 +321,21 @@ def encodeInsn32 : Insn → Option (BitVec 32)
       some (fields [(9, 428), (2, opc), (11, 1984), (5, rn), (5, 0)])
   | .address page imm rd =>
       if page then
-        some (fields [(1, 1), (2, imm.toNat % 4), (5, 16),
-          (19, (imm >>> 2).toNat % 2 ^ 19), (5, rd)])
-      else if fitsSigned 20 imm then
-        some (fields [(1, 0), (2, imm.toNat % 4), (5, 16),
-          (19, (imm >>> 2).toNat % 2 ^ 19), (5, rd)])
-      else none
+        -- ADRP: immlo/immhi are bits 13:12 and 32:14 of the page-relative
+        -- offset; L3 requires the immediate to be the sign extension of those
+        -- 33 bits.
+        let immlo := (imm >>> 12).toNat % 4
+        let immhi := (imm >>> 14).toNat % 2 ^ 19
+        let raw := ((immhi <<< 2) ||| immlo) <<< 12
+        if BitVec.ofInt 64 (sextValue 33 raw) = imm then
+          some (fields [(1, 1), (2, immlo), (5, 16), (19, immhi), (5, rd)])
+        else none
+      else
+        -- ADR: L3 accepts a signed 21-bit byte offset.
+        if fitsSigned 21 imm then
+          some (fields [(1, 0), (2, imm.toNat % 4), (5, 16),
+            (19, (imm >>> 2).toNat % 2 ^ 19), (5, rd)])
+        else none
 
 /-- The 64-bit carrier form used by the backend, obtained by zero-extending
 the 32-bit encoding. -/

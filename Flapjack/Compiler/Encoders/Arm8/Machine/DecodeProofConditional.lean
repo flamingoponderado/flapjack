@@ -1060,12 +1060,13 @@ theorem decode_encode_bitfieldMove32 (inzero extend : Bool) (immr imms rn rd : N
 
 /-- The 64-bit carrier word emitted for a `bitfieldMove`. -/
 theorem encodeInsn_bitfieldMove (inzero extend : Bool) (immr imms rn rd : Nat)
-    (opc : Nat) (hbits : bitfieldOpBits inzero extend = some opc) :
+    (opc : Nat) (hbits : bitfieldOpBits inzero extend = some opc)
+    (himmr : immr < 64) (himms : imms < 64) :
     encodeInsn (.bitfieldMove inzero extend immr imms rn rd) =
       some ((fields [(1, 1), (2, opc), (6, 0b100110), (1, 1), (6, immr), (6, imms),
         (5, rn), (5, rd)]).setWidth 64) := by
   unfold encodeInsn
-  simp only [encodeInsn32, hbits]
+  simp only [encodeInsn32, hbits, himmr, himms]
   rfl
 
 /-- The 64-bit carrier form of the decoder inverts the encoder's carrier form for
@@ -1091,7 +1092,8 @@ theorem decode_encode_bitfieldMoveInsn (inzero extend : Bool) (immr imms rn rd :
     (himmr : immr < 64) (himms : imms < 64) (hrn : rn < 32) (hrd : rd < 32) :
     decodeInsn ((encodeInsn (.bitfieldMove inzero extend immr imms rn rd)).getD 0)
       = some (.bitfieldMove inzero extend immr imms rn rd) := by
-  rw [encodeInsn_bitfieldMove inzero extend immr imms rn rd opc hbits, Option.getD_some]
+  rw [encodeInsn_bitfieldMove inzero extend immr imms rn rd opc hbits himmr himms,
+    Option.getD_some]
   exact decode_encode_bitfieldMove inzero extend immr imms rn rd opc hbits himmr himms
     hrn hrd
 
@@ -1107,7 +1109,7 @@ theorem arm8Next_bitfieldMove (s : Arm8State) (d : BitVec 64 → Prop)
   rw [arm8Next_encodeBytes s (.bitfieldMove inzero extend immr imms rn rd)
     ((fields [(1, 1), (2, opc), (6, 0b100110), (1, 1), (6, immr), (6, imms),
       (5, rn), (5, rd)]).setWidth 64) d
-    (encodeInsn_bitfieldMove inzero extend immr imms rn rd opc hbits)
+    (encodeInsn_bitfieldMove inzero extend immr imms rn rd opc hbits himmr himms)
     (decode_encode_bitfieldMove inzero extend immr imms rn rd opc hbits himmr himms
       hrn hrd) hbytes]
 

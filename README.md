@@ -31,8 +31,10 @@ Flapjack is an in-progress Lean 4 port of the formally verified Pancake compiler
   [`docs/MIPS32.md`](docs/MIPS32.md) and [`docs/SOUNDNESS.md`](docs/SOUNDNESS.md) item 9.
 - An experimental ARMv8 (AArch64) backend follows CakeML's `arm8` target. Its
   source-to-assembly output is byte-for-byte parity-tested against the original
-  Pancake compiler, but its machine semantics and encoder-correctness theorem are
-  not ported yet; see [`docs/ARM8.md`](docs/ARM8.md) and
+  Pancake compiler. It also proves `encoderCorrect arm8Target` for a closed
+  ARMv8 machine model covering exactly the emitted instruction subset (not the
+  full L3 semantics) and instantiates the Pancake-to-machine-code theorem at
+  that model; see [`docs/ARM8.md`](docs/ARM8.md) and
   [`docs/SOUNDNESS.md`](docs/SOUNDNESS.md) item 10.
 - Other backends, including 32-bit ARM and x86, have not yet been ported to Lean.
 - The CakeML front end has not been ported to Lean.

@@ -368,6 +368,12 @@ theorem bfmove_asr_value (v : BitVec 64) (n : Nat) (hn : n < 64) :
 theorem execInsn_extractRegister (s : Arm8State) (n t r : Nat) :
     execInsn s (.extractRegister n t t r) = writeReg s r (ror64 (readReg s t) n) := by
   simp only [execInsn]
+  congr 1
+  by_cases h : n % 64 = 0
+  · simp [h, ror64, BitVec.rotateRight_def]
+  · simp only [h, if_false]
+    rw [ror64, BitVec.rotateRight_def, BitVec.or_comm]
+    simp
 
 /-- The lowered `LSR` immediate form (a bitfield move with `imms = 63`) writes
 the logical shift right. -/
@@ -402,7 +408,7 @@ theorem asr_beq_asr : (Flapjack.Shift.asr == Flapjack.Shift.asr) = true := by de
 /-- `arm8_ast` lowers an `LSR` by a constant to one bitfield move. -/
 theorem arm8Ast_shift_lsr (r t : Nat) (w : BitVec 64) :
     arm8Ast (.inst (.arith (.shift .lsr r t (.imm w)))) =
-      [.bitfieldMove true false (w.toNat % 64) 63 t r] := by
+      [.bitfieldMove true false w.toNat 63 t r] := by
   simp only [arm8Ast, arm8Inst, decodeBitMasks_lsr (w.toNat % 64)
     (Nat.mod_lt _ (by norm_num)), lsr_beq_asr]
 
@@ -410,7 +416,7 @@ theorem arm8Ast_shift_lsr (r t : Nat) (w : BitVec 64) :
 move. -/
 theorem arm8Ast_shift_asr (r t : Nat) (w : BitVec 64) :
     arm8Ast (.inst (.arith (.shift .asr r t (.imm w)))) =
-      [.bitfieldMove true true (w.toNat % 64) 63 t r] := by
+      [.bitfieldMove true true w.toNat 63 t r] := by
   simp only [arm8Ast, arm8Inst, decodeBitMasks_lsr (w.toNat % 64)
     (Nat.mod_lt _ (by norm_num)), asr_beq_asr]
 
@@ -479,30 +485,33 @@ theorem case_shift_imm_lsr (r t : Nat) (w : BitVec 64) (hw : w.toNat < 32)
   obtain ⟨hltt, havt, hnet31⟩ := regOk_of_asm hokt
   have hltr32 : r < 32 := by simpa [arm8Config] using hltr
   have hltt32 : t < 32 := by simpa [arm8Config] using hltt
-  have hn64 : w.toNat % 64 < 64 := Nat.mod_lt _ (by norm_num)
-  have hn32 : w.toNat % 64 < 32 := by omega
-  have hn64' : w.toNat % 64 < 64 := hn64
-  have hmod : w.toNat % 64 = w.toNat := Nat.mod_eq_of_lt hwlt
+  have hn64 : w.toNat < 64 := hwlt
+  have hn32 : w.toNat < 32 := hw
   have hast := arm8Ast_shift_lsr r t w
   have st := arm8Start (.inst (.arith (.shift .lsr r t (.imm w)))) s1 s2 ms h
-  have hb : bytesInMemoryHOL ms.pc (encodeBytes (.bitfieldMove true false (w.toNat % 64) 63 t r))
+  have hb : bytesInMemoryHOL ms.pc (encodeBytes (.bitfieldMove true false w.toNat 63 t r))
       ms.mem s1.memDomain := by
     have hb' := st.bytes
     rw [arm8Enc, hast] at hb'
     simpa only [List.flatMap_cons, List.flatMap_nil, List.append_nil] using hb'
   have hnext : arm8Next ms = execInsn { ms with pc := ms.pc + 4 }
-      (.bitfieldMove true false (w.toNat % 64) 63 t r) :=
-    arm8Next_bitfieldMove ms s1.memDomain true false (w.toNat % 64) 63 t r 2 (by decide)
+      (.bitfieldMove true false w.toNat 63 t r) :=
+    arm8Next_bitfieldMove ms s1.memDomain true false (w.toNat) 63 t r 2 (by decide)
       hn64 (by decide) hltt32 hltr32 hb
   have hsrc := msReadReg_pc st hltt havt hnet31
-  have hwrite : execInsn { ms with pc := ms.pc + 4 } (.bitfieldMove true false (w.toNat % 64) 63 t r) =
+  have hwrite : execInsn { ms with pc := ms.pc + 4 } (.bitfieldMove true false w.toNat 63 t r) =
       writeReg { ms with pc := ms.pc + 4 } r (wordShift .lsr (s1.regs t) w.toNat) := by
-    rw [execInsn_bitfieldMove_lsr _ _ _ _ hn64, hsrc, hmod, wordShift]
+    rw [execInsn_bitfieldMove_lsr _ _ _ _ hn64, hsrc, wordShift]
+  have hdec : decodeInsn32 (BitVec.setWidth 32 (BitVec.setWidth 64
+      (fields [(1, 1), (2, 2), (6, 0b100110), (1, 1), (6, w.toNat), (6, 63),
+        (5, t), (5, r)]))) = some (.bitfieldMove true false w.toNat 63 t r) := by
+    simpa [decodeInsn] using
+      (decode_encode_bitfieldMove true false w.toNat 63 t r 2 (by decide) hn64
+        (by decide) hltt32 hltr32)
   have hsafe0 : StepSafe s1.memDomain ms :=
-    stepSafe_of_encode ms s1.memDomain (.bitfieldMove true false (w.toNat % 64) 63 t r) _ hb
-      (encodeInsn_bitfieldMove true false (w.toNat % 64) 63 t r 2 (by decide))
-      (decode_encode_bitfieldMoveInsn true false (w.toNat % 64) 63 t r 2 (by decide) hn64
-        (by decide) hltt32 hltr32) (by rfl)
+    stepSafe_of_encode ms s1.memDomain (.bitfieldMove true false w.toNat 63 t r) _ hb
+      (encodeInsn_bitfieldMove true false w.toNat 63 t r 2 (by decide) hn64 (by decide))
+      hdec (by rfl)
   have hupd := arithUpd_of_start (.inst (.arith (.shift .lsr r t (.imm w)))) s1 s2 ms h hast
   have hregs := arithUpd_shift_imm_regs s1 .lsr r t w
   obtain ⟨hs2pc, hs2mem, hs2dom, hs2regs⟩ :=
@@ -525,30 +534,33 @@ theorem case_shift_imm_asr (r t : Nat) (w : BitVec 64) (hw : w.toNat < 32)
   obtain ⟨hltt, havt, hnet31⟩ := regOk_of_asm hokt
   have hltr32 : r < 32 := by simpa [arm8Config] using hltr
   have hltt32 : t < 32 := by simpa [arm8Config] using hltt
-  have hn64 : w.toNat % 64 < 64 := Nat.mod_lt _ (by norm_num)
-  have hn32 : w.toNat % 64 < 32 := by omega
-  have hn64' : w.toNat % 64 < 64 := hn64
-  have hmod : w.toNat % 64 = w.toNat := Nat.mod_eq_of_lt hwlt
+  have hn64 : w.toNat < 64 := hwlt
+  have hn32 : w.toNat < 32 := hw
   have hast := arm8Ast_shift_asr r t w
   have st := arm8Start (.inst (.arith (.shift .asr r t (.imm w)))) s1 s2 ms h
-  have hb : bytesInMemoryHOL ms.pc (encodeBytes (.bitfieldMove true true (w.toNat % 64) 63 t r))
+  have hb : bytesInMemoryHOL ms.pc (encodeBytes (.bitfieldMove true true w.toNat 63 t r))
       ms.mem s1.memDomain := by
     have hb' := st.bytes
     rw [arm8Enc, hast] at hb'
     simpa only [List.flatMap_cons, List.flatMap_nil, List.append_nil] using hb'
   have hnext : arm8Next ms = execInsn { ms with pc := ms.pc + 4 }
-      (.bitfieldMove true true (w.toNat % 64) 63 t r) :=
-    arm8Next_bitfieldMove ms s1.memDomain true true (w.toNat % 64) 63 t r 0 (by decide)
+      (.bitfieldMove true true w.toNat 63 t r) :=
+    arm8Next_bitfieldMove ms s1.memDomain true true (w.toNat) 63 t r 0 (by decide)
       hn64 (by decide) hltt32 hltr32 hb
   have hsrc := msReadReg_pc st hltt havt hnet31
-  have hwrite : execInsn { ms with pc := ms.pc + 4 } (.bitfieldMove true true (w.toNat % 64) 63 t r) =
+  have hwrite : execInsn { ms with pc := ms.pc + 4 } (.bitfieldMove true true w.toNat 63 t r) =
       writeReg { ms with pc := ms.pc + 4 } r (wordShift .asr (s1.regs t) w.toNat) := by
-    rw [execInsn_bitfieldMove_asr _ _ _ _ hn64, hsrc, hmod, wordShift]
+    rw [execInsn_bitfieldMove_asr _ _ _ _ hn64, hsrc, wordShift]
+  have hdec : decodeInsn32 (BitVec.setWidth 32 (BitVec.setWidth 64
+      (fields [(1, 1), (2, 0), (6, 0b100110), (1, 1), (6, w.toNat), (6, 63),
+        (5, t), (5, r)]))) = some (.bitfieldMove true true w.toNat 63 t r) := by
+    simpa [decodeInsn] using
+      (decode_encode_bitfieldMove true true w.toNat 63 t r 0 (by decide) hn64
+        (by decide) hltt32 hltr32)
   have hsafe0 : StepSafe s1.memDomain ms :=
-    stepSafe_of_encode ms s1.memDomain (.bitfieldMove true true (w.toNat % 64) 63 t r) _ hb
-      (encodeInsn_bitfieldMove true true (w.toNat % 64) 63 t r 0 (by decide))
-      (decode_encode_bitfieldMoveInsn true true (w.toNat % 64) 63 t r 0 (by decide) hn64
-        (by decide) hltt32 hltr32) (by rfl)
+    stepSafe_of_encode ms s1.memDomain (.bitfieldMove true true w.toNat 63 t r) _ hb
+      (encodeInsn_bitfieldMove true true w.toNat 63 t r 0 (by decide) hn64 (by decide))
+      hdec (by rfl)
   have hupd := arithUpd_of_start (.inst (.arith (.shift .asr r t (.imm w)))) s1 s2 ms h hast
   have hregs := arithUpd_shift_imm_regs s1 .asr r t w
   obtain ⟨hs2pc, hs2mem, hs2dom, hs2regs⟩ :=

@@ -83,8 +83,13 @@ therefore infrastructure, not a port of the HOL theorem.
 ## Closed ARMv8 machine model (new)
 
 The `Flapjack/Compiler/Encoders/Arm8/Machine/` directory adds a small,
-closed ARMv8 execution model for exactly the instruction subset that
-`arm8_ast` emits (it is **not** a port of the full L3 `arm8Script.sml` model):
+closed ARMv8 execution model for the instruction subset that `arm8_ast`
+emits (it is **not** a port of the full L3 `arm8Script.sml` model).  The decoder
+is a permissive recognizer: it can also accept some real AArch64 words outside
+the emitted subset (for example register-offset loads, conditional-compare
+register forms, or instructions that would use `r31` as SP), and gives those
+words this closed model's semantics.  The correctness proofs only cover words
+that `arm8_ast`/`encodeInsn` emit; no claim is made about other accepted words.
 
 - `State.lean`: registers, flags, memory, failure flag, aligned-PC
   well-formedness, and the `target_ok` projection.
@@ -106,15 +111,18 @@ closed ARMv8 execution model for exactly the instruction subset that
   data-processing encodings (`addSubImmediate`, `logicalShiftedRegister`,
   `logicalImmediate`, `bitfieldMove`).
 - `DecodeProofControl.lean`: kernel-checked inverses for `branchImmediate`,
-  `branchConditional`, `address false`, and load/store. Two documented limits:
-  `address true` is not emitted by `arm8Ast` and its decoder returns only the page
-  field, and `regsizeWord := true` is not recoverable from emitted bytes (the
-  lowering's loads use `opc = 1`), so load/store inverses use the byte-identical
-  `regsizeWord := false` representative.
+  `branchConditional`, `address false`, and load/store.  `address false` now
+  decodes both `immlo` bits, and `Encode` accepts L3's signed 21-bit ADR range;
+  the page (`address true`) form reconstructs the full page-relative offset but
+  is not emitted by `arm8Ast` and has no step case.  `regsizeWord := true` is
+  not recoverable from emitted bytes, so load/store inverses use the
+  byte-identical `regsizeWord := false` representative.
 
 The model is deliberately closed: unknown instruction words set `failed`
-instead of being interpreted by the full L3 decoder. Consequently these
-modules carry no `@[hol]` tags. All twenty instruction forms now have kernel-checked decoder inverses on the
+instead of being interpreted by the full L3 decoder.  The executor now uses
+`rm` in `EXTR`, treats condition code 15 (NV) as always true, and follows L3's
+ADR/ADRP field geometry.  Because the decoder is still a permissive subset
+recognizer, these modules carry no `@[hol]` tags. All twenty instruction forms now have kernel-checked decoder inverses on the
 emitted shapes, with the two documented load/address limits above.
 `Flapjack/Compiler/Backend/Arm8Config/BackendProof.lean` proves
 `backendConfigOk arm8Config pancakeArm8BackendConfig`, and

@@ -53,7 +53,8 @@ def conditionHolds (s : Arm8State) (cond : Nat) : Bool :=
   | 12 => !s.z && s.n = s.v
   | 13 => s.z || s.n ≠ s.v
   | 14 => true
-  | _ => false
+  -- Condition code 15 (NV) is always true in AArch64 and in L3.
+  | _ => true
 
 /-- The bitfield `Replicate` used for sign-extending bitfield moves. -/
 def replicateBit (b : Bool) : BitVec 64 := if b then 0xFFFFFFFFFFFFFFFF else 0
@@ -125,8 +126,12 @@ def execInsn (s : Arm8State) : Insn → Arm8State
       writeReg s rd result
   | .bitfieldMove inzero extend immr imms rn rd =>
       bitfieldMove s inzero extend immr imms rn rd
-  | .extractRegister imms _rm rn rd =>
-      writeReg s rd (ror64 (readReg s rn) imms)
+  | .extractRegister imms rm rn rd =>
+      let n := imms % 64
+      let result :=
+        if n = 0 then readReg s rm
+        else (readReg s rn <<< (64 - n)) ||| (readReg s rm >>> n)
+      writeReg s rd result
   | .shift shift rm rn rd =>
       writeReg s rd (shiftValue (readReg s rn) shift (readReg s rm).toNat)
   | .division unsigned rm rn rd =>
@@ -183,7 +188,7 @@ def execInsn (s : Arm8State) : Insn → Arm8State
       { s with pc := target }
   | .address page imm rd =>
       if page then
-        writeReg s rd (((s.pc - 4) &&& ~~~(BitVec.ofNat 64 0xFFF)) + (imm <<< 12))
+        writeReg s rd (((s.pc - 4) &&& ~~~(BitVec.ofNat 64 0xFFF)) + imm)
       else writeReg s rd (s.pc - 4 + imm)
 
 /-- Fetch four bytes little-endian from memory. -/

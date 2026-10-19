@@ -282,12 +282,15 @@ The following are open review or verification obligations:
       `makesym` symbol lines. During development the comparison covered all 244
       standalone Pancake programs embedded in `cakeml/pancake/**/*.sml`.
       In addition, `Flapjack/Compiler/Encoders/Arm8/Machine/Complete.lean`
-      proves `encoderCorrect arm8Target` for a closed ARMv8 model that decodes
-      and executes exactly the instruction forms `arm8_ast` emits, and
+      proves `encoderCorrect arm8Target` for a closed ARMv8 model that covers
+      the instruction forms `arm8_ast` emits, and
       `Flapjack/Pancake/Proofs/PanToTarget/Arm8Instance.lean` instantiates the
       Pancake-to-machine-code theorem at that model with no encoder premise.
     - **What is not checked.** The closed model is not CakeML's full L3 ARMv8
-      semantics. Unknown instruction words set `failed`; there is no L3
+      semantics.  The decoder is a permissive recognizer and can also accept
+      non-emitted AArch64 words with closed-model (not L3) semantics; only
+      emitted forms have inversion and simulation proofs.  Unknown instruction
+      words set `failed`; there is no L3
       `arm8_encoder_correct` port, no proof about arbitrary ARMv8 code, and no
       theorem that the model agrees with real AArch64 hardware or with L3.
       The trusted compiler claim therefore rests on the closed model plus the

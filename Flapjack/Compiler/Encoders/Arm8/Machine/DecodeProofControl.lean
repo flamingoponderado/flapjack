@@ -653,7 +653,8 @@ theorem fields_addressFalse (imm2 imm19 rd : Nat) :
 /-- Decode the width-typed `address false` word. -/
 theorem decode_addressFalse_word (imm2 : BitVec 2) (imm19 : BitVec 19) (rd : BitVec 5) :
     decodeInsn32 (addressFalseWord imm2 imm19 rd)
-      = some (.address false (BitVec.ofInt 64 (sextValue 21 (imm19.toNat <<< 2)))
+      = some (.address false
+          (BitVec.ofInt 64 (sextValue 21 (imm19.toNat <<< 2 ||| imm2.toNat)))
           rd.toNat) := by
   simp only [decodeInsn32]
   have h1 : bitMatches (addressFalseWord imm2 imm19 rd) 0xFFFFFFFF 0xD503201F = false := by
@@ -792,13 +793,20 @@ theorem decode_addressFalse_word (imm2 : BitVec 2) (imm19 : BitVec 19) (rd : Bit
     simp only [addressFalseWord]
     simp
     interval_cases i <;> simp
+  have f29 : part (addressFalseWord imm2 imm19 rd) 29 2 = imm2.toNat := by
+    apply part_eq_of_setWidth
+    apply BitVec.eq_of_getLsbD_eq
+    intro i hi
+    simp only [addressFalseWord]
+    simp
+    interval_cases i <;> simp
   have f0 : part (addressFalseWord imm2 imm19 rd) 0 5 = rd.toNat := by
     apply part_eq_of_setWidth
     apply BitVec.eq_of_getLsbD_eq
     intro i hi
     simp only [addressFalseWord]
     simp
-  simp only [f5, f0]
+  simp only [f5, f29, f0]
 
 /-- The `address false` word decodes back to the encoded immediate, provided the
 immediate is a multiple of four inside the decoder's twenty-one-bit range. -/
@@ -815,7 +823,10 @@ theorem decode_encode_addressFalse32 (imm : W) (rd : Nat)
     rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt (Nat.mod_lt _ (by norm_num))]
   have h5 : (BitVec.ofNat 5 rd).toNat = rd := by
     rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt hrd]
-  rw [h19, h5, ofInt_sextValue_field_shift 19 imm hmod hfits]
+  have h2 : (BitVec.ofNat 2 (imm.toNat % 4)).toNat = 0 := by
+    rw [BitVec.toNat_ofNat, hmod]
+  rw [h19, h5, h2, Nat.or_zero]
+  rw [ofInt_sextValue_field_shift 19 imm hmod hfits]
 
 /-- The 64-bit carrier word emitted for an `address false`. -/
 theorem encodeInsn_addressFalse (imm : W) (rd : Nat) (hfits : fitsSigned 20 imm = true) :
@@ -827,7 +838,7 @@ theorem encodeInsn_addressFalse (imm : W) (rd : Nat) (hfits : fitsSigned 20 imm 
       = some (fields [(1, 0), (2, imm.toNat % 4), (5, 16),
           (19, (imm >>> 2).toNat % 2 ^ 19), (5, rd)]) by
     simp only [encodeInsn32]
-    rw [if_neg (by simp), if_pos hfits]]
+    rw [if_neg (by simp), if_pos (fitsSigned20_imp_21 imm hfits)]]
   rfl
 
 /-- The 64-bit carrier form of the decoder inverts the encoder's carrier form. -/

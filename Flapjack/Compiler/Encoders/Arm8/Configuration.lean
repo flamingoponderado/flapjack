@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Encoders.Arm8.Target
+import Flapjack.HolRef
 
 /-! The ARMv8 assembler configuration (`arm8_config` of
 `cakeml/compiler/encoders/arm8/arm8_targetScript.sml`), over the subset encoder in
@@ -12,6 +13,7 @@ open Flapjack Compiler.Encoders.Asm
 
 /-- `valid_immediate`: the integer-range test for `Add`/`Sub`/`Less`/`Lower`/`Equal`/
 `NotLess`/`NotLower`/`NotEqual`, and `EncodeBitMask` for the bitwise operations. -/
+@[hol "cakeml/compiler/encoders/arm8/arm8_targetScript.sml" "valid_immediate_def"]
 def validImmediate (operator : Sum BinOp Cmp) (i : BitVec 64) : Bool :=
   match operator with
   | .inl .add | .inl .sub

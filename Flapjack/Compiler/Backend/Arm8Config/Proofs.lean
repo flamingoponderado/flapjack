@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.Arm8Config.BackendConfig
+import Flapjack.HolRef
 import Flapjack.Compiler.Encoders.Arm8.Machine.Complete
 import Flapjack.Compiler.Backend.BackendProof.MachineInit
 import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
@@ -18,6 +19,7 @@ open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Encoders.AsmProps
 open Flapjack.Compiler.Backend.BackendProof
 
 /-- CakeML's `is_arm8_machine_config`. -/
+@[hol "cakeml/compiler/backend/arm8/proofs/arm8_configProofScript.sml" "is_arm8_machine_config_def"]
 def isArm8MachineConfig
     (mc : MachineConfig 64 Arm8State Arm8Projection) : Prop :=
   mc.target = arm8Target ∧
