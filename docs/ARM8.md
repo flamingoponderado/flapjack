@@ -10,7 +10,7 @@ proves `encoderCorrect arm8Target` for a closed ARMv8 execution model covering
 the emitted instruction subset, and instantiates the full
 Pancake-to-target theorem at that model. This is **not** a port of CakeML's full
 L3 ARMv8 semantics; the closed model and its limits are described below and in
-`docs/SOUNDNESS.md`.
+`docs/SOUNDNESS.md`; faithful-L3 follow-ups are tracked in issue #1229.
 
 ## Code generation
 
@@ -125,8 +125,10 @@ that `arm8_ast`/`encodeInsn` emit; no claim is made about other accepted words.
 The model is deliberately closed: unknown instruction words set `failed`
 instead of being interpreted by the full L3 decoder.  The executor now uses
 `rm` in `EXTR`, treats condition code 15 (NV) as always true, and follows L3's
-ADR/ADRP field geometry.  It does not model `r31` as the stack pointer outside
-data-processing operands: `readReg`/`writeReg` always treat `r31` as XZR.
+ADR/ADRP field geometry.  It does not model the stack-pointer role of `r31`
+anywhere: `readReg`/`writeReg` treat `r31` as XZR in every operand position,
+including ADD/SUB-immediate, base-register, and ORR-immediate positions where
+AArch64 would use SP.  Emitted code avoids `r31` in those positions.
 Because the decoder is still a permissive subset recognizer, it can also treat
 a CCMP-register word as ADCS, register-offset or pre/post-index loads and stores
 as unscaled, and other multiply-high variants as `MULH`; these words are never

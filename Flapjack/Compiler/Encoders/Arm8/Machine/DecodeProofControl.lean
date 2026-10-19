@@ -2,8 +2,8 @@
 Copyright (c) 2025 Flapjack contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Mathlib.Tactic
 import Mathlib.Tactic.IntervalCases
+import Mathlib.Tactic.Ring
 import Flapjack.Compiler.Encoders.Arm8.Machine.DecodeProofConditional
 
 /-!
@@ -44,8 +44,8 @@ theorem `arm8Next_*`.
 The `address true` (page) form is decoded faithfully from bits 32:14 and 13:12,
 but no lowering path emits it: `arm8_ast`'s `Loc` case only produces
 `.address false`.  It therefore has no step theorem here; concrete positive,
-negative, and bit-32 round trips are checked in
-`Flapjack/Test/Arm8Encoding.lean`.
+negative, bit-32, non-page-aligned, nonzero-`rd`, and executor page-arithmetic
+checks are in `Flapjack/Test/Arm8Encoding.lean`.
 
 Bit facts are proved by extensionality over `getLsbD` and `interval_cases`, and
 every `Nat`/`Int` fact is a kernel proof; no native decision procedure is used.
@@ -79,44 +79,6 @@ theorem sextToWord_eq_self (bits : Nat) (v : W) (h : fitsSigned bits v = true) :
   unfold fitsSigned at h
   rw [decide_eq_true_eq] at h
   rw [← h]
-  exact BitVec.ofInt_toInt
-
-/-- A multiple of four leaves the low `k + 2` bits unchanged when its `k`-bit
-field above bit 1 is written back and shifted up. -/
-theorem nat_field_mod_shift (k a : Nat) (hmod : a % 4 = 0) :
-    (a / 4 % 2 ^ k) * 4 % 2 ^ (k + 2) = a % 2 ^ (k + 2) := by
-  have hcancel : a / 4 * 4 = a := Nat.div_mul_cancel (Nat.dvd_of_mod_eq_zero hmod)
-  have hpow : 2 ^ (k + 2) = 2 ^ k * 4 := by rw [pow_add]; norm_num
-  have hlt : a / 4 % 2 ^ k * 4 < 2 ^ k * 4 := by
-    have h := Nat.mod_lt (a / 4) (Nat.two_pow_pos k)
-    exact Nat.mul_lt_mul_of_pos_right h (by norm_num)
-  calc (a / 4 % 2 ^ k) * 4 % 2 ^ (k + 2)
-      = (a / 4 * 4) % (2 ^ k * 4) := by
-        rw [hpow, Nat.mul_mod_mul_right 4 (a / 4) (2 ^ k), Nat.mod_eq_of_lt hlt]
-    _ = a % 2 ^ (k + 2) := by rw [hcancel, hpow]
-
-/-- The field `(imm >>> 2) % 2^k` written back as `(... <<< 2)` reconstructs the
-low `k + 2` bits of `imm` whenever `imm` is a multiple of four. -/
-theorem field_mod_shift (k : Nat) (imm : W) (hmod : imm.toNat % 4 = 0) :
-    ((((imm >>> 2).toNat % 2 ^ k) <<< 2)) % 2 ^ (k + 2) = imm.toNat % 2 ^ (k + 2) := by
-  have hshift : (imm >>> 2).toNat = imm.toNat / 4 :=
-    (BitVec.toNat_ushiftRight imm 2).trans (Nat.shiftRight_eq_div_pow _ _)
-  rw [hshift, Nat.shiftLeft_eq]
-  have h4 : (2 : Nat) ^ 2 = 4 := by norm_num
-  rw [h4]
-  exact nat_field_mod_shift k imm.toNat hmod
-
-/-- The shifted `k`-bit field sign-extends back to the original word, provided
-the word fits in `k + 2` signed bits and is a multiple of four. -/
-theorem ofInt_sextValue_field_shift (k : Nat) (imm : W)
-    (hmod : imm.toNat % 4 = 0) (hfits : fitsSigned (k + 2) imm = true) :
-    BitVec.ofInt 64 (sextValue (k + 2) (((imm >>> 2).toNat % 2 ^ k) <<< 2)) = imm := by
-  unfold fitsSigned at hfits
-  rw [decide_eq_true_eq] at hfits
-  have hcongr : sextValue (k + 2) (((imm >>> 2).toNat % 2 ^ k) <<< 2)
-      = sextValue (k + 2) imm.toNat :=
-    sextValue_congr (k + 2) _ _ (field_mod_shift k imm hmod)
-  rw [hcongr, ← hfits]
   exact BitVec.ofInt_toInt
 
 /-- The low `k + 2` bits of a `Nat` are reconstructed from its `k`-bit field
@@ -180,6 +142,25 @@ theorem ofInt_sextValue_field_shift_add (k : Nat) (imm : W)
     sextValue_congr (k + 2) _ _ (field_mod_shift_add k imm)
   rw [hcongr, ← hfits]
   exact BitVec.ofInt_toInt
+
+/-- A multiple of four is the special case of `nat_field_mod_shift_add` with
+zero low bits. -/
+theorem nat_field_mod_shift (k a : Nat) (hmod : a % 4 = 0) :
+    (a / 4 % 2 ^ k) * 4 % 2 ^ (k + 2) = a % 2 ^ (k + 2) := by
+  simpa [hmod] using nat_field_mod_shift_add k a
+
+/-- The field `(imm >>> 2) % 2^k` written back as `(... <<< 2)` reconstructs the
+low `k + 2` bits of `imm` whenever `imm` is a multiple of four. -/
+theorem field_mod_shift (k : Nat) (imm : W) (hmod : imm.toNat % 4 = 0) :
+    ((((imm >>> 2).toNat % 2 ^ k) <<< 2)) % 2 ^ (k + 2) = imm.toNat % 2 ^ (k + 2) := by
+  simpa [hmod] using field_mod_shift_add k imm
+
+/-- The shifted `k`-bit field sign-extends back to the original word, provided
+the word fits in `k + 2` signed bits and is a multiple of four. -/
+theorem ofInt_sextValue_field_shift (k : Nat) (imm : W)
+    (hmod : imm.toNat % 4 = 0) (hfits : fitsSigned (k + 2) imm = true) :
+    BitVec.ofInt 64 (sextValue (k + 2) (((imm >>> 2).toNat % 2 ^ k) <<< 2)) = imm := by
+  simpa [hmod] using ofInt_sextValue_field_shift_add k imm hfits
 
 /-- Sign-extending the low `bits` bits of a `Nat` and widening the result to a
 sixty-four-bit word. -/

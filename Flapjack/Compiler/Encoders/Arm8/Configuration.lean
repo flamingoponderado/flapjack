@@ -6,7 +6,9 @@ import Flapjack.Compiler.Encoders.Arm8.Target
 
 The `encode` field is `arm8Enc` over Flapjack's `HolAsm 64` carrier rather than HOL's
 full L3 `arm8$instruction`, so this record is not tagged as an exact `arm8_config` port.
-All bounds are the original ones; `valid_immediate` uses `EncodeBitMask`. -/
+All bounds are the original ones.  `valid_immediate` uses `encodeBitMask`, the
+Lean `Nat`-valued rendering of L3's `EncodeBitMask`; a carrier-exact port is
+tracked in issue #1229. -/
 namespace Flapjack.Compiler.Encoders.Arm8
 open Flapjack Compiler.Encoders.Asm
 
@@ -14,7 +16,8 @@ open Flapjack Compiler.Encoders.Asm
 `Add`/`Sub`/`Less`/`Lower`/`Equal`/`NotLess`/`NotLower`/`NotEqual`, and
 `EncodeBitMask` for the bitwise operations.  Deliberately untagged:
 `encodeBitMask` is Flapjack's `Nat`-valued rendering of L3's `EncodeBitMask`, so
-this declaration has not been reviewed as an exact carrier-level HOL port. -/
+this declaration has not been reviewed as an exact carrier-level HOL port.  A
+faithful carrier-exact port is tracked in issue #1229. -/
 def validImmediate (operator : Sum BinOp Cmp) (i : BitVec 64) : Bool :=
   match operator with
   | .inl .add | .inl .sub

@@ -99323,6 +99323,6 @@
     "lean_path": "Flapjack/Compiler/Encoders/Arm8/Target.lean",
     "lean_name": "arm8Shv",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack source comparison (2026-10-19): HOL `arm8_shv_def` matches the four `Shift` constructors (`Lsl`, `Lsr`, `Asr`, `Ror`) to the same-named `ShiftType` constructors. Lean `arm8Shv` has the same four cases in the same order, no side condition or width parameter; the `Shift`/`ShiftType` carriers are the already-reviewed constructor-for-constructor ports. Exact."
+    "reviewer": "flapjack source comparison (2026-10-19): HOL `arm8_shv_def` matches the four `Shift` constructors (`Lsl`, `Lsr`, `Asr`, `Ror`) to the same-named `ShiftType` constructors. Lean `arm8Shv` has the same four cases in the same order, no side condition or width parameter. The `Shift` carrier is the reviewed exact port; `ShiftType` is a local closed-model inductive whose four constructors match the unnamed L3 `Construct \"ShiftType\"` declaration in HOL/examples/l3-machine-code/arm8/model/arm8Script.sml, and it is not separately tagged because that source uses an unnamed `Construct` command. Exact mapping of `arm8_shv`."
   }
 ]

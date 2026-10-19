@@ -20,7 +20,8 @@ open Flapjack.Compiler.Backend.BackendProof
 /-- Flapjack's closed-model instance of CakeML's `is_arm8_machine_config`.
 Deliberately untagged: HOL's predicate takes `arm8_state`/`arm8_proj`, while
 this one is stated for `MachineConfig 64 Arm8State Arm8Projection`; the carriers
-are not the same, so it is not an exact HOL port. -/
+are not the same, so it is not an exact HOL port.  A faithful L3-carrier
+version is tracked in issue #1229. -/
 def isArm8MachineConfig
     (mc : MachineConfig 64 Arm8State Arm8Projection) : Prop :=
   mc.target = arm8Target ∧

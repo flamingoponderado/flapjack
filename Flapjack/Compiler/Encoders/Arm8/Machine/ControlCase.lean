@@ -790,7 +790,6 @@ theorem case_loc (r : Nat) (l : BitVec 64) (s1 s2 : AsmState 64) (ms : Arm8State
   have hok := st.asmOk
   simp only [asmOkExact, Bool.and_eq_true] at hok
   obtain ⟨hlt, hav, hne31⟩ := regOk_of_asm hok.1
-  have hmod := locAligned_of_asm l hok.2
   by_cases hfits : fitsSigned 20 l = true
   · have hlen : (arm8Enc (.loc r l)).length = 4 := by
       rw [arm8Enc_loc_short r l hfits]; exact encodeBytes_length _

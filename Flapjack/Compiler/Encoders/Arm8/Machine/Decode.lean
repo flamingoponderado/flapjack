@@ -129,10 +129,11 @@ def decodeInsn32 (w : BitVec 32) : Option Insn :=
       (BitVec.ofNat 64 off) (b 5 5) (b 0 5))
   -- The closed model gives every accepted load/store zero-extending semantics.
   -- `signed` and `regsizeWord` are only modelled for the zero-extending forms
-  -- `arm8_ast` emits.  Both load/store masks are permissive: the unsigned-offset
-  -- mask above and the unscaled mask below can accept signed, register-offset,
-  -- and pre/post-index neighbours, and no correctness claim is made for those
-  -- words.
+  -- `arm8_ast` emits.  Both load/store masks are permissive, but differently:
+  -- the unsigned-offset mask above (which requires bit 24) also accepts signed
+  -- loads, PRFM, and bits 25:24 = 11; the unscaled mask below accepts
+  -- register-offset and pre/post-index forms (bits 25:24 = 00).  No correctness
+  -- claim is made for any of those words.
   else if bitMatches w 0x3F000000 0x38000000 then
     let size := b 30 2
     let opc := b 22 2
