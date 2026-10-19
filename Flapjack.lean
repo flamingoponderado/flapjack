@@ -2764,6 +2764,41 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Skip
    the faithful `findLoopVar` lowering and is intentionally not in this
    umbrella until its old identity-map assumptions are repaired. -/
 
+import Flapjack.Compiler.Encoders.Arm8.Encode
+import Flapjack.Compiler.Encoders.Arm8.Target
+import Flapjack.Compiler.Encoders.Arm8.Configuration
+import Flapjack.Compiler.Encoders.Arm8.TargetProof
+import Flapjack.Compiler.Encoders.Arm8.Machine.State
+import Flapjack.Compiler.Encoders.Arm8.Machine.Decode
+import Flapjack.Compiler.Encoders.Arm8.Machine.Execute
+import Flapjack.Compiler.Encoders.Arm8.Machine.DecodeProof
+import Flapjack.Compiler.Encoders.Arm8.Machine.DecodeProofSimple
+import Flapjack.Compiler.Encoders.Arm8.Machine.DecodeProofSimple2
+import Flapjack.Compiler.Encoders.Arm8.Machine.DecodeProofConditional
+import Flapjack.Compiler.Encoders.Arm8.Machine.DecodeProofControl
+import Flapjack.Compiler.Encoders.Arm8.Machine.Target
+import Flapjack.Compiler.Encoders.Arm8.Machine.Agree
+import Flapjack.Compiler.Encoders.Arm8.Machine.StepAgree
+import Flapjack.Compiler.Encoders.Arm8.Machine.Simulate
+import Flapjack.Compiler.Encoders.Arm8.Machine.MaskConverses
+import Flapjack.Compiler.Encoders.Arm8.Machine.SkipCase
+import Flapjack.Compiler.Encoders.Arm8.Machine.ControlCase
+import Flapjack.Compiler.Encoders.Arm8.Machine.JumpCmpCase
+import Flapjack.Compiler.Encoders.Arm8.Machine.ConstCase
+import Flapjack.Compiler.Encoders.Arm8.Machine.ArithCase
+import Flapjack.Compiler.Encoders.Arm8.Machine.ShiftCase
+import Flapjack.Compiler.Encoders.Arm8.Machine.ShiftCaseFull
+import Flapjack.Compiler.Encoders.Arm8.Machine.MulCarryCase
+import Flapjack.Compiler.Encoders.Arm8.Machine.Complete
+import Flapjack.Compiler.Encoders.Arm8.Machine.MemCaseFull
+import Flapjack.Compiler.Encoders.Arm8.Machine.MemCase
+import Flapjack.Compiler.Encoders.Arm8.Machine.TargetProof
+import Flapjack.Compiler.Encoders.Arm8.Machine.ExecuteProof
+import Flapjack.Compiler.Backend.Arm8Config.Names
+import Flapjack.Compiler.Backend.Arm8Config.BackendConfig
+import Flapjack.Compiler.Backend.Arm8Config.Proofs
+import Flapjack.Arm8.NativeSource
+import Flapjack.Arm8.NativeCLIAdapter
 import Flapjack.Compiler.Encoders.Mips32.Encode
 import Flapjack.Compiler.Encoders.Mips32.Target
 import Flapjack.Compiler.Backend.Mips32Config.Names
@@ -2782,6 +2817,7 @@ import Flapjack.Mips32.TargetProof.Mem
 import Flapjack.Mips32.TargetProof.Control
 import Flapjack.Mips32.TargetProof.Complete
 import Flapjack.Pancake.Proofs.PanToTarget.Mips32Instance
+import Flapjack.Pancake.Proofs.PanToTarget.Arm8Instance
 import Flapjack.Pancake.Proofs.PanToTarget.Mips32InstanceExecutable
 import Flapjack.Pancake.Proofs.PanToTarget.Mips32Source
 import Flapjack.Pancake.Proofs.PanToTarget.Mips32NativeSourceCorrect

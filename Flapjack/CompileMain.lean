@@ -2,6 +2,7 @@ import Flapjack.RiscV.PipelineDiagnostics
 import Flapjack.RiscV.ArtifactFormat
 import Flapjack.RiscV.NativeCLIAdapter
 import Flapjack.Mips32.NativeCLIAdapter
+import Flapjack.Arm8.NativeCLIAdapter
 
 /-!
 # Flapjack compiler command
@@ -16,6 +17,12 @@ is the default and `--assembly` is retained as a compatibility alias for `--panc
 leading `--legacy` selects the previous checked runtime-image route. A leading
 `--target=mips32` selects the MIPS32 (Ziren) backend, `Mips32.NativeSource.compile`, whose
 successful output `mips32CLIOutput_correct` connects to source correctness in the same way.
+A leading `--target=arm8` selects the ARMv8 (AArch64) backend,
+`Arm8.NativeSource.compile`, whose successful output is identified by
+`Arm8.NativeCLI.output_ok`.  The ARMv8 target proves `encoderCorrect arm8Target`
+for the closed ARMv8 model in `Flapjack/Compiler/Encoders/Arm8/Machine/` and
+instantiates the Pancake-to-machine-code theorem there; that model covers the
+emitted instruction subset, not the full L3 ARMv8 semantics.
 -/
 
 namespace Flapjack
@@ -40,7 +47,7 @@ inductive OutputFormat where
   deriving DecidableEq
 
 def usage : String :=
-  "Usage: lake exe flapjack-compile [--legacy|--target=riscv64|--target=mips32] " ++
+  "Usage: lake exe flapjack-compile [--legacy|--target=riscv64|--target=mips32|--target=arm8] " ++
   "[--assembly|--pancake|--hex|--sections] " ++
   "[SOURCE.pnk]\nRead Pancake source from SOURCE.pnk or stdin. The default, " ++
   "--assembly, and --pancake modes emit the Pancake-compatible assembly " ++
@@ -48,7 +55,8 @@ def usage : String :=
   "--sections emits its sections as <label> <address> <bytes> lines. " ++
   "--legacy selects the previous runtime-image route instead of the native " ++
   "whole compiler. --target=mips32 compiles for the MIPS32 (Ziren) target; " ++
-  "--target=riscv64 is the default."
+  "--target=arm8 compiles for the ARMv8 (AArch64) target; --target=riscv64 " ++
+  "is the default."
 
 def parseArguments (arguments : List String) : IO (Option (OutputFormat × Option String)) := do
   match arguments with
@@ -162,6 +170,25 @@ def compileMainMips32 (outputFormat : OutputFormat) (path : Option String) : IO 
       IO.print text
       return 0
 
+/-- The ARMv8 (AArch64) compiler (`Arm8.NativeSource.compile`), rendered by
+`Arm8.NativeCLI`. -/
+def compileMainArm8 (outputFormat : OutputFormat) (path : Option String) : IO UInt32 := do
+  let source ← readSource path
+  let format : RiscV.NativeCLI.Format :=
+    match outputFormat with
+    | .pancake => .assembly
+    | .hex => .hex
+    | .sections => .sections
+  match Arm8.NativeCLI.output format source with
+  | .error message =>
+      IO.eprintln s!"flapjack-compile: {message}"
+      return 1
+  | .ok (warnings, text) =>
+      for warning in warnings do
+        IO.eprintln s!"warning: {warning}"
+      IO.print text
+      return 0
+
 /-- The command: the native whole compiler by default (`--native` is accepted as an
 explicit alias), or the previous route after a leading `--legacy`. -/
 def compileMain (arguments : List String) : IO UInt32 := do
@@ -176,6 +203,9 @@ def compileMain (arguments : List String) : IO UInt32 := do
   | "--target=mips32" :: rest =>
       let some (outputFormat, path) ← parseArguments rest | return 0
       compileMainMips32 outputFormat path
+  | "--target=arm8" :: rest =>
+      let some (outputFormat, path) ← parseArguments rest | return 0
+      compileMainArm8 outputFormat path
   | _ =>
       let some (outputFormat, path) ← parseArguments arguments | return 0
       compileMainNative outputFormat path

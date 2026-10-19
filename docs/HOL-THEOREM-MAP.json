@@ -11977,6 +11977,15 @@
     "reviewer": "flapjack-luna-b source comparison riscv_config10-43: exact Spt Nat (num num_map), thirteen inserts in identical outer-to-inner order and values on LN; no finite-map qualifier. Universal kernel lookup/getD theorem matches existing production mapper for all Nat, including missing/out-of-range identity default. Actual RiscV/Lab five and LabDiagnostics six checked source-facing naming sites routed to exact map lookup. Original HOL table/default row replayed; full StackProg/HolProg carrier relation remains open."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/Arm8Config/Names.lean",
+    "lean_name": "arm8Names",
+    "hol_path": "cakeml/compiler/backend/arm8/arm8_configScript.sml",
+    "hol_name": "arm8_names_def",
+    "hol_line": 10,
+    "statement_status": "reviewed_exact",
+    "reviewer": "ARMv8 backend source comparison 2026-10-19 against arm8_configScript.sml:10-32: exact Spt Nat (num num_map), the ten inserts insert 0 30, 1 0, 2 1, 3 2, 4 3, 18 4, 25 29, 26 25, 29 18, 30 26 in identical outer-to-inner order on LN; no finite-map qualifier. arm8Names_lookup_eq relates the identity-default lookup to the explicit arm8NameMap for every Nat (kernel-checked, interval cases below 32, sptLookup_sptInsert_ne above). The surrounding ARMv8 backend configuration is Flapjack infrastructure and untagged."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/Mips32Config/Names.lean",
     "lean_name": "mipsNames",
     "hol_path": "cakeml/compiler/backend/mips/mips_configScript.sml",
@@ -99307,5 +99316,45 @@
     "lean_name": "nativeSourceCompile_full_result",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack infrastructure (flapjack-sol; bead flapjack-pr1215-depth-blocker): Every successful source driver run supplies the full logical compiler tuple (out.artifact, nativeSourceLogicalBound out); Prod.ext and artifact equality establish this without evaluating depth in the driver."
+    },
+  {
+    "hol_path": "cakeml/compiler/encoders/arm8/arm8_targetScript.sml",
+    "hol_name": "arm8_shv_def",
+    "lean_path": "Flapjack/Compiler/Encoders/Arm8/Target.lean",
+    "lean_name": "arm8Shv",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack source comparison (2026-10-19): HOL `arm8_shv_def` matches the four `Shift` constructors (`Lsl`, `Lsr`, `Asr`, `Ror`) to the same-named `ShiftType` constructors. Lean `arm8Shv` has the same four cases in the same order, no side condition or width parameter. Both the `Shift` and `ShiftType` carriers are reviewed exact constructor-for-constructor ports. Exact mapping of `arm8_shv`."
+    },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
+    "hol_name": "ShiftType",
+    "lean_path": "Flapjack/Compiler/Encoders/Arm8/Encode.lean",
+    "lean_name": "ShiftType",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack source comparison (2026-10-19): L3 `Construct \"ShiftType\"` at arm8Script.sml:38 declares four nullary constructors, `ShiftType_LSL`, `ShiftType_LSR`, `ShiftType_ASR`, `ShiftType_ROR`. Lean `ShiftType` has exactly the same four nullary constructors in that order, no payload, width parameter, or side condition. Exact constructor-for-constructor datatype port."
+    },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/arm8/model/arm8Script.sml",
+    "hol_name": "MoveWideOp",
+    "lean_path": "Flapjack/Compiler/Encoders/Arm8/Encode.lean",
+    "lean_name": "MoveWideOp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack source comparison (2026-10-19): L3 `Construct \"MoveWideOp\"` at arm8Script.sml:61 declares three nullary constructors, `MoveWideOp_N`, `MoveWideOp_Z`, `MoveWideOp_K`. Lean `MoveWideOp` has exactly `n`, `z`, `k` in that order, no payload, width parameter, or side condition. Exact constructor-for-constructor datatype port."
+    },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/Arm8Instance.lean",
+    "lean_name": "arm8PancakeHeapLimit_lt",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure (ARM8 closed-model instance, 2026-10-19): this is the concrete heap-limit side condition for `pancakeBackendConf arm8BackendConfig`, discharged by kernel `decide`. It has no HOL original because the closed ARM8 `arm8BackendConfig` is Flapjack-specific; the full L3 ARM8 configuration is tracked separately in #1229."
+    },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/Arm8Instance.lean",
+    "lean_name": "panToTargetCompileSemanticsArm8",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure (ARM8 closed-model instance, 2026-10-19): instantiates the generic `panToTargetCompileSemantics` theorem at the closed `arm8Target`, supplying `arm8MachineConfigOk` and `arm8EncoderCorrect`. It has no single HOL original: the CakeML analogue depends on the unported L3 `arm8_encoder_correct` and the full `arm8_config` carrier, tracked in #1229."
   }
 ]

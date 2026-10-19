@@ -1,0 +1,8 @@
+fun 1 f(1 a, 1 b) {
+  var 1 c = a << b;
+  var 1 d = a >>> b;
+  var 1 e = a >> b;
+  var 1 g = a #>> b;
+  return c + d + e + g;
+}
+fun 1 main() { return f(305419896, 13); }
