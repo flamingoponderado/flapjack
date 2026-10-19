@@ -91,14 +91,12 @@ closed ARMv8 execution model for exactly the instruction subset that
   `arm8Config` and `arm8Next`.
 - `TargetProof.lean`: `arm8EncOk` and the unconditional `targetOk arm8Target`
   (projection consistency), plus `Loc` offset-length monotonicity.
-- `ExecuteProof.lean`: one-step execution from a supplied fetched word and
-  decoder inverse (`decodeInsn w = some i`); the byte-reassembly lemma is not
-  yet kernel-checked.
-- `DecodeProof.lean`: the kernel-checked `noOp` decoder inverse only.
+- `ExecuteProof.lean`: kernel-checked byte reassembly and one-step execution
+  from the encoded bytes plus the per-instruction decoder inverse.
+- `DecodeProof.lean`: kernel-checked `noOp` and `moveWide` decoder inverses.
 
 The model is deliberately closed: unknown instruction words set `failed`
 instead of being interpreted by the full L3 decoder. Consequently these
-modules carry no `@[hol]` tags. Only `noOp` has a kernel-checked decoder
-inverse; the remaining per-instruction decoder inverses, byte reassembly,
-`encoderCorrect`, and the `pan_to_target_compile_semantics` instantiation are
-still future work. The parity fixtures remain the executable evidence.
+modules carry no `@[hol]` tags. Only `noOp` and `moveWide` have kernel-checked decoder
+inverses; the remaining per-instruction decoder inverses, `encoderCorrect`, and
+the `pan_to_target_compile_semantics` instantiation are still future work. The parity fixtures remain the executable evidence.
