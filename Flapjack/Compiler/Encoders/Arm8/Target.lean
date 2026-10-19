@@ -87,7 +87,7 @@ def arm8Inst : HolInst 64 → List Insn
       | _ =>
           match bopEnc bop with
           | some op => [.logicalShiftedRegister op false false .lsl 0 right source destination]
-          | none => []
+          | none => [.noOp]
   | .arith (.binop bop destination source (.imm value)) =>
       match bop with
       | .add => [.addSubImmediate false false value source destination]
@@ -100,7 +100,7 @@ def arm8Inst : HolInst 64 → List Insn
       | _ =>
           match bopEnc bop with
           | some op => [.logicalImmediate op false value source destination]
-          | none => []
+          | none => [.noOp]
   | .arith (.shift shift destination source (.imm value)) =>
       let n := value.toNat % 64
       match shift with

@@ -83,4 +83,66 @@ theorem length_arm8Enc_mod (instruction : HolAsm 64) :
   rw [length_arm8Enc]
   omega
 
+/-- Flapjack structural nonemptiness of every lowered ARMv8 sequence, including
+the fallback `NoOperation` used for unsupported operations. -/
+theorem arm8Ast_nonempty (instruction : HolAsm 64) : arm8Ast instruction ≠ [] := by
+  cases instruction <;> simp only [arm8Ast, arm8Inst, loadStoreAst] <;>
+    (try (repeat' split)) <;> simp
+
+/-- The byte sequence is nonempty on every source instruction. -/
+theorem arm8Enc_nonempty (instruction : HolAsm 64) : arm8Enc instruction ≠ [] := by
+  unfold arm8Enc
+  intro h
+  have hl := congrArg List.length h
+  rw [length_flatMap_encodeBytes, List.length_nil] at hl
+  have hp := List.length_pos_iff.mpr (arm8Ast_nonempty instruction)
+  omega
+
+/-- `arm8_encoding` nonemptiness half, for the lowered byte list. -/
+theorem length_arm8Enc_pos (instruction : HolAsm 64) : 0 < (arm8Enc instruction).length := by
+  rw [length_arm8Enc]
+  have := List.length_pos_iff.mpr (arm8Ast_nonempty instruction)
+  omega
+
+/-- Concrete `arm8_ast` equations for the branch forms. -/
+@[simp] theorem arm8Ast_jump (target : BitVec 64) :
+    arm8Ast (.jump target) = [.branchImmediate target false] := rfl
+@[simp] theorem arm8Ast_call (target : BitVec 64) :
+    arm8Ast (.call target) = [.branchImmediate target true] := rfl
+@[simp] theorem arm8Ast_jumpReg (register : Nat) :
+    arm8Ast (.jumpReg register) = [.branchRegister register .jmp] := rfl
+@[simp] theorem arm8Ast_jumpCmp (cmp : Cmp) (r : Nat) (ri : HolRegImm 64)
+    (target : BitVec 64) :
+    arm8Ast (.jumpCmp cmp r ri target) = (match ri with
+      | .reg right =>
+          [if Compiler.Encoders.AsmSem.isTest cmp = true then
+              .logicalShiftedRegister .and false true .lsl 0 right r 31
+            else .addSubShiftedRegister true true .lsl right 0 r 31,
+            .branchConditional (target - 4) (cmpCond cmp)]
+      | .imm value =>
+          [if Compiler.Encoders.AsmSem.isTest cmp = true then
+              .logicalImmediate .and true value r 31
+            else .addSubImmediate true true value r 31,
+            .branchConditional (target - 4) (cmpCond cmp)]) := by
+  cases ri <;> rfl
+
+/-- Concrete `arm8_ast` equation for long/short `Loc` lowering. -/
+@[simp] theorem arm8Ast_loc (register : Nat) (offset : BitVec 64) :
+    arm8Ast (.loc register offset) =
+      (if fitsSigned 20 offset = true then [.address false offset register]
+       else [.address false 0 register,
+         .moveWide .k 0 (offset.toNat % 65536) temp,
+         .moveWide .k 1 ((offset >>> 16).toNat % 65536) temp,
+         .moveWide .k 2 ((offset >>> 32).toNat % 65536) temp,
+         .moveWide .k 3 ((offset >>> 48).toNat % 65536) temp,
+         .addSubShiftedRegister false false .lsl temp 0 register register]) := rfl
+
+/-- `fitsSigned 20` is exactly the signed 20-bit range. -/
+theorem fitsSigned20_toInt (value : BitVec 64) :
+    fitsSigned 20 value = true ↔
+      -(2 ^ 19 : Int) ≤ value.toInt ∧ value.toInt ≤ 2 ^ 19 - 1 := by
+  unfold fitsSigned sextValue
+  simp only [decide_eq_true_eq]
+  split <;> simp [BitVec.toInt] <;> omega
+
 end Flapjack.Compiler.Encoders.Arm8

@@ -2768,6 +2768,12 @@ import Flapjack.Compiler.Encoders.Arm8.Encode
 import Flapjack.Compiler.Encoders.Arm8.Target
 import Flapjack.Compiler.Encoders.Arm8.Configuration
 import Flapjack.Compiler.Encoders.Arm8.TargetProof
+import Flapjack.Compiler.Encoders.Arm8.Machine.State
+import Flapjack.Compiler.Encoders.Arm8.Machine.Decode
+import Flapjack.Compiler.Encoders.Arm8.Machine.Execute
+import Flapjack.Compiler.Encoders.Arm8.Machine.Target
+import Flapjack.Compiler.Encoders.Arm8.Machine.TargetProof
+import Flapjack.Compiler.Encoders.Arm8.Machine.ExecuteProof
 import Flapjack.Compiler.Backend.Arm8Config.Names
 import Flapjack.Compiler.Backend.Arm8Config.BackendConfig
 import Flapjack.Arm8.NativeSource

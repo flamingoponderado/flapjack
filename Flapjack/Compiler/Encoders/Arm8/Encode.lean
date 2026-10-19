@@ -195,7 +195,7 @@ inductive Insn where
   | branchConditional (imm : W) (cond : Nat)
   | branchRegister (rn : Nat) (kind : BranchKind)
   | address (page : Bool) (imm : W) (rd : Nat)
-  deriving Repr
+  deriving DecidableEq, Repr
 
 /-- The `opc` field of `EncodeLogicalOp`.  `none` is HOL's `LO (word2)`. -/
 def encodeLogicalOp (op : LogicalOp) (setFlags : Bool) : Option Nat :=

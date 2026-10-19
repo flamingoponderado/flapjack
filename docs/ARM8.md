@@ -75,3 +75,27 @@ The main theorem, `arm8_encoder_correct`, needs CakeML's ARMv8 L3 machine model
 (`HOL/examples/l3-machine-code/arm8/model/arm8Script.sml` and
 `step/arm8_stepScript.sml`). That model and its next-state function are not yet
 in Flapjack, so the proof port remains future work.
+
+## Closed ARMv8 machine model (new)
+
+The `Flapjack/Compiler/Encoders/Arm8/Machine/` directory adds a small,
+closed ARMv8 execution model for exactly the instruction subset that
+`arm8_ast` emits (it is **not** a port of the full L3 `arm8Script.sml` model):
+
+- `State.lean`: registers, flags, memory, failure flag, aligned-PC
+  well-formedness, and the `target_ok` projection.
+- `Decode.lean`: a 32-bit decoder for the emitted instruction forms.
+- `Execute.lean`: `execInsn` and `arm8Next`, including ARM `AddWithCarry`,
+  condition codes, shifts, bitfield move, and branch PC arithmetic.
+- `Target.lean`: the nonempty `HolAsmTarget` record `arm8Target`, using
+  `arm8Config` and `arm8Next`.
+- `TargetProof.lean`: `arm8EncOk` and the unconditional `targetOk arm8Target`
+  (projection consistency), plus `Loc` offset-length monotonicity.
+- `ExecuteProof.lean`: fetch/decode lemmas from encoded bytes, parameterized
+  by the per-instruction decoder inverse `decodeInsn w = some i`.
+
+The model is deliberately closed: unknown instruction words set `failed`
+instead of being interpreted by the full L3 decoder. Consequently these
+modules carry no `@[hol]` tags. The per-instruction decoder inverse and the
+`encoderCorrect`/`pan_to_target_compile_semantics` instantiation are still
+future work; the parity fixtures remain the executable evidence.
