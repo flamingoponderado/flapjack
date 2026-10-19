@@ -2781,6 +2781,7 @@ import Flapjack.Compiler.Encoders.Arm8.Machine.Agree
 import Flapjack.Compiler.Encoders.Arm8.Machine.StepAgree
 import Flapjack.Compiler.Encoders.Arm8.Machine.Simulate
 import Flapjack.Compiler.Encoders.Arm8.Machine.SkipCase
+import Flapjack.Compiler.Encoders.Arm8.Machine.ControlCase
 import Flapjack.Compiler.Encoders.Arm8.Machine.TargetProof
 import Flapjack.Compiler.Encoders.Arm8.Machine.ExecuteProof
 import Flapjack.Compiler.Backend.Arm8Config.Names
