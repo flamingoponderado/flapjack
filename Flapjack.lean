@@ -2802,6 +2802,7 @@ import Flapjack.Mips32.TargetProof.Mem
 import Flapjack.Mips32.TargetProof.Control
 import Flapjack.Mips32.TargetProof.Complete
 import Flapjack.Pancake.Proofs.PanToTarget.Mips32Instance
+import Flapjack.Pancake.Proofs.PanToTarget.Arm8Instance
 import Flapjack.Pancake.Proofs.PanToTarget.Mips32InstanceExecutable
 import Flapjack.Pancake.Proofs.PanToTarget.Mips32Source
 import Flapjack.Pancake.Proofs.PanToTarget.Mips32NativeSourceCorrect

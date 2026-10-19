@@ -112,5 +112,9 @@ The model is deliberately closed: unknown instruction words set `failed`
 instead of being interpreted by the full L3 decoder. Consequently these
 modules carry no `@[hol]` tags. All twenty instruction forms now have kernel-checked decoder inverses on the
 emitted shapes, with the two documented load/address limits above.
-`encoderCorrect`, the machine-step simulation of `asmStep`, and the
-`pan_to_target_compile_semantics` instantiation remain future work. The parity fixtures remain the executable evidence.
+`Flapjack/Compiler/Backend/Arm8Config/BackendProof.lean` proves
+`backendConfigOk arm8Config pancakeArm8BackendConfig`, and
+`Flapjack/Pancake/Proofs/PanToTarget/Arm8Instance.lean` instantiates
+`panToTargetCompileSemantics` for ARM8. The instance still takes the explicit
+premise `encoderCorrect arm8Target`; proving that premise (the machine-step
+simulation of `asmStep`) is the remaining work. The parity fixtures remain the executable evidence.
