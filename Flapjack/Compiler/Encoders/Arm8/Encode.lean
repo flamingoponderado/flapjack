@@ -30,9 +30,9 @@ abbrev W := BitVec 64
 
 /-- Concatenate a list of `(width, value)` fields, most significant first,
 exactly like HOL's `CC[...]` / `word_concat`. -/
-def fields (fs : List (Nat × Nat)) : W :=
+def fields (fs : List (Nat × Nat)) : BitVec 32 :=
   fs.foldl (fun acc (width, value) =>
-    (acc <<< width) ||| BitVec.ofNat 64 (value % 2 ^ width)) 0
+    (acc <<< width) ||| BitVec.ofNat 32 (value % 2 ^ width)) 0
 
 /-- `n2w` of a Boolean field. -/
 def bit (value : Bool) : Nat := if value then 1 else 0
@@ -229,7 +229,7 @@ def bitfieldOpBits (inzero extend : Bool) : Option Nat :=
 /-- Encode one instruction word, following `arm8Theory`'s `Encode`.  `none`
 corresponds to HOL's `BadCode` (which `arm8_encode` turns into four zero
 bytes). -/
-def encodeInsn : Insn → Option W
+def encodeInsn32 : Insn → Option (BitVec 32)
   | .noOp => some (fields [(24, 0xD50320), (3, 0), (5, 31)])
   | .moveWide op hw imm16 rd =>
       some (fields [(1, 1), (2, moveWideOpBits op), (6, 0b100101),
@@ -321,6 +321,11 @@ def encodeInsn : Insn → Option W
         some (fields [(1, 0), (2, imm.toNat % 4), (5, 16),
           (19, (imm >>> 2).toNat % 2 ^ 19), (5, rd)])
       else none
+
+/-- The 64-bit carrier form used by the backend, obtained by zero-extending
+the 32-bit encoding. -/
+def encodeInsn (i : Insn) : Option W :=
+  (encodeInsn32 i).map (fun w => w.setWidth 64)
 
 /-- Little-endian bytes of an instruction word. -/
 def wordBytes (w : W) : List (BitVec 8) :=
