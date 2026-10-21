@@ -20,640 +20,640 @@ private noncomputable def observation (f : riscv_state → riscv_state) (s : ris
 example (base : riscv_state) :
     observation (signalEnvCall ()) (fixture base 0 7 false) =
       ((3,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,signalEnvCall,
+    signalException,setTrap,«write'NextFetch»,MCSR,privilege,
+    holUpdate]
 
 -- Original signal0_priv0_prior0_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation (signalEnvCall ()) (fixture base 0 255 false) =
       ((3,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,signalEnvCall,
+    signalException,setTrap,«write'NextFetch»,MCSR,privilege,
+    holUpdate]
 
 -- Original signal0_priv0_prior1_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation (signalEnvCall ()) (fixture base 0 7 true) =
       ((3,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,signalEnvCall,
+    signalException,setTrap,«write'NextFetch»,MCSR,privilege,
+    holUpdate]
 
 -- Original signal0_priv0_prior1_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation (signalEnvCall ()) (fixture base 0 255 true) =
       ((3,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,signalEnvCall,
+    signalException,setTrap,«write'NextFetch»,MCSR,privilege,
+    holUpdate]
 
 -- Original signal0_priv1_prior0_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation (signalEnvCall ()) (fixture base 1 7 false) =
       ((4,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,signalEnvCall,
+    signalException,setTrap,«write'NextFetch»,MCSR,privilege,
+    holUpdate]
 
 -- Original signal0_priv1_prior0_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation (signalEnvCall ()) (fixture base 1 255 false) =
       ((4,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,signalEnvCall,
+    signalException,setTrap,«write'NextFetch»,MCSR,privilege,
+    holUpdate]
 
 -- Original signal0_priv1_prior1_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation (signalEnvCall ()) (fixture base 1 7 true) =
       ((4,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,signalEnvCall,
+    signalException,setTrap,«write'NextFetch»,MCSR,privilege,
+    holUpdate]
 
 -- Original signal0_priv1_prior1_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation (signalEnvCall ()) (fixture base 1 255 true) =
       ((4,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,signalEnvCall,
+    signalException,setTrap,«write'NextFetch»,MCSR,privilege,
+    holUpdate]
 
 -- Original signal0_priv2_prior0_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation (signalEnvCall ()) (fixture base 2 7 false) =
       ((5,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,signalEnvCall,
+    signalException,setTrap,«write'NextFetch»,MCSR,privilege,
+    holUpdate]
 
 -- Original signal0_priv2_prior0_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation (signalEnvCall ()) (fixture base 2 255 false) =
       ((5,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,signalEnvCall,
+    signalException,setTrap,«write'NextFetch»,MCSR,privilege,
+    holUpdate]
 
 -- Original signal0_priv2_prior1_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation (signalEnvCall ()) (fixture base 2 7 true) =
       ((5,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,signalEnvCall,
+    signalException,setTrap,«write'NextFetch»,MCSR,privilege,
+    holUpdate]
 
 -- Original signal0_priv2_prior1_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation (signalEnvCall ()) (fixture base 2 255 true) =
       ((5,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,signalEnvCall,
+    signalException,setTrap,«write'NextFetch»,MCSR,privilege,
+    holUpdate]
 
 -- Original signal0_priv3_prior0_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation (signalEnvCall ()) (fixture base 3 7 false) =
       ((6,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,signalEnvCall,
+    signalException,setTrap,«write'NextFetch»,MCSR,privilege,
+    holUpdate]
 
 -- Original signal0_priv3_prior0_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation (signalEnvCall ()) (fixture base 3 255 false) =
       ((6,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,signalEnvCall,
+    signalException,setTrap,«write'NextFetch»,MCSR,privilege,
+    holUpdate]
 
 -- Original signal0_priv3_prior1_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation (signalEnvCall ()) (fixture base 3 7 true) =
       ((6,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,signalEnvCall,
+    signalException,setTrap,«write'NextFetch»,MCSR,privilege,
+    holUpdate]
 
 -- Original signal0_priv3_prior1_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation (signalEnvCall ()) (fixture base 3 255 true) =
       ((6,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,signalEnvCall,
+    signalException,setTrap,«write'NextFetch»,MCSR,privilege,
+    holUpdate]
 
 -- Original signal1_priv0_prior0_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'ECALL» (fixture base 0 7 false) =
       ((3,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,
+    signalException,setTrap,«write'NextFetch»,MCSR,privilege,
+    holUpdate]
 
 -- Original signal1_priv0_prior0_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'ECALL» (fixture base 0 255 false) =
       ((3,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,
+    signalException,setTrap,«write'NextFetch»,MCSR,privilege,
+    holUpdate]
 
 -- Original signal1_priv0_prior1_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'ECALL» (fixture base 0 7 true) =
       ((3,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,
+    signalException,setTrap,«write'NextFetch»,MCSR,privilege,
+    holUpdate]
 
 -- Original signal1_priv0_prior1_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'ECALL» (fixture base 0 255 true) =
       ((3,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,
+    signalException,setTrap,«write'NextFetch»,MCSR,privilege,
+    holUpdate]
 
 -- Original signal1_priv1_prior0_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'ECALL» (fixture base 1 7 false) =
       ((4,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,
+    signalException,setTrap,«write'NextFetch»,MCSR,privilege,
+    holUpdate]
 
 -- Original signal1_priv1_prior0_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'ECALL» (fixture base 1 255 false) =
       ((4,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,
+    signalException,setTrap,«write'NextFetch»,MCSR,privilege,
+    holUpdate]
 
 -- Original signal1_priv1_prior1_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'ECALL» (fixture base 1 7 true) =
       ((4,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,
+    signalException,setTrap,«write'NextFetch»,MCSR,privilege,
+    holUpdate]
 
 -- Original signal1_priv1_prior1_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'ECALL» (fixture base 1 255 true) =
       ((4,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,
+    signalException,setTrap,«write'NextFetch»,MCSR,privilege,
+    holUpdate]
 
 -- Original signal1_priv2_prior0_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'ECALL» (fixture base 2 7 false) =
       ((5,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,
+    signalException,setTrap,«write'NextFetch»,MCSR,privilege,
+    holUpdate]
 
 -- Original signal1_priv2_prior0_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'ECALL» (fixture base 2 255 false) =
       ((5,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,
+    signalException,setTrap,«write'NextFetch»,MCSR,privilege,
+    holUpdate]
 
 -- Original signal1_priv2_prior1_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'ECALL» (fixture base 2 7 true) =
       ((5,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,
+    signalException,setTrap,«write'NextFetch»,MCSR,privilege,
+    holUpdate]
 
 -- Original signal1_priv2_prior1_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'ECALL» (fixture base 2 255 true) =
       ((5,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,
+    signalException,setTrap,«write'NextFetch»,MCSR,privilege,
+    holUpdate]
 
 -- Original signal1_priv3_prior0_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'ECALL» (fixture base 3 7 false) =
       ((6,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,
+    signalException,setTrap,«write'NextFetch»,MCSR,privilege,
+    holUpdate]
 
 -- Original signal1_priv3_prior0_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'ECALL» (fixture base 3 255 false) =
       ((6,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,
+    signalException,setTrap,«write'NextFetch»,MCSR,privilege,
+    holUpdate]
 
 -- Original signal1_priv3_prior1_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'ECALL» (fixture base 3 7 true) =
       ((6,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,
+    signalException,setTrap,«write'NextFetch»,MCSR,privilege,
+    holUpdate]
 
 -- Original signal1_priv3_prior1_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'ECALL» (fixture base 3 255 true) =
       ((6,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,
+    signalException,setTrap,«write'NextFetch»,MCSR,privilege,
+    holUpdate]
 
 -- Original signal2_priv0_prior0_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'EBREAK» (fixture base 0 7 false) =
       ((2,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,«dfn'EBREAK»,
+    signalException,setTrap,«write'NextFetch»,
+    holUpdate]
 
 -- Original signal2_priv0_prior0_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'EBREAK» (fixture base 0 255 false) =
       ((2,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,«dfn'EBREAK»,
+    signalException,setTrap,«write'NextFetch»,
+    holUpdate]
 
 -- Original signal2_priv0_prior1_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'EBREAK» (fixture base 0 7 true) =
       ((2,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,«dfn'EBREAK»,
+    signalException,setTrap,«write'NextFetch»,
+    holUpdate]
 
 -- Original signal2_priv0_prior1_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'EBREAK» (fixture base 0 255 true) =
       ((2,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,«dfn'EBREAK»,
+    signalException,setTrap,«write'NextFetch»,
+    holUpdate]
 
 -- Original signal2_priv1_prior0_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'EBREAK» (fixture base 1 7 false) =
       ((2,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,«dfn'EBREAK»,
+    signalException,setTrap,«write'NextFetch»,
+    holUpdate]
 
 -- Original signal2_priv1_prior0_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'EBREAK» (fixture base 1 255 false) =
       ((2,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,«dfn'EBREAK»,
+    signalException,setTrap,«write'NextFetch»,
+    holUpdate]
 
 -- Original signal2_priv1_prior1_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'EBREAK» (fixture base 1 7 true) =
       ((2,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,«dfn'EBREAK»,
+    signalException,setTrap,«write'NextFetch»,
+    holUpdate]
 
 -- Original signal2_priv1_prior1_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'EBREAK» (fixture base 1 255 true) =
       ((2,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,«dfn'EBREAK»,
+    signalException,setTrap,«write'NextFetch»,
+    holUpdate]
 
 -- Original signal2_priv2_prior0_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'EBREAK» (fixture base 2 7 false) =
       ((2,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,«dfn'EBREAK»,
+    signalException,setTrap,«write'NextFetch»,
+    holUpdate]
 
 -- Original signal2_priv2_prior0_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'EBREAK» (fixture base 2 255 false) =
       ((2,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,«dfn'EBREAK»,
+    signalException,setTrap,«write'NextFetch»,
+    holUpdate]
 
 -- Original signal2_priv2_prior1_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'EBREAK» (fixture base 2 7 true) =
       ((2,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,«dfn'EBREAK»,
+    signalException,setTrap,«write'NextFetch»,
+    holUpdate]
 
 -- Original signal2_priv2_prior1_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'EBREAK» (fixture base 2 255 true) =
       ((2,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,«dfn'EBREAK»,
+    signalException,setTrap,«write'NextFetch»,
+    holUpdate]
 
 -- Original signal2_priv3_prior0_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'EBREAK» (fixture base 3 7 false) =
       ((2,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,«dfn'EBREAK»,
+    signalException,setTrap,«write'NextFetch»,
+    holUpdate]
 
 -- Original signal2_priv3_prior0_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'EBREAK» (fixture base 3 255 false) =
       ((2,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,«dfn'EBREAK»,
+    signalException,setTrap,«write'NextFetch»,
+    holUpdate]
 
 -- Original signal2_priv3_prior1_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'EBREAK» (fixture base 3 7 true) =
       ((2,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,«dfn'EBREAK»,
+    signalException,setTrap,«write'NextFetch»,
+    holUpdate]
 
 -- Original signal2_priv3_prior1_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'EBREAK» (fixture base 3 255 true) =
       ((2,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,«dfn'EBREAK»,
+    signalException,setTrap,«write'NextFetch»,
+    holUpdate]
 
 -- Original signal3_priv0_prior0_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'ERET» (fixture base 0 7 false) =
       ((7,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,«dfn'ERET»,
+    «write'NextFetch»,
+    holUpdate]
 
 -- Original signal3_priv0_prior0_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'ERET» (fixture base 0 255 false) =
       ((7,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,«dfn'ERET»,
+    «write'NextFetch»,
+    holUpdate]
 
 -- Original signal3_priv0_prior1_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'ERET» (fixture base 0 7 true) =
       ((7,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,«dfn'ERET»,
+    «write'NextFetch»,
+    holUpdate]
 
 -- Original signal3_priv0_prior1_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'ERET» (fixture base 0 255 true) =
       ((7,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,«dfn'ERET»,
+    «write'NextFetch»,
+    holUpdate]
 
 -- Original signal3_priv1_prior0_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'ERET» (fixture base 1 7 false) =
       ((7,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,«dfn'ERET»,
+    «write'NextFetch»,
+    holUpdate]
 
 -- Original signal3_priv1_prior0_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'ERET» (fixture base 1 255 false) =
       ((7,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,«dfn'ERET»,
+    «write'NextFetch»,
+    holUpdate]
 
 -- Original signal3_priv1_prior1_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'ERET» (fixture base 1 7 true) =
       ((7,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,«dfn'ERET»,
+    «write'NextFetch»,
+    holUpdate]
 
 -- Original signal3_priv1_prior1_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'ERET» (fixture base 1 255 true) =
       ((7,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,«dfn'ERET»,
+    «write'NextFetch»,
+    holUpdate]
 
 -- Original signal3_priv2_prior0_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'ERET» (fixture base 2 7 false) =
       ((7,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,«dfn'ERET»,
+    «write'NextFetch»,
+    holUpdate]
 
 -- Original signal3_priv2_prior0_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'ERET» (fixture base 2 255 false) =
       ((7,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,«dfn'ERET»,
+    «write'NextFetch»,
+    holUpdate]
 
 -- Original signal3_priv2_prior1_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'ERET» (fixture base 2 7 true) =
       ((7,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,«dfn'ERET»,
+    «write'NextFetch»,
+    holUpdate]
 
 -- Original signal3_priv2_prior1_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'ERET» (fixture base 2 255 true) =
       ((7,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,«dfn'ERET»,
+    «write'NextFetch»,
+    holUpdate]
 
 -- Original signal3_priv3_prior0_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'ERET» (fixture base 3 7 false) =
       ((7,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,«dfn'ERET»,
+    «write'NextFetch»,
+    holUpdate]
 
 -- Original signal3_priv3_prior0_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'ERET» (fixture base 3 255 false) =
       ((7,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,«dfn'ERET»,
+    «write'NextFetch»,
+    holUpdate]
 
 -- Original signal3_priv3_prior1_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'ERET» (fixture base 3 7 true) =
       ((7,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,«dfn'ERET»,
+    «write'NextFetch»,
+    holUpdate]
 
 -- Original signal3_priv3_prior1_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'ERET» (fixture base 3 255 true) =
       ((7,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,«dfn'ERET»,
+    «write'NextFetch»,
+    holUpdate]
 
 -- Original signal4_priv0_prior0_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'UnknownInstruction» (fixture base 0 7 false) =
       ((1,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,
+    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,
+    holUpdate]
 
 -- Original signal4_priv0_prior0_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'UnknownInstruction» (fixture base 0 255 false) =
       ((1,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,
+    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,
+    holUpdate]
 
 -- Original signal4_priv0_prior1_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'UnknownInstruction» (fixture base 0 7 true) =
       ((1,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,
+    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,
+    holUpdate]
 
 -- Original signal4_priv0_prior1_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'UnknownInstruction» (fixture base 0 255 true) =
       ((1,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,
+    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,
+    holUpdate]
 
 -- Original signal4_priv1_prior0_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'UnknownInstruction» (fixture base 1 7 false) =
       ((1,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,
+    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,
+    holUpdate]
 
 -- Original signal4_priv1_prior0_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'UnknownInstruction» (fixture base 1 255 false) =
       ((1,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,
+    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,
+    holUpdate]
 
 -- Original signal4_priv1_prior1_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'UnknownInstruction» (fixture base 1 7 true) =
       ((1,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,
+    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,
+    holUpdate]
 
 -- Original signal4_priv1_prior1_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'UnknownInstruction» (fixture base 1 255 true) =
       ((1,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,
+    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,
+    holUpdate]
 
 -- Original signal4_priv2_prior0_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'UnknownInstruction» (fixture base 2 7 false) =
       ((1,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,
+    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,
+    holUpdate]
 
 -- Original signal4_priv2_prior0_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'UnknownInstruction» (fixture base 2 255 false) =
       ((1,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,
+    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,
+    holUpdate]
 
 -- Original signal4_priv2_prior1_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'UnknownInstruction» (fixture base 2 7 true) =
       ((1,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,
+    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,
+    holUpdate]
 
 -- Original signal4_priv2_prior1_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'UnknownInstruction» (fixture base 2 255 true) =
       ((1,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,
+    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,
+    holUpdate]
 
 -- Original signal4_priv3_prior0_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'UnknownInstruction» (fixture base 3 7 false) =
       ((1,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,
+    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,
+    holUpdate]
 
 -- Original signal4_priv3_prior0_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'UnknownInstruction» (fixture base 3 255 false) =
       ((1,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,
+    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,
+    holUpdate]
 
 -- Original signal4_priv3_prior1_core7; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'UnknownInstruction» (fixture base 3 7 true) =
       ((1,none),true,true,true,1,7) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,
+    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,
+    holUpdate]
 
 -- Original signal4_priv3_prior1_core255; literal independent selector/frame result.
 example (base : riscv_state) :
     observation «dfn'UnknownInstruction» (fixture base 3 255 true) =
       ((1,none),true,true,true,1,255) := by
-  simp [observation,fixture,view,signalEnvCall,«dfn'ECALL»,«dfn'EBREAK»,«dfn'ERET»,
-    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,MCSR,privilege,
-    holUpdate,holWordExtract]
+  simp [observation,fixture,view,
+    «dfn'UnknownInstruction»,signalException,setTrap,«write'NextFetch»,
+    holUpdate]
 
 end Flapjack.Test.L3SystemSignalsParity

@@ -762,7 +762,7 @@ example : ssaView (.addOverflow 2 3 4 5) =
     wordSsaRead, wordSsaFresh, wordSsaSeq, lookupNatInfo,
     Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable,
     Compiler.Backend.WordAlloc.nextVarRename,
-    sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext]
+    sptToAList, sptFromAList, sptFoldi, sptInsert, lrNext]
 
 -- overflow_copy_add_0 / overflow_copy_add_1
 example : (wordCopyInst (α := BitVec 64) wordCopyEmpty (.arith (.addOverflow 1 2 3 4))).1 =
@@ -793,7 +793,7 @@ example : ssaView (.subOverflow 2 3 4 5) =
     wordSsaRead, wordSsaFresh, wordSsaSeq, lookupNatInfo,
     Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable,
     Compiler.Backend.WordAlloc.nextVarRename,
-    sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext]
+    sptToAList, sptFromAList, sptFoldi, sptInsert, lrNext]
 
 -- overflow_copy_sub_0 / overflow_copy_sub_1
 example : (wordCopyInst (α := BitVec 64) wordCopyEmpty (.arith (.subOverflow 1 2 3 4))).1 =

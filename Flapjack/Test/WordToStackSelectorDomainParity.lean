@@ -45,7 +45,7 @@ example : (match wordInstSelectProgram 23
     (.store (.op .add [.var 18,.const 7]) 10 : WordProg (BitVec 64)) with
     | .seq (.move 0 [(23,18)]) (.inst (.memOffset .store 10 23 7)) => true
     | _ => false) = true := by
-  simp only [wordInstSelectProgram, wordInstSelectStoreCake, wordInstSelectAddressAtom,
+  simp only [wordInstSelectProgram, wordInstSelectStoreCake, 
     wordDeadSelectSeq]
   decide +kernel
 

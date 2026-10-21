@@ -33,442 +33,442 @@ private def observe (s : riscv_state) :=
 -- Original fadd_s_one_two_rte
 example : observe («dfn'FADD_S» (3,1,2,0) (state 0x3f800000 0x40000000 0)) =
     (0xCAFE000040400000,0x3F800000,0x40000000,3,true,(some 0x40400000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_S», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fadd_s_one_two_rtz
 example : observe («dfn'FADD_S» (3,1,2,1) (state 0x3f800000 0x40000000 0)) =
     (0xCAFE000040400000,0x3F800000,0x40000000,3,true,(some 0x40400000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_S», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fadd_s_one_two_down
 example : observe («dfn'FADD_S» (3,1,2,2) (state 0x3f800000 0x40000000 0)) =
     (0xCAFE000040400000,0x3F800000,0x40000000,3,true,(some 0x40400000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_S», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fadd_s_one_two_up
 example : observe («dfn'FADD_S» (3,1,2,3) (state 0x3f800000 0x40000000 0)) =
     (0xCAFE000040400000,0x3F800000,0x40000000,3,true,(some 0x40400000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_S», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fadd_s_one_two_dynamic_up
 example : observe («dfn'FADD_S» (3,1,2,7) (state 0x3f800000 0x40000000 3)) =
     (0xCAFE000040400000,0x3F800000,0x40000000,3,true,(some 0x40400000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_S», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fadd_s_one_two_invalid_static
 example : observe («dfn'FADD_S» (3,1,2,4) (state 0x3f800000 0x40000000 0)) =
     (0xCAFE000000000000,0x3F800000,0x40000000,0,false,(some 42),false,true,0xBBBB000000000000,true) := by
-  simp only [«dfn'FADD_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_S», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fadd_s_one_two_invalid_dynamic
 example : observe («dfn'FADD_S» (3,1,2,7) (state 0x3f800000 0x40000000 4)) =
     (0xCAFE000000000000,0x3F800000,0x40000000,0,false,(some 42),false,true,0xBBBB000000000000,true) := by
-  simp only [«dfn'FADD_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_S», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fadd_s_negative_one_two_rte
 example : observe («dfn'FADD_S» (3,1,2,0) (state 0xbf800000 0x40000000 0)) =
     (0xCAFE00003F800000,0xBF800000,0x40000000,3,true,(some 0x3F800000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_S», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fadd_s_zero_negative_one_rte
 example : observe («dfn'FADD_S» (3,1,2,0) (state 0x0 0xbf800000 0)) =
     (0xCAFE0000BF800000,0,0xBF800000,3,true,(some 0xBF800000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_S», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fadd_s_negative_zero_zero_rte
 example : observe («dfn'FADD_S» (3,1,2,0) (state 0x80000000 0x0 0)) =
     (0xCAFE000000000000,0x80000000,0,3,true,(some 0),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_S», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fadd_s_negative_zero_zero_rtz
 example : observe («dfn'FADD_S» (3,1,2,1) (state 0x80000000 0x0 0)) =
     (0xCAFE000000000000,0x80000000,0,3,true,(some 0),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_S», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fadd_s_negative_zero_zero_down
 example : observe («dfn'FADD_S» (3,1,2,2) (state 0x80000000 0x0 0)) =
     (0xCAFE000080000000,0x80000000,0,3,true,(some 0x80000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_S», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fadd_s_negative_zero_zero_up
 example : observe («dfn'FADD_S» (3,1,2,3) (state 0x80000000 0x0 0)) =
     (0xCAFE000000000000,0x80000000,0,3,true,(some 0),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_S», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fadd_s_cancel_rte
 example : observe («dfn'FADD_S» (3,1,2,0) (state 0x3f800000 0xbf800000 0)) =
     (0xCAFE000000000000,0x3F800000,0xBF800000,3,true,(some 0),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_S», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fadd_s_cancel_rtz
 example : observe («dfn'FADD_S» (3,1,2,1) (state 0x3f800000 0xbf800000 0)) =
     (0xCAFE000000000000,0x3F800000,0xBF800000,3,true,(some 0),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_S», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fadd_s_cancel_down
 example : observe («dfn'FADD_S» (3,1,2,2) (state 0x3f800000 0xbf800000 0)) =
     (0xCAFE000080000000,0x3F800000,0xBF800000,3,true,(some 0x80000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_S», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fadd_s_cancel_up
 example : observe («dfn'FADD_S» (3,1,2,3) (state 0x3f800000 0xbf800000 0)) =
     (0xCAFE000000000000,0x3F800000,0xBF800000,3,true,(some 0),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_S», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fadd_s_tie_rte
 example : observe («dfn'FADD_S» (3,1,2,0) (state 0x3f800000 0x33800000 0)) =
     (0xCAFE00003F800000,0x3F800000,0x33800000,3,true,(some 0x3F800000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_S», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fadd_s_tie_rtz
 example : observe («dfn'FADD_S» (3,1,2,1) (state 0x3f800000 0x33800000 0)) =
     (0xCAFE00003F800000,0x3F800000,0x33800000,3,true,(some 0x3F800000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_S», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fadd_s_tie_down
 example : observe («dfn'FADD_S» (3,1,2,2) (state 0x3f800000 0x33800000 0)) =
     (0xCAFE00003F800000,0x3F800000,0x33800000,3,true,(some 0x3F800000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_S», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fadd_s_tie_up
 example : observe («dfn'FADD_S» (3,1,2,3) (state 0x3f800000 0x33800000 0)) =
     (0xCAFE00003F800001,0x3F800000,0x33800000,3,true,(some 0x3F800001),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_S», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fadd_s_pinf_one_rte
 example : observe («dfn'FADD_S» (3,1,2,0) (state 0x7f800000 0x3f800000 0)) =
     (0xCAFE00007F800000,0x7F800000,0x3F800000,3,true,(some 0x7F800000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_S», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fsub_s_one_two_rte
 example : observe («dfn'FSUB_S» (3,1,2,0) (state 0x3f800000 0x40000000 0)) =
     (0xCAFE0000BF800000,0x3F800000,0x40000000,3,true,(some 0xBF800000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FSUB_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_S», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fsub_s_one_two_rtz
 example : observe («dfn'FSUB_S» (3,1,2,1) (state 0x3f800000 0x40000000 0)) =
     (0xCAFE0000BF800000,0x3F800000,0x40000000,3,true,(some 0xBF800000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FSUB_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_S», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fsub_s_one_two_down
 example : observe («dfn'FSUB_S» (3,1,2,2) (state 0x3f800000 0x40000000 0)) =
     (0xCAFE0000BF800000,0x3F800000,0x40000000,3,true,(some 0xBF800000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FSUB_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_S», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fsub_s_one_two_up
 example : observe («dfn'FSUB_S» (3,1,2,3) (state 0x3f800000 0x40000000 0)) =
     (0xCAFE0000BF800000,0x3F800000,0x40000000,3,true,(some 0xBF800000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FSUB_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_S», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fsub_s_one_two_dynamic_up
 example : observe («dfn'FSUB_S» (3,1,2,7) (state 0x3f800000 0x40000000 3)) =
     (0xCAFE0000BF800000,0x3F800000,0x40000000,3,true,(some 0xBF800000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FSUB_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_S», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fsub_s_one_two_invalid_static
 example : observe («dfn'FSUB_S» (3,1,2,4) (state 0x3f800000 0x40000000 0)) =
     (0xCAFE000000000000,0x3F800000,0x40000000,0,false,(some 42),false,true,0xBBBB000000000000,true) := by
-  simp only [«dfn'FSUB_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_S», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fsub_s_one_two_invalid_dynamic
 example : observe («dfn'FSUB_S» (3,1,2,7) (state 0x3f800000 0x40000000 4)) =
     (0xCAFE000000000000,0x3F800000,0x40000000,0,false,(some 42),false,true,0xBBBB000000000000,true) := by
-  simp only [«dfn'FSUB_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_S», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fsub_s_negative_one_two_rte
 example : observe («dfn'FSUB_S» (3,1,2,0) (state 0xbf800000 0x40000000 0)) =
     (0xCAFE0000C0400000,0xBF800000,0x40000000,3,true,(some 0xC0400000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FSUB_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_S», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fsub_s_zero_negative_one_rte
 example : observe («dfn'FSUB_S» (3,1,2,0) (state 0x0 0xbf800000 0)) =
     (0xCAFE00003F800000,0,0xBF800000,3,true,(some 0x3F800000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FSUB_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_S», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fsub_s_negative_zero_zero_rte
 example : observe («dfn'FSUB_S» (3,1,2,0) (state 0x80000000 0x0 0)) =
     (0xCAFE000080000000,0x80000000,0,3,true,(some 0x80000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FSUB_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_S», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fsub_s_negative_zero_zero_rtz
 example : observe («dfn'FSUB_S» (3,1,2,1) (state 0x80000000 0x0 0)) =
     (0xCAFE000080000000,0x80000000,0,3,true,(some 0x80000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FSUB_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_S», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fsub_s_negative_zero_zero_down
 example : observe («dfn'FSUB_S» (3,1,2,2) (state 0x80000000 0x0 0)) =
     (0xCAFE000080000000,0x80000000,0,3,true,(some 0x80000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FSUB_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_S», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fsub_s_negative_zero_zero_up
 example : observe («dfn'FSUB_S» (3,1,2,3) (state 0x80000000 0x0 0)) =
     (0xCAFE000080000000,0x80000000,0,3,true,(some 0x80000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FSUB_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_S», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fsub_s_cancel_rte
 example : observe («dfn'FSUB_S» (3,1,2,0) (state 0x3f800000 0x3f800000 0)) =
     (0xCAFE000000000000,0x3F800000,0x3F800000,3,true,(some 0),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FSUB_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_S», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fsub_s_cancel_rtz
 example : observe («dfn'FSUB_S» (3,1,2,1) (state 0x3f800000 0x3f800000 0)) =
     (0xCAFE000000000000,0x3F800000,0x3F800000,3,true,(some 0),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FSUB_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_S», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fsub_s_cancel_down
 example : observe («dfn'FSUB_S» (3,1,2,2) (state 0x3f800000 0x3f800000 0)) =
     (0xCAFE000080000000,0x3F800000,0x3F800000,3,true,(some 0x80000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FSUB_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_S», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fsub_s_cancel_up
 example : observe («dfn'FSUB_S» (3,1,2,3) (state 0x3f800000 0x3f800000 0)) =
     (0xCAFE000000000000,0x3F800000,0x3F800000,3,true,(some 0),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FSUB_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_S», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fsub_s_one_pinf_rte
 example : observe («dfn'FSUB_S» (3,1,2,0) (state 0x3f800000 0x7f800000 0)) =
     (0xCAFE0000FF800000,0x3F800000,0x7F800000,3,true,(some 0xFF800000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FSUB_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_S», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fmul_s_one_two_rte
 example : observe («dfn'FMUL_S» (3,1,2,0) (state 0x3f800000 0x40000000 0)) =
     (0xCAFE000040000000,0x3F800000,0x40000000,3,true,(some 0x40000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FMUL_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FMUL_S», holFloatMul, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fmul_s_one_two_rtz
 example : observe («dfn'FMUL_S» (3,1,2,1) (state 0x3f800000 0x40000000 0)) =
     (0xCAFE000040000000,0x3F800000,0x40000000,3,true,(some 0x40000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FMUL_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FMUL_S», holFloatMul, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fmul_s_one_two_down
 example : observe («dfn'FMUL_S» (3,1,2,2) (state 0x3f800000 0x40000000 0)) =
     (0xCAFE000040000000,0x3F800000,0x40000000,3,true,(some 0x40000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FMUL_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FMUL_S», holFloatMul, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fmul_s_one_two_up
 example : observe («dfn'FMUL_S» (3,1,2,3) (state 0x3f800000 0x40000000 0)) =
     (0xCAFE000040000000,0x3F800000,0x40000000,3,true,(some 0x40000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FMUL_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FMUL_S», holFloatMul, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fmul_s_one_two_dynamic_up
 example : observe («dfn'FMUL_S» (3,1,2,7) (state 0x3f800000 0x40000000 3)) =
     (0xCAFE000040000000,0x3F800000,0x40000000,3,true,(some 0x40000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FMUL_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FMUL_S», holFloatMul, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fmul_s_one_two_invalid_static
 example : observe («dfn'FMUL_S» (3,1,2,4) (state 0x3f800000 0x40000000 0)) =
     (0xCAFE000000000000,0x3F800000,0x40000000,0,false,(some 42),false,true,0xBBBB000000000000,true) := by
-  simp only [«dfn'FMUL_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FMUL_S», holFloatMul, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fmul_s_one_two_invalid_dynamic
 example : observe («dfn'FMUL_S» (3,1,2,7) (state 0x3f800000 0x40000000 4)) =
     (0xCAFE000000000000,0x3F800000,0x40000000,0,false,(some 42),false,true,0xBBBB000000000000,true) := by
-  simp only [«dfn'FMUL_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FMUL_S», holFloatMul, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fmul_s_negative_one_two_rte
 example : observe («dfn'FMUL_S» (3,1,2,0) (state 0xbf800000 0x40000000 0)) =
     (0xCAFE0000C0000000,0xBF800000,0x40000000,3,true,(some 0xC0000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FMUL_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FMUL_S», holFloatMul, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fmul_s_zero_negative_one_rte
 example : observe («dfn'FMUL_S» (3,1,2,0) (state 0x0 0xbf800000 0)) =
     (0xCAFE000080000000,0,0xBF800000,3,true,(some 0x80000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FMUL_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FMUL_S», holFloatMul, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fmul_s_negative_zero_zero_rte
 example : observe («dfn'FMUL_S» (3,1,2,0) (state 0x80000000 0x0 0)) =
     (0xCAFE000080000000,0x80000000,0,3,true,(some 0x80000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FMUL_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FMUL_S», holFloatMul, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fmul_s_negative_zero_zero_rtz
 example : observe («dfn'FMUL_S» (3,1,2,1) (state 0x80000000 0x0 0)) =
     (0xCAFE000080000000,0x80000000,0,3,true,(some 0x80000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FMUL_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FMUL_S», holFloatMul, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fmul_s_negative_zero_zero_down
 example : observe («dfn'FMUL_S» (3,1,2,2) (state 0x80000000 0x0 0)) =
     (0xCAFE000080000000,0x80000000,0,3,true,(some 0x80000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FMUL_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FMUL_S», holFloatMul, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fmul_s_negative_zero_zero_up
 example : observe («dfn'FMUL_S» (3,1,2,3) (state 0x80000000 0x0 0)) =
     (0xCAFE000080000000,0x80000000,0,3,true,(some 0x80000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FMUL_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FMUL_S», holFloatMul, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fmul_s_pinf_negative_one_rte
 example : observe («dfn'FMUL_S» (3,1,2,0) (state 0x7f800000 0xbf800000 0)) =
     (0xCAFE0000FF800000,0x7F800000,0xBF800000,3,true,(some 0xFF800000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FMUL_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FMUL_S», holFloatMul, 
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fdiv_s_one_two_rte
 example : observe («dfn'FDIV_S» (3,1,2,0) (state 0x3f800000 0x40000000 0)) =
     (0xCAFE00003F000000,0x3F800000,0x40000000,3,true,(some 0x3F000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FDIV_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FDIV_S», holFloatDiv,
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fdiv_s_one_two_rtz
 example : observe («dfn'FDIV_S» (3,1,2,1) (state 0x3f800000 0x40000000 0)) =
     (0xCAFE00003F000000,0x3F800000,0x40000000,3,true,(some 0x3F000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FDIV_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FDIV_S», holFloatDiv,
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fdiv_s_one_two_down
 example : observe («dfn'FDIV_S» (3,1,2,2) (state 0x3f800000 0x40000000 0)) =
     (0xCAFE00003F000000,0x3F800000,0x40000000,3,true,(some 0x3F000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FDIV_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FDIV_S», holFloatDiv,
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fdiv_s_one_two_up
 example : observe («dfn'FDIV_S» (3,1,2,3) (state 0x3f800000 0x40000000 0)) =
     (0xCAFE00003F000000,0x3F800000,0x40000000,3,true,(some 0x3F000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FDIV_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FDIV_S», holFloatDiv,
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fdiv_s_one_two_dynamic_up
 example : observe («dfn'FDIV_S» (3,1,2,7) (state 0x3f800000 0x40000000 3)) =
     (0xCAFE00003F000000,0x3F800000,0x40000000,3,true,(some 0x3F000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FDIV_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FDIV_S», holFloatDiv,
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fdiv_s_one_two_invalid_static
 example : observe («dfn'FDIV_S» (3,1,2,4) (state 0x3f800000 0x40000000 0)) =
     (0xCAFE000000000000,0x3F800000,0x40000000,0,false,(some 42),false,true,0xBBBB000000000000,true) := by
-  simp only [«dfn'FDIV_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FDIV_S», holFloatDiv,
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fdiv_s_one_two_invalid_dynamic
 example : observe («dfn'FDIV_S» (3,1,2,7) (state 0x3f800000 0x40000000 4)) =
     (0xCAFE000000000000,0x3F800000,0x40000000,0,false,(some 42),false,true,0xBBBB000000000000,true) := by
-  simp only [«dfn'FDIV_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FDIV_S», holFloatDiv,
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fdiv_s_negative_one_two_rte
 example : observe («dfn'FDIV_S» (3,1,2,0) (state 0xbf800000 0x40000000 0)) =
     (0xCAFE0000BF000000,0xBF800000,0x40000000,3,true,(some 0xBF000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FDIV_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FDIV_S», holFloatDiv,
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fdiv_s_zero_negative_one_rte
 example : observe («dfn'FDIV_S» (3,1,2,0) (state 0x0 0xbf800000 0)) =
     (0xCAFE000080000000,0,0xBF800000,3,true,(some 0x80000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FDIV_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FDIV_S», holFloatDiv,
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original complete symbolic state equation fdiv_s_negative_zero_zero_rte
@@ -518,463 +518,463 @@ example : «dfn'FDIV_S» (3,1,2,3) (state 0x80000000 0x0 0) =
 -- Original fdiv_s_one_zero_rte
 example : observe («dfn'FDIV_S» (3,1,2,0) (state 0x3f800000 0x0 0)) =
     (0xCAFE00007F800000,0x3F800000,0,3,true,(some 0x7F800000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FDIV_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FDIV_S», holFloatDiv,
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fdiv_s_one_pinf_rte
 example : observe («dfn'FDIV_S» (3,1,2,0) (state 0x3f800000 0x7f800000 0)) =
     (0xCAFE000000000000,0x3F800000,0x7F800000,3,true,(some 0),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FDIV_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FDIV_S», holFloatDiv,
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fdiv_s_pinf_negative_one_rte
 example : observe («dfn'FDIV_S» (3,1,2,0) (state 0x7f800000 0xbf800000 0)) =
     (0xCAFE0000FF800000,0x7F800000,0xBF800000,3,true,(some 0xFF800000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FDIV_S», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FDIV_S», holFloatDiv,
+    holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 
 -- Original fadd_d_one_two_rte
 example : observe («dfn'FADD_D» (3,1,2,0) (state 0x3ff0000000000000 0x4000000000000000 0)) =
     (0x4008000000000000,0x3FF0000000000000,0x4000000000000000,3,true,(some 0x4008000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_D», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fadd_d_one_two_rtz
 example : observe («dfn'FADD_D» (3,1,2,1) (state 0x3ff0000000000000 0x4000000000000000 0)) =
     (0x4008000000000000,0x3FF0000000000000,0x4000000000000000,3,true,(some 0x4008000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_D», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fadd_d_one_two_down
 example : observe («dfn'FADD_D» (3,1,2,2) (state 0x3ff0000000000000 0x4000000000000000 0)) =
     (0x4008000000000000,0x3FF0000000000000,0x4000000000000000,3,true,(some 0x4008000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_D», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fadd_d_one_two_up
 example : observe («dfn'FADD_D» (3,1,2,3) (state 0x3ff0000000000000 0x4000000000000000 0)) =
     (0x4008000000000000,0x3FF0000000000000,0x4000000000000000,3,true,(some 0x4008000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_D», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fadd_d_one_two_dynamic_up
 example : observe («dfn'FADD_D» (3,1,2,7) (state 0x3ff0000000000000 0x4000000000000000 3)) =
     (0x4008000000000000,0x3FF0000000000000,0x4000000000000000,3,true,(some 0x4008000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_D», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fadd_d_one_two_invalid_static
 example : observe («dfn'FADD_D» (3,1,2,4) (state 0x3ff0000000000000 0x4000000000000000 0)) =
     (0xCAFE000000000000,0x3FF0000000000000,0x4000000000000000,0,false,(some 42),false,true,0xBBBB000000000000,true) := by
-  simp only [«dfn'FADD_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_D», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fadd_d_one_two_invalid_dynamic
 example : observe («dfn'FADD_D» (3,1,2,7) (state 0x3ff0000000000000 0x4000000000000000 4)) =
     (0xCAFE000000000000,0x3FF0000000000000,0x4000000000000000,0,false,(some 42),false,true,0xBBBB000000000000,true) := by
-  simp only [«dfn'FADD_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_D», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fadd_d_negative_one_two_rte
 example : observe («dfn'FADD_D» (3,1,2,0) (state 0xbff0000000000000 0x4000000000000000 0)) =
     (0x3FF0000000000000,0xBFF0000000000000,0x4000000000000000,3,true,(some 0x3FF0000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_D», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fadd_d_zero_negative_one_rte
 example : observe («dfn'FADD_D» (3,1,2,0) (state 0x0 0xbff0000000000000 0)) =
     (0xBFF0000000000000,0,0xBFF0000000000000,3,true,(some 0xBFF0000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_D», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fadd_d_negative_zero_zero_rte
 example : observe («dfn'FADD_D» (3,1,2,0) (state 0x8000000000000000 0x0 0)) =
     (0,0x8000000000000000,0,3,true,(some 0),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_D», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fadd_d_negative_zero_zero_rtz
 example : observe («dfn'FADD_D» (3,1,2,1) (state 0x8000000000000000 0x0 0)) =
     (0,0x8000000000000000,0,3,true,(some 0),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_D», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fadd_d_negative_zero_zero_down
 example : observe («dfn'FADD_D» (3,1,2,2) (state 0x8000000000000000 0x0 0)) =
     (0x8000000000000000,0x8000000000000000,0,3,true,(some 0x8000000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_D», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fadd_d_negative_zero_zero_up
 example : observe («dfn'FADD_D» (3,1,2,3) (state 0x8000000000000000 0x0 0)) =
     (0,0x8000000000000000,0,3,true,(some 0),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_D», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fadd_d_cancel_rte
 example : observe («dfn'FADD_D» (3,1,2,0) (state 0x3ff0000000000000 0xbff0000000000000 0)) =
     (0,0x3FF0000000000000,0xBFF0000000000000,3,true,(some 0),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_D», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fadd_d_cancel_rtz
 example : observe («dfn'FADD_D» (3,1,2,1) (state 0x3ff0000000000000 0xbff0000000000000 0)) =
     (0,0x3FF0000000000000,0xBFF0000000000000,3,true,(some 0),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_D», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fadd_d_cancel_down
 example : observe («dfn'FADD_D» (3,1,2,2) (state 0x3ff0000000000000 0xbff0000000000000 0)) =
     (0x8000000000000000,0x3FF0000000000000,0xBFF0000000000000,3,true,(some 0x8000000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_D», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fadd_d_cancel_up
 example : observe («dfn'FADD_D» (3,1,2,3) (state 0x3ff0000000000000 0xbff0000000000000 0)) =
     (0,0x3FF0000000000000,0xBFF0000000000000,3,true,(some 0),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_D», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fadd_d_tie_rte
 example : observe («dfn'FADD_D» (3,1,2,0) (state 0x3ff0000000000000 0x3ca0000000000000 0)) =
     (0x3FF0000000000000,0x3FF0000000000000,0x3CA0000000000000,3,true,(some 0x3FF0000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_D», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fadd_d_tie_rtz
 example : observe («dfn'FADD_D» (3,1,2,1) (state 0x3ff0000000000000 0x3ca0000000000000 0)) =
     (0x3FF0000000000000,0x3FF0000000000000,0x3CA0000000000000,3,true,(some 0x3FF0000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_D», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fadd_d_tie_down
 example : observe («dfn'FADD_D» (3,1,2,2) (state 0x3ff0000000000000 0x3ca0000000000000 0)) =
     (0x3FF0000000000000,0x3FF0000000000000,0x3CA0000000000000,3,true,(some 0x3FF0000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_D», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fadd_d_tie_up
 example : observe («dfn'FADD_D» (3,1,2,3) (state 0x3ff0000000000000 0x3ca0000000000000 0)) =
     (0x3FF0000000000001,0x3FF0000000000000,0x3CA0000000000000,3,true,(some 0x3FF0000000000001),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_D», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fadd_d_pinf_one_rte
 example : observe («dfn'FADD_D» (3,1,2,0) (state 0x7ff0000000000000 0x3ff0000000000000 0)) =
     (0x7FF0000000000000,0x7FF0000000000000,0x3FF0000000000000,3,true,(some 0x7FF0000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FADD_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FADD_D», holFloatAdd, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fsub_d_one_two_rte
 example : observe («dfn'FSUB_D» (3,1,2,0) (state 0x3ff0000000000000 0x4000000000000000 0)) =
     (0xBFF0000000000000,0x3FF0000000000000,0x4000000000000000,3,true,(some 0xBFF0000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FSUB_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_D», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fsub_d_one_two_rtz
 example : observe («dfn'FSUB_D» (3,1,2,1) (state 0x3ff0000000000000 0x4000000000000000 0)) =
     (0xBFF0000000000000,0x3FF0000000000000,0x4000000000000000,3,true,(some 0xBFF0000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FSUB_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_D», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fsub_d_one_two_down
 example : observe («dfn'FSUB_D» (3,1,2,2) (state 0x3ff0000000000000 0x4000000000000000 0)) =
     (0xBFF0000000000000,0x3FF0000000000000,0x4000000000000000,3,true,(some 0xBFF0000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FSUB_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_D», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fsub_d_one_two_up
 example : observe («dfn'FSUB_D» (3,1,2,3) (state 0x3ff0000000000000 0x4000000000000000 0)) =
     (0xBFF0000000000000,0x3FF0000000000000,0x4000000000000000,3,true,(some 0xBFF0000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FSUB_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_D», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fsub_d_one_two_dynamic_up
 example : observe («dfn'FSUB_D» (3,1,2,7) (state 0x3ff0000000000000 0x4000000000000000 3)) =
     (0xBFF0000000000000,0x3FF0000000000000,0x4000000000000000,3,true,(some 0xBFF0000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FSUB_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_D», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fsub_d_one_two_invalid_static
 example : observe («dfn'FSUB_D» (3,1,2,4) (state 0x3ff0000000000000 0x4000000000000000 0)) =
     (0xCAFE000000000000,0x3FF0000000000000,0x4000000000000000,0,false,(some 42),false,true,0xBBBB000000000000,true) := by
-  simp only [«dfn'FSUB_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_D», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fsub_d_one_two_invalid_dynamic
 example : observe («dfn'FSUB_D» (3,1,2,7) (state 0x3ff0000000000000 0x4000000000000000 4)) =
     (0xCAFE000000000000,0x3FF0000000000000,0x4000000000000000,0,false,(some 42),false,true,0xBBBB000000000000,true) := by
-  simp only [«dfn'FSUB_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_D», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fsub_d_negative_one_two_rte
 example : observe («dfn'FSUB_D» (3,1,2,0) (state 0xbff0000000000000 0x4000000000000000 0)) =
     (0xC008000000000000,0xBFF0000000000000,0x4000000000000000,3,true,(some 0xC008000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FSUB_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_D», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fsub_d_zero_negative_one_rte
 example : observe («dfn'FSUB_D» (3,1,2,0) (state 0x0 0xbff0000000000000 0)) =
     (0x3FF0000000000000,0,0xBFF0000000000000,3,true,(some 0x3FF0000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FSUB_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_D», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fsub_d_negative_zero_zero_rte
 example : observe («dfn'FSUB_D» (3,1,2,0) (state 0x8000000000000000 0x0 0)) =
     (0x8000000000000000,0x8000000000000000,0,3,true,(some 0x8000000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FSUB_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_D», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fsub_d_negative_zero_zero_rtz
 example : observe («dfn'FSUB_D» (3,1,2,1) (state 0x8000000000000000 0x0 0)) =
     (0x8000000000000000,0x8000000000000000,0,3,true,(some 0x8000000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FSUB_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_D», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fsub_d_negative_zero_zero_down
 example : observe («dfn'FSUB_D» (3,1,2,2) (state 0x8000000000000000 0x0 0)) =
     (0x8000000000000000,0x8000000000000000,0,3,true,(some 0x8000000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FSUB_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_D», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fsub_d_negative_zero_zero_up
 example : observe («dfn'FSUB_D» (3,1,2,3) (state 0x8000000000000000 0x0 0)) =
     (0x8000000000000000,0x8000000000000000,0,3,true,(some 0x8000000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FSUB_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_D», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fsub_d_cancel_rte
 example : observe («dfn'FSUB_D» (3,1,2,0) (state 0x3ff0000000000000 0x3ff0000000000000 0)) =
     (0,0x3FF0000000000000,0x3FF0000000000000,3,true,(some 0),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FSUB_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_D», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fsub_d_cancel_rtz
 example : observe («dfn'FSUB_D» (3,1,2,1) (state 0x3ff0000000000000 0x3ff0000000000000 0)) =
     (0,0x3FF0000000000000,0x3FF0000000000000,3,true,(some 0),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FSUB_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_D», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fsub_d_cancel_down
 example : observe («dfn'FSUB_D» (3,1,2,2) (state 0x3ff0000000000000 0x3ff0000000000000 0)) =
     (0x8000000000000000,0x3FF0000000000000,0x3FF0000000000000,3,true,(some 0x8000000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FSUB_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_D», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fsub_d_cancel_up
 example : observe («dfn'FSUB_D» (3,1,2,3) (state 0x3ff0000000000000 0x3ff0000000000000 0)) =
     (0,0x3FF0000000000000,0x3FF0000000000000,3,true,(some 0),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FSUB_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_D», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fsub_d_one_pinf_rte
 example : observe («dfn'FSUB_D» (3,1,2,0) (state 0x3ff0000000000000 0x7ff0000000000000 0)) =
     (0xFFF0000000000000,0x3FF0000000000000,0x7FF0000000000000,3,true,(some 0xFFF0000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FSUB_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FSUB_D», holFloatSub, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fmul_d_one_two_rte
 example : observe («dfn'FMUL_D» (3,1,2,0) (state 0x3ff0000000000000 0x4000000000000000 0)) =
     (0x4000000000000000,0x3FF0000000000000,0x4000000000000000,3,true,(some 0x4000000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FMUL_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FMUL_D», holFloatMul, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fmul_d_one_two_rtz
 example : observe («dfn'FMUL_D» (3,1,2,1) (state 0x3ff0000000000000 0x4000000000000000 0)) =
     (0x4000000000000000,0x3FF0000000000000,0x4000000000000000,3,true,(some 0x4000000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FMUL_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FMUL_D», holFloatMul, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fmul_d_one_two_down
 example : observe («dfn'FMUL_D» (3,1,2,2) (state 0x3ff0000000000000 0x4000000000000000 0)) =
     (0x4000000000000000,0x3FF0000000000000,0x4000000000000000,3,true,(some 0x4000000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FMUL_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FMUL_D», holFloatMul, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fmul_d_one_two_up
 example : observe («dfn'FMUL_D» (3,1,2,3) (state 0x3ff0000000000000 0x4000000000000000 0)) =
     (0x4000000000000000,0x3FF0000000000000,0x4000000000000000,3,true,(some 0x4000000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FMUL_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FMUL_D», holFloatMul, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fmul_d_one_two_dynamic_up
 example : observe («dfn'FMUL_D» (3,1,2,7) (state 0x3ff0000000000000 0x4000000000000000 3)) =
     (0x4000000000000000,0x3FF0000000000000,0x4000000000000000,3,true,(some 0x4000000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FMUL_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FMUL_D», holFloatMul, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fmul_d_one_two_invalid_static
 example : observe («dfn'FMUL_D» (3,1,2,4) (state 0x3ff0000000000000 0x4000000000000000 0)) =
     (0xCAFE000000000000,0x3FF0000000000000,0x4000000000000000,0,false,(some 42),false,true,0xBBBB000000000000,true) := by
-  simp only [«dfn'FMUL_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FMUL_D», holFloatMul, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fmul_d_one_two_invalid_dynamic
 example : observe («dfn'FMUL_D» (3,1,2,7) (state 0x3ff0000000000000 0x4000000000000000 4)) =
     (0xCAFE000000000000,0x3FF0000000000000,0x4000000000000000,0,false,(some 42),false,true,0xBBBB000000000000,true) := by
-  simp only [«dfn'FMUL_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FMUL_D», holFloatMul, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fmul_d_negative_one_two_rte
 example : observe («dfn'FMUL_D» (3,1,2,0) (state 0xbff0000000000000 0x4000000000000000 0)) =
     (0xC000000000000000,0xBFF0000000000000,0x4000000000000000,3,true,(some 0xC000000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FMUL_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FMUL_D», holFloatMul, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fmul_d_zero_negative_one_rte
 example : observe («dfn'FMUL_D» (3,1,2,0) (state 0x0 0xbff0000000000000 0)) =
     (0x8000000000000000,0,0xBFF0000000000000,3,true,(some 0x8000000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FMUL_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FMUL_D», holFloatMul, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fmul_d_negative_zero_zero_rte
 example : observe («dfn'FMUL_D» (3,1,2,0) (state 0x8000000000000000 0x0 0)) =
     (0x8000000000000000,0x8000000000000000,0,3,true,(some 0x8000000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FMUL_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FMUL_D», holFloatMul, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fmul_d_negative_zero_zero_rtz
 example : observe («dfn'FMUL_D» (3,1,2,1) (state 0x8000000000000000 0x0 0)) =
     (0x8000000000000000,0x8000000000000000,0,3,true,(some 0x8000000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FMUL_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FMUL_D», holFloatMul, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fmul_d_negative_zero_zero_down
 example : observe («dfn'FMUL_D» (3,1,2,2) (state 0x8000000000000000 0x0 0)) =
     (0x8000000000000000,0x8000000000000000,0,3,true,(some 0x8000000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FMUL_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FMUL_D», holFloatMul, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fmul_d_negative_zero_zero_up
 example : observe («dfn'FMUL_D» (3,1,2,3) (state 0x8000000000000000 0x0 0)) =
     (0x8000000000000000,0x8000000000000000,0,3,true,(some 0x8000000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FMUL_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FMUL_D», holFloatMul, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fmul_d_pinf_negative_one_rte
 example : observe («dfn'FMUL_D» (3,1,2,0) (state 0x7ff0000000000000 0xbff0000000000000 0)) =
     (0xFFF0000000000000,0x7FF0000000000000,0xBFF0000000000000,3,true,(some 0xFFF0000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FMUL_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FMUL_D», holFloatMul, 
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fdiv_d_one_two_rte
 example : observe («dfn'FDIV_D» (3,1,2,0) (state 0x3ff0000000000000 0x4000000000000000 0)) =
     (0x3FE0000000000000,0x3FF0000000000000,0x4000000000000000,3,true,(some 0x3FE0000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FDIV_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FDIV_D», holFloatDiv,
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fdiv_d_one_two_rtz
 example : observe («dfn'FDIV_D» (3,1,2,1) (state 0x3ff0000000000000 0x4000000000000000 0)) =
     (0x3FE0000000000000,0x3FF0000000000000,0x4000000000000000,3,true,(some 0x3FE0000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FDIV_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FDIV_D», holFloatDiv,
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fdiv_d_one_two_down
 example : observe («dfn'FDIV_D» (3,1,2,2) (state 0x3ff0000000000000 0x4000000000000000 0)) =
     (0x3FE0000000000000,0x3FF0000000000000,0x4000000000000000,3,true,(some 0x3FE0000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FDIV_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FDIV_D», holFloatDiv,
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fdiv_d_one_two_up
 example : observe («dfn'FDIV_D» (3,1,2,3) (state 0x3ff0000000000000 0x4000000000000000 0)) =
     (0x3FE0000000000000,0x3FF0000000000000,0x4000000000000000,3,true,(some 0x3FE0000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FDIV_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FDIV_D», holFloatDiv,
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fdiv_d_one_two_dynamic_up
 example : observe («dfn'FDIV_D» (3,1,2,7) (state 0x3ff0000000000000 0x4000000000000000 3)) =
     (0x3FE0000000000000,0x3FF0000000000000,0x4000000000000000,3,true,(some 0x3FE0000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FDIV_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FDIV_D», holFloatDiv,
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fdiv_d_one_two_invalid_static
 example : observe («dfn'FDIV_D» (3,1,2,4) (state 0x3ff0000000000000 0x4000000000000000 0)) =
     (0xCAFE000000000000,0x3FF0000000000000,0x4000000000000000,0,false,(some 42),false,true,0xBBBB000000000000,true) := by
-  simp only [«dfn'FDIV_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FDIV_D», holFloatDiv,
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fdiv_d_one_two_invalid_dynamic
 example : observe («dfn'FDIV_D» (3,1,2,7) (state 0x3ff0000000000000 0x4000000000000000 4)) =
     (0xCAFE000000000000,0x3FF0000000000000,0x4000000000000000,0,false,(some 42),false,true,0xBBBB000000000000,true) := by
-  simp only [«dfn'FDIV_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FDIV_D», holFloatDiv,
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fdiv_d_negative_one_two_rte
 example : observe («dfn'FDIV_D» (3,1,2,0) (state 0xbff0000000000000 0x4000000000000000 0)) =
     (0xBFE0000000000000,0xBFF0000000000000,0x4000000000000000,3,true,(some 0xBFE0000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FDIV_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FDIV_D», holFloatDiv,
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fdiv_d_zero_negative_one_rte
 example : observe («dfn'FDIV_D» (3,1,2,0) (state 0x0 0xbff0000000000000 0)) =
     (0x8000000000000000,0,0xBFF0000000000000,3,true,(some 0x8000000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FDIV_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FDIV_D», holFloatDiv,
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original complete symbolic state equation fdiv_d_negative_zero_zero_rte
@@ -1024,22 +1024,22 @@ example : «dfn'FDIV_D» (3,1,2,3) (state 0x8000000000000000 0x0 0) =
 -- Original fdiv_d_one_zero_rte
 example : observe («dfn'FDIV_D» (3,1,2,0) (state 0x3ff0000000000000 0x0 0)) =
     (0x7FF0000000000000,0x3FF0000000000000,0,3,true,(some 0x7FF0000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FDIV_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FDIV_D», holFloatDiv,
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fdiv_d_one_pinf_rte
 example : observe («dfn'FDIV_D» (3,1,2,0) (state 0x3ff0000000000000 0x7ff0000000000000 0)) =
     (0,0x3FF0000000000000,0x7FF0000000000000,3,true,(some 0),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FDIV_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FDIV_D», holFloatDiv,
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 -- Original fdiv_d_pinf_negative_one_rte
 example : observe («dfn'FDIV_D» (3,1,2,0) (state 0x7ff0000000000000 0xbff0000000000000 0)) =
     (0xFFF0000000000000,0x7FF0000000000000,0xBFF0000000000000,3,true,(some 0xFFF0000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FDIV_D», holFloatAdd, holFloatSub, holFloatMul, holFloatDiv,
-    holFloatRoundWithFlags, holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FDIV_D», holFloatDiv,
+    holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 
 end Flapjack.Test.L3RiscvArithmeticParity

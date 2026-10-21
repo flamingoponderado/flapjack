@@ -26,136 +26,136 @@ private noncomputable def observation (rs : BitVec 5) (s : riscv_state) := by
 example (entry : TLBEntry) :
     tableObservation (table entry) (flushTLB (0,none,table entry)) =
       ([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]) := by
-  simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+  simp [tableObservation,table,flushTLB,
+    TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original flush_asid0_addr0; source-derived independent filtering result.
 example (entry : TLBEntry) :
     tableObservation (table entry) (flushTLB (0,(some (BitVec.ofNat 64 0)),table entry)) =
       ([false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]) := by
-  simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+  simp [tableObservation,table,flushTLB,
+    TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original flush_asid0_addr1; source-derived independent filtering result.
 example (entry : TLBEntry) :
     tableObservation (table entry) (flushTLB (0,(some (BitVec.ofNat 64 1)),table entry)) =
       ([true,true,true,false,true,false,false,false,false,false,false,false,false,false,true,true],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]) := by
-  simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
-    holUpdate,List.range_succ,List.map]
+  simp [tableObservation,table,flushTLB,
+    TLBEntries,Flapjack.holFor,
+    List.range_succ,List.map]
 
 -- Original flush_asid0_addr4096; source-derived independent filtering result.
 example (entry : TLBEntry) :
     tableObservation (table entry) (flushTLB (0,(some (BitVec.ofNat 64 4096)),table entry)) =
       ([false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]) := by
-  simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+  simp [tableObservation,table,flushTLB,
+    TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original flush_asid3_addrnone; source-derived independent filtering result.
 example (entry : TLBEntry) :
     tableObservation (table entry) (flushTLB (3,none,table entry)) =
       ([false,true,true,false,false,false,false,false,false,false,false,false,false,false,false,false],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]) := by
-  simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+  simp [tableObservation,table,flushTLB,
+    TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original flush_asid3_addr0; source-derived independent filtering result.
 example (entry : TLBEntry) :
     tableObservation (table entry) (flushTLB (3,(some (BitVec.ofNat 64 0)),table entry)) =
       ([false,true,true,false,true,false,false,false,false,false,false,false,false,false,false,false],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]) := by
-  simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+  simp [tableObservation,table,flushTLB,
+    TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original flush_asid3_addr1; source-derived independent filtering result.
 example (entry : TLBEntry) :
     tableObservation (table entry) (flushTLB (3,(some (BitVec.ofNat 64 1)),table entry)) =
       ([true,true,true,false,true,false,false,false,false,false,false,false,false,false,true,true],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]) := by
-  simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
-    holUpdate,List.range_succ,List.map]
+  simp [tableObservation,table,flushTLB,
+    TLBEntries,Flapjack.holFor,
+    List.range_succ,List.map]
 
 -- Original flush_asid3_addr4096; source-derived independent filtering result.
 example (entry : TLBEntry) :
     tableObservation (table entry) (flushTLB (3,(some (BitVec.ofNat 64 4096)),table entry)) =
       ([false,true,true,false,true,false,false,false,false,false,false,false,false,false,false,false],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]) := by
-  simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+  simp [tableObservation,table,flushTLB,
+    TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original flush_asid4_addrnone; source-derived independent filtering result.
 example (entry : TLBEntry) :
     tableObservation (table entry) (flushTLB (4,none,table entry)) =
       ([true,true,false,false,true,false,false,false,false,false,false,false,false,false,true,true],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]) := by
-  simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+  simp [tableObservation,table,flushTLB,
+    TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original flush_asid4_addr0; source-derived independent filtering result.
 example (entry : TLBEntry) :
     tableObservation (table entry) (flushTLB (4,(some (BitVec.ofNat 64 0)),table entry)) =
       ([true,true,false,false,true,false,false,false,false,false,false,false,false,false,true,true],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]) := by
-  simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+  simp [tableObservation,table,flushTLB,
+    TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original flush_asid4_addr1; source-derived independent filtering result.
 example (entry : TLBEntry) :
     tableObservation (table entry) (flushTLB (4,(some (BitVec.ofNat 64 1)),table entry)) =
       ([true,true,true,false,true,false,false,false,false,false,false,false,false,false,true,true],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]) := by
-  simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
-    holUpdate,List.range_succ,List.map]
+  simp [tableObservation,table,flushTLB,
+    TLBEntries,Flapjack.holFor,
+    List.range_succ,List.map]
 
 -- Original flush_asid4_addr4096; source-derived independent filtering result.
 example (entry : TLBEntry) :
     tableObservation (table entry) (flushTLB (4,(some (BitVec.ofNat 64 4096)),table entry)) =
       ([true,true,false,false,true,false,false,false,false,false,false,false,false,false,true,true],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]) := by
-  simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+  simp [tableObservation,table,flushTLB,
+    TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original flush_asid63_addrnone; source-derived independent filtering result.
 example (entry : TLBEntry) :
     tableObservation (table entry) (flushTLB (63,none,table entry)) =
       ([true,true,true,false,true,false,false,false,false,false,false,false,false,false,true,true],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]) := by
-  simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
-    holUpdate,List.range_succ,List.map]
+  simp [tableObservation,table,flushTLB,
+    TLBEntries,Flapjack.holFor,
+    List.range_succ,List.map]
 
 -- Original flush_asid63_addr0; source-derived independent filtering result.
 example (entry : TLBEntry) :
     tableObservation (table entry) (flushTLB (63,(some (BitVec.ofNat 64 0)),table entry)) =
       ([true,true,true,false,true,false,false,false,false,false,false,false,false,false,true,true],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]) := by
-  simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
-    holUpdate,List.range_succ,List.map]
+  simp [tableObservation,table,flushTLB,
+    TLBEntries,Flapjack.holFor,
+    List.range_succ,List.map]
 
 -- Original flush_asid63_addr1; source-derived independent filtering result.
 example (entry : TLBEntry) :
     tableObservation (table entry) (flushTLB (63,(some (BitVec.ofNat 64 1)),table entry)) =
       ([true,true,true,false,true,false,false,false,false,false,false,false,false,false,true,true],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]) := by
-  simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
-    holUpdate,List.range_succ,List.map]
+  simp [tableObservation,table,flushTLB,
+    TLBEntries,Flapjack.holFor,
+    List.range_succ,List.map]
 
 -- Original flush_asid63_addr4096; source-derived independent filtering result.
 example (entry : TLBEntry) :
     tableObservation (table entry) (flushTLB (63,(some (BitVec.ofNat 64 4096)),table entry)) =
       ([true,true,true,false,true,false,false,false,false,false,false,false,false,false,true,true],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]) := by
-  simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
-    holUpdate,List.range_succ,List.map]
+  simp [tableObservation,table,flushTLB,
+    TLBEntries,Flapjack.holFor,
+    List.range_succ,List.map]
 
 -- Original sfence_asid0_rs0_addr0_core7; full original state frame.
 example (base : riscv_state) (entry : TLBEntry) :
     observation 0 (fixture base entry 0 0 7) =
       (([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]),true,true,1,7) := by
   simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original sfence_asid0_rs0_addr0_core255; full original state frame.
@@ -163,7 +163,7 @@ example (base : riscv_state) (entry : TLBEntry) :
     observation 0 (fixture base entry 0 0 255) =
       (([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]),true,true,1,255) := by
   simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original sfence_asid0_rs0_addr1_core7; full original state frame.
@@ -171,7 +171,7 @@ example (base : riscv_state) (entry : TLBEntry) :
     observation 0 (fixture base entry 0 1 7) =
       (([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]),true,true,1,7) := by
   simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original sfence_asid0_rs0_addr1_core255; full original state frame.
@@ -179,7 +179,7 @@ example (base : riscv_state) (entry : TLBEntry) :
     observation 0 (fixture base entry 0 1 255) =
       (([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]),true,true,1,255) := by
   simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original sfence_asid0_rs0_addr4096_core7; full original state frame.
@@ -187,7 +187,7 @@ example (base : riscv_state) (entry : TLBEntry) :
     observation 0 (fixture base entry 0 4096 7) =
       (([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]),true,true,1,7) := by
   simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original sfence_asid0_rs0_addr4096_core255; full original state frame.
@@ -195,7 +195,7 @@ example (base : riscv_state) (entry : TLBEntry) :
     observation 0 (fixture base entry 0 4096 255) =
       (([false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]),true,true,1,255) := by
   simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original sfence_asid0_rs2_addr0_core7; full original state frame.
@@ -251,7 +251,7 @@ example (base : riscv_state) (entry : TLBEntry) :
     observation 0 (fixture base entry 3 0 7) =
       (([false,true,true,false,false,false,false,false,false,false,false,false,false,false,false,false],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]),true,true,1,7) := by
   simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original sfence_asid3_rs0_addr0_core255; full original state frame.
@@ -259,7 +259,7 @@ example (base : riscv_state) (entry : TLBEntry) :
     observation 0 (fixture base entry 3 0 255) =
       (([false,true,true,false,false,false,false,false,false,false,false,false,false,false,false,false],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]),true,true,1,255) := by
   simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original sfence_asid3_rs0_addr1_core7; full original state frame.
@@ -267,7 +267,7 @@ example (base : riscv_state) (entry : TLBEntry) :
     observation 0 (fixture base entry 3 1 7) =
       (([false,true,true,false,false,false,false,false,false,false,false,false,false,false,false,false],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]),true,true,1,7) := by
   simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original sfence_asid3_rs0_addr1_core255; full original state frame.
@@ -275,7 +275,7 @@ example (base : riscv_state) (entry : TLBEntry) :
     observation 0 (fixture base entry 3 1 255) =
       (([false,true,true,false,false,false,false,false,false,false,false,false,false,false,false,false],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]),true,true,1,255) := by
   simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original sfence_asid3_rs0_addr4096_core7; full original state frame.
@@ -283,7 +283,7 @@ example (base : riscv_state) (entry : TLBEntry) :
     observation 0 (fixture base entry 3 4096 7) =
       (([false,true,true,false,false,false,false,false,false,false,false,false,false,false,false,false],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]),true,true,1,7) := by
   simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original sfence_asid3_rs0_addr4096_core255; full original state frame.
@@ -291,7 +291,7 @@ example (base : riscv_state) (entry : TLBEntry) :
     observation 0 (fixture base entry 3 4096 255) =
       (([false,true,true,false,false,false,false,false,false,false,false,false,false,false,false,false],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]),true,true,1,255) := by
   simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original sfence_asid3_rs2_addr0_core7; full original state frame.
@@ -347,7 +347,7 @@ example (base : riscv_state) (entry : TLBEntry) :
     observation 0 (fixture base entry 4 0 7) =
       (([true,true,false,false,true,false,false,false,false,false,false,false,false,false,true,true],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]),true,true,1,7) := by
   simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original sfence_asid4_rs0_addr0_core255; full original state frame.
@@ -355,7 +355,7 @@ example (base : riscv_state) (entry : TLBEntry) :
     observation 0 (fixture base entry 4 0 255) =
       (([true,true,false,false,true,false,false,false,false,false,false,false,false,false,true,true],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]),true,true,1,255) := by
   simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original sfence_asid4_rs0_addr1_core7; full original state frame.
@@ -363,7 +363,7 @@ example (base : riscv_state) (entry : TLBEntry) :
     observation 0 (fixture base entry 4 1 7) =
       (([true,true,false,false,true,false,false,false,false,false,false,false,false,false,true,true],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]),true,true,1,7) := by
   simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original sfence_asid4_rs0_addr1_core255; full original state frame.
@@ -371,7 +371,7 @@ example (base : riscv_state) (entry : TLBEntry) :
     observation 0 (fixture base entry 4 1 255) =
       (([true,true,false,false,true,false,false,false,false,false,false,false,false,false,true,true],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]),true,true,1,255) := by
   simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original sfence_asid4_rs0_addr4096_core7; full original state frame.
@@ -379,7 +379,7 @@ example (base : riscv_state) (entry : TLBEntry) :
     observation 0 (fixture base entry 4 4096 7) =
       (([true,true,false,false,true,false,false,false,false,false,false,false,false,false,true,true],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]),true,true,1,7) := by
   simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original sfence_asid4_rs0_addr4096_core255; full original state frame.
@@ -387,7 +387,7 @@ example (base : riscv_state) (entry : TLBEntry) :
     observation 0 (fixture base entry 4 4096 255) =
       (([true,true,false,false,true,false,false,false,false,false,false,false,false,false,true,true],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]),true,true,1,255) := by
   simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original sfence_asid4_rs2_addr0_core7; full original state frame.
@@ -443,7 +443,7 @@ example (base : riscv_state) (entry : TLBEntry) :
     observation 0 (fixture base entry 63 0 7) =
       (([true,true,true,false,true,false,false,false,false,false,false,false,false,false,true,true],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]),true,true,1,7) := by
   simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original sfence_asid63_rs0_addr0_core255; full original state frame.
@@ -451,7 +451,7 @@ example (base : riscv_state) (entry : TLBEntry) :
     observation 0 (fixture base entry 63 0 255) =
       (([true,true,true,false,true,false,false,false,false,false,false,false,false,false,true,true],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]),true,true,1,255) := by
   simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original sfence_asid63_rs0_addr1_core7; full original state frame.
@@ -459,7 +459,7 @@ example (base : riscv_state) (entry : TLBEntry) :
     observation 0 (fixture base entry 63 1 7) =
       (([true,true,true,false,true,false,false,false,false,false,false,false,false,false,true,true],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]),true,true,1,7) := by
   simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original sfence_asid63_rs0_addr1_core255; full original state frame.
@@ -467,7 +467,7 @@ example (base : riscv_state) (entry : TLBEntry) :
     observation 0 (fixture base entry 63 1 255) =
       (([true,true,true,false,true,false,false,false,false,false,false,false,false,false,true,true],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]),true,true,1,255) := by
   simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original sfence_asid63_rs0_addr4096_core7; full original state frame.
@@ -475,7 +475,7 @@ example (base : riscv_state) (entry : TLBEntry) :
     observation 0 (fixture base entry 63 4096 7) =
       (([true,true,true,false,true,false,false,false,false,false,false,false,false,false,true,true],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]),true,true,1,7) := by
   simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original sfence_asid63_rs0_addr4096_core255; full original state frame.
@@ -483,7 +483,7 @@ example (base : riscv_state) (entry : TLBEntry) :
     observation 0 (fixture base entry 63 4096 255) =
       (([true,true,true,false,true,false,false,false,false,false,false,false,false,false,true,true],[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]),true,true,1,255) := by
   simp [observation,fixture,tableObservation,table,flushTLB,«dfn'SFENCE_VM»,
-    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,GPR,gpr,TLBEntries,Flapjack.holFor,
+    curASID,holWordExtract,ASID_SIZE,SCSR,TLB,«write'TLB»,TLBEntries,Flapjack.holFor,
     holUpdate,List.range_succ,List.map]
 
 -- Original sfence_asid63_rs2_addr0_core7; full original state frame.

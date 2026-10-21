@@ -34,298 +34,298 @@ private def observe (s : riscv_state) :=
 -- Original fcvt_s_d_zero_rte
 example : observe («dfn'FCVT_S_D» (3,1,0) (state 0x0 0)) =
     (0xCAFE000000000000,0,3,true,(some 0),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FCVT_S_D», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_S_D», holFp64ToFp32,
+    holFp64ToFp32WithFlags, holMachineConvert,
+    holRealToFp32WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp32]
   decide +kernel
 
 -- Original fcvt_s_d_negative_zero_rte
 example : observe («dfn'FCVT_S_D» (3,1,0) (state 0x8000000000000000 0)) =
     (0xCAFE000000000000,0x8000000000000000,3,true,(some 0),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FCVT_S_D», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_S_D», holFp64ToFp32,
+    holFp64ToFp32WithFlags, holMachineConvert,
+    holRealToFp32WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp32]
   decide +kernel
 
 -- Original fcvt_s_d_negative_zero_rtz
 example : observe («dfn'FCVT_S_D» (3,1,1) (state 0x8000000000000000 0)) =
     (0xCAFE000000000000,0x8000000000000000,3,true,(some 0),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FCVT_S_D», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_S_D», holFp64ToFp32,
+    holFp64ToFp32WithFlags, holMachineConvert,
+    holRealToFp32WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp32]
   decide +kernel
 
 -- Original fcvt_s_d_negative_zero_down
 example : observe («dfn'FCVT_S_D» (3,1,2) (state 0x8000000000000000 0)) =
     (0xCAFE000080000000,0x8000000000000000,3,true,(some 0x80000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FCVT_S_D», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_S_D», holFp64ToFp32,
+    holFp64ToFp32WithFlags, holMachineConvert,
+    holRealToFp32WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp32]
   decide +kernel
 
 -- Original fcvt_s_d_negative_zero_up
 example : observe («dfn'FCVT_S_D» (3,1,3) (state 0x8000000000000000 0)) =
     (0xCAFE000000000000,0x8000000000000000,3,true,(some 0),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FCVT_S_D», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_S_D», holFp64ToFp32,
+    holFp64ToFp32WithFlags, holMachineConvert,
+    holRealToFp32WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp32]
   decide +kernel
 
 -- Original fcvt_s_d_one_rte
 example : observe («dfn'FCVT_S_D» (3,1,0) (state 0x3ff0000000000000 0)) =
     (0xCAFE00003F800000,0x3FF0000000000000,3,true,(some 0x3F800000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FCVT_S_D», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_S_D», holFp64ToFp32,
+    holFp64ToFp32WithFlags, holMachineConvert,
+    holRealToFp32WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp32]
   decide +kernel
 
 -- Original fcvt_s_d_one_rtz
 example : observe («dfn'FCVT_S_D» (3,1,1) (state 0x3ff0000000000000 0)) =
     (0xCAFE00003F800000,0x3FF0000000000000,3,true,(some 0x3F800000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FCVT_S_D», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_S_D», holFp64ToFp32,
+    holFp64ToFp32WithFlags, holMachineConvert,
+    holRealToFp32WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp32]
   decide +kernel
 
 -- Original fcvt_s_d_one_down
 example : observe («dfn'FCVT_S_D» (3,1,2) (state 0x3ff0000000000000 0)) =
     (0xCAFE00003F800000,0x3FF0000000000000,3,true,(some 0x3F800000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FCVT_S_D», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_S_D», holFp64ToFp32,
+    holFp64ToFp32WithFlags, holMachineConvert,
+    holRealToFp32WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp32]
   decide +kernel
 
 -- Original fcvt_s_d_one_up
 example : observe («dfn'FCVT_S_D» (3,1,3) (state 0x3ff0000000000000 0)) =
     (0xCAFE00003F800000,0x3FF0000000000000,3,true,(some 0x3F800000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FCVT_S_D», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_S_D», holFp64ToFp32,
+    holFp64ToFp32WithFlags, holMachineConvert,
+    holRealToFp32WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp32]
   decide +kernel
 
 -- Original fcvt_s_d_one_dynamic_up
 example : observe («dfn'FCVT_S_D» (3,1,7) (state 0x3ff0000000000000 3)) =
     (0xCAFE00003F800000,0x3FF0000000000000,3,true,(some 0x3F800000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FCVT_S_D», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_S_D», holFp64ToFp32,
+    holFp64ToFp32WithFlags, holMachineConvert,
+    holRealToFp32WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp32]
   decide +kernel
 
 -- Original fcvt_s_d_one_invalid_static
 example : observe («dfn'FCVT_S_D» (3,1,4) (state 0x3ff0000000000000 0)) =
     (0xCAFE000000000000,0x3FF0000000000000,0,false,(some 42),false,true,0xBBBB000000000000,true) := by
-  simp only [«dfn'FCVT_S_D», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_S_D», holFp64ToFp32,
+    holFp64ToFp32WithFlags, holMachineConvert,
+    holRealToFp32WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp32]
   decide +kernel
 
 -- Original fcvt_s_d_one_invalid_dynamic
 example : observe («dfn'FCVT_S_D» (3,1,7) (state 0x3ff0000000000000 4)) =
     (0xCAFE000000000000,0x3FF0000000000000,0,false,(some 42),false,true,0xBBBB000000000000,true) := by
-  simp only [«dfn'FCVT_S_D», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_S_D», holFp64ToFp32,
+    holFp64ToFp32WithFlags, holMachineConvert,
+    holRealToFp32WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp32]
   decide +kernel
 
 -- Original fcvt_s_d_tie_rte
 example : observe («dfn'FCVT_S_D» (3,1,0) (state 0x3ff0000010000000 0)) =
     (0xCAFE00003F800000,0x3FF0000010000000,3,true,(some 0x3F800000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FCVT_S_D», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_S_D», holFp64ToFp32,
+    holFp64ToFp32WithFlags, holMachineConvert,
+    holRealToFp32WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp32]
   decide +kernel
 
 -- Original fcvt_s_d_tie_rtz
 example : observe («dfn'FCVT_S_D» (3,1,1) (state 0x3ff0000010000000 0)) =
     (0xCAFE00003F800000,0x3FF0000010000000,3,true,(some 0x3F800000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FCVT_S_D», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_S_D», holFp64ToFp32,
+    holFp64ToFp32WithFlags, holMachineConvert,
+    holRealToFp32WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp32]
   decide +kernel
 
 -- Original fcvt_s_d_tie_down
 example : observe («dfn'FCVT_S_D» (3,1,2) (state 0x3ff0000010000000 0)) =
     (0xCAFE00003F800000,0x3FF0000010000000,3,true,(some 0x3F800000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FCVT_S_D», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_S_D», holFp64ToFp32,
+    holFp64ToFp32WithFlags, holMachineConvert,
+    holRealToFp32WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp32]
   decide +kernel
 
 -- Original fcvt_s_d_tie_up
 example : observe («dfn'FCVT_S_D» (3,1,3) (state 0x3ff0000010000000 0)) =
     (0xCAFE00003F800001,0x3FF0000010000000,3,true,(some 0x3F800001),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FCVT_S_D», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_S_D», holFp64ToFp32,
+    holFp64ToFp32WithFlags, holMachineConvert,
+    holRealToFp32WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp32]
   decide +kernel
 
 -- Original fcvt_s_d_pinf_rte
 example : observe («dfn'FCVT_S_D» (3,1,0) (state 0x7ff0000000000000 0)) =
     (0xCAFE00007F800000,0x7FF0000000000000,3,true,(some 0x7F800000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FCVT_S_D», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_S_D», holFp64ToFp32,
+    holFp64ToFp32WithFlags, holMachineConvert,
+    holRealToFp32WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp32]
   decide +kernel
 
 -- Original fcvt_s_d_ninf_rte
 example : observe («dfn'FCVT_S_D» (3,1,0) (state 0xfff0000000000000 0)) =
     (0xCAFE0000FF800000,0xFFF0000000000000,3,true,(some 0xFF800000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FCVT_S_D», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_S_D», holFp64ToFp32,
+    holFp64ToFp32WithFlags, holMachineConvert,
+    holRealToFp32WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp32]
   decide +kernel
 
 -- Original fcvt_d_s_zero_rte
 example : observe («dfn'FCVT_D_S» (3,1,0) (state 0x0 0)) =
     (0,0,3,true,(some 0),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FCVT_D_S», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_D_S», holFp32ToFp64, 
+    holFp32ToFp64WithFlags, holMachineConvert,
+    holRealToFp64WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp64]
   decide +kernel
 
 -- Original fcvt_d_s_negative_zero_rte
 example : observe («dfn'FCVT_D_S» (3,1,0) (state 0x80000000 0)) =
     (0,0x80000000,3,true,(some 0),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FCVT_D_S», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_D_S», holFp32ToFp64, 
+    holFp32ToFp64WithFlags, holMachineConvert,
+    holRealToFp64WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp64]
   decide +kernel
 
 -- Original fcvt_d_s_negative_zero_rtz
 example : observe («dfn'FCVT_D_S» (3,1,1) (state 0x80000000 0)) =
     (0,0x80000000,3,true,(some 0),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FCVT_D_S», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_D_S», holFp32ToFp64, 
+    holFp32ToFp64WithFlags, holMachineConvert,
+    holRealToFp64WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp64]
   decide +kernel
 
 -- Original fcvt_d_s_negative_zero_down
 example : observe («dfn'FCVT_D_S» (3,1,2) (state 0x80000000 0)) =
     (0,0x80000000,3,true,(some 0),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FCVT_D_S», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_D_S», holFp32ToFp64, 
+    holFp32ToFp64WithFlags, holMachineConvert,
+    holRealToFp64WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp64]
   decide +kernel
 
 -- Original fcvt_d_s_negative_zero_up
 example : observe («dfn'FCVT_D_S» (3,1,3) (state 0x80000000 0)) =
     (0,0x80000000,3,true,(some 0),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FCVT_D_S», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_D_S», holFp32ToFp64, 
+    holFp32ToFp64WithFlags, holMachineConvert,
+    holRealToFp64WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp64]
   decide +kernel
 
 -- Original fcvt_d_s_one_rte
 example : observe («dfn'FCVT_D_S» (3,1,0) (state 0x3f800000 0)) =
     (0x3FF0000000000000,0x3F800000,3,true,(some 0x3FF0000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FCVT_D_S», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_D_S», holFp32ToFp64, 
+    holFp32ToFp64WithFlags, holMachineConvert,
+    holRealToFp64WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp64]
   decide +kernel
 
 -- Original fcvt_d_s_one_rtz
 example : observe («dfn'FCVT_D_S» (3,1,1) (state 0x3f800000 0)) =
     (0x3FF0000000000000,0x3F800000,3,true,(some 0x3FF0000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FCVT_D_S», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_D_S», holFp32ToFp64, 
+    holFp32ToFp64WithFlags, holMachineConvert,
+    holRealToFp64WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp64]
   decide +kernel
 
 -- Original fcvt_d_s_one_down
 example : observe («dfn'FCVT_D_S» (3,1,2) (state 0x3f800000 0)) =
     (0x3FF0000000000000,0x3F800000,3,true,(some 0x3FF0000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FCVT_D_S», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_D_S», holFp32ToFp64, 
+    holFp32ToFp64WithFlags, holMachineConvert,
+    holRealToFp64WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp64]
   decide +kernel
 
 -- Original fcvt_d_s_one_up
 example : observe («dfn'FCVT_D_S» (3,1,3) (state 0x3f800000 0)) =
     (0x3FF0000000000000,0x3F800000,3,true,(some 0x3FF0000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FCVT_D_S», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_D_S», holFp32ToFp64, 
+    holFp32ToFp64WithFlags, holMachineConvert,
+    holRealToFp64WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp64]
   decide +kernel
 
 -- Original fcvt_d_s_one_dynamic_up
 example : observe («dfn'FCVT_D_S» (3,1,7) (state 0x3f800000 3)) =
     (0x3FF0000000000000,0x3F800000,3,true,(some 0x3FF0000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FCVT_D_S», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_D_S», holFp32ToFp64, 
+    holFp32ToFp64WithFlags, holMachineConvert,
+    holRealToFp64WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp64]
   decide +kernel
 
 -- Original fcvt_d_s_one_invalid_static
 example : observe («dfn'FCVT_D_S» (3,1,4) (state 0x3f800000 0)) =
     (0xCAFE000000000000,0x3F800000,0,false,(some 42),false,true,0xBBBB000000000000,true) := by
-  simp only [«dfn'FCVT_D_S», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_D_S», holFp32ToFp64, 
+    holFp32ToFp64WithFlags, holMachineConvert,
+    holRealToFp64WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp64]
   decide +kernel
 
 -- Original fcvt_d_s_one_invalid_dynamic
 example : observe («dfn'FCVT_D_S» (3,1,7) (state 0x3f800000 4)) =
     (0xCAFE000000000000,0x3F800000,0,false,(some 42),false,true,0xBBBB000000000000,true) := by
-  simp only [«dfn'FCVT_D_S», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_D_S», holFp32ToFp64, 
+    holFp32ToFp64WithFlags, holMachineConvert,
+    holRealToFp64WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp64]
   decide +kernel
 
 -- Original fcvt_d_s_min_subnormal_rte
 example : observe («dfn'FCVT_D_S» (3,1,0) (state 0x1 0)) =
     (0x36A0000000000000,1,3,true,(some 0x36A0000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FCVT_D_S», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_D_S», holFp32ToFp64, 
+    holFp32ToFp64WithFlags, holMachineConvert,
+    holRealToFp64WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp64]
   decide +kernel
 
 -- Original fcvt_d_s_pinf_rte
 example : observe («dfn'FCVT_D_S» (3,1,0) (state 0x7f800000 0)) =
     (0x7FF0000000000000,0x7F800000,3,true,(some 0x7FF0000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FCVT_D_S», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_D_S», holFp32ToFp64, 
+    holFp32ToFp64WithFlags, holMachineConvert,
+    holRealToFp64WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp64]
   decide +kernel
 
 -- Original fcvt_d_s_ninf_rte
 example : observe («dfn'FCVT_D_S» (3,1,0) (state 0xff800000 0)) =
     (0xFFF0000000000000,0xFF800000,3,true,(some 0xFFF0000000000000),false,true,0xBBBB000000000000,false) := by
-  simp only [«dfn'FCVT_D_S», holFp32ToFp64, holFp64ToFp32,
-    holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags,
-    holFloatRound_fp32, holFloatRound_fp64]
+  simp only [«dfn'FCVT_D_S», holFp32ToFp64, 
+    holFp32ToFp64WithFlags, holMachineConvert,
+    holRealToFp64WithFlags, holFloatRoundWithFlags,
+    holFloatRound_fp64]
   decide +kernel
 
 end Flapjack.Test.L3RiscvCrossFormatParity

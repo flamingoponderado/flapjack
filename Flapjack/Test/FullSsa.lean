@@ -12,7 +12,7 @@ example :
         .seq (.move 1 [(5, 2), (9, 3)])
           (.seq (.move 0 [(2, 5), (4, 9)]) (.return 0 [2, 4]))) := by
   have hAbi : wordSsaCallAbiRegisters 1 2 = [2, 4] := by rfl
-  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordSsaRenameFunctionWithEntry, wordSsaEntryMove,
+  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, sptToAList, sptFromAList, sptFoldi, sptInsert, lrNext, wordSsaRenameFunctionWithEntry, wordSsaEntryMove,
     wordSsaRenameFunction, wordSsaSetupParameters, wordSsaLimitVar,
     wordProgCakeMaxVar,
     wordSsaRenameProgram, wordSsaRenameProgramWithLoops, wordSsaRead,
@@ -33,7 +33,7 @@ example :
         .seq (.move 1 [(0, 0), (4, 0)])
         (.seq (.inst (.arith (.longMul 6 0 0 4)))
             (.move 1 [(8, 0), (4, 6)]))) := by
-  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
+  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, sptToAList, sptFromAList, sptFoldi, sptInsert, lrNext, wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
     wordSsaRead, wordSsaFresh, wordSsaSeq,
     lookupNatInfo]
 
@@ -50,7 +50,7 @@ example :
         .seq (.move 1 [(0, 0), (4, 0)])
             (.seq (.inst (.arith (.longMul 6 0 0 4)))
             (.move 1 [(14, 0), (10, 6)]))) := by
-  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
+  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, sptToAList, sptFromAList, sptFoldi, sptInsert, lrNext, wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
     wordSsaRead, wordSsaFresh, wordSsaSeq, lookupNatInfo]
 
 /- CakeML's fresh-name limit scans the body only, so unused ABI formals do not
@@ -61,7 +61,7 @@ example :
       ({ current := sptToAList (sptFromAList [(4, 13), (2, 9), (0, 5)]), next := 17 },
         [5, 9, 13],
         .seq (.move 1 [(5, 0), (9, 2), (13, 4)]) .skip) := by
-  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordSsaRenameFunctionWithEntry, wordSsaEntryMove,
+  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, sptToAList, sptFromAList, sptFoldi, sptInsert, lrNext, wordSsaRenameFunctionWithEntry, wordSsaEntryMove,
     wordSsaRenameFunction, wordSsaSetupParameters, wordSsaLimitVar,
     wordProgCakeMaxVar,
     wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
@@ -73,7 +73,7 @@ example :
         (.skip : WordProg Nat) =
       ({ current := sptToAList (sptFromAList [(4, 13), (2, 9), (0, 5)]), next := 17 },
         [5, 9, 13], .skip) := by
-  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordSsaRenameFunctionWithEntryAndDeadMoves,
+  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, sptToAList, sptFromAList, sptFoldi, sptInsert, lrNext, wordSsaRenameFunctionWithEntryAndDeadMoves,
     wordSsaRenameFunctionWithEntry, wordSsaEntryMove,
     wordSsaRenameFunction, wordSsaSetupParameters, wordSsaLimitVar,
     wordProgCakeMaxVar, wordProgReadVars,
@@ -116,13 +116,13 @@ example :
           (.seq (.move 1 [(2, 0), (4, 0), (6, 0), (8, 0)])
             (.seq (.ffi "f" 2 4 6 8 ([12], [16]))
               (.move 0 [(22, 12), (26, 16)])))) := by
-  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename, Compiler.Backend.WordAlloc.ssaForceRenameExecutable, Compiler.Backend.WordAlloc.forceRename, Compiler.Backend.WordAlloc.ssaMapKeysExecutable, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
+  simp [Compiler.Backend.WordAlloc.nextVarRename, sptToAList, sptFromAList, sptFoldi, sptInsert, sptLookup, lrNext, wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
     wordSsaListNextVarRenameMove,
     Compiler.Backend.WordAlloc.ssaListNextVarRenameMoveExecutable,
     Compiler.Backend.WordAlloc.listNextVarRenameMove,
-    Compiler.Backend.WordAlloc.listNextVarRename, Compiler.Backend.WordAlloc.optionLookup, wordSsaReadCutsets, wordSsaFreshList,
-    Compiler.Backend.WordAlloc.ssaRestrictExecutable, sptInter, sptMkBN, sptMkBS,
-    wordSsaFresh, wordSsaRead, wordSsaRestrict, wordSsaSeq, List.eraseDups,
+    Compiler.Backend.WordAlloc.listNextVarRename, Compiler.Backend.WordAlloc.optionLookup, wordSsaReadCutsets, 
+    Compiler.Backend.WordAlloc.ssaRestrictExecutable, sptInter, sptMkBN, 
+    wordSsaRead, wordSsaRestrict, wordSsaSeq, List.eraseDups,
     List.eraseDupsBy, List.eraseDupsBy.loop, lookupNatInfo,
     NumSet.fromList, NumSet.fromAList, NumSet.toAList, NumSet.toSet, NumSet.insert,
     NumSet.insertFuel, NumSet.lrnext, NumSet.lrnextFuel, NumSet.insertList]

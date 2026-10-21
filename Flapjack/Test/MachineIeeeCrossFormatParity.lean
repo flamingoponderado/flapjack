@@ -27,24 +27,24 @@ example : (holFp64ToFp32WithFlags .roundTiesToEven 0x7ff8000000000000).1 = holCl
 example : (holFp64ToFp32WithFlags .roundTiesToEven 0x7ff0000000000001).1 = { holClearFlags with invalidOp := true } := by
   decide +kernel
 example : holFp32ToFp64WithFlags 0x0 = (holClearFlags, 0x0) := by
-  simp only [holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags, holFloatRound_fp64]
+  simp only [holFp32ToFp64WithFlags, holMachineConvert,
+    holRealToFp64WithFlags, holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 example : holFp32ToFp64WithFlags 0x3f800000 = (holClearFlags, 0x3ff0000000000000) := by
-  simp only [holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags, holFloatRound_fp64]
+  simp only [holFp32ToFp64WithFlags, holMachineConvert,
+    holRealToFp64WithFlags, holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 example : holFp32ToFp64WithFlags 0x1 = (holClearFlags, 0x36a0000000000000) := by
-  simp only [holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags, holFloatRound_fp64]
+  simp only [holFp32ToFp64WithFlags, holMachineConvert,
+    holRealToFp64WithFlags, holFloatRoundWithFlags, holFloatRound_fp64]
   decide +kernel
 example : holFp64ToFp32WithFlags .roundTiesToEven 0x0 = (holClearFlags, 0x0) := by
-  simp only [holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags, holFloatRound_fp32]
+  simp only [holFp64ToFp32WithFlags, holMachineConvert,
+    holRealToFp32WithFlags, holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 example : holFp64ToFp32WithFlags .roundTiesToEven 0x3ff0000000000000 = (holClearFlags, 0x3f800000) := by
-  simp only [holFp32ToFp64WithFlags, holFp64ToFp32WithFlags, holMachineConvert,
-    holRealToFp32WithFlags, holRealToFp64WithFlags, holFloatRoundWithFlags, holFloatRound_fp32]
+  simp only [holFp64ToFp32WithFlags, holMachineConvert,
+    holRealToFp32WithFlags, holFloatRoundWithFlags, holFloatRound_fp32]
   decide +kernel
 example : (holFp64ToFp32WithFlags .roundTiesToEven 0x3ff0000010000000).2 = 0x3f800000 := by
   simp only [holFp64ToFp32WithFlags, holMachineConvert, holRealToFp32WithFlags,

@@ -48,9 +48,25 @@ private def code : LabProgHOL 8 :=
 
 /-- Actual full theorem consumer with arbitrary query position and external
 prefix name. The original encoding/size/prefix guards are discharged here. -/
- noncomputable def actualFullConsumer (p : Nat) (guest : MlString) :=
-  getShmemInfo_ok (cfg (width := 8) 1 [0,0]) old [] 18 code [.extCall guest] p
-    (getShmemInfo code p [.extCall guest] []).1
-    (getShmemInfo code p [.extCall guest] []).2
-    ⟨by cbv,by simp [encOk,offsetMonotonic,cfg],by cbv,by simp,rfl⟩
+ theorem actualFullConsumer (p : Nat) (guest : MlString) :
+   (∀ pc op reg addr bytes len i,
+     asmFetchAux pc code = some (.asm (.shareMem op reg addr) bytes len) ∧
+       mmioPcsMinIndex (getShmemInfo code p [.extCall guest] []).1 = some i →
+     ∃ index, Flapjack.Misc.findIndex (p+posVal pc 0 code)
+         ((getShmemInfo code p [.extCall guest] []).2.map ShmemInfoNum.entryPc) 0 = some index ∧
+       (let (name,nb) := getMemopInfo op
+        holEl (index+i) (getShmemInfo code p [.extCall guest] []).1 = .sharedMem name ∧
+        holEl index (getShmemInfo code p [.extCall guest] []).2 =
+          {entryPc:=(holEl index (getShmemInfo code p [.extCall guest] []).2).entryPc,nbytes:=nb,
+           addrReg:=match addr with | .addr base _ => base,
+           addrOff:=match addr with | .addr _ off => off.toNat,
+           reg:=reg,exitPc:=p+(posVal pc 0 code+len)})) ∧
+   (∀ pc line, asmFetchAux pc code = some line ∧
+     (∀ op reg addr bytes len, line ≠ .asm (.shareMem op reg addr) bytes len) →
+     Disjoint ({n | n ∈ (getShmemInfo code p [.extCall guest] []).2.map ShmemInfoNum.entryPc} : Set Nat)
+       {n | ∃ a, a < (lineBytes line).length ∧ n = p+a+posVal pc 0 code}) :=
+   getShmemInfo_ok (cfg (width := 8) 1 [0,0]) old [] 18 code [.extCall guest] p
+     (getShmemInfo code p [.extCall guest] []).1
+     (getShmemInfo code p [.extCall guest] []).2
+     ⟨by cbv,by simp [encOk,offsetMonotonic,cfg],by cbv,by simp,rfl⟩
 end Flapjack.Test.LabToTargetShmemCorrectnessParity

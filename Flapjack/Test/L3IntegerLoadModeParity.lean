@@ -15,7 +15,7 @@ private def unknownMessage : List (BitVec 8) :=
 example (base : riscv_state) :
     (curArch () (fixture base 0), in32BitMode () (fixture base 0)) =
       ((Architecture.RV32I, fixture base 0), ((Architecture.RV32I == Architecture.RV32I), fixture base 0)) := by
-  simp [fixture, curArch, in32BitMode, architecture, MCSR, raiseException_eq, unknownMessage, Flapjack.holNumToDecString, Flapjack.holN2s, Flapjack.holN2l, Flapjack.holHex]
+  simp [fixture, curArch, in32BitMode, architecture, MCSR, ]
 
 -- Original l3_integer_load_mode_probe.out: selector_1.
 example (base : riscv_state) :
@@ -27,13 +27,13 @@ example (base : riscv_state) :
 example (base : riscv_state) :
     (curArch () (fixture base 2), in32BitMode () (fixture base 2)) =
       ((Architecture.RV64I, fixture base 2), ((Architecture.RV64I == Architecture.RV32I), fixture base 2)) := by
-  simp [fixture, curArch, in32BitMode, architecture, MCSR, raiseException_eq, unknownMessage, Flapjack.holNumToDecString, Flapjack.holN2s, Flapjack.holN2l, Flapjack.holHex]
+  simp [fixture, curArch, in32BitMode, architecture, MCSR, ]
 
 -- Original l3_integer_load_mode_probe.out: selector_3.
 example (base : riscv_state) :
     (curArch () (fixture base 3), in32BitMode () (fixture base 3)) =
       ((Architecture.RV128I, fixture base 3), ((Architecture.RV128I == Architecture.RV32I), fixture base 3)) := by
-  simp [fixture, curArch, in32BitMode, architecture, MCSR, raiseException_eq, unknownMessage, Flapjack.holNumToDecString, Flapjack.holN2s, Flapjack.holN2l, Flapjack.holHex]
+  simp [fixture, curArch, in32BitMode, architecture, MCSR, ]
 
 
 /-- Full arbitrary-state invalid route: retains a prior exception and leaves the
