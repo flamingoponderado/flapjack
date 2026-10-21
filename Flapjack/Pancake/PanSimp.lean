@@ -739,144 +739,21 @@ decreasing_by all_goals decreasing_trivial
 
 theorem progSize_seqCallRet_le (program : Prog α) :
     progSize (seqCallRet program) ≤ progSize program := by
-  cases program with
-  | seq first second =>
-      cases first with
-      | call info function arguments =>
-          cases second with
-          | «return» value =>
-              cases value with
-              | var kind returnedName =>
-                  cases kind with
-                  | «local» =>
-                      cases info with
-                      | none => simp [seqCallRet, progSize]
-                      | some info =>
-                          cases info with
-                          | mk returns handler =>
-                              cases returns with
-                              | none => simp [seqCallRet, progSize]
-                              | some returnInfo =>
-                                  cases returnInfo with
-                                  | mk returnKind returnName =>
-                                      cases returnKind with
-                                      | «local» =>
-                                          cases handler with
-                                          | none =>
-                                              simp [seqCallRet, progSize] <;>
-                                                split <;> simp [progSize]
-                                          | some handler => simp [seqCallRet, progSize]
-                                      | global => simp [seqCallRet, progSize]
-                  | global => simp [seqCallRet, progSize]
-              | _ => simp [seqCallRet, progSize]
-          | _ => simp [seqCallRet, progSize]
-      | _ => simp [seqCallRet, progSize]
-  | _ => simp [seqCallRet, progSize]
+  fun_cases seqCallRet program with
+  | case1 => simp only [progSize]; omega
+  | case2 | case3 => exact Nat.le_refl _
 
 theorem progSize_retToTail_le (program : Prog α) :
     progSize (retToTail program) ≤ progSize program := by
-  let rec go : (program : Prog α) → progSize (retToTail program) ≤ progSize program
-    | .skip => by simp [retToTail, progSize]
-    | .dec name shape value body => by
-        have h := go body
-        simp [retToTail, progSize]
-        omega
-    | .assign kind name value => by simp [retToTail, progSize]
-    | .primitive name operator args => by simp [retToTail, progSize]
-    | .store address value => by simp [retToTail, progSize]
-    | .store32 address value => by simp [retToTail, progSize]
-    | .storeByte address value => by simp [retToTail, progSize]
-    | .seq first second => by
-        have hfirst := go first
-        have hsecond := go second
-        calc
-          progSize (retToTail (.seq first second)) =
-              progSize (seqCallRet (.seq (retToTail first) (retToTail second))) := by
-                simp only [retToTail]
-          _ ≤ progSize (.seq (retToTail first) (retToTail second)) :=
-            progSize_seqCallRet_le _
-          _ = 1 + progSize (retToTail first) + progSize (retToTail second) := by
-            simp [progSize]
-          _ ≤ 1 + progSize first + progSize second := by omega
-          _ = progSize (.seq first second) := by simp [progSize]
-    | .ite condition thenBranch elseBranch => by
-        simp only [retToTail, progSize]
-        have hthen := go thenBranch
-        have helse := go elseBranch
-        omega
-    | .while condition body => by
-        have h := go body
-        simp [retToTail, progSize]
-        omega
-    | .break => by simp [retToTail, progSize]
-    | .continue => by simp [retToTail, progSize]
-    | .call info name args => by
-        cases info with
-        | none => simp [retToTail, progSize]
-        | some info =>
-            cases info with
-            | mk returns handlerInfo =>
-                cases handlerInfo with
-                | none => simp [retToTail, progSize]
-                | some handler =>
-                    cases handler with
-                    | mk exception handlerInfo =>
-                        cases handlerInfo with
-                        | mk handlerVar handlerProgram =>
-                            have h := go handlerProgram
-                            simp [retToTail, progSize]
-                            omega
-    | .decCall name shape function args body => by
-        have h := go body
-        simp [retToTail, progSize]
-        omega
-    | .extCall function configuration configurationLength array arrayLength =>
-        by simp [retToTail, progSize]
-    | .raise exception value => by simp [retToTail, progSize]
-    | .return value => by simp [retToTail, progSize]
-    | .shMemLoad size kind name address => by simp [retToTail, progSize]
-    | .shMemStore size address value => by simp [retToTail, progSize]
-    | .tick => by simp [retToTail, progSize]
-    | .annot tag text => by simp [retToTail, progSize]
-    termination_by program => sizeOf program
-    decreasing_by all_goals decreasing_trivial
-  exact go program
+  fun_induction progSize program with
+  | case3 =>
+      simp only [retToTail]
+      exact Nat.le_trans (progSize_seqCallRet_le _) (by simp only [progSize]; omega)
+  | case11 => grind only [retToTail, progSize]
+  | _ => simp_all only [retToTail, progSize] <;> omega
 
-theorem progSize_pos : ∀ program : Prog α, 1 ≤ progSize program
-  | .dec _ _ _ _ => by simp only [progSize]; omega
-  | .seq _ _ => by simp only [progSize]; omega
-  | .ite _ _ _ => by simp only [progSize]; omega
-  | .while _ _ => by simp only [progSize]; omega
-  | .call info _ _ => by
-      cases info with
-      | none => simp only [progSize]; omega
-      | some info =>
-          cases info with
-          | mk returns handlerInfo =>
-              cases handlerInfo with
-              | none => simp only [progSize]; omega
-              | some handler =>
-                  cases handler with
-                  | mk exception handlerInfo =>
-                      cases handlerInfo with
-                      | mk handlerVar handlerProgram =>
-                          simp only [progSize]; omega
-  | .decCall _ _ _ _ _ => by simp only [progSize]; omega
-  | .skip => by simp only [progSize]; omega
-  | .annot _ _ => by simp only [progSize]; omega
-  | .assign _ _ _ => by simp only [progSize]; omega
-  | .primitive _ _ _ => by simp only [progSize]; omega
-  | .store _ _ => by simp only [progSize]; omega
-  | .store32 _ _ => by simp only [progSize]; omega
-  | .storeByte _ _ => by simp only [progSize]; omega
-  | .break => by simp only [progSize]; omega
-  | .continue => by simp only [progSize]; omega
-  | .extCall _ _ _ _ _ => by simp only [progSize]; omega
-  | .raise _ _ => by simp only [progSize]; omega
-  | .return _ => by simp only [progSize]; omega
-  | .shMemLoad _ _ _ _ => by simp only [progSize]; omega
-  | .shMemStore _ _ _ => by simp only [progSize]; omega
-  | .tick => by simp only [progSize]; omega
+theorem progSize_pos (program : Prog α) : 1 ≤ progSize program := by
+  fun_cases progSize program <;> omega
 
 /-- A call-aware structural budget: `progSize` for the ordinary nodes, but each
     `Call`/`DecCall` node reserves a uniform `callBudget` for its callee (and
@@ -902,67 +779,17 @@ def progCallFuel (callBudget : Nat) : Prog α → Nat
 termination_by program => sizeOf program
 decreasing_by all_goals decreasing_trivial
 
+/-- Flapjack-specific positivity helper for the structural fuel budget. -/
+private theorem progCallFuel_pos (callBudget : Nat) (program : Prog α) :
+    1 ≤ progCallFuel callBudget program := by
+  fun_cases progCallFuel callBudget program <;> omega
+
 /-- The call-aware budget dominates the plain structural size. -/
 theorem progSize_le_progCallFuel (callBudget : Nat) (program : Prog α) :
     progSize program ≤ progCallFuel callBudget program := by
-  let rec go : (program : Prog α) →
-      progSize program ≤ progCallFuel callBudget program
-    | .skip => by simp only [progSize, progCallFuel]; omega
-    | .dec _ _ _ body => by
-        simp only [progSize, progCallFuel]
-        have hb := go body
-        omega
-    | .seq first second => by
-        simp only [progSize, progCallFuel]
-        have h1 := go first
-        have h2 := go second
-        omega
-    | .ite _ thenBranch elseBranch => by
-        simp only [progSize, progCallFuel]
-        have ht := go thenBranch
-        have he := go elseBranch
-        omega
-    | .while _ body => by
-        simp only [progSize, progCallFuel]
-        have hb := go body
-        omega
-    | .call info _ _ => by
-        cases info with
-        | none => simp only [progSize, progCallFuel]; omega
-        | some info =>
-            cases info with
-            | mk returns handlerInfo =>
-                cases handlerInfo with
-                | none => simp only [progSize, progCallFuel]; omega
-                | some handler =>
-                    cases handler with
-                    | mk exception handlerInfo =>
-                        cases handlerInfo with
-                        | mk handlerVar handlerProgram =>
-                            simp only [progSize, progCallFuel]
-                            have hh := go handlerProgram
-                            omega
-    | .decCall _ _ _ _ body => by
-        simp only [progSize, progCallFuel]
-        have hb := go body
-        omega
-    | .annot _ _ => by simp only [progSize, progCallFuel]; omega
-    | .assign _ _ _ => by simp only [progSize, progCallFuel]; omega
-    | .primitive _ _ _ => by simp only [progSize, progCallFuel]; omega
-    | .store _ _ => by simp only [progSize, progCallFuel]; omega
-    | .store32 _ _ => by simp only [progSize, progCallFuel]; omega
-    | .storeByte _ _ => by simp only [progSize, progCallFuel]; omega
-    | .break => by simp only [progSize, progCallFuel]; omega
-    | .continue => by simp only [progSize, progCallFuel]; omega
-    | .extCall _ _ _ _ _ => by simp only [progSize, progCallFuel]; omega
-    | .raise _ _ => by simp only [progSize, progCallFuel]; omega
-    | .return _ => by simp only [progSize, progCallFuel]; omega
-    | .shMemLoad _ _ _ _ => by simp only [progSize, progCallFuel]; omega
-    | .shMemStore _ _ _ => by simp only [progSize, progCallFuel]; omega
-    | .tick => by simp only [progSize, progCallFuel]; omega
-    termination_by program => sizeOf program
-    decreasing_by all_goals decreasing_trivial
-  exact go program
+  fun_induction progSize program with
+  | case11 => exact progCallFuel_pos _ _
+  | _ => simp_all only [progCallFuel] <;> omega
 
 theorem progSize_smartSeq_le (pre program : Prog α) :
     progSize (smartSeq pre program) ≤ progSize pre + progSize program + 1 := by
@@ -975,140 +802,8 @@ theorem progSize_smartSeq_le (pre program : Prog α) :
 
 theorem progSize_seqAssoc_le (pre program : Prog α) :
     progSize (seqAssoc pre program) ≤ progSize pre + 4 * progSize program := by
-  let rec go (pre : Prog α) : (program : Prog α) →
-      progSize (seqAssoc pre program) ≤ progSize pre + 4 * progSize program
-    | .skip => by simp [seqAssoc, progSize]
-    | .dec name shape value body => by
-        simp only [seqAssoc]
-        have h := progSize_smartSeq_le pre (.dec name shape value (seqAssoc .skip body))
-        have hb := go .skip body
-        simp only [progSize] at h hb ⊢
-        omega
-    | .seq first second => by
-        simp only [seqAssoc, progSize]
-        have h1 := go (seqAssoc pre first) second
-        have h2 := go pre first
-        omega
-    | .ite condition thenBranch elseBranch => by
-        simp only [seqAssoc]
-        have h := progSize_smartSeq_le pre
-          (.ite condition (seqAssoc .skip thenBranch) (seqAssoc .skip elseBranch))
-        have ht := go .skip thenBranch
-        have he := go .skip elseBranch
-        simp only [progSize] at h ht he ⊢
-        omega
-    | .while condition body => by
-        simp only [seqAssoc]
-        have h := progSize_smartSeq_le pre (.while condition (seqAssoc .skip body))
-        have hb := go .skip body
-        simp only [progSize] at h hb ⊢
-        omega
-    | .call info function arguments => by
-        cases info with
-        | none =>
-            simp only [seqAssoc]
-            have h := progSize_smartSeq_le pre (.call none function arguments)
-            simp only [progSize] at h ⊢
-            omega
-        | some info =>
-            cases info with
-            | mk returns handlerInfo =>
-                cases handlerInfo with
-                | none =>
-                    simp only [seqAssoc]
-                    have h := progSize_smartSeq_le pre
-                      (.call (some (returns, none)) function arguments)
-                    simp only [progSize] at h ⊢
-                    omega
-                | some handler =>
-                    cases handler with
-                    | mk exception handlerInfo =>
-                        cases handlerInfo with
-                        | mk handlerVar handlerProgram =>
-                            simp only [seqAssoc]
-                            have h := progSize_smartSeq_le pre
-                              (.call (some (returns, some (exception, handlerVar,
-                                seqAssoc .skip handlerProgram))) function arguments)
-                            have hb := go .skip handlerProgram
-                            simp only [progSize] at h hb ⊢
-                            omega
-    | .decCall name shape function arguments body => by
-        simp only [seqAssoc]
-        have h := progSize_smartSeq_le pre
-          (.decCall name shape function arguments (seqAssoc .skip body))
-        have hb := go .skip body
-        simp only [progSize] at h hb ⊢
-        omega
-    | .annot tag text => by simp [seqAssoc, progSize]
-    | .assign kind name value => by
-        simp only [seqAssoc]
-        have h := progSize_smartSeq_le pre (.assign kind name value)
-        simp only [progSize] at h ⊢
-        omega
-    | .primitive name operator args => by
-        simp only [seqAssoc]
-        have h := progSize_smartSeq_le pre (.primitive name operator args)
-        simp only [progSize] at h ⊢
-        omega
-    | .store address value => by
-        simp only [seqAssoc]
-        have h := progSize_smartSeq_le pre (.store address value)
-        simp only [progSize] at h ⊢
-        omega
-    | .store32 address value => by
-        simp only [seqAssoc]
-        have h := progSize_smartSeq_le pre (.store32 address value)
-        simp only [progSize] at h ⊢
-        omega
-    | .storeByte address value => by
-        simp only [seqAssoc]
-        have h := progSize_smartSeq_le pre (.storeByte address value)
-        simp only [progSize] at h ⊢
-        omega
-    | .break => by
-        simp only [seqAssoc]
-        have h := progSize_smartSeq_le pre (.break : Prog α)
-        simp only [progSize] at h ⊢
-        omega
-    | .continue => by
-        simp only [seqAssoc]
-        have h := progSize_smartSeq_le pre (.continue : Prog α)
-        simp only [progSize] at h ⊢
-        omega
-    | .extCall function configuration configurationLength array arrayLength => by
-        simp only [seqAssoc]
-        have h := progSize_smartSeq_le pre
-          (.extCall function configuration configurationLength array arrayLength)
-        simp only [progSize] at h ⊢
-        omega
-    | .raise exception value => by
-        simp only [seqAssoc]
-        have h := progSize_smartSeq_le pre (.raise exception value)
-        simp only [progSize] at h ⊢
-        omega
-    | .return value => by
-        simp only [seqAssoc]
-        have h := progSize_smartSeq_le pre (.return value)
-        simp only [progSize] at h ⊢
-        omega
-    | .shMemLoad size kind name address => by
-        simp only [seqAssoc]
-        have h := progSize_smartSeq_le pre (.shMemLoad size kind name address)
-        simp only [progSize] at h ⊢
-        omega
-    | .shMemStore size address value => by
-        simp only [seqAssoc]
-        have h := progSize_smartSeq_le pre (.shMemStore size address value)
-        simp only [progSize] at h ⊢
-        omega
-    | .tick => by
-        simp only [seqAssoc]
-        have h := progSize_smartSeq_le pre (.tick : Prog α)
-        simp only [progSize] at h ⊢
-        omega
-    termination_by program => sizeOf program
-    decreasing_by all_goals decreasing_trivial
-  exact go pre program
+  fun_induction progSize program generalizing pre <;>
+    grind only [seqAssoc, progSize, progSize_smartSeq_le]
 
 theorem progSize_panSimpProg_le (program : Prog α) :
     progSize (panSimpProg program) ≤ 1 + 4 * progSize program := by
