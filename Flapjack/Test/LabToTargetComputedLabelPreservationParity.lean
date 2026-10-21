@@ -23,71 +23,71 @@ private def result : List (Section (LabLineHOL 8)) :=
 example : encLinesAgainSimp labs [] 4 encode8 input = (output,true) ∧
     sectionLabels 4 input acc = (8,(6,8)::(5,4)::acc) ∧
     sectionLabels 4 output acc = (8,(6,8)::(5,4)::acc) := by
-  simp [encLinesAgainSimp,encSecsAgain,encLinesAgain,sectionLabels,computeLabelsAlt,
-    getJumpOffset,getLabel,labInst,findPos,lookupAny,labLookup,labs,sptLookup,sptInsert,
-    input,output,acc,code,result,encode8] <;> first | rfl | decide +kernel
+  simp [encLinesAgainSimp,sectionLabels,
+    getJumpOffset,getLabel,labInst,findPos,lookupAny,labs,sptLookup,sptInsert,
+    input,output,acc,encode8] <;> first | rfl | decide +kernel
 example : encLinesAgainSimp labs [] 4 encode8 [.labAsm (.jump (.lab 1 5)) 16 [1] 2] =
     ([.labAsm (.jump (.lab 1 5)) 16 [1] 2],true) ∧
     sectionLabels 4 ([.labAsm (.jump (.lab 1 5)) 16 [1] 2] : List (LabLineHOL 8)) acc = (6,acc) := by
-  simp [encLinesAgainSimp,encSecsAgain,encLinesAgain,sectionLabels,computeLabelsAlt,
-    getJumpOffset,getLabel,labInst,findPos,lookupAny,labLookup,labs,sptLookup,sptInsert,
-    input,output,acc,code,result,encode8] <;> first | rfl | decide +kernel
+  simp [encLinesAgainSimp,sectionLabels,
+    getJumpOffset,getLabel,findPos,lookupAny,labs,sptLookup,sptInsert,
+    acc,] <;> first | rfl | decide +kernel
 example : encLinesAgainSimp labs [] 3 encode8 [] = ([],true) ∧
     sectionLabels 3 ([] : List (LabLineHOL 8)) acc = (3,acc) := by
-  simp [encLinesAgainSimp,encSecsAgain,encLinesAgain,sectionLabels,computeLabelsAlt,
-    getJumpOffset,getLabel,labInst,findPos,lookupAny,labLookup,labs,sptLookup,sptInsert,
-    input,output,acc,code,result,encode8] <;> first | rfl | decide +kernel
+  simp [encLinesAgainSimp,sectionLabels,
+    
+    acc,] <;> first | rfl | decide +kernel
 example : sectionLabels 4 ([.label 1 0 3,.label 1 5 1] : List (LabLineHOL 8)) acc =
     (8,(5,8)::acc) := by
-  simp [encLinesAgainSimp,encSecsAgain,encLinesAgain,sectionLabels,computeLabelsAlt,
-    getJumpOffset,getLabel,labInst,findPos,lookupAny,labLookup,labs,sptLookup,sptInsert,
-    input,output,acc,code,result,encode8] <;> first | rfl | decide +kernel
+  simp [sectionLabels,
+    
+    acc,] <;> first | rfl | decide +kernel
 example : encSecsAgain 4 labs [] encode8 code = (result,true) ∧
     computeLabelsAlt 4 result initial = computeLabelsAlt 4 code initial ∧
     computeLabelsAlt 4 code initial =
       sptInsert 2 (sptFromAList [(0,8),(3,9)])
         (sptInsert 1 (sptFromAList [(0,8)]) initial) := by
-  simp [encLinesAgainSimp,encSecsAgain,encLinesAgain,sectionLabels,computeLabelsAlt,
-    getJumpOffset,getLabel,labInst,findPos,lookupAny,labLookup,labs,sptLookup,sptInsert,
-    input,output,acc,code,result,encode8] <;> first | rfl | decide +kernel
+  simp [encSecsAgain,encLinesAgain,sectionLabels,computeLabelsAlt,
+    getJumpOffset,getLabel,labInst,findPos,lookupAny,labs,sptLookup,sptInsert,
+    input,output,code,result,encode8] <;> first | rfl | decide +kernel
 example : 7 ∉ code.map (fun sec => sec.sectionId) ∧
     labLookup 7 3 (computeLabelsAlt 4 code initial) = some (2^80+7) ∧
     labLookup 7 3 initial = some (2^80+7) := by
-  simp [encLinesAgainSimp,encSecsAgain,encLinesAgain,sectionLabels,computeLabelsAlt,
-    getJumpOffset,getLabel,labInst,findPos,lookupAny,labLookup,labs,sptLookup,sptInsert,
-    input,output,acc,code,result,encode8] <;> first | rfl | decide +kernel
+  simp [sectionLabels,computeLabelsAlt,
+    labLookup,
+    input,code,] <;> first | rfl | decide +kernel
 example : 13 ∉ code.map (fun sec => sec.sectionId) ∧
     labLookup 13 3 (computeLabelsAlt 4 code initial) = none ∧
     labLookup 13 3 initial = none := by
-  simp [encLinesAgainSimp,encSecsAgain,encLinesAgain,sectionLabels,computeLabelsAlt,
-    getJumpOffset,getLabel,labInst,findPos,lookupAny,labLookup,labs,sptLookup,sptInsert,
-    input,output,acc,code,result,encode8] <;> first | rfl | decide +kernel
+  simp [sectionLabels,computeLabelsAlt,
+    labLookup,
+    input,code,] <;> first | rfl | decide +kernel
 example : labLookup 1 9 initial = some 77 ∧
     labLookup 1 9 (computeLabelsAlt 4 code initial) = none := by
-  simp [encLinesAgainSimp,encSecsAgain,encLinesAgain,sectionLabels,computeLabelsAlt,
-    getJumpOffset,getLabel,labInst,findPos,lookupAny,labLookup,labs,sptLookup,sptInsert,
-    input,output,acc,code,result,encode8] <;> first | rfl | decide +kernel
+  simp [sectionLabels,computeLabelsAlt,
+    labLookup,
+    input,code,] <;> first | rfl | decide +kernel
 example : encLinesAgainSimp labs [] 4 encode8
     [.labAsm (.jump (.lab 1 5)) 99 [] 0,.label 1 6 0] =
     ([.labAsm (.jump (.lab 1 5)) 16 [16,99] 2,.label 1 6 0],false) ∧
     sectionLabels 4 ([.labAsm (.jump (.lab 1 5)) 99 [] 0,.label 1 6 0] : List (LabLineHOL 8)) [] = (4,[(6,4)]) ∧
     sectionLabels 4 ([.labAsm (.jump (.lab 1 5)) 16 [16,99] 2,.label 1 6 0] : List (LabLineHOL 8)) [] = (6,[(6,6)]) := by
-  simp [encLinesAgainSimp,encSecsAgain,encLinesAgain,sectionLabels,computeLabelsAlt,
-    getJumpOffset,getLabel,labInst,findPos,lookupAny,labLookup,labs,sptLookup,sptInsert,
-    input,output,acc,code,result,encode8] <;> first | rfl | decide +kernel
+  simp [encLinesAgainSimp,sectionLabels,
+    getJumpOffset,getLabel,labInst,findPos,lookupAny,labs,sptLookup,sptInsert,
+    encode8] <;> first | rfl | decide +kernel
 example : encLinesAgainSimp (.ln : Spt (Spt Nat)) [] 0 (fun _ : HolAsm 1 => [3,4])
     [.labAsm .halt 1 [] 2,.label 1 7 0] = ([.labAsm .halt 0 [3,4] 2,.label 1 7 0],true) ∧
     sectionLabels 0 ([.labAsm .halt 0 [3,4] 2,.label 1 7 0] : List (LabLineHOL 1)) [] = (2,[(7,2)]) := by
-  simp [encLinesAgainSimp,encSecsAgain,encLinesAgain,sectionLabels,computeLabelsAlt,
-    getJumpOffset,getLabel,labInst,findPos,lookupAny,labLookup,labs,sptLookup,sptInsert,
-    input,output,acc,code,result,encode8] <;> first | rfl | decide +kernel
+  simp [encLinesAgainSimp,sectionLabels,
+    getJumpOffset,
+    ] <;> first | rfl | decide +kernel
 example : encLinesAgainSimp (.ln : Spt (Spt Nat)) [] (2^80+4) (fun _ : HolAsm 80 => [])
     [.label 1 7 0] = ([.label 1 7 0],true) ∧
     sectionLabels (2^80+4) ([.label 1 7 0] : List (LabLineHOL 80)) [(8,2^81)] =
     (2^80+4,[(7,2^80+4),(8,2^81)]) := by
-  simp [encLinesAgainSimp,encSecsAgain,encLinesAgain,sectionLabels,computeLabelsAlt,
-    getJumpOffset,getLabel,labInst,findPos,lookupAny,labLookup,labs,sptLookup,sptInsert,
-    input,output,acc,code,result,encode8] <;> first | rfl | decide +kernel
+  simp [encLinesAgainSimp,sectionLabels,
+    
+    ] <;> first | rfl | decide +kernel
 
 example {width : Nat} [NeZero width]
     (pos : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))

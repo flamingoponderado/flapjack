@@ -93,7 +93,7 @@ private theorem writeFullWord (w : BitVec 64) (s : riscv_state) :
   have hidx : holWordExtract 61 63 3 (BitVec.ofNat 64 0) = BitVec.ofNat 61 0 := by decide
   have halign : holWordExtract 3 2 0 (BitVec.ofNat 64 0) = BitVec.ofNat 3 0 := by decide
   simp only [rawWriteData, hmask, hidx, halign]
-  simp only [BitVec.toNat_zero, BEq.refl, Bool.true_eq, ↓reduceIte,
+  simp only [BitVec.toNat_zero, BEq.refl, ↓reduceIte,
     BitVec.not_allOnes, BitVec.and_zero, BitVec.and_allOnes, BitVec.zero_or]
 
 -- Flapjack-specific empty-table normalizations, with no standalone HOL originals.
@@ -111,7 +111,7 @@ private theorem insertEmpty (asid : BitVec 6) (va pa pteAddr : BitVec 64)
   simp [addToTLB, TLBEntries, Flapjack.holFor, holUpdate]
 
 
-private def fixture (base : riscv_state) (w b v o rd core arch vm : Nat) : riscv_state :=
+private def fixture (base : riscv_state) (w b v _o _rd core arch vm : Nat) : riscv_state :=
   { base with procID := BitVec.ofNat 8 core, totalCore := 1, exception := .NoException, c_NextFetch := (fun _ => none), c_gpr := (fun _ reg => if reg = BitVec.ofNat 5 2 then BitVec.ofNat 64 b else 99), c_cycles := (fun _ => 77),       c_MCSR := (fun id => { base.c_MCSR id with mstatus := { (base.c_MCSR id).mstatus with MMPRV := false, MPRV := 0, MPRV1 := 3, VM := BitVec.ofNat 5 vm }, mcpuid := { (base.c_MCSR id).mcpuid with ArchBase := BitVec.ofNat 2 arch } }), c_SCSR := (fun id => { base.c_SCSR id with sasid := 63, sptbr := 0 }), c_tlb := (fun _ _ => none),       MEM8 := (fun x => if (x - BitVec.ofNat 64 v).toNat < 8 then BitVec.ofNat 8 (w / 2 ^ (8 * (x - BitVec.ofNat 64 v).toNat)) else 0) }
 
 private def trapView : Option TransferControl → Nat × Option Nat
@@ -142,12 +142,12 @@ example (base : riscv_state) :
   simp only [observation, lwShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LW»,fixture,trapView,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: lw_positive.
 example (base : riscv_state) :
@@ -157,12 +157,12 @@ example (base : riscv_state) :
   simp only [observation, lwShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LW»,fixture,trapView,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: lw_rd_zero.
 example (base : riscv_state) :
@@ -172,12 +172,12 @@ example (base : riscv_state) :
   simp only [observation, lwShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LW»,fixture,trapView,
+    GPR,gpr,«write'GPR»,
+    translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    ] <;> decide
 
 -- Original l3_integer_load_probe.out: lw_unaligned.
 example (base : riscv_state) :
@@ -187,12 +187,12 @@ example (base : riscv_state) :
   simp only [observation, lwShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LW»,fixture,trapView,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: lw_offset_wrap.
 example (base : riscv_state) :
@@ -202,12 +202,12 @@ example (base : riscv_state) :
   simp only [observation, lwShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LW»,fixture,trapView,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: lw_walk_returned_state.
 example (base : riscv_state) :
@@ -217,12 +217,12 @@ example (base : riscv_state) :
   simp only [observation, lwShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
+  all_goals simp [«dfn'LW»,fixture,trapView,tlbView,singletonWord,writeFullWord,insertEmpty,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
     SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
     «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: lwu_negative.
 example (base : riscv_state) :
@@ -232,12 +232,12 @@ example (base : riscv_state) :
   simp only [observation, lwuShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LWU»,fixture,trapView,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: lwu_positive.
 example (base : riscv_state) :
@@ -247,12 +247,12 @@ example (base : riscv_state) :
   simp only [observation, lwuShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LWU»,fixture,trapView,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: lwu_rd_zero.
 example (base : riscv_state) :
@@ -262,12 +262,12 @@ example (base : riscv_state) :
   simp only [observation, lwuShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LWU»,fixture,trapView,
+    GPR,gpr,«write'GPR»,
+    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    ] <;> decide
 
 -- Original l3_integer_load_probe.out: lwu_unaligned.
 example (base : riscv_state) :
@@ -277,12 +277,12 @@ example (base : riscv_state) :
   simp only [observation, lwuShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LWU»,fixture,trapView,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: lwu_offset_wrap.
 example (base : riscv_state) :
@@ -292,12 +292,12 @@ example (base : riscv_state) :
   simp only [observation, lwuShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LWU»,fixture,trapView,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: lwu_walk_returned_state.
 example (base : riscv_state) :
@@ -307,12 +307,12 @@ example (base : riscv_state) :
   simp only [observation, lwuShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
+  all_goals simp [«dfn'LWU»,fixture,trapView,tlbView,singletonWord,writeFullWord,insertEmpty,
+    GPR,gpr,«write'GPR»,«write'gpr»,
     in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
     SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
     «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: lh_negative.
 example (base : riscv_state) :
@@ -322,12 +322,12 @@ example (base : riscv_state) :
   simp only [observation, lhShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LH»,fixture,trapView,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: lh_positive.
 example (base : riscv_state) :
@@ -337,12 +337,12 @@ example (base : riscv_state) :
   simp only [observation, lhShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LH»,fixture,trapView,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: lh_rd_zero.
 example (base : riscv_state) :
@@ -352,12 +352,12 @@ example (base : riscv_state) :
   simp only [observation, lhShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LH»,fixture,trapView,
+    GPR,gpr,«write'GPR»,
+    translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    ] <;> decide
 
 -- Original l3_integer_load_probe.out: lh_unaligned.
 example (base : riscv_state) :
@@ -367,12 +367,12 @@ example (base : riscv_state) :
   simp only [observation, lhShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LH»,fixture,trapView,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: lh_offset_wrap.
 example (base : riscv_state) :
@@ -382,12 +382,12 @@ example (base : riscv_state) :
   simp only [observation, lhShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LH»,fixture,trapView,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: lh_walk_returned_state.
 example (base : riscv_state) :
@@ -397,12 +397,12 @@ example (base : riscv_state) :
   simp only [observation, lhShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
+  all_goals simp [«dfn'LH»,fixture,trapView,tlbView,singletonWord,writeFullWord,insertEmpty,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
     SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
     «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: lhu_negative.
 example (base : riscv_state) :
@@ -412,12 +412,12 @@ example (base : riscv_state) :
   simp only [observation, lhuShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LHU»,fixture,trapView,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: lhu_positive.
 example (base : riscv_state) :
@@ -427,12 +427,12 @@ example (base : riscv_state) :
   simp only [observation, lhuShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LHU»,fixture,trapView,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: lhu_rd_zero.
 example (base : riscv_state) :
@@ -442,12 +442,12 @@ example (base : riscv_state) :
   simp only [observation, lhuShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LHU»,fixture,trapView,
+    GPR,gpr,«write'GPR»,
+    translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    ] <;> decide
 
 -- Original l3_integer_load_probe.out: lhu_unaligned.
 example (base : riscv_state) :
@@ -457,12 +457,12 @@ example (base : riscv_state) :
   simp only [observation, lhuShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LHU»,fixture,trapView,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: lhu_offset_wrap.
 example (base : riscv_state) :
@@ -472,12 +472,12 @@ example (base : riscv_state) :
   simp only [observation, lhuShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LHU»,fixture,trapView,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: lhu_walk_returned_state.
 example (base : riscv_state) :
@@ -487,12 +487,12 @@ example (base : riscv_state) :
   simp only [observation, lhuShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
+  all_goals simp [«dfn'LHU»,fixture,trapView,tlbView,singletonWord,writeFullWord,insertEmpty,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
     SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
     «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: lb_negative.
 example (base : riscv_state) :
@@ -502,12 +502,12 @@ example (base : riscv_state) :
   simp only [observation, lbShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LB»,fixture,trapView,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: lb_positive.
 example (base : riscv_state) :
@@ -517,12 +517,12 @@ example (base : riscv_state) :
   simp only [observation, lbShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LB»,fixture,trapView,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: lb_rd_zero.
 example (base : riscv_state) :
@@ -532,12 +532,12 @@ example (base : riscv_state) :
   simp only [observation, lbShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LB»,fixture,trapView,
+    GPR,gpr,«write'GPR»,
+    translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    ] <;> decide
 
 -- Original l3_integer_load_probe.out: lb_unaligned.
 example (base : riscv_state) :
@@ -547,12 +547,12 @@ example (base : riscv_state) :
   simp only [observation, lbShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LB»,fixture,trapView,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: lb_offset_wrap.
 example (base : riscv_state) :
@@ -562,12 +562,12 @@ example (base : riscv_state) :
   simp only [observation, lbShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LB»,fixture,trapView,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: lb_walk_returned_state.
 example (base : riscv_state) :
@@ -577,12 +577,12 @@ example (base : riscv_state) :
   simp only [observation, lbShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
+  all_goals simp [«dfn'LB»,fixture,trapView,tlbView,singletonWord,writeFullWord,insertEmpty,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
     SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
     «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: lbu_negative.
 example (base : riscv_state) :
@@ -592,12 +592,12 @@ example (base : riscv_state) :
   simp only [observation, lbuShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LBU»,fixture,trapView,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: lbu_positive.
 example (base : riscv_state) :
@@ -607,12 +607,12 @@ example (base : riscv_state) :
   simp only [observation, lbuShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LBU»,fixture,trapView,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: lbu_rd_zero.
 example (base : riscv_state) :
@@ -622,12 +622,12 @@ example (base : riscv_state) :
   simp only [observation, lbuShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LBU»,fixture,trapView,
+    GPR,gpr,«write'GPR»,
+    translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    ] <;> decide
 
 -- Original l3_integer_load_probe.out: lbu_unaligned.
 example (base : riscv_state) :
@@ -637,12 +637,12 @@ example (base : riscv_state) :
   simp only [observation, lbuShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LBU»,fixture,trapView,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: lbu_offset_wrap.
 example (base : riscv_state) :
@@ -652,12 +652,12 @@ example (base : riscv_state) :
   simp only [observation, lbuShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LBU»,fixture,trapView,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: lbu_walk_returned_state.
 example (base : riscv_state) :
@@ -667,12 +667,12 @@ example (base : riscv_state) :
   simp only [observation, lbuShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
+  all_goals simp [«dfn'LBU»,fixture,trapView,tlbView,singletonWord,writeFullWord,insertEmpty,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
     SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
     «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: ld_negative.
 example (base : riscv_state) :
@@ -682,12 +682,12 @@ example (base : riscv_state) :
   simp only [observation, ldShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LD»,fixture,trapView,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: ld_positive.
 example (base : riscv_state) :
@@ -697,12 +697,12 @@ example (base : riscv_state) :
   simp only [observation, ldShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LD»,fixture,trapView,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: ld_rd_zero.
 example (base : riscv_state) :
@@ -712,12 +712,12 @@ example (base : riscv_state) :
   simp only [observation, ldShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LD»,fixture,trapView,
+    GPR,gpr,«write'GPR»,
+    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    ] <;> decide
 
 -- Original l3_integer_load_probe.out: ld_unaligned.
 example (base : riscv_state) :
@@ -727,12 +727,12 @@ example (base : riscv_state) :
   simp only [observation, ldShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LD»,fixture,trapView,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: ld_offset_wrap.
 example (base : riscv_state) :
@@ -742,12 +742,12 @@ example (base : riscv_state) :
   simp only [observation, ldShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LD»,fixture,trapView,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: ld_core_wrap.
 example (base : riscv_state) :
@@ -757,12 +757,12 @@ example (base : riscv_state) :
   simp only [observation, ldShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LD»,fixture,trapView,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: ld_fault_sv32.
 example (base : riscv_state) :
@@ -772,12 +772,12 @@ example (base : riscv_state) :
   simp only [observation, ldShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LD»,fixture,trapView,
+    GPR,gpr,signalAddressException,setTrap,«write'NextFetch»,
+    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: ld_rv32_mode.
 example (base : riscv_state) :
@@ -787,12 +787,12 @@ example (base : riscv_state) :
   simp only [observation, ldShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LD»,fixture,trapView,
+    GPR,gpr,signalException,setTrap,«write'NextFetch»,
+    in32BitMode,curArch,architecture,MCSR,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: ld_rv128_mode.
 example (base : riscv_state) :
@@ -802,12 +802,12 @@ example (base : riscv_state) :
   simp only [observation, ldShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'LD»,fixture,trapView,
+    GPR,gpr,«write'GPR»,«write'gpr»,
+    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_integer_load_probe.out: ld_walk_returned_state.
 example (base : riscv_state) :
@@ -817,11 +817,11 @@ example (base : riscv_state) :
   simp only [observation, ldShape]
   simp only [Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'LW»,«dfn'LWU»,«dfn'LH»,«dfn'LHU»,«dfn'LB»,«dfn'LBU»,«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
+  all_goals simp [«dfn'LD»,fixture,trapView,tlbView,singletonWord,writeFullWord,insertEmpty,
+    GPR,gpr,«write'GPR»,«write'gpr»,
     in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
     SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,MEM,«write'MEM»,
     «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+    holUpdate,] <;> decide
 
 end Flapjack.Test.L3IntegerLoadParity

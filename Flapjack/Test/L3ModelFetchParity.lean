@@ -57,7 +57,7 @@ private theorem writeFullWord (w : BitVec 64) (s : riscv_state) :
   have hidx : holWordExtract 61 63 3 (BitVec.ofNat 64 0) = BitVec.ofNat 61 0 := by decide
   have halign : holWordExtract 3 2 0 (BitVec.ofNat 64 0) = BitVec.ofNat 3 0 := by decide
   simp only [rawWriteData, hmask, hidx, halign]
-  simp only [BitVec.toNat_zero, BEq.refl, Bool.true_eq, ↓reduceIte,
+  simp only [BitVec.toNat_zero, BEq.refl, ↓reduceIte,
     BitVec.not_allOnes, BitVec.and_zero, BitVec.and_allOnes, BitVec.zero_or]
 
 -- Flapjack-specific empty-table normalizations, with no standalone HOL originals.
@@ -95,7 +95,7 @@ private def tlbView (e : TLBEntry) :=
 -- Original HOL oracle odd_unknown_vm; all nine Delta and all sixteen TLB slots.
 example (base : riscv_state) :
     (let a : BitVec 64 := 1
-     let e : TLBEntry := { (default : TLBEntry) with
+     let _e : TLBEntry := { (default : TLBEntry) with
        asid := 63, global := false,
        vAddrMask := 4095, vMatchMask := 18446744073709547520, vAddr := 0,
        pAddr := 8192, age := 88, pteAddr := 0, pte := «rec'SV_PTE» 3079 }
@@ -123,18 +123,18 @@ example (base : riscv_state) :
       ((1, 0, 1), 99, 99, [(true, true, 11, (16, 48879), some 21, some 22, some 23, some 24, some 8), (true, true, 11, (16, 48879), some 21, some 22, some 23, some 24, some 8)], 370240783104, [none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none], true, 3, 1, 7) := by
   simp only [modelFetchShape]
   repeat' apply Prod.ext
-  all_goals simp [fetchExpected, singletonWord, writeFullWord, lookupEmpty, insertEmpty, resultView, deltaView, tlbView, fetchedDelta, PC,
-    rawReadInst, boolify8, «write'Skip», translateAddr, MCSR, vmType, privilege,
-    translate64, curASID, ASID_SIZE, SCSR, TLB, «write'TLB»,
-    mkTLBEntry, lookupTLB, TLBEntries, Flapjack.holFor, walk64, rawReadData,
-    MEM, «write'MEM», «rec'SV_Vaddr», «rec'SV_PTE», «reg'SV_PTE»,
-    checkMemPermission, isGlobal, LEVEL_BITS, PAGESIZE_BITS, holWordExtract,
-    holUpdate, List.range_succ, List.map] <;> decide
+  all_goals simp [fetchExpected, resultView, deltaView, PC,
+    
+    
+    rawReadData,
+    MEM, 
+    holWordExtract,
+    List.range_succ, List.map] <;> decide
 
 -- Original HOL oracle odd_wrap; all nine Delta and all sixteen TLB slots.
 example (base : riscv_state) :
     (let a : BitVec 64 := 18446744073709551615
-     let e : TLBEntry := { (default : TLBEntry) with
+     let _e : TLBEntry := { (default : TLBEntry) with
        asid := 63, global := false,
        vAddrMask := 4095, vMatchMask := 18446744073709547520, vAddr := 0,
        pAddr := 8192, age := 88, pteAddr := 0, pte := «rec'SV_PTE» 3079 }
@@ -162,18 +162,18 @@ example (base : riscv_state) :
       ((1, 0, 18446744073709551615), 99, 99, [(true, true, 11, (16, 48879), some 21, some 22, some 23, some 24, some 8), (true, true, 11, (16, 48879), some 21, some 22, some 23, some 24, some 8)], 5649426, [none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none], true, 3, 1, 7) := by
   simp only [modelFetchShape]
   repeat' apply Prod.ext
-  all_goals simp [fetchExpected, singletonWord, writeFullWord, lookupEmpty, insertEmpty, resultView, deltaView, tlbView, fetchedDelta, PC,
-    rawReadInst, boolify8, «write'Skip», translateAddr, MCSR, vmType, privilege,
-    translate64, curASID, ASID_SIZE, SCSR, TLB, «write'TLB»,
-    mkTLBEntry, lookupTLB, TLBEntries, Flapjack.holFor, walk64, rawReadData,
-    MEM, «write'MEM», «rec'SV_Vaddr», «rec'SV_PTE», «reg'SV_PTE»,
-    checkMemPermission, isGlobal, LEVEL_BITS, PAGESIZE_BITS, holWordExtract,
-    holUpdate, List.range_succ, List.map] <;> decide
+  all_goals simp [fetchExpected, resultView, deltaView, PC,
+    
+    
+    rawReadData,
+    MEM, 
+    holWordExtract,
+    List.range_succ, List.map] <;> decide
 
 -- Original HOL oracle none_vm_1; all nine Delta and all sixteen TLB slots.
 example (base : riscv_state) :
     (let a : BitVec 64 := 2
-     let e : TLBEntry := { (default : TLBEntry) with
+     let _e : TLBEntry := { (default : TLBEntry) with
        asid := 63, global := false,
        vAddrMask := 4095, vMatchMask := 18446744073709547520, vAddr := 0,
        pAddr := 8192, age := 88, pteAddr := 0, pte := «rec'SV_PTE» 3079 }
@@ -201,18 +201,18 @@ example (base : riscv_state) :
       ((2, 0, 2), 99, 99, [(true, true, 11, (16, 48879), some 21, some 22, some 23, some 24, some 8), (true, true, 11, (16, 48879), some 21, some 22, some 23, some 24, some 8)], 94781640474624, [none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none], true, 3, 1, 7) := by
   simp only [modelFetchShape]
   repeat' apply Prod.ext
-  all_goals simp [fetchExpected, singletonWord, writeFullWord, lookupEmpty, insertEmpty, resultView, deltaView, tlbView, fetchedDelta, PC,
-    rawReadInst, boolify8, «write'Skip», translateAddr, MCSR, vmType, privilege,
-    translate64, curASID, ASID_SIZE, SCSR, TLB, «write'TLB»,
-    mkTLBEntry, lookupTLB, TLBEntries, Flapjack.holFor, walk64, rawReadData,
-    MEM, «write'MEM», «rec'SV_Vaddr», «rec'SV_PTE», «reg'SV_PTE»,
-    checkMemPermission, isGlobal, LEVEL_BITS, PAGESIZE_BITS, holWordExtract,
-    holUpdate, List.range_succ, List.map] <;> decide
+  all_goals simp [fetchExpected, resultView, deltaView, PC,
+    translateAddr, MCSR, vmType, privilege,
+    
+    rawReadData,
+    MEM, 
+    holWordExtract,
+    List.range_succ, List.map] <;> decide
 
 -- Original HOL oracle none_vm_2; all nine Delta and all sixteen TLB slots.
 example (base : riscv_state) :
     (let a : BitVec 64 := 2
-     let e : TLBEntry := { (default : TLBEntry) with
+     let _e : TLBEntry := { (default : TLBEntry) with
        asid := 63, global := false,
        vAddrMask := 4095, vMatchMask := 18446744073709547520, vAddr := 0,
        pAddr := 8192, age := 88, pteAddr := 0, pte := «rec'SV_PTE» 3079 }
@@ -240,18 +240,18 @@ example (base : riscv_state) :
       ((2, 0, 2), 99, 99, [(true, true, 11, (16, 48879), some 21, some 22, some 23, some 24, some 8), (true, true, 11, (16, 48879), some 21, some 22, some 23, some 24, some 8)], 94781640474624, [none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none], true, 3, 1, 7) := by
   simp only [modelFetchShape]
   repeat' apply Prod.ext
-  all_goals simp [fetchExpected, singletonWord, writeFullWord, lookupEmpty, insertEmpty, resultView, deltaView, tlbView, fetchedDelta, PC,
-    rawReadInst, boolify8, «write'Skip», translateAddr, MCSR, vmType, privilege,
-    translate64, curASID, ASID_SIZE, SCSR, TLB, «write'TLB»,
-    mkTLBEntry, lookupTLB, TLBEntries, Flapjack.holFor, walk64, rawReadData,
-    MEM, «write'MEM», «rec'SV_Vaddr», «rec'SV_PTE», «reg'SV_PTE»,
-    checkMemPermission, isGlobal, LEVEL_BITS, PAGESIZE_BITS, holWordExtract,
-    holUpdate, List.range_succ, List.map] <;> decide
+  all_goals simp [fetchExpected, resultView, deltaView, PC,
+    translateAddr, MCSR, vmType, privilege,
+    
+    rawReadData,
+    MEM, 
+    holWordExtract,
+    List.range_succ, List.map] <;> decide
 
 -- Original HOL oracle none_vm_8; all nine Delta and all sixteen TLB slots.
 example (base : riscv_state) :
     (let a : BitVec 64 := 2
-     let e : TLBEntry := { (default : TLBEntry) with
+     let _e : TLBEntry := { (default : TLBEntry) with
        asid := 63, global := false,
        vAddrMask := 4095, vMatchMask := 18446744073709547520, vAddr := 0,
        pAddr := 8192, age := 88, pteAddr := 0, pte := «rec'SV_PTE» 3079 }
@@ -279,18 +279,18 @@ example (base : riscv_state) :
       ((2, 0, 2), 99, 99, [(true, true, 11, (16, 48879), some 21, some 22, some 23, some 24, some 8), (true, true, 11, (16, 48879), some 21, some 22, some 23, some 24, some 8)], 94781640474624, [none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none], true, 3, 1, 7) := by
   simp only [modelFetchShape]
   repeat' apply Prod.ext
-  all_goals simp [fetchExpected, singletonWord, writeFullWord, lookupEmpty, insertEmpty, resultView, deltaView, tlbView, fetchedDelta, PC,
-    rawReadInst, boolify8, «write'Skip», translateAddr, MCSR, vmType, privilege,
-    translate64, curASID, ASID_SIZE, SCSR, TLB, «write'TLB»,
-    mkTLBEntry, lookupTLB, TLBEntries, Flapjack.holFor, walk64, rawReadData,
-    MEM, «write'MEM», «rec'SV_Vaddr», «rec'SV_PTE», «reg'SV_PTE»,
-    checkMemPermission, isGlobal, LEVEL_BITS, PAGESIZE_BITS, holWordExtract,
-    holUpdate, List.range_succ, List.map] <;> decide
+  all_goals simp [fetchExpected, resultView, deltaView, PC,
+    translateAddr, MCSR, vmType, privilege,
+    
+    rawReadData,
+    MEM, 
+    holWordExtract,
+    List.range_succ, List.map] <;> decide
 
 -- Original HOL oracle none_vm_11; all nine Delta and all sixteen TLB slots.
 example (base : riscv_state) :
     (let a : BitVec 64 := 2
-     let e : TLBEntry := { (default : TLBEntry) with
+     let _e : TLBEntry := { (default : TLBEntry) with
        asid := 63, global := false,
        vAddrMask := 4095, vMatchMask := 18446744073709547520, vAddr := 0,
        pAddr := 8192, age := 88, pteAddr := 0, pte := «rec'SV_PTE» 3079 }
@@ -318,18 +318,18 @@ example (base : riscv_state) :
       ((2, 0, 2), 99, 99, [(true, true, 11, (16, 48879), some 21, some 22, some 23, some 24, some 8), (true, true, 11, (16, 48879), some 21, some 22, some 23, some 24, some 8)], 94781640474624, [none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none], true, 3, 1, 7) := by
   simp only [modelFetchShape]
   repeat' apply Prod.ext
-  all_goals simp [fetchExpected, singletonWord, writeFullWord, lookupEmpty, insertEmpty, resultView, deltaView, tlbView, fetchedDelta, PC,
-    rawReadInst, boolify8, «write'Skip», translateAddr, MCSR, vmType, privilege,
-    translate64, curASID, ASID_SIZE, SCSR, TLB, «write'TLB»,
-    mkTLBEntry, lookupTLB, TLBEntries, Flapjack.holFor, walk64, rawReadData,
-    MEM, «write'MEM», «rec'SV_Vaddr», «rec'SV_PTE», «reg'SV_PTE»,
-    checkMemPermission, isGlobal, LEVEL_BITS, PAGESIZE_BITS, holWordExtract,
-    holUpdate, List.range_succ, List.map] <;> decide
+  all_goals simp [fetchExpected, resultView, deltaView, PC,
+    translateAddr, MCSR, vmType, privilege,
+    
+    rawReadData,
+    MEM, 
+    holWordExtract,
+    List.range_succ, List.map] <;> decide
 
 -- Original HOL oracle none_vm_12; all nine Delta and all sixteen TLB slots.
 example (base : riscv_state) :
     (let a : BitVec 64 := 2
-     let e : TLBEntry := { (default : TLBEntry) with
+     let _e : TLBEntry := { (default : TLBEntry) with
        asid := 63, global := false,
        vAddrMask := 4095, vMatchMask := 18446744073709547520, vAddr := 0,
        pAddr := 8192, age := 88, pteAddr := 0, pte := «rec'SV_PTE» 3079 }
@@ -357,18 +357,18 @@ example (base : riscv_state) :
       ((2, 0, 2), 99, 99, [(true, true, 11, (16, 48879), some 21, some 22, some 23, some 24, some 8), (true, true, 11, (16, 48879), some 21, some 22, some 23, some 24, some 8)], 94781640474624, [none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none], true, 3, 1, 7) := by
   simp only [modelFetchShape]
   repeat' apply Prod.ext
-  all_goals simp [fetchExpected, singletonWord, writeFullWord, lookupEmpty, insertEmpty, resultView, deltaView, tlbView, fetchedDelta, PC,
-    rawReadInst, boolify8, «write'Skip», translateAddr, MCSR, vmType, privilege,
-    translate64, curASID, ASID_SIZE, SCSR, TLB, «write'TLB»,
-    mkTLBEntry, lookupTLB, TLBEntries, Flapjack.holFor, walk64, rawReadData,
-    MEM, «write'MEM», «rec'SV_Vaddr», «rec'SV_PTE», «reg'SV_PTE»,
-    checkMemPermission, isGlobal, LEVEL_BITS, PAGESIZE_BITS, holWordExtract,
-    holUpdate, List.range_succ, List.map] <;> decide
+  all_goals simp [fetchExpected, resultView, deltaView, PC,
+    translateAddr, MCSR, vmType, privilege,
+    
+    rawReadData,
+    MEM, 
+    holWordExtract,
+    List.range_succ, List.map] <;> decide
 
 -- Original HOL oracle bare_0_0; all nine Delta and all sixteen TLB slots.
 example (base : riscv_state) :
     (let a : BitVec 64 := 0
-     let e : TLBEntry := { (default : TLBEntry) with
+     let _e : TLBEntry := { (default : TLBEntry) with
        asid := 63, global := false,
        vAddrMask := 4095, vMatchMask := 18446744073709547520, vAddr := 0,
        pAddr := 8192, age := 88, pteAddr := 0, pte := «rec'SV_PTE» 3079 }
@@ -396,18 +396,18 @@ example (base : riscv_state) :
       ((0, 16, 4608), 2, 99, [(false, false, 0, (16, 4608), none, none, none, none, none), (true, true, 11, (16, 48879), some 21, some 22, some 23, some 24, some 8)], 1446253056, [none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none], true, 0, 1, 7) := by
   simp only [modelFetchShape]
   repeat' apply Prod.ext
-  all_goals simp [fetchExpected, singletonWord, writeFullWord, lookupEmpty, insertEmpty, resultView, deltaView, tlbView, fetchedDelta, PC,
-    rawReadInst, boolify8, «write'Skip», translateAddr, MCSR, vmType, privilege,
-    translate64, curASID, ASID_SIZE, SCSR, TLB, «write'TLB»,
-    mkTLBEntry, lookupTLB, TLBEntries, Flapjack.holFor, walk64, rawReadData,
-    MEM, «write'MEM», «rec'SV_Vaddr», «rec'SV_PTE», «reg'SV_PTE»,
-    checkMemPermission, isGlobal, LEVEL_BITS, PAGESIZE_BITS, holWordExtract,
+  all_goals simp [fetchExpected, resultView, deltaView, fetchedDelta, PC,
+    rawReadInst, boolify8, «write'Skip», translateAddr, MCSR, vmType, 
+    
+    rawReadData,
+    MEM, 
+    holWordExtract,
     holUpdate, List.range_succ, List.map] <;> decide
 
 -- Original HOL oracle bare_0_3; all nine Delta and all sixteen TLB slots.
 example (base : riscv_state) :
     (let a : BitVec 64 := 0
-     let e : TLBEntry := { (default : TLBEntry) with
+     let _e : TLBEntry := { (default : TLBEntry) with
        asid := 63, global := false,
        vAddrMask := 4095, vMatchMask := 18446744073709547520, vAddr := 0,
        pAddr := 8192, age := 88, pteAddr := 0, pte := «rec'SV_PTE» 3079 }
@@ -435,18 +435,18 @@ example (base : riscv_state) :
       ((0, 32, 1446253059), 4, 99, [(false, false, 0, (32, 1446253059), none, none, none, none, none), (true, true, 11, (16, 48879), some 21, some 22, some 23, some 24, some 8)], 1446253059, [none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none], true, 3, 1, 7) := by
   simp only [modelFetchShape]
   repeat' apply Prod.ext
-  all_goals simp [fetchExpected, singletonWord, writeFullWord, lookupEmpty, insertEmpty, resultView, deltaView, tlbView, fetchedDelta, PC,
-    rawReadInst, boolify8, «write'Skip», translateAddr, MCSR, vmType, privilege,
-    translate64, curASID, ASID_SIZE, SCSR, TLB, «write'TLB»,
-    mkTLBEntry, lookupTLB, TLBEntries, Flapjack.holFor, walk64, rawReadData,
-    MEM, «write'MEM», «rec'SV_Vaddr», «rec'SV_PTE», «reg'SV_PTE»,
-    checkMemPermission, isGlobal, LEVEL_BITS, PAGESIZE_BITS, holWordExtract,
+  all_goals simp [fetchExpected, resultView, deltaView, fetchedDelta, PC,
+    rawReadInst, boolify8, «write'Skip», translateAddr, MCSR, vmType, 
+    
+    rawReadData,
+    MEM, 
+    holWordExtract,
     holUpdate, List.range_succ, List.map] <;> decide
 
 -- Original HOL oracle bare_2_3; all nine Delta and all sixteen TLB slots.
 example (base : riscv_state) :
     (let a : BitVec 64 := 2
-     let e : TLBEntry := { (default : TLBEntry) with
+     let _e : TLBEntry := { (default : TLBEntry) with
        asid := 63, global := false,
        vAddrMask := 4095, vMatchMask := 18446744073709547520, vAddr := 0,
        pAddr := 8192, age := 88, pteAddr := 0, pte := «rec'SV_PTE» 3079 }
@@ -474,18 +474,18 @@ example (base : riscv_state) :
       ((0, 32, 1446253059), 4, 99, [(false, false, 2, (32, 1446253059), none, none, none, none, none), (true, true, 11, (16, 48879), some 21, some 22, some 23, some 24, some 8)], 94781640474624, [none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none], true, 3, 1, 7) := by
   simp only [modelFetchShape]
   repeat' apply Prod.ext
-  all_goals simp [fetchExpected, singletonWord, writeFullWord, lookupEmpty, insertEmpty, resultView, deltaView, tlbView, fetchedDelta, PC,
-    rawReadInst, boolify8, «write'Skip», translateAddr, MCSR, vmType, privilege,
-    translate64, curASID, ASID_SIZE, SCSR, TLB, «write'TLB»,
-    mkTLBEntry, lookupTLB, TLBEntries, Flapjack.holFor, walk64, rawReadData,
-    MEM, «write'MEM», «rec'SV_Vaddr», «rec'SV_PTE», «reg'SV_PTE»,
-    checkMemPermission, isGlobal, LEVEL_BITS, PAGESIZE_BITS, holWordExtract,
+  all_goals simp [fetchExpected, resultView, deltaView, fetchedDelta, PC,
+    rawReadInst, boolify8, «write'Skip», translateAddr, MCSR, vmType, 
+    
+    rawReadData,
+    MEM, 
+    holWordExtract,
     holUpdate, List.range_succ, List.map] <;> decide
 
 -- Original HOL oracle bare_18446744073709551614_0; all nine Delta and all sixteen TLB slots.
 example (base : riscv_state) :
     (let a : BitVec 64 := 18446744073709551614
-     let e : TLBEntry := { (default : TLBEntry) with
+     let _e : TLBEntry := { (default : TLBEntry) with
        asid := 63, global := false,
        vAddrMask := 4095, vMatchMask := 18446744073709547520, vAddr := 0,
        pAddr := 8192, age := 88, pteAddr := 0, pte := «rec'SV_PTE» 3079 }
@@ -513,18 +513,18 @@ example (base : riscv_state) :
       ((0, 16, 4608), 2, 99, [(false, false, 18446744073709551614, (16, 4608), none, none, none, none, none), (true, true, 11, (16, 48879), some 21, some 22, some 23, some 24, some 8)], 22068, [none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none], true, 0, 1, 7) := by
   simp only [modelFetchShape]
   repeat' apply Prod.ext
-  all_goals simp [fetchExpected, singletonWord, writeFullWord, lookupEmpty, insertEmpty, resultView, deltaView, tlbView, fetchedDelta, PC,
-    rawReadInst, boolify8, «write'Skip», translateAddr, MCSR, vmType, privilege,
-    translate64, curASID, ASID_SIZE, SCSR, TLB, «write'TLB»,
-    mkTLBEntry, lookupTLB, TLBEntries, Flapjack.holFor, walk64, rawReadData,
-    MEM, «write'MEM», «rec'SV_Vaddr», «rec'SV_PTE», «reg'SV_PTE»,
-    checkMemPermission, isGlobal, LEVEL_BITS, PAGESIZE_BITS, holWordExtract,
+  all_goals simp [fetchExpected, resultView, deltaView, fetchedDelta, PC,
+    rawReadInst, boolify8, «write'Skip», translateAddr, MCSR, vmType, 
+    
+    rawReadData,
+    MEM, 
+    holWordExtract,
     holUpdate, List.range_succ, List.map] <;> decide
 
 -- Original HOL oracle bare_18446744073709551614_3; all nine Delta and all sixteen TLB slots.
 example (base : riscv_state) :
     (let a : BitVec 64 := 18446744073709551614
-     let e : TLBEntry := { (default : TLBEntry) with
+     let _e : TLBEntry := { (default : TLBEntry) with
        asid := 63, global := false,
        vAddrMask := 4095, vMatchMask := 18446744073709547520, vAddr := 0,
        pAddr := 8192, age := 88, pteAddr := 0, pte := «rec'SV_PTE» 3079 }
@@ -552,12 +552,12 @@ example (base : riscv_state) :
       ((0, 32, 1446253059), 4, 99, [(false, false, 18446744073709551614, (32, 1446253059), none, none, none, none, none), (true, true, 11, (16, 48879), some 21, some 22, some 23, some 24, some 8)], 22068, [none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none], true, 3, 1, 7) := by
   simp only [modelFetchShape]
   repeat' apply Prod.ext
-  all_goals simp [fetchExpected, singletonWord, writeFullWord, lookupEmpty, insertEmpty, resultView, deltaView, tlbView, fetchedDelta, PC,
-    rawReadInst, boolify8, «write'Skip», translateAddr, MCSR, vmType, privilege,
-    translate64, curASID, ASID_SIZE, SCSR, TLB, «write'TLB»,
-    mkTLBEntry, lookupTLB, TLBEntries, Flapjack.holFor, walk64, rawReadData,
-    MEM, «write'MEM», «rec'SV_Vaddr», «rec'SV_PTE», «reg'SV_PTE»,
-    checkMemPermission, isGlobal, LEVEL_BITS, PAGESIZE_BITS, holWordExtract,
+  all_goals simp [fetchExpected, resultView, deltaView, fetchedDelta, PC,
+    rawReadInst, boolify8, «write'Skip», translateAddr, MCSR, vmType, 
+    
+    rawReadData,
+    MEM, 
+    holWordExtract,
     holUpdate, List.range_succ, List.map] <;> decide
 
 -- Original HOL oracle hit_sv39; all nine Delta and all sixteen TLB slots.
@@ -591,12 +591,12 @@ example (base : riscv_state) :
       ((0, 32, 1446253059), 4, 99, [(false, false, 1656, (32, 1446253059), none, none, none, none, none), (true, true, 11, (16, 48879), some 21, some 22, some 23, some 24, some 8)], 0, [none, none, none, none, some (63, false, 4095, 18446744073709547520, 0, 8192, 88, 0, 3079), none, none, none, none, none, none, none, none, none, none, none], true, 3, 1, 7) := by
   simp only [modelFetchShape]
   repeat' apply Prod.ext
-  all_goals simp [fetchExpected, singletonWord, writeFullWord, lookupEmpty, insertEmpty, resultView, deltaView, tlbView, fetchedDelta, PC,
+  all_goals simp [fetchExpected, singletonWord, resultView, deltaView, tlbView, fetchedDelta, PC,
     rawReadInst, boolify8, «write'Skip», translateAddr, MCSR, vmType, privilege,
-    translate64, curASID, ASID_SIZE, SCSR, TLB, «write'TLB»,
-    mkTLBEntry, lookupTLB, TLBEntries, Flapjack.holFor, walk64, rawReadData,
-    MEM, «write'MEM», «rec'SV_Vaddr», «rec'SV_PTE», «reg'SV_PTE»,
-    checkMemPermission, isGlobal, LEVEL_BITS, PAGESIZE_BITS, holWordExtract,
+    translate64, curASID, ASID_SIZE, SCSR, TLB, 
+    lookupTLB, TLBEntries, Flapjack.holFor, rawReadData,
+    MEM, «rec'SV_PTE», «reg'SV_PTE»,
+    checkMemPermission, holWordExtract,
     holUpdate, List.range_succ, List.map] <;> decide
 
 -- Original HOL oracle hit_sv48_half; all nine Delta and all sixteen TLB slots.
@@ -630,12 +630,12 @@ example (base : riscv_state) :
       ((0, 16, 4608), 2, 99, [(false, false, 1656, (16, 4608), none, none, none, none, none), (true, true, 11, (16, 48879), some 21, some 22, some 23, some 24, some 8)], 0, [none, none, none, none, some (63, false, 4095, 18446744073709547520, 0, 8192, 88, 0, 3079), none, none, none, none, none, none, none, none, none, none, none], true, 0, 1, 7) := by
   simp only [modelFetchShape]
   repeat' apply Prod.ext
-  all_goals simp [fetchExpected, singletonWord, writeFullWord, lookupEmpty, insertEmpty, resultView, deltaView, tlbView, fetchedDelta, PC,
+  all_goals simp [fetchExpected, singletonWord, resultView, deltaView, tlbView, fetchedDelta, PC,
     rawReadInst, boolify8, «write'Skip», translateAddr, MCSR, vmType, privilege,
-    translate64, curASID, ASID_SIZE, SCSR, TLB, «write'TLB»,
-    mkTLBEntry, lookupTLB, TLBEntries, Flapjack.holFor, walk64, rawReadData,
-    MEM, «write'MEM», «rec'SV_Vaddr», «rec'SV_PTE», «reg'SV_PTE»,
-    checkMemPermission, isGlobal, LEVEL_BITS, PAGESIZE_BITS, holWordExtract,
+    translate64, curASID, ASID_SIZE, SCSR, TLB, 
+    lookupTLB, TLBEntries, Flapjack.holFor, rawReadData,
+    MEM, «rec'SV_PTE», «reg'SV_PTE»,
+    checkMemPermission, holWordExtract,
     holUpdate, List.range_succ, List.map] <;> decide
 
 -- Original HOL oracle hit_denied; all nine Delta and all sixteen TLB slots.
@@ -669,18 +669,18 @@ example (base : riscv_state) :
       ((2, 0, 1656), 99, 99, [(true, true, 11, (16, 48879), some 21, some 22, some 23, some 24, some 8), (true, true, 11, (16, 48879), some 21, some 22, some 23, some 24, some 8)], 0, [none, none, none, none, some (63, false, 4095, 18446744073709547520, 0, 8192, 88, 0, 3079), none, none, none, none, none, none, none, none, none, none, none], true, 3, 1, 7) := by
   simp only [modelFetchShape]
   repeat' apply Prod.ext
-  all_goals simp [fetchExpected, singletonWord, writeFullWord, lookupEmpty, insertEmpty, resultView, deltaView, tlbView, fetchedDelta, PC,
-    rawReadInst, boolify8, «write'Skip», translateAddr, MCSR, vmType, privilege,
-    translate64, curASID, ASID_SIZE, SCSR, TLB, «write'TLB»,
-    mkTLBEntry, lookupTLB, TLBEntries, Flapjack.holFor, walk64, rawReadData,
-    MEM, «write'MEM», «rec'SV_Vaddr», «rec'SV_PTE», «reg'SV_PTE»,
-    checkMemPermission, isGlobal, LEVEL_BITS, PAGESIZE_BITS, holWordExtract,
-    holUpdate, List.range_succ, List.map] <;> decide
+  all_goals simp [fetchExpected, singletonWord, resultView, deltaView, tlbView, PC,
+    translateAddr, MCSR, vmType, privilege,
+    translate64, curASID, ASID_SIZE, SCSR, TLB, 
+    lookupTLB, TLBEntries, Flapjack.holFor, rawReadData,
+    MEM, «rec'SV_PTE», «reg'SV_PTE»,
+    checkMemPermission, holWordExtract,
+    List.range_succ, List.map] <;> decide
 
 -- Original HOL oracle walk_sv39; all nine Delta and all sixteen TLB slots.
 example (base : riscv_state) :
     (let a : BitVec 64 := 13944
-     let e : TLBEntry := { (default : TLBEntry) with
+     let _e : TLBEntry := { (default : TLBEntry) with
        asid := 63, global := false,
        vAddrMask := 4095, vMatchMask := 18446744073709547520, vAddr := 0,
        pAddr := 8192, age := 88, pteAddr := 0, pte := «rec'SV_PTE» 3079 }
@@ -708,7 +708,7 @@ example (base : riscv_state) :
       ((0, 16, 0), 2, 99, [(false, false, 1656, (16, 0), none, none, none, none, none), (true, true, 11, (16, 48879), some 21, some 22, some 23, some 24, some 8)], 3111, [some (63, false, 1073741823, 18446744072635809792, 0, 0, 77, 0, 3111), none, none, none, none, none, none, none, none, none, none, none, none, none, none, none], true, 3, 1, 7) := by
   simp only [modelFetchShape]
   repeat' apply Prod.ext
-  all_goals simp [fetchExpected, singletonWord, writeFullWord, lookupEmpty, insertEmpty, resultView, deltaView, tlbView, fetchedDelta, PC,
+  all_goals simp [fetchExpected, singletonWord, writeFullWord, insertEmpty, resultView, deltaView, tlbView, fetchedDelta, PC,
     rawReadInst, boolify8, «write'Skip», translateAddr, MCSR, vmType, privilege,
     translate64, curASID, ASID_SIZE, SCSR, TLB, «write'TLB»,
     mkTLBEntry, lookupTLB, TLBEntries, Flapjack.holFor, walk64, rawReadData,
@@ -719,7 +719,7 @@ example (base : riscv_state) :
 -- Original HOL oracle walk_sv48; all nine Delta and all sixteen TLB slots.
 example (base : riscv_state) :
     (let a : BitVec 64 := 13944
-     let e : TLBEntry := { (default : TLBEntry) with
+     let _e : TLBEntry := { (default : TLBEntry) with
        asid := 63, global := false,
        vAddrMask := 4095, vMatchMask := 18446744073709547520, vAddr := 0,
        pAddr := 8192, age := 88, pteAddr := 0, pte := «rec'SV_PTE» 3079 }
@@ -747,7 +747,7 @@ example (base : riscv_state) :
       ((0, 16, 0), 2, 99, [(false, false, 1656, (16, 0), none, none, none, none, none), (true, true, 11, (16, 48879), some 21, some 22, some 23, some 24, some 8)], 3111, [some (63, false, 549755813887, 18446743523953737728, 0, 0, 77, 0, 3111), none, none, none, none, none, none, none, none, none, none, none, none, none, none, none], true, 0, 1, 7) := by
   simp only [modelFetchShape]
   repeat' apply Prod.ext
-  all_goals simp [fetchExpected, singletonWord, writeFullWord, lookupEmpty, insertEmpty, resultView, deltaView, tlbView, fetchedDelta, PC,
+  all_goals simp [fetchExpected, singletonWord, writeFullWord, insertEmpty, resultView, deltaView, tlbView, fetchedDelta, PC,
     rawReadInst, boolify8, «write'Skip», translateAddr, MCSR, vmType, privilege,
     translate64, curASID, ASID_SIZE, SCSR, TLB, «write'TLB»,
     mkTLBEntry, lookupTLB, TLBEntries, Flapjack.holFor, walk64, rawReadData,
@@ -758,7 +758,7 @@ example (base : riscv_state) :
 -- Original HOL oracle walk_invalid; all nine Delta and all sixteen TLB slots.
 example (base : riscv_state) :
     (let a : BitVec 64 := 13944
-     let e : TLBEntry := { (default : TLBEntry) with
+     let _e : TLBEntry := { (default : TLBEntry) with
        asid := 63, global := false,
        vAddrMask := 4095, vMatchMask := 18446744073709547520, vAddr := 0,
        pAddr := 8192, age := 88, pteAddr := 0, pte := «rec'SV_PTE» 3079 }
@@ -786,12 +786,12 @@ example (base : riscv_state) :
       ((2, 0, 1656), 99, 99, [(true, true, 11, (16, 48879), some 21, some 22, some 23, some 24, some 8), (true, true, 11, (16, 48879), some 21, some 22, some 23, some 24, some 8)], 0, [none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none], true, 3, 1, 7) := by
   simp only [modelFetchShape]
   repeat' apply Prod.ext
-  all_goals simp [fetchExpected, singletonWord, writeFullWord, lookupEmpty, insertEmpty, resultView, deltaView, tlbView, fetchedDelta, PC,
-    rawReadInst, boolify8, «write'Skip», translateAddr, MCSR, vmType, privilege,
-    translate64, curASID, ASID_SIZE, SCSR, TLB, «write'TLB»,
-    mkTLBEntry, lookupTLB, TLBEntries, Flapjack.holFor, walk64, rawReadData,
-    MEM, «write'MEM», «rec'SV_Vaddr», «rec'SV_PTE», «reg'SV_PTE»,
-    checkMemPermission, isGlobal, LEVEL_BITS, PAGESIZE_BITS, holWordExtract,
-    holUpdate, List.range_succ, List.map] <;> decide
+  all_goals simp [fetchExpected, resultView, deltaView, PC,
+    translateAddr, MCSR, vmType, privilege,
+    translate64, SCSR, TLB, 
+    lookupTLB, TLBEntries, Flapjack.holFor, walk64, rawReadData,
+    MEM, «rec'SV_Vaddr», «rec'SV_PTE», 
+    LEVEL_BITS, holWordExtract,
+    List.range_succ, List.map] <;> decide
 
 end Flapjack.Test

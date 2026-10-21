@@ -21,7 +21,7 @@ private theorem writeFullWord (w : BitVec 64) (s : riscv_state) :
   have hidx : holWordExtract 61 63 3 (BitVec.ofNat 64 0) = BitVec.ofNat 61 0 := by decide
   have halign : holWordExtract 3 2 0 (BitVec.ofNat 64 0) = BitVec.ofNat 3 0 := by decide
   simp only [rawWriteData, hmask, hidx, halign]
-  simp only [BitVec.toNat_zero, BEq.refl, Bool.true_eq, ↓reduceIte,
+  simp only [BitVec.toNat_zero, BEq.refl, ↓reduceIte,
     BitVec.not_allOnes, BitVec.and_zero, BitVec.and_allOnes, BitVec.zero_or]
 
 -- Flapjack-specific empty-table normalizations, with no standalone HOL originals.
@@ -39,7 +39,7 @@ private theorem insertEmpty (asid : BitVec 6) (va pa pteAddr : BitVec 64)
   simp [addToTLB, TLBEntries, Flapjack.holFor, holUpdate]
 
 
-private def fixture (base : riscv_state) (w b v o rd core arch vm : Nat) (reservation : Option (BitVec 64)) : riscv_state :=
+private def fixture (base : riscv_state) (w b v _o _rd core arch vm : Nat) (reservation : Option (BitVec 64)) : riscv_state :=
   { base with procID := BitVec.ofNat 8 core, totalCore := 1, exception := .NoException, c_NextFetch := (fun _ => none), c_gpr := (fun _ reg => if reg = BitVec.ofNat 5 2 then BitVec.ofNat 64 b else if reg = BitVec.ofNat 5 3 then 3735928559 else 99), c_cycles := (fun _ => 77),       c_MCSR := (fun id => { base.c_MCSR id with mstatus := { (base.c_MCSR id).mstatus with MMPRV := false, MPRV := 0, MPRV1 := 3, VM := BitVec.ofNat 5 vm }, mcpuid := { (base.c_MCSR id).mcpuid with ArchBase := BitVec.ofNat 2 arch } }), c_SCSR := (fun id => { base.c_SCSR id with sasid := 63, sptbr := 0 }), c_tlb := (fun _ _ => none), c_ReserveLoad := (fun id => if id = BitVec.ofNat 8 core then reservation else some 21),       MEM8 := (fun x => if (x - BitVec.ofNat 64 v).toNat < 8 then BitVec.ofNat 8 (w / 2 ^ (8 * (x - BitVec.ofNat 64 v).toNat)) else 0) }
 
 private def trapView : Option TransferControl → Nat × Option Nat
@@ -70,12 +70,12 @@ example (base : riscv_state) :
       (0,0,99,(0,none),true,18364758546243763951,239,none,none,true,1,7,none,some 21) := by
   simp only [observation, Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'SC_W»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    Flapjack.holThe,ReserveLoad,matchLoadReservation,«write'ReserveLoad»,GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'SC_W»,fixture,trapView,
+    Flapjack.holThe,ReserveLoad,matchLoadReservation,«write'ReserveLoad»,GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,
+    rawReadData,rawWriteData,MEM,«write'MEM»,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_scw_probe.out: scw_positive.
 example (base : riscv_state) :
@@ -84,12 +84,12 @@ example (base : riscv_state) :
       (0,0,99,(0,none),true,1311768468603649775,239,none,none,true,1,7,none,some 21) := by
   simp only [observation, Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'SC_W»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    Flapjack.holThe,ReserveLoad,matchLoadReservation,«write'ReserveLoad»,GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'SC_W»,fixture,trapView,
+    Flapjack.holThe,ReserveLoad,matchLoadReservation,«write'ReserveLoad»,GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,
+    rawReadData,rawWriteData,MEM,«write'MEM»,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_scw_probe.out: scw_rd_zero.
 example (base : riscv_state) :
@@ -98,12 +98,12 @@ example (base : riscv_state) :
       (0,99,99,(0,none),true,18364758546243763951,239,none,none,true,1,7,none,some 21) := by
   simp only [observation, Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'SC_W»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    Flapjack.holThe,ReserveLoad,matchLoadReservation,«write'ReserveLoad»,GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'SC_W»,fixture,trapView,
+    Flapjack.holThe,ReserveLoad,matchLoadReservation,«write'ReserveLoad»,GPR,gpr,«write'GPR»,
+    translateAddr,MCSR,vmType,
+    rawReadData,rawWriteData,MEM,«write'MEM»,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_scw_probe.out: scw_core_wrap.
 example (base : riscv_state) :
@@ -112,12 +112,12 @@ example (base : riscv_state) :
       (0,0,99,(0,none),true,18364758546243763951,239,none,none,true,1,255,none,some 21) := by
   simp only [observation, Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'SC_W»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    Flapjack.holThe,ReserveLoad,matchLoadReservation,«write'ReserveLoad»,GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'SC_W»,fixture,trapView,
+    Flapjack.holThe,ReserveLoad,matchLoadReservation,«write'ReserveLoad»,GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,
+    rawReadData,rawWriteData,MEM,«write'MEM»,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_scw_probe.out: scw_fault_sv32.
 example (base : riscv_state) :
@@ -126,12 +126,12 @@ example (base : riscv_state) :
       (99,99,99,(4,some 8),true,0,128,none,none,true,1,7,some 8,some 21) := by
   simp only [observation, Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'SC_W»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    Flapjack.holThe,ReserveLoad,matchLoadReservation,«write'ReserveLoad»,GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'SC_W»,fixture,trapView,
+    Flapjack.holThe,ReserveLoad,matchLoadReservation,GPR,gpr,signalAddressException,setTrap,«write'NextFetch»,
+    translateAddr,MCSR,vmType,privilege,
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_scw_probe.out: scw_rv32_mode.
 example (base : riscv_state) :
@@ -140,12 +140,12 @@ example (base : riscv_state) :
       (0,0,99,(0,none),true,18364758546243763951,239,none,none,true,1,7,none,some 21) := by
   simp only [observation, Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'SC_W»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    Flapjack.holThe,ReserveLoad,matchLoadReservation,«write'ReserveLoad»,GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'SC_W»,fixture,trapView,
+    Flapjack.holThe,ReserveLoad,matchLoadReservation,«write'ReserveLoad»,GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,
+    rawReadData,rawWriteData,MEM,«write'MEM»,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_scw_probe.out: scw_rv128_mode.
 example (base : riscv_state) :
@@ -154,12 +154,12 @@ example (base : riscv_state) :
       (0,0,99,(0,none),true,18364758546243763951,239,none,none,true,1,7,none,some 21) := by
   simp only [observation, Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'SC_W»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    Flapjack.holThe,ReserveLoad,matchLoadReservation,«write'ReserveLoad»,GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'SC_W»,fixture,trapView,
+    Flapjack.holThe,ReserveLoad,matchLoadReservation,«write'ReserveLoad»,GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,
+    rawReadData,rawWriteData,MEM,«write'MEM»,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_scw_probe.out: scw_walk_returned_state.
 example (base : riscv_state) :
@@ -168,12 +168,12 @@ example (base : riscv_state) :
       (0,0,99,(0,none),true,3735928559,239,some (63,false,1073741823,18446744072635809792,0,0,77,0,false,3,true,0,3,true,0),none,true,1,7,none,some 21) := by
   simp only [observation, Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'SC_W»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    Flapjack.holThe,ReserveLoad,matchLoadReservation,«write'ReserveLoad»,GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
+  all_goals simp [«dfn'SC_W»,fixture,trapView,tlbView,singletonWord,insertEmpty,
+    Flapjack.holThe,ReserveLoad,matchLoadReservation,«write'ReserveLoad»,GPR,gpr,«write'GPR»,«write'gpr»,
     translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
     SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
     «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+    holUpdate,] <;> decide
 
 -- Original l3_scw_probe.out: scw_misaligned_1.
 example (base : riscv_state) :
@@ -182,12 +182,12 @@ example (base : riscv_state) :
       (99,99,99,(3,some 1),true,15905193217759412224,128,none,none,true,1,7,some 1,some 21) := by
   simp only [observation, Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'SC_W»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    Flapjack.holThe,ReserveLoad,matchLoadReservation,«write'ReserveLoad»,GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'SC_W»,fixture,trapView,
+    ReserveLoad,GPR,gpr,signalAddressException,setTrap,«write'NextFetch»,
+    
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_scw_probe.out: scw_misaligned_2.
 example (base : riscv_state) :
@@ -196,12 +196,12 @@ example (base : riscv_state) :
       (99,99,99,(3,some 2),true,13445767530308173824,128,none,none,true,1,7,some 2,some 21) := by
   simp only [observation, Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'SC_W»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    Flapjack.holThe,ReserveLoad,matchLoadReservation,«write'ReserveLoad»,GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'SC_W»,fixture,trapView,
+    ReserveLoad,GPR,gpr,signalAddressException,setTrap,«write'NextFetch»,
+    
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_scw_probe.out: scw_misaligned_3.
 example (base : riscv_state) :
@@ -210,12 +210,12 @@ example (base : riscv_state) :
       (99,99,99,(3,some 3),true,11022090048915898368,128,none,none,true,1,7,some 3,some 21) := by
   simp only [observation, Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'SC_W»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    Flapjack.holThe,ReserveLoad,matchLoadReservation,«write'ReserveLoad»,GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'SC_W»,fixture,trapView,
+    ReserveLoad,GPR,gpr,signalAddressException,setTrap,«write'NextFetch»,
+    
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_scw_probe.out: scw_order_0_1.
 example (base : riscv_state) :
@@ -224,12 +224,12 @@ example (base : riscv_state) :
       (0,0,99,(0,none),true,18364758546243763951,239,none,none,true,1,7,none,some 21) := by
   simp only [observation, Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'SC_W»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    Flapjack.holThe,ReserveLoad,matchLoadReservation,«write'ReserveLoad»,GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'SC_W»,fixture,trapView,
+    Flapjack.holThe,ReserveLoad,matchLoadReservation,«write'ReserveLoad»,GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,
+    rawReadData,rawWriteData,MEM,«write'MEM»,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_scw_probe.out: scw_order_1_0.
 example (base : riscv_state) :
@@ -238,12 +238,12 @@ example (base : riscv_state) :
       (0,0,99,(0,none),true,18364758546243763951,239,none,none,true,1,7,none,some 21) := by
   simp only [observation, Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'SC_W»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    Flapjack.holThe,ReserveLoad,matchLoadReservation,«write'ReserveLoad»,GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'SC_W»,fixture,trapView,
+    Flapjack.holThe,ReserveLoad,matchLoadReservation,«write'ReserveLoad»,GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,
+    rawReadData,rawWriteData,MEM,«write'MEM»,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_scw_probe.out: scw_order_1_1.
 example (base : riscv_state) :
@@ -252,12 +252,12 @@ example (base : riscv_state) :
       (0,0,99,(0,none),true,18364758546243763951,239,none,none,true,1,7,none,some 21) := by
   simp only [observation, Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'SC_W»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    Flapjack.holThe,ReserveLoad,matchLoadReservation,«write'ReserveLoad»,GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'SC_W»,fixture,trapView,
+    Flapjack.holThe,ReserveLoad,matchLoadReservation,«write'ReserveLoad»,GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,
+    rawReadData,rawWriteData,MEM,«write'MEM»,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_scw_probe.out: scw_reservation_mismatch.
 example (base : riscv_state) :
@@ -266,12 +266,12 @@ example (base : riscv_state) :
       (1,1,99,(0,none),true,18364758546640568448,128,none,none,true,1,7,some 21,some 21) := by
   simp only [observation, Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'SC_W»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    Flapjack.holThe,ReserveLoad,matchLoadReservation,«write'ReserveLoad»,GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'SC_W»,fixture,trapView,
+    Flapjack.holThe,ReserveLoad,matchLoadReservation,GPR,gpr,«write'GPR»,«write'gpr»,
+    
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_scw_probe.out: scw_reservation_none.
 example (base : riscv_state) :
@@ -280,12 +280,12 @@ example (base : riscv_state) :
       (1,1,99,(0,none),true,18364758546640568448,128,none,none,true,1,7,none,some 21) := by
   simp only [observation, Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'SC_W»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    Flapjack.holThe,ReserveLoad,matchLoadReservation,«write'ReserveLoad»,GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'SC_W»,fixture,trapView,
+    Flapjack.holThe,ReserveLoad,matchLoadReservation,GPR,gpr,«write'GPR»,«write'gpr»,
+    
+    rawReadData,MEM,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_scw_probe.out: scw_read_only_page.
 example (base : riscv_state) :
@@ -294,12 +294,12 @@ example (base : riscv_state) :
       (0,0,99,(0,none),true,3735928559,239,some (63,false,1073741823,18446744072635809792,0,0,77,0,false,3,true,0,2,true,0),none,true,1,7,none,some 21) := by
   simp only [observation, Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'SC_W»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    Flapjack.holThe,ReserveLoad,matchLoadReservation,«write'ReserveLoad»,GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
+  all_goals simp [«dfn'SC_W»,fixture,trapView,tlbView,singletonWord,insertEmpty,
+    Flapjack.holThe,ReserveLoad,matchLoadReservation,«write'ReserveLoad»,GPR,gpr,«write'GPR»,«write'gpr»,
     translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
     SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
     «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+    holUpdate,] <;> decide
 
 -- Original l3_scw_probe.out: scw_rs2_zero.
 example (base : riscv_state) :
@@ -308,12 +308,12 @@ example (base : riscv_state) :
       (0,0,99,(0,none),true,18364758542507835392,0,none,none,true,1,7,none,some 21) := by
   simp only [observation, Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'SC_W»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    Flapjack.holThe,ReserveLoad,matchLoadReservation,«write'ReserveLoad»,GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'SC_W»,fixture,trapView,
+    Flapjack.holThe,ReserveLoad,matchLoadReservation,«write'ReserveLoad»,GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,
+    rawReadData,rawWriteData,MEM,«write'MEM»,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 -- Original l3_scw_probe.out: scw_address_four.
 example (base : riscv_state) :
@@ -322,11 +322,11 @@ example (base : riscv_state) :
       (0,0,99,(0,none),true,16045690981097406464,239,none,none,true,1,7,none,some 21) := by
   simp only [observation, Prod.mk.injEq]
   repeat' apply And.intro
-  all_goals simp [«dfn'SC_W»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    Flapjack.holThe,ReserveLoad,matchLoadReservation,«write'ReserveLoad»,GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
+  all_goals simp [«dfn'SC_W»,fixture,trapView,
+    Flapjack.holThe,ReserveLoad,matchLoadReservation,«write'ReserveLoad»,GPR,gpr,«write'GPR»,«write'gpr»,
+    translateAddr,MCSR,vmType,
+    rawReadData,rawWriteData,MEM,«write'MEM»,
+    holWordExtract,
+    holUpdate,] <;> decide
 
 end Flapjack.Test.L3SCWParity
