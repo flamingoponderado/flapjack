@@ -146,17 +146,17 @@ theorem simpProgCorrectTickCase {width : Nat} [NeZero width] {σ : Type} :
   intro state result finalState heval _hresult
   rw [evalCrepSemHOLProgExact_tick] at heval
   by_cases hzero : state.clock = 0
-  · rw [if_pos hzero] at heval
+  · rw [ite_eq_left hzero] at heval
     cases heval
     simp only [crepSimpProgHOL]
     rw [evalCrepSemHOLProgExact_tick]
     have hclock : (crepSimpMapcsHOL state).clock = state.clock := rfl
-    rw [hclock, if_pos hzero, crepSimpMapcsHOL_emptyLocals]
-  · rw [if_neg hzero] at heval
+    rw [hclock, ite_eq_left hzero, crepSimpMapcsHOL_emptyLocals]
+  · rw [ite_eq_right hzero] at heval
     cases heval
     simp only [crepSimpProgHOL]
     rw [evalCrepSemHOLProgExact_tick]
     have hclock : (crepSimpMapcsHOL state).clock = state.clock := rfl
-    rw [hclock, if_neg hzero, ← crepSimpMapcsHOL_decClock]
+    rw [hclock, ite_eq_right hzero, ← crepSimpMapcsHOL_decClock]
 
 end Flapjack

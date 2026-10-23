@@ -94,7 +94,7 @@ theorem nonrecursive {width : Nat} {σ : Type} [NeZero width]
     | none => rfl
     | some result =>
         obtain ⟨body, callee, shape⟩ := result
-        simp only [Option.map_some, hclock, if_true]
+        simp only [Option.map_some, hclock, ite_true]
         simp only [emptyLocalsHOLFinite, hclock]
 
 end FpermCallEntry

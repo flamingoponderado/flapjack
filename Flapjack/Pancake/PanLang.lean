@@ -788,7 +788,7 @@ theorem mem_compField_imp_mem (index : Nat) (shapes : List Shape)
           have hvalues' : (values.drop (Shape.shapeSize shape)).length =
               Shape.shapeSize (.comb shapes) := by
             rw [List.length_drop, hvalues, shapeSize_comb_cons, Nat.add_sub_cancel_left]
-          simp only [compField, Nat.succ_ne_zero, if_false] at hmem
+          simp only [compField, Nat.succ_ne_zero, ite_false] at hmem
           exact List.mem_of_mem_drop
             (ih k (values.drop (Shape.shapeSize shape)) hk hvalues' hmem)
 
@@ -812,7 +812,7 @@ theorem mem_compField_imp_mem_of_any (index : Nat) (shapes : List Shape)
           simp only [compField] at hmem
           exact List.mem_of_mem_take hmem
       | succ k =>
-          simp only [compField, Nat.succ_ne_zero, if_false] at hmem
+          simp only [compField, Nat.succ_ne_zero, ite_false] at hmem
           exact List.mem_of_mem_drop
             (ih k (values.drop (Shape.shapeSize shape)) hmem)
 
@@ -843,7 +843,7 @@ theorem listDisjoint_take_drop_sum (values : List α) (n m p : Nat)
     have := hi; rw [List.length_take] at this; omega
   have hjLen : (n + m) + j < values.length := by
     have := hj; rw [List.length_take, List.length_drop] at this; omega
-  have hinj : i = (n + m) + j := (List.getElem_inj h).mp (hix.trans hjx.symm)
+  have hinj : i = (n + m) + j := (List.Nodup.getElem_inj h).mp (hix.trans hjx.symm)
   have hiN : i < n := by
     have := hi; rw [List.length_take] at this; omega
   omega
@@ -916,7 +916,7 @@ theorem listDisjoint_take_drop (xs : List α) (n : Nat) (h : xs.Nodup) :
     have := hi; rw [List.length_take] at this; omega
   have hjLen : n + j < xs.length := by
     have := hj; rw [List.length_drop] at this; omega
-  have hinj : i = n + j := (List.getElem_inj h).mp (hix.trans hjx.symm)
+  have hinj : i = n + j := (List.Nodup.getElem_inj h).mp (hix.trans hjx.symm)
   have hiN : i < n := by
     have := hi; rw [List.length_take] at this; omega
   omega
@@ -943,7 +943,7 @@ theorem listDisjoint_drop_take_drop_take (values : List α) (a b c d : Nat)
   rw [List.getElem_drop] at hjx
   have hiN : i < b := by
     have := hi; rw [List.length_take] at this; omega
-  have hinj : a + i = (a + c) + j := (List.getElem_inj h).mp (hix.trans hjx.symm)
+  have hinj : a + i = (a + c) + j := (List.Nodup.getElem_inj h).mp (hix.trans hjx.symm)
   omega
 
 /-! Additivity of the flat size over an appended shape list (used to relate the
@@ -1101,7 +1101,7 @@ theorem getElem_fst_inj (values : List (α × β)) (n n' : Nat)
   have hmapped : (values.map Prod.fst)[n]'(by rwa [List.length_map]) =
       (values.map Prod.fst)[n']'(by rwa [List.length_map]) := by
     rw [List.getElem_map, List.getElem_map, heq, heq']
-  exact (List.getElem_inj hnodup).mp hmapped
+  exact (List.Nodup.getElem_inj hnodup).mp hmapped
 
 /-! Counterpart of Cake's `max_foldr_lt`
     (`cakeml/pancake/semantics/pan_commonPropsScript.sml:768`): a member of a

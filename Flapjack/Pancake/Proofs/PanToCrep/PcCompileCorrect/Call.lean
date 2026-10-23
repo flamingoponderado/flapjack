@@ -222,7 +222,7 @@ theorem pcCompileCorrectCallPrelude {width : Nat} {σ : Type} [NeZero width]
   · exact pcCompileCorrectCallTargetArgs s t ctxt argexps args hargs hstate hcode hlocals
       hlocalised
   · simp only [lookupCodeFiniteHOL, htgt]
-    rw [if_pos ⟨by simp [List.length_range, hsize, hflatLen], List.nodup_range⟩]
+    rw [ite_eq_left ⟨by simp [List.length_range, hsize, hflatLen], List.nodup_range⟩]
     congr 3
     apply HolFiniteMapExact.ext
     funext k
@@ -270,7 +270,7 @@ theorem pcCompileCorrectCallNoReturnTarget {width : Nat} {σ : Type} [NeZero wid
   dsimp only
   rw [hlookup]
   dsimp only
-  rw [if_neg (by simp [crepReturnInfoNodupError]), if_neg hclock]
+  rw [ite_eq_right (by simp [crepReturnInfoNodupError]), ite_eq_right hclock]
   rcases evalCrepSemHOLProgExact { decClockCrepSemHOL t with locals := locals } body with
     ⟨_ | r, st⟩
   · rfl
@@ -331,7 +331,7 @@ theorem pcCompileCorrectAt_callTail {width : Nat} {σ : Type} [NeZero width]
           obtain ⟨prog, newlocals, rsh⟩ := triple
           rw [hlk] at hrun
           dsimp only at hrun
-          rw [if_neg hclock] at hrun
+          rw [ite_eq_right hclock] at hrun
           obtain ⟨vshapes, _hsrc, hprogLoc, _hfuncs, _hlen, htargs, htlookup, hst', hcode',
             hexcp', hloc'⟩ :=
             pcCompileCorrectCallPrelude source t ctxt fname argexps args prog newlocals rsh
@@ -370,14 +370,14 @@ theorem pcCompileCorrectAt_callTail {width : Nat} {σ : Type} [NeZero width]
             | returned v =>
                 dsimp only at hrun
                 by_cases hsh : shapeEqHOL (shapeOfHOLExact v) rsh = true
-                · rw [if_pos hsh] at hrun
+                · rw [ite_eq_left hsh] at hrun
                   obtain ⟨rfl, rfl⟩ := Prod.mk.inj hrun
                   obtain ⟨res1, t1, hrun1, hs, hc, he, hr⟩ := hIH _ (by simp) hbody
                   simp only [pcCompileCorrectResultRel] at hr
                   subst hr
                   refine ⟨_, _, by rw [htarget, hrun1], panToCrepStateRelFiniteExact_emptyLocals _ _ hs,
                     codeRelExactHOLW_ctxtFc ctxt _ _ _ _ _ hc, he, rfl⟩
-                · rw [if_neg hsh] at hrun
+                · rw [ite_eq_right hsh] at hrun
                   exact absurd (Prod.mk.inj hrun).1.symm hres
             | exception eid v =>
                 obtain ⟨rfl, rfl⟩ := Prod.mk.inj hrun
@@ -447,10 +447,10 @@ theorem crepCallTarget {width : Nat} [NeZero width] {σ : Type}
   dsimp only
   rw [hlookup]
   dsimp only
-  rw [if_neg (by
+  rw [ite_eq_right (by
     rcases returnInfo with _ | ⟨rts, h⟩
     · simp [crepReturnInfoNodupError]
-    · simpa [crepReturnInfoNodupError] using hguard rts h rfl), if_neg hclock]
+    · simpa [crepReturnInfoNodupError] using hguard rts h rfl), ite_eq_right hclock]
   rcases evalCrepSemHOLProgExact { decClockCrepSemHOL t with locals := locals } body with
     ⟨_ | r, st⟩
   · rfl
@@ -673,7 +673,7 @@ theorem pcCompileCorrectAt_callRetTerminal {width : Nat} {σ : Type} [NeZero wid
   dsimp only at hrun
   rw [hlk] at hrun
   dsimp only at hrun
-  rw [if_neg hclock, hbody] at hrun
+  rw [ite_eq_right hclock, hbody] at hrun
   obtain ⟨vshapes, _hsrc, hprogLoc, hfuncs, _hlen, htargs, htlookup, hst', hcode',
     hexcp', hloc'⟩ :=
     pcCompileCorrectCallPrelude source t ctxt fname argexps values prog newlocals rsh
@@ -729,10 +729,10 @@ theorem crepCallTimeout {width : Nat} [NeZero width] {σ : Type}
   dsimp only
   rw [hlookup]
   dsimp only
-  rw [if_neg (by
+  rw [ite_eq_right (by
     rcases returnInfo with _ | ⟨rts, h⟩
     · simp [crepReturnInfoNodupError]
-    · simpa [crepReturnInfoNodupError] using hguard rts h rfl), if_pos hclock]
+    · simpa [crepReturnInfoNodupError] using hguard rts h rfl), ite_eq_left hclock]
 
 /-- The zero-clock target run of a call wrapped in zero-initialised return slots:
     it times out, in a state that differs from the caller's only in locals. -/
@@ -804,7 +804,7 @@ theorem pcCompileCorrectAt_callZeroClock {width : Nat} {σ : Type} [NeZero width
           obtain ⟨prog, newlocals, rsh⟩ := triple
           rw [hlk] at hrun
           dsimp only at hrun
-          rw [if_pos hclock] at hrun
+          rw [ite_eq_left hclock] at hrun
           obtain ⟨rfl, rfl⟩ := Prod.mk.inj hrun
           obtain ⟨vshapes, _hsrc, _hprogLoc, hfuncs, _hlen, htargs, htlookup, _⟩ :=
             pcCompileCorrectCallPrelude source t ctxt fname argexps values prog newlocals rsh
@@ -981,7 +981,7 @@ theorem pcCompileCorrectCallRetReturnTargetNested {width : Nat} [NeZero width] {
   have hzlen : rts.length = (List.replicate rts.length (HolWordLab.word (0 : BitVec width))).length :=
     by simp
   simp only [crepCallAfterBody]
-  rw [if_neg (by rw [hlen, hrtsLen]; exact fun h => h rfl)]
+  rw [ite_eq_right (by rw [hlen, hrtsLen]; exact fun h => h rfl)]
   rw [mapM_lookup_updateListEq _ rts _ hnodup hzlen]
   dsimp only
   rw [updateListEq_overwrite t.locals rts _ retvs hzlen (by rw [hlen, hrtsLen]),
@@ -1018,7 +1018,7 @@ theorem pcCompileCorrectCallRetReturnTargetWrap {width : Nat} [NeZero width] {σ
     intro rts' h heq; simp only [Option.some.injEq, Prod.mk.injEq] at heq; rw [← heq.1]; exact hnodup
   rw [hc, crepCallTarget t _ f _ flat body locals hargs hlookup hg hclock, hcallee]
   simp only [crepCallAfterBody]
-  rw [if_neg (by rw [hlen]; exact fun h => h rfl), hns]
+  rw [ite_eq_right (by rw [hlen]; exact fun h => h rfl), hns]
 /-- `locals_rel` survives writing a same-shaped value `v` to a source local whose
     context slots are `ns`, together with `ns := flatten v` on the target. This is
     the relation reasoning of HOL's `ret_call_shape_retv_*_tac`
@@ -1098,13 +1098,13 @@ theorem pcCompileCorrectAt_callRetReturn {width : Nat} {σ : Type} [NeZero width
   dsimp only at hrun
   rw [hlk] at hrun
   dsimp only at hrun
-  rw [if_neg hclock, hbody] at hrun
+  rw [ite_eq_right hclock, hbody] at hrun
   dsimp only at hrun
   by_cases hsh : shapeEqHOL (shapeOfHOLExact v) rsh = true
   case neg =>
-    rw [if_neg hsh] at hrun
+    rw [ite_eq_right hsh] at hrun
     exact absurd (Prod.mk.inj hrun).1.symm hres
-  rw [if_pos hsh] at hrun
+  rw [ite_eq_left hsh] at hrun
   have hshape : shapeOfHOLExact v = rsh := (shapeEqHOL_eq_true _ _).mp hsh
   obtain ⟨vshapes, _hsrc, hprogLoc, hfuncs, _hlen, htargs, htlookup, hst', hcode',
     hexcp', hloc'⟩ :=
@@ -1140,9 +1140,9 @@ theorem pcCompileCorrectAt_callRetReturn {width : Nat} {σ : Type} [NeZero width
         dsimp only at hrun
         by_cases hvalid : isValidValueHOLExact source.toExact .local name v = true
         case neg =>
-          rw [if_neg hvalid] at hrun
+          rw [ite_eq_right hvalid] at hrun
           exact absurd (Prod.mk.inj hrun).1.symm hres
-        rw [if_pos hvalid] at hrun
+        rw [ite_eq_left hvalid] at hrun
         obtain ⟨rfl, rfl⟩ := Prod.mk.inj hrun
         cases hold : source.locals.lookup name with
         | none =>
@@ -1242,7 +1242,7 @@ theorem crepEvalAssignLoadGlobals {width : Nat} [NeZero width] {σ : Type} :
               simp only [List.length_cons, loadGlobalsHOL, panMap2, crepNestedSeqHOL]
               rw [evalCrepSemHOLProgExact_seq_holShape, evalCrepSemHOLProgExact_assign_holShape]
               simp only [evalCrepSemHOLExp, hw, hold]
-              try simp only [if_true]
+              try simp only [ite_true]
               let t1 : CrepSemHOLState width σ := { t with locals := t.locals.updateEq (n, w) }
               have hloc1 : ∀ m, m ∈ ns → t1.locals.lookup m ≠ none := by
                 intro m hm
@@ -1375,7 +1375,7 @@ theorem pcCompileCorrectCallExcPropagateTarget {width : Nat} [NeZero width] {σ 
     | some ch =>
         obtain ⟨code, h⟩ := ch
         simp only [crepCallAfterBody]
-        rw [if_neg (hnofire code h hH)]
+        rw [ite_eq_right (hnofire code h hH)]
   rcases compileCallSomeShapeHdl ctxt dest hdl f args vshapes rsh hno hfuncs with
     hc | ⟨hc, _⟩ | ⟨rts0, hnd0, hc⟩
   · have hnodup : ((List.range (sizeOfShapeHOL rsh)).map (fun i => ctxt.vmax + i + 1)).Nodup :=
@@ -1437,13 +1437,13 @@ theorem pcCompileCorrectCallExcCaughtTarget {width : Nat} [NeZero width] {σ : T
     · rw [hc, crepNestedCallTarget t _ f _ flat body locals _ hargs hlookup
         (by intro r h heq; simp only [Option.some.injEq, Prod.mk.injEq] at heq; rw [← heq.1]
             exact hnodup) hclock hnodup hdist, hcallee, hfire]
-      simp only [crepCallAfterBody, if_true]
+      simp only [crepCallAfterBody, ite_true]
   · rw [hfire] at hnone; exact absurd hnone (by simp)
   · left
     rw [hc, crepCallTarget t _ f _ flat body locals hargs hlookup
       (by intro r h heq; simp only [Option.some.injEq, Prod.mk.injEq] at heq; rw [← heq.1]
           exact hnd0) hclock, hcallee, hfire]
-    simp only [crepCallAfterBody, if_true]
+    simp only [crepCallAfterBody, ite_true]
 
 private theorem fupdListHOLZipNotMem {α β : Type} [DecidableEq α] (k : α) :
     ∀ (xs : List α) (ys : List β) (f : FiniteMap α β), k ∉ xs →
@@ -1516,7 +1516,7 @@ theorem pcCompileCorrectAt_callRetException {width : Nat} {σ : Type} [NeZero wi
   dsimp only at hrun
   rw [hlk] at hrun
   dsimp only at hrun
-  rw [if_neg hclock, hbody] at hrun
+  rw [ite_eq_right hclock, hbody] at hrun
   dsimp only at hrun
   obtain ⟨vshapes, _hsrc, hprogLoc, hfuncs, _hlen, htargs, htlookup, hst', hcode',
     hexcp', hloc'⟩ :=
@@ -1557,7 +1557,7 @@ theorem pcCompileCorrectAt_callRetException {width : Nat} {σ : Type} [NeZero wi
     · dsimp only at hrun
       by_cases heq : eid = hid
       case neg =>
-        rw [if_neg heq] at hrun
+        rw [ite_eq_right heq] at hrun
         obtain ⟨rfl, rfl⟩ := Prod.mk.inj hrun
         apply prop rfl rfl
         intro code h hH hnc
@@ -1566,7 +1566,7 @@ theorem pcCompileCorrectAt_callRetException {width : Nat} {σ : Type} [NeZero wi
         simp only [Prod.mk.injEq] at hpair
         exact heq (hexcp.2 eid hid n code hn (hpair.1 ▸ hcode') hnc)
       subst heq
-      rw [if_pos rfl] at hrun
+      rw [ite_eq_left rfl] at hrun
       cases hsh : source.eshapes.lookup eid with
       | none =>
           rw [hsh] at hrun
@@ -1577,9 +1577,9 @@ theorem pcCompileCorrectAt_callRetException {width : Nat} {σ : Type} [NeZero wi
         by_cases hok : (shapeEqHOL (shapeOfHOLExact exn) sh &&
             isValidValueHOLExact source.toExact .local hv exn) = true
         case neg =>
-          rw [if_neg hok] at hrun
+          rw [ite_eq_right hok] at hrun
           exact absurd (Prod.mk.inj hrun).1.symm hres
-        rw [if_pos hok] at hrun
+        rw [ite_eq_left hok] at hrun
         obtain ⟨hshb, hvalid⟩ := Bool.and_eq_true_iff.mp hok
         have hshape : shapeOfHOLExact exn = sh := (shapeEqHOL_eq_true _ _).mp hshb
         cases hold : source.locals.lookup hv with
@@ -1661,7 +1661,7 @@ theorem pcCompileCorrectAt_callRetException {width : Nat} {σ : Type} [NeZero wi
             rw [evalCrepSemHOLProgExact_seq_holShape, hexp,
               crepEvalAssignLoadGlobals nsE { t1 with locals := TT } 0 (flattenHOL exn) hndE hpresent
                 hglobE]
-            simp only [if_true]
+            simp only [ite_true]
             have hsetE : panToCrepLocalsRelFiniteExact ctxt
                 (PanSemStateFiniteExact.setVarHOLFinite hv exn
                   { st with locals := source.locals }).locals
@@ -1753,7 +1753,7 @@ theorem pcCompileCorrectAt_call {width : Nat} {σ : Type} [NeZero width]
             dsimp only at hrun
             rw [hlk] at hrun
             dsimp only at hrun
-            rw [if_neg hclock] at hrun
+            rw [ite_eq_right hclock] at hrun
             rcases hb with hb | hb | hb | hb <;> rw [hb] at hrun <;>
               exact absurd (Prod.mk.inj hrun).1.symm hres
           rcases hbody : (PanSemStateFiniteExact.callEntryStateHOLFinite source newlocals

@@ -106,7 +106,7 @@ theorem doSimplify_production (limit : Nat) {native : State} {production : CakeR
       rw [degreeRel.simplify]
   refine ⟨result, ?_, ?_⟩
   · rw [actual]
-    simp only [doSimplify, Translator.Monadic.MonadBase.bind, getSimpWl, if_neg empty,
+    simp only [doSimplify, Translator.Monadic.MonadBase.bind, getSimpWl, ite_eq_right empty,
       ignoreBind, degreeRun, nativePush, setSimpWl, ret]
     have finalRun : unspill limit {native with degrees := finalDegrees, move_related := moves, stack := stack, simp_wl := []} = (.success (), result) := unspillRun
     rw [finalRun]

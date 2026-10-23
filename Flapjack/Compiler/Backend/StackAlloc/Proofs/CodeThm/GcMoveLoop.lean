@@ -170,7 +170,7 @@ theorem wordGcMoveLoopCode_run {width : Nat} [NeZero width] {C F : Type} {conf :
   rw [wordGcMoveLoop] at hm
   by_cases hp : pb = pa
   · subst hp
-    simp only [if_true, Prod.mk.injEq] at hm
+    simp only [ite_true, Prod.mk.injEq] at hm
     obtain ⟨rfl, rfl, rfl, -⟩ := hm
     obtain ⟨r0, hr0⟩ := Option.isSome_iff_exists.1 h0
     obtain ⟨r1, hr1⟩ := Option.isSome_iff_exists.1 h1
@@ -207,10 +207,10 @@ theorem wordGcMoveLoopCode_run {width : Nat} [NeZero width] {C F : Type} {conf :
     simp [k0, k1, k2, k3, k4, k5, k6, k7, k8]
   have hk : k ≠ 0 := by
     intro hk; subst hk; simp [hp] at hm
-  simp only [hp, hk, if_false] at hm
+  simp only [hp, hk, ite_false] at hm
   have hpb : (!(pa == pb)) = true := by simpa using Ne.symm hp
   by_cases hb : (wordSemTheWord (s.memory pb)).getLsbD 2 = true
-  · simp only [hb, if_true] at hm
+  · simp only [hb, ite_true] at hm
     have hc0 := wordGcMoveLoop_ok hm rfl
     simp only [Bool.and_eq_true] at hc0
     obtain ⟨-, hdm, hisw⟩ := hc0
@@ -235,7 +235,7 @@ theorem wordGcMoveLoopCode_run {width : Nat} [NeZero width] {C F : Type} {conf :
     rw [gcMoveLoop_body_skip conf { s with clock := s.clock + (ck + 1) } pb x hws hw2 hlen hshift
       h8 hdm hx hb]
     have hck : s.clock + (ck + 1) ≠ 0 := by omega
-    simp only [fixClock, setVar, contLoop, Nat.min_self, if_true, hck, if_false, decClock,
+    simp only [fixClock, setVar, contLoop, Nat.min_self, ite_true, hck, ite_false, decClock,
       ← wordGcMoveLoopCode_eq]
     refine (congrArg (fun st => evaluate (wordGcMoveLoopCode conf, st)) ?_).trans (hr.trans ?_)
     · simp only [s5, setVar]
@@ -251,7 +251,7 @@ theorem wordGcMoveLoopCode_run {width : Nat} [NeZero width] {C F : Type} {conf :
       by_cases k8 : k = 8
       · subst k8; simp
       simp [k7, k8]
-  · simp only [hb, Bool.false_eq_true, if_false] at hm
+  · simp only [hb, Bool.false_eq_true, ite_false] at hm
     generalize hl : wordGcMoveList conf (pb + wordSemBytesInWord,
       decodeLength conf (wordSemTheWord (s.memory pb)), i, pa, old, s.memory, s.mdomain) = R at hm
     obtain ⟨pb3, i1, pa1, m1, c1⟩ := R
@@ -310,7 +310,7 @@ theorem wordGcMoveLoopCode_run {width : Nat} [NeZero width] {C F : Type} {conf :
     have hmin : min (s.clock + (ck + ck' + 1)) (s5.clock + (ck' + 1)) = s5.clock + (ck' + 1) := by
       omega
     have hck : s5.clock + (ck' + 1) ≠ 0 := by omega
-    simp only [fixClock, contLoop, hmin, if_true, hck, if_false, decClock,
+    simp only [fixClock, contLoop, hmin, ite_true, hck, ite_false, decClock,
       ← wordGcMoveLoopCode_eq]
     refine (congrArg (fun st => evaluate (wordGcMoveLoopCode conf, st)) ?_).trans (hr.trans ?_)
     · congr 1

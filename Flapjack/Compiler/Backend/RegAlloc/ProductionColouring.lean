@@ -40,13 +40,13 @@ theorem assignAtempTag_production (limit node : Nat) (table : Spt (List Nat))
     exact good.2.2.2.2.2.2.1 _ (List.getElem_mem adjBound) next member
   have removal := removeColours_production native.adj_ls[node] (List.range limit) related good neighbours
   simp only [assignAtempTag, Translator.Monadic.MonadBase.bind, nodeTagSubEqn,
-    if_pos tagBound, holEl_eq_getElem node native.node_tag tagBound,
+    ite_eq_left tagBound, holEl_eq_getElem node native.node_tag tagBound,
     cakeAssignAtempTag, tagRead]
   cases native.node_tag[node] with
   | Fixed colour => exact ⟨native, rfl, good, rfl, related⟩
   | Stemp => exact ⟨native, rfl, good, rfl, related⟩
   | Atemp =>
-    simp only [Tag.toProduction, Translator.Monadic.MonadBase.bind, adjLsSubEqn, if_pos adjBound,
+    simp only [Tag.toProduction, Translator.Monadic.MonadBase.bind, adjLsSubEqn, ite_eq_left adjBound,
       holEl_eq_getElem node native.adj_ls adjBound, cakeAdjSub, adjRead,
       Option.getD_some, removal]
     cases colours : cakeRemoveColours production native.adj_ls[node] (List.range limit) with
@@ -78,14 +78,14 @@ theorem assignStempTag_production (limit node : Nat) (table : Spt (List Nat))
     fun next member => good.2.2.2.2.2.2.1 _ (List.getElem_mem adjBound) next member
   obtain ⟨tags, tagRun, colours⟩ := tagMap_production native.adj_ls[node] related good neighbours
   simp only [assignStempTag, Translator.Monadic.MonadBase.bind, nodeTagSubEqn,
-    if_pos tagBound, holEl_eq_getElem node native.node_tag tagBound,
+    ite_eq_left tagBound, holEl_eq_getElem node native.node_tag tagBound,
     cakeAssignStempTag, tagRead]
   cases native.node_tag[node] with
   | Fixed colour => exact ⟨native, rfl, good, rfl, related⟩
   | Atemp => exact ⟨native, rfl, good, rfl, related⟩
   | Stemp =>
     simp only [Tag.toProduction, Translator.Monadic.MonadBase.bind, adjLsSubEqn,
-      if_pos adjBound, holEl_eq_getElem node native.adj_ls adjBound, tagRun,
+      ite_eq_left adjBound, holEl_eq_getElem node native.adj_ls adjBound, tagRun,
       colours, cakeAdjSub, adjRead, Option.getD_some, cakeSort_eq_literal]
     let bads := Basis.Pure.MlList.sort (fun x y => decide (x ≤ y))
       (native.adj_ls[node].map (cakeTagCol production))

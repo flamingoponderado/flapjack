@@ -1138,7 +1138,7 @@ theorem bindPanValueParameters_eq_slc
   have hlengthCheck :
       ¬ ((parameters.map Prod.fst).length != arguments.length) := by
     simp [hnamesLength]
-  rw [if_neg hlengthCheck]
+  rw [ite_eq_right hlengthCheck]
   apply congrArg some
   have hempty : (FEMPTY : VarName → Option (PanValue α)) = fun _ => none := rfl
   rw [hempty] at hfold
@@ -3854,7 +3854,7 @@ theorem panValueFfiSharedLoad_stateRel_target
        simp only [opSizeToCrepLoadOp, crepRuntimeMemWidth,
          riscv64CrepRuntimeTarget_ffi, riscv64CrepRuntimeTarget_ffiContext,
          riscv64SharedMemCallFfiHandler_sharedMem, crepSharedMemOperator,
-         crepRuntimeSharedMem, setCrepRuntimeLocal_eq_update, hvalid, if_true,
+         crepRuntimeSharedMem, setCrepRuntimeLocal_eq_update, hvalid, ite_true,
          hcallBase, ← hvalue])
   · simpa only [stateRel] using stateRel_ffiUpdate source (riscv64CrepRuntimeTarget base)
       nextFfi hstate
@@ -3919,7 +3919,7 @@ theorem panValueFfiSharedStore_stateRel_target
        simp only [opSizeToCrepStoreOp,
          riscv64CrepRuntimeTarget_ffi, riscv64CrepRuntimeTarget_ffiContext,
          riscv64SharedMemCallFfiHandler_sharedMem, crepSharedMemOperator,
-         crepRuntimeSharedMem, hname, Option.map_some, panTheWord, hvalid, if_true]
+         crepRuntimeSharedMem, hname, Option.map_some, panTheWord, hvalid, ite_true]
        erw [hcallGoal])
   · simpa only [stateRel] using stateRel_ffiUpdate source (riscv64CrepRuntimeTarget base)
       nextFfi hstate
@@ -3963,7 +3963,7 @@ theorem panValueFfiSharedLoad_stateRel_final
        simp only [opSizeToCrepLoadOp, crepRuntimeMemWidth,
          riscv64CrepRuntimeTarget_ffi, riscv64CrepRuntimeTarget_ffiContext,
          riscv64SharedMemCallFfiHandler_sharedMem, crepSharedMemOperator,
-         crepRuntimeSharedMem, clearCrepRuntimeLocals, hvalid, if_true,
+         crepRuntimeSharedMem, clearCrepRuntimeLocals, hvalid, ite_true,
          hcallBase])
   · simpa only [stateRel, clearCrepRuntimeLocals] using hstate
 
@@ -4026,7 +4026,7 @@ theorem panValueFfiSharedStore_stateRel_final
        simp only [opSizeToCrepStoreOp, riscv64CrepRuntimeTarget_ffi,
          riscv64CrepRuntimeTarget_ffiContext,
          riscv64SharedMemCallFfiHandler_sharedMem, crepSharedMemOperator,
-         crepRuntimeSharedMem, hname, Option.map_some, panTheWord, hvalid, if_true]
+         crepRuntimeSharedMem, hname, Option.map_some, panTheWord, hvalid, ite_true]
        erw [hcallGoal])
   · simpa only [stateRel] using hstate
 
@@ -4643,12 +4643,12 @@ theorem rewrittenContextUnassigned [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
     intro v' sh'' ns'' hlk
     rw [FLOOKUP_update] at hlk
     by_cases hv : (v == v') = true
-    · rw [if_pos hv] at hlk
+    · rw [ite_eq_left hv] at hlk
       have hpair : (sh, nvars) = (sh'', ns'') := Option.some.inj hlk
       have hn : nvars = ns'' := congrArg Prod.snd hpair
       intro hxns''
       exact (hdistinct x (by rw [hn]; exact hxns'')) hxns
-    · rw [if_neg hv] at hlk
+    · rw [ite_eq_right hv] at hlk
       intro hxns''
       have hveq : v = v' :=
         hnoOverlap.2 v v' sh' sh'' ns ns'' hlookup hlk ⟨x, hxns, hxns''⟩

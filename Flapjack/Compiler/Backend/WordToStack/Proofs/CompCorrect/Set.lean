@@ -46,12 +46,12 @@ theorem compCorrectSet {width : Nat} [NeZero width] {C F : Type}
   rename_i register
   simp only [WordSemStateFiniteExact.evaluate] at execution
   have notHandler : name ≠ .handler := by
-    intro eq; subst name; simp only [true_or,if_true,Prod.mk.injEq] at execution
+    intro eq; subst name; simp only [true_or,ite_true,Prod.mk.injEq] at execution
     obtain ⟨rfl,rfl⟩ := execution; contradiction
   have notBitmap : name ≠ .bitmapBase := by
-    intro eq; subst name; simp only [or_true,if_true,Prod.mk.injEq] at execution
+    intro eq; subst name; simp only [or_true,ite_true,Prod.mk.injEq] at execution
     obtain ⟨rfl,rfl⟩ := execution; contradiction
-  simp only [notHandler,notBitmap,false_or,if_false,WordSemStateFiniteExact.wordExp] at execution
+  simp only [notHandler,notBitmap,false_or,ite_false,WordSemStateFiniteExact.wordExp] at execution
   cases read : WordSemStateFiniteExact.getVar register source with
   | none => simp [read] at execution; obtain ⟨rfl,rfl⟩ := execution; contradiction
   | some value =>
@@ -79,7 +79,7 @@ theorem compCorrectSet {width : Nat} [NeZero width] {C F : Type}
         have le : loaded.clock ≤ target.clock := by omega
         simp only [StackSemControl.fixClock,Nat.min_eq_right le]
       rw [fix]
-      simp only [StackSemEvaluate.evaluate_set,useStore,not_true_eq_false,if_false,
+      simp only [StackSemEvaluate.evaluate_set,useStore,not_true_eq_false,ite_false,
         loadedRead,codec]
     · simpa only [compCorrectResult,Option.map_none,ne_eq,not_true_eq_false,
         ↓reduceIte] using StateRelStoreUpdate.stateRelSetStore ac k f frame source

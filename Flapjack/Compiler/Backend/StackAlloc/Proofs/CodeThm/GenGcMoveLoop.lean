@@ -258,7 +258,7 @@ theorem genLoopStep_eval {width : Nat} [NeZero width] {C F : Type} (conf : Confi
   have hm : min (s.clock + (ckBody + ckRest + 1)) (t.clock + (ckRest + 1)) =
       t.clock + (ckRest + 1) := by omega
   have hn : t.clock + (ckRest + 1) ≠ 0 := by omega
-  simp only [fixClock, contLoop, hm, if_true, hn, if_false, decClock]
+  simp only [fixClock, contLoop, hm, ite_true, hn, ite_false, decClock]
   change evaluate (wordGenGcMoveLoopCode conf,
     { t with clock := t.clock + (ckRest + 1) - 1 }) = _
   convert hrest using 1
@@ -363,14 +363,14 @@ theorem genLoopSource_data {width : Nat} [NeZero width] (conf : Config)
       wordGenGcMoveLoop conf (k - 1) (pa', i', pa', ib', pb', pb, old, m', dm) =
         (i1, pa1, ib1, pb1, m1, true) := by
   rw [wordGenGcMoveLoop] at h
-  simp only [if_true, hpa, if_false] at h
+  simp only [ite_true, hpa, ite_false] at h
   generalize hd : wordGenGcMoveData conf (2 ^ width) (pax, i, pa, ib, pb, old, m, dm) = D at h
   obtain ⟨i', pa', ib', pb', m', cd⟩ := D
   simp only at h
   have hk : k ≠ 0 := by
     intro hk
     simp [hk] at h
-  simp only [hk, if_false] at h
+  simp only [hk, ite_false] at h
   generalize hr : wordGenGcMoveLoop conf (k - 1)
     (pa', i', pa', ib', pb', pb, old, m', dm) = R at h
   obtain ⟨ir, par, ibr, pbr, mr, cr⟩ := R
@@ -395,7 +395,7 @@ theorem genLoopSource_refs {width : Nat} [NeZero width] (conf : Config)
       wordGenGcMoveLoop conf (k - 1) (pax, i', pa', ib', pb', pb, old, m', dm) =
         (i1, pa1, ib1, pb1, m1, true) := by
   rw [wordGenGcMoveLoop] at h
-  simp only [hpb, if_false] at h
+  simp only [hpb, ite_false] at h
   generalize hd : wordGenGcMoveRefs conf (2 ^ width)
     (pb, pbx, i, pa, ib, pb, old, m, dm) = D at h
   obtain ⟨ha, i', pa', ib', pb', m', cd⟩ := D
@@ -403,7 +403,7 @@ theorem genLoopSource_refs {width : Nat} [NeZero width] (conf : Config)
   have hk : k ≠ 0 := by
     intro hk
     simp [hk] at h
-  simp only [hk, if_false] at h
+  simp only [hk, ite_false] at h
   generalize hr : wordGenGcMoveLoop conf (k - 1)
     (pax, i', pa', ib', pb', pb, old, m', dm) = R at h
   obtain ⟨ir, par, ibr, pbr, mr, cr⟩ := R
@@ -847,7 +847,7 @@ theorem wordGenGcMoveLoopCode_run {width : Nat} [NeZero width] {C F : Type} {con
       by_cases hpa : pax = pa
       · subst pax
         rw [wordGenGcMoveLoop] at h
-        simp only [if_true, Prod.mk.injEq] at h
+        simp only [ite_true, Prod.mk.injEq] at h
         obtain ⟨rfl, rfl, rfl, rfl, rfl, -⟩ := h
         have ht : tt = 0 := r.stop.mpr ⟨rfl, rfl⟩
         subst tt

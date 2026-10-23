@@ -1257,7 +1257,7 @@ theorem evalPanValueFfiClock_clock_le (context : PanValueFfiContext α) (primiti
         obtain ⟨parameters, body⟩ := pair
         simp only [hlookup, Option.bind_eq_bind, Option.bind_some] at hrun
         by_cases hparams : panValueParametersValid structs contracts function values = true
-        · simp only [hparams, if_true, Option.bind_eq_bind, Option.bind_some] at hrun
+        · simp only [hparams, ite_true, Option.bind_eq_bind, Option.bind_some] at hrun
           cases hbind : bindPanValueParameters parameters values with
           | none =>
             simp only [hbind, Option.elim_none] at hrun
@@ -1266,10 +1266,10 @@ theorem evalPanValueFfiClock_clock_le (context : PanValueFfiContext α) (primiti
           | some calleeLocals =>
             simp only [hbind, Option.elim_some] at hrun
             by_cases hclock : clock = 0
-            · simp only [hclock, if_true, Option.pure_def, Option.some.injEq, Prod.mk.injEq] at hrun
+            · simp only [hclock, ite_true, Option.pure_def, Option.some.injEq, Prod.mk.injEq] at hrun
               obtain ⟨_, hc⟩ := hrun
               omega
-            · simp only [hclock, if_false, Option.bind_eq_bind, Option.bind_some] at hrun
+            · simp only [hclock, ite_false, Option.bind_eq_bind, Option.bind_some] at hrun
               cases hcallee : evalPanValueFfiClockProg context primitive handler structs functions baseAddress
                   topAddress bytesInWord fuel calleeLocals globals memory ffi (decPanClock clock) body
                   (memoryAccess := memoryAccess) (contracts := contracts) (memoryHandler := memoryHandler) with
@@ -1310,7 +1310,7 @@ theorem evalPanValueFfiClock_clock_le (context : PanValueFfiContext α) (primiti
                         obtain ⟨_, hc⟩ := hrun; omega
                   | raised l g m f ex v =>
                     by_cases hexc : (panValueExceptionValid structs contracts ex v && panValuePayloadWithinLimit structs v) = true
-                    · simp only [hexc, if_true, Option.bind_eq_bind, Option.bind_some] at hrun
+                    · simp only [hexc, ite_true, Option.bind_eq_bind, Option.bind_some] at hrun
                       cases info with
                       | none =>
                         simp only [Option.pure_def, Option.some.injEq, Prod.mk.injEq] at hrun
@@ -1324,23 +1324,23 @@ theorem evalPanValueFfiClock_clock_le (context : PanValueFfiContext α) (primiti
                         | some htriple =>
                           obtain ⟨caught, handlerVariable, handlerProgram⟩ := htriple
                           by_cases hcaught : (caught == ex) = true
-                          · simp only [hcaught, if_true, Option.bind_eq_bind, Option.bind_some] at hrun
+                          · simp only [hcaught, ite_true, Option.bind_eq_bind, Option.bind_some] at hrun
                             by_cases hvalid : panValueHandlerValid structs contracts locals handlerVariable v = true
-                            · simp only [hvalid, if_true] at hrun
+                            · simp only [hvalid, ite_true] at hrun
                               have hh : calleeClock ≤ calleeClock := by omega
                               have := hhandlerIH calleeClock g m f v handlerVariable handlerProgram outcome resultClock hrun
                               omega
-                            · simp only [hvalid, if_false, Option.bind_eq_bind, Option.bind_none] at hrun; exact absurd hrun (by simp)
-                          · simp only [hcaught, if_false, Option.pure_def, Option.some.injEq, Prod.mk.injEq] at hrun
+                            · simp only [hvalid, ite_false, Option.bind_eq_bind, Option.bind_none] at hrun; exact absurd hrun (by simp)
+                          · simp only [hcaught, ite_false, Option.pure_def, Option.some.injEq, Prod.mk.injEq] at hrun
                             obtain ⟨_, hc⟩ := hrun; omega
-                    · simp only [hexc, if_false, Option.bind_eq_bind, Option.bind_none] at hrun; exact absurd hrun (by simp)
+                    · simp only [hexc, ite_false, Option.bind_eq_bind, Option.bind_none] at hrun; exact absurd hrun (by simp)
                   | finalFfi l g m f ev =>
                     simp only [Option.pure_def, Option.some.injEq, Prod.mk.injEq] at hrun
                     obtain ⟨_, hc⟩ := hrun; omega
                   | error l g m f =>
                     simp only [Option.pure_def, Option.some.injEq, Prod.mk.injEq] at hrun
                     obtain ⟨_, hc⟩ := hrun; omega
-        · simp only [hparams, if_false, Option.elim_none] at hrun
+        · simp only [hparams, ite_false, Option.elim_none] at hrun
           simp only [Option.pure_def, Option.some.injEq, Prod.mk.injEq] at hrun
           obtain ⟨_, hc⟩ := hrun; omega
   · -- case3: Prog fuel 0
@@ -1359,7 +1359,7 @@ theorem evalPanValueFfiClock_clock_le (context : PanValueFfiContext α) (primiti
     | some valueResult =>
       simp only [panValueDecAcceptedValue, hvalue] at hrun
       by_cases hmatch : panShapeMatches (panValueShape structs valueResult) shape = true
-      · simp only [hmatch, if_true, Option.elim_some, Option.bind_eq_bind, Option.bind_some] at hrun
+      · simp only [hmatch, ite_true, Option.elim_some, Option.bind_eq_bind, Option.bind_some] at hrun
         cases hbody : evalPanValueFfiClockProg context primitive handler structs functions baseAddress topAddress
             bytesInWord fuel (updatePanValueMap locals name valueResult) globals memory ffi clock body
             (memoryAccess := memoryAccess) (contracts := contracts) (memoryHandler := memoryHandler) with
@@ -1370,7 +1370,7 @@ theorem evalPanValueFfiClock_clock_le (context : PanValueFfiContext α) (primiti
           have hb : bodyClock ≤ clock := hbodyIH valueResult bodyOutcome bodyClock hbody
           simp only [Option.pure_def, Option.some.injEq, Prod.mk.injEq] at hrun
           obtain ⟨_, hc⟩ := hrun; omega
-      · simp only [hmatch, if_false, Option.elim_none] at hrun
+      · simp only [hmatch, ite_false, Option.elim_none] at hrun
         simp only [Option.pure_def, Option.some.injEq, Prod.mk.injEq] at hrun
         obtain ⟨_, hc⟩ := hrun; omega
   · -- case5: Prog seq
@@ -1464,7 +1464,7 @@ theorem evalPanValueFfiClock_clock_le (context : PanValueFfiContext α) (primiti
             | nil =>
               simp only [Option.bind_eq_bind, Option.bind_some] at hrun
               by_cases hmatch : panShapeMatches (panValueShape structs v) shape = true
-              · simp only [hmatch, if_true, Option.bind_eq_bind, Option.bind_some] at hrun
+              · simp only [hmatch, ite_true, Option.bind_eq_bind, Option.bind_some] at hrun
                 cases hbody : evalPanValueFfiClockProg context primitive handler structs functions baseAddress topAddress
                     bytesInWord fuel (updatePanValueMap locals name v) g m f nextClock body
                     (memoryAccess := memoryAccess) (contracts := contracts) (memoryHandler := memoryHandler) with
@@ -1475,7 +1475,7 @@ theorem evalPanValueFfiClock_clock_le (context : PanValueFfiContext α) (primiti
                   have hb : bodyClock ≤ nextClock := hbodyIH nextClock g m f v bodyOutcome bodyClock hbody
                   simp only [Option.pure_def, Option.some.injEq, Prod.mk.injEq] at hrun
                   obtain ⟨_, he⟩ := hrun; omega
-              · simp only [hmatch, if_false, Option.pure_def, Option.some.injEq, Prod.mk.injEq] at hrun
+              · simp only [hmatch, ite_false, Option.pure_def, Option.some.injEq, Prod.mk.injEq] at hrun
                 obtain ⟨_, he⟩ := hrun; omega
         | normal l g m f =>
           simp only [Option.pure_def, Option.some.injEq, Prod.mk.injEq] at hrun
@@ -1507,13 +1507,13 @@ theorem evalPanValueFfiClock_clock_le (context : PanValueFfiContext α) (primiti
     | some w =>
       simp only [hv, Option.elim_some] at hrun
       by_cases hz : (w == 0) = true
-      · simp only [hz, if_true, Option.pure_def, Option.some.injEq, Prod.mk.injEq] at hrun
+      · simp only [hz, ite_true, Option.pure_def, Option.some.injEq, Prod.mk.injEq] at hrun
         obtain ⟨_, hc⟩ := hrun; omega
-      · simp only [hz, if_false, Option.bind_eq_bind, Option.bind_some] at hrun
+      · simp only [hz, ite_false, Option.bind_eq_bind, Option.bind_some] at hrun
         by_cases hclock : (clock == 0) = true
-        · simp only [hclock, if_true, Option.pure_def, Option.some.injEq, Prod.mk.injEq] at hrun
+        · simp only [hclock, ite_true, Option.pure_def, Option.some.injEq, Prod.mk.injEq] at hrun
           obtain ⟨_, hc⟩ := hrun; omega
-        · simp only [hclock, if_false, Option.bind_eq_bind, Option.bind_some] at hrun
+        · simp only [hclock, ite_false, Option.bind_eq_bind, Option.bind_some] at hrun
           cases hbody : evalPanValueFfiClockProg context primitive handler structs functions baseAddress topAddress
               bytesInWord fuel locals globals memory ffi (decPanClock clock) body
               (memoryAccess := memoryAccess) (contracts := contracts) (memoryHandler := memoryHandler) with
@@ -1573,7 +1573,7 @@ theorem evalPanValueFfiClock_clock_le (context : PanValueFfiContext α) (primiti
     obtain ⟨_, hc⟩ := hrun; omega
   · -- case11: Prog tick clock != 0
     intro memoryAccess contracts memoryHandler _fuel locals globals memory ffi clock hclock outcome resultClock hrun
-    simp only [evalPanValueFfiClockProg, if_neg hclock, Option.pure_def, Option.some.injEq, Prod.mk.injEq] at hrun
+    simp only [evalPanValueFfiClockProg, ite_eq_right hclock, Option.pure_def, Option.some.injEq, Prod.mk.injEq] at hrun
     obtain ⟨_, hc⟩ := hrun
     have hdc : decPanClock clock ≤ clock := Nat.sub_le clock 1
     omega

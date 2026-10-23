@@ -43,7 +43,7 @@ theorem stateRelFfiRet {s : StackSemStateFiniteExact width C F}
     have hio := h18 r (.extCall f) 0 hs
     have hne : r ≠ ret := by
       rintro rfl; rw [hret] at hs; exact h17 hs
-    simp only [hio, getRegValue, hne, if_false]
+    simp only [hio, getRegValue, hne, ite_false]
     exact h1 r v hv
   · intro r v hv
     simp [HolFiniteMapExact.empty] at hv
@@ -59,7 +59,7 @@ theorem flattenCorrectFfi (s1 : StackSemStateFiniteExact width C F)
   have hinst : codeInstalled t1.pc [.labAsm (.locValue t1.linkReg (.lab n l)) 0 [] 0,
       .labAsm (.callFFI f) 0 [] 0, .label n l 0] t1.code := by
     simpa [flattenHOL, appListAppendList] using inst
-  simp only [isLabelHOL, Bool.false_eq_true, if_false, if_true,
+  simp only [isLabelHOL, Bool.false_eq_true, ite_false, ite_true,
     codeInstalled] at hinst
   obtain ⟨fetch0, fetch1, locL, -⟩ := hinst
   obtain ⟨-, -, hmem, hdom, -, hbe, hffiEq, hclk, -, -, -, hnf, d13, d14, d15, d16, -⟩ := id rel
@@ -93,11 +93,11 @@ theorem flattenCorrectFfi (s1 : StackSemStateFiniteExact width C F)
               clock := c } := by
         intro c
         rw [evaluate]
-        simp only [show c + 2 ≠ 0 by omega, if_false, asmFetch, fetch0, getPcValue, locL,
+        simp only [show c + 2 ≠ 0 by omega, ite_false, asmFetch, fetch0, getPcValue, locL,
           reduceCtorEq]
         rw [evaluate]
-        simp only [incPc, decClock, updReg, labToLoc, show c + 2 - 1 ≠ 0 by omega, if_false,
-          asmFetch, fetch1, Ne.symm d13, Ne.symm d14, Ne.symm d15, Ne.symm d16, if_true,
+        simp only [incPc, decClock, updReg, labToLoc, show c + 2 - 1 ≠ 0 by omega, ite_false,
+          asmFetch, fetch1, Ne.symm d13, Ne.symm d14, Ne.symm d15, Ne.symm d16, ite_true,
           rlen, rptr, rlen2, rptr2, hcfg, hbytes, locL]
         cases callFFIHOL t1.ffi (.extCall f) cfg bytes with
         | final o => rfl

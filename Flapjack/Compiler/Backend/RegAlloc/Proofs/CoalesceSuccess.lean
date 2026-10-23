@@ -27,7 +27,7 @@ private theorem isFixed_ok {s : State} (hg : goodRaState s) {x : Nat} (hx : x < 
     ∃ b, isFixed x s = (.success b, s) := by
   have hl : x < s.node_tag.length := by rw [hg.2.1]; exact hx
   refine ⟨match holEl x s.node_tag with | .Fixed _ => true | _ => false, ?_⟩
-  simp only [isFixed, Translator.Monadic.MonadBase.bind, nodeTagSubEqn, if_pos hl, ret]
+  simp only [isFixed, Translator.Monadic.MonadBase.bind, nodeTagSubEqn, ite_eq_left hl, ret]
   rfl
 
 private theorem good_coalesced {s : State} {c : List Nat} (h : goodRaState s)
@@ -55,13 +55,13 @@ theorem consistencyOkSuccess :
   unfold consistencyOk
   split
   · exact ⟨false, rfl⟩
-  · simp only [Translator.Monadic.MonadBase.bind, adjLsSubEqn, if_pos hyl]
+  · simp only [Translator.Monadic.MonadBase.bind, adjLsSubEqn, ite_eq_left hyl]
     split
     · exact ⟨false, rfl⟩
     · refine ⟨(bx || holEl x s.move_related) && (by_ || holEl y s.move_related) && !(bx && by_),
         ?_⟩
-      simp only [Translator.Monadic.MonadBase.bind, hbx, hby, moveRelatedSubEqn, if_pos hxm,
-        if_pos hym, ret]
+      simp only [Translator.Monadic.MonadBase.bind, hbx, hby, moveRelatedSubEqn, ite_eq_left hxm,
+        ite_eq_left hym, ret]
 
 /-- Exact HOL `st_ex_FILTER_consistency_ok` (`reg_allocProofScript.sml:2320-2347`). -/
 @[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml"
@@ -85,7 +85,7 @@ theorem stExFilterConsistencyOk :
       | true =>
           obtain ⟨ts, hts, hmem⟩ := ih (m :: acc) s ⟨hg, hms⟩
           refine ⟨ts, ?_, fun m' hm' => ?_⟩
-          · simp only [stExFilter, Translator.Monadic.MonadBase.bind, hrun, if_true]
+          · simp only [stExFilter, Translator.Monadic.MonadBase.bind, hrun, ite_true]
             exact hts
           rcases hmem m' hm' with h | h
           · exact Or.inl h
@@ -110,12 +110,12 @@ private theorem stExMap_degOrInf {s : State} (hg : goodRaState s) (k : Nat) :
       have hd : ∃ d, degOrInf k v s = (.success d, s) := by
         obtain ⟨b, hb⟩ : ∃ b, isFixedK k v s = (.success b, s) := by
           refine ⟨match holEl v s.node_tag with | .Fixed n => decide (n < k) | _ => false, ?_⟩
-          simp only [isFixedK, Translator.Monadic.MonadBase.bind, nodeTagSubEqn, if_pos hnl, ret]
+          simp only [isFixedK, Translator.Monadic.MonadBase.bind, nodeTagSubEqn, ite_eq_left hnl, ret]
           rfl
         simp only [degOrInf, Translator.Monadic.MonadBase.bind, hb]
         cases b
         · exact ⟨holEl v s.degrees, by
-            simp only [Bool.false_eq_true, ↓reduceIte, degreesSubEqn, if_pos hdl]⟩
+            simp only [Bool.false_eq_true, ↓reduceIte, degreesSubEqn, ite_eq_left hdl]⟩
         · exact ⟨k, rfl⟩
       obtain ⟨d, hd⟩ := hd
       exact ⟨d :: ds, by simp only [stExMap, Translator.Monadic.MonadBase.bind, hd, hds, ret]⟩
@@ -170,7 +170,7 @@ theorem bgOkSuccess (s : State) (x y k : Nat) :
       · exact Or.inr rfl
       · exact Or.inl rfl
   have hrun : bgOk k x y s = (.success opt, s) := by
-    simp only [bgOk, Translator.Monadic.MonadBase.bind, adjLsSubEqn, if_pos hxl, if_pos hyl]
+    simp only [bgOk, Translator.Monadic.MonadBase.bind, adjLsSubEqn, ite_eq_left hxl, ite_eq_left hyl]
     simp only [pr] at hc1 hc2
     simp only [case3] at hc3
     rw [hc1]
@@ -202,7 +202,7 @@ theorem coalesceParentSuccess :
     rw [holEl_eq_getElem _ _ hcl]; exact List.getElem_mem _
   obtain ⟨bx, hbx⟩ := isFixed_ok hg hxt
   rw [coalesceParent]
-  simp only [Translator.Monadic.MonadBase.bind, coalescedSubEqn, if_pos hcl, hbx]
+  simp only [Translator.Monadic.MonadBase.bind, coalescedSubEqn, ite_eq_left hcl, hbx]
   split
   · exact ⟨_, s, s.coalesced, rfl, hxt, hg, rfl⟩
   · split
@@ -213,7 +213,7 @@ theorem coalesceParentSuccess :
       have hcl1 : x < c1.length := by rw [hg1.2.2.2.1]; exact hx
       refine ⟨anc, { s with coalesced := c1.set x anc }, c1.set x anc, ?_, hanc, ?_, rfl⟩
       · simp only [Translator.Monadic.MonadBase.bind, hrun, ignoreBind, updateCoalescedEqn]
-        rw [if_pos hcl1]
+        rw [ite_eq_left hcl1]
         rfl
       · refine good_coalesced (s := { s with coalesced := c1 }) hg1 ?_ ?_
         · rw [List.length_set]; exact hg1.2.2.2.1
@@ -281,9 +281,9 @@ theorem resetMoveRelatedSuccess {α : Type} :
         refine ⟨mv', ?_, hl'⟩
         simp only [stExForeach, ignoreBind, Translator.Monadic.MonadBase.bind, hbx, hby,
           updateMoveRelatedEqn]
-        rw [if_pos hxl]
+        rw [ite_eq_left hxl]
         simp only
-        rw [if_pos hyl]
+        rw [ite_eq_left hyl]
         exact hrun
   obtain ⟨mv, hrun2, hl2⟩ := key ls lss hb (by rw [hl1, hml])
   refine ⟨mv, ?_, hl2⟩
@@ -397,7 +397,7 @@ theorem doCoalesceRealSuccess :
         refine ⟨s.degrees.set x (holEl x s.degrees + case2.length), ?_,
           good_degrees' hg1 (List.length_set ..)⟩
         simp only [Bool.false_eq_true, ↓reduceIte, incDeg, Translator.Monadic.MonadBase.bind,
-          degreesSubEqn, updateDegreesEqn, if_pos hxd]
+          degreesSubEqn, updateDegreesEqn, ite_eq_left hxd]
   obtain ⟨s3, h3, hg3, hs3, hedge⟩ :=
     listInsertEdgeSucceeds case2 x { s with coalesced := s.coalesced.set y x, degrees := d2 }
       ⟨hg2, hx, hc2⟩
@@ -420,7 +420,7 @@ theorem doCoalesceRealSuccess :
     good_push hg3 (hl5.trans hl4) hm5, fun a b h => (hedge a b).2 (Or.inr (Or.inr h)),
     hdim3.symm, htag3.symm⟩
   simp only [doCoalesceReal, ignoreBind, Translator.Monadic.MonadBase.bind, updateCoalescedEqn,
-    if_pos hyc, hbx, h2, h3, h4, hp]
+    ite_eq_left hyc, hbx, h2, h3, h4, hp]
 
 private theorem good_wl {s : State} (h : goodRaState s) {sp fr : List Nat}
     {av un : List (Nat × (Nat × Nat))} (hsp : ∀ v ∈ sp, v < s.dim) (hfr : ∀ v ∈ fr, v < s.dim)
@@ -438,13 +438,13 @@ private theorem respill_ok (k x : Nat) (s : State) (hg : goodRaState s) (hx : x 
   have hxd : x < s.degrees.length := by rw [hg.2.2.1]; exact hx
   by_cases hlt : holEl x s.degrees < k
   · exact ⟨s, by simp only [respill, Translator.Monadic.MonadBase.bind, degreesSubEqn,
-      if_pos hxd, if_pos hlt, ret], hg, rfl, rfl, rfl⟩
+      ite_eq_left hxd, ite_eq_left hlt, ret], hg, rfl, rfl, rfl⟩
   · by_cases hm : x ∈ s.freeze_wl
     · refine ⟨({ s with spill_wl := [x] ++ s.spill_wl,
                          freeze_wl := s.freeze_wl.filter (fun y => decide (y ≠ x)) }),
         ?_, ?_, rfl, rfl, rfl⟩
-      · simp only [respill, Translator.Monadic.MonadBase.bind, degreesSubEqn, if_pos hxd,
-          if_neg hlt, getFreezeWl, if_pos hm, ignoreBind, addSpillWl, getSpillWl, setSpillWl,
+      · simp only [respill, Translator.Monadic.MonadBase.bind, degreesSubEqn, ite_eq_left hxd,
+          ite_eq_right hlt, getFreezeWl, ite_eq_left hm, ignoreBind, addSpillWl, getSpillWl, setSpillWl,
           setFreezeWl]
       · exact good_wl hg
           (fun v hv => by
@@ -454,7 +454,7 @@ private theorem respill_ok (k x : Nat) (s : State) (hg : goodRaState s) (hx : x 
           (fun v hv => hg.2.2.2.2.2.2.2.2.2.2.1 v (List.mem_filter.mp hv).1)
           hg.2.2.2.2.2.2.2.2.2.2.2.1 hg.2.2.2.2.2.2.2.2.2.2.2.2.1
     · exact ⟨s, by simp only [respill, Translator.Monadic.MonadBase.bind, degreesSubEqn,
-        if_pos hxd, if_neg hlt, getFreezeWl, if_neg hm, ret], hg, rfl, rfl, rfl⟩
+        ite_eq_left hxd, ite_eq_right hlt, getFreezeWl, ite_eq_right hm, ret], hg, rfl, rfl, rfl⟩
 
 /-- Exact HOL `do_coalesce_success` (`reg_allocProofScript.sml:2606-2643`); `k` is free in
 HOL. -/

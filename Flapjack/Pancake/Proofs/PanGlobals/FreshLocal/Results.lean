@@ -65,10 +65,10 @@ theorem evaluateFreshLocal_Return {width : Nat} {σ : Type} [NeZero width]
   | some returned =>
       simp only [hx] at hev ⊢
       by_cases hs : sizeOfShapeWithContextHOL state.structs (shapeOfHOLExact returned) ≤ 32
-      · rw [if_pos hs] at hev ⊢
+      · rw [ite_eq_left hs] at hev ⊢
         obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
         exact ⟨HolFiniteMapExact.empty, rfl, by simp [goodResHOL]⟩
-      · rw [if_neg hs] at hev ⊢
+      · rw [ite_eq_right hs] at hev ⊢
         obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
         exact ⟨state.locals.updateEq (name, value), rfl, fun _ => rfl⟩
 
@@ -104,10 +104,10 @@ theorem evaluateFreshLocal_Raise {width : Nat} {σ : Type} [NeZero width]
   rename_i result shape
   by_cases hs : shapeOfHOLExact result = shape ∧
       sizeOfShapeWithContextHOL state.structs (shapeOfHOLExact result) ≤ 32
-  · rw [if_pos hs] at hev ⊢
+  · rw [ite_eq_left hs] at hev ⊢
     obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
     exact ⟨HolFiniteMapExact.empty, rfl, by simp [goodResHOL]⟩
-  · rw [if_neg hs] at hev ⊢
+  · rw [ite_eq_right hs] at hev ⊢
     obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
     exact ⟨state.locals.updateEq (name, value), rfl, fun _ => rfl⟩
 

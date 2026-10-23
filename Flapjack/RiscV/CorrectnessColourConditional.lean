@@ -112,7 +112,7 @@ theorem evalWordFunction_ite_executeCodeUntil_of_coloured_data_relation
           some (thenState, returns) := by
       simp only [evalWordFunction, hsourceChoose]
       exact hthenEval
-    rw [if_pos hchoose] at hrun
+    rw [ite_eq_left hchoose] at hrun
     let machineThen := executeInstructions
       (execute state (riscVBranchFalseInstruction operator branchLeft right
         (BitVec.ofNat width (8 + 4 * thenCode.length)))) thenCode
@@ -134,7 +134,7 @@ theorem evalWordFunction_ite_executeCodeUntil_of_coloured_data_relation
           some (elseState, returns) := by
       simp only [evalWordFunction, hsourceChoose]
       exact helseEval
-    rw [if_neg hchoose] at hrun
+    rw [ite_eq_right hchoose] at hrun
     refine ⟨elseState,
       executeInstructions
         (execute state (riscVBranchFalseInstruction operator branchLeft right

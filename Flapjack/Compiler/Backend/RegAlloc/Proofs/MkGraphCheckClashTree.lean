@@ -52,7 +52,7 @@ private theorem checkColOk (f : Nat → Nat) (t : NumSet)
       ((sptMemMapFstToAList t y).mp hy)) (sptAllDistinctMapFstToAList t)
   refine ⟨_, by
     simp only [checkCol]
-    rw [if_pos (show List.Pairwise (fun x1 x2 => x1 ≠ x2) _ from hnd)], ?_⟩
+    rw [ite_eq_left (show List.Pairwise (fun x1 x2 => x1 ≠ x2) _ from hnd)], ?_⟩
   rw [sptDomainFromAList]
   funext y
   apply propext

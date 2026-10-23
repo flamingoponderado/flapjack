@@ -156,16 +156,16 @@ theorem shareLoadLemma2 {width : Nat} [NeZero width] {C F : Type}
     · rename_i hD
       split
       · rename_i o hc
-        simp only [hD, if_true, hc, Prod.mk.injEq] at hrun
+        simp only [hD, ite_true, hc, Prod.mk.injEq] at hrun
         obtain ⟨rfl, rfl⟩ := hrun
         exact ⟨_, rfl, .inl ⟨_, rfl, r4.symm, r1⟩⟩
       · rename_i nf nb hc
-        simp only [hD, if_true, hc, Prod.mk.injEq] at hrun
+        simp only [hD, ite_true, hc, Prod.mk.injEq] at hrun
         obtain ⟨rfl, rfl⟩ := hrun
         exact ⟨_, rfl, .inr ⟨rfl,
           StateRelRegisterUpdate.stateRelSetVar v _ (stateRelFfi _ related) hv⟩⟩
     · rename_i hD
-      simp only [hD, Bool.false_eq_true, if_false, Prod.mk.injEq] at hrun
+      simp only [hD, Bool.false_eq_true, ite_false, Prod.mk.injEq] at hrun
       exact absurd hrun.1.symm notError
 
 /-- HOL `share_load_lemma1` (7207-7252): a shared-memory load into a
@@ -208,11 +208,11 @@ theorem shareLoadLemma1 {width : Nat} [NeZero width] {C F : Type}
     · rename_i hD
       split
       · rename_i o hc
-        simp only [hD, if_true, hc, Prod.mk.injEq] at hrun
+        simp only [hD, ite_true, hc, Prod.mk.injEq] at hrun
         obtain ⟨rfl, rfl⟩ := hrun
         exact ⟨_, rfl, .inl ⟨_, rfl, r4.symm, r1⟩⟩
       · rename_i nf nb hc
-        simp only [hD, if_true, hc, Prod.mk.injEq] at hrun
+        simp only [hD, ite_true, hc, Prod.mk.injEq] at hrun
         obtain ⟨rfl, rfl⟩ := hrun
         refine ⟨_, rfl, .inr ⟨rfl, ?_, ⟨.word (panWordOfBytesHOL false 0 nb),
           by simp [HolFiniteMapExact.updateEq, FUPDATE_HOL]⟩,
@@ -226,7 +226,7 @@ theorem shareLoadLemma1 {width : Nat} [NeZero width] {C F : Type}
         simpa [StackSemStateOps.setVar, HolFiniteMapExact.updateEq, FUPDATE_HOL,
           Flapjack.holThe] using this
     · rename_i hD
-      simp only [hD, Bool.false_eq_true, if_false, Prod.mk.injEq] at hrun
+      simp only [hD, Bool.false_eq_true, ite_false, Prod.mk.injEq] at hrun
       exact absurd hrun.1.symm notError
 
 /-- HOL `share_store_lemma2` (7348-7384): a shared-memory store of a
@@ -268,7 +268,7 @@ theorem shareStoreLemma2 {width : Nat} [NeZero width] {C F : Type}
     split
     · rename_i hD
       rw [r11] at hD
-      simp only [hD, if_true] at hrun
+      simp only [hD, ite_true] at hrun
       split
       · rename_i o hc
         simp only [hc, Prod.mk.injEq] at hrun
@@ -280,7 +280,7 @@ theorem shareStoreLemma2 {width : Nat} [NeZero width] {C F : Type}
         exact ⟨_, rfl, .inr ⟨rfl, stateRelFfi nf related⟩⟩
     · rename_i hD
       rw [r11] at hD
-      simp only [hD, Bool.false_eq_true, if_false, Prod.mk.injEq] at hrun
+      simp only [hD, Bool.false_eq_true, ite_false, Prod.mk.injEq] at hrun
       exact absurd hrun.1.symm notError
 
 /-- HOL `share_store_lemma1` (7298-7346): a shared-memory store of a
@@ -318,7 +318,7 @@ theorem shareStoreLemma1 {width : Nat} [NeZero width] {C F : Type}
   all_goals
     have hel : Flapjack.holEl (t.stackSpace + (f + k - (v + 1))) t.stack = .word w := by
       obtain ⟨-, hplace⟩ := rloc (2 * v) (.word w) hw
-      rw [if_neg (by omega)] at hplace
+      rw [ite_eq_right (by omega)] at hplace
       obtain ⟨hslot, hlt⟩ := hplace
       have hf : f = frame + 1 := by split at r35 <;> omega
       have hidx : f - 1 - (2 * v / 2 - k) = f + k - (v + 1) := by omega
@@ -342,7 +342,7 @@ theorem shareStoreLemma1 {width : Nat} [NeZero width] {C F : Type}
     split
     · rename_i hD
       rw [r11] at hD
-      simp only [hD, if_true] at hrun
+      simp only [hD, ite_true] at hrun
       split
       · rename_i o hc
         simp only [hc, Prod.mk.injEq] at hrun
@@ -356,7 +356,7 @@ theorem shareStoreLemma1 {width : Nat} [NeZero width] {C F : Type}
           (stateRelFfi nf related)
     · rename_i hD
       rw [r11] at hD
-      simp only [hD, Bool.false_eq_true, if_false, Prod.mk.injEq] at hrun
+      simp only [hD, Bool.false_eq_true, ite_false, Prod.mk.injEq] at hrun
       exact absurd hrun.1.symm notError
 
 /-- The source address `Var r + Const c` (Flapjack infrastructure). -/
@@ -455,11 +455,11 @@ theorem evaluateShareInstLoad {width : Nat} [NeZero width] {C F : Type}
     split
     · rename_i hlt
       rw [StackSemEvaluate.evaluate_shMemOp, haddr]
-      simp only [show ¬ (1 + t.clock = 0) by omega, if_false, hdec]
+      simp only [show ¬ (1 + t.clock = 0) by omega, ite_false, hdec]
       exact shareLoadLemma2 ⟨hshare, rel1, hlt, by simp, notError⟩
     · rename_i hge
       rw [StackSemEvaluate.evaluate_seq, StackSemEvaluate.evaluate_shMemOp, haddr]
-      simp only [show ¬ (1 + t.clock = 0) by omega, if_false, hdec]
+      simp only [show ¬ (1 + t.clock = 0) by omega, ite_false, hdec]
       obtain ⟨t2, h2, hc⟩ := shareLoadLemma1 ⟨hshare, rel1, hv, by omega, by simp, notError⟩
       have hclk : t2.clock = t.clock := by
         have hc' := congrArg (fun p => p.2.clock) h2
@@ -488,9 +488,9 @@ theorem evaluateShareInstLoad {width : Nat} [NeZero width] {C F : Type}
         refine ⟨_, ?_, .inr ⟨rfl, hrel⟩⟩
         simp only [Option.map_none]
         rw [StackSemEvaluate.evaluate_stackStore]
-        simp only [huse, Bool.not_true, Bool.false_eq_true, if_false,
+        simp only [huse, Bool.not_true, Bool.false_eq_true, ite_false,
           StackSemStateOps.getVar, hxv, hidx, Flapjack.holThe]
-        rw [if_neg (by omega)]
+        rw [ite_eq_right (by omega)]
 
 /-- A shared-memory store from any target register holding the stored source
 word (Flapjack factoring of `share_store_lemma1`/`share_store_lemma2` after the
@@ -523,7 +523,7 @@ theorem shareStoreGeneric {width : Nat} [NeZero width] {C F : Type}
     split
     · rename_i hD
       rw [r11] at hD
-      simp only [hD, if_true] at hrun
+      simp only [hD, ite_true] at hrun
       split
       · rename_i o hc
         simp only [hc, Prod.mk.injEq] at hrun
@@ -535,7 +535,7 @@ theorem shareStoreGeneric {width : Nat} [NeZero width] {C F : Type}
         exact ⟨_, rfl, .inr ⟨rfl, stateRelFfi nf related⟩⟩
     · rename_i hD
       rw [r11] at hD
-      simp only [hD, Bool.false_eq_true, if_false, Prod.mk.injEq] at hrun
+      simp only [hD, Bool.false_eq_true, ite_false, Prod.mk.injEq] at hrun
       exact absurd hrun.1.symm notError
 
 /-- HOL `evaluate_ShareInst_Store` (7447-7499). -/
@@ -608,7 +608,7 @@ theorem evaluateShareInstStore {width : Nat} [NeZero width] {C F : Type}
     rw [LoadRegister.evaluateWStackLoadSeq, StackSemEvaluate.evaluate_seq, hl2, hfix] <;>
     dsimp only <;>
     rw [StackSemEvaluate.evaluate_shMemOp, haddr] <;>
-    simp only [show ¬ (1 + t.clock = 0) by omega, if_false, hdec] <;>
+    simp only [show ¬ (1 + t.clock = 0) by omega, ite_false, hdec] <;>
     exact shareStoreGeneric hshare rel2 hw loaded2 (by simp) notError
 
 /-- HOL `evaluate_ShareInst_correct_lemma` (7501-7526). -/

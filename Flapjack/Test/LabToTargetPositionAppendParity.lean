@@ -49,7 +49,7 @@ example {width : Nat} [NeZero width] (c1 c2 : LabProgHOL width) (pos n : Nat)
   rw [posVal_append c1 _ pos c2 h]
   have hn : ¬ (c1.map (fun sec => lenNoLab sec.lines)).sum + n + 1 ≤
       (c1.map (fun sec => lenNoLab sec.lines)).sum := by omega
-  simp only [if_neg hn]
+  simp only [ite_eq_right hn]
   congr 1
   simp [Nat.add_assoc]
 example {width : Nat} [NeZero width] (xs : LabProgHOL width) (pos : Nat)

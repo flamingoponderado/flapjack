@@ -69,6 +69,6 @@ theorem evaluateFreshLocal_ExtCall {width : Nat} {σ : Type} [NeZero width]
     all_goals obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
     all_goals simp_all [goodResHOL, emptyLocalsHOLFinite, ofExact, toExact]
   · intro hg
-    rw [if_pos hg.1]
+    rw [ite_eq_left hg.1]
 
 end Flapjack.PanGlobalsFreshLocalExtCall

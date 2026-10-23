@@ -39,7 +39,7 @@ theorem nextInterferenceCache {width : Nat} [NeZero width]
   apply nextInterferenceIntro mc ffi 1 ms
   rcases h with ⟨hn, hh, hc⟩
   simp only [findNextInterference]
-  rw [if_neg hn, if_neg hh, if_pos hc]
+  rw [ite_eq_right hn, ite_eq_right hh, ite_eq_left hc]
   rfl
 
 end Flapjack.Compiler.Backend.Semantics.TargetProps

@@ -183,7 +183,7 @@ theorem compile_semantics {width : Nat} [NeZero width] {C F : Type}
     apply hsem
     rw [semantics_eq_aux]
     unfold semanticsAux
-    rw [if_pos ⟨k, hb⟩]
+    rw [ite_eq_left ⟨k, hb⟩]
   have addc : ∀ (S : StackSemStateFiniteExact width C F) (d : Nat),
       (evaluate ((.call none (.inl start) none : HolProg width), S)).1 ≠ some .timeOut →
       (evaluate ((.call none (.inl start) none : HolProg width),

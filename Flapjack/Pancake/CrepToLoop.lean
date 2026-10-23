@@ -111,7 +111,7 @@ theorem insertNatSorted_mem (name : Nat) (live : List Nat) (x : Nat) :
       · simp [insertNatSorted, hlt, List.mem_cons]
       · by_cases heq : name = head
         · subst heq; simp [insertNatSorted, List.mem_cons]
-        · simp only [insertNatSorted, if_neg hlt, if_neg heq, List.mem_cons, ih]
+        · simp only [insertNatSorted, ite_eq_right hlt, ite_eq_right heq, List.mem_cons, ih]
           by_cases h1 : x = name <;> by_cases h2 : x = head <;> by_cases h3 : x ∈ tail <;>
             simp_all
 
@@ -127,7 +127,7 @@ theorem insertNatSorted_idem (name : Nat) (live : List Nat) :
       · simp [insertNatSorted, hlt]
       · by_cases heq : name = head
         · subst heq; simp [insertNatSorted]
-        · simp only [insertNatSorted, if_neg hlt, if_neg heq, ih]
+        · simp only [insertNatSorted, ite_eq_right hlt, ite_eq_right heq, ih]
 
 /-- CakeML's `list_insert_SNOC`
     (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:386`). -/
@@ -177,12 +177,12 @@ theorem insertNatSorted_nil_comm (x y : Nat) :
   · have hyx : ¬ y < x := Nat.not_lt_of_lt h
     have hne1 : ¬ x = y := by omega
     have hne2 : ¬ y = x := by omega
-    simp only [insertNatSorted, if_pos h, if_neg hyx, if_neg hne1, if_neg hne2]
+    simp only [insertNatSorted, ite_eq_left h, ite_eq_right hyx, ite_eq_right hne1, ite_eq_right hne2]
   · subst h; rfl
   · have hxy : ¬ x < y := Nat.not_lt_of_lt h
     have hne1 : ¬ x = y := by omega
     have hne2 : ¬ y = x := by omega
-    simp only [insertNatSorted, if_pos h, if_neg hxy, if_neg hne1, if_neg hne2]
+    simp only [insertNatSorted, ite_eq_left h, ite_eq_right hxy, ite_eq_right hne1, ite_eq_right hne2]
 
 theorem insertNatSorted_comm (x y : Nat) :
     ∀ live : List Nat,

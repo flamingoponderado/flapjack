@@ -76,7 +76,7 @@ theorem alookupMapInjFst {α β γ : Type} (ls : List α) (f : α → β × γ)
       · have hn : (f p).1 ≠ (f x).1 := by
           intro hf
           exact he (hinj p x (Or.inr (List.mem_cons_self ..)) (Or.inl rfl) hf)
-        simp only [if_neg he, if_neg hn]
+        simp only [ite_eq_right he, ite_eq_right hn]
         exact ih hi
 
 /-- Full original identity tabulation lookup for arbitrary keys and arbitrary

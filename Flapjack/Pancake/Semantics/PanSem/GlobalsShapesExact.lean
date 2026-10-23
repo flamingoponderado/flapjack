@@ -68,9 +68,9 @@ theorem assignStepHOLExact_globalsShapesExact {width : Nat} {σ : Type} [NeZero 
         have hshape := isValidValueHOLExact_global_shape state name value hvalid
         by_cases hk : key = name
         · subst hk
-          simp only [globalsShapesExact, setKvarHOLExact, if_true, Option.map_some]
+          simp only [globalsShapesExact, setKvarHOLExact, ite_true, Option.map_some]
           exact hshape.symm
-        · simp only [globalsShapesExact, setKvarHOLExact, if_neg hk]
+        · simp only [globalsShapesExact, setKvarHOLExact, ite_eq_right hk]
     · rfl
   · rfl
 
@@ -86,9 +86,9 @@ theorem setKvarHOLExact_globalsShapesExact_of_valid {width : Nat} {σ : Type} [N
     have hshape := isValidValueHOLExact_global_shape state name value hvalid
     by_cases hk : key = name
     · subst hk
-      simp only [globalsShapesExact, setKvarHOLExact, if_true, Option.map_some]
+      simp only [globalsShapesExact, setKvarHOLExact, ite_true, Option.map_some]
       exact hshape.symm
-    · simp only [globalsShapesExact, setKvarHOLExact, if_neg hk]
+    · simp only [globalsShapesExact, setKvarHOLExact, ite_eq_right hk]
 
 /-- The broad shared-memory load helper preserves the globals shape map whenever
     its destination already holds a word (the guard the HOL evaluate clause
@@ -102,9 +102,9 @@ theorem shMemLoadHOLExact_globalsShapesExact {width : Nat} {σ : Type} [NeZero w
       globalsShapesExact state := by
   unfold shMemLoadHOLExact
   by_cases hzero : nb = 0
-  · rw [if_pos hzero]
+  · rw [ite_eq_left hzero]
     by_cases hdomain : state.shMemaddrs address
-    · rw [if_pos hdomain]
+    · rw [ite_eq_left hdomain]
       generalize hffi : callFFIHOL state.ffi (.sharedMem .mappedRead)
           [BitVec.ofNat 8 nb] (panWordToBytesHOL address false) = ffiResult
       cases ffiResult with
@@ -116,13 +116,13 @@ theorem shMemLoadHOLExact_globalsShapesExact {width : Nat} {σ : Type} [NeZero w
             by_cases hk : key = name
             · subst hk
               simp only [lookupKvarHOLExact] at hlocal
-              simp only [globalsShapesExact, setKvarHOLExact, if_true, hlocal,
+              simp only [globalsShapesExact, setKvarHOLExact, ite_true, hlocal,
                 Option.map_some, shapeOfHOLExact_val_local]
-            · simp only [globalsShapesExact, setKvarHOLExact, if_neg hk]
-    · rw [if_neg hdomain]
-  · rw [if_neg hzero]
+            · simp only [globalsShapesExact, setKvarHOLExact, ite_eq_right hk]
+    · rw [ite_eq_right hdomain]
+  · rw [ite_eq_right hzero]
     by_cases hdomain : state.shMemaddrs (panByteAlignHOL address)
-    · rw [if_pos hdomain]
+    · rw [ite_eq_left hdomain]
       generalize hffi : callFFIHOL state.ffi (.sharedMem .mappedRead)
           [BitVec.ofNat 8 nb] (panWordToBytesHOL address false) = ffiResult
       cases ffiResult with
@@ -134,10 +134,10 @@ theorem shMemLoadHOLExact_globalsShapesExact {width : Nat} {σ : Type} [NeZero w
             by_cases hk : key = name
             · subst hk
               simp only [lookupKvarHOLExact] at hlocal
-              simp only [globalsShapesExact, setKvarHOLExact, if_true, hlocal,
+              simp only [globalsShapesExact, setKvarHOLExact, ite_true, hlocal,
                 Option.map_some, shapeOfHOLExact_val_local]
-            · simp only [globalsShapesExact, setKvarHOLExact, if_neg hk]
-    · rw [if_neg hdomain]
+            · simp only [globalsShapesExact, setKvarHOLExact, ite_eq_right hk]
+    · rw [ite_eq_right hdomain]
 
 /-- The broad shared-memory store helper never writes a global. -/
 theorem shMemStoreHOLExact_globalsShapesExact {width : Nat} {σ : Type} [NeZero width]

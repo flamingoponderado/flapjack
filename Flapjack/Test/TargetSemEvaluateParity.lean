@@ -118,7 +118,7 @@ example (mc : MachineConfig 8 Nat Nat) (ffi : HolFfiState Nat) :
   simp [evaluateTargetHOL, normal, fixture, applyOracleHOL]
   have he := normalEncoded mc 7
   simp [normal, fixture] at he
-  simp only [he, if_true]
+  simp only [he, ite_true]
 
 -- Original HOL te_normal_guard_rollback=T, rejecting state 18 after interference.
 example (mc : MachineConfig 8 Nat Nat) (ffi : HolFfiState Nat) :
@@ -128,7 +128,7 @@ example (mc : MachineConfig 8 Nat Nat) (ffi : HolFfiState Nat) :
   simp [evaluateTargetHOL, normal, fixture, applyOracleHOL]
   have he := normalEncoded mc 7
   simp [normal, fixture] at he
-  simp only [he, if_true]
+  simp only [he, ite_true]
 
 
 -- Original HOL te_normal_shift=T: next/oracle states are 8/18, then 19/30.
@@ -137,7 +137,7 @@ example (mc : MachineConfig 8 Nat Nat) (ffi : HolFfiState Nat) :
   simp [evaluateTargetHOL, normal, fixture, applyOracleHOL, holShiftSeq]
   have he := normalEncoded mc 7
   simp [normal, fixture] at he
-  simp only [he, if_true]
+  simp only [he, ite_true]
 
 
 def mmio (mc : MachineConfig 8 Nat Nat) (op : HolShmemOp) (nb : BitVec 8) :

@@ -5,8 +5,8 @@ import Flapjack.Pancake.Semantics.PanSem.ValueHOL
 
 Replays the direct original-HOL rows in
 `scripts/hol-probes/pan_sem_e2e_probe.out` for `Seq`/`If`/`While`/`Break`/
-`Continue`/`Annot` (rows `seq_two_assigns`, `seq_first_errors`, `if_true`,
-`if_false`, `if_error`, `while_cond_zero`, `while_timeout`, `while_break`,
+`Continue`/`Annot` (rows `seq_two_assigns`, `seq_first_errors`, `ite_true`,
+`ite_false`, `if_error`, `while_cond_zero`, `while_timeout`, `while_break`,
 `while_continue_then_zero`, `while_error_condition`, `break_clause`,
 `continue_clause`, `annot_clause`) against the untagged exact clause steps in
 `Flapjack/Pancake/Semantics/PanSem/ControlExact.lean`.
@@ -128,14 +128,14 @@ def seqFirstErrorsGuard : Bool :=
     (.assign .local (ml "x") (.const 2)) evaluateStub
   isErrorResult result.1 && localsWordOf result.2 (ml "x") == some 0
 
-/-- `if_true = (NONE, SOME (ValWord 1w))`. -/
+/-- `ite_true = (NONE, SOME (ValWord 1w))`. -/
 def ifTrueGuard : Bool :=
   let result := ifStepHOLExact state5 (.var .local (ml "c"))
     (.assign .local (ml "x") (.const 1)) (.assign .local (ml "x") (.const 2))
     evalExpressionFixture evaluateStub
   isNoneResult result.1 && localsWordOf result.2 (ml "x") == some 1
 
-/-- `if_false = (NONE, SOME (ValWord 2w))` (false is zero). -/
+/-- `ite_false = (NONE, SOME (ValWord 2w))` (false is zero). -/
 def ifFalseGuard : Bool :=
   let result := ifStepHOLExact stateFalse (.var .local (ml "c"))
     (.assign .local (ml "x") (.const 1)) (.assign .local (ml "x") (.const 2))

@@ -43,7 +43,7 @@ theorem memByte32_wide_le (b0 b1 b2 b3 : BitVec 32) (h0 : b0.toNat < 256) (h1 : 
       = b0 ||| BitVec.shiftLeft b1 8 ||| BitVec.shiftLeft b2 16 ||| BitVec.shiftLeft b3 24 := by
   simp only [RiscV.panRiscVWordOfBytes, List.getElem?_cons_zero, List.getElem?_cons_succ,
     Option.getD_some]
-  rw [if_neg (by decide : ¬ (false = true))]
+  rw [ite_eq_right (by decide : ¬ (false = true))]
   apply BitVec.eq_of_toNat_eq
   rw [BitVec.toNat_ofNat, BitVec.toNat_or, BitVec.toNat_or, BitVec.toNat_or]
   simp only [BitVec.shiftLeft, BitVec.toNat_ofNat]
@@ -63,7 +63,7 @@ theorem memByte32_wide_be (b0 b1 b2 b3 : BitVec 32) (h0 : b0.toNat < 256) (h1 : 
     exact memByte_nat_orShift_eq_base256 b3.toNat b2.toNat b1.toNat b0.toNat h3 h2 h1 h0
   simp only [RiscV.panRiscVWordOfBytes, List.getElem?_cons_zero, List.getElem?_cons_succ,
     Option.getD_some]
-  rw [if_pos trivial]
+  rw [ite_eq_left trivial]
   apply BitVec.eq_of_toNat_eq
   rw [BitVec.toNat_ofNat, BitVec.toNat_or, BitVec.toNat_or, BitVec.toNat_or]
   simp only [BitVec.shiftLeft, BitVec.toNat_ofNat]
@@ -295,7 +295,7 @@ theorem panMemLoad32HOL_eq_alt {width : Nat} [NeZero width]
   classical
   unfold panMemLoad32HOL
   by_cases haligned : address.toNat % 4 = 0
-  · simp only [if_pos haligned]
+  · simp only [ite_eq_left haligned]
     let aligned := panByteAlignHOL (width := width) address
     cases hmemory : memory aligned with
     | word value =>

@@ -43,7 +43,7 @@ theorem evaluateWhileNoErrorImpHOL {width : Nat} {σ : Type} [NeZero width]
       (fun address => Classical.propDecidable (s.memaddrs address)) e =
       some (.val (.word w)) := hev
   rw [hev']
-  simp only [if_pos hw, if_neg hc, hb]
+  simp only [ite_eq_left hw, ite_eq_right hc, hb]
 
 @[hol "cakeml/pancake/proofs/pan_simpProofScript.sml" "eval_seq_assoc_eq_evaluate"
   (fmap_as_finite_support := [locals, globals, code, eshapes])

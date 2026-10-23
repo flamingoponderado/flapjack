@@ -523,7 +523,7 @@ theorem localsRelOracleTargetRel :
     simp only [sptLookup] at hv ⊢
     split at hv
     · rename_i hn0
-      exact ⟨WordLocW.word 9, by rw [if_pos hn0]⟩
+      exact ⟨WordLocW.word 9, by rw [ite_eq_left hn0]⟩
     · simp at hv
   · intro vname value hv
     simp only [HolFiniteMapExact.lookup_update, HolFiniteMapExact.lookup_empty,

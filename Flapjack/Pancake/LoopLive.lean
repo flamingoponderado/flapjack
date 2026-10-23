@@ -440,12 +440,12 @@ theorem deleteNatSorted_eq_filter (name : Nat) (live : List Nat) :
   | cons head tail ih =>
       rw [deleteNatSorted, ih, List.filter_cons]
       by_cases h : (name == head) = true
-      · rw [if_pos h]
+      · rw [ite_eq_left h]
         have : decide (head ≠ name) = false := by
           rw [decide_eq_false_iff_not]
           exact fun hne => hne (beq_iff_eq.mp h).symm
         simp [this]
-      · rw [if_neg h]
+      · rw [ite_eq_right h]
         have : decide (head ≠ name) = true := by
           rw [decide_eq_true_iff]
           exact fun hx => h (beq_iff_eq.mpr hx.symm)
@@ -1444,9 +1444,9 @@ theorem loopCompSyntaxOk_cutSets_exists_extra :
 theorem loopInsert_mem (name : Nat) (names : List Nat) (x : Nat) :
     x ∈ loopInsert name names ↔ x = name ∨ x ∈ names := by
   by_cases hname : name ∈ names
-  · rw [loopInsert, if_pos hname]
+  · rw [loopInsert, ite_eq_left hname]
     exact ⟨fun h => Or.inr h, fun h => h.elim (fun heq => heq ▸ hname) id⟩
-  · rw [loopInsert, if_neg hname]
+  · rw [loopInsert, ite_eq_right hname]
     exact List.mem_cons
 
 theorem loopInsertAll_mem (added : List Nat) (names : List Nat) (x : Nat) :

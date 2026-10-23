@@ -318,11 +318,11 @@ theorem hfresh_update [BEq String] [LawfulBEq String]
   intro v sh ns' hlk
   rw [FLOOKUP_update] at hlk
   by_cases hv : name == v
-  · rw [if_pos hv] at hlk
+  · rw [ite_eq_left hv] at hlk
     have hpair : (shape, names) = (sh, ns') := Option.some.inj hlk
     have hns : names = ns' := congrArg Prod.snd hpair
     exact hns ▸ hnames
-  · rw [if_neg hv] at hlk
+  · rw [ite_eq_right hv] at hlk
     exact hfresh v sh ns' hlk
 
 /-- HOL `panLang$load_op` (`panLangScript.sml:300-305`): `Op8 ↦ Load8`,

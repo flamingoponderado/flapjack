@@ -140,7 +140,7 @@ theorem pcCompileCorrectAt_primitive {width : Nat} {σ : Type} [NeZero width]
     simp only [htargs]
     rw [show crepPrimopHOLExact pop flat = some (flattenHOL value) from hcrep]
     dsimp only
-    rw [if_pos ⟨hnsv, hnsSome, hnodup⟩]
+    rw [ite_eq_left ⟨hnsv, hnsSome, hnodup⟩]
   rw [hprimRun] at hnd
   have hfinal : ((temps.zip (temps.map t.locals.lookup)).foldl
         (fun current entry => HolFiniteMapExact.resVarEq current entry)

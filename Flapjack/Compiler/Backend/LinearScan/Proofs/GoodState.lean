@@ -182,7 +182,7 @@ theorem removeInactiveIntervalsInvariants :
     have hle := sorted_head_le hsort
     split
     · next hlt =>
-      simp only [Translator.Monadic.MonadBase.bind, colorsSubEqn, if_pos hrc]
+      simp only [Translator.Monadic.MonadBase.bind, colorsSubEqn, ite_eq_left hrc]
       let st' : LinearScanState :=
         { st with active := activetail, colorpool := holEl r sth.colors :: st.colorpool }
       have hpe : pos ≤ e + 1 := by

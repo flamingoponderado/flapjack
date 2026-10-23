@@ -40,7 +40,7 @@ theorem evaluateApplyColour_Seq {width : Nat} [NeZero width] {C F : Type}
   · refine ⟨p1, ?_⟩
     simp only [ht, he1, herr]
     trivial
-  · rw [if_neg herr] at hp1
+  · rw [ite_eq_right herr] at hp1
     rcases hec1 : evaluate (applyColour f first) cst with ⟨rc1, cs1⟩
     rw [hec1] at hp1
     dsimp only at hp1
@@ -50,7 +50,7 @@ theorem evaluateApplyColour_Seq {width : Nat} [NeZero width] {C F : Type}
     | some result =>
         refine ⟨p1, ?_⟩
         simp only [ht, he1, applyColour, hec1]
-        rw [if_neg herr]
+        rw [ite_eq_right herr]
         refine ⟨trivial, hs1, ?_⟩
         cases result <;> exact hl1
     | none =>

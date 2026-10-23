@@ -69,7 +69,7 @@ private theorem scanCons (executed : WordCseKnowledge) (register : Nat)
         simp [wordCseInvalidate, wordCseKeepData, found]
       rw [discarded, scanEmpty]
       simp only [wordCseInvalidateRegs, List.any_cons, found, Option.isSome_some,
-        Bool.true_or, if_true]
+        Bool.true_or, ite_true]
 
 /-- Whole original recursive invalidation is preserved by the executed
 absorbing any-scan, for arbitrary lists and all five related knowledge fields.

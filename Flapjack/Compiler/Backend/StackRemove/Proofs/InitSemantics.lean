@@ -57,7 +57,7 @@ theorem evaluateInitCode {width : Nat} [NeZero width] {C F : Type}
     | some r => simp
     | none =>
       rintro ⟨_, rel, ffi, prop, _⟩
-      exact ⟨_, by simp only []; rw [if_pos prop], rel, ffi⟩
+      exact ⟨_, by simp only []; rw [ite_eq_left prop], rel, ffi⟩
 
 /-- Prefixing a clock-zero timeout to the clock-indexed evaluations leaves
 the observable semantics unchanged when results and FFI states shift by one.
@@ -95,8 +95,8 @@ theorem semanticsAux_shift {width : Nat} [NeZero width] {C F : Type}
   by_cases f : (∃ k, let res := (E k).1
       res ≠ some .timeOut ∧ res ≠ some (.result (.loc 1 0)) ∧
       (∀ w, res ≠ some (.halt (.word w))) ∧ ∀ e, res ≠ some (.finalFFI e))
-  · rw [if_pos (hfail.mpr f), if_pos f]
-  · rw [if_neg (fun h => f (hfail.mp h)), if_neg f, hD]
+  · rw [ite_eq_left (hfail.mpr f), ite_eq_left f]
+  · rw [ite_eq_right (fun h => f (hfail.mp h)), ite_eq_right f, hD]
     congr 2
     funext res
     apply propext
@@ -188,7 +188,7 @@ theorem initSemantics {width : Nat} [NeZero width] {C F : Type}
           simp [StackSemControl.fixClock]
         have notBad := callNotBad start {t with clock := k}
         rw [StackSemEvaluate.evaluate_call]
-        simp only [StackSemControl.findCode, entry, Nat.add_one_ne_zero, if_false,
+        simp only [StackSemControl.findCode, entry, Nat.add_one_ne_zero, ite_false,
           StackSemStateOps.decClock, Nat.add_sub_cancel]
         rw [show ({ ({s with clock := k + 1} : StackSemStateFiniteExact width C F) with
             clock := k } : StackSemStateFiniteExact width C F) = {s with clock := k} from rfl, body]

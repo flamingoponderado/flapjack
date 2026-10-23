@@ -90,6 +90,6 @@ theorem holEl_set {α : Type} [Nonempty α] (l : List α) (i j : Nat) (v : α) (
   by_cases hj : j < l.length
   · rw [holEl_eq_getElem j _ (by simpa using hj), holEl_eq_getElem j l hj, List.getElem_set]
   · rw [holEl_of_length_le j _ (by simp; omega), holEl_of_length_le j l (by omega)]
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
 
 end Flapjack

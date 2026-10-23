@@ -283,12 +283,12 @@ theorem evaluateDecls_agree {σ : Type}
                 exact panShapeMatches_eq_shapeEqHOL shape _ hshape hvShape
               rw [← hmatch]
               by_cases hm : panShapeMatches (panValueShape decl.runtime.structs value) shape = true
-              · rw [if_pos hm, if_pos hm]
+              · rw [ite_eq_left hm, ite_eq_left hm]
                 apply ih _ _ htail
                 refine ⟨?_, ?_, hma, hbw⟩
                 · exact PanSemStateRelExec.updateGlobals hrel name hname value
                 · exact hrg.updateGlobals name value hvR
-              · rw [if_neg hm, if_neg hm]
+              · rw [ite_eq_right hm, ite_eq_right hm]
                 trivial
       | function fd =>
           obtain ⟨hfname, hparams, _, hret⟩ : FunDeclByteRanged fd := hhead
@@ -309,7 +309,7 @@ theorem evaluateDecls_agree {σ : Type}
           rw [← hcheck]
           by_cases hc : (fd.params.all (fun p => isWfShape decl.runtime.structs p.2) &&
               isWfShape decl.runtime.structs fd.returnShape) = true
-          · rw [if_pos hc, if_pos hc]
+          · rw [ite_eq_left hc, ite_eq_left hc]
             apply ih _ _ htail
             refine ⟨?_, hrg.of_fields rfl rfl rfl, hma, hbw⟩
             obtain ⟨hl, hg, hs, hcode, he, hm, hmd, hsm, hck, hbe, hffi, hb, ht⟩ := hrel
@@ -325,9 +325,9 @@ theorem evaluateDecls_agree {σ : Type}
             · have hne : ofString q ≠ ofString fd.name :=
                 fun h => hname (ofString_injective_of_ranged hfname hq h.symm)
               have hbeq : (fd.name == q) = false := beq_eq_false_iff_ne.mpr hname
-              simp only [hbeq, hne, if_false, Bool.false_eq_true]
+              simp only [hbeq, hne, ite_false, Bool.false_eq_true]
               exact hold
-          · rw [if_neg hc, if_neg hc]
+          · rw [ite_eq_right hc, ite_eq_right hc]
             trivial
       | exnDecl eid shape =>
           obtain ⟨heid, hshape⟩ : NameRanged eid ∧ ShapeByteRanged shape := hhead
@@ -347,14 +347,14 @@ theorem evaluateDecls_agree {σ : Type}
           simp only [evaluateDecls, List.map_cons, declToHOL, evaluateDeclsHOLFinite]
           rw [hnone, ← hwf]
           by_cases hs : (lookupInfo eid decl.eshapes).isSome = true
-          · rw [if_pos hs]
+          · rw [ite_eq_left hs]
             simp [hs, PanSemDeclOutcomeRel]
-          · rw [if_neg hs]
+          · rw [ite_eq_right hs]
             by_cases hw : isWfShape decl.runtime.structs shape = true
             · have hcond : (!(lookupInfo eid decl.eshapes).isSome &&
                   isWfShape decl.runtime.structs shape) = true := by
                 simp [hs, hw]
-              rw [if_pos hw, if_pos hcond]
+              rw [ite_eq_left hw, ite_eq_left hcond]
               apply ih _ _ htail
               refine ⟨?_, hrg.of_fields rfl rfl rfl, hma, hbw⟩
               obtain ⟨hl, hg, hstr, hcode, he, hm, hmd, hsm, hck, hbe, hffi, hb, ht⟩ := hrel
@@ -370,12 +370,12 @@ theorem evaluateDecls_agree {σ : Type}
               · have hne : ofString q ≠ ofString eid :=
                   fun h => hname (ofString_injective_of_ranged heid hq h.symm)
                 have hbeq : (eid == q) = false := beq_eq_false_iff_ne.mpr hname
-                simp only [hbeq, hne, if_false, Bool.false_eq_true]
+                simp only [hbeq, hne, ite_false, Bool.false_eq_true]
                 exact hold
             · have hcond : ¬ (!(lookupInfo eid decl.eshapes).isSome &&
                   isWfShape decl.runtime.structs shape) = true := by
                 simp [hw]
-              rw [if_neg hw, if_neg hcond]
+              rw [ite_eq_right hw, ite_eq_right hcond]
               trivial
 
 /-- Membership in a declaration map update. -/

@@ -52,11 +52,11 @@ theorem mapKeys_eraseEq {α β γ : Type} [DecidableEq α] [DecidableEq γ] {g :
     simp only [HolFiniteMapExact.eraseEq, FDOMSUB_HOL]
     by_cases hxk : x = k
     · subst hxk; simp
-    · rw [if_neg hxk, if_neg (fun h => hxk (hg h)),
+    · rw [ite_eq_right hxk, ite_eq_right (fun h => hxk (hg h)),
         HolFiniteMapExact.lookup_mapKeys_of_injective hg]
   · have hj' : ∀ x, j ≠ g x := fun x h => hj ⟨x, h⟩
     simp only [HolFiniteMapExact.eraseEq, FDOMSUB_HOL]
-    rw [if_neg (hj' k)]
+    rw [ite_eq_right (hj' k)]
     rw [show (HolFiniteMapExact.mapKeys g m).lookup j = none from
         HolFiniteMapExact.lookup_mapKeys_of_not_range _ hj']
     exact (HolFiniteMapExact.lookup_mapKeys_of_not_range _ hj').symm
@@ -239,89 +239,89 @@ theorem comp_measure {width : Nat} [NeZero width] {C F : Type}
   case tick =>
     change evaluate (.tick, _) = _
     rw [evaluate_tick] at h; rw [evaluate_tick, renameState_clock]
-    by_cases h0 : s.clock = 0 <;> simp only [h0, if_true, if_false, Prod.mk.injEq] at h <;>
+    by_cases h0 : s.clock = 0 <;> simp only [h0, ite_true, ite_false, Prod.mk.injEq] at h <;>
       obtain ⟨rfl, rfl⟩ := h
-    · simp only [h0, if_true, emptyEnv_renameState]
-    · simp only [h0, if_false]; rfl
+    · simp only [h0, ite_true, emptyEnv_renameState]
+    · simp only [h0, ite_false]; rfl
   case alloc n =>
     change evaluate (.alloc n, _) = _
     rw [evaluate_alloc] at h; rw [evaluate_alloc]
-    simp only [renameState_useAlloc, hA, Bool.not_false, if_true, Prod.mk.injEq] at h ⊢
+    simp only [renameState_useAlloc, hA, Bool.not_false, ite_true, Prod.mk.injEq] at h ⊢
     obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
   case get v n =>
     change evaluate (.get v n, _) = _
     rw [evaluate_get] at h; rw [evaluate_get]
-    simp only [renameState_useStore, hS, Bool.false_eq_true, not_false_eq_true, if_true,
+    simp only [renameState_useStore, hS, Bool.false_eq_true, not_false_eq_true, ite_true,
       Prod.mk.injEq] at h ⊢
     obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
   case set n v =>
     change evaluate (.set n v, _) = _
     rw [evaluate_set] at h; rw [evaluate_set]
-    simp only [renameState_useStore, hS, Bool.false_eq_true, not_false_eq_true, if_true,
+    simp only [renameState_useStore, hS, Bool.false_eq_true, not_false_eq_true, ite_true,
       Prod.mk.injEq] at h ⊢
     obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
   case opCurrHeap b d src =>
     change evaluate (.opCurrHeap b d src, _) = _
     rw [evaluate_opCurrHeap] at h; rw [evaluate_opCurrHeap]
-    simp only [renameState_useStore, hS, Bool.false_eq_true, not_false_eq_true, if_true,
+    simp only [renameState_useStore, hS, Bool.false_eq_true, not_false_eq_true, ite_true,
       Prod.mk.injEq] at h ⊢
     obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
   case storeConsts t1 t2 stub =>
     change evaluate (.storeConsts t1 t2 stub, _) = _
     rw [evaluate_storeConsts] at h; rw [evaluate_storeConsts]
-    simp only [renameState_useStore, hS, Bool.false_eq_true, not_false_eq_true, if_true,
+    simp only [renameState_useStore, hS, Bool.false_eq_true, not_false_eq_true, ite_true,
       Prod.mk.injEq] at h ⊢
     obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
   case stackAlloc n =>
     change evaluate (.stackAlloc n, _) = _
     rw [evaluate_stackAlloc] at h; rw [evaluate_stackAlloc]
-    simp only [renameState_useStack, hK, Bool.not_false, if_true, Prod.mk.injEq] at h ⊢
+    simp only [renameState_useStack, hK, Bool.not_false, ite_true, Prod.mk.injEq] at h ⊢
     obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
   case stackFree n =>
     change evaluate (.stackFree n, _) = _
     rw [evaluate_stackFree] at h; rw [evaluate_stackFree]
-    simp only [renameState_useStack, hK, Bool.not_false, if_true, Prod.mk.injEq] at h ⊢
+    simp only [renameState_useStack, hK, Bool.not_false, ite_true, Prod.mk.injEq] at h ⊢
     obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
   case stackLoad a b =>
     change evaluate (.stackLoad a b, _) = _
     rw [evaluate_stackLoad] at h; rw [evaluate_stackLoad]
-    simp only [renameState_useStack, hK, Bool.not_false, if_true, Prod.mk.injEq] at h ⊢
+    simp only [renameState_useStack, hK, Bool.not_false, ite_true, Prod.mk.injEq] at h ⊢
     obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
   case stackLoadAny a b =>
     change evaluate (.stackLoadAny a b, _) = _
     rw [evaluate_stackLoadAny] at h; rw [evaluate_stackLoadAny]
-    simp only [renameState_useStack, hK, Bool.not_false, if_true, Prod.mk.injEq] at h ⊢
+    simp only [renameState_useStack, hK, Bool.not_false, ite_true, Prod.mk.injEq] at h ⊢
     obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
   case stackStore a b =>
     change evaluate (.stackStore a b, _) = _
     rw [evaluate_stackStore] at h; rw [evaluate_stackStore]
-    simp only [renameState_useStack, hK, Bool.not_false, if_true, Prod.mk.injEq] at h ⊢
+    simp only [renameState_useStack, hK, Bool.not_false, ite_true, Prod.mk.injEq] at h ⊢
     obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
   case stackStoreAny a b =>
     change evaluate (.stackStoreAny a b, _) = _
     rw [evaluate_stackStoreAny] at h; rw [evaluate_stackStoreAny]
-    simp only [renameState_useStack, hK, Bool.not_false, if_true, Prod.mk.injEq] at h ⊢
+    simp only [renameState_useStack, hK, Bool.not_false, ite_true, Prod.mk.injEq] at h ⊢
     obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
   case stackGetSize a =>
     change evaluate (.stackGetSize a, _) = _
     rw [evaluate_stackGetSize] at h; rw [evaluate_stackGetSize]
-    simp only [renameState_useStack, hK, Bool.not_false, if_true, Prod.mk.injEq] at h ⊢
+    simp only [renameState_useStack, hK, Bool.not_false, ite_true, Prod.mk.injEq] at h ⊢
     obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
   case stackSetSize a =>
     change evaluate (.stackSetSize a, _) = _
     rw [evaluate_stackSetSize] at h; rw [evaluate_stackSetSize]
-    simp only [renameState_useStack, hK, Bool.not_false, if_true, Prod.mk.injEq] at h ⊢
+    simp only [renameState_useStack, hK, Bool.not_false, ite_true, Prod.mk.injEq] at h ⊢
     obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
   case bitmapLoad a b =>
     change evaluate (.bitmapLoad a b, _) = _
     rw [evaluate_bitmapLoad] at h; rw [evaluate_bitmapLoad]
-    simp only [renameState_useStack, hK, Bool.not_false, Bool.true_or, if_true,
+    simp only [renameState_useStack, hK, Bool.not_false, Bool.true_or, ite_true,
       Prod.mk.injEq] at h ⊢
     obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
   case dataBufferWrite a b =>
     change evaluate (.dataBufferWrite a b, _) = _
     rw [evaluate_dataBufferWrite] at h; rw [evaluate_dataBufferWrite]
-    simp only [renameState_useStack, hK, Bool.false_eq_true, not_false_eq_true, if_true,
+    simp only [renameState_useStack, hK, Bool.false_eq_true, not_false_eq_true, ite_true,
       Prod.mk.injEq] at h ⊢
     obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
   case inst i =>
@@ -333,9 +333,9 @@ theorem comp_measure {width : Nat} [NeZero width] {C F : Type}
     change evaluate (.locValue (findNameSpt f a) l1 l2, _) = _
     rw [evaluate_locValue] at h; rw [evaluate_locValue, locCheck_renameState]
     by_cases hl : StackSem.locCheckExact s.code (l1, l2) <;>
-      simp only [hl, if_true, if_false, Prod.mk.injEq] at h <;> obtain ⟨rfl, rfl⟩ := h
-    · simp only [hl, if_true, setVar_findName hf]
-    · simp only [hl, if_false]
+      simp only [hl, ite_true, ite_false, Prod.mk.injEq] at h <;> obtain ⟨rfl, rfl⟩ := h
+    · simp only [hl, ite_true, setVar_findName hf]
+    · simp only [hl, ite_false]
   case codeBufferWrite a b =>
     change evaluate (.codeBufferWrite (findNameSpt f a) (findNameSpt f b), _) = _
     rw [evaluate_codeBufferWrite] at h
@@ -352,7 +352,7 @@ theorem comp_measure {width : Nat} [NeZero width] {C F : Type}
     rcases he : StackSemExpressions.wordExp s (.op .add [.var a, .const w]) with _ | a' <;>
       simp only [he] at h ⊢
     · simp only [Prod.mk.injEq] at h; obtain ⟨rfl, rfl⟩ := h; rfl
-    · by_cases h0 : s.clock = 0 <;> simp only [h0, if_true, if_false] at h ⊢
+    · by_cases h0 : s.clock = 0 <;> simp only [h0, ite_true, ite_false] at h ⊢
       · simp only [Prod.mk.injEq] at h; obtain ⟨rfl, rfl⟩ := h; simp only [emptyEnv_renameState]
       · rw [decClock_renameState, shMemOp_renameState hf, h]
   case seq c1 c2 =>
@@ -393,17 +393,17 @@ theorem comp_measure {width : Nat} [NeZero width] {C F : Type}
     rw [hfx] at h ⊢
     dsimp only at h ⊢
     by_cases hl : StackSemControl.contLoop r1 = true
-    · simp only [hl, if_true] at h ⊢
+    · simp only [hl, ite_true] at h ⊢
       by_cases h0 : min s.clock t1.clock = 0
-      · simp only [renameState_clock, h0, if_true, Prod.mk.injEq] at h ⊢
+      · simp only [renameState_clock, h0, ite_true, Prod.mk.injEq] at h ⊢
         obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, emptyEnv_renameState _⟩
-      · simp only [renameState_clock, h0, if_false] at h ⊢
+      · simp only [renameState_clock, h0, ite_false] at h ⊢
         have hlt := loop_reentry_measure_lt c1 s (r1, t1) (by rw [hfx]; exact h0)
         rw [hfx] at hlt
         rw [decClock_renameState]
         have hp1 : Pre c f t1 := Pre.of_evaluate h1 hpre
         exact ih _ hlt (.loop c1) _ rfl r t h hp1
-    · simp only [hl, Bool.false_eq_true, if_false, Prod.mk.injEq] at h ⊢
+    · simp only [hl, Bool.false_eq_true, ite_false, Prod.mk.injEq] at h ⊢
       obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
   case ffi n p1 p2 p3 p4 p5 =>
     change evaluate (.ffi n (findNameSpt f p1) (findNameSpt f p2) (findNameSpt f p3)
@@ -437,7 +437,7 @@ theorem comp_measure {width : Nat} [NeZero width] {C F : Type}
     rcases hy : getVar r2 s with _ | ⟨y | _⟩ <;> simp only [hy] at h ⊢ <;>
       try (simp only [Prod.mk.injEq] at h; obtain ⟨rfl, rfl⟩ := h; rfl)
     by_cases hw : Flapjack.Compiler.Encoders.Asm.wordCmpHOL .lower x y = true
-    · simp only [hw, if_true] at h ⊢
+    · simp only [hw, ite_true] at h ⊢
       have hfc : findCode (.inl dest) (renameState c f s).regs (renameState c f s).code =
           (findCode (.inl dest) s.regs s.code).map (progCompHOL f) :=
         findCode_renameState (dest := .inl dest) hf
@@ -446,17 +446,17 @@ theorem comp_measure {width : Nat} [NeZero width] {C F : Type}
         simp only [hp, Option.map_none, Option.map_some] at h ⊢
       · simp only [Prod.mk.injEq] at h; obtain ⟨rfl, rfl⟩ := h; rfl
       by_cases h0 : s.clock = 0
-      · simp only [renameState_clock, h0, if_true, Prod.mk.injEq] at h ⊢
+      · simp only [renameState_clock, h0, ite_true, Prod.mk.injEq] at h ⊢
         obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, emptyEnv_renameState _⟩
-      simp only [renameState_clock, h0, if_false] at h ⊢
+      simp only [renameState_clock, h0, ite_false] at h ⊢
       rcases h1 : evaluate (prog, decClock s) with ⟨r1', t1⟩
       have e1 := ih _ (callee_measure_lt prog _ s h0) prog _ rfl r1' t1 h1 hpre
       rw [h1] at h; rw [decClock_renameState, e1]
       dsimp only at h ⊢
       by_cases hb : badFunReturn r1' = true <;>
-        simp only [hb, if_true, if_false, Bool.false_eq_true, Prod.mk.injEq] at h ⊢ <;>
+        simp only [hb, ite_true, ite_false, Bool.false_eq_true, Prod.mk.injEq] at h ⊢ <;>
         obtain ⟨rfl, rfl⟩ := h <;> exact ⟨rfl, rfl⟩
-    · simp only [hw, Bool.false_eq_true, if_false, Prod.mk.injEq] at h ⊢
+    · simp only [hw, Bool.false_eq_true, ite_false, Prod.mk.injEq] at h ⊢
       obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
   case rawCall dest =>
     change evaluate (.rawCall dest, _) = _
@@ -469,15 +469,15 @@ theorem comp_measure {width : Nat} [NeZero width] {C F : Type}
       simp only [hd, Option.map_none, Option.map_some, Prod.map] at h ⊢
     · simp only [Prod.mk.injEq] at h; obtain ⟨rfl, rfl⟩ := h; rfl
     by_cases h0 : s.clock = 0
-    · simp only [renameState_clock, h0, if_true, Prod.mk.injEq] at h ⊢
+    · simp only [renameState_clock, h0, ite_true, Prod.mk.injEq] at h ⊢
       obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, emptyEnv_renameState _⟩
-    simp only [renameState_clock, h0, if_false] at h ⊢
+    simp only [renameState_clock, h0, ite_false] at h ⊢
     rcases h1 : evaluate (body, decClock s) with ⟨r1', t1⟩
     have e1 := ih _ (callee_measure_lt body _ s h0) body _ rfl r1' t1 h1 hpre
     rw [h1] at h; rw [decClock_renameState, e1]
     dsimp only at h ⊢
     by_cases hb : badFunReturn r1' = true <;>
-      simp only [hb, if_true, if_false, Bool.false_eq_true, Prod.mk.injEq] at h ⊢ <;>
+      simp only [hb, ite_true, ite_false, Bool.false_eq_true, Prod.mk.injEq] at h ⊢ <;>
       obtain ⟨rfl, rfl⟩ := h <;> exact ⟨rfl, rfl⟩
   case call ret dest handler =>
     rcases ret with _ | ⟨retH, link, l1, l2⟩
@@ -490,9 +490,9 @@ theorem comp_measure {width : Nat} [NeZero width] {C F : Type}
           simp only [hpc, Option.map_none, Option.map_some] at h ⊢
         · simp only [Prod.mk.injEq] at h; obtain ⟨rfl, rfl⟩ := h; rfl
         by_cases h0 : s.clock = 0
-        · simp only [renameState_clock, h0, if_true, Prod.mk.injEq] at h ⊢
+        · simp only [renameState_clock, h0, ite_true, Prod.mk.injEq] at h ⊢
           obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, emptyEnv_renameState _⟩
-        simp only [renameState_clock, h0, if_false] at h ⊢
+        simp only [renameState_clock, h0, ite_false] at h ⊢
         rcases h1 : evaluate (prog, decClock s) with ⟨r1', t1⟩
         have e1 := ih _ (callee_measure_lt prog _ s h0) prog _ rfl r1' t1 h1 hpre
         rw [h1] at h; rw [decClock_renameState, e1, fixClock_renameState]
@@ -501,7 +501,7 @@ theorem comp_measure {width : Nat} [NeZero width] {C F : Type}
         rw [hfx] at h ⊢
         dsimp only at h ⊢
         by_cases hb : badFunReturn r1' = true <;>
-          simp only [hb, if_true, if_false, Bool.false_eq_true, Prod.mk.injEq] at h ⊢ <;>
+          simp only [hb, ite_true, ite_false, Bool.false_eq_true, Prod.mk.injEq] at h ⊢ <;>
           obtain ⟨rfl, rfl⟩ := h <;> exact ⟨rfl, rfl⟩
       · change evaluate (.call none (destFindNameHOL f dest)
           (some (progCompHOL f hp, hl1, hl2)), _) = _
@@ -527,9 +527,9 @@ theorem comp_measure {width : Nat} [NeZero width] {C F : Type}
         simp only [hpc, Option.map_none, Option.map_some] at h ⊢
       · simp only [Prod.mk.injEq] at h; obtain ⟨rfl, rfl⟩ := h; rfl
       by_cases h0 : s.clock = 0
-      · simp only [renameState_clock, h0, if_true, Prod.mk.injEq] at h ⊢
+      · simp only [renameState_clock, h0, ite_true, Prod.mk.injEq] at h ⊢
         obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, emptyEnv_renameState _⟩
-      simp only [renameState_clock, h0, if_false] at h ⊢
+      simp only [renameState_clock, h0, ite_false] at h ⊢
       rw [← setVar_findName hf]
       have h0' : (setVar link (.loc l1 l2) s).clock ≠ 0 := h0
       have hpv : Pre c f (decClock (setVar link (.loc l1 l2) s)) := hpre
@@ -548,18 +548,18 @@ theorem comp_measure {width : Nat} [NeZero width] {C F : Type}
       rcases r1' with _ | ⟨x⟩ | ⟨x⟩ | _ | _ | _ | _ | _ | _
       all_goals try (simp only [Prod.mk.injEq] at h; obtain ⟨rfl, rfl⟩ := h; rfl)
       · by_cases hx : x = .loc l1 l2
-        · simp only [hx, ne_eq, not_true_eq_false, if_false] at h ⊢
+        · simp only [hx, ne_eq, not_true_eq_false, ite_false] at h ⊢
           exact ih _ (hlt retH) retH _ rfl r t h hp1
-        · simp only [hx, ne_eq, not_false_eq_true, if_true, Prod.mk.injEq] at h ⊢
+        · simp only [hx, ne_eq, not_false_eq_true, ite_true, Prod.mk.injEq] at h ⊢
           obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
       · rcases handler with _ | ⟨hp, hl1, hl2⟩
         · dsimp only [handlerComp] at h ⊢
           simp only [Prod.mk.injEq] at h; obtain ⟨rfl, rfl⟩ := h; rfl
         · dsimp only [handlerComp] at h ⊢
           by_cases hx : x = .loc hl1 hl2
-          · simp only [hx, ne_eq, not_true_eq_false, if_false] at h ⊢
+          · simp only [hx, ne_eq, not_true_eq_false, ite_false] at h ⊢
             exact ih _ (hlt hp) hp _ rfl r t h hp1
-          · simp only [hx, ne_eq, not_false_eq_true, if_true, Prod.mk.injEq] at h ⊢
+          · simp only [hx, ne_eq, not_false_eq_true, ite_true, Prod.mk.injEq] at h ⊢
             obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
   case install p1 p2 p3 p4 p5 =>
     change evaluate (.install (findNameSpt f p1) (findNameSpt f p2) (findNameSpt f p3)
@@ -580,7 +580,7 @@ theorem comp_measure {width : Nat} [NeZero width] {C F : Type}
     rcases h4 : getVar p4 s with _ | ⟨w4 | _⟩ <;> simp only [h4] at h ⊢ <;>
       try (simp only [Prod.mk.injEq] at h; obtain ⟨rfl, rfl⟩ := h; rfl)
     try dsimp only at h ⊢
-    simp only [renameState_codeBuffer, renameState_useStack, hK, Bool.false_eq_true, if_false]
+    simp only [renameState_codeBuffer, renameState_useStack, hK, Bool.false_eq_true, ite_false]
       at h ⊢
     rcases hfl : wordSemBufferFlush s.codeBuffer w1 w2 with _ | ⟨bytes, cb⟩ <;>
       simp only [hfl] at h ⊢
@@ -602,7 +602,7 @@ theorem comp_measure {width : Nat} [NeZero width] {C F : Type}
     rw [hno]
     split at h
     · rename_i hcond
-      rw [if_pos hcond]
+      rw [ite_eq_left hcond]
       simp only [Prod.mk.injEq] at h; obtain ⟨rfl, rfl⟩ := h
       refine congrArg (Prod.mk none) ?_
       simp only [renameState]
@@ -610,7 +610,7 @@ theorem comp_measure {width : Nat} [NeZero width] {C F : Type}
         renamedCode_union]
       rfl
     · rename_i hcond
-      rw [if_neg hcond]
+      rw [ite_eq_right hcond]
       simp only [Prod.mk.injEq] at h; obtain ⟨rfl, rfl⟩ := h; rfl
 
 end CompCorrect

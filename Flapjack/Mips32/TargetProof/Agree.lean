@@ -144,7 +144,7 @@ theorem exec_frame {d : W → Prop} (s : State) (i : Insn) (hacc : ∀ x ∈ tou
     simp only [touched, wordAt, List.mem_cons, List.mem_nil_iff, or_false, forall_eq_or_imp,
       forall_eq] at hne <;>
     simp only [exec, lwl, lwr, swl, swr, setReg_mem, Mem.writeWord, Mem.writeHalf,
-      readByte_writeByte, hne, if_false]
+      readByte_writeByte, hne, ite_false]
 
 /-! ## Fetching and the asm-level step -/
 

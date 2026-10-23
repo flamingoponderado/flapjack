@@ -128,7 +128,7 @@ theorem compExpPreservesEval_load_case {width : Nat} [NeZero width]
               simpa [hDomain] using h.symm
             simp only [LoopSemStateFiniteExact.eval, hAddressResult,
               wlabWlocExact, LoopSemStateFiniteExact.memLoad,
-              hDomain', if_true]
+              hDomain', ite_true]
             exact congrArg some (hMem' addressWord hDomain).symm
           · simp [hDomain] at hEval
 

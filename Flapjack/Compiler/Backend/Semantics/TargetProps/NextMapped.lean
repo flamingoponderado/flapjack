@@ -28,7 +28,7 @@ theorem nextInterferenceMappedRead {width : Nat} [NeZero width]
     split <;> simp_all
   simp only [he] at hf
   simp only [findNextInterference]
-  rw [if_neg hn, if_neg hh, if_neg hc]
+  rw [ite_eq_right hn, ite_eq_right hh, ite_eq_right hc]
   simp only [hi, he, hm, halign, hd, hv, applyOracleHOL, hf, and_self, ite_true]
 
 /-- Literal source712: the complete mapped-write interference guards, payload and oracle shift. -/
@@ -58,7 +58,7 @@ theorem nextInterferenceMappedWrite {width : Nat} [NeZero width]
     split <;> simp_all
   simp only [he] at hf
   simp only [findNextInterference]
-  rw [if_neg hn, if_neg hh, if_neg hc]
+  rw [ite_eq_right hn, ite_eq_right hh, ite_eq_right hc]
   simp only [hi, he, hm, halign, hd, hv, applyOracleHOL, hf, and_self, ite_true]
 
 end Flapjack.Compiler.Backend.Semantics.TargetProps

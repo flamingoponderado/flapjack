@@ -716,7 +716,7 @@ theorem evalCrepClockProg_ite_nonzero [NeZero width] {σ : Type _}
   simp only [evalCrepClockProg, hcondition]
   by_cases hzero : value = 0
   · exact False.elim (hnonzero hzero)
-  · rw [if_neg hzero]
+  · rw [ite_eq_right hzero]
 
 theorem evalCrepClockProg_ite_error [NeZero width] {σ : Type _}
     (condition : CrepExp (BitVec width)) (thenBranch elseBranch : CrepClockProg width)

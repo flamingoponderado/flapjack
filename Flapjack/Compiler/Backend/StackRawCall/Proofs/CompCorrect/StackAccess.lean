@@ -184,7 +184,7 @@ theorem compCorrectLocValue {width : Nat} [NeZero width] {C F : Type}
         (setVar register (.loc first second) source).stackSpace, postRelation, ?_, ?_⟩
     all_goals try (intro _; rfl)
     all_goals simp only [compTop, comp, Nat.add_zero, StackSemEvaluate.evaluate_locValue,
-      targetLocation, if_true, setVar]
+      targetLocation, ite_true, setVar]
   · exact False.elim (nonerror (Prod.mk.inj execution).1.symm)
 
 /-- Genuine original stackAlloc case: all three source premises and both

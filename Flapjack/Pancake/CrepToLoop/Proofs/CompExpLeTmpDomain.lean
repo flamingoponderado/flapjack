@@ -29,7 +29,7 @@ theorem sptListInsert_mem (k : Nat) :
   | key :: ks, t, h => by
       simp only [sptListInsert]
       rcases List.mem_cons.mp h with rfl | h
-      · apply sptListInsert_mono; rw [sptLookup_sptInsert, if_pos rfl]; rfl
+      · apply sptListInsert_mono; rw [sptLookup_sptInsert, ite_eq_left rfl]; rfl
       · exact sptListInsert_mem k ks _ h
 
 variable {width : Nat} [NeZero width]
@@ -128,7 +128,7 @@ theorem compileExpHOLExact_le_tmp_domain (ct : CrepToLoopContextExact)
       simp only [compileExpHOLExact, hA, holLoopLocalsTouched, List.mem_singleton] at h ⊢
       subst h
       refine ⟨Nat.lt_succ_self _, ?_⟩
-      rw [sptLookup_sptInsert, if_pos rfl]; rfl
+      rw [sptLookup_sptInsert, ite_eq_left rfl]; rfl
   | .op o es, n, ht, hv, h => by
       have ih := compileExpsHOLExact_le_tmp_domain ct hmax tmp l es n ht
         (fun v hv' => hv v (by simpa [crepExpVarsHOL, crepExpVarsHOLList_eq_flatten] using hv'))
@@ -143,7 +143,7 @@ theorem compileExpHOLExact_le_tmp_domain (ct : CrepToLoopContextExact)
       rw [hB] at h; simp only [holLoopLocalsTouched, List.mem_singleton] at h ⊢
       subst h
       refine ⟨Nat.lt_succ_self _, ?_⟩
-      rw [sptLookup_sptInsert, if_pos rfl]; rfl
+      rw [sptLookup_sptInsert, ite_eq_left rfl]; rfl
   | .cmp o a b, n, ht, hv, h => by
       rcases hA : compileExpHOLExact ct tmp l a with ⟨c, v, m, ol⟩
       rcases hB : compileExpHOLExact ct m ol b with ⟨c', v', m', ol'⟩

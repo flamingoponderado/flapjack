@@ -152,13 +152,13 @@ theorem memLoadNamedAfindi {width : Nat} [NeZero width] (madd : BitVec width →
       rw [afindi_cons] at h
       rw [memLoadHOLExact]
       by_cases hc : nm = candidate
-      · rw [if_pos hc] at h
+      · rw [ite_eq_left hc] at h
         cases h
         simp only [List.getElem_cons_zero, List.drop_succ_cons, List.drop_zero]
-        rw [if_pos hc.symm]
+        rw [ite_eq_left hc.symm]
         cases memLoadFldsHOLExact info.fields x madd memry rest <;> rfl
-      · rw [if_neg hc] at h
-        rw [if_neg (fun h' => hc h'.symm)]
+      · rw [ite_eq_right hc] at h
+        rw [ite_eq_right (fun h' => hc h'.symm)]
         cases h' : afindi nm rest with
         | none => rw [h'] at h; cases h
         | some k =>
@@ -222,7 +222,7 @@ theorem memLoadConversion {width : Nat} [NeZero width] (madd : BitVec width → 
     split at hload
     · rename_i hx
       cases hload
-      rw [if_pos hx]
+      rw [ite_eq_left hx]
       exact ⟨by rw [convertV], by rw [valueFldsOkHOLExact]⟩
     · cases hload
   | case2 n shs ih =>

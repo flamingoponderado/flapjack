@@ -147,7 +147,7 @@ theorem lookup_insert_other (name location other : Nat) (environment : LocationE
     (h : other ≠ name) :
     lookup other (insert name location environment) = lookup other environment := by
   simp only [insert]
-  rw [lookup_cons, if_neg (fun hc => h hc.symm)]
+  rw [lookup_cons, ite_eq_right (fun hc => h hc.symm)]
 
 theorem lookup_delete_same (name : Nat) (environment : LocationEnv) :
     lookup name (delete name environment) = none := by
@@ -157,10 +157,10 @@ theorem lookup_delete_same (name : Nat) (environment : LocationEnv) :
       obtain ⟨candidate, location⟩ := entry
       rw [delete_cons]
       by_cases hc : candidate = name
-      · rw [if_pos hc]
+      · rw [ite_eq_left hc]
         exact ih
-      · rw [if_neg hc]
-        rw [lookup_cons, if_neg hc]
+      · rw [ite_eq_right hc]
+        rw [lookup_cons, ite_eq_right hc]
         exact ih
 
 theorem lookup_delete_other (name other : Nat) (environment : LocationEnv)
@@ -172,14 +172,14 @@ theorem lookup_delete_other (name other : Nat) (environment : LocationEnv)
       obtain ⟨candidate, location⟩ := entry
       rw [delete_cons]
       by_cases hc : candidate = name
-      · rw [if_pos hc]
-        rw [lookup_cons, if_neg (fun hc' => h (hc'.symm.trans hc))]
+      · rw [ite_eq_left hc]
+        rw [lookup_cons, ite_eq_right (fun hc' => h (hc'.symm.trans hc))]
         exact ih
-      · rw [if_neg hc]
+      · rw [ite_eq_right hc]
         by_cases ho : candidate = other
-        · rw [lookup_cons, if_pos ho, lookup_cons, if_pos ho]
-        · rw [lookup_cons, if_neg ho]
-          rw [lookup_cons, if_neg ho]
+        · rw [lookup_cons, ite_eq_left ho, lookup_cons, ite_eq_left ho]
+        · rw [lookup_cons, ite_eq_right ho]
+          rw [lookup_cons, ite_eq_right ho]
           exact ih
 
 end LoopCall

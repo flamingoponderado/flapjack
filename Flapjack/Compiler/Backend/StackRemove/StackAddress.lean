@@ -51,7 +51,7 @@ theorem upshift_large {width : Nat} [NeZero width] (register count : Nat)
     upshift (width := width) register count =
       .seq (.inst (.arith (.binop .add register register (.imm (wordOffset maxStackAlloc)))))
         (upshift register (count - maxStackAlloc)) := by
-  rw [upshift, if_neg (Nat.not_le.mpr large)]
+  rw [upshift, ite_eq_right (Nat.not_le.mpr large)]
 
 /-- Flapjack equation fixture preserving the complete source recursion. -/
 theorem downshift_large {width : Nat} [NeZero width] (register count : Nat)
@@ -59,6 +59,6 @@ theorem downshift_large {width : Nat} [NeZero width] (register count : Nat)
     downshift (width := width) register count =
       .seq (.inst (.arith (.binop .sub register register (.imm (wordOffset maxStackAlloc)))))
         (downshift register (count - maxStackAlloc)) := by
-  rw [downshift, if_neg (Nat.not_le.mpr large)]
+  rw [downshift, ite_eq_right (Nat.not_le.mpr large)]
 
 end Flapjack.Compiler.Backend.StackRemove

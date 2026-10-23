@@ -47,7 +47,7 @@ private theorem memStore32Simulation {width : Nat} {σ : Type} [NeZero width]
     | word cell =>
       by_cases hd : source.memaddrs (panByteAlignHOL address)
       · have htargetCell := hmem _ hd
-        simp only [if_pos ha, hm, if_pos hd, Option.some.injEq] at hstore
+        simp only [ite_eq_left ha, hm, ite_eq_left hd, Option.some.injEq] at hstore
         subst memory
         refine ⟨(fun a => if a = panByteAlignHOL address then
           .word (store32Alt address source.be value cell) else target.memory a), ?_, ?_⟩

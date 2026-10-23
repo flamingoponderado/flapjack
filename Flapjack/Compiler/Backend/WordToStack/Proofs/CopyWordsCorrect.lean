@@ -40,7 +40,7 @@ theorem copyWordsCorrect {width : Nat} [NeZero width]
         (fun key => decide (domain key)) address).mp (by simpa [splitWords] using addresses)
       have headRun := copyWordsShort head xs address offset
         (constWordsToBitmapW tail tail.length ++ ys) domain memory addressParts.1 dimension headBound
-      simp only [if_pos headLength] at headRun
+      simp only [ite_eq_left headLength] at headRun
       have shorter : tail.length < words.length := by omega
       have tailRun := ih tail shorter (xs ++ chunkToBitmapW head)
         (address + Flapjack.wordSemBytesInWord * BitVec.ofNat width head.length)

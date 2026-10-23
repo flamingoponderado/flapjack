@@ -546,11 +546,11 @@ theorem compileTopSemanticsDeclsHOL {width : Nat} {σ : Type} [NeZero width]
     obtain ⟨entry, hentry, heq⟩ := List.mem_map.mp hmem
     simp only [Function.comp, fpermName] at heq
     by_cases h1 : start = entry.1
-    · rw [if_pos h1] at heq; exact hnmStart heq
-    · rw [if_neg h1] at heq
+    · rw [ite_eq_left h1] at heq; exact hnmStart heq
+    · rw [ite_eq_right h1] at heq
       by_cases h2 : nm = entry.1
       · exact hnmFresh (List.mem_map.mpr ⟨entry, hentry, h2.symm⟩)
-      · rw [if_neg h2] at heq; exact h1 heq.symm
+      · rw [ite_eq_right h2] at heq; exact h1 heq.symm
   -- Target: the initialiser call reduces to the renamed original entry.
   have hL1 : T.code.lookup start =
       some ([], .seq (nestedSeqHOL inits) (.call none nm []), rshape) := by

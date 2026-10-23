@@ -212,7 +212,7 @@ theorem evaluateApplyColour_InstFp {width : Nat} [NeZero width] {C F : Type}
     · exact absurd rfl he
   case fpMovToReg r1 r2 d =>
     by_cases hw : width = 64
-    · simp only [if_pos hw] at hok hr he ⊢
+    · simp only [ite_eq_left hw] at hok hr he ⊢
       split at he
       · rename_i rst hinst
         split at hinst
@@ -224,7 +224,7 @@ theorem evaluateApplyColour_InstFp {width : Nat} [NeZero width] {C F : Type}
           exact slrMono hr (fun k hk => (sptDomain_del _ _ k).mpr ⟨hk.2, hk.1⟩)
         · cases hinst
       · exact absurd rfl he
-    · simp only [if_neg hw] at hok hr he ⊢
+    · simp only [ite_eq_right hw] at hok hr he ⊢
       split at he
       · rename_i rst hinst
         split at hinst
@@ -244,7 +244,7 @@ theorem evaluateApplyColour_InstFp {width : Nat} [NeZero width] {C F : Type}
       · exact absurd rfl he
   case fpMovFromReg d r1 r2 =>
     by_cases hw : width = 64
-    · simp only [if_pos hw] at hok hr he ⊢
+    · simp only [ite_eq_left hw] at hok hr he ⊢
       split at he
       · rename_i rst hinst
         split at hinst
@@ -258,7 +258,7 @@ theorem evaluateApplyColour_InstFp {width : Nat} [NeZero width] {C F : Type}
           exact slrMono hr (fun k hk => (sptDomain_ins _ _ _ k).mpr (Or.inr hk))
         · cases hinst
       · exact absurd rfl he
-    · simp only [if_neg hw] at hok hr he ⊢
+    · simp only [ite_eq_right hw] at hok hr he ⊢
       split at he
       · rename_i rst hinst
         split at hinst

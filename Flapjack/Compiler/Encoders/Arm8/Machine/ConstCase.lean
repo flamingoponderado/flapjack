@@ -123,29 +123,29 @@ theorem encMovImm_some_val (v : BitVec 64) (imm16 hw : Nat)
     BitVec.ofNat 64 imm16 <<< (hw * 16) = v := by
   unfold encMovImm at h
   by_cases h0 : v &&& ~~~(0xFFFF : W) = 0
-  · rw [if_pos h0] at h
+  · rw [ite_eq_left h0] at h
     simp only [Option.some.injEq, Prod.mk.injEq] at h
     obtain ⟨rfl, rfl⟩ := h
     exact movWideImm_value v 0 _ (by decide) (by simpa using h0) (by simp)
-  · rw [if_neg h0] at h
+  · rw [ite_eq_right h0] at h
     by_cases h1 : v &&& ~~~(0xFFFF0000 : W) = 0
-    · rw [if_pos h1] at h
+    · rw [ite_eq_left h1] at h
       simp only [Option.some.injEq, Prod.mk.injEq] at h
       obtain ⟨rfl, rfl⟩ := h
       exact movWideImm_value v 16 _ (by decide) (by simpa using h1) (by simp)
-    · rw [if_neg h1] at h
+    · rw [ite_eq_right h1] at h
       by_cases h2 : v &&& ~~~(0xFFFF00000000 : W) = 0
-      · rw [if_pos h2] at h
+      · rw [ite_eq_left h2] at h
         simp only [Option.some.injEq, Prod.mk.injEq] at h
         obtain ⟨rfl, rfl⟩ := h
         exact movWideImm_value v 32 _ (by decide) (by simpa using h2) (by simp)
-      · rw [if_neg h2] at h
+      · rw [ite_eq_right h2] at h
         by_cases h3 : v &&& ~~~(0xFFFF000000000000 : W) = 0
-        · rw [if_pos h3] at h
+        · rw [ite_eq_left h3] at h
           simp only [Option.some.injEq, Prod.mk.injEq] at h
           obtain ⟨rfl, rfl⟩ := h
           exact movWideImm_value v 48 _ (by decide) (by simpa using h3) (by simp)
-        · rw [if_neg h3] at h
+        · rw [ite_eq_right h3] at h
           exact absurd h (by simp)
 
 /-- `enc_mov_imm` on the complement returns the immediate whose negation is the
@@ -160,29 +160,29 @@ theorem encMovImm_some_lt (v : BitVec 64) (imm16 hw : Nat)
     (h : encMovImm v = some (imm16, hw)) : hw < 4 ∧ imm16 < 65536 := by
   unfold encMovImm at h
   by_cases h0 : v &&& ~~~(0xFFFF : W) = 0
-  · rw [if_pos h0] at h
+  · rw [ite_eq_left h0] at h
     simp only [Option.some.injEq, Prod.mk.injEq] at h
     obtain ⟨rfl, rfl⟩ := h
     exact ⟨by decide, Nat.mod_lt _ (show 0 < 2 ^ 16 by decide)⟩
-  · rw [if_neg h0] at h
+  · rw [ite_eq_right h0] at h
     by_cases h1 : v &&& ~~~(0xFFFF0000 : W) = 0
-    · rw [if_pos h1] at h
+    · rw [ite_eq_left h1] at h
       simp only [Option.some.injEq, Prod.mk.injEq] at h
       obtain ⟨rfl, rfl⟩ := h
       exact ⟨by decide, Nat.mod_lt _ (show 0 < 2 ^ 16 by decide)⟩
-    · rw [if_neg h1] at h
+    · rw [ite_eq_right h1] at h
       by_cases h2 : v &&& ~~~(0xFFFF00000000 : W) = 0
-      · rw [if_pos h2] at h
+      · rw [ite_eq_left h2] at h
         simp only [Option.some.injEq, Prod.mk.injEq] at h
         obtain ⟨rfl, rfl⟩ := h
         exact ⟨by decide, Nat.mod_lt _ (show 0 < 2 ^ 16 by decide)⟩
-      · rw [if_neg h2] at h
+      · rw [ite_eq_right h2] at h
         by_cases h3 : v &&& ~~~(0xFFFF000000000000 : W) = 0
-        · rw [if_pos h3] at h
+        · rw [ite_eq_left h3] at h
           simp only [Option.some.injEq, Prod.mk.injEq] at h
           obtain ⟨rfl, rfl⟩ := h
           exact ⟨by decide, Nat.mod_lt _ (show 0 < 2 ^ 16 by decide)⟩
-        · rw [if_neg h3] at h
+        · rw [ite_eq_right h3] at h
           exact absurd h (by simp)
 
 /-! ## The lowered instruction lists -/
@@ -270,8 +270,8 @@ theorem constCaseOne (r : Nat) (v : BitVec 64) (i : Insn) (t : Arm8State)
       arm8Target.config.avoidRegs.contains j = false → t.regs j = s2.regs j := by
     intro j hj
     by_cases hjr : j = r
-    · rw [hjr, htval, hs2regs r, if_pos rfl]
-    · rw [htreg j hjr, hs2regs j, if_neg hjr]
+    · rw [hjr, htval, hs2regs r, ite_eq_left rfl]
+    · rw [htreg j hjr, hs2regs j, ite_eq_right hjr]
       exact st.reg j hj
   have hq5 : ∀ j, j < arm8Target.config.fpRegCount →
       arm8Target.getFpReg t j = s2.fpRegs j := by
@@ -344,26 +344,26 @@ theorem constCaseFour (r : Nat) (v : BitVec 64) (s1 s2 : AsmState 64) (ms : Arm8
     rw [arm8Next_moveWide ms s1.memDomain .k 0 (v.toNat % 65536) r (by decide)
       (Nat.mod_lt _ (show 0 < 2 ^ 16 by decide)) hlt hb1, execInsn_moveWideK]
     have hreg : readReg { ms with pc := ms.pc + 4 } r = ms.regs r := by
-      simp only [readReg, if_neg hne31]
-    simp only [hreg, writeReg, if_neg hne31, wstep, t1]
+      simp only [readReg, ite_eq_right hne31]
+    simp only [hreg, writeReg, ite_eq_right hne31, wstep, t1]
   have hstep2 : arm8Next t1 = t2 := by
     rw [arm8Next_moveWide t1 s1.memDomain .k 1 ((v >>> 16).toNat % 65536) r (by decide)
       (Nat.mod_lt _ (show 0 < 2 ^ 16 by decide)) hlt hb2, execInsn_moveWideK]
     have hreg : readReg { t1 with pc := t1.pc + 4 } r = t1.regs r := by
-      simp only [readReg, if_neg hne31]
-    simp only [hreg, writeReg, if_neg hne31, wstep, t2]
+      simp only [readReg, ite_eq_right hne31]
+    simp only [hreg, writeReg, ite_eq_right hne31, wstep, t2]
   have hstep3 : arm8Next t2 = t3 := by
     rw [arm8Next_moveWide t2 s1.memDomain .k 2 ((v >>> 32).toNat % 65536) r (by decide)
       (Nat.mod_lt _ (show 0 < 2 ^ 16 by decide)) hlt hb3, execInsn_moveWideK]
     have hreg : readReg { t2 with pc := t2.pc + 4 } r = t2.regs r := by
-      simp only [readReg, if_neg hne31]
-    simp only [hreg, writeReg, if_neg hne31, wstep, t3]
+      simp only [readReg, ite_eq_right hne31]
+    simp only [hreg, writeReg, ite_eq_right hne31, wstep, t3]
   have hstep4 : arm8Next t3 = t4 := by
     rw [arm8Next_moveWide t3 s1.memDomain .k 3 ((v >>> 48).toNat % 65536) r (by decide)
       (Nat.mod_lt _ (show 0 < 2 ^ 16 by decide)) hlt hb4, execInsn_moveWideK]
     have hreg : readReg { t3 with pc := t3.pc + 4 } r = t3.regs r := by
-      simp only [readReg, if_neg hne31]
-    simp only [hreg, writeReg, if_neg hne31, wstep, t4]
+      simp only [readReg, ite_eq_right hne31]
+    simp only [hreg, writeReg, ite_eq_right hne31, wstep, t4]
   have hit1 : arm8Next^[1] ms = t1 := by
     rw [Function.iterate_one]; exact hstep1
   have hit2 : arm8Next^[2] ms = t2 := by
@@ -416,25 +416,25 @@ theorem constCaseFour (r : Nat) (v : BitVec 64) (s1 s2 : AsmState 64) (ms : Arm8
   have hm3 : ∀ j, t3.mem j = ms.mem j := fun _ => rfl
   have hm4 : ∀ j, t4.mem j = ms.mem j := fun _ => rfl
   have hq2 : t1.regs r = wstep (ms.regs r) 0 (v.toNat % 65536) := by
-    simp only [t1, if_true]
+    simp only [t1, ite_true]
   have hq3 : t2.regs r = wstep (t1.regs r) 1 ((v >>> 16).toNat % 65536) := by
-    simp only [t2, if_true]
+    simp only [t2, ite_true]
   have hq4 : t3.regs r = wstep (t2.regs r) 2 ((v >>> 32).toNat % 65536) := by
-    simp only [t3, if_true]
+    simp only [t3, ite_true]
   have hq5 : t4.regs r = wstep (t3.regs r) 3 ((v >>> 48).toNat % 65536) := by
-    simp only [t4, if_true]
+    simp only [t4, ite_true]
   have ht4r : t4.regs r = v := by
     rw [hq5, hq4, hq3, hq2, wstep_zero, wstep_eq_locTemp _ v 1 _ (by rfl),
       wstep_eq_locTemp _ v 2 _ (by rfl), wstep_eq_locTemp _ v 3 _ (by rfl)]
     exact locTemp_chain _ v
   have hx1 : ∀ j, j ≠ r → t1.regs j = ms.regs j := by
-    intro j hj; simp only [t1, if_neg hj]
+    intro j hj; simp only [t1, ite_eq_right hj]
   have hx2 : ∀ j, j ≠ r → t2.regs j = t1.regs j := by
-    intro j hj; simp only [t2, if_neg hj]
+    intro j hj; simp only [t2, ite_eq_right hj]
   have hx3 : ∀ j, j ≠ r → t3.regs j = t2.regs j := by
-    intro j hj; simp only [t3, if_neg hj]
+    intro j hj; simp only [t3, ite_eq_right hj]
   have hx4 : ∀ j, j ≠ r → t4.regs j = t3.regs j := by
-    intro j hj; simp only [t4, if_neg hj]
+    intro j hj; simp only [t4, ite_eq_right hj]
   have hupd : asmUpd (.inst (.const r v)) (s1.pc + BitVec.ofNat 64 16) s1 = s2 := by
     rw [← st.upd, hlen]
   have hs2pc : s2.pc = s1.pc + 16 := by
@@ -468,8 +468,8 @@ theorem constCaseFour (r : Nat) (v : BitVec 64) (s1 s2 : AsmState 64) (ms : Arm8
       arm8Target.config.avoidRegs.contains j = false → t4.regs j = s2.regs j := by
     intro j hj
     by_cases hjr : j = r
-    · rw [hjr, ht4r, hs2regs r, if_pos rfl]
-    · rw [hx4 j hjr, hx3 j hjr, hx2 j hjr, hx1 j hjr, hs2regs j, if_neg hjr]
+    · rw [hjr, ht4r, hs2regs r, ite_eq_left rfl]
+    · rw [hx4 j hjr, hx3 j hjr, hx2 j hjr, hx1 j hjr, hs2regs j, ite_eq_right hjr]
       exact st.reg j hj
   have hqE : ∀ j, j < arm8Target.config.fpRegCount →
       arm8Target.getFpReg t4 j = s2.fpRegs j := by
@@ -528,17 +528,17 @@ theorem case_const (r : Nat) (v : BitVec 64) (s1 s2 : AsmState 64) (ms : Arm8Sta
       arm8Next_moveWide ms s1.memDomain .z hw imm16 r hhw himm hlt hb
     have hval := encMovImm_some_val v imm16 hw hz
     have htval : t.regs r = v := by
-      simp only [t, execInsn, writeReg, if_neg hne31, hval, if_true]
+      simp only [t, execInsn, writeReg, ite_eq_right hne31, hval, ite_true]
     have htpc : t.pc = ms.pc + 4 := by
-      simp only [t, execInsn, writeReg, if_neg hne31]
+      simp only [t, execInsn, writeReg, ite_eq_right hne31]
     have htmem : ∀ x, t.mem x = ms.mem x := by
       intro x
-      simp only [t, execInsn, writeReg, if_neg hne31]
+      simp only [t, execInsn, writeReg, ite_eq_right hne31]
     have htreg : ∀ j, j ≠ r → t.regs j = ms.regs j := by
       intro j hj
-      simp only [t, execInsn, writeReg, if_neg hne31, if_neg hj]
+      simp only [t, execInsn, writeReg, ite_eq_right hne31, ite_eq_right hj]
     have htfailed : t.failed = ms.failed := by
-      simp only [t, execInsn, writeReg, if_neg hne31]
+      simp only [t, execInsn, writeReg, ite_eq_right hne31]
     have htal : holAligned 2 t.pc = true := by
       rw [htpc, (alignedAddSub 2 ms.pc 4 holAligned_four).1, st.aligned]
     have hsafe0 : StepSafe s1.memDomain ms :=
@@ -564,17 +564,17 @@ theorem case_const (r : Nat) (v : BitVec 64) (s1 s2 : AsmState 64) (ms : Arm8Sta
         arm8Next_moveWide ms s1.memDomain .n hw imm16 r hhw himm hlt hb
       have hval := encMovImm_some_val_not v imm16 hw hn
       have htval : t.regs r = v := by
-        simp only [t, execInsn, writeReg, if_neg hne31, hval, if_true]
+        simp only [t, execInsn, writeReg, ite_eq_right hne31, hval, ite_true]
       have htpc : t.pc = ms.pc + 4 := by
-        simp only [t, execInsn, writeReg, if_neg hne31]
+        simp only [t, execInsn, writeReg, ite_eq_right hne31]
       have htmem : ∀ x, t.mem x = ms.mem x := by
         intro x
-        simp only [t, execInsn, writeReg, if_neg hne31]
+        simp only [t, execInsn, writeReg, ite_eq_right hne31]
       have htreg : ∀ j, j ≠ r → t.regs j = ms.regs j := by
         intro j hj
-        simp only [t, execInsn, writeReg, if_neg hne31, if_neg hj]
+        simp only [t, execInsn, writeReg, ite_eq_right hne31, ite_eq_right hj]
       have htfailed : t.failed = ms.failed := by
-        simp only [t, execInsn, writeReg, if_neg hne31]
+        simp only [t, execInsn, writeReg, ite_eq_right hne31]
       have htal : holAligned 2 t.pc = true := by
         rw [htpc, (alignedAddSub 2 ms.pc 4 holAligned_four).1, st.aligned]
       have hsafe0 : StepSafe s1.memDomain ms :=
@@ -599,21 +599,21 @@ theorem case_const (r : Nat) (v : BitVec 64) (s1 s2 : AsmState 64) (ms : Arm8Sta
           arm8Next_logicalImmediate ms s1.memDomain .orr false v 31 r 1 n imms immr
             (by decide) hbits (by decide) hlt hb
         have htval : t.regs r = v := by
-          simp only [t, execInsn, writeReg, if_neg hne31, Bool.false_eq_true, if_false,
-            readReg, if_true]
+          simp only [t, execInsn, writeReg, ite_eq_right hne31, Bool.false_eq_true, ite_false,
+            readReg, ite_true]
           change (0#64) ||| v = v
           exact BitVec.zero_or
         have htpc : t.pc = ms.pc + 4 := by
-          simp only [t, execInsn, writeReg, if_neg hne31, Bool.false_eq_true, if_false]
+          simp only [t, execInsn, writeReg, ite_eq_right hne31, Bool.false_eq_true, ite_false]
         have htmem : ∀ x, t.mem x = ms.mem x := by
           intro x
-          simp only [t, execInsn, writeReg, if_neg hne31, Bool.false_eq_true, if_false]
+          simp only [t, execInsn, writeReg, ite_eq_right hne31, Bool.false_eq_true, ite_false]
         have htreg : ∀ j, j ≠ r → t.regs j = ms.regs j := by
           intro j hj
-          simp only [t, execInsn, writeReg, if_neg hne31, Bool.false_eq_true, if_false,
-            if_neg hj]
+          simp only [t, execInsn, writeReg, ite_eq_right hne31, Bool.false_eq_true, ite_false,
+            ite_eq_right hj]
         have htfailed : t.failed = ms.failed := by
-          simp only [t, execInsn, writeReg, if_neg hne31, Bool.false_eq_true, if_false]
+          simp only [t, execInsn, writeReg, ite_eq_right hne31, Bool.false_eq_true, ite_false]
         have htal : holAligned 2 t.pc = true := by
           rw [htpc, (alignedAddSub 2 ms.pc 4 holAligned_four).1, st.aligned]
         have hsafe0 : StepSafe s1.memDomain ms :=

@@ -16,7 +16,7 @@ private theorem optionSomeSucc (P Q : Nat → Prop)
   · have hp : ∃ n, P n := by
       obtain ⟨m, hm⟩ := hex
       exact ⟨m + 1, (h _).2 ⟨m, rfl, hm⟩⟩
-    rw [dif_pos hp, dif_pos hex]
+    rw [dite_eq_left hp, dite_eq_left hex]
     simp only [Option.map_some]
     congr 1
     obtain ⟨m, he, hm⟩ := (h _).1 (Classical.choose_spec hp)
@@ -26,7 +26,7 @@ private theorem optionSomeSucc (P Q : Nat → Prop)
       rintro ⟨n, hn⟩
       obtain ⟨m, _, hm⟩ := (h n).1 hn
       exact hex ⟨m, hm⟩
-    rw [dif_neg hp, dif_neg hex]
+    rw [dite_eq_right hp, dite_eq_right hex]
     rfl
 
 /-- Literal source468: the hit suffix position shifts by successor, including absence. -/

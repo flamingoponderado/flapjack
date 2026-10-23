@@ -632,13 +632,13 @@ def panMemStoresHOL {width : Nat} [NeZero width] (address : RiscV.Word width)
     (memory : RiscV.Word width → HolWordLab width) (h : domain address) :
     panMemStoreHOL address value domain memory
       = some (fun current => if current = address then value else memory current) := by
-  simp only [panMemStoreHOL, if_pos h]
+  simp only [panMemStoreHOL, ite_eq_left h]
 
 theorem panMemStoreHOL_miss {width : Nat} [NeZero width] (address : RiscV.Word width)
     (value : HolWordLab width) (domain : RiscV.Word width → Prop) [DecidablePred domain]
     (memory : RiscV.Word width → HolWordLab width) (h : ¬ domain address) :
     panMemStoreHOL address value domain memory = none := by
-  simp only [panMemStoreHOL, if_neg h]
+  simp only [panMemStoreHOL, ite_eq_right h]
 
 @[simp] theorem panMemStoresHOL_nil {width : Nat} [NeZero width] (address : RiscV.Word width)
     (domain : RiscV.Word width → Prop) [DecidablePred domain]
@@ -1265,7 +1265,7 @@ theorem panValueFlatLoad_one_eq_panMemLoadHOL (state : PanSemState (RiscV.Word 6
         (fun a => state.memaddrs a && panValueWordDefined memory a = true)
         (panValueWordHOL memory) structs.toHOL).map HolValue.toPanValue := by
   unfold panValueFlatLoad panMemLoadHOL
-  simp only [isWfShape.eq_def, isWfShapeHOL_one, if_true]
+  simp only [isWfShape.eq_def, isWfShapeHOL_one, ite_true]
   unfold panValueFlatLoadFuel panValueFlatReadWord
   unfold panSemBitVec64MemoryAccess panValueMemoryAccessOfModel
   simp only []
@@ -1453,7 +1453,7 @@ theorem panMemLoadHOL_named_none (name : StructName) (structs : StructContext)
       · simp [hc] at h
       · have hrest : lookupInfoWithRest name rest = none := by simpa [hc] using h
         rw [panMemLoadHOL.eq_def]
-        simp only [hc, Bool.false_eq_true, if_false]
+        simp only [hc, Bool.false_eq_true, ite_false]
         exact ih hrest
 
 /-- Named-scan agreement, found case: when `lookupInfoWithRest` finds the name with tail `rest`,
@@ -1475,14 +1475,14 @@ theorem panMemLoadHOL_named_some (name : StructName) (structs : StructContext)
       cases hb : candidate == name
       · simp only [lookupInfoWithRest, hb] at h
         rw [panMemLoadHOL.eq_def]
-        simp only [hb, Bool.false_eq_true, if_false]
+        simp only [hb, Bool.false_eq_true, ite_false]
         exact ih h
-      · simp only [lookupInfoWithRest, hb, if_true] at h
+      · simp only [lookupInfoWithRest, hb, ite_true] at h
         obtain ⟨rfl, rfl⟩ := Option.some.inj h
         have hc : candidate = name := beq_iff_eq.mp hb
         subst hc
         rw [panMemLoadHOL.eq_def]
-        simp only [hb, if_true]
+        simp only [hb, ite_true]
         split <;> simp_all [Option.map]
 
 /-! The equation lemmas of the exact-HOL value isomorphism `HolValue.toPanValue`
@@ -1695,7 +1695,7 @@ theorem panValueFlatLoad_eq_panMemLoadHOL (state : PanSemState (RiscV.Word 64) f
         (some (panSemBitVec64MemoryAccess state))
       = (panMemLoadHOL (width := 64) shape address (panValueFlatMachineDomain state memory)
           (panValueWordHOL memory) structs.toHOL).map HolValue.toPanValue := by
-  simp only [panValueFlatLoad, hwf, if_true]
+  simp only [panValueFlatLoad, hwf, ite_true]
   exact (panValueFlatLoadFuel_eq_panMemLoadHOL state memory
       (panValueFlatContextFuel structs + panValueFlatShapeFuel shape + 1)).1
     structs shape address (by omega)
@@ -2440,7 +2440,7 @@ theorem evalPanValueExp_op_eq_evalHOL {width : Nat} [NeZero width] [LawfulBEq St
       rw [Option.bind_some]
       by_cases hall : hvs.all holValueIsWord = true
       · rw [mapM_panValueWordProjection_toPanValue hvs]
-        simp only [if_pos hall]
+        simp only [ite_eq_left hall]
         rw [Option.bind_some]
         rw [hwordOp]
         change Option.map PanValue.word (wordOpHOL operator (hvs.map holValueWord))
@@ -2452,7 +2452,7 @@ theorem evalPanValueExp_op_eq_evalHOL {width : Nat} [NeZero width] [LawfulBEq St
         funext word
         exact (HolValue.toPanValue_val word).symm
       · rw [mapM_panValueWordProjection_toPanValue hvs]
-        simp only [if_neg hall]
+        simp only [ite_eq_right hall]
         simp
 
 /-! ## Production `panOp` clause bridge (flapjack-pxn.18.3.6.9.2.10)
@@ -2534,7 +2534,7 @@ theorem evalPanValueExp_panOp_eq_evalHOL {width : Nat} [NeZero width] [LawfulBEq
                               | word bBits =>
                                   simp only [List.map_cons, List.map_nil,
                                     HolValue.toPanValue_val, List.all_cons, List.all_nil,
-                                    holValueIsWord, Bool.true_and, if_true, holValueWord,
+                                    holValueIsWord, Bool.true_and, ite_true, holValueWord,
                                     Option.map_some]
                                   simp
                                   rw [show (HolValue.toPanValue ∘

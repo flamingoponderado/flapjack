@@ -55,7 +55,7 @@ theorem comp_correct_MustTerminate {width : Nat} [NeZero width] {C : Type} {F : 
       have hd1 := data_inv_clock data s (wordSemMustTerminateLimit width) (s.termdep - 1) hd
       obtain ⟨e1, i1⟩ := ih htd res s1 data q1 d1 ⟨he1, hf, hd1, hres, hc⟩
       refine ⟨?_, fun hn => data_inv_clock d1 s1 s.clock s.termdep (i1 hn)⟩
-      rw [evaluate, dif_neg htd, e1]
+      rw [evaluate, dite_eq_right htd, e1]
       simp only
 
 /-- HOL `comp_correct`, `Seq` case (`word_cseProof:3647-3662`). -/
@@ -151,7 +151,7 @@ theorem comp_correct_Loop {width : Nat} [NeZero width] {C : Type} {F : Type}
     simp only at he
     have hq : q ≠ some .error := by
       rintro rfl
-      simp only [wordSemContLoop, Bool.false_eq_true, if_false] at he
+      simp only [wordSemContLoop, Bool.false_eq_true, ite_false] at he
       cases he; exact hres rfl
     obtain ⟨e1, -⟩ := ih.2 v hv q r emptyData c' d0 ⟨he1, hf, dataInvEmpty v, hq, hc⟩
     rw [evaluate]
@@ -163,18 +163,18 @@ theorem comp_correct_Loop {width : Nat} [NeZero width] {C : Type} {F : Type}
       simp only
       split
       · rename_i hcont
-        rw [if_pos hcont] at he
+        rw [ite_eq_left hcont] at he
         split
-        · rename_i hclk; rw [dif_pos hclk] at he; exact he
+        · rename_i hclk; rw [dite_eq_left hclk] at he; exact he
         · rename_i hclk
-          rw [dif_neg hclk] at he
+          rw [dite_eq_right hclk] at he
           obtain ⟨e2, -⟩ := ih.1 v q r ⟨hv, he1.symm, hcont, hclk⟩ res s' emptyData
             (.loop names c' exitNames) emptyData
             ⟨he, by simpa [wordSemSTOP, flatExpConventions] using hf, dataInvEmpty _, hres,
               by simp [wordSemSTOP, wordCse, hc]⟩
           exact e2
       · rename_i hcont
-        rw [if_neg hcont] at he
+        rw [ite_eq_right hcont] at he
         exact he
 
 end Flapjack.Compiler.Backend.WordCse

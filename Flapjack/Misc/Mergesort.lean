@@ -105,8 +105,8 @@ theorem sort2Sorted {α : Type} :
   intro r x y ht
   unfold sort2
   by_cases h : r x y = true
-  · rw [if_pos h]; exact ⟨h, trivial⟩
-  · rw [if_neg h]
+  · rw [ite_eq_left h]; exact ⟨h, trivial⟩
+  · rw [ite_eq_right h]
     exact ⟨(ht x y).resolve_left h, trivial⟩
 
 /-- Exact HOL `sort3_sorted` (`mergesortScript.sml:226-234`). -/

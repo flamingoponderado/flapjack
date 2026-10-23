@@ -20,7 +20,7 @@ theorem wordSemListRearrange_mem_iff {α : Type} (mover : Nat → Nat)
     value ∈ wordSemListRearrange mover xs ↔ value ∈ xs := by
   unfold wordSemListRearrange
   by_cases hbij : wordSemBijCount mover xs.length
-  · simp only [dif_pos hbij, List.mem_map]
+  · simp only [dite_eq_left hbij, List.mem_map]
     constructor
     · rintro ⟨⟨index, hindex⟩, _hmem, hvalue⟩
       have hbound : index < xs.length := List.mem_range.mp hindex
@@ -63,11 +63,11 @@ theorem wordSemMergeTail_mem_iff {α : Type} (negate : Bool)
       | cons rightHead rightTail =>
           rw [Basis.Pure.MlList.mergeTail.eq_4]
           by_cases h : (compare head rightHead != negate) = true
-          · rw [if_pos h]
+          · rw [ite_eq_left h]
             have ih := wordSemMergeTail_mem_iff negate compare tail
               (rightHead :: rightTail) (head :: accumulator) value
             simpa [or_assoc, or_left_comm, or_comm] using ih
-          · rw [if_neg h]
+          · rw [ite_eq_right h]
             have ih := wordSemMergeTail_mem_iff negate compare
               (head :: tail) rightTail (rightHead :: accumulator) value
             simpa [or_assoc, or_left_comm, or_comm] using ih

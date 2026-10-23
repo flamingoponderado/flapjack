@@ -76,13 +76,13 @@ theorem wordColourStateRelationOn_writeRegister
       intro h
       exact hcolourNonzero' (congrArg Fin.val h)
     constructor
-    · simp only [writeRegister, hsourceNonzero, htargetNonzero, if_false]
+    · simp only [writeRegister, hsourceNonzero, htargetNonzero, ite_false]
       exact hrelation.pc
-    · simp only [writeRegister, hsourceNonzero, htargetNonzero, if_false]
+    · simp only [writeRegister, hsourceNonzero, htargetNonzero, ite_false]
       exact hrelation.memory
-    · simp only [writeRegister, hsourceNonzero, htargetNonzero, if_false]
+    · simp only [writeRegister, hsourceNonzero, htargetNonzero, ite_false]
       exact hrelation.privilege
-    · simp only [writeRegister, hsourceNonzero, htargetNonzero, if_false]
+    · simp only [writeRegister, hsourceNonzero, htargetNonzero, ite_false]
       exact hrelation.mode
     · intro current hcurrent hcurrentValid hcurrentColourValid
       by_cases hsame : current = name
@@ -96,9 +96,9 @@ theorem wordColourStateRelationOn_writeRegister
               ⟨colour name, valid name hname⟩ := by
           apply Fin.ext
           rfl
-        simp only [writeRegister, hsourceNonzero, htargetNonzero, if_false,
+        simp only [writeRegister, hsourceNonzero, htargetNonzero, ite_false,
           readRegister]
-        simp only [hsourceEq, htargetEq, if_true]
+        simp only [hsourceEq, htargetEq, ite_true]
         exact hvalue
       · have htargetSame :
             (⟨colour current, hcurrentColourValid⟩ : Fin 32) ≠
@@ -110,9 +110,9 @@ theorem wordColourStateRelationOn_writeRegister
             (⟨current, hcurrentValid⟩ : Fin 32) ≠ ⟨name, hname⟩ := by
           intro h
           exact hsame (congrArg Fin.val h)
-        simp only [writeRegister, hsourceNonzero, htargetNonzero, if_false,
+        simp only [writeRegister, hsourceNonzero, htargetNonzero, ite_false,
           readRegister]
-        rw [if_neg hsourceCurrent, if_neg htargetSame]
+        rw [ite_eq_right hsourceCurrent, ite_eq_right htargetSame]
         exact hrelation.register current hcurrent hcurrentValid hcurrentColourValid
 
 theorem wordColourStateRelation_nextPc
@@ -155,13 +155,13 @@ theorem wordColourStateRelation_writeRegister
     intro h
     exact hcolourNonzero (congrArg Fin.val h)
   constructor
-  · simp only [writeRegister, hsourceNonzero, htargetNonzero, if_false]
+  · simp only [writeRegister, hsourceNonzero, htargetNonzero, ite_false]
     exact hrelation.pc
-  · simp only [writeRegister, hsourceNonzero, htargetNonzero, if_false]
+  · simp only [writeRegister, hsourceNonzero, htargetNonzero, ite_false]
     exact hrelation.memory
-  · simp only [writeRegister, hsourceNonzero, htargetNonzero, if_false]
+  · simp only [writeRegister, hsourceNonzero, htargetNonzero, ite_false]
     exact hrelation.privilege
-  · simp only [writeRegister, hsourceNonzero, htargetNonzero, if_false]
+  · simp only [writeRegister, hsourceNonzero, htargetNonzero, ite_false]
     exact hrelation.mode
   · intro current hcurrent hcolour
     by_cases hsame : current = name
@@ -175,9 +175,9 @@ theorem wordColourStateRelation_writeRegister
             ⟨colour name, valid name hname⟩ := by
         apply Fin.ext
         rfl
-      simp only [writeRegister, hsourceNonzero, htargetNonzero, if_false,
+      simp only [writeRegister, hsourceNonzero, htargetNonzero, ite_false,
         readRegister]
-      simp only [if_true]
+      simp only [ite_true]
       exact hvalue
     · have htargetSame :
           (⟨colour current, hcolour⟩ : Fin 32) ≠
@@ -191,9 +191,9 @@ theorem wordColourStateRelation_writeRegister
         intro h
         apply hsame
         exact congrArg Fin.val h
-      simp only [writeRegister, hsourceNonzero, htargetNonzero, if_false,
+      simp only [writeRegister, hsourceNonzero, htargetNonzero, ite_false,
         readRegister]
-      rw [if_neg hsourceCurrent, if_neg htargetSame]
+      rw [ite_eq_right hsourceCurrent, ite_eq_right htargetSame]
       exact hrelation.register current hcurrent hcolour
 
 theorem wordColourStateRelation_executeAddi

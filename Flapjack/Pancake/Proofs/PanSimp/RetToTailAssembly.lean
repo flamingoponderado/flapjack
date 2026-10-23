@@ -157,13 +157,13 @@ theorem retToTailCorrectHOL {width : Nat} {σ : Type} [NeZero width] :
           have hb := ih _ _ w ⟨hev, rfl, rfl⟩
           dsimp only at h hb ⊢
           by_cases hw : w = 0
-          · rw [if_pos hw] at h
-            rw [if_pos hw, if_pos hw]
-            rw [if_neg (fun h' => h' hw)] at hb
+          · rw [ite_eq_left hw] at h
+            rw [ite_eq_left hw, ite_eq_left hw]
+            rw [ite_eq_right (fun h' => h' hw)] at hb
             exact hb h
-          · rw [if_neg hw] at h
-            rw [if_neg hw, if_neg hw]
-            rw [if_pos hw] at hb
+          · rw [ite_eq_right hw] at h
+            rw [ite_eq_right hw, ite_eq_right hw]
+            rw [ite_eq_left hw] at hb
             exact hb h
       | _ => rfl
   -- While
@@ -183,12 +183,12 @@ theorem retToTailCorrectHOL {width : Nat} {σ : Type} [NeZero width] :
         | word w =>
           dsimp only at h ⊢
           by_cases hw : w ≠ 0
-          · rw [if_pos hw] at h
-            rw [if_pos hw, if_pos hw]
+          · rw [ite_eq_left hw] at h
+            rw [ite_eq_left hw, ite_eq_left hw]
             by_cases hc : s.clock = 0
-            · rw [if_pos hc, if_pos hc]
-            rw [if_neg hc] at h
-            rw [if_neg hc, if_neg hc]
+            · rw [ite_eq_left hc, ite_eq_left hc]
+            rw [ite_eq_right hc] at h
+            rw [ite_eq_right hc, ite_eq_right hc]
             have hbIH := ihbody _ _ w ⟨hev, rfl, rfl, hw, hc⟩
             cases hb : evaluateHOLFiniteState (decClockHOLFinite s) c with
             | mk r s1 =>
@@ -208,7 +208,7 @@ theorem retToTailCorrectHOL {width : Nat} {σ : Type} [NeZero width] :
                   rw [retToTailHOL.eq_5] at this
                   exact this h
                 | _ => rfl
-          · rw [if_neg hw, if_neg hw]
+          · rw [ite_eq_right hw, ite_eq_right hw]
       | _ => rfl
   -- Call
   · rintro caltyp fname argexps s ⟨ihh, -⟩ h
@@ -231,8 +231,8 @@ theorem retToTailCorrectHOL {width : Nat} {σ : Type} [NeZero width] :
     obtain ⟨body, callee, returnShape⟩ := entry
     dsimp only
     by_cases hc : s.clock = 0
-    · rw [if_pos hc, if_pos hc]; intro _; rfl
-    rw [if_neg hc, if_neg hc]
+    · rw [ite_eq_left hc, ite_eq_left hc]; intro _; rfl
+    rw [ite_eq_right hc, ite_eq_right hc]
     cases hb : evaluateHOLFiniteState (callEntryStateHOLFinite s callee) body with
     | mk res st =>
     rcases res with _ | r
@@ -241,22 +241,22 @@ theorem retToTailCorrectHOL {width : Nat} {σ : Type} [NeZero width] :
     | exception exceptionId value =>
       dsimp only
       by_cases heid : exceptionId = eid
-      · rw [if_pos heid, if_pos heid]
+      · rw [ite_eq_left heid, ite_eq_left heid]
         cases hesh : s.eshapes.lookup exceptionId with
         | none => intro _; rfl
         | some shape =>
           dsimp only
           by_cases hcond : (shapeEqHOL (shapeOfHOLExact value) shape &&
               isValidValueHOLExact s.toExact .local evar value) = true
-          · rw [if_pos hcond, if_pos hcond]
+          · rw [ite_eq_left hcond, ite_eq_left hcond]
             intro h
             simp only [Bool.and_eq_true] at hcond
             exact ihh values (body, callee, returnShape) body (callee, returnShape) callee
               returnShape _ _ st _ exceptionId value _ returns _ _ eid _ evar hp shape
               ⟨hargs, hl, rfl, rfl, hc, hb.symm, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, heid,
                 hesh, (shapeEqHOL_eq_true _ _).mp hcond.1, hcond.2⟩ h
-          · rw [if_neg hcond, if_neg hcond]; intro _; rfl
-      · rw [if_neg heid, if_neg heid]; intro _; rfl
+          · rw [ite_eq_right hcond, ite_eq_right hcond]; intro _; rfl
+      · rw [ite_eq_right heid, ite_eq_right heid]; intro _; rfl
     | returned v => rcases returns with _ | ⟨k, n⟩ <;> intro _ <;> rfl
     | _ => intro _; rfl
   -- DecCall
@@ -278,8 +278,8 @@ theorem retToTailCorrectHOL {width : Nat} {σ : Type} [NeZero width] :
     obtain ⟨body, callee, returnShape⟩ := entry
     dsimp only
     by_cases hc : s.clock = 0
-    · rw [if_pos hc, if_pos hc]; intro _; rfl
-    rw [if_neg hc, if_neg hc]
+    · rw [ite_eq_left hc, ite_eq_left hc]; intro _; rfl
+    rw [ite_eq_right hc, ite_eq_right hc]
     cases hb : evaluateHOLFiniteState (callEntryStateHOLFinite s callee) body with
     | mk res st =>
     dsimp only
@@ -290,7 +290,7 @@ theorem retToTailCorrectHOL {width : Nat} {σ : Type} [NeZero width] :
       dsimp only
       by_cases hcond : (shapeEqHOL (shapeOfHOLExact v) shape &&
           shapeEqHOL (shapeOfHOLExact v) returnShape) = true
-      · rw [if_pos hcond, if_pos hcond]
+      · rw [ite_eq_left hcond, ite_eq_left hcond]
         simp only [Bool.and_eq_true] at hcond
         intro h
         have hIH := ihc values (body, callee, returnShape) body (callee, returnShape) callee
@@ -299,7 +299,7 @@ theorem retToTailCorrectHOL {width : Nat} {σ : Type} [NeZero width] :
             (shapeEqHOL_eq_true _ _).mp hcond.1, (shapeEqHOL_eq_true _ _).mp hcond.2⟩ h
         dsimp only at hIH
         rw [hIH]
-      · rw [if_neg hcond, if_neg hcond]; intro _; rfl
+      · rw [ite_eq_right hcond, ite_eq_right hcond]; intro _; rfl
     | _ => intro _; rfl
 
 end Flapjack.PanSimp.RetToTailCorrect

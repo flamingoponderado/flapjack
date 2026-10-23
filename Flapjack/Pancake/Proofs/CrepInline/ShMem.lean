@@ -124,24 +124,24 @@ theorem inlineProgCorrectShMemCaseExact {width : Nat} [NeZero width] {σ : Type}
           | true =>
               cases hlookup : s.locals.lookup name with
               | none =>
-                  simp only [heval,hop,if_true,hlookup] at hsource
+                  simp only [heval,hop,ite_true,hlookup] at hsource
                   exact False.elim (hnotError (congrArg Prod.fst hsource).symm)
               | some localValue =>
-                  simp only [heval,hop,if_true,hlookup] at hsource
+                  simp only [heval,hop,ite_true,hlookup] at hsource
                   apply finish addr hsource
                   rw [evalCrepSemHOLProgExact_shMem_holShape,htarget,hop]
-                  simp only [if_true,← hlocalEq,hlookup]
+                  simp only [ite_true,← hlocalEq,hlookup]
           | false =>
               cases hlookup : s.locals.lookup name with
               | none =>
-                  simp only [heval,hop,Bool.false_eq_true,if_false,hlookup] at hsource
+                  simp only [heval,hop,Bool.false_eq_true,ite_false,hlookup] at hsource
                   exact False.elim (hnotError (congrArg Prod.fst hsource).symm)
               | some localValue =>
                   cases localValue with
                   | word localWord =>
-                      simp only [heval,hop,Bool.false_eq_true,if_false,hlookup] at hsource
+                      simp only [heval,hop,Bool.false_eq_true,ite_false,hlookup] at hsource
                       apply finish addr hsource
                       rw [evalCrepSemHOLProgExact_shMem_holShape,htarget,hop]
-                      simp only [Bool.false_eq_true,if_false,← hlocalEq,hlookup]
+                      simp only [Bool.false_eq_true,ite_false,← hlocalEq,hlookup]
 
 end Flapjack.CrepInlineExact

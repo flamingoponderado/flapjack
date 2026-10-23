@@ -72,7 +72,7 @@ theorem loopFamilyNth_eq {family : Nat → List α}
     loopFamilyNth family index = some value := by
   have hhas : loopFamilyHasValue family index := ⟨clock, value, hvalue⟩
   unfold loopFamilyNth
-  rw [dif_pos hhas]
+  rw [dite_eq_left hhas]
   let chosenClock := Classical.choose hhas
   let chosenValues := Classical.choose_spec hhas
   let chosenValue := Classical.choose chosenValues

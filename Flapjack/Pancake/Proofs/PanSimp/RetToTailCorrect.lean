@@ -236,9 +236,9 @@ theorem retToTailCorrect_dec {width : Nat} {σ : Type} [NeZero width]
   | some value =>
       simp only [hinit] at hsource ⊢
       by_cases hshape : shapeEqHOL shape (shapeOfHOLExact value) = true
-      · simp only [hshape, if_true] at hsource ⊢
+      · simp only [hshape, ite_true] at hsource ⊢
         rw [bodyIH value ⟨hinit, (shapeEqHOL_eq_true _ _).mp hshape⟩ hsource]
-      · simp only [hshape, Bool.false_eq_true, if_false] at hsource
+      · simp only [hshape, Bool.false_eq_true, ite_false] at hsource
         exact False.elim (hsource rfl)
 
 end Flapjack.PanSimp.RetToTailCorrect

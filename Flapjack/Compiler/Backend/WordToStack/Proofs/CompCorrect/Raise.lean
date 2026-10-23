@@ -548,7 +548,7 @@ theorem compCorrectRaise {width : Nat} [NeZero width] {C F : Type}
   · exact evaluateRaiseCall target k offset l1 l2 saved parts.2.2.2 parts.1 parts.2.1
       handler offsetWidth space location savedWord
   · rw [resultEq]
-    simp only [compCorrectResult,Option.map,compileResult,ne_eq,not_true_eq_false,if_false]
+    simp only [compCorrectResult,Option.map,compileResult,ne_eq,not_true_eq_false,ite_false]
     refine ⟨nonGc,gc,?_,?_,?_⟩
     · simpa only [postEq,pushLocals,clearedSource,lastNDrop2] using postRelation
     · simp only [postEq]

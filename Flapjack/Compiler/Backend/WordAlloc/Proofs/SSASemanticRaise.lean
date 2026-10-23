@@ -88,7 +88,7 @@ theorem ssaCcTransCorrectRaise {width : Nat} [NeZero width] {C F : Type}
             rcases info with ⟨handler, label, offset⟩
             simp only [WordSemStateFiniteExact.evaluate, sameRead, found,
               WordSemStateFiniteExact.jumpExc, WordSemStateFiniteExact.setVars,
-              stackEq, handlerEq, bound, if_pos, frames]
+              stackEq, handlerEq, bound, ite_eq_left, frames]
             simp_all [Flapjack.WordAlloc.wordStateEqRel, WordSemStateFiniteExact.getVar,
               LoopSemStateFiniteExact.sptAlistInsert, sptLookup_sptInsert_same]
     · simp [WordSemStateFiniteExact.evaluate, sameRead, found,

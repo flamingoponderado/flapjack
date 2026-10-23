@@ -89,7 +89,7 @@ theorem codeSim_dec {width : Nat} {σ : Type} [NeZero width]
   | some value =>
       simp only [he] at heval ⊢
       by_cases hs : shapeEqHOL sh (shapeOfHOLExact value) = true
-      · simp only [hs, if_true, setVarHOLFinite] at heval ⊢
+      · simp only [hs, ite_true, setVarHOLFinite] at heval ⊢
         cases hb : evaluateHOLFiniteState { s with locals := s.locals.update (v, value) } prog with
         | mk r1 s1 =>
             rw [hb] at heval
@@ -164,11 +164,11 @@ theorem codeSim_ite {width : Nat} {σ : Type} [NeZero width]
               simp only [he] at heval ⊢
               have hb := ih _ _ w ⟨he, rfl, rfl⟩
               by_cases hw : w = 0
-              · rw [if_pos hw] at heval ⊢
-                rw [if_neg (fun h' => h' hw)] at hb
+              · rw [ite_eq_left hw] at heval ⊢
+                rw [ite_eq_right (fun h' => h' hw)] at hb
                 exact hb res post c heval hres hc
-              · rw [if_neg hw] at heval ⊢
-                rw [if_pos hw] at hb
+              · rw [ite_eq_right hw] at heval ⊢
+                rw [ite_eq_left hw] at hb
                 exact hb res post c heval hres hc
       | rStruct _ | nStruct _ _ =>
           simp only [he] at heval
@@ -226,12 +226,12 @@ theorem codeSim_while {width : Nat} {σ : Type} [NeZero width]
           | word w =>
               simp only [he] at heval ⊢
               by_cases hw : w ≠ 0
-              · simp only [hw, if_true, ne_eq, not_false_eq_true] at heval ⊢
+              · simp only [hw, ite_true, ne_eq, not_false_eq_true] at heval ⊢
                 by_cases hz : s.clock = 0
-                · simp only [hz, if_true] at heval ⊢
+                · simp only [hz, ite_true] at heval ⊢
                   obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
                   exact ⟨by simp only [emptyLocalsHOLFinite, hz], rfl⟩
-                · simp only [hz, if_false] at heval ⊢
+                · simp only [hz, ite_false] at heval ⊢
                   cases hb : evaluateHOLFiniteState s.decClockHOLFinite body with
                   | mk r1 s1 =>
                       simp only [hb] at heval
@@ -264,7 +264,7 @@ theorem codeSim_while {width : Nat} {σ : Type} [NeZero width]
                           | error | timeOut | returned _ | exception _ _ | finalFfi _ =>
                               obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
                               exact ⟨rfl, hcd⟩
-              · simp only [hw, if_false] at heval ⊢
+              · simp only [hw, ite_false] at heval ⊢
                 obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
                 exact ⟨rfl, rfl⟩
 
@@ -410,10 +410,10 @@ theorem codeSim_call {width : Nat} {σ : Type} [NeZero width]
       obtain ⟨prog, newlocals, rsh⟩ := triple
       simp only [hl, Option.map_some] at heval ⊢
       by_cases hz : s.clock = 0
-      · simp only [hz, if_true] at heval ⊢
+      · simp only [hz, ite_true] at heval ⊢
         obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
         exact ⟨by simp only [emptyLocalsHOLFinite, hz], rfl⟩
-      · simp only [hz, if_false] at heval ⊢
+      · simp only [hz, ite_false] at heval ⊢
         cases hb : evaluateHOLFiniteState (callEntryStateHOLFinite s newlocals) prog with
         | mk r st =>
         rw [hb] at heval
@@ -439,7 +439,7 @@ theorem codeSim_call {width : Nat} {σ : Type} [NeZero width]
               exact ⟨rfl, hcd⟩
           | returned value =>
             by_cases hs : shapeEqHOL (shapeOfHOLExact value) rsh = true
-            · simp only [hs, if_true] at heval ⊢
+            · simp only [hs, ite_true] at heval ⊢
               cases info with
               | none =>
                   obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
@@ -454,13 +454,13 @@ theorem codeSim_call {width : Nat} {σ : Type} [NeZero width]
                   obtain ⟨kind, evar⟩ := pair
                   dsimp only at heval ⊢
                   by_cases hv : isValidValueHOLExact s.toExact kind evar value = true
-                  · simp only [hv, if_true] at heval ⊢
+                  · simp only [hv, ite_true] at heval ⊢
                     obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
                     cases kind <;> exact ⟨rfl, hcd⟩
-                  · simp only [hv, Bool.false_eq_true, if_false] at heval
+                  · simp only [hv, Bool.false_eq_true, ite_false] at heval
                     obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
                     exact absurd rfl hres
-            · simp only [hs, Bool.false_eq_true, if_false] at heval
+            · simp only [hs, Bool.false_eq_true, ite_false] at heval
               obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
               exact absurd rfl hres
           | exception eid value =>
@@ -479,7 +479,7 @@ theorem codeSim_call {width : Nat} {σ : Type} [NeZero width]
                 dsimp only at heval ⊢
                 by_cases hid : eid = handlerId
                 · subst handlerId
-                  simp only [if_true] at heval ⊢
+                  simp only [ite_true] at heval ⊢
                   cases he : s.eshapes.lookup eid with
                   | none =>
                       simp only [he] at heval
@@ -489,7 +489,7 @@ theorem codeSim_call {width : Nat} {σ : Type} [NeZero width]
                     simp only [he] at heval ⊢
                     by_cases hv : (shapeEqHOL (shapeOfHOLExact value) handlerShape &&
                         isValidValueHOLExact s.toExact .local evar value) = true
-                    · simp only [hv, if_true] at heval ⊢
+                    · simp only [hv, ite_true] at heval ⊢
                       have hh := hv
                       simp only [Bool.and_eq_true] at hh
                       obtain ⟨hshape, hvalid⟩ := hh
@@ -501,10 +501,10 @@ theorem codeSim_call {width : Nat} {σ : Type} [NeZero width]
                         (by simp only [setVarHOLFinite]; rw [hcd]; exact hc)
                       exact ⟨by simpa only [setVarHOLFinite] using ht2,
                         hcd2.trans (by simp only [setVarHOLFinite]; exact hcd)⟩
-                    · simp only [hv, Bool.false_eq_true, if_false] at heval
+                    · simp only [hv, Bool.false_eq_true, ite_false] at heval
                       obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
                       exact absurd rfl hres
-                · simp only [hid, if_false] at heval ⊢
+                · simp only [hid, ite_false] at heval ⊢
                   obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
                   exact ⟨rfl, hcd⟩
 
@@ -562,10 +562,10 @@ theorem codeSim_decCall {width : Nat} {σ : Type} [NeZero width]
       obtain ⟨prog, newlocals, rsh⟩ := triple
       simp only [hl, Option.map_some] at heval ⊢
       by_cases hz : s.clock = 0
-      · simp only [hz, if_true] at heval ⊢
+      · simp only [hz, ite_true] at heval ⊢
         obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
         exact ⟨by simp only [emptyLocalsHOLFinite, hz], rfl⟩
-      · simp only [hz, if_false] at heval ⊢
+      · simp only [hz, ite_false] at heval ⊢
         cases hb : evaluateHOLFiniteState (callEntryStateHOLFinite s newlocals) prog with
         | mk r st =>
         rw [hb] at heval
@@ -593,7 +593,7 @@ theorem codeSim_decCall {width : Nat} {σ : Type} [NeZero width]
           | returned value =>
             by_cases hs : (shapeEqHOL (shapeOfHOLExact value) shape &&
                 shapeEqHOL (shapeOfHOLExact value) rsh) = true
-            · simp only [hs, if_true] at heval ⊢
+            · simp only [hs, ite_true] at heval ⊢
               have hh := hs
               simp only [Bool.and_eq_true] at hh
               obtain ⟨hs1, hs2⟩ := hh
@@ -613,7 +613,7 @@ theorem codeSim_decCall {width : Nat} {σ : Type} [NeZero width]
                 simpa only [setVarHOLFinite] using ht2
               rw [ht2']
               exact ⟨rfl, hcd2.trans (by simp only [setVarHOLFinite]; exact hcd)⟩
-            · simp only [hs, Bool.false_eq_true, if_false] at heval
+            · simp only [hs, Bool.false_eq_true, ite_false] at heval
               obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
               exact absurd rfl hres
 

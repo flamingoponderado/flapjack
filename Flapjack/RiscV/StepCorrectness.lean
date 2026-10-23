@@ -497,7 +497,7 @@ theorem executeCodeUntilWithFfiCounted_suffix
               simpa [hpc] using hnotReturn
             rw [executeCodeUntilWithFfiCounted]
             rw [hpc]
-            rw [if_neg hnotReturnPc]
+            rw [ite_eq_right hnotReturnPc]
             simp [BitVec.toNat_ofNat, Nat.mod_eq_of_lt hpreludeBound,
               Nat.add_comm, Nat.add_left_comm]
             rw [List.getElem?_append_right (by omega)]
@@ -576,7 +576,7 @@ theorem executeCodeUntilWithFfiCounted_after_nonbranching
           simp only [List.length_cons, Nat.succ_add]
           rw [executeCodeUntilWithFfiCounted]
           rw [hpc]
-          rw [if_neg hnotReturnPc]
+          rw [ite_eq_right hnotReturnPc]
           simp [BitVec.toNat_ofNat, Nat.mod_eq_of_lt hpreludeBound]
           simp [hstep, executeInstructionsWithFfiCounted]
       | some nextState =>
@@ -612,7 +612,7 @@ theorem executeCodeUntilWithFfiCounted_after_nonbranching
             simp only [List.length_cons, Nat.succ_add]
             rw [executeCodeUntilWithFfiCounted]
             rw [hpc]
-            rw [if_neg hnotReturnPc]
+            rw [ite_eq_right hnotReturnPc]
             simp [BitVec.toNat_ofNat, Nat.mod_eq_of_lt hpreludeBound]
             rw [hstep]
             have hmap_bind (result : Option (State width × Nat)) :
@@ -1459,7 +1459,7 @@ theorem executeCodeUntil_suffix_of_nonbranching_fuel [NeZero width]
           rw [hpc]
           have hnotReturnPc := hnotReturn
           rw [hpc] at hnotReturnPc
-          rw [if_neg hnotReturnPc]
+          rw [ite_eq_right hnotReturnPc]
           simp [BitVec.toNat_ofNat, Nat.mod_eq_of_lt hpreludeBound,
             Nat.add_comm, Nat.add_left_comm]
           rw [List.getElem?_append_right (by omega)]
@@ -1542,7 +1542,7 @@ theorem executeCodeUntil_after_nonbranching [NeZero width]
           rw [hpc]
           have hnotReturnPc := hnotReturn
           rw [hpc] at hnotReturnPc
-          rw [if_neg hnotReturnPc]
+          rw [ite_eq_right hnotReturnPc]
           simp [BitVec.toNat_ofNat, Nat.mod_eq_of_lt hpreludeBound,
             Nat.add_comm, Nat.add_left_comm]
           rw [List.getElem?_append_right (by omega)]

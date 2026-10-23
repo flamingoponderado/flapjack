@@ -170,8 +170,8 @@ theorem lookupInfo_eq_flookup_infoMapToFiniteMap [BEq String] [LawfulBEq String]
       rw [lookupInfo, infoMapToFiniteMap, List.reverse_cons, FUPDATE_LIST_append,
         FUPDATE_LIST_cons, FUPDATE_LIST_nil, FLOOKUP_update]
       by_cases h : (entry.1 == name) = true
-      · rw [if_pos h, if_pos h]
-      · rw [if_neg h, if_neg h]
+      · rw [ite_eq_left h, ite_eq_left h]
+      · rw [ite_eq_right h, ite_eq_right h]
         exact ih
 
 @[simp] theorem FLOOKUP_infoMapToFiniteMap [BEq String] [LawfulBEq String]
@@ -404,14 +404,14 @@ theorem compileField_map_codecs {width : Nat} [NeZero width] (index : Nat)
       · rw [compileField.eq_2]
         simp only [List.map_cons]
         rw [compFieldHOL.eq_2]
-        simp only [if_pos h]
+        simp only [ite_eq_left h]
         constructor
         · rw [sizeOfShapeHOL_shapeToHOL, ← List.map_take]
         · trivial
       · rw [compileField.eq_2]
         simp only [List.map_cons]
         rw [compFieldHOL.eq_2]
-        simp only [if_neg h]
+        simp only [ite_eq_right h]
         rw [sizeOfShapeHOL_shapeToHOL]
         rw [← List.map_drop]
         exact ih (index - 1) (expressions.drop (Shape.shapeSize shape))

@@ -54,18 +54,18 @@ example : (fixClockHOLExact (width := 64) { exactState with clock := 9 }
 example : lookupKvarHOLExact (width := 64) .local (ml "x") exactState
     = some (.val (.word 7)) := by
   simp only [lookupKvarHOLExact, exactState]
-  rw [if_pos (by decide)]
+  rw [ite_eq_left (by decide)]
 
 -- HOL `lookup_kvar_global = SOME (ValWord 4w)` (here global `y` is 9).
 example : lookupKvarHOLExact (width := 64) .global (ml "y") exactState
     = some (.val (.word 9)) := by
   simp only [lookupKvarHOLExact, exactState]
-  rw [if_pos (by decide)]
+  rw [ite_eq_left (by decide)]
 
 -- HOL `lookup_kvar_missing = NONE`.
 example : lookupKvarHOLExact (width := 64) .local (ml "z") exactState = none := by
   simp only [lookupKvarHOLExact, exactState]
-  rw [if_neg (by decide)]
+  rw [ite_eq_right (by decide)]
 
 -- `set_kvar` then `lookup_kvar` returns the stored value.
 example :
@@ -76,7 +76,7 @@ example :
   change (if ml "z" = ml "z" then
       some (ValueHOL.val (HolWordLab.word 11)) else exactState.locals (ml "z"))
     = some (ValueHOL.val (HolWordLab.word 11))
-  rw [if_pos (by decide)]
+  rw [ite_eq_left (by decide)]
 
 #guard (decClockHOLExact (width := 64) exactState).clock == 4
 #guard (fixClockHOLExact (width := 64) { exactState with clock := 2 }

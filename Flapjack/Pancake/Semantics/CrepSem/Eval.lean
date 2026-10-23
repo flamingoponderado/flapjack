@@ -2989,7 +2989,7 @@ theorem crepHolEvalMemLoad32_riscv64_eq_panMemLoad32HOL {σ : Type}
           panSemBitVec64WordModel.byteAlign (8 : BitVec 64) address := rfl
     rw [haligned, hbyteAlign]
     by_cases ha : panSemBitVec64WordModel.aligned 4 address = true
-    · simp only [if_pos ha]
+    · simp only [ite_eq_left ha]
       by_cases hd : state.memaddrs
           (panSemBitVec64WordModel.byteAlign (8 : BitVec 64) address) = true
       · simp only [hd, ↓reduceIte]

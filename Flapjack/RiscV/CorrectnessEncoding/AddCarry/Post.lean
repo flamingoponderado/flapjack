@@ -42,7 +42,7 @@ theorem carry_input (c : BitVec 64) :
   by_cases eq : c = 0#64
   · subst c
     simp [BitVec.ult_eq_decide]
-  · rw [if_pos (iff.mpr eq), if_neg eq]
+  · rw [ite_eq_left (iff.mpr eq), ite_eq_right eq]
     rfl
 /-- AddCarry-local execution/source composition; no separately named HOL declaration. -/
 def purePost (r1 r2 r3 r4 : BitVec 5) (ms : riscv_state) : riscv_state :=

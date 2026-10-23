@@ -25,7 +25,7 @@ theorem crepSemantics_fail_of_lookup_none {width : Nat} [NeZero width] {σ : Typ
     (h : t.code.lookup start = none) : crepSemantics t start = .fail := by
   unfold crepSemantics
   simp only [crepEntryProgram]
-  refine if_pos ⟨0, ?_⟩
+  refine ite_eq_left ⟨0, ?_⟩
   rw [evalCrepSemHOLProgExact_call_holShape]
   simp [lookupCodeFiniteHOL, h]
 

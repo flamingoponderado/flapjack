@@ -114,7 +114,7 @@ theorem flattenCorrectLoop (s1 : StackSemStateFiniteExact width C F) (body : Hol
   have bh := ih body s1 lt1 false res s1' n (l + 2) (l :: cs) ((l + 1) :: bs) t1
     ⟨e1, nerrBody, rel, ca, by rw [h1]; exact instXs, labs'⟩
   by_cases hc : StackSemControl.contLoop res = true
-  · rw [if_pos hc] at ev
+  · rw [ite_eq_left hc] at ev
     obtain ⟨ck, t2, run, f1, f2, f3, f4, f5, pre, rel2, fetch2⟩ := loopReentry h1 fetchJ hc bh
     split_ifs at ev with hz
     · simp only [Prod.mk.injEq] at ev
@@ -140,7 +140,7 @@ theorem flattenCorrectLoop (s1 : StackSemStateFiniteExact width C F) (body : Hol
         (fun ck1 => ?_) f1 f2 f3 f4 f5 pre rfl lh
       rw [run, show t2.clock + ck1 = (t2.clock - 1 + ck1) + 1 by omega,
         jumpStep (t2.clock - 1 + ck1) fetch2 locL2]
-  · rw [if_neg hc] at ev
+  · rw [ite_eq_right hc] at ev
     simp only [Prod.mk.injEq] at ev
     obtain ⟨rfl, rfl⟩ := ev
     rcases res with _ | x
@@ -151,7 +151,7 @@ theorem flattenCorrectLoop (s1 : StackSemStateFiniteExact width C F) (body : Hol
     · -- `Break k`
       rcases k with _ | k
       · -- `Break 0` leaves the loop after the break label
-        simp only [StackSemControl.exitLoop, if_true]
+        simp only [StackSemControl.exitLoop, ite_true]
         obtain ⟨ck, t2, h⟩ := bh
         simp only [haltView, Option.map_some, resultView, findLabHOL,
           List.getElem?_cons_zero, Option.getD_some] at h
@@ -160,7 +160,7 @@ theorem flattenCorrectLoop (s1 : StackSemStateFiniteExact width C F) (body : Hol
         refine ⟨ck, t2, run, f1, f2, f3, f4, f5, pre, ?_, rel2⟩
         rw [← hpc, total]
         omega
-      · simp only [StackSemControl.exitLoop, Nat.add_one_ne_zero, if_false, Nat.add_sub_cancel]
+      · simp only [StackSemControl.exitLoop, Nat.add_one_ne_zero, ite_false, Nat.add_sub_cancel]
         refine flattenConclResult (h := bh) (by simp [haltView]) ?_
         simp [resultView, findLabHOL]
     · -- `Continue k`, `k ≠ 0`

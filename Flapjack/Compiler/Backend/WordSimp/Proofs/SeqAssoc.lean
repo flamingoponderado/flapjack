@@ -183,15 +183,15 @@ theorem evaluate_Loop_body_cong_gc {width : Nat} [NeZero width] {C : Type} {F : 
     have hcon := evaluate_consts c _ rb s1 hb
     simp only
     by_cases hcont : wordSemContLoop rb = true
-    · simp only [hcont, if_true]
+    · simp only [hcont, ite_true]
       by_cases hz : s1.clock = 0
-      · simp only [hz, if_true]
-      · simp only [hz, if_false, wordSemSTOP]
+      · simp only [hz, ite_true]
+      · simp only [hz, ite_false, wordSemSTOP]
         refine ih (decClock s1).clock ?_ (decClock s1) rfl ?_
         · simp only [decClock] at *; omega
         · show R s1.gcFun
           rw [← hcon.1]; exact hR
-    · simp only [hcont, Bool.false_eq_true, if_false]
+    · simp only [hcont, Bool.false_eq_true, ite_false]
 
 /-- Exact HOL `evaluate_Loop_body_cong` (`word_simpProofScript.sml:33-47`). -/
 @[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "evaluate_Loop_body_cong"

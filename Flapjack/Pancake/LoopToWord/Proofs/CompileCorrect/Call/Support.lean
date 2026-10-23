@@ -42,15 +42,15 @@ theorem sptLookup_sptDifference {α β : Type} :
         by_cases hk : k = 0
         · simp [sptLookup, hk]
         · by_cases he : k % 2 = 0
-          · simp only [sptLookup, hk, he, if_false, if_true, sptLookup_sptDifference l l']
-          · simp only [sptLookup, hk, he, if_false, sptLookup_sptDifference r r']
+          · simp only [sptLookup, hk, he, ite_false, ite_true, sptLookup_sptDifference l l']
+          · simp only [sptLookup, hk, he, ite_false, sptLookup_sptDifference r r']
       | bs l' _ r' =>
         simp only [sptDifference, sptLookup_sptMkBN]
         by_cases hk : k = 0
         · simp [sptLookup, hk]
         · by_cases he : k % 2 = 0
-          · simp only [sptLookup, hk, he, if_false, if_true, sptLookup_sptDifference l l']
-          · simp only [sptLookup, hk, he, if_false, sptLookup_sptDifference r r']
+          · simp only [sptLookup, hk, he, ite_false, ite_true, sptLookup_sptDifference l l']
+          · simp only [sptLookup, hk, he, ite_false, sptLookup_sptDifference r r']
   | .bs l v r, t2, k => by
       cases t2 with
       | ln => simp [sptDifference, sptLookup]
@@ -60,15 +60,15 @@ theorem sptLookup_sptDifference {α β : Type} :
         by_cases hk : k = 0
         · simp [sptLookup, hk]
         · by_cases he : k % 2 = 0
-          · simp only [sptLookup, hk, he, if_false, if_true, sptLookup_sptDifference l l']
-          · simp only [sptLookup, hk, he, if_false, sptLookup_sptDifference r r']
+          · simp only [sptLookup, hk, he, ite_false, ite_true, sptLookup_sptDifference l l']
+          · simp only [sptLookup, hk, he, ite_false, sptLookup_sptDifference r r']
       | bs l' _ r' =>
         simp only [sptDifference, sptLookup_sptMkBN]
         by_cases hk : k = 0
         · simp [sptLookup, hk]
         · by_cases he : k % 2 = 0
-          · simp only [sptLookup, hk, he, if_false, if_true, sptLookup_sptDifference l l']
-          · simp only [sptLookup, hk, he, if_false, sptLookup_sptDifference r r']
+          · simp only [sptLookup, hk, he, ite_false, ite_true, sptLookup_sptDifference l l']
+          · simp only [sptLookup, hk, he, ite_false, sptLookup_sptDifference r r']
 
 theorem sptMem_sptDifference {α β : Type} (t1 : Spt α) (t2 : Spt β) (k : Nat) :
     sptMem k (sptDifference t1 t2) ↔ sptMem k t1 ∧ ¬ sptMem k t2 := by
@@ -161,7 +161,7 @@ theorem findCode_rel {width : Nat} [NeZero width]
             · have hl2 : (x :: a :: rest).getLast (by simp) = .loc loc 0 := by
                 rw [List.getLast_cons (by simp)]; exact hlast
               simp only [wordSemFindCode, List.cons_ne_nil, dite_false, hl2, htl]
-              rw [if_pos (by simp at hlen ⊢; omega)]
+              rw [ite_eq_left (by simp at hlen ⊢; omega)]
               simp [loopToWordCompFuncHOL, List.dropLast_cons_of_ne_nil]
             · have h := sptLookup_sptFromList2_get (x :: (a :: rest).dropLast) 0 (by simp)
               simp only [Nat.mul_zero, List.getElem_cons_zero] at h; exact h

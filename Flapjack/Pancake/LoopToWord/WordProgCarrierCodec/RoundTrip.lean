@@ -56,10 +56,10 @@ theorem wordLangInstToHOL_of_fromHOL {width : Nat}
       cases address with
       | addr base offset =>
           by_cases hz : offset = 0
-          · simp only [wordLangInstFromHOL, if_pos hz, Option.some.injEq] at h
+          · simp only [wordLangInstFromHOL, ite_eq_left hz, Option.some.injEq] at h
             subst b
             simp [wordLangInstToHOL, hz]
-          · simp only [wordLangInstFromHOL, if_neg hz, Option.some.injEq] at h
+          · simp only [wordLangInstFromHOL, ite_eq_right hz, Option.some.injEq] at h
             subst b
             rfl
 

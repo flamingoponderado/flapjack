@@ -170,7 +170,7 @@ theorem prepareCondition {width : Nat} [NeZero width] {C F : Type}
         (wStackLoadNative loads .skip) target post none loadRun
       refine ⟨post, postRel, sameClock, mono.1, mono.2, ?_⟩
       intro first second clock
-      simp only [conditionProgram, regCompile, immediate, if_true]
+      simp only [conditionProgram, regCompile, immediate, ite_true]
       exact loadConditionRun loads target post comparison physical (.imm word) first second x (.word word) value loadRun firstRead rfl compared clock
     · obtain ⟨constantPost, constantRun, constantClock, constantRel, _, _, constantRead⟩ :=
         ConstantInstruction.evaluateConstInst ac k f frame 0 source target lens word related
@@ -187,7 +187,7 @@ theorem prepareCondition {width : Nat} [NeZero width] {C F : Type}
         (.seq (.inst (.const (k+1) word)) (wStackLoadNative loads .skip)) target post none prefixRun
       refine ⟨post, postRel, constantClock.trans sameClock, mono.1, mono.2, ?_⟩
       intro first second clock
-      simp only [conditionProgram, regCompile, immediate, Bool.false_eq_true, if_false]
+      simp only [conditionProgram, regCompile, immediate, Bool.false_eq_true, ite_false]
       rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate,
         ConstantInstruction.evaluateConstInstClock, constantRun]
       simp only [Prod.map, id_eq]
@@ -311,7 +311,7 @@ theorem compCorrectIf {width : Nat} [NeZero width] {C F : Type}
       unfold max3HOL
       split_ifs <;> omega
     rw [max3Eq] at maxBound
-    cases value <;> simp only [Bool.false_eq_true,if_false,if_true] <;> omega
+    cases value <;> simp only [Bool.false_eq_true,ite_false,ite_true] <;> omega
   have selectedCompile :
       compNative ac false (if value then first else second)
         (if value then (bs,n) else middle) (k,f,frame) =

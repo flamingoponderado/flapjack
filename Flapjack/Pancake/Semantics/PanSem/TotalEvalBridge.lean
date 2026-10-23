@@ -188,7 +188,7 @@ theorem updatePanValueMap_agree (values : VarName → Option (PanValue (RiscV.Wo
   · have hof : (ofString name == ofString query) = true := by
       apply beq_iff_eq.mpr
       rw [beq_iff_eq.mp hq]
-    simp only [hq, hof, if_true, Option.map_some]
+    simp only [hq, hof, ite_true, Option.map_some]
   · have hq' : (query == name) = false := Bool.eq_false_iff.mpr hq
     have hne : query ≠ name := fun hh => hq (beq_iff_eq.mpr hh)
     have hof : (ofString name == ofString query) = false := by
@@ -221,12 +221,12 @@ theorem resVar_agree (values : VarName → Option (PanValue (RiscV.Word 64)))
       by_cases hq : (name == query) = true
       · have hof : (ofString query = ofString name) := by
           rw [beq_iff_eq.mp hq]
-        simp only [hq, hof, if_true, Option.map_none]
+        simp only [hq, hof, ite_true, Option.map_none]
       · have hq' : (name == query) = false := Bool.eq_false_iff.mpr hq
         have hne : name ≠ query := fun hh => hq (beq_iff_eq.mpr hh)
         have hof : ¬ (ofString query = ofString name) :=
           fun hh => hne (ofString_injective_of_ranged hquery hname hh).symm
-        simp only [hq', hof, if_false]
+        simp only [hq', hof, ite_false]
         exact hold
   | some v =>
       simp only [Option.map_some]
@@ -235,7 +235,7 @@ theorem resVar_agree (values : VarName → Option (PanValue (RiscV.Word 64)))
       by_cases hq : (name == query) = true
       · have hof : (ofString query = ofString name) := by
           rw [beq_iff_eq.mp hq]
-        simp only [hq, hof, if_true, Option.map_some]
+        simp only [hq, hof, ite_true, Option.map_some]
       · have hq' : (name == query) = false := Bool.eq_false_iff.mpr hq
         have hne : name ≠ query := fun hh => hq (beq_iff_eq.mpr hh)
         have hof : ¬ (ofString query = ofString name) :=
@@ -323,7 +323,7 @@ theorem panSemTotalAssignClause_agree {σ : Type}
         (evaluateHOLFiniteState exact (.assign kind (ofString name) (expToHOL e))).2.toExact := by
   rw [panSemTotalAssignClause_normal production kind name e value heval hvalid]
   rw [evaluateHOLFiniteState_assign, hexactEval]
-  simp only [hexactValid, if_true]
+  simp only [hexactValid, ite_true]
   constructor
   · trivial
   · cases kind
@@ -475,12 +475,12 @@ theorem panSemTotalEvaluate_tick_agree {σ : Type}
   by_cases h : production.clock = 0
   · have he : exact.clock = 0 := by rw [hcl, h]
     rw [panSemEvaluateClockLeaf_tick_zero production h,
-      evaluateHOLFiniteState_tick, if_pos he]
+      evaluateHOLFiniteState_tick, ite_eq_left he]
     refine ⟨trivial, ?_⟩
     simpa only [toExact_emptyLocalsHOLFinite] using PanSemStateRelExec.emptyLocals hrelKeep
   · have he : exact.clock ≠ 0 := by rw [hcl]; exact h
     rw [panSemEvaluateClockLeaf_tick_positive production h,
-      evaluateHOLFiniteState_tick, if_neg he]
+      evaluateHOLFiniteState_tick, ite_eq_right he]
     refine ⟨trivial, ?_⟩
     simpa only [toExact_decClockHOLFinite] using PanSemStateRelExec.decClock hrelKeep
 
@@ -627,7 +627,7 @@ private theorem panValueFlatStoreWords_rel {ffiState : Type}
           _ _ hstep
         have hb : panBytesInWord 64 = panSemBitVec64BytesInWord := rfl
         simp only [panValueFlatStoreWords, List.map_cons, panMemStoresHOL,
-          panMemStoreHOL, if_pos hD, hb]
+          panMemStoreHOL, ite_eq_left hD, hb]
         simpa [panSemBitVec64MemoryAccess, panValueMemoryAccessOfModel, hd,
           panValueFlatOffset] using ih
       · have hD : ¬ D addr := fun h => hd ((hdom addr).mpr h)
@@ -790,7 +790,7 @@ theorem panSemStateRelExec_storeByte {σ : Type}
         simp only [holWordLabBits_word] at hcell hbyte hupd
         simp only [panSemBitVec64MemoryAccess, panValueMemoryAccessOfModel,
           panSemBitVec64WordModel, panSemWordModel, panMemStoreByteWord8HOL, hex, hd, hD,
-          if_true, hcell]
+          ite_true, hcell]
         refine ⟨hl, hg, hs, hc, he, ?_, hmd, hsm, hck, hbe, hffi, hb, ht⟩
         rw [← hbyte]
         exact hupd
@@ -990,7 +990,7 @@ theorem panSemStateRelExec_store32 {σ : Type}
           simp only [holWordLabBits_word] at hcell
           simp only [panSemBitVec64MemoryAccess, panValueMemoryAccessOfModel,
             panSemBitVec64WordModel, panSemWordModel, RiscV.panRiscVMemoryModel,
-            RiscV.aligned, panMemStore32HOL, hex, hd, hD, hal, hcell, if_true,
+            RiscV.aligned, panMemStore32HOL, hex, hd, hD, hal, hcell, ite_true,
             decide_true]
           rw [hbe]
           have key : ∀ be : Bool, ∀ i, i < 4 →
@@ -1000,7 +1000,7 @@ theorem panSemStateRelExec_store32 {σ : Type}
                 (BitVec.ofNat 32 w.toNat) be).toNat).toNat % 256 :=
             fun be i hi => store32_byte_eq w be i hi
           by_cases hB : state.be = true
-          · simp only [hB, if_true]
+          · simp only [hB, ite_true]
             refine ⟨hl, hg, hs, hc, he, memRel_update_eq _ _ _ hm _ _ _ ?_, hmd, hsm, hck,
               ?_, hffi, hb, ht⟩
             rotate_left
@@ -1010,7 +1010,7 @@ theorem panSemStateRelExec_store32 {σ : Type}
             refine panSetByteHOL_congr' _ rfl (key true 1 (by omega)) ?_
             exact panSetByteHOL_congr' _ (by simp) (key true 0 (by omega)) rfl
           · have hF : state.be = false := by simpa using hB
-            simp only [hF, Bool.false_eq_true, if_false]
+            simp only [hF, Bool.false_eq_true, ite_false]
             refine ⟨hl, hg, hs, hc, he, memRel_update_eq _ _ _ hm _ _ _ ?_, hmd, hsm, hck,
               ?_, hffi, hb, ht⟩
             rotate_left
@@ -1067,7 +1067,7 @@ theorem riscv64PanValueFfiContext_byteAlign_eq_panByteAlignHOL
     show (64 / 8 : Nat) = 8 by decide,
     show (Nat.log2 8) = 3 by decide,
     show (2 ^ 3 : Nat) = 8 by decide,
-    show (8 : Nat) = 0 ↔ False by decide, if_false]
+    show (8 : Nat) = 0 ↔ False by decide, ite_false]
 
 /-- The executed RISC-V byte alignment at byte count 8 is HOL `byte_align`. -/
 theorem panRiscVByteAlign_eight_eq_panByteAlignHOL (address : RiscV.Word 64) :
@@ -1084,15 +1084,15 @@ theorem callFfi_sharedMem_returned_length {σ : Type} (state : FfiState σ)
     nextBytes.length = bytes.length := by
   have hne : (FfiName.sharedMem op) ≠ .extCall "" := by intro hh; cases hh
   unfold callFfi at h
-  rw [if_neg hne] at h
+  rw [ite_eq_right hne] at h
   split at h
   · rename_i ns nb hor
     by_cases hl : nb.length = bytes.length
-    · rw [if_pos hl] at h
+    · rw [ite_eq_left hl] at h
       injection h with _ hb
       rw [← hb]
       exact hl
-    · rw [if_neg hl] at h
+    · rw [ite_eq_right hl] at h
       exact absurd h (by simp)
   · rename_i outcome hor
     exact absurd h (by simp)
@@ -1125,7 +1125,7 @@ theorem riscv64PanValueFfiContext_wordToBytes_bytesRel
         (BitVec.ofNat 64 index) address false).toNat := by
     unfold riscv64GetByte
     simp only [RiscV.panRiscVGetByteEndian, RiscV.panRiscVGetByte, RiscV.panRiscVByteIndex,
-      Bool.false_eq_true, if_false, hidx]
+      Bool.false_eq_true, ite_false, hidx]
   have hbridge := panGetByteHOL_eq_panRiscVGetByteEndian
     (BitVec.ofNat 64 index) address false
   rw [hget, hbridge]
@@ -1151,7 +1151,7 @@ theorem panRiscVSetByte_eq_panSetByteHOL (address byte value : RiscV.Word 64) :
     RiscV.panRiscVSetByte (8 : RiscV.Word 64) address byte value =
       panSetByteHOL address byte value false := by
   simp only [RiscV.panRiscVSetByte, RiscV.panRiscVByteIndex, panSetByteHOL,
-    Bool.false_eq_true, if_false]
+    Bool.false_eq_true, ite_false]
   rw [show (BitVec.toNat (8 : RiscV.Word 64)) = 8 by decide]
 
 /-- Writing byte `k` of a word whose bytes below `k` are the value itself (no
@@ -1174,7 +1174,7 @@ theorem panSetByteHOL_ofNat_lt (k : Nat) (hk8 : k < 8) (b : BitVec 8) (V : Nat)
     have hle : 256 ^ k ≤ 256 ^ k * 256 :=
       Nat.le_mul_of_pos_right (m := 256) (256 ^ k) (by decide)
     omega
-  simp only [panSetByteHOL, Bool.false_eq_true, if_false,
+  simp only [panSetByteHOL, Bool.false_eq_true, ite_false,
     BitVec.toNat_ofNat, Nat.mod_eq_of_lt hk, Nat.mod_eq_of_lt hV64,
     Nat.mod_eq_of_lt hb64, Nat.mod_eq_of_lt b.isLt,
     show (64 / 8 : Nat) = 8 by decide, Nat.mod_eq_of_lt hk8,
@@ -1325,7 +1325,7 @@ theorem ffiResultRel_callFfi_sharedMem {σ : Type} (prod : FfiState σ)
               rw [hlen_of nextBytes hBytes hbytesRel, hlen,
                 ← hlen_of bytes holBytes hbytes]
             rw [callFfi_nonextCall_success prod _ hne _ _ nextState nextBytes hprod hlen,
-              callFFIHOL_ret exact _ _ _ hState hBytes hneH hexa, if_pos hlenH]
+              callFFIHOL_ret exact _ _ _ hState hBytes hneH hexa, ite_eq_left hlenH]
             exact ⟨⟨hst.symm,
               ffiEventListRel_append hevents
                 ⟨⟨hop, hcfg, bytesPairRel_zip hbytes hbytesRel⟩, trivial⟩,
@@ -1339,7 +1339,7 @@ theorem ffiResultRel_callFfi_sharedMem {σ : Type} (prod : FfiState σ)
                 _ = bytes.length := hlen_of bytes holBytes hbytes
             rw [callFfi_nonextCall_return_lengthFailure prod _ hne _ _ nextState nextBytes
                 hprod hlen, callFFIHOL_ret exact _ _ _ hState hBytes hneH hexa,
-              if_neg hlenHf]
+              ite_eq_right hlenHf]
             exact ⟨hop, hcfg, hbytes, Or.inl ⟨rfl, rfl⟩⟩
 
 
@@ -1397,10 +1397,10 @@ theorem panShMemLoad_agree {σ : Type}
     panValueFfiWidth_eq_nbOpHOL, panSemTotalShMemContext, panSemTotalShMemState,
     panSemTotalShMemStateBack, riscv64PanValueFfiContext]
   by_cases h0 : nbOpHOL size = 0
-  · simp only [h0, if_true] at *
+  · simp only [h0, ite_true] at *
     by_cases hs : exact.shMemaddrs addr
     · have hp : production.sharedMemaddrs addr = true := (hshared addr).mpr hs
-      simp only [hp, Bool.not_true, Bool.false_eq_true, if_false, hs, if_true] at *
+      simp only [hp, Bool.not_true, Bool.false_eq_true, ite_false, hs, ite_true] at *
       cases hcall : callFfi production.ffi (.sharedMem .mappedRead) [UInt8.ofNat 0]
           (List.map (fun index => riscv64GetByte index addr) (List.range 8)) with
       | returned nextFfi bytes =>
@@ -1463,14 +1463,14 @@ theorem panShMemLoad_agree {σ : Type}
         cases hb : production.sharedMemaddrs addr with
         | false => rfl
         | true => exact absurd ((hshared addr).mp hb) hs
-      simp only [hp, Bool.not_false, if_true, hs, if_false] at *
+      simp only [hp, Bool.not_false, ite_true, hs, ite_false] at *
       exact ⟨trivial, hrelRaw⟩
-  · simp only [if_neg h0] at *
+  · simp only [ite_eq_right h0] at *
     rw [panRiscVByteAlign_eight_eq_panByteAlignHOL] at *
     by_cases hs : exact.shMemaddrs (panByteAlignHOL addr)
     · have hp : production.sharedMemaddrs (panByteAlignHOL addr) = true :=
         (hshared (panByteAlignHOL addr)).mpr hs
-      simp only [hp, Bool.not_true, Bool.false_eq_true, if_false, hs, if_true] at *
+      simp only [hp, Bool.not_true, Bool.false_eq_true, ite_false, hs, ite_true] at *
       cases hcall : callFfi production.ffi (.sharedMem .mappedRead) [UInt8.ofNat (nbOpHOL size)]
           (List.map (fun index => riscv64GetByte index addr) (List.range 8)) with
       | returned nextFfi bytes =>
@@ -1533,7 +1533,7 @@ theorem panShMemLoad_agree {σ : Type}
         cases hb : production.sharedMemaddrs (panByteAlignHOL addr) with
         | false => rfl
         | true => exact absurd ((hshared (panByteAlignHOL addr)).mp hb) hs
-      simp only [hp, Bool.not_false, if_true, hs, if_false] at *
+      simp only [hp, Bool.not_false, ite_true, hs, ite_false] at *
       exact ⟨trivial, hrelRaw⟩
 
 /-- Production/exact agreement for the executed shared-memory store body
@@ -1584,7 +1584,7 @@ theorem panShMemStore_agree {σ : Type}
     panValueFfiWidth_eq_nbOpHOL, panSemTotalShMemContext, panSemTotalShMemState,
     panSemTotalShMemStateBack, riscv64PanValueFfiContext]
   by_cases h0 : nbOpHOL size = 0
-  · simp only [h0, if_true] at *
+  · simp only [h0, ite_true] at *
     have hFFIw : FfiResultRel
         (callFfi production.ffi (.sharedMem .mappedWrite) [UInt8.ofNat 0]
           (List.map (fun index => riscv64GetByte index bytes) (List.range 8)
@@ -1597,7 +1597,7 @@ theorem panShMemStore_agree {σ : Type}
         hcfgRel0 (BytesRel_append hbytesValRel0 hbytesAddrRel0)
     by_cases hs : exact.shMemaddrs addr
     · have hp : production.sharedMemaddrs addr = true := (hshared addr).mpr hs
-      simp only [hp, Bool.not_true, Bool.false_eq_true, if_false, hs, if_true] at *
+      simp only [hp, Bool.not_true, Bool.false_eq_true, ite_false, hs, ite_true] at *
       cases hcall : callFfi production.ffi (.sharedMem .mappedWrite) [UInt8.ofNat 0]
           (List.map (fun index => riscv64GetByte index bytes) (List.range 8)
             ++ List.map (fun index => riscv64GetByte index addr) (List.range 8)) with
@@ -1632,9 +1632,9 @@ theorem panShMemStore_agree {σ : Type}
         cases hb : production.sharedMemaddrs addr with
         | false => rfl
         | true => exact absurd ((hshared addr).mp hb) hs
-      simp only [hp, Bool.not_false, if_true, hs, if_false] at *
+      simp only [hp, Bool.not_false, ite_true, hs, ite_false] at *
       exact ⟨trivial, hrelRaw⟩
-  · simp only [if_neg h0] at *
+  · simp only [ite_eq_right h0] at *
     rw [panRiscVByteAlign_eight_eq_panByteAlignHOL] at *
     have hFFIw : FfiResultRel
         (callFfi production.ffi (.sharedMem .mappedWrite) [UInt8.ofNat (nbOpHOL size)]
@@ -1651,7 +1651,7 @@ theorem panShMemStore_agree {σ : Type}
     by_cases hs : exact.shMemaddrs (panByteAlignHOL addr)
     · have hp : production.sharedMemaddrs (panByteAlignHOL addr) = true :=
         (hshared (panByteAlignHOL addr)).mpr hs
-      simp only [hp, Bool.not_true, Bool.false_eq_true, if_false, hs, if_true] at *
+      simp only [hp, Bool.not_true, Bool.false_eq_true, ite_false, hs, ite_true] at *
       cases hcall : callFfi production.ffi (.sharedMem .mappedWrite) [UInt8.ofNat (nbOpHOL size)]
           (List.take (nbOpHOL size)
               (List.map (fun index => riscv64GetByte index bytes) (List.range 8))
@@ -1687,6 +1687,6 @@ theorem panShMemStore_agree {σ : Type}
         cases hb : production.sharedMemaddrs (panByteAlignHOL addr) with
         | false => rfl
         | true => exact absurd ((hshared (panByteAlignHOL addr)).mp hb) hs
-      simp only [hp, Bool.not_false, if_true, hs, if_false] at *
+      simp only [hp, Bool.not_false, ite_true, hs, ite_false] at *
       exact ⟨trivial, hrelRaw⟩
 end Flapjack

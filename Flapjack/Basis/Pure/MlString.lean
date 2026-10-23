@@ -104,7 +104,7 @@ theorem ofNat_toNat_char (b : BitVec 8) : (Char.ofNat b.toNat).toNat = b.toNat :
     left
     have := b.isLt
     omega
-  rw [Char.ofNat, dif_pos hvalid]
+  rw [Char.ofNat, dite_eq_left hvalid]
   unfold Char.ofNatAux
   simp
 

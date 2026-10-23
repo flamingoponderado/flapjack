@@ -94,13 +94,13 @@ theorem compileCorrect_CallLocalHandler {width : Nat} {σ : Type} [NeZero width]
       have hc := hrel.2.2.2.2.2.1
       by_cases hz : source.clock = 0
       · have htz : target.clock = 0 := hc ▸ hz
-        simp only [if_pos hz] at hev
+        simp only [ite_eq_left hz] at hev
         obtain ⟨rfl,rfl⟩ := Prod.mk.inj hev
-        exact ⟨emptyLocalsHOLFinite target,by simp only [if_pos htz],
+        exact ⟨emptyLocalsHOLFinite target,by simp only [ite_eq_left htz],
           (PanGlobalsStateRelationLocals.stateRelEmptyLocalsHOL context source target false).1 hrel⟩
       · have htz : target.clock ≠ 0 := hc ▸ hz
-        simp only [if_neg hz] at hev
-        simp only [if_neg htz]
+        simp only [ite_eq_right hz] at hev
+        simp only [ite_eq_right htz]
         have hd := PanGlobalsStateRelationClock.stateRelDecClockHOL context source target true hrel
         have he := (PanGlobalsStateRelationLocals.stateRelChangeLocalsHOL context
           (decClockHOLFinite source) (decClockHOLFinite target) true callee).1 hd
@@ -136,15 +136,15 @@ theorem compileCorrect_CallLocalHandler {width : Nat} {σ : Type} [NeZero width]
                 refine ⟨setKvarHOLFinite .local name value { bt with locals := target.locals }, ?_, ?_⟩
                 · simp only [hbt,hs,htvalid,↓reduceIte]
                 · simpa only [setKvarHOLFinite,goodResHOL,hrel.2.1 rfl] using hupdate
-              · simp only [if_neg hvalid] at hev
+              · simp only [ite_eq_right hvalid] at hev
                 exact False.elim (hne (Prod.mk.inj hev).1.symm)
-            · simp only [if_neg hs] at hev
+            · simp only [ite_eq_right hs] at hev
               exact False.elim (hne (Prod.mk.inj hev).1.symm)
           | exception eid value =>
             obtain ⟨bt,hbt,hr⟩ := hbody (some (.exception eid value)) context (callEntryStateHOLFinite target callee) bs ⟨he,hb,by simp⟩
             simp only [hbt]
             by_cases hid : eid = handlerId
-            · simp only [if_pos hid] at hev ⊢
+            · simp only [ite_eq_left hid] at hev ⊢
               have hesh := hrel.2.2.2.2.1
               cases hshape : source.eshapes.lookup eid with
               | none =>
@@ -177,12 +177,12 @@ theorem compileCorrect_CallLocalHandler {width : Nat} {σ : Type} [NeZero width]
                         (setVarHOLFinite handlerVar value { bt with locals := target.locals }) := by
                       simpa only [hrel.2.1 rfl] using hupdate
                     exact hh res context _ post ⟨hupdate',hev,hne⟩
-                  · simp only [hsh,Bool.true_and,if_neg hvalid] at hev
+                  · simp only [hsh,Bool.true_and,ite_eq_right hvalid] at hev
                     exact False.elim (hne (Prod.mk.inj hev).1.symm)
                 · have hfalse : shapeEqHOL (shapeOfHOLExact value) shape = false := Bool.eq_false_iff.mpr hsh
                   simp only [hfalse,Bool.false_and] at hev
                   exact False.elim (hne (Prod.mk.inj hev).1.symm)
-            · simp only [if_neg hid] at hev ⊢
+            · simp only [ite_eq_right hid] at hev ⊢
               obtain ⟨rfl,rfl⟩ := Prod.mk.inj hev
               exact ⟨emptyLocalsHOLFinite bt,rfl,
                 (PanGlobalsStateRelationLocals.stateRelEmptyLocalsHOL context bs bt false).2 hr⟩

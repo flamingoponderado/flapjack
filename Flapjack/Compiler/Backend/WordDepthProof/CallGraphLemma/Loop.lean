@@ -82,7 +82,7 @@ theorem maxDepthCallGraphLemma_Loop {width : Nat} [NeZero width] {C F : Type}
     by_cases hcont : wordSemContLoop r = true
     · have hr : r = none ∨ ∃ k, r = some (.continue k) := by
         rcases r with _ | ⟨_ | _ | _ | k | _ | _ | _ | _⟩ <;> simp_all [wordSemContLoop]
-      simp only [hcont, if_true] at herr ⊢
+      simp only [hcont, ite_true] at herr ⊢
       by_cases hz : s1.clock = 0
       · simp only [hz, ↓reduceDIte, flushState] at herr ⊢
         exact ⟨p1.1, fun _ => ⟨hss1, fun h => by simp at h⟩⟩
@@ -108,7 +108,7 @@ theorem maxDepthCallGraphLemma_Loop {width : Nat} [NeZero width] {C F : Type}
           rwa [optionMap2_max_idempot] at this
         · obtain ⟨hss2, hls2⟩ := p2.2 hne
           exact ⟨hss2, fun h => (hls2 h).trans hls1'⟩
-    · simp only [hcont, if_false, Bool.false_eq_true] at herr ⊢
+    · simp only [hcont, ite_false, Bool.false_eq_true] at herr ⊢
       by_cases hb0 : r = some (.break 0)
       · subst hb0
         simp only at herr ⊢

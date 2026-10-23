@@ -19,7 +19,7 @@ private theorem shMemStore_ioEvents_prefix {width : Nat} [NeZero width]
     (state : WordSemStateFiniteExact width C F) :
     state.ffi.ioEvents <+: (shMemStore (rw := rw) address value state).2.ffi.ioEvents := by
   by_cases hdom : state.shMdomain address
-  · simp only [shMemStore, if_pos hdom]
+  · simp only [shMemStore, ite_eq_left hdom]
     cases hcall : callFFIHOL state.ffi (.sharedMem .mappedWrite) [0]
         (panWordToBytesHOL value false ++ panWordToBytesHOL address false) with
     | final _ => simp [flushState]
@@ -35,7 +35,7 @@ private theorem shMemStoreByte_ioEvents_prefix {width : Nat} [NeZero width]
     (state : WordSemStateFiniteExact width C F) :
     state.ffi.ioEvents <+: (shMemStoreByte (rw := rw) address value state).2.ffi.ioEvents := by
   by_cases hdom : state.shMdomain (riscvByteAlignHOL address)
-  · simp only [shMemStoreByte, if_pos hdom]
+  · simp only [shMemStoreByte, ite_eq_left hdom]
     cases hcall : callFFIHOL state.ffi (.sharedMem .mappedWrite) [1]
         ([getByteHOL8 0 value false] ++ panWordToBytesHOL address false) with
     | final _ => simp [flushState]
@@ -51,7 +51,7 @@ private theorem shMemStore16_ioEvents_prefix {width : Nat} [NeZero width]
     (state : WordSemStateFiniteExact width C F) :
     state.ffi.ioEvents <+: (shMemStore16 (rw := rw) address value state).2.ffi.ioEvents := by
   by_cases hdom : state.shMdomain (riscvByteAlignHOL address)
-  · simp only [shMemStore16, if_pos hdom]
+  · simp only [shMemStore16, ite_eq_left hdom]
     cases hcall : callFFIHOL state.ffi (.sharedMem .mappedWrite) [2]
         ((panWordToBytesHOL value false).take 2 ++ panWordToBytesHOL address false) with
     | final _ => simp [flushState]
@@ -67,7 +67,7 @@ private theorem shMemStore32_ioEvents_prefix {width : Nat} [NeZero width]
     (state : WordSemStateFiniteExact width C F) :
     state.ffi.ioEvents <+: (shMemStore32 (rw := rw) address value state).2.ffi.ioEvents := by
   by_cases hdom : state.shMdomain (riscvByteAlignHOL address)
-  · simp only [shMemStore32, if_pos hdom]
+  · simp only [shMemStore32, ite_eq_left hdom]
     cases hcall : callFFIHOL state.ffi (.sharedMem .mappedWrite) [4]
         ((panWordToBytesHOL value false).take 4 ++ panWordToBytesHOL address false) with
     | final _ => simp [flushState]
@@ -87,7 +87,7 @@ private theorem shMemLoad_ioEvents_prefix {width : Nat} [NeZero width]
        | some (.ret nextFfi _) => nextFfi.ioEvents) := by
   unfold shMemLoad
   by_cases hdom : state.shMdomain address
-  · simp only [if_pos hdom]
+  · simp only [ite_eq_left hdom]
     cases hcall : callFFIHOL state.ffi (.sharedMem .mappedRead) [0]
         (panWordToBytesHOL address false) with
     | final _ => exact List.prefix_refl _
@@ -106,7 +106,7 @@ private theorem shMemLoadByte_ioEvents_prefix {width : Nat} [NeZero width]
        | some (.ret nextFfi _) => nextFfi.ioEvents) := by
   unfold shMemLoadByte
   by_cases hdom : state.shMdomain (riscvByteAlignHOL address)
-  · simp only [if_pos hdom]
+  · simp only [ite_eq_left hdom]
     cases hcall : callFFIHOL state.ffi (.sharedMem .mappedRead) [1]
         (panWordToBytesHOL address false) with
     | final _ => exact List.prefix_refl _
@@ -125,7 +125,7 @@ private theorem shMemLoad16_ioEvents_prefix {width : Nat} [NeZero width]
        | some (.ret nextFfi _) => nextFfi.ioEvents) := by
   unfold shMemLoad16
   by_cases hdom : state.shMdomain (riscvByteAlignHOL address)
-  · simp only [if_pos hdom]
+  · simp only [ite_eq_left hdom]
     cases hcall : callFFIHOL state.ffi (.sharedMem .mappedRead) [2]
         (panWordToBytesHOL address false) with
     | final _ => exact List.prefix_refl _
@@ -144,7 +144,7 @@ private theorem shMemLoad32_ioEvents_prefix {width : Nat} [NeZero width]
        | some (.ret nextFfi _) => nextFfi.ioEvents) := by
   unfold shMemLoad32
   by_cases hdom : state.shMdomain (riscvByteAlignHOL address)
-  · simp only [if_pos hdom]
+  · simp only [ite_eq_left hdom]
     cases hcall : callFFIHOL state.ffi (.sharedMem .mappedRead) [4]
         (panWordToBytesHOL address false) with
     | final _ => exact List.prefix_refl _
@@ -400,12 +400,12 @@ private theorem loopStatement_ioEvents_prefix {width : Nat} [NeZero width] {C F 
           dsimp only
           rw [hstep] at hfirst
           by_cases hcont : wordSemContLoop result = true
-          · simp only [if_pos hcont]
+          · simp only [ite_eq_left hcont]
             by_cases hz : next.clock = 0
             · simpa only [hz, ↓reduceDIte, flushState] using hfirst
             · simp only [hz, ↓reduceDIte]
               exact hfirst.trans (hrecur v result next hcut hstep hcont hz)
-          · simp only [if_neg hcont]
+          · simp only [ite_eq_right hcont]
             repeat' split
             all_goals first
               | exact hfirst
@@ -455,7 +455,7 @@ private theorem returningCallStatement_ioEvents_prefix {width : Nat} [NeZero wid
       (evaluate (.call (some (n, names, retHandler, l1, l2)) dest args handler) state).2.ffi.ioEvents := by
   have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2
   rw [ht]
-  simp only [hg, hbad, Bool.false_eq_true, if_false, hf, hnames, henvs, hz]
+  simp only [hg, hbad, Bool.false_eq_true, ite_false, hf, hnames, henvs, hz]
   have hstart : (callEnv args1 ss (pushEnv envs handler (decClock state))).ffi.ioEvents =
       state.ffi.ioEvents := by
     change (pushEnv envs handler (decClock state)).ffi.ioEvents = state.ffi.ioEvents
@@ -509,7 +509,7 @@ private theorem tailCallStatement_ioEvents_prefix {width : Nat} [NeZero width] {
     state.ffi.ioEvents <+: (evaluate (.call none dest args none) state).2.ffi.ioEvents := by
   have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2
   rw [ht]
-  simp only [hg, hbad, Bool.false_eq_true, if_false, hf, hz]
+  simp only [hg, hbad, Bool.false_eq_true, ite_false, hf, hz]
   rcases hcv : evaluate prog (callEnv args1 ss (decClock state)) with ⟨result, next⟩
   rw [hcv] at hcallee
   split <;> exact hcallee

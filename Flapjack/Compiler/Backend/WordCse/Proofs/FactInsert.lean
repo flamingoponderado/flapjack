@@ -322,7 +322,7 @@ theorem add_to_data_LocValue_correct {width : Nat} [NeZero width] {C : Type} {F 
     evaluate p' s = (none, setVar r (.loc l 0) s) ∧ dataInv data' (setVar r (.loc l 0) s) := by
   obtain ⟨hd, hr, hcode, he⟩ := h
   refine add_to_data_aux_correct data s r [48, l] (.locValue r l) (.loc l 0) data' p'
-    ⟨hd, hr, he, by rw [evaluate_locValue_eq, if_pos hcode], fun v hv => hd.2.2.2.2.2.2.1 l v hv,
+    ⟨hd, hr, he, by rw [evaluate_locValue_eq, ite_eq_left hcode], fun v hv => hd.2.2.2.2.2.2.1 l v hv,
       fun hev => ?_⟩
   exact data_inv_insert_instrs_LocValue _ _ r l
     ⟨data_inv_fresh data s r _ hd hr (by omega), sptLookup_sptInsert_same _ _ _,
@@ -344,7 +344,7 @@ theorem add_to_data_OpCurrHeap_correct {width : Nat} [NeZero width] {C : Type} {
   have hne : r2' ≠ r1 := canonicalRegs'_ne data r1 r2 hne21
   have dD := data_inv_register_read data s r2' hd
   have rD : sptLookup r1 (registerRead data r2').toCanonical = none := by
-    rw [lookup_register_read, if_neg (fun hc => hne hc.1.symm), hr1]
+    rw [lookup_register_read, ite_eq_right (fun hc => hne hc.1.symm), hr1]
   have g2 : getVar r2' s = getVar r2 s := canonicalRegsAvoidCorrect r1 data r2 s hd
   have exp' : wordExp s (.op b [.var r2', .lookup .currHeap]) = some w := by
     rw [← hexp]
@@ -475,7 +475,7 @@ theorem add_to_load_correct {width : Nat} [NeZero width] {C : Type} {F : Type}
   have hne' : a' ≠ r := canonicalRegs'_ne data r a hne
   have dD := data_inv_register_read data s a' hd
   have rD : sptLookup r (registerRead data a').toCanonical = none := by
-    rw [lookup_register_read, if_neg (fun hc => hne' hc.1.symm), hr]
+    rw [lookup_register_read, ite_eq_right (fun hc => hne' hc.1.symm), hr]
   have loc : sptLookup a s.locals = sptLookup a' s.locals := by
     have := canonicalRegsAvoidCorrect r data a s hd
     simp only [getVar] at this; exact this.symm

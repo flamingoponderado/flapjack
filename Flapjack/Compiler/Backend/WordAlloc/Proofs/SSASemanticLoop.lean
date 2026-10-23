@@ -87,7 +87,7 @@ theorem ssaCcTransCorrectLoop {width : Nat} [NeZero width] {C F : Type}
       dsimp only at post ⊢
       by_cases error : result = some .error
       · simp [error]
-      · rw [if_neg error]
+      · rw [ite_eq_right error]
         exact post.resolve_left error
     · intro key value present
       have relation := afterLocals.2 key value present.2

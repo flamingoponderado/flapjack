@@ -88,10 +88,10 @@ theorem compileCorrect_Call_TailCall {width : Nat} [NeZero width] {C F : Type}
     · rename_i env prog hfc
       simp only at hEval
       by_cases hh : handler.isSome = true
-      · rw [if_pos hh] at hEval
+      · rw [ite_eq_left hh] at hEval
         simp only [Prod.mk.injEq] at hEval
         exact absurd hEval.1.symm hNE
-      rw [if_neg hh] at hEval
+      rw [ite_eq_right hh] at hEval
       have hhn : handler = none := by cases handler <;> simp_all
       subst hhn
       obtain ⟨hwgv, -⟩ := LoopToWord.localsRelHOLGetVars ctxt s t argvars argvals ⟨hLocals, hgv⟩
@@ -104,17 +104,17 @@ theorem compileCorrect_Call_TailCall {width : Nat} [NeZero width] {C F : Type}
         simp [wordSemBadDestArgs]
       simp only [LoopToWord.compHOL]
       rw [hcall]
-      simp only [hwgv0, hbad, Bool.false_eq_true, if_false, wordSemAddRetLoc, hwf]
+      simp only [hwgv0, hbad, Bool.false_eq_true, ite_false, wordSemAddRetLoc, hwf]
       by_cases hz : s.clock = 0
-      · rw [dif_pos hz] at hEval
+      · rw [dite_eq_left hz] at hEval
         simp only [Prod.mk.injEq] at hEval
         obtain ⟨rfl, rfl⟩ := hEval
         refine ⟨WordSemStateFiniteExact.flushState true t, some .timeOut, ?_, ?_, rfl⟩
-        · rw [if_pos (by rw [hclock]; exact hz)]
+        · rw [ite_eq_left (by rw [hclock]; exact hz)]
         · simp [WordSemStateFiniteExact.flushState, hffi]
-      · rw [dif_neg hz] at hEval
+      · rw [dite_eq_right hz] at hEval
         have hz' : ¬ t.clock = 0 := by rw [hclock]; exact hz
-        rw [if_neg hz']
+        rw [ite_eq_right hz']
         have ihs := ih argvals (env, prog) env prog ⟨hgv, hfc, rfl, rfl, rfl, hz⟩
         rcases hr : LoopSemStateFiniteExact.evaluate prog
           { LoopSemStateFiniteExact.decClock s with locals := env } with ⟨r', s'⟩
@@ -158,7 +158,7 @@ theorem compileCorrect_Call_TailCall {width : Nat} [NeZero width] {C F : Type}
               by_cases hE : res1 = some .error
               · rw [hE]; rfl
               · obtain ⟨u1, u2, rfl⟩ := himp hE; rfl
-            simp only [hb, Bool.false_eq_true, if_false]
+            simp only [hb, Bool.false_eq_true, ite_false]
             exact ⟨t1, res1, rfl, hf1, hrc⟩
           | timeOut =>
             have hrc' : res1 = some .timeOut := hrc

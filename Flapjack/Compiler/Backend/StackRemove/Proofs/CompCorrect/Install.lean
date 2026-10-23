@@ -115,12 +115,12 @@ theorem stateRelInstall {width : Nat} [NeZero width] {C F : Type}
         StackSemStateOps.restrictIn_lookup, h10]
       by_cases same : query = register
       · simp [same]
-      · simp only [same, if_false]
+      · simp only [same, ite_false]
         rw [h18 query queryBound]
     · rw [sptLookup_sptUnion, h20]
     · have different : pointer + 2 ≠ register := by omega
-      simp only [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, different, if_false,
-        StackSemStateOps.restrictIn_lookup, h22 (pointer + 2) (by simp), if_true, h21]
+      simp only [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, different, ite_false,
+        StackSemStateOps.restrictIn_lookup, h22 (pointer + 2) (by simp), ite_true, h21]
     · have position : dataEnd = source.dataBuffer.position +
           bytesInWord width * BitVec.ofNat width source.dataBuffer.buffer.length := by
         simpa only [bytesInWord] using condition.2.symm
@@ -134,10 +134,10 @@ theorem stateRelInstall {width : Nat} [NeZero width] {C F : Type}
           StackSemStateOps.restrictIn_lookup]
         have different : pointer + 1 ≠ register := by omega
         have saved := h22 (pointer + 1) (by simp)
-        simp only [different, if_false, saved, if_true]
+        simp only [different, ite_false, saved, ite_true]
         have pointerDifferent : pointer ≠ register := by omega
         have pointerSaved := h22 pointer (by simp)
-        simpa only [pointerDifferent, if_false, pointerSaved, if_true, List.length_append] using heap
+        simpa only [pointerDifferent, ite_false, pointerSaved, ite_true, List.length_append] using heap
   next => cases flush
 
 /-- Canonical codec of the actual imported evaluator state. -/
@@ -184,7 +184,7 @@ theorem compCorrectInstall {width : Nat} [NeZero width] {C F : Type}
   split at sourceRun
   next _ _ _ _ w1 w2 w3 w4 lookup1 lookup2 lookup3 lookup4 =>
     rcases oracle : source.compileOracle 0 with ⟨cfg, programs, bitmaps⟩
-    simp only [oracle, if_pos relation.1] at sourceRun
+    simp only [oracle, ite_eq_left relation.1] at sourceRun
     split at sourceRun
     next _ _ bytes codeBuffer data dataBuffer codeFlush dataFlush =>
       split at sourceRun
@@ -219,10 +219,10 @@ theorem compCorrectInstall {width : Nat} [NeZero width] {C F : Type}
               (evaluate_install first second third fourth fifth target).trans (by
                 simp only [firstRead, secondRead, thirdRead, fourthRead,
                   lookup1, lookup2, lookup3, lookup4, targetOracle,
-                  relation.2.2.1, Bool.false_eq_true, if_false,
+                  relation.2.2.1, Bool.false_eq_true, ite_false,
                   relation.2.2.2.2.2.2.2.2.2.2.2.2.1, codeFlush,
                   targetCompileCons, List.map_cons, progComp, condition.1, nextConfigEq,
-                  and_self, if_true, installedState])
+                  and_self, ite_true, installedState])
           · exact stateRelInstall jump bounds pointer first entry source target
               ((entry, program) :: rest) bitmaps codeBuffer dataBuffer w3 w4
               relation bound.1 programsEq dataFlush

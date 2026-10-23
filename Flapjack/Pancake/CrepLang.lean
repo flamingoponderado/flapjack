@@ -298,7 +298,7 @@ theorem crepExps_loadShape_not_mem_loadGlob [BEq α] [OfNat α 0] [Add α]
       simp only [List.flatMap_cons, List.mem_append, not_or]
       refine ⟨?_, ih (address + stride)⟩
       by_cases hz : address == 0
-      · simp only [hz, if_true]
+      · simp only [hz, ite_true]
         simpa [crepExps] using h
       · simp only [hz]
         simp [crepExps, crepExps.crepExpsList, h]

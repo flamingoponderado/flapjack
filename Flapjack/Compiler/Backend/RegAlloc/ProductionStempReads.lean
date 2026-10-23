@@ -23,7 +23,7 @@ theorem tagMap_production (nodes : List Nat)
       (fun next member => bounds next (List.mem_cons_of_mem node member))
     refine ⟨native.node_tag[node] :: tags, ?_, ?_⟩
     · simp only [stExMap, Translator.Monadic.MonadBase.bind, nodeTagSubEqn,
-        if_pos bound, holEl_eq_getElem node native.node_tag bound, run, ret]
+        ite_eq_left bound, holEl_eq_getElem node native.node_tag bound, run, ret]
     · simp only [List.map_cons, colours, cakeTagCol, read]
       cases native.node_tag[node] <;> rfl
 
@@ -61,7 +61,7 @@ theorem negFirstMatchCol_production (limit : Nat) (bads nodes : List Nat)
     have tailBounds : ∀ next ∈ rest, next < native.dim :=
       fun next member => bounds next (List.mem_cons_of_mem node member)
     simp only [negFirstMatchCol, Translator.Monadic.MonadBase.bind, nodeTagSubEqn,
-      if_pos bound, holEl_eq_getElem node native.node_tag bound,
+      ite_eq_left bound, holEl_eq_getElem node native.node_tag bound,
       cakeNegFirstMatchCol, read]
     cases native.node_tag[node] <;> simp only [Tag.toProduction, ih tailBounds]
     all_goals first | rfl | (split <;> simp_all [ret] <;> omega)

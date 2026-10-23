@@ -56,7 +56,7 @@ theorem shrinkHOL_everyProg_loopInstOk {width : Nat} [NeZero width] {cWidth : Na
   all_goals (try (rw [shrinkHOL]; simp_all [everyProgHOL, loopInstOk]; done))
   case case1 hx ih hb b l0 hf =>
     rw [fixedpointHOL, hx] at hf
-    simp only [if_true, Option.some.injEq, Prod.mk.injEq] at hf
+    simp only [ite_true, Option.some.injEq, Prod.mk.injEq] at hf
     obtain ⟨rfl, rfl⟩ := hf
     have := ih hb
     rwa [hx] at this
@@ -65,7 +65,7 @@ theorem shrinkHOL_everyProg_loopInstOk {width : Nat} [NeZero width] {cWidth : Na
     simp [hne, hle] at hf
   case case3 hx hne hnle _ _ _ ih hb b l0 hf =>
     rw [fixedpointHOL, hx] at hf
-    simp only [hne, hnle, if_false, dite_false] at hf
+    simp only [hne, hnle, ite_false, dite_false] at hf
     exact ih hb b l0 hf
   case case5 body' l0 hx ih hp =>
     rw [shrinkHOL]
@@ -105,7 +105,7 @@ theorem markAllHOL_everyProg_loopInstOk {width : Nat} [NeZero width] {cWidth : N
     have hseq : everyProgHOL (loopInstOk c) (.seq f' s') := by
       unfold everyProgHOL; exact ⟨by simp [loopInstOk], e1, e2⟩
     by_cases hm : marked = true
-    · simp only [hm, if_true]; unfold everyProgHOL; exact ⟨by simp [loopInstOk], hseq⟩
+    · simp only [hm, ite_true]; unfold everyProgHOL; exact ⟨by simp [loopInstOk], hseq⟩
     · simp only [hm]; exact hseq
   case case2 _ hx ih =>
     intro hp
@@ -120,7 +120,7 @@ theorem markAllHOL_everyProg_loopInstOk {width : Nat} [NeZero width] {cWidth : N
     have hprog : everyProgHOL (loopInstOk c) program := by
       simp only [program]; unfold everyProgHOL; exact ⟨by simp [loopInstOk], e1, e2⟩
     by_cases hm : marked = true
-    · simp only [hm, if_true]; unfold everyProgHOL; exact ⟨by simp [loopInstOk], hprog⟩
+    · simp only [hm, ite_true]; unfold everyProgHOL; exact ⟨by simp [loopInstOk], hprog⟩
     · simp only [hm]; exact hprog
   case case4 ih =>
     intro hp
@@ -137,7 +137,7 @@ theorem markAllHOL_everyProg_loopInstOk {width : Nat} [NeZero width] {cWidth : N
     have hprog : everyProgHOL (loopInstOk c) program := by
       simp only [program]; unfold everyProgHOL; exact ⟨by simp [loopInstOk], e1, e2⟩
     by_cases hm : marked = true
-    · simp only [hm, if_true]; unfold everyProgHOL; exact ⟨by simp [loopInstOk], hprog⟩
+    · simp only [hm, ite_true]; unfold everyProgHOL; exact ⟨by simp [loopInstOk], hprog⟩
     · simp only [hm]; exact hprog
   case case7 =>
     intro hp
@@ -285,13 +285,13 @@ theorem everyInstOkLessCrepToLoopCompileExp {width : Nat} [NeZero width]
         rw [hvl, hlen] at hx2
         unfold compileCrepopHOLExact at hx2
         by_cases h7 : ctxt.target = .armv7
-        · simp only [h7, if_true, Prod.mk.injEq] at hx2
+        · simp only [h7, ite_true, Prod.mk.injEq] at hx2
           obtain ⟨rfl, -⟩ := hx2
           simp only [List.mem_singleton] at hp; subst hp
           unfold everyProgHOL
           simp only [loopInstOk]
           exact ⟨fun _ => by omega, fun _ => ⟨by omega, by omega⟩⟩
-        · simp only [h7, if_false, Prod.mk.injEq] at hx2
+        · simp only [h7, ite_false, Prod.mk.injEq] at hx2
           obtain ⟨rfl, -⟩ := hx2
           simp only [List.mem_singleton] at hp; subst hp
           unfold everyProgHOL

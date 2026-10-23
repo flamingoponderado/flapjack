@@ -235,9 +235,9 @@ private theorem iteGoal {width : Nat} [NeZero width] {σ : Type}
       simpa only [crepExactEvalExpClassical_eq, crepExactEvalExp_eq_eval] using hcond
     have hsel := ih (.word w) w hcl rfl
     by_cases hw : w ≠ 0
-    · rw [if_pos hw] at hev hsel ⊢
+    · rw [ite_eq_left hw] at hev hsel ⊢
       exact hsel r s' x1 rts ⟨hev, hu1, hnb1, hlen, hf1, hz, hnd, hne⟩
-    · rw [if_neg hw] at hev hsel ⊢
+    · rw [ite_eq_right hw] at hev hsel ⊢
       exact hsel r s' x2 rts ⟨hev, hu2, hnb2, hlen, hf2, hz, hnd, hne⟩
   · obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
     exact absurd rfl hne
@@ -253,12 +253,12 @@ private theorem seqGoal {width : Nat} [NeZero width] {σ : Type}
   rcases hu1 : unreachElimHOLExact c1 with ⟨c1', x1⟩
   simp only [unreachElimHOLExact, hu1] at hue
   by_cases hx1 : x1.isSome
-  · simp only [hx1, if_true, Prod.mk.injEq] at hue
+  · simp only [hx1, ite_true, Prod.mk.injEq] at hue
     have hsz := CrepInlineUnreachElimProgSize.unreachElimProgSize c1 c1' x1 (fun n : Nat => n) hu1
     rw [hue.1] at hsz
     simp only [CrepLangGeneratedSize.crepProgSizeHOL] at hsz
     omega
-  · simp only [hx1, if_false, Bool.false_eq_true] at hue
+  · simp only [hx1, ite_false, Bool.false_eq_true] at hue
     rcases hu2 : unreachElimHOLExact c2 with ⟨c2', x2⟩
     simp only [hu2, Prod.mk.injEq, CrepProgHOL.seq.injEq] at hue
     obtain ⟨⟨rfl, rfl⟩, rfl⟩ := hue

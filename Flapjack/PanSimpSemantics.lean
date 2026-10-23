@@ -175,7 +175,7 @@ theorem dec_congr (structs : StructContext) (baseAddress topAddress bytesInWord 
   | some v =>
       simp
       by_cases hmatch : panShapeMatches (panValueShape structs v) shape = true
-      · simp only [hmatch, if_true]
+      · simp only [hmatch, ite_true]
         simp only [h (updatePanValueMap locals name v) globals memory]
       · simp [hmatch]
 
@@ -207,7 +207,7 @@ theorem ite_congr (structs : StructContext) (baseAddress topAddress bytesInWord 
       cases v with
       | word w =>
           by_cases hz : (w != 0) = true
-          · simp only [hz, if_true]
+          · simp only [hz, ite_true]
             exact hthen locals globals memory
           · simp [hz]
             exact helse locals globals memory

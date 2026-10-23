@@ -101,9 +101,9 @@ theorem compileCorrectShMemLoad {width : Nat} {σ : Type} [NeZero width]
               dsimp only at heval
               simp only [PanSemStateFiniteExact.shMemLoadHOLFiniteExact] at heval
               by_cases hn : nbOpHOL operator = 0
-              · rw [if_pos hn] at heval
+              · rw [ite_eq_left hn] at heval
                 by_cases ha : source.shMemaddrs address
-                · rw [if_pos ha] at heval
+                · rw [ite_eq_left ha] at heval
                   cases hf : callFFIHOL source.ffi (.sharedMem .mappedRead)
                       [BitVec.ofNat 8 (nbOpHOL operator)] (panWordToBytesHOL address false) with
                   | final event =>
@@ -119,9 +119,9 @@ theorem compileCorrectShMemLoad {width : Nat} {σ : Type} [NeZero width]
                       rw [hlookup]
                       dsimp only
                       simp only [PanSemStateFiniteExact.shMemLoadHOLFiniteExact]
-                      rw [if_pos hn]
+                      rw [ite_eq_left hn]
                       have htargetDomain : (convertStateExact context source).shMemaddrs address := ha
-                      rw [if_pos htargetDomain]
+                      rw [ite_eq_left htargetDomain]
                       have htargetFfi : callFFIHOL (convertStateExact context source).ffi (.sharedMem .mappedRead)
                           [BitVec.ofNat 8 (nbOpHOL operator)] (panWordToBytesHOL address false) = .final event := hf
                       rw [htargetFfi]
@@ -173,9 +173,9 @@ theorem compileCorrectShMemLoad {width : Nat} {σ : Type} [NeZero width]
                       rw [hlookup]
                       dsimp only
                       simp only [PanSemStateFiniteExact.shMemLoadHOLFiniteExact]
-                      rw [if_pos hn]
+                      rw [ite_eq_left hn]
                       have htargetDomain : (convertStateExact context source).shMemaddrs address := ha
-                      rw [if_pos htargetDomain]
+                      rw [ite_eq_left htargetDomain]
                       have htargetFfi : callFFIHOL (convertStateExact context source).ffi (.sharedMem .mappedRead)
                           [BitVec.ofNat 8 (nbOpHOL operator)] (panWordToBytesHOL address false) = .ret newFfi newBytes := hf
                       rw [htargetFfi]
@@ -188,11 +188,11 @@ theorem compileCorrectShMemLoad {width : Nat} {σ : Type} [NeZero width]
                     · exact hassign.2.2.2.2.1
                     · simp [resVsHOL]
                     · simp [resVsHOL]
-                · rw [if_neg ha] at heval
+                · rw [ite_eq_right ha] at heval
                   exact False.elim (herror (Prod.mk.inj heval).1.symm)
-              · rw [if_neg hn] at heval
+              · rw [ite_eq_right hn] at heval
                 by_cases ha : source.shMemaddrs (panByteAlignHOL address)
-                · rw [if_pos ha] at heval
+                · rw [ite_eq_left ha] at heval
                   cases hf : callFFIHOL source.ffi (.sharedMem .mappedRead)
                       [BitVec.ofNat 8 (nbOpHOL operator)] (panWordToBytesHOL address false) with
                   | final event =>
@@ -208,9 +208,9 @@ theorem compileCorrectShMemLoad {width : Nat} {σ : Type} [NeZero width]
                       rw [hlookup]
                       dsimp only
                       simp only [PanSemStateFiniteExact.shMemLoadHOLFiniteExact]
-                      rw [if_neg hn]
+                      rw [ite_eq_right hn]
                       have htargetDomain : (convertStateExact context source).shMemaddrs (panByteAlignHOL address) := ha
-                      rw [if_pos htargetDomain]
+                      rw [ite_eq_left htargetDomain]
                       have htargetFfi : callFFIHOL (convertStateExact context source).ffi (.sharedMem .mappedRead)
                           [BitVec.ofNat 8 (nbOpHOL operator)] (panWordToBytesHOL address false) = .final event := hf
                       rw [htargetFfi]
@@ -262,9 +262,9 @@ theorem compileCorrectShMemLoad {width : Nat} {σ : Type} [NeZero width]
                       rw [hlookup]
                       dsimp only
                       simp only [PanSemStateFiniteExact.shMemLoadHOLFiniteExact]
-                      rw [if_neg hn]
+                      rw [ite_eq_right hn]
                       have htargetDomain : (convertStateExact context source).shMemaddrs (panByteAlignHOL address) := ha
-                      rw [if_pos htargetDomain]
+                      rw [ite_eq_left htargetDomain]
                       have htargetFfi : callFFIHOL (convertStateExact context source).ffi (.sharedMem .mappedRead)
                           [BitVec.ofNat 8 (nbOpHOL operator)] (panWordToBytesHOL address false) = .ret newFfi newBytes := hf
                       rw [htargetFfi]
@@ -277,6 +277,6 @@ theorem compileCorrectShMemLoad {width : Nat} {σ : Type} [NeZero width]
                     · exact hassign.2.2.2.2.1
                     · simp [resVsHOL]
                     · simp [resVsHOL]
-                · rw [if_neg ha] at heval
+                · rw [ite_eq_right ha] at heval
                   exact False.elim (herror (Prod.mk.inj heval).1.symm)
 end Flapjack.Pancake.Proofs.PanStructs.CompileCorrectShMemLoad

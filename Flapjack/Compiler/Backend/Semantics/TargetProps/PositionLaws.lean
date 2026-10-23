@@ -36,7 +36,7 @@ theorem interferencePosHead {width : Nat} [NeZero width]
       ∃ app mc' ffi', interferenceAppSeq mc ffi ms n = some (app, mc', ffi') ∧ P app :=
     ⟨0, rfl, app0, mcc, ffic, hz, h.2⟩
   unfold interferencePos holOptionSome
-  rw [dif_pos hex]
+  rw [dite_eq_left hex]
   congr 1
   have hs := Classical.choose_spec hex
   rcases hs with ⟨hc, app, mc', ffi', hseq, hp⟩

@@ -53,7 +53,7 @@ private theorem moveWrites_foreach (nodes : List Nat) (native : State) (value : 
         next < ({native with move_related := native.move_related.set node value} : State).move_related.length := by
       intro next member
       simpa only [List.length_set] using bounds next (List.mem_cons_of_mem node member)
-    simp only [stExForeach, ignoreBind, updateMoveRelatedEqn, if_pos bound]
+    simp only [stExForeach, ignoreBind, updateMoveRelatedEqn, ite_eq_left bound]
     rw [ih _ tailBounds]
     rfl
 
@@ -74,7 +74,7 @@ theorem isFixed_production (node : Nat) {native : State} {production : CakeRaSta
     isFixed node native = (.success (cakeIsFixed production node), native) := by
   have tagBound : node < native.node_tag.length := by rwa [good.2.1]
   have tagRead := related.tag_read node tagBound
-  simp only [isFixed, Translator.Monadic.MonadBase.bind, nodeTagSubEqn, if_pos tagBound,
+  simp only [isFixed, Translator.Monadic.MonadBase.bind, nodeTagSubEqn, ite_eq_left tagBound,
     holEl_eq_getElem node native.node_tag tagBound, ret, cakeIsFixed, tagRead, Option.getD_some]
   cases native.node_tag[node] <;> rfl
 
@@ -108,7 +108,7 @@ private theorem markEndpoints_production (move : Nat × (Nat × Nat))
     simpa only [good.2.2.2.2.1] using bounds.2
   refine ⟨result, ?_, ?_, ?_, rfl⟩
   · simp only [nativeMarkEndpoints, Translator.Monadic.MonadBase.bind, left, right,
-      ignoreBind, updateMoveRelatedEqn, if_pos leftBound, List.length_set, if_pos rightBound]
+      ignoreBind, updateMoveRelatedEqn, ite_eq_left leftBound, List.length_set, ite_eq_left rightBound]
     rfl
   · obtain ⟨a,b,c,d,e,f,g,h,i,j,k,l,m,n⟩ := good
     exact ⟨a,b,c,d,(List.length_set.trans List.length_set).trans e,f,g,h,i,j,k,l,m,n⟩

@@ -139,9 +139,9 @@ theorem compCorrectCallTail {width : Nat} [NeZero width] {C F : Type}
   · simp only [hgv, Prod.mk.injEq] at execution; exact absurd execution.1.symm notError
   simp only [hgv] at execution
   by_cases hbad : wordSemBadDestArgs dest args = true
-  · simp only [hbad, if_true, Prod.mk.injEq] at execution
+  · simp only [hbad, ite_true, Prod.mk.injEq] at execution
     exact absurd execution.1.symm notError
-  simp only [hbad, Bool.false_eq_true, if_false] at execution
+  simp only [hbad, Bool.false_eq_true, ite_false] at execution
   rcases hfc : wordSemFindCode dest (wordSemAddRetLoc (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat)) xs) source.code source.stackSize with
     _ | ⟨args1, prog, ss⟩
   · simp only [hfc, Prod.mk.injEq] at execution; exact absurd execution.1.symm notError
@@ -184,15 +184,15 @@ theorem compCorrectCallTail {width : Nat} [NeZero width] {C F : Type}
     have : sac ≤ args.length - k := by
       simp only [hsac, Compiler.Backend.WordToStack.stackArgCount]; split <;> omega
     by_cases h0 : frame = 0
-    · rw [if_pos h0] at r35; omega
-    · rw [if_neg h0] at r35; omega
+    · rw [ite_eq_left h0] at r35; omega
+    · rw [ite_eq_right h0] at r35; omega
   obtain ⟨pLoc, hpLoc, hssLoc, hnone, hsome⟩ :=
     findCode_facts dest _ source.code source.stackSize args1 prog ss hfc
   have hsac1 : sac = args1.length - k := by
     rcases dest with _ | p
     · have hne : args ≠ [] := by rintro rfl; simp [wordSemBadDestArgs] at hbad
       have hlen0 : ¬ args.length = 0 := by simpa using hne
-      simp only [callDestNative, dif_neg hlen0, Prod.mk.injEq] at hcd
+      simp only [callDestNative, dite_eq_right hlen0, Prod.mk.injEq] at hcd
       obtain ⟨-, rfl⟩ := hcd
       rw [hnone rfl]
       simp only [hsac, Compiler.Backend.WordToStack.stackArgCount, wordSemAddRetLoc,
@@ -224,29 +224,29 @@ theorem compCorrectCallTail {width : Nat} [NeZero width] {C F : Type}
     simp only
     rw [CallHelpers.evaluateSeqStackFree _ _ {t4 with clock := t4.clock + extra}
         ⟨huse4, by simp only; omega⟩, StackSemEvaluate.evaluate_seq,
-      StackSemEvaluate.evaluate_stackFree, if_neg (by simp [huse4]), if_neg (by simp; omega)]
+      StackSemEvaluate.evaluate_stackFree, ite_eq_right (by simp [huse4]), ite_eq_right (by simp; omega)]
     simp only [StackSemControl.fixClock, Nat.min_self]
   by_cases hclk : source.clock = 0
   · -- the clock runs out at the call
-    rw [dif_pos hclk] at execution
+    rw [dite_eq_left hclk] at execution
     simp only [Prod.mk.injEq] at execution
     obtain ⟨rfl, rfl⟩ := execution
     have hrun := hcall 0
     rw [StackSemEvaluate.evaluate_call] at hrun
-    simp only [hfind, Nat.add_zero, r1.symm.trans hclk, if_true] at hrun
+    simp only [hfind, Nat.add_zero, r1.symm.trans hclk, ite_true] at hrun
     refine ⟨0, _, _, hrun, ?_⟩
     · unfold compCorrectResult
-      simp only [Option.map_some, compileResult, ne_eq, not_true_eq_false, if_false]
+      simp only [Option.map_some, compileResult, ne_eq, not_true_eq_false, ite_false]
       exact ⟨r4.symm, hclk⟩
-  · rw [dif_neg hclk] at execution
+  · rw [dite_eq_right hclk] at execution
     rcases hbody : WordSemStateFiniteExact.evaluate prog
         (WordSemStateFiniteExact.callEnv args1 ss (WordSemStateFiniteExact.decClock source)) with
       ⟨res', s'⟩
     rw [hbody] at execution
     by_cases hbf : wordSemBadFunReturn res' = true
-    · simp only [hbf, if_true, Prod.mk.injEq] at execution
+    · simp only [hbf, ite_true, Prod.mk.injEq] at execution
       exact absurd execution.1.symm notError
-    simp only [hbf, Bool.false_eq_true, if_false, Prod.mk.injEq] at execution
+    simp only [hbf, Bool.false_eq_true, ite_false, Prod.mk.injEq] at execution
     obtain ⟨rfl, rfl⟩ := execution
     -- the compiled callee: a frame allocation followed by the compiled body
     have hsacfs : args1.length - k ≤ fs := CallHelpers.compileProgStackSize _ _ _ _ _ _ _ _ _ hcomp
@@ -279,14 +279,14 @@ theorem compCorrectCallTail {width : Nat} [NeZero width] {C F : Type}
             | (res, s2) => if StackSemControl.badFunReturn res then (some .error, s2) else (res, s2)) := by
       intro extra
       rw [hcall extra, StackSemEvaluate.evaluate_call]
-      simp only [hfind, if_neg (show ¬ t4.clock + extra = 0 by omega)]
+      simp only [hfind, ite_eq_right (show ¬ t4.clock + extra = 0 by omega)]
       rfl
     by_cases hlim : t4.stackSpace + nfree < m
     · -- the callee's frame does not fit: Halt (Word 2w)
       have hrun := hreach 0
       rw [StackSemEvaluate.evaluate_seq (Prog.stackAlloc m) body,
-        StackSemEvaluate.evaluate_stackAlloc, if_neg (by simp [r5]),
-        if_pos (by simp only; omega)] at hrun
+        StackSemEvaluate.evaluate_stackAlloc, ite_eq_right (by simp [r5]),
+        ite_eq_left (by simp only; omega)] at hrun
       simp only [StackSemControl.fixClock, StackSemControl.badFunReturn] at hrun
       refine ⟨0, _, _, hrun, ?_⟩
       unfold compCorrectResult
@@ -295,7 +295,7 @@ theorem compCorrectCallTail {width : Nat} [NeZero width] {C F : Type}
         · simp [wordSemBadFunReturn] at hbf
         · simp only [Option.map_some, ne_eq, Option.some.injEq]
           exact CallHelpers.compileResultNot2 r r28
-      rw [if_pos hne]
+      rw [ite_eq_left hne]
       refine ⟨rfl, ?_, ?_⟩
       · show List.IsPrefix t4.ffi.ioEvents s'.ffi.ioEvents
         rw [r4]
@@ -358,8 +358,8 @@ theorem compCorrectCallTail {width : Nat} [NeZero width] {C F : Type}
           omega
         · show if svc = 0 then fs = 0 else fs = svc + 1
           by_cases h : svc = 0
-          · rw [if_pos h] at hfsdef ⊢; exact hfsdef.symm
-          · rw [if_neg h] at hfsdef ⊢; exact hfsdef.symm
+          · rw [ite_eq_left h] at hfsdef ⊢; exact hfsdef.symm
+          · rw [ite_eq_right h] at hfsdef ⊢; exact hfsdef.symm
         · show stackSizeRel fs ss source.stackLimit
             (wordSemOptionMax source.stackMax (wordSemOptionAdd (wordSemStackSize source.stack) ss))
             source.stack t4.stack t5.stackSpace 0
@@ -401,13 +401,13 @@ theorem compCorrectCallTail {width : Nat} [NeZero width] {C F : Type}
           obtain ⟨he, hif⟩ := gloc nn v hsrc
           refine ⟨he, ?_⟩
           by_cases hlt : nn / 2 < k
-          · rw [if_pos hlt] at hif ⊢
+          · rw [ite_eq_left hlt] at hif ⊢
             exact hif
-          · rw [if_neg hlt] at hif ⊢
+          · rw [ite_eq_right hlt] at hif ⊢
             obtain ⟨hslot, -⟩ := hif
             refine ⟨?_, ?_⟩
             · rw [Nat.add_zero, List.getElem?_take, List.getElem?_drop] at hslot ⊢
-              rw [if_pos (by omega)] at hslot ⊢
+              rw [ite_eq_left (by omega)] at hslot ⊢
               rw [show t5.stackSpace + (fs - 1 - (nn / 2 - k)) =
                 t4.stackSpace + (f - 1 - (nn / 2 - k)) by omega]
               exact hslot
@@ -443,11 +443,11 @@ theorem compCorrectCallTail {width : Nat} [NeZero width] {C F : Type}
       refine ⟨ck, tpost, tres, ?_, ?_⟩
       · rw [hreach ck, show t4.clock + ck - 1 = t4.clock - 1 + ck by omega,
           StackSemEvaluate.evaluate_seq (Prog.stackAlloc m) body,
-          StackSemEvaluate.evaluate_stackAlloc, if_neg (by simp [r5]),
-          if_neg (by simp only; omega)]
+          StackSemEvaluate.evaluate_stackAlloc, ite_eq_right (by simp [r5]),
+          ite_eq_right (by simp only; omega)]
         simp only [StackSemControl.fixClock, Nat.min_self]
         rw [hrunb]
-        simp only [Nat.min_eq_right hle, hbadT, Bool.false_eq_true, if_false]
+        simp only [Nat.min_eq_right hle, hbadT, Bool.false_eq_true, ite_false]
       · unfold compCorrectResult at hresb ⊢
         split_ifs at hresb ⊢ with hne
         · exact hresb

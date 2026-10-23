@@ -54,7 +54,7 @@ theorem readMemWord_fst (a : BitVec 64) (n : Nat) (s : AsmState 64) (hbe : s.be 
   | zero => simp [readMemWord, readBytes]
   | succ n ih =>
       rw [readMemWord_succ, hbe]
-      simp only [Bool.false_eq_true, if_false]
+      simp only [Bool.false_eq_true, ite_false]
       generalize hr : readMemWord (resultWidth := 64) (a + 1) n s = r
       obtain ⟨w, s1⟩ := r
       have hmem := readMemWord_mem_eq_direct (resultWidth := 64) (a + 1) n s
@@ -131,7 +131,7 @@ theorem readMemWord_domain (a : BitVec 64) (n : Nat) (s : AsmState 64) (hbe : s.
       intro k hk
       classical
       rw [readMemWord_succ] at h
-      simp only [hbe, Bool.false_eq_true, if_false] at h
+      simp only [hbe, Bool.false_eq_true, ite_false] at h
       set s1 : AsmState 64 := (readMemWord (resultWidth := 64) (a + 1) n s).2 with hs1
       simp only [assertState, Bool.or_eq_false_iff] at h
       obtain ⟨hdom, hf⟩ := h
@@ -251,7 +251,7 @@ theorem writeMemWord_mem_two (s : AsmState 64) (m : BitVec 64 → BitVec 8) (a v
     (hbe : s.be = false) (hm : s.mem x = m x) :
     (writeMemWord (valueWidth := 64) a 2 v s).mem x = (writeMemN (memState m) 2 a v).mem x := by
   simp only [writeMemWord, writeMemN, memState, updMem_mem, assertState_mem]
-  simp only [hbe, Bool.false_eq_true, if_false]
+  simp only [hbe, Bool.false_eq_true, ite_false]
   simp [hm]
 
 /-- A four-byte source store is the machine's four-byte write. -/
@@ -259,7 +259,7 @@ theorem writeMemWord_mem_four (s : AsmState 64) (m : BitVec 64 → BitVec 8) (a 
     (hbe : s.be = false) (hm : s.mem x = m x) :
     (writeMemWord (valueWidth := 64) a 4 v s).mem x = (writeMemN (memState m) 4 a v).mem x := by
   simp only [writeMemWord, writeMemN, memState, updMem_mem, assertState_mem]
-  simp only [hbe, Bool.false_eq_true, if_false]
+  simp only [hbe, Bool.false_eq_true, ite_false]
   rw [show a + 1 + 1 + 1 = a + 3 by bv_omega, show a + 1 + 1 = a + 2 by bv_omega]
   rw [byteShift v 1, byteShift v 0]
   simp [hm]
@@ -269,7 +269,7 @@ theorem writeMemWord_mem_eight (s : AsmState 64) (m : BitVec 64 → BitVec 8) (a
     (hbe : s.be = false) (hm : s.mem x = m x) :
     (writeMemWord (valueWidth := 64) a 8 v s).mem x = (writeMemN (memState m) 8 a v).mem x := by
   simp only [writeMemWord, writeMemN, memState, updMem_mem, assertState_mem]
-  simp only [hbe, Bool.false_eq_true, if_false]
+  simp only [hbe, Bool.false_eq_true, ite_false]
   rw [show a + 1 + 1 + 1 + 1 + 1 + 1 + 1 = a + 7 by bv_omega,
     show a + 1 + 1 + 1 + 1 + 1 + 1 = a + 6 by bv_omega,
     show a + 1 + 1 + 1 + 1 + 1 = a + 5 by bv_omega,
@@ -479,7 +479,7 @@ theorem encodeBytes_mem_true_false (size : Nat) (rg : Bool) (memop : MemOp) (off
     decide_eq_false_iff_not.mpr hne
   have hi : encodeInsn (.loadStoreImmediate size rg memop false true off rn rt) =
       encodeInsn (.loadStoreImmediate size rg memop false false off rn rt) := by
-    simp only [encodeInsn, encodeInsn32, hfits, hd, Bool.and_false, if_true]
+    simp only [encodeInsn, encodeInsn32, hfits, hd, Bool.and_false, ite_true]
   simp only [encodeBytes, hi]
 
 /-- One machine step executes an unsigned-offset memory instruction whose scaled
@@ -648,7 +648,7 @@ theorem memLoadDomain (op : HolMemop) (r base : Nat) (off : BitVec 64) (s1 s2 : 
   have hfail : s2.failed = false := boolOfNotTrue hok
   rw [← hupd] at hfail
   simp only [asmUpd, instUpd, hspec, memLoad, addrHOL, updPc, updReg, assertState,
-    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, if_false] at hfail
+    Flapjack.Compiler.Encoders.AsmSem.readReg, hbe, Bool.false_eq_true, ite_false] at hfail
   obtain ⟨-, hf⟩ := (Bool.or_eq_false_iff).1 hfail
   exact readMemWord_domain (s1.regs base + off) (2 ^ size) s1 hbe hf
 
@@ -729,13 +729,13 @@ theorem case_memLoadOne (op : HolMemop) (r base : Nat) (off : BitVec 64) (s1 s2 
     rw [← hupd]
     simp only [asmUpd, instUpd, hspec, memLoad, addrHOL, updPc, updReg, assertState,
       readMemWord_regs, Flapjack.Compiler.Encoders.AsmSem.readReg, st.be,
-      Bool.false_eq_true, if_false]
+      Bool.false_eq_true, ite_false]
   have hbase : ms.regs base = s1.regs base := st.reg base hbdom
   have hregr : ms.regs r = s1.regs r := st.reg r hrdom
   have haddr : readReg ms base + off = s1.regs base + off := by
-    simp only [readReg, if_neg hbne, hbase]
+    simp only [readReg, ite_eq_right hbne, hbase]
   have hreadr : readReg ms r = s1.regs r := by
-    simp only [readReg, if_neg hrne, hregr]
+    simp only [readReg, ite_eq_right hrne, hregr]
   have hvalue : (readMemWord (s1.regs base + off) (2 ^ size) s1).1 =
       readMemN ms (2 ^ size) (readReg ms base + off) := by
     rw [haddr]
@@ -768,23 +768,23 @@ theorem case_memLoadOne (op : HolMemop) (r base : Nat) (off : BitVec 64) (s1 s2 
   have hq1 : targetStateRel arm8Target s2 (arm8Next ms) := by
     rw [hnext, execInsn_loadStoreImmediate_load]
     refine ⟨?_, ?_, ?_, ?_, ?_⟩
-    · simp only [arm8Target_stateOk, writeReg, if_neg hrne]
+    · simp only [arm8Target_stateOk, writeReg, ite_eq_right hrne]
       exact arm8StateOk_set _ hal st.msFailed
-    · simp only [writeReg, if_neg hrne]
+    · simp only [writeReg, ite_eq_right hrne]
       show ms.pc + 4 = s2.pc
       rw [st.pc, hs2pc]
     · intro x hx
-      simp only [arm8Target_getByte, writeReg, if_neg hrne]
+      simp only [arm8Target_getByte, writeReg, ite_eq_right hrne]
       show ms.mem x = s2.mem x
       rw [hs2mem x]
       exact st.mem x (hs2dom ▸ hx)
     · intro i hi
-      simp only [arm8Target_getReg, writeReg, if_neg hrne]
+      simp only [arm8Target_getReg, writeReg, ite_eq_right hrne]
       by_cases hir : i = r
       · subst hir
-        rw [if_pos rfl, readMemN_pcUpdate, readReg_pcUpdate, hs2regs i, if_pos rfl]
+        rw [ite_eq_left rfl, readMemN_pcUpdate, readReg_pcUpdate, hs2regs i, ite_eq_left rfl]
         exact hvalue.symm
-      · rw [if_neg hir, hs2regs i, if_neg hir]
+      · rw [ite_eq_right hir, hs2regs i, ite_eq_right hir]
         exact st.reg i hi
     · intro i hi
       simp only [arm8Target_config, arm8Config] at hi
@@ -824,7 +824,7 @@ theorem writeMemWord_domain (a : BitVec 64) (n : Nat) (v : BitVec 64) (s : AsmSt
       rw [writeMemWord_succ] at h
       have hif : (if s.be then a - 1 else a + 1) = a + 1 := by
         rw [hbe]
-        rw [if_neg (by decide : ¬((false : Bool) = true))]
+        rw [ite_eq_right (by decide : ¬((false : Bool) = true))]
       rw [hif] at h
       set s1 : AsmState 64 :=
         writeMemWord (valueWidth := 64) (a + 1) n (v >>> (8 : Nat)) s with hs1
@@ -899,13 +899,13 @@ theorem case_memStoreOne (op : HolMemop) (r base : Nat) (off : BitVec 64) (s1 s2
     intro x
     rw [← hupd]
     simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
-      Flapjack.Compiler.Encoders.AsmSem.readReg, st.be, Bool.false_eq_true, if_false]
+      Flapjack.Compiler.Encoders.AsmSem.readReg, st.be, Bool.false_eq_true, ite_false]
   have hbase : ms.regs base = s1.regs base := st.reg base hbdom
   have hregr : ms.regs r = s1.regs r := st.reg r hrdom
   have haddr : readReg ms base + off = s1.regs base + off := by
-    simp only [readReg, if_neg hbne, hbase]
+    simp only [readReg, ite_eq_right hbne, hbase]
   have hvalr : readReg ms r = s1.regs r := by
-    simp only [readReg, if_neg hrne, hregr]
+    simp only [readReg, ite_eq_right hrne, hregr]
   have hbytes : bytesInMemoryHOL ms.pc (encodeBytes (.loadStoreImmediate size false .store false
       (decide (off = scaledOff size off)) off base r)) ms.mem s1.memDomain := by
     rw [← hast]; exact st.bytes
@@ -919,7 +919,7 @@ theorem case_memStoreOne (op : HolMemop) (r base : Nat) (off : BitVec 64) (s1 s2
       s1).failed = false := by
     rw [← hupd] at hfail
     simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
-      Flapjack.Compiler.Encoders.AsmSem.readReg, st.be, Bool.false_eq_true, if_false] at hfail
+      Flapjack.Compiler.Encoders.AsmSem.readReg, st.be, Bool.false_eq_true, ite_false] at hfail
     obtain ⟨-, hf⟩ := (Bool.or_eq_false_iff).1 hfail
     exact hf
   have hdomW := writeMemWord_domain (s1.regs base + off) (2 ^ size) (s1.regs r) s1 st.be
@@ -1202,7 +1202,7 @@ theorem case_memLoadTwo (op : HolMemop) (r base : Nat) (off : BitVec 64) (s1 s2 
     rw [← hupd]
     simp only [asmUpd, instUpd, hspec, memLoad, addrHOL, updPc, updReg, assertState,
       readMemWord_regs, Flapjack.Compiler.Encoders.AsmSem.readReg, st.be,
-      Bool.false_eq_true, if_false]
+      Bool.false_eq_true, ite_false]
   have hsplit : bytesInMemoryHOL ms.pc (encodeBytes (.addSubImmediate (!u) false b base temp))
         ms.mem s1.memDomain ∧
       bytesInMemoryHOL (ms.pc + 4)
@@ -1217,16 +1217,16 @@ theorem case_memLoadTwo (op : HolMemop) (r base : Nat) (off : BitVec 64) (s1 s2 
       (if u then s1.regs base + b else s1.regs base - b) := by
     rw [arm8Next_addSubImmediate ms s1.memDomain (!u) false b base temp himm hb32 htemp32 hb1]
     have hrd : readReg { ms with pc := ms.pc + 4 } base = s1.regs base := by
-      rw [readReg_pcUpdate, readReg, if_neg hbne, hbv]
+      rw [readReg_pcUpdate, readReg, ite_eq_right hbne, hbv]
     cases u with
     | true =>
         rw [show (!true : Bool) = false from rfl]
         rw [execInsn_addSubImmediate_add { ms with pc := ms.pc + 4 } b base temp]
-        rw [if_pos rfl, hrd]
+        rw [ite_eq_left rfl, hrd]
     | false =>
         rw [show (!false : Bool) = true from rfl]
         rw [execInsn_addSubImmediate_sub { ms with pc := ms.pc + 4 } b base temp]
-        rw [if_neg (by decide : ¬((false : Bool) = true)), hrd]
+        rw [ite_eq_right (by decide : ¬((false : Bool) = true)), hrd]
   set t1 : Arm8State := writeReg { ms with pc := ms.pc + 4 } temp
     (if u then s1.regs base + b else s1.regs base - b) with ht1
   obtain ⟨ht1pc, ht1mem, ht1regs, ht1failed, ht1temp⟩ := execWriteFields htemp31 ht1
@@ -1256,7 +1256,7 @@ theorem case_memLoadTwo (op : HolMemop) (r base : Nat) (off : BitVec 64) (s1 s2 
       simpa only [arm8Touched] using ha
     simp only [bytesAt, List.mem_map, List.mem_range] at ha'
     obtain ⟨j, hj, rfl⟩ := ha'
-    simp only [readReg, if_neg htemp31]
+    simp only [readReg, ite_eq_right htemp31]
     rw [ht1addr]
     exact hdom j hj
   have hnext2 : arm8Next t1 = execInsn { t1 with pc := t1.pc + 4 }
@@ -1276,32 +1276,32 @@ theorem case_memLoadTwo (op : HolMemop) (r base : Nat) (off : BitVec 64) (s1 s2 
   have hq1 : targetStateRel arm8Target s2 (arm8Next t1) := by
     rw [hnext2, execInsn_loadStoreImmediate_load]
     refine ⟨?_, ?_, ?_, ?_, ?_⟩
-    · simp only [arm8Target_stateOk, writeReg, if_neg hrne]
+    · simp only [arm8Target_stateOk, writeReg, ite_eq_right hrne]
       exact arm8StateOk_set _ hal2 (ht1failed.trans st.msFailed)
-    · simp only [arm8Target_getPc, writeReg, if_neg hrne]
+    · simp only [arm8Target_getPc, writeReg, ite_eq_right hrne]
       show t1.pc + 4 = s2.pc
       rw [ht1pc, st.pc, hs2pc]
       bv_omega
     · intro x hx
-      simp only [arm8Target_getByte, writeReg, if_neg hrne]
+      simp only [arm8Target_getByte, writeReg, ite_eq_right hrne]
       rw [hs2mem x]
       exact (ht1mem x).trans (st.mem x (hs2dom ▸ hx))
     · intro i hi
-      simp only [arm8Target_getReg, writeReg, if_neg hrne]
+      simp only [arm8Target_getReg, writeReg, ite_eq_right hrne]
       by_cases hir : i = r
       · subst hir
-        rw [if_pos rfl, hs2regs i, if_pos rfl]
+        rw [ite_eq_left rfl, hs2regs i, ite_eq_left rfl]
         show readMemN t1 (2 ^ size) (readReg t1 temp + c) =
           (readMemWord (s1.regs base + off) (2 ^ size) s1).1
         have haddr' : readReg t1 temp + c = s1.regs base + off := by
-          simp only [readReg, if_neg htemp31]
+          simp only [readReg, ite_eq_right htemp31]
           exact ht1addr
         rw [haddr']
         refine (readValue_agree (s1.regs base + off) size hsize s1 t1 st.be hdom ?_).symm
         intro x hx
         rw [ht1mem x]
         exact st.mem x hx
-      · rw [if_neg hir, hs2regs i, if_neg hir]
+      · rw [ite_eq_right hir, hs2regs i, ite_eq_right hir]
         have hne26 : i ≠ temp := by
           intro h26
           subst h26
@@ -1411,13 +1411,13 @@ theorem case_memStoreTwo (op : HolMemop) (r base : Nat) (off : BitVec 64) (s1 s2
     intro x
     rw [← hupd]
     simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
-      Flapjack.Compiler.Encoders.AsmSem.readReg, st.be, Bool.false_eq_true, if_false]
+      Flapjack.Compiler.Encoders.AsmSem.readReg, st.be, Bool.false_eq_true, ite_false]
   have hfail : s2.failed = false := boolOfNotTrue st.ok
   have hfailW : (writeMemWord (valueWidth := 64) (s1.regs base + off) (2 ^ size) (s1.regs r)
       s1).failed = false := by
     rw [← hupd] at hfail
     simp only [asmUpd, instUpd, hspec, memStore, addrHOL, updPc, assertState,
-      Flapjack.Compiler.Encoders.AsmSem.readReg, st.be, Bool.false_eq_true, if_false] at hfail
+      Flapjack.Compiler.Encoders.AsmSem.readReg, st.be, Bool.false_eq_true, ite_false] at hfail
     obtain ⟨-, hf⟩ := (Bool.or_eq_false_iff).1 hfail
     exact hf
   have hdomW := writeMemWord_domain (s1.regs base + off) (2 ^ size) (s1.regs r) s1 st.be
@@ -1436,16 +1436,16 @@ theorem case_memStoreTwo (op : HolMemop) (r base : Nat) (off : BitVec 64) (s1 s2
       (if u then s1.regs base + b else s1.regs base - b) := by
     rw [arm8Next_addSubImmediate ms s1.memDomain (!u) false b base temp himm hb32 htemp32 hb1]
     have hrd : readReg { ms with pc := ms.pc + 4 } base = s1.regs base := by
-      rw [readReg_pcUpdate, readReg, if_neg hbne, hbv]
+      rw [readReg_pcUpdate, readReg, ite_eq_right hbne, hbv]
     cases u with
     | true =>
         rw [show (!true : Bool) = false from rfl]
         rw [execInsn_addSubImmediate_add { ms with pc := ms.pc + 4 } b base temp]
-        rw [if_pos rfl, hrd]
+        rw [ite_eq_left rfl, hrd]
     | false =>
         rw [show (!false : Bool) = true from rfl]
         rw [execInsn_addSubImmediate_sub { ms with pc := ms.pc + 4 } b base temp]
-        rw [if_neg (by decide : ¬((false : Bool) = true)), hrd]
+        rw [ite_eq_right (by decide : ¬((false : Bool) = true)), hrd]
   set t1 : Arm8State := writeReg { ms with pc := ms.pc + 4 } temp
     (if u then s1.regs base + b else s1.regs base - b) with ht1
   obtain ⟨ht1pc, ht1mem, ht1regs, ht1failed, ht1temp⟩ := execWriteFields htemp31 ht1
@@ -1475,7 +1475,7 @@ theorem case_memStoreTwo (op : HolMemop) (r base : Nat) (off : BitVec 64) (s1 s2
       simpa only [arm8Touched] using ha
     simp only [bytesAt, List.mem_map, List.mem_range] at ha'
     obtain ⟨j, hj, rfl⟩ := ha'
-    simp only [readReg, if_neg htemp31]
+    simp only [readReg, ite_eq_right htemp31]
     rw [ht1addr]
     exact hdomW j hj
   have hnext2 : arm8Next t1 = execInsn { t1 with pc := t1.pc + 4 }
@@ -1505,10 +1505,10 @@ theorem case_memStoreTwo (op : HolMemop) (r base : Nat) (off : BitVec 64) (s1 s2
       simp only [arm8Target_getByte, readReg_pcUpdate]
       rw [hs2memWord x]
       have haddr2 : readReg t1 temp + c = s1.regs base + off := by
-        simp only [readReg, if_neg htemp31]
+        simp only [readReg, ite_eq_right htemp31]
         exact ht1addr
       have hval2 : readReg t1 r = s1.regs r := by
-        simp only [readReg, if_neg hrne]
+        simp only [readReg, ite_eq_right hrne]
         rw [ht1regs r hrne26]
         exact st.reg r hrdom
       rw [haddr2, hval2]

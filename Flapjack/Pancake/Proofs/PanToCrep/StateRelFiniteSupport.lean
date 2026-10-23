@@ -278,7 +278,7 @@ theorem panToCrepLocalsRelFiniteExact_setVarWord {width : Nat} [NeZero width]
     have hwk : w = .val word := by
       have hsome : some (.val word) = some w := by
         simpa only [HolFiniteMapExact.lookup_update, FUPDATE,
-          beq_self_eq_true, if_true] using hk
+          beq_self_eq_true, ite_true] using hk
       exact (Option.some.inj hsome).symm
     subst hwk
     refine ⟨[crepName], [word], ?_, ?_, ?_, ?_⟩
@@ -287,7 +287,7 @@ theorem panToCrepLocalsRelFiniteExact_setVarWord {width : Nat} [NeZero width]
       have hkey : FUPDATE_HOL targetLocals.lookup (crepName, word) crepName = some word := by
         rw [show FUPDATE_HOL targetLocals.lookup (crepName, word) crepName =
             FLOOKUP (FUPDATE_HOL targetLocals.lookup (crepName, word)) crepName from rfl,
-          FLOOKUP_FUPDATE_HOL, if_pos rfl]
+          FLOOKUP_FUPDATE_HOL, ite_eq_left rfl]
       rw [HolFiniteMapExact.lookup_updateEq, hkey]
       rfl
     · simp only [flattenHOL]
@@ -298,7 +298,7 @@ theorem panToCrepLocalsRelFiniteExact_setVarWord {width : Nat} [NeZero width]
         rw [beq_eq_false_iff_ne]
         exact fun h => hkn h.symm
       simpa only [HolFiniteMapExact.lookup_update, FUPDATE, hne, Bool.false_eq_true,
-        if_false] using hk
+        ite_false] using hk
     obtain ⟨slots, words, hvk, hmm, hfl, hwfk⟩ := hlk k w hk'
     refine ⟨slots, words, hvk, ?_, hfl, hwfk⟩
     have hdisj : ∀ s ∈ slots, s ≠ crepName := by
@@ -312,7 +312,7 @@ theorem panToCrepLocalsRelFiniteExact_setVarWord {width : Nat} [NeZero width]
       rw [HolFiniteMapExact.lookup_updateEq]
       rw [show FUPDATE_HOL targetLocals.lookup (crepName, word) s =
         FLOOKUP (FUPDATE_HOL targetLocals.lookup (crepName, word)) s from rfl]
-      rw [FLOOKUP_FUPDATE_HOL, if_neg (hdisj s hs)]
+      rw [FLOOKUP_FUPDATE_HOL, ite_eq_right (hdisj s hs)]
       rfl
     rw [hmap]
     exact hmm
@@ -403,12 +403,12 @@ theorem shMemLoadHOLFiniteExact_ret_corresponds {width : Nat} [NeZero width] {σ
       exact panToCrepLocalsRelFiniteExact_setVarWord ctxt source.locals target.locals
         name destination (.word (panWordOfBytesHOL false 0 newBytes)) hlocals hvar
   by_cases hnb : nb = 0
-  · rw [if_pos hnb] at hsource
+  · rw [ite_eq_left hnb] at hsource
     by_cases hdom : source.shMemaddrs address
-    · rw [if_pos hdom] at hsource
+    · rw [ite_eq_left hdom] at hsource
       have hdomT : target.shMemaddrs address := by
         rw [← congrFun hshmema address]; exact hdom
-      rw [if_pos hnb, if_pos hdomT] at htarget
+      rw [ite_eq_left hnb, ite_eq_left hdomT] at htarget
       cases hcallS : callFFIHOL source.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 nb]
           (panWordToBytesHOL address false) with
       | final event => simp [hcallS] at hsource
@@ -420,13 +420,13 @@ theorem shMemLoadHOLFiniteExact_ret_corresponds {width : Nat} [NeZero width] {σ
             exact hcallS] at htarget
           simp only [] at htarget
           exact finish newFfi newBytes (Prod.mk.inj hsource).2.symm (Prod.mk.inj htarget).2.symm
-    · rw [if_neg hdom] at hsource; simp at hsource
-  · rw [if_neg hnb] at hsource
+    · rw [ite_eq_right hdom] at hsource; simp at hsource
+  · rw [ite_eq_right hnb] at hsource
     by_cases hdom : source.shMemaddrs (panByteAlignHOL address)
-    · rw [if_pos hdom] at hsource
+    · rw [ite_eq_left hdom] at hsource
       have hdomT : target.shMemaddrs (panByteAlignHOL address) := by
         rw [← congrFun hshmema (panByteAlignHOL address)]; exact hdom
-      rw [if_neg hnb, if_pos hdomT] at htarget
+      rw [ite_eq_right hnb, ite_eq_left hdomT] at htarget
       cases hcallS : callFFIHOL source.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 nb]
           (panWordToBytesHOL address false) with
       | final event => simp [hcallS] at hsource
@@ -438,7 +438,7 @@ theorem shMemLoadHOLFiniteExact_ret_corresponds {width : Nat} [NeZero width] {σ
             exact hcallS] at htarget
           simp only [] at htarget
           exact finish newFfi newBytes (Prod.mk.inj hsource).2.symm (Prod.mk.inj htarget).2.symm
-    · rw [if_neg hdom] at hsource; simp at hsource
+    · rw [ite_eq_right hdom] at hsource; simp at hsource
 
 /-- The exact Pan and Crep shared-memory load helpers agree on every
     observable control outcome under the `state_rel` projection.  A final FFI
@@ -733,19 +733,19 @@ theorem localsRelExtendNewVarHOL {width : Nat} [NeZero width] :
       rw [hvars] at h h'
       by_cases hk : key = x <;> by_cases hk' : key' = x
       · rw [hk, hk']
-      · rw [if_pos hk] at h; rw [if_neg hk'] at h'
+      · rw [ite_eq_left hk] at h; rw [ite_eq_right hk'] at h'
         simp only [Option.some.injEq, Prod.mk.injEq] at h
         rw [← h.2] at hs
         have := hmax.2 key' shape' slots' h' slot hs'
         have := (hrange slot hs).1
         omega
-      · rw [if_neg hk] at h; rw [if_pos hk'] at h'
+      · rw [ite_eq_right hk] at h; rw [ite_eq_left hk'] at h'
         simp only [Option.some.injEq, Prod.mk.injEq] at h'
         rw [← h'.2] at hs'
         have := hmax.2 key shape slots h slot hs
         have := (hrange slot hs').1
         omega
-      · rw [if_neg hk] at h; rw [if_neg hk'] at h'
+      · rw [ite_eq_right hk] at h; rw [ite_eq_right hk'] at h'
         exact hno.2 key key' shape shape' slots slots' h h' ⟨slot, hs, hs'⟩
   · refine ⟨Nat.zero_le _, ?_⟩
     intro key shape slots h slot hslot
@@ -761,15 +761,15 @@ theorem localsRelExtendNewVarHOL {width : Nat} [NeZero width] :
     simp only
     rw [hsrc] at hl
     by_cases hk : name = x
-    · rw [if_pos hk] at hl
+    · rw [ite_eq_left hk] at hl
       simp only [Option.some.injEq] at hl
       subst hl; subst hk
-      refine ⟨ns, flattenHOL v, by rw [hvars, if_pos rfl], ?_, rfl, hwf⟩
+      refine ⟨ns, flattenHOL v, by rw [hvars, ite_eq_left rfl], ?_, rfl, hwf⟩
       rw [hfun]
       exact optMmapSomeEqZipFlookup ns t.lookup (flattenHOL v) hnd (by rw [hlen, hflen])
-    · rw [if_neg hk] at hl
+    · rw [ite_eq_right hk] at hl
       obtain ⟨slots, words, hv, hmm, hfl, hwfk⟩ := hlk name value hl
-      refine ⟨slots, words, by rw [hvars, if_neg hk]; exact hv, ?_, hfl, hwfk⟩
+      refine ⟨slots, words, by rw [hvars, ite_eq_right hk]; exact hv, ?_, hfl, hwfk⟩
       have hdisj : ListDisjoint ns slots := by
         intro y hy hy'
         have := hmax.2 name _ slots hv y hy'

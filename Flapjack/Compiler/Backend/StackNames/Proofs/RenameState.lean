@@ -97,7 +97,7 @@ theorem memStore_renameState {width : Nat} [NeZero width] {C F : Type}
     {s : StackSemStateFiniteExact width C F} {x : BitVec width} {y : WordLocW width} :
     memStore x y (renameState c f s) = (memStore x y s).map (renameState c f) := by
   by_cases h : s.mdomain x = true
-  · simp only [memStore, show (renameState c f s).mdomain x = true from h, h, if_true,
+  · simp only [memStore, show (renameState c f s).mdomain x = true from h, h, ite_true,
       Option.map_some]
     rfl
   · have h'' : s.mdomain x = false := by simpa using h

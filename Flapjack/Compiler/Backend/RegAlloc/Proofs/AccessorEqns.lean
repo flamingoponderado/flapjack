@@ -69,7 +69,7 @@ theorem msubEqn {α ε : Type} [Nonempty α] :
       cases n with
       | zero => simp [mSub, holEl, holHd]
       | succ n =>
-          simp only [mSub, Nat.succ_ne_zero, if_false, Nat.add_sub_cancel, ih,
+          simp only [mSub, Nat.succ_ne_zero, ite_false, Nat.add_sub_cancel, ih,
             List.length_cons, Nat.add_lt_add_iff_right, holEl_cons_succ]
 
 /-- Exact HOL `Mupdate_eqn` (`reg_allocProofScript.sml:192-205`). -/
@@ -84,7 +84,7 @@ theorem mupdateEqn {α ε : Type} :
       cases n with
       | zero => simp [mUpdate]
       | succ n =>
-          simp only [mUpdate, Nat.succ_ne_zero, if_false, Nat.add_sub_cancel, ih,
+          simp only [mUpdate, Nat.succ_ne_zero, ite_false, Nat.add_sub_cancel, ih,
             List.length_cons, Nat.add_lt_add_iff_right]
           by_cases h : n < ys.length <;> simp [h]
 
@@ -202,7 +202,7 @@ private theorem stExMapArraySub {α : Type} [Nonempty α] (get : State → List 
       have hv : v < (get s).length := h v List.mem_cons_self
       have ih := stExMapArraySub get ls s (fun w hw => h w (List.mem_cons_of_mem _ hw))
       simp only [stExMap, Flapjack.Translator.Monadic.MonadBase.bind,
-        Flapjack.Translator.Monadic.MonadBase.ret, arraySubEqn, hv, if_true, ih, List.map_cons]
+        Flapjack.Translator.Monadic.MonadBase.ret, arraySubEqn, hv, ite_true, ih, List.map_cons]
 
 /-- Exact HOL `st_ex_MAP_node_tag_sub` (`reg_allocProofScript.sml:269-275`). -/
 @[hol "cakeml/compiler/backend/reg_alloc/proofs/reg_allocProofScript.sml" "st_ex_MAP_node_tag_sub"]

@@ -56,7 +56,7 @@ theorem wordSemJumpExc_some_restore {width : Nat} [NeZero width] {C F : Type}
       cases h
       refine ⟨⟨_, _, _, _, rfl⟩, ?_⟩
       unfold WordSemStateFiniteExact.jumpExc
-      simp only [hlt, if_true, hl]
+      simp only [hlt, ite_true, hl]
     · cases h
   · cases h
 

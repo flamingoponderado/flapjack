@@ -45,11 +45,11 @@ theorem stExListMaxDeg_production (items : List Nat) (selected value : Nat)
     by_cases bound : node < native.dim
     · have degreeBound : node < native.degrees.length := by rwa [good.2.2.1]
       have read := related.degree_read node degreeBound
-      simp only [stExListMaxDeg, cakeStExListMaxDeg, bound, if_true,
+      simp only [stExListMaxDeg, cakeStExListMaxDeg, bound, ite_true,
         degreesSubEqn, degreeBound, holEl_eq_getElem node native.degrees degreeBound,
         read, Option.getD_some, Translator.Monadic.MonadBase.bind]
       split <;> exact ih _ _ _
-    · simp only [stExListMaxDeg, cakeStExListMaxDeg, bound, if_false]
+    · simp only [stExListMaxDeg, cakeStExListMaxDeg, bound, ite_false]
       exact ih _ _ _
 
 /-- Actual minimum-cost selection preserves the native result pair and
@@ -71,12 +71,12 @@ theorem stExListMinCost_production (costs : Spt Nat) (actualCosts : CakeNodeMap 
       have costRead : (actualCosts.get node).getD 0 = lookupAny node costs 0 := by
         rw [costRel node]
         cases readCost : sptLookup node costs <;> simp [lookupAny, readCost]
-      simp only [stExListMinCost, cakeStExListMinCost, bound, if_true,
+      simp only [stExListMinCost, cakeStExListMinCost, bound, ite_true,
         degreesSubEqn, degreeBound, holEl_eq_getElem node native.degrees degreeBound,
         read, Option.getD_some, cakeSafeDiv, costRead,
         Translator.Monadic.MonadBase.bind, ret]
       split <;> exact ih _ _ _
-    · simp only [stExListMinCost, cakeStExListMinCost, bound, if_false]
+    · simp only [stExListMinCost, cakeStExListMinCost, bound, ite_false]
       exact ih _ _ _
 
 end Flapjack.RegAlloc

@@ -41,7 +41,7 @@ theorem legacy_original (label : Nat) : legacySection (originalSection label) = 
           simp only [Flapjack.firstLoopName]
           omega
         change legacySection ((label + 3) + (Flapjack.firstLoopName - 3)) = label + 3
-        rw [legacySection, if_pos bound] <;>
+        rw [legacySection, ite_eq_left bound] <;>
           simp only [Flapjack.firstLoopName] at * <;> omega
 
 /-- Translate every global label-bearing constructor, recursively including

@@ -79,7 +79,7 @@ private theorem stackStoreSetVar {width : Nat} [NeZero width] {C F : Type}
         · cases hr : StackSemStateOps.getVar r x1 with
           | none => simp [use, room, hr] at run
           | some value =>
-            simp only [use, room, hr, Bool.not_true, Bool.false_eq_true, if_false,
+            simp only [use, room, hr, Bool.not_true, Bool.false_eq_true, ite_false,
               Prod.mk.injEq, true_and] at run
             subst run
             simp [StackSemStateOps.setVar, use, room]
@@ -120,7 +120,7 @@ theorem evaluateWInstFpMovFromReg {width : Nat} [NeZero width] {C F : Type}
       cases a with
       | loc l n => simp [WordSemStateFiniteExact.inst, hw, h1] at executed
       | word w1 =>
-        simp only [WordSemStateFiniteExact.inst, hw, if_true, h1, Option.some.injEq] at executed
+        simp only [WordSemStateFiniteExact.inst, hw, ite_true, h1, Option.some.injEq] at executed
         rcases compiled : wReg1 r1 (k,f,frame) with ⟨loads, reg⟩
         obtain ⟨loaded, loadRun, loadClock, loadedRel, loadedLength, loadedSpace, _, _, _,
             regValue⟩ :=
@@ -128,7 +128,7 @@ theorem evaluateWInstFpMovFromReg {width : Nat} [NeZero width] {C F : Type}
             (.word w1) compiled even h1 related
         refine ⟨StackSemStateOps.setFpVar d (w1.setWidth 64) loaded, ?_, ?_, loadedLength,
           loadedSpace⟩
-        · simp only [wInstNative, hw, if_true, compiled, List.append_nil]
+        · simp only [wInstNative, hw, ite_true, compiled, List.append_nil]
           rw [LoadRegister.evaluateWStackLoadSeq, StackSemEvaluate.evaluate_seq,
             StackSemEvaluateClock.fixClockEvaluate, loadRun]
           simp [StackSemEvaluate.evaluate_inst, StackSemInst.instHOL,
@@ -150,7 +150,7 @@ theorem evaluateWInstFpMovFromReg {width : Nat} [NeZero width] {C F : Type}
           cases b with
           | loc l n => simp [WordSemStateFiniteExact.inst, hw, h1, h2] at executed
           | word w2 =>
-            simp only [WordSemStateFiniteExact.inst, hw, if_false, h1, h2,
+            simp only [WordSemStateFiniteExact.inst, hw, ite_false, h1, h2,
               Option.some.injEq] at executed
             rcases compiled1 : wReg1 r1 (k,f,frame) with ⟨loads1, reg1⟩
             rcases compiled2 : wReg2 r2 (k,f,frame) with ⟨loads2, reg2⟩
@@ -161,7 +161,7 @@ theorem evaluateWInstFpMovFromReg {width : Nat} [NeZero width] {C F : Type}
                 related
             refine ⟨StackSemStateOps.setFpVar d ((w2 ++ w1).setWidth 64) loaded, ?_, ?_,
               loadedLength, loadedSpace⟩
-            · simp only [wInstNative, hw, if_false, compiled1, compiled2]
+            · simp only [wInstNative, hw, ite_false, compiled1, compiled2]
               rw [LoadRegister.evaluateWStackLoadSeq, StackSemEvaluate.evaluate_seq,
                 StackSemEvaluateClock.fixClockEvaluate, loadRun]
               simp [StackSemEvaluate.evaluate_inst, StackSemInst.instHOL,
@@ -206,23 +206,23 @@ theorem evaluateWInstFpMovToReg {width : Nat} [NeZero width] {C F : Type}
   by_cases hw : width = 64
   · have even : r1 % 2 = 0 := by simpa [everyVarInstHOL, isPhyVar, hw] using physical
     have range : r1 < 2 * frame + 2 * k := by simpa [maxVarInstHOL, hw] using bound
-    simp only [WordSemStateFiniteExact.inst, hd, hw, if_true, Option.some.injEq] at executed
+    simp only [WordSemStateFiniteExact.inst, hd, hw, ite_true, Option.some.injEq] at executed
     rcases compiled : wReg1 r1 (k,f,frame) with ⟨loads, reg⟩
     obtain ⟨post, run, postRel, lengthEq, spaceEq⟩ :=
       StoreRegister.evaluateWStackStoreWReg1 ac r1 reg k f frame loads source target lens
         (.word (v.setWidth width)) target.stack.length target.stackSpace compiled even range
         related rfl rfl
     refine ⟨post, ?_, executed ▸ postRel, lengthEq, spaceEq⟩
-    simp only [wInstNative, hw, if_true, StoreRegister.evaluateWRegWrite1Seq, compiled]
+    simp only [wInstNative, hw, ite_true, StoreRegister.evaluateWRegWrite1Seq, compiled]
     rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate]
     simpa [StackSemEvaluate.evaluate_inst, StackSemInst.instHOL, StackSemFpInstructions.instFp,
       StackSemFpRegisterInstructions.instFpRegister, hw, td] using run
   · have evens : r1 % 2 = 0 ∧ r2 % 2 = 0 := by
       simpa [everyVarInstHOL, isPhyVar, hw] using physical
     have ranges : r1 < 2 * frame + 2 * k ∧ r2 < 2 * frame + 2 * k := by
-      simp only [maxVarInstHOL, hw, if_false] at bound
+      simp only [maxVarInstHOL, hw, ite_false] at bound
       omega
-    simp only [WordSemStateFiniteExact.inst, hd, hw, if_false, Option.some.injEq,
+    simp only [WordSemStateFiniteExact.inst, hd, hw, ite_false, Option.some.injEq,
       ← extractLow, ← extractHigh] at executed
     let lo : WordLocW width := .word ((v.extractLsb' 0 32).setWidth width)
     let hi : WordLocW width := .word ((v.extractLsb' 32 32).setWidth width)
@@ -266,7 +266,7 @@ theorem evaluateWInstFpMovToReg {width : Nat} [NeZero width] {C F : Type}
         target.stackSpace ⟨compiled2, evens.2, ranges.2, base, innerRun, baseRel, baseLength,
           baseSpace⟩
     refine ⟨post, ?_, executed ▸ postRel, lengthEq, spaceEq⟩
-    simp only [wInstNative, hw, if_false, StoreRegister2.evaluateWRegWrite2Seq, compiled2]
+    simp only [wInstNative, hw, ite_false, StoreRegister2.evaluateWRegWrite2Seq, compiled2]
     exact run
 
 end Flapjack.WordToStackProofs.InstSimulation.FpTransfer

@@ -98,24 +98,24 @@ theorem compCorrectCallTail {width : Nat} [NeZero width] {C F : Type}
             callEntry info source target relation dest program lookup
           have clockEq := LoopCase.stateRel_clock info source target relation
           by_cases zero : source.clock = 0
-          · simp only [zero, if_true, Prod.mk.injEq] at execution
+          · simp only [zero, ite_true, Prod.mk.injEq] at execution
             obtain ⟨rfl, rfl⟩ := execution
             refine ⟨0, emptyEnv target, (emptyEnv target).stackSpace,
               LoopCase.stateRel_emptyEnv info source target relation, ?_, ?_⟩
             · have targetZero : target.clock = 0 := clockEq.trans zero
               simp only [Nat.add_zero, StackSemEvaluate.evaluate_call, targetLookup,
-                targetZero, if_true]
+                targetZero, ite_true]
               have update : {target with clock := 0} = target := by rw [← targetZero]
               rw [update]
             · simp
-          · simp only [zero, if_false, StackSemEvaluateClock.fixClockEvaluate] at execution
+          · simp only [zero, ite_false, StackSemEvaluateClock.fixClockEvaluate] at execution
             rcases bodyExecution : StackSemEvaluate.evaluate (program, decClock source) with
               ⟨bodyResult, bodyPost⟩
             rw [bodyExecution] at execution
             by_cases bad : badFunReturn bodyResult = true
-            · simp only [bad, if_true, Prod.mk.injEq] at execution
+            · simp only [bad, ite_true, Prod.mk.injEq] at execution
               exact False.elim (nonerror execution.1.symm)
-            · simp only [bad, Bool.false_eq_true, if_false, Prod.mk.injEq] at execution
+            · simp only [bad, Bool.false_eq_true, ite_false, Prod.mk.injEq] at execution
               obtain ⟨rfl, rfl⟩ := execution
               obtain ⟨clock, targetPost, space, postRelation, targetExecution, guard⟩ :=
                 calleeIH rfl program lookup zero entryInfo (decClock target) bodyPost bodyResult
@@ -132,9 +132,9 @@ theorem compCorrectCallTail {width : Nat} [NeZero width] {C F : Type}
               have targetNonzero : target.clock ≠ 0 := by omega
               have addedNonzero : target.clock + clock ≠ 0 := by omega
               rw [StackSemEvaluate.evaluate_call]
-              simp only [targetLookup, addedNonzero, if_false]
+              simp only [targetLookup, addedNonzero, ite_false]
               rw [StackSemEvaluateClock.fixClockEvaluate]
               simp only [StackProps.EvaluateAddClock.decClock_addClock target clock targetNonzero,
-                targetExecution, bad, Bool.false_eq_true, if_false]
+                targetExecution, bad, Bool.false_eq_true, ite_false]
 
 end Flapjack.Compiler.Backend.StackRawCall.CallCase

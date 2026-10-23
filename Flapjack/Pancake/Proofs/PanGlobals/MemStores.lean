@@ -45,12 +45,12 @@ private theorem memStoresLookup_gen {width : Nat} [NeZero width]
       intro memory m addr' h hnot
       simp only [panMemStoresHOL, panMemStoreHOL] at h
       by_cases hd : addrs addr
-      · simp only [if_pos hd] at h
+      · simp only [ite_eq_left hd] at h
         have hne : addr' ≠ addr := fun heq => hnot (Or.inl heq)
         have htail : ¬ addresses (addr + Flapjack.Compiler.Backend.StackRemove.bytesInWord width)
             vs.length addr' := fun hin => hnot (Or.inr hin)
-        rw [ih _ _ m addr' h htail, if_neg hne]
-      · simp [if_neg hd] at h
+        rw [ih _ _ m addr' h htail, ite_eq_right hne]
+      · simp [ite_eq_right hd] at h
 
 /-- Local support: the stride step `a + B + B * n = a + B * (n + 1)`. -/
 private theorem stride_succ {width : Nat} (a : BitVec width) (n : Nat) :
@@ -254,7 +254,7 @@ private theorem memLoad_domain_cover {width : Nat} [NeZero width]
           rcases hx with rfl | hx
           · exact hd
           · exact hx.elim
-        · rw [if_neg hd] at h; cases h
+        · rw [ite_eq_right hd] at h; cases h
     | comb shapes ih =>
         intro addr v h hwf x hx
         rw [memLoadHOLExact] at h
@@ -348,10 +348,10 @@ mutual
         simp only [shapeOfHOLExact]
         rw [memLoadHOLExact]
         by_cases hd : addrs addr
-        · simp only [if_pos hd, Option.some.injEq] at hm
-          rw [if_pos hd, ← hm]
+        · simp only [ite_eq_left hd, Option.some.injEq] at hm
+          rw [ite_eq_left hd, ← hm]
           simp
-        · simp [if_neg hd] at hm
+        · simp [ite_eq_right hd] at hm
     | .rStruct fields, addr, memory, m, hm, hlen, hwf => by
         simp only [flattenHOL] at hm hlen
         simp only [shapeOfHOLExact, isWfShapeExactHOL_comb] at hwf ⊢
@@ -532,11 +532,11 @@ private theorem memStores_cover {width : Nat} [NeZero width]
       intro memory m h x hx
       simp only [panMemStoresHOL, panMemStoreHOL] at h
       by_cases hd : addrs addr
-      · simp only [if_pos hd] at h
+      · simp only [ite_eq_left hd] at h
         rcases hx with rfl | hx
         · exact hd
         · exact ih _ _ m h x hx
-      · simp [if_neg hd] at h
+      · simp [ite_eq_right hd] at h
 
 /-- Exact HOL `mem_stores_bounded_length` (`pan_globalsProofScript.sml:490-533`). -/
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "mem_stores_bounded_length"

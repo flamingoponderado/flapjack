@@ -68,8 +68,8 @@ theorem applyColourPost_intro {width : Nat} [NeZero width] {C F : Type} (f : Nat
   rw [h1]
   simp only
   by_cases he : res = some .error
-  · rw [if_pos he]; trivial
-  · rw [if_neg he]
+  · rw [ite_eq_left he]; trivial
+  · rw [ite_eq_right he]
     obtain ⟨h2, h3⟩ := h2 he
     rw [h2]
     exact h3

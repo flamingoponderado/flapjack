@@ -65,11 +65,11 @@ theorem holFloatToReal_fp64 (f : HolFloat 52 11) :
   · have he' : f.exponent.toNat = 0 := by simp [he]
     have hlt : fp64Pat f < 2 ^ 52 := by unfold fp64Pat; omega
     have hp : fp64Pat f = f.significand.toNat := by unfold fp64Pat; omega
-    simp only [he, if_true, hp, holFloatBias]
+    simp only [he, ite_true, hp, holFloatBias]
     grind
   · have hne : f.exponent.toNat ≠ 0 := fun h => he (BitVec.eq_of_toNat_eq (by simpa using h))
     have hge : ¬ fp64Pat f < 2 ^ 52 := by unfold fp64Pat; have := Nat.pos_of_ne_zero hne; omega
-    simp only [he, if_false, hge, fp64Pat_div, fp64Pat_mod, holFloatBias]
+    simp only [he, ite_false, hge, fp64Pat_div, fp64Pat_mod, holFloatBias]
     obtain ⟨k, hk⟩ : ∃ k, f.exponent.toNat = k + 1 := ⟨f.exponent.toNat - 1, by omega⟩
     rw [hk, Nat.add_sub_cancel]
     push_cast
@@ -100,9 +100,9 @@ theorem fp64N_succ (q : Nat) : fp64N (q + 1) = fp64N q + fp64Step q := by
   · by_cases h0 : q < M
     · have hq : q + 1 = 1 * M + 0 := by omega
       have ⟨hd, hm⟩ := fp64_divmod (e := 1) (show 0 < M by omega)
-      rw [if_neg h1, if_pos h0, if_pos h0, hq, hd, hm]
+      rw [ite_eq_right h1, ite_eq_left h0, ite_eq_left h0, hq, hd, hm]
       omega
-    · simp only [h1, h0, if_false]
+    · simp only [h1, h0, ite_false]
       obtain ⟨e, s, hs, rfl⟩ : ∃ e s, s < M ∧ q = e * M + s :=
         ⟨q / M, q % M, Nat.mod_lt _ (by omega), (Nat.div_add_mod' q M).symm⟩
       have ⟨hd, hm⟩ := fp64_divmod (e := e) hs
@@ -151,11 +151,11 @@ theorem fp64Bracket_spec (k : Nat) :
   rw [fp64N_succ]
   unfold fp64Bracket
   by_cases hk : k < 2 ^ 52
-  · rw [if_pos hk]
+  · rw [ite_eq_left hk]
     unfold fp64N fp64Step
-    rw [if_pos hk, if_pos hk]
+    rw [ite_eq_left hk, ite_eq_left hk]
     omega
-  · rw [if_neg hk]
+  · rw [ite_eq_right hk]
     have hk0 : k ≠ 0 := by intro h; subst h; exact hk (by decide)
     have hL : 52 ≤ k.log2 := (Nat.le_log2 hk0).2 (by omega)
     obtain ⟨j, hj⟩ : ∃ j, k.log2 = 52 + j := ⟨k.log2 - 52, by omega⟩
@@ -177,7 +177,7 @@ theorem fp64Bracket_spec (k : Nat) :
     have hge : ¬ (j + 1) * 2 ^ 52 + (k / S - 2 ^ 52) < 2 ^ 52 := by
       rw [Nat.add_mul, Nat.one_mul]; omega
     unfold fp64N fp64Step
-    rw [if_neg hge, if_neg hge, hd, hm, Nat.add_sub_cancel, hS,
+    rw [ite_eq_right hge, ite_eq_right hge, hd, hm, Nat.add_sub_cancel, hS,
       show 2 ^ 52 + (k / S - 2 ^ 52) = k / S by omega]
     refine ⟨Nat.div_mul_le_self k S, ?_⟩
     have := Nat.lt_mul_div_succ k hSpos
@@ -225,11 +225,11 @@ theorem fp64_isFinite_iff (f : HolFloat 52 11) :
   have hfin : holFloatIsFinite f = true ↔ f.exponent ≠ BitVec.allOnes 11 := by
     unfold holFloatIsFinite holFloatValue
     by_cases he : f.exponent = BitVec.allOnes 11
-    · rw [if_pos he]
+    · rw [ite_eq_left he]
       by_cases hs : f.significand = 0
-      · rw [if_pos hs]; simp [he]
-      · rw [if_neg hs]; simp [he]
-    · rw [if_neg he]
+      · rw [ite_eq_left hs]; simp [he]
+      · rw [ite_eq_right hs]; simp [he]
+    · rw [ite_eq_right he]
       simpa using he
   rw [hfin, hne]
   unfold fp64Pat
@@ -309,16 +309,16 @@ theorem fp64Nearest_cases (hX : 0 ≤ X) :
   generalize hlo : ((fp64N p : Nat) : Rat) = lo at *
   generalize hhi : ((fp64N (p + 1) : Nat) : Rat) = hi at *
   by_cases c1 : X - lo < hi - X
-  · simp only [c1, if_true, hlo]
+  · simp only [c1, ite_true, hlo]
     refine ⟨by first | exact Or.inl trivial | exact Or.inl rfl | trivial, ?_, ?_, fun h => by exfalso; grind⟩ <;> split <;> grind
   · by_cases c2 : hi - X < X - lo
-    · simp only [c1, c2, if_true, if_false, hhi]
+    · simp only [c1, c2, ite_true, ite_false, hhi]
       refine ⟨by first | exact Or.inr trivial | exact Or.inr rfl | trivial, ?_, ?_, fun h => by exfalso; grind⟩ <;> split <;> grind
-    · simp only [c1, c2, if_false]
+    · simp only [c1, c2, ite_false]
       by_cases hp : p % 2 = 0
-      · simp only [hp, if_true, hlo]
+      · simp only [hp, ite_true, hlo]
         refine ⟨by first | exact Or.inl trivial | exact Or.inl rfl | trivial, ?_, ?_, fun _ => by first | trivial | exact hp⟩ <;> split <;> grind
-      · simp only [hp, if_false, hhi]
+      · simp only [hp, ite_false, hhi]
         refine ⟨by first | exact Or.inr trivial | exact Or.inr rfl | trivial, ?_, ?_, fun _ => by first | trivial | omega⟩ <;> split <;> grind
 
 theorem fp64Nearest_succ_le (_hX : 0 ≤ X)
@@ -333,7 +333,7 @@ theorem fp64Nearest_succ_le (_hX : 0 ≤ X)
   generalize ((fp64N (p + 1) : Nat) : Rat) = hi
   intro h
   by_cases c1 : X - lo < hi - X
-  · rw [if_pos c1] at h; omega
+  · rw [ite_eq_left c1] at h; omega
   · grind
 
 private theorem fp64Dist_of_le {q : Nat} (h : ((fp64N q : Nat) : Rat) ≤ X) :
@@ -459,13 +459,13 @@ theorem holRatAbs_mul_pos (y D : Rat) (hD : 0 < D) : holRatAbs y * D = holRatAbs
   by_cases hy : y < 0
   · have : y * D < 0 := by
       have := Rat.mul_lt_mul_of_pos_right hy hD; simpa using this
-    rw [if_pos hy, if_pos this]; grind
+    rw [ite_eq_left hy, ite_eq_left this]; grind
   · have : ¬ y * D < 0 := by
       intro h
       have h0 : 0 ≤ y := by grind
       have := Rat.mul_le_mul_of_nonneg_right h0 (Rat.le_of_lt hD)
       simp at this; grind
-    rw [if_neg hy, if_neg this]
+    rw [ite_eq_right hy, ite_eq_right this]
 
 /-- The distance from `x ≥ 0` to a binary64 float, scaled by `2^1074`. -/
 theorem fp64_absdist_scaled (f : HolFloat 52 11) {x : Rat} (hx : 0 ≤ x) :
@@ -477,14 +477,14 @@ theorem fp64_absdist_scaled (f : HolFloat 52 11) {x : Rat} (hx : 0 ≤ x) :
   have hN : (0 : Rat) ≤ ((fp64N (fp64Pat f) : Nat) : Rat) := by exact_mod_cast Nat.zero_le _
   unfold fp64Dist
   by_cases hs : f.sign = 1
-  · rw [if_pos hs, if_pos hs]
+  · rw [ite_eq_left hs, ite_eq_left hs]
     have hx' : 0 ≤ x * 2 ^ 1074 := Rat.mul_nonneg hx (Rat.le_of_lt hD)
     unfold holRatAbs
     generalize (2 : Rat) ^ 1074 = D at *
     have : (-1 * ((fp64N (fp64Pat f) : Nat) : Rat) / D - x) * D =
         -(((fp64N (fp64Pat f) : Nat) : Rat) + x * D) := by grind
     rw [this]; split <;> grind
-  · rw [if_neg hs, if_neg hs]
+  · rw [ite_eq_right hs, ite_eq_right hs]
     generalize (2 : Rat) ^ 1074 = D at *
     congr 1
     grind
@@ -560,7 +560,7 @@ theorem fp64_rte_core {x : Rat} (hx : 0 ≤ x) (hth : x < holFloatThreshold 52 1
       if f.sign = 1 then ((fp64N (fp64Pat f) : Nat) : Rat) + X else fp64Dist X (fp64Pat f) := by
     intro f; rw [fp64_absdist_scaled f hx, hXd]
   have hda : holRatAbs (holFloatToReal a - x) * 2 ^ 1074 = fp64Dist X (fp64Nearest X) := by
-    rw [hdist, if_neg hsa, hpa]
+    rw [hdist, ite_eq_right hsa, hpa]
   have hle : ∀ b : HolFloat 52 11,
       holRatAbs (holFloatToReal a - x) ≤ holRatAbs (holFloatToReal b - x) := by
     intro b
@@ -584,8 +584,8 @@ theorem fp64_rte_core {x : Rat} (hx : 0 ≤ x) (hth : x < holFloatThreshold 52 1
       have := Rat.le_antisymm h1 h2; rw [this]
     rw [hda, hdist] at hEq
     constructor
-    · intro hs; rw [if_pos hs] at hEq; exact fp64Nearest_eq_neg hX _ hEq
-    · intro hs; rw [if_neg hs] at hEq; exact fp64Nearest_eq hX _ hEq
+    · intro hs; rw [ite_eq_left hs] at hEq; exact fp64Nearest_eq_neg hX _ hEq
+    · intro hs; rw [ite_eq_right hs] at hEq; exact fp64Nearest_eq hX _ hEq
   have hPa : fp64RtePred x a := by
     refine ⟨hclosest, fun b ⟨hb, hbe⟩ => ?_⟩
     rw [hlsba]
@@ -718,15 +718,15 @@ theorem holFloatRound_rte_fp64 (toneg : Bool) (x : Rat) :
   unfold holFloatRound holRound holFp64RoundTiesToEven
   simp only
   by_cases h1 : x ≤ -holFloatThreshold 52 11
-  · rw [if_pos h1, if_pos h1]
+  · rw [ite_eq_left h1, ite_eq_left h1]
     have : holFloatIsZero (holFloatMinusInfinity 52 11) = false := by decide +kernel
     rw [this]; rfl
-  rw [if_neg h1, if_neg h1]
+  rw [ite_eq_right h1, ite_eq_right h1]
   by_cases h2 : x ≥ holFloatThreshold 52 11
-  · rw [if_pos h2, if_pos h2]
+  · rw [ite_eq_left h2, ite_eq_left h2]
     have : holFloatIsZero (holFloatPlusInfinity 52 11) = false := by decide +kernel
     rw [this]; rfl
-  rw [if_neg h2, if_neg h2]
+  rw [ite_eq_right h2, ite_eq_right h2]
   have hth : x < holFloatThreshold 52 11 := by grind
   have hth' : -x < holFloatThreshold 52 11 := by grind
   -- the choice meets HOL's predicate once a witness is known
@@ -735,7 +735,7 @@ theorem holFloatRound_rte_fp64 (toneg : Bool) (x : Rat) :
         (fun a => holFloatIsFinite a = true) x) :=
     fun a ha => holClosestSuch_spec _ _ _ ⟨a, ha⟩
   by_cases hneg : x < 0
-  · rw [if_pos hneg]
+  · rw [ite_eq_left hneg]
     have hx : 0 ≤ -x := by grind
     obtain ⟨hPa', hall⟩ := fp64_rte_core hx hth'
     generalize fp64OfPat false (fp64Nearest (-x * 2 ^ 1074)) = a' at hPa' hall
@@ -753,7 +753,7 @@ theorem holFloatRound_rte_fp64 (toneg : Bool) (x : Rat) :
       rw [holFloatIsZero_negate a' ha'fin] at h
       have := hne h
       rw [← this, holFloatNegate_negate]
-  · rw [if_neg hneg]
+  · rw [ite_eq_right hneg]
     have hx : 0 ≤ x := by grind
     obtain ⟨hPa, hall⟩ := fp64_rte_core hx hth
     generalize fp64OfPat false (fp64Nearest (x * 2 ^ 1074)) = a at hPa hall

@@ -26,8 +26,8 @@ private theorem namesSet_lookup (names : List Nat) (key : Nat) :
   | cons name names ih =>
       simp only [List.map_cons, sptAListLookup, List.mem_cons]
       by_cases equal : key = name
-      · simp only [equal, if_true, true_or]
-      · simp only [equal, if_false, false_or, ih]
+      · simp only [equal, ite_true, true_or]
+      · simp only [equal, ite_false, false_or, ih]
 
 private theorem namesSet_eraseDups (names : List Nat) :
     LoopToWord.toNumSetHOL names.eraseDups = LoopToWord.toNumSetHOL names := by

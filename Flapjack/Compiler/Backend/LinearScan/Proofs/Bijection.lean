@@ -71,7 +71,7 @@ theorem findBijectionInvariants :
   have mod2 : ∀ n, isPhyVar n = decide (n % 2 = 0) := fun _ => rfl
   by_cases hin : sptLookup r st.bij ≠ none
   · have hdom : regset r := by rw [hR]; simp [sptDomain, Option.isSome_iff_ne_none, hin]
-    unfold findBijectionStep; rw [if_pos hin]
+    unfold findBijectionStep; rw [ite_eq_left hin]
     refine goodCongr ⟨hR, ⟨hi1, hi2⟩, ⟨hs, ha, hp⟩, hbs, hba, ⟨hns, hna⟩, hmax⟩ ?_
     intro x; constructor
     · intro h; exact Or.inr h
@@ -79,14 +79,14 @@ theorem findBijectionInvariants :
   · have hnone : sptLookup r st.bij = none := by simpa using hin
     have hnd : ¬ sptDomain st.bij r := by simp [sptDomain, hnone]
     have hnr : ¬ regset r := by rw [hR]; exact hnd
-    unfold findBijectionStep; rw [if_neg hin]
+    unfold findBijectionStep; rw [ite_eq_right hin]
     have lk : ∀ (v : Nat) x, x ≠ r → sptLookup x (sptInsert r v st.bij) = sptLookup x st.bij :=
       fun v x hx => sptLookup_sptInsert_ne r x v st.bij hx
     have lk0 : ∀ (v : Nat), sptLookup r (sptInsert r v st.bij) = some v :=
       fun v => sptLookup_sptInsert_same r v st.bij
     -- `r` is not yet a value of `invbij` when it is a physical register
     rcases conventionPartitionsOr r with ⟨hP, hS, hA⟩ | ⟨hP, hS, hA⟩ | ⟨hP, hS, hA⟩
-    · rw [if_pos hP]
+    · rw [ite_eq_left hP]
       have hinv : ¬ sptDomain st.invbij r := by
         intro hd
         obtain ⟨fr, hfr⟩ := lookupOfDomain _ _ hd
@@ -132,7 +132,7 @@ theorem findBijectionInvariants :
         by_cases hxr : x = r
         · subst hxr; rw [lk0]; exact Nat.le_max_left _ _
         · rw [lk r x hxr]; exact Nat.le_trans (hmax x) (Nat.le_max_right _ _)
-    · rw [if_neg hP, if_pos hS]
+    · rw [ite_eq_right hP, ite_eq_left hS]
       have hinv : ¬ sptDomain st.invbij st.nstack := by
         intro hd; have := hbs _ ⟨hd, hns⟩; omega
       refine ⟨?_, ⟨spInvertsInsert _ _ _ _ ⟨hi1, hnd, hinv⟩, spInvertsInsert _ _ _ _ ⟨hi2, hinv, hnd⟩⟩,
@@ -172,7 +172,7 @@ theorem findBijectionInvariants :
         by_cases hxr : x = r
         · subst hxr; rw [lk0]; exact Nat.le_max_left _ _
         · rw [lk _ x hxr]; exact Nat.le_trans (hmax x) (Nat.le_max_right _ _)
-    · rw [if_neg hP, if_neg hS]
+    · rw [ite_eq_right hP, ite_eq_right hS]
       have hinv : ¬ sptDomain st.invbij st.nalloc := by
         intro hd; have := hba _ ⟨hd, hna⟩; omega
       refine ⟨?_, ⟨spInvertsInsert _ _ _ _ ⟨hi1, hnd, hinv⟩, spInvertsInsert _ _ _ _ ⟨hi2, hinv, hnd⟩⟩,

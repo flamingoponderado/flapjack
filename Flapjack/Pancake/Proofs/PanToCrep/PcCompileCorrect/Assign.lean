@@ -98,7 +98,7 @@ theorem compileLocalAssignTarget {width : Nat} [NeZero width] {σ : Type}
     congr 1; funext c
     rw [crepExpVarsW_eq_crepExpVarsHOL_crepExpToHOL, crepExpToHOL_crepExpOfHOL]
   simp only [compileLocalAssignExactHOLW, hc, hvar]
-  rw [if_neg (by rw [hlen]; simp)]
+  rw [ite_eq_right (by rw [hlen]; simp)]
   try dsimp only
   rw [hvarsEq]
   split

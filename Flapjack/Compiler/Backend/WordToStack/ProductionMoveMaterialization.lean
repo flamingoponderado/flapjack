@@ -571,7 +571,7 @@ private theorem pmov_fstep {α : Type} [DecidableEq α]
   · rcases state with ⟨pending, active, emitted⟩
     obtain ⟨rfl, rfl⟩ := finished
     rfl
-  · rw [Compiler.Backend.Parmove.pmov.eq_def state, dif_neg finished]
+  · rw [Compiler.Backend.Parmove.pmov.eq_def state, dite_eq_right finished]
 
 /-- Literal emitted scheduler output is invariant under initial pending
 identity removal. Original wf guards ensure removed identities cannot be

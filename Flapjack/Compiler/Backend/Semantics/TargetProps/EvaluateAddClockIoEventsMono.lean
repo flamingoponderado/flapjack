@@ -1,4 +1,3 @@
-import Mathlib.Logic.Basic
 import Mathlib.Tactic.CasesM
 import Flapjack.Compiler.Backend.Semantics.TargetProps.EvaluateIoEventsMono
 
@@ -28,11 +27,21 @@ theorem evaluateTargetAddClockIoEventsMono {width : Nat} [NeZero width]
       repeat' (first
         | exact List.prefix_refl _
         | (rw [← hlarge]; exact List.prefix_refl _)
+        | (rw [← hsmall, ← hlarge]; exact List.prefix_refl _)
         | (rw [← hsmall, ← hlarge]; exact ih _ _ _ _ hkn)
-        | (rename_i hguard; rw [if_pos hguard] at hlarge)
+        | (rename_i hguard; rw [ite_eq_left hguard] at hlarge)
         | (simp_all only [not_not])
         | cases_type Compiler.Encoders.Asm.HolAddr
-        | (simp only [ite_and] at hsmall hlarge)
-        | split at hsmall <;> (try simp_all only [↓reduceIte]))
+        | (rw [ite_and] at hsmall hlarge)
+        | (split at hsmall <;> (try simp_all only [↓reduceIte]))
+        -- Split only the outer guard when rc4's core `split` cannot reduce it.
+        | (run_tac Lean.Elab.Tactic.withMainContext do
+            let h ← Lean.Elab.Tactic.getFVarId (Lean.mkIdent `hsmall)
+            let ty ← Lean.Meta.inferType (Lean.mkFVar h)
+            let lhs := ty.getAppArgs[1]!
+            unless lhs.isAppOf ``ite do throwError "not an outer conditional"
+            let condition ← Lean.Elab.Term.exprToSyntax lhs.getAppArgs[1]!
+            Lean.Elab.Tactic.evalTactic (← `(tactic|
+              by_cases hcondition : $condition <;> simp only [hcondition, ↓reduceIte] at *))))
 
 end Flapjack

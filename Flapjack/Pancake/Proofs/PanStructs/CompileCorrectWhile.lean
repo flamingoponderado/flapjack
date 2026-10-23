@@ -130,7 +130,7 @@ theorem compileCorrectWhile {width : Nat} {σ : Type} [NeZero width]
         simp only [PanSemStateFiniteExact.evalHOLFinite, convertV] at ht
         dsimp only at heval
         by_cases hz : word = 0
-        · simp only [hz, ne_eq, not_true_eq_false, if_false, Prod.mk.injEq] at heval
+        · simp only [hz, ne_eq, not_true_eq_false, ite_false, Prod.mk.injEq] at heval
           rcases heval with ⟨hr,hp⟩
           subst res
           subst post
@@ -143,7 +143,7 @@ theorem compileCorrectWhile {width : Nat} {σ : Type} [NeZero width]
             exact hlocals
           · simp [resVsHOL]
           · simp [resVsHOL]
-        · rw [if_pos hz] at heval
+        · rw [ite_eq_left hz] at heval
           by_cases hc : source.clock = 0
           · simp only [hc, ite_true, Prod.mk.injEq] at heval
             rcases heval with ⟨hr,hp⟩
@@ -155,13 +155,13 @@ theorem compileCorrectWhile {width : Nat} {σ : Type} [NeZero width]
               rw [ht]
               dsimp only
               have htargetClock : (convertStateExact context source).clock = 0 := hc
-              rw [if_pos hz, if_pos htargetClock]
+              rw [ite_eq_left hz, ite_eq_left htargetClock]
               rfl
             · simp [PanSemStateFiniteExact.emptyLocalsHOLFinite, feveryHOL]
             · simp [isContResHOL]
             · simp [resVsHOL]
             · simp [resVsHOL]
-          · rw [if_neg hc] at heval
+          · rw [ite_eq_right hc] at heval
             cases hb : PanSemStateFiniteExact.evaluateHOLFiniteState source.decClockHOLFinite body with
             | mk bodyRes middle =>
               rw [hb] at heval
@@ -193,7 +193,7 @@ theorem compileCorrectWhile {width : Nat} {σ : Type} [NeZero width]
                 rw [ht]
                 dsimp only
                 have htargetClock : (convertStateExact context source).clock ≠ 0 := hc
-                rw [if_pos hz,if_neg htargetClock]
+                rw [ite_eq_left hz,ite_eq_right htargetClock]
                 have htargetBody : PanSemStateFiniteExact.evaluateHOLFiniteState
                     (convertStateExact context source).decClockHOLFinite (compileProgExact context body) =
                     (convertResHOL none,convertStateExact context middle) := hbody.1
@@ -228,7 +228,7 @@ theorem compileCorrectWhile {width : Nat} {σ : Type} [NeZero width]
                   rw [ht]
                   dsimp only
                   have htargetClock : (convertStateExact context source).clock ≠ 0 := hc
-                  rw [if_pos hz,if_neg htargetClock]
+                  rw [ite_eq_left hz,ite_eq_right htargetClock]
                   have htargetBody : PanSemStateFiniteExact.evaluateHOLFiniteState
                       (convertStateExact context source).decClockHOLFinite (compileProgExact context body) =
                       (convertResHOL (some .continue),convertStateExact context middle) := hbody.1
@@ -248,7 +248,7 @@ theorem compileCorrectWhile {width : Nat} {σ : Type} [NeZero width]
                     rw [ht]
                     dsimp only
                     have htargetClock : (convertStateExact context source).clock ≠ 0 := hc
-                    rw [if_pos hz,if_neg htargetClock]
+                    rw [ite_eq_left hz,ite_eq_right htargetClock]
                     have htargetBody : PanSemStateFiniteExact.evaluateHOLFiniteState
                         (convertStateExact context source).decClockHOLFinite (compileProgExact context body) =
                         (convertResHOL (some .break),convertStateExact context middle) := hbody.1
@@ -275,7 +275,7 @@ theorem compileCorrectWhile {width : Nat} {σ : Type} [NeZero width]
                   rw [ht]
                   dsimp only
                   have htargetClock : (convertStateExact context source).clock ≠ 0 := hc
-                  rw [if_pos hz,if_neg htargetClock]
+                  rw [ite_eq_left hz,ite_eq_right htargetClock]
                   have htargetBody : PanSemStateFiniteExact.evaluateHOLFiniteState
                       (convertStateExact context source).decClockHOLFinite (compileProgExact context body) =
                       (convertResHOL (some .timeOut),convertStateExact context middle) := hbody.1
@@ -295,7 +295,7 @@ theorem compileCorrectWhile {width : Nat} {σ : Type} [NeZero width]
                   rw [ht]
                   dsimp only
                   have htargetClock : (convertStateExact context source).clock ≠ 0 := hc
-                  rw [if_pos hz,if_neg htargetClock]
+                  rw [ite_eq_left hz,ite_eq_right htargetClock]
                   have htargetBody : PanSemStateFiniteExact.evaluateHOLFiniteState
                       (convertStateExact context source).decClockHOLFinite (compileProgExact context body) =
                       (convertResHOL (some (.returned value)),convertStateExact context middle) := hbody.1
@@ -315,7 +315,7 @@ theorem compileCorrectWhile {width : Nat} {σ : Type} [NeZero width]
                   rw [ht]
                   dsimp only
                   have htargetClock : (convertStateExact context source).clock ≠ 0 := hc
-                  rw [if_pos hz,if_neg htargetClock]
+                  rw [ite_eq_left hz,ite_eq_right htargetClock]
                   have htargetBody : PanSemStateFiniteExact.evaluateHOLFiniteState
                       (convertStateExact context source).decClockHOLFinite (compileProgExact context body) =
                       (convertResHOL (some (.finalFfi outcome)),convertStateExact context middle) := hbody.1
@@ -335,7 +335,7 @@ theorem compileCorrectWhile {width : Nat} {σ : Type} [NeZero width]
                   rw [ht]
                   dsimp only
                   have htargetClock : (convertStateExact context source).clock ≠ 0 := hc
-                  rw [if_pos hz,if_neg htargetClock]
+                  rw [ite_eq_left hz,ite_eq_right htargetClock]
                   have htargetBody : PanSemStateFiniteExact.evaluateHOLFiniteState
                       (convertStateExact context source).decClockHOLFinite (compileProgExact context body) =
                       (convertResHOL (some (.exception eid value)),convertStateExact context middle) := hbody.1

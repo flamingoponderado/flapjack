@@ -79,8 +79,8 @@ theorem post_to_goal {width : Nat} [NeZero width] {C F : Type} (f : Nat → Nat)
   dsimp only
   intro h
   by_cases he : res = some .error
-  · rw [if_pos he]; trivial
-  · rw [if_neg he] at h ⊢
+  · rw [ite_eq_left he]; trivial
+  · rw [ite_eq_right he] at h ⊢
     obtain ⟨e1, e2, e3⟩ := h
     refine ⟨e1, e2, ?_⟩
     unfold applyColourLocals at e3
@@ -170,7 +170,7 @@ theorem wordAllocCorrect {width : Nat} [NeZero width] {C F : Type} :
         fun x v hl hp => by
           have hd : sptDomain spcol x := by simp [sptDomain, hl]
           have hx := (hdom x (hsup x hd)).2
-          rw [if_pos hp] at hx
+          rw [ite_eq_left hp] at hx
           have : spDefault spcol x = v := by simp only [spDefault, hl]
           rw [this] at hx
           simp only [isPhyVar, decide_eq_true_eq] at hp

@@ -97,10 +97,10 @@ theorem inlineProgHOLCoreExact_lookup_none {width : Nat} [NeZero width]
       supportKeys₂ support₂ h
     exact absurd (hl.symm.trans (h name)) (by simp)
   · intro inlineable supportKeys support_spec returnNames name arguments hd supportKeys₂ support₂ h
-    simp only [inlineProgHOLCoreExact, hd, if_true]
+    simp only [inlineProgHOLCoreExact, hd, ite_true]
   · intro inlineable supportKeys support_spec returnNames name arguments hd hl supportKeys₂ support₂ h
     simp only [inlineProgHOLCoreExact]
-    simp only [if_neg hd]
+    simp only [ite_eq_right hd]
     rw [hl]
   · intro inlineable supportKeys support_spec returnNames name arguments hd argumentNames body hl ih
       supportKeys₂ support₂ h
@@ -351,7 +351,7 @@ theorem filter_names_toStringOfBytes {l1 : List FunName} {l2 : List CrepInlineMa
       simp only [List.map_cons, List.filter_cons]
       rw [hcond]
       by_cases hc : inl_fname.contains m
-      · simp only [hc, if_true]
+      · simp only [hc, ite_true]
         exact congrArg (toStringOfBytes m :: ·) (ih hsub)
       · simp only [hc]
         exact ih hsub
@@ -609,7 +609,7 @@ theorem crepProgToHOL_crepUnreachElim {width : Nat} [NeZero width] (program : Cr
     cases h
     simp only [crepProgToHOL, unreachElimHOLExact]
     rw [← ihFirst second' secondExit hfirst]
-    simp only [Option.isSome_map, hsome, if_true]
+    simp only [Option.isSome_map, hsome, ite_true]
   · intro first second second' secondExit hfirst hnotsome second'' secondExit' hsecond ihFirst ihSecond q r h
     have hunf : crepUnreachElim (.seq first second) = (.seq second' second'', secondExit') := by
       rw [crepUnreachElim.eq_def]
@@ -620,7 +620,7 @@ theorem crepProgToHOL_crepUnreachElim {width : Nat} [NeZero width] (program : Cr
     cases h
     simp only [crepProgToHOL, unreachElimHOLExact]
     rw [← ihFirst second' secondExit hfirst, ← ihSecond second'' secondExit' hsecond]
-    simp only [Option.isSome_map, hnotsome, Bool.false_eq_true, if_false]
+    simp only [Option.isSome_map, hnotsome, Bool.false_eq_true, ite_false]
   · intro name value body body' bodyExit hbody ih q r h
     have hunf : crepUnreachElim (.dec name value body) = (.dec name value body', bodyExit) := by
       rw [crepUnreachElim.eq_def]
@@ -761,12 +761,12 @@ theorem crepInlineLookup_isSome_any [BEq FunName] [LawfulBEq FunName]
       simp only [crepInlineLookup, List.any_cons]
       by_cases h : (name == entry.1) = true
       · have h' : (entry.1 == name) = true := by rw [beq_comm entry.1 name]; exact h
-        rw [if_pos h, h', Bool.true_or]
+        rw [ite_eq_left h, h', Bool.true_or]
         rfl
       · have hnf : (name == entry.1) = false := by
           cases hv : (name == entry.1) <;> simp_all
         have h' : (entry.1 == name) = false := by rw [beq_comm entry.1 name]; exact hnf
-        rw [if_neg h, ih, h', Bool.false_or]
+        rw [ite_eq_right h, ih, h', Bool.false_or]
 
 /-- The executable active-name guard equals the exact finite-map lookup used by
     `inlineProgHOLCoreExact`.  Untagged Flapjack-specific infrastructure. -/
@@ -1006,15 +1006,15 @@ theorem crepProgToHOL_crepInlineCallBody_some_none {width : Nat} [NeZero width]
           temporaryNames (arguments.map crepExpToHOL) argumentNames) := by
   simp only [crepInlineCallBody]
   by_cases hd : (!crepAllDistinct returnNames) = true
-  · rw [if_pos hd, if_pos hd]
+  · rw [ite_eq_left hd, ite_eq_left hd]
     simp only [crepProgToHOL]
-  · rw [if_neg hd, if_neg hd]
+  · rw [ite_eq_right hd, ite_eq_right hd]
     rw [crepInlineTmpNames_codec, crepVmaxProg_codec, crepNotBranchRet_codec]
     by_cases hbr : notBranchRetHOLExact (crepProgToHOL body) = true
-    · rw [if_pos hbr, if_pos hbr]
+    · rw [ite_eq_left hbr, ite_eq_left hbr]
       simp only [crepProgToHOL, crepProgToHOL_crepTransformEoc,
         crepProgToHOL_crepInlineNontail, genlistSuccAddHOLExact, Nat.add_assoc]
-    · rw [if_neg hbr, if_neg hbr]
+    · rw [ite_eq_right hbr, ite_eq_right hbr]
       simp only [crepProgToHOL, crepExpToHOL, crepProgToHOL_crepTransformBranch,
         crepProgToHOL_crepInlineNontail, genlistSuccAddHOLExact, Nat.add_assoc]
 
@@ -1089,14 +1089,14 @@ theorem crepInlineCodecEntries_filter_map {width : Nat} [NeZero width]
         contains_map_toStringOfBytes t.1 ht_name
       rw [hcontains]
       by_cases hc : inl_fname.contains (ofString t.1) = true
-      · rw [if_pos hc, if_pos hc]
+      · rw [ite_eq_left hc, ite_eq_left hc]
         simp only [List.map_cons]
         have hd : (toStringOfBytes (ofString t.1), (t.2.1, crepProgOfHOL (crepProgToHOL t.2.2)))
             = (t.1, (t.2.1, t.2.2)) := by
           rw [toStringOfBytes_ofString_of_bytes t.1 ht_name,
             crepProgOfHOL_crepProgToHOL t.2.2 ht_prog]
         rw [hd, ih hrest_name hrest_prog]
-      · rw [if_neg hc, if_neg hc]
+      · rw [ite_eq_right hc, ite_eq_right hc]
         exact ih hrest_name hrest_prog
 
 private theorem erase_active_contains {width : Nat} [NeZero width]
@@ -1146,7 +1146,7 @@ private theorem erase_range {width : Nat} [NeZero width]
   by_cases hk : (name == k) = true
   · rw [hk] at h; simp at h
   · rw [Bool.not_eq_true] at hk
-    rw [hk] at h; simp only [Bool.false_eq_true, if_false, FLOOKUP] at h
+    rw [hk] at h; simp only [Bool.false_eq_true, ite_false, FLOOKUP] at h
     exact hrange k v (by simpa using h)
 
 set_option maxHeartbeats 1000000 in
@@ -1260,7 +1260,7 @@ theorem crepProgToHOL_crepInlineProgRecursive {width : Nat} [NeZero width]
         have h := hactive name hprog
         rw [hcont] at h
         exact Option.isNone_iff_eq_none.mp (Option.isSome_eq_false_iff.mp h.symm)
-      simp only [crepInlineProgRecursive, dif_neg hnot, crepProgToHOL]
+      simp only [crepInlineProgRecursive, dite_eq_right hnot, crepProgToHOL]
       rw [inlineProgHOLCoreExact_call_none, hmapNone]
   | case8 active returnNames name arguments hmem hlookupNone =>
       intro map supportKeys support_spec hactive hlookup hrange hprog
@@ -1329,11 +1329,11 @@ theorem crepProgToHOL_crepInlineProgRecursive {width : Nat} [NeZero width]
         have h := hactive name hprog
         rw [hcont] at h
         exact Option.isNone_iff_eq_none.mp (Option.isSome_eq_false_iff.mp h.symm)
-      simp only [crepInlineProgRecursive, dif_neg hnot, crepProgToHOL, inlineProgHOLCoreExact]
+      simp only [crepInlineProgRecursive, dite_eq_right hnot, crepProgToHOL, inlineProgHOLCoreExact]
       rw [hmapNone]
       by_cases hg : (!crepAllDistinct returnNames) = true
-      · simp only [hg, if_true]
-      · simp only [hg, if_false]
+      · simp only [hg, ite_true]
+      · simp only [hg, ite_false]
         rfl
   | case11 active returnNames handler body name arguments ih =>
       intro map supportKeys support_spec hactive hlookup hrange hprog
@@ -1374,9 +1374,9 @@ theorem flookup_fupdateList_exists {α β : Type} [BEq α] [LawfulBEq α]
       · exact Or.inl ⟨t, by simp [ht], h1, h2⟩
       · rw [FLOOKUP_update] at hrest
         by_cases hb : (entry.1 == k) = true
-        · rw [if_pos hb] at hrest
+        · rw [ite_eq_left hb] at hrest
           exact Or.inl ⟨entry, by simp, beq_iff_eq.mp hb, Option.some.inj hrest⟩
-        · rw [if_neg hb] at hrest
+        · rw [ite_eq_right hb] at hrest
           exact Or.inr hrest
 
 /-- Any successful lookup in an exact alist map is witnessed by one of the entries.

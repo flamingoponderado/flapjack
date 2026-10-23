@@ -144,7 +144,7 @@ theorem writeRegister_transfer_forward (state : State width) (name : Fin 32)
   · cases state with
     | mk pc registers memory privilege mode =>
       simp only [transferState, writeRegister, writeRegisterInternal]
-      rw [if_neg hzero, if_neg hzero]
+      rw [ite_eq_right hzero, ite_eq_right hzero]
       congr 1
       funext index
       by_cases hidx : index = riscvForward name
@@ -176,7 +176,7 @@ theorem writeRegister_transfer (state : State width) (index : Fin 32) (value : W
   cases state with
   | mk pc registers memory privilege mode =>
     simp only [transferState, writeRegister, writeRegisterInternal]
-    rw [if_neg hindex, if_neg hinner]
+    rw [ite_eq_right hindex, ite_eq_right hinner]
     congr 1
     funext slot
     by_cases hslot : slot = index

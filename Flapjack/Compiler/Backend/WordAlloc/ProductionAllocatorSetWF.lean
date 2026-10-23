@@ -31,7 +31,7 @@ theorem mergeStackOnly_setsWf (move : Nat × Nat) (trees : Spt Unit × Spt Unit)
     by_cases alloc : isAllocVar y = true <;>
     by_cases physical : isPhyVar y = true <;>
     by_cases stack : isStackVar x = true
-  all_goals simp only [lookup, alloc, physical, stack, if_true, if_false, StackOnlySetsWf]
+  all_goals simp only [lookup, alloc, physical, stack, ite_true, ite_false, StackOnlySetsWf]
   all_goals exact ⟨by first | exact sptWfInsert _ _ _ ht | exact sptWfDelete _ _ ht | exact ht,
     by first | exact sptWfInsert _ _ _ hf | exact hf⟩
 

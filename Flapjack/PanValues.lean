@@ -911,10 +911,10 @@ theorem panValueFlatLoad_wf [BEq α] [Add α] (structs : StructContext)
     panValueIsWf structs value = true := by
   rw [panValueFlatLoad] at h
   by_cases hwf : isWfShape structs shape = true
-  · rw [if_pos hwf] at h
+  · rw [ite_eq_left hwf] at h
     exact panValueFlatLoadFuel_wf structs
       (panValueFlatReadWord memory bytesInWord memoryAccess) bytesInWord _ shape address value h
-  · rw [if_neg hwf] at h
+  · rw [ite_eq_right hwf] at h
     simp at h
 
 theorem panValueFlatLoadFuel_shape [BEq α] [Add α]
@@ -1000,10 +1000,10 @@ theorem panValueFlatLoad_shape [BEq α] [Add α] (structs : StructContext)
     panValueShape structs value = shape := by
   rw [panValueFlatLoad] at h
   by_cases hwf : isWfShape structs shape = true
-  · rw [if_pos hwf] at h
+  · rw [ite_eq_left hwf] at h
     exact panValueFlatLoadFuel_shape structs
       (panValueFlatReadWord memory bytesInWord memoryAccess) bytesInWord _ shape address value h
-  · rw [if_neg hwf] at h
+  · rw [ite_eq_right hwf] at h
     simp at h
 
 /-- List conjunct of Cake's `mem_loads_some_shape_eq`
@@ -1089,10 +1089,10 @@ theorem panValueFlatLoadList_shape [BEq α] [Add α] (structs : StructContext)
     values.map (panValueShape structs) = shapes := by
   rw [panValueFlatLoadList] at h
   by_cases hwf : shapes.all (isWfShape structs) = true
-  · rw [if_pos hwf] at h
+  · rw [ite_eq_left hwf] at h
     exact panValueFlatLoadListFuel_shape structs
       (panValueFlatReadWord memory bytesInWord memoryAccess) bytesInWord _ shapes address values h
-  · rw [if_neg hwf] at h
+  · rw [ite_eq_right hwf] at h
     simp at h
 
 /-- Fields conjunct of Cake's `mem_loads_some_shape_eq`
@@ -1106,10 +1106,10 @@ theorem panValueFlatLoadFields_shape [BEq α] [Add α] (structs : StructContext)
     values.map (fun field => panValueShape structs field.2) = fields.map Prod.snd := by
   rw [panValueFlatLoadFields] at h
   by_cases hwf : fields.all (fun field => isWfShape structs field.2) = true
-  · rw [if_pos hwf] at h
+  · rw [ite_eq_left hwf] at h
     exact panValueFlatLoadFieldsFuel_shape structs
       (panValueFlatReadWord memory bytesInWord memoryAccess) bytesInWord _ fields address values h
-  · rw [if_neg hwf] at h
+  · rw [ite_eq_right hwf] at h
     simp at h
 
 /-- Flapjack's executable rendering of HOL structural equality on `Shape`
@@ -1841,12 +1841,12 @@ theorem panValueIsWfFields_lookupPanValueField {context : StructContext}
       obtain ⟨candidate, fieldValue⟩ := field
       simp only [lookupPanValueField] at hlookup
       by_cases hname : (candidate == name) = true
-      · rw [if_pos hname] at hlookup
+      · rw [ite_eq_left hname] at hlookup
         have heq : fieldValue = value := Option.some.inj hlookup
         subst heq
         simp only [panValueIsWfFields, Bool.and_eq_true] at hwf
         exact hwf.1
-      · rw [if_neg hname] at hlookup
+      · rw [ite_eq_right hname] at hlookup
         simp only [panValueIsWfFields, Bool.and_eq_true] at hwf
         exact ih hwf.2 hlookup
 
@@ -2908,7 +2908,7 @@ theorem panValueResVarFold_mem [BEq String] [LawfulBEq String]
       · rcases hmem with heq | hmem
         · rw [panValueResVarFold_not_mem _ locals' names x hmemRest]
           rw [panValueResVar_eq_ite]
-          rw [if_pos (by rw [beq_iff_eq]; exact heq)]
+          rw [ite_eq_left (by rw [beq_iff_eq]; exact heq)]
           rw [heq]
         · exact absurd hmem hmemRest
 

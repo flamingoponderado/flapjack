@@ -55,7 +55,7 @@ theorem evaluateFperm_Dec {width : Nat} {σ : Type} [NeZero width]
   | some value =>
       simp only [hc] at heval ⊢
       by_cases hs : shapeEqHOL shape (shapeOfHOLExact value) = true
-      · simp only [hs, if_true, setVarHOLFinite] at heval ⊢
+      · simp only [hs, ite_true, setVarHOLFinite] at heval ⊢
         cases hb : evaluateHOLFiniteState
             { state with locals := state.locals.update (name,value) } body with
         | mk r1 s1 =>

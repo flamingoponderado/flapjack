@@ -48,7 +48,7 @@ theorem dropListUpdate {α : Type} (ys : List α) (n m : Nat) (xs : List α)
   | nil => rfl
   | cons y ys ih =>
     rw [listUpdate, ih (m + 1) (xs.set m y) (by omega)]
-    rw [List.drop_set, if_neg (by omega)]
+    rw [List.drop_set, ite_eq_right (by omega)]
     have heq : m + 1 - n = (m - n) + 1 := by omega
     rw [heq]
     rfl

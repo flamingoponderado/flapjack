@@ -28,11 +28,11 @@ theorem sptLookupMapi0 {α β : Type} (f : Nat → α → β) (tree : Spt α) (i
       by_cases zero : key = 0
       · simp [sptLookup, zero]
       · by_cases even : key % 2 = 0
-        · simp only [sptLookup, zero, if_false, even, if_true, ihLeft]
+        · simp only [sptLookup, zero, ite_false, even, ite_true, ihLeft]
           rw [sptAcc_childLeft]
           have address : 2 * ((key - 1) / 2) + 2 = key := by omega
           rw [address]
-        · simp only [sptLookup, zero, if_false, even, ihRight]
+        · simp only [sptLookup, zero, ite_false, even, ihRight]
           rw [sptAcc_childRight]
           have address : 2 * ((key - 1) / 2) + 1 = key := by omega
           rw [address]
@@ -41,11 +41,11 @@ theorem sptLookupMapi0 {α β : Type} (f : Nat → α → β) (tree : Spt α) (i
       by_cases zero : key = 0
       · simp [sptLookup, zero, sptAcc]
       · by_cases even : key % 2 = 0
-        · simp only [sptLookup, zero, if_false, even, if_true, ihLeft]
+        · simp only [sptLookup, zero, ite_false, even, ite_true, ihLeft]
           rw [sptAcc_childLeft]
           have address : 2 * ((key - 1) / 2) + 2 = key := by omega
           rw [address]
-        · simp only [sptLookup, zero, if_false, even, ihRight]
+        · simp only [sptLookup, zero, ite_false, even, ihRight]
           rw [sptAcc_childRight]
           have address : 2 * ((key - 1) / 2) + 1 = key := by omega
           rw [address]

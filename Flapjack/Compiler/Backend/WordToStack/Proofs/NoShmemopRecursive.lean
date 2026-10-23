@@ -205,10 +205,10 @@ theorem compNoShmemopIf {width : Nat} [NeZero width]
   | imm value =>
     simp only [compNative] at result
     by_cases immediate : conf.validImm (.inr cmp) value = true
-    · simp only [immediate, if_true] at result
+    · simp only [immediate, ite_true] at result
       rw [← result, wStackLoadNoShmemop]
       simp only [noShmemop, safeFirst, safeSecond, Bool.true_and]
-    · simp only [immediate, Bool.false_eq_true, if_false] at result
+    · simp only [immediate, Bool.false_eq_true, ite_false] at result
       rw [← result]
       simp only [noShmemop, wStackLoadNoShmemop, safeFirst, safeSecond, Bool.true_and]
 

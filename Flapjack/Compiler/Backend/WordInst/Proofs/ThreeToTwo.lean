@@ -80,16 +80,16 @@ theorem three_to_two_reg_Loop {width : Nat} [NeZero width] {C : Type} {F : Type}
   rw [ih x r1 s1 ⟨hb, hr1⟩]
   simp only
   by_cases hcont : wordSemContLoop r1 = true
-  · simp only [hcont, if_true] at he ⊢
+  · simp only [hcont, ite_true] at he ⊢
     by_cases hz : s1.clock = 0
-    · simp only [hz, if_true] at he ⊢; exact he
-    · simp only [hz, if_false] at he ⊢
+    · simp only [hz, ite_true] at he ⊢; exact he
+    · simp only [hz, ite_false] at he ⊢
       have hc1 := evaluate_clock prog x r1 s1 hb
       have hcx := cutState_clock_termdep _ _ _ hcs
       have hlt : (decClock s1).clock < n := by
         simp only [decClock]; omega
       exact IH _ hlt (decClock s1) rfl names prog exitNames res s' ⟨ih, he, herr⟩
-  · simp only [hcont, Bool.false_eq_true, if_false] at he ⊢
+  · simp only [hcont, Bool.false_eq_true, ite_false] at he ⊢
     exact he
 
 section Arith
@@ -289,23 +289,23 @@ theorem ttr_call_some {width : Nat} [NeZero width] {C : Type} {F : Type}
   · simp only [hg, Prod.mk.injEq] at he; exact absurd he.1.symm herr
   simp only [hg] at he ⊢
   by_cases hbad : wordSemBadDestArgs dest args = true
-  · simp only [hbad, if_true, Prod.mk.injEq] at he; exact absurd he.1.symm herr
-  simp only [hbad, Bool.false_eq_true, if_false] at he ⊢
+  · simp only [hbad, ite_true, Prod.mk.injEq] at he; exact absurd he.1.symm herr
+  simp only [hbad, Bool.false_eq_true, ite_false] at he ⊢
   simp only [wordSemAddRetLoc] at he ⊢
   rcases hf : wordSemFindCode dest (.loc l1 l2 :: xs) s.code s.stackSize with
     _ | ⟨args1, prog, ss⟩
   · simp only [hf, Prod.mk.injEq] at he; exact absurd he.1.symm herr
   simp only [hf] at he ⊢
   by_cases hdc : sptDomainEmpty names.fst ∨ ¬ n.Nodup
-  · simp only [hdc, if_true, Prod.mk.injEq] at he; exact absurd he.1.symm herr
-  simp only [hdc, if_false] at he ⊢
+  · simp only [hdc, ite_true, Prod.mk.injEq] at he; exact absurd he.1.symm herr
+  simp only [hdc, ite_false] at he ⊢
   rcases hce : wordSemCutEnvs names s.locals with _ | envs
   · simp only [hce, Prod.mk.injEq] at he; exact absurd he.1.symm herr
   simp only [hce] at he ⊢
   simp only [hpm]
   by_cases hz : s.clock = 0
-  · rw [if_pos hz] at he ⊢; exact he
-  rw [if_neg hz] at he ⊢
+  · rw [ite_eq_left hz] at he ⊢; exact he
+  rw [ite_eq_right hz] at he ⊢
   rcases hcv : evaluate prog
       (WordSemStateFiniteExact.callEnv args1 ss (pushEnv envs handler (decClock s))) with
     ⟨rc, s2⟩
@@ -314,15 +314,15 @@ theorem ttr_call_some {width : Nat} [NeZero width] {C : Type} {F : Type}
   rotate_left
   · simp only at he ⊢
     by_cases hx : x ≠ WordLocW.loc l1 l2 ∨ ys.length ≠ n.length
-    · simp only [hx, if_true] at he ⊢; exact he
-    simp only [hx, if_false] at he ⊢
+    · simp only [hx, ite_true] at he ⊢; exact he
+    simp only [hx, ite_false] at he ⊢
     rcases hp : popEnv s2 with _ | s1
     · simp only [hp] at he ⊢; exact he
     simp only [hp] at he ⊢
     by_cases hdom : sptDomainEqUnion s1.locals envs.fst envs.snd
-    · simp only [hdom, if_true] at he ⊢
+    · simp only [hdom, ite_true] at he ⊢
       exact ihr _ res s' ⟨hdr, he, herr⟩
-    · simp only [hdom, if_false] at he ⊢; exact he
+    · simp only [hdom, ite_false] at he ⊢; exact he
   · cases handler with
     | none => exact he
     | some hdl =>
@@ -332,12 +332,12 @@ theorem ttr_call_some {width : Nat} [NeZero width] {C : Type} {F : Type}
         exact hd.2
       simp only [Option.map_some] at he ⊢
       by_cases hx : x ≠ WordLocW.loc l1' l2'
-      · rw [if_pos hx] at he ⊢; exact he
-      rw [if_neg hx] at he ⊢
+      · rw [ite_eq_left hx] at he ⊢; exact he
+      rw [ite_eq_right hx] at he ⊢
       by_cases hdom : sptDomainEqUnion s2.locals envs.fst envs.snd
-      · rw [if_pos hdom] at he ⊢
+      · rw [ite_eq_left hdom] at he ⊢
         exact ihh n' hprog l1' l2' rfl _ res s' ⟨hdh, he, herr⟩
-      · rw [if_neg hdom] at he ⊢; exact he
+      · rw [ite_eq_right hdom] at he ⊢; exact he
   all_goals exact he
 
 set_option linter.unusedSimpArgs false in
@@ -426,8 +426,8 @@ theorem three_to_two_reg_correct {width : Nat} [NeZero width] {C : Type} {F : Ty
       show evaluate (.mustTerminate (threeToTwoReg p)) s = _
       rw [hm]
       by_cases hz : s.termdep = 0
-      · rw [if_pos hz] at he ⊢; exact he
-      rw [if_neg hz] at he ⊢
+      · rw [ite_eq_left hz] at he ⊢; exact he
+      rw [ite_eq_right hz] at he ⊢
       rcases hq : evaluate p { s with
           clock := wordSemMustTerminateLimit width
           termdep := s.termdep - 1 } with ⟨r1, s1⟩
@@ -464,8 +464,8 @@ theorem three_to_two_reg_correct {width : Nat} [NeZero width] {C : Type} {F : Ty
         rcases hg : WordSemStateFiniteExact.getVars args s with _ | xs <;> simp only [hg] at he
         · simp only [Prod.mk.injEq] at he; exact herr he.1.symm
         by_cases hbad : wordSemBadDestArgs dest args = true
-        · simp only [hbad, if_true, Prod.mk.injEq] at he; exact herr he.1.symm
-        simp only [hbad, Bool.false_eq_true, if_false] at he
+        · simp only [hbad, ite_true, Prod.mk.injEq] at he; exact herr he.1.symm
+        simp only [hbad, Bool.false_eq_true, ite_false] at he
         rcases hf : wordSemFindCode dest (wordSemAddRetLoc (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat)) xs) s.code s.stackSize with
           _ | ⟨a1, pr, ss⟩ <;> simp only [hf, Prod.mk.injEq] at he <;> exact herr he.1.symm
   | .call (some (n, names, retHandler, l1, l2)) dest args handler, s, res, s', ⟨hd, he, herr⟩ =>

@@ -304,7 +304,7 @@ private theorem labPresAux {width : Nat} [NeZero width] (n : Nat) :
       (nodupRight hD) (by have := pa.2.2.2; omega)
     rw [h2] at pb; dsimp only at pb
     rw [flattenHOL]
-    simp only [h1, h2, Bool.false_eq_true, if_false, appAppend, LabProps.LabelSets.extractLabels_append]
+    simp only [h1, h2, Bool.false_eq_true, ite_false, appAppend, LabProps.LabelSets.extractLabels_append]
     exact labPresApp pa pb hD bnd
   | .ite c r ri a b, nl, cs, bs, hE, hD, hnl => by
     have two : 2 ≤ nl := le_trans (nextLabNonZero _) hnl
@@ -544,7 +544,7 @@ theorem stackToLabLabPresT {width : Nat} [NeZero width] :
     rw [h2] at pb; dsimp only at pb
     obtain ⟨g, d, m, o⟩ := labPresApp pa pb hD bnd
     rw [flattenHOL]
-    simp only [h1, h2, if_true, appAppend, appList, LabProps.LabelSets.extractLabels_append,
+    simp only [h1, h2, ite_true, appAppend, appList, LabProps.LabelSets.extractLabels_append,
       LabProps.LabelSets.extractLabels]
     have one : (n, 1) ∉ LabProps.LabelSets.extractLabels (appListAppend ys1) ++
         LabProps.LabelSets.extractLabels (appListAppend ys2) := fun h => (g _ h).2.2 rfl
@@ -603,13 +603,13 @@ theorem progToSectionLabelsOk {width : Nat} [NeZero width] {prog : List (Nat × 
   have notin : (n, k) ∉ L := by
     intro h
     by_cases hs : isSeqHOL p = true
-    · rw [if_pos hs] at hk
+    · rw [ite_eq_left hs] at hk
       rcases m _ h with e | lt
       · have := labelsBound (p := p) hnl _ e
         simp only at this
         omega
       · simp only at lt; omega
-    · rw [if_neg hs] at hk
+    · rw [ite_eq_right hs] at hk
       rw [hL, flattenTF hs] at h
       have := (labPresAux n p _ [] [] hE hD hnl).1 _ h
       exact this.2.2 hk

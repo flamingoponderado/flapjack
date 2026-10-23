@@ -1373,13 +1373,13 @@ theorem crepUnreachElim_converge (program : CrepProg α) :
           rw [hfirst] at he
           cases firstExit with
           | some firstExitValue =>
-            simp only [Option.isSome_some, if_true] at he
+            simp only [Option.isSome_some, ite_true] at he
             cases he
             have hsub : sizeOf first < sizeOf (CrepProg.seq first second : CrepProg α) := by
               decreasing_trivial
             exact ih (sizeOf (CrepProg.seq first second : CrepProg α)) hlt first hsub hfirst
           | none =>
-            simp only [Option.isSome_none, Bool.false_eq_true, if_false] at he
+            simp only [Option.isSome_none, Bool.false_eq_true, ite_false] at he
             cases hsecond : crepUnreachElim second with
             | mk second' secondExit =>
               rw [hsecond] at he
@@ -1393,7 +1393,7 @@ theorem crepUnreachElim_converge (program : CrepProg α) :
               rw [crepUnreachElim.eq_def]
               dsimp only
               rw [h1]
-              simp only [Option.isSome_none, Bool.false_eq_true, if_false]
+              simp only [Option.isSome_none, Bool.false_eq_true, ite_false]
               rw [h2]
       | «ite» condition thenBranch elseBranch =>
         rw [crepUnreachElim.eq_def] at he

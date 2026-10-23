@@ -40,7 +40,7 @@ theorem machineSemEqSem {width : Nat} [NeZero width] {S Q F : Type}
   rintro ⟨hencoder, hinit, hnonfail⟩
   have hnoerror : ¬ ∃ k, (evaluate {s with clock := k}).1 = .error := by
     intro h
-    exact hnonfail (by simp only [semantics, if_pos h])
+    exact hnonfail (by simp only [semantics, ite_eq_left h])
   obtain ⟨code2, labs, t1, hrel, htie⟩ := hinit
   have sim (k : Nat) : ∃ extra ms2,
       evaluateTargetHOL mc s.ffi (k + extra) ms =
@@ -99,7 +99,7 @@ theorem machineSemEqSem {width : Nat} [NeZero width] {S Q F : Type}
   | some behavior =>
     obtain ⟨clock, next, outcome, hhalt, rfl⟩ := holOptionSome_some hchoice
     have hsem : semantics s = .terminate outcome next.ffi.ioEvents := by
-      simp only [semantics, if_neg hnoerror, hchoice]
+      simp only [semantics, ite_eq_right hnoerror, hchoice]
     obtain ⟨extra, ms2, htarget⟩ := sim clock
     rw [hhalt] at htarget
     funext behavior
@@ -143,7 +143,7 @@ theorem machineSemEqSem {width : Nat} [NeZero width] {S Q F : Type}
       · intro h; cases h
   | none =>
     have hsem : semantics s = .diverge (HolLList.buildLprefixLub sourceTraces) := by
-      simp only [semantics, if_neg hnoerror, hchoice]
+      simp only [semantics, ite_eq_right hnoerror, hchoice]
       rfl
     have hsourceTimeout (k : Nat) : (evaluate {s with clock := k}).1 = .timeOut := by
       cases he : (evaluate {s with clock := k}).1 with

@@ -69,7 +69,7 @@ theorem compCorrectStackLoadAny {width : Nat} [NeZero width] {C F : Type}
   rcases hypothesis with ⟨sourceRun, notError, relation, lower⟩
   change register < pointer ∧ index < pointer at lower
   rw [StackSemEvaluate.evaluate_stackLoadAny] at sourceRun
-  simp only [relation.1, Bool.not_true, Bool.false_eq_true, if_false] at sourceRun
+  simp only [relation.1, Bool.not_true, Bool.false_eq_true, ite_false] at sourceRun
   cases indexLookup : StackSemStateOps.getVar index source with
   | none =>
     rw [indexLookup] at sourceRun
@@ -84,7 +84,7 @@ theorem compCorrectStackLoadAny {width : Nat} [NeZero width] {C F : Type}
       dsimp only at sourceRun
       by_cases valid : source.stackSpace + (word >>> wordShiftAmount width).toNat < source.stack.length ∧
           (word >>> wordShiftAmount width) <<< wordShiftAmount width = word
-      · rw [dif_pos valid] at sourceRun
+      · rw [dite_eq_left valid] at sourceRun
         rcases Prod.mk.inj sourceRun with ⟨resultEq, stateEq⟩
         subst result
         subst postSource
@@ -126,7 +126,7 @@ theorem compCorrectStackLoadAny {width : Nat} [NeZero width] {C F : Type}
           rfl
         · simpa only [entry, relation.1] using StateUpdates.stateRelSetVar jump bounds pointer register
             entry source target ⟨relation, lower.1⟩
-      · rw [dif_neg valid] at sourceRun
+      · rw [dite_eq_right valid] at sourceRun
         exact (notError (Prod.mk.inj sourceRun).1.symm).elim
 /-- Flapjack native execution factoring for the original Any constructors;
 all lookup facts are derived inside the full cases below. No standalone HOL
@@ -177,7 +177,7 @@ theorem compCorrectStackStoreAny {width : Nat} [NeZero width] {C F : Type}
   rcases hypothesis with ⟨sourceRun, notError, relation, lower⟩
   change register < pointer ∧ index < pointer at lower
   rw [StackSemEvaluate.evaluate_stackStoreAny] at sourceRun
-  simp only [relation.1, Bool.not_true, Bool.false_eq_true, if_false] at sourceRun
+  simp only [relation.1, Bool.not_true, Bool.false_eq_true, ite_false] at sourceRun
   cases valueLookup : StackSemStateOps.getVar register source with
   | none =>
     rw [valueLookup] at sourceRun
@@ -198,7 +198,7 @@ theorem compCorrectStackStoreAny {width : Nat} [NeZero width] {C F : Type}
         dsimp only at sourceRun
         by_cases valid : source.stackSpace + (word >>> wordShiftAmount width).toNat < source.stack.length ∧
             (word >>> wordShiftAmount width) <<< wordShiftAmount width = word
-        · rw [if_pos valid] at sourceRun
+        · rw [ite_eq_left valid] at sourceRun
           rcases Prod.mk.inj sourceRun with ⟨resultEq, stateEq⟩
           subst result
           subst postSource
@@ -267,6 +267,6 @@ theorem compCorrectStackStoreAny {width : Nat} [NeZero width] {C F : Type}
               StackHeapWrites.stateRelStackStore jump bounds pointer (word >>> wordShiftAmount width).toNat
                 source target source.stack pointerWord (pointerWord + word) value
                 ⟨relation, rfl, pointerLookup, valid.1, by rw [← WordAddressArithmetic.wordOffsetEq, offsetEq]⟩
-        · rw [if_neg valid] at sourceRun
+        · rw [ite_eq_right valid] at sourceRun
           exact (notError (Prod.mk.inj sourceRun).1.symm).elim
 end Flapjack.Compiler.Backend.StackRemove.CompCorrect.StackMemoryAny

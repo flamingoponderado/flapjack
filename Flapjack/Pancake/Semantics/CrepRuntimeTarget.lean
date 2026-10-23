@@ -558,9 +558,9 @@ theorem crepRuntimeStore_target_eq_riscv
   rw [crepRuntimeStore_eq_memory_view]
   simp only [RiscV.panRiscVStoreWord, riscv64CrepRuntimeTarget, RiscV.panRiscVMemoryModel]
   by_cases hb : base.memaddrs address = true
-  · simp only [hb, if_true]
+  · simp only [hb, ite_true]
     rw [updateMemory_eq_updatePanValueMap]
-  · simp only [hb, if_false, Bool.false_eq_true]
+  · simp only [hb, ite_false, Bool.false_eq_true]
 
 theorem crepRuntimeStoreByte_target_eq_riscv
     (base : CrepRuntimeState (RiscV.Word 64) σ) (address value : RiscV.Word 64) :
@@ -572,10 +572,10 @@ theorem crepRuntimeStoreByte_target_eq_riscv
   simp only [RiscV.panRiscVStoreByte, panModelStoreByte, riscv64CrepRuntimeTarget,
     RiscV.panRiscVMemoryModel]
   by_cases hb : base.memaddrs (RiscV.panRiscVByteAlign 8 address) = true
-  · simp only [hb, if_true, crepRuntimeMemoryView, Option.pure_def, panTheWord]
+  · simp only [hb, ite_true, crepRuntimeMemoryView, Option.pure_def, panTheWord]
     rw [updateMemory_eq_panModelUpdateMemory]
     rfl
-  · simp only [hb, if_false, Bool.false_eq_true]
+  · simp only [hb, ite_false, Bool.false_eq_true]
 
 theorem crepRuntimeStore32_target_eq_riscv
     (base : CrepRuntimeState (RiscV.Word 64) σ) (address value : RiscV.Word 64) :
@@ -587,15 +587,15 @@ theorem crepRuntimeStore32_target_eq_riscv
   simp only [RiscV.panRiscVStore32, panModelStore32, riscv64CrepRuntimeTarget,
     RiscV.panRiscVMemoryModel, BitVec.add_assoc]
   by_cases ha : RiscV.aligned address 4 = true
-  · simp only [ha, if_true]
+  · simp only [ha, ite_true]
     by_cases hb : base.memaddrs (RiscV.panRiscVByteAlign 8 address) = true
     · have h1 : (1 + 2 : RiscV.Word 64) = 3 := rfl
       have h2 : (1 + 1 : RiscV.Word 64) = 2 := rfl
-      simp only [hb, if_true, crepRuntimeMemoryView, Option.pure_def, panTheWord, h2, h1]
+      simp only [hb, ite_true, crepRuntimeMemoryView, Option.pure_def, panTheWord, h2, h1]
       rw [updateMemory_eq_panModelUpdateMemory]
       rfl
-    · simp only [hb, if_false, Bool.false_eq_true]
-  · simp only [ha, if_false, Bool.false_eq_true]
+    · simp only [hb, ite_false, Bool.false_eq_true]
+  · simp only [ha, ite_false, Bool.false_eq_true]
 
 /-! ## Evaluator bridges
 
@@ -1095,10 +1095,10 @@ theorem crepRuntimeStoreByte_setMemory_view
   simp only [riscv64SetMemory, riscv64CrepRuntimeTarget, RiscV.panRiscVStoreByte,
     panModelStoreByte, RiscV.panRiscVMemoryModel]
   by_cases hb : base.memaddrs (RiscV.panRiscVByteAlign (8 : RiscV.Word 64) address) = true
-  · simp only [hb, if_true, crepRuntimeMemoryView, Option.pure_def, panTheWord]
+  · simp only [hb, ite_true, crepRuntimeMemoryView, Option.pure_def, panTheWord]
     rw [updateMemory_eq_panModelUpdateMemory]
     rfl
-  · simp only [hb, if_false, Bool.false_eq_true]
+  · simp only [hb, ite_false, Bool.false_eq_true]
 
 /-- The canonical source byte store on the `PanValue` view equals the wrap of the
     canonical RISC-V store. -/
@@ -1114,7 +1114,7 @@ theorem panValueStoreByte_view
   simp only [panValueMemoryAccessOfModel, panValueMemoryView, riscv64SetMemory,
     crepRuntimeStoreByte, RiscV.panRiscVMemoryModel, riscv64CrepRuntimeTarget]
   by_cases hb : base.memaddrs (RiscV.panRiscVByteAlign (8 : RiscV.Word 64) address) = true
-  · simp only [hb, if_true, Option.map_some,
+  · simp only [hb, ite_true, Option.map_some,
       Option.pure_def, Function.comp_apply]
     have hfun :
         (fun current : RiscV.Word 64 =>
@@ -1131,7 +1131,7 @@ theorem panValueStoreByte_view
         simp_all [updateCrepRuntimeMemory, panValueViewOf, crepRuntimeMemoryView, panTheWord]
     rw [← hfun]
     rfl
-  · simp only [hb, if_false, Bool.false_eq_true]
+  · simp only [hb, ite_false, Bool.false_eq_true]
     rfl
 
 /-- A successful production byte store agrees with the tail on every field other
@@ -1154,9 +1154,9 @@ theorem crepRuntimeStoreByte_withFfi [BEq α] [Add α] [OfNat α 1]
       (crepRuntimeStoreByte s address value).map (fun u => { u with ffi := ffi }) := by
   unfold crepRuntimeStoreByte
   by_cases h : s.memaddrs (s.memoryModel.byteAlign s.bytesInWord address) = true
-  · simp only [h, if_true]
+  · simp only [h, ite_true]
     rfl
-  · simp only [h, if_false, Bool.false_eq_true]
+  · simp only [h, ite_false, Bool.false_eq_true]
     rfl
 
 /-- Updating the ffi before writing bytes commutes with the write on every field:
@@ -2037,7 +2037,7 @@ theorem panRiscVShift_eight_eq_holWordShift64
   unfold RiscV.panRiscVShift holWordShift64
   by_cases h : right.toNat < 64
   · have hnot : ¬ (right.toNat ≠ 0 ∧ 64 ≤ right.toNat) := by omega
-    simp only [h, if_true, hnot, if_false]
+    simp only [h, ite_true, hnot, ite_false]
     rfl
   · have hge : 64 ≤ right.toNat := by omega
     have hnz : right.toNat ≠ 0 := by omega
@@ -2536,9 +2536,9 @@ theorem crepRuntimeLoad32_eq_holMemLoad32_64_of_matches
   simp only [crepRuntimeLoad32, holMemLoad32_64, crepRuntimeMemoryView, hbytes, hbig]
   rw [haligned, hbyteAlign]
   by_cases ha : holAligned32_64 address = true
-  · simp only [ha, if_true]
+  · simp only [ha, ite_true]
     by_cases hd : base.memaddrs (holByteAlign64 address) = true
-    · simp only [hd, if_true]
+    · simp only [hd, ite_true]
       rw [hgetByte address, hgetByte (address + 1), hgetByte (address + 1 + 1),
         hgetByte (address + 1 + 1 + 1), h3, h2, hwordOfBytes]
       simp only [Option.pure_def]
@@ -2634,7 +2634,7 @@ theorem panRiscVSetByte_eight_eq_holSetByte64 (address byteValue cell : RiscV.Wo
     RiscV.panRiscVSetByte (8 : RiscV.Word 64) address byteValue cell =
       holSetByte64 address byteValue cell false := by
   simp only [RiscV.panRiscVSetByte, panRiscVByteIndex_eight, holSetByte64, Bool.false_eq_true,
-    if_false]
+    ite_false]
 
 /-- HOL `panSemScript.sml` `mem_store_def`: guarded insertion of a word-labelled
 value into the total memory function. -/
@@ -2693,7 +2693,7 @@ theorem crepRuntimeStore_rv64_eq_holMemStore64
         (fun memory => { riscv64CrepRuntimeTarget base with memory := memory }) := by
   simp only [crepRuntimeStore, holMemStore64, riscv64CrepRuntimeTarget]
   by_cases h : base.memaddrs address = true
-  · simp only [h, if_true, Option.map_some]
+  · simp only [h, ite_true, Option.map_some]
   · simp [h]
 
 /-- The production byte store is HOL `mem_store_byte` under the `setByte`
@@ -2713,7 +2713,7 @@ theorem crepRuntimeStoreByte_eq_holMemStoreByte64_of_matches
   simp only [crepRuntimeStoreByte, holMemStoreByte64, hbytes, hbig]
   rw [halign]
   by_cases hd : base.memaddrs (holByteAlign64 address) = true
-  · simp only [hd, if_true]
+  · simp only [hd, ite_true]
     rw [hset]
     simp only [Option.pure_def, Option.map_some]
   · simp [hd]
@@ -2804,10 +2804,10 @@ theorem crepRuntimeStore32_eq_holMemStore32_64_of_matches
   simp only [crepRuntimeStore32, holMemStore32_64, hbytes, hbig]
   rw [haligned]
   by_cases ha : holAligned32_64 address = true
-  · simp only [ha, if_true]
+  · simp only [ha, ite_true]
     rw [halign]
     by_cases hd : base.memaddrs (holByteAlign64 address) = true
-    · simp only [hd, if_true]
+    · simp only [hd, ite_true]
       have hget0 := crepMemoryModelStore32_getByte_of_matches hmodel address value
         (panTheWord (base.memory (holByteAlign64 address))) 0 value
       have hget1 := crepMemoryModelStore32_getByte_of_matches hmodel address value
@@ -2879,7 +2879,7 @@ theorem crepRuntimeStore_eq_holMemStore64
         (fun memory => { base with memory := memory }) := by
   simp only [crepRuntimeStore, holMemStore64]
   by_cases h : base.memaddrs address = true
-  · simp only [h, if_true, Option.map_some]
+  · simp only [h, ite_true, Option.map_some]
   · simp [h]
 
 /-! HOL `crepSemScript.sml` `crep_op_def` shape at 64 bits: `Mul` over exactly

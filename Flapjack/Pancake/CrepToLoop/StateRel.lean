@@ -1235,15 +1235,15 @@ theorem sptInsert_insert_eq {α : Type} (a : Nat) (b : α) (tree : Spt α) :
         omega
       by_cases h2 : a % 2 = 0
       · cases tree with
-        | ln => rw [sptInsert.eq_1, if_neg h0, if_pos h2, sptInsert.eq_3, if_neg h0, if_pos h2, ih ((a-1)/2) hk b .ln]
-        | ls existing => rw [sptInsert.eq_2, if_neg h0, if_pos h2, sptInsert.eq_4, if_neg h0, if_pos h2, ih ((a-1)/2) hk b .ln]
-        | bn left right => rw [sptInsert.eq_3, if_neg h0, if_pos h2, sptInsert.eq_3, if_neg h0, if_pos h2, ih ((a-1)/2) hk b left]
-        | bs left existing right => rw [sptInsert.eq_4, if_neg h0, if_pos h2, sptInsert.eq_4, if_neg h0, if_pos h2, ih ((a-1)/2) hk b left]
+        | ln => rw [sptInsert.eq_1, ite_eq_right h0, ite_eq_left h2, sptInsert.eq_3, ite_eq_right h0, ite_eq_left h2, ih ((a-1)/2) hk b .ln]
+        | ls existing => rw [sptInsert.eq_2, ite_eq_right h0, ite_eq_left h2, sptInsert.eq_4, ite_eq_right h0, ite_eq_left h2, ih ((a-1)/2) hk b .ln]
+        | bn left right => rw [sptInsert.eq_3, ite_eq_right h0, ite_eq_left h2, sptInsert.eq_3, ite_eq_right h0, ite_eq_left h2, ih ((a-1)/2) hk b left]
+        | bs left existing right => rw [sptInsert.eq_4, ite_eq_right h0, ite_eq_left h2, sptInsert.eq_4, ite_eq_right h0, ite_eq_left h2, ih ((a-1)/2) hk b left]
       · cases tree with
-        | ln => rw [sptInsert.eq_1, if_neg h0, if_neg h2, sptInsert.eq_3, if_neg h0, if_neg h2, ih ((a-1)/2) hk b .ln]
-        | ls existing => rw [sptInsert.eq_2, if_neg h0, if_neg h2, sptInsert.eq_4, if_neg h0, if_neg h2, ih ((a-1)/2) hk b .ln]
-        | bn left right => rw [sptInsert.eq_3, if_neg h0, if_neg h2, sptInsert.eq_3, if_neg h0, if_neg h2, ih ((a-1)/2) hk b right]
-        | bs left existing right => rw [sptInsert.eq_4, if_neg h0, if_neg h2, sptInsert.eq_4, if_neg h0, if_neg h2, ih ((a-1)/2) hk b right]
+        | ln => rw [sptInsert.eq_1, ite_eq_right h0, ite_eq_right h2, sptInsert.eq_3, ite_eq_right h0, ite_eq_right h2, ih ((a-1)/2) hk b .ln]
+        | ls existing => rw [sptInsert.eq_2, ite_eq_right h0, ite_eq_right h2, sptInsert.eq_4, ite_eq_right h0, ite_eq_right h2, ih ((a-1)/2) hk b .ln]
+        | bn left right => rw [sptInsert.eq_3, ite_eq_right h0, ite_eq_right h2, sptInsert.eq_3, ite_eq_right h0, ite_eq_right h2, ih ((a-1)/2) hk b right]
+        | bs left existing right => rw [sptInsert.eq_4, ite_eq_right h0, ite_eq_right h2, sptInsert.eq_4, ite_eq_right h0, ite_eq_right h2, ih ((a-1)/2) hk b right]
 
 /-- Exact port of HOL `list_insert_insert`
     (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:406`): a single `insert`

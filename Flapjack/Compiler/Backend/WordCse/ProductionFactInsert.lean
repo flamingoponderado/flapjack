@@ -37,7 +37,7 @@ theorem factInsert_transport
       wordCseListInsert]
   · have different : keySet listCmp observed ≠ keySet listCmp key :=
       fun equality => same (keys.mp equality)
-    simp only [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, different, if_false]
+    simp only [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, different, ite_false]
     rw [← input, related observed]
     simp [wordCseListLookup, wordCseListInsert, Std.TreeMap.getElem?_insert,
       listCmpEqCorrect, Ne.symm same]

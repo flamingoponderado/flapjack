@@ -82,8 +82,8 @@ theorem aux_eq_pmov (fuel : Nat) (pending active emitted : List Move)
   | succ fuel ih =>
     rw [aux_step]
     by_cases finished : pending = [] ∧ active = []
-    · rw [if_pos finished, Compiler.Backend.Parmove.pmov.eq_def, dif_pos finished]
-    · rw [if_neg finished]
+    · rw [ite_eq_left finished, Compiler.Backend.Parmove.pmov.eq_def, dite_eq_left finished]
+    · rw [ite_eq_right finished]
       have unfinished : pending ≠ [] ∨ active ≠ [] := by
         by_cases empty : pending = []
         · exact Or.inr (fun activeEmpty => finished ⟨empty, activeEmpty⟩)
@@ -93,7 +93,7 @@ theorem aux_eq_pmov (fuel : Nat) (pending active emitted : List Move)
           (Compiler.Backend.Parmove.fstep (pending, active, emitted)) < fuel := by omega
       have schedule : Compiler.Backend.Parmove.pmov (pending, active, emitted) =
           Compiler.Backend.Parmove.pmov (Compiler.Backend.Parmove.fstep (pending, active, emitted)) := by
-        rw [Compiler.Backend.Parmove.pmov.eq_def, dif_neg finished]
+        rw [Compiler.Backend.Parmove.pmov.eq_def, dite_eq_right finished]
       rw [schedule]
       exact ih _ _ _ smaller
 

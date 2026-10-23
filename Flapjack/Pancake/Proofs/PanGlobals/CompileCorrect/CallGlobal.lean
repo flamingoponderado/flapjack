@@ -131,18 +131,18 @@ theorem compileCorrect_CallGlobal {width : Nat} {σ : Type} [NeZero width]
       have hc := hrel.2.2.2.2.2.1
       by_cases hz : source.clock = 0
       · have htz : target.clock = 0 := hc ▸ hz
-        simp only [if_pos hz] at hev
+        simp only [ite_eq_left hz] at hev
         obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
         refine ⟨emptyLocalsHOLFinite target, ?_,
           (PanGlobalsStateRelationLocals.stateRelEmptyLocalsHOL context source target false).1 hrel⟩
         cases hct : context.globals.lookup name with
         | none => simp only [compileProgExactHOL, hct, compileList_eq_map,
-            evaluateHOLFiniteState_call, hta, htl, if_pos htz]
+            evaluateHOLFiniteState_call, hta, htl, ite_eq_left htz]
         | some pair => rcases pair with ⟨shape, address⟩
                        simp only [compileProgExactHOL, hct, compileList_eq_map,
-                         evaluateHOLFiniteState_decCall_fixClockRewrite, hta, htl, if_pos htz]
+                         evaluateHOLFiniteState_decCall_fixClockRewrite, hta, htl, ite_eq_left htz]
       · have htz : target.clock ≠ 0 := hc ▸ hz
-        simp only [if_neg hz] at hev
+        simp only [ite_eq_right hz] at hev
         have hd := PanGlobalsStateRelationClock.stateRelDecClockHOL context source target true hrel
         have he := (PanGlobalsStateRelationLocals.stateRelChangeLocalsHOL context
           (decClockHOLFinite source) (decClockHOLFinite target) true callee).1 hd
@@ -202,15 +202,15 @@ theorem compileCorrect_CallGlobal {width : Nat} {σ : Type} [NeZero width]
                   · have hshapeBool : shapeEqHOL (shapeOfHOLExact value) (shapeOfHOLExact oldValue) = true :=
                       (shapeEqHOL_eq_true _ _).mpr hshape
                     simp only [compileProgExactHOL, hct, compileList_eq_map,
-                      evaluateHOLFiniteState_decCall_fixClockRewrite, hta, htl, if_neg htz,
+                      evaluateHOLFiniteState_decCall_fixClockRewrite, hta, htl, ite_eq_right htz,
                       hbt, hshapeBool, hs, Bool.true_and, ↓reduceIte]
                     exact congrArg (fun pair => (pair.1,
                       {pair.2 with locals := HolFiniteMapExact.resVarEq pair.2.locals (temporary, target.locals.lookup temporary)})) hstoreRun
                   · simpa only [ghostSource, setKvarHOLFinite, setGlobalHOLFinite, setVarHOLFinite,
                       restore_update, goodResHOL] using hscope
-              · simp only [if_neg hv] at hev
+              · simp only [ite_eq_right hv] at hev
                 exact False.elim (hne (Prod.mk.inj hev).1.symm)
-            · simp only [if_neg hs] at hev
+            · simp only [ite_eq_right hs] at hev
               exact False.elim (hne (Prod.mk.inj hev).1.symm)
           | exception eid value | timeOut | finalFfi outcome =>
             obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
@@ -219,9 +219,9 @@ theorem compileCorrect_CallGlobal {width : Nat} {σ : Type} [NeZero width]
               (PanGlobalsStateRelationLocals.stateRelEmptyLocalsHOL context bs bt false).2 hr⟩
             cases hct : context.globals.lookup name with
             | none => simp only [compileProgExactHOL, hct, compileList_eq_map,
-                evaluateHOLFiniteState_call, hta, htl, if_neg htz, hbt]
+                evaluateHOLFiniteState_call, hta, htl, ite_eq_right htz, hbt]
             | some pair => rcases pair with ⟨shape, address⟩
                            simp only [compileProgExactHOL, hct, compileList_eq_map,
-                             evaluateHOLFiniteState_decCall_fixClockRewrite, hta, htl, if_neg htz, hbt]
+                             evaluateHOLFiniteState_decCall_fixClockRewrite, hta, htl, ite_eq_right htz, hbt]
 
 end Flapjack.PanGlobalsCompileCorrectCallGlobal

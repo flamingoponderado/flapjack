@@ -95,18 +95,18 @@ theorem goal_tick (s : StackSemStateFiniteExact width C F) :
   rw [evaluate_tick] at h
   show ∃ ck regs1, evaluate (.tick, Tgt anything cr c s ck regs) = _ ∧ _
   by_cases h0 : s.clock = 0
-  · simp only [h0, if_true, Prod.mk.injEq] at h
+  · simp only [h0, ite_true, Prod.mk.injEq] at h
     obtain ⟨rfl, rfl⟩ := h
     refine ⟨0, HolFiniteMapExact.empty, ?_, submap_empty _, hpre.buf, fun _ => ?_⟩
     · rw [evaluate_tick, tgt_zero]
-      simp only [h0, if_true]
+      simp only [h0, ite_true]
       rfl
     · simp [StackBound, emptyEnv]
-  · simp only [h0, if_false, Prod.mk.injEq] at h
+  · simp only [h0, ite_false, Prod.mk.injEq] at h
     obtain ⟨rfl, rfl⟩ := h
     refine ⟨0, regs, ?_, hpre.regs, hpre.buf, fun _ => hpre.stack⟩
     rw [evaluate_tick, tgt_zero]
-    simp only [h0, if_false]
+    simp only [h0, ite_false]
     rfl
 
 theorem goal_inst (s : StackSemStateFiniteExact width C F) (i : Compiler.Encoders.Asm.HolInst width) :
@@ -200,7 +200,7 @@ theorem goal_locValue (s : StackSemStateFiniteExact width C F) (v l1 l2 : Nat) :
     obtain ⟨rfl, rfl⟩ := h
     refine ⟨0, _, ?_, submap_fupdate_both hpre.regs, hpre.buf, fun _ => hpre.stack⟩
     show evaluate (.locValue v l1 l2, Res anything cr c s regs) = _
-    rw [evaluate_locValue, if_pos (loc_check_compile ⟨hl, fun k p hk => (hpre.code k p hk).1⟩)]
+    rw [evaluate_locValue, ite_eq_left (loc_check_compile ⟨hl, fun k p hk => (hpre.code k p hk).1⟩)]
     rfl
   · simp only [Prod.mk.injEq] at h
     exact absurd h.1.symm hr
@@ -216,7 +216,7 @@ theorem goal_stackAlloc (s : StackSemStateFiniteExact width C F) (k : Nat) :
     Goal anything cr (.stackAlloc k : HolProg width) s := by
   intro r t m n c regs h hr _ hpre
   rw [evaluate_stackAlloc] at h
-  simp only [hpre.useStack, Bool.not_true, Bool.false_eq_true, if_false] at h
+  simp only [hpre.useStack, Bool.not_true, Bool.false_eq_true, ite_false] at h
   show ∃ ck regs1, evaluate (.stackAlloc k, Tgt anything cr c s ck regs) = _ ∧ _
   split at h
   · rename_i hlt
@@ -225,20 +225,20 @@ theorem goal_stackAlloc (s : StackSemStateFiniteExact width C F) (k : Nat) :
     refine ⟨0, HolFiniteMapExact.empty, ?_, submap_empty _, hpre.buf,
       fun _ => stackBound_emptyEnv _⟩
     rw [tgt_zero, evaluate_stackAlloc]
-    simp only [Bool.not_true, Bool.false_eq_true, if_false, hlt, if_true]
+    simp only [Bool.not_true, Bool.false_eq_true, ite_false, hlt, ite_true]
     rfl
   · rename_i hlt
     simp only [Prod.mk.injEq] at h
     obtain ⟨rfl, rfl⟩ := h
     refine ⟨0, regs, ?_, hpre.regs, hpre.buf, fun _ => hpre.stack⟩
     rw [tgt_zero, evaluate_stackAlloc]
-    simp only [Bool.not_true, Bool.false_eq_true, if_false, hlt]
+    simp only [Bool.not_true, Bool.false_eq_true, ite_false, hlt]
 
 theorem goal_stackFree (s : StackSemStateFiniteExact width C F) (k : Nat) :
     Goal anything cr (.stackFree k : HolProg width) s := by
   intro r t m n c regs h hr _ hpre
   rw [evaluate_stackFree] at h
-  simp only [hpre.useStack, Bool.not_true, Bool.false_eq_true, if_false] at h
+  simp only [hpre.useStack, Bool.not_true, Bool.false_eq_true, ite_false] at h
   show ∃ ck regs1, evaluate (.stackFree k, Tgt anything cr c s ck regs) = _ ∧ _
   split at h
   · simp only [Prod.mk.injEq] at h
@@ -248,13 +248,13 @@ theorem goal_stackFree (s : StackSemStateFiniteExact width C F) (k : Nat) :
     obtain ⟨rfl, rfl⟩ := h
     refine ⟨0, regs, ?_, hpre.regs, hpre.buf, fun _ => hpre.stack⟩
     rw [tgt_zero, evaluate_stackFree]
-    simp only [Bool.not_true, Bool.false_eq_true, if_false, hlt]
+    simp only [Bool.not_true, Bool.false_eq_true, ite_false, hlt]
 
 theorem goal_stackLoad (s : StackSemStateFiniteExact width C F) (a k : Nat) :
     Goal anything cr (.stackLoad a k : HolProg width) s := by
   intro r t m n c regs h hr _ hpre
   rw [evaluate_stackLoad] at h
-  simp only [hpre.useStack, Bool.not_true, Bool.false_eq_true, if_false] at h
+  simp only [hpre.useStack, Bool.not_true, Bool.false_eq_true, ite_false] at h
   show ∃ ck regs1, evaluate (.stackLoad a k, Tgt anything cr c s ck regs) = _ ∧ _
   split at h
   · rename_i hlt
@@ -262,8 +262,8 @@ theorem goal_stackLoad (s : StackSemStateFiniteExact width C F) (a k : Nat) :
     obtain ⟨rfl, rfl⟩ := h
     refine ⟨0, _, ?_, submap_fupdate_both hpre.regs, hpre.buf, fun _ => hpre.stack⟩
     rw [tgt_zero, evaluate_stackLoad]
-    simp only [Bool.not_true, Bool.false_eq_true, if_false]
-    rw [dif_pos hlt]
+    simp only [Bool.not_true, Bool.false_eq_true, ite_false]
+    rw [dite_eq_left hlt]
     rfl
   · simp only [Prod.mk.injEq] at h
     exact absurd h.1.symm hr
@@ -272,7 +272,7 @@ theorem goal_stackLoadAny (s : StackSemStateFiniteExact width C F) (a rn : Nat) 
     Goal anything cr (.stackLoadAny a rn : HolProg width) s := by
   intro r t m n c regs h hr _ hpre
   rw [evaluate_stackLoadAny] at h
-  simp only [hpre.useStack, Bool.not_true, Bool.false_eq_true, if_false] at h
+  simp only [hpre.useStack, Bool.not_true, Bool.false_eq_true, ite_false] at h
   show ∃ ck regs1, evaluate (.stackLoadAny a rn, Tgt anything cr c s ck regs) = _ ∧ _
   split at h
   · rename_i w hw
@@ -283,9 +283,9 @@ theorem goal_stackLoadAny (s : StackSemStateFiniteExact width C F) (a rn : Nat) 
       obtain ⟨rfl, rfl⟩ := h
       refine ⟨0, _, ?_, submap_fupdate_both hpre.regs, hpre.buf, fun _ => hpre.stack⟩
       rw [tgt_zero, evaluate_stackLoadAny]
-      simp only [Bool.not_true, Bool.false_eq_true, if_false,
+      simp only [Bool.not_true, Bool.false_eq_true, ite_false,
         getVar_res anything cr c s regs hpre.regs hw]
-      rw [dif_pos hlt]
+      rw [dite_eq_left hlt]
       rfl
     · simp only [Prod.mk.injEq] at h
       exact absurd h.1.symm hr
@@ -296,7 +296,7 @@ theorem goal_stackStore (s : StackSemStateFiniteExact width C F) (a k : Nat) :
     Goal anything cr (.stackStore a k : HolProg width) s := by
   intro r t m n c regs h hr _ hpre
   rw [evaluate_stackStore] at h
-  simp only [hpre.useStack, Bool.not_true, Bool.false_eq_true, if_false] at h
+  simp only [hpre.useStack, Bool.not_true, Bool.false_eq_true, ite_false] at h
   show ∃ ck regs1, evaluate (.stackStore a k, Tgt anything cr c s ck regs) = _ ∧ _
   split at h
   · simp only [Prod.mk.injEq] at h
@@ -310,7 +310,7 @@ theorem goal_stackStore (s : StackSemStateFiniteExact width C F) (a k : Nat) :
     obtain ⟨rfl, rfl⟩ := h
     refine ⟨0, regs, ?_, hpre.regs, hpre.buf, fun _ => ?_⟩
     · rw [tgt_zero, evaluate_stackStore]
-      simp only [Bool.not_true, Bool.false_eq_true, if_false, hle,
+      simp only [Bool.not_true, Bool.false_eq_true, ite_false, hle,
         getVar_res anything cr c s regs hpre.regs hv]
     · have := hpre.stack
       simpa [StackBound] using this
@@ -319,7 +319,7 @@ theorem goal_stackStoreAny (s : StackSemStateFiniteExact width C F) (a rn : Nat)
     Goal anything cr (.stackStoreAny a rn : HolProg width) s := by
   intro r t m n c regs h hr _ hpre
   rw [evaluate_stackStoreAny] at h
-  simp only [hpre.useStack, Bool.not_true, Bool.false_eq_true, if_false] at h
+  simp only [hpre.useStack, Bool.not_true, Bool.false_eq_true, ite_false] at h
   show ∃ ck regs1, evaluate (.stackStoreAny a rn, Tgt anything cr c s ck regs) = _ ∧ _
   split at h
   · rename_i v w hv hw
@@ -330,10 +330,10 @@ theorem goal_stackStoreAny (s : StackSemStateFiniteExact width C F) (a rn : Nat)
       obtain ⟨rfl, rfl⟩ := h
       refine ⟨0, regs, ?_, hpre.regs, hpre.buf, fun _ => ?_⟩
       · rw [tgt_zero, evaluate_stackStoreAny]
-        simp only [Bool.not_true, Bool.false_eq_true, if_false,
+        simp only [Bool.not_true, Bool.false_eq_true, ite_false,
           getVar_res anything cr c s regs hpre.regs hv,
           getVar_res anything cr c s regs hpre.regs hw]
-        rw [if_pos hlt]
+        rw [ite_eq_left hlt]
       · have := hpre.stack
         simpa [StackBound] using this
     · simp only [Prod.mk.injEq] at h
@@ -345,7 +345,7 @@ theorem goal_stackGetSize (s : StackSemStateFiniteExact width C F) (a : Nat) :
     Goal anything cr (.stackGetSize a : HolProg width) s := by
   intro r t m n c regs h hr _ hpre
   rw [evaluate_stackGetSize] at h
-  simp only [hpre.useStack, Bool.not_true, Bool.false_eq_true, if_false, Prod.mk.injEq] at h
+  simp only [hpre.useStack, Bool.not_true, Bool.false_eq_true, ite_false, Prod.mk.injEq] at h
   obtain ⟨rfl, rfl⟩ := h
   refine ⟨0, _, ?_, submap_fupdate_both hpre.regs, hpre.buf, fun _ => hpre.stack⟩
   show evaluate (.stackGetSize a, Res anything cr c s regs) = _
@@ -356,7 +356,7 @@ theorem goal_stackSetSize (s : StackSemStateFiniteExact width C F) (a : Nat) :
     Goal anything cr (.stackSetSize a : HolProg width) s := by
   intro r t m n c regs h hr _ hpre
   rw [evaluate_stackSetSize] at h
-  simp only [hpre.useStack, Bool.not_true, Bool.false_eq_true, if_false] at h
+  simp only [hpre.useStack, Bool.not_true, Bool.false_eq_true, ite_false] at h
   show ∃ ck regs1, evaluate (.stackSetSize a, Tgt anything cr c s ck regs) = _ ∧ _
   split at h
   · rename_i w hw
@@ -368,7 +368,7 @@ theorem goal_stackSetSize (s : StackSemStateFiniteExact width C F) (a : Nat) :
       obtain ⟨rfl, rfl⟩ := h
       refine ⟨0, _, ?_, submap_fupdate_both hpre.regs, hpre.buf, fun _ => hpre.stack⟩
       rw [tgt_zero, evaluate_stackSetSize]
-      simp only [Bool.not_true, Bool.false_eq_true, if_false,
+      simp only [Bool.not_true, Bool.false_eq_true, ite_false,
         getVar_res anything cr c s regs hpre.regs hw, hle]
       rfl
   · simp only [Prod.mk.injEq] at h
@@ -396,7 +396,7 @@ theorem goal_bitmapLoad (s : StackSemStateFiniteExact width C F) (a v : Nat) :
       rw [tgt_zero, evaluate_bitmapLoad]
       simp only [Bool.not_true, Bool.false_or, hav,
         getVar_res anything cr c s regs hpre.regs hw]
-      rw [dif_neg hle]
+      rw [dite_eq_right hle]
       rfl
   · simp only [Prod.mk.injEq] at h
     exact absurd h.1.symm hr
@@ -416,8 +416,8 @@ theorem shMemOp_res (c : DataToWord.Config) (s s1 : StackSemStateFiniteExact wid
   all_goals try exact absurd rfl hres
   all_goals try rw [getVar_res anything cr c s regs hsub ‹getVar v s = some _›]
   all_goals first
-    | exact ⟨regs, by simp only [*, if_true], hsub, rfl, rfl⟩
-    | exact ⟨regs.updateEq _, by simp only [*, if_true], submap_fupdate_both hsub, rfl, rfl⟩
+    | exact ⟨regs, by simp only [*, ite_true], hsub, rfl, rfl⟩
+    | exact ⟨regs.updateEq _, by simp only [*, ite_true], submap_fupdate_both hsub, rfl, rfl⟩
 
 theorem goal_shMemOp (s : StackSemStateFiniteExact width C F)
     (op : Compiler.Encoders.Asm.HolMemop) (v : Nat) (addr : Compiler.Encoders.Asm.HolAddr width) :
@@ -429,22 +429,22 @@ theorem goal_shMemOp (s : StackSemStateFiniteExact width C F)
   split at h
   · rename_i a' ha
     by_cases h0 : s.clock = 0
-    · simp only [h0, if_true, Prod.mk.injEq] at h
+    · simp only [h0, ite_true, Prod.mk.injEq] at h
       obtain ⟨rfl, rfl⟩ := h
       refine ⟨0, HolFiniteMapExact.empty, ?_, submap_empty _, hpre.buf,
         fun _ => stackBound_emptyEnv _⟩
       rw [tgt_zero, evaluate_shMemOp,
         InstCorrectSupport.wordExp_rel (instRel_res anything cr c s regs hpre.regs) _ _ ha]
-      simp only [h0, if_true]
+      simp only [h0, ite_true]
       rfl
-    · simp only [h0, if_false] at h
+    · simp only [h0, ite_false] at h
       obtain ⟨regs1, he, hsub, hbuf, hst⟩ :=
         shMemOp_res anything cr c (decClock s) t regs hpre.regs op v a' r hr h
       refine ⟨0, regs1, ?_, hsub, hbuf ▸ hpre.buf, fun _ => by
         unfold StackBound; rw [hst]; exact hpre.stack⟩
       rw [tgt_zero, evaluate_shMemOp,
         InstCorrectSupport.wordExp_rel (instRel_res anything cr c s regs hpre.regs) _ _ ha]
-      simp only [h0, if_false]
+      simp only [h0, ite_false]
       exact he
   · simp only [Prod.mk.injEq] at h
     exact absurd h.1.symm hr
@@ -473,7 +473,7 @@ theorem goal_dataBufferWrite (s : StackSemStateFiniteExact width C F) (a b : Nat
     Goal anything cr (.dataBufferWrite a b : HolProg width) s := by
   intro r t m n c regs h hr _ hpre
   rw [evaluate_dataBufferWrite] at h
-  simp only [hpre.useStack, not_true_eq_false, if_false] at h
+  simp only [hpre.useStack, not_true_eq_false, ite_false] at h
   split at h
   · rename_i w1 w2 h1 h2
     split at h
@@ -484,7 +484,7 @@ theorem goal_dataBufferWrite (s : StackSemStateFiniteExact width C F) (a b : Nat
       · show evaluate (.dataBufferWrite a b, Res anything cr c s regs) = _
         rw [evaluate_dataBufferWrite, getVar_res anything cr c s regs hpre.regs h1,
           getVar_res anything cr c s regs hpre.regs h2]
-        simp only [not_true_eq_false, if_false, hdb]
+        simp only [not_true_eq_false, ite_false, hdb]
       · have hb := hpre.buf
         simp only [wordSemBufferWrite] at hdb
         split at hdb
@@ -505,7 +505,7 @@ theorem restrictIn_submap {m1 m2 : HolFiniteMapExact Nat (WordLocW width)} (keep
   intro k v hk
   simp only [restrictIn] at hk ⊢
   split at hk
-  · rw [if_pos ‹_›]; exact h _ _ hk
+  · rw [ite_eq_left ‹_›]; exact h _ _ hk
   · simp at hk
 
 theorem goal_ffi (s : StackSemStateFiniteExact width C F) (fi : Basis.Pure.MlString.MlString)

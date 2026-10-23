@@ -54,7 +54,7 @@ private theorem memLoadHOLExact_flatRead_mutual {width : Nat} [NeZero width]
             some (((values.map flattenHOL).flatten)[n]'hn))
   case case1 =>
     intro address context hdom _hwf value hload n hn
-    simp only [memLoadHOLExact, if_pos hdom] at hload
+    simp only [memLoadHOLExact, ite_eq_left hdom] at hload
     injection hload with hvalue
     subst value
     have hn0 : n = 0 := by simpa [flattenHOL] using hn
@@ -62,7 +62,7 @@ private theorem memLoadHOLExact_flatRead_mutual {width : Nat} [NeZero width]
     simp [memLoadFlatTargetHOL, flattenHOL, hdom]
   case case2 =>
     intro address context hndom _hwf value hload n hn
-    simp only [memLoadHOLExact, if_neg hndom] at hload
+    simp only [memLoadHOLExact, ite_eq_right hndom] at hload
     contradiction
   case case3 =>
     intro address context shapes values hloads ihShapes hwf value hload n hn

@@ -472,7 +472,7 @@ private theorem structContextLookupHOL_mem_of_some
       by_cases hmatch : name = candidate
       · subst name
         simp
-      · simp only [Flapjack.Pancake.PanLang.structContextLookupHOL, if_neg hmatch] at hlookup
+      · simp only [Flapjack.Pancake.PanLang.structContextLookupHOL, ite_eq_right hmatch] at hlookup
         have htail := ih hlookup
         simp [hmatch, htail]
 

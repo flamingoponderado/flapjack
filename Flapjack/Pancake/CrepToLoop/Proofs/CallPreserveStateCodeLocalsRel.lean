@@ -140,7 +140,7 @@ theorem crepToLoopCallPreserveStateCodeLocalsRelExact
       have hmi : lns[j]'(by omega) = m := by
         have := congrArg Prod.snd hjy
         simpa only [List.getElem_zip] using this
-      have hij : i = j := (List.getElem_inj hlns).mp (hni.trans (hnm.trans hmi.symm))
+      have hij : i = j := (List.Nodup.getElem_inj hlns).mp (hni.trans (hnm.trans hmi.symm))
       subst j
       have hzipBound : i < (ns.zip lns).length := by
         simp only [List.length_zip]

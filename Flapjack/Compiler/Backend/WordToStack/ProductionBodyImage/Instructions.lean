@@ -52,9 +52,9 @@ theorem registerWriteImage {width : Nat} [NeZero width] (make : Nat → HolProg 
     (register : Nat) (frame : Nat × Nat × Nat) (image : ∀ n, OutputImage (make n)) :
     OutputImage (wRegWrite1Native make register frame) := by
   by_cases h : register / 2 < frame.1
-  · simp only [wRegWrite1Native, if_pos h]
+  · simp only [wRegWrite1Native, ite_eq_left h]
     exact image _
-  · simp only [wRegWrite1Native, if_neg h]
+  · simp only [wRegWrite1Native, ite_eq_right h]
     exact sequenceImage _ _ (image _) (stackStoreImage _ _)
 
 /-- A concrete accepted instruction produces the complete production leaf. -/

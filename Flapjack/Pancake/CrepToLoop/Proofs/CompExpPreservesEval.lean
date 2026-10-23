@@ -195,7 +195,7 @@ private theorem memLoadByte_bridge {width : Nat} [NeZero width]
   | word val =>
     simp only [hv] at h
     by_cases hd : dom (panByteAlignHOL a)
-    · rw [if_pos hd, Option.some.injEq] at h
+    · rw [ite_eq_left hd, Option.some.injEq] at h
       subst h
       have hmv := hm _ hd
       rw [hv] at hmv
@@ -207,7 +207,7 @@ private theorem memLoadByte_bridge {width : Nat} [NeZero width]
       · rw [panGetByteHOL_eq_riscvGetByteHOL]
         apply BitVec.eq_of_toNat_eq
         simp [getByteHOL8, riscvGetByteHOL, byteIndexHOL]
-    · rw [if_neg hd] at h
+    · rw [ite_eq_right hd] at h
       cases h
 
 /-- Flapjack helper (no HOL declaration): HOL's LoadByte/Load32 cases close the
@@ -358,23 +358,23 @@ private theorem memLoad32_bridge {width : Nat} [NeZero width]
     memLoad32Exact tmem tdom be a = some word := by
   rw [panMemLoad32HOL_eq_alt] at h
   by_cases ha : a.toNat % 4 = 0
-  · rw [if_pos ha] at h
+  · rw [ite_eq_left ha] at h
     cases hv : smem (panByteAlignHOL a) with
     | word val =>
       simp only [hv] at h
       by_cases hd : dom (panByteAlignHOL a)
-      · rw [if_pos hd] at h
+      · rw [ite_eq_left hd] at h
         have hmv := hm _ hd
         rw [hv] at hmv
         have htd : tdom (panByteAlignHOL a) = true := by subst hdom; exact hd
         unfold memLoad32Exact
-        rw [if_pos ((riscvAligned2_iff a).mpr ha), riscvByteAlignHOL_eq_panByteAlignHOL, ← hmv]
-        simp only [wlabWlocExact, htd, if_true, wordOfBytes32_alt]
+        rw [ite_eq_left ((riscvAligned2_iff a).mpr ha), riscvByteAlignHOL_eq_panByteAlignHOL, ← hmv]
+        simp only [wlabWlocExact, htd, ite_true, wordOfBytes32_alt]
         simp only [byte32_of_panGetByteHOL] at h
         exact h
-      · rw [if_neg hd] at h
+      · rw [ite_eq_right hd] at h
         cases h
-  · rw [if_neg ha] at h
+  · rw [ite_eq_right ha] at h
     cases h
 
 /-- `comp_exp_preserves_eval`, case `Load32 e` (`crep_to_loopProofScript.sml:772-786`
@@ -567,7 +567,7 @@ private theorem eval_setVar_untouched {width : Nat} [NeZero width] {F : Type}
   refine ⟨rfl, rfl, rfl, rfl, rfl, fun k hk => ?_⟩
   have := h k hk
   simp only [LoopSemStateFiniteExact.setVar, sptLookup_sptInsert]
-  rw [if_neg (by omega)]
+  rw [ite_eq_right (by omega)]
 
 /-- `comp_exp_preserves_eval`, case `Crepop bop es`
     (`crep_to_loopProofScript.sml:772-786` statement; case proof at 889-972),
@@ -709,7 +709,7 @@ theorem crepToLoop_comp_exp_preserves_eval_crepOp {width : Nat} [NeZero width] {
     simp only [loopNestedSeqHOL, LoopSemStateFiniteExact.evaluate_seq]
     simp only [LoopSemStateFiniteExact.evaluate, hv1, Nat.add_zero, hv2]
     simp only [LoopSemStateFiniteExact.loopArith, LoopSemStateFiniteExact.setVar,
-      sptLookup_sptInsert, if_true, show ¬ n2 = n2 + 1 by omega, if_false]
+      sptLookup_sptInsert, ite_true, show ¬ n2 = n2 + 1 by omega, ite_false]
   · simp [LoopSemStateFiniteExact.eval, LoopSemStateFiniteExact.setVar, sptLookup_sptInsert,
       wlabWlocExact, hmul]
   · refine locals_rel_update ctxt l2 _ s.locals st2.locals _ h2l ?_ ?_ ?_
@@ -730,7 +730,7 @@ theorem crepToLoop_comp_exp_preserves_eval_crepOp {width : Nat} [NeZero width] {
       exact (sptMem_sptInsert k d () _).mpr (Or.inr (sptMem_sptListInsert_of k _ _ hk))
     · intro n hn
       simp only [LoopSemStateFiniteExact.setVar, sptLookup_sptInsert]
-      rw [if_neg (by omega), if_neg (by omega), if_neg (by omega), if_neg (by omega)]
+      rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega)]
 
 /-- `comp_exp_preserves_eval`, case `Cmp cmp e e'`
     (`crep_to_loopProofScript.sml:772-786` statement; case proof at 1128-1233),
@@ -859,7 +859,7 @@ theorem crepToLoop_comp_exp_preserves_eval_cmp {width : Nat} [NeZero width] {σ 
         LoopSemStateFiniteExact.cutRes L (none, s4) := by
       rw [LoopSemStateFiniteExact.evaluate]
       simp only [s4, s3, LoopSemStateFiniteExact.setVar, LoopSemStateFiniteExact.getVarImm,
-        sptLookup_sptInsert, if_true, show ¬ n2 + 1 = n2 + 2 by omega, if_false]
+        sptLookup_sptInsert, ite_true, show ¬ n2 + 1 = n2 + 2 by omega, ite_false]
       by_cases hcmp : Compiler.Encoders.Asm.wordCmpHOL cmp w1 w2 = true <;>
         simp [hcmp, r, Compiler.Encoders.Asm.wordCmpResultHOL, LoopSemStateFiniteExact.evaluate,
           LoopSemStateFiniteExact.eval, LoopSemStateFiniteExact.setVar]
@@ -893,21 +893,21 @@ theorem crepToLoop_comp_exp_preserves_eval_cmp {width : Nat} [NeZero width] {σ 
     rw [ha1]; simp only; rw [ha2]; simp only; rw [hite]; simp only
     rw [LoopSemStateFiniteExact.evaluate]
   · have hL1 : (sptLookup (n2 + 1) L).isSome := (hLmem (n2 + 1)).mpr (Or.inr (Or.inl rfl))
-    simp only [LoopSemStateFiniteExact.eval, sptLookup_sptInter, hL1, if_true]
+    simp only [LoopSemStateFiniteExact.eval, sptLookup_sptInter, hL1, ite_true]
     simp [s4, LoopSemStateFiniteExact.setVar, sptLookup_sptInsert, wlabWlocExact, r]
   · refine ⟨h2l.1, h2l.2.1, fun k hk => ?_, fun vn val hval => ?_⟩
     · have hk' : (sptLookup k L).isSome := hk
       show (sptLookup k (sptInter s4.locals L)).isSome
-      rw [sptLookup_sptInter, if_pos hk']
+      rw [sptLookup_sptInter, ite_eq_left hk']
       exact hs4mem k hk
     · obtain ⟨n, h1, h2, h3⟩ := h2l.2.2.2 vn val hval
       have hn := h2l.2.1 vn n h1
       have hnL : (sptLookup n L).isSome := (hLmem n).mpr (Or.inr (Or.inr h2))
       refine ⟨n, h1, hnL, ?_⟩
       show sptLookup n (sptInter s4.locals L) = _
-      rw [sptLookup_sptInter, if_pos hnL]
+      rw [sptLookup_sptInter, ite_eq_left hnL]
       simp only [s4, s3, s2, LoopSemStateFiniteExact.setVar, sptLookup_sptInsert]
-      rw [if_neg (by omega), if_neg (by omega), if_neg (by omega)]
+      rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega)]
       exact h3
 
 /-! ## Op-case clause projections (flapjack-luna-c, bead `flapjack-pxn.18.5.6.33.15.6`) -/

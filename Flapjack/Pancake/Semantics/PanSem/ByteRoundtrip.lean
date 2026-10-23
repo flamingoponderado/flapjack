@@ -59,7 +59,7 @@ theorem panSetByteHOL_panGetByteHOL_toNat {width : Nat}
     calc (256 : Nat) = 2 ^ 8 := by decide
       _ ≤ 2 ^ width := Nat.pow_le_pow_right (by decide) hwidth
   cases bigEndian
-  · simp only [Bool.false_eq_true, if_false, panSetByteHOL, panGetByteHOL,
+  · simp only [Bool.false_eq_true, ite_false, panSetByteHOL, panGetByteHOL,
       BitVec.toNat_ofNat, UInt8.toNat_ofNat', Nat.mod_mod]
     have h1 : (BitVec.toNat value / 256 ^ (BitVec.toNat address % (width / 8))) % 256 <
         2 ^ width := Nat.lt_of_lt_of_le (Nat.mod_lt _ (by decide)) h8
@@ -69,7 +69,7 @@ theorem panSetByteHOL_panGetByteHOL_toNat {width : Nat}
     rw [nat_byte_reconstruct (BitVec.toNat value)
       (256 ^ (BitVec.toNat address % (width / 8)))]
     rw [Nat.mod_eq_of_lt value.isLt]
-  · simp only [if_true, panSetByteHOL, panGetByteHOL,
+  · simp only [ite_true, panSetByteHOL, panGetByteHOL,
       BitVec.toNat_ofNat, UInt8.toNat_ofNat', Nat.mod_mod]
     rw [Nat.sub_right_comm (width / 8) 1 (BitVec.toNat address % (width / 8))]
     have h1 : (BitVec.toNat value / 256 ^ (width / 8 - BitVec.toNat address % (width / 8) - 1)) % 256 <

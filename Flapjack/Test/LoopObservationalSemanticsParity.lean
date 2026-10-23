@@ -221,7 +221,7 @@ theorem semanticsDivergence :
   · exact (divergenceBranch.1 forbidden).elim
   · by_cases successful : loopHasSuccessfulRun (hooksFor divergingEvaluate)
     · exact (divergenceBranch.2 successful).elim
-    · simp only [loopSemanticsWithLub, dif_neg forbidden, dif_neg successful]
+    · simp only [loopSemanticsWithLub, dite_eq_right forbidden, dite_eq_right successful]
       congr 2
 
 theorem semanticsCanonicalDivergence :
@@ -234,8 +234,8 @@ theorem semanticsCanonicalDivergence :
     divergenceBranch.1
   have hsuccessful : ¬ loopHasSuccessfulRun (hooksFor divergingEvaluate) :=
     divergenceBranch.2
-  simp only [loopSemantics, loopSemanticsWithLub, dif_neg hforbidden,
-    dif_neg hsuccessful]
+  simp only [loopSemantics, loopSemanticsWithLub, dite_eq_right hforbidden,
+    dite_eq_right hsuccessful]
   congr 2
 
 #guard sourceClockParity

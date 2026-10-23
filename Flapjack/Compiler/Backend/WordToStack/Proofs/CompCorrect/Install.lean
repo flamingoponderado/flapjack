@@ -260,7 +260,7 @@ theorem installRelation {width : Nat} [NeZero width] {C F : Type}
       rw [sptLookup_sptInsert_same] at hm
       cases hm
       refine ⟨rfl, ?_⟩
-      rw [if_pos (by omega)]
+      rw [ite_eq_left (by omega)]
       simp [HolFiniteMapExact.updateEq, FUPDATE_HOL]
     · rw [sptLookup_sptInsert_ne _ _ _ _ hm2] at hm
       rw [henv, sptLookup_sptUnion, sptLookup_sptInterCases, sptLookup_sptInterCases] at hm
@@ -274,7 +274,7 @@ theorem installRelation {width : Nat} [NeZero width] {C F : Type}
       have hev : m % 2 = 0 ∧ 2 * k ≤ m := hd.elim (hc1 m) (hc2 m)
       obtain ⟨he, hif⟩ := rloc m v hl
       refine ⟨he, ?_⟩
-      rw [if_neg (by omega)] at hif ⊢
+      rw [ite_eq_right (by omega)] at hif ⊢
       exact hif
 
 /-- Full original comp_correct Install case (`word_to_stackProofScript.sml:6943-7070`).
@@ -327,9 +327,9 @@ theorem compCorrectInstall {width : Nat} [NeZero width] {C F : Type}
   by_cases hcond : bytes = bytes' ∧ data = data' ∧
       (holShiftSeq 1 source.compileOracle 0).1 = cfg'
   swap
-  · rw [if_neg hcond] at execution
+  · rw [ite_eq_right hcond] at execution
     exact absurd (congrArg Prod.fst execution).symm notError
-  rw [if_pos hcond] at execution
+  rw [ite_eq_left hcond] at execution
   simp only [Prod.mk.injEq] at execution
   obtain ⟨rfl, rfl⟩ := execution
   -- The target loads of the data pointer and length.
@@ -417,8 +417,8 @@ theorem compCorrectInstall {width : Nat} [NeZero width] {C F : Type}
       simp only [StackSemControl.fixClock, Nat.min_eq_right le]
     simp only [fix2]
     rw [StackSemEvaluate.evaluate_install]
-    simp only [read1, read2, read3, loaded2, hor2, r20, r19, r5, hcf, hflush, if_true, htc]
-    rw [if_pos ⟨hcond.1, hcond.2.1.trans (congrArg (fun x => x.2.2) hor2).symm, hnew⟩]
+    simp only [read1, read2, read3, loaded2, hor2, r20, r19, r5, hcf, hflush, ite_true, htc]
+    rw [ite_eq_left ⟨hcond.1, hcond.2.1.trans (congrArg (fun x => x.2.2) hor2).symm, hnew⟩]
   · simp only [compCorrectResult, Option.map_none, ne_eq, not_true_eq_false, ↓reduceIte]
     exact installRelation ac k f frame source t2 lens rel2 names hc1 hc2 env hce bm0 cfg kk2 argc
       prog rest hor (_ :: rest2) fs bm hcw cfg2 hcfg cb db hdata hdb

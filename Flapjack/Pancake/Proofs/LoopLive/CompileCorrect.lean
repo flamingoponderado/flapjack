@@ -80,7 +80,7 @@ private theorem sptSubspt_inter_lookup {width : Nat} [NeZero width]
     simp only [sptMem, sptDomain, sptLookup_sptInter]
     have : (sptLookup k l).isSome = true := hl
     simp [this, ha]
-  rw [(h k hm).2, sptLookup_sptInter, if_pos (show (sptLookup k l).isSome = true from hl), ha]
+  rw [(h k hm).2, sptLookup_sptInter, ite_eq_left (show (sptLookup k l).isSome = true from hl), ha]
 
 private theorem sptMem_sptListInsert_of_mem (k : Nat) :
     ∀ (keys : List Nat) (t : NumSet), k ∈ keys → sptMem k (sptListInsert keys t)
@@ -225,10 +225,10 @@ theorem loopLive_compile_correct_tick {width : Nat} [NeZero width] {F : Type} :
   simp only [shrinkHOL, Prod.mk.injEq] at hs
   obtain ⟨rfl, rfl⟩ := hs
   by_cases hc : v1.clock = 0
-  · simp only [evaluate, hc, if_true, Prod.mk.injEq] at he
+  · simp only [evaluate, hc, ite_true, Prod.mk.injEq] at he
     obtain ⟨rfl, rfl⟩ := he
     exact ⟨.ln, by simp [evaluate, hc], rfl⟩
-  · simp only [evaluate, hc, if_false, Prod.mk.injEq] at he
+  · simp only [evaluate, hc, ite_false, Prod.mk.injEq] at he
     obtain ⟨rfl, rfl⟩ := he
     exact ⟨locals, by simp [evaluate, hc, decClock], hsub⟩
 
@@ -553,28 +553,28 @@ private theorem sptLookup_sptDelete' {α : Type} :
   | .bn l r, n, k => by
       by_cases hn : n = 0
       · subst hn; by_cases hk : k = 0 <;> simp [sptDelete, sptLookup, hk]
-      · simp only [sptDelete, hn, if_false]
+      · simp only [sptDelete, hn, ite_false]
         by_cases he : n % 2 = 0
-        · simp only [he, if_true, sptLookup_sptMkBN]
+        · simp only [he, ite_true, sptLookup_sptMkBN]
           by_cases hk : k = 0
           · simp [sptLookup, hk] <;> omega
           · by_cases hke : k % 2 = 0
-            · simp only [sptLookup, hk, hke, if_false, if_true, sptLookup_sptDelete' l]
+            · simp only [sptLookup, hk, hke, ite_false, ite_true, sptLookup_sptDelete' l]
               by_cases h : k = n
               · subst h; simp
               · have : (k - 1) / 2 ≠ (n - 1) / 2 := by omega
                 simp [h, this]
-            · simp only [sptLookup, hk, hke, if_false]
+            · simp only [sptLookup, hk, hke, ite_false]
               have : k ≠ n := by omega
               simp [this]
-        · simp only [he, if_false, sptLookup_sptMkBN]
+        · simp only [he, ite_false, sptLookup_sptMkBN]
           by_cases hk : k = 0
           · simp [sptLookup, hk] <;> omega
           · by_cases hke : k % 2 = 0
-            · simp only [sptLookup, hk, hke, if_false, if_true]
+            · simp only [sptLookup, hk, hke, ite_false, ite_true]
               have : k ≠ n := by omega
               simp [this]
-            · simp only [sptLookup, hk, hke, if_false, sptLookup_sptDelete' r]
+            · simp only [sptLookup, hk, hke, ite_false, sptLookup_sptDelete' r]
               by_cases h : k = n
               · subst h; simp
               · have : (k - 1) / 2 ≠ (n - 1) / 2 := by omega
@@ -582,28 +582,28 @@ private theorem sptLookup_sptDelete' {α : Type} :
   | .bs l v r, n, k => by
       by_cases hn : n = 0
       · subst hn; by_cases hk : k = 0 <;> simp [sptDelete, sptLookup, hk]
-      · simp only [sptDelete, hn, if_false]
+      · simp only [sptDelete, hn, ite_false]
         by_cases he : n % 2 = 0
-        · simp only [he, if_true, sptLookup_sptMkBS]
+        · simp only [he, ite_true, sptLookup_sptMkBS]
           by_cases hk : k = 0
           · simp [sptLookup, hk] <;> omega
           · by_cases hke : k % 2 = 0
-            · simp only [sptLookup, hk, hke, if_false, if_true, sptLookup_sptDelete' l]
+            · simp only [sptLookup, hk, hke, ite_false, ite_true, sptLookup_sptDelete' l]
               by_cases h : k = n
               · subst h; simp
               · have : (k - 1) / 2 ≠ (n - 1) / 2 := by omega
                 simp [h, this]
-            · simp only [sptLookup, hk, hke, if_false]
+            · simp only [sptLookup, hk, hke, ite_false]
               have : k ≠ n := by omega
               simp [this]
-        · simp only [he, if_false, sptLookup_sptMkBS]
+        · simp only [he, ite_false, sptLookup_sptMkBS]
           by_cases hk : k = 0
           · simp [sptLookup, hk] <;> omega
           · by_cases hke : k % 2 = 0
-            · simp only [sptLookup, hk, hke, if_false, if_true]
+            · simp only [sptLookup, hk, hke, ite_false, ite_true]
               have : k ≠ n := by omega
               simp [this]
-            · simp only [sptLookup, hk, hke, if_false, sptLookup_sptDelete' r]
+            · simp only [sptLookup, hk, hke, ite_false, sptLookup_sptDelete' r]
               by_cases h : k = n
               · subst h; simp
               · have : (k - 1) / 2 ≠ (n - 1) / 2 := by omega
@@ -809,8 +809,8 @@ theorem eval_lemma {width : Nat} [NeZero width] {F : Type} :
   have hdef : (sptLookup n s.locals).isSome = true := eval_some_touched_defined s exp w he n hn
   have hv : (sptLookup n (varsOfExpHOL exp l)).isSome = true := touched_mem_varsOfExp exp l n hn
   have hm : sptMem n (sptInter s.locals (varsOfExpHOL exp l)) := by
-    simp only [sptMem, sptDomain, sptLookup_sptInter, hv, if_true]; exact hdef
-  rw [(hsub n hm).2, sptLookup_sptInter, if_pos hv]
+    simp only [sptMem, sptDomain, sptLookup_sptInter, hv, ite_true]; exact hdef
+  rw [(hsub n hm).2, sptLookup_sptInter, ite_eq_left hv]
 
 private theorem subspt_of_lookup {α : Type} {a b : Spt α}
     (h : ∀ k, sptMem k a → sptLookup k b = sptLookup k a) : sptSubspt a b := by
@@ -828,7 +828,7 @@ private theorem subspt_inter_apply {width : Nat} [NeZero width]
     {a b : Spt (WordLocW width)} {l : NumSet} (h : sptSubspt (sptInter a l) b) {k : Nat}
     (ha : sptMem k a) (hl : sptMem k l) : sptLookup k b = sptLookup k a := by
   rw [(h k ((mem_inter_iff a l k).mpr ⟨ha, hl⟩)).2, sptLookup_sptInter,
-    if_pos (show (sptLookup k l).isSome = true from hl)]
+    ite_eq_left (show (sptLookup k l).isSome = true from hl)]
 
 /-- Exact `evaluate_ind` leaf case of HOL `compile_correct` for `Assign`
     (`loop_liveProofScript.sml:17-37`; `Resume compile_correct[Assign]` at 490-509). Specializing HOL's
@@ -879,7 +879,7 @@ theorem loopLive_compile_correct_assign {width : Nat} [NeZero width] {F : Type} 
     have hka' : sptMem k v1.locals := by
       simpa [setVar, sptMem, sptDomain, sptLookup_sptInsert, hkn] using hka
     rw [subspt_inter_apply hsub hka' hkl, sptLookup_sptInter,
-      if_pos (show (sptLookup k l0).isSome = true from hkl)]
+      ite_eq_left (show (sptLookup k l0).isSome = true from hkl)]
     simp [setVar, sptLookup_sptInsert, hkn]
   | some u =>
     simp only [shrinkHOL, hn, Prod.mk.injEq] at hs
@@ -888,15 +888,15 @@ theorem loopLive_compile_correct_assign {width : Nat} [NeZero width] {F : Type} 
     refine ⟨sptInsert n w locals, by simp [evaluate, hx', setVar], ?_⟩
     refine subspt_of_lookup fun k hk => ?_
     obtain ⟨hka, hkl⟩ := (mem_inter_iff _ _ k).mp hk
-    rw [sptLookup_sptInter, if_pos (show (sptLookup k l0).isSome = true from hkl)]
+    rw [sptLookup_sptInter, ite_eq_left (show (sptLookup k l0).isSome = true from hkl)]
     by_cases hkn : k = n
     · subst hkn; simp [setVar, sptLookup_sptInsert]
     · have hka' : sptMem k v1.locals := by
         simpa [setVar, sptMem, sptDomain, sptLookup_sptInsert, hkn] using hka
       have hkd : sptMem k (sptDelete n l0) := by
-        simp only [sptMem, sptDomain, sptLookup_sptDelete', hkn, if_false]; exact hkl
+        simp only [sptMem, sptDomain, sptLookup_sptDelete', hkn, ite_false]; exact hkl
       have hkv := (vars_of_exp_mono x (sptDelete n l0) k hkd).1
-      simp only [setVar, sptLookup_sptInsert, hkn, if_false]
+      simp only [setVar, sptLookup_sptInsert, hkn, ite_false]
       exact subspt_inter_apply hsub hka' hkv
 
 /-- Exact `evaluate_ind` leaf case of HOL `compile_correct` for `SetGlobal`
@@ -943,7 +943,7 @@ theorem loopLive_compile_correct_setGlobal {width : Nat} [NeZero width] {F : Typ
   refine ⟨locals, by simp [evaluate, hx', setGlobals], ?_⟩
   refine subspt_of_lookup fun k hk => ?_
   obtain ⟨hka, hkl⟩ := (mem_inter_iff _ _ k).mp hk
-  rw [sptLookup_sptInter, if_pos (show (sptLookup k l0).isSome = true from hkl)]
+  rw [sptLookup_sptInter, ite_eq_left (show (sptLookup k l0).isSome = true from hkl)]
   exact subspt_inter_apply hsub hka ((vars_of_exp_mono x l0 k hkl).1)
 
 /-- Exact `evaluate_ind` leaf case of HOL `compile_correct` for `LocValue`
@@ -980,7 +980,7 @@ theorem loopLive_compile_correct_locValue {width : Nat} [NeZero width] {F : Type
       | some .error => new_locals = s1.locals := by
   intro r m v1 res s1 lt locals prog1 l1 l0 ⟨he, hne, hs, hsub⟩
   by_cases hc : (sptLookup m v1.code).isSome = true
-  · simp only [evaluate, hc, if_true, Prod.mk.injEq] at he
+  · simp only [evaluate, hc, ite_true, Prod.mk.injEq] at he
     obtain ⟨rfl, rfl⟩ := he
     cases hr : sptLookup r l0 with
     | none =>
@@ -993,7 +993,7 @@ theorem loopLive_compile_correct_locValue {width : Nat} [NeZero width] {F : Type
       have hka' : sptMem k v1.locals := by
         simpa [setVar, sptMem, sptDomain, sptLookup_sptInsert, hkn] using hka
       rw [subspt_inter_apply hsub hka' hkl, sptLookup_sptInter,
-        if_pos (show (sptLookup k l0).isSome = true from hkl)]
+        ite_eq_left (show (sptLookup k l0).isSome = true from hkl)]
       simp [setVar, sptLookup_sptInsert, hkn]
     | some u =>
       simp only [shrinkHOL, hr, Prod.mk.injEq] at hs
@@ -1001,14 +1001,14 @@ theorem loopLive_compile_correct_locValue {width : Nat} [NeZero width] {F : Type
       refine ⟨sptInsert r (.loc m 0) locals, by simp [evaluate, hc, setVar], ?_⟩
       refine subspt_of_lookup fun k hk => ?_
       obtain ⟨hka, hkl⟩ := (mem_inter_iff _ _ k).mp hk
-      rw [sptLookup_sptInter, if_pos (show (sptLookup k l0).isSome = true from hkl)]
+      rw [sptLookup_sptInter, ite_eq_left (show (sptLookup k l0).isSome = true from hkl)]
       by_cases hkn : k = r
       · subst hkn; simp [setVar, sptLookup_sptInsert]
       · have hka' : sptMem k v1.locals := by
           simpa [setVar, sptMem, sptDomain, sptLookup_sptInsert, hkn] using hka
         have hkd : sptMem k (sptDelete r l0) := by
-          simp only [sptMem, sptDomain, sptLookup_sptDelete', hkn, if_false]; exact hkl
-        simp only [setVar, sptLookup_sptInsert, hkn, if_false]
+          simp only [sptMem, sptDomain, sptLookup_sptDelete', hkn, ite_false]; exact hkl
+        simp only [setVar, sptLookup_sptInsert, hkn, ite_false]
         exact subspt_inter_apply hsub hka' hkd
   · simp [evaluate, hc] at he
     exact absurd he.1.symm hne
@@ -1032,7 +1032,7 @@ private theorem post_none_same {width : Nat} [NeZero width]
     (hsub : ∀ k, sptMem k l0 → sptMem k l1) : sptSubspt (sptInter a l0) b :=
   subspt_of_lookup fun k hk => by
     obtain ⟨hka, hkl⟩ := (mem_inter_iff _ _ k).mp hk
-    rw [sptLookup_sptInter, if_pos (show (sptLookup k l0).isSome = true from hkl)]
+    rw [sptLookup_sptInter, ite_eq_left (show (sptLookup k l0).isSome = true from hkl)]
     exact subspt_inter_apply h hka (hsub k hkl)
 
 private theorem post_setVar {width : Nat} [NeZero width]
@@ -1042,11 +1042,11 @@ private theorem post_setVar {width : Nat} [NeZero width]
     sptSubspt (sptInter (sptInsert y val a) l0) (sptInsert y val b) :=
   subspt_of_lookup fun k hk => by
     obtain ⟨hka, hkl⟩ := (mem_inter_iff _ _ k).mp hk
-    rw [sptLookup_sptInter, if_pos (show (sptLookup k l0).isSome = true from hkl)]
+    rw [sptLookup_sptInter, ite_eq_left (show (sptLookup k l0).isSome = true from hkl)]
     by_cases hky : k = y
     · subst hky; simp [sptLookup_sptInsert]
     · have hka' : sptMem k a := by simpa [sptMem, sptDomain, sptLookup_sptInsert, hky] using hka
-      simp only [sptLookup_sptInsert, hky, if_false]
+      simp only [sptLookup_sptInsert, hky, ite_false]
       exact subspt_inter_apply h hka' (hsub k hky hkl)
 
 /-- Exact `evaluate_ind` leaf case of HOL `compile_correct` for `Store`
@@ -1094,7 +1094,7 @@ theorem loopLive_compile_correct_store {width : Nat} [NeZero width] {F : Type} :
   | none => simp [evaluate, hx, hn] at he; exact absurd he.1.symm hne
   | some w =>
   by_cases hd : v1.mdomain adr = true
-  · simp only [evaluate, hx, hn, memStore, hd, if_true, Prod.mk.injEq] at he
+  · simp only [evaluate, hx, hn, memStore, hd, ite_true, Prod.mk.injEq] at he
     obtain ⟨rfl, rfl⟩ := he
     have hx' := eval_lemma v1 e (.word adr) (sptInsert n () l0) locals ⟨hx, hsub⟩
     have hn' := lookup_of_subspt hsub
@@ -1266,7 +1266,7 @@ theorem loopLive_compile_correct_load32 {width : Nat} [NeZero width] {F : Type} 
   obtain ⟨rfl, rfl⟩ := he
   refine ⟨sptInsert y (.word (b.setWidth width)) locals, by simp [evaluate, ha', hm, setVar], ?_⟩
   refine post_setVar y _ hsub fun k hky hk => mem_insert_of' a ?_
-  simp only [sptMem, sptDomain, sptLookup_sptDelete', hky, if_false]; exact hk
+  simp only [sptMem, sptDomain, sptLookup_sptDelete', hky, ite_false]; exact hk
 
 /-- Exact `evaluate_ind` leaf case of HOL `compile_correct` for `LoadByte`
     (`loop_liveProofScript.sml:17-37`; `Resume compile_correct[LoadByte]` at 747-754). Specializing HOL's
@@ -1317,7 +1317,7 @@ theorem loopLive_compile_correct_loadByte {width : Nat} [NeZero width] {F : Type
   obtain ⟨rfl, rfl⟩ := he
   refine ⟨sptInsert y (.word (b.setWidth width)) locals, by simp [evaluate, ha', hm, setVar], ?_⟩
   refine post_setVar y _ hsub fun k hky hk => mem_insert_of' a ?_
-  simp only [sptMem, sptDomain, sptLookup_sptDelete', hky, if_false]; exact hk
+  simp only [sptMem, sptDomain, sptLookup_sptDelete', hky, ite_false]; exact hk
 
 /-! ## Primitive / Arith / ShMem / FFI cases -/
 
@@ -1421,13 +1421,13 @@ theorem loopLive_compile_correct_primitive {width : Nat} [NeZero width] {F : Typ
   | none => simp [evaluate, hg, hp] at he; exact absurd he.1.symm hne
   | some rws =>
   by_cases hl : lhss.length = rws.length
-  · simp only [evaluate, hg, hp, hl, if_true, Prod.mk.injEq] at he
+  · simp only [evaluate, hg, hp, hl, ite_true, Prod.mk.injEq] at he
     obtain ⟨rfl, rfl⟩ := he
     have hg' := get_vars_subspt rhss ws v1 _ locals ⟨hg, hsub⟩
     refine ⟨sptAlistInsert lhss rws locals, by simp [evaluate, hg', hp, hl, setVars], ?_⟩
     refine subspt_of_lookup fun k hk => ?_
     obtain ⟨hka, hkl⟩ := (mem_inter_iff _ _ k).mp hk
-    rw [sptLookup_sptInter, if_pos (show (sptLookup k l0).isSome = true from hkl)]
+    rw [sptLookup_sptInter, ite_eq_left (show (sptLookup k l0).isSome = true from hkl)]
     simp only [setVars]
     rw [lookup_alist_insert_any, lookup_alist_insert_any]
     cases hz : holAlookup (lhss.zip rws) k with
@@ -1438,7 +1438,7 @@ theorem loopLive_compile_correct_primitive {width : Nat} [NeZero width] {F : Typ
       have hka' : sptMem k v1.locals := by
         simpa [setVars, sptMem, sptDomain, lookup_alist_insert_any, hz] using hka
       have hkd : sptMem k (sptListDelete lhss l0) := by
-        simp only [sptMem, sptDomain, sptLookup_sptListDelete, hkn, if_false]; exact hkl
+        simp only [sptMem, sptDomain, sptLookup_sptListDelete, hkn, ite_false]; exact hkl
       exact subspt_inter_apply hsub hka' (sptMem_sptListInsert_of k rhss _ hkd)
   · simp [evaluate, hg, hp, hl] at he; exact absurd he.1.symm hne
 
@@ -1484,7 +1484,7 @@ theorem loopLive_compile_correct_arith {width : Nat} [NeZero width] {F : Type} :
   simp only [evaluate, hA, Prod.mk.injEq] at he
   obtain ⟨rfl, rfl⟩ := he
   have hdel : ∀ {k x : Nat} {t : NumSet}, k ≠ x → sptMem k t → sptMem k (sptDelete x t) :=
-    fun hkx h => by simp only [sptMem, sptDomain, sptLookup_sptDelete', hkx, if_false]; exact h
+    fun hkx h => by simp only [sptMem, sptDomain, sptLookup_sptDelete', hkx, ite_false]; exact h
   cases a with
   | div r1 r2 r3 =>
     simp only [arithVarsHOL] at hsub
@@ -1492,9 +1492,9 @@ theorem loopLive_compile_correct_arith {width : Nat} [NeZero width] {F : Type} :
     split at hA
     · rename_i q w2 h3 h2
       by_cases hq0 : q = 0
-      · rw [if_neg (by simpa using hq0)] at hA; cases hA
+      · rw [ite_eq_right (by simpa using hq0)] at hA; cases hA
       have hq : q ≠ 0 := hq0
-      · rw [if_pos hq, Option.some.injEq] at hA
+      · rw [ite_eq_left hq, Option.some.injEq] at hA
         subst hA
         have h3' := lookup_of_subspt hsub (mem_insert_of' r2 (mem_insert_self' r3 _)) h3
         have h2' := lookup_of_subspt hsub (mem_insert_self' r2 _) h2
@@ -1561,17 +1561,17 @@ private theorem shMemLoad_frame {width : Nat} [NeZero width] {F : Type}
       (shMemLoad v addr nb s).1 = some .error := by
   unfold shMemLoad
   by_cases hnb : nb = 0
-  · simp only [hnb, if_true]
+  · simp only [hnb, ite_true]
     by_cases hd : s.shMdomain addr = true
-    · simp only [hd, if_true]
+    · simp only [hd, ite_true]
       cases hf : callFFIHOL s.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 0]
           (panWordToBytesHOL addr false) with
       | final e => exact Or.inr (Or.inl ⟨e, rfl, rfl⟩)
       | ret f b => exact Or.inl ⟨_, f, rfl, rfl⟩
     · simp [hd]
-  · simp only [hnb, if_false]
+  · simp only [hnb, ite_false]
     by_cases hd : s.shMdomain (riscvByteAlignHOL addr) = true
-    · simp only [hd, if_true]
+    · simp only [hd, ite_true]
       cases hf : callFFIHOL s.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 nb]
           (panWordToBytesHOL addr false) with
       | final e => exact Or.inr (Or.inl ⟨e, rfl, rfl⟩)
@@ -1598,17 +1598,17 @@ private theorem shMemStore_frame {width : Nat} [NeZero width] {F : Type}
     | word w =>
       simp only
       by_cases hnb : nb = 0
-      · simp only [hnb, if_true]
+      · simp only [hnb, ite_true]
         by_cases hd : s.shMdomain addr = true
-        · simp only [hd, if_true]
+        · simp only [hd, ite_true]
           cases hf : callFFIHOL s.ffi (.sharedMem .mappedWrite) [BitVec.ofNat 8 0]
               (panWordToBytesHOL w false ++ panWordToBytesHOL addr false) with
           | final e => exact Or.inr (Or.inl ⟨e, rfl, rfl⟩)
           | ret f b => exact Or.inl ⟨f, rfl, rfl⟩
         · simp [hd]
-      · simp only [hnb, if_false]
+      · simp only [hnb, ite_false]
         by_cases hd : s.shMdomain (riscvByteAlignHOL addr) = true
-        · simp only [hd, if_true]
+        · simp only [hd, ite_true]
           cases hf : callFFIHOL s.ffi (.sharedMem .mappedWrite) [BitVec.ofNat 8 nb]
               ((panWordToBytesHOL w false).take nb ++ panWordToBytesHOL addr false) with
           | final e => exact Or.inr (Or.inl ⟨e, rfl, rfl⟩)
@@ -1668,119 +1668,119 @@ theorem loopLive_compile_correct_shMem {width : Nat} [NeZero width] {F : Type} :
   have hr' := lookup_of_subspt hsub (hsubr r (mem_insert_self' r l0)) hrv
   cases op with
   | load =>
-    simp only [evaluate, hx, Compiler.Encoders.Asm.asmIsLoad, if_true, hrv, shMemOp] at he
+    simp only [evaluate, hx, Compiler.Encoders.Asm.asmIsLoad, ite_true, hrv, shMemOp] at he
     rcases shMemLoad_frame r addr 0 v1 locals with ⟨val, ffi', h1, h2⟩ | ⟨e, h1, h2⟩ | h1
     · rw [h1, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
       refine ⟨sptInsert r val locals, ?_, ?_⟩
-      · simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, if_true, hr', shMemOp, h2]; rfl
+      · simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, ite_true, hr', shMemOp, h2]; rfl
       · exact post_setVar r val hsub fun k hk hl => hsubr k (mem_insert_of' r hl)
     · rw [h1, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
-      exact ⟨_, by simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, if_true, hr', shMemOp, h2]; rfl, rfl⟩
+      exact ⟨_, by simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, ite_true, hr', shMemOp, h2]; rfl, rfl⟩
     · rw [he] at h1; exact absurd h1 hne
   | store =>
     cases rv with
     | loc _ _ =>
       simp [evaluate, hx, Compiler.Encoders.Asm.asmIsLoad, hrv] at he; exact absurd he.1.symm hne
     | word _ =>
-    simp only [evaluate, hx, Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, if_false, hrv, shMemOp] at he
+    simp only [evaluate, hx, Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, ite_false, hrv, shMemOp] at he
     rcases shMemStore_frame r addr 0 v1 locals (by rw [hr', hrv]) with ⟨ffi', h1, h2⟩ | ⟨e, h1, h2⟩ | h1
     · rw [h1, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
       refine ⟨locals, ?_, ?_⟩
-      · simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, if_false, hr', shMemOp, h2]
+      · simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, ite_false, hr', shMemOp, h2]
       · exact post_none_same hsub fun k hk => hsubr k (mem_insert_of' r hk)
     · rw [h1, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
-      exact ⟨_, by simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, if_false, hr',
+      exact ⟨_, by simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, ite_false, hr',
         shMemOp, h2]; rfl, rfl⟩
     · rw [he] at h1; exact absurd h1 hne
   | load8 =>
-    simp only [evaluate, hx, Compiler.Encoders.Asm.asmIsLoad, if_true, hrv, shMemOp] at he
+    simp only [evaluate, hx, Compiler.Encoders.Asm.asmIsLoad, ite_true, hrv, shMemOp] at he
     rcases shMemLoad_frame r addr 1 v1 locals with ⟨val, ffi', h1, h2⟩ | ⟨e, h1, h2⟩ | h1
     · rw [h1, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
       refine ⟨sptInsert r val locals, ?_, ?_⟩
-      · simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, if_true, hr', shMemOp, h2]; rfl
+      · simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, ite_true, hr', shMemOp, h2]; rfl
       · exact post_setVar r val hsub fun k hk hl => hsubr k (mem_insert_of' r hl)
     · rw [h1, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
-      exact ⟨_, by simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, if_true, hr', shMemOp, h2]; rfl, rfl⟩
+      exact ⟨_, by simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, ite_true, hr', shMemOp, h2]; rfl, rfl⟩
     · rw [he] at h1; exact absurd h1 hne
   | store8 =>
     cases rv with
     | loc _ _ =>
       simp [evaluate, hx, Compiler.Encoders.Asm.asmIsLoad, hrv] at he; exact absurd he.1.symm hne
     | word _ =>
-    simp only [evaluate, hx, Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, if_false, hrv, shMemOp] at he
+    simp only [evaluate, hx, Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, ite_false, hrv, shMemOp] at he
     rcases shMemStore_frame r addr 1 v1 locals (by rw [hr', hrv]) with ⟨ffi', h1, h2⟩ | ⟨e, h1, h2⟩ | h1
     · rw [h1, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
       refine ⟨locals, ?_, ?_⟩
-      · simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, if_false, hr', shMemOp, h2]
+      · simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, ite_false, hr', shMemOp, h2]
       · exact post_none_same hsub fun k hk => hsubr k (mem_insert_of' r hk)
     · rw [h1, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
-      exact ⟨_, by simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, if_false, hr',
+      exact ⟨_, by simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, ite_false, hr',
         shMemOp, h2]; rfl, rfl⟩
     · rw [he] at h1; exact absurd h1 hne
   | load16 =>
-    simp only [evaluate, hx, Compiler.Encoders.Asm.asmIsLoad, if_true, hrv, shMemOp] at he
+    simp only [evaluate, hx, Compiler.Encoders.Asm.asmIsLoad, ite_true, hrv, shMemOp] at he
     rcases shMemLoad_frame r addr 2 v1 locals with ⟨val, ffi', h1, h2⟩ | ⟨e, h1, h2⟩ | h1
     · rw [h1, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
       refine ⟨sptInsert r val locals, ?_, ?_⟩
-      · simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, if_true, hr', shMemOp, h2]; rfl
+      · simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, ite_true, hr', shMemOp, h2]; rfl
       · exact post_setVar r val hsub fun k hk hl => hsubr k (mem_insert_of' r hl)
     · rw [h1, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
-      exact ⟨_, by simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, if_true, hr', shMemOp, h2]; rfl, rfl⟩
+      exact ⟨_, by simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, ite_true, hr', shMemOp, h2]; rfl, rfl⟩
     · rw [he] at h1; exact absurd h1 hne
   | store16 =>
     cases rv with
     | loc _ _ =>
       simp [evaluate, hx, Compiler.Encoders.Asm.asmIsLoad, hrv] at he; exact absurd he.1.symm hne
     | word _ =>
-    simp only [evaluate, hx, Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, if_false, hrv, shMemOp] at he
+    simp only [evaluate, hx, Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, ite_false, hrv, shMemOp] at he
     rcases shMemStore_frame r addr 2 v1 locals (by rw [hr', hrv]) with ⟨ffi', h1, h2⟩ | ⟨e, h1, h2⟩ | h1
     · rw [h1, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
       refine ⟨locals, ?_, ?_⟩
-      · simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, if_false, hr', shMemOp, h2]
+      · simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, ite_false, hr', shMemOp, h2]
       · exact post_none_same hsub fun k hk => hsubr k (mem_insert_of' r hk)
     · rw [h1, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
-      exact ⟨_, by simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, if_false, hr',
+      exact ⟨_, by simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, ite_false, hr',
         shMemOp, h2]; rfl, rfl⟩
     · rw [he] at h1; exact absurd h1 hne
   | load32 =>
-    simp only [evaluate, hx, Compiler.Encoders.Asm.asmIsLoad, if_true, hrv, shMemOp] at he
+    simp only [evaluate, hx, Compiler.Encoders.Asm.asmIsLoad, ite_true, hrv, shMemOp] at he
     rcases shMemLoad_frame r addr 4 v1 locals with ⟨val, ffi', h1, h2⟩ | ⟨e, h1, h2⟩ | h1
     · rw [h1, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
       refine ⟨sptInsert r val locals, ?_, ?_⟩
-      · simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, if_true, hr', shMemOp, h2]; rfl
+      · simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, ite_true, hr', shMemOp, h2]; rfl
       · exact post_setVar r val hsub fun k hk hl => hsubr k (mem_insert_of' r hl)
     · rw [h1, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
-      exact ⟨_, by simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, if_true, hr', shMemOp, h2]; rfl, rfl⟩
+      exact ⟨_, by simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, ite_true, hr', shMemOp, h2]; rfl, rfl⟩
     · rw [he] at h1; exact absurd h1 hne
   | store32 =>
     cases rv with
     | loc _ _ =>
       simp [evaluate, hx, Compiler.Encoders.Asm.asmIsLoad, hrv] at he; exact absurd he.1.symm hne
     | word _ =>
-    simp only [evaluate, hx, Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, if_false, hrv, shMemOp] at he
+    simp only [evaluate, hx, Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, ite_false, hrv, shMemOp] at he
     rcases shMemStore_frame r addr 4 v1 locals (by rw [hr', hrv]) with ⟨ffi', h1, h2⟩ | ⟨e, h1, h2⟩ | h1
     · rw [h1, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
       refine ⟨locals, ?_, ?_⟩
-      · simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, if_false, hr', shMemOp, h2]
+      · simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, ite_false, hr', shMemOp, h2]
       · exact post_none_same hsub fun k hk => hsubr k (mem_insert_of' r hk)
     · rw [h1, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
-      exact ⟨_, by simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, if_false, hr',
+      exact ⟨_, by simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, ite_false, hr',
         shMemOp, h2]; rfl, rfl⟩
     · rw [he] at h1; exact absurd h1 hne
 
@@ -1888,9 +1888,9 @@ theorem loopLive_compile_correct_ffi {width : Nat} [NeZero width] {F : Type} :
       obtain ⟨hk1, hkl⟩ := (mem_inter_iff _ _ k).mp hk
       obtain ⟨hkv, hkc⟩ := (mem_inter_iff _ _ k).mp hk1
       have hkcl : sptMem k (sptInter cs l0) := (mem_inter_iff _ _ k).mpr ⟨hkc, hkl⟩
-      rw [sptLookup_sptInter, if_pos (show (sptLookup k (sptInter cs l0)).isSome = true from hkcl),
-        sptLookup_sptInter, if_pos (show (sptLookup k l0).isSome = true from hkl),
-        sptLookup_sptInter, if_pos (show (sptLookup k cs).isSome = true from hkc)]
+      rw [sptLookup_sptInter, ite_eq_left (show (sptLookup k (sptInter cs l0)).isSome = true from hkcl),
+        sptLookup_sptInter, ite_eq_left (show (sptLookup k l0).isSome = true from hkl),
+        sptLookup_sptInter, ite_eq_left (show (sptLookup k cs).isSome = true from hkc)]
       exact subspt_inter_apply hsub hkv (hin hkcl)
 
 /-- Flapjack helper (no HOL declaration): the branch-independent tail of HOL's
@@ -1945,10 +1945,10 @@ private theorem loopLive_if_branch {width : Nat} [NeZero width] {F : Type}
       simp only [cutRes, cutState_of_subset liveOut sc hS] at he
       simp only [cutRes, cutState_of_subset (sptInter l0 liveOut) { sc with locals := nl } hS']
       by_cases hz : sc.clock = 0
-      · simp only [hz, if_true, Prod.mk.injEq] at he ⊢
+      · simp only [hz, ite_true, Prod.mk.injEq] at he ⊢
         obtain ⟨rfl, rfl⟩ := he
         exact ⟨.ln, by constructor <;> rfl, rfl⟩
-      · simp only [hz, if_false, Prod.mk.injEq] at he ⊢
+      · simp only [hz, ite_false, Prod.mk.injEq] at he ⊢
         obtain ⟨rfl, rfl⟩ := he
         refine ⟨sptInter nl (sptInter l0 liveOut), by constructor <;> rfl, ?_⟩
         refine subspt_of_lookup fun k hk => ?_
@@ -1957,7 +1957,7 @@ private theorem loopLive_if_branch {width : Nat} [NeZero width] {F : Type}
         have hkL : sptMem k (sptInter l0 liveOut) := (mem_inter_iff _ _ k).mpr ⟨hk0, hkl⟩
         have hk0' : (sptLookup k l0).isSome = true := hk0
         have hkl' : (sptLookup k liveOut).isSome = true := hkl
-        simp only [decClock, sptLookup_sptInter, hk0', hkl', if_true]
+        simp only [decClock, sptLookup_sptInter, hk0', hkl', ite_true]
         exact subspt_inter_apply hp hks hkL
     · simp [cutRes, cutState_eq_none_of_not_subset liveOut sc hS] at he
       exact absurd he.1.symm hne
@@ -2024,10 +2024,10 @@ private theorem loopLive_cutRes_tail {width : Nat} [NeZero width] {F : Type}
       simp only [cutRes, cutState_of_subset liveOut sc hS] at he
       simp only [cutRes, cutState_of_subset (sptInter l0 liveOut) { sc with locals := nl } hS']
       by_cases hz : sc.clock = 0
-      · simp only [hz, if_true, Prod.mk.injEq] at he ⊢
+      · simp only [hz, ite_true, Prod.mk.injEq] at he ⊢
         obtain ⟨rfl, rfl⟩ := he
         exact ⟨.ln, by constructor <;> rfl, rfl⟩
-      · simp only [hz, if_false, Prod.mk.injEq] at he ⊢
+      · simp only [hz, ite_false, Prod.mk.injEq] at he ⊢
         obtain ⟨rfl, rfl⟩ := he
         refine ⟨sptInter nl (sptInter l0 liveOut), by constructor <;> rfl, ?_⟩
         refine subspt_of_lookup fun k hk => ?_
@@ -2036,7 +2036,7 @@ private theorem loopLive_cutRes_tail {width : Nat} [NeZero width] {F : Type}
         have hkL : sptMem k (sptInter l0 liveOut) := (mem_inter_iff _ _ k).mpr ⟨hk0, hkl⟩
         have hk0' : (sptLookup k l0).isSome = true := hk0
         have hkl' : (sptLookup k liveOut).isSome = true := hkl
-        simp only [decClock, sptLookup_sptInter, hk0', hkl', if_true]
+        simp only [decClock, sptLookup_sptInter, hk0', hkl', ite_true]
         exact subspt_inter_apply hp hks hkL
     · simp [cutRes, cutState_eq_none_of_not_subset liveOut sc hS] at he
       exact absurd he.1.symm hne
@@ -2125,10 +2125,10 @@ theorem loopLive_compile_correct_if {width : Nat} [NeZero width] {F : Type} :
   simp only [evaluate, hx, hy] at he
   simp only [evaluate, hx', hy']
   by_cases hb : Compiler.Encoders.Asm.wordCmpHOL cmp x y = true
-  · simp only [hb, if_true] at he ih' ⊢
+  · simp only [hb, ite_true] at he ih' ⊢
     exact loopLive_if_branch c1 p1' v1 lt l1' l0 liveOut locals res s1 ih' h1s
       (post_none_same hsub fun k hk => mem_insert_of' r1 (hmem (hmeml hk _) _)) he hne
-  · simp only [hb, if_false, Bool.false_eq_true] at he ih' ⊢
+  · simp only [hb, ite_false, Bool.false_eq_true] at he ih' ⊢
     exact loopLive_if_branch c2 p2' v1 lt l2' l0 liveOut locals res s1 ih' h2s
       (post_none_same hsub fun k hk => mem_insert_of' r1 (hmem (hmem hk _) _)) he hne
 
@@ -2294,7 +2294,7 @@ theorem loopLive_compile_correct_call {width : Nat} [NeZero width] {F : Type} :
       simp only [evaluate]
       rw [hg']
       simp [hfc, hz]
-    · simp only [evaluate, hg, hfc, hz, Option.isSome_none, Bool.false_eq_true, if_false,
+    · simp only [evaluate, hg, hfc, hz, Option.isSome_none, Bool.false_eq_true, ite_false,
         dite_false] at he
       rcases hc : evaluate prog { decClock v1 with locals := env } with ⟨rc, sc⟩
       rw [hc] at he
@@ -2308,7 +2308,7 @@ theorem loopLive_compile_correct_call {width : Nat} [NeZero width] {F : Type} :
         subst hr
         simp only [evaluate]
         rw [hg']
-        simp only [hfc, hz, Option.isSome_none, Bool.false_eq_true, if_false, dite_false, hc']
+        simp only [hfc, hz, Option.isSome_none, Bool.false_eq_true, ite_false, dite_false, hc']
       rcases rc with _ | r
       · simp at he; exact absurd he.1.symm hne
       · cases r with
@@ -2365,7 +2365,7 @@ theorem loopLive_compile_correct_call {width : Nat} [NeZero width] {F : Type} :
         refine ⟨.ln, ?_, rfl⟩
         simp only [evaluate]
         rw [hg']
-        simp only [hfc, hnd, not_true_eq_false, if_false]
+        simp only [hfc, hnd, not_true_eq_false, ite_false]
         rw [cutRes_none_of_cut hcut']
         simp [hz]
       · have hc0 : cutRes live (none, v1) =
@@ -2377,7 +2377,7 @@ theorem loopLive_compile_correct_call {width : Nat} [NeZero width] {F : Type} :
           rw [cutRes_none_of_cut hcut']; simp [hz]
         rcases hc : evaluate prog { decClock { v1 with locals := sptInter v1.locals live } with locals := env } with ⟨rc, st⟩
         have hc' : evaluate prog { decClock { v1 with locals := sptInter locals K } with locals := env } = (rc, st) := hc
-        simp only [evaluate, hg, hfc, hnd, not_true_eq_false, if_false] at he
+        simp only [evaluate, hg, hfc, hnd, not_true_eq_false, ite_false] at he
         rw [hc0] at he
         simp only at he
         rw [fix_clock_evaluate, hc] at he
@@ -2391,27 +2391,27 @@ theorem loopLive_compile_correct_call {width : Nat} [NeZero width] {F : Type} :
           simp only [Prod.mk.injEq] at he
           obtain ⟨rfl, rfl⟩ := he
           exact ⟨st.locals, by
-            simp only [evaluate]; rw [hg']; simp only [hfc, hnd, not_true_eq_false, if_false]; rw [hc0']; simp only; rw [fix_clock_evaluate, hc'], rfl⟩
+            simp only [evaluate]; rw [hg']; simp only [hfc, hnd, not_true_eq_false, ite_false]; rw [hc0']; simp only; rw [fix_clock_evaluate, hc'], rfl⟩
         | finalFfi e =>
           simp only [Prod.mk.injEq] at he
           obtain ⟨rfl, rfl⟩ := he
           exact ⟨st.locals, by
-            simp only [evaluate]; rw [hg']; simp only [hfc, hnd, not_true_eq_false, if_false]; rw [hc0']; simp only; rw [fix_clock_evaluate, hc'], rfl⟩
+            simp only [evaluate]; rw [hg']; simp only [hfc, hnd, not_true_eq_false, ite_false]; rw [hc0']; simp only; rw [fix_clock_evaluate, hc'], rfl⟩
         | exception w =>
           simp only [Prod.mk.injEq] at he
           obtain ⟨rfl, rfl⟩ := he
           exact ⟨.ln, by
-            simp only [evaluate]; rw [hg']; simp only [hfc, hnd, not_true_eq_false, if_false]; rw [hc0']; simp only; rw [fix_clock_evaluate, hc'], rfl⟩
+            simp only [evaluate]; rw [hg']; simp only [hfc, hnd, not_true_eq_false, ite_false]; rw [hc0']; simp only; rw [fix_clock_evaluate, hc'], rfl⟩
         | result retvs =>
           by_cases hlen : retvs.length = ns.length
-          · simp only [hlen, ne_eq, not_true_eq_false, if_false, Prod.mk.injEq] at he
+          · simp only [hlen, ne_eq, not_true_eq_false, ite_false, Prod.mk.injEq] at he
             obtain ⟨rfl, rfl⟩ := he
             refine ⟨sptAlistInsert ns retvs (sptInter locals K), ?_, ?_⟩
-            · simp only [evaluate]; rw [hg']; simp only [hfc, hnd, not_true_eq_false, if_false]; rw [hc0']; simp only; rw [fix_clock_evaluate, hc']
+            · simp only [evaluate]; rw [hg']; simp only [hfc, hnd, not_true_eq_false, ite_false]; rw [hc0']; simp only; rw [fix_clock_evaluate, hc']
               simp [hlen, setVars, decClock]
             · refine subspt_of_lookup fun k hk => ?_
               obtain ⟨hka, hkl⟩ := (mem_inter_iff _ _ k).mp hk
-              rw [sptLookup_sptInter, if_pos (show (sptLookup k l0).isSome = true from hkl)]
+              rw [sptLookup_sptInter, ite_eq_left (show (sptLookup k l0).isSome = true from hkl)]
               simp only [setVars, decClock]
               rw [lookup_alist_insert_any, lookup_alist_insert_any]
               cases hz2 : holAlookup (ns.zip retvs) k with
@@ -2424,12 +2424,12 @@ theorem loopLive_compile_correct_call {width : Nat} [NeZero width] {F : Type} :
                 obtain ⟨hkv, hklv⟩ := (mem_inter_iff _ _ k).mp hka'
                 have hkK : sptMem k K := by
                   rw [← hKd]
-                  simp only [sptMem, sptDomain, sptLookup_sptListDelete, hkn, if_false]
+                  simp only [sptMem, sptDomain, sptLookup_sptListDelete, hkn, ite_false]
                   exact (mem_inter_iff _ _ k).mpr ⟨hkl, hklv⟩
-                rw [sptLookup_sptInter, if_pos (show (sptLookup k K).isSome = true from hkK),
-                  sptLookup_sptInter, if_pos (show (sptLookup k live).isSome = true from hklv)]
+                rw [sptLookup_sptInter, ite_eq_left (show (sptLookup k K).isSome = true from hkK),
+                  sptLookup_sptInter, ite_eq_left (show (sptLookup k live).isSome = true from hklv)]
                 exact subspt_inter_apply hsub hkv (hK hkK)
-          · simp only [hlen, ne_eq, not_false_eq_true, if_true, Prod.mk.injEq] at he
+          · simp only [hlen, ne_eq, not_false_eq_true, ite_true, Prod.mk.injEq] at he
             exact absurd he.1.symm hne
     | some hd =>
       obtain ⟨e, h, r, lo⟩ := hd
@@ -2455,7 +2455,7 @@ theorem loopLive_compile_correct_call {width : Nat} [NeZero width] {F : Type} :
         refine ⟨.ln, ?_, rfl⟩
         simp only [evaluate]
         rw [hg']
-        simp only [hfc, hnd, not_true_eq_false, if_false]
+        simp only [hfc, hnd, not_true_eq_false, ite_false]
         rw [cutRes_none_of_cut hcut']
         simp [hz]
       have hc0 : cutRes live (none, v1) =
@@ -2466,7 +2466,7 @@ theorem loopLive_compile_correct_call {width : Nat} [NeZero width] {F : Type} :
         rw [cutRes_none_of_cut hcut']; simp [hz]
       rcases hc : evaluate prog { decClock { v1 with locals := sptInter v1.locals live } with locals := env } with ⟨rc, st⟩
       have hc' : evaluate prog { decClock { v1 with locals := sptInter locals K } with locals := env } = (rc, st) := hc
-      simp only [evaluate, hg, hfc, hnd, not_true_eq_false, if_false] at he
+      simp only [evaluate, hg, hfc, hnd, not_true_eq_false, ite_false] at he
       rw [hc0] at he
       simp only at he
       rw [fix_clock_evaluate, hc] at he
@@ -2479,11 +2479,11 @@ theorem loopLive_compile_correct_call {width : Nat} [NeZero width] {F : Type} :
       | timeOut =>
         simp only [Prod.mk.injEq] at he
         obtain ⟨rfl, rfl⟩ := he
-        exact ⟨st.locals, by simp only [evaluate]; rw [hg']; simp only [hfc, hnd, not_true_eq_false, if_false]; rw [hc0']; simp only; rw [fix_clock_evaluate, hc'], rfl⟩
+        exact ⟨st.locals, by simp only [evaluate]; rw [hg']; simp only [hfc, hnd, not_true_eq_false, ite_false]; rw [hc0']; simp only; rw [fix_clock_evaluate, hc'], rfl⟩
       | finalFfi fe =>
         simp only [Prod.mk.injEq] at he
         obtain ⟨rfl, rfl⟩ := he
-        exact ⟨st.locals, by simp only [evaluate]; rw [hg']; simp only [hfc, hnd, not_true_eq_false, if_false]; rw [hc0']; simp only; rw [fix_clock_evaluate, hc'], rfl⟩
+        exact ⟨st.locals, by simp only [evaluate]; rw [hg']; simp only [hfc, hnd, not_true_eq_false, ite_false]; rw [hc0']; simp only; rw [fix_clock_evaluate, hc'], rfl⟩
       | exception w =>
         simp only at he
         rcases hY : evaluate h (setVar e w { st with locals := sptInter v1.locals live }) with ⟨rr, sr⟩
@@ -2495,7 +2495,7 @@ theorem loopLive_compile_correct_call {width : Nat} [NeZero width] {F : Type} :
             (sptInsert e w (sptInter locals K)) := by
           refine subspt_of_lookup fun k hk => ?_
           obtain ⟨hka, hkl3⟩ := (mem_inter_iff _ _ k).mp hk
-          rw [sptLookup_sptInter, if_pos (show (sptLookup k l3).isSome = true from hkl3)]
+          rw [sptLookup_sptInter, ite_eq_left (show (sptLookup k l3).isSome = true from hkl3)]
           by_cases hke : k = e
           · subst hke; simp [setVar, sptLookup_sptInsert]
           · have hka' : sptMem k (sptInter v1.locals live) := by
@@ -2504,10 +2504,10 @@ theorem loopLive_compile_correct_call {width : Nat} [NeZero width] {F : Type} :
             have hkK : sptMem k K := by
               rw [← hKd]
               refine (mem_inter_iff _ _ k).mpr ⟨hklv, (sptMem_sptUnion' _ _ _).mpr (Or.inr ?_)⟩
-              simp only [sptMem, sptDomain, sptLookup_sptDelete', hke, if_false]; exact hkl3
-            simp only [setVar, sptLookup_sptInsert, hke, if_false]
-            rw [sptLookup_sptInter, if_pos (show (sptLookup k K).isSome = true from hkK),
-              sptLookup_sptInter, if_pos (show (sptLookup k live).isSome = true from hklv)]
+              simp only [sptMem, sptDomain, sptLookup_sptDelete', hke, ite_false]; exact hkl3
+            simp only [setVar, sptLookup_sptInsert, hke, ite_false]
+            rw [sptLookup_sptInter, ite_eq_left (show (sptLookup k K).isSome = true from hkK),
+              sptLookup_sptInter, ite_eq_left (show (sptLookup k live).isSome = true from hklv)]
             exact subspt_inter_apply hsub hkv (hK hkK)
         have ihH : loopLiveCompileCorrectAt h
             (setVar e w { st with locals := sptInter v1.locals live }) :=
@@ -2520,7 +2520,7 @@ theorem loopLive_compile_correct_call {width : Nat} [NeZero width] {F : Type} :
         obtain ⟨nl2, hn2, hp2⟩ :=
           loopLive_cutRes_tail rr sr nl lt l0 lo res s1 (loopLive_post_weaken rr sr nl lt l0 lo hp) hYe hne
         refine ⟨nl2, ?_, hp2⟩
-        simp only [evaluate]; rw [hg']; simp only [hfc, hnd, not_true_eq_false, if_false]; rw [hc0']; simp only; rw [fix_clock_evaluate, hc']
+        simp only [evaluate]; rw [hg']; simp only [hfc, hnd, not_true_eq_false, ite_false]; rw [hc0']; simp only; rw [fix_clock_evaluate, hc']
         simp only [decClock]
         rw [show setVar e w { st with locals := sptInter locals K } =
           { setVar e w { st with locals := sptInter v1.locals live } with locals := sptInsert e w (sptInter locals K) }
@@ -2530,7 +2530,7 @@ theorem loopLive_compile_correct_call {width : Nat} [NeZero width] {F : Type} :
         by_cases hlen' : ¬ retvs.length = ns.length
         · simp [hlen'] at he; exact absurd he.1.symm hne
         have hlen : retvs.length = ns.length := Classical.not_not.mp hlen'
-        simp only [hlen, ne_eq, not_true_eq_false, if_false] at he
+        simp only [hlen, ne_eq, not_true_eq_false, ite_false] at he
         rcases hX : evaluate r (setVars ns retvs { st with locals := sptInter v1.locals live }) with ⟨rr, sr⟩
         have hXe : cutRes lo (rr, sr) = (res, s1) := by
           rw [← hX]; simpa [decClock] using he
@@ -2540,7 +2540,7 @@ theorem loopLive_compile_correct_call {width : Nat} [NeZero width] {F : Type} :
             (sptAlistInsert ns retvs (sptInter locals K)) := by
           refine subspt_of_lookup fun k hk => ?_
           obtain ⟨hka, hkl2⟩ := (mem_inter_iff _ _ k).mp hk
-          rw [sptLookup_sptInter, if_pos (show (sptLookup k l2).isSome = true from hkl2)]
+          rw [sptLookup_sptInter, ite_eq_left (show (sptLookup k l2).isSome = true from hkl2)]
           simp only [setVars]
           rw [lookup_alist_insert_any, lookup_alist_insert_any]
           cases hz2 : holAlookup (ns.zip retvs) k with
@@ -2554,9 +2554,9 @@ theorem loopLive_compile_correct_call {width : Nat} [NeZero width] {F : Type} :
             have hkK : sptMem k K := by
               rw [← hKd]
               refine (mem_inter_iff _ _ k).mpr ⟨hklv, (sptMem_sptUnion' _ _ _).mpr (Or.inl ?_)⟩
-              simp only [sptMem, sptDomain, sptLookup_sptListDelete, hkn, if_false]; exact hkl2
-            rw [sptLookup_sptInter, if_pos (show (sptLookup k K).isSome = true from hkK),
-              sptLookup_sptInter, if_pos (show (sptLookup k live).isSome = true from hklv)]
+              simp only [sptMem, sptDomain, sptLookup_sptListDelete, hkn, ite_false]; exact hkl2
+            rw [sptLookup_sptInter, ite_eq_left (show (sptLookup k K).isSome = true from hkK),
+              sptLookup_sptInter, ite_eq_left (show (sptLookup k live).isSome = true from hklv)]
             exact subspt_inter_apply hsub hkv (hK hkK)
         have ihR : loopLiveCompileCorrectAt r
             (setVars ns retvs { st with locals := sptInter v1.locals live }) :=
@@ -2569,8 +2569,8 @@ theorem loopLive_compile_correct_call {width : Nat} [NeZero width] {F : Type} :
         obtain ⟨nl2, hn2, hp2⟩ :=
           loopLive_cutRes_tail rr sr nl lt l0 lo res s1 (loopLive_post_weaken rr sr nl lt l0 lo hp) hXe hne
         refine ⟨nl2, ?_, hp2⟩
-        simp only [evaluate]; rw [hg']; simp only [hfc, hnd, not_true_eq_false, if_false]; rw [hc0']; simp only; rw [fix_clock_evaluate, hc']
-        simp only [hlen, ne_eq, not_true_eq_false, if_false, decClock]
+        simp only [evaluate]; rw [hg']; simp only [hfc, hnd, not_true_eq_false, ite_false]; rw [hc0']; simp only; rw [fix_clock_evaluate, hc']
+        simp only [hlen, ne_eq, not_true_eq_false, ite_false, decClock]
         rw [show setVars ns retvs { st with locals := sptInter locals K } =
           { setVars ns retvs { st with locals := sptInter v1.locals live } with
               locals := sptAlistInsert ns retvs (sptInter locals K) }
@@ -2608,8 +2608,8 @@ theorem subspt_inter_union_R {α β : Type} :
   have := h k ((mem_inter_iff _ _ k).mpr ⟨hka, hku⟩)
   refine ⟨this.1, ?_⟩
   rw [this.2, sptLookup_sptInter, sptLookup_sptInter,
-    if_pos (show (sptLookup k (sptUnion B C)).isSome = true from hku),
-    if_pos (show (sptLookup k C).isSome = true from hkc)]
+    ite_eq_left (show (sptLookup k (sptUnion B C)).isSome = true from hku),
+    ite_eq_left (show (sptLookup k C).isSome = true from hkc)]
 
 /-- Flapjack helper (no HOL declaration): the `Break 0` exit of HOL's
     `Resume compile_correct[Loop]` — `cut_res live_out` on the source against the
@@ -2648,10 +2648,10 @@ private theorem loopLive_break_tail {width : Nat} [NeZero width] {F : Type}
     simp only [cutRes, cutState_of_subset liveOut sb hS] at he
     simp only [cutRes, cutState_of_subset (sptInter liveOut l0) { sb with locals := nl } hS']
     by_cases hz : sb.clock = 0
-    · simp only [hz, if_true, Prod.mk.injEq] at he ⊢
+    · simp only [hz, ite_true, Prod.mk.injEq] at he ⊢
       obtain ⟨rfl, rfl⟩ := he
       exact ⟨.ln, by constructor <;> rfl, rfl⟩
-    · simp only [hz, if_false, Prod.mk.injEq] at he ⊢
+    · simp only [hz, ite_false, Prod.mk.injEq] at he ⊢
       obtain ⟨rfl, rfl⟩ := he
       refine ⟨sptInter nl (sptInter liveOut l0), by constructor <;> rfl, ?_⟩
       refine subspt_of_lookup fun k hk => ?_
@@ -2660,9 +2660,9 @@ private theorem loopLive_break_tail {width : Nat} [NeZero width] {F : Type}
       have hkL : sptMem k (sptInter liveOut l0) := (mem_inter_iff _ _ k).mpr ⟨hkl, hk0⟩
       have hk0' : (sptLookup k l0).isSome = true := hk0
       have hkl' : (sptLookup k liveOut).isSome = true := hkl
-      simp only [decClock, sptLookup_sptInter, hk0', hkl', if_true]
+      simp only [decClock, sptLookup_sptInter, hk0', hkl', ite_true]
       rw [(hsubB k ((mem_inter_iff _ _ k).mpr ⟨hks, hBRK k hkL⟩)).2, sptLookup_sptInter,
-        if_pos (show (sptLookup k brk).isSome = true from hBRK k hkL)]
+        ite_eq_left (show (sptLookup k brk).isSome = true from hBRK k hkL)]
   · simp [cutRes, cutState_eq_none_of_not_subset liveOut sb hS] at he
     exact absurd he.1.symm hne
 
@@ -2751,7 +2751,7 @@ private theorem loopLive_loop_core {width : Nat} [NeZero width] {F : Type}
     have hkb' : (sptLookup k lB).isSome = true := hkb
     have hkL' : (sptLookup k L').isSome = true := hkL
     have hki' : (sptLookup k liveIn).isSome = true := hki
-    simp only [decClock, sptLookup_sptInter, hkb', hkL', hki', if_true]
+    simp only [decClock, sptLookup_sptInter, hkb', hkL', hki', ite_true]
     exact subspt_inter_apply hsub hkv hkL
   obtain ⟨nl, hn, hp⟩ := ihBody _ _ hc0 rfl rb sb ((L', BRK) :: lt) (sptInter locals L') B lB
     (sptUnion liveIn (sptInter liveOut l0)) ⟨hbe, hrb, hB, hpre⟩

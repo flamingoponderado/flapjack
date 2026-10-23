@@ -243,7 +243,7 @@ theorem set_vars_move_NONE {width : Nat} [NeZero width] {C : Type} {F : Type} {�
     rcases x with _ | ⟨y, ys⟩
     · rfl
     · simp only [List.map_cons, getVar_setVars_eq, LoopSemStateFiniteExact.sptAlistInsert]
-      rw [sptLookup_sptInsert_eq, if_neg hne]
+      rw [sptLookup_sptInsert_eq, ite_eq_right hne]
       exact ih ys s _ v ⟨rfl, hl⟩
 
 /-- Exact HOL `set_vars_move_SOME` (`word_simpProofScript.sml:244-254`). -/
@@ -278,10 +278,10 @@ theorem set_vars_move_SOME {width : Nat} [NeZero width] {C : Type} {F : Type} :
     · rename_i hvq
       simp only [Option.some.injEq] at hl
       subst hl
-      rw [if_pos hvq]
+      rw [ite_eq_left hvq]
       exact hy.symm
     · rename_i hvq
-      rw [if_neg hvq]
+      rw [ite_eq_right hvq]
       exact ih ys v w s _ ⟨rfl, hys, hl⟩
 
 /-- Exact HOL `get_var_move_thm` (`word_simpProofScript.sml:256-265`). -/
@@ -318,10 +318,10 @@ theorem lookup_const_fp_move_cs_NONE {width : Nat} [NeZero width] :
     · cases hl
     rename_i hne
     rcases hc : sptLookup r cs with _ | c <;> simp only [constFpMoveCs, hc]
-    · rw [ih v cs _ ⟨hl, by rw [sptLookup_sptDelete, if_neg hne, he]⟩, sptLookup_sptDelete,
-        if_neg hne]
-    · rw [ih v cs _ ⟨hl, by rw [sptLookup_sptInsert_eq, if_neg hne, he]⟩, sptLookup_sptInsert_eq,
-        if_neg hne]
+    · rw [ih v cs _ ⟨hl, by rw [sptLookup_sptDelete, ite_eq_right hne, he]⟩, sptLookup_sptDelete,
+        ite_eq_right hne]
+    · rw [ih v cs _ ⟨hl, by rw [sptLookup_sptInsert_eq, ite_eq_right hne, he]⟩, sptLookup_sptInsert_eq,
+        ite_eq_right hne]
 
 /-- Exact HOL `lookup_const_fp_move_cs_SOME_part` (`word_simpProofScript.sml:286-294`). -/
 @[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "lookup_const_fp_move_cs_SOME_part"
@@ -338,8 +338,8 @@ theorem lookup_const_fp_move_cs_SOME_part {width : Nat} [NeZero width] :
     rcases m with ⟨a, b⟩
     simp only [List.map_cons, List.mem_cons, not_or] at hm
     rcases hc : sptLookup b cs with _ | c <;> simp only [constFpMoveCs, hc]
-    · exact ih q cs _ x ⟨hm.2, by rw [sptLookup_sptDelete, if_neg hm.1, h]⟩
-    · exact ih q cs _ x ⟨hm.2, by rw [sptLookup_sptInsert_eq, if_neg hm.1, h]⟩
+    · exact ih q cs _ x ⟨hm.2, by rw [sptLookup_sptDelete, ite_eq_right hm.1, h]⟩
+    · exact ih q cs _ x ⟨hm.2, by rw [sptLookup_sptInsert_eq, ite_eq_right hm.1, h]⟩
 
 /-- Exact HOL `lookup_const_fp_move_cs_SOME` (`word_simpProofScript.sml:296-323`). -/
 @[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "lookup_const_fp_move_cs_SOME"
@@ -364,13 +364,13 @@ theorem lookup_const_fp_move_cs_SOME {width : Nat} [NeZero width] :
       subst hl
       rcases hc : sptLookup r cs with _ | c <;> simp only [constFpMoveCs, hc]
       · exact lookup_const_fp_move_cs_SOME_part ms v cs _ _
-          ⟨hnd.1, by rw [sptLookup_sptDelete, if_pos rfl]⟩
+          ⟨hnd.1, by rw [sptLookup_sptDelete, ite_eq_left rfl]⟩
       · exact lookup_const_fp_move_cs_SOME_part ms v cs _ _
-          ⟨hnd.1, by rw [sptLookup_sptInsert_eq, if_pos rfl]⟩
+          ⟨hnd.1, by rw [sptLookup_sptInsert_eq, ite_eq_left rfl]⟩
     · rename_i hvq
       rcases hc : sptLookup r cs with _ | c <;> simp only [constFpMoveCs, hc]
-      · exact ih v w cs _ ⟨hl, hnd.2, by rw [sptLookup_sptDelete, if_neg hvq, he]⟩
-      · exact ih v w cs _ ⟨hl, hnd.2, by rw [sptLookup_sptInsert_eq, if_neg hvq, he]⟩
+      · exact ih v w cs _ ⟨hl, hnd.2, by rw [sptLookup_sptDelete, ite_eq_right hvq, he]⟩
+      · exact ih v w cs _ ⟨hl, hnd.2, by rw [sptLookup_sptInsert_eq, ite_eq_right hvq, he]⟩
 
 /-- Exact HOL `lookup_const_fp_move_cs` (`word_simpProofScript.sml:325-334`). -/
 @[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "lookup_const_fp_move_cs"
@@ -436,7 +436,7 @@ theorem cs_delete_if_set {width : Nat} [NeZero width] {C : Type} {F : Type} :
   split at hl
   · cases hl
   · rename_i hne
-    rw [if_neg hne]
+    rw [ite_eq_right hne]
     exact h v2 w hl
 
 /-- Exact HOL `cs_delete_if_set_x2` (`word_simpProofScript.sml:371-378`). -/

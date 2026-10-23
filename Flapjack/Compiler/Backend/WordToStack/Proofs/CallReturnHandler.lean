@@ -397,8 +397,8 @@ theorem pushedHandlerStateHeader {width : Nat} [NeZero width] {C F : Type}
     rw [show source.stackSpace - 3 + 3 = source.stackSpace by omega] at shifted
     exact shifted.symm
   simp only [pushedHandlerState]
-  rw [List.drop_set, if_neg (by omega), List.drop_set, if_neg (by omega),
-    List.drop_set, if_neg (by omega), headerShape]
+  rw [List.drop_set, ite_eq_right (by omega), List.drop_set, ite_eq_right (by omega),
+    List.drop_set, ite_eq_right (by omega), headerShape]
   simp only [Nat.add_sub_cancel_left, Nat.sub_self, List.set_cons_zero,
     List.set_cons_succ, tailEq]
 

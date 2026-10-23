@@ -91,26 +91,26 @@ theorem compCorrectJumpLower {width : Nat} [NeZero width] {C F : Type}
           calleeEntry info source target relation dest program lookup
         have clockEq := LoopCase.stateRel_clock info source target relation
         by_cases zero : source.clock = 0
-        · simp only [zero, if_true, Prod.mk.injEq] at execution
+        · simp only [zero, ite_true, Prod.mk.injEq] at execution
           obtain ⟨rfl, rfl⟩ := execution
           refine ⟨0, emptyEnv target, (emptyEnv target).stackSpace,
             LoopCase.stateRel_emptyEnv info source target relation, ?_, ?_⟩
           · simp only [Nat.add_zero, StackSemEvaluate.evaluate_jumpLower,
               getVar_targetClock info source target relation, firstRead, secondRead,
-              lower, if_true, findCode, targetLookup]
+              lower, ite_true, findCode, targetLookup]
             have tz : target.clock = 0 := clockEq.trans zero
-            simp only [tz, if_true]
+            simp only [tz, ite_true]
             have update : { target with clock := 0 } = target := by rw [← tz]
             rw [update]
           · simp
-        · simp only [zero, if_false] at execution
+        · simp only [zero, ite_false] at execution
           rcases bodyExecution : StackSemEvaluate.evaluate (program, decClock source) with
             ⟨bodyResult, bodyPost⟩
           rw [bodyExecution] at execution
           by_cases bad : badFunReturn bodyResult = true
-          · simp only [bad, if_true, Prod.mk.injEq] at execution
+          · simp only [bad, ite_true, Prod.mk.injEq] at execution
             exact False.elim (nonerror execution.1.symm)
-          · simp only [bad, Bool.false_eq_true, if_false, Prod.mk.injEq] at execution
+          · simp only [bad, Bool.false_eq_true, ite_false, Prod.mk.injEq] at execution
             obtain ⟨rfl, rfl⟩ := execution
             obtain ⟨clock, targetState, stackSpace, postRelation, targetExecution, guard⟩ :=
               calleeIH left right program firstRead secondRead lower lookup zero
@@ -129,15 +129,15 @@ theorem compCorrectJumpLower {width : Nat} [NeZero width] {C F : Type}
             have addedNonzero : target.clock + clock ≠ 0 := by omega
             simp only [StackSemEvaluate.evaluate_jumpLower,
               getVar_targetClock info source target relation, firstRead, secondRead,
-              lower, if_true, findCode, targetLookup, addedNonzero, if_false,
+              lower, ite_true, findCode, targetLookup, addedNonzero, ite_false,
               StackProps.EvaluateAddClock.decClock_addClock target clock targetNonzero,
-              targetExecution, bad, Bool.false_eq_true, if_false]
+              targetExecution, bad, Bool.false_eq_true, ite_false]
     · rename_i notLower
       obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
       refine ⟨0, target, target.stackSpace, relation, ?_, fun _ => rfl⟩
       simp only [StackSemEvaluate.evaluate_jumpLower,
         getVar_targetClock info source target relation, firstRead, secondRead,
-        notLower, Bool.false_eq_true, if_false]
+        notLower, Bool.false_eq_true, ite_false]
       have update : { target with clock := target.clock + 0 } = target := by
         cases target
         simp

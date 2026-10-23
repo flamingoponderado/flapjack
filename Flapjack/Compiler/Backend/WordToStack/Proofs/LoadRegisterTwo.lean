@@ -55,16 +55,16 @@ theorem evaluateWStackLoadWReg2 {width : Nat} [NeZero width] {C F : Type}
         StackSemExpressions.wordExp target (.op .add [.var register,.const constant])) ∧
       StackSemStateOps.getVar reg post = some value := by
   by_cases below : r / 2 < k
-  · simp only [wReg2,below,if_true,Prod.mk.injEq] at compiled
+  · simp only [wReg2,below,ite_true,Prod.mk.injEq] at compiled
     obtain ⟨rfl,rfl⟩ := compiled
     refine ⟨target,StackSemEvaluate.evaluate_skip target,rfl,rfl,related,rfl,rfl,
       (fun _ _ => rfl),(fun _ _ _ => rfl),?_⟩
     exact StateRelGetVar.stateRelGetVarImp' ac k f frame source target lens 0 r value
       ⟨related,sourceRead,even,below⟩
-  · simp only [wReg2,below,if_false,Prod.mk.injEq] at compiled
+  · simp only [wReg2,below,ite_false,Prod.mk.injEq] at compiled
     obtain ⟨rfl,rfl⟩ := compiled
     have placement := StateRelGetVar.stateRel_locals related r value sourceRead
-    rw [if_neg below] at placement
+    rw [ite_eq_right below] at placement
     obtain ⟨_,slot,bound⟩ := placement
     rw [Nat.add_zero,List.getElem?_take,List.getElem?_drop] at slot
     split at slot
@@ -76,7 +76,7 @@ theorem evaluateWStackLoadWReg2 {width : Nat} [NeZero width] {C F : Type}
     refine ⟨StackSemStateOps.setVar (k+1) value target,?_,rfl,rfl,
       CallDest.stateRel_setVar_of_ge (k+1) (by omega) value related,rfl,rfl,?_,?_,?_⟩
     · rw [wStackLoadNative,StackSemEvaluate.evaluate_seq,StackSemEvaluate.evaluate_stackLoad,
-        if_neg (by simp [useStack]),dif_pos stackBound]
+        ite_eq_right (by simp [useStack]),dite_eq_left stackBound]
       simp only [StackSemControl.fixClock,StackSemStateOps.setVar,Nat.min_self]
       rw [wStackLoadNative,StackSemEvaluate.evaluate_skip,stackValue]
     · intro register different

@@ -81,7 +81,7 @@ theorem const_step_list_controls (is : List instruction)
     by_cases empty : is = []
     · subst is
       simpa using const_step_controls i kind ms ok
-    · simp only [if_neg empty, List.cons_ne_nil, if_false, List.length_cons]
+    · simp only [ite_eq_right empty, List.cons_ne_nil, ite_false, List.length_cons]
       rw [frame.1, frame.2.2, const_step_controls i kind ms ok,
         const_run_list_controls is tailKinds (Run i ms) _ runOk, controls_overwrite]
       congr 1
@@ -149,6 +149,6 @@ theorem const_step_post (r : Nat) (c : BitVec 64) (ms : riscv_state)
       constControls (constRunPost r c ms)
         (ms.c_PC ms.procID + BitVec.ofNat 64 (4 * (riscvAst (.inst (.const r c))).length)) := by
   rw [const_step_list_controls _ (const_register_family r c) ms state,
-    if_neg (const_register_nonempty r c), run_const r c ms ok state]
+    ite_eq_right (const_register_nonempty r c), run_const r c ms ok state]
 
 end Flapjack.RiscV.TargetProof

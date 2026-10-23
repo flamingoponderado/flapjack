@@ -53,7 +53,7 @@ theorem unreachElimNotNoneEvaluate {width : Nat} [NeZero width] {σ : Type} :
     rcases h1 : evalCrepSemHOLProgExact s first with ⟨res, s1⟩
     obtain ⟨e1, rfl⟩ := ih s res s1 first' e ⟨hfirst, h1⟩
     rw [h1] at hev
-    simp only [reduceCtorEq, if_false, Prod.mk.injEq] at hev
+    simp only [reduceCtorEq, ite_false, Prod.mk.injEq] at hev
     exact ⟨e1, hev.1.symm⟩
   -- Seq whose first component reports no exit.
   · rename_i first second first' firstExit hfirst hnone second' secondExit hsecond ih1 ih2
@@ -63,9 +63,9 @@ theorem unreachElimNotNoneEvaluate {width : Nat} [NeZero width] {σ : Type} :
     rw [h1] at hev
     dsimp only at hev
     by_cases hres : res = none
-    · rw [if_pos hres] at hev
+    · rw [ite_eq_left hres] at hev
       exact ih2 s1 r s' second' e ⟨hsecond, hev⟩
-    · rw [if_neg hres] at hev
+    · rw [ite_eq_right hres] at hev
       have hr : res = r := (Prod.mk.inj hev).1
       exact Option.ne_none_iff_exists'.mp (hr ▸ hres)
   -- Dec.
@@ -91,9 +91,9 @@ theorem unreachElimNotNoneEvaluate {width : Nat} [NeZero width] {σ : Type} :
     split at hev
     · rename_i w _
       by_cases hw : w ≠ 0
-      · rw [if_pos hw] at hev
+      · rw [ite_eq_left hw] at hev
         exact ihThen s r s' then' a ⟨hthen, hev⟩
-      · rw [if_neg hw] at hev
+      · rw [ite_eq_right hw] at hev
         exact ihElse s r s' else' b ⟨helse, hev⟩
     · exact ⟨_, (Prod.mk.inj hev).1.symm⟩
   -- While: unreach_elim reports no exit.
@@ -171,28 +171,28 @@ theorem unreachElimCorrect {width : Nat} [NeZero width] {σ : Type} :
       dsimp only at hev
       have hresErr : res ≠ some .error := by
         intro hres
-        rw [if_neg (by simp [hres])] at hev
+        rw [ite_eq_right (by simp [hres])] at hev
         exact hne ((Prod.mk.inj hev).1 ▸ hres)
       have ha' := ih a s (lexSmaller (Nat.le_refl _) (by first | omega | (simp; omega) | simp)) res t a' ea ⟨h1, hresErr, ha⟩
       by_cases hsome : ea.isSome
-      · simp only [hsome, if_true, Prod.mk.injEq] at hu
+      · simp only [hsome, ite_true, Prod.mk.injEq] at hu
         obtain ⟨rfl, _⟩ := hu
         obtain ⟨e, rfl⟩ := Option.isSome_iff_exists.mp hsome
         obtain ⟨e1, rfl⟩ := unreachElimNotNoneEvaluate a s res t a' e ⟨ha, h1⟩
-        simp only [reduceCtorEq, if_false] at hev
+        simp only [reduceCtorEq, ite_false] at hev
         rw [ha', hev]
-      · simp only [hsome, Bool.false_eq_true, if_false] at hu
+      · simp only [hsome, Bool.false_eq_true, ite_false] at hu
         rcases hb : unreachElimHOLExact b with ⟨b', eb⟩
         rw [hb] at hu
         obtain ⟨rfl, _⟩ := Prod.mk.inj hu
         rw [evalCrepSemHOLProgExact_seq_holShape, ha']
         try dsimp only
         by_cases hres : res = none
-        · rw [if_pos hres] at hev ⊢
+        · rw [ite_eq_left hres] at hev ⊢
           have ht := evalCrepSemHOLProgExact_clock_le s a
           rw [h1] at ht
           exact ih b t (lexSmaller ht (by first | omega | (simp; omega) | simp)) r s' b' eb ⟨hev, hne, hb⟩
-        · rw [if_neg hres] at hev ⊢
+        · rw [ite_eq_right hres] at hev ⊢
           exact hev
   | dec name value body =>
       rcases hbody : unreachElimHOLExact body with ⟨body', eb⟩
@@ -224,10 +224,10 @@ theorem unreachElimCorrect {width : Nat} [NeZero width] {σ : Type} :
         try rw [hw]
         try dsimp only
         by_cases hwz : w ≠ 0
-        · rw [if_pos hwz] at hev ⊢
+        · rw [ite_eq_left hwz] at hev ⊢
           exact ih thenBranch s (lexSmaller (Nat.le_refl _) (by first | omega | (simp; omega) | simp)) r s' then' et
             ⟨hev, hne, hthen⟩
-        · rw [if_neg hwz] at hev ⊢
+        · rw [ite_eq_right hwz] at hev ⊢
           exact ih elseBranch s (lexSmaller (Nat.le_refl _) (by first | omega | (simp; omega) | simp)) r s' else' ee
             ⟨hev, hne, helse⟩
       · exact absurd (Prod.mk.inj hev).1.symm hne
@@ -242,11 +242,11 @@ theorem unreachElimCorrect {width : Nat} [NeZero width] {σ : Type} :
         try rw [hw]
         try dsimp only
         by_cases hwz : w ≠ 0
-        · rw [if_pos hwz] at hev ⊢
+        · rw [ite_eq_left hwz] at hev ⊢
           by_cases hclock : s.clock = 0
-          · rw [if_pos hclock] at hev ⊢
+          · rw [ite_eq_left hclock] at hev ⊢
             exact hev
-          · rw [if_neg hclock] at hev ⊢
+          · rw [ite_eq_right hclock] at hev ⊢
             rcases h1 : evalCrepSemHOLProgExact (decClockCrepSemHOL s) body with ⟨res, t⟩
             rw [h1] at hev
             dsimp only at hev
@@ -275,7 +275,7 @@ theorem unreachElimCorrect {width : Nat} [NeZero width] {σ : Type} :
             · exact hrec r s' hev hne
             · exact hev
             · exact hev
-        · rw [if_neg hwz] at hev ⊢
+        · rw [ite_eq_right hwz] at hev ⊢
           exact hev
       · exact hev
   | call returnInfo function arguments =>
@@ -296,7 +296,7 @@ theorem unreachElimCorrect {width : Nat} [NeZero width] {σ : Type} :
           | (simp_all; done)
           | (rename_i hnodup hclock _ _ st hcallee heid
              subst heid
-             rw [if_neg hnodup, if_neg hclock, if_pos rfl]
+             rw [ite_eq_right hnodup, ite_eq_right hclock, ite_eq_left rfl]
              have hle := clockLeOfEval hcallee
              simp only [decClockCrepSemHOL] at hle
              exact ih hbody _ (lexClock (by simp only; omega)) r s' hbody' eh

@@ -420,7 +420,7 @@ theorem lookupFunctionEntry_of_getElem?
             exact List.mem_map.mpr ⟨tail[n], List.getElem_mem hlt, rfl⟩
           have hne : entry.1 ≠ head.1 := fun h => hhead (h ▸ hentry_mem)
           simp only [lookupFunctionEntry]
-          rw [if_neg (by simpa [beq_iff_eq] using hne)]
+          rw [ite_eq_right (by simpa [beq_iff_eq] using hne)]
           exact ih htail hget
 
 /-- Counterpart of Cake's `el_compile_prog_el_prog_eq`

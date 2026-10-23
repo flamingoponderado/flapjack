@@ -73,9 +73,9 @@ theorem evaluateFperm_If {width : Nat} {σ : Type} [NeZero width]
           | word word =>
               have hh := ih (.val (.word word)) (.word word) word ⟨hc, rfl, rfl⟩ res post
               by_cases hz : word = 0
-              · simp only [hc, hz, if_true, ne_eq, not_true_eq_false, if_false] at heval hh ⊢
+              · simp only [hc, hz, ite_true, ne_eq, not_true_eq_false, ite_false] at heval hh ⊢
                 exact hh heval
-              · simp only [hc, hz, if_false, ne_eq, not_false_eq_true, if_true] at heval hh ⊢
+              · simp only [hc, hz, ite_false, ne_eq, not_false_eq_true, ite_true] at heval hh ⊢
                 exact hh heval
 
 end Flapjack

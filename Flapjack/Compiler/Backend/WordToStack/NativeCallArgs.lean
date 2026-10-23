@@ -82,7 +82,7 @@ theorem toGeneric_callDestNative {width : Nat} [NeZero width]
     · subst args
       simp [callDestNative, WordToStackRegFormat.callDest, toGeneric, Prog.map]
     · have hlen : args.length ≠ 0 := by simpa using hnil
-      simp only [callDestNative, dif_neg hlen, WordToStackRegFormat.callDest,
+      simp only [callDestNative, dite_eq_right hlen, WordToStackRegFormat.callDest,
         List.getLast?_eq_some_getLast hnil, toGeneric_wStackLoad]
       simp [toGeneric, Prog.map]
 

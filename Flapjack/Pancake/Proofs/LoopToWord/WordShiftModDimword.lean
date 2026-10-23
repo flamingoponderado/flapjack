@@ -21,9 +21,9 @@ theorem wordShiftHOL_some_mod_dimword {width : Nat} [NeZero width]
     n % 2 ^ width = n := by
   unfold wordShiftHOL at h
   by_cases hbad : n ≠ 0 ∧ width ≤ n
-  · rw [if_pos hbad] at h
+  · rw [ite_eq_left hbad] at h
     exact absurd h (by simp)
-  · rw [if_neg hbad] at h
+  · rw [ite_eq_right hbad] at h
     by_cases hzero : n = 0
     · subst hzero
       simp

@@ -397,8 +397,8 @@ theorem evaluate_add_clock_io_events_mono_snd (p : HolLoopProg width)
             | none =>
               simp only at hbig ⊢
               by_cases hh : handler.isSome = true
-              · simp only [hh, if_true]; exact hmono
-              · simp only [hh, if_false, Bool.false_eq_true] at hbig ⊢
+              · simp only [hh, ite_true]; exact hmono
+              · simp only [hh, ite_false, Bool.false_eq_true] at hbig ⊢
                 by_cases hz : s.clock = 0
                 · simp only [hz, dite_true]; exact hmono
                 · have hz' : s.clock + extra ≠ 0 := by omega
@@ -423,7 +423,7 @@ theorem evaluate_add_clock_io_events_mono_snd (p : HolLoopProg width)
               simp only at hbig ⊢
               by_cases hnd : ¬ ns.Nodup
               · simp only [hnd]; exact hmono
-              simp only [hnd, if_false] at hbig ⊢
+              simp only [hnd, ite_false] at hbig ⊢
               cases hc : cutRes live (none, s) with
               | mk r0 s1 =>
                 cases r0 with
@@ -465,8 +465,8 @@ theorem evaluate_add_clock_io_events_mono_snd (p : HolLoopProg width)
                       all_goals (try exact List.prefix_refl _)
                       all_goals (try exact absurd rfl hrc)
                       · by_cases hlen : vs.length ≠ ns.length
-                        · rw [if_pos hlen, if_pos hlen]; exact List.prefix_refl _
-                        · rw [if_neg hlen, if_neg hlen]
+                        · rw [ite_eq_left hlen, ite_eq_left hlen]; exact List.prefix_refl _
+                        · rw [ite_eq_right hlen, ite_eq_right hlen]
                           cases handler with
                           | none => exact List.prefix_refl _
                           | some hd =>

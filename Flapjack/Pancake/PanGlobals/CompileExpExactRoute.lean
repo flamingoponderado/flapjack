@@ -333,7 +333,7 @@ def expLocalVarsViaHOLWhenByteRanged {width : Nat} [NeZero width]
   dsimp only
   by_cases hnames : (Flapjack.expLocalVars expression).all
       (fun name => name.toList.all (fun c => decide (c.toNat < 256))) = true
-  · simp only [hnames, if_pos]
+  · simp only [hnames, ite_eq_left]
     apply Flapjack.Pancake.PanLang.varExpHOL_expToHOL_decode
     intro name hmem c hc
     have hname := List.all_eq_true.mp hnames name hmem

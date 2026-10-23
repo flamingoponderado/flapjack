@@ -164,7 +164,7 @@ theorem compileCorrect_Arith {width : Nat} [NeZero width] {C F : Type}
             rw [WordSemStateFiniteExact.evaluate]
             simp [WordSemStateFiniteExact.inst, WordSemStateFiniteExact.getVars, hget _ _ hq,
               hget _ _ hw2]
-            rw [if_neg (by intro h; exact hq0 (by simpa using h))]
+            rw [ite_eq_right (by intro h; exact hq0 (by simpa using h))]
           · simpa [WordSemStateFiniteExact.setVar, LoopSemStateFiniteExact.setVar] using hffi
         · cases hs'
       · cases hs'

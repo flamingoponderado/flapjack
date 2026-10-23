@@ -259,7 +259,7 @@ theorem enc_dec_stack {bitmapWidth : Nat} {width : Nat} [NeZero bitmapWidth] [Ne
       rw [encStack] at h1
       rw [decStack] at h2
       by_cases hz : header = .word 0
-      · simp only [hz, if_true] at h1 h2
+      · simp only [hz, ite_true] at h1 h2
         split at h1
         · rename_i ht
           simp only [Option.some.injEq] at h1
@@ -267,7 +267,7 @@ theorem enc_dec_stack {bitmapWidth : Nat} {width : Nat} [NeZero bitmapWidth] [Ne
           simp at h2
           rw [← h2, hz]; rfl
         · exact absurd h1 (by simp)
-      · simp only [hz, if_false] at h1 h2
+      · simp only [hz, ite_false] at h1 h2
         split at h1
         · exact absurd h1 (by simp)
         · rename_i bits hb

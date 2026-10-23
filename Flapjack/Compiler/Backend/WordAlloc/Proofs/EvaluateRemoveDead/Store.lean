@@ -50,11 +50,11 @@ theorem evaluateRemoveDead_Get {width : Nat} [NeZero width] {C F : Type} (v : Na
     simp only [Prod.mk.injEq] at hev
     obtain ⟨rfl, rfl⟩ := hev
     by_cases hd : sptLookup v live = none
-    · simp only [removeDead, hd, if_true, Prod.mk.injEq] at hrd
+    · simp only [removeDead, hd, ite_true, Prod.mk.injEq] at hrd
       obtain ⟨rfl, rfl, rfl⟩ := hrd
       exact ⟨t, tstore, by rw [evaluate]; rfl,
         strongLocalsRelInsertNotin id _ _ _ v _ ⟨hl, by simp [sptDomain, hd]⟩, hs⟩
-    · simp only [removeDead, hd, if_false, Prod.mk.injEq] at hrd
+    · simp only [removeDead, hd, ite_false, Prod.mk.injEq] at hrd
       obtain ⟨rfl, rfl, rfl⟩ := hrd
       have htg : getStore name { st with locals := t, store := tstore } = some x := by
         have := liveStoreRelFlookupStore _ st.store tstore name
@@ -81,11 +81,11 @@ theorem evaluateRemoveDead_OpCurrHeap {width : Nat} [NeZero width] {C F : Type} 
     simp only [Prod.mk.injEq] at hev
     obtain ⟨rfl, rfl⟩ := hev
     by_cases hd : sptLookup dst live = none
-    · simp only [removeDead, hd, if_true, Prod.mk.injEq] at hrd
+    · simp only [removeDead, hd, ite_true, Prod.mk.injEq] at hrd
       obtain ⟨rfl, rfl, rfl⟩ := hrd
       exact ⟨t, tstore, by rw [evaluate]; rfl,
         strongLocalsRelInsertNotin id _ _ _ dst _ ⟨hl, by simp [sptDomain, hd]⟩, hs⟩
-    · simp only [removeDead, hd, if_false, Prod.mk.injEq] at hrd
+    · simp only [removeDead, hd, ite_false, Prod.mk.injEq] at hrd
       obtain ⟨rfl, rfl, rfl⟩ := hrd
       have htw : wordExp { st with locals := t, store := tstore }
           (.op b [.var src, .lookup .currHeap]) = some w := by
@@ -124,8 +124,8 @@ theorem evaluateRemoveDead_Set {width : Nat} [NeZero width] {C F : Type} (v : Wo
   | var r =>
     rw [evaluate] at hev
     by_cases hv : v = .handler ∨ v = .bitmapBase
-    · simp only [hv, if_true, Prod.mk.injEq] at hev; exact absurd hev.1.symm herr
-    · simp only [hv, if_false] at hev
+    · simp only [hv, ite_true, Prod.mk.injEq] at hev; exact absurd hev.1.symm herr
+    · simp only [hv, ite_false] at hev
       cases hw : wordExp st (.var r) with
       | none => rw [hw] at hev; simp only [Prod.mk.injEq] at hev; exact absurd hev.1.symm herr
       | some w =>
@@ -133,13 +133,13 @@ theorem evaluateRemoveDead_Set {width : Nat} [NeZero width] {C F : Type} (v : Wo
         simp only [Prod.mk.injEq] at hev
         obtain ⟨rfl, rfl⟩ := hev
         by_cases hm : v ∈ nlive
-        · simp only [removeDead, hm, if_true, Prod.mk.injEq] at hrd
+        · simp only [removeDead, hm, ite_true, Prod.mk.injEq] at hrd
           obtain ⟨rfl, rfl, rfl⟩ := hrd
           refine ⟨t, tstore, by rw [evaluate]; rfl, hl, ?_⟩
           intro n hn
           have hne : n ≠ v := fun h => hn (h ▸ hm)
           simp [setStore, FUPDATE_HOL, hne, hs n hn]
-        · simp only [removeDead, hm, if_false, Prod.mk.injEq] at hrd
+        · simp only [removeDead, hm, ite_false, Prod.mk.injEq] at hrd
           obtain ⟨rfl, rfl, rfl⟩ := hrd
           have htw : wordExp { st with locals := t, store := tstore } (.var r) = some w := by
             simp only [wordExp, getVar] at hw ⊢
@@ -148,7 +148,7 @@ theorem evaluateRemoveDead_Set {width : Nat} [NeZero width] {C F : Type} (v : Wo
             fun k x ⟨hk, hx⟩ => hl k x ⟨(sptDomain_ins _ _ _ _).mpr (Or.inr hk), hx⟩, ?_⟩
           · rw [evaluate]
             have hv' : ¬ (v = .handler ∨ v = .bitmapBase) := hv
-            simp only [hv', if_false, htw]; rfl
+            simp only [hv', ite_false, htw]; rfl
           · intro n hn
             by_cases hnv : n = v
             · subst hnv; simp [setStore, FUPDATE_HOL]

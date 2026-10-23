@@ -135,7 +135,7 @@ theorem memcpy_of_ne {width : Nat} [NeZero width] {w : BitVec width} (h : w ≠ 
       (let (b1, m1, c1) := memcpy (w - 1) (a + wordSemBytesInWord) (b + wordSemBytesInWord)
         (gcUpdate b (m a) m) dm
        (b1, m1, c1 && (dm a && dm b))) := by
-  rw [memcpy, if_neg h]
+  rw [memcpy, ite_eq_right h]
 
 /-- Exact HOL `decode_length_def` (`word_gcFunctionsScript.sml:61-63`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml" "decode_length_def"
@@ -243,7 +243,7 @@ theorem wordGcMoveList_of_ne {width : Nat} [NeZero width] (conf : Config)
        let (a2, i2, pa2, m2, c2) :=
          wordGcMoveList conf (a + wordSemBytesInWord, l - 1, i1, pa1, old, m1, dm)
        (a2, i2, pa2, m2, dm a && (c1 && c2))) := by
-  rw [wordGcMoveList, if_neg h]
+  rw [wordGcMoveList, ite_eq_right h]
 
 /-- Exact HOL `word_gen_gc_partial_move_roots_def` (`word_gcFunctionsScript.sml:125-131`). -/
 @[hol "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml"
@@ -342,7 +342,7 @@ theorem wordGenGcPartialMoveList_append {width : Nat} [NeZero width] :
         simp [Nat.mod_eq_of_lt (show l + l' + 1 < 2 ^ width by omega)] at this
       rw [show l + 1 + l' = (l + l') + 1 by omega, wordGenGcPartialMoveList_suc,
         wordGenGcPartialMoveList_suc]
-      simp only [hne, hne', if_false]
+      simp only [hne, hne', ite_false]
       rw [ih _ l' _ _ _ _ _ gs rs conf (by omega)]
       cases wordGenGcPartialMove conf (m a, i, pa, old, m, dm, gs, rs) with
       | mk w1 r1 =>

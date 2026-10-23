@@ -75,7 +75,7 @@ theorem simpProgCorrectPrimitiveCase {width : Nat} [NeZero width] {σ : Type} :
           (decide (names.length = results.length) &&
             names.all (fun v => (state.locals.lookup v).isSome) &&
             decide names.Nodup) = true
-      · rw [if_pos hg] at heval ⊢
+      · rw [ite_eq_left hg] at heval ⊢
         obtain ⟨hr, hs'⟩ := Prod.ext_iff.mp heval
         have hr' : result = none := hr.symm
         have hs'' : finalState =
@@ -83,7 +83,7 @@ theorem simpProgCorrectPrimitiveCase {width : Nat} [NeZero width] {σ : Type} :
         subst hr'
         subst hs''
         rfl
-      · rw [if_neg hg] at heval ⊢
+      · rw [ite_eq_right hg] at heval ⊢
         exact absurd (Prod.ext_iff.mp heval).1.symm hresult
 
 /-- The `Raise eid` specialization of HOL `simp_prog_correct`

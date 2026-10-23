@@ -607,14 +607,14 @@ theorem get_mapValues {α : Type u} {β : Type v} (f : α → β)
   by_cases hi : i < m.slots.size
   · have hsize : i < (mapValues f m).slots.size := by
       simpa [mapValues, Array.size_map] using hi
-    rw [show (mapValues f m).get i = (mapValues f m).slots[i] from dif_pos hsize,
-      show m.get i = m.slots[i] from dif_pos hi]
+    rw [show (mapValues f m).get i = (mapValues f m).slots[i] from dite_eq_left hsize,
+      show m.get i = m.slots[i] from dite_eq_left hi]
     simp [mapValues, Array.getElem_map]
   · have hsize : ¬ i < (mapValues f m).slots.size := by
       simp [mapValues, Array.size_map, hi]
     rw [show (mapValues f m).get i = cakeMapLookup (mapValues f m).outside i from
-        dif_neg hsize,
-      show m.get i = cakeMapLookup m.outside i from dif_neg hi]
+        dite_eq_right hsize,
+      show m.get i = cakeMapLookup m.outside i from dite_eq_right hi]
     exact lookupNatInfo_map_snd f m.outside i
 
 /-- The checked node-list representation is preserved by the production
@@ -691,9 +691,9 @@ theorem get_set_self {α : Type u} (m : CakeNodeMap α) (i : Nat) (v : α) :
   by_cases hi : i < m.slots.size
   · simp [get, set, hi]
   · unfold set
-    rw [if_neg hi]
+    rw [ite_eq_right hi]
     unfold get
-    rw [dif_neg (by simpa using hi)]
+    rw [dite_eq_right (by simpa using hi)]
     unfold cakeMapLookup
     exact lookupNatInfo_cakeMapUpdate_self m.outside i v
 
@@ -791,7 +791,7 @@ theorem lookupNatInfo_mapIdx_add {α : Type u} (values : List α) :
           rw [hfun]
           have hj : j < vs.length := by simpa using hi
           have hne : ¬ (s = j + 1 + s) := by omega
-          simp only [Flapjack.lookupNatInfo, Nat.zero_add, beq_iff_eq, hne, if_false]
+          simp only [Flapjack.lookupNatInfo, Nat.zero_add, beq_iff_eq, hne, ite_false]
           have hkey : j + 1 + s = j + (s + 1) := by omega
           rw [hkey]
           rw [ih (s + 1) j hj]
@@ -962,7 +962,7 @@ theorem lookupNatInfo_toNatInfoMap {α : Type u} (m : CakeNodeMap α)
     rw [hnone']
     have hnot : ¬ i < m.slots.size := by rw [hsize]; exact hi
     unfold get
-    rw [dif_neg hnot, hout]
+    rw [dite_eq_right hnot, hout]
     simp [cakeMapLookup, Flapjack.lookupNatInfo]
 
 /-- Rebuilding a represented node field from its `toNatInfoMap` readback
@@ -1056,7 +1056,7 @@ theorem sortedInsert_eq_reverse_append (x : Nat) :
       · simp [Flapjack.RegAlloc.sortedInsert, hxy]
       · by_cases hgt : x > y
         · simp [Flapjack.RegAlloc.sortedInsert, hxy, hgt]
-        · simp only [Flapjack.RegAlloc.sortedInsert, hxy, hgt, if_false]
+        · simp only [Flapjack.RegAlloc.sortedInsert, hxy, hgt, ite_false]
           rw [ih (y :: acc), ih [y]]
           simp
 
@@ -1075,7 +1075,7 @@ theorem cakeSortedInsert_cons (x y : Nat) (ys : List Nat) :
   · simp [cakeSortedInsert, Flapjack.RegAlloc.sortedInsert, hxy]
   · by_cases hgt : x > y
     · simp [cakeSortedInsert, Flapjack.RegAlloc.sortedInsert, hxy, hgt]
-    · simp only [cakeSortedInsert, Flapjack.RegAlloc.sortedInsert, hxy, hgt, if_false] at h ⊢
+    · simp only [cakeSortedInsert, Flapjack.RegAlloc.sortedInsert, hxy, hgt, ite_false] at h ⊢
       simpa using h
 
 /-- `sorted_mem` (`reg_allocScript.sml:193-198`): membership in a descending

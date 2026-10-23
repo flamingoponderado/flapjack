@@ -91,7 +91,7 @@ theorem evaluate_compileFields_frame :
       simp only [noInstallSubprogsHOL, notCreatedSubprogsWithMemOp, Bool.true_and] at hni
       by_cases hz : s.termdep = 0
       · rw [ht, ht]
-        simp only [hz, dite_true, if_true]
+        simp only [hz, dite_true, ite_true]
       · rcases hq : evaluate q { s with
             clock := wordSemMustTerminateLimit width
             termdep := s.termdep - 1 } with ⟨r, s1⟩
@@ -115,9 +115,9 @@ theorem evaluate_compileFields_frame :
       rw [evaluate_seq_run c1 c2 s r1 s1 h1,
         evaluate_seq_run c1 c2 (cfState o cc s) r1 (cfState o cc s1) ih1]
       by_cases hr : r1 = none
-      · simp only [hr, if_true]
+      · simp only [hr, ite_true]
         exact evaluate_compileFields_frame c2 s1 hni.2 (hcode ▸ hc)
-      · simp only [hr, if_false]
+      · simp only [hr, ite_false]
   | .ite cmp r1 ri c1 c2, s, hni, hc => by
       simp only [noInstallSubprogsHOL, notCreatedSubprogsWithMemOp, Bool.and_eq_true] at hni
       have e1 := evaluate_compileFields_frame c1 s hni.1 hc
@@ -149,26 +149,26 @@ theorem evaluate_compileFields_frame :
       rw [evaluate_loop_run names exitNames c s _ hcs rb s1 hb,
         evaluate_loop_run names exitNames c (cfState o cc s) _ hcs' rb (cfState o cc s1) ih]
       by_cases hcont : wordSemContLoop rb = true
-      · simp only [hcont, if_true]
+      · simp only [hcont, ite_true]
         by_cases hz : s1.clock = 0
-        · simp only [hz, if_true]
+        · simp only [hz, ite_true]
           rfl
-        · simp only [hz, if_false]
+        · simp only [hz, ite_false]
           have hcd : noInstallCode (decClock s1).code := hcode ▸ hc
           exact evaluate_compileFields_frame (.loop names c exitNames) (decClock s1) hni hcd
-      · simp only [hcont, Bool.false_eq_true, if_false]
+      · simp only [hcont, Bool.false_eq_true, ite_false]
         by_cases hbr : rb = some (.break 0)
-        · simp only [hbr, if_true, cf_cutState]
+        · simp only [hbr, ite_true, cf_cutState]
           rcases cutState (exitNames, .ln) s1 <;> rfl
-        · simp only [hbr, if_false]
+        · simp only [hbr, ite_false]
   | .call ret dest args handler, s, hni, hc => by
       rw [evaluate_call_eq, evaluate_call_eq, cf_getVars]
       rcases hg : WordSemStateFiniteExact.getVars args s with _ | xs
       · rfl
       simp only
       by_cases hbad : wordSemBadDestArgs dest args = true
-      · simp only [hbad, if_true]
-      simp only [hbad, Bool.false_eq_true, if_false]
+      · simp only [hbad, ite_true]
+      simp only [hbad, Bool.false_eq_true, ite_false]
       rcases hf : wordSemFindCode dest (wordSemAddRetLoc ret xs) s.code s.stackSize with
         _ | ⟨args1, prog, ss⟩
       · rfl
@@ -181,9 +181,9 @@ theorem evaluate_compileFields_frame :
         | none =>
           simp only
           by_cases hz : s.clock = 0
-          · simp only [hz, if_true]
+          · simp only [hz, ite_true]
             rfl
-          simp only [hz, if_false]
+          simp only [hz, ite_false]
           have ih := evaluate_compileFields_frame prog (WordSemStateFiniteExact.callEnv args1 ss (decClock s)) hprog hc
           rcases hcv : evaluate prog (WordSemStateFiniteExact.callEnv args1 ss (decClock s)) with ⟨rc, sc⟩
           rw [hcv] at ih
@@ -195,15 +195,15 @@ theorem evaluate_compileFields_frame :
         obtain ⟨n, names, retHandler, l1, l2⟩ := rv
         simp only
         by_cases hdc : sptDomainEmpty names.fst ∨ ¬ n.Nodup
-        · simp only [hdc, if_true]
-        simp only [hdc, if_false]
+        · simp only [hdc, ite_true]
+        simp only [hdc, ite_false]
         rcases hce : wordSemCutEnvs names s.locals with _ | envs
         · rfl
         simp only
         by_cases hz : s.clock = 0
-        · simp only [hz, if_true, cf_pushEnv]
+        · simp only [hz, ite_true, cf_pushEnv]
           rfl
-        simp only [hz, if_false]
+        simp only [hz, ite_false]
         have hpre : (WordSemStateFiniteExact.callEnv args1 ss (pushEnv envs handler (decClock s))).code = s.code := by
           rcases handler with _ | ⟨_, _, _, _⟩ <;> rfl
         have ih := evaluate_compileFields_frame prog (WordSemStateFiniteExact.callEnv args1 ss (pushEnv envs handler (decClock s)))
@@ -224,8 +224,8 @@ theorem evaluate_compileFields_frame :
         · rfl
         · simp only
           by_cases hx : x ≠ WordLocW.loc l1 l2 ∨ ys.length ≠ n.length
-          · simp only [hx, if_true]
-          simp only [hx, if_false, cf_popEnv]
+          · simp only [hx, ite_true]
+          simp only [hx, ite_false, cf_popEnv]
           rcases hp : popEnv s2 with _ | s1
           · rfl
           simp only [Option.map_some]
@@ -381,7 +381,7 @@ theorem no_install_no_alloc_compile_single_correct {width : Nat} [NeZero width] 
   dsimp only
   by_cases herr : res = some .error
   · simp [herr]
-  rw [if_neg herr] at H ⊢
+  rw [ite_eq_right herr] at H ⊢
   rcases hT : evaluate prog { st with code := l } with ⟨res1, rst1⟩
   have hB := evaluate_compileFields_frame O2 cc0 prog { st with code := l } hni hnil
   have hTc := evaluate_compileFields_const prog { st with code := l } hni hnil

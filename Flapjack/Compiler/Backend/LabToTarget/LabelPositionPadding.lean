@@ -99,7 +99,7 @@ theorem padSection_posOk {width : Nat} [NeZero width]
           cases aux with
           | nil => simp at hn
           | cons x xs => exact hn) ha
-        simp only [padSection,if_neg hz]
+        simp only [padSection,ite_eq_right hz]
         apply ih
         refine ⟨?_,?_,?_,?_⟩
         · simpa [List.map_cons,List.sum_cons,lineLen,hs,hlen,Nat.add_assoc] using hp.2

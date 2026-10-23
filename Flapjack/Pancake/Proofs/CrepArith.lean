@@ -123,7 +123,7 @@ private theorem crepMulConst_holWordBits {width : Nat} [NeZero width]
   · by_cases hone : holWordBitsToBitVec constant == 1
     · have honeEq : holWordBitsToBitVec constant = 1 := of_decide_eq_true hone
       simp [honeEq, NeZero.ne width]
-    · simp only [if_neg hzero, if_neg hone]
+    · simp only [ite_eq_right hzero, ite_eq_right hone]
       rw [crepDest2Exp_holWordBits]
       cases crepDest2Exp 0 (holWordBitsToBitVec constant) with
       | none => simp [mapCrepExpWord]
@@ -163,7 +163,7 @@ private theorem crepMulConst_holFiniteDimension {ι : Type}
   · by_cases hone : holWordToBitVec dimension constant == 1
     · have honeEq : holWordToBitVec dimension constant = 1 := of_decide_eq_true hone
       simp [honeEq, NeZero.ne dimension.width]
-    · simp only [if_neg hzero, if_neg hone]
+    · simp only [ite_eq_right hzero, ite_eq_right hone]
       rw [crepDest2Exp_holFiniteDimension]
       cases crepDest2Exp 0 (holWordToBitVec dimension constant) with
       | none => simp [mapCrepExpWord]
@@ -732,7 +732,7 @@ private theorem crepDest2ExpFuel_eq_bitVecSpec {n : Nat} [NeZero n]
       by_cases hzero : word = 0
       · have hzeroB : (word == 0) = true := by
           cases hb : (word == 0) <;> simp_all
-        simp only [hzeroB, if_true]
+        simp only [hzeroB, ite_true]
       · by_cases hone : word = 1
         · change word ≠ (0 : BitVec n) at hzero
           change word = (1 : BitVec n) at hone
@@ -740,7 +740,7 @@ private theorem crepDest2ExpFuel_eq_bitVecSpec {n : Nat} [NeZero n]
             cases hb : (word == 0) <;> simp_all
           have honeB : (word == 1) = true := by
             cases hb : (word == 1) <;> simp_all
-          simp only [hzeroB, honeB, if_true]
+          simp only [hzeroB, honeB, ite_true]
         · by_cases hlow : AndOp.and word 1 = 0
           · change word ≠ (0 : BitVec n) at hzero
             change word ≠ (1 : BitVec n) at hone
@@ -760,7 +760,7 @@ private theorem crepDest2ExpFuel_eq_bitVecSpec {n : Nat} [NeZero n]
               cases hb : (word == 1) <;> simp_all
             have hoddB : (AndOp.and word 1 != 0) = true := by
               cases hb : (AndOp.and word 1 != 0) <;> simp_all
-            simp only [hzeroB, honeB, hoddB, if_true]
+            simp only [hzeroB, honeB, hoddB, ite_true]
 
 theorem crepDest2Exp_eq_bitVecSpec {n : Nat} [NeZero n]
     (start : Nat) (word : RiscV.Word n) :
@@ -1054,7 +1054,7 @@ theorem crepEvalMulConstForModel {n : Nat} [NeZero n] {σ : Type}
           have hmul : crepMulConst (BitVec.ofNat n) expression constant =
               .crepOp .mul [expression, .const constant] := by
             unfold crepMulConst
-            simp only [if_neg hzeroCond, if_neg honeCond, hdest]
+            simp only [ite_eq_right hzeroCond, ite_eq_right honeCond, hdest]
           rw [hmul]
           simp [evalCrepRuntimeExp, crepOpCrep, h]
       | some exponent =>
@@ -1080,7 +1080,7 @@ theorem crepEvalMulConstForModel {n : Nat} [NeZero n] {σ : Type}
           have hmul : crepMulConst (BitVec.ofNat n) expression constant =
               .shift .lsl expression (.const (BitVec.ofNat n exponent)) := by
             unfold crepMulConst
-            simp only [if_neg hzeroCond, if_neg honeCond, hdest]
+            simp only [ite_eq_right hzeroCond, ite_eq_right honeCond, hdest]
           rw [hmul]
           simp [evalCrepRuntimeExp, h, hmodelShift]
 
@@ -1150,7 +1150,7 @@ theorem crepEvalMulConstFiniteWordForModel {ι : Type}
           have hback := bitVecToHolWord_holWordToBitVec dimension (0 : ι → Bool)
           rw [holFiniteWordToBitVec_zero] at hback
           exact hback
-    simp only [hzero, if_pos]
+    simp only [hzero, ite_eq_left]
     rw [hconstant]
     simp [evalCrepRuntimeExp, hMulZero]
   · by_cases hone : holWordToBitVec dimension constant == 1
@@ -1164,10 +1164,10 @@ theorem crepEvalMulConstFiniteWordForModel {ι : Type}
             have hback := bitVecToHolWord_holWordToBitVec dimension (1 : ι → Bool)
             rw [holFiniteWordToBitVec_one] at hback
             exact hback
-      simp only [hzero, hone, if_pos]
+      simp only [hzero, hone, ite_eq_left]
       rw [hconstant]
       simp [h, hMulOne]
-    · simp only [if_neg hzero, if_neg hone]
+    · simp only [ite_eq_right hzero, ite_eq_right hone]
       cases hdest : crepDest2Exp 0 constant with
       | none =>
           simp [evalCrepRuntimeExp, crepOpCrep, h]
@@ -1260,7 +1260,7 @@ theorem crepEvalMulConstHolFiniteWordSource {ι : Type} {σ : Type}
     have hcondition : ¬ (exponent ≠ 0 ∧
         PanShiftWidth.width (α := ι → Bool) ≤ exponent) :=
       fun hcondition => hnotWidth hcondition.2
-    rw [if_neg hcondition]
+    rw [ite_eq_right hcondition]
     exact congrArg some hshiftMul
   exact crepEvalMulConstFiniteWordForModel runtime
     (fun n => bitVecToHolWord dimension (BitVec.ofNat dimension.width n))

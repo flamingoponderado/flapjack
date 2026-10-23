@@ -27,7 +27,7 @@ private theorem stateFilter_pure {α : Type} (predicate : α → M State Bool St
   | cons node rest ih =>
     simp only [stExFilter, Translator.Monadic.MonadBase.bind, reads node List.mem_cons_self]
     cases selected : pure node <;>
-      simp only [Bool.false_eq_true, if_false, if_true, List.filter_cons, selected,
+      simp only [Bool.false_eq_true, ite_false, ite_true, List.filter_cons, selected,
         List.reverse_cons, List.append_assoc, List.singleton_append]
     all_goals exact ih _ (fun next member => reads next (List.mem_cons_of_mem node member))
 
@@ -78,9 +78,9 @@ theorem initAllocDegree_production (limit node : Nat) {native : State} {producti
   dsimp only [neighbours, predicate] at filterRun
   let result : State := {native with degrees := native.degrees.set node (neighbours.filter predicate).length}
   refine ⟨result, ?_, ?_, rfl, ?_⟩
-  · simp only [Translator.Monadic.MonadBase.bind, adjLsSubEqn, if_pos adjacencyBound,
+  · simp only [Translator.Monadic.MonadBase.bind, adjLsSubEqn, ite_eq_left adjacencyBound,
       holEl_eq_getElem node native.adj_ls adjacencyBound, filterRun,
-      updateDegreesEqn, List.length_reverse, if_pos degreeBound]
+      updateDegreesEqn, List.length_reverse, ite_eq_left degreeBound]
     rfl
   · obtain ⟨a,b,c,d,e,f,g,h,i,j,k,l,m,n⟩ := good
     exact ⟨a,b,by simpa only [result, List.length_set] using c,d,e,f,g,h,i,j,k,l,m,n⟩
@@ -219,7 +219,7 @@ theorem initAllocFlags_production (nodes : List Nat)
       simpa only [List.length_set] using bounds next (List.mem_cons_of_mem node member)
     have tail := ih nextRel restBounds
     refine ⟨?_, ?_⟩
-    · simp only [stExForeach, ignoreBind, updateMoveRelatedEqn, if_pos bound, tail.1, List.foldl_cons]
+    · simp only [stExForeach, ignoreBind, updateMoveRelatedEqn, ite_eq_left bound, tail.1, List.foldl_cons]
     · simpa only [List.foldl_cons] using tail.2
 
 /-- Clearing the full original node range represents the canonical replicated
@@ -360,7 +360,7 @@ private theorem nodeMap_unique {α : Type} {left right : CakeNodeMap α} {values
     · intro index leftBound rightBound
       have bound : index < values.length := by rwa [← leftRep.2.1]
       have reads := (leftRep.2.2 index bound).trans (rightRep.2.2 index bound).symm
-      simpa only [CakeNodeMap.get, dif_pos leftBound, dif_pos rightBound] using reads
+      simpa only [CakeNodeMap.get, dite_eq_left leftBound, dite_eq_left rightBound] using reads
   cases left
   cases right
   cases slots
@@ -468,7 +468,7 @@ private theorem initPartition_pure (predicate : Nat → M State Bool StateExcept
   | cons node rest ih =>
     simp only [stExPartition, Translator.Monadic.MonadBase.bind, reads node List.mem_cons_self]
     cases selected : pure node <;>
-      simp only [Bool.false_eq_true, if_false, if_true, holPart, selected]
+      simp only [Bool.false_eq_true, ite_false, ite_true, holPart, selected]
     all_goals exact ih _ _ (fun next member => reads next (List.mem_cons_of_mem node member))
 
 /-- The whole degree partition preserves the original reverse-accumulator

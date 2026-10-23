@@ -572,7 +572,7 @@ theorem cutState_of_subset {width : Nat} [NeZero width] {F : Type}
     (h : sptSubsetLive live state.locals) :
     cutState live state = some { state with locals := sptInter state.locals live } := by
   unfold cutState
-  rw [if_pos h]
+  rw [ite_eq_left h]
 
 /-- `cutState` fails exactly when some live key is not a local. -/
 theorem cutState_eq_none_of_not_subset {width : Nat} [NeZero width] {F : Type}
@@ -580,7 +580,7 @@ theorem cutState_eq_none_of_not_subset {width : Nat} [NeZero width] {F : Type}
     (h : ¬ sptSubsetLive live state.locals) :
     cutState live state = none := by
   unfold cutState
-  rw [if_neg h]
+  rw [ite_eq_right h]
 
 /-- `cut_state` preserves the clock (HOL's `s with locals := inter s.locals live`
     updates only `locals`). -/
@@ -908,7 +908,7 @@ theorem lookupLoopFunction_eq_none_of_rel {width : Nat} [NeZero width] {F : Type
       intro hcode
       rcases head with ⟨candidate, headParameters, headBody⟩
       by_cases hc : (label == candidate) = true
-      · simp only [lookupLoopFunction, hc, if_true]
+      · simp only [lookupLoopFunction, hc, ite_true]
         obtain ⟨program, hlookup', _⟩ :=
           hcode (candidate, headParameters, headBody) (by simp)
         have hcand : label = candidate := by simpa [beq_iff_eq] using hc
@@ -945,7 +945,7 @@ theorem lookupLoopFunction_eq_of_rel {width : Nat} [NeZero width] {F : Type}
       rcases head with ⟨candidate, headParameters, headBody⟩
       simp only [lookupLoopFunction]
       by_cases hc : (label == candidate) = true
-      · simp only [hc, if_true]
+      · simp only [hc, ite_true]
         obtain ⟨program', hlookup', hrel'⟩ :=
           hcode (candidate, headParameters, headBody) (by simp)
         have hcand : label = candidate := by simpa [beq_iff_eq] using hc
@@ -1024,14 +1024,14 @@ theorem findLoopCode_prodRel {width : Nat} [NeZero width] {F : Type}
             lookupLoopFunction_eq_of_rel hcode ⟨codeEntry, hentry, hlabel⟩ hlookup
           simp only [hprod]
           by_cases hlen : args.length = parameters.length
-          · simp only [hlen, if_true]
+          · simp only [hlen, ite_true]
             exact ⟨rfl, hrel⟩
-          · simp only [hlen, if_false, loopFindCodeResultRel]
+          · simp only [hlen, ite_false, loopFindCodeResultRel]
   | none =>
       simp only [findLoopCode, findLoopCodeSpt]
       by_cases hempty : args = []
-      · simp only [hempty, if_true, loopFindCodeResultRel]
-      · simp only [hempty, if_false]
+      · simp only [hempty, ite_true, loopFindCodeResultRel]
+      · simp only [hempty, ite_false]
         cases hlast : args.getLast? with
         | none => simp only [loopFindCodeResultRel]
         | some last =>
@@ -1058,9 +1058,9 @@ theorem findLoopCode_prodRel {width : Nat} [NeZero width] {F : Type}
                       simp only [loopFindCodeResultRel]
                       rw [hsome, hprod]
                       by_cases hlen : args.length = parameters.length + 1
-                      · simp only [hlen, if_true]
+                      · simp only [hlen, ite_true]
                         exact ⟨trivial, hrel⟩
-                      · simp only [hlen, if_false]
+                      · simp only [hlen, ite_false]
                 | succ offset => simp only [loopFindCodeResultRel]
 
 end LoopSemStateFiniteExact

@@ -572,7 +572,7 @@ theorem retainedConsumer_schedulerLocation {α : Type} [OfNat α 0] [WordCseHash
   rw [cakeColourWordSpillState_lookup]
   have member : name ∈ parameters ++ wordProgVariables output.program :=
     List.mem_append_right _ (schedulerOperand_variables occurs)
-  simp only [member, if_pos]
+  simp only [member, ite_eq_left]
 
 /-- The real caller's argument floor is already included by the actual shared
 allocator. The post-allocation program parameter is ignored by its frame API,

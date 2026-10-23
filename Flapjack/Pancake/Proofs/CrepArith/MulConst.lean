@@ -38,7 +38,7 @@ def holWordLog2 {width : Nat} (w : BitVec width) : BitVec width :=
 private theorem crepDest2ExpHOL_ne_zero {width : Nat} [NeZero width] {i : Nat}
     {w : BitVec width} {n : Nat} (h : crepDest2ExpHOL i w = some n) : w ≠ 0 := by
   intro h0
-  rw [crepDest2ExpHOL, if_pos h0] at h
+  rw [crepDest2ExpHOL, ite_eq_left h0] at h
   cases h
 
 /-- The exponent of a successful `dest_2exp` is below the width, and the
@@ -101,10 +101,10 @@ theorem crepEval_mul_const {width : Nat} [NeZero width] {σ : Type} :
   unfold crepMulConstHOL
   by_cases hc0 : c = 0
   · subst hc0; simp [evalCrepSemHOLExp]
-  rw [if_neg hc0]
+  rw [ite_eq_right hc0]
   by_cases hc1 : c = 1
   · subst hc1; simpa using h
-  rw [if_neg hc1]
+  rw [ite_eq_right hc1]
   cases hd : crepDest2ExpHOL 0 c with
   | none => simp [evalCrepSemHOLExp, h, crepOpCrepWord]
   | some i =>

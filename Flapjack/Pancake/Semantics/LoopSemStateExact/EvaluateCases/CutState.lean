@@ -116,7 +116,7 @@ theorem cutState_cutLoopState {width : Nat} [NeZero width] {F : Type}
       subst hs'
       refine ⟨{ machine with locals := loopRestrictLocals machine.locals live }, ?_, ?_⟩
       · unfold cutLoopState
-        rw [if_pos hpresent]
+        rw [ite_eq_left hpresent]
       · refine ⟨?_, hglobals, hmemory, hmdomain, hshMdomain, hclock, hbe, hffi,
           hbaseAddr, htopAddr, hcode, hcoverage⟩
         intro name
@@ -143,7 +143,7 @@ theorem cutState_cutLoopState {width : Nat} [NeZero width] {F : Type}
     constructor
     · intro _
       unfold cutLoopState
-      rw [if_neg hpresent]
+      rw [ite_eq_right hpresent]
     · intro s' hcs
       rw [cutState_eq_none_of_not_subset _ _ hsub] at hcs
       exact absurd hcs (by simp)

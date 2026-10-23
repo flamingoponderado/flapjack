@@ -40,7 +40,7 @@ theorem takeLupdate {α : Type} (xs : List α) (n : Nat) (x : α) (i : Nat) :
 theorem dropLupdateGe {α : Type} (xs : List α) (n m : Nat) (h : α)
     (hnm : n ≤ m) :
     (xs.set m h).drop n = (xs.drop n).set (m - n) h := by
-  rw [List.drop_set, if_neg (by omega)]
+  rw [List.drop_set, ite_eq_right (by omega)]
 
 /-- Full original suffix preservation when the write precedes the suffix. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "DROP_LUPDATE_lemma2"]

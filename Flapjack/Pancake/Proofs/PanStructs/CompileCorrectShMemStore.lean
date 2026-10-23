@@ -121,7 +121,7 @@ theorem compileCorrectShMemStore {width : Nat} {σ : Type} [NeZero width]
                   | final event =>
                     have hop : sourceOut = (some (.finalFfi event),(source).toExact) := by
                       simp only [sourceOut,shMemStoreHOLExact,hn,ite_true]
-                      rw [if_pos ha,hf]
+                      rw [ite_eq_left ha,hf]
                     have hpost : PanSemStateFiniteExact.ofExact sourceOut.2 sourceSupport = source :=
                       repack sourceOut.2 source (congrArg Prod.snd hop) sourceSupport
                     change (sourceOut.1,PanSemStateFiniteExact.ofExact sourceOut.2 sourceSupport) = (res,post) at heval
@@ -140,7 +140,7 @@ theorem compileCorrectShMemStore {width : Nat} {σ : Type} [NeZero width]
                       have htout : targetOut = (some (.finalFfi event),(convertStateExact context source).toExact) := by
                         simp only [targetOut,shMemStoreHOLExact,convertStateExact,
                           PanSemStateFiniteExact.toExact,hn,ite_true]
-                        rw [if_pos ha,hf]
+                        rw [ite_eq_left ha,hf]
                       let targetSupport : targetOut.2.FiniteSupport :=
                         @shMemStoreHOLExact_finiteSupport width σ _ (convertStateExact context source).toExact
                           (fun key => Classical.propDecidable ((convertStateExact context source).shMemaddrs key))
@@ -156,7 +156,7 @@ theorem compileCorrectShMemStore {width : Nat} {σ : Type} [NeZero width]
                   | ret newFfi newBytes =>
                     have hop : sourceOut = (none,(({source with ffi := newFfi} : PanSemStateFiniteExact width σ)).toExact) := by
                       simp only [sourceOut,shMemStoreHOLExact,hn,ite_true]
-                      rw [if_pos ha,hf]
+                      rw [ite_eq_left ha,hf]
                     have hpost : PanSemStateFiniteExact.ofExact sourceOut.2 sourceSupport = ({source with ffi := newFfi} : PanSemStateFiniteExact width σ) :=
                       repack sourceOut.2 ({source with ffi := newFfi} : PanSemStateFiniteExact width σ) (congrArg Prod.snd hop) sourceSupport
                     change (sourceOut.1,PanSemStateFiniteExact.ofExact sourceOut.2 sourceSupport) = (res,post) at heval
@@ -175,7 +175,7 @@ theorem compileCorrectShMemStore {width : Nat} {σ : Type} [NeZero width]
                       have htout : targetOut = (none,(convertStateExact context ({source with ffi := newFfi} : PanSemStateFiniteExact width σ)).toExact) := by
                         simp only [targetOut,shMemStoreHOLExact,convertStateExact,
                           PanSemStateFiniteExact.toExact,hn,ite_true]
-                        rw [if_pos ha,hf]
+                        rw [ite_eq_left ha,hf]
                       let targetSupport : targetOut.2.FiniteSupport :=
                         @shMemStoreHOLExact_finiteSupport width σ _ (convertStateExact context source).toExact
                           (fun key => Classical.propDecidable ((convertStateExact context source).shMemaddrs key))

@@ -76,7 +76,7 @@ theorem full_collected_pipeline {width : Nat} [NeZero width] {C F : Type}
             regs := HolFiniteMapExact.empty } := by
   obtain ⟨hlen, ha⟩ := AllocGenerationalPartial.collected_guards hgc hk hs
   rw [Generational.gc_full hgc hk (Nat.not_lt_of_ge hlen) ha hp] at hs
-  simp only [Generational.gcExpanded, Nat.not_lt_of_ge hlen, if_false, ha,
+  simp only [Generational.gcExpanded, Nat.not_lt_of_ge hlen, ite_false, ha,
     not_true_eq_false, hp] at hs
   dsimp only at hs ⊢
   split at hs
@@ -1871,12 +1871,12 @@ theorem evaluate_full_program_source_result {width : Nat} [NeZero width] {C F : 
   dsimp only
   by_cases hshort : (trigger - pa3).toNat < w.toNat
   · simp only [trigger] at hshort heval'
-    simp only [hshort, if_true] at heval' ⊢
+    simp only [hshort, ite_true] at heval' ⊢
     refine ⟨ck, HolFiniteMapExact.empty, ?_, by simp, ?_, by simp⟩
     · exact heval'.trans (congrArg (fun state => (some (StackSemResult.halt (WordLocW.word (1 : BitVec width))), state)) hh)
     · exact AllocGenerationalPartial.partial_empty_regs_submap _
   · simp only [trigger] at hshort heval'
-    simp only [hshort, if_false] at heval' ⊢
+    simp only [hshort, ite_false] at heval' ⊢
     refine ⟨ck, V.regs, ?_, by simp, ?_, ?_⟩
     · exact heval'.trans (congrArg (fun state => ((none : Option (StackSemResult width)), state)) hn)
     · exact AllocGenerationalPartial.partial_empty_regs_submap _
@@ -1933,7 +1933,7 @@ theorem alloc_full_source_result {width : Nat} [NeZero width] {C F : Type}
       regs := HolFiniteMapExact.empty } := by
     simpa only [fullSourceStore, A, curr, other, setStore,
       holFapply, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL,
-      if_true, Option.getD_some, wordSemTheWord] using hfinal
+      ite_true, Option.getD_some, wordSemTheWord] using hfinal
   have hresult := alloc_after_full_collection (pa := pa3)
     (trigger := pa3 + newTrig (pb3 - pa3) w genSizes) hcol
     (by rw [hfinal']; simp [fullSourceStore, HolFiniteMapExact.lookup_updateListEq,
@@ -2042,7 +2042,7 @@ theorem alloc_correct_lemma_Generational_full {width : Nat} [NeZero width] {C F 
   let short := ((pa3 + newTrig (pb3 - pa3) w genSizes) - pa3).toNat < w.toNat
   have hrResult : r = (if short then some (.halt (.word 1)) else none) := by
     by_cases h : short <;> simp only [short] at h ⊢ <;>
-      simp only [h, if_true, if_false, Prod.mk.injEq] at hsource ⊢ <;> exact hsource.1
+      simp only [h, ite_true, ite_false, Prod.mk.injEq] at hsource ⊢ <;> exact hsource.1
   have hstate : { (if short then emptyEnv { P with
         memory := m3
         stack := P.stack.take P.stackSpace ++ roots
@@ -2061,18 +2061,18 @@ theorem alloc_correct_lemma_Generational_full {width : Nat} [NeZero width] {C F 
         gcFun := anything } := by
     by_cases h : short
     · simp only [short] at h
-      simp only [h, if_true, Prod.mk.injEq] at hsource
+      simp only [h, ite_true, Prod.mk.injEq] at hsource
       rw [hsource.2]
-      simp only [short, h, if_true]
+      simp only [short, h, ite_true]
       rfl
     · simp only [short] at h
-      simp only [h, if_false, Prod.mk.injEq] at hsource
+      simp only [h, ite_false, Prod.mk.injEq] at hsource
       rw [hsource.2]
-      simp only [short, h, if_false]
+      simp only [short, h, ite_false]
       rfl
   have htregs : t.regs = HolFiniteMapExact.empty := by
     by_cases h : short <;> simp only [short] at h <;>
-      simp only [h, if_true, if_false, Prod.mk.injEq] at hsource <;>
+      simp only [h, ite_true, ite_false, Prod.mk.injEq] at hsource <;>
       rw [hsource.2]
     all_goals rfl
   refine ⟨ck, l2, ?_, ?_, ?_, ?_⟩

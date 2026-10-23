@@ -59,7 +59,7 @@ theorem lookupInfo_toHOL [BEq String] (name : String) (context : StructContext) 
             ((structName, { fields := info.fields, size := info.size }) : StructName × StructInfoHOL)
               :: StructContext.toHOL entries from rfl]
         simp only [lookupInfo]
-        simp only [if_neg h]
+        simp only [ite_eq_right h]
         exact ih
 
 /-- The `isSome` corollary of `lookupInfo_toHOL`: the HOL `ALOOKUP sctxt nm <>
@@ -81,9 +81,9 @@ theorem lookupInfo_map3 [BEq κ] (f : γ → δ) (name : κ)
   | cons entry entries ih =>
       simp only [List.map_cons, lookupInfo]
       by_cases h : (entry.1 == name) = true
-      · rw [if_pos h, if_pos h]
+      · rw [ite_eq_left h, ite_eq_left h]
         rfl
-      · rw [if_neg h, if_neg h]
+      · rw [ite_eq_right h, ite_eq_right h]
         exact ih
 
 /-- Cake's `ALOOKUP_MAP4` (`pan_globalsProofScript.sml:2851`): mapping a
@@ -99,9 +99,9 @@ theorem lookupInfo_map4 [BEq κ] (f : γ → δ) (name : κ)
   | cons entry entries ih =>
       simp only [List.map_cons, lookupInfo]
       by_cases h : (entry.1 == name) = true
-      · rw [if_pos h, if_pos h]
+      · rw [ite_eq_left h, ite_eq_left h]
         rfl
-      · rw [if_neg h, if_neg h]
+      · rw [ite_eq_right h, ite_eq_right h]
         exact ih
 
 /-! The original Pancake `mem_load` uses `dropWhile` to find a named
@@ -694,11 +694,11 @@ def getMemopMessage (isLocal isLoad isUntrusted : Bool)
 
 /-! Source-shaped port of CakeML's `get_oparg_msg_def`
     (`cakeml/pancake/panStaticScript.sml:517-527`). -/
-def getOpargMessage (isExact : Bool) (expected given location operation : String)
+def getOpargMessage (isExact : Bool) (expected «given» location operation : String)
     (scope : Scope) : String :=
   location ++ "operation " ++ operation ++
     (if isExact then " only accepts " else " requires at least ") ++
-    expected ++ " operands, " ++ given ++ " provided in " ++
+    expected ++ " operands, " ++ «given» ++ " provided in " ++
     staticScopeDescription scope ++ "\n"
 
 /-! Cake's memory-operation diagnostics distinguish local addresses, which

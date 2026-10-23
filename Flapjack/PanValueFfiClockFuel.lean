@@ -126,8 +126,8 @@ theorem call_clock_succ_mono
           rw [htarget] at h
           simp only [Option.elim_some] at h ⊢
           by_cases hclock : clock = 0
-          · rw [if_pos hclock] at h ⊢; exact h
-          · rw [if_neg hclock] at h ⊢
+          · rw [ite_eq_left hclock] at h ⊢; exact h
+          · rw [ite_eq_right hclock] at h ⊢
             cases hbody : evalPanValueFfiClockProg context primitive handler structs
                 functions baseAddress topAddress bytesInWord fuel calleeLocals globals
                 memory ffi (clock - 1) body ma c mh with
@@ -151,7 +151,7 @@ theorem call_clock_succ_mono
                   by_cases hev :
                       (panValueExceptionValid structs c e v &&
                         panValuePayloadWithinLimit structs v) = true
-                  · rw [if_pos hev] at h ⊢
+                  · rw [ite_eq_left hev] at h ⊢
                     cases info with
                     | none => exact h
                     | some pr =>
@@ -162,14 +162,14 @@ theorem call_clock_succ_mono
                         obtain ⟨caught, handlerVariable, handlerProgram⟩ := triple
                         dsimp only at h ⊢
                         by_cases hcaught : (caught == e) = true
-                        · rw [if_pos hcaught] at h ⊢
+                        · rw [ite_eq_left hcaught] at h ⊢
                           by_cases hhv :
                               panValueHandlerValid structs c locals handlerVariable v
-                          · rw [if_pos hhv] at h ⊢
+                          · rw [ite_eq_left hhv] at h ⊢
                             exact ihHandler _ _ _ _ _ _ _ _ _ hfk h
-                          · rw [if_neg hhv] at h; simp at h
-                        · rw [if_neg hcaught] at h ⊢; exact h
-                  · rw [if_neg hev] at h; simp at h
+                          · rw [ite_eq_right hhv] at h; simp at h
+                        · rw [ite_eq_right hcaught] at h ⊢; exact h
+                  · rw [ite_eq_right hev] at h; simp at h
 
 theorem evalPanValueFfiClockProg_fuel_mono'
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
@@ -222,7 +222,7 @@ theorem evalPanValueFfiClockProg_fuel_mono'
     | some value =>
       simp only [panValueDecAcceptedValue, hv] at h ⊢
       by_cases hshape : panShapeMatches (panValueShape structs value) shape
-      · simp only [hshape, if_true, Option.elim_some,
+      · simp only [hshape, ite_true, Option.elim_some,
           Option.bind_eq_bind] at h ⊢
         cases hb : evalPanValueFfiClockProg context primitive handler structs functions
           baseAddress topAddress bytesInWord fuel (updatePanValueMap locals name value)
@@ -317,7 +317,7 @@ theorem evalPanValueFfiClockProg_fuel_mono'
             | nil =>
               dsimp only at h ⊢
               by_cases hshape : panShapeMatches (panValueShape structs value) shape
-              · rw [if_pos hshape] at h ⊢
+              · rw [ite_eq_left hshape] at h ⊢
                 cases hb : evalPanValueFfiClockProg context primitive handler structs
                   functions baseAddress topAddress bytesInWord fuel
                   (updatePanValueMap locals name value) g m f callClock body ma c mh with
@@ -326,7 +326,7 @@ theorem evalPanValueFfiClockProg_fuel_mono'
                   rw [hb] at h
                   rw [ihBody _ _ _ _ _ _ _ hfk hb]
                   exact h
-              · rw [if_neg hshape] at h ⊢
+              · rw [ite_eq_right hshape] at h ⊢
                 exact h
         | raised l g m f e v => exact h
         | normal l g m f => dsimp only at h ⊢; exact h
@@ -349,11 +349,11 @@ theorem evalPanValueFfiClockProg_fuel_mono'
     | some cv =>
       simp only [hv, Option.elim_some] at h ⊢
       by_cases hz : (cv == 0) = true
-      · rw [if_pos hz] at h ⊢; exact h
-      · rw [if_neg hz] at h ⊢
+      · rw [ite_eq_left hz] at h ⊢; exact h
+      · rw [ite_eq_right hz] at h ⊢
         by_cases hclock : (clock == 0) = true
-        · rw [if_pos hclock] at h ⊢; exact h
-        · rw [if_neg hclock] at h ⊢
+        · rw [ite_eq_left hclock] at h ⊢; exact h
+        · rw [ite_eq_right hclock] at h ⊢
           cases hb : evalPanValueFfiClockProg context primitive handler structs functions
             baseAddress topAddress bytesInWord fuel locals globals memory ffi (clock - 1)
               body ma c mh with
@@ -669,8 +669,8 @@ theorem evalPanValueFfiClockCodeCall_fuel_mono_succ
           rw [htarget] at h
           simp only [Option.elim_some] at h ⊢
           by_cases hclock : clock = 0
-          · rw [if_pos hclock] at h ⊢; exact h
-          · rw [if_neg hclock] at h ⊢
+          · rw [ite_eq_left hclock] at h ⊢; exact h
+          · rw [ite_eq_right hclock] at h ⊢
             cases hbody : evalPanValueFfiClockCodeProg context primitive handler structs
                 code exceptionShapes baseAddress topAddress bytesInWord fuel calleeLocals
                 globals memory ffi (decPanClock clock) body ma contracts memoryHandler with
@@ -719,13 +719,13 @@ theorem evalPanValueFfiClockCodeCall_fuel_mono_succ
                                                 panValueAssignmentValid structs locals (fun _ => none)
                                                   .local handlerVariable value = true
                                           · simp only [hexShape] at h ⊢
-                                            rw [if_pos hvalid] at h ⊢
+                                            rw [ite_eq_left hvalid] at h ⊢
                                             exact ihBody (fuel' := k) (result := result) hfk
                                               (updatePanValueMap locals handlerVariable value)
                                               cg cm cf (min (decPanClock clock) calleeClock)
                                               handlerProgram ma contracts memoryHandler h
                                           · simp only [hexShape] at h ⊢
-                                            rw [if_neg hvalid] at h ⊢
+                                            rw [ite_eq_right hvalid] at h ⊢
                                             exact h
                                     · simpa [hcaught] using h
 

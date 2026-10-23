@@ -266,7 +266,7 @@ theorem permute_swap_aux :
       rw [ht] at h
       by_cases hz : s.termdep = 0
       · simp [hz] at h
-      simp only [hz, if_false] at h
+      simp only [hz, ite_false] at h
       rcases hq : evaluate q { s with
           clock := wordSemMustTerminateLimit width
           termdep := s.termdep - 1 } with ⟨r, s1⟩
@@ -280,7 +280,7 @@ theorem permute_swap_aux :
       refine ⟨p', ?_⟩
       rw [ht, ht]
       have hzs : ({ s with permute := p' } : WordSemStateFiniteExact width C F).termdep ≠ 0 := hz
-      simp only [hzs, hz, if_false]
+      simp only [hzs, hz, ite_false]
       have hin : ({ { s with permute := p' } with
             clock := wordSemMustTerminateLimit width
             termdep := ({ s with permute := p' } : WordSemStateFiniteExact width C F).termdep - 1 } :
@@ -355,7 +355,7 @@ theorem permute_swap_aux :
       by_cases hcont : wordSemContLoop rb = true
       · have hrb : rb ≠ some .error := by
           intro hr; subst hr; simp [wordSemContLoop] at hcont
-        simp only [hcont, if_true] at h
+        simp only [hcont, ite_true] at h
         by_cases hz : s1.clock = 0
         · obtain ⟨p1, hp1⟩ := permute_swap_aux c s' perm (by rw [hb]; exact hrb)
           rw [hb] at hp1
@@ -364,9 +364,9 @@ theorem permute_swap_aux :
           simp only
           rw [hp1, hb]
           have hz' : ({ s1 with permute := perm } : WordSemStateFiniteExact width C F).clock = 0 := hz
-          simp only [hcont, if_true, hz, hz']
+          simp only [hcont, ite_true, hz, hz']
           simp [flushState, hz]
-        · simp only [hz, if_false, wordSemSTOP] at h
+        · simp only [hz, ite_false, wordSemSTOP] at h
           obtain ⟨p2, hp2⟩ := permute_swap_aux (.loop names c exitNames) (decClock s1) perm h
           obtain ⟨p1, hp1⟩ := permute_swap_aux c s' p2 (by rw [hb]; exact hrb)
           rw [hb] at hp1
@@ -375,9 +375,9 @@ theorem permute_swap_aux :
           simp only
           rw [hp1, hb]
           have hz' : ¬ ({ s1 with permute := p2 } : WordSemStateFiniteExact width C F).clock = 0 := hz
-          simp only [hcont, if_true, hz, hz', if_false, wordSemSTOP]
+          simp only [hcont, ite_true, hz, hz', ite_false, wordSemSTOP]
           exact hp2
-      · simp only [hcont, Bool.false_eq_true, if_false] at h
+      · simp only [hcont, Bool.false_eq_true, ite_false] at h
         have hrb : rb ≠ some .error := by
           intro hr; subst hr; simp [wordSemExitLoop] at h
         obtain ⟨p1, hp1⟩ := permute_swap_aux c s' perm (by rw [hb]; exact hrb)
@@ -386,7 +386,7 @@ theorem permute_swap_aux :
         rw [ht, ht, hcsP p1, hcs]
         simp only
         rw [hp1, hb]
-        simp only [hcont, Bool.false_eq_true, if_false]
+        simp only [hcont, Bool.false_eq_true, ite_false]
         rcases rb with _ | x
         · simp [wordSemContLoop] at hcont
         cases x with
@@ -407,7 +407,7 @@ theorem permute_swap_aux :
       simp only [hg] at h
       by_cases hbad : wordSemBadDestArgs dest args = true
       · simp [hbad] at h
-      simp only [hbad, Bool.false_eq_true, if_false] at h
+      simp only [hbad, Bool.false_eq_true, ite_false] at h
       rcases hf : wordSemFindCode dest (wordSemAddRetLoc ret xs) s.code s.stackSize with
         _ | ⟨args1, prog, ss⟩
       · simp [hf] at h
@@ -425,12 +425,12 @@ theorem permute_swap_aux :
           by_cases hz : s.clock = 0
           · refine ⟨perm, ?_⟩
             rw [ht, ht, getVars_withPermute, hg]
-            simp only [hbad, Bool.false_eq_true, if_false]
+            simp only [hbad, Bool.false_eq_true, ite_false]
             simp only [hf', hf]
             have hz' : ({ s with permute := perm } : WordSemStateFiniteExact width C F).clock = 0 := hz
-            simp only [hz, hz', if_true]
+            simp only [hz, hz', ite_true]
             simp [flushState, hz]
-          simp only [hz, if_false] at h
+          simp only [hz, ite_false] at h
           rcases hcv : evaluate prog (callEnv args1 ss (decClock s)) with ⟨rc, sc⟩
           rw [hcv] at h
           have hc := evaluate_clock prog _ rc sc hcv
@@ -441,10 +441,10 @@ theorem permute_swap_aux :
           rw [hcv] at hp1
           refine ⟨p1, ?_⟩
           rw [ht, ht, getVars_withPermute, hg]
-          simp only [hbad, Bool.false_eq_true, if_false]
+          simp only [hbad, Bool.false_eq_true, ite_false]
           simp only [hf', hf]
           have hz' : ¬ ({ s with permute := p1 } : WordSemStateFiniteExact width C F).clock = 0 := hz
-          simp only [hz, hz', if_false]
+          simp only [hz, hz', ite_false]
           have hce : callEnv args1 ss (decClock { s with permute := p1 }) =
               { callEnv args1 ss (decClock s) with permute := p1 } := rfl
           rw [hce, hp1, hcv]
@@ -455,7 +455,7 @@ theorem permute_swap_aux :
         simp only at h
         by_cases hdc : sptDomainEmpty names.fst ∨ ¬ n.Nodup
         · simp [hdc] at h
-        simp only [hdc, if_false] at h
+        simp only [hdc, ite_false] at h
         rcases hce : wordSemCutEnvs names s.locals with _ | envs
         · simp [hce] at h
         simp only [hce] at h
@@ -490,21 +490,21 @@ theorem permute_swap_aux :
               | res => res := by
           intro q hz0
           rw [ht, getVars_withPermute, hg]
-          simp only [hbad, Bool.false_eq_true, if_false]
+          simp only [hbad, Bool.false_eq_true, ite_false]
           rw [hf']
-          simp only [hdc, if_false]
+          simp only [hdc, ite_false]
           rw [hce']
           have hz0' : ¬ ({ s with permute := q } : WordSemStateFiniteExact width C F).clock = 0 := hz0
-          simp only [hz0', if_false]
+          simp only [hz0', ite_false]
           rfl
         by_cases hz : s.clock = 0
         · refine ⟨perm, ?_⟩
           rw [ht, ht, getVars_withPermute, hg]
-          simp only [hbad, Bool.false_eq_true, if_false, hf', hf, hdc, hce', hce]
+          simp only [hbad, Bool.false_eq_true, ite_false, hf', hf, hdc, hce', hce]
           have hz' : ({ s with permute := perm } : WordSemStateFiniteExact width C F).clock = 0 := hz
-          rw [if_pos hz', if_pos hz, callEnv_pushEnv_stackMax_withPermute]
+          rw [ite_eq_left hz', ite_eq_left hz, callEnv_pushEnv_stackMax_withPermute]
           rfl
-        simp only [hz, if_false] at h
+        simp only [hz, ite_false] at h
         have hpush : ∀ q : Nat → Nat → Nat,
             callEnv args1 ss (pushEnv envs handler
               (decClock { s with permute := permuteShift (s.permute 0) q })) =
@@ -546,32 +546,32 @@ theorem permute_swap_aux :
             | (some (.continue _), s) => (some .error, s)
             | res => res := by
           rw [ht]
-          simp only [hg, hbad, Bool.false_eq_true, if_false, hf, hdc, hce, hz]
+          simp only [hg, hbad, Bool.false_eq_true, ite_false, hf, hdc, hce, hz]
           rw [hcv]
           rfl
         rcases rc with _ | ⟨x, ys⟩ | ⟨x, y⟩ | k | k | _ | _ | _ | _
         · simp at h
         · by_cases hx : x ≠ WordLocW.loc l1 l2 ∨ ys.length ≠ n.length
           · simp [hx] at h
-          simp only [hx, if_false] at h
+          simp only [hx, ite_false] at h
           rcases hp : popEnv s2 with _ | s1
           · simp [hp] at h
           simp only [hp] at h
           have hc2 : s1.clock = s2.clock ∧ s1.termdep = s2.termdep :=
             ⟨popEnv_clock _ _ hp, popEnv_termdep _ _ hp⟩
           by_cases hdom : sptDomainEqUnion s1.locals envs.fst envs.snd
-          · simp only [hdom, if_true] at h
+          · simp only [hdom, ite_true] at h
             obtain ⟨p2, hp2⟩ := permute_swap_aux retHandler (setVars n ys s1) perm h
             obtain ⟨p1, hp1⟩ := permute_swap_aux prog
               (callEnv args1 ss (pushEnv envs handler (decClock s))) p2 (by rw [hcv]; simp)
             rw [hcv] at hp1
             refine ⟨permuteShift (s.permute 0) p1, ?_⟩
             rw [hopen _ hz, hR, hp1, hRHS]
-            simp only [hx, if_false]
+            simp only [hx, ite_false]
             rw [popEnv_withPermute, hp]
             have hdom' : sptDomainEqUnion ({ s1 with permute := p2 } :
                 WordSemStateFiniteExact width C F).locals envs.fst envs.snd := hdom
-            simp only [Option.map_some, hdom', hdom, if_true]
+            simp only [Option.map_some, hdom', hdom, ite_true]
             exact hp2
           · simp [hdom] at h
         · cases handler with
@@ -586,9 +586,9 @@ theorem permute_swap_aux :
             simp only at h
             by_cases hx : x ≠ WordLocW.loc l1' l2'
             · simp [hx] at h
-            simp only [hx, if_false] at h
+            simp only [hx, ite_false] at h
             by_cases hdom : sptDomainEqUnion s2.locals envs.fst envs.snd
-            · simp only [hdom, if_true] at h
+            · simp only [hdom, ite_true] at h
               obtain ⟨p2, hp2⟩ := permute_swap_aux hprog (setVar n' y s2) perm h
               obtain ⟨p1, hp1⟩ := permute_swap_aux prog
                 (callEnv args1 ss (pushEnv envs (some (n', hprog, l1', l2')) (decClock s))) p2
@@ -598,7 +598,7 @@ theorem permute_swap_aux :
               rw [hopen _ hz, hR, hp1, hRHS]
               have hdom' : sptDomainEqUnion ({ s2 with permute := p2 } :
                   WordSemStateFiniteExact width C F).locals envs.fst envs.snd := hdom
-              simp only [hx, if_false, hdom', hdom, if_true]
+              simp only [hx, ite_false, hdom', hdom, ite_true]
               exact hp2
             · simp [hdom] at h
         all_goals

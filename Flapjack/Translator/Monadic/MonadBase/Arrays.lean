@@ -34,7 +34,7 @@ theorem msubEq {value exception : Type} [Nonempty value] :
       cases n with
       | zero => simp [mSub, holEl, holHd]
       | succ n =>
-          simp only [mSub, Nat.succ_ne_zero, if_false, Nat.add_sub_cancel, holEl, List.tail_cons]
+          simp only [mSub, Nat.succ_ne_zero, ite_false, Nat.add_sub_cancel, holEl, List.tail_cons]
           exact ih n e (by simp at h; omega)
 
 /-- Exact HOL `Mupdate_eq` (`ml_monadBaseScript.sml:163-170`); HOL `LUPDATE x n l`
@@ -51,7 +51,7 @@ theorem mupdateEq {value exception : Type} :
       cases n with
       | zero => simp [mUpdate]
       | succ n =>
-          simp only [mUpdate, Nat.succ_ne_zero, if_false, Nat.add_sub_cancel]
+          simp only [mUpdate, Nat.succ_ne_zero, ite_false, Nat.add_sub_cancel]
           rw [ih n x e (by simp at h; omega)]
           rfl
 

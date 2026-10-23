@@ -60,7 +60,7 @@ theorem panLang_compile_word_to_word_thm {width : Nat} [NeZero width] {C F : Typ
   dsimp only at H ⊢
   by_cases herr : res = some .error
   · simp [herr]
-  rw [if_neg herr] at H ⊢
+  rw [ite_eq_right herr] at H ⊢
   rcases hT : evaluate prog { st with code := l } with ⟨res1, rst1⟩
   rw [hT] at H
   dsimp only at H ⊢
@@ -99,7 +99,7 @@ theorem compile_runs_agree {width : Nat} [NeZero width] {C F : Type}
   dsimp only at H
   rw [hP] at H
   dsimp only at H
-  rw [if_neg hne] at H
+  rw [ite_eq_right hne] at H
   rcases hT : evaluate prog { sk with code := l } with ⟨q1, r1⟩
   rw [hT] at H
   dsimp only at H
@@ -180,8 +180,8 @@ theorem semantics_eq_of_runs {width : Nat} [NeZero width] {C F : Type}
   unfold semBody
   by_cases hf : ∃ k, semFailCond (evaluate (.call none (some start) [0] none)
       { s with clock := k }).1
-  · rw [if_pos hf, if_pos (hc.mp hf)]
-  · rw [if_neg hf, if_neg (mt hc.mpr hf), hsome, hdiv]
+  · rw [ite_eq_left hf, ite_eq_left (hc.mp hf)]
+  · rw [ite_eq_right hf, ite_eq_right (mt hc.mpr hf), hsome, hdiv]
 
 /-- Membership of a key is unchanged by the entry-wise `full_compile_single` of
     `compile` (Flapjack infrastructure for HOL's `domain_fromAList`/`MAP_ZIP` step). -/
@@ -199,8 +199,8 @@ theorem sptAListLookup_isSome_map_fullCompileSingle {width : Nat} [NeZero width]
     have hname : (fullCompileSingle t k a c ((m, ar, p), o)).1 = m := rfl
     simp only [sptAListLookup, hname]
     by_cases hnm : n = m
-    · simp only [hnm, if_true, Option.isSome_some]
-    · simp only [hnm, if_false]
+    · simp only [hnm, ite_true, Option.isSome_some]
+    · simp only [hnm, ite_false]
       exact sptAListLookup_isSome_map_fullCompileSingle t k a c code os hl n
 
 open Classical in
@@ -241,7 +241,7 @@ theorem word_to_word_compile_semantics {width : Nat} [NeZero width] {C F : Type}
     apply hnf
     unfold semantics
     dsimp only
-    rw [if_pos ⟨k, by rw [he]; trivial⟩]
+    rw [ite_eq_left ⟨k, by rw [he]; trivial⟩]
   apply semantics_eq_of_runs
   intro k
   exact compile_runs_agree s (sptFromAList wprog) start k hrel0 hnic hnac hnmc hdom0 hgc hstack (hne k)

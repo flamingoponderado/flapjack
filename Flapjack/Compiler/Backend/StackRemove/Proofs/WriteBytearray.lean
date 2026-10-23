@@ -156,6 +156,6 @@ theorem writeBytearrayEq {width : Nat} [NeZero width]
           simp only [inside,aligned.2,ite_true]
           by_cases equal : point = riscvByteAlignHOL address
           · simp [equal]
-          · simpa only [if_neg equal] using tailPoint
+          · simpa only [ite_eq_right equal] using tailPoint
 
 end Flapjack.Compiler.Backend.StackRemove

@@ -196,7 +196,7 @@ theorem compCorrectCallReturn {width : Nat} [NeZero width] {C F : Type}
       rw [lookup] at execution
       have clockEq := LoopCase.stateRel_clock info source target relation
       by_cases zero : source.clock = 0
-      · simp only [zero, if_true, Prod.mk.injEq] at execution
+      · simp only [zero, ite_true, Prod.mk.injEq] at execution
         obtain ⟨rfl, rfl⟩ := execution
         obtain ⟨entryInfo, _, targetLookup⟩ :=
           callEntryErased info source target relation dest link program lookup
@@ -207,12 +207,12 @@ theorem compCorrectCallReturn {width : Nat} [NeZero width] {C F : Type}
         cases handler with
         | none =>
             simp only [comp, Nat.add_zero, targetZero, update,
-              StackSemEvaluate.evaluate_call, targetLookup, if_true]
+              StackSemEvaluate.evaluate_call, targetLookup, ite_true]
         | some triple =>
             obtain ⟨h, hl1, hl2⟩ := triple
             simp only [comp, Nat.add_zero, targetZero, update,
-              StackSemEvaluate.evaluate_call, targetLookup, if_true]
-      · simp only [zero, if_false] at execution
+              StackSemEvaluate.evaluate_call, targetLookup, ite_true]
+      · simp only [zero, ite_false] at execution
         rw [StackSemEvaluateClock.fixClockEvaluate] at execution
         rcases bodyExecution : StackSemEvaluate.evaluate
           (program, decClock (setVar link (.loc l1 l2) source)) with
@@ -254,11 +254,11 @@ theorem compCorrectCallReturn {width : Nat} [NeZero width] {C F : Type}
                 refine ⟨firstClock, targetMiddle, firstSpace, middleRelation, ?_, firstGuard⟩
                 cases handler with
                 | none =>
-                    simp only [comp, StackSemEvaluate.evaluate_call, targetLookup, addedNonzero, if_false]
+                    simp only [comp, StackSemEvaluate.evaluate_call, targetLookup, addedNonzero, ite_false]
                     rw [StackSemEvaluateClock.fixClockEvaluate, calleeNative]
                 | some triple =>
                     obtain ⟨h, hl1, hl2⟩ := triple
-                    simp only [comp, StackSemEvaluate.evaluate_call, targetLookup, addedNonzero, if_false]
+                    simp only [comp, StackSemEvaluate.evaluate_call, targetLookup, addedNonzero, ite_false]
                     rw [StackSemEvaluateClock.fixClockEvaluate, calleeNative]
             | timeOut =>
                 simp only [Prod.mk.injEq] at execution
@@ -266,11 +266,11 @@ theorem compCorrectCallReturn {width : Nat} [NeZero width] {C F : Type}
                 refine ⟨firstClock, targetMiddle, firstSpace, middleRelation, ?_, firstGuard⟩
                 cases handler with
                 | none =>
-                    simp only [comp, StackSemEvaluate.evaluate_call, targetLookup, addedNonzero, if_false]
+                    simp only [comp, StackSemEvaluate.evaluate_call, targetLookup, addedNonzero, ite_false]
                     rw [StackSemEvaluateClock.fixClockEvaluate, calleeNative]
                 | some triple =>
                     obtain ⟨h, hl1, hl2⟩ := triple
-                    simp only [comp, StackSemEvaluate.evaluate_call, targetLookup, addedNonzero, if_false]
+                    simp only [comp, StackSemEvaluate.evaluate_call, targetLookup, addedNonzero, ite_false]
                     rw [StackSemEvaluateClock.fixClockEvaluate, calleeNative]
             | finalFFI event =>
                 simp only [Prod.mk.injEq] at execution
@@ -278,16 +278,16 @@ theorem compCorrectCallReturn {width : Nat} [NeZero width] {C F : Type}
                 refine ⟨firstClock, targetMiddle, firstSpace, middleRelation, ?_, firstGuard⟩
                 cases handler with
                 | none =>
-                    simp only [comp, StackSemEvaluate.evaluate_call, targetLookup, addedNonzero, if_false]
+                    simp only [comp, StackSemEvaluate.evaluate_call, targetLookup, addedNonzero, ite_false]
                     rw [StackSemEvaluateClock.fixClockEvaluate, calleeNative]
                 | some triple =>
                     obtain ⟨h, hl1, hl2⟩ := triple
-                    simp only [comp, StackSemEvaluate.evaluate_call, targetLookup, addedNonzero, if_false]
+                    simp only [comp, StackSemEvaluate.evaluate_call, targetLookup, addedNonzero, ite_false]
                     rw [StackSemEvaluateClock.fixClockEvaluate, calleeNative]
             | result value =>
                 by_cases equal : value = .loc l1 l2
                 · subst value
-                  simp only [ne_eq, not_true_eq_false, if_false] at execution
+                  simp only [ne_eq, not_true_eq_false, ite_false] at execution
                   have spaceEq := firstGuard (by simp)
                   subst firstSpace
                   have selfSpace : {targetMiddle with stackSpace := targetMiddle.stackSpace} =
@@ -305,16 +305,16 @@ theorem compCorrectCallReturn {width : Nat} [NeZero width] {C F : Type}
                   cases handler with
                   | none =>
                       simp only [comp, StackSemEvaluate.evaluate_call, targetLookup,
-                        totalNonzero, if_false]
+                        totalNonzero, ite_false]
                       rw [StackSemEvaluateClock.fixClockEvaluate, extended]
-                      simpa only [ne_eq, not_true_eq_false, if_false] using continuationExecution
+                      simpa only [ne_eq, not_true_eq_false, ite_false] using continuationExecution
                   | some triple =>
                       obtain ⟨h, hl1, hl2⟩ := triple
                       simp only [comp, StackSemEvaluate.evaluate_call, targetLookup,
-                        totalNonzero, if_false]
+                        totalNonzero, ite_false]
                       rw [StackSemEvaluateClock.fixClockEvaluate, extended]
-                      simpa only [ne_eq, not_true_eq_false, if_false] using continuationExecution
-                · simp only [ne_eq, equal, not_false_eq_true, if_true, Prod.mk.injEq] at execution
+                      simpa only [ne_eq, not_true_eq_false, ite_false] using continuationExecution
+                · simp only [ne_eq, equal, not_false_eq_true, ite_true, Prod.mk.injEq] at execution
                   exact False.elim (nonerror execution.1.symm)
             | exception value =>
                 cases handler with
@@ -323,13 +323,13 @@ theorem compCorrectCallReturn {width : Nat} [NeZero width] {C F : Type}
                     obtain ⟨rfl, rfl⟩ := execution
                     refine ⟨firstClock, targetMiddle, firstSpace, middleRelation, ?_, firstGuard⟩
                     simp only [comp, StackSemEvaluate.evaluate_call, targetLookup,
-                      addedNonzero, if_false]
+                      addedNonzero, ite_false]
                     rw [StackSemEvaluateClock.fixClockEvaluate, calleeNative]
                 | some triple =>
                     obtain ⟨h, hl1, hl2⟩ := triple
                     by_cases equal : value = .loc hl1 hl2
                     · subst value
-                      simp only [ne_eq, not_true_eq_false, if_false] at execution
+                      simp only [ne_eq, not_true_eq_false, ite_false] at execution
                       have spaceEq := firstGuard (by simp)
                       subst firstSpace
                       have selfSpace : {targetMiddle with stackSpace := targetMiddle.stackSpace} =
@@ -346,10 +346,10 @@ theorem compCorrectCallReturn {width : Nat} [NeZero width] {C F : Type}
                       refine ⟨firstClock + secondClock, targetPost, finalSpace,
                         postRelation, ?_, finalGuard⟩
                       simp only [comp, StackSemEvaluate.evaluate_call, targetLookup,
-                        totalNonzero, if_false]
+                        totalNonzero, ite_false]
                       rw [StackSemEvaluateClock.fixClockEvaluate, extended]
-                      simpa only [ne_eq, not_true_eq_false, if_false] using continuationExecution
-                    · simp only [ne_eq, equal, not_false_eq_true, if_true, Prod.mk.injEq] at execution
+                      simpa only [ne_eq, not_true_eq_false, ite_false] using continuationExecution
+                    · simp only [ne_eq, equal, not_false_eq_true, ite_true, Prod.mk.injEq] at execution
                       exact False.elim (nonerror execution.1.symm)
 
 end Flapjack.Compiler.Backend.StackRawCall.CallCase

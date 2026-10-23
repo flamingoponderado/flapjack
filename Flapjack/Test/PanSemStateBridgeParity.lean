@@ -677,7 +677,7 @@ private theorem PanSemStateRelExec.updateLocalsAt {σ : Type}
     have hofne : Flapjack.Basis.Pure.MlString.ofString key ≠
         Flapjack.Basis.Pure.MlString.ofString name :=
       fun hh => hne (ofString_injective_of_ranged hkey hname hh)
-    simp only [updatePanValueMap, if_neg hk, if_neg hofne]
+    simp only [updatePanValueMap, ite_eq_right hk, ite_eq_right hofne]
     exact hl key hkey
 
 /-- The boundary witness is related by `PanSemStateRelExec`. -/

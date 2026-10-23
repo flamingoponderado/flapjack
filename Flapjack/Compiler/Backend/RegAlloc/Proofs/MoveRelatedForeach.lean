@@ -27,5 +27,5 @@ theorem stExForeachUpdateMoveRelated :
         intro v hv; simpa [s'] using hb v (by simp [hv])
       obtain ⟨lss, heq, hlen⟩ := ih s' b ht
       refine ⟨lss, ?_, by simpa [s'] using hlen⟩
-      simp only [stExForeach, ignoreBind, updateMoveRelatedEqn, hh, if_true]
+      simp only [stExForeach, ignoreBind, updateMoveRelatedEqn, hh, ite_true]
       rw [heq]

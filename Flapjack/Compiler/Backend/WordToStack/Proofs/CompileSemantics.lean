@@ -47,10 +47,10 @@ private theorem mem_of_lookup {α : Type} {key : Nat} {value : α} :
       simp only [panPropsALookupEq] at h
       by_cases ho : other = key
       · subst ho
-        simp only [decide_true, if_true, Option.some.injEq] at h
+        simp only [decide_true, ite_true, Option.some.injEq] at h
         subst h
         exact List.mem_cons_self
-      · simp only [ho, decide_false, Bool.false_eq_true, if_false] at h
+      · simp only [ho, decide_false, Bool.false_eq_true, ite_false] at h
         exact List.mem_cons_of_mem _ (mem_of_lookup h)
 
 /-- Full original compile_semantics (10709-10758): for the native top-level
@@ -100,7 +100,7 @@ theorem compileSemantics {width : Nat} [NeZero width] {C F : Type}
   rcases compiled : compileWordToStackNative asmConf false
       (asmConf.regCount - (5 + asmConf.avoidRegs.length)) code (.list [4], 1) with
     ⟨bodies, frames, output, nextIndex⟩
-  simp only [compileNative, Bool.false_eq_true, if_false, compiled] at codeEq bitmapsPrefix
+  simp only [compileNative, Bool.false_eq_true, ite_false, compiled] at codeEq bitmapsPrefix
   have keys := mapFstCompileWordToStack asmConf false _ code (.list [4], 1) bodies
     (frames, (output, nextIndex)) compiled
   have stubsDistinct : raiseStubLocation ≠ storeConstsStubLocation := by
@@ -141,10 +141,10 @@ theorem compileSemantics {width : Nat} [NeZero width] {C F : Type}
   by_cases safe : WordSemStateFiniteExact.wordLangSafeForSpace
       (makeInit asmConf (asmConf.regCount - (5 + asmConf.avoidRegs.length)) t
         (sptFromAList code) coracle) start
-  · simp only [SemanticsPropsHOL.extendWithResourceLimitPrimeHOL, decide_eq_true safe, if_true]
+  · simp only [SemanticsPropsHOL.extendWithResourceLimitPrimeHOL, decide_eq_true safe, ite_true]
     exact StateRelSemantics.stateRelImpSemantics' asmConf _ _ t [] start ⟨related, notFail, safe⟩
   · simp only [SemanticsPropsHOL.extendWithResourceLimitPrimeHOL, decide_eq_false safe,
-      Bool.false_eq_true, if_false]
+      Bool.false_eq_true, ite_false]
     exact StateRelSemantics.stateRelImpSemantics asmConf _ _ t [] start ⟨related, notFail⟩
 
 end Flapjack.WordToStackProofs.CompileSemantics

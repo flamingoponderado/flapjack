@@ -5,6 +5,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListInjective
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListReverse
 import Flapjack.Misc.GoodDimindex
 import Flapjack.Misc.ListEl
+import Mathlib.Tactic.Set
 
 /-! Word-list heap lemmas of `stack_removeProofScript.sml` (lines 2827-3222)
 used by the initializer proof. HOL sets are predicates; `set (GENLIST f n)` is

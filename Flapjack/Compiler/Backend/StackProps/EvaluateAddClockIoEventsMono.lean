@@ -67,7 +67,7 @@ theorem returningCallPrefix {width : Nat} [NeZero width] {C F : Type}
     post.ffi.ioEvents <+:
       (evaluate (.call (some (body, link, l1, l2)) dest handler, source)).2.ffi.ioEvents := by
   rw [evaluate_call]
-  simp only [found, nonzero, if_false]
+  simp only [found, nonzero, ite_false]
   rw [StackSemEvaluateClock.fixClockEvaluate, run]
   cases result with
   | none => exact List.prefix_refl _
@@ -148,7 +148,7 @@ theorem extraClockLoop {width : Nat} [NeZero width] {C F : Type}
   by_cases timeout : result = some .timeOut
   · subst result
     rw [evaluate_loop, StackSemEvaluateClock.fixClockEvaluate, run]
-    simp only [contLoop, Bool.false_eq_true, if_false, StackSemControl.exitLoop]
+    simp only [contLoop, Bool.false_eq_true, ite_false, StackSemControl.exitLoop]
     rw [run] at bodyIH
     exact bodyIH.trans (bodyLoopPrefix body _)
   · have boost := evaluateAddClock extra body source result middle ⟨run, timeout⟩
@@ -157,12 +157,12 @@ theorem extraClockLoop {width : Nat} [NeZero width] {C F : Type}
       · have suffix := bodyLoopPrefix body {source with clock := source.clock + extra}
         rw [boost] at suffix
         rw [evaluate_loop, StackSemEvaluateClock.fixClockEvaluate, run]
-        simp only [continues, if_true, zero]
+        simp only [continues, ite_true, zero]
         exact suffix
       · rw [evaluate_loop, evaluate_loop, StackSemEvaluateClock.fixClockEvaluate,
           StackSemEvaluateClock.fixClockEvaluate, run, boost]
-        simp only [continues, if_true]
-        rw [if_neg zero, if_neg (show middle.clock + extra ≠ 0 by omega),
+        simp only [continues, ite_true]
+        rw [ite_eq_right zero, ite_eq_right (show middle.clock + extra ≠ 0 by omega),
           EvaluateAddClock.decClock_addClock middle extra zero]
         exact reentryIH result middle run continues zero
     · rw [evaluate_loop, evaluate_loop, StackSemEvaluateClock.fixClockEvaluate,
@@ -189,14 +189,14 @@ theorem extraClockRawCall {width : Nat} [NeZero width] {C F : Type}
     · dsimp only; exact List.prefix_refl _
     · dsimp only
       by_cases zero : source.clock = 0
-      · rw [if_pos zero]
+      · rw [ite_eq_left zero]
         have suffix := evaluateIoEventsMono (.rawCall dest)
           {source with clock := source.clock + extra} _ _ rfl
         change source.ffi.ioEvents <+:
           (evaluate (.rawCall dest, {source with clock := source.clock + extra})).2.ffi.ioEvents at suffix
         rw [evaluate_rawCall] at suffix
         simpa only [found, sequence, emptyEnv] using suffix
-      · rw [if_neg zero, if_neg (show source.clock + extra ≠ 0 by omega),
+      · rw [ite_eq_right zero, ite_eq_right (show source.clock + extra ≠ 0 by omega),
           EvaluateAddClock.decClock_addClock source extra zero]
         have eventsPrefix := calleeIH program body initial found sequence zero
         rcases run : evaluate (body, decClock source) with ⟨result, post⟩
@@ -239,7 +239,7 @@ theorem extraClockReturningCall {width : Nat} [NeZero width] {C F : Type}
   by_cases timeout : result = some .timeOut
   · subst result
     rw [evaluate_call]
-    simp only [found, nonzero, if_false]
+    simp only [found, nonzero, ite_false]
     rw [StackSemEvaluateClock.fixClockEvaluate, run]
     dsimp only
     rw [run] at calleeIH
@@ -255,8 +255,8 @@ theorem extraClockReturningCall {width : Nat} [NeZero width] {C F : Type}
   · have boost := evaluateAddClock extra program
       (decClock (setVar link (.loc l1 l2) source)) result post ⟨run, timeout⟩
     rw [evaluate_call, evaluate_call]
-    simp only [found, nonzero, if_false]
-    rw [if_neg (show source.clock + extra ≠ 0 by omega),
+    simp only [found, nonzero, ite_false]
+    rw [ite_eq_right (show source.clock + extra ≠ 0 by omega),
       StackSemEvaluateClock.fixClockEvaluate, StackSemEvaluateClock.fixClockEvaluate,
       decClockBoost, run, boost]
     cases result with
@@ -290,8 +290,8 @@ theorem extraClockTailCall {width : Nat} [NeZero width] {C F : Type}
     (evaluate (.call none dest none, source)).2.ffi.ioEvents <+:
       (evaluate (.call none dest none, {source with clock := source.clock + extra})).2.ffi.ioEvents := by
   rw [evaluate_call, evaluate_call]
-  simp only [found, nonzero, if_false]
-  rw [if_neg (show source.clock + extra ≠ 0 by omega),
+  simp only [found, nonzero, ite_false]
+  rw [ite_eq_right (show source.clock + extra ≠ 0 by omega),
     StackSemEvaluateClock.fixClockEvaluate, StackSemEvaluateClock.fixClockEvaluate,
     EvaluateAddClock.decClock_addClock source extra nonzero]
   rcases run : evaluate (program, decClock source) with ⟨result, post⟩
@@ -320,19 +320,19 @@ theorem extraClockJumpLower {width : Nat} [NeZero width] {C F : Type}
     dsimp only
   all_goals try exact List.prefix_refl _
   by_cases lower : Encoders.Asm.wordCmpHOL .lower x y = true
-  · rw [if_pos lower, if_pos lower]
+  · rw [ite_eq_left lower, ite_eq_left lower]
     rcases found : findCode (.inl dest) source.regs source.code with _ | program
     · dsimp only; exact List.prefix_refl _
     · dsimp only
       by_cases zero : source.clock = 0
-      · rw [if_pos zero]
+      · rw [ite_eq_left zero]
         have suffix := evaluateIoEventsMono (.jumpLower r1 r2 dest)
           {source with clock := source.clock + extra} _ _ rfl
         change source.ffi.ioEvents <+:
           (evaluate (.jumpLower r1 r2 dest, {source with clock := source.clock + extra})).2.ffi.ioEvents at suffix
         rw [evaluate_jumpLower, read1, read2] at suffix
-        simpa only [value1, value2, lower, if_true, found, emptyEnv] using suffix
-      · rw [if_neg zero, if_neg (show source.clock + extra ≠ 0 by omega),
+        simpa only [value1, value2, lower, ite_true, found, emptyEnv] using suffix
+      · rw [ite_eq_right zero, ite_eq_right (show source.clock + extra ≠ 0 by omega),
           EvaluateAddClock.decClock_addClock source extra zero]
         have eventsPrefix := calleeIH program found zero
         rcases run : evaluate (program, decClock source) with ⟨result, post⟩
@@ -341,7 +341,7 @@ theorem extraClockJumpLower {width : Nat} [NeZero width] {C F : Type}
         rw [run, boostedRun] at eventsPrefix
         dsimp only
         split <;> split <;> exact eventsPrefix
-  · rw [if_neg lower, if_neg lower]
+  · rw [ite_eq_right lower, ite_eq_right lower]
 
 /-- Local full native evaluator induction; no independent HOL declaration.
 Every recursive hypothesis is derived from the original clock-first measure. -/
@@ -377,7 +377,7 @@ private theorem extraClockMeasure {width : Nat} [NeZero width] {C F : Type} (ext
     · dsimp only; exact List.prefix_refl _
     · dsimp only
       by_cases zero : source.clock = 0
-      · rw [if_pos zero]
+      · rw [ite_eq_left zero]
         have suffix := evaluateIoEventsMono (.shMemOp operation register (.addr a offset))
           {source with clock := source.clock + extra} _ _ rfl
         change source.ffi.ioEvents <+:
@@ -385,7 +385,7 @@ private theorem extraClockMeasure {width : Nat} [NeZero width] {C F : Type} (ext
             {source with clock := source.clock + extra})).2.ffi.ioEvents at suffix
         rw [evaluate_shMemOp, StackPropsExpressionClock.wordExpWithClock source _ (source.clock + extra)] at suffix
         simpa only [value, emptyEnv] using suffix
-      · rw [if_neg zero, if_neg (show source.clock + extra ≠ 0 by omega),
+      · rw [ite_eq_right zero, ite_eq_right (show source.clock + extra ≠ 0 by omega),
           EvaluateAddClock.decClock_addClock source extra zero,
           StackPropsSharedMemoryClock.shMemOpWithClock operation register location
             (decClock source) ((decClock source).clock + extra)]
@@ -434,7 +434,7 @@ private theorem extraClockMeasure {width : Nat} [NeZero width] {C F : Type} (ext
         | none =>
           by_cases zero : source.clock = 0
           · rw [evaluate_call]
-            simp only [found, zero, if_true]
+            simp only [found, zero, ite_true]
             have suffix := evaluateIoEventsMono (.call none dest none)
               {source with clock := source.clock + extra} _ _ rfl
             simpa only [zero, emptyEnv, evaluate] using suffix
@@ -449,7 +449,7 @@ private theorem extraClockMeasure {width : Nat} [NeZero width] {C F : Type} (ext
         exact List.prefix_refl _
       · by_cases zero : source.clock = 0
         · rw [evaluate_call]
-          simp only [found, zero, if_true]
+          simp only [found, zero, ite_true]
           have suffix := evaluateIoEventsMono (.call (some (body, link, l1, l2)) dest handler)
             {source with clock := source.clock + extra} _ _ rfl
           simpa only [zero, emptyEnv, evaluate] using suffix

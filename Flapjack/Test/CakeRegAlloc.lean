@@ -767,7 +767,7 @@ theorem cakeDecDegStep_matchesHolLupdate (state : CakeRaState)
   · unfold cakeDecDegStep
     unfold cakeDecDegMonadic
     rw [hstate]
-    simp only [if_pos hi']
+    simp only [ite_eq_left hi']
     rw [hslot]
   · exact CakeNodeMap.set_representsHOLNodeList m values
       ⟨houtside, hsize, hget⟩ i (values[i] - 1) hi
@@ -793,7 +793,7 @@ theorem cakeDecDegMonadic_matchesHolLupdate (state : CakeRaState)
   constructor
   · unfold cakeDecDegMonadic
     rw [hstate]
-    simp only [if_pos hi']
+    simp only [ite_eq_left hi']
     rw [hslot]
   · exact CakeNodeMap.set_representsHOLNodeList m values
       ⟨houtside, hsize, hget⟩ i (values[i] - 1) hi

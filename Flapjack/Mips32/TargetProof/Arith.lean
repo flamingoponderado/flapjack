@@ -117,7 +117,7 @@ theorem case_binop_imm (bop : BinOp) (r1 r2 : Nat) (i : W) (s1 s2 : AsmState 32)
         ((x :: []).foldl exec ms).reg (regOf r) = (if r = r1 then v else s1.regs r) := by
       intro x v hx
       simp only [List.foldl_cons, List.foldl_nil, hx, reg_setReg, reg_mk_gpr, hr.regOf_ne_zero,
-        regOf_inj hr.lt o1.lt, hr', if_false]
+        regOf_inj hr.lt o1.lt, hr', ite_false]
     cases bop
     · have hv : (-32768 : W).sle i = true ∧ i.sle 32767 = true := by
         rcases himm with ⟨hx, -⟩ | hv
@@ -147,7 +147,7 @@ theorem case_binop_imm (bop : BinOp) (r1 r2 : Nat) (i : W) (s1 s2 : AsmState 32)
       rw [fin _ (s1.regs r2 ||| i) (by simp [exec, h2, zext_lo16 i hv.1 hv.2])]
     · simp only [mips32Ast]
       by_cases hm : i = -1
-      · simp only [hm, if_true]
+      · simp only [hm, ite_true]
         rw [fin _ (s1.regs r2 ^^^ -1) (by
           simp [exec, h2]
           congr 1
@@ -156,7 +156,7 @@ theorem case_binop_imm (bop : BinOp) (r1 r2 : Nat) (i : W) (s1 s2 : AsmState 32)
           rcases himm with ⟨-, hx⟩ | hv
           · exact absurd (by simpa using hx) hm
           · simpa [mips32Config] using hv
-        simp only [hm, if_false]
+        simp only [hm, ite_false]
         rw [fin _ (s1.regs r2 ^^^ i) (by
           simp [exec, h2, zext_lo16 i hv.1 hv.2])]
 
@@ -221,18 +221,18 @@ theorem case_const (r : Nat) (i : W) (s1 s2 : AsmState 32) (ms : State)
     have hr' := st.reg _ hr.lt hr.avoid
     simp only [mips32Ast]
     by_cases h1 : hi16 i = 0
-    · rw [if_pos h1]
+    · rw [ite_eq_left h1]
       have e : zext16 (lo16 i) = i := by simpa using const_lo i h1
       simp [exec, reg_setReg, hr.regOf_ne_zero, regOf_inj hr.lt o.lt, hr', e]
-    rw [if_neg h1]
+    rw [ite_eq_right h1]
     by_cases h2 : hi16 i = -1 ∧ (lo16 i).msb
-    · rw [if_pos h2]
+    · rw [ite_eq_left h2]
       have e : sext16 (lo16 i) = i := by simpa using const_neg i h2.1 h2.2
       simp [exec, reg_setReg, hr.regOf_ne_zero, regOf_inj hr.lt o.lt, hr', e]
-    · rw [if_neg h2]
+    · rw [ite_eq_right h2]
       have e := const_full i
       simp only [List.foldl_cons, List.foldl_nil, exec, reg_setReg, reg_mk_gpr, hr.regOf_ne_zero,
-        regOf_inj hr.lt o.lt, hr', o.regOf_ne_zero, alu_or, if_false, if_true]
+        regOf_inj hr.lt o.lt, hr', o.regOf_ne_zero, alu_or, ite_false, ite_true]
       by_cases hrr : r' = r
       · simp [hrr]; exact e
       · simp [hrr]
@@ -504,8 +504,8 @@ theorem add_flag (a b : W) :
       Bool.true_and] using (add_overflow_sign a b).symm
   rw [shift_msb]
   by_cases h : ((~~~(a ^^^ b)) &&& (b ^^^ (a+b))).msb = true
-  · simp only [h, ↓reduceIte, if_pos (sign.mp h)]
-  · simp only [if_neg h, if_neg (fun k => h (sign.mpr k))]
+  · simp only [h, ↓reduceIte, ite_eq_left (sign.mp h)]
+  · simp only [ite_eq_right h, ite_eq_right (fun k => h (sign.mpr k))]
 
 theorem sub_overflow_sign (a b : W) :
     ((a - b).toInt ≠ a.toInt - b.toInt) ↔
@@ -535,8 +535,8 @@ theorem sub_flag (a b : W) :
       Bool.true_and] using (sub_overflow_sign a b).symm
   rw [shift_msb]
   by_cases h : ((a ^^^ b) &&& (~~~(b ^^^ (a-b)))).msb = true
-  · simp only [h, ↓reduceIte, if_pos (sign.mp h)]
-  · simp only [if_neg h, if_neg (fun k => h (sign.mpr k))]
+  · simp only [h, ↓reduceIte, ite_eq_left (sign.mp h)]
+  · simp only [ite_eq_right h, ite_eq_right (fun k => h (sign.mpr k))]
 
 theorem case_addOverflow (r1 r2 r3 r4 : Nat) (s1 s2 : AsmState 32) (ms : State)
     (h : asmStep mips32Target.config s1 (.inst (.arith (.addOverflow r1 r2 r3 r4))) s2 ∧

@@ -797,7 +797,7 @@ theorem extractColorationOutput :
       refine ⟨col, ?_, ?_, ?_⟩
       · show Translator.Monadic.MonadBase.bind (colorsSub h) _ sth = _
         unfold Translator.Monadic.MonadBase.bind
-        rw [colorsSubEqn, if_pos hh]
+        rw [colorsSubEqn, ite_eq_left hh]
         exact hrun
       · intro r hr
         have hc := hcol r hr
@@ -814,18 +814,18 @@ theorem extractColorationOutput :
             have := hi1 r br hbr
             rw [this] at hih; cases hih; rfl
         by_cases hm : br ∈ l
-        · rw [if_pos hm] at hc
-          rw [if_pos (List.mem_cons_of_mem h hm)]
+        · rw [ite_eq_left hm] at hc
+          rw [ite_eq_left (List.mem_cons_of_mem h hm)]
           exact hc
-        · rw [if_neg hm] at hc
+        · rw [ite_eq_right hm] at hc
           by_cases hbh : br = h
-          · rw [if_pos (by rw [hbh]; exact List.mem_cons_self), hc]
+          · rw [ite_eq_left (by rw [hbh]; exact List.mem_cons_self), hc]
             show sptLookup r (sptInsert (miscThe 0 (sptLookup h invbij)) _ acc) = _
             rw [hih]
             simp only [miscThe]
             rw [hkey.mpr hbh, sptLookup_sptInsert_same, hbh]
           · have hne : r ≠ ih' := fun e => hbh (hkey.mp e)
-            rw [if_neg (by simp [hm, hbh]), hc]
+            rw [ite_eq_right (by simp [hm, hbh]), hc]
             show sptLookup r (sptInsert (miscThe 0 (sptLookup h invbij)) _ acc) = _
             rw [hih]
             simp only [miscThe]

@@ -84,7 +84,7 @@ theorem copyPropInstEval {width : Nat} [NeZero width] {C F : Type} :
     | binop bop r1 r2 ri =>
         cases ri with
         | imm w =>
-            simp only [copyPropInst, lookupEqImm, reduceCtorEq, if_false, Prod.mk.injEq] at h
+            simp only [copyPropInst, lookupEqImm, reduceCtorEq, ite_false, Prod.mk.injEq] at h
             obtain ⟨rfl, -⟩ := h
             apply instCong
             simp only [WordSemStateFiniteExact.inst, WordSemStateFiniteExact.assign]
@@ -92,7 +92,7 @@ theorem copyPropInstEval {width : Nat} [NeZero width] {C F : Type} :
             simp only [List.map_cons, List.map_nil, gvi]
         | reg r3 =>
             by_cases hc : lookupEq cs r3 = r1 <;>
-              simp only [copyPropInst, lookupEqImm, WordRegImm.reg.injEq, hc, if_true, if_false,
+              simp only [copyPropInst, lookupEqImm, WordRegImm.reg.injEq, hc, ite_true, ite_false,
                 Prod.mk.injEq] at h <;>
               obtain ⟨rfl, -⟩ := h <;>
               apply instCong <;>
@@ -102,14 +102,14 @@ theorem copyPropInstEval {width : Nat} [NeZero width] {C F : Type} :
     | shift sh r1 r2 ri =>
         cases ri with
         | imm w =>
-            simp only [copyPropInst, lookupEqImm, reduceCtorEq, if_false, Prod.mk.injEq] at h
+            simp only [copyPropInst, lookupEqImm, reduceCtorEq, ite_false, Prod.mk.injEq] at h
             obtain ⟨rfl, -⟩ := h
             apply instCong
             simp only [WordSemStateFiniteExact.inst, WordSemStateFiniteExact.assign]
             rw [wordExpCongShift (gvi r2) rfl]
         | reg r3 =>
             by_cases hc : lookupEq cs r3 = r1 <;>
-              simp only [copyPropInst, lookupEqImm, WordRegImm.reg.injEq, hc, if_true, if_false,
+              simp only [copyPropInst, lookupEqImm, WordRegImm.reg.injEq, hc, ite_true, ite_false,
                 Prod.mk.injEq] at h <;>
               obtain ⟨rfl, -⟩ := h <;>
               apply instCong <;>
@@ -155,10 +155,10 @@ theorem copyPropInstEval {width : Nat} [NeZero width] {C F : Type} :
   · cases f with
     | fpMovFromReg d r1 r2 =>
         by_cases hq : lookupEq cs r1 = lookupEq cs r2
-        · simp only [copyPropInst, hq, if_true, Prod.mk.injEq] at h
+        · simp only [copyPropInst, hq, ite_true, Prod.mk.injEq] at h
           obtain ⟨rfl, -⟩ := h
           rfl
-        · simp only [copyPropInst, hq, if_false, Prod.mk.injEq] at h
+        · simp only [copyPropInst, hq, ite_false, Prod.mk.injEq] at h
           obtain ⟨rfl, -⟩ := h
           apply instCong
           simp only [WordSemStateFiniteExact.inst, gv]

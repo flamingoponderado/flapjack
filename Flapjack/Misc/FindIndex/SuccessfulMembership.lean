@@ -15,7 +15,7 @@ theorem findIndex_isMem {α : Type} [DecidableEq α] (target : α)
     by_cases he : head = target
     · exact List.mem_cons.mpr (Or.inl he.symm)
     · have ht : findIndex target tail (offset+1) = some index := by
-        simpa only [findIndex, if_neg he] using hs
+        simpa only [findIndex, ite_eq_right he] using hs
       exact List.mem_cons.mpr (Or.inr (ih (offset+1) ht))
 
 end Flapjack.Misc

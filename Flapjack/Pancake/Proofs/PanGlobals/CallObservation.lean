@@ -42,7 +42,7 @@ theorem panGlobals_call_emptyLocals_observation {width : Nat} {σ : Type}
       by_cases hclock : state.clock = 0
       · simp [context, cleared, emptyLocalsHOLFinite, hlookup, hclock]
       · simp only [show cleared.state.code = state.code from rfl,
-          show cleared.state.clock = state.clock from rfl, hlookup, if_neg hclock]
+          show cleared.state.clock = state.clock from rfl, hlookup, ite_eq_right hclock]
         rw [← hentry]
         cases hbody : evalPanSemRecursiveCallFiniteContext body
             (callEntryContextHOLFinite context callee) with

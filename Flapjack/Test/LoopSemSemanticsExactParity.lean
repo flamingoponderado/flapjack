@@ -69,7 +69,7 @@ theorem semantics_return : semantics sRet 1 = .terminate .success [] := by
 theorem semantics_missing_entry : semantics { sRet with code := .ln } 1 = .fail := by
   unfold semantics
   simp only
-  rw [if_pos]
+  rw [ite_eq_left]
   refine ⟨0, ?_⟩
   rw [evaluate]
   simp [findCode, sptLookup]

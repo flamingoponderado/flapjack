@@ -173,8 +173,8 @@ private theorem clockMeasure {width : Nat} [NeZero width] {C F : Type} :
               simp only [decClock]
               omega
             by_cases hb : StackSemControl.badFunReturn r1 = true
-            · simp only [hb, if_true] at h; exact leaf _ _ h hc
-            · simp only [hb, Bool.false_eq_true, if_false] at h; exact leaf _ _ h hc
+            · simp only [hb, ite_true] at h; exact leaf _ _ h hc
+            · simp only [hb, Bool.false_eq_true, ite_false] at h; exact leaf _ _ h hc
     | some rr =>
       obtain ⟨retH, link, l1, l2⟩ := rr
       dsimp only at h
@@ -198,16 +198,16 @@ private theorem clockMeasure {width : Nat} [NeZero width] {C F : Type} :
           rcases r1 with _ | ⟨x⟩ | ⟨x⟩ | _ | _ | _ | _ | _ | _
           all_goals try (exact leaf _ _ h hc)
           · by_cases hx : x = .loc l1 l2
-            · simp only [hx, ne_eq, not_true_eq_false, if_false] at h
+            · simp only [hx, ne_eq, not_true_eq_false, ite_false] at h
               exact Nat.le_trans (ih _ (hlt retH) retH _ rfl r s' h) hc
-            · simp only [hx, ne_eq, not_false_eq_true, if_true] at h
+            · simp only [hx, ne_eq, not_false_eq_true, ite_true] at h
               exact leaf _ _ h hc
           · rcases handler with _ | ⟨hp, hl1, hl2⟩
             · exact leaf _ _ h hc
             · by_cases hx : x = .loc hl1 hl2
-              · simp only [hx, ne_eq, not_true_eq_false, if_false] at h
+              · simp only [hx, ne_eq, not_true_eq_false, ite_false] at h
                 exact Nat.le_trans (ih _ (hlt hp) hp _ rfl r s' h) hc
-              · simp only [hx, ne_eq, not_false_eq_true, if_true] at h
+              · simp only [hx, ne_eq, not_false_eq_true, ite_true] at h
                 exact leaf _ _ h hc
 /-- Full original arbitrary-program clock inequality for the faithful native total evaluator.
 No clock-law, callback, restricted-program or target-evaluation premise is added. -/

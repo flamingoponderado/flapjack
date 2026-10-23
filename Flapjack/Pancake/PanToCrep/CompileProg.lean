@@ -711,7 +711,7 @@ theorem compileProgExactHOLW_store_success_bridge {width : Nat} [NeZero width]
     hproductionValue, hsuccess, hsuccessProduction]
   have hExactGuard : ¬ ((exactValues.length != exactValues.length) = true) := by
     simp
-  simp only [if_neg hExactGuard, if_true]
+  simp only [ite_eq_right hExactGuard, ite_true]
   rw [crepProgOfHOL_nestedDecsHOL, crepProgOfHOL_crepNestedSeqHOL,
     crepProgOfHOL_storesHOL]
   simp [haddressCodec, hvaluesCodec, hnamesProduction,
@@ -1087,8 +1087,8 @@ theorem compileProgExactHOLW_local_assign_bridge {width : Nat} [NeZero width]
                     hExact, hProduction]
                   rw [hlookup]
                   dsimp only
-                  rw [if_pos hproductionLen, if_pos hdisj,
-                    if_neg (by simp [hlen]), if_pos hdisjHol]
+                  rw [ite_eq_left hproductionLen, ite_eq_left hdisj,
+                    ite_eq_right (by simp [hlen]), ite_eq_left hdisjHol]
                   simp only [crepProgOfHOL_crepNestedSeqHOL,
                     crepProgOfHOL_zipWith_assign]
                   exact congrArg crepNestedSeq hassign.symm
@@ -1116,8 +1116,8 @@ theorem compileProgExactHOLW_local_assign_bridge {width : Nat} [NeZero width]
                     hExact, hProduction]
                   rw [hlookup]
                   dsimp only
-                  rw [if_pos hproductionLen, if_neg hdisj,
-                    if_neg (by simp [hlen]), if_neg hdisjHol]
+                  rw [ite_eq_left hproductionLen, ite_eq_right hdisj,
+                    ite_eq_right (by simp [hlen]), ite_eq_right hdisjHol]
                   rw [crepProgOfHOL_nestedDecsHOL,
                     crepProgOfHOL_crepNestedSeqHOL,
                     crepProgOfHOL_zipWith_assign, hvalues]
@@ -1132,7 +1132,7 @@ theorem compileProgExactHOLW_local_assign_bridge {width : Nat} [NeZero width]
                   hExact, hProduction]
                 rw [hlookup]
                 dsimp only
-                rw [if_neg hproductionLen, if_pos (by simp [hlen])]
+                rw [ite_eq_right hproductionLen, ite_eq_left (by simp [hlen])]
                 simp only [crepProgOfHOL]
 
 /-- Source-reviewed HOL `ShMemStore` clause bridge (`pan_to_crepScript.sml`,
@@ -2020,7 +2020,7 @@ theorem compileProgExactHOLW_dec_bridge {width : Nat} [NeZero width]
           (compileExpHOL context.toProduction expression).1.length := by
       rw [hshapeSize, ← hlength]
       exact hcount
-    rw [if_neg (by simp [hcount]), if_pos hcountProduction]
+    rw [ite_eq_right (by simp [hcount]), ite_eq_left hcountProduction]
     rw [crepProgOfHOL_nestedDecsHOL]
     rw [hbody]
     rw [hnames, hvalues]
@@ -2031,7 +2031,7 @@ theorem compileProgExactHOLW_dec_bridge {width : Nat} [NeZero width]
       apply hcount
       rw [← hshapeSize, hlength]
       exact hcontra
-    rw [if_pos (by simp [hcount]), if_neg hcountProduction]
+    rw [ite_eq_left (by simp [hcount]), ite_eq_right hcountProduction]
     simp only [crepProgOfHOL]
 
 /-- Recursive `Dec` bridge driven by the ranged context relation. The induction
@@ -2255,7 +2255,7 @@ theorem compileProgExactHOLW_dec_relation_bridge {width : Nat} [NeZero width]
           (compileExpHOL productionContext expression).1.length := by
       rw [hshapeSize, ← hlength]
       exact hcount
-    rw [if_neg (by simp [hcount]), if_pos hcountProduction]
+    rw [ite_eq_right (by simp [hcount]), ite_eq_left hcountProduction]
     rw [crepProgOfHOL_nestedDecsHOL]
     rw [hbody]
     rw [hcountNames, hvalues]
@@ -2266,7 +2266,7 @@ theorem compileProgExactHOLW_dec_relation_bridge {width : Nat} [NeZero width]
       apply hcount
       rw [← hshapeSize, hlength]
       exact hcontra
-    rw [if_pos (by simp [hcount]), if_neg hcountProduction]
+    rw [ite_eq_left (by simp [hcount]), ite_eq_right hcountProduction]
     simp only [crepProgOfHOL]
 
 /-! The recursive `DecCall` bridge (`pan_to_crepScript.sml:262-272`). Both

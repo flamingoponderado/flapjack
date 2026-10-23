@@ -14,7 +14,7 @@ theorem pmov_final {α : Type} [DecidableEq α] (state : State α) :
       rcases finished with ⟨rfl, rfl⟩
       exact ⟨emitted, by rw [pmov.eq_def]; simp⟩
   | case2 state unfinished ih =>
-      rw [pmov.eq_def, dif_neg unfinished]
+      rw [pmov.eq_def, dite_eq_right unfinished]
       exact ih
 
 end Flapjack.Compiler.Backend.Parmove

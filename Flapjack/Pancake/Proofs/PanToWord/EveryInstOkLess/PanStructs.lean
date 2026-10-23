@@ -45,10 +45,10 @@ theorem findSome_snd_mem {α β : Type} [DecidableEq α] (l : List (α × β)) (
   | cons q l ih =>
       simp only [List.findSome?_cons] at h
       by_cases hq : q.1 = k
-      · simp only [hq, if_true, Option.some.injEq] at h
+      · simp only [hq, ite_true, Option.some.injEq] at h
         subst h
         simp
-      · simp only [hq, if_false] at h
+      · simp only [hq, ite_false] at h
         exact List.mem_map.mpr (by
           obtain ⟨x, hx, rfl⟩ := List.mem_map.mp (ih h)
           exact ⟨x, List.mem_cons_of_mem _ hx, rfl⟩)

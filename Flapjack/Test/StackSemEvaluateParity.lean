@@ -59,12 +59,12 @@ example : observe (evaluateHOL (.seq .tick (.ret 4)) (fixture s)) =
     (some (.result (.loc 4 5)), 4, some (.word (w8 3)), 1) := by
   simp
 
--- if_true=(SOME (Result (Loc 4 5)),5,SOME (Word 3w),1)
+-- ite_true=(SOME (Result (Loc 4 5)),5,SOME (Word 3w),1)
 example : observe (evaluateHOL (.ite .equal 1 (.imm (w8 3)) (.ret 4) (.halt 1)) (fixture s)) =
     (some (.result (.loc 4 5)), 5, some (.word (w8 3)), 1) := by
   simp
 
--- if_false=(SOME (Halt (Word 3w)),5,NONE,0)
+-- ite_false=(SOME (Halt (Word 3w)),5,NONE,0)
 example : observe (evaluateHOL (.ite .equal 1 (.imm (w8 4)) (.ret 4) (.halt 1)) (fixture s)) =
     (some (.halt (.word (w8 3))), 5, none, 0) := by
   simp

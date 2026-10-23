@@ -173,7 +173,7 @@ theorem executeCodeUntil_conditional_of_nonbranching [NeZero width]
         executeCodeUntil code.length 0 (BitVec.ofNat width returnOffset)
           code (execute state branch) := by
     rw [executeCodeUntil]
-    rw [if_neg hnotEnd]
+    rw [ite_eq_right hnotEnd]
     simp [code, branch, hpc]
   by_cases hcondition : riscVCondition state operator left right
   · have hbranchPcTrue : (execute state branch).pc = 4 := by
@@ -230,7 +230,7 @@ theorem executeCodeUntil_conditional_of_nonbranching [NeZero width]
           Nat.mod_eq_of_lt hreturnBound] at heqNat
         omega
       rw [executeCodeUntil]
-      rw [if_neg hnotReturn]
+      rw [ite_eq_right hnotReturn]
       rw [hthenPc]
       simp [BitVec.toNat_ofNat, Nat.mod_eq_of_lt hthenBound]
       have hlookup : code[1 + thenCode.length]? = some jump := by
@@ -409,7 +409,7 @@ theorem executeCodeUntilWithFfiCounted_conditional_of_nonbranching
             Nat.succ (thenCode.length + elseCode.length + 2) := by omega
       rw [show code = branch :: thenCode ++ [jump] ++ elseCode by rfl]
       rw [hfuel, executeCodeUntilWithFfiCounted]
-      rw [if_neg (by simpa [returnAddress] using hnotReturn)]
+      rw [ite_eq_right (by simpa [returnAddress] using hnotReturn)]
       rw [hpc]
       simp [BitVec.toNat_ofNat]
       rw [hbranchFfi']
@@ -486,7 +486,7 @@ theorem executeCodeUntilWithFfiCounted_conditional_of_nonbranching
         omega
       have hfuel : elseCode.length + 2 = Nat.succ (elseCode.length + 1) := by omega
       rw [hfuel, executeCodeUntilWithFfiCounted]
-      rw [if_neg hnotReturnThen]
+      rw [ite_eq_right hnotReturnThen]
       rw [hthenPc']
       simp [BitVec.toNat_ofNat, Nat.mod_eq_of_lt hthenBound]
       have hlookup : code[1 + thenCode.length]? = some jump := by
@@ -547,7 +547,7 @@ theorem executeCodeUntilWithFfiCounted_conditional_of_nonbranching
       have hfuel : elseCode.length + 2 = Nat.succ (elseCode.length + 1) := by omega
       rw [show code = branch :: thenCode ++ [jump] ++ elseCode by rfl]
       rw [hfuel, executeCodeUntilWithFfiCounted]
-      rw [if_neg (by simpa [returnAddress] using hnotReturn)]
+      rw [ite_eq_right (by simpa [returnAddress] using hnotReturn)]
       rw [hpc]
       simp [BitVec.toNat_ofNat]
       rw [hbranchFfi']
@@ -691,7 +691,7 @@ theorem evalWordFunction_ite_executeCodeUntil_of_nonbranching [NeZero width]
           some (thenState, returns) := by
       simp only [evalWordFunction, hsourceChoose]
       exact hthenEval
-    rw [if_pos hchoose] at hrun
+    rw [ite_eq_left hchoose] at hrun
     have hjumpData := stateDataRelation_execute_branchEq_zero
       (executeInstructions
         (execute state (riscVBranchFalseInstruction operator branchLeft right
@@ -715,7 +715,7 @@ theorem evalWordFunction_ite_executeCodeUntil_of_nonbranching [NeZero width]
           some (elseState, returns) := by
       simp only [evalWordFunction, hsourceChoose]
       exact helseEval
-    rw [if_neg hchoose] at hrun
+    rw [ite_eq_right hchoose] at hrun
     refine ⟨elseState,
       executeInstructions
         (execute state (riscVBranchFalseInstruction operator branchLeft right
@@ -833,7 +833,7 @@ theorem executeCode_ite_assign [NeZero width] (state : State width) (hpc : state
       simp [riscVCondition, hcondition]
     have hcondition' : state.registers 1 = state.registers 2 := by
       simpa [readRegister] using hcondition
-    rw [if_pos hrisc] at hrun
+    rw [ite_eq_left hrisc] at hrun
     simp only [riscVBranchFalseInstruction] at hrun
     rw [hrun]
     simp [execute, writeRegister, readRegister, nextPc, hzero']
@@ -845,7 +845,7 @@ theorem executeCode_ite_assign [NeZero width] (state : State width) (hpc : state
       intro heq
       apply hcondition
       simpa [readRegister] using heq
-    rw [if_neg hrisc] at hrun
+    rw [ite_eq_right hrisc] at hrun
     simp only [riscVBranchFalseInstruction] at hrun
     rw [hrun]
     simp [execute, writeRegister, readRegister, nextPc, hzero']
@@ -944,7 +944,7 @@ theorem executeCodeUntilWithFfiCounted_ite_assign [NeZero width]
       simpa [riscVBranchFalseInstruction, riscVCondition, hcondition] using hrun
     have hconditionBool : (readRegister state 1 == readRegister state 2) = true := by
       simp [hcondition]
-    rw [if_pos hconditionBool]
+    rw [ite_eq_left hconditionBool]
     rw [hrun']
     simp [execute, writeRegister, readRegister, nextPc, hzero', hcondition']
   · have hrisc : ¬riscVCondition state .equal 1 2 = true := by
@@ -961,7 +961,7 @@ theorem executeCodeUntilWithFfiCounted_ite_assign [NeZero width]
       simpa [riscVBranchFalseInstruction, riscVCondition, hcondition] using hrun
     have hconditionBool : ¬((readRegister state 1 == readRegister state 2) = true) := by
       simp [hcondition]
-    rw [if_neg hconditionBool]
+    rw [ite_eq_right hconditionBool]
     rw [hrun']
     simp [execute, writeRegister, readRegister, nextPc, hzero', hcondition']
 

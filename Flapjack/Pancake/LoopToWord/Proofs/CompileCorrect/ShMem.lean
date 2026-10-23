@@ -78,7 +78,7 @@ theorem compileCorrect_ShMem {width : Nat} [NeZero width] {C F : Type}
   · rename_i addr haddr
     have hexp := LoopToWord.compExpPreservesEval s ad _ t ctxt ⟨haddr, hgd, hState, hLocals⟩
     have hmv : sptMem v ctxt := hAcc v (by simp [accVarsHOL, sptMem_sptInsert])
-    cases op <;> simp only [Flapjack.Compiler.Encoders.Asm.asmIsLoad, if_true, if_false, Bool.false_eq_true] at hEval
+    cases op <;> simp only [Flapjack.Compiler.Encoders.Asm.asmIsLoad, ite_true, ite_false, Bool.false_eq_true] at hEval
     all_goals
       split at hEval
       rotate_left
@@ -102,7 +102,7 @@ theorem compileCorrect_ShMem {width : Nat} [NeZero width] {C F : Type}
       | (
         split at hEval
         · rename_i hd
-          rw [if_pos hd]
+          rw [ite_eq_left hd]
           split at hEval
           · rename_i o hc
             simp only [Prod.mk.injEq] at hEval
@@ -130,7 +130,7 @@ theorem compileCorrect_ShMem {width : Nat} [NeZero width] {C F : Type}
         try rw [takeOneWordToBytesHOL w hgd] at hEval
         split at hEval
         · rename_i hd
-          rw [if_pos hd]
+          rw [ite_eq_left hd]
           split at hEval
           · rename_i o hc
             simp only [Prod.mk.injEq] at hEval

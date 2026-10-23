@@ -44,7 +44,7 @@ theorem execute_riscVBranchFalse_pc [NeZero width] (state : State width)
   · by_cases h : signedLess (readRegister state left) (readRegister state right) = true
     · simp [h]
     · have h' : signedLess (readRegister state left) (readRegister state right) = false :=
-        eq_false_of_ne_true h
+        Bool.eq_false_of_ne_true h
       simp [h]
 
 theorem execute_riscVBranchFalse_pc_of_condition [NeZero width]

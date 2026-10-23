@@ -148,12 +148,12 @@ theorem ssaCcTransCorrectStoreConsts {width : Nat} [NeZero width] {C F : Type}
             have sourceRun : WordSemStateFiniteExact.evaluate
                 (.storeConsts tmp1 tmp2 address offset words) permuted = (none,sourceWritten) := by
               simp only [WordSemStateFiniteExact.evaluate,addressRead,offsetRead,
-                validAddresses,not_true_eq_false,if_false]
+                validAddresses,not_true_eq_false,ite_false]
               rfl
             have sourceExpanded := sourceRun
             dsimp only [permuted] at sourceExpanded
             dsimp only
-            simp only [sourceExpanded,reduceCtorEq,if_false]
+            simp only [sourceExpanded,reduceCtorEq,ite_false]
             simp only [ssaCcTrans,nextVarRename]
             rw [compiledRun]
             refine ⟨rfl,?_,finalLocals⟩

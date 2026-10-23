@@ -179,7 +179,7 @@ theorem sptMem_bn {α : Type} (left right : Spt α) (key : Nat) :
     simp only [sptLookup]
     simp
   · by_cases h2 : key % 2 = 0
-    · simp only [sptLookup, if_neg h0, if_pos h2]
+    · simp only [sptLookup, ite_eq_right h0, ite_eq_left h2]
       constructor
       · intro h
         left
@@ -188,7 +188,7 @@ theorem sptMem_bn {α : Type} (left right : Spt α) (key : Nat) :
         · have : m = (key - 1) / 2 := by omega
           subst this; simpa using hm
         · omega
-    · simp only [sptLookup, if_neg h0, if_neg h2]
+    · simp only [sptLookup, ite_eq_right h0, ite_eq_right h2]
       constructor
       · intro h
         right
@@ -213,7 +213,7 @@ theorem sptMem_bs {α : Type} (left : Spt α) (value : α) (right : Spt α) (key
     simp only [sptLookup]
     simp
   · by_cases h2 : key % 2 = 0
-    · simp only [sptLookup, if_neg h0, if_pos h2]
+    · simp only [sptLookup, ite_eq_right h0, ite_eq_left h2]
       constructor
       · intro h
         right; left
@@ -223,7 +223,7 @@ theorem sptMem_bs {α : Type} (left : Spt α) (value : α) (right : Spt α) (key
         · have : m = (key - 1) / 2 := by omega
           subst this; simpa using hm
         · omega
-    · simp only [sptLookup, if_neg h0, if_neg h2]
+    · simp only [sptLookup, ite_eq_right h0, ite_eq_right h2]
       constructor
       · intro h
         right; right
@@ -263,37 +263,37 @@ theorem sptLookup_sptInsert_same {α : Type} :
         by_cases heven : key % 2 = 0
         · cases tree with
           | ln =>
-              conv => lhs; rw [sptInsert.eq_1, if_neg hzero, if_pos heven]
-              conv => lhs; rw [sptLookup.eq_3, if_neg hzero, if_pos heven]
+              conv => lhs; rw [sptInsert.eq_1, ite_eq_right hzero, ite_eq_left heven]
+              conv => lhs; rw [sptLookup.eq_3, ite_eq_right hzero, ite_eq_left heven]
               exact ih ((key - 1) / 2) hdecrease value .ln
           | ls existing =>
-              conv => lhs; rw [sptInsert.eq_2, if_neg hzero, if_pos heven]
-              conv => lhs; rw [sptLookup.eq_4, if_neg hzero, if_pos heven]
+              conv => lhs; rw [sptInsert.eq_2, ite_eq_right hzero, ite_eq_left heven]
+              conv => lhs; rw [sptLookup.eq_4, ite_eq_right hzero, ite_eq_left heven]
               exact ih ((key - 1) / 2) hdecrease value .ln
           | bn left right =>
-              conv => lhs; rw [sptInsert.eq_3, if_neg hzero, if_pos heven]
-              conv => lhs; rw [sptLookup.eq_3, if_neg hzero, if_pos heven]
+              conv => lhs; rw [sptInsert.eq_3, ite_eq_right hzero, ite_eq_left heven]
+              conv => lhs; rw [sptLookup.eq_3, ite_eq_right hzero, ite_eq_left heven]
               exact ih ((key - 1) / 2) hdecrease value left
           | bs left existing right =>
-              conv => lhs; rw [sptInsert.eq_4, if_neg hzero, if_pos heven]
-              conv => lhs; rw [sptLookup.eq_4, if_neg hzero, if_pos heven]
+              conv => lhs; rw [sptInsert.eq_4, ite_eq_right hzero, ite_eq_left heven]
+              conv => lhs; rw [sptLookup.eq_4, ite_eq_right hzero, ite_eq_left heven]
               exact ih ((key - 1) / 2) hdecrease value left
         · cases tree with
           | ln =>
-              conv => lhs; rw [sptInsert.eq_1, if_neg hzero, if_neg heven]
-              conv => lhs; rw [sptLookup.eq_3, if_neg hzero, if_neg heven]
+              conv => lhs; rw [sptInsert.eq_1, ite_eq_right hzero, ite_eq_right heven]
+              conv => lhs; rw [sptLookup.eq_3, ite_eq_right hzero, ite_eq_right heven]
               exact ih ((key - 1) / 2) hdecrease value .ln
           | ls existing =>
-              conv => lhs; rw [sptInsert.eq_2, if_neg hzero, if_neg heven]
-              conv => lhs; rw [sptLookup.eq_4, if_neg hzero, if_neg heven]
+              conv => lhs; rw [sptInsert.eq_2, ite_eq_right hzero, ite_eq_right heven]
+              conv => lhs; rw [sptLookup.eq_4, ite_eq_right hzero, ite_eq_right heven]
               exact ih ((key - 1) / 2) hdecrease value .ln
           | bn left right =>
-              conv => lhs; rw [sptInsert.eq_3, if_neg hzero, if_neg heven]
-              conv => lhs; rw [sptLookup.eq_3, if_neg hzero, if_neg heven]
+              conv => lhs; rw [sptInsert.eq_3, ite_eq_right hzero, ite_eq_right heven]
+              conv => lhs; rw [sptLookup.eq_3, ite_eq_right hzero, ite_eq_right heven]
               exact ih ((key - 1) / 2) hdecrease value right
           | bs left existing right =>
-              conv => lhs; rw [sptInsert.eq_4, if_neg hzero, if_neg heven]
-              conv => lhs; rw [sptLookup.eq_4, if_neg hzero, if_neg heven]
+              conv => lhs; rw [sptInsert.eq_4, ite_eq_right hzero, ite_eq_right heven]
+              conv => lhs; rw [sptLookup.eq_4, ite_eq_right hzero, ite_eq_right heven]
               exact ih ((key - 1) / 2) hdecrease value right
 
 private theorem div2_pred_ne {a b : Nat} (ha : 0 < a) (hb : 0 < b)
@@ -319,114 +319,114 @@ theorem sptLookup_sptInsert_ne {α : Type} :
       by_cases h2 : other % 2 = 0
       · cases tree with
         | ln =>
-          conv => lhs; rw [sptInsert.eq_1, if_neg h0, if_pos h2]
+          conv => lhs; rw [sptInsert.eq_1, ite_eq_right h0, ite_eq_left h2]
           conv => rhs; rw [sptLookup.eq_1]
           by_cases hk : key = 0
-          · conv => lhs; rw [sptLookup.eq_3, if_pos hk]
-          · conv => lhs; rw [sptLookup.eq_3, if_neg hk]
+          · conv => lhs; rw [sptLookup.eq_3, ite_eq_left hk]
+          · conv => lhs; rw [sptLookup.eq_3, ite_eq_right hk]
             by_cases hkk : key % 2 = 0
-            · conv => lhs; rw [if_pos hkk]
+            · conv => lhs; rw [ite_eq_left hkk]
               rw [ih ((other - 1) / 2) hdec ((key - 1) / 2) value (.ln : Spt α)
                 (div2_pred_ne (by omega) hpos (by omega) hne)]
               simp only [sptLookup.eq_1]
-            · conv => lhs; rw [if_neg hkk]
+            · conv => lhs; rw [ite_eq_right hkk]
               simp only [sptLookup.eq_1]
         | ls e =>
-          conv => lhs; rw [sptInsert.eq_2, if_neg h0, if_pos h2]
+          conv => lhs; rw [sptInsert.eq_2, ite_eq_right h0, ite_eq_left h2]
           by_cases hk : key = 0
-          · conv => lhs; rw [sptLookup.eq_4, if_pos hk]
-            conv => rhs; rw [sptLookup.eq_2, if_pos hk]
-          · conv => lhs; rw [sptLookup.eq_4, if_neg hk]
-            conv => rhs; rw [sptLookup.eq_2, if_neg hk]
+          · conv => lhs; rw [sptLookup.eq_4, ite_eq_left hk]
+            conv => rhs; rw [sptLookup.eq_2, ite_eq_left hk]
+          · conv => lhs; rw [sptLookup.eq_4, ite_eq_right hk]
+            conv => rhs; rw [sptLookup.eq_2, ite_eq_right hk]
             by_cases hkk : key % 2 = 0
-            · conv => lhs; rw [if_pos hkk]
+            · conv => lhs; rw [ite_eq_left hkk]
               rw [ih ((other - 1) / 2) hdec ((key - 1) / 2) value (.ln : Spt α)
                 (div2_pred_ne (by omega) hpos (by omega) hne)]
               simp only [sptLookup.eq_1]
-            · conv => lhs; rw [if_neg hkk]
+            · conv => lhs; rw [ite_eq_right hkk]
               simp only [sptLookup.eq_1]
         | bn l r =>
-          conv => lhs; rw [sptInsert.eq_3, if_neg h0, if_pos h2]
+          conv => lhs; rw [sptInsert.eq_3, ite_eq_right h0, ite_eq_left h2]
           by_cases hk : key = 0
-          · conv => lhs; rw [sptLookup.eq_3, if_pos hk]
-            conv => rhs; rw [sptLookup.eq_3, if_pos hk]
-          · conv => lhs; rw [sptLookup.eq_3, if_neg hk]
-            conv => rhs; rw [sptLookup.eq_3, if_neg hk]
+          · conv => lhs; rw [sptLookup.eq_3, ite_eq_left hk]
+            conv => rhs; rw [sptLookup.eq_3, ite_eq_left hk]
+          · conv => lhs; rw [sptLookup.eq_3, ite_eq_right hk]
+            conv => rhs; rw [sptLookup.eq_3, ite_eq_right hk]
             by_cases hkk : key % 2 = 0
-            · conv => lhs; rw [if_pos hkk]
-              conv => rhs; rw [if_pos hkk]
+            · conv => lhs; rw [ite_eq_left hkk]
+              conv => rhs; rw [ite_eq_left hkk]
               rw [ih ((other - 1) / 2) hdec ((key - 1) / 2) value l
                 (div2_pred_ne (by omega) hpos (by omega) hne)]
-            · conv => lhs; rw [if_neg hkk]
-              conv => rhs; rw [if_neg hkk]
+            · conv => lhs; rw [ite_eq_right hkk]
+              conv => rhs; rw [ite_eq_right hkk]
         | bs l e r =>
-          conv => lhs; rw [sptInsert.eq_4, if_neg h0, if_pos h2]
+          conv => lhs; rw [sptInsert.eq_4, ite_eq_right h0, ite_eq_left h2]
           by_cases hk : key = 0
-          · conv => lhs; rw [sptLookup.eq_4, if_pos hk]
-            conv => rhs; rw [sptLookup.eq_4, if_pos hk]
-          · conv => lhs; rw [sptLookup.eq_4, if_neg hk]
-            conv => rhs; rw [sptLookup.eq_4, if_neg hk]
+          · conv => lhs; rw [sptLookup.eq_4, ite_eq_left hk]
+            conv => rhs; rw [sptLookup.eq_4, ite_eq_left hk]
+          · conv => lhs; rw [sptLookup.eq_4, ite_eq_right hk]
+            conv => rhs; rw [sptLookup.eq_4, ite_eq_right hk]
             by_cases hkk : key % 2 = 0
-            · conv => lhs; rw [if_pos hkk]
-              conv => rhs; rw [if_pos hkk]
+            · conv => lhs; rw [ite_eq_left hkk]
+              conv => rhs; rw [ite_eq_left hkk]
               rw [ih ((other - 1) / 2) hdec ((key - 1) / 2) value l
                 (div2_pred_ne (by omega) hpos (by omega) hne)]
-            · conv => lhs; rw [if_neg hkk]
-              conv => rhs; rw [if_neg hkk]
+            · conv => lhs; rw [ite_eq_right hkk]
+              conv => rhs; rw [ite_eq_right hkk]
       · cases tree with
         | ln =>
-          conv => lhs; rw [sptInsert.eq_1, if_neg h0, if_neg h2]
+          conv => lhs; rw [sptInsert.eq_1, ite_eq_right h0, ite_eq_right h2]
           conv => rhs; rw [sptLookup.eq_1]
           by_cases hk : key = 0
-          · conv => lhs; rw [sptLookup.eq_3, if_pos hk]
-          · conv => lhs; rw [sptLookup.eq_3, if_neg hk]
+          · conv => lhs; rw [sptLookup.eq_3, ite_eq_left hk]
+          · conv => lhs; rw [sptLookup.eq_3, ite_eq_right hk]
             by_cases hkk : key % 2 = 0
-            · conv => lhs; rw [if_pos hkk]
+            · conv => lhs; rw [ite_eq_left hkk]
               simp only [sptLookup.eq_1]
-            · conv => lhs; rw [if_neg hkk]
+            · conv => lhs; rw [ite_eq_right hkk]
               rw [ih ((other - 1) / 2) hdec ((key - 1) / 2) value (.ln : Spt α)
                 (div2_pred_ne (by omega) hpos (by omega) hne)]
               simp only [sptLookup.eq_1]
         | ls e =>
-          conv => lhs; rw [sptInsert.eq_2, if_neg h0, if_neg h2]
+          conv => lhs; rw [sptInsert.eq_2, ite_eq_right h0, ite_eq_right h2]
           by_cases hk : key = 0
-          · conv => lhs; rw [sptLookup.eq_4, if_pos hk]
-            conv => rhs; rw [sptLookup.eq_2, if_pos hk]
-          · conv => lhs; rw [sptLookup.eq_4, if_neg hk]
-            conv => rhs; rw [sptLookup.eq_2, if_neg hk]
+          · conv => lhs; rw [sptLookup.eq_4, ite_eq_left hk]
+            conv => rhs; rw [sptLookup.eq_2, ite_eq_left hk]
+          · conv => lhs; rw [sptLookup.eq_4, ite_eq_right hk]
+            conv => rhs; rw [sptLookup.eq_2, ite_eq_right hk]
             by_cases hkk : key % 2 = 0
-            · conv => lhs; rw [if_pos hkk]
+            · conv => lhs; rw [ite_eq_left hkk]
               simp only [sptLookup.eq_1]
-            · conv => lhs; rw [if_neg hkk]
+            · conv => lhs; rw [ite_eq_right hkk]
               rw [ih ((other - 1) / 2) hdec ((key - 1) / 2) value (.ln : Spt α)
                 (div2_pred_ne (by omega) hpos (by omega) hne)]
               simp only [sptLookup.eq_1]
         | bn l r =>
-          conv => lhs; rw [sptInsert.eq_3, if_neg h0, if_neg h2]
+          conv => lhs; rw [sptInsert.eq_3, ite_eq_right h0, ite_eq_right h2]
           by_cases hk : key = 0
-          · conv => lhs; rw [sptLookup.eq_3, if_pos hk]
-            conv => rhs; rw [sptLookup.eq_3, if_pos hk]
-          · conv => lhs; rw [sptLookup.eq_3, if_neg hk]
-            conv => rhs; rw [sptLookup.eq_3, if_neg hk]
+          · conv => lhs; rw [sptLookup.eq_3, ite_eq_left hk]
+            conv => rhs; rw [sptLookup.eq_3, ite_eq_left hk]
+          · conv => lhs; rw [sptLookup.eq_3, ite_eq_right hk]
+            conv => rhs; rw [sptLookup.eq_3, ite_eq_right hk]
             by_cases hkk : key % 2 = 0
-            · conv => lhs; rw [if_pos hkk]
-              conv => rhs; rw [if_pos hkk]
-            · conv => lhs; rw [if_neg hkk]
-              conv => rhs; rw [if_neg hkk]
+            · conv => lhs; rw [ite_eq_left hkk]
+              conv => rhs; rw [ite_eq_left hkk]
+            · conv => lhs; rw [ite_eq_right hkk]
+              conv => rhs; rw [ite_eq_right hkk]
               rw [ih ((other - 1) / 2) hdec ((key - 1) / 2) value r
                 (div2_pred_ne (by omega) hpos (by omega) hne)]
         | bs l e r =>
-          conv => lhs; rw [sptInsert.eq_4, if_neg h0, if_neg h2]
+          conv => lhs; rw [sptInsert.eq_4, ite_eq_right h0, ite_eq_right h2]
           by_cases hk : key = 0
-          · conv => lhs; rw [sptLookup.eq_4, if_pos hk]
-            conv => rhs; rw [sptLookup.eq_4, if_pos hk]
-          · conv => lhs; rw [sptLookup.eq_4, if_neg hk]
-            conv => rhs; rw [sptLookup.eq_4, if_neg hk]
+          · conv => lhs; rw [sptLookup.eq_4, ite_eq_left hk]
+            conv => rhs; rw [sptLookup.eq_4, ite_eq_left hk]
+          · conv => lhs; rw [sptLookup.eq_4, ite_eq_right hk]
+            conv => rhs; rw [sptLookup.eq_4, ite_eq_right hk]
             by_cases hkk : key % 2 = 0
-            · conv => lhs; rw [if_pos hkk]
-              conv => rhs; rw [if_pos hkk]
-            · conv => lhs; rw [if_neg hkk]
-              conv => rhs; rw [if_neg hkk]
+            · conv => lhs; rw [ite_eq_left hkk]
+              conv => rhs; rw [ite_eq_left hkk]
+            · conv => lhs; rw [ite_eq_right hkk]
+              conv => rhs; rw [ite_eq_right hkk]
               rw [ih ((other - 1) / 2) hdec ((key - 1) / 2) value r
                 (div2_pred_ne (by omega) hpos (by omega) hne)]
 
@@ -588,7 +588,7 @@ theorem sptAcc_eq (index key : Nat) :
           intro index
           rw [sptAcc]
           by_cases heven : (key + 1) % 2 = 0
-          · rw [if_pos heven]
+          · rw [ite_eq_left heven]
             have hlt : key / 2 < key + 1 := by omega
             have hkey : key + 1 = 2 * (key / 2) + 2 := by omega
             have hchild := ih (key / 2) hlt (index + 2 * lrNext index)
@@ -600,7 +600,7 @@ theorem sptAcc_eq (index key : Nat) :
               simp [Nat.mul_comm, Nat.mul_left_comm]
             rw [hmul, Nat.mul_add]
             omega
-          · rw [if_neg heven]
+          · rw [ite_eq_right heven]
             have hlt : key / 2 < key + 1 := by omega
             have hkey : key + 1 = 2 * (key / 2) + 1 := by omega
             have hchild := ih (key / 2) hlt (index + lrNext index)
@@ -1201,28 +1201,28 @@ theorem sptRootSet_insert {α : Type} (v d : α) (c : Nat) (t : Spt α) (hc : c 
   cases t with
   | ln =>
     by_cases hc2 : c % 2 = 0
-    · conv => lhs; rw [sptInsert.eq_1, if_neg hc, if_pos hc2, sptRootSet.eq_3]
-      rw [sptRootSet.eq_1, sptInsert.eq_2, if_neg hc, if_pos hc2]
-    · conv => lhs; rw [sptInsert.eq_1, if_neg hc, if_neg hc2, sptRootSet.eq_3]
-      rw [sptRootSet.eq_1, sptInsert.eq_2, if_neg hc, if_neg hc2]
+    · conv => lhs; rw [sptInsert.eq_1, ite_eq_right hc, ite_eq_left hc2, sptRootSet.eq_3]
+      rw [sptRootSet.eq_1, sptInsert.eq_2, ite_eq_right hc, ite_eq_left hc2]
+    · conv => lhs; rw [sptInsert.eq_1, ite_eq_right hc, ite_eq_right hc2, sptRootSet.eq_3]
+      rw [sptRootSet.eq_1, sptInsert.eq_2, ite_eq_right hc, ite_eq_right hc2]
   | ls existing =>
     by_cases hc2 : c % 2 = 0
-    · conv => lhs; rw [sptInsert.eq_2, if_neg hc, if_pos hc2, sptRootSet.eq_4]
-      rw [sptRootSet.eq_2, sptInsert.eq_2, if_neg hc, if_pos hc2]
-    · conv => lhs; rw [sptInsert.eq_2, if_neg hc, if_neg hc2, sptRootSet.eq_4]
-      rw [sptRootSet.eq_2, sptInsert.eq_2, if_neg hc, if_neg hc2]
+    · conv => lhs; rw [sptInsert.eq_2, ite_eq_right hc, ite_eq_left hc2, sptRootSet.eq_4]
+      rw [sptRootSet.eq_2, sptInsert.eq_2, ite_eq_right hc, ite_eq_left hc2]
+    · conv => lhs; rw [sptInsert.eq_2, ite_eq_right hc, ite_eq_right hc2, sptRootSet.eq_4]
+      rw [sptRootSet.eq_2, sptInsert.eq_2, ite_eq_right hc, ite_eq_right hc2]
   | bn left right =>
     by_cases hc2 : c % 2 = 0
-    · conv => lhs; rw [sptInsert.eq_3, if_neg hc, if_pos hc2, sptRootSet.eq_3]
-      rw [sptRootSet.eq_3, sptInsert.eq_4, if_neg hc, if_pos hc2]
-    · conv => lhs; rw [sptInsert.eq_3, if_neg hc, if_neg hc2, sptRootSet.eq_3]
-      rw [sptRootSet.eq_3, sptInsert.eq_4, if_neg hc, if_neg hc2]
+    · conv => lhs; rw [sptInsert.eq_3, ite_eq_right hc, ite_eq_left hc2, sptRootSet.eq_3]
+      rw [sptRootSet.eq_3, sptInsert.eq_4, ite_eq_right hc, ite_eq_left hc2]
+    · conv => lhs; rw [sptInsert.eq_3, ite_eq_right hc, ite_eq_right hc2, sptRootSet.eq_3]
+      rw [sptRootSet.eq_3, sptInsert.eq_4, ite_eq_right hc, ite_eq_right hc2]
   | bs left existing right =>
     by_cases hc2 : c % 2 = 0
-    · conv => lhs; rw [sptInsert.eq_4, if_neg hc, if_pos hc2, sptRootSet.eq_4]
-      rw [sptRootSet.eq_4, sptInsert.eq_4, if_neg hc, if_pos hc2]
-    · conv => lhs; rw [sptInsert.eq_4, if_neg hc, if_neg hc2, sptRootSet.eq_4]
-      rw [sptRootSet.eq_4, sptInsert.eq_4, if_neg hc, if_neg hc2]
+    · conv => lhs; rw [sptInsert.eq_4, ite_eq_right hc, ite_eq_left hc2, sptRootSet.eq_4]
+      rw [sptRootSet.eq_4, sptInsert.eq_4, ite_eq_right hc, ite_eq_left hc2]
+    · conv => lhs; rw [sptInsert.eq_4, ite_eq_right hc, ite_eq_right hc2, sptRootSet.eq_4]
+      rw [sptRootSet.eq_4, sptInsert.eq_4, ite_eq_right hc, ite_eq_right hc2]
 
 /-- Exact port of HOL sptree `insert_shadow`
     (`HOL/src/finite_maps/sptreeScript.sml:1641`): re-inserting the same key
@@ -1246,38 +1246,38 @@ theorem sptInsert_insert_shadow {α : Type} (a : Nat) (b c : α) (tree : Spt α)
       by_cases h2 : a % 2 = 0
       · cases tree with
         | ln =>
-            conv => rhs; rw [sptInsert.eq_1, if_neg h0, if_pos h2]
-            rw [sptInsert.eq_1, if_neg h0, if_pos h2, sptInsert.eq_3, if_neg h0, if_pos h2,
+            conv => rhs; rw [sptInsert.eq_1, ite_eq_right h0, ite_eq_left h2]
+            rw [sptInsert.eq_1, ite_eq_right h0, ite_eq_left h2, sptInsert.eq_3, ite_eq_right h0, ite_eq_left h2,
               ih ((a - 1) / 2) hk c .ln]
         | ls existing =>
-            conv => rhs; rw [sptInsert.eq_2, if_neg h0, if_pos h2]
-            rw [sptInsert.eq_2, if_neg h0, if_pos h2,
-              sptInsert.eq_4, if_neg h0, if_pos h2, ih ((a - 1) / 2) hk c .ln]
+            conv => rhs; rw [sptInsert.eq_2, ite_eq_right h0, ite_eq_left h2]
+            rw [sptInsert.eq_2, ite_eq_right h0, ite_eq_left h2,
+              sptInsert.eq_4, ite_eq_right h0, ite_eq_left h2, ih ((a - 1) / 2) hk c .ln]
         | bn left right =>
-            conv => rhs; rw [sptInsert.eq_3, if_neg h0, if_pos h2]
-            rw [sptInsert.eq_3, if_neg h0, if_pos h2,
-              sptInsert.eq_3, if_neg h0, if_pos h2, ih ((a - 1) / 2) hk c left]
+            conv => rhs; rw [sptInsert.eq_3, ite_eq_right h0, ite_eq_left h2]
+            rw [sptInsert.eq_3, ite_eq_right h0, ite_eq_left h2,
+              sptInsert.eq_3, ite_eq_right h0, ite_eq_left h2, ih ((a - 1) / 2) hk c left]
         | bs left existing right =>
-            conv => rhs; rw [sptInsert.eq_4, if_neg h0, if_pos h2]
-            rw [sptInsert.eq_4, if_neg h0, if_pos h2,
-              sptInsert.eq_4, if_neg h0, if_pos h2, ih ((a - 1) / 2) hk c left]
+            conv => rhs; rw [sptInsert.eq_4, ite_eq_right h0, ite_eq_left h2]
+            rw [sptInsert.eq_4, ite_eq_right h0, ite_eq_left h2,
+              sptInsert.eq_4, ite_eq_right h0, ite_eq_left h2, ih ((a - 1) / 2) hk c left]
       · cases tree with
         | ln =>
-            conv => rhs; rw [sptInsert.eq_1, if_neg h0, if_neg h2]
-            rw [sptInsert.eq_1, if_neg h0, if_neg h2, sptInsert.eq_3, if_neg h0, if_neg h2,
+            conv => rhs; rw [sptInsert.eq_1, ite_eq_right h0, ite_eq_right h2]
+            rw [sptInsert.eq_1, ite_eq_right h0, ite_eq_right h2, sptInsert.eq_3, ite_eq_right h0, ite_eq_right h2,
               ih ((a - 1) / 2) hk c .ln]
         | ls existing =>
-            conv => rhs; rw [sptInsert.eq_2, if_neg h0, if_neg h2]
-            rw [sptInsert.eq_2, if_neg h0, if_neg h2,
-              sptInsert.eq_4, if_neg h0, if_neg h2, ih ((a - 1) / 2) hk c .ln]
+            conv => rhs; rw [sptInsert.eq_2, ite_eq_right h0, ite_eq_right h2]
+            rw [sptInsert.eq_2, ite_eq_right h0, ite_eq_right h2,
+              sptInsert.eq_4, ite_eq_right h0, ite_eq_right h2, ih ((a - 1) / 2) hk c .ln]
         | bn left right =>
-            conv => rhs; rw [sptInsert.eq_3, if_neg h0, if_neg h2]
-            rw [sptInsert.eq_3, if_neg h0, if_neg h2,
-              sptInsert.eq_3, if_neg h0, if_neg h2, ih ((a - 1) / 2) hk c right]
+            conv => rhs; rw [sptInsert.eq_3, ite_eq_right h0, ite_eq_right h2]
+            rw [sptInsert.eq_3, ite_eq_right h0, ite_eq_right h2,
+              sptInsert.eq_3, ite_eq_right h0, ite_eq_right h2, ih ((a - 1) / 2) hk c right]
         | bs left existing right =>
-            conv => rhs; rw [sptInsert.eq_4, if_neg h0, if_neg h2]
-            rw [sptInsert.eq_4, if_neg h0, if_neg h2,
-              sptInsert.eq_4, if_neg h0, if_neg h2, ih ((a - 1) / 2) hk c right]
+            conv => rhs; rw [sptInsert.eq_4, ite_eq_right h0, ite_eq_right h2]
+            rw [sptInsert.eq_4, ite_eq_right h0, ite_eq_right h2,
+              sptInsert.eq_4, ite_eq_right h0, ite_eq_right h2, ih ((a - 1) / 2) hk c right]
 
 /-- Exact port of HOL sptree `insert_swap`
     (`HOL/src/finite_maps/sptreeScript.sml:2214`): inserting distinct keys in
@@ -1314,68 +1314,68 @@ theorem sptInsert_swap {α : Type} :
           · have hc2 : c % 2 = 0 := by omega
             cases t with
             | ln =>
-              conv => rhs; rw [sptInsert.eq_1, if_neg ha0, if_pos ha2, sptInsert.eq_3, if_neg hc0, if_pos hc2]
-              rw [sptInsert.eq_1, if_neg hc0, if_pos hc2, sptInsert.eq_3, if_neg ha0, if_pos ha2,
+              conv => rhs; rw [sptInsert.eq_1, ite_eq_right ha0, ite_eq_left ha2, sptInsert.eq_3, ite_eq_right hc0, ite_eq_left hc2]
+              rw [sptInsert.eq_1, ite_eq_right hc0, ite_eq_left hc2, sptInsert.eq_3, ite_eq_right ha0, ite_eq_left ha2,
                 iha ((a - 1) / 2) hka ((c - 1) / 2) b d .ln hne]
             | ls existing =>
-              conv => rhs; rw [sptInsert.eq_2, if_neg ha0, if_pos ha2, sptInsert.eq_4, if_neg hc0, if_pos hc2]
-              rw [sptInsert.eq_2, if_neg hc0, if_pos hc2, sptInsert.eq_4, if_neg ha0, if_pos ha2,
+              conv => rhs; rw [sptInsert.eq_2, ite_eq_right ha0, ite_eq_left ha2, sptInsert.eq_4, ite_eq_right hc0, ite_eq_left hc2]
+              rw [sptInsert.eq_2, ite_eq_right hc0, ite_eq_left hc2, sptInsert.eq_4, ite_eq_right ha0, ite_eq_left ha2,
                 iha ((a - 1) / 2) hka ((c - 1) / 2) b d .ln hne]
             | bn left right =>
-              conv => rhs; rw [sptInsert.eq_3, if_neg ha0, if_pos ha2, sptInsert.eq_3, if_neg hc0, if_pos hc2]
-              rw [sptInsert.eq_3, if_neg hc0, if_pos hc2, sptInsert.eq_3, if_neg ha0, if_pos ha2,
+              conv => rhs; rw [sptInsert.eq_3, ite_eq_right ha0, ite_eq_left ha2, sptInsert.eq_3, ite_eq_right hc0, ite_eq_left hc2]
+              rw [sptInsert.eq_3, ite_eq_right hc0, ite_eq_left hc2, sptInsert.eq_3, ite_eq_right ha0, ite_eq_left ha2,
                 iha ((a - 1) / 2) hka ((c - 1) / 2) b d left hne]
             | bs left existing right =>
-              conv => rhs; rw [sptInsert.eq_4, if_neg ha0, if_pos ha2, sptInsert.eq_4, if_neg hc0, if_pos hc2]
-              rw [sptInsert.eq_4, if_neg hc0, if_pos hc2, sptInsert.eq_4, if_neg ha0, if_pos ha2,
+              conv => rhs; rw [sptInsert.eq_4, ite_eq_right ha0, ite_eq_left ha2, sptInsert.eq_4, ite_eq_right hc0, ite_eq_left hc2]
+              rw [sptInsert.eq_4, ite_eq_right hc0, ite_eq_left hc2, sptInsert.eq_4, ite_eq_right ha0, ite_eq_left ha2,
                 iha ((a - 1) / 2) hka ((c - 1) / 2) b d left hne]
           · have hc2 : ¬ c % 2 = 0 := by omega
             cases t with
             | ln =>
-              conv => rhs; rw [sptInsert.eq_1, if_neg ha0, if_neg ha2, sptInsert.eq_3, if_neg hc0, if_neg hc2]
-              rw [sptInsert.eq_1, if_neg hc0, if_neg hc2, sptInsert.eq_3, if_neg ha0, if_neg ha2,
+              conv => rhs; rw [sptInsert.eq_1, ite_eq_right ha0, ite_eq_right ha2, sptInsert.eq_3, ite_eq_right hc0, ite_eq_right hc2]
+              rw [sptInsert.eq_1, ite_eq_right hc0, ite_eq_right hc2, sptInsert.eq_3, ite_eq_right ha0, ite_eq_right ha2,
                 iha ((a - 1) / 2) hka ((c - 1) / 2) b d .ln hne]
             | ls existing =>
-              conv => rhs; rw [sptInsert.eq_2, if_neg ha0, if_neg ha2, sptInsert.eq_4, if_neg hc0, if_neg hc2]
-              rw [sptInsert.eq_2, if_neg hc0, if_neg hc2, sptInsert.eq_4, if_neg ha0, if_neg ha2,
+              conv => rhs; rw [sptInsert.eq_2, ite_eq_right ha0, ite_eq_right ha2, sptInsert.eq_4, ite_eq_right hc0, ite_eq_right hc2]
+              rw [sptInsert.eq_2, ite_eq_right hc0, ite_eq_right hc2, sptInsert.eq_4, ite_eq_right ha0, ite_eq_right ha2,
                 iha ((a - 1) / 2) hka ((c - 1) / 2) b d .ln hne]
             | bn left right =>
-              conv => rhs; rw [sptInsert.eq_3, if_neg ha0, if_neg ha2, sptInsert.eq_3, if_neg hc0, if_neg hc2]
-              rw [sptInsert.eq_3, if_neg hc0, if_neg hc2, sptInsert.eq_3, if_neg ha0, if_neg ha2,
+              conv => rhs; rw [sptInsert.eq_3, ite_eq_right ha0, ite_eq_right ha2, sptInsert.eq_3, ite_eq_right hc0, ite_eq_right hc2]
+              rw [sptInsert.eq_3, ite_eq_right hc0, ite_eq_right hc2, sptInsert.eq_3, ite_eq_right ha0, ite_eq_right ha2,
                 iha ((a - 1) / 2) hka ((c - 1) / 2) b d right hne]
             | bs left existing right =>
-              conv => rhs; rw [sptInsert.eq_4, if_neg ha0, if_neg ha2, sptInsert.eq_4, if_neg hc0, if_neg hc2]
-              rw [sptInsert.eq_4, if_neg hc0, if_neg hc2, sptInsert.eq_4, if_neg ha0, if_neg ha2,
+              conv => rhs; rw [sptInsert.eq_4, ite_eq_right ha0, ite_eq_right ha2, sptInsert.eq_4, ite_eq_right hc0, ite_eq_right hc2]
+              rw [sptInsert.eq_4, ite_eq_right hc0, ite_eq_right hc2, sptInsert.eq_4, ite_eq_right ha0, ite_eq_right ha2,
                 iha ((a - 1) / 2) hka ((c - 1) / 2) b d right hne]
         · by_cases ha2 : a % 2 = 0
           · have hc2 : ¬ c % 2 = 0 := by omega
             cases t with
             | ln =>
-              conv => rhs; rw [sptInsert.eq_1, if_neg ha0, if_pos ha2, sptInsert.eq_3, if_neg hc0, if_neg hc2]
-              rw [sptInsert.eq_1, if_neg hc0, if_neg hc2, sptInsert.eq_3, if_neg ha0, if_pos ha2]
+              conv => rhs; rw [sptInsert.eq_1, ite_eq_right ha0, ite_eq_left ha2, sptInsert.eq_3, ite_eq_right hc0, ite_eq_right hc2]
+              rw [sptInsert.eq_1, ite_eq_right hc0, ite_eq_right hc2, sptInsert.eq_3, ite_eq_right ha0, ite_eq_left ha2]
             | ls existing =>
-              conv => rhs; rw [sptInsert.eq_2, if_neg ha0, if_pos ha2, sptInsert.eq_4, if_neg hc0, if_neg hc2]
-              rw [sptInsert.eq_2, if_neg hc0, if_neg hc2, sptInsert.eq_4, if_neg ha0, if_pos ha2]
+              conv => rhs; rw [sptInsert.eq_2, ite_eq_right ha0, ite_eq_left ha2, sptInsert.eq_4, ite_eq_right hc0, ite_eq_right hc2]
+              rw [sptInsert.eq_2, ite_eq_right hc0, ite_eq_right hc2, sptInsert.eq_4, ite_eq_right ha0, ite_eq_left ha2]
             | bn left right =>
-              conv => rhs; rw [sptInsert.eq_3, if_neg ha0, if_pos ha2, sptInsert.eq_3, if_neg hc0, if_neg hc2]
-              rw [sptInsert.eq_3, if_neg hc0, if_neg hc2, sptInsert.eq_3, if_neg ha0, if_pos ha2]
+              conv => rhs; rw [sptInsert.eq_3, ite_eq_right ha0, ite_eq_left ha2, sptInsert.eq_3, ite_eq_right hc0, ite_eq_right hc2]
+              rw [sptInsert.eq_3, ite_eq_right hc0, ite_eq_right hc2, sptInsert.eq_3, ite_eq_right ha0, ite_eq_left ha2]
             | bs left existing right =>
-              conv => rhs; rw [sptInsert.eq_4, if_neg ha0, if_pos ha2, sptInsert.eq_4, if_neg hc0, if_neg hc2]
-              rw [sptInsert.eq_4, if_neg hc0, if_neg hc2, sptInsert.eq_4, if_neg ha0, if_pos ha2]
+              conv => rhs; rw [sptInsert.eq_4, ite_eq_right ha0, ite_eq_left ha2, sptInsert.eq_4, ite_eq_right hc0, ite_eq_right hc2]
+              rw [sptInsert.eq_4, ite_eq_right hc0, ite_eq_right hc2, sptInsert.eq_4, ite_eq_right ha0, ite_eq_left ha2]
           · have hc2 : c % 2 = 0 := by omega
             cases t with
             | ln =>
-              conv => rhs; rw [sptInsert.eq_1, if_neg ha0, if_neg ha2, sptInsert.eq_3, if_neg hc0, if_pos hc2]
-              rw [sptInsert.eq_1, if_neg hc0, if_pos hc2, sptInsert.eq_3, if_neg ha0, if_neg ha2]
+              conv => rhs; rw [sptInsert.eq_1, ite_eq_right ha0, ite_eq_right ha2, sptInsert.eq_3, ite_eq_right hc0, ite_eq_left hc2]
+              rw [sptInsert.eq_1, ite_eq_right hc0, ite_eq_left hc2, sptInsert.eq_3, ite_eq_right ha0, ite_eq_right ha2]
             | ls existing =>
-              conv => rhs; rw [sptInsert.eq_2, if_neg ha0, if_neg ha2, sptInsert.eq_4, if_neg hc0, if_pos hc2]
-              rw [sptInsert.eq_2, if_neg hc0, if_pos hc2, sptInsert.eq_4, if_neg ha0, if_neg ha2]
+              conv => rhs; rw [sptInsert.eq_2, ite_eq_right ha0, ite_eq_right ha2, sptInsert.eq_4, ite_eq_right hc0, ite_eq_left hc2]
+              rw [sptInsert.eq_2, ite_eq_right hc0, ite_eq_left hc2, sptInsert.eq_4, ite_eq_right ha0, ite_eq_right ha2]
             | bn left right =>
-              conv => rhs; rw [sptInsert.eq_3, if_neg ha0, if_neg ha2, sptInsert.eq_3, if_neg hc0, if_pos hc2]
-              rw [sptInsert.eq_3, if_neg hc0, if_pos hc2, sptInsert.eq_3, if_neg ha0, if_neg ha2]
+              conv => rhs; rw [sptInsert.eq_3, ite_eq_right ha0, ite_eq_right ha2, sptInsert.eq_3, ite_eq_right hc0, ite_eq_left hc2]
+              rw [sptInsert.eq_3, ite_eq_right hc0, ite_eq_left hc2, sptInsert.eq_3, ite_eq_right ha0, ite_eq_right ha2]
             | bs left existing right =>
-              conv => rhs; rw [sptInsert.eq_4, if_neg ha0, if_neg ha2, sptInsert.eq_4, if_neg hc0, if_pos hc2]
-              rw [sptInsert.eq_4, if_neg hc0, if_pos hc2, sptInsert.eq_4, if_neg ha0, if_neg ha2]
+              conv => rhs; rw [sptInsert.eq_4, ite_eq_right ha0, ite_eq_right ha2, sptInsert.eq_4, ite_eq_right hc0, ite_eq_left hc2]
+              rw [sptInsert.eq_4, ite_eq_right hc0, ite_eq_left hc2, sptInsert.eq_4, ite_eq_right ha0, ite_eq_right ha2]
 
 /-! ## HOL `fromAList` rendering
 

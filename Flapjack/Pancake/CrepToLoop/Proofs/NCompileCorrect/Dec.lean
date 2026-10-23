@@ -70,14 +70,14 @@ theorem crepToLoopNcompileDecLocalsEnter {width : Nat} [NeZero width]
         have hn : n = tmp := by simpa using hx.symm
         have hm : m = tmp := by simpa using hy.symm
         rfl
-      · simp only [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, if_neg hyName] at hy
+      · simp only [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, ite_eq_right hyName] at hy
         have hn : n = tmp := by simpa using hx.symm
         have hbound := hInitial.2.1 y m hy
         have hFalse : False := by omega
         exact hFalse.elim
     · by_cases hyName : y = name
       · subst y
-        simp only [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, if_neg hxName] at hx
+        simp only [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, ite_eq_right hxName] at hx
         simp only [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL] at hy
         have hm : tmp = m := by simpa using hy
         have hbound := hInitial.2.1 x n hx

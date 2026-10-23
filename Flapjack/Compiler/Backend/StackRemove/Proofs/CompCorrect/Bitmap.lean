@@ -121,9 +121,9 @@ theorem compCorrectBitmapLoad {width : Nat} [NeZero width] {C F : Type}
   rw [StackSemEvaluate.evaluate_bitmapLoad] at sourceRun
   simp only [relation.1, Bool.not_true, Bool.false_or] at sourceRun
   by_cases same : register = index
-  · simp only [same, beq_self_eq_true, if_true] at sourceRun
+  · simp only [same, beq_self_eq_true, ite_true] at sourceRun
     exact (notError (Prod.mk.inj sourceRun).1.symm).elim
-  · simp only [beq_eq_false_iff_ne.mpr same, Bool.false_eq_true, if_false] at sourceRun
+  · simp only [beq_eq_false_iff_ne.mpr same, Bool.false_eq_true, ite_false] at sourceRun
     cases lookup : StackSemStateOps.getVar index source with
     | none =>
       rw [lookup] at sourceRun
@@ -137,9 +137,9 @@ theorem compCorrectBitmapLoad {width : Nat} [NeZero width] {C F : Type}
         rw [lookup] at sourceRun
         simp only [] at sourceRun
         by_cases outsideBounds : source.bitmaps.length ≤ word.toNat
-        · rw [dif_pos outsideBounds] at sourceRun
+        · rw [dite_eq_left outsideBounds] at sourceRun
           exact (notError (Prod.mk.inj sourceRun).1.symm).elim
-        · rw [dif_neg outsideBounds] at sourceRun
+        · rw [dite_eq_right outsideBounds] at sourceRun
           have resultEq := (Prod.mk.inj sourceRun).1.symm
           have sourceEq := (Prod.mk.inj sourceRun).2.symm
           subst result

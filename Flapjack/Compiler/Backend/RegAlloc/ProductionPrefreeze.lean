@@ -46,8 +46,8 @@ theorem consistencyOk_production (left right : Nat) {native : State}
     have fixedRight := isFixed_production right related good rightBound
     have moveLeft := moveRelatedSub_production left related good leftBound
     have moveRight := moveRelatedSub_production right related good rightBound
-    simp only [consistencyOk, if_neg equal, Translator.Monadic.MonadBase.bind,
-      adjLsSubEqn, if_pos adjacencyBound, holEl_eq_getElem right native.adj_ls adjacencyBound]
+    simp only [consistencyOk, ite_eq_right equal, Translator.Monadic.MonadBase.bind,
+      adjLsSubEqn, ite_eq_left adjacencyBound, holEl_eq_getElem right native.adj_ls adjacencyBound]
     rw [← adjacency]
     cases query : cakeAdjMem production left right <;>
       simp [query, fixedLeft, fixedRight, moveLeft, moveRight,
@@ -79,7 +79,7 @@ private theorem stateFilter_pure {α : Type} (predicate : α → M State Bool St
   | cons node rest ih =>
     simp only [stExFilter, Translator.Monadic.MonadBase.bind, reads node List.mem_cons_self]
     cases selected : pure node <;>
-      simp only [Bool.false_eq_true, if_false, if_true,
+      simp only [Bool.false_eq_true, ite_false, ite_true,
         List.filter_cons, selected, List.reverse_cons, List.append_assoc, List.singleton_append]
     all_goals exact ih _ (fun next member => reads next (List.mem_cons_of_mem node member))
 
@@ -93,7 +93,7 @@ private theorem statePartition_pure {α : Type} (predicate : α → M State Bool
   | cons node rest ih =>
     simp only [stExPartition, Translator.Monadic.MonadBase.bind, reads node List.mem_cons_self]
     cases selected : pure node <;>
-      simp only [Bool.false_eq_true, if_false, if_true, holPart, selected]
+      simp only [Bool.false_eq_true, ite_false, ite_true, holPart, selected]
     all_goals exact ih _ _ (fun next member => reads next (List.mem_cons_of_mem node member))
 
 

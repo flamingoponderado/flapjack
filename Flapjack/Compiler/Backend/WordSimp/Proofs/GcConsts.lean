@@ -57,7 +57,7 @@ private theorem natLookup {β : Type} (values : List (Nat × β)) (key : Nat) :
     by_cases equal : key = name
     · subst name; simp [sptAListLookup]
     · simp only [List.lookup_cons, beq_eq_false_iff_ne.mpr equal,
-        sptAListLookup, equal, if_false, ih]
+        sptAListLookup, equal, ite_false, ih]
 
 /-- Exact HOL `ALOOKUP_LIST_REL_sf_gc_consts` (`word_simpProofScript.sml:436-448`). -/
 @[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "ALOOKUP_LIST_REL_sf_gc_consts"
@@ -628,7 +628,7 @@ theorem sfMotive_raise (n : Nat) (s : WordSemStateFiniteExact width C F) :
   · rename_i w hw
     unfold jumpExc
     by_cases hh : s.handler < s.stack.length
-    · simp only [hh, if_true]
+    · simp only [hh, ite_true]
       rcases hl : wordSemLastN (s.handler + 1) s.stack with _ | ⟨fr, xs⟩
       · simp only [sfMotive]
       · rcases fr with ⟨m, e0, e, _ | ⟨n', l1, l2⟩⟩
@@ -642,7 +642,7 @@ theorem sfMotive_raise (n : Nat) (s : WordSemStateFiniteExact width C F) :
           unfold getAboveHandler
           rw [← hhd]
           rfl
-    · simp only [hh, if_false, sfMotive]
+    · simp only [hh, ite_false, sfMotive]
 
 theorem sfMotive_alloc (w : BitVec width) (names : WordLangCutsetsHOL)
     (s : WordSemStateFiniteExact width C F) (hok : gcFunConstOk s.gcFun) :
@@ -735,8 +735,8 @@ theorem sf_aux :
       have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.1
       rw [ht]
       by_cases hz : s.termdep = 0
-      · simp only [hz, dite_true, if_true, sfMotive]
-      · simp only [hz, dite_false, if_false]
+      · simp only [hz, dite_true, ite_true, sfMotive]
+      · simp only [hz, dite_false, ite_false]
         have ih := sf_aux q { s with
             clock := wordSemMustTerminateLimit width
             termdep := s.termdep - 1 } hok
@@ -785,16 +785,16 @@ theorem sf_aux :
       have hok1 : gcFunConstOk s1.gcFun := evaluate_gc_fun_const_ok c _ rb s1 ⟨hb, hok⟩
       simp only
       by_cases hcont : wordSemContLoop rb = true
-      · simp only [hcont, if_true]
+      · simp only [hcont, ite_true]
         have hrel : List.Forall₂ sfGcConsts s.stack s1.stack ∧ s1.handler = s.handler := by
           rcases rb with _ | ⟨_ | _ | _ | k | _ | _ | _ | _⟩ <;>
             simp [wordSemContLoop] at hcont <;> simpa only [sfMotive] using ih'
         by_cases hz : s1.clock = 0
-        · simp only [hz, dite_true, if_true, sfMotive]
-        · simp only [hz, dite_false, if_false, wordSemSTOP]
+        · simp only [hz, dite_true, ite_true, sfMotive]
+        · simp only [hz, dite_false, ite_false, wordSemSTOP]
           exact sfMotive_compose hrel.1 hrel.2
             (sf_aux (.loop names c exitNames) (decClock s1) hok1)
-      · simp only [hcont, Bool.false_eq_true, if_false]
+      · simp only [hcont, Bool.false_eq_true, ite_false]
         split
         · rcases hce : cutState (exitNames, .ln) s1 with _ | s2
           · simp only [sfMotive]
@@ -812,8 +812,8 @@ theorem sf_aux :
       · simp only [sfMotive]
       simp only
       by_cases hbad : wordSemBadDestArgs dest args = true
-      · simp only [hbad, if_true, sfMotive]
-      simp only [hbad, Bool.false_eq_true, if_false]
+      · simp only [hbad, ite_true, sfMotive]
+      simp only [hbad, Bool.false_eq_true, ite_false]
       rcases hf : wordSemFindCode dest (wordSemAddRetLoc ret xs) s.code s.stackSize with
         _ | ⟨args1, prog, ss⟩
       · simp only [sfMotive]
@@ -825,8 +825,8 @@ theorem sf_aux :
         | none =>
           simp only
           by_cases hz : s.clock = 0
-          · simp only [hz, dite_true, if_true, sfMotive]
-          simp only [hz, dite_false, if_false]
+          · simp only [hz, dite_true, ite_true, sfMotive]
+          simp only [hz, dite_false, ite_false]
           have ih := sf_aux prog (callEnv args1 ss (decClock s)) hok
           rcases hcv : evaluate prog (callEnv args1 ss (decClock s)) with ⟨rc, sc⟩
           rw [hcv] at ih
@@ -839,14 +839,14 @@ theorem sf_aux :
         obtain ⟨n, names, retHandler, l1, l2⟩ := rv
         simp only
         by_cases hdc : sptDomainEmpty names.fst ∨ ¬ n.Nodup
-        · simp only [hdc, if_true, sfMotive]
-        simp only [hdc, if_false]
+        · simp only [hdc, ite_true, sfMotive]
+        simp only [hdc, ite_false]
         rcases hce : wordSemCutEnvs names s.locals with _ | envs
         · simp only [sfMotive]
         simp only
         by_cases hz : s.clock = 0
-        · rw [if_pos hz]; simp only [sfMotive]
-        rw [if_neg hz]
+        · rw [ite_eq_left hz]; simp only [sfMotive]
+        rw [ite_eq_right hz]
         have hokS : gcFunConstOk (callEnv args1 ss (pushEnv envs handler (decClock s))).gcFun := by
           rcases handler with _ | ⟨_, _, _, _⟩ <;> exact hok
         have ih := sf_aux prog (callEnv args1 ss (pushEnv envs handler (decClock s))) hokS
@@ -858,8 +858,8 @@ theorem sf_aux :
         rcases rc with _ | ⟨x, ys⟩ | ⟨x, y⟩ | kk | kk | _ | _ | _ | _
         · simp only [sfMotive]
         · by_cases hx : x ≠ WordLocW.loc l1 l2 ∨ ys.length ≠ n.length
-          · simp only [hx, if_true, sfMotive]
-          simp only [hx, if_false]
+          · simp only [hx, ite_true, sfMotive]
+          simp only [hx, ite_false]
           rcases hp : popEnv s2 with _ | s1
           · simp only [sfMotive]
           simp only

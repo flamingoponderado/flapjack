@@ -119,8 +119,8 @@ theorem gc_thm {width : Nat} [NeZero width] {C F : Type} {conf : Config}
   rintro ⟨hgc, hk⟩
   simp only [StackSemAllocation.gc]
   by_cases hlt : s.stack.length < s.stackSpace
-  · simp only [hlt, if_true]
-  simp only [hlt, if_false, hgc, word_gc_fun_thm hk, wordGcMoveRootsBitmaps]
+  · simp only [hlt, ite_true]
+  simp only [hlt, ite_false, hgc, word_gc_fun_thm hk, wordGcMoveRootsBitmaps]
   rcases wordGcMove conf (holFapply s.store .globals, 0,
     wordSemTheWord (holFapply s.store .otherHeap),
     wordSemTheWord (holFapply s.store .currHeap), s.memory, s.mdomain) with ⟨w1, i1, pa1, m1, c1⟩

@@ -415,7 +415,7 @@ private theorem returningCalleeOutcomes {width : Nat} [NeZero width] {C F : Type
         Flapjack.WordAlloc.callRetTail_result_pop _ _ _ _ _ _ _ _ _ {popped with permute := permutation}
           badReturn (by rw [Flapjack.WordAlloc.popEnv_withPermute,sourcePop]; rfl),
         Flapjack.WordAlloc.callRetTail_result_pop _ _ _ _ _ _ _ _ _ targetPopped targetGood targetPop]
-      rw [if_pos sourceUnion,if_pos targetUnion]
+      rw [ite_eq_left sourceUnion,ite_eq_left targetUnion]
       exact post
 
 
@@ -548,7 +548,7 @@ private theorem returningAppendReconciliation {width : Nat} [NeZero width] {C F 
   | none =>
     cases targetEval : WordSemStateFiniteExact.evaluate compiled target with
     | mk targetResult targetAfter =>
-      simp only [targetEval,reduceCtorEq,if_false] at post
+      simp only [targetEval,reduceCtorEq,ite_false] at post
       have equal : targetResult = none := post.1.symm
       subst targetResult
       have moved := moveSpec sourceAfter targetAfter post.2.2
@@ -558,7 +558,7 @@ private theorem returningAppendReconciliation {width : Nat} [NeZero width] {C F 
         have equal : moveResult = none := moved.1
         subst moveResult
         rw [evaluateSeqCollapse compiled moves target targetAfter targetEval,moveEval]
-        simp only [reduceCtorEq,if_false]
+        simp only [reduceCtorEq,ite_false]
         refine ⟨trivial,?_,moved.2.1⟩
         simp_all [Flapjack.WordAlloc.wordStateEqRel]
   | some result =>
@@ -568,10 +568,10 @@ private theorem returningAppendReconciliation {width : Nat} [NeZero width] {C F 
     · cases targetEval : WordSemStateFiniteExact.evaluate compiled target with
       | mk targetResult targetAfter =>
         have noError : (some result : Option (WordSemResult width)) ≠ some .error := by simpa using error
-        simp only [if_neg noError,targetEval] at post
+        simp only [ite_eq_right noError,targetEval] at post
         have equal : targetResult = some result := post.1.symm
         subst targetResult
-        simp only [returningEvaluateSeqNative,targetEval,if_neg noError]
+        simp only [returningEvaluateSeqNative,targetEval,ite_eq_right noError]
         cases result <;> try (simpa only using post)
 
 
@@ -772,7 +772,7 @@ private theorem returningHandlerCalleeOutcomes {width : Nat} [NeZero width] {C F
         rightNext finalNext tables exceptionReconcile post
       refine ⟨permutation,?_⟩
       rw [actual]
-      simp only [Flapjack.WordAlloc.callRetTail,if_neg badLabel,if_pos sourceUnion,if_pos targetUnion]
+      simp only [Flapjack.WordAlloc.callRetTail,ite_eq_right badLabel,ite_eq_left sourceUnion,ite_eq_left targetUnion]
       exact composed
     | result x values =>
       by_cases badReturn : x ≠ .loc l1 l2 ∨ values.length ≠ returns.length
@@ -828,7 +828,7 @@ private theorem returningHandlerCalleeOutcomes {width : Nat} [NeZero width] {C F
         Flapjack.WordAlloc.callRetTail_result_pop _ _ _ _ _ _ _ _ _ {popped with permute := permutation}
           badReturn (by rw [Flapjack.WordAlloc.popEnv_withPermute,sourcePop]; rfl),
         Flapjack.WordAlloc.callRetTail_result_pop _ _ _ _ _ _ _ _ _ targetPopped targetGood targetPop]
-      rw [if_pos sourceUnion,if_pos targetUnion]
+      rw [ite_eq_left sourceUnion,ite_eq_left targetUnion]
       exact composed
 
 
@@ -1071,7 +1071,7 @@ theorem ssaCcTransCorrectCallReturningNone {width : Nat} [NeZero width] {C F : T
           change returningPost finalMap finalNext tables _ _
           rw [prefixRun,sourceTimeout,targetTimeout]
           unfold returningPost
-          rw [if_neg (by intro impossible; cases impossible)]
+          rw [ite_eq_right (by intro impossible; cases impossible)]
           simp only [WordSemStateFiniteExact.flushState]
           refine ⟨trivial,?_,trivial⟩
           exact ⟨h1,rfl,rfl,rfl,h5,maxEqual.symm,h7,h8,h9,h10,h11,h12,h13,h14,h15,h16,h17,h18,h19,h20,h21⟩
@@ -1398,7 +1398,7 @@ theorem ssaCcTransCorrectCallReturningSome {width : Nat} [NeZero width] {C F : T
           change returningPost finalMap finalNext tables _ _
           rw [prefixRun,sourceTimeout,targetTimeout]
           unfold returningPost
-          rw [if_neg (by intro impossible; cases impossible)]
+          rw [ite_eq_right (by intro impossible; cases impossible)]
           simp only [WordSemStateFiniteExact.flushState]
           refine ⟨trivial,?_,trivial⟩
           exact ⟨h1,rfl,rfl,rfl,h5,maxEqual.symm,h7,h8,h9,h10,h11,h12,h13,h14,h15,h16,h17,h18,h19,h20,h21⟩

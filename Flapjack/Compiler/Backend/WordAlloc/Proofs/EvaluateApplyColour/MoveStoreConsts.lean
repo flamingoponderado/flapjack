@@ -122,7 +122,7 @@ theorem sptLookup_sptAlistInsert_get? {α : Type} :
               · exact absurd h hnx
               · exact h
             rw [sptLookup_sptInsert_ne x n v _ hnx, ih vs t n hnd' hlen' hnxs, List.idxOf_cons]
-            simp only [beq_eq_false_iff_ne.mpr (Ne.symm hnx), cond_false,
+            simp only [beq_eq_false_iff_ne.mpr (Ne.symm hnx), Bool.false_eq_true, ite_false,
               List.getElem?_cons_succ]
 
 /-- The first-occurrence index of a mapped element is the first-occurrence
@@ -195,11 +195,11 @@ theorem evaluateApplyColour_Move {width : Nat} [NeZero width] {C F : Type} (pri 
   have hnd : (moves.map Prod.fst).Nodup := by
     by_cases h : (moves.map Prod.fst).Nodup
     · exact h
-    · rw [evaluate, if_neg h] at he
+    · rw [evaluate, ite_eq_right h] at he
       exact absurd rfl he
   obtain ⟨vs, hgv⟩ : ∃ vs, WordSemStateFiniteExact.getVars (moves.map Prod.snd) st = some vs := by
     cases h : WordSemStateFiniteExact.getVars (moves.map Prod.snd) st with
-    | none => rw [evaluate, if_pos hnd, h] at he; exact absurd rfl he
+    | none => rw [evaluate, ite_eq_left hnd, h] at he; exact absurd rfl he
     | some vs => exact ⟨vs, rfl⟩
   have hns : ∀ n, n ∈ moves.map Prod.fst →
       sptDomain (numsetListInsert (moves.map Prod.fst) .ln) n :=
@@ -227,11 +227,11 @@ theorem evaluateApplyColour_Move {width : Nat} [NeZero width] {C F : Type} (pri 
     rw [List.map_snd_zip] <;> simp [List.map_map, Function.comp_def]
   have hsrc : evaluate (.move pri moves) st =
       (none, WordSemStateFiniteExact.setVars (moves.map Prod.fst) vs st) := by
-    simp only [evaluate, hnd, hgv, if_true]
+    simp only [evaluate, hnd, hgv, ite_true]
   have htgt : evaluate
         (.move pri (List.zip (moves.map (f ∘ Prod.fst)) (moves.map (f ∘ Prod.snd)))) cst =
       (none, WordSemStateFiniteExact.setVars ((moves.map Prod.fst).map f) vs cst) := by
-    simp only [evaluate, hMfst, hMsnd, hnodupC, hgetvsC, if_true]
+    simp only [evaluate, hMfst, hMsnd, hnodupC, hgetvsC, ite_true]
   rw [hsrc, htgt]
   refine ⟨rfl, wsrLocals _ _ hs, ?_⟩
   simp only [applyColourLocals, setVars]
@@ -316,14 +316,14 @@ theorem evaluateApplyColour_StoreConsts {width : Nat} [NeZero width] {C F : Type
                 (WordSemStateFiniteExact.setVar d (.word doff)
                   (WordSemStateFiniteExact.unsetVar a (WordSemStateFiniteExact.unsetVar b
                     { st with memory := wordSemConstWrites ca doff words st.memory })))) := by
-            simp only [evaluate, hc, hd, hca, not_true_eq_false, if_false]
+            simp only [evaluate, hc, hd, hca, not_true_eq_false, ite_false]
           have htgt : evaluate (.storeConsts (f a) (f b) (f c) (f d) words) cst =
               (none, WordSemStateFiniteExact.setVar (f c)
                 (.word (ca + wordSemBytesInWord * BitVec.ofNat width words.length))
                 (WordSemStateFiniteExact.setVar (f d) (.word doff)
                   (WordSemStateFiniteExact.unsetVar (f a) (WordSemStateFiniteExact.unsetVar (f b)
                     { cst with memory := wordSemConstWrites ca doff words cst.memory })))) := by
-            simp only [evaluate, hcv, hdv, hmd, hca, not_true_eq_false, if_false]
+            simp only [evaluate, hcv, hdv, hmd, hca, not_true_eq_false, ite_false]
           rw [hsrc, htgt]
           refine ⟨rfl, ?_, ?_⟩
           · -- word_state_eq_rel
@@ -350,18 +350,18 @@ theorem evaluateApplyColour_StoreConsts {width : Nat} [NeZero width] {C F : Type
                 have hnLive : sptDomain live n := hn.1.1
                 rw [sptLookup_sptDelete, sptLookup_sptDelete] at hlookup
                 by_cases hna : n = a
-                · rw [if_pos hna] at hlookup; exact absurd hlookup (by simp)
-                · rw [if_neg hna] at hlookup
+                · rw [ite_eq_left hna] at hlookup; exact absurd hlookup (by simp)
+                · rw [ite_eq_right hna] at hlookup
                   by_cases hnb : n = b
-                  · rw [if_pos hnb] at hlookup; exact absurd hlookup (by simp)
-                  · rw [if_neg hnb] at hlookup
+                  · rw [ite_eq_left hnb] at hlookup; exact absurd hlookup (by simp)
+                  · rw [ite_eq_right hnb] at hlookup
                     have hglive : sptDomain (sptInsert c () (sptInsert d () (sptDelete a (sptDelete b live)))) n :=
                       (sptDomain_ins _ _ _ _).mpr (Or.inr ((sptDomain_ins _ _ _ _).mpr (Or.inr
                         ((sptDomain_del _ _ _).mpr ⟨hna, (sptDomain_del _ _ _).mpr ⟨hnb, hnLive⟩⟩))))
                     have hdst : sptLookup (f n) cst.locals = some v := hr n v ⟨hglive, hlookup⟩
                     have hfna : ¬ f n = f a := fun h => hna (hinjX n a (Or.inr hnLive) (Or.inl (hgotW (Or.inl rfl))) h)
                     have hfnb : ¬ f n = f b := fun h => hnb (hinjX n b (Or.inr hnLive) (Or.inl (hgotW (Or.inr (Or.inl rfl)))) h)
-                    rw [sptLookup_sptDelete, sptLookup_sptDelete, if_neg hfna, if_neg hfnb]
+                    rw [sptLookup_sptDelete, sptLookup_sptDelete, ite_eq_right hfna, ite_eq_right hfnb]
                     exact hdst
 
 end Flapjack.WordAlloc

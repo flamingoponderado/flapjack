@@ -36,7 +36,7 @@ theorem storeFacts_insert_transport {width : Nat} [NeZero width]
         wordCseStoreCode (wordStoreFromHOL store : WordStore (BitVec width)) ≠
         wordCseStoreCode (wordStoreFromHOL observed : WordStore (BitVec width)) :=
       fun equal => same (storeCode_injective equal)
-    simp only [Std.TreeMap.getElem?_insert, Nat.compare_eq_eq, keysDifferent, if_false]
+    simp only [Std.TreeMap.getElem?_insert, Nat.compare_eq_eq, keysDifferent, ite_false]
     have different : (observed == store) = false := by
       exact beq_eq_false_iff_ne.mpr (Ne.symm same)
     simpa [List.lookup, different] using related observed

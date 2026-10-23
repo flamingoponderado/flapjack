@@ -158,14 +158,14 @@ theorem panToTargetHeapLimitSnd {width : Nat} [NeZero width]
     rwa [BitVec.mul_comm]
   have hmh : maxHeap * (bytesInWord width).toNat < 2 ^ width := by
     rwa [Nat.mul_comm] at hheapLt
-  simp only [hlo', hhi', and_self, if_true, hmh]
+  simp only [hlo', hhi', and_self, ite_true, hmh]
   have hnlt : ¬ bytesInWord width * BitVec.ofNat width maxHeap < -1 * w2 + w3 := by
     rw [BitVec.lt_def, BitVec.toNat_mul, BitVec.toNat_ofNat, Nat.mod_eq_of_lt (a := maxHeap)
       (by rcases hgood with h | h <;> subst h <;> simp [bytesInWord] at hheapLt ⊢ <;> omega),
-      Nat.mod_eq_of_lt (by rwa [Nat.mul_comm] at hheapLt ⊢)]
+      Nat.mod_eq_of_lt (by rw [Nat.mul_comm] at hheapLt ⊢; assumption)]
     rw [Nat.mul_comm] at hheap
     omega
-  simp only [hnlt, if_false]
+  simp only [hnlt, ite_false]
   rw [hcomm, Compiler.Backend.DataToWord.Proofs.Gc.lsrLsl _ _ halign]
   have hneg : -1 * w2 = -w2 := by
     rw [BitVec.neg_mul]; exact congrArg _ (BitVec.one_mul w2)

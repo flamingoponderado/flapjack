@@ -340,11 +340,11 @@ theorem memStore_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
     memStore x y (compileState clk c s) = (memStore x y s).map (compileState clk c) := by
   unfold memStore
   by_cases h : s.mdomain x = true
-  · simp only [show (compileState clk c s).mdomain = s.mdomain from rfl, h, if_true,
+  · simp only [show (compileState clk c s).mdomain = s.mdomain from rfl, h, ite_true,
       Option.map_some]
     rfl
   · simp only [show (compileState clk c s).mdomain = s.mdomain from rfl, h,
-      Bool.false_eq_true, if_false, Option.map_none]
+      Bool.false_eq_true, ite_false, Option.map_none]
 
 /-- Exact HOL `word_exp_compile_state` (`word_removeProofScript.sml:189-193`). -/
 @[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "word_exp_compile_state"
@@ -468,9 +468,9 @@ theorem jumpExc_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
   have hh : (compileState clk c s).handler = s.handler := rfl
   have hs : (compileState clk c s).stack = s.stack := rfl
   by_cases h : s.handler < s.stack.length
-  · simp only [hh, hs, h, if_true]
+  · simp only [hh, hs, h, ite_true]
     split <;> rfl
-  · simp only [hh, hs, h, if_false, Option.map_none]
+  · simp only [hh, hs, h, ite_false, Option.map_none]
 
 /-- Exact HOL `get_var_imm_compile_state` (`word_removeProofScript.sml:241-245`). -/
 @[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "get_var_imm_compile_state"

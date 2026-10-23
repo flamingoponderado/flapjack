@@ -168,7 +168,7 @@ theorem pcCompileCorrectAt_shMemLoad {width : Nat} {σ : Type} [NeZero width]
                                       have h := hrun
                                       simp only [haddress, hlookup] at h
                                       unfold shMemLoadHOLFiniteExact at h
-                                      rw [if_pos hnb, if_pos hdom, hcall] at h
+                                      rw [ite_eq_left hnb, ite_eq_left hdom, hcall] at h
                                       try simp only [] at h
                                       exact h
                                     have hs1 : s1 =
@@ -181,7 +181,7 @@ theorem pcCompileCorrectAt_shMemLoad {width : Nat} {σ : Type} [NeZero width]
                                         (some (.finalFfi event),
                                           CrepSemHOLState.emptyLocals t) := by
                                       unfold crepShMemLoadExactHOL
-                                      rw [if_pos hnb, if_pos hdomT, hcallT]
+                                      rw [ite_eq_left hnb, ite_eq_left hdomT, hcallT]
                                     refine ⟨some (.finalFfi event),
                                       CrepSemHOLState.emptyLocals t, ?_, ?_, ?_, ?_, ?_⟩
                                     · rw [hcomp, hbody, htargetF]
@@ -212,7 +212,7 @@ theorem pcCompileCorrectAt_shMemLoad {width : Nat} {σ : Type} [NeZero width]
                                       have h := hrun
                                       simp only [haddress, hlookup] at h
                                       unfold shMemLoadHOLFiniteExact at h
-                                      rw [if_pos hnb, if_pos hdom, hcall] at h
+                                      rw [ite_eq_left hnb, ite_eq_left hdom, hcall] at h
                                       try simp only [] at h
                                       exact h
                                     have hs1 : s1 = setKvarFfiHOLFinite VarKind.local name
@@ -226,11 +226,11 @@ theorem pcCompileCorrectAt_shMemLoad {width : Nat} {σ : Type} [NeZero width]
                                             (newBytes.map UInt8.ofBitVec))) t with
                                           ffi := newFfi }) := by
                                       unfold crepShMemLoadExactHOL
-                                      rw [if_pos hnb, if_pos hdomT, hcallT]
+                                      rw [ite_eq_left hnb, ite_eq_left hdomT, hcallT]
                                     have hsource' : shMemLoadHOLFiniteExact s VarKind.local
                                         name addr (nbOpHOL operator) = (none, s1) := by
                                       unfold shMemLoadHOLFiniteExact
-                                      rw [if_pos hnb, if_pos hdom, hcall]
+                                      rw [ite_eq_left hnb, ite_eq_left hdom, hcall]
                                       rw [hs1]
                                     obtain ⟨hst1, hloc1⟩ :=
                                       shMemLoadHOLFiniteExact_ret_corresponds (source := s)
@@ -255,7 +255,7 @@ theorem pcCompileCorrectAt_shMemLoad {width : Nat} {σ : Type} [NeZero width]
                                   have h := hrun
                                   simp only [haddress, hlookup] at h
                                   unfold shMemLoadHOLFiniteExact at h
-                                  rw [if_pos hnb, if_neg hdom] at h
+                                  rw [ite_eq_left hnb, ite_eq_right hdom] at h
                                   try simp only [] at h
                                   exact (Prod.mk.inj h).1.symm
                                 exact absurd hsrc hres
@@ -280,7 +280,7 @@ theorem pcCompileCorrectAt_shMemLoad {width : Nat} {σ : Type} [NeZero width]
                                       have h := hrun
                                       simp only [haddress, hlookup] at h
                                       unfold shMemLoadHOLFiniteExact at h
-                                      rw [if_neg hnb, if_pos hdom, hcall] at h
+                                      rw [ite_eq_right hnb, ite_eq_left hdom, hcall] at h
                                       try simp only [] at h
                                       exact h
                                     have hs1 : s1 =
@@ -293,7 +293,7 @@ theorem pcCompileCorrectAt_shMemLoad {width : Nat} {σ : Type} [NeZero width]
                                         (some (.finalFfi event),
                                           CrepSemHOLState.emptyLocals t) := by
                                       unfold crepShMemLoadExactHOL
-                                      rw [if_neg hnb, if_pos hdomT, hcallT]
+                                      rw [ite_eq_right hnb, ite_eq_left hdomT, hcallT]
                                     refine ⟨some (.finalFfi event),
                                       CrepSemHOLState.emptyLocals t, ?_, ?_, ?_, ?_, ?_⟩
                                     · rw [hcomp, hbody, htargetF]
@@ -324,7 +324,7 @@ theorem pcCompileCorrectAt_shMemLoad {width : Nat} {σ : Type} [NeZero width]
                                       have h := hrun
                                       simp only [haddress, hlookup] at h
                                       unfold shMemLoadHOLFiniteExact at h
-                                      rw [if_neg hnb, if_pos hdom, hcall] at h
+                                      rw [ite_eq_right hnb, ite_eq_left hdom, hcall] at h
                                       try simp only [] at h
                                       exact h
                                     have hs1 : s1 = setKvarFfiHOLFinite VarKind.local name
@@ -338,11 +338,11 @@ theorem pcCompileCorrectAt_shMemLoad {width : Nat} {σ : Type} [NeZero width]
                                             (newBytes.map UInt8.ofBitVec))) t with
                                           ffi := newFfi }) := by
                                       unfold crepShMemLoadExactHOL
-                                      rw [if_neg hnb, if_pos hdomT, hcallT]
+                                      rw [ite_eq_right hnb, ite_eq_left hdomT, hcallT]
                                     have hsource' : shMemLoadHOLFiniteExact s VarKind.local
                                         name addr (nbOpHOL operator) = (none, s1) := by
                                       unfold shMemLoadHOLFiniteExact
-                                      rw [if_neg hnb, if_pos hdom, hcall]
+                                      rw [ite_eq_right hnb, ite_eq_left hdom, hcall]
                                       rw [hs1]
                                     obtain ⟨hst1, hloc1⟩ :=
                                       shMemLoadHOLFiniteExact_ret_corresponds (source := s)
@@ -367,7 +367,7 @@ theorem pcCompileCorrectAt_shMemLoad {width : Nat} {σ : Type} [NeZero width]
                                   have h := hrun
                                   simp only [haddress, hlookup] at h
                                   unfold shMemLoadHOLFiniteExact at h
-                                  rw [if_neg hnb, if_neg hdom] at h
+                                  rw [ite_eq_right hnb, ite_eq_right hdom] at h
                                   try simp only [] at h
                                   exact (Prod.mk.inj h).1.symm
                                 exact absurd hsrc hres

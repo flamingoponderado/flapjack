@@ -82,7 +82,7 @@ theorem constRel_insert {width : Nat} {m : NatInfoMap (BitVec width)} {s : Spt (
     · have hne : (n == k) = false := by simpa using Ne.symm h
       simp only [wordSimpMapInsert, lookupNatInfo, hne]
       rw [show (List.filter (fun entry => entry.1 != n) m) = wordSimpMapDelete m n from rfl,
-        del.2 k, sptLookup_sptDelete, if_neg h, sptLookup_sptInsert_ne n k v s h]
+        del.2 k, sptLookup_sptDelete, ite_eq_right h, sptLookup_sptInsert_ne n k v s h]
       rfl
 
 theorem constRel_empty {width : Nat} : ConstRel ([] : NatInfoMap (BitVec width)) .ln :=
@@ -224,10 +224,10 @@ theorem shiftEval_eq {width : Nat} [NeZero width] (op : Shift) (l r : BitVec wid
   unfold wordShiftHOL
   by_cases h : r.toNat < width
   · have : ¬ (r.toNat ≠ 0 ∧ width ≤ r.toNat) := by omega
-    rw [if_pos h, if_neg this]
+    rw [ite_eq_left h, ite_eq_right this]
     cases op <;> rfl
   · have : r.toNat ≠ 0 ∧ width ≤ r.toNat := by omega
-    rw [if_neg h, if_pos this]
+    rw [ite_eq_right h, ite_eq_left this]
 
 theorem constExp_production {width : Nat} [NeZero width] {m : NatInfoMap (BitVec width)}
     {s : Spt (BitVec width)} (rel : ConstRel m s) :

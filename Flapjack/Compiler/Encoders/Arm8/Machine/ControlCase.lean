@@ -89,13 +89,13 @@ theorem fitsSigned_of_range (bits : Nat) (v : BitVec 64) (hb : 1 ≤ bits) (hbit
   unfold fitsSigned sextValue
   rw [decide_eq_true_eq]
   by_cases hcase : 2 * v.toNat < 2 ^ 64
-  · have htoInt : v.toInt = (v.toNat : Int) := by rw [hcond, if_pos hcase]
+  · have htoInt : v.toInt = (v.toNat : Int) := by rw [hcond, ite_eq_left hcase]
     have hlt : v.toNat < 2 ^ (bits - 1) := by
       have h : (v.toNat : Int) ≤ (2 : Int) ^ (bits - 1) - 1 := by rw [← htoInt]; exact hhi
       omega
     have hmod : v.toNat % 2 ^ bits = v.toNat := Nat.mod_eq_of_lt (by omega)
-    rw [hmod, if_pos (by omega), htoInt]
-  · have htoInt : v.toInt = (v.toNat : Int) - (2 : Int) ^ 64 := by rw [hcond, if_neg hcase]
+    rw [hmod, ite_eq_left (by omega), htoInt]
+  · have htoInt : v.toInt = (v.toNat : Int) - (2 : Int) ^ 64 := by rw [hcond, ite_eq_right hcase]
     have hdpos : 0 < 2 ^ 64 - v.toNat := by omega
     have hxeq : v.toNat = 2 ^ 64 - (2 ^ 64 - v.toNat) :=
       (Nat.sub_sub_self (by omega : v.toNat ≤ 2 ^ 64)).symm
@@ -115,7 +115,7 @@ theorem fitsSigned_of_range (bits : Nat) (v : BitVec 64) (hb : 1 ≤ bits) (hbit
         = (2 : Int) ^ bits - ((2 ^ 64 - v.toNat : Nat) : Int) := by
       rw [Nat.cast_sub (by omega : 2 ^ 64 - v.toNat ≤ 2 ^ bits)]
       norm_num
-    rw [hmod, if_neg hneg, htoInt, hcB, hcD]
+    rw [hmod, ite_eq_right hneg, htoInt, hcB, hcD]
     norm_num
 
 /-! ## The encoder side conditions -/
@@ -326,7 +326,7 @@ theorem execInsn_branchImmediate_call_pc (s : Arm8State) (imm : W) :
 /-- A linking branch writes the return address into register 30. -/
 theorem execInsn_branchImmediate_call_regs (s : Arm8State) (imm : W) (i : Nat) :
     (execInsn s (.branchImmediate imm true)).regs i = (if i = 30 then s.pc else s.regs i) := by
-  simp only [execInsn_branchImmediate_call, writeReg, if_neg (by decide : (30 : Nat) ≠ 31)]
+  simp only [execInsn_branchImmediate_call, writeReg, ite_eq_right (by decide : (30 : Nat) ≠ 31)]
 
 /-- A PC-relative address is written into its destination register. -/
 theorem execInsn_addressFalse (s : Arm8State) (imm : W) (rd : Nat) :
@@ -483,7 +483,7 @@ theorem case_call (a : BitVec 64) (s1 s2 : AsmState 64) (ms : Arm8State)
   have hpc4 : (ms.pc + 4 : BitVec 64) - 4 + a = ms.pc + a := by bv_omega
   have hq1 : targetStateRel arm8Target s2 (arm8Next ms) := by
     rw [hnext, execInsn_branchImmediate_call, writeReg,
-      hpc4, if_neg (by decide : (30 : Nat) ≠ 31)]
+      hpc4, ite_eq_right (by decide : (30 : Nat) ≠ 31)]
     refine ⟨?_, ?_, ?_, ?_, ?_⟩
     · simp only [arm8Target_stateOk]
       exact arm8StateOk_set _ hal st.msFailed
@@ -497,9 +497,9 @@ theorem case_call (a : BitVec 64) (s1 s2 : AsmState 64) (ms : Arm8State)
       by_cases h30 : i = 30
       · subst h30
         show ms.pc + 4 = s2.regs 30
-        rw [hs2regs 30, if_pos rfl, st.pc]
+        rw [hs2regs 30, ite_eq_left rfl, st.pc]
       · show (if i = 30 then ms.pc + 4 else ms.regs i) = s2.regs i
-        rw [if_neg h30, hs2regs i, if_neg h30]
+        rw [ite_eq_right h30, hs2regs i, ite_eq_right h30]
         exact st.reg i hi
     · intro i hi
       simp only [arm8Target_config, arm8Config] at hi
@@ -585,7 +585,7 @@ theorem case_jumpReg (r : Nat) (s1 s2 : AsmState 64) (ms : Arm8State)
     simp [arm8Touched] at hx
   have hregr : ms.regs r = s1.regs r := st.reg r ⟨hlt, hav⟩
   have hread : readReg { ms with pc := ms.pc + 4 } r = s1.regs r := by
-    simp only [readReg, if_neg hne31]
+    simp only [readReg, ite_eq_right hne31]
     exact hregr
   have hq1 : targetStateRel arm8Target s2 (arm8Next ms) := by
     rw [hnext, execInsn_branchRegister_jmp]
@@ -833,7 +833,7 @@ theorem case_loc (r : Nat) (l : BitVec 64) (s1 s2 : AsmState 64) (ms : Arm8State
       rw [(alignedAddSub 2 ms.pc 4 hal4).1, st.aligned]
     have hval : (ms.pc + 4 : BitVec 64) - 4 + l = ms.pc + l := by bv_omega
     have hq1 : targetStateRel arm8Target s2 (arm8Next ms) := by
-      rw [hnext, execInsn_addressFalse, writeReg, if_neg hne31, hval]
+      rw [hnext, execInsn_addressFalse, writeReg, ite_eq_right hne31, hval]
       refine ⟨?_, ?_, ?_, ?_, ?_⟩
       · simp only [arm8Target_stateOk]
         exact arm8StateOk_set _ hal st.msFailed
@@ -847,10 +847,10 @@ theorem case_loc (r : Nat) (l : BitVec 64) (s1 s2 : AsmState 64) (ms : Arm8State
         by_cases hir : i = r
         · subst i
           show (if r = r then ms.pc + l else ms.regs r) = s2.regs r
-          rw [if_pos rfl, hs2regs r, if_pos rfl]
+          rw [ite_eq_left rfl, hs2regs r, ite_eq_left rfl]
           exact congrArg (· + l) st.pc
         · show (if i = r then ms.pc + l else ms.regs i) = s2.regs i
-          rw [if_neg hir, hs2regs i, if_neg hir]
+          rw [ite_eq_right hir, hs2regs i, ite_eq_right hir]
           exact st.reg i hi
       · intro i hi
         simp only [arm8Target_config, arm8Config] at hi
@@ -911,43 +911,43 @@ theorem case_loc (r : Nat) (l : BitVec 64) (s1 s2 : AsmState 64) (ms : Arm8State
     have hstep1 : arm8Next ms = t1 := by
       rw [arm8Next_addressFalse ms s1.memDomain 0 r (by decide) hlt hb1]
       have h0 : (ms.pc + 4 : BitVec 64) - 4 + 0 = ms.pc := by bv_omega
-      simp only [execInsn_addressFalse, writeReg, if_neg hne31, h0, t1]
+      simp only [execInsn_addressFalse, writeReg, ite_eq_right hne31, h0, t1]
     have hstep2 : arm8Next t1 = t2 := by
       rw [arm8Next_moveWide t1 s1.memDomain .k 0 (l.toNat % 65536) temp (by decide)
         (Nat.mod_lt _ (by decide)) (show temp < 32 by decide) hb2, execInsn_moveWideK]
       have hreg : readReg { t1 with pc := t1.pc + 4 } temp = t1.regs temp := by
-        simp only [readReg, if_neg h2631]
-      simp only [hreg, writeReg, if_neg h2631, wstep, t2]
+        simp only [readReg, ite_eq_right h2631]
+      simp only [hreg, writeReg, ite_eq_right h2631, wstep, t2]
     have hstep3 : arm8Next t2 = t3 := by
       rw [arm8Next_moveWide t2 s1.memDomain .k 1 ((l >>> 16).toNat % 65536) temp
         (by decide) (Nat.mod_lt _ (by decide)) (show temp < 32 by decide) hb3,
         execInsn_moveWideK]
       have hreg : readReg { t2 with pc := t2.pc + 4 } temp = t2.regs temp := by
-        simp only [readReg, if_neg h2631]
-      simp only [hreg, writeReg, if_neg h2631, wstep, t3]
+        simp only [readReg, ite_eq_right h2631]
+      simp only [hreg, writeReg, ite_eq_right h2631, wstep, t3]
     have hstep4 : arm8Next t3 = t4 := by
       rw [arm8Next_moveWide t3 s1.memDomain .k 2 ((l >>> 32).toNat % 65536) temp
         (by decide) (Nat.mod_lt _ (by decide)) (show temp < 32 by decide) hb4,
         execInsn_moveWideK]
       have hreg : readReg { t3 with pc := t3.pc + 4 } temp = t3.regs temp := by
-        simp only [readReg, if_neg h2631]
-      simp only [hreg, writeReg, if_neg h2631, wstep, t4]
+        simp only [readReg, ite_eq_right h2631]
+      simp only [hreg, writeReg, ite_eq_right h2631, wstep, t4]
     have hstep5 : arm8Next t4 = t5 := by
       rw [arm8Next_moveWide t4 s1.memDomain .k 3 ((l >>> 48).toNat % 65536) temp
         (by decide) (Nat.mod_lt _ (by decide)) (show temp < 32 by decide) hb5,
         execInsn_moveWideK]
       have hreg : readReg { t4 with pc := t4.pc + 4 } temp = t4.regs temp := by
-        simp only [readReg, if_neg h2631]
-      simp only [hreg, writeReg, if_neg h2631, wstep, t5]
+        simp only [readReg, ite_eq_right h2631]
+      simp only [hreg, writeReg, ite_eq_right h2631, wstep, t5]
     have hstep6 : arm8Next t5 = t6 := by
       rw [arm8Next_addSubShiftedRegister t5 s1.memDomain false false .lsl temp 0 r r
         (show temp < 32 by decide) (by decide) hlt hlt hb6,
         execInsn_addSubShiftedRegister_lsl0]
       have hreg1 : readReg { t5 with pc := t5.pc + 4 } r = t5.regs r := by
-        simp only [readReg, if_neg hne31]
+        simp only [readReg, ite_eq_right hne31]
       have hreg2 : readReg { t5 with pc := t5.pc + 4 } temp = t5.regs temp := by
-        simp only [readReg, if_neg h2631]
-      simp only [hreg1, hreg2, writeReg, if_neg hne31, t6]
+        simp only [readReg, ite_eq_right h2631]
+      simp only [hreg1, hreg2, writeReg, ite_eq_right hne31, t6]
     have hit1 : arm8Next^[1] ms = t1 := by
       rw [Function.iterate_one]; exact hstep1
     have hit2 : arm8Next^[2] ms = t2 := by
@@ -1032,22 +1032,22 @@ theorem case_loc (r : Nat) (l : BitVec 64) (s1 s2 : AsmState 64) (ms : Arm8State
     have hf4 : t4.failed = ms.failed := rfl
     have hf5 : t5.failed = ms.failed := rfl
     have hf6 : t6.failed = ms.failed := rfl
-    have hreg1 : t1.regs r = ms.pc := by simp only [t1, if_true]
-    have hreg2 : t2.regs r = t1.regs r := by simp only [t2, if_neg hne26]
-    have hreg3 : t3.regs r = t2.regs r := by simp only [t3, if_neg hne26]
-    have hreg4 : t4.regs r = t3.regs r := by simp only [t4, if_neg hne26]
-    have hreg5 : t5.regs r = t4.regs r := by simp only [t5, if_neg hne26]
-    have hq1 : t1.regs temp = ms.regs temp := by simp only [t1, if_neg htr]
+    have hreg1 : t1.regs r = ms.pc := by simp only [t1, ite_true]
+    have hreg2 : t2.regs r = t1.regs r := by simp only [t2, ite_eq_right hne26]
+    have hreg3 : t3.regs r = t2.regs r := by simp only [t3, ite_eq_right hne26]
+    have hreg4 : t4.regs r = t3.regs r := by simp only [t4, ite_eq_right hne26]
+    have hreg5 : t5.regs r = t4.regs r := by simp only [t5, ite_eq_right hne26]
+    have hq1 : t1.regs temp = ms.regs temp := by simp only [t1, ite_eq_right htr]
     have hq2 : t2.regs temp = wstep (t1.regs temp) 0 (l.toNat % 65536) := by
-      simp only [t2, if_true]
+      simp only [t2, ite_true]
     have hq3 : t3.regs temp = wstep (t2.regs temp) 1 ((l >>> 16).toNat % 65536) := by
-      simp only [t3, if_true]
+      simp only [t3, ite_true]
     have hq4 : t4.regs temp = wstep (t3.regs temp) 2 ((l >>> 32).toNat % 65536) := by
-      simp only [t4, if_true]
+      simp only [t4, ite_true]
     have hq5 : t5.regs temp = wstep (t4.regs temp) 3 ((l >>> 48).toNat % 65536) := by
-      simp only [t5, if_true]
-    have hq6 : t6.regs r = t5.regs r + t5.regs temp := by simp only [t6, if_true]
-    have hrep : ∀ j, j ≠ r → t6.regs j = t5.regs j := by intro j hj; simp only [t6, if_neg hj]
+      simp only [t5, ite_true]
+    have hq6 : t6.regs r = t5.regs r + t5.regs temp := by simp only [t6, ite_true]
+    have hrep : ∀ j, j ≠ r → t6.regs j = t5.regs j := by intro j hj; simp only [t6, ite_eq_right hj]
     have ht5 : t5.regs temp = l := by
       rw [hq5, hq4, hq3, hq2, hq1, wstep_zero, wstep_eq_locTemp _ l 1 _ (by rfl),
         wstep_eq_locTemp _ l 2 _ (by rfl), wstep_eq_locTemp _ l 3 _ (by rfl)]
@@ -1073,15 +1073,15 @@ theorem case_loc (r : Nat) (l : BitVec 64) (s1 s2 : AsmState 64) (ms : Arm8State
       rw [arm8Target_config, arm8Config_encode, ← st.pc]
       exact bytesInMemory_allPcs _ _ _ _ 0 st.bytes
     have hx1 : ∀ j, j ≠ r → t1.regs j = ms.regs j := by
-      intro j hj; simp only [t1, if_neg hj]
+      intro j hj; simp only [t1, ite_eq_right hj]
     have hx2 : ∀ j, j ≠ temp → t2.regs j = t1.regs j := by
-      intro j hj; simp only [t2, if_neg hj]
+      intro j hj; simp only [t2, ite_eq_right hj]
     have hx3 : ∀ j, j ≠ temp → t3.regs j = t2.regs j := by
-      intro j hj; simp only [t3, if_neg hj]
+      intro j hj; simp only [t3, ite_eq_right hj]
     have hx4 : ∀ j, j ≠ temp → t4.regs j = t3.regs j := by
-      intro j hj; simp only [t4, if_neg hj]
+      intro j hj; simp only [t4, ite_eq_right hj]
     have hx5 : ∀ j, j ≠ temp → t5.regs j = t4.regs j := by
-      intro j hj; simp only [t5, if_neg hj]
+      intro j hj; simp only [t5, ite_eq_right hj]
     have hne26i : ∀ i, arm8Config.avoidRegs.contains i = false → i ≠ temp := by
       intro i hi h
       subst h
@@ -1106,12 +1106,12 @@ theorem case_loc (r : Nat) (l : BitVec 64) (s1 s2 : AsmState 64) (ms : Arm8State
         by_cases hir : i = r
         · subst i
           show t6.regs r = s2.regs r
-          rw [hqregs, hs2regs r, if_pos rfl]
+          rw [hqregs, hs2regs r, ite_eq_left rfl]
           exact congrArg (· + l) st.pc
         · have hit' : i ≠ temp := hne26i i har
           show t6.regs i = s2.regs i
           rw [hrep i hir, hx5 i hit', hx4 i hit', hx3 i hit', hx2 i hit', hx1 i hir,
-            hs2regs i, if_neg hir]
+            hs2regs i, ite_eq_right hir]
           exact st.reg i hi
       · intro i hi
         simp only [arm8Target_config, arm8Config] at hi

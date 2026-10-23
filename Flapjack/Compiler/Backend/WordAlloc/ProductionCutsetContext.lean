@@ -24,8 +24,8 @@ private theorem unitLookup (names : List Nat) (key : Nat) :
   | cons name names ih =>
       simp only [List.map_cons, sptAListLookup, List.mem_cons]
       by_cases equal : key = name
-      · simp only [equal, if_true, true_or]
-      · simp only [equal, if_false, false_or, ih]
+      · simp only [equal, ite_true, true_or]
+      · simp only [equal, ite_false, false_or, ih]
 
 private theorem unitMap_eq_of_membership (left right : List Nat)
     (same : ∀ key, key ∈ left ↔ key ∈ right) :

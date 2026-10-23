@@ -35,7 +35,7 @@ noncomputable def holLinv {α β : Type} [Nonempty α] (f : α → β) (s : α �
 theorem holLinv_apply_of_injective {α β : Type} [Nonempty α] {f : α → β}
     (hf : Function.Injective f) (x : α) : holLinv f (fun _ => True) (f x) = x := by
   have h : ∃ z, f x = f z ∧ (fun _ => True) z := ⟨x, rfl, trivial⟩
-  simp only [holLinv, holLinvOpt, dif_pos h, holThe]
+  simp only [holLinv, holLinvOpt, dite_eq_left h, holThe]
   exact hf (Classical.choose_spec (show ∃ z, (fun _ => True) z ∧ f z = f x from
     let ⟨z, h1, h2⟩ := h; ⟨z, h2, h1.symm⟩)).2
 
@@ -45,7 +45,7 @@ theorem apply_holLinv_of_surjective {α β : Type} [Nonempty α] {f : α → β}
     (hf : Function.Surjective f) (y : β) : f (holLinv f (fun _ => True) y) = y := by
   obtain ⟨x, rfl⟩ := hf y
   have h : ∃ z, f x = f z ∧ (fun _ => True) z := ⟨x, rfl, trivial⟩
-  simp only [holLinv, holLinvOpt, dif_pos h, holThe]
+  simp only [holLinv, holLinvOpt, dite_eq_left h, holThe]
   exact (Classical.choose_spec (show ∃ z, (fun _ => True) z ∧ f z = f x from
     let ⟨z, h1, h2⟩ := h; ⟨z, h2, h1.symm⟩)).2
 

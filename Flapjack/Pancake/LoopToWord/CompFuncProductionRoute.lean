@@ -72,7 +72,7 @@ theorem loopToWordCompFuncViaHOL_ne_none_of_encode_and_byte_names
     loopToWordCompFuncViaHOL name params body ≠ none := by
   unfold loopToWordCompFuncViaHOL
   rw [hnames]
-  simp only [if_pos]
+  simp only [ite_eq_left]
   rw [hencode]
   unfold loopToWordCompFuncHOL
   exact wordLangProgFromHOL_compHOL_ne_none

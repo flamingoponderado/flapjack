@@ -162,12 +162,12 @@ theorem doRegAllocCorrect :
       else if isStackVar (spDefault fa i) then holEl i T3 = .Stemp
       else holEl i T3 = .Atemp ∨ holEl i T3 = .Stemp) at h
     by_cases hp : isPhyVar (spDefault fa i) = true
-    · rw [if_pos hp, hc] at h
+    · rw [ite_eq_left hp, hc] at h
       exact ⟨hp, Tag.Fixed.inj h⟩
-    · rw [if_neg hp] at h
+    · rw [ite_eq_right hp] at h
       by_cases hs : isStackVar (spDefault fa i) = true
-      · rw [if_pos hs, hc] at h; cases h
-      · rw [if_neg hs, hc] at h
+      · rw [ite_eq_left hs, hc] at h; cases h
+      · rw [ite_eq_right hs, hc] at h
         rcases h with h | h <;> cases h
   have hfainj : ∀ x y, x < n → y < n → spDefault fa x = spDefault fa y → x = y :=
     fun x y hx hy he => by
@@ -220,10 +220,10 @@ theorem doRegAllocCorrect :
   have hfixed6 : ∀ m, m < n → ∃ c, holEl m T6 = .Fixed c := fun m hm => by
     have h := hT6 m hm
     by_cases hs : holEl m T5 = .Stemp
-    · rw [if_pos hs] at h
+    · rw [ite_eq_left hs] at h
       obtain ⟨k', hk', _⟩ := h
       exact ⟨k', hk'⟩
-    · rw [if_neg hs] at h
+    · rw [ite_eq_right hs] at h
       rw [h]
       cases ht : holEl m T5 with
       | Fixed c => exact ⟨c, rfl⟩
@@ -285,7 +285,7 @@ theorem doRegAllocCorrect :
       (fun x hx => ?_)]
     · exact hcc
     · obtain ⟨v, hv, hvn, hx⟩ := hspcol x (hx.resolve_right (hln x))
-      simp only [Function.comp_apply, hspd ta x v hv, hx, col, if_pos (show v < T6.length by omega)]
+      simp only [Function.comp_apply, hspd ta x v hv, hx, col, ite_eq_left (show v < T6.length by omega)]
   · obtain ⟨v, hv, hvn, hxv⟩ := hspcol x hx
     refine ⟨by simp [sptDomain, hlook x v hv], ?_⟩
     have ht := htags v x ⟨hvn, (hfa x v hv).symm⟩
@@ -294,20 +294,20 @@ theorem doRegAllocCorrect :
       else holEl v T3 = .Atemp ∨ holEl v T3 = .Stemp) at ht
     rw [hxv]
     by_cases hp : isPhyVar x = true
-    · rw [if_pos hp] at ht ⊢
+    · rw [ite_eq_left hp] at ht ⊢
       have e5 : holEl v T5 = .Fixed (x / 2) := by rw [hT5 v hvn (by rw [ht]; simp), ht]
       have e6 := hT6 v hvn
-      rw [if_neg (by rw [e5]; simp), e5] at e6
+      rw [ite_eq_right (by rw [e5]; simp), e5] at e6
       rw [e6]; rfl
-    · rw [if_neg hp] at ht ⊢
+    · rw [ite_eq_right hp] at ht ⊢
       by_cases hs : isStackVar x = true
-      · rw [if_pos hs] at ht ⊢
+      · rw [ite_eq_left hs] at ht ⊢
         have e5 : holEl v T5 = .Stemp := by rw [hT5 v hvn (by rw [ht]; simp), ht]
         have e6 := hT6 v hvn
-        rw [if_pos e5] at e6
+        rw [ite_eq_left e5] at e6
         obtain ⟨k', hk', hkk⟩ := e6
         rw [hk']; exact hkk
-      · rw [if_neg hs]; trivial
+      · rw [ite_eq_right hs]; trivial
   · have h := hx
     simp only [sptDomain, sptLookup_sptMap, Option.isSome_map] at h
     exact (hdomta x).mp h
@@ -318,7 +318,7 @@ theorem doRegAllocCorrect :
       (he2 v1 v2).mpr (Or.inr (Or.inl ⟨m.1, m.2, hspd ta _ _ hv1, hspd ta _ _ hv2, hm⟩))
     have hedge4 := hsub4 v1 v2 hedge
     have hc : col v1 = col v2 := by
-      simp only [col, if_pos (show v1 < T6.length by omega), if_pos (show v2 < T6.length by omega)]
+      simp only [col, ite_eq_left (show v1 < T6.length by omega), ite_eq_left (show v2 < T6.length by omega)]
       rw [← he1, ← he2']; exact heq
     have hv := hcol v1 hedge4.1 v2 ⟨hedge4.2.1, hedge4.2.2⟩ hc
     exact htainj _ _ hx1 hx2 (by rw [hspd ta _ _ hv1, hspd ta _ _ hv2, hv])

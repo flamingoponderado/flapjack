@@ -202,7 +202,7 @@ theorem globalFindFunction_mem [BEq String] [LawfulBEq String]
       | function function =>
           rw [globalFindFunction.eq_def] at hfind
           by_cases hname : (function.name == name) = true
-          · simp only [hname, if_pos] at hfind
+          · simp only [hname, ite_eq_left] at hfind
             have heq : entry = function := (Option.some.inj hfind).symm
             subst heq
             exact List.mem_cons.mpr (Or.inl rfl)

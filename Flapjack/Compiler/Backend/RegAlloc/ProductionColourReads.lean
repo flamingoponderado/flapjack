@@ -37,7 +37,7 @@ theorem removeColours_production (nodes colours : List Nat)
       have tailBounds : ∀ next ∈ rest, next < native.dim :=
         fun next member => bounds next (List.mem_cons_of_mem node member)
       simp only [removeColours, Translator.Monadic.MonadBase.bind, nodeTagSubEqn,
-        if_pos bound, holEl_eq_getElem node native.node_tag bound,
+        ite_eq_left bound, holEl_eq_getElem node native.node_tag bound,
         cakeRemoveColours, read]
       cases native.node_tag[node] <;>
         simp only [Tag.toProduction, ih _ tailBounds, ret]
@@ -62,7 +62,7 @@ theorem firstMatchCol_production (colours nodes : List Nat)
     have tailBounds : ∀ next ∈ rest, next < native.dim :=
       fun next member => bounds next (List.mem_cons_of_mem node member)
     simp only [firstMatchCol, Translator.Monadic.MonadBase.bind, nodeTagSubEqn,
-      if_pos bound, holEl_eq_getElem node native.node_tag bound,
+      ite_eq_left bound, holEl_eq_getElem node native.node_tag bound,
       cakeFirstMatchCol, read]
     cases native.node_tag[node] <;> simp only [Tag.toProduction, ih tailBounds]
     all_goals first | rfl | (split <;> simp_all [ret])

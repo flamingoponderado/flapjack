@@ -77,9 +77,9 @@ theorem simpProgCorrectIfCase {width : Nat} [NeZero width] {σ : Type} :
     exact hexp
   have hbranch := ih (.word w) w hvalue rfl result finalState he hne
   by_cases hw : w ≠ 0
-  · rw [if_pos hw] at hbranch ⊢
+  · rw [ite_eq_left hw] at hbranch ⊢
     exact hbranch
-  · rw [if_neg hw] at hbranch ⊢
+  · rw [ite_eq_right hw] at hbranch ⊢
     exact hbranch
 
 end Flapjack

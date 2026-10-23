@@ -452,7 +452,7 @@ theorem extendCliqueSetReference_staticMembership (new initial : List Nat)
         · rcases List.mem_cons.mp belongs with rfl | belongs
           · exact Or.inl List.mem_cons_self
           · exact Or.inr belongs
-      simp only [Bool.false_eq_true, if_false]
+      simp only [Bool.false_eq_true, ite_false]
       rw [ih _ _ nextPresent]
       have edges := listInsertEdgeSet_membership initial cache node key member nodePresent initialPresent
       have carried := congrArg (Option.map (fun bit => bit || cliqueNewEdge rest (node :: initial) key member)) edges
@@ -514,7 +514,7 @@ theorem extendCliqueSetReference_materialize (new initial : List Nat)
     cases present : initial.contains node with
     | true => simpa only [↓reduceIte] using ih initial cache
     | false =>
-      simp only [Bool.false_eq_true, if_false]
+      simp only [Bool.false_eq_true, ite_false]
       have run := ih (node :: initial) (cakeListInsertEdgeSet node initial cache)
       rw [listInsertEdgeSet_materialize_eq] at run
       exact run
@@ -574,7 +574,7 @@ private theorem unionRowsFold_frame (nodes : List Nat) (partners : Nat → Std.T
     have size : (unionRow partners cache node).slots.size = cache.slots.size :=
       CakeNodeMap.slots_size_set _ _ _
     have outside : (unionRow partners cache node).outside = cache.outside := by
-      simp only [unionRow, CakeNodeMap.set, bounded, if_true]
+      simp only [unionRow, CakeNodeMap.set, bounded, ite_true]
     have tail := ih (unionRow partners cache node) (by
       intro next belongs
       rw [size]
@@ -631,7 +631,7 @@ theorem extendCliqueReference_production (new initial : List Nat)
         intro next belongs
         exact bounds next (belongs.elim (fun h => Or.inl (List.mem_cons_of_mem _ h)) Or.inr))
       refine ⟨result, ?_, length, ?_⟩
-      · simpa only [extendClique, if_pos inInitial, cakeExtendClique, present, ↓reduceIte] using run
+      · simpa only [extendClique, ite_eq_left inInitial, cakeExtendClique, present, ↓reduceIte] using run
       · simpa only [cakeExtendClique, cakeExtendCliqueSetReference, present, ↓reduceIte] using rel
     · have absent : initial.contains node = false := by
         apply Bool.eq_false_iff.mpr
@@ -648,10 +648,10 @@ theorem extendCliqueReference_production (new initial : List Nat)
           · exact bounds _ (Or.inl List.mem_cons_self)
           · exact bounds next (Or.inr belongs))
       refine ⟨result, ?_, length.trans firstLength, ?_⟩
-      · simp only [extendClique, if_neg inInitial, Translator.Monadic.MonadBase.ignoreBind,
-          firstRun, run, cakeExtendClique, absent, Bool.false_eq_true, if_false]
+      · simp only [extendClique, ite_eq_right inInitial, Translator.Monadic.MonadBase.ignoreBind,
+          firstRun, run, cakeExtendClique, absent, Bool.false_eq_true, ite_false]
       · simpa only [cakeExtendClique, cakeExtendCliqueSetReference, absent, Bool.false_eq_true,
-          if_false, Option.map_map, Function.comp_def] using rel
+          ite_false, Option.map_map, Function.comp_def] using rel
 
 /-- Complete executed batch/native extendClique correspondence, including
 the actual live list, ordered adjacency rows, all other native state fields,
@@ -741,7 +741,7 @@ theorem cliqueInsertEdgeFast_membership (live : List Nat)
   have graph : cakeCliqueInsertEdgeSetFast live cache =
       live.foldl (unionRow (fun node => (Std.TreeSet.ofList live).erase node)) cache := by
     unfold cakeCliqueInsertEdgeSetFast unionRow
-    simp only [distinct, dif_pos]
+    simp only [distinct, dite_eq_left]
   rw [graph]
   rw [folded]
   simp only [Std.TreeSet.contains_erase, Std.TreeSet.contains_ofList]
@@ -861,7 +861,7 @@ theorem cliqueInsertEdgeFast_rows_reference (live : List Nat)
         simpa only [left, right, Option.map_some, Option.some.injEq] using observed
       exact congrArg some (congrArg List.reverse
         (Std.TreeSet.Equiv.toList_eq (Std.TreeSet.Equiv.of_forall_contains_eq same)))
-  · simp only [cakeCliqueInsertEdgeSetFast, dif_neg distinct]
+  · simp only [cakeCliqueInsertEdgeSetFast, dite_eq_right distinct]
 
 private theorem cliqueInsertEdgeSet_materialize (live : List Nat)
     (cache : CakeNodeMap (Std.TreeSet Nat)) :
@@ -903,7 +903,7 @@ theorem cliqueInsertEdgeFast_production (live : List Nat)
     have graph : cakeCliqueInsertEdgeSetFast live cache =
         live.foldl (unionRow (fun node => (Std.TreeSet.ofList live).erase node)) cache := by
       unfold cakeCliqueInsertEdgeSetFast unionRow
-      simp only [distinct, dif_pos]
+      simp only [distinct, dite_eq_left]
     have frame := unionRowsFold_frame live
       (fun node => (Std.TreeSet.ofList live).erase node) cache (by
         intro node belongs
@@ -928,6 +928,6 @@ theorem cliqueInsertEdgeFast_production (live : List Nat)
         adjLists := (cakeCliqueInsertEdgeSet live cache).mapValues cakeAdjSetList
         adjSets := some (cakeCliqueInsertEdgeSet live cache)} := by
       simpa only [materialized, Option.map_some] using rel
-    simpa only [cakeCliqueInsertEdgeSetFast, dif_neg distinct] using adjusted
+    simpa only [cakeCliqueInsertEdgeSetFast, dite_eq_right distinct] using adjusted
 
 end Flapjack.RegAlloc

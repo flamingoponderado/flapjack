@@ -79,7 +79,7 @@ theorem wordCseArithmetic_production_transport {width : Nat} [NeZero width]
       (.inst (.arith (executedArithmetic operation)))
       (arithmeticProgram_codec operation)
     exact ⟨output.1, output.2.2⟩
-  · simp only [Bool.and_eq_true, Bool.not_eq_true', containsFalse, share, if_false]
+  · simp only [Bool.and_eq_true, Bool.not_eq_true', containsFalse, share, ite_false]
     exact ⟨invalidRelated, arithmeticProgram_codec operation⟩
 
 /-- Complete arithmetic correspondence at both actual program Inst callers.

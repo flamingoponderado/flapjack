@@ -80,7 +80,7 @@ theorem semanticsNonFail_has_zeroArgCodeEntry
   apply hsem
   unfold semantics
   dsimp only
-  rw [if_pos]
+  rw [ite_eq_left]
   exact ⟨0, by rw [herror]; trivial⟩
 
 namespace PanPropsHasMain

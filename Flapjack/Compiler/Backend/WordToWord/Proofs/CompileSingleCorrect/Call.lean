@@ -156,7 +156,7 @@ theorem compileSingleCorrect_callTail {width : Nat} [NeZero width] {C F : Type}
     rw [evaluate_call_eq, show WordSemStateFiniteExact.getVars args { st with permute := P } = some xs
       from (getVars_congr st { st with permute := P } rfl args).trans hxs]
     dsimp only
-    rw [if_neg hbad, show wordSemFindCode dest (wordSemAddRetLoc (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat)) xs) st.code st.stackSize =
+    rw [ite_eq_right hbad, show wordSemFindCode dest (wordSemAddRetLoc (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat)) xs) st.code st.stackSize =
       some (args1, prog, ss) from hfc]
     dsimp only
     split
@@ -171,7 +171,7 @@ theorem compileSingleCorrect_callTail {width : Nat} [NeZero width] {C F : Type}
     rw [evaluate_call_eq, show WordSemStateFiniteExact.getVars args T = some xs
       from (getVars_congr st T rfl args).trans hxs]
     dsimp only
-    rw [if_neg hbad, show wordSemFindCode dest (wordSemAddRetLoc (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat)) xs) l st.stackSize =
+    rw [ite_eq_right hbad, show wordSemFindCode dest (wordSemAddRetLoc (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat)) xs) l st.stackSize =
       some (args1, prog', ss) from hfcT]
     dsimp only
     split
@@ -183,8 +183,8 @@ theorem compileSingleCorrect_callTail {width : Nat} [NeZero width] {C F : Type}
     rcases h1 : evaluate prog (WordSemStateFiniteExact.callEnv args1 ss (decClock st)) with ⟨r0, s0⟩
     rcases h2 : evaluate prog' (WordSemStateFiniteExact.callEnv args1 ss (decClock T)) with ⟨r1, s1⟩
     rw [srcRun st.permute r0 s0 h1, tgtRun r1 s1 h2]
-    simp only [hz, if_true]
-    rw [if_neg (show some WordSemResult.timeOut ≠ some WordSemResult.error by simp)]
+    simp only [hz, ite_true]
+    rw [ite_eq_right (show some WordSemResult.timeOut ≠ some WordSemResult.error by simp)]
     exact ⟨trivial, hrel, hdom, by simp [flushState, T, O, hz]⟩
   -- the callee state
   let stt : WordSemStateFiniteExact width C F := WordSemStateFiniteExact.callEnv args1 ss (decClock st)
@@ -206,13 +206,13 @@ theorem compileSingleCorrect_callTail {width : Nat} [NeZero width] {C F : Type}
     rcases h2 : evaluate prog' (WordSemStateFiniteExact.callEnv args1 ss (decClock T)) with ⟨r1, s1⟩
     rw [srcRun perm2 res rst hR, tgtRun r1 s1 h2]
     subst herr
-    simp only [hz, if_false, ite_self]
+    simp only [hz, ite_false, ite_self]
     simp
-  rw [if_neg herr, hA] at H2
+  rw [ite_eq_right herr, hA] at H2
   dsimp only at H2
   obtain ⟨hres, heq, hloc⟩ := H2
   subst resA
-  rw [if_neg herr] at H1
+  rw [ite_eq_right herr] at H1
   rcases hB : evaluate prog' { stt with code := l, compileOracle := O, compile := cc } with
     ⟨resB, rB⟩
   rw [hB] at H1
@@ -224,10 +224,10 @@ theorem compileSingleCorrect_callTail {width : Nat} [NeZero width] {C F : Type}
   obtain ⟨perm3, hP⟩ := hsw herr
   refine ⟨perm3, ?_⟩
   rw [srcRun perm3 res _ hP, tgtRun res rB hB]
-  simp only [hz, if_false]
+  simp only [hz, ite_false]
   by_cases hbr : wordSemBadFunReturn res = true
   · simp [hbr]
-  simp only [hbr, Bool.false_eq_true, if_false]
+  simp only [hbr, Bool.false_eq_true, ite_false]
   have hlocal : rst.locals = rA.locals := by
     rcases res with _ | r
     · exact absurd rfl hbr
@@ -235,7 +235,7 @@ theorem compileSingleCorrect_callTail {width : Nat} [NeZero width] {C F : Type}
   have hcode : rst.code = rA.code := heq.2.2.2.2.2.2.2.2.2.2.2.2.2.1.symm
   have hst : ({ rst with permute := rA.permute } : WordSemStateFiniteExact width C F) = rA :=
     eqRel_permute heq hlocal
-  rw [if_neg herr]
+  rw [ite_eq_right herr]
   refine ⟨by simp, ?_, ?_, ?_⟩
   · show codeRel rst.code rB.code; rw [hcode]; exact hcB
   · show sptDomain rst.code = sptDomain rB.code; rw [hcode]; exact hdB
@@ -255,7 +255,7 @@ theorem pushEnv_shift (envs : Spt (WordLocW width) × Spt (WordLocW width))
       { pushEnv envs h s with permute := q } := by
   have hq : (fun n => (fun n => if n = 0 then s.permute 0 else q (n - 1)) (n + 1)) = q := by
     funext n; simp
-  cases h <;> simp only [pushEnv, wordSemEnvToList, if_pos] <;> rw [hq]
+  cases h <;> simp only [pushEnv, wordSemEnvToList, ite_eq_left] <;> rw [hq]
 
 theorem pushEnv_fields (envs : Spt (WordLocW width) × Spt (WordLocW width))
     (h : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
@@ -379,12 +379,12 @@ theorem compileSingleCorrect_callRet {width : Nat} [NeZero width] {C F : Type}
     rw [evaluate_call_eq, show WordSemStateFiniteExact.getVars args { st with permute := P } = some xs
       from (getVars_congr st { st with permute := P } rfl args).trans hxs]
     dsimp only
-    rw [if_neg hbad, show wordSemFindCode dest (wordSemAddRetLoc (some (xn, names, xrh, xl1, xl2)) xs)
+    rw [ite_eq_right hbad, show wordSemFindCode dest (wordSemAddRetLoc (some (xn, names, xrh, xl1, xl2)) xs)
       st.code st.stackSize = some (args1, prog, ss) from hfc]
     dsimp only
-    rw [if_neg hnm, show wordSemCutEnvs names st.locals = some envs from hce]
+    rw [ite_eq_right hnm, show wordSemCutEnvs names st.locals = some envs from hce]
     dsimp only
-    rw [if_neg hz, h]
+    rw [ite_eq_right hz, h]
   have tgtRun : ∀ (r : Option (WordSemResult width)) (s' : WordSemStateFiniteExact width C F),
       evaluate prog' (WordSemStateFiniteExact.callEnv args1 ss (pushEnv envs handler (decClock T))) =
         (r, s') →
@@ -394,18 +394,18 @@ theorem compileSingleCorrect_callRet {width : Nat} [NeZero width] {C F : Type}
     rw [evaluate_call_eq, show WordSemStateFiniteExact.getVars args T = some xs
       from (getVars_congr st T rfl args).trans hxs]
     dsimp only
-    rw [if_neg hbad, show wordSemFindCode dest (wordSemAddRetLoc (some (xn, names, xrh, xl1, xl2)) xs)
+    rw [ite_eq_right hbad, show wordSemFindCode dest (wordSemAddRetLoc (some (xn, names, xrh, xl1, xl2)) xs)
       l st.stackSize = some (args1, prog', ss) from hfcT]
     dsimp only
-    rw [if_neg hnm, show wordSemCutEnvs names T.locals = some envs from hce]
+    rw [ite_eq_right hnm, show wordSemCutEnvs names T.locals = some envs from hce]
     dsimp only
-    rw [if_neg hz, h]
+    rw [ite_eq_right hz, h]
   by_cases hz : st.clock = 0
   · refine ⟨st.permute, ?_⟩
     rw [evaluate_call_eq, hxs, evaluate_call_eq, show WordSemStateFiniteExact.getVars args T = some xs
       from (getVars_congr st T rfl args).trans hxs]
-    simp only [hbad, Bool.false_eq_true, if_false, hfc, hfcT, hnm, hce, hz, if_true]
-    rw [if_neg (show some WordSemResult.timeOut ≠ some WordSemResult.error by simp)]
+    simp only [hbad, Bool.false_eq_true, ite_false, hfc, hfcT, hnm, hce, hz, ite_true]
+    rw [ite_eq_right (show some WordSemResult.timeOut ≠ some WordSemResult.error by simp)]
     refine ⟨trivial, hrel, hdom, ?_⟩
     cases handler <;> rfl
   have hpf := pushEnv_fields envs handler (decClock st)
@@ -459,11 +459,11 @@ theorem compileSingleCorrect_callRet {width : Nat} [NeZero width] {C F : Type}
     rw [srcRun P res rst hP hz]
     subst herr
     simp [K]
-  rw [if_neg herr, hA] at H2
+  rw [ite_eq_right herr, hA] at H2
   dsimp only at H2
   obtain ⟨hres, heq, hloc⟩ := H2
   subst resA
-  rw [if_neg herr] at H1
+  rw [ite_eq_right herr] at H1
   rcases hB : evaluate prog' { stt with code := l, compileOracle := O, compile := cc } with ⟨resB, rB⟩
   rw [hB] at H1
   dsimp only at H1
@@ -505,7 +505,7 @@ theorem compileSingleCorrect_callRet {width : Nat} [NeZero width] {C F : Type}
     refine ⟨P, ?_⟩
     rw [srcRun P _ _ hP hz, tgtRun _ _ hB' hz]
     simp only [K]
-    rw [if_neg herr]
+    rw [ite_eq_right herr]
     exact ⟨by trivial, hcB, hdB, by trivial⟩
   | result x ys =>
     by_cases hx : x ≠ .loc xl1 xl2 ∨ ys.length ≠ xn.length
@@ -517,7 +517,7 @@ theorem compileSingleCorrect_callRet {width : Nat} [NeZero width] {C F : Type}
     · obtain ⟨P, hP⟩ := hswap pA herr
       refine ⟨P, ?_⟩
       rw [srcRun P _ _ hP hz]
-      simp only [K, hx, if_false]
+      simp only [K, hx, ite_false]
       rw [popEnv_permute, hpop]
       simp
     have hpf2 := popEnv_fields hpop
@@ -526,7 +526,7 @@ theorem compileSingleCorrect_callRet {width : Nat} [NeZero width] {C F : Type}
     · obtain ⟨P, hP⟩ := hswap pA herr
       refine ⟨P, ?_⟩
       rw [srcRun P _ _ hP hz]
-      simp only [K, hx, if_false]
+      simp only [K, hx, ite_false]
       rw [popEnv_permute, hpop]
       simp [hdu]
     let Y : WordSemStateFiniteExact width C F :=
@@ -557,9 +557,9 @@ theorem compileSingleCorrect_callRet {width : Nat} [NeZero width] {C F : Type}
         { st with permute := P } = evaluate xrh { Y with permute := perm3 } := by
       rw [srcRun P _ _ hP hz]
       simp only [K]
-      rw [if_neg hnx, popEnv_permute, hpop]
+      rw [ite_eq_right hnx, popEnv_permute, hpop]
       dsimp only [Option.map]
-      rw [if_pos hdu]
+      rw [ite_eq_left hdu]
       rfl
     let M := Prod.map id (List.map (fun p => compileSingle tt kk aa co (p, none))) ∘ x''.compileOracle
     have tgtRes : evaluate (.call (some (xn, names, xrh, xl1, xl2)) dest args handler) T =
@@ -568,9 +568,9 @@ theorem compileSingleCorrect_callRet {width : Nat} [NeZero width] {C F : Type}
       let Mr := Prod.map id (List.map (fun p => compileSingle tt kk aa co (p, none))) ∘ rst.compileOracle
       show K (some (.result x ys), { rst with permute := pA, code := cB, compileOracle := Mr, compile := cc }) = _
       simp only [K]
-      rw [if_neg hnx, popEnv_with, hpop]
+      rw [ite_eq_right hnx, popEnv_with, hpop]
       dsimp only [Option.map]
-      rw [if_pos hdu]
+      rw [ite_eq_left hdu]
       have hMM : M = Mr := by simp only [M, Mr, hpf2.2.2.1]
       rw [hMM]
       rfl
@@ -583,7 +583,7 @@ theorem compileSingleCorrect_callRet {width : Nat} [NeZero width] {C F : Type}
       refine ⟨P, ?_⟩
       rw [srcRun P _ _ hP hz, tgtRun _ _ hB' hz]
       simp only [K]
-      rw [if_neg herr]
+      rw [ite_eq_right herr]
       exact ⟨by trivial, hcB, hdB, by trivial⟩
     | some hh =>
       obtain ⟨hn, hprog, hl1, hl2⟩ := hh
@@ -597,8 +597,8 @@ theorem compileSingleCorrect_callRet {width : Nat} [NeZero width] {C F : Type}
       · obtain ⟨P, hP⟩ := hswap pA herr
         refine ⟨P, ?_⟩
         rw [srcRun P _ _ hP hz]
-        simp only [K, hxl, if_false]
-        rw [if_neg (show ¬sptDomainEqUnion ({ rst with permute := pA } :
+        simp only [K, hxl, ite_false]
+        rw [ite_eq_right (show ¬sptDomainEqUnion ({ rst with permute := pA } :
           WordSemStateFiniteExact width C F).locals envs.1 envs.2 from hdu)]
         simp
       let Y : WordSemStateFiniteExact width C F := setVar hn y { rst with permute := pA }
@@ -624,7 +624,7 @@ theorem compileSingleCorrect_callRet {width : Nat} [NeZero width] {C F : Type}
           (some (hn, hprog, hl1, hl2))) { st with permute := P } = evaluate hprog { Y with permute := perm3 } := by
         rw [srcRun P _ _ hP hz]
         simp only [K]
-        rw [if_neg hxl, if_pos (show sptDomainEqUnion ({ rst with permute := perm3 } :
+        rw [ite_eq_right hxl, ite_eq_left (show sptDomainEqUnion ({ rst with permute := perm3 } :
           WordSemStateFiniteExact width C F).locals envs.1 envs.2 from hdu)]
         rfl
       let Mr := Prod.map id (List.map (fun p => compileSingle tt kk aa co (p, none))) ∘ rst.compileOracle
@@ -635,7 +635,7 @@ theorem compileSingleCorrect_callRet {width : Nat} [NeZero width] {C F : Type}
         simp only [K]
         let Tst : WordSemStateFiniteExact width C F :=
           { rst with permute := pA, code := cB, compileOracle := Mr, compile := cc }
-        rw [if_neg hxl, if_pos (show sptDomainEqUnion Tst.locals envs.1 envs.2 from hdu)]
+        rw [ite_eq_right hxl, ite_eq_left (show sptDomainEqUnion Tst.locals envs.1 envs.2 from hdu)]
         rfl
       rw [srcRes, tgtRes]
       exact H3
@@ -673,7 +673,7 @@ theorem compile_single_correct_Call {width : Nat} [NeZero width] {C F : Type}
       rcases e : evaluate (.call none dest args (some h)) st with ⟨r, s⟩
       rw [e] at herr
       dsimp only at herr ⊢
-      rw [if_pos herr]
+      rw [ite_eq_left herr]
       trivial
 
 end Flapjack.Compiler.Backend.WordToWord

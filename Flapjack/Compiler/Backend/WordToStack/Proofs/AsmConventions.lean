@@ -125,7 +125,7 @@ theorem wordToStackStackAsmConvs {width : Nat} [NeZero width]
       stackAsmRemove conf (storeConstsStubNative (width := width) k) := by
     simp [storeConstsStubNative, stackAsmName, stackAsmRemove, regName]
     omega
-  simp only [compileNative, Bool.false_eq_true, if_false]
+  simp only [compileNative, Bool.false_eq_true, ite_false]
   intro row membership
   rcases List.mem_cons.mp membership with equal | membership
   · subst row

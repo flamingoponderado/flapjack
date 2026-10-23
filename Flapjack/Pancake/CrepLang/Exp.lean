@@ -229,9 +229,9 @@ theorem loadShapeBytesHOLW_toProduction {width : Nat} [NeZero width]
       congr 1
       simp only [beq_iff_eq]
       by_cases hzero : address = 0
-      · rw [if_pos hzero, if_pos hzero]
+      · rw [ite_eq_left hzero, ite_eq_left hzero]
         simp [crepExpOfHOL]
-      · rw [if_neg hzero, if_neg hzero]
+      · rw [ite_eq_right hzero, ite_eq_right hzero]
         simp [crepExpOfHOL]
 
 end Flapjack

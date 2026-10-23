@@ -197,7 +197,7 @@ theorem routed_global_hit :
   simp only [PanGlobalsContextExact.ofPass_globals_lookup]
   rw [Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes "g" (by decide)]
   simp only [productionPassContext, lookupInfo, List.map_cons, List.map_nil,
-    beq_self_eq_true, if_true, Option.map_some, expOfHOL]
+    beq_self_eq_true, ite_true, Option.map_some, expOfHOL]
   rw [Flapjack.Pancake.PanLang.shapeOfHOL_shapeToHOL Shape.one (by simp [ShapeByteRanged])]
 
 /-- The `top_addr` row through the executed `cakeContextOfPass` production path,
@@ -282,7 +282,7 @@ theorem routed_prog_global_miss :
       (by simp [ExpByteRanged])]
   have hmiss : ("g" == "missing") = false := by decide
   simp only [compileExpCake, cakeContextOfPass, productionPassContext, lookupInfo,
-    FLOOKUP, hmiss, Bool.false_eq_true, if_false]
+    FLOOKUP, hmiss, Bool.false_eq_true, ite_false]
   rfl
 
 /-- The `top_addr` probe row through the executed routed program compiler. -/
@@ -311,7 +311,7 @@ theorem routed_nested :
   simp only [PanGlobalsContextExact.ofPass_globals_lookup]
   rw [Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes "g" (by decide)]
   simp only [productionPassContext, lookupInfo,
-    beq_self_eq_true, if_true, Option.map_some]
+    beq_self_eq_true, ite_true, Option.map_some]
   simp only [expOfHOL, List.map_cons, List.map_nil]
   rw [Flapjack.Pancake.PanLang.shapeOfHOL_shapeToHOL Shape.one (by simp [ShapeByteRanged])]
   simp only [PanGlobalsContextExact.ofPass]

@@ -22,12 +22,12 @@ theorem sptInsertUnchanged {α : Type} (tree : Spt α) (key : Nat) (value : α)
       by_cases hz : key = 0
       · simp [sptLookup, hz] at h
       · by_cases he : key % 2 = 0
-        · simp only [sptLookup, if_neg hz, if_pos he] at h
+        · simp only [sptLookup, ite_eq_right hz, ite_eq_left he] at h
           rw [sptInsert]
-          simp only [if_neg hz, if_pos he, ihl _ h]
-        · simp only [sptLookup, if_neg hz, if_neg he] at h
+          simp only [ite_eq_right hz, ite_eq_left he, ihl _ h]
+        · simp only [sptLookup, ite_eq_right hz, ite_eq_right he] at h
           rw [sptInsert]
-          simp only [if_neg hz, if_neg he, ihr _ h]
+          simp only [ite_eq_right hz, ite_eq_right he, ihr _ h]
   | bs left old right ihl ihr =>
       by_cases hz : key = 0
       · subst key
@@ -36,11 +36,11 @@ theorem sptInsertUnchanged {α : Type} (tree : Spt α) (key : Nat) (value : α)
         rw [sptInsert]
         simp
       · by_cases he : key % 2 = 0
-        · simp only [sptLookup, if_neg hz, if_pos he] at h
+        · simp only [sptLookup, ite_eq_right hz, ite_eq_left he] at h
           rw [sptInsert]
-          simp only [if_neg hz, if_pos he, ihl _ h]
-        · simp only [sptLookup, if_neg hz, if_neg he] at h
+          simp only [ite_eq_right hz, ite_eq_left he, ihl _ h]
+        · simp only [sptLookup, ite_eq_right hz, ite_eq_right he] at h
           rw [sptInsert]
-          simp only [if_neg hz, if_neg he, ihr _ h]
+          simp only [ite_eq_right hz, ite_eq_right he, ihr _ h]
 
 end Flapjack

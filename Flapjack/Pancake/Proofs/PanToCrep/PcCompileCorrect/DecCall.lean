@@ -303,7 +303,7 @@ theorem pcCompileCorrectAt_decCall {width : Nat} {σ : Type} [NeZero width]
     hlocals.2.1
   rw [compileDecCallShape]
   by_cases hclock : source.clock = 0
-  · rw [if_pos hclock] at hrun
+  · rw [ite_eq_left hclock] at hrun
     obtain ⟨rfl, rfl⟩ := Prod.mk.inj hrun
     have htclock : t.clock = 0 := by rw [← hstate.2.2.2.2.2.1]; exact hclock
     obtain ⟨t2, hrun2, hsame⟩ := crepNestedDecCallTimeout t fname _ _ _ _ _
@@ -313,7 +313,7 @@ theorem pcCompileCorrectAt_decCall {width : Nat} {σ : Type} [NeZero width]
       ?_, hexcp, rfl⟩
     have hcode2 : t2.code = t.code := by rw [← hsame]
     rw [hcode2]; exact hcode
-  rw [if_neg hclock] at hrun
+  rw [ite_eq_right hclock] at hrun
   have htclock : t.clock ≠ 0 := by rw [← hstate.2.2.2.2.2.1]; exact hclock
   rw [crepNestedDecCallTarget t fname _ _ _ _ _ _ htargs htlookup htclock hnodup hdist]
   rcases hbody : (PanSemStateFiniteExact.callEntryStateHOLFinite source newlocals
@@ -363,9 +363,9 @@ theorem pcCompileCorrectAt_decCall {width : Nat} {σ : Type} [NeZero width]
       by_cases hsh : (shapeEqHOL (shapeOfHOLExact retv) shape &&
           shapeEqHOL (shapeOfHOLExact retv) rsh) = true
       case neg =>
-        rw [if_neg hsh] at hrun
+        rw [ite_eq_right hsh] at hrun
         exact absurd (Prod.mk.inj hrun).1.symm hres
-      rw [if_pos hsh] at hrun
+      rw [ite_eq_left hsh] at hrun
       simp only [Bool.and_eq_true] at hsh
       have h1 : shapeOfHOLExact retv = shape := (shapeEqHOL_eq_true _ _).mp hsh.1
       have h2 : shapeOfHOLExact retv = rsh := (shapeEqHOL_eq_true _ _).mp hsh.2
@@ -394,13 +394,13 @@ theorem pcCompileCorrectAt_decCall {width : Nat} {σ : Type} [NeZero width]
           (none, { t1 with locals :=
             t.locals.updateListEq ((decCallSlots ctxt shape).zip (flattenHOL retv)) }) := by
         simp only [crepCallAfterBody]
-        rw [if_neg (by rw [hlenS]; exact fun h => h rfl)]
+        rw [ite_eq_right (by rw [hlenS]; exact fun h => h rfl)]
         rw [mapM_lookup_updateListEq _ _ _ hnodup hzlen]
         dsimp only
         rw [updateListEq_overwrite t.locals _ _ _ hzlen hlenS.symm]
       rw [hcallres]
       dsimp only
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       rcases hcont : (PanSemStateFiniteExact.setVarHOLFinite rt retv
           { st with locals := source.locals }).evaluateHOLFiniteState prog1 with ⟨res2, s2⟩
       rw [hcont] at hrun

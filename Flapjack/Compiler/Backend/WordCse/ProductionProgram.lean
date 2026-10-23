@@ -31,10 +31,10 @@ theorem wordCseInstruction_production_transport {width : Nat} [NeZero width]
     have invalidWf := wfData_invalidate native destination wellFormed
     simp only [HolInst.ofWordLangInst, wordCseInst, RiscV.wordCseInst]
     by_cases even : destination % 2 = 0
-    · simp only [even, if_pos, beq_self_eq_true]
+    · simp only [even, ite_eq_left, beq_self_eq_true]
       exact ⟨invalidRelated, rfl⟩
     · have evenBool : (destination % 2 == 0) = false := beq_eq_false_iff_ne.mpr even
-      simp only [even, evenBool, Bool.false_eq_true, if_false]
+      simp only [even, evenBool, Bool.false_eq_true, ite_false]
       have output := addToDataConst_transport _ _ invalidRelated
         invalidWf.2.2.2.2.2.2.2.1 destination word
       exact ⟨output.1, output.2.2⟩
@@ -105,7 +105,7 @@ theorem wordCseProgram_production_transport {width : Nat} [NeZero width]
       (invalidateRegs_transport native executed related [source,bitmap,codeLength,dataLength]), rfl⟩
   case shareInst operator name address =>
     cases store : isStore operator <;> simp only [wordCse, wordCseProg, wordCseIsStore, store,
-      Bool.false_eq_true, if_false, if_true]
+      Bool.false_eq_true, ite_false, ite_true]
     · exact ⟨invalidateData_transport native executed related name, rfl⟩
     · exact ⟨related, rfl⟩
   case mustTerminate body =>

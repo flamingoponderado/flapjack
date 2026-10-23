@@ -250,16 +250,16 @@ theorem crepDest2ExpHOL_lemma {width : Nat} [NeZero width] :
   intro n h
   rw [crepDest2ExpHOL] at h
   by_cases h0 : w = 0
-  · rw [if_pos h0] at h; cases h
-  rw [if_neg h0] at h
+  · rw [ite_eq_left h0] at h; cases h
+  rw [ite_eq_right h0] at h
   by_cases h1 : w = 1
-  · rw [if_pos h1, Option.some.injEq] at h
+  · rw [ite_eq_left h1, Option.some.injEq] at h
     subst h; subst h1
     simp
-  rw [if_neg h1] at h
+  rw [ite_eq_right h1] at h
   by_cases hb : w &&& 1 ≠ 0
-  · rw [if_pos hb] at h; cases h
-  rw [if_neg hb] at h
+  · rw [ite_eq_left hb] at h; cases h
+  rw [ite_eq_right hb] at h
   have hwpos : 0 < w.toNat := by
     rcases Nat.eq_zero_or_pos w.toNat with hz | hz
     · exact absurd (BitVec.eq_of_toNat_eq (by simpa using hz)) h0

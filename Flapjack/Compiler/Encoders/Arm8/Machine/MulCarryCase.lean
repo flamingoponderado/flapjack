@@ -98,7 +98,7 @@ theorem writeReg_failed (s : Arm8State) (r : Nat) (v : BitVec 64) :
 /-- The register file after a `writeReg` of a non-zero register. -/
 theorem writeReg_regs (s : Arm8State) {r : Nat} (hne : r ≠ 31) (v : BitVec 64) (j : Nat) :
     (writeReg s r v).regs j = (if j = r then v else s.regs j) := by
-  simp only [writeReg, if_neg hne]
+  simp only [writeReg, ite_eq_right hne]
 
 /-- Reading a register after advancing the PC. -/
 theorem readReg_pcUpdate (s : Arm8State) (pc : BitVec 64) (r : Nat) :
@@ -259,7 +259,7 @@ theorem case_longMul (r1 r2 r3 r4 : Nat) (s1 s2 : AsmState 64) (ms : Arm8State)
     rw [arm8Next_multiplyHigh ms s1.memDomain false r4 r3 r1 hlt4 hlt3 hlt1 hb1,
       execInsn_multiplyHigh_unsigned]
     simp only [longMulT1]
-    simp only [readReg, if_neg hne31_3, if_neg hne31_4]
+    simp only [readReg, ite_eq_right hne31_3, ite_eq_right hne31_4]
     rw [msRegs st hlt3 hav3, msRegs st hlt4 hav4]
   have hnext2 : arm8Next (longMulT1 s1 ms r1 r3 r4) = longMulT2 s1 ms r1 r2 r3 r4 := by
     have hb2' : bytesInMemoryHOL (longMulT1 s1 ms r1 r3 r4).pc
@@ -269,8 +269,8 @@ theorem case_longMul (r1 r2 r3 r4 : Nat) (s1 s2 : AsmState 64) (ms : Arm8State)
       exact hb2
     rw [arm8Next_multiplyAddSub (longMulT1 s1 ms r1 r3 r4) s1.memDomain false r4 31 r3 r2
       hlt4 (by decide) hlt3 hlt2 hb2', execInsn_multiplyAddSub_add, longMulT2]
-    simp only [readReg, if_true, longMulT1, writeReg_regs _ hne31_1,
-      hne31_3, hne31_4, hne13', hne14', if_false]
+    simp only [readReg, ite_true, longMulT1, writeReg_regs _ hne31_1,
+      hne31_3, hne31_4, hne13', hne14', ite_false]
     rw [msRegs st hlt3 hav3, msRegs st hlt4 hav4]
     have hval : 0 + s1.regs r3 * s1.regs r4 = mulLo (s1.regs r3) (s1.regs r4) := by
       simp only [mulLo]
@@ -341,13 +341,13 @@ theorem case_longMul (r1 r2 r3 r4 : Nat) (s1 s2 : AsmState 64) (ms : Arm8State)
       have hs := hs2regs j
       simp only [longMulT2, longMulT1, writeReg_regs _ hne31_2, writeReg_regs _ hne31_1]
       by_cases hj2 : j = r2
-      · rw [if_pos hj2] at hs ⊢
+      · rw [ite_eq_left hj2] at hs ⊢
         exact hs.symm
-      · rw [if_neg hj2] at hs ⊢
+      · rw [ite_eq_right hj2] at hs ⊢
         by_cases hj1 : j = r1
-        · rw [if_pos hj1] at hs ⊢
+        · rw [ite_eq_left hj1] at hs ⊢
           exact hs.symm
-        · rw [if_neg hj1] at hs ⊢
+        · rw [ite_eq_right hj1] at hs ⊢
           rw [st.reg j hj]
           exact hs.symm
     · intro j hj
@@ -381,7 +381,7 @@ theorem case_longMul (r1 r2 r3 r4 : Nat) (s1 s2 : AsmState 64) (ms : Arm8State)
 
 /-- Writing the zero register leaves the state unchanged. -/
 theorem writeReg_zero_reg (s : Arm8State) (v : BitVec 64) : writeReg s 31 v = s := by
-  simp only [writeReg, if_true]
+  simp only [writeReg, ite_true]
 
 /-- The condition flags after writing a register. -/
 theorem writeReg_c (s : Arm8State) (r : Nat) (v : BitVec 64) : (writeReg s r v).c = s.c := by
@@ -562,9 +562,9 @@ theorem arithUpd_addOverflow_regs (s : AsmState 64) (r1 r2 r3 r4 : Nat) :
   intro j
   simp only [arithUpd, updReg, Flapjack.Compiler.Encoders.AsmSem.readReg]
   by_cases h4 : j = r4
-  · simp only [if_pos h4]
+  · simp only [ite_eq_left h4]
     simp
-  · simp only [if_neg h4]
+  · simp only [ite_eq_right h4]
 
 /-- The register update of a `subOverflow`. -/
 theorem arithUpd_subOverflow_regs (s : AsmState 64) (r1 r2 r3 r4 : Nat) :
@@ -575,9 +575,9 @@ theorem arithUpd_subOverflow_regs (s : AsmState 64) (r1 r2 r3 r4 : Nat) :
   intro j
   simp only [arithUpd, updReg, Flapjack.Compiler.Encoders.AsmSem.readReg]
   by_cases h4 : j = r4
-  · simp only [if_pos h4]
+  · simp only [ite_eq_left h4]
     simp
-  · simp only [if_neg h4]
+  · simp only [ite_eq_right h4]
 /-- The state after the flag-setting addition of the `addOverflow` lowering. -/
 def overflowAddT1 (s1 : AsmState 64) (ms : Arm8State) (d c t : Nat) : Arm8State :=
   writeReg (writeFlags { ms with pc := ms.pc + 4 } (addFlags (s1.regs c) (s1.regs t))) d
@@ -640,7 +640,7 @@ theorem case_addOverflow (destination resultCarry sourceLeft sourceRight : Nat)
     show writeReg (writeFlags { ms with pc := ms.pc + 4 }
         (addFlags (readReg ms resultCarry) (readReg ms sourceLeft))) destination
         (readReg ms resultCarry + readReg ms sourceLeft) = _
-    simp only [readReg, if_neg hne31_2, if_neg hne31_3]
+    simp only [readReg, ite_eq_right hne31_2, ite_eq_right hne31_3]
     rw [msRegs st hlt2 hav2, msRegs st hlt3 hav3]
     rfl
   have ht1 : t 1 = overflowAddT1 s1 ms destination resultCarry sourceLeft := rfl
@@ -752,14 +752,14 @@ theorem case_addOverflow (destination resultCarry sourceLeft sourceRight : Nat)
       simp only [overflowAddT2, overflowAddT1, writeReg_regs _ hne31_4,
         writeReg_regs _ hne31_1, writeFlags_regs, writeReg_v, writeFlags_v]
       by_cases hju : j = sourceRight
-      · rw [if_pos hju] at hs ⊢
+      · rw [ite_eq_left hju] at hs ⊢
         rw [hs]
         simp only [addFlags_v, decide_eq_true_eq]
-      · rw [if_neg hju] at hs ⊢
+      · rw [ite_eq_right hju] at hs ⊢
         by_cases hjd : j = destination
-        · rw [if_pos hjd] at hs ⊢
+        · rw [ite_eq_left hjd] at hs ⊢
           exact hs.symm
-        · rw [if_neg hjd] at hs ⊢
+        · rw [ite_eq_right hjd] at hs ⊢
           rw [st.reg j hj]
           exact hs.symm
     · intro j hj
@@ -818,7 +818,7 @@ theorem case_subOverflow (destination resultCarry sourceLeft sourceRight : Nat)
     show writeReg (writeFlags { ms with pc := ms.pc + 4 }
         (subFlags (readReg ms resultCarry) (readReg ms sourceLeft))) destination
         (readReg ms resultCarry - readReg ms sourceLeft) = _
-    simp only [readReg, if_neg hne31_2, if_neg hne31_3]
+    simp only [readReg, ite_eq_right hne31_2, ite_eq_right hne31_3]
     rw [msRegs st hlt2 hav2, msRegs st hlt3 hav3]
     rfl
   have ht1 : t 1 = overflowSubT1 s1 ms destination resultCarry sourceLeft := rfl
@@ -930,14 +930,14 @@ theorem case_subOverflow (destination resultCarry sourceLeft sourceRight : Nat)
       simp only [overflowSubT2, overflowSubT1, writeReg_regs _ hne31_4,
         writeReg_regs _ hne31_1, writeFlags_regs, writeReg_v, writeFlags_v]
       by_cases hju : j = sourceRight
-      · rw [if_pos hju] at hs ⊢
+      · rw [ite_eq_left hju] at hs ⊢
         rw [hs]
         simp only [subFlags_v, decide_eq_true_eq]
-      · rw [if_neg hju] at hs ⊢
+      · rw [ite_eq_right hju] at hs ⊢
         by_cases hjd : j = destination
-        · rw [if_pos hjd] at hs ⊢
+        · rw [ite_eq_left hjd] at hs ⊢
           exact hs.symm
-        · rw [if_neg hjd] at hs ⊢
+        · rw [ite_eq_right hjd] at hs ⊢
           rw [st.reg j hj]
           exact hs.symm
     · intro j hj
@@ -976,8 +976,8 @@ instances. -/
 theorem ite_of_iff {α : Sort u} {p q : Prop} [Decidable p] [Decidable q] (h : p ↔ q) (a b : α) :
     (if p then a else b) = (if q then a else b) := by
   by_cases hp : p
-  · rw [if_pos hp, if_pos (h.mp hp)]
-  · rw [if_neg hp, if_neg (fun hq => hp (h.mpr hq))]
+  · rw [ite_eq_left hp, ite_eq_left (h.mp hp)]
+  · rw [ite_eq_right hp, ite_eq_right (fun hq => hp (h.mpr hq))]
 
 /-- Two `decide`s of the same proposition agree, whatever their `Decidable` instances. -/
 theorem decide_of_iff {p q : Prop} [Decidable p] [Decidable q] (h : p ↔ q) :
@@ -1096,7 +1096,7 @@ theorem pcNext_c (s : Arm8State) : (pcNext s).c = s.c := rfl
 /-- Reading a register of the advanced state. -/
 theorem readReg_pcNext_field (s : Arm8State) (r : Nat) (h : r ≠ 31) :
     readReg (pcNext s) r = s.regs r := by
-  rw [readReg, if_neg h, pcNext_regs]
+  rw [readReg, ite_eq_right h, pcNext_regs]
 
 /-- The state after the carry test of an `addCarry`. -/
 def carryT1 (s1 : AsmState 64) (ms : Arm8State) (sr : Nat) : Arm8State :=
@@ -1288,9 +1288,9 @@ theorem arithUpd_addCarry_regs (s : AsmState 64) (r1 r2 r3 r4 : Nat) :
   intro j
   simp only [arithUpd, updReg, Flapjack.Compiler.Encoders.AsmSem.readReg]
   by_cases h4 : j = r4
-  · simp only [if_pos h4]
+  · simp only [ite_eq_left h4]
     exact ite_of_iff Iff.rfl _ _
-  · simp only [if_neg h4]
+  · simp only [ite_eq_right h4]
     exact ite_of_iff Iff.rfl _ _
 
 /-- The `addCarry` constructor of `encoder_correct arm8Target`. -/
@@ -1399,7 +1399,7 @@ theorem case_addCarry (destination resultCarry sourceLeft sourceRight : Nat)
     have hz : readReg (pcNext (carryT4 s1 ms sourceRight resultCarry sourceLeft destination))
         sourceRight = 0 := by
       rw [readReg_pcNext_field _ sourceRight hne31_4,
-        carryT4_regs _ _ _ _ _ _ hne31_4 hne31_1, if_pos rfl]
+        carryT4_regs _ _ _ _ _ _ hne31_4 hne31_1, ite_eq_left rfl]
     have hb5' : bytesInMemoryHOL
         (carryT4 s1 ms sourceRight resultCarry sourceLeft destination).pc
         (encodeBytes (.addSubCarry false false 31 sourceRight sourceRight))
@@ -1576,13 +1576,13 @@ theorem case_addCarry (destination resultCarry sourceLeft sourceRight : Nat)
       rw [hget, carryT5_regs _ _ _ _ _ _ hne31_4 hne31_1]
       have hs := hs2regs j
       by_cases hjs : j = sourceRight
-      · rw [if_pos hjs] at hs ⊢
+      · rw [ite_eq_left hjs] at hs ⊢
         rw [hs]
-      · rw [if_neg hjs] at hs ⊢
+      · rw [ite_eq_right hjs] at hs ⊢
         by_cases hjd : j = destination
-        · rw [if_pos hjd] at hs ⊢
+        · rw [ite_eq_left hjd] at hs ⊢
           exact hs.symm
-        · rw [if_neg hjd] at hs ⊢
+        · rw [ite_eq_right hjd] at hs ⊢
           rw [st.reg j hj]
           exact hs.symm
     · intro j hj

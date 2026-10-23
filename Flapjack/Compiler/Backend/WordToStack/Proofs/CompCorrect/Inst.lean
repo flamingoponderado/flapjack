@@ -75,7 +75,7 @@ theorem compCorrectInst {width : Nat} [NeZero width] {C F : Type}
         (by simpa only [HolInst.to_of, maxVarHOL] using maxBound)
         (by rw [← instArgConvention_ofWordLangInst]; exact convention) related
     refine ⟨0, post', none, by simpa using run, ?_⟩
-    simp only [compCorrectResult, Option.map_none, ne_eq, not_true_eq_false, if_false]
+    simp only [compCorrectResult, Option.map_none, ne_eq, not_true_eq_false, ite_false]
     exact postRel
 
 end Flapjack.WordToStackProofs.CompCorrect.Inst

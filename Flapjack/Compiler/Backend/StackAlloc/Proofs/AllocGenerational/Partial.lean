@@ -47,13 +47,13 @@ theorem collected_guards {width : Nat} [NeZero width] {C F : Type}
     s.stackSpace ≤ s.stack.length ∧ wordGcFunAssum conf s.store := by
   rw [Generational.gc_thm_generational ⟨hgc, hk⟩] at hs
   by_cases hlen : s.stack.length < s.stackSpace
-  · simp only [hlen, if_true] at hs
+  · simp only [hlen, ite_true] at hs
     contradiction
   have hle : s.stackSpace ≤ s.stack.length := Nat.le_of_not_gt hlen
-  simp only [hlen, if_false] at hs
+  simp only [hlen, ite_false] at hs
   by_cases ha : wordGcFunAssum conf s.store
   · exact ⟨hle, ha⟩
-  · simp only [ha, not_false_eq_true, if_true] at hs
+  · simp only [ha, not_false_eq_true, ite_true] at hs
     contradiction
 
 /-- Guard inversion at the exact source state used by allocation. This is the
@@ -100,8 +100,8 @@ theorem partial_collected_flags {width : Nat} [NeZero width] {C F : Type}
             a ≤ endh - b1 ∧ a ≤ newTrig (endh - b1) a genSizes := by
   obtain ⟨hlen, ha⟩ := collected_guards hgc hk hs
   rw [Generational.gc_partial hgc hk (Nat.not_lt_of_ge hlen) ha hp] at hs
-  simp only [Generational.gcExpanded, Nat.not_lt_of_ge hlen, if_false, ha,
-    not_true_eq_false, hp, if_true] at hs
+  simp only [Generational.gcExpanded, Nat.not_lt_of_ge hlen, ite_false, ha,
+    not_true_eq_false, hp, ite_true] at hs
   dsimp only at hs ⊢
   split at hs
   · simpa only [ha, true_and] using ‹True ∧ _›
@@ -148,8 +148,8 @@ theorem partial_collected_state {width : Nat} [NeZero width] {C F : Type}
           regs := HolFiniteMapExact.empty } := by
   obtain ⟨hlen, ha⟩ := collected_guards hgc hk hs
   rw [Generational.gc_partial hgc hk (Nat.not_lt_of_ge hlen) ha hp] at hs
-  simp only [Generational.gcExpanded, Nat.not_lt_of_ge hlen, if_false, ha,
-    not_true_eq_false, hp, if_true] at hs
+  simp only [Generational.gcExpanded, Nat.not_lt_of_ge hlen, ite_false, ha,
+    not_true_eq_false, hp, ite_true] at hs
   dsimp only at hs ⊢
   split at hs
   · exact (Option.some.inj hs).symm

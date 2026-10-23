@@ -73,7 +73,7 @@ theorem sptMap_sptInsert {α β : Type} :
     · have hlt : (x - 1) / 2 < x := by omega
       cases z <;> simp only [sptMap] <;>
         rw [sptInsert.eq_def x (f y), sptInsert.eq_def x y] <;>
-        by_cases h2 : x % 2 = 0 <;> simp only [hx, h2, if_true, if_false, sptMap, ih _ hlt]
+        by_cases h2 : x % 2 = 0 <;> simp only [hx, h2, ite_true, ite_false, sptMap, ih _ hlt]
 
 /-- Exact HOL `map_fromAList` (`sptreeScript.sml:1604-1610`). -/
 @[hol "HOL/src/finite_maps/sptreeScript.sml" "map_fromAList"]

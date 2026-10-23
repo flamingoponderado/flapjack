@@ -136,7 +136,7 @@ theorem lcons_ne_lnil (h : α) (t : HolLList α) : lcons h t ≠ lnil := by
 theorem lcons_inj {h h' : α} {t t' : HolLList α} (heq : lcons h t = lcons h' t') :
     h = h' ∧ t = t' := by
   have h0 := congrArg (fun l : HolLList α => l.rep 0) heq
-  simp only [lcons, if_pos] at h0
+  simp only [lcons, ite_eq_left] at h0
   refine ⟨Option.some.inj h0, ?_⟩
   cases t; cases t'
   simp only [mk.injEq]
@@ -183,14 +183,14 @@ theorem llengthRel_unique {ll : HolLList α} {n m : Nat} (hn : LLengthRel ll n) 
 theorem llength_fromList (l : List α) : llength (fromList l) = some l.length := by
   have hr := llengthRel_fromList l
   unfold llength
-  rw [if_pos (lfinite_fromList l)]
+  rw [ite_eq_left (lfinite_fromList l)]
   congr 1
   exact llengthRel_unique (Classical.epsilon_spec ⟨_, hr⟩) hr
 
 theorem ltake_fromList : ∀ l : List α, ltake l.length (fromList l) = some l
   | [] => rfl
   | h :: t => by
-      simp only [List.length_cons, fromList, ltake, lhd, lcons, ltl, if_pos]
+      simp only [List.length_cons, fromList, ltake, lhd, lcons, ltl, ite_eq_left]
       have := ltake_fromList t
       have ht : (⟨fun n => (lcons h (fromList t)).rep (n + 1),
           fun n hn => (lcons h (fromList t)).ok (n + 1) hn⟩ : HolLList α) = fromList t := by
@@ -200,7 +200,7 @@ theorem ltake_fromList : ∀ l : List α, ltake l.length (fromList l) = some l
 
 theorem toList_fromList (l : List α) : toList (fromList l) = some l := by
   unfold toList
-  rw [if_pos (lfinite_fromList l), llength_fromList]
+  rw [ite_eq_left (lfinite_fromList l), llength_fromList]
   exact ltake_fromList l
 
 /-- On finite lists, HOL `LPREFIX (fromList xs) (fromList ys) = isPREFIX xs ys`. -/
@@ -221,7 +221,7 @@ theorem fromList_rep (l : List α) (n : Nat) : (fromList l).rep n = l[n]? := by
       | zero => rfl
       | succ k =>
           show (if k + 1 = 0 then some h else (fromList t).rep (k + 1 - 1)) = (h :: t)[k + 1]?
-          rw [if_neg (Nat.succ_ne_zero k), Nat.add_sub_cancel, ih k]
+          rw [ite_eq_right (Nat.succ_ne_zero k), Nat.add_sub_cancel, ih k]
           rfl
 
 /-- A present read of `fromList l` is within the list. -/
@@ -424,7 +424,7 @@ theorem llength_spec {ll : HolLList α} (h : LFinite ll) :
   have hex : ∃ n, LLengthRel ll n := exists_LLengthRel_of_LFinite h
   refine ⟨Classical.epsilon (fun n => LLengthRel ll n), ?_, Classical.epsilon_spec hex⟩
   unfold llength
-  rw [if_pos h]
+  rw [ite_eq_left h]
 
 
 /-- Beyond a length relation bound the representation is `none`. -/
@@ -455,8 +455,8 @@ theorem toList_eq_some_rep {ll : HolLList α} {xs : List α} (h : toList ll = so
     obtain ⟨hlen, hrep⟩ := ltake_spec n ll xs h
     intro i
     by_cases hi : i < xs.length
-    · rw [dif_pos hi]; simpa using hrep i hi
-    · rw [dif_neg hi]
+    · rw [dite_eq_left hi]; simpa using hrep i hi
+    · rw [dite_eq_right hi]
       have hnrel' : LLengthRel ll xs.length := by rw [hlen]; exact hnrel
       exact rep_none_of_LLengthRel hnrel' i (Nat.le_of_not_lt hi)
   · simp at h
@@ -493,7 +493,7 @@ theorem toList_of_LFinite {ll : HolLList α} (h : LFinite ll) :
   obtain ⟨xs, hxs⟩ := ltake_of_LLengthRel hnrel
   refine ⟨xs, ?_⟩
   unfold toList
-  rw [if_pos h, hnlen]
+  rw [ite_eq_left h, hnlen]
   simp only [Option.getD_some]
   exact hxs
 
@@ -530,7 +530,7 @@ theorem LFinite_of_llength_eq_some {ll : HolLList α} {n : Nat} (h : llength ll 
   by_cases hfin : LFinite ll
   · exact hfin
   · unfold llength at h
-    rw [if_neg hfin] at h
+    rw [ite_eq_right hfin] at h
     exact (Option.some_ne_none n h.symm).elim
 
 /-- A `some` length is exactly the (unique) `LLengthRel` witness. -/
@@ -545,7 +545,7 @@ theorem not_LFinite_of_llength_eq_none {ll : HolLList α} (h : llength ll = none
     ¬ LFinite ll := by
   intro hfin
   unfold llength at h
-  rw [if_pos hfin] at h
+  rw [ite_eq_left hfin] at h
   exact Option.some_ne_none _ h
 
 /-- A `LLengthRel` bound makes the representation defined at every earlier
@@ -587,7 +587,7 @@ theorem LTAKE_LLENGTH_SOME {ll : HolLList α} {n : Nat} (h : llength ll = some n
   obtain ⟨l, hl⟩ := ltake_of_LLengthRel (LLengthRel_of_llength_eq_some h)
   refine ⟨l, hl, ?_⟩
   unfold toList
-  rw [if_pos hfin, h]
+  rw [ite_eq_left hfin, h]
   simpa using hl
 
 /-- HOL `LTAKE_LNTH_EL` (`llistScript.sml:1067-1075`); HOL's total `EL m l` is
@@ -626,7 +626,7 @@ theorem lprefix_rep {a b : HolLList α} (h : lprefix a b) {n : Nat} {x : α}
       have hra := toList_eq_some_rep hta n
       rw [hra] at ha
       by_cases hn : n < xs.length
-      · rw [dif_pos hn] at ha
+      · rw [dite_eq_left hn] at ha
         injection ha with hx
         cases htb : toList b with
         | none =>
@@ -638,10 +638,10 @@ theorem lprefix_rep {a b : HolLList α} (h : lprefix a b) {n : Nat} {x : α}
             have hrb := toList_eq_some_rep htb n
             rw [hrb]
             have hnys : n < ys.length := Nat.lt_of_lt_of_le hn h.length_le
-            rw [dif_pos hnys]
+            rw [dite_eq_left hnys]
             obtain ⟨zs, rfl⟩ := h
             rw [List.getElem_append_left hn, hx]
-      · rw [dif_neg hn] at ha
+      · rw [dite_eq_right hn] at ha
         exact absurd ha (by simp)
 
 /-- `lprefix` is reflexive. -/
@@ -698,16 +698,16 @@ theorem lprefix_of_rep_agree {a b : HolLList α}
           apply ltake_of_rep
           intro i hi
           have hai : a.rep i = some xs[i] := by
-            rw [toList_eq_some_rep ha i, dif_pos hi]
+            rw [toList_eq_some_rep ha i, dite_eq_left hi]
           exact h i xs[i] hai
       | some ys =>
           dsimp only
           have hlt : xs.length ≤ ys.length := Nat.le_of_not_lt fun hys => by
             have hai : a.rep ys.length = some xs[ys.length] := by
-              rw [toList_eq_some_rep ha ys.length, dif_pos hys]
+              rw [toList_eq_some_rep ha ys.length, dite_eq_left hys]
             have hbi : b.rep ys.length = some xs[ys.length] := h _ _ hai
             have hby : b.rep ys.length = none := by
-              rw [toList_eq_some_rep hb ys.length, dif_neg (Nat.lt_irrefl ys.length)]
+              rw [toList_eq_some_rep hb ys.length, dite_eq_right (Nat.lt_irrefl ys.length)]
             rw [hby] at hbi
             cases hbi
           rw [List.prefix_iff_eq_take]
@@ -716,10 +716,10 @@ theorem lprefix_of_rep_agree {a b : HolLList α}
           · intro j hj1 hj2
             rw [List.getElem_take]
             have haj : a.rep j = some xs[j] := by
-              rw [toList_eq_some_rep ha j, dif_pos hj1]
+              rw [toList_eq_some_rep ha j, dite_eq_left hj1]
             have hbj : b.rep j = some xs[j] := h j _ haj
             have hby : b.rep j = some ys[j] := by
-              rw [toList_eq_some_rep hb j, dif_pos (Nat.lt_of_lt_of_le hj1 hlt)]
+              rw [toList_eq_some_rep hb j, dite_eq_left (Nat.lt_of_lt_of_le hj1 hlt)]
             rw [hby] at hbj
             exact (Option.some.inj hbj).symm
 

@@ -231,7 +231,7 @@ theorem readRegister_writeRegisterInternal_riscvForward_self (state : State widt
     (name : Fin 32) (value : Word width) (himage : riscvForward name ≠ 0) :
     readRegister (writeRegisterInternal riscvForward state name value) name = value := by
   unfold writeRegisterInternal readRegister
-  rw [if_neg himage]
+  rw [ite_eq_right himage]
   simp
 
 /-- Reading any other internal register after an internal write under the
@@ -245,8 +245,8 @@ theorem readRegister_writeRegisterInternal_riscvForward_other (state : State wid
       readRegister state other := by
   unfold writeRegisterInternal readRegister
   by_cases himage : riscvForward name = 0
-  · rw [if_pos himage]
-  · rw [if_neg himage]
+  · rw [ite_eq_left himage]
+  · rw [ite_eq_right himage]
     simp [hne]
 
 /-- The CakeML internal zero/link role register `27` is never modified by the

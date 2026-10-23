@@ -45,7 +45,7 @@ theorem compiled_union (c : DataToWord.Config) (code : Spt (HolProg width))
     sptAListLookup_map_progComp, sptLookup_sptFromAList]
   by_cases hk : k = gcStubLocation
   · simp [hk]
-  · simp only [hk, if_false]
+  · simp only [hk, ite_false]
     cases sptLookup k code <;> rfl
 
 theorem goal_install (s : StackSemStateFiniteExact width C F) (ptr len dptr dlen ret : Nat) :
@@ -58,7 +58,7 @@ theorem goal_install (s : StackSemStateFiniteExact width C F) (ptr len dptr dlen
     rcases hco : s.compileOracle 0 with ⟨cfg, progs, bm⟩
     rw [hco] at h
     dsimp only at h
-    simp only [hpre.useStack, if_true] at h
+    simp only [hpre.useStack, ite_true] at h
     split at h
     · rename_i bytes cb data db hcb hdb
       split at h
@@ -82,12 +82,12 @@ theorem goal_install (s : StackSemStateFiniteExact width C F) (ptr len dptr dlen
             dsimp only
             rw [hoc]
             dsimp only
-            rw [hcb, if_pos rfl, hdb]
+            rw [hcb, ite_eq_left rfl, hdb]
             simp only [List.map_cons, progComp]
             simp only [List.map_cons, progComp] at hcomp'
             rw [hcomp']
             dsimp only
-            rw [if_pos ⟨hc.1, hc.2.1, hc.2.2⟩]
+            rw [ite_eq_left ⟨hc.1, hc.2.1, hc.2.2⟩]
             simp only [Prod.mk.injEq, true_and, StackSemStateFiniteExact.mk.injEq]
             have hu := compiled_union c s.code ((k, p) :: tail)
             simp only [List.map_cons, progComp] at hu

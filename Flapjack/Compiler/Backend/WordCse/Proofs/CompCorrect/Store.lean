@@ -63,10 +63,10 @@ theorem comp_correct_ShareInst {width : Nat} [NeZero width] {C : Type} {F : Type
   split at he
   · obtain ⟨f, hst | hld⟩ := shareInst_none op v _ s s' he
     · obtain ⟨hst, rfl⟩ := hst
-      simp only [hst, if_true]
+      simp only [hst, ite_true]
       exact data_inv_state_agree data s _ ⟨hd, rfl, rfl, rfl, rfl, rfl⟩
     · obtain ⟨hst, w, rfl⟩ := hld
-      simp only [hst, Bool.false_eq_true, if_false]
+      simp only [hst, Bool.false_eq_true, ite_false]
       refine (data_inv_set_var _ _ v w (lookup_invalidateData_self data v)).mpr ?_
       exact data_inv_state_agree _ s _ ⟨data_inv_invalidate data s v hd, rfl, rfl, rfl, rfl, rfl⟩
   · cases he
@@ -131,7 +131,7 @@ theorem comp_correct_Set {width : Nat} [NeZero width] {C : Type} {F : Type}
     · rename_i w hexp
       cases he
       have orig : evaluate (.set x exp) s = (none, setStore x w s) := by
-        rw [evaluate, if_neg hnot, hexp]
+        rw [evaluate, ite_eq_right hnot, hexp]
       have hnf : ∀ (d : Knowledge), (d.getsMem.filter (fun entry => decide (entry.1 ≠ x))).lookup x = none :=
         fun d => List.lookup_eq_none_iff.mpr (fun p hp => by
           have := (List.mem_filter.mp hp).2

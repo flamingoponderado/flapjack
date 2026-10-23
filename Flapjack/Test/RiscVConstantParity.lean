@@ -545,7 +545,7 @@ theorem wordConstToInstructions_eq_labConstInstructions {width : Nat}
   · have hlow : value.toNat % 2 ^ 12 = value.toNat :=
       Nat.mod_eq_of_lt (by omega)
     simp [hsmall, hlow]
-  · simp only [hsmall, if_false, hmod]
+  · simp only [hsmall, ite_false, hmod]
     by_cases hfit :
         (value.toNat ==
           (if value.toNat % 2 ^ 12 / 2 ^ 11 % 2 = 0 then value.toNat % 2 ^ 12

@@ -773,7 +773,7 @@ theorem panSemDeclarationGlobalMapRel_update {width : Nat}
         production query := by
       simp [panSemDeclUpdateGlobal, heq]
     rw [hprod, HolFiniteMapExact.lookup_update_pointwise]
-    simp only [if_neg hkeyNe]
+    simp only [ite_eq_right hkeyNe]
     exact hrel query hquery
 
 /-- The `Decl` constructor case of production/exact `evaluateDecls`.
@@ -1708,7 +1708,7 @@ theorem evalPanValueExp_load_one_option_correspondence {width : Nat} [NeZero wid
             rfl
           have hfin : state.evalHOLFinite (.load .one (expToHOL addressExpression)) = none := by
             rw [PanSemStateFiniteExact.evalHOLFinite_load]
-            simp only [hf, isWfShapeExactHOL, if_true]
+            simp only [hf, isWfShapeExactHOL, ite_true]
           rw [hprod, hfin]
           simp only [PanSemDeclarationValueOptionRel]
       | some fv => rw [hf] at haddr; simp only [PanSemDeclarationValueOptionRel] at haddr
@@ -1736,7 +1736,7 @@ theorem evalPanValueExp_load_one_option_correspondence {width : Nat} [NeZero wid
                    (match state.memory address with | .word value => some (.val (.word value)))
                  else none) from by
               rw [PanSemStateFiniteExact.evalHOLFinite_load]
-              simp only [hf, isWfShapeExactHOL, if_true, memLoadHOLExact]]
+              simp only [hf, isWfShapeExactHOL, ite_true, memLoadHOLExact]]
           cases hmem : state.memory address with
           | word payload =>
               split <;> simp only [PanSemDeclarationValueOptionRel, panValueCodecRel_word]
@@ -1818,7 +1818,7 @@ theorem evalPanValueExp_load_one_option_correspondence_executed {σ : Type}
             rfl
           have hfin : state.evalHOLFinite (.load .one (expToHOL addressExpression)) = none := by
             rw [PanSemStateFiniteExact.evalHOLFinite_load]
-            simp only [hf, isWfShapeExactHOL, if_true]
+            simp only [hf, isWfShapeExactHOL, ite_true]
           rw [hprod, hfin]
           simp only [PanSemDeclarationValueOptionRel]
       | some fv => rw [hf] at haddr; simp only [PanSemDeclarationValueOptionRel] at haddr
@@ -1848,7 +1848,7 @@ theorem evalPanValueExp_load_one_option_correspondence_executed {σ : Type}
                    (match state.memory address with | .word value => some (.val (.word value)))
                  else none) from by
               rw [PanSemStateFiniteExact.evalHOLFinite_load]
-              simp only [hf, isWfShapeExactHOL, if_true, memLoadHOLExact]]
+              simp only [hf, isWfShapeExactHOL, ite_true, memLoadHOLExact]]
           cases hmem : state.memory address with
           | word payload =>
               split <;> simp only [PanSemDeclarationValueOptionRel, panValueCodecRel_word]
@@ -1865,7 +1865,7 @@ theorem panValueWordHOL_eq_of_memCodecRel
     (hdom : state.memaddrs address) :
     panValueWordHOL memory address = state.memory address := by
   have h := hMem address
-  rw [if_pos hdom] at h
+  rw [ite_eq_left hdom] at h
   simp only [panValueWordHOL, h]
 
 /-- Under `PanValueMemoryCodecRel`, the executed definedness guard is the
@@ -1878,9 +1878,9 @@ theorem panValueWordDefined_eq_of_memCodecRel
     panValueWordDefined memory address = decide (state.memaddrs address) := by
   have h := hMem address
   by_cases hdom : state.memaddrs address
-  · rw [if_pos hdom] at h
+  · rw [ite_eq_left hdom] at h
     simp only [panValueWordDefined, h, hdom, decide_true]
-  · rw [if_neg hdom] at h
+  · rw [ite_eq_right hdom] at h
     simp only [panValueWordDefined, h, hdom, decide_false]
 
 /-! ### Flat recursive loads over the exact finite memory carrier -/
@@ -2071,12 +2071,12 @@ theorem panMemLoadByteHOL_codecRel
   · have hp : productionState.memaddrs (panByteAlignHOL (width := 64) address) = true := by
       rw [← hdom (panByteAlignHOL (width := 64) address)] at h
       exact h
-    simp only [hMem (panByteAlignHOL (width := 64) address), if_pos h, hp, decide_true,
-      Bool.true_and, if_true]
+    simp only [hMem (panByteAlignHOL (width := 64) address), ite_eq_left h, hp, decide_true,
+      Bool.true_and, ite_true]
   · have hp : productionState.memaddrs (panByteAlignHOL (width := 64) address) = false := by
       cases hb : productionState.memaddrs (panByteAlignHOL (width := 64) address) <;> simp_all
-    simp only [hMem (panByteAlignHOL (width := 64) address), if_neg h, hp, Bool.false_and,
-      Bool.false_eq_true, if_false]
+    simp only [hMem (panByteAlignHOL (width := 64) address), ite_eq_right h, hp, Bool.false_and,
+      Bool.false_eq_true, ite_false]
 
 /-- The executed (code-map evaluator) `mem_load_32` agrees with the finite
     `panMemLoad32HOL` on the same address under the memory codec and equal
@@ -2098,12 +2098,12 @@ theorem panMemLoad32HOL_codecRel
   · have hp : productionState.memaddrs (panByteAlignHOL (width := 64) address) = true := by
       rw [← hdom (panByteAlignHOL (width := 64) address)] at h
       exact h
-    simp only [hMem (panByteAlignHOL (width := 64) address), if_pos h, hp, decide_true,
-      Bool.true_and, if_true]
+    simp only [hMem (panByteAlignHOL (width := 64) address), ite_eq_left h, hp, decide_true,
+      Bool.true_and, ite_true]
   · have hp : productionState.memaddrs (panByteAlignHOL (width := 64) address) = false := by
       cases hb : productionState.memaddrs (panByteAlignHOL (width := 64) address) <;> simp_all
-    simp only [hMem (panByteAlignHOL (width := 64) address), if_neg h, hp, Bool.false_and,
-      Bool.false_eq_true, if_false]
+    simp only [hMem (panByteAlignHOL (width := 64) address), ite_eq_right h, hp, Bool.false_and,
+      Bool.false_eq_true, ite_false]
 
 
 /-- Executed-access `.load32` arm correspondence: the production `read32` at the

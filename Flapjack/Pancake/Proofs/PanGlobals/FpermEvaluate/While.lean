@@ -84,12 +84,12 @@ theorem evaluateFperm_While {width : Nat} {σ : Type} [NeZero width]
           | word word =>
               simp only [hc] at heval ⊢
               by_cases hw : word ≠ 0
-              · simp only [hw,if_true,ne_eq,not_false_eq_true] at heval ⊢
+              · simp only [hw,ite_true,ne_eq,not_false_eq_true] at heval ⊢
                 by_cases hz : state.clock = 0
-                · simp only [hz,if_true] at heval ⊢
+                · simp only [hz,ite_true] at heval ⊢
                   obtain ⟨rfl,rfl⟩ := Prod.mk.inj heval
                   simp only [emptyLocalsHOLFinite,hz]
-                · simp only [hz,if_false] at heval ⊢
+                · simp only [hz,ite_false] at heval ⊢
                   cases hb : evaluateHOLFiniteState state.decClockHOLFinite body with
                   | mk r1 s1 =>
                       simp only [hb] at heval
@@ -117,7 +117,7 @@ theorem evaluateFperm_While {width : Nat} {σ : Type} [NeZero width]
                           | error | timeOut | returned value | exception eid value | finalFfi event =>
                               obtain ⟨rfl,rfl⟩ := Prod.mk.inj heval
                               rfl
-              · simp only [hw,if_false] at heval ⊢
+              · simp only [hw,ite_false] at heval ⊢
                 obtain ⟨rfl,rfl⟩ := Prod.mk.inj heval
                 rfl
 

@@ -78,7 +78,7 @@ theorem lookup_alist_insert_any {α : Type} :
       rw [sptLookup_sptInsert]
       by_cases h : n = x
       · subst h; simp
-      · rw [if_neg h, if_neg (Ne.symm h)]; exact lookup_alist_insert_any n xs ys t
+      · rw [ite_eq_right h, ite_eq_right (Ne.symm h)]; exact lookup_alist_insert_any n xs ys t
 
 namespace LoopPropsNestedSeqSyntaxFiniteSupport
 

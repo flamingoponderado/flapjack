@@ -82,7 +82,7 @@ theorem simpProgCorrectShMemCase {width : Nat} [NeZero width] {σ : Type} :
           rw [hsrc] at heval
           generalize hc : crepIsLoadMemOp operator = c at heval ⊢
           cases c <;>
-            simp only [Bool.false_eq_true, if_true, if_false] at heval ⊢
+            simp only [Bool.false_eq_true, ite_true, ite_false] at heval ⊢
           all_goals
             generalize hl : state.locals.lookup name = l at heval ⊢
             cases l

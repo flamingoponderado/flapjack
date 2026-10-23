@@ -353,7 +353,7 @@ theorem copyEachReenter {width : Nat} [NeZero width] {C F : Type}
   have comparison : (pattern == (1 : BitVec width)) = false := by simp [notSentinel]
   rw [comparison]
   simp only [Bool.not_false, bodyRun, unclamped, StackSemControl.contLoop,
-    if_true, postClock, clock, if_false]
+    ite_true, postClock, clock, ite_false]
 
 /-- Canonical codec for the actual imported native state; local infrastructure. -/
 theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} :
@@ -469,7 +469,7 @@ theorem copyEachThm {width : Nat} [NeZero width] {C F : Type}
       resultMemory, ?_, finalHeap⟩
     change StackSemEvaluate.evaluate (copyEach temporary bitmap, boosted) = _
     rw [reentry, reentryState, recursiveRun]
-    simp only [hone, if_false, post, copyStepState]
+    simp only [hone, ite_false, post, copyStepState]
     congr 2
     apply HolFiniteMapExact.ext_lookup
     intro query

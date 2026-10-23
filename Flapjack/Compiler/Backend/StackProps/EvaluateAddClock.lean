@@ -157,11 +157,11 @@ theorem addClock_measure {width : Nat} [NeZero width] {C F : Type} (extra : Nat)
   case tick =>
     rw [evaluate_tick] at h ⊢
     by_cases h0 : s.clock = 0
-    · simp only [h0, if_true, Prod.mk.injEq] at h
+    · simp only [h0, ite_true, Prod.mk.injEq] at h
       exact absurd h.1.symm hr
-    · simp only [h0, if_false, Prod.mk.injEq] at h
+    · simp only [h0, ite_false, Prod.mk.injEq] at h
       obtain ⟨rfl, rfl⟩ := h
-      rw [if_neg (show s.clock + extra ≠ 0 by omega), decClock_addClock s extra h0]
+      rw [ite_eq_right (show s.clock + extra ≠ 0 by omega), decClock_addClock s extra h0]
   case shMemOp op reg addr =>
     cases addr with
     | addr a w =>
@@ -173,10 +173,10 @@ theorem addClock_measure {width : Nat} [NeZero width] {C F : Type} (extra : Nat)
       rfl
     · simp only [hw] at h ⊢
       by_cases h0 : s.clock = 0
-      · simp only [h0, if_true, Prod.mk.injEq] at h
+      · simp only [h0, ite_true, Prod.mk.injEq] at h
         exact absurd h.1.symm hr
-      · simp only [h0, if_false] at h
-        rw [if_neg (show s.clock + extra ≠ 0 by omega), decClock_addClock s extra h0,
+      · simp only [h0, ite_false] at h
+        rw [ite_eq_right (show s.clock + extra ≠ 0 by omega), decClock_addClock s extra h0,
           StackPropsSharedMemoryClock.shMemOpWithClock, h]
         have hc := (StackPropsSharedMemoryClock.shMemOpConst op reg a' (decClock s) s' r h).1
         simp [hc]
@@ -223,16 +223,16 @@ theorem addClock_measure {width : Nat} [NeZero width] {C F : Type} (extra : Nat)
     rw [hfx] at h
     have hne1 : r1 ≠ some .timeOut := by
       rintro rfl
-      simp only [contLoop, Bool.false_eq_true, if_false, Prod.mk.injEq] at h
+      simp only [contLoop, Bool.false_eq_true, ite_false, Prod.mk.injEq] at h
       exact hr h.1.symm
     rw [ih _ (loop_body_measure_lt c1 s) c1 s rfl r1 t1 h1 hne1, fixClock_addClock, hfx]
     by_cases hc : contLoop r1 = true
-    · simp only [hc, if_true] at h ⊢
+    · simp only [hc, ite_true] at h ⊢
       by_cases h0 : min s.clock t1.clock = 0
-      · simp only [h0, if_true, Prod.mk.injEq] at h
+      · simp only [h0, ite_true, Prod.mk.injEq] at h
         exact absurd h.1.symm hr
-      · simp only [h0, if_false] at h
-        rw [if_neg (show min s.clock t1.clock + extra ≠ 0 by omega)]
+      · simp only [h0, ite_false] at h
+        rw [ite_eq_right (show min s.clock t1.clock + extra ≠ 0 by omega)]
         have hlt := loop_reentry_measure_lt c1 s (r1, t1) (by rw [hfx]; exact h0)
         rw [hfx] at hlt
         have := ih _ hlt (.loop c1) _ rfl r s' h hr
@@ -240,7 +240,7 @@ theorem addClock_measure {width : Nat} [NeZero width] {C F : Type} (extra : Nat)
         simp only [decClock]
         congr 1
         omega
-    · simp only [hc, Bool.false_eq_true, if_false, Prod.mk.injEq] at h ⊢
+    · simp only [hc, Bool.false_eq_true, ite_false, Prod.mk.injEq] at h ⊢
       obtain ⟨rfl, rfl⟩ := h
       exact ⟨rfl, rfl⟩
   case jumpLower r1 r2 dest =>
@@ -251,28 +251,28 @@ theorem addClock_measure {width : Nat} [NeZero width] {C F : Type} (extra : Nat)
       simp only [hx, hy, Prod.mk.injEq] at h ⊢
     all_goals try (obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩)
     by_cases hl : wordCmpHOL .lower x y = true
-    · simp only [hl, if_true] at h ⊢
+    · simp only [hl, ite_true] at h ⊢
       rcases hf : findCode (.inl dest) s.regs s.code with _ | prog <;>
         simp only [hf, Prod.mk.injEq] at h ⊢
       · obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
       by_cases h0 : s.clock = 0
-      · simp only [h0, if_true, Prod.mk.injEq] at h
+      · simp only [h0, ite_true, Prod.mk.injEq] at h
         exact absurd h.1.symm hr
-      simp only [h0, if_false] at h
-      rw [if_neg (show s.clock + extra ≠ 0 by omega), decClock_addClock s extra h0]
+      simp only [h0, ite_false] at h
+      rw [ite_eq_right (show s.clock + extra ≠ 0 by omega), decClock_addClock s extra h0]
       rcases h1 : evaluate (prog, decClock s) with ⟨r1, t1⟩
       rw [h1] at h
       have hne1 : r1 ≠ some .timeOut := by
         rintro rfl
-        simp only [badFunReturn, Bool.false_eq_true, if_false, Prod.mk.injEq] at h
+        simp only [badFunReturn, Bool.false_eq_true, ite_false, Prod.mk.injEq] at h
         exact hr h.1.symm
       rw [ih _ (callee_measure_lt prog _ s h0) prog _ rfl r1 t1 h1 hne1]
       by_cases hb : badFunReturn r1 = true
-      · simp only [hb, if_true, Prod.mk.injEq] at h ⊢
+      · simp only [hb, ite_true, Prod.mk.injEq] at h ⊢
         obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
-      · simp only [hb, Bool.false_eq_true, if_false, Prod.mk.injEq] at h ⊢
+      · simp only [hb, Bool.false_eq_true, ite_false, Prod.mk.injEq] at h ⊢
         obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
-    · simp only [hl, Bool.false_eq_true, if_false, Prod.mk.injEq] at h ⊢
+    · simp only [hl, Bool.false_eq_true, ite_false, Prod.mk.injEq] at h ⊢
       obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
   case rawCall dest =>
     rw [evaluate_rawCall] at h ⊢
@@ -281,21 +281,21 @@ theorem addClock_measure {width : Nat} [NeZero width] {C F : Type} (extra : Nat)
     rcases hd : destSeq prog with _ | ⟨_, body⟩ <;> simp only [hd, Prod.mk.injEq] at h ⊢
     · obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
     by_cases h0 : s.clock = 0
-    · simp only [h0, if_true, Prod.mk.injEq] at h
+    · simp only [h0, ite_true, Prod.mk.injEq] at h
       exact absurd h.1.symm hr
-    simp only [h0, if_false] at h
-    rw [if_neg (show s.clock + extra ≠ 0 by omega), decClock_addClock s extra h0]
+    simp only [h0, ite_false] at h
+    rw [ite_eq_right (show s.clock + extra ≠ 0 by omega), decClock_addClock s extra h0]
     rcases h1 : evaluate (body, decClock s) with ⟨r1, t1⟩
     rw [h1] at h
     have hne1 : r1 ≠ some .timeOut := by
       rintro rfl
-      simp only [badFunReturn, Bool.false_eq_true, if_false, Prod.mk.injEq] at h
+      simp only [badFunReturn, Bool.false_eq_true, ite_false, Prod.mk.injEq] at h
       exact hr h.1.symm
     rw [ih _ (callee_measure_lt body _ s h0) body _ rfl r1 t1 h1 hne1]
     by_cases hb : badFunReturn r1 = true
-    · simp only [hb, if_true, Prod.mk.injEq] at h ⊢
+    · simp only [hb, ite_true, Prod.mk.injEq] at h ⊢
       obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
-    · simp only [hb, Bool.false_eq_true, if_false, Prod.mk.injEq] at h ⊢
+    · simp only [hb, Bool.false_eq_true, ite_false, Prod.mk.injEq] at h ⊢
       obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
   case call ret dest handler =>
     rw [evaluate_call] at h ⊢
@@ -306,22 +306,22 @@ theorem addClock_measure {width : Nat} [NeZero width] {C F : Type} (extra : Nat)
       · obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
       rcases handler with _ | hd <;> simp only [Prod.mk.injEq] at h ⊢
       · by_cases h0 : s.clock = 0
-        · simp only [h0, if_true, Prod.mk.injEq] at h
+        · simp only [h0, ite_true, Prod.mk.injEq] at h
           exact absurd h.1.symm hr
-        simp only [h0, if_false] at h
-        rw [if_neg (show s.clock + extra ≠ 0 by omega), decClock_addClock s extra h0]
+        simp only [h0, ite_false] at h
+        rw [ite_eq_right (show s.clock + extra ≠ 0 by omega), decClock_addClock s extra h0]
         rcases h1 : evaluate (prog, decClock s) with ⟨r1, t1⟩
         rw [h1] at h
         have hne1 : r1 ≠ some .timeOut := by
           rintro rfl
-          simp only [fixClock, badFunReturn, Bool.false_eq_true, if_false, Prod.mk.injEq] at h
+          simp only [fixClock, badFunReturn, Bool.false_eq_true, ite_false, Prod.mk.injEq] at h
           exact hr h.1.symm
         rw [ih _ (callee_measure_lt prog _ s h0) prog _ rfl r1 t1 h1 hne1, fixClock_addClock]
         simp only [fixClock] at h ⊢
         by_cases hb : badFunReturn r1 = true
-        · simp only [hb, if_true, Prod.mk.injEq] at h ⊢
+        · simp only [hb, ite_true, Prod.mk.injEq] at h ⊢
           obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
-        · simp only [hb, Bool.false_eq_true, if_false, Prod.mk.injEq] at h ⊢
+        · simp only [hb, Bool.false_eq_true, ite_false, Prod.mk.injEq] at h ⊢
           obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
       · obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
     | some rr =>
@@ -331,10 +331,10 @@ theorem addClock_measure {width : Nat} [NeZero width] {C F : Type} (extra : Nat)
         simp only [hf, Prod.mk.injEq] at h ⊢
       · obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
       by_cases h0 : s.clock = 0
-      · simp only [h0, if_true, Prod.mk.injEq] at h
+      · simp only [h0, ite_true, Prod.mk.injEq] at h
         exact absurd h.1.symm hr
-      simp only [h0, if_false] at h
-      rw [if_neg (show s.clock + extra ≠ 0 by omega)]
+      simp only [h0, ite_false] at h
+      rw [ite_eq_right (show s.clock + extra ≠ 0 by omega)]
       have h0' : (setVar link (.loc l1 l2) s).clock ≠ 0 := h0
       have hsv : setVar link (.loc l1 l2) { s with clock := s.clock + extra } =
           { setVar link (.loc l1 l2) s with
@@ -359,17 +359,17 @@ theorem addClock_measure {width : Nat} [NeZero width] {C F : Type} (extra : Nat)
       rcases r1 with _ | ⟨x⟩ | ⟨x⟩ | _ | _ | _ | _ | _ | _
       all_goals try (simp only [Prod.mk.injEq] at h ⊢; obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩)
       · by_cases hx : x = .loc l1 l2
-        · simp only [hx, ne_eq, not_true_eq_false, if_false] at h ⊢
+        · simp only [hx, ne_eq, not_true_eq_false, ite_false] at h ⊢
           exact ih _ (hlt retH) retH _ rfl r s' h hr
-        · simp only [hx, ne_eq, not_false_eq_true, if_true, Prod.mk.injEq] at h ⊢
+        · simp only [hx, ne_eq, not_false_eq_true, ite_true, Prod.mk.injEq] at h ⊢
           obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
       · rcases handler with _ | ⟨hp, hl1, hl2⟩
         · simp only [Prod.mk.injEq] at h ⊢
           obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
         · by_cases hx : x = .loc hl1 hl2
-          · simp only [hx, ne_eq, not_true_eq_false, if_false] at h ⊢
+          · simp only [hx, ne_eq, not_true_eq_false, ite_false] at h ⊢
             exact ih _ (hlt hp) hp _ rfl r s' h hr
-          · simp only [hx, ne_eq, not_false_eq_true, if_true, Prod.mk.injEq] at h ⊢
+          · simp only [hx, ne_eq, not_false_eq_true, ite_true, Prod.mk.injEq] at h ⊢
             obtain ⟨rfl, rfl⟩ := h; exact ⟨rfl, rfl⟩
 
 end EvaluateAddClock

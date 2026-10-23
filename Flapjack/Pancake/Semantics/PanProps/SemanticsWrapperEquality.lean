@@ -45,7 +45,7 @@ theorem panPropsSemanticsWrapper_eq
     panPropsSemanticsWrapper concf = panPropsSemanticsWrapper absf := by
   intro hfail h1 h2 _h3 h4 h5
   have hnoErrA : ¬ ∃ k v, absf k = (.RunError, v) := by
-    intro h; apply hfail; unfold panPropsSemanticsWrapper; rw [if_pos h]
+    intro h; apply hfail; unfold panPropsSemanticsWrapper; rw [ite_eq_left h]
   cases hA : holOptionSome (fun res => ∃ k r ev,
       absf k = (.CompleteResult r, ev) ∧ res = HolBehaviour.terminate r ev) with
   | some res =>
@@ -76,7 +76,7 @@ theorem panPropsSemanticsWrapper_eq
       · cases h; rfl
       · cases h
     unfold panPropsSemanticsWrapper
-    rw [if_neg hnoErrC, if_neg hnoErrA, hC, hA]
+    rw [ite_eq_right hnoErrC, ite_eq_right hnoErrA, hC, hA]
   | none =>
     have hnoCR : ∀ k r ev, absf k ≠ (.CompleteResult r, ev) := fun k r ev hk =>
       holOptionSome_none hA _ ⟨k, r, ev, hk, rfl⟩
@@ -102,7 +102,7 @@ theorem panPropsSemanticsWrapper_eq
     have hC : holOptionSome (fun res => ∃ k r ev,
         concf k = (.CompleteResult r, ev) ∧ res = HolBehaviour.terminate r ev) = none := by
       unfold holOptionSome
-      rw [dif_neg]
+      rw [dite_eq_right]
       rintro ⟨_, k, r, ev, hk, _⟩
       have := hincC k; rw [hk] at this; cases this
     have cA := panPropsSemanticsWrapper_chain absf hincA h4
@@ -133,7 +133,7 @@ theorem panPropsSemanticsWrapper_eq
       rw [← HolLList.lnth_eq_rep, ← HolLList.lnth_eq_rep,
         HolLList.lnth_buildLprefixLub cC, HolLList.lnth_buildLprefixLub cA, hnth]
     unfold panPropsSemanticsWrapper
-    rw [if_neg hnoErrC, if_neg hnoErrA, hC, hA, hlub]
+    rw [ite_eq_right hnoErrC, ite_eq_right hnoErrA, hC, hA, hlub]
 
 
 

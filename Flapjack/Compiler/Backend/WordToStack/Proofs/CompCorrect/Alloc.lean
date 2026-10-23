@@ -124,10 +124,10 @@ theorem compCorrectAlloc {width : Nat} [NeZero width] {C F : Type}
     by_cases hres : result = none
     · obtain ⟨rfl, hrel1⟩ := hnone hres
       subst hres
-      simp only [Option.map_none, ne_eq, not_true_eq_false, if_false]
+      simp only [Option.map_none, ne_eq, not_true_eq_false, ite_false]
       exact hrel1
     · obtain ⟨rfl, rfl, hcl, hff⟩ := hsome hres
-      simp only [Option.map_some, compileResult, ne_eq, not_true_eq_false, if_false]
+      simp only [Option.map_some, compileResult, ne_eq, not_true_eq_false, ite_false]
       exact ⟨hff, hcl⟩
   by_cases hf : 1 ≤ f
   · obtain ⟨t5, hev5, hpush5, hrel5, -, -, hget5⟩ :=
@@ -143,22 +143,22 @@ theorem compCorrectAlloc {width : Nat} [NeZero width] {C F : Type}
       AllocStateRel.allocImpAlloc ac k f frame w names source sourcePost result t5 lens envs
         ⟨execution, hn1, hn2, hf, hrel5, hpush5, hcut, notError⟩
     refine ⟨0, t1, res1, ?_, finish t1 res1
-      (fun hr => by rw [if_pos hr] at hif; exact ⟨hif.1, hif.2.1⟩)
-      (fun hr => by rw [if_neg hr] at hif; exact hif)⟩
+      (fun hr => by rw [ite_eq_left hr] at hif; exact ⟨hif.1, hif.2.1⟩)
+      (fun hr => by rw [ite_eq_right hr] at hif; exact hif)⟩
     rw [htarget, StackSemEvaluate.evaluate_seq, hev5]
     simp only [StackSemControl.fixClock]
     rw [show min target.clock t5.clock = t5.clock by omega]
     show StackSemEvaluate.evaluate (Prog.alloc 1, t5) = (res1, t1)
     rw [StackSemEvaluate.evaluate_alloc]
-    simp only [huse5, Bool.not_true, Bool.false_eq_true, if_false, hg5]
+    simp only [huse5, Bool.not_true, Bool.false_eq_true, ite_false, hg5]
     exact halloc1
   · have hf0 : f = 0 := by omega
     have hfr0 : frame = 0 := by
       by_cases h : frame = 0
       · exact h
-      · rw [if_neg h] at r35; omega
+      · rw [ite_eq_right h] at r35; omega
     subst hf0 hfr0
-    simp only [wLiveNative, if_true, Prod.mk.injEq] at hwl
+    simp only [wLiveNative, ite_true, Prod.mk.injEq] at hwl
     obtain ⟨rfl, -⟩ := hwl
     -- with no frame, the stack-placed cutset names cannot exist
     have hempty : ∀ t : Spt Unit, (∀ x, sptDomain t x → 2 * k ≤ x) →
@@ -181,13 +181,13 @@ theorem compCorrectAlloc {width : Nat} [NeZero width] {C F : Type}
       AllocStateRel.allocImpAlloc2 ac k w names source sourcePost result target lens
         ⟨execution, related, hd1, hd2, notError⟩
     refine ⟨0, t1, res1, ?_, finish t1 res1
-      (fun hr => by rw [if_pos hr] at hif; exact ⟨hif.1, hif.2.1⟩)
-      (fun hr => by rw [if_neg hr] at hif; exact hif)⟩
+      (fun hr => by rw [ite_eq_left hr] at hif; exact ⟨hif.1, hif.2.1⟩)
+      (fun hr => by rw [ite_eq_right hr] at hif; exact hif)⟩
     rw [htarget, StackSemEvaluate.evaluate_seq, StackSemEvaluate.evaluate_skip]
     simp only [StackSemControl.fixClock, Nat.min_self]
     show StackSemEvaluate.evaluate (Prog.alloc 1, target) = (res1, t1)
     rw [StackSemEvaluate.evaluate_alloc]
-    simp only [r7, Bool.not_true, Bool.false_eq_true, if_false, hg1]
+    simp only [r7, Bool.not_true, Bool.false_eq_true, ite_false, hg1]
     exact halloc1
 
 end Flapjack.WordToStackProofs.CompCorrect.Alloc

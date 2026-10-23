@@ -92,9 +92,9 @@ theorem heuristicProgram_production {width : Nat} [NeZero width]
       | none => exact valid
       | some name =>
           by_cases same : name = functionName
-          · simpa only [incoming, same, if_true, WordHeuristicCallSet.addCall] using
+          · simpa only [incoming, same, ite_true, WordHeuristicCallSet.addCall] using
               (callCache_merge calls counts.keys valid).2
-          · simpa only [incoming, same, if_false] using valid
+          · simpa only [incoming, same, ite_false] using valid
     cases hReturns : returns with
     | none =>
         cases hHandler : handler with
@@ -106,7 +106,7 @@ theorem heuristicProgram_production {width : Nat} [NeZero width]
             | some name =>
                 by_cases same : name = functionName <;>
                   simp only [wordHeuristicFast, getHeu, heuristicStateToNative, same,
-                    if_true, if_false, (callCache_addCall calls counts valid).1]
+                    ite_true, ite_false, (callCache_addCall calls counts valid).1]
         | some exception =>
             rcases exception with ⟨name, body, label1, label2⟩
             cases hb : wordLangProgToHOL body <;>
@@ -117,7 +117,7 @@ theorem heuristicProgram_production {width : Nat} [NeZero width]
             | some name =>
                 by_cases same : name = functionName <;>
                   simp only [wordHeuristicFast, getHeu, heuristicStateToNative, same,
-                    if_true, if_false, (callCache_addCall calls counts valid).1]
+                    ite_true, ite_false, (callCache_addCall calls counts valid).1]
     | some returning =>
         rcases returning with ⟨values, sets, body, label1, label2⟩
         cases hb : wordLangProgToHOL body with
@@ -135,11 +135,11 @@ theorem heuristicProgram_production {width : Nat} [NeZero width]
                     simp only [wordHeuristicFast, getHeu, ← br, heuristicStateToNative]
                 | some name =>
                     by_cases same : name = functionName
-                    · simp only [incoming, same, if_true] at br
-                      simp only [wordHeuristicFast, getHeu, same, if_true,
+                    · simp only [incoming, same, ite_true] at br
+                      simp only [wordHeuristicFast, getHeu, same, ite_true,
                         ← (callCache_addCall calls counts valid).1, ← br, heuristicStateToNative]
-                    · simp only [incoming, same, if_false] at br
-                      simp only [wordHeuristicFast, getHeu, same, if_false, ← br,
+                    · simp only [incoming, same, ite_false] at br
+                      simp only [wordHeuristicFast, getHeu, same, ite_false, ← br,
                         heuristicStateToNative]
             | some exception =>
                 rcases exception with ⟨name, exceptionBody, handler1, handler2⟩
@@ -159,12 +159,12 @@ theorem heuristicProgram_production {width : Nat} [NeZero width]
                       heuristicCountMap_maxAll, merged]
                 | some destination =>
                     by_cases same : destination = functionName
-                    · simp only [incoming, same, if_true] at br hr merged
-                      simp only [wordHeuristicFast, getHeu, same, if_true,
+                    · simp only [incoming, same, ite_true] at br hr merged
+                      simp only [wordHeuristicFast, getHeu, same, ite_true,
                         ← (callCache_addCall calls counts valid).1, ← br, ← hr,
                         heuristicStateToNative, heuristicCountMap_maxAll, merged]
-                    · simp only [incoming, same, if_false] at br hr merged
-                      simp only [wordHeuristicFast, getHeu, same, if_false,
+                    · simp only [incoming, same, ite_false] at br hr merged
+                      simp only [wordHeuristicFast, getHeu, same, ite_false,
                         ← br, ← hr, heuristicStateToNative, heuristicCountMap_maxAll, merged]
   all_goals try
     simp only [wordLangProgToHOL, Option.some.injEq] at encoded

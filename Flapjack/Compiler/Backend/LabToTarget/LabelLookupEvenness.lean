@@ -41,9 +41,9 @@ theorem linesOk_sectionLabels_lookup_even {width : Nat} [NeZero width]
       rcases hh with ⟨he,rfl⟩
       simp only [lineLen,Nat.add_zero] at ht
       by_cases hid : lid = 0
-      · simp only [sectionLabels,if_pos hid,Nat.add_zero] at hl
+      · simp only [sectionLabels,ite_eq_left hid,Nat.add_zero] at hl
         exact ih pos acc ⟨ht,ha,hl⟩
-      · simp only [sectionLabels,if_neg hid,Nat.add_zero] at hl
+      · simp only [sectionLabels,ite_eq_right hid,Nat.add_zero] at hl
         apply ih pos ((lid,pos)::acc) ⟨ht,?_,hl⟩
         intro k x hx
         by_cases hk : k = lid

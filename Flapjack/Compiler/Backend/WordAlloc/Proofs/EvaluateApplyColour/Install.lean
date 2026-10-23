@@ -73,7 +73,7 @@ theorem evaluateApplyColour_Install {width : Nat} [NeZero width] {C F : Type}
       · split at he
         · split at he
           · rename_i hchecks
-            simp only [if_pos hchecks]
+            simp only [ite_eq_left hchecks]
             refine ⟨trivial, ?_, ?_⟩
             · simp_all [wordStateEqRel]
             · simp only [applyColourLocals]

@@ -2551,8 +2551,8 @@ theorem evalStackFrameFuel_stackGcMoveList_copy_one_memory_relation
       Ne.symm hscratch5, 
       Ne.symm hscratch8]
     simp only [
-      if_neg (show (5 : Nat) ≠ 8 by decide),
-      if_neg (show ¬ False by decide)]
+      ite_eq_right (show (5 : Nat) ≠ 8 by decide),
+      ite_eq_right (show ¬ False by decide)]
     rfl
   rw [heval]
   by_cases htargetAddress : target = address
@@ -2586,7 +2586,7 @@ theorem evalStackFrameFuel_stackGcMoveList_copy_one_memory_relation
       
       
       Ne.symm hscratch8]
-    simp only [if_neg htargetOfNat]
+    simp only [ite_eq_right htargetOfNat]
     exact congrArg some hcopy
 
 theorem stackGcMoveLoop_machine_condition_matches_nat [NeZero width]
@@ -4135,8 +4135,8 @@ theorem evalStackFrameFuel_stackGcMoveList_copy_body_with_nat_relation
       
       Ne.symm hscratch5,
       Ne.symm hscratch8]
-    simp only [if_neg (show (5 : Nat) ≠ 8 by decide),
-      if_neg (show ¬ False by decide)]
+    simp only [ite_eq_right (show (5 : Nat) ≠ 8 by decide),
+      ite_eq_right (show ¬ False by decide)]
     rfl
   have hfinalValue :
       ((stackGcMoveListCopyState config state).machine.memory
@@ -4479,7 +4479,7 @@ theorem evalStackFrameFuel_stackGcMoveCopySuffixAfterMemcpy_with_nat_relation
         apply htargetAddress
         simpa [BitVec.toNat_ofNat, Nat.mod_eq_of_lt htarget,
           Nat.mod_eq_of_lt hsourceBound] using hto
-      rw [hfinalMemory, if_neg htargetWord]
+      rw [hfinalMemory, ite_eq_right htargetWord]
       rw [hmemory target htarget]
       simp [stackGcNatMoveCopySuffix, htargetAddress]
 

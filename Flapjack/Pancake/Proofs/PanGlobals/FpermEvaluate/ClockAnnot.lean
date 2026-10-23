@@ -58,11 +58,11 @@ theorem evaluateFperm_Tick {width : Nat} {σ : Type} [NeZero width]
   rw [fpermHOL]
   · rw [evaluateHOLFiniteState_tick] at heval ⊢
     by_cases hc : state.clock = 0
-    · simp only [if_pos hc, emptyLocalsHOLFinite] at heval ⊢
+    · simp only [ite_eq_left hc, emptyLocalsHOLFinite] at heval ⊢
       simpa only [Prod.fst, Prod.snd] using congrArg
         (fun (run : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ) =>
           (run.1, { run.2 with code := fpermCodeHOL f g run.2.code })) heval
-    · simp only [if_neg hc, decClockHOLFinite] at heval ⊢
+    · simp only [ite_eq_right hc, decClockHOLFinite] at heval ⊢
       simpa only [Prod.fst, Prod.snd] using congrArg
         (fun (run : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ) =>
           (run.1, { run.2 with code := fpermCodeHOL f g run.2.code })) heval

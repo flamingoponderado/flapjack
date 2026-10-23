@@ -52,16 +52,16 @@ theorem edgesToAdjlistFoldl :
         fun x hx => hb x (List.mem_cons_of_mem _ hx)
       rw [edgesToAdjlist, List.foldl_cons]
       by_cases e : a = b
-      · rw [if_pos e, ih acc ht]
-        simp only [edgesToAdjlistStep, if_pos e]
-      · rw [if_neg e]
-        simp only [Translator.Monadic.MonadBase.bind, intBegSubEqn, if_pos hab.1, if_pos hab.2]
+      · rw [ite_eq_left e, ih acc ht]
+        simp only [edgesToAdjlistStep, ite_eq_left e]
+      · rw [ite_eq_right e]
+        simp only [Translator.Monadic.MonadBase.bind, intBegSubEqn, ite_eq_left hab.1, ite_eq_left hab.2]
         have hstep : edgesToAdjlistStep sth (a, b) acc =
             if holEl a sth.int_beg < holEl b sth.int_beg ∨
                 (holEl a sth.int_beg = holEl b sth.int_beg ∧ a ≤ b) then
               sptInsert b (a :: miscThe [] (sptLookup b acc)) acc
             else sptInsert a (b :: miscThe [] (sptLookup a acc)) acc := by
-          simp only [edgesToAdjlistStep, if_neg e, holLex]; rfl
+          simp only [edgesToAdjlistStep, ite_eq_right e, holLex]; rfl
         rw [hstep]
         split <;> exact ih _ ht
 
@@ -114,7 +114,7 @@ private theorem mem_step (sth : LinearScanHiddenState) (a b reg reg2 : Nat)
   simp only [edgesToAdjlistStep]
   by_cases e : a = b
   · simp [e]
-  · rw [if_neg e]
+  · rw [ite_eq_right e]
     split
     · next hl =>
       by_cases hr : reg = b

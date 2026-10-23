@@ -87,7 +87,7 @@ private def view (r : Option (WordSemResult 64) × WordSemStateFiniteExact 64 Un
 local macro "ev_simp" : tactic => `(tactic| (
   simp (config := { ground := true, decide := true }) only [evaluate]
   repeat (simp only [wordSemSTOP]; simp (config := { ground := true, decide := true }) only [evaluate])
-  first | done | decide +kernel))
+  first | done | decide +kernel | cbv))
 
 /-- The `Loop` and `MustTerminate` recipe: unfold `evaluate` with the helper
     definitions its guards need, without ground evaluation (which would try
@@ -113,11 +113,11 @@ theorem seqTick :
 theorem tickZero :
     view (evaluate (.tick) ({ s0 with clock := 0 })) = (.timeOut, [], 0) := by
   ev_simp
-/-- `if_true=(NONE,[(3,Loc 5 0); (1,Word 1w); (9,Word 1w); (8,Word 16w); (2,Word 7w)],3)` -/
+/-- `ite_true=(NONE,[(3,Loc 5 0); (1,Word 1w); (9,Word 1w); (8,Word 16w); (2,Word 7w)],3)` -/
 theorem ifTrue :
     view (evaluate (.ite .equal 2 (.imm 7) (.assign 1 (.const 1)) (.assign 1 (.const 0))) (s0)) = (.none, [(3, .loc 5 0), (1, .word 1), (9, .word 1), (8, .word 16), (2, .word 7)], 3) := by
   ev_simp
-/-- `if_false=(NONE,[(3,Loc 5 0); (1,Word 0w); (9,Word 1w); (8,Word 16w); (2,Word 7w)],3)` -/
+/-- `ite_false=(NONE,[(3,Loc 5 0); (1,Word 0w); (9,Word 1w); (8,Word 16w); (2,Word 7w)],3)` -/
 theorem ifFalse :
     view (evaluate (.ite .less 2 (.imm 7) (.assign 1 (.const 1)) (.assign 1 (.const 0))) (s0)) = (.none, [(3, .loc 5 0), (1, .word 0), (9, .word 1), (8, .word 16), (2, .word 7)], 3) := by
   ev_simp
@@ -210,9 +210,9 @@ theorem callRet :
       some (.bn (.ls (.word 7)) .ln, .bn .ln (.bn .ln (.ls (.loc 5 0)))) := by decide +kernel
   simp only [evaluate]
   rw [h1]; dsimp only
-  rw [if_neg (by decide), h3]; dsimp only
-  rw [if_neg (by decide +kernel), h4]; dsimp only
-  rw [dif_neg (by decide)]
+  rw [ite_eq_right (by decide), h3]; dsimp only
+  rw [ite_eq_right (by decide +kernel), h4]; dsimp only
+  rw [dite_eq_right (by decide)]
   rw [evaluate.eq_def]; dsimp only
   decide +kernel
 /-- `call_ret_empty_names=(SOME Error,[(3,Loc 5 0); (9,Word 1w); (8,Word 16w); (2,Word 7w)],3)` -/

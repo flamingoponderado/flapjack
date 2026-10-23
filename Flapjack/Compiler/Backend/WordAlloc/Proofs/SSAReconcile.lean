@@ -108,7 +108,6 @@ theorem evaluateSSAReconcile {width : Nat} [NeZero width] {C F β : Type}
       exfalso
       apply empty
       convert hempty using 1
-      congr 2
     · congr 1
   refine ⟨after, ?_, ?_, ?_⟩
   · rw [compiled]

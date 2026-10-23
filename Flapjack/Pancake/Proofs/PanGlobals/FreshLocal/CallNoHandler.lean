@@ -83,10 +83,10 @@ theorem evaluateFreshLocal_CallNoHandler {width : Nat} {σ : Type} [NeZero width
       obtain ⟨body, callee, shape⟩ := entry
       simp only [hl] at heval ⊢
       by_cases hc : state.clock = 0
-      · simp only [if_pos hc] at heval ⊢
+      · simp only [ite_eq_left hc] at heval ⊢
         obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
         exact ⟨HolFiniteMapExact.empty, rfl, by simp [goodResHOL]⟩
-      · simp only [if_neg hc] at heval ⊢
+      · simp only [ite_eq_right hc] at heval ⊢
         have hentry : callEntryStateHOLFinite
             {state with locals := state.locals.updateEq (name, value)} callee =
             callEntryStateHOLFinite state callee := rfl

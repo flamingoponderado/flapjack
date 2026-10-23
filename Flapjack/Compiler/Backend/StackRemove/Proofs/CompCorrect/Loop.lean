@@ -35,7 +35,7 @@ theorem evaluateLoopExit {width : Nat} [NeZero width] {C F : Type}
     (exits : StackSemControl.contLoop result = false) :
     evaluate (.loop body, source) = (StackSemControl.exitLoop result, middle) := by
   rw [evaluateLoopUnclamped, execution]
-  simp only [exits, Bool.false_eq_true, if_false]
+  simp only [exits, Bool.false_eq_true, ite_false]
 
 /-- Actual zero-clock branch equation; source-local infrastructure, not a separate HOL port. -/
 theorem evaluateLoopTimeOut {width : Nat} [NeZero width] {C F : Type}
@@ -45,7 +45,7 @@ theorem evaluateLoopTimeOut {width : Nat} [NeZero width] {C F : Type}
     (continues : StackSemControl.contLoop result = true) (zero : middle.clock = 0) :
     evaluate (.loop body, source) = (some .timeOut, emptyEnv middle) := by
   rw [evaluateLoopUnclamped, execution]
-  simp only [continues, if_true, zero]
+  simp only [continues, ite_true, zero]
 
 /-- Actual reentry equation; source-local infrastructure retaining both real guards. -/
 theorem evaluateLoopReentry {width : Nat} [NeZero width] {C F : Type}
@@ -55,7 +55,7 @@ theorem evaluateLoopReentry {width : Nat} [NeZero width] {C F : Type}
     (continues : StackSemControl.contLoop result = true) (nonzero : middle.clock ≠ 0) :
     evaluate (.loop body, source) = evaluate (.loop body, decClock middle) := by
   rw [evaluateLoopUnclamped, execution]
-  simp only [continues, if_true, nonzero, if_false]
+  simp only [continues, ite_true, nonzero, ite_false]
 
 /-- The original non-Error whole-run premise excludes a body Error. This is
 source-local case factoring, with no independent HOL declaration. -/

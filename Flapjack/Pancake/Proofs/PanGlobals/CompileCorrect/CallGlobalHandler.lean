@@ -105,8 +105,8 @@ private theorem missingGlobalCallRun {width : Nat} {σ : Type} [NeZero width]
       rcases entry with ⟨body, locals, returnShape⟩
       simp only [hl] at run ⊢
       by_cases hz : state.clock = 0
-      · simpa only [if_pos hz] using run
-      · simp only [if_neg hz] at run ⊢
+      · simpa only [ite_eq_left hz] using run
+      · simp only [ite_eq_right hz] at run ⊢
         rcases hb : evaluateHOLFiniteState (callEntryStateHOLFinite state locals) body with ⟨br, bs⟩
         simp only [hb] at run ⊢
         cases br with
@@ -117,9 +117,9 @@ private theorem missingGlobalCallRun {width : Nat} {σ : Type} [NeZero width]
             have hv : isValidValueHOLExact state.toExact .global name value = false := by
               simp [isValidValueHOLExact, lookupKvarHOLExact, missing]
             by_cases hs : shapeEqHOL (shapeOfHOLExact value) returnShape = true
-            · simp only [if_pos hs, hv, Bool.false_eq_true, ite_false] at run
+            · simp only [ite_eq_left hs, hv, Bool.false_eq_true, ite_false] at run
               exact False.elim (nonError (Prod.mk.inj run).1.symm)
-            · simp only [if_neg hs] at run
+            · simp only [ite_eq_right hs] at run
               exact False.elim (nonError (Prod.mk.inj run).1.symm)
           | «break» | «continue» | error | exception eid value | timeOut | finalFfi outcome => exact run
 
@@ -275,7 +275,7 @@ private theorem returnedLocalCall {width : Nat} {σ : Type} [NeZero width]
   have hv : isValidValueHOLExact state.toExact .local name value = true := by
     simp [isValidValueHOLExact, lookupKvarHOLExact, hlocal, hshape, shapeEqHOL_eq_true]
   have hs := (shapeEqHOL_eq_true _ _).mpr hreturn
-  simp only [evaluateHOLFiniteState_call, hargs, hcode, if_neg hclock, hbody,
+  simp only [evaluateHOLFiniteState_call, hargs, hcode, ite_eq_right hclock, hbody,
     hs, hv, ite_true, setKvarHOLFinite]
 
 /-- Internal matched-exception Call computation. Derives the local handler
@@ -306,7 +306,7 @@ private theorem matchedHandlerCall {width : Nat} {σ : Type} [NeZero width]
   have hv : isValidValueHOLExact state.toExact .local handlerVar value = true := by
     simp [isValidValueHOLExact, lookupKvarHOLExact, hlocal, hshape, shapeEqHOL_eq_true]
   have hs := (shapeEqHOL_eq_true _ _).mpr hhandlerShape
-  simp only [evaluateHOLFiniteState_call, hargs, hcode, if_neg hclock, hbody,
+  simp only [evaluateHOLFiniteState_call, hargs, hcode, ite_eq_right hclock, hbody,
     ite_true, hexception, hs, hv, Bool.true_and]
 
 /-- Reorder the matched handler binding past the two distinct scratch writes.
@@ -480,7 +480,7 @@ private theorem normalHandlerIfRun {width : Nat} {σ : Type} [NeZero width]
     contradiction
   rw [evaluateHOLFiniteState_ite, hpost]
   simp only [evalHOLExact, HolFiniteMapExact.lookup_update_pointwise,
-    ite_true, if_neg hone, evaluateHOLFiniteState_skip]
+    ite_true, ite_eq_right hone, evaluateHOLFiniteState_skip]
 
 /-- Complete normal-handler continuation and restored relation, composing the
 literal flag/If computation with both scope restorations. The handler run and
@@ -1143,9 +1143,9 @@ private theorem bypassScratchCall {width : Nat} {σ : Type} [NeZero width]
     (.call (some (some (.local, resultName), some (handlerId, handlerVar,
       .seq handler (.assign .local flagName (.const (BitVec.ofNat width 1)))))) function arguments) = _
   rw [evaluateHOLFiniteState_call]
-  simp only [hsargs, hscode, if_neg hsc, hsbody]
+  simp only [hsargs, hscode, ite_eq_right hsc, hsbody]
   cases result with
-  | exception eid value => simp only [if_neg hbypass]
+  | exception eid value => simp only [ite_eq_right hbypass]
   | timeOut | finalFfi outcome => rfl
   | «break» | «continue» | error | returned value => contradiction
 
@@ -1306,7 +1306,7 @@ private theorem zeroClockCorrect {width : Nat} {σ : Type} [NeZero width]
   have hscode : lookupCodeHOLFinite scratch.code.lookup function args = some (compileProgExactHOL context body, callee, returnShape) := htl
   have htz : scratch.clock = 0 := hrel.2.2.2.2.2.1 ▸ hz
   have hcall : evaluateHOLFiniteState scratch call = (some .timeOut, emptyLocalsHOLFinite scratch) := by
-    simp only [call, evaluateHOLFiniteState_call, hsargs, hscode, if_pos htz]
+    simp only [call, evaluateHOLFiniteState_call, hsargs, hscode, ite_eq_left htz]
   have hempty := (PanGlobalsStateRelationLocals.stateRelEmptyLocalsHOL context source target false).1 hrel
   have hsrel : panGlobalsStateRelHOLExact false context (emptyLocalsHOLFinite source) (emptyLocalsHOLFinite scratch) := hempty
   obtain ⟨ht, hr⟩ := nonGoodCallTail context target scratch (emptyLocalsHOLFinite source)
@@ -1439,11 +1439,11 @@ theorem compileCorrect_CallGlobalHandler {width : Nat} {σ : Type} [NeZero width
         rcases entry with ⟨body, callee, returnShape⟩
         simp only [hl] at hev
         by_cases hz : source.clock = 0
-        · simp only [if_pos hz] at hev
+        · simp only [ite_eq_left hz] at hev
           obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
           exact zeroClockCorrect context source target name function handlerId handlerVar handlerBody body
             arguments args callee returnShape shape address hrel hcontext ha hl hz
-        · simp only [if_neg hz] at hev
+        · simp only [ite_eq_right hz] at hev
           rcases hb : evaluateHOLFiniteState (callEntryStateHOLFinite source callee) body with ⟨br, bs⟩
           simp only [hb] at hev
           cases br with
@@ -1460,9 +1460,9 @@ theorem compileCorrect_CallGlobalHandler {width : Nat} {σ : Type} [NeZero width
                   exact returnedFromIH source name function handlerId handlerVar arguments handlerBody ih
                     context target bs args body callee returnShape value hrel ha hl hz hb
                     ((shapeEqHOL_eq_true _ _).mp hs) hv
-                · simp only [if_neg hv] at hev
+                · simp only [ite_eq_right hv] at hev
                   exact False.elim (hne (Prod.mk.inj hev).1.symm)
-              · simp only [if_neg hs] at hev
+              · simp only [ite_eq_right hs] at hev
                 exact False.elim (hne (Prod.mk.inj hev).1.symm)
             | exception eid value =>
               by_cases hid : eid = handlerId
@@ -1474,16 +1474,16 @@ theorem compileCorrect_CallGlobalHandler {width : Nat} {σ : Type} [NeZero width
                   simp only [hs] at hev
                   by_cases hv : (shapeEqHOL (shapeOfHOLExact value) handlerShape &&
                     isValidValueHOLExact source.toExact .local handlerVar value) = true
-                  · simp only [if_pos hv] at hev
+                  · simp only [ite_eq_left hv] at hev
                     have hg := hv
                     simp only [Bool.and_eq_true] at hg
                     exact matchedFromIH source name function arguments handlerId handlerVar handlerBody
                       ih ihHandler context target bs post args body callee returnShape handlerShape shape
                       value address res hrel hcontext ha hl hz hb hs
                       ((shapeEqHOL_eq_true _ _).mp hg.1) hg.2 hev hne
-                  · simp only [if_neg hv] at hev
+                  · simp only [ite_eq_right hv] at hev
                     exact False.elim (hne (Prod.mk.inj hev).1.symm)
-              · simp only [if_neg hid] at hev
+              · simp only [ite_eq_right hid] at hev
                 obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
                 exact bypassFromIH source name function handlerId handlerVar arguments handlerBody ih
                   context target bs args body callee returnShape shape address (.exception eid value)

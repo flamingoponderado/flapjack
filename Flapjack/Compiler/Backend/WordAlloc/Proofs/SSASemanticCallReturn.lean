@@ -145,7 +145,7 @@ theorem returningPrepareArguments {width : Nat} [NeZero width] {C F : Type}
     preparedRelated,preparedFrame,cuts⟩
   change WordSemStateFiniteExact.evaluate (.move 1 (registers.zip renamed)) refreshed = (none,prepared)
   simp only [WordSemStateFiniteExact.evaluate,List.map_fst_zip (Nat.le_of_eq same),
-    List.map_snd_zip (Nat.le_of_eq same.symm),distinct,if_true]
+    List.map_snd_zip (Nat.le_of_eq same.symm),distinct,ite_true]
   rw [show WordSemStateFiniteExact.getVars renamed refreshed = some values from renamedRead]
 
 /-- Flapjack-specific original returning Call8422-8477 pushed-stack/callee
@@ -466,7 +466,7 @@ theorem returningBindResults {width : Nat} [NeZero width] {C F : Type}
   simp only [WordSemStateFiniteExact.evaluate,
     List.map_fst_zip (Nat.le_of_eq zipLengths),
     List.map_snd_zip (Nat.le_of_eq zipLengths.symm),
-    arithmetic.1,if_true,read]
+    arithmetic.1,ite_true,read]
 
 
 /-- Flapjack-specific original8660-8692 no-handler exception transport.

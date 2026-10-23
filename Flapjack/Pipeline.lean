@@ -441,11 +441,11 @@ theorem crepMakeFuncsAt_label_ge (start : Nat)
       intro x n rm h
       simp only [crepMakeFuncsAt, lookupInfo] at h
       by_cases hc : (function.name == x) = true
-      · rw [if_pos hc] at h
+      · rw [ite_eq_left hc] at h
         have hpair := Option.some.inj h
         have : start = n := congrArg Prod.fst hpair
         omega
-      · rw [if_neg hc] at h
+      · rw [ite_eq_right hc] at h
         have := ih (start := start + 1) h
         omega
 
@@ -458,23 +458,23 @@ theorem crepDistinctFuncs_crepMakeFuncsAt (start : Nat)
   | cons function functions ih =>
       simp only [crepMakeFuncsAt, lookupInfo] at hx hy
       by_cases hcx : (function.name == x) = true
-      · rw [if_pos hcx] at hx
+      · rw [ite_eq_left hcx] at hx
         have hxn : start = n := congrArg Prod.fst (Option.some.inj hx)
         by_cases hcy : (function.name == y) = true
-        · rw [if_pos hcy] at hy
+        · rw [ite_eq_left hcy] at hy
           have hxname : x = function.name := (beq_iff_eq.mp hcx).symm
           have hyname : y = function.name := (beq_iff_eq.mp hcy).symm
           exact hxname.trans hyname.symm
-        · rw [if_neg hcy] at hy
+        · rw [ite_eq_right hcy] at hy
           have hge := crepMakeFuncsAt_label_ge (start := start + 1) functions hy
           omega
-      · rw [if_neg hcx] at hx
+      · rw [ite_eq_right hcx] at hx
         by_cases hcy : (function.name == y) = true
-        · rw [if_pos hcy] at hy
+        · rw [ite_eq_left hcy] at hy
           have hyn : start = m := congrArg Prod.fst (Option.some.inj hy)
           have hge := crepMakeFuncsAt_label_ge (start := start + 1) functions hx
           omega
-        · rw [if_neg hcy] at hy
+        · rw [ite_eq_right hcy] at hy
           exact ih (start := start + 1) hx hy
 
 /-- Cake's `distinct_make_funcs`
@@ -503,10 +503,10 @@ theorem crepMakeFuncsAt_exists_index (start : Nat)
   | cons function functions ih =>
       simp only [crepMakeFuncsAt, lookupInfo] at h
       by_cases hc : (function.name == name) = true
-      · rw [if_pos hc] at h
+      · rw [ite_eq_left hc] at h
         have hlabel : label = start := (congrArg Prod.fst (Option.some.inj h)).symm
         exact ⟨0, by omega, by simp [beq_iff_eq.mp hc], by simp⟩
-      · rw [if_neg hc] at h
+      · rw [ite_eq_right hc] at h
         obtain ⟨n, hlabel, hget, hn⟩ := ih (start := start + 1) h
         refine ⟨n + 1, by omega, ?_, by simp; omega⟩
         simp only [List.getElem?_cons_succ]
@@ -1088,7 +1088,7 @@ theorem pipelineLoopFunctionsSourceRouted_body_rel {width : Nat} [NeZero width]
       CrepNameRanged entry.1 :=
     pipelineFunctionInfos_byteRanged firstLabel functions hNames
   unfold pipelineLoopFunctionsSourceRouted
-  simp only [dif_pos hRanged]
+  simp only [dite_eq_left hRanged]
   exact pipelineLoopFunctionsSourceExactAux_body_rel architecture
     (pipelineFunctionInfos firstLabel functions) hFunctionNames firstLabel
     functions hBodies

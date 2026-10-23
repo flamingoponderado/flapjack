@@ -744,7 +744,7 @@ theorem alist_duplicate_first :
   simp only [alistProbeRows, alistToFmapHOLExact, HolFiniteMapExact.lookup_updateList,
     List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append,
     FUPDATE_LIST_cons, FUPDATE_LIST_nil, FUPDATE, hff, hgf, Bool.false_eq_true,
-    if_true, if_false]
+    ite_true, ite_false]
 
 /-- HOL `alist_other_row`. -/
 theorem alist_other_row :
@@ -755,21 +755,21 @@ theorem alist_other_row :
   simp only [alistProbeRows, alistToFmapHOLExact, HolFiniteMapExact.lookup_updateList,
     List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append,
     FUPDATE_LIST_cons, FUPDATE_LIST_nil, FUPDATE, hfg, hgg, Bool.false_eq_true,
-    if_true, if_false]
+    ite_true, ite_false]
 
 /-- HOL `domsub_selected_f`: erasing `«f»` removes its row. -/
 theorem domsub_selected_f :
     ((alistToFmapHOLExact alistProbeRows).erase (ofString "f")).lookup (ofString "f") =
       none := by
   have hff : (ofString "f" == ofString "f") = true := by decide
-  simp only [HolFiniteMapExact.erase, FDOMSUB, hff, if_true]
+  simp only [HolFiniteMapExact.erase, FDOMSUB, hff, ite_true]
 
 /-- HOL `domsub_preserves_g`: erasing `«f»` preserves `«g»`. -/
 theorem domsub_preserves_g :
     ((alistToFmapHOLExact alistProbeRows).erase (ofString "f")).lookup (ofString "g") =
       some ([], (.skip : CrepProgHOL 8)) := by
   have hfg : (ofString "f" == ofString "g") = false := by decide
-  simp only [HolFiniteMapExact.erase, FDOMSUB, hfg, Bool.false_eq_true, if_false,
+  simp only [HolFiniteMapExact.erase, FDOMSUB, hfg, Bool.false_eq_true, ite_false,
     alist_other_row]
 
 /-! ### Executability regression for `compile_inl_top`
@@ -907,15 +907,15 @@ theorem inlineProgHOLCoreExact_support_independent [BEq CrepInlineMapHOLName]
     rw [ih (supportKeys₂.filter (fun k => k != name))
       (HolFiniteMapExact.erase_support inlineable supportKeys₂ support₂ name)]
   · intro inlineable supportKeys support_spec returnNames name arguments hd supportKeys₂ support₂
-    simp only [inlineProgHOLCoreExact, hd, if_true]
+    simp only [inlineProgHOLCoreExact, hd, ite_true]
   · intro inlineable supportKeys support_spec returnNames name arguments hd hl supportKeys₂ support₂
     simp only [inlineProgHOLCoreExact]
-    simp only [if_neg hd]
+    simp only [ite_eq_right hd]
     rw [hl]
   · intro inlineable supportKeys support_spec returnNames name arguments hd argumentNames body hl ih
       supportKeys₂ support₂
     simp only [inlineProgHOLCoreExact]
-    simp only [if_neg hd]
+    simp only [ite_eq_right hd]
     rw [hl]
     simp only []
     rw [ih (supportKeys₂.filter (fun k => k != name))

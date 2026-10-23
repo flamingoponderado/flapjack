@@ -109,7 +109,7 @@ private theorem postRelated {width : Nat} [NeZero width] {C F : Type}
       (sptDelete 0 (sptDelete 2 source.locals)))) = some value at found
     have offsetPlacement := (hloc 6 (.word offset) offsetRead).2
     have offsetPhysical : 6 / 2 < k := by omega
-    rw [if_pos offsetPhysical] at offsetPlacement
+    rw [ite_eq_left offsetPhysical] at offsetPlacement
     by_cases isAddress : n = 4
     · subst n
       rw [sptLookup_sptInsert_same] at found
@@ -136,7 +136,7 @@ private theorem postRelated {width : Nat} [NeZero width] {C F : Type}
         obtain ⟨even,placement⟩ := hloc n value found
         refine ⟨even,?_⟩
         by_cases physical : n / 2 < k
-        · rw [if_pos physical] at placement ⊢
+        · rw [ite_eq_left physical] at placement ⊢
           have halfZero : n/2 ≠ 0 := by omega
           have halfOne : n/2 ≠ 1 := by omega
           have halfTwo : n/2 ≠ 2 := by omega
@@ -145,7 +145,7 @@ private theorem postRelated {width : Nat} [NeZero width] {C F : Type}
           simpa [targetPost, StackSemStoreConsts.unsetVarZero, StackSemStateOps.setVar,
             HolFiniteMapExact.updateEq, HolFiniteMapExact.eraseEq, FUPDATE_HOL, FDOMSUB_HOL,
             halfZero,halfOne,halfTwo,halfK,halfNext] using placement
-        · rw [if_neg physical] at placement ⊢
+        · rw [ite_eq_right physical] at placement ⊢
           exact placement
 
 /-- Flapjack infrastructure for the source proof's bitmap-prefix decomposition.
@@ -284,9 +284,9 @@ theorem compCorrectStoreConsts {width : Nat} [NeZero width] {C F : Type}
       h37,h38,hloc⟩ := related
     refine ⟨h6,h7,h10,h27,h28,h9,by omega,?_,?_⟩
     · have value := (hloc 4 (.word address) addressRead).2
-      simpa only [show 4/2 < k by omega,if_true] using value
+      simpa only [show 4/2 < k by omega,ite_true] using value
     · have value := (hloc 6 (.word offset) offsetRead).2
-      simpa only [show 6/2 < k by omega,if_true] using value
+      simpa only [show 6/2 < k by omega,ite_true] using value
   obtain ⟨storeEnabled,allocEnabled,large,stub,dimension,domains,bitmapLength,
     targetAddress,targetOffset⟩ := facts
   have compiledEq : compiled = Compiler.Backend.StackLang.Prog.seq

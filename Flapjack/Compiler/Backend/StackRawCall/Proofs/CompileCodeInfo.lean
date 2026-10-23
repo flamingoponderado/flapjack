@@ -50,11 +50,11 @@ theorem lookupCollectInfo {width : Nat} [NeZero width]
         rw [aListLookupNoneOfNotMem name code absent]
         simp [sptAListLookup, collectInfo]
       · cases frame : seqStackAlloc body with
-        | none => simp only [sptAListLookup, equal, if_false]
+        | none => simp only [sptAListLookup, equal, ite_false]
         | some size =>
             cases found : sptAListLookup key code with
             | none =>
-                simp only [found, sptAListLookup, equal, if_false,
+                simp only [found, sptAListLookup, equal, ite_false,
                   sptLookup_sptInsert_ne name key size rest equal]
             | some chosen =>
                 cases chosenFrame : seqStackAlloc chosen <;>

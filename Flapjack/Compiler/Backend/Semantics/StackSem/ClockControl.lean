@@ -84,17 +84,17 @@ theorem evaluateClockLoop {width : Nat} [NeZero width] {C F : Type}
   rw [bodyRun] at execution
   dsimp only at execution
   by_cases continues : contLoop firstResult = true
-  · rw [if_pos continues] at execution
+  · rw [ite_eq_left continues] at execution
     by_cases empty : middle.clock = 0
-    · rw [if_pos empty] at execution
+    · rw [ite_eq_left empty] at execution
       have same := (Prod.mk.inj execution).2
       subst post
       exact bound
-    · rw [if_neg empty] at execution
+    · rw [ite_eq_right empty] at execution
       have next := reentryIH firstResult middle bodyRun continues empty result post execution
       simp only [decClock] at next
       omega
-  · rw [if_neg continues] at execution
+  · rw [ite_eq_right continues] at execution
     have same := (Prod.mk.inj execution).2
     subst post
     exact bound

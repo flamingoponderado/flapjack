@@ -82,7 +82,7 @@ private theorem instBound {width : Nat} [NeZero width] (i : HolInst width)
   | fp f =>
       cases f
       all_goals by_cases hw : width = 64
-      all_goals simp only [wInstNative, hw, if_true, if_false,
+      all_goals simp only [wInstNative, hw, ite_true, ite_false,
         wRegWrite1Native, wRegWrite2Native, wReg1, wReg2, regBound, regBoundInst]
       all_goals try split_ifs
       all_goals try simp only [regBound, regBoundInst, List.append_nil,

@@ -32,7 +32,7 @@ theorem compileLab_some {width : Nat} [NeZero width] {asmConf : AsmConfigExact w
   unfold compileLab at h
   cases hc : c.ffiNames with
   | none =>
-    simp only [hc, if_true] at h
+    simp only [hc, ite_true] at h
     split at h
     · rename_i secs' l1 _
       simp only [Option.some.injEq, Prod.mk.injEq] at h

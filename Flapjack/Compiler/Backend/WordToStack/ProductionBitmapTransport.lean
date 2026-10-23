@@ -84,7 +84,7 @@ theorem allocator_stackColour (algorithm : RegAlloc.Algorithm)
   have physical : Flapjack.isPhyVar name = false := by
     simp [Flapjack.isPhyVar, Flapjack.isStackVar] at stacked ⊢
     omega
-  simp only [physical, Bool.false_eq_true, if_false, stacked, if_true] at bound
+  simp only [physical, Bool.false_eq_true, ite_false, stacked, ite_true] at bound
   have lookup := RegAlloc.tagDecoder_production colours name
   rw [spDefaultIndexed_corresponds] at lookup
   unfold CakeAlloc.totalColour
@@ -122,7 +122,7 @@ theorem stackColour_bitmapIndex (k slots colour : Nat) (stacked : 2 * k ≤ colo
       | .stack slot => some (slot - 1)
       | .register _ => none) = some (slots - 1 - (colour / 2 - k)) := by
   have bound : k ≤ colour / 2 := by omega
-  simp only [CakeRegAlloc.cakeColourLocation, Nat.not_lt.mpr bound, if_false]
+  simp only [CakeRegAlloc.cakeColourLocation, Nat.not_lt.mpr bound, ite_false]
   rw [physicalSlot_bitmapIndex]
 
 /-- Actual source-routed inputs discharge all forced-pair domain/bounds.
@@ -157,7 +157,7 @@ theorem sourceAllocator_stackColour {width : Nat} [NeZero width]
   have physical : Flapjack.isPhyVar name = false := by
     simp [Flapjack.isPhyVar, Flapjack.isStackVar] at stacked ⊢
     omega
-  simp only [physical, Bool.false_eq_true, if_false, stacked, if_true] at bound
+  simp only [physical, Bool.false_eq_true, ite_false, stacked, ite_true] at bound
   have lookup := RegAlloc.tagDecoder_production colours name
   rw [spDefaultIndexed_corresponds] at lookup
   unfold CakeAlloc.totalColour
@@ -198,7 +198,7 @@ theorem sourceAllocator_liveBitmap {width : Nat} [NeZero width]
         | _ => none) = some (index name) := by
     intro name member
     have lookup := cakeColourWordSpillState_lookup limit parameters program colours name
-    rw [if_pos (inputNames name member)] at lookup
+    rw [ite_eq_left (inputNames name member)] at lookup
     change (match lookupNatInfo name allocation.locations with
       | some (.stack slot) => some (slot - 1)
       | _ => none) = _

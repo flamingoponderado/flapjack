@@ -1431,7 +1431,7 @@ theorem evalCrepSemHOLProg_ite_true {width : Nat} [NeZero width] {σ : Type}
     evalCrepSemHOLProg state memDec shMemDec (.ite condition thenBranch elseBranch) =
       evalCrepSemHOLProg state memDec shMemDec thenBranch := by
   rw [evalCrepSemHOLProg_ite, hcondition]
-  exact if_pos hw
+  exact ite_eq_left hw
 
 /-- HOL `If` false branch: a zero `Word` condition evaluates the else-branch. -/
 theorem evalCrepSemHOLProg_ite_false {width : Nat} [NeZero width] {σ : Type}
@@ -1445,7 +1445,7 @@ theorem evalCrepSemHOLProg_ite_false {width : Nat} [NeZero width] {σ : Type}
     evalCrepSemHOLProg state memDec shMemDec (.ite condition thenBranch elseBranch) =
       evalCrepSemHOLProg state memDec shMemDec elseBranch := by
   rw [evalCrepSemHOLProg_ite, hcondition]
-  exact if_neg (by simp [hw])
+  exact ite_eq_right (by simp [hw])
 
 /-- HOL `evaluate (While e c, s)` (`crepSemScript.sml:311-323`): the loop-control
     `Continue 0`/`NONE` recurse on the clamped `dec_clock` state, `Break 0`
@@ -1489,7 +1489,7 @@ theorem evalCrepSemHOLProg_while_false {width : Nat} [NeZero width] {σ : Type}
     (hw : w = 0) :
     evalCrepSemHOLProg state memDec shMemDec (.while condition body) = (none, state) := by
   rw [evalCrepSemHOLProg_while, hcondition]
-  exact if_neg (by simp [hw])
+  exact ite_eq_right (by simp [hw])
 
 /-- HOL `While` clock exhaustion (`s.clock = 0` with a nonzero condition):
     `(SOME TimeOut, empty_locals s)`. -/
@@ -1503,7 +1503,7 @@ theorem evalCrepSemHOLProg_while_timeout {width : Nat} [NeZero width] {σ : Type
     evalCrepSemHOLProg state memDec shMemDec (.while condition body) =
       (some .timeOut, CrepSemHOLState.emptyLocals state) := by
   rw [evalCrepSemHOLProg_while, hcondition]
-  exact (if_pos hw).trans (dif_pos hclock)
+  exact (ite_eq_left hw).trans (dite_eq_left hclock)
 
 /-- HOL `evaluate (Break n, s)` (`crepSemScript.sml:309`). -/
 @[simp] theorem evalCrepSemHOLProg_break {width : Nat} [NeZero width] {σ : Type}
@@ -1853,7 +1853,7 @@ theorem evalCrepSemHOLProg_ite_ffi {width : Nat} [NeZero width] {σ : Type}
           simp only []
           by_cases hw : w = 0
           · simp [hw]
-          · rw [if_pos hw, if_pos hw]
+          · rw [ite_eq_left hw, ite_eq_left hw]
 
 /-- HOL `evaluate (Call caltyp fname argexps, s)` (`crepSemScript.sml:330-363`):
     evaluate the arguments, look up the code, require distinct formals, install
@@ -1970,7 +1970,7 @@ theorem evalCrepSemHOLProg_call_none_timeout {width : Nat} [NeZero width] {σ : 
     evalCrepSemHOLProg state memDec shMemDec (.call none function arguments) =
       (some .timeOut, CrepSemHOLState.emptyLocals state) := by
   rw [evalCrepSemHOLProg_call, hargs, hcode]
-  simp only [hlen, hnodup, decide_true, Bool.true_and, if_true, dif_pos hclock]
+  simp only [hlen, hnodup, decide_true, Bool.true_and, ite_true, dite_eq_left hclock]
 
 
 /-! ## FFI reduction for the FFI-producing clauses
@@ -3811,7 +3811,7 @@ theorem evalCrepSemHOLProgExact_while_unstamped {width : Nat} [NeZero width]
       | word w =>
           dsimp only
           by_cases hw : w ≠ 0
-          · simp only [if_pos hw]
+          · simp only [ite_eq_left hw]
             by_cases hclock : state.clock = 0
             · simp [hclock]
             ·
@@ -3851,7 +3851,7 @@ theorem evalCrepSemHOLProgExact_while_unstamped {width : Nat} [NeZero width]
                       | «return» _ => rfl
                       | exception _ => rfl
                       | finalFfi _ => rfl
-          · rw [if_neg hw, if_neg hw]
+          · rw [ite_eq_right hw, ite_eq_right hw]
 
 /-- Flapjack-specific unstamped no-decider restatement of HOL `If` at
 `crepSemScript.sml:304-308`. No separate HOL declaration exists for this
@@ -3893,8 +3893,8 @@ theorem evalCrepSemHOLProgExact_ite_unstamped {width : Nat} [NeZero width]
       | word w =>
           dsimp only
           by_cases hw : w ≠ 0
-          · simp only [if_pos hw, hThen]
-          · simp only [if_neg hw, hElse]
+          · simp only [ite_eq_left hw, hThen]
+          · simp only [ite_eq_right hw, hElse]
 
 /-- Flapjack-specific unstamped no-decider restatement of HOL
 `evaluate_def`'s `ShMem` clause at `crepSemScript.sml:292-303`. It evaluates
@@ -4894,7 +4894,7 @@ theorem fixClockCrepSemHOL_evalCrepSemHOLProgExact {width : Nat} [NeZero width] 
       rw [h] at hclock
       exact hclock
     simp only [fixClockCrepSemHOL]
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
 
 /-- Fix-clock-free `Seq` clause of HOL `evaluate_def` as rebound at
 `cakeml/pancake/semantics/crepSemScript.sml:443` (`evaluate_def =
@@ -5083,9 +5083,9 @@ theorem lookupCodeFiniteHOL_lookup {width : Nat} [NeZero width]
   rcases code.lookup fname with _ | ⟨parameters, body⟩
   · rfl
   · by_cases h : parameters.length = args.length ∧ parameters.Nodup
-    · simp only [if_pos h, Option.map_some]
+    · simp only [ite_eq_left h, Option.map_some]
       rfl
-    · simp only [if_neg h, Option.map_none]
+    · simp only [ite_eq_right h, Option.map_none]
 
 /-- The no-decider evaluator never changes `memaddrs`/`sh_memaddrs`, as HOL
     `evaluate` never updates them. -/
@@ -5173,7 +5173,7 @@ theorem evalCrepSemHOLProgExact_call_holShape {width : Nat} [NeZero width] {σ :
       by_cases hp : parameters.length = values.length ∧ parameters.Nodup
       · have hb : (decide (parameters.length = values.length) && decide parameters.Nodup) = true := by
           simpa using hp
-        rw [if_pos hb, if_pos hp]
+        rw [ite_eq_left hb, ite_eq_left hp]
         dsimp only
         rw [show ({ decClockCrepSemHOL state with
               locals := HolFiniteMapExact.empty.updateList (parameters.zip values) } :
@@ -5181,18 +5181,18 @@ theorem evalCrepSemHOLProgExact_call_holShape {width : Nat} [NeZero width] {σ :
             decClockCrepSemHOL { state with
               locals := HolFiniteMapExact.empty.updateList (parameters.zip values) } from rfl]
         rcases returnInfo with _ | ⟨rts, handler⟩
-        · simp only [crepReturnInfoNodupError, if_false]
+        · simp only [crepReturnInfoNodupError, ite_false]
           by_cases hc : state.clock = 0
-          · rw [dif_pos hc, if_pos hc]
-          · rw [dif_neg hc, if_neg hc]
+          · rw [dite_eq_left hc, ite_eq_left hc]
+          · rw [dite_eq_right hc, ite_eq_right hc]
             split <;> rename_i h <;> rw [h] <;> try rfl
             split <;> simp_all
         · simp only [crepReturnInfoNodupError]
           by_cases hn : rts.Nodup
-          · rw [if_pos hn, if_neg (not_not_intro hn)]
+          · rw [ite_eq_left hn, ite_eq_right (not_not_intro hn)]
             by_cases hc : state.clock = 0
-            · rw [dif_pos hc, if_pos hc]
-            · rw [dif_neg hc, if_neg hc]
+            · rw [dite_eq_left hc, ite_eq_left hc]
+            · rw [dite_eq_right hc, ite_eq_right hc]
               split <;> rename_i h <;> rw [h] <;> try rfl
               · rcases handler with _ | ⟨eid', p⟩
                 · rfl
@@ -5202,10 +5202,10 @@ theorem evalCrepSemHOLProgExact_call_holShape {width : Nat} [NeZero width] {σ :
                   rw [hd.1, hd.2]
                   rfl
               · split <;> simp_all
-          · rw [if_neg hn, if_pos hn]
+          · rw [ite_eq_right hn, ite_eq_left hn]
       · have hb : (decide (parameters.length = values.length) && decide parameters.Nodup) = false := by
           simpa using hp
-        simp only [hb, if_neg hp]
+        simp only [hb, ite_eq_right hp]
         rfl
 
 /-! ## HOL-shaped clause equations of the line-443 `evaluate_def` (bead `flapjack-4ac.5.16.5.36`) -/
@@ -5296,7 +5296,7 @@ theorem evalCrepSemHOLProgExact_shMem_holShape {width : Nat} [NeZero width] {σ 
   rcases evalCrepSemHOLExp state address with _ | ⟨⟨addr⟩⟩
   · rfl
   · cases operator <;>
-      simp only [crepIsLoadMemOp, if_true, Bool.false_eq_true, if_false] <;>
+      simp only [crepIsLoadMemOp, ite_true, Bool.false_eq_true, ite_false] <;>
       split <;> rename_i h <;> (try simp only [h]) <;> rfl
 
 open Classical in
@@ -5350,14 +5350,14 @@ theorem evalCrepSemHOLProgExact_while_holShape {width : Nat} [NeZero width]
   · rfl
   · dsimp only
     by_cases hw : w ≠ 0
-    · rw [if_pos hw, if_pos hw]
+    · rw [ite_eq_left hw, ite_eq_left hw]
       by_cases hc : state.clock = 0
-      · rw [dif_pos hc, if_pos hc]
-      · rw [dif_neg hc, if_neg hc]
+      · rw [dite_eq_left hc, ite_eq_left hc]
+      · rw [dite_eq_right hc, ite_eq_right hc]
         split <;> rename_i h <;> rw [h] <;> try rfl
         dsimp only
         split <;> simp_all
-    · rw [if_neg hw, if_neg hw]
+    · rw [ite_eq_right hw, ite_eq_right hw]
 
 open Classical in
 /-- HOL-shaped `Assign` clause (`crepSemScript.sml:260-266`) with the tagged
@@ -5437,14 +5437,14 @@ theorem evalCrepSemHOLProgExact_primitive_holShape {width : Nat} [NeZero width] 
             decide names.Nodup) = true := by
           simp only [Bool.and_eq_true, decide_eq_true_eq, List.all_eq_true]
           exact ⟨⟨h.1, h.2.1⟩, h.2.2⟩
-        rw [if_pos hb, if_pos h]
+        rw [ite_eq_left hb, ite_eq_left h]
       · have hb : ¬ (decide (names.length = results.length) &&
             names.all (fun v => (state.locals.lookup v).isSome) &&
             decide names.Nodup) = true := by
           simp only [Bool.and_eq_true, decide_eq_true_eq, List.all_eq_true]
           intro hh
           exact h ⟨hh.1.1, hh.1.2, hh.2⟩
-        rw [if_neg hb, if_neg h]
+        rw [ite_eq_right hb, ite_eq_right h]
 
 open Classical in
 /-- HOL-shaped `ExtCall` clause (`crepSemScript.sml:367-379`), with the tagged

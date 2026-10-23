@@ -181,14 +181,14 @@ theorem compCorrectStoreConsts {width : Nat} [NeZero width] {C F : Type}
   change 3 < pointer ∧ temporary < pointer ∧ bitmap < pointer at bound
   have notAlloc : source.useAlloc = false := relation.2.2.2.2.2.1
   rw [evaluate_storeConsts] at sourceRun
-  rw [if_neg (by simp [relation.2.1])] at sourceRun
+  rw [ite_eq_right (by simp [relation.2.1])] at sourceRun
   cases stub with
   | some label =>
     simp only [notAlloc, Bool.false_eq_true, not_false_eq_true,
-      Option.isSome_some, and_self, if_true] at sourceRun
+      Option.isSome_some, and_self, ite_true] at sourceRun
     exact False.elim (notError (Prod.mk.inj sourceRun).1.symm)
   | none =>
-    simp only [Option.isSome_none, Bool.false_eq_true, and_false, if_false,
+    simp only [Option.isSome_none, Bool.false_eq_true, and_false, ite_false,
       StackSemStoreConstsGuard.checkStoreConstsOpt, not_true_eq_false] at sourceRun
     unfold StackSemStoreConsts.storeConstSem at sourceRun
     split at sourceRun
@@ -205,7 +205,7 @@ theorem compCorrectStoreConsts {width : Nat} [NeZero width] {C F : Type}
         | some output =>
           rcases output with ⟨finalAddress, finalMemory⟩
           simp only [copySource] at sourceRun
-          rw [if_neg (by simp [notAlloc])] at sourceRun
+          rw [ite_eq_right (by simp [notAlloc])] at sourceRun
           simp only [id_eq] at sourceRun
           have loopDistinct : [1, 2, 3, temporary, bitmap].Nodup :=
             (List.nodup_cons.mp distinct).2

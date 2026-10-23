@@ -23,7 +23,7 @@ private theorem pushStack_bounded (node : Nat) {native : State} {production : Ca
       (cakePushStack node production) := by
   constructor
   · simp only [pushStack, Translator.Monadic.MonadBase.bind, getStack, ignoreBind,
-      updateDegreesEqn, if_pos degreeBound, updateMoveRelatedEqn, if_pos moveBound,
+      updateDegreesEqn, ite_eq_left degreeBound, updateMoveRelatedEqn, ite_eq_left moveBound,
       setStack]
   · have updated := (related.degree_write node 0 degreeBound).moveRelated_write
       node false moveBound

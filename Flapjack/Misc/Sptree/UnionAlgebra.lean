@@ -16,8 +16,8 @@ theorem sptInsert_union {α : Type} (key : Nat) (value : α) (tree : Spt α) :
         have recur := ih ((key - 1) / 2) smaller
         by_cases even : key % 2 = 0
         <;> cases tree
-        <;> (conv => lhs; rw [sptInsert]; simp only [zero, even, if_true, if_false])
-        <;> (conv => rhs; rw [sptInsert.eq_1]; simp only [zero, even, if_true, if_false])
+        <;> (conv => lhs; rw [sptInsert]; simp only [zero, even, ite_true, ite_false])
+        <;> (conv => rhs; rw [sptInsert.eq_1]; simp only [zero, even, ite_true, ite_false])
         <;> simp only [sptUnion, ← recur]
 
 /-- Literal associativity of the tree operation, including malformed trees

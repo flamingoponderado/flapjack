@@ -22,7 +22,7 @@ theorem instSelectExp_noLabels {width : Nat} [NeZero width]
         | (apply ih; simp_wf; omega)
         | simp_all +zetaDelta [extractLabels, isLookupCurrHeap]
         | split
-        | constructor
+        | constructor!
     case case3 =>
       rename_i child notAddress
       apply ih child
@@ -47,7 +47,7 @@ theorem instSelectExp_flatExpConventions {width : Nat} [NeZero width]
         | (apply ih; simp_wf; omega)
         | simp_all +zetaDelta [flatExpConventions, isLookupCurrHeap]
         | split
-        | constructor
+        | constructor!
     case case3 =>
       rename_i child notAddress
       apply ih child
@@ -82,7 +82,7 @@ theorem instSelectExp_fullInstOkLess {width : Nat} [NeZero width]
             HolInst.ofWordLangInst, HolArith.ofWordLangArith, HolRegImm.ofWordRegImm,
             instOkLessExact]
         | split
-        | constructor
+        | constructor!
     all_goals
       first
       | (apply ih

@@ -28,9 +28,9 @@ private theorem unitMembers (names : List Nat) (key : Nat) :
   have same := RegAlloc.stackOnlyCodec_production names key
   rw [stackNamesTree_lookup] at same
   by_cases member : key ∈ names
-  · simp only [member, if_true, Option.isSome_some] at same
+  · simp only [member, ite_true, Option.isSome_some] at same
     exact ⟨fun _ => member, fun _ => Std.TreeSet.contains_iff_mem.mp same⟩
-  · simp only [member, if_false, Option.isSome_none] at same
+  · simp only [member, ite_false, Option.isSome_none] at same
     exact ⟨fun h => by have yes := Std.TreeSet.contains_iff_mem.mpr h; rw [same] at yes; contradiction,
       fun h => False.elim (member h)⟩
 
@@ -45,7 +45,7 @@ theorem stackCache_insert (key : Nat) (names : List Nat) (seen : Std.TreeSet Nat
   unfold cakeStackOnlyInsert CakeAlloc.insertSet
   by_cases member : key ∈ names
   · simp [contains, member, valid]
-  · simp only [contains, decide_false, Bool.false_eq_true, if_false,
+  · simp only [contains, decide_false, Bool.false_eq_true, ite_false,
       List.contains_iff_mem, member]
     refine ⟨True.intro, ⟨List.nodup_cons.mpr ⟨member, valid.1⟩, ?_⟩⟩
     intro other

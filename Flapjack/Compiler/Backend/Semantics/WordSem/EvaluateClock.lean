@@ -260,7 +260,7 @@ theorem fix_clock_evaluate {width : Nat} [NeZero width] {C : Type} {F : Type}
   obtain ⟨res, s2⟩ := r
   unfold fixClock
   simp only at h1 h2 ⊢
-  rw [if_neg (by omega)]
+  rw [ite_eq_right (by omega)]
   cases s2
   simp only at h2 ⊢
   rw [h2]

@@ -28,7 +28,7 @@ private theorem spillRead {width : Nat} [NeZero width] {C F : Type}
     target.stack[target.stackSpace+(f-1-(x-k))]? = some value := by
   have placement := StateRelGetVar.stateRel_locals related (x*2) value read
   have half : x*2/2=x := by omega
-  rw [half, if_neg spilled] at placement
+  rw [half, ite_eq_right spilled] at placement
   rw [Nat.add_zero, List.getElem?_take, List.getElem?_drop] at placement
   split at placement
   · exact placement.2.1
@@ -158,7 +158,7 @@ theorem wMoveSingleThm {width : Nat} [NeZero width] {C F : Type}
   | some y =>
     by_cases physical : y<k
     · refine ⟨StackSemStateOps.setVar y value target,?_,?_,by simp,?_,rfl,rfl⟩
-      · simpa only [formatVar,if_pos physical] using readToRegister x y value related read
+      · simpa only [formatVar,ite_eq_left physical] using readToRegister x y value related read
       · simpa only [Nat.mul_comm] using StateRelRegisterUpdate.stateRelSetVar y value related physical
       · intro _
         simp [StackSemStateOps.getVar,StackSemStateOps.setVar,HolFiniteMapExact.updateEq,FUPDATE_HOL,
@@ -167,14 +167,14 @@ theorem wMoveSingleThm {width : Nat} [NeZero width] {C F : Type}
       | none =>
         obtain ⟨post,run,relation,scratch,len,space⟩ := storeToSlot (k+1) value related physical bound read
         refine ⟨post,?_,relation,by simp,fun _ => scratch,len,space⟩
-        simpa only [formatVar,if_neg physical,wMoveSingleNative] using run
+        simpa only [formatVar,ite_eq_right physical,wMoveSingleNative] using run
       | some x =>
         by_cases sourcePhysical : x<k
         · have actualRead := StateRelGetVar.stateRelGetVarImp ac k f frame source target lens 0 x value
             ⟨related,by simpa [SourceRead,Nat.mul_comm] using read,sourcePhysical⟩
           obtain ⟨post,run,relation,scratch,len,space⟩ := storeToSlot x value related physical bound actualRead
           refine ⟨post,?_,relation,by simp,fun _ => scratch,len,space⟩
-          simpa only [formatVar,if_neg physical,if_pos sourcePhysical,wMoveSingleNative] using run
+          simpa only [formatVar,ite_eq_right physical,ite_eq_left sourcePhysical,wMoveSingleNative] using run
         · let loaded := StackSemStateOps.setVar k value target
           have loadedRel := CallDest.stateRel_setVar_of_ge k (Nat.le_refl _) value related
           have loadedRead : StackSemStateOps.getVar k loaded=some value := by
@@ -182,8 +182,8 @@ theorem wMoveSingleThm {width : Nat} [NeZero width] {C F : Type}
           obtain ⟨post,run,relation,scratch,len,space⟩ := storeToSlot k value loadedRel physical bound loadedRead
           refine ⟨post,?_,relation,by simp,?_,len,space⟩
           · have loadRun := readToRegister (some x) k value related read
-            simp only [formatVar,if_neg sourcePhysical,wMoveSingleNative] at loadRun
-            simp only [formatVar,if_neg physical,if_neg sourcePhysical,wMoveSingleNative,
+            simp only [formatVar,ite_eq_right sourcePhysical,wMoveSingleNative] at loadRun
+            simp only [formatVar,ite_eq_right physical,ite_eq_right sourcePhysical,wMoveSingleNative,
               StackSemEvaluate.evaluate_seq,loadRun]
             simpa [StackSemControl.fixClock,StackSemStateOps.setVar,loaded] using run
           · intro _

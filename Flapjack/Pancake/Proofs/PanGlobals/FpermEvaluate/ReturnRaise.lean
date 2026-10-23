@@ -52,11 +52,11 @@ theorem evaluateFperm_Return {width : Nat} {σ : Type} [NeZero width]
             (run.1, { run.2 with code := fpermCodeHOL f g run.2.code })) heval
     | some value =>
         by_cases hs : sizeOfShapeWithContextHOL state.structs (shapeOfHOLExact value) ≤ 32
-        · simp only [hv, if_pos hs] at heval ⊢
+        · simp only [hv, ite_eq_left hs] at heval ⊢
           simpa only [Prod.fst, Prod.snd, emptyLocalsHOLFinite] using congrArg
             (fun (run : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ) =>
               (run.1, { run.2 with code := fpermCodeHOL f g run.2.code })) heval
-        · simp only [hv, if_neg hs] at heval ⊢
+        · simp only [hv, ite_eq_right hs] at heval ⊢
           simpa only [Prod.fst, Prod.snd] using congrArg
             (fun (run : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ) =>
               (run.1, { run.2 with code := fpermCodeHOL f g run.2.code })) heval
@@ -107,11 +107,11 @@ theorem evaluateFperm_Raise {width : Nat} {σ : Type} [NeZero width]
         | some value =>
             by_cases hc : shapeOfHOLExact value = shape ∧
               sizeOfShapeWithContextHOL state.structs (shapeOfHOLExact value) ≤ 32
-            · simp only [hshape, hv, if_pos hc] at heval ⊢
+            · simp only [hshape, hv, ite_eq_left hc] at heval ⊢
               simpa only [Prod.fst, Prod.snd, emptyLocalsHOLFinite] using congrArg
                 (fun (run : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ) =>
                   (run.1, { run.2 with code := fpermCodeHOL f g run.2.code })) heval
-            · simp only [hshape, hv, if_neg hc] at heval ⊢
+            · simp only [hshape, hv, ite_eq_right hc] at heval ⊢
               simpa only [Prod.fst, Prod.snd] using congrArg
                 (fun (run : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ) =>
                   (run.1, { run.2 with code := fpermCodeHOL f g run.2.code })) heval

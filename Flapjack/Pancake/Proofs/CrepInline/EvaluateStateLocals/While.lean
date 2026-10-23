@@ -57,15 +57,15 @@ theorem whileStrongGoal {width : Nat} [NeZero width] {σ : Type}
       have hclass : crepExactEvalExpClassical s e = some (.word w) := by
         simpa only [crepExactEvalExpClassical_eq, crepExactEvalExp_eq_eval] using hcond
       by_cases hw : w ≠ 0
-      · rw [if_pos hw] at hev ⊢
+      · rw [ite_eq_left hw] at hev ⊢
         by_cases hc : s.clock = 0
-        · rw [if_pos hc] at hev
-          rw [if_pos (hclock ▸ hc)]
+        · rw [ite_eq_left hc] at hev
+          rw [ite_eq_left (hclock ▸ hc)]
           obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
           obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10⟩ := hrel
           exact ⟨_, rfl, ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10⟩, trivial⟩
-        · rw [if_neg hc] at hev
-          rw [if_neg (hclock ▸ hc)]
+        · rw [ite_eq_right hc] at hev
+          rw [ite_eq_right (hclock ▸ hc)]
           rcases hb : evalCrepSemHOLProgExact (decClockCrepSemHOL s) c with ⟨r0, s1⟩
           rw [hb] at hev
           dsimp only at hev
@@ -141,7 +141,7 @@ theorem whileStrongGoal {width : Nat} [NeZero width] {σ : Type}
           · simp only [exitLoopCrepResult] at hev ⊢
             obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
             exact ⟨_, rfl, hrel1, trivial⟩
-      · rw [if_neg hw] at hev ⊢
+      · rw [ite_eq_right hw] at hev ⊢
         obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
         exact ⟨_, rfl, hrel, hloc, rfl⟩
 

@@ -92,7 +92,7 @@ theorem nativeCleanupSuffix_evaluation {width : Nat} [NeZero width] {C F : Type}
   have twoFlat := WordConvs.threeToTwoRegProg_flatExpConventions false _ copyFlat
   have twoRun : evaluate (threeToTwoRegProg false (copyProp native)) state =
       (result, finalState) := by
-    simpa only [threeToTwoRegProg, Bool.false_eq_true, if_false] using copyRun
+    simpa only [threeToTwoRegProg, Bool.false_eq_true, ite_false] using copyRun
   -- unreach: actual output and its literal re-encoding
   obtain ⟨unreached, unreachRouted, unreachEncoded⟩ :=
     executedUnreach_literalImage _ _ twoEncoded

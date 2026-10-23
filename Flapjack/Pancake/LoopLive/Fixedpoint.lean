@@ -73,15 +73,15 @@ theorem fixedpoint_thm {width : Nat} [NeZero width] :
     rw [hs] at h
     simp only at h
     by_cases heq : sptInter live_in l0' = l1
-    · rw [if_pos heq, Option.some.injEq, Prod.mk.injEq] at h
+    · rw [ite_eq_left heq, Option.some.injEq, Prod.mk.injEq] at h
       obtain ⟨rfl, rfl⟩ := h
       have hidem : sptInter live_in l1 = l1 := by
         rw [← heq]; exact sptInter_idem_left live_in l0'
       rw [heq, ← hidem, hs]
-    · rw [if_neg heq] at h
+    · rw [ite_eq_right heq] at h
       by_cases hle : sptSize (sptInter live_in l0') ≤ sptSize l1
-      · rw [dif_pos hle] at h; cases h
-      · rw [dif_neg hle] at h
+      · rw [dite_eq_left hle] at h; cases h
+      · rw [dite_eq_right hle] at h
         have hb := sptSize_inter_le live_in l0'
         exact ih (sptSize live_in - sptSize (sptInter live_in l0')) (by omega) _ rfl l0 b h
 

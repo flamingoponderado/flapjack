@@ -73,12 +73,12 @@ theorem wordCseMemory_production_transport {width : Nat} [NeZero width]
   rw [executedMemoryInst_cse_eq]
   simp only [wordCseInst]
   cases store : isStore operator
-  · simp only [Bool.false_eq_true, if_false]
+  · simp only [Bool.false_eq_true, ite_false]
     have invalidRelated := invalidateData_transport native executed related destination
     by_cases guarded : destination % 2 = 0 ∨ address % 2 = 0 ∨ address = destination
-    · simp only [guarded, if_pos]
+    · simp only [guarded, ite_eq_left]
       exact ⟨invalidRelated, memoryProgram_codec operator destination address offset⟩
-    · simp only [guarded, if_false]
+    · simp only [guarded, ite_false]
       have canonical := canonicalRegsAvoid_transport _ _ invalidRelated destination address
       rw [← canonical]
       have registered := registerRead_transport _ _ invalidRelated
@@ -91,7 +91,7 @@ theorem wordCseMemory_production_transport {width : Nat} [NeZero width]
         (loadToNumList operator (canonicalRegs' destination (invalidateData native destination) address) offset)
         _ _ (memoryProgram_codec operator destination address offset)
       exact ⟨output.1, output.2.2⟩
-  · simp only [if_true]
+  · simp only [ite_true]
     exact ⟨wipeLoads_production_transport native executed related,
       memoryProgram_codec operator destination address offset⟩
 

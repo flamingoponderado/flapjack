@@ -44,7 +44,7 @@ theorem panGetByteHOL_eq_riscvGetByteHOL {width : Nat} [NeZero width]
     (address value : RiscV.Word width) (bigEndian : Bool) :
     panGetByteHOL address value bigEndian = riscvGetByteHOL bigEndian address value := by
   cases bigEndian <;>
-    simp only [panGetByteHOL, riscvGetByteHOL, if_true, if_false, Bool.false_eq_true,
+    simp only [panGetByteHOL, riscvGetByteHOL, ite_true, ite_false, Bool.false_eq_true,
       BitVec.toNat_ushiftRight, Nat.shiftRight_eq_div_pow, pow256_eq_two_pow_mul]
 
 /-- Bit index (within a word) of the byte selected by `address`; shared by the
@@ -61,7 +61,7 @@ private theorem byteBitIndex_add_eight_le {width : Nat} [NeZero width]
   have hle : 8 * (width / 8) ≤ width := by
     rw [Nat.mul_comm]; exact Nat.div_mul_le_self width 8
   cases bigEndian <;>
-    simp only [byteBitIndex, Bool.false_eq_true, if_true, if_false] <;>
+    simp only [byteBitIndex, Bool.false_eq_true, ite_true, ite_false] <;>
     omega
 
 /-- Boundedness of the three disjoint byte slices: the preserved low slice, the
@@ -122,11 +122,11 @@ theorem panSetByteHOL_toNat {width : Nat} [NeZero width] (h8 : 8 ≤ width)
       byteBitIndex_add_eight_le h8 address false
     have hoff : (256 : Nat) ^ (address.toNat % (width / 8)) = 2 ^ byteBitIndex address false := by
       rw [pow256_eq_two_pow_mul]
-      simp only [byteBitIndex, Bool.false_eq_true, if_false]
+      simp only [byteBitIndex, Bool.false_eq_true, ite_false]
     have hmod := byteSetBound value.toNat byte.toNat (byteBitIndex address false) width
       hb8 value.isLt hK8
     unfold panSetByteHOL
-    simp only [Bool.false_eq_true, if_false, BitVec.toNat_ofNat]
+    simp only [Bool.false_eq_true, ite_false, BitVec.toNat_ofNat]
     rw [hoff, hbyte, show 2 ^ byteBitIndex address false * 256 =
         2 ^ (byteBitIndex address false + 8) from by
       rw [show (256 : Nat) = 2 ^ 8 from by decide, ← Nat.pow_add]]
@@ -137,12 +137,12 @@ theorem panSetByteHOL_toNat {width : Nat} [NeZero width] (h8 : 8 ≤ width)
     have hoff : (256 : Nat) ^ (width / 8 - address.toNat % (width / 8) - 1) =
         2 ^ byteBitIndex address true := by
       rw [pow256_eq_two_pow_mul]
-      simp only [byteBitIndex, if_true]
+      simp only [byteBitIndex, ite_true]
       rw [Nat.sub_right_comm]
     have hmod := byteSetBound value.toNat byte.toNat (byteBitIndex address true) width
       hb8 value.isLt hK8
     unfold panSetByteHOL
-    simp only [if_true, BitVec.toNat_ofNat]
+    simp only [ite_true, BitVec.toNat_ofNat]
     rw [hoff, hbyte, show 2 ^ byteBitIndex address true * 256 =
         2 ^ (byteBitIndex address true + 8) from by
       rw [show (256 : Nat) = 2 ^ 8 from by decide, ← Nat.pow_add]]
@@ -163,15 +163,15 @@ private theorem getLsbD_mask_or_shift {width : Nat} (value : BitVec width) (byte
   by_cases h1 : i < K
   · have h2 : i < K + 8 := by omega
     simp [h1, h2, hi]
-  · rw [if_neg h1]
+  · rw [ite_eq_right h1]
     by_cases h2 : i < K + 8
-    · rw [if_pos h2]
+    · rw [ite_eq_left h2]
       have h8 : i - K < 8 := by omega
       have hwK : i - K < width := by omega
       have h255 : (2 ^ 8 - 1).testBit (i - K) = true := by
         rw [Nat.testBit_two_pow_sub_one]; simp [h8]
       simp [h1, h2, h8, hwK, hi, h255, Nat.add_zero]
-    · rw [if_neg h2]
+    · rw [ite_eq_right h2]
       have hj : 8 ≤ i - K := by omega
       have h8 : ¬ i - K < 8 := by omega
       have hb : byte.toNat.testBit (i - K) = false :=
@@ -196,13 +196,13 @@ private theorem getLsbD_holFinite {width : Nat} (value : BitVec width) (byte : U
   by_cases h1 : i < K
   · have h2 : i < K + 8 := by omega
     simp [h1, h2, hi]
-  · rw [if_neg h1]
+  · rw [ite_eq_right h1]
     by_cases h2 : i < K + 8
-    · rw [if_pos h2]
+    · rw [ite_eq_left h2]
       have h8 : i - K < 8 := by omega
       have hwK : i - K < width := by omega
       simp [h1, h2, h8, hwK, hi, Nat.add_zero]
-    · rw [if_neg h2]
+    · rw [ite_eq_right h2]
       have hj : 8 ≤ i - K := by omega
       have h8 : ¬ i - K < 8 := by omega
       have hb : byte.toNat.testBit (i - K) = false :=

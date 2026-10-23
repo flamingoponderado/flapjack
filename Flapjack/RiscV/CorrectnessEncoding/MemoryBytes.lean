@@ -227,7 +227,7 @@ theorem memory_raw_read_low_byte (p : BitVec 64) (s : riscv_state) :
         ((RiscV.L3.holWordExtract 3 2 0 p).toNat * 8 + j) =
       (MEM (RiscV.L3.holWordExtract 61 63 3 p) s).getLsbD
         ((RiscV.L3.holWordExtract 3 2 0 p).toNat * 8 + j)
-    rw [BitVec.getLsbD_append, if_pos sumBound]
+    rw [BitVec.getLsbD_append, ite_eq_left sumBound]
 
 
 /-- Actual native LBU loads the addressed byte under only original RV64 validity.
@@ -264,7 +264,7 @@ theorem memory_raw_read_within_word (p : BitVec 64) (s : riscv_state)
         ((RiscV.L3.holWordExtract 3 2 0 p).toNat * 8 + j) =
       (MEM (RiscV.L3.holWordExtract 61 63 3 p) s).getLsbD
         ((RiscV.L3.holWordExtract 3 2 0 p).toNat * 8 + j)
-    rw [BitVec.getLsbD_append, if_pos sumBound]
+    rw [BitVec.getLsbD_append, ite_eq_left sumBound]
 
 /-- Original byte/half/word/double alignment supplies the within-word bound.
 No independent range assumption is imposed on a source memory instruction. -/
@@ -352,7 +352,7 @@ theorem memory_store_word_byte (old v : BitVec 64) (offset n : Nat) (i : Fin 8) 
         v.extractLsb' ((i.val - offset) * 8) 8
       else old.extractLsb' (i.val * 8) 8 := by
   by_cases selected : offset ≤ i.val ∧ i.val < offset + n
-  · rw [if_pos selected]
+  · rw [ite_eq_left selected]
     apply BitVec.eq_of_getLsbD_eq
     intro j hj
     have bound : i.val * 8 + j < 64 := by omega
@@ -360,15 +360,15 @@ theorem memory_store_word_byte (old v : BitVec 64) (offset n : Nat) (i : Fin 8) 
     have difference : i.val * 8 + j - offset * 8 = (i.val - offset) * 8 + j := by omega
     simp only [BitVec.getLsbD_extractLsb']
     rw [memory_store_word_bit old v (n * 8) (offset * 8) (i.val * 8 + j) bound,
-      if_pos region, difference]
-  · rw [if_neg selected]
+      ite_eq_left region, difference]
+  · rw [ite_eq_right selected]
     apply BitVec.eq_of_getLsbD_eq
     intro j hj
     have bound : i.val * 8 + j < 64 := by omega
     have region : ¬(offset * 8 ≤ i.val * 8 + j ∧ i.val * 8 + j < offset * 8 + n * 8) := by omega
     simp only [BitVec.getLsbD_extractLsb']
     rw [memory_store_word_bit old v (n * 8) (offset * 8) (i.val * 8 + j) bound,
-      if_neg region]
+      ite_eq_right region]
 
 /-- Actual raw partial-store byte effect at every byte in the native word.
 Untouched bytes retain MEM8, rather than being discarded with the word update. -/
@@ -387,8 +387,8 @@ theorem memory_raw_write_within_byte (p v : BitVec 64) (s : riscv_state)
   rw [memory_write_word_byte, memory_extract_offset8, memory_store_word_byte]
   by_cases selected : (RiscV.L3.holWordExtract 3 2 0 p).toNat ≤ i.val ∧
       i.val < (RiscV.L3.holWordExtract 3 2 0 p).toNat + n
-  · simp only [if_pos selected]
-  · rw [if_neg selected, if_neg selected, ← memory_extract_offset8,
+  · simp only [ite_eq_left selected]
+  · rw [ite_eq_right selected, ite_eq_right selected, ← memory_extract_offset8,
       memory_read_word_byte]
 
 /-- Actual partial raw store preserves all bytes outside its native word. -/
@@ -430,7 +430,7 @@ theorem memory_raw_write_region_frame (p v : BitVec 64) (s : riscv_state)
         congr 2
         omega
       exact outside (i - (RiscV.L3.holWordExtract 3 2 0 p).toNat) (by omega) address
-    simp only [index, if_neg unselected] at byte
+    simp only [index, ite_eq_right unselected] at byte
     rw [← hx] at byte
     exact byte
   · apply memory_raw_write_within_frame p v s n within x
@@ -454,7 +454,7 @@ theorem memory_raw_write_selected_byte (p v : BitVec 64) (s : riscv_state)
   rw [low, BitVec.add_assoc, ← BitVec.ofNat_add] at address
   have region : (RiscV.L3.holWordExtract 3 2 0 p).toNat ≤ i.val ∧
       i.val < (RiscV.L3.holWordExtract 3 2 0 p).toNat + n := by dsimp [i]; omega
-  rw [if_pos region] at byte
+  rw [ite_eq_left region] at byte
   dsimp only [i] at byte
   rw [address] at byte
   simpa using byte
@@ -501,7 +501,7 @@ theorem memory_raw_read_selected_byte (p : BitVec 64) (s : riscv_state)
         ((RiscV.L3.holWordExtract 3 2 0 p).toNat * 8 + (j * 8 + b)) =
       (MEM (RiscV.L3.holWordExtract 61 63 3 p) s).getLsbD
         (((RiscV.L3.holWordExtract 3 2 0 p).toNat + j) * 8 + b)
-    rw [BitVec.getLsbD_append, if_pos indexBound]
+    rw [BitVec.getLsbD_append, ite_eq_left indexBound]
     congr 1
     omega
 

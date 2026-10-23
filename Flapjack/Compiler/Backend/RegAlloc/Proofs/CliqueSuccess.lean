@@ -78,7 +78,7 @@ theorem extendCliqueSucceeds :
       have hxs : ∀ y ∈ xs, y < s.dim := fun y hy => hb y (List.mem_cons_of_mem _ hy)
       by_cases hm : x ∈ cli
       · obtain ⟨cli', s', hr, hg', hd', hs', hset, hc', hsub⟩ := ih cli s ⟨hg, hc, hxs, hd, hcb⟩
-        refine ⟨cli', s', by simp only [extendClique, if_pos hm]; exact hr, hg', hd', hs', ?_,
+        refine ⟨cli', s', by simp only [extendClique, ite_eq_left hm]; exact hr, hg', hd', hs', ?_,
           hc', hsub⟩
         rw [hset]
         funext y
@@ -110,7 +110,7 @@ theorem extendCliqueSucceeds :
           ⟨_, hs'⟩
         refine ⟨cli', _, ?_, hg', hd', rfl, ?_, hc',
           fun a b h => hsub a b ((he1 a b).2 (Or.inr (Or.inr h)))⟩
-        · simp only [extendClique, if_neg hm, ignoreBind, h1]
+        · simp only [extendClique, ite_eq_right hm, ignoreBind, h1]
           exact hr
         · rw [hset]
           funext y
@@ -423,23 +423,23 @@ theorem mkTagsStExForeachLem (fs : NumSet) :
             simp only [isStackVar, decide_eq_false_iff_not]; omega
           cases hlk : sptLookup (fa h) fs with
           | none =>
-              exact ⟨.Atemp, by simp only [if_pos h1, updateNodeTagEqn, if_pos hl],
+              exact ⟨.Atemp, by simp only [ite_eq_left h1, updateNodeTagEqn, ite_eq_left hl],
                 by simp only [hp, hs, Bool.false_eq_true, ↓reduceIte, true_or]⟩
           | some u =>
               cases u
-              exact ⟨.Stemp, by simp only [if_pos h1, updateNodeTagEqn, if_pos hl],
+              exact ⟨.Stemp, by simp only [ite_eq_left h1, updateNodeTagEqn, ite_eq_left hl],
                 by simp only [hp, hs, Bool.false_eq_true, ↓reduceIte, or_true]⟩
         · by_cases h3 : fa h % 4 = 3
           · have hp : isPhyVar (fa h) = false := by
               simp only [isPhyVar, decide_eq_false_iff_not]; omega
             have hs : isStackVar (fa h) = true := by
               simp only [isStackVar, decide_eq_true_eq]; omega
-            exact ⟨.Stemp, by simp only [if_neg h1, if_pos h3, updateNodeTagEqn, if_pos hl],
+            exact ⟨.Stemp, by simp only [ite_eq_right h1, ite_eq_left h3, updateNodeTagEqn, ite_eq_left hl],
               by simp only [hp, hs, Bool.false_eq_true, ↓reduceIte]⟩
           · have hp : isPhyVar (fa h) = true := by
               simp only [isPhyVar, decide_eq_true_eq]; omega
-            exact ⟨.Fixed (fa h / 2), by simp only [if_neg h1, if_neg h3, updateNodeTagEqn,
-              if_pos hl], by simp only [hp, ↓reduceIte]⟩
+            exact ⟨.Fixed (fa h / 2), by simp only [ite_eq_right h1, ite_eq_right h3, updateNodeTagEqn,
+              ite_eq_left hl], by simp only [hp, ↓reduceIte]⟩
       have hg1 : goodRaState { s with node_tag := s.node_tag.set h tg } := by
         obtain ⟨g1, g2, g3, g4, g5, g6, g7, g8, g9, g10, g11, g12, g13, g14⟩ := hg
         exact ⟨g1, (List.length_set ..).trans g2, g3, g4, g5, g6, g7, g8, g9, g10, g11, g12, g13,
@@ -452,20 +452,20 @@ theorem mkTagsStExForeachLem (fs : NumSet) :
         exact h2
       have hx2 := hx2 x hx
       by_cases ht : x ∈ t
-      · rw [if_pos ht] at hx2
-        rw [if_pos (List.mem_cons_of_mem _ ht)]
+      · rw [ite_eq_left ht] at hx2
+        rw [ite_eq_left (List.mem_cons_of_mem _ ht)]
         exact hx2
-      · rw [if_neg ht] at hx2
+      · rw [ite_eq_right ht] at hx2
         change holEl x T2 = holEl x (s.node_tag.set h tg) at hx2
         rw [holEl_set _ _ _ _ hl] at hx2
         by_cases hxh : x = h
         · subst hxh
-          rw [if_pos List.mem_cons_self, hx2, if_pos rfl]
+          rw [ite_eq_left List.mem_cons_self, hx2, ite_eq_left rfl]
           exact htg
-        · rw [if_neg (fun hm => by
+        · rw [ite_eq_right (fun hm => by
             rcases List.mem_cons.mp hm with hm | hm
             · exact hxh hm
-            · exact ht hm), hx2, if_neg (Ne.symm hxh)]
+            · exact ht hm), hx2, ite_eq_right (Ne.symm hxh)]
 
 /-- Exact HOL `mk_tags_succeeds` (`reg_allocProofScript.sml:2009-2028`); `s`, `n`, `fs` and
 `fa` are free in HOL, and `GENLIST (λx. x) n` is `List.range n` in the tagged `mkTags`. -/
@@ -487,7 +487,7 @@ theorem mkTagsSucceeds (s : State) (n : Nat) (fs : NumSet) (fa : Nat → Nat) :
     exact h
   · subst hy
     have := hx x hx'
-    rw [if_pos (List.mem_range.mpr hx')] at this
+    rw [ite_eq_left (List.mem_range.mpr hx')] at this
     exact this
 
 end Flapjack.RegAlloc

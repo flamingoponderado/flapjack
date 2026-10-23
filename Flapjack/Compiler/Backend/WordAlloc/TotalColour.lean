@@ -22,7 +22,7 @@ theorem totalColourAlt (col : Spt Nat) : totalColour col = (fun x => 2 * x) ∘ 
   | some v => rfl
   | none =>
     by_cases h : isPhyVar x = true
-    · simp only [h, if_true]
+    · simp only [h, ite_true]
       simp [isPhyVar] at h
       omega
     · simp [h]

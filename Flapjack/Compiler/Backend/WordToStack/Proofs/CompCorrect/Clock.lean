@@ -86,7 +86,7 @@ theorem compCorrectTick {width : Nat} [NeZero width] {C F : Type}
     refine ⟨0, StackSemStateOps.emptyEnv target, some .timeOut, ?_, ?_⟩
     · change StackSemEvaluate.evaluate (.tick, target) =
         (some .timeOut, StackSemStateOps.emptyEnv target)
-      rw [StackSemEvaluate.evaluate_tick, if_pos (clocks.symm.trans zero)]
+      rw [StackSemEvaluate.evaluate_tick, ite_eq_left (clocks.symm.trans zero)]
     · simp only [compCorrectResult, Option.map_some, compileResult, ne_eq,
         not_true_eq_false, ↓reduceIte]
       exact ⟨related.2.2.2.1.symm, clocks⟩
@@ -98,7 +98,7 @@ theorem compCorrectTick {width : Nat} [NeZero width] {C F : Type}
     · change StackSemEvaluate.evaluate (.tick, target) =
         (none, StackSemStateOps.decClock target)
       have targetNonzero : target.clock ≠ 0 := fun h => zero (clocks.trans h)
-      rw [StackSemEvaluate.evaluate_tick, if_neg targetNonzero]
+      rw [StackSemEvaluate.evaluate_tick, ite_eq_right targetNonzero]
     · simp only [compCorrectResult, Option.map_none, ne_eq, not_true_eq_false, ↓reduceIte]
       exact stateRelDecClock ac k f frame source target lens 0 related
 

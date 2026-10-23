@@ -25,7 +25,7 @@ theorem submap_fupdateListHOL {α β : Type} [DecidableEq α] :
       simp only [FUPDATE_HOL] at hk ⊢
       by_cases hke : k = e.1
       · simp_all
-      · simp only [hke, if_false] at hk ⊢; exact h k v hk
+      · simp only [hke, ite_false] at hk ⊢; exact h k v hk
 
 /-- Local support: `|++` over keys already in the domain keeps the domain. -/
 theorem dom_fupdateListHOL {α β : Type} [DecidableEq α] :
@@ -43,7 +43,7 @@ theorem dom_fupdateListHOL {α β : Type} [DecidableEq α] :
       · simp only [FUPDATE_HOL]
         by_cases hke : e'.1 = e.1
         · simp [hke]
-        · simp only [hke, if_false]; exact h e' (List.mem_cons_of_mem _ he')
+        · simp only [hke, ite_false]; exact h e' (List.mem_cons_of_mem _ he')
 
 open Classical in
 /-- Exact HOL `SUBMAP_IMP_FUPDATE_LIST_SUBMAP` (`crep_inlineProofScript.sml:143-145`):

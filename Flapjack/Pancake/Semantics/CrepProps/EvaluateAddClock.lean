@@ -333,10 +333,10 @@ theorem evalCrepSemHOLProgExact_add_clock_eq {width : Nat} [NeZero width] {σ : 
               simp only [hprim] at heval ⊢
               by_cases hcond : ((decide (lhss.length = results.length) &&
                   lhss.all (fun v => (s.locals.lookup v).isSome)) && decide lhss.Nodup) = true
-              · rw [if_pos hcond] at heval ⊢
+              · rw [ite_eq_left hcond] at heval ⊢
                 obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
                 rfl
-              · rw [if_neg hcond] at heval ⊢
+              · rw [ite_eq_right hcond] at heval ⊢
                 obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
                 rfl
     · intro v src s res st ck heval hnt
@@ -473,7 +473,7 @@ theorem evalCrepSemHOLProgExact_add_clock_eq {width : Nat} [NeZero width] {σ : 
           | word addressValue =>
               simp only [haddr] at heval ⊢
               by_cases hload : crepIsLoadMemOp operator
-              · simp only [if_pos hload] at heval ⊢
+              · simp only [ite_eq_left hload] at heval ⊢
                 cases hlook : s.locals.lookup name with
                 | none =>
                     simp only [hlook] at heval ⊢
@@ -489,7 +489,7 @@ theorem evalCrepSemHOLProgExact_add_clock_eq {width : Nat} [NeZero width] {σ : 
                         rw [Prod.mk.injEq] at heval ⊢
                         obtain ⟨hr, hs⟩ := heval
                         exact ⟨hr, by subst hs; rfl⟩
-              · simp only [if_neg hload] at heval ⊢
+              · simp only [ite_eq_right hload] at heval ⊢
                 cases hlook : s.locals.lookup name with
                 | none =>
                     simp only [hlook] at heval ⊢
@@ -540,13 +540,13 @@ theorem evalCrepSemHOLProgExact_add_clock_eq {width : Nat} [NeZero width] {σ : 
           cases cv with
           | word w =>
               by_cases hw : w ≠ 0
-              · simp only [hcond, if_pos hw] at heval ⊢
+              · simp only [hcond, ite_eq_left hw] at heval ⊢
                 have hP := ih (.word w) w hcond rfl
-                rw [if_pos hw] at hP
+                rw [ite_eq_left hw] at hP
                 exact hP res st ck heval hnt
-              · simp only [hcond, if_neg hw] at heval ⊢
+              · simp only [hcond, ite_eq_right hw] at heval ⊢
                 have hP := ih (.word w) w hcond rfl
-                rw [if_neg hw] at hP
+                rw [ite_eq_right hw] at hP
                 exact hP res st ck heval hnt
     · intro n s res st ck heval hnt
       rw [evalCrepSemHOLProgExact_break] at heval
@@ -569,12 +569,12 @@ theorem evalCrepSemHOLProgExact_add_clock_eq {width : Nat} [NeZero width] {σ : 
           | word w =>
               by_cases hw : w ≠ 0
               · by_cases hclk : s.clock = 0
-                · simp only [hcond, if_pos hw, dif_pos hclk] at heval
+                · simp only [hcond, ite_eq_left hw, dite_eq_left hclk] at heval
                   obtain ⟨hr, _⟩ := Prod.mk.inj heval
                   exact absurd hr.symm hnt
-                · simp only [hcond, if_pos hw] at heval ⊢
-                  rw [dif_neg hclk] at heval
-                  rw [dif_neg (by change s.clock + ck ≠ 0; omega)]
+                · simp only [hcond, ite_eq_left hw] at heval ⊢
+                  rw [dite_eq_right hclk] at heval
+                  rw [dite_eq_right (by change s.clock + ck ≠ 0; omega)]
                   conv =>
                     lhs
                     rw [decClockCrepSemHOL_addClock s ck hclk]
@@ -626,7 +626,7 @@ theorem evalCrepSemHOLProgExact_add_clock_eq {width : Nat} [NeZero width] {σ : 
                           | finalFfi ev =>
                               obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
                               rfl
-              · simp only [hcond, if_neg hw] at heval ⊢
+              · simp only [hcond, ite_eq_right hw] at heval ⊢
                 obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
                 rfl
     · intro es s res st ck heval hnt
@@ -649,13 +649,13 @@ theorem evalCrepSemHOLProgExact_add_clock_eq {width : Nat} [NeZero width] {σ : 
     · intro s res st ck heval hnt
       rw [evalCrepSemHOLProgExact_tick] at heval
       by_cases hclk : s.clock = 0
-      · rw [if_pos hclk] at heval
+      · rw [ite_eq_left hclk] at heval
         obtain ⟨hr, _⟩ := Prod.mk.inj heval
         exact absurd hr.symm hnt
-      · rw [if_neg hclk] at heval
+      · rw [ite_eq_right hclk] at heval
         obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
         rw [evalCrepSemHOLProgExact_tick]
-        rw [if_neg (by change s.clock + ck ≠ 0; omega)]
+        rw [ite_eq_right (by change s.clock + ck ≠ 0; omega)]
         rw [decClockCrepSemHOL_addClock s ck hclk]
     · intro caltyp fname argexps s ihexn ihnormal res st ck heval hnt
       classical
@@ -693,16 +693,16 @@ theorem evalCrepSemHOLProgExact_add_clock_eq {width : Nat} [NeZero width] {σ : 
                 (lookupCodeHOLFinite_eq_some_iff s.code.lookup fname args args.length
                   prog newlocals).mpr hcode'
               by_cases hbad : crepReturnInfoNodupError caltyp
-              · rw [if_pos hbad] at heval ⊢
+              · rw [ite_eq_left hbad] at heval ⊢
                 obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
                 rfl
-              · rw [if_neg hbad] at heval ⊢
+              · rw [ite_eq_right hbad] at heval ⊢
                 by_cases hclk : s.clock = 0
-                · rw [if_pos hclk] at heval
+                · rw [ite_eq_left hclk] at heval
                   obtain ⟨hr, _⟩ := Prod.mk.inj heval
                   exact absurd hr.symm hnt
-                · rw [if_neg hclk] at heval
-                  rw [if_neg (by omega)]
+                · rw [ite_eq_right hclk] at heval
+                  rw [ite_eq_right (by omega)]
                   cases hbody : evalCrepSemHOLProgExact
                       { decClockCrepSemHOL s with locals := newlocals } prog with
                   | mk r t =>
@@ -761,10 +761,10 @@ theorem evalCrepSemHOLProgExact_add_clock_eq {width : Nat} [NeZero width] {σ : 
                                   obtain ⟨rts, handler⟩ := cval
                                   dsimp only at heval ⊢
                                   by_cases hlen : retvs.length ≠ rts.length
-                                  · rw [if_pos hlen] at heval ⊢
+                                  · rw [ite_eq_left hlen] at heval ⊢
                                     obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
                                     rfl
-                                  · rw [if_neg hlen] at heval ⊢
+                                  · rw [ite_eq_right hlen] at heval ⊢
                                     cases hmap : List.mapM s.locals.lookup rts with
                                     | none =>
                                         simp only [hmap] at heval ⊢
@@ -789,7 +789,7 @@ theorem evalCrepSemHOLProgExact_add_clock_eq {width : Nat} [NeZero width] {σ : 
                                       obtain ⟨eid', p⟩ := hval
                                       dsimp only at heval ⊢
                                       by_cases heq : eid = eid'
-                                      · rw [if_pos heq] at heval ⊢
+                                      · rw [ite_eq_left heq] at heval ⊢
                                         have hihx := ihexn args (prog, newlocals) prog newlocals
                                           (evalCrepSemHOLProgExact { decClockCrepSemHOL s with
                                             locals := newlocals } prog)
@@ -802,7 +802,7 @@ theorem evalCrepSemHOLProgExact_add_clock_eq {width : Nat} [NeZero width] {σ : 
                                         have hihx' := hihx res st ck heval hnt
                                         rw [CrepAddClock_setLocals]
                                         exact hihx'
-                                      · rw [if_neg heq] at heval ⊢
+                                      · rw [ite_eq_right heq] at heval ⊢
                                         obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
                                         simp only [CrepSemHOLState.emptyLocals_addClock]
     · intro ffi_index ptr1 len1 ptr2 len2 s res st ck heval hnt

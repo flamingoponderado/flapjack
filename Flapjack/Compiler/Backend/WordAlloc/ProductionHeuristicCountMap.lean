@@ -21,7 +21,7 @@ private theorem assocAbsent {α : Type} (entries : List (Nat × α)) (key : Nat)
   | cons entry rest ih =>
       rcases entry with ⟨name, value⟩
       have parts : key ≠ name ∧ key ∉ rest.map Prod.fst := by simpa using missing
-      simp only [sptAListLookup, parts.1, if_false, ih parts.2]
+      simp only [sptAListLookup, parts.1, ite_false, ih parts.2]
 
 private theorem assocTreeMap {α : Type} (tree : Std.TreeMap Nat α) (key : Nat) :
     sptAListLookup key tree.toList = tree[key]? := by

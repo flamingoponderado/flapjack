@@ -664,7 +664,7 @@ theorem panToCrepPcCompileCorrectTickCodeState
         decCrepClock] using
         (crepTickEvaluationEquation targetHandler targetPrimitive fuel targetState)
     · simp only [stateRel, panSemCodeStateAfter, decPanClock, decCrepClock,
-        if_neg hzero]
+        ite_eq_right hzero]
       exact ⟨hmem, hmemaddrs, hshared, hstructs, hglobals,
         by rw [hclock], hbe, hffi, hbase, htop⟩
     · simpa [panSemCodeStateAfter, decCrepClock, hzero] using hcode
@@ -8959,7 +8959,7 @@ theorem lookupCrepRuntimeCode_ofCodeRel
   simp only [lookupCrepRuntimeCode, lookupCrepHolCode, htargetEntry]
   have hvalid : names.length = (argumentWords.map PanWordLab.word).length ∧ names.Nodup := by
     simp [names, hnamesLength, hnamesNodup]
-  rw [if_pos hvalid]
+  rw [ite_eq_left hvalid]
   apply congrArg some
   apply Prod.ext
   · rfl

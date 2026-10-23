@@ -94,7 +94,7 @@ theorem evaluateFakeConstChainLocals {width : Nat} [NeZero width] {C F : Type}
     rw [sptMem_iff_lookup]
     by_cases member : key ∈ names
     · simp [constFoldLookup,member]
-    · simp only [constFoldLookup,member,if_false,or_false]
+    · simp only [constFoldLookup,member,ite_false,or_false]
       exact (sptMem_iff_lookup key state.locals).symm
   · intro key member
     simp [constFoldLookup,member]

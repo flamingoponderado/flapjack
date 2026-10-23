@@ -196,7 +196,7 @@ theorem compileCorrectDecCall {width : Nat} {σ : Type} [NeZero width]
           (compileProgExact {context with locals := parameters} body,
             callee.map2 (fun entry => convertV entry.2),compileShapeExact context.structs returnShape) at htlookup
       by_cases hc : source.clock = 0
-      · rw [if_pos hc] at heval
+      · rw [ite_eq_left hc] at heval
         rcases Prod.mk.inj heval with ⟨hr,hp⟩
         subst res
         subst post
@@ -207,13 +207,13 @@ theorem compileCorrectDecCall {width : Nat} {σ : Type} [NeZero width]
           rw [htlookup]
           dsimp only
           have htclock : (convertStateExact context source).clock = 0 := hc
-          rw [if_pos htclock]
+          rw [ite_eq_left htclock]
           rfl
         · simp [PanSemStateFiniteExact.emptyLocalsHOLFinite,feveryHOL]
         · simp [isContResHOL]
         · simp [resVsHOL]
         · simp [resVsHOL]
-      · rw [if_neg hc] at heval
+      · rw [ite_eq_right hc] at heval
         let entry := PanSemStateFiniteExact.callEntryStateHOLFinite source callee
         cases hb : PanSemStateFiniteExact.evaluateHOLFiniteState entry body with
         | mk bodyRes middle =>
@@ -333,7 +333,7 @@ theorem compileCorrectDecCall {width : Nat} {σ : Type} [NeZero width]
                     rw [htlookup]
                     dsimp only
                     have htclock : (convertStateExact context source).clock ≠ 0 := hc
-                    rw [if_neg htclock,hbodyRun]
+                    rw [ite_eq_right htclock,hbodyRun]
                     simp only [convertResHOL]
                     have htd : shapeEqHOL (shapeOfHOLExact (convertV value))
                         (compileShapeExact context.structs declaredShape) = true := by
@@ -424,7 +424,7 @@ theorem compileCorrectDecCall {width : Nat} {σ : Type} [NeZero width]
                 rw [htlookup]
                 dsimp only
                 have htclock : (convertStateExact context source).clock ≠ 0 := hc
-                rw [if_neg htclock,hbodyRun]
+                rw [ite_eq_right htclock,hbodyRun]
                 rfl
               · simp [PanSemStateFiniteExact.emptyLocalsHOLFinite,feveryHOL]
               · simp [isContResHOL]
@@ -441,7 +441,7 @@ theorem compileCorrectDecCall {width : Nat} {σ : Type} [NeZero width]
                 rw [htlookup]
                 dsimp only
                 have htclock : (convertStateExact context source).clock ≠ 0 := hc
-                rw [if_neg htclock,hbodyRun]
+                rw [ite_eq_right htclock,hbodyRun]
                 rfl
               · simp [PanSemStateFiniteExact.emptyLocalsHOLFinite,feveryHOL]
               · simp [isContResHOL]
@@ -458,7 +458,7 @@ theorem compileCorrectDecCall {width : Nat} {σ : Type} [NeZero width]
                 rw [htlookup]
                 dsimp only
                 have htclock : (convertStateExact context source).clock ≠ 0 := hc
-                rw [if_neg htclock,hbodyRun]
+                rw [ite_eq_right htclock,hbodyRun]
                 rfl
               · simp [PanSemStateFiniteExact.emptyLocalsHOLFinite,feveryHOL]
               · simp [isContResHOL]

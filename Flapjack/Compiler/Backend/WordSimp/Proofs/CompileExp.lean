@@ -316,8 +316,8 @@ theorem push_out_if_aux_T {width : Nat} [NeZero width] {C : Type} {F : Type} :
       obtain ⟨-, rfl⟩ := h
       rw [ht] at he
       by_cases hz : s.termdep = 0
-      · simp only [hz, if_true, Prod.mk.injEq] at he; rw [← he.1]; simp
-      · simp only [hz, if_false] at he
+      · simp only [hz, ite_true, Prod.mk.injEq] at he; rw [← he.1]; simp
+      · simp only [hz, ite_false] at he
         rcases hev : evaluate q { s with
             clock := wordSemMustTerminateLimit width
             termdep := s.termdep - 1 } with ⟨r, s1⟩

@@ -380,7 +380,7 @@ theorem compile_decs_FILTER_declsHOL {width : Nat} [NeZero width] :
           obtain ⟨a, b, c, e⟩ := r
           simp only [Prod.mk.injEq] at h
           obtain ⟨rfl, _, _, rfl⟩ := h
-          simp only [List.filter_cons, isDeclHOL.eq_1, if_true, compileDecsExactHOL,
+          simp only [List.filter_cons, isDeclHOL.eq_1, ite_true, compileDecsExactHOL,
             ih _ a b c e hr]
       | exnDecl name shape =>
           simp only [compileDecsExactHOL] at h

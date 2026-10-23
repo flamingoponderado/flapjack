@@ -116,7 +116,7 @@ theorem flattenCorrectSeq (s1 : StackSemStateFiniteExact width C F) (c1 c2 : Hol
       (fun x => !isLabelHOL x)).length) (appListAppend ys) t1.code := by
     cases t
     · simpa using instRest
-    · simp only [if_true, List.singleton_append, codeInstalled_cons, isLabelHOL] at instRest
+    · simp only [ite_true, List.singleton_append, codeInstalled_cons, isLabelHOL] at instRest
       exact instRest.2
   have lenFlat : ((appListAppend (flattenHOL t (.seq c1 c2) n l cs bs).1).filter
       (fun x => !isLabelHOL x)).length =

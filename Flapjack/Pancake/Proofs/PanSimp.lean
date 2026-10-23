@@ -1650,7 +1650,7 @@ theorem evalPanValueDeclarationsWithStructs_only_functions_sufficiency
                 (fun parameter => isWfShape structs parameter.2) &&
               isWfShape structs declaration.returnShape) = true :=
             hwf (.function declaration) (by simp)
-          rw [if_pos hdeclWf]
+          rw [ite_eq_left hdeclWf]
           rw [ih _ (by rfl) htail
             (fun other hmem => hwf other (by simp [hmem]))]
           simp [panFunctionEntries, panReturnShapeEntries,
@@ -1716,8 +1716,8 @@ theorem evalPanValueDeclarationsWithStructs_exns_wf_sufficiency
           have hheadWf : isWfShape structs shape = true :=
             hwf exception shape (by simp [panExceptionEntries_cons])
           rw [hheadNone]
-          simp only [Option.isSome_none, Bool.false_eq_true, if_false,
-            hheadWf, if_true]
+          simp only [Option.isSome_none, Bool.false_eq_true, ite_false,
+            hheadWf, ite_true]
           simp only [panExceptionEntries_cons, List.map_append, List.map_cons,
             List.map_nil] at hnodup
           obtain ⟨hnodupTail, _, hdisjoint⟩ := List.nodup_append.mp hnodup
@@ -1846,7 +1846,7 @@ theorem evalPanValueDeclarationsWithStructs_only_functions_and_exns_sufficiency
                 (fun parameter => isWfShape structs parameter.2) &&
               isWfShape structs function.returnShape) = true :=
             hfunctions (.function function) (by simp)
-          rw [if_pos hdeclWf]
+          rw [ite_eq_left hdeclWf]
           have hnodupTail :
               ((panExceptionEntries declarations).map
                 (fun entry => entry.1)).Nodup := by
@@ -1888,8 +1888,8 @@ theorem evalPanValueDeclarationsWithStructs_only_functions_and_exns_sufficiency
           have hheadWf : isWfShape structs shape = true :=
             hexns exception shape (by simp [panExceptionEntries_cons])
           rw [hheadNone]
-          simp only [Option.isSome_none, Bool.false_eq_true, if_false,
-            hheadWf, if_true]
+          simp only [Option.isSome_none, Bool.false_eq_true, ite_false,
+            hheadWf, ite_true]
           simp only [panExceptionEntries_cons, List.map_append, List.map_cons,
             List.map_nil] at hnodup
           obtain ⟨hnodupTail, _, hdisjoint⟩ := List.nodup_append.mp hnodup

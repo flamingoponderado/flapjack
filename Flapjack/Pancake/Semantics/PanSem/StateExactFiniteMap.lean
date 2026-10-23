@@ -1689,7 +1689,7 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_timeout_branch
       (.decCall resultName shape function arguments continuation) context =
       some (some .timeOut, FiniteEvalContext.emptyLocalsContextHOLFinite context) := by
   rw [evalPanSemRecursiveCallFiniteContext.eq_6]
-  simp only [hargs, hlookup, if_pos hclock]
+  simp only [hargs, hlookup, ite_eq_left hclock]
 
 /-- HOL `evaluate_decls_def` (`cakeml/pancake/semantics/panSemScript.sml:814-837`)
     over the finite-support state carrier.  Its clauses match the HOL definition
@@ -1818,7 +1818,7 @@ theorem evaluateDeclsHOLFinite_functions {width : Nat} {σ : Type} [NeZero width
           | none => simp [heval] at hresult
           | some value =>
               by_cases hshape : shapeEqHOL shape (shapeOfHOLExact value)
-              · simp only [heval, if_pos hshape] at hresult
+              · simp only [heval, ite_eq_left hshape] at hresult
                 have htail := ih
                   { state with globals := state.globals.update (name, value) }
                   result hresult
@@ -1830,7 +1830,7 @@ theorem evaluateDeclsHOLFinite_functions {width : Nat} {σ : Type} [NeZero width
             isWfShapeExactHOL state.structs declaration.returnShape
           simp only [evaluateDeclsHOLFinite, functionsHOL] at hresult ⊢
           by_cases hcondition : condition = true
-          · simp only [condition, hcondition, if_true] at hresult
+          · simp only [condition, hcondition, ite_true] at hresult
             have htail := ih
               { state with code := state.code.update (declaration.name,
                 (declaration.params, declaration.body, declaration.returnShape)) }
@@ -1850,7 +1850,7 @@ theorem evaluateDeclsHOLFinite_functions {width : Nat} {σ : Type} [NeZero width
             isWfShapeExactHOL state.structs shape
           simp only [evaluateDeclsHOLFinite, functionsHOL] at hresult ⊢
           by_cases hcondition : condition = true
-          · simp only [condition, hcondition, if_true] at hresult
+          · simp only [condition, hcondition, ite_true] at hresult
             have htail := ih
               { state with eshapes := state.eshapes.update (exceptionName, shape) }
               result hresult
@@ -1898,7 +1898,7 @@ theorem evaluateDeclsHOLFinite_declCommute {width : Nat} {σ : Type} [NeZero wid
   simp only [setGlobalHOLFinite]
   by_cases hwf : (fi.params.all (fun parameter => isWfShapeExactHOL state.structs parameter.2) &&
       isWfShapeExactHOL state.structs fi.returnShape) = true
-  · rw [if_pos hwf]
+  · rw [ite_eq_left hwf]
     letI : DecidablePred state.emptyLocalsHOLFinite.memaddrs := h
     cases hev : evalHOLFinite (emptyLocalsHOLFinite state) e with
     | none => rfl
@@ -1906,7 +1906,7 @@ theorem evaluateDeclsHOLFinite_declCommute {width : Nat} {σ : Type} [NeZero wid
         by_cases hshape : shapeEqHOL sh (shapeOfHOLExact value) = true
         · simp [hshape, hwf]
         · simp [hshape]
-  · rw [if_neg hwf]
+  · rw [ite_eq_right hwf]
     letI : DecidablePred state.emptyLocalsHOLFinite.memaddrs := h
     cases hev : evalHOLFinite (emptyLocalsHOLFinite state) e with
     | none => rfl
@@ -2003,7 +2003,7 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_body_none
   rw [evalPanSemRecursiveCallFiniteContext.eq_6]
   simp only [hargs]
   rw [lookupCodeCanonicalHOL, hlookup]
-  simp only [if_neg hclock, hbodyGenerated]
+  simp only [ite_eq_right hclock, hbodyGenerated]
 
 /-- FLAPJACK-SPECIFIC DecCall body-`Break` case for the finite context
     evaluator: the source clause maps a callee `Break` outcome to `Error` at
@@ -2040,7 +2040,7 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_body_break
   rw [evalPanSemRecursiveCallFiniteContext.eq_6]
   simp only [hargs]
   rw [lookupCodeCanonicalHOL, hlookup]
-  simp only [if_neg hclock, hbodyGenerated]
+  simp only [ite_eq_right hclock, hbodyGenerated]
 
 /-- FLAPJACK-SPECIFIC DecCall body-`Continue` case for the finite context
     evaluator: the source clause maps a callee `Continue` outcome to `Error`
@@ -2077,7 +2077,7 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_body_continue
   rw [evalPanSemRecursiveCallFiniteContext.eq_6]
   simp only [hargs]
   rw [lookupCodeCanonicalHOL, hlookup]
-  simp only [if_neg hclock, hbodyGenerated]
+  simp only [ite_eq_right hclock, hbodyGenerated]
 
 /-- FLAPJACK-SPECIFIC specialization for the fixed callee context in the
     DecCall equation. This hides the generated finite-domain proof arguments
@@ -3420,7 +3420,7 @@ theorem evaluateHOLFiniteState_dec_total {width : Nat} {σ : Type} [NeZero width
           | some pair => (pair.1, pair.2.state)
           | none => (none, state)) = _
         rw [evalPanSemRecursiveCallFiniteContext.eq_def]
-        simp only [evalHOLFinite, hinit, hshape, if_true, context, bodyState, hbodyExpr]
+        simp only [evalHOLFinite, hinit, hshape, ite_true, context, bodyState, hbodyExpr]
         rw [hbodyOutput]
         rfl
       · simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
@@ -3747,8 +3747,8 @@ theorem evaluateHOLFiniteState_decCall_total {width : Nat} {σ : Type}
                 (bodyPair.1, bodyPair.2.state) := by
               simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
                 entryClassical, hbodyClassical]
-            simp only [hlookupContext, if_neg hclockContext,
-              hbodyGenerated, entryContext, hbody, hlookup, if_neg hclock]
+            simp only [hlookupContext, ite_eq_right hclockContext,
+              hbodyGenerated, entryContext, hbody, hlookup, ite_eq_right hclock]
             cases hresult : bodyPair.1 with
             | none => simp [hbodyState, hresult, context, entry,
                 fixClockHOLFinite, callFixedContextHOLFinite]
@@ -4006,14 +4006,14 @@ theorem evaluateHOLFiniteState_while_total {width : Nat} {σ : Type} [NeZero wid
           | word word =>
               simp only []
               by_cases hword : word ≠ 0
-              · rw [if_pos hword, if_pos hword]
+              · rw [ite_eq_left hword, ite_eq_left hword]
                 by_cases hclock : context.state.clock = 0
                 · have hclock' : state.clock = 0 := hclock
-                  rw [if_pos hclock, if_pos hclock']
+                  rw [ite_eq_left hclock, ite_eq_left hclock']
                   simp [context]
                   rfl
                 · have hclock' : ¬ state.clock = 0 := hclock
-                  rw [if_neg hclock, if_neg hclock']
+                  rw [ite_eq_right hclock, ite_eq_right hclock']
                   let entry := decClockHOLFinite context.state
                   let entryContext := context.withState entry rfl rfl
                   obtain ⟨bodyPair, hbody⟩ :=
@@ -4086,7 +4086,7 @@ theorem evaluateHOLFiniteState_while_total {width : Nat} {σ : Type} [NeZero wid
                       cases result <;>
                         simp [fixedContext, fixed, fixClockHOLFinite,
                           FiniteEvalContext.withState_state]
-              · rw [if_neg hword, if_neg hword]
+              · rw [ite_eq_right hword, ite_eq_right hword]
 
 /-! ### Global-shape invariant core (flapjack-4ac.4.62.1)
 
@@ -4126,9 +4126,9 @@ theorem globalsShapes_setGlobalHOLFinite_value {width : Nat} {σ : Type} [NeZero
       FUPDATE (globalsShapes state) (name, shapeOfHOLExact value) := by
   funext key
   by_cases h : name == key
-  · simp only [globalsShapes, setGlobalHOLFinite, HolFiniteMapExact.lookup_update, FUPDATE, h, if_true, Option.map_some]
+  · simp only [globalsShapes, setGlobalHOLFinite, HolFiniteMapExact.lookup_update, FUPDATE, h, ite_true, Option.map_some]
   · simp only [globalsShapes, setGlobalHOLFinite, HolFiniteMapExact.lookup_update, FUPDATE, h,
-      Bool.false_eq_true, if_false]
+      Bool.false_eq_true, ite_false]
 
 /-- A `set_global` write whose value has the shape already stored at `name`
     (the `is_valid_value Global` condition) preserves the global shape map. -/
@@ -4141,9 +4141,9 @@ theorem globalsShapes_setGlobalHOLFinite_of_shape {width : Nat} {σ : Type} [NeZ
   by_cases hk : name == key
   · have hnk : name = key := by simpa only [beq_iff_eq] using hk
     subst hnk
-    simp only [FUPDATE, hk, if_true]
+    simp only [FUPDATE, hk, ite_true]
     simpa only [globalsShapes] using h.symm
-  · simp only [FUPDATE, hk, Bool.false_eq_true, if_false]
+  · simp only [FUPDATE, hk, Bool.false_eq_true, ite_false]
 
 theorem globalsShapes_setKvarHOLFinite_of_shape {width : Nat} {σ : Type} [NeZero width]
     (kind : VarKind) (name : MlS) (value : ValueHOL width) (state : PanSemStateFiniteExact width σ)
@@ -4345,7 +4345,7 @@ theorem globalsShapes_dec_arm {width : Nat} {σ : Type} [NeZero width]
   dsimp only at heval
   rw [hinit] at heval
   dsimp only at heval
-  rw [if_pos hshape] at heval
+  rw [ite_eq_left hshape] at heval
   cases hb : evalPanSemRecursiveCallFiniteContext body
       (context.withState (setVarHOLFinite name value context.state) rfl rfl) with
   | none => rw [hb] at heval; dsimp only at heval; simp at heval
@@ -4440,7 +4440,7 @@ theorem globalsShapes_ite_then_arm {width : Nat} {σ : Type} [NeZero width]
   dsimp only at heval
   rw [hcond] at heval
   dsimp only at heval
-  rw [if_pos hne] at heval
+  rw [ite_eq_left hne] at heval
   exact hsubInv result output heval
 
 theorem globalsShapes_ite_else_arm {width : Nat} {σ : Type} [NeZero width]
@@ -4461,7 +4461,7 @@ theorem globalsShapes_ite_else_arm {width : Nat} {σ : Type} [NeZero width]
   dsimp only at heval
   rw [hcond] at heval
   dsimp only at heval
-  rw [if_neg (by rw [hz]; decide)] at heval
+  rw [ite_eq_right (by rw [hz]; decide)] at heval
   exact hsubInv result output heval
 
 /-- While-arm helper for the recursive `globalsShapes` invariant (HOL
@@ -4515,13 +4515,13 @@ theorem globalsShapes_while_arm {width : Nat} {σ : Type} [NeZero width]
           | word word =>
               rw [hcond] at heval; try simp only [] at heval
               by_cases hw : word ≠ 0
-              · rw [if_pos hw] at heval; try simp only [] at heval
+              · rw [ite_eq_left hw] at heval; try simp only [] at heval
                 by_cases hclock : context.state.clock = 0
-                · rw [if_pos hclock] at heval; try simp only [] at heval
+                · rw [ite_eq_left hclock] at heval; try simp only [] at heval
                   simp only [Option.some.injEq, Prod.mk.injEq] at heval
                   rcases heval with ⟨_, rfl⟩
                   exact globalsShapes_emptyLocalsHOLFinite context.state
-                · rw [if_neg hclock] at heval; try simp only [] at heval
+                · rw [ite_eq_right hclock] at heval; try simp only [] at heval
                   cases hbody : evalPanSemRecursiveCallFiniteContext body
                       (context.withState (decClockHOLFinite context.state) rfl rfl) with
                   | none => rw [hbody] at heval; simp at heval
@@ -4571,7 +4571,7 @@ theorem globalsShapes_while_arm {width : Nat} {σ : Type} [NeZero width]
                               simp only [Option.some.injEq, Prod.mk.injEq] at heval
                               rcases heval with ⟨_, rfl⟩
                               exact hfixedGlob (some (.finalFfi event))
-              · rw [if_neg hw] at heval; try simp only [] at heval
+              · rw [ite_eq_right hw] at heval; try simp only [] at heval
                 simp only [Option.some.injEq, Prod.mk.injEq] at heval
                 rcases heval with ⟨_, rfl⟩
                 rfl
@@ -4623,13 +4623,13 @@ theorem globalsShapes_call_arm {width : Nat} {σ : Type} [NeZero width]
       rw [lookupCodeCanonicalHOL, hcode] at heval
       try simp only [] at heval
       by_cases hclock : context.state.clock = 0
-      · rw [if_pos hclock] at heval
+      · rw [ite_eq_left hclock] at heval
         try simp only [] at heval
         simp only [Option.some.injEq, Prod.mk.injEq] at heval
         rcases heval with ⟨_, rfl⟩
         show globalsShapes (emptyLocalsHOLFinite context.state) = globalsShapes context.state
         exact globalsShapes_emptyLocalsHOLFinite context.state
-      · rw [if_neg hclock] at heval
+      · rw [ite_eq_right hclock] at heval
         try simp only [] at heval
         cases hbody : evalPanSemRecursiveCallFiniteContext body
             (callEntryContextHOLFinite context callee) with
@@ -4694,7 +4694,7 @@ theorem globalsShapes_call_arm {width : Nat} {σ : Type} [NeZero width]
                 | returned value =>
                     try simp only [] at heval
                     by_cases hshape : shapeEqHOL (shapeOfHOLExact value) returnShape = true
-                    · rw [if_pos hshape] at heval
+                    · rw [ite_eq_left hshape] at heval
                       try simp only [] at heval
                       cases info with
                       | none =>
@@ -4714,19 +4714,19 @@ theorem globalsShapes_call_arm {width : Nat} {σ : Type} [NeZero width]
                               obtain ⟨kind, name⟩ := kv
                               try simp only [] at heval
                               by_cases hvalid : isValidValueHOLExact context.state.toExact kind name value = true
-                              · rw [if_pos hvalid] at heval
+                              · rw [ite_eq_left hvalid] at heval
                                 try simp only [] at heval
                                 simp only [Option.some.injEq, Prod.mk.injEq] at heval
                                 rcases heval with ⟨_, rfl⟩
                                 have hm := hLocals (some (.returned value))
                                 exact (globalsShapes_setKvarHOLFinite_of_globalsShapes
                                   (source := context.state) kind name value _ hm hvalid).trans hm
-                              · rw [if_neg hvalid] at heval
+                              · rw [ite_eq_right hvalid] at heval
                                 try simp only [] at heval
                                 simp only [Option.some.injEq, Prod.mk.injEq] at heval
                                 rcases heval with ⟨_, rfl⟩
                                 exact hfixedGlob (some (.returned value))
-                    · rw [if_neg hshape] at heval
+                    · rw [ite_eq_right hshape] at heval
                       try simp only [] at heval
                       simp only [Option.some.injEq, Prod.mk.injEq] at heval
                       rcases heval with ⟨_, rfl⟩
@@ -4751,7 +4751,7 @@ theorem globalsShapes_call_arm {width : Nat} {σ : Type} [NeZero width]
                             obtain ⟨handlerId, handlerVar, handlerProgram⟩ := triple
                             try simp only [] at heval
                             by_cases heq : exceptionId = handlerId
-                            · rw [if_pos heq] at heval
+                            · rw [ite_eq_left heq] at heval
                               try simp only [] at heval
                               cases hlookup : context.state.eshapes.lookup exceptionId with
                               | none =>
@@ -4766,7 +4766,7 @@ theorem globalsShapes_call_arm {width : Nat} {σ : Type} [NeZero width]
                                   by_cases hguard :
                                       (shapeEqHOL (shapeOfHOLExact value) shape &&
                                         isValidValueHOLExact context.state.toExact .local handlerVar value) = true
-                                  · rw [if_pos hguard] at heval
+                                  · rw [ite_eq_left hguard] at heval
                                     try simp only [] at heval
                                     exact hhandlerInv handlerVar value handlerProgram
                                       (bodyContext.withState
@@ -4775,12 +4775,12 @@ theorem globalsShapes_call_arm {width : Nat} {σ : Type} [NeZero width]
                                             Option (PanSemResultExact width)), bodyContext.state)).2
                                         rfl rfl)
                                       result output heval
-                                  · rw [if_neg hguard] at heval
+                                  · rw [ite_eq_right hguard] at heval
                                     try simp only [] at heval
                                     simp only [Option.some.injEq, Prod.mk.injEq] at heval
                                     rcases heval with ⟨_, rfl⟩
                                     exact hfixedGlob (some (.exception exceptionId value))
-                            · rw [if_neg heq] at heval
+                            · rw [ite_eq_right heq] at heval
                               try simp only [] at heval
                               simp only [Option.some.injEq, Prod.mk.injEq] at heval
                               rcases heval with ⟨_, rfl⟩
@@ -4837,14 +4837,14 @@ theorem globalsShapes_decCall_arm {width : Nat} {σ : Type} [NeZero width]
       rw [lookupCodeCanonicalHOL, hcode] at heval
       try simp only [] at heval
       by_cases hclock : context.state.clock = 0
-      · rw [if_pos hclock] at heval
+      · rw [ite_eq_left hclock] at heval
         try simp only [] at heval
         simp only [Option.some.injEq, Prod.mk.injEq] at heval
         rcases heval with ⟨_, rfl⟩
         show globalsShapes (emptyLocalsHOLFinite context.state) =
           globalsShapes context.state
         exact globalsShapes_emptyLocalsHOLFinite context.state
-      · rw [if_neg hclock] at heval
+      · rw [ite_eq_right hclock] at heval
         try simp only [] at heval
         cases hbody : evalPanSemRecursiveCallFiniteContext body
             (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) with
@@ -4896,7 +4896,7 @@ theorem globalsShapes_decCall_arm {width : Nat} {σ : Type} [NeZero width]
                     try simp only [] at heval
                     by_cases hg : (shapeEqHOL (shapeOfHOLExact value) shape &&
                         shapeEqHOL (shapeOfHOLExact value) returnShape) = true
-                    · rw [if_pos hg] at heval
+                    · rw [ite_eq_left hg] at heval
                       try simp only [] at heval
                       cases hcont : evalPanSemRecursiveCallFiniteContext continuation
                           (callContinuationContextHOLFinite context
@@ -4919,7 +4919,7 @@ theorem globalsShapes_decCall_arm {width : Nat} {σ : Type} [NeZero width]
                           rcases heval with ⟨_, rfl⟩
                           rw [globalsShapes_setLocals]
                           exact hcontGlob
-                    · rw [if_neg hg] at heval
+                    · rw [ite_eq_right hg] at heval
                       try simp only [] at heval
                       simp only [Option.some.injEq, Prod.mk.injEq] at heval
                       rcases heval with ⟨_, rfl⟩
@@ -5008,10 +5008,10 @@ theorem evalPanSemRecursiveCallFiniteContext_globalsShapesInvariant {width : Nat
       funext key
       by_cases hk : key = name
       · have hshapeVal := isValidValueHOLExact_global_shape state.toExact name value hvalid
-        simp only [globalsShapesExact, setKvarHOLExact, if_true, hk, Option.map_some]
+        simp only [globalsShapesExact, setKvarHOLExact, ite_true, hk, Option.map_some]
         exact hshapeVal.symm
       · have hkey := congrFun ih1 key
-        simp only [globalsShapesExact, setKvarHOLExact, if_neg hk]
+        simp only [globalsShapesExact, setKvarHOLExact, ite_eq_right hk]
         exact hkey
 
 /-- Per-name globals shape preservation for the top-level finite PanSem evaluator.

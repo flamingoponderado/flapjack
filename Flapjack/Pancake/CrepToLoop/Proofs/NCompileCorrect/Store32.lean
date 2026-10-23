@@ -184,7 +184,7 @@ private theorem crepToLoopMemStore32RelExact {width : Nat} [NeZero width]
           exact congrArg WordLocW.word
             (panStore32Cell_chain_eq_wordStore32Cell_chain address be targetValue cell)
         exact hcell
-      · simp only [if_neg hsame]
+      · simp only [ite_eq_right hsame]
         exact hm a ha
 
 /-- Genuine `Store32 dst src` constructor case of HOL `ncompile_correct`
@@ -389,7 +389,7 @@ theorem crepToLoop_ncompile_correct_store32 {width : Nat} [NeZero width]
                 sourceState.memaddrs (panByteAlignHOL address) := by
               have h := hSourceStore
               rw [panMemStore32HOL_eq_alt] at h
-              simp only [if_pos hAligned] at h
+              simp only [ite_eq_left hAligned] at h
               cases hCell : sourceState.memory (panByteAlignHOL address) with
               | word cell =>
                 by_cases hDomain : sourceState.memaddrs (panByteAlignHOL address)

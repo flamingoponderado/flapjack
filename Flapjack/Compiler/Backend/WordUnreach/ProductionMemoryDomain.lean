@@ -212,7 +212,7 @@ private theorem instructionMemImage {width : Nat}
     · subst offset
       cases operation <;> simp [memDomain, wordLangInstFromHOL, RiscV.allocatorMemorySupported]
     · simp only [memDomain, wordLangInstFromHOL]
-      rw [if_neg (by exact zero)]
+      rw [ite_eq_right (by exact zero)]
 
 /-- Actual encoder output has exactly the production program's allocator
 support, for every constructor and both optional Call continuations. The sole

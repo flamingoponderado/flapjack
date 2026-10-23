@@ -77,7 +77,7 @@ theorem wordToStackStackConvs {width : Nat} [NeZero width]
     simp [storeConstsStubNative, allocArg, regBound, callArgs]
     omega
   have result := congrArg (fun r => r.2.2.2) compiled
-  simp only [compileNative, ← registers, Bool.false_eq_true, if_false] at result
+  simp only [compileNative, ← registers, Bool.false_eq_true, ite_false] at result
   have bodySafe := compileListConventions conf k programs (.list [4],1) conventions room
   have allSafe : ∀ p ∈ outputs.map Prod.snd,
       allocArg p ∧ regBound p (k + 2) ∧ callArgs p 1 2 3 4 0 := by

@@ -19,8 +19,8 @@ open Flapjack.RegAlloc Flapjack.Compiler.Encoders.Asm
 theorem sptLookup_sptInsert_ite {α : Type} (k n : Nat) (v : α) (t : Spt α) :
     sptLookup k (sptInsert n v t) = if k = n then some v else sptLookup k t := by
   by_cases h : k = n
-  · subst h; rw [sptLookup_sptInsert_same, if_pos rfl]
-  · rw [sptLookup_sptInsert_ne n k v t h, if_neg h]
+  · subst h; rw [sptLookup_sptInsert_same, ite_eq_left rfl]
+  · rw [sptLookup_sptInsert_ne n k v t h, ite_eq_right h]
 
 /-- Domain of an insertion (Flapjack infrastructure). -/
 theorem sptDomain_sptInsert_iff {α : Type} (k n : Nat) (v : α) (t : Spt α) :
@@ -145,7 +145,7 @@ theorem instDelta {width : Nat} [NeZero width] (i : WordLangInst (BitVec width))
           simp [getLiveInst, getLiveInstCore, h64, numsetListInsert, numsetListDelete]
         · refine ⟨[r1, r2], [], by simp [getDeltaInst, HolInst.ofWordLangInst, h64], fun k => by
             simp [getWritesInst, h64, sptDomain_sptInsert_iff, sptDomain_ln_iff, or_comm], ?_⟩
-          simp only [getLiveInst, getLiveInstCore, h64, if_false, numsetListInsert,
+          simp only [getLiveInst, getLiveInstCore, h64, ite_false, numsetListInsert,
             numsetListDelete]
           exact wfDeleteSwap live _ _ hw
       case fpMovFromReg r1 r2 r3 =>
@@ -155,7 +155,7 @@ theorem instDelta {width : Nat} [NeZero width] (i : WordLangInst (BitVec width))
           simp [getLiveInst, getLiveInstCore, h64, numsetListInsert, numsetListDelete]
         · refine ⟨[], [r2, r3], by simp [getDeltaInst, HolInst.ofWordLangInst, h64], fun k => by
             simp [getWritesInst, sptDomain_ln_iff], ?_⟩
-          simp only [getLiveInst, getLiveInstCore, h64, if_false, numsetListInsert,
+          simp only [getLiveInst, getLiveInstCore, h64, ite_false, numsetListInsert,
             numsetListDelete]
           exact wfInsertSwap live r2 r3 hw
 

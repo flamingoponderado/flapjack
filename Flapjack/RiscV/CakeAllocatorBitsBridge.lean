@@ -97,7 +97,7 @@ theorem frameBitmapWordsAux_map {width : Nat} [NeZero width] (chunkSize fuel : N
     have hnil : bits = [] := List.eq_nil_of_length_eq_zero (Nat.le_zero.mp hfuel)
     subst hnil
     rw [frameBitmapWordsAux, wordListW]
-    rw [if_pos (by simp), if_pos (by simp)]
+    rw [ite_eq_left (by simp), ite_eq_left (by simp)]
     simp only [List.map_cons, List.map_nil, bitsToWord_ofNat_eq]
   | succ fuel ih =>
     rw [frameBitmapWordsAux, wordListW]
@@ -106,14 +106,14 @@ theorem frameBitmapWordsAux_map {width : Nat} [NeZero width] (chunkSize fuel : N
         rw [Bool.or_eq_true]; rcases h with h | h
         · exact Or.inr (by simp [h])
         · exact Or.inl (by simp [h])
-      rw [if_pos (by simp [hb]), if_pos h]
+      rw [ite_eq_left (by simp [hb]), ite_eq_left h]
       simp only [List.map_cons, List.map_nil, bitsToWord_ofNat_eq]
     · have hb : (chunkSize = 0 || bits.length ≤ chunkSize) = false := by
         rw [Bool.or_eq_false_iff]
         refine ⟨?_, ?_⟩
         · simp only [decide_eq_false_iff_not]; exact fun hh => h (Or.inr hh)
         · simp only [decide_eq_false_iff_not]; exact fun hh => h (Or.inl hh)
-      rw [if_neg (by simp [hb]), if_neg h]
+      rw [ite_eq_right (by simp [hb]), ite_eq_right h]
       simp only [List.map_cons, bitsToWord_ofNat_eq]
       have hlt : (bits.drop chunkSize).length ≤ fuel := by
         have h1 : (bits.drop chunkSize).length = bits.length - chunkSize := List.length_drop

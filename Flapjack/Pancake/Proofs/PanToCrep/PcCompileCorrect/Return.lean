@@ -42,7 +42,7 @@ theorem pcCompileCorrectAt_return {width : Nat} {σ : Type} [NeZero width]
       simp only at hrun
       by_cases hsize : Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL source.structs
           (shapeOfHOLExact value) ≤ 32
-      · rw [if_pos hsize] at hrun
+      · rw [ite_eq_left hsize] at hrun
         obtain ⟨rfl, rfl⟩ := Prod.mk.inj hrun
         rcases hc : compileExpExactHOLW ctxt expression with ⟨es, cs⟩
         obtain ⟨hmapEval, _, hshapeval, hwf⟩ :=
@@ -62,7 +62,7 @@ theorem pcCompileCorrectAt_return {width : Nat} {σ : Type} [NeZero width]
           refine ⟨some (.return (flattenHOL value)), CrepSemHOLState.emptyLocals t,
             ?_, ?_, ?_, ?_, ?_⟩
           · rw [show compileProgExactHOLW ctxt (.return expression) = .return [] from by
-              simp only [compileProgExactHOLW, compileReturnExactHOLW, hc, if_pos hsz]]
+              simp only [compileProgExactHOLW, compileReturnExactHOLW, hc, ite_eq_left hsz]]
             rw [evalCrepSemHOLProgExact_return_holShape]
             simp [hnil]
           · obtain ⟨hmemory, hmemaddrs, hshmemaddrs, hstructs, hglobals, hclock,
@@ -80,7 +80,7 @@ theorem pcCompileCorrectAt_return {width : Nat} {σ : Type} [NeZero width]
           refine ⟨some (.return (flattenHOL value)), CrepSemHOLState.emptyLocals t,
             ?_, ?_, ?_, ?_, ?_⟩
           · rw [show compileProgExactHOLW ctxt (.return expression) = .return es from by
-              simp only [compileProgExactHOLW, compileReturnExactHOLW, hc, if_neg hsz]]
+              simp only [compileProgExactHOLW, compileReturnExactHOLW, hc, ite_eq_right hsz]]
             rw [evalCrepSemHOLProgExact_return_holShape]
             have hmapM : es.mapM (evalCrepSemHOLExp t) = some (flattenHOL value) :=
               (optMmapEqSome es (evalCrepSemHOLExp t) (flattenHOL value)).mpr hmapEval
@@ -95,7 +95,7 @@ theorem pcCompileCorrectAt_return {width : Nat} {σ : Type} [NeZero width]
           · simpa only [PanSemStateFiniteExact.emptyLocalsHOLFinite,
               CrepSemHOLState.emptyLocals] using hexcp
           · rfl
-      · rw [if_neg hsize] at hrun
+      · rw [ite_eq_right hsize] at hrun
         exact absurd (Prod.mk.inj hrun).1.symm hres
 
 namespace PcCompileCorrectReturnWitnesses

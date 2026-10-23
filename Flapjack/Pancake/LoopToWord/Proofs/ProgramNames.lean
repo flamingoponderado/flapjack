@@ -57,7 +57,7 @@ theorem loopToWordLookupProgSomeLookupCompileProg {width : Nat} [NeZero width]
         simp [sptAListLookup] at h
         obtain ⟨rfl, rfl⟩ := h
         simp [loopToWordCompileProgHOL, sptAListLookup]
-      · simp only [sptAListLookup, if_neg hn] at h
+      · simp only [sptAListLookup, ite_eq_right hn] at h
         simpa [loopToWordCompileProgHOL, sptAListLookup, hn] using ih h
 
 end Flapjack

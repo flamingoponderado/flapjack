@@ -119,7 +119,7 @@ theorem alloc_correct {width : Nat} [NeZero width] {C F : Type}
   refine ⟨ck + 1, l2, ?_, hsub⟩
   rw [evaluate_call]
   simp only [findCode_gcStub_compile]
-  rw [if_neg (by simp)]
+  rw [ite_eq_right (by simp)]
   have hstate : decClock (setVar 0 (.loc n' m) { s with
         useStore := true, useStack := true, useAlloc := false, clock := s.clock + (ck + 1),
         regs := l, gcFun := anything,
@@ -160,7 +160,7 @@ theorem alloc_length_stack {width : Nat} [NeZero width] {C F : Type}
     simp only [StackSemAllocation.gc, setStore] at h
     by_cases hsp : s.stack.length < s.stackSpace
     · simp [hsp] at h
-    simp only [hsp, if_false] at h
+    simp only [hsp, ite_false] at h
     split at h
     · simp at h
     split at h

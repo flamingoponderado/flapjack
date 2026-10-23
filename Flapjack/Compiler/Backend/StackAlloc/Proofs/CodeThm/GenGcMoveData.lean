@@ -155,7 +155,7 @@ theorem wordGenGcMoveDataCode_run {width : Nat} [NeZero width] {C F : Type} {con
   rw [wordGenGcMoveData] at hm
   by_cases hp : ha = pa
   · subst hp
-    simp only [if_true, Prod.mk.injEq] at hm
+    simp only [ite_true, Prod.mk.injEq] at hm
     obtain ⟨rfl, rfl, rfl, rfl, rfl, -⟩ := hm
     obtain ⟨t0, hrt0⟩ := Option.isSome_iff_exists.1 ht0
     obtain ⟨t1, hrt1⟩ := Option.isSome_iff_exists.1 ht1
@@ -195,10 +195,10 @@ theorem wordGenGcMoveDataCode_run {width : Nat} [NeZero width] {C F : Type} {con
     simp [k0, k1, k2, k3, k4, k5, k6, k7, k8]
   have hk : k ≠ 0 := by
     intro hk; subst hk; simp [hp] at hm
-  simp only [hp, hk, if_false] at hm
+  simp only [hp, hk, ite_false] at hm
   have hpb : (!(pa == ha)) = true := by simpa using Ne.symm hp
   by_cases hb : (wordSemTheWord (s.memory ha)).getLsbD 2 = true
-  · simp only [hb, if_true] at hm
+  · simp only [hb, ite_true] at hm
     generalize hrec : wordGenGcMoveData conf (k - 1) (ha + (decodeLength conf
       (wordSemTheWord (s.memory ha)) + 1) * wordSemBytesInWord, i, pa, ib, pb, old, s.memory,
       s.mdomain) = R at hm
@@ -225,7 +225,7 @@ theorem wordGenGcMoveDataCode_run {width : Nat} [NeZero width] {C F : Type} {con
     rw [dataBody_skip conf _ { s with clock := s.clock + (ck + 1) } ha x hws hw2 hlen hshift
       h8 hdm hx hb]
     have hck : s.clock + (ck + 1) ≠ 0 := by omega
-    simp only [fixClock, setVar, contLoop, Nat.min_self, if_true, hck, if_false, decClock,
+    simp only [fixClock, setVar, contLoop, Nat.min_self, ite_true, hck, ite_false, decClock,
       ← wordGenGcMoveDataCode_eq]
     refine (congrArg (fun st => evaluate (wordGenGcMoveDataCode conf, st)) ?_).trans (hr.trans ?_)
     · simp only [s5, setVar]
@@ -241,7 +241,7 @@ theorem wordGenGcMoveDataCode_run {width : Nat} [NeZero width] {C F : Type} {con
       by_cases k8 : k = 8
       · subst k8; simp
       simp [k7, k8]
-  · simp only [hb, Bool.false_eq_true, if_false] at hm
+  · simp only [hb, Bool.false_eq_true, ite_false] at hm
     generalize hl : wordGenGcMoveList conf (ha + wordSemBytesInWord,
       decodeLength conf (wordSemTheWord (s.memory ha)), i, pa, ib, pb, old, s.memory,
       s.mdomain) = R at hm
@@ -310,7 +310,7 @@ theorem wordGenGcMoveDataCode_run {width : Nat} [NeZero width] {C F : Type} {con
     have hmin : min (s.clock + (ck + ck' + 1)) (s5.clock + (ck' + 1)) = s5.clock + (ck' + 1) := by
       omega
     have hck : s5.clock + (ck' + 1) ≠ 0 := by omega
-    simp only [fixClock, contLoop, hmin, if_true, hck, if_false, decClock,
+    simp only [fixClock, contLoop, hmin, ite_true, hck, ite_false, decClock,
       ← wordGenGcMoveDataCode_eq]
     refine (congrArg (fun st => evaluate (wordGenGcMoveDataCode conf, st)) ?_).trans (hr.trans ?_)
     · congr 1

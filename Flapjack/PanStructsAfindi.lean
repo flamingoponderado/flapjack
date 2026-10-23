@@ -22,12 +22,12 @@ theorem lookupInfoWithRest_length_lt [BEq String] {name : String}
       obtain ⟨candidate, entryInfo⟩ := entry
       simp only [lookupInfoWithRest] at h
       by_cases hc : (candidate == name) = true
-      · rw [if_pos hc] at h
+      · rw [ite_eq_left hc] at h
         have hrest : context = rest := by
           simpa using congrArg Prod.snd (Option.some.inj h)
         subst hrest
         simp
-      · rw [if_neg hc] at h
+      · rw [ite_eq_right hc] at h
         have := ih h
         simp only [List.length_cons]
         omega

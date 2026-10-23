@@ -71,7 +71,7 @@ private theorem instRemove {width : Nat} [NeZero width]
   | fp f =>
       cases f
       all_goals by_cases hw : width = 64
-      all_goals simp only [wInstNative, hw, if_true, if_false,
+      all_goals simp only [wInstNative, hw, ite_true, ite_false,
         wRegWrite1Native, wRegWrite2Native, wReg1, wReg2]
       all_goals try split_ifs
       all_goals simp only [stackAsmRemove, wStackLoadNative, List.append_nil,
@@ -164,7 +164,7 @@ theorem wordToStackStackAsmRemove {width : Nat} [NeZero width]
                 wordToStackStackAsmRemove conf false retCode next frame room rfl
               cases handler with
               | none =>
-                  simp only [compNative, Bool.false_eq_true, if_false, stackAsmRemove]
+                  simp only [compNative, Bool.false_eq_true, ite_false, stackAsmRemove]
                   simp only [copyRetStackAsmRemove conf false frame values _ named]
                   repeat' apply And.intro
                   all_goals first | exact hd.1 | exact liveSafe | apply argumentSafe | apply retSafe | trivial
@@ -175,7 +175,7 @@ theorem wordToStackStackAsmRemove {width : Nat} [NeZero width]
                         wordToStackStackAsmRemove conf false handleCode next frame room rfl
                       have pushSafe : stackAsmRemove conf (pushHandlerNative false h1 h2 frame : HolProg width) := by
                         simp [pushHandlerNative, stackAsmRemove, named]
-                      simp only [compNative, Bool.false_eq_true, if_false, stackAsmRemove]
+                      simp only [compNative, Bool.false_eq_true, ite_false, stackAsmRemove]
                       simp only [copyRetStackAsmRemove conf true frame values _ named,
                         popHandlerNative, stackAsmRemove, named, true_and,
                         stackHandlerArgsNative]

@@ -194,7 +194,7 @@ theorem linearScanRegAllocCorrect :
   have hcolv : ∀ r, inClashTree ct r → sptLookup r col = some (holEl (b r) sthout.colors) := by
     intro r hr
     have := hcol r ((hdomct r).mp hr)
-    rw [if_pos (hbru r hr)] at this
+    rw [ite_eq_left (hbru r hr)] at this
     exact this
   have hspd : ∀ r, inClashTree ct r → spDefault col r = holEl (b r) sthout.colors := by
     intro r hr
@@ -231,13 +231,13 @@ theorem linearScanRegAllocCorrect :
     · next hp =>
       have hbr : b r = r := (hphy r ⟨Or.inl hr, hp⟩).symm
       rw [hbr] at hc
-      rw [if_pos hp] at hc
+      rw [ite_eq_left hp] at hc
       rw [hbr]; exact hc
     · next hp =>
       split
       · next hs =>
         have hs' : isStackVar (b r) = true := (hstk r (Or.inl hr)).mp hs
-        rw [if_neg (by rw [stack_not_phy' _ hs']; decide), if_pos hs'] at hc
+        rw [ite_eq_right (by rw [stack_not_phy' _ hs']; decide), ite_eq_left hs'] at hc
         exact hc
       · trivial
   · rcases hdcol r hr with h | h

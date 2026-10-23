@@ -131,9 +131,9 @@ theorem pcCompileCorrectAt_dec {width : Nat} {σ : Type} [NeZero width]
   dsimp only at hrun
   by_cases hsh : shapeEqHOL sh (shapeOfHOLExact value) = true
   case neg =>
-    rw [if_neg hsh] at hrun
+    rw [ite_eq_right hsh] at hrun
     exact absurd (Prod.mk.inj hrun).1.symm hres
-  rw [if_pos hsh] at hrun
+  rw [ite_eq_left hsh] at hrun
   have hshape : sh = shapeOfHOLExact value := (shapeEqHOL_eq_true _ _).mp hsh
   rcases hc : compileExpExactHOLW ctxt e with ⟨es, cs⟩
   obtain ⟨hes, hlen, hcs, hwf⟩ :=
@@ -161,7 +161,7 @@ theorem pcCompileCorrectAt_dec {width : Nat} {σ : Type} [NeZero width]
       nestedDecsHOL (decCallSlots ctxt (shapeOfHOLExact value)) es
         (compileProgExactHOLW (decCallCtxt ctxt v (shapeOfHOLExact value)) prog) := by
     simp only [compileProgExactHOLW, compileDecExactHOLW, hc]
-    rw [if_neg (by rw [← hlen]; simp)]
+    rw [ite_eq_right (by rw [← hlen]; simp)]
   have hnd := evalNestedDecsSeqResVarEqHOL es (decCallSlots ctxt (shapeOfHOLExact value)) t
     (flattenHOL value)
     (compileProgExactHOLW (decCallCtxt ctxt v (shapeOfHOLExact value)) prog)

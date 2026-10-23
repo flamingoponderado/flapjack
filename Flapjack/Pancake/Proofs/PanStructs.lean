@@ -812,11 +812,11 @@ theorem lookupInfo_fields_nodup [BEq String] [LawfulBEq String] (name : String)
       obtain ⟨candidate, entryInfo⟩ := entry
       simp only [lookupInfo] at hlookup
       by_cases hc : (candidate == name) = true
-      · rw [if_pos hc] at hlookup
+      · rw [ite_eq_left hc] at hlookup
         have heq : entryInfo = info := Option.some.inj hlookup
         subst heq
         exact hok.1 (candidate, entryInfo) (by simp)
-      · rw [if_neg hc] at hlookup
+      · rw [ite_eq_right hc] at hlookup
         exact ih hlookup (structInfosOk_drop 1 ((candidate, entryInfo) :: context) hok)
 
 /-- Production-carrier analogue of HOL `fields_in_order_reorder_noop`
@@ -890,7 +890,7 @@ theorem fieldsInOrderReorderNoop [BEq String] [LawfulBEq String]
           have hTailNames : infoFields.map Prod.fst = eflds.map Prod.fst := hNames
           have hTailNodup : (infoFields.map Prod.fst).Nodup := hNodup.2
           simp only [structSelectFields, structCompileExp.structCompileFields,
-            hHead, lookupInfo, beq_self_eq_true, if_true]
+            hHead, lookupInfo, beq_self_eq_true, ite_true]
           have hdisjoint : ∀ other ∈ infoFields.map Prod.fst,
               other ∉ [(name, structCompileExp context expression)].map Prod.fst := by
             intro other hmem
@@ -959,16 +959,16 @@ theorem dropWhile_map_helper {α β : Type} (P : α → Bool) (Q : β → Bool)
       have hx : P x = Q (f x) := hPQ x (by simp)
       rw [List.dropWhile_cons] at h
       by_cases hP : P x = true
-      · rw [if_pos hP] at h
+      · rw [ite_eq_left hP] at h
         have hQ : Q (f x) = true := by rw [← hx]; exact hP
         rw [List.map_cons, List.dropWhile_cons, hQ]
-        simp only [if_true]
+        simp only [ite_true]
         exact ih ys h (fun y hy => hPQ y (by simp [hy]))
-      · rw [if_neg hP] at h
+      · rw [ite_eq_right hP] at h
         have hPfalse : P x = false := by simpa using hP
         have hQ : Q (f x) = false := by rw [← hx]; exact hPfalse
         rw [← h, List.map_cons, List.dropWhile_cons, hQ]
-        simp only [Bool.false_eq_true, if_false]
+        simp only [Bool.false_eq_true, ite_false]
 
 /-- Production-carrier analogue of HOL `old_exp_shapes_eq`
     (`pan_structsProofScript.sml:679-683`): the production old-shape list
@@ -1167,7 +1167,7 @@ theorem afindi_dropWhile [DecidableEq α] (key : α) (entries : List (α × β))
       by_cases hb : key = candidate
       · simp [afindi_cons, hb]
       · have hdec : decide (key ≠ candidate) = true := by simp [hb]
-        simp only [List.dropWhile_cons, afindi_cons, hdec, if_neg hb]
+        simp only [List.dropWhile_cons, afindi_cons, hdec, ite_eq_right hb]
         rw [ih]
         cases afindi key rest with
         | none => simp
@@ -1190,7 +1190,7 @@ theorem afindi_lookup [DecidableEq α] (key : α) (entries : List (α × β)) :
       · simp [afindi_cons, hbeq]
       · have hbeq' : (key == candidate) = false := by
           simp [BEq.beq, hbeq]
-        simp only [List.lookup_cons, hbeq', afindi_cons, if_neg hbeq]
+        simp only [List.lookup_cons, hbeq', afindi_cons, ite_eq_right hbeq]
         rw [ih]
         cases afindi key rest with
         | none => simp
@@ -1223,9 +1223,9 @@ theorem afindi_eq_of_map_fst_eq [DecidableEq α] (key : α) :
           subst hcy
           by_cases hbc : key = cx
           · rw [afindi_cons key (cx, vx) xs, afindi_cons key (cx, vy) ys,
-              if_pos hbc, if_pos hbc]
+              ite_eq_left hbc, ite_eq_left hbc]
           · rw [afindi_cons key (cx, vx) xs, afindi_cons key (cx, vy) ys,
-              if_neg hbc, if_neg hbc, ih ys htail]
+              ite_eq_right hbc, ite_eq_right hbc, ih ys htail]
 
 /-- HOL `map_fst_eq_alookup` (`pan_structsProofScript.sml:278`) has key type
     `α`, xs value type `β`, and ys value type `γ`; the source syntax leaves all

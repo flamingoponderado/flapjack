@@ -111,7 +111,7 @@ theorem everyVar_inGetClashTree {width : Nat} [NeZero width]
     rcases cutsets with ⟨left, right⟩
     finishClashCoverage
   case case23 op name addr lt store =>
-    simp only [getClashTree, if_pos store, everyVarHOL, inClashTree,
+    simp only [getClashTree, ite_eq_left store, everyVarHOL, inClashTree,
       Bool.and_eq_true, decide_eq_true_eq]
     simp only [List.not_mem_nil, false_or, List.mem_cons, true_or]
     refine ⟨True.intro, everyVarExpMono _ addr _ ⟨?_, everyVarExp_getReadsExp addr⟩⟩
@@ -119,7 +119,7 @@ theorem everyVar_inGetClashTree {width : Nat} [NeZero width]
     simp only [decide_eq_true_eq] at hx ⊢
     exact Or.inr hx
   case case24 op name addr lt store =>
-    simp only [getClashTree, if_neg store, everyVarHOL, inClashTree,
+    simp only [getClashTree, ite_eq_right store, everyVarHOL, inClashTree,
       Bool.and_eq_true, decide_eq_true_eq]
     simp only [List.mem_cons, true_or]
     refine ⟨True.intro, everyVarExpMono _ addr _ ⟨?_, everyVarExp_getReadsExp addr⟩⟩

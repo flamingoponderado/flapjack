@@ -102,8 +102,8 @@ private theorem handlerOnlyBranchMotive {width : Nat} [NeZero width] {σ : Type}
   | .dec v e body, s => transformBranchCorrect_Dec v e body s (fun _ _ => handlerOnlyBranchMotive body _)
   | .ite c a b, s => transformBranchCorrect_If c a b s (fun _ w _ _ => by
       by_cases hw : w ≠ 0
-      · rw [if_pos hw]; exact handlerOnlyBranchMotive a s
-      · rw [if_neg hw]; exact handlerOnlyBranchMotive b s)
+      · rw [ite_eq_left hw]; exact handlerOnlyBranchMotive a s
+      · rw [ite_eq_right hw]; exact handlerOnlyBranchMotive b s)
   | .seq a b, s => transformBranchCorrect_Seq a b s (fun _ s1 _ _ => handlerOnlyBranchMotive b s1) (handlerOnlyBranchMotive a s)
   | .while e c, s => whileBranchMotive e c (fun u => handlerOnlyBranchMotive c u) s
   | .call none f args, s =>

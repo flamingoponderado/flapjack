@@ -77,7 +77,7 @@ theorem evaluate_tick_loop_tick_unfold {width : Nat} [NeZero width] {C : Type} {
           else (res', s1))
         (evaluate (.loop names body exit_names) { t1 with clock := t1.clock - 1 }) := by
   intro h
-  rw [evaluate_def_rebound.2.2.2.2.2.2.2.2.2.2.2.2.1, evaluate_tick_unfold, if_neg h]
+  rw [evaluate_def_rebound.2.2.2.2.2.2.2.2.2.2.2.2.1, evaluate_tick_unfold, ite_eq_right h]
   simp only [evaluate_def_rebound.2.2.2.2.2.2.2.2.2.2.2.2.1, decClock]
   rcases evaluate (.loop names body exit_names) { t1 with clock := t1.clock - 1 } with ⟨res, s1⟩
   cases res with

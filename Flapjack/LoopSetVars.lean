@@ -51,7 +51,7 @@ theorem lookupFirst_of_absent (key : Nat) (entries : List (Nat × α))
   | nil => rfl
   | cons entry rest ih =>
       have hne : key ≠ entry.1 := fun h => absent entry (by simp) h.symm
-      simp only [lookupFirst, hne, if_false]
+      simp only [lookupFirst, hne, ite_false]
       exact ih (fun e he => absent e (by simp [he]))
 
 /-- First-occurrence-wins: a key that appears at the head with value `value`

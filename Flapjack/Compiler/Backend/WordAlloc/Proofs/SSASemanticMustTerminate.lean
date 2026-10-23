@@ -73,7 +73,7 @@ theorem ssaCcTransCorrectMustTerminate {width : Nat} [NeZero width] {C F : Type}
           | mk targetResult targetAfter =>
             dsimp only at simulation
             rw [sourceEval] at simulation
-            simp only [if_neg error, targetEval] at simulation
+            simp only [ite_eq_right error, targetEval] at simulation
             have eq : targetResult = result := simulation.1.symm
             subst targetResult
             have sourceOuter : WordSemStateFiniteExact.evaluate (.mustTerminate body)
@@ -100,7 +100,7 @@ theorem ssaCcTransCorrectMustTerminate {width : Nat} [NeZero width] {C F : Type}
               rw [ssaCcTrans, compiledEq]
             dsimp only
             rw [sourceOuter]
-            simp only [if_neg error, compileOuter, targetOuter]
+            simp only [ite_eq_right error, compileOuter, targetOuter]
             refine ⟨True.intro, ?_, simulation.2.2⟩
             simp_all [Flapjack.WordAlloc.wordStateEqRel]
 

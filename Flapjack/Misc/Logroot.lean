@@ -27,7 +27,7 @@ theorem holLogWitness_spec (a : Nat) (ha : 1 < a) :
   | ind n ih =>
   intro hn
   by_cases han : a ≤ n
-  · rw [holLogWitness, dif_pos ⟨ha, han⟩]
+  · rw [holLogWitness, dite_eq_left ⟨ha, han⟩]
     have hm : 0 < n / a := Nat.div_pos han (by omega)
     obtain ⟨h1, h2⟩ := ih (n / a) (Nat.div_lt_self hn ha) hm
     refine ⟨?_, ?_⟩
@@ -40,7 +40,7 @@ theorem holLogWitness_spec (a : Nat) (ha : 1 < a) :
         rw [Nat.add_mul, Nat.one_mul, Nat.mul_comm (n / a) a]
         omega
       exact Nat.lt_of_lt_of_le hlt (Nat.mul_le_mul_right a h2)
-  · rw [holLogWitness, dif_neg (by omega)]
+  · rw [holLogWitness, dite_eq_right (by omega)]
     simp only [Nat.pow_zero, Nat.zero_add, Nat.pow_one]
     omega
 

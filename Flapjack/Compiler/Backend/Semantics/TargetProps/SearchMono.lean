@@ -21,18 +21,18 @@ theorem findNextInterferenceMono {width : Nat} [NeZero width]
     simp only [findNextInterference] at h ⊢
     split at h
     · rename_i hn
-      rw [if_pos hn]
+      rw [ite_eq_left hn]
       split at h
       · rename_i he
-        rw [if_pos he]
+        rw [ite_eq_left he]
         split at h
         · rename_i hg
-          rw [if_pos hg]
+          rw [ite_eq_left hg]
           exact ih _ _ _ h
         · cases h
       · cases h
     · rename_i hn
-      rw [if_neg hn]
+      rw [ite_eq_right hn]
       exact h
 
 /-- Literal source319: successful searches at any two clock limits return the

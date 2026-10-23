@@ -35,6 +35,6 @@ theorem keyOrderedOfSemanticUpdate {κ ν : Type} (cmp : κ → κ → Ordering)
   · subst keys
     exact (keySetCmpThm cmp root key result hgood).mpr hkey
   · have hlookup : (toFmap cmp tree).lookup keys ≠ none := by
-      simpa only [FUPDATE_HOL, heq, if_false] using hdefined
+      simpa only [FUPDATE_HOL, heq, ite_false] using hdefined
     exact (keyOrderedToFmap cmp root tree result hgood).mp hold keys hlookup
 end Flapjack.Misc.BalancedMap

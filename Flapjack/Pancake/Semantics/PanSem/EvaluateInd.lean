@@ -209,9 +209,9 @@ private theorem evaluateIndHOL_go {width : Nat} {σ : Type} [NeZero width]
       ⟨fun res s1 hr => evaluateIndHOL_go P H c2 s1, evaluateIndHOL_go P H c1 s⟩
   | .ite e c1 c2, s => H.2.2.2.2.2.2.2.2.2.2.1 e c1 c2 s (fun v1 v6 w _ =>
       if hw : w ≠ 0 then by
-        rw [if_pos hw]; exact evaluateIndHOL_go P H c1 s
+        rw [ite_eq_left hw]; exact evaluateIndHOL_go P H c1 s
       else by
-        rw [if_neg hw]; exact evaluateIndHOL_go P H c2 s)
+        rw [ite_eq_right hw]; exact evaluateIndHOL_go P H c2 s)
   | .break, s => H.2.2.2.2.2.2.2.2.2.2.2.1 s
   | .continue, s => H.2.2.2.2.2.2.2.2.2.2.2.2.1 s
   | .while e c, s => H.2.2.2.2.2.2.2.2.2.2.2.2.2.1 e c s

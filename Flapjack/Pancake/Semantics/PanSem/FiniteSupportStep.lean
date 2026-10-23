@@ -412,13 +412,13 @@ theorem lookupCodeHOLExact_calleeLocals_finiteSupport {width : Nat} [NeZero widt
         parameters.length = arguments.length ∧
         ((parameters.zip arguments).all
           (fun pair => shapeEqHOL pair.1.2 (shapeOfHOLExact pair.2))) = true
-    · rw [if_pos hcond] at h
+    · rw [ite_eq_left hcond] at h
       simp only [Option.some.injEq, Prod.mk.injEq] at h
       obtain ⟨_, hlocals, _⟩ := h
       subst hlocals
       exact foldl_set_finiteSupport _ _
         ⟨[], by intro key hk; exact absurd rfl hk⟩
-    · rw [if_neg hcond] at h
+    · rw [ite_eq_right hcond] at h
       exact absurd h (by simp)
 
 /-! ### Per-constructor recursive cases of finite-support preservation
@@ -454,7 +454,7 @@ theorem evalPanSemRecursiveCallContextHOLExact_dec_finiteSupport
   | some value =>
       simp only [hval] at hres
       by_cases hshape : shapeEqHOL shape (shapeOfHOLExact value) = true
-      · rw [if_pos hshape] at hres
+      · rw [ite_eq_left hshape] at hres
         cases hrec : evalPanSemRecursiveCallContextHOLExact body
             (context.withState (setVarHOLExact name value context.state) rfl rfl) with
         | none => simp only [hrec] at hres; cases hres
@@ -472,7 +472,7 @@ theorem evalPanSemRecursiveCallContextHOLExact_dec_finiteSupport
             exact PanSemStateExact.finiteSupport_setLocals postContext.state
               (resVarHOLExact postContext.state.locals (name, context.state.locals name))
               hl' hpost
-      · rw [if_neg hshape] at hres
+      · rw [ite_eq_right hshape] at hres
         simp only [Option.some.injEq] at hres
         rw [← hres]
         exact h
@@ -556,9 +556,9 @@ theorem evalPanSemRecursiveCallContextHOLExact_ite_finiteSupport
           | word value =>
               simp only at hres
               by_cases hz : (value != 0) = true
-              · rw [if_pos hz] at hres
+              · rw [ite_eq_left hz] at hres
                 exact ihThen result hres
-              · rw [if_neg hz] at hres
+              · rw [ite_eq_right hz] at hres
                 exact ihElse result hres
       | rStruct fields =>
           simp only [Option.some.injEq] at hres
@@ -593,14 +593,14 @@ theorem evalPanSemRecursiveCallContextHOLExact_whileWord_finiteSupport
   intro result hres
   rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hres
   simp only [hcond] at hres
-  rw [if_pos hw] at hres
+  rw [ite_eq_left hw] at hres
   by_cases hclock : context.state.clock = 0
-  · rw [if_pos hclock] at hres
+  · rw [ite_eq_left hclock] at hres
     simp only [Option.some.injEq] at hres
     rw [← hres]
     change (emptyLocalsHOLExact context.state).FiniteSupport
     exact PanSemStateExact.finiteSupport_emptyLocals h
-  · rw [if_neg hclock] at hres
+  · rw [ite_eq_right hclock] at hres
     cases hbody : evalPanSemRecursiveCallContextHOLExact body
         (context.withState (decClockHOLExact context.state) rfl rfl) with
     | none => simp only [hbody] at hres; cases hres
@@ -674,7 +674,7 @@ theorem evalPanSemRecursiveCallContextHOLExact_while_finiteSupport
                   condition body word context h hcond hw ihBody ihSelf result hres
               · rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hres
                 simp only [hcond] at hres
-                rw [if_neg hw] at hres
+                rw [ite_eq_right hw] at hres
                 simp only [Option.some.injEq] at hres
                 obtain ⟨_, rfl⟩ := hres
                 exact h
@@ -729,11 +729,11 @@ theorem evalPanSemRecursiveCallContextHOLExact_call_finiteSupport
           obtain ⟨body, calleeLocals, returnShape⟩ := triple
           simp only [hlookup] at hres
           by_cases hclock : context.state.clock = 0
-          · rw [if_pos hclock] at hres
+          · rw [ite_eq_left hclock] at hres
             simp only [Option.some.injEq] at hres
             rw [← hres]
             exact PanSemStateExact.finiteSupport_emptyLocals h
-          · rw [if_neg hclock] at hres
+          · rw [ite_eq_right hclock] at hres
             have hentry : (callEntryStateHOLExact context.state calleeLocals).FiniteSupport :=
               PanSemStateExact.finiteSupport_setLocals_clock context.state calleeLocals
                 (context.state.clock - 1)
@@ -784,7 +784,7 @@ theorem evalPanSemRecursiveCallContextHOLExact_call_finiteSupport
                     | «returned» value =>
                         try (simp only at hres)
                         by_cases hshape : shapeEqHOL (shapeOfHOLExact value) returnShape = true
-                        · rw [if_pos hshape] at hres
+                        · rw [ite_eq_left hshape] at hres
                           cases hinfo : info with
                           | none =>
                               simp only [hinfo, Option.some.injEq] at hres
@@ -804,16 +804,16 @@ theorem evalPanSemRecursiveCallContextHOLExact_call_finiteSupport
                                   rcases kn with ⟨kind, name⟩
                                   try (simp only at hres)
                                   by_cases hvalid : isValidValueHOLExact context.state kind name value = true
-                                  · rw [if_pos hvalid] at hres
+                                  · rw [ite_eq_left hvalid] at hres
                                     simp only [Option.some.injEq] at hres
                                     rw [← hres]
                                     change (setKvarHOLExact kind name value ({ fixedCtx.state with locals := context.state.locals } : PanSemStateExact width σ)).FiniteSupport
                                     exact PanSemStateExact.finiteSupport_setKvar (PanSemStateExact.finiteSupport_setLocals fixedCtx.state context.state.locals h.1 hfixedCtx) kind name value
-                                  · rw [if_neg hvalid] at hres
+                                  · rw [ite_eq_right hvalid] at hres
                                     simp only [Option.some.injEq] at hres
                                     rw [← hres]
                                     exact hfixedCtx
-                        · rw [if_neg hshape] at hres
+                        · rw [ite_eq_right hshape] at hres
                           simp only [Option.some.injEq] at hres
                           rw [← hres]
                           exact hfixedCtx
@@ -837,7 +837,7 @@ theorem evalPanSemRecursiveCallContextHOLExact_call_finiteSupport
                                 rcases htriple with ⟨handlerId, handlerVar, handlerProgram⟩
                                 try (simp only at hres)
                                 by_cases heq : exceptionId = handlerId
-                                · rw [if_pos heq] at hres
+                                · rw [ite_eq_left heq] at hres
                                   cases heshapes : context.state.eshapes exceptionId with
                                   | none =>
                                       simp only [heshapes, Option.some.injEq] at hres
@@ -846,16 +846,16 @@ theorem evalPanSemRecursiveCallContextHOLExact_call_finiteSupport
                                   | some shape =>
                                       simp only [heshapes] at hres
                                       by_cases hcond : (shapeEqHOL (shapeOfHOLExact value) shape && isValidValueHOLExact context.state .local handlerVar value) = true
-                                      · rw [if_pos hcond] at hres
+                                      · rw [ite_eq_left hcond] at hres
                                         have hhandler : (fixedCtx.withState (handlerStateHOLExact context fixedCtx handlerVar value) rfl rfl).state.FiniteSupport := by
                                           change (setVarHOLExact handlerVar value ({ fixedCtx.state with locals := context.state.locals } : PanSemStateExact width σ)).FiniteSupport
                                           exact PanSemStateExact.finiteSupport_setVar (PanSemStateExact.finiteSupport_setLocals fixedCtx.state context.state.locals h.1 hfixedCtx) handlerVar value
                                         exact ihHandler handlerProgram (fixedCtx.withState (handlerStateHOLExact context fixedCtx handlerVar value) rfl rfl) hhandler result hres
-                                      · rw [if_neg hcond] at hres
+                                      · rw [ite_eq_right hcond] at hres
                                         simp only [Option.some.injEq] at hres
                                         rw [← hres]
                                         exact hfixedCtx
-                                · rw [if_neg heq] at hres
+                                · rw [ite_eq_right heq] at hres
                                   simp only [Option.some.injEq] at hres
                                   rw [← hres]
                                   exact PanSemStateExact.finiteSupport_emptyLocals hfixedCtx
@@ -903,11 +903,11 @@ theorem evalPanSemRecursiveCallContextHOLExact_decCall_finiteSupport
           obtain ⟨body, calleeLocals, returnShape⟩ := triple
           simp only [hlookup] at hres
           by_cases hclock : context.state.clock = 0
-          · rw [if_pos hclock] at hres
+          · rw [ite_eq_left hclock] at hres
             simp only [Option.some.injEq] at hres
             rw [← hres]
             exact PanSemStateExact.finiteSupport_emptyLocals h
-          · rw [if_neg hclock] at hres
+          · rw [ite_eq_right hclock] at hres
             have hentry : (callEntryStateHOLExact context.state calleeLocals).FiniteSupport :=
               PanSemStateExact.finiteSupport_setLocals_clock context.state calleeLocals
                 (context.state.clock - 1)
@@ -958,7 +958,7 @@ theorem evalPanSemRecursiveCallContextHOLExact_decCall_finiteSupport
                     | «returned» value =>
                         try (simp only at hres)
                         by_cases hcond : (shapeEqHOL (shapeOfHOLExact value) shape && shapeEqHOL (shapeOfHOLExact value) returnShape) = true
-                        · rw [if_pos hcond] at hres
+                        · rw [ite_eq_left hcond] at hres
                           cases hcont : evalPanSemRecursiveCallContextHOLExact continuation
                               (callContinuationContextHOLExact context (callFixedContextHOLExact (callEntryStateHOLExact context.state calleeLocals) (some (PanSemResultExact.returned value)) bodyContext) resultName value) with
                           | none => try (simp only [hcont] at hres); cases hres
@@ -974,7 +974,7 @@ theorem evalPanSemRecursiveCallContextHOLExact_decCall_finiteSupport
                               rw [← hres]
                               change ({ continuationPost.state with locals := resVarHOLExact continuationPost.state.locals (resultName, context.state.locals resultName) } : PanSemStateExact width σ).FiniteSupport
                               exact ⟨resVarHOLExact_finiteSupport continuationPost.state.locals (resultName, context.state.locals resultName) hcontF.1, hcontF.2.1, hcontF.2.2.1, hcontF.2.2.2⟩
-                        · rw [if_neg hcond] at hres
+                        · rw [ite_eq_right hcond] at hres
                           simp only [Option.some.injEq] at hres
                           rw [← hres]
                           exact hfixedCtx

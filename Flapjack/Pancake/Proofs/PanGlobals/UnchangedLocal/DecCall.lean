@@ -57,10 +57,10 @@ theorem evaluateUnchangedLocal_DecCall {width : Nat} {σ : Type} [NeZero width]
       rcases entry with ⟨body,callee,returnShape⟩
       simp only [hl] at hev
       by_cases hz : state.clock = 0
-      · simp only [if_pos hz] at hev
+      · simp only [ite_eq_left hz] at hev
         obtain ⟨rfl,rfl⟩ := Prod.mk.inj hev
         simp [goodResHOL] at hgood
-      · simp only [if_neg hz] at hev
+      · simp only [ite_eq_right hz] at hev
         rcases hb : evaluateHOLFiniteState (callEntryStateHOLFinite state callee) body with ⟨br,output⟩
         simp only [hb] at hev
         cases br with

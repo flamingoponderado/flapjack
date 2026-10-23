@@ -45,13 +45,13 @@ theorem stExFilterConsideredVar :
             · exact hx
             · exact h.2 y hy⟩
           refine ⟨ts, ?_, hts⟩
-          simp only [stExFilter, Translator.Monadic.MonadBase.bind, hb, if_true]
+          simp only [stExFilter, Translator.Monadic.MonadBase.bind, hb, ite_true]
           exact heq
       | false =>
           obtain ⟨ts, heq, hts⟩ := ih acc s ⟨hxs, h.2⟩
           refine ⟨ts, ?_, hts⟩
           simp only [stExFilter, Translator.Monadic.MonadBase.bind, hb, Bool.false_eq_true,
-            if_false]
+            ite_false]
           exact heq
 
 end Flapjack.RegAlloc

@@ -188,8 +188,8 @@ theorem code_evaluate :
       rw [ht]
       simp only [noInstallSubprogsHOL, notCreatedSubprogsWithMemOp, Bool.true_and] at hni
       by_cases hz : s.termdep = 0
-      · simp only [hz, dite_true, if_true]
-      · simp only [hz, dite_false, if_false]
+      · simp only [hz, dite_true, ite_true]
+      · simp only [hz, dite_false, ite_false]
         have ih := code_evaluate q { s with
             clock := wordSemMustTerminateLimit width
             termdep := s.termdep - 1 } hni hc
@@ -236,14 +236,14 @@ theorem code_evaluate :
       have hcl := evaluate_clock c _ rb s1 hb
       simp only
       by_cases hcont : wordSemContLoop rb = true
-      · simp only [hcont, if_true]
+      · simp only [hcont, ite_true]
         by_cases hz : s1.clock = 0
-        · simp only [hz, dite_true, if_true]
+        · simp only [hz, dite_true, ite_true]
           exact ih
-        · simp only [hz, dite_false, if_false, wordSemSTOP]
+        · simp only [hz, dite_false, ite_false, wordSemSTOP]
           have hcd : noInstallCode (decClock s1).code := ih ▸ hc
           exact (code_evaluate (.loop names c exitNames) (decClock s1) hni hcd).trans ih
-      · simp only [hcont, Bool.false_eq_true, if_false]
+      · simp only [hcont, Bool.false_eq_true, ite_false]
         split
         · split
           · exact ih
@@ -258,8 +258,8 @@ theorem code_evaluate :
       · rfl
       simp only
       by_cases hbad : wordSemBadDestArgs dest args = true
-      · simp only [hbad, if_true]
-      simp only [hbad, Bool.false_eq_true, if_false]
+      · simp only [hbad, ite_true]
+      simp only [hbad, Bool.false_eq_true, ite_false]
       rcases hf : wordSemFindCode dest (wordSemAddRetLoc ret xs) s.code s.stackSize with
         _ | ⟨args1, prog, ss⟩
       · rfl
@@ -272,8 +272,8 @@ theorem code_evaluate :
         | none =>
           simp only
           by_cases hz : s.clock = 0
-          · simp only [hz, dite_true, if_true]; rfl
-          simp only [hz, dite_false, if_false]
+          · simp only [hz, dite_true, ite_true]; rfl
+          simp only [hz, dite_false, ite_false]
           have ih := code_evaluate prog (callEnv args1 ss (decClock s)) hprog hc
           rcases hcv : evaluate prog (callEnv args1 ss (decClock s)) with ⟨rc, sc⟩
           rw [hcv] at ih
@@ -285,14 +285,14 @@ theorem code_evaluate :
         obtain ⟨n, names, retHandler, l1, l2⟩ := rv
         simp only
         by_cases hdc : sptDomainEmpty names.fst ∨ ¬ n.Nodup
-        · simp only [hdc, if_true]
-        simp only [hdc, if_false]
+        · simp only [hdc, ite_true]
+        simp only [hdc, ite_false]
         rcases hce : wordSemCutEnvs names s.locals with _ | envs
         · rfl
         simp only
         by_cases hz : s.clock = 0
-        · simp only [hz, dite_true, if_true]; rfl
-        simp only [hz, dite_false, if_false]
+        · simp only [hz, dite_true, ite_true]; rfl
+        simp only [hz, dite_false, ite_false]
         have hpre : (callEnv args1 ss (pushEnv envs handler (decClock s))).code = s.code :=
           code_pushEnv envs handler _
         have ih := code_evaluate prog (callEnv args1 ss (pushEnv envs handler (decClock s)))
@@ -305,8 +305,8 @@ theorem code_evaluate :
         rcases rc with _ | ⟨x, ys⟩ | ⟨x, y⟩ | k | k | _ | _ | _ | _
         · exact h2
         · by_cases hx : x ≠ WordLocW.loc l1 l2 ∨ ys.length ≠ n.length
-          · simp only [hx, if_true]; exact h2
-          simp only [hx, if_false]
+          · simp only [hx, ite_true]; exact h2
+          simp only [hx, ite_false]
           rcases hp : popEnv s2 with _ | s1
           · exact h2
           simp only

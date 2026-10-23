@@ -105,10 +105,10 @@ theorem evaluateFreshLocal_CallHandler {width : Nat} {σ : Type} [NeZero width]
       obtain ⟨body, callee, shape⟩ := entry
       simp only [hl] at heval ⊢
       by_cases hc : state.clock = 0
-      · simp only [if_pos hc] at heval ⊢
+      · simp only [ite_eq_left hc] at heval ⊢
         obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
         exact ⟨HolFiniteMapExact.empty, rfl, by simp [goodResHOL]⟩
-      · simp only [if_neg hc] at heval ⊢
+      · simp only [ite_eq_right hc] at heval ⊢
         have hentry : callEntryStateHOLFinite
             {state with locals := state.locals.updateEq (name, value)} callee =
             callEntryStateHOLFinite state callee := rfl
@@ -136,7 +136,7 @@ theorem evaluateFreshLocal_CallHandler {width : Nat} {σ : Type} [NeZero width]
                 FUPDATE_HOL, Ne.symm hhandler.1]
             simp only [hv]
             by_cases hid : eid = handlerId
-            · simp only [if_pos hid] at heval ⊢
+            · simp only [ite_eq_left hid] at heval ⊢
               cases hes : state.eshapes.lookup eid with
               | none =>
                 simp only [hes] at heval ⊢
@@ -161,7 +161,7 @@ theorem evaluateFreshLocal_CallHandler {width : Nat} {σ : Type} [NeZero width]
                 · simp only [hg] at heval ⊢
                   obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
                   exact ⟨st.locals, rfl, by simp [goodResHOL]⟩
-            · simp only [if_neg hid] at heval ⊢
+            · simp only [ite_eq_right hid] at heval ⊢
               obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
               exact ⟨HolFiniteMapExact.empty, rfl, by simp [goodResHOL]⟩
           | timeOut =>

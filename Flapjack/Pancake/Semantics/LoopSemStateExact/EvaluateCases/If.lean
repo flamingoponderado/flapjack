@@ -213,7 +213,7 @@ private theorem cutRes_cutLoopResult_prodRel {width : Nat} [NeZero width] {F : T
                     hclock] using hupdated
                 simp only [LoopSemStateFiniteExact.cutRes, cutLoopResult,
                   hExactCut, hProdCut, hzero, hprodZero,
-                  if_false, loopEvaluationStepRel,
+                  ite_false, loopEvaluationStepRel,
                   loopResultOptionRel]
                 exact ⟨trivial, by simpa [LoopSemStateFiniteExact.decClock,
                   decrementLoopClock, hclock] using hdecrement⟩

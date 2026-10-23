@@ -16,7 +16,7 @@ private theorem structInfosOkExact_lookup_mem
       by_cases hmatch : name = candidate
       · subst name
         simp
-      · simp only [structContextLookupHOL, if_neg hmatch] at hlookup
+      · simp only [structContextLookupHOL, ite_eq_right hmatch] at hlookup
         have htail := ih hlookup
         simp [hmatch, htail]
 
@@ -336,11 +336,11 @@ theorem structInfosOkHOLExact_lookup_fields_nodup (name : MlS)
       obtain ⟨candidate, entryInfo⟩ := entry
       rw [structContextLookupHOL_cons] at hlookup
       by_cases hmatch : name = candidate
-      · rw [if_pos hmatch] at hlookup
+      · rw [ite_eq_left hmatch] at hlookup
         have heq : entryInfo = info := Option.some.inj hlookup
         subst heq
         exact hok.1 (candidate, entryInfo) (by simp)
-      · rw [if_neg hmatch] at hlookup
+      · rw [ite_eq_right hmatch] at hlookup
         have hrest : structInfosOkHOLExact rest := by
           simpa using structInfosOkHOLExact_drop 1 ((candidate, entryInfo) :: rest) hok
         exact ih hlookup hrest

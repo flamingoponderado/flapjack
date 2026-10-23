@@ -170,7 +170,7 @@ theorem evaluateFreshLocal_Dec {width : Nat} {σ : Type} [NeZero width]
           intro hgood
           rw [hpost hgood]
           exact restoreCommute output.locals name bound value (state.locals.lookup bound) hn
-    · simp only [hs, Bool.false_eq_true, if_false] at hev ⊢
+    · simp only [hs, Bool.false_eq_true, ite_false] at hev ⊢
       obtain ⟨rfl,rfl⟩ := Prod.mk.inj hev
       exact ⟨state.locals.updateEq (name,value), rfl, fun _ => rfl⟩
 

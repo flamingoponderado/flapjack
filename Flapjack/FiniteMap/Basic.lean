@@ -162,14 +162,14 @@ theorem FDOMSUB_FUPDATE_neq [BEq α] [LawfulBEq α] (f : FiniteMap α β) (key m
   funext k
   simp only [FDOMSUB, FUPDATE]
   by_cases hkm : m == k
-  · simp only [hkm, if_true]
+  · simp only [hkm, ite_true]
     have hkm' : k = m := (beq_iff_eq.mp hkm).symm
     have hkeyk : (key == k) = false := by
       rw [beq_eq_false_iff_ne]
       intro hc
       exact h (hc.trans hkm')
-    simp only [hkeyk, Bool.false_eq_true, if_false]
-  · simp only [hkm, Bool.false_eq_true, if_false]
+    simp only [hkeyk, Bool.false_eq_true, ite_false]
+  · simp only [hkm, Bool.false_eq_true, ite_false]
 
 theorem FDOMSUB_commutes [BEq α] [LawfulBEq α] (f : FiniteMap α β) (n m : α)
     (h : n ≠ m) : FDOMSUB (FDOMSUB f n) m = FDOMSUB (FDOMSUB f m) n := by
@@ -181,15 +181,15 @@ theorem FDOMSUB_commutes [BEq α] [LawfulBEq α] (f : FiniteMap α β) (n m : α
       rw [beq_eq_false_iff_ne]
       intro hc
       exact h (hc.trans hmn')
-    simp only [hmn, if_true, hnk, Bool.false_eq_true, if_false]
+    simp only [hmn, ite_true, hnk, Bool.false_eq_true, ite_false]
   · by_cases hnk : n == k
     · have hnk' : k = n := (beq_iff_eq.mp hnk).symm
       have hmk : (m == k) = false := by
         rw [beq_eq_false_iff_ne]
         intro hc
         exact h (hnk'.symm.trans hc.symm)
-      simp only [hnk, if_true, hmk, Bool.false_eq_true, if_false]
-    · simp only [hmn, hnk, Bool.false_eq_true, if_false]
+      simp only [hnk, ite_true, hmk, Bool.false_eq_true, ite_false]
+    · simp only [hmn, hnk, Bool.false_eq_true, ite_false]
 
 theorem FLOOKUP_FUPDATE_LIST_zip_not_mem [BEq α] [LawfulBEq α]
     (xs : List α) (ys : List β) (f : FiniteMap α β) (n : α)
@@ -306,10 +306,10 @@ theorem FDOMSUB_eq_self_of_lookup_none [BEq α] [LawfulBEq α]
     FDOMSUB f x = f := by
   funext k
   by_cases hk : (x == k) = true
-  · simp only [FDOMSUB, hk, if_true]
+  · simp only [FDOMSUB, hk, ite_true]
     rw [← beq_iff_eq.mp hk]
     exact h.symm
-  · simp only [FDOMSUB, hk, Bool.false_eq_true, if_false]
+  · simp only [FDOMSUB, hk, Bool.false_eq_true, ite_false]
 
 /-- Updating a key with the value it already binds leaves the map unchanged. -/
 theorem FUPDATE_eq_self_of_lookup_some [BEq α] [LawfulBEq α]
@@ -317,10 +317,10 @@ theorem FUPDATE_eq_self_of_lookup_some [BEq α] [LawfulBEq α]
     FUPDATE f (x, v) = f := by
   funext k
   by_cases hk : (x == k) = true
-  · simp only [FUPDATE, hk, if_true]
+  · simp only [FUPDATE, hk, ite_true]
     rw [← beq_iff_eq.mp hk]
     exact h.symm
-  · simp only [FUPDATE, hk, Bool.false_eq_true, if_false]
+  · simp only [FUPDATE, hk, Bool.false_eq_true, ite_false]
 
 /-- Domain subtraction at a key immediately after updating that same key. -/
 theorem FDOMSUB_FUPDATE_same [BEq α] [LawfulBEq α]
@@ -328,8 +328,8 @@ theorem FDOMSUB_FUPDATE_same [BEq α] [LawfulBEq α]
     FDOMSUB (FUPDATE f (x, v)) x = FDOMSUB f x := by
   funext k
   by_cases hk : (x == k) = true
-  · simp only [FDOMSUB, FUPDATE, hk, if_true]
-  · simp only [FDOMSUB, FUPDATE, hk, Bool.false_eq_true, if_false]
+  · simp only [FDOMSUB, FUPDATE, hk, ite_true]
+  · simp only [FDOMSUB, FUPDATE, hk, Bool.false_eq_true, ite_false]
 
 /-- Two consecutive updates of the same key collapse to the later one. -/
 theorem FUPDATE_FUPDATE_same [BEq α] [LawfulBEq α]
@@ -337,8 +337,8 @@ theorem FUPDATE_FUPDATE_same [BEq α] [LawfulBEq α]
     FUPDATE (FUPDATE f (x, v1)) (x, v2) = FUPDATE f (x, v2) := by
   funext k
   by_cases hk : (x == k) = true
-  · simp only [FUPDATE, hk, if_true]
-  · simp only [FUPDATE, hk, Bool.false_eq_true, if_false]
+  · simp only [FUPDATE, hk, ite_true]
+  · simp only [FUPDATE, hk, Bool.false_eq_true, ite_false]
 
 /-! ## HOL-equality (`=`) finite-map primitives
 
@@ -391,8 +391,8 @@ theorem FUPDATE_HOL_eq_FUPDATE [DecidableEq α] [BEq α] [LawfulBEq α]
   funext k
   unfold FUPDATE_HOL FUPDATE
   by_cases h : k = entry.1
-  · rw [if_pos h, if_pos (beq_iff_eq.mpr h.symm)]
-  · rw [if_neg h, if_neg (fun hb => h (beq_iff_eq.mp hb).symm)]
+  · rw [ite_eq_left h, ite_eq_left (beq_iff_eq.mpr h.symm)]
+  · rw [ite_eq_right h, ite_eq_right (fun hb => h (beq_iff_eq.mp hb).symm)]
 
 /-- List-level agreement of the equality-based and Boolean `FUPDATE_LIST`. -/
 theorem FUPDATE_LIST_HOL_eq_FUPDATE_LIST [DecidableEq α] [BEq α] [LawfulBEq α]

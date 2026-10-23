@@ -642,7 +642,7 @@ theorem compileExpValRelHOL_nfield {width : Nat} {σ : Type} [NeZero width]
   | some inner =>
       cases inner <;>
         simp only [hval, structContextLookupHOL, Option.isSome_none,
-          Bool.false_eq_true, if_false] at heval <;>
+          Bool.false_eq_true, ite_false] at heval <;>
         exact absurd heval.symm (Option.some_ne_none value)
 
 /-! ### `compFieldHOL` slice correspondence
@@ -708,12 +708,12 @@ private theorem compFieldHOL_slice
             omega
           refine ⟨?_, ?_, ?_, hWfHead⟩
           · simp only [List.map_cons, compFieldHOL]
-            rw [if_true]
+            rw [ite_true]
             exact htake
           · simp only [List.map_cons, compFieldHOL]
-            rw [if_true]
+            rw [ite_true]
           · simp only [List.map_cons, compFieldHOL]
-            rw [if_true]
+            rw [ite_true]
             rw [List.length_take, Nat.min_eq_left hbound]
       | succ k =>
           simp only [List.getElem?_cons_succ] at hget
@@ -722,7 +722,7 @@ private theorem compFieldHOL_slice
             rw [List.map_drop, hEvalSplit, ← hmapSomeLen, List.drop_left]
           have hrec :=
             ih (cexp.drop (sizeOfShapeHOL (shapeOfHOLExact v))) hdrop hWfRest k value hget
-          simpa only [List.map_cons, compFieldHOL, Nat.succ_ne_zero, if_false,
+          simpa only [List.map_cons, compFieldHOL, Nat.succ_ne_zero, ite_false,
             Nat.succ_sub_one] using hrec
 
 /-- Flapjack-specific staged constructor lemma for the `RField` leaf of the
@@ -1070,7 +1070,7 @@ theorem compileExpValRelHOL_load {width : Nat} {σ : Type} [NeZero width]
     isWfShapeExactHOL ([] : StructContextExact) outputShape = true := by
   rw [PanSemStateFiniteExact.evalHOLFinite_load] at heval
   by_cases hwfSource : isWfShapeExactHOL state.structs shape = true
-  · simp only [if_pos hwfSource] at heval
+  · simp only [ite_eq_left hwfSource] at heval
     cases haddress : state.evalHOLFinite address with
     | none =>
         simp only [haddress] at heval
@@ -1559,7 +1559,7 @@ theorem compileExpValRelHOL_op {width : Nat} {σ : Type} [NeZero width]
       exact absurd heval.symm (Option.some_ne_none value)
   | some values =>
       by_cases hall : values.all valueIsWord = true
-      · simp only [hvals, hall, if_true] at heval
+      · simp only [hvals, hall, ite_true] at heval
         cases hop : wordOpHOL operator (values.map valueWord) with
         | none =>
             simp only [hop] at heval
@@ -1600,7 +1600,7 @@ theorem compileExpValRelHOL_op {width : Nat} {σ : Type} [NeZero width]
           cases hb : values.all valueIsWord with
           | false => rfl
           | true => exact absurd hb hall
-        simp only [hvals, hfalse, Bool.false_eq_true, if_false] at heval
+        simp only [hvals, hfalse, Bool.false_eq_true, ite_false] at heval
         exact absurd heval.symm (Option.some_ne_none value)
 
 private theorem crepOpCrepWord_compilePanOp {width : Nat} [NeZero width]
@@ -1655,7 +1655,7 @@ theorem compileExpValRelHOL_panop {width : Nat} {σ : Type} [NeZero width]
       exact absurd heval.symm (Option.some_ne_none value)
   | some values =>
       by_cases hall : values.all valueIsWord = true
-      · simp only [hvals, hall, if_true] at heval
+      · simp only [hvals, hall, ite_true] at heval
         cases hop : panOpHOL operator (values.map valueWord) with
         | none =>
             simp only [hop] at heval
@@ -1696,7 +1696,7 @@ theorem compileExpValRelHOL_panop {width : Nat} {σ : Type} [NeZero width]
           cases hb : values.all valueIsWord with
           | false => rfl
           | true => exact absurd hb hall
-        simp only [hvals, hfalse, Bool.false_eq_true, if_false] at heval
+        simp only [hvals, hfalse, Bool.false_eq_true, ite_false] at heval
         exact absurd heval.symm (Option.some_ne_none value)
 
 /- Same-module canonical relation witnesses for the combined qualifier on

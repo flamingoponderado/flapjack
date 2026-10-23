@@ -68,7 +68,7 @@ theorem evaluateFreshLocal_Assign {width : Nat} {σ : Type} [NeZero width]
     cases kind with
     | «local» =>
       simp only [isValidValueHOLFinite, lookupKvarHOLFinite,
-        HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, if_neg (Ne.symm (hn rfl))]
+        HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, ite_eq_right (Ne.symm (hn rfl))]
     | «global» => rfl
   have hu : ∀ assigned : ValueHOL width,
       setKvarHOLFinite kind target assigned

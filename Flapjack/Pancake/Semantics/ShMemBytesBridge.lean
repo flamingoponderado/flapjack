@@ -54,7 +54,7 @@ theorem panWordToBytesHOL_eq_map_crepClockWordToBytes {width : Nat} [NeZero widt
   have hexp : 256 ^ index = 2 ^ (8 * index) := by
     rw [show (256 : Nat) = 2 ^ 8 by decide]
     rw [← Nat.pow_mul]
-  simp only [panGetByteHOL, Bool.false_eq_true, if_false, hidx,
+  simp only [panGetByteHOL, Bool.false_eq_true, ite_false, hidx,
     UInt8.toNat_ofNat', Nat.mod_mod]
   rw [hexp, UInt8.toBitVec_ofNat']
 
@@ -257,7 +257,7 @@ theorem panSetByteHOL_ofNat_eq {width : Nat} [NeZero width]
     Nat.mod_eq_zero_of_dvd (Nat.dvd_trans ⟨256, by rw [Nat.pow_add_one]⟩ hdvd)
   have hhigh : V / (256 ^ k * 256) * (256 ^ k * 256) = V := by
     rw [← Nat.pow_add_one, Nat.div_mul_cancel hdvd]
-  simp only [panSetByteHOL, Bool.false_eq_true, if_false, BitVec.toNat_ofNat,
+  simp only [panSetByteHOL, Bool.false_eq_true, ite_false, BitVec.toNat_ofNat,
     Nat.mod_eq_of_lt hkw, Nat.mod_eq_of_lt hk,
     Nat.mod_eq_of_lt hVlt, Nat.mod_eq_of_lt hbw, Nat.mod_eq_of_lt hb,
     hlow, hhigh, Nat.zero_add]
@@ -410,7 +410,7 @@ theorem panGetByteHOL_panSetByteHOL_self {width : Nat} [NeZero width]
   have haddr : (BitVec.ofNat width k : RiscV.Word width).toNat = k := by
     rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt hkw]
   have hbi : byteBitIndex (BitVec.ofNat width k) false = 8 * k := by
-    simp only [byteBitIndex, Bool.false_eq_true, if_false, haddr, Nat.mod_eq_of_lt hk]
+    simp only [byteBitIndex, Bool.false_eq_true, ite_false, haddr, Nat.mod_eq_of_lt hk]
   have h256 : 0 < 256 ^ k := Nat.pow_pos (by decide)
   have hlow : X.toNat % 256 ^ k < 256 ^ k := Nat.mod_lt _ h256
   have hb : b.toNat < 256 := b.isLt
@@ -419,7 +419,7 @@ theorem panGetByteHOL_panSetByteHOL_self {width : Nat} [NeZero width]
   have hset := panSetByteHOL_toNat (width := width) h8w (BitVec.ofNat width k)
     X (UInt8.ofNat b.toNat) false
   rw [hbi, two_pow_eight_mul_eq_pow256, two_pow_eight_mul_succ_eq_pow256, hbb] at hset
-  simp only [panGetByteHOL, Bool.false_eq_true, if_false, haddr, Nat.mod_eq_of_lt hk]
+  simp only [panGetByteHOL, Bool.false_eq_true, ite_false, haddr, Nat.mod_eq_of_lt hk]
   rw [UInt8.toNat_ofNat', Nat.mod_mod, hset]
   have harr : BitVec.toNat X / 256 ^ (k + 1) * 256 ^ (k + 1) +
         b.toNat * 256 ^ k + BitVec.toNat X % 256 ^ k
@@ -532,7 +532,7 @@ theorem panGetByteHOL_toNat_ofNat {width : Nat} [NeZero width] (r : Nat)
     Nat.lt_of_le_of_lt (Nat.le_trans (Nat.le_of_lt hr) (Nat.div_le_self width 8))
       Nat.lt_two_pow_self
   have h256 : 0 < 256 ^ r := Nat.pow_pos (by decide)
-  simp only [panGetByteHOL, Bool.false_eq_true, if_false, BitVec.toNat_ofNat,
+  simp only [panGetByteHOL, Bool.false_eq_true, ite_false, BitVec.toNat_ofNat,
     Nat.mod_eq_of_lt hkw, Nat.mod_eq_of_lt hr]
   rw [UInt8.toNat_ofNat', show (2 : Nat) ^ 8 = 256 by decide]
   exact Nat.mod_eq_of_lt (Nat.mod_lt _ (by decide : 0 < 256))
@@ -600,7 +600,7 @@ theorem panWacc_toNat_formula {width : Nat} [NeZero width] (h8w : 8 ≤ width)
             Nat.lt_two_pow_self
         have haddr : (BitVec.ofNat width a : RiscV.Word width).toNat = a := by
           rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt hkw]
-        simp only [byteBitIndex, Bool.false_eq_true, if_false, haddr, Nat.mod_eq_of_lt halt]
+        simp only [byteBitIndex, Bool.false_eq_true, ite_false, haddr, Nat.mod_eq_of_lt halt]
       have hset := panSetByteHOL_toNat (width := width) h8w (BitVec.ofNat width a)
         (panWacc (a + 1) rest C) (UInt8.ofNat b.toNat) false
       have hbb : BitVec.ofNat width (UInt8.ofNat b.toNat).toNat = BitVec.ofNat width b.toNat := by
@@ -741,7 +741,7 @@ theorem panSetByteHOL_toNat_foldr {width : Nat} [NeZero width] (h8 : 8 ≤ width
           * (256 ^ ((BitVec.ofNat width a).toNat % (width / 8)) * 256) := by
   have hbbi : byteBitIndex (BitVec.ofNat width a) false
       = 8 * ((BitVec.ofNat width a).toNat % (width / 8)) := by
-    simp only [byteBitIndex, Bool.false_eq_true, if_false]
+    simp only [byteBitIndex, Bool.false_eq_true, ite_false]
   have h := panSetByteHOL_toNat (width := width) h8 (BitVec.ofNat width a)
     (BitVec.ofNat width V) byte false
   rw [hbbi, two_pow_eight_mul_succ_eq_pow256, two_pow_eight_mul_eq_pow256,
@@ -826,7 +826,7 @@ private theorem panWordOfBytesHOL_cons_of_width_lt_eight {width : Nat}
   unfold panSetByteHOL
   have haddr0 : (0 : RiscV.Word width).toNat = 0 := rfl
   rw [haddr0]
-  simp only [BitVec.toNat_ofNat, Bool.false_eq_true, if_false, hdiv0,
+  simp only [BitVec.toNat_ofNat, Bool.false_eq_true, ite_false, hdiv0,
     Nat.mod_zero, Nat.pow_zero, Nat.mod_one, Nat.one_mul, Nat.mul_one,
     Nat.zero_add]
   rw [hbyte]

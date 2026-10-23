@@ -20,10 +20,10 @@ theorem lengthWordListPositive {width : Nat} [NeZero width] (xs : List Bool)
   | ind n ih =>
     rw [wordListW, ← hn]
     by_cases hshort : xs.length ≤ d
-    · rw [if_pos (Or.inl hshort)]
+    · rw [ite_eq_left (Or.inl hshort)]
       have hsmall : xs.length - 1 < d := by omega
       simp [Nat.div_eq_of_lt hsmall]
-    · rw [if_neg (by omega), List.length_cons]
+    · rw [ite_eq_right (by omega), List.length_cons]
       have hdrop : (xs.drop d).length < n := by
         simp only [List.length_drop]
         omega
@@ -42,7 +42,7 @@ theorem lengthWordList {width : Nat} [NeZero width] (xs : List Bool) (d : Nat) :
   · subst d
     rw [wordListW]
     simp
-  · rw [if_neg hd]
+  · rw [ite_eq_right hd]
     exact lengthWordListPositive xs d (by omega)
 
 end Flapjack.Compiler.Backend.WordToStack

@@ -87,13 +87,13 @@ theorem compileCorrect_CallNoDestination {width : Nat} {σ : Type} [NeZero width
       have hc := hrel.2.2.2.2.2.1
       by_cases hz : source.clock = 0
       · have htz : target.clock = 0 := hc ▸ hz
-        simp only [if_pos hz] at hev
+        simp only [ite_eq_left hz] at hev
         obtain ⟨rfl,rfl⟩ := Prod.mk.inj hev
-        exact ⟨emptyLocalsHOLFinite target,by simp only [if_pos htz],
+        exact ⟨emptyLocalsHOLFinite target,by simp only [ite_eq_left htz],
           (PanGlobalsStateRelationLocals.stateRelEmptyLocalsHOL context source target false).1 hrel⟩
       · have htz : target.clock ≠ 0 := hc ▸ hz
-        simp only [if_neg hz] at hev
-        simp only [if_neg htz]
+        simp only [ite_eq_right hz] at hev
+        simp only [ite_eq_right htz]
         have hd := PanGlobalsStateRelationClock.stateRelDecClockHOL context source target true hrel
         have he := (PanGlobalsStateRelationLocals.stateRelChangeLocalsHOL context
           (decClockHOLFinite source) (decClockHOLFinite target) true callee).1 hd
@@ -117,7 +117,7 @@ theorem compileCorrect_CallNoDestination {width : Nat} {σ : Type} [NeZero width
               refine ⟨{bt with locals := target.locals}, ?_, ?_⟩
               · simp only [hbt, hs, ↓reduceIte]
               · simpa only [hlocals, goodResHOL] using hrestored
-            · simp only [if_neg hs] at hev
+            · simp only [ite_eq_right hs] at hev
               exact False.elim (hne (Prod.mk.inj hev).1.symm)
           | exception eid value | timeOut | finalFfi outcome =>
             obtain ⟨rfl,rfl⟩ := Prod.mk.inj hev

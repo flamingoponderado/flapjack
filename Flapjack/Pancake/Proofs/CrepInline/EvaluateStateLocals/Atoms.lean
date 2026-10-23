@@ -111,21 +111,21 @@ theorem evaluateStateLocalsRelStrongTickExact {width : Nat} [NeZero width] {σ :
   have hclock : s.clock = t.clock := hstate.2.2.2.2.2.1
   rw [evalCrepSemHOLProgExact_tick] at heval
   by_cases hc : s.clock = 0
-  · rw [if_pos hc] at heval
+  · rw [ite_eq_left hc] at heval
     obtain ⟨hr,ht⟩ := Prod.ext_iff.mp heval
     simp only at hr ht
     subst r
     subst s'
     refine ⟨t.emptyLocals, ?_, ?_, True.intro⟩
-    · rw [evalCrepSemHOLProgExact_tick, if_pos (hclock ▸ hc)]
+    · rw [evalCrepSemHOLProgExact_tick, ite_eq_left (hclock ▸ hc)]
     · simpa only [crepInlineStateRelExact, CrepSemHOLState.emptyLocals] using hstate
-  · rw [if_neg hc] at heval
+  · rw [ite_eq_right hc] at heval
     obtain ⟨hr,ht⟩ := Prod.ext_iff.mp heval
     simp only at hr ht
     subst r
     subst s'
     refine ⟨decClockCrepSemHOL t, ?_, ?_, ?_, rfl⟩
-    · rw [evalCrepSemHOLProgExact_tick, if_neg (hclock ▸ hc)]
+    · rw [evalCrepSemHOLProgExact_tick, ite_eq_right (hclock ▸ hc)]
     · simpa only [crepInlineStateRelExact, decClockCrepSemHOL] using
         (show crepInlineStateRelExact (decClockCrepSemHOL s) (decClockCrepSemHOL t) from
           crepInlineLocalsRel_decClockExact s t ⟨hlocals,hstate⟩ |>.2)

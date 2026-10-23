@@ -34,10 +34,10 @@ theorem compNoShmemopTailCall {width : Nat} [NeZero width]
       split <;> rfl
   | none =>
       by_cases empty : args.length = 0
-      · simp only [callDestNative, dif_pos empty, noShmemop, Bool.true_and]
+      · simp only [callDestNative, dite_eq_left empty, noShmemop, Bool.true_and]
         unfold seqStackFreeNative
         split <;> rfl
-      · simp only [callDestNative, dif_neg empty, noShmemop, wStackLoadNoShmemop,
+      · simp only [callDestNative, dite_eq_right empty, noShmemop, wStackLoadNoShmemop,
           Bool.true_and]
         unfold seqStackFreeNative
         split <;> rfl
@@ -124,8 +124,8 @@ private theorem callDestNoShmemop {width : Nat} [NeZero width]
   | some label => rfl
   | none =>
       by_cases empty : args.length = 0
-      · simp only [callDestNative, dif_pos empty]; rfl
-      · simp only [callDestNative, dif_neg empty, wStackLoadNoShmemop]; rfl
+      · simp only [callDestNative, dite_eq_left empty]; rfl
+      · simp only [callDestNative, dite_eq_right empty, wStackLoadNoShmemop]; rfl
 
 /-- Structural-motive returning Call piece without a handler. Bitmap threading
 is preserved; the return-body hypothesis quantifies over all bitmap/frame inputs,

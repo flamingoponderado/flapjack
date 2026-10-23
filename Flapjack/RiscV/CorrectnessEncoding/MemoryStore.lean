@@ -42,7 +42,7 @@ private theorem source_write_value_at {width valueWidth : Nat} [NeZero width]
         have numeric := congrArg BitVec.toNat value
         rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt bound] at numeric
         simp at numeric
-      rw [if_neg different, ← stepAddr_succ, ih _ _ j (by omega) (by omega)]
+      rw [ite_eq_right different, ← stepAddr_succ, ih _ _ j (by omega) (by omega)]
       apply BitVec.eq_of_getLsbD_eq
       intro i bound
       simp only [BitVec.getLsbD_setWidth, BitVec.getLsbD_ushiftRight,

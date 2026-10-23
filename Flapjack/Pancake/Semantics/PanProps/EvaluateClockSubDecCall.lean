@@ -54,9 +54,9 @@ theorem decCallCore {width : Nat} {σ : Type} [NeZero width]
       rw [hlk] at hHigh
       simp only at hHigh ⊢
       by_cases hc0 : u.clock = 0
-      · rw [if_pos hc0] at hHigh
+      · rw [ite_eq_left hc0] at hHigh
         exact absurd (Prod.mk.inj hHigh).1.symm hnt
-      rw [if_neg hc0] at hHigh
+      rw [ite_eq_right hc0] at hHigh
       rcases hb : evaluateHOLFiniteState (callEntryStateHOLFinite u nl) prog with ⟨r0, st0⟩
       rw [hb] at hHigh
       have hc0le := evaluateHOLFiniteState_clock_le_result _ _ _ _ hb
@@ -77,7 +77,7 @@ theorem decCallCore {width : Nat} {σ : Type} [NeZero width]
           have := congrArg PanSemStateFiniteExact.clock hst
           simp only [emptyLocalsHOLFinite] at this
           omega
-        rw [if_neg (hlow0 hck), lowCallee hck (by simp)]
+        rw [ite_eq_right (hlow0 hck), lowCallee hck (by simp)]
         simp only []
         exact hres
       · obtain ⟨hres, hst⟩ := Prod.mk.inj hHigh
@@ -85,7 +85,7 @@ theorem decCallCore {width : Nat} {σ : Type} [NeZero width]
           have := congrArg PanSemStateFiniteExact.clock hst
           simp only [emptyLocalsHOLFinite] at this
           omega
-        rw [if_neg (hlow0 hck), lowCallee hck (by simp)]
+        rw [ite_eq_right (hlow0 hck), lowCallee hck (by simp)]
         simp only []
         exact hres
       · exact absurd (Prod.mk.inj hHigh).1.symm hnt
@@ -94,7 +94,7 @@ theorem decCallCore {width : Nat} {σ : Type} [NeZero width]
           have := congrArg PanSemStateFiniteExact.clock hst
           simp only [emptyLocalsHOLFinite] at this
           omega
-        rw [if_neg (hlow0 hck), lowCallee hck (by simp)]
+        rw [ite_eq_right (hlow0 hck), lowCallee hck (by simp)]
         simp only []
         exact hres
       · obtain ⟨hres, hst⟩ := Prod.mk.inj hHigh
@@ -102,11 +102,11 @@ theorem decCallCore {width : Nat} {σ : Type} [NeZero width]
           have := congrArg PanSemStateFiniteExact.clock hst
           simp only [emptyLocalsHOLFinite] at this
           omega
-        rw [if_neg (hlow0 hck), lowCallee hck (by simp)]
+        rw [ite_eq_right (hlow0 hck), lowCallee hck (by simp)]
         simp only []
         exact hres
       · by_cases hsh : (shapeEqHOL (shapeOfHOLExact v) shape && shapeEqHOL (shapeOfHOLExact v) rsh) = true
-        · simp only [hsh, if_true] at hHigh
+        · simp only [hsh, ite_true] at hHigh
           obtain ⟨hs1, hs2⟩ := Bool.and_eq_true_iff.mp hsh
           rcases hk : evaluateHOLFiniteState
               (setVarHOLFinite rt v { st0 with locals := u.locals }) prog1 with ⟨rk, stk⟩
@@ -119,8 +119,8 @@ theorem decCallCore {width : Nat} {σ : Type} [NeZero width]
             have := congrArg PanSemStateFiniteExact.clock hst
             simpa using this
           have hck : ck ≤ st0.clock := by omega
-          rw [if_neg (hlow0 hck), lowCallee hck (by simp)]
-          simp only [hsh, if_true]
+          rw [ite_eq_right (hlow0 hck), lowCallee hck (by simp)]
+          simp only [hsh, ite_true]
           have hmc := ihK values prog nl rsh st0 v hargs hlk hc0 hb
             ((shapeEqHOL_eq_true _ _).mp hs1) ((shapeEqHOL_eq_true _ _).mp hs2) rk
             { stk with clock := stk.clock - ck } ck
@@ -133,21 +133,21 @@ theorem decCallCore {width : Nat} {σ : Type} [NeZero width]
                 clock := (setVarHOLFinite rt v { st0 with locals := u.locals }).clock - ck } := rfl
           rw [hstate, hmc]
           exact hres
-        · simp only [hsh, if_false, Bool.false_eq_true] at hHigh
+        · simp only [hsh, ite_false, Bool.false_eq_true] at hHigh
           obtain ⟨hres, hst⟩ := Prod.mk.inj hHigh
           have hck : ck ≤ st0.clock := by
             have := congrArg PanSemStateFiniteExact.clock hst
             simp only [emptyLocalsHOLFinite] at this
             omega
-          rw [if_neg (hlow0 hck), lowCallee hck (by simp)]
-          simp only [hsh, if_false, Bool.false_eq_true]
+          rw [ite_eq_right (hlow0 hck), lowCallee hck (by simp)]
+          simp only [hsh, ite_false, Bool.false_eq_true]
           exact hres
       · obtain ⟨hres, hst⟩ := Prod.mk.inj hHigh
         have hck : ck ≤ st0.clock := by
           have := congrArg PanSemStateFiniteExact.clock hst
           simp only [emptyLocalsHOLFinite] at this
           omega
-        rw [if_neg (hlow0 hck), lowCallee hck (by simp)]
+        rw [ite_eq_right (hlow0 hck), lowCallee hck (by simp)]
         simp only []
         exact hres
       · obtain ⟨hres, hst⟩ := Prod.mk.inj hHigh
@@ -155,7 +155,7 @@ theorem decCallCore {width : Nat} {σ : Type} [NeZero width]
           have := congrArg PanSemStateFiniteExact.clock hst
           simp only [emptyLocalsHOLFinite] at this
           omega
-        rw [if_neg (hlow0 hck), lowCallee hck (by simp)]
+        rw [ite_eq_right (hlow0 hck), lowCallee hck (by simp)]
         simp only []
         exact hres
 

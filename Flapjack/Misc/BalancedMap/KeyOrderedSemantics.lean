@@ -24,7 +24,7 @@ theorem keyOrderedToFmap {κ ν : Type} (cmp : κ → κ → Ordering)
       by_cases heq : keys = keySet cmp root
       · simp [toFmap, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, heq]
       · simp only [toFmap, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL,
-          heq, if_false, false_or]
+          heq, ite_false, false_or]
         exact HolFiniteMapExact.union_defined_iff _ _ _
     constructor
     · rintro ⟨hroot, hleft, hright⟩ keys hkeys

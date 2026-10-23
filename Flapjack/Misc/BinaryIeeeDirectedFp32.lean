@@ -145,9 +145,9 @@ theorem fp32Lower_value_extremal {X : Rat} (hX : 0 ≤ X)
   have hn0 : (0 : Rat) ≤ ((fp32N (fp32Pat b) : Nat) : Rat) := by exact_mod_cast Nat.zero_le _
   have hl0 : (0 : Rat) ≤ ((fp32N (fp32Lower X) : Nat) : Rat) := by exact_mod_cast Nat.zero_le _
   by_cases hs : b.sign = 1
-  · simp only [hs, if_true] at hb ⊢
+  · simp only [hs, ite_true] at hb ⊢
     grind
-  · simp only [hs, if_false, Rat.one_mul] at hb ⊢
+  · simp only [hs, ite_false, Rat.one_mul] at hb ⊢
     have hq : ((fp32N (fp32Pat b) : Nat) : Rat) ≤ X := by grind
     have hp := fp32Lower_extremal hX hq
     have hn := fp32N_mono hp
@@ -166,7 +166,7 @@ theorem fp32Upper_value_extremal {X : Rat} (hX : 0 ≤ X)
   have hD := fp32_D_pos
   have hn0 : (0 : Rat) ≤ ((fp32N (fp32Pat b) : Nat) : Rat) := by exact_mod_cast Nat.zero_le _
   by_cases hs : b.sign = 1
-  · simp only [hs, if_true] at hb ⊢
+  · simp only [hs, ite_true] at hb ⊢
     have hx0 : X = 0 := by grind
     have hp : fp32Upper X ≤ 0 := fp32Upper_extremal hX (by simp [hx0, fp32N])
     have hp0 : fp32Upper X = 0 := by omega
@@ -175,7 +175,7 @@ theorem fp32Upper_value_extremal {X : Rat} (hX : 0 ≤ X)
     rw [hnzero]
     change (0 : Rat) / 2 ^ 149 ≤ -1 * ((fp32N (fp32Pat b) : Nat) : Rat) / 2 ^ 149
     grind
-  · simp only [hs, if_false, Rat.one_mul] at hb ⊢
+  · simp only [hs, ite_false, Rat.one_mul] at hb ⊢
     have hq : X ≤ ((fp32N (fp32Pat b) : Nat) : Rat) := by grind
     have hp := fp32Upper_extremal hX hq
     have hn := fp32N_mono hp
@@ -297,7 +297,7 @@ theorem fp32_same_sign_value_injective (a b : HolFloat 23 8)
   have hD := fp32_D_pos
   have hn : ((fp32N (fp32Pat a) : Nat) : Rat) =
       ((fp32N (fp32Pat b) : Nat) : Rat) := by
-    by_cases h : b.sign = 1 <;> simp only [h, if_true, if_false] at hv <;> grind
+    by_cases h : b.sign = 1 <;> simp only [h, ite_true, ite_false] at hv <;> grind
   have hnat : fp32N (fp32Pat a) = fp32N (fp32Pat b) := by exact_mod_cast hn
   have hp : fp32Pat a = fp32Pat b := by
     rcases Nat.lt_trichotomy (fp32Pat a) (fp32Pat b) with h | h | h
@@ -321,7 +321,7 @@ theorem fp32_finite_zero_value (f : HolFloat 23 8)
     grind
   · intro hv
     have hn : ((fp32N (fp32Pat f) : Nat) : Rat) = 0 := by
-      by_cases hs : f.sign = 1 <;> simp only [hs, if_true, if_false] at hv <;> grind
+      by_cases hs : f.sign = 1 <;> simp only [hs, ite_true, ite_false] at hv <;> grind
     have hn' : fp32N (fp32Pat f) = 0 := by exact_mod_cast hn
     exact fp32N_eq_zero.mp hn'
 
@@ -636,15 +636,15 @@ theorem holFloatRound_directed_fp32 (d : Fp32Direction) (toneg : Bool) (x : Rat)
   have hlow := fp32DirectedCandidate_choice d x
   unfold holFloatRound holFp32DirectedRound
   by_cases hl : x < -holFloatLargest 23 8
-  · cases d <;> simp only [fp32DirectionMode, holRound, hl, if_true]
+  · cases d <;> simp only [fp32DirectionMode, holRound, hl, ite_true]
   · by_cases hh : x > holFloatLargest 23 8
-    · cases d <;> simp only [fp32DirectionMode, holRound, hl, hh, if_false, if_true]
+    · cases d <;> simp only [fp32DirectionMode, holRound, hl, hh, ite_false, ite_true]
     · have hlo : -holFloatLargest 23 8 ≤ x := by grind
       have hhi : x ≤ holFloatLargest 23 8 := by grind
       have h := hlow hlo hhi
         (if toneg then holFloatMinusZero 23 8 else holFloatPlusZero 23 8)
       cases d <;> dsimp [fp32DirectionMode, holRound, fp32DirectedCandidates] at h ⊢ <;>
-        simp only [hl, hh, if_false] <;> exact h
+        simp only [hl, hh, ite_false] <;> exact h
 
 end Flapjack.Binary32Rounding
 

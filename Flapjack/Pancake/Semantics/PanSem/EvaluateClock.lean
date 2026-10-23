@@ -453,7 +453,7 @@ theorem fixClockHOLFinite_evaluate {width : Nat} {σ : Type} [NeZero width]
     rw [hres] at hle
     change st.clock ≤ state.clock at hle
     simp only [fixClockHOLFinite]
-    rw [if_neg (by omega)]
+    rw [ite_eq_right (by omega)]
 
 namespace PanSemStateFiniteExact
 
@@ -661,7 +661,7 @@ theorem evaluateHOLFiniteState_call_clock_zero {width : Nat} {σ : Type} [NeZero
     dsimp only
     rw [lookupCodeCanonicalHOL, hlookupContext]
     dsimp only
-    rw [if_pos hclockContext]
+    rw [ite_eq_left hclockContext]
   rw [evaluateHOLFiniteState_eq_withDeciders state (.call info function arguments)]
   simp only [evaluateHOLFiniteStateWithDeciders]
   rw [show (⟨state, fun address => Classical.propDecidable (state.memaddrs address),
@@ -1523,7 +1523,7 @@ theorem evaluateHOLFiniteState_call_body_fallback {width : Nat} {σ : Type} [NeZ
             (callEntryStateHOLFinite context.state callee) (some other) postContext).state)
           rfl rfl) := by
     rw [evalPanSemRecursiveCallFiniteContext.eq_5]
-    simp only [hargsContext, hlookupContext, if_neg hclockContext, hbodyInternal]
+    simp only [hargsContext, hlookupContext, ite_eq_right hclockContext, hbodyInternal]
     rcases hother with rfl | rfl | ⟨event, rfl⟩ <;> rfl
   rw [hfixed] at hcall
   rw [evaluateHOLFiniteState_eq_withDeciders state (.call info function arguments)]
@@ -1631,39 +1631,39 @@ theorem evaluateHOLFiniteState_call {width : Nat} {σ : Type} [NeZero width]
           by_cases hclock : state.clock = 0
           · rw [evaluateHOLFiniteState_call_clock_zero state info function arguments values
               body callee returnShape hargs hlookup hclock]
-            simp only [hlookup, if_pos hclock]
+            simp only [hlookup, ite_eq_left hclock]
           · cases hbody : evaluateHOLFiniteState (callEntryStateHOLFinite state callee) body with
             | mk bodyResult postState =>
               cases bodyResult with
               | none =>
                   rw [evaluateHOLFiniteState_call_body_error state info function arguments values
                     body callee returnShape postState hargs hlookup hclock hbody]
-                  simp only [hlookup, if_neg hclock, hbody]
+                  simp only [hlookup, ite_eq_right hclock, hbody]
               | some r =>
                   cases r with
                   | «break» =>
                       rw [evaluateHOLFiniteState_call_body_break state info function arguments
                         values body callee returnShape postState hargs hlookup hclock hbody]
-                      simp only [hlookup, if_neg hclock, hbody]
+                      simp only [hlookup, ite_eq_right hclock, hbody]
                   | «continue» =>
                       rw [evaluateHOLFiniteState_call_body_continue state info function arguments
                         values body callee returnShape postState hargs hlookup hclock hbody]
-                      simp only [hlookup, if_neg hclock, hbody]
+                      simp only [hlookup, ite_eq_right hclock, hbody]
                   | error =>
                       rw [evaluateHOLFiniteState_call_body_fallback state info function arguments
                         values body callee returnShape .error postState hargs hlookup hclock hbody
                         (Or.inl rfl)]
-                      simp only [hlookup, if_neg hclock, hbody]
+                      simp only [hlookup, ite_eq_right hclock, hbody]
                   | timeOut =>
                       rw [evaluateHOLFiniteState_call_body_fallback state info function arguments
                         values body callee returnShape .timeOut postState hargs hlookup hclock hbody
                         (Or.inr (Or.inl rfl))]
-                      simp only [hlookup, if_neg hclock, hbody]
+                      simp only [hlookup, ite_eq_right hclock, hbody]
                   | finalFfi event =>
                       rw [evaluateHOLFiniteState_call_body_fallback state info function arguments
                         values body callee returnShape (.finalFfi event) postState hargs hlookup
                         hclock hbody (Or.inr (Or.inr ⟨event, rfl⟩))]
-                      simp only [hlookup, if_neg hclock, hbody]
+                      simp only [hlookup, ite_eq_right hclock, hbody]
                   | returned value =>
                       by_cases hshape : shapeEqHOL (shapeOfHOLExact value) returnShape = true
                       · cases info with
@@ -1671,7 +1671,7 @@ theorem evaluateHOLFiniteState_call {width : Nat} {σ : Type} [NeZero width]
                             rw [evaluateHOLFiniteState_call_return_none state value function
                               arguments values body callee returnShape postState hargs hlookup
                               hclock hbody hshape]
-                            simp only [hlookup, if_neg hclock, hbody, if_pos hshape]
+                            simp only [hlookup, ite_eq_right hclock, hbody, ite_eq_left hshape]
                         | some istr =>
                             obtain ⟨returns, handler⟩ := istr
                             cases returns with
@@ -1679,36 +1679,36 @@ theorem evaluateHOLFiniteState_call {width : Nat} {σ : Type} [NeZero width]
                                 rw [evaluateHOLFiniteState_call_return_caller_locals state handler
                                   function arguments values body callee returnShape value postState
                                   hargs hlookup hclock hbody hshape]
-                                simp only [hlookup, if_neg hclock, hbody, if_pos hshape]
+                                simp only [hlookup, ite_eq_right hclock, hbody, ite_eq_left hshape]
                             | some kn =>
                                 obtain ⟨kind, name⟩ := kn
                                 by_cases hvalid : isValidValueHOLExact state.toExact kind name value = true
                                 · rw [evaluateHOLFiniteState_call_return_set_kvar state kind name
                                     handler function arguments values body callee returnShape value
                                     postState hargs hlookup hclock hbody hshape hvalid]
-                                  simp only [hlookup, if_neg hclock, hbody, if_pos hshape,
-                                    if_pos hvalid]
+                                  simp only [hlookup, ite_eq_right hclock, hbody, ite_eq_left hshape,
+                                    ite_eq_left hvalid]
                                 · have hvalidFalse : isValidValueHOLExact state.toExact kind name value = false := by
                                     cases h : isValidValueHOLExact state.toExact kind name value <;>
                                       simp_all
                                   rw [evaluateHOLFiniteState_call_return_kvar_invalid state kind name
                                     handler function arguments values body callee returnShape value
                                     postState hargs hlookup hclock hbody hshape hvalidFalse]
-                                  simp only [hlookup, if_neg hclock, hbody, if_pos hshape,
-                                    if_neg hvalid]
+                                  simp only [hlookup, ite_eq_right hclock, hbody, ite_eq_left hshape,
+                                    ite_eq_right hvalid]
                       · have hshapeFalse : shapeEqHOL (shapeOfHOLExact value) returnShape = false := by
                           cases h : shapeEqHOL (shapeOfHOLExact value) returnShape <;> simp_all
                         rw [evaluateHOLFiniteState_call_return_shape_mismatch state info function
                           arguments values body callee returnShape value postState hargs hlookup
                           hclock hbody hshapeFalse]
-                        simp only [hlookup, if_neg hclock, hbody, if_neg hshape]
+                        simp only [hlookup, ite_eq_right hclock, hbody, ite_eq_right hshape]
                   | exception eid value =>
                       cases info with
                       | none =>
                           rw [evaluateHOLFiniteState_call_exception_unhandled state eid value
                             function arguments values body callee returnShape postState hargs
                             hlookup hclock hbody]
-                          simp only [hlookup, if_neg hclock, hbody]
+                          simp only [hlookup, ite_eq_right hclock, hbody]
                       | some istr =>
                           obtain ⟨returns, handler⟩ := istr
                           cases handler with
@@ -1716,7 +1716,7 @@ theorem evaluateHOLFiniteState_call {width : Nat} {σ : Type} [NeZero width]
                               rw [evaluateHOLFiniteState_call_exception_no_handler state returns
                                 function arguments values body callee returnShape eid value
                                 postState hargs hlookup hclock hbody]
-                              simp only [hlookup, if_neg hclock, hbody]
+                              simp only [hlookup, ite_eq_right hclock, hbody]
                           | some hkn =>
                               obtain ⟨handlerId, handlerVar, handlerProgram⟩ := hkn
                               by_cases heq : eid = handlerId
@@ -1726,7 +1726,7 @@ theorem evaluateHOLFiniteState_call {width : Nat} {σ : Type} [NeZero width]
                                       returns handlerId handlerVar handlerProgram function arguments
                                       values body callee returnShape eid value postState hargs
                                       hlookup hclock hbody heq hshapeSome]
-                                    simp only [hlookup, if_neg hclock, hbody, if_pos heq,
+                                    simp only [hlookup, ite_eq_right hclock, hbody, ite_eq_left heq,
                                       hshapeSome]
                                 | some declaredShape =>
                                     by_cases hcond : (shapeEqHOL (shapeOfHOLExact value) declaredShape &&
@@ -1746,8 +1746,8 @@ theorem evaluateHOLFiniteState_call {width : Nat} {σ : Type} [NeZero width]
                                         body arguments values callee returnShape value postState
                                         declaredShape hargs hlookup hclock hbodyId hshapeSomeId hshapeEq
                                         hvalid]
-                                      simp only [hlookup, if_neg hclock, hbody, if_pos heq,
-                                        hshapeSome, if_pos hcond]
+                                      simp only [hlookup, ite_eq_right hclock, hbody, ite_eq_left heq,
+                                        hshapeSome, ite_eq_left hcond]
                                     · have hcondFalse : (shapeEqHOL (shapeOfHOLExact value) declaredShape &&
                                           isValidValueHOLExact state.toExact VarKind.local handlerVar value) = false := by
                                         cases h : (shapeEqHOL (shapeOfHOLExact value) declaredShape &&
@@ -1758,13 +1758,13 @@ theorem evaluateHOLFiniteState_call {width : Nat} {σ : Type} [NeZero width]
                                         function arguments values body callee returnShape eid value
                                         postState hargs hlookup hclock hbody heq hshapeSome
                                         hcondFalse]
-                                      simp only [hlookup, if_neg hclock, hbody, if_pos heq,
-                                        hshapeSome, if_neg hcond]
+                                      simp only [hlookup, ite_eq_right hclock, hbody, ite_eq_left heq,
+                                        hshapeSome, ite_eq_right hcond]
                               · rw [evaluateHOLFiniteState_call_exception_mismatch state returns
                                   handlerId handlerVar handlerProgram function arguments values body
                                   callee returnShape eid value postState hargs hlookup hclock hbody
                                   heq]
-                                simp only [hlookup, if_neg hclock, hbody, if_neg heq]
+                                simp only [hlookup, ite_eq_right hclock, hbody, ite_eq_right heq]
 
 /-
 Re-export of the canonical finite-map translation witness

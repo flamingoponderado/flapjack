@@ -48,9 +48,9 @@ theorem wordLocValueToInstructionsCake_small_eq [NeZero width]
     Int.emod_eq_of_lt (by omega) (by omega)
   have hnot : ¬ ((label : Int) ≥ (2048 : Int)) := by omega
   unfold wordLocValueToInstructionsCake
-  simp only [registerOfNat, hdestination, dif_pos trivial]
+  simp only [registerOfNat, hdestination, dite_eq_left trivial]
   have hdelta : (Int.ofNat label - Int.ofNat 0 : Int) = (label : Int) := by simp
-  rw [hdelta, hrem, if_neg hnot]
+  rw [hdelta, hrem, ite_eq_right hnot]
   simp
 
 theorem wordLocValueToInstructions_execution [NeZero width]
@@ -86,8 +86,8 @@ theorem auipcAddi_execution_of_small [NeZero width]
   simp only [Fin.ext_iff, Fin.val_zero]
   by_cases h : destination = 0
   · rw [execute_auipc]; simp [h]
-  · rw [if_neg (by simpa using h), if_neg (by simpa using h), execute_auipc]
-    simp only [Fin.ext_iff, Fin.val_zero, if_neg (by simpa using h), hpc, uImmediate_zero]
+  · rw [ite_eq_right (by simpa using h), ite_eq_right (by simpa using h), execute_auipc]
+    simp only [Fin.ext_iff, Fin.val_zero, ite_eq_right (by simpa using h), hpc, uImmediate_zero]
     simp
 
 theorem wordLocValueToInstructions_agrees_cake_of_small [NeZero width]
@@ -177,7 +177,7 @@ theorem execute_auipc_addi_read [NeZero width] (state : State width) (d : Fin 32
       state.pc + uImmediate upper + low := by
   simp only [executeInstructions]
   rw [execute_addi_read]
-  rw [if_neg (by simpa using hne), execute_auipc, if_neg (by simpa using hne)]
+  rw [ite_eq_right (by simpa using hne), execute_auipc, ite_eq_right (by simpa using hne)]
 
 theorem wordLocValueToInstructionsCake_getD [NeZero width] (destination label position : Nat)
     (hd : destination < 32) :
@@ -296,7 +296,7 @@ theorem bmod_ofInt_toNat_neg (upper : Int) (hlo : -(2^19) ≤ upper) (hneg : upp
     omega
   rw [hper]
   have hc : (((2^20 : Nat) : Int) + 1) / 2 = 524288 := by decide
-  rw [if_pos (by rw [hc]; omega :
+  rw [ite_eq_left (by rw [hc]; omega :
     (((2^20 : Nat) : Int) + 1) / 2 ≤ upper + ((2^20 : Nat) : Int))]
   omega
 

@@ -2848,16 +2848,16 @@ theorem lookupInfo_filter_not_eq [BEq String] [LawfulBEq String]
               = List.filter (fun entry => !(entry.1 == name)) entries from by
             simp [hb, Bool.not_true]]
         rw [ih]
-        simp only [lookupInfo, hck, Bool.false_eq_true, if_false]
+        simp only [lookupInfo, hck, Bool.false_eq_true, ite_false]
       · have hb : (candidate == name) = false := beq_eq_false_iff_ne.mpr hc
         rw [show List.filter (fun entry => !(entry.1 == name)) ((candidate, val) :: entries)
               = (candidate, val) :: List.filter (fun entry => !(entry.1 == name)) entries from by
             simp [hb, Bool.not_false]]
         by_cases hk : candidate = key
         · have hkb : (candidate == key) = true := beq_iff_eq.mpr hk
-          simp only [lookupInfo, hkb, if_true]
+          simp only [lookupInfo, hkb, ite_true]
         · have hkb : (candidate == key) = false := beq_eq_false_iff_ne.mpr hk
-          simp only [lookupInfo, hkb, Bool.false_eq_true, if_false]
+          simp only [lookupInfo, hkb, Bool.false_eq_true, ite_false]
           exact ih
 
 /-- `panSemDeclUpdateInfo` is exactly HOL `code |+ (name,value)` /
@@ -2879,7 +2879,7 @@ theorem lookupInfo_panSemDeclUpdateInfo [BEq String] [LawfulBEq String]
     simp
   · have hb : (name == key) = false := beq_eq_false_iff_ne.mpr h
     rw [hb]
-    simp only [Bool.false_eq_true, if_false]
+    simp only [Bool.false_eq_true, ite_false]
     exact lookupInfo_filter_not_eq entries name key (fun hh => h hh.symm)
 
 /-! Constructor form of the admissible-declaration premise used by Cake's

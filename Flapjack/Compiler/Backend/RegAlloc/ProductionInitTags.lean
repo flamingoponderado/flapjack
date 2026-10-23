@@ -69,7 +69,7 @@ theorem stackOnlyCodec_production (names : List Nat) (key : Nat) :
   · have setMember : key ∈ natSetOfList names := by simpa [natSetOfList] using members.mpr (Or.inl member)
     simpa [member] using (Std.TreeSet.contains_iff_mem).mpr setMember
   · have setMissing : key ∉ natSetOfList names := by simpa [natSetOfList, member] using members
-    simp only [if_neg member, Option.isSome_none]
+    simp only [ite_eq_right member, Option.isSome_none]
     exact Bool.eq_false_iff.mpr (fun h => setMissing (Std.TreeSet.contains_iff_mem.mp h))
 
 private def initializerTag (fs : NumSet) (decode : Nat → Nat) (node : Nat) : Tag :=
@@ -121,7 +121,7 @@ private theorem foreach_tagWrites (nodes : List Nat) (role : Nat → Tag) (nativ
         next < ({native with node_tag := native.node_tag.set node (role node)} : State).node_tag.length := by
       intro next member
       simpa only [List.length_set] using bounds next (List.mem_cons_of_mem node member)
-    simp only [stExForeach, ignoreBind, updateNodeTagEqn, if_pos bound, ih _ tailBounds, List.foldl_cons]
+    simp only [stExForeach, ignoreBind, updateNodeTagEqn, ite_eq_left bound, ih _ tailBounds, List.foldl_cons]
 
 private theorem mkTags_equation (dimension : Nat) (fs : NumSet) (decode : Nat → Nat)
     (native : State) (length : native.node_tag.length = dimension) :
@@ -188,7 +188,7 @@ private theorem arrayFold_frame (nodes : List Nat) (tags : CakeNodeMap CakeNodeT
     have nextSize : (tags.set node (role node)).slots.size = dimension :=
       (CakeNodeMap.slots_size_set ..).trans size
     have nextOutside : (tags.set node (role node)).outside = [] := by
-      simp only [CakeNodeMap.set, if_pos bound, outside]
+      simp only [CakeNodeMap.set, ite_eq_left bound, outside]
     exact ih _ nextSize nextOutside (fun next member => bounds next (List.mem_cons_of_mem node member))
 
 private theorem arrayFold_unchanged (nodes : List Nat) (tags : CakeNodeMap CakeNodeTag)

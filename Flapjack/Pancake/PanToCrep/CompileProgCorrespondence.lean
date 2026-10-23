@@ -134,7 +134,7 @@ theorem compileProgNativeWithMetadataRouted_native {width : Nat} [NeZero width]
     compileProgNativeWithMetadataRouted declarations hdecls =
       compileProgNativeWithMetadata declarations hdecls := by
   unfold compileProgNativeWithMetadataRouted
-  rw [if_pos ⟨rfl, rfl⟩]
+  rw [ite_eq_left ⟨rfl, rfl⟩]
 
 /-- Native routing preserves the generic pipeline, including custom literals.
 This is a compatibility codec theorem, not a HOL declaration port. -/

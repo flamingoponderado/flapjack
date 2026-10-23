@@ -164,11 +164,11 @@ theorem evaluateStackFree {width : Nat} [NeZero width] {C F : Type}
       stateRelHOL jump bounds pointer postSource postTarget := by
   rcases hypothesis with ⟨sourceRun, notError, relation⟩
   rw [StackSemEvaluate.evaluate_stackFree] at sourceRun
-  simp only [relation.1, Bool.not_true, Bool.false_eq_true, if_false] at sourceRun
+  simp only [relation.1, Bool.not_true, Bool.false_eq_true, ite_false] at sourceRun
   by_cases safe : source.stack.length < source.stackSpace + count
-  · rw [if_pos safe] at sourceRun
+  · rw [ite_eq_left safe] at sourceRun
     exact (notError (Prod.mk.inj sourceRun).1.symm).elim
-  · rw [if_neg safe] at sourceRun
+  · rw [ite_eq_right safe] at sourceRun
     rcases Prod.mk.inj sourceRun with ⟨resultEq, stateEq⟩
     subst result
     subst postSource

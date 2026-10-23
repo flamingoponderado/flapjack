@@ -218,7 +218,7 @@ theorem wLiveFilterBitmap {width : Nat} [NeZero width] (k f' : Nat) (names2 : Sp
 
 theorem drop_set_self {α : Type} (l : List α) (i : Nat) (a : α) (h : i < l.length) :
     (l.set i a).drop i = a :: l.drop (i + 1) := by
-  rw [List.drop_set, if_neg (by omega), Nat.sub_self, List.drop_eq_getElem_cons h]
+  rw [List.drop_set, ite_eq_right (by omega), Nat.sub_self, List.drop_eq_getElem_cons h]
   rfl
 
 theorem cutEnvs_subset {β : Type} {names : WordLangCutsetsHOL} {env : Spt β}
@@ -262,7 +262,7 @@ theorem evaluateWLive {width : Nat} [NeZero width] {C F : Type}
       ∀ i, i ≠ k → StackSemStateOps.getVar i t5 = StackSemStateOps.getVar i t := by
   rintro ⟨hw, hfst, hsnd, hrel, hf1, hcut, hbsn, hbsl, hpre⟩
   have hf0 : ¬ f = 0 := by omega
-  simp only [wLiveNative, hf0, if_false, insertBitmap, Prod.mk.injEq] at hw
+  simp only [wLiveNative, hf0, ite_false, insertBitmap, Prod.mk.injEq] at hw
   obtain ⟨rfl, rfl, rfl⟩ := hw
   have hrel' := hrel
   unfold stateRel at hrel'
@@ -272,8 +272,8 @@ theorem evaluateWLive {width : Nat} [NeZero width] {C F : Type}
   simp only [Nat.add_zero] at r38 rloc
   have hff : f = f' + 1 := by
     by_cases h0 : f' = 0
-    · rw [if_pos h0] at r35; omega
-    · rw [if_neg h0] at r35; exact r35
+    · rw [ite_eq_left h0] at r35; omega
+    · rw [ite_eq_right h0] at r35; exact r35
   have hsp : t.stackSpace < t.stack.length := by omega
   set w : WordLocW width := .word (BitVec.ofNat width (n + 1)) with hwdef
   set t5 : StackSemStateFiniteExact width C F :=
@@ -286,9 +286,9 @@ theorem evaluateWLive {width : Nat} [NeZero width] {C F : Type}
       StackSemExpressions.assign, StackSemExpressions.wordExp, Option.join_some]
     simp only [StackSemControl.fixClock, StackSemStateOps.setVar, Nat.min_self]
     rw [StackSemEvaluate.evaluate_stackStore]
-    simp only [r5, Bool.not_true, Bool.false_eq_true, if_false, Nat.add_zero,
-      if_neg (by omega : ¬ t.stack.length ≤ t.stackSpace), StackSemStateOps.getVar,
-      HolFiniteMapExact.updateEq, FUPDATE_HOL, if_true]
+    simp only [r5, Bool.not_true, Bool.false_eq_true, ite_false, Nat.add_zero,
+      ite_eq_right (by omega : ¬ t.stack.length ≤ t.stackSpace), StackSemStateOps.getVar,
+      HolFiniteMapExact.updateEq, FUPDATE_HOL, ite_true]
     simp [t5, StackSemStateOps.setVar, HolFiniteMapExact.updateEq, r5, hwdef]
   have ht5regs : ∀ i, i ≠ k → t5.regs.lookup i = t.regs.lookup i := by
     intro i hi
@@ -305,7 +305,7 @@ theorem evaluateWLive {width : Nat} [NeZero width] {C F : Type}
       n / 2 < k + f' ∧ (rest.take f')[f' - 1 - (n / 2 - k)]? = some v := by
     intro m v hm _ hk
     obtain ⟨-, hif⟩ := rloc m v hm
-    rw [if_neg (by omega)] at hif
+    rw [ite_eq_right (by omega)] at hif
     obtain ⟨hslot, hlt⟩ := hif
     refine ⟨hlt, ?_⟩
     rw [hdrop, hff, List.take_succ_cons,
@@ -344,7 +344,7 @@ theorem evaluateWLive {width : Nat} [NeZero width] {C F : Type}
         show 2 ^ width - 1 + (n + 1) = n + 2 ^ width by
           have := Nat.one_lt_two_pow (n := width) (by omega); omega,
         Nat.add_mod_right, Nat.mod_eq_of_lt (by omega)]
-    simp only [hwdef, fullReadBitmap, if_neg hne0, hsub1, hdropn]
+    simp only [hwdef, fullReadBitmap, ite_eq_right hne0, hsub1, hdropn]
     exact readBitmapAppendExtra _ _ _ (readBitmapWriteBitmap names.2 k f' r29)
   have hperm0 : s.permute 0 = id := by rw [r3]
   obtain ⟨he1, he2⟩ := AllocStateRel.cutEnvs_eq hcut
@@ -406,7 +406,7 @@ theorem evaluateWLive {width : Nat} [NeZero width] {C F : Type}
         exact hd
       · rw [absStack.eq_def]
         simp only [hfrb]
-        rw [if_neg (by simp [hbitslen]), if_neg (by omega), hys]
+        rw [ite_eq_right (by simp [hbitslen]), ite_eq_right (by omega), hys]
       · intro hlt hhf
         simp only [List.length_cons] at hlt hhf ⊢
         by_cases heq : s.handler = s.stack.length
@@ -488,10 +488,10 @@ theorem evaluateWLive {width : Nat} [NeZero width] {C F : Type}
         else ((t5.stack.drop (t.stackSpace + 0)).take f)[f - 1 - (m / 2 - k)]? = some v ∧
           m / 2 < k + f'
       by_cases hlt : m / 2 < k
-      · rw [if_pos hlt] at hif ⊢
+      · rw [ite_eq_left hlt] at hif ⊢
         rw [ht5regs _ (by omega)]
         exact hif
-      · rw [if_neg hlt] at hif ⊢
+      · rw [ite_eq_right hlt] at hif ⊢
         obtain ⟨hslot, hbound⟩ := hif
         refine ⟨?_, hbound⟩
         rw [Nat.add_zero, hdrop5, hff, List.take_succ_cons,

@@ -119,16 +119,16 @@ theorem evaluateFreshLocal_Tick {width : Nat} {σ : Type} [NeZero width]
   have hev := h.2
   rw [evaluateHOLFiniteState_tick] at hev
   by_cases hz : state.clock = 0
-  · rw [if_pos hz] at hev
+  · rw [ite_eq_left hz] at hev
     obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
     refine ⟨HolFiniteMapExact.empty, ?_, ?_⟩
-    · rw [evaluateHOLFiniteState_tick, if_pos hz]
+    · rw [evaluateHOLFiniteState_tick, ite_eq_left hz]
       rfl
     · simp [goodResHOL]
-  · rw [if_neg hz] at hev
+  · rw [ite_eq_right hz] at hev
     obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
     refine ⟨state.locals.updateEq (name, value), ?_, fun _ => rfl⟩
-    rw [evaluateHOLFiniteState_tick, if_neg hz]
+    rw [evaluateHOLFiniteState_tick, ite_eq_right hz]
     rfl
 
 end Flapjack.PanGlobalsFreshLocal

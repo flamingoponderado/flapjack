@@ -103,7 +103,7 @@ theorem evaluate_call_some_callee_prefix
       (evaluate (.call (some (n, names, retHandler, l1, l2)) dest args handler) s).2.ffi.ioEvents := by
   have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2
   rw [ht]
-  simp only [hg, hbad, Bool.false_eq_true, if_false, hf, hdc, hce, hz, hcv]
+  simp only [hg, hbad, Bool.false_eq_true, ite_false, hf, hdc, hce, hz, hcv]
   rcases rc with _ | ⟨x, ys⟩ | ⟨x, y⟩ | k | k | _ | _ | _ | _
   · exact List.prefix_refl _
   · simp only
@@ -148,9 +148,9 @@ theorem evaluate_add_clock_io_events_mono_aux
       have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.1
       rw [ht, ht]
       by_cases hz : s.termdep = 0
-      · simp only [hz, if_true]
+      · simp only [hz, ite_true]
         exact List.prefix_refl _
-      · simp only [hz, if_false]
+      · simp only [hz, ite_false]
         have hq : ({ { s with clock := s.clock + e } with
               clock := wordSemMustTerminateLimit width
               termdep := s.termdep - 1 } : WordSemStateFiniteExact width C F) =
@@ -221,18 +221,18 @@ theorem evaluate_add_clock_io_events_mono_aux
         rcases hb' : evaluate c { s' with clock := s'.clock + e } with ⟨rb', s1'⟩
         rw [hb'] at ih
         have hl : wordSemContLoop (some (WordSemResult.timeOut : WordSemResult width)) = false := rfl
-        simp only [hl, Bool.false_eq_true, if_false]
+        simp only [hl, Bool.false_eq_true, ite_false]
         refine ih.trans ?_
         simp only
         by_cases hcont : wordSemContLoop rb' = true
-        · rw [if_pos hcont]
+        · rw [ite_eq_left hcont]
           by_cases hz : s1'.clock = 0
-          · rw [if_pos hz]
+          · rw [ite_eq_left hz]
             unfold flushState
             split <;> exact List.prefix_refl _
-          · rw [if_neg hz]
+          · rw [ite_eq_right hz]
             exact hmono _ (decClock s1') _ _ rfl
-        · rw [if_neg hcont]
+        · rw [ite_eq_right hcont]
           split
           · split
             · exact List.prefix_refl _
@@ -243,21 +243,21 @@ theorem evaluate_add_clock_io_events_mono_aux
       · rw [evaluate_add_clock_aux e c s' (by rw [hb]; exact hrb), hb]
         simp only
         by_cases hcont : wordSemContLoop rb = true
-        · rw [if_pos hcont, if_pos hcont]
+        · rw [ite_eq_left hcont, ite_eq_left hcont]
           by_cases hz : s1.clock = 0
-          · rw [if_pos hz]
+          · rw [ite_eq_left hz]
             have hf : (flushState true s1).ffi = s1.ffi := by
               unfold flushState
               split <;> rfl
             show (flushState true s1).ffi.ioEvents <+: _
             rw [hf]
             by_cases hz' : s1.clock + e = 0
-            · rw [if_pos hz']
+            · rw [ite_eq_left hz']
               unfold flushState
               split <;> exact List.prefix_refl _
-            · rw [if_neg hz']
+            · rw [ite_eq_right hz']
               exact hmono _ (decClock { s1 with clock := s1.clock + e }) _ _ rfl
-          · rw [if_neg hz, if_neg (by omega)]
+          · rw [ite_eq_right hz, ite_eq_right (by omega)]
             simp only [wordSemSTOP]
             have hd : decClock { s1 with clock := s1.clock + e } =
                 { decClock s1 with clock := (decClock s1).clock + e } := by
@@ -265,7 +265,7 @@ theorem evaluate_add_clock_io_events_mono_aux
               rw [show s1.clock + e - 1 = s1.clock - 1 + e by omega]
             rw [hd]
             exact evaluate_add_clock_io_events_mono_aux hmono e (.loop names c exitNames) (decClock s1)
-        · rw [if_neg hcont, if_neg hcont]
+        · rw [ite_eq_right hcont, ite_eq_right hcont]
           rcases rb with _ | x
           · simp [wordSemContLoop] at hcont
           · cases x with
@@ -289,9 +289,9 @@ theorem evaluate_add_clock_io_events_mono_aux
       · exact List.prefix_refl _
       simp only
       by_cases hbad : wordSemBadDestArgs dest args = true
-      · simp only [hbad, if_true]
+      · simp only [hbad, ite_true]
         exact List.prefix_refl _
-      simp only [hbad, Bool.false_eq_true, if_false]
+      simp only [hbad, Bool.false_eq_true, ite_false]
       rcases hf : wordSemFindCode dest (wordSemAddRetLoc ret xs) s.code s.stackSize with
         _ | ⟨args1, prog, ss⟩
       · simp only [hf]
@@ -303,7 +303,7 @@ theorem evaluate_add_clock_io_events_mono_aux
         | some _ => exact List.prefix_refl _
         | none =>
           simp only
-          rw [if_neg hz, if_neg (show ¬ (s.clock + e = 0) by omega)]
+          rw [ite_eq_right hz, ite_eq_right (show ¬ (s.clock + e = 0) by omega)]
           have hd : callEnv args1 ss (decClock { s with clock := s.clock + e }) =
               { callEnv args1 ss (decClock s) with
                 clock := (callEnv args1 ss (decClock s)).clock + e } := by
@@ -323,13 +323,13 @@ theorem evaluate_add_clock_io_events_mono_aux
         obtain ⟨n, names, retHandler, l1, l2⟩ := rv
         simp only
         by_cases hdc : sptDomainEmpty names.fst ∨ ¬ n.Nodup
-        · simp only [hdc, if_true]
+        · simp only [hdc, ite_true]
           exact List.prefix_refl _
-        simp only [hdc, if_false]
+        simp only [hdc, ite_false]
         rcases hce : wordSemCutEnvs names s.locals with _ | envs
         · exact List.prefix_refl _
         simp only
-        rw [if_neg hz, if_neg (show ¬ (s.clock + e = 0) by omega)]
+        rw [ite_eq_right hz, ite_eq_right (show ¬ (s.clock + e = 0) by omega)]
         have hd : callEnv args1 ss (pushEnv envs handler (decClock { s with clock := s.clock + e })) =
             { callEnv args1 ss (pushEnv envs handler (decClock s)) with
               clock := (callEnv args1 ss (pushEnv envs handler (decClock s))).clock + e } := by
@@ -385,9 +385,9 @@ theorem evaluate_add_clock_io_events_mono_aux
         rcases rc with _ | ⟨x, ys⟩ | ⟨x, y⟩ | k | k | _ | _ | _ | _
         · exact List.prefix_refl _
         · by_cases hx : x ≠ WordLocW.loc l1 l2 ∨ ys.length ≠ n.length
-          · simp only [hx, if_true]
+          · simp only [hx, ite_true]
             exact List.prefix_refl _
-          simp only [hx, if_false]
+          simp only [hx, ite_false]
           rw [popEnv_withClock s2 (s2.clock + e)]
           rcases hp : popEnv s2 with _ | s1
           · exact List.prefix_refl _
@@ -397,7 +397,7 @@ theorem evaluate_add_clock_io_events_mono_aux
           by_cases hdom : sptDomainEqUnion s1.locals envs.fst envs.snd
           · have hdom' : sptDomainEqUnion ({ s1 with clock := s2.clock + e } :
                 WordSemStateFiniteExact width C F).locals envs.fst envs.snd := hdom
-            simp only [hdom, hdom', if_true]
+            simp only [hdom, hdom', ite_true]
             rw [← hc2.1]
             have hsv : setVars n ys { s1 with clock := s1.clock + e } =
                 { setVars n ys s1 with clock := (setVars n ys s1).clock + e } := rfl
@@ -405,7 +405,7 @@ theorem evaluate_add_clock_io_events_mono_aux
             exact evaluate_add_clock_io_events_mono_aux hmono e retHandler (setVars n ys s1)
           · have hdom' : ¬ sptDomainEqUnion ({ s1 with clock := s2.clock + e } :
                 WordSemStateFiniteExact width C F).locals envs.fst envs.snd := hdom
-            simp only [hdom, hdom', if_false]
+            simp only [hdom, hdom', ite_false]
             exact List.prefix_refl _
         · cases handler with
           | none => exact List.prefix_refl _
@@ -413,20 +413,20 @@ theorem evaluate_add_clock_io_events_mono_aux
             obtain ⟨n', hprog, l1', l2'⟩ := hv
             simp only
             by_cases hx : x ≠ WordLocW.loc l1' l2'
-            · rw [if_pos hx, if_pos hx]
+            · rw [ite_eq_left hx, ite_eq_left hx]
               exact List.prefix_refl _
-            rw [if_neg hx, if_neg hx]
+            rw [ite_eq_right hx, ite_eq_right hx]
             by_cases hdom : sptDomainEqUnion s2.locals envs.fst envs.snd
             · have hdom' : sptDomainEqUnion ({ s2 with clock := s2.clock + e } :
                   WordSemStateFiniteExact width C F).locals envs.fst envs.snd := hdom
-              rw [if_pos hdom, if_pos hdom']
+              rw [ite_eq_left hdom, ite_eq_left hdom']
               have hsv : setVar n' y { s2 with clock := s2.clock + e } =
                   { setVar n' y s2 with clock := (setVar n' y s2).clock + e } := rfl
               rw [hsv]
               exact evaluate_add_clock_io_events_mono_aux hmono e hprog (setVar n' y s2)
             · have hdom' : ¬ sptDomainEqUnion ({ s2 with clock := s2.clock + e } :
                   WordSemStateFiniteExact width C F).locals envs.fst envs.snd := hdom
-              rw [if_neg hdom, if_neg hdom']
+              rw [ite_eq_right hdom, ite_eq_right hdom']
               exact List.prefix_refl _
         all_goals exact List.prefix_refl _
   | .skip, s => by

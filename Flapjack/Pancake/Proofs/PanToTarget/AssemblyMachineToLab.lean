@@ -240,7 +240,7 @@ theorem panToTargetMachineSemExtend (machine : SemanticsPropsHOL.BehaviourSetHOL
   intro b hb
   have hlabnf : lab ≠ .fail := extendPrime_singleton_ne_fail precise w lab hlab hw
   have := himpl (fun h => hlabnf h.symm) b hb
-  simp only [SemanticsPropsHOL.extendWithResourceLimitPrimeHOL, if_true] at this
+  simp only [SemanticsPropsHOL.extendWithResourceLimitPrimeHOL, ite_true] at this
   rw [this]
   exact hlab
 

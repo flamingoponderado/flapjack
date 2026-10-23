@@ -175,7 +175,7 @@ theorem callFFIHOL_final {σ : Type u} (state : HolFfiState σ) (name : HolFfiNa
       .final { name := name, configuration := configuration, bytes := bytes,
                outcome := outcome } := by
   unfold callFFIHOL
-  rw [if_neg hne, h]
+  rw [ite_eq_right hne, h]
 
 /-- Flapjack-only helper: the returning-oracle branch of `callFFIHOL`. -/
 theorem callFFIHOL_ret {σ : Type u} (state : HolFfiState σ) (name : HolFfiName)
@@ -195,7 +195,7 @@ theorem callFFIHOL_ret {σ : Type u} (state : HolFfiState σ) (name : HolFfiName
         .final { name := name, configuration := configuration, bytes := bytes,
                  outcome := .failed }) := by
   unfold callFFIHOL
-  rw [if_neg hne, h]
+  rw [ite_eq_right hne, h]
 
 /-- Flapjack-only helper used to prove the canonical tagged port
 `Flapjack.Compiler.Backend.StackRemove.callFFILengthHOL` (HOL `call_FFI_LENGTH`).
@@ -210,18 +210,18 @@ theorem callFFIHOL_ret_length {σ : Type u} (state : HolFfiState σ) (name : Hol
     nextBytes.length = bytes.length := by
   unfold callFFIHOL at h
   by_cases hid : name = .extCall (Flapjack.Basis.Pure.MlString.MlString.implode [])
-  · rw [if_pos hid] at h
+  · rw [ite_eq_left hid] at h
     injection h with _ hbytes
     rw [← hbytes]
-  · rw [if_neg hid] at h
+  · rw [ite_eq_right hid] at h
     cases hor : state.oracle name state.ffiState configuration bytes with
     | ret ns nb =>
         simp only [hor] at h
         by_cases hl : nb.length = bytes.length
-        · rw [if_pos hl] at h
+        · rw [ite_eq_left hl] at h
           injection h with _ hb
           rw [← hb]; exact hl
-        · rw [if_neg hl] at h
+        · rw [ite_eq_right hl] at h
           exact absurd h (by simp)
     | final outcome =>
         simp only [hor] at h
@@ -244,7 +244,7 @@ theorem callFFIHOL_ret_ffi_eq_of_ioEvents_eq {σ : Type u}
     rcases hcall with ⟨hnext, _⟩
     exact hnext.symm
   · unfold callFFIHOL at hcall
-    rw [if_neg hname] at hcall
+    rw [ite_eq_right hname] at hcall
     cases horacle : state.oracle name state.ffiState configuration bytes with
     | final outcome => simp [horacle] at hcall
     | ret hostState returnedBytes =>

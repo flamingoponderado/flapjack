@@ -231,8 +231,8 @@ theorem evaluate_add_clock_aux (e : Nat) :
       rw [ht, ht]
       by_cases hz : s.clock = 0
       · simp [hz] at h
-      · simp only [hz, if_false]
-        rw [if_neg (by simp; omega)]
+      · simp only [hz, ite_false]
+        rw [ite_eq_right (by simp; omega)]
         simp only [decClock]
         rw [show s.clock + e - 1 = s.clock - 1 + e by omega]
   | .mustTerminate q, s, _ => by
@@ -240,7 +240,7 @@ theorem evaluate_add_clock_aux (e : Nat) :
       rw [ht, ht]
       by_cases hz : s.termdep = 0
       · simp [hz]
-      · simp only [hz, if_false]
+      · simp only [hz, ite_false]
         have hq : ({ { s with clock := s.clock + e } with
               clock := wordSemMustTerminateLimit width
               termdep := s.termdep - 1 } : WordSemStateFiniteExact width C F) =
@@ -302,18 +302,18 @@ theorem evaluate_add_clock_aux (e : Nat) :
       rw [evaluate_add_clock_aux e c s' (by rw [hb]; exact hrb), hb]
       simp only
       by_cases hcont : wordSemContLoop rb = true
-      · simp only [hcont, if_true] at h ⊢
+      · simp only [hcont, ite_true] at h ⊢
         by_cases hz : s1.clock = 0
         · simp [hz] at h
-        · simp only [hz, if_false, wordSemSTOP] at h ⊢
-          rw [if_neg (by simp; omega)]
+        · simp only [hz, ite_false, wordSemSTOP] at h ⊢
+          rw [ite_eq_right (by simp; omega)]
           have hd : decClock { s1 with clock := s1.clock + e } =
               { decClock s1 with clock := (decClock s1).clock + e } := by
             simp only [decClock]
             rw [show s1.clock + e - 1 = s1.clock - 1 + e by omega]
           rw [hd]
           exact evaluate_add_clock_aux e (.loop names c exitNames) (decClock s1) h
-      · simp only [hcont, Bool.false_eq_true, if_false] at h ⊢
+      · simp only [hcont, Bool.false_eq_true, ite_false] at h ⊢
         rcases rb with _ | x
         · simp [wordSemContLoop] at hcont
         · cases x with
@@ -337,8 +337,8 @@ theorem evaluate_add_clock_aux (e : Nat) :
       · rfl
       simp only [hg] at h ⊢
       by_cases hbad : wordSemBadDestArgs dest args = true
-      · simp only [hbad, if_true]
-      simp only [hbad, Bool.false_eq_true, if_false] at h ⊢
+      · simp only [hbad, ite_true]
+      simp only [hbad, Bool.false_eq_true, ite_false] at h ⊢
       rcases hf : wordSemFindCode dest (wordSemAddRetLoc ret xs) s.code s.stackSize with
         _ | ⟨args1, prog, ss⟩
       · simp only [hf]
@@ -351,8 +351,8 @@ theorem evaluate_add_clock_aux (e : Nat) :
           simp only at h ⊢
           by_cases hz : s.clock = 0
           · simp [hz] at h
-          simp only [hz, if_false] at h ⊢
-          rw [if_neg (by simp; omega)]
+          simp only [hz, ite_false] at h ⊢
+          rw [ite_eq_right (by simp; omega)]
           have hd : callEnv args1 ss (decClock { s with clock := s.clock + e }) =
               { callEnv args1 ss (decClock s) with
                 clock := (callEnv args1 ss (decClock s)).clock + e } := by
@@ -374,15 +374,15 @@ theorem evaluate_add_clock_aux (e : Nat) :
         obtain ⟨n, names, retHandler, l1, l2⟩ := rv
         simp only at h ⊢
         by_cases hdc : sptDomainEmpty names.fst ∨ ¬ n.Nodup
-        · simp only [hdc, if_true]
-        simp only [hdc, if_false] at h ⊢
+        · simp only [hdc, ite_true]
+        simp only [hdc, ite_false] at h ⊢
         rcases hce : wordSemCutEnvs names s.locals with _ | envs
         · rfl
         simp only [hce] at h ⊢
         by_cases hz : s.clock = 0
         · simp [hz] at h
-        simp only [hz, if_false] at h ⊢
-        rw [if_neg (by simp; omega)]
+        simp only [hz, ite_false] at h ⊢
+        rw [ite_eq_right (by simp; omega)]
         have hd : callEnv args1 ss (pushEnv envs handler (decClock { s with clock := s.clock + e })) =
             { callEnv args1 ss (pushEnv envs handler (decClock s)) with
               clock := (callEnv args1 ss (pushEnv envs handler (decClock s))).clock + e } := by
@@ -407,8 +407,8 @@ theorem evaluate_add_clock_aux (e : Nat) :
         rcases rc with _ | ⟨x, ys⟩ | ⟨x, y⟩ | k | k | _ | _ | _ | _
         · rfl
         · by_cases hx : x ≠ WordLocW.loc l1 l2 ∨ ys.length ≠ n.length
-          · simp only [hx, if_true]
-          simp only [hx, if_false] at h ⊢
+          · simp only [hx, ite_true]
+          simp only [hx, ite_false] at h ⊢
           rw [popEnv_withClock]
           rcases hp : popEnv s2 with _ | s1
           · rfl
@@ -418,7 +418,7 @@ theorem evaluate_add_clock_aux (e : Nat) :
           by_cases hdom : sptDomainEqUnion s1.locals envs.fst envs.snd
           · have hdom' : sptDomainEqUnion ({ s1 with clock := s2.clock + e } :
                 WordSemStateFiniteExact width C F).locals envs.fst envs.snd := hdom
-            simp only [hdom, hdom', if_true] at h ⊢
+            simp only [hdom, hdom', ite_true] at h ⊢
             rw [← hc2.1]
             have hsv : setVars n ys { s1 with clock := s1.clock + e } =
                 { setVars n ys s1 with clock := (setVars n ys s1).clock + e } := rfl
@@ -426,7 +426,7 @@ theorem evaluate_add_clock_aux (e : Nat) :
             exact evaluate_add_clock_aux e retHandler (setVars n ys s1) h
           · have hdom' : ¬ sptDomainEqUnion ({ s1 with clock := s2.clock + e } :
                 WordSemStateFiniteExact width C F).locals envs.fst envs.snd := hdom
-            simp only [hdom, hdom', if_false]
+            simp only [hdom, hdom', ite_false]
             rw [hc2.1]
         · cases handler with
           | none => rfl
@@ -434,19 +434,19 @@ theorem evaluate_add_clock_aux (e : Nat) :
             obtain ⟨n', hprog, l1', l2'⟩ := hv
             simp only at h ⊢
             by_cases hx : x ≠ WordLocW.loc l1' l2'
-            · rw [if_pos hx, if_pos hx]
-            simp only [hx, if_false] at h ⊢
+            · rw [ite_eq_left hx, ite_eq_left hx]
+            simp only [hx, ite_false] at h ⊢
             by_cases hdom : sptDomainEqUnion s2.locals envs.fst envs.snd
             · have hdom' : sptDomainEqUnion ({ s2 with clock := s2.clock + e } :
                   WordSemStateFiniteExact width C F).locals envs.fst envs.snd := hdom
-              simp only [hdom, hdom', if_true] at h ⊢
+              simp only [hdom, hdom', ite_true] at h ⊢
               have hsv : setVar n' y { s2 with clock := s2.clock + e } =
                   { setVar n' y s2 with clock := (setVar n' y s2).clock + e } := rfl
               rw [hsv]
               exact evaluate_add_clock_aux e hprog (setVar n' y s2) h
             · have hdom' : ¬ sptDomainEqUnion ({ s2 with clock := s2.clock + e } :
                   WordSemStateFiniteExact width C F).locals envs.fst envs.snd := hdom
-              simp only [hdom, hdom', if_false]
+              simp only [hdom, hdom', ite_false]
         · rfl
         · rfl
         · exact absurd rfl hrc

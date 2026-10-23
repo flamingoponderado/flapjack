@@ -130,15 +130,15 @@ theorem panWriteBytearrayWord8HOL_congr (address : RiscV.Word 64) (bytes : List 
         rcases h₂ : w₂ (panByteAlignHOL address) with ⟨cell₂⟩
         rw [h₁, h₂] at hw
         cases hw
-        simp only [hal, hal₁, if_true]
+        simp only [hal, hal₁, ite_true]
         by_cases hcur : c = panByteAlignHOL address
         · simp [hcur]
-        · simp only [hcur, if_false]
+        · simp only [hcur, ite_false]
           exact hrest c hc
       · have hal₁ : ¬ domain₁ (panByteAlignHOL address) := fun h => hal ((hdomain _).mp h)
         rcases h₁ : w₁ (panByteAlignHOL address) with ⟨cell₁⟩
         rcases h₂ : w₂ (panByteAlignHOL address) with ⟨cell₂⟩
-        simp only [hal, hal₁, if_false]
+        simp only [hal, hal₁, ite_false]
         exact hmemory c hc
 
 theorem byteToBits_eq_toBitVec : byteToBits = UInt8.toBitVec := by

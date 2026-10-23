@@ -50,8 +50,8 @@ theorem nativeSsa_firstDead_evaluation {width : Nat} [NeZero width] {C F : Type}
     refine ⟨ssaOutput, actual, deadOutput, decoded, routed, permutation, ?_⟩
     dsimp only at ssa ⊢
     by_cases failed : (evaluate native {state with permute := permutation}).1 = some .error
-    · simp only [failed, if_pos]
-    · rw [if_neg failed] at ssa ⊢
+    · simp only [failed, ite_eq_left]
+    · rw [ite_eq_right failed] at ssa ⊢
       have targetNonerror : (evaluate (fullSsaCcTrans count native) state).1 ≠ some .error := by
         rw [← ssa.1]
         exact failed

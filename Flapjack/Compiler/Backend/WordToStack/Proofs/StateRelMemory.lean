@@ -72,7 +72,7 @@ theorem stateRelMemStore {width : Nat} [NeZero width] {C F : Type}
   next inDomain =>
     cases executed
     refine ⟨{target with memory := fun key => if key = address then value else source.memory key},?_,?_⟩
-    · simp only [StackSemStateOps.memStore,sameDomain,inDomain,if_true,sameMemory]
+    · simp only [StackSemStateOps.memStore,sameDomain,inDomain,ite_true,sameMemory]
     · exact stateRelWithMemory ac k f frame source target lens extra _ related
   next => contradiction
 

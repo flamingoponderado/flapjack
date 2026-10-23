@@ -39,6 +39,6 @@ theorem stackAlloc_large {width : Nat} [NeZero width] (jump : Bool) (pointer cou
       .seq (singleStackAlloc jump pointer maxStackAlloc)
         (stackAlloc jump pointer (count - maxStackAlloc)) := by
   have nonzero : count ≠ 0 := by simp only [maxStackAlloc] at large; omega
-  rw [stackAlloc, if_neg nonzero, if_neg (Nat.not_le.mpr large)]
+  rw [stackAlloc, ite_eq_right nonzero, ite_eq_right (Nat.not_le.mpr large)]
 
 end Flapjack.Compiler.Backend.StackRemove

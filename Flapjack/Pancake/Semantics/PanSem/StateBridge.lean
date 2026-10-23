@@ -313,7 +313,7 @@ theorem lookupInfo_mlFunctionToInfoMap {β : Type} [BEq String] [LawfulBEq Strin
           · have heq : head = query := toStringOfBytes_injective (beq_iff_eq.mp hbeq)
             subst heq
             simp only [mlFunctionToInfoMap, hhead, lookupInfo,
-              if_pos (beq_self_eq_true _)]
+              ite_eq_left (beq_self_eq_true _)]
           · have hne : head ≠ query := by
               intro h
               exact hbeq (by rw [h]; exact beq_self_eq_true _)
@@ -322,7 +322,7 @@ theorem lookupInfo_mlFunctionToInfoMap {β : Type} [BEq String] [LawfulBEq Strin
               rcases List.mem_cons.mp (hquery hq) with hmem | hmem
               · exact absurd hmem.symm hne
               · exact hmem
-            simp only [mlFunctionToInfoMap, hhead, lookupInfo, if_neg hbeq]
+            simp only [mlFunctionToInfoMap, hhead, lookupInfo, ite_eq_right hbeq]
             exact ih query htail
 
 /-! ## State relation and codecs -/
@@ -398,11 +398,11 @@ theorem panSemMemoryRel_update {width : Nat} [NeZero width]
   intro a ha
   by_cases h : a = address
   · subst h
-    simp only [beq_self_eq_true, if_true, holWordLabBits_word]
+    simp only [beq_self_eq_true, ite_true, holWordLabBits_word]
   · have hbeq : (a == address) = false := by
       simp [beq_eq_false_iff_ne, h]
     have hif : (if a = address then (.word value : HolWordLab width) else exactMemory a)
-        = exactMemory a := if_neg h
+        = exactMemory a := ite_eq_right h
     simp only [hbeq, hif]
     exact hrel a ha
 

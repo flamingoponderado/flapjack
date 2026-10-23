@@ -203,7 +203,7 @@ theorem filterCorrectInstall {width : Nat} [NeZero width] {C : Type} {F : Type}
                       simp only [hs, hr0, hr1, hr2, hflush, hsourceLoc, ho, hcomp] at he
                       simp only [filterSkip, holShiftSeq] at he
                       change (if bytes = compiledBytes ∧ (holShiftSeq 1 t1.compileOracle 0).1 = nextConfiguration then _ else _) = _ at he
-                      rw [if_pos (by simpa only [holShiftSeq] using hv)] at he
+                      rw [ite_eq_left (by simpa only [holShiftSeq] using hv)] at he
                       simpa only [hs, filterSkip, holShiftSeq, installReturnState] using he
                     have hpath : ∃ (start finish : BitVec width) (sectionId labelId : Nat) (bytes compiledBytes : List (BitVec 8))
                         (configuration nextConfiguration : C),
@@ -233,7 +233,7 @@ theorem filterCorrectInstall {width : Nat} [NeZero width] {C : Type} {F : Type}
                     simp only [hnonzero, ↓reduceIte, asmFetch, halign, hcompile, hr0, hr1, hr2, hflush, htargetLoc, ho, hcomp]
                     simp only [holShiftSeq]
                     change (if bytes = compiledBytes ∧ (holShiftSeq 1 t1.compileOracle 0).1 = nextConfiguration then _ else _) = _
-                    rw [if_pos (by simpa only [holShiftSeq] using hv)]
+                    rw [ite_eq_left (by simpa only [holShiftSeq] using hv)]
                     rw [← hcompile]
                     change evaluate (installReturnState {t1 with pc := t1.pc + count, clock := t1.clock + extra}
                       (⟨installedSection, lines⟩ :: rest) installedSection originalPc buffer) = (res, t2)
@@ -253,7 +253,7 @@ theorem filterCorrectInstall {width : Nat} [NeZero width] {C : Type} {F : Type}
                     simp only [hs, hr0, hr1, hr2, hflush, hsourceLoc, ho, hcomp] at he
                     simp only [filterSkip, holShiftSeq] at he
                     change (if bytes = compiledBytes ∧ (holShiftSeq 1 t1.compileOracle 0).1 = nextConfiguration then _ else _) = _ at he
-                    rw [if_neg (by simpa only [holShiftSeq] using hv)] at he
+                    rw [ite_eq_right (by simpa only [holShiftSeq] using hv)] at he
                     cases he
                     have hrun := allSkipsEvaluate count t1 ⟨hskips, hfailed⟩ 0
                     refine ⟨count, {t1 with pc := t1.pc + count}, ?_, rfl⟩
@@ -263,7 +263,7 @@ theorem filterCorrectInstall {width : Nat} [NeZero width] {C : Type} {F : Type}
                     simp only [htclock, ↓reduceIte, asmFetch, halign, hcompile, hr0, hr1, hr2, hflush, htargetLoc, ho, hcomp]
                     simp only [holShiftSeq]
                     change (if bytes = compiledBytes ∧ (holShiftSeq 1 t1.compileOracle 0).1 = nextConfiguration then _ else _) = _
-                    rw [if_neg (by simpa only [holShiftSeq] using hv)]
+                    rw [ite_eq_right (by simpa only [holShiftSeq] using hv)]
 
 
 end Flapjack.Compiler.Backend.LabFilter.Proofs

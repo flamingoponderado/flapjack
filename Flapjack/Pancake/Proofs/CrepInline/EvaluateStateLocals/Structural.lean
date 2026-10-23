@@ -58,7 +58,7 @@ theorem localsRel_updateEq {width : Nat} [NeZero width] {σ : Type}
   simp only [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL] at hk ⊢
   by_cases hkv : k = v
   · simp_all
-  · simp only [hkv, if_false] at hk ⊢; exact h k x hk
+  · simp only [hkv, ite_false] at hk ⊢; exact h k x hk
 
 /-- Local support: the `locals_ext_rel` step of the `Dec` case, pointwise. -/
 private theorem decExtRel {width : Nat} [NeZero width] {σ : Type}
@@ -91,9 +91,9 @@ private theorem decExtRel {width : Nat} [NeZero width] {σ : Type}
   simp only [hres]
   by_cases hkv : k = v
   · subst hkv
-    simp only [if_true]
+    simp only [ite_true]
     rfl
-  · simp only [hkv, if_false] at hdk hxk ⊢
+  · simp only [hkv, ite_false] at hdk hxk ⊢
     exact hxk
 
 /-- Local support: the `Dec` case of the motive from its guarded premise. -/
@@ -158,20 +158,20 @@ private theorem decStrongGoal {width : Nat} [NeZero width] {σ : Type}
                 simp only [FUPDATE_HOL] at hk ⊢
                 by_cases hkv : k = v
                 · simp_all
-                · simp only [hkv, if_false] at hk ⊢; exact hl2 k x hk
+                · simp only [hkv, ite_false] at hk ⊢; exact hl2 k x hk
             | none =>
                 rw [hsv, HolFiniteMapExact.lookup_resVarEq_none] at hk
                 simp only [FDOMSUB_HOL] at hk
                 by_cases hkv : k = v
                 · simp [hkv] at hk
-                · simp only [hkv, if_false] at hk
+                · simp only [hkv, ite_false] at hk
                   cases htv : t.locals.lookup v with
                   | none =>
                       rw [HolFiniteMapExact.lookup_resVarEq_none]
-                      simp only [FDOMSUB_HOL, hkv, if_false]; exact hl2 k x hk
+                      simp only [FDOMSUB_HOL, hkv, ite_false]; exact hl2 k x hk
                   | some y =>
                       rw [HolFiniteMapExact.lookup_resVarEq_some]
-                      simp only [FUPDATE_HOL, hkv, if_false]; exact hl2 k x hk
+                      simp only [FUPDATE_HOL, hkv, ite_false]; exact hl2 k x hk
           · unfold crepInlineLocalsExtRelExact at hx2 ⊢
             exact decExtRel v val s t st t2 hdom (Or.inr hx2)
         unfold strongLocalsPost at hpost2 ⊢
@@ -243,9 +243,9 @@ private theorem iteStrongGoal {width : Nat} [NeZero width] {σ : Type}
           have hsel := ih (.word w) w hcl rfl
           dsimp only at hev ⊢
           by_cases hw : w ≠ 0
-          · rw [if_pos hw] at hev hsel ⊢
+          · rw [ite_eq_left hw] at hev hsel ⊢
             exact hsel r s' t hev hne hloc hrel
-          · rw [if_neg hw] at hev hsel ⊢
+          · rw [ite_eq_right hw] at hev hsel ⊢
             exact hsel r s' t hev hne hloc hrel
 
 /-- `Dec` case of HOL `evaluate_state_locals_rel_strong` (`:328-380`), with

@@ -20,12 +20,12 @@ theorem memStoresMemorySwapHOL {width : Nat} [NeZero width]
   | cons value values ih =>
     intro heval
     by_cases hd : domain address
-    · simp only [panMemStoresHOL, panMemStoreHOL, if_pos hd] at heval
+    · simp only [panMemStoresHOL, panMemStoreHOL, ite_eq_left hd] at heval
       obtain ⟨updated, hu⟩ := ih (address + panBytesInWord width)
         (fun a => if a = address then value else memory a)
         (fun a => if a = address then value else replacement a) result heval
       exact ⟨updated, by
-        simpa only [panMemStoresHOL, panMemStoreHOL, if_pos hd] using hu⟩
+        simpa only [panMemStoresHOL, panMemStoreHOL, ite_eq_left hd] using hu⟩
     · simp [panMemStoresHOL, panMemStoreHOL, hd] at heval
 
 end Flapjack.PanGlobalsMemorySwap

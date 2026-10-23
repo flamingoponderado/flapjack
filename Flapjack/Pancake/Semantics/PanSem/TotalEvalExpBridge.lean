@@ -355,11 +355,11 @@ theorem lookupInfo_panStructContextToHOL (name : String) (structs : StructContex
       by_cases hc : candidate == name
       · have heq : candidate = name := beq_iff_eq.mp hc
         rw [heq]
-        simp only [beq_self_eq_true, if_pos, Option.map_some]
+        simp only [beq_self_eq_true, ite_eq_left, Option.map_some]
       · have hne : candidate ≠ name := fun h => hc (beq_iff_eq.mpr h)
         have hofne : ofString name ≠ ofString candidate :=
           fun h => hne (ofString_injective_of_ranged hname hcandidate h).symm
-        rw [if_neg hc, if_neg hofne]
+        rw [ite_eq_right hc, ite_eq_right hofne]
         exact ih hrangeTail
 
 /-! ## Memory-view helpers for the load clauses -/
@@ -412,18 +412,18 @@ theorem panMemLoad32HOL_agree {σ : Type}
       = panMemLoad32HOL exact.memory exact.memaddrs exact.be address := by
   obtain ⟨_, _, _, _, _, hm, hmd, _, _, hbe, _, _, _⟩ := hrel
   by_cases halign : address.toNat % 4 = 0
-  · simp only [panMemLoad32HOL, if_pos halign]
+  · simp only [panMemLoad32HOL, ite_eq_left halign]
     by_cases hexact : exact.memaddrs (panByteAlignHOL (width := 64) address)
     · have hmem := panValueWordHOL_eq_of_memRel state exact hm hmd _ hexact
       have hdom : state.memaddrs (panByteAlignHOL (width := 64) address)
           && panValueWordDefined state.memory (panByteAlignHOL (width := 64) address) = true :=
         (panValueFlatMachineDomain_iff state exact hm hmd _).mpr hexact
-      rw [if_pos hdom, if_pos hexact, hmem, ← hbe]
+      rw [ite_eq_left hdom, ite_eq_left hexact, hmem, ← hbe]
     · have hdom : ¬ (state.memaddrs (panByteAlignHOL (width := 64) address)
           && panValueWordDefined state.memory (panByteAlignHOL (width := 64) address) = true) :=
         fun h => hexact ((panValueFlatMachineDomain_iff state exact hm hmd _).mp h)
-      rw [if_neg hdom, if_neg hexact]
-  · simp only [panMemLoad32HOL, if_neg halign]
+      rw [ite_eq_right hdom, ite_eq_right hexact]
+  · simp only [panMemLoad32HOL, ite_eq_right halign]
 
 /-- The executed and exact `mem_load_byte` agree under `PanSemStateRelExec`. -/
 theorem panMemLoadByteHOL_agree {σ : Type}
@@ -440,12 +440,12 @@ theorem panMemLoadByteHOL_agree {σ : Type}
     have hdom : state.memaddrs (panByteAlignHOL (width := 64) address)
         && panValueWordDefined state.memory (panByteAlignHOL (width := 64) address) = true :=
       (panValueFlatMachineDomain_iff state exact hm hmd _).mpr hexact
-    simp only [panMemLoadByteHOL, if_pos hdom, if_pos hexact]
+    simp only [panMemLoadByteHOL, ite_eq_left hdom, ite_eq_left hexact]
     rw [hmem, ← hbe]
   · have hdom : ¬ (state.memaddrs (panByteAlignHOL (width := 64) address)
         && panValueWordDefined state.memory (panByteAlignHOL (width := 64) address) = true) :=
       fun h => hexact ((panValueFlatMachineDomain_iff state exact hm hmd _).mp h)
-    simp only [panMemLoadByteHOL, if_neg hdom, if_neg hexact]
+    simp only [panMemLoadByteHOL, ite_eq_right hdom, ite_eq_right hexact]
 
 /-- The executed comparison is the exact `word_cmp` word encoding. -/
 theorem panSemBitVec64MemoryAccess_compare {σ : Type}
@@ -697,14 +697,14 @@ theorem evalPanValueExp_op_agree {σ : Type}
             else none)
       rw [Option.bind_some]
       by_cases hall : (values.map panValueToHOL).all valueIsWord = true
-      · rw [if_pos hall]
-        rw [mapM_panValueWordProjection_panValueToHOL values, if_pos hall, Option.bind_some,
+      · rw [ite_eq_left hall]
+        rw [mapM_panValueWordProjection_panValueToHOL values, ite_eq_left hall, Option.bind_some,
           hwordOp, Option.map_map]
         congr 1
         funext w
         simp [Function.comp_apply, panValueToHOL_word]
-      · rw [if_neg hall]
-        rw [mapM_panValueWordProjection_panValueToHOL values, if_neg hall]
+      · rw [ite_eq_right hall]
+        rw [mapM_panValueWordProjection_panValueToHOL values, ite_eq_right hall]
         simp
 
 theorem evalPanValueExp_panOp_agree {σ : Type}
@@ -1006,11 +1006,11 @@ theorem structContextLookupHOL_structContextToHOL (name : String)
       by_cases hc : candidate == name
       · have heq : candidate = name := beq_iff_eq.mp hc
         subst heq
-        simp only [beq_self_eq_true, if_pos, Option.map_some]
+        simp only [beq_self_eq_true, ite_eq_left, Option.map_some]
       · have hne : candidate ≠ name := fun h => hc (beq_iff_eq.mpr h)
         have hofne : ofString name ≠ ofString candidate :=
           fun h => hne (ofString_injective_of_ranged hname hcandidate h).symm
-        rw [if_neg hc, if_neg hofne]
+        rw [ite_eq_right hc, ite_eq_right hofne]
         exact ih hrangeTail
 
 /-- Encode a production cache-augmented `StructInfo` (dropping `shapedFields`)
@@ -1142,7 +1142,7 @@ theorem panMemLoadHOL_map_holValueToHOL {width : Nat} [NeZero width]
   case case1 =>
     intro address ctx hdomA hr hi hs
     simp only [panMemLoadHOL, shapeToHOL, memLoadHOLExact]
-    rw [if_pos hdomA, if_pos ((hdom address).mp hdomA),
+    rw [ite_eq_left hdomA, ite_eq_left ((hdom address).mp hdomA),
       hmem address ((hdom address).mp hdomA)]
     cases memoryE address with
     | word bits =>
@@ -1150,7 +1150,7 @@ theorem panMemLoadHOL_map_holValueToHOL {width : Nat} [NeZero width]
   case case2 =>
     intro address ctx hndomA hr hi hs
     have hndomE : ¬ domainE address := fun h => hndomA ((hdom address).mpr h)
-    simp only [panMemLoadHOL, shapeToHOL, memLoadHOLExact, hndomA, hndomE, if_false,
+    simp only [panMemLoadHOL, shapeToHOL, memLoadHOLExact, hndomA, hndomE, ite_false,
       Option.map_none]
   case case3 =>
     intro address ctx shapes values hloads ih hr hi hs
@@ -1187,10 +1187,10 @@ theorem panMemLoadHOL_map_holValueToHOL {width : Nat} [NeZero width]
     have hih := ih hrTail hiTail hfr
     rw [hfields] at hih
     simp only [Option.map_some] at hih
-    simp only [panMemLoadHOL, hc, if_true, hfields, Option.map_some, holValueToHOL]
+    simp only [panMemLoadHOL, hc, ite_true, hfields, Option.map_some, holValueToHOL]
     rw [heq]
     simp only [shapeToHOL, memLoadHOLExact, structContextToHOL, List.map_cons, structInfoToHOL]
-    simp only [if_true]
+    simp only [ite_true]
     rw [show memLoadFldsHOLExact (info.fields.map paramToHOL) address domainE memoryE
           (List.map (fun p => (ofString p.fst, { fields := List.map paramToHOL p.snd.fields, size := p.snd.size })) rest) =
           some (fields.map (fun p => (ofString p.1, holValueToHOL (width := width) p.2))) from
@@ -1207,10 +1207,10 @@ theorem panMemLoadHOL_map_holValueToHOL {width : Nat} [NeZero width]
     have hih := ih hrTail hiTail hfr
     rw [hfields] at hih
     simp only [Option.map_none] at hih
-    simp only [panMemLoadHOL, hc, if_true, hfields, Option.map_none]
+    simp only [panMemLoadHOL, hc, ite_true, hfields, Option.map_none]
     rw [heq]
     simp only [shapeToHOL, memLoadHOLExact, structContextToHOL, List.map_cons, structInfoToHOL]
-    simp only [if_true]
+    simp only [ite_true]
     rw [show memLoadFldsHOLExact (info.fields.map paramToHOL) address domainE memoryE
           (List.map (fun p => (ofString p.fst, { fields := List.map paramToHOL p.snd.fields, size := p.snd.size })) rest) = none from hih.symm]
   case case8 =>
@@ -1226,9 +1226,9 @@ theorem panMemLoadHOL_map_holValueToHOL {width : Nat} [NeZero width]
     have hrTail : ∀ p ∈ rest, NameRanged p.1 := fun p hp => hr p (by simp [hp])
     have hiTail : ∀ p ∈ rest, StructInfoByteRanged p.2 := fun p hp => hi p (by simp [hp])
     have hih := ih hrTail hiTail hs
-    simp only [panMemLoadHOL, hc', Bool.false_eq_true, if_false, shapeToHOL, memLoadHOLExact,
+    simp only [panMemLoadHOL, hc', Bool.false_eq_true, ite_false, shapeToHOL, memLoadHOLExact,
       structContextToHOL, List.map_cons]
-    rw [if_neg hofne]
+    rw [ite_eq_right hofne]
     simpa only [shapeToHOL, structContextToHOL] using hih
   case case9 =>
     intro address ctx hr hi hfields
@@ -1660,11 +1660,11 @@ theorem lookupPanValueField_map (name : String)
       by_cases hc : candidate == name
       · have heq : candidate = name := beq_iff_eq.mp hc
         subst heq
-        simp only [beq_self_eq_true, if_pos, Option.map_some]
+        simp only [beq_self_eq_true, ite_eq_left, Option.map_some]
       · have hne : candidate ≠ name := fun h => hc (beq_iff_eq.mpr h)
         have hofne : ofString candidate ≠ ofString name :=
           fun h => hne (ofString_injective_of_ranged hcand hname h)
-        rw [if_neg hc, if_neg hofne]
+        rw [ite_eq_right hc, ite_eq_right hofne]
         exact ih htail
 
 /-- Production/exact agreement for the `.nField` clause. -/
@@ -1721,7 +1721,7 @@ theorem evalPanValueExp_nField_agree {σ : Type}
               Option.isSome_map]
           simp [hlookEq]
           by_cases hc : (lookupInfo structName state.structs).isSome = true
-          · simp only [hc, if_true]
+          · simp only [hc, ite_true]
             rw [lookupPanValueField_map name fields hname hfieldsNames]
           · have hc' : (lookupInfo structName state.structs).isSome = false := by
               cases h : (lookupInfo structName state.structs).isSome <;> simp_all
@@ -1774,7 +1774,7 @@ theorem evalPanValueExp_load_agree {σ : Type}
           by_cases hwf : isWfShape state.structs shape = true
           · have hwfE : isWfShapeExactHOL (panStructContextToHOL state.structs)
                 (shapeToHOL shape) = true := by rw [← hwfEq]; exact hwf
-            simp only [hwfE, if_true]
+            simp only [hwfE, ite_true]
             rw [panValueFlatLoad_eq_panMemLoadHOL state state.memory state.structs shape bits hwf]
             rw [Option.map_map]
             have hcomp : ((panValueToHOL (width := 64)) ∘ (HolValue.toPanValue (width := 64))) =
@@ -1796,7 +1796,7 @@ theorem evalPanValueExp_load_agree {σ : Type}
           · have hwfE : ¬ isWfShapeExactHOL (panStructContextToHOL state.structs)
                 (shapeToHOL shape) = true := by rw [← hwfEq]; exact hwf
             unfold panValueFlatLoad
-            rw [if_neg hwf, if_neg hwfE]
+            rw [ite_eq_right hwf, ite_eq_right hwfE]
             rfl
       | rStruct fs => simp
       | nStruct nm fs => simp
@@ -1848,11 +1848,11 @@ theorem lookupInfo_byteRanged {name : String} {context : StructContext}
       have hheadRange := hrange _ hhead
       simp only [lookupInfo] at h
       by_cases hc : candidate == name
-      · rw [if_pos hc] at h
+      · rw [ite_eq_left hc] at h
         have hinj : info' = info := by simpa using h
         subst hinj
         exact ⟨fun f hf => (hheadRange.2 f hf).1, fun f hf => (hheadRange.2 f hf).2⟩
-      · rw [if_neg hc] at h
+      · rw [ite_eq_right hc] at h
         refine ih h ?_
         intro p hp
         apply hrange p
@@ -1901,11 +1901,11 @@ theorem lookupPanValueField_byteRanged {width : Nat}
       obtain ⟨candidate, fieldValue⟩ := pair
       simp only [lookupPanValueField] at h
       by_cases hc : candidate == name
-      · rw [if_pos hc] at h
+      · rw [ite_eq_left hc] at h
         have heq : fieldValue = value := by simpa using h
         subst heq
         exact hranged (candidate, fieldValue) (by simp)
-      · rw [if_neg hc] at h
+      · rw [ite_eq_right hc] at h
         exact ih (fun p hp => hranged p (by simp [hp])) h
 
 /-- Flat-load fuel rangedness: every value returned by the fuel-indexed flat load
@@ -2045,11 +2045,11 @@ theorem panValueFlatLoad_byteRanged (structs : StructContext)
     PanValueByteRanged value := by
   rw [panValueFlatLoad] at h
   by_cases hwf : isWfShape structs shape = true
-  · rw [if_pos hwf] at h
+  · rw [ite_eq_left hwf] at h
     exact panValueFlatLoadFuel_byteRanged structs
       (panValueFlatReadWord memory bytesInWord memoryAccess) bytesInWord hctx
       _ shape address value hshape h
-  · rw [if_neg hwf] at h
+  · rw [ite_eq_right hwf] at h
     simp at h
 
 /-! ## Rangedness of production expression evaluation -/
@@ -3525,7 +3525,7 @@ theorem panSemTotalEvaluate_return_agree {σ : Type}
           exact hsize
         rw [panSemTotalReturnClause_some production (expOfHOL expression) value hest hsize]
         rw [evaluateHOLFiniteState_return, hexactEval]
-        simp only [hsizeExact, if_true]
+        simp only [hsizeExact, ite_true]
         exact ⟨rfl, by
           simpa only [panEmptyLocals, toExact_emptyLocalsHOLFinite] using
             PanSemStateRelExec.emptyLocals hrel⟩
@@ -3537,7 +3537,7 @@ theorem panSemTotalEvaluate_return_agree {σ : Type}
             (some .error, production) from by
           simp [panSemTotalReturnClause, panSemTotalExprStep, hest, hsize]]
         rw [evaluateHOLFiniteState_return, hexactEval]
-        simp only [hsizeExact, if_false]
+        simp only [hsizeExact, ite_false]
         exact ⟨trivial, hrel⟩
 
 /-- Production/exact agreement for the `Raise` constructor.  The extra premise
@@ -3673,7 +3673,7 @@ theorem panSemTotalEvaluate_raise_agree {σ : Type}
               (expOfHOL expression) value shape hest hsh hmatchTrue hsizeTrue]
             rw [evaluateHOLFiniteState_raise, hshapeLookup, hexactEval]
             dsimp only
-            rw [if_pos (hcondBool.mpr hcond)]
+            rw [ite_eq_left (hcondBool.mpr hcond)]
             exact ⟨⟨ofString_toStringOfBytes exceptionId, rfl⟩, by
               simpa only [panEmptyLocals, toExact_emptyLocalsHOLFinite] using
                 PanSemStateRelExec.emptyLocals hrel⟩
@@ -3685,7 +3685,7 @@ theorem panSemTotalEvaluate_raise_agree {σ : Type}
               simp [panSemTotalRaiseClause, panSemTotalExprStep, hest, hsh, hcondFalse]]
             rw [evaluateHOLFiniteState_raise, hshapeLookup, hexactEval]
             dsimp only
-            rw [if_neg (fun h => hcond (hcondBool.mp h))]
+            rw [ite_eq_right (fun h => hcond (hcondBool.mp h))]
             exact ⟨trivial, hrel⟩
 
 /-- Production/exact agreement for the `StoreByte` constructor: both evaluators
@@ -4032,10 +4032,10 @@ theorem updatePanValueMap_byteRanged {width : Nat} {γ : Type} [BEq γ]
   intro key v h
   unfold updatePanValueMap at h
   by_cases hc : key == name
-  · rw [if_pos hc] at h
+  · rw [ite_eq_left hc] at h
     rw [Option.some.injEq] at h
     exact h ▸ hvalue
-  · rw [if_neg hc] at h
+  · rw [ite_eq_right hc] at h
     exact hvalues key v h
 
 /-- A local assignment of a byte-ranged value preserves
@@ -4643,7 +4643,7 @@ theorem panSemTotalEvaluate_exceptionShapes {σ : Type}
             cases hmatch : panShapeMatches shape (panSemShapeOf evaluated) with
             | false => rfl
             | true =>
-                simp only [if_true]
+                simp only [ite_true]
                 try dsimp only
                 rw [ih (panSemTotalDecBind state name evaluated, body)
                   (panSemEvalMeasureRel_decBody state name shape value body)]
@@ -4931,7 +4931,7 @@ theorem panSemExceptionShapesRanged_of_ALookupEq [DecidableEq String]
       rcases entry with ⟨candidate, value⟩
       by_cases hc : candidate = exceptionId
       · subst hc
-        simp only [panPropsALookupEq, decide_true, if_true] at hlookup
+        simp only [panPropsALookupEq, decide_true, ite_true] at hlookup
         rw [Option.some.injEq] at hlookup
         subst hlookup
         exact hranged (candidate, value) (by simp)
@@ -5179,7 +5179,7 @@ theorem panSemTotalEvaluate_code {σ : Type}
             cases hmatch : panShapeMatches shape (panSemShapeOf evaluated) with
             | false => rfl
             | true =>
-                simp only [if_true]
+                simp only [ite_true]
                 try dsimp only
                 rw [ih (panSemTotalDecBind state name evaluated, body)
                   (panSemEvalMeasureRel_decBody state name shape value body)]
@@ -5483,8 +5483,8 @@ theorem panSemTotalEvaluate_ite_agree {σ : Type}
     | word a =>
       simp only [Option.map_some, panValueToHOL_word]
       by_cases ha : a = 0
-      · simp only [ha, if_true]; exact ihElse
-      · simp only [ha, if_false]; exact ihThen
+      · simp only [ha, ite_true]; exact ihElse
+      · simp only [ha, ite_false]; exact ihThen
 
 /-- `PanSemStateRelExec` carries over the production `panSemFixClock` and the
     exact `fixClockHOLFinite` (HOL `fix_clock`, whose `if … < …` clamp equals
@@ -5625,7 +5625,7 @@ theorem panSemTotalEvaluate_dec_agree {σ : Type}
         hshapeRanged, shapeToHOL_shapeOfHOL, hshapeExact]
     rw [← hmatch]
     by_cases hm : panShapeMatches (shapeOfHOL shape) (panSemShapeOf v) = true
-    · simp only [hm, if_true]
+    · simp only [hm, ite_true]
       have hbodyRel := PanSemStateRelExec.updateLocals hrel (toStringOfBytes name) hn v
       rw [ofString_toStringOfBytes] at hbodyRel
       have hbodyRanged := PanSemStateRelExecRanged.updateLocals hranged
@@ -5707,15 +5707,15 @@ theorem panSemTotalEvaluate_while_agree {σ : Type}
     | word a =>
       simp only [Option.map_some, panValueToHOL_word]
       by_cases ha : a = 0
-      · simp only [ha, if_true, ne_eq, not_true_eq_false, if_false]
+      · simp only [ha, ite_true, ne_eq, not_true_eq_false, ite_false]
         exact ⟨trivial, hrel⟩
-      · simp only [ha, if_false, ne_eq, not_false_eq_true, if_true, hck]
+      · simp only [ha, ite_false, ne_eq, not_false_eq_true, ite_true, hck]
         by_cases hz : production.clock = 0
-        · simp only [hz, if_true]
+        · simp only [hz, ite_true]
           exact ⟨trivial, by
             simpa only [panEmptyLocals, toExact_emptyLocalsHOLFinite] using
               PanSemStateRelExec.emptyLocals hrel⟩
-        · simp only [hz, if_false]
+        · simp only [hz, ite_false]
           have hdecRel : PanSemStateRelExec { production with clock := production.clock - 1 }
               (decClockHOLFinite exact).toExact := by
             simpa only [toExact_decClockHOLFinite] using PanSemStateRelExec.decClock hrel

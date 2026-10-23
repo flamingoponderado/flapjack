@@ -45,16 +45,16 @@ theorem heuristicCache_preserved (functionName : Nat) (program : WordProg α)
       | none => exact valid
       | some name =>
           by_cases same : name = functionName
-          · simpa only [incoming, same, if_true, WordHeuristicCallSet.addCall] using
+          · simpa only [incoming, same, ite_true, WordHeuristicCallSet.addCall] using
               (callCache_merge calls counts.keys valid).2
-          · simpa only [incoming, same, if_false] using valid
+          · simpa only [incoming, same, ite_false] using valid
     cases returns with
     | none =>
         cases target with
         | none => simpa only [wordHeuristicFast] using valid
         | some name =>
             by_cases same : name = functionName <;>
-              simpa only [wordHeuristicFast, incoming, same, if_true, if_false] using incomingValid
+              simpa only [wordHeuristicFast, incoming, same, ite_true, ite_false] using incomingValid
     | some returning =>
         rcases returning with ⟨values, sets, body, label1, label2⟩
         cases handler with
@@ -63,7 +63,7 @@ theorem heuristicCache_preserved (functionName : Nat) (program : WordProg α)
             | none => simpa only [wordHeuristicFast] using valid
             | some name =>
                 by_cases same : name = functionName <;>
-                  simpa only [wordHeuristicFast, incoming, same, if_true, if_false] using incomingValid
+                  simpa only [wordHeuristicFast, incoming, same, ite_true, ite_false] using incomingValid
         | some exception =>
             rcases exception with ⟨name, exceptionBody, handler1, handler2⟩
             have merged := (callCache_merge
@@ -74,7 +74,7 @@ theorem heuristicCache_preserved (functionName : Nat) (program : WordProg α)
             | none => simpa only [wordHeuristicFast, incoming] using merged
             | some name =>
                 by_cases same : name = functionName <;>
-                  simpa only [wordHeuristicFast, incoming, same, if_true, if_false] using merged
+                  simpa only [wordHeuristicFast, incoming, same, ite_true, ite_false] using merged
 termination_by sizeOf program
 decreasing_by all_goals decreasing_trivial
 

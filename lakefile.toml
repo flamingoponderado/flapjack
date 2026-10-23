@@ -2,11 +2,8 @@ name = "Flapjack"
 version = "0.1.0"
 testDriver = "FlapjackTest"
 defaultTargets = ["Flapjack", "FlapjackTest"]
-
-[[require]]
-name = "mathlib"
-scope = "leanprover-community"
-rev = "v4.33.1"
+# Keep the existing public-import behavior when consuming module-system dependencies.
+allowNonModules = true
 
 # Ziren's executable MIPS32r2 model (`ZirenDet.Isa`), the semantics of the MIPS32 backend.
 [[require]]
@@ -14,6 +11,11 @@ name = "ZirenDet"
 git = "https://github.com/ProjectZKM/Ziren"
 rev = "e08a98236d033f940160ccfe244dec12df0dddb0"
 subDir = "crates/fv/lean4"
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+rev = "v4.35.0-rc4"
 
 [[lean_lib]]
 name = "Flapjack"

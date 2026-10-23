@@ -118,7 +118,7 @@ theorem linesOffsetOk_padSection {width : Nat} [NeZero width]
         have hs := lineLen_addNop_nonlabel nop aux hnall
         have he : (pos+((addNop nop aux).map lineLen).sum) % 2 = 0 := by rw [hs]; omega
         have had := reverseAddNop_invariants nop aux labs ffis pos hn ha hoaux.1
-        simp only [padSection,if_neg hz]
+        simp only [padSection,ite_eq_right hz]
         apply ih
         refine ⟨?_,?_,?_,?_,?_⟩
         · simpa [List.map_cons,List.sum_cons,lineLen,hs,hlen,Nat.add_assoc] using hp.2

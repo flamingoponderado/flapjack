@@ -155,19 +155,19 @@ theorem goal_loop (s : StackSemStateFiniteExact width C F) (c1 : HolProg width)
       rcases contLoopImp r1 hl with rfl | rfl <;> simp
     have hnt : r1 ≠ some .timeOut := by
       rcases contLoopImp r1 hl with rfl | rfl <;> simp
-    rw [if_pos hl] at h
+    rw [ite_eq_left hl] at h
     by_cases h0 : t1.clock = 0
-    · rw [if_pos h0] at h
+    · rw [ite_eq_left h0] at h
       simp only [Prod.mk.injEq] at h
       obtain ⟨rfl, rfl⟩ := h
       refine ⟨ck1, HolFiniteMapExact.empty, ?_, submap_empty _, hbuf1, fun _ => ?_⟩
       · rw [evaluate_loop, StackSemEvaluateClock.fixClockEvaluate, he1]
         dsimp only
-        rw [if_pos hl, if_pos h0]
+        rw [ite_eq_left hl, ite_eq_left h0]
         rfl
       · simp only [StackBound, emptyEnv, List.length_nil, Nat.zero_mul]
         exact Nat.two_pow_pos width
-    · rw [if_neg h0] at h
+    · rw [ite_eq_right h0] at h
       have hm := loop_reentry_measure_lt c1 s (evaluate (c1, s))
       rw [StackSemEvaluateClock.fixClockEvaluate, h1] at hm
       have hpre1 := (Pre.of_evaluate h1 hpre hsub1 hbuf1 (hst1 hnh)).decClock
@@ -177,17 +177,17 @@ theorem goal_loop (s : StackSemStateFiniteExact width C F) (c1 : HolProg width)
       rw [evaluate_loop, StackSemEvaluateClock.fixClockEvaluate,
         target_add_clock anything cr he1 hnt ck2]
       dsimp only
-      rw [if_pos hl, if_neg (by show t1.clock + ck2 ≠ 0; omega)]
+      rw [ite_eq_left hl, ite_eq_right (by show t1.clock + ck2 ≠ 0; omega)]
       rw [show decClock (Tgt anything cr c t1 ck2 regs1) = Tgt anything cr c (decClock t1) ck2 regs1
         from res_clock anything cr c (decClock t1) regs1 (by simp [decClock]; omega)]
       exact he2
-  · rw [if_neg hl] at h
+  · rw [ite_eq_right hl] at h
     simp only [Prod.mk.injEq] at h
     obtain ⟨rfl, rfl⟩ := h
     refine ⟨ck1, regs1, ?_, hsub1, hbuf1, fun hh => hst1 fun w hw => hh w ?_⟩
     · rw [evaluate_loop, StackSemEvaluateClock.fixClockEvaluate, he1]
       dsimp only
-      rw [if_neg hl]
+      rw [ite_eq_right hl]
     · rw [hw]; rfl
 
 end Flapjack.Compiler.Backend.StackAlloc.CompCorrect

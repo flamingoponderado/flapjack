@@ -197,7 +197,7 @@ private theorem insertEdge_run (s : State) (x y : Nat) (hx : x < s.adj_ls.length
     insertEdge x y s = (.success (), { s with adj_ls :=
       ((s.adj_ls.set x (sortedInsert y [] (holEl x s.adj_ls))).set y
         (sortedInsert x [] (holEl y s.adj_ls))) }) := by
-  simp only [insertEdge, Translator.Monadic.MonadBase.bind, adjLsSubEqn, if_pos hx, if_pos hy,
+  simp only [insertEdge, Translator.Monadic.MonadBase.bind, adjLsSubEqn, ite_eq_left hx, ite_eq_left hy,
     ignoreBind, updateAdjLsEqn, List.length_set]
 
 /-- Exact HOL `insert_edge_succeeds` (`reg_allocProofScript.sml:1099-1138`); `s`, `x`
@@ -237,7 +237,7 @@ theorem insertEdgeSucceeds (s : State) (x y : Nat) :
     simp only [hasEdge, hlen, hel]
     by_cases ea : y = a
     · subst ea
-      rw [if_pos rfl, my b]
+      rw [ite_eq_left rfl, my b]
       constructor
       · rintro ⟨ha, hb, rfl | hb'⟩
         · exact Or.inr (Or.inl ⟨rfl, rfl⟩)
@@ -246,10 +246,10 @@ theorem insertEdgeSucceeds (s : State) (x y : Nat) :
         · exact ⟨hyl, hyl, Or.inl rfl⟩
         · exact ⟨hyl, hxl, Or.inl rfl⟩
         · exact ⟨ha, hb, Or.inr hb'⟩
-    · rw [if_neg ea]
+    · rw [ite_eq_right ea]
       by_cases eb : x = a
       · subst eb
-        rw [if_pos rfl, mx b]
+        rw [ite_eq_left rfl, mx b]
         constructor
         · rintro ⟨ha, hb, rfl | hb'⟩
           · exact Or.inl ⟨rfl, rfl⟩
@@ -258,7 +258,7 @@ theorem insertEdgeSucceeds (s : State) (x y : Nat) :
           · exact ⟨hxl, hyl, Or.inl rfl⟩
           · exact absurd h.symm ea
           · exact ⟨ha, hb, Or.inr hb'⟩
-      · rw [if_neg eb]
+      · rw [ite_eq_right eb]
         constructor
         · exact fun h => Or.inr (Or.inr h)
         · rintro (⟨h, _⟩ | ⟨h, _⟩ | h)

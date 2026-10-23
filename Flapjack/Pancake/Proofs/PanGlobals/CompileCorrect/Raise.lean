@@ -58,7 +58,7 @@ theorem compileCorrect_Raise {width : Nat} {σ : Type} [NeZero width]
       simp only [he] at hev
       by_cases hv : shapeOfHOLExact value = shape ∧
           sizeOfShapeWithContextHOL source.structs (shapeOfHOLExact value) ≤ 32
-      · rw [if_pos hv] at hev
+      · rw [ite_eq_left hv] at hev
         obtain ⟨rfl,rfl⟩ := Prod.mk.inj hev
         have ht := PanGlobalsCompileExpCorrect.compileExpCorrectHOL source expression value context target ⟨hrel,he⟩
         change @evalHOLExact width σ _ target.toExact
@@ -70,10 +70,10 @@ theorem compileCorrect_Raise {width : Nat} {σ : Type} [NeZero width]
           simpa only [hstructs.1,hstructs.2] using hv
         refine ⟨emptyLocalsHOLFinite target, ?_, ?_⟩
         · simp only [compileProgExactHOL,evaluateHOLFiniteState_raise,← heshapes,hs,ht]
-          exact if_pos hvalid
+          exact ite_eq_left hvalid
         · exact (PanGlobalsStateRelationLocals.stateRelEmptyLocalsHOL context source target
             (goodResHOL (some (.exception exceptionId value)))).1 hrel
-      · rw [if_neg hv] at hev
+      · rw [ite_eq_right hv] at hev
         obtain ⟨rfl,rfl⟩ := Prod.mk.inj hev
         exact False.elim (hne rfl)
 

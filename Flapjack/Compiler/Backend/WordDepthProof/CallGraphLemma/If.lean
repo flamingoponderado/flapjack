@@ -85,11 +85,11 @@ theorem maxDepthCallGraphLemma_MustTerminate {width : Nat} [NeZero width] {C F :
   intro funs n ns funs2 ⟨hsub, hcode, hloc, herr, hmem, hnd, hdom⟩
   simp only [callGraph]
   by_cases hd : s.termdep = 0
-  · exact absurd (by rw [evaluate, dif_pos hd]) herr
+  · exact absurd (by rw [evaluate, dite_eq_left hd]) herr
   rcases he : evaluate p { s with clock := wordSemMustTerminateLimit width, termdep := s.termdep - 1 } with ⟨r, s1⟩
   have hTO : r = some .timeOut → evaluate (.mustTerminate p) s = (some .error, s) := by
     intro hr
-    rw [evaluate, dif_neg hd]
+    rw [evaluate, dite_eq_right hd]
     split
     rename_i heq
     rw [he] at heq
@@ -98,7 +98,7 @@ theorem maxDepthCallGraphLemma_MustTerminate {width : Nat} [NeZero width] {C F :
     rfl
   have hnt : r ≠ some .timeOut := fun hr => herr (by rw [hTO hr])
   have hev : evaluate (.mustTerminate p) s = (r, { s1 with clock := s.clock, termdep := s.termdep }) := by
-    rw [evaluate, dif_neg hd]
+    rw [evaluate, dite_eq_right hd]
     split
     rename_i heq
     rw [he] at heq

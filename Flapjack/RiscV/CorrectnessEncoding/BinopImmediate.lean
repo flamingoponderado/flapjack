@@ -92,11 +92,12 @@ private theorem imm_valid_of_ok (op : HolBinop) (c : BitVec 64)
     (h : asmRegImmOkExact (.inl op) (.imm c) riscvConfig = true) :
     riscvConfig.validImm (.inl op) c = true := by
   cases op <;> simp [asmRegImmOkExact] at h
-  all_goals
-    rcases h with h | h
-    · rw [h.2]
-      decide
-    · exact h
+  all_goals first
+    | exact h
+    | (rcases h with h | h
+       · rw [h]
+         decide
+       · exact h)
 
 private theorem imm_reg_nonzero (r : Nat) (guard : asmRegOkExact r riscvConfig = true) :
     BitVec.ofNat 5 r ≠ 0#5 := by

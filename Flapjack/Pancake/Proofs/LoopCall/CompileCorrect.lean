@@ -217,12 +217,12 @@ theorem loopCall_compile_correct_if {width : Nat} [NeZero width] {F : Type} :
   have ih' := ih x y hx hy
   simp only [evaluate, hx, hy] at he ⊢
   by_cases hb : Compiler.Encoders.Asm.wordCmpHOL cmp x y = true
-  · simp only [hb, if_true] at he ih' ⊢
+  · simp only [hb, ite_true] at he ih' ⊢
     rcases hr : evaluate c1 v1 with ⟨rr, sr⟩
     rw [hr] at he
     have hrne : rr ≠ some .error := fun e => by subst e; simp [cutRes] at he; exact hne he.1.symm
     rw [(ih' rr sr l np n1 ⟨hr, hrne, h1c, hl⟩).1]; exact he
-  · simp only [hb, if_false, Bool.false_eq_true] at he ih' ⊢
+  · simp only [hb, ite_false, Bool.false_eq_true] at he ih' ⊢
     rcases hr : evaluate c2 v1 with ⟨rr, sr⟩
     rw [hr] at he
     have hrne : rr ≠ some .error := fun e => by subst e; simp [cutRes] at he; exact hne he.1.symm
@@ -292,14 +292,14 @@ private theorem labelsIn_set_del {width : Nat} [NeZero width] (l : Spt Nat)
   | none =>
     refine labelsIn_mono h fun n x hn => ⟨hn, ?_⟩
     have : n ≠ k := fun e => by subst e; rw [hk] at hn; cases hn
-    rw [sptLookup_sptInsert, if_neg this]
+    rw [sptLookup_sptInsert, ite_eq_right this]
   | some _ =>
     refine labelsIn_mono h fun n x hn => ?_
     rw [sptLookup_sptDelete] at hn
     by_cases hnk : n = k
-    · rw [if_pos hnk] at hn; cases hn
-    · rw [if_neg hnk] at hn
-      exact ⟨hn, by rw [sptLookup_sptInsert, if_neg hnk]⟩
+    · rw [ite_eq_left hnk] at hn; cases hn
+    · rw [ite_eq_right hnk] at hn
+      exact ⟨hn, by rw [sptLookup_sptInsert, ite_eq_right hnk]⟩
 
 /-- Flapjack-only auxiliary lemma (no HOL declaration) for the `LocValue` case of the proof of the
     tagged `loopCall_compile_correct`, following `Resume compile_correct[LocValue]` (`loop_callProofScript.sml:79-92`). -/
@@ -311,13 +311,13 @@ theorem loopCall_compile_correct_locValue {width : Nat} [NeZero width] {F : Type
   obtain ⟨rfl, rfl⟩ := hc
   refine ⟨he, ?_⟩
   by_cases hcd : (sptLookup m v1.code).isSome = true
-  · simp only [evaluate, hcd, if_true, Prod.mk.injEq] at he
+  · simp only [evaluate, hcd, ite_true, Prod.mk.injEq] at he
     obtain ⟨rfl, rfl⟩ := he
     intro n x hn
     simp only [LoopSemStateFiniteExact.setVar, sptLookup_sptInsert] at hn ⊢
     by_cases hnr : n = r
-    · rw [if_pos hnr] at hn ⊢; cases hn; rfl
-    · rw [if_neg hnr] at hn ⊢; exact hl n x hn
+    · rw [ite_eq_left hnr] at hn ⊢; cases hn; rfl
+    · rw [ite_eq_right hnr] at hn ⊢; exact hl n x hn
   · simp [evaluate, hcd] at he; exact absurd he.1.symm hne
 
 /-- Flapjack-only auxiliary lemma (no HOL declaration) for the `Assign` case of the proof of the
@@ -352,8 +352,8 @@ theorem loopCall_compile_correct_assign {width : Nat} [NeZero width] {F : Type} 
       · intro k x hk
         rw [sptLookup_sptInsert] at hk ⊢
         by_cases hkn : k = n
-        · rw [if_pos hkn] at hk ⊢; cases hk; rfl
-        · rw [if_neg hkn] at hk ⊢; exact hl k x hk
+        · rw [ite_eq_left hkn] at hk ⊢; cases hk; rfl
+        · rw [ite_eq_right hkn] at hk ⊢; exact hl k x hk
   | _ =>
     simp only [loopCallCompHOL, Prod.mk.injEq] at hc
     obtain ⟨rfl, rfl⟩ := hc
@@ -422,7 +422,7 @@ theorem loopCall_compile_correct_store {width : Nat} [NeZero width] {F : Type} :
   | none => simp [evaluate, hx, hn] at he; exact absurd he.1.symm hne
   | some w =>
   by_cases hd : v1.mdomain adr = true
-  · simp only [evaluate, hx, hn, memStore, hd, if_true, Prod.mk.injEq] at he
+  · simp only [evaluate, hx, hn, memStore, hd, ite_true, Prod.mk.injEq] at he
     obtain ⟨rfl, rfl⟩ := he
     exact hl
   · simp [evaluate, hx, hn, memStore, hd] at he; exact absurd he.1.symm hne
@@ -510,7 +510,7 @@ private theorem holAlookup_zip_not_mem {β : Type} :
   | _ :: _, [], _, _ => by simp [holAlookup]
   | x :: xs, y :: ys, k, h => by
       simp only [List.zip_cons_cons, holAlookup]
-      rw [if_neg (fun (e : x = k) => h (e ▸ List.mem_cons_self))]
+      rw [ite_eq_right (fun (e : x = k) => h (e ▸ List.mem_cons_self))]
       exact holAlookup_zip_not_mem xs ys k (fun hk => h (List.mem_cons_of_mem _ hk))
 
 /-- Flapjack-only auxiliary lemma (no HOL declaration) for the `Primitive` case of the proof of the
@@ -529,13 +529,13 @@ theorem loopCall_compile_correct_primitive {width : Nat} [NeZero width] {F : Typ
   | none => simp [evaluate, hg, hp] at he; exact absurd he.1.symm hne
   | some rws =>
   by_cases hlen : lhss.length = rws.length
-  · simp only [evaluate, hg, hp, hlen, if_true, Prod.mk.injEq] at he
+  · simp only [evaluate, hg, hp, hlen, ite_true, Prod.mk.injEq] at he
     obtain ⟨rfl, rfl⟩ := he
     refine labelsIn_mono hl fun n x hn => ?_
     rw [sptLookup_sptListDelete] at hn
     by_cases hnl : n ∈ lhss
-    · rw [if_pos hnl] at hn; cases hn
-    · rw [if_neg hnl] at hn
+    · rw [ite_eq_left hnl] at hn; cases hn
+    · rw [ite_eq_right hnl] at hn
       refine ⟨hn, ?_⟩
       simp only [LoopSemStateFiniteExact.setVars]
       rw [lookup_alist_insert_any, holAlookup_zip_not_mem lhss rws n hnl]
@@ -563,25 +563,25 @@ private theorem comp_two_dests (l : Spt Nat) (d1 d2 : Nat) :
       simp only [h1, h2] at hn
       rw [sptLookup_sptDelete] at hn
       by_cases e2 : n = d2
-      · rw [if_pos e2] at hn; cases hn
-      · rw [if_neg e2] at hn; exact ⟨hn, nd h1 hn, e2⟩
+      · rw [ite_eq_left e2] at hn; cases hn
+      · rw [ite_eq_right e2] at hn; exact ⟨hn, nd h1 hn, e2⟩
   | some _ =>
     cases h2 : sptLookup d2 l with
     | none =>
       simp only [h1, h2] at hn
       rw [sptLookup_sptDelete] at hn
       by_cases e1 : n = d1
-      · rw [if_pos e1] at hn; cases hn
-      · rw [if_neg e1] at hn; exact ⟨hn, e1, nd h2 hn⟩
+      · rw [ite_eq_left e1] at hn; cases hn
+      · rw [ite_eq_right e1] at hn; exact ⟨hn, e1, nd h2 hn⟩
     | some _ =>
       simp only [h1, h2] at hn
       rw [sptLookup_sptDelete, sptLookup_sptDelete] at hn
       by_cases e1 : n = d1
-      · rw [if_pos e1] at hn; cases hn
-      · rw [if_neg e1] at hn
+      · rw [ite_eq_left e1] at hn; cases hn
+      · rw [ite_eq_right e1] at hn
         by_cases e2 : n = d2
-        · rw [if_pos e2] at hn; cases hn
-        · rw [if_neg e2] at hn; exact ⟨hn, e1, e2⟩
+        · rw [ite_eq_left e2] at hn; cases hn
+        · rw [ite_eq_right e2] at hn; exact ⟨hn, e1, e2⟩
 
 /-- Flapjack-only auxiliary lemma (no HOL declaration) for the `Arith` case of the proof of the
     tagged `loopCall_compile_correct`, following `Resume compile_correct[Arith]` (`loop_callProofScript.sml:403-410`). -/
@@ -624,7 +624,7 @@ theorem loopCall_compile_correct_arith {width : Nat} [NeZero width] {F : Type} :
       refine labelsIn_mono hl fun n x hn => ?_
       obtain ⟨h1, h2, h3⟩ := comp_two_dests l r1 r2 n x hn
       refine ⟨h1, ?_⟩
-      simp only [LoopSemStateFiniteExact.setVar, sptLookup_sptInsert, h2, h3, if_false]
+      simp only [LoopSemStateFiniteExact.setVar, sptLookup_sptInsert, h2, h3, ite_false]
     · cases hA
   | longDiv r1 r2 r3 r4 r5 =>
     intro v1 res s1 l p nl ⟨he, hne, hc, hl⟩
@@ -644,7 +644,7 @@ theorem loopCall_compile_correct_arith {width : Nat} [NeZero width] {F : Type} :
         refine labelsIn_mono hl fun n x hn => ?_
         obtain ⟨h1, h2, h3⟩ := comp_two_dests l r1 r2 n x hn
         refine ⟨h1, ?_⟩
-        simp only [LoopSemStateFiniteExact.setVar, sptLookup_sptInsert, h2, h3, if_false]
+        simp only [LoopSemStateFiniteExact.setVar, sptLookup_sptInsert, h2, h3, ite_false]
       · cases hA
     · cases hA
 
@@ -696,7 +696,7 @@ theorem evaluate_ShMem_neq_locals {width : Nat} [NeZero width] {F : Type} :
     · rw [hop] at he'; exact absurd ⟨e, he'⟩ hnf
     · rw [hop] at hl; simp only at hl; rw [hl, hx]
     · rw [hop] at hl; simp only at hl
-      rw [hl, sptLookup_sptInsert, if_neg (fun e => hvn e.symm), hx]
+      rw [hl, sptLookup_sptInsert, ite_eq_right (fun e => hvn e.symm), hx]
 
 /-- Exact HOL `evaluate_ShMem_not_load_locals` (`loop_callProofScript.sml:424-427`):
     `evaluate (ShMem op v ad, s) = (res, s') ∧ ¬is_load op ∧
@@ -953,8 +953,8 @@ private theorem loopCall_compile_correct_at {width : Nat} [NeZero width] {F : Ty
       | ite cmp r1 ri c1 c2 live =>
         refine loopCall_compile_correct_if cmp r1 ri c1 c2 live v1 fun x y _ _ => ?_
         by_cases hb : Compiler.Encoders.Asm.wordCmpHOL cmp x y = true
-        · simp only [hb, if_true]; exact ihs c1 (by simp <;> omega)
-        · simp only [hb, if_false, Bool.false_eq_true]; exact ihs c2 (by simp <;> omega)
+        · simp only [hb, ite_true]; exact ihs c1 (by simp <;> omega)
+        · simp only [hb, ite_false, Bool.false_eq_true]; exact ihs c2 (by simp <;> omega)
       | call ret dest args handler => exact loopCall_compile_correct_call ret dest args handler v1
   exact fun v v1 => key _ v v1 rfl
 

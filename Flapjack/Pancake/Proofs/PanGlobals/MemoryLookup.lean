@@ -29,10 +29,10 @@ theorem memStoresLookupHOL {width : Nat} [NeZero width]
     have htail : ¬ addresses (address + panBytesInWord width) values.length query :=
       fun h => hout (Or.inr h)
     by_cases hd : domain address
-    · simp only [panMemStoresHOL, panMemStoreHOL, if_pos hd] at heval
+    · simp only [panMemStoresHOL, panMemStoreHOL, ite_eq_left hd] at heval
       have h := ih (address + panBytesInWord width)
         (fun a => if a = address then value else memory a) result ⟨heval, htail⟩
-      simpa only [if_neg hhead] using h
+      simpa only [ite_eq_right hhead] using h
     · simp [panMemStoresHOL, panMemStoreHOL, hd] at heval
 
 end Flapjack.PanGlobalsMemoryLookup

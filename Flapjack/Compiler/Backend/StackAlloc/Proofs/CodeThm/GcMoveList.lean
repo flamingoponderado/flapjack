@@ -226,7 +226,7 @@ theorem wordGcMoveListCode_loop {width : Nat} [NeZero width] {C F : Type} {conf 
       have hmin : min (s.clock + (ck + ck' + 1)) (t.clock + (ck' + 1)) = t.clock + (ck' + 1) := by
         omega
       have hck : t.clock + (ck' + 1) ≠ 0 := by omega
-      simp only [fixClock, contLoop, hmin, if_true, hck, if_false, decClock, ← wordGcMoveListCode_eq]
+      simp only [fixClock, contLoop, hmin, ite_true, hck, ite_false, decClock, ← wordGcMoveListCode_eq]
       refine (congrArg (fun st => evaluate (wordGcMoveListCode conf, st)) ?_).trans (hr.trans ?_)
       · congr 1
       · simp only [t, SB, setVar, Prod.mk.injEq, true_and]

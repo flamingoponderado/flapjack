@@ -30,18 +30,18 @@ theorem addToDataAux_production_transport {width : Nat} [NeZero width]
           wordCseLookupAny previous executed.toLatest previous := by
         simp only [wordCseLookupAny, related.2.1]
       by_cases even : destination % 2 = 0
-      · simp only [even, if_pos, beq_self_eq_true]
+      · simp only [even, ite_eq_left, beq_self_eq_true]
         exact ⟨related, valid, by simp [wordLangProgFromHOL, current]⟩
       · have oddBool : (destination % 2 == 0) = false := beq_eq_false_iff_ne.mpr even
-        simp only [even, if_false, oddBool, Bool.false_eq_true]
+        simp only [even, ite_false, oddBool, Bool.false_eq_true]
         exact ⟨registerPair_transport native executed related destination previous previous destination,
           valid, by simp [wordLangProgFromHOL, current]⟩
   | none =>
       by_cases even : destination % 2 = 0
-      · simp only [even, if_pos, beq_self_eq_true]
+      · simp only [even, ite_eq_left, beq_self_eq_true]
         exact ⟨related, valid, converted⟩
       · have oddBool : (destination % 2 == 0) = false := beq_eq_false_iff_ne.mpr even
-        simp only [even, if_false, oddBool, Bool.false_eq_true]
+        simp only [even, ite_false, oddBool, Bool.false_eq_true]
         obtain ⟨outputValid, inserted⟩ := factInsert_transport native.instrsMem executed.instrsMem
           valid related.2.2.2.1 key destination
         have factRelated : KnowledgeRel width
@@ -77,18 +77,18 @@ theorem addToLoadAux_production_transport {width : Nat} [NeZero width]
           wordCseLookupAny previous executed.toLatest previous := by
         simp only [wordCseLookupAny, related.2.1]
       by_cases even : destination % 2 = 0
-      · simp only [even, if_pos, beq_self_eq_true]
+      · simp only [even, ite_eq_left, beq_self_eq_true]
         exact ⟨related, valid, by simp [wordLangProgFromHOL, current]⟩
       · have oddBool : (destination % 2 == 0) = false := beq_eq_false_iff_ne.mpr even
-        simp only [even, if_false, oddBool, Bool.false_eq_true]
+        simp only [even, ite_false, oddBool, Bool.false_eq_true]
         exact ⟨registerPair_transport native executed related destination previous previous destination,
           valid, by simp [wordLangProgFromHOL, current]⟩
   | none =>
       by_cases even : destination % 2 = 0
-      · simp only [even, if_pos, beq_self_eq_true]
+      · simp only [even, ite_eq_left, beq_self_eq_true]
         exact ⟨related, valid, converted⟩
       · have oddBool : (destination % 2 == 0) = false := beq_eq_false_iff_ne.mpr even
-        simp only [even, if_false, oddBool, Bool.false_eq_true]
+        simp only [even, ite_false, oddBool, Bool.false_eq_true]
         obtain ⟨outputValid, inserted⟩ := factInsert_transport native.loadsMem executed.loadsMem
           valid related.2.2.2.2 key destination
         have factRelated : KnowledgeRel width

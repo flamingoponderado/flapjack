@@ -53,7 +53,7 @@ theorem takeOneWordToBytesHOL {width : Nat} [NeZero width] (w : RiscV.Word width
     simp
   rw [htake]
   congr 1
-  simp only [getByteHOL8, panGetByteHOL, byteIndexHOL, Bool.false_eq_true, if_false,
+  simp only [getByteHOL8, panGetByteHOL, byteIndexHOL, Bool.false_eq_true, ite_false,
     BitVec.ofNat_eq_ofNat, Nat.zero_mod, Nat.pow_zero, Nat.div_one, Nat.mul_zero,
     BitVec.toNat_ofNat, UInt8.ofNat, UInt8.toNat]
   apply BitVec.eq_of_toNat_eq

@@ -84,7 +84,7 @@ def noOverlapFm : FiniteMap String (Shape × List Nat) :=
 
 theorem noOverlapFm_x : FLOOKUP noOverlapFm "x" = some (Shape.one, [1, 2]) := by
   simp only [noOverlapFm, FLOOKUP, FUPDATE]
-  rw [if_neg (by decide), if_pos (by decide)]
+  rw [ite_eq_right (by decide), ite_eq_left (by decide)]
 
 theorem noOverlapFm_x_nodup : ([1, 2] : List Nat).Nodup := by decide
 

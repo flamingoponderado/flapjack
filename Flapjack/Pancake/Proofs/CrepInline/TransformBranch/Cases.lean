@@ -172,9 +172,9 @@ private theorem iteGoal {width : Nat} [NeZero width] {σ : Type}
       simpa only [crepExactEvalExpClassical_eq, crepExactEvalExp_eq_eval] using hcond
     have hsel := ih (.word w) w hcl rfl
     by_cases hw : w ≠ 0
-    · rw [if_pos hw] at hev hsel ⊢
+    · rw [ite_eq_left hw] at hev hsel ⊢
       exact hsel r s' ld rts ⟨hev, hlen, hf1, hz, hnd, hne⟩
-    · rw [if_neg hw] at hev hsel ⊢
+    · rw [ite_eq_right hw] at hev hsel ⊢
       exact hsel r s' ld rts ⟨hev, hlen, hf2, hz, hnd, hne⟩
   · obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
     exact absurd rfl hne

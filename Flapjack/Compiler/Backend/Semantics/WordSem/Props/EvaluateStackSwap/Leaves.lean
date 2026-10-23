@@ -317,7 +317,7 @@ theorem stackSwapPost_raise {width : Nat} [NeZero width] {C F : Type}
     dsimp only
     unfold jumpExc
     by_cases hlt : s.handler < s.stack.length
-    · rw [if_pos hlt]
+    · rw [ite_eq_left hlt]
       cases hl : wordSemLastN (s.handler + 1) s.stack with
       | nil => trivial
       | cons fr ls =>
@@ -340,10 +340,10 @@ theorem stackSwapPost_raise {width : Nat} [NeZero width] {C F : Type}
             rw [hsw, hv]
             dsimp only
             unfold jumpExc
-            rw [if_pos (show s.handler < xs.length from hlen ▸ hlt)]
+            rw [ite_eq_left (show s.handler < xs.length from hlen ▸ hlt)]
             dsimp only
             rw [hl']
-    · rw [if_neg hlt]
+    · rw [ite_eq_right hlt]
       trivial
 
 end WordSemStackEq

@@ -138,7 +138,7 @@ theorem compCorrectDataBufferWrite {width : Nat} [NeZero width] {C F : Type}
       simp only [StackSemControl.fixClock,Nat.min_eq_right le]
     simp only [fix2]
     have useStack : t2.useStack = true := rel2.2.2.2.2.1
-    simp only [StackSemEvaluate.evaluate_dataBufferWrite,useStack,not_true_eq_false,if_false,read1Final,loaded2,bufferEq,writeEq]
+    simp only [StackSemEvaluate.evaluate_dataBufferWrite,useStack,not_true_eq_false,ite_false,read1Final,loaded2,bufferEq,writeEq]
   · simpa only [compCorrectResult,Option.map_none,ne_eq,not_true_eq_false,
       ↓reduceIte] using dataBufferRelation cb capacity rel2
 

@@ -34,8 +34,8 @@ theorem bitLengthBitsToWord {width : Nat} [NeZero width] (bits : List Bool)
       simp only [List.length_nil]
       simp only [List.length_nil] at h
       omega
-    rw [he, Flapjack.StackSem.bitLength, if_neg h1, oneRight]
-    rw [Flapjack.StackSem.bitLength, if_pos rfl]
+    rw [he, Flapjack.StackSem.bitLength, ite_eq_right h1, oneRight]
+    rw [Flapjack.StackSem.bitLength, ite_eq_left rfl]
     rfl
   | cons bit bits ih =>
     have ht : bits.length + 1 < width := by simp at h; omega
@@ -46,7 +46,7 @@ theorem bitLengthBitsToWord {width : Nat} [NeZero width] (bits : List Bool)
       constructor <;> omega
     have hs := shiftShiftLemma (bitsToWordW (bits ++ [true]) : BitVec width) hm
     have hn := sentinelNonzero (width := width) (bit :: bits) (by simp at h ⊢; omega)
-    rw [Flapjack.StackSem.bitLength, if_neg hn]
+    rw [Flapjack.StackSem.bitLength, ite_eq_right hn]
     have hr : (bitsToWordW ((bit :: bits) ++ [true]) : BitVec width) >>> 1 =
         bitsToWordW (bits ++ [true]) := by
       cases bit

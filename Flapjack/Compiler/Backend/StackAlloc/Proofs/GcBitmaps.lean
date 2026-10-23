@@ -227,7 +227,7 @@ theorem wordGcMoveLoop_F {width : Nat} [NeZero width] :
       rw [wordGcMoveLoop] at h
       split at h
       · simp_all
-      · simp only [Nat.add_one_ne_zero, if_false, Bool.false_and, Nat.add_sub_cancel] at h
+      · simp only [Nat.add_one_ne_zero, ite_false, Bool.false_and, Nat.add_sub_cancel] at h
         split at h
         · exact ih _ _ _ _ _ _ _ _ _ _ _ h
         · generalize wordGcMoveList (width := width) conf _ = r at h
@@ -266,7 +266,7 @@ theorem wordGenGcPartialMoveRefList_ok {width : Nat} [NeZero width] :
       rw [wordGenGcPartialMoveRefList] at h
       split at h
       · simp_all
-      · simp only [Nat.add_one_ne_zero, if_false, Nat.add_sub_cancel] at h
+      · simp only [Nat.add_one_ne_zero, ite_false, Nat.add_sub_cancel] at h
         generalize wordGenGcPartialMoveList (width := width) conf _ = r at h
         obtain ⟨pb', i1', pa1', m1', c1'⟩ := r
         have := ih _ _ _ _ _ _ _ _ _ _ _ _ _ _ h

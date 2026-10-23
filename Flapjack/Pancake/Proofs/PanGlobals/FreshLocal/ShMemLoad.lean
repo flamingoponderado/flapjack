@@ -40,7 +40,7 @@ private theorem loadFresh {width : Nat} {σ : Type} [NeZero width]
   classical
   by_cases hn : nb = 0
   · by_cases ha : state.shMemaddrs address
-    · simp only [shMemLoadHOLFiniteExact, if_pos hn, if_pos ha] at heval ⊢
+    · simp only [shMemLoadHOLFiniteExact, ite_eq_left hn, ite_eq_left ha] at heval ⊢
       cases hh : callFFIHOL state.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 nb]
           (panWordToBytesHOL address false) <;> simp only [hh] at heval ⊢
       case final event =>
@@ -51,11 +51,11 @@ private theorem loadFresh {width : Nat} {σ : Type} [NeZero width]
         refine ⟨_, ?_, fun _ => rfl⟩
         cases kind <;> simp_all [setKvarFfiHOLFinite, setKvarHOLFinite,
           setVarHOLFinite, setGlobalHOLFinite, updateMixed]
-    · simp only [shMemLoadHOLFiniteExact, if_pos hn, if_neg ha] at heval ⊢
+    · simp only [shMemLoadHOLFiniteExact, ite_eq_left hn, ite_eq_right ha] at heval ⊢
       obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
       exact ⟨state.locals.updateEq (name, value), rfl, fun _ => rfl⟩
   · by_cases ha : state.shMemaddrs (panByteAlignHOL address)
-    · simp only [shMemLoadHOLFiniteExact, if_neg hn, if_pos ha] at heval ⊢
+    · simp only [shMemLoadHOLFiniteExact, ite_eq_right hn, ite_eq_left ha] at heval ⊢
       cases hh : callFFIHOL state.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 nb]
           (panWordToBytesHOL address false) <;> simp only [hh] at heval ⊢
       case final event =>
@@ -66,7 +66,7 @@ private theorem loadFresh {width : Nat} {σ : Type} [NeZero width]
         refine ⟨_, ?_, fun _ => rfl⟩
         cases kind <;> simp_all [setKvarFfiHOLFinite, setKvarHOLFinite,
           setVarHOLFinite, setGlobalHOLFinite, updateMixed]
-    · simp only [shMemLoadHOLFiniteExact, if_neg hn, if_neg ha] at heval ⊢
+    · simp only [shMemLoadHOLFiniteExact, ite_eq_right hn, ite_eq_right ha] at heval ⊢
       obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
       exact ⟨state.locals.updateEq (name, value), rfl, fun _ => rfl⟩
 

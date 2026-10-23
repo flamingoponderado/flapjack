@@ -118,8 +118,8 @@ theorem callStep_prefix {width : Nat} [NeZero width] {σ : Type}
           · exact List.prefix_refl _
           · simp only []
             by_cases hlen : retvs.length ≠ rts.length
-            · rw [if_pos hlen]; exact List.prefix_refl _
-            · rw [if_neg hlen]
+            · rw [ite_eq_left hlen]; exact List.prefix_refl _
+            · rw [ite_eq_right hlen]
               cases hmap : rts.mapM s.locals.lookup <;> exact List.prefix_refl _
       | «exception» eid =>
           simp only []
@@ -130,10 +130,10 @@ theorem callStep_prefix {width : Nat} [NeZero width] {σ : Type}
             · simp only []
               by_cases heq : eid = eid'
               · subst heq
-                rw [if_pos rfl]
+                rw [ite_eq_left rfl]
                 simpa using evalCrepSemHOLProgExact_ioEvents_prefix
                   { sh with locals := s.locals } p
-              · rw [if_neg heq]; exact List.prefix_refl _
+              · rw [ite_eq_right heq]; exact List.prefix_refl _
       | _ => exact List.prefix_refl _
 
 
@@ -244,13 +244,13 @@ theorem evalCrepSemHOLProgExact_addClock_mono_aux {width : Nat} [NeZero width] {
               | word w =>
                   simp only []
                   by_cases hw : w ≠ 0
-                  · simp only [if_pos hw]
+                  · simp only [ite_eq_left hw]
                     have hthis := ih (.word w) w h rfl extra
-                    rw [if_pos hw] at hthis
+                    rw [ite_eq_left hw] at hthis
                     exact hthis.1
-                  · simp only [if_neg hw]
+                  · simp only [ite_eq_right hw]
                     have hthis := ih (.word w) w h rfl extra
-                    rw [if_neg hw] at hthis
+                    rw [ite_eq_right hw] at hthis
                     exact hthis.1
         · intro hnt; exact combined_second' _ _ _ hnt)
       (by intro n s extra
@@ -272,22 +272,22 @@ theorem evalCrepSemHOLProgExact_addClock_mono_aux {width : Nat} [NeZero width] {
               | word w =>
                   simp only []
                   by_cases hw : w ≠ 0
-                  · simp only [if_pos hw]
+                  · simp only [ite_eq_left hw]
                     by_cases hclk : s.clock = 0
-                    · simp only [dif_pos hclk]
+                    · simp only [dite_eq_left hclk]
                       by_cases hclkH : (crepStateAddClock s extra).clock = 0
-                      · simp only [dif_pos hclkH]; exact List.prefix_refl _
-                      · simp only [dif_neg hclkH]
+                      · simp only [dite_eq_left hclkH]; exact List.prefix_refl _
+                      · simp only [dite_eq_right hclkH]
                         have hsp := evalCrepSemHOLProgExact_ioEvents_prefix
                           (crepStateAddClock s extra) (.while e c)
                         rw [evalCrepSemHOLProgExact_while_fixClockFree] at hsp
                         rw [crepExactEvalExp_addClock] at hsp
                         simp only [h] at hsp
-                        rw [if_pos hw] at hsp
-                        rw [dif_neg hclkH] at hsp
+                        rw [ite_eq_left hw] at hsp
+                        rw [dite_eq_right hclkH] at hsp
                         simpa [CrepSemHOLState.emptyLocals, crepStateAddClock_ffi] using hsp
-                    · simp only [dif_neg hclk]
-                      rw [dif_neg (show ¬ s.clock + extra = 0 by omega)]
+                    · simp only [dite_eq_right hclk]
+                      rw [dite_eq_right (show ¬ s.clock + extra = 0 by omega)]
                       rw [decClockCrepSemHOL_addClock s extra hclk]
                       cases hbodyL : evalCrepSemHOLProgExact (decClockCrepSemHOL s) c with
                       | mk r1 st1 =>
@@ -345,7 +345,7 @@ theorem evalCrepSemHOLProgExact_addClock_mono_aux {width : Nat} [NeZero width] {
                                   | «break» k =>
                                       cases k <;> (simp only []; exact hb.1)
                                   | _ => simp only []; exact hb.1
-                  · simp only [if_neg hw]; exact List.prefix_refl _
+                  · simp only [ite_eq_right hw]; exact List.prefix_refl _
         · intro hnt; exact combined_second' _ _ _ hnt)
       (by intro es s extra
           exact combined_of_not_timeout _ _ _
@@ -394,17 +394,17 @@ theorem evalCrepSemHOLProgExact_addClock_mono_aux {width : Nat} [NeZero width] {
                 (lookupCodeHOLFinite_eq_some_iff s.code.lookup fname args args.length
                   prog newlocals).mpr hcode'
               by_cases hbad : crepReturnInfoNodupError caltyp
-              · rw [if_pos hbad]
-                rw [if_pos hbad]
+              · rw [ite_eq_left hbad]
+                rw [ite_eq_left hbad]
                 exact List.prefix_refl _
-              · rw [if_neg hbad]
-                rw [if_neg hbad]
+              · rw [ite_eq_right hbad]
+                rw [ite_eq_right hbad]
                 by_cases hclk : s.clock = 0
-                · rw [if_pos hclk]
+                · rw [ite_eq_left hclk]
                   by_cases hclkH : (crepStateAddClock s extra).clock = 0
-                  · rw [if_pos hclkH]
+                  · rw [ite_eq_left hclkH]
                     exact List.prefix_refl _
-                  · rw [if_neg hclkH]
+                  · rw [ite_eq_right hclkH]
                     cases hbodyH : evalCrepSemHOLProgExact
                         { decClockCrepSemHOL (crepStateAddClock s extra) with
                           locals := newlocals } prog with
@@ -417,8 +417,8 @@ theorem evalCrepSemHOLProgExact_addClock_mono_aux {width : Nat} [NeZero width] {
                         simpa [decClockCrepSemHOL, crepStateAddClock_ffi,
                           CrepSemHOLState.emptyLocals] using hh
                       exact hbodypref.trans (callStep_prefix caltyp s rh sh)
-                · rw [if_neg hclk]
-                  rw [if_neg (show ¬ (crepStateAddClock s extra).clock = 0 by
+                · rw [ite_eq_right hclk]
+                  rw [ite_eq_right (show ¬ (crepStateAddClock s extra).clock = 0 by
                     rw [crepStateAddClock_clock]
                     omega)]
                   rw [decClockCrepSemHOL_addClock s extra hclk]
@@ -468,9 +468,9 @@ theorem evalCrepSemHOLProgExact_addClock_mono_aux {width : Nat} [NeZero width] {
                                   obtain ⟨rts, _⟩ := cval
                                   try simp only []
                                   by_cases hlen : retvs.length ≠ rts.length
-                                  · simp only [if_pos hlen]
+                                  · simp only [ite_eq_left hlen]
                                     exact List.prefix_refl _
-                                  · simp only [if_neg hlen]
+                                  · simp only [ite_eq_right hlen]
                                     cases hm : List.mapM s.locals.lookup rts <;>
                                       (try simp only []) <;> exact List.prefix_refl _
                           | «exception» eid =>
@@ -484,7 +484,7 @@ theorem evalCrepSemHOLProgExact_addClock_mono_aux {width : Nat} [NeZero width] {
                                       obtain ⟨eid', p⟩ := hval
                                       try simp only []
                                       by_cases heq2 : eid = eid'
-                                      · simp only [if_pos heq2]
+                                      · simp only [ite_eq_left heq2]
                                         have hnodup : rts.Nodup := by
                                           by_cases hnodup : rts.Nodup
                                           · exact hnodup
@@ -504,7 +504,7 @@ theorem evalCrepSemHOLProgExact_addClock_mono_aux {width : Nat} [NeZero width] {
                                           (by intro hnotBad; exact hnotBad hnodup)
                                           hclk rfl hbodyL rfl rfl rfl rfl rfl
                                           rfl heq2 extra).1
-                                      · simp only [if_neg heq2]
+                                      · simp only [ite_eq_right heq2]
                                         exact List.prefix_refl _
                           | _ => (try simp only []); exact List.prefix_refl _
         · intro hnt; exact combined_second' _ _ _ hnt)

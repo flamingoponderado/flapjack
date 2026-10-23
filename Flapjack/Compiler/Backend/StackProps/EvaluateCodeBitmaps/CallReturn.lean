@@ -85,9 +85,9 @@ theorem evaluateCodeBitmapsCallReturn {width : Nat} [NeZero width] {C F : Type}
         case result x =>
           by_cases equal : x = .loc l1 l2
           · subst x
-            simp only [ne_eq, not_true_eq_false, if_false] at execution
+            simp only [ne_eq, not_true_eq_false, ite_false] at execution
             exact clamped.trans (returnIH prog lookup clock middle evaluated result post execution)
-          · simp only [ne_eq, equal, not_false_eq_true, if_true, Prod.mk.injEq] at execution
+          · simp only [ne_eq, equal, not_false_eq_true, ite_true, Prod.mk.injEq] at execution
             exact execution.2 ▸ clamped
         case exception x =>
           cases handler with
@@ -100,9 +100,9 @@ theorem evaluateCodeBitmapsCallReturn {width : Nat} [NeZero width] {C F : Type}
             dsimp only at execution
             by_cases equal : x = .loc hl1 hl2
             · subst x
-              simp only [ne_eq, not_true_eq_false, if_false] at execution
+              simp only [ne_eq, not_true_eq_false, ite_false] at execution
               exact clamped.trans (exceptionIH prog h hl1 hl2 lookup clock rfl middle evaluated result post execution)
-            · simp only [ne_eq, equal, not_false_eq_true, if_true, Prod.mk.injEq] at execution
+            · simp only [ne_eq, equal, not_false_eq_true, ite_true, Prod.mk.injEq] at execution
               exact execution.2 ▸ clamped
 
 end Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps

@@ -100,7 +100,7 @@ theorem wordGenGcPartialMoveListCode_loop {width : Nat} [NeZero width] {C F : Ty
         simp [Nat.mod_eq_of_lt hlt] at this
       have hpred : BitVec.ofNat width (n + 1) - 1 = BitVec.ofNat width n := by
         rw [BitVec.ofNat_add]; exact BitVec.add_sub_cancel _ _
-      rw [wordGenGcPartialMoveList_suc, if_neg hne] at hm
+      rw [wordGenGcPartialMoveList_suc, ite_eq_right hne] at hm
       simp only at hm
       generalize hmv : wordGenGcPartialMove conf (s.memory a, i, pa, old, s.memory, s.mdomain,
         gs, rs) = R1 at hm
@@ -181,7 +181,7 @@ theorem wordGenGcPartialMoveListCode_loop {width : Nat} [NeZero width] {C F : Ty
       have hmin : min (s.clock + (ck + ck' + 1)) (t.clock + (ck' + 1)) = t.clock + (ck' + 1) := by
         omega
       have hck : t.clock + (ck' + 1) ≠ 0 := by omega
-      simp only [fixClock, contLoop, hmin, if_true, hck, if_false, decClock,
+      simp only [fixClock, contLoop, hmin, ite_true, hck, ite_false, decClock,
         ← wordGenGcPartialMoveListCode_eq]
       refine (congrArg (fun st => evaluate (wordGenGcPartialMoveListCode conf, st)) ?_).trans
         (hr.trans ?_)

@@ -82,7 +82,7 @@ theorem evalPanValueFfiClockProg_tick_shift
       (memoryHandler := memoryHandler) =
     some (.control (.normal locals globals memory ffi), decPanClock clock + ck) := by
   have hpos : clock + ck ≠ 0 := by omega
-  simp only [evalPanValueFfiClockProg, if_neg hpos, Option.pure_def]
+  simp only [evalPanValueFfiClockProg, ite_eq_right hpos, Option.pure_def]
   rw [decPanClock_add clock ck hclock]
 
 /-! A zero-condition `While` is independent of the clock.  This is the

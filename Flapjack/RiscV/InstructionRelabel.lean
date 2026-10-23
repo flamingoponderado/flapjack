@@ -129,7 +129,7 @@ theorem writeRegisterInternal_eq_writeRegister (state : State width) (name : Fin
     (value : Word width) (himage : riscvForward name ≠ 0) (hname : name ≠ 0) :
     writeRegisterInternal riscvForward state name value = writeRegister state name value := by
   simp only [writeRegisterInternal, writeRegister]
-  rw [if_neg himage, if_neg hname]
+  rw [ite_eq_right himage, ite_eq_right hname]
 
 /-- The write bridge specialized to registers that avoid both `0` and `27`. -/
 theorem writeRegister_transfer_forward_avoiding (state : State width) (name : Fin 32)

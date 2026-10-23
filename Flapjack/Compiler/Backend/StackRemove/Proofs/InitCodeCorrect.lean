@@ -48,19 +48,19 @@ theorem thirdInRange {width : Nat} [NeZero width] (good : goodDimindex width) (m
   have adj : adjustedThird p3 (middleWord p2 p4) (p2 + marginWord width)
       (p4 - marginWord width) = p3 := by
     unfold adjustedThird marginWord
-    rw [if_neg (by rw [BitVec.lt_def]; rw [BitVec.le_def] at lo; omega),
-      if_neg (by rw [BitVec.lt_def]; rw [BitVec.le_def] at hi; omega)]
+    rw [ite_eq_right (by rw [BitVec.lt_def]; rw [BitVec.le_def] at lo; omega),
+      ite_eq_right (by rw [BitVec.lt_def]; rw [BitVec.le_def] at hi; omega)]
   have sub : p3 + -1 * p2 = p3 - p2 := by
     rw [BitVec.neg_mul]; simp [BitVec.sub_eq_add_neg]
   have sub' : -1 * p2 + p3 = p3 - p2 := by rw [BitVec.add_comm, sub]
   rw [sub'] at hm
   have shr : shrunkThird p2 p3 (maxHeapWord width maxHeap) = p3 := by
     unfold shrunkThird
-    rw [if_neg]
+    rw [ite_eq_right]
     rw [BitVec.lt_def]
     unfold maxHeapWord
     have hb' : maxHeap * (bytesInWord width).toNat < 2 ^ width := by rw [Nat.mul_comm]; exact hb
-    rw [if_pos hb', BitVec.toNat_mul, BitVec.toNat_ofNat]
+    rw [ite_eq_left hb', BitVec.toNat_mul, BitVec.toNat_ofNat]
     have bpos : 0 < (bytesInWord width).toNat := by
       unfold bytesInWord; rcases good with h | h <;> subst h <;> decide
     have : maxHeap % 2 ^ width * (bytesInWord width).toNat % 2 ^ width =
@@ -558,7 +558,8 @@ theorem initCodeThm {width : Nat} [NeZero width] {C F : Type}
       have d2 : p2.toNat / (width / 8) * (width / 8) = p2.toNat := Nat.div_mul_cancel
         (Nat.dvd_of_mod_eq_zero a2)
       rw [Nat.add_mul_div_right _ _ bpos, Nat.add_mul_div_right _ _ bpos]
-      congr 1 <;> omega
+      set_option maxRecDepth 2048 in
+        congr 1 <;> omega
     have stackLen : T0.stack.length = stackLength - storeList.length := by
       rw [stackVal]; simp [rlen]; omega
     have word2 : p2 + bytesInWord width + bytesInWord width = p2 + 2 * bytesInWord width := by

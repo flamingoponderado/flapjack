@@ -236,10 +236,10 @@ private theorem memLoadHOLExact_nil_mono {width : Nat} [NeZero width]
         intro address value h
         rw [memLoadHOLExact] at h ⊢
         by_cases hd : domain address
-        · rw [if_pos hd] at h
-          rw [if_pos (hdomain address hd), ← hmemory address hd]
+        · rw [ite_eq_left hd] at h
+          rw [ite_eq_left (hdomain address hd), ← hmemory address hd]
           exact h
-        · rw [if_neg hd] at h
+        · rw [ite_eq_right hd] at h
           cases h
     | comb shapes ih =>
         intro address value h
@@ -325,7 +325,7 @@ theorem panGlobalsCompileExpCorrectGlobalVarCaseExact {width : Nat} {σ : Type}
   simp only [compileExpExactHOL, hlookup]
   rw [PanSemStateFiniteExact.evalHOLFinite_load]
   rw [hstructsT]
-  rw [if_pos hwf']
+  rw [ite_eq_left hwf']
   have hop :
       @PanSemStateFiniteExact.evalHOLFinite width σ _ target
         (fun address => Classical.propDecidable (target.memaddrs address))
@@ -358,19 +358,19 @@ theorem panMemLoad32HOL_mono {width : Nat} [NeZero width]
       be address = some v := by
   unfold panMemLoad32HOL at h ⊢
   by_cases hal : address.toNat % 4 = 0
-  · rw [if_pos hal] at h ⊢
+  · rw [ite_eq_left hal] at h ⊢
     dsimp only at h ⊢
     cases hm : sm (panByteAlignHOL (width := width) address) with
     | word value =>
       rw [hm] at h
       by_cases hsd : sd (panByteAlignHOL (width := width) address)
-      · rw [if_pos hsd] at h
-        rw [if_pos (hsub _ hsd)]
+      · rw [ite_eq_left hsd] at h
+        rw [ite_eq_left (hsub _ hsd)]
         rw [← hmem _ hsd, hm]
         exact h
-      · rw [if_neg hsd] at h
+      · rw [ite_eq_right hsd] at h
         exact absurd h (by simp)
-  · rw [if_neg hal] at h ⊢
+  · rw [ite_eq_right hal] at h ⊢
     simp at h
 
 /-- `panMemLoadByteHOL` is monotone in the address domain and memory, with the
@@ -390,11 +390,11 @@ theorem panMemLoadByteHOL_mono {width : Nat} [NeZero width]
   | word value =>
     rw [hm] at h
     by_cases hsd : sd (panByteAlignHOL (width := width) address)
-    · rw [if_pos hsd] at h
-      rw [if_pos (hsub _ hsd)]
+    · rw [ite_eq_left hsd] at h
+      rw [ite_eq_left (hsub _ hsd)]
       rw [← hmem _ hsd, hm]
       exact h
-    · rw [if_neg hsd] at h
+    · rw [ite_eq_right hsd] at h
       exact absurd h (by simp)
 
 /-- HOL `compile_exp_correct`, `Load` case
@@ -444,7 +444,7 @@ theorem panGlobalsCompileExpCorrectLoadCaseExact {width : Nat} {σ : Type}
   rw [hstructsS] at heval
   rw [hstructsT]
   by_cases hwf : isWfShapeExactHOL ([] : StructContextExact) shape = true
-  · rw [if_pos hwf] at heval ⊢
+  · rw [ite_eq_left hwf] at heval ⊢
     cases haddr : @PanSemStateFiniteExact.evalHOLFinite width σ _ source
         (fun a => Classical.propDecidable (source.memaddrs a)) address with
     | none => simp only [haddr] at heval; simp at heval
@@ -462,7 +462,7 @@ theorem panGlobalsCompileExpCorrectLoadCaseExact {width : Nat} {σ : Type}
                   shape word value ⟨hrel, heval⟩
         | rStruct fields => simp only [haddr] at heval; simp at heval
         | nStruct name fields => simp only [haddr] at heval; simp at heval
-  · rw [if_neg hwf] at heval ⊢
+  · rw [ite_eq_right hwf] at heval ⊢
     simp at heval
 
 /-- HOL `compile_exp_correct`, `Load32` case

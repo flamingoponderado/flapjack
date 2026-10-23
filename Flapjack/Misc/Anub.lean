@@ -24,8 +24,8 @@ theorem anubAllDistinctKeys {α β : Type} [DecidableEq α] :
   | (k, v) :: ls, acc, h => by
       unfold anub
       by_cases hk : k ∈ acc
-      · rw [if_pos hk]; exact anubAllDistinctKeys ls acc h
-      · rw [if_neg hk]
+      · rw [ite_eq_left hk]; exact anubAllDistinctKeys ls acc h
+      · rw [ite_eq_right hk]
         have ih := anubAllDistinctKeys ls (k :: acc) (List.nodup_cons.mpr ⟨hk, h⟩)
         rw [List.map_cons, List.cons_append]
         exact List.perm_middle.nodup_iff.mp ih

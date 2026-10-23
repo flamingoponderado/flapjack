@@ -105,7 +105,7 @@ theorem maxDepthCallNONE {width : Nat} [NeZero width] {C F : Type}
   rcases hg : WordSemStateFiniteExact.getVars args s with _ | xs
   · simp only [hg, Prod.mk.injEq] at hev; exact absurd hev.1.symm herr
   have hbad : ¬ wordSemBadDestArgs (some dest) args = true := by simp [wordSemBadDestArgs]
-  simp only [hg, hbad, Bool.false_eq_true, if_false] at hev
+  simp only [hg, hbad, Bool.false_eq_true, ite_false] at hev
   rcases hf : wordSemFindCode (some dest) (wordSemAddRetLoc (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat)) xs) s.code s.stackSize with
     _ | ⟨args1, prog, ss⟩
   · simp only [hf, Prod.mk.injEq] at hev; exact absurd hev.1.symm herr
@@ -124,8 +124,8 @@ theorem maxDepthCallNONE {width : Nat} [NeZero width] {C F : Type}
   rw [hr] at hev
   dsimp only at hev
   by_cases hb : wordSemBadFunReturn r = true
-  · simp only [hb, if_true, Prod.mk.injEq] at hev; exact absurd hev.1.symm herr
-  simp only [hb, Bool.false_eq_true, if_false, Prod.mk.injEq] at hev
+  · simp only [hb, ite_true, Prod.mk.injEq] at hev; exact absurd hev.1.symm herr
+  simp only [hb, Bool.false_eq_true, ite_false, Prod.mk.injEq] at hev
   obtain ⟨rfl, rfl⟩ := hev
   have h := maxDepthCallGraph body _ _ _ funs dest a
     ⟨hr, hcode, hl, rfl, herr⟩

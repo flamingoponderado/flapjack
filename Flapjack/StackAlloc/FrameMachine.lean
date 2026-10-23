@@ -1642,8 +1642,8 @@ theorem evalStackFrameGcMoveCode_forwarding_register [NeZero width]
         ¬ (state.machine.registers 5 &&& BitVec.ofNat width 1) =
             BitVec.ofNat width 0 := by
       simpa using hodd
-    rw [if_neg hoddEq]
-    rw [if_pos hforwardEq]
+    rw [ite_eq_right hoddEq]
+    rw [ite_eq_left hforwardEq]
     simp [stackFrameNormalRegisterNat, 
       ]
 

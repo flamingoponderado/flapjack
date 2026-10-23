@@ -62,7 +62,7 @@ theorem panRiscVByteAlign_eq_bitMask_of_pow2 [NeZero width]
     have hle := Nat.two_pow_pos k
     omega
   unfold panRiscVByteAlign
-  rw [if_neg h0]
+  rw [ite_eq_right h0]
   apply BitVec.eq_of_toNat_eq
   simp only [BitVec.toNat_ofNat]
   rw [Nat.shiftRight_eq_div_pow, Nat.shiftLeft_eq, hbytes, Nat.log2_two_pow]

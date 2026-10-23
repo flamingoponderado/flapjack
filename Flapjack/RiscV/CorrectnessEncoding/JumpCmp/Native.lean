@@ -115,11 +115,11 @@ theorem beq_next (ms : riscv_state) (rs1 rs2 : BitVec 5) (imm : BitVec 12)
   have g2 : GPR rs2 fetched = GPR rs2 ms := rfl
   rw [g1, g2] at run
   by_cases taken : GPR rs1 ms = GPR rs2 ms
-  · simp only [if_pos taken]
+  · simp only [ite_eq_left taken]
     apply Jump.branch_next ms (.Branch (.BEQ (rs1,rs2,imm))) _ _ ok
       (decode_encode_beq rs1 rs2 imm) ?_ low.1 low.2 b0 b1 b2 b3
     simpa [fetched,taken] using run
-  · simp only [if_neg taken]
+  · simp only [ite_eq_right taken]
     apply fallthrough_next ms (.Branch (.BEQ (rs1,rs2,imm))) _ ok
       (decode_encode_beq rs1 rs2 imm) ?_ low.1 low.2 b0 b1 b2 b3
     simpa [fetched,taken] using run
@@ -155,11 +155,11 @@ theorem bne_next (ms : riscv_state) (rs1 rs2 : BitVec 5) (imm : BitVec 12)
   have g2 : GPR rs2 fetched = GPR rs2 ms := rfl
   rw [g1, g2] at run
   by_cases taken : GPR rs1 ms ≠ GPR rs2 ms
-  · simp only [if_pos taken]
+  · simp only [ite_eq_left taken]
     apply Jump.branch_next ms (.Branch (.BNE (rs1,rs2,imm))) _ _ ok
       (decode_encode_bne rs1 rs2 imm) ?_ low.1 low.2 b0 b1 b2 b3
     simpa [fetched,taken] using run
-  · simp only [if_neg taken]
+  · simp only [ite_eq_right taken]
     apply fallthrough_next ms (.Branch (.BNE (rs1,rs2,imm))) _ ok
       (decode_encode_bne rs1 rs2 imm) ?_ low.1 low.2 b0 b1 b2 b3
     simpa [fetched,taken] using run
@@ -195,11 +195,11 @@ theorem blt_next (ms : riscv_state) (rs1 rs2 : BitVec 5) (imm : BitVec 12)
   have g2 : GPR rs2 fetched = GPR rs2 ms := rfl
   rw [g1, g2] at run
   by_cases taken : (GPR rs1 ms).slt (GPR rs2 ms) = true
-  · simp only [if_pos taken]
+  · simp only [ite_eq_left taken]
     apply Jump.branch_next ms (.Branch (.BLT (rs1,rs2,imm))) _ _ ok
       (decode_encode_blt rs1 rs2 imm) ?_ low.1 low.2 b0 b1 b2 b3
     simpa [fetched,taken] using run
-  · simp only [if_neg taken]
+  · simp only [ite_eq_right taken]
     apply fallthrough_next ms (.Branch (.BLT (rs1,rs2,imm))) _ ok
       (decode_encode_blt rs1 rs2 imm) ?_ low.1 low.2 b0 b1 b2 b3
     simpa [fetched,taken] using run
@@ -235,11 +235,11 @@ theorem bltu_next (ms : riscv_state) (rs1 rs2 : BitVec 5) (imm : BitVec 12)
   have g2 : GPR rs2 fetched = GPR rs2 ms := rfl
   rw [g1, g2] at run
   by_cases taken : (GPR rs1 ms).ult (GPR rs2 ms) = true
-  · simp only [if_pos taken]
+  · simp only [ite_eq_left taken]
     apply Jump.branch_next ms (.Branch (.BLTU (rs1,rs2,imm))) _ _ ok
       (decode_encode_bltu rs1 rs2 imm) ?_ low.1 low.2 b0 b1 b2 b3
     simpa [fetched,taken] using run
-  · simp only [if_neg taken]
+  · simp only [ite_eq_right taken]
     apply fallthrough_next ms (.Branch (.BLTU (rs1,rs2,imm))) _ ok
       (decode_encode_bltu rs1 rs2 imm) ?_ low.1 low.2 b0 b1 b2 b3
     simpa [fetched,taken] using run
@@ -275,11 +275,11 @@ theorem bge_next (ms : riscv_state) (rs1 rs2 : BitVec 5) (imm : BitVec 12)
   have g2 : GPR rs2 fetched = GPR rs2 ms := rfl
   rw [g1, g2] at run
   by_cases taken : (GPR rs2 ms).sle (GPR rs1 ms) = true
-  · simp only [if_pos taken]
+  · simp only [ite_eq_left taken]
     apply Jump.branch_next ms (.Branch (.BGE (rs1,rs2,imm))) _ _ ok
       (decode_encode_bge rs1 rs2 imm) ?_ low.1 low.2 b0 b1 b2 b3
     simpa [fetched,taken] using run
-  · simp only [if_neg taken]
+  · simp only [ite_eq_right taken]
     apply fallthrough_next ms (.Branch (.BGE (rs1,rs2,imm))) _ ok
       (decode_encode_bge rs1 rs2 imm) ?_ low.1 low.2 b0 b1 b2 b3
     simpa [fetched,taken] using run
@@ -315,11 +315,11 @@ theorem bgeu_next (ms : riscv_state) (rs1 rs2 : BitVec 5) (imm : BitVec 12)
   have g2 : GPR rs2 fetched = GPR rs2 ms := rfl
   rw [g1, g2] at run
   by_cases taken : (GPR rs1 ms).ult (GPR rs2 ms) = false
-  · simp only [if_pos taken]
+  · simp only [ite_eq_left taken]
     apply Jump.branch_next ms (.Branch (.BGEU (rs1,rs2,imm))) _ _ ok
       (decode_encode_bgeu rs1 rs2 imm) ?_ low.1 low.2 b0 b1 b2 b3
     simpa [fetched,taken] using run
-  · simp only [if_neg taken]
+  · simp only [ite_eq_right taken]
     apply fallthrough_next ms (.Branch (.BGEU (rs1,rs2,imm))) _ ok
       (decode_encode_bgeu rs1 rs2 imm) ?_ low.1 low.2 b0 b1 b2 b3
     simpa [fetched,taken] using run

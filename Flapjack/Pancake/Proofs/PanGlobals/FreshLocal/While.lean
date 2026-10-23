@@ -116,14 +116,14 @@ theorem evaluateFreshLocal_While {width : Nat} {σ : Type} [NeZero width]
           | word w =>
               simp only [hc] at hev ⊢
               by_cases hw : w ≠ 0
-              · rw [if_pos hw] at hev ⊢
+              · rw [ite_eq_left hw] at hev ⊢
                 by_cases hz : state.clock = 0
-                · rw [if_pos hz] at hev
-                  rw [if_pos hz]
+                · rw [ite_eq_left hz] at hev
+                  rw [ite_eq_left hz]
                   obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
                   exact ⟨HolFiniteMapExact.empty, rfl, by simp [goodResHOL]⟩
-                · rw [if_neg hz] at hev
-                  rw [if_neg hz]
+                · rw [ite_eq_right hz] at hev
+                  rw [ite_eq_right hz]
                   cases hb : evaluateHOLFiniteState (decClockHOLFinite state) body with
                   | mk r s1 =>
                       rw [hb] at hev
@@ -165,7 +165,7 @@ theorem evaluateFreshLocal_While {width : Nat} {σ : Type} [NeZero width]
                           | finalFfi event =>
                               obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
                               exact ⟨locals, rfl, by simp [goodResHOL]⟩
-              · rw [if_neg hw] at hev ⊢
+              · rw [ite_eq_right hw] at hev ⊢
                 obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
                 exact ⟨state.locals.updateEq (name, value), rfl, fun _ => rfl⟩
 

@@ -207,13 +207,13 @@ theorem runAdjust (s : StackSemStateFiniteExact width C F) (p3 middle low high :
       (none, {s with regs := s.regs.updateEq (3, .word (adjustedThird p3 middle low high))}) := by
   rw [stepIteLower 3 2 p3 low _ _ s read3 read2]
   by_cases lowCase : p3 < low
-  · simp only [lowCase, if_true, adjustedThird]
+  · simp only [lowCase, ite_true, adjustedThird]
     exact stepMove 3 0 _ s read0
-  · rw [if_neg lowCase, stepIteLower 4 3 high p3 _ _ s read4 read3]
+  · rw [ite_eq_right lowCase, stepIteLower 4 3 high p3 _ _ s read4 read3]
     by_cases highCase : high < p3
-    · simp only [highCase, if_true, adjustedThird, lowCase, if_false]
+    · simp only [highCase, ite_true, adjustedThird, lowCase, ite_false]
       exact stepMove 3 0 _ s read0
-    · simp only [highCase, if_false, adjustedThird, lowCase, StackSemEvaluate.evaluate_skip,
+    · simp only [highCase, ite_false, adjustedThird, lowCase, StackSemEvaluate.evaluate_skip,
         updateEq_self s.regs 3 _ read3]
 
 /-- The heap-limited third pointer chosen by the second conditional. -/
@@ -230,11 +230,11 @@ theorem runShrink (s : StackSemStateFiniteExact width C F) (p2 adjusted maxHeapW
       (none, {s with regs := s.regs.updateEq (3, .word (shrunkThird p2 adjusted maxHeapWord))}) := by
   rw [stepIteLower 5 0 maxHeapWord (adjusted - p2) _ _ s read5 read0]
   by_cases shrink : maxHeapWord < adjusted - p2
-  · simp only [shrink, if_true, shrunkThird]
+  · simp only [shrink, ite_true, shrunkThird]
     rw [StoreListCodeThm.evaluateSeqNormal _ _ s _ (stepMove 3 2 _ s read2) rfl,
       stepAdd 3 5 p2 maxHeapWord _ (by simp [FUPDATE_HOL]) (by simp [FUPDATE_HOL, read5]),
       updateEq_updateEq_same]
-  · simp only [shrink, if_false, shrunkThird, StackSemEvaluate.evaluate_skip,
+  · simp only [shrink, ite_false, shrunkThird, StackSemEvaluate.evaluate_skip,
       updateEq_self s.regs 3 _ read3]
 
 /-- The initializer's guarded maximum-heap word. -/
@@ -463,7 +463,7 @@ theorem runLocValue (s : StackSemStateFiniteExact width C F) (entry : sptDomain 
     StackSemEvaluate.evaluate (.locValue 0 1 0, s) =
       (none, {s with regs := s.regs.updateEq (0, .loc 1 0)}) := by
   have check : StackSem.locCheckExact s.code (1, 0) := Or.inl ⟨rfl, entry⟩
-  rw [StackSemEvaluate.evaluate_locValue, if_pos check]
+  rw [StackSemEvaluate.evaluate_locValue, ite_eq_left check]
   rfl
 
 /-- The literal initializer is the concatenation of the verified segments. -/
@@ -809,7 +809,7 @@ theorem adjustedInRange (p3 middle low high : BitVec width)
     (lowP : low.toNat ≤ p3.toNat) (pHigh : p3.toNat ≤ high.toNat) :
     adjustedThird p3 middle low high = p3 := by
   unfold adjustedThird
-  rw [if_neg (by rw [BitVec.lt_def]; omega), if_neg (by rw [BitVec.lt_def]; omega)]
+  rw [ite_eq_right (by rw [BitVec.lt_def]; omega), ite_eq_right (by rw [BitVec.lt_def]; omega)]
 
 /-- Heap offset chosen by the shrink conditional. -/
 theorem shrunkNat (good : goodDimindex width) (p2 adjusted : BitVec width) (maxHeap : Nat)

@@ -67,7 +67,7 @@ theorem ALOOKUP_EQ_EL {α β : Type} [DecidableEq α] (n : Nat) (xs : List (α �
         apply hd.1
         rw [hanm, ← h1]
         exact List.mem_map.mpr ⟨_, List.getElem_mem _, rfl⟩
-      simp only [holAlookup, if_neg hne]
+      simp only [holAlookup, ite_eq_right hne]
       exact ih n (by simpa using hn) h1 hd.2 h2
 
 end Flapjack

@@ -79,7 +79,7 @@ private theorem panSetByteHOL_eq_setByteHOL8_lt {width : Nat} [NeZero width] (h8
   unfold panSetByteHOL setByteHOL8 byteIndexHOL
   simp only [hd, Nat.mod_zero]
   cases be
-  · simp only [Bool.false_eq_true, if_false]
+  · simp only [Bool.false_eq_true, ite_false]
     by_cases ha : a.toNat = 0
     · simp [ha]
       exact zero_case
@@ -145,13 +145,13 @@ theorem write_bytearray_mem_rel {width : Nat} [NeZero width] :
       by_cases hd : dm (panByteAlignHOL w) = true
       · have htr : tr (panByteAlignHOL w) = .word cell := by
           rw [← hr _ hd, hc]; rfl
-        simp only [panMemStoreByteWord8HOL, hc, hd, if_true, memStoreByteAuxExact, hal, htr]
+        simp only [panMemStoreByteWord8HOL, hc, hd, ite_true, memStoreByteAuxExact, hal, htr]
         intro ad had
         by_cases hadal : ad = panByteAlignHOL w
         · subst hadal
-          simp only [wlabWlocExact, if_true]
+          simp only [wlabWlocExact, ite_true]
           rw [panSetByteHOL_eq_setByteHOL8]
-        · simp only [hadal, if_false]
+        · simp only [hadal, ite_false]
           exact hr ad had
       · have hdf : dm (panByteAlignHOL w) = false := by simpa using hd
         simp only [panMemStoreByteWord8HOL, hc, hdf, memStoreByteAuxExact, hal]
@@ -237,13 +237,13 @@ theorem writeBytearrayMemRelAnyAlignment {width : Nat} [NeZero width] (alignment
       by_cases hd : dm (alignment w) = true
       · have htr : tr (alignment w) = .word cell := by
           rw [← hr _ hd, hc]; rfl
-        simp only [panMemStoreByteWord8HOLAligned, hc, hd, if_true, memStoreByteAuxExactAligned, htr]
+        simp only [panMemStoreByteWord8HOLAligned, hc, hd, ite_true, memStoreByteAuxExactAligned, htr]
         intro ad had
         by_cases hadal : ad = alignment w
         · subst hadal
-          simp only [wlabWlocExact, if_true]
+          simp only [wlabWlocExact, ite_true]
           rw [panSetByteHOL_eq_setByteHOL8]
-        · simp only [hadal, if_false]
+        · simp only [hadal, ite_false]
           exact hr ad had
       · have hdf : dm (alignment w) = false := by simpa using hd
         simp only [panMemStoreByteWord8HOLAligned, hc, hdf, memStoreByteAuxExactAligned]

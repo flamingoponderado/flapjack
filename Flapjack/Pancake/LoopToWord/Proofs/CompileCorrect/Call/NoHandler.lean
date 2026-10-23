@@ -102,10 +102,10 @@ theorem compileCorrect_Call_NOhandler {width : Nat} [NeZero width] {C F : Type}
   rename_i env prog hfc
   simp only at hEval
   by_cases hnnd : ¬ ns.Nodup
-  · rw [if_pos hnnd] at hEval
+  · rw [ite_eq_left hnnd] at hEval
     simp only [Prod.mk.injEq] at hEval
     exact absurd hEval.1.symm hNE
-  rw [if_neg hnnd] at hEval
+  rw [ite_eq_right hnnd] at hEval
   have hnd : ns.Nodup := by simpa using hnnd
   obtain ⟨hwgv, -⟩ := LoopToWord.localsRelHOLGetVars ctxt s t argvars argvals ⟨hLocals, hgv⟩
   obtain ⟨args1, ss1, ctxt1, l1, hwf, h0, hl1, hacc1⟩ :=
@@ -127,7 +127,7 @@ theorem compileCorrect_Call_NOhandler {width : Nat} [NeZero width] {C F : Type}
     LoopToWord.localsRelHOLAllDistinctMap ctxt s.locals t.locals ns ⟨hLocals, hnsctx, hnd⟩
   simp only [LoopToWord.compHOL]
   rw [hcall]
-  simp only [hwgv, hbad, Bool.false_eq_true, if_false, wordSemAddRetLoc, hwf, hne, hndw,
+  simp only [hwgv, hbad, Bool.false_eq_true, ite_false, wordSemAddRetLoc, hwf, hne, hndw,
     not_true_eq_false, or_self]
   have hcutw : ∀ cs, LoopSemStateFiniteExact.cutState live s = some cs →
       ∃ result, wordSemCutEnvs (LoopToWord.mkNewCutsetHOL ctxt live, .ln) t.locals =
@@ -158,13 +158,13 @@ theorem compileCorrect_Call_NOhandler {width : Nat} [NeZero width] {C F : Type}
         simp only [hcs] at hcr
         by_cases hz : s.clock = 0
         · simp [hz] at hcr
-        · simp only [hz, if_false, Prod.mk.injEq, true_and] at hcr
+        · simp only [hz, ite_false, Prod.mk.injEq, true_and] at hcr
           exact ⟨_, rfl, hz, hcr.symm⟩
     obtain ⟨cs, hcs, hz, rfl⟩ := hc2
     obtain ⟨result, hce, hlr, h0r, rfl⟩ := hcutw _ hcs
     rw [hce]
     simp only
-    rw [if_neg (by rw [hclock]; exact hz)]
+    rw [ite_eq_right (by rw [hclock]; exact hz)]
     have ihs := ih argvals (env, prog) env prog (ns, live) ns live none _
       ⟨hgv, hfc, rfl, rfl, rfl, hnd, hcr, rfl⟩
     have hIH : ∀ r st, LoopSemStateFiniteExact.evaluate prog
@@ -200,7 +200,7 @@ theorem compileCorrect_Call_NOhandler {width : Nat} [NeZero width] {C F : Type}
       simp only at h ⊢
       split at h
       · rename_i hlt
-        rw [if_pos (by simp; omega), LoopToWord.wordSemLastN_add_cons _ _ _ (by omega)]
+        rw [ite_eq_left (by simp; omega), LoopToWord.wordSemLastN_add_cons _ _ _ (by omega)]
         exact h
       · cases h
     split at hEval
@@ -232,8 +232,8 @@ theorem compileCorrect_Call_NOhandler {width : Nat} [NeZero width] {C F : Type}
           sptLookup]
       have hskip := (WordSemStateFiniteExact.evaluate_def_rebound (width := width) (C := C)
         (F := F)).1
-      simp only [ne_eq, not_true_eq_false, false_or, hlen', if_false, hpop]
-      simp only [if_pos hdom, hskip]
+      simp only [ne_eq, not_true_eq_false, false_or, hlen', ite_false, hpop]
+      simp only [ite_eq_left hdom, hskip]
       have h0ns : 0 ∉ ns.map (LoopToWord.findVarHOL ctxt) := by
         intro hmem
         obtain ⟨n, hn, h⟩ := List.mem_map.mp hmem
@@ -311,11 +311,11 @@ theorem compileCorrect_Call_NOhandler {width : Nat} [NeZero width] {C F : Type}
       obtain ⟨result, hce, -, -, rfl⟩ := hcutw _ hcs
       simp only [hcs] at hEval
       by_cases hz : s.clock = 0
-      · simp only [hz, if_true, Prod.mk.injEq] at hEval
+      · simp only [hz, ite_true, Prod.mk.injEq] at hEval
         obtain ⟨rfl, rfl⟩ := hEval
         rw [hce]
         simp only
-        rw [if_pos (by rw [hclock]; exact hz)]
+        rw [ite_eq_left (by rw [hclock]; exact hz)]
         exact ⟨_, _, rfl, by simp [WordSemStateFiniteExact.flushState, hffi], rfl⟩
       · exfalso
         refine hnone (LoopSemStateFiniteExact.decClock

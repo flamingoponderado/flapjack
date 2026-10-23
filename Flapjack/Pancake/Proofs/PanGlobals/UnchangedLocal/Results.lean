@@ -59,10 +59,10 @@ theorem evaluateUnchangedLocal_Raise {width : Nat} {σ : Type} [NeZero width]
   rename_i value shape
   by_cases hs : shapeOfHOLExact value = shape ∧
       sizeOfShapeWithContextHOL state.structs (shapeOfHOLExact value) ≤ 32
-  · rw [if_pos hs] at heval
+  · rw [ite_eq_left hs] at heval
     obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
     simp [goodResHOL] at hgood
-  · rw [if_neg hs] at heval
+  · rw [ite_eq_right hs] at heval
     obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
     rfl
 

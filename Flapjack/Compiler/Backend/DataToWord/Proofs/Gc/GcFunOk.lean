@@ -47,7 +47,7 @@ theorem updateListEq_eraseHandler {s : HolFiniteMapExact WordStoreHOL (WordLocW 
     have := FLOOKUP_FUPDATE_LIST_HOL_not_mem s.lookup L .handler hL
     simp only [FLOOKUP] at this
     simp [FUPDATE_HOL, this, hv]
-  · simp only [FUPDATE_HOL, hk, if_false]
+  · simp only [FUPDATE_HOL, hk, ite_false]
     exact fupdateList_agree _ _ (fun k' hk' => by simp [FDOMSUB_HOL, hk']) k hk
 
 theorem lookup_handler_updateListEq_erase {s : HolFiniteMapExact WordStoreHOL (WordLocW width)} {L : List (WordStoreHOL × WordLocW width)}

@@ -55,14 +55,14 @@ theorem sptLookupInterEq {α : Type} [DecidableEq α] :
           rw [sptLookupMkBN]
           by_cases hk : k = 0
           · simp [sptLookup, hk]
-          · simp only [sptLookup, hk, if_false]
+          · simp only [sptLookup, hk, ite_false]
             split <;> first | exact ihl _ _ | exact ihr _ _
       | bs l' b r' =>
           simp only [sptInterEq]
           rw [sptLookupMkBN]
           by_cases hk : k = 0
           · simp [sptLookup, hk]
-          · simp only [sptLookup, hk, if_false]
+          · simp only [sptLookup, hk, ite_false]
             split <;> first | exact ihl _ _ | exact ihr _ _
   | bs l a r ihl ihr =>
       intro m2 k
@@ -76,20 +76,20 @@ theorem sptLookupInterEq {α : Type} [DecidableEq α] :
           rw [sptLookupMkBN]
           by_cases hk : k = 0
           · simp [sptLookup, hk]
-          · simp only [sptLookup, hk, if_false]
+          · simp only [sptLookup, hk, ite_false]
             split <;> first | exact ihl _ _ | exact ihr _ _
       | bs l' b r' =>
           simp only [sptInterEq]
           by_cases hab : b = a
-          · rw [if_pos hab, sptLookupMkBS]
+          · rw [ite_eq_left hab, sptLookupMkBS]
             by_cases hk : k = 0
             · simp [sptLookup, hk, hab]
-            · simp only [sptLookup, hk, if_false]
+            · simp only [sptLookup, hk, ite_false]
               split <;> first | exact ihl _ _ | exact ihr _ _
-          · rw [if_neg hab, sptLookupMkBN]
+          · rw [ite_eq_right hab, sptLookupMkBN]
             by_cases hk : k = 0
             · simp [sptLookup, hk, hab]
-            · simp only [sptLookup, hk, if_false]
+            · simp only [sptLookup, hk, ite_false]
               split <;> first | exact ihl _ _ | exact ihr _ _
 
 end Flapjack

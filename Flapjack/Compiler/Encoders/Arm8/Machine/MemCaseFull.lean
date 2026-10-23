@@ -289,7 +289,7 @@ theorem case_memLoadSpine (op : HolMemop) (r base : Nat) (off : W) (s1 s2 : AsmS
       have haddr : ∀ x : W,
           (if false then x + (-off - 0x100) else x - (-off - 0x100)) + (-0x100) = x + off := by
         intro x
-        rw [if_neg (by decide : ¬((false : Bool) = true))]
+        rw [ite_eq_right (by decide : ¬((false : Bool) = true))]
         bv_omega
       have hast : arm8Enc (.inst (.mem op r (.addr base off))) =
           ([.addSubImmediate true false (-off - 0x100) base temp,
@@ -325,7 +325,7 @@ theorem case_memLoadSpine (op : HolMemop) (r base : Nat) (off : W) (s1 s2 : AsmS
         have haddr : ∀ x : W,
             (if true then x + (off - 0xFF) else x - (off - 0xFF)) + (0xFF : W) = x + off := by
           intro x
-          rw [if_pos rfl]
+          rw [ite_eq_left rfl]
           bv_omega
         have hast : arm8Enc (.inst (.mem op r (.addr base off))) =
             ([.addSubImmediate false false (off - 0xFF) base temp,
@@ -399,7 +399,7 @@ theorem case_memStoreSpine (op : HolMemop) (r base : Nat) (off : W) (s1 s2 : Asm
       have haddr : ∀ x : W,
           (if false then x + (-off - 0x100) else x - (-off - 0x100)) + (-0x100) = x + off := by
         intro x
-        rw [if_neg (by decide : ¬((false : Bool) = true))]
+        rw [ite_eq_right (by decide : ¬((false : Bool) = true))]
         bv_omega
       have hast : arm8Enc (.inst (.mem op r (.addr base off))) =
           ([.addSubImmediate true false (-off - 0x100) base temp,
@@ -427,7 +427,7 @@ theorem case_memStoreSpine (op : HolMemop) (r base : Nat) (off : W) (s1 s2 : Asm
         have haddr : ∀ x : W,
             (if true then x + (off - 0xFF) else x - (off - 0xFF)) + (0xFF : W) = x + off := by
           intro x
-          rw [if_pos rfl]
+          rw [ite_eq_left rfl]
           bv_omega
         have hast : arm8Enc (.inst (.mem op r (.addr base off))) =
             ([.addSubImmediate false false (off - 0xFF) base temp,

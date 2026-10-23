@@ -239,8 +239,8 @@ theorem stackRel_evaluate :
       have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.1
       rw [ht]
       by_cases hz : s.termdep = 0
-      · simp only [hz, dite_true, if_true]; exact StackRel.refl _
-      · simp only [hz, dite_false, if_false]
+      · simp only [hz, dite_true, ite_true]; exact StackRel.refl _
+      · simp only [hz, dite_false, ite_false]
         have ih := stackRel_evaluate q { s with
             clock := wordSemMustTerminateLimit width
             termdep := s.termdep - 1 }
@@ -285,14 +285,14 @@ theorem stackRel_evaluate :
       have hb1 := hcut.trans ih
       simp only
       by_cases hcont : wordSemContLoop rb = true
-      · simp only [hcont, if_true]
+      · simp only [hcont, ite_true]
         by_cases hz : s1.clock = 0
-        · simp only [hz, dite_true, if_true]
+        · simp only [hz, dite_true, ite_true]
           exact hb1.trans (StackRel.of_eq rfl rfl)
-        · simp only [hz, dite_false, if_false, wordSemSTOP]
+        · simp only [hz, dite_false, ite_false, wordSemSTOP]
           exact (hb1.trans (StackRel.of_eq rfl rfl)).trans
             (stackRel_evaluate (.loop names c exitNames) (decClock s1))
-      · simp only [hcont, Bool.false_eq_true, if_false]
+      · simp only [hcont, Bool.false_eq_true, ite_false]
         split
         · split
           · exact hb1
@@ -306,8 +306,8 @@ theorem stackRel_evaluate :
       · exact StackRel.refl _
       simp only
       by_cases hbad : wordSemBadDestArgs dest args = true
-      · simp only [hbad, if_true]; exact StackRel.refl _
-      simp only [hbad, Bool.false_eq_true, if_false]
+      · simp only [hbad, ite_true]; exact StackRel.refl _
+      simp only [hbad, Bool.false_eq_true, ite_false]
       rcases hf : wordSemFindCode dest (wordSemAddRetLoc ret xs) s.code s.stackSize with
         _ | ⟨args1, prog, ss⟩
       · exact StackRel.refl _
@@ -319,8 +319,8 @@ theorem stackRel_evaluate :
         | none =>
           simp only
           by_cases hz : s.clock = 0
-          · simp only [hz, dite_true, if_true]; exact StackRel.of_eq rfl rfl
-          simp only [hz, dite_false, if_false]
+          · simp only [hz, dite_true, ite_true]; exact StackRel.of_eq rfl rfl
+          simp only [hz, dite_false, ite_false]
           have ih := stackRel_evaluate prog (callEnv args1 ss (decClock s))
           rcases hcv : evaluate prog (callEnv args1 ss (decClock s)) with ⟨rc, sc⟩
           rw [hcv] at ih
@@ -334,15 +334,15 @@ theorem stackRel_evaluate :
         obtain ⟨n, names, retHandler, l1, l2⟩ := rv
         simp only
         by_cases hdc : sptDomainEmpty names.fst ∨ ¬ n.Nodup
-        · simp only [hdc, if_true]; exact StackRel.refl _
-        simp only [hdc, if_false]
+        · simp only [hdc, ite_true]; exact StackRel.refl _
+        simp only [hdc, ite_false]
         rcases hce : wordSemCutEnvs names s.locals with _ | envs
         · exact StackRel.refl _
         simp only
         by_cases hz : s.clock = 0
-        · simp only [hz, dite_true, if_true]
+        · simp only [hz, dite_true, ite_true]
           exact ⟨rfl, callPushEnv_optionLe_stackMax args1 ss envs handler s⟩
-        simp only [hz, dite_false, if_false]
+        simp only [hz, dite_false, ite_false]
         have hpre : StackRel s (callEnv args1 ss (pushEnv envs handler (decClock s))) :=
           ((StackRel.of_eq rfl rfl : StackRel s (decClock s)).trans
             (stackRel_pushEnv envs handler _)).trans
@@ -356,8 +356,8 @@ theorem stackRel_evaluate :
         rcases rc with _ | ⟨x, ys⟩ | ⟨x, y⟩ | k | k | _ | _ | _ | _
         · exact h2
         · by_cases hx : x ≠ WordLocW.loc l1 l2 ∨ ys.length ≠ n.length
-          · simp only [hx, if_true]; exact h2
-          simp only [hx, if_false]
+          · simp only [hx, ite_true]; exact h2
+          simp only [hx, ite_false]
           rcases hp : popEnv s2 with _ | s1
           · exact h2
           simp only

@@ -201,7 +201,7 @@ theorem stateRelGlobalWriteHOL {width : Nat} {σ : Type} [NeZero width]
     rw [hunfold nm] at hlookup
     by_cases hnm : nm = name
     · subst hnm
-      rw [if_pos rfl] at hlookup
+      rw [ite_eq_left rfl] at hlookup
       obtain rfl : value = .val (.word w) := (Option.some.inj hlookup).symm
       refine ⟨gaddr, by simpa only [shapeOfHOLExact] using hctxt, hwfOne, ?_, ?_, ?_⟩
       · exact (memStoresMemLoadBackHOL.1 (.val (.word w)) (t.topAddr - gaddr) t.memaddrs
@@ -209,7 +209,7 @@ theorem stateRelGlobalWriteHOL {width : Nat} {σ : Type} [NeZero width]
       · intro slot hslot
         simpa only [shapeOfHOLExact, sizeOfShapeHOL_one] using hstoreDisj slot hslot
       · exact ha0 ▸ halign0
-    · rw [if_neg hnm] at hlookup
+    · rw [ite_eq_right hnm] at hlookup
       obtain ⟨addr', hctx', hwf', hload', hdis', halign'⟩ := hglob nm value hlookup
       have hnme : name ≠ nm := fun h => hnm h.symm
       have hnmnone : s.globals.lookup nm ≠ none := by rw [hlookup]; exact Option.some_ne_none _
@@ -236,7 +236,7 @@ theorem stateRelGlobalWriteHOL {width : Nat} {σ : Type} [NeZero width]
     by_cases hlt : a = t.topAddr - gaddr
     · have hmem : addresses (t.topAddr - gaddr) 1 a := by rw [hlt]; exact Or.inl rfl
       exact absurd hmem (hstoreDisj a ha)
-    · rw [if_neg hlt]
+    · rw [ite_eq_right hlt]
       exact hmemAgree a ha
   · show s.ffi = t.ffi
     exact hffi
@@ -247,21 +247,21 @@ theorem stateRelGlobalWriteHOL {width : Nat} {σ : Type} [NeZero width]
     rw [hunfold n2] at hn2
     by_cases h1 : n1 = name
     · rw [h1] at hn1 hne hc1
-      rw [if_pos rfl] at hn1
+      rw [ite_eq_left rfl] at hn1
       have h2 : ¬ (n2 = name) := fun h => hne h.symm
-      rw [if_neg h2] at hn2
+      rw [ite_eq_right h2] at hn2
       have hp1 : (sh1, ad1) = (.one, gaddr) := Option.some.inj (hc1.symm.trans hctxt)
       rw [(Prod.mk.inj hp1).1, (Prod.mk.inj hp1).2]
       exact hdisj name n2 .one gaddr sh2 ad2 hne hsrc hn2 hctxt hc2 slot
     · by_cases h2 : n2 = name
       · rw [h2] at hn2 hne hc2
-        rw [if_pos rfl] at hn2
-        rw [if_neg h1] at hn1
+        rw [ite_eq_left rfl] at hn2
+        rw [ite_eq_right h1] at hn1
         have hp2 : (sh2, ad2) = (.one, gaddr) := Option.some.inj (hc2.symm.trans hctxt)
         rw [(Prod.mk.inj hp2).1, (Prod.mk.inj hp2).2]
         exact hdisj n1 name sh1 ad1 .one gaddr hne hn1 hsrc hc1 hctxt slot
-      · rw [if_neg h1] at hn1
-        rw [if_neg h2] at hn2
+      · rw [ite_eq_right h1] at hn1
+        rw [ite_eq_right h2] at hn2
         exact hdisj n1 n2 sh1 ad1 sh2 ad2 hne hn1 hn2 hc1 hc2 slot
   · show ¬ t.memaddrs t.topAddr
     exact htopmem
@@ -370,7 +370,7 @@ private theorem evalStore_globalRet {width : Nat} {σ : Type} [NeZero width]
         (setVarHOLFinite (mlstrAppend name (ofString "'")) (.val (.word (BitVec.ofNat width 0)))
           (setVarHOLFinite name (.val (.word addr)) t)) newFfi).locals.lookup
         (mlstrAppend name (ofString "'")) = some (.val (.word wL))
-    simp only [setKvarFfiHOLFinite, setKvarHOLFinite, lookup_setVarHOLFinite, if_true]
+    simp only [setKvarFfiHOLFinite, setKvarHOLFinite, lookup_setVarHOLFinite, ite_true]
   rw [hdst, hsrc]
   simp only [setKvarFfiHOLFinite, setKvarHOLFinite, setVarHOLFinite, flattenHOL]
   rw [hmem]
@@ -456,16 +456,16 @@ theorem evaluateHOLFiniteState_compile_shMemLoad_global {width : Nat} {σ : Type
   rw [evaluateHOLFiniteState_dec_total]
   dsimp only
   rw [haddrExact]
-  simp only [shapeOfHOLExact, shapeEqHOL, if_true]
+  simp only [shapeOfHOLExact, shapeEqHOL, ite_true]
   rw [evaluateHOLFiniteState_dec_total]
   dsimp only
   simp only [evalHOLExact]
-  simp only [shapeOfHOLExact, shapeEqHOL, if_true]
+  simp only [shapeOfHOLExact, shapeEqHOL, ite_true]
   rw [evaluateHOLFiniteState_seq_line780]
   rw [evaluateHOLFiniteState_shMemLoad_source]
   dsimp only
   simp only [PanSemStateFiniteExact.evalHOLFinite_var_local, lookupKvarHOLFinite,
-    lookup_setVarHOLFinite, Flapjack.PanGlobalsShMemLoadLemmas.vNeqV' name, if_false, if_true]
+    lookup_setVarHOLFinite, Flapjack.PanGlobalsShMemLoadLemmas.vNeqV' name, ite_false, ite_true]
   cases hload : @shMemLoadHOLFiniteExact width σ _
       (setVarHOLFinite (mlstrAppend name (ofString "'")) (ValueHOL.val (HolWordLab.word 0#width))
         (setVarHOLFinite name (ValueHOL.val (HolWordLab.word addr)) t))
@@ -567,12 +567,12 @@ theorem compileCorrect_ShMemLoad_global {width : Nat} {σ : Type} [NeZero width]
                             · exact ht
                             · exfalso
                               have h := hmemload
-                              simp only [memLoadHOLExact, shapeOfHOLExact, if_neg ht] at h
+                              simp only [memLoadHOLExact, shapeOfHOLExact, ite_eq_right ht] at h
                               exact absurd h (by simp)
                           by_cases hnb : nbOpHOL operator = 0
-                          · simp only [if_pos hnb] at hev ⊢
+                          · simp only [ite_eq_left hnb] at hev ⊢
                             by_cases hmem0 : s.shMemaddrs addr
-                            · simp only [if_pos hmem0] at hev ⊢
+                            · simp only [ite_eq_left hmem0] at hev ⊢
                               cases hcall : callFFIHOL s.ffi (.sharedMem .mappedRead)
                                   [BitVec.ofNat 8 (nbOpHOL operator)]
                                   (panWordToBytesHOL addr false) with
@@ -594,7 +594,7 @@ theorem compileCorrect_ShMemLoad_global {width : Nat} {σ : Type} [NeZero width]
                                       t.memaddrs (fun a => Classical.propDecidable (t.memaddrs a))
                                       t.memory = some newMemory := by
                                     simp only [newMemory, panMemStoresHOL, panMemStoreHOL,
-                                      if_pos hdomT]
+                                      ite_eq_left hdomT]
                                   rw [evalStore_globalRet t name addr gaddr
                                     (panWordOfBytesHOL false 0 newBytes) newFfi newMemory hmem]
                                   refine ⟨_, rfl, ?_⟩
@@ -609,11 +609,11 @@ theorem compileCorrect_ShMemLoad_global {width : Nat} {σ : Type} [NeZero width]
                                       (stateRelGlobalWriteHOL ctxt s t hrel name
                                         (panWordOfBytesHOL false 0 newBytes) gaddr hctxt
                                         (by simp [hglobS]) newMemory hmem)
-                            · simp only [if_neg hmem0] at hev ⊢
+                            · simp only [ite_eq_right hmem0] at hev ⊢
                               exact absurd (Prod.mk.inj hev).1.symm hne
-                          · simp only [if_neg hnb] at hev ⊢
+                          · simp only [ite_eq_right hnb] at hev ⊢
                             by_cases hmem1 : s.shMemaddrs (panByteAlignHOL addr)
-                            · simp only [if_pos hmem1] at hev ⊢
+                            · simp only [ite_eq_left hmem1] at hev ⊢
                               cases hcall : callFFIHOL s.ffi (.sharedMem .mappedRead)
                                   [BitVec.ofNat 8 (nbOpHOL operator)]
                                   (panWordToBytesHOL addr false) with
@@ -635,7 +635,7 @@ theorem compileCorrect_ShMemLoad_global {width : Nat} {σ : Type} [NeZero width]
                                       t.memaddrs (fun a => Classical.propDecidable (t.memaddrs a))
                                       t.memory = some newMemory := by
                                     simp only [newMemory, panMemStoresHOL, panMemStoreHOL,
-                                      if_pos hdomT]
+                                      ite_eq_left hdomT]
                                   rw [evalStore_globalRet t name addr gaddr
                                     (panWordOfBytesHOL false 0 newBytes) newFfi newMemory hmem]
                                   refine ⟨_, rfl, ?_⟩
@@ -650,7 +650,7 @@ theorem compileCorrect_ShMemLoad_global {width : Nat} {σ : Type} [NeZero width]
                                       (stateRelGlobalWriteHOL ctxt s t hrel name
                                         (panWordOfBytesHOL false 0 newBytes) gaddr hctxt
                                         (by simp [hglobS]) newMemory hmem)
-                            · simp only [if_neg hmem1] at hev ⊢
+                            · simp only [ite_eq_right hmem1] at hev ⊢
                               exact absurd (Prod.mk.inj hev).1.symm hne
 
 /-- Complete HOL ShMemLoad constructor case, assembled by the original Local/Global

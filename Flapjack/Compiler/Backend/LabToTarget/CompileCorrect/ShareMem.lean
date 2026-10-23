@@ -152,7 +152,7 @@ theorem evaluateTarget_mappedRead {width : Nat} [NeZero width] {S Q σ : Type}
     · exact hal ‹_›
     · trivial
   simp only [evaluateTargetHOL, hn, ↓reduceIte, hh, hc, hi, he, hm, applyOracleHOL]
-  rw [if_pos ⟨hcond, hsh, hv⟩]
+  rw [ite_eq_left ⟨hcond, hsh, hv⟩]
   rfl
 
 /-- One target step at a valid mapped-write FFI entry (`evaluate_def`). -/
@@ -183,7 +183,7 @@ theorem evaluateTarget_mappedWrite {width : Nat} [NeZero width] {S Q σ : Type}
     · exact hal ‹_›
     · trivial
   simp only [evaluateTargetHOL, hn, ↓reduceIte, hh, hc, hi, he, hm, applyOracleHOL]
-  rw [if_pos ⟨hcond, hsh, hv⟩]
+  rw [ite_eq_left ⟨hcond, hsh, hv⟩]
   rfl
 
 @[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "compile_correct"
@@ -299,22 +299,22 @@ theorem compileCorrect_shareMem {width : Nat} [NeZero width] {S Q F : Type}
           ((wb + off).toNat % (width / 8) == 0 && s1.sharedMemDomain (wb + off))
         else s1.sharedMemDomain (riscvByteAlignHOL (wb + off))) = true
       swap
-      · rw [if_neg hcond] at hso; cases hso
-      rw [if_pos hcond] at hso
+      · rw [ite_eq_right hcond] at hso; cases hso
+      rw [ite_eq_left hcond] at hso
       have hal : BitVec.ofNat 8 size = 0 →
           (mc.target.getReg ms1 base + off).toNat % (width / 8) = 0 := by
         intro h0
         rw [hsize0] at h0
-        rw [if_pos h0] at hcond
+        rw [ite_eq_left h0] at hcond
         simp only [Bool.and_eq_true, beq_iff_eq] at hcond
         rw [hgb wb hb]; exact hcond.1
       have hsh : mc.sharedAddresses (mc.target.getReg ms1 base + off) := by
         rw [hgb wb hb]
         by_cases h0 : size = 0
-        · rw [if_pos h0] at hcond
+        · rw [ite_eq_left h0] at hcond
           simp only [Bool.and_eq_true] at hcond
           exact hshared0 _ hcond.2
-        · rw [if_neg h0, riscvByteAlignHOL_eq c2] at hcond
+        · rw [ite_eq_right h0, riscvByteAlignHOL_eq c2] at hcond
           exact hshared _ hcond
       have hstep := fun c => evaluateTarget_mappedRead mc s1.ffi c ms1 index _ base r off _
         hn hhalt hcc hfi he hm hal hsh hv
@@ -365,22 +365,22 @@ theorem compileCorrect_shareMem {width : Nat} [NeZero width] {S Q F : Type}
           ((wb + off).toNat % (width / 8) == 0 && s1.sharedMemDomain (wb + off))
         else s1.sharedMemDomain (riscvByteAlignHOL (wb + off))) = true
       swap
-      · rw [if_neg hcond] at hso; cases hso
-      rw [if_pos hcond] at hso
+      · rw [ite_eq_right hcond] at hso; cases hso
+      rw [ite_eq_left hcond] at hso
       have hal : BitVec.ofNat 8 size = 0 →
           (mc.target.getReg ms1 base + off).toNat % (width / 8) = 0 := by
         intro h0
         rw [hsize0] at h0
-        rw [if_pos h0] at hcond
+        rw [ite_eq_left h0] at hcond
         simp only [Bool.and_eq_true, beq_iff_eq] at hcond
         rw [hgb wb hb]; exact hcond.1
       have hsh : mc.sharedAddresses (mc.target.getReg ms1 base + off) := by
         rw [hgb wb hb]
         by_cases h0 : size = 0
-        · rw [if_pos h0] at hcond
+        · rw [ite_eq_left h0] at hcond
           simp only [Bool.and_eq_true] at hcond
           exact hshared0 _ hcond.2
-        · rw [if_neg h0, riscvByteAlignHOL_eq c2] at hcond
+        · rw [ite_eq_right h0, riscvByteAlignHOL_eq c2] at hcond
           exact hshared _ hcond
       have hstep := fun c => evaluateTarget_mappedWrite mc s1.ffi c ms1 index _ base r off _
         hn hhalt hcc hfi he hm hal hsh hv

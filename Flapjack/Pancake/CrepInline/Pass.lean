@@ -292,7 +292,7 @@ theorem lookup_filter_bne {α : Type u} {β : Type v} [BEq α] [LawfulBEq α]
       obtain ⟨hk, hnd_t⟩ := List.nodup_cons.mp hnd
       rw [List.filter_cons]
       by_cases hkn : (k != name) = true
-      · rw [if_pos hkn, List.lookup_cons, List.lookup_cons, ih hnd_t]
+      · rw [ite_eq_left hkn, List.lookup_cons, List.lookup_cons, ih hnd_t]
         have hkne : k ≠ name := by simpa [bne_iff_ne] using hkn
         cases hkey : key == k with
         | true =>
@@ -301,13 +301,13 @@ theorem lookup_filter_bne {α : Type u} {β : Type v} [BEq α] [LawfulBEq α]
               rw [beq_eq_false_iff_ne]; exact fun h => hkne (hk_eq ▸ h)
             simp [hnm]
         | false => simp
-      · rw [if_neg hkn, List.lookup_cons, ih hnd_t]
+      · rw [ite_eq_right hkn, List.lookup_cons, ih hnd_t]
         have hke : k = name := Classical.byContradiction (by
           intro h
           exact hkn (by rw [bne_iff_ne]; exact h))
         by_cases hkey : key == name
-        · rw [if_pos hkey, if_pos hkey]
-        · rw [if_neg hkey, if_neg hkey]
+        · rw [ite_eq_left hkey, ite_eq_left hkey]
+        · rw [ite_eq_right hkey, ite_eq_right hkey]
           have hkeq : (key == k) = false := by
             rw [beq_eq_false_iff_ne]
             intro h
@@ -336,7 +336,7 @@ theorem lookup_insert [BEq FunName] [LawfulBEq FunName]
   | true => simp
   | false =>
       have hneg : ¬ (key == name) = true := by rw [hkey]; simp
-      rw [lookup_filter_bne key name fs.entries fs.nodupKeys, if_neg hneg]
+      rw [lookup_filter_bne key name fs.entries fs.nodupKeys, ite_eq_right hneg]
       rfl
 
 end CrepInlineFmap
@@ -1021,31 +1021,31 @@ theorem crepInlineProgFmap_congr [BEq FunName] [LawfulBEq FunName]
         rw [CrepInlineFmap.toFiniteMap_remove, CrepInlineFmap.toFiniteMap_remove]
         funext k
         by_cases hk : k == name
-        · rw [if_pos hk, if_pos hk]
-        · rw [if_neg hk, if_neg hk]
+        · rw [ite_eq_left hk, ite_eq_left hk]
+        · rw [ite_eq_right hk, ite_eq_right hk]
           exact congrFun hn k
       rw [ih (CrepInlineFmap.remove name n) hremove]
     · intro m returnNames name arguments hdistinct n hn
       rw [crepInlineProgFmap.eq_6, crepInlineProgFmap.eq_6]
-      rw [if_pos hdistinct, if_pos hdistinct]
+      rw [ite_eq_left hdistinct, ite_eq_left hdistinct]
     · intro m returnNames name arguments hnd hlookup n hn
       rw [crepInlineProgFmap.eq_6, crepInlineProgFmap.eq_6]
       have hnlookup : CrepInlineFmap.lookup name n = none :=
         (congrFun hn name).trans hlookup
-      rw [if_neg hnd, if_neg hnd, hlookup, hnlookup]
+      rw [ite_eq_right hnd, ite_eq_right hnd, hlookup, hnlookup]
     · intro m returnNames name arguments hnd argumentNames calleeBody hlookup ih n hn
       rw [crepInlineProgFmap.eq_6, crepInlineProgFmap.eq_6]
       have hnlookup : CrepInlineFmap.lookup name n = some (argumentNames, calleeBody) :=
         (congrFun hn name).trans hlookup
-      rw [if_neg hnd, if_neg hnd, hlookup, hnlookup]
+      rw [ite_eq_right hnd, ite_eq_right hnd, hlookup, hnlookup]
       simp only []
       have hremove : CrepInlineFmap.toFiniteMap (CrepInlineFmap.remove name n) =
           CrepInlineFmap.toFiniteMap (CrepInlineFmap.remove name m) := by
         rw [CrepInlineFmap.toFiniteMap_remove, CrepInlineFmap.toFiniteMap_remove]
         funext k
         by_cases hk : k == name
-        · rw [if_pos hk, if_pos hk]
-        · rw [if_neg hk, if_neg hk]
+        · rw [ite_eq_left hk, ite_eq_left hk]
+        · rw [ite_eq_right hk, ite_eq_right hk]
           exact congrFun hn k
       rw [ih (CrepInlineFmap.remove name n) hremove]
     · intro m returnNames handler body name arguments ih n hn
@@ -1132,7 +1132,7 @@ theorem crepInlineProgFmap_call_some_none_hol {α : Type} [BEq FunName]
   | true =>
       simp only [Bool.not_true]
       cases h : fs.lookup name <;> rfl
-  | false => simp only [Bool.not_false, if_true]
+  | false => simp only [Bool.not_false, ite_true]
 
 theorem crepInlineProgFmap_call_some_handler_hol {α : Type} [BEq FunName]
     [LawfulBEq FunName] [OfNat α 0] [OfNat α 1] (fs : CrepInlineFmap α)

@@ -582,28 +582,28 @@ theorem instCorrectFp {s2 : StackSemStateFiniteExact width C F} (rel : stateRel 
       · rename_i i hi
         by_cases fits : (BitVec.ofInt 32 i).toInt = i
         swap
-        · rw [if_neg fits] at h; simp at h
-        rw [if_pos fits] at h
+        · rw [ite_eq_right fits] at h; simp at h
+        rw [ite_eq_left fits] at h
         by_cases w64 : width = 64
-        · rw [if_pos w64] at h
+        · rw [ite_eq_left w64] at h
           cases h
           have step : asmInst (.fp (.fpToInt d1 d2)) t =
               updFpReg d1 ((BitVec.ofInt 32 i).setWidth 64) (assertState true t) := by
             simp [asmInst, fpUpd, rd hf, hi, fits, w64]
           rw [step, Prelude.assertT]; exact setFpVarUpdFpReg rel
-        · rw [if_neg w64] at h
+        · rw [ite_eq_right w64] at h
           split at h
           · simp at h
           · rename_i g hg
             by_cases odd : d1 % 2 = 1
-            · simp only [odd, if_true, Option.some.injEq] at h
+            · simp only [odd, ite_true, Option.some.injEq] at h
               subst h
               have step : asmInst (.fp (.fpToInt d1 d2)) t =
                   updFpReg (d1 / 2) (holBitFieldInsert 63 32 (BitVec.ofInt 32 i) g)
                     (assertState true t) := by
                 simp [asmInst, fpUpd, rd hf, hi, fits, w64, rd hg, odd]
               rw [step, Prelude.assertT]; exact setFpVarUpdFpReg rel
-            · simp only [odd, if_false, Option.some.injEq] at h
+            · simp only [odd, ite_false, Option.some.injEq] at h
               subst h
               have step : asmInst (.fp (.fpToInt d1 d2)) t =
                   updFpReg (d1 / 2) (holBitFieldInsert 31 0 (BitVec.ofInt 32 i) g)
@@ -613,7 +613,7 @@ theorem instCorrectFp {s2 : StackSemStateFiniteExact width C F} (rel : stateRel 
   case fpFromInt d1 d2 =>
     unfold instFpFromInt at h
     by_cases w64 : width = 64
-    · rw [if_pos w64] at h
+    · rw [ite_eq_left w64] at h
       split at h
       · rename_i f hf; cases h
         have step : asmInst (.fp (.fpFromInt d1 d2)) t = updFpReg d1
@@ -621,13 +621,13 @@ theorem instCorrectFp {s2 : StackSemStateFiniteExact width C F} (rel : stateRel 
           simp [asmInst, fpUpd, rd hf, w64]
         rw [step]; exact setFpVarUpdFpReg rel
       · simp at h
-    · rw [if_neg w64] at h
+    · rw [ite_eq_right w64] at h
       split at h
       · rename_i f hf; cases h
         have step : asmInst (.fp (.fpFromInt d1 d2)) t = updFpReg d1
             (holIntToFp64 .roundTiesToEven (if d2 % 2 = 1 then holWordExtract 63 32 f width
               else holWordExtract 31 0 f width).toInt) t := by
-          simp only [asmInst, fpUpd, if_neg w64]
+          simp only [asmInst, fpUpd, ite_eq_right w64]
           rw [rd hf]
         rw [step]; exact setFpVarUpdFpReg rel
       · simp at h

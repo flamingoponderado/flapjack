@@ -82,7 +82,7 @@ theorem sourceNotBad (s : WordSemStateFiniteExact width (Nat × C) F) (start : N
   intro bad
   apply notFail
   unfold WordSemStateFiniteExact.semantics
-  rw [if_pos ⟨k, bad⟩]
+  rw [ite_eq_left ⟨k, bad⟩]
 
 theorem wordEntryAddClock (s : WordSemStateFiniteExact width (Nat × C) F) (start k extra : Nat)
     (res : Option (WordSemResult width)) (s1 : WordSemStateFiniteExact width (Nat × C) F)
@@ -327,7 +327,7 @@ private theorem targetTerminatesOfSource (s : WordSemStateFiniteExact width (Nat
 private theorem holOptionSome_eq_none {α : Type} {P : α → Prop} (h : ∀ x, ¬ P x) :
     holOptionSome P = none := by
   unfold holOptionSome
-  rw [dif_neg (fun ⟨x, hx⟩ => h x hx)]
+  rw [dite_eq_right (fun ⟨x, hx⟩ => h x hx)]
 
 /-- When the target has no termination witness, the source diverges with the
 same trace limit. -/
@@ -511,9 +511,9 @@ theorem entrySimulationOfStateRel (ac : AsmConfigExact width) (k : Nat)
       ⟨run, notError, moved⟩
   refine ⟨ck, res1, t1, by simpa only [stackEntry] using targetRun, ?_⟩
   by_cases same : res.map compileResult = res1
-  · rw [if_pos same] at outcome
+  · rw [ite_eq_left same] at outcome
     exact Or.inl ⟨same, outcome.1⟩
-  · rw [if_neg same] at outcome
+  · rw [ite_eq_right same] at outcome
     exact Or.inr ⟨same, outcome⟩
 
 private theorem twoNeZero (ac : AsmConfigExact width) (k : Nat)

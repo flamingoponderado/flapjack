@@ -586,7 +586,7 @@ theorem evalHOLExact_updLocals_not_mem {width : Nat} {σ : Type} [NeZero width]
       intro heq; exact h (by simp [varExpHOL, heq])
     change FLOOKUP (FUPDATE_HOL state.locals (name, word)) name' =
       FLOOKUP state.locals name'
-    rw [FLOOKUP_FUPDATE_HOL, if_neg hne]
+    rw [FLOOKUP_FUPDATE_HOL, ite_eq_right hne]
   case case3 name' => intro _; rfl
   case case4 fields ih =>
     intro h
@@ -612,23 +612,23 @@ theorem evalHOLExact_updLocals_not_mem {width : Nat} {σ : Type} [NeZero width]
       (not_mem_map_flatten (fun pair : MlS × ExpHOL width => varExpHOL pair.2)
         fields name).mp (by simpa [varExpHOL] using h)
     have hlist := ih2 hpoint
-    simp only [evalHOLExact, hlookup, if_pos hnames, hlist]
+    simp only [evalHOLExact, hlookup, ite_eq_left hnames, hlist]
   case case9 structName fields info hlookup hnames fieldValues heval hcheck ih2 =>
     intro h
     have hpoint : ∀ pair ∈ fields, name ∉ varExpHOL pair.2 :=
       (not_mem_map_flatten (fun pair : MlS × ExpHOL width => varExpHOL pair.2)
         fields name).mp (by simpa [varExpHOL] using h)
     have hlist := ih2 hpoint
-    simp only [evalHOLExact, hlookup, if_pos hnames, hlist, heval, hcheck]
+    simp only [evalHOLExact, hlookup, ite_eq_left hnames, hlist, heval, hcheck]
   case case10 structName fields info hlookup hnames fieldValues heval hcheckfalse ih2 =>
     intro h
     have hpoint : ∀ pair ∈ fields, name ∉ varExpHOL pair.2 :=
       (not_mem_map_flatten (fun pair : MlS × ExpHOL width => varExpHOL pair.2)
         fields name).mp (by simpa [varExpHOL] using h)
     have hlist := ih2 hpoint
-    simp only [evalHOLExact, hlookup, if_pos hnames, hlist, heval, hcheckfalse]
+    simp only [evalHOLExact, hlookup, ite_eq_left hnames, hlist, heval, hcheckfalse]
   case case11 structName fields info hlookup hnotnames =>
-    intro _; simp only [evalHOLExact, hlookup, if_neg hnotnames]
+    intro _; simp only [evalHOLExact, hlookup, ite_eq_right hnotnames]
   case case12 fieldName value structName values hstruct hisSome ih =>
     intro h
     have hchild : name ∉ varExpHOL value := by simpa [varExpHOL] using h
@@ -1312,14 +1312,14 @@ private theorem panMemLoad32HOL_monoDomain {width : Nat} [NeZero width]
     panMemLoad32HOL memory domain2 bigEndian address = some value := by
   unfold panMemLoad32HOL at hload ⊢
   by_cases haligned : address.toNat % 4 = 0
-  · simp only [if_pos haligned] at hload ⊢
+  · simp only [ite_eq_left haligned] at hload ⊢
     cases hmemory : memory (panByteAlignHOL (width := width) address) with
     | word word =>
         simp only [hmemory] at hload ⊢
         by_cases hdomain : domain1 (panByteAlignHOL (width := width) address)
-        · simp only [if_pos hdomain] at hload
+        · simp only [ite_eq_left hdomain] at hload
           have hdomain2 := hsubset _ hdomain
-          simp only [if_pos hdomain2]
+          simp only [ite_eq_left hdomain2]
           exact hload
         · simp [hdomain] at hload
   · simp [haligned] at hload
@@ -1410,7 +1410,7 @@ private theorem panMemLoad32HOL_agreeMemory {width : Nat} [NeZero width]
       panMemLoad32HOL memory2 domain bigEndian address := by
   unfold panMemLoad32HOL
   by_cases haligned : address.toNat % 4 = 0
-  · simp only [if_pos haligned]
+  · simp only [ite_eq_left haligned]
     by_cases hdomain : domain (panByteAlignHOL (width := width) address)
     · have hmemory := hagree _ hdomain
       rw [hmemory]
@@ -1540,7 +1540,7 @@ private theorem evaluateDeclsHOLFiniteMemaddrsMono {width : Nat} {σ : Type}
           | none => simp [heval] at hEval
           | some value =>
               by_cases hshape : shapeEqHOL shape (shapeOfHOLExact value)
-              · simp only [heval, if_pos hshape] at hEval
+              · simp only [heval, ite_eq_left hshape] at hEval
                 let emptyState := PanSemStateFiniteExact.emptyLocalsHOLFinite state
                 have hsubsetEmpty : ∀ address, emptyState.memaddrs address → memaddrs address := by
                   simpa [emptyState, PanSemStateFiniteExact.emptyLocalsHOLFinite] using hsubset
@@ -1579,7 +1579,7 @@ private theorem evaluateDeclsHOLFiniteMemaddrsMono {width : Nat} {σ : Type}
                     (inferInstance : DecidablePred memaddrs)
                 simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite]
                 rw [hevalWidenedCanonical]
-                simp only [if_pos hshape]
+                simp only [ite_eq_left hshape]
                 simpa [nextState, widenedNext, PanSemStateFiniteExact.setGlobalHOLFinite] using htail
               · simp [heval, hshape] at hEval
       | function declaration =>
@@ -1735,7 +1735,7 @@ private theorem evaluateDeclsPanSemMemorySwap {width : Nat} {σ : Type}
           | none => simp [heval] at hEval
           | some value =>
               by_cases hshape : shapeEqHOL shape (shapeOfHOLExact value)
-              · simp only [heval, if_pos hshape] at hEval
+              · simp only [heval, ite_eq_left hshape] at hEval
                 have hExactEval :
                     evalHOLExact
                       (PanSemStateFiniteExact.emptyLocalsHOLFinite state).toExact
@@ -1829,14 +1829,14 @@ private theorem evaluateDeclsHOLFiniteSwapLocals {width : Nat} {σ : Type}
                 simpa [stateWithLocals,
                   PanSemStateFiniteExact.emptyLocalsHOLFinite] using heval
               by_cases hshape : shapeEqHOL shape (shapeOfHOLExact value)
-              · simp only [heval, if_pos hshape] at hEval
+              · simp only [heval, ite_eq_left hshape] at hEval
                 let nextState := PanSemStateFiniteExact.setGlobalHOLFinite name value state
                 letI : DecidablePred nextState.memaddrs := by
                   simpa [nextState, PanSemStateFiniteExact.setGlobalHOLFinite] using
                     (inferInstance : DecidablePred state.memaddrs)
                 have htail := ih nextState result hEval
                 rw [hevalChanged]
-                simp only [if_pos hshape]
+                simp only [ite_eq_left hshape]
                 simpa [nextState, stateWithLocals,
                   PanSemStateFiniteExact.setGlobalHOLFinite] using htail
               · simp [heval, hshape] at hEval
@@ -2398,7 +2398,7 @@ private theorem evaluateDeclsHOLFinite_eshapes {width : Nat} {σ : Type}
           | none => simp [heval] at hEval
           | some value =>
               by_cases hshape : shapeEqHOL shape (shapeOfHOLExact value)
-              · simp only [heval, if_pos hshape] at hEval
+              · simp only [heval, ite_eq_left hshape] at hEval
                 have htail := ih
                   { state with globals := state.globals.update (name, value) } result hEval
                 simpa [exceptionsHOL] using htail
@@ -2409,7 +2409,7 @@ private theorem evaluateDeclsHOLFinite_eshapes {width : Nat} {σ : Type}
               (fun parameter => isWfShapeExactHOL state.structs parameter.2) &&
             isWfShapeExactHOL state.structs declaration.returnShape
           by_cases hcondition : condition = true
-          · simp only [condition, hcondition, if_pos] at hEval
+          · simp only [condition, hcondition, ite_eq_left] at hEval
             have htail := ih
               { state with code := state.code.update (declaration.name,
                 (declaration.params, declaration.body, declaration.returnShape)) } result hEval
@@ -2424,7 +2424,7 @@ private theorem evaluateDeclsHOLFinite_eshapes {width : Nat} {σ : Type}
           let condition := (state.eshapes.lookup exceptionName).isNone &&
             isWfShapeExactHOL state.structs shape
           by_cases hcondition : condition = true
-          · simp only [condition, hcondition, if_pos] at hEval
+          · simp only [condition, hcondition, ite_eq_left] at hEval
             have htail := ih
               { state with eshapes := state.eshapes.update (exceptionName, shape) } result hEval
             rw [htail]
@@ -2503,7 +2503,7 @@ private theorem evaluateDeclsHOLFinite_onlyFunctions {width : Nat} {σ : Type}
               (fun parameter => isWfShapeExactHOL state.structs parameter.2) &&
             isWfShapeExactHOL state.structs declaration.returnShape
           by_cases hcondition : condition = true
-          · simp only [condition, hcondition, if_pos] at hEval
+          · simp only [condition, hcondition, ite_eq_left] at hEval
             have htail := ih
               { state with code := state.code.update (declaration.name,
                 (declaration.params, declaration.body, declaration.returnShape)) }
@@ -2602,7 +2602,7 @@ private theorem evaluateDeclsHOLFinite_append {width : Nat} {σ : Type}
           | none => simp
           | some value =>
               by_cases hshape : shapeEqHOL shape (shapeOfHOLExact value)
-              · simp only [if_pos hshape]
+              · simp only [ite_eq_left hshape]
                 exact ih (PanSemStateFiniteExact.setGlobalHOLFinite name value state)
                   (_hdec := _hdec) ds2
               · simp [hshape]
@@ -2612,7 +2612,7 @@ private theorem evaluateDeclsHOLFinite_append {width : Nat} {σ : Type}
               (fun parameter => isWfShapeExactHOL state.structs parameter.2) &&
             isWfShapeExactHOL state.structs declaration.returnShape
           by_cases hcondition : condition = true
-          · simp only [condition, hcondition, if_pos]
+          · simp only [condition, hcondition, ite_eq_left]
             exact ih
               { state with code := state.code.update (declaration.name,
                 (declaration.params, declaration.body, declaration.returnShape)) }
@@ -2627,7 +2627,7 @@ private theorem evaluateDeclsHOLFinite_append {width : Nat} {σ : Type}
           let condition := (state.eshapes.lookup exceptionName).isNone &&
             isWfShapeExactHOL state.structs shape
           by_cases hcondition : condition = true
-          · simp only [condition, hcondition, if_pos]
+          · simp only [condition, hcondition, ite_eq_left]
             exact ih
               { state with eshapes := state.eshapes.update (exceptionName, shape) }
               (_hdec := _hdec) ds2
@@ -2692,7 +2692,7 @@ private theorem lookup_update_ne {α β : Type} [BEq α] [LawfulBEq α]
     (h : entry.1 ≠ key) :
     (map.update entry).lookup key = map.lookup key := by
   simp only [HolFiniteMapExact.lookup_update, FUPDATE, beq_eq_false_iff_ne.mpr h,
-    Bool.false_eq_true, if_false]
+    Bool.false_eq_true, ite_false]
 
 /-- Tail freshness survives prepending a distinct exception binding. Untagged
     finite-map helper. -/
@@ -2780,7 +2780,7 @@ private theorem evaluateDeclsHOLFinite_onlyExnDecls {width : Nat} {σ : Type}
           let condition := (state.eshapes.lookup exceptionName).isNone &&
             isWfShapeExactHOL state.structs shape
           by_cases hcondition : condition = true
-          · simp only [condition, hcondition, if_pos] at hEval
+          · simp only [condition, hcondition, ite_eq_left] at hEval
             have htail := ih
               { state with eshapes := state.eshapes.update (exceptionName, shape) }
               result hall hEval
@@ -2870,7 +2870,7 @@ private theorem evaluateDeclsHOLFinite_exnsWf {width : Nat} {σ : Type}
           let condition := (state.eshapes.lookup exceptionName).isNone &&
             isWfShapeExactHOL state.structs shape
           by_cases hcondition : condition = true
-          · simp only [condition, hcondition, if_pos] at hEval
+          · simp only [condition, hcondition, ite_eq_left] at hEval
             have hcondRaw : ((state.eshapes.lookup exceptionName).isNone &&
                 isWfShapeExactHOL state.structs shape) = true := by
               simpa [condition] using hcondition
@@ -2911,7 +2911,7 @@ private theorem evaluateDeclsHOLFinite_exnsWf {width : Nat} {σ : Type}
           | none => simp [heval] at hEval
           | some value =>
               by_cases hshape : shapeEqHOL shape (shapeOfHOLExact value)
-              · simp only [heval, if_pos hshape] at hEval
+              · simp only [heval, ite_eq_left hshape] at hEval
                 have htail := ih
                   { state with globals := state.globals.update (name, value) } result hEval
                 simpa [exceptionsHOL] using htail
@@ -2922,7 +2922,7 @@ private theorem evaluateDeclsHOLFinite_exnsWf {width : Nat} {σ : Type}
               (fun parameter => isWfShapeExactHOL state.structs parameter.2) &&
             isWfShapeExactHOL state.structs declaration.returnShape
           by_cases hcondition : condition = true
-          · simp only [condition, hcondition, if_pos] at hEval
+          · simp only [condition, hcondition, ite_eq_left] at hEval
             have htail := ih
               { state with code := state.code.update (declaration.name,
                 (declaration.params, declaration.body, declaration.returnShape)) }
@@ -3017,7 +3017,7 @@ private theorem evaluateDeclsHOLFinite_exnsWfEvaluateDecls {width : Nat} {σ : T
               isWfShapeExactHOL state.structs shape) = true := by
             rw [Bool.and_eq_true]
             exact ⟨hfreshHead, hwfHead⟩
-          simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite, if_pos hcondition]
+          simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite, ite_eq_left hcondition]
           have htail := ih
             { state with eshapes := state.eshapes.update (exceptionName, shape) }
             _result hall hnodupTail
@@ -3129,7 +3129,7 @@ private theorem evaluateDeclsHOLFinite_onlyFunsAndExnDecls {width : Nat} {σ : T
             isWfShapeExactHOL state.structs declaration.returnShape
           simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite] at hEval
           by_cases hcondition : condition = true
-          · simp only [condition, hcondition, if_pos] at hEval
+          · simp only [condition, hcondition, ite_eq_left] at hEval
             have htail := ih
               { state with code := state.code.update (declaration.name,
                 (declaration.params, declaration.body, declaration.returnShape)) }
@@ -3148,7 +3148,7 @@ private theorem evaluateDeclsHOLFinite_onlyFunsAndExnDecls {width : Nat} {σ : T
             isWfShapeExactHOL state.structs shape
           simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite] at hEval
           by_cases hcondition : condition = true
-          · simp only [condition, hcondition, if_pos] at hEval
+          · simp only [condition, hcondition, ite_eq_left] at hEval
             have htail := ih
               { state with eshapes := state.eshapes.update (exceptionName, shape) }
               result hall hEval
@@ -3435,7 +3435,7 @@ private theorem evaluateInvariantsCallTimeoutHOLFinite
           (.call info function arguments : ProgHOL width)).2 = post.toPanSemFinite := by
       simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair] using hpair
     exact Prod.ext hpair'.1 hpair'.2
-  simp only [evaluateHOLFiniteState_call, hargs, hlookup, if_pos hclock] at hcanonical
+  simp only [evaluateHOLFiniteState_call, hargs, hlookup, ite_eq_left hclock] at hcanonical
   have hpost := congrArg Prod.snd hcanonical
   have hsame : post.toPanSemFinite =
       PanSemStateFiniteExact.emptyLocalsHOLFinite state.toPanSemFinite := by
@@ -3844,7 +3844,7 @@ private theorem evaluateInvariantsCallBodyResultBranchesHOLFinite
     subst post
     simpa [PanPropsEvalStateFiniteExact.ofPanSemFinite,
       PanPropsEvalStateFiniteExact.toPanSemFinite] using hfields
-  simp only [evaluateHOLFiniteState_call, hargs, hlookup, if_neg hclock, hbody]
+  simp only [evaluateHOLFiniteState_call, hargs, hlookup, ite_eq_right hclock, hbody]
     at hcanonical
   rcases hbodyKind with hnone | hbreak | hcontinue
       | herror | htimeout | ⟨event, hffi⟩ | ⟨value, hreturn, hshapeFalse⟩
@@ -4003,7 +4003,7 @@ private theorem evaluateInvariantsCallBodyResultBranchesHOLFinite
     exact hfinish empty
       (by simpa [empty, PanSemStateFiniteExact.emptyLocalsHOLFinite] using
         congrArg Prod.snd hcanonical) hemptyFields
-  · simp only [hexception, hinfo, if_neg hne] at hcanonical
+  · simp only [hexception, hinfo, ite_eq_right hne] at hcanonical
     let empty := PanSemStateFiniteExact.emptyLocalsHOLFinite bodyPost
     have hemptyFields :
         empty.memaddrs = state.toPanSemFinite.memaddrs ∧
@@ -4018,9 +4018,9 @@ private theorem evaluateInvariantsCallBodyResultBranchesHOLFinite
     exact hfinish empty
       (by simpa [empty, PanSemStateFiniteExact.emptyLocalsHOLFinite] using
         congrArg Prod.snd hcanonical) hemptyFields
-  · simp only [hexception, hinfo, if_pos heq, hshapeNone] at hcanonical
+  · simp only [hexception, hinfo, ite_eq_left heq, hshapeNone] at hcanonical
     exact hfinish bodyPost (by simpa using congrArg Prod.snd hcanonical) hbodyFields
-  · simp only [hexception, hinfo, if_pos heq, hshapeSome, hcondFalse] at hcanonical
+  · simp only [hexception, hinfo, ite_eq_left heq, hshapeSome, hcondFalse] at hcanonical
     exact hfinish bodyPost (by simpa using congrArg Prod.snd hcanonical) hbodyFields
   · have hshapeEq : shapeEqHOL (shapeOfHOLExact value) declaredShape = true :=
       (Bool.and_eq_true_iff.mp hcondTrue).1
@@ -5298,12 +5298,12 @@ theorem evaluateInvariantsIfCaseHOLFinite {width : Nat} {σ : Type} [NeZero widt
                 by_cases hzero : word = 0
                 · have hne : ¬ (word ≠ 0) := by simp [hzero]
                   simp only [heval] at hcanonical
-                  rw [if_pos hzero] at hcanonical
-                  rw [if_neg hne]
+                  rw [ite_eq_left hzero] at hcanonical
+                  rw [ite_eq_right hne]
                   exact hcanonical
                 · simp only [heval] at hcanonical
-                  rw [if_neg hzero] at hcanonical
-                  rw [if_pos hzero]
+                  rw [ite_eq_right hzero] at hcanonical
+                  rw [ite_eq_left hzero]
                   exact hcanonical
               have hbranchPair :
                   PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
@@ -5435,7 +5435,7 @@ theorem evaluateInvariantsDecCaseHOLFinite {width : Nat} {σ : Type} [NeZero wid
               (HolFiniteMapExact.resVarEq bodyOutput.2.locals
                 (name, state.toPanSemFinite.locals.lookup name)) }
         have hpostRaw := congrArg Prod.snd hcanonical
-        simp only [hinit, if_pos hshape] at hpostRaw
+        simp only [hinit, ite_eq_left hshape] at hpostRaw
         have hpost : post.toPanSemFinite = restored := by
           simpa [restored, bodyState, bodyOutput,
             PanSemStateFiniteExact.setVarHOLFinite] using hpostRaw.symm
@@ -5472,7 +5472,7 @@ theorem evaluateInvariantsDecCaseHOLFinite {width : Nat} {σ : Type} [NeZero wid
           rw [hpost]
           simpa [restored] using horacle'
       · have hpostRaw := congrArg Prod.snd hcanonical
-        simp only [hinit, if_neg hshape] at hpostRaw
+        simp only [hinit, ite_eq_right hshape] at hpostRaw
         have hstate : post = state := by
           simpa using congrArg PanPropsEvalStateFiniteExact.ofPanSemFinite hpostRaw.symm
         subst post
@@ -5956,7 +5956,7 @@ private theorem evaluateHOLFinitePair_while_breakOutput {width : Nat} {σ : Type
     change state.clock ≠ 0
     exact hClock
   dsimp only
-  rw [if_pos hWord, if_neg hclock]
+  rw [ite_eq_left hWord, ite_eq_right hclock]
   simp [hBodyExact]
 
 /-- Flapjack-specific clock-subtraction identity for `dec_clock`: this is a
@@ -5988,7 +5988,7 @@ private theorem fixClockHOLFinite_sub_clock {width : Nat} {σ : Type} {β : Type
         clock := (PanSemStateFiniteExact.fixClockHOLFinite entry (result, post)).2.clock - ck } := by
   have hhigh : ¬ entry.clock < post.clock := by omega
   have hlow : ¬ entry.clock - ck < post.clock - ck := by omega
-  simp only [PanSemStateFiniteExact.fixClockHOLFinite, if_neg hhigh, if_neg hlow]
+  simp only [PanSemStateFiniteExact.fixClockHOLFinite, ite_eq_right hhigh, ite_eq_right hlow]
 
 /-- Flapjack-specific bound for the exact source `While` clause. When its
     guard is a nonzero word and the body runs at the decremented entry clock,
@@ -6012,7 +6012,7 @@ private theorem evaluateWhileOutputClock_le_bodyPost {width : Nat} {σ : Type}
     (PanSemStateFiniteExact.evaluateHOLFiniteState state (.while condition body)).2.clock ≤
       bodyPost.clock := by
   rw [PanSemStateFiniteExact.evaluateHOLFiniteState_while_fixClockRewrite]
-  simp only [hguard, if_pos hword, if_neg hclock, hbody]
+  simp only [hguard, ite_eq_left hword, ite_eq_right hclock, hbody]
   cases bodyResult with
   | none =>
       exact evaluateHOLFiniteState_clock_le bodyPost (.while condition body)
@@ -6489,7 +6489,7 @@ private theorem evaluateHOLFinitePair_while_recOutput {width : Nat} {σ : Type} 
   dsimp only
   rw [hGuard]
   dsimp only
-  rw [if_pos hWord, if_neg hClockFinite]
+  rw [ite_eq_left hWord, ite_eq_right hClockFinite]
   rcases hRec with hrec | hrec
   · rw [hrec] at hFixedEq
     rw [hBodyCanon]
@@ -6556,7 +6556,7 @@ private theorem evaluateHOLFinitePair_while_propOutput {width : Nat} {σ : Type}
   dsimp only
   rw [hGuard]
   dsimp only
-  rw [if_pos hWord, if_neg hClockFinite]
+  rw [ite_eq_left hWord, ite_eq_right hClockFinite]
   rw [hBodyCanon]
   dsimp only
   cases r with
@@ -6786,11 +6786,11 @@ theorem evaluateClockSubWhileCaseHOLFinite {width : Nat} {σ : Type} [NeZero wid
                     dsimp only
                     rw [hC]
                     dsimp only
-                    rw [if_pos hzero]
+                    rw [ite_eq_left hzero]
                     have hc : state.toPanSemFinite.clock = 0 := by
                       change state.clock = 0
                       exact hz
-                    rw [if_pos hc]
+                    rw [ite_eq_left hc]
                   have hres := congrArg Prod.fst (hTimeOut.symm.trans hRun)
                   exact hNotTimeout (by simpa using hres.symm)
                 have hGuardExact : @evalHOLExact width σ _ state.toPanSemFinite.toExact
@@ -7187,7 +7187,7 @@ theorem evaluateClockSubDecCaseHOLFinite {width : Nat} {σ : Type} [NeZero width
           rw [PanSemStateFiniteExact.evaluateHOLFiniteState_dec_total]
           have hInitLowValue' :
               @evalHOLExact width σ _ lowCanonical.toExact lowMem initializer = some value := hInitLowValue
-          simp only [hInitLowValue', hshape, if_true]
+          simp only [hInitLowValue', hshape, ite_true]
           have hBodyInputEq :
               PanSemStateFiniteExact.setVarHOLFinite name value lowCanonical =
                 { bodyInputHigh with clock := bodyInputHigh.clock - ck } := by
@@ -7266,8 +7266,8 @@ private theorem evaluateHOLFinitePair_ite {width : Nat} {σ : Type} [NeZero widt
           | word word =>
               simp only [h]
               by_cases hzero : word = 0
-              · rw [if_pos hzero, if_pos hzero]
-              · rw [if_neg hzero, if_neg hzero]
+              · rw [ite_eq_left hzero, ite_eq_left hzero]
+              · rw [ite_eq_right hzero, ite_eq_right hzero]
       | rStruct f =>
           simp only [h]
           rw [PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite]
@@ -7346,20 +7346,20 @@ theorem evaluateClockSubIfCaseHOLFinite {width : Nat} {σ : Type} [NeZero width]
                       (if word ≠ 0 then thenBranch else elseBranch : ProgHOL width) =
                     (result, { st with clock := st.clock + ck }) := by
                 by_cases hzero : word = 0
-                · rw [if_pos hzero] at hRun
-                  rw [if_neg (by simp [hzero])]
+                · rw [ite_eq_left hzero] at hRun
+                  rw [ite_eq_right (by simp [hzero])]
                   exact hRun
-                · rw [if_neg hzero] at hRun
-                  rw [if_pos hzero]
+                · rw [ite_eq_right hzero] at hRun
+                  rw [ite_eq_left hzero]
                   exact hRun
               have hBranchLow := ihIf (.val (.word word)) (.word word) word
                 ⟨hCond, rfl, rfl⟩ result st ck hBranchPair hne
               by_cases hzero : word = 0
-              · rw [if_neg (by simp [hzero])] at hBranchLow
-                rw [if_pos hzero]
+              · rw [ite_eq_right (by simp [hzero])] at hBranchLow
+                rw [ite_eq_left hzero]
                 exact hBranchLow
-              · rw [if_pos hzero] at hBranchLow
-                rw [if_neg hzero]
+              · rw [ite_eq_left hzero] at hBranchLow
+                rw [ite_eq_right hzero]
                 exact hBranchLow
       | rStruct f =>
           dsimp only at hRun ⊢
@@ -7681,7 +7681,7 @@ theorem evaluateClockSubTickCaseHOLFinite {width : Nat} {σ : Type} [NeZero widt
           (PanSemStateFiniteExact.decClockHOLFinite state.toPanSemFinite) =
           { st with clock := st.clock + ck } := by
       simpa only [PanPropsEvalStateFiniteExact.toPanSemFinite, hclock,
-        if_false, PanSemStateFiniteExact.decClockHOLFinite] using hpost
+        ite_false, PanSemStateFiniteExact.decClockHOLFinite] using hpost
     have hclockEq : state.clock - 1 = st.clock + ck := by
       simpa only [PanPropsEvalStateFiniteExact.toPanSemFinite,
         PanPropsEvalStateFiniteExact.ofPanSemFinite,
@@ -7707,7 +7707,7 @@ theorem evaluateClockSubTickCaseHOLFinite {width : Nat} {σ : Type} [NeZero widt
             ({ state with clock := state.clock - ck }.toPanSemFinite) .tick).2) =
         (none, st)
     rw [PanSemStateFiniteExact.evaluateHOLFiniteState_tick]
-    rw [if_neg hlowCanonical]
+    rw [ite_eq_right hlowCanonical]
     simpa [PanSemStateFiniteExact.decClockHOLFinite,
       PanPropsEvalStateFiniteExact.toPanSemFinite,
       PanPropsEvalStateFiniteExact.ofPanSemFinite] using
@@ -7796,7 +7796,7 @@ theorem evaluateClockSubReturnCaseHOLFinite {width : Nat} {σ : Type} [NeZero wi
             PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
                 (.return expression) = (some (.returned value), st.toPanSemFinite) := by
           rw [PanSemStateFiniteExact.evaluateHOLFiniteState_return]
-          simp only [hEvalLowValue, hsizeLow, if_pos]
+          simp only [hEvalLowValue, hsizeLow, ite_eq_left]
           have hRestored :
               PanSemStateFiniteExact.emptyLocalsHOLFinite lowCanonical = st.toPanSemFinite := by
             cases state <;> cases st <;>
@@ -8025,7 +8025,7 @@ theorem evaluateClockSubRaiseCaseHOLFinite {width : Nat} {σ : Type} [NeZero wid
                 (some (.exception exceptionId value),
                   PanSemStateFiniteExact.emptyLocalsHOLFinite highState)
                 (some .error, highState) = (result, highPost) at hCanonical
-              rw [if_pos hguard] at hCanonical
+              rw [ite_eq_left hguard] at hCanonical
               rcases Prod.mk.inj hCanonical with ⟨hresult, hpost⟩
               subst result
               clear hCanonical hRun
@@ -8056,7 +8056,7 @@ theorem evaluateClockSubRaiseCaseHOLFinite {width : Nat} {σ : Type} [NeZero wid
                     simp_all [highState, highPost, lowState, lowCanonical,
                       PanPropsEvalStateFiniteExact.toPanSemFinite,
                       PanSemStateFiniteExact.emptyLocalsHOLFinite] <;> omega
-                rw [if_pos ⟨rfl, by simpa [heq] using hsizeLow⟩]
+                rw [ite_eq_left ⟨rfl, by simpa [heq] using hsizeLow⟩]
                 exact Prod.ext rfl hRestored
               apply Prod.ext
               · change (PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
@@ -8080,7 +8080,7 @@ theorem evaluateClockSubRaiseCaseHOLFinite {width : Nat} {σ : Type} [NeZero wid
                 (some (.exception exceptionId value),
                   PanSemStateFiniteExact.emptyLocalsHOLFinite highState)
                 (some .error, highState) = (result, highPost) at hCanonical
-              rw [if_neg hguard] at hCanonical
+              rw [ite_eq_right hguard] at hCanonical
               rcases Prod.mk.inj hCanonical with ⟨hresult, hpost⟩
               subst result
               clear hCanonical hRun
@@ -8112,7 +8112,7 @@ theorem evaluateClockSubRaiseCaseHOLFinite {width : Nat} {σ : Type} [NeZero wid
                     PanSemStateFiniteExact.emptyLocalsHOLFinite lowCanonical)
                   (some PanSemResultExact.error, lowCanonical) =
                   (some PanSemResultExact.error, lowCanonical)
-                rw [if_neg hguardLow]
+                rw [ite_eq_right hguardLow]
               apply Prod.ext
               · change (PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
                   (.raise exceptionId expression)).1 = some .error
@@ -8134,7 +8134,7 @@ theorem evaluateClockSubRaiseCaseHOLFinite {width : Nat} {σ : Type} [NeZero wid
               (some (.exception exceptionId value),
                 PanSemStateFiniteExact.emptyLocalsHOLFinite highState)
               (some .error, highState) = (result, highPost) at hCanonical
-            rw [if_neg hguard] at hCanonical
+            rw [ite_eq_right hguard] at hCanonical
             rcases Prod.mk.inj hCanonical with ⟨hresult, hpost⟩
             subst result
             clear hCanonical hRun
@@ -8531,10 +8531,10 @@ theorem evaluateInvariantsDecCallCaseHOLFinite {width : Nat} {σ : Type}
   rw [hlk] at hW
   dsimp only at hW
   by_cases hclk : s.toPanSemFinite.clock = 0
-  · rw [if_pos hclk] at hW
+  · rw [ite_eq_left hclk] at hW
     obtain ⟨_, rfl⟩ := Prod.mk.inj hW
     simp [decCallFields, PanSemStateFiniteExact.emptyLocalsHOLFinite]
-  rw [if_neg hclk] at hW
+  rw [ite_eq_right hclk] at hW
   try dsimp only at hW
   have hmap : argexps.mapM (fun expression =>
       PanSemStateFiniteExact.evalHOLFinite s.toPanSemFinite
@@ -8561,7 +8561,7 @@ theorem evaluateInvariantsDecCallCaseHOLFinite {width : Nat} {σ : Type}
       dsimp only at hW
       by_cases hsh : (shapeEqHOL (shapeOfHOLExact retv) shape &&
           shapeEqHOL (shapeOfHOLExact retv) rsh) = true
-      · rw [if_pos hsh] at hW
+      · rw [ite_eq_left hsh] at hW
         simp only [Bool.and_eq_true] at hsh
         have h1 : shapeOfHOLExact retv = shape := (shapeEqHOL_eq_true _ _).mp hsh.1
         have h2 : shapeOfHOLExact retv = rsh := (shapeEqHOL_eq_true _ _).mp hsh.2
@@ -8576,7 +8576,7 @@ theorem evaluateInvariantsDecCallCaseHOLFinite {width : Nat} {σ : Type}
           simp [decCallFields, PanSemStateFiniteExact.setVarHOLFinite]
         have hfin := decCallFields_trans (decCallFields_trans hcont hset) hbody
         simpa [decCallFields] using hfin
-      · rw [if_neg hsh] at hW
+      · rw [ite_eq_right hsh] at hW
         obtain ⟨_, rfl⟩ := Prod.mk.inj hW
         exact hbody
   | error | «break» | «continue» =>

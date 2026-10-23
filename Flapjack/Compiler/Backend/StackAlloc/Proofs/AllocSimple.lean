@@ -135,9 +135,9 @@ theorem alloc_correct_lemma_Simple {width : Nat} [NeZero width] {C F : Type} {co
     | some collected => _) = (r, t) at hA
   rw [hgcthm] at hA
   by_cases hsp : s'.stack.length < s'.stackSpace
-  · simp only [hsp, if_true, Prod.mk.injEq] at hA
+  · simp only [hsp, ite_true, Prod.mk.injEq] at hA
     exact absurd hA.1.symm hr
-  simp only [hsp, if_false] at hA
+  simp only [hsp, ite_false] at hA
   generalize hmv : wordGcMove conf (holFapply s'.store .globals, 0,
     wordSemTheWord (holFapply s'.store .otherHeap),
     wordSemTheWord (holFapply s'.store .currHeap), s'.memory, s'.mdomain) = R1 at hA
@@ -153,7 +153,7 @@ theorem alloc_correct_lemma_Simple {width : Nat} [NeZero width] {C F : Type} {co
   simp only at hA
   by_cases hP : wordGcFunAssum conf s'.store ∧ c3 = true
   swap
-  · simp only [hP, if_false, Prod.mk.injEq] at hA
+  · simp only [hP, ite_false, Prod.mk.injEq] at hA
     exact absurd hA.1.symm hr
   simp only [hP] at hA
   obtain ⟨hassum, rfl⟩ := hP
@@ -190,7 +190,7 @@ theorem alloc_correct_lemma_Simple {width : Nat} [NeZero width] {C F : Type} {co
   rw [hglob, hother, hcurr] at hmv
   simp only [wordSemTheWord] at hA hlp hrb hmv
   -- the allocation's space test
-  simp only [and_self, if_true] at hA
+  simp only [and_self, ite_true] at hA
   have hspace : StackSemAllocation.hasSpace (.word w : WordLocW width)
       ((s'.store.updateListEq [(.currHeap, .word other), (.otherHeap, .word curr),
         (.nextFree, .word pa3), (.triggerGC, .word (other + len)), (.endOfHeap, .word (other + len)),
@@ -522,7 +522,7 @@ theorem alloc_correct_lemma_Simple {width : Nat} [NeZero width] {C F : Type} {co
     obtain ⟨rfl, rfl⟩ := hA
     refine ⟨ckG + ckR + ckL, Sfin.regs, ?_, by simp, ?_, ?_⟩
     · change evaluate (wordGcCode conf, { S0 with clock := s.clock + (ckG + ckR + ckL) }) = _
-      rw [hrun, hB4, if_neg (fun h => hlt_iff.1 h hsp2)]
+      rw [hrun, hB4, ite_eq_right (fun h => hlt_iff.1 h hsp2)]
       simp only [Prod.mk.injEq, true_and]
       rw [← hstore]
       simp [Sfin, S3L, S3, S2R, S2, S2a, SG, S1, S0, s', X, setVar, setStore]
@@ -534,7 +534,7 @@ theorem alloc_correct_lemma_Simple {width : Nat} [NeZero width] {C F : Type} {co
     obtain ⟨rfl, rfl⟩ := hA
     refine ⟨ckG + ckR + ckL, HolFiniteMapExact.empty, ?_, fun _ => rfl, ?_, fun h => by cases h⟩
     · change evaluate (wordGcCode conf, { S0 with clock := s.clock + (ckG + ckR + ckL) }) = _
-      rw [hrun, hB4, if_pos (hlt_iff.2 hsp2)]
+      rw [hrun, hB4, ite_eq_left (hlt_iff.2 hsp2)]
       simp only [Prod.mk.injEq, true_and]
       simp only [emptyEnv]
       rw [hstore]

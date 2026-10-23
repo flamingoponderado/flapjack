@@ -1006,7 +1006,7 @@ theorem fixCrepHolClock_clock_le (oldState : CrepHolState α σ)
     (fixCrepHolClock oldState (result, newState)).2.clock ≤ oldState.clock := by
   by_cases hlt : oldState.clock < newState.clock
   · simp [fixCrepHolClock, hlt]
-  · simp only [fixCrepHolClock, hlt, if_false]
+  · simp only [fixCrepHolClock, hlt, ite_false]
     exact Nat.le_of_not_lt hlt
 
 /-- Generic production clock bound for the generic (untagged)
@@ -1061,7 +1061,7 @@ theorem fixCrepHolClock_IMP_LESS_EQW {width : Nat} [NeZero width] {σ : Type} {�
         oldState.clock := by
     by_cases hlt : oldState.clock < stepState.clock
     · simp [fixCrepHolClockW, hlt]
-    · simp only [fixCrepHolClockW, hlt, if_false]
+    · simp only [fixCrepHolClockW, hlt, ite_false]
       exact Nat.le_of_not_lt hlt
   rw [hfixed] at hbound
   exact hbound
@@ -1276,11 +1276,11 @@ theorem crepRuntimeStore_eq_memory_view [BEq α]
         some (updateMemory (crepRuntimeMemoryView state.memory) address value) else none := by
   rw [crepRuntimeStore]
   by_cases h : state.memaddrs address = true
-  · rw [if_pos h, if_pos h]
+  · rw [ite_eq_left h, ite_eq_left h]
     simp only [Option.map_some]
     exact congrArg some
       (crepRuntimeMemoryView_updateCrepRuntimeMemory_word state.memory address value)
-  · rw [if_neg h, if_neg h]
+  · rw [ite_eq_right h, ite_eq_right h]
     rfl
 
 /-- Flapjack-only: memory-level view of a production byte store. -/
@@ -1295,11 +1295,11 @@ theorem crepRuntimeStoreByte_eq_memory_view [BEq α] [Add α] [OfNat α 1]
             state.bigEndian)) else none := by
   simp only [crepRuntimeStoreByte]
   by_cases h : state.memaddrs (state.memoryModel.byteAlign state.bytesInWord address) = true
-  · rw [if_pos h, if_pos h]
+  · rw [ite_eq_left h, ite_eq_left h]
     simp only [Option.pure_def, Option.map_some]
     exact congrArg some
       (crepRuntimeMemoryView_updateCrepRuntimeMemory_word state.memory _ _)
-  · rw [if_neg h, if_neg h]
+  · rw [ite_eq_right h, ite_eq_right h]
     rfl
 
 /-- Flapjack-only: memory-level view of a production 32-bit store. -/
@@ -1324,15 +1324,15 @@ theorem crepRuntimeStore32_eq_memory_view [BEq α] [Add α] [OfNat α 0] [OfNat 
       else none := by
   simp only [crepRuntimeStore32]
   by_cases ha : state.memoryModel.aligned 4 address = true
-  · rw [if_pos ha, if_pos ha]
+  · rw [ite_eq_left ha, ite_eq_left ha]
     by_cases hb : state.memaddrs (state.memoryModel.byteAlign state.bytesInWord address) = true
-    · rw [if_pos hb, if_pos hb]
+    · rw [ite_eq_left hb, ite_eq_left hb]
       simp only [Option.pure_def, Option.map_some]
       exact congrArg some
         (crepRuntimeMemoryView_updateCrepRuntimeMemory_word state.memory _ _)
-    · rw [if_neg hb, if_neg hb]
+    · rw [ite_eq_right hb, ite_eq_right hb]
       rfl
-  · rw [if_neg ha, if_neg ha]
+  · rw [ite_eq_right ha, ite_eq_right ha]
     rfl
 
 /-- Flapjack-only: the single-constructor `word_lab` cell is recovered by
@@ -2528,24 +2528,24 @@ theorem FLOOKUP_resVar [BEq α] [LawfulBEq α] (f : FiniteMap α β) (m n : α)
     · have hm : (m == n) = true := by
         rw [beq_iff_eq]
         exact (beq_iff_eq.mp h).symm
-      simp only [hm, if_true, h]
+      simp only [hm, ite_true, h]
     · have hm : (m == n) = false := by
         rw [beq_eq_false_iff_ne]
         intro hc
         exact h (beq_iff_eq.mpr hc.symm)
-      simp only [hm, Bool.false_eq_true, if_false, h]
+      simp only [hm, Bool.false_eq_true, ite_false, h]
   | some w =>
     simp only [resVar, FUPDATE, FLOOKUP]
     by_cases h : n == m
     · have hm : (m == n) = true := by
         rw [beq_iff_eq]
         exact (beq_iff_eq.mp h).symm
-      simp only [hm, if_true, h]
+      simp only [hm, ite_true, h]
     · have hm : (m == n) = false := by
         rw [beq_eq_false_iff_ne]
         intro hc
         exact h (beq_iff_eq.mpr hc.symm)
-      simp only [hm, Bool.false_eq_true, if_false, h]
+      simp only [hm, Bool.false_eq_true, ite_false, h]
 
 /-- Flapjack-specific analogue of Cake's `flookup_res_var_diff_eq`
 (crepPropsScript.sml:249); not an exact HOL port, since it is stated over the
@@ -2556,7 +2556,7 @@ theorem FLOOKUP_resVar_diff_eq [BEq α] [LawfulBEq α] (f : FiniteMap α β) (m 
   have hb : (n == m) = false := by
     rw [beq_eq_false_iff_ne]
     exact h
-  simp only [hb, Bool.false_eq_true, if_false]
+  simp only [hb, Bool.false_eq_true, ite_false]
 
 /-- Flapjack-specific analogue of Cake's `res_var_commutes`
 (crepPropsScript.sml:234); not an exact HOL port, since it is stated over the

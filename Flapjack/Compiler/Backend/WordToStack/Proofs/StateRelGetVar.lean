@@ -63,7 +63,7 @@ theorem stateRelGetVarImp {width : Nat} [NeZero width] {C F : Type}
   rintro ⟨related, lookup, lt⟩
   have h := stateRel_locals related (2 * x) v lookup
   have hx : 2 * x / 2 = x := by omega
-  rw [hx, if_pos lt] at h
+  rw [hx, ite_eq_left lt] at h
   exact h.2
 
 /-- Exact HOL `state_rel_get_var_imp'` (`word_to_stackProofScript.sml:2884-2893`).
@@ -100,7 +100,7 @@ theorem stateRelGetVarImp2 {width : Nat} [NeZero width] {C F : Type}
   rintro ⟨related, lookup, nlt⟩
   have h := stateRel_locals related (2 * x) v lookup
   have hx : 2 * x / 2 = x := by omega
-  rw [hx, if_neg nlt] at h
+  rw [hx, ite_eq_right nlt] at h
   obtain ⟨-, slot, bound⟩ := h
   have hi : f - 1 - (x - k) = f + k - (x + 1) := by omega
   rw [hi, Nat.add_zero, List.getElem?_take, List.getElem?_drop] at slot

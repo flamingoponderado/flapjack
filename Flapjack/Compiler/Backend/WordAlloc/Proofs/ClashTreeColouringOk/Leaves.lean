@@ -215,7 +215,7 @@ theorem clashTreeColouringOk_StoreConsts {width : Nat} [NeZero width]
       by_cases hd' : k = d
       · subst hd'; rw [sptLookup_sptInsert_same, sptLookup_sptInsert_same]
       rw [sptLookup_sptInsert_ne _ _ _ _ hd', sptLookup_sptInsert_ne _ _ _ _ hd']
-      simp only [sptLookup_sptDelete, hc, hd', if_false]
+      simp only [sptLookup_sptDelete, hc, hd', ite_false]
       by_cases ha : k = a <;> by_cases hb : k = b <;> simp [ha, hb]) Iff.rfl
 
 

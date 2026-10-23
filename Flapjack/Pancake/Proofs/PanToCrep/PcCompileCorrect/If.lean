@@ -61,12 +61,12 @@ theorem pcCompileCorrectAt_ite {width : Nat} {σ : Type} [NeZero width]
   dsimp only
   have hih := ih w heval
   by_cases hw : w = 0
-  · rw [if_pos hw] at hrun
+  · rw [ite_eq_left hw] at hrun
     have hne : ¬ (w ≠ 0) := fun h => h hw
-    rw [if_neg hne] at hih ⊢
+    rw [ite_eq_right hne] at hih ⊢
     exact hih res s1 t ctxt hrun hres hstate hcode hexcp hlocals hlocs.2.2
-  · rw [if_neg hw] at hrun
-    rw [if_pos hw] at hih ⊢
+  · rw [ite_eq_right hw] at hrun
+    rw [ite_eq_left hw] at hih ⊢
     exact hih res s1 t ctxt hrun hres hstate hcode hexcp hlocals hlocs.2.1
 
 namespace PcCompileCorrectIfWitnesses

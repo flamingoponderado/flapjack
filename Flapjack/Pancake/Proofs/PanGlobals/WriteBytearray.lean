@@ -83,7 +83,7 @@ theorem stateRelWriteBytearrayHOL {width : Nat} {σ : Type} [NeZero width] :
                   s.memaddrs (fun a => Classical.propDecidable (s.memaddrs a)) s.be sz b =
                     some m' := by
                 unfold panMemStoreByteWord8HOL
-                simp only [if_pos hdom]
+                simp only [ite_eq_left hdom]
                 exact ⟨_, rfl⟩
               obtain ⟨m'', htstore, hrel2⟩ :=
                 PanGlobalsByteStore.stateRelMemStoreByte ls ctxt _ _ sz b m' ⟨hrel1, hstore⟩

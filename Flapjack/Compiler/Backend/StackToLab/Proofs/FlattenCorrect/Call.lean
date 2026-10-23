@@ -77,19 +77,19 @@ theorem flattenCorrectCallTail (s1 : StackSemStateFiniteExact width C F) (dest :
   obtain ⟨d, pc', -, entry, caP, instP, step⟩ :=
     compileJumpEnter (fun r v h => InstCorrect.regOfLookup rel h) rel fetch hfind
   by_cases h0 : s1.clock = 0
-  · rw [if_pos h0] at ev
+  · rw [ite_eq_left h0] at ev
     simp only [Prod.mk.injEq] at ev
     obtain ⟨rfl, rfl⟩ := ev
     refine ⟨0, t1, fun _ => by simp, rfl, rfl, rfl, rfl, rfl, List.prefix_refl _, ?_, ?_⟩
     · simp [StackSemStateOps.emptyEnv, relFfi rel]
     · omega
-  rw [if_neg h0, StackSemEvaluateClock.fixClockEvaluate] at ev
+  rw [ite_eq_right h0, StackSemEvaluateClock.fixClockEvaluate] at ev
   rcases e2 : StackSemEvaluate.evaluate (prog, StackSemStateOps.decClock s1) with ⟨res, s'⟩
   rw [e2] at ev
   simp only at ev
   by_cases hbad : StackSemControl.badFunReturn res = true
-  · rw [if_pos hbad] at ev; exact (err ev).elim
-  rw [if_neg hbad] at ev
+  · rw [ite_eq_left hbad] at ev; exact (err ev).elim
+  rw [ite_eq_right hbad] at ev
   simp only [Prod.mk.injEq] at ev
   obtain ⟨rfl, rfl⟩ := ev
   obtain ⟨x', rfl⟩ := notBadFunReturnImpSome _ hbad
@@ -149,7 +149,7 @@ theorem callEnter {s1 : StackSemStateFiniteExact width C F}
     intro r v h
     simp only [HolFiniteMapExact.eraseEq, FDOMSUB_HOL] at h
     split_ifs at h with e
-    simp only [tB, e, if_false]
+    simp only [tB, e, ite_false]
     exact InstCorrect.regOfLookup rel h
   obtain ⟨d, pc', -, entry, caP, instP, stepB⟩ :=
     compileJumpEnter (t1 := tB) (s := StackSemStateOps.setVar link (.loc l1 l2) s1) hregs relB
@@ -342,13 +342,13 @@ theorem flattenCorrectCallRet (s1 : StackSemStateFiniteExact width C F) (rp : Ho
   rw [hfind] at ev
   simp only at ev
   by_cases h0 : s1.clock = 0
-  · rw [if_pos h0] at ev
+  · rw [ite_eq_left h0] at ev
     simp only [Prod.mk.injEq] at ev
     obtain ⟨rfl, rfl⟩ := ev
     refine ⟨0, t1, fun _ => by simp, rfl, rfl, rfl, rfl, rfl, List.prefix_refl _, ?_, ?_⟩
     · simp [StackSemStateOps.emptyEnv, relFfi rel]
     · omega
-  rw [if_neg h0] at ev
+  rw [ite_eq_right h0] at ev
   rcases e2 : StackSemEvaluate.evaluate (prog, StackSemStateOps.decClock
     (StackSemStateOps.setVar link (.loc l1 l2) s1)) with ⟨res0, s2'⟩
   have ev' := callRetEval e2 ev
@@ -375,8 +375,8 @@ theorem flattenCorrectCallRet (s1 : StackSemStateFiniteExact width C F) (rp : Ho
   · -- the callee returned
     simp only at ev'
     by_cases hv : v = .loc l1 l2
-    swap; · rw [if_pos hv] at ev'; exact (err ev').elim
-    rw [if_neg (not_not.mpr hv)] at ev'
+    swap; · rw [ite_eq_left hv] at ev'; exact (err ev').elim
+    rw [ite_eq_right (not_not.mpr hv)] at ev'
     subst hv
     obtain ⟨ck', t3, run3, g1, g2, g3, g4, g5, pre3, hw⟩ :=
       flattenConclVloc (n1 := l1) (n2 := l2) rfl rfl ph
@@ -424,8 +424,8 @@ theorem flattenCorrectCallRet (s1 : StackSemStateFiniteExact width C F) (rp : Ho
       exact prop _ (fun _ _ _ _ _ _ => by cases v <;> rfl) ph
     · simp only at ev'
       by_cases hv : v = .loc hs hl
-      swap; · rw [if_pos hv] at ev'; exact (err ev').elim
-      rw [if_neg (not_not.mpr hv)] at ev'
+      swap; · rw [ite_eq_left hv] at ev'; exact (err ev').elim
+      rw [ite_eq_right (not_not.mpr hv)] at ev'
       subst hv
       obtain ⟨ys, m2, -, locH, instYs, -, total, h2⟩ := callHandlerCode h1 inst0
       obtain ⟨ck', t3, run3, g1, g2, g3, g4, g5, pre3, hw⟩ :=

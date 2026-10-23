@@ -39,7 +39,7 @@ theorem panPropsALookupEq_eq_none {κ α : Type} [DecidableEq κ] (key : κ) :
     obtain ⟨k, v⟩ := e
     simp only [panPropsALookupEq]
     have hk : k ≠ key := h (k, v) (by simp)
-    simp only [hk, decide_false, Bool.false_eq_true, if_false]
+    simp only [hk, decide_false, Bool.false_eq_true, ite_false]
     exact ih (fun e he => h e (List.mem_cons_of_mem _ he))
 
 /-- The word program has no entries at the two stub locations (HOL proof lines

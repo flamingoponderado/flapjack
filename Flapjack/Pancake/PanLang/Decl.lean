@@ -240,7 +240,7 @@ theorem inlinable_map_declOfHOL {width : Nat} [NeZero width]
     | function declaration =>
       cases h : declaration.inline <;>
         simp only [List.map_cons, List.filter_cons, Flapjack.inlinable, inlinableHOL,
-          declOfHOL, funDeclOfHOL, h, Bool.false_eq_true, if_false, if_true, ih]
+          declOfHOL, funDeclOfHOL, h, Bool.false_eq_true, ite_false, ite_true, ih]
     | decl _ _ _ => simp [Flapjack.inlinable, inlinableHOL, declOfHOL, ih]
     | exnDecl _ _ => simp [Flapjack.inlinable, inlinableHOL, declOfHOL, ih]
     | name _ _ => simp [Flapjack.inlinable, inlinableHOL, declOfHOL, ih]

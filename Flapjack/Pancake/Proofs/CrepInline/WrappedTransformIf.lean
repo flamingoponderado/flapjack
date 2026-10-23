@@ -85,18 +85,18 @@ theorem wrappedTransformIf {width : Nat} [NeZero width] {σ : Type} :
   have hdec : decClockCrepSemHOL { s with locals := loc } =
       { decClockCrepSemHOL s with locals := loc } := rfl
   by_cases hnb : notBranchRetHOLExact p = true
-  · rw [if_pos hnb]
+  · rw [ite_eq_left hnb]
     obtain ⟨r1, s1, hev1, hrel1, hpost1⟩ :=
       CrepInlineTransformEoc.transformEocCorrect p { decClockCrepSemHOL s with locals := loc }
         r s' res rts ⟨hev, hue, hnb, hlen, hfresh, hz, hnd, hne⟩
     refine ⟨r1, s1, ?_, hrel1, ?_⟩
     · rw [evalCrepSemHOLProgExact_seq_fixClockFree, evalCrepSemHOLProgExact_tick,
-        if_neg hc]
+        ite_eq_right hc]
       dsimp only
       rw [hdec, hev1]
     · rcases r with _ | ⟨_ | _ | n | n | vs | ex | ev⟩ <;>
         simp_all [contResHOLExact]
-  · rw [if_neg hnb]
+  · rw [ite_eq_right hnb]
     obtain ⟨r1, s1, hev1, hrel1, hpost1⟩ :=
       CrepInlineTransformBranch.transformBranchCorrect p { decClockCrepSemHOL s with locals := loc }
         r s' 0 rts ⟨hev, hlen, hfresh, hz, hnd, hne⟩
@@ -106,7 +106,7 @@ theorem wrappedTransformIf {width : Nat} [NeZero width] {σ : Type} :
       simp [evalCrepSemHOLExp]
     rw [hconst]
     dsimp only
-    rw [if_pos one_ne_zero, if_neg hc, hdec, hev1]
+    rw [ite_eq_left one_ne_zero, ite_eq_right hc, hdec, hev1]
     dsimp only
     rcases r with _ | ⟨_ | _ | n | n | vs | ex | ev⟩
     · simp [contResHOLExact] at hcont

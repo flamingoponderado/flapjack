@@ -82,10 +82,10 @@ theorem evaluateFperm_DecCall {width : Nat} {σ : Type} [NeZero width]
           obtain ⟨body, callee, returnShape⟩ := triple
           simp only [hl, Option.map_some] at heval ⊢
           by_cases hc : state.clock = 0
-          · simp only [hc, if_true] at heval ⊢
+          · simp only [hc, ite_true] at heval ⊢
             cases heval
             simp only [emptyLocalsHOLFinite, hc]
-          · simp only [hc, if_false] at heval ⊢
+          · simp only [hc, ite_false] at heval ⊢
             rw [FpermCallEntry.entry]
             rcases hb : evaluateHOLFiniteState (callEntryStateHOLFinite state callee) body with
               ⟨br, output⟩
@@ -103,7 +103,7 @@ theorem evaluateFperm_DecCall {width : Nat} {σ : Type} [NeZero width]
                 | returned value =>
                     by_cases hg : (shapeEqHOL (shapeOfHOLExact value) shape &&
                       shapeEqHOL (shapeOfHOLExact value) returnShape) = true
-                    · simp only [hg, if_true] at heval ⊢
+                    · simp only [hg, ite_true] at heval ⊢
                       have hs : shapeOfHOLExact value = shape ∧
                           shapeOfHOLExact value = returnShape := by
                         simpa only [Bool.and_eq_true, shapeEqHOL_eq_true] using hg

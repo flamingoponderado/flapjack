@@ -1267,17 +1267,17 @@ theorem FILTER_decs_fperm_decsHOL {width : Nat} [NeZero width] (f g : MlS)
       cases d with
       | function fi =>
           simp only [fpermDecsHOL, List.filter_cons]
-          rw [if_neg (by simp [isFunctionHOL]), if_neg (by simp [isFunctionHOL])]
+          rw [ite_eq_right (by simp [isFunctionHOL]), ite_eq_right (by simp [isFunctionHOL])]
           exact ih
       | decl shape name value =>
           simp only [fpermDecsHOL, List.filter_cons]
-          rw [if_pos (by simp [isFunctionHOL]), if_pos (by simp [isFunctionHOL]), ih]
+          rw [ite_eq_left (by simp [isFunctionHOL]), ite_eq_left (by simp [isFunctionHOL]), ih]
       | exnDecl exceptionName shape =>
           simp only [fpermDecsHOL, List.filter_cons]
-          rw [if_pos (by simp [isFunctionHOL]), if_pos (by simp [isFunctionHOL]), ih]
+          rw [ite_eq_left (by simp [isFunctionHOL]), ite_eq_left (by simp [isFunctionHOL]), ih]
       | name struct fields =>
           simp only [fpermDecsHOL, List.filter_cons]
-          rw [if_pos (by simp [isFunctionHOL]), if_pos (by simp [isFunctionHOL]), ih]
+          rw [ite_eq_left (by simp [isFunctionHOL]), ite_eq_left (by simp [isFunctionHOL]), ih]
 
 /-- Flapjack-only analogue of Cake's `compile_decs_FILTER_decs`
     (`cakeml/pancake/proofs/pan_globalsProofScript.sml:2822`): filtering the
@@ -1599,7 +1599,7 @@ theorem evaluateDeclsHOLFinite_append {width : Nat} {σ : Type} [NeZero width] :
           | none => simp
           | some value =>
               by_cases hshape : shapeEqHOL shape (shapeOfHOLExact value)
-              · simp only [if_pos hshape]
+              · simp only [ite_eq_left hshape]
                 exact ih (PanSemStateFiniteExact.setGlobalHOLFinite name value state)
                   (_hdec := _hdec) ds2
               · simp [hshape]
@@ -1609,7 +1609,7 @@ theorem evaluateDeclsHOLFinite_append {width : Nat} {σ : Type} [NeZero width] :
               (fun parameter => isWfShapeExactHOL state.structs parameter.2) &&
             isWfShapeExactHOL state.structs declaration.returnShape
           by_cases hcondition : condition = true
-          · simp only [condition, hcondition, if_pos]
+          · simp only [condition, hcondition, ite_eq_left]
             exact ih
               { state with code := state.code.update (declaration.name,
                 (declaration.params, declaration.body, declaration.returnShape)) }
@@ -1624,7 +1624,7 @@ theorem evaluateDeclsHOLFinite_append {width : Nat} {σ : Type} [NeZero width] :
           let condition := (state.eshapes.lookup exceptionName).isNone &&
             isWfShapeExactHOL state.structs shape
           by_cases hcondition : condition = true
-          · simp only [condition, hcondition, if_pos]
+          · simp only [condition, hcondition, ite_eq_left]
             exact ih
               { state with eshapes := state.eshapes.update (exceptionName, shape) }
               (_hdec := _hdec) ds2
@@ -1667,14 +1667,14 @@ private theorem evaluateDeclsHOLFinite_exnDeclDeclCommute {width : Nat} {σ : Ty
   rw [evalHOLFinite_emptyLocals_eshapes]
   letI : DecidablePred state.emptyLocalsHOLFinite.memaddrs := h
   by_cases hcond : ((state.eshapes.lookup eid).isNone && isWfShapeExactHOL state.structs shape) = true
-  · rw [if_pos hcond]
+  · rw [ite_eq_left hcond]
     cases hev : state.emptyLocalsHOLFinite.evalHOLFinite e with
     | none => simp
     | some value =>
         by_cases hshape : shapeEqHOL sh (shapeOfHOLExact value) = true
         · simp [hshape, hcond, PanSemStateFiniteExact.setGlobalHOLFinite]
         · simp [hshape]
-  · rw [if_neg hcond]
+  · rw [ite_eq_right hcond]
     cases hev : state.emptyLocalsHOLFinite.evalHOLFinite e with
     | none => simp
     | some value =>
@@ -1723,7 +1723,7 @@ private theorem filter_exn_all_or {width : Nat} [NeZero width]
       rw [List.filter_cons]
       by_cases ha : isExnDeclHOL a = true
       · simp [ha, ih]
-      · rw [if_neg ha]
+      · rw [ite_eq_right ha]
         exact ih
 
 /-- Flapjack-specific list support: every `Decl` satisfies the resort
@@ -1737,7 +1737,7 @@ private theorem filter_decl_all_or {width : Nat} [NeZero width]
       rw [List.filter_cons]
       by_cases ha : isDeclHOL a = true
       · simp [ha, ih]
-      · rw [if_neg ha]
+      · rw [ite_eq_right ha]
         exact ih
 
 /-- Flapjack-specific list support: under the resort admissibility predicate no
@@ -1780,9 +1780,9 @@ private theorem evaluateDeclsHOLFinite_moveDeclLeft {width : Nat} {σ : Type} [N
           simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite]
           by_cases hcond : ((state.eshapes.lookup eid).isNone &&
               isWfShapeExactHOL state.structs shp) = true
-          · rw [if_pos hcond, if_pos hcond]
+          · rw [ite_eq_left hcond, ite_eq_left hcond]
             exact ih hExns sh v' e rest { state with eshapes := state.eshapes.update (eid, shp) }
-          · rw [if_neg hcond, if_neg hcond]
+          · rw [ite_eq_right hcond, ite_eq_right hcond]
       | name _ _ => simp [isExnDeclHOL] at ha
       | decl _ _ _ => simp [isExnDeclHOL] at ha
       | function _ => simp [isExnDeclHOL] at ha
@@ -1816,7 +1816,7 @@ private theorem evaluateDeclsHOLFinite_moveFunctionRight {width : Nat} {σ : Typ
               letI : DecidablePred
                   (PanSemStateFiniteExact.setGlobalHOLFinite v' value state).memaddrs := hdec
               by_cases hshape : shapeEqHOL sh (shapeOfHOLExact value) = true
-              · simp only [hshape, if_pos]
+              · simp only [hshape, ite_eq_left]
                 exact ih hX f rest (PanSemStateFiniteExact.setGlobalHOLFinite v' value state)
               · simp [hshape]
       | exnDecl eid shp =>
@@ -1825,9 +1825,9 @@ private theorem evaluateDeclsHOLFinite_moveFunctionRight {width : Nat} {σ : Typ
           simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite]
           by_cases hcond : ((state.eshapes.lookup eid).isNone &&
               isWfShapeExactHOL state.structs shp) = true
-          · rw [if_pos hcond, if_pos hcond]
+          · rw [ite_eq_left hcond, ite_eq_left hcond]
             exact ih hX f rest { state with eshapes := state.eshapes.update (eid, shp) }
-          · rw [if_neg hcond, if_neg hcond]
+          · rw [ite_eq_right hcond, ite_eq_right hcond]
       | name _ _ => simp [isDeclHOL, isExnDeclHOL] at ha
       | function _ => simp [isDeclHOL, isExnDeclHOL] at ha
 
@@ -1858,9 +1858,9 @@ private theorem evaluateDeclsHOLFinite_nf {width : Nat} {σ : Type} [NeZero widt
           simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite]
           by_cases hcond : ((state.eshapes.lookup eid).isNone &&
               isWfShapeExactHOL state.structs shp) = true
-          · rw [if_pos hcond, if_pos hcond]
+          · rw [ite_eq_left hcond, ite_eq_left hcond]
             exact ih hdecs { state with eshapes := state.eshapes.update (eid, shp) }
-          · rw [if_neg hcond, if_neg hcond]
+          · rw [ite_eq_right hcond, ite_eq_right hcond]
       | decl sh v' e =>
           rw [List.filter_cons_of_neg (by simp [isExnDeclHOL]),
               List.filter_cons_of_pos (by simp [isDeclHOL]),
@@ -1878,7 +1878,7 @@ private theorem evaluateDeclsHOLFinite_nf {width : Nat} {σ : Type} [NeZero widt
               letI : DecidablePred
                   (PanSemStateFiniteExact.setGlobalHOLFinite v' value state).memaddrs := hdec
               by_cases hshape : shapeEqHOL sh (shapeOfHOLExact value) = true
-              · simp only [hshape, if_pos]
+              · simp only [hshape, ite_eq_left]
                 exact ih hdecs (PanSemStateFiniteExact.setGlobalHOLFinite v' value state)
               · simp [hshape]
       | function f =>
@@ -1895,10 +1895,10 @@ private theorem evaluateDeclsHOLFinite_nf {width : Nat} {σ : Type} [NeZero widt
           simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite]
           by_cases hcond : (f.params.all (fun parameter => isWfShapeExactHOL state.structs parameter.snd) &&
               isWfShapeExactHOL state.structs f.returnShape) = true
-          · rw [if_pos hcond, if_pos hcond]
+          · rw [ite_eq_left hcond, ite_eq_left hcond]
             exact ih hdecs
               { state with code := state.code.update (f.name, (f.params, f.body, f.returnShape)) }
-          · rw [if_neg hcond, if_neg hcond]
+          · rw [ite_eq_right hcond, ite_eq_right hcond]
       | name _ _ => simp [isFunctionHOL, isDeclHOL, isExnDeclHOL] at hx
 
 end

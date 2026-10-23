@@ -86,8 +86,8 @@ theorem stackSemIsWrapper {width : Nat} [NeZero width] {C F : Type} (start : Nat
         ((.call none (.inl start) none : HolProg width), { s with clock := k })).1
       res ≠ some .timeOut ∧ res ≠ some (.result (.loc 1 0)) ∧
       (∀ w : BitVec width, res ≠ some (.halt (.word w))) ∧ ∀ e, res ≠ some (.finalFFI e))
-  · rw [if_pos hf, if_pos ((exists_congr hk).1 hf)]
-  · rw [if_neg hf, if_neg (fun h => hf ((exists_congr hk).2 h))]
+  · rw [ite_eq_left hf, ite_eq_left ((exists_congr hk).1 hf)]
+  · rw [ite_eq_right hf, ite_eq_right (fun h => hf ((exists_congr hk).2 h))]
     congr 2
     funext res
     apply propext
@@ -134,8 +134,8 @@ theorem labSemIsWrapper {width : Nat} [NeZero width] {C F : Type}
       cases (evaluate { t with clock := k - 1 }).1 <;> simp [labEntryClass]
   unfold semantics crepToLoopSemanticsWrapper
   by_cases h : ∃ clock, (evaluate { t with clock := clock }).1 = .error
-  · rw [if_pos h, if_pos (hf.1 h)]
-  rw [if_neg h, if_neg (fun h' => h (hf.2 h'))]
+  · rw [ite_eq_left h, ite_eq_left (hf.1 h)]
+  rw [ite_eq_right h, ite_eq_right (fun h' => h (hf.2 h'))]
   have hP : (fun result => ∃ clock next outcome,
         evaluate { t with clock := clock } = (.halt outcome, next) ∧
         result = HolBehaviour.terminate outcome next.ffi.ioEvents) =
@@ -192,7 +192,7 @@ theorem stackRunsSim {width : Nat} [NeZero width] {C F : Type} {start : Nat}
     obtain ⟨-, -, ⟨-, rfl, rfl⟩ | ⟨h0, -⟩⟩ := callNoneInlCases he nerr
     · refine ⟨0, ?_⟩
       simp only [labRuns, Nat.add_zero, Nat.zero_sub]
-      rw [evaluate, if_pos rfl]
+      rw [evaluate, ite_eq_left rfl]
       simp [Prod.map, labEntryClass, stackEntryClass, StackSemStateOps.emptyEnv,
         FlattenCorrect.relFfi rel]
     · exact absurd rfl h0
@@ -285,7 +285,7 @@ theorem flattenSemantics {width : Nat} [NeZero width] {C F : Type} {start : Nat}
     have hm : m ≠ .timeOut := by rintro rfl; exact hr rfl
     have kpos : k ≠ 0 := by
       rintro rfl
-      rw [evaluate, if_pos rfl] at he
+      rw [evaluate, ite_eq_left rfl] at he
       exact hm (Prod.mk.inj he).1.symm
     have := LabProps.evaluateAddClock _ m next k' ⟨he, hm⟩
     simp only at this

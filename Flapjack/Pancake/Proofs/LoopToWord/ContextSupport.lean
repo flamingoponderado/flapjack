@@ -291,7 +291,7 @@ theorem wordSemCutEnvMkNewCutsetHOL {width : Nat} [NeZero width]
   refine ⟨sptInter targetLocals (mkNewCutsetHOL context live), ?_, ?_⟩
   · simp only [wordSemCutEnv, wordSemCutEnvs]
     rw [hempty]
-    simp only [wordSemCutNames, if_pos hsubset, sptUnion]
+    simp only [wordSemCutNames, ite_eq_left hsubset, sptUnion]
   · rcases hrel with ⟨hinjective, heven, hlookups⟩
     refine ⟨hinjective, heven, ?_⟩
     intro name value hsourceCut

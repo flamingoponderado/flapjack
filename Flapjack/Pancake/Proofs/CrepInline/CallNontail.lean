@@ -72,7 +72,7 @@ theorem inlineProgHOLExact_call_nontail (inlBag : InlMap width)
         rets (retTmps rets (inlinedCallee inlBag fname body) (argTmps args ns))
         (argTmps args ns) args ns := by
   unfold inlineProgHOLExact
-  simp only [inlineProgHOLCoreExact, hd, Bool.not_true, Bool.false_eq_true, if_false]
+  simp only [inlineProgHOLCoreExact, hd, Bool.not_true, Bool.false_eq_true, ite_false]
   split
   · rename_i heq; rw [h] at heq; cases heq
   · rename_i ns' body' heq
@@ -190,7 +190,7 @@ theorem transformedCallee_clock0 (callee : CrepProgHOL width) (trets : List Nat)
       (some .timeOut, CrepSemHOLState.emptyLocals u) := by
   unfold transformedCallee
   split
-  · rw [evalCrepSemHOLProgExact_seq_fixClockFree, evalCrepSemHOLProgExact_tick, if_pos h0]
+  · rw [evalCrepSemHOLProgExact_seq_fixClockFree, evalCrepSemHOLProgExact_tick, ite_eq_left h0]
   · rw [evalCrepSemHOLProgExact_while_holShape]
     simp [evalCrepSemHOLExp, h0]
     exact NeZero.ne width
@@ -277,16 +277,16 @@ theorem callNontail
   have hcond : ns.length = vs.length ∧ ns.Nodup := by
     by_cases hc : ns.length = vs.length ∧ ns.Nodup
     · exact hc
-    · rw [if_neg hc] at hlk'
+    · rw [ite_eq_right hc] at hlk'
       cases hlk'
-  rw [if_pos hcond] at hlk'
+  rw [ite_eq_left hcond] at hlk'
   simp only [Option.some.injEq, Prod.mk.injEq] at hlk'
   obtain ⟨rfl, rfl⟩ := hlk'
   have hretsNodup : rets.Nodup := crepAllDistinct_nodup rets hdist
   have hnd : ¬ crepReturnInfoNodupError
       (some (rets, none) : Option (List Nat × Option (BitVec width × CrepProgHOL width))) := by
     simp [crepReturnInfoNodupError, hretsNodup]
-  rw [if_neg hnd] at hev
+  rw [ite_eq_right hnd] at hev
   have hclk : s.clock = t.clock := hsr.2.2.2.2.1
   have hlenArgs : argexps.length = ns.length := by
     rw [hcond.1]; exact (opt_mmap_length_eq argexps (evalCrepSemHOLExp s) vs hargs)
@@ -363,7 +363,7 @@ theorem callNontail
       (nestedDecsHOL tmps argexps (nestedDecsHOL ns (tmps.map CrepExpHOL.var) P)) = (rA, sA) := by
     simpa [argLoadHOLExact] using hArg
   by_cases hz0 : s.clock = 0
-  · rw [if_pos hz0] at hev
+  · rw [ite_eq_left hz0] at hev
     simp only [Prod.mk.injEq] at hev
     obtain ⟨rfl, rfl⟩ := hev
     have hP0 : evalCrepSemHOLProgExact
@@ -382,7 +382,7 @@ theorem callNontail
     · refine codeRel_trans (codeRel_emptyLocals hsr) (stateRel_trans ?_ (stateRel_trans hrelD hrelA))
       exact ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
     · exact codeInl_of_code_eq rfl (hrelD.2.1.trans hrelA.2.1).symm hci
-  rw [if_neg hz0] at hev
+  rw [ite_eq_right hz0] at hev
   have ihB := ihBody vs (body, HolFiniteMapExact.empty.updateList (ns.zip vs)) body
     (HolFiniteMapExact.empty.updateList (ns.zip vs))
     (by rw [show crepExactEvalExpClassical s = evalCrepSemHOLExp s from
@@ -405,7 +405,7 @@ theorem callNontail
       simp only [Option.some.injEq, CrepResultHOLExact.return.injEq] at h
       subst h
       by_cases hl : retvs.length ≠ rets.length
-      · rw [if_pos hl] at hev; simp only [Prod.mk.injEq] at hev; exact absurd hev.1.symm hne
+      · rw [ite_eq_left hl] at hev; simp only [Prod.mk.injEq] at hev; exact absurd hev.1.symm hne
       · omega
     · exact ⟨by simp, rfl, by simp⟩
     · exact ⟨by simp, rfl, by simp⟩
@@ -487,8 +487,8 @@ theorem callNontail
     simp only at hW hpost hev
     obtain ⟨hFD, hFL⟩ := hpost
     by_cases hl : retvs.length ≠ rets.length
-    · rw [if_pos hl] at hev; simp only [Prod.mk.injEq] at hev; exact absurd hev.1.symm hne
-    rw [if_neg hl] at hev
+    · rw [ite_eq_left hl] at hev; simp only [Prod.mk.injEq] at hev; exact absurd hev.1.symm hne
+    rw [ite_eq_right hl] at hev
     rcases hrm : rets.mapM s.locals.lookup with _ | valsR
     · simp only [hrm, Prod.mk.injEq] at hev; exact absurd hev.1.symm hne
     simp only [hrm, Prod.mk.injEq] at hev
@@ -502,7 +502,7 @@ theorem callNontail
       intro x y hx hy
       apply hFD x y
       simp only [crepHolFdiff, crepHolFdom, hnotZ x hx, Option.isSome_none,
-        Bool.false_eq_true, if_false, HolFiniteMapExact.lookup_updateListEq]
+        Bool.false_eq_true, ite_false, HolFiniteMapExact.lookup_updateListEq]
       have := FLOOKUP_FUPDATE_LIST_HOL_not_mem t.locals.lookup (trets.zip zeros) x
         (fun hm => by
           obtain ⟨e, he, rfl⟩ := List.mem_map.mp hm

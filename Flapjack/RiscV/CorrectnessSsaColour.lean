@@ -46,7 +46,7 @@ theorem ssaAssignmentColour_eq_wordSsaRead_fresh
     simp only [ssaAssignmentColour]
     rw [wordSsaRead_fresh_name]
     rfl
-  · simp only [ssaAssignmentColour,if_neg hcurrent]
+  · simp only [ssaAssignmentColour,ite_eq_right hcurrent]
     exact (wordSsaRead_fresh_of_ne ssa name current hcurrent).symm
 
 theorem wordSsaRenameProgram_assign_state
@@ -196,13 +196,13 @@ theorem wordColourStateRelationExcept_writeRegister
       intro h
       exact hcolourNonzero (congrArg Fin.val h)
     constructor
-    · simp only [writeRegister, hsourceNonzero, htargetNonzero, if_false]
+    · simp only [writeRegister, hsourceNonzero, htargetNonzero, ite_false]
       exact hrelation.pc
-    · simp only [writeRegister, hsourceNonzero, htargetNonzero, if_false]
+    · simp only [writeRegister, hsourceNonzero, htargetNonzero, ite_false]
       exact hrelation.memory
-    · simp only [writeRegister, hsourceNonzero, htargetNonzero, if_false]
+    · simp only [writeRegister, hsourceNonzero, htargetNonzero, ite_false]
       exact hrelation.privilege
-    · simp only [writeRegister, hsourceNonzero, htargetNonzero, if_false]
+    · simp only [writeRegister, hsourceNonzero, htargetNonzero, ite_false]
       exact hrelation.mode
     · intro current hcurrent hcolour
       by_cases hsame : current = excluded
@@ -216,9 +216,9 @@ theorem wordColourStateRelationExcept_writeRegister
               ⟨colour excluded, valid excluded hname⟩ := by
           apply Fin.ext
           rfl
-        simp only [writeRegister, hsourceNonzero, htargetNonzero, if_false,
+        simp only [writeRegister, hsourceNonzero, htargetNonzero, ite_false,
           readRegister]
-        simp only [if_true]
+        simp only [ite_true]
         exact hvalue
       · have htargetSame :
             (⟨colour current, hcolour⟩ : Fin 32) ≠
@@ -232,9 +232,9 @@ theorem wordColourStateRelationExcept_writeRegister
           intro h
           apply hsame
           exact congrArg Fin.val h
-        simp only [writeRegister, hsourceNonzero, htargetNonzero, if_false,
+        simp only [writeRegister, hsourceNonzero, htargetNonzero, ite_false,
           readRegister]
-        rw [if_neg hsourceCurrent, if_neg htargetSame]
+        rw [ite_eq_right hsourceCurrent, ite_eq_right htargetSame]
         exact hrelation.register current hcurrent hsame hcolour
 
 theorem wordColourStateRelationExcept_executeConst

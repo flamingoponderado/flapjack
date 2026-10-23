@@ -39,7 +39,7 @@ theorem evaluateSeqStackFree {width : Nat} [NeZero width] {C F : Type}
   · rename_i h0
     subst h0
     rw [StackSemEvaluate.evaluate_seq, StackSemEvaluate.evaluate_stackFree,
-      if_neg (by simp [huse]), if_neg (by omega)]
+      ite_eq_right (by simp [huse]), ite_eq_right (by omega)]
     simp only [StackSemControl.fixClock, Nat.add_zero, Nat.min_self]
   · rfl
 

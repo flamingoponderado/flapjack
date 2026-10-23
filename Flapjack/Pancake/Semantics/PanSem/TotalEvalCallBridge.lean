@@ -225,7 +225,7 @@ theorem panSemTotalCodeLookup_agree {σ : Type}
             ((parameters.map paramToHOL).zip (values.map panValueToHOL)).all
               (fun pair => shapeEqHOL pair.1.2 (shapeOfHOLExact pair.2)) = true :=
           ⟨hnodup.mpr hok.1, hlen, hall⟩
-        rw [if_pos hcond] at hexactCode
+        rw [ite_eq_left hcond] at hexactCode
         have hlen' : parameters.length = values.length := by
           simpa using hlen
         have hprod : panSemTotalCodeLookup production (toStringOfBytes function) values =
@@ -268,7 +268,7 @@ theorem panSemTotalCodeLookup_agree {σ : Type}
               (fun pair => shapeEqHOL pair.1.2 (shapeOfHOLExact pair.2)) = true) := by
           rintro ⟨h1, h2, h3⟩
           exact hok ⟨hnodup.mp h1, hargs.mpr ⟨h2, h3⟩⟩
-        rw [if_neg hbad] at hexactCode
+        rw [ite_eq_right hbad] at hexactCode
         have hprod : panSemTotalCodeLookup production (toStringOfBytes function) values =
             none := by
           by_cases hnd : (parameters.map Prod.fst).Nodup
@@ -485,11 +485,11 @@ theorem panSemTotalEvaluate_call_agree {σ : Type}
         obtain ⟨hpostR, hresR⟩ := hcal callee newLocals returnShape rfl
         simp only [hck]
         by_cases hz : production.clock = 0
-        · simp only [hz, if_true]
+        · simp only [hz, ite_true]
           exact ⟨trivial, by
             simpa only [panEmptyLocals, toExact_emptyLocalsHOLFinite] using
               PanSemStateRelExec.emptyLocals hrel⟩
-        simp only [hz, if_false]
+        simp only [hz, ite_false]
         have hentryRel := PanSemStateRelExec.callEntry hrel newLocals calleeLocals hlocals
         have hentryR : PanSemStateRelExecRanged
             { production with clock := production.clock - 1, locals := newLocals } :=
@@ -559,7 +559,7 @@ theorem panSemTotalEvaluate_call_agree {σ : Type}
               exact panShapeMatches_eq_shapeEqHOL _ _ hshR hrsR
             rw [← hmatch]
             by_cases hm : panShapeMatches (panSemShapeOf v) returnShape = true
-            · simp only [hm, if_true]
+            · simp only [hm, ite_true]
               rcases info with _ | ⟨_ | ⟨k, n⟩, hopt⟩
               · exact ⟨rfl, hempty⟩
               · rcases hopt with _ | ⟨eid, var, h⟩ <;>
@@ -573,7 +573,7 @@ theorem panSemTotalEvaluate_call_agree {σ : Type}
                 · simp only [callInfoOfHOL, Option.map, ← hparity]
                   by_cases hv : panValueAssignmentValid production.structs production.locals
                       production.globals k (toStringOfBytes n) v = true
-                  · simp only [hv, if_true]
+                  · simp only [hv, ite_true]
                     refine ⟨trivial, ?_⟩
                     cases k with
                     | «local» =>
@@ -601,7 +601,7 @@ theorem panSemTotalEvaluate_call_agree {σ : Type}
                   ofString_injective_of_ranged hidR (nameRanged_toStringOfBytes_bridge hid)
                     (by rw [ofString_toStringOfBytes]; exact heq)
                 have hb : (eid0 == toStringOfBytes hid) = true := beq_iff_eq.mpr hstr
-                simp only [hb, heq, if_true]
+                simp only [hb, heq, ite_true]
                 subst heq
                 have hes : Option.map shapeToHOL (production.exceptionShapes eid0) =
                     exact.eshapes.lookup (ofString eid0) := hrel.2.2.2.2.1 eid0 hidR
@@ -634,7 +634,7 @@ theorem panSemTotalEvaluate_call_agree {σ : Type}
                     by_cases hok : (panShapeMatches (panSemShapeOf v) shape &&
                         panValueAssignmentValid production.structs production.locals
                           production.globals .local (toStringOfBytes hvar) v) = true
-                    · simp only [hok, if_true]
+                    · simp only [hok, ite_true]
                       have hstate := PanSemStateRelExec.updateLocals
                         (PanSemStateRelExec.restoreLocals hfix hrel) (toStringOfBytes hvar) hvn v
                       rw [ofString_toStringOfBytes] at hstate
@@ -747,11 +747,11 @@ theorem panSemTotalEvaluate_decCall_agree {σ : Type}
         obtain ⟨hpostR, hresR⟩ := hcal callee newLocals returnShape rfl
         simp only [hck]
         by_cases hz : production.clock = 0
-        · simp only [hz, if_true]
+        · simp only [hz, ite_true]
           exact ⟨trivial, by
             simpa only [panEmptyLocals, toExact_emptyLocalsHOLFinite] using
               PanSemStateRelExec.emptyLocals hrel⟩
-        simp only [hz, if_false]
+        simp only [hz, ite_false]
         have hentryRel := PanSemStateRelExec.callEntry hrel newLocals calleeLocals hlocals
         have hentryR : PanSemStateRelExecRanged
             { production with clock := production.clock - 1, locals := newLocals } :=
@@ -836,7 +836,7 @@ theorem panSemTotalEvaluate_decCall_agree {σ : Type}
           rw [← hcond]
           by_cases hok : (panShapeMatches (shapeOfHOL shape) (panSemShapeOf v) &&
               panShapeMatches (shapeOfHOL shape) returnShape) = true
-          · simp only [hok, if_true]
+          · simp only [hok, ite_true]
             have hn := nameRanged_toStringOfBytes_bridge resultName
             have hstate := PanSemStateRelExec.updateLocals
               (PanSemStateRelExec.restoreLocals hfix hrel) (toStringOfBytes resultName) hn v

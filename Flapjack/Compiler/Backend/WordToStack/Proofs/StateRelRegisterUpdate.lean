@@ -60,11 +60,11 @@ theorem stateRelSetVar {width : Nat} [NeZero width] {C F : Type}
       obtain ⟨even, placement⟩ := hloc n v found
       refine ⟨even, ?_⟩
       by_cases inReg : n/2 < k
-      · rw [if_pos inReg] at placement ⊢
+      · rw [ite_eq_left inReg] at placement ⊢
         have different : n/2 ≠ x := by omega
         simpa [StackSemStateOps.setVar, HolFiniteMapExact.updateEq, FUPDATE_HOL,
           different] using placement
-      · rw [if_neg inReg] at placement ⊢
+      · rw [ite_eq_right inReg] at placement ⊢
         exact placement
 /-- Full original spilled-local update law (2962–2997), including the explicit
 original stack/space equalities and every full stateRel conjunct. Bounds follow
@@ -116,7 +116,7 @@ theorem wordToStackStateRelSetVar2 {width : Nat} [NeZero width] {C F : Type}
       have half : 2*x/2 = x := by omega
       have indexEq : f-1-(x-k) = f+k-(x+1) := by omega
       refine ⟨by omega, ?_⟩
-      simp only [half, Nat.add_zero, if_neg spilled]
+      simp only [half, Nat.add_zero, ite_eq_right spilled]
       refine ⟨?_, by omega⟩
       rw [List.getElem?_take, List.getElem?_drop]
       simp [indexEq,slotBound,slotLength]
@@ -124,8 +124,8 @@ theorem wordToStackStateRelSetVar2 {width : Nat} [NeZero width] {C F : Type}
       obtain ⟨even, placement⟩ := hloc n v found
       refine ⟨even, ?_⟩
       by_cases inReg : n/2 < k
-      · simpa only [if_pos inReg] using placement
-      · rw [if_neg inReg] at placement ⊢
+      · simpa only [ite_eq_left inReg] using placement
+      · rw [ite_eq_right inReg] at placement ⊢
         refine ⟨?_,placement.2⟩
         have different : target.stackSpace+(f+k-(x+1)) ≠
             target.stackSpace+(f-1-(n/2-k)) := by omega
@@ -159,10 +159,10 @@ theorem stateRelSetVarHigh {width : Nat} [NeZero width] {C F : Type}
     refine ⟨even, ?_⟩
     split at placement
     · rename_i inReg
-      rw [if_pos inReg, ← regs _ inReg]
+      rw [ite_eq_left inReg, ← regs _ inReg]
       exact placement
     · rename_i inReg
-      rw [if_neg inReg]
+      rw [ite_eq_right inReg]
       exact placement
   · rintro ⟨h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11,h12,h13,h14,h15,h16,h17,h18,
       h19,h20,h21,h22,h23,h24,h25,h26,h27,h28,h29,h30,h31,h32,h33,h34,h35,h36,
@@ -174,10 +174,10 @@ theorem stateRelSetVarHigh {width : Nat} [NeZero width] {C F : Type}
     refine ⟨even, ?_⟩
     split at placement
     · rename_i inReg
-      rw [if_pos inReg, regs _ inReg]
+      rw [ite_eq_left inReg, regs _ inReg]
       exact placement
     · rename_i inReg
-      rw [if_neg inReg]
+      rw [ite_eq_right inReg]
       exact placement
 
 /-- Full original `state_rel_set_var_k` (2917–2928): writing target register

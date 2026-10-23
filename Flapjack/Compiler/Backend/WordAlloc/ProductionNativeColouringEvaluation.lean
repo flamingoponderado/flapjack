@@ -55,7 +55,7 @@ theorem nativeAllocator_colouringEvaluation {width : Nat} [NeZero width] {C F : 
     intro x v lookup phy
     have domain : sptDomain (sptFromAList output.colouring) x := by simp [sptDomain, lookup]
     have value := (conventions x (support x domain)).2
-    rw [if_pos phy] at value
+    rw [ite_eq_left phy] at value
     have lookupValue : spDefault (sptFromAList output.colouring) x = v := by simp [spDefault, lookup]
     rw [lookupValue] at value
     simp only [isPhyVar, decide_eq_true_eq] at phy

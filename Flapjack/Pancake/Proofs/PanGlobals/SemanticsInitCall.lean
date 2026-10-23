@@ -167,7 +167,7 @@ theorem step {width : Nat} {σ : Type} [NeZero width]
   dsimp only
   rw [lookup_init _ start _ _ h1]
   dsimp only
-  rw [if_neg (by simp), hinner]
+  rw [ite_eq_right (by simp), hinner]
   rcases hBe : evaluateHOLFiniteState { s' with clock := c } (.call none start' []) with ⟨r, st⟩
   rw [hBe] at hB
   obtain ⟨hn, hb, hc, hret⟩ := hB
@@ -299,10 +299,10 @@ theorem semanticsInitCall {width : Nat} {σ : Type} [NeZero width]
   dsimp only
   split
   · rename_i hA
-    rw [if_pos]
+    rw [ite_eq_left]
     exact hcond.mp hA
   · rename_i hA
-    rw [if_neg]
+    rw [ite_eq_right]
     rotate_left
     · exact fun h => hA (hcond.mpr h)
     refine sem_tail_congr ?_ hlub

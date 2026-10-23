@@ -25,7 +25,7 @@ theorem getBits_cons {width : Nat} [NeZero width] {w : BitVec width} (h0 : w ≠
     getBits w = w.getLsbD 0 :: getBits (w >>> (1 : Nat)) := by
   have hb : bitLength w = bitLength (w >>> (1 : Nat)) + 1 := by
     have := bitLength_eq w
-    rw [if_neg h0] at this
+    rw [ite_eq_right h0] at this
     exact this
   have hpos : bitLength (w >>> (1 : Nat)) ≠ 0 := by
     intro hz
@@ -44,13 +44,13 @@ theorem getBits_cons {width : Nat} [NeZero width] {w : BitVec width} (h0 : w ≠
 theorem readBitmap_cons_msb {width : Nat} [NeZero width] {y : BitVec width}
     {ys : List (BitVec width)} (h : y.msb = true) :
     readBitmap (y :: ys) = (readBitmap ys).map (getBits y ++ ·) := by
-  rw [readBitmap, if_pos h, ← getBits_intro h]
+  rw [readBitmap, ite_eq_left h, ← getBits_intro h]
   cases readBitmap ys <;> rfl
 
 theorem readBitmap_cons_not_msb {width : Nat} [NeZero width] {y : BitVec width}
     {ys : List (BitVec width)} (h : ¬ y.msb = true) :
     readBitmap (y :: ys) = some (getBits y) := by
-  rw [readBitmap, if_neg h]; rfl
+  rw [readBitmap, ite_eq_right h]; rfl
 
 /-- HOL's unnamed `map_bitmap_APPEND_APPEND` (`stack_allocProofScript.sml:718-735`, a
 `val` without a theory name), Flapjack infrastructure for the `bitmaps_unroll`
@@ -135,7 +135,7 @@ theorem wordGcMoveBitmap_unroll {descWidth : Nat} {width : Nat} [NeZero descWidt
   by_cases h1 : w = 1
   · subst h1
     simp [wordGcMoveBitmap, getBits_one, filterBitmap, mapBitmap, wordGcMoveRoots_nil]
-  simp only [h0, h1, if_false]
+  simp only [h0, h1, ite_false]
   have hbits := getBits_cons h0 h1
   have hlsb : (w &&& 1 = 0) ↔ w.getLsbD 0 = false := by
     rw [word_and_one_eq_0_iff]; simp
@@ -145,7 +145,7 @@ theorem wordGcMoveBitmap_unroll {descWidth : Nat} {width : Nat} [NeZero descWidt
       cases w.getLsbD 0 <;> simp [filterBitmap]
   | cons x xs =>
       by_cases hb : w.getLsbD 0 = false
-      · simp only [hlsb.2 hb, if_true]
+      · simp only [hlsb.2 hb, ite_true]
         simp only [wordGcMoveBitmap, hbits, hb, filterBitmap, mapBitmap]
         rcases filterBitmap (getBits (w >>> (1 : Nat))) xs with _ | ⟨ts, ws⟩
         · rfl
@@ -154,7 +154,7 @@ theorem wordGcMoveBitmap_unroll {descWidth : Nat} {width : Nat} [NeZero descWidt
             (wordGcMoveRoots conf (ts, i1, pa1, curr, m, dm)).1 xs with _ | ⟨a, b, c⟩ <;> rfl
       · have hb' : w.getLsbD 0 = true := by simpa using hb
         have hne : ¬ (w &&& 1 = 0) := fun h => hb (hlsb.1 h)
-        simp only [hne, if_false]
+        simp only [hne, ite_false]
         simp only [wordGcMoveBitmap, hbits, hb', filterBitmap]
         rcases filterBitmap (getBits (w >>> (1 : Nat))) xs with _ | ⟨ts, ws⟩
         · rfl
@@ -199,7 +199,7 @@ theorem wordGenGcMoveBitmap_unroll {descWidth : Nat} {width : Nat} [NeZero descW
   by_cases h1 : w = 1
   · subst h1
     simp [wordGenGcMoveBitmap, getBits_one, filterBitmap, mapBitmap, wordGenGcMoveRoots_nil]
-  simp only [h0, h1, if_false]
+  simp only [h0, h1, ite_false]
   have hbits := getBits_cons h0 h1
   have hlsb : (w &&& 1 = 0) ↔ w.getLsbD 0 = false := by
     rw [word_and_one_eq_0_iff]; simp
@@ -209,7 +209,7 @@ theorem wordGenGcMoveBitmap_unroll {descWidth : Nat} {width : Nat} [NeZero descW
       cases w.getLsbD 0 <;> simp [filterBitmap]
   | cons x xs =>
       by_cases hb : w.getLsbD 0 = false
-      · simp only [hlsb.2 hb, if_true]
+      · simp only [hlsb.2 hb, ite_true]
         simp only [wordGenGcMoveBitmap, hbits, hb, filterBitmap, mapBitmap]
         rcases filterBitmap (getBits (w >>> (1 : Nat))) xs with _ | ⟨ts, ws⟩
         · rfl
@@ -219,7 +219,7 @@ theorem wordGenGcMoveBitmap_unroll {descWidth : Nat} {width : Nat} [NeZero descW
             _ | ⟨a, b, c⟩ <;> rfl
       · have hb' : w.getLsbD 0 = true := by simpa using hb
         have hne : ¬ (w &&& 1 = 0) := fun h => hb (hlsb.1 h)
-        simp only [hne, if_false]
+        simp only [hne, ite_false]
         simp only [wordGenGcMoveBitmap, hbits, hb', filterBitmap]
         rcases filterBitmap (getBits (w >>> (1 : Nat))) xs with _ | ⟨ts, ws⟩
         · rfl
@@ -265,7 +265,7 @@ theorem wordGenGcPartialMoveBitmap_unroll {descWidth : Nat} {width : Nat} [NeZer
   · subst h1
     simp [wordGenGcPartialMoveBitmap, getBits_one, filterBitmap, mapBitmap,
       wordGenGcPartialMoveRoots_nil]
-  simp only [h0, h1, if_false]
+  simp only [h0, h1, ite_false]
   have hbits := getBits_cons h0 h1
   have hlsb : (w &&& 1 = 0) ↔ w.getLsbD 0 = false := by
     rw [word_and_one_eq_0_iff]; simp
@@ -275,7 +275,7 @@ theorem wordGenGcPartialMoveBitmap_unroll {descWidth : Nat} {width : Nat} [NeZer
       cases w.getLsbD 0 <;> simp [filterBitmap]
   | cons x xs =>
       by_cases hb : w.getLsbD 0 = false
-      · simp only [hlsb.2 hb, if_true]
+      · simp only [hlsb.2 hb, ite_true]
         simp only [wordGenGcPartialMoveBitmap, hbits, hb, filterBitmap, mapBitmap]
         rcases filterBitmap (getBits (w >>> (1 : Nat))) xs with _ | ⟨ts, ws⟩
         · rfl
@@ -285,7 +285,7 @@ theorem wordGenGcPartialMoveBitmap_unroll {descWidth : Nat} {width : Nat} [NeZer
             _ | ⟨a, b, c⟩ <;> rfl
       · have hb' : w.getLsbD 0 = true := by simpa using hb
         have hne : ¬ (w &&& 1 = 0) := fun h => hb (hlsb.1 h)
-        simp only [hne, if_false]
+        simp only [hne, ite_false]
         simp only [wordGenGcPartialMoveBitmap, hbits, hb', filterBitmap]
         rcases filterBitmap (getBits (w >>> (1 : Nat))) xs with _ | ⟨ts, ws⟩
         · rfl
@@ -326,7 +326,7 @@ theorem wordGcMoveBitmaps_unroll {descWidth : Nat} {width : Nat} {bitmapWidth : 
   have hw0 : w ≠ 0 := by
     rintro rfl; simp [wordGcMoveBitmaps, fullReadBitmap] at hx
   rcases hd : bitmaps.drop (w - 1).toNat with _ | ⟨y, ys⟩
-  · simp only [wordGcMoveBitmaps, fullReadBitmap, hw0, if_false, hd, readBitmap]
+  · simp only [wordGcMoveBitmaps, fullReadBitmap, hw0, ite_false, hd, readBitmap]
   · dsimp only
     have hk : (w - 1).toNat < bitmaps.length := by
       rcases Nat.lt_or_ge (w - 1).toNat bitmaps.length with h | h
@@ -354,8 +354,8 @@ theorem wordGcMoveBitmaps_unroll {descWidth : Nat} {width : Nat} {bitmapWidth : 
       rw [show w + 1 - 1 = w from BitVec.add_sub_cancel w 1, hwsucc]
       exact drop_succ_of_drop_eq_cons hd
     by_cases hm : y.msb = true
-    · simp only [hm, not_true_eq_false, if_false]
-      simp only [wordGcMoveBitmaps, fullReadBitmap, hw0, hw1, if_false, hd, hdrop,
+    · simp only [hm, not_true_eq_false, ite_false]
+      simp only [wordGcMoveBitmaps, fullReadBitmap, hw0, hw1, ite_false, hd, hdrop,
         readBitmap_cons_msb hm, wordGcMoveBitmap]
       rcases readBitmap ys with _ | bs2
       · dsimp only
@@ -395,7 +395,7 @@ theorem wordGcMoveBitmaps_unroll {descWidth : Nat} {width : Nat} {bitmapWidth : 
               rw [hR2]
               rcases mapBitmap bs2 wl2 s1 with _ | ⟨u1, u2, u3⟩ <;> simp
     · simp only [hm]
-      simp only [wordGcMoveBitmaps, fullReadBitmap, hw0, if_false, hd,
+      simp only [wordGcMoveBitmaps, fullReadBitmap, hw0, ite_false, hd,
         readBitmap_cons_not_msb hm, wordGcMoveBitmap]
       rcases filterBitmap (getBits y) stack with _ | ⟨ts, ws⟩
       · rfl
@@ -431,7 +431,7 @@ theorem wordGenGcMoveBitmaps_unroll {descWidth : Nat} {width : Nat} {bitmapWidth
   have hw0 : w ≠ 0 := by
     rintro rfl; simp [wordGenGcMoveBitmaps, fullReadBitmap] at hx
   rcases hd : bitmaps.drop (w - 1).toNat with _ | ⟨y, ys⟩
-  · simp only [wordGenGcMoveBitmaps, fullReadBitmap, hw0, if_false, hd, readBitmap]
+  · simp only [wordGenGcMoveBitmaps, fullReadBitmap, hw0, ite_false, hd, readBitmap]
   · dsimp only
     have hk : (w - 1).toNat < bitmaps.length := by
       rcases Nat.lt_or_ge (w - 1).toNat bitmaps.length with h | h
@@ -459,8 +459,8 @@ theorem wordGenGcMoveBitmaps_unroll {descWidth : Nat} {width : Nat} {bitmapWidth
       rw [show w + 1 - 1 = w from BitVec.add_sub_cancel w 1, hwsucc]
       exact drop_succ_of_drop_eq_cons hd
     by_cases hm : y.msb = true
-    · simp only [hm, not_true_eq_false, if_false]
-      simp only [wordGenGcMoveBitmaps, fullReadBitmap, hw0, hw1, if_false, hd, hdrop,
+    · simp only [hm, not_true_eq_false, ite_false]
+      simp only [wordGenGcMoveBitmaps, fullReadBitmap, hw0, hw1, ite_false, hd, hdrop,
         readBitmap_cons_msb hm, wordGenGcMoveBitmap]
       rcases readBitmap ys with _ | bs2
       · dsimp only
@@ -500,7 +500,7 @@ theorem wordGenGcMoveBitmaps_unroll {descWidth : Nat} {width : Nat} {bitmapWidth
               rw [hR2]
               rcases mapBitmap bs2 wl2 s1 with _ | ⟨u1, u2, u3⟩ <;> simp
     · simp only [hm]
-      simp only [wordGenGcMoveBitmaps, fullReadBitmap, hw0, if_false, hd,
+      simp only [wordGenGcMoveBitmaps, fullReadBitmap, hw0, ite_false, hd,
         readBitmap_cons_not_msb hm, wordGenGcMoveBitmap]
       rcases filterBitmap (getBits y) stack with _ | ⟨ts, ws⟩
       · rfl
@@ -535,7 +535,7 @@ theorem wordGenGcPartialMoveBitmaps_unroll {descWidth : Nat} {width : Nat} {bitm
   have hw0 : w ≠ 0 := by
     rintro rfl; simp [wordGenGcPartialMoveBitmaps, fullReadBitmap] at hx
   rcases hd : bitmaps.drop (w - 1).toNat with _ | ⟨y, ys⟩
-  · simp only [wordGenGcPartialMoveBitmaps, fullReadBitmap, hw0, if_false, hd, readBitmap]
+  · simp only [wordGenGcPartialMoveBitmaps, fullReadBitmap, hw0, ite_false, hd, readBitmap]
   · dsimp only
     have hk : (w - 1).toNat < bitmaps.length := by
       rcases Nat.lt_or_ge (w - 1).toNat bitmaps.length with h | h
@@ -563,8 +563,8 @@ theorem wordGenGcPartialMoveBitmaps_unroll {descWidth : Nat} {width : Nat} {bitm
       rw [show w + 1 - 1 = w from BitVec.add_sub_cancel w 1, hwsucc]
       exact drop_succ_of_drop_eq_cons hd
     by_cases hm : y.msb = true
-    · simp only [hm, not_true_eq_false, if_false]
-      simp only [wordGenGcPartialMoveBitmaps, fullReadBitmap, hw0, hw1, if_false, hd, hdrop,
+    · simp only [hm, not_true_eq_false, ite_false]
+      simp only [wordGenGcPartialMoveBitmaps, fullReadBitmap, hw0, hw1, ite_false, hd, hdrop,
         readBitmap_cons_msb hm, wordGenGcPartialMoveBitmap]
       rcases readBitmap ys with _ | bs2
       · dsimp only
@@ -604,7 +604,7 @@ theorem wordGenGcPartialMoveBitmaps_unroll {descWidth : Nat} {width : Nat} {bitm
               rw [hR2]
               rcases mapBitmap bs2 wl2 s1 with _ | ⟨u1, u2, u3⟩ <;> simp
     · simp only [hm]
-      simp only [wordGenGcPartialMoveBitmaps, fullReadBitmap, hw0, if_false, hd,
+      simp only [wordGenGcPartialMoveBitmaps, fullReadBitmap, hw0, ite_false, hd,
         readBitmap_cons_not_msb hm, wordGenGcPartialMoveBitmap]
       rcases filterBitmap (getBits y) stack with _ | ⟨ts, ws⟩
       · rfl
@@ -622,7 +622,7 @@ theorem encStack_cons_ne {bitmapWidth : Nat} {width : Nat} [NeZero bitmapWidth] 
           match filterBitmap bits ws with
           | none => none
           | some (sel, rem) => (encStack bitmaps rem).map (sel ++ ·) := by
-  rw [encStack, if_neg hw]
+  rw [encStack, ite_eq_right hw]
   rcases fullReadBitmap bitmaps w with _ | bits
   · rfl
   · dsimp only
@@ -642,7 +642,7 @@ theorem decStack_cons_ne {bitmapWidth : Nat} {width : Nat} [NeZero bitmapWidth] 
           match mapBitmap bits roots ws with
           | none => none
           | some (front, rr, rem) => (decStack bitmaps rr rem).map ([w] ++ front ++ ·) := by
-  rw [decStack, if_neg hw]
+  rw [decStack, ite_eq_right hw]
   rcases fullReadBitmap bitmaps w with _ | bits
   · rfl
   · dsimp only
@@ -680,13 +680,13 @@ theorem wordGcMoveRootsBitmaps_unroll {width : Nat} {bitmapWidth : Nat} [NeZero 
   dsimp only
   by_cases hw : w = .word 0
   · subst hw
-    simp only [if_true]
+    simp only [ite_true]
     by_cases hws : ws = []
     · subst hws
       simp [wordGcMoveRootsBitmaps, encStack, decStack, wordGcMoveRoots_nil]
     · exfalso
       simp [wordGcMoveRootsBitmaps, encStack, hws] at hx
-  simp only [hw, if_false]
+  simp only [hw, ite_false]
   rcases hb : fullReadBitmap bitmaps w with _ | bits
   · have he : encStack bitmaps (w :: ws) = none := by rw [encStack_cons_ne hw, hb]
     simp [wordGcMoveRootsBitmaps, he, wordGcMoveBitmaps, hb]
@@ -760,13 +760,13 @@ theorem wordGenGcMoveRootsBitmaps_unroll {width : Nat} {bitmapWidth : Nat} [NeZe
   dsimp only
   by_cases hw : w = .word 0
   · subst hw
-    simp only [if_true]
+    simp only [ite_true]
     by_cases hws : ws = []
     · subst hws
       simp [wordGenGcMoveRootsBitmaps, encStack, decStack, wordGenGcMoveRoots_nil]
     · exfalso
       simp [wordGenGcMoveRootsBitmaps, encStack, hws] at hx
-  simp only [hw, if_false]
+  simp only [hw, ite_false]
   rcases hb : fullReadBitmap bitmaps w with _ | bits
   · have he : encStack bitmaps (w :: ws) = none := by rw [encStack_cons_ne hw, hb]
     simp [wordGenGcMoveRootsBitmaps, he, wordGenGcMoveBitmaps, hb]
@@ -840,13 +840,13 @@ theorem wordGenGcPartialMoveRootsBitmaps_unroll {width : Nat} {bitmapWidth : Nat
   dsimp only
   by_cases hw : w = .word 0
   · subst hw
-    simp only [if_true]
+    simp only [ite_true]
     by_cases hws : ws = []
     · subst hws
       simp [wordGenGcPartialMoveRootsBitmaps, encStack, decStack, wordGenGcPartialMoveRoots_nil]
     · exfalso
       simp [wordGenGcPartialMoveRootsBitmaps, encStack, hws] at hx
-  simp only [hw, if_false]
+  simp only [hw, ite_false]
   rcases hb : fullReadBitmap bitmaps w with _ | bits
   · have he : encStack bitmaps (w :: ws) = none := by rw [encStack_cons_ne hw, hb]
     simp [wordGenGcPartialMoveRootsBitmaps, he, wordGenGcPartialMoveBitmaps, hb]

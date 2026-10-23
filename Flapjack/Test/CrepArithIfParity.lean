@@ -46,7 +46,7 @@ example {width : Nat} [NeZero width] {σ : Type}
     (hcond : evalCrepSemHOLExp state condition = some (.word w)) (hw : w ≠ 0) :
     evalCrepSemHOLProgExact state (.ite condition thenBranch elseBranch) =
       evalCrepSemHOLProgExact state thenBranch := by
-  simp only [evalCrepSemHOLProgExact_ite_holShape, hcond, if_pos hw]
+  simp only [evalCrepSemHOLProgExact_ite_holShape, hcond, ite_eq_left hw]
 
 example {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) (condition : CrepExpHOL width)
@@ -56,7 +56,7 @@ example {width : Nat} [NeZero width] {σ : Type}
       evalCrepSemHOLProgExact state elseBranch := by
   subst hw
   simp only [evalCrepSemHOLProgExact_ite_holShape, hcond]
-  simp only [if_neg (show ¬((0 : BitVec width) ≠ 0) by simp)]
+  simp only [ite_eq_right (show ¬((0 : BitVec width) ≠ 0) by simp)]
 
 /-- Probe row `evaluate_if_error` (`crepSemScript.sml:307-311`): a condition
     that does not evaluate to a word errors with the input state. -/

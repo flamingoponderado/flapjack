@@ -198,7 +198,7 @@ theorem toGeneric_wInst {width : Nat} [NeZero width]
     all_goals
       by_cases hw : width = 64
       all_goals
-        try simp only [hw, if_true, if_false]
+        try simp only [hw, ite_true, ite_false]
         try simp only [toGeneric_wStackLoad, toGeneric_wRegWrite1, toGeneric_wRegWrite2]
         simp [toGeneric, StackLang.Prog.map, HolInst.toWordLangInst]
   | skip => simp [wInstNative, WordToStackRegFormat.wInst, toGeneric, StackLang.Prog.map,

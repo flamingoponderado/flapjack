@@ -134,7 +134,7 @@ theorem nativeAllocator_evaluation {width : Nat} [NeZero width] {C F : Type}
   split
   · trivial
   rename_i nonerror
-  rw [if_neg nonerror] at ssaPost
+  rw [ite_eq_right nonerror] at ssaPost
   rcases ssaRun : evaluate (fullSsaCcTrans parameters.length native) permuted with
     ⟨ssaResult, ssaFinal⟩
   rw [ssaRun] at ssaPost
@@ -150,13 +150,13 @@ theorem nativeAllocator_evaluation {width : Nat} [NeZero width] {C F : Type}
     (wordCommonSubexpElim_setsWf _ (removeDeadProg_setsWf _
       (productionProgram_setsWf _ _ ssaEncoded)))))
   have chainEncoded := canonicalProgram_codec _ cleaned
-    (by simpa only [threeToTwoRegProg, Bool.false_eq_true, if_false] using chainWf) cleanedDecoded
+    (by simpa only [threeToTwoRegProg, Bool.false_eq_true, ite_false] using chainWf) cleanedDecoded
   rw [← deadRouted, ← programEq, outputEncoded] at chainEncoded
   cases Option.some.inj chainEncoded
   -- colouring post-condition at the cleaned program's run
   rw [show ({st with permute := colourPermutation} : WordSemStateFiniteExact width C F) =
     permuted from rfl, cleanRun] at colourPost
-  simp only [if_neg nonerror] at colourPost
+  simp only [ite_eq_right nonerror] at colourPost
   rcases colourRun : evaluate colouredNative st with ⟨colourResult, colourFinal⟩
   rw [colourRun] at colourPost
   obtain ⟨sameColour, colourRel, colourLocals⟩ := colourPost

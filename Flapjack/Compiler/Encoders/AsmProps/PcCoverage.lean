@@ -32,7 +32,7 @@ theorem allPcs_eq {width : Nat} [NeZero width] (n : Nat)
     · subst n
       simp [allPcs]
     · have hl : n - 2 ^ alignment < n := by omega
-      rw [allPcs, if_neg hz, ih _ hl]
+      rw [allPcs, ite_eq_right hz, ih _ hl]
       ext x
       change (x = address ∨ ∃ i, i * 2 ^ alignment < n - 2 ^ alignment ∧
         x = address + BitVec.ofNat width (2 ^ alignment) + BitVec.ofNat width (i * 2 ^ alignment)) ↔ _

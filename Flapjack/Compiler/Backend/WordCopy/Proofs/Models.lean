@@ -156,9 +156,9 @@ theorem removeEqModelInsert' {width : Nat} [NeZero width] {C F : Type} {cs : Cop
         rintro c vrep hc rfl; have := h4 c vrep hc; rw [ht] at this; cases this
       refine ⟨fun v c vrep hv hc => ?_, fun s c vrep hsc hc => ?_⟩
       · have hvt : v ≠ t := by rintro rfl; rw [ht] at hv; cases hv
-        rw [hl, sptLookupInsert, if_neg hvt, sptLookupInsert, if_neg (hne c vrep hc)]
+        rw [hl, sptLookupInsert, ite_eq_right hvt, sptLookupInsert, ite_eq_right (hne c vrep hc)]
         exact m1 v c vrep hv hc
-      · rw [hl, hs, sptLookupInsert, if_neg (hne c vrep hc)]
+      · rw [hl, hs, sptLookupInsert, ite_eq_right (hne c vrep hc)]
         exact m2 s c vrep hsc hc
 
 /-- Exact HOL `remove_eq_model_insert` (`word_copyProofScript.sml:377-386`). -/

@@ -95,10 +95,10 @@ theorem cutRes_add_clock (live : NumSet) (r : Option (LoopResultExact width))
       rw [hc] at h; simp only [Option.map] at h ⊢
       have hs1 := cutState_clock hc
       by_cases hz : s1.clock = 0
-      · simp only [hz, if_true, Prod.mk.injEq] at h; exact absurd h.1.symm hne
-      · simp only [hz, if_false, Prod.mk.injEq] at h; obtain ⟨rfl, rfl⟩ := h
+      · simp only [hz, ite_true, Prod.mk.injEq] at h; exact absurd h.1.symm hne
+      · simp only [hz, ite_false, Prod.mk.injEq] at h; obtain ⟨rfl, rfl⟩ := h
         have hz' : t.clock + ck ≠ 0 := by omega
-        simp only [hz', if_false, decClock, Prod.mk.injEq, true_and]
+        simp only [hz', ite_false, decClock, Prod.mk.injEq, true_and]
         cases s1; simp only [LoopSemStateFiniteExact.mk.injEq, true_and, and_true] at hs1 hz ⊢; omega
 
 /-- Exact HOL `evaluate_add_clock_eq` (`loopPropsScript.sml:985-...`):
@@ -172,7 +172,7 @@ theorem evaluate_add_clock_eq (p : HolLoopProg width) (t : LoopSemStateFiniteExa
         revert h; split
         · intro h
           split
-          · rename_i hb; simp only [hb, if_true] at h
+          · rename_i hb; simp only [hb, ite_true] at h
             exact step c1 (lexLt (Nat.le_refl _) (by simp +arith)) h
           · rename_i hb; simp only [hb] at h
             exact step c2 (lexLt (Nat.le_refl _) (by simp +arith)) h
@@ -267,8 +267,8 @@ theorem evaluate_add_clock_eq (p : HolLoopProg width) (t : LoopSemStateFiniteExa
             | none =>
               simp only at h ⊢
               by_cases hh : handler.isSome = true
-              · simp only [hh, if_true] at h ⊢; obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; rfl
-              · simp only [hh, if_false, Bool.false_eq_true] at h ⊢
+              · simp only [hh, ite_true] at h ⊢; obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; rfl
+              · simp only [hh, ite_false, Bool.false_eq_true] at h ⊢
                 by_cases hz : t.clock = 0
                 · simp only [hz, dite_true, Prod.mk.injEq] at h; exact absurd h.1.symm hne
                 · have hz' : t.clock + ck ≠ 0 := by omega
@@ -295,7 +295,7 @@ theorem evaluate_add_clock_eq (p : HolLoopProg width) (t : LoopSemStateFiniteExa
               by_cases hnd : ¬ ns.Nodup
               · simp only [hnd] at h ⊢
                 obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; rfl
-              simp only [hnd, if_false] at h ⊢
+              simp only [hnd, ite_false] at h ⊢
               split at h
               · rename_i s1 hc
                 have hs1 := cutRes_none_clock hc
@@ -320,8 +320,8 @@ theorem evaluate_add_clock_eq (p : HolLoopProg width) (t : LoopSemStateFiniteExa
                     all_goals (try (obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; rfl))
                     all_goals (try (exact absurd rfl hr1))
                     · by_cases hlen : vs.length ≠ ns.length
-                      · rw [if_pos hlen] at h ⊢; obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; rfl
-                      · rw [if_neg hlen] at h ⊢
+                      · rw [ite_eq_left hlen] at h ⊢; obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; rfl
+                      · rw [ite_eq_right hlen] at h ⊢
                         cases handler with
                         | none => simp only at h ⊢; obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; rfl
                         | some hd =>
@@ -383,10 +383,10 @@ theorem evaluate_add_clock_eq (p : HolLoopProg width) (t : LoopSemStateFiniteExa
       case tick =>
         rw [evaluate] at h; rw [evaluate]
         by_cases hz : t.clock = 0
-        · simp only [hz, if_true, Prod.mk.injEq] at h; exact absurd h.1.symm hne
-        · simp only [hz, if_false, Prod.mk.injEq] at h; obtain ⟨rfl, rfl⟩ := h
+        · simp only [hz, ite_true, Prod.mk.injEq] at h; exact absurd h.1.symm hne
+        · simp only [hz, ite_false, Prod.mk.injEq] at h; obtain ⟨rfl, rfl⟩ := h
           have hz' : t.clock + ck ≠ 0 := by omega
-          simp only [hz', if_false, decClock, Prod.mk.injEq, true_and]
+          simp only [hz', ite_false, decClock, Prod.mk.injEq, true_and]
           cases t; simp only [LoopSemStateFiniteExact.mk.injEq, true_and, and_true] at hz ⊢; omega
       all_goals (rw [evaluate] at h; rw [evaluate])
       all_goals (try simp only [eval_upd_clock_eq, getVars_upd_clock,

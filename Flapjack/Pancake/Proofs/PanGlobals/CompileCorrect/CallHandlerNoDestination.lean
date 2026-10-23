@@ -97,13 +97,13 @@ theorem compileCorrect_CallHandlerNoDestination {width : Nat} {σ : Type} [NeZer
       have hc := hrel.2.2.2.2.2.1
       by_cases hz : source.clock = 0
       · have htz : target.clock = 0 := hc ▸ hz
-        simp only [if_pos hz] at hev
+        simp only [ite_eq_left hz] at hev
         obtain ⟨rfl,rfl⟩ := Prod.mk.inj hev
-        exact ⟨emptyLocalsHOLFinite target,by simp only [if_pos htz],
+        exact ⟨emptyLocalsHOLFinite target,by simp only [ite_eq_left htz],
           (PanGlobalsStateRelationLocals.stateRelEmptyLocalsHOL context source target false).1 hrel⟩
       · have htz : target.clock ≠ 0 := hc ▸ hz
-        simp only [if_neg hz] at hev
-        simp only [if_neg htz]
+        simp only [ite_eq_right hz] at hev
+        simp only [ite_eq_right htz]
         have hd := PanGlobalsStateRelationClock.stateRelDecClockHOL context source target true hrel
         have he := (PanGlobalsStateRelationLocals.stateRelChangeLocalsHOL context
           (decClockHOLFinite source) (decClockHOLFinite target) true callee).1 hd
@@ -127,7 +127,7 @@ theorem compileCorrect_CallHandlerNoDestination {width : Nat} {σ : Type} [NeZer
               refine ⟨{bt with locals := target.locals}, ?_, ?_⟩
               · simp only [hbt, hs, ↓reduceIte]
               · simpa only [hlocals, goodResHOL] using hrestored
-            · simp only [if_neg hs] at hev
+            · simp only [ite_eq_right hs] at hev
               exact False.elim (hne (Prod.mk.inj hev).1.symm)
           | exception eid value =>
             obtain ⟨bt, hbt, hr⟩ := hbody _ context (callEntryStateHOLFinite target callee) bs
@@ -151,8 +151,8 @@ theorem compileCorrect_CallHandlerNoDestination {width : Nat} {σ : Type} [NeZer
                   simp only [isValidValueHOLExact, lookupKvarHOLExact, ← hlocals]
                 by_cases hv : (shapeEqHOL (shapeOfHOLExact value) handlerShape &&
                     isValidValueHOLExact source.toExact .local handlerVar value) = true
-                · simp only [if_pos hv] at hev
-                  simp only [hvalid, if_pos hv]
+                · simp only [ite_eq_left hv] at hev
+                  simp only [hvalid, ite_eq_left hv]
                   have hrestored := (PanGlobalsStateRelationLocals.stateRelChangeLocalsHOL
                     context bs bt true source.locals).2 hr
                   have hentry := PanGlobalsStateRelationLocals.stateRelSetVarHOL context
@@ -167,9 +167,9 @@ theorem compileCorrect_CallHandlerNoDestination {width : Nat} {σ : Type} [NeZer
                     (setVarHOLFinite handlerVar value {bt with locals := target.locals}) post
                     ⟨by simpa only [hlocals] using hentry, hev, hne⟩
                   exact ⟨handlerPost, hrun, hpost⟩
-                · simp only [if_neg hv] at hev
+                · simp only [ite_eq_right hv] at hev
                   exact False.elim (hne (Prod.mk.inj hev).1.symm)
-            · simp only [if_neg hid] at hev ⊢
+            · simp only [ite_eq_right hid] at hev ⊢
               obtain ⟨rfl, rfl⟩ := Prod.mk.inj hev
               exact ⟨emptyLocalsHOLFinite bt, rfl,
                 (PanGlobalsStateRelationLocals.stateRelEmptyLocalsHOL context bs bt false).2 hr⟩

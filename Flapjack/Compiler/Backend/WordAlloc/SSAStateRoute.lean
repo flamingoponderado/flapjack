@@ -83,9 +83,9 @@ theorem ssaRestrictExecutableLookup (entries : List (Nat × Nat))
   rw [ssaRestrictExecutable, decoded, sptLookup_sptInterCases,
     ssaCutsetLookup, sptLookup_sptFromAList]
   by_cases member : key ∈ names
-  · simp only [if_pos member]
+  · simp only [ite_eq_left member]
     cases sptAListLookup key entries <;> rfl
-  · simp only [if_neg member]
+  · simp only [ite_eq_right member]
     cases sptAListLookup key entries <;> rfl
 
 /-- Execute the reviewed reconciliation producer and decode its parallel moves.

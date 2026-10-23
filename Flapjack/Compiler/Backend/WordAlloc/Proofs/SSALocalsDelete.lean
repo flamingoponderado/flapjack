@@ -16,7 +16,7 @@ theorem ssaLocalsRelDeleteLeft {α : Type} (next : Nat) (ssa : Spt Nat)
   rw [sptLookup_sptDelete] at lookup
   by_cases same : key = name
   · simp [same] at lookup
-  · rw [if_neg same] at lookup
+  · rw [ite_eq_right same] at lookup
     exact related.2 key value lookup
 
 /-- Full generic original physical target deletion relation. The original
@@ -36,7 +36,7 @@ theorem ssaLocalsRelDeleteRight {α : Type} (next : Nat) (ssa : Spt Nat)
       exact (valid key name lookup).1 physical
     obtain ⟨value, read⟩ := (sptMem_iff_lookup register target).mp (related.1 key register lookup)
     apply (sptMem_iff_lookup register (sptDelete name target)).mpr
-    exact ⟨value, by rw [sptLookup_sptDelete, if_neg different]; exact read⟩
+    exact ⟨value, by rw [sptLookup_sptDelete, ite_eq_right different]; exact read⟩
   · intro key value lookup
     obtain ⟨domain, read, bound⟩ := related.2 key value lookup
     obtain ⟨register, mapped⟩ := (sptMem_iff_lookup key ssa).mp domain
@@ -45,6 +45,6 @@ theorem ssaLocalsRelDeleteRight {α : Type} (next : Nat) (ssa : Spt Nat)
       subst register
       exact (valid key name mapped).1 physical
     refine ⟨domain, ?_, bound⟩
-    simpa only [mapped, Option.getD_some, sptLookup_sptDelete, if_neg different] using read
+    simpa only [mapped, Option.getD_some, sptLookup_sptDelete, ite_eq_right different] using read
 
 end Flapjack.Compiler.Backend.WordAlloc

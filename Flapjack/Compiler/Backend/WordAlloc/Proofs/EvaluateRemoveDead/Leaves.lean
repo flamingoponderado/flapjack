@@ -52,14 +52,14 @@ theorem evaluateRemoveDead_Tick {width : Nat} [NeZero width] {C F : Type} :
   rw [evaluate]
   by_cases hz : st.clock = 0
   · have hz' : ({ st with locals := t, store := tstore } : WordSemStateFiniteExact width C F).clock = 0 := hz
-    simp only [hz, if_true, Prod.mk.injEq] at hev
+    simp only [hz, ite_true, Prod.mk.injEq] at hev
     obtain ⟨rfl, rfl⟩ := hev
-    rw [if_pos hz']
+    rw [ite_eq_left hz']
     exact ⟨(flushState true st).locals, (flushState true st).store, by simp [flushState], rfl, rfl⟩
   · have hz' : ¬ ({ st with locals := t, store := tstore } : WordSemStateFiniteExact width C F).clock = 0 := hz
-    simp only [hz, if_false, Prod.mk.injEq] at hev
+    simp only [hz, ite_false, Prod.mk.injEq] at hev
     obtain ⟨rfl, rfl⟩ := hev
-    rw [if_neg hz']
+    rw [ite_eq_right hz']
     exact ⟨t, tstore, rfl, hl, hs⟩
 
 /-- HOL `evaluate_remove_dead`, `Break` case (Resume 4291). -/
@@ -192,24 +192,24 @@ theorem evaluateRemoveDead_LocValue {width : Nat} [NeZero width] {C F : Type} (r
   rintro live nlive lt prog' livein nlivein st t tstore res rst ⟨hl, hs, hev, -, hrd, herr⟩
   rw [evaluate] at hev
   by_cases hm : sptMem l1 st.code
-  · simp only [hm, if_true, Prod.mk.injEq] at hev
+  · simp only [hm, ite_true, Prod.mk.injEq] at hev
     obtain ⟨rfl, rfl⟩ := hev
     by_cases hd : sptLookup r live = none
-    · simp only [removeDead, hd, if_true, Prod.mk.injEq] at hrd
+    · simp only [removeDead, hd, ite_true, Prod.mk.injEq] at hrd
       obtain ⟨rfl, rfl, rfl⟩ := hrd
       refine ⟨t, tstore, by rw [evaluate]; rfl, ?_, hs⟩
       refine strongLocalsRelInsertNotin id _ _ _ r _ ⟨hl, ?_⟩
       simp [sptDomain, hd]
-    · simp only [removeDead, hd, if_false, Prod.mk.injEq] at hrd
+    · simp only [removeDead, hd, ite_false, Prod.mk.injEq] at hrd
       obtain ⟨rfl, rfl, rfl⟩ := hrd
       refine ⟨sptInsert r (.loc l1 0) t, tstore, ?_, ?_, hs⟩
       · rw [evaluate]
         have hm' : sptMem l1 ({ st with locals := t, store := tstore } : WordSemStateFiniteExact width C F).code := hm
-        simp only [hm', if_true, setVar]
+        simp only [hm', ite_true, setVar]
       · refine strongLocalsRelIInsertInsert _ r _ _ _ _ ⟨?_, rfl⟩
         intro k v ⟨hk, hv⟩
         exact hl k v ⟨(sptDomain_del _ _ _).mpr ⟨hk.2, hk.1⟩, hv⟩
-  · simp only [hm, if_false, Prod.mk.injEq] at hev
+  · simp only [hm, ite_false, Prod.mk.injEq] at hev
     exact absurd hev.1.symm herr
 
 end Flapjack.WordAlloc

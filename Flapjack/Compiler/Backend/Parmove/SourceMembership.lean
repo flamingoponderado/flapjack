@@ -52,12 +52,12 @@ theorem memMapSndSndSndPmov {α : Type} [DecidableEq α] :
   intro state
   induction state using pmov.induct with
   | case1 state finished =>
-    rw [pmov.eq_def, dif_pos finished]
+    rw [pmov.eq_def, dite_eq_left finished]
     intro x hx
     simp only [List.map_append, List.mem_append]
     exact Or.inr hx
   | case2 state unfinished ih =>
-    rw [pmov.eq_def, dif_neg unfinished]
+    rw [pmov.eq_def, dite_eq_right unfinished]
     intro x hx
     have hi := ih x hx
     simp only [List.map_append]

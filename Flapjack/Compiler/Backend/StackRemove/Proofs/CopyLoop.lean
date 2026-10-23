@@ -158,7 +158,7 @@ theorem copyWhileReenter {width : Nat} [NeZero width] {C F : Type}
   rw [evaluate_loop, StackSemEvaluateClock.fixClockEvaluate]
   simp only [evaluate_ite, StackSemStateOps.getVarImm, HolRegImm.toWordRegImm,
     read, wordSemWordCmp, comparison, sign, bodyRun,
-    StackSemControl.contLoop, if_true, clock, if_false]
+    StackSemControl.contLoop, ite_true, clock, ite_false]
 
 /-- Reassociate the native CopyLoop prefix into the exact loaded state. -/
 theorem copyLoopAfterPrefix {width : Nat} [NeZero width] {C F : Type}
@@ -322,7 +322,7 @@ theorem copyLoopThm {width : Nat} [NeZero width] {C F : Type}
     have nextValid : nextIndex < bitmaps.length := by
       by_contra outside
       have outside : bitmaps.length ≤ nextIndex := by omega
-      rw [StackSemStoreConsts.copyWordsExact, dif_pos outside] at success
+      rw [StackSemStoreConsts.copyWordsExact, dite_eq_left outside] at success
       cases success
     let boosted := {target with clock := target.clock + (allowance + recursiveAllowance + 1)}
     let boostedLoaded := {loaded with clock := loaded.clock + (allowance + recursiveAllowance + 1)}

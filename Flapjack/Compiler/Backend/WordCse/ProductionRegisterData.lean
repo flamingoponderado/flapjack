@@ -19,7 +19,7 @@ private theorem insertLookup_transport (native : Spt Nat) (executed : WordCseReg
     simp [wordCseInsert, sptLookup_sptInsert_same]
   · rw [sptLookup_sptInsert_ne key register value native same]
     simp only [wordCseInsert, Std.TreeMap.getElem?_insert, Nat.compare_eq_eq,
-      Ne.symm same, if_false]
+      Ne.symm same, ite_false]
     exact related register
 
 /-- Original odd-register tracking establishes all five output observations.

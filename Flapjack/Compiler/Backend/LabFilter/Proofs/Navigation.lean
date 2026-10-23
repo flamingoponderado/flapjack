@@ -154,7 +154,7 @@ theorem allSkipsEvaluate {width : Nat} [NeZero width] {C F : Type}
         exact ⟨b, l, by simpa [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using hf⟩
     have hclock : s.clock + extra + (count + 1) ≠ 0 := by omega
     conv => lhs; rw [evaluate]
-    simp only [hclock, if_false, asmFetch, hfetch, asmInst, hfailed, Bool.false_eq_true]
+    simp only [hclock, ite_false, asmFetch, hfetch, asmInst, hfailed, Bool.false_eq_true]
     have hpred : s.clock + extra + (count + 1) - 1 = s.clock + extra + count := by omega
     simp only [incPc, decClock, hpred]
     simpa only [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm, hfailed] using

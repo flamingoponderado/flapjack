@@ -166,7 +166,7 @@ theorem word_gc_move_code_thm {width : Nat} [NeZero width] {C F : Type} {conf : 
         evaluate_skip]
   | word v =>
       by_cases hv : v &&& 1 = 0
-      · simp only [wordGcMove, hv, if_true, Prod.mk.injEq] at hmove
+      · simp only [wordGcMove, hv, ite_true, Prod.mk.injEq] at hmove
         obtain ⟨rfl, rfl, rfl, rfl, -⟩ := hmove
         refine ⟨0, r0, r1, r2, r6, ?_⟩
         rw [gcMove_skip_regs s r0 r1 r2 r6 _ _ _ hr0 hr1 hr2 h3' h4' h5' hr6]
@@ -195,9 +195,9 @@ theorem word_gc_move_code_thm {width : Nat} [NeZero width] {C F : Type} {conf : 
         have hr1' := hr1
         have hcur : s.store.lookup (StackSemRegisterTransfers.storeOfSyntax .currHeap) =
             some (.word old) := hcurr
-        simp only [wordGcMove, hv, if_false] at hmove
+        simp only [wordGcMove, hv, ite_false] at hmove
         by_cases hfwd : wordSemIsFwdPtr (s.memory (ptrToAddr conf old v)) = true
-        · simp only [hfwd, if_true, Prod.mk.injEq] at hmove
+        · simp only [hfwd, ite_true, Prod.mk.injEq] at hmove
           obtain ⟨rfl, rfl, rfl, rfl, hdm⟩ := hmove
           obtain ⟨x, hx, hx3⟩ := (is_fwd_ptr_iff _).1 hfwd
           have hx3a : AndOp.and x (3#width) = 0#width := hx3
@@ -234,7 +234,7 @@ theorem word_gc_move_code_thm {width : Nat} [NeZero width] {C F : Type} {conf : 
           simp [k0, k1, k2, k3, k4, k5, k6]
         · have hfwd' : wordSemIsFwdPtr (s.memory (ptrToAddr conf old v)) = false := by
             simpa using hfwd
-          simp only [hfwd', Bool.false_eq_true, if_false] at hmove
+          simp only [hfwd', Bool.false_eq_true, ite_false] at hmove
           have hc := congrArg (fun t => t.2.2.2.2) hmove
           simp only [Bool.and_eq_true] at hc
           obtain ⟨⟨hdm, -, hisw⟩, -, hc1⟩ := hc

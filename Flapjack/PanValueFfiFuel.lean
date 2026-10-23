@@ -148,7 +148,7 @@ theorem call_succ_mono (context : PanValueFfiContext α) (primitive : PanPrimiti
           dsimp only at h ⊢
           by_cases hvalid :
               (panValueExceptionValid structs c e v && panValuePayloadWithinLimit structs v) = true
-          · rw [if_pos hvalid] at h ⊢
+          · rw [ite_eq_left hvalid] at h ⊢
             cases info with
             | none => exact h
             | some pr =>
@@ -159,9 +159,9 @@ theorem call_succ_mono (context : PanValueFfiContext α) (primitive : PanPrimiti
                 obtain ⟨caught, handlerVariable, handlerProgram⟩ := triple
                 dsimp only at h ⊢
                 by_cases hcaught : (caught == e) = true
-                · rw [if_pos hcaught] at h ⊢
+                · rw [ite_eq_left hcaught] at h ⊢
                   by_cases hhv : panValueHandlerValid structs c locals handlerVariable v
-                  · rw [if_pos hhv] at h ⊢
+                  · rw [ite_eq_left hhv] at h ⊢
                     cases hh : evalPanValueFfiProgSteps context primitive handler structs functions
                         baseAddress topAddress bytesInWord fuel (updatePanValueMap locals handlerVariable v)
                         cg cm cf handlerProgram (memoryAccess := ma) (contracts := c)
@@ -171,9 +171,9 @@ theorem call_succ_mono (context : PanValueFfiContext α) (primitive : PanPrimiti
                       rw [hh] at h
                       rw [ihHandler _ _ _ _ _ _ _ _ hfk hh]
                       exact h
-                  · rw [if_neg hhv] at h; simp at h
-                · rw [if_neg hcaught] at h ⊢; exact h
-          · rw [if_neg hvalid] at h; simp at h
+                  · rw [ite_eq_right hhv] at h; simp at h
+                · rw [ite_eq_right hcaught] at h ⊢; exact h
+          · rw [ite_eq_right hvalid] at h; simp at h
 
 theorem progMono (context : PanValueFfiContext α) (primitive : PanPrimitiveHandler α)
     (handler : PanValueStatefulFfiHandler α σ) (structs : StructContext)
@@ -224,7 +224,7 @@ theorem progMono (context : PanValueFfiContext α) (primitive : PanPrimitiveHand
       obtain ⟨value, valueSteps⟩ := pair
       simp only [panValueDecAccepted, hv] at h ⊢
       by_cases hshape : panShapeMatches (panValueShape structs value) shape
-      · simp only [hshape, if_true, Option.elim_some, Option.bind_eq_bind] at h ⊢
+      · simp only [hshape, ite_true, Option.elim_some, Option.bind_eq_bind] at h ⊢
         cases hb : evalPanValueFfiProgSteps context primitive handler structs functions
           baseAddress topAddress bytesInWord fuel (updatePanValueMap locals name value) globals memory ffi body
             (memoryAccess := ma) (contracts := c) (memoryHandler := mh) with
@@ -318,7 +318,7 @@ theorem progMono (context : PanValueFfiContext α) (primitive : PanPrimitiveHand
       obtain ⟨w, conditionSteps⟩ := pair
       simp only [hv, Option.elim_some, Option.bind_eq_bind] at h ⊢
       by_cases hz : (w != 0) = true
-      · rw [if_pos hz] at h ⊢
+      · rw [ite_eq_left hz] at h ⊢
         cases ht : evalPanValueFfiProgSteps context primitive handler structs functions
           baseAddress topAddress bytesInWord fuel locals globals memory ffi thenBranch
           (memoryAccess := ma) (contracts := c) (memoryHandler := mh) with
@@ -327,7 +327,7 @@ theorem progMono (context : PanValueFfiContext α) (primitive : PanPrimitiveHand
           rw [ht] at h
           rw [ihThen _ _ hfk ht]
           exact h
-      · rw [if_neg hz] at h ⊢
+      · rw [ite_eq_right hz] at h ⊢
         cases te : evalPanValueFfiProgSteps context primitive handler structs functions
           baseAddress topAddress bytesInWord fuel locals globals memory ffi elseBranch
           (memoryAccess := ma) (contracts := c) (memoryHandler := mh) with
@@ -377,7 +377,7 @@ theorem progMono (context : PanValueFfiContext α) (primitive : PanPrimitiveHand
           | nil =>
             dsimp only at h ⊢
             by_cases hshape : panShapeMatches (panValueShape structs value) shape
-            · rw [if_pos hshape] at h ⊢
+            · rw [ite_eq_left hshape] at h ⊢
               cases hb : evalPanValueFfiProgSteps context primitive handler structs functions
                 baseAddress topAddress bytesInWord fuel (updatePanValueMap locals name value) g m f body
                 (memoryAccess := ma) (contracts := c) (memoryHandler := mh) with
@@ -386,7 +386,7 @@ theorem progMono (context : PanValueFfiContext α) (primitive : PanPrimitiveHand
                 rw [hb] at h
                 rw [ihBody _ _ _ _ _ _ hfk hb]
                 exact h
-            · rw [if_neg hshape] at h ⊢; exact h
+            · rw [ite_eq_right hshape] at h ⊢; exact h
       | raised l g m f e v => exact h
       | normal l g m f => simp at h
       | broke l g m f => simp at h
@@ -414,8 +414,8 @@ theorem progMono (context : PanValueFfiContext α) (primitive : PanPrimitiveHand
       obtain ⟨cv, conditionSteps⟩ := pair
       simp only [hc, Option.elim_some] at h ⊢
       by_cases hz : (cv == 0) = true
-      · rw [if_pos hz] at h ⊢; exact h
-      · rw [if_neg hz] at h ⊢
+      · rw [ite_eq_left hz] at h ⊢; exact h
+      · rw [ite_eq_right hz] at h ⊢
         cases hb : evalPanValueFfiProgSteps context primitive handler structs functions
           baseAddress topAddress bytesInWord fuel locals globals memory ffi body
           (memoryAccess := ma) (contracts := c) (memoryHandler := mh) with

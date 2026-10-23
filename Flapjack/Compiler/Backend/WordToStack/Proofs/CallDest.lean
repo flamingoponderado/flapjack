@@ -109,10 +109,10 @@ theorem stateRel_setVar_of_ge {width : Nat} [NeZero width] {C F : Type}
   obtain ⟨he, hif⟩ := hloc n w hn
   refine ⟨he, ?_⟩
   by_cases hlt : n / 2 < k
-  · rw [if_pos hlt] at hif ⊢
+  · rw [ite_eq_left hlt] at hif ⊢
     have hne : n / 2 ≠ r := by omega
     simp [StackSemStateOps.setVar, HolFiniteMapExact.updateEq, FUPDATE_HOL, hne, hif]
-  · rw [if_neg hlt] at hif ⊢
+  · rw [ite_eq_right hlt] at hif ⊢
     exact hif
 
 /-- Exact HOL `call_dest_lemma` (`word_to_stackProofScript.sml:3315-3415`). HOL's
@@ -152,7 +152,7 @@ theorem callDestLemma {width : Nat} [NeZero width] {C F : Type}
     obtain ⟨hne', hlast⟩ := getVars_getLast s args args' hvars hne
     have hloc := StateRelGetVar.stateRel_locals hrel _ _ hlast
     have hlen0 : ¬ args.length = 0 := by simpa using hne
-    simp only [callDestNative, dif_neg hlen0, Prod.mk.injEq] at hcall
+    simp only [callDestNative, dite_eq_right hlen0, Prod.mk.injEq] at hcall
     obtain ⟨rfl, rfl⟩ := hcall
     have hrne : wordSemAddRetLoc ret args' ≠ [] := by
       rcases ret with _ | ⟨_, _, _, _, _⟩ <;> simp [wordSemAddRetLoc, hne']
@@ -166,7 +166,7 @@ theorem callDestLemma {width : Nat} [NeZero width] {C F : Type}
         ∃ n arity, args'.getLast hne' = .loc n 0 ∧ sptLookup n s.code = some (arity, prog) ∧
           realArgs.length = arity ∧ ssize = sptLookup n s.stackSize := by
       intro realArgs prog ssize hfind
-      simp only [wordSemFindCode, dif_neg hrne, hrlast] at hfind
+      simp only [wordSemFindCode, dite_eq_right hrne, hrlast] at hfind
       rcases hv : args'.getLast hne' with w | ⟨n, off⟩
       · rw [hv] at hfind; cases hfind
       rw [hv] at hfind
@@ -182,7 +182,7 @@ theorem callDestLemma {width : Nat} [NeZero width] {C F : Type}
         · cases hfind
       · simp at hfind
     by_cases hlt : args.getLast hne / 2 < k
-    · rw [if_pos hlt] at hloc
+    · rw [ite_eq_left hlt] at hloc
       have hw : wReg2 (args.getLast hne) (k, f, f') = ([], args.getLast hne / 2) := by
         simp [wReg2, hlt]
       simp only [hw, wStackLoadNative]
@@ -193,7 +193,7 @@ theorem callDestLemma {width : Nat} [NeZero width] {C F : Type}
       refine ⟨bs, i, bs2, i2, fs, sp, by rw [hl]; exact hc, h1, h2, h3, h4, ?_⟩
       simp only [StackSemControl.findCode, hloc.2, hv]
       exact h5
-    · rw [if_neg hlt] at hloc
+    · rw [ite_eq_right hlt] at hloc
       obtain ⟨-, hslot, hbound⟩ := hloc
       have hw : wReg2 (args.getLast hne) (k, f, f') =
           ([(k + 1, f - 1 - (args.getLast hne / 2 - k))], k + 1) := by
@@ -214,7 +214,7 @@ theorem callDestLemma {width : Nat} [NeZero width] {C F : Type}
       have hval : t.stack[t.stackSpace + idx] = args'.getLast hne' :=
         (List.getElem?_eq_some_iff.mp hslot).2
       rw [StackSemEvaluate.evaluate_seq, StackSemEvaluate.evaluate_stackLoad,
-        if_neg (by simp [h5]), dif_pos hlt2]
+        ite_eq_right (by simp [h5]), dite_eq_left hlt2]
       simp only [StackSemControl.fixClock, StackSemStateOps.setVar, Nat.min_self]
       rw [StackSemEvaluate.evaluate_skip]
       refine ⟨_, rfl, ?_, rfl, rfl, ?_⟩
@@ -224,7 +224,7 @@ theorem callDestLemma {width : Nat} [NeZero width] {C F : Type}
         obtain ⟨bs, i, bs2, i2, fs, sp, hc, h1, h2, h3, h4, h6⟩ :=
           stateRel_code hrel n arity prog hp
         refine ⟨bs, i, bs2, i2, fs, sp, by rw [hl]; exact hc, h1, h2, h3, h4, ?_⟩
-        simp only [StackSemControl.findCode, HolFiniteMapExact.updateEq, FUPDATE_HOL, if_true,
+        simp only [StackSemControl.findCode, HolFiniteMapExact.updateEq, FUPDATE_HOL, ite_true,
           hval, hv]
         exact h6
   · simp only [callDestNative, Prod.mk.injEq] at hcall

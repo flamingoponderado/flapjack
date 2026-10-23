@@ -16,7 +16,7 @@ theorem dedupAux_member (seen : Std.TreeSet Nat) (names : List Nat) (key : Nat) 
   | cons name rest ih =>
       by_cases present : name ∈ seen
       · have contains := Std.TreeSet.contains_iff_mem.mpr present
-        simp only [natEraseDupsAux, contains, if_true, ih, List.mem_cons]
+        simp only [natEraseDupsAux, contains, ite_true, ih, List.mem_cons]
         constructor
         · intro h; exact ⟨Or.inr h.1, h.2⟩
         · rintro ⟨equal | member, missing⟩
@@ -24,7 +24,7 @@ theorem dedupAux_member (seen : Std.TreeSet Nat) (names : List Nat) (key : Nat) 
           · exact ⟨member, missing⟩
       · have contains : seen.contains name = false :=
           Bool.eq_false_iff.mpr (fun h => present (Std.TreeSet.contains_iff_mem.mp h))
-        simp only [natEraseDupsAux, contains, Bool.false_eq_true, if_false,
+        simp only [natEraseDupsAux, contains, Bool.false_eq_true, ite_false,
           List.mem_cons, ih, Std.TreeSet.mem_insert,
           Std.LawfulEqCmp.compare_eq_iff_eq]
         by_cases same : key = name <;> simp [same, present, eq_comm]
@@ -88,11 +88,11 @@ private theorem callFold_member (right : List Nat) (calls : WordHeuristicCallSet
       simp only [List.foldl_cons, ih, List.mem_cons]
       by_cases present : name ∈ calls.seen
       · have contains := Std.TreeSet.contains_iff_mem.mpr present
-        simp only [contains, if_true]
+        simp only [contains, ite_true]
         by_cases same : key = name <;> simp [same, present]
       · have contains : calls.seen.contains name = false :=
           Bool.eq_false_iff.mpr (fun h => present (Std.TreeSet.contains_iff_mem.mp h))
-        simp only [contains, Bool.false_eq_true, if_false, Std.TreeSet.mem_insert,
+        simp only [contains, Bool.false_eq_true, ite_false, Std.TreeSet.mem_insert,
           Std.LawfulEqCmp.compare_eq_iff_eq]
         simp only [or_assoc, or_left_comm, eq_comm]
 

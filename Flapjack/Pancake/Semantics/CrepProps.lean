@@ -1362,13 +1362,13 @@ theorem flookupResVarDiffEqHOL [DecidableEq α] (l : HolFiniteMapExact α β)
     simp only [HolFiniteMapExact.lookup_resVarEq_none]
     rw [show FDOMSUB_HOL l.lookup m n = FLOOKUP (FDOMSUB_HOL l.lookup m) n from rfl]
     rw [FLOOKUP_FDOMSUB_HOL]
-    simp [FLOOKUP, if_neg hne]
+    simp [FLOOKUP, ite_eq_right hne]
   | some value =>
     simp only [HolFiniteMapExact.lookup_resVarEq_some]
     rw [show FUPDATE_HOL l.lookup (m, value) n =
         FLOOKUP (FUPDATE_HOL l.lookup (m, value)) n from rfl]
     rw [FLOOKUP_FUPDATE_HOL]
-    simp [FLOOKUP, if_neg hne]
+    simp [FLOOKUP, ite_eq_right hne]
 
 /-- Exact port of HOL `flookup_res_var_thm`
     (`cakeml/pancake/semantics/crepPropsScript.sml:257-263`):
@@ -1757,10 +1757,10 @@ private theorem crepUnassignedFreeVarsEvaluateSameInduct {width : Nat} [NeZero w
     rw [h1] at h
     dsimp only at h
     by_cases hr1 : r1 = none
-    · rw [if_pos hr1] at h
+    · rw [ite_eq_left hr1] at h
       rw [ih2 r1 s1 h1.symm hr1 res t n k h hres hn.2]
       exact ih1 r1 s1 n k h1 (Or.inl hr1) hn.1
-    · rw [if_neg hr1] at h
+    · rw [ite_eq_right hr1] at h
       obtain ⟨rfl, rfl⟩ := Prod.mk.inj h
       exact ih1 _ _ n k h1 hres hn.1
   · -- ite
@@ -1789,11 +1789,11 @@ private theorem crepUnassignedFreeVarsEvaluateSameInduct {width : Nat} [NeZero w
     split at h
     · rename_i w hw
       by_cases hw0 : w ≠ 0
-      · rw [if_pos hw0] at h
+      · rw [ite_eq_left hw0] at h
         by_cases hc : s.clock = 0
-        · rw [if_pos hc] at h
+        · rw [ite_eq_left hc] at h
           obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
-        · rw [if_neg hc] at h
+        · rw [ite_eq_right hc] at h
           rcases hb : evalCrepSemHOLProgExact (decClockCrepSemHOL s) c with ⟨r, s1⟩
           rw [hb] at h
           dsimp only at h
@@ -1826,7 +1826,7 @@ private theorem crepUnassignedFreeVarsEvaluateSameInduct {width : Nat} [NeZero w
             | _ =>
                 obtain ⟨rfl, rfl⟩ := Prod.mk.inj h
                 simp [exitLoopCrepResult] at hres
-      · rw [if_neg hw0] at h
+      · rw [ite_eq_right hw0] at h
         obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; rfl
     · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
   · -- return
@@ -2043,7 +2043,7 @@ theorem evaluateSeqStoreGlobalsResHOL {width : Nat} [NeZero width] {σ : Type} :
                 simp only [evalCrepSemHOLExp]
                 exact hlk]
           dsimp only
-          rw [if_pos rfl]
+          rw [ite_eq_left rfl]
           let t'' : CrepSemHOLState width σ :=
             { t with locals := t.locals.updateEq (h, v), globals := t.globals.updateEq (a, v) }
           have hst : CrepSemHOLState.setGlobals a v
@@ -2174,7 +2174,7 @@ private theorem evalSeqStoresMem {width : Nat} [NeZero width] {σ : Type} (ad : 
       dsimp only at h
       split at h
       · rename_i hdec
-        rw [if_pos rfl] at h
+        rw [ite_eq_left rfl] at h
         have hstep := evalSeqStoresMem ad es vs' (a + BitVec.ofNat width (width / 8))
           { s with memory := m1 } addr m res t hvs had
           (by rw [← BitVec.add_assoc]; exact hm) (by rw [hm1']; exact h)
@@ -2310,8 +2310,8 @@ private theorem codeInvariantInduct {width : Nat} [NeZero width] {σ : Type} :
         simp only [hp] at h
         by_cases hv : names.length = results.length ∧
             (∀ name ∈ names, (s.locals.lookup name).isSome) ∧ names.Nodup
-        · simp only [if_pos hv] at h; obtain ⟨_, rfl⟩ := Prod.mk.inj h; rfl
-        · simp only [if_neg hv] at h; obtain ⟨_, rfl⟩ := Prod.mk.inj h; rfl
+        · simp only [ite_eq_left hv] at h; obtain ⟨_, rfl⟩ := Prod.mk.inj h; rfl
+        · simp only [ite_eq_right hv] at h; obtain ⟨_, rfl⟩ := Prod.mk.inj h; rfl
   · intro v src s res t h
     change t.code = s.code
     rw [evalCrepSemHOLProgExact_assign_holShape] at h
@@ -2382,7 +2382,7 @@ private theorem codeInvariantInduct {width : Nat} [NeZero width] {σ : Type} :
             have hcode := shMemOpCodePreserved op v addr s res t
             simp [he, hv] at h
             exact hcode h
-        · simp only [if_neg hload] at h
+        · simp only [ite_eq_right hload] at h
           cases hv : s.locals.lookup v with
           | none => simp [he, hv] at h; rcases h with ⟨_, rfl⟩; rfl
           | some val =>
@@ -2397,11 +2397,11 @@ private theorem codeInvariantInduct {width : Nat} [NeZero width] {σ : Type} :
     rw [h1] at h
     dsimp only at h
     by_cases hr : r1 = none
-    · rw [if_pos hr] at h
+    · rw [ite_eq_left hr] at h
       have hi2 := ih2 r1 s1 h1.symm hr res t h
       have hi1 := ih1 r1 s1 h1
       exact hi2.trans hi1
-    · rw [if_neg hr] at h
+    · rw [ite_eq_right hr] at h
       obtain ⟨_, rfl⟩ := Prod.mk.inj h
       exact ih1 r1 s1 h1
   · intro e c1 c2 s ih res t h
@@ -2425,12 +2425,12 @@ private theorem codeInvariantInduct {width : Nat} [NeZero width] {σ : Type} :
     · rename_i w hv
       have hv' := hv
       by_cases hw : w ≠ 0
-      · rw [if_pos hw] at h
+      · rw [ite_eq_left hw] at h
         by_cases hc : s.clock = 0
-        · rw [if_pos hc] at h
+        · rw [ite_eq_left hc] at h
           obtain ⟨_, rfl⟩ := Prod.mk.inj h
           rfl
-        · rw [if_neg hc] at h
+        · rw [ite_eq_right hc] at h
           rcases hb : evalCrepSemHOLProgExact (decClockCrepSemHOL s) c with ⟨r, s1⟩
           simp only [hb] at h
           have hcne : s.clock ≠ 0 := fun h0 => hc h0
@@ -2462,7 +2462,7 @@ private theorem codeInvariantInduct {width : Nat} [NeZero width] {σ : Type} :
             | «return» values => obtain ⟨_, rfl⟩ := Prod.mk.inj h; exact hbody
             | «exception» eid => obtain ⟨_, rfl⟩ := Prod.mk.inj h; exact hbody
             | finalFfi event => obtain ⟨_, rfl⟩ := Prod.mk.inj h; exact hbody
-      · rw [if_neg hw] at h
+      · rw [ite_eq_right hw] at h
         obtain ⟨_, rfl⟩ := Prod.mk.inj h
         rfl
     · obtain ⟨_, rfl⟩ := Prod.mk.inj h; rfl
@@ -2491,9 +2491,9 @@ private theorem codeInvariantInduct {width : Nat} [NeZero width] {σ : Type} :
         by_cases hparams : params.length = args.length ∧ params.Nodup
         · simp only [hparams] at h
           by_cases hnodup : crepReturnInfoNodupError caltyp
-          · simp only [if_pos hnodup] at h
+          · simp only [ite_eq_left hnodup] at h
             rcases h with ⟨_, rfl⟩; rfl
-          · simp only [if_neg hnodup] at h
+          · simp only [ite_eq_right hnodup] at h
             by_cases hc : s.clock = 0
             · simp only [hc] at h
               rcases h with ⟨_, rfl⟩; rfl
@@ -2526,7 +2526,7 @@ private theorem codeInvariantInduct {width : Nat} [NeZero width] {σ : Type} :
               have hbodyCode : s1.code = s.code := by
                 have hp := hrec r s1 hb
                 simpa [decClockCrepSemHOL] using hp
-              simp only [and_self, if_true] at h
+              simp only [and_self, ite_true] at h
               rw [hb] at h
               cases r with
               | none => rcases h with ⟨_, rfl⟩; exact hbodyCode

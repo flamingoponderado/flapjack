@@ -34,14 +34,14 @@ theorem balanceLThm {κ ν : Type} (key : κ) (value : ν) (left right : Map κ 
   rw [balanceLBalL key value left right cmp ⟨hgood, hl, hr⟩]
   unfold balL
   by_cases hsmall : size left + size right ≤ 1
-  · rw [if_pos hsmall]
+  · rw [ite_eq_left hsmall]
     exact binCorrect key value left right cmp hl hr hlo hro
       (balancedLem1 _ _ hsmall)
-  · rw [if_neg hsmall]
+  · rw [ite_eq_right hsmall]
     by_cases hheavy : size left > delta * size right
-    · rw [if_pos hheavy]
+    · rw [ite_eq_left hheavy]
       exact rotateRThm key value left right cmp ⟨hgood, hlo, hro, hsmall, hheavy, halmost, hl, hr⟩
-    · rw [if_neg hheavy]
+    · rw [ite_eq_right hheavy]
       exact binCorrect key value left right cmp hl hr hlo hro
         (balancedLem2 _ _ ⟨hheavy, halmost, hsmall⟩)
 end

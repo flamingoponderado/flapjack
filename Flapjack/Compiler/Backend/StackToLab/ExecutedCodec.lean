@@ -238,13 +238,13 @@ theorem name_from_recover (executed : String) (native : Basis.Pure.MlString.MlSt
     (decoded : nameFromExecuted? executed = some native) :
     nameToExecuted native = executed := by
   by_cases ranged : executed.toList.all (fun c => decide (c.toNat < 256)) = true
-  · simp only [nameFromExecuted?, if_pos ranged, Option.some.injEq] at decoded
+  · simp only [nameFromExecuted?, ite_eq_left ranged, Option.some.injEq] at decoded
     subst native
     have bytes : ∀ c ∈ executed.toList, c.toNat < 256 := by
       intro character member
       simpa only [decide_eq_true_eq] using (List.all_eq_true.mp ranged character member)
     exact Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes executed bytes
-  · simp only [nameFromExecuted?, if_neg ranged] at decoded
+  · simp only [nameFromExecuted?, ite_eq_right ranged] at decoded
     cases decoded
 
 /-- Flapjack-specific exact codec recovery or boundary fact; no HOL original. -/
@@ -321,11 +321,11 @@ theorem line_recover {width : Nat} [NeZero width]
       simp [lineFromExecuted?, plain_recover instruction operation converted]
   | labAsm instruction position bytes length =>
     by_cases zero : position = 0
-    · simp only [lineToExecuted?, if_pos zero, Option.some.injEq] at encoded
+    · simp only [lineToExecuted?, ite_eq_left zero, Option.some.injEq] at encoded
       subst executed
       subst position
       simp only [lineFromExecuted?, labAsm_recover, Option.map_some]
-    · simp only [lineToExecuted?, if_neg zero] at encoded
+    · simp only [lineToExecuted?, ite_eq_right zero] at encoded
       cases encoded
 
 -- Generic finite-list codec, with a genuine element recovery hypothesis.

@@ -164,21 +164,21 @@ theorem shMemStoreRelationHOL {width : Nat} {σ : Type} [NeZero width]
               [BitVec.ofNat 8 nb]
               (panWordToBytesHOL bytes false ++ panWordToBytesHOL addr false) =
               HolFfiResult.final event := by rw [hffi']; exact hcall
-          simp only [shMemStoreFin, shMemStoreHOLExact, if_pos hnb,
-            if_pos (show s.toExact.shMemaddrs addr from hmem),
-            if_pos (show t.toExact.shMemaddrs addr from hmemT), hcall, hcallT]
+          simp only [shMemStoreFin, shMemStoreHOLExact, ite_eq_left hnb,
+            ite_eq_left (show s.toExact.shMemaddrs addr from hmem),
+            ite_eq_left (show t.toExact.shMemaddrs addr from hmemT), hcall, hcallT]
         | ret newFfi newBytes =>
           have hcallT : callFFIHOL t.toExact.ffi (.sharedMem .mappedWrite)
               [BitVec.ofNat 8 nb]
               (panWordToBytesHOL bytes false ++ panWordToBytesHOL addr false) =
               HolFfiResult.ret newFfi newBytes := by rw [hffi']; exact hcall
-          simp only [shMemStoreFin, shMemStoreHOLExact, if_pos hnb,
-            if_pos (show s.toExact.shMemaddrs addr from hmem),
-            if_pos (show t.toExact.shMemaddrs addr from hmemT), hcall, hcallT]
+          simp only [shMemStoreFin, shMemStoreHOLExact, ite_eq_left hnb,
+            ite_eq_left (show s.toExact.shMemaddrs addr from hmem),
+            ite_eq_left (show t.toExact.shMemaddrs addr from hmemT), hcall, hcallT]
       · have hmemT : ¬ t.shMemaddrs addr := by rw [← hshmem]; exact hmem
-        simp only [shMemStoreFin, shMemStoreHOLExact, if_pos hnb,
-          if_neg (show ¬ s.toExact.shMemaddrs addr from hmem),
-          if_neg (show ¬ t.toExact.shMemaddrs addr from hmemT)]
+        simp only [shMemStoreFin, shMemStoreHOLExact, ite_eq_left hnb,
+          ite_eq_right (show ¬ s.toExact.shMemaddrs addr from hmem),
+          ite_eq_right (show ¬ t.toExact.shMemaddrs addr from hmemT)]
     · by_cases hmem : s.shMemaddrs (panByteAlignHOL addr)
       · have hmemT : t.shMemaddrs (panByteAlignHOL addr) := by rw [← hshmem]; exact hmem
         cases hcall : callFFIHOL s.toExact.ffi (.sharedMem .mappedWrite)
@@ -189,23 +189,23 @@ theorem shMemStoreRelationHOL {width : Nat} {σ : Type} [NeZero width]
               [BitVec.ofNat 8 nb]
               ((panWordToBytesHOL bytes false).take nb ++ panWordToBytesHOL addr false) =
               HolFfiResult.final event := by rw [hffi']; exact hcall
-          simp only [shMemStoreFin, shMemStoreHOLExact, if_neg hnb,
-            if_pos (show s.toExact.shMemaddrs (panByteAlignHOL addr) from hmem),
-            if_pos (show t.toExact.shMemaddrs (panByteAlignHOL addr) from hmemT),
+          simp only [shMemStoreFin, shMemStoreHOLExact, ite_eq_right hnb,
+            ite_eq_left (show s.toExact.shMemaddrs (panByteAlignHOL addr) from hmem),
+            ite_eq_left (show t.toExact.shMemaddrs (panByteAlignHOL addr) from hmemT),
             hcall, hcallT]
         | ret newFfi newBytes =>
           have hcallT : callFFIHOL t.toExact.ffi (.sharedMem .mappedWrite)
               [BitVec.ofNat 8 nb]
               ((panWordToBytesHOL bytes false).take nb ++ panWordToBytesHOL addr false) =
               HolFfiResult.ret newFfi newBytes := by rw [hffi']; exact hcall
-          simp only [shMemStoreFin, shMemStoreHOLExact, if_neg hnb,
-            if_pos (show s.toExact.shMemaddrs (panByteAlignHOL addr) from hmem),
-            if_pos (show t.toExact.shMemaddrs (panByteAlignHOL addr) from hmemT),
+          simp only [shMemStoreFin, shMemStoreHOLExact, ite_eq_right hnb,
+            ite_eq_left (show s.toExact.shMemaddrs (panByteAlignHOL addr) from hmem),
+            ite_eq_left (show t.toExact.shMemaddrs (panByteAlignHOL addr) from hmemT),
             hcall, hcallT]
       · have hmemT : ¬ t.shMemaddrs (panByteAlignHOL addr) := by rw [← hshmem]; exact hmem
-        simp only [shMemStoreFin, shMemStoreHOLExact, if_neg hnb,
-          if_neg (show ¬ s.toExact.shMemaddrs (panByteAlignHOL addr) from hmem),
-          if_neg (show ¬ t.toExact.shMemaddrs (panByteAlignHOL addr) from hmemT)]
+        simp only [shMemStoreFin, shMemStoreHOLExact, ite_eq_right hnb,
+          ite_eq_right (show ¬ s.toExact.shMemaddrs (panByteAlignHOL addr) from hmem),
+          ite_eq_right (show ¬ t.toExact.shMemaddrs (panByteAlignHOL addr) from hmemT)]
   · by_cases hnb : nb = 0
     · by_cases hmem : s.shMemaddrs addr
       · have hmemT : t.shMemaddrs addr := by rw [← hshmem]; exact hmem
@@ -217,9 +217,9 @@ theorem shMemStoreRelationHOL {width : Nat} {σ : Type} [NeZero width]
               [BitVec.ofNat 8 nb]
               (panWordToBytesHOL bytes false ++ panWordToBytesHOL addr false) =
               HolFfiResult.final event := by rw [hffi']; exact hcall
-          simp only [shMemStoreFin, shMemStoreHOLExact, if_pos hnb,
-            if_pos (show s.toExact.shMemaddrs addr from hmem),
-            if_pos (show t.toExact.shMemaddrs addr from hmemT),
+          simp only [shMemStoreFin, shMemStoreHOLExact, ite_eq_left hnb,
+            ite_eq_left (show s.toExact.shMemaddrs addr from hmem),
+            ite_eq_left (show t.toExact.shMemaddrs addr from hmemT),
             hcall, hcallT, goodResHOL]
           change panGlobalsStateRelHOLExact false ctxt s t
           exact stateRelFlagFalseHOL ctxt s t hrel
@@ -228,15 +228,15 @@ theorem shMemStoreRelationHOL {width : Nat} {σ : Type} [NeZero width]
               [BitVec.ofNat 8 nb]
               (panWordToBytesHOL bytes false ++ panWordToBytesHOL addr false) =
               HolFfiResult.ret newFfi' newBytes := by rw [hffi']; exact hcall
-          simp only [shMemStoreFin, shMemStoreHOLExact, if_pos hnb,
-            if_pos (show s.toExact.shMemaddrs addr from hmem),
-            if_pos (show t.toExact.shMemaddrs addr from hmemT),
+          simp only [shMemStoreFin, shMemStoreHOLExact, ite_eq_left hnb,
+            ite_eq_left (show s.toExact.shMemaddrs addr from hmem),
+            ite_eq_left (show t.toExact.shMemaddrs addr from hmemT),
             hcall, hcallT, goodResHOL]
           exact stateRelFfiUpdateHOL true ctxt s t newFfi' hrel
       · have hmemT : ¬ t.shMemaddrs addr := by rw [← hshmem]; exact hmem
-        simp only [shMemStoreFin, shMemStoreHOLExact, if_pos hnb,
-          if_neg (show ¬ s.toExact.shMemaddrs addr from hmem),
-          if_neg (show ¬ t.toExact.shMemaddrs addr from hmemT),
+        simp only [shMemStoreFin, shMemStoreHOLExact, ite_eq_left hnb,
+          ite_eq_right (show ¬ s.toExact.shMemaddrs addr from hmem),
+          ite_eq_right (show ¬ t.toExact.shMemaddrs addr from hmemT),
           ofExact_toExact_any, goodResHOL]
         change panGlobalsStateRelHOLExact true ctxt s t
         exact hrel
@@ -250,9 +250,9 @@ theorem shMemStoreRelationHOL {width : Nat} {σ : Type} [NeZero width]
               [BitVec.ofNat 8 nb]
               ((panWordToBytesHOL bytes false).take nb ++ panWordToBytesHOL addr false) =
               HolFfiResult.final event := by rw [hffi']; exact hcall
-          simp only [shMemStoreFin, shMemStoreHOLExact, if_neg hnb,
-            if_pos (show s.toExact.shMemaddrs (panByteAlignHOL addr) from hmem),
-            if_pos (show t.toExact.shMemaddrs (panByteAlignHOL addr) from hmemT),
+          simp only [shMemStoreFin, shMemStoreHOLExact, ite_eq_right hnb,
+            ite_eq_left (show s.toExact.shMemaddrs (panByteAlignHOL addr) from hmem),
+            ite_eq_left (show t.toExact.shMemaddrs (panByteAlignHOL addr) from hmemT),
             hcall, hcallT, goodResHOL]
           change panGlobalsStateRelHOLExact false ctxt s t
           exact stateRelFlagFalseHOL ctxt s t hrel
@@ -261,15 +261,15 @@ theorem shMemStoreRelationHOL {width : Nat} {σ : Type} [NeZero width]
               [BitVec.ofNat 8 nb]
               ((panWordToBytesHOL bytes false).take nb ++ panWordToBytesHOL addr false) =
               HolFfiResult.ret newFfi' newBytes := by rw [hffi']; exact hcall
-          simp only [shMemStoreFin, shMemStoreHOLExact, if_neg hnb,
-            if_pos (show s.toExact.shMemaddrs (panByteAlignHOL addr) from hmem),
-            if_pos (show t.toExact.shMemaddrs (panByteAlignHOL addr) from hmemT),
+          simp only [shMemStoreFin, shMemStoreHOLExact, ite_eq_right hnb,
+            ite_eq_left (show s.toExact.shMemaddrs (panByteAlignHOL addr) from hmem),
+            ite_eq_left (show t.toExact.shMemaddrs (panByteAlignHOL addr) from hmemT),
             hcall, hcallT, goodResHOL]
           exact stateRelFfiUpdateHOL true ctxt s t newFfi' hrel
       · have hmemT : ¬ t.shMemaddrs (panByteAlignHOL addr) := by rw [← hshmem]; exact hmem
-        simp only [shMemStoreFin, shMemStoreHOLExact, if_neg hnb,
-          if_neg (show ¬ s.toExact.shMemaddrs (panByteAlignHOL addr) from hmem),
-          if_neg (show ¬ t.toExact.shMemaddrs (panByteAlignHOL addr) from hmemT),
+        simp only [shMemStoreFin, shMemStoreHOLExact, ite_eq_right hnb,
+          ite_eq_right (show ¬ s.toExact.shMemaddrs (panByteAlignHOL addr) from hmem),
+          ite_eq_right (show ¬ t.toExact.shMemaddrs (panByteAlignHOL addr) from hmemT),
           ofExact_toExact_any, goodResHOL]
         change panGlobalsStateRelHOLExact true ctxt s t
         exact hrel
@@ -305,16 +305,16 @@ theorem shMemLoadLocalRelationHOL {width : Nat} {σ : Type} [NeZero width]
           have hcallT : callFFIHOL t.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 nb]
               (panWordToBytesHOL addr false) = HolFfiResult.final event := by
             rw [← hffi]; exact hcall
-          simp only [shMemLoadHOLFiniteExact, if_pos hnb, if_pos hmem, if_pos hmemT,
+          simp only [shMemLoadHOLFiniteExact, ite_eq_left hnb, ite_eq_left hmem, ite_eq_left hmemT,
             hcall, hcallT]
         | ret newFfi newBytes =>
           have hcallT : callFFIHOL t.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 nb]
               (panWordToBytesHOL addr false) = HolFfiResult.ret newFfi newBytes := by
             rw [← hffi]; exact hcall
-          simp only [shMemLoadHOLFiniteExact, if_pos hnb, if_pos hmem, if_pos hmemT,
+          simp only [shMemLoadHOLFiniteExact, ite_eq_left hnb, ite_eq_left hmem, ite_eq_left hmemT,
             hcall, hcallT]
       · have hmemT : ¬ t.shMemaddrs addr := by rw [← hshmem]; exact hmem
-        simp only [shMemLoadHOLFiniteExact, if_pos hnb, if_neg hmem, if_neg hmemT]
+        simp only [shMemLoadHOLFiniteExact, ite_eq_left hnb, ite_eq_right hmem, ite_eq_right hmemT]
     · by_cases hmem : s.shMemaddrs (panByteAlignHOL addr)
       · have hmemT : t.shMemaddrs (panByteAlignHOL addr) := by rw [← hshmem]; exact hmem
         cases hcall : callFFIHOL s.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 nb]
@@ -323,16 +323,16 @@ theorem shMemLoadLocalRelationHOL {width : Nat} {σ : Type} [NeZero width]
           have hcallT : callFFIHOL t.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 nb]
               (panWordToBytesHOL addr false) = HolFfiResult.final event := by
             rw [← hffi]; exact hcall
-          simp only [shMemLoadHOLFiniteExact, if_neg hnb, if_pos hmem, if_pos hmemT,
+          simp only [shMemLoadHOLFiniteExact, ite_eq_right hnb, ite_eq_left hmem, ite_eq_left hmemT,
             hcall, hcallT]
         | ret newFfi newBytes =>
           have hcallT : callFFIHOL t.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 nb]
               (panWordToBytesHOL addr false) = HolFfiResult.ret newFfi newBytes := by
             rw [← hffi]; exact hcall
-          simp only [shMemLoadHOLFiniteExact, if_neg hnb, if_pos hmem, if_pos hmemT,
+          simp only [shMemLoadHOLFiniteExact, ite_eq_right hnb, ite_eq_left hmem, ite_eq_left hmemT,
             hcall, hcallT]
       · have hmemT : ¬ t.shMemaddrs (panByteAlignHOL addr) := by rw [← hshmem]; exact hmem
-        simp only [shMemLoadHOLFiniteExact, if_neg hnb, if_neg hmem, if_neg hmemT]
+        simp only [shMemLoadHOLFiniteExact, ite_eq_right hnb, ite_eq_right hmem, ite_eq_right hmemT]
   · by_cases hnb : nb = 0
     · by_cases hmem : s.shMemaddrs addr
       · have hmemT : t.shMemaddrs addr := by rw [← hshmem]; exact hmem
@@ -342,21 +342,21 @@ theorem shMemLoadLocalRelationHOL {width : Nat} {σ : Type} [NeZero width]
           have hcallT : callFFIHOL t.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 nb]
               (panWordToBytesHOL addr false) = HolFfiResult.final event := by
             rw [← hffi]; exact hcall
-          simp only [shMemLoadHOLFiniteExact, if_pos hnb, if_pos hmem, if_pos hmemT,
+          simp only [shMemLoadHOLFiniteExact, ite_eq_left hnb, ite_eq_left hmem, ite_eq_left hmemT,
             hcall, hcallT, goodResHOL, emptyLocalsHOLFinite]
           exact (Flapjack.PanGlobalsStateRelationLocals.stateRelEmptyLocalsHOL ctxt s t false).1 hrel
         | ret newFfi newBytes =>
           have hcallT : callFFIHOL t.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 nb]
               (panWordToBytesHOL addr false) = HolFfiResult.ret newFfi newBytes := by
             rw [← hffi]; exact hcall
-          simp only [shMemLoadHOLFiniteExact, if_pos hnb, if_pos hmem, if_pos hmemT,
+          simp only [shMemLoadHOLFiniteExact, ite_eq_left hnb, ite_eq_left hmem, ite_eq_left hmemT,
             hcall, hcallT, goodResHOL]
           exact stateRelFfiUpdateHOL true ctxt (s.setVarHOLFinite name _)
             (t.setVarHOLFinite name _) newFfi
             (Flapjack.PanGlobalsStateRelationLocals.stateRelSetVarHOL ctxt s t true name _
               hrel)
       · have hmemT : ¬ t.shMemaddrs addr := by rw [← hshmem]; exact hmem
-        simp only [shMemLoadHOLFiniteExact, if_pos hnb, if_neg hmem, if_neg hmemT,
+        simp only [shMemLoadHOLFiniteExact, ite_eq_left hnb, ite_eq_right hmem, ite_eq_right hmemT,
           goodResHOL]
         exact hrel
     · by_cases hmem : s.shMemaddrs (panByteAlignHOL addr)
@@ -367,21 +367,21 @@ theorem shMemLoadLocalRelationHOL {width : Nat} {σ : Type} [NeZero width]
           have hcallT : callFFIHOL t.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 nb]
               (panWordToBytesHOL addr false) = HolFfiResult.final event := by
             rw [← hffi]; exact hcall
-          simp only [shMemLoadHOLFiniteExact, if_neg hnb, if_pos hmem, if_pos hmemT,
+          simp only [shMemLoadHOLFiniteExact, ite_eq_right hnb, ite_eq_left hmem, ite_eq_left hmemT,
             hcall, hcallT, goodResHOL, emptyLocalsHOLFinite]
           exact (Flapjack.PanGlobalsStateRelationLocals.stateRelEmptyLocalsHOL ctxt s t false).1 hrel
         | ret newFfi newBytes =>
           have hcallT : callFFIHOL t.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 nb]
               (panWordToBytesHOL addr false) = HolFfiResult.ret newFfi newBytes := by
             rw [← hffi]; exact hcall
-          simp only [shMemLoadHOLFiniteExact, if_neg hnb, if_pos hmem, if_pos hmemT,
+          simp only [shMemLoadHOLFiniteExact, ite_eq_right hnb, ite_eq_left hmem, ite_eq_left hmemT,
             hcall, hcallT, goodResHOL]
           exact stateRelFfiUpdateHOL true ctxt (s.setVarHOLFinite name _)
             (t.setVarHOLFinite name _) newFfi
             (Flapjack.PanGlobalsStateRelationLocals.stateRelSetVarHOL ctxt s t true name _
               hrel)
       · have hmemT : ¬ t.shMemaddrs (panByteAlignHOL addr) := by rw [← hshmem]; exact hmem
-        simp only [shMemLoadHOLFiniteExact, if_neg hnb, if_neg hmem, if_neg hmemT,
+        simp only [shMemLoadHOLFiniteExact, ite_eq_right hnb, ite_eq_right hmem, ite_eq_right hmemT,
           goodResHOL]
         exact hrel
 

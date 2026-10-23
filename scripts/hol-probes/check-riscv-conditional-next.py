@@ -3,7 +3,7 @@
 from pathlib import Path
 import hashlib
 ROOT=Path(__file__).resolve().parents[2]
-CHECKS={'Flapjack/RiscV/CorrectnessEncoding/JumpCmp/Native.lean': '96c1ba6baa1b7195b126346f1fd8a39c2c0ff43dafbe733d9d84492601de96cd', 'scripts/hol-probes/riscv_conditional_next_probeScript.sml': '0ad98483ca9e9521a8bd94ce92e809340ef99ed61fb5154e56bcf7aa1f3445a1'}
+CHECKS={'Flapjack/RiscV/CorrectnessEncoding/JumpCmp/Native.lean': '939c8b36d015d64a8c89f0639d0bd8777b93086a437061177d412ed84523907f', 'scripts/hol-probes/riscv_conditional_next_probeScript.sml': '0ad98483ca9e9521a8bd94ce92e809340ef99ed61fb5154e56bcf7aa1f3445a1'}
 CHECKS['scripts/hol-probes/riscv_conditional_next_probe.out']='21d65648e3422dd77b3c36cbada1bbce4e141e2f67f35e80f16788bab4775bd5'
 OPS=('beq','bne','blt','bltu','bge','bgeu')
 SUFFIXES=('zero','alias_sign','odd_taken','odd_reverse','signed_boundary')

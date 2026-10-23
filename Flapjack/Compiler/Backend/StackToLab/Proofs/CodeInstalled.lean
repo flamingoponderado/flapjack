@@ -84,8 +84,8 @@ theorem locToPcAppend {width : Nat} [NeZero width] :
       intro pc code2 h
       simp only [List.cons_append, locToPc.eq_2] at h ⊢
       by_cases hc : sid = n ∧ m = 0
-      · rw [if_pos hc] at h ⊢; exact h
-      · rw [if_neg hc] at h ⊢; exact ih pc code2 h
+      · rw [ite_eq_left hc] at h ⊢; exact h
+      · rw [ite_eq_right hc] at h ⊢; exact ih pc code2 h
     | cons line lines ihl =>
       intro pc code2 h
       have tail : ∀ p, locToPc n m (⟨sid, lines⟩ :: rest) = some p →
@@ -128,13 +128,13 @@ theorem codeInstalledAppend {width : Nat} [NeZero width] :
     rw [codeInstalled_cons] at h ⊢
     split at h
     · rename_i lab
-      rw [if_pos lab]
+      rw [ite_eq_left lab]
       refine ⟨?_, ih _ _ _ h.2⟩
       cases x with
       | label l1 l2 _ => exact locToPcAppend _ _ _ _ _ h.1
       | _ => trivial
     · rename_i lab
-      rw [if_neg lab]
+      rw [ite_eq_right lab]
       exact ⟨asmFetchAuxSomeAppend _ _ _ _ h.1, ih _ _ _ h.2⟩
 
 /-- Complete original installation prefix law. -/
@@ -179,12 +179,12 @@ theorem codeInstalledAppendImp {width : Nat} [NeZero width] :
     split at h
     · rename_i lab
       obtain ⟨first, rest⟩ := ih pc l2 code h.2
-      refine ⟨by rw [if_pos lab]; exact ⟨h.1, first⟩, ?_⟩
+      refine ⟨by rw [ite_eq_left lab]; exact ⟨h.1, first⟩, ?_⟩
       simpa [List.filter_cons, lab] using rest
     · rename_i lab
       obtain ⟨first, rest⟩ := ih (pc + 1) l2 code h.2
-      refine ⟨by rw [if_neg lab]; exact ⟨h.1, first⟩, ?_⟩
-      simp only [List.filter_cons, lab, Bool.not_false, if_true, List.length_cons]
+      refine ⟨by rw [ite_eq_right lab]; exact ⟨h.1, first⟩, ?_⟩
+      simp only [List.filter_cons, lab, Bool.not_false, ite_true, List.length_cons]
       simpa [Nat.add_assoc, Nat.add_comm 1] using rest
 
 /-- Number of non-label lines in a list of sections (HOL
@@ -204,10 +204,10 @@ theorem asmFetchAuxSkipLines {width : Nat} [NeZero width] (sid : Nat) :
     intro pc rest
     rw [asmFetchAux.eq_3]
     by_cases lab : isLabelHOL line = true
-    · rw [if_pos lab]; simpa [List.filter_cons, lab] using ih pc rest
-    · rw [if_neg lab]
-      simp only [List.filter_cons, lab, Bool.not_false, if_true, List.length_cons]
-      rw [if_neg (by omega), show (lines.filter fun x => !isLabelHOL x).length + 1 + pc - 1 =
+    · rw [ite_eq_left lab]; simpa [List.filter_cons, lab] using ih pc rest
+    · rw [ite_eq_right lab]
+      simp only [List.filter_cons, lab, Bool.not_false, ite_true, List.length_cons]
+      rw [ite_eq_right (by omega), show (lines.filter fun x => !isLabelHOL x).length + 1 + pc - 1 =
         (lines.filter fun x => !isLabelHOL x).length + pc by omega]
       exact ih pc rest
 
@@ -289,7 +289,7 @@ theorem codeInstalledEq {width : Nat} [NeZero width] :
     rw [codeInstalled_cons]
     simp only [codeInstalled', labsCorrect]
     by_cases lab : isLabelHOL x = true
-    · simp only [lab, if_true, ih]; tauto
+    · simp only [lab, ite_true, ih]; tauto
     · simp only [lab, Bool.false_eq_true, ite_false, ih]; tauto
 
 /-- Complete original `code_installed'` cons law for a leading section. -/
@@ -308,7 +308,7 @@ theorem codeInstalledCons {width : Nat} [NeZero width]
     intro ys pos pc h
     simp only [codeInstalled'] at h ⊢
     by_cases lab : isLabelHOL x = true
-    · simp only [lab, if_true] at h ⊢; exact ih ys pos pc h
+    · simp only [lab, ite_true] at h ⊢; exact ih ys pos pc h
     · simp only [lab] at h ⊢
       refine ⟨?_, ?_⟩
       · rw [Nat.add_comm, asmFetchAuxSkipLines]; exact h.1
@@ -339,7 +339,7 @@ theorem locToPcSkip {width : Nat} [NeZero width] (k ll sid : Nat) (hsid : sid �
   induction lines with
   | nil =>
     intro rest _
-    rw [locToPc.eq_2, if_neg (by omega)]
+    rw [locToPc.eq_2, ite_eq_right (by omega)]
     cases locToPc k ll rest <;> rfl
   | cons line lines ih =>
     intro rest hok
@@ -348,21 +348,21 @@ theorem locToPcSkip {width : Nat} [NeZero width] (k ll sid : Nat) (hsid : sid �
     cases line with
     | label a b c =>
       have no := hok _ List.mem_cons_self a b c rfl
-      rw [locToPc.eq_3, if_neg (by omega)]
+      rw [locToPc.eq_3, ite_eq_right (by omega)]
       simp only [Bool.and_eq_true, beq_iff_eq, bne_iff_ne, ne_eq]
-      rw [if_neg (by tauto)]
-      simp only [isLabelHOL, if_true, List.filter_cons, Bool.not_true]
+      rw [ite_eq_right (by tauto)]
+      simp only [isLabelHOL, ite_true, List.filter_cons, Bool.not_true]
       exact ih rest tailOk
     | asm i e l =>
-      rw [locToPc.eq_4, if_neg (by omega)]
-      simp only [isLabelHOL, Bool.false_eq_true, if_false, Bool.false_and, List.filter_cons,
-        Bool.not_false, if_true, List.length_cons, ih rest tailOk, Option.map_map]
+      rw [locToPc.eq_4, ite_eq_right (by omega)]
+      simp only [isLabelHOL, Bool.false_eq_true, ite_false, Bool.false_and, List.filter_cons,
+        Bool.not_false, ite_true, List.length_cons, ih rest tailOk, Option.map_map]
       · rfl
       · intro _ _ _ h; cases h
     | labAsm i p e l =>
-      rw [locToPc.eq_4, if_neg (by omega)]
-      simp only [isLabelHOL, Bool.false_eq_true, if_false, Bool.false_and, List.filter_cons,
-        Bool.not_false, if_true, List.length_cons, ih rest tailOk, Option.map_map]
+      rw [locToPc.eq_4, ite_eq_right (by omega)]
+      simp only [isLabelHOL, Bool.false_eq_true, ite_false, Bool.false_and, List.filter_cons,
+        Bool.not_false, ite_true, List.length_cons, ih rest tailOk, Option.map_map]
       · rfl
       · intro _ _ _ h; cases h
 
@@ -426,7 +426,7 @@ theorem codeInstalledAppend2 {width : Nat} [NeZero width] :
     have tailOk : ∀ line ∈ xs, LabProps.secLabelOk k line :=
       fun l m => linesOk l (List.mem_cons_of_mem _ m)
     by_cases lab : isLabelHOL x = true
-    · rw [if_pos lab] at h ⊢
+    · rw [ite_eq_left lab] at h ⊢
       refine ⟨?_, ih pc c1 c2 k ⟨notMem, ok, tailOk, h.2⟩⟩
       cases x with
       | label l1 l2 _ =>
@@ -436,7 +436,7 @@ theorem codeInstalledAppend2 {width : Nat} [NeZero width] :
         show locToPc l1 l2 (c1 ++ c2) = some (codeLength c1 + pc)
         rw [this, Nat.add_comm]
       | _ => trivial
-    · rw [if_neg lab] at h ⊢
+    · rw [ite_eq_right lab] at h ⊢
       refine ⟨?_, ?_⟩
       · exact asmFetchAuxSomeAppend2 pc c1 x c2 h.1
       · have := ih (pc + 1) c1 c2 k ⟨notMem, ok, tailOk, h.2⟩
@@ -459,9 +459,9 @@ theorem codeInstalled'ConsLabel {width : Nat} [NeZero width] (h : LabLineHOL wid
     intro pos lab
     simp only [codeInstalled']
     by_cases lx : isLabelHOL x = true
-    · simp only [lx, if_true]; exact ih pos lab
-    · simp only [lx, Bool.false_eq_true, if_false, ih (pos + 1) lab, asmFetchAux.eq_3, lab,
-        if_true]
+    · simp only [lx, ite_true]; exact ih pos lab
+    · simp only [lx, Bool.false_eq_true, ite_false, ih (pos + 1) lab, asmFetchAux.eq_3, lab,
+        ite_true]
 
 /-- Complete original `code_installed'` law for a leading non-label line,
 specialised as in the source to position zero. -/
@@ -483,8 +483,8 @@ theorem codeInstalled'ConsNonLabel {width : Nat} [NeZero width] (h : LabLineHOL 
     intro pos
     simp only [codeInstalled']
     by_cases lx : isLabelHOL x = true
-    · simp only [lx, if_true]; exact ih pos
-    · simp only [lx, Bool.false_eq_true, if_false, ih (pos + 1), asmFetchAux.eq_3, nonLabel,
+    · simp only [lx, ite_true]; exact ih pos
+    · simp only [lx, Bool.false_eq_true, ite_false, ih (pos + 1), asmFetchAux.eq_3, nonLabel,
         Nat.add_one_ne_zero, Nat.add_sub_cancel]
 
 /-- Complete original self-installation of a section prefix. -/
@@ -500,9 +500,9 @@ theorem codeInstalled'Simp {width : Nat} [NeZero width] (n : Nat) (rest : List (
   | cons x lines ih =>
     simp only [codeInstalled', List.cons_append]
     by_cases lx : isLabelHOL x = true
-    · simp only [lx, if_true]; exact (codeInstalled'ConsLabel x n _ other lines 0 lx).mpr ih
-    · simp only [lx, Bool.false_eq_true, if_false]
-      refine ⟨by rw [asmFetchAux.eq_3, if_neg lx, if_pos rfl], ?_⟩
+    · simp only [lx, ite_true]; exact (codeInstalled'ConsLabel x n _ other lines 0 lx).mpr ih
+    · simp only [lx, Bool.false_eq_true, ite_false]
+      refine ⟨by rw [asmFetchAux.eq_3, ite_eq_right lx, ite_eq_left rfl], ?_⟩
       exact (codeInstalled'ConsNonLabel x n _ other lines lx).mpr ih
 
 /-- Complete original label-correctness prefix law. -/
@@ -520,8 +520,8 @@ theorem labsCorrectAppend {width : Nat} [NeZero width] (rest : List (LabLineHOL 
     intro pc h
     simp only [List.cons_append, labsCorrect] at h ⊢
     by_cases lab : isLabelHOL x = true
-    · rw [if_pos lab] at h ⊢; exact ⟨ih pc h.1, h.2⟩
-    · rw [if_neg lab] at h ⊢; exact ih (pc + 1) h
+    · rw [ite_eq_left lab] at h ⊢; exact ⟨ih pc h.1, h.2⟩
+    · rw [ite_eq_right lab] at h ⊢; exact ih (pc + 1) h
 
 open Flapjack.Compiler.Backend.LabProps.LabelSets in
 /-- Searching a positive label through a section prefix that does not contain
@@ -539,27 +539,27 @@ theorem locToPcPrefix {width : Nat} [NeZero width] (n b sid : Nat) (hb : b ≠ 0
     cases x with
     | label a c d =>
       simp only [extractLabels, List.mem_cons, not_or] at notMem
-      rw [List.cons_append, locToPc.eq_3, if_neg (by omega)]
+      rw [List.cons_append, locToPc.eq_3, ite_eq_right (by omega)]
       have : ¬((a == n && c == b && b != 0) = true) := by
         intro h
         simp only [Bool.and_eq_true, beq_iff_eq, bne_iff_ne] at h
         obtain ⟨⟨ha, hc⟩, _⟩ := h
         exact notMem.1 (by rw [ha, hc])
-      rw [if_neg this]
-      simp only [isLabelHOL, if_true, List.filter_cons, Bool.not_true]
+      rw [ite_eq_right this]
+      simp only [isLabelHOL, ite_true, List.filter_cons, Bool.not_true]
       exact ih notMem.2
     | asm i e l =>
       simp only [extractLabels] at notMem
-      rw [List.cons_append, locToPc.eq_4, if_neg (by omega)]
-      · simp only [isLabelHOL, Bool.false_eq_true, if_false, Bool.false_and, List.filter_cons,
-          Bool.not_false, if_true, List.length_cons, ih notMem, Option.map_map]
+      rw [List.cons_append, locToPc.eq_4, ite_eq_right (by omega)]
+      · simp only [isLabelHOL, Bool.false_eq_true, ite_false, Bool.false_and, List.filter_cons,
+          Bool.not_false, ite_true, List.length_cons, ih notMem, Option.map_map]
         rfl
       · intro _ _ _ h; cases h
     | labAsm i p e l =>
       simp only [extractLabels] at notMem
-      rw [List.cons_append, locToPc.eq_4, if_neg (by omega)]
-      · simp only [isLabelHOL, Bool.false_eq_true, if_false, Bool.false_and, List.filter_cons,
-          Bool.not_false, if_true, List.length_cons, ih notMem, Option.map_map]
+      rw [List.cons_append, locToPc.eq_4, ite_eq_right (by omega)]
+      · simp only [isLabelHOL, Bool.false_eq_true, ite_false, Bool.false_and, List.filter_cons,
+          Bool.not_false, ite_true, List.length_cons, ih notMem, Option.map_map]
         rfl
       · intro _ _ _ h; cases h
 
@@ -583,7 +583,7 @@ theorem labsCorrectHd {width : Nat} [NeZero width] (n : Nat)
     simp only [List.append_assoc, List.singleton_append] at shifted
     simp only [labsCorrect]
     by_cases lab : isLabelHOL x = true
-    · rw [if_pos lab]
+    · rw [ite_eq_left lab]
       refine ⟨by simpa [List.filter_append, lab] using shifted, ?_⟩
       cases x with
       | label a b c =>
@@ -596,10 +596,10 @@ theorem labsCorrectHd {width : Nat} [NeZero width] (n : Nat)
           intro m
           exact (List.nodup_append.mp nodup).2.2 _ m _ List.mem_cons_self rfl
         show locToPc a b (⟨a, extra ++ Line.label a b c :: l⟩ :: code) = _
-        rw [locToPcPrefix a b a hb _ code extra notMem, locToPc.eq_3, if_neg (by omega)]
+        rw [locToPcPrefix a b a hb _ code extra notMem, locToPc.eq_3, ite_eq_right (by omega)]
         simp [hb]
       | _ => simp [isLabelHOL] at lab
-    · rw [if_neg lab]
+    · rw [ite_eq_right lab]
       simpa [List.filter_append, lab] using shifted
 
 open Flapjack.Compiler.Backend.LabProps.LabelSets
@@ -659,7 +659,7 @@ theorem labsCorrectSkip {width : Nat} [NeZero width] (n : Nat) (l : List (LabLin
     have tailOther : ∀ p ∈ extractLabels xs, p.1 ≠ n := fun p m => other p (by
       cases x <;> simp [extractLabels, m])
     by_cases lab : isLabelHOL x = true
-    · rw [if_pos lab] at h ⊢
+    · rw [ite_eq_left lab] at h ⊢
       refine ⟨ih pc tailOther h.1, ?_⟩
       cases x with
       | label a b c =>
@@ -675,7 +675,7 @@ theorem labsCorrectSkip {width : Nat} [NeZero width] (n : Nat) (l : List (LabLin
           simp only at this
           omega
       | _ => trivial
-    · rw [if_neg lab] at h ⊢
+    · rw [ite_eq_right lab] at h ⊢
       have := ih (pc + 1) tailOther h
       rwa [show pc + 1 + (l.filter fun x => !isLabelHOL x).length =
         pc + (l.filter fun x => !isLabelHOL x).length + 1 by omega] at this
@@ -687,9 +687,9 @@ theorem locToPcSelf {width : Nat} [NeZero width] (n : Nat) (lines : List (LabLin
   | nil => simp [locToPc.eq_2]
   | cons x xs =>
     cases x
-    · rw [locToPc.eq_3, if_pos ⟨rfl, rfl⟩]
-    · rw [locToPc.eq_4, if_pos ⟨rfl, rfl⟩]; intro _ _ _ h; cases h
-    · rw [locToPc.eq_4, if_pos ⟨rfl, rfl⟩]; intro _ _ _ h; cases h
+    · rw [locToPc.eq_3, ite_eq_left ⟨rfl, rfl⟩]
+    · rw [locToPc.eq_4, ite_eq_left ⟨rfl, rfl⟩]; intro _ _ _ h; cases h
+    · rw [locToPc.eq_4, ite_eq_left ⟨rfl, rfl⟩]; intro _ _ _ h; cases h
 
 /-- Complete original label correctness of every section from well-formedness. -/
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "labels_ok_labs_correct"
@@ -866,7 +866,7 @@ private theorem codeInstalledLabelMem {width : Nat} [NeZero width] (l1 l2 x : Na
       intro pc installed mem
       rw [codeInstalled_cons] at installed
       rcases List.mem_cons.mp mem with rfl | mem
-      · simp only [isLabelHOL, if_true] at installed
+      · simp only [isLabelHOL, ite_true] at installed
         exact ⟨pc, installed.1⟩
       · split_ifs at installed
         · exact ih pc installed.2 mem

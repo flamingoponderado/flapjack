@@ -144,10 +144,10 @@ theorem fp64Lower_value_extremal {X : Rat} (hX : 0 ≤ X)
   have hn0 : (0 : Rat) ≤ ((fp64N (fp64Pat b) : Nat) : Rat) := by exact_mod_cast Nat.zero_le _
   have hl0 : (0 : Rat) ≤ ((fp64N (fp64Lower X) : Nat) : Rat) := by exact_mod_cast Nat.zero_le _
   by_cases hs : b.sign = 1
-  · simp only [hs, if_true] at hb ⊢
+  · simp only [hs, ite_true] at hb ⊢
     apply Rat.mul_le_mul_of_nonneg_right _ (Rat.le_of_lt hInv)
     grind
-  · simp only [hs, if_false, Rat.one_mul] at hb ⊢
+  · simp only [hs, ite_false, Rat.one_mul] at hb ⊢
     have hq : ((fp64N (fp64Pat b) : Nat) : Rat) ≤ X :=
       Rat.le_of_mul_le_mul_right hb hInv
     have hp := fp64Lower_extremal hX hq
@@ -168,7 +168,7 @@ theorem fp64Upper_value_extremal {X : Rat} (hX : 0 ≤ X)
   have hInv := Rat.inv_pos.mpr hD
   have hn0 : (0 : Rat) ≤ ((fp64N (fp64Pat b) : Nat) : Rat) := by exact_mod_cast Nat.zero_le _
   by_cases hs : b.sign = 1
-  · simp only [hs, if_true] at hb ⊢
+  · simp only [hs, ite_true] at hb ⊢
     have hxn := Rat.le_of_mul_le_mul_right hb hInv
     have hx0 : X = 0 := by grind
     have hp : fp64Upper X ≤ 0 := fp64Upper_extremal hX (by simp [hx0, fp64N])
@@ -178,7 +178,7 @@ theorem fp64Upper_value_extremal {X : Rat} (hX : 0 ≤ X)
     rw [hnzero]
     change (0 : Rat) / 2 ^ 1074 ≤ -1 * ((fp64N (fp64Pat b) : Nat) : Rat) / 2 ^ 1074
     simpa only [hx0] using hb
-  · simp only [hs, if_false, Rat.one_mul] at hb ⊢
+  · simp only [hs, ite_false, Rat.one_mul] at hb ⊢
     have hq : X ≤ ((fp64N (fp64Pat b) : Nat) : Rat) :=
       Rat.le_of_mul_le_mul_right hb hInv
     have hp := fp64Upper_extremal hX hq
@@ -306,7 +306,7 @@ theorem fp64_same_sign_value_injective (a b : HolFloat 52 11)
   have hInv := Rat.inv_pos.mpr hD
   have hn : ((fp64N (fp64Pat a) : Nat) : Rat) =
       ((fp64N (fp64Pat b) : Nat) : Rat) := by
-    by_cases h : b.sign = 1 <;> simp only [h, if_true, if_false] at hv <;> grind
+    by_cases h : b.sign = 1 <;> simp only [h, ite_true, ite_false] at hv <;> grind
   have hnat : fp64N (fp64Pat a) = fp64N (fp64Pat b) := by exact_mod_cast hn
   have hp : fp64Pat a = fp64Pat b := by
     rcases Nat.lt_trichotomy (fp64Pat a) (fp64Pat b) with h | h | h
@@ -331,7 +331,7 @@ theorem fp64_finite_zero_value (f : HolFloat 52 11)
     grind
   · intro hv
     have hn : ((fp64N (fp64Pat f) : Nat) : Rat) = 0 := by
-      by_cases hs : f.sign = 1 <;> simp only [hs, if_true, if_false] at hv <;> grind
+      by_cases hs : f.sign = 1 <;> simp only [hs, ite_true, ite_false] at hv <;> grind
     have hn' : fp64N (fp64Pat f) = 0 := by exact_mod_cast hn
     exact fp64N_eq_zero.mp hn'
 
@@ -658,15 +658,15 @@ theorem holFloatRound_directed_fp64 (d : Fp64Direction) (toneg : Bool) (x : Rat)
   have hlow := fp64DirectedCandidate_choice d x
   unfold holFloatRound holFp64DirectedRound
   by_cases hl : x < -holFloatLargest 52 11
-  · cases d <;> simp only [fp64DirectionMode, holRound, hl, if_true]
+  · cases d <;> simp only [fp64DirectionMode, holRound, hl, ite_true]
   · by_cases hh : x > holFloatLargest 52 11
-    · cases d <;> simp only [fp64DirectionMode, holRound, hl, hh, if_false, if_true]
+    · cases d <;> simp only [fp64DirectionMode, holRound, hl, hh, ite_false, ite_true]
     · have hlo : -holFloatLargest 52 11 ≤ x := by grind
       have hhi : x ≤ holFloatLargest 52 11 := by grind
       have h := hlow hlo hhi
         (if toneg then holFloatMinusZero 52 11 else holFloatPlusZero 52 11)
       cases d <;> dsimp [fp64DirectionMode, holRound, fp64DirectedCandidates] at h ⊢ <;>
-        simp only [hl, hh, if_false] <;> exact h
+        simp only [hl, hh, ite_false] <;> exact h
 
 end Flapjack.Binary64DirectedRounding
 

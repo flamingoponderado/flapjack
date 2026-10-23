@@ -206,7 +206,7 @@ theorem compile_single_lem {width : Nat} [NeZero width] {C F : Type} (t : Bool) 
   have e1' : evaluate p1 { st with permute := perm2 } = (res, { rst with locals := loc1 }) := e1
   -- SSA result
   rw [e1'] at hS
-  simp only [herr, if_false] at hS
+  simp only [herr, ite_false] at hS
   obtain ⟨hres2, heq2, hloc2⟩ := hS
   rcases e2 : evaluate p2 { st with permute := perm1 } with ⟨res2, rst2⟩
   rw [e2] at hres2 heq2 hloc2
@@ -229,7 +229,7 @@ theorem compile_single_lem {width : Nat} [NeZero width] {C F : Type} (t : Bool) 
   obtain ⟨t7, e7, hl7⟩ := WordAlloc.evaluateRemoveDeadProg p6 _ _ res ⟨flat6, e6, herr⟩
   -- word_alloc result
   rw [e7] at hA
-  simp only [herr, if_false] at hA
+  simp only [herr, ite_false] at hA
   rcases e8 : evaluate (WordAlloc.wordAlloc name c a k p7 col) st with ⟨res', rcst⟩
   rw [e8] at hA
   obtain ⟨hres', heq', hloc'⟩ := hA

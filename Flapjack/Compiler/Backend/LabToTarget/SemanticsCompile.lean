@@ -51,10 +51,10 @@ private theorem successfulIndex {α : Type} [DecidableEq α] (values : List α)
   | nil => simp [findIndex] at h
   | cons head tail ih =>
     by_cases he : head = target
-    · have hs : offset = index := by simpa only [findIndex,if_pos he,Option.some.injEq] using h
+    · have hs : offset = index := by simpa only [findIndex,ite_eq_left he,Option.some.injEq] using h
       exact ⟨0,by simp,by omega,he⟩
     · have ht : findIndex target tail (offset+1) = some index := by
-        simpa only [findIndex,if_neg he] using h
+        simpa only [findIndex,ite_eq_right he] using h
       obtain ⟨i,hi,hindex,hvalue⟩ := ih (offset+1) ht
       exact ⟨i+1,by simp; omega,by omega,by simpa using hvalue⟩
 

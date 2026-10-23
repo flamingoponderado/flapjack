@@ -56,16 +56,16 @@ theorem handlerBitmapProps {width : Nat} [NeZero width] (stack : List (BitVec wi
   intro hw
   rcases hw with hw | hw <;> subst hw
   · have h4 : bitLength (4 : BitVec 32) = 3 := by
-      rw [bitLength, if_neg (by decide), bitLength, if_neg (by decide), bitLength,
-        if_neg (by decide), bitLength, if_pos (by decide)]
+      rw [bitLength, ite_eq_right (by decide), bitLength, ite_eq_right (by decide), bitLength,
+        ite_eq_right (by decide), bitLength, ite_eq_left (by decide)]
     simp only [readBitmap, h4]
-    rw [if_neg (by decide)]
+    rw [ite_eq_right (by decide)]
     decide
   · have h4 : bitLength (4 : BitVec 64) = 3 := by
-      rw [bitLength, if_neg (by decide), bitLength, if_neg (by decide), bitLength,
-        if_neg (by decide), bitLength, if_pos (by decide)]
+      rw [bitLength, ite_eq_right (by decide), bitLength, ite_eq_right (by decide), bitLength,
+        ite_eq_right (by decide), bitLength, ite_eq_left (by decide)]
     simp only [readBitmap, h4]
-    rw [if_neg (by decide)]
+    rw [ite_eq_right (by decide)]
     decide
 
 theorem fullReadBitmap_ne_zero {width : Nat} [NeZero width] {bs : List (BitVec width)}
@@ -96,7 +96,7 @@ theorem encStackLemma {width : Nat} [NeZero width] (k len : Nat) :
     · rw [absStack.eq_def] at habs
       simp only [Option.ite_none_right_eq_some, Option.some.injEq] at habs
       obtain ⟨rfl, -⟩ := habs
-      rw [encStack, if_pos rfl, if_pos rfl]
+      rw [encStack, ite_eq_left rfl, ite_eq_left rfl]
       rfl
     · rw [absStack.eq_def] at habs
       simp at habs
@@ -128,7 +128,7 @@ theorem encStackLemma {width : Nat} [NeZero width] (k len : Nat) :
       have hbl : bits.length = len0 := by simpa using hlen0
       subst hbl
       have hf := Compiler.Backend.WordToStack.filterBitmapIndexReconstruct bits stack k _ hfilter
-      rw [encStack, if_neg (fullReadBitmap_ne_zero hb)]
+      rw [encStack, ite_eq_right (fullReadBitmap_ne_zero hb)]
       simp only [hb]
       split
       · rename_i h; rw [hf] at h; cases h
@@ -172,10 +172,10 @@ theorem encStackLemma {width : Nat} [NeZero width] (k len : Nat) :
         rcases hgood with hw | hw <;> subst hw <;> decide
       have hread : fullReadBitmap ((4 : BitVec width) :: bs') (WordLocW.word (1 : BitVec width)) =
           some [false, false] := by
-        simp only [fullReadBitmap, if_neg h10]
+        simp only [fullReadBitmap, ite_eq_right h10]
         rw [show ((1 : BitVec width) - 1).toNat = 0 by simp]
         exact handlerBitmapProps bs' hgood
-      rw [encStack, if_neg (by simpa using h10)]
+      rw [encStack, ite_eq_right (by simpa using h10)]
       simp only [hread]
       split
       · rename_i h; simp [filterBitmap] at h
@@ -184,7 +184,7 @@ theorem encStackLemma {width : Nat} [NeZero width] (k len : Nat) :
         obtain ⟨rfl, rfl⟩ := h
         have hinner : encStack ((4 : BitVec width) :: bs') (w :: stack) =
             some (l.map Prod.snd ++ wordSemEncStack xs) := by
-          rw [encStack, if_neg (fullReadBitmap_ne_zero hb)]
+          rw [encStack, ite_eq_right (fullReadBitmap_ne_zero hb)]
           simp only [hb]
           split
           · rename_i h; rw [hf] at h; cases h
@@ -356,7 +356,7 @@ theorem decStackLemma1 {width : Nat} [NeZero width] (k len : Nat) :
       · simp only [wordSemDecStack, Option.some.injEq] at hdec
         subst hdec
         refine ⟨[.word 0], [], ?_, ?_, trivial, List.Forall₂.nil⟩
-        · rw [decStack, if_pos rfl, if_pos ⟨rfl, rfl⟩]
+        · rw [decStack, ite_eq_left rfl, ite_eq_left ⟨rfl, rfl⟩]
         · rw [absStack.eq_def]; simp
       · simp [wordSemDecStack] at hdec
     · rw [absStack.eq_def] at habs; simp at habs
@@ -399,7 +399,7 @@ theorem decStackLemma1 {width : Nat} [NeZero width] (k len : Nat) :
       obtain ⟨sdec', bstack', hsdec, hbabs, hbrel, hfa⟩ :=
         ih _ lens ys s' (ls.drop l.length) ⟨hgood, hone, hhd, hys, hrest, hs'⟩
       refine ⟨[w] ++ x ++ sdec', (none, bits, x) :: bstack', ?_, ?_, ?_, ?_⟩
-      · rw [decStack, if_neg (fullReadBitmap_ne_zero hb)]
+      · rw [decStack, ite_eq_right (fullReadBitmap_ne_zero hb)]
         simp only [hb]
         split
         · rename_i h; rw [hm] at h; cases h
@@ -410,7 +410,7 @@ theorem decStackLemma1 {width : Nat} [NeZero width] (k len : Nat) :
           rw [hsdec]
       · rw [absStack.eq_def]
         simp only [List.cons_append, hb]
-        rw [if_neg (by simp), if_neg (by simp [hxl]), List.nil_append, List.take_left' hxl,
+        rw [ite_eq_right (by simp), ite_eq_right (by simp [hxl]), List.nil_append, List.take_left' hxl,
           List.drop_left' hxl, hbabs]
       · simp only [stackRelAux]
         refine ⟨hA', hB', ?_, hbrel⟩
@@ -454,12 +454,12 @@ theorem decStackLemma1 {width : Nat} [NeZero width] (k len : Nat) :
         rcases hgood with hw | hw <;> subst hw <;> decide
       have hread : fullReadBitmap ((4 : BitVec width) :: bs') (WordLocW.word (1 : BitVec width)) =
           some [false, false] := by
-        simp only [fullReadBitmap, if_neg h10]
+        simp only [fullReadBitmap, ite_eq_right h10]
         rw [show ((1 : BitVec width) - 1).toNat = 0 by simp]
         exact handlerBitmapProps bs' hgood
       have hinner : decStack ((4 : BitVec width) :: bs') ls (w :: stack) =
           some ([w] ++ x ++ sdec') := by
-        rw [decStack, if_neg (fullReadBitmap_ne_zero hb)]
+        rw [decStack, ite_eq_right (fullReadBitmap_ne_zero hb)]
         simp only [hb]
         split
         · rename_i h; rw [hm] at h; cases h
@@ -470,7 +470,7 @@ theorem decStackLemma1 {width : Nat} [NeZero width] (k len : Nat) :
           rw [hsdec]
       refine ⟨[.word 1] ++ [loc, hv] ++ ([w] ++ x ++ sdec'),
         (some (loc, hv), bits, x) :: bstack', ?_, ?_, ?_, ?_⟩
-      · rw [decStack, if_neg (by simpa using h10)]
+      · rw [decStack, ite_eq_right (by simpa using h10)]
         simp only [hread]
         split
         · rename_i h; simp [mapBitmap] at h
@@ -480,7 +480,7 @@ theorem decStackLemma1 {width : Nat} [NeZero width] (k len : Nat) :
           rw [hinner]
       · rw [absStack.eq_def]
         simp only [List.cons_append, List.nil_append, hb]
-        rw [if_neg (by simp), if_neg (by simp), if_neg (by simp [hxl]), List.take_left' hxl,
+        rw [ite_eq_right (by simp), ite_eq_right (by simp), ite_eq_right (by simp [hxl]), List.take_left' hxl,
           List.drop_left' hxl, hbabs]
       · simp only [stackRelAux]
         have hlenEq : ys.length = bstack'.length := hfa.length_eq
@@ -591,7 +591,7 @@ theorem gcStateRel {width : Nat} [NeZero width] {C F : Type}
       store := st.updateEq (.handler, (t1.store.lookup .handler).getD (.loc 0 0))
       regs := HolFiniteMapExact.empty
       memory := m }, ?_, ?_, ?_, rfl⟩
-  · simp only [StackSemAllocation.gc, if_neg (by omega : ¬ t1.stack.length < t1.stackSpace),
+  · simp only [StackSemAllocation.gc, ite_eq_right (by omega : ¬ t1.stack.length < t1.stackSpace),
       henc]
     rw [h8, h9, htf]
     simp only [hyy]

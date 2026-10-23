@@ -129,12 +129,12 @@ theorem compileCorrect_Tick {width : Nat} [NeZero width] {C F : Type}
   obtain ⟨len, hmem, hmd, hsmd, hclock, hbe, hffi, hcur, hlen, htop, hglob, hcode⟩ := hState'
   simp only [LoopSemStateFiniteExact.evaluate] at hEval
   by_cases h0 : s.clock = 0
-  · rw [if_pos h0, Prod.mk.injEq] at hEval
+  · rw [ite_eq_left h0, Prod.mk.injEq] at hEval
     obtain ⟨rfl, rfl⟩ := hEval
     refine ⟨WordSemStateFiniteExact.flushState true t, some .timeOut, ?_, ?_, rfl⟩
     · simp only [LoopToWord.compHOL]; rw [WordSemStateFiniteExact.evaluate]; simp [hclock, h0]
     · simp [WordSemStateFiniteExact.flushState, hffi]
-  · rw [if_neg h0, Prod.mk.injEq] at hEval
+  · rw [ite_eq_right h0, Prod.mk.injEq] at hEval
     obtain ⟨rfl, rfl⟩ := hEval
     refine ⟨WordSemStateFiniteExact.decClock t, none, ?_, ?_, ?_⟩
     · simp only [LoopToWord.compHOL]; rw [WordSemStateFiniteExact.evaluate]; simp [hclock, h0]

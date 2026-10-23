@@ -78,10 +78,10 @@ theorem evaluateUnchangedLocal_CallHandler {width : Nat} {σ : Type} [NeZero wid
       obtain ⟨body, callee, shape⟩ := entry
       simp only [hl] at heval
       by_cases hc : state.clock = 0
-      · simp only [if_pos hc] at heval
+      · simp only [ite_eq_left hc] at heval
         obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
         simp [goodResHOL] at hgood
-      · simp only [if_neg hc] at heval
+      · simp only [ite_eq_right hc] at heval
         have hex : ∃ r st, evaluateHOLFiniteState (callEntryStateHOLFinite state callee) body = (r, st) := ⟨_, _, rfl⟩
         obtain ⟨r, st, hb⟩ := hex
         simp only [hb] at heval
@@ -93,7 +93,7 @@ theorem evaluateUnchangedLocal_CallHandler {width : Nat} {σ : Type} [NeZero wid
           | «continue» => exact False.elim (herror (Prod.mk.inj heval).1.symm)
           | exception eid exn =>
             by_cases hid : eid = handlerId
-            · simp only [if_pos hid] at heval
+            · simp only [ite_eq_left hid] at heval
               cases hes : state.eshapes.lookup eid with
               | none =>
                 simp only [hes] at heval
@@ -115,7 +115,7 @@ theorem evaluateUnchangedLocal_CallHandler {width : Nat} {σ : Type} [NeZero wid
                     Ne.symm hhandler.1] using hi
                 · simp only [hg] at heval
                   exact False.elim (herror (Prod.mk.inj heval).1.symm)
-            · simp only [if_neg hid] at heval
+            · simp only [ite_eq_right hid] at heval
               obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
               simp [goodResHOL] at hgood
           | timeOut =>

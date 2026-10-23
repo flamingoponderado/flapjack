@@ -172,7 +172,7 @@ theorem compileCorrect_callFFI {width : Nat} [NeZero width] {S Q : Type} {F : Ty
   have he := el_getFfiIndex_mem _ _ hmemNames
   have hlk : mc.mmioInfo.lookup (getFfiIndex mc.ffiNames (.extCall name)) = none := by
     have := hiinfo (getFfiIndex mc.ffiNames (.extCall name))
-    rwa [if_neg (by omega)] at this
+    rwa [ite_eq_right (by omega)] at this
   have hm := (sptAListLookup_eq_lookup _ mc.mmioInfo).trans hlk
   -- the target PC after the jump is that FFI entry
   have hjpc : t1.pc + (0 - BitVec.ofNat width (posVal s1.pc 0 code2 +
@@ -197,8 +197,8 @@ theorem compileCorrect_callFFI {width : Nat} [NeZero width] {S Q : Type} {F : Ty
       (fun a => if mc.progAddresses a then some (t1.mem a) else none) := by
     funext a
     by_cases ha : mc.progAddresses a
-    · rw [if_pos ha, if_pos ha, hgmem a (c3 ▸ ha)]; rfl
-    · rw [if_neg ha, if_neg ha]
+    · rw [ite_eq_left ha, ite_eq_left ha, hgmem a (c3 ▸ ha)]; rfl
+    · rw [ite_eq_right ha, ite_eq_right ha]
   have hrd : readFfiBytearraysHOL mc ms2 = (some conf, some bytes2) := by
     simp only [readFfiBytearraysHOL, readFfiBytearrayHOL, hfun]
     rw [c7, c9, c11, c13, hreg _ c6, hreg _ c8, hreg _ c10, hreg _ c12,

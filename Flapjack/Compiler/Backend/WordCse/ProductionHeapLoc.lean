@@ -19,9 +19,9 @@ theorem wordCseHeap_production_transport {width : Nat} [NeZero width]
   have invalidRelated := invalidateData_transport native executed related destination
   simp only [wordCse, RiscV.wordCseProg, Bool.or_eq_true, beq_iff_eq, decide_eq_true_eq]
   by_cases guard : source % 2 = 0 ∨ source = destination
-  · simp only [guard, if_pos]
+  · simp only [guard, ite_eq_left]
     exact ⟨invalidRelated, rfl⟩
-  · simp only [guard, if_false]
+  · simp only [guard, ite_false]
     have canonical := canonicalRegsAvoid_transport _ _ invalidRelated destination source
     rw [← canonical]
     have registered := registerRead_transport _ _ invalidRelated

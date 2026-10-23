@@ -172,7 +172,7 @@ theorem listRearrangeEqOf {α : Type} (m : Nat → Nat) (xs ys : List α)
     (hel : ∀ i, i < xs.length → ys[i]? = xs[m i]?) :
     wordSemListRearrange m xs = ys := by
   unfold wordSemListRearrange
-  rw [dif_pos hb]
+  rw [dite_eq_left hb]
   apply List.ext_getElem?
   intro i
   by_cases hi : i < xs.length
@@ -208,8 +208,8 @@ theorem rearrangeWitnessOfPerm {α : Type} {xs ys : List α} (h : xs.Perm ys) :
           · have := hin (i - 1) (by omega); omega
         refine ⟨⟨hin', ?_⟩, ⟨hin', ?_⟩⟩
         · intro a ha b hb' hab
-          by_cases a0 : a = 0 <;> by_cases b0 : b = 0 <;> simp only [a0, b0, if_true,
-            if_false] at hab
+          by_cases a0 : a = 0 <;> by_cases b0 : b = 0 <;> simp only [a0, b0, ite_true,
+            ite_false] at hab
           · omega
           · omega
           · omega
@@ -365,7 +365,7 @@ theorem listRearrangePermSelf {α : Type} (m : Nat → Nat) (xs : List α) :
       apply List.ext_getElem?
       intro i
       unfold wordSemListRearrange
-      rw [dif_pos hb]
+      rw [dite_eq_left hb]
       by_cases hi : i < xs.length
       · simp [hi, List.getElem?_eq_getElem (hb.1.1 i hi)]
       · simp [hi]
@@ -389,13 +389,13 @@ theorem listRearrangePermSelf {α : Type} (m : Nat → Nat) (xs : List α) :
     have := hp.filterMap id
     simpa using this
   · unfold wordSemListRearrange
-    rw [dif_neg hb]
+    rw [dite_eq_right hb]
 
 theorem listRearrangeGetElem? {α : Type} (m : Nat → Nat) (xs : List α)
     (hb : wordSemBijCount m xs.length) (i : Nat) (hi : i < xs.length) :
     (wordSemListRearrange m xs)[i]? = xs[m i]? := by
   unfold wordSemListRearrange
-  rw [dif_pos hb]
+  rw [dite_eq_left hb]
   simp [hi, List.getElem?_eq_getElem (hb.1.1 i hi)]
 
 /-- Exact HOL `list_rearrange_MAP` (`word_allocProofScript.sml:425-429`). -/
@@ -412,7 +412,7 @@ theorem listRearrangeMap {α β : Type} :
     rw [List.getElem?_map, listRearrangeGetElem? m l hb i hi, List.getElem?_map]
   · have hb' : ¬ wordSemBijCount m (l.map f).length := by simpa using hb
     unfold wordSemListRearrange
-    rw [dif_neg hb', dif_neg hb]
+    rw [dite_eq_right hb', dite_eq_right hb]
 
 /-- Keys of the sorted `toAList` enumeration are exactly the tree domain. -/
 private theorem sortToAListKeys {α : Type} (r : Nat × α → Nat × α → Bool)
@@ -579,6 +579,6 @@ theorem envToListPerm {width : Nat} [NeZero width] :
   refine ⟨?_, ?_⟩
   · funext n
     simp
-  · rw [← hp, listRearrangeMap, if_pos trivial]
+  · rw [← hp, listRearrangeMap, ite_eq_left trivial]
 
 end Flapjack.WordAlloc

@@ -20,28 +20,28 @@ theorem sptLookup_sptDelete {α : Type} :
   | .bn l r, n, k => by
       by_cases hn : n = 0
       · subst hn; by_cases hk : k = 0 <;> simp [sptDelete, sptLookup, hk]
-      · simp only [sptDelete, hn, if_false]
+      · simp only [sptDelete, hn, ite_false]
         by_cases he : n % 2 = 0
-        · simp only [he, if_true, sptLookup_sptMkBN]
+        · simp only [he, ite_true, sptLookup_sptMkBN]
           by_cases hk : k = 0
           · simp [sptLookup, hk] <;> omega
           · by_cases hke : k % 2 = 0
-            · simp only [sptLookup, hk, hke, if_false, if_true, sptLookup_sptDelete l]
+            · simp only [sptLookup, hk, hke, ite_false, ite_true, sptLookup_sptDelete l]
               by_cases h : k = n
               · subst h; simp
               · have : (k - 1) / 2 ≠ (n - 1) / 2 := by omega
                 simp [h, this]
-            · simp only [sptLookup, hk, hke, if_false]
+            · simp only [sptLookup, hk, hke, ite_false]
               have : k ≠ n := by omega
               simp [this]
-        · simp only [he, if_false, sptLookup_sptMkBN]
+        · simp only [he, ite_false, sptLookup_sptMkBN]
           by_cases hk : k = 0
           · simp [sptLookup, hk] <;> omega
           · by_cases hke : k % 2 = 0
-            · simp only [sptLookup, hk, hke, if_false, if_true]
+            · simp only [sptLookup, hk, hke, ite_false, ite_true]
               have : k ≠ n := by omega
               simp [this]
-            · simp only [sptLookup, hk, hke, if_false, sptLookup_sptDelete r]
+            · simp only [sptLookup, hk, hke, ite_false, sptLookup_sptDelete r]
               by_cases h : k = n
               · subst h; simp
               · have : (k - 1) / 2 ≠ (n - 1) / 2 := by omega
@@ -49,28 +49,28 @@ theorem sptLookup_sptDelete {α : Type} :
   | .bs l v r, n, k => by
       by_cases hn : n = 0
       · subst hn; by_cases hk : k = 0 <;> simp [sptDelete, sptLookup, hk]
-      · simp only [sptDelete, hn, if_false]
+      · simp only [sptDelete, hn, ite_false]
         by_cases he : n % 2 = 0
-        · simp only [he, if_true, sptLookup_sptMkBS]
+        · simp only [he, ite_true, sptLookup_sptMkBS]
           by_cases hk : k = 0
           · simp [sptLookup, hk] <;> omega
           · by_cases hke : k % 2 = 0
-            · simp only [sptLookup, hk, hke, if_false, if_true, sptLookup_sptDelete l]
+            · simp only [sptLookup, hk, hke, ite_false, ite_true, sptLookup_sptDelete l]
               by_cases h : k = n
               · subst h; simp
               · have : (k - 1) / 2 ≠ (n - 1) / 2 := by omega
                 simp [h, this]
-            · simp only [sptLookup, hk, hke, if_false]
+            · simp only [sptLookup, hk, hke, ite_false]
               have : k ≠ n := by omega
               simp [this]
-        · simp only [he, if_false, sptLookup_sptMkBS]
+        · simp only [he, ite_false, sptLookup_sptMkBS]
           by_cases hk : k = 0
           · simp [sptLookup, hk] <;> omega
           · by_cases hke : k % 2 = 0
-            · simp only [sptLookup, hk, hke, if_false, if_true]
+            · simp only [sptLookup, hk, hke, ite_false, ite_true]
               have : k ≠ n := by omega
               simp [this]
-            · simp only [sptLookup, hk, hke, if_false, sptLookup_sptDelete r]
+            · simp only [sptLookup, hk, hke, ite_false, sptLookup_sptDelete r]
               by_cases h : k = n
               · subst h; simp
               · have : (k - 1) / 2 ≠ (n - 1) / 2 := by omega

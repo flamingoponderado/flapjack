@@ -31,7 +31,7 @@ theorem sectionLabels_codeLabels {width : Nat} [NeZero width] (pos : Nat)
     | label k1 k2 len =>
       intro heq
       by_cases hz : k2 = 0
-      · simp only [sectionLabels,hz,if_true] at heq
+      · simp only [sectionLabels,hz,ite_true] at heq
         have hh := ih (pos+len) aux heq
         ext key
         have hk := congrArg (fun s : Set Nat => key ∈ s) hh
@@ -46,7 +46,7 @@ theorem sectionLabels_codeLabels {width : Nat} [NeZero width] (pos : Nat)
           · exact hk.mpr (Or.inl h)
           · exact hk.mpr (Or.inl (Or.inl h0))
           · exact hk.mpr (Or.inr ht)
-      · simp only [sectionLabels,hz,if_false] at heq
+      · simp only [sectionLabels,hz,ite_false] at heq
         have hh := ih (pos+len) ((k2,pos+len)::aux) heq
         ext key
         have hk := congrArg (fun s : Set Nat => key ∈ s) hh

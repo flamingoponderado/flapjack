@@ -239,7 +239,7 @@ theorem callFFI_bytearray_lemma {width : Nat} [NeZero width] {mw : Nat} [NeZero 
     rw [hwrite]
     have h8 : 8 ≤ width := by rcases hg with h | h <;> simp [h]
     by_cases hxa : holByteAlign a = holByteAlign c1
-    · rw [wordLocValByte, hxa, if_pos rfl]
+    · rw [wordLocValByte, hxa, ite_eq_left rfl]
       simp only [wordLocVal, asmWriteBytearrayHOL]
       by_cases hx : a = c1
       · subst hx
@@ -250,7 +250,7 @@ theorem callFFI_bytearray_lemma {width : Nat} [NeZero width] {mw : Nat} [NeZero 
         rw [wordLocValByte, hxa, hv'] at ih'
         simpa [wordLocVal, hbe] using ih'
     · have hxne : a ≠ c1 := fun e => hxa (e ▸ rfl)
-      rw [wordLocValByte, if_neg hxa]
+      rw [wordLocValByte, ite_eq_right hxa]
       simp only [asmWriteBytearrayHOL, hxne, ↓reduceIte]
       exact ih'
 

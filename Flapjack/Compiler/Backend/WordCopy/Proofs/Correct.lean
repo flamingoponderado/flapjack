@@ -249,7 +249,7 @@ theorem copyPropCorrect {width : Nat} [NeZero width] {C F : Type} :
                 refine ⟨?_, fun _ => setEqRemoveEqModels ⟨hinv, hm, hvx⟩⟩
                 rw [evMove']
                 simp only [List.map_cons, List.map_nil, List.nodup_cons, List.not_mem_nil,
-                  not_false_eq_true, List.nodup_nil, and_self, if_true,
+                  not_false_eq_true, List.nodup_nil, and_self, ite_true,
                   WordSemStateFiniteExact.getVars, WordSemStateFiniteExact.getVar,
                   cpStateModel hm, hvx]
                 rfl
@@ -299,7 +299,7 @@ theorem copyPropCorrect {width : Nat} [NeZero width] {C F : Type} :
       split at he
       · simp only [Prod.mk.injEq] at he; exact absurd he.1.symm hne
       · rename_i hd
-        rw [if_neg hd]
+        rw [ite_eq_right hd]
         have hm1 : cpStateModels cs
             { st with clock := wordSemMustTerminateLimit width, termdep := st.termdep - 1 } :=
           cpStateModelsSame ⟨hm, rfl, rfl⟩

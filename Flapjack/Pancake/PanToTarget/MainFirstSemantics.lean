@@ -47,7 +47,7 @@ theorem evaluateDeclsHOLFinite_exnCommute (state : PanSemStateFiniteExact width 
       isWfShapeExactHOL state.structs fi.returnShape) = true <;>
     by_cases hexn : ((state.eshapes.lookup exception).isNone &&
       isWfShapeExactHOL state.structs shape) = true <;>
-    simp only [hfun, hexn, if_true, if_false, Bool.false_eq_true]
+    simp only [hfun, hexn, ite_true, ite_false, Bool.false_eq_true]
 
 /-- Function declarations with distinct names commute. -/
 theorem evaluateDeclsHOLFinite_functionCommute (state : PanSemStateFiniteExact width σ)
@@ -60,7 +60,7 @@ theorem evaluateDeclsHOLFinite_functionCommute (state : PanSemStateFiniteExact w
       isWfShapeExactHOL state.structs fi.returnShape) = true <;>
     by_cases hg : (gi.params.all (fun parameter => isWfShapeExactHOL state.structs parameter.2) &&
       isWfShapeExactHOL state.structs gi.returnShape) = true <;>
-    simp only [hf, hg, if_true, if_false, Bool.false_eq_true]
+    simp only [hf, hg, ite_true, ite_false, Bool.false_eq_true]
   rw [holFiniteMapExact_update_comm _ _ _ (fun h => distinct h.symm)]
 
 /-- Evaluation of a declaration list prefixed by one declaration respects extensional

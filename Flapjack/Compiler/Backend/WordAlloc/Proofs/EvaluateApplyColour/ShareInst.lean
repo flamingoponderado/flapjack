@@ -76,11 +76,11 @@ theorem shStoreGen_sim {st cst : WordSemStateFiniteExact width C F} (hs : wordSt
   unfold shStoreGen at he ⊢
   by_cases hd : st.shMdomain d = true
   · have hd' : cst.shMdomain d = true := by rw [wsr_shMdomain hs]; exact hd
-    rw [if_pos hd, if_pos hd', wsr_ffi hs]
+    rw [ite_eq_left hd, ite_eq_left hd', wsr_ffi hs]
     cases callFFIHOL st.ffi (.sharedMem .mappedWrite) cfg bytes with
     | final outcome => exact ⟨rfl, wsrFlush true hs, rfl⟩
     | ret newFfi _ => exact ⟨rfl, wsrFfi _ hs, hl⟩
-  · rw [if_neg hd] at he; exact absurd rfl he
+  · rw [ite_eq_right hd] at he; exact absurd rfl he
 
 /-- Simulation of `sh_mem_set_var` for a load result shared by related states. -/
 theorem shMemSetVar_sim {st cst : WordSemStateFiniteExact width C F} (hs : wordStateEqRel st cst)
@@ -147,18 +147,18 @@ theorem evaluateApplyColour_ShareInst {width : Nat} [NeZero width] {C F : Type}
       op = .store32) →
       sptDomain (getLive (.shareInst op v exp : WordLangProgHOL (BitVec width)) live lt) k := by
     intro k hk hop
-    simp only [getLive, if_pos hop]
+    simp only [getLive, ite_eq_left hop]
     exact (sptDomain_uni _ _ k).mpr (Or.inr ((sptDomain_ins _ _ _ k).mpr (Or.inr hk)))
   have hvlive : (op = .store ∨ op = .store8 ∨ op = .store16 ∨ op = .store32) →
       sptDomain (getLive (.shareInst op v exp : WordLangProgHOL (BitVec width)) live lt) v := by
     intro hop
-    simp only [getLive, if_pos hop]
+    simp only [getLive, ite_eq_left hop]
     exact (sptDomain_uni _ _ v).mpr (Or.inr ((sptDomain_ins _ _ _ v).mpr (Or.inl rfl)))
   have hdel : ¬ (op = .store ∨ op = .store8 ∨ op = .store16 ∨ op = .store32) →
       strongLocalsRel f (fun k => sptDomain live k ∧ k ≠ v) st.locals cst.locals := by
     intro hop
     refine slrMono hr (fun k hk => ?_)
-    simp only [getLive, if_neg hop]
+    simp only [getLive, ite_eq_right hop]
     exact (sptDomain_uni _ _ k).mpr (Or.inr ((sptDomain_del _ _ k).mpr ⟨hk.2, hk.1⟩))
   have hinjL : ¬ (op = .store ∨ op = .store8 ∨ op = .store16 ∨ op = .store32) →
       ∀ a b, (a = v ∨ sptDomain live a) → (b = v ∨ sptDomain live b) → f a = f b → a = b := by

@@ -14,7 +14,7 @@ theorem findIndexShiftZero {α : Type} [DecidableEq α]
   | cons head tail ih =>
       by_cases equal : head = target
       · simp [findIndex, equal]
-      · simp only [findIndex, if_neg equal]
+      · simp only [findIndex, ite_eq_right equal]
         rw [ih (offset + 1), ih 1]
         cases found : findIndex target tail 0 <;>
           simp [Option.map, Nat.add_comm, Nat.add_left_comm]

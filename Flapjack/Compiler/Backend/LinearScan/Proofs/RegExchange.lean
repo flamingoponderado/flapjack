@@ -37,8 +37,8 @@ private theorem updateEqn {value : Type} (get : LinearScanHiddenState → List v
       if n < (get s).length then (.success (), set ((get s).set n t) s)
       else (.failure .Subscript, s) := by
   by_cases h : n < (get s).length
-  · rw [if_pos h]; unfold arrayUpdate; rw [mupdateEq _ _ _ _ h]
-  · rw [if_neg h]; unfold arrayUpdate; rw [mUpdateExnEq _ _ _ _ (by omega)]
+  · rw [ite_eq_left h]; unfold arrayUpdate; rw [mupdateEq _ _ _ _ h]
+  · rw [ite_eq_right h]; unfold arrayUpdate; rw [mUpdateExnEq _ _ _ _ (by omega)]
 
 /-- HOL `colors_sub_eqn` (`linear_scanProofScript.sml:2020-2029`). HOL `EL` is the exact `holEl`. -/
 @[hol "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml" "colors_sub_eqn"]
@@ -151,7 +151,7 @@ theorem findRegExchangeFoldl {β : Type} :
                 (lookupDefaultId invexch (r / 2)) invexch)) sth := by
         show Translator.Monadic.MonadBase.bind (colorsSub r) _ sth = _
         unfold Translator.Monadic.MonadBase.bind
-        rw [colorsSubEqn, if_pos hr]
+        rw [colorsSubEqn, ite_eq_left hr]
         rfl
       rw [step, ih colors _ _ sth (fun x hx => hl x (List.mem_cons_of_mem r hx))]
       rfl
@@ -166,7 +166,7 @@ theorem lookupDefaultIdInsert :
   unfold lookupDefaultId
   by_cases h : k1 = k2
   · subst h; rw [sptLookup_sptInsert_same]; simp
-  · rw [sptLookup_sptInsert_ne k2 k1 v s h, if_neg h]
+  · rw [sptLookup_sptInsert_ne k2 k1 v s h, ite_eq_right h]
 
 /-- HOL proof-script definition `id` (`linear_scanProofScript.sml:2162-2164`). -/
 @[hol "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml" "id_def"]
@@ -196,35 +196,35 @@ private theorem exchangeStep (cols σ σi De Di : Nat → Nat) (h k : Nat) (t : 
     simp only [Function.comp]
     rw [hDi x]
     by_cases x1 : x = h / 2
-    · rw [if_pos x1, hD, if_pos rfl, x1]
-    · rw [if_neg x1]
+    · rw [ite_eq_left x1, hD, ite_eq_left rfl, x1]
+    · rw [ite_eq_right x1]
       by_cases x2 : x = σ (cols h)
-      · rw [if_pos x2, hD]
+      · rw [ite_eq_left x2, hD]
         by_cases e : σi (h / 2) = cols h
         · exfalso; apply x1; rw [x2, ← e, hσ2]
-        · rw [if_neg e, if_pos rfl, x2]
-      · rw [if_neg x2, hD]
+        · rw [ite_eq_right e, ite_eq_left rfl, x2]
+      · rw [ite_eq_right x2, hD]
         have n1 : σi x ≠ cols h := by intro e; apply x2; rw [← e, hσσi]
         have n2 : σi x ≠ σi (h / 2) := by intro e; apply x1; rw [← hσσi x, e, hσ2]
-        rw [if_neg n1, if_neg n2, hσσi]
+        rw [ite_eq_right n1, ite_eq_right n2, hσσi]
   · funext y
     simp only [Function.comp]
     rw [hD y]
     by_cases y1 : y = cols h
-    · rw [if_pos y1, hDi, if_pos rfl, y1]
-    · rw [if_neg y1]
+    · rw [ite_eq_left y1, hDi, ite_eq_left rfl, y1]
+    · rw [ite_eq_right y1]
       by_cases y2 : y = σi (h / 2)
-      · rw [if_pos y2, hDi]
+      · rw [ite_eq_left y2, hDi]
         have e : σ (cols h) ≠ h / 2 := by
           intro e; apply y1; rw [y2, ← e, hσiσ]
-        rw [if_neg e, if_pos rfl, y2]
-      · rw [if_neg y2, hDi]
+        rw [ite_eq_right e, ite_eq_left rfl, y2]
+      · rw [ite_eq_right y2, hDi]
         have n1 : σ y ≠ h / 2 := by intro e; apply y2; rw [← e, hσiσ]
         have n2 : σ y ≠ σ (cols h) := by intro e; apply y1; rw [← hσiσ y, e, hσiσ]
-        rw [if_neg n1, if_neg n2, hσiσ]
+        rw [ite_eq_right n1, ite_eq_right n2, hσiσ]
   · intro r hr
     rcases List.mem_cons.mp hr with rfl | hr
-    · rw [hD, if_pos rfl]
+    · rw [hD, ite_eq_left rfl]
     · have n1 : cols r ≠ cols h := by
         intro e; apply hnotin; rw [← e]; exact List.mem_map_of_mem hr
       have n2 : cols r ≠ σi (h / 2) := by
@@ -236,7 +236,7 @@ private theorem exchangeStep (cols σ σi De Di : Nat → Nat) (h k : Nat) (t : 
         have : r = h := by omega
         subst this
         exact n1 rfl
-      rw [hD, if_neg n1, if_neg n2, hb r hr]
+      rw [hD, ite_eq_right n1, ite_eq_right n2, hb r hr]
   · intro H c
     have Ht : ∀ r, r ∈ t → (k ≤ cols r ↔ k ≤ r / 2) :=
       fun r hr => H r (List.mem_cons_of_mem h hr)
@@ -247,38 +247,38 @@ private theorem exchangeStep (cols σ σi De Di : Nat → Nat) (h k : Nat) (t : 
     simp only [lsId]
     rw [hD]
     by_cases c1 : c = cols h
-    · rw [if_pos c1, c1, k1]
-    · rw [if_neg c1]
+    · rw [ite_eq_left c1, c1, k1]
+    · rw [ite_eq_right c1]
       by_cases c2 : c = σi (h / 2)
-      · rw [if_pos c2, c2, k2, ← k1]
+      · rw [ite_eq_left c2, c2, k2, ← k1]
         have := hc' (cols h); simp only [lsId] at this; exact this
-      · rw [if_neg c2]
+      · rw [ite_eq_right c2]
         have := hc' c; simp only [lsId] at this; exact this
   · intro H c ⟨hkc, hnc⟩
     have Ht : ∀ r, r ∈ t → r / 2 < k := fun r hr => H r (List.mem_cons_of_mem h hr)
     rw [hD]
     have c1 : c ≠ cols h := hnc h List.mem_cons_self
-    rw [if_neg c1]
+    rw [ite_eq_right c1]
     by_cases c2 : c = σi (h / 2)
     · exfalso
       have := hd Ht c ⟨hkc, fun r hr => hnc r (List.mem_cons_of_mem h hr)⟩
       rw [c2, hσ2] at this
       have := H h List.mem_cons_self
       omega
-    · rw [if_neg c2]
+    · rw [ite_eq_right c2]
       exact hd Ht c ⟨hkc, fun r hr => hnc r (List.mem_cons_of_mem h hr)⟩
   · intro H c hck
     have Ht : ∀ r, r ∈ t → k ≤ cols r ∧ k ≤ r / 2 := fun r hr => H r (List.mem_cons_of_mem h hr)
     have hh := H h List.mem_cons_self
     rw [hD]
     have c1 : c ≠ cols h := by omega
-    rw [if_neg c1]
+    rw [ite_eq_right c1]
     by_cases c2 : c = σi (h / 2)
     · exfalso
       have := he Ht c hck
       rw [c2, hσ2] at this
       omega
-    · rw [if_neg c2]
+    · rw [ite_eq_right c2]
       exact he Ht c hck
 
 /-- HOL `find_reg_exchange_FOLDR_correct` (`linear_scanProofScript.sml:2166-2281`). HOL `EL` is the exact `holEl`. -/
@@ -382,24 +382,24 @@ theorem mapColorsEqLemma :
       have hstep : mapColors f (n + 1) sth = mapColors f n sth' := by
         show Translator.Monadic.MonadBase.bind (colorsSub n) _ sth = _
         unfold Translator.Monadic.MonadBase.bind
-        rw [colorsSubEqn, if_pos hlt]
+        rw [colorsSubEqn, ite_eq_left hlt]
         show Translator.Monadic.MonadBase.ignoreBind (updateColors n (f (holEl n sth.colors))) (mapColors f n) sth = _
         unfold Translator.Monadic.MonadBase.ignoreBind
-        rw [updateColorsEqn, if_pos hlt]
+        rw [updateColorsEqn, ite_eq_left hlt]
       refine ⟨sthout, by rw [hstep]; exact hrun, by rw [← hl, hlen'], hb, he, ?_, ?_⟩
       · intro n' hn'
         by_cases e : n' = n
         · subst e
           rw [hhi n' (Nat.le_refl _)]
           show holEl n' (sth.colors.set n' _) = _
-          rw [holEl_set _ _ _ _ hlt, if_pos rfl]
+          rw [holEl_set _ _ _ _ hlt, ite_eq_left rfl]
         · rw [hlo n' (by omega)]
           show f (holEl n' (sth.colors.set n _)) = _
-          rw [holEl_set _ _ _ _ hlt, if_neg (Ne.symm e)]
+          rw [holEl_set _ _ _ _ hlt, ite_eq_right (Ne.symm e)]
       · intro n' hn'
         rw [hhi n' (by omega)]
         show holEl n' (sth.colors.set n _) = _
-        rw [holEl_set _ _ _ _ hlt, if_neg (by omega)]
+        rw [holEl_set _ _ _ _ hlt, ite_eq_right (by omega)]
 
 /-- HOL `MAP_colors_eq` (`linear_scanProofScript.sml:2352-2362`). HOL `EL` is the exact `holEl`. -/
 @[hol "cakeml/compiler/backend/reg_alloc/proofs/linear_scanProofScript.sml" "MAP_colors_eq"]

@@ -225,10 +225,10 @@ theorem evalPanValueFfiClockProg_while_body_same
         simp only [Option.elim_some]
         by_cases hz : (w == 0) = true
         · simp [hz]
-        · simp only [if_neg hz]
+        · simp only [ite_eq_right hz]
           by_cases hclock : (clock == 0) = true
           · simp [hclock]
-          · simp only [if_neg hclock]
+          · simp only [ite_eq_right hclock]
             rw [hbody f (clock - 1) locals globals memory ffi ma c mh]
             have hloop : ∀ (cl : Nat) (l g : VarName → Option (PanValue α))
                 (m : α → Option (PanValue α)) (ff : FfiState σ),

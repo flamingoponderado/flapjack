@@ -159,7 +159,7 @@ theorem readWriteBytearrayLemma {width : Nat} [NeZero width]
                       domain (panByteAlignHOL (width := width) address)
                   · have hb : b = panGetByteHOL address v bigEndian := by
                       have hEq : some (panGetByteHOL address v bigEndian) = some b := by
-                        simpa only [panMemLoadByteHOL, hcell, hdom, if_true] using hload
+                        simpa only [panMemLoadByteHOL, hcell, hdom, ite_true] using hload
                       injection hEq with h
                       exact h.symm
                     have hstore : panMemStoreByteHOL memory domain bigEndian address b
@@ -168,20 +168,20 @@ theorem readWriteBytearrayLemma {width : Nat} [NeZero width]
                               .word (panSetByteHOL address
                                 (BitVec.ofNat width b.toNat) v bigEndian)
                             else memory current) := by
-                      simp only [panMemStoreByteHOL, hcell, hdom, if_true]
+                      simp only [panMemStoreByteHOL, hcell, hdom, ite_true]
                     rw [hstore]
                     dsimp only
                     funext current
                     by_cases hcur :
                         current = panByteAlignHOL (width := width) address
                     · subst hcur
-                      rw [if_pos rfl, hcell]
+                      rw [ite_eq_left rfl, hcell]
                       congr 1
                       rw [hb]
                       exact panSetByteHOL_panGetByteHOL address v bigEndian hwidth
-                    · rw [if_neg hcur]
+                    · rw [ite_eq_right hcur]
                   · exfalso
-                    simp only [panMemLoadByteHOL, hcell, hdom, if_false] at hload
+                    simp only [panMemLoadByteHOL, hcell, hdom, ite_false] at hload
                     exact absurd hload (Option.some_ne_none b).symm
 
 end Flapjack

@@ -55,7 +55,7 @@ theorem movEvalHead {width : Nat} [NeZero width] {C : Type} {F : Type}
     | some list =>
       have output : WordSemStateFiniteExact.setVars (moves.map Prod.fst) list state =
           result := by
-        simpa only [WordSemStateFiniteExact.evaluate, if_pos distinct, values,
+        simpa only [WordSemStateFiniteExact.evaluate, ite_eq_left distinct, values,
           Prod.mk.injEq, true_and] using evaluation
       subst result
       simp [WordSemStateFiniteExact.evaluate, List.nodup_cons,

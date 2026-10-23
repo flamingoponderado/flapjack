@@ -57,7 +57,7 @@ private theorem assocLookupAbsent {β : Type} (key : Nat) (entries : List (Nat �
   | cons head rest ih =>
       rcases head with ⟨name, value⟩
       have parts : key ≠ name ∧ key ∉ rest.map Prod.fst := by simpa using missing
-      simp only [sptAListLookup, parts.1, if_false, ih parts.2]
+      simp only [sptAListLookup, parts.1, ite_false, ih parts.2]
 
 private theorem mergeFold_lookup {β : Type} (f : Nat → β → β → β)
     (entries : List (Nat × β)) (unique : (entries.map Prod.fst).Nodup)
@@ -77,11 +77,11 @@ private theorem mergeFold_lookup {β : Type} (f : Nat → β → β → β)
       by_cases same : key = name
       · subst key
         rw [assocLookupAbsent name rest parts.1]
-        simp only [sptAListLookup, if_true, mergeEntry, Std.TreeMap.getElem?_alter_self]
+        simp only [sptAListLookup, ite_true, mergeEntry, Std.TreeMap.getElem?_alter_self]
       · have different : compare name key ≠ Ordering.eq := by
           intro equal
           exact same (Std.LawfulEqCmp.compare_eq_iff_eq.mp equal).symm
-        simp only [sptAListLookup, same, if_false, mergeEntry,
+        simp only [sptAListLookup, same, ite_false, mergeEntry,
           Std.TreeMap.getElem?_alter, different]
 
 private theorem assocLookupTreeMap {β : Type} (tree : Std.TreeMap Nat β) (key : Nat) :

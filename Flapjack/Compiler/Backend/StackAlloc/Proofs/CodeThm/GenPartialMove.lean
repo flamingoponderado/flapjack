@@ -78,7 +78,7 @@ theorem word_gen_gc_partial_move_code_thm {width : Nat} [NeZero width] {C F : Ty
         evaluate_skip]
   | word v =>
       by_cases hv : v &&& 1 = 0
-      · simp only [wordGenGcPartialMove, hv, if_true, Prod.mk.injEq] at hmove
+      · simp only [wordGenGcPartialMove, hv, ite_true, Prod.mk.injEq] at hmove
         obtain ⟨rfl, rfl, rfl, rfl, -⟩ := hmove
         refine ⟨0, r0, r1, r2, r6, ?_⟩
         rw [gcMove_skip_regs s r0 r1 r2 r6 _ _ _ hr0 hr1 hr2 h3' h4' h5' hr6]
@@ -114,9 +114,9 @@ theorem word_gen_gc_partial_move_code_thm {width : Nat} [NeZero width] {C F : Ty
             some (.word rs) := hrs
         have htmp : v >>> shiftLength conf <<< wordShiftAmount width = ptrToAddr conf old v - old := by
           rw [← haddr, BitVec.add_sub_cancel]
-        simp only [wordGenGcPartialMove, hv, if_false] at hmove
+        simp only [wordGenGcPartialMove, hv, ite_false] at hmove
         by_cases hlo : ptrToAddr conf old v - old < gs
-        · simp only [hlo, true_or, if_true, Prod.mk.injEq] at hmove
+        · simp only [hlo, true_or, ite_true, Prod.mk.injEq] at hmove
           obtain ⟨rfl, rfl, rfl, rfl, -⟩ := hmove
           refine ⟨0, .word (v >>> shiftLength conf <<< wordShiftAmount width), .word rs, r2,
             .word gs, ?_⟩
@@ -149,7 +149,7 @@ theorem word_gen_gc_partial_move_code_thm {width : Nat} [NeZero width] {C F : Ty
           · subst k6; simp
           simp [k0, k1, k2, k3, k4, k5, k6]
         by_cases hhi : rs ≤ ptrToAddr conf old v - old
-        · simp only [hlo, hhi, or_true, if_true, Prod.mk.injEq] at hmove
+        · simp only [hlo, hhi, or_true, ite_true, Prod.mk.injEq] at hmove
           obtain ⟨rfl, rfl, rfl, rfl, -⟩ := hmove
           have hhi' : ¬ ptrToAddr conf old v - old < rs := by
             intro h; exact absurd hhi (BitVec.not_le.2 h)
@@ -187,9 +187,9 @@ theorem word_gen_gc_partial_move_code_thm {width : Nat} [NeZero width] {C F : Ty
           have hhi'' : ¬ rs ≤ ptrToAddr conf old v - old := hhi
           have haddr2 : ptrToAddr conf old v - old + old = ptrToAddr conf old v :=
             BitVec.sub_add_cancel _ _
-          simp only [hlo, hhi'', or_self, if_false] at hmove
+          simp only [hlo, hhi'', or_self, ite_false] at hmove
           by_cases hfwd : wordSemIsFwdPtr (s.memory (ptrToAddr conf old v)) = true
-          · simp only [hfwd, if_true, Prod.mk.injEq] at hmove
+          · simp only [hfwd, ite_true, Prod.mk.injEq] at hmove
             obtain ⟨rfl, rfl, rfl, rfl, hdm⟩ := hmove
             obtain ⟨x, hx, hx3⟩ := (is_fwd_ptr_iff _).1 hfwd
             have hx3a : AndOp.and x (3#width) = 0#width := hx3
@@ -228,7 +228,7 @@ theorem word_gen_gc_partial_move_code_thm {width : Nat} [NeZero width] {C F : Ty
             simp [k0, k1, k2, k3, k4, k5, k6]
           · have hfwd' : wordSemIsFwdPtr (s.memory (ptrToAddr conf old v)) = false := by
               simpa using hfwd
-            simp only [hfwd', Bool.false_eq_true, if_false] at hmove
+            simp only [hfwd', Bool.false_eq_true, ite_false] at hmove
             have hc := congrArg (fun t => t.2.2.2.2) hmove
             simp only [Bool.and_eq_true] at hc
             obtain ⟨⟨hdm, -, hisw⟩, -, hc1⟩ := hc
