@@ -488,185 +488,32 @@ theorem expIds_smartSeq (pre program : Prog α) :
     expIds (smartSeq pre program) = expIds pre ++ expIds program := by
   cases pre <;> simp [smartSeq, expIds]
 
-/-! Manual well-founded induction for Cake's `exp_ids_seq_assoc_eq`.  The
-    handler stored inside `Call` is nested in the syntax, so the ordinary
-    generated `Prog` recursor does not expose it as an induction hypothesis. -/
+/-! Functional induction exposes recursive handlers nested inside `Call`
+    for the exception-identifier preservation proof. -/
 
 theorem expIds_seqAssoc (pre program : Prog α) :
     expIds (seqAssoc pre program) = expIds pre ++ expIds program := by
-  let rec go (pre : Prog α) : (program : Prog α) →
-      expIds (seqAssoc pre program) = expIds pre ++ expIds program
-    | .skip => by
-        simp [seqAssoc, expIds]
-    | .dec name shape value body => by
-        simp only [seqAssoc]
-        rw [expIds_smartSeq]
-        simp only [expIds]
-        rw [go .skip body]
-        simp [expIds]
-    | .seq first second => by
-        simp only [seqAssoc]
-        rw [go (seqAssoc pre first) second, go pre first]
-        simp [expIds, List.append_assoc]
-    | .ite condition thenBranch elseBranch => by
-        simp only [seqAssoc]
-        rw [expIds_smartSeq]
-        simp only [expIds]
-        rw [go .skip thenBranch, go .skip elseBranch]
-        simp [expIds]
-    | .while condition body => by
-        simp only [seqAssoc]
-        rw [expIds_smartSeq]
-        simp only [expIds]
-        rw [go .skip body]
-        simp [expIds]
-    | .call info function arguments => by
-        cases info with
-        | none =>
-            simp [seqAssoc, expIds, expIds_smartSeq]
-        | some info =>
-            cases info with
-            | mk returns handlerInfo =>
-                cases handlerInfo with
-                | none =>
-                    simp [seqAssoc, expIds, expIds_smartSeq]
-                | some handler =>
-                    cases handler with
-                    | mk exception handlerInfo =>
-                        cases handlerInfo with
-                        | mk handlerVar handlerProgram =>
-                            simp only [seqAssoc]
-                            rw [expIds_smartSeq]
-                            simp only [expIds]
-                            rw [go .skip handlerProgram]
-                            simp [expIds]
-    | .decCall name shape function arguments body => by
-        simp only [seqAssoc]
-        rw [expIds_smartSeq]
-        simp only [expIds]
-        rw [go .skip body]
-        simp [expIds]
-    | .annot tag text => by
-        simp [seqAssoc, expIds]
-    | .assign kind name value => by
-        simp only [seqAssoc]
-        rw [expIds_smartSeq]
-    | .primitive name operator args => by
-        simp only [seqAssoc]
-        rw [expIds_smartSeq]
-    | .store address value => by
-        simp only [seqAssoc]
-        rw [expIds_smartSeq]
-    | .store32 address value => by
-        simp only [seqAssoc]
-        rw [expIds_smartSeq]
-    | .storeByte address value => by
-        simp only [seqAssoc]
-        rw [expIds_smartSeq]
-    | .break => by
-        simp only [seqAssoc]
-        rw [expIds_smartSeq]
-    | .continue => by
-        simp only [seqAssoc]
-        rw [expIds_smartSeq]
-    | .extCall function configuration configurationLength array arrayLength => by
-        simp only [seqAssoc]
-        rw [expIds_smartSeq]
-    | .raise exception value => by
-        simp only [seqAssoc]
-        rw [expIds_smartSeq]
-    | .return value => by
-        simp only [seqAssoc]
-        rw [expIds_smartSeq]
-    | .shMemLoad size kind name address => by
-        simp only [seqAssoc]
-        rw [expIds_smartSeq]
-    | .shMemStore size address value => by
-        simp only [seqAssoc]
-        rw [expIds_smartSeq]
-    | .tick => by
-        simp only [seqAssoc]
-        rw [expIds_smartSeq]
-    termination_by program => sizeOf program
-    decreasing_by all_goals decreasing_trivial
-  exact go pre program
+  fun_induction expIds program generalizing pre with
+  | case14 info _ _ noHandler =>
+      rcases info with _ | ⟨returns, _ | ⟨exception, handlerVar, handler⟩⟩
+      · simp [seqAssoc, expIds_smartSeq, expIds]
+      · simp [seqAssoc, expIds_smartSeq, expIds]
+      · exact (noHandler returns exception handlerVar handler rfl).elim
+  | _ =>
+      grind only [seqAssoc, expIds_smartSeq, expIds, List.append_assoc,
+        List.nil_append, List.append_nil]
 
-/-! Manual well-founded induction for Cake's `exp_ids_ret_to_tail_eq`.  The
-    handler stored inside `Call` is nested in the syntax, so this uses the
-    same explicit handler case as `expIds_seqAssoc`. -/
+/-! The same functional induction covers the nested handler in `retToTail`. -/
 
 theorem expIds_retToTail (program : Prog α) :
     expIds (retToTail program) = expIds program := by
-  let rec go : (program : Prog α) →
-      expIds (retToTail program) = expIds program
-    | .skip => by
-        simp [retToTail, expIds]
-    | .dec name shape value body => by
-        simp only [retToTail, expIds]
-        rw [go body]
-    | .seq first second => by
-        simp only [retToTail]
-        rw [expIds_seqCallRet]
-        simp only [expIds]
-        rw [go first, go second]
-    | .ite condition thenBranch elseBranch => by
-        simp only [retToTail, expIds]
-        rw [go thenBranch, go elseBranch]
-    | .while condition body => by
-        simp only [retToTail, expIds]
-        rw [go body]
-    | .call info function arguments => by
-        cases info with
-        | none =>
-            simp [retToTail, expIds]
-        | some info =>
-            cases info with
-            | mk returns handlerInfo =>
-                cases handlerInfo with
-                | none =>
-                    simp [retToTail, expIds]
-                | some handler =>
-                    cases handler with
-                    | mk exception handlerInfo =>
-                        cases handlerInfo with
-                        | mk handlerVar handlerProgram =>
-                            simp only [retToTail]
-                            simp only [expIds]
-                            rw [go handlerProgram]
-    | .decCall name shape function arguments body => by
-        simp only [retToTail, expIds]
-        rw [go body]
-    | .annot tag text => by
-        simp [retToTail, expIds]
-    | .assign kind name value => by
-        simp [retToTail, expIds]
-    | .primitive name operator args => by
-        simp [retToTail, expIds]
-    | .store address value => by
-        simp [retToTail, expIds]
-    | .store32 address value => by
-        simp [retToTail, expIds]
-    | .storeByte address value => by
-        simp [retToTail, expIds]
-    | .break => by
-        simp [retToTail, expIds]
-    | .continue => by
-        simp [retToTail, expIds]
-    | .extCall function configuration configurationLength array arrayLength => by
-        simp [retToTail, expIds]
-    | .raise exception value => by
-        simp [retToTail, expIds]
-    | .return value => by
-        simp [retToTail, expIds]
-    | .shMemLoad size kind name address => by
-        simp [retToTail, expIds]
-    | .shMemStore size address value => by
-        simp [retToTail, expIds]
-    | .tick => by
-        simp [retToTail, expIds]
-    termination_by program => sizeOf program
-    decreasing_by all_goals decreasing_trivial
-  exact go program
+  fun_induction expIds program with
+  | case14 info _ _ noHandler =>
+      rcases info with _ | ⟨returns, _ | ⟨exception, handlerVar, handler⟩⟩
+      · simp [retToTail, expIds]
+      · simp [retToTail, expIds]
+      · exact (noHandler returns exception handlerVar handler rfl).elim
+  | _ => grind only [retToTail, expIds_seqCallRet, expIds]
 
 /-- The full `pan_simp` program transformation preserves the exception
     identifiers reachable from a program, mirroring Cake's

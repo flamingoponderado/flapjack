@@ -165,62 +165,24 @@ decreasing_by
 
 /-- `ExpHOL -> Exp -> ExpHOL` round trips exactly. -/
 @[simp] theorem expToHOL_expOfHOL {width : Nat} [NeZero width] :
-    (e : ExpHOL width) → expToHOL (expOfHOL e) = e :=
-  ExpHOL.rec
-    (motive_1 := fun e => expToHOL (expOfHOL e) = e)
-    (motive_2 := fun l => (l.map expOfHOL).map expToHOL = l)
-    (motive_3 := fun l =>
-      (l.map (fun p => (toStringOfBytes p.1, expOfHOL p.2))).map
-        (fun p => (ofString p.1, expToHOL p.2)) = l)
-    (motive_4 := fun p => (ofString (toStringOfBytes p.1), expToHOL (expOfHOL p.2)) = p)
-    (fun _value => by simp only [expToHOL, expOfHOL])
-    (fun _kind name => by
-      simp only [expToHOL, expOfHOL,
-        Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes])
-    (fun fields ih => by
-      simp only [expToHOL, expOfHOL]
-      rw [ih])
-    (fun _index _value ih => by
-      simp only [expToHOL, expOfHOL]
-      rw [ih])
-    (fun name fields ih => by
-      simp only [expToHOL, expOfHOL,
+    (e : ExpHOL width) → expToHOL (expOfHOL e) = e := by
+  intro e
+  fun_induction expOfHOL e with
+  | case3 fields ih | case10 _ fields ih | case11 _ fields ih =>
+      simp only [expToHOL, List.map_map]
+      congr 1
+      exact (List.map_congr_left (g := id) ih).trans (List.map_id _)
+  | case5 name fields ih =>
+      simp only [expToHOL, List.map_map, Function.comp_def,
         Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes]
-      rw [ih])
-    (fun name _value ih => by
-      simp only [expToHOL, expOfHOL,
-        Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes]
-      rw [ih])
-    (fun shape address ih => by
-      simp only [expToHOL, expOfHOL, shapeToHOL_shapeOfHOL]
-      rw [ih])
-    (fun _address ih => by
-      simp only [expToHOL, expOfHOL]
-      rw [ih])
-    (fun _address ih => by
-      simp only [expToHOL, expOfHOL]
-      rw [ih])
-    (fun operator args ih => by
-      simp only [expToHOL, expOfHOL]
-      rw [ih])
-    (fun operator args ih => by
-      simp only [expToHOL, expOfHOL]
-      rw [ih])
-    (fun operator left right ihl ihr => by
-      simp only [expToHOL, expOfHOL]
-      rw [ihl, ihr])
-    (fun operator left right ihl ihr => by
-      simp only [expToHOL, expOfHOL]
-      rw [ihl, ihr])
-    (by simp only [expToHOL, expOfHOL])
-    (by simp only [expToHOL, expOfHOL])
-    (by simp only [expToHOL, expOfHOL])
-    rfl
-    (fun _head _tail ih1 ih2 => by simp [ih1, ih2])
-    rfl
-    (fun head _tail ih4 ih3 => by simp [ih4, ih3])
-    (fun fst snd ih => by
-      simp [Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes, ih])
+      congr 1
+      exact (List.map_congr_left (g := id) (fun (name, value) h =>
+        congrArg (Prod.mk name) (ih (name, value) h))).trans (List.map_id _)
+  | _ =>
+      simp_all [expToHOL,
+        Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes,
+        shapeToHOL_shapeOfHOL]
+
 /-- `Exp -> ExpHOL -> Exp` round trips exactly on byte-ranged expressions. -/
 @[simp] theorem expOfHOL_expToHOL {width : Nat} [NeZero width] :
     (e : Flapjack.Exp (BitVec width)) → ExpByteRanged e →
