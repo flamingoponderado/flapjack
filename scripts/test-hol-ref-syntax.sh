@@ -5,8 +5,21 @@ set -euo pipefail
 # in the repository's declaration inventory.
 root_dir=$(cd "$(dirname "$0")/.." && pwd)
 cd "$root_dir"
+
+mktemp_cmd=mktemp
+if [[ $(uname -s) == Darwin ]]; then
+  if command -v gmktemp >/dev/null 2>&1; then
+    mktemp_cmd=gmktemp
+  elif [[ $(mktemp --version 2>/dev/null) == *"GNU coreutils"* ]]; then
+    mktemp_cmd=mktemp
+  else
+    echo 'error: this script requires GNU mktemp on macOS; install it with: brew install coreutils' >&2
+    exit 1
+  fi
+fi
+
 lake build Flapjack.HolRef >/dev/null
-test_file=$(mktemp --suffix=.lean)
+test_file=$("$mktemp_cmd" --suffix=.lean)
 trap 'rm -f "$test_file"' EXIT
 
 printf '%s\n' \
