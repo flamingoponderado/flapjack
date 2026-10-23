@@ -279,29 +279,11 @@ theorem mem_functions {declarations : List (Decl α)}
       (.function declaration : Decl α) ∈ declarations ∧
         entry = (declaration.name, declaration.params, declaration.body,
           declaration.returnShape) := by
-  induction declarations with
-  | nil => simp [functions, functionEntries] at hmem
-  | cons declaration declarations ih =>
-      cases declaration with
-      | function function =>
-          simp only [functions, functionEntries, List.mem_cons] at hmem
-          rcases hmem with hentry | htail
-          · subst hentry
-            exact ⟨function, by simp, rfl⟩
-          · obtain ⟨found, hfound, hentry⟩ := ih htail
-            exact ⟨found, by simp [hfound], hentry⟩
-      | decl shape name value =>
-          simp only [functions, functionEntries] at hmem
-          obtain ⟨found, hfound, hentry⟩ := ih hmem
-          exact ⟨found, by simp [hfound], hentry⟩
-      | exnDecl exception shape =>
-          simp only [functions, functionEntries] at hmem
-          obtain ⟨found, hfound, hentry⟩ := ih hmem
-          exact ⟨found, by simp [hfound], hentry⟩
-      | name struct fields =>
-          simp only [functions, functionEntries] at hmem
-          obtain ⟨found, hfound, hentry⟩ := ih hmem
-          exact ⟨found, by simp [hfound], hentry⟩
+  rw [functions_eq_filterMap] at hmem
+  obtain ⟨declaration, hdecl, hentry⟩ := List.mem_filterMap.mp hmem
+  cases declaration with
+  | function declaration => exact ⟨declaration, hdecl, (Option.some.inj hentry).symm⟩
+  | _ => contradiction
 
 /-! Counterpart of Cake's `first_compile_prog_all_distinct`
     (`pan_simpProofScript.sml:1025-1041`): `pan_simp` preserves distinctness of
@@ -310,16 +292,7 @@ theorem mem_functions {declarations : List (Decl α)}
 theorem functions_panSimpDecls_names_nodup (declarations : List (Decl α))
     (hnames : ((functions declarations).map (fun entry => entry.1)).Nodup) :
     ((functions (panSimpDecls declarations)).map (fun entry => entry.1)).Nodup := by
-  rw [functions_panSimpDecls, List.map_map]
-  have hfun :
-      ((fun entry : FunName × List (VarName × Shape) × Prog α × Shape => entry.1) ∘
-        (fun entry : FunName × List (VarName × Shape) × Prog α × Shape =>
-          (entry.1, entry.2.1, panSimpProg entry.2.2.1, entry.2.2.2))) =
-      (fun entry : FunName × List (VarName × Shape) × Prog α × Shape => entry.1) := by
-    funext entry
-    rfl
-  rw [hfun]
-  exact hnames
+  simpa only [functions_panSimpDecls, List.map_map, Function.comp_def] using hnames
 
 /-! Counterpart of Cake's `compile_prog_distinct_params`
     (`pan_simpProofScript.sml:1064-1069`): rewriting function bodies does not
@@ -361,36 +334,13 @@ theorem lookupFunctionEntry_panSimpDecls
     lookupFunctionEntry name (functions (panSimpDecls declarations)) =
       some (parameters, panSimpProg body, returnShape) := by
   induction declarations with
-  | nil =>
-      simp [functions, functionEntries, lookupFunctionEntry] at hlookup
+  | nil => simp [functions, functionEntries, lookupFunctionEntry] at hlookup
   | cons declaration declarations ih =>
       cases declaration with
       | function declaration =>
-          by_cases hname : name == declaration.name
-          · simp [functions, functionEntries, panSimpDecls, lookupFunctionEntry, hname] at hlookup ⊢
-            rcases hlookup with ⟨rfl, rfl, rfl⟩
-            simp
-          · have htail : lookupFunctionEntry name (functions declarations) =
-                some (parameters, body, returnShape) := by
-              simpa [functions, functionEntries, lookupFunctionEntry, hname] using hlookup
-            have htail' := ih htail
-            simpa [functions, functionEntries, panSimpDecls, lookupFunctionEntry, hname]
-              using htail'
-      | decl shape declarationName expression =>
-          have htail : lookupFunctionEntry name (functions declarations) =
-              some (parameters, body, returnShape) := by
-            simpa only [functions, functionEntries] using hlookup
-          simpa only [panSimpDecls, functions, functionEntries] using ih htail
-      | exnDecl exception shape =>
-          have htail : lookupFunctionEntry name (functions declarations) =
-              some (parameters, body, returnShape) := by
-            simpa only [functions, functionEntries] using hlookup
-          simpa only [panSimpDecls, functions, functionEntries] using ih htail
-      | name struct fields =>
-          have htail : lookupFunctionEntry name (functions declarations) =
-              some (parameters, body, returnShape) := by
-            simpa only [functions, functionEntries] using hlookup
-          simpa only [panSimpDecls, functions, functionEntries] using ih htail
+          by_cases hname : name == declaration.name <;>
+            simp_all [functions, functionEntries, panSimpDecls, lookupFunctionEntry]
+      | _ => simpa only [panSimpDecls, functions, functionEntries] using ih hlookup
 
 /-- `lookupFunctionEntry` returns the entry found at a given index whenever the
     function names are distinct. -/
@@ -437,34 +387,13 @@ theorem el_functions_panSimpDecls_eq {declarations : List (Decl α)} {n : Nat}
       some ([], p, rshape)) :
     (functions declarations)[n]? = some (start, [], p, rshape) := by
   rw [functions_panSimpDecls, List.getElem?_map] at hentry
-  have hsome : (functions declarations)[n]? ≠ none := by
-    intro hnone
-    rw [hnone] at hentry
-    exact absurd hentry (by simp)
-  obtain ⟨entry, hentry_eq⟩ := Option.ne_none_iff_exists'.mp hsome
-  have hproj :
-      (entry.1, entry.2.1, panSimpProg entry.2.2.1, entry.2.2.2) =
-        (start, [], pprog, rshape) := by
-    rw [hentry_eq] at hentry
-    simpa using hentry
-  have h1 : entry.1 = start := by
-    simpa using congrArg Prod.fst hproj
-  have hlookupEntry :=
-    lookupFunctionEntry_of_getElem? (functions declarations) hnodup hentry_eq
-  rw [h1] at hlookupEntry
-  rw [hlookup] at hlookupEntry
-  have hp : (entry.2.1, entry.2.2.1, entry.2.2.2) = ([], p, rshape) :=
-    (Option.some.inj hlookupEntry).symm
-  have g1 : entry.2.1 = [] := by simpa using congrArg Prod.fst hp
-  have g2 : entry.2.2.1 = p := by
-    simpa using congrArg Prod.fst (congrArg Prod.snd hp)
-  have g3 : entry.2.2.2 = rshape := by
-    simpa using congrArg Prod.snd (congrArg Prod.snd hp)
-  rw [hentry_eq]
-  congr 1
-  refine Prod.ext (by simpa using h1) ?_
-  refine Prod.ext (by simpa using g1) ?_
-  exact Prod.ext (by simpa using g2) (by simpa using g3)
+  rcases hget : (functions declarations)[n]? with _ | ⟨name, params, body, shape⟩
+  · simp [hget] at hentry
+  · simp only [hget, Option.map_some, Option.some.injEq, Prod.mk.injEq] at hentry
+    obtain ⟨rfl, rfl, _, rfl⟩ := hentry
+    have hp := lookupFunctionEntry_of_getElem? (functions declarations) hnodup hget
+    simp only [hlookup, Option.some.injEq, Prod.mk.injEq, true_and, and_true] at hp
+    simp [hp]
 
 @[simp] theorem smartSeq_skip (program : Prog α) :
     smartSeq (.skip : Prog α) program = program := by
