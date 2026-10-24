@@ -1,3 +1,4 @@
+import Flapjack.Pancake.WordLang.MaxVar
 import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundRecursive
 import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterBoundInstructions
 
@@ -23,64 +24,36 @@ theorem wordToStackRegBound {width : Nat} [NeZero width]
     (conventions : postAllocConventionsHOL frame.1 program = true)
     (room : 4 ≤ frame.1) (plain : perf = false) :
     regBound (compNative conf perf program bs frame).1 (frame.1 + 2) := by
-  cases program with
-  | skip => exact wordToStackRegBoundSkip conf perf bs frame conventions room plain
-  | move _ _ => exact wordToStackRegBoundMove conf perf _ _ bs frame conventions room plain
-  | inst _ => exact wordToStackRegBoundInst conf perf _ bs frame conventions room plain
-  | assign _ _ => exact wordToStackRegBoundAssign conf perf _ _ bs frame conventions room plain
-  | get _ _ => exact wordToStackRegBoundGet conf perf _ _ bs frame conventions room plain
-  | set _ _ => exact wordToStackRegBoundSet conf perf _ _ bs frame conventions room plain
-  | store _ _ => exact wordToStackRegBoundStore conf perf _ _ bs frame conventions room plain
-  | alloc _ _ => exact wordToStackRegBoundAlloc conf perf _ _ bs frame conventions room plain
-  | storeConsts _ _ _ _ _ => exact wordToStackRegBoundStoreConsts conf perf _ _ _ _ _ bs frame conventions room plain
-  | raise _ => exact wordToStackRegBoundRaise conf perf _ bs frame conventions room plain
-  | «return» _ _ => exact wordToStackRegBoundReturn conf perf _ _ bs frame conventions room plain
-  | «break» _ => exact wordToStackRegBoundBreak conf perf _ bs frame conventions room plain
-  | «continue» _ => exact wordToStackRegBoundContinue conf perf _ bs frame conventions room plain
-  | tick => exact wordToStackRegBoundTick conf perf bs frame conventions room plain
-  | opCurrHeap _ _ _ => exact wordToStackRegBoundOpCurrHeap conf perf _ _ _ bs frame conventions room plain
-  | locValue _ _ => exact wordToStackRegBoundLocValue conf perf _ _ bs frame conventions room plain
-  | install _ _ _ _ _ => exact wordToStackRegBoundInstall conf perf _ _ _ _ _ bs frame conventions room plain
-  | codeBufferWrite _ _ => exact wordToStackRegBoundCodeBufferWrite conf perf _ _ bs frame conventions room plain
-  | dataBufferWrite _ _ => exact wordToStackRegBoundDataBufferWrite conf perf _ _ bs frame conventions room plain
-  | ffi _ _ _ _ _ _ => exact wordToStackRegBoundFfi conf perf _ _ _ _ _ _ bs frame conventions room plain
-  | shareInst _ _ _ => exact wordToStackRegBoundShareInst conf perf _ _ _ bs frame conventions room plain
-  | mustTerminate body =>
-      exact wordToStackRegBoundMustTerminate conf perf body bs frame conventions room plain
-        (fun bs frame conventions room plain => wordToStackRegBound conf perf body bs frame conventions room plain)
-  | loop liveIn body liveOut =>
-      exact wordToStackRegBoundLoop conf perf liveIn liveOut body bs frame conventions room plain
-        (fun bs frame conventions room plain => wordToStackRegBound conf perf body bs frame conventions room plain)
-  | seq first second =>
-      exact wordToStackRegBoundSeq conf perf first second bs frame conventions room plain
-        (fun bs frame conventions room plain => wordToStackRegBound conf perf first bs frame conventions room plain)
-        (fun bs frame conventions room plain => wordToStackRegBound conf perf second bs frame conventions room plain)
-  | ite cmp reg ri first second =>
-      exact wordToStackRegBoundIf conf perf cmp reg ri first second bs frame conventions room plain
-        (fun bs frame conventions room plain => wordToStackRegBound conf perf first bs frame conventions room plain)
-        (fun bs frame conventions room plain => wordToStackRegBound conf perf second bs frame conventions room plain)
-  | call returns dest args handler =>
-      cases returns with
-      | none => exact wordToStackRegBoundCallTail conf perf dest args handler bs frame conventions room plain
-      | some record =>
-          match hRet : record with
-          | (values,live,retCode,l1,l2) =>
-              cases handler with
-              | none =>
-                  exact wordToStackRegBoundCallReturn conf perf values live retCode l1 l2
-                    dest args bs frame conventions room plain
-                    (fun bs frame conventions room plain => wordToStackRegBound conf perf retCode bs frame conventions room plain)
-              | some record =>
-                  match hHandle : record with
-                  | (handleValue,handleCode,h1,h2) =>
-                      exact wordToStackRegBoundCallHandler conf perf values live retCode handleCode
-                        l1 l2 handleValue h1 h2 dest args bs frame conventions room plain
-                        (fun bs frame conventions room plain => wordToStackRegBound conf perf retCode bs frame conventions room plain)
-                        (fun bs frame conventions room plain => wordToStackRegBound conf perf handleCode bs frame conventions room plain)
-termination_by sizeOf program
-decreasing_by
-  all_goals subst_vars
-  all_goals simp_wf
-  all_goals omega
+  set_option tactic.fun_induction.unfolding false in
+    fun_induction maxVarHOL program generalizing bs frame with
+    | case8 dest args values live body l1 l2 ih =>
+        exact wordToStackRegBoundCallReturn conf perf values live body l1 l2 dest args
+          bs frame conventions room plain (by intros; apply ih <;> assumption)
+    | case9 dest args values live body l1 l2 value handler h1 h2 ihBody ihHandler =>
+        exact wordToStackRegBoundCallHandler conf perf values live body handler l1 l2 value h1 h2
+          dest args bs frame conventions room plain
+          (by intros; apply ihBody <;> assumption) (by intros; apply ihHandler <;> assumption)
+    | case10 first second ihFirst ihSecond =>
+        exact wordToStackRegBoundSeq conf perf first second bs frame conventions room plain
+          (by intros; apply ihFirst <;> assumption) (by intros; apply ihSecond <;> assumption)
+    | case11 body ih =>
+        exact wordToStackRegBoundMustTerminate conf perf body bs frame conventions room plain
+          (by intros; apply ih <;> assumption)
+    | case12 cmp reg ri first second ihFirst ihSecond =>
+        exact wordToStackRegBoundIf conf perf cmp reg ri first second bs frame conventions room plain
+          (by intros; apply ihFirst <;> assumption) (by intros; apply ihSecond <;> assumption)
+    | case26 liveIn body liveOut ih =>
+        exact wordToStackRegBoundLoop conf perf liveIn liveOut body bs frame conventions room plain
+          (by intros; apply ih <;> assumption)
+    | case27 program =>
+        cases program <;> solve_by_elim [wordToStackRegBoundBreak, wordToStackRegBoundContinue]
+    | _ =>
+        solve_by_elim [wordToStackRegBoundSkip, wordToStackRegBoundMove, wordToStackRegBoundInst,
+          wordToStackRegBoundAssign, wordToStackRegBoundGet, wordToStackRegBoundSet,
+          wordToStackRegBoundStore, wordToStackRegBoundAlloc, wordToStackRegBoundStoreConsts,
+          wordToStackRegBoundRaise, wordToStackRegBoundReturn, wordToStackRegBoundBreak,
+          wordToStackRegBoundContinue, wordToStackRegBoundTick, wordToStackRegBoundOpCurrHeap,
+          wordToStackRegBoundLocValue, wordToStackRegBoundInstall, wordToStackRegBoundCodeBufferWrite,
+          wordToStackRegBoundDataBufferWrite, wordToStackRegBoundFfi, wordToStackRegBoundShareInst, wordToStackRegBoundCallTail]
 
 end Flapjack.WordToStackProofs.RegisterBoundCompiler

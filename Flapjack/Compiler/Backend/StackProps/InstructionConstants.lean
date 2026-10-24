@@ -1,3 +1,4 @@
+import Flapjack.Pancake.WordLang.MaxVarExp
 import Flapjack.Compiler.Backend.Semantics.StackSem.Inst
 import Flapjack.Compiler.Backend.StackProps.ExpressionClock
 
@@ -53,32 +54,15 @@ private theorem wordExpWithFfi {width : Nat} [NeZero width] {C : Type} {F : Type
     (s : StackSemStateFiniteExact width C F)
     (y : WordLangExpHOL (BitVec width)) (k : HolFfiState OtherF) :
     wordExp ({ s with ffi := k } : StackSemStateFiniteExact width C OtherF) y = wordExp s y := by
-  refine WordLangExpHOL.rec
-    (motive_1 := fun e : WordLangExpHOL (BitVec width) =>
-      wordExp ({ s with ffi := k } : StackSemStateFiniteExact width C OtherF) e = wordExp s e)
-    (motive_2 := fun es : List (WordLangExpHOL (BitVec width)) =>
-      ∀ e ∈ es, wordExp ({ s with ffi := k } : StackSemStateFiniteExact width C OtherF) e = wordExp s e)
-    ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ y
-  · intro value; simp only [wordExp]
-  · intro register; simp only [wordExp]
-  · intro name; simp only [wordExp]
-  · intro address ih
-    simp only [wordExp, ih, memLoad]
-  · intro operator arguments ih
-    simp only [wordExp]
-    have hmap : arguments.attach.map (fun e => wordExp ({ s with ffi := k } : StackSemStateFiniteExact width C OtherF) e.val) =
-        arguments.attach.map (fun e => wordExp s e.val) := by
-      apply List.map_congr_left
-      intro e _
-      exact ih e.val e.property
-    rw [hmap]
-  · intro operator left right ihLeft ihRight
-    simp only [wordExp, ihLeft, ihRight]
-  · intro e h; cases h
-  · intro head tail ihHead ihTail e he
-    rcases List.mem_cons.mp he with rfl | ht
-    · exact ihHead
-    · exact ihTail e ht
+  set_option tactic.fun_induction.unfolding false in
+    fun_induction maxVarExpHOL y with
+    | case3 operator arguments ih =>
+        simp only [wordExp]
+        have hmap := List.map_congr_left (l := arguments.attach)
+          (fun e _ => ih e.val e.property)
+        rw [hmap]
+    | case5 expression _ _ _ _ => cases expression <;> grind only [wordExp, memLoad]
+    | _ => simp_all only [wordExp, memLoad]
 
 /-- Flapjack auxiliary for the original FFI commutation proof, derived from
 actual expression evaluation and register update. No callback law is assumed. -/

@@ -49,31 +49,12 @@ theorem executableLoopExpToHol_holLoopExpToExecutable
     {width : Nat} [NeZero width] (expression : HolLoopExp width) :
       executableLoopExpToHol (holLoopExpToExecutable expression) =
       some expression := by
-  refine HolLoopExp.rec
-    (motive_1 := fun expression =>
-      executableLoopExpToHol (holLoopExpToExecutable expression) = some expression)
-    (motive_2 := fun expressions =>
-      executableLoopExpToHol.executableLoopExpListToHol
-        (expressions.map holLoopExpToExecutable) = some expressions)
-    ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ expression
-  · intro value
-    simp [holLoopExpToExecutable, executableLoopExpToHol]
-  · intro name
-    simp [holLoopExpToExecutable, executableLoopExpToHol]
-  · intro address
-    simp [holLoopExpToExecutable, executableLoopExpToHol]
-  · intro address ih
-    simpa [holLoopExpToExecutable, executableLoopExpToHol] using ih
-  · intro operator args ih
-    simpa [holLoopExpToExecutable, executableLoopExpToHol] using ih
-  · intro operator left right ihLeft ihRight
-    simp [holLoopExpToExecutable, executableLoopExpToHol, ihLeft, ihRight]
-  · simp [holLoopExpToExecutable, executableLoopExpToHol]
-  · simp [holLoopExpToExecutable, executableLoopExpToHol]
-  · simp [executableLoopExpToHol.executableLoopExpListToHol]
-  · intro head tail ihHead ihTail
-    simp [executableLoopExpToHol.executableLoopExpListToHol,
-      ihHead, ihTail]
+  induction expression using HolLoopExp.rec
+    (motive_2 := fun es => executableLoopExpToHol.executableLoopExpListToHol
+      (es.map holLoopExpToExecutable) = some es) with
+  | _ =>
+      simp_all [holLoopExpToExecutable, executableLoopExpToHol,
+        executableLoopExpToHol.executableLoopExpListToHol]
 
 @[simp] theorem executableLoopExpToHol_rejects_crepOp
     {width : Nat} [NeZero width] (operator : CrepOp)

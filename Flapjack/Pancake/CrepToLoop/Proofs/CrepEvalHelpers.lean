@@ -27,23 +27,13 @@ end CrepToLoopCrepEvalFiniteSupport
 
 theorem evalCrepSemHOLExp_upd_clock {width : Nat} [NeZero width] {ffiState : Type}
     (s : CrepSemHOLState width ffiState) (v : Nat) :
-    ∀ e : CrepExpHOL width, evalCrepSemHOLExp { s with clock := v } e = evalCrepSemHOLExp s e
-  | .const _ | .var _ | .loadGlob _ | .baseAddr | .topAddr => by simp only [evalCrepSemHOLExp]
-  | .load a | .load32 a | .loadByte a => by
-      simp only [evalCrepSemHOLExp, evalCrepSemHOLExp_upd_clock s v a]
-  | .op o args | .crepOp o args => by
+    ∀ e : CrepExpHOL width, evalCrepSemHOLExp { s with clock := v } e = evalCrepSemHOLExp s e := by
+  intro e
+  fun_induction evalCrepSemHOLExp s e with
+  | case7 _ args ih | case8 _ args ih =>
       simp only [evalCrepSemHOLExp]
-      rw [optMmapCongHOL args args _ _ rfl (fun x hx => evalCrepSemHOLExp_upd_clock s v x)]
-  | .cmp o a b | .shift o a b => by
-      simp only [evalCrepSemHOLExp, evalCrepSemHOLExp_upd_clock s v a,
-        evalCrepSemHOLExp_upd_clock s v b]
-termination_by e => sizeOf e
-decreasing_by
-  all_goals simp_wf
-  all_goals first
-    | decreasing_trivial
-    | (simp_all only [CrepExpHOL.op.sizeOf_spec, CrepExpHOL.crepOp.sizeOf_spec];
-       have := List.sizeOf_lt_of_mem hx; omega)
+      rw [optMmapCongHOL args args _ _ rfl ih]
+  | _ => simp_all [evalCrepSemHOLExp]
 
 /-- Exact HOL `crep_eval_upd_clock` (`crep_to_loopProofScript.sml:3295-3296`, `[local]`):
     `crepSem$eval (s with clock := v) = crepSem$eval s`. -/

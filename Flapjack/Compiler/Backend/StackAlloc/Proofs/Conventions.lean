@@ -29,145 +29,31 @@ open Flapjack.Compiler.Encoders.Asm
 theorem stack_alloc_comp_stack_asm_name {width : Nat} [NeZero width] {c : AsmConfigExact width} :
     ∀ (n m : Nat) (p : HolProg width),
       stackAsmName c p ∧ stackAsmRemove c p →
-      stackAsmName c (comp n m p).1 ∧ stackAsmRemove c (comp n m p).1
-  | n, m, .seq a b, ⟨h1, h2⟩ => by
-      simp only [stackAsmName, stackAsmRemove] at h1 h2
-      have ha := stack_alloc_comp_stack_asm_name n m a ⟨h1.1, h2.1⟩
-      have hb := stack_alloc_comp_stack_asm_name n (comp n m a).2 b ⟨h1.2, h2.2⟩
-      simp only [comp, stackAsmName, stackAsmRemove]
-      exact ⟨⟨ha.1, hb.1⟩, ha.2, hb.2⟩
-  | n, m, .ite cmp r ri a b, ⟨h1, h2⟩ => by
-      simp only [stackAsmName, stackAsmRemove] at h1 h2
-      have ha := stack_alloc_comp_stack_asm_name n m a ⟨h1.1, h2.1⟩
-      have hb := stack_alloc_comp_stack_asm_name n (comp n m a).2 b ⟨h1.2, h2.2⟩
-      simp only [comp, stackAsmName, stackAsmRemove]
-      exact ⟨⟨ha.1, hb.1⟩, ha.2, hb.2⟩
-  | n, m, .loop body, ⟨h1, h2⟩ => by
-      simp only [stackAsmName, stackAsmRemove] at h1 h2
-      have hb := stack_alloc_comp_stack_asm_name n m body ⟨h1, h2⟩
-      simp only [comp, stackAsmName, stackAsmRemove]
-      exact hb
-  | n, m, .call none dest handler, ⟨h1, h2⟩ => by
-      simp only [stackAsmName] at h1
-      simp only [comp, stackAsmName, stackAsmRemove, and_true]
-      exact h1.1
-  | n, m, .call (some (rp, lr, l1, l2)) dest none, ⟨h1, h2⟩ => by
-      simp only [stackAsmName, stackAsmRemove, and_true] at h1 h2
-      have hr := stack_alloc_comp_stack_asm_name n m rp ⟨h1.2, h2⟩
-      simp only [comp, stackAsmName, stackAsmRemove, and_true]
-      exact ⟨⟨h1.1, hr.1⟩, hr.2⟩
-  | n, m, .call (some (rp, lr, l1, l2)) dest (some (hp, k1, k2)), ⟨h1, h2⟩ => by
-      simp only [stackAsmName, stackAsmRemove] at h1 h2
-      have hr := stack_alloc_comp_stack_asm_name n m rp ⟨h1.2.1, h2.1⟩
-      have hh := stack_alloc_comp_stack_asm_name n (comp n m rp).2 hp ⟨h1.2.2, h2.2⟩
-      simp only [comp, stackAsmName, stackAsmRemove]
-      exact ⟨⟨h1.1, hr.1, hh.1⟩, hr.2, hh.2⟩
-  | n, m, .alloc k, _ => by
-      simp [comp, stackAsmName, stackAsmRemove]
-  | n, m, .storeConsts t1 t2 (some loc), _ => by
-      simp [comp, stackAsmName, stackAsmRemove]
-  | _, _, .storeConsts _ _ none, h | _, _, .skip, h | _, _, .halt _, h | _, _, .tick, h
-  | _, _, .ret _, h | _, _, .raise _, h | _, _, .break _, h | _, _, .continue _, h
-  | _, _, .inst _, h | _, _, .get _ _, h | _, _, .set _ _, h | _, _, .opCurrHeap _ _ _, h
-  | _, _, .jumpLower _ _ _, h | _, _, .rawCall _, h | _, _, .install _ _ _ _ _, h
-  | _, _, .shMemOp _ _ _, h | _, _, .codeBufferWrite _ _, h | _, _, .dataBufferWrite _ _, h
-  | _, _, .ffi _ _ _ _ _ _, h | _, _, .locValue _ _ _, h | _, _, .stackAlloc _, h
-  | _, _, .stackFree _, h | _, _, .stackLoad _ _, h | _, _, .stackLoadAny _ _, h
-  | _, _, .stackStore _ _, h | _, _, .stackStoreAny _ _, h | _, _, .stackGetSize _, h
-  | _, _, .stackSetSize _, h | _, _, .bitmapLoad _ _, h => by
-      simp only [comp]; exact h
-termination_by _ _ p => sizeOf p
-decreasing_by all_goals simp_wf <;> omega
+      stackAsmName c (comp n m p).1 ∧ stackAsmRemove c (comp n m p).1 := by
+  intro n m p
+  set_option tactic.fun_induction.unfolding false in
+    fun_induction comp n m p with
+    | _ => simp_all only [comp, stackAsmName, stackAsmRemove] <;> grind
 
 namespace ConventionSupport
 
 /-- `comp` preserves `reg_bound` when the bound is at least 10 (the inner
 `comp_ind` induction of HOL's `stack_alloc_reg_bound`). -/
 theorem comp_regBound {width : Nat} [NeZero width] {sp : Nat} (hsp : 10 ≤ sp) :
-    ∀ (n m : Nat) (p : HolProg width), regBound p sp → regBound (comp n m p).1 sp
-  | n, m, .seq a b, h => by
-      simp only [regBound] at h
-      simp only [comp, regBound]
-      exact ⟨comp_regBound hsp n m a h.1, comp_regBound hsp n _ b h.2⟩
-  | n, m, .ite cmp r ri a b, h => by
-      simp only [regBound] at h
-      simp only [comp, regBound]
-      exact ⟨h.1, h.2.1, comp_regBound hsp n m a h.2.2.1, comp_regBound hsp n _ b h.2.2.2⟩
-  | n, m, .loop body, h => by
-      simp only [regBound] at h
-      simp only [comp, regBound]
-      exact comp_regBound hsp n m body h
-  | n, m, .call none dest handler, h => by
-      simp only [regBound] at h
-      simp only [comp, regBound, and_true]
-      exact h.1
-  | n, m, .call (some (rp, lr, l1, l2)) dest none, h => by
-      simp only [regBound, and_true] at h
-      simp only [comp, regBound, and_true]
-      exact ⟨h.1, comp_regBound hsp n m rp h.2.1, h.2.2⟩
-  | n, m, .call (some (rp, lr, l1, l2)) dest (some (hp, k1, k2)), h => by
-      simp only [regBound] at h
-      simp only [comp, regBound]
-      exact ⟨h.1, comp_regBound hsp n m rp h.2.1, h.2.2.1, comp_regBound hsp n _ hp h.2.2.2⟩
-  | n, m, .alloc k, _ => by
-      simp only [comp, regBound]; exact ⟨trivial, trivial, by omega, trivial⟩
-  | n, m, .storeConsts t1 t2 (some loc), _ => by
-      simp only [comp, regBound]; exact ⟨trivial, trivial, by omega, trivial⟩
-  | _, _, .storeConsts _ _ none, h | _, _, .skip, h | _, _, .halt _, h | _, _, .tick, h
-  | _, _, .ret _, h | _, _, .raise _, h | _, _, .break _, h | _, _, .continue _, h
-  | _, _, .inst _, h | _, _, .get _ _, h | _, _, .set _ _, h | _, _, .opCurrHeap _ _ _, h
-  | _, _, .jumpLower _ _ _, h | _, _, .rawCall _, h | _, _, .install _ _ _ _ _, h
-  | _, _, .shMemOp _ _ _, h | _, _, .codeBufferWrite _ _, h | _, _, .dataBufferWrite _ _, h
-  | _, _, .ffi _ _ _ _ _ _, h | _, _, .locValue _ _ _, h | _, _, .stackAlloc _, h
-  | _, _, .stackFree _, h | _, _, .stackLoad _ _, h | _, _, .stackLoadAny _ _, h
-  | _, _, .stackStore _ _, h | _, _, .stackStoreAny _ _, h | _, _, .stackGetSize _, h
-  | _, _, .stackSetSize _, h | _, _, .bitmapLoad _ _, h => by
-      simp only [comp]; exact h
-termination_by _ _ p => sizeOf p
-decreasing_by all_goals simp_wf <;> omega
+    ∀ (n m : Nat) (p : HolProg width), regBound p sp → regBound (comp n m p).1 sp := by
+  intro n m p
+  set_option tactic.fun_induction.unfolding false in
+    fun_induction comp n m p with
+    | _ => simp_all only [comp, regBound] <;> grind
 
 /-- `comp` preserves `call_args p 1 2 3 4 0` (the inner `comp_ind` induction of
 HOL's `stack_alloc_call_args`). -/
 theorem comp_callArgs {width : Nat} [NeZero width] :
-    ∀ (n m : Nat) (p : HolProg width), callArgs p 1 2 3 4 0 → callArgs (comp n m p).1 1 2 3 4 0
-  | n, m, .seq a b, h => by
-      simp only [callArgs] at h
-      simp only [comp, callArgs]
-      exact ⟨comp_callArgs n m a h.1, comp_callArgs n _ b h.2⟩
-  | n, m, .ite cmp r ri a b, h => by
-      simp only [callArgs] at h
-      simp only [comp, callArgs]
-      exact ⟨comp_callArgs n m a h.1, comp_callArgs n _ b h.2⟩
-  | n, m, .loop body, h => by
-      simp only [callArgs] at h
-      simp only [comp, callArgs]
-      exact comp_callArgs n m body h
-  | n, m, .call none dest handler, h => by
-      simp only [comp, callArgs]
-  | n, m, .call (some (rp, lr, l1, l2)) dest none, h => by
-      simp only [callArgs, and_true] at h
-      simp only [comp, callArgs, and_true]
-      exact ⟨comp_callArgs n m rp h.1, h.2⟩
-  | n, m, .call (some (rp, lr, l1, l2)) dest (some (hp, k1, k2)), h => by
-      simp only [callArgs] at h
-      simp only [comp, callArgs]
-      exact ⟨comp_callArgs n m rp h.1, h.2.1, comp_callArgs n _ hp h.2.2⟩
-  | n, m, .alloc k, _ => by
-      simp [comp, callArgs]
-  | n, m, .storeConsts t1 t2 (some loc), _ => by
-      simp [comp, callArgs]
-  | _, _, .storeConsts _ _ none, h | _, _, .skip, h | _, _, .halt _, h | _, _, .tick, h
-  | _, _, .ret _, h | _, _, .raise _, h | _, _, .break _, h | _, _, .continue _, h
-  | _, _, .inst _, h | _, _, .get _ _, h | _, _, .set _ _, h | _, _, .opCurrHeap _ _ _, h
-  | _, _, .jumpLower _ _ _, h | _, _, .rawCall _, h | _, _, .install _ _ _ _ _, h
-  | _, _, .shMemOp _ _ _, h | _, _, .codeBufferWrite _ _, h | _, _, .dataBufferWrite _ _, h
-  | _, _, .ffi _ _ _ _ _ _, h | _, _, .locValue _ _ _, h | _, _, .stackAlloc _, h
-  | _, _, .stackFree _, h | _, _, .stackLoad _ _, h | _, _, .stackLoadAny _ _, h
-  | _, _, .stackStore _ _, h | _, _, .stackStoreAny _ _, h | _, _, .stackGetSize _, h
-  | _, _, .stackSetSize _, h | _, _, .bitmapLoad _ _, h => by
-      simp only [comp]; exact h
-termination_by _ _ p => sizeOf p
-decreasing_by all_goals simp_wf <;> omega
+    ∀ (n m : Nat) (p : HolProg width), callArgs p 1 2 3 4 0 → callArgs (comp n m p).1 1 2 3 4 0 := by
+  intro n m p
+  set_option tactic.fun_induction.unfolding false in
+    fun_induction comp n m p with
+    | _ => simp_all only [comp, callArgs] <;> grind
 
 set_option linter.unusedSimpArgs false in
 /-- The GC stub is register-bounded by any bound of at least 10 (the

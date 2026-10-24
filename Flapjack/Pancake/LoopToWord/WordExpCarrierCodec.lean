@@ -104,51 +104,21 @@ decreasing_by
 theorem wordExpToHOL_fromHOL {α : Type u}
     (expression : WordLangExpHOL α) :
     wordExpToHOL (wordExpFromHOL expression) = expression := by
-  refine WordLangExpHOL.rec
-    (motive_1 := fun expression =>
-      wordExpToHOL (wordExpFromHOL expression) = expression)
-    (motive_2 := fun expressions =>
-      (expressions.map wordExpFromHOL).map wordExpToHOL = expressions)
-    ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ expression
-  · intro value
-    simp [wordExpToHOL, wordExpFromHOL]
-  · intro name
-    simp [wordExpToHOL, wordExpFromHOL]
-  · intro store
-    simp [wordExpToHOL, wordExpFromHOL]
-  · intro address ih
-    simp [wordExpToHOL, wordExpFromHOL, ih]
-  · intro operator arguments ih
-    simpa [wordExpToHOL, wordExpFromHOL] using ih
-  · intro operator left right ihLeft ihRight
-    simp [wordExpToHOL, wordExpFromHOL, ihLeft, ihRight]
-  · rfl
-  · intro head tail ihHead ihTail
-    simp [ihHead, ihTail]
+  fun_induction wordExpFromHOL expression with
+  | case5 _ arguments ih =>
+      simp only [wordExpToHOL, List.map_map]
+      congr 1
+      exact (List.map_congr_left (g := id) ih).trans (List.map_id _)
+  | _ => simp_all [wordExpToHOL]
 
 theorem wordExpFromHOL_toHOL {α : Type u}
     (expression : WordExp α) :
     wordExpFromHOL (wordExpToHOL expression) = expression := by
-  refine WordExp.rec
-    (motive_1 := fun expression =>
-      wordExpFromHOL (wordExpToHOL expression) = expression)
-    (motive_2 := fun expressions =>
-      (expressions.map wordExpToHOL).map wordExpFromHOL = expressions)
-    ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ expression
-  · intro value
-    simp [wordExpToHOL, wordExpFromHOL]
-  · intro name
-    simp [wordExpToHOL, wordExpFromHOL]
-  · intro store
-    simp [wordExpToHOL, wordExpFromHOL]
-  · intro address ih
-    simp [wordExpToHOL, wordExpFromHOL, ih]
-  · intro operator arguments ih
-    simpa [wordExpToHOL, wordExpFromHOL] using ih
-  · intro operator left right ihLeft ihRight
-    simp [wordExpToHOL, wordExpFromHOL, ihLeft, ihRight]
-  · rfl
-  · intro head tail ihHead ihTail
-    simp [ihHead, ihTail]
+  fun_induction wordExpToHOL expression with
+  | case5 _ arguments ih =>
+      simp only [wordExpFromHOL, List.map_map]
+      congr 1
+      exact (List.map_congr_left (g := id) ih).trans (List.map_id _)
+  | _ => simp_all [wordExpFromHOL]
 
 end Flapjack

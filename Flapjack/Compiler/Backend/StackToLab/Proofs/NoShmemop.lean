@@ -70,45 +70,11 @@ theorem stackRawcallCompileNoShmemop {width : Nat} [NeZero width] :
   (words_as_type_indexed_bitvec)]
 theorem stackAllocCompNoShmemop {width : Nat} [NeZero width] :
     ∀ (n m : Nat) (p : HolProg width),
-      noShmemop p = true → noShmemop (StackAlloc.comp n m p).1 = true
-  | n, m, .seq a b, h => by
-      simp only [noShmemop, Bool.and_eq_true] at h
-      simp only [StackAlloc.comp, noShmemop, Bool.and_eq_true]
-      exact ⟨stackAllocCompNoShmemop n m a h.1, stackAllocCompNoShmemop n _ b h.2⟩
-  | n, m, .ite cmp r ri a b, h => by
-      simp only [noShmemop, Bool.and_eq_true] at h
-      simp only [StackAlloc.comp, noShmemop, Bool.and_eq_true]
-      exact ⟨stackAllocCompNoShmemop n m a h.1, stackAllocCompNoShmemop n _ b h.2⟩
-  | n, m, .loop body, h => by
-      simp only [noShmemop] at h
-      simp only [StackAlloc.comp, noShmemop]
-      exact stackAllocCompNoShmemop n m body h
-  | n, m, .call none dest handler, h => by
-      simp [StackAlloc.comp, noShmemop]
-  | n, m, .call (some (rp, lr, l1, l2)) dest none, h => by
-      simp only [noShmemop, Bool.and_true] at h
-      simp only [StackAlloc.comp, noShmemop, Bool.and_true]
-      exact stackAllocCompNoShmemop n m rp h
-  | n, m, .call (some (rp, lr, l1, l2)) dest (some (hp, k1, k2)), h => by
-      simp only [noShmemop, Bool.and_eq_true] at h
-      simp only [StackAlloc.comp, noShmemop, Bool.and_eq_true]
-      exact ⟨stackAllocCompNoShmemop n m rp h.1, stackAllocCompNoShmemop n _ hp h.2⟩
-  | n, m, .alloc k, _ => by
-      simp [StackAlloc.comp, noShmemop]
-  | n, m, .storeConsts t1 t2 (some loc), _ => by
-      simp [StackAlloc.comp, noShmemop]
-  | _, _, .storeConsts _ _ none, h | _, _, .skip, h | _, _, .halt _, h | _, _, .tick, h
-  | _, _, .ret _, h | _, _, .raise _, h | _, _, .break _, h | _, _, .continue _, h
-  | _, _, .inst _, h | _, _, .get _ _, h | _, _, .set _ _, h | _, _, .opCurrHeap _ _ _, h
-  | _, _, .jumpLower _ _ _, h | _, _, .rawCall _, h | _, _, .install _ _ _ _ _, h
-  | _, _, .shMemOp _ _ _, h | _, _, .codeBufferWrite _ _, h | _, _, .dataBufferWrite _ _, h
-  | _, _, .ffi _ _ _ _ _ _, h | _, _, .locValue _ _ _, h | _, _, .stackAlloc _, h
-  | _, _, .stackFree _, h | _, _, .stackLoad _ _, h | _, _, .stackLoadAny _ _, h
-  | _, _, .stackStore _ _, h | _, _, .stackStoreAny _ _, h | _, _, .stackGetSize _, h
-  | _, _, .stackSetSize _, h | _, _, .bitmapLoad _ _, h => by
-      simp only [StackAlloc.comp]; exact h
-termination_by _ _ p => sizeOf p
-decreasing_by all_goals simp_wf <;> omega
+      noShmemop p = true → noShmemop (StackAlloc.comp n m p).1 = true := by
+  intro n m p
+  set_option tactic.fun_induction.unfolding false in
+    fun_induction StackAlloc.comp n m p with
+    | _ => simp_all [StackAlloc.comp, noShmemop]
 
 /-- HOL `stack_alloc_prog_comp_no_shmemop`. -/
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"

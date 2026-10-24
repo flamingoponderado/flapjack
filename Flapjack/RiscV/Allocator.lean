@@ -2339,23 +2339,8 @@ decreasing_by all_goals decreasing_trivial
 nested Op argument and both Shift operands. Flapjack carrier infrastructure. -/
 theorem wordApplyColourExp_route_eq (colour : Nat → Nat) (expression : WordExp α) :
     wordApplyColourExpRoute colour expression = wordApplyColourExp colour expression := by
-  refine WordExp.rec
-    (motive_1 := fun e => wordApplyColourExpRoute colour e = wordApplyColourExp colour e)
-    (motive_2 := fun es => es.map (wordApplyColourExpRoute colour) =
-      es.map (wordApplyColourExp colour))
-    ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ expression
-  · intro value; simp [wordApplyColourExpRoute, wordApplyColourExp]
-  · intro name; simp [wordApplyColourExpRoute, wordApplyColourExp]
-  · intro store; simp [wordApplyColourExpRoute, wordApplyColourExp]
-  · intro address ih
-    simpa [wordApplyColourExpRoute, wordApplyColourExp] using congrArg WordExp.load ih
-  · intro operator arguments ih
-    simpa [wordApplyColourExpRoute, wordApplyColourExp] using congrArg (WordExp.op operator) ih
-  · intro operator left right ihLeft ihRight
-    simp only [wordApplyColourExpRoute] at ihLeft ihRight ⊢
-    simp [wordApplyColourExp, ihLeft, ihRight]
-  · rfl
-  · intro head tail ihHead ihTail; simp [ihHead, ihTail]
+  fun_induction wordApplyColourExp colour expression with
+  | _ => simp_all [wordApplyColourExpRoute]
 
 /-- Kernel-proved compiler routing for all types and inputs, registered before
 production callers are compiled. Flapjack infrastructure, not a HOL theorem. -/
@@ -2522,62 +2507,10 @@ def wordProgBranchLabels : WordProg α → List Nat
 theorem wordApplyColourPreservesBranchLabelsAux
     (colour : Nat → Nat) : (program : WordProg α) →
     wordProgBranchLabels (wordApplyColour colour program) =
-      wordProgBranchLabels program
-  | .skip => by simp [wordApplyColour, wordProgBranchLabels]
-  | .move _ _ => by simp [wordApplyColour, wordProgBranchLabels]
-  | .assign _ _ => by simp [wordApplyColour, wordProgBranchLabels]
-  | .inst _ => by simp [wordApplyColour, wordProgBranchLabels]
-  | .get _ _ => by simp [wordApplyColour, wordProgBranchLabels]
-  | .store _ _ => by simp [wordApplyColour, wordProgBranchLabels]
-  | .set _ _ => by simp [wordApplyColour, wordProgBranchLabels]
-  | .seq first second => by
-      simp [wordApplyColour, wordProgBranchLabels,
-        wordApplyColourPreservesBranchLabelsAux colour first,
-        wordApplyColourPreservesBranchLabelsAux colour second]
-  | .ite _ _ _ thenBranch elseBranch => by
-      simp [wordApplyColour, wordProgBranchLabels,
-        wordApplyColourPreservesBranchLabelsAux colour thenBranch,
-        wordApplyColourPreservesBranchLabelsAux colour elseBranch]
-  | .loop _ body _ => by
-      simp [wordApplyColour, wordProgBranchLabels,
-        wordApplyColourPreservesBranchLabelsAux colour body]
-  | .mustTerminate body => by
-      simp [wordApplyColour, wordProgBranchLabels,
-        wordApplyColourPreservesBranchLabelsAux colour body]
-  | .break _ => by simp [wordApplyColour, wordProgBranchLabels]
-  | .continue _ => by simp [wordApplyColour, wordProgBranchLabels]
-  | .raise _ => by simp [wordApplyColour, wordProgBranchLabels]
-  | .return _ _ => by simp [wordApplyColour, wordProgBranchLabels]
-  | .tick => by simp [wordApplyColour, wordProgBranchLabels]
-  | .locValue _ _ => by simp [wordApplyColour, wordProgBranchLabels]
-  | .call returns target arguments handler => by
-      cases returns
-      · cases handler
-        · simp [wordApplyColour, wordProgBranchLabels]
-        · rename_i handlerData
-          rcases handlerData with ⟨exception, body, handlerLabel, entryLabel⟩
-          simp [wordApplyColour, wordProgBranchLabels]
-      · rename_i returnData
-        rcases returnData with
-          ⟨values, cutsets, returnProgram, returnLabel, entryLabel⟩
-        cases handler
-        · simp [wordApplyColour, wordProgBranchLabels]
-        · rename_i handlerData
-          rcases handlerData with
-            ⟨exception, body, handlerLabel, handlerEntryLabel⟩
-          simp [wordApplyColour, wordProgBranchLabels]
-  | .alloc _ cutsets => by
-      cases cutsets <;> simp [wordApplyColour, wordProgBranchLabels]
-  | .storeConsts _ _ _ _ _ => by simp [wordApplyColour, wordProgBranchLabels]
-  | .opCurrHeap _ _ _ => by simp [wordApplyColour, wordProgBranchLabels]
-  | .install _ _ _ _ cutsets => by
-      cases cutsets <;> simp [wordApplyColour, wordProgBranchLabels]
-  | .codeBufferWrite _ _ => by simp [wordApplyColour, wordProgBranchLabels]
-  | .dataBufferWrite _ _ => by simp [wordApplyColour, wordProgBranchLabels]
-  | .ffi _ _ _ _ _ _ => by simp [wordApplyColour, wordProgBranchLabels]
-  | .shareInst _ _ _ => by simp [wordApplyColour, wordProgBranchLabels]
-termination_by program => sizeOf program
-decreasing_by all_goals decreasing_trivial
+      wordProgBranchLabels program := by
+  intro program
+  fun_induction wordApplyColour colour program with
+  | _ => simp_all [wordProgBranchLabels]
 
 theorem wordApplyColour_preserves_branch_labels
     (colour : Nat → Nat) (program : WordProg α) :
@@ -2612,70 +2545,10 @@ decreasing_by all_goals decreasing_trivial
 
 theorem wordApplyColourPreservesLabelsAux
     (colour : Nat → Nat) : (program : WordProg α) →
-    wordProgLabels (wordApplyColour colour program) = wordProgLabels program
-  | .skip => by simp [wordApplyColour, wordProgLabels]
-  | .move _ _ => by simp [wordApplyColour, wordProgLabels]
-  | .assign _ _ => by simp [wordApplyColour, wordProgLabels]
-  | .inst _ => by simp [wordApplyColour, wordProgLabels]
-  | .get _ _ => by simp [wordApplyColour, wordProgLabels]
-  | .store _ _ => by simp [wordApplyColour, wordProgLabels]
-  | .set _ _ => by simp [wordApplyColour, wordProgLabels]
-  | .seq first second => by
-      simp [wordApplyColour, wordProgLabels,
-        wordApplyColourPreservesLabelsAux colour first,
-        wordApplyColourPreservesLabelsAux colour second]
-  | .ite _ _ _ thenBranch elseBranch => by
-      simp [wordApplyColour, wordProgLabels,
-        wordApplyColourPreservesLabelsAux colour thenBranch,
-        wordApplyColourPreservesLabelsAux colour elseBranch]
-  | .loop _ body _ => by
-      simp [wordApplyColour, wordProgLabels,
-        wordApplyColourPreservesLabelsAux colour body]
-  | .mustTerminate body => by
-      simp [wordApplyColour, wordProgLabels,
-        wordApplyColourPreservesLabelsAux colour body]
-  | .break _ => by simp [wordApplyColour, wordProgLabels]
-  | .continue _ => by simp [wordApplyColour, wordProgLabels]
-  | .raise _ => by simp [wordApplyColour, wordProgLabels]
-  | .return _ _ => by simp [wordApplyColour, wordProgLabels]
-  | .tick => by simp [wordApplyColour, wordProgLabels]
-  | .locValue _ _ => by simp [wordApplyColour, wordProgLabels]
-  | .call returns _ _ handler => by
-      cases returns with
-      | none =>
-          cases handler with
-          | none => simp [wordApplyColour, wordProgLabels]
-          | some value =>
-              rcases value with ⟨exception, handlerProgram, handlerLabel,
-                entryLabel⟩
-              have hhandler :=
-                wordApplyColourPreservesLabelsAux colour handlerProgram
-              simp [wordApplyColour, wordProgLabels, hhandler]
-      | some value =>
-          rcases value with ⟨values, cutsets, returnProgram, returnLabel,
-            entryLabel⟩
-          have hreturn :=
-            wordApplyColourPreservesLabelsAux colour returnProgram
-          cases handler with
-          | none => simp [wordApplyColour, wordProgLabels, hreturn]
-          | some handlerValue =>
-              rcases handlerValue with ⟨exception, handlerProgram,
-                handlerLabel, handlerEntryLabel⟩
-              have hhandler :=
-                wordApplyColourPreservesLabelsAux colour handlerProgram
-              simp [wordApplyColour, wordProgLabels, hreturn, hhandler]
-  | .alloc _ cutsets => by
-      cases cutsets <;> simp [wordApplyColour, wordProgLabels]
-  | .storeConsts _ _ _ _ _ => by simp [wordApplyColour, wordProgLabels]
-  | .opCurrHeap _ _ _ => by simp [wordApplyColour, wordProgLabels]
-  | .install _ _ _ _ cutsets => by
-      cases cutsets <;> simp [wordApplyColour, wordProgLabels]
-  | .codeBufferWrite _ _ => by simp [wordApplyColour, wordProgLabels]
-  | .dataBufferWrite _ _ => by simp [wordApplyColour, wordProgLabels]
-  | .ffi _ _ _ _ _ _ => by simp [wordApplyColour, wordProgLabels]
-  | .shareInst _ _ _ => by simp [wordApplyColour, wordProgLabels]
-termination_by program => sizeOf program
-decreasing_by all_goals decreasing_trivial
+    wordProgLabels (wordApplyColour colour program) = wordProgLabels program := by
+  intro program
+  fun_induction wordApplyColour colour program with
+  | _ => simp_all [wordProgLabels]
 
 theorem wordApplyColour_preserves_labels
     (colour : Nat → Nat) (program : WordProg α) :

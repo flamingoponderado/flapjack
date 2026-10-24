@@ -1,4 +1,5 @@
 import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+import Flapjack.Misc.OptMmapCong
 
 namespace Flapjack.CrepInlineClockExpressions
 
@@ -19,30 +20,11 @@ theorem evalDecClockEq {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) (expression : CrepExpHOL width) :
     evalCrepSemHOLExp (decClockCrepSemHOL state) expression =
       evalCrepSemHOLExp state expression := by
-  change evalCrepSemHOLExp { state with clock := state.clock - 1 } expression =
-    evalCrepSemHOLExp state expression
-  refine CrepExpHOL.rec
-    (motive_1 := fun expression =>
-      evalCrepSemHOLExp { state with clock := state.clock - 1 } expression =
-        evalCrepSemHOLExp state expression)
-    (motive_2 := fun expressions =>
-      expressions.mapM (evalCrepSemHOLExp { state with clock := state.clock - 1 }) =
-        expressions.mapM (evalCrepSemHOLExp state))
-    (fun value => by simp [evalCrepSemHOLExp])
-    (fun name => by simp [evalCrepSemHOLExp])
-    (fun address ih => by simp [evalCrepSemHOLExp, ih])
-    (fun address ih => by simp [evalCrepSemHOLExp, ih])
-    (fun address ih => by simp [evalCrepSemHOLExp, ih])
-    (fun address => by simp [evalCrepSemHOLExp])
-    (fun operator args ih => by simp [evalCrepSemHOLExp, ih])
-    (fun operator args ih => by simp [evalCrepSemHOLExp, ih])
-    (fun operator left right ihl ihr => by simp [evalCrepSemHOLExp, ihl, ihr])
-    (fun operator left right ihl ihr => by simp [evalCrepSemHOLExp, ihl, ihr])
-    (by simp [evalCrepSemHOLExp])
-    (by simp [evalCrepSemHOLExp])
-    (by simp only [List.mapM_nil])
-    (fun head tail ihh iht => by simp only [List.mapM_cons, ihh, iht])
-    expression
+  fun_induction evalCrepSemHOLExp state expression with
+  | case7 _ args ih | case8 _ args ih =>
+      simp only [evalCrepSemHOLExp]
+      rw [optMmapCongHOL args args _ _ rfl ih]
+  | _ => simp_all [evalCrepSemHOLExp, decClockCrepSemHOL]
 
 /-- Source OPT_MMAP equation, retaining failure as well as success. -/
 @[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "opt_mmap_eval_dec_clock_eq"

@@ -16,39 +16,15 @@ theorem rebaseHOLFunctionLabelsExact_preserves_locValueFree {width : Nat} [NeZer
     (firstLabel functionCount : Nat) (program : HolLoopProg width)
     (hfree : holLoopProgLocValueFree program) :
     holLoopProgLocValueFree (rebaseHOLFunctionLabelsExact firstLabel functionCount program) := by
-  let mProg : HolLoopProg width → Prop := fun p =>
-    holLoopProgLocValueFree p →
-      holLoopProgLocValueFree (rebaseHOLFunctionLabelsExact firstLabel functionCount p)
-  let mPair : HolLoopProg width × NumSet → Prop := fun p => mProg p.1
-  let mTriple : HolLoopProg width × HolLoopProg width × NumSet → Prop :=
-    fun p => mProg p.1 ∧ mProg p.2.1
-  let mQuad : Nat × HolLoopProg width × HolLoopProg width × NumSet → Prop :=
-    fun p => mTriple p.2
-  let mHandler : Option (Nat × HolLoopProg width × HolLoopProg width × NumSet) → Prop
-    | none => True
-    | some entry => mQuad entry
-  have hgeneral : mProg program := by
-    refine HolLoopProg.rec
-        (motive_1 := mProg) (motive_2 := mHandler) (motive_3 := mQuad)
-        (motive_4 := mTriple) (motive_5 := mPair)
-        ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
-        ?_ ?_ ?_ ?_ ?_ ?_ ?_ program <;>
-      simp_all [mProg, mPair, mTriple, mQuad, mHandler,
-        holLoopProgLocValueFree, rebaseHOLFunctionLabelsExact]
-    case refine_23 =>
-      intro returns target arguments handler hHandler hfree
-      cases handler with
-      | none => simp [holLoopProgLocValueFree, rebaseHOLFunctionLabelsExact]
-      | some entry =>
-          rcases entry with ⟨exception, first, second, live⟩
-          rcases hHandler with ⟨ihFirst, ihSecond⟩
-          simp only [holLoopProgLocValueFree] at hfree
-          rcases hfree with ⟨hFirst, hSecond⟩
-          have hFirst' := ihFirst hFirst
-          have hSecond' := ihSecond hSecond
-          simp [holLoopProgLocValueFree, rebaseHOLFunctionLabelsExact,
-            hFirst', hSecond']
-  exact hgeneral hfree
+  fun_induction holLoopProgLocValueFree program with
+  | case8 program _ _ _ _ _ noTail noHandler =>
+      cases program with
+      | call returns target arguments handler =>
+          rcases handler with _ | ⟨eid, handler, normal, live⟩
+          · exact (noTail returns target arguments rfl).elim
+          · exact (noHandler returns target arguments eid handler normal live rfl).elim
+      | _ => grind only [holLoopProgLocValueFree, rebaseHOLFunctionLabelsExact]
+  | _ => simp_all [holLoopProgLocValueFree, rebaseHOLFunctionLabelsExact]
 
 /-- Production label rebasing after canonical projection preserves the same
 recursive `locValue`-free fact, by the checked projection/rebase commuting

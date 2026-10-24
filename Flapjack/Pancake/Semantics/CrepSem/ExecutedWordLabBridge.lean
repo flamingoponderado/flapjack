@@ -146,19 +146,8 @@ def crepExpNoLoad32 {width : Nat} [NeZero width] : CrepExp (BitVec width) → Pr
 theorem crepExpNoLoad32_of_noByteMemoryLoad {width : Nat} [NeZero width] :
     ∀ e : CrepExp (BitVec width), crepExpNoByteMemoryLoad e → crepExpNoLoad32 e := by
   intro e
-  induction e using (CrepExp.rec (motive_2 := fun (args : List (CrepExp (BitVec width))) =>
-      ∀ e ∈ args, crepExpNoByteMemoryLoad e → crepExpNoLoad32 e))
-  case nil e he _ => exact absurd he (by simp)
-  case cons head tail head_ih tail_ih e he hm =>
-      rcases List.mem_cons.mp he with rfl | he
-      · exact head_ih hm
-      · exact tail_ih e he hm
-  all_goals intro hm; simp only [crepExpNoByteMemoryLoad, crepExpNoLoad32] at hm ⊢
-  case load address ih => exact ih hm
-  case op _ args ih => exact fun a ha => ih a ha (hm a ha)
-  case crepOp _ args ih => exact fun a ha => ih a ha (hm a ha)
-  case cmp _ _ _ ihl ihr => exact ⟨ihl hm.1, ihr hm.2⟩
-  case shift _ _ _ ihl ihr => exact ⟨ihl hm.1, ihr hm.2⟩
+  fun_induction crepExpNoByteMemoryLoad e with
+  | _ => grind only [crepExpNoLoad32]
 
 /-- Distribution of `Option.map` over `List.mapM`. -/
 theorem list_mapM_mapOption {α β γ : Type} (f : α → Option β) (g : β → γ) :
@@ -282,34 +271,25 @@ theorem evalCrepRuntimeExp_executed_allWidth {width : Nat} [NeZero width] {σ : 
     (e : CrepExp (BitVec width)) :
     evalCrepRuntimeExp (executedCrepState state) e =
       (evalCrepSemHOLExp state (crepExpToHOL e)).map holWordLabToWord := by
-  induction e using (CrepExp.rec (motive_2 := fun args =>
-      ∀ e ∈ args,
-        evalCrepRuntimeExp (executedCrepState state) e =
-          (evalCrepSemHOLExp state (crepExpToHOL e)).map holWordLabToWord))
-  case nil e he =>
-      exact absurd he (by simp)
-  case cons head tail head_ih tail_ih e he =>
-      rcases List.mem_cons.mp he with rfl | he
-      · exact head_ih
-      · exact tail_ih e he
-  case const value =>
-      simp [evalCrepRuntimeExp, evalCrepSemHOLExp, crepExpToHOL, holWordLabToWord]
-  case var name =>
+  fun_induction crepExpToHOL e with
+  | case1 value =>
+      simp [evalCrepRuntimeExp, evalCrepSemHOLExp, holWordLabToWord]
+  | case2 name =>
       simp only [executedCrepState, CrepSemHOLState.toBitVecEvaluatorState,
-        CrepHolState.toRuntime, evalCrepRuntimeExp, evalCrepSemHOLExp, crepExpToHOL]
+        CrepHolState.toRuntime, evalCrepRuntimeExp, evalCrepSemHOLExp]
       simp only [Option.map_map, Function.comp_def, panTheWord_toPanWordLab]
-  case loadGlob address =>
+  | case6 address =>
       simp only [executedCrepState, CrepSemHOLState.toBitVecEvaluatorState,
-        CrepHolState.toRuntime, evalCrepRuntimeExp, evalCrepSemHOLExp, crepExpToHOL]
+        CrepHolState.toRuntime, evalCrepRuntimeExp, evalCrepSemHOLExp]
       simp only [Option.map_map, Function.comp_def, panTheWord_toPanWordLab]
-  case baseAddr =>
+  | case11 =>
       simp [executedCrepState, CrepSemHOLState.toBitVecEvaluatorState, CrepHolState.toRuntime,
-        evalCrepRuntimeExp, evalCrepSemHOLExp, crepExpToHOL, holWordLabToWord]
-  case topAddr =>
+        evalCrepRuntimeExp, evalCrepSemHOLExp, holWordLabToWord]
+  | case12 =>
       simp [executedCrepState, CrepSemHOLState.toBitVecEvaluatorState, CrepHolState.toRuntime,
-        evalCrepRuntimeExp, evalCrepSemHOLExp, crepExpToHOL, holWordLabToWord]
-  case load address ih =>
-      simp only [evalCrepRuntimeExp, evalCrepSemHOLExp, crepExpToHOL]
+        evalCrepRuntimeExp, evalCrepSemHOLExp, holWordLabToWord]
+  | case3 address ih =>
+      simp only [evalCrepRuntimeExp, evalCrepSemHOLExp]
       rw [ih]
       cases ha : evalCrepSemHOLExp state (crepExpToHOL address) with
       | none => rfl
@@ -319,10 +299,10 @@ theorem evalCrepRuntimeExp_executed_allWidth {width : Nat} [NeZero width] {σ : 
               simp only [Option.map_some]
               simp [crepRuntimeLoad, executedCrepState, CrepSemHOLState.toBitVecEvaluatorState,
                 CrepHolState.toRuntime, holWordLabToWord]
-  case load32 address ih => exact evalCrepRuntimeExp_executed_load32 state address ih
-  case loadByte address ih =>
-      exact evalCrepRuntimeExp_executed_loadByte state address ih
-  case crepOp operator args ih =>
+  | case4 address ih => simpa only [crepExpToHOL] using evalCrepRuntimeExp_executed_load32 state address ih
+  | case5 address ih =>
+      simpa only [crepExpToHOL] using evalCrepRuntimeExp_executed_loadByte state address ih
+  | case8 operator args ih =>
       have hpoint : ∀ e ∈ args,
           evalCrepRuntimeExp (executedCrepState state) e =
             (evalCrepSemHOLExp state (crepExpToHOL e)).map holWordLabToWord :=
@@ -330,11 +310,11 @@ theorem evalCrepRuntimeExp_executed_allWidth {width : Nat} [NeZero width] {σ : 
       cases operator with
       | mul =>
           cases args with
-          | nil => simp [evalCrepRuntimeExp, evalCrepSemHOLExp, crepExpToHOL, crepOpCrepWord]
+          | nil => simp [evalCrepRuntimeExp, evalCrepSemHOLExp, crepOpCrepWord]
           | cons a rest =>
               cases rest with
               | nil =>
-                  simp only [evalCrepRuntimeExp, evalCrepSemHOLExp, crepExpToHOL]
+                  simp only [evalCrepRuntimeExp, evalCrepSemHOLExp]
                   cases ha : evalCrepSemHOLExp state (crepExpToHOL a) with
                   | none => simp [ha, crepOpCrepWord]
                   | some hwa =>
@@ -343,7 +323,7 @@ theorem evalCrepRuntimeExp_executed_allWidth {width : Nat} [NeZero width] {σ : 
               | cons b rest2 =>
                   cases rest2 with
                   | nil =>
-                      simp only [evalCrepRuntimeExp, evalCrepSemHOLExp, crepExpToHOL]
+                      simp only [evalCrepRuntimeExp, evalCrepSemHOLExp]
                       rw [hpoint a (by simp), hpoint b (by simp)]
                       cases ha : evalCrepSemHOLExp state (crepExpToHOL a) with
                       | none => simp [ha, crepOpCrepWord]
@@ -357,7 +337,7 @@ theorem evalCrepRuntimeExp_executed_allWidth {width : Nat} [NeZero width] {σ : 
                                   | word r =>
                                       simp [ha, hb, crepOpCrep, crepOpCrepWord, holWordLabToWord]
                   | cons c rest3 =>
-                      simp only [evalCrepRuntimeExp, evalCrepSemHOLExp, crepExpToHOL,
+                      simp only [evalCrepRuntimeExp, evalCrepSemHOLExp,
                         List.mapM_map, Function.comp_def]
                       cases ha : evalCrepSemHOLExp state (crepExpToHOL a) with
                       | none => simp [ha, crepOpCrepWord]
@@ -379,8 +359,8 @@ theorem evalCrepRuntimeExp_executed_allWidth {width : Nat} [NeZero width] {σ : 
                                                   rest3 with
                                               | none => simp [hr]
                                               | some vr => simp [ha, hb, hc, hr, crepOpCrepWord]
-  case cmp operator left right ihleft ihright =>
-      simp only [evalCrepRuntimeExp, evalCrepSemHOLExp, crepExpToHOL]
+  | case9 operator left right ihleft ihright =>
+      simp only [evalCrepRuntimeExp, evalCrepSemHOLExp]
       rw [ihleft, ihright]
       cases hl : evalCrepSemHOLExp state (crepExpToHOL left) with
       | none => rfl
@@ -396,8 +376,8 @@ theorem evalCrepRuntimeExp_executed_allWidth {width : Nat} [NeZero width] {σ : 
                       simp [executedCrepState, CrepHolState.toRuntime,
                         RiscV.panRiscVMemoryModelForEndian, panRiscVCmp_eq_wordCmpResultHOL,
                         holWordLabToWord]
-  case shift operator left right ihleft ihright =>
-      simp only [evalCrepRuntimeExp, evalCrepSemHOLExp, crepExpToHOL]
+  | case10 operator left right ihleft ihright =>
+      simp only [evalCrepRuntimeExp, evalCrepSemHOLExp]
       rw [ihleft, ihright]
       cases hl : evalCrepSemHOLExp state (crepExpToHOL left) with
       | none => rfl
@@ -413,7 +393,7 @@ theorem evalCrepRuntimeExp_executed_allWidth {width : Nat} [NeZero width] {σ : 
                       simp [executedCrepState, CrepHolState.toRuntime,
                         RiscV.panRiscVMemoryModelForEndian, panRiscVShift_eq_wordShiftHOL,
                         Option.map_map, Function.comp_def]
-  case op operator args ih =>
+  | case7 operator args ih =>
       have hpoint : ∀ e ∈ args,
           evalCrepRuntimeExp (executedCrepState state) e =
             (evalCrepSemHOLExp state (crepExpToHOL e)).map holWordLabToWord :=
@@ -425,7 +405,7 @@ theorem evalCrepRuntimeExp_executed_allWidth {width : Nat} [NeZero width] {σ : 
               args.mapM (fun a => (evalCrepSemHOLExp state (crepExpToHOL a)).map holWordLabToWord)
             from Flapjack.list_mapM_congr _ _ _ hpoint]
         exact list_mapM_mapOption _ _ args
-      simp only [evalCrepRuntimeExp, evalCrepSemHOLExp, crepExpToHOL, List.mapM_map,
+      simp only [evalCrepRuntimeExp, evalCrepSemHOLExp, List.mapM_map,
         Function.comp_def]
       rw [hf]
       cases hargs : args.mapM (fun a => evalCrepSemHOLExp state (crepExpToHOL a)) with
