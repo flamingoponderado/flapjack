@@ -1,3 +1,5 @@
+module
+
 /-
 FINITE-SUPPORT CARRIER PROGRAM EVALUATION (flapjack-6yq / flapjack-qj5).
 
@@ -101,7 +103,9 @@ de0d2ff1e) are all proved, so the finite-to-broad evaluator equality over every
 constructor is complete; `flapjack-qj5` tracks the matching conjunction of
 state-level equations and its source-reviewed HOL tag.
 -/
-import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+
+@[expose] public section
 
 namespace Flapjack
 

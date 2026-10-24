@@ -1,8 +1,12 @@
-import Flapjack.Pancake.Semantics.PanSem
-import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
-import Flapjack.Pancake.Semantics.PanSem.EvalFinite
-import Flapjack.Pancake.PanLang.Decl
-import Flapjack.Pancake.Semantics.PanSem.TotalEvalExpBridge
+module
+
+public import Flapjack.Pancake.Semantics.PanSem
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+public import Flapjack.Pancake.Semantics.PanSem.EvalFinite
+public import Flapjack.Pancake.PanLang.Decl
+public import Flapjack.Pancake.Semantics.PanSem.TotalEvalExpBridge
+
+@[expose] public section
 
 /-!
 This module records constructor-level production/exact congruence for the HOL

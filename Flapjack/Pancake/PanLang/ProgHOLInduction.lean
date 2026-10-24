@@ -1,4 +1,8 @@
-import Flapjack.Pancake.PanLang.Prog
+module
+
+public import Flapjack.Pancake.PanLang.Prog
+
+@[expose] public section
 
 /-!
 Lean-only well-founded induction support for the nested `ProgHOL` syntax.

@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.PanLang.Decl
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.PanLang.Decl
+
+@[expose] public section
 
 /-!
 Faithful carriers and executable definitions for CakeML Pancake's source

@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Semantics.PanSem.AddClock
-import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
-import Flapjack.Pancake.Semantics.PanSem.EvaluateFinite
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.AddClock
+public import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
+public import Flapjack.Pancake.Semantics.PanSem.EvaluateFinite
+
+@[expose] public section
 
 /-!
 # HOL `evaluate_add_clock_or_timeout` over the exact finite-map PanSem evaluator

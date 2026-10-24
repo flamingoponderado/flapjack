@@ -1,10 +1,14 @@
-import Flapjack.Pancake.PanLang
-import Flapjack.FiniteMap.Basic
-import Flapjack.HolRef
-import Flapjack.Word
-import Flapjack.Compiler.Backend.BackendCommon
-import Flapjack.Basis.Pure.MlString
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Pancake.PanLang
+public import Flapjack.FiniteMap.Basic
+public import Flapjack.HolRef
+public import Flapjack.Word
+public import Flapjack.Compiler.Backend.BackendCommon
+public import Flapjack.Basis.Pure.MlString
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 /-!
 # Pancake wordLang word operations

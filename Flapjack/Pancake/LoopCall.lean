@@ -1,4 +1,8 @@
-import Flapjack.Pancake.LoopLang
+module
+
+public import Flapjack.Pancake.LoopLang
+
+@[expose] public section
 
 /-!
 # Pancake `loop_call.comp`

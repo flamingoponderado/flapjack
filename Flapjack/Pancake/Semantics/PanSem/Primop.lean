@@ -1,6 +1,10 @@
-import Flapjack.Compiler.Backend.BackendCommon
-import Flapjack.HolRef
-import Flapjack.PanValueFlatten
+module
+
+public import Flapjack.Compiler.Backend.BackendCommon
+public import Flapjack.HolRef
+public import Flapjack.PanValueFlatten
+
+@[expose] public section
 
 /-!
 HOL `panSemScript.sml` word-labeled flattening and AddCarry primitive. The

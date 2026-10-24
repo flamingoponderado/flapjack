@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
-import Flapjack.Pancake.Semantics.PanSem.PanObservationalSemantics
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+public import Flapjack.Pancake.Semantics.PanSem.PanObservationalSemantics
+
+@[expose] public section
 
 /-!
 Finite-map-carrier clock observations for `panSem$semantics_def`.

@@ -1,8 +1,12 @@
-import Flapjack.Pancake.Semantics.PanSem.ShMemExact
-import Flapjack.Pancake.Semantics.CrepSem.TotalEval
-import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
-import Flapjack.Pancake.Semantics.ByteAlignBridge
-import Flapjack.Pancake.Semantics.PanSem.ByteRoundtrip
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.ShMemExact
+public import Flapjack.Pancake.Semantics.CrepSem.TotalEval
+public import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+public import Flapjack.Pancake.Semantics.ByteAlignBridge
+public import Flapjack.Pancake.Semantics.PanSem.ByteRoundtrip
+
+@[expose] public section
 
 /-!
 # Byte-list bridge between the exact Pan and Crep shared-memory primitives

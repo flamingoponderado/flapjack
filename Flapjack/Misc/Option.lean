@@ -1,4 +1,8 @@
-import Flapjack.HolRef
+module
+
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-! Counterpart for the pinned original HOL optionScript.sml. -/
 namespace Flapjack

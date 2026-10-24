@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
+
+@[expose] public section
 
 /-!
 # HOL `panSem$evaluate_ind` over the exact finite evaluator

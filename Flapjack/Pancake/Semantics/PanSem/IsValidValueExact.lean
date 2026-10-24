@@ -1,3 +1,5 @@
+module
+
 /-
   Function-backed rendering of HOL `panSem$is_valid_value`. Its source state
   has unrestricted lookup functions, not HOL finite-map fields; the declaration
@@ -25,7 +27,9 @@
   `is_valid_value_mismatch=F`, `is_valid_value_missing=F`) and
   `scripts/hol-probes/pan_is_valid_value_probe.out`.
 -/
-import Flapjack.Pancake.Semantics.PanSem.StateExact
+public import Flapjack.Pancake.Semantics.PanSem.StateExact
+
+@[expose] public section
 
 namespace Flapjack
 

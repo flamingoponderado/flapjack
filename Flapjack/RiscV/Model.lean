@@ -1,5 +1,9 @@
-import Std
-import Flapjack.Pancake.PanLang
+module
+
+public import Std
+public import Flapjack.Pancake.PanLang
+
+@[expose] public section
 
 /-!
 The first Lean target-model slice for Flapjack's RISC-V backend.

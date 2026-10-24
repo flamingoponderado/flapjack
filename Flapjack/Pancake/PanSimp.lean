@@ -1,6 +1,10 @@
-import Flapjack.Pancake.PanLang
-import Flapjack.Pancake.PanLang.Prog
-import Flapjack.Pancake.PanLang.Decl
+module
+
+public import Flapjack.Pancake.PanLang
+public import Flapjack.Pancake.PanLang.Prog
+public import Flapjack.Pancake.PanLang.Decl
+
+@[expose] public section
 
 /-!
 The `pan_simp` pass from CakeML's Pancake development.

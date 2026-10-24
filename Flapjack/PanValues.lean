@@ -1,7 +1,11 @@
-import Flapjack.Semantics
-import Flapjack.PanMemoryModel
-import Flapjack.PanStructsAfindi
-import Flapjack.Pancake.PanLang.Exp
+module
+
+public import Flapjack.Semantics
+public import Flapjack.PanMemoryModel
+public import Flapjack.PanStructsAfindi
+public import Flapjack.Pancake.PanLang.Exp
+
+@[expose] public section
 
 /-!
 Structured source values and the corresponding executable expression/state

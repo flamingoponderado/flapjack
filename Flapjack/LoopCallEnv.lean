@@ -1,4 +1,8 @@
-import Flapjack.LoopStateResult
+module
+
+public import Flapjack.LoopStateResult
+
+@[expose] public section
 
 /-!
 # Pancake `loopSem.call_env`

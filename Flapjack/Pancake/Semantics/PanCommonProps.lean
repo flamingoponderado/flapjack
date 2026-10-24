@@ -1,9 +1,13 @@
-import Flapjack.FiniteMap.Basic
-import Flapjack.HolRef
-import Flapjack.Pancake.CrepLang
-import Flapjack.PanToCrepMaxList
-import Flapjack.Pancake.PanCommon
-import Flapjack.Pancake.PanLang
+module
+
+public import Flapjack.FiniteMap.Basic
+public import Flapjack.HolRef
+public import Flapjack.Pancake.CrepLang
+public import Flapjack.PanToCrepMaxList
+public import Flapjack.Pancake.PanCommon
+public import Flapjack.Pancake.PanLang
+
+@[expose] public section
 
 /-!
 # Pancake `pan_commonProps`

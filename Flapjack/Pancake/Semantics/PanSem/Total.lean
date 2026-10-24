@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Semantics.PanSem
-import Flapjack.Pancake.Semantics.PanSem.TotalMeasure
-import Flapjack.Pancake.Semantics.PanSemStateEval
+module
+
+public import Flapjack.Pancake.Semantics.PanSem
+public import Flapjack.Pancake.Semantics.PanSem.TotalMeasure
+public import Flapjack.Pancake.Semantics.PanSemStateEval
+
+@[expose] public section
 
 /-!
 # HOL-shaped result interface for a total Pancake `evaluate`

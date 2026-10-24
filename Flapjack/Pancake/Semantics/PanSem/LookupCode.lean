@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.PanSem
+module
+
+public import Flapjack.Pancake.Semantics.PanSem
+
+@[expose] public section
 
 /-!
 # PanSem `lookup_code` over String-keyed carriers

@@ -1,3 +1,5 @@
+module
+
 /-
 EXACT CARRIER EXPRESSIONS (flapjack-pxn.18.3.6.9.15).
 
@@ -94,13 +96,15 @@ finite-support state is tracked by `flapjack-pxn.18.3.7.1.3.1.1.2`, and the
 exact `mlstring`-keyed expression/variable carriers by
 `flapjack-pxn.18.3.5.8`.  Recorded by bead `flapjack-4ac.4.39`.
 -/
-import Flapjack.Pancake.WordLang
-import Flapjack.Compiler.Encoders.Asm
-import Flapjack.Pancake.Semantics.PanSem.StateExact
-import Flapjack.Pancake.Semantics.PanSem.ValueHOL
-import Flapjack.Pancake.Semantics.PanSem.MemLoadHOL
-import Flapjack.Pancake.Semantics.PanSem.IsValidValueExact
-import Flapjack.Pancake.Semantics.PanSemStateEval
+public import Flapjack.Pancake.WordLang
+public import Flapjack.Compiler.Encoders.Asm
+public import Flapjack.Pancake.Semantics.PanSem.StateExact
+public import Flapjack.Pancake.Semantics.PanSem.ValueHOL
+public import Flapjack.Pancake.Semantics.PanSem.MemLoadHOL
+public import Flapjack.Pancake.Semantics.PanSem.IsValidValueExact
+public import Flapjack.Pancake.Semantics.PanSemStateEval
+
+@[expose] public section
 
 namespace Flapjack
 

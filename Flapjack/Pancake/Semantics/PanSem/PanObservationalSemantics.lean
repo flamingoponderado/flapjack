@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Semantics.PanSem.AddClock
-import Flapjack.FfiHOL
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.AddClock
+public import Flapjack.FfiHOL
+
+@[expose] public section
 
 /-!
 # Pancake `panSem.semantics`

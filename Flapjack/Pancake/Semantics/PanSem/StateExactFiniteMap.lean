@@ -1,3 +1,5 @@
+module
+
 /-
   Finite-support PanSem state carrier.
 
@@ -54,11 +56,13 @@
   not a changed side condition of the tagged definitions.
 -/
 
-import Flapjack.Pancake.Semantics.PanSem.StateExactFinite
-import Flapjack.Pancake.Semantics.PanSem.EvalExact
-import Flapjack.Pancake.Semantics.PanSem.FiniteSupportStep
-import Flapjack.Pancake.Semantics.PanSem.ExtCallExact
-import Flapjack.Pancake.Semantics.PanSem.GlobalsShapesExact
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFinite
+public import Flapjack.Pancake.Semantics.PanSem.EvalExact
+public import Flapjack.Pancake.Semantics.PanSem.FiniteSupportStep
+public import Flapjack.Pancake.Semantics.PanSem.ExtCallExact
+public import Flapjack.Pancake.Semantics.PanSem.GlobalsShapesExact
+
+@[expose] public section
 
 namespace Flapjack
 
@@ -3046,7 +3050,6 @@ theorem evaluateHOLFiniteState_shMemLoad {width : Nat} {σ : Type} [NeZero width
   classical
   simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
     evalPanSemRecursiveCallFiniteContext, shMemLoadClauseHOLFiniteExact]
-  rfl
 
 attribute [simp] evaluateHOLFiniteState_shMemLoad
 
@@ -3184,7 +3187,6 @@ theorem evaluateHOLFiniteState_shMemStore {width : Nat} {σ : Type} [NeZero widt
   classical
   simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
     evalPanSemRecursiveCallFiniteContext, shMemStoreClauseHOLFiniteExact]
-  rfl
 
 attribute [simp] evaluateHOLFiniteState_shMemStore
 

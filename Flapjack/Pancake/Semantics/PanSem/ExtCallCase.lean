@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.PanSem.EvaluateFinite
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.EvaluateFinite
+
+@[expose] public section
 
 /-!
 # ExtCall finite-carrier case import shim

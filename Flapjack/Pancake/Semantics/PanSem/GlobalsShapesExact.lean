@@ -1,3 +1,5 @@
+module
+
 /-
 Untagged Flapjack infrastructure: preservation of the globals shape map through
 the exact shared-memory step helpers.
@@ -11,7 +13,9 @@ records the broad (`PanSemStateExact`) shape preservation used by the faithful
 port of that HOL theorem.  No `@[hol]` tag: this is carrier/bookkeeping
 infrastructure, not a standalone HOL declaration.
 -/
-import Flapjack.Pancake.Semantics.PanSem.TotalEvalExact
+public import Flapjack.Pancake.Semantics.PanSem.TotalEvalExact
+
+@[expose] public section
 
 open Flapjack.Pancake.PanLang
 

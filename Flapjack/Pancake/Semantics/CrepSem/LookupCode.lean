@@ -1,9 +1,13 @@
-import Flapjack.Pancake.Semantics.CrepSem
-import Flapjack.Pancake.Semantics.PanSem
-import Flapjack.Pancake.CrepLang
-import Flapjack.Pancake.CrepLang.Prog
-import Flapjack.FiniteMap.Basic
-import Flapjack.Basis.Pure.MlString
+module
+
+public import Flapjack.Pancake.Semantics.CrepSem
+public import Flapjack.Pancake.Semantics.PanSem
+public import Flapjack.Pancake.CrepLang
+public import Flapjack.Pancake.CrepLang.Prog
+public import Flapjack.FiniteMap.Basic
+public import Flapjack.Basis.Pure.MlString
+
+@[expose] public section
 
 /-!
 Exact port of HOL `crepSem$lookup_code_def`

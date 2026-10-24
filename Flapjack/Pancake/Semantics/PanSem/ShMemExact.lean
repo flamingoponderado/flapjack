@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Semantics.PanSem.DecExact
-import Flapjack.Pancake.Semantics.PanSemStateEval
-import Flapjack.FfiHOL
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.DecExact
+public import Flapjack.Pancake.Semantics.PanSemStateEval
+public import Flapjack.FfiHOL
+
+@[expose] public section
 
 /-!
 # Exact HOL `panSem$sh_mem_load` / `sh_mem_store` over the faithful state

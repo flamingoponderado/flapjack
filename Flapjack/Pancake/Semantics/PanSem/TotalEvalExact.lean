@@ -1,11 +1,15 @@
-import Flapjack.Pancake.Semantics.PanSem.EvalExact
-import Flapjack.Pancake.Semantics.PanSem.AssignPrimitiveExact
-import Flapjack.Pancake.Semantics.PanSem.StoreExact
-import Flapjack.Pancake.Semantics.PanSem.ReturnRaiseExact
-import Flapjack.Pancake.Semantics.PanSem.TickShMemExact
-import Flapjack.Pancake.Semantics.PanSem.ExtCallExact
-import Flapjack.Pancake.Semantics.PanSem.DecCallExact
-import Flapjack.Pancake.Semantics.PanSem.ClockExact
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.EvalExact
+public import Flapjack.Pancake.Semantics.PanSem.AssignPrimitiveExact
+public import Flapjack.Pancake.Semantics.PanSem.StoreExact
+public import Flapjack.Pancake.Semantics.PanSem.ReturnRaiseExact
+public import Flapjack.Pancake.Semantics.PanSem.TickShMemExact
+public import Flapjack.Pancake.Semantics.PanSem.ExtCallExact
+public import Flapjack.Pancake.Semantics.PanSem.DecCallExact
+public import Flapjack.Pancake.Semantics.PanSem.ClockExact
+
+@[expose] public section
 
 /-!
 # Exact-state PanSem dispatcher fragments

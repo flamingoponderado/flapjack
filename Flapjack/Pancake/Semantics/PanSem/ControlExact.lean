@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.PanSem.DecCallExact
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.DecCallExact
+
+@[expose] public section
 
 /-! # Exact HOL panSem control-flow clause steps over the exact MlString state
 

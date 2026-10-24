@@ -1,4 +1,8 @@
-import Flapjack.Pancake.PanLang.Prog
+module
+
+public import Flapjack.Pancake.PanLang.Prog
+
+@[expose] public section
 
 namespace Flapjack.Pancake.PanLang
 

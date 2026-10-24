@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Semantics.PanSem.StateExact
-import Flapjack.Pancake.Semantics.PanSem.LocalUpdatesExact
-import Flapjack.Pancake.Semantics.PanSem.IsValidValueExact
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.StateExact
+public import Flapjack.Pancake.Semantics.PanSem.LocalUpdatesExact
+public import Flapjack.Pancake.Semantics.PanSem.IsValidValueExact
+
+@[expose] public section
 
 /-!
 # Exact HOL `panSem$result` carrier and the `Dec`-with-initializer clause

@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Semantics.PanSem.LocalUpdatesExact
-import Flapjack.Pancake.Semantics.PanSem.IsValidValueExact
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.LocalUpdatesExact
+public import Flapjack.Pancake.Semantics.PanSem.IsValidValueExact
+
+@[expose] public section
 
 /-!
 # `panSem` state-accessor simplification lemmas over the function-backed carrier

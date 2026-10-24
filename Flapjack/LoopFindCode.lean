@@ -1,5 +1,9 @@
-import Flapjack.LoopSemantics
-import Flapjack.LoopSetVars
+module
+
+public import Flapjack.LoopSemantics
+public import Flapjack.LoopSetVars
+
+@[expose] public section
 
 /-!
 Faithful port of the original Pancake Loop `find_code`.

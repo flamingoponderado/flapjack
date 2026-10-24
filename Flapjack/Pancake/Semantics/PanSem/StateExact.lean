@@ -1,8 +1,12 @@
-import Flapjack.HolRef
-import Flapjack.FfiHOL
-import Flapjack.RiscV.Model
-import Flapjack.Pancake.PanLang.Decl
-import Flapjack.Pancake.Semantics.PanSem.ValueHOL
+module
+
+public import Flapjack.HolRef
+public import Flapjack.FfiHOL
+public import Flapjack.RiscV.Model
+public import Flapjack.Pancake.PanLang.Decl
+public import Flapjack.Pancake.Semantics.PanSem.ValueHOL
+
+@[expose] public section
 
 /-!
 # `panSem$state` projection over the faithful `mlstring` name carrier

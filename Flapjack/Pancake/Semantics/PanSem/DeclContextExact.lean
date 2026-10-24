@@ -1,3 +1,5 @@
+module
+
 /-
 Copyright (c) 2026 Flapjack contributors.
 
@@ -33,8 +35,10 @@ entries as HOL, so the clause shapes and side conditions match the HOL definitio
 exactly; the tag is therefore attached to the Lean definition.
 -/
 
-import Flapjack.Pancake.PanLang.Decl
-import Flapjack.HolRef
+public import Flapjack.Pancake.PanLang.Decl
+public import Flapjack.HolRef
+
+@[expose] public section
 
 namespace Flapjack
 

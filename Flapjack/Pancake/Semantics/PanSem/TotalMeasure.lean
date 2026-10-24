@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.PanSem
+module
+
+public import Flapjack.Pancake.Semantics.PanSem
+
+@[expose] public section
 
 /-!
 # Well-founded measure for total Pancake `evaluate`

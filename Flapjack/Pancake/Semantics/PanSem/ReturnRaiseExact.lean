@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.PanSem.DecExact
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.DecExact
+
+@[expose] public section
 
 /-!
 # Exact `panSem$empty_locals` and the `Return`/`Raise` evaluation clauses

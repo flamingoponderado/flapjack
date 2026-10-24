@@ -1,8 +1,12 @@
-import Flapjack.Pancake.Semantics.CrepRuntimeTarget
-import Flapjack.Compiler.Encoders.Asm
-import Flapjack.Pancake.Semantics.PanSemStateEval
-import Flapjack.Pancake.WordLang
-import Flapjack.Pancake.Semantics.CrepSem.WordAlignment
+module
+
+public import Flapjack.Pancake.Semantics.CrepRuntimeTarget
+public import Flapjack.Compiler.Encoders.Asm
+public import Flapjack.Pancake.Semantics.PanSemStateEval
+public import Flapjack.Pancake.WordLang
+public import Flapjack.Pancake.Semantics.CrepSem.WordAlignment
+
+@[expose] public section
 
 /-!
 # Pancake Crepe expression evaluation
@@ -1152,7 +1156,7 @@ def holWordBitsRiscVMemoryModel [NeZero width] (bigEndian : Bool) :
       (model.shift operator (holWordBitsToBitVec left) (holWordBitsToBitVec right)).map
         bitVecToHolWordBits }
 
-private def crepHolEvalFfiContext [OfNat α 0] : PanValueFfiContext α where
+def crepHolEvalFfiContext [OfNat α 0] : PanValueFfiContext α where
   sharedDomain := fun _ => false
   byteAlign := id
   bigEndian := false
@@ -1641,7 +1645,7 @@ theorem holFiniteWordSourceSetByte_toBitVec {ι : Type u}
       simp [holFiniteWordSetByteBitVec, hlow, hmid, hge, hnoByte,
         hindex, hrestore]
 
-private def holFiniteWordSourceWordOfBytesAt {ι : Type u}
+def holFiniteWordSourceWordOfBytesAt {ι : Type u}
     (dimension : HolFiniteDimension ι) (bigEndian : Bool)
     (address : ι → Bool) : List (ι → Bool) → ι → Bool
   | [] => bitVecToHolWord dimension (BitVec.ofNat dimension.width 0)
@@ -1693,7 +1697,7 @@ def holFiniteWordSourceWordOfBytes {ι : Type u}
 
 /-- The result of HOL `word_of_bytes` at its fixed `word32` width. Each source
     byte is first widened to a 32-bit word, independently of the carrier width. -/
-private def holFiniteWordSourceWordOfBytesBitVecAt {ι : Type u}
+def holFiniteWordSourceWordOfBytesBitVecAt {ι : Type u}
     (dimension : HolFiniteDimension ι) (bigEndian : Bool)
     (address : ι → Bool) :
     List (BitVec dimension.width) → BitVec dimension.width

@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Semantics.PanSem.Total
-import Flapjack.PanShMemStore
-import Flapjack.Pancake.Semantics.LoopSem
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.Total
+public import Flapjack.PanShMemStore
+public import Flapjack.Pancake.Semantics.LoopSem
+
+@[expose] public section
 
 /-!
 # Production-state statement-clause assembly steps

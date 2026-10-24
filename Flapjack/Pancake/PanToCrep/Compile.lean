@@ -1,7 +1,11 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.PanToCrep
-import Flapjack.Pancake.PanGlobals
-import Flapjack.Pancake.PanLang.Decl
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.PanToCrep
+public import Flapjack.Pancake.PanGlobals
+public import Flapjack.Pancake.PanLang.Decl
+
+@[expose] public section
 
 /-!
 Core statement lowering from Flapjack to Crepe.

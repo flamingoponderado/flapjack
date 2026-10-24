@@ -1,8 +1,12 @@
-import Flapjack.HolRef
-import Flapjack.Basis.Pure.MlString
-import Flapjack.Compiler.Backend.BackendCommon
-import Flapjack.Pancake.PanLang.Shape
-import Flapjack.Pancake.Semantics.PanSem
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Basis.Pure.MlString
+public import Flapjack.Compiler.Backend.BackendCommon
+public import Flapjack.Pancake.PanLang.Shape
+public import Flapjack.Pancake.Semantics.PanSem
+
+@[expose] public section
 
 /-!
 # Exact `panSem$v` over the faithful `mlstring`/`word_lab` carriers

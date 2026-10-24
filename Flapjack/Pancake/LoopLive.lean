@@ -1,6 +1,10 @@
-import Flapjack.Pancake.CrepToLoop
-import Flapjack.Pancake.LoopCall
-import Flapjack.LoopSemantics
+module
+
+public import Flapjack.Pancake.CrepToLoop
+public import Flapjack.Pancake.LoopCall
+public import Flapjack.LoopSemantics
+
+@[expose] public section
 
 /-!
 Structural analyses for the Loop language. These are the list-based

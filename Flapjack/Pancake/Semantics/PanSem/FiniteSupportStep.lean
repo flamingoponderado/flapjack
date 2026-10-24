@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Semantics.PanSem.TotalEvalExact
-import Flapjack.Pancake.Semantics.PanSem.StateExactFinite
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.TotalEvalExact
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFinite
+
+@[expose] public section
 
 /-!
 # Finite support preserved by the exact panSem clause steps
