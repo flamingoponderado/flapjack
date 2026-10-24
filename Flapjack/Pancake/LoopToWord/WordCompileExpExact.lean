@@ -115,44 +115,18 @@ theorem wordCompileExp_holLoopExpToExecutable {width : Nat} [NeZero width]
     wordCompileExp context (holLoopExpToExecutable expression) =
       some (wordExpFromHOL
         (LoopToWord.compExpHOL (wordContextToHOLContext context) expression)) := by
-  refine HolLoopExp.rec
-    (motive_1 := fun expression =>
-      wordCompileExp context (holLoopExpToExecutable expression) =
-        some (wordExpFromHOL
-          (LoopToWord.compExpHOL (wordContextToHOLContext context) expression)))
-    (motive_2 := fun expressions =>
-      wordCompileExp.wordCompileExpList context
-          (expressions.map holLoopExpToExecutable) =
-        some (expressions.map fun expression =>
-          wordExpFromHOL
-            (LoopToWord.compExpHOL (wordContextToHOLContext context) expression)))
-    ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ expression
-  · intro value
-    simp [wordCompileExp, holLoopExpToExecutable, wordExpFromHOL,
-      LoopToWord.compExpHOL]
-  · intro name
-    simp only [wordCompileExp, holLoopExpToExecutable, wordExpFromHOL,
-      LoopToWord.compExpHOL, wordContextToHOLContext, Option.some.injEq]
-    exact congrArg WordExp.var (findVarHOL_wordFindVar context name).symm
-  · intro address
-    simp [wordCompileExp, holLoopExpToExecutable, wordExpFromHOL,
-      LoopToWord.compExpHOL, wordStoreFromHOL]
-  · intro address ih
-    simpa [wordCompileExp, holLoopExpToExecutable, wordExpFromHOL,
-      LoopToWord.compExpHOL] using congrArg (Option.map WordExp.load) ih
-  · intro operator args ih
-    simp [wordCompileExp, holLoopExpToExecutable, wordExpFromHOL,
-      LoopToWord.compExpHOL, ih]
-  · intro operator left right ihLeft ihRight
-    simp [wordCompileExp, holLoopExpToExecutable, wordExpFromHOL,
-      LoopToWord.compExpHOL, ihLeft, ihRight]
-  · simp [wordCompileExp, holLoopExpToExecutable, wordExpFromHOL,
-      LoopToWord.compExpHOL, wordStoreFromHOL]
-  · simp [wordCompileExp, holLoopExpToExecutable, wordExpFromHOL,
-      LoopToWord.compExpHOL, wordStoreFromHOL]
-  · simp [wordCompileExp.wordCompileExpList]
-  · intro head tail ihHead ihTail
-    simp [wordCompileExp.wordCompileExpList, ihHead, ihTail]
+  induction expression using HolLoopExp.rec
+    (motive_2 := fun es => wordCompileExp.wordCompileExpList context
+      (es.map holLoopExpToExecutable) = some
+        (es.map fun e => wordExpFromHOL (LoopToWord.compExpHOL (wordContextToHOLContext context) e))) with
+  | var name =>
+      simp only [wordCompileExp, holLoopExpToExecutable, wordExpFromHOL,
+        LoopToWord.compExpHOL, wordContextToHOLContext, Option.some.injEq]
+      exact congrArg WordExp.var (findVarHOL_wordFindVar context name).symm
+  | _ =>
+      simp_all [wordCompileExp, wordCompileExp.wordCompileExpList,
+        holLoopExpToExecutable, wordExpFromHOL, LoopToWord.compExpHOL,
+        wordStoreFromHOL, List.map_map, Function.comp_def]
 
 /-- For any production expression accepted by the exact source codec, the
 production compiler result equals the decoded exact HOL `comp_exp` result. -/

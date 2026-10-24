@@ -81,55 +81,10 @@ decreasing_by
     Crep programs rather than opaque metadata. -/
 private theorem crepHasReturn_false_imp_notBranchRet_aux :
     (program : CrepProg α) →
-      crepHasReturn program = false → crepNotBranchRet program = true
-  | .skip => fun _ => by simp [crepNotBranchRet]
-  | .dec name value body => fun h =>
-      by
-        simpa [crepNotBranchRet] using
-          (crepHasReturn_false_imp_notBranchRet_aux body (by
-            simpa [crepHasReturn] using h))
-  | .assign name value => fun _ => by simp [crepNotBranchRet]
-  | .primitive names operator args =>
-      fun _ => by simp [crepNotBranchRet]
-  | .store address value => fun _ => by simp [crepNotBranchRet]
-  | .store32 address value =>
-      fun _ => by simp [crepNotBranchRet]
-  | .storeByte address value =>
-      fun _ => by simp [crepNotBranchRet]
-  | .storeGlob address value =>
-      fun _ => by simp [crepNotBranchRet]
-  | .seq first second => fun h =>
-      by
-        have hparts : crepHasReturn first = false ∧
-            crepHasReturn second = false := by
-          simpa [crepHasReturn] using h
-        simp [crepNotBranchRet,
-          crepHasReturn_false_imp_notBranchRet_aux first hparts.1,
-          crepHasReturn_false_imp_notBranchRet_aux second hparts.2]
-  | .ite condition thenBranch elseBranch => fun h =>
-      by simpa [crepHasReturn, crepNotBranchRet] using h
-  | .while condition body => fun h =>
-      by simpa [crepHasReturn, crepNotBranchRet] using h
-  | .break label => fun _ => by simp [crepNotBranchRet]
-  | .continue label => fun _ => by simp [crepNotBranchRet]
-  | .call none name args => fun h =>
-      by simp [crepHasReturn] at h
-  | .call (some (names, none)) name args =>
-      fun _ => by simp [crepNotBranchRet]
-  | .call (some (names, some (handlerName, handler))) name args => fun h =>
-      by
-        have hhandler : crepHasReturn handler = false := by
-          simpa [crepHasReturn] using h
-        simpa [crepNotBranchRet] using hhandler
-  | .extCall function configuration configurationLength array arrayLength =>
-      fun _ => by simp [crepNotBranchRet]
-  | .raise exception => fun _ => by simp [crepNotBranchRet]
-  | .return values => fun _ => by simp [crepNotBranchRet]
-  | .shMem operator name address =>
-      fun _ => by simp [crepNotBranchRet]
-  | .tick => fun _ => by simp [crepNotBranchRet]
-termination_by program => sizeOf program
-decreasing_by all_goals decreasing_trivial
+      crepHasReturn program = false → crepNotBranchRet program = true := by
+  intro program
+  fun_induction crepHasReturn program with
+  | _ => grind only [crepNotBranchRet, crepHasReturn]
 
 theorem crepHasReturn_false_imp_notBranchRet (program : CrepProg α)
     (h : crepHasReturn program = false) :
@@ -380,96 +335,18 @@ decreasing_by
 private theorem crepHasReturn_false_imp_unreachElim_notReturn_aux :
     (program : CrepProg α) →
       crepHasReturn program = false →
-      (crepUnreachElim program).2 ≠ some .return
-  | .skip => fun _ => by simp [crepUnreachElim]
-  | .dec name value body => fun h =>
-      by
-        simpa [crepUnreachElim] using
-          (crepHasReturn_false_imp_unreachElim_notReturn_aux body (by
-            simpa [crepHasReturn] using h))
-  | .assign name value => fun _ => by simp [crepUnreachElim]
-  | .primitive names operator args => fun _ => by simp [crepUnreachElim]
-  | .store address value => fun _ => by simp [crepUnreachElim]
-  | .store32 address value => fun _ => by simp [crepUnreachElim]
-  | .storeByte address value => fun _ => by simp [crepUnreachElim]
-  | .storeGlob address value => fun _ => by simp [crepUnreachElim]
-  | .seq first second => fun h =>
-      by
-        have hparts : crepHasReturn first = false ∧
-            crepHasReturn second = false := by
-          simpa [crepHasReturn] using h
-        cases hfirst : crepUnreachElim first with
-        | mk first' firstExit =>
-            cases hsecond : crepUnreachElim second with
-            | mk second' secondExit =>
-                have hfirstNot : firstExit ≠ some .return := by
-                  simpa [hfirst] using
-                    (crepHasReturn_false_imp_unreachElim_notReturn_aux first
-                      hparts.1)
-                have hsecondNot : secondExit ≠ some .return := by
-                  simpa [hsecond] using
-                    (crepHasReturn_false_imp_unreachElim_notReturn_aux second
-                      hparts.2)
-                by_cases hsome : firstExit.isSome
-                · simp [crepUnreachElim, hfirst, hsome, hfirstNot]
-                · simp [crepUnreachElim, hfirst, hsecond, hsome, hsecondNot]
-  | .ite condition thenBranch elseBranch => fun h =>
-      by
-        have hparts : crepHasReturn thenBranch = false ∧
-            crepHasReturn elseBranch = false := by
-          simpa [crepHasReturn] using h
-        cases hthen : crepUnreachElim thenBranch with
-        | mk then' thenExit =>
-            cases helse : crepUnreachElim elseBranch with
-            | mk else' elseExit =>
-                have hthenNot : thenExit ≠ some .return := by
-                  simpa [hthen] using
-                    (crepHasReturn_false_imp_unreachElim_notReturn_aux thenBranch
-                      hparts.1)
-                have helseNot : elseExit ≠ some .return := by
-                  simpa [ helse] using
-                    (crepHasReturn_false_imp_unreachElim_notReturn_aux elseBranch
-                      hparts.2)
-                cases thenExit with
-                | none =>
-                    cases elseExit with
-                    | none => simp [crepUnreachElim, hthen, helse, crepMergeExit]
-                    | some elseExit =>
-                        cases elseExit <;>
-                          simp [crepUnreachElim, hthen, helse, crepMergeExit]
-                | some thenExit =>
-                    cases thenExit with
-                    | exception =>
-                        cases elseExit with
-                        | none => simp [crepUnreachElim, hthen, helse, crepMergeExit]
-                        | some elseExit =>
-                            cases elseExit <;>
-                              simp [crepUnreachElim, hthen, helse, crepMergeExit,
-                                helseNot]
-                    | «return» =>
-                        simp at hthenNot
-                    | loopExit =>
-                        cases elseExit with
-                        | none => simp [crepUnreachElim, hthen, helse, crepMergeExit]
-                        | some elseExit =>
-                            cases elseExit <;>
-                              simp [crepUnreachElim, hthen, helse, crepMergeExit,
-                                helseNot]
-  | .while condition body => fun _ => by simp [crepUnreachElim]
-  | .break label => fun _ => by simp [crepUnreachElim]
-  | .continue label => fun _ => by simp [crepUnreachElim]
-  | .call none name args => fun h => by simp [crepHasReturn] at h
-  | .call (some (names, none)) name args => fun _ => by simp [crepUnreachElim]
-  | .call (some (names, some (handlerName, handler))) name args =>
-      fun _ => by simp [crepUnreachElim]
-  | .extCall function configuration configurationLength array arrayLength =>
-      fun _ => by simp [crepUnreachElim]
-  | .raise exception => fun _ => by simp [crepUnreachElim]
-  | .return values => fun h => by simp [crepHasReturn] at h
-  | .shMem operator name address => fun _ => by simp [crepUnreachElim]
-  | .tick => fun _ => by simp [crepUnreachElim]
-termination_by program => sizeOf program
-decreasing_by all_goals decreasing_trivial
+      (crepUnreachElim program).2 ≠ some .return := by
+  intro program
+  fun_induction crepHasReturn program with
+  | case3 condition left right ihLeft ihRight =>
+      intro h
+      have hLeft := ihLeft (Bool.or_eq_false_iff.mp h).1
+      have hRight := ihRight (Bool.or_eq_false_iff.mp h).2
+      rcases hl : (crepUnreachElim left).2 with _ | ⟨_ | _ | _⟩ <;>
+        rcases hr : (crepUnreachElim right).2 with _ | ⟨_ | _ | _⟩ <;>
+        simp_all [crepUnreachElim, crepMergeExit]
+  | case9 program => cases program <;> simp_all [crepUnreachElim]
+  | _ => grind only [crepUnreachElim, crepMergeExit, crepHasReturn]
 
 theorem crepHasReturn_false_imp_unreachElim_notReturn
     (program : CrepProg α) (result : Option CrepEarlyExit)

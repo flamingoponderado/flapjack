@@ -137,53 +137,15 @@ theorem mapInst_inverseOn (f : α → β) (g : β → α) (instruction : WordIns
 theorem mapProg_inverseOn (f : α → β) (g : β → α) (program : StackProg α)
     (h : ∀ x ∈ values program, g (f x) = x) :
     mapProg g (mapProg f program) = program := by
-  cases program with
-  | inst instruction =>
-      simp [mapProg, mapInst_inverseOn f g instruction h]
-  | shMemOffset op r address offset =>
-      have ho := h offset (by simp [values])
-      simp [mapProg, ho]
-  | seq first second =>
-      have hf : ∀ x ∈ values first, g (f x) = x :=
-        fun x hx => h x (by simp [values, hx])
-      have hs : ∀ x ∈ values second, g (f x) = x :=
-        fun x hx => h x (by simp [values, hx])
-      simp [mapProg, mapProg_inverseOn f g first hf, mapProg_inverseOn f g second hs]
-  | ite op r right first second =>
-      have hr : ∀ x ∈ regImmValues right, g (f x) = x :=
-        fun x hx => h x (by simp [values, hx])
-      have hf : ∀ x ∈ values first, g (f x) = x :=
-        fun x hx => h x (by simp [values, hx])
-      have hs : ∀ x ∈ values second, g (f x) = x :=
-        fun x hx => h x (by simp [values, hx])
-      simp [mapProg, mapRegImm_inverseOn f g right hr,
-        mapProg_inverseOn f g first hf, mapProg_inverseOn f g second hs]
-  | loop body =>
-      simp [mapProg, mapProg_inverseOn f g body h]
-  | call returns target handler =>
-      rcases hr : returns with _ | ⟨p, link, l1, l2⟩ <;>
-        rcases hh : handler with _ | ⟨q, l3, l4⟩
-      · simp [mapProg]
-      · have hq : ∀ x ∈ values q, g (f x) = x :=
-          fun x hx => h x (by simp [values, hr, hh, hx])
-        simp [mapProg, mapProg_inverseOn f g q hq]
-      · have hp : ∀ x ∈ values p, g (f x) = x :=
-          fun x hx => h x (by simp [values, hr, hh, hx])
-        simp [mapProg, mapProg_inverseOn f g p hp]
-      · have hp : ∀ x ∈ values p, g (f x) = x :=
-          fun x hx => h x (by simp [values, hr, hh, hx])
-        have hq : ∀ x ∈ values q, g (f x) = x :=
-          fun x hx => h x (by simp [values, hr, hh, hx])
-        simp [mapProg, mapProg_inverseOn f g p hp, mapProg_inverseOn f g q hq]
-  | _ => rfl
-termination_by sizeOf program
-decreasing_by
-  all_goals
-    simp_wf
-    subst program
-    try rw [hr]
-    try rw [hh]
-    simp <;> omega
+  fun_induction mapProg f program with
+  | case38 returns target handler _ _ =>
+      rcases returns with _ | ⟨body, link, l1, l2⟩ <;>
+        rcases handler with _ | ⟨hbody, h1, h2⟩ <;>
+        simp_all [mapProg, values, List.mem_append]
+  | _ =>
+      simp_all [mapProg, values, mapInst_inverseOn, mapRegImm_inverseOn,
+        List.mem_append]
+
 
 theorem regImmValues_mapRegImm (f : α → β) (operand : WordRegImm α) :
     regImmValues (mapRegImm f operand) = (regImmValues operand).map f := by
@@ -200,24 +162,13 @@ theorem instValues_mapInst (f : α → β) (instruction : WordInst α) :
 /-- No shared word payload is omitted by the traversal or numeric invariant. -/
 theorem values_mapProg (f : α → β) (program : StackProg α) :
     values (mapProg f program) = (values program).map f := by
-  cases program with
-  | inst instruction => simp [mapProg, values, instValues_mapInst]
-  | seq first second =>
-      simp [mapProg, values, values_mapProg f first, values_mapProg f second]
-  | ite op r right first second =>
-      simp [mapProg, values, regImmValues_mapRegImm,
-        values_mapProg f first, values_mapProg f second]
-  | loop body => simp [mapProg, values, values_mapProg f body]
-  | call returns target handler =>
-      rcases hr : returns with _ | ⟨p, link, l1, l2⟩ <;>
-        rcases hh : handler with _ | ⟨q, l3, l4⟩
-      · simp [mapProg, values]
-      · simp [mapProg, values, values_mapProg f q]
-      · simp [mapProg, values, values_mapProg f p]
-      · simp [mapProg, values, values_mapProg f p, values_mapProg f q]
-  | _ => rfl
-termination_by sizeOf program
-decreasing_by all_goals simp_wf <;> simp_all <;> omega
+  fun_induction mapProg f program with
+  | case38 returns target handler _ _ =>
+      rcases returns with _ | ⟨body, link, l1, l2⟩ <;>
+        rcases handler with _ | ⟨hbody, h1, h2⟩ <;>
+        simp_all [values]
+  | _ => simp_all [values, instValues_mapInst, regImmValues_mapRegImm]
+
 
 /-- Lift word-valued Nat fields exactly as the executed Lab operand boundary
 reduces words; all other Nat fields and production macros remain unchanged. -/

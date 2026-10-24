@@ -114,23 +114,10 @@ theorem mapInstPayloads_comp (f : α → β) (g : β → γ) (x : WordInst α) :
 /-- Every recursive production constructor, including both call bodies. -/
 theorem mapWordPayloads_comp (f : α → β) (g : β → γ) (program : StackProg α) :
     mapWordPayloads g (mapWordPayloads f program) = mapWordPayloads (g ∘ f) program := by
-  cases program with
-  | call returns target handler =>
-    rcases hr : returns with _ | ⟨p, link, l1, l2⟩ <;>
-      rcases hh : handler with _ | ⟨q, l3, l4⟩
-    · simp only [mapWordPayloads]
-    · simp only [mapWordPayloads, mapWordPayloads_comp f g q]
-    · simp only [mapWordPayloads, mapWordPayloads_comp f g p]
-    · simp only [mapWordPayloads, mapWordPayloads_comp f g p, mapWordPayloads_comp f g q]
-  | seq first second => simp only [mapWordPayloads,
-      mapWordPayloads_comp f g first, mapWordPayloads_comp f g second]
-  | ite op r right first second =>
-    simp only [mapWordPayloads, mapRegImmPayloads_comp,
-      mapWordPayloads_comp f g first, mapWordPayloads_comp f g second]
-  | loop body => simp only [mapWordPayloads, mapWordPayloads_comp f g body]
-  | _ => simp only [mapWordPayloads, mapInstPayloads_comp, Function.comp_apply]
-termination_by sizeOf program
-decreasing_by all_goals subst_vars; decreasing_trivial
+  fun_induction mapWordPayloads f program with
+  | _ => simp_all only [mapWordPayloads, mapInstPayloads_comp,
+      mapRegImmPayloads_comp, Function.comp_apply]
+
 
 theorem mapRegImmPayloads_id (x : WordRegImm α) : mapRegImmPayloads id x = x := by
   cases x <;> rfl
@@ -143,23 +130,10 @@ theorem mapInstPayloads_id (x : WordInst α) : mapInstPayloads id x = x := by
 
 /-- An arbitrary program is recovered, rather than just successful codec images. -/
 theorem mapWordPayloads_id (program : StackProg α) : mapWordPayloads id program = program := by
-  cases program with
-  | call returns target handler =>
-    rcases hr : returns with _ | ⟨p, link, l1, l2⟩ <;>
-      rcases hh : handler with _ | ⟨q, l3, l4⟩
-    · simp only [mapWordPayloads]
-    · simp only [mapWordPayloads, mapWordPayloads_id q]
-    · simp only [mapWordPayloads, mapWordPayloads_id p]
-    · simp only [mapWordPayloads, mapWordPayloads_id p, mapWordPayloads_id q]
-  | seq first second => simp only [mapWordPayloads,
-      mapWordPayloads_id first, mapWordPayloads_id second]
-  | ite op r right first second =>
-    simp only [mapWordPayloads, mapRegImmPayloads_id,
-      mapWordPayloads_id first, mapWordPayloads_id second]
-  | loop body => simp only [mapWordPayloads, mapWordPayloads_id body]
-  | _ => simp only [mapWordPayloads, mapInstPayloads_id, id_eq]
-termination_by sizeOf program
-decreasing_by all_goals subst_vars; decreasing_trivial
+  fun_induction mapWordPayloads id program with
+  | _ => simp_all only [mapInstPayloads_id,
+      mapRegImmPayloads_id, id_eq]
+
 
 /-- Width conversion only. Macro constants and names retain their original carriers. -/
 def natToWord {width : Nat} (program : StackProg Nat) : StackProg (BitVec width) :=

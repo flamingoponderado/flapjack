@@ -76,32 +76,12 @@ theorem comp_syn_ok_nested_seq2 :
 
 theorem compSyntaxOk_cut_sets_mono :
     ∀ (p : HolLoopProg width) (l : NumSet), compSyntaxOkHOL l p = true →
-      ∀ k, sptMem k l → sptMem k (cutSetsHOL l p)
-  | .skip, l, _, k, hk | .break _, l, _, k, hk => by simpa [cutSetsHOL] using hk
-  | .assign _ _, l, _, k, hk | .locValue _ _, l, _, k, hk | .load32 _ _, l, _, k, hk
-  | .loadByte _ _, l, _, k, hk => by
-      simp only [cutSetsHOL]; exact sptMem_sptInsert_of _ _ _ _ hk
-  | .arith op, l, _, k, hk => by
-      cases op <;> simp only [cutSetsHOL] <;>
-        first
-          | exact sptMem_sptInsert_of _ _ _ _ hk
-          | exact sptMem_sptInsert_of _ _ _ _ (sptMem_sptInsert_of _ _ _ _ hk)
-  | .loop _ _ _, l, _, k, hk => by simpa [cutSetsHOL] using hk
-  | .seq p q, l, h, k, hk => by
-      rw [compSyntaxOkHOL, Bool.and_eq_true] at h
-      simp only [cutSetsHOL]
-      exact compSyntaxOk_cut_sets_mono q _ h.2 k (compSyntaxOk_cut_sets_mono p l h.1 k hk)
-  | .ite _ _ _ _ _ nl, l, h, k, hk => by
-      rw [compSyntaxOkHOL, Bool.and_eq_true, holPropBool_eq_true] at h
-      obtain ⟨names, rfl⟩ := h.2
-      simp only [cutSetsHOL]; exact sptMem_sptListInsert_of _ _ _ hk
-  | .primitive _ _ _, _, h, _, _ | .store _ _, _, h, _, _ | .setGlobal _ _, _, h, _, _
-  | .store32 _ _, _, h, _, _ | .storeByte _ _, _, h, _, _ | .continue _, _, h, _, _
-  | .raise _, _, h, _, _ | .return _, _, h, _, _ | .shMem _ _ _, _, h, _, _
-  | .tick, _, h, _, _ | .mark _, _, h, _, _ | .fail, _, h, _, _
-  | .call _ _ _ _, _, h, _, _ | .ffi _ _ _ _ _ _, _, h, _, _ => by
-      simp [compSyntaxOkHOL] at h
-termination_by p => sizeOf p
+      ∀ k, sptMem k l → sptMem k (cutSetsHOL l p) := by
+  intro p l h k hk
+  fun_induction cutSetsHOL l p generalizing k with
+  | _ =>
+      simp_all only [compSyntaxOkHOL, Bool.and_eq_true, holPropBool_eq_true] <;>
+      grind only [cutSetsHOL, sptMem_sptInsert_of, sptMem_sptListInsert_of]
 
 /-- Exact HOL `cut_sets_union_domain_subset` (`loopPropsScript.sml:810-812`). -/
 @[hol "cakeml/pancake/semantics/loopPropsScript.sml" "cut_sets_union_domain_subset"

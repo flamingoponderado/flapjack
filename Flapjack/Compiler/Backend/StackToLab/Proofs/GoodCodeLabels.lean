@@ -483,57 +483,14 @@ in the statement and are omitted. -/
   "stack_alloc_get_code_labels_comp" (words_as_type_indexed_bitvec)]
 theorem stackAllocGetCodeLabelsComp {width : Nat} [NeZero width] :
     ∀ (n m : Nat) (p : HolProg width),
-      getCodeLabels (StackAlloc.comp n m p).1 ⊆ insert (gcStubLocation, 0) (getCodeLabels p)
-  | n, m, .seq a b => by
-      simp only [StackAlloc.comp, getCodeLabels]
-      exact Set.union_subset
-        ((stackAllocGetCodeLabelsComp n m a).trans (Set.insert_subset_insert Set.subset_union_left))
-        ((stackAllocGetCodeLabelsComp n _ b).trans (Set.insert_subset_insert Set.subset_union_right))
-  | n, m, .ite cmp r ri a b => by
-      simp only [StackAlloc.comp, getCodeLabels]
-      exact Set.union_subset
-        ((stackAllocGetCodeLabelsComp n m a).trans (Set.insert_subset_insert Set.subset_union_left))
-        ((stackAllocGetCodeLabelsComp n _ b).trans (Set.insert_subset_insert Set.subset_union_right))
-  | n, m, .loop body => by
-      simp only [StackAlloc.comp, getCodeLabels]
-      exact stackAllocGetCodeLabelsComp n m body
-  | n, m, .call none dest handler => by
-      rcases handler with _ | ⟨hp, k1, k2⟩ <;> simp only [StackAlloc.comp, getCodeLabels] <;>
-        intro x hx <;>
-        simp only [Set.mem_union, Set.mem_insert_iff, Set.mem_empty_iff_false] at hx ⊢ <;>
-        tauto
-  | n, m, .call (some (rp, lr, l1, l2)) dest none => by
-      have h1 := stackAllocGetCodeLabelsComp n m rp
-      simp only [StackAlloc.comp, getCodeLabels]
-      intro x hx
-      have h1 := @h1 x
-      simp only [Set.mem_union, Set.mem_insert_iff, Set.mem_empty_iff_false] at hx h1 ⊢
-      tauto
-  | n, m, .call (some (rp, lr, l1, l2)) dest (some (hp, k1, k2)) => by
-      have h1 := stackAllocGetCodeLabelsComp n m rp
-      have h2 := stackAllocGetCodeLabelsComp n (StackAlloc.comp n m rp).2 hp
-      simp only [StackAlloc.comp, getCodeLabels]
-      intro x hx
-      have h1 := @h1 x
-      have h2 := @h2 x
-      simp only [Set.mem_union, Set.mem_insert_iff] at hx h1 h2 ⊢
-      tauto
-  | n, m, .alloc k => by
-      simp [StackAlloc.comp, getCodeLabels]
-  | n, m, .storeConsts t1 t2 (some loc) => by
-      simp [StackAlloc.comp, getCodeLabels]
-  | _, _, .storeConsts _ _ none | _, _, .skip | _, _, .halt _ | _, _, .tick
-  | _, _, .ret _ | _, _, .raise _ | _, _, .break _ | _, _, .continue _
-  | _, _, .inst _ | _, _, .get _ _ | _, _, .set _ _ | _, _, .opCurrHeap _ _ _
-  | _, _, .jumpLower _ _ _ | _, _, .rawCall _ | _, _, .install _ _ _ _ _
-  | _, _, .shMemOp _ _ _ | _, _, .codeBufferWrite _ _ | _, _, .dataBufferWrite _ _
-  | _, _, .ffi _ _ _ _ _ _ | _, _, .locValue _ _ _ | _, _, .stackAlloc _
-  | _, _, .stackFree _ | _, _, .stackLoad _ _ | _, _, .stackLoadAny _ _
-  | _, _, .stackStore _ _ | _, _, .stackStoreAny _ _ | _, _, .stackGetSize _
-  | _, _, .stackSetSize _ | _, _, .bitmapLoad _ _ => by
-      simp only [StackAlloc.comp]; exact Set.subset_insert _ _
-termination_by _ _ p => sizeOf p
-decreasing_by all_goals simp_wf <;> omega
+      getCodeLabels (StackAlloc.comp n m p).1 ⊆ insert (gcStubLocation, 0) (getCodeLabels p) := by
+  intro n m p
+  set_option tactic.fun_induction.unfolding false in
+    fun_induction StackAlloc.comp n m p with
+    | case4 _ dest handler =>
+        rcases handler with _ | ⟨body, h1, h2⟩ <;> cases dest <;> simp [StackAlloc.comp, getCodeLabels]
+    | _ => simp_all only [StackAlloc.comp, getCodeLabels, Set.subset_def, Set.mem_union, Set.mem_insert_iff,
+        Set.mem_empty_iff_false]; grind
 
 /-- HOL `stack_alloc_stack_get_handler_labels_comp`. HOL's binders `pp mm` do not
 occur in the statement and are omitted. -/
@@ -541,41 +498,11 @@ occur in the statement and are omitted. -/
   "stack_alloc_stack_get_handler_labels_comp" (words_as_type_indexed_bitvec)]
 theorem stackAllocStackGetHandlerLabelsComp {width : Nat} [NeZero width] {i : Nat} :
     ∀ (n m : Nat) (p : HolProg width),
-      stackGetHandlerLabels i (StackAlloc.comp n m p).1 = stackGetHandlerLabels i p
-  | n, m, .seq a b => by
-      simp only [StackAlloc.comp, stackGetHandlerLabels]
-      rw [stackAllocStackGetHandlerLabelsComp n m a, stackAllocStackGetHandlerLabelsComp n _ b]
-  | n, m, .ite cmp r ri a b => by
-      simp only [StackAlloc.comp, stackGetHandlerLabels]
-      rw [stackAllocStackGetHandlerLabelsComp n m a, stackAllocStackGetHandlerLabelsComp n _ b]
-  | n, m, .loop body => by
-      simp only [StackAlloc.comp, stackGetHandlerLabels]
-      exact stackAllocStackGetHandlerLabelsComp n m body
-  | n, m, .call none dest handler => by
-      simp [StackAlloc.comp, stackGetHandlerLabels]
-  | n, m, .call (some (rp, lr, l1, l2)) dest none => by
-      simp only [StackAlloc.comp, stackGetHandlerLabels]
-      rw [stackAllocStackGetHandlerLabelsComp n m rp]
-  | n, m, .call (some (rp, lr, l1, l2)) dest (some (hp, k1, k2)) => by
-      simp only [StackAlloc.comp, stackGetHandlerLabels]
-      rw [stackAllocStackGetHandlerLabelsComp n m rp,
-        stackAllocStackGetHandlerLabelsComp n (StackAlloc.comp n m rp).2 hp]
-  | n, m, .alloc k => by
-      simp [StackAlloc.comp, stackGetHandlerLabels]
-  | n, m, .storeConsts t1 t2 (some loc) => by
-      simp [StackAlloc.comp, stackGetHandlerLabels]
-  | _, _, .storeConsts _ _ none | _, _, .skip | _, _, .halt _ | _, _, .tick
-  | _, _, .ret _ | _, _, .raise _ | _, _, .break _ | _, _, .continue _
-  | _, _, .inst _ | _, _, .get _ _ | _, _, .set _ _ | _, _, .opCurrHeap _ _ _
-  | _, _, .jumpLower _ _ _ | _, _, .rawCall _ | _, _, .install _ _ _ _ _
-  | _, _, .shMemOp _ _ _ | _, _, .codeBufferWrite _ _ | _, _, .dataBufferWrite _ _
-  | _, _, .ffi _ _ _ _ _ _ | _, _, .locValue _ _ _ | _, _, .stackAlloc _
-  | _, _, .stackFree _ | _, _, .stackLoad _ _ | _, _, .stackLoadAny _ _
-  | _, _, .stackStore _ _ | _, _, .stackStoreAny _ _ | _, _, .stackGetSize _
-  | _, _, .stackSetSize _ | _, _, .bitmapLoad _ _ => by
-      simp only [StackAlloc.comp]
-termination_by _ _ p => sizeOf p
-decreasing_by all_goals simp_wf <;> omega
+      stackGetHandlerLabels i (StackAlloc.comp n m p).1 = stackGetHandlerLabels i p := by
+  intro n m p
+  set_option tactic.fun_induction.unfolding false in
+    fun_induction StackAlloc.comp n m p with
+    | _ => simp_all [StackAlloc.comp, stackGetHandlerLabels]
 
 /-- HOL `stack_alloc_init_code_labels`. -/
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"

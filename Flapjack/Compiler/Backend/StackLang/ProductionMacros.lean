@@ -101,81 +101,20 @@ decreasing_by all_goals decreasing_trivial
 theorem projectMacros_noMacros {width : Nat}
     (program result : StackProg (BitVec width))
     (accepted : projectMacros program = some result) : noMacros result = true := by
-  cases program with
-  | const destination value =>
-    simp only [projectMacros] at accepted
-    split at accepted
-    · cases accepted
-      simp only [noMacros]
-    · contradiction
-  | seq p q =>
-    simp [projectMacros, Option.bind_eq_some_iff] at accepted
-    rcases accepted with ⟨p', hp, q', hq, rfl⟩
-    simp only [noMacros, projectMacros_noMacros p p' hp, projectMacros_noMacros q q' hq,
-      Bool.and_self]
-  | ite op r right p q =>
-    simp [projectMacros, Option.bind_eq_some_iff] at accepted
-    rcases accepted with ⟨p', hp, q', hq, rfl⟩
-    simp only [noMacros, projectMacros_noMacros p p' hp, projectMacros_noMacros q q' hq,
-      Bool.and_self]
-  | loop p =>
-    simp only [projectMacros, Option.map_eq_some_iff] at accepted
-    rcases accepted with ⟨p', hp, rfl⟩
-    simp only [noMacros, projectMacros_noMacros p p' hp]
-  | call ret target handler =>
-    rcases hr : ret with _ | ⟨p, link, l1, l2⟩ <;>
-      rcases hh : handler with _ | ⟨q, l3, l4⟩
-    · simp only [projectMacros, hr, hh, Option.some.injEq] at accepted
-      subst result
-      simp only [noMacros, Bool.and_self]
-    · simp [projectMacros, hr, hh, Option.bind_eq_some_iff] at accepted
-      rcases accepted with ⟨q', hq, rfl⟩
-      simp only [noMacros, projectMacros_noMacros q q' hq, Bool.and_self]
-    · simp [projectMacros, hr, hh, Option.bind_eq_some_iff] at accepted
-      rcases accepted with ⟨p', hp, rfl⟩
-      simp only [noMacros, projectMacros_noMacros p p' hp, Bool.and_self]
-    · simp [projectMacros, hr, hh, Option.bind_eq_some_iff] at accepted
-      rcases accepted with ⟨p', hp, q', hq, rfl⟩
-      simp only [noMacros, projectMacros_noMacros p p' hp, projectMacros_noMacros q q' hq,
-        Bool.and_self]
+  fun_induction projectMacros program generalizing result with
   | _ =>
-    simp only [projectMacros, Option.some.injEq] at accepted
-    subst result
-    simp only [noMacros]
-termination_by sizeOf program
-decreasing_by all_goals simp_all only [Option.some.injEq]; subst_vars; decreasing_trivial
+      simp_all only [bind, pure, Option.bind_eq_some_iff,
+        Option.map_eq_some_iff, Option.some.injEq, reduceCtorEq] <;>
+        grind only [noMacros]
+
 
 /-- Every macro-free input is retained literally, with no successful-pass assumption. -/
 theorem projectMacros_of_noMacros {width : Nat}
     (program : StackProg (BitVec width)) (free : noMacros program = true) :
     projectMacros program = some program := by
-  cases program with
-  | const _ _ | arith _ _ _ _ | shift _ _ _ _ => simp [noMacros] at free
-  | seq p q =>
-    simp only [noMacros, Bool.and_eq_true] at free
-    simp only [projectMacros, projectMacros_of_noMacros p free.1,
-      projectMacros_of_noMacros q free.2, bind, Option.bind_some, pure]
-  | ite op r right p q =>
-    simp only [noMacros, Bool.and_eq_true] at free
-    simp only [projectMacros, projectMacros_of_noMacros p free.1,
-      projectMacros_of_noMacros q free.2, bind, Option.bind_some, pure]
-  | loop p =>
-    simp only [noMacros] at free
-    simp only [projectMacros, projectMacros_of_noMacros p free, Option.map_some]
-  | call ret target handler =>
-    rcases hr : ret with _ | ⟨p, link, l1, l2⟩ <;>
-      rcases hh : handler with _ | ⟨q, l3, l4⟩
-    · simp only [projectMacros]
-    · simp only [noMacros, hr, hh, Bool.true_and] at free
-      simp only [projectMacros, projectMacros_of_noMacros q free, bind, Option.bind_some, pure]
-    · simp only [noMacros, hr, hh, Bool.and_true] at free
-      simp only [projectMacros, projectMacros_of_noMacros p free, bind, Option.bind_some, pure]
-    · simp only [noMacros, hr, hh, Bool.and_eq_true] at free
-      simp only [projectMacros, projectMacros_of_noMacros p free.1,
-        projectMacros_of_noMacros q free.2, bind, Option.bind_some, pure]
-  | _ => simp only [projectMacros]
-termination_by sizeOf program
-decreasing_by all_goals simp_all only [Option.some.injEq]; subst_vars; decreasing_trivial
+  fun_induction projectMacros program with
+  | _ => simp_all [noMacros]
+
 
 /-- Complete idempotence with failure retained, not only an accepted-image equation. -/
 theorem projectMacros_idempotent {width : Nat} (program : StackProg (BitVec width)) :

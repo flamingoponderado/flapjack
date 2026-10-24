@@ -28,78 +28,15 @@ theorem panBinary_retToTail_eq {width : Nat} [NeZero width]
     (program : ProgHOL width) :
     everyExpListHOL panopArityTwoHOL (expsOfHOL (retToTailHOL program)) =
       everyExpListHOL panopArityTwoHOL (expsOfHOL program) := by
-  let rec go : (program : ProgHOL width) →
-      everyExpListHOL panopArityTwoHOL (expsOfHOL (retToTailHOL program)) =
-        everyExpListHOL panopArityTwoHOL (expsOfHOL program)
-    | .skip => by
-        simp only [retToTailHOL, expsOfHOL, everyExpListHOL]
-    | .dec name shape value body => by
-        simp only [retToTailHOL, expsOfHOL, everyExpListHOL]
-        rw [go body]
-    | .seq first second => by
-        simp only [retToTailHOL]
-        rw [show everyExpListHOL panopArityTwoHOL (expsOfHOL (seqCallRetHOL _)) =
-          everyExpListHOL panopArityTwoHOL (expsOfHOL _) from binary_seqCallRet _]
-        simp only [expsOfHOL, binary_append]
-        rw [go first, go second]
-    | .ite condition thenBranch elseBranch => by
-        simp only [retToTailHOL, expsOfHOL, everyExpListHOL, binary_append]
-        rw [go thenBranch, go elseBranch]
-    | .while condition body => by
-        simp only [retToTailHOL, expsOfHOL, everyExpListHOL]
-        rw [go body]
-    | .call info function arguments => by
-        cases info with
-        | none =>
-            simp only [retToTailHOL, expsOfHOL]
-        | some info =>
-            cases info with
-            | mk returns handlerInfo =>
-                cases handlerInfo with
-                | none =>
-                    simp only [retToTailHOL, expsOfHOL]
-                | some handler =>
-                    cases handler with
-                    | mk exception handlerInfo =>
-                        cases handlerInfo with
-                        | mk handlerVar handlerProgram =>
-                            simp only [retToTailHOL]
-                            simp only [expsOfHOL, binary_append]
-                            rw [go handlerProgram]
-    | .decCall name shape function arguments body => by
-        simp only [retToTailHOL, expsOfHOL, binary_append]
-        rw [go body]
-    | .annot tag text => by
-        simp only [retToTailHOL, expsOfHOL, everyExpListHOL]
-    | .assign kind name value => by
-        simp only [retToTailHOL, expsOfHOL, everyExpListHOL]
-    | .primitive name operator args => by
-        simp only [retToTailHOL, expsOfHOL]
-    | .store address value => by
-        simp only [retToTailHOL, expsOfHOL, everyExpListHOL]
-    | .store32 address value => by
-        simp only [retToTailHOL, expsOfHOL, everyExpListHOL]
-    | .storeByte address value => by
-        simp only [retToTailHOL, expsOfHOL, everyExpListHOL]
-    | .break => by
-        simp only [retToTailHOL, expsOfHOL, everyExpListHOL]
-    | .continue => by
-        simp only [retToTailHOL, expsOfHOL, everyExpListHOL]
-    | .extCall function configuration configurationLength array arrayLength => by
-        simp only [retToTailHOL, expsOfHOL, everyExpListHOL]
-    | .raise exception value => by
-        simp only [retToTailHOL, expsOfHOL, everyExpListHOL]
-    | .return value => by
-        simp only [retToTailHOL, expsOfHOL, everyExpListHOL]
-    | .shMemLoad size kind name address => by
-        simp only [retToTailHOL, expsOfHOL, everyExpListHOL]
-    | .shMemStore size address value => by
-        simp only [retToTailHOL, expsOfHOL, everyExpListHOL]
-    | .tick => by
-        simp only [retToTailHOL, expsOfHOL, everyExpListHOL]
-    termination_by program => sizeOf program
-    decreasing_by all_goals decreasing_trivial
-  exact go program
+  fun_induction expIdsHOL program with
+  | case14 info _ _ noHandler =>
+      rcases info with _ | ⟨returns, _ | ⟨exception, handlerVar, handler⟩⟩
+      · simp [retToTailHOL, expsOfHOL]
+      · simp [retToTailHOL, expsOfHOL]
+      · exact (noHandler returns exception handlerVar handler rfl).elim
+  | _ =>
+      grind only [retToTailHOL, binary_seqCallRet,
+        expsOfHOL, binary_append, everyExpListHOL]
 
 private theorem binary_smartSeq {width : Nat} [NeZero width] (pre p : ProgHOL width) :
     everyExpListHOL panopArityTwoHOL (expsOfHOL (smartSeqHOL pre p)) =
@@ -112,107 +49,15 @@ theorem panBinary_seqAssoc_eq {width : Nat} [NeZero width]
     (everyExpListHOL panopArityTwoHOL (expsOfHOL (seqAssocHOL pre program))) =
       ((everyExpListHOL panopArityTwoHOL (expsOfHOL pre)) &&
         (everyExpListHOL panopArityTwoHOL (expsOfHOL program))) := by
-  let rec go (pre : ProgHOL width) : (program : ProgHOL width) →
-      (everyExpListHOL panopArityTwoHOL (expsOfHOL (seqAssocHOL pre program))) =
-        ((everyExpListHOL panopArityTwoHOL (expsOfHOL pre)) &&
-          (everyExpListHOL panopArityTwoHOL (expsOfHOL program)))
-    | .skip => by
-        simp [seqAssocHOL, expsOfHOL, everyExpListHOL]
-    | .dec name shape value body => by
-        simp only [seqAssocHOL]
-        rw [binary_smartSeq]
-        simp only [expsOfHOL, everyExpListHOL]
-        rw [go .skip body]
-        simp [expsOfHOL, everyExpListHOL]
-    | .seq first second => by
-        simp only [seqAssocHOL]
-        rw [go (seqAssocHOL pre first) second, go pre first]
-        simp [expsOfHOL, binary_append, Bool.and_assoc]
-    | .ite condition thenBranch elseBranch => by
-        simp only [seqAssocHOL]
-        rw [binary_smartSeq]
-        simp only [expsOfHOL, everyExpListHOL, binary_append]
-        rw [go .skip thenBranch, go .skip elseBranch]
-        simp [expsOfHOL, everyExpListHOL]
-    | .while condition body => by
-        simp only [seqAssocHOL]
-        rw [binary_smartSeq]
-        simp only [expsOfHOL, everyExpListHOL]
-        rw [go .skip body]
-        simp [expsOfHOL, everyExpListHOL]
-    | .call info function arguments => by
-        cases info with
-        | none =>
-            simp [seqAssocHOL, expsOfHOL,
-              binary_smartSeq]
-        | some info =>
-            cases info with
-            | mk returns handlerInfo =>
-                cases handlerInfo with
-                | none =>
-                    simp [seqAssocHOL, expsOfHOL,
-                      binary_smartSeq]
-                | some handler =>
-                    cases handler with
-                    | mk exception handlerInfo =>
-                        cases handlerInfo with
-                        | mk handlerVar handlerProgram =>
-                            simp only [seqAssocHOL]
-                            rw [binary_smartSeq]
-                            simp only [expsOfHOL, binary_append]
-                            rw [go .skip handlerProgram]
-                            simp [expsOfHOL, everyExpListHOL]
-    | .decCall name shape function arguments body => by
-        simp only [seqAssocHOL]
-        rw [binary_smartSeq]
-        simp only [expsOfHOL, binary_append]
-        rw [go .skip body]
-        simp [expsOfHOL, everyExpListHOL]
-    | .annot tag text => by
-        simp [seqAssocHOL, expsOfHOL, everyExpListHOL]
-    | .assign kind name value => by
-        simp only [seqAssocHOL]
-        rw [binary_smartSeq]
-    | .primitive name operator args => by
-        simp only [seqAssocHOL]
-        rw [binary_smartSeq]
-    | .store address value => by
-        simp only [seqAssocHOL]
-        rw [binary_smartSeq]
-    | .store32 address value => by
-        simp only [seqAssocHOL]
-        rw [binary_smartSeq]
-    | .storeByte address value => by
-        simp only [seqAssocHOL]
-        rw [binary_smartSeq]
-    | .break => by
-        simp only [seqAssocHOL]
-        rw [binary_smartSeq]
-    | .continue => by
-        simp only [seqAssocHOL]
-        rw [binary_smartSeq]
-    | .extCall function configuration configurationLength array arrayLength => by
-        simp only [seqAssocHOL]
-        rw [binary_smartSeq]
-    | .raise exception value => by
-        simp only [seqAssocHOL]
-        rw [binary_smartSeq]
-    | .return value => by
-        simp only [seqAssocHOL]
-        rw [binary_smartSeq]
-    | .shMemLoad size kind name address => by
-        simp only [seqAssocHOL]
-        rw [binary_smartSeq]
-    | .shMemStore size address value => by
-        simp only [seqAssocHOL]
-        rw [binary_smartSeq]
-    | .tick => by
-        simp only [seqAssocHOL]
-        rw [binary_smartSeq]
-    termination_by program => sizeOf program
-    decreasing_by all_goals decreasing_trivial
-  exact go pre program
-
+  fun_induction expIdsHOL program generalizing pre with
+  | case14 info _ _ noHandler =>
+      rcases info with _ | ⟨returns, _ | ⟨exception, handlerVar, handler⟩⟩
+      · simp [seqAssocHOL, expsOfHOL, binary_smartSeq]
+      · simp [seqAssocHOL, expsOfHOL, binary_smartSeq]
+      · exact (noHandler returns exception handlerVar handler rfl).elim
+  | _ =>
+      simp_all only [seqAssocHOL, binary_smartSeq, expsOfHOL,
+        binary_append, everyExpListHOL, Bool.and_assoc, Bool.true_and, Bool.and_true]
 
 /-- The original EVERY/every_exp condition is preserved in both directions.
 Uses exact width-indexed syntax; no additional predicate hypothesis. -/
