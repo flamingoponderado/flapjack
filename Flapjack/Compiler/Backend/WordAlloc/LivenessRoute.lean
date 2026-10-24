@@ -33,35 +33,13 @@ original; no injectivity, evaluation, or output premise is assumed. -/
 theorem getLiveExpExecutable_exact {width : Nat} [NeZero width]
     (expression : WordExp (BitVec width)) :
     getLiveExpExecutable expression = getLiveExp (wordExpToHOL expression) := by
-  refine WordExp.rec
-    (motive_1 := fun expression =>
-      getLiveExpExecutable expression = getLiveExp (wordExpToHOL expression))
-    (motive_2 := fun expressions =>
-      expressions.map getLiveExpExecutable =
-        (expressions.map wordExpToHOL).map getLiveExp)
-    ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ expression
-  · intro value
-    simp [getLiveExpExecutable, expressionForLiveness, wordExpToHOL, getLiveExp]
-  · intro name
-    simp [getLiveExpExecutable, expressionForLiveness, wordExpToHOL, getLiveExp]
-  · intro store
-    simp [getLiveExpExecutable, expressionForLiveness, wordExpToHOL, getLiveExp]
-  · intro address ih
-    simpa [getLiveExpExecutable, expressionForLiveness, wordExpToHOL, getLiveExp]
-      using ih
-  · intro operator arguments ih
-    unfold getLiveExpExecutable at ih
-    simpa [getLiveExpExecutable, expressionForLiveness, wordExpToHOL,
-      getLiveExp, List.map_map, Function.comp_def] using congrArg bigUnion ih
-  · intro operator left right ihLeft ihRight
-    have hpair : (getLiveExpExecutable left, getLiveExpExecutable right) =
-        (getLiveExp (wordExpToHOL left), getLiveExp (wordExpToHOL right)) := by
-      rw [ihLeft, ihRight]
-    simpa [getLiveExpExecutable, expressionForLiveness, wordExpToHOL, getLiveExp]
-      using congrArg (fun pair : Spt Unit × Spt Unit => sptUnion pair.1 pair.2) hpair
-  · rfl
-  · intro head tail ihHead ihTail
-    simp [ihHead, ihTail]
+  fun_induction expressionForLiveness expression with
+  | case5 operator arguments ih =>
+      simp only [getLiveExpExecutable, expressionForLiveness, wordExpToHOL, getLiveExp, List.map_map]
+      congr 1
+      exact List.map_congr_left ih
+  | _ => simp_all [getLiveExpExecutable, expressionForLiveness, wordExpToHOL, getLiveExp]
+
 
 /-- Canonical mixed-tree key traversal for set-valued expression liveness.
 Raw occurrence collectors retain their separate duplicate-sensitive API. -/

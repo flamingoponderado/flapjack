@@ -7,24 +7,14 @@ nested records and named fields; names are erased without reordering values. -/
   (words_as_type_indexed_bitvec)]
 theorem flattenConvertV {width : Nat} [NeZero width] (value : ValueHOL width) :
     flattenHOL (convertV value) = flattenHOL value := by
-  refine ValueHOL.rec
-    (motive_1 := fun value => flattenHOL (convertV value) = flattenHOL value)
-    (motive_2 := fun values => values.map (fun value => flattenHOL (convertV value)) = values.map flattenHOL)
-    (motive_3 := fun fields => fields.map (fun field => flattenHOL (convertV field.2)) =
-      fields.map (fun field => flattenHOL field.2))
-    (motive_4 := fun field => flattenHOL (convertV field.2) = flattenHOL field.2) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ value
-  all_goals intros
-  all_goals simp_all [convertV, flattenHOL, List.map_map, Function.comp_def]
-  · rename_i fields ih
-    apply congrArg List.flatten
-    apply List.map_congr_left
-    intro entry hmem
-    exact ih entry hmem
-  · rename_i name fields ih
-    apply congrArg List.flatten
-    apply List.map_congr_left
-    rintro ⟨fieldName, fieldValue⟩ hmem
-    exact ih fieldName fieldValue hmem
-  · assumption
+  fun_induction convertV value with
+  | case1 => rfl
+  | case2 values ih =>
+      simp only [flattenHOL, List.map_map, Function.comp_def]
+      exact congrArg List.flatten (List.map_congr_left ih)
+  | case3 name fields ih =>
+      simp only [flattenHOL, List.map_map, Function.comp_def]
+      apply congrArg List.flatten
+      exact List.map_congr_left (fun (name, value) h => ih (name, value) h)
 
 end Flapjack.Pancake.Proofs.PanStructs.FlattenConversion

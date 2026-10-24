@@ -183,97 +183,46 @@ decreasing_by
         Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes,
         shapeToHOL_shapeOfHOL]
 
+/-- Flapjack-specific list views of the recursive byte-range predicates. -/
+theorem listExpByteRanged_iff_forall_mem {width : Nat}
+    (expressions : List (Flapjack.Exp (BitVec width))) :
+    ListExpByteRanged expressions ↔ ∀ e ∈ expressions, ExpByteRanged e := by
+  induction expressions with
+  | nil => simp [ListExpByteRanged]
+  | cons head tail ih => simp only [ListExpByteRanged, List.mem_cons, forall_eq_or_imp, ih]
+theorem listFieldByteRanged_iff_forall_mem {width : Nat}
+    (fields : List (String × Flapjack.Exp (BitVec width))) :
+    ListFieldByteRanged fields ↔
+      ∀ p ∈ fields, (∀ c ∈ p.1.toList, c.toNat < 256) ∧ ExpByteRanged p.2 := by
+  induction fields with
+  | nil => simp [ListFieldByteRanged]
+  | cons head tail ih => simp only [ListFieldByteRanged, List.mem_cons, forall_eq_or_imp, ih, and_assoc]
+
 /-- `Exp -> ExpHOL -> Exp` round trips exactly on byte-ranged expressions. -/
 @[simp] theorem expOfHOL_expToHOL {width : Nat} [NeZero width] :
     (e : Flapjack.Exp (BitVec width)) → ExpByteRanged e →
-      expOfHOL (expToHOL e) = e :=
-  Flapjack.Exp.rec
-    (motive_1 := fun e => ExpByteRanged e → expOfHOL (expToHOL e) = e)
-    (motive_2 := fun l =>
-      ListExpByteRanged l → (l.map (expOfHOL ∘ expToHOL)) = l)
-    (motive_3 := fun l =>
-      ListFieldByteRanged l →
-        (l.map ((fun p => (toStringOfBytes p.1, expOfHOL p.2)) ∘
-          fun p => (ofString p.1, expToHOL p.2))) = l)
-    (motive_4 := fun p =>
-      ((∀ c ∈ p.1.toList, c.toNat < 256) ∧ ExpByteRanged p.2) →
-        (toStringOfBytes (ofString p.1), expOfHOL (expToHOL p.2)) = p)
-    (fun _value => by intro _; simp only [expToHOL, expOfHOL])
-    (fun _kind name => by
+      expOfHOL (expToHOL e) = e := by
+  intro e
+  fun_induction expToHOL e with
+  | case3 fields ih | case10 _ fields ih | case11 _ fields ih =>
       intro h
-      simp only [expToHOL, expOfHOL,
-        Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes name h])
-    (fun fields ih => by
+      simp only [ExpByteRanged, listExpByteRanged_iff_forall_mem] at h
+      simp only [expOfHOL, List.map_map]
+      congr 1
+      exact (List.map_congr_left (g := id) (fun e he => ih e he (h e he))).trans (List.map_id _)
+  | case5 name fields ih =>
       intro h
-      simp only [expToHOL, expOfHOL, List.map_map]
-      rw [ih h])
-    (fun _index _value ih => by
+      simp only [ExpByteRanged, listFieldByteRanged_iff_forall_mem] at h
+      simp only [expOfHOL, List.map_map, Function.comp_def,
+        toStringOfBytes_ofString_of_bytes name h.1]
+      congr 1
+      exact (List.map_congr_left (g := id) (fun (field, e) he => by
+        have hb := h.2 (field,e) he
+        simp only [toStringOfBytes_ofString_of_bytes field hb.1, ih (field,e) he hb.2, id_eq])).trans (List.map_id _)
+  | _ =>
       intro h
-      simp only [expToHOL, expOfHOL]
-      rw [ih h])
-    (fun name fields ih => by
-      intro h
-      obtain ⟨hname, hfields⟩ := h
-      simp only [expToHOL, expOfHOL, List.map_map,
-        Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes name hname]
-      rw [ih hfields])
-    (fun name _value ih => by
-      intro h
-      obtain ⟨hname, hvalue⟩ := h
-      simp only [expToHOL, expOfHOL,
-        Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes name hname]
-      rw [ih hvalue])
-    (fun shape address ih => by
-      intro h
-      obtain ⟨hshape, haddress⟩ := h
-      simp only [expToHOL, expOfHOL, shapeOfHOL_shapeToHOL shape hshape]
-      rw [ih haddress])
-    (fun address ih => by
-      intro h
-      simp only [expToHOL, expOfHOL]
-      rw [ih h])
-    (fun address ih => by
-      intro h
-      simp only [expToHOL, expOfHOL]
-      rw [ih h])
-    (fun _operator args ih => by
-      intro h
-      simp only [expToHOL, expOfHOL, List.map_map]
-      rw [ih h])
-    (fun _operator args ih => by
-      intro h
-      simp only [expToHOL, expOfHOL, List.map_map]
-      rw [ih h])
-    (fun _operator left right ihl ihr => by
-      intro h
-      obtain ⟨hl, hr⟩ := h
-      simp only [expToHOL, expOfHOL]
-      rw [ihl hl, ihr hr])
-    (fun _operator left right ihl ihr => by
-      intro h
-      obtain ⟨hl, hr⟩ := h
-      simp only [expToHOL, expOfHOL]
-      rw [ihl hl, ihr hr])
-    (by intro _; simp only [expToHOL, expOfHOL])
-    (by intro _; simp only [expToHOL, expOfHOL])
-    (by intro _; simp only [expToHOL, expOfHOL])
-    (by intro _; rfl)
-    (fun head _tail ih1 ih2 => by
-      intro h
-      obtain ⟨hh, ht⟩ := h
-      simp only [List.map_cons, Function.comp_apply]
-      rw [ih1 hh, ih2 ht])
-    (by intro _; rfl)
-    (fun head _tail ih4 ih3 => by
-      intro h
-      obtain ⟨hA, hB, hC⟩ := h
-      simp only [List.map_cons, Function.comp_apply]
-      rw [ih4 ⟨hA, hB⟩, ih3 hC])
-    (fun fst snd ih => by
-      intro h
-      obtain ⟨hf, hs⟩ := h
-      simp only [Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes fst hf,
-        ih hs])
+      grind only [ExpByteRanged, expOfHOL, toStringOfBytes_ofString_of_bytes,
+        shapeOfHOL_shapeToHOL]
 
 /-- Flapjack-only refinement fact for the HOL `NStruct` constructor
 (`cakeml/pancake/panLangScript.sml:53-69`).  The exact carrier stores its
@@ -345,60 +294,24 @@ refactor. The relation is kept as a checked bridge rather than claimed as direct
 production routing. -/
 theorem varExpHOL_expToHOL {width : Nat} [NeZero width] :
     (e : Flapjack.Exp (BitVec width)) →
-      varExpHOL (expToHOL e) = (Flapjack.expLocalVars e).map ofString :=
-  Exp.rec
-    (motive_1 := fun e => varExpHOL (expToHOL e) = (Flapjack.expLocalVars e).map ofString)
-    (motive_2 := fun es => (es.map (varExpHOL ∘ expToHOL)).flatten
-      = (Flapjack.expLocalVars.expLocalVarsList es).map ofString)
-    (motive_3 := fun fs => (fs.map ((fun pair => varExpHOL pair.snd) ∘
-        (fun p => (ofString p.fst, expToHOL p.snd)))).flatten
-      = (Flapjack.expLocalVars.expLocalVarsFieldList fs).map ofString)
-    (motive_4 := fun p => varExpHOL (expToHOL p.2) = (Flapjack.expLocalVars p.2).map ofString)
-    (fun _value => by simp [expToHOL, varExpHOL, Flapjack.expLocalVars])
-    (fun kind _name => by cases kind <;> simp [expToHOL, varExpHOL, Flapjack.expLocalVars])
-    (fun _fields ih => by
-      simpa only [expToHOL, varExpHOL, Flapjack.expLocalVars, List.map_map] using ih)
-    (fun _index _value ih => by
-      simpa only [expToHOL, varExpHOL, Flapjack.expLocalVars] using ih)
-    (fun _name _fields ih => by
-      simpa only [expToHOL, varExpHOL, Flapjack.expLocalVars, List.map_map] using ih)
-    (fun _name _value ih => by
-      simpa only [expToHOL, varExpHOL, Flapjack.expLocalVars] using ih)
-    (fun _shape _address ih => by
-      simpa only [expToHOL, varExpHOL, Flapjack.expLocalVars] using ih)
-    (fun _address ih => by simp only [expToHOL, varExpHOL, Flapjack.expLocalVars]; exact ih)
-    (fun _address ih => by simp only [expToHOL, varExpHOL, Flapjack.expLocalVars]; exact ih)
-    (fun _operator _args ih => by
-      simpa only [expToHOL, varExpHOL, Flapjack.expLocalVars, List.map_map] using ih)
-    (fun _operator _args ih => by
-      simpa only [expToHOL, varExpHOL, Flapjack.expLocalVars, List.map_map] using ih)
-    (fun _operator _left _right ihl ihr => by
-      simp [expToHOL, varExpHOL, Flapjack.expLocalVars, List.map_append, ihl, ihr])
-    (fun _operator _left _right ihl ihr => by
-      simp [expToHOL, varExpHOL, Flapjack.expLocalVars, List.map_append, ihl, ihr])
-    (by simp [expToHOL, varExpHOL, Flapjack.expLocalVars])
-    (by simp [expToHOL, varExpHOL, Flapjack.expLocalVars])
-    (by simp [expToHOL, varExpHOL, Flapjack.expLocalVars])
-    (by simp only [List.map_nil, List.flatten_nil,
-      Flapjack.expLocalVars.expLocalVarsList.eq_1])
-    (fun _head _tail ih1 ih2 => by
-      rw [Flapjack.expLocalVars.expLocalVarsList.eq_2, List.map_append]
-      simp only [List.map_cons, List.flatten_cons, Function.comp_def, ih1]
-      rw [show (List.map (fun x => varExpHOL (expToHOL x)) _tail).flatten
-          = List.map ofString (Flapjack.expLocalVars.expLocalVarsList _tail)
-        from by simpa only [Function.comp_def] using ih2])
-    (by simp only [List.map_nil, List.flatten_nil,
-      Flapjack.expLocalVars.expLocalVarsFieldList.eq_1])
-    (fun _head _tail ih1 ih2 => by
-      obtain ⟨fst, exp⟩ := _head
-      rw [Flapjack.expLocalVars.expLocalVarsFieldList.eq_2, List.map_append]
-      simp only [List.map_cons, List.flatten_cons, Function.comp_def]
-      rw [show varExpHOL (expToHOL exp) = List.map ofString (Flapjack.expLocalVars exp)
-        from by simpa using ih1]
-      rw [show (List.map (fun x => varExpHOL (expToHOL x.snd)) _tail).flatten
-          = List.map ofString (Flapjack.expLocalVars.expLocalVarsFieldList _tail)
-        from by simpa only [Function.comp_def] using ih2])
-    (fun _fst _snd ih => ih)
+      varExpHOL (expToHOL e) = (Flapjack.expLocalVars e).map ofString := by
+  intro expression
+  induction expression using Exp.rec
+    (motive_2 := fun es => (es.map (varExpHOL ∘ expToHOL)).flatten =
+      (Flapjack.expLocalVars.expLocalVarsList es).map ofString)
+    (motive_3 := fun fs : List (String × Flapjack.Exp (BitVec width)) =>
+      (fs.map (fun p => varExpHOL (expToHOL p.2))).flatten =
+        (Flapjack.expLocalVars.expLocalVarsFieldList fs).map ofString)
+    (motive_4 := fun p => varExpHOL (expToHOL p.2) =
+      (Flapjack.expLocalVars p.2).map ofString) with
+  | var kind name => cases kind <;> simp only [expToHOL, varExpHOL, Flapjack.expLocalVars, List.map_cons, List.map_nil]
+  | _ =>
+      simp_all [expToHOL, varExpHOL, Flapjack.expLocalVars,
+        Flapjack.expLocalVars.expLocalVarsList, Flapjack.expLocalVars.expLocalVarsFieldList,
+        List.map_map, Function.comp_def] <;>
+        (rename_i head tail ihHead ihTail
+         rcases head with ⟨name, value⟩
+         simp_all [Flapjack.expLocalVars.expLocalVarsFieldList])
 
 /-- On the byte-range domain for every emitted local name, decoding the tagged
 HOL `var_exp` result returns exactly the production `expLocalVars` list. This
@@ -428,89 +341,23 @@ theorem varExpHOL_expToHOL_decode {width : Nat} [NeZero width]
 theorem expLocalVars_byteRanged {width : Nat} :
     (expression : Flapjack.Exp (BitVec width)) → ExpByteRanged expression →
       ∀ name ∈ Flapjack.expLocalVars expression,
-        ∀ c ∈ name.toList, c.toNat < 256 :=
-  Exp.rec
-    (motive_1 := fun expression => ExpByteRanged expression →
-      ∀ name ∈ Flapjack.expLocalVars expression,
+        ∀ c ∈ name.toList, c.toNat < 256 := by
+  intro expression
+  induction expression using Exp.rec
+    (motive_2 := fun es => ListExpByteRanged es →
+      ∀ name ∈ Flapjack.expLocalVars.expLocalVarsList es,
         ∀ c ∈ name.toList, c.toNat < 256)
-    (motive_2 := fun expressions => ListExpByteRanged expressions →
-      ∀ name ∈ Flapjack.expLocalVars.expLocalVarsList expressions,
+    (motive_3 := fun fs => ListFieldByteRanged fs →
+      ∀ name ∈ Flapjack.expLocalVars.expLocalVarsFieldList fs,
         ∀ c ∈ name.toList, c.toNat < 256)
-    (motive_3 := fun fields => ListFieldByteRanged fields →
-      ∀ name ∈ Flapjack.expLocalVars.expLocalVarsFieldList fields,
-        ∀ c ∈ name.toList, c.toNat < 256)
-    (motive_4 := fun pair => ExpByteRanged pair.2 →
-      ∀ name ∈ Flapjack.expLocalVars pair.2,
-        ∀ c ∈ name.toList, c.toNat < 256)
-    (fun _value => by simp [ExpByteRanged, Flapjack.expLocalVars])
-    (fun kind name => by
-      intro h localName hmem c hc
-      cases kind
-      · simp only [ExpByteRanged] at h
-        simp only [Flapjack.expLocalVars] at hmem
-        rcases List.mem_singleton.mp hmem with rfl
-        exact h c hc
-      · simp [Flapjack.expLocalVars] at hmem)
-    (fun _fields ih => by
-      intro h name hmem c hc
-      exact ih h name (by simpa [Flapjack.expLocalVars] using hmem) c hc)
-    (fun _index _value ih => by
-      intro h name hmem c hc
-      exact ih h name (by simpa [Flapjack.expLocalVars] using hmem) c hc)
-    (fun _name _fields ih => by
-      intro h name hmem c hc
-      exact ih h.2 name (by simpa [Flapjack.expLocalVars] using hmem) c hc)
-    (fun _name _value ih => by
-      intro h name hmem c hc
-      exact ih h.2 name (by simpa [Flapjack.expLocalVars] using hmem) c hc)
-    (fun _shape _address ih => by
-      intro h name hmem c hc
-      exact ih h.2 name (by simpa [Flapjack.expLocalVars] using hmem) c hc)
-    (fun _address ih => by
-      intro h name hmem c hc
-      exact ih h name (by simpa [Flapjack.expLocalVars] using hmem) c hc)
-    (fun _address ih => by
-      intro h name hmem c hc
-      exact ih h name (by simpa [Flapjack.expLocalVars] using hmem) c hc)
-    (fun _operator _args ih => by
-      intro h name hmem c hc
-      exact ih h name (by simpa [Flapjack.expLocalVars] using hmem) c hc)
-    (fun _operator _args ih => by
-      intro h name hmem c hc
-      exact ih h name (by simpa [Flapjack.expLocalVars] using hmem) c hc)
-    (fun _operator _left _right ihLeft ihRight => by
-      intro h name hmem c hc
-      simp only [Flapjack.expLocalVars, List.mem_append] at hmem
-      rcases hmem with hmem | hmem
-      · exact ihLeft h.1 name hmem c hc
-      · exact ihRight h.2 name hmem c hc)
-    (fun _operator _left _right ihLeft ihRight => by
-      intro h name hmem c hc
-      simp only [Flapjack.expLocalVars, List.mem_append] at hmem
-      rcases hmem with hmem | hmem
-      · exact ihLeft h.1 name hmem c hc
-      · exact ihRight h.2 name hmem c hc)
-    (by simp [ExpByteRanged, Flapjack.expLocalVars])
-    (by simp [ExpByteRanged, Flapjack.expLocalVars])
-    (by simp [ExpByteRanged, Flapjack.expLocalVars])
-    (by simp [Flapjack.expLocalVars.expLocalVarsList])
-    (fun _head _tail ihHead ihTail => by
-      intro h name hmem c hc
-      simp only [ListExpByteRanged, Flapjack.expLocalVars.expLocalVarsList.eq_2,
-        List.mem_append] at h hmem
-      rcases hmem with hmem | hmem
-      · exact ihHead h.1 name hmem c hc
-      · exact ihTail h.2 name hmem c hc)
-    (by simp [Flapjack.expLocalVars.expLocalVarsFieldList])
-    (fun _head _tail ihHead ihTail => by
-      intro h name hmem c hc
-      simp only [ListFieldByteRanged] at h
-      rw [Flapjack.expLocalVars.expLocalVarsFieldList.eq_2] at hmem
-      simp only [List.mem_append] at hmem
-      rcases hmem with hmem | hmem
-      · exact ihHead h.2.1 name hmem c hc
-      · exact ihTail h.2.2 name hmem c hc)
-    (fun _fst _snd ih => ih)
+    (motive_4 := fun p => ExpByteRanged p.2 →
+      ∀ name ∈ Flapjack.expLocalVars p.2, ∀ c ∈ name.toList, c.toNat < 256) with
+  | var kind name => cases kind <;> grind only [ExpByteRanged, Flapjack.expLocalVars, List.mem_cons, List.not_mem_nil]
+  | _ =>
+      grind only [ExpByteRanged, ListExpByteRanged, ListFieldByteRanged,
+        Flapjack.expLocalVars, Flapjack.expLocalVars.expLocalVarsList,
+        Flapjack.expLocalVars.expLocalVarsFieldList, List.mem_append,
+        List.mem_cons, List.not_mem_nil]
 
 /-- The decoded `var_exp` bridge with its String/MlString premise discharged by
     the expression's syntax-domain invariant. -/

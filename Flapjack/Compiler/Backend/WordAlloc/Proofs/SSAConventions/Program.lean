@@ -24,109 +24,41 @@ theorem ssaCcTrans_preAllocConventions {width : Nat} [NeZero width]
     (tables : List (Spt Nat × Spt Unit × Spt Unit))
     (h : isAllocVar next ∧ ssaMapOK next ssa) :
     preAllocConventionsHOL (ssaCcTrans prog ssa next tables).1 = true := by
-  have all : ∀ (p : WordLangProgHOL (BitVec width)), programPre p := by
+  have all : ∀ p : WordLangProgHOL (BitVec width), programPre p := by
     intro p
-    apply WordLangProgHOL.rec
-      (motive_1 := programPre)
-      (motive_2 := fun ret => match ret with | none => True | some r => programPre r.2.2.1)
-      (motive_3 := fun exc => match exc with | none => True | some r => programPre r.2.1)
-      (motive_4 := fun r => programPre r.2.2.1)
-      (motive_5 := fun r => programPre r.2.1)
-      (motive_6 := fun r => programPre r.2.1)
-      (motive_7 := fun r => programPre r.1) (t := p)
-    case skip =>
-      exact ssaCcTrans_preAllocSkip
-    case move =>
-      intro priority moves
-      exact ssaCcTrans_preAllocMove priority moves
-    case inst =>
-      intro instruction
-      exact ssaCcTrans_preAllocInst instruction
-    case assign =>
-      intro name exp
-      exact ssaCcTrans_preAllocAssign name exp
-    case get =>
-      intro destination store
-      exact ssaCcTrans_preAllocGet destination store
-    case set =>
-      intro store exp
-      exact ssaCcTrans_preAllocSet store exp
-    case store =>
-      intro exp name
-      exact ssaCcTrans_preAllocStore exp name
-    case alloc =>
-      intro destination cutsets
-      exact ssaCcTrans_preAllocAlloc destination cutsets
-    case storeConsts =>
-      intro a b c d ws
-      exact ssaCcTrans_preAllocStoreConsts a b c d ws
-    case raise =>
-      intro name
-      exact ssaCcTrans_preAllocRaise name
-    case «return» =>
-      intro label values
-      exact ssaCcTrans_preAllocReturn label values
-    case «break» =>
-      intro label
-      exact ssaCcTrans_preAllocBreak label
-    case «continue» =>
-      intro label
-      exact ssaCcTrans_preAllocContinue label
-    case tick =>
-      exact ssaCcTrans_preAllocTick
-    case opCurrHeap =>
-      intro operator destination source
-      exact ssaCcTrans_preAllocOpCurrHeap operator destination source
-    case locValue =>
-      intro destination source
-      exact ssaCcTrans_preAllocLocValue destination source
-    case install =>
-      intro ptr len dptr dlen cutsets
-      exact ssaCcTrans_preAllocInstall ptr len dptr dlen cutsets
-    case codeBufferWrite =>
-      intro address value
-      exact ssaCcTrans_preAllocCodeBufferWrite address value
-    case dataBufferWrite =>
-      intro address value
-      exact ssaCcTrans_preAllocDataBufferWrite address value
-    case ffi =>
-      intro function configuration configurationLength array arrayLength cutsets
-      exact ssaCcTrans_preAllocFFI function configuration configurationLength array arrayLength cutsets
-    case shareInst =>
-      intro operator destination exp
-      exact ssaCcTrans_preAllocShareInst operator destination exp
-    case mustTerminate =>
-      intro body bodyIH
-      exact ssaCcTrans_preAllocMustTerminate body bodyIH
-    case seq =>
-      intro first second firstIH secondIH
-      exact ssaCcTrans_preAllocSeq first second firstIH secondIH
-    case ite =>
-      intro cmp condition right yes no yesIH noIH
-      exact ssaCcTrans_preAllocIf cmp condition right yes no yesIH noIH
-    case loop =>
-      intro names body exitNames bodyIH
-      exact ssaCcTrans_preAllocLoop names exitNames body bodyIH
-    case call =>
-      intro returns dest args handler retIH excIH
-      cases returns with
-      | none => exact ssaCcTrans_preAllocTailCall dest args handler
-      | some ret =>
-        rcases ret with ⟨ret, cutsets, retHandler, l1, l2⟩
-        apply ssaCcTrans_preAllocReturningCall ret cutsets retHandler l1 l2 dest args handler retIH
-        cases handler with
-        | none => exact True.intro
-        | some exc =>
-          rcases exc with ⟨name, body, l1, l2⟩
-          exact excIH
-    case none => exact True.intro
-    case some => intro value ih; exact ih
-    case none => exact True.intro
-    case some => intro value ih; exact ih
-    case mk => intro fst snd ih; exact ih
-    case mk => intro fst snd ih; exact ih
-    case mk => intro fst snd ih; exact ih
-    case mk => intro body rest ih; exact ih
+    set_option tactic.fun_induction.unfolding false in
+    fun_induction everyVarHOL (fun _ => true) p with
+    | case13 returns dest args handler ih =>
+        rcases returns with _ | ⟨values, cutsets, body, l1, l2⟩
+        · exact ssaCcTrans_preAllocTailCall dest args handler
+        · exact ssaCcTrans_preAllocReturningCall values cutsets body l1 l2 dest args handler ih.1 ih.2
+    | case1 => exact ssaCcTrans_preAllocSkip
+    | case2 priority moves => exact ssaCcTrans_preAllocMove priority moves
+    | case3 instruction => exact ssaCcTrans_preAllocInst instruction
+    | case4 destination expression => exact ssaCcTrans_preAllocAssign destination expression
+    | case5 destination store => exact ssaCcTrans_preAllocGet destination store
+    | case6 expression source => exact ssaCcTrans_preAllocStore expression source
+    | case7 destination source => exact ssaCcTrans_preAllocLocValue destination source
+    | case8 a b c d names => exact ssaCcTrans_preAllocInstall a b c d names
+    | case9 a b => exact ssaCcTrans_preAllocCodeBufferWrite a b
+    | case10 a b => exact ssaCcTrans_preAllocDataBufferWrite a b
+    | case11 function a b c d names => exact ssaCcTrans_preAllocFFI function a b c d names
+    | case16 destination names => exact ssaCcTrans_preAllocAlloc destination names
+    | case17 a b c d constants => exact ssaCcTrans_preAllocStoreConsts a b c d constants
+    | case18 value => exact ssaCcTrans_preAllocRaise value
+    | case19 value values => exact ssaCcTrans_preAllocReturn value values
+    | case20 operator left right => exact ssaCcTrans_preAllocOpCurrHeap operator left right
+    | case21 => exact ssaCcTrans_preAllocTick
+    | case22 store expression => exact ssaCcTrans_preAllocSet store expression
+    | case23 operator destination expression => exact ssaCcTrans_preAllocShareInst operator destination expression
+    | case12 body ih => exact ssaCcTrans_preAllocMustTerminate body ih
+    | case14 first second ihFirst ihSecond => exact ssaCcTrans_preAllocSeq first second ihFirst ihSecond
+    | case15 cmp register right first second ihFirst ihSecond =>
+        exact ssaCcTrans_preAllocIf cmp register right first second ihFirst ihSecond
+    | case24 liveIn body liveOut ih => exact ssaCcTrans_preAllocLoop liveIn liveOut body ih
+    | case25 p =>
+        cases p <;> grind only [programPre, ssaCcTrans_preAllocBreak, ssaCcTrans_preAllocContinue]
   exact all prog ssa next tables h
+
 
 end Flapjack.WordAlloc

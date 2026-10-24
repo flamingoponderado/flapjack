@@ -118,24 +118,25 @@ theorem sptWf_bigUnion : ∀ (sets : List (Spt Unit)), (∀ s, s ∈ sets → sp
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "wf_get_live_exp"
   (words_as_type_indexed_bitvec)]
 theorem wfGetLiveExp {width : Nat} [NeZero width] :
-    ∀ exp : WordLangExpHOL (BitVec width), sptWf (getLiveExp exp) = true
-  | .var n => by rw [getLiveExp]; exact sptWfInsert n () _ rfl
-  | .load e => by rw [getLiveExp]; exact wfGetLiveExp e
-  | .op _ es => by
-      rw [getLiveExp]
-      refine sptWf_bigUnion _ (fun s hs => ?_)
+    ∀ exp : WordLangExpHOL (BitVec width), sptWf (getLiveExp exp) = true:= by
+  intro exp
+  set_option tactic.fun_induction.unfolding false in
+  fun_induction getLiveExp exp with
+  | case1 n =>
+      simp only [getLiveExp]
+      exact sptWfInsert n () .ln rfl
+  | case3 operator es ih =>
+      simp only [getLiveExp]
+      apply sptWf_bigUnion
+      intro s hs
       obtain ⟨e, he, rfl⟩ := List.mem_map.mp hs
-      exact wfGetLiveExp e
-  | .shift _ e n => by
-      rw [getLiveExp]
-      exact sptWfUnion _ _ ⟨wfGetLiveExp e, wfGetLiveExp n⟩
-  | .const _ => by rw [getLiveExp]; rfl
-  | .lookup _ => by rw [getLiveExp]; rfl
-termination_by e => sizeOf e
-decreasing_by
-  all_goals first
-    | decreasing_trivial
-    | (have := List.sizeOf_lt_of_mem he; simp_wf; omega)
+      exact ih e he
+  | case4 operator e n ihE ihN =>
+      simp only [getLiveExp]
+      exact sptWfUnion _ _ ⟨ihE, ihN⟩
+  | case2 e ih => simpa only [getLiveExp] using ih
+  | case5 | case6 => simp only [getLiveExp]; rfl
+
 
 /-- Exact HOL `IMAGE_DIFF` (`word_allocProofScript.sml:2806-2811`): under
 injectivity on `s ∪ t`, the image of `s DIFF t` is the difference of the

@@ -1,3 +1,4 @@
+import Flapjack.Pancake.WordLang.MaxVarExp
 import Flapjack.HolRef
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Motive
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PermuteSwap
@@ -21,26 +22,17 @@ variable {width : Nat} [NeZero width] {C : Type} {F : Type}
 
 theorem wordExp_withStack (s : WordSemStateFiniteExact width C F)
     (k : List (WordSemStackFrame width)) :
-    ∀ e : WordLangExpHOL (BitVec width), wordExp { s with stack := k } e = wordExp s e
-  | .const w => by rw [wordExp, wordExp]
-  | .var v => by rw [wordExp, wordExp]; rfl
-  | .lookup n => by rw [wordExp, wordExp]; rfl
-  | .load a => by
-      rw [wordExp, wordExp, wordExp_withStack s k a]
-      rfl
-  | .op op args => by
-      rw [wordExp, wordExp]
-      have : (args.attach.map fun (x : { x // x ∈ args }) => wordExp { s with stack := k } x.1) =
-          (args.attach.map fun (x : { x // x ∈ args }) => wordExp s x.1) := by
-        apply List.map_congr_left
-        intro ⟨e, he⟩ _
-        have := List.sizeOf_lt_of_mem he
-        exact wordExp_withStack s k e
-      simp only [] at this ⊢
-      rw [this]
-  | .shift sh e1 e2 => by
-      rw [wordExp, wordExp, wordExp_withStack s k e1, wordExp_withStack s k e2]
-termination_by e => sizeOf e
+    ∀ e : WordLangExpHOL (BitVec width), wordExp { s with stack := k } e = wordExp s e := by
+  intro e
+  set_option tactic.fun_induction.unfolding false in
+    fun_induction maxVarExpHOL e with
+    | case3 operator arguments ih =>
+        simp only [wordExp]
+        have hmap := List.map_congr_left (l := arguments.attach)
+          (fun e _ => ih e.val e.property)
+        rw [hmap]
+    | case5 expression _ _ _ _ => cases expression <;> grind only [wordExp, memLoad, getVar, getStore]
+    | _ => simp_all only [wordExp, memLoad, getVar]
 
 theorem getVars_withStack (s : WordSemStateFiniteExact width C F)
     (k : List (WordSemStackFrame width)) :

@@ -30,53 +30,14 @@ stack offsets, allocation counts, word width or target evaluation is added. -/
 theorem regBoundMono {width : Nat} [NeZero width]
     (program : HolProg width) (k k' : Nat)
     (bounded : regBound program k) (le : k ≤ k') : regBound program k' := by
-  cases program with
-  | seq first second =>
-      exact ⟨regBoundMono first k k' bounded.1 le,
-        regBoundMono second k k' bounded.2 le⟩
-  | loop body => exact regBoundMono body k k' bounded le
-  | ite cmp register right first second =>
-      have firstSafe := regBoundMono first k k' bounded.2.2.1 le
-      have secondSafe := regBoundMono second k k' bounded.2.2.2 le
-      cases right <;> simp_all [regBound] <;> omega
-  | call returns target handler =>
-      cases target with
-      | inl label =>
-          cases returns with
-          | none => simp_all [regBound] <;> omega
-          | some record =>
-              match hRet : record with
-              | (body,register,l1,l2) =>
-                  unfold regBound at bounded
-                  have bodySafe := regBoundMono body k k' bounded.2.1 le
-                  cases handler with
-                  | none => simp_all [regBound] <;> omega
-                  | some record =>
-                      match hHandle : record with
-                      | (body,l1,l2) =>
-                          have handlerSafe := regBoundMono body k k' bounded.2.2.2 le
-                          simp_all [regBound] <;> omega
-      | inr register =>
-          cases returns with
-          | none => simp_all [regBound] <;> omega
-          | some record =>
-              match hRet : record with
-              | (body,register,l1,l2) =>
-                  unfold regBound at bounded
-                  have bodySafe := regBoundMono body k k' bounded.2.1 le
-                  cases handler with
-                  | none => simp_all [regBound] <;> omega
-                  | some record =>
-                      match hHandle : record with
-                      | (body,l1,l2) =>
-                          have handlerSafe := regBoundMono body k k' bounded.2.2.2 le
-                          simp_all [regBound] <;> omega
-  | inst i => exact instBoundMono i k k' bounded le
-  | _ => simp_all [regBound] <;> omega
-termination_by sizeOf program
-decreasing_by
-  all_goals subst_vars
-  all_goals simp_wf
-  all_goals omega
+  set_option tactic.fun_induction.unfolding false in
+    fun_induction regBound program k with
+    | case11 _ _ right => cases right <;> grind only [regBound, instBoundMono]
+    | case15 returns target handler bound ih =>
+        rcases returns with _ | ⟨body, register, l1, l2⟩ <;>
+          rcases handler with _ | ⟨continuation, h1, h2⟩ <;>
+          cases target <;> grind only [regBound, instBoundMono]
+    | case27 program => cases program <;> grind only [regBound]
+    | _ => grind only [regBound, instBoundMono]
 
 end Flapjack.WordToStackProofs

@@ -52,42 +52,8 @@ theorem notCreatedSubprogsWithMemOp_congr {α : Type}
     (program : WordLangProgHOL α) :
     notCreatedSubprogsWithMemOp arb₁ P program =
       notCreatedSubprogsWithMemOp arb₂ Q program := by
-  cases program with
-  | mustTerminate body =>
-      simp only [notCreatedSubprogsWithMemOp, hmt]
-      rw [notCreatedSubprogsWithMemOp_congr arb₁ arb₂ P Q hmt hcall hhandler halloc hloc hshare hinstall body]
-  | seq first second | ite _ _ _ first second =>
-      simp only [notCreatedSubprogsWithMemOp]
-      rw [notCreatedSubprogsWithMemOp_congr arb₁ arb₂ P Q hmt hcall hhandler halloc hloc hshare hinstall first,
-        notCreatedSubprogsWithMemOp_congr arb₁ arb₂ P Q hmt hcall hhandler halloc hloc hshare hinstall second]
-  | loop _ body _ =>
-      exact notCreatedSubprogsWithMemOp_congr arb₁ arb₂ P Q hmt hcall hhandler halloc hloc hshare hinstall body
-  | call returns destination arguments handler =>
-      cases returns with
-      | none =>
-          cases handler with
-          | none => simp [notCreatedSubprogsWithMemOp, hcall]
-          | some data =>
-              rcases data with ⟨value, body, label, location⟩
-              simp only [notCreatedSubprogsWithMemOp, hcall, hhandler]
-              rw [notCreatedSubprogsWithMemOp_congr arb₁ arb₂ P Q hmt hcall hhandler halloc hloc hshare hinstall body]
-      | some data =>
-          rcases data with ⟨values, cuts, body, label, location⟩
-          cases handler with
-          | none =>
-              simp only [notCreatedSubprogsWithMemOp, hcall]
-              rw [notCreatedSubprogsWithMemOp_congr arb₁ arb₂ P Q hmt hcall hhandler halloc hloc hshare hinstall body]
-          | some data =>
-              rcases data with ⟨value, handlerBody, handlerLabel, handlerLocation⟩
-              simp only [notCreatedSubprogsWithMemOp, hcall, hhandler]
-              rw [notCreatedSubprogsWithMemOp_congr arb₁ arb₂ P Q hmt hcall hhandler halloc hloc hshare hinstall body,
-                notCreatedSubprogsWithMemOp_congr arb₁ arb₂ P Q hmt hcall hhandler halloc hloc hshare hinstall handlerBody]
-  | alloc _ _ => exact halloc
-  | locValue _ label => exact hloc label
-  | shareInst _ _ _ => exact hshare
-  | install _ _ _ _ _ => exact hinstall
-  | _ => rfl
-termination_by sizeOf program
+  fun_induction notCreatedSubprogsWithMemOp arb₁ P program with
+  | _ => grind only [notCreatedSubprogsWithMemOp]
 
 /-- Canonical HOL `ARB : memop`, sharing `Flapjack.holArb` with every other
 HOL ARB occurrence at this carrier. The `.load` below witnesses only

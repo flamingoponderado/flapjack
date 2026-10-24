@@ -38,75 +38,16 @@ theorem panSimpSkipSeqProg_seqAssoc (pre : Prog α) (program : Prog α)
     (hpre : panSimpSkipSeqProg pre)
     (hprogram : panSimpSkipSeqProg program) :
     panSimpSkipSeqProg (seqAssoc pre program) := by
-  let rec go (pre : Prog α) : (program : Prog α) →
-      panSimpSkipSeqProg pre → panSimpSkipSeqProg program →
-      panSimpSkipSeqProg (seqAssoc pre program)
-    | .skip, hpre, _ => by simpa [seqAssoc] using hpre
-    | .seq first second, hpre, hprogram => by
-        simp only [seqAssoc]
-        exact go (seqAssoc pre first) second
-          (go pre first hpre hprogram.1) hprogram.2
-    | .dec _ _ _ _, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .assign _ _ _, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .primitive _ _ _, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .store _ _, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .store32 _ _, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .storeByte _ _, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .ite _ _ _, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .while _ _, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .break, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .continue, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .call _ _ _, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .decCall _ _ _ _ _, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .extCall _ _ _ _ _, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .raise _ _, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .return _, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .shMemLoad _ _ _ _, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .shMemStore _ _ _, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .tick, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .annot _ _, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    termination_by program => sizeOf program
-    decreasing_by all_goals decreasing_trivial
-  exact go pre program hpre hprogram
+  fun_induction panSimpSkipSeqProg program generalizing pre with
+  | _ => grind only [seqAssoc, panSimpSkipSeqProg]
 
 theorem panSimpSkipSeqFuel_seqAssoc_le (pre : Prog α) (program : Prog α)
     (hpre : panSimpSkipSeqProg pre)
     (hprogram : panSimpSkipSeqProg program) :
     panSimpSkipSeqFuel (seqAssoc pre program) ≤
       panSimpSkipSeqFuel pre + panSimpSkipSeqFuel program := by
-  let rec go (pre : Prog α) : (program : Prog α) →
-      panSimpSkipSeqProg pre → panSimpSkipSeqProg program →
-      panSimpSkipSeqFuel (seqAssoc pre program) ≤
-        panSimpSkipSeqFuel pre + panSimpSkipSeqFuel program
-    | .skip, hpre, _ => by simp [seqAssoc, panSimpSkipSeqFuel]
-    | .seq first second, hpre, hprogram => by
-        simp only [seqAssoc, panSimpSkipSeqFuel]
-        have hfirst := go pre first hpre hprogram.1
-        have hsecond := go (seqAssoc pre first) second
-          (panSimpSkipSeqProg_seqAssoc pre first hpre hprogram.1) hprogram.2
-        omega
-    | .dec _ _ _ _, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .assign _ _ _, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .primitive _ _ _, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .store _ _, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .store32 _ _, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .storeByte _ _, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .ite _ _ _, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .while _ _, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .break, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .continue, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .call _ _ _, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .decCall _ _ _ _ _, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .extCall _ _ _ _ _, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .raise _ _, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .return _, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .shMemLoad _ _ _ _, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .shMemStore _ _ _, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .tick, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    | .annot _ _, _, hprogram => by simp [panSimpSkipSeqProg] at hprogram
-    termination_by program => sizeOf program
-    decreasing_by all_goals decreasing_trivial
-  exact go pre program hpre hprogram
+  fun_induction panSimpSkipSeqProg program generalizing pre with
+  | _ => grind only [seqAssoc, panSimpSkipSeqFuel, panSimpSkipSeqProg_seqAssoc]
 
 theorem evalPanValueFfiClockLeaf_skip
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
@@ -1332,32 +1273,10 @@ the evaluator-level `seqAssoc` corollary. -/
 
 theorem panSimpSeqSkipFragment_of_skipSeqProg {program : Prog α}
     (h : panSimpSkipSeqProg program) : PanSimpSeqSkipFragment program := by
-  let rec go : (program : Prog α) → panSimpSkipSeqProg program →
-      PanSimpSeqSkipFragment program
-    | .skip, _ => .skip
-    | .seq first second, h => .seq first second (go first h.1) (go second h.2)
-    | .dec _ _ _ _, h => by simp [panSimpSkipSeqProg] at h
-    | .assign _ _ _, h => by simp [panSimpSkipSeqProg] at h
-    | .primitive _ _ _, h => by simp [panSimpSkipSeqProg] at h
-    | .store _ _, h => by simp [panSimpSkipSeqProg] at h
-    | .store32 _ _, h => by simp [panSimpSkipSeqProg] at h
-    | .storeByte _ _, h => by simp [panSimpSkipSeqProg] at h
-    | .ite _ _ _, h => by simp [panSimpSkipSeqProg] at h
-    | .while _ _, h => by simp [panSimpSkipSeqProg] at h
-    | .break, h => by simp [panSimpSkipSeqProg] at h
-    | .continue, h => by simp [panSimpSkipSeqProg] at h
-    | .call _ _ _, h => by simp [panSimpSkipSeqProg] at h
-    | .decCall _ _ _ _ _, h => by simp [panSimpSkipSeqProg] at h
-    | .extCall _ _ _ _ _, h => by simp [panSimpSkipSeqProg] at h
-    | .raise _ _, h => by simp [panSimpSkipSeqProg] at h
-    | .return _, h => by simp [panSimpSkipSeqProg] at h
-    | .shMemLoad _ _ _ _, h => by simp [panSimpSkipSeqProg] at h
-    | .shMemStore _ _ _, h => by simp [panSimpSkipSeqProg] at h
-    | .tick, h => by simp [panSimpSkipSeqProg] at h
-    | .annot _ _, h => by simp [panSimpSkipSeqProg] at h
-    termination_by program => sizeOf program
-    decreasing_by all_goals decreasing_trivial
-  exact go program h
+  fun_induction panSimpSkipSeqProg program with
+  | case1 => exact .skip
+  | case2 first second ihFirst ihSecond => exact .seq first second (ihFirst h.1) (ihSecond h.2)
+  | case3 => exact h.elim
 
 theorem panSimpSkipSeqProg_of_fragment {program : Prog α}
     (h : PanSimpSeqSkipFragment program) : panSimpSkipSeqProg program := by

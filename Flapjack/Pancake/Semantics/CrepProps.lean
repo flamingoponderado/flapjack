@@ -1152,28 +1152,11 @@ theorem evalCrepSemHOLExp_upd_clock_eq {width : Nat} [NeZero width] {σ : Type}
     (expression : CrepExpHOL width) (clock : Nat) :
     evalCrepSemHOLExp { state with clock := clock } expression =
       evalCrepSemHOLExp state expression := by
-  refine CrepExpHOL.rec
-    (motive_1 := fun expression =>
-      evalCrepSemHOLExp { state with clock := clock } expression =
-        evalCrepSemHOLExp state expression)
-    (motive_2 := fun expressions =>
-      expressions.mapM (evalCrepSemHOLExp { state with clock := clock }) =
-        expressions.mapM (evalCrepSemHOLExp state))
-    (fun value => by simp [evalCrepSemHOLExp])
-    (fun name => by simp [evalCrepSemHOLExp])
-    (fun address ih => by simp [evalCrepSemHOLExp, ih])
-    (fun address ih => by simp [evalCrepSemHOLExp, ih])
-    (fun address ih => by simp [evalCrepSemHOLExp, ih])
-    (fun address => by simp [evalCrepSemHOLExp])
-    (fun operator args ih => by simp [evalCrepSemHOLExp, ih])
-    (fun operator args ih => by simp [evalCrepSemHOLExp, ih])
-    (fun operator left right ihl ihr => by simp [evalCrepSemHOLExp, ihl, ihr])
-    (fun operator left right ihl ihr => by simp [evalCrepSemHOLExp, ihl, ihr])
-    (by simp [evalCrepSemHOLExp])
-    (by simp [evalCrepSemHOLExp])
-    (by simp only [List.mapM_nil])
-    (fun head tail ihh iht => by simp only [List.mapM_cons, ihh, iht])
-    expression
+  fun_induction evalCrepSemHOLExp state expression with
+  | case7 _ args ih | case8 _ args ih =>
+      simp only [evalCrepSemHOLExp]
+      rw [optMmapCongHOL args args _ _ rfl ih]
+  | _ => simp_all [evalCrepSemHOLExp]
 
 /-- Flapjack-specific equality helper for exact Crep expression evaluation.
 An update of a local absent from `var_cexp` does not change the `eval_def`
@@ -1185,68 +1168,19 @@ theorem evalCrepSemHOLExp_updateLocals_eq_of_not_vars {width : Nat} [NeZero widt
     (hfresh : name ∉ crepExpVarsHOL expression) :
     evalCrepSemHOLExp { state with locals := state.locals.updateEq (name, word) }
         expression = evalCrepSemHOLExp state expression := by
-  let updated : CrepSemHOLState width σ :=
-    { state with locals := state.locals.updateEq (name, word) }
-  change evalCrepSemHOLExp updated expression = evalCrepSemHOLExp state expression
-  refine CrepExpHOL.rec
-    (motive_1 := fun expression =>
-      name ∉ crepExpVarsHOL expression →
-        evalCrepSemHOLExp updated expression = evalCrepSemHOLExp state expression)
-    (motive_2 := fun expressions =>
-      (∀ expression, expression ∈ expressions → name ∉ crepExpVarsHOL expression) →
-        expressions.mapM (evalCrepSemHOLExp updated) =
-          expressions.mapM (evalCrepSemHOLExp state))
-    (fun _ _ => by simp only [evalCrepSemHOLExp])
-    (fun variableName hfresh => by
-      have hne : variableName ≠ name := by
-        intro heq
-        subst variableName
-        exact hfresh (by simp [crepExpVarsHOL])
-      simp [evalCrepSemHOLExp, updated, HolFiniteMapExact.updateEq, FUPDATE_HOL, hne])
-    (fun address ih hfresh => by
-      have hsub : name ∉ crepExpVarsHOL address := by simpa [crepExpVarsHOL] using hfresh
-      simp [evalCrepSemHOLExp, ih hsub, updated])
-    (fun address ih hfresh => by
-      have hsub : name ∉ crepExpVarsHOL address := by simpa [crepExpVarsHOL] using hfresh
-      simp [evalCrepSemHOLExp, ih hsub, updated])
-    (fun address ih hfresh => by
-      have hsub : name ∉ crepExpVarsHOL address := by simpa [crepExpVarsHOL] using hfresh
-      simp [evalCrepSemHOLExp, ih hsub, updated])
-    (fun _ _ => by simp [evalCrepSemHOLExp, updated])
-    (fun _ args ih hfresh => by
-      have hargs : ∀ expression, expression ∈ args → name ∉ crepExpVarsHOL expression := by
-        intro expression hmem hvar
-        have hmemVars : name ∈ crepExpVarsHOLList args := by
-          rw [crepExpVarsHOLList_eq_flatMap]
-          exact List.mem_flatMap.mpr ⟨expression, hmem, hvar⟩
-        exact hfresh hmemVars
-      simp only [evalCrepSemHOLExp, ih hargs])
-    (fun _ args ih hfresh => by
-      have hargs : ∀ expression, expression ∈ args → name ∉ crepExpVarsHOL expression := by
-        intro expression hmem hvar
-        have hmemVars : name ∈ crepExpVarsHOLList args := by
-          rw [crepExpVarsHOLList_eq_flatMap]
-          exact List.mem_flatMap.mpr ⟨expression, hmem, hvar⟩
-        exact hfresh hmemVars
-      simp only [evalCrepSemHOLExp, ih hargs])
-    (fun _ left right ihl ihr hfresh => by
-      have ⟨hleft, hright⟩ : name ∉ crepExpVarsHOL left ∧
-          name ∉ crepExpVarsHOL right := by simpa [crepExpVarsHOL] using hfresh
-      simp only [evalCrepSemHOLExp, ihl hleft, ihr hright])
-    (fun _ left right ihl ihr hfresh => by
-      have ⟨hleft, hright⟩ : name ∉ crepExpVarsHOL left ∧
-          name ∉ crepExpVarsHOL right := by simpa [crepExpVarsHOL] using hfresh
-      simp only [evalCrepSemHOLExp, ihl hleft, ihr hright])
-    (by simp [evalCrepSemHOLExp, updated])
-    (by simp [evalCrepSemHOLExp, updated])
-    (fun _ => by simp only [List.mapM_nil])
-    (fun head tail ihHead ihTail hfresh => by
-      have hhead : name ∉ crepExpVarsHOL head := hfresh head (by simp)
-      have htail : ∀ expression, expression ∈ tail → name ∉ crepExpVarsHOL expression := by
-        intro expression hmem
-        exact hfresh expression (by simp [hmem])
-      simp only [List.mapM_cons, ihHead hhead, ihTail htail])
-    expression hfresh
+  fun_induction evalCrepSemHOLExp state expression with
+  | case2 variableName =>
+      have hne : variableName ≠ name := Ne.symm (by simpa [crepExpVarsHOL] using hfresh)
+      simp [evalCrepSemHOLExp, HolFiniteMapExact.updateEq, FUPDATE_HOL, hne]
+  | case7 _ args ih | case8 _ args ih =>
+      have hargs : ∀ e ∈ args, name ∉ crepExpVarsHOL e := by
+        intro e he hvar
+        apply hfresh
+        rw [crepExpVarsHOL, crepExpVarsHOLList_eq_flatMap]
+        exact List.mem_flatMap.mpr ⟨e, he, hvar⟩
+      simp only [evalCrepSemHOLExp]
+      rw [optMmapCongHOL args args _ _ rfl (fun e he => ih e he (hargs e he))]
+  | _ => simp_all [evalCrepSemHOLExp, crepExpVarsHOL]
 
 /-- Flapjack-only finite-list extension of the exact `var_cexp` noninterference
 helper above. A list of HOL-equality local updates whose keys are all absent

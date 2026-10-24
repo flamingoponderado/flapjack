@@ -1,3 +1,4 @@
+import Flapjack.Pancake.WordLang.MaxVarExp
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
 import Flapjack.Compiler.Backend.Semantics.WordSem.ShMem
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.InstConstFull
@@ -75,26 +76,19 @@ variable {width : Nat} [NeZero width] {C : Type} {F : Type} {C' : Type} {F' : Ty
 theorem wordExp_congr (s : WordSemStateFiniteExact width C F) (t : WordSemStateFiniteExact width C' F')
     (hl : t.locals = s.locals) (hs : t.store = s.store) (hm : t.memory = s.memory)
     (hd : t.mdomain = s.mdomain) :
-    ∀ e : WordLangExpHOL (BitVec width), wordExp t e = wordExp s e
-  | .const w => by rw [wordExp, wordExp]
-  | .var v => by rw [wordExp, wordExp]; simp only [getVar, hl]
-  | .lookup n => by rw [wordExp, wordExp]; simp only [getStore, hs]
-  | .load a => by
-      rw [wordExp, wordExp, wordExp_congr s t hl hs hm hd a]
-      simp only [memLoad, hm, hd]
-  | .op op args => by
-      rw [wordExp, wordExp]
-      have : (args.attach.map fun (x : { x // x ∈ args }) => wordExp t x.1) =
-          (args.attach.map fun (x : { x // x ∈ args }) => wordExp s x.1) := by
-        apply List.map_congr_left
-        intro ⟨e, he⟩ _
-        have := List.sizeOf_lt_of_mem he
-        exact wordExp_congr s t hl hs hm hd e
-      simp only [] at this ⊢
-      rw [this]
-  | .shift sh e1 e2 => by
-      rw [wordExp, wordExp, wordExp_congr s t hl hs hm hd e1, wordExp_congr s t hl hs hm hd e2]
-termination_by e => sizeOf e
+    ∀ e : WordLangExpHOL (BitVec width), wordExp t e = wordExp s e:= by
+  intro e
+  set_option tactic.fun_induction.unfolding false in
+  fun_induction maxVarExpHOL e with
+  | case3 op args ih =>
+      have hmap : (args.attach.map fun x => wordExp t x.1) =
+          (args.attach.map fun x => wordExp s x.1) :=
+        List.map_congr_left (fun ⟨e, he⟩ _ => ih e he)
+      simp only [wordExp, hmap]
+  | case5 e _ _ _ _ =>
+      cases e <;> grind only [wordExp, getVar, getStore]
+  | _ => simp_all only [wordExp, getVar, memLoad]
+
 
 /-- `get_vars` reads only the locals (Flapjack infrastructure). -/
 theorem getVars_congr (s : WordSemStateFiniteExact width C F) (t : WordSemStateFiniteExact width C' F')
