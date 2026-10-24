@@ -53,30 +53,12 @@ inductive PostRemoval {width : Nat} [NeZero width] : HolProg width → Prop wher
 /-- Sound structural check; no output, evaluation or pass-success premise. -/
 theorem supported_postRemoval {width : Nat} [NeZero width]
     (p : HolProg width) (accepted : supported p = true) : PostRemoval p := by
-  cases p with
-  | seq p q =>
-    simp only [supported, Bool.and_eq_true] at accepted
-    exact .seq (supported_postRemoval p accepted.1) (supported_postRemoval q accepted.2)
-  | ite op r right p q =>
-    simp only [supported, Bool.and_eq_true] at accepted
-    exact .ite (supported_postRemoval p accepted.1) (supported_postRemoval q accepted.2)
-  | loop p =>
-    simp only [supported] at accepted
-    exact .loop (supported_postRemoval p accepted)
-  | call ret target handler =>
-    rcases hr : ret with _ | ⟨p, r, s, l⟩ <;>
-      rcases hh : handler with _ | ⟨q, e, h⟩
-    · exact .callNoneNone target
-    · simp only [supported, hr, hh, Bool.true_and] at accepted
-      exact .callNoneSome target (supported_postRemoval q accepted)
-    · simp only [supported, hr, hh, Bool.and_true] at accepted
-      exact .callSomeNone target (supported_postRemoval p accepted)
-    · simp only [supported, hr, hh, Bool.and_eq_true] at accepted
-      exact .callSomeSome target (supported_postRemoval p accepted.1)
-        (supported_postRemoval q accepted.2)
-  | _ => apply PostRemoval.leaf; simpa only [supported] using accepted
-termination_by sizeOf p
-decreasing_by all_goals simp_all only [Option.some.injEq]; subst_vars; decreasing_trivial
+  fun_induction supported p with
+  | _ =>
+      grind only [PostRemoval.leaf, PostRemoval.seq, PostRemoval.ite, PostRemoval.loop,
+        PostRemoval.callNoneNone, PostRemoval.callNoneSome,
+        PostRemoval.callSomeNone, PostRemoval.callSomeSome]
+
 
 /-- All post-removal grammar trees pass the check, at arbitrary positive width. -/
 theorem postRemoval_supported {width : Nat} [NeZero width]

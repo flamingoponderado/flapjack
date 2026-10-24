@@ -47,45 +47,30 @@ theorem evalIndExact {width : Nat} {σ : Type} [NeZero width]
     (hbytes : ∀ s, P s .bytesInWord) :
     ∀ s e, P s e := by
   intro s e
-  apply ExpHOL.rec
-    (motive_1 := fun e => ∀ s, P s e)
-    (motive_2 := fun es => ∀ s a, a ∈ es → P s a)
-    (motive_3 := fun fields => ∀ s a, a ∈ fields.map Prod.snd → P s a)
-    (motive_4 := fun entry => ∀ s, P s entry.2)
-    (t := e)
-  · exact fun w s => hconst s w
-  · intro kind name s
-    cases kind
-    · exact hlocal s name
-    · exact hglobal s name
-  · exact fun es ih s => hrstruct s es (ih s)
-  · exact fun index e ih s => hrfield s index e (ih s)
-  · intro name fields ih s
-    apply hnstruct s name fields
-    intro fieldNames fieldExps info fieldNames' fieldShapes a hunzip _ _ _ hm
-    have he : fieldExps = fields.map Prod.snd := by
-      simpa using congrArg Prod.snd hunzip
-    exact ih s a (he ▸ hm)
-  · exact fun name e ih s => hnfield s name e (ih s)
-  · exact fun shape address ih s => hload s shape address (fun _ => ih s)
-  · exact fun address ih s => hload32 s address (ih s)
-  · exact fun address ih s => hloadByte s address (ih s)
-  · exact fun operator es ih s => hop s operator es (ih s)
-  · exact fun operator es ih s => hpanop s operator es (ih s)
-  · exact fun operator left right ihl ihr s => hcmp s operator left right ⟨ihl s, ihr s⟩
-  · exact fun operator left right ihl ihr s => hshift s operator left right ⟨ihl s, ihr s⟩
-  · exact hbase
-  · exact htop
-  · exact hbytes
-  · simp
-  · intro head tail ihhead ihtail s a hm
-    rcases List.mem_cons.mp hm with rfl | hm
-    · exact ihhead s
-    · exact ihtail s a hm
-  · simp
-  · intro head tail ihhead ihtail s a hm
-    rcases List.mem_cons.mp hm with rfl | hm
-    · exact ihhead s
-    · exact ihtail s a hm
-  · exact fun name e ih s => ih s
+  fun_induction expOfHOL e with
+  | case1 w => exact hconst s w
+  | case2 kind name =>
+      cases kind with
+      | «local» => exact hlocal s name
+      | global => exact hglobal s name
+  | case3 es ih => exact hrstruct s es ih
+  | case4 index e ih => exact hrfield s index e ih
+  | case5 name fields ih =>
+      apply hnstruct s name fields
+      intro fieldNames fieldExps info fieldNames' fieldShapes a hunzip _ _ _ hm
+      have he : fieldExps = fields.map Prod.snd := by
+        simpa using congrArg Prod.snd hunzip
+      obtain ⟨⟨name, value⟩, hfield, rfl⟩ := List.mem_map.mp (he ▸ hm)
+      exact ih (name, value) hfield
+  | case6 name e ih => exact hnfield s name e ih
+  | case7 shape address ih => exact hload s shape address (fun _ => ih)
+  | case8 address ih => exact hload32 s address ih
+  | case9 address ih => exact hloadByte s address ih
+  | case10 operator es ih => exact hop s operator es ih
+  | case11 operator es ih => exact hpanop s operator es ih
+  | case12 operator left right ihLeft ihRight => exact hcmp s operator left right ⟨ihLeft, ihRight⟩
+  | case13 operator left right ihLeft ihRight => exact hshift s operator left right ⟨ihLeft, ihRight⟩
+  | case14 => exact hbase s
+  | case15 => exact htop s
+  | case16 => exact hbytes s
 end Flapjack.Pancake.Semantics.PanSem.EvalInd

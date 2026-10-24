@@ -42,37 +42,10 @@ theorem wordSemMergeTail_mem_iff {α : Type} (negate : Bool)
     (compare : α → α → Bool) (left right accumulator : List α) (value : α) :
     value ∈ Basis.Pure.MlList.mergeTail negate compare left right accumulator ↔
       value ∈ left ∨ value ∈ right ∨ value ∈ accumulator := by
-  cases left with
-  | nil =>
-      cases right with
-      | nil =>
-          rw [Basis.Pure.MlList.mergeTail.eq_1]
-          simp
-      | cons head tail =>
-          rw [Basis.Pure.MlList.mergeTail.eq_3]
-          · simp [List.mem_append, List.mem_reverse, or_assoc, or_left_comm,
-              or_comm]
-          · simp
-  | cons head tail =>
-      cases right with
-      | nil =>
-          rw [Basis.Pure.MlList.mergeTail.eq_2]
-          · simp [List.mem_append, List.mem_reverse, or_assoc, or_left_comm,
-              or_comm]
-          · simp
-      | cons rightHead rightTail =>
-          rw [Basis.Pure.MlList.mergeTail.eq_4]
-          by_cases h : (compare head rightHead != negate) = true
-          · rw [ite_eq_left h]
-            have ih := wordSemMergeTail_mem_iff negate compare tail
-              (rightHead :: rightTail) (head :: accumulator) value
-            simpa [or_assoc, or_left_comm, or_comm] using ih
-          · rw [ite_eq_right h]
-            have ih := wordSemMergeTail_mem_iff negate compare
-              (head :: tail) rightTail (rightHead :: accumulator) value
-            simpa [or_assoc, or_left_comm, or_comm] using ih
-termination_by left.length + right.length
-decreasing_by all_goals simp_wf
+  set_option tactic.fun_induction.unfolding false in
+    fun_induction Basis.Pure.MlList.mergeTail negate compare left right accumulator with
+    | _ => simp_all [Basis.Pure.MlList.mergeTail, List.mem_append, List.mem_reverse,
+        or_assoc, or_left_comm]
 
 /-- Membership in `mergesortN_tail` is exactly membership in the sorted prefix
 of the requested length. This is untagged support for the external

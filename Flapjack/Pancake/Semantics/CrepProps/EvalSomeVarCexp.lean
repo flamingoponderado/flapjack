@@ -47,71 +47,29 @@ private theorem eval_some_var_cexp_aux {width : Nat} [NeZero width] {σ : Type}
     (s : CrepSemHOLState width σ) (n : Nat) :
     ∀ (e : CrepExpHOL width) (v : HolWordLab width),
       evalCrepSemHOLExp s e = some v → n ∈ crepExpVarsHOL e →
-        ∃ w, s.locals.lookup n = some w
-  | .const _, _, _, hm => by simp [crepExpVarsHOL] at hm
-  | .var m, v, he, hm => by
-      simp only [crepExpVarsHOL, List.mem_singleton] at hm
-      subst hm
-      exact ⟨v, by simpa [evalCrepSemHOLExp] using he⟩
-  | .load a, _, he, hm => by
-      cases ha : evalCrepSemHOLExp s a with
-      | none => simp [evalCrepSemHOLExp, ha] at he
-      | some w => exact eval_some_var_cexp_aux s n a w ha (by simpa [crepExpVarsHOL] using hm)
-  | .load32 a, _, he, hm => by
-      cases ha : evalCrepSemHOLExp s a with
-      | none => simp [evalCrepSemHOLExp, ha] at he
-      | some w => exact eval_some_var_cexp_aux s n a w ha (by simpa [crepExpVarsHOL] using hm)
-  | .loadByte a, _, he, hm => by
-      cases ha : evalCrepSemHOLExp s a with
-      | none => simp [evalCrepSemHOLExp, ha] at he
-      | some w => exact eval_some_var_cexp_aux s n a w ha (by simpa [crepExpVarsHOL] using hm)
-  | .loadGlob _, _, _, hm => by simp [crepExpVarsHOL] at hm
-  | .op _ args, _, he, hm => by
-      cases hargs : args.mapM (evalCrepSemHOLExp s) with
-      | none => simp [evalCrepSemHOLExp, hargs] at he
-      | some vs =>
-        simp only [crepExpVarsHOL, crepExpVarsHOLList_eq_flatMap] at hm
-        obtain ⟨arg, harg, hn⟩ := List.mem_flatMap.mp hm
-        obtain ⟨w, hw⟩ := mapM_some_mem _ args vs hargs arg harg
-        exact eval_some_var_cexp_aux s n arg w hw hn
-  | .crepOp _ args, _, he, hm => by
-      cases hargs : args.mapM (evalCrepSemHOLExp s) with
-      | none => simp [evalCrepSemHOLExp, hargs] at he
-      | some vs =>
-        simp only [crepExpVarsHOL, crepExpVarsHOLList_eq_flatMap] at hm
-        obtain ⟨arg, harg, hn⟩ := List.mem_flatMap.mp hm
-        obtain ⟨w, hw⟩ := mapM_some_mem _ args vs hargs arg harg
-        exact eval_some_var_cexp_aux s n arg w hw hn
-  | .cmp _ l r, _, he, hm => by
-      cases hl : evalCrepSemHOLExp s l with
-      | none => simp [evalCrepSemHOLExp, hl] at he
-      | some wl =>
-        cases hr : evalCrepSemHOLExp s r with
-        | none => simp [evalCrepSemHOLExp, hl, hr] at he
-        | some wr =>
-          simp only [crepExpVarsHOL, List.mem_append] at hm
-          rcases hm with hm | hm
-          · exact eval_some_var_cexp_aux s n l wl hl hm
-          · exact eval_some_var_cexp_aux s n r wr hr hm
-  | .shift _ l r, _, he, hm => by
-      cases hl : evalCrepSemHOLExp s l with
-      | none => simp [evalCrepSemHOLExp, hl] at he
-      | some wl =>
-        cases hr : evalCrepSemHOLExp s r with
-        | none => simp [evalCrepSemHOLExp, hl, hr] at he
-        | some wr =>
-          simp only [crepExpVarsHOL, List.mem_append] at hm
-          rcases hm with hm | hm
-          · exact eval_some_var_cexp_aux s n l wl hl hm
-          · exact eval_some_var_cexp_aux s n r wr hr hm
-  | .baseAddr, _, _, hm => by simp [crepExpVarsHOL] at hm
-  | .topAddr, _, _, hm => by simp [crepExpVarsHOL] at hm
-termination_by e => sizeOf e
-decreasing_by
-  all_goals simp_wf
-  all_goals first
-    | omega
-    | (have := List.sizeOf_lt_of_mem harg; omega)
+        ∃ w, s.locals.lookup n = some w := by
+  intro e v he hm
+  fun_induction evalCrepSemHOLExp s e generalizing v with
+  | case2 m =>
+      have hn : n = m := by simpa [crepExpVarsHOL] using hm
+      exact ⟨v, hn ▸ he⟩
+  | case3 address ih | case4 address ih | case5 address ih =>
+      obtain ⟨addressValue, haddress, _⟩ := Option.bind_eq_some_iff.mp he
+      exact ih addressValue haddress (by simpa [crepExpVarsHOL] using hm)
+  | case7 _ args ih | case8 _ args ih =>
+      obtain ⟨values, hargs, _⟩ := Option.bind_eq_some_iff.mp he
+      obtain ⟨arg, harg, hn⟩ := List.mem_flatMap.mp
+        (by simpa only [crepExpVarsHOL, crepExpVarsHOLList_eq_flatMap] using hm)
+      obtain ⟨w, hw⟩ := mapM_some_mem _ args values hargs arg harg
+      exact ih arg harg w hw hn
+  | case9 _ left right ihLeft ihRight | case10 _ left right ihLeft ihRight =>
+      obtain ⟨leftValue, hleft, hrest⟩ := Option.bind_eq_some_iff.mp he
+      obtain ⟨rightValue, hright, _⟩ := Option.bind_eq_some_iff.mp hrest
+      simp only [crepExpVarsHOL, List.mem_append] at hm
+      rcases hm with hm | hm
+      · exact ihLeft leftValue hleft hm
+      · exact ihRight rightValue hright hm
+  | _ => simp only [crepExpVarsHOL, List.not_mem_nil] at hm
 
 /-- Exact HOL `eval_some_var_cexp_local_lookup` (`crepPropsScript.sml:835-837`):
     `∀s e v n. eval s e = SOME v /\ MEM n (var_cexp e) ==>

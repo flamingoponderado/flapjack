@@ -29,109 +29,41 @@ theorem ssaCcTrans_fullInstOkLess {width : Nat} [NeZero width]
     (h : everyVarHOL (fun x => decide (x < next)) prog = true ∧
       isAllocVar next ∧ ssaMapOK next ssa ∧ fullInstOkLessExact config prog = true) :
     fullInstOkLessExact config (ssaCcTrans prog ssa next tables).1 = true := by
-  have all : ∀ (p : WordLangProgHOL (BitVec width)), programValid config p := by
+  have all : ∀ p : WordLangProgHOL (BitVec width), programValid config p := by
     intro p
-    apply WordLangProgHOL.rec
-      (motive_1 := programValid config)
-      (motive_2 := fun ret => match ret with | none => True | some r => programValid config r.2.2.1)
-      (motive_3 := fun exc => match exc with | none => True | some r => programValid config r.2.1)
-      (motive_4 := fun r => programValid config r.2.2.1)
-      (motive_5 := fun r => programValid config r.2.1)
-      (motive_6 := fun r => programValid config r.2.1)
-      (motive_7 := fun r => programValid config r.1) (t := p)
-    case skip =>
-      exact ssaCcTrans_fullInstSkip config
-    case move =>
-      intro priority moves
-      exact ssaCcTrans_fullInstMove config priority moves
-    case inst =>
-      intro instruction
-      exact ssaCcTrans_fullInstInst config instruction
-    case assign =>
-      intro name exp
-      exact ssaCcTrans_fullInstAssign config name exp
-    case get =>
-      intro destination store
-      exact ssaCcTrans_fullInstGet config destination store
-    case set =>
-      intro store exp
-      exact ssaCcTrans_fullInstSet config store exp
-    case store =>
-      intro exp name
-      exact ssaCcTrans_fullInstStore config exp name
-    case alloc =>
-      intro destination cutsets
-      exact ssaCcTrans_fullInstAlloc config destination cutsets
-    case storeConsts =>
-      intro a b c d ws
-      exact ssaCcTrans_fullInstStoreConsts config a b c d ws
-    case raise =>
-      intro name
-      exact ssaCcTrans_fullInstRaise config name
-    case «return» =>
-      intro label values
-      exact ssaCcTrans_fullInstReturn config label values
-    case «break» =>
-      intro label
-      exact ssaCcTrans_fullInstBreak config label
-    case «continue» =>
-      intro label
-      exact ssaCcTrans_fullInstContinue config label
-    case tick =>
-      exact ssaCcTrans_fullInstTick config
-    case opCurrHeap =>
-      intro operator destination source
-      exact ssaCcTrans_fullInstOpCurrHeap config operator destination source
-    case locValue =>
-      intro destination source
-      exact ssaCcTrans_fullInstLocValue config destination source
-    case install =>
-      intro ptr len dptr dlen cutsets
-      exact ssaCcTrans_fullInstInstall config ptr len dptr dlen cutsets
-    case codeBufferWrite =>
-      intro address value
-      exact ssaCcTrans_fullInstCodeBufferWrite config address value
-    case dataBufferWrite =>
-      intro address value
-      exact ssaCcTrans_fullInstDataBufferWrite config address value
-    case ffi =>
-      intro function configuration configurationLength array arrayLength cutsets
-      exact ssaCcTrans_fullInstFFI config function configuration configurationLength array arrayLength cutsets
-    case shareInst =>
-      intro operator destination exp
-      exact ssaCcTrans_fullInstShareInst config operator destination exp
-    case mustTerminate =>
-      intro body bodyIH
-      exact ssaCcTrans_fullInstMustTerminate config body bodyIH
-    case seq =>
-      intro first second firstIH secondIH
-      exact ssaCcTrans_fullInstSeq config first second firstIH secondIH
-    case ite =>
-      intro cmp condition right yes no yesIH noIH
-      exact ssaCcTrans_fullInstIf config cmp condition right yes no yesIH noIH
-    case loop =>
-      intro names body exitNames bodyIH
-      exact ssaCcTrans_fullInstLoop config names exitNames body bodyIH
-    case call =>
-      intro returns dest args handler retIH excIH
-      cases returns with
-      | none => exact ssaCcTrans_fullInstTailCall config dest args handler
-      | some ret =>
-        rcases ret with ⟨ret, cutsets, retHandler, l1, l2⟩
-        apply ssaCcTrans_fullInstReturningCall config ret cutsets retHandler l1 l2 dest args handler retIH
-        cases handler with
-        | none => exact True.intro
-        | some exc =>
-          rcases exc with ⟨name, body, l1, l2⟩
-          exact excIH
-    case none => exact True.intro
-    case some => intro value ih; exact ih
-    case none => exact True.intro
-    case some => intro value ih; exact ih
-    case mk => intro fst snd ih; exact ih
-    case mk => intro fst snd ih; exact ih
-    case mk => intro fst snd ih; exact ih
-    case mk => intro body rest ih; exact ih
+    set_option tactic.fun_induction.unfolding false in
+    fun_induction everyVarHOL (fun _ => true) p with
+    | case13 returns dest args handler ih =>
+        rcases returns with _ | ⟨values, cutsets, body, l1, l2⟩
+        · exact ssaCcTrans_fullInstTailCall config dest args handler
+        · exact ssaCcTrans_fullInstReturningCall config values cutsets body l1 l2 dest args handler ih.1 ih.2
+    | case1 => exact ssaCcTrans_fullInstSkip config
+    | case2 => exact ssaCcTrans_fullInstMove config _ _
+    | case3 => exact ssaCcTrans_fullInstInst config _
+    | case4 => exact ssaCcTrans_fullInstAssign config _ _
+    | case5 => exact ssaCcTrans_fullInstGet config _ _
+    | case6 => exact ssaCcTrans_fullInstStore config _ _
+    | case7 => exact ssaCcTrans_fullInstLocValue config _ _
+    | case8 => exact ssaCcTrans_fullInstInstall config _ _ _ _ _
+    | case9 => exact ssaCcTrans_fullInstCodeBufferWrite config _ _
+    | case10 => exact ssaCcTrans_fullInstDataBufferWrite config _ _
+    | case11 => exact ssaCcTrans_fullInstFFI config _ _ _ _ _ _
+    | case16 => exact ssaCcTrans_fullInstAlloc config _ _
+    | case17 => exact ssaCcTrans_fullInstStoreConsts config _ _ _ _ _
+    | case18 => exact ssaCcTrans_fullInstRaise config _
+    | case19 => exact ssaCcTrans_fullInstReturn config _ _
+    | case20 => exact ssaCcTrans_fullInstOpCurrHeap config _ _ _
+    | case21 => exact ssaCcTrans_fullInstTick config
+    | case22 => exact ssaCcTrans_fullInstSet config _ _
+    | case23 => exact ssaCcTrans_fullInstShareInst config _ _ _
+    | case12 body ih => exact ssaCcTrans_fullInstMustTerminate config body ih
+    | case14 first second ihFirst ihSecond => exact ssaCcTrans_fullInstSeq config first second ihFirst ihSecond
+    | case15 cmp register right first second ihFirst ihSecond =>
+        exact ssaCcTrans_fullInstIf config cmp register right first second ihFirst ihSecond
+    | case24 liveIn body liveOut ih => exact ssaCcTrans_fullInstLoop config liveIn liveOut body ih
+    | case25 p =>
+        cases p <;> grind only [programValid, ssaCcTrans_fullInstBreak, ssaCcTrans_fullInstContinue]
   exact all prog ssa next tables h
+
 
 end Flapjack.WordAlloc

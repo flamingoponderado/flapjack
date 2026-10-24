@@ -3418,51 +3418,18 @@ theorem shapeOfHOL_byteRanged_bridge :
     `ExpByteRanged` premise of the expression agreement is always available for
     `expOfHOL`. -/
 theorem expOfHOL_byteRanged_bridge {width : Nat} [NeZero width] :
-    (expression : ExpHOL width) → ExpByteRanged (expOfHOL expression) :=
-  ExpHOL.rec
-    (motive_1 := fun expression => ExpByteRanged (expOfHOL expression))
-    (motive_2 := fun expressions =>
-      ListExpByteRanged (expressions.map expOfHOL))
-    (motive_3 := fun fields =>
-      ListFieldByteRanged (fields.map
-        (fun p => (toStringOfBytes p.1, expOfHOL p.2))))
-    (motive_4 := fun field =>
-      (∀ c ∈ toStringOfBytes field.1 |>.toList, c.toNat < 256) ∧
-        ExpByteRanged (expOfHOL field.2))
-    (by simp [expOfHOL, ExpByteRanged])
-    (fun _kind name => by
-      simpa [expOfHOL, ExpByteRanged] using nameRanged_toStringOfBytes_bridge name)
-    (fun _fields ih => by simpa [expOfHOL, ExpByteRanged, ListExpByteRanged] using ih)
-    (fun _index _value ih => by simpa [expOfHOL, ExpByteRanged] using ih)
-    (fun name _fields ih => by
-      simpa [expOfHOL, ExpByteRanged, ListFieldByteRanged] using
-        And.intro (nameRanged_toStringOfBytes_bridge name) ih)
-    (fun name _value ih => by
-      simpa [expOfHOL, ExpByteRanged] using
-        And.intro (nameRanged_toStringOfBytes_bridge name) ih)
-    (fun shape _address ih => by
-      simpa [expOfHOL, ExpByteRanged] using
-        And.intro (shapeOfHOL_byteRanged_bridge shape) ih)
-    (fun _address ih => by simpa [expOfHOL, ExpByteRanged] using ih)
-    (fun _address ih => by simpa [expOfHOL, ExpByteRanged] using ih)
-    (fun _operator _args ih => by simpa [expOfHOL, ExpByteRanged] using ih)
-    (fun _operator _args ih => by simpa [expOfHOL, ExpByteRanged] using ih)
-    (fun _operator _left _right ihl ihr => by
-      simpa [expOfHOL, ExpByteRanged] using And.intro ihl ihr)
-    (fun _operator _left _right ihl ihr => by
-      simpa [expOfHOL, ExpByteRanged] using And.intro ihl ihr)
-    (by simp [expOfHOL, ExpByteRanged])
-    (by simp [expOfHOL, ExpByteRanged])
-    (by simp [expOfHOL, ExpByteRanged])
-    (by simp [ListExpByteRanged])
-    (fun _head _tail ihHead ihTail => by
-      simpa [ListExpByteRanged, List.map] using And.intro ihHead ihTail)
-    (by simp [ListFieldByteRanged])
-    (fun _head _tail ihHead ihTail => by
-      simpa [ListFieldByteRanged, List.map] using
-        And.intro ihHead.1 (And.intro ihHead.2 ihTail))
-    (fun fst snd ih => by
-      exact ⟨nameRanged_toStringOfBytes_bridge fst, ih⟩)
+    (expression : ExpHOL width) → ExpByteRanged (expOfHOL expression)  := by
+  intro expression
+  fun_induction expOfHOL expression with
+  | case2 _ name => exact nameRanged_toStringOfBytes_bridge name
+  | case5 name fields ih =>
+      refine ⟨nameRanged_toStringOfBytes_bridge name, ?_⟩
+      rw [listFieldByteRanged_iff_forall_mem]
+      intro field hfield
+      obtain ⟨⟨fieldName, value⟩, hsource, rfl⟩ := List.mem_map.mp hfield
+      exact ⟨nameRanged_toStringOfBytes_bridge fieldName, ih (fieldName, value) hsource⟩
+  | case6 name _ ih => exact ⟨nameRanged_toStringOfBytes_bridge name, ih⟩
+  | _ => simp_all [ExpByteRanged, listExpByteRanged_iff_forall_mem, shapeOfHOL_byteRanged_bridge]
 
 /-- Production/exact agreement for the `Return` constructor. -/
 theorem panSemTotalEvaluate_return_agree {σ : Type}

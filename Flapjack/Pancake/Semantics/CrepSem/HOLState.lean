@@ -442,38 +442,17 @@ theorem evalCrepSemHOLExpWithDecider_eq {width : Nat} [NeZero width]
     (memDec : (address : BitVec width) → Decidable (state.memaddrs address)) :
     ∀ expression : CrepExpHOL width,
       evalCrepSemHOLExpWithDecider state memDec expression =
-        evalCrepSemHOLExp state expression
-  | .const _ | .var _ | .loadGlob _ | .baseAddr | .topAddr => by
-      simp only [evalCrepSemHOLExpWithDecider, evalCrepSemHOLExp]
-  | .load address => by
-      simp only [evalCrepSemHOLExpWithDecider, evalCrepSemHOLExp,
-        evalCrepSemHOLExpWithDecider_eq state memDec address]
-      have hdec : memDec = (fun a => Classical.propDecidable (state.memaddrs a)) := by
-        funext a
-        exact Subsingleton.elim _ _
-      rw [hdec]
-  | .load32 address | .loadByte address => by
-      simp only [evalCrepSemHOLExpWithDecider, evalCrepSemHOLExp,
-        evalCrepSemHOLExpWithDecider_eq state memDec address]
-      have hdec : memDec = (fun a => Classical.propDecidable (state.memaddrs a)) := by
-        funext a
-        exact Subsingleton.elim _ _
-      rw [hdec]
-  | .op operator args | .crepOp operator args => by
-      simp only [evalCrepSemHOLExpWithDecider, evalCrepSemHOLExp]
-      rw [optMmapCongHOL args args _ _ rfl
-        (fun x hx => evalCrepSemHOLExpWithDecider_eq state memDec x)]
-  | .cmp operator left right | .shift operator left right => by
-      simp only [evalCrepSemHOLExpWithDecider, evalCrepSemHOLExp,
-        evalCrepSemHOLExpWithDecider_eq state memDec left,
-        evalCrepSemHOLExpWithDecider_eq state memDec right]
-termination_by expression => sizeOf expression
-decreasing_by
-  all_goals simp_wf
-  all_goals first
-    | decreasing_trivial
-    | (simp_all only [CrepExpHOL.op.sizeOf_spec, CrepExpHOL.crepOp.sizeOf_spec];
-       have := List.sizeOf_lt_of_mem hx; omega)
+        evalCrepSemHOLExp state expression := by
+  intro expression
+  have hdec : memDec = (fun a => Classical.propDecidable (state.memaddrs a)) := by
+    funext a
+    exact Subsingleton.elim _ _
+  subst memDec
+  fun_induction evalCrepSemHOLExp state expression with
+  | case7 _ args ih | case8 _ args ih =>
+      simp only [evalCrepSemHOLExpWithDecider]
+      rw [optMmapCongHOL args args _ _ rfl ih]
+  | _ => simp_all only [evalCrepSemHOLExpWithDecider]
 
 end CrepEvalExact
 
