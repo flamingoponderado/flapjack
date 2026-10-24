@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Semantics.PanSem.TotalEvalExpBridge
-import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.TotalEvalExpBridge
+public import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
+
+@[expose] public section
 
 /-!
 # Production/exact `lookup_code` correspondence for the total panSem bridge

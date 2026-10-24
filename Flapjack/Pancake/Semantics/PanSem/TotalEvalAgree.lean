@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.PanSem.TotalEvalExtCallBridge
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.TotalEvalExtCallBridge
+
+@[expose] public section
 
 /-!
 # Total production/exact agreement of the panSem evaluators

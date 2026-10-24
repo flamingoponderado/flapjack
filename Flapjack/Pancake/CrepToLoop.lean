@@ -1,8 +1,12 @@
-import Flapjack.HolRef
-import Flapjack.FiniteMap.Basic
-import Flapjack.Pancake.LoopLang
-import Flapjack.Pancake.PanStatic
-import Flapjack.RiscV.Model
+module
+
+public import Flapjack.HolRef
+public import Flapjack.FiniteMap.Basic
+public import Flapjack.Pancake.LoopLang
+public import Flapjack.Pancake.PanStatic
+public import Flapjack.RiscV.Model
+
+@[expose] public section
 
 /-!
 Initial Crepe-to-Loop lowering for the direct executable fragment. This keeps

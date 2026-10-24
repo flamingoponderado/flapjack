@@ -1,7 +1,11 @@
-import Flapjack.CrepeSemantics
-import Flapjack.FiniteMap.Basic
-import Flapjack.HolRef
-import Flapjack.PanValueFfiSemantics
+module
+
+public import Flapjack.CrepeSemantics
+public import Flapjack.FiniteMap.Basic
+public import Flapjack.HolRef
+public import Flapjack.PanValueFfiSemantics
+
+@[expose] public section
 
 /-!
 Observable runtime boundary for the Crepe evaluator.

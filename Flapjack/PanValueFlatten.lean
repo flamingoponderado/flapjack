@@ -1,5 +1,9 @@
-import Flapjack.PanValues
-import Flapjack.Pancake.PanStatic
+module
+
+public import Flapjack.PanValues
+public import Flapjack.Pancake.PanStatic
+
+@[expose] public section
 
 namespace Flapjack
 

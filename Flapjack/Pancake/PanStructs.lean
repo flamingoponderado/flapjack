@@ -1,7 +1,11 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.PanSimp
-import Flapjack.Pancake.PanStatic
-import Flapjack.Pancake.PanStructs.CompileShapeExact
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.PanSimp
+public import Flapjack.Pancake.PanStatic
+public import Flapjack.Pancake.PanStructs.CompileShapeExact
+
+@[expose] public section
 
 /-!
 The named-structure elimination pass from CakeML's `pan_structs` theory.

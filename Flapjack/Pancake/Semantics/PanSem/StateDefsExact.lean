@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.PanSem.StateSimpExact
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.StateSimpExact
+
+@[expose] public section
 
 /-!
 # `panSem` state-accessor definition bundle over the function-backed carrier

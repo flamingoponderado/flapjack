@@ -1,5 +1,9 @@
-import Flapjack.PanValueFfiSemantics
-import Flapjack.PanBst
+module
+
+public import Flapjack.PanValueFfiSemantics
+public import Flapjack.PanBst
+
+@[expose] public section
 
 /-!
 # Clocked structured Pancake semantics

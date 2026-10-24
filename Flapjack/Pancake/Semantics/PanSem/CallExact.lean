@@ -1,3 +1,5 @@
+module
+
 /-
   Exact HOL-shaped `panSem$evaluate` Call clause over the exact `mlstring`-keyed
   source state.
@@ -22,7 +24,9 @@
   supplied by the caller) and is therefore deliberately untagged: only the
   whole recursive `evaluate_def` statement can carry a `@[hol]` tag.
 -/
-import Flapjack.Pancake.Semantics.PanSem.DecCallExact
+public import Flapjack.Pancake.Semantics.PanSem.DecCallExact
+
+@[expose] public section
 
 namespace Flapjack
 

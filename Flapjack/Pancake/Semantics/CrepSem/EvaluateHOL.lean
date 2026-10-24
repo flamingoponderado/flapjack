@@ -1,11 +1,15 @@
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
-import Flapjack.Pancake.Semantics.CrepSem.Primop
-import Flapjack.Pancake.Semantics.CrepSem.LookupCode
-import Flapjack.Pancake.Semantics.CrepSem.TotalEval
-import Flapjack.Pancake.Semantics.PanSemStateEval
-import Flapjack.Pancake.Semantics.PanSem.ExtCallExact
-import Flapjack.Pancake.Semantics.LoopSem
-import Flapjack.FfiHOL
+module
+
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+public import Flapjack.Pancake.Semantics.CrepSem.Primop
+public import Flapjack.Pancake.Semantics.CrepSem.LookupCode
+public import Flapjack.Pancake.Semantics.CrepSem.TotalEval
+public import Flapjack.Pancake.Semantics.PanSemStateEval
+public import Flapjack.Pancake.Semantics.PanSem.ExtCallExact
+public import Flapjack.Pancake.Semantics.LoopSem
+public import Flapjack.FfiHOL
+
+@[expose] public section
 
 /-!
 # Total HOL-shaped `crepSem$evaluate` over the exact Crep carriers

@@ -1,6 +1,10 @@
-import Flapjack.Pancake.PanLang
-import Flapjack.Pancake.PanLang.Shape
-import Flapjack.Basis.Pure.MlString
+module
+
+public import Flapjack.Pancake.PanLang
+public import Flapjack.Pancake.PanLang.Shape
+public import Flapjack.Basis.Pure.MlString
+
+@[expose] public section
 
 /-!
 # Exact `panLang$exp` over the faithful `mlstring` carrier

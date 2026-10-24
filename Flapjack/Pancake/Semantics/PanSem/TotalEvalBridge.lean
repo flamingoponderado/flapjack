@@ -1,8 +1,12 @@
-import Flapjack.Pancake.Semantics.PanSem.TotalEval
-import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
-import Flapjack.Pancake.Semantics.PanSem.StateBridge
-import Flapjack.Pancake.Semantics.ShMemBytesBridge
-import Flapjack.FfiBridge
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.TotalEval
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+public import Flapjack.Pancake.Semantics.PanSem.StateBridge
+public import Flapjack.Pancake.Semantics.ShMemBytesBridge
+public import Flapjack.FfiBridge
+
+@[expose] public section
 
 /-!
 # Production/exact agreement interface for the total `panSem$evaluate`

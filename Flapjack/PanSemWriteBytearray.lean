@@ -1,4 +1,8 @@
-import Flapjack.PanValueFfiSemantics
+module
+
+public import Flapjack.PanValueFfiSemantics
+
+@[expose] public section
 
 /-!
 # Pancake `panSem.write_bytearray`

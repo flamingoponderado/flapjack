@@ -1,4 +1,8 @@
-import Init.Data.BitVec.Lemmas
+module
+
+public import Init.Data.BitVec.Lemmas
+
+@[expose] public section
 
 namespace Flapjack
 

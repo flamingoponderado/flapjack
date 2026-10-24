@@ -1,4 +1,8 @@
-import Flapjack.Pancake.PanLang
+module
+
+public import Flapjack.Pancake.PanLang
+
+@[expose] public section
 
 /-!
 Common executable operations for the Pancake word-cell memory model.

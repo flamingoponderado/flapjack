@@ -1,3 +1,5 @@
+module
+
 /-
 # Untagged `ExtCall` clause step over the exact MlString carrier
 
@@ -35,9 +37,11 @@ step. The direct original-HOL rows for this clause are
 `extcall_clause_returned`, `extcall_clause_bad_read`, and
 `extcall_clause_final` in `scripts/hol-probes/pan_sem_e2e_probe.out`.
 -/
-import Flapjack.Pancake.Semantics.PanSem.TickShMemExact
-import Flapjack.Pancake.Semantics.LoopSem
-import Flapjack.FfiHOL
+public import Flapjack.Pancake.Semantics.PanSem.TickShMemExact
+public import Flapjack.Pancake.Semantics.LoopSem
+public import Flapjack.FfiHOL
+
+@[expose] public section
 
 namespace Flapjack
 

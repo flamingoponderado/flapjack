@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.PanLang.Decl
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.PanLang.Decl
+
+@[expose] public section
 
 namespace Flapjack.Pancake.Proofs.PanStructs.StructInfosOkExact
 

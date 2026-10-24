@@ -1,7 +1,11 @@
-import Flapjack.Semantics
-import Flapjack.Ffi
-import Flapjack.PanMemoryModel
-import Flapjack.PanValues
+module
+
+public import Flapjack.Semantics
+public import Flapjack.Ffi
+public import Flapjack.PanMemoryModel
+public import Flapjack.PanValues
+
+@[expose] public section
 
 /-!
 Fuel-bounded executable semantics for the full scalar Crepe control fragment.

@@ -1,7 +1,11 @@
-import Flapjack.Pancake.Semantics.PanSemStateEval
-import Flapjack.Pancake.Semantics.PanSem.Primop
-import Flapjack.Pancake.Semantics.PanSem.TotalEvalExpBridge
-import Flapjack.Pancake.Semantics.PanSem.ValueHOL
+module
+
+public import Flapjack.Pancake.Semantics.PanSemStateEval
+public import Flapjack.Pancake.Semantics.PanSem.Primop
+public import Flapjack.Pancake.Semantics.PanSem.TotalEvalExpBridge
+public import Flapjack.Pancake.Semantics.PanSem.ValueHOL
+
+@[expose] public section
 
 /-!
 # Concrete production primitive wiring for state-based PanSem

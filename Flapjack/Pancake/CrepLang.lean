@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.MemOp
-import Flapjack.Pancake.PanLang
+module
+
+public import Flapjack.HolRef
+public import Flapjack.MemOp
+public import Flapjack.Pancake.PanLang
+
+@[expose] public section
 
 /-!
 The Crepe intermediate language.

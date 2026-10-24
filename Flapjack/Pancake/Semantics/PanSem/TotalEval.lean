@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Semantics.PanSem.TotalSteps
-import Flapjack.Pancake.Semantics.PanSem.TotalMeasure
-import Flapjack.Pancake.Semantics.PanSem.LookupCode
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.TotalSteps
+public import Flapjack.Pancake.Semantics.PanSem.TotalMeasure
+public import Flapjack.Pancake.Semantics.PanSem.LookupCode
+
+@[expose] public section
 
 /-!
 # Measured total `panSem$evaluate` over the production `Prog`/`PanSemState`

@@ -1,8 +1,12 @@
-import Flapjack.Compiler.Encoders.Asm
-import Flapjack.Pancake.Semantics.CrepSem
-import Flapjack.Pancake.WordLang
-import Flapjack.PanSemWriteBytearray
-import Flapjack.RiscV.PanMemory
+module
+
+public import Flapjack.Compiler.Encoders.Asm
+public import Flapjack.Pancake.Semantics.CrepSem
+public import Flapjack.Pancake.WordLang
+public import Flapjack.PanSemWriteBytearray
+public import Flapjack.RiscV.PanMemory
+
+@[expose] public section
 
 /-!
 # Canonical RISC-V 64 target for the Crep runtime

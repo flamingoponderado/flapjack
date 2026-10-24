@@ -1,5 +1,10 @@
-import Flapjack.Pancake.Semantics.CrepSem.Eval
-import Flapjack.RiscV.PanMemory
+module
+
+public import Flapjack.Pancake.Semantics.CrepSem.Eval
+public import Flapjack.RiscV.PanMemory
+
+@[expose] public section
+
 
 /-!
 # Total Crep evaluator fragment
@@ -351,6 +356,20 @@ def evalCrepClockLeaf {width : Nat} {σ : Type _}
       else
         (none, decCrepHolClock state)
 
+theorem crepClockLoop_lt [NeZero width] {σ : Type _}
+    (state : CrepHolState (BitVec width) σ)
+    (step : Option (CrepResultHOL (BitVec width) FfiFinalEvent) ×
+      CrepHolState (BitVec width) σ)
+    (result : Option (CrepResultHOL (BitVec width) FfiFinalEvent))
+    (loopState : CrepHolState (BitVec width) σ)
+    (hclock : state.clock ≠ 0)
+    (hfixed : fixCrepHolClockW (decCrepHolClockW state) step = (result, loopState)) :
+    loopState.clock < state.clock := by
+  have hbound := fixCrepHolClock_IMP_LESS_EQW
+    (decCrepHolClockW state) step result loopState hfixed
+  simp only [decCrepHolClockW] at hbound
+  omega
+
 /-- Total recursive evaluator for the implemented source-shaped Crep fragment.
     `Assign` requires an existing destination and uses HOL `set_var` on success;
     expression and destination errors preserve the input state. `If` selects
@@ -486,25 +505,12 @@ def evalCrepClockProg [NeZero width] {σ : Type _}
             let fixed := fixCrepHolClockW decState step
             match hfixed : fixed with
             | (none, loopState) =>
-                have hbound : loopState.clock ≤ decState.clock := by
-                  have h := fixCrepHolClock_IMP_LESS_EQW decState step none loopState
-                  exact h (by simpa [fixed] using hfixed)
-                have hlt : loopState.clock < state.clock := by
-                  simp [decState, decCrepHolClockW] at hbound
-                  have hsub : state.clock - 1 < state.clock :=
-                    Nat.sub_lt (Nat.pos_of_ne_zero hclock) (by omega)
-                  exact Nat.lt_of_le_of_lt hbound hsub
+                have _hlt : loopState.clock < state.clock :=
+                  crepClockLoop_lt state step none loopState hclock hfixed
                 evalCrepClockProg (.whileLoop condition body) loopState
             | (some (.continue 0), loopState) =>
-                have hbound : loopState.clock ≤ decState.clock := by
-                  have h := fixCrepHolClock_IMP_LESS_EQW decState step
-                    (some (.continue 0)) loopState
-                  exact h (by simpa [fixed] using hfixed)
-                have hlt : loopState.clock < state.clock := by
-                  simp [decState, decCrepHolClockW] at hbound
-                  have hsub : state.clock - 1 < state.clock :=
-                    Nat.sub_lt (Nat.pos_of_ne_zero hclock) (by omega)
-                  exact Nat.lt_of_le_of_lt hbound hsub
+                have _hlt : loopState.clock < state.clock :=
+                  crepClockLoop_lt state step (some (.continue 0)) loopState hclock hfixed
                 evalCrepClockProg (.whileLoop condition body) loopState
             | (some (.break 0), loopState) => (none, loopState)
             | (result, loopState) => (exitCrepClockLoopResult result, loopState)

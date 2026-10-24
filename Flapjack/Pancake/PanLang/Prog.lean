@@ -1,5 +1,9 @@
-import Flapjack.Pancake.PanLang.Exp
-import Flapjack.Pancake.PanLang.Shape
+module
+
+public import Flapjack.Pancake.PanLang.Exp
+public import Flapjack.Pancake.PanLang.Shape
+
+@[expose] public section
 
 /-!
 Exact `panLang$prog` carrier over the faithful `MlString` identifiers and the

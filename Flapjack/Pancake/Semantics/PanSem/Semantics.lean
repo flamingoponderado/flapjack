@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
-import Flapjack.Misc.LprefixLub
-import Flapjack.Pancake.Semantics.PanSem.DeclContextExact
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+public import Flapjack.Misc.LprefixLub
+public import Flapjack.Pancake.Semantics.PanSem.DeclContextExact
+
+@[expose] public section
 
 /-!
 # HOL `panSem` observational semantics

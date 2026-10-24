@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.PanSem.TotalEvalCallBridge
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.TotalEvalCallBridge
+
+@[expose] public section
 
 /-!
 # Reachable rangedness of the production total panSem evaluator

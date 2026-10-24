@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
-import Flapjack.Pancake.Semantics.PanSem.EvaluateFinite
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+public import Flapjack.Pancake.Semantics.PanSem.EvaluateFinite
+
+@[expose] public section
 
 /-!
 # HOL whole-evaluator clock theorems over the exact finite-map PanSem evaluator

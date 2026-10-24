@@ -1,3 +1,7 @@
+module
+
+@[expose] public section
+
 /-!
 # The shared `asm$memop` carrier
 

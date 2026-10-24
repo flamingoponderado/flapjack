@@ -1,5 +1,9 @@
-import Flapjack.LoopFindCode
-import Flapjack.Ffi
+module
+
+public import Flapjack.LoopFindCode
+public import Flapjack.Ffi
+
+@[expose] public section
 
 /-!
 Faithful Loop state and result boundary.

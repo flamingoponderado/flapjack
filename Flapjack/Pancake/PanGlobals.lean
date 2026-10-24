@@ -1,9 +1,13 @@
-import Flapjack.HolRef
-import Flapjack.FiniteMap.Basic
-import Flapjack.Pancake.PanStructs
-import Flapjack.Pancake.PanSimp
-import Flapjack.Pancake.PanLang.Prog
-import Flapjack.Pancake.PanLang.Decl
+module
+
+public import Flapjack.HolRef
+public import Flapjack.FiniteMap.Basic
+public import Flapjack.Pancake.PanStructs
+public import Flapjack.Pancake.PanSimp
+public import Flapjack.Pancake.PanLang.Prog
+public import Flapjack.Pancake.PanLang.Decl
+
+@[expose] public section
 
 /-!
 The core of Pancake's `pan_globals` pass.
@@ -1034,7 +1038,7 @@ def isName : Decl α → Bool
 `size_of_eids_def`.  The source definition observes only whether a declaration
 is `ExnDecl`; the generic production payload, names, and shapes are discarded
 here and are not being claimed as HOL carriers. -/
-private def declClassViewHOL (declaration : Decl α) :
+def declClassViewHOL (declaration : Decl α) :
     Flapjack.Pancake.PanLang.DeclHOL 1 :=
   match declaration with
   | .exnDecl _ _ =>
