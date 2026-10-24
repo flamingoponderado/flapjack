@@ -16,26 +16,12 @@ including the original tail-call handler convention. -/
 theorem maxVarRemoveMustTerminate {width : Nat} [NeZero width]
     (native : WordLangProgHOL (BitVec width)) :
     maxVarHOL (removeMustTerminate native) = maxVarHOL native := by
-  cases nativeEquation : native with
-  | seq first second =>
-    simp [removeMustTerminate, maxVarHOL, maxVarRemoveMustTerminate first,
-      maxVarRemoveMustTerminate second]
-  | mustTerminate body =>
-    simp [removeMustTerminate, maxVarHOL, maxVarRemoveMustTerminate body]
-  | loop liveIn body liveOut =>
-    simp [removeMustTerminate, maxVarHOL, maxVarRemoveMustTerminate body]
-  | ite op condition right first second =>
-    cases right <;> simp [removeMustTerminate, maxVarHOL,
-      maxVarRemoveMustTerminate first, maxVarRemoveMustTerminate second]
-  | call returns target arguments handler =>
-    rcases returnsEquation : returns with _ | ⟨values, sets, body, l1, l2⟩ <;>
-      rcases handlerEquation : handler with _ | ⟨exception, continuation, h1, h2⟩ <;>
-      simp [removeMustTerminate, maxVarHOL]
-    all_goals rw [maxVarRemoveMustTerminate body]
-    all_goals try rw [maxVarRemoveMustTerminate continuation]
-  | _ => simp [removeMustTerminate, maxVarHOL]
-termination_by sizeOf native
-decreasing_by all_goals subst_vars; decreasing_trivial
+  set_option tactic.fun_induction.unfolding false in
+    fun_induction maxVarHOL native with
+    | case7 _ _ handler => cases handler <;> simp (config := { zetaDelta := true }) [removeMustTerminate, maxVarHOL]
+    | case12 _ _ right _ _ _ _ =>
+        cases right <;> simp_all (config := { zetaDelta := true }) [removeMustTerminate, maxVarHOL]
+    | _ => simp_all (config := { zetaDelta := true }) [removeMustTerminate, maxVarHOL]
 
 /-- The whole lowering result, not just its body, is unchanged by the actual
 post-allocation annotation removal, at every incoming bitmap state and frame. -/
@@ -45,29 +31,10 @@ theorem compNativeRemoveMustTerminate {width : Nat} [NeZero width]
     (bitmaps : AppList (BitVec width) × Nat) (frame : Nat × Nat × Nat) :
     compNative config perf (removeMustTerminate native) bitmaps frame =
       compNative config perf native bitmaps frame := by
-  cases nativeEquation : native with
-  | seq first second =>
-    simp [removeMustTerminate, compNative,
-      compNativeRemoveMustTerminate config perf first,
-      compNativeRemoveMustTerminate config perf second]
-  | mustTerminate body =>
-    simp [removeMustTerminate, compNative, compNativeRemoveMustTerminate config perf body]
-  | loop liveIn body liveOut =>
-    simp [removeMustTerminate, compNative, compNativeRemoveMustTerminate config perf body]
-  | ite op condition right first second =>
-    simp [removeMustTerminate, compNative,
-      compNativeRemoveMustTerminate config perf first,
-      compNativeRemoveMustTerminate config perf second]
-  | call returns target arguments handler =>
-    rcases returnsEquation : returns with _ | ⟨values, sets, body, l1, l2⟩ <;>
-      rcases handlerEquation : handler with _ | ⟨exception, continuation, h1, h2⟩ <;>
-      simp [removeMustTerminate, compNative]
-    all_goals rw [compNativeRemoveMustTerminate config perf body]
-    all_goals try rw [compNativeRemoveMustTerminate config perf continuation]
-    all_goals simp
-  | _ => simp [removeMustTerminate, compNative]
-termination_by sizeOf native
-decreasing_by all_goals subst_vars; decreasing_trivial
+  set_option tactic.fun_induction.unfolding false in
+    fun_induction maxVarHOL native generalizing bitmaps with
+    | case7 _ _ handler => cases handler <;> simp [removeMustTerminate, compNative]
+    | _ => simp_all [removeMustTerminate, compNative]
 
 /-- Complete program output, frame and final bitmap state are preserved. -/
 theorem compileProgNativeRemoveMustTerminate {width : Nat} [NeZero width]

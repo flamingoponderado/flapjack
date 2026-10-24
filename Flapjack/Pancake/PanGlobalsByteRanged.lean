@@ -79,27 +79,13 @@ theorem globalShapeVal_byteRanged {width : Nat}
     (context : GlobalPassContext (BitVec width)) :
     ∀ shape, ShapeByteRanged shape →
       ExpByteRanged (globalShapeVal context shape) := by
-  apply Flapjack.Shape.rec
-    (motive_1 := fun shape => ShapeByteRanged shape →
-      ExpByteRanged (globalShapeVal context shape))
-    (motive_2 := fun shapes =>
-      (∀ shape ∈ shapes, ShapeByteRanged shape) →
-        ListExpByteRanged (shapes.map (globalShapeVal context)))
-  · intro _
-    simp [globalShapeVal, ExpByteRanged]
-  · intro shapes ih
-    intro hshape
-    simp only [ShapeByteRanged] at hshape
-    simpa [globalShapeVal, ExpByteRanged] using ih hshape
-  · intro _ _
-    simp [globalShapeVal, ExpByteRanged]
-  · intro _
-    simp [ListExpByteRanged]
-  · intro head tail ihHead ihTail hshapes
-    simp only [ListExpByteRanged, List.map_cons]
-    exact ⟨ihHead (hshapes head (by simp)), ihTail (by
-      intro shape hshape
-      exact hshapes shape (by simp [hshape]))⟩
+  intro shape
+  induction shape using Flapjack.Shape.rec
+    (motive_2 := fun shapes => (∀ shape ∈ shapes, ShapeByteRanged shape) →
+      ListExpByteRanged (shapes.map (globalShapeVal context))) with
+  | _ =>
+      grind only [globalShapeVal, ExpByteRanged, ShapeByteRanged,
+        ListExpByteRanged, List.map_cons, List.map_nil, List.mem_cons, List.not_mem_nil]
 
 theorem globalCompileExp_byteRanged [BEq String]
     {width : Nat} (context : GlobalPassContext (BitVec width))

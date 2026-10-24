@@ -13,34 +13,16 @@ private theorem removeOfBound {configWidth : Nat} {width : Nat} [NeZero configWi
     (conf : AsmConfigExact configWidth) (program : HolProg width) (bound : Nat)
     (bounded : regBound program bound)
     (room : bound ≤ conf.regCount - conf.avoidRegs.length) : stackAsmRemove conf program := by
-  cases program with
-  | seq first second =>
-      exact ⟨removeOfBound conf first bound bounded.1 room,
-        removeOfBound conf second bound bounded.2 room⟩
-  | loop body => exact removeOfBound conf body bound bounded room
-  | ite cmp register right first second =>
-      exact ⟨removeOfBound conf first bound bounded.2.2.1 room,
-        removeOfBound conf second bound bounded.2.2.2 room⟩
-  | call returns target handler =>
-      cases returns with
-      | none => trivial
-      | some record =>
-          match hRet : record with
-          | (body,register,l1,l2) =>
-              unfold regBound at bounded
-              have bodySafe := removeOfBound conf body bound bounded.2.1 room
-              cases handler with
-              | none => simpa only [stackAsmRemove, and_true] using bodySafe
-              | some record =>
-                  match hHandle : record with
-                  | (handlerBody,h1,h2) =>
-                      exact ⟨bodySafe, removeOfBound conf handlerBody bound bounded.2.2.2 room⟩
-  | _ => simp_all [stackAsmRemove, regName, regBound] <;> omega
-termination_by sizeOf program
-decreasing_by
-  all_goals subst_vars
-  all_goals simp_wf
-  all_goals omega
+  set_option tactic.fun_induction.unfolding false in
+  fun_induction regBound program bound with
+  | case15 returns target handler bound ih =>
+      rcases returns with _ | ⟨body, register, l1, l2⟩ <;>
+        rcases handler with _ | ⟨hbody, h1, h2⟩ <;>
+        grind only [regBound, stackAsmRemove]
+  | case11 cmp register right first second bound ihFirst ihSecond =>
+      cases right <;> grind only [regBound, stackAsmRemove, regName]
+  | _ => grind only [regBound, stackAsmRemove, regName]
+
 
 /-- Entire original destination preparation implication, including both output
 components and the original upper bound on the indirect destination register. -/

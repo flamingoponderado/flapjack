@@ -144,61 +144,11 @@ theorem find_code_regs_SUBMAP {width : Nat} [NeZero width] {κ α : Type}
   (words_as_type_indexed_bitvec)]
 theorem get_labels_comp {width : Nat} [NeZero width] :
     ∀ (n p : Nat) (e : HolProg width) (l : Nat × Nat),
-      StackSem.getLabelsExact e l → StackSem.getLabelsExact (comp n p e).1 l
-  | n, p, .seq a b, l, hl => by
-      rw [StackSem.getLabelsExact] at hl
-      simp only [comp]
-      rw [StackSem.getLabelsExact]
-      rcases hl with hl | hl
-      · exact Or.inl (get_labels_comp n p a l hl)
-      · exact Or.inr (get_labels_comp n _ b l hl)
-  | n, p, .ite cmp r ri a b, l, hl => by
-      rw [StackSem.getLabelsExact] at hl
-      simp only [comp]
-      rw [StackSem.getLabelsExact]
-      rcases hl with hl | hl
-      · exact Or.inl (get_labels_comp n p a l hl)
-      · exact Or.inr (get_labels_comp n _ b l hl)
-  | n, p, .loop body, l, hl => by
-      rw [StackSem.getLabelsExact] at hl
-      simp only [comp]
-      rw [StackSem.getLabelsExact]
-      exact get_labels_comp n p body l hl
-  | n, p, .call none dest handler, l, hl => by
-      simp [StackSem.getLabelsExact] at hl
-  | n, p, .call (some (rp, lr, l1, l2)) dest none, l, hl => by
-      simp only [StackSem.getLabelsExact] at hl
-      simp only [comp]
-      rw [StackSem.getLabelsExact]
-      rcases hl with hl | hl | hl
-      · exact Or.inl hl
-      · exact Or.inr (Or.inl (get_labels_comp n p rp l hl))
-      · exact hl.elim
-  | n, p, .call (some (rp, lr, l1, l2)) dest (some (hp, k1, k2)), l, hl => by
-      simp only [StackSem.getLabelsExact] at hl
-      simp only [comp]
-      rw [StackSem.getLabelsExact]
-      rcases hl with hl | hl | hl | hl
-      · exact Or.inl hl
-      · exact Or.inr (Or.inl (get_labels_comp n p rp l hl))
-      · exact Or.inr (Or.inr (Or.inl hl))
-      · exact Or.inr (Or.inr (Or.inr (get_labels_comp n _ hp l hl)))
-  | n, p, .skip, l, hl | n, p, .halt _, l, hl | n, p, .tick, l, hl | n, p, .ret _, l, hl
-  | n, p, .raise _, l, hl | n, p, .break _, l, hl | n, p, .continue _, l, hl
-  | n, p, .inst _, l, hl | n, p, .get _ _, l, hl | n, p, .set _ _, l, hl
-  | n, p, .opCurrHeap _ _ _, l, hl | n, p, .alloc _, l, hl
-  | n, p, .storeConsts _ _ _, l, hl | n, p, .jumpLower _ _ _, l, hl
-  | n, p, .rawCall _, l, hl | n, p, .install _ _ _ _ _, l, hl
-  | n, p, .shMemOp _ _ _, l, hl | n, p, .codeBufferWrite _ _, l, hl
-  | n, p, .dataBufferWrite _ _, l, hl | n, p, .ffi _ _ _ _ _ _, l, hl
-  | n, p, .locValue _ _ _, l, hl | n, p, .stackAlloc _, l, hl | n, p, .stackFree _, l, hl
-  | n, p, .stackLoad _ _, l, hl | n, p, .stackLoadAny _ _, l, hl
-  | n, p, .stackStore _ _, l, hl | n, p, .stackStoreAny _ _, l, hl
-  | n, p, .stackGetSize _, l, hl | n, p, .stackSetSize _, l, hl
-  | n, p, .bitmapLoad _ _, l, hl => by
-      simp [StackSem.getLabelsExact] at hl
-termination_by _ _ e => sizeOf e
-decreasing_by all_goals simp_wf <;> omega
+      StackSem.getLabelsExact e l → StackSem.getLabelsExact (comp n p e).1 l := by
+  intro n p e
+  set_option tactic.fun_induction.unfolding false in
+    fun_induction comp n p e with
+    | _ => simp_all only [comp, StackSem.getLabelsExact] <;> grind
 
 /-- Exact HOL `loc_check_compile` (`stack_allocProofScript.sml:5182-5204`). -/
 @[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "loc_check_compile"

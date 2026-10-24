@@ -69,51 +69,19 @@ private theorem shapeOfHOL_byteRanged :
       exact shapeOfHOL_byteRanged source
 
 theorem expOfHOL_byteRanged {width : Nat} [NeZero width] :
-    (expression : ExpHOL width) → ExpByteRanged (expOfHOL expression) :=
-  ExpHOL.rec
-    (motive_1 := fun expression => ExpByteRanged (expOfHOL expression))
-    (motive_2 := fun expressions =>
-      ListExpByteRanged (expressions.map expOfHOL))
-    (motive_3 := fun fields =>
-      ListFieldByteRanged (fields.map
-        (fun p => (toStringOfBytes p.1, expOfHOL p.2))))
-    (motive_4 := fun field =>
-      (∀ c ∈ toStringOfBytes field.1 |>.toList, c.toNat < 256) ∧
-        ExpByteRanged (expOfHOL field.2))
-    (by simp [expOfHOL, ExpByteRanged])
-    (fun _kind name => by
-      simpa [expOfHOL, ExpByteRanged] using stringOfBytes_byteRanged name)
-    (fun _fields ih => by simpa [expOfHOL, ExpByteRanged, ListExpByteRanged] using ih)
-    (fun _index _value ih => by simpa [expOfHOL, ExpByteRanged] using ih)
-    (fun name _fields ih => by
-      simpa [expOfHOL, ExpByteRanged, ListFieldByteRanged] using
-        And.intro (stringOfBytes_byteRanged name) ih)
-    (fun name _value ih => by
-      simpa [expOfHOL, ExpByteRanged] using
-        And.intro (stringOfBytes_byteRanged name) ih)
-    (fun shape _address ih => by
-      simpa [expOfHOL, ExpByteRanged] using
-        And.intro (shapeOfHOL_byteRanged shape) ih)
-    (fun _address ih => by simpa [expOfHOL, ExpByteRanged] using ih)
-    (fun _address ih => by simpa [expOfHOL, ExpByteRanged] using ih)
-    (fun _operator _args ih => by simpa [expOfHOL, ExpByteRanged] using ih)
-    (fun _operator _args ih => by simpa [expOfHOL, ExpByteRanged] using ih)
-    (fun _operator _left _right ihl ihr => by
-      simpa [expOfHOL, ExpByteRanged] using And.intro ihl ihr)
-    (fun _operator _left _right ihl ihr => by
-      simpa [expOfHOL, ExpByteRanged] using And.intro ihl ihr)
-    (by simp [expOfHOL, ExpByteRanged])
-    (by simp [expOfHOL, ExpByteRanged])
-    (by simp [expOfHOL, ExpByteRanged])
-    (by simp [ListExpByteRanged])
-    (fun _head _tail ihHead ihTail => by
-      simpa [ListExpByteRanged, List.map] using And.intro ihHead ihTail)
-    (by simp [ListFieldByteRanged])
-    (fun _head _tail ihHead ihTail => by
-      simpa [ListFieldByteRanged, List.map] using
-        And.intro ihHead.1 (And.intro ihHead.2 ihTail))
-    (fun fst snd ih => by
-      exact ⟨stringOfBytes_byteRanged fst, ih⟩)
+    (expression : ExpHOL width) → ExpByteRanged (expOfHOL expression) := by
+  intro expression
+  fun_induction expOfHOL expression with
+  | case2 _ name => exact stringOfBytes_byteRanged name
+  | case6 name _ ih => exact ⟨stringOfBytes_byteRanged name, ih⟩
+  | case5 name fields ih =>
+      refine ⟨stringOfBytes_byteRanged name, ?_⟩
+      rw [listFieldByteRanged_iff_forall_mem]
+      intro field hfield
+      obtain ⟨⟨fieldName, value⟩, hsource, rfl⟩ := List.mem_map.mp hfield
+      exact ⟨stringOfBytes_byteRanged fieldName, ih (fieldName, value) hsource⟩
+  | _ =>
+      simp_all [ExpByteRanged, listExpByteRanged_iff_forall_mem, shapeOfHOL_byteRanged]
 
 /-- Codec agreement between the production and exact expression compilers at a
     single expression. The first component is the compiled expression list
@@ -625,34 +593,18 @@ handlers. -/
 
 theorem compileExpBridge {width : Nat} [NeZero width]
     (context : CompileExpContextExact width) (expression : Exp (BitVec width)) :
-    compileExpBridgeProp context expression :=
-  Flapjack.Exp.rec
-    (motive_1 := compileExpBridgeProp context)
+    compileExpBridgeProp context expression := by
+  induction expression using Flapjack.Exp.rec
     (motive_2 := compileExpListBridgeProp context)
-    (motive_3 := fun _ => True)
-    (motive_4 := fun _ => True)
-    (compileExpBridge_const context)
-    (compileExpBridge_var context)
-    (compileExpBridge_rStruct context)
-    (compileExpBridge_rField context)
-    (fun name fields _ => compileExpBridge_nStruct context name fields)
-    (fun name value _ => compileExpBridge_nField context name value)
-    (compileExpBridge_load context)
-    (compileExpBridge_load32 context)
-    (compileExpBridge_loadByte context)
-    (compileExpBridge_op context)
-    (compileExpBridge_panOp context)
-    (compileExpBridge_cmp context)
-    (compileExpBridge_shift context)
-    (compileExpBridge_baseAddr context)
-    (compileExpBridge_topAddr context)
-    (compileExpBridge_bytesInWord context)
-    (compileExpListBridgeProp_nil context)
-    (compileExpListBridgeProp_cons context)
-    True.intro
-    (fun _ _ _ _ => True.intro)
-    (fun _ _ _ => True.intro)
-    expression
+    (motive_3 := fun _ => True) (motive_4 := fun _ => True) with
+  | _ =>
+      solve_by_elim [compileExpBridge_const, compileExpBridge_var,
+        compileExpBridge_rStruct, compileExpBridge_rField, compileExpBridge_nStruct,
+        compileExpBridge_nField, compileExpBridge_load, compileExpBridge_load32,
+        compileExpBridge_loadByte, compileExpBridge_op, compileExpBridge_panOp,
+        compileExpBridge_cmp, compileExpBridge_shift, compileExpBridge_baseAddr,
+        compileExpBridge_topAddr, compileExpBridge_bytesInWord,
+        compileExpListBridgeProp_nil, compileExpListBridgeProp_cons, True.intro]
 
 /-! ### Shape range in the exact-context expression path
 

@@ -24,29 +24,14 @@ is required. The Word-to-Stack frame and executed route remain separate. -/
 theorem wordExpCakeMaxVar_eq_maxVarExpHOL {width : Nat} [NeZero width]
     (expression : WordExp (BitVec width)) :
     wordExpCakeMaxVar expression = maxVarExpHOL (wordExpToHOL expression) := by
-  refine WordExp.rec
-    (motive_1 := fun expression =>
-      wordExpCakeMaxVar expression = maxVarExpHOL (wordExpToHOL expression))
-    (motive_2 := fun expressions =>
-      expressions.map wordExpCakeMaxVar =
-        (expressions.map wordExpToHOL).map maxVarExpHOL)
-    ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ expression
-  · intro value
-    simp only [wordExpCakeMaxVar, wordExpToHOL, maxVarExpHOL]
-  · intro name
-    simp only [wordExpCakeMaxVar, wordExpToHOL, maxVarExpHOL]
-  · intro store
-    simp only [wordExpCakeMaxVar, wordExpToHOL, maxVarExpHOL]
-  · intro address ih
-    simpa only [wordExpCakeMaxVar, wordExpToHOL, maxVarExpHOL] using ih
-  · intro operator arguments ih
-    simp only [wordExpCakeMaxVar, wordExpToHOL, maxVarExpHOL,
-      foldMaximum, Nat.zero_max, ih]
-  · intro operator left right ihLeft ihRight
-    simp only [wordExpCakeMaxVar, wordExpToHOL, maxVarExpHOL, ihLeft, ihRight]
-  · rfl
-  · intro head tail ihHead ihTail
-    simp only [List.map_cons, ihHead, ihTail]
+  set_option tactic.fun_induction.unfolding false in
+  fun_induction wordExpToHOL expression with
+  | case5 operator arguments ih =>
+      simp only [wordExpToHOL, wordExpCakeMaxVar, maxVarExpHOL, foldMaximum, Nat.zero_max, List.map_map]
+      congr 1
+      exact List.map_congr_left ih
+  | _ => simp_all only [wordExpToHOL, wordExpCakeMaxVar, maxVarExpHOL]
+
 
 /-- Complete production argument-list scan correspondence, including empty
 lists and arbitrary initial maxima. Flapjack-only carrier infrastructure;

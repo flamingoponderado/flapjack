@@ -1,3 +1,4 @@
+import Flapjack.Pancake.WordLang.MaxVarExp
 import Flapjack.Compiler.Backend.WordRemove
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateDecClock
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.GcConst
@@ -352,26 +353,19 @@ theorem memStore_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
 theorem wordExp_compileState {width : Nat} [NeZero width] {C : Type} {F : Type}
     (clk : Nat) (c : WordCompileFn width C) :
     ∀ (s : WordSemStateFiniteExact width C F) (y : WordLangExpHOL (BitVec width)),
-      wordExp (compileState clk c s) y = wordExp s y
-  | s, .const w => by rw [wordExp, wordExp]
-  | s, .var v => by rw [wordExp, wordExp]; rfl
-  | s, .lookup n => by rw [wordExp, wordExp]; rfl
-  | s, .load a => by
-      rw [wordExp, wordExp, wordExp_compileState clk c s a]
-      rfl
-  | s, .op op args => by
-      rw [wordExp, wordExp]
-      have : (args.attach.map fun (x : { x // x ∈ args }) => wordExp (compileState clk c s) x.1) =
-          (args.attach.map fun (x : { x // x ∈ args }) => wordExp s x.1) := by
-        apply List.map_congr_left
-        intro ⟨e, he⟩ _
-        have := List.sizeOf_lt_of_mem he
-        exact wordExp_compileState clk c s e
-      simp only [] at this ⊢
-      rw [this]
-  | s, .shift sh e1 e2 => by
-      rw [wordExp, wordExp, wordExp_compileState clk c s e1, wordExp_compileState clk c s e2]
-termination_by _ e => sizeOf e
+      wordExp (compileState clk c s) y = wordExp s y:= by
+  intro s y
+  set_option tactic.fun_induction.unfolding false in
+  fun_induction maxVarExpHOL y with
+  | case3 op args ih =>
+      have hmap : (args.attach.map fun x => wordExp (compileState clk c s) x.1) =
+          (args.attach.map fun x => wordExp s x.1) :=
+        List.map_congr_left (fun ⟨e, he⟩ _ => ih e he)
+      simp only [wordExp, hmap]
+  | case5 e _ _ _ _ =>
+      cases e <;> grind only [wordExp, getVar, getStore, compileState]
+  | _ => simp_all [wordExp, compileState, getVar, memLoad]
+
 
 /-- Exact HOL `assign_compile_state` (`word_removeProofScript.sml:195-199`). -/
 @[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "assign_compile_state"
