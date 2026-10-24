@@ -1,9 +1,13 @@
-import Flapjack.Compiler.Encoders.Asm
-import Flapjack.PanBst
-import Flapjack.Pancake.Semantics.CrepRuntimeTarget
-import Flapjack.Pancake.Semantics.PanSem
-import Flapjack.PanValueEvaluatorStability
-import Flapjack.RiscV.PanMemory
+module
+
+public import Flapjack.Compiler.Encoders.Asm
+public import Flapjack.PanBst
+public import Flapjack.Pancake.Semantics.CrepRuntimeTarget
+public import Flapjack.Pancake.Semantics.PanSem
+public import Flapjack.PanValueEvaluatorStability
+public import Flapjack.RiscV.PanMemory
+
+@[expose] public section
 
 /-!
 HOL-shaped expression evaluation inputs for a Pancake state.

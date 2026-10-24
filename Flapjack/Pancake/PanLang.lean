@@ -1,7 +1,11 @@
-import Flapjack.HolRef
-import Flapjack.Basis.Pure.MlString
-import Flapjack.FiniteMap.Basic
-import Flapjack.AstHOL
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Basis.Pure.MlString
+public import Flapjack.FiniteMap.Basic
+public import Flapjack.AstHOL
+
+@[expose] public section
 
 /-!
 The core Flapjack syntax.

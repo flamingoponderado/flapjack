@@ -1,5 +1,9 @@
-import Flapjack.Pancake.CrepLang.Exp
-import Flapjack.Pancake.PanLang
+module
+
+public import Flapjack.Pancake.CrepLang.Exp
+public import Flapjack.Pancake.PanLang
+
+@[expose] public section
 
 /-!
 Exact width-indexed carrier for the Crepe program syntax.

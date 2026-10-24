@@ -1,7 +1,11 @@
-import Flapjack.PanMemory
-import Flapjack.PanMemoryModel
-import Flapjack.Pancake.WordLang
-import Flapjack.RiscV.Model
+module
+
+public import Flapjack.PanMemory
+public import Flapjack.PanMemoryModel
+public import Flapjack.Pancake.WordLang
+public import Flapjack.RiscV.Model
+
+@[expose] public section
 
 /-!
 RISC-V byte-addressed operations for CakeML-style flat memory.

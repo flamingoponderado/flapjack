@@ -1,5 +1,9 @@
-import Flapjack.PanMemory
-import Flapjack.PanBst
+module
+
+public import Flapjack.PanMemory
+public import Flapjack.PanBst
+
+@[expose] public section
 
 /-!
 Top-level structured Pancake semantics.
@@ -29,7 +33,7 @@ structure PanValueProgramState (α : Type u) where
 /-- Retain the first (newest) source function for each name. This private list
     normalization has no independent HOL declaration; it implements the
     shadowing needed by the finite code-map adapter below. -/
-private def panValueProgramVisibleFunctions [BEq String]
+def panValueProgramVisibleFunctions [BEq String]
     (functions : List (FunName × List VarName × Prog α)) :
     List (FunName × List VarName × Prog α) := Id.run do
   let mut seen : List FunName := []

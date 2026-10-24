@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.PanSem.StateExact
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.StateExact
+
+@[expose] public section
 
 /-!
 # `panSem` local/global update helpers over the function-backed carrier

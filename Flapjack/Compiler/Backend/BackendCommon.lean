@@ -1,4 +1,8 @@
-import Flapjack.HolRef
+module
+
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-!
 The word-arithmetic helper shared by Pancake's Pan, Crep, and Loop primitive

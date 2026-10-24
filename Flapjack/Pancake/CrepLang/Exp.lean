@@ -1,5 +1,9 @@
-import Flapjack.Pancake.CrepLang
-import Flapjack.Basis.Pure.MlString
+module
+
+public import Flapjack.Pancake.CrepLang
+public import Flapjack.Basis.Pure.MlString
+
+@[expose] public section
 
 /-!
 Exact width-indexed carrier for the Crepe expression syntax.

@@ -1,7 +1,11 @@
-import Flapjack.Pancake.CrepLang
-import Flapjack.Basis.Pure.MlString
-import Flapjack.FiniteMap.Basic
-import Flapjack.Misc.Sptree
+module
+
+public import Flapjack.Pancake.CrepLang
+public import Flapjack.Basis.Pure.MlString
+public import Flapjack.FiniteMap.Basic
+public import Flapjack.Misc.Sptree
+
+@[expose] public section
 
 /-!
 The Loop intermediate language used after Crepe lowering. The constructors

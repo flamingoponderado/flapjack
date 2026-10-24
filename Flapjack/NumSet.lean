@@ -1,3 +1,7 @@
+module
+
+@[expose] public section
+
 /-!
 Executable list-backed model of the `num_set` operations used by Pancake.
 

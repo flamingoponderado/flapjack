@@ -1,5 +1,9 @@
-import Flapjack.PanSteppedSemantics
-import Flapjack.Ffi
+module
+
+public import Flapjack.PanSteppedSemantics
+public import Flapjack.Ffi
+
+@[expose] public section
 
 /-!
 # Stateful FFI semantics for structured Pancake programs

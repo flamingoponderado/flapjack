@@ -1,8 +1,12 @@
-import Flapjack.Pancake.PanStructs
-import Flapjack.Pancake.PanLang.Decl
-import Flapjack.Pancake.PanLang.Prog
-import Flapjack.Pancake.PanStructs.CompileShapeExact
-import Flapjack.Pancake.PanStructs.OldExpShapeExact
+module
+
+public import Flapjack.Pancake.PanStructs
+public import Flapjack.Pancake.PanLang.Decl
+public import Flapjack.Pancake.PanLang.Prog
+public import Flapjack.Pancake.PanStructs.CompileShapeExact
+public import Flapjack.Pancake.PanStructs.OldExpShapeExact
+
+@[expose] public section
 
 /-!
 Byte-rangedness preservation for the named-structure elimination pass

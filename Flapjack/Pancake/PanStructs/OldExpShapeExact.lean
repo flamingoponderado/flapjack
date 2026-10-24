@@ -1,4 +1,8 @@
-import Flapjack.Pancake.PanStructs.CompileShapeExact
+module
+
+public import Flapjack.Pancake.PanStructs.CompileShapeExact
+
+@[expose] public section
 
 /-! Exact expression-shape dependency of structure compilation. Production
 routing through these definitions remains a separate obligation. -/

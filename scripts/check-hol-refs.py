@@ -443,7 +443,10 @@ HOL_HEADER_KEYWORDS = (
     "Overload",
     "Type",
 )
-IMPORT_RE = re.compile(r"^import\s+(Flapjack(?:\.[A-Za-z0-9_]+)*)", re.M)
+IMPORT_RE = re.compile(
+    r"^(?:public\s+)?(?:meta\s+)?import\s+(?:all\s+)?"
+    r"(Flapjack(?:\.[A-Za-z0-9_]+)*)", re.M
+)
 
 
 class _LeanFileInfo:

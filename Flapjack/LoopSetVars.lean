@@ -1,4 +1,8 @@
-import Flapjack.LoopSemantics
+module
+
+public import Flapjack.LoopSemantics
+
+@[expose] public section
 
 /-!
 Faithful port of the original Pancake Loop `set_var` / `set_vars`.

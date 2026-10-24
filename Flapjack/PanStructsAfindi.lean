@@ -1,5 +1,9 @@
-import Flapjack.Pancake.PanStatic
-import Flapjack.Pancake.Proofs.PanStructs
+module
+
+public import Flapjack.Pancake.PanStatic
+public import Flapjack.Pancake.Proofs.PanStructs
+
+@[expose] public section
 
 /-!
 Residual named-structure proof helpers retained from the earlier

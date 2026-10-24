@@ -1,3 +1,5 @@
+module
+
 /-
 Exact HOL `panLang$fun_decl`, `panLang$decl`, and `panLang$struct_info` carriers
 over the faithful `MlString` name carrier (bead flapjack-pxn.18.3.5.8.4).
@@ -31,7 +33,9 @@ the field is `returnShape`, matching production; `export` is spelled `exported`.
 The codecs `*ToHOL`/`*OfHOL` bridge to the production carriers.  The total
 roundtrip `*ToHOL (*OfHOL x) = x` is kernel-checked below.
 -/
-import Flapjack.Pancake.PanLang.Prog
+public import Flapjack.Pancake.PanLang.Prog
+
+@[expose] public section
 
 namespace Flapjack.Pancake.PanLang
 

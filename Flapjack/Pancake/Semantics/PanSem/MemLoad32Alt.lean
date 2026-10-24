@@ -1,3 +1,5 @@
+module
+
 /-
 # Arbitrary-width port of `panSem$mem_load_32_alt` OR/shift assembly
 
@@ -25,8 +27,10 @@ rows are reused from `scripts/hol-probes/pan_sem_state_eval_probe.out`
 the Lean fixture also instantiates narrow widths. See bead
 `flapjack-pxn.18.3.6.9.27`.
 -/
-import Flapjack.Pancake.Semantics.PanSem.MemByteAssembly
-import Flapjack.Pancake.Semantics.PanSemStateEval
+public import Flapjack.Pancake.Semantics.PanSem.MemByteAssembly
+public import Flapjack.Pancake.Semantics.PanSemStateEval
+
+@[expose] public section
 
 namespace Flapjack
 

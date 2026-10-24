@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.PanSem.MemLoad32Alt
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.MemLoad32Alt
+
+@[expose] public section
 
 /-! Arbitrary-positive-width port of HOL `panSem$mem_store_32_alt` (`cakeml/pancake/semantics/panSemScript.sml:344`)
     over the HOL-shaped memory carrier.

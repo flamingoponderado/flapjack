@@ -1,4 +1,8 @@
-import Flapjack.HolRef
+module
+
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-!
 Primary Lean counterpart of `cakeml/semantics/astScript.sml` (the CakeML

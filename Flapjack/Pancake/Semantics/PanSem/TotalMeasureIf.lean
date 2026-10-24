@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Semantics.PanSem.Total
-import Flapjack.Pancake.Semantics.PanSem.TotalSteps
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.Total
+public import Flapjack.Pancake.Semantics.PanSem.TotalSteps
+
+@[expose] public section
 
 /-!
 # Measure-driven total PanSem control fragment

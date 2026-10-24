@@ -1,7 +1,11 @@
-import Flapjack.Pancake.Semantics.PanSem.ControlExact
-import Flapjack.Pancake.Semantics.PanSem.TickShMemExact
-import Flapjack.Pancake.Semantics.PanSem.LocalUpdatesExact
-import Flapjack.Pancake.Semantics.PanSem.CallExact
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.ControlExact
+public import Flapjack.Pancake.Semantics.PanSem.TickShMemExact
+public import Flapjack.Pancake.Semantics.PanSem.LocalUpdatesExact
+public import Flapjack.Pancake.Semantics.PanSem.CallExact
+
+@[expose] public section
 
 /-!
 # Exact `panSem` clock bounds for the recursive `evaluate` dispatcher

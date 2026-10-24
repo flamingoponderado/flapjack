@@ -1,4 +1,8 @@
-import Flapjack.PanShMemLoad
+module
+
+public import Flapjack.PanShMemLoad
+
+@[expose] public section
 
 /-!
 # Pancake `panSem.sh_mem_store`

@@ -1,4 +1,8 @@
-import Lean
+module
+
+public meta import Lean
+
+public meta section
 
 /-!
 # `@[hol ...]`: cross-reference to the original HOL4 declaration

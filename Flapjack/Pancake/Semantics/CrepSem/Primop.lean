@@ -1,7 +1,11 @@
-import Flapjack.Compiler.Backend.BackendCommon
-import Flapjack.HolRef
-import Flapjack.PanValues
-import Flapjack.Pancake.Semantics.PanSem
+module
+
+public import Flapjack.Compiler.Backend.BackendCommon
+public import Flapjack.HolRef
+public import Flapjack.PanValues
+public import Flapjack.Pancake.Semantics.PanSem
+
+@[expose] public section
 
 /-!
 The HOL `crepSemScript.sml` primitive operator acts on `word_lab` cells, not

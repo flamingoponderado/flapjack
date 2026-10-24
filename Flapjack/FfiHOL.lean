@@ -1,7 +1,11 @@
-import Flapjack.Ffi
-import Flapjack.Basis.Pure.MlString
-import Flapjack.HolRef
-import Flapjack.Misc.LList
+module
+
+public import Flapjack.Ffi
+public import Flapjack.Basis.Pure.MlString
+public import Flapjack.HolRef
+public import Flapjack.Misc.LList
+
+@[expose] public section
 
 /-!
 # Exact HOL `ffi_state` carrier

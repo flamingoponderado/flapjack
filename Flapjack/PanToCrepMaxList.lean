@@ -1,4 +1,8 @@
-import Flapjack.Pancake.PanToCrep
+module
+
+public import Flapjack.Pancake.PanToCrep
+
+@[expose] public section
 
 /-!
 Faithful executable port of HOL's `rich_list$MAX_LIST` over `num`, used by the

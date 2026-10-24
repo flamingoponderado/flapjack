@@ -1,11 +1,15 @@
-import Flapjack.LoopStateResult
-import Flapjack.LoopCallEnv
-import Flapjack.LoopFindCode
-import Flapjack.LoopGetVarImm
-import Flapjack.LoopSetVars
-import Flapjack.LoopArith
-import Flapjack.Compiler.Backend.BackendCommon
-import Flapjack.Pancake.Semantics.CrepRuntimeTarget
+module
+
+public import Flapjack.LoopStateResult
+public import Flapjack.LoopCallEnv
+public import Flapjack.LoopFindCode
+public import Flapjack.LoopGetVarImm
+public import Flapjack.LoopSetVars
+public import Flapjack.LoopArith
+public import Flapjack.Compiler.Backend.BackendCommon
+public import Flapjack.Pancake.Semantics.CrepRuntimeTarget
+
+@[expose] public section
 
 /-!
 # Pancake `loopSem.evaluate`

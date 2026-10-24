@@ -1,7 +1,11 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.PanLang.Shape
-import Flapjack.Pancake.PanLang.Decl
-import Flapjack.Pancake.Semantics.PanSem.ValueHOL
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.PanLang.Shape
+public import Flapjack.Pancake.PanLang.Decl
+public import Flapjack.Pancake.Semantics.PanSem.ValueHOL
+
+@[expose] public section
 
 /-!
 # Exact `panSem$mem_load` over the faithful `mlstring` carriers
