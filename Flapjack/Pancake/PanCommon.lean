@@ -1,5 +1,9 @@
-import Flapjack.FiniteMap.Basic
-import Flapjack.HolRef
+module
+
+public import Flapjack.FiniteMap.Basic
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-!
 # Pancake `pan_common`

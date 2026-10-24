@@ -1,9 +1,13 @@
+module
+
 /-
 Copyright (c) 2026 Flapjack contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file COPYING.
 Authors: Flapjack contributors
 -/
-import Flapjack.HolRef
+public import Flapjack.HolRef
+
+@[expose] public section
 
 /-!
 # Exact port of HOL `misc$OPT_MMAP_CONG`

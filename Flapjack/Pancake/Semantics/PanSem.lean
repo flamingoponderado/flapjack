@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.PanBst
-import Flapjack.PanValueFfiClockSemantics
+module
+
+public import Flapjack.HolRef
+public import Flapjack.PanBst
+public import Flapjack.PanValueFfiClockSemantics
+
+@[expose] public section
 
 /-!
 # Pancake `evaluate`

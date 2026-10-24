@@ -1,7 +1,11 @@
-import Flapjack.Ffi
-import Flapjack.FfiHOL
-import Flapjack.HolRef
-import Flapjack.Pancake.PanLang.Prog
+module
+
+public import Flapjack.Ffi
+public import Flapjack.FfiHOL
+public import Flapjack.HolRef
+public import Flapjack.Pancake.PanLang.Prog
+
+@[expose] public section
 
 /-!
 # Bridge between the executable FFI state and the exact HOL `ffi_state`

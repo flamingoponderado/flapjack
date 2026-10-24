@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Semantics.PanSem.StateExact
-import Flapjack.Pancake.Semantics.PanSem.LocalUpdatesExact
-import Flapjack.Pancake.Semantics.CrepSem.HOLState
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.StateExact
+public import Flapjack.Pancake.Semantics.PanSem.LocalUpdatesExact
+public import Flapjack.Pancake.Semantics.CrepSem.HOLState
+
+@[expose] public section
 
 /-!
 # Finite-support refinement of the exact source-state carrier

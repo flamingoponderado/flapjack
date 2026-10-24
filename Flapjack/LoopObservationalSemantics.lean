@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Semantics.LoopSem
-import Flapjack.Ffi
+module
+
+public import Flapjack.Pancake.Semantics.LoopSem
+public import Flapjack.Ffi
+
+@[expose] public section
 
 /-!
 # Pancake `loopSem.semantics`

@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.PanSem.TotalEvalAgree
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.TotalEvalAgree
+
+@[expose] public section
 
 /-!
 # Production PanSem entry state from evaluated declarations

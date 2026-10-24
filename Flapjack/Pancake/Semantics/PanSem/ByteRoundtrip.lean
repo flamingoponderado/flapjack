@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.PanSemStateEval
+module
+
+public import Flapjack.Pancake.Semantics.PanSemStateEval
+
+@[expose] public section
 
 /-!
 # Byte set/get roundtrip for the Pancake memory proof

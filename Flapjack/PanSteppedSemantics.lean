@@ -1,4 +1,8 @@
-import Flapjack.PanProgramSemantics
+module
+
+public import Flapjack.PanProgramSemantics
+
+@[expose] public section
 
 /-!
 Step-counted structured Pancake semantics.

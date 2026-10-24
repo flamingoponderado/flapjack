@@ -1,5 +1,9 @@
-import Flapjack.Pancake.LoopLang
-import Flapjack.LoopSemantics
+module
+
+public import Flapjack.Pancake.LoopLang
+public import Flapjack.LoopSemantics
+
+@[expose] public section
 
 namespace Flapjack
 

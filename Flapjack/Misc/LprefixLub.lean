@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Misc.Option
-import Flapjack.Misc.LList
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Misc.Option
+public import Flapjack.Misc.LList
+
+@[expose] public section
 
 /-!
 # HOL `lprefix_lub` (least upper bounds of lazy-list prefix chains)

@@ -1,6 +1,10 @@
-import Flapjack.MemOp
-import Flapjack.Pancake.LoopLive
-import Flapjack.NumSet
+module
+
+public import Flapjack.MemOp
+public import Flapjack.Pancake.LoopLive
+public import Flapjack.NumSet
+
+@[expose] public section
 
 /-!
 The Word intermediate language used by CakeML's backend. This first port

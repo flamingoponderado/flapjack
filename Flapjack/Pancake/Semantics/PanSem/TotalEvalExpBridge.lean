@@ -1,10 +1,14 @@
-import Flapjack.Pancake.Semantics.PanSem.TotalEvalBridge
-import Flapjack.Pancake.Semantics.PanSem.EvalFinite
-import Flapjack.Pancake.Semantics.PanSem.MemLoadHOL
-import Flapjack.Pancake.Semantics.PanSem.StateExactFinite
-import Flapjack.Pancake.Semantics.PanSem.Primop
-import Flapjack.Pancake.PanStructsByteRanged
-import Flapjack.Pancake.Semantics.PanProps
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.TotalEvalBridge
+public import Flapjack.Pancake.Semantics.PanSem.EvalFinite
+public import Flapjack.Pancake.Semantics.PanSem.MemLoadHOL
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFinite
+public import Flapjack.Pancake.Semantics.PanSem.Primop
+public import Flapjack.Pancake.PanStructsByteRanged
+public import Flapjack.Pancake.Semantics.PanProps
+
+@[expose] public section
 
 /-!
 # Production/exact expression-evaluation agreement for the total `panSem` bridge

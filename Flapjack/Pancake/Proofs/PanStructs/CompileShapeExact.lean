@@ -1,5 +1,9 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.PanStructs.CompileShapeExact
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.PanStructs.CompileShapeExact
+
+@[expose] public section
 
 /-! Exact proof theorem for the source `compile_shapes` definition. -/
 

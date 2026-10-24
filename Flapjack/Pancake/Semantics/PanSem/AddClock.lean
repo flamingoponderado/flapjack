@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Semantics.PanSem.FiniteSupportStep
-import Flapjack.Pancake.Semantics.PanSem.StateSimpExact
-import Flapjack.PanObservationalSemantics
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.FiniteSupportStep
+public import Flapjack.Pancake.Semantics.PanSem.StateSimpExact
+public import Flapjack.PanObservationalSemantics
+
+@[expose] public section
 
 /-!
 # Clock-shift infrastructure for the exact `panSem` evaluator

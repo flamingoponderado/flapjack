@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Semantics.PanSem.StoreExact
-import Flapjack.Pancake.Semantics.PanSem.ShMemExact
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.StoreExact
+public import Flapjack.Pancake.Semantics.PanSem.ShMemExact
+
+@[expose] public section
 
 /-! # Exact panSem `Tick` and `ShMemLoad`/`ShMemStore` clause steps
 

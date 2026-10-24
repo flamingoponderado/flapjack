@@ -1,6 +1,10 @@
-import Flapjack.HolRef
-import Flapjack.Pancake.WordLang
-import Flapjack.Compiler.Backend.StackLang
+module
+
+public import Flapjack.HolRef
+public import Flapjack.Pancake.WordLang
+public import Flapjack.Compiler.Backend.StackLang
+
+@[expose] public section
 
 /-!
 # Faithful assembler configuration validity predicates

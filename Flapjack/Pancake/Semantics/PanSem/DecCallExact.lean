@@ -1,3 +1,5 @@
+module
+
 /-
   Function-backed `panSem$lookup_code` and callback-parameterised DecCall
   clause over the `mlstring`-keyed source state. `PanSemStateExact.code` and the
@@ -26,8 +28,10 @@
   caller) and is therefore deliberately untagged: only the whole recursive
   `evaluate_def` statement can carry a `@[hol]` tag.
 -/
-import Flapjack.Pancake.Semantics.PanSem.EvalExact
-import Flapjack.Pancake.Semantics.PanSem.TickShMemExact
+public import Flapjack.Pancake.Semantics.PanSem.EvalExact
+public import Flapjack.Pancake.Semantics.PanSem.TickShMemExact
+
+@[expose] public section
 
 namespace Flapjack
 

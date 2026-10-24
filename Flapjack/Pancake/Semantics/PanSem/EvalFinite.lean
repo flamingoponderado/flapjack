@@ -1,3 +1,5 @@
+module
+
 /-
 FINITE-SUPPORT CARRIER EVALUATION (flapjack-pxn.18.3.7.1.3.1.1.2.5).
 
@@ -33,8 +35,10 @@ The `fmap_as_finite_support` qualifier, manifest entry, type-lock coverage, and
 the production-path follow-up are tracked by the parent bead
 `flapjack-pxn.18.3.7.1.3.1.1.2.5`.
 -/
-import Flapjack.Pancake.Semantics.PanSem.EvalExact
-import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+public import Flapjack.Pancake.Semantics.PanSem.EvalExact
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+
+@[expose] public section
 
 namespace Flapjack
 

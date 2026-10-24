@@ -1,3 +1,5 @@
+module
+
 /-
 # Production/exact carrier bridge for the captured `panSem$state`
 
@@ -58,10 +60,12 @@ relation is strong enough to determine FFI effects (the oracle, host state and
 event log are compared exactly); no bridge beyond equality is needed.
 -/
 
-import Flapjack.Pancake.Semantics.PanSem.StateExactFinite
-import Flapjack.Pancake.PanLang.Prog
-import Flapjack.Pancake.PanLang.Decl
-import Flapjack.Pancake.PanStatic
+public import Flapjack.Pancake.Semantics.PanSem.StateExactFinite
+public import Flapjack.Pancake.PanLang.Prog
+public import Flapjack.Pancake.PanLang.Decl
+public import Flapjack.Pancake.PanStatic
+
+@[expose] public section
 
 namespace Flapjack
 

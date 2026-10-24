@@ -1,4 +1,8 @@
-import Flapjack.Pancake.CrepToLoop
+module
+
+public import Flapjack.Pancake.CrepToLoop
+
+@[expose] public section
 
 /-!
 Executable semantics for the first Loop fragment.

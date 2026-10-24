@@ -1,3 +1,7 @@
+module
+
+@[expose] public section
+
 
 /-!
 Primitive HOL4/CakeML finite-map interface.

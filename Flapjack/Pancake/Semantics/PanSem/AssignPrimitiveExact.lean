@@ -1,4 +1,8 @@
-import Flapjack.Pancake.Semantics.PanSem.DecExact
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.DecExact
+
+@[expose] public section
 
 /-!
 # Exact HOL panSem `Assign` and `Primitive` clause steps

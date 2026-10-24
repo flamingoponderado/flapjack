@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
-import Flapjack.Pancake.Semantics.PanSem.Semantics
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
+public import Flapjack.Pancake.Semantics.PanSem.Semantics
+
+@[expose] public section
 
 /-!
 The `semantics_decls_has_main` theorems in `panPropsScript.sml:1611-1638`

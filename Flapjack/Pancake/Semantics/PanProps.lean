@@ -1,13 +1,17 @@
-import Flapjack.HolRef
-import Flapjack.FiniteMap.Basic
-import Flapjack.Pancake.Semantics.PanSem
-import Flapjack.PanValueFlatten
-import Flapjack.Pancake.Semantics.PanCommonProps
-import Flapjack.Pancake.Semantics.PanSem.LocalUpdatesExact
-import Flapjack.Pancake.Semantics.PanSem.MemLoadHOL
-import Flapjack.Pancake.Semantics.PanSem.DeclContextExact
-import Flapjack.Pancake.Semantics.PanSem.EvalExact
-import Flapjack.Pancake.Semantics.PanProps.HasMain
+module
+
+public import Flapjack.HolRef
+public import Flapjack.FiniteMap.Basic
+public import Flapjack.Pancake.Semantics.PanSem
+public import Flapjack.PanValueFlatten
+public import Flapjack.Pancake.Semantics.PanCommonProps
+public import Flapjack.Pancake.Semantics.PanSem.LocalUpdatesExact
+public import Flapjack.Pancake.Semantics.PanSem.MemLoadHOL
+public import Flapjack.Pancake.Semantics.PanSem.DeclContextExact
+public import Flapjack.Pancake.Semantics.PanSem.EvalExact
+public import Flapjack.Pancake.Semantics.PanProps.HasMain
+
+@[expose] public section
 
 /-!
 HOL counterpart module for `cakeml/pancake/semantics/panPropsScript.sml`.

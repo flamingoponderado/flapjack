@@ -1,10 +1,14 @@
-import Flapjack.FiniteMap.Basic
-import Flapjack.Basis.Pure.MlString
-import Flapjack.Pancake.CrepLang.Prog
-import Flapjack.Pancake.Semantics.CrepSem.Eval
-import Flapjack.Pancake.Semantics.PanSem
-import Flapjack.FfiHOL
-import Flapjack.Misc.OptMmapCong
+module
+
+public import Flapjack.FiniteMap.Basic
+public import Flapjack.Basis.Pure.MlString
+public import Flapjack.Pancake.CrepLang.Prog
+public import Flapjack.Pancake.Semantics.CrepSem.Eval
+public import Flapjack.Pancake.Semantics.PanSem
+public import Flapjack.FfiHOL
+public import Flapjack.Misc.OptMmapCong
+
+@[expose] public section
 
 /-!
 # HOL-shaped state carriers for Crep expression proofs
@@ -589,12 +593,12 @@ structure CrepSemHOLFiniteState (ι : Type) (codeEntry ffiState : Type) where
   baseAddr : ι → Bool
   topAddr : ι → Bool
 
-private def crepExpressionProjectionFfi : FfiState Unit :=
+def crepExpressionProjectionFfi : FfiState Unit :=
   { oracle := fun _ _ _ _ => .final .failed
     state := ()
     ioEvents := [] }
 
-private def holWordLabToBits {width : Nat} [NeZero width] (cell : HolWordLab width) :
+def holWordLabToBits {width : Nat} [NeZero width] (cell : HolWordLab width) :
     PanWordLab (Fin width → Bool) :=
   match cell with
   | .word word => .word (bitVecToHolWordBits word)

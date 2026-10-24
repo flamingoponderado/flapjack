@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Semantics.LoopSem
-import Flapjack.Pancake.Semantics.PanSemStateEval
-import Flapjack.Pancake.Semantics.CrepSem.Eval
+module
+
+public import Flapjack.Pancake.Semantics.LoopSem
+public import Flapjack.Pancake.Semantics.PanSemStateEval
+public import Flapjack.Pancake.Semantics.CrepSem.Eval
+
+@[expose] public section
 
 /-!
 # Agreement of the source and target byte-codec renderings

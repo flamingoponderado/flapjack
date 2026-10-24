@@ -1,4 +1,8 @@
-import Flapjack.Pancake.PanLang
+module
+
+public import Flapjack.Pancake.PanLang
+
+@[expose] public section
 
 /-!
 Static-checker data and shape-context operations.

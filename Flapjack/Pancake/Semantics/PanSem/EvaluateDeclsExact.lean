@@ -1,3 +1,5 @@
+module
+
 /-
 EXACT DECLARATION EVALUATION (flapjack-pxn.18.3.6.9.22).
 
@@ -39,7 +41,9 @@ The direct original-HOL EVAL rows for these clauses are in
 `scripts/hol-probes/regenerate.sh:194`) and are reproduced by
 `Flapjack/Test/PanSemEvaluateDeclsExactParity.lean`.
 -/
-import Flapjack.Pancake.Semantics.PanSem.EvalExact
+public import Flapjack.Pancake.Semantics.PanSem.EvalExact
+
+@[expose] public section
 
 namespace Flapjack
 

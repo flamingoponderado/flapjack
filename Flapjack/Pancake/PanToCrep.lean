@@ -1,10 +1,14 @@
-import Flapjack.HolRef
-import Flapjack.FiniteMap.Basic
-import Flapjack.Pancake.CrepLang
-import Flapjack.Pancake.PanStatic
-import Flapjack.Pancake.PanLang.Shape
-import Flapjack.Pancake.CrepLang.Exp
-import Flapjack.Pancake.CrepLang.Prog
+module
+
+public import Flapjack.HolRef
+public import Flapjack.FiniteMap.Basic
+public import Flapjack.Pancake.CrepLang
+public import Flapjack.Pancake.PanStatic
+public import Flapjack.Pancake.PanLang.Shape
+public import Flapjack.Pancake.CrepLang.Exp
+public import Flapjack.Pancake.CrepLang.Prog
+
+@[expose] public section
 
 /-!
 Executable expression lowering from Flapjack to Crepe.

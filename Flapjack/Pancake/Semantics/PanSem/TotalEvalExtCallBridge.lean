@@ -1,5 +1,9 @@
-import Flapjack.Pancake.Semantics.PanSem.TotalEvalRanged
-import Flapjack.Pancake.Semantics.PanSem.ExtCallExact
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.TotalEvalRanged
+public import Flapjack.Pancake.Semantics.PanSem.ExtCallExact
+
+@[expose] public section
 
 /-!
 # Production/exact byte-array correspondence for the total panSem `ExtCall`

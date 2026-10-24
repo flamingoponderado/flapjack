@@ -1,6 +1,10 @@
-import Flapjack.Pancake.Semantics.PanSem.AssignPrimitiveExact
-import Flapjack.Pancake.Semantics.PanSem.MemLoadHOL
-import Flapjack.Pancake.Semantics.PanSemStateEval
+module
+
+public import Flapjack.Pancake.Semantics.PanSem.AssignPrimitiveExact
+public import Flapjack.Pancake.Semantics.PanSem.MemLoadHOL
+public import Flapjack.Pancake.Semantics.PanSemStateEval
+
+@[expose] public section
 
 /-! # Exact panSem `Store`/`Store32`/`StoreByte` clause steps
 

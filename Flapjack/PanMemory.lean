@@ -1,5 +1,9 @@
-import Flapjack.PanValues
-import Flapjack.PanMemoryModel
+module
+
+public import Flapjack.PanValues
+public import Flapjack.PanMemoryModel
+
+@[expose] public section
 
 /-!
 Flat source memory semantics.
