@@ -7,6 +7,7 @@ import Flapjack.Compiler.Backend.FlatToClos.Helpers
 import Flapjack.Compiler.Backend.FlatToClos.Arith
 import Flapjack.Compiler.Backend.FlatToClos.CopyByte
 import Flapjack.Compiler.Backend.FlatToClos.Op
+import Flapjack.Compiler.Backend.FlatToClos.Compile
 import Flapjack.Test.CakeMLFlatOracle
 
 namespace Flapjack.Test.FlatElim
@@ -111,5 +112,13 @@ example : compileOp .none (.src .aupdate) [] = .let .none []
 example : compileOp .none (.src (.fromTo .intT (.wordT .w8))) [.var .none 7] =
     .op .none (.intOp .mod) [.op .none (.intOp (.const 256)) [], .var .none 7] := rfl
 #guard array_update && word8_conversion
+example : Flapjack.Compiler.Backend.FlatToClos.compile []
+    [.let_ .none (some (ofString "x")) (.lit .none (.intLit 4))
+      (.varLocal .none (ofString "x"))] =
+    [.let .none [.op .none (.intOp (.const 4)) []] (.var .none 0)] := rfl
+example : Flapjack.Compiler.Backend.FlatToClos.compile []
+    [.con .none (some (4, none)) [.lit .none (.intLit 1), .lit .none (.intLit 2)]] =
+    [.op .none (.blockOp (.constant (.constCons 4 [.constInt 1, .constInt 2]))) []] := rfl
+#guard compile_let && compile_constructor
 
 end Flapjack.Test.FlatElim

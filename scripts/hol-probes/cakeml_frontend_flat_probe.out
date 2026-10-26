@@ -20,3 +20,5 @@ int_division=T
 copy_string=T
 array_update=T
 word8_conversion=T
+compile_let=T
+compile_constructor=T
