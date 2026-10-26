@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.FlatToClos.Op
 import Flapjack.Compiler.Backend.ClosInterp.Interpreter
+import Flapjack.Compiler.Backend.ClosInterp.Optimise
 
 /-! Flat expressions to closure expressions, before interpreter attachment. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
@@ -65,5 +66,12 @@ def compileDecs (es : List FlatLang.Exp) : List ClosLang.Exp := compile [] es
 @[hol "cakeml/compiler/backend/flat_to_closScript.sml" "compile_prog_def"]
 def compileProg (es : List FlatLang.Exp) : List ClosLang.Exp :=
   ClosInterp.attachInterpreter (compileDecs es)
+
+/-- Incremental compilation appends the unit expression and applies the
+original interpreter-insertion optimization. -/
+@[hol "cakeml/compiler/backend/flat_to_closScript.sml" "inc_compile_decs_def"]
+def incCompileDecs {α : Type} (es : List FlatLang.Exp) : List ClosLang.Exp × List α :=
+  let xs := compileDecs es ++ compileDecs [.con .none none []]
+  (ClosInterp.insertInterp xs, [])
 
 end Flapjack.Compiler.Backend.FlatToClos

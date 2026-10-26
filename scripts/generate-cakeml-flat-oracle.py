@@ -13,7 +13,7 @@ NAMES = ("name_roundtrips", "name_bytes", "name_unreserved", "pure_init", "hidde
          "pattern_encoding", "empty_program_globals", "empty_program_output", "word8_literal",
          "smart_constructor", "int_division", "copy_string", "array_update", "word8_conversion",
          "compile_let", "compile_constructor", "compile_nop", "closure_empty_program",
-         "closure_install_detect", "closure_init_false")
+         "closure_install_detect", "closure_init_false", "incremental_empty", "interpreter_arity")
 
 
 def render():
@@ -36,12 +36,16 @@ def render():
              f"def nameRoundtrips : List Nat := {numbers}",
              f"def nameBytes : List (List Nat) := {byte_rows}",
              f"def nameUnreserved : Nat := {name_unreserved}"]
+    if rows["interpreter_arity"] not in ("[F; T]", "[F; F]", "[T; F]", "[T; T]"):
+        raise ValueError("invalid interpreter arity observations")
+    values = rows["interpreter_arity"][1:-1].split("; ")
+    lines.append(f"def interpreter_arity : List Bool := [{', '.join('true' if v == 'T' else 'false' for v in values)}]")
     for name in ("pure_init", "hidden_init", "impure_lookup_init", "hidden_lookup_init",
                  "keep_empty", "keep_reachable", "guard_double_not", "guard_false_conj",
                  "pattern_encoding", "empty_program_output", "word8_literal", "smart_constructor",
                  "int_division", "copy_string", "array_update", "word8_conversion", "compile_let",
                  "compile_constructor", "compile_nop", "closure_empty_program", "closure_install_detect",
-                 "closure_init_false"):
+                 "closure_init_false", "incremental_empty"):
         value = rows[name]
         if value not in ("T", "F"):
             raise ValueError(f"invalid HOL boolean for {name}: {value}")

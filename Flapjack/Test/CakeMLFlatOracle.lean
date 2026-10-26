@@ -3,6 +3,7 @@ namespace Flapjack.Test.CakeMLFlatOracle
 def nameRoundtrips : List Nat := [0, 89, 90, 181]
 def nameBytes : List (List Nat) := [[46, 46, 35], [46, 46, 124], [46, 46, 35, 125], [46, 46, 36, 125, 125]]
 def nameUnreserved : Nat := 0
+def interpreter_arity : List Bool := [false, true]
 def pure_init : Bool := true
 def hidden_init : Bool := true
 def impure_lookup_init : Bool := false
@@ -25,6 +26,7 @@ def compile_nop : Bool := true
 def closure_empty_program : Bool := true
 def closure_install_detect : Bool := true
 def closure_init_false : Bool := true
+def incremental_empty : Bool := true
 def eliminate_pure_length : Nat := 0
 def eval_bypass_length : Nat := 2
 def empty_program_globals : Nat := 1

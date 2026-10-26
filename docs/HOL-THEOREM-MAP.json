@@ -99900,5 +99900,125 @@
     "hol_name": "compile_prog_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source composition transcribed; complete source and typed carrier review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Optimise.lean",
+    "lean_name": "canInterpretOp",
+    "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
+    "hol_name": "can_interpret_op_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Optimise.lean",
+    "lean_name": "canInterpret",
+    "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
+    "hol_name": "can_interpret_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Optimise.lean",
+    "lean_name": "canInterpretList",
+    "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
+    "hol_name": "can_interpret_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Optimise.lean",
+    "lean_name": "checkSizeOp",
+    "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
+    "hol_name": "check_size_op_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Optimise.lean",
+    "lean_name": "checkSize",
+    "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
+    "hol_name": "check_size_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Optimise.lean",
+    "lean_name": "checkSizeList",
+    "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
+    "hol_name": "check_size_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Optimise.lean",
+    "lean_name": "nontrivialSize",
+    "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
+    "hol_name": "nontrivial_size_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Optimise.lean",
+    "lean_name": "toConstantOp",
+    "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
+    "hol_name": "to_constant_op_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Optimise.lean",
+    "lean_name": "toConstant",
+    "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
+    "hol_name": "to_constant_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Optimise.lean",
+    "lean_name": "toConstantList",
+    "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
+    "hol_name": "to_constant_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Optimise.lean",
+    "lean_name": "optInterp",
+    "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
+    "hol_name": "opt_interp_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Optimise.lean",
+    "lean_name": "optInterp1",
+    "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
+    "hol_name": "opt_interp1_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Optimise.lean",
+    "lean_name": "insertInterp1",
+    "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
+    "hol_name": "insert_interp1_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Optimise.lean",
+    "lean_name": "insertInterp",
+    "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
+    "hol_name": "insert_interp_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Compile.lean",
+    "lean_name": "incCompileDecs",
+    "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
+    "hol_name": "inc_compile_decs_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source composition transcribed; complete source and typed carrier review remains pending."
   }
 ]

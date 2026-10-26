@@ -50,3 +50,6 @@ val _ = capture "closure_install_detect" ``closLang$has_install_list [closLang$F
 val _ = capture "closure_init_false" ``clos_interp$compile_init F =
   closLang$Let backend_common$None [closLang$Op backend_common$None (closLang$GlobOp closLang$AllocGlobal) [closLang$Op backend_common$None (closLang$IntOp (closLang$Const 1)) []]; closLang$Op backend_common$None (closLang$BlockOp (closLang$Cons 0)) []]
     (closLang$Op backend_common$None (closLang$GlobOp (closLang$SetGlobal 0)) [closLang$Var backend_common$None 1])``;
+val _ = capture "incremental_empty" ``flat_to_clos$inc_compile_decs [] =
+  ([closLang$Op backend_common$None (closLang$BlockOp (closLang$Cons 0)) []], ([]:num list))``;
+val _ = capture "interpreter_arity" ``[clos_interp$can_interpret_op (closLang$BlockOp (closLang$Cons 3)) 1; clos_interp$can_interpret_op (closLang$BlockOp (closLang$Cons 2)) 1]``;

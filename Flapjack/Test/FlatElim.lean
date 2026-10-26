@@ -137,5 +137,11 @@ example : Flapjack.Compiler.Backend.ClosInterp.compileInit false =
       .op .none (.blockOp (.cons 0)) []]
       (.op .none (.globOp (.setGlobal 0)) [.var .none 1]) := rfl
 #guard closure_init_false
+example : (Flapjack.Compiler.Backend.FlatToClos.incCompileDecs [] :
+    List Flapjack.Compiler.Backend.ClosLang.Exp × List Nat) =
+    ([.op .none (.blockOp (.cons 0)) []], []) := rfl
+#guard incremental_empty
+#guard [Flapjack.Compiler.Backend.ClosInterp.canInterpretOp (.blockOp (.cons 3)) 1,
+  Flapjack.Compiler.Backend.ClosInterp.canInterpretOp (.blockOp (.cons 2)) 1] == interpreter_arity
 
 end Flapjack.Test.FlatElim
