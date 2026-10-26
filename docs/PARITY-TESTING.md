@@ -1,5 +1,13 @@
 # Pancake parity-testing workflow
 
+For a pinned CakeML oracle, build from a clean checkout of the `cakeml`
+submodule revision in `/var/tmp/flapjack-cakeml-oracle`, using a built HOL
+checkout at the `HOL` submodule revision. Run
+`HOL4=/path/to/built/HOL scripts/build-pinned-cake.sh`; the script checks both
+source revisions and the resulting executable's embedded version. Set
+`CAKEML_BUILD_DIR` to choose another persistent build directory. The reference
+submodules in this repository remain read-only.
+
 Flapjack is a Lean port of the CakeML Pancake compiler. A regression test is
 useful for porting only when it corresponds to behavior of the original
 Pancake implementation. This applies to source-to-RISC-V tests and to tests
