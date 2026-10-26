@@ -167,6 +167,12 @@ example : Flapjack.Compiler.Backend.PatternComp.compFuel 1 [] = some .fail := rf
 example : Flapjack.Compiler.Backend.PatternComp.compFuel 3 [(.any, 7)] = some (.leaf 7) := rfl
 example : Flapjack.Compiler.Backend.PatternComp.compFuel 0 [(.any, 7)] = none := rfl
 #guard pattern_compile_empty && pattern_compile_any
+#guard [Flapjack.Compiler.Backend.PatternExh.exhRows ([] : List (Flapjack.Compiler.Backend.PatternSemantics.Pat × Nat)),
+  Flapjack.Compiler.Backend.PatternExh.exhRows [(.any, 0)],
+  Flapjack.Compiler.Backend.PatternExh.exhRows [(.lit (.intLit 1), 0)],
+  Flapjack.Compiler.Backend.PatternExh.exhRows
+    [(.cons (some (0, some [(0,0), (1,0)])) [], 0),
+     (.cons (some (1, some [(0,0), (1,0)])) [], 1)]] == pattern_exhaustive
 example : compilePatRhsFuel 1 .none 0 (.varLocal .none (ofString "v"))
     (.pvar (ofString "x"), lit) =
     some (.let_ .none (some (ofString "x")) (.varLocal .none (ofString "v")) lit) := rfl

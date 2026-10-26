@@ -15,7 +15,7 @@ NAMES = ("name_roundtrips", "name_bytes", "name_unreserved", "pure_init", "hidde
          "compile_let", "compile_constructor", "compile_nop", "closure_empty_program",
          "closure_install_detect", "closure_init_false", "incremental_empty", "interpreter_arity",
          "pattern_any_tree", "pattern_constructor_guard", "pattern_nub", "pattern_specialize",
-         "pattern_compile_empty", "pattern_compile_any", "pattern_bind_variable", "pattern_compile_branch", "pattern_constructor_branch",
+         "pattern_compile_empty", "pattern_compile_any", "pattern_exhaustive", "pattern_bind_variable", "pattern_compile_branch", "pattern_constructor_branch",
          "empty_source_to_clos", "reference_source_to_clos", "source_let_lifting", "lifted_source_to_clos", "match_source_to_clos",
          "bvl_shared_constant", "bvl_stub_layout", "bvl_chain_empty", "bvl_code_sort", "bvl_build_aux")
 
@@ -48,6 +48,13 @@ def render():
         raise ValueError("invalid interpreter arity observations")
     values = rows["interpreter_arity"][1:-1].split("; ")
     lines.append(f"def interpreter_arity : List Bool := [{', '.join('true' if v == 'T' else 'false' for v in values)}]")
+    exhaustive = rows["pattern_exhaustive"]
+    if not (exhaustive.startswith("[") and exhaustive.endswith("]")):
+        raise ValueError("invalid exhaustiveness observations")
+    values = exhaustive[1:-1].split("; ")
+    if len(values) != 4 or any(v not in ("T", "F") for v in values):
+        raise ValueError("invalid exhaustiveness observations")
+    lines.append(f"def pattern_exhaustive : List Bool := [{', '.join('true' if v == 'T' else 'false' for v in values)}]")
     for name in ("pure_init", "hidden_init", "impure_lookup_init", "hidden_lookup_init",
                  "keep_empty", "keep_reachable", "guard_double_not", "guard_false_conj",
                  "pattern_encoding", "empty_program_output", "word8_literal", "smart_constructor",

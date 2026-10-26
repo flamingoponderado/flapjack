@@ -58,7 +58,8 @@ def exhAllFuel : Nat → List (List (List Pat)) → Option Bool
         | some cs => exhAllFuel fuel (specMats cs (r :: rows) ++ ms)
 
 /-- Bounded exhaustiveness check for pattern rows. The total HOL `exh_rows`
-and the source proof that `exh_all` agrees with it remain to be ported. -/
+is implemented separately; the source proof that `exh_all` agrees with it
+remains to be ported. -/
 def exhRowsFuel {α : Type} (fuel : Nat) (rows : List (Pat × α)) : Option Bool :=
   exhAllFuel fuel [orRows rows]
 

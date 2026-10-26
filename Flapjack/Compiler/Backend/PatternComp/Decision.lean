@@ -1,8 +1,8 @@
 import Flapjack.Compiler.Backend.PatternSemantics
 import Flapjack.Compiler.Backend.PatternExh.Weights
+import Flapjack.Compiler.Backend.PatternExh.Exhaustive
 
-/-! Decision-tree construction in CakeML's pattern compiler. The exhaustiveness
-analysis used by `comp` is a separate, not-yet-ported prerequisite. -/
+/-! Decision-tree construction in CakeML's pattern compiler. -/
 namespace Flapjack.Compiler.Backend.PatternComp
 open PatternCommon PatternSemantics
 
@@ -99,9 +99,16 @@ def patsToCode : List (Pat × Nat) → DTree
   | [] => .fail
   | (p, x) :: rows => mkIf (patToGuard [] p) (.leaf x) (patsToCode rows)
 
+/-- Compile pattern rows using the total source exhaustiveness analysis. -/
+@[hol "cakeml/compiler/backend/pattern_matching/pattern_compScript.sml" "comp_def"]
+def comp (rows : List (Pat × Nat)) : DTree :=
+  let rows0 := moveConstUp rows
+  let rows1 := if PatternExh.exhRows rows0 then insertAny rows0 else rows0
+  patsToCode rows1
+
 /-- Execute pattern compilation with an explicit exhaustiveness budget.
-`none` means the budget was exhausted; proving a total bound and porting
-the original `comp` remain open. -/
+`none` means the budget was exhausted. This remains available to compare the
+bounded worklist against the total implementation. -/
 def compFuel (fuel : Nat) (rows : List (Pat × Nat)) : Option DTree := do
   let rows0 := moveConstUp rows
   let exhaustive ← PatternExh.exhRowsFuel fuel rows0

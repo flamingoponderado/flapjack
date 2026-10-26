@@ -5,6 +5,7 @@ def nameBytes : List (List Nat) := [[46, 46, 35], [46, 46, 124], [46, 46, 35, 12
 def bvl_stub_layout : List Nat := [12, 8]
 def nameUnreserved : Nat := 0
 def interpreter_arity : List Bool := [false, true]
+def pattern_exhaustive : List Bool := [false, true, false, true]
 def pure_init : Bool := true
 def hidden_init : Bool := true
 def impure_lookup_init : Bool := false

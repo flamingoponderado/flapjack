@@ -50,9 +50,9 @@ private def branchTree (branches : List FlatLang.Exp) : Spt FlatLang.Exp :=
   (branches.foldl (fun (state : Nat × Spt FlatLang.Exp) branch =>
     (state.1 + 1, sptInsert state.1 branch state.2)) (0, .ln)).2
 
-/-- Run the source `compile_pats` algorithm with explicit budgets for pattern
-expansion, variable bindings and exhaustiveness. `none` reports exhaustion;
-the original total declaration and the proofs of sufficient bounds remain open. -/
+/-- Run the source `compile_pats` algorithm with explicit budgets for naive
+matching and variable bindings. `none` reports exhaustion; the original total
+declaration and proofs of sufficient bounds remain open. -/
 def compilePatsFuel (fuel : Nat) (_cfg : Config) (naive : Bool) (t : Tra) (i : Nat)
     (v default : FlatLang.Exp) (ps : List (FlatLang.Pat × FlatLang.Exp)) : Option FlatLang.Exp := do
   let branches ← compileBranchesFuel fuel t i v ps
@@ -60,7 +60,7 @@ def compilePatsFuel (fuel : Nat) (_cfg : Config) (naive : Bool) (t : Tra) (i : N
     naivePatternMatchesFuel fuel t v (List.zip (ps.map Prod.fst) branches) default
   else
     let pats := ps.zipIdx.map fun ((p, _), j) => (encodePat p, j)
-    let tree ← PatternComp.compFuel fuel pats
+    let tree := PatternComp.comp pats
     pure (decodeDtree t (branchTree branches) v default tree)
 
 end Flapjack.Compiler.Backend.FlatPattern
