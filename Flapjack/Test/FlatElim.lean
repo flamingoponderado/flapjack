@@ -409,5 +409,15 @@ example : Flapjack.Compiler.Backend.BviLet.compileFuel 0 [] 0 (.var 0) = none :=
       loc == bvlNumStubs + 1 && auxLoc == bvlNumStubs + 1
   | _ => false
 #guard bvl_to_bvi_marker
+#guard match Flapjack.Compiler.Backend.BvlToBvi.compileIncFuel 10 10 0 [(5, 1, .var 0)] with
+  | some (0, [(loc, 1, .var 0)]) => loc == bvlNumStubs + 20
+  | _ => false
+#guard bvl_to_bvi_incremental
+#guard match Flapjack.Compiler.Backend.ClosToBvl.compileProg? 0 [(10, 0, .var .none 0)] with
+  | some bvl => match Flapjack.Compiler.Backend.BvlToBvi.compileIncFuel 10 10 0 bvl with
+    | some (0, [(loc, 0, .var 0)]) => loc == bvlNumStubs + 48
+    | _ => false
+  | _ => false
+#guard clos_to_bvi_program
 
 end Flapjack.Test.FlatElim

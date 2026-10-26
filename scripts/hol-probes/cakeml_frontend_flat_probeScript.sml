@@ -160,3 +160,8 @@ val _ = capture "bvl_to_bvi_marker" ``bvl_to_bvi$compile_exps_sing 0
  (bvl$Let [] (bvl$Let [bvl$Var 2] (bvl$Var 0))) =
  (bvi$Call 0 (SOME (backend_common$bvl_num_stubs + 1)) [bvi$Var 2] NONE,
   bvl_to_bvi$compile_aux (0, 1, bvi$Var 0), 1)``;
+val _ = capture "bvl_to_bvi_incremental" ``bvl_to_bvi$compile_inc 0 [(5, 1, bvl$Var 0)] =
+ (0, [(backend_common$bvl_num_stubs + 20, 1, bvi$Var 0)])``;
+val _ = capture "clos_to_bvi_program" ``bvl_to_bvi$compile_inc 0
+ (clos_to_bvl$compile_prog 0 [(10, 0, closLang$Var backend_common$None 0)]) =
+ (0, [(backend_common$bvl_num_stubs + 48, 0, bvi$Var 0)])``;

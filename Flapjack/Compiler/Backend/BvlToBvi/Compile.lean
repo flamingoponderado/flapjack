@@ -69,4 +69,28 @@ def compileListFuel : Nat → Nat → Nat → List Bvl.Exp → Option (List Bvi.
       pure (x :: xs, a ++ b, n)
 end
 
+/-- Compile one labeled function and its auxiliary functions. The BVI let
+optimization and expression conversion share the explicit checked bounds. -/
+def compileSingleFuel (fuel optFuel n : Nat) (p : Nat × Nat × Bvl.Exp) :
+    Option (List (Nat × Nat × Bvi.Exp) × Nat) := do
+  let (name, args, exp) := p
+  let (exp, aux, n) ← compileFuel fuel optFuel n exp
+  let exp ← BviLet.compileFuel optFuel [] 0 exp
+  pure ((bvlNumStubs + bvlToBviNamespaces * name, args, exp) :: aux, n)
+
+/-- Compile a sequence of labeled functions, preserving source code order. -/
+def compileProgramsFuel (fuel optFuel : Nat) : Nat → List (Nat × Nat × Bvl.Exp) →
+    Option (List (Nat × Nat × Bvi.Exp) × Nat)
+  | n, [] => some ([], n)
+  | n, p :: ps => do
+      let (code, n) ← compileSingleFuel fuel optFuel n p
+      let (rest, n) ← compileProgramsFuel fuel optFuel n ps
+      pure (code ++ rest, n)
+
+/-- Incremental compilation exposes the next fresh name before the code. -/
+def compileIncFuel (fuel optFuel n : Nat) (prog : List (Nat × Nat × Bvl.Exp)) :
+    Option (Nat × List (Nat × Nat × Bvi.Exp)) := do
+  let (code, n) ← compileProgramsFuel fuel optFuel n prog
+  pure (n, code)
+
 end Flapjack.Compiler.Backend.BvlToBvi

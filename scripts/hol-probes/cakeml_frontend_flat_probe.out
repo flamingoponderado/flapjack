@@ -64,3 +64,5 @@ bvl_to_bvi_analysis=T
 bvl_to_bvi_operations=T
 bvi_let_optimization=T
 bvl_to_bvi_marker=T
+bvl_to_bvi_incremental=T
+clos_to_bvi_program=T
