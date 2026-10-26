@@ -283,3 +283,13 @@ val data_loads_word = EVAL ``let conf = (ARB:data_to_word$config) with <|tag_bit
   (wordLang$Assign 8 (wordLang$Load (wordLang$Op asm$Add [wordLang$Op asm$Add [wordLang$Lookup stackLang$CurrHeap; wordLang$Shift ast$Lsr (wordLang$Var 4) (wordLang$Const 6w)]; wordLang$Op asm$Add [wordLang$Const 4w; wordLang$Var 6]])), 2)``;
 val _ = (print "data_to_word_loads="; print_term (rhs (concl (CONV_RULE
   (RAND_CONV (SIMP_CONV (srw_ss()) [wordsTheory.dimindex_32, wordsTheory.dimindex_64, wordsTheory.dimword_def] THENC EVAL)) data_loads_word))); print "\n");
+val data_comparisons_word = EVAL ``
+ (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$BlockOp (closLang$BoolTest (ast$Compare ast$Gt))) [1;2] NONE) : 64 wordLang$prog # num) =
+  (wordLang$If asm$Equal 4 (asm$Reg 6) (wordLang$Assign 8 (wordLang$Const 18w)) (wordLang$Assign 8 (wordLang$Const 2w)), 2) /\
+ (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$WordOp (closLang$WordTest ast$W64 (ast$Compare ast$Leq))) [1;2] NONE) : 64 wordLang$prog # num) =
+  (wordLang$If asm$NotLower 6 (asm$Reg 4) (wordLang$Assign 8 (wordLang$Const 18w)) (wordLang$Assign 8 (wordLang$Const 2w)), 2) /\
+ (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$WordOp (closLang$WordTest ast$W64 (ast$Compare ast$Gt))) [1;2] NONE) : 64 wordLang$prog # num) = (wordLang$Skip, 2) /\
+ (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$BlockOp (closLang$Cons 15)) [] NONE) : 8 wordLang$prog # num) = (wordLang$Assign 8 (wordLang$Const 242w), 2) /\
+ (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$BlockOp (closLang$Cons 16)) [] NONE) : 8 wordLang$prog # num) = (wordLang$Seq (wordLang$Assign 1 (wordLang$Const 255w)) (wordLang$Alloc 1 (sptree$LS (), sptree$LN)), 2)``;
+val _ = (print "data_to_word_comparisons="; print_term (rhs (concl (CONV_RULE
+  (RAND_CONV (SIMP_CONV (srw_ss()) [wordsTheory.dimindex_8, wordsTheory.dimindex_64, wordsTheory.dimword_def] THENC EVAL)) data_comparisons_word))); print "\n");

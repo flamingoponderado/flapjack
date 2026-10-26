@@ -86,6 +86,7 @@ def clos_to_bvi_constant : Bool := true
 def bvi_to_data_constant : Bool := true
 def data_to_word_globals : Bool := true
 def data_to_word_loads : Bool := true
+def data_to_word_comparisons : Bool := true
 def eliminate_pure_length : Nat := 0
 def eval_bypass_length : Nat := 2
 def empty_program_globals : Nat := 1

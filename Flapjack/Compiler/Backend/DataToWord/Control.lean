@@ -36,6 +36,12 @@ private def realAddr {width : Nat} [NeZero width] (conf : Config) (r : Nat) : Wo
       (.shift .lsr (.var r) (.const (BitVec.ofNat width l))) (.const (BitVec.ofNat width k))
   .op .add [.lookup .currHeap, offset]
 
+/-- Internal helper for supported comparisons; the source `SetBool` uses an
+already adjusted destination and remains a separate unported declaration. -/
+private def boolResult {width : Nat} (dest : Nat) (cmp : Cmp) (r : Nat)
+    (other : WordRegImm (BitVec width)) : WordLangProgHOL (BitVec width) :=
+  .ite cmp r other (.assign (adjustVar dest) (.const 18)) (.assign (adjustVar dest) (.const 2))
+
 /-- Flapjack's partial traversal. Unsupported assignment operations and
 thunk cases return `none`; this is not HOL's total `comp`. -/
 def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
@@ -82,6 +88,24 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
       match args with
       | [src] => some (.assign (adjustVar dest) (.op .xor [.var (adjustVar src), .const 16]), l)
       | _ => some (.skip, l)
+  | l, .assign dest (.blockOp (.boolTest _)) args _ =>
+      match args with
+      | [x, y] => some (boolResult dest .equal (adjustVar x) (.reg (adjustVar y)), l)
+      | _ => some (.skip, l)
+  | l, .assign dest (.intOp (.lessConstSmall i)) args _ =>
+      match args with
+      | [src] => some (boolResult dest .less (adjustVar src) (.imm (BitVec.ofNat width (4 * i))), l)
+      | _ => some (.skip, l)
+  | l, .assign dest (.wordOp (.wordTest _ test)) args _ =>
+      match args, test with
+      | [x, y], .equal => some (boolResult dest .equal (adjustVar x) (.reg (adjustVar y)), l)
+      | [x, y], .compare .lt => some (boolResult dest .lower (adjustVar x) (.reg (adjustVar y)), l)
+      | [x, y], .compare .leq => some (boolResult dest .notLower (adjustVar y) (.reg (adjustVar x)), l)
+      | _, _ => some (.skip, l)
+  | l, .assign dest (.blockOp (.cons tag)) [] _ =>
+      if tag < 2 ^ width / 16 then
+        some (.assign (adjustVar dest) (.const (BitVec.ofNat width (16 * tag + 2))), l)
+      else some (.seq (.assign 1 (.const (-1))) (.alloc 1 (adjustSets (.ln : NumSet))), l)
   | l, .assign dest (.blockOp (.elemAt n)) args _ =>
       match args with
       | [src] =>

@@ -97,6 +97,22 @@ private def headerConfig : Config := { conf with lenSize := 4 }
       .op .add [.const 4, .var 6]])), 2) => true
   | _ => false
 #guard Flapjack.Test.CakeMLFlatOracle.data_to_word_loads
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.boolTest (.compare .gt))) [1, 2] none) with
+  | some (.ite .equal 4 (.reg 6) (.assign 8 (.const 18)) (.assign 8 (.const 2)), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.wordOp (.wordTest .w64 (.compare .leq))) [1, 2] none) with
+  | some (.ite .notLower 6 (.reg 4) (.assign 8 (.const 18)) (.assign 8 (.const 2)), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.wordOp (.wordTest .w64 (.compare .gt))) [1, 2] none) with
+  | some (.skip, 2) => true
+  | _ => false
+#guard match compileControl? (width := 8) conf 5 2 (.assign 3 (.blockOp (.cons 15)) [] none) with
+  | some (.assign 8 (.const 242), 2) => true
+  | _ => false
+#guard match compileControl? (width := 8) conf 5 2 (.assign 3 (.blockOp (.cons 16)) [] none) with
+  | some (.seq (.assign 1 (.const 255)) (.alloc 1 (.ls (), .ln)), 2) => true
+  | _ => false
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_comparisons
 
 def runChecks : IO Bool := do
   IO.println "PASS data_to_word shift_length/small_shift_length/get_gen_size match six original HOL rows"
