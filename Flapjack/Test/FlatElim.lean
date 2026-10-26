@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.FlatElim.Reachability
 import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
+import Flapjack.Compiler.Backend.FlatPattern.Names
 
 namespace Flapjack.Test.FlatElim
 open Flapjack Flapjack.Compiler.Backend.FlatLang Flapjack.Compiler.Backend.FlatElim
@@ -48,5 +49,14 @@ private def roots : NumSet := sptInsert 1 () .ln
 #guard (removeFlatProg [eval, pureSet]).map List.length == some 2
 #guard ((Flapjack.Compiler.Backend.SourceToFlat.compileProgElim
   Flapjack.Compiler.Backend.SourceToFlat.emptyConfig []).map (fun result => result.2.length)) == some 2
+
+-- Reserved pattern names round-trip at both sides of the encoding boundary.
+#guard Flapjack.Compiler.Backend.FlatPattern.decNameToNum (ofString "x") == 0
+#guard Flapjack.Compiler.Backend.FlatPattern.decNameToNum
+  (Flapjack.Compiler.Backend.FlatPattern.encNumToName 89) == 89
+#guard Flapjack.Compiler.Backend.FlatPattern.decNameToNum
+  (Flapjack.Compiler.Backend.FlatPattern.encNumToName 90) == 90
+#guard Flapjack.Compiler.Backend.FlatPattern.decNameToNum
+  (Flapjack.Compiler.Backend.FlatPattern.encNumToName 181) == 181
 
 end Flapjack.Test.FlatElim

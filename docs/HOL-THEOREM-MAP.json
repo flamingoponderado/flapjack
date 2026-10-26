@@ -99556,5 +99556,53 @@
     "hol_name": "has_Eval_dec_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Names.lean",
+    "lean_name": "sumStringOrds",
+    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
+    "hol_name": "sum_string_ords_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source definition transcribed; typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Names.lean",
+    "lean_name": "decNameToNum",
+    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
+    "hol_name": "dec_name_to_num_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source definition transcribed; typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Names.lean",
+    "lean_name": "encNumToNameAux",
+    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
+    "hol_name": "enc_num_to_name_aux_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source definition transcribed; typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Names.lean",
+    "lean_name": "encNumToName",
+    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
+    "hol_name": "enc_num_to_name_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source definition transcribed; typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Names.lean",
+    "lean_name": "maxDecName",
+    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
+    "hol_name": "max_dec_name_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source definition transcribed; typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Names.lean",
+    "lean_name": "opSetsGlobals",
+    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
+    "hol_name": "op_sets_globals_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source definition transcribed; typed HOL capture and full statement review remain pending."
   }
 ]
