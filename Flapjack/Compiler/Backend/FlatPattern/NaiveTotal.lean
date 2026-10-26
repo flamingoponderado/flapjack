@@ -30,6 +30,13 @@ private def children (t : Tra) (v : FlatLang.Exp) (j : Nat) : List FlatLang.Pat 
   | [] => []
   | p :: ps => (p, .app t (.el j) [v]) :: children t v (j + 1) ps
 
+/-- The structurally recursive traversal has exactly the source `MAPi` order. -/
+private theorem children_eq_zipIdx (t : Tra) (v : FlatLang.Exp) (j : Nat) (ps : List FlatLang.Pat) :
+    children t v j ps = (ps.zipIdx j).map (fun (p, i) => (p, FlatLang.Exp.app t (.el i) [v])) := by
+  induction ps generalizing j with
+  | nil => rfl
+  | cons p ps ih => simp [children, List.zipIdx, ih]
+
 private theorem childrenWeight (t : Tra) (v : FlatLang.Exp) (j : Nat) (ps : List FlatLang.Pat) :
     todoWeight (children t v j ps) = naiveWeights ps := by
   induction ps generalizing j with

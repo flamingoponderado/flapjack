@@ -34,6 +34,16 @@ private def patternEntries (t : Tra) (i j : Nat) : List FlatLang.Pat →
       let name := encNumToName key
       ((j, name), (p, key, .varLocal t name)) :: patternEntries t i (j + 1) ps
 
+/-- The generated entries follow the source `enumerate` traversal exactly. -/
+private theorem patternEntries_eq_zipIdx (t : Tra) (i j : Nat) (ps : List FlatLang.Pat) :
+    patternEntries t i j ps = (ps.zipIdx j).map (fun (p, k) =>
+      let key := i + 1 + k
+      let name := encNumToName key
+      ((k, name), (p, key, FlatLang.Exp.varLocal t name))) := by
+  induction ps generalizing j with
+  | nil => rfl
+  | cons p ps ih => simp [patternEntries, List.zipIdx, ih]
+
 private theorem entriesWeight (t : Tra) (i j : Nat) (ps : List FlatLang.Pat) :
     todoWeight ((patternEntries t i j ps).map Prod.snd) = bindWeights ps := by
   induction ps generalizing j with
