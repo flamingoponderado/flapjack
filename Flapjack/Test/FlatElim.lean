@@ -19,6 +19,7 @@ import Flapjack.Compiler.Backend.BviToData.Compile
 import Flapjack.Compiler.Backend.DataSimp
 import Flapjack.Compiler.Backend.DataLive
 import Flapjack.Compiler.Backend.BviToData.Optimise
+import Flapjack.Compiler.Backend.DataToWord.Variables
 import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
 import Flapjack.Compiler.Backend.FlatPattern.Encode
@@ -490,5 +491,9 @@ example : Flapjack.Compiler.Backend.DataSimp.simp (.ifThenElse 0 (.seq .skip (.r
     | _ => false
   | _ => false
 #guard clos_to_data_program
+#guard Flapjack.Compiler.Backend.DataToWord.adjustVar 7 == 16
+private def adjustedNames := Flapjack.Compiler.Backend.DataToWord.adjustSet (sptInsert 1 8 (sptInsert 0 9 .ln))
+#guard [sptLookup 0 adjustedNames, sptLookup 2 adjustedNames, sptLookup 4 adjustedNames] == [none, some (), some ()]
+#guard data_to_word_variables
 
 end Flapjack.Test.FlatElim

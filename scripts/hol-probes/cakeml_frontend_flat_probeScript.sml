@@ -1,4 +1,4 @@
-load "flat_patternTheory"; load "flat_elimTheory"; load "source_to_flatTheory"; load "flat_to_closTheory"; load "source_to_sourceTheory"; load "clos_to_bvlTheory"; load "clos_numberTheory"; load "bvl_to_bviTheory"; load "bvi_letTheory"; load "dataLangTheory"; load "data_spaceTheory"; load "data_simpTheory"; load "data_liveTheory"; load "bvi_to_dataTheory"; load "wordsLib";
+load "flat_patternTheory"; load "flat_elimTheory"; load "source_to_flatTheory"; load "flat_to_closTheory"; load "source_to_sourceTheory"; load "clos_to_bvlTheory"; load "clos_numberTheory"; load "bvl_to_bviTheory"; load "bvi_letTheory"; load "dataLangTheory"; load "data_spaceTheory"; load "data_simpTheory"; load "data_liveTheory"; load "bvi_to_dataTheory"; load "data_to_wordTheory"; load "wordsLib";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 fun capture label term =
@@ -216,3 +216,7 @@ val _ = capture "clos_to_data_program" ``
  MAP (\(name, args, exp). (name, args, bvi_to_data$compile_exp args exp))
   (SND (bvl_to_bvi$compile_inc 0 (clos_to_bvl$compile_prog 0 [(10, 1, closLang$Var backend_common$None 0)]))) =
  [(backend_common$bvl_num_stubs + 48, 1, dataLang$Return [0])]``;
+val _ = capture "data_to_word_variables" ``
+ data_to_word$adjust_var 7 = 16 /\
+ let names = data_to_word$adjust_set (sptree$insert 1 8 (sptree$insert 0 9 sptree$LN)) in
+ [sptree$lookup 0 names; sptree$lookup 2 names; sptree$lookup 4 names] = [NONE; SOME (); SOME ()]``;
