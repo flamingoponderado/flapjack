@@ -1,4 +1,4 @@
-load "flat_patternTheory"; load "flat_elimTheory"; load "source_to_flatTheory"; load "flat_to_closTheory"; load "source_to_sourceTheory"; load "clos_to_bvlTheory"; load "clos_numberTheory"; load "bvl_to_bviTheory"; load "bvi_letTheory"; load "dataLangTheory"; load "data_spaceTheory"; load "bvi_to_dataTheory"; load "wordsLib";
+load "flat_patternTheory"; load "flat_elimTheory"; load "source_to_flatTheory"; load "flat_to_closTheory"; load "source_to_sourceTheory"; load "clos_to_bvlTheory"; load "clos_numberTheory"; load "bvl_to_bviTheory"; load "bvi_letTheory"; load "dataLangTheory"; load "data_spaceTheory"; load "data_simpTheory"; load "bvi_to_dataTheory"; load "wordsLib";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 fun capture label term =
@@ -196,3 +196,8 @@ val _ = captureBviData "bvi_to_data_expression" ``bvi_to_data$compile_sing 0 [5]
  (bvi$Op (closLang$IntOp (closLang$Const 4)) [bvi$Var 0]) =
  (dataLang$Seq (dataLang$Seq dataLang$Skip (dataLang$Assign 6 (closLang$IntOp (closLang$Const 4)) [5] NONE))
    (dataLang$Return [6]), 6, 7)``;
+val _ = capture "data_simplification" ``
+ data_simp$simp (dataLang$Seq (dataLang$Move 1 2) (dataLang$Return [1])) (dataLang$Move 3 4) =
+  dataLang$Seq (dataLang$Move 1 2) (dataLang$Return [1]) /\
+ data_simp$simp (dataLang$If 0 (dataLang$Seq dataLang$Skip (dataLang$Raise 1)) dataLang$Skip) dataLang$Skip =
+  dataLang$If 0 (dataLang$Raise 1) dataLang$Skip``;

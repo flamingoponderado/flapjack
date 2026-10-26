@@ -69,6 +69,7 @@ def data_lang_syntax : Bool := true
 def data_space_requirements : Bool := true
 def bvi_to_data_assign : Bool := true
 def bvi_to_data_expression : Bool := true
+def data_simplification : Bool := true
 def eliminate_pure_length : Nat := 0
 def eval_bypass_length : Nat := 2
 def empty_program_globals : Nat := 1

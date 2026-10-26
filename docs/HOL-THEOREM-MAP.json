@@ -101068,5 +101068,21 @@
     "hol_name": "iAssign_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataSimp.lean",
+    "lean_name": "pSeq",
+    "hol_path": "cakeml/compiler/backend/data_simpScript.sml",
+    "hol_name": "pSeq_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataSimp.lean",
+    "lean_name": "simp",
+    "hol_path": "cakeml/compiler/backend/data_simpScript.sml",
+    "hol_name": "simp_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
   }
 ]

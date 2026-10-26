@@ -70,3 +70,4 @@ data_lang_syntax=T
 data_space_requirements=T
 bvi_to_data_assign=T
 bvi_to_data_expression=T
+data_simplification=T

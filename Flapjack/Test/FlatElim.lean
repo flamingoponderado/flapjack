@@ -16,6 +16,7 @@ import Flapjack.Compiler.Backend.DataLang.Syntax
 import Flapjack.Compiler.Backend.DataSpace.Requirements
 import Flapjack.Compiler.Backend.BviToData.Assign
 import Flapjack.Compiler.Backend.BviToData.Compile
+import Flapjack.Compiler.Backend.DataSimp
 import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
 import Flapjack.Compiler.Backend.FlatPattern.Encode
@@ -449,5 +450,10 @@ example : Flapjack.Compiler.Backend.BviToData.compileFuel 10 0 [5] true []
     some (.seq (.seq .skip (.assign 6 (.intOp (.const 4)) [5] none)) (.return [6]), 6, 7) := rfl
 example : Flapjack.Compiler.Backend.BviToData.compileFuel 0 0 [] true [] (.var 0) = none := rfl
 #guard bvi_to_data_expression
+example : Flapjack.Compiler.Backend.DataSimp.simp (.seq (.move 1 2) (.return [1])) (.move 3 4) =
+    .seq (.move 1 2) (.return [1]) := rfl
+example : Flapjack.Compiler.Backend.DataSimp.simp (.ifThenElse 0 (.seq .skip (.raise 1)) .skip) .skip =
+    .ifThenElse 0 (.raise 1) .skip := rfl
+#guard data_simplification
 
 end Flapjack.Test.FlatElim
