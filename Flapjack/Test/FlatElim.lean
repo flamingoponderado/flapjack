@@ -180,6 +180,17 @@ example : (compilePatRhsFuel 0 .none 0 (.varLocal .none (ofString "v"))
       x == ofString "x" && v == ofString "v"
   | _ => false
 #guard pattern_compile_branch
+#guard match compilePatsFuel 30 (Flapjack.Compiler.Backend.FlatPattern.initConfig 0) false
+    .none 0 (.varLocal .none (ofString "v")) (.lit .none (.intLit 0))
+    [(.pcon (some (2, none)) [.pvar (ofString "x")], .varLocal .none (ofString "x"))] with
+  | some (.if_ .none (.app .none (.tagLenEq 2 1) [.varLocal .none v])
+      (.let_ .none (some temp) (.app .none (.el 0) [.varLocal .none v'])
+        (.let_ .none (some x) (.varLocal .none temp') (.varLocal .none x')))
+      (.lit .none (.intLit 0))) =>
+      v == ofString "v" && v' == ofString "v" && temp == ofString "..%" && temp' == temp &&
+        x == ofString "x" && x' == x
+  | _ => false
+#guard pattern_constructor_branch
 #guard match Flapjack.Compiler.Backend.SourceToFlat.compileToClosFuel 100
     Flapjack.Compiler.Backend.SourceToFlat.emptyConfig [] with
   | some (_, [

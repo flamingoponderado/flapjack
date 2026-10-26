@@ -15,7 +15,7 @@ NAMES = ("name_roundtrips", "name_bytes", "name_unreserved", "pure_init", "hidde
          "compile_let", "compile_constructor", "compile_nop", "closure_empty_program",
          "closure_install_detect", "closure_init_false", "incremental_empty", "interpreter_arity",
          "pattern_any_tree", "pattern_constructor_guard", "pattern_nub", "pattern_specialize",
-         "pattern_compile_empty", "pattern_compile_any", "pattern_bind_variable", "pattern_compile_branch",
+         "pattern_compile_empty", "pattern_compile_any", "pattern_bind_variable", "pattern_compile_branch", "pattern_constructor_branch",
          "empty_source_to_clos", "reference_source_to_clos", "source_let_lifting", "lifted_source_to_clos",
          "bvl_shared_constant", "bvl_stub_layout", "bvl_chain_empty", "bvl_code_sort")
 
@@ -55,7 +55,7 @@ def render():
                  "compile_constructor", "compile_nop", "closure_empty_program", "closure_install_detect",
                  "closure_init_false", "incremental_empty", "pattern_any_tree", "pattern_constructor_guard",
                  "pattern_nub", "pattern_specialize", "pattern_compile_empty", "pattern_compile_any",
-                 "pattern_bind_variable", "pattern_compile_branch", "empty_source_to_clos", "reference_source_to_clos",
+                 "pattern_bind_variable", "pattern_compile_branch", "pattern_constructor_branch", "empty_source_to_clos", "reference_source_to_clos",
                  "source_let_lifting", "lifted_source_to_clos", "bvl_shared_constant", "bvl_chain_empty", "bvl_code_sort"):
         value = rows[name]
         if value not in ("T", "F"):

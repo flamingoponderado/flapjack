@@ -36,6 +36,7 @@ def pattern_compile_empty : Bool := true
 def pattern_compile_any : Bool := true
 def pattern_bind_variable : Bool := true
 def pattern_compile_branch : Bool := true
+def pattern_constructor_branch : Bool := true
 def empty_source_to_clos : Bool := true
 def reference_source_to_clos : Bool := true
 def source_let_lifting : Bool := true
