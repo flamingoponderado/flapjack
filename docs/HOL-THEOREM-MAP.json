@@ -99356,5 +99356,53 @@
     "lean_name": "panToTargetCompileSemanticsArm8",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack infrastructure (ARM8 closed-model instance, 2026-10-19): instantiates the generic `panToTargetCompileSemantics` theorem at the closed `arm8Target`, supplying `arm8MachineConfigOk` and `arm8EncoderCorrect`. It has no single HOL original: the CakeML analogue depends on the unported L3 `arm8_encoder_correct` and the full `arm8_config` carrier, tracked in #1229."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/CompileProg.lean",
+    "lean_name": "globAlloc",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "glob_alloc_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source definition transcribed; independent typed HOL capture and complete source review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/CompileProg.lean",
+    "lean_name": "allocEnvRef",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "alloc_env_ref_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source definition transcribed; independent typed HOL capture and complete source review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/CompileProg.lean",
+    "lean_name": "compileProg",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "compile_prog_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source definition transcribed; independent typed HOL capture and complete source review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/CompileProg.lean",
+    "lean_name": "lookupEnvId",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "lookup_env_id_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source definition transcribed; independent typed HOL capture and complete source review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/CompileProg.lean",
+    "lean_name": "storeEnvId",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "store_env_id_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source definition transcribed; independent typed HOL capture and complete source review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/CompileProg.lean",
+    "lean_name": "incCompileProg",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "inc_compile_prog_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source definition transcribed; independent typed HOL capture and complete source review remain pending."
   }
 ]
