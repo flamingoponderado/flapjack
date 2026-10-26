@@ -314,6 +314,11 @@ private def bvlNames := Flapjack.Compiler.Backend.ClosToBvl.getSrcNames
       .fn (ofString "last") (some 0) none 1 (.var .none 0)] : List Flapjack.Compiler.Backend.ClosLang.Exp) .ln
 #guard [sptLookup 0 bvlNames, sptLookup 1 bvlNames] == [some (ofString "last_clos"), some (ofString "last")]
 #guard bvl_source_names
+private def bvlNameAlist := Flapjack.Compiler.Backend.ClosToBvl.makeNameAlist
+    [0, 2, 3, 4, 5, 6, 7] [(0, 0, .fn (ofString "f") (some 0) none 1 (.var .none 0))] 4 2 1
+#guard [0, 2, 3, 4, 5, 6, 7].map (fun n => sptLookup n bvlNameAlist) ==
+  (["bvl_stub", "bvl_force", "bvl_init", "f_clos", "f", "dec", "unknown_clos_fun"].map (fun s => some (ofString s)))
+#guard bvl_name_alist
 example : Flapjack.Compiler.Backend.ClosNumber.renumber 4
     (.fn (ofString "f") none none 1 (.fn (ofString "g") none none 1 (.var .none 0))) =
     (8, .fn (ofString "f") (some 6) none 1 (.fn (ofString "g") (some 4) none 1 (.var .none 0))) := rfl

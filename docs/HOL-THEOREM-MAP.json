@@ -100876,5 +100876,13 @@
     "hol_name": "extract_name_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Uses the source extract_name_pmatch characterization; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Names.lean",
+    "lean_name": "makeNameAlist",
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
+    "hol_name": "make_name_alist_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
   }
 ]

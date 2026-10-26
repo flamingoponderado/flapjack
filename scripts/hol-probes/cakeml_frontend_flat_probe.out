@@ -56,3 +56,4 @@ closure_number_incremental=T
 bvl_closure_call=T
 bvl_partial_application=T
 bvl_extract_name=T
+bvl_name_alist=T

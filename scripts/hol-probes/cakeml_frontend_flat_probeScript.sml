@@ -99,6 +99,7 @@ val _ = capture "bvl_chain_empty" ``clos_to_bvl$chain_exps 7 [] = [(7, 0, closLa
 val _ = capture "bvl_code_sort" ``clos_to_bvl$code_sort [(1,10); (1,20); (1,30); (0,40)] = [(0,40); (1,20); (1,30); (1,10)]``;
 val _ = capture "bvl_build_aux" ``clos_to_bvl$build_aux 3 [(1,bvl$Var 0); (2,bvl$Var 1)] [] = (7, [(5,2,bvl$Var 1); (3,1,bvl$Var 0)])``;
 val _ = capture "bvl_source_names" ``let names = clos_to_bvl$get_src_names [closLang$Fn «first» (SOME 0) NONE 1 (closLang$Var backend_common$None 0); closLang$Fn «last» (SOME 0) NONE 1 (closLang$Var backend_common$None 0)] sptree$LN in [sptree$lookup 0 names; sptree$lookup 1 names] = [SOME «last_clos»; SOME «last»]``;
+
 val _ = capture "closure_numbering" ``clos_number$renumber_code_locs 4 (closLang$Fn «f» NONE NONE 1 (closLang$Fn «g» NONE NONE 1 (closLang$Var backend_common$None 0))) =
  (8, closLang$Fn «f» (SOME 6) NONE 1 (closLang$Fn «g» (SOME 4) NONE 1 (closLang$Var backend_common$None 0)))``;
 val _ = capture "closure_number_incremental" ``clos_number$compile_inc 3 [closLang$Fn «f» NONE NONE 1 (closLang$Var backend_common$None 0)] =
@@ -119,3 +120,5 @@ val _ = captureExtract "bvl_extract_name" ``
  clos_to_bvl$extract_name [x; closLang$Var backend_common$None 2] = (7, [closLang$Var backend_common$None 2]) /\
  clos_to_bvl$extract_name [x] = (7, [x]) /\
  clos_to_bvl$extract_name [neg; closLang$Var backend_common$None 2] = (0, [neg; closLang$Var backend_common$None 2])``;
+val _ = capture "bvl_name_alist" ``let names = clos_to_bvl$make_name_alist [0; 2; 3; 4; 5; 6; 7] [(0, 0, closLang$Fn «f» (SOME 0) NONE 1 (closLang$Var backend_common$None 0))] 4 2 1 in
+ MAP (\n. sptree$lookup n names) [0; 2; 3; 4; 5; 6; 7] = [SOME «bvl_stub»; SOME «bvl_force»; SOME «bvl_init»; SOME «f_clos»; SOME «f»; SOME «dec»; SOME «unknown_clos_fun»]``;

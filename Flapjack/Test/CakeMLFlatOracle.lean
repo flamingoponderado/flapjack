@@ -55,6 +55,7 @@ def closure_number_incremental : Bool := true
 def bvl_closure_call : Bool := true
 def bvl_partial_application : Bool := true
 def bvl_extract_name : Bool := true
+def bvl_name_alist : Bool := true
 def eliminate_pure_length : Nat := 0
 def eval_bypass_length : Nat := 2
 def empty_program_globals : Nat := 1

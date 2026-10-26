@@ -50,4 +50,19 @@ the original list-valued `get_src_names` definition. -/
 def getSrcNames (es : List Exp) (table : Spt MlString) : Spt MlString :=
   getSrcNamesList es table
 
+/-- Construct the name table for stubs, top-level declarations and closures. -/
+@[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "make_name_alist_def"]
+def makeNameAlist (nums : List Nat) (prog : List (Nat × Nat × Exp))
+    (nstubs decStart decLength : Nat) : Spt MlString :=
+  let names := getSrcNames (prog.map (fun (_, _, e) => e)) .ln
+  sptFromAList (nums.map fun n =>
+    (n, if n < nstubs then
+      if n = nstubs - 1 then ofString "bvl_init"
+      else if n = nstubs - 2 then ofString "bvl_force"
+      else ofString "bvl_stub"
+    else
+      let loc := n - nstubs
+      if decStart ≤ loc ∧ loc < decStart + decLength then ofString "dec"
+      else (sptLookup loc names).getD (ofString "unknown_clos_fun")))
+
 end Flapjack.Compiler.Backend.ClosToBvl
