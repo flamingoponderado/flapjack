@@ -44,6 +44,7 @@ reference_source_to_clos=T
 source_let_lifting=T
 lifted_source_to_clos=T
 match_source_to_clos=T
+match_bind_source_to_clos=T
 bvl_shared_constant=T
 bvl_stub_layout=[12; 8]
 bvl_chain_empty=T
