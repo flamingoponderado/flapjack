@@ -99700,5 +99700,13 @@
     "hol_name": "decode_dtree_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Encode.lean",
+    "lean_name": "encodePat",
+    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
+    "hol_name": "encode_pat_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
   }
 ]

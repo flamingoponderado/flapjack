@@ -11,3 +11,4 @@ eliminate_pure_length=0
 eval_bypass_length=2
 guard_double_not=T
 guard_false_conj=T
+pattern_encoding=T

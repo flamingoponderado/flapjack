@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.FlatElim.Reachability
 import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
 import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
+import Flapjack.Compiler.Backend.FlatPattern.Encode
 import Flapjack.Test.CakeMLFlatOracle
 
 namespace Flapjack.Test.FlatElim
@@ -69,5 +70,8 @@ open Flapjack.Compiler.Backend.FlatPattern Flapjack.Compiler.Backend.PatternSema
 example : decodeDtree .none .ln lit pureSet (.leaf 4) = pureSet := rfl
 example : decodeDtree .none (.ls lit) lit pureSet (.leaf 0) = lit := rfl
 example : decodeDtree .none .ln lit pureSet (.if_ .true_ (.leaf 0) .typeFail) = pureSet := rfl
+example : encodePat (.pcon (some (3, some (42, [(3, 1)]))) [.pany]) =
+    .cons (some (3, some [(3, 1)])) [.any] := rfl
+#guard pattern_encoding
 
 end Flapjack.Test.FlatElim
