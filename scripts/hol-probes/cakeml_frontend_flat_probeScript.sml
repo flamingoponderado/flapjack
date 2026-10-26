@@ -1,4 +1,4 @@
-load "flat_patternTheory"; load "flat_elimTheory"; load "source_to_flatTheory"; load "flat_to_closTheory"; load "source_to_sourceTheory"; load "clos_to_bvlTheory"; load "clos_numberTheory"; load "wordsLib";
+load "flat_patternTheory"; load "flat_elimTheory"; load "source_to_flatTheory"; load "flat_to_closTheory"; load "source_to_sourceTheory"; load "clos_to_bvlTheory"; load "clos_numberTheory"; load "bvl_to_bviTheory"; load "wordsLib";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 fun capture label term =
@@ -138,3 +138,8 @@ val _ = capture "bvl_compile_program" ``clos_to_bvl$compile_prog 0
  [(12, 0, bvl$Var 0);
   (10, 1, bvl$Op (closLang$BlockOp (closLang$Cons 30)) [bvl$Var 2; bvl$Op (closLang$IntOp (closLang$Const 0)) []; bvl$Op (closLang$Label 5) []]);
   (5, 2, bvl$Let [bvl$Var 0; bvl$Op (closLang$BlockOp (closLang$ElemAt 2)) [bvl$Var 1]] (bvl$Var 0))]``;
+val _ = capture "bvl_to_bvi_analysis" ``
+ bvl_to_bvi$compile_int 268435457 = bvi$Op (closLang$IntOp (closLang$Const 268435457)) [] /\
+ bvl_to_bvi$compile_int 268435458 = bvi$Op (closLang$BlockOp (closLang$Build [closLang$Int 268435458])) [] /\
+ bvl_to_bvi$compile_int (-268435458) = bvi$Op (closLang$BlockOp (closLang$Build [closLang$Int (-268435458)])) [] /\
+ bvl_to_bvi$global_count_sing (bvl$Let [bvl$Op (closLang$GlobOp closLang$AllocGlobal) []; bvl$Raise (bvl$Op (closLang$GlobOp closLang$AllocGlobal) [])] (bvl$Op (closLang$GlobOp closLang$AllocGlobal) [])) = 3``;

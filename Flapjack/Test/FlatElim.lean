@@ -8,6 +8,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Names
 import Flapjack.Compiler.Backend.ClosNumber
 import Flapjack.Compiler.Backend.ClosToBvl.ExtractName
 import Flapjack.Compiler.Backend.ClosToBvl.Compile
+import Flapjack.Compiler.Backend.BvlToBvi.Analysis
 import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
 import Flapjack.Compiler.Backend.FlatPattern.Encode
@@ -370,5 +371,15 @@ example : Flapjack.Compiler.Backend.ClosToBvl.buildReccLets? [] [] 4 1 (.var 0) 
       (5, 2, .let [.var 0, .op (.blockOp (.elemAt 2)) [.var 1]] (.var 0))] => true
   | _ => false
 #guard bvl_compile_program
+example : Flapjack.Compiler.Backend.BvlToBvi.compileInt 268435457 =
+    .op (.intOp (.const 268435457)) [] := rfl
+example : Flapjack.Compiler.Backend.BvlToBvi.compileInt 268435458 =
+    .op (.blockOp (.build [.int 268435458])) [] := rfl
+example : Flapjack.Compiler.Backend.BvlToBvi.compileInt (-268435458) =
+    .op (.blockOp (.build [.int (-268435458)])) [] := rfl
+#guard Flapjack.Compiler.Backend.BvlToBvi.globalCountSing
+  (.let [.op (.globOp .allocGlobal) [], .raise (.op (.globOp .allocGlobal) [])]
+    (.op (.globOp .allocGlobal) [])) == 3
+#guard bvl_to_bvi_analysis
 
 end Flapjack.Test.FlatElim

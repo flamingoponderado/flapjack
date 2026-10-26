@@ -100900,5 +100900,37 @@
     "hol_name": "recc_Let0_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Analysis.lean",
+    "lean_name": "destLet",
+    "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
+    "hol_name": "destLet_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Analysis.lean",
+    "lean_name": "compileInt",
+    "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
+    "hol_name": "compile_int_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Analysis.lean",
+    "lean_name": "globalCountSing",
+    "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
+    "hol_name": "global_count_sing_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Analysis.lean",
+    "lean_name": "globalCountList",
+    "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
+    "hol_name": "global_count_sing_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
   }
 ]
