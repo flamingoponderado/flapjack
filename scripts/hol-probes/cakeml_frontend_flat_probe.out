@@ -35,3 +35,4 @@ pattern_specialize=T
 pattern_compile_empty=T
 pattern_compile_any=T
 pattern_bind_variable=T
+pattern_compile_branch=T

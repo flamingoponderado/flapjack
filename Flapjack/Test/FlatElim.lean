@@ -4,6 +4,7 @@ import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
 import Flapjack.Compiler.Backend.FlatPattern.Encode
 import Flapjack.Compiler.Backend.FlatPattern.Bindings
+import Flapjack.Compiler.Backend.FlatPattern.Patterns
 import Flapjack.Compiler.Backend.PatternComp.Decision
 import Flapjack.Compiler.Backend.PatternExh.Matrix
 import Flapjack.Compiler.Backend.FlatToClos.Helpers
@@ -168,5 +169,12 @@ example : compilePatRhsFuel 1 .none 0 (.varLocal .none (ofString "v"))
 example : (compilePatRhsFuel 0 .none 0 (.varLocal .none (ofString "v"))
     (.pvar (ofString "x"), lit)).isNone = true := rfl
 #guard pattern_bind_variable
+#guard match compilePatsFuel 4 (Flapjack.Compiler.Backend.FlatPattern.initConfig 0) false
+    .none 0 (.varLocal .none (ofString "v")) (.lit .none (.intLit 0))
+    [(.pvar (ofString "x"), lit)] with
+  | some (.let_ .none (some x) (.varLocal .none v) (.lit .none (.intLit 1))) =>
+      x == ofString "x" && v == ofString "v"
+  | _ => false
+#guard pattern_compile_branch
 
 end Flapjack.Test.FlatElim

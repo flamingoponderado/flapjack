@@ -63,3 +63,5 @@ val _ = capture "pattern_compile_empty" ``pattern_comp$comp [] = pattern_semanti
 val _ = capture "pattern_compile_any" ``pattern_comp$comp [(pattern_semantics$Any, 7)] = pattern_semantics$Leaf 7``;
 val _ = capture "pattern_bind_variable" ``flat_pattern$compile_pat_rhs backend_common$None 0 (flatLang$Var_local backend_common$None «v») (flatLang$Pvar «x», flatLang$Lit backend_common$None (ast$IntLit 1)) =
   flatLang$Let backend_common$None (SOME «x») (flatLang$Var_local backend_common$None «v») (flatLang$Lit backend_common$None (ast$IntLit 1))``;
+val _ = capture "pattern_compile_branch" ``flat_pattern$compile_pats (flat_pattern$init_config 0) F backend_common$None 0 (flatLang$Var_local backend_common$None «v») (flatLang$Lit backend_common$None (ast$IntLit 0)) [(flatLang$Pvar «x», flatLang$Lit backend_common$None (ast$IntLit 1))] =
+  flatLang$Let backend_common$None (SOME «x») (flatLang$Var_local backend_common$None «v») (flatLang$Lit backend_common$None (ast$IntLit 1))``;

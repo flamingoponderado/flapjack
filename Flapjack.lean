@@ -190,6 +190,7 @@ import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
 import Flapjack.Compiler.Backend.FlatPattern.Encode
 import Flapjack.Compiler.Backend.FlatPattern.Bindings
+import Flapjack.Compiler.Backend.FlatPattern.Patterns
 import Flapjack.Compiler.Backend.PatternComp.Decision
 import Flapjack.Compiler.Backend.PatternExh.Matrix
 import Flapjack.Compiler.Backend.FlatToClos.Helpers
