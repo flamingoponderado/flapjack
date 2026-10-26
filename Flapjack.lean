@@ -187,6 +187,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.CompileProg
 import Flapjack.Compiler.Backend.FlatElim.Reachability
 import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
 import Flapjack.Compiler.Backend.FlatPattern.Names
+import Flapjack.Compiler.Backend.FlatPattern.Decode
 import Flapjack.Compiler.Backend.Backend.PrimSrcConfig
 import Flapjack.Misc.Location
 import Flapjack.Compiler.Backend.BackendCommon.Operators

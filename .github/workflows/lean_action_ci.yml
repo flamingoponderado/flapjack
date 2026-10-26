@@ -51,6 +51,7 @@ jobs:
           lake build flapjack-compile
           python3 scripts/check-parity-goldens.py
           python3 scripts/check-cli-no-depth.py
+          python3 scripts/generate-cakeml-flat-oracle.py --check
 
       - name: Check Pan-to-Crep intermediate fixture coverage
         run: python3 scripts/pan-to-crep-coverage-report.py --check

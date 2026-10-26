@@ -8898,3 +8898,10 @@ comparison remain separate required gates.
 
 `l3_step_immediate_comparison_nop_probe.out` captures both original exported SLTI_NOP/SLTIU_NOP statements, typed binders, two original hypotheses (destination zero AND ArchBase<>1), and HOL kernel result T. The exact Lean pair preserves whole native-state equality and unrestricted source/immediate. These residual exports are unused by the accepted encoder; they add no production-route dependency. Captured statements and scoped checker are regression evidence, not cross-language equivalence proofs.
 `word_simp_const_fp_mem_probe.out` is a direct HOL-EVAL of original `const_fp` on `Assign 2 (Const 7w); Inst (Mem op 2 (Addr 3 0w)); Assign 4 (Op Add [Var 2; Const 3w])` for all eight memory operations. Through `const_fp_inst_cs_def` only Load/Load8/Load32 delete the destination, so stores and both sixteen-bit operations still fold the last assignment to `Const 10w`. `Flapjack/Test/WordSimpConstFpMemParity.lean` compares the executed `wordConstFpLoop` with every row. This is executed-behaviour oracle evidence, not an equivalence proof.
+`cakeml_frontend_flat_probe.out` captures generated-name bytes and flat
+elimination observations from the pinned CakeML `flat_pattern` and `flat_elim`
+definitions. Regenerate with
+`HOL_PROBE_ONLY=cakeml_frontend_flat_probeScript.sml scripts/hol-probes/regenerate.sh`,
+then run `python3 scripts/generate-cakeml-flat-oracle.py`. The Lean fixture
+compares these outputs and CI checks that it matches the captured transcript.
+The capture is finite regression evidence, not a cross-language equivalence proof.

@@ -99604,5 +99604,101 @@
     "hol_name": "op_sets_globals_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source definition transcribed; typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternCommon.lean",
+    "lean_name": "Position",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_commonScript.sml",
+    "hol_name": "position",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternCommon.lean",
+    "lean_name": "PmatchResult",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_commonScript.sml",
+    "hol_name": "pmatchResult",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternCommon.lean",
+    "lean_name": "MatchResult",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_commonScript.sml",
+    "hol_name": "matchResult",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternSemantics.lean",
+    "lean_name": "Pat",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_semanticsScript.sml",
+    "hol_name": "pat",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternSemantics.lean",
+    "lean_name": "DTest",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_semanticsScript.sml",
+    "hol_name": "dTest",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternSemantics.lean",
+    "lean_name": "DGuard",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_semanticsScript.sml",
+    "hol_name": "dGuard",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternSemantics.lean",
+    "lean_name": "DTree",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_semanticsScript.sml",
+    "hol_name": "dTree",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Decode.lean",
+    "lean_name": "decodePos",
+    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
+    "hol_name": "decode_pos_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Decode.lean",
+    "lean_name": "decodeTest",
+    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
+    "hol_name": "decode_test_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Decode.lean",
+    "lean_name": "simpGuard",
+    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
+    "hol_name": "simp_guard_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Decode.lean",
+    "lean_name": "decodeGuard",
+    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
+    "hol_name": "decode_guard_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Decode.lean",
+    "lean_name": "decodeDtree",
+    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
+    "hol_name": "decode_dtree_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed HOL capture and full statement review remain pending."
   }
 ]

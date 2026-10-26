@@ -1,0 +1,13 @@
+name_roundtrips=[0; 89; 90; 181]
+name_bytes=[[46; 46; 35]; [46; 46; 124]; [46; 46; 35; 125]; [46; 46; 36; 125; 125]]
+name_unreserved=0
+pure_init=T
+hidden_init=T
+impure_lookup_init=F
+hidden_lookup_init=F
+keep_empty=F
+keep_reachable=T
+eliminate_pure_length=0
+eval_bypass_length=2
+guard_double_not=T
+guard_false_conj=T

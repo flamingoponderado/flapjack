@@ -1,6 +1,8 @@
 import Flapjack.Compiler.Backend.FlatElim.Reachability
 import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
 import Flapjack.Compiler.Backend.FlatPattern.Names
+import Flapjack.Compiler.Backend.FlatPattern.Decode
+import Flapjack.Test.CakeMLFlatOracle
 
 namespace Flapjack.Test.FlatElim
 open Flapjack Flapjack.Compiler.Backend.FlatLang Flapjack.Compiler.Backend.FlatElim
@@ -10,9 +12,11 @@ private def lit : Exp := .lit .none (.intLit 1)
 private def get1 : Exp := .app .none (.globalVarLookup 1) []
 private def set2 : Exp := .app .none (.globalVarInit 2) [get1]
 private def eval : Exp := .app .none (.src .eval) []
+open Flapjack.Test.CakeMLFlatOracle
 
 -- An assignment containing a lookup is effectful and immediately reachable.
-#guard !isPure set2 && !isHidden set2
+#guard isPure set2 == impure_lookup_init
+#guard isHidden set2 == hidden_lookup_init
 #guard (sptLookup 2 (findLoc set2)).isSome
 #guard (sptLookup 1 (findLookups set2)).isSome
 #guard (sptLookup 2 (analyseExp set2).1).isSome
@@ -27,9 +31,10 @@ private def function : Exp := .fn (ofString "f") (ofString "x")
 
 -- A pure assignment can be removed unless its location is reachable.
 private def pureSet : Exp := .app .none (.globalVarInit 2) [lit]
-#guard isPure pureSet && isHidden pureSet
-#guard !keep .ln pureSet
-#guard keep (sptInsert 2 () .ln) pureSet
+#guard isPure pureSet == pure_init
+#guard isHidden pureSet == hidden_init
+#guard keep .ln pureSet == keep_empty
+#guard keep (sptInsert 2 () .ln) pureSet == keep_reachable
 #guard keep .ln eval
 
 -- Only a match with a total pattern is considered pure.
@@ -45,18 +50,24 @@ private def roots : NumSet := sptInsert 1 () .ln
 #guard (closureFuel 3 roots graph).isSome
 #guard (removeFlatProgFuel 0 [eval]).isSome
 #guard (removeFlatProgFuel 0 [pureSet]).isNone
-#guard (removeFlatProg [pureSet]).map List.length == some 0
-#guard (removeFlatProg [eval, pureSet]).map List.length == some 2
+#guard (removeFlatProg [pureSet]).map List.length == some eliminate_pure_length
+#guard (removeFlatProg [eval, pureSet]).map List.length == some eval_bypass_length
+example : removeFlatProg [eval, pureSet] = some [eval, pureSet] := rfl
 #guard ((Flapjack.Compiler.Backend.SourceToFlat.compileProgElim
   Flapjack.Compiler.Backend.SourceToFlat.emptyConfig []).map (fun result => result.2.length)) == some 2
 
 -- Reserved pattern names round-trip at both sides of the encoding boundary.
-#guard Flapjack.Compiler.Backend.FlatPattern.decNameToNum (ofString "x") == 0
-#guard Flapjack.Compiler.Backend.FlatPattern.decNameToNum
-  (Flapjack.Compiler.Backend.FlatPattern.encNumToName 89) == 89
-#guard Flapjack.Compiler.Backend.FlatPattern.decNameToNum
-  (Flapjack.Compiler.Backend.FlatPattern.encNumToName 90) == 90
-#guard Flapjack.Compiler.Backend.FlatPattern.decNameToNum
-  (Flapjack.Compiler.Backend.FlatPattern.encNumToName 181) == 181
+#guard Flapjack.Compiler.Backend.FlatPattern.decNameToNum (ofString "x") == nameUnreserved
+#guard [0, 89, 90, 181].map (fun n => Flapjack.Compiler.Backend.FlatPattern.decNameToNum
+  (Flapjack.Compiler.Backend.FlatPattern.encNumToName n)) == nameRoundtrips
+#guard [0, 89, 90, 181].map (fun n =>
+  (Flapjack.Compiler.Backend.FlatPattern.encNumToName n).explode.map BitVec.toNat) == nameBytes
+
+open Flapjack.Compiler.Backend.FlatPattern Flapjack.Compiler.Backend.PatternSemantics
+#guard decide (simpGuard (.not (.not .true_)) = .true_) == guard_double_not
+#guard decide (simpGuard (.conj .true_ (.not .true_)) = .not .true_) == guard_false_conj
+example : decodeDtree .none .ln lit pureSet (.leaf 4) = pureSet := rfl
+example : decodeDtree .none (.ls lit) lit pureSet (.leaf 0) = lit := rfl
+example : decodeDtree .none .ln lit pureSet (.if_ .true_ (.leaf 0) .typeFail) = pureSet := rfl
 
 end Flapjack.Test.FlatElim
