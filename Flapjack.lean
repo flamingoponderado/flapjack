@@ -205,6 +205,7 @@ import Flapjack.Compiler.Backend.BvlToBvi.Analysis
 import Flapjack.Compiler.Backend.BvlToBvi.CompileOp
 import Flapjack.Compiler.Backend.BviLet.Compile
 import Flapjack.Compiler.Backend.BvlToBvi.Compile
+import Flapjack.Compiler.Backend.DataLang.Syntax
 import Flapjack.Compiler.Backend.PatternComp.Decision
 import Flapjack.Compiler.Backend.PatternExh.Matrix
 import Flapjack.Compiler.Backend.FlatToClos.Helpers

@@ -53,6 +53,8 @@ probe_needs_refresh() {
          "$cake_dir/compiler/backend/clos_numberScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/bvl_to_bviScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/bvi_letScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/dataLangScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/bvi_to_dataScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/pattern_matching/pattern_compScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/pattern_matching/pattern_exhScript.sml" -nt "$output" ) ]] ||
     [[ "$(basename "$probe")" == l3_riscv_int_to_fp_probeScript.sml &&
@@ -123,7 +125,7 @@ run_probe() {
 }
 
 run_probe cakeml_frontend_flat_probeScript.sml cakeml_frontend_flat_probe.out \
-  name_roundtrips name_bytes name_unreserved pure_init hidden_init impure_lookup_init hidden_lookup_init keep_empty keep_reachable eliminate_pure_length eval_bypass_length guard_double_not guard_false_conj pattern_encoding empty_program_globals empty_program_output word8_literal smart_constructor int_division copy_string array_update word8_conversion compile_let compile_constructor compile_nop closure_empty_program closure_install_detect closure_init_false incremental_empty interpreter_arity pattern_any_tree pattern_constructor_guard pattern_nub pattern_specialize pattern_compile_empty pattern_compile_any pattern_exhaustive pattern_bind_variable pattern_compile_branch pattern_naive_branch pattern_constructor_branch empty_source_to_clos reference_source_to_clos source_let_lifting lifted_source_to_clos match_source_to_clos match_bind_source_to_clos bvl_shared_constant bvl_stub_layout bvl_chain_empty bvl_code_sort bvl_build_aux bvl_source_names closure_numbering closure_number_incremental bvl_closure_call bvl_partial_application bvl_extract_name bvl_name_alist bvl_recursive_closures bvl_compile_closure bvl_compile_program bvl_to_bvi_analysis bvl_to_bvi_operations bvi_let_optimization bvl_to_bvi_marker bvl_to_bvi_incremental clos_to_bvi_program \
+  name_roundtrips name_bytes name_unreserved pure_init hidden_init impure_lookup_init hidden_lookup_init keep_empty keep_reachable eliminate_pure_length eval_bypass_length guard_double_not guard_false_conj pattern_encoding empty_program_globals empty_program_output word8_literal smart_constructor int_division copy_string array_update word8_conversion compile_let compile_constructor compile_nop closure_empty_program closure_install_detect closure_init_false incremental_empty interpreter_arity pattern_any_tree pattern_constructor_guard pattern_nub pattern_specialize pattern_compile_empty pattern_compile_any pattern_exhaustive pattern_bind_variable pattern_compile_branch pattern_naive_branch pattern_constructor_branch empty_source_to_clos reference_source_to_clos source_let_lifting lifted_source_to_clos match_source_to_clos match_bind_source_to_clos bvl_shared_constant bvl_stub_layout bvl_chain_empty bvl_code_sort bvl_build_aux bvl_source_names closure_numbering closure_number_incremental bvl_closure_call bvl_partial_application bvl_extract_name bvl_name_alist bvl_recursive_closures bvl_compile_closure bvl_compile_program bvl_to_bvi_analysis bvl_to_bvi_operations bvi_let_optimization bvl_to_bvi_marker bvl_to_bvi_incremental clos_to_bvi_program data_lang_syntax \
   "$cake_dir/compiler/backend/flat_elimScript.sml" "$cake_dir/compiler/backend"
 
 run_probe l3_step_register_comparison_probeScript.sml l3_step_register_comparison_probe.out \

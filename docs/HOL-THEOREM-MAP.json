@@ -101004,5 +101004,37 @@
     "hol_name": "delete_var_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataLang/Syntax.lean",
+    "lean_name": "Prog",
+    "hol_path": "cakeml/compiler/backend/dataLangScript.sml",
+    "hol_name": "prog",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source syntax or clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataLang/Syntax.lean",
+    "lean_name": "opSpaceReset",
+    "hol_path": "cakeml/compiler/backend/dataLangScript.sml",
+    "hol_name": "op_space_reset_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source syntax or clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataLang/Syntax.lean",
+    "lean_name": "opRequiresNames",
+    "hol_path": "cakeml/compiler/backend/dataLangScript.sml",
+    "hol_name": "op_requires_names_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source syntax or clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataLang/Syntax.lean",
+    "lean_name": "mkTicks",
+    "hol_path": "cakeml/compiler/backend/dataLangScript.sml",
+    "hol_name": "mk_ticks_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source syntax or clauses transcribed; complete typed carrier and statement review remains pending."
   }
 ]

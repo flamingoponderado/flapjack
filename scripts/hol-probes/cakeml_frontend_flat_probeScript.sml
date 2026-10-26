@@ -1,4 +1,4 @@
-load "flat_patternTheory"; load "flat_elimTheory"; load "source_to_flatTheory"; load "flat_to_closTheory"; load "source_to_sourceTheory"; load "clos_to_bvlTheory"; load "clos_numberTheory"; load "bvl_to_bviTheory"; load "bvi_letTheory"; load "wordsLib";
+load "flat_patternTheory"; load "flat_elimTheory"; load "source_to_flatTheory"; load "flat_to_closTheory"; load "source_to_sourceTheory"; load "clos_to_bvlTheory"; load "clos_numberTheory"; load "bvl_to_bviTheory"; load "bvi_letTheory"; load "dataLangTheory"; load "bvi_to_dataTheory"; load "wordsLib";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 fun capture label term =
@@ -165,3 +165,12 @@ val _ = capture "bvl_to_bvi_incremental" ``bvl_to_bvi$compile_inc 0 [(5, 1, bvl$
 val _ = capture "clos_to_bvi_program" ``bvl_to_bvi$compile_inc 0
  (clos_to_bvl$compile_prog 0 [(10, 0, closLang$Var backend_common$None 0)]) =
  (0, [(backend_common$bvl_num_stubs + 48, 0, bvi$Var 0)])``;
+fun captureData label term =
+  let val rewritten = rhs (concl (REWRITE_CONV [bvi_to_dataTheory.op_requires_names_eqn] term))
+  in capture label rewritten end;
+val _ = captureData "data_lang_syntax" ``
+ dataLang$op_space_reset (closLang$MemOp (closLang$CopyByte T)) /\
+ ~dataLang$op_space_reset (closLang$MemOp (closLang$CopyByte F)) /\
+ dataLang$op_requires_names (closLang$MemOp (closLang$CopyByte F)) /\
+ ~dataLang$op_requires_names (closLang$IntOp (closLang$Const 1)) /\
+ dataLang$mk_ticks 2 dataLang$Skip = dataLang$Seq dataLang$Tick (dataLang$Seq dataLang$Tick dataLang$Skip)``;

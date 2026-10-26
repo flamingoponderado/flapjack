@@ -12,6 +12,7 @@ import Flapjack.Compiler.Backend.BvlToBvi.Analysis
 import Flapjack.Compiler.Backend.BvlToBvi.CompileOp
 import Flapjack.Compiler.Backend.BviLet.Compile
 import Flapjack.Compiler.Backend.BvlToBvi.Compile
+import Flapjack.Compiler.Backend.DataLang.Syntax
 import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
 import Flapjack.Compiler.Backend.FlatPattern.Encode
@@ -419,5 +420,11 @@ example : Flapjack.Compiler.Backend.BviLet.compileFuel 0 [] 0 (.var 0) = none :=
     | _ => false
   | _ => false
 #guard clos_to_bvi_program
+#guard Flapjack.Compiler.Backend.DataLang.opSpaceReset (.memOp (.copyByte true))
+#guard !Flapjack.Compiler.Backend.DataLang.opSpaceReset (.memOp (.copyByte false))
+#guard Flapjack.Compiler.Backend.DataLang.opRequiresNames (.memOp (.copyByte false))
+#guard !Flapjack.Compiler.Backend.DataLang.opRequiresNames (.intOp (.const 1))
+example : Flapjack.Compiler.Backend.DataLang.mkTicks 2 .skip = .seq .tick (.seq .tick .skip) := rfl
+#guard data_lang_syntax
 
 end Flapjack.Test.FlatElim

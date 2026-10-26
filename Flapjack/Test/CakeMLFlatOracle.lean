@@ -65,6 +65,7 @@ def bvi_let_optimization : Bool := true
 def bvl_to_bvi_marker : Bool := true
 def bvl_to_bvi_incremental : Bool := true
 def clos_to_bvi_program : Bool := true
+def data_lang_syntax : Bool := true
 def eliminate_pure_length : Nat := 0
 def eval_bypass_length : Nat := 2
 def empty_program_globals : Nat := 1
