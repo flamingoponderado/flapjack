@@ -230,8 +230,15 @@ val _ = capture "data_to_word_locations" ``[data_to_word$FromList_location; data
 val _ = capture "data_to_word_word_ops" ``MAP data_to_word$lookup_word_op [backend_common$Andw; backend_common$Orw; backend_common$Xor; backend_common$Add; backend_common$Sub] =
  [data_to_word$Bitwise asm$And; data_to_word$Bitwise asm$Or; data_to_word$Bitwise asm$Xor; data_to_word$Carried asm$Add; data_to_word$Carried asm$Sub]``;
 val _ = capture "data_to_word_control" ``
- (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Return [0;3]) : word64 wordLang$prog # num) = (wordLang$Return 0 [2;8], 2) /\
- (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Call NONE (SOME 9) [0;3] NONE) : word64 wordLang$prog # num) = (wordLang$Call NONE (SOME 9) [0;2;8] NONE, 2)``;
+ (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Return [0;3]) : 64 wordLang$prog # num) = (wordLang$Return 0 [2;8], 2) /\
+ (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Call NONE (SOME 9) [0;3] NONE) : 64 wordLang$prog # num) = (wordLang$Call NONE (SOME 9) [0;2;8] NONE, 2)``;
 val _ = capture "clos_to_word_control" ``
  let (name,args,exp) = HD (SND (bvl_to_bvi$compile_inc 0 (clos_to_bvl$compile_prog 0 [(10, 1, closLang$Var backend_common$None 0)]))) in
- (data_to_word$comp (ARB:data_to_word$config) name 2 (bvi_to_data$compile_exp args exp) : word64 wordLang$prog # num) = (wordLang$Return 0 [2], 2)``;
+ (data_to_word$comp (ARB:data_to_word$config) name 2 (bvi_to_data$compile_exp args exp) : 64 wordLang$prog # num) = (wordLang$Return 0 [2], 2)``;
+val data_space_word = EVAL ``
+ (data_to_word$comp ((ARB:data_to_word$config) with call_empty_ffi := F) 5 2 (dataLang$MakeSpace 2 sptree$LN) : 64 wordLang$prog # num) =
+ (wordLang$Seq (wordLang$Assign 1 (wordLang$Op asm$Sub [wordLang$Lookup stackLang$TriggerGC; wordLang$Lookup stackLang$NextFree]))
+  (wordLang$If asm$Lower 1 (asm$Imm 16w)
+   (wordLang$Seq wordLang$Skip (wordLang$Seq (wordLang$Assign 1 (wordLang$Const 16w)) (wordLang$Seq (wordLang$Alloc 1 (sptree$LS (), sptree$LN)) wordLang$Skip))) wordLang$Skip), 2)``;
+val _ = (print "data_to_word_space="; print_term (rhs (concl (CONV_RULE
+  (RAND_CONV (SIMP_CONV (srw_ss()) [wordsTheory.dimindex_64, wordsTheory.dimword_def] THENC EVAL)) data_space_word))); print "\n");

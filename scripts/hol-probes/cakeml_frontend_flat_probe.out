@@ -81,3 +81,4 @@ data_to_word_locations=T
 data_to_word_word_ops=T
 data_to_word_control=T
 clos_to_word_control=T
+data_to_word_space=T

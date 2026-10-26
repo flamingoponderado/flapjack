@@ -6,8 +6,25 @@ import Flapjack.Pancake.WordLang
 /-! Checked control-flow cases of data-to-word compilation. -/
 namespace Flapjack.Compiler.Backend.DataToWord
 
-/-- Flapjack's partial control-flow traversal. Unsupported allocation,
-assignment and thunk cases return `none`; this is not HOL's total `comp`. -/
+/-- Generic Flapjack sequencing helper; HOL's `list_Seq` is restricted to
+word-indexed programs, so this broader helper is not tagged as that port. -/
+private def listSeq {α : Type} : List (WordLangProgHOL α) → WordLangProgHOL α
+  | [] => .skip
+  | [x] => x
+  | x :: y :: xs => .seq x (listSeq (y :: xs))
+
+/-- Internal support for the checked allocation case; a reviewed port of
+`SilentFFI` and its width-indexed statement remains open. -/
+private def silentFfi {width : Nat} (conf : Config) (n : Nat) (names : WordLangCutsetsHOL) :
+    WordLangProgHOL (BitVec width) :=
+  if conf.callEmptyFfi then
+    listSeq [.assign n (.const 0),
+      .assign 7 (.op .sub [.lookup .nextFree, .lookup .currHeap]),
+      .assign 9 (.lookup .heapLength), .ffi (.implode []) 7 n 9 n names]
+  else .skip
+
+/-- Flapjack's partial control-flow traversal. Unsupported assignment and
+thunk cases return `none`; this is not HOL's total `comp`. -/
 def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
     Nat → DataLang.Prog → Option (WordLangProgHOL (BitVec width) × Nat)
   | l, .skip => some (.skip, l)
@@ -23,6 +40,15 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
       let (x, l) ← compileControl? conf secn l x
       let (y, l) ← compileControl? conf secn l y
       pure (.ite .equal (adjustVar n) (.imm 18) x y, l)
+  | l, .makeSpace n names =>
+      let bytes := n * (width / 8)
+      let value := BitVec.ofNat width bytes
+      let value := if value.toNat = bytes then value else (-1 : BitVec width)
+      let cutsets := adjustSets names
+      some (.seq (.assign 1 (.op .sub [.lookup .triggerGC, .lookup .nextFree]))
+        (.ite .lower 1 (.imm value)
+          (listSeq [silentFfi conf 3 cutsets, .assign 1 (.const value),
+            .alloc 1 cutsets, silentFfi conf 3 cutsets]) .skip), l)
   | l, .call none target args _ => some (.call none target (0 :: args.map adjustVar) none, l)
   | l, .call (some (ns, names)) target args none =>
       some (.call (some (ns.map adjustVar, adjustSets names, .skip, secn, l))

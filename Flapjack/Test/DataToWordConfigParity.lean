@@ -56,6 +56,12 @@ private def headerConfig : Config := { conf with lenSize := 4 }
   | _ => false
 #guard (compileControl? (width := 64) conf 5 2 (.assign 0 (.intOp (.const 1)) [] none)).isNone
 #guard Flapjack.Test.CakeMLFlatOracle.data_to_word_control
+#guard match compileControl? (width := 64) conf 5 2 (.makeSpace 2 .ln) with
+  | some (.seq (.assign 1 (.op .sub [.lookup .triggerGC, .lookup .nextFree]))
+      (.ite .lower 1 (.imm 16)
+        (.seq .skip (.seq (.assign 1 (.const 16)) (.seq (.alloc 1 (.ls (), .ln)) .skip))) .skip), 2) => true
+  | _ => false
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_space
 
 def runChecks : IO Bool := do
   IO.println "PASS data_to_word shift_length/small_shift_length/get_gen_size match six original HOL rows"
