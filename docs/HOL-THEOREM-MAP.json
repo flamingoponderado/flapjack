@@ -101156,5 +101156,23 @@
     "hol_name": "adjust_sets_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Header.lean",
+    "lean_name": "makeHeader",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "make_header_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Typed original definition and carrier captured in data_to_word_header_types_probe.out. Compared all arguments, arithmetic bounds, truncating subtraction, word shifts, disjunction and option result; positive-width BitVec is the only representation translation. Original 32- and 64-bit examples and an invalid length are replayed; these examples do not prove cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Header.lean",
+    "lean_name": "encodeHeader",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "encode_header_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Typed original definition and carrier captured in data_to_word_header_types_probe.out. Compared all arguments, arithmetic bounds, truncating subtraction, word shifts, disjunction and option result; positive-width BitVec is the only representation translation. Original 32- and 64-bit examples and an invalid length are replayed; these examples do not prove cross-language equivalence."
   }
 ]

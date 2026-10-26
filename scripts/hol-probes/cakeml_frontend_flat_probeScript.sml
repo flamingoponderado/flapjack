@@ -220,3 +220,8 @@ val _ = capture "data_to_word_variables" ``
  data_to_word$adjust_var 7 = 16 /\
  let names = data_to_word$adjust_set (sptree$insert 1 8 (sptree$insert 0 9 sptree$LN)) in
  [sptree$lookup 0 names; sptree$lookup 2 names; sptree$lookup 4 names] = [NONE; SOME (); SOME ()]``;
+val header_test = EVAL ``let conf = (ARB:data_to_word$config) with len_size := 4 in
+ data_to_word$encode_header conf 3 5 = SOME (0x500000000000000Fw:word64) /\
+ data_to_word$encode_header conf 3 5 = SOME (0x5000000Fw:word32) /\
+ data_to_word$encode_header conf 3 16 = (NONE:word64 option)``;
+val _ = (print "data_to_word_header="; print_term (rhs (concl (CONV_RULE (RAND_CONV wordsLib.WORD_EVAL_CONV) header_test))); print "\n");

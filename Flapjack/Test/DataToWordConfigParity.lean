@@ -1,4 +1,6 @@
 import Flapjack.Compiler.Backend.DataToWord.Config
+import Flapjack.Compiler.Backend.DataToWord.Header
+import Flapjack.Test.CakeMLFlatOracle
 
 /-!
 # `data_to_word` configuration helpers: original-oracle rows
@@ -27,6 +29,16 @@ example : (getGenSize [10, 20] : BitVec 64) = 80 := by decide
 example : (getGenSize [2305843009213693952] : BitVec 64) = 0xFFFFFFFFFFFFFFF8 := by decide
 -- gen_size_three_32=12w
 example : (getGenSize [3] : BitVec 32) = 12 := by decide
+
+private def headerConfig : Config := { conf with lenSize := 4 }
+#guard match encodeHeader (width := 64) headerConfig 3 5 with
+  | some w => w.toNat == 5764607523034234895
+  | none => false
+#guard (encodeHeader (width := 64) headerConfig 3 16).isNone
+#guard match encodeHeader (width := 32) headerConfig 3 5 with
+  | some w => w.toNat == 1342177295
+  | none => false
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_header
 
 def runChecks : IO Bool := do
   IO.println "PASS data_to_word shift_length/small_shift_length/get_gen_size match six original HOL rows"

@@ -213,6 +213,7 @@ import Flapjack.Compiler.Backend.DataSimp
 import Flapjack.Compiler.Backend.DataLive
 import Flapjack.Compiler.Backend.BviToData.Optimise
 import Flapjack.Compiler.Backend.DataToWord.Variables
+import Flapjack.Compiler.Backend.DataToWord.Header
 import Flapjack.Compiler.Backend.PatternComp.Decision
 import Flapjack.Compiler.Backend.PatternExh.Matrix
 import Flapjack.Compiler.Backend.FlatToClos.Helpers
