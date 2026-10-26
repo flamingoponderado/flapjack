@@ -127,5 +127,10 @@ example : Flapjack.Compiler.Backend.FlatToClos.compile []
       [.app .none (.src (.fromTo .charT .intT)) [lit]]] =
     [.op .none (.intOp (.const 1)) []] := rfl
 #guard compile_nop
+example : Flapjack.Compiler.Backend.FlatToClos.compileProg [] =
+    [Flapjack.Compiler.Backend.ClosInterp.compileInit false] := rfl
+#guard closure_empty_program
+#guard Flapjack.Compiler.Backend.ClosLang.hasInstallList
+  [.fn (ofString "f") none none 1 (.op .none .install [])] == closure_install_detect
 
 end Flapjack.Test.FlatElim

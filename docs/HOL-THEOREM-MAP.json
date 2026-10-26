@@ -99828,5 +99828,77 @@
     "hol_name": "dest_nop_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Two source conversion patterns transcribed; independent typed HOL capture and complete source review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosLang/HasInstall.lean",
+    "lean_name": "hasInstall",
+    "hol_path": "cakeml/compiler/backend/closLangScript.sml",
+    "hol_name": "has_install_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosLang/HasInstall.lean",
+    "lean_name": "hasInstallList",
+    "hol_path": "cakeml/compiler/backend/closLangScript.sml",
+    "hol_name": "has_install_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Interpreter.lean",
+    "lean_name": "closInterpEl",
+    "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
+    "hol_name": "clos_interp_el_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Interpreter.lean",
+    "lean_name": "closInterpRev",
+    "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
+    "hol_name": "clos_interp_rev_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Interpreter.lean",
+    "lean_name": "closInterpreterBody",
+    "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
+    "hol_name": "clos_interpreter_body_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Interpreter.lean",
+    "lean_name": "closInterpreter",
+    "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
+    "hol_name": "clos_interpreter_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Interpreter.lean",
+    "lean_name": "compileInit",
+    "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
+    "hol_name": "compile_init_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosInterp/Interpreter.lean",
+    "lean_name": "attachInterpreter",
+    "hol_path": "cakeml/compiler/backend/clos_interpScript.sml",
+    "hol_name": "attach_interpreter_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Compile.lean",
+    "lean_name": "compileProg",
+    "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
+    "hol_name": "compile_prog_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source composition transcribed; complete source and typed carrier review remains pending."
   }
 ]

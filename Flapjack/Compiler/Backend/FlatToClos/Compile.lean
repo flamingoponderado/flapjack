@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.FlatToClos.Op
+import Flapjack.Compiler.Backend.ClosInterp.Interpreter
 
 /-! Flat expressions to closure expressions, before interpreter attachment. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
@@ -59,5 +60,10 @@ def compile (m : List (Option MlString)) (es : List FlatLang.Exp) : List ClosLan
 /-- Compile each top-level flat declaration in an empty environment. -/
 @[hol "cakeml/compiler/backend/flat_to_closScript.sml" "compile_decs_def"]
 def compileDecs (es : List FlatLang.Exp) : List ClosLang.Exp := compile [] es
+
+/-- Compile flat declarations and attach the original interpreter initializer. -/
+@[hol "cakeml/compiler/backend/flat_to_closScript.sml" "compile_prog_def"]
+def compileProg (es : List FlatLang.Exp) : List ClosLang.Exp :=
+  ClosInterp.attachInterpreter (compileDecs es)
 
 end Flapjack.Compiler.Backend.FlatToClos

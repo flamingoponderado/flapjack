@@ -23,3 +23,5 @@ word8_conversion=T
 compile_let=T
 compile_constructor=T
 compile_nop=T
+closure_empty_program=T
+closure_install_detect=T
