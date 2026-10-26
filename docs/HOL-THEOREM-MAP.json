@@ -101174,5 +101174,269 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Typed original definition and carrier captured in data_to_word_header_types_probe.out. Compared all arguments, arithmetic bounds, truncating subtraction, word shifts, disjunction and option result; positive-width BitVec is the only representation translation. Original 32- and 64-bit examples and an invalid length are replayed; these examples do not prove cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "fromListLocation",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "FromList_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "fromList1Location",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "FromList1_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "refByteLocation",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "RefByte_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "refArrayLocation",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "RefArray_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "replicateLocation",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "Replicate_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "anyArithLocation",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "AnyArith_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "addLocation",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "Add_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "subLocation",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "Sub_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "mulLocation",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "Mul_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "divLocation",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "Div_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "modLocation",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "Mod_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "compare1Location",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "Compare1_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "compareLocation",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "Compare_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "equal1Location",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "Equal1_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "equalLocation",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "Equal_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "longDiv1Location",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "LongDiv1_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "longDivLocation",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "LongDiv_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "memCopyLocation",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "MemCopy_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "byteCopyLocation",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "ByteCopy_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "byteCopyAddLocation",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "ByteCopyAdd_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "byteCopySubLocation",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "ByteCopySub_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "byteCopyNewLocation",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "ByteCopyNew_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "installLocation",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "Install_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "installCodeLocation",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "InstallCode_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "installDataLocation",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "InstallData_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "dummyLocation",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "Dummy_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "appendLocation",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "Append_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "appendMainLoopLocation",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "AppendMainLoop_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "appendLenLoopLocation",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "AppendLenLoop_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "xorLoopLocation",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "XorLoop_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "unusedLocation",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "Unused_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "stringCmpLoopLocation",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "StringCmpLoop_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Locations.lean",
+    "lean_name": "bignumLocation",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "Bignum_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
   }
 ]
