@@ -57,3 +57,5 @@ val _ = capture "pattern_any_tree" ``pattern_comp$pats_to_code [(pattern_semanti
 val _ = capture "pattern_constructor_guard" ``pattern_comp$pat_to_guard [] (pattern_semantics$Cons (SOME (2, NONE)) [pattern_semantics$Lit (ast$IntLit 7)]) =
   pattern_semantics$Conj (pattern_semantics$PosTest pattern_common$EmptyPos (pattern_semantics$TagLenEq 2 1))
     (pattern_semantics$PosTest (pattern_common$Pos 0 pattern_common$EmptyPos) (pattern_semantics$LitEq (ast$IntLit 7)))``;
+val _ = capture "pattern_nub" ``pattern_exh$ctor_nub [pattern_exh$TagC 1 0; pattern_exh$RefC; pattern_exh$TagC 1 0] = [pattern_exh$RefC; pattern_exh$TagC 1 0]``;
+val _ = capture "pattern_specialize" ``pattern_exh$spec_row (pattern_exh$TagC 2 1) [pattern_semantics$Any; pattern_semantics$Lit (ast$IntLit 3)] = [[pattern_semantics$Any; pattern_semantics$Lit (ast$IntLit 3)]]``;

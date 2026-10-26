@@ -100132,5 +100132,181 @@
     "hol_name": "pats_to_code_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
+    "lean_name": "Ctor",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "ctor",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
+    "lean_name": "ctorArity",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "ctor_arity_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
+    "lean_name": "anys",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "anys_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
+    "lean_name": "addHead",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "add_head_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
+    "lean_name": "mkProds",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "mk_prods_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
+    "lean_name": "mkRefs",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "mk_refs_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
+    "lean_name": "mkConses",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "mk_conses_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
+    "lean_name": "expand",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "expand_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
+    "lean_name": "expandList",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "expand_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
+    "lean_name": "mkRows",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "mk_rows_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
+    "lean_name": "orRows",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "or_rows_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
+    "lean_name": "tagCtors",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "tag_ctors_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
+    "lean_name": "ctorNub",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "ctor_nub_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
+    "lean_name": "ctorsOf",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "ctors_of_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
+    "lean_name": "ctorKeep",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "ctor_keep_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
+    "lean_name": "ctorInter",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "ctor_inter_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
+    "lean_name": "colCtors",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "col_ctors_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
+    "lean_name": "specRow",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "spec_row_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
+    "lean_name": "specMat",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "spec_mat_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
+    "lean_name": "specMats",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "spec_mats_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
+    "lean_name": "defaultRow",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "default_row_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Matrix.lean",
+    "lean_name": "defaultMat",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "default_mat_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
   }
 ]

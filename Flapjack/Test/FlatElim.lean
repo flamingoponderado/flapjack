@@ -4,6 +4,7 @@ import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
 import Flapjack.Compiler.Backend.FlatPattern.Encode
 import Flapjack.Compiler.Backend.PatternComp.Decision
+import Flapjack.Compiler.Backend.PatternExh.Matrix
 import Flapjack.Compiler.Backend.FlatToClos.Helpers
 import Flapjack.Compiler.Backend.FlatToClos.Arith
 import Flapjack.Compiler.Backend.FlatToClos.CopyByte
@@ -151,5 +152,10 @@ example : Flapjack.Compiler.Backend.PatternComp.patToGuard []
     .conj (.posTest .emptyPos (.tagLenEq 2 1))
       (.posTest (.pos 0 .emptyPos) (.litEq (.intLit 7))) := rfl
 #guard pattern_any_tree && pattern_constructor_guard
+example : Flapjack.Compiler.Backend.PatternExh.ctorNub [.tagC 1 0, .refC, .tagC 1 0] =
+    [.refC, .tagC 1 0] := rfl
+example : Flapjack.Compiler.Backend.PatternExh.specRow (.tagC 2 1)
+    [.any, .lit (.intLit 3)] = [[.any, .lit (.intLit 3)]] := rfl
+#guard pattern_nub && pattern_specialize
 
 end Flapjack.Test.FlatElim
