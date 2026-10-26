@@ -61,6 +61,24 @@ def partialAppFnLocationCode {α : Type} (_maxApp : α) (total previous : Bvl.Ex
     .op (.intOp .div) [mkConst 2,
       .op (.intOp .mult) [.var 0, .op (.intOp .sub) [mkConst 1, .var 0]]]])
 
+/-- Emit the direct-call or generic-application branch for a closure. -/
+@[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "mk_cl_call_def"]
+def mkClCall (cl : Bvl.Exp) (args : List Bvl.Exp) : Bvl.Exp :=
+  let arity := args.length - 1
+  .ifThenElse (.op (.blockOp (.equalConst (.int (Int.ofNat arity)))) [mkElemAt cl 1])
+    (.call arity none (args ++ [cl, mkElemAt cl 0]))
+    (.call 0 (some (genericAppFnLocation arity)) (args ++ [cl]))
+
+/-- Emit the function that completes a partial closure application. -/
+@[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "generate_partial_app_closure_fn_def"]
+def generatePartialAppClosureFn (totalArgs prevArgs : Nat) : Bvl.Exp :=
+  .let [mkElemAt (.var (totalArgs - prevArgs)) 2]
+    (.call 0 none
+      ((List.range (totalArgs - prevArgs)).map (fun arg => .var (arg + 1)) ++
+       (List.range (prevArgs + 1)).map (fun arg =>
+         mkElemAt (.var (totalArgs - prevArgs + 1)) (arg + 3)) ++
+       [.var 0, mkElemAt (.var 0) 0]))
+
 /-- Chain top-level closure expressions through successive zero-argument calls. -/
 @[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "chain_exps_def"]
 def chainExps (i : Nat) : List ClosLang.Exp → List (Nat × Nat × ClosLang.Exp)

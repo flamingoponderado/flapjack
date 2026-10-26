@@ -6,6 +6,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Layout
 import Flapjack.Compiler.Backend.ClosToBvl.Sort
 import Flapjack.Compiler.Backend.ClosToBvl.Names
 import Flapjack.Compiler.Backend.ClosNumber
+import Flapjack.Compiler.Backend.ClosToBvl.ExtractName
 import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
 import Flapjack.Compiler.Backend.FlatPattern.Encode
@@ -320,5 +321,22 @@ example : Flapjack.Compiler.Backend.ClosNumber.compileInc 3
     [.fn (ofString "f") none none 1 (.var .none 0)] =
     (6, [.op .none (.intOp (.const 3)) [], .fn (ofString "f") (some 4) none 1 (.var .none 0)]) := rfl
 #guard closure_numbering && closure_number_incremental
+example : Flapjack.Compiler.Backend.ClosToBvl.mkClCall (.var 2) [.var 1, .var 0] =
+    .ifThenElse (.op (.blockOp (.equalConst (.int 1))) [.op (.blockOp (.elemAt 1)) [.var 2]])
+      (.call 1 none [.var 1, .var 0, .var 2, .op (.blockOp (.elemAt 0)) [.var 2]])
+      (.call 0 (some 1) [.var 1, .var 0, .var 2]) := rfl
+example : Flapjack.Compiler.Backend.ClosToBvl.generatePartialAppClosureFn 2 1 =
+    .let [.op (.blockOp (.elemAt 2)) [.var 1]]
+      (.call 0 none [.var 1, .op (.blockOp (.elemAt 3)) [.var 2],
+        .op (.blockOp (.elemAt 4)) [.var 2], .var 0, .op (.blockOp (.elemAt 0)) [.var 0]]) := rfl
+#guard bvl_closure_call && bvl_partial_application
+example : Flapjack.Compiler.Backend.ClosToBvl.extractName
+    [.op .none (.intOp (.const 7)) [], .var .none 2] = (7, [.var .none 2]) := rfl
+example : Flapjack.Compiler.Backend.ClosToBvl.extractName
+    [.op .none (.intOp (.const 7)) []] = (7, [.op .none (.intOp (.const 7)) []]) := rfl
+example : Flapjack.Compiler.Backend.ClosToBvl.extractName
+    [.op .none (.intOp (.const (-1))) [], .var .none 2] =
+    (0, [.op .none (.intOp (.const (-1))) [], .var .none 2]) := rfl
+#guard bvl_extract_name
 
 end Flapjack.Test.FlatElim

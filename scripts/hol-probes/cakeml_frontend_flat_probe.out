@@ -53,3 +53,6 @@ bvl_build_aux=T
 bvl_source_names=T
 closure_numbering=T
 closure_number_incremental=T
+bvl_closure_call=T
+bvl_partial_application=T
+bvl_extract_name=T

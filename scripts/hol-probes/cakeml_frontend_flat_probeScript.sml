@@ -103,3 +103,19 @@ val _ = capture "closure_numbering" ``clos_number$renumber_code_locs 4 (closLang
  (8, closLang$Fn «f» (SOME 6) NONE 1 (closLang$Fn «g» (SOME 4) NONE 1 (closLang$Var backend_common$None 0)))``;
 val _ = capture "closure_number_incremental" ``clos_number$compile_inc 3 [closLang$Fn «f» NONE NONE 1 (closLang$Var backend_common$None 0)] =
  (6, [closLang$Op backend_common$None (closLang$IntOp (closLang$Const 3)) []; closLang$Fn «f» (SOME 4) NONE 1 (closLang$Var backend_common$None 0)])``;
+val _ = capture "bvl_closure_call" ``clos_to_bvl$mk_cl_call (bvl$Var 2) [bvl$Var 1; bvl$Var 0] =
+ bvl$If (bvl$Op (closLang$BlockOp (closLang$EqualConst (closLang$Int 1))) [bvl$Op (closLang$BlockOp (closLang$ElemAt 1)) [bvl$Var 2]])
+  (bvl$Call 1 NONE [bvl$Var 1; bvl$Var 0; bvl$Var 2; bvl$Op (closLang$BlockOp (closLang$ElemAt 0)) [bvl$Var 2]])
+  (bvl$Call 0 (SOME 1) [bvl$Var 1; bvl$Var 0; bvl$Var 2])``;
+val _ = capture "bvl_partial_application" ``clos_to_bvl$generate_partial_app_closure_fn 2 1 =
+ bvl$Let [bvl$Op (closLang$BlockOp (closLang$ElemAt 2)) [bvl$Var 1]]
+  (bvl$Call 0 NONE [bvl$Var 1; bvl$Op (closLang$BlockOp (closLang$ElemAt 3)) [bvl$Var 2]; bvl$Op (closLang$BlockOp (closLang$ElemAt 4)) [bvl$Var 2]; bvl$Var 0; bvl$Op (closLang$BlockOp (closLang$ElemAt 0)) [bvl$Var 0]])``;
+fun captureExtract label term =
+  let val rewritten = rhs (concl (REWRITE_CONV [clos_to_bvlTheory.extract_name_pmatch] term))
+  in capture label rewritten end;
+val _ = captureExtract "bvl_extract_name" ``
+ let x = closLang$Op backend_common$None (closLang$IntOp (closLang$Const 7)) [] in
+ let neg = closLang$Op backend_common$None (closLang$IntOp (closLang$Const (-1))) [] in
+ clos_to_bvl$extract_name [x; closLang$Var backend_common$None 2] = (7, [closLang$Var backend_common$None 2]) /\
+ clos_to_bvl$extract_name [x] = (7, [x]) /\
+ clos_to_bvl$extract_name [neg; closLang$Var backend_common$None 2] = (0, [neg; closLang$Var backend_common$None 2])``;

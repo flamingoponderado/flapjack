@@ -18,7 +18,7 @@ NAMES = ("name_roundtrips", "name_bytes", "name_unreserved", "pure_init", "hidde
          "pattern_compile_empty", "pattern_compile_any", "pattern_exhaustive", "pattern_bind_variable", "pattern_compile_branch", "pattern_naive_branch", "pattern_constructor_branch",
          "empty_source_to_clos", "reference_source_to_clos", "source_let_lifting", "lifted_source_to_clos", "match_source_to_clos", "match_bind_source_to_clos",
          "bvl_shared_constant", "bvl_stub_layout", "bvl_chain_empty", "bvl_code_sort", "bvl_build_aux", "bvl_source_names",
-         "closure_numbering", "closure_number_incremental")
+         "closure_numbering", "closure_number_incremental", "bvl_closure_call", "bvl_partial_application", "bvl_extract_name")
 
 
 def render():
@@ -64,7 +64,7 @@ def render():
                  "closure_init_false", "incremental_empty", "pattern_any_tree", "pattern_constructor_guard",
                  "pattern_nub", "pattern_specialize", "pattern_compile_empty", "pattern_compile_any",
                  "pattern_bind_variable", "pattern_compile_branch", "pattern_naive_branch", "pattern_constructor_branch", "empty_source_to_clos", "reference_source_to_clos",
-                 "source_let_lifting", "lifted_source_to_clos", "match_source_to_clos", "match_bind_source_to_clos", "bvl_shared_constant", "bvl_chain_empty", "bvl_code_sort", "bvl_build_aux", "bvl_source_names", "closure_numbering", "closure_number_incremental"):
+                 "source_let_lifting", "lifted_source_to_clos", "match_source_to_clos", "match_bind_source_to_clos", "bvl_shared_constant", "bvl_chain_empty", "bvl_code_sort", "bvl_build_aux", "bvl_source_names", "closure_numbering", "closure_number_incremental", "bvl_closure_call", "bvl_partial_application", "bvl_extract_name"):
         value = rows[name]
         if value not in ("T", "F"):
             raise ValueError(f"invalid HOL boolean for {name}: {value}")
