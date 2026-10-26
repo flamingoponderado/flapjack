@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.DataLang.Syntax
 import Flapjack.Compiler.Backend.DataToWord.Config
 import Flapjack.Compiler.Backend.DataToWord.Variables
+import Flapjack.Compiler.Backend.DataToWord.WordOp
 import Flapjack.Pancake.WordLang
 
 /-! Checked control-flow cases of data-to-word compilation. -/
@@ -41,6 +42,24 @@ already adjusted destination and remains a separate unported declaration. -/
 private def boolResult {width : Nat} (dest : Nat) (cmp : Cmp) (r : Nat)
     (other : WordRegImm (BitVec width)) : WordLangProgHOL (BitVec width) :=
   .ite cmp r other (.assign (adjustVar dest) (.const 18)) (.assign (adjustVar dest) (.const 2))
+
+/-- Internal shift constructor and source-shaped saturation for variable
+shifts. The standalone HOL `ShiftVar` declaration remains to be reviewed. -/
+private def shiftN {width : Nat} (op : Shift) (e : WordLangExpHOL (BitVec width)) (n : Nat) :
+    WordLangExpHOL (BitVec width) := .shift op e (.const (BitVec.ofNat width n))
+
+private def shiftVar {width : Nat} (op : Shift) (v n : Nat) : WordLangExpHOL (BitVec width) :=
+  match op with
+  | .ror =>
+      let m := if n < width then n else n % width
+      if m = 0 then .var v else shiftN .ror (.var v) m
+  | _ =>
+      if n = 0 then .var v
+      else if width ≤ n then
+        match op with
+        | .asr => shiftN .asr (.var v) (width - 1)
+        | _ => .const 0
+      else shiftN op (.var v) n
 
 /-- Flapjack's partial traversal. Unsupported assignment operations and
 thunk cases return `none`; this is not HOL's total `comp`. -/
@@ -102,6 +121,33 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
       | [x, y], .compare .lt => some (boolResult dest .lower (adjustVar x) (.reg (adjustVar y)), l)
       | [x, y], .compare .leq => some (boolResult dest .notLower (adjustVar y) (.reg (adjustVar x)), l)
       | _, _ => some (.skip, l)
+  | l, .assign dest (.wordOp (.wordOpw .w8 op)) args _ =>
+      match args with
+      | [x, y] =>
+          let (binop, carried) := match lookupWordOp op with
+            | .bitwise b => (b, false)
+            | .carried b => (b, true)
+          let value := WordLangExpHOL.op binop [.var (adjustVar x), .var (adjustVar y)]
+          let amount := BitVec.ofNat width (width - 10)
+          let value := if carried then WordLangExpHOL.shift .lsr (.shift .lsl value (.const amount)) (.const amount)
+            else value
+          some (.assign (adjustVar dest) value, l)
+      | _ => some (.skip, l)
+  | l, .assign dest (.wordOp (.wordShift .w8 sh n)) args _ =>
+      match args with
+      | [src] =>
+          let src := adjustVar src
+          let amount := min n 8
+          let value := match sh with
+            | .lsl => shiftN .lsr (shiftN .lsl (.var src) (width - 10 + amount)) (width - 10)
+            | .lsr => shiftN .lsl (shiftN .lsr (.var src) (amount + 2)) 2
+            | .asr => shiftN .lsl (shiftN .lsr (shiftN .asr (shiftN .lsl (.var src) (width - 10)) amount) (width - 8)) 2
+            | .ror =>
+                let n := n % 8
+                WordLangExpHOL.op .or [shiftN .lsl (shiftVar .lsr src (n + 2)) 2,
+                  shiftN .lsr (shiftVar .lsl src ((width - 2) - n)) (width - 10)]
+          some (.assign (adjustVar dest) value, l)
+      | _ => some (.skip, l)
   | l, .assign dest (.blockOp (.cons tag)) [] _ =>
       if tag < 2 ^ width / 16 then
         some (.assign (adjustVar dest) (.const (BitVec.ofNat width (16 * tag + 2))), l)

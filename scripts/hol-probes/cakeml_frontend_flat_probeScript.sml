@@ -293,3 +293,18 @@ val data_comparisons_word = EVAL ``
  (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$BlockOp (closLang$Cons 16)) [] NONE) : 8 wordLang$prog # num) = (wordLang$Seq (wordLang$Assign 1 (wordLang$Const 255w)) (wordLang$Alloc 1 (sptree$LS (), sptree$LN)), 2)``;
 val _ = (print "data_to_word_comparisons="; print_term (rhs (concl (CONV_RULE
   (RAND_CONV (SIMP_CONV (srw_ss()) [wordsTheory.dimindex_8, wordsTheory.dimindex_64, wordsTheory.dimword_def] THENC EVAL)) data_comparisons_word))); print "\n");
+val byte_ops_word = EVAL ``
+ (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$WordOp (closLang$WordOpw ast$W8 backend_common$Xor)) [1;2] NONE) : 64 wordLang$prog # num) =
+  (wordLang$Assign 8 (wordLang$Op asm$Xor [wordLang$Var 4; wordLang$Var 6]), 2) /\
+ (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$WordOp (closLang$WordOpw ast$W8 backend_common$Add)) [1;2] NONE) : 64 wordLang$prog # num) =
+  (wordLang$Assign 8 (wordLang$Shift ast$Lsr (wordLang$Shift ast$Lsl (wordLang$Op asm$Add [wordLang$Var 4; wordLang$Var 6]) (wordLang$Const 54w)) (wordLang$Const 54w)), 2)``;
+val _ = (print "data_to_word_byte_ops="; print_term (rhs (concl (CONV_RULE
+  (RAND_CONV (SIMP_CONV (srw_ss()) [wordsTheory.dimindex_64, wordsTheory.dimword_def] THENC EVAL)) byte_ops_word))); print "\n");
+val byte_shifts_word = EVAL ``
+ (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$WordOp (closLang$WordShift ast$W8 ast$Lsl 10)) [1] NONE) : 64 wordLang$prog # num) =
+  (wordLang$Assign 8 (wordLang$Shift ast$Lsr (wordLang$Shift ast$Lsl (wordLang$Var 4) (wordLang$Const 62w)) (wordLang$Const 54w)), 2) /\
+ (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$WordOp (closLang$WordShift ast$W8 ast$Ror 0)) [1] NONE) : 64 wordLang$prog # num) =
+  (wordLang$Assign 8 (wordLang$Op asm$Or [wordLang$Shift ast$Lsl (wordLang$Shift ast$Lsr (wordLang$Var 4) (wordLang$Const 2w)) (wordLang$Const 2w);
+   wordLang$Shift ast$Lsr (wordLang$Shift ast$Lsl (wordLang$Var 4) (wordLang$Const 62w)) (wordLang$Const 54w)]), 2)``;
+val _ = (print "data_to_word_byte_shifts="; print_term (rhs (concl (CONV_RULE
+  (RAND_CONV (SIMP_CONV (srw_ss()) [wordsTheory.dimindex_64, wordsTheory.dimword_def] THENC EVAL)) byte_shifts_word))); print "\n");

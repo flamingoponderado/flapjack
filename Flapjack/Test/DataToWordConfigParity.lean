@@ -113,6 +113,21 @@ private def headerConfig : Config := { conf with lenSize := 4 }
   | some (.seq (.assign 1 (.const 255)) (.alloc 1 (.ls (), .ln)), 2) => true
   | _ => false
 #guard Flapjack.Test.CakeMLFlatOracle.data_to_word_comparisons
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.wordOp (.wordOpw .w8 .xor)) [1, 2] none) with
+  | some (.assign 8 (.op .xor [.var 4, .var 6]), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.wordOp (.wordOpw .w8 .add)) [1, 2] none) with
+  | some (.assign 8 (.shift .lsr (.shift .lsl (.op .add [.var 4, .var 6]) (.const 54)) (.const 54)), 2) => true
+  | _ => false
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_byte_ops
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.wordOp (.wordShift .w8 .lsl 10)) [1] none) with
+  | some (.assign 8 (.shift .lsr (.shift .lsl (.var 4) (.const 62)) (.const 54)), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.wordOp (.wordShift .w8 .ror 0)) [1] none) with
+  | some (.assign 8 (.op .or [.shift .lsl (.shift .lsr (.var 4) (.const 2)) (.const 2),
+      .shift .lsr (.shift .lsl (.var 4) (.const 62)) (.const 54)]), 2) => true
+  | _ => false
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_byte_shifts
 
 def runChecks : IO Bool := do
   IO.println "PASS data_to_word shift_length/small_shift_length/get_gen_size match six original HOL rows"
