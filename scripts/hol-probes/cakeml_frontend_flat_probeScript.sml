@@ -81,3 +81,4 @@ val _ = capture "lifted_source_to_clos" ``(let ds = source_to_source$compile [as
 val _ = capture "bvl_shared_constant" ``clos_to_bvl$compile_const (closLang$ConstCons 30 [closLang$ConstInt 1; closLang$ConstInt 1]) = closLang$BlockOp (closLang$Build [closLang$Int 1; closLang$Con 32 [0; 0]])``;
 val _ = capture "bvl_stub_layout" ``[clos_to_bvl$num_stubs 4; clos_to_bvl$partial_app_fn_location 4 3 1]``;
 val _ = capture "bvl_chain_empty" ``clos_to_bvl$chain_exps 7 [] = [(7, 0, closLang$Op backend_common$None (closLang$IntOp (closLang$Const 0)) [])]``;
+val _ = capture "bvl_code_sort" ``clos_to_bvl$code_sort [(1,10); (1,20); (1,30); (0,40)] = [(0,40); (1,20); (1,30); (1,10)]``;

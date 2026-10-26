@@ -100540,5 +100540,29 @@
     "hol_name": "chain_exps_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Sort.lean",
+    "lean_name": "codeSplit",
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
+    "hol_name": "code_split_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Sort.lean",
+    "lean_name": "codeMerge",
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
+    "hol_name": "code_merge_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Sort.lean",
+    "lean_name": "codeSort",
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
+    "hol_name": "code_sort_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
   }
 ]

@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
 import Flapjack.Compiler.Backend.SourceToFlat.ToClos
 import Flapjack.Compiler.Backend.ClosToBvl.Constants
 import Flapjack.Compiler.Backend.ClosToBvl.Layout
+import Flapjack.Compiler.Backend.ClosToBvl.Sort
 import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
 import Flapjack.Compiler.Backend.FlatPattern.Encode
@@ -234,5 +235,8 @@ example : Flapjack.Compiler.Backend.SourceToSource.compile
 example : Flapjack.Compiler.Backend.ClosToBvl.chainExps 7 [] =
     [(7, 0, .op .none (.intOp (.const 0)) [])] := rfl
 #guard bvl_chain_empty
+#guard Flapjack.Compiler.Backend.ClosToBvl.codeSort [(1, 10), (1, 20), (1, 30), (0, 40)] ==
+  [(0, 40), (1, 20), (1, 30), (1, 10)]
+#guard bvl_code_sort
 
 end Flapjack.Test.FlatElim
