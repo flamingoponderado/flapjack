@@ -17,7 +17,7 @@ NAMES = ("name_roundtrips", "name_bytes", "name_unreserved", "pure_init", "hidde
          "pattern_any_tree", "pattern_constructor_guard", "pattern_nub", "pattern_specialize",
          "pattern_compile_empty", "pattern_compile_any", "pattern_bind_variable", "pattern_compile_branch",
          "empty_source_to_clos", "reference_source_to_clos", "source_let_lifting", "lifted_source_to_clos",
-         "bvl_shared_constant")
+         "bvl_shared_constant", "bvl_stub_layout", "bvl_chain_empty")
 
 
 def render():
@@ -28,6 +28,9 @@ def render():
     if not (nums.startswith("[") and nums.endswith("]")):
         raise ValueError("invalid HOL list")
     numbers = [int(x.strip()) for x in nums[1:-1].split(";")]
+    layout = ast.literal_eval(rows["bvl_stub_layout"].replace(";", ","))
+    if not isinstance(layout, list) or not all(type(n) is int and n >= 0 for n in layout):
+        raise ValueError("invalid BVL stub layout")
     byte_rows = ast.literal_eval(rows["name_bytes"].replace(";", ","))
     if not isinstance(byte_rows, list) or not all(
         isinstance(row, list) and all(type(b) is int and 0 <= b <= 255 for b in row)
@@ -39,6 +42,7 @@ def render():
              "namespace Flapjack.Test.CakeMLFlatOracle",
              f"def nameRoundtrips : List Nat := {numbers}",
              f"def nameBytes : List (List Nat) := {byte_rows}",
+             f"def bvl_stub_layout : List Nat := {layout}",
              f"def nameUnreserved : Nat := {name_unreserved}"]
     if rows["interpreter_arity"] not in ("[F; T]", "[F; F]", "[T; F]", "[T; T]"):
         raise ValueError("invalid interpreter arity observations")
@@ -52,7 +56,7 @@ def render():
                  "closure_init_false", "incremental_empty", "pattern_any_tree", "pattern_constructor_guard",
                  "pattern_nub", "pattern_specialize", "pattern_compile_empty", "pattern_compile_any",
                  "pattern_bind_variable", "pattern_compile_branch", "empty_source_to_clos", "reference_source_to_clos",
-                 "source_let_lifting", "lifted_source_to_clos", "bvl_shared_constant"):
+                 "source_let_lifting", "lifted_source_to_clos", "bvl_shared_constant", "bvl_chain_empty"):
         value = rows[name]
         if value not in ("T", "F"):
             raise ValueError(f"invalid HOL boolean for {name}: {value}")

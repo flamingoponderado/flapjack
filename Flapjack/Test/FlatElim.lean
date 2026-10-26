@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.FlatElim.Reachability
 import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
 import Flapjack.Compiler.Backend.SourceToFlat.ToClos
 import Flapjack.Compiler.Backend.ClosToBvl.Constants
+import Flapjack.Compiler.Backend.ClosToBvl.Layout
 import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
 import Flapjack.Compiler.Backend.FlatPattern.Encode
@@ -228,5 +229,10 @@ example : Flapjack.Compiler.Backend.SourceToSource.compile
   | .blockOp (.build [.int 1, .con 32 [0, 0]]) => true
   | _ => false
 #guard bvl_shared_constant
+#guard [Flapjack.Compiler.Backend.ClosToBvl.numStubs 4,
+  Flapjack.Compiler.Backend.ClosToBvl.partialAppFnLocation 4 3 1] == bvl_stub_layout
+example : Flapjack.Compiler.Backend.ClosToBvl.chainExps 7 [] =
+    [(7, 0, .op .none (.intOp (.const 0)) [])] := rfl
+#guard bvl_chain_empty
 
 end Flapjack.Test.FlatElim

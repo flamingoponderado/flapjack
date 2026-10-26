@@ -79,3 +79,5 @@ val _ = capture "source_let_lifting" ``source_to_source$compile [ast$Dlet locati
 val _ = capture "lifted_source_to_clos" ``(let ds = source_to_source$compile [ast$Dlet location$unknown_loc (ast$Pvar «x») (ast$Let (SOME «y») (ast$App ast$Opref [ast$Lit (ast$IntLit 1)]) (ast$Var (namespace$Short «y»)))] in let (c,p) = source_to_flat$compile source_to_flat$empty_config ds in flat_to_clos$compile_prog p) =
   (let (c,p) = source_to_flat$compile source_to_flat$empty_config [ast$Dlet location$unknown_loc (ast$Pvar «x») (ast$App ast$Opref [ast$Lit (ast$IntLit 1)])] in flat_to_clos$compile_prog p)``;
 val _ = capture "bvl_shared_constant" ``clos_to_bvl$compile_const (closLang$ConstCons 30 [closLang$ConstInt 1; closLang$ConstInt 1]) = closLang$BlockOp (closLang$Build [closLang$Int 1; closLang$Con 32 [0; 0]])``;
+val _ = capture "bvl_stub_layout" ``[clos_to_bvl$num_stubs 4; clos_to_bvl$partial_app_fn_location 4 3 1]``;
+val _ = capture "bvl_chain_empty" ``clos_to_bvl$chain_exps 7 [] = [(7, 0, closLang$Op backend_common$None (closLang$IntOp (closLang$Const 0)) [])]``;

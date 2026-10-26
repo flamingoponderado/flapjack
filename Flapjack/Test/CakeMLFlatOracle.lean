@@ -2,6 +2,7 @@
 namespace Flapjack.Test.CakeMLFlatOracle
 def nameRoundtrips : List Nat := [0, 89, 90, 181]
 def nameBytes : List (List Nat) := [[46, 46, 35], [46, 46, 124], [46, 46, 35, 125], [46, 46, 36, 125, 125]]
+def bvl_stub_layout : List Nat := [12, 8]
 def nameUnreserved : Nat := 0
 def interpreter_arity : List Bool := [false, true]
 def pure_init : Bool := true
@@ -40,6 +41,7 @@ def reference_source_to_clos : Bool := true
 def source_let_lifting : Bool := true
 def lifted_source_to_clos : Bool := true
 def bvl_shared_constant : Bool := true
+def bvl_chain_empty : Bool := true
 def eliminate_pure_length : Nat := 0
 def eval_bypass_length : Nat := 2
 def empty_program_globals : Nat := 1
