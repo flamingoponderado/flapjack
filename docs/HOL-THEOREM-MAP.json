@@ -100788,5 +100788,37 @@
     "hol_name": "compile_pats_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source branch composition transcribed; typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Names.lean",
+    "lean_name": "addSrcNames",
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
+    "hol_name": "add_src_names_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source traversal transcribed; typed HOL capture and complete statement, ordering and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Names.lean",
+    "lean_name": "getSrcNamesSing",
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
+    "hol_name": "get_src_names_sing_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source traversal transcribed; typed HOL capture and complete statement, ordering and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Names.lean",
+    "lean_name": "getSrcNamesList",
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
+    "hol_name": "get_src_names_sing_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source traversal transcribed; typed HOL capture and complete statement, ordering and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Names.lean",
+    "lean_name": "getSrcNames",
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
+    "hol_name": "get_src_names_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source traversal transcribed; typed HOL capture and complete statement, ordering and carrier review remain pending."
   }
 ]

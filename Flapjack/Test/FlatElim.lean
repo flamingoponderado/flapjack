@@ -4,6 +4,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.ToClos
 import Flapjack.Compiler.Backend.ClosToBvl.Constants
 import Flapjack.Compiler.Backend.ClosToBvl.Layout
 import Flapjack.Compiler.Backend.ClosToBvl.Sort
+import Flapjack.Compiler.Backend.ClosToBvl.Names
 import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
 import Flapjack.Compiler.Backend.FlatPattern.Encode
@@ -306,5 +307,10 @@ example : Flapjack.Compiler.Backend.ClosToBvl.chainExps 7 [] =
 example : Flapjack.Compiler.Backend.ClosToBvl.buildAux 3 [(1, .var 0), (2, .var 1)] [] =
     (7, [(5, 2, .var 1), (3, 1, .var 0)]) := rfl
 #guard bvl_build_aux
+private def bvlNames := Flapjack.Compiler.Backend.ClosToBvl.getSrcNames
+    ([.fn (ofString "first") (some 0) none 1 (.var .none 0),
+      .fn (ofString "last") (some 0) none 1 (.var .none 0)] : List Flapjack.Compiler.Backend.ClosLang.Exp) .ln
+#guard [sptLookup 0 bvlNames, sptLookup 1 bvlNames] == [some (ofString "last_clos"), some (ofString "last")]
+#guard bvl_source_names
 
 end Flapjack.Test.FlatElim

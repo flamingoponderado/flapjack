@@ -50,3 +50,4 @@ bvl_stub_layout=[12; 8]
 bvl_chain_empty=T
 bvl_code_sort=T
 bvl_build_aux=T
+bvl_source_names=T

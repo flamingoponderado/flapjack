@@ -98,3 +98,4 @@ val _ = capture "bvl_stub_layout" ``[clos_to_bvl$num_stubs 4; clos_to_bvl$partia
 val _ = capture "bvl_chain_empty" ``clos_to_bvl$chain_exps 7 [] = [(7, 0, closLang$Op backend_common$None (closLang$IntOp (closLang$Const 0)) [])]``;
 val _ = capture "bvl_code_sort" ``clos_to_bvl$code_sort [(1,10); (1,20); (1,30); (0,40)] = [(0,40); (1,20); (1,30); (1,10)]``;
 val _ = capture "bvl_build_aux" ``clos_to_bvl$build_aux 3 [(1,bvl$Var 0); (2,bvl$Var 1)] [] = (7, [(5,2,bvl$Var 1); (3,1,bvl$Var 0)])``;
+val _ = capture "bvl_source_names" ``let names = clos_to_bvl$get_src_names [closLang$Fn «first» (SOME 0) NONE 1 (closLang$Var backend_common$None 0); closLang$Fn «last» (SOME 0) NONE 1 (closLang$Var backend_common$None 0)] sptree$LN in [sptree$lookup 0 names; sptree$lookup 1 names] = [SOME «last_clos»; SOME «last»]``;

@@ -49,6 +49,7 @@ def bvl_shared_constant : Bool := true
 def bvl_chain_empty : Bool := true
 def bvl_code_sort : Bool := true
 def bvl_build_aux : Bool := true
+def bvl_source_names : Bool := true
 def eliminate_pure_length : Nat := 0
 def eval_bypass_length : Nat := 2
 def empty_program_globals : Nat := 1
