@@ -38,3 +38,5 @@ pattern_bind_variable=T
 pattern_compile_branch=T
 empty_source_to_clos=T
 reference_source_to_clos=T
+source_let_lifting=T
+lifted_source_to_clos=T

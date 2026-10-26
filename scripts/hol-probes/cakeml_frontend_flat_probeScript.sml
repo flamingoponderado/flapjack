@@ -1,4 +1,4 @@
-load "flat_patternTheory"; load "flat_elimTheory"; load "source_to_flatTheory"; load "flat_to_closTheory"; load "wordsLib";
+load "flat_patternTheory"; load "flat_elimTheory"; load "source_to_flatTheory"; load "flat_to_closTheory"; load "source_to_sourceTheory"; load "wordsLib";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 fun capture label term =
@@ -74,3 +74,7 @@ val _ = capture "reference_source_to_clos" ``(let (c,p) = source_to_flat$compile
   closLang$Let (backend_common$Cons (backend_common$SourceLoc 2 2 1 1) 1) [closLang$Let (backend_common$Cons (backend_common$SourceLoc 2 2 1 1) 1) [] (closLang$Op (backend_common$Cons (backend_common$SourceLoc 2 2 1 1) 1) (closLang$GlobOp closLang$AllocGlobal) [closLang$Op (backend_common$Cons (backend_common$SourceLoc 2 2 1 1) 1) (closLang$IntOp (closLang$Const 2)) []])] (closLang$Op (backend_common$Cons (backend_common$SourceLoc 2 2 1 1) 1) (closLang$BlockOp (closLang$Cons 0)) []);
   closLang$Op backend_common$None (closLang$GlobOp (closLang$SetGlobal 1)) [closLang$Op backend_common$None (closLang$MemOp closLang$Ref) [closLang$Op backend_common$None (closLang$BlockOp (closLang$Cons 0)) []]];
   closLang$Let backend_common$None [closLang$Op backend_common$None (closLang$MemOp closLang$Ref) [closLang$Op backend_common$None (closLang$IntOp (closLang$Const 1)) []]] (closLang$Let backend_common$None [closLang$Var backend_common$None 0] (closLang$Op backend_common$None (closLang$GlobOp (closLang$SetGlobal 2)) [closLang$Var backend_common$None 0]))]``;
+val _ = capture "source_let_lifting" ``source_to_source$compile [ast$Dlet location$unknown_loc (ast$Pvar «x») (ast$Let (SOME «y») (ast$Lit (ast$IntLit 1)) (ast$Var (namespace$Short «y»)))] =
+ [ast$Dlocal [ast$Dlet location$unknown_loc (ast$Pvar «y») (ast$Lit (ast$IntLit 1))] [ast$Dlet location$unknown_loc (ast$Pvar «x») (ast$Var (namespace$Short «y»))]]``;
+val _ = capture "lifted_source_to_clos" ``(let ds = source_to_source$compile [ast$Dlet location$unknown_loc (ast$Pvar «x») (ast$Let (SOME «y») (ast$App ast$Opref [ast$Lit (ast$IntLit 1)]) (ast$Var (namespace$Short «y»)))] in let (c,p) = source_to_flat$compile source_to_flat$empty_config ds in flat_to_clos$compile_prog p) =
+  (let (c,p) = source_to_flat$compile source_to_flat$empty_config [ast$Dlet location$unknown_loc (ast$Pvar «x») (ast$App ast$Opref [ast$Lit (ast$IntLit 1)])] in flat_to_clos$compile_prog p)``;

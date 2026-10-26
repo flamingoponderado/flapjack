@@ -190,9 +190,9 @@ example : (compilePatRhsFuel 0 .none 0 (.varLocal .none (ofString "v"))
       .op .none (.globOp (.setGlobal 1)) [.op .none (.memOp .ref) [.op .none (.blockOp (.cons 0)) []]]]) => true
   | _ => false
 #guard empty_source_to_clos
-#guard match Flapjack.Compiler.Backend.SourceToFlat.compileToClosFuel 100
-    Flapjack.Compiler.Backend.SourceToFlat.emptyConfig
-    [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x")) (.app .opref [.lit (.intLit 1)])] with
+private def referenceOutput (result : Option (Flapjack.Compiler.Backend.SourceToFlat.Config ×
+    List Flapjack.Compiler.Backend.ClosLang.Exp)) : Bool :=
+  match result with
   | some (_, [
       .let .none [.op .none (.globOp .allocGlobal) [.op .none (.intOp (.const 1)) []],
         .op .none (.blockOp (.cons 0)) []] (.op .none (.globOp (.setGlobal 0)) [.var .none 1]),
@@ -205,6 +205,22 @@ example : (compilePatRhsFuel 0 .none 0 (.varLocal .none (ofString "v"))
       .let .none [.op .none (.memOp .ref) [.op .none (.intOp (.const 1)) []]]
         (.let .none [.var .none 0] (.op .none (.globOp (.setGlobal 2)) [.var .none 0]))]) => true
   | _ => false
+#guard referenceOutput (Flapjack.Compiler.Backend.SourceToFlat.compileToClosFuel 100
+    Flapjack.Compiler.Backend.SourceToFlat.emptyConfig
+    [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x")) (.app .opref [.lit (.intLit 1)])])
 #guard reference_source_to_clos
+example : Flapjack.Compiler.Backend.SourceToSource.compile
+    [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x"))
+      (.let_ (some (ofString "y")) (.lit (.intLit 1)) (.var (.short (ofString "y"))))] =
+    [.dlocal [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "y")) (.lit (.intLit 1))]
+      [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x")) (.var (.short (ofString "y")))]] := by
+  simp [Flapjack.Compiler.Backend.SourceToSource.compile, Flapjack.Compiler.Backend.SourceLet.compileDecs,
+    Flapjack.Compiler.Backend.SourceLet.liftLets]
+#guard source_let_lifting
+#guard referenceOutput (Flapjack.Compiler.Backend.SourceToFlat.compileCakeToClosFuel 100
+    Flapjack.Compiler.Backend.SourceToFlat.emptyConfig
+    [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x"))
+      (.let_ (some (ofString "y")) (.app .opref [.lit (.intLit 1)]) (.var (.short (ofString "y"))))])
+#guard lifted_source_to_clos
 
 end Flapjack.Test.FlatElim

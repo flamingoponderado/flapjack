@@ -100356,5 +100356,53 @@
     "hol_name": "mats_len_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceLet.lean",
+    "lean_name": "destLet",
+    "hol_path": "cakeml/compiler/backend/source_letScript.sml",
+    "hol_name": "dest_Let_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceLet.lean",
+    "lean_name": "destLetrec",
+    "hol_path": "cakeml/compiler/backend/source_letScript.sml",
+    "hol_name": "dest_Letrec_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceLet.lean",
+    "lean_name": "liftLet",
+    "hol_path": "cakeml/compiler/backend/source_letScript.sml",
+    "hol_name": "lift_let_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceLet.lean",
+    "lean_name": "liftLets",
+    "hol_path": "cakeml/compiler/backend/source_letScript.sml",
+    "hol_name": "lift_lets_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceLet.lean",
+    "lean_name": "compileDecs",
+    "hol_path": "cakeml/compiler/backend/source_letScript.sml",
+    "hol_name": "compile_decs_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToSource.lean",
+    "lean_name": "compile",
+    "hol_path": "cakeml/compiler/backend/source_to_sourceScript.sml",
+    "hol_name": "compile_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed capture and complete source and carrier review remain pending."
   }
 ]
