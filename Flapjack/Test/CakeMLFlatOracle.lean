@@ -24,6 +24,7 @@ def compile_constructor : Bool := true
 def compile_nop : Bool := true
 def closure_empty_program : Bool := true
 def closure_install_detect : Bool := true
+def closure_init_false : Bool := true
 def eliminate_pure_length : Nat := 0
 def eval_bypass_length : Nat := 2
 def empty_program_globals : Nat := 1

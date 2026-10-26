@@ -132,5 +132,10 @@ example : Flapjack.Compiler.Backend.FlatToClos.compileProg [] =
 #guard closure_empty_program
 #guard Flapjack.Compiler.Backend.ClosLang.hasInstallList
   [.fn (ofString "f") none none 1 (.op .none .install [])] == closure_install_detect
+example : Flapjack.Compiler.Backend.ClosInterp.compileInit false =
+    .let .none [.op .none (.globOp .allocGlobal) [.op .none (.intOp (.const 1)) []],
+      .op .none (.blockOp (.cons 0)) []]
+      (.op .none (.globOp (.setGlobal 0)) [.var .none 1]) := rfl
+#guard closure_init_false
 
 end Flapjack.Test.FlatElim

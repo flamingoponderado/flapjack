@@ -47,3 +47,6 @@ val _ = capture "compile_nop" ``flat_to_clos$compile [] [flatLang$App backend_co
   [closLang$Op backend_common$None (closLang$IntOp (closLang$Const 1)) []]``;
 val _ = capture "closure_empty_program" ``flat_to_clos$compile_prog [] = [clos_interp$compile_init F]``;
 val _ = capture "closure_install_detect" ``closLang$has_install_list [closLang$Fn «f» NONE NONE 1 (closLang$Op backend_common$None closLang$Install [])]``;
+val _ = capture "closure_init_false" ``clos_interp$compile_init F =
+  closLang$Let backend_common$None [closLang$Op backend_common$None (closLang$GlobOp closLang$AllocGlobal) [closLang$Op backend_common$None (closLang$IntOp (closLang$Const 1)) []]; closLang$Op backend_common$None (closLang$BlockOp (closLang$Cons 0)) []]
+    (closLang$Op backend_common$None (closLang$GlobOp (closLang$SetGlobal 0)) [closLang$Var backend_common$None 1])``;

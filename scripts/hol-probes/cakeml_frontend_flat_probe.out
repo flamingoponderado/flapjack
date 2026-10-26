@@ -25,3 +25,4 @@ compile_constructor=T
 compile_nop=T
 closure_empty_program=T
 closure_install_detect=T
+closure_init_false=T
