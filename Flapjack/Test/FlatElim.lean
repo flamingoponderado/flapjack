@@ -15,6 +15,7 @@ import Flapjack.Compiler.Backend.BvlToBvi.Compile
 import Flapjack.Compiler.Backend.DataLang.Syntax
 import Flapjack.Compiler.Backend.DataSpace.Requirements
 import Flapjack.Compiler.Backend.BviToData.Assign
+import Flapjack.Compiler.Backend.BviToData.Compile
 import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
 import Flapjack.Compiler.Backend.FlatPattern.Encode
@@ -443,5 +444,10 @@ example : Flapjack.Compiler.Backend.BviToData.iAssign 0 (.wordOp (.wordTest .w8 
 example : Flapjack.Compiler.Backend.BviToData.iAssign 0 (.memOp .ref) [1, 2] [] [] =
     .seq (.makeSpace 3 (sptInsert 1 () (sptInsert 2 () .ln))) (.assign 0 (.memOp .ref) [1, 2] none) := rfl
 #guard bvi_to_data_assign
+example : Flapjack.Compiler.Backend.BviToData.compileFuel 10 0 [5] true []
+    (.op (.intOp (.const 4)) [.var 0]) =
+    some (.seq (.seq .skip (.assign 6 (.intOp (.const 4)) [5] none)) (.return [6]), 6, 7) := rfl
+example : Flapjack.Compiler.Backend.BviToData.compileFuel 0 0 [] true [] (.var 0) = none := rfl
+#guard bvi_to_data_expression
 
 end Flapjack.Test.FlatElim

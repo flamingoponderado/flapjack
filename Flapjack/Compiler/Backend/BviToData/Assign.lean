@@ -4,7 +4,7 @@ import Flapjack.Compiler.Backend.DataSpace.Requirements
 namespace Flapjack.Compiler.Backend.BviToData
 
 /-- Source-shaped construction of a live-name set, using HOL's right fold. -/
-private def namesOfList : List Nat → NumSet
+def namesOfList : List Nat → NumSet
   | [] => .ln
   | n :: ns => sptInsert n () (namesOfList ns)
 

@@ -188,3 +188,11 @@ val _ = captureData "bvi_to_data_assign" ``
   dataLang$Assign 0 (closLang$WordOp (closLang$WordTest ast$W8 (ast$Compare ast$Lt))) [2;1] NONE /\
  bvi_to_data$iAssign 0 (closLang$MemOp closLang$Ref) [1;2] [] [] =
   dataLang$Seq (dataLang$MakeSpace 3 (sptree$list_to_num_set [1;2])) (dataLang$Assign 0 (closLang$MemOp closLang$Ref) [1;2] NONE)``;
+fun captureBviData label term =
+  let val rewritten = rhs (concl (REWRITE_CONV [bvi_to_dataTheory.compile_sing_def,
+        bvi_to_dataTheory.iAssign_def, bvi_to_dataTheory.op_requires_names_eqn] term))
+  in capture label rewritten end;
+val _ = captureBviData "bvi_to_data_expression" ``bvi_to_data$compile_sing 0 [5] T []
+ (bvi$Op (closLang$IntOp (closLang$Const 4)) [bvi$Var 0]) =
+ (dataLang$Seq (dataLang$Seq dataLang$Skip (dataLang$Assign 6 (closLang$IntOp (closLang$Const 4)) [5] NONE))
+   (dataLang$Return [6]), 6, 7)``;
