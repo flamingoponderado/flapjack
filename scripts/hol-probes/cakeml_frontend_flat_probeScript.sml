@@ -122,3 +122,19 @@ val _ = captureExtract "bvl_extract_name" ``
  clos_to_bvl$extract_name [neg; closLang$Var backend_common$None 2] = (0, [neg; closLang$Var backend_common$None 2])``;
 val _ = capture "bvl_name_alist" ``let names = clos_to_bvl$make_name_alist [0; 2; 3; 4; 5; 6; 7] [(0, 0, closLang$Fn «f» (SOME 0) NONE 1 (closLang$Var backend_common$None 0))] 4 2 1 in
  MAP (\n. sptree$lookup n names) [0; 2; 3; 4; 5; 6; 7] = [SOME «bvl_stub»; SOME «bvl_force»; SOME «bvl_init»; SOME «f_clos»; SOME «f»; SOME «dec»; SOME «unknown_clos_fun»]``;
+val _ = capture "bvl_recursive_closures" ``
+ clos_to_bvl$recc_Lets 4 [1; 2] 2 (bvl$Var 0) = bvl$Let [clos_to_bvl$recc_Let 6 1 1] (bvl$Let [clos_to_bvl$recc_Let 4 2 0] (bvl$Var 0)) /\
+ clos_to_bvl$recc_Let0 6 1 1 = bvl$Let [bvl$Op (closLang$BlockOp (closLang$Cons 30)) [bvl$Var 0; bvl$Op (closLang$IntOp (closLang$Const 0)) []; bvl$Op (closLang$Label 6) []]]
+  (bvl$Let [bvl$Op (closLang$MemOp closLang$Update) [bvl$Var 0; bvl$Op (closLang$IntOp (closLang$Const 1)) []; bvl$Var 1]] (bvl$Var 1)) /\
+ clos_to_bvl$build_recc_lets [1;2] [5] 4 2 (bvl$Var 0) =
+  bvl$Let [bvl$Let [bvl$Op (closLang$MemOp closLang$Ref) [bvl$Var 5; bvl$Op (closLang$IntOp (closLang$Const 0)) []; bvl$Op (closLang$IntOp (closLang$Const 0)) []]] (clos_to_bvl$recc_Let0 6 2 1)]
+   (bvl$Let [clos_to_bvl$recc_Let 4 1 0] (bvl$Var 0))``;
+val _ = capture "bvl_compile_closure" ``clos_to_bvl$compile_exp_sing 0
+ (closLang$Fn «f» (SOME 3) (SOME [2]) 1 (closLang$Var backend_common$None 0)) [] =
+ (bvl$Op (closLang$BlockOp (closLang$Cons 30)) [bvl$Var 2; bvl$Op (closLang$IntOp (closLang$Const 0)) []; bvl$Op (closLang$Label 5) []],
+  [(5, 2, bvl$Let [bvl$Var 0; bvl$Op (closLang$BlockOp (closLang$ElemAt 2)) [bvl$Var 1]] (bvl$Var 0))])``;
+val _ = capture "bvl_compile_program" ``clos_to_bvl$compile_prog 0
+ [(10, 0, closLang$Var backend_common$None 0); (8, 1, closLang$Fn «f» (SOME 3) (SOME [2]) 1 (closLang$Var backend_common$None 0))] =
+ [(12, 0, bvl$Var 0);
+  (10, 1, bvl$Op (closLang$BlockOp (closLang$Cons 30)) [bvl$Var 2; bvl$Op (closLang$IntOp (closLang$Const 0)) []; bvl$Op (closLang$Label 5) []]);
+  (5, 2, bvl$Let [bvl$Var 0; bvl$Op (closLang$BlockOp (closLang$ElemAt 2)) [bvl$Var 1]] (bvl$Var 0))]``;

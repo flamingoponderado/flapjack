@@ -39,6 +39,37 @@ def buildAux (i : Nat) : List (Nat × Bvl.Exp) → List (Nat × Nat × Bvl.Exp) 
   | [], aux => (i, aux)
   | (arity, body) :: xs, aux => buildAux (i + 2) xs ((i, arity, body) :: aux)
 
+/-- Build a recursive closure and install it in the environment. -/
+@[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "recc_Let_def"]
+def reccLet (n numArgs i : Nat) : Bvl.Exp :=
+  .let [mkElemAt (.var 0) 2]
+    (.let [.op (.blockOp (.cons 30)) [.var 0, mkConst (numArgs - 1), mkLabel n]]
+      (.let [.op (.memOp .update) [.var 0, mkConst i, .var 1]] (.var 1)))
+
+/-- Build the first recursive closure, whose environment is already in scope. -/
+@[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "recc_Let0_def"]
+def reccLet0 (n numArgs i : Nat) : Bvl.Exp :=
+  .let [.op (.blockOp (.cons 30)) [.var 0, mkConst (numArgs - 1), mkLabel n]]
+    (.let [.op (.memOp .update) [.var 0, mkConst i, .var 1]] (.var 1))
+
+/-- Flapjack's checked form of the recursive-closure builder. It reports a
+short argument list instead of selecting HOL's unspecified `HD []`. -/
+def reccLets? (n : Nat) : List Nat → Nat → Bvl.Exp → Option Bvl.Exp
+  | _, 0, rest => some rest
+  | [], _ + 1, _ => none
+  | a :: args, k + 1, rest => do
+      let body ← reccLets? n args k rest
+      pure (.let [reccLet (n + 2 * k) a k] body)
+
+/-- Checked construction of a recursive closure group. A missing arity is
+reported explicitly because the source uses unspecified `HD []` there. -/
+def buildReccLets? (nargs vs : List Nat) (n1 fnsLen : Nat) (body : Bvl.Exp) : Option Bvl.Exp := do
+  let last :: remaining := nargs.reverse | none
+  let rest ← reccLets? n1 remaining (fnsLen - 1) body
+  pure (.let [.let [.op (.memOp .ref) (((nargs.map fun _ => mkConst 0) ++
+      (vs.map Bvl.Exp.var)).reverse)]
+      (reccLet0 (n1 + 2 * (fnsLen - 1)) last (fnsLen - 1))] rest)
+
 /-- Count generic, partial-application, initialization and force stubs. -/
 @[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "num_stubs_def"]
 def numStubs (maxApp : Nat) : Nat := maxApp + maxApp * (maxApp - 1) / 2 + 1 + 1

@@ -7,6 +7,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Sort
 import Flapjack.Compiler.Backend.ClosToBvl.Names
 import Flapjack.Compiler.Backend.ClosNumber
 import Flapjack.Compiler.Backend.ClosToBvl.ExtractName
+import Flapjack.Compiler.Backend.ClosToBvl.Compile
 import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
 import Flapjack.Compiler.Backend.FlatPattern.Encode
@@ -343,5 +344,31 @@ example : Flapjack.Compiler.Backend.ClosToBvl.extractName
     [.op .none (.intOp (.const (-1))) [], .var .none 2] =
     (0, [.op .none (.intOp (.const (-1))) [], .var .none 2]) := rfl
 #guard bvl_extract_name
+example : Flapjack.Compiler.Backend.ClosToBvl.reccLets? 4 [1, 2] 2 (.var 0) =
+    some (.let [Flapjack.Compiler.Backend.ClosToBvl.reccLet 6 1 1]
+      (.let [Flapjack.Compiler.Backend.ClosToBvl.reccLet 4 2 0] (.var 0))) := rfl
+example : Flapjack.Compiler.Backend.ClosToBvl.reccLets? 4 [1] 2 (.var 0) = none := rfl
+example : Flapjack.Compiler.Backend.ClosToBvl.reccLet0 6 1 1 =
+    .let [.op (.blockOp (.cons 30)) [.var 0, .op (.intOp (.const 0)) [], .op (.label 6) []]]
+      (.let [.op (.memOp .update) [.var 0, .op (.intOp (.const 1)) [], .var 1]] (.var 1)) := rfl
+example : Flapjack.Compiler.Backend.ClosToBvl.buildReccLets? [1, 2] [5] 4 2 (.var 0) =
+    some (.let [.let [.op (.memOp .ref) [.var 5, .op (.intOp (.const 0)) [], .op (.intOp (.const 0)) []]]
+        (Flapjack.Compiler.Backend.ClosToBvl.reccLet0 6 2 1)]
+      (.let [Flapjack.Compiler.Backend.ClosToBvl.reccLet 4 1 0] (.var 0))) := rfl
+example : Flapjack.Compiler.Backend.ClosToBvl.buildReccLets? [] [] 4 1 (.var 0) = none := rfl
+#guard bvl_recursive_closures
+#guard match Flapjack.Compiler.Backend.ClosToBvl.compileExp? 0
+    (.fn (ofString "f") (some 3) (some [2]) 1 (.var .none 0)) [] with
+  | some (.op (.blockOp (.cons 30)) [.var 2, .op (.intOp (.const 0)) [], .op (.label 5) []],
+      [(5, 2, .let [.var 0, .op (.blockOp (.elemAt 2)) [.var 1]] (.var 0))]) => true
+  | _ => false
+#guard bvl_compile_closure
+#guard match Flapjack.Compiler.Backend.ClosToBvl.compileProg? 0
+    [(10, 0, .var .none 0), (8, 1, .fn (ofString "f") (some 3) (some [2]) 1 (.var .none 0))] with
+  | some [(12, 0, .var 0),
+      (10, 1, .op (.blockOp (.cons 30)) [.var 2, .op (.intOp (.const 0)) [], .op (.label 5) []]),
+      (5, 2, .let [.var 0, .op (.blockOp (.elemAt 2)) [.var 1]] (.var 0))] => true
+  | _ => false
+#guard bvl_compile_program
 
 end Flapjack.Test.FlatElim
