@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.DataToWord.Config
 import Flapjack.Compiler.Backend.DataToWord.Header
 import Flapjack.Compiler.Backend.DataToWord.Locations
 import Flapjack.Compiler.Backend.DataToWord.WordOp
+import Flapjack.Compiler.Backend.DataToWord.Control
 import Flapjack.Test.CakeMLFlatOracle
 
 /-!
@@ -47,6 +48,14 @@ private def headerConfig : Config := { conf with lenSize := 4 }
 #guard decide ([lookupWordOp .andw, lookupWordOp .orw, lookupWordOp .xor, lookupWordOp .add, lookupWordOp .sub] =
   [.bitwise .and, .bitwise .or, .bitwise .xor, .carried .add, .carried .sub])
 #guard Flapjack.Test.CakeMLFlatOracle.data_to_word_word_ops
+#guard match compileControl? (width := 64) conf 5 2 (.return [0, 3]) with
+  | some (.return 0 [2, 8], 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.call none (some 9) [0, 3] none) with
+  | some (.call none (some 9) [0, 2, 8] none, 2) => true
+  | _ => false
+#guard (compileControl? (width := 64) conf 5 2 (.assign 0 (.intOp (.const 1)) [] none)).isNone
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_control
 
 def runChecks : IO Bool := do
   IO.println "PASS data_to_word shift_length/small_shift_length/get_gen_size match six original HOL rows"
