@@ -17,6 +17,7 @@ import Flapjack.Compiler.Backend.DataSpace.Requirements
 import Flapjack.Compiler.Backend.BviToData.Assign
 import Flapjack.Compiler.Backend.BviToData.Compile
 import Flapjack.Compiler.Backend.DataSimp
+import Flapjack.Compiler.Backend.DataLive
 import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
 import Flapjack.Compiler.Backend.FlatPattern.Encode
@@ -455,5 +456,15 @@ example : Flapjack.Compiler.Backend.DataSimp.simp (.seq (.move 1 2) (.return [1]
 example : Flapjack.Compiler.Backend.DataSimp.simp (.ifThenElse 0 (.seq .skip (.raise 1)) .skip) .skip =
     .ifThenElse 0 (.raise 1) .skip := rfl
 #guard data_simplification
+#guard match Flapjack.Compiler.Backend.DataLive.compile
+    (.seq (.assign 1 (.intOp (.const 3)) [0] none) (.return [0])) .ln with
+  | (.seq .skip (.return [0]), live) => decide (live = sptListInsert [0] .ln)
+  | _ => false
+#guard match Flapjack.Compiler.Backend.DataLive.compile
+    (.seq (.assign 1 (.intOp .add) [0, 2] none) (.return [0])) .ln with
+  | (.seq (.assign 1 (.intOp .add) [0, 2] none) (.return [0]), live) =>
+      decide (live = sptListInsert [0, 2] (sptListInsert [0] .ln))
+  | _ => false
+#guard data_liveness
 
 end Flapjack.Test.FlatElim

@@ -101084,5 +101084,21 @@
     "hol_name": "simp_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataLive.lean",
+    "lean_name": "isPure",
+    "hol_path": "cakeml/compiler/backend/data_liveScript.sml",
+    "hol_name": "is_pure_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataLive.lean",
+    "lean_name": "compile",
+    "hol_path": "cakeml/compiler/backend/data_liveScript.sml",
+    "hol_name": "compile_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
   }
 ]

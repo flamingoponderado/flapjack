@@ -210,6 +210,7 @@ import Flapjack.Compiler.Backend.DataSpace.Requirements
 import Flapjack.Compiler.Backend.BviToData.Assign
 import Flapjack.Compiler.Backend.BviToData.Compile
 import Flapjack.Compiler.Backend.DataSimp
+import Flapjack.Compiler.Backend.DataLive
 import Flapjack.Compiler.Backend.PatternComp.Decision
 import Flapjack.Compiler.Backend.PatternExh.Matrix
 import Flapjack.Compiler.Backend.FlatToClos.Helpers
