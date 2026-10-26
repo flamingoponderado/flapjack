@@ -43,6 +43,8 @@ probe_needs_refresh() {
     [[ "$(basename "$probe")" == cakeml_frontend_flat_probeScript.sml &&
        ( "$cake_dir/compiler/backend/flat_patternScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/source_to_flatScript.sml" -nt "$output" ) ]] ||
+    [[ "$(basename "$probe")" == cakeml_frontend_flat_probeScript.sml &&
+       "$cake_dir/compiler/backend/flat_to_closScript.sml" -nt "$output" ]] ||
     [[ "$(basename "$probe")" == l3_riscv_int_to_fp_probeScript.sml &&
        "$probe_dir/binary_ieee_directed_certificates.sml" -nt "$output" ]]
 }
@@ -111,7 +113,7 @@ run_probe() {
 }
 
 run_probe cakeml_frontend_flat_probeScript.sml cakeml_frontend_flat_probe.out \
-  name_roundtrips name_bytes name_unreserved pure_init hidden_init impure_lookup_init hidden_lookup_init keep_empty keep_reachable eliminate_pure_length eval_bypass_length guard_double_not guard_false_conj pattern_encoding empty_program_globals empty_program_output \
+  name_roundtrips name_bytes name_unreserved pure_init hidden_init impure_lookup_init hidden_lookup_init keep_empty keep_reachable eliminate_pure_length eval_bypass_length guard_double_not guard_false_conj pattern_encoding empty_program_globals empty_program_output word8_literal smart_constructor \
   "$cake_dir/compiler/backend/flat_elimScript.sml" "$cake_dir/compiler/backend"
 
 run_probe l3_step_register_comparison_probeScript.sml l3_step_register_comparison_probe.out \

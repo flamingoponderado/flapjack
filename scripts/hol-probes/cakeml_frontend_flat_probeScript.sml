@@ -1,4 +1,4 @@
-load "flat_patternTheory"; load "flat_elimTheory"; load "source_to_flatTheory";
+load "flat_patternTheory"; load "flat_elimTheory"; load "source_to_flatTheory"; load "flat_to_closTheory"; load "wordsLib";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 fun capture label term =
@@ -20,3 +20,6 @@ val _ = capture "guard_false_conj" ``flat_pattern$simp_guard (pattern_semantics$
 val _ = capture "pattern_encoding" ``flat_pattern$encode_pat (flatLang$Pcon (SOME (3, SOME (42, [(3, 1)]))) [flatLang$Pany]) = pattern_semantics$Cons (SOME (3, SOME [(3, 1)])) [pattern_semantics$Any]``;
 val _ = capture "empty_program_globals" ``(FST (source_to_flat$compile_prog source_to_flat$empty_config [])).next.vidx``;
 val _ = capture "empty_program_output" ``SND (source_to_flat$compile_prog source_to_flat$empty_config []) = [source_to_flat$glob_alloc ((FST (source_to_flat$compile_prog source_to_flat$empty_config [])).next) source_to_flat$empty_config; source_to_flat$alloc_env_ref]``;
+val word8_lit = EVAL ``flat_to_clos$compile_lit backend_common$None (ast$Word8 255w) = closLang$Op backend_common$None (closLang$IntOp (closLang$Const 255)) []``;
+val _ = (print "word8_literal="; print_term (rhs (concl (CONV_RULE (RAND_CONV wordsLib.WORD_EVAL_CONV) word8_lit))); print "\n");
+val _ = capture "smart_constructor" ``flat_to_clos$SmartCons backend_common$None 4 [closLang$Op backend_common$None (closLang$IntOp (closLang$Const 1)) []; closLang$Op backend_common$None (closLang$IntOp (closLang$Const 2)) []] = closLang$Op backend_common$None (closLang$BlockOp (closLang$Constant (closLang$ConstCons 4 [closLang$ConstInt 2; closLang$ConstInt 1]))) []``;

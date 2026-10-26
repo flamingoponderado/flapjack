@@ -99708,5 +99708,69 @@
     "hol_name": "encode_pat_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Helpers.lean",
+    "lean_name": "destPat",
+    "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
+    "hol_name": "dest_pat_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Helpers.lean",
+    "lean_name": "compileLit",
+    "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
+    "hol_name": "compile_lit_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Helpers.lean",
+    "lean_name": "arg1",
+    "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
+    "hol_name": "arg1_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Helpers.lean",
+    "lean_name": "arg2",
+    "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
+    "hol_name": "arg2_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Helpers.lean",
+    "lean_name": "joinStrings",
+    "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
+    "hol_name": "join_strings_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Helpers.lean",
+    "lean_name": "destConstant",
+    "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
+    "hol_name": "dest_Constant_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Helpers.lean",
+    "lean_name": "destConstants",
+    "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
+    "hol_name": "dest_Constants_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Helpers.lean",
+    "lean_name": "smartCons",
+    "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
+    "hol_name": "SmartCons_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
   }
 ]

@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
 import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
 import Flapjack.Compiler.Backend.FlatPattern.Encode
+import Flapjack.Compiler.Backend.FlatToClos.Helpers
 import Flapjack.Test.CakeMLFlatOracle
 
 namespace Flapjack.Test.FlatElim
@@ -76,5 +77,13 @@ example : decodeDtree .none .ln lit pureSet (.if_ .true_ (.leaf 0) .typeFail) = 
 example : encodePat (.pcon (some (3, some (42, [(3, 1)]))) [.pany]) =
     .cons (some (3, some [(3, 1)])) [.any] := rfl
 #guard pattern_encoding
+
+open Flapjack.Compiler.Backend.FlatToClos
+example : compileLit .none (.word8 255) = .op .none (.intOp (.const 255)) [] := rfl
+#guard word8_literal
+example : smartCons .none 4 [.op .none (.intOp (.const 1)) [],
+    .op .none (.intOp (.const 2)) []] =
+    .op .none (.blockOp (.constant (.constCons 4 [.constInt 2, .constInt 1]))) [] := rfl
+#guard smart_constructor
 
 end Flapjack.Test.FlatElim
