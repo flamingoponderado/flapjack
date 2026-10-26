@@ -198,6 +198,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Constants
 import Flapjack.Compiler.Backend.ClosToBvl.Layout
 import Flapjack.Compiler.Backend.ClosToBvl.Sort
 import Flapjack.Compiler.Backend.ClosToBvl.Names
+import Flapjack.Compiler.Backend.ClosNumber
 import Flapjack.Compiler.Backend.PatternComp.Decision
 import Flapjack.Compiler.Backend.PatternExh.Matrix
 import Flapjack.Compiler.Backend.FlatToClos.Helpers

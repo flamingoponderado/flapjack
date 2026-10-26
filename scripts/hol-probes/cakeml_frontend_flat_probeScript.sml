@@ -1,4 +1,4 @@
-load "flat_patternTheory"; load "flat_elimTheory"; load "source_to_flatTheory"; load "flat_to_closTheory"; load "source_to_sourceTheory"; load "clos_to_bvlTheory"; load "wordsLib";
+load "flat_patternTheory"; load "flat_elimTheory"; load "source_to_flatTheory"; load "flat_to_closTheory"; load "source_to_sourceTheory"; load "clos_to_bvlTheory"; load "clos_numberTheory"; load "wordsLib";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 fun capture label term =
@@ -99,3 +99,7 @@ val _ = capture "bvl_chain_empty" ``clos_to_bvl$chain_exps 7 [] = [(7, 0, closLa
 val _ = capture "bvl_code_sort" ``clos_to_bvl$code_sort [(1,10); (1,20); (1,30); (0,40)] = [(0,40); (1,20); (1,30); (1,10)]``;
 val _ = capture "bvl_build_aux" ``clos_to_bvl$build_aux 3 [(1,bvl$Var 0); (2,bvl$Var 1)] [] = (7, [(5,2,bvl$Var 1); (3,1,bvl$Var 0)])``;
 val _ = capture "bvl_source_names" ``let names = clos_to_bvl$get_src_names [closLang$Fn «first» (SOME 0) NONE 1 (closLang$Var backend_common$None 0); closLang$Fn «last» (SOME 0) NONE 1 (closLang$Var backend_common$None 0)] sptree$LN in [sptree$lookup 0 names; sptree$lookup 1 names] = [SOME «last_clos»; SOME «last»]``;
+val _ = capture "closure_numbering" ``clos_number$renumber_code_locs 4 (closLang$Fn «f» NONE NONE 1 (closLang$Fn «g» NONE NONE 1 (closLang$Var backend_common$None 0))) =
+ (8, closLang$Fn «f» (SOME 6) NONE 1 (closLang$Fn «g» (SOME 4) NONE 1 (closLang$Var backend_common$None 0)))``;
+val _ = capture "closure_number_incremental" ``clos_number$compile_inc 3 [closLang$Fn «f» NONE NONE 1 (closLang$Var backend_common$None 0)] =
+ (6, [closLang$Op backend_common$None (closLang$IntOp (closLang$Const 3)) []; closLang$Fn «f» (SOME 4) NONE 1 (closLang$Var backend_common$None 0)])``;

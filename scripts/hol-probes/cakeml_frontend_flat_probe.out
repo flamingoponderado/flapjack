@@ -51,3 +51,5 @@ bvl_chain_empty=T
 bvl_code_sort=T
 bvl_build_aux=T
 bvl_source_names=T
+closure_numbering=T
+closure_number_incremental=T

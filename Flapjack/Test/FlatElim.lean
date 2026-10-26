@@ -5,6 +5,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Constants
 import Flapjack.Compiler.Backend.ClosToBvl.Layout
 import Flapjack.Compiler.Backend.ClosToBvl.Sort
 import Flapjack.Compiler.Backend.ClosToBvl.Names
+import Flapjack.Compiler.Backend.ClosNumber
 import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
 import Flapjack.Compiler.Backend.FlatPattern.Encode
@@ -312,5 +313,12 @@ private def bvlNames := Flapjack.Compiler.Backend.ClosToBvl.getSrcNames
       .fn (ofString "last") (some 0) none 1 (.var .none 0)] : List Flapjack.Compiler.Backend.ClosLang.Exp) .ln
 #guard [sptLookup 0 bvlNames, sptLookup 1 bvlNames] == [some (ofString "last_clos"), some (ofString "last")]
 #guard bvl_source_names
+example : Flapjack.Compiler.Backend.ClosNumber.renumber 4
+    (.fn (ofString "f") none none 1 (.fn (ofString "g") none none 1 (.var .none 0))) =
+    (8, .fn (ofString "f") (some 6) none 1 (.fn (ofString "g") (some 4) none 1 (.var .none 0))) := rfl
+example : Flapjack.Compiler.Backend.ClosNumber.compileInc 3
+    [.fn (ofString "f") none none 1 (.var .none 0)] =
+    (6, [.op .none (.intOp (.const 3)) [], .fn (ofString "f") (some 4) none 1 (.var .none 0)]) := rfl
+#guard closure_numbering && closure_number_incremental
 
 end Flapjack.Test.FlatElim

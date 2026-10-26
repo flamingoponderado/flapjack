@@ -100820,5 +100820,37 @@
     "hol_name": "get_src_names_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source traversal transcribed; typed HOL capture and complete statement, ordering and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber.lean",
+    "lean_name": "renumber",
+    "hol_path": "cakeml/compiler/backend/clos_numberScript.sml",
+    "hol_name": "renumber_code_locs_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber.lean",
+    "lean_name": "renumberList",
+    "hol_path": "cakeml/compiler/backend/clos_numberScript.sml",
+    "hol_name": "renumber_code_locs_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber.lean",
+    "lean_name": "compileInc",
+    "hol_path": "cakeml/compiler/backend/clos_numberScript.sml",
+    "hol_name": "compile_inc_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosNumber.lean",
+    "lean_name": "ignoreTable",
+    "hol_path": "cakeml/compiler/backend/clos_numberScript.sml",
+    "hol_name": "ignore_table_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
   }
 ]
