@@ -1,5 +1,5 @@
 import Flapjack.Compiler.Backend.ClosLang.Syntax
-import Flapjack.NamespaceHOL
+import Flapjack.Misc.Sptree
 
 /-! Imperative data-language syntax and allocation classifications. -/
 namespace Flapjack.Compiler.Backend.DataLang

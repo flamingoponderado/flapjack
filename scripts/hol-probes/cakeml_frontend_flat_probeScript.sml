@@ -1,4 +1,4 @@
-load "flat_patternTheory"; load "flat_elimTheory"; load "source_to_flatTheory"; load "flat_to_closTheory"; load "source_to_sourceTheory"; load "clos_to_bvlTheory"; load "clos_numberTheory"; load "bvl_to_bviTheory"; load "bvi_letTheory"; load "dataLangTheory"; load "bvi_to_dataTheory"; load "wordsLib";
+load "flat_patternTheory"; load "flat_elimTheory"; load "source_to_flatTheory"; load "flat_to_closTheory"; load "source_to_sourceTheory"; load "clos_to_bvlTheory"; load "clos_numberTheory"; load "bvl_to_bviTheory"; load "bvi_letTheory"; load "dataLangTheory"; load "data_spaceTheory"; load "bvi_to_dataTheory"; load "wordsLib";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 fun capture label term =
@@ -166,7 +166,7 @@ val _ = capture "clos_to_bvi_program" ``bvl_to_bvi$compile_inc 0
  (clos_to_bvl$compile_prog 0 [(10, 0, closLang$Var backend_common$None 0)]) =
  (0, [(backend_common$bvl_num_stubs + 48, 0, bvi$Var 0)])``;
 fun captureData label term =
-  let val rewritten = rhs (concl (REWRITE_CONV [bvi_to_dataTheory.op_requires_names_eqn] term))
+  let val rewritten = rhs (concl (REWRITE_CONV [bvi_to_dataTheory.iAssign_def, bvi_to_dataTheory.op_requires_names_eqn] term))
   in capture label rewritten end;
 val _ = captureData "data_lang_syntax" ``
  dataLang$op_space_reset (closLang$MemOp (closLang$CopyByte T)) /\
@@ -174,3 +174,17 @@ val _ = captureData "data_lang_syntax" ``
  dataLang$op_requires_names (closLang$MemOp (closLang$CopyByte F)) /\
  ~dataLang$op_requires_names (closLang$IntOp (closLang$Const 1)) /\
  dataLang$mk_ticks 2 dataLang$Skip = dataLang$Seq dataLang$Tick (dataLang$Seq dataLang$Tick dataLang$Skip)``;
+val _ = capture "data_space_requirements" ``
+ data_space$num_size 4294967296 = 3 /\
+ data_space$part_space_req (closLang$Int 536870911) = 0 /\
+ data_space$part_space_req (closLang$Int (-536870912)) = 2 /\
+ data_space$part_space_req (closLang$Str «abcde») = 3 /\
+ data_space$op_space_req (closLang$BlockOp (closLang$Cons 4)) 2 = 3 /\
+ data_space$op_space_req (closLang$WordOp (closLang$WordFromWord F)) 0 = 3``;
+val _ = captureData "bvi_to_data_assign" ``
+ bvi_to_data$iAssign 4 (closLang$IntOp closLang$Greater) [1;2] [3] [] =
+  dataLang$Assign 4 (closLang$IntOp closLang$Less) [2;1] (SOME (sptree$list_to_num_set [1;2;3])) /\
+ bvi_to_data$iAssign 0 (closLang$WordOp (closLang$WordTest ast$W8 (ast$Compare ast$Gt))) [1;2] [] [] =
+  dataLang$Assign 0 (closLang$WordOp (closLang$WordTest ast$W8 (ast$Compare ast$Lt))) [2;1] NONE /\
+ bvi_to_data$iAssign 0 (closLang$MemOp closLang$Ref) [1;2] [] [] =
+  dataLang$Seq (dataLang$MakeSpace 3 (sptree$list_to_num_set [1;2])) (dataLang$Assign 0 (closLang$MemOp closLang$Ref) [1;2] NONE)``;

@@ -101036,5 +101036,37 @@
     "hol_name": "mk_ticks_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source syntax or clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataSpace/Requirements.lean",
+    "lean_name": "numSize",
+    "hol_path": "cakeml/compiler/backend/data_spaceScript.sml",
+    "hol_name": "num_size_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataSpace/Requirements.lean",
+    "lean_name": "partSpaceReq",
+    "hol_path": "cakeml/compiler/backend/data_spaceScript.sml",
+    "hol_name": "part_space_req_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataSpace/Requirements.lean",
+    "lean_name": "opSpaceReq",
+    "hol_path": "cakeml/compiler/backend/data_spaceScript.sml",
+    "hol_name": "op_space_req_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Assign.lean",
+    "lean_name": "iAssign",
+    "hol_path": "cakeml/compiler/backend/bvi_to_dataScript.sml",
+    "hol_name": "iAssign_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
   }
 ]

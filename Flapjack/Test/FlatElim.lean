@@ -13,6 +13,8 @@ import Flapjack.Compiler.Backend.BvlToBvi.CompileOp
 import Flapjack.Compiler.Backend.BviLet.Compile
 import Flapjack.Compiler.Backend.BvlToBvi.Compile
 import Flapjack.Compiler.Backend.DataLang.Syntax
+import Flapjack.Compiler.Backend.DataSpace.Requirements
+import Flapjack.Compiler.Backend.BviToData.Assign
 import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
 import Flapjack.Compiler.Backend.FlatPattern.Encode
@@ -426,5 +428,20 @@ example : Flapjack.Compiler.Backend.BviLet.compileFuel 0 [] 0 (.var 0) = none :=
 #guard !Flapjack.Compiler.Backend.DataLang.opRequiresNames (.intOp (.const 1))
 example : Flapjack.Compiler.Backend.DataLang.mkTicks 2 .skip = .seq .tick (.seq .tick .skip) := rfl
 #guard data_lang_syntax
+#guard Flapjack.Compiler.Backend.DataSpace.numSize 4294967296 == 3
+#guard Flapjack.Compiler.Backend.DataSpace.partSpaceReq (.int 536870911) == 0
+#guard Flapjack.Compiler.Backend.DataSpace.partSpaceReq (.int (-536870912)) == 2
+#guard Flapjack.Compiler.Backend.DataSpace.partSpaceReq (.str (ofString "abcde")) == 3
+#guard Flapjack.Compiler.Backend.DataSpace.opSpaceReq (.blockOp (.cons 4)) 2 == 3
+#guard Flapjack.Compiler.Backend.DataSpace.opSpaceReq (.wordOp (.wordFromWord false)) 0 == 3
+#guard data_space_requirements
+example : Type := Flapjack.Compiler.Backend.DataLang.Prog
+example : Flapjack.Compiler.Backend.BviToData.iAssign 4 (.intOp .greater) [1, 2] [3] [] =
+    .assign 4 (.intOp .less) [2, 1] (some (sptInsert 1 () (sptInsert 2 () (sptInsert 3 () .ln)))) := rfl
+example : Flapjack.Compiler.Backend.BviToData.iAssign 0 (.wordOp (.wordTest .w8 (.compare .gt))) [1, 2] [] [] =
+    .assign 0 (.wordOp (.wordTest .w8 (.compare .lt))) [2, 1] none := rfl
+example : Flapjack.Compiler.Backend.BviToData.iAssign 0 (.memOp .ref) [1, 2] [] [] =
+    .seq (.makeSpace 3 (sptInsert 1 () (sptInsert 2 () .ln))) (.assign 0 (.memOp .ref) [1, 2] none) := rfl
+#guard bvi_to_data_assign
 
 end Flapjack.Test.FlatElim
