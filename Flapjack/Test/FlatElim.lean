@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
 import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
 import Flapjack.Compiler.Backend.FlatPattern.Encode
+import Flapjack.Compiler.Backend.FlatPattern.Bindings
 import Flapjack.Compiler.Backend.PatternComp.Decision
 import Flapjack.Compiler.Backend.PatternExh.Matrix
 import Flapjack.Compiler.Backend.FlatToClos.Helpers
@@ -161,5 +162,11 @@ example : Flapjack.Compiler.Backend.PatternComp.compFuel 1 [] = some .fail := rf
 example : Flapjack.Compiler.Backend.PatternComp.compFuel 3 [(.any, 7)] = some (.leaf 7) := rfl
 example : Flapjack.Compiler.Backend.PatternComp.compFuel 0 [(.any, 7)] = none := rfl
 #guard pattern_compile_empty && pattern_compile_any
+example : compilePatRhsFuel 1 .none 0 (.varLocal .none (ofString "v"))
+    (.pvar (ofString "x"), lit) =
+    some (.let_ .none (some (ofString "x")) (.varLocal .none (ofString "v")) lit) := rfl
+example : (compilePatRhsFuel 0 .none 0 (.varLocal .none (ofString "v"))
+    (.pvar (ofString "x"), lit)).isNone = true := rfl
+#guard pattern_bind_variable
 
 end Flapjack.Test.FlatElim

@@ -33,6 +33,7 @@ def pattern_nub : Bool := true
 def pattern_specialize : Bool := true
 def pattern_compile_empty : Bool := true
 def pattern_compile_any : Bool := true
+def pattern_bind_variable : Bool := true
 def eliminate_pure_length : Nat := 0
 def eval_bypass_length : Nat := 2
 def empty_program_globals : Nat := 1

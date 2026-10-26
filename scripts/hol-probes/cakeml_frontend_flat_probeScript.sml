@@ -61,3 +61,5 @@ val _ = capture "pattern_nub" ``pattern_exh$ctor_nub [pattern_exh$TagC 1 0; patt
 val _ = capture "pattern_specialize" ``pattern_exh$spec_row (pattern_exh$TagC 2 1) [pattern_semantics$Any; pattern_semantics$Lit (ast$IntLit 3)] = [[pattern_semantics$Any; pattern_semantics$Lit (ast$IntLit 3)]]``;
 val _ = capture "pattern_compile_empty" ``pattern_comp$comp [] = pattern_semantics$Fail``;
 val _ = capture "pattern_compile_any" ``pattern_comp$comp [(pattern_semantics$Any, 7)] = pattern_semantics$Leaf 7``;
+val _ = capture "pattern_bind_variable" ``flat_pattern$compile_pat_rhs backend_common$None 0 (flatLang$Var_local backend_common$None «v») (flatLang$Pvar «x», flatLang$Lit backend_common$None (ast$IntLit 1)) =
+  flatLang$Let backend_common$None (SOME «x») (flatLang$Var_local backend_common$None «v») (flatLang$Lit backend_common$None (ast$IntLit 1))``;
