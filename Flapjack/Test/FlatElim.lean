@@ -186,6 +186,13 @@ example : (compilePatRhsFuel 0 .none 0 (.varLocal .none (ofString "v"))
       x == ofString "x" && v == ofString "v"
   | _ => false
 #guard pattern_compile_branch
+#guard match compilePats (Flapjack.Compiler.Backend.FlatPattern.initConfig 0) true
+    .none 0 (.varLocal .none (ofString "v")) (.lit .none (.intLit 0))
+    [(.pvar (ofString "x"), lit)] with
+  | .let_ .none (some x) (.varLocal .none v) (.lit .none (.intLit 1)) =>
+      x == ofString "x" && v == ofString "v"
+  | _ => false
+#guard pattern_naive_branch
 #guard match compilePatsFuel 30 (Flapjack.Compiler.Backend.FlatPattern.initConfig 0) false
     .none 0 (.varLocal .none (ofString "v")) (.lit .none (.intLit 0))
     [(.pcon (some (2, none)) [.pvar (ofString "x")], .varLocal .none (ofString "x"))] with

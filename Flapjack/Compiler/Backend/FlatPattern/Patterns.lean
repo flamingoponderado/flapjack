@@ -1,4 +1,6 @@
 import Flapjack.Compiler.Backend.FlatPattern.Bindings
+import Flapjack.Compiler.Backend.FlatPattern.BindingsTotal
+import Flapjack.Compiler.Backend.FlatPattern.NaiveTotal
 import Flapjack.Compiler.Backend.FlatPattern.Encode
 import Flapjack.Compiler.Backend.FlatPattern.Decode
 import Flapjack.Compiler.Backend.PatternComp.Decision
@@ -36,26 +38,28 @@ def naivePatternMatchesFuel (fuel : Nat) (t : Tra) (v : FlatLang.Exp) :
       let rest ← naivePatternMatchesFuel fuel t v ps default
       pure (FlatLang.smartIf t guard x rest)
 
-/-- Translate branch bodies, reporting exhaustion of the binding budget. -/
-private def compileBranchesFuel (fuel : Nat) (t : Tra) (i : Nat) (v : FlatLang.Exp) :
-    List (FlatLang.Pat × FlatLang.Exp) → Option (List FlatLang.Exp)
-  | [] => some []
-  | p :: ps => do
-      let e ← compilePatRhsFuel fuel t i v p
-      let es ← compileBranchesFuel fuel t i v ps
-      pure (e :: es)
-
 /-- The source `sptree$fromList` on branch expressions. -/
 private def branchTree (branches : List FlatLang.Exp) : Spt FlatLang.Exp :=
   (branches.foldl (fun (state : Nat × Spt FlatLang.Exp) branch =>
     (state.1 + 1, sptInsert state.1 branch state.2)) (0, .ln)).2
 
-/-- Run the source `compile_pats` algorithm with explicit budgets for naive
-matching and variable bindings. `none` reports exhaustion; the original total
-declaration and proofs of sufficient bounds remain open. -/
+/-- Compile pattern branches using the original naive or decision-tree path. -/
+@[hol "cakeml/compiler/backend/flat_patternScript.sml" "compile_pats_def"]
+def compilePats (_cfg : Config) (naive : Bool) (t : Tra) (i : Nat)
+    (v default : FlatLang.Exp) (ps : List (FlatLang.Pat × FlatLang.Exp)) : FlatLang.Exp :=
+  let branches := ps.map (compilePatRhs t i v)
+  if naive then
+    naivePatternMatches t v (List.zip (ps.map Prod.fst) branches) default
+  else
+    let pats := ps.zipIdx.map fun ((p, _), j) => (encodePat p, j)
+    decodeDtree t (branchTree branches) v default (PatternComp.comp pats)
+
+/-- Run the source `compile_pats` algorithm with an explicit budget for naive
+matching. `none` reports exhaustion; the original total declaration and a
+proof of a sufficient naive-matching bound remain open. -/
 def compilePatsFuel (fuel : Nat) (_cfg : Config) (naive : Bool) (t : Tra) (i : Nat)
     (v default : FlatLang.Exp) (ps : List (FlatLang.Pat × FlatLang.Exp)) : Option FlatLang.Exp := do
-  let branches ← compileBranchesFuel fuel t i v ps
+  let branches := ps.map (compilePatRhs t i v)
   if naive then
     naivePatternMatchesFuel fuel t v (List.zip (ps.map Prod.fst) branches) default
   else

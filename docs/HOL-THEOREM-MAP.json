@@ -100716,5 +100716,77 @@
     "hol_name": "comp_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source composition transcribed; complete typed source review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/BindingsTotal.lean",
+    "lean_name": "compilePatBindings",
+    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
+    "hol_name": "compile_pat_bindings_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed and termination kernel-checked; typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/BindingsTotal.lean",
+    "lean_name": "compilePatRhs",
+    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
+    "hol_name": "compile_pat_rhs_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed and termination kernel-checked; typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/NaiveTotal.lean",
+    "lean_name": "naivePatternMatch",
+    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
+    "hol_name": "naive_pattern_match_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed and termination kernel-checked; typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/NaiveTotal.lean",
+    "lean_name": "naivePatternMatches",
+    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
+    "hol_name": "naive_pattern_matches_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed and termination kernel-checked; typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/CompileTotal.lean",
+    "lean_name": "compileExp",
+    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
+    "hol_name": "compile_exp_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed and termination kernel-checked; typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/CompileTotal.lean",
+    "lean_name": "compileExps",
+    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
+    "hol_name": "compile_exp_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed and termination kernel-checked; typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/CompileTotal.lean",
+    "lean_name": "compileMatch",
+    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
+    "hol_name": "compile_exp_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed and termination kernel-checked; typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/CompileTotal.lean",
+    "lean_name": "compileDec",
+    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
+    "hol_name": "compile_dec_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed and termination kernel-checked; typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Patterns.lean",
+    "lean_name": "compilePats",
+    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
+    "hol_name": "compile_pats_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source branch composition transcribed; typed HOL capture and full statement review remain pending."
   }
 ]
