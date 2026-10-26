@@ -84,3 +84,4 @@ val _ = capture "bvl_shared_constant" ``clos_to_bvl$compile_const (closLang$Cons
 val _ = capture "bvl_stub_layout" ``[clos_to_bvl$num_stubs 4; clos_to_bvl$partial_app_fn_location 4 3 1]``;
 val _ = capture "bvl_chain_empty" ``clos_to_bvl$chain_exps 7 [] = [(7, 0, closLang$Op backend_common$None (closLang$IntOp (closLang$Const 0)) [])]``;
 val _ = capture "bvl_code_sort" ``clos_to_bvl$code_sort [(1,10); (1,20); (1,30); (0,40)] = [(0,40); (1,20); (1,30); (1,10)]``;
+val _ = capture "bvl_build_aux" ``clos_to_bvl$build_aux 3 [(1,bvl$Var 0); (2,bvl$Var 1)] [] = (7, [(5,2,bvl$Var 1); (3,1,bvl$Var 0)])``;

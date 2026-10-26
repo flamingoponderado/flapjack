@@ -15,6 +15,30 @@ def mkLabel (n : Nat) : Bvl.Exp := .op (.label n) []
 @[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "mk_el_def"]
 def mkEl (b i : Bvl.Exp) : Bvl.Exp := .op (.memOp .el) [i, b]
 
+/-- The BVL `mk_elem_at` overload, used by closure-environment extraction. -/
+private def mkElemAt (b : Bvl.Exp) (i : Nat) : Bvl.Exp := .op (.blockOp (.elemAt i)) [b]
+
+/-- Read the free variables stored after the two closure metadata fields. -/
+@[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "free_let_def"]
+def freeLet (cl : Bvl.Exp) (n : Nat) : List Bvl.Exp :=
+  (List.range n).map (fun i => mkElemAt cl (i + 2))
+
+/-- Wrap a recursively defined function body with its argument and environment
+extractions. -/
+@[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "code_for_recc_case_def"]
+def codeForReccCase (n numArgs : Nat) (body : Bvl.Exp) : Nat × Bvl.Exp :=
+  (numArgs + 1, .let [mkElemAt (.var numArgs) 2]
+    (.let ((List.range numArgs).map (fun a => .var (a + 1)) ++
+      (List.range n).map (fun i => mkElemAt (.var 0) i)) body))
+
+/-- Assign successive even locations to recursive-function bodies, prepending
+each generated entry to the auxiliary table. -/
+@[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "build_aux_def"]
+def buildAux (i : Nat) : List (Nat × Bvl.Exp) → List (Nat × Nat × Bvl.Exp) →
+    Nat × List (Nat × Nat × Bvl.Exp)
+  | [], aux => (i, aux)
+  | (arity, body) :: xs, aux => buildAux (i + 2) xs ((i, arity, body) :: aux)
+
 /-- Count generic, partial-application, initialization and force stubs. -/
 @[hol "cakeml/compiler/backend/clos_to_bvlScript.sml" "num_stubs_def"]
 def numStubs (maxApp : Nat) : Nat := maxApp + maxApp * (maxApp - 1) / 2 + 1 + 1

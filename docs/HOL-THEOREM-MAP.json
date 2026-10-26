@@ -100564,5 +100564,29 @@
     "hol_name": "code_sort_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Layout.lean",
+    "lean_name": "freeLet",
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
+    "hol_name": "free_let_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Layout.lean",
+    "lean_name": "codeForReccCase",
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
+    "hol_name": "code_for_recc_case_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Layout.lean",
+    "lean_name": "buildAux",
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
+    "hol_name": "build_aux_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
   }
 ]

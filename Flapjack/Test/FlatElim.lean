@@ -249,5 +249,8 @@ example : Flapjack.Compiler.Backend.ClosToBvl.chainExps 7 [] =
 #guard Flapjack.Compiler.Backend.ClosToBvl.codeSort [(1, 10), (1, 20), (1, 30), (0, 40)] ==
   [(0, 40), (1, 20), (1, 30), (1, 10)]
 #guard bvl_code_sort
+example : Flapjack.Compiler.Backend.ClosToBvl.buildAux 3 [(1, .var 0), (2, .var 1)] [] =
+    (7, [(5, 2, .var 1), (3, 1, .var 0)]) := rfl
+#guard bvl_build_aux
 
 end Flapjack.Test.FlatElim
