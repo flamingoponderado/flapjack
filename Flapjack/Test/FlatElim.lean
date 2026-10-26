@@ -9,6 +9,7 @@ import Flapjack.Compiler.Backend.ClosNumber
 import Flapjack.Compiler.Backend.ClosToBvl.ExtractName
 import Flapjack.Compiler.Backend.ClosToBvl.Compile
 import Flapjack.Compiler.Backend.BvlToBvi.Analysis
+import Flapjack.Compiler.Backend.BvlToBvi.CompileOp
 import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
 import Flapjack.Compiler.Backend.FlatPattern.Encode
@@ -381,5 +382,14 @@ example : Flapjack.Compiler.Backend.BvlToBvi.compileInt (-268435458) =
   (.let [.op (.globOp .allocGlobal) [], .raise (.op (.globOp .allocGlobal) [])]
     (.op (.globOp .allocGlobal) [])) == 3
 #guard bvl_to_bvi_analysis
+example : Flapjack.Compiler.Backend.BvlToBvi.compileOp (.intOp (.const 9)) [.var 1] =
+    .let [.op (.intOp (.const 0)) [.var 1]] (.op (.intOp (.const 9)) []) := rfl
+example : Flapjack.Compiler.Backend.BvlToBvi.compileOp (.globOp (.setGlobal 4)) [.var 2] =
+    .op (.globOp (.setGlobal 5)) [.var 2] := rfl
+example : Flapjack.Compiler.Backend.BvlToBvi.compileOp (.memOp (.copyByte true)) [] =
+    .let [.op (.intOp (.const 0)) [], .op (.intOp (.const 0)) [], .op (.intOp (.const 0)) []]
+      (.let [.op (.memOp (.refByte true)) [.op (.intOp (.const 0)) [], .var 0]]
+        (.let [.op (.memOp (.copyByte false)) [.op (.intOp (.const 0)) [], .var 0, .var 1, .var 2, .var 3]] (.var 1))) := rfl
+#guard bvl_to_bvi_operations
 
 end Flapjack.Test.FlatElim

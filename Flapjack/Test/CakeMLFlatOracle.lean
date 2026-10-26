@@ -60,6 +60,7 @@ def bvl_recursive_closures : Bool := true
 def bvl_compile_closure : Bool := true
 def bvl_compile_program : Bool := true
 def bvl_to_bvi_analysis : Bool := true
+def bvl_to_bvi_operations : Bool := true
 def eliminate_pure_length : Nat := 0
 def eval_bypass_length : Nat := 2
 def empty_program_globals : Nat := 1

@@ -143,3 +143,10 @@ val _ = capture "bvl_to_bvi_analysis" ``
  bvl_to_bvi$compile_int 268435458 = bvi$Op (closLang$BlockOp (closLang$Build [closLang$Int 268435458])) [] /\
  bvl_to_bvi$compile_int (-268435458) = bvi$Op (closLang$BlockOp (closLang$Build [closLang$Int (-268435458)])) [] /\
  bvl_to_bvi$global_count_sing (bvl$Let [bvl$Op (closLang$GlobOp closLang$AllocGlobal) []; bvl$Raise (bvl$Op (closLang$GlobOp closLang$AllocGlobal) [])] (bvl$Op (closLang$GlobOp closLang$AllocGlobal) [])) = 3``;
+val _ = capture "bvl_to_bvi_operations" ``
+ bvl_to_bvi$compile_op (closLang$IntOp (closLang$Const 9)) [bvi$Var 1] = bvi$Let [bvi$Op (closLang$IntOp (closLang$Const 0)) [bvi$Var 1]] (bvi$Op (closLang$IntOp (closLang$Const 9)) []) /\
+ bvl_to_bvi$compile_op (closLang$GlobOp (closLang$SetGlobal 4)) [bvi$Var 2] = bvi$Op (closLang$GlobOp (closLang$SetGlobal 5)) [bvi$Var 2] /\
+ bvl_to_bvi$compile_op (closLang$MemOp (closLang$CopyByte T)) [] =
+  bvi$Let [bvi$Op (closLang$IntOp (closLang$Const 0)) []; bvi$Op (closLang$IntOp (closLang$Const 0)) []; bvi$Op (closLang$IntOp (closLang$Const 0)) []]
+   (bvi$Let [bvi$Op (closLang$MemOp (closLang$RefByte T)) [bvi$Op (closLang$IntOp (closLang$Const 0)) []; bvi$Var 0]]
+    (bvi$Let [bvi$Op (closLang$MemOp (closLang$CopyByte F)) [bvi$Op (closLang$IntOp (closLang$Const 0)) []; bvi$Var 0; bvi$Var 1; bvi$Var 2; bvi$Var 3]] (bvi$Var 1)))``;

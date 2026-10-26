@@ -100932,5 +100932,53 @@
     "hol_name": "global_count_sing_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/CompileOp.lean",
+    "lean_name": "compileOp",
+    "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
+    "hol_name": "compile_op_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/CompileOp.lean",
+    "lean_name": "listLengthLocation",
+    "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
+    "hol_name": "ListLength_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source definition transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/CompileOp.lean",
+    "lean_name": "fromListByteLocation",
+    "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
+    "hol_name": "FromListByte_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source definition transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/CompileOp.lean",
+    "lean_name": "toListByteLocation",
+    "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
+    "hol_name": "ToListByte_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source definition transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/CompileOp.lean",
+    "lean_name": "sumListLengthLocation",
+    "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
+    "hol_name": "SumListLength_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source definition transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/CompileOp.lean",
+    "lean_name": "concatByteLocation",
+    "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
+    "hol_name": "ConcatByte_location_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source definition transcribed; complete typed carrier and statement review remains pending."
   }
 ]
