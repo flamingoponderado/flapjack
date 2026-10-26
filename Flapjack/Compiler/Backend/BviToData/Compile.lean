@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.BviToData.Assign
 import Flapjack.Compiler.Backend.Bvi.Syntax
+import Flapjack.Compiler.Backend.BviToData.Optimise
 
 /-! Checked expression traversal for BVI-to-data lowering. -/
 namespace Flapjack.Compiler.Backend.BviToData
@@ -86,5 +87,10 @@ def compileListFuel : Nat → Nat → List Nat → List Nat → List Bvi.Exp →
           let (rest, vs, n) ← compileListFuel fuel n env (v :: live) xs
           pure (.seq c rest, v :: vs, n)
 end
+
+/-- Run the source optimization sequence after checked expression lowering. -/
+def compileExpFuel (fuel argc : Nat) (exp : Bvi.Exp) : Option DataLang.Prog := do
+  let (prog, _, _) ← compileFuel fuel argc (List.range argc) true [] exp
+  pure (optimise prog)
 
 end Flapjack.Compiler.Backend.BviToData

@@ -101100,5 +101100,37 @@
     "hol_name": "compile_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataSpace/Compile.lean",
+    "lean_name": "pMakeSpace",
+    "hol_path": "cakeml/compiler/backend/data_spaceScript.sml",
+    "hol_name": "pMakeSpace_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataSpace/Compile.lean",
+    "lean_name": "space",
+    "hol_path": "cakeml/compiler/backend/data_spaceScript.sml",
+    "hol_name": "space_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataSpace/Compile.lean",
+    "lean_name": "compile",
+    "hol_path": "cakeml/compiler/backend/data_spaceScript.sml",
+    "hol_name": "compile_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BviToData/Optimise.lean",
+    "lean_name": "optimise",
+    "hol_path": "cakeml/compiler/backend/bvi_to_dataScript.sml",
+    "hol_name": "optimise_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
   }
 ]

@@ -18,6 +18,7 @@ import Flapjack.Compiler.Backend.BviToData.Assign
 import Flapjack.Compiler.Backend.BviToData.Compile
 import Flapjack.Compiler.Backend.DataSimp
 import Flapjack.Compiler.Backend.DataLive
+import Flapjack.Compiler.Backend.BviToData.Optimise
 import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
 import Flapjack.Compiler.Backend.FlatPattern.Encode
@@ -466,5 +467,28 @@ example : Flapjack.Compiler.Backend.DataSimp.simp (.ifThenElse 0 (.seq .skip (.r
       decide (live = sptListInsert [0, 2] (sptListInsert [0] .ln))
   | _ => false
 #guard data_liveness
+#guard match Flapjack.Compiler.Backend.DataSpace.compile
+    (.seq (.assign 0 (.memOp .ref) [1] none) (.makeSpace 3 .ln)) with
+  | .seq (.makeSpace 5 names) (.seq (.assign 0 (.memOp .ref) [1] none) .skip) =>
+      decide (names = sptListInsert [1] .ln)
+  | _ => false
+#guard match Flapjack.Compiler.Backend.BviToData.optimise
+    (.seq (.assign 1 (.intOp (.const 3)) [0] none) (.return [0])) with
+  | .return [0] => true
+  | _ => false
+#guard data_optimisation
+#guard match Flapjack.Compiler.Backend.BviToData.compileExpFuel 10 1 (.var 0) with
+  | some (.return [0]) => true
+  | _ => false
+#guard bvi_to_data_complete_example
+#guard match Flapjack.Compiler.Backend.ClosToBvl.compileProg? 0 [(10, 1, .var .none 0)] with
+  | some bvl => match Flapjack.Compiler.Backend.BvlToBvi.compileIncFuel 10 10 0 bvl with
+    | some (0, [(loc, 1, exp)]) =>
+        loc == bvlNumStubs + 48 && match Flapjack.Compiler.Backend.BviToData.compileExpFuel 10 1 exp with
+          | some (.return [0]) => true
+          | _ => false
+    | _ => false
+  | _ => false
+#guard clos_to_data_program
 
 end Flapjack.Test.FlatElim

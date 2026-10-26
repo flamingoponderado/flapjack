@@ -72,3 +72,6 @@ bvi_to_data_assign=T
 bvi_to_data_expression=T
 data_simplification=T
 data_liveness=T
+data_optimisation=T
+bvi_to_data_complete_example=T
+clos_to_data_program=T

@@ -206,3 +206,13 @@ val _ = capture "data_liveness" ``
   (dataLang$Seq dataLang$Skip (dataLang$Return [0]), sptree$list_insert [0] sptree$LN) /\
  data_live$compile (dataLang$Seq (dataLang$Assign 1 (closLang$IntOp closLang$Add) [0;2] NONE) (dataLang$Return [0])) sptree$LN =
   (dataLang$Seq (dataLang$Assign 1 (closLang$IntOp closLang$Add) [0;2] NONE) (dataLang$Return [0]), sptree$list_insert [0;2] (sptree$list_insert [0] sptree$LN))``;
+val _ = capture "data_optimisation" ``
+ data_space$compile (dataLang$Seq (dataLang$Assign 0 (closLang$MemOp closLang$Ref) [1] NONE) (dataLang$MakeSpace 3 sptree$LN)) =
+  dataLang$Seq (dataLang$MakeSpace 5 (sptree$list_insert [1] sptree$LN))
+   (dataLang$Seq (dataLang$Assign 0 (closLang$MemOp closLang$Ref) [1] NONE) dataLang$Skip) /\
+ bvi_to_data$optimise (dataLang$Seq (dataLang$Assign 1 (closLang$IntOp (closLang$Const 3)) [0] NONE) (dataLang$Return [0])) = dataLang$Return [0]``;
+val _ = capture "bvi_to_data_complete_example" ``bvi_to_data$compile_exp 1 (bvi$Var 0) = dataLang$Return [0]``;
+val _ = capture "clos_to_data_program" ``
+ MAP (\(name, args, exp). (name, args, bvi_to_data$compile_exp args exp))
+  (SND (bvl_to_bvi$compile_inc 0 (clos_to_bvl$compile_prog 0 [(10, 1, closLang$Var backend_common$None 0)]))) =
+ [(backend_common$bvl_num_stubs + 48, 1, dataLang$Return [0])]``;
