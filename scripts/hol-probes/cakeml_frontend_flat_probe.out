@@ -28,3 +28,5 @@ closure_install_detect=T
 closure_init_false=T
 incremental_empty=T
 interpreter_arity=[F; T]
+pattern_any_tree=T
+pattern_constructor_guard=T

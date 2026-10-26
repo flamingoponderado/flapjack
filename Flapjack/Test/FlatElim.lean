@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
 import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
 import Flapjack.Compiler.Backend.FlatPattern.Encode
+import Flapjack.Compiler.Backend.PatternComp.Decision
 import Flapjack.Compiler.Backend.FlatToClos.Helpers
 import Flapjack.Compiler.Backend.FlatToClos.Arith
 import Flapjack.Compiler.Backend.FlatToClos.CopyByte
@@ -143,5 +144,12 @@ example : (Flapjack.Compiler.Backend.FlatToClos.incCompileDecs [] :
 #guard incremental_empty
 #guard [Flapjack.Compiler.Backend.ClosInterp.canInterpretOp (.blockOp (.cons 3)) 1,
   Flapjack.Compiler.Backend.ClosInterp.canInterpretOp (.blockOp (.cons 2)) 1] == interpreter_arity
+example : Flapjack.Compiler.Backend.PatternComp.patsToCode
+    [(.any, 4), (.lit (.intLit 3), 5)] = .leaf 4 := rfl
+example : Flapjack.Compiler.Backend.PatternComp.patToGuard []
+    (.cons (some (2, none)) [.lit (.intLit 7)]) =
+    .conj (.posTest .emptyPos (.tagLenEq 2 1))
+      (.posTest (.pos 0 .emptyPos) (.litEq (.intLit 7))) := rfl
+#guard pattern_any_tree && pattern_constructor_guard
 
 end Flapjack.Test.FlatElim

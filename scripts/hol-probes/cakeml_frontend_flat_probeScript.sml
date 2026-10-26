@@ -53,3 +53,7 @@ val _ = capture "closure_init_false" ``clos_interp$compile_init F =
 val _ = capture "incremental_empty" ``flat_to_clos$inc_compile_decs [] =
   ([closLang$Op backend_common$None (closLang$BlockOp (closLang$Cons 0)) []], ([]:num list))``;
 val _ = capture "interpreter_arity" ``[clos_interp$can_interpret_op (closLang$BlockOp (closLang$Cons 3)) 1; clos_interp$can_interpret_op (closLang$BlockOp (closLang$Cons 2)) 1]``;
+val _ = capture "pattern_any_tree" ``pattern_comp$pats_to_code [(pattern_semantics$Any, 4); (pattern_semantics$Lit (ast$IntLit 3), 5)] = pattern_semantics$Leaf 4``;
+val _ = capture "pattern_constructor_guard" ``pattern_comp$pat_to_guard [] (pattern_semantics$Cons (SOME (2, NONE)) [pattern_semantics$Lit (ast$IntLit 7)]) =
+  pattern_semantics$Conj (pattern_semantics$PosTest pattern_common$EmptyPos (pattern_semantics$TagLenEq 2 1))
+    (pattern_semantics$PosTest (pattern_common$Pos 0 pattern_common$EmptyPos) (pattern_semantics$LitEq (ast$IntLit 7)))``;
