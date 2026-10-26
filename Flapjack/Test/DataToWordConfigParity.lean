@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.DataToWord.Config
 import Flapjack.Compiler.Backend.DataToWord.Header
 import Flapjack.Compiler.Backend.DataToWord.Locations
+import Flapjack.Compiler.Backend.DataToWord.WordOp
 import Flapjack.Test.CakeMLFlatOracle
 
 /-!
@@ -43,6 +44,9 @@ private def headerConfig : Config := { conf with lenSize := 4 }
 
 #guard [fromListLocation, fromList1Location, refByteLocation, refArrayLocation, replicateLocation, anyArithLocation, addLocation, subLocation, mulLocation, divLocation, modLocation, compare1Location, compareLocation, equal1Location, equalLocation, longDiv1Location, longDivLocation, memCopyLocation, byteCopyLocation, byteCopyAddLocation, byteCopySubLocation, byteCopyNewLocation, installLocation, installCodeLocation, installDataLocation, dummyLocation, appendLocation, appendMainLoopLocation, appendLenLoopLocation, xorLoopLocation, unusedLocation, stringCmpLoopLocation, bignumLocation] == (List.range 33).map (fun n => n + 7)
 #guard Flapjack.Test.CakeMLFlatOracle.data_to_word_locations
+#guard decide ([lookupWordOp .andw, lookupWordOp .orw, lookupWordOp .xor, lookupWordOp .add, lookupWordOp .sub] =
+  [.bitwise .and, .bitwise .or, .bitwise .xor, .carried .add, .carried .sub])
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_word_ops
 
 def runChecks : IO Bool := do
   IO.println "PASS data_to_word shift_length/small_shift_length/get_gen_size match six original HOL rows"

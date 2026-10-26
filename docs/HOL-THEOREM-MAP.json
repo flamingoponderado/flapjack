@@ -101438,5 +101438,21 @@
     "hol_name": "Bignum_location_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source location chain transcribed; typed source and statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/WordOp.lean",
+    "lean_name": "WordOpType",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "word_op_type",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source constructors and clauses transcribed; typed HOL capture and complete statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/WordOp.lean",
+    "lean_name": "lookupWordOp",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "lookup_word_op_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source constructors and clauses transcribed; typed HOL capture and complete statement review remain pending."
   }
 ]

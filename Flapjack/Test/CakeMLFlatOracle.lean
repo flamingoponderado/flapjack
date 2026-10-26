@@ -77,6 +77,7 @@ def clos_to_data_program : Bool := true
 def data_to_word_variables : Bool := true
 def data_to_word_header : Bool := true
 def data_to_word_locations : Bool := true
+def data_to_word_word_ops : Bool := true
 def eliminate_pure_length : Nat := 0
 def eval_bypass_length : Nat := 2
 def empty_program_globals : Nat := 1
