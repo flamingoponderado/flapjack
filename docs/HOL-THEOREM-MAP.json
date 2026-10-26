@@ -100308,5 +100308,53 @@
     "hol_name": "default_mat_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Weights.lean",
+    "lean_name": "patWeight",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "pat_weight_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Weights.lean",
+    "lean_name": "patsWeight",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "pat_weight_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Weights.lean",
+    "lean_name": "matWeight",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "mat_weight_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Weights.lean",
+    "lean_name": "matLen",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "mat_len_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Weights.lean",
+    "lean_name": "matsWeight",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "mats_weight_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PatternExh/Weights.lean",
+    "lean_name": "matsLen",
+    "hol_path": "cakeml/compiler/backend/pattern_matching/pattern_exhScript.sml",
+    "hol_name": "mats_len_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and full statement review remain pending."
   }
 ]

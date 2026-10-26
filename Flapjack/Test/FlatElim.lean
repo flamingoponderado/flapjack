@@ -157,5 +157,9 @@ example : Flapjack.Compiler.Backend.PatternExh.ctorNub [.tagC 1 0, .refC, .tagC 
 example : Flapjack.Compiler.Backend.PatternExh.specRow (.tagC 2 1)
     [.any, .lit (.intLit 3)] = [[.any, .lit (.intLit 3)]] := rfl
 #guard pattern_nub && pattern_specialize
+example : Flapjack.Compiler.Backend.PatternComp.compFuel 1 [] = some .fail := rfl
+example : Flapjack.Compiler.Backend.PatternComp.compFuel 3 [(.any, 7)] = some (.leaf 7) := rfl
+example : Flapjack.Compiler.Backend.PatternComp.compFuel 0 [(.any, 7)] = none := rfl
+#guard pattern_compile_empty && pattern_compile_any
 
 end Flapjack.Test.FlatElim

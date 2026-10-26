@@ -59,3 +59,5 @@ val _ = capture "pattern_constructor_guard" ``pattern_comp$pat_to_guard [] (patt
     (pattern_semantics$PosTest (pattern_common$Pos 0 pattern_common$EmptyPos) (pattern_semantics$LitEq (ast$IntLit 7)))``;
 val _ = capture "pattern_nub" ``pattern_exh$ctor_nub [pattern_exh$TagC 1 0; pattern_exh$RefC; pattern_exh$TagC 1 0] = [pattern_exh$RefC; pattern_exh$TagC 1 0]``;
 val _ = capture "pattern_specialize" ``pattern_exh$spec_row (pattern_exh$TagC 2 1) [pattern_semantics$Any; pattern_semantics$Lit (ast$IntLit 3)] = [[pattern_semantics$Any; pattern_semantics$Lit (ast$IntLit 3)]]``;
+val _ = capture "pattern_compile_empty" ``pattern_comp$comp [] = pattern_semantics$Fail``;
+val _ = capture "pattern_compile_any" ``pattern_comp$comp [(pattern_semantics$Any, 7)] = pattern_semantics$Leaf 7``;

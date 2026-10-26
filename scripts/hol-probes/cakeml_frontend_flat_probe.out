@@ -32,3 +32,5 @@ pattern_any_tree=T
 pattern_constructor_guard=T
 pattern_nub=T
 pattern_specialize=T
+pattern_compile_empty=T
+pattern_compile_any=T
