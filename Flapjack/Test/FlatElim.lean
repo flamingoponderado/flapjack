@@ -120,5 +120,12 @@ example : Flapjack.Compiler.Backend.FlatToClos.compile []
     [.con .none (some (4, none)) [.lit .none (.intLit 1), .lit .none (.intLit 2)]] =
     [.op .none (.blockOp (.constant (.constCons 4 [.constInt 1, .constInt 2]))) []] := rfl
 #guard compile_let && compile_constructor
+example : destNop (.src (.fromTo .intT (.wordT .w8)))
+    [.app .none (.src (.fromTo .charT .intT)) [lit]] = some lit := rfl
+example : Flapjack.Compiler.Backend.FlatToClos.compile []
+    [.app .none (.src (.fromTo .intT (.wordT .w8)))
+      [.app .none (.src (.fromTo .charT .intT)) [lit]]] =
+    [.op .none (.intOp (.const 1)) []] := rfl
+#guard compile_nop
 
 end Flapjack.Test.FlatElim

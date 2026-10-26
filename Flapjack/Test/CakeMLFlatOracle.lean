@@ -21,6 +21,7 @@ def array_update : Bool := true
 def word8_conversion : Bool := true
 def compile_let : Bool := true
 def compile_constructor : Bool := true
+def compile_nop : Bool := true
 def eliminate_pure_length : Nat := 0
 def eval_bypass_length : Nat := 2
 def empty_program_globals : Nat := 1

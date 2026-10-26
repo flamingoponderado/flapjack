@@ -43,3 +43,5 @@ val _ = capture "compile_let" ``flat_to_clos$compile [] [flatLang$Let backend_co
   [closLang$Let backend_common$None [closLang$Op backend_common$None (closLang$IntOp (closLang$Const 4)) []] (closLang$Var backend_common$None 0)]``;
 val _ = capture "compile_constructor" ``flat_to_clos$compile [] [flatLang$Con backend_common$None (SOME (4, NONE)) [flatLang$Lit backend_common$None (ast$IntLit 1); flatLang$Lit backend_common$None (ast$IntLit 2)]] =
   [closLang$Op backend_common$None (closLang$BlockOp (closLang$Constant (closLang$ConstCons 4 [closLang$ConstInt 1; closLang$ConstInt 2]))) []]``;
+val _ = capture "compile_nop" ``flat_to_clos$compile [] [flatLang$App backend_common$None (flatLang$Src (ast$FromTo ast$IntT (ast$WordT ast$W8))) [flatLang$App backend_common$None (flatLang$Src (ast$FromTo ast$CharT ast$IntT)) [flatLang$Lit backend_common$None (ast$IntLit 1)]]] =
+  [closLang$Op backend_common$None (closLang$IntOp (closLang$Const 1)) []]``;

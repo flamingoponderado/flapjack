@@ -12,7 +12,7 @@ NAMES = ("name_roundtrips", "name_bytes", "name_unreserved", "pure_init", "hidde
          "eliminate_pure_length", "eval_bypass_length", "guard_double_not", "guard_false_conj",
          "pattern_encoding", "empty_program_globals", "empty_program_output", "word8_literal",
          "smart_constructor", "int_division", "copy_string", "array_update", "word8_conversion",
-         "compile_let", "compile_constructor")
+         "compile_let", "compile_constructor", "compile_nop")
 
 
 def render():
@@ -39,7 +39,7 @@ def render():
                  "keep_empty", "keep_reachable", "guard_double_not", "guard_false_conj",
                  "pattern_encoding", "empty_program_output", "word8_literal", "smart_constructor",
                  "int_division", "copy_string", "array_update", "word8_conversion", "compile_let",
-                 "compile_constructor"):
+                 "compile_constructor", "compile_nop"):
         value = rows[name]
         if value not in ("T", "F"):
             raise ValueError(f"invalid HOL boolean for {name}: {value}")

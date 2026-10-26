@@ -39,6 +39,16 @@ def arg2 (xs : List ClosLang.Exp) (f : ClosLang.Exp → ClosLang.Exp → ClosLan
 def joinStrings (x y : MlString) : MlString :=
   if x.explode.isEmpty then y else MlString.concat [x, ofString "_", y]
 
+/-- Recognize the two source conversion pairs removed before operator lowering. -/
+@[hol "cakeml/compiler/backend/flat_to_closScript.sml" "dest_nop_def"]
+def destNop (op : FlatLang.Op) (es : List FlatLang.Exp) : Option FlatLang.Exp :=
+  match op, es with
+  | .src (.fromTo .intT (.wordT .w8)),
+      [.app _ (.src (.fromTo .charT .intT)) [x]] => some x
+  | .src (.fromTo .intT .charT),
+      [.app _ (.src (.fromTo (.wordT .w8) .intT)) [x]] => some x
+  | _, _ => none
+
 /-- Recognize closure constants that can be folded into a constructor. -/
 @[hol "cakeml/compiler/backend/flat_to_closScript.sml" "dest_Constant_def"]
 def destConstant : ClosLang.Exp → Option ClosLang.Const
