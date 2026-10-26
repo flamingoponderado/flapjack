@@ -99404,5 +99404,157 @@
     "hol_name": "inc_compile_prog_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source definition transcribed; independent typed HOL capture and complete source review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Analysis.lean",
+    "lean_name": "isHidden",
+    "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
+    "hol_name": "is_hidden_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Analysis.lean",
+    "lean_name": "totalPat",
+    "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
+    "hol_name": "total_pat_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Analysis.lean",
+    "lean_name": "totalPatList",
+    "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
+    "hol_name": "total_pat_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Analysis.lean",
+    "lean_name": "isPure",
+    "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
+    "hol_name": "is_pure_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Analysis.lean",
+    "lean_name": "hasEval",
+    "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
+    "hol_name": "has_Eval_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Analysis.lean",
+    "lean_name": "hasEvalList",
+    "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
+    "hol_name": "has_Eval_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Analysis.lean",
+    "lean_name": "hasEvalPats",
+    "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
+    "hol_name": "has_Eval_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Analysis.lean",
+    "lean_name": "hasEvalFuns",
+    "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
+    "hol_name": "has_Eval_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Analysis.lean",
+    "lean_name": "destGlobalVarInit",
+    "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
+    "hol_name": "dest_GlobalVarInit_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Analysis.lean",
+    "lean_name": "destGlobalVarLookup",
+    "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
+    "hol_name": "dest_GlobalVarLookup_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Analysis.lean",
+    "lean_name": "findLoc",
+    "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
+    "hol_name": "find_loc_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Analysis.lean",
+    "lean_name": "findLookups",
+    "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
+    "hol_name": "find_lookups_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Reachability.lean",
+    "lean_name": "numSetTreeUnion",
+    "hol_path": "HOL/examples/algorithms/spt_closureScript.sml",
+    "hol_name": "num_set_tree_union_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Reachability.lean",
+    "lean_name": "analyseExp",
+    "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
+    "hol_name": "analyse_exp_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Reachability.lean",
+    "lean_name": "codeAnalysisUnion",
+    "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
+    "hol_name": "code_analysis_union_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Reachability.lean",
+    "lean_name": "analyseCode",
+    "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
+    "hol_name": "analyse_code_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Reachability.lean",
+    "lean_name": "keep",
+    "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
+    "hol_name": "keep_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Reachability.lean",
+    "lean_name": "removeUnreachable",
+    "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
+    "hol_name": "remove_unreachable_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Reachability.lean",
+    "lean_name": "hasEvalDec",
+    "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
+    "hol_name": "has_Eval_dec_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
   }
 ]

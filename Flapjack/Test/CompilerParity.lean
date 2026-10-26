@@ -297,6 +297,7 @@ import Flapjack.Test.LabToTargetShmemInfoParity
 import Flapjack.Test.LabToTargetCompileParity
 import Flapjack.Test.SourceToFlatPrimConfigParity
 import Flapjack.Test.SourceToFlatCompileProg
+import Flapjack.Test.FlatElim
 import Flapjack.Test.MiscLookupAnyFindIndexParity
 import Flapjack.Test.StackPropsClockSupportParity
 import Flapjack.Test.StackToLabExecutedCodecParity
