@@ -6,6 +6,7 @@ import Flapjack.Compiler.Backend.FlatPattern.Encode
 import Flapjack.Compiler.Backend.FlatToClos.Helpers
 import Flapjack.Compiler.Backend.FlatToClos.Arith
 import Flapjack.Compiler.Backend.FlatToClos.CopyByte
+import Flapjack.Compiler.Backend.FlatToClos.Op
 import Flapjack.Test.CakeMLFlatOracle
 
 namespace Flapjack.Test.FlatElim
@@ -103,5 +104,12 @@ example : copyByteStr .none =
         (.op .none (.memOp (.copyByte true)) [.var .none 0, .var .none 1, .var .none 2])
         (.raise .none (.op .none (.blockOp (.cons 3)) [])))) := rfl
 #guard copy_string
+example : compileOp .none (.src .aupdate) [] = .let .none []
+    (.ifThenElse .none (.op .none (.memOp .boundsCheckArray) [.var .none 1, .var .none 2])
+      (.op .none (.memOp .update) [.var .none 0, .var .none 1, .var .none 2])
+      (.raise .none (.op .none (.blockOp (.cons 3)) []))) := rfl
+example : compileOp .none (.src (.fromTo .intT (.wordT .w8))) [.var .none 7] =
+    .op .none (.intOp .mod) [.op .none (.intOp (.const 256)) [], .var .none 7] := rfl
+#guard array_update && word8_conversion
 
 end Flapjack.Test.FlatElim

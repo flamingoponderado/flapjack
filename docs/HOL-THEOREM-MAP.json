@@ -99796,5 +99796,13 @@
     "hol_name": "CopyByteAw8_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source quotation transcribed; typed HOL capture and complete statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Op.lean",
+    "lean_name": "compileOp",
+    "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
+    "hol_name": "compile_op_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source operator clauses transcribed; complete typed HOL capture and branch-by-branch source and carrier review remain pending."
   }
 ]

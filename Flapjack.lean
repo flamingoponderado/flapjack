@@ -192,6 +192,7 @@ import Flapjack.Compiler.Backend.FlatPattern.Encode
 import Flapjack.Compiler.Backend.FlatToClos.Helpers
 import Flapjack.Compiler.Backend.FlatToClos.Arith
 import Flapjack.Compiler.Backend.FlatToClos.CopyByte
+import Flapjack.Compiler.Backend.FlatToClos.Op
 import Flapjack.Compiler.Backend.Backend.PrimSrcConfig
 import Flapjack.Misc.Location
 import Flapjack.Compiler.Backend.BackendCommon.Operators

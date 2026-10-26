@@ -18,3 +18,5 @@ word8_literal=T
 smart_constructor=T
 int_division=T
 copy_string=T
+array_update=T
+word8_conversion=T

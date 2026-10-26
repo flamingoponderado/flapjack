@@ -32,3 +32,10 @@ val _ = capture "copy_string" ``flat_to_clos$CopyByteStr backend_common$None =
       (closLang$If backend_common$None (closLang$Op backend_common$None (closLang$MemOp (closLang$BoundsCheckByte T)) [closLang$Op backend_common$None (closLang$IntOp closLang$Add) [closLang$Var backend_common$None 0; closLang$Var backend_common$None 1]; closLang$Var backend_common$None 2])
         (closLang$Op backend_common$None (closLang$MemOp (closLang$CopyByte T)) [closLang$Var backend_common$None 0; closLang$Var backend_common$None 1; closLang$Var backend_common$None 2])
         (closLang$Raise backend_common$None (closLang$Op backend_common$None (closLang$BlockOp (closLang$Cons 3)) []))))``;
+val _ = capture "array_update" ``flat_to_clos$compile_op backend_common$None (flatLang$Src ast$Aupdate) [] =
+  closLang$Let backend_common$None [] (closLang$If backend_common$None
+    (closLang$Op backend_common$None (closLang$MemOp closLang$BoundsCheckArray) [closLang$Var backend_common$None 1; closLang$Var backend_common$None 2])
+    (closLang$Op backend_common$None (closLang$MemOp closLang$Update) [closLang$Var backend_common$None 0; closLang$Var backend_common$None 1; closLang$Var backend_common$None 2])
+    (closLang$Raise backend_common$None (closLang$Op backend_common$None (closLang$BlockOp (closLang$Cons 3)) [])))``;
+val _ = capture "word8_conversion" ``flat_to_clos$compile_op backend_common$None (flatLang$Src (ast$FromTo ast$IntT (ast$WordT ast$W8))) [closLang$Var backend_common$None 7] =
+  closLang$Op backend_common$None (closLang$IntOp closLang$Mod) [closLang$Op backend_common$None (closLang$IntOp (closLang$Const 256)) []; closLang$Var backend_common$None 7]``;
