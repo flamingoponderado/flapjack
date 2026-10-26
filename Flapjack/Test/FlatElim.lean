@@ -236,6 +236,27 @@ example : Flapjack.Compiler.Backend.SourceToSource.compile
     [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x"))
       (.let_ (some (ofString "y")) (.app .opref [.lit (.intLit 1)]) (.var (.short (ofString "y"))))])
 #guard lifted_source_to_clos
+#guard match Flapjack.Compiler.Backend.SourceToFlat.compileCakeToClosFuel 100
+    Flapjack.Compiler.Backend.SourceToFlat.emptyConfig
+    [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x"))
+      (.app .opref [.mat (.lit (.intLit 1))
+        [(.plit (.intLit 1), .lit (.intLit 2)), (.pany, .lit (.intLit 3))]])] with
+  | some (_, [
+      .let .none [.op .none (.globOp .allocGlobal) [.op .none (.intOp (.const 1)) []],
+        .op .none (.blockOp (.cons 0)) []] (.op .none (.globOp (.setGlobal 0)) [.var .none 1]),
+      .let (.cons (.sourceLoc 2 2 1 1) 1)
+        [.let (.cons (.sourceLoc 2 2 1 1) 1) []
+          (.op (.cons (.sourceLoc 2 2 1 1) 1) (.globOp .allocGlobal)
+            [.op (.cons (.sourceLoc 2 2 1 1) 1) (.intOp (.const 2)) []])]
+        (.op (.cons (.sourceLoc 2 2 1 1) 1) (.blockOp (.cons 0)) []),
+      .op .none (.globOp (.setGlobal 1)) [.op .none (.memOp .ref) [.op .none (.blockOp (.cons 0)) []]],
+      .let .none [.op .none (.memOp .ref) [
+        .let .none [.op .none (.intOp (.const 1)) []]
+          (.ifThenElse .none (.op .none (.blockOp .equal) [.op .none (.intOp (.const 1)) [], .var .none 0])
+            (.op .none (.intOp (.const 2)) []) (.op .none (.intOp (.const 3)) []))]]
+        (.let .none [.var .none 0] (.op .none (.globOp (.setGlobal 2)) [.var .none 0]))]) => true
+  | _ => false
+#guard match_source_to_clos
 #guard match Flapjack.Compiler.Backend.ClosToBvl.compileConst
     (.constCons 30 [.constInt 1, .constInt 1]) with
   | .blockOp (.build [.int 1, .con 32 [0, 0]]) => true

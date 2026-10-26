@@ -41,6 +41,7 @@ def empty_source_to_clos : Bool := true
 def reference_source_to_clos : Bool := true
 def source_let_lifting : Bool := true
 def lifted_source_to_clos : Bool := true
+def match_source_to_clos : Bool := true
 def bvl_shared_constant : Bool := true
 def bvl_chain_empty : Bool := true
 def bvl_code_sort : Bool := true
