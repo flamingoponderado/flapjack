@@ -56,6 +56,9 @@ private def roots : NumSet := sptInsert 1 () .ln
 example : removeFlatProg [eval, pureSet] = some [eval, pureSet] := rfl
 #guard ((Flapjack.Compiler.Backend.SourceToFlat.compileProgElim
   Flapjack.Compiler.Backend.SourceToFlat.emptyConfig []).map (fun result => result.2.length)) == some 2
+#guard (Flapjack.Compiler.Backend.SourceToFlat.compileProg
+  Flapjack.Compiler.Backend.SourceToFlat.emptyConfig []).1.next.vidx == empty_program_globals
+#guard empty_program_output
 
 -- Reserved pattern names round-trip at both sides of the encoding boundary.
 #guard Flapjack.Compiler.Backend.FlatPattern.decNameToNum (ofString "x") == nameUnreserved

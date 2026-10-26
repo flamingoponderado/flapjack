@@ -10,7 +10,7 @@ OUTPUT = ROOT / "Flapjack/Test/CakeMLFlatOracle.lean"
 NAMES = ("name_roundtrips", "name_bytes", "name_unreserved", "pure_init", "hidden_init",
          "impure_lookup_init", "hidden_lookup_init", "keep_empty", "keep_reachable",
          "eliminate_pure_length", "eval_bypass_length", "guard_double_not", "guard_false_conj",
-         "pattern_encoding")
+         "pattern_encoding", "empty_program_globals", "empty_program_output")
 
 
 def render():
@@ -33,12 +33,14 @@ def render():
              f"def nameRoundtrips : List Nat := {numbers}",
              f"def nameBytes : List (List Nat) := {byte_rows}",
              f"def nameUnreserved : Nat := {name_unreserved}"]
-    for name in NAMES[3:-5] + NAMES[-3:]:
+    for name in ("pure_init", "hidden_init", "impure_lookup_init", "hidden_lookup_init",
+                 "keep_empty", "keep_reachable", "guard_double_not", "guard_false_conj",
+                 "pattern_encoding", "empty_program_output"):
         value = rows[name]
         if value not in ("T", "F"):
             raise ValueError(f"invalid HOL boolean for {name}: {value}")
         lines.append(f"def {name} : Bool := {'true' if value == 'T' else 'false'}")
-    for name in NAMES[-5:-3]:
+    for name in ("eliminate_pure_length", "eval_bypass_length", "empty_program_globals"):
         lines.append(f"def {name} : Nat := {int(rows[name])}")
     return "\n".join(lines + ["end Flapjack.Test.CakeMLFlatOracle", ""])
 

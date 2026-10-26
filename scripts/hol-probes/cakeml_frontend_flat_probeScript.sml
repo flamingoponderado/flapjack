@@ -1,4 +1,4 @@
-load "flat_patternTheory"; load "flat_elimTheory";
+load "flat_patternTheory"; load "flat_elimTheory"; load "source_to_flatTheory";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 fun capture label term =
@@ -18,3 +18,5 @@ val _ = capture "eval_bypass_length" ``LENGTH (flat_elim$remove_flat_prog [flatL
 val _ = capture "guard_double_not" ``flat_pattern$simp_guard (pattern_semantics$Not (pattern_semantics$Not pattern_semantics$True)) = pattern_semantics$True``;
 val _ = capture "guard_false_conj" ``flat_pattern$simp_guard (pattern_semantics$Conj pattern_semantics$True (pattern_semantics$Not pattern_semantics$True)) = pattern_semantics$Not pattern_semantics$True``;
 val _ = capture "pattern_encoding" ``flat_pattern$encode_pat (flatLang$Pcon (SOME (3, SOME (42, [(3, 1)]))) [flatLang$Pany]) = pattern_semantics$Cons (SOME (3, SOME [(3, 1)])) [pattern_semantics$Any]``;
+val _ = capture "empty_program_globals" ``(FST (source_to_flat$compile_prog source_to_flat$empty_config [])).next.vidx``;
+val _ = capture "empty_program_output" ``SND (source_to_flat$compile_prog source_to_flat$empty_config []) = [source_to_flat$glob_alloc ((FST (source_to_flat$compile_prog source_to_flat$empty_config [])).next) source_to_flat$empty_config; source_to_flat$alloc_env_ref]``;

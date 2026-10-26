@@ -12,3 +12,5 @@ eval_bypass_length=2
 guard_double_not=T
 guard_false_conj=T
 pattern_encoding=T
+empty_program_globals=1
+empty_program_output=T

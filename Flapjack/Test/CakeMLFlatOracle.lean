@@ -12,6 +12,8 @@ def keep_reachable : Bool := true
 def guard_double_not : Bool := true
 def guard_false_conj : Bool := true
 def pattern_encoding : Bool := true
+def empty_program_output : Bool := true
 def eliminate_pure_length : Nat := 0
 def eval_bypass_length : Nat := 2
+def empty_program_globals : Nat := 1
 end Flapjack.Test.CakeMLFlatOracle
