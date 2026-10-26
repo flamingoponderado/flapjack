@@ -11,7 +11,7 @@ NAMES = ("name_roundtrips", "name_bytes", "name_unreserved", "pure_init", "hidde
          "impure_lookup_init", "hidden_lookup_init", "keep_empty", "keep_reachable",
          "eliminate_pure_length", "eval_bypass_length", "guard_double_not", "guard_false_conj",
          "pattern_encoding", "empty_program_globals", "empty_program_output", "word8_literal",
-         "smart_constructor")
+         "smart_constructor", "int_division")
 
 
 def render():
@@ -36,7 +36,8 @@ def render():
              f"def nameUnreserved : Nat := {name_unreserved}"]
     for name in ("pure_init", "hidden_init", "impure_lookup_init", "hidden_lookup_init",
                  "keep_empty", "keep_reachable", "guard_double_not", "guard_false_conj",
-                 "pattern_encoding", "empty_program_output", "word8_literal", "smart_constructor"):
+                 "pattern_encoding", "empty_program_output", "word8_literal", "smart_constructor",
+                 "int_division"):
         value = rows[name]
         if value not in ("T", "F"):
             raise ValueError(f"invalid HOL boolean for {name}: {value}")

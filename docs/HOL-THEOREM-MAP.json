@@ -99772,5 +99772,13 @@
     "hol_name": "SmartCons_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source clauses transcribed; typed HOL capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/Arith.lean",
+    "lean_name": "compileArith",
+    "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
+    "hol_name": "compile_arith_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; typed HOL capture and complete statement and carrier review remain pending."
   }
 ]

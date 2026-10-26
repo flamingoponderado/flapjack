@@ -4,6 +4,7 @@ import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
 import Flapjack.Compiler.Backend.FlatPattern.Encode
 import Flapjack.Compiler.Backend.FlatToClos.Helpers
+import Flapjack.Compiler.Backend.FlatToClos.Arith
 import Flapjack.Test.CakeMLFlatOracle
 
 namespace Flapjack.Test.FlatElim
@@ -85,5 +86,11 @@ example : smartCons .none 4 [.op .none (.intOp (.const 1)) [],
     .op .none (.intOp (.const 2)) []] =
     .op .none (.blockOp (.constant (.constCons 4 [.constInt 2, .constInt 1]))) [] := rfl
 #guard smart_constructor
+example : compileArith .none .div .intT [] = .let .none []
+    (.ifThenElse .none (.op .none (.blockOp .equal)
+      [.var .none 0, .op .none (.intOp (.const 0)) []])
+      (.raise .none (.op .none (.blockOp (.cons 2)) []))
+      (.op .none (.intOp .div) [.var .none 0, .var .none 1])) := rfl
+#guard int_division
 
 end Flapjack.Test.FlatElim

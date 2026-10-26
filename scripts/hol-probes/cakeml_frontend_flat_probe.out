@@ -16,3 +16,4 @@ empty_program_globals=1
 empty_program_output=T
 word8_literal=T
 smart_constructor=T
+int_division=T

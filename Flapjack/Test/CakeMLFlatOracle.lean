@@ -15,6 +15,7 @@ def pattern_encoding : Bool := true
 def empty_program_output : Bool := true
 def word8_literal : Bool := true
 def smart_constructor : Bool := true
+def int_division : Bool := true
 def eliminate_pure_length : Nat := 0
 def eval_bypass_length : Nat := 2
 def empty_program_globals : Nat := 1
