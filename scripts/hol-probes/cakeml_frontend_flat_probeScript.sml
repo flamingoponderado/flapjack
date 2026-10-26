@@ -264,3 +264,22 @@ fun captureBviConstant label term =
   in capture label rewritten end;
 val _ = captureBviConstant "bvi_to_data_constant" ``bvi_to_data$compile_exp 0 (bvi$Op (closLang$IntOp (closLang$Const 3)) []) =
  dataLang$Seq (dataLang$Assign 0 (closLang$IntOp (closLang$Const 3)) [] NONE) (dataLang$Return [0])``;
+val data_globals_word = EVAL ``
+ (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$GlobOp (closLang$Global 3)) [] NONE) : 64 wordLang$prog # num) =
+  (wordLang$Assign 8 (wordLang$Load (wordLang$Op asm$Add [wordLang$Lookup stackLang$GlobReal; wordLang$Const 32w])), 2) /\
+ (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$GlobOp (closLang$SetGlobal 3)) [1] NONE) : 64 wordLang$prog # num) =
+  (wordLang$Seq (wordLang$Store (wordLang$Op asm$Add [wordLang$Lookup stackLang$GlobReal; wordLang$Const 32w]) 4) (wordLang$Assign 8 (wordLang$Const 2w)), 2) /\
+ (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$GlobOp (closLang$SetGlobal 3)) [] NONE) : 64 wordLang$prog # num) = (wordLang$Skip, 2)``;
+val _ = (print "data_to_word_globals="; print_term (rhs (concl (CONV_RULE
+  (RAND_CONV (SIMP_CONV (srw_ss()) [wordsTheory.dimindex_64, wordsTheory.dimword_def] THENC EVAL)) data_globals_word))); print "\n");
+val data_loads_word = EVAL ``let conf = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3|> in
+ (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$BlockOp (closLang$ElemAt 2)) [1] NONE) : 64 wordLang$prog # num) =
+  (wordLang$Assign 8 (wordLang$Load (wordLang$Op asm$Add [wordLang$Op asm$Add [wordLang$Lookup stackLang$CurrHeap; wordLang$Shift ast$Lsr (wordLang$Var 4) (wordLang$Const 5w)]; wordLang$Const 24w])), 2) /\
+ (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$MemOp closLang$El) [1;2] NONE) : 64 wordLang$prog # num) =
+  (wordLang$Assign 8 (wordLang$Load (wordLang$Op asm$Add [wordLang$Op asm$Add [wordLang$Lookup stackLang$CurrHeap; wordLang$Shift ast$Lsr (wordLang$Var 4) (wordLang$Const 5w)]; wordLang$Op asm$Add [wordLang$Const 8w; wordLang$Shift ast$Lsl (wordLang$Var 6) (wordLang$Const 1w)]])), 2) /\
+ (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$BlockOp closLang$BoolNot) [1] NONE) : 64 wordLang$prog # num) =
+  (wordLang$Assign 8 (wordLang$Op asm$Xor [wordLang$Var 4; wordLang$Const 16w]), 2) /\
+ (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$MemOp closLang$El) [1;2] NONE) : 32 wordLang$prog # num) =
+  (wordLang$Assign 8 (wordLang$Load (wordLang$Op asm$Add [wordLang$Op asm$Add [wordLang$Lookup stackLang$CurrHeap; wordLang$Shift ast$Lsr (wordLang$Var 4) (wordLang$Const 6w)]; wordLang$Op asm$Add [wordLang$Const 4w; wordLang$Var 6]])), 2)``;
+val _ = (print "data_to_word_loads="; print_term (rhs (concl (CONV_RULE
+  (RAND_CONV (SIMP_CONV (srw_ss()) [wordsTheory.dimindex_32, wordsTheory.dimindex_64, wordsTheory.dimword_def] THENC EVAL)) data_loads_word))); print "\n");

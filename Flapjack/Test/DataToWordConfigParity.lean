@@ -72,6 +72,31 @@ private def headerConfig : Config := { conf with lenSize := 4 }
   | some (.locValue 8 12, 2) => true
   | _ => false
 #guard Flapjack.Test.CakeMLFlatOracle.data_to_word_assign
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.globOp (.global 3)) [] none) with
+  | some (.assign 8 (.load (.op .add [.lookup .globReal, .const 32])), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.globOp (.setGlobal 3)) [1] none) with
+  | some (.seq (.store (.op .add [.lookup .globReal, .const 32]) 4) (.assign 8 (.const 2)), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.globOp (.setGlobal 3)) [] none) with
+  | some (.skip, 2) => true
+  | _ => false
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_globals
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.elemAt 2)) [1] none) with
+  | some (.assign 8 (.load (.op .add [.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)], .const 24])), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp .el) [1, 2] none) with
+  | some (.assign 8 (.load (.op .add [.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)],
+      .op .add [.const 8, .shift .lsl (.var 6) (.const 1)]])), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp .boolNot) [1] none) with
+  | some (.assign 8 (.op .xor [.var 4, .const 16]), 2) => true
+  | _ => false
+#guard match compileControl? (width := 32) conf 5 2 (.assign 3 (.memOp .el) [1, 2] none) with
+  | some (.assign 8 (.load (.op .add [.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 6)],
+      .op .add [.const 4, .var 6]])), 2) => true
+  | _ => false
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_loads
 
 def runChecks : IO Bool := do
   IO.println "PASS data_to_word shift_length/small_shift_length/get_gen_size match six original HOL rows"

@@ -85,3 +85,5 @@ data_to_word_space=T
 data_to_word_assign=T
 clos_to_bvi_constant=T
 bvi_to_data_constant=T
+data_to_word_globals=T
+data_to_word_loads=T

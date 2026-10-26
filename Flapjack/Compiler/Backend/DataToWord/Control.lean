@@ -23,6 +23,19 @@ private def silentFfi {width : Nat} (conf : Config) (n : Nat) (names : WordLangC
       .assign 9 (.lookup .heapLength), .ffi (.implode []) 7 n 9 n names]
   else .skip
 
+/-- Internal word-address construction for supported load cases; the
+standalone width-indexed HOL definition remains to be reviewed and tagged. -/
+private def realAddr {width : Nat} [NeZero width] (conf : Config) (r : Nat) : WordLangExpHOL (BitVec width) :=
+  let k := wordShiftAmount width
+  let l := shiftLength conf
+  let offset := if k = l ∧ conf.lenBits = 0 ∧ conf.tagBits = 0 then
+      WordLangExpHOL.op .sub [.var r, .const 1]
+    else if k ≤ conf.padBits + 1 then
+      WordLangExpHOL.shift .lsr (.var r) (.const (BitVec.ofNat width (l - k)))
+    else WordLangExpHOL.shift .lsl
+      (.shift .lsr (.var r) (.const (BitVec.ofNat width l))) (.const (BitVec.ofNat width k))
+  .op .add [.lookup .currHeap, offset]
+
 /-- Flapjack's partial traversal. Unsupported assignment operations and
 thunk cases return `none`; this is not HOL's total `comp`. -/
 def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
@@ -55,6 +68,37 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
       some (.assign (adjustVar dest) (.const value), l)
   | l, .assign dest (.globOp .globalsPtr) _ _ =>
       some (.assign (adjustVar dest) (.lookup .globals), l)
+  | l, .assign dest (.globOp (.global n)) _ _ =>
+      let offset := BitVec.ofNat width (width / 8) * BitVec.ofNat width (n + 1)
+      some (.assign (adjustVar dest) (.load (.op .add [.lookup .globReal, .const offset])), l)
+  | l, .assign dest (.globOp (.setGlobal n)) args _ =>
+      match args with
+      | [src] =>
+          let offset := BitVec.ofNat width (width / 8) * BitVec.ofNat width (n + 1)
+          some (.seq (.store (.op .add [.lookup .globReal, .const offset]) (adjustVar src))
+            (.assign (adjustVar dest) (.const 2)), l)
+      | _ => some (.skip, l)
+  | l, .assign dest (.blockOp .boolNot) args _ =>
+      match args with
+      | [src] => some (.assign (adjustVar dest) (.op .xor [.var (adjustVar src), .const 16]), l)
+      | _ => some (.skip, l)
+  | l, .assign dest (.blockOp (.elemAt n)) args _ =>
+      match args with
+      | [src] =>
+          let bytes := BitVec.ofNat width (width / 8)
+          let offset := bytes + bytes * BitVec.ofNat width n
+          some (.assign (adjustVar dest)
+            (.load (.op .add [realAddr conf (adjustVar src), .const offset])), l)
+      | _ => some (.skip, l)
+  | l, .assign dest (.memOp .el) args _ =>
+      match args with
+      | [base, index] =>
+          let index := adjustVar index
+          let scaled := if width = 32 then WordLangExpHOL.var index
+            else .shift .lsl (.var index) (.const 1)
+          let offset := WordLangExpHOL.op .add [.const (BitVec.ofNat width (width / 8)), scaled]
+          some (.assign (adjustVar dest) (.load (.op .add [realAddr conf (adjustVar base), offset])), l)
+      | _ => some (.skip, l)
   | l, .assign dest (.label n) _ _ => some (.locValue (adjustVar dest) n, l)
   | l, .call none target args _ => some (.call none target (0 :: args.map adjustVar) none, l)
   | l, .call (some (ns, names)) target args none =>
