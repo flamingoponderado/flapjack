@@ -15,7 +15,8 @@ NAMES = ("name_roundtrips", "name_bytes", "name_unreserved", "pure_init", "hidde
          "compile_let", "compile_constructor", "compile_nop", "closure_empty_program",
          "closure_install_detect", "closure_init_false", "incremental_empty", "interpreter_arity",
          "pattern_any_tree", "pattern_constructor_guard", "pattern_nub", "pattern_specialize",
-         "pattern_compile_empty", "pattern_compile_any", "pattern_bind_variable", "pattern_compile_branch")
+         "pattern_compile_empty", "pattern_compile_any", "pattern_bind_variable", "pattern_compile_branch",
+         "empty_source_to_clos", "reference_source_to_clos")
 
 
 def render():
@@ -49,7 +50,7 @@ def render():
                  "compile_constructor", "compile_nop", "closure_empty_program", "closure_install_detect",
                  "closure_init_false", "incremental_empty", "pattern_any_tree", "pattern_constructor_guard",
                  "pattern_nub", "pattern_specialize", "pattern_compile_empty", "pattern_compile_any",
-                 "pattern_bind_variable", "pattern_compile_branch"):
+                 "pattern_bind_variable", "pattern_compile_branch", "empty_source_to_clos", "reference_source_to_clos"):
         value = rows[name]
         if value not in ("T", "F"):
             raise ValueError(f"invalid HOL boolean for {name}: {value}")

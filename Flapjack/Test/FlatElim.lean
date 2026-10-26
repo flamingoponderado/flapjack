@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.FlatElim.Reachability
 import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
+import Flapjack.Compiler.Backend.SourceToFlat.ToClos
 import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
 import Flapjack.Compiler.Backend.FlatPattern.Encode
@@ -176,5 +177,34 @@ example : (compilePatRhsFuel 0 .none 0 (.varLocal .none (ofString "v"))
       x == ofString "x" && v == ofString "v"
   | _ => false
 #guard pattern_compile_branch
+#guard match Flapjack.Compiler.Backend.SourceToFlat.compileToClosFuel 100
+    Flapjack.Compiler.Backend.SourceToFlat.emptyConfig [] with
+  | some (_, [
+      .let .none [.op .none (.globOp .allocGlobal) [.op .none (.intOp (.const 1)) []],
+        .op .none (.blockOp (.cons 0)) []] (.op .none (.globOp (.setGlobal 0)) [.var .none 1]),
+      .let (.cons (.sourceLoc 2 2 1 1) 1)
+        [.let (.cons (.sourceLoc 2 2 1 1) 1) []
+          (.op (.cons (.sourceLoc 2 2 1 1) 1) (.globOp .allocGlobal)
+            [.op (.cons (.sourceLoc 2 2 1 1) 1) (.intOp (.const 1)) []])]
+        (.op (.cons (.sourceLoc 2 2 1 1) 1) (.blockOp (.cons 0)) []),
+      .op .none (.globOp (.setGlobal 1)) [.op .none (.memOp .ref) [.op .none (.blockOp (.cons 0)) []]]]) => true
+  | _ => false
+#guard empty_source_to_clos
+#guard match Flapjack.Compiler.Backend.SourceToFlat.compileToClosFuel 100
+    Flapjack.Compiler.Backend.SourceToFlat.emptyConfig
+    [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x")) (.app .opref [.lit (.intLit 1)])] with
+  | some (_, [
+      .let .none [.op .none (.globOp .allocGlobal) [.op .none (.intOp (.const 1)) []],
+        .op .none (.blockOp (.cons 0)) []] (.op .none (.globOp (.setGlobal 0)) [.var .none 1]),
+      .let (.cons (.sourceLoc 2 2 1 1) 1)
+        [.let (.cons (.sourceLoc 2 2 1 1) 1) []
+          (.op (.cons (.sourceLoc 2 2 1 1) 1) (.globOp .allocGlobal)
+            [.op (.cons (.sourceLoc 2 2 1 1) 1) (.intOp (.const 2)) []])]
+        (.op (.cons (.sourceLoc 2 2 1 1) 1) (.blockOp (.cons 0)) []),
+      .op .none (.globOp (.setGlobal 1)) [.op .none (.memOp .ref) [.op .none (.blockOp (.cons 0)) []]],
+      .let .none [.op .none (.memOp .ref) [.op .none (.intOp (.const 1)) []]]
+        (.let .none [.var .none 0] (.op .none (.globOp (.setGlobal 2)) [.var .none 0]))]) => true
+  | _ => false
+#guard reference_source_to_clos
 
 end Flapjack.Test.FlatElim
