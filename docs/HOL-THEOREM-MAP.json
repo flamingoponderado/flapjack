@@ -100404,5 +100404,77 @@
     "hol_name": "compile_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source clauses transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendCommon/ClosTags.lean",
+    "lean_name": "closTagShift",
+    "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
+    "hol_name": "clos_tag_shift_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Constants.lean",
+    "lean_name": "partHash",
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
+    "hol_name": "part_hash_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Constants.lean",
+    "lean_name": "addPart",
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
+    "hol_name": "add_part_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Constants.lean",
+    "lean_name": "addParts",
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
+    "hol_name": "add_parts_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Constants.lean",
+    "lean_name": "addPartsList",
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
+    "hol_name": "add_parts_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Constants.lean",
+    "lean_name": "compileConst",
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
+    "hol_name": "compile_const_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Constants.lean",
+    "lean_name": "numAddedGlobals",
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
+    "hol_name": "num_added_globals_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Constants.lean",
+    "lean_name": "partialAppLabelTableLoc",
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
+    "hol_name": "partial_app_label_table_loc_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed capture and complete source and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Constants.lean",
+    "lean_name": "compileOp",
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
+    "hol_name": "compile_op_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; independent typed capture and complete source and carrier review remain pending."
   }
 ]

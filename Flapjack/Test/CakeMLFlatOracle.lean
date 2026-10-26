@@ -39,6 +39,7 @@ def empty_source_to_clos : Bool := true
 def reference_source_to_clos : Bool := true
 def source_let_lifting : Bool := true
 def lifted_source_to_clos : Bool := true
+def bvl_shared_constant : Bool := true
 def eliminate_pure_length : Nat := 0
 def eval_bypass_length : Nat := 2
 def empty_program_globals : Nat := 1

@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.FlatElim.Reachability
 import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
 import Flapjack.Compiler.Backend.SourceToFlat.ToClos
+import Flapjack.Compiler.Backend.ClosToBvl.Constants
 import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
 import Flapjack.Compiler.Backend.FlatPattern.Encode
@@ -222,5 +223,10 @@ example : Flapjack.Compiler.Backend.SourceToSource.compile
     [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x"))
       (.let_ (some (ofString "y")) (.app .opref [.lit (.intLit 1)]) (.var (.short (ofString "y"))))])
 #guard lifted_source_to_clos
+#guard match Flapjack.Compiler.Backend.ClosToBvl.compileConst
+    (.constCons 30 [.constInt 1, .constInt 1]) with
+  | .blockOp (.build [.int 1, .con 32 [0, 0]]) => true
+  | _ => false
+#guard bvl_shared_constant
 
 end Flapjack.Test.FlatElim

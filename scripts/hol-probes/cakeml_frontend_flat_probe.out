@@ -40,3 +40,4 @@ empty_source_to_clos=T
 reference_source_to_clos=T
 source_let_lifting=T
 lifted_source_to_clos=T
+bvl_shared_constant=T

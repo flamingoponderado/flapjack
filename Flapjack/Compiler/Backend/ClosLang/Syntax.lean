@@ -28,6 +28,7 @@ inductive ConstPart where
   | int : Int → ConstPart
   | str : MlString → ConstPart
   | w64 : BitVec 64 → ConstPart
+  deriving DecidableEq
 
 /-- Complete original `int_op` datatype, preserving every constructor and payload. -/
 @[hol "cakeml/compiler/backend/closLangScript.sml" "int_op"]
