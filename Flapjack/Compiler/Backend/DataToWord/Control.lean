@@ -23,7 +23,7 @@ private def silentFfi {width : Nat} (conf : Config) (n : Nat) (names : WordLangC
       .assign 9 (.lookup .heapLength), .ffi (.implode []) 7 n 9 n names]
   else .skip
 
-/-- Flapjack's partial control-flow traversal. Unsupported assignment and
+/-- Flapjack's partial traversal. Unsupported assignment operations and
 thunk cases return `none`; this is not HOL's total `comp`. -/
 def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
     Nat → DataLang.Prog → Option (WordLangProgHOL (BitVec width) × Nat)
@@ -49,6 +49,13 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
         (.ite .lower 1 (.imm value)
           (listSeq [silentFfi conf 3 cutsets, .assign 1 (.const value),
             .alloc 1 cutsets, silentFfi conf 3 cutsets]) .skip), l)
+  | l, .assign dest (.intOp (.const i)) _ _ =>
+      let magnitude := BitVec.ofNat width (4 * i.natAbs)
+      let value := if i < 0 then -magnitude else magnitude
+      some (.assign (adjustVar dest) (.const value), l)
+  | l, .assign dest (.globOp .globalsPtr) _ _ =>
+      some (.assign (adjustVar dest) (.lookup .globals), l)
+  | l, .assign dest (.label n) _ _ => some (.locValue (adjustVar dest) n, l)
   | l, .call none target args _ => some (.call none target (0 :: args.map adjustVar) none, l)
   | l, .call (some (ns, names)) target args none =>
       some (.call (some (ns.map adjustVar, adjustSets names, .skip, secn, l))

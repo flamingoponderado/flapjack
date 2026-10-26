@@ -23,4 +23,18 @@ private def config : Flapjack.Compiler.Backend.DataToWord.Config :=
   | _ => false
 #guard Flapjack.Test.CakeMLFlatOracle.clos_to_word_control
 
+#guard match Flapjack.Compiler.Backend.ClosToBvl.compileProg? 0
+    [(10, 0, .op .none (.intOp (.const 3)) [])] with
+  | some bvl => match Flapjack.Compiler.Backend.BvlToBvi.compileIncFuel 10 10 0 bvl with
+    | some (0, [(loc, 0, exp)]) =>
+        match Flapjack.Compiler.Backend.BviToData.compileExpFuel 10 0 exp with
+        | some data => match Flapjack.Compiler.Backend.DataToWord.compileControl? (width := 64) config loc 2 data with
+          | some (.seq (.assign 2 (.const 12)) (.return 0 [2]), 2) => true
+          | _ => false
+        | _ => false
+    | _ => false
+  | _ => false
+#guard Flapjack.Test.CakeMLFlatOracle.clos_to_bvi_constant &&
+  Flapjack.Test.CakeMLFlatOracle.bvi_to_data_constant && Flapjack.Test.CakeMLFlatOracle.data_to_word_assign
+
 end Flapjack.Test.CakeMLControlFlowParity

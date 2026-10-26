@@ -82,3 +82,6 @@ data_to_word_word_ops=T
 data_to_word_control=T
 clos_to_word_control=T
 data_to_word_space=T
+data_to_word_assign=T
+clos_to_bvi_constant=T
+bvi_to_data_constant=T

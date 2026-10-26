@@ -242,3 +242,25 @@ val data_space_word = EVAL ``
    (wordLang$Seq wordLang$Skip (wordLang$Seq (wordLang$Assign 1 (wordLang$Const 16w)) (wordLang$Seq (wordLang$Alloc 1 (sptree$LS (), sptree$LN)) wordLang$Skip))) wordLang$Skip), 2)``;
 val _ = (print "data_to_word_space="; print_term (rhs (concl (CONV_RULE
   (RAND_CONV (SIMP_CONV (srw_ss()) [wordsTheory.dimindex_64, wordsTheory.dimword_def] THENC EVAL)) data_space_word))); print "\n");
+val data_assign_word = EVAL ``
+ (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$IntOp (closLang$Const (-3))) [] NONE) : 64 wordLang$prog # num) =
+  (wordLang$Assign 8 (wordLang$Const (-12w)), 2) /\
+ (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$GlobOp closLang$GlobalsPtr) [] NONE) : 64 wordLang$prog # num) =
+  (wordLang$Assign 8 (wordLang$Lookup stackLang$Globals), 2) /\
+ (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$Label 12) [] NONE) : 64 wordLang$prog # num) =
+  (wordLang$LocValue 8 12, 2) /\
+ (data_to_word$comp (ARB:data_to_word$config) 5 2
+  (dataLang$Seq (dataLang$Assign 0 (closLang$IntOp (closLang$Const 3)) [] NONE) (dataLang$Return [0])) : 64 wordLang$prog # num) =
+  (wordLang$Seq (wordLang$Assign 2 (wordLang$Const 12w)) (wordLang$Return 0 [2]), 2)``;
+val _ = (print "data_to_word_assign="; print_term (rhs (concl (CONV_RULE
+  (RAND_CONV (SIMP_CONV (srw_ss()) [wordsTheory.dimindex_64, wordsTheory.dimword_def] THENC EVAL)) data_assign_word))); print "\n");
+val _ = capture "clos_to_bvi_constant" ``bvl_to_bvi$compile_inc 0
+  (clos_to_bvl$compile_prog 0 [(10, 0, closLang$Op backend_common$None (closLang$IntOp (closLang$Const 3)) [])]) =
+ (0, [(backend_common$bvl_num_stubs + 48, 0, bvi$Op (closLang$IntOp (closLang$Const 3)) [])])``;
+fun captureBviConstant label term =
+  let val rewritten = rhs (concl (REWRITE_CONV [bvi_to_dataTheory.compile_exp_def,
+        bvi_to_dataTheory.compile_def, bvi_to_dataTheory.iAssign_def,
+        bvi_to_dataTheory.op_requires_names_eqn] term))
+  in capture label rewritten end;
+val _ = captureBviConstant "bvi_to_data_constant" ``bvi_to_data$compile_exp 0 (bvi$Op (closLang$IntOp (closLang$Const 3)) []) =
+ dataLang$Seq (dataLang$Assign 0 (closLang$IntOp (closLang$Const 3)) [] NONE) (dataLang$Return [0])``;

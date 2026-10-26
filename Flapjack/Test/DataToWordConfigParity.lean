@@ -54,7 +54,7 @@ private def headerConfig : Config := { conf with lenSize := 4 }
 #guard match compileControl? (width := 64) conf 5 2 (.call none (some 9) [0, 3] none) with
   | some (.call none (some 9) [0, 2, 8] none, 2) => true
   | _ => false
-#guard (compileControl? (width := 64) conf 5 2 (.assign 0 (.intOp (.const 1)) [] none)).isNone
+#guard (compileControl? (width := 64) conf 5 2 (.assign 0 (.intOp .add) [] none)).isNone
 #guard Flapjack.Test.CakeMLFlatOracle.data_to_word_control
 #guard match compileControl? (width := 64) conf 5 2 (.makeSpace 2 .ln) with
   | some (.seq (.assign 1 (.op .sub [.lookup .triggerGC, .lookup .nextFree]))
@@ -62,6 +62,16 @@ private def headerConfig : Config := { conf with lenSize := 4 }
         (.seq .skip (.seq (.assign 1 (.const 16)) (.seq (.alloc 1 (.ls (), .ln)) .skip))) .skip), 2) => true
   | _ => false
 #guard Flapjack.Test.CakeMLFlatOracle.data_to_word_space
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.intOp (.const (-3))) [] none) with
+  | some (.assign 8 (.const w), 2) => w == (-12 : BitVec 64)
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.globOp .globalsPtr) [] none) with
+  | some (.assign 8 (.lookup .globals), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.label 12) [] none) with
+  | some (.locValue 8 12, 2) => true
+  | _ => false
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_assign
 
 def runChecks : IO Bool := do
   IO.println "PASS data_to_word shift_length/small_shift_length/get_gen_size match six original HOL rows"
