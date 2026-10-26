@@ -100980,5 +100980,29 @@
     "hol_name": "ConcatByte_location_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source definition transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BviLet/Helpers.lean",
+    "lean_name": "extract",
+    "hol_path": "cakeml/compiler/backend/bvi_letScript.sml",
+    "hol_name": "extract_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BviLet/Helpers.lean",
+    "lean_name": "extractList",
+    "hol_path": "cakeml/compiler/backend/bvi_letScript.sml",
+    "hol_name": "extract_list_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BviLet/Helpers.lean",
+    "lean_name": "deleteVar",
+    "hol_path": "cakeml/compiler/backend/bvi_letScript.sml",
+    "hol_name": "delete_var_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
   }
 ]

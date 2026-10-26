@@ -62,3 +62,5 @@ bvl_compile_closure=T
 bvl_compile_program=T
 bvl_to_bvi_analysis=T
 bvl_to_bvi_operations=T
+bvi_let_optimization=T
+bvl_to_bvi_marker=T

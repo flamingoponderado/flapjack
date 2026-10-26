@@ -10,6 +10,8 @@ import Flapjack.Compiler.Backend.ClosToBvl.ExtractName
 import Flapjack.Compiler.Backend.ClosToBvl.Compile
 import Flapjack.Compiler.Backend.BvlToBvi.Analysis
 import Flapjack.Compiler.Backend.BvlToBvi.CompileOp
+import Flapjack.Compiler.Backend.BviLet.Compile
+import Flapjack.Compiler.Backend.BvlToBvi.Compile
 import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
 import Flapjack.Compiler.Backend.FlatPattern.Encode
@@ -391,5 +393,21 @@ example : Flapjack.Compiler.Backend.BvlToBvi.compileOp (.memOp (.copyByte true))
       (.let [.op (.memOp (.refByte true)) [.op (.intOp (.const 0)) [], .var 0]]
         (.let [.op (.memOp (.copyByte false)) [.op (.intOp (.const 0)) [], .var 0, .var 1, .var 2, .var 3]] (.var 1))) := rfl
 #guard bvl_to_bvi_operations
+example : Flapjack.Compiler.Backend.BviLet.extractList
+    [.var 2, .op (.intOp (.const 7)) []] = [4, 0] := rfl
+example : Flapjack.Compiler.Backend.BviLet.compileFuel 5 [] 0
+    (.let [.var 2, .op (.intOp (.const 7)) []] (.var 0)) =
+    some (.let [.op (.intOp (.const 0)) [], .op (.intOp (.const 7)) []] (.var 4)) := rfl
+example : Flapjack.Compiler.Backend.BviLet.compileFuel 5 [] 0
+    (.let [.var 2, .op (.intOp (.const 7)) []] (.var 1)) =
+    some (.let [.var 2] (.op (.intOp (.const 7)) [])) := rfl
+example : Flapjack.Compiler.Backend.BviLet.compileFuel 0 [] 0 (.var 0) = none := rfl
+#guard bvi_let_optimization
+#guard match Flapjack.Compiler.Backend.BvlToBvi.compileFuel 10 10 0
+    (.let [] (.let [.var 2] (.var 0))) with
+  | some (.call 0 (some loc) [.var 2] none, [(auxLoc, 1, .var 0)], 1) =>
+      loc == bvlNumStubs + 1 && auxLoc == bvlNumStubs + 1
+  | _ => false
+#guard bvl_to_bvi_marker
 
 end Flapjack.Test.FlatElim

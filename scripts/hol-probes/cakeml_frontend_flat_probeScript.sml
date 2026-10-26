@@ -1,4 +1,4 @@
-load "flat_patternTheory"; load "flat_elimTheory"; load "source_to_flatTheory"; load "flat_to_closTheory"; load "source_to_sourceTheory"; load "clos_to_bvlTheory"; load "clos_numberTheory"; load "bvl_to_bviTheory"; load "wordsLib";
+load "flat_patternTheory"; load "flat_elimTheory"; load "source_to_flatTheory"; load "flat_to_closTheory"; load "source_to_sourceTheory"; load "clos_to_bvlTheory"; load "clos_numberTheory"; load "bvl_to_bviTheory"; load "bvi_letTheory"; load "wordsLib";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 fun capture label term =
@@ -150,3 +150,13 @@ val _ = capture "bvl_to_bvi_operations" ``
   bvi$Let [bvi$Op (closLang$IntOp (closLang$Const 0)) []; bvi$Op (closLang$IntOp (closLang$Const 0)) []; bvi$Op (closLang$IntOp (closLang$Const 0)) []]
    (bvi$Let [bvi$Op (closLang$MemOp (closLang$RefByte T)) [bvi$Op (closLang$IntOp (closLang$Const 0)) []; bvi$Var 0]]
     (bvi$Let [bvi$Op (closLang$MemOp (closLang$CopyByte F)) [bvi$Op (closLang$IntOp (closLang$Const 0)) []; bvi$Var 0; bvi$Var 1; bvi$Var 2; bvi$Var 3]] (bvi$Var 1)))``;
+val _ = capture "bvi_let_optimization" ``
+ bvi_let$extract_list [bvi$Var 2; bvi$Op (closLang$IntOp (closLang$Const 7)) []] = [4; 0] /\
+ bvi_let$compile_sing [] 0 (bvi$Let [bvi$Var 2; bvi$Op (closLang$IntOp (closLang$Const 7)) []] (bvi$Var 0)) =
+  bvi$Let [bvi$Op (closLang$IntOp (closLang$Const 0)) []; bvi$Op (closLang$IntOp (closLang$Const 7)) []] (bvi$Var 4) /\
+ bvi_let$compile_sing [] 0 (bvi$Let [bvi$Var 2; bvi$Op (closLang$IntOp (closLang$Const 7)) []] (bvi$Var 1)) =
+  bvi$Let [bvi$Var 2] (bvi$Op (closLang$IntOp (closLang$Const 7)) [])``;
+val _ = capture "bvl_to_bvi_marker" ``bvl_to_bvi$compile_exps_sing 0
+ (bvl$Let [] (bvl$Let [bvl$Var 2] (bvl$Var 0))) =
+ (bvi$Call 0 (SOME (backend_common$bvl_num_stubs + 1)) [bvi$Var 2] NONE,
+  bvl_to_bvi$compile_aux (0, 1, bvi$Var 0), 1)``;
