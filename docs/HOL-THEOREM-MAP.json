@@ -99780,5 +99780,21 @@
     "hol_name": "compile_arith_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source clauses transcribed; typed HOL capture and complete statement and carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/CopyByte.lean",
+    "lean_name": "copyByteStr",
+    "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
+    "hol_name": "CopyByteStr_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source quotation transcribed; typed HOL capture and complete statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatToClos/CopyByte.lean",
+    "lean_name": "copyByteAw8",
+    "hol_path": "cakeml/compiler/backend/flat_to_closScript.sml",
+    "hol_name": "CopyByteAw8_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source quotation transcribed; typed HOL capture and complete statement review remain pending."
   }
 ]

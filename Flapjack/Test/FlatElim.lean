@@ -5,6 +5,7 @@ import Flapjack.Compiler.Backend.FlatPattern.Decode
 import Flapjack.Compiler.Backend.FlatPattern.Encode
 import Flapjack.Compiler.Backend.FlatToClos.Helpers
 import Flapjack.Compiler.Backend.FlatToClos.Arith
+import Flapjack.Compiler.Backend.FlatToClos.CopyByte
 import Flapjack.Test.CakeMLFlatOracle
 
 namespace Flapjack.Test.FlatElim
@@ -92,5 +93,15 @@ example : compileArith .none .div .intT [] = .let .none []
       (.raise .none (.op .none (.blockOp (.cons 2)) []))
       (.op .none (.intOp .div) [.var .none 0, .var .none 1])) := rfl
 #guard int_division
+example : copyByteStr .none =
+  .ifThenElse .none (.op .none (.intOp .less) [.op .none (.intOp (.const 0)) [], .var .none 0])
+    (.raise .none (.op .none (.blockOp (.cons 3)) []))
+    (.ifThenElse .none (.op .none (.intOp .less) [.op .none (.intOp (.const 0)) [], .var .none 1])
+      (.raise .none (.op .none (.blockOp (.cons 3)) []))
+      (.ifThenElse .none (.op .none (.memOp (.boundsCheckByte true))
+        [.op .none (.intOp .add) [.var .none 0, .var .none 1], .var .none 2])
+        (.op .none (.memOp (.copyByte true)) [.var .none 0, .var .none 1, .var .none 2])
+        (.raise .none (.op .none (.blockOp (.cons 3)) [])))) := rfl
+#guard copy_string
 
 end Flapjack.Test.FlatElim
