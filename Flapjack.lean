@@ -1873,6 +1873,7 @@ import Flapjack.CakeParser.ParseTree.Grammar
 import Flapjack.CakeParser.CfgGrammar
 import Flapjack.CakeParser.CfgValidation
 import Flapjack.CakeParser.CfgLocation
+import Flapjack.CakeParser.PegEvalMonotonic
 import Flapjack.TypeSystemHOL.Environments
 import Flapjack.TypeSystemHOL.TypeNames
 import Flapjack.TypeSystemHOL.Patterns
