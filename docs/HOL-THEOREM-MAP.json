@@ -102020,5 +102020,30 @@
     "lean_path": "Flapjack/CakeParser/PegChecks.lean", "lean_name": "evalToken",
     "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "eval_token_check_def",
     "statement_status": "pending_statement_review", "reviewer": "Grammar token predicate or carrier transcribed; complete source review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PegActions.lean", "lean_name": "Unary",
+    "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "sem_u",
+    "statement_status": "pending_statement_review", "reviewer": "First-order semantic action transcribed against generated nonterminal and parse-tree carriers; complete source review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PegActions.lean", "lean_name": "Binary",
+    "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "sem_b",
+    "statement_status": "pending_statement_review", "reviewer": "First-order semantic action transcribed against generated nonterminal and parse-tree carriers; complete source review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PegActions.lean", "lean_name": "evalUnary",
+    "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "eval_unary_def",
+    "statement_status": "pending_statement_review", "reviewer": "First-order semantic action transcribed against generated nonterminal and parse-tree carriers; complete source review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PegActions.lean", "lean_name": "mkLinfix",
+    "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "mk_linfix_fo_def",
+    "statement_status": "pending_statement_review", "reviewer": "First-order semantic action transcribed against generated nonterminal and parse-tree carriers; complete source review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PegActions.lean", "lean_name": "evalBinary",
+    "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "eval_binary_def",
+    "statement_status": "pending_statement_review", "reviewer": "First-order semantic action transcribed against generated nonterminal and parse-tree carriers; complete source review remains pending."
   }
 ]
