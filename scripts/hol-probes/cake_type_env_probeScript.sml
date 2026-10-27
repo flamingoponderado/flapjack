@@ -17,3 +17,10 @@ val _ = (print "bind_list="; print_thm typeSystemTheory.bind_var_list_def; print
 val _ = (print "inc_example="; print_thm (EVAL ``typeSystem$deBruijn_inc 1 3 (Tapp [Tvar_db 0;Tvar_db 1;Tvar_db 4] 7)``); print "\n");
 val _ = (print "subst_example="; print_thm (EVAL ``typeSystem$deBruijn_subst 1 [Tapp [] 5;Tvar_db 7] (Tapp [Tvar_db 0;Tvar_db 1;Tvar_db 2;Tvar_db 4] 9)``); print "\n");
 val _ = (print "lookup_example="; print_thm (EVAL ``typeSystem$tveLookup «x» 0 (Bind_tvar 2 (Bind_name «x» 1 (Tapp [Tvar_db 0;Tvar_db 1] 4) Empty))``); print "\n");
+val _ = (print "type_subst="; print_thm typeSystemTheory.type_subst_def; print "\n");
+val _ = (print "check_type_names="; print_thm typeSystemTheory.check_type_names_def; print "\n");
+val _ = (print "type_name_subst="; print_thm typeSystemTheory.type_name_subst_def; print "\n");
+val _ = (print "type_p_rules="; print_thm typeSystemTheory.type_p_rules; print "\n");
+val _ = (print "type_name_example="; print_thm (EVAL ``typeSystem$type_name_subst (namespace$alist_to_ns [(«pair», ([«a»; «b»], Tapp [Tvar «a»; Tvar «b»] 9))]) (Atapp [Atvar «x»; Atvar «y»] (Short «pair»))``); print "\n");
+val _ = (print "type_name_missing="; print_thm (EVAL ``typeSystem$type_name_subst (namespace$alist_to_ns []) (Atapp [Atvar «x»] (Short «missing»))``); print "\n");
+val _ = (print "type_name_duplicates="; print_thm (EVAL ``typeSystem$type_name_subst (namespace$alist_to_ns [(«dup», ([«a»; «a»], Tvar «a»))]) (Atapp [Atvar «x»; Atvar «y»] (Short «dup»))``); print "\n");

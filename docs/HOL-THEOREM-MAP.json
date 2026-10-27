@@ -104481,5 +104481,48 @@
     "lean_name": "bindVarList",
     "statement_status": "pending_statement_review",
     "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "type_subst_def",
+    "lean_path": "Flapjack/TypeSystemHOL/TypeNames.lean",
+    "lean_name": "typeSubst",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "reviewer": "Codex source comparison: type_subst_def equations and inferred types captured in cake_type_env_probe. Tvar uses FLOOKUP with the unchanged variable on absence, Tvar_db is unchanged, and Tapp maps recursively over every argument preserving its type identifier. The input is the canonical HolFiniteMapExact MlString SemanticT carrier; holFmapAsFiniteSupportParamWitness_typeSubst_subst proves the lookup and finite-support codec roundtrip. The imported semantic type has the original Tvar, Tvar_db and Tapp constructors, with MlString names and natural identifiers. This review records the representation and equations, not cross-language equivalence of later typing judgments.",
+    "fmap_as_finite_support_parameters": [
+      "subst"
+    ]
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "check_type_names_def",
+    "lean_path": "Flapjack/TypeSystemHOL/TypeNames.lean",
+    "lean_name": "checkTypeNames",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed HOL source equations and pattern-typing rules captured in cake_type_env_probe; complete source, finite-map and carrier review remains pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "type_name_subst_def",
+    "lean_path": "Flapjack/TypeSystemHOL/TypeNames.lean",
+    "lean_name": "typeNameSubst",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed HOL source equations and pattern-typing rules captured in cake_type_env_probe; complete source, finite-map and carrier review remains pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "type_p",
+    "lean_path": "Flapjack/TypeSystemHOL/Patterns.lean",
+    "lean_name": "TypeP",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed HOL source equations and pattern-typing rules captured in cake_type_env_probe; complete source, finite-map and carrier review remains pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "type_p",
+    "lean_path": "Flapjack/TypeSystemHOL/Patterns.lean",
+    "lean_name": "TypePs",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed HOL source equations and pattern-typing rules captured in cake_type_env_probe; complete source, finite-map and carrier review remains pending."
   }
 ]
