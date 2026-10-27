@@ -93,6 +93,12 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
       some (.assign (adjustVar dest) (.const value), l)
   | l, .assign dest (.globOp .globalsPtr) _ _ =>
       some (.assign (adjustVar dest) (.lookup .globals), l)
+  | l, .assign dest (.globOp .setGlobalsPtr) args _ =>
+      match args with
+      | [src] => some (.seq (.set .globals (.var (adjustVar src)))
+          (.seq (.set .globReal (realAddr conf (adjustVar src)))
+            (.assign (adjustVar dest) (.const 2))), l)
+      | _ => some (.skip, l)
   | l, .assign dest (.globOp (.global n)) _ _ =>
       let offset := BitVec.ofNat width (width / 8) * BitVec.ofNat width (n + 1)
       some (.assign (adjustVar dest) (.load (.op .add [.lookup .globReal, .const offset])), l)
@@ -169,6 +175,17 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
           let offset := WordLangExpHOL.op .add [.const (BitVec.ofNat width (width / 8)), scaled]
           some (.assign (adjustVar dest) (.load (.op .add [realAddr conf (adjustVar base), offset])), l)
       | _ => some (.skip, l)
+  | l, .assign dest (.memOp op) args _ =>
+      match op, args with
+      | .update, [base, index, value] | .updateCons, [base, index, value] =>
+          let index := adjustVar index
+          let scaled := if width = 32 then WordLangExpHOL.var index
+            else .shift .lsl (.var index) (.const 1)
+          let offset := WordLangExpHOL.op .add [.const (BitVec.ofNat width (width / 8)), scaled]
+          some (.seq (.store (.op .add [realAddr conf (adjustVar base), offset]) (adjustVar value))
+            (.assign (adjustVar dest) (.const 2)), l)
+      | .update, _ | .updateCons, _ => some (.skip, l)
+      | _, _ => none
   | l, .assign dest (.label n) _ _ => some (.locValue (adjustVar dest) n, l)
   | l, .call none target args _ => some (.call none target (0 :: args.map adjustVar) none, l)
   | l, .call (some (ns, names)) target args none =>

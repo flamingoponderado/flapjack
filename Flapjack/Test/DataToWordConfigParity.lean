@@ -96,6 +96,24 @@ private def headerConfig : Config := { conf with lenSize := 4 }
   | some (.assign 8 (.load (.op .add [.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 6)],
       .op .add [.const 4, .var 6]])), 2) => true
   | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.globOp .setGlobalsPtr) [1] none) with
+  | some (.seq (.set .globals (.var 4)) (.seq (.set .globReal
+      (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)])) (.assign 8 (.const 2))), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.globOp .setGlobalsPtr) [] none) with
+  | some (.skip, 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp .update) [1, 2, 3] none) with
+  | some (.seq (.store (.op .add [.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)],
+      .op .add [.const 8, .shift .lsl (.var 6) (.const 1)]]) 8) (.assign 8 (.const 2)), 2) => true
+  | _ => false
+#guard match compileControl? (width := 32) conf 5 2 (.assign 3 (.memOp .updateCons) [1, 2, 3] none) with
+  | some (.seq (.store (.op .add [.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 6)],
+      .op .add [.const 4, .var 6]]) 8) (.assign 8 (.const 2)), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp .update) [1] none) with
+  | some (.skip, 2) => true
+  | _ => false
 #guard Flapjack.Test.CakeMLFlatOracle.data_to_word_loads
 #guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.boolTest (.compare .gt))) [1, 2] none) with
   | some (.ite .equal 4 (.reg 6) (.assign 8 (.const 18)) (.assign 8 (.const 2)), 2) => true

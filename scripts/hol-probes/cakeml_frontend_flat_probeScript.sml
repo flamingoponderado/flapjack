@@ -280,7 +280,15 @@ val data_loads_word = EVAL ``let conf = (ARB:data_to_word$config) with <|tag_bit
  (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$BlockOp closLang$BoolNot) [1] NONE) : 64 wordLang$prog # num) =
   (wordLang$Assign 8 (wordLang$Op asm$Xor [wordLang$Var 4; wordLang$Const 16w]), 2) /\
  (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$MemOp closLang$El) [1;2] NONE) : 32 wordLang$prog # num) =
-  (wordLang$Assign 8 (wordLang$Load (wordLang$Op asm$Add [wordLang$Op asm$Add [wordLang$Lookup stackLang$CurrHeap; wordLang$Shift ast$Lsr (wordLang$Var 4) (wordLang$Const 6w)]; wordLang$Op asm$Add [wordLang$Const 4w; wordLang$Var 6]])), 2)``;
+  (wordLang$Assign 8 (wordLang$Load (wordLang$Op asm$Add [wordLang$Op asm$Add [wordLang$Lookup stackLang$CurrHeap; wordLang$Shift ast$Lsr (wordLang$Var 4) (wordLang$Const 6w)]; wordLang$Op asm$Add [wordLang$Const 4w; wordLang$Var 6]])), 2) /\
+ (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$GlobOp closLang$SetGlobalsPtr) [1] NONE) : 64 wordLang$prog # num) =
+  (wordLang$Seq (wordLang$Set stackLang$Globals (wordLang$Var 4)) (wordLang$Seq (wordLang$Set stackLang$GlobReal (wordLang$Op asm$Add [wordLang$Lookup stackLang$CurrHeap; wordLang$Shift ast$Lsr (wordLang$Var 4) (wordLang$Const 5w)])) (wordLang$Assign 8 (wordLang$Const 2w))), 2) /\
+ (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$GlobOp closLang$SetGlobalsPtr) [] NONE) : 64 wordLang$prog # num) = (wordLang$Skip, 2) /\
+ (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$MemOp closLang$Update) [1;2;3] NONE) : 64 wordLang$prog # num) =
+  (wordLang$Seq (wordLang$Store (wordLang$Op asm$Add [wordLang$Op asm$Add [wordLang$Lookup stackLang$CurrHeap; wordLang$Shift ast$Lsr (wordLang$Var 4) (wordLang$Const 5w)]; wordLang$Op asm$Add [wordLang$Const 8w; wordLang$Shift ast$Lsl (wordLang$Var 6) (wordLang$Const 1w)]]) 8) (wordLang$Assign 8 (wordLang$Const 2w)), 2) /\
+ (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$MemOp closLang$UpdateCons) [1;2;3] NONE) : 32 wordLang$prog # num) =
+  (wordLang$Seq (wordLang$Store (wordLang$Op asm$Add [wordLang$Op asm$Add [wordLang$Lookup stackLang$CurrHeap; wordLang$Shift ast$Lsr (wordLang$Var 4) (wordLang$Const 6w)]; wordLang$Op asm$Add [wordLang$Const 4w; wordLang$Var 6]]) 8) (wordLang$Assign 8 (wordLang$Const 2w)), 2) /\
+ (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$MemOp closLang$Update) [1] NONE) : 64 wordLang$prog # num) = (wordLang$Skip, 2)``;
 val _ = (print "data_to_word_loads="; print_term (rhs (concl (CONV_RULE
   (RAND_CONV (SIMP_CONV (srw_ss()) [wordsTheory.dimindex_32, wordsTheory.dimindex_64, wordsTheory.dimword_def] THENC EVAL)) data_loads_word))); print "\n");
 val data_comparisons_word = EVAL ``
