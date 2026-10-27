@@ -48,6 +48,23 @@ theorem dlet_conditions_of_safe {F : Type} (source : SemanticPrimitivesHOL.State
       simp [EvaluateHOL.evaluateDecs, distinct, EvaluateHOL.typeError]
     exact False.elim (safe source bad)
 
+/-- A safe variable-initialized declaration must find its source variable,
+regardless of the declaration pattern. -/
+theorem dlet_variable_lookup_of_safe {F : Type} (source : SemanticPrimitivesHOL.State F)
+    (sourceEnv : SemEnv Value) (location : Flapjack.Misc.Location.Locs)
+    (pattern : Pat) (id : Ident ModN VarN)
+    (safe : ∀ next, EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern (.var id)] ≠
+      (next, .err (.abort .typeError))) :
+    ∃ value, nsLookup sourceEnv.v id = some value := by
+  obtain ⟨distinct, wellformed⟩ := dlet_conditions_of_safe source sourceEnv location pattern (.var id) safe
+  cases lookup : nsLookup sourceEnv.v id with
+  | some value => exact ⟨value, rfl⟩
+  | none =>
+    have bad : EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern (.var id)] =
+        (source, .err (.abort .typeError)) := by
+      simp [EvaluateHOL.evaluateDecs, distinct, wellformed, EvaluateHOL.evaluate, lookup, EvaluateHOL.typeError]
+    exact False.elim (safe source bad)
+
 /-- A safe declaration whose expression succeeds cannot have a pattern
 matching type error. -/
 theorem dlet_match_noTypeError_of_safe {F : Type} (source middle : SemanticPrimitivesHOL.State F)
@@ -1096,6 +1113,29 @@ theorem dletExpressionStep_global {C F : Type} [Nonempty C]
     · rw [sourceRun, flatRun]
       exact ⟨GlobalGrowth.refl genv, invariant, generation, oracForwardRel_refl interp source.evalState⟩
 
+/-- Function creation captures related source and flat environments while
+preserving the factored invariant and oracle generation. This is preliminary
+simulation infrastructure, not a reviewed HOL theorem. -/
+theorem dletExpressionStep_function {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F) (sourceEnv : SemEnv Value)
+    (trace : List VarN) (compMap : Environment) (gen : EnvironmentGenerationStore)
+    (name : VarN) (body : AstHOL.Exp)
+    (envInv : GlobalEnvInv genv compMap (fun _ => False) sourceEnv)
+    (invariant : factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (generation : envGenRel gen source.evalState) :
+    DletExpressionStep interp transform genv start finish other source flat sourceEnv trace compMap gen
+      (.fn name body) := by
+  have related := (evaluate_global_function_related genv compMap sourceEnv envInv source flat
+    invariant.2.2.1 trace name body 0).2.2.1
+  refine ⟨genv, ?_, ?_⟩
+  · simp only [ExprSim, EvaluateHOL.evaluate, compileExp, FlatSem.evaluate]
+    exact ⟨.value (.cons related .nil), invariant.2.2.1⟩
+  · simpa only [EvaluateHOL.evaluate, compileExp, FlatSem.evaluate] using
+      And.intro (GlobalGrowth.refl genv) (And.intro invariant
+        (And.intro generation (oracForwardRel_refl interp source.evalState)))
+
 /-- Type annotations preserve the factored declaration expression step. -/
 theorem dletExpressionStep_tannot {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
@@ -1469,6 +1509,68 @@ theorem evaluateDlet_literal_advanced {C F : Type} [Nonempty C]
     compiled bounded sourceRun notTypeError envInv invariant generation
   exact dletExpressionStep_literal interp transform genv start finish other source flat sourceEnv
     ((AstHOL.patBindings pattern).reverse ++ trace) compMap gen lit invariant generation
+
+/-- A declaration initialized by a function has the advanced factored
+outcome without an expression induction hypothesis. The factored relations
+still require correspondence review. -/
+theorem evaluateDlet_function_advanced {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (start finish next : NextIndices) (other : Set (Nat × IndexKind))
+    (source sourceLast : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (sourceEnv : SemEnv Value) (trace : List VarN) (n n' : Nat)
+    (compMap nextMap : Environment) (gen nextGen : EnvironmentGenerationStore)
+    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (name : VarN) (body : AstHOL.Exp)
+    (flatDecs : List FlatLang.Exp) (result : Result (SemEnv Value) Value)
+    (compiled : compileDecs trace n start compMap gen [.dlet location pattern (.fn name body)] =
+      (n', next, nextMap, nextGen, flatDecs))
+    (bounded : idxPrev next finish)
+    (sourceRun : EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern (.fn name body)] =
+      (sourceLast, result))
+    (notTypeError : result ≠ .err (.abort .typeError))
+    (envInv : GlobalEnvInv genv compMap (fun _ => False) sourceEnv)
+    (invariant : factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (generation : envGenRel gen source.evalState) :
+    DletOutcomeAdvanced interp transform genv start finish other source flat sourceEnv trace n compMap gen
+      location pattern (.fn name body) := by
+  apply evaluateDlet_advanced_compiled interp transform genv start finish next other source sourceLast flat
+    sourceEnv trace n n' compMap nextMap gen nextGen location pattern (.fn name body) flatDecs result
+    compiled bounded sourceRun notTypeError envInv invariant generation
+  exact dletExpressionStep_function interp transform genv start finish other source flat sourceEnv
+    ((AstHOL.patBindings pattern).reverse ++ trace) compMap gen name body envInv invariant generation
+
+/-- A safe declaration initialized from a global variable has the advanced
+factored outcome without an expression induction hypothesis or a separate
+source lookup assumption. The factored relations still need HOL review. -/
+theorem evaluateDlet_variable_advanced {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (start finish next : NextIndices) (other : Set (Nat × IndexKind))
+    (source sourceLast : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (sourceEnv : SemEnv Value) (trace : List VarN) (n n' : Nat)
+    (compMap nextMap : Environment) (gen nextGen : EnvironmentGenerationStore)
+    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (id : Ident ModN VarN)
+    (flatDecs : List FlatLang.Exp) (result : Result (SemEnv Value) Value)
+    (compiled : compileDecs trace n start compMap gen [.dlet location pattern (.var id)] =
+      (n', next, nextMap, nextGen, flatDecs))
+    (bounded : idxPrev next finish)
+    (sourceRun : EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern (.var id)] =
+      (sourceLast, result))
+    (notTypeError : result ≠ .err (.abort .typeError))
+    (envInv : GlobalEnvInv genv compMap (fun _ => False) sourceEnv)
+    (invariant : factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (generation : envGenRel gen source.evalState) :
+    DletOutcomeAdvanced interp transform genv start finish other source flat sourceEnv trace n compMap gen
+      location pattern (.var id) := by
+  have safe : ∀ last, EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern (.var id)] ≠
+      (last, .err (.abort .typeError)) := by
+    intro last bad
+    apply notTypeError
+    exact congrArg Prod.snd (sourceRun.symm.trans bad)
+  obtain ⟨value, lookup⟩ := dlet_variable_lookup_of_safe source sourceEnv location pattern id safe
+  apply evaluateDlet_advanced_compiled interp transform genv start finish next other source sourceLast flat
+    sourceEnv trace n n' compMap nextMap gen nextGen location pattern (.var id) flatDecs result
+    compiled bounded sourceRun notTypeError envInv invariant generation
+  exact dletExpressionStep_global interp transform genv start finish other source flat sourceEnv
+    ((AstHOL.patBindings pattern).reverse ++ trace) compMap gen id value lookup envInv invariant generation
 
 /-- A literal declaration initializes its reserved flat global slot. -/
 theorem evaluateDlet_literal_flat {C F : Type} (flat : FlatSem.State C F)
