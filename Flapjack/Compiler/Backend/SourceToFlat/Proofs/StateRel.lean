@@ -39,6 +39,21 @@ inductive StateRel {C F : Type} (genv : GlobalEnv) :
       (clock : source.clock = flat.clock)
       (ffi : source.ffi = flat.ffi) : StateRel genv source flat
 
+/-- Unfold the factored state relation into the four conditions used by the
+original state-relation rule. Correspondence of the underlying value
+relation remains a separate obligation. -/
+theorem stateRel_iff {C F : Type} (genv : GlobalEnv)
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F) :
+    StateRel genv source flat ↔
+      flat.refs ≠ [] ∧ List.Forall₂ (StoreValueRel genv) source.refs flat.refs.tail ∧
+        source.clock = flat.clock ∧ source.ffi = flat.ffi := by
+  constructor
+  · intro related
+    cases related with
+    | intro nonempty refs clock ffi => exact ⟨nonempty, refs, clock, ffi⟩
+  · rintro ⟨nonempty, refs, clock, ffi⟩
+    exact .intro source flat nonempty refs clock ffi
+
 /-- Flapjack list infrastructure: a pointwise relation preserves successful
 indexed lookup. -/
 theorem forall₂_lookup {α β : Type} {R : α → β → Prop} {xs : List α} {ys : List β}
