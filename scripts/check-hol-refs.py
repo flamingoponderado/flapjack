@@ -4502,7 +4502,9 @@ def hol_declaration_lines(
         # header line itself and still ends with ``End``.
         datatype_header = re.compile(r"^Datatype\s*:?\s*$")
         datatype_inline = re.compile(r"^Datatype\s*:\s*([A-Za-z0-9_']+)\s*=")
-        datatype_name = re.compile(r"^\s*([A-Za-z0-9_']+)\s*=")
+        # Some scripts put a short SML comment before the type name on the
+        # same line, e.g. flatSem's `(* 'v *) environment = ...`.
+        datatype_name = re.compile(r"^\s*(?:\(\*[^()\n]*\*\)\s*)*([A-Za-z0-9_']+)\s*=")
         datatype_bare_name = re.compile(r"^\s*([A-Za-z0-9_']+)\s*$")
         datatype_equals = re.compile(r"^\s*=")
         datatype_end = re.compile(r"^End\b")

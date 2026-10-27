@@ -2201,6 +2201,21 @@ class HolDatatypeDeclarationsTest(unittest.TestCase):
         )
         self.assertEqual(DECL(path, {})["shmem_info_num"], [2])
 
+    def test_datatype_name_after_inline_comment_is_indexed(self):
+        path = self._write_sml(
+            "Datatype:\n  (* 'v *) environment = <| v : 'v list |>\nEnd\n"
+            "Datatype:\n  (* fake = Bad *)\n  actual = Good\nEnd\n"
+        )
+        names = DECL(path, {})
+        self.assertEqual(names["environment"], [2])
+        self.assertEqual(names["actual"], [6])
+        self.assertNotIn("fake", names)
+
+    def test_flat_sem_environment_is_resolvable(self):
+        path = (Path(__file__).resolve().parents[2] /
+                "cakeml/compiler/backend/semantics/flatSemScript.sml")
+        self.assertIsNone(REF_ERROR(path, "environment", None, {}))
+
     def test_lab_to_target_shmem_info_num_is_resolvable(self):
         path = (
             Path(__file__).resolve().parents[2]

@@ -1,3 +1,5 @@
+`cake_flat_sem_carriers_probe.out` captures flat-semantics value constructors, environment and state field types, compiler callback widths, and basic value and constructor helper definitions with inferred types. It is carrier and definition evidence, not evaluator or simulation correctness.
+
 `source_to_flat_bind_locals_probe.out` captures the original binding definition and replays its local namespace-composition and pattern-binding theorems with full inferred types, including independent namespace-module and function-payload types. This checks prerequisites, not source-to-flat semantic correctness.
 
 `source_to_flat_exps_length_probe.out` replays the original local `compile_exps_length` proof and captures the inferred types of all inputs and the compiled list. It checks a list-shape prerequisite, not source-to-flat semantic correctness.

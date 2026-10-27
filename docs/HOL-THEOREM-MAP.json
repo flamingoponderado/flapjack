@@ -104881,5 +104881,77 @@
     "lean_name": "nsBindList_patTups_bindLocals",
     "statement_status": "reviewed_exact",
     "reviewer": "Codex source comparison: the original local theorem quantifies over names and asserts an existential trace list whose binding equals nsBindList (pat_tups t names) (bind_locals ts locals comp_map), and whose length equals the names length. Lean retains the existential, both conjuncts, list order, namespace and trace carriers, and no extra premises. Typed source_to_flat_bind_locals_probe replay confirms names : mlstring list, traces : tra list and independent polymorphic namespace-module type α. The witness uses the original mk_cons t (LENGTH tail + 1) case."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "environment",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem.lean",
+    "lean_name": "Environment",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: Original environment is a single association list v of mlstring and an independent generic value type; Lean uses the same ordered List of pairs."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "v",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem.lean",
+    "lean_name": "Value",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: All six constructors match the source in order and arity: literal, optional numeric constructor/type pair with value list, closure with flat environment/name/expression, recursive closure with flat environment/function triples/name, bool/location, and value vector. Typed constructor captures are in cake_flat_sem_carriers_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "install_config",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem.lean",
+    "lean_name": "InstallConfig",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: The two source fields are the compiler-state-to-flat-expression-list callback returning optional byte list, fixed word64 list and compiler state, and the natural-number oracle returning compiler state and flat expressions. Compiler-state type remains generic and independent; typed capture confirms fixed widths and tuple order."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "state",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem.lean",
+    "lean_name": "State",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: The five source fields retain clock, semanticPrimitives value store, generic FFI state, ordered optional flat globals and install configuration. Compiler state and FFI types remain independently polymorphic; original store constructors and fixed byte words are retained. Typed carrier and field captures are in cake_flat_sem_carriers_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "list_id_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem.lean",
+    "lean_name": "listId",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: Source list_id is the natural number 1; Lean is identical."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "Boolv_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem.lean",
+    "lean_name": "boolValue",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: The source chooses true_tag or false_tag, pairs it with SOME bool_id, and constructs Conv with empty values. Lean boolToTag is the reviewed exact if expression and uses the same identifiers."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "Unitv_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem.lean",
+    "lean_name": "unitValue",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: Source Unitv is Conv NONE []; Lean is the same constructor and fields."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "build_rec_env_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem.lean",
+    "lean_name": "buildRecEnv",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: Source folds right over function triples, prepending (f, Recclosure cl_env funs f) to the supplied initial environment. Lean retains the original whole function list in each closure, initial list and fold order."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "ctor_same_type_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem.lean",
+    "lean_name": "ctorSameType",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: Typed original shows independent constructor payload types α and γ and shared comparison type β; Lean preserves all three without an equality-instance premise. Both SOME cases compare only type fields, both NONE is true, and mixed NONE/SOME cases are false."
   }
 ]

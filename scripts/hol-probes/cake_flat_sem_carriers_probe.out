@@ -1,0 +1,23 @@
+closure_type=:v environment -> mlstring -> exp -> v
+recclosure_type=:v environment -> (mlstring # mlstring # exp) list -> mlstring -> v
+conv_type=:(num # num option) option -> v list -> v
+lit_type=:lit -> v
+loc_type=:bool -> num -> v
+vector_type=:v list -> v
+environment_v_type=:α environment -> (mlstring # α) list
+compile_type=:γ install_config -> γ -> exp list -> (word8 list # word64 list # γ) option
+oracle_type=:γ install_config -> num -> γ # exp list
+state_ffi_type=:(γ, 'ffi) state -> 'ffi ffi_state
+state_globals_type=:(γ, 'ffi) state -> v option list
+state_refs_type=:(γ, 'ffi) state -> v store_v list
+state_config_type=:(γ, 'ffi) state -> γ install_config
+list_id=list_id = (1 :num)
+
+bool_value=∀(b :bool). (Boolv b :v) = Conv (SOME (if b then true_tag else false_tag,SOME bool_id)) ([] :v list)
+
+unit_value=Unitv = Conv (NONE :(num # num option) option) ([] :v list)
+
+build_rec_env=∀(funs :(mlstring # mlstring # exp) list) (cl_env :v environment) (add_to_env :(mlstring # v) list). build_rec_env funs cl_env add_to_env = FOLDR (λ((f :mlstring),(x :mlstring),(e :exp)) (env' :(mlstring # v) list). (f,(Recclosure cl_env funs f :v))::env') add_to_env funs
+
+ctor_same_type=(ctor_same_type (SOME ((v0 :α),(t :β))) (SOME ((v1 :γ),(t' :β))) ⇔ t = t') ∧ (ctor_same_type (NONE :(α # β) option) (NONE :(γ # β) option) ⇔ T) ∧ (ctor_same_type (NONE :(α # β) option) (SOME (v7 :γ # β)) ⇔ F) ∧ (ctor_same_type (SOME (v5 :α # β)) (NONE :(γ # β) option) ⇔ F)
+
