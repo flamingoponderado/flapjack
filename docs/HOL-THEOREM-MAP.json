@@ -102928,6 +102928,33 @@
   },
   {
     "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 54,
+    "lean_path": "Flapjack/EvaluateHOL/Definition.lean",
+    "lean_name": "evaluate",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: clocked mutually recursive source evaluator; complete clause and imported-carrier review remains pending. Floating-point branches inherit the rational-cut assumption documented for the primitive dispatcher; HOL HD on an empty list uses the existing holHd/holArb representation."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 54,
+    "lean_path": "Flapjack/EvaluateHOL/Definition.lean",
+    "lean_name": "evaluateMatch",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: clocked mutually recursive source evaluator; complete clause and imported-carrier review remains pending. Floating-point branches inherit the rational-cut assumption documented for the primitive dispatcher; HOL HD on an empty list uses the existing holHd/holArb representation."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 54,
+    "lean_path": "Flapjack/EvaluateHOL/Definition.lean",
+    "lean_name": "evaluateDecs",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: clocked mutually recursive source evaluator; complete clause and imported-carrier review remains pending. Floating-point branches inherit the rational-cut assumption documented for the primitive dispatcher; HOL HD on an empty list uses the existing holHd/holArb representation."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
     "hol_name": "dec_clock_def",
     "lean_path": "Flapjack/EvaluateHOL.lean",
     "lean_name": "decClock",

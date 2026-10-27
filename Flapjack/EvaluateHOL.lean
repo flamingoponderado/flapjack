@@ -1,9 +1,9 @@
 import Flapjack.SemanticPrimitivesHOL.Eval
 import Flapjack.SemanticPrimitivesHOL.ApplyNumeric
 
-/-! Initial definitions from the CakeML source evaluator. The main evaluator
-and its compiler-correctness theorem are not yet ported; declaration-specific
-review status is recorded in the HOL inventory. -/
+/-! Initial definitions from the CakeML source evaluator. Its mutually recursive
+definition is in `EvaluateHOL.Definition` and remains pending source review;
+the compiler correctness theorem is not yet ported. -/
 namespace Flapjack.EvaluateHOL
 open Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL Flapjack.AstHOL
 

@@ -1,0 +1,11 @@
+evaluate_type=:α state -> v sem_env -> exp list -> α state # (v list, v) result
+match_type=:α state -> v sem_env -> v -> (pat # exp) list -> v -> α state # (v list, v) result
+decs_type=:α state -> v sem_env -> dec list -> α state # (v sem_env, v) result
+literal=((10 :num),([] :v store_v list),(Rval [Litv (IntLit (7 :int))] :(v list, v) result))
+raise=((10 :num),([] :v store_v list),(Rerr (Rraise (Litv (IntLit (7 :int)))) :(v list, v) result))
+type_error=((10 :num),([] :v store_v list),(Rerr (Rabort Rtype_error :v error_result) :(v list, v) result))
+call_zero=((0 :num),([] :v store_v list),(Rerr (Rabort Rtimeout_error :v error_result) :(v list, v) result))
+call_one=((0 :num),([] :v store_v list),(Rval [Litv (IntLit (9 :int))] :(v list, v) result))
+match_bind=((4 :num),([] :v store_v list),(Rval [Litv (IntLit (7 :int))] :(v list, v) result))
+match_empty=((4 :num),([] :v store_v list),(Rerr (Rraise (Conv (SOME (ExnStamp (0 :num))) ([] :v list))) :(v list, v) result))
+declaration=((4 :num),SOME (Litv (IntLit (7 :int))))
