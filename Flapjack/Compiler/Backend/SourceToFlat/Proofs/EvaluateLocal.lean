@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateModule
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateException
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDatatype
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLiteralConstructors
 
 /-! Local declaration simulation over the preliminary factored relations. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
@@ -145,6 +146,9 @@ inductive FactoredScopedDec : Dec → Prop where
       FactoredScopedDec (.dexn location name types)
   | datatype_ (location : Flapjack.Misc.Location.Locs) (types : TypeDef) :
       FactoredScopedDec (.dtype location types)
+  | literalConstructor (location : Flapjack.Misc.Location.Locs) (pattern : Pat)
+      (name : Option (Ident ModN ConN)) (lits : List Lit) :
+      FactoredScopedDec (.dlet location pattern (.con name (lits.map AstHOL.Exp.lit)))
   | module_ (moduleName : ModN) (decs : List Dec) :
       (∀ dec, dec ∈ decs → FactoredScopedDec dec) → FactoredScopedDec (.dmod moduleName decs)
   | local_ (locals body : List Dec) :
@@ -165,6 +169,8 @@ theorem factoredDecIH_scoped {C F : Type} [Nonempty C]
     exact supported
   | exception_ location name types => exact factoredDecIH_dexn interp transform location name types
   | datatype_ location types => exact factoredDecIH_dtype interp transform location types
+  | literalConstructor location pattern name lits =>
+    exact factoredDecIH_dlet_literalConstructor interp transform location pattern name lits
   | module_ moduleName decs _ ih =>
     apply factoredDecIH_dmod interp transform moduleName decs
     apply factoredDecIH_list interp transform decs
