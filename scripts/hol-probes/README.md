@@ -1,3 +1,5 @@
+`source_to_flat_list_conversion_probe.out` replays the original local list and character-list decoding proofs and captures their complete typed statements. Lean establishes analogous statements over its factored value relation; full correspondence of that relation and compiler correctness remain open.
+
 `cake_flat_sem_conversions_probe.out` captures typed list and string conversion equations and malformed and valid examples. Lean parity fixtures replay these observations; the source-to-flat relation and compiler correctness remain open.
 
 `source_to_flat_equality_probe.out` replays the original local source-to-flat equality theorem and captures its complete typed statement. Lean proves an analogous equality simulation over its factored relation; the relation's full HOL correspondence and pass correctness remain open.

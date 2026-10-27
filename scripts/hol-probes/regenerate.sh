@@ -241,6 +241,10 @@ run_probe() {
   done
 }
 
+run_probe source_to_flat_list_conversion_probeScript.sml source_to_flat_list_conversion_probe.out \
+  v_to_char_list_typed v_to_list_typed \
+  "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe cake_flat_sem_conversions_probeScript.sml cake_flat_sem_conversions_probe.out \
   v_to_list list_to_v v_to_char_list vs_to_string empty_list integer_list bad_type bad_tail chars bad_char strings bad_string \
   "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/semantics"

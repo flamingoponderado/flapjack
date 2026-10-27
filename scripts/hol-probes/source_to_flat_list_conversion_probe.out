@@ -1,0 +1,2 @@
+v_to_char_list_typed=∀(genv :global_env). genv_c_ok genv.c ⇒ ∀(v1 :semanticPrimitives$v) (v2 :v) (vs1 :string). (v_rel genv v1 v2 :bool) ∧ v_to_char_list v1 = SOME vs1 ⇒ v_to_char_list v2 = SOME vs1
+v_to_list_typed=∀(genv :global_env). genv_c_ok genv.c ⇒ ∀(v1 :semanticPrimitives$v) (v2 :v) (vs1 :semanticPrimitives$v list). (v_rel genv v1 v2 :bool) ∧ v_to_list v1 = SOME vs1 ⇒ ∃(vs2 :v list). v_to_list v2 = SOME vs2 ∧ LIST_REL (v_rel genv :semanticPrimitives$v -> v -> bool) vs1 vs2
