@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDenv
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvalDeclarations
 
 /-! Namespace-domain facts needed by sequential declaration simulation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
@@ -322,5 +323,50 @@ theorem evalDeclare_store_factored {C F : Type} [Nonempty C]
   exact ⟨stored, run, nextInvariant,
     OracleInvariant.factoredInvariant_changeEvalRef interp transform _ newGenv idxs _ flat stored nextInvariant,
     globals, related, nextForward, nextGeneration⟩
+
+/-- Compose the successful declaration induction hypothesis with the actual
+incremental flat sequence and its environment-ID store. The evaluator and
+factored relations remain under HOL correspondence review. -/
+theorem evalDeclare_incremental_success {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (envId : Nat × Nat) (config nextConfig : Config) (decs : List Dec) (flatDecs : List FlatLang.Exp)
+    (before : Option EvalState) (source : SemanticPrimitivesHOL.State F)
+    (flatStart flatMiddle : FlatSem.State C F) (oldGenv newGenv : GlobalEnv)
+    (idxs : NextIndices × NextIndices × Set (Nat × IndexKind))
+    (sourceEnv sourceNew : SemEnv Value) (value : Value) (after : Option EvalState)
+    (n : Nat) (next : NextIndices) (newMap : Environment) (gen : EnvironmentGenerationStore)
+    (body : List FlatLang.Exp)
+    (compiled : incCompileProg envId config decs = (nextConfig, flatDecs))
+    (compiledBody : compileDecs [] 1 config.next (lookupEnvId envId config.envs)
+      ⟨0, config.envs.next, .ln⟩ decs = (n, next, newMap, gen, body))
+    (bodyRun : FlatSem.evaluateDecs
+      { flatStart with globals := flatStart.globals ++ List.replicate (next.vidx - config.next.vidx) none } body =
+      (flatMiddle, none))
+    (nextCfg : OracleInvariant.srcOracNextCfg interp before = some nextConfig)
+    (forward : OracleInvariant.oracForwardRel interp before source.evalState)
+    (growth : GlobalGrowth oldGenv newGenv)
+    (baseInv : GlobalEnvInv oldGenv (lookupEnvId envId config.envs) (fun _ => False) sourceEnv)
+    (newDomain : EnvDomainEq newMap sourceNew)
+    (newInv : GlobalEnvInv newGenv newMap (fun _ => False) sourceNew)
+    (invariant : OracleInvariant.factoredInvariant interp transform gen newGenv idxs source flatMiddle)
+    (generation : OracleInvariant.envGenRel gen source.evalState)
+    (declared : declareEnv source.evalState (extendDecEnv sourceNew sourceEnv) = some (value, after)) :
+    ∃ stored : FlatSem.Value,
+      FlatSem.evaluateDecs flatStart flatDecs =
+        ({ flatMiddle with refs := .refv stored :: flatMiddle.refs.tail }, none) ∧
+      OracleInvariant.factoredInvariant interp transform { gen with next := gen.next + 1 } newGenv idxs
+        { source with evalState := after } { flatMiddle with refs := .refv stored :: flatMiddle.refs.tail } ∧
+      ValueRel newGenv value stored ∧ OracleInvariant.oracForwardRel interp source.evalState after ∧
+      OracleInvariant.envGenRel { gen with next := gen.next + 1 } after := by
+  have stage := evalDeclare_store_factored interp transform envId config nextConfig decs flatDecs before source
+    flatMiddle oldGenv newGenv idxs sourceEnv sourceNew value after compiled nextCfg forward growth baseInv
+    (by simpa [compiledBody] using newDomain) (by simpa [compiledBody] using newInv)
+    (by simpa [compiledBody] using invariant) (by simpa [compiledBody] using generation) declared
+  simp only [compiledBody] at stage
+  obtain ⟨stored, storeRun, _, nextInv, _, related, nextForward, nextGeneration⟩ := stage
+  have full := evaluateIncCompileProg_continue flatStart flatMiddle envId config decs n next newMap gen body
+    compiledBody bodyRun
+  rw [compiled] at full
+  exact ⟨stored, full.trans storeRun, nextInv, related, nextForward, nextGeneration⟩
 
 end Flapjack.Compiler.Backend.SourceToFlat
