@@ -49,6 +49,103 @@ theorem subglobals_trans {α : Type} (first middle last : List (Option α))
   exact (subglobals_iff_observations first last).mpr
     ⟨Nat.le_trans len1 len2, fun n value slot => values2 n value (values1 n value slot)⟩
 
+/-- A list of uninitialized slots is a subglobal list exactly when the target
+has room for those slots. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "subglobals_NONE"]
+theorem subglobals_none {α : Type} (n : Nat) (globals : List (Option α)) :
+    subglobals (List.replicate n none) globals ↔ n ≤ globals.length := by
+  rw [subglobals_iff_observations]
+  have emptySlot : ∀ (count index : Nat),
+      ((List.replicate count none : List (Option α))[index]?).getD none = none := by
+    intro count
+    induction count with
+    | zero => intro index; simp
+    | succ count ih =>
+      intro index
+      cases index with
+      | zero => simp
+      | succ index => simpa [List.replicate_succ] using ih index
+  simp [emptySlot]
+
+/-- Allocating uninitialized global slots preserves all existing globals. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "subglobals_add_NONE"]
+theorem subglobals_add_none {α : Type} (globals : List (Option α)) (n : Nat) :
+    subglobals globals (globals ++ List.replicate n none) := by
+  apply (subglobals_iff_observations _ _).mpr
+  refine ⟨by simp, ?_⟩
+  intro i value slot
+  have bound : i < globals.length := by
+    by_contra notBound
+    simp [List.getElem?_eq_none (Nat.le_of_not_gt notBound)] at slot
+  simpa [List.getElem?_append_left bound] using slot
+
+/-- A shared leading slot has no effect on preservation of the remaining
+slots. This helper supports the original append characterization. -/
+private theorem subglobals_cons_iff {α : Type} (head : Option α)
+    (old new : List (Option α)) :
+    subglobals (head :: old) (head :: new) ↔ subglobals old new := by
+  rw [subglobals_iff_observations, subglobals_iff_observations]
+  constructor
+  · rintro ⟨length, values⟩
+    refine ⟨by simpa using length, ?_⟩
+    intro n value slot
+    simpa using values (n + 1) value (by simpa using slot)
+  · rintro ⟨length, values⟩
+    refine ⟨by simpa using length, ?_⟩
+    intro n value slot
+    cases n with
+    | zero => simpa using slot
+    | succ n => simpa using values n value (by simpa using slot)
+
+private theorem subglobals_prefix_iff {α : Type} (pre old new : List (Option α)) :
+    subglobals (pre ++ old) (pre ++ new) ↔ subglobals old new := by
+  induction pre with
+  | nil => simp
+  | cons head tail ih => simpa [subglobals_cons_iff] using ih
+
+private theorem subglobals_suffix_iff {α : Type} (post old new : List (Option α))
+    (sameLength : old.length = new.length) :
+    subglobals (old ++ post) (new ++ post) ↔ subglobals old new := by
+  rw [subglobals_iff_observations, subglobals_iff_observations]
+  constructor
+  · rintro ⟨_, values⟩
+    refine ⟨by omega, ?_⟩
+    intro n value slot
+    have bound : n < old.length := by
+      by_contra notBound
+      simp [List.getElem?_eq_none (Nat.le_of_not_gt notBound)] at slot
+    have newBound : n < new.length := by omega
+    have preserved := values n value (by simpa [List.getElem?_append_left bound] using slot)
+    simpa [List.getElem?_append_left newBound] using preserved
+  · rintro ⟨_, values⟩
+    refine ⟨by simp [sameLength], ?_⟩
+    intro n value slot
+    by_cases bound : n < old.length
+    · have newBound : n < new.length := by omega
+      have original : old[n]?.getD none = some value := by
+        simpa [List.getElem?_append_left bound] using slot
+      simpa [List.getElem?_append_left newBound] using values n value original
+    · have newBound : ¬ n < new.length := by omega
+      simpa [List.getElem?_append, bound, newBound, sameLength] using slot
+
+/-- A common prefix can be removed from the subglobal relation; a common
+suffix can also be removed when the differing parts have equal lengths. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "subglobals_refl_append"]
+theorem subglobals_refl_append {α : Type} (g1 g2 g3 : List (Option α)) :
+    (subglobals (g1 ++ g2) (g1 ++ g3) ↔ subglobals g2 g3) ∧
+    (g2.length = g3.length → (subglobals (g2 ++ g1) (g3 ++ g1) ↔ subglobals g2 g3)) :=
+  ⟨subglobals_prefix_iff g1 g2 g3, fun sameLength => subglobals_suffix_iff g1 g2 g3 sameLength⟩
+
+/-- Filling a contiguous block of blank slots preserves all previously
+initialized slots, including those after the block. This is Flapjack
+infrastructure for declaration simulation. -/
+theorem subglobals_fill_none {α : Type} (pre values post : List (Option α)) :
+    subglobals (pre ++ (List.replicate values.length none ++ post))
+      (pre ++ (values ++ post)) := by
+  apply (subglobals_prefix_iff pre _ _).mpr
+  apply (subglobals_suffix_iff post _ _ (by simp)).mpr
+  exact (subglobals_none values.length values).mpr (Nat.le_refl _)
+
 /-- Existing global slots and constructor/type lookups survive growth. This
 Flapjack relation exposes the observations needed by the factored relations;
 the slot component agrees with `subglobals` above. -/
@@ -140,6 +237,15 @@ theorem GlobalGrowth.append (env : GlobalEnv) (extra : List (Option FlatSem.Valu
     by_contra notBound
     simp [List.getElem?_eq_none (Nat.le_of_not_gt notBound)] at slot
   simpa [List.getElem?_append_left bound] using slot
+
+/-- Filling reserved slots preserves the factored global-growth invariant. -/
+theorem GlobalGrowth.fillNone (env : GlobalEnv) (pre values post : List (Option FlatSem.Value))
+    (slots : env.v = pre ++ (List.replicate values.length none ++ post)) :
+    GlobalGrowth env { env with v := pre ++ (values ++ post) } := by
+  apply GlobalGrowth.ofSubglobals
+  · simpa [slots] using subglobals_fill_none pre values post
+  · exact fun _ _ h => h
+  · exact fun _ _ h => h
 
 /-- Global variable lookup relations survive growth. -/
 theorem globalLookupRel_growth (old new : GlobalEnv) (growth : GlobalGrowth old new)

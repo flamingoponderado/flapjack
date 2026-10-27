@@ -1,6 +1,30 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "subglobals_NONE",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalWeakening.lean",
+    "lean_name": "subglobals_none",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed subglobals_none probe with the original source and Lean statement: both quantify n and a list of options over one arbitrary element type and characterize subglobals from n NONE slots by n <= the target length, without extra hypotheses."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "subglobals_add_NONE",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalWeakening.lean",
+    "lean_name": "subglobals_add_none",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed subglobals_add_none probe with the original source and Lean statement: both quantify one arbitrary option list and n, and assert its subglobals relation to the same list followed by n NONE slots."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "subglobals_refl_append",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalWeakening.lean",
+    "lean_name": "subglobals_refl_append",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the local source statement with append_replay, a typed replay of its original HOL proof: both quantify three option lists over the same arbitrary element type and state the two equivalences, with equal lengths required only for the common suffix case. HOL Boolean equality is Lean iff; list, option, length and append are constructor-for-constructor."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "submap_distinct_fupdate_flookup",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/FiniteMapGrowth.lean",
     "lean_name": "finiteSubmap_update_fresh",
