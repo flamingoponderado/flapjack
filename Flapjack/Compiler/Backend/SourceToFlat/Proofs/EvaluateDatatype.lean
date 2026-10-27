@@ -760,4 +760,151 @@ theorem factoredInvariant_installAllocatedConstructors {C F : Type} [Nonempty C]
   · exact free
   · exact fresh
 
+/-- Reserving a fresh type and installing all of its distinct constructor
+entries preserves the factored invariant, including for an empty type. -/
+theorem factoredInvariant_allocateConstructorList {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
+    (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : State F) (flat : FlatSem.State C F) (tags : List (Nat × Nat))
+    (entries : List (ConN × Nat × Nat))
+    (valid : factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (fits : start.tidx + 1 ≤ finish.tidx)
+    (names : (entries.map Prod.fst).Nodup) (keys : (entries.map Prod.snd).Nodup)
+    (members : ∀ name tag arity, (name, tag, arity) ∈ entries → (tag, arity) ∈ tags) :
+    factoredInvariant interp transform gen
+      (installTypeConstructorList start.tidx source.nextTypeStamp entries
+        { genv with tys := finiteUpdate genv.tys start.tidx tags })
+      ({ start with tidx := start.tidx + 1 }, finish, other)
+      { source with nextTypeStamp := source.nextTypeStamp + 1 } flat := by
+  classical
+  cases entries with
+  | nil =>
+    exact factoredInvariant_installTypeTable interp transform gen genv start finish other source flat tags valid fits
+  | cons head rest =>
+    rcases head with ⟨name, tag, arity⟩
+    have names' := List.nodup_cons.mp names
+    have keys' := List.nodup_cons.mp keys
+    have headMember : (name, tag, arity) ∈ (name, tag, arity) :: rest := by simp
+    let next := { { genv with tys := finiteUpdate genv.tys start.tidx tags } with
+      c := finiteUpdate genv.c ((tag, some start.tidx), arity) (.typeStamp name source.nextTypeStamp) }
+    have nextValid := factoredInvariant_allocateFirstTypeConstructor interp transform gen genv start finish other
+      source flat tag arity name tags valid fits (members name tag arity headMember)
+    have table : next.tys.lookup start.tidx = some tags := by simp [next, finiteUpdate, FUPDATE_HOL]
+    have anchor : next.c.lookup ((tag, some start.tidx), arity) = some (.typeStamp name source.nextTypeStamp) := by
+      simp [next, finiteUpdate, FUPDATE_HOL]
+    have range := valid.2.2.2.1
+    have free := (idxRangeRel_type_free interp genv source.nextTypeStamp source.nextExnStamp source.evalState
+      start finish other range (by omega)).2
+    have fresh := idxRangeRel_typeStamp_fresh interp genv source.nextTypeStamp source.nextExnStamp source.evalState
+      start finish other range
+    change factoredInvariant interp transform gen
+      (installTypeConstructorList start.tidx source.nextTypeStamp rest next)
+      ({ start with tidx := start.tidx + 1 }, finish, other)
+      { source with nextTypeStamp := source.nextTypeStamp + 1 } flat
+    apply factoredInvariant_installConstructorList interp transform gen { start with tidx := start.tidx + 1 }
+      finish other { source with nextTypeStamp := source.nextTypeStamp + 1 } flat start.tidx source.nextTypeStamp
+      tags tag arity name rest next nextValid table (by simp) anchor names'.2 keys'.2
+    · intro name' tag' arity' present
+      exact members name' tag' arity' (List.mem_cons_of_mem _ present)
+    · intro name' tag' arity' present
+      have different : ((tag', some start.tidx), arity') ≠ ((tag, some start.tidx), arity) := by
+        intro same
+        have pair : (tag', arity') = (tag, arity) := by simpa [and_assoc] using same
+        apply keys'.1
+        exact List.mem_map.mpr ⟨(name', tag', arity'), present, pair⟩
+      simpa [next, finiteUpdate, FUPDATE_HOL, different] using free tag' arity'
+    · intro name' tag' arity' present key
+      have different : name' ≠ name := by
+        intro same
+        apply names'.1
+        exact List.mem_map.mpr ⟨(name', tag', arity'), present, same⟩
+      by_cases atKey : key = ((tag, some start.tidx), arity)
+      · subst key
+        simp [next, finiteUpdate, FUPDATE_HOL, Ne.symm different]
+      · simpa [next, finiteUpdate, FUPDATE_HOL, atKey] using fresh name' key
+
+/-- Allocating all constructors produced by `allocTags` preserves the
+factored invariant. The table is reversed exactly as in the compiler pass. -/
+theorem factoredInvariant_allocateTags {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
+    (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : State F) (flat : FlatSem.State C F) (constructors : List (ConN × List AstT))
+    (valid : factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (fits : start.tidx + 1 ≤ finish.tidx) (names : (constructors.map Prod.fst).Nodup) :
+    factoredInvariant interp transform gen
+      (installTypeConstructorList start.tidx source.nextTypeStamp
+        (allocatedConstructorEntries (M := ModN) constructors.reverse)
+        { genv with tys := finiteUpdate genv.tys start.tidx ((allocTags1 constructors.reverse :
+          Namespace ModN ConN Nat × Spt Nat × List (Nat × Nat)).2.2.reverse) })
+      ({ start with tidx := start.tidx + 1 }, finish, other)
+      { source with nextTypeStamp := source.nextTypeStamp + 1 } flat := by
+  have reversedNames : (constructors.reverse.map Prod.fst).Nodup := by
+    rw [List.map_reverse, List.Nodup, List.pairwise_reverse]
+    exact names.imp (fun h => Ne.symm h)
+  have distinct := allocatedConstructorEntries_nodup (M := ModN) constructors.reverse reversedNames
+  apply factoredInvariant_allocateConstructorList interp transform gen genv start finish other source flat
+    (allocTags1 constructors.reverse : Namespace ModN ConN Nat × Spt Nat × List (Nat × Nat)).2.2.reverse
+    (allocatedConstructorEntries (M := ModN) constructors.reverse) valid fits distinct.1 distinct.2
+  intro name tag arity member
+  simp only [List.mem_reverse]
+  rw [← (allocatedConstructorEntries_projections (M := ModN) constructors.reverse).2]
+  exact List.mem_map.mpr ⟨(name, tag, arity), member, rfl⟩
+
+/-- Installing distinct, unused constructor keys preserves every previous
+global binding throughout the whole list. -/
+theorem GlobalGrowth.installConstructorList (idx stamp : Nat) (entries : List (ConN × Nat × Nat)) :
+    ∀ genv : GlobalEnv, (entries.map Prod.snd).Nodup →
+      (∀ name tag arity, (name, tag, arity) ∈ entries → genv.c.lookup ((tag, some idx), arity) = none) →
+      GlobalGrowth genv (installTypeConstructorList idx stamp entries genv) := by
+  classical
+  induction entries with
+  | nil =>
+    intro genv _ _
+    exact GlobalGrowth.refl genv
+  | cons entry rest ih =>
+    rcases entry with ⟨name, tag, arity⟩
+    intro genv distinct free
+    have distinct' := List.nodup_cons.mp distinct
+    have headFree := free name tag arity (by simp)
+    let next := { genv with c := finiteUpdate genv.c ((tag, some idx), arity) (.typeStamp name stamp) }
+    have first := GlobalGrowth.installTypeConstructor genv idx tag arity name stamp headFree
+    have remainingFree : ∀ name' tag' arity', (name', tag', arity') ∈ rest →
+        next.c.lookup ((tag', some idx), arity') = none := by
+      intro name' tag' arity' present
+      have different : ((tag', some idx), arity') ≠ ((tag, some idx), arity) := by
+        intro same
+        have pair : (tag', arity') = (tag, arity) := by simpa [and_assoc] using same
+        apply distinct'.1
+        exact List.mem_map.mpr ⟨(name', tag', arity'), present, pair⟩
+      simpa [next, finiteUpdate, FUPDATE_HOL, different] using
+        free name' tag' arity' (List.mem_cons_of_mem _ present)
+    exact first.trans (ih next distinct'.2 remainingFree)
+
+/-- The fresh allocation generated by `allocTags` extends the original
+global environment. -/
+theorem GlobalGrowth.allocateTags {C : Type}
+    (interp : Option (Value → Option (Config × C))) (genv : GlobalEnv)
+    (nextType nextExn : Nat) (evalState : Option EvalState)
+    (start finish : NextIndices) (other : Set (Nat × IndexKind)) (constructors : List (ConN × List AstT))
+    (range : idxRangeRel interp genv nextType nextExn evalState (start, finish, other))
+    (fits : start.tidx < finish.tidx) :
+    GlobalGrowth genv
+      (installTypeConstructorList start.tidx nextType (allocatedConstructorEntries (M := ModN) constructors.reverse)
+        { genv with tys := finiteUpdate genv.tys start.tidx ((allocTags1 constructors.reverse :
+          Namespace ModN ConN Nat × Spt Nat × List (Nat × Nat)).2.2.reverse) }) := by
+  have free := idxRangeRel_type_free interp genv nextType nextExn evalState start finish other range fits
+  let reserved := { genv with tys := finiteUpdate genv.tys start.tidx ((allocTags1 constructors.reverse :
+    Namespace ModN ConN Nat × Spt Nat × List (Nat × Nat)).2.2.reverse) }
+  have tableGrowth := GlobalGrowth.installTypeTable genv start.tidx
+    (allocTags1 constructors.reverse : Namespace ModN ConN Nat × Spt Nat × List (Nat × Nat)).2.2.reverse free.1
+  have keys : ((allocatedConstructorEntries (M := ModN) constructors.reverse).map Prod.snd).Nodup := by
+    rw [(allocatedConstructorEntries_projections (M := ModN) constructors.reverse).2]
+    exact allocTags1_tags_nodup (M := ModN) constructors.reverse
+  have constructorGrowth := GlobalGrowth.installConstructorList start.tidx nextType
+    (allocatedConstructorEntries (M := ModN) constructors.reverse) reserved keys
+    (fun _ tag arity _ => free.2 tag arity)
+  exact tableGrowth.trans constructorGrowth
+
 end Flapjack.Compiler.Backend.SourceToFlat
