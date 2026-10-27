@@ -101955,5 +101955,70 @@
     "lean_path": "Flapjack/CakeParser/LexerImpl.lean", "lean_name": "lexAuxTokens",
     "hol_path": "cakeml/compiler/parsing/lexer_implScript.sml", "hol_name": "lex_aux_tokens_def",
     "statement_status": "pending_statement_review", "reviewer": "Top-level token grouping transcribed; complete source review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/Grammar.lean", "lean_name": "validMultSym",
+    "hol_path": "cakeml/semantics/gramScript.sml", "hol_name": "validMultSym_def",
+    "statement_status": "pending_statement_review", "reviewer": "Grammar token predicate or carrier transcribed; complete source review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/Grammar.lean", "lean_name": "validAddSym",
+    "hol_path": "cakeml/semantics/gramScript.sml", "hol_name": "validAddSym_def",
+    "statement_status": "pending_statement_review", "reviewer": "Grammar token predicate or carrier transcribed; complete source review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/Grammar.lean", "lean_name": "validRelSym",
+    "hol_path": "cakeml/semantics/gramScript.sml", "hol_name": "validRelSym_def",
+    "statement_status": "pending_statement_review", "reviewer": "Grammar token predicate or carrier transcribed; complete source review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/Grammar.lean", "lean_name": "validListSym",
+    "hol_path": "cakeml/semantics/gramScript.sml", "hol_name": "validListSym_def",
+    "statement_status": "pending_statement_review", "reviewer": "Grammar token predicate or carrier transcribed; complete source review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/Grammar.lean", "lean_name": "validPrefixSym",
+    "hol_path": "cakeml/semantics/gramScript.sml", "hol_name": "validPrefixSym_def",
+    "statement_status": "pending_statement_review", "reviewer": "Grammar token predicate or carrier transcribed; complete source review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PegChecks.lean", "lean_name": "AlphaCheck",
+    "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "token_alpha_check",
+    "statement_status": "pending_statement_review", "reviewer": "Grammar token predicate or carrier transcribed; complete source review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PegChecks.lean", "lean_name": "SymbolCheck",
+    "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "token_symbol_check",
+    "statement_status": "pending_statement_review", "reviewer": "Grammar token predicate or carrier transcribed; complete source review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PegChecks.lean", "lean_name": "LongidCheck",
+    "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "token_longid_check",
+    "statement_status": "pending_statement_review", "reviewer": "Grammar token predicate or carrier transcribed; complete source review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PegChecks.lean", "lean_name": "TokenCheck",
+    "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "token_check",
+    "statement_status": "pending_statement_review", "reviewer": "Grammar token predicate or carrier transcribed; complete source review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PegChecks.lean", "lean_name": "evalAlpha",
+    "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "eval_token_alpha_check_def",
+    "statement_status": "pending_statement_review", "reviewer": "Grammar token predicate or carrier transcribed; complete source review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PegChecks.lean", "lean_name": "evalSymbol",
+    "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "eval_token_symbol_check_def",
+    "statement_status": "pending_statement_review", "reviewer": "Grammar token predicate or carrier transcribed; complete source review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PegChecks.lean", "lean_name": "evalLongid",
+    "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "eval_token_longid_check_alt_def",
+    "statement_status": "pending_statement_review", "reviewer": "Grammar token predicate or carrier transcribed; complete source review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PegChecks.lean", "lean_name": "evalToken",
+    "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "eval_token_check_def",
+    "statement_status": "pending_statement_review", "reviewer": "Grammar token predicate or carrier transcribed; complete source review remains pending."
   }
 ]

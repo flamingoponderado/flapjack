@@ -56,6 +56,8 @@
 
 `cake_lexer_probe.out` captures CakeML tokens and source locations for identifiers, numbers, nested comments, strings, characters, FFI names and lexical errors. `cake_lexer_chunks_probe.out` captures top-level semicolon grouping and incomplete trailing input. The bounded Lean lexer consumes the HOL byte-character carrier; CakeML parsing and type inference remain separate work.
 
+`cake_peg_checks_probe.out` captures CakeML grammar operator classes and first-order PEG token predicates, including reserved names and qualified identifiers. It covers parser prerequisites rather than a complete parser.
+
 `default_frontend_config_probe.out` captures the original configured frontend's entry location, fresh-name counters, inline-cache keys, program size and symbol-name keys for that same example.
 
 `tmc_ops_word_probe.out` captures mutable-constructor, finalisation and update lowering under simple and generational GC configurations. `tmc_program_word_probe.out` captures all word functions for a positive TMC example after BVI inlining and data lowering.

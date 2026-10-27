@@ -47,6 +47,8 @@ the cited name occurs in one of the two syntactic forms.
 | `semantics/tokensScript.sml` | `Flapjack/CakeParser/Tokens.lean` |
 | `semantics/lexer_funScript.sml` | `Flapjack/CakeParser/Lexer.lean` |
 | `compiler/parsing/lexer_implScript.sml` | `Flapjack/CakeParser/LexerImpl.lean` |
+| `semantics/gramScript.sml` | `Flapjack/CakeParser/Grammar.lean` |
+| `compiler/parsing/pegexec_cml_foScript.sml` | `Flapjack/CakeParser/PegChecks.lean` |
 | `pancake/pan_to_targetScript.sml` | `Flapjack/Pancake/PanToTarget.lean` |
 | `pancake/proofs/pan_to_targetProofScript.sml` | `Flapjack/Pancake/Proofs/PanToTarget.lean` and its `PanToTarget/` submodules |
 | `panLangScript.sml` | `Flapjack/Pancake/PanLang.lean` (exact `mlstring`-named syntax over the faithful carriers in `Flapjack/Pancake/PanLang/Shape.lean`, `Flapjack/Pancake/PanLang/Exp.lean` and `Flapjack/Pancake/PanLang/Prog.lean` and `Flapjack/Pancake/PanLang/Decl.lean` (`fun_decl`, `decl`, `struct_info`, byte-ranged production roundtrips and the MlString-keyed struct-context pass-boundary bridge), and follow-ups) |

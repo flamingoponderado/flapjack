@@ -148,6 +148,10 @@ probe_needs_refresh() {
        ( "$cake_dir/semantics/lexer_funScript.sml" -nt "$output" ||
          "$cake_dir/semantics/tokensScript.sml" -nt "$output" ||
          "$cake_dir/compiler/parsing/lexer_implScript.sml" -nt "$output" ) ]] ||
+    [[ "$(basename "$probe")" == cake_peg_checks_probeScript.sml &&
+       ( "$cake_dir/semantics/gramScript.sml" -nt "$output" ||
+         "$cake_dir/semantics/tokensScript.sml" -nt "$output" ||
+         "$cake_dir/semantics/tokenUtilsScript.sml" -nt "$output" ) ]] ||
     [[ ( "$(basename "$probe")" == bignum_word_probeScript.sml ||
          "$(basename "$probe")" == full_cake_word_probeScript.sml ||
          "$(basename "$probe")" == full_inline_cake_word_probeScript.sml ||
@@ -340,6 +344,9 @@ run_probe cake_lexer_probeScript.sml cake_lexer_probe.out \
 
 run_probe cake_lexer_chunks_probeScript.sml cake_lexer_chunks_probe.out \
   chunks "$cake_dir/compiler/parsing/lexer_implScript.sml" "$cake_dir/compiler/parsing"
+
+run_probe cake_peg_checks_probeScript.sml cake_peg_checks_probe.out \
+  symbols alpha tokens "$cake_dir/compiler/parsing/pegexec_cml_foScript.sml" "$cake_dir/compiler/parsing"
 
 run_probe bvl_inline_cake_bvi_probeScript.sml bvl_inline_cake_bvi_probe.out \
   code "$cake_dir/compiler/backend/bvl_inlineScript.sml" "$cake_dir/compiler/backend"

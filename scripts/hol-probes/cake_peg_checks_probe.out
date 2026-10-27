@@ -1,0 +1,3 @@
+symbols=[(F,F,F,F,F); (F,T,F,F,F); (F,F,F,F,F); (F,T,F,F,F); (F,F,F,F,F); (F,F,T,F,F); (F,F,F,F,F); (F,F,F,F,F); (F,F,F,T,F); (F,F,F,F,T); (F,F,T,F,F); (F,F,F,F,T); (T,F,F,F,F); (F,F,F,T,F)]
+alpha=[[F; F; F]; [T; T; F]; [T; F; T]; [T; F; F]; [T; F; F]; [T; F; F]; [T; F; F]; [T; F; T]]
+tokens=[T; T; F; T; T; T; F]
