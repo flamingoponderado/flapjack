@@ -431,6 +431,15 @@ unsupported; their precedence over help is preserved by reporting that limit.
 The feature-query checks cover every feature in the pinned NEWS file, including
 disabled entries, duplicate flags, and precedence over configuration errors.
 
+`python3 scripts/check-cake-pinned-parity.py` checks additional successful,
+basis-enabled programs against complete-output captures from the pinned
+compiler. The cases exercise observable array and byte-array updates, strings,
+closures, exceptions, lists, vectors, integers and words. Use
+`--check-reference /path/to/pinned/cake` to rerun the original alongside
+Flapjack, or `--record-reference /path/to/pinned/cake` to regenerate captures;
+both commands verify the reported CakeML and HOL revisions. These finite
+comparisons are regression evidence, not a proof of output parity.
+
 An additional unverified bootstrap provides an original compiler built from
 the pinned translated CakeML compiler AST. Given the pinned CakeML and HOL
 checkouts, an already-built `compiler64ProgTheory`, and the historical bootstrap

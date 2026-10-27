@@ -71,6 +71,7 @@ jobs:
           python3 scripts/generate-cake-features.py --check
           python3 scripts/check-cake-features.py
           python3 scripts/check-cake-cli-parity.py
+          python3 scripts/check-cake-pinned-parity.py
 
       - name: Check Pan-to-Crep intermediate fixture coverage
         run: python3 scripts/pan-to-crep-coverage-report.py --check
