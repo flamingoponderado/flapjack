@@ -33,3 +33,15 @@ val _ = capture "config_gc" ``
 val _ = capture "config_gc_ffi" ``
  let c = (ARB:data_to_word$config) with <|call_empty_ffi := T|> in
  data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$MemOp closLang$ConfigGC) [1;2] NONE) : 64 wordLang$prog # num``;
+val _ = capture "len_zero" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$BlockOp (closLang$LenEq 0)) [1] NONE) : 64 wordLang$prog # num``;
+val _ = capture "len_small" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$BlockOp (closLang$LenEq 1)) [1] NONE) : 64 wordLang$prog # num``;
+val _ = capture "len_header" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$BlockOp (closLang$LenEq 3)) [1] NONE) : 64 wordLang$prog # num``;
+val _ = capture "len_overflow" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$BlockOp (closLang$LenEq 18446744073709551616)) [1] NONE) : 64 wordLang$prog # num``;

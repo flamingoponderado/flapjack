@@ -238,6 +238,25 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
           some (.ite .test (adjustVar src) (.imm 1) (.assign (adjustVar dest) (.const 0))
             (.assign (adjustVar dest) length), l)
       | _ => some (.skip, l)
+  | l, .assign dest (.blockOp (.lenEq len)) args _ =>
+      match args with
+      | [src] =>
+          let src := adjustVar src
+          if len = 0 then
+            some (boolResult dest .test src (.imm 1), l)
+          else if len < 2 ^ conf.lenBits - 1 then
+            let mask := BitVec.ofNat width (2 ^ (conf.lenBits + 1) - 1)
+            let bits := pointerBits conf 0 len ||| 1
+            some (.seq (.assign 1 (.op .and [.var src, .const mask]))
+              (boolResult dest .equal 1 (.imm bits)), l)
+          else if len < 2 ^ width then
+            some (listSeq [
+              .assign 1 (.const 0),
+              .ite .test src (.imm 1) .skip
+                (.assign 1 (shiftN .lsr (.load (realAddr conf src)) (width - conf.lenSize))),
+              boolResult dest .equal 1 (.imm (BitVec.ofNat width len))], l)
+          else some (.assign (adjustVar dest) (.const 2), l)
+      | _ => some (.skip, l)
   | l, .assign dest (.blockOp (.tagLenEq tag len)) args _ =>
       match args with
       | [src] =>

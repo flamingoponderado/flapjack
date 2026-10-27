@@ -111,6 +111,37 @@ private def conf : Config := ⟨1, 2, 3, 16, true, false, false, false, false, f
   | some (.skip, 2) => true
   | _ => false
 
+-- LenEq uses an immediate for short blocks and the header for longer ones.
+#guard match compileControl? (width := 64) conf 5 2
+    (.assign 3 (.blockOp (.lenEq 0)) [1] none) with
+  | some (.ite .test 4 (.imm 1) (.assign 8 (.const 18)) (.assign 8 (.const 2)), 2) => true
+  | _ => false
+
+#guard match compileControl? (width := 64) conf 5 2
+    (.assign 3 (.blockOp (.lenEq 1)) [1] none) with
+  | some (.seq (.assign 1 (.op .and [.var 4, .const 7]))
+      (.ite .equal 1 (.imm 3) (.assign 8 (.const 18)) (.assign 8 (.const 2))), 2) => true
+  | _ => false
+
+#guard match compileControl? (width := 64) conf 5 2
+    (.assign 3 (.blockOp (.lenEq 3)) [1] none) with
+  | some (.seq (.assign 1 (.const 0))
+      (.seq (.ite .test 4 (.imm 1) .skip
+        (.assign 1 (.shift .lsr (.load (.op .add [.lookup .currHeap,
+          .shift .lsr (.var 4) (.const 5)])) (.const 48))))
+        (.ite .equal 1 (.imm 3) (.assign 8 (.const 18)) (.assign 8 (.const 2)))), 2) => true
+  | _ => false
+
+#guard match compileControl? (width := 64) conf 5 2
+    (.assign 3 (.blockOp (.lenEq 18446744073709551616)) [1] none) with
+  | some (.assign 8 (.const 2), 2) => true
+  | _ => false
+
+#guard match compileControl? (width := 64) conf 5 2
+    (.assign 3 (.blockOp (.lenEq 1)) [] none) with
+  | some (.skip, 2) => true
+  | _ => false
+
 private def matchesWord64Shift (shift : Shift) (amount expected : Nat) : Bool :=
   match compileControl? (width := 64) conf 5 2
       (.assign 3 (.wordOp (.wordShift .w64 shift amount)) [1] none) with
