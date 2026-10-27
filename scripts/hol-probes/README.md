@@ -1,3 +1,5 @@
+`cake_flat_sem_pattern_probe.out` captures the original typed stamp relation, matching equations, and matched literal, constructor, tuple, and error-precedence observations. The Lean matcher is a semantic prerequisite; source-to-flat matching preservation and whole compiler correctness remain open.
+
 `source_to_flat_test_probe.out` replays the original local primitive-test preservation proof and captures its typed statement. Lean proves the analogous statement over its factored relation; full HOL correspondence and compiler correctness remain open.
 
 `cake_flat_sem_test_probe.out` captures the typed flat primitive-test equations and representative equality, type-error, integer, character and string ordering cases. The Lean simulation uses the factored relation and inherits the documented rational-cut assumption; full HOL correspondence and compiler correctness remain open.

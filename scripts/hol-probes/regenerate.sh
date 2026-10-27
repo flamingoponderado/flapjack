@@ -241,6 +241,10 @@ run_probe() {
   done
 }
 
+run_probe cake_flat_sem_pattern_probeScript.sml cake_flat_sem_pattern_probe.out \
+  stamp_rules_typed stamp_cases_typed pmatch_typed rows_typed wildcard literal_same literal_mismatch literal_wrong_type tuple_length different_constructor wrong_constructor_type list_error_precedence \
+  "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe source_to_flat_test_probeScript.sml source_to_flat_test_probe.out \
   do_test_lemma_typed \
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"

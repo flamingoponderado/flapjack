@@ -105217,5 +105217,37 @@
     "lean_name": "subscriptExnV",
     "statement_status": "reviewed_exact",
     "reviewer": "Codex source comparison: Both sides are the nullary constructor with subscript_tag, no type ID, and an empty value list; the typed original equation is captured in source_to_flat_primitive_type_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "pmatch_stamps_ok",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/PatternMatch.lean",
+    "lean_name": "PmatchStampsOk",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: The original three rules retain exception stamps, matching type identifiers and both constructor/arity membership conditions, and equal tuple arity. The case implementation is proved equivalent to this inductive relation. The complete typed original declarations and finite observations are captured in cake_flat_sem_pattern_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "pmatch_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/PatternMatch.lean",
+    "lean_name": "pmatch",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: All original variable, wildcard, literal, constructor, as-pattern, reference, and mismatch clauses use the same state, bindings, type errors, and recursive pattern lists. The complete typed original declarations and finite observations are captured in cake_flat_sem_pattern_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "pmatch_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/PatternMatch.lean",
+    "lean_name": "pmatchList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: The original list clauses preserve binding order and check later patterns for type errors even after an earlier non-match. The complete typed original declarations and finite observations are captured in cake_flat_sem_pattern_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "pmatch_rows_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/PatternMatch.lean",
+    "lean_name": "pmatchRows",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: The original recursive clauses select the first match while retaining a type error from any later row. The complete typed original declarations and finite observations are captured in cake_flat_sem_pattern_probe."
   }
 ]
