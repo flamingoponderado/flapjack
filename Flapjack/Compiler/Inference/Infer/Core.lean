@@ -17,6 +17,7 @@ inductive Error where
   | duplicateDefinitionVariable : MlString → Error
   | duplicateFunctionName : MlString → Bool → Error
   | duplicateAbbreviationVariable : MlString → MlString → Error
+  | constructorArity : Ident MlString MlString → Nat → Nat → Error
   | typeConstructorArity : Ident MlString MlString → Nat → Nat → Error
   | duplicateTypeName : MlString → Error
   | duplicateConstructor : MlString → MlString → Error
@@ -49,6 +50,7 @@ private def typeNamesFuel : Nat → MlString → Namespace MlString MlString
 
 private def withLoc (loc : Flapjack.Misc.Location.Locs) (env : Env) (action : M α) : M α := fun state =>
   match action state with
+  | .error .valueRestriction => .error (.located loc .valueRestriction)
   | .error (.undefinedVariable name) => .error (.located loc (.undefinedVariable name))
   | .error (.undefinedConstructor name) => .error (.located loc (.undefinedConstructor name))
   | .error (.undefinedTypeConstructor name) => .error (.located loc (.undefinedTypeConstructor name))
@@ -58,6 +60,7 @@ private def withLoc (loc : Flapjack.Misc.Location.Locs) (env : Env) (action : M 
   | .error (.duplicateDefinitionVariable name) => .error (.located loc (.duplicateDefinitionVariable name))
   | .error (.duplicateFunctionName name isLocal) => .error (.located loc (.duplicateFunctionName name isLocal))
   | .error (.duplicateAbbreviationVariable name typ) => .error (.located loc (.duplicateAbbreviationVariable name typ))
+  | .error (.constructorArity name actual expected) => .error (.located loc (.constructorArity name actual expected))
   | .error (.typeConstructorArity name actual expected) => .error (.located loc (.typeConstructorArity name actual expected))
   | .error (.duplicateTypeName name) => .error (.located loc (.duplicateTypeName name))
   | .error (.duplicateConstructor name typ) => .error (.located loc (.duplicateConstructor name typ))
@@ -169,7 +172,7 @@ private def inferPatWorker : Nat → Nat → Env → Pat → M (InferT × List (
       let (vars, expected, typeId) ← ctorInfo env name
       let (actual, bindings) ← inferPatsWorker fuel unifFuel env ps
       let freshVars ← freshMany vars.length
-      if actual.length != expected.length then fail .invalidPattern else
+      if actual.length != expected.length then fail (.constructorArity name actual.length expected.length) else
       constrainMany unifFuel actual (expected.map (inferTypeSubst (List.zip vars freshVars)))
       return (.app freshVars typeId, bindings)
     | .pref p =>
@@ -341,7 +344,7 @@ private def inferExprWorker : Nat → Nat → Env → Exp → M InferT
       let (vars, expected, typeId) ← ctorInfo env name
       let actual ← inferExprsWorker fuel unifFuel env es
       let freshVars ← freshMany vars.length
-      if actual.length != expected.length then fail .mismatch else
+      if actual.length != expected.length then fail (.constructorArity name actual.length expected.length) else
       constrainMany unifFuel actual (expected.map (inferTypeSubst (List.zip vars freshVars)))
       return .app freshVars typeId
     | .fn v body =>

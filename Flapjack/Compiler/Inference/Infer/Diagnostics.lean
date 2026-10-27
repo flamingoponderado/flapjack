@@ -117,6 +117,12 @@ def renderTypeMismatch (input : List HolChar) : Error → Option (List HolChar)
   | .located loc (.typeMismatchNames names left right) => renderTypes input loc names left right
   | _ => none
 
+/-- Render the value restriction at the declaration location. -/
+def renderValueRestriction (input : List HolChar) : Error → Option (List HolChar)
+  | .located loc .valueRestriction => some (ascii "### ERROR: type error\nValue restriction violated at " ++
+      sourceLocation input (some loc) ++ ascii "\nProgram exited with nonzero exit code.\n")
+  | _ => none
+
 /-- Render duplicate names rejected by datatype definitions. -/
 def renderDatatypeError (input : List HolChar) : Error → Option (List HolChar)
   | .located loc error => do
@@ -141,6 +147,8 @@ def renderBindingError (input : List HolChar) : Error → Option (List HolChar)
       | .duplicateFunctionName name isLocal => some (ascii "Duplicate function name " ++ name.explode ++
           ascii (if isLocal then " in mutually recursive function definition" else " a mutually recursive function definition"))
       | .duplicateAbbreviationVariable name typ => some (ascii "Duplicate type variable bindings for " ++ name.explode ++ ascii " in type abbreviation " ++ typ.explode)
+      | .constructorArity name actual expected => some (ascii "Constructor " ++ nameBytes name ++
+          ascii (" given " ++ toString actual ++ " arguments, but expected " ++ toString expected))
       | .typeConstructorArity name actual expected => some (ascii "Type constructor " ++ nameBytes name ++
           ascii (" given " ++ toString actual ++ " arguments, but expected " ++ toString expected))
       | _ => none
