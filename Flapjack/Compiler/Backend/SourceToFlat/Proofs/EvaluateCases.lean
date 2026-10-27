@@ -5,8 +5,8 @@ import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 import Flapjack.EvaluateHOL.Definition
 
 /-! Initial source-to-flat expression simulations. These are Flapjack-specific
-infrastructure over the factored relations and the fuel-bounded flat
-evaluator, not cases of the unbounded HOL `compile_correct` theorem. -/
+infrastructure over the factored relations and the bounded and clocked flat
+evaluators, not cases of the full HOL `compile_correct` theorem. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.SemanticPrimitivesHOL
 open Flapjack.Compiler.Backend.BackendCommon

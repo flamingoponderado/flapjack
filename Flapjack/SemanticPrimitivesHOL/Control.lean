@@ -24,6 +24,12 @@ def doIf {α : Type} (value : Value) (yes no : α) : Option α :=
   | some false => some no
   | none => none
 
+/-- A source Boolean chooses its corresponding branch. This is Flapjack
+infrastructure for source-to-flat simulation. -/
+theorem doIf_boolValue {α : Type} (b : Bool) (yes no : α) :
+    doIf (boolValue b) yes no = some (if b then yes else no) := by
+  cases b <;> rfl
+
 /-- Flapjack infrastructure: successful source conditionals expose the Boolean
 constructor and selected branch. -/
 theorem doIf_success_boolean {α : Type} (value : Value) (yes no result : α)

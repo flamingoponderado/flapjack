@@ -241,6 +241,10 @@ run_probe() {
   done
 }
 
+run_probe cake_source_evaluate_length_probeScript.sml cake_source_evaluate_length_probe.out \
+  evaluate_length_typed evaluate_sing_typed \
+  "$cake_dir/semantics/proofs/evaluatePropsScript.sml" "$cake_dir/semantics/proofs"
+
 run_probe cake_flat_sem_evaluate_probeScript.sml cake_flat_sem_evaluate_probe.out \
   eval_lit eval_missing eval_call eval_timeout eval_raise_handle eval_reference_order eval_match_failure eval_force eval_decs_unit eval_decs_nonunit \
   "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/semantics"
