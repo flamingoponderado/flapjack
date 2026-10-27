@@ -22,6 +22,134 @@ noncomputable def factoredInvariant {C F : Type} [Nonempty C]
   evalRefInv (flat.globals.take 1) (flat.refs.take 1) ∧ envGenInv gen ∧
   finIdxMatch flat.globals.length idxs.2.1 (srcOracNextCfg interp source.evalState)
 
+/-- Declaring an oracle environment preserves the factored simulation
+invariant, provided the next compiler configuration contains the new map.
+This is a partial step toward the HOL declaration theorem; the factored
+relations still require source correspondence review. -/
+theorem factoredInvariant_declareEnv {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
+    (idxs : NextIndices × NextIndices × Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (state : EvalOracleState) (env : SemEnv Value) (storedEnvs : List (SemEnv Value))
+    (sourceState : source.evalState = some (.evalOracle state))
+    (found : state.envs[state.generation]? = some storedEnvs)
+    (valid : factoredInvariant interp transform gen genv idxs source flat)
+    (newMap : ∀ config, srcOracNextCfg interp (some (.evalOracle state)) = some config →
+      ∃ mapGen compMap, Flapjack.sptLookup state.generation config.envs.envGens = some mapGen ∧
+        Flapjack.sptLookup storedEnvs.length mapGen = some compMap ∧
+        GlobalEnvInv genv compMap (fun _ => False) env) :
+    factoredInvariant interp transform { gen with next := gen.next + 1 } genv idxs
+      { source with evalState := some (.evalOracle
+        { state with envs := state.envs.set state.generation (storedEnvs ++ [env]) }) } flat := by
+  rcases valid with ⟨cOk, tysOk, states, range, invs, orac, globals, reserved, genInv, fin⟩
+  have nextEq : srcOracNextCfg interp (some (.evalOracle
+      { state with envs := state.envs.set state.generation (storedEnvs ++ [env]) })) =
+      srcOracNextCfg interp (some (.evalOracle state)) := by rfl
+  have envs := srcOracEnvInvs_declare interp genv state env storedEnvs found (by simpa [sourceState] using invs.2.1) newMap
+  refine ⟨cOk, tysOk, ?_, ?_, ?_, ?_, globals, reserved, ?_, ?_⟩
+  · cases states with
+    | intro nonempty refs clock ffi => exact .intro _ _ nonempty refs clock ffi
+  · simpa [idxRangeRel, sourceState, ← nextEq] using range
+  · refine ⟨?_, envs, ?_⟩
+    · cases interp <;> simpa [srcOracStepInvs, sourceState] using invs.1
+    · simpa [srcOracGenInv, sourceState] using invs.2.2
+  · cases interp with
+    | none => simp [oracRel, sourceState] at orac
+    | some decode => simpa [oracRel, oracRelInner, sourceState] using orac
+  · intro i member
+    have h := genInv i member
+    change i < gen.next + 1
+    omega
+  · simpa [sourceState, nextEq] using fin
+
+/-- Oracle-mode declaration and the generated flat store satisfy the
+declaration step over the factored invariant. This is not yet the complete
+HOL theorem: the no-Eval case and correspondence of the factored relations
+remain to be established. -/
+theorem declareEnv_storeEnvId_factored {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
+    (idxs : NextIndices × NextIndices × Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (state : EvalOracleState) (env : SemEnv Value) (value : Value) (after : Option EvalState)
+    (sourceState : source.evalState = some (.evalOracle state))
+    (valid : factoredInvariant interp transform gen genv idxs source flat)
+    (generation : envGenRel gen source.evalState)
+    (declared : declareEnv source.evalState env = some (value, after))
+    (newMap : ∀ config, srcOracNextCfg interp source.evalState = some config →
+      ∃ mapGen compMap, Flapjack.sptLookup gen.generation config.envs.envGens = some mapGen ∧
+        Flapjack.sptLookup gen.next mapGen = some compMap ∧
+        GlobalEnvInv genv compMap (fun _ => False) env) :
+    ∃ stored : FlatSem.Value,
+      FlatSem.evaluateDecs flat [storeEnvId gen.generation gen.next] =
+        ({ flat with refs := .refv stored :: flat.refs.tail }, none) ∧
+      factoredInvariant interp transform { gen with next := gen.next + 1 } genv idxs
+        { source with evalState := after } flat ∧
+      (∃ globals, flat.globals = some (.loc true 0) :: globals) ∧
+      ValueRel genv value stored ∧ oracForwardRel interp source.evalState after ∧
+      envGenRel { gen with next := gen.next + 1 } after := by
+  have genRel : envGenRel gen (some (.evalOracle state)) := by simpa [sourceState] using generation
+  have decl : declareEnv (some (.evalOracle state)) env = some (value, after) := by
+    simpa [sourceState] using declared
+  have ⟨_, _, _, _, _, _, _, reserved, _, _⟩ := valid
+  obtain ⟨globals, old, refs, globalEq, refsEq⟩ := evalRefInv_heads flat reserved
+  obtain ⟨stored, execution, valueRel, forward, nextGen, _⟩ :=
+    declareEnv_storeEnvId_oracle interp state flat genv gen env value after genRel reserved decl
+  refine ⟨stored, execution, ?_, ⟨globals, globalEq⟩, valueRel, ?_, nextGen⟩
+  · cases found : state.envs[state.generation]? with
+    | none => simp [declareEnv, found] at decl
+    | some storedEnvs =>
+      have genEq : gen.generation = state.generation := genRel.1
+      have idEq : gen.next = storedEnvs.length := by simpa [found] using genRel.2.2
+      have map : ∀ config, srcOracNextCfg interp (some (.evalOracle state)) = some config →
+          ∃ mapGen compMap, Flapjack.sptLookup state.generation config.envs.envGens = some mapGen ∧
+            Flapjack.sptLookup storedEnvs.length mapGen = some compMap ∧
+            GlobalEnvInv genv compMap (fun _ => False) env := by
+        intro config next
+        simpa [sourceState, genEq, idEq] using newMap config (by simpa [sourceState] using next)
+      simp [declareEnv, found] at decl
+      obtain ⟨_, afterEq⟩ := decl
+      subst after
+      exact factoredInvariant_declareEnv interp transform gen genv idxs source flat state env storedEnvs
+        sourceState found valid map
+  · simpa [sourceState] using forward
+
+/-- Declaration and the generated store satisfy the original theorem's
+control-flow cases over the factored invariant. The relations underlying that
+invariant have not yet been reviewed as HOL-equivalent. -/
+theorem declareEnv_storeEnvId_factored_all {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
+    (idxs : NextIndices × NextIndices × Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (env : SemEnv Value) (value : Value) (after : Option EvalState)
+    (valid : factoredInvariant interp transform gen genv idxs source flat)
+    (generation : envGenRel gen source.evalState)
+    (declared : declareEnv source.evalState env = some (value, after))
+    (newMap : ∀ config, srcOracNextCfg interp source.evalState = some config →
+      ∃ mapGen compMap, Flapjack.sptLookup gen.generation config.envs.envGens = some mapGen ∧
+        Flapjack.sptLookup gen.next mapGen = some compMap ∧
+        GlobalEnvInv genv compMap (fun _ => False) env) :
+    ∃ stored : FlatSem.Value,
+      FlatSem.evaluateDecs flat [storeEnvId gen.generation gen.next] =
+        ({ flat with refs := .refv stored :: flat.refs.tail }, none) ∧
+      factoredInvariant interp transform { gen with next := gen.next + 1 } genv idxs
+        { source with evalState := after } flat ∧
+      (∃ globals, flat.globals = some (.loc true 0) :: globals) ∧
+      ValueRel genv value stored ∧ oracForwardRel interp source.evalState after ∧
+      envGenRel { gen with next := gen.next + 1 } after := by
+  have ⟨_, _, _, _, _, oracle, _, _, _, _⟩ := valid
+  cases sourceState : source.evalState with
+  | none => simp [sourceState, declareEnv] at declared
+  | some mode =>
+    obtain ⟨_, state, _, modeEq⟩ := oracRel_some interp transform mode flat.evalConfig
+      (by simpa [sourceState] using oracle)
+    subst mode
+    simpa [sourceState] using
+      declareEnv_storeEnvId_factored interp transform gen genv idxs source flat state
+        env value after sourceState valid generation declared newMap
+
 /-- Advancing both compiler oracles preserves their pointwise relationship.
 Environment generation changes do not affect this relationship. -/
 theorem oracRel_advance {C : Type} [Nonempty C]

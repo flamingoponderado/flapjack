@@ -22,6 +22,48 @@ theorem evaluateStoreEnvId {C F : Type} (state : FlatSem.State C F)
 
 namespace OracleInvariant
 
+/-- Extending the current source generation preserves the environment-map
+invariant when the compiler oracle already contains the new environment map.
+This uses the factored global environment relation, whose HOL correspondence
+is a separate obligation. -/
+theorem srcOracEnvInvs_declare {C : Type}
+    (interp : Option (Value → Option (Config × C))) (genv : GlobalEnv)
+    (state : EvalOracleState) (env : SemEnv Value) (storedEnvs : List (SemEnv Value))
+    (found : state.envs[state.generation]? = some storedEnvs)
+    (invs : srcOracEnvInvs interp genv (some (.evalOracle state)))
+    (newMap : ∀ config, srcOracNextCfg interp (some (.evalOracle state)) = some config →
+      ∃ mapGen compMap, Flapjack.sptLookup state.generation config.envs.envGens = some mapGen ∧
+        Flapjack.sptLookup storedEnvs.length mapGen = some compMap ∧
+        GlobalEnvInv genv compMap (fun _ => False) env) :
+    srcOracEnvInvs interp genv
+      (some (.evalOracle { state with envs := state.envs.set state.generation (storedEnvs ++ [env]) })) := by
+  obtain ⟨config, next, store, length, envs⟩ := invs
+  have bound : state.generation < state.envs.length := (List.getElem?_eq_some_iff.mp found).1
+  have eqStored : state.envs[state.generation] = storedEnvs := (List.getElem?_eq_some_iff.mp found).2
+  refine ⟨config, ?_, store, ?_, ?_⟩
+  · simpa [srcOracNextCfg] using next
+  · simpa using length
+  · intro gId gBound id idBound
+    by_cases same : gId = state.generation
+    · subst gId
+      simp only [List.getElem_set_self, List.length_append, List.length_singleton] at idBound
+      by_cases old : id < storedEnvs.length
+      · obtain ⟨mapGen, compMap, genLookup, mapLookup, inv⟩ :=
+          envs state.generation bound id (by simpa [eqStored] using old)
+        refine ⟨mapGen, compMap, genLookup, mapLookup, ?_⟩
+        simpa [List.getElem_set_self, List.getElem_append_left, old, eqStored] using inv
+      · have idEq : id = storedEnvs.length := by omega
+        subst id
+        obtain ⟨mapGen, compMap, genLookup, mapLookup, inv⟩ := newMap config next
+        refine ⟨mapGen, compMap, genLookup, mapLookup, ?_⟩
+        simpa [List.getElem_set_self] using inv
+    · have oldBound : gId < state.envs.length := by simpa using gBound
+      have oldIdBound : id < state.envs[gId].length := by
+        simpa [List.getElem_set, Ne.symm same] using idBound
+      obtain ⟨mapGen, compMap, genLookup, mapLookup, inv⟩ := envs gId oldBound id oldIdBound
+      refine ⟨mapGen, compMap, genLookup, mapLookup, ?_⟩
+      simpa [List.getElem_set, Ne.symm same] using inv
+
 /-- Declaring an environment advances the source and compiler counters together. -/
 theorem declareEnv_oracle_generation (state : EvalOracleState)
     (gen : EnvironmentGenerationStore) (env : SemEnv Value) (value : Value)
