@@ -245,6 +245,10 @@ run_probe() {
   done
 }
 
+run_probe cake_from_sexp_probeScript.sml cake_from_sexp_probe.out \
+  control lists option identifier literals locations types patterns \
+  "$cake_dir/compiler/parsing/fromSexpScript.sml" "$cake_dir/compiler/parsing"
+
 run_probe cake_sexp_parser_probeScript.sml cake_sexp_parser_probe.out \
   atoms lists failures edges bytes \
   "$hol_dir/examples/formal-languages/context-free/simpleSexpPEGScript.sml" "$cake_dir/compiler/parsing"

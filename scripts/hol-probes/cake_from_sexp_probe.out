@@ -1,0 +1,8 @@
+control=[SOME "abc"; SOME "\\"; SOME "\^@"; SOME "\^_"; SOME "\127"; SOME "\255"; NONE; NONE; NONE; NONE; NONE; NONE; SOME "x\^@y"]
+lists=[SOME []; SOME [1; 2; 3]; NONE; NONE]
+option=[SOME NONE; SOME (SOME 5); NONE; NONE]
+identifier=[SOME (Short «x»); SOME (Long «M» (Short «x»)); NONE]
+literals=[SOME (IntLit 0); SOME (IntLit 12); SOME (StrLit «a\^@b»); NONE; SOME (IntLit (-12)); SOME (Char #"z"); NONE; SOME (Word8 255w); NONE; SOME (Word64 0xFFFFFFFFFFFFFFFFw); NONE; SOME (Float64 42w)]
+locations=[SOME (Locs UNKNOWNpt EOFpt); SOME (Locs (POSN 1 2) (POSN 3 4)); NONE; NONE]
+types=[SOME (Atvar «a»); SOME (Atfun (Atvar «a») (Attup [])); SOME (Atapp [Atvar «a»] (Short «list»)); NONE]
+patterns=[SOME (Pvar «x»); SOME Pany; SOME (Plit (IntLit 42)); SOME (Pcon NONE [Pvar «x»; Pany]); SOME (Pas (Pref (Pvar «x»)) «y»); SOME (Ptannot (Pvar «x») (Atvar «a»)); NONE]

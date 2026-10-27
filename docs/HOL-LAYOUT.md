@@ -51,6 +51,7 @@ the cited name occurs in one of the two syntactic forms.
 | `compiler/parsing/lexer_implScript.sml` | `Flapjack/CakeParser/LexerImpl.lean` |
 | `semantics/gramScript.sml` | `Flapjack/CakeParser/Grammar.lean` |
 | `compiler/parsing/pegexec_cml_foScript.sml` | `Flapjack/CakeParser/PegChecks.lean` and `Flapjack/CakeParser/PegActions.lean` |
+| `compiler/parsing/fromSexpScript.sml` | `Flapjack/CakeParser/FromSexp.lean` (untagged byte, list, option, identifier, literal, location, type and pattern decoders; expression and declaration conversion and source review remain open) |
 | `HOL/examples/formal-languages/context-free/simpleSexpPEGScript.sml` | `Flapjack/CakeParser/Sexp.lean` (untagged direct, bounded parser; PEG equivalence and CakeML AST conversion remain open) |
 | `pancake/pan_to_targetScript.sml` | `Flapjack/Pancake/PanToTarget.lean` |
 | `pancake/proofs/pan_to_targetProofScript.sml` | `Flapjack/Pancake/Proofs/PanToTarget.lean` and its `PanToTarget/` submodules |
