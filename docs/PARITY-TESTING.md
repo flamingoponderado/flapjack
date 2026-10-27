@@ -456,6 +456,8 @@ function that captures its enclosing argument. It
 also covers short-circuit Boolean control, partial application, constructor
 matching on triples, escaped byte lookup, captured let bindings, large signed
 products, and datatype matches through a module. It
+also covers mutable references, captured reference updates, nested exception
+handlers, and datatypes with several constructor arities. It
 also checks that
 `--types` takes precedence over `--print_sexp` and `--explore` in either flag
 order, including parse and type failures.

@@ -324,6 +324,34 @@
       "stderr_bytes": 0,
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
+    "reference_mutation": {
+      "exit_code": 0,
+      "stdout_bytes": 397828,
+      "stdout_sha256": "b848a2c9a2cb37696f21904c240ee50de99c14e2564aec864794a33aa0258e83",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "nested_exception_handlers": {
+      "exit_code": 0,
+      "stdout_bytes": 397734,
+      "stdout_sha256": "f6d57b44d67473a93a7836622498c56ca33d7b4ccfe7e4c171bfb9c6c9447714",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "mixed_constructor_arities": {
+      "exit_code": 0,
+      "stdout_bytes": 396320,
+      "stdout_sha256": "ef0c603cb8b70a137049830b0731e176127f80d926169b49f528e6b0f9e91d34",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "captured_reference_mutation": {
+      "exit_code": 0,
+      "stdout_bytes": 398444,
+      "stdout_sha256": "38ace9f512ec59f5fd34a5ec77e4a4911df180caa7990cf8f3726d5bf5093414",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
     "types_before_print_sexp": {
       "exit_code": 0,
       "stdout_bytes": 0,
