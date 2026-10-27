@@ -278,6 +278,83 @@ theorem genvCOk_installFreshTypeConstructor (genv : GlobalEnv) (idx tag arity : 
     simp [SemanticPrimitivesHOL.ctorSameType, SemanticPrimitivesHOL.sameType,
       FlatSem.ctorSameType, Ne.symm otherIndex, Ne.symm otherStamp]
 
+/-- Once one constructor of a type has been installed, its compatibility
+establishes the type relation for any additional constructor of that type. -/
+theorem genvCOk_sameType_compatible (genv : GlobalEnv) (idx tag anchorTag anchorArity : Nat)
+    (name anchorName : ConN) (stamp : Nat) (valid : genvCOk genv.c)
+    (anchor : genv.c.lookup ((anchorTag, some idx), anchorArity) = some (.typeStamp anchorName stamp)) :
+    ∀ cn' arity' stamp', genv.c.lookup (cn', arity') = some stamp' →
+      (SemanticPrimitivesHOL.ctorSameType (some (.typeStamp name stamp)) (some stamp') = true ↔
+        FlatSem.ctorSameType (some (tag, some idx)) (some cn')) := by
+  intro cn' arity' stamp' lookup
+  have existing := valid.2.2.2.1 (anchorTag, some idx) cn' anchorArity arity'
+    (.typeStamp anchorName stamp) stamp' anchor lookup
+  cases stamp' <;> simpa only [SemanticPrimitivesHOL.ctorSameType, SemanticPrimitivesHOL.sameType,
+    FlatSem.ctorSameType] using existing
+
+/-- Adding a constructor at an unused key preserves existing globals. -/
+theorem GlobalGrowth.installTypeConstructor (genv : GlobalEnv) (idx tag arity : Nat)
+    (name : ConN) (stamp : Nat) (free : genv.c.lookup ((tag, some idx), arity) = none) :
+    GlobalGrowth genv
+      { genv with c := finiteUpdate genv.c ((tag, some idx), arity) (.typeStamp name stamp) } := by
+  classical
+  refine ⟨Nat.le_refl _, ?_, ?_, fun _ _ lookup => lookup⟩
+  · intro _ _ lookup
+    exact lookup
+  · intro key value lookup
+    have different : key ≠ ((tag, some idx), arity) := by
+      intro same
+      subst key
+      rw [free] at lookup
+      contradiction
+    simpa [finiteUpdate, FUPDATE_HOL, different] using lookup
+
+/-- A constructor belonging to an already allocated type leaves the
+reserved-index partition and future stamp freshness intact. -/
+theorem idxRangeRel_installTypeConstructor {C : Type}
+    (interp : Option (Value → Option (Config × C))) (genv : GlobalEnv)
+    (nextType nextExn : Nat) (evalState : Option EvalState)
+    (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (idx tag arity : Nat) (name : ConN) (stamp : Nat) (tags : List (Nat × Nat))
+    (range : idxRangeRel interp genv nextType nextExn evalState (start, finish, other))
+    (table : genv.tys.lookup idx = some tags) (older : stamp < nextType) :
+    idxRangeRel interp
+      { genv with c := finiteUpdate genv.c ((tag, some idx), arity) (.typeStamp name stamp) }
+      nextType nextExn evalState (start, finish, other) := by
+  classical
+  obtain ⟨_, _, final, _, tuple, nextMatch, previous, disjoint, types, exceptions⟩ := range
+  cases tuple
+  refine ⟨_, _, final, other, rfl, nextMatch, previous, ?_, ?_, ?_⟩
+  · have allocated : (idx, IndexKind.type) ∈ genvAllocatedIndices genv := by
+      right
+      simp [table]
+    have unchanged : genvAllocatedIndices genv ∪ {(idx, IndexKind.type)} = genvAllocatedIndices genv := by
+      ext item
+      change (item ∈ genvAllocatedIndices genv ∨ item = (idx, IndexKind.type)) ↔
+        item ∈ genvAllocatedIndices genv
+      constructor
+      · rintro (present | rfl)
+        · exact present
+        · exact allocated
+      · exact Or.inl
+    rw [allocatedIndices_installTypeConstructor, unchanged]
+    exact disjoint
+  · intro name' stamp' bound ⟨key, found⟩
+    by_cases same : key = ((tag, some idx), arity)
+    · subst key
+      simp [finiteUpdate, FUPDATE_HOL] at found
+      omega
+    · have original : genv.c.lookup key = some (.typeStamp name' stamp') := by
+        simpa [finiteUpdate, FUPDATE_HOL, same] using found
+      exact types name' stamp' bound ⟨key, original⟩
+  · intro exn bound ⟨key, found⟩
+    by_cases same : key = ((tag, some idx), arity)
+    · subst key
+      simp [finiteUpdate, FUPDATE_HOL] at found
+    · have original : genv.c.lookup key = some (.exnStamp exn) := by
+        simpa [finiteUpdate, FUPDATE_HOL, same] using found
+      exact exceptions exn bound ⟨key, original⟩
+
 /-- Installing the type table consumes one reserved index; no source type
 stamp has yet been added to the constructor map. -/
 theorem idxRangeRel_installTypeTable {C : Type}
@@ -339,5 +416,107 @@ theorem factoredInvariant_installTypeTable {C F : Type} [Nonempty C]
       source.evalState := ⟨invs.1, srcOracEnvInvs_growth interp genv _ growth _ invs.2.1, invs.2.2⟩
   exact ⟨cOk, genvCTysOk_installTypeTable genv start.tidx tags typesOk free,
     nextStates, nextRange, nextInvs, oracle, globals, reserved, genInv, fin⟩
+
+/-- Installing a constructor in an already reserved type preserves the
+factored invariant when its key, stamp and type relation are compatible with
+the existing constructor map. -/
+theorem factoredInvariant_installTypeConstructor {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
+    (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : State F) (flat : FlatSem.State C F)
+    (idx tag arity : Nat) (name : ConN) (stamp : Nat) (tags : List (Nat × Nat))
+    (valid : factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (table : genv.tys.lookup idx = some tags) (member : (tag, arity) ∈ tags)
+    (older : stamp < source.nextTypeStamp)
+    (free : genv.c.lookup ((tag, some idx), arity) = none)
+    (fresh : ∀ key, genv.c.lookup key ≠ some (.typeStamp name stamp))
+    (compatible : ∀ cn' arity' stamp', genv.c.lookup (cn', arity') = some stamp' →
+      (SemanticPrimitivesHOL.ctorSameType (some (.typeStamp name stamp)) (some stamp') = true ↔
+        FlatSem.ctorSameType (some (tag, some idx)) (some cn'))) :
+    factoredInvariant interp transform gen
+      { genv with c := finiteUpdate genv.c ((tag, some idx), arity) (.typeStamp name stamp) }
+      (start, finish, other) source flat := by
+  obtain ⟨cOk, typesOk, states, range, invs, oracle, globals, reserved, genInv, fin⟩ := valid
+  have growth := GlobalGrowth.installTypeConstructor genv idx tag arity name stamp free
+  have nextInvs : srcOracInvs interp transform
+      { genv with c := finiteUpdate genv.c ((tag, some idx), arity) (.typeStamp name stamp) }
+      source.evalState := ⟨invs.1, srcOracEnvInvs_growth interp genv _ growth _ invs.2.1, invs.2.2⟩
+  exact ⟨genvCOk_installConstructor genv (tag, some idx) arity (.typeStamp name stamp) cOk free fresh compatible,
+    genvCTysOk_installTypeConstructor genv idx tag arity name stamp tags typesOk table member,
+    stateRel_growth genv _ growth source flat states,
+    idxRangeRel_installTypeConstructor interp genv source.nextTypeStamp source.nextExnStamp source.evalState
+      start finish other idx tag arity name stamp tags range table older,
+    nextInvs, oracle, globals, reserved, genInv, fin⟩
+
+/-- Subsequent constructors of a reserved type inherit compatibility from
+an existing constructor of that type. -/
+theorem factoredInvariant_installSiblingConstructor {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
+    (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : State F) (flat : FlatSem.State C F)
+    (idx tag arity anchorTag anchorArity : Nat) (name anchorName : ConN)
+    (stamp : Nat) (tags : List (Nat × Nat))
+    (valid : factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (table : genv.tys.lookup idx = some tags) (member : (tag, arity) ∈ tags)
+    (older : stamp < source.nextTypeStamp)
+    (anchor : genv.c.lookup ((anchorTag, some idx), anchorArity) = some (.typeStamp anchorName stamp))
+    (free : genv.c.lookup ((tag, some idx), arity) = none)
+    (fresh : ∀ key, genv.c.lookup key ≠ some (.typeStamp name stamp)) :
+    factoredInvariant interp transform gen
+      { genv with c := finiteUpdate genv.c ((tag, some idx), arity) (.typeStamp name stamp) }
+      (start, finish, other) source flat :=
+  factoredInvariant_installTypeConstructor interp transform gen genv start finish other source flat
+    idx tag arity name stamp tags valid table member older free fresh
+    (genvCOk_sameType_compatible genv idx tag anchorTag anchorArity name anchorName stamp valid.1 anchor)
+
+/-- Reserving a type and installing its first constructor preserves the
+factored invariant, deriving the compatibility conditions from the original
+fresh index and stamp. -/
+theorem factoredInvariant_allocateFirstTypeConstructor {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
+    (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : State F) (flat : FlatSem.State C F)
+    (tag arity : Nat) (name : ConN) (tags : List (Nat × Nat))
+    (valid : factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (fits : start.tidx + 1 ≤ finish.tidx) (member : (tag, arity) ∈ tags) :
+    factoredInvariant interp transform gen
+      { { genv with tys := finiteUpdate genv.tys start.tidx tags } with
+        c := finiteUpdate genv.c ((tag, some start.tidx), arity) (.typeStamp name source.nextTypeStamp) }
+      ({ start with tidx := start.tidx + 1 }, finish, other)
+      { source with nextTypeStamp := source.nextTypeStamp + 1 } flat := by
+  classical
+  let reserved := { genv with tys := finiteUpdate genv.tys start.tidx tags }
+  let nextSource := { source with nextTypeStamp := source.nextTypeStamp + 1 }
+  have reservedInv : factoredInvariant interp transform gen reserved
+      ({ start with tidx := start.tidx + 1 }, finish, other) nextSource flat :=
+    factoredInvariant_installTypeTable interp transform gen genv start finish other source flat tags valid fits
+  have range := valid.2.2.2.1
+  have free := (idxRangeRel_type_free interp genv source.nextTypeStamp source.nextExnStamp source.evalState
+    start finish other range (by omega)).2
+  have fresh := idxRangeRel_typeStamp_fresh interp genv source.nextTypeStamp source.nextExnStamp source.evalState
+    start finish other range
+  have table : reserved.tys.lookup start.tidx = some tags := by
+    simp [reserved, finiteUpdate, FUPDATE_HOL]
+  have cOk := genvCOk_installFreshTypeConstructor reserved start.tidx tag arity name source.nextTypeStamp
+    reservedInv.1 free fresh
+  have growth := GlobalGrowth.installTypeConstructor reserved start.tidx tag arity name source.nextTypeStamp
+    (free tag arity)
+  have newLookup : (finiteUpdate reserved.c ((tag, some start.tidx), arity)
+      (.typeStamp name source.nextTypeStamp)).lookup ((tag, some start.tidx), arity) =
+      some (.typeStamp name source.nextTypeStamp) := by
+    simp [finiteUpdate, FUPDATE_HOL]
+  have compatible : ∀ cn' arity' stamp', reserved.c.lookup (cn', arity') = some stamp' →
+      (SemanticPrimitivesHOL.ctorSameType (some (.typeStamp name source.nextTypeStamp)) (some stamp') = true ↔
+        FlatSem.ctorSameType (some (tag, some start.tidx)) (some cn')) := by
+    intro cn' arity' stamp' old
+    exact cOk.2.2.2.1 (tag, some start.tidx) cn' arity arity' (.typeStamp name source.nextTypeStamp) stamp'
+      newLookup (growth.constructors (cn', arity') stamp' old)
+  have result := factoredInvariant_installTypeConstructor interp transform gen reserved
+    { start with tidx := start.tidx + 1 } finish other nextSource flat start.tidx tag arity name
+    source.nextTypeStamp tags reservedInv table member (by simp [nextSource]) (free tag arity) (fresh name) compatible
+  simpa [reserved, nextSource] using result
 
 end Flapjack.Compiler.Backend.SourceToFlat
