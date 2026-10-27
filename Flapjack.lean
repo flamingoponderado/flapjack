@@ -228,6 +228,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateModule
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateException
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDatatype
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLiteralConstructors
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingConstructors
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocal
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EnvironmentDomain
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.MemoryOps
