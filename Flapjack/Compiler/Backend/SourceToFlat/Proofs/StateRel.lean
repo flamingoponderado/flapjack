@@ -102,4 +102,20 @@ theorem stateRel_ref_lookup {C F : Type} (genv : GlobalEnv)
       refine ⟨_, ?_, hvalue⟩
       simpa [storeLookup, hflat, Nat.add_comm] using hfound
 
+/-- A source byte-array lookup finds the same bytes one slot later in the
+flat store. This is infrastructure over the factored state relation. -/
+theorem stateRel_byteArray_lookup {C F : Type} (genv : GlobalEnv)
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (related : StateRel genv source flat) (n : Nat) (bytes : List (BitVec 8))
+    (lookup : storeLookup n source.refs = some (.w8array bytes)) :
+    storeLookup (n + 1) flat.refs = some (.w8array bytes) := by
+  cases related with
+  | intro nonempty refs _ _ =>
+    obtain ⟨entry, rest, hflat⟩ := List.exists_cons_of_ne_nil nonempty
+    have relatedRest : List.Forall₂ (StoreValueRel genv) source.refs rest := by simpa [hflat] using refs
+    obtain ⟨found, hfound, hrel⟩ := forall₂_lookup relatedRest n (.w8array bytes) lookup
+    cases hrel with
+    | w8array bytes =>
+      simpa [storeLookup, hflat, Nat.add_comm] using hfound
+
 end Flapjack.Compiler.Backend.SourceToFlat

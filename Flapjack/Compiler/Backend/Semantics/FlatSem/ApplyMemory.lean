@@ -5,11 +5,13 @@ import Flapjack.Compiler.Backend.Semantics.FlatSem.Primitives
 namespace Flapjack.Compiler.Backend.FlatSem
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 
-private def boundsFailure {C F : Type} (state : State C F) (unsafeOp : Bool) :
+/-- Bounds-error helper for the partial memory dispatcher. -/
+def boundsFailure {C F : Type} (state : State C F) (unsafeOp : Bool) :
     Option (State C F × Result Value Value) :=
   if unsafeOp then none else some (state, .err (.raise subscriptExnV))
 
-private def readIndexed {C F α : Type} (state : State C F) (unsafeOp : Bool)
+/-- Shared indexed-read helper for the partial memory dispatcher. -/
+def readIndexed {C F α : Type} (state : State C F) (unsafeOp : Bool)
     (items : List α) (index : Int) (toValue : α → Value) : Option (State C F × Result Value Value) :=
   if index < 0 then boundsFailure state unsafeOp else
   match items[index.toNat]? with
