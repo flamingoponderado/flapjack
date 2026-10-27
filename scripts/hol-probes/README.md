@@ -9021,3 +9021,5 @@ compares these outputs and CI checks that it matches the captured transcript.
 The capture is finite regression evidence, not a cross-language equivalence proof.
 
 `cake_program_semantics_probeScript.sml` captures the pinned program-semantics types and empty-program behavior used by `Flapjack/SemanticsHOL.lean`.
+
+`prim_sem_env_probeScript.sml` captures the original semantic initialization types for `Flapjack/PrimTypesHOL.lean`.

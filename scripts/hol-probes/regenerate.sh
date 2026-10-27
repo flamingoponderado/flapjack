@@ -8860,3 +8860,6 @@ run_probe l3_step_immediate_comparison_nop_probeScript.sml l3_step_immediate_com
   slti_nop_statement slti_nop_types slti_nop_source_hypotheses slti_nop_proved sltiu_nop_statement sltiu_nop_types sltiu_nop_source_hypotheses sltiu_nop_proved \
   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe prim_sem_env_probeScript.sml prim_sem_env_probe.out \
+  add_type prim_type "$cake_dir/semantics/primTypesScript.sml" "$cake_dir/semantics"

@@ -103489,5 +103489,21 @@
     "lean_name": "semanticsProg",
     "statement_status": "pending_statement_review",
     "reviewer": "Codex (pending complete source evaluator and carrier review): pinned HOL types and empty-program behavior captured in cake_program_semantics_probe; divergence uses lprefixLub over the clock-indexed event traces. Inherits the floating-point rational-cut assumption."
+  },
+  {
+    "hol_path": "cakeml/semantics/primTypesScript.sml",
+    "hol_name": "add_to_sem_env_def",
+    "lean_path": "Flapjack/PrimTypesHOL.lean",
+    "lean_name": "addToSemEnv",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending complete source evaluator and carrier review): pinned HOL types captured in prim_sem_env_probe; inherits the floating-point rational-cut assumption."
+  },
+  {
+    "hol_path": "cakeml/semantics/primTypesScript.sml",
+    "hol_name": "prim_sem_env_def",
+    "lean_path": "Flapjack/PrimTypesHOL.lean",
+    "lean_name": "primSemEnv",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending complete source evaluator and carrier review): pinned HOL types captured in prim_sem_env_probe; inherits the floating-point rational-cut assumption."
   }
 ]

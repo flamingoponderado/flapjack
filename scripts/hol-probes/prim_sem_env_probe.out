@@ -1,0 +1,2 @@
+add_type=:α state # v sem_env -> dec list -> (α state # v sem_env) option
+prim_type=:α ffi_state -> (α state # v sem_env) option

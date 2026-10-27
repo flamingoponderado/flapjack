@@ -1,4 +1,5 @@
 import Flapjack.SemanticsHOL
+import Flapjack.PrimTypesHOL
 
 /-! Basic observations of the clock-indexed CakeML source semantics. -/
 namespace Flapjack.Test.CakeProgramSemanticsParity
@@ -24,5 +25,11 @@ example {σ : Type} (st : State σ) (env : SemEnv Value) (trace) :
   rintro ⟨timeouts, _⟩
   obtain ⟨ffi, h⟩ := timeouts 0
   simp [evaluateProgWithClock, EvaluateHOL.evaluateDecs] at h
+
+example {σ : Type} (st : State σ) (env : SemEnv Value) :
+    PrimTypesHOL.addToSemEnv (st, env) [] =
+      some (st, extendDecEnv { v := nsEmpty, c := nsEmpty } env) := by
+  simp [PrimTypesHOL.addToSemEnv, EvaluateHOL.evaluateDecs]
+  rfl
 
 end Flapjack.Test.CakeProgramSemanticsParity
