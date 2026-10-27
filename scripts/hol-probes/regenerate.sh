@@ -40,6 +40,10 @@ probe_needs_refresh() {
   local probe="$2"
   local source="$3"
   [[ ! -f "$output" || "$probe" -nt "$output" || "$source" -nt "$output" ]] ||
+    [[ "$(basename "$probe")" == cake_sexp_parser_probeScript.sml &&
+       ( "$hol_dir/examples/formal-languages/context-free/simpleSexpScript.sml" -nt "$output" ||
+         "$hol_dir/examples/formal-languages/context-free/simpleSexpParseScript.sml" -nt "$output" ||
+         "$hol_dir/src/string/stringScript.sml" -nt "$output" ) ]] ||
     [[ "$(basename "$probe")" == cake_basis_bvi_probeScript.sml &&
        "$cake_dir/basis/basisProgScript.sml" -nt "$output" ]] ||
     [[ "$(basename "$probe")" == cake_parse_error_probeScript.sml &&
@@ -240,6 +244,10 @@ run_probe() {
     fi
   done
 }
+
+run_probe cake_sexp_parser_probeScript.sml cake_sexp_parser_probe.out \
+  atoms lists failures edges bytes \
+  "$hol_dir/examples/formal-languages/context-free/simpleSexpPEGScript.sml" "$cake_dir/compiler/parsing"
 
 run_probe cake_source_evaluate_length_probeScript.sml cake_source_evaluate_length_probe.out \
   evaluate_length_typed evaluate_sing_typed \

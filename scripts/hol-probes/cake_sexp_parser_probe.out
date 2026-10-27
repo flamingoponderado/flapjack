@@ -1,0 +1,5 @@
+atoms=[SOME ⟪⟫; SOME 12345; SOME (SX_SYM "alpha.beta"); SOME (SX_STR "a\"b"); SOME (’ (SX_SYM "x"))]
+lists=[SOME ⟪⟫; SOME ⟪1; 2; 3⟫; SOME ⟪1 • ⟪2 • 3⟫⟫; SOME ⟪1 • ⟪⟪2 • 3⟫ • 4⟫⟫; SOME ⟪1⟫; SOME ⟪1; 2; 3⟫]
+failures=[NONE; NONE; NONE; NONE; NONE; NONE; NONE; NONE]
+edges=[SOME ⟪SX_SYM "a" • SX_SYM "b"⟫; SOME (SX_SYM "a.b"); NONE; SOME ⟪SX_SYM "a.b"⟫; NONE; SOME (’ (’ (SX_SYM "x"))); SOME ⟪1⟫; NONE; NONE; SOME (SX_STR "\\"); NONE; NONE]
+bytes=[SOME (SX_SYM "x"); NONE; NONE; NONE; NONE; SOME (SX_STR "~"); NONE]
