@@ -105176,5 +105176,14 @@
     "lean_name": "flatToValue",
     "statement_status": "reviewed_exact",
     "reviewer": "Codex source comparison: Preserves all literal payloads, maps exactly the two nullary flat Boolean constructors to the corresponding source Boolean stamps, and maps all other constructors and values to the empty source vector. The full typed original equations and representative observations are in source_to_flat_primitive_type_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_test_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Test.lean",
+    "lean_name": "doTest",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: Equal first checks both primitive types, uses IEEE equality for Float64 and do_eq for other types; Compare accepts exactly Int, Char, Word8, Float64, and String literals, while AltCompare accepts only String literals. All other cases return Eq_type_error. The typed HOL equations and finite examples are captured in cake_flat_sem_test_probe. Floating-point comparison dependencies inherit reals_as_rational_cuts, the rational-cut assumption in SOUNDNESS item 8.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]

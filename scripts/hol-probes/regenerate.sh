@@ -241,6 +241,14 @@ run_probe() {
   done
 }
 
+run_probe source_to_flat_test_probeScript.sml source_to_flat_test_probe.out \
+  do_test_lemma_typed \
+  "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe cake_flat_sem_test_probeScript.sml cake_flat_sem_test_probe.out \
+  do_test_typed int_equal wrong_int word64_compare int_compare char_compare string_compare string_alt_compare \
+  "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe source_to_flat_primitive_type_probeScript.sml source_to_flat_primitive_type_probe.out \
   check_type_typed dest_litv_typed v_to_flat_typed flat_to_v_typed v_rel_check_type_typed check_type_to_flat_typed check_type_from_flat_typed true_bool false_bool wrong_bool int_type wrong_int word8_type word64_type literal_projection nonliteral_projection to_flat_true to_flat_other from_flat_false from_flat_other \
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
