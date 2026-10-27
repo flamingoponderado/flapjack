@@ -294,6 +294,74 @@ theorem doEval_oracle_envGenFuture {C : Type} [Nonempty C]
       rw [compiled] at future
       simpa [envGenFutureRel, nextCfg] using future
 
+/-- Appending the slots reserved by successful incremental Eval preserves the
+global environment and establishes the final-index length condition for the
+next oracle configuration. -/
+theorem doEval_oracle_globalSlots {C : Type} [Nonempty C]
+    (decode : Value → Option (Config × C)) (transform : List Dec → List Dec)
+    (state : EvalOracleState) (flat : FlatSem.InstallConfig C) (genv : GlobalEnv)
+    (steps : srcOracStepInvs (some decode) transform (some (.evalOracle state)))
+    (related : oracRel (some decode) transform (some (.evalOracle state)) flat)
+    (finish : NextIndices)
+    (lengthMatch : finIdxMatch genv.v.length finish
+      (srcOracNextCfg (some decode) (some (.evalOracle state))))
+    (first second third fourth bytesValue wordsValue : Value)
+    (output : SemEnv Value × List Dec × Option EvalState)
+    (success : SemanticPrimitivesHOL.doEval
+      [first, second, third, fourth, bytesValue, wordsValue] (some (.evalOracle state)) = some output) :
+    ∃ envId config next flatDecs,
+      srcOracNextCfg (some decode) (some (.evalOracle state)) = some config ∧
+      srcOracNextCfg (some decode) output.2.2 = some next ∧
+      incCompileProg envId config output.2.1 = (next, flatDecs) ∧
+      idxPrev config.next next.next ∧
+      let expanded := { genv with v := genv.v ++ List.replicate (next.next.vidx - config.next.vidx) none }
+      GlobalGrowth genv expanded ∧ genvAllocatedIndices expanded = genvAllocatedIndices genv ∧
+      finIdxMatch expanded.v.length next.next (srcOracNextCfg (some decode) output.2.2) := by
+  obtain ⟨envId, config, next, flatDecs, currentCfg, nextCfg, compiled, prev, _⟩ :=
+    doEval_oracle_envGenFuture decode transform state flat steps related
+      first second third fourth bytesValue wordsValue output success
+  refine ⟨envId, config, next, flatDecs, currentCfg, nextCfg, compiled, prev, ?_⟩
+  have length : config.next.vidx = genv.v.length := by simpa [currentCfg, finIdxMatch] using lengthMatch
+  refine ⟨GlobalGrowth.append genv _, genvAllocatedIndices_append_none genv _, ?_⟩
+  simp only [nextCfg, finIdxMatch, List.length_append, List.length_replicate]
+  have bound : config.next.vidx ≤ next.next.vidx := prev.1
+  omega
+
+/-- The factored state relation survives the Eval state updates and global
+slot allocation. This does not yet establish the remaining full evaluator
+invariant or execution of the compiled declarations. -/
+theorem doEval_oracle_stateRel {C F : Type} [Nonempty C]
+    (decode : Value → Option (Config × C)) (transform : List Dec → List Dec)
+    (state : EvalOracleState) (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (genv : GlobalEnv) (states : StateRel genv source flat)
+    (steps : srcOracStepInvs (some decode) transform (some (.evalOracle state)))
+    (related : oracRel (some decode) transform (some (.evalOracle state)) flat.evalConfig)
+    (finish : NextIndices)
+    (lengthMatch : finIdxMatch genv.v.length finish
+      (srcOracNextCfg (some decode) (some (.evalOracle state))))
+    (first second third fourth bytesValue wordsValue : Value)
+    (output : SemEnv Value × List Dec × Option EvalState)
+    (success : SemanticPrimitivesHOL.doEval
+      [first, second, third, fourth, bytesValue, wordsValue] (some (.evalOracle state)) = some output) :
+    ∃ envId config next flatDecs,
+      srcOracNextCfg (some decode) output.2.2 = some next ∧
+      incCompileProg envId config output.2.1 = (next, flatDecs) ∧
+      let extra := List.replicate (next.next.vidx - config.next.vidx) none
+      let expanded := { genv with v := genv.v ++ extra }
+      let source' := { source with evalState := output.2.2 }
+      let flat' := { flat with globals := flat.globals ++ extra, evalConfig :=
+        { flat.evalConfig with compileOracle := Flapjack.holShiftSeq 1 flat.evalConfig.compileOracle } }
+      GlobalGrowth genv expanded ∧ StateRel expanded source' flat' ∧
+      genvAllocatedIndices expanded = genvAllocatedIndices genv ∧
+      finIdxMatch expanded.v.length next.next (srcOracNextCfg (some decode) output.2.2) := by
+  obtain ⟨envId, config, next, flatDecs, _, nextCfg, compiled, _, growth, indices, length⟩ :=
+    doEval_oracle_globalSlots decode transform state flat.evalConfig genv steps related finish lengthMatch
+      first second third fourth bytesValue wordsValue output success
+  refine ⟨envId, config, next, flatDecs, nextCfg, compiled, growth, ?_, indices, length⟩
+  cases states with
+  | intro nonempty refs clock ffi =>
+    exact .intro _ _ nonempty (storeList_growth genv _ growth _ _ refs) clock ffi
+
 private theorem list_length_six {α : Type} (xs : List α) (length : xs.length = 6) :
     ∃ a b c d e f, xs = [a, b, c, d, e, f] := by
   cases xs with

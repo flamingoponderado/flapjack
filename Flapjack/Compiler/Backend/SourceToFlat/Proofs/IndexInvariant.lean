@@ -68,6 +68,26 @@ def genvAllocatedIndices (genv : GlobalEnv) : Set (Nat × IndexKind) :=
         (genv.tys.lookup i).isSome
     | .exception => ∃ arity, (genv.c.lookup ((i, none), arity)).isSome
 
+/-- Appending uninitialized global slots does not allocate any indices. -/
+theorem genvAllocatedIndices_append_none (genv : GlobalEnv) (count : Nat) :
+    genvAllocatedIndices { genv with v := genv.v ++ List.replicate count none } =
+      genvAllocatedIndices genv := by
+  ext ⟨i, kind⟩
+  cases kind with
+  | «variable» =>
+    change (i < (genv.v ++ List.replicate count none).length ∧
+      ((genv.v ++ List.replicate count none)[i]?).getD none ≠ none) ↔
+      (i < genv.v.length ∧ (genv.v[i]?).getD none ≠ none)
+    by_cases bound : i < genv.v.length
+    · simp [List.getElem?_append, bound]; omega
+    · simp [List.getElem?_append, bound]
+      intro inRange
+      have index : i - genv.v.length < (List.replicate count (none : Option FlatSem.Value)).length := by
+        simp; omega
+      simp [List.getElem?_eq_getElem index]
+  | «type» => rfl
+  | «exception» => rfl
+
 /-- The variable-index projection is precisely the initialized-slot predicate
 used by the declaration initialization proof. -/
 theorem allocatedIndices_variable (genv : GlobalEnv) (i : Nat) :
