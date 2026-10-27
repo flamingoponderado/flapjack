@@ -210,6 +210,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.Equality
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ListConversion
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveType
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveTest
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternStamps
 import Flapjack.Compiler.Backend.Semantics.FlatSem
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Operations
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Conversions

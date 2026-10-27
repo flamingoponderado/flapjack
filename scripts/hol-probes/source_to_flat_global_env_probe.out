@@ -2,35 +2,21 @@ globals_type=:global_env -> v option list
 constructors_type=:global_env -> ((num # num option) # num |-> stamp)
 types_type=:global_env -> (num |-> (num # num) list)
 has_bools=∀(genv :(num # num option) # num |-> stamp). has_bools genv ⇔ FLOOKUP genv ((true_tag,SOME bool_id),(0 :num)) = SOME (TypeStamp «True» bool_type_num) ∧ FLOOKUP genv ((false_tag,SOME bool_id),(0 :num)) = SOME (TypeStamp «False» bool_type_num)
-
 has_lists=∀(genv :(num # num option) # num |-> stamp). has_lists genv ⇔ FLOOKUP genv ((cons_tag,SOME list_id),(2 :num)) = SOME (TypeStamp «::» list_type_num) ∧ FLOOKUP genv ((nil_tag,SOME list_id),(0 :num)) = SOME (TypeStamp «[]» list_type_num)
-
 has_exns=∀(genv :(num # α option) # num |-> stamp). has_exns genv ⇔ FLOOKUP genv ((div_tag,(NONE :α option)),(0 :num)) = SOME div_stamp ∧ FLOOKUP genv ((chr_tag,(NONE :α option)),(0 :num)) = SOME chr_stamp ∧ FLOOKUP genv ((subscript_tag,(NONE :α option)),(0 :num)) = SOME subscript_stamp ∧ FLOOKUP genv ((bind_tag,(NONE :α option)),(0 :num)) = SOME bind_stamp
-
 genv_c_ok=∀(genv_c :(num # num option) # num |-> stamp). genv_c_ok genv_c ⇔ has_bools genv_c ∧ has_exns genv_c ∧ has_lists genv_c ∧ (∀(cn1 :num # num option) (cn2 :num # num option) (l1 :num) (l2 :num) (stamp1 :stamp) (stamp2 :stamp). FLOOKUP genv_c (cn1,l1) = SOME stamp1 ∧ FLOOKUP genv_c (cn2,l2) = SOME stamp2 ⇒ (ctor_same_type (SOME stamp1) (SOME stamp2) ⇔ ctor_same_type (SOME cn1) (SOME cn2))) ∧ ∀(cn1 :num # num option) (cn2 :num # num option) (l1 :num) (l2 :num) (stamp :stamp). FLOOKUP genv_c (cn1,l1) = SOME stamp ∧ FLOOKUP genv_c (cn2,l2) = SOME stamp ⇒ cn1 = cn2 ∧ l1 = l2
-
 genv_c_tys_ok=∀(genv_c :(α # β option) # γ |-> δ) (genv_tys :β |-> (α # γ) list). genv_c_tys_ok genv_c genv_tys ⇔ ∀(cn :α) (ty_id :β) (arity :γ). ((cn,SOME ty_id),arity) ∈ FDOM genv_c ⇒ ∃(ctors :(α # γ) list). FLOOKUP genv_tys ty_id = SOME ctors ∧ MEM (cn,arity) ctors
-
 genv_lookup_nil=genv_c_ok (genv_c :(num # num option) # num |-> stamp) ⇒ (FLOOKUP genv_c (cn :(num # num option) # num) = SOME (TypeStamp «[]» list_type_num) ⇔ cn = ((nil_tag,SOME list_id),(0 :num)))
-
 genv_lookup_cons=genv_c_ok (genv_c :(num # num option) # num |-> stamp) ⇒ (FLOOKUP genv_c (cn :(num # num option) # num) = SOME (TypeStamp «::» list_type_num) ⇔ cn = ((cons_tag,SOME list_id),(2 :num)))
-
+same_type_fst_same_ctor=genv_c_ok (genv_c :(num # num option) # num |-> stamp) ∧ FLOOKUP genv_c ((cn1 :num # num option),(l1 :num)) = SOME (stamp1 :stamp) ∧ FLOOKUP genv_c ((cn2 :num # num option),(l2 :num)) = SOME (stamp2 :stamp) ∧ same_type stamp1 stamp2 ∧ FST cn1 = FST cn2 ∧ l1 = l2 ⇒ same_ctor stamp1 stamp2
+pmatch_stamps_ok=s_rel (genv :global_env) (s :α semanticPrimitives$state) (t :(β, α) flatSem$state) ∧ nsLookup (comp_map_c :(γ, δ, num # (num # (num # num) list) option) namespace) (nm :(γ, δ) id) = SOME ((flat_cn :num),(ty_gp :(num # (num # num) list) option)) ∧ same_type (src_stamp :stamp) (src_stamp' :stamp) ∧ genv_c_ok genv.c ∧ genv_c_tys_ok genv.c genv.tys ∧ FLOOKUP genv.c ((flat_cn,OPTION_MAP (FST :num # (num # num) list -> num) ty_gp),(l :num)) = SOME src_stamp ∧ FLOOKUP genv.c ((flat_stamp' :num # num option),(l' :num)) = SOME src_stamp' ∧ (∀(ty_id :num) (ctors :(num # num) list). ty_gp = SOME (ty_id,ctors) ⇒ FLOOKUP genv.tys ty_id = SOME ctors) ⇒ pmatch_stamps_ok (SOME (flat_cn,ty_gp)) (SOME flat_stamp') l l'
 bind_tag=bind_tag = (0 :num)
-
 chr_tag=chr_tag = (1 :num)
-
 div_tag=div_tag = (2 :num)
-
 subscript_tag=subscript_tag = (3 :num)
-
 nil_tag=nil_tag = (0 :num)
-
 cons_tag=cons_tag = (0 :num)
-
 empty_bools=F
-
 empty_lists=F
-
 empty_exns=F
-
 empty_types=∀(cn :num) (ty_id :bool) (arity :num). T

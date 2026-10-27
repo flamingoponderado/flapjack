@@ -105249,5 +105249,16 @@
     "lean_name": "pmatchRows",
     "statement_status": "reviewed_exact",
     "reviewer": "Codex source comparison: The original recursive clauses select the first match while retaining a type error from any later row. The complete typed original declarations and finite observations are captured in cake_flat_sem_pattern_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "genv_c_ok_same_type_FST_eq_imp_same_ctor",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/PatternStamps.lean",
+    "lean_name": "genvCOk_sameType_ctorEq",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "genvC"
+    ],
+    "reviewer": "Codex source comparison: retains the original constructor-map invariant, two lookup hypotheses, same source type, equal flat constructor IDs and equal arities, concluding same source constructor. The finite-map input has a same-module lookup/support codec roundtrip; the fully typed original theorem is in source_to_flat_global_env_probe."
   }
 ]
