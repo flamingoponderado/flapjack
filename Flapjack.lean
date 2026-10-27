@@ -2346,10 +2346,12 @@ import Flapjack.CakeParser.PegEval
 import Flapjack.CakeParser.PtreeConversion
 import Flapjack.CakeParser.Frontend
 import Flapjack.CakeParser.Sexp
+import Flapjack.CakeParser.SexpPrint
 import Flapjack.Test.CakeSexpParserParity
 import Flapjack.CakeParser.FromSexp
 import Flapjack.CakeParser.FromSexp.Operators
 import Flapjack.CakeParser.FromSexp.Ast
+import Flapjack.CakeParser.ToSexp
 import Flapjack.Test.CakeFromSexpParity
 import Flapjack.RiscV.CakeArtifactFormat
 import Flapjack.Compiler.Inference.Infer

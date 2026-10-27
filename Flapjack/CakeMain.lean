@@ -7,6 +7,7 @@ import Flapjack.CakeParser.Diagnostics
 import Flapjack.CakeHelp
 import Flapjack.CakeFeatures
 import Flapjack.CakeParser.FromSexp.Ast
+import Flapjack.CakeParser.ToSexp
 
 /-! Experimental CakeML source-to-RISC-V command. The frontend and backend
 are still bounded ports, the original diagnostics and full CLI are incomplete,
@@ -20,6 +21,7 @@ structure Options where
   skipTypeInference : Bool := false
   mainReturn : Bool := false
   onlyTypes : Bool := false
+  onlySexp : Bool := false
   seenTarget : Bool := false
   otherTarget : Option String := none
   seenExcludePrelude : Bool := false
@@ -292,9 +294,9 @@ private def parseArgs : List String → Options → Except String Options
         match parseBool (arg.drop "--main_return=".length |>.toString) with
         | some b => parseArgs args { options with mainReturn := b, seenMainReturn := true }
         | none => .error s!"invalid Boolean option: {arg}"
-      else if (arg == "--print_sexp" || arg == "--explore") && options.onlyTypes then
+      else if arg == "--print_sexp" || (arg == "--explore" && (options.onlyTypes || options.onlySexp)) then
         parseArgs args options
-      else if arg == "--print_sexp" || arg == "--explore" || arg == "--pancake" ||
+      else if arg == "--explore" || arg == "--pancake" ||
           arg == "--help" || arg == "--version" || arg == "--repl" || arg == "--candle" ||
           arg.startsWith "--pancake_feature=" then
         .error s!"unsupported option: {arg}"
@@ -374,9 +376,9 @@ def compileBytes (options : Options) (source : List HolChar) : PrimitiveCheckedS
     | none => return .backendRejected
     | some (bytes, bitmaps, config) => return .success bytes bitmaps config
 
-/-- Parse and infer the input for the driver's `--types` mode. Errors follow
+/-- Parse and infer the input for the driver's output-only modes. Errors follow
 the same path as ordinary compilation; no backend pass is run on success. -/
-private def inferTypesBytes (options : Options) (source : List HolChar) :
+private def outputOnlyBytes (options : Options) (source : List HolChar) :
     Except PrimitiveCheckedSourceResult (List HolChar) := do
   let fuel := sourceFuel source
   let decls ← match parseInput options fuel source with
@@ -389,7 +391,11 @@ private def inferTypesBytes (options : Options) (source : List HolChar) :
   else match Flapjack.Compiler.Inference.Infer.Core.inferProgramFuel fuel fuel full with
     | .error e => .error (.inferenceError e)
     | .ok env => .ok env
-  return Flapjack.Compiler.Inference.Infer.TypesOutput.render env
+  if options.onlyTypes then
+    return Flapjack.Compiler.Inference.Infer.TypesOutput.render env
+  else
+    return [BitVec.ofNat 8 10] ++
+      Flapjack.CakeParser.Sexp.render (Flapjack.CakeParser.ToSexp.program full)
 
 def main (args : List String) : IO UInt32 := do
   if args.contains "--repl" || args.contains "--candle" then
@@ -414,7 +420,7 @@ def main (args : List String) : IO UInt32 := do
       "\n\nProgram exited with nonzero exit code.\n")
     return 1
   -- The original driver checks these flags by membership, independent of order.
-  match parseArgs args { onlyTypes := args.contains "--types" } with
+  match parseArgs args { onlyTypes := args.contains "--types", onlySexp := args.contains "--print_sexp" } with
   | .error message =>
     if message.startsWith "### ERROR: config error\n" then
       IO.eprint message
@@ -422,13 +428,13 @@ def main (args : List String) : IO UInt32 := do
     IO.eprintln s!"cake: {message}\n{usage}"
     return 2
   | .ok options =>
-    if !options.onlyTypes then
+    if !options.onlyTypes && !options.onlySexp then
       if let some target := options.otherTarget then
         IO.eprintln s!"cake: unsupported option: {target}\n{usage}"
         return 2
     let input ← (← IO.getStdin).readBinToEnd
     let chars := input.data.toList.map (fun c => BitVec.ofNat 8 c.toNat)
-    let typeOutput := if options.onlyTypes then some (inferTypesBytes options chars) else none
+    let typeOutput := if options.onlyTypes || options.onlySexp then some (outputOnlyBytes options chars) else none
     if let some (.ok bytes) := typeOutput then
       let stderr ← IO.getStderr
       stderr.write (ByteArray.mk (bytes.map (fun b => UInt8.ofNat b.toNat)).toArray)

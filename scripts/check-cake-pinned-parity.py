@@ -45,6 +45,16 @@ CASES = {
     'explore_before_types': 'val id = fn x => x;',
     'types_print_sexp_type_error': 'val x = missing;',
     'types_explore_parse_error': 'val x = ;',
+    'print_sexp_empty': '',
+    'print_sexp_datatype': 'datatype t = A | B int; fun f x = case x of A => 0 | B n => n;',
+    'print_sexp_exception': 'exception E int; val _ = (raise E 4) handle E n => n;',
+    'print_sexp_module': 'structure A = struct type t = int; val x = 12; end; val y = A.x;',
+    'print_sexp_control_bytes': 'val x = "\\000\\255\\\\";',
+    'print_sexp_with_prelude': 'val _ = print "Hi";',
+    'print_sexp_input': '((Dlet ((0 0) (0 11)) "x" (Lannot (Lit 1) ((0 11) (0 11)))))',
+    'print_sexp_explore': 'val n = 42;',
+    'print_sexp_type_error': 'val x = missing;',
+    'print_sexp_parse_error': 'val x = ;',
 }
 
 CASE_ARGS = {
@@ -54,8 +64,19 @@ CASE_ARGS = {
     'explore_before_types': ['--explore', '--types', '--exclude_prelude=true'],
     'types_print_sexp_type_error': ['--print_sexp', '--types', '--exclude_prelude=true'],
     'types_explore_parse_error': ['--explore', '--types', '--exclude_prelude=true'],
+    'print_sexp_empty': ['--print_sexp', '--exclude_prelude=true'],
+    'print_sexp_datatype': ['--print_sexp', '--exclude_prelude=true'],
+    'print_sexp_exception': ['--print_sexp', '--exclude_prelude=true'],
+    'print_sexp_module': ['--print_sexp', '--exclude_prelude=true'],
+    'print_sexp_control_bytes': ['--print_sexp', '--exclude_prelude=true'],
+    'print_sexp_with_prelude': ['--print_sexp'],
+    'print_sexp_input': ['--sexp=true', '--print_sexp', '--exclude_prelude=true'],
+    'print_sexp_explore': ['--print_sexp', '--explore', '--exclude_prelude=true'],
+    'print_sexp_type_error': ['--print_sexp', '--exclude_prelude=true'],
+    'print_sexp_parse_error': ['--print_sexp', '--exclude_prelude=true'],
 }
-ERROR_CASES = {'types_print_sexp_type_error', 'types_explore_parse_error'}
+ERROR_CASES = {'types_print_sexp_type_error', 'types_explore_parse_error',
+               'print_sexp_type_error', 'print_sexp_parse_error'}
 
 def run(executable, source, name):
     process = subprocess.run([str(executable), '--target=riscv', *CASE_ARGS.get(name, [])], input=source.encode('ascii'),
