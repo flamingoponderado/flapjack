@@ -227,6 +227,7 @@ import Flapjack.Compiler.Backend.DataToWord.Header
 import Flapjack.Compiler.Backend.DataToWord.Locations
 import Flapjack.Compiler.Backend.DataToWord.WordOp
 import Flapjack.Compiler.Backend.DataToWord.Control
+import Flapjack.Compiler.Backend.DataToWord.Stubs
 import Flapjack.Compiler.Backend.PatternComp.Decision
 import Flapjack.Compiler.Backend.PatternExh.Matrix
 import Flapjack.Compiler.Backend.FlatToClos.Helpers

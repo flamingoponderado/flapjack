@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.DataToWord.Header
 import Flapjack.Compiler.Backend.DataToWord.Locations
 import Flapjack.Compiler.Backend.DataToWord.WordOp
 import Flapjack.Compiler.Backend.DataToWord.Control
+import Flapjack.Compiler.Backend.DataToWord.Stubs
 import Flapjack.Test.CakeMLFlatOracle
 
 /-!
@@ -263,6 +264,24 @@ private def headerConfig : Config := { conf with lenSize := 4 }
   | some (.seq (.assign 1 (.const w)) (.alloc 1 (.ls (), .ln)), 2) => w == (-1 : BitVec 8)
   | _ => false
 #guard Flapjack.Test.CakeMLFlatOracle.data_to_word_runtime_ops
+#guard match compileStub? (width := 64) memCopyLocation with
+  | some (5, .ite .test 2 (.reg 2) (.return 0 [8])
+      (.seq (.assign 1 (.load (.var 4))) (.seq (.assign 2 (.op .sub [.var 2, .const 4]))
+       (.seq (.assign 4 (.op .add [.var 4, .const 8])) (.seq (.store (.var 6) 1)
+        (.seq (.assign 6 (.op .add [.var 6, .const 8])) (.call none (some 24) [0, 2, 4, 6, 8] none))))))) => true
+  | _ => false
+#guard match compileStub? (width := 32) stringCmpLoopLocation with
+  | some (6, .ite .equal 6 (.imm 4) (.return 0 [8, 10])
+      (.seq (.inst (.mem .load8 1 (.addr 2 0))) (.seq (.inst (.mem .load8 3 (.addr 4 0)))
+       (.seq (.ite .notEqual 1 (.reg 3) (.return 0 [1, 3]) .skip)
+        (.seq (.assign 2 (.op .add [.var 2, .const 1])) (.seq (.assign 4 (.op .add [.var 4, .const 1]))
+         (.seq (.assign 6 (.op .sub [.var 6, .const 1])) (.call none (some 38) [0, 2, 4, 6, 8, 10] none)))))))) => true
+  | _ => false
+#guard match compileStub? (width := 64) byteCopyNewLocation with
+  | some (4, .skip) => true
+  | _ => false
+#guard (compileStub? (width := 64) refArrayLocation).isNone
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_stubs
 #guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.boolTest (.compare .gt))) [1, 2] none) with
   | some (.ite .equal 4 (.reg 6) (.assign 8 (.const 18)) (.assign 8 (.const 2)), 2) => true
   | _ => false
