@@ -64,8 +64,44 @@ private def intValue (n : Int) : Value := .litv (.intLit n)
   | _ => false
 
 -- Unsupported operations are kept separate from HOL's failed application.
-#guard match doAppBasic ([], ffi) .aw8alloc [] with
+#guard match doAppBasic ([], ffi) .copyStrStr [] with
   | none => true
+  | _ => false
+
+-- Safe accesses raise Subscript; unsafe accesses return HOL's NONE.
+#guard match doAppBasic ([], ffi) .aw8alloc [intValue 2, .litv (.word8 7)] with
+  | some (some (([.w8array [a, b]], _), .val (.loc true 0))) => a == 7 && b == 7
+  | _ => false
+#guard match doAppBasic ([], ffi) .aw8alloc [intValue (-1), .litv (.word8 7)] with
+  | some (some (([], _), .err (.raise (.conv (some (.exnStamp 3)) [])))) => true
+  | _ => false
+#guard match doAppBasic ([.w8array [4, 7]], ffi) .aw8sub [.loc false 0, intValue 1] with
+  | some (some ((_, _), .val (.litv (.word8 b)))) => b == 7
+  | _ => false
+#guard match doAppBasic ([.w8array [4, 7]], ffi) .aw8sub [.loc true 0, intValue 2] with
+  | some (some ((_, _), .err (.raise (.conv (some (.exnStamp 3)) [])))) => true
+  | _ => false
+#guard match doAppBasic ([.w8array [4, 7]], ffi) .aw8subUnsafe [.loc true 0, intValue 2] with
+  | some none => true
+  | _ => false
+#guard match doAppBasic ([.w8array [4, 7]], ffi) .aw8update [.loc true 0, intValue 1, .litv (.word8 9)] with
+  | some (some (([.w8array [a, b]], _), .val (.conv none []))) => a == 4 && b == 9
+  | _ => false
+#guard match doAppBasic ([], ffi) .aallocFixed [intValue 4, intValue 7] with
+  | some (some (([.varray [.litv (.intLit 4), .litv (.intLit 7)]], _), .val (.loc true 0))) => true
+  | _ => false
+#guard match doAppBasic ([.varray [intValue 4, intValue 7]], ffi) .aupdate
+    [.loc false 0, intValue 1, intValue 9] with
+  | some (some (([.varray [.litv (.intLit 4), .litv (.intLit 9)]], _), .val (.conv none []))) => true
+  | _ => false
+#guard match doAppBasic ([.varray [intValue 4]], ffi) .asub [.loc true 0, intValue (-1)] with
+  | some (some ((_, _), .err (.raise (.conv (some (.exnStamp 3)) [])))) => true
+  | _ => false
+#guard match doAppBasic ([], ffi) .vsubUnsafe [.vectorv [intValue 4], intValue (-1)] with
+  | some none => true
+  | _ => false
+#guard match doAppBasic ([.refv (intValue 4)], ffi) .alength [.loc true 0] with
+  | some none => true
   | _ => false
 
 end Flapjack.Test.CakeSourceStoreParity
