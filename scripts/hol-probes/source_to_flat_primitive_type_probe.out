@@ -1,6 +1,10 @@
 check_type_typed=(check_type BoolT (v :v) ⇔ v = (Boolv T :v) ∨ v = (Boolv F :v)) ∧ (check_type IntT v ⇔ ∃(i :int). v = (Litv (IntLit i) :v)) ∧ (check_type CharT v ⇔ ∃(c :char). v = (Litv (Char c) :v)) ∧ (check_type StrT v ⇔ ∃(s :mlstring). v = (Litv (StrLit s) :v)) ∧ (check_type (WordT W8 :prim_type) v ⇔ ∃(w :word8). v = (Litv (Word8 w) :v)) ∧ (check_type (WordT W64 :prim_type) v ⇔ ∃(w :word64). v = (Litv (Word64 w) :v)) ∧ (check_type Float64T v ⇔ ∃(w :word64). v = (Litv (Float64 w) :v))
 dest_litv_typed=dest_Litv (Litv (v :lit) :v) = SOME v ∧ dest_Litv (Conv (v2 :(num # num option) option) (v3 :v list)) = (NONE :lit option) ∧ dest_Litv (Closure (v4 :v environment) (v5 :mlstring) (v6 :exp) :v) = (NONE :lit option) ∧ dest_Litv (Recclosure (v7 :v environment) (v8 :(mlstring # mlstring # exp) list) (v9 :mlstring) :v) = (NONE :lit option) ∧ dest_Litv (Loc (v10 :bool) (v11 :num) :v) = (NONE :lit option) ∧ dest_Litv (Vectorv (v12 :v list)) = (NONE :lit option)
+v_to_flat_typed=v_to_flat (Litv (v :lit) :semanticPrimitives$v) = (Litv v :v) ∧ v_to_flat (Conv (x :stamp option) (y :semanticPrimitives$v list)) = (if Conv x y = (Boolv T :semanticPrimitives$v) then (Boolv T :v) else if Conv x y = (Boolv F :semanticPrimitives$v) then (Boolv F :v) else Vectorv ([] :v list)) ∧ v_to_flat (Closure (v4 :semanticPrimitives$v sem_env) (v5 :mlstring) (v6 :ast$exp) :semanticPrimitives$v) = Vectorv ([] :v list) ∧ v_to_flat (Recclosure (v7 :semanticPrimitives$v sem_env) (v8 :(mlstring # mlstring # ast$exp) list) (v9 :mlstring) :semanticPrimitives$v) = Vectorv ([] :v list) ∧ v_to_flat (Loc (v10 :bool) (v11 :num) :semanticPrimitives$v) = Vectorv ([] :v list) ∧ v_to_flat (Vectorv (v12 :semanticPrimitives$v list)) = Vectorv ([] :v list) ∧ v_to_flat (Env (v13 :semanticPrimitives$v sem_env) (v14 :num # num)) = Vectorv ([] :v list)
+flat_to_v_typed=flat_to_v (Litv (v :lit) :v) = (Litv v :semanticPrimitives$v) ∧ flat_to_v (Conv (x :(num # num option) option) (y :v list)) = (if Conv x y = (Boolv T :v) then (Boolv T :semanticPrimitives$v) else if Conv x y = (Boolv F :v) then (Boolv F :semanticPrimitives$v) else Vectorv ([] :semanticPrimitives$v list)) ∧ flat_to_v (Closure (v4 :v environment) (v5 :mlstring) (v6 :exp) :v) = Vectorv ([] :semanticPrimitives$v list) ∧ flat_to_v (Recclosure (v7 :v environment) (v8 :(mlstring # mlstring # exp) list) (v9 :mlstring) :v) = Vectorv ([] :semanticPrimitives$v list) ∧ flat_to_v (Loc (v10 :bool) (v11 :num) :v) = Vectorv ([] :semanticPrimitives$v list) ∧ flat_to_v (Vectorv (v12 :v list)) = Vectorv ([] :semanticPrimitives$v list)
 v_rel_check_type_typed=(v_rel (genv :global_env) (v1 :semanticPrimitives$v) (w1 :v) :bool) ∧ genv_c_ok genv.c ∧ check_type (ty :prim_type) v1 ⇒ check_type ty w1
+check_type_to_flat_typed=check_type (ty :prim_type) (v :semanticPrimitives$v) ∧ genv_c_ok (genv :global_env).c ⇒ (v_rel genv v (v_to_flat v) :bool)
+check_type_from_flat_typed=check_type (ty :prim_type) (v :semanticPrimitives$v) ∧ (v_rel (genv :global_env) v (y :v) :bool) ∧ genv_c_ok genv.c ⇒ flat_to_v y = v
 true_bool=T
 false_bool=T
 wrong_bool=F
@@ -10,3 +14,7 @@ word8_type=T
 word64_type=T
 literal_projection=SOME (IntLit 7)
 nonliteral_projection=NONE
+to_flat_true=Conv (SOME (1,SOME 0)) []
+to_flat_other=Vectorv []
+from_flat_false=Conv (SOME (TypeStamp «False» 0)) []
+from_flat_other=Vectorv []

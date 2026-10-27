@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.Semantics.FlatSem
 import Flapjack.Compiler.Backend.BackendCommon.BoolTags
+import Flapjack.SemanticPrimitivesHOL.Primitives
 
 /-! Primitive type checks and literal projection in the flat evaluator. -/
 namespace Flapjack.Compiler.Backend.FlatSem
@@ -23,4 +24,24 @@ def checkType : PrimType → Value → Bool
 def destLitv : Value → Option Lit
   | .litv lit => some lit
   | _ => none
+
+/-- Convert literals and Booleans to flat values; other values become an empty vector. -/
+@[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "v_to_flat_def"]
+def valueToFlat : SemanticPrimitivesHOL.Value → Value
+  | .litv lit => .litv lit
+  | .conv (some (.typeStamp name 0)) [] =>
+    if name == Basis.Pure.MlString.ofString "True" then boolValue true
+    else if name == Basis.Pure.MlString.ofString "False" then boolValue false
+    else .vectorv []
+  | _ => .vectorv []
+
+/-- Convert flat literals and Booleans to source values; other values become an empty vector. -/
+@[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "flat_to_v_def"]
+def flatToValue : Value → SemanticPrimitivesHOL.Value
+  | .litv lit => .litv lit
+  | .conv (some (tag, some typeId)) [] =>
+    if typeId == FlatLang.boolId && tag == trueTag then SemanticPrimitivesHOL.boolValue true
+    else if typeId == FlatLang.boolId && tag == falseTag then SemanticPrimitivesHOL.boolValue false
+    else .vectorv []
+  | _ => .vectorv []
 end Flapjack.Compiler.Backend.FlatSem

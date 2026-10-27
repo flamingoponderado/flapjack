@@ -242,7 +242,7 @@ run_probe() {
 }
 
 run_probe source_to_flat_primitive_type_probeScript.sml source_to_flat_primitive_type_probe.out \
-  check_type_typed dest_litv_typed v_rel_check_type_typed true_bool false_bool wrong_bool int_type wrong_int word8_type word64_type literal_projection nonliteral_projection \
+  check_type_typed dest_litv_typed v_to_flat_typed flat_to_v_typed v_rel_check_type_typed check_type_to_flat_typed check_type_from_flat_typed true_bool false_bool wrong_bool int_type wrong_int word8_type word64_type literal_projection nonliteral_projection to_flat_true to_flat_other from_flat_false from_flat_other \
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe source_to_flat_list_conversion_probeScript.sml source_to_flat_list_conversion_probe.out \

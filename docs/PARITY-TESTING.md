@@ -420,6 +420,7 @@ The linear-scan mode is substantially slower in the Lean executable. Separate
 and malformed options.
 The suite also checks ignored unrecognized arguments, including the short `-h`
 argument, in both type-reporting and complete RISC-V assembly output.
+Programs with observable calls also cover string implode and substring, byte-to-integer conversion, array length, integer division, and recursive Fibonacci.
 Type-reporting cases cover the other three supported target names and first-target precedence; invalid-target-only errors are compared byte for byte. RISC-V remains the supported compilation target.
 Additional basis-enabled examples retain observable calls through nested
 closures, datatype matches, type aliases, byte escapes, hexadecimal literals,

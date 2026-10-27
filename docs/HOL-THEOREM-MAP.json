@@ -105160,5 +105160,21 @@
     "lean_name": "destLitv",
     "statement_status": "reviewed_exact",
     "reviewer": "Codex source comparison: A literal projects to its payload and every other value returns none. Typed original equations and finite examples are captured in source_to_flat_primitive_type_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "v_to_flat_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Primitives.lean",
+    "lean_name": "valueToFlat",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: Preserves all literal payloads, maps the two source Boolean stamps to the corresponding flat Boolean tags, and maps all other constructors and values to the empty flat vector. The full typed original equations and representative observations are in source_to_flat_primitive_type_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "flat_to_v_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Primitives.lean",
+    "lean_name": "flatToValue",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: Preserves all literal payloads, maps exactly the two nullary flat Boolean constructors to the corresponding source Boolean stamps, and maps all other constructors and values to the empty source vector. The full typed original equations and representative observations are in source_to_flat_primitive_type_probe."
   }
 ]

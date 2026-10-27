@@ -13,4 +13,8 @@ example : checkType (.wordT .w8) (.litv (.word8 7)) = true := by rfl
 example : checkType (.wordT .w64) (.litv (.word64 7)) = true := by rfl
 example : destLitv (.litv (.intLit 7)) = some (.intLit 7) := by rfl
 example : destLitv (.conv none []) = none := by rfl
+example : valueToFlat (Flapjack.SemanticPrimitivesHOL.boolValue true) = boolValue true := by rfl
+example : valueToFlat (.loc true 4) = .vectorv [] := by rfl
+example : flatToValue (boolValue false) = Flapjack.SemanticPrimitivesHOL.boolValue false := by rfl
+example : flatToValue (.loc true 4) = .vectorv [] := by rfl
 end Flapjack.Test.CakeFlatSemPrimitiveParity

@@ -1549,6 +1549,48 @@
       "stdout_sha256": "d8246681aace705785b9e4be24337832873a0cac858f27d289ca6bce2029ce0e",
       "stderr_bytes": 0,
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "observed_string_implode": {
+      "exit_code": 0,
+      "stdout_bytes": 377113,
+      "stdout_sha256": "db9087589e44617482eee027a6f38effb9e44f939b80e3fd022d31302874ca20",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "observed_string_substring": {
+      "exit_code": 0,
+      "stdout_bytes": 379243,
+      "stdout_sha256": "07dbee0d4847fafd906986e26059cad3c7c44f838e2a1cbdfd75ca3707f9793e",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "observed_word8_to_int": {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 215,
+      "stderr_sha256": "0d63e51ec42d922e99fb15c00910d1dfc0f5ad7df0415b825a14638ad3191a76"
+    },
+    "observed_array_length": {
+      "exit_code": 0,
+      "stdout_bytes": 398211,
+      "stdout_sha256": "fa770b3e3482fabb2fd430dc1f63b911791dcea7a7ff9448c84281d1ee9d91ad",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "observed_integer_division": {
+      "exit_code": 0,
+      "stdout_bytes": 393660,
+      "stdout_sha256": "f66f2f3268c9e1352819c7395d1cd7adcfa2a09027594f0d5fb465d048086095",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "observed_recursive_fib": {
+      "exit_code": 0,
+      "stdout_bytes": 397016,
+      "stdout_sha256": "b43a676d26c7edc43f01385d845b53e052f210a65ac929c2afb949d1c4da13e8",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     }
   }
 }
