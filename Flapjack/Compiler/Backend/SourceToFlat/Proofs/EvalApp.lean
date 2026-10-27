@@ -269,6 +269,115 @@ theorem exprSim_eval_operand_error {C F : Type} (genv : GlobalEnv) (compMap : En
       rw [evaluate_compileEval_operand_error flatEnv flatState flatLast trace compMap exprs _ flatRun]
       exact ⟨.abort kind, states⟩
 
+/-- Source Eval follows successful operand evaluation, callback decoding,
+declaration execution, and environment declaration, restoring the caller's
+generation in the final state. -/
+theorem evaluate_sourceEval_success {F : Type}
+    (env evalEnv newEnv : SemEnv Value) (state arguments last : SemanticPrimitivesHOL.State F)
+    (exprs : List AstHOL.Exp) (values : List Value) (decs : List Dec)
+    (begin after : Option EvalState) (value : Value)
+    (operandRun : EvaluateHOL.evaluate state env exprs.reverse = (arguments, .val values.reverse))
+    (decoded : SemanticPrimitivesHOL.doEval values arguments.evalState = some (evalEnv, decs, begin))
+    (positive : 0 < arguments.clock)
+    (declarationRun : EvaluateHOL.evaluateDecs
+      (EvaluateHOL.decClock { arguments with evalState := begin }) evalEnv decs = (last, .val newEnv))
+    (declared : declareEnv last.evalState (extendDecEnv newEnv evalEnv) = some (value, after)) :
+    EvaluateHOL.evaluate state env [.app .eval exprs] =
+      ({ last with evalState := resetEnvGeneration arguments.evalState after }, .val [value]) := by
+  have nonzero : arguments.clock ≠ 0 := Nat.ne_of_gt positive
+  rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate state env exprs.reverse []).1, operandRun]
+  simp only [List.reverse_reverse, getOpClass]
+  rw [EvaluateHOL.fixClockDoEvalRes]
+  simp only [EvaluateHOL.doEvalRes, decoded, nonzero, if_false]
+  rw [(EvaluateHOL.fixClockEvaluate (EvaluateHOL.decClock { arguments with evalState := begin })
+    evalEnv [] decs).2, declarationRun]
+  simp [declared]
+
+/-- A successful callback at clock zero returns timeout after installing the
+source callback state, before executing any declaration. -/
+theorem evaluate_sourceEval_timeout {F : Type}
+    (env evalEnv : SemEnv Value) (state arguments : SemanticPrimitivesHOL.State F)
+    (exprs : List AstHOL.Exp) (values : List Value) (decs : List Dec) (begin : Option EvalState)
+    (operandRun : EvaluateHOL.evaluate state env exprs.reverse = (arguments, .val values.reverse))
+    (decoded : SemanticPrimitivesHOL.doEval values arguments.evalState = some (evalEnv, decs, begin))
+    (zero : arguments.clock = 0) :
+    EvaluateHOL.evaluate state env [.app .eval exprs] =
+      ({ arguments with evalState := begin }, .err (.abort .timeoutError)) := by
+  rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate state env exprs.reverse []).1, operandRun]
+  simp only [List.reverse_reverse, getOpClass]
+  rw [EvaluateHOL.fixClockDoEvalRes]
+  simp [EvaluateHOL.doEvalRes, decoded, zero, EvaluateHOL.timeoutError]
+
+/-- A declaration error propagates from source Eval. Raised exceptions reset
+the generation, while aborts retain the declaration state as in CakeML. -/
+theorem evaluate_sourceEval_declaration_error {F : Type}
+    (env evalEnv : SemEnv Value) (state arguments last : SemanticPrimitivesHOL.State F)
+    (exprs : List AstHOL.Exp) (values : List Value) (decs : List Dec)
+    (begin : Option EvalState) (error : ErrorResult Value)
+    (operandRun : EvaluateHOL.evaluate state env exprs.reverse = (arguments, .val values.reverse))
+    (decoded : SemanticPrimitivesHOL.doEval values arguments.evalState = some (evalEnv, decs, begin))
+    (positive : 0 < arguments.clock)
+    (declarationRun : EvaluateHOL.evaluateDecs
+      (EvaluateHOL.decClock { arguments with evalState := begin }) evalEnv decs = (last, .err error)) :
+    EvaluateHOL.evaluate state env [.app .eval exprs] =
+      (match error with
+       | .abort _ => last
+       | .raise _ => { last with evalState := resetEnvGeneration arguments.evalState last.evalState }, .err error) := by
+  have nonzero : arguments.clock ≠ 0 := Nat.ne_of_gt positive
+  rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate state env exprs.reverse []).1, operandRun]
+  simp only [List.reverse_reverse, getOpClass]
+  rw [EvaluateHOL.fixClockDoEvalRes]
+  simp only [EvaluateHOL.doEvalRes, decoded, nonzero, if_false]
+  rw [(EvaluateHOL.fixClockEvaluate (EvaluateHOL.decClock { arguments with evalState := begin })
+    evalEnv [] decs).2]
+  cases error <;> simp_all only
+
+/-- With related operands and the callback invariant, a zero-clock Eval
+times out in both evaluators after advancing their respective callback states.
+The operand runs are the expression-list induction hypothesis. -/
+theorem exprSim_eval_timeout {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
+    (idxs : NextIndices × NextIndices × Set (Nat × IndexKind)) (compMap : Environment)
+    (trace : List VarN) (sourceEnv : SemEnv Value) (flatEnv : FlatSem.Environment FlatSem.Value)
+    (sourceState sourceArguments : SemanticPrimitivesHOL.State F) (flatState flatArguments : FlatSem.State C F)
+    (exprs : List AstHOL.Exp) (sa sb sc sd sourceBytes sourceWords : Value)
+    (a b c d bytes words : FlatSem.Value) (evalEnv : SemEnv Value) (decs : List Dec) (begin : Option EvalState)
+    (sourceRun : EvaluateHOL.evaluate sourceState sourceEnv exprs.reverse =
+      (sourceArguments, .val [sourceWords, sourceBytes, sd, sc, sb, sa]))
+    (flatRun : FlatSem.evaluate flatEnv flatState (compileExps trace compMap exprs).reverse =
+      (flatArguments, .val [words, bytes, d, c, b, a]))
+    (valuesRel : List.Forall₂ (ValueRel genv) [sa, sb, sc, sd, sourceBytes, sourceWords]
+      [a, b, c, d, bytes, words])
+    (invariant : OracleInvariant.factoredInvariant interp transform gen genv idxs sourceArguments flatArguments)
+    (decoded : SemanticPrimitivesHOL.doEval [sa, sb, sc, sd, sourceBytes, sourceWords]
+      sourceArguments.evalState = some (evalEnv, decs, begin))
+    (zero : sourceArguments.clock = 0) :
+    ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.app .eval exprs) := by
+  obtain ⟨_, _, _, _, flatDecs, _, _, _, _, flatDecoded, _, _, _, _, _, _, _, _, _, _, _, _, _, _⟩ :=
+    OracleInvariant.doEval_factoredInvariant_sourceShape interp transform sourceArguments flatArguments gen genv
+      idxs invariant [sa, sb, sc, sd, sourceBytes, sourceWords] [a, b, c, d, bytes, words]
+      valuesRel (evalEnv, decs, begin) decoded
+  have flatDecoded' : FlatSem.doEval [bytes, words] flatArguments.evalConfig =
+      some (flatDecs, { flatArguments.evalConfig with
+        compileOracle := Flapjack.holShiftSeq 1 flatArguments.evalConfig.compileOracle }, FlatSem.unitValue) := by
+    simpa using flatDecoded
+  have states := invariant.2.2.1
+  have flatZero : flatArguments.clock = 0 := by
+    cases states with
+    | intro _ _ clock _ => exact clock.symm.trans zero
+  have sourceResult := evaluate_sourceEval_timeout sourceEnv evalEnv sourceState sourceArguments exprs
+    [sa, sb, sc, sd, sourceBytes, sourceWords] decs begin (by simpa using sourceRun) decoded zero
+  have flatResult := evaluate_compileEval_timeout flatEnv flatState flatArguments trace compMap exprs
+    a b c d bytes words flatDecs
+    { flatArguments.evalConfig with compileOracle := Flapjack.holShiftSeq 1 flatArguments.evalConfig.compileOracle }
+    flatRun flatDecoded' flatZero
+  unfold ExprSim
+  rw [sourceResult, flatResult]
+  refine ⟨.abort .timeoutError, ?_⟩
+  cases states with
+  | intro nonempty refs clock ffi => exact .intro _ _ nonempty refs clock ffi
+
 /-- Compose the successful declaration induction hypothesis with the whole
 generated Eval expression and the stored environment ID. The factored
 invariant and value relation still require HOL correspondence review. -/
