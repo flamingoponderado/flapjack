@@ -411,5 +411,7 @@ To recheck the recorded historical outputs when that exact binary is available,
 run `python3 scripts/check-cake-cli-parity.py --check-reference /path/to/cake`.
 `--record-reference /path/to/cake` checks the same provenance before replacing
 the recorded hashes. A pinned executable comparison is still required for the
-final parity claim. The suite also covers undefined-variable errors; other parser and type-error
-diagnostics do not yet match the original CakeML executable.
+final parity claim. The suite also covers selected parser and type errors; other
+diagnostic paths remain incomplete. Its `--reg_alg` cases compare complete
+assembly for allocator modes 0 through 4, including first-option precedence.
+The linear-scan mode is substantially slower in the Lean executable.

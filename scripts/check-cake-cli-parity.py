@@ -20,6 +20,14 @@ PINNED_REV = '857f0d98da8f8a3580f34423338e697809308ede'
 HOL_REV = 'a390cbabd3a4521bab4ee20281e3e42933a8a3ae'
 CASES = {
     'empty': '',
+    'config_error_reg_alg': '',
+    'no_prelude_reg_alg_0': 'fun id x = x; val a = id (1, 2);',
+    'no_prelude_reg_alg_1': 'fun id x = x; val a = id (1, 2);',
+    'no_prelude_reg_alg_2': 'fun id x = x; val a = id (1, 2);',
+    'no_prelude_reg_alg_3': 'fun id x = x; val a = id (1, 2);',
+    'no_prelude_reg_alg_4': 'fun id x = x; val a = id (1, 2);',
+    'no_prelude_reg_alg_duplicate': 'fun id x = x; val a = id (1, 2);',
+    'no_prelude_reg_alg_empty': 'fun id x = x; val a = id (1, 2);',
     'hello': 'val _ = print "Hello";',
     'identity': 'val id = fn x => x;',
     'module': 'structure M = struct val x = 1; end;',
@@ -133,6 +141,10 @@ CASES = {
 def run(executable, source, name):
     flags = ['--target=riscv']
     if name.startswith('no_prelude_'): flags.append('--exclude_prelude=true')
+    if name == 'config_error_reg_alg': flags.append('--reg_alg=bad')
+    if name == 'no_prelude_reg_alg_duplicate': flags.extend(['--reg_alg=1', '--reg_alg=bad'])
+    elif name == 'no_prelude_reg_alg_empty': flags.extend(['--reg_alg=', '--reg_alg=3'])
+    elif name.startswith('no_prelude_reg_alg_'): flags.append('--reg_alg=' + name.rsplit('_', 1)[1])
     p = subprocess.run([str(executable), *flags], input=source.encode('ascii'),
                        stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=180)
     return {'exit_code': p.returncode, 'stdout_bytes': len(p.stdout),
@@ -163,7 +175,7 @@ if __name__ == '__main__':
         check_reference(args.record_reference)
         rows = {name: run(args.record_reference, source, name) for name, source in CASES.items()}
         for name, row in rows.items():
-            rejected = name.startswith(('undefined_', 'parse_error_', 'type_error_'))
+            rejected = name.startswith(('undefined_', 'parse_error_', 'type_error_', 'config_error_'))
             if row['exit_code'] != (1 if rejected else 0) or (row['stderr_bytes'] == 0) == rejected:
                 raise SystemExit(f'{name}: reference outcome did not match the expected category')
         FIXTURE.write_text(json.dumps({'reference_revision': REFERENCE_REV, 'hol_revision': HOL_REV,

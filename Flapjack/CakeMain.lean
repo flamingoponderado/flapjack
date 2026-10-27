@@ -14,10 +14,11 @@ open Flapjack.Basis.Pure.MlString
 structure Options where
   excludePrelude : Bool := false
   skipTypeInference : Bool := false
+  regAlg : Option Nat := none
 
 private def usage : String :=
   "Usage: cake [--target=riscv] [--exclude_prelude=true|false] " ++
-  "[--skip_type_inference=true|false] < input_file\n" ++
+  "[--skip_type_inference=true|false] [--reg_alg=N] < input_file\n" ++
   "Experimental CakeML to RISC-V port; complete CakeML output parity is not yet established."
 
 private def parseBool (text : String) : Option Bool :=
@@ -27,6 +28,13 @@ private def parseArgs : List String → Options → Except String Options
   | [], options => .ok options
   | arg :: args, options =>
       if arg == "--target=riscv" then parseArgs args options
+      else if arg.startsWith "--reg_alg=" then
+        let digits := (arg.drop "--reg_alg=".length).toString
+        if options.regAlg.isSome then parseArgs args options
+        else if digits.toList.all (fun c => c ≥ '0' && c ≤ '9') then
+          let n := digits.toNat?.getD 0
+          parseArgs args { options with regAlg := some n }
+        else .error s!"### ERROR: config error\nUnable to parse as num: {digits} for flag: --reg_alg=\n\n\n\nProgram exited with nonzero exit code.\n"
       else if arg.startsWith "--exclude_prelude=" then
         match parseBool (arg.drop "--exclude_prelude=".length |>.toString) with
         | some b => parseArgs args { options with excludePrelude := b }
@@ -47,7 +55,9 @@ private def errorMessage : PrimitiveCheckedSourceResult → Option String
 /-- Run the currently supported CakeML frontend and backend options. This is
 Flapjack CLI infrastructure, not a port of the full HOL compiler driver. -/
 def compileBytes (options : Options) (source : List HolChar) : PrimitiveCheckedSourceResult := Id.run do
-  let config := RiscVConfig.riscvBackendConfigExecutable
+  let base := RiscVConfig.riscvBackendConfigExecutable
+  let config := { base with wordToWordConf :=
+    { base.wordToWordConf with regAlg := options.regAlg.getD base.wordToWordConf.regAlg } }
   let fuel := 10000
   match Flapjack.CakeParser.Frontend.parseSourceFuel fuel fuel source with
   | .exhausted => return .parseExhausted
@@ -68,6 +78,9 @@ def main (args : List String) : IO UInt32 := do
     return 0
   match parseArgs args {} with
   | .error message =>
+    if message.startsWith "### ERROR: config error\n" then
+      IO.eprint message
+      return 1
     IO.eprintln s!"cake: {message}\n{usage}"
     return 2
   | .ok options =>

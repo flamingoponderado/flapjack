@@ -765,6 +765,62 @@
       "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stderr_bytes": 186,
       "stderr_sha256": "93057c7b9f64cb5d11491455c869b162fada2d2f81601374d0431d41aa4c845e"
+    },
+    "no_prelude_reg_alg_0": {
+      "exit_code": 0,
+      "stdout_bytes": 325184,
+      "stdout_sha256": "be2e847d8c96dc489a38a7780a424c3c8624c83ed6df3fe9df8b23cda4ea3eb3",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "no_prelude_reg_alg_1": {
+      "exit_code": 0,
+      "stdout_bytes": 324183,
+      "stdout_sha256": "895269002326c414498e79d8b71ed3c1cf77364c1182e4c130cb8b42134203af",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "no_prelude_reg_alg_2": {
+      "exit_code": 0,
+      "stdout_bytes": 315284,
+      "stdout_sha256": "e682378134ace188e36640c52f1e8c4bba88c249425801db2417f97a92f599cc",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "no_prelude_reg_alg_3": {
+      "exit_code": 0,
+      "stdout_bytes": 311914,
+      "stdout_sha256": "6e941eac44c3fe76846cf3f9cfa0e69072f94de978ea65a57f92f0f869b19479",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "no_prelude_reg_alg_4": {
+      "exit_code": 0,
+      "stdout_bytes": 523680,
+      "stdout_sha256": "b0b7982deb40e524e5e85d7205309551b7af6c6e4424682398def3e70560234e",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "no_prelude_reg_alg_duplicate": {
+      "exit_code": 0,
+      "stdout_bytes": 324183,
+      "stdout_sha256": "895269002326c414498e79d8b71ed3c1cf77364c1182e4c130cb8b42134203af",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "no_prelude_reg_alg_empty": {
+      "exit_code": 0,
+      "stdout_bytes": 325184,
+      "stdout_sha256": "be2e847d8c96dc489a38a7780a424c3c8624c83ed6df3fe9df8b23cda4ea3eb3",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "config_error_reg_alg": {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 115,
+      "stderr_sha256": "ae9d85fc6678024cb3b222dd9b14ead77665263bf5fb39e9211150545cdb6877"
     }
   }
 }
