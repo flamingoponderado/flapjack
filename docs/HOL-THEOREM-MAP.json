@@ -103179,6 +103179,22 @@
   },
   {
     "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/EvaluateHOL/ClockFull.lean",
+    "lean_name": "evaluateClock",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: kernel-checked full source clock result using explicit well-founded mutual induction over the actual evaluator and the source-shaped constructor cases. The pinned cake_source_evaluate_clock_probe captures the original typed theorem and full_evaluate_ind. Full source evaluator and imported-carrier review remains pending; floating-point behavior inherits the documented rational-cut assumption."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "fix_clock_evaluate",
+    "lean_path": "Flapjack/EvaluateHOL/ClockFull.lean",
+    "lean_name": "fixClockEvaluate",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: kernel-checked full source clock result using explicit well-founded mutual induction over the actual evaluator and the source-shaped constructor cases. The pinned cake_source_evaluate_clock_probe captures the original typed theorem and full_evaluate_ind. Full source evaluator and imported-carrier review remains pending; floating-point behavior inherits the documented rational-cut assumption."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
     "hol_name": "dec_clock_def",
     "lean_path": "Flapjack/EvaluateHOL.lean",
     "lean_name": "decClock",

@@ -7,15 +7,15 @@ open Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL Flapjack.AstHOL
 
 /-- Flapjack helper used to remove a clock clamp after the corresponding
 recursive clock hypothesis has established its bound. -/
-private theorem fixClock_eq_of_bound {σ τ α : Type} (st : State σ) (output : State τ × α)
+theorem fixClock_eq_of_bound {σ τ α : Type} (st : State σ) (output : State τ × α)
     (bound : output.1.clock ≤ st.clock) : fixClock st output = output := by
   cases output with
   | mk next value =>
     cases next
     simp_all [fixClock, Nat.min_eq_left]
 
-/-- Dynamic compilation changes only the Eval bookkeeping field. -/
-private theorem doEvalRes_clock {σ β : Type} (values : List Value) (st : State σ) :
+/-- Flapjack helper: dynamic compilation changes only the Eval bookkeeping field. -/
+theorem doEvalRes_clock {σ β : Type} (values : List Value) (st : State σ) :
     (doEvalRes (β := β) values st).1.clock = st.clock := by
   unfold doEvalRes
   split <;> rfl

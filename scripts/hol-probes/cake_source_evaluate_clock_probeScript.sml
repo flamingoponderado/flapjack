@@ -11,6 +11,7 @@ val _ = (print "clock_lemma="; print_thm replay; print "\n");
 val _ = (print "eval_clock_lemma="; print_thm evaluateTheory.fix_clock_do_eval_res; print "\n");
 val _ = (print "full_evaluate_ind="; print_thm evaluateTheory.full_evaluate_ind; print "\n");
 val _ = (print "evaluate_ind="; print_thm evaluateTheory.evaluate_ind; print "\n");
+val _ = (print "fix_clock_evaluate="; print_thm evaluateTheory.fix_clock_evaluate; print "\n");
 val _ = (print "evaluate_clock="; print_thm evaluateTheory.evaluate_clock; print "\n");
 val raiseReplay = prove (``∀(s:'ffi semanticPrimitives$state) env e r s2.
   evaluate s env [Raise e] = (s2,r) ⇒ s2.clock ≤ s.clock``,
