@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.OracleRel
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.WordLists
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvalPattern
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StoreEnvId
 
 /-! Source-to-flat Eval callback simulation over the factored value relation. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat.OracleInvariant
