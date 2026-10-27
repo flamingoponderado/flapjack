@@ -12,6 +12,7 @@ open Flapjack.Compiler.Inference.Unify
 inductive Error where
   | exhausted | unsupported | mismatch | undefinedName | invalidPattern | valueRestriction
   | typeMismatch : InferT → InferT → Error
+  | typeMismatchNames : List (Nat × MlString) → InferT → InferT → Error
   | undefinedVariable : Ident MlString MlString → Error
   | located : Flapjack.Misc.Location.Locs → Error → Error
   deriving Repr
@@ -22,10 +23,21 @@ private def fail (e : Error) : M α := fun _ => .error e
 
 /-- Preserve the innermost source location for errors that carry enough
 information for original-style rendering. Other error classes remain unchanged. -/
-private def withLoc (loc : Flapjack.Misc.Location.Locs) (action : M α) : M α := fun state =>
+private def typeNamesFuel : Nat → MlString → Namespace MlString MlString
+    (List MlString × TypeSystemHOL.SemanticT) → List (Nat × MlString)
+  | 0, _, _ => []
+  | fuel + 1, path, .bind entries modules =>
+    entries.filterMap (fun (name, _, typ) => match typ with
+      | .app _ id => some (id, MlString.concat [path, name])
+      | _ => none) ++
+    modules.flatMap (fun (name, env) =>
+      typeNamesFuel fuel (MlString.concat [path, name, ofString "."]) env)
+
+private def withLoc (loc : Flapjack.Misc.Location.Locs) (env : Env) (action : M α) : M α := fun state =>
   match action state with
   | .error (.undefinedVariable name) => .error (.located loc (.undefinedVariable name))
-  | .error (.typeMismatch left right) => .error (.located loc (.typeMismatch left right))
+  | .error (.typeMismatch left right) => .error (.located loc
+      (.typeMismatchNames (typeNamesFuel 10000 (ofString "") env.infT) left right))
   | other => other
 private def fresh : M InferT := do
   let s ← get
@@ -351,7 +363,7 @@ private def inferExprWorker : Nat → Nat → Env → Exp → M InferT
       let t ← inferExprWorker fuel unifFuel env value
       let env := match name with | none => env | some n => bindVars env [(n, t)]
       inferExprWorker fuel unifFuel env body
-    | .lannot body loc => withLoc loc (inferExprWorker fuel unifFuel env body)
+    | .lannot body loc => withLoc loc env (inferExprWorker fuel unifFuel env body)
     | .tannot body typ =>
       let t ← inferExprWorker fuel unifFuel env body
       let typ ← annotation fuel env typ
@@ -466,10 +478,10 @@ private def inferDeclWorker : Nat → Nat → Env → Dec → M Env
   | 0, _, _, _ => fail .exhausted
   | fuel + 1, unifFuel, env, decl => do
     match decl with
-    | .dlet loc pat expr => withLoc loc do
+    | .dlet loc pat expr => withLoc loc env do
       let st ← get
       set (resetState st)
-      let exprType ← withLoc loc (inferExprWorker fuel unifFuel env expr)
+      let exprType ← withLoc loc env (inferExprWorker fuel unifFuel env expr)
       let (patType, bindings) ← inferPatWorker fuel unifFuel env pat
       if !distinctBindings bindings then fail .invalidPattern else
       constrain unifFuel exprType patType
@@ -478,7 +490,7 @@ private def inferDeclWorker : Nat → Nat → Env → Dec → M Env
       if count != 0 && !isValue expr then fail .valueRestriction else
       let vars := List.zip (bindings.map Prod.fst) (ts.map (fun t => (count, t)))
       return { emptyEnv with infV := alistToNs vars }
-    | .dletrec loc funs => withLoc loc do
+    | .dletrec loc funs => withLoc loc env do
       let names := funs.map (fun (name, _, _) => name)
       if !distinctNames names then fail .invalidPattern else
       let st ← get

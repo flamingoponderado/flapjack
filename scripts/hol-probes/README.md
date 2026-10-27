@@ -4,7 +4,7 @@
 
 `cake_parse_error_probe.out` captures the first unconsumed token's location after malformed declarations, including a multiline example. The CLI renders those locations as the original compiler's parse diagnostic; parser failures without an unconsumed-token location are not covered by this probe.
 
-`cake_type_diagnostic_probe.out` captures the original inferencer's formatting for function, nested list, tuple, and variable types. The CLI can render failed constraints involving built-in constructors; rendering user-defined type names requires the original inference error environment.
+`cake_type_diagnostic_probe.out` captures the original inferencer's formatting for function, nested list, tuple, variable, and user-defined types. The CLI retains names from the inference environment in lookup order; cases where the bounded traversal cannot recover a name remain unsupported.
 
 `mti_cake_bvi_probe.out` captures the full BVI program for a nested-function declaration with multi-argument introduction enabled, the other closure optimizations disabled, and the outer BVL/BVI optimizations omitted.
 

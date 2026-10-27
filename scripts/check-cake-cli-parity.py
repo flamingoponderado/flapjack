@@ -57,6 +57,10 @@ CASES = {
     'type_error_function': 'val x : int -> bool = fn y => y + 1;',
     'type_error_multiline': 'val x = 1;\nval y = if x then 2 else 3;',
     'type_error_polymorphism': 'val x = fn f => f 1 + f True;',
+    'type_error_named': 'datatype t = A; val x : t = 1;',
+    'type_error_qualified': 'structure M = struct datatype t = A; end; val x : M.t = 1;',
+    'type_error_alias': 'datatype t = A; type alias = t; val x : alias = 1;',
+    'type_error_two_modules': 'structure A = struct datatype t = A; end; structure B = struct datatype t = B; end; val x : A.t = B.B;',
 }
 
 def run(executable, source, name):

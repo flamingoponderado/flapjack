@@ -50,54 +50,60 @@ private def builtinTypeName : Nat → Option String
 private def parens (threshold : Nat) (part : String × Nat) : String :=
   if threshold < part.2 then "(" ++ part.1 ++ ")" else part.1
 
-/- Only built-in type constructors are rendered here; user-defined type names
-require the original inference error environment and are left unsupported. -/
+/- The supplied names preserve the lookup order of the inference environment.
+If the bounded traversal did not retain a name, rendering remains unsupported. -/
 mutual
-private def builtinTypeString : InferT → Option (String × Nat)
+private def typeString (names : List (Nat × MlString)) : InferT → Option (String × Nat)
   | .uvar n => some ("_" ++ toString n, 0)
   | .varDb n => some ("'" ++ (if n < 28 then String.singleton (Char.ofNat (n + 97)) else toString n), 0)
   | .app ts 4 => match ts with
     | [a, b] => do
-      let a ← builtinTypeString a
-      let b ← builtinTypeString b
+      let a ← typeString names a
+      let b ← typeString names b
       some (parens 2 a ++ " -> " ++ parens 3 b, 3)
     | _ => none
   | .app ts 9 => match ts with
     | [] => some ("unit", 0)
-    | [t] => builtinTypeString t
+    | [t] => typeString names t
     | a :: b :: rest => do
-      let parts ← builtinTypeStrings (a :: b :: rest)
+      let parts ← typeStrings names (a :: b :: rest)
       some (String.intercalate " * " (parts.map (parens 1)), 2)
   | .app ts name => do
-    let name ← builtinTypeName name
+    let name ← match builtinTypeName name with
+      | some name => some name
+      | none => (names.lookup name).map toStringOfBytes
     match ts with
     | [] => some (name, 0)
     | [t] => do
-      let part ← builtinTypeString t
+      let part ← typeString names t
       some (parens 1 part ++ " " ++ name, 1)
     | a :: b :: rest => do
-      let parts ← builtinTypeStrings (a :: b :: rest)
+      let parts ← typeStrings names (a :: b :: rest)
       some ("(" ++ String.intercalate ", " (parts.map (parens 5)) ++ ") " ++ name, 1)
 termination_by t => sizeOf t
 
-private def builtinTypeStrings : List InferT → Option (List (String × Nat))
+private def typeStrings (names : List (Nat × MlString)) : List InferT → Option (List (String × Nat))
   | [] => some []
   | t :: ts => do
-    let t ← builtinTypeString t
-    let ts ← builtinTypeStrings ts
+    let t ← typeString names t
+    let ts ← typeStrings names ts
     some (t :: ts)
 termination_by ts => sizeOf ts
 end
 
-/-- Render failed constraints when both normalized types use built-in type
-constructors. Unknown user-defined type names remain unsupported. -/
-def renderTypeMismatch (input : List HolChar) : Error → Option (List HolChar)
-  | .located loc (.typeMismatch left right) => do
-    let left ← builtinTypeString left
-    let right ← builtinTypeString right
+private def renderTypes (input : List HolChar) (loc : Locs) (names : List (Nat × MlString))
+    (left right : InferT) : Option (List HolChar) := do
+    let left ← typeString names left
+    let right ← typeString names right
     some (ascii "### ERROR: type error\nType mismatch between " ++ ascii left.1 ++
       ascii " and " ++ ascii right.1 ++ ascii " at " ++ sourceLocation input (some loc) ++
       ascii "\nProgram exited with nonzero exit code.\n")
+
+/-- Render failed constraints when their type names were retained from the
+inference environment. Unknown names remain unsupported. -/
+def renderTypeMismatch (input : List HolChar) : Error → Option (List HolChar)
+  | .located loc (.typeMismatch left right) => renderTypes input loc [] left right
+  | .located loc (.typeMismatchNames names left right) => renderTypes input loc names left right
   | _ => none
 
 end Flapjack.Compiler.Inference.Infer.Diagnostics
