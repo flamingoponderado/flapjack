@@ -7,7 +7,8 @@ complete declaration is pending full source and carrier review. -/
 namespace Flapjack.SemanticPrimitivesHOL
 open Flapjack.AstHOL Flapjack.Basis.Pure.MlString
 
-private def wordArith {width : Nat} (op : Arith) (a b : BitVec width) : Option (BitVec width) :=
+/-- Executable helper for the word arithmetic clauses of source application. -/
+def wordArith {width : Nat} (op : Arith) (a b : BitVec width) : Option (BitVec width) :=
   match op with
   | .add => some (a + b)
   | .sub => some (a - b)
