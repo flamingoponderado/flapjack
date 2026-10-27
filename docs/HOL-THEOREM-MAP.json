@@ -103473,5 +103473,21 @@
     "statement_status": "pending_statement_review",
     "reviewer": "Codex (pending source review): floating-point branches call qualified FpSemHOL comparisons and inherit the reals_as_rational_cuts assumption in docs/SOUNDNESS.md item 8.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticsScript.sml",
+    "hol_name": "evaluate_prog_with_clock_def",
+    "lean_path": "Flapjack/SemanticsHOL.lean",
+    "lean_name": "evaluateProgWithClock",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending complete source evaluator and carrier review): pinned HOL types and empty-program behavior captured in cake_program_semantics_probe; divergence uses lprefixLub over the clock-indexed event traces. Inherits the floating-point rational-cut assumption."
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticsScript.sml",
+    "hol_name": "semantics_prog_def",
+    "lean_path": "Flapjack/SemanticsHOL.lean",
+    "lean_name": "semanticsProg",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending complete source evaluator and carrier review): pinned HOL types and empty-program behavior captured in cake_program_semantics_probe; divergence uses lprefixLub over the clock-indexed event traces. Inherits the floating-point rational-cut assumption."
   }
 ]

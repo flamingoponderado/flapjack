@@ -1,0 +1,4 @@
+evaluate_type=:α semanticPrimitives$state -> v sem_env -> num -> dec list -> α ffi_state # (v sem_env, v) result
+semantics_type=:α semanticPrimitives$state -> v sem_env -> dec list -> behaviour -> bool
+empty_terminates=⊢ ∀(st :'ffi semanticPrimitives$state) (env :v sem_env). semantics_prog st env ([] :dec list) (Terminate Success st.ffi.io_events)
+empty_result=(Rval <|v := Bind ([] :(mlstring # v) list) ([] :(mlstring # (mlstring, mlstring, v) namespace) list); c := Bind ([] :(mlstring # num # stamp) list) ([] :(mlstring # (mlstring, mlstring, num # stamp) namespace) list)|> :(v sem_env, v) result)

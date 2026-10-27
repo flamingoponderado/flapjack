@@ -1,3 +1,4 @@
+import Flapjack.Test.CakeProgramSemanticsParity
 import Flapjack.Test.RiscVBackendConfigExecutable
 import Flapjack.Test.Mips32Encoding
 import Flapjack.Test.Arm8Parity

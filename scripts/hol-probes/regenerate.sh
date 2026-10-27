@@ -405,6 +405,9 @@ run_probe cake_source_conversions_probeScript.sml cake_source_conversions_probe.
 run_probe cake_source_thunk_probeScript.sml cake_source_thunk_probe.out \
   thunk_op_type dest_type good bad ordinary update nested operation xor_tail xor_short "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
 
+run_probe cake_program_semantics_probeScript.sml cake_program_semantics_probe.out \
+  evaluate_type semantics_type empty_terminates empty_result "$cake_dir/semantics/semanticsScript.sml" "$cake_dir/semantics"
+
 run_probe cake_source_evaluator_probeScript.sml cake_source_evaluator_probe.out \
   evaluate_type match_type decs_type literal raise type_error call_zero call_one match_bind match_empty declaration "$cake_dir/semantics/evaluateScript.sml" "$cake_dir/semantics"
 

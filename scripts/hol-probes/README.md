@@ -9019,3 +9019,5 @@ definitions. Regenerate with
 then run `python3 scripts/generate-cakeml-flat-oracle.py`. The Lean fixture
 compares these outputs and CI checks that it matches the captured transcript.
 The capture is finite regression evidence, not a cross-language equivalence proof.
+
+`cake_program_semantics_probeScript.sml` captures the pinned program-semantics types and empty-program behavior used by `Flapjack/SemanticsHOL.lean`.

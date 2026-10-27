@@ -8,6 +8,7 @@ import Flapjack.EvaluateHOL
 import Flapjack.EvaluateHOL.Definition
 import Flapjack.EvaluateHOL.Clock
 import Flapjack.EvaluateHOL.ClockFull
+import Flapjack.SemanticsHOL
 import Flapjack.SemanticPrimitivesHOL.EvalState
 import Flapjack.SemanticPrimitivesHOL.Concrete
 import Flapjack.SemanticPrimitivesHOL.Eval
