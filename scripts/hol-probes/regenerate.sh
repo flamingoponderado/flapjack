@@ -451,7 +451,7 @@ run_probe cake_riscv_export_probeScript.sml cake_riscv_export_probe.out \
   assembly end "$cake_dir/compiler/backend/riscv/export_riscvScript.sml" "$cake_dir/compiler/backend/riscv"
 
 run_probe cake_io_lowering_probeScript.sml cake_io_lowering_probe.out \
-  lesseq mod bounds ffi "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+  lesseq mod bounds ffi list_append list_append_arity "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
 
 run_probe cake_word_array_probeScript.sml cake_word_array_probe.out \
   word64 array shift64 shift64_large shift64_asr_large boundsblock wordfrom wordto stringcmp stringcmp_fast fp_cmp_no_hardware fp_bop_no_hardware fp_uop_no_hardware fp_top_no_hardware fp_top_no_ternary "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"

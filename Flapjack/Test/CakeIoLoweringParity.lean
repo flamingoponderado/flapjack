@@ -64,6 +64,18 @@ private def conf : Config := ⟨1, 2, 3, 16, true, false, false, false, false, f
         (.ite .lower 3 (.reg 1) (.assign 8 (.const 18)) (.assign 8 (.const 2)))), 2) => true
   | _ => false
 
+-- The append call reverses the argument registers, as in the pinned HOL probe.
+#guard match compileControl? (width := 64) conf 5 2
+    (.assign 3 (.blockOp .listAppend) [1, 2] none) with
+  | some (.mustTerminate (.call (some ([8], (.ls (), .ln), .skip, 5, 2))
+      (some 33) [6, 4] none), 3) => true
+  | _ => false
+
+#guard match compileControl? (width := 64) conf 5 2
+    (.assign 3 (.blockOp .listAppend) [1] none) with
+  | some (.skip, 2) => true
+  | _ => false
+
 private def matchesWord64Shift (shift : Shift) (amount expected : Nat) : Bool :=
   match compileControl? (width := 64) conf 5 2
       (.assign 3 (.wordOp (.wordShift .w64 shift amount)) [1] none) with

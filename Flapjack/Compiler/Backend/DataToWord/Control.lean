@@ -217,6 +217,15 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
             .call (some ([adjustVar dest], adjustSets (names.getD .ln), .skip, secn, l))
               (some fromListLocation) [adjustVar x, adjustVar y, 1] none]), l + 1)
       | _ => some (.skip, l)
+  | l, .assign dest (.blockOp .listAppend) args names =>
+      match args with
+      | [first, second] =>
+          match encodeHeader (width := width) conf 0 2 with
+          | none => some (giveUp, l)
+          | some _ => some (.mustTerminate (.call
+              (some ([adjustVar dest], adjustSets (names.getD .ln), .skip, secn, l))
+              (some appendLocation) [adjustVar second, adjustVar first] none), l + 1)
+      | _ => some (.skip, l)
   | l, .assign dest (.blockOp .boolNot) args _ =>
       match args with
       | [src] => some (.assign (adjustVar dest) (.op .xor [.var (adjustVar src), .const 16]), l)

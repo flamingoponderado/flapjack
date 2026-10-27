@@ -136,6 +136,27 @@
       "stderr_bytes": 0,
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
+    "list_append": {
+      "exit_code": 0,
+      "stdout_bytes": 327601,
+      "stdout_sha256": "e2a79b7ee1021e4781ff184ac076958a84733f501499f15bb69f301e447fda7b",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "list_append_function": {
+      "exit_code": 0,
+      "stdout_bytes": 328848,
+      "stdout_sha256": "5416cff691cfb7ff7ef820fc4e6612e4cd2a565662119c728a0d7ead5ab8c6b4",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "list_append_empty": {
+      "exit_code": 0,
+      "stdout_bytes": 327302,
+      "stdout_sha256": "0236858c499fab8b4ddba442e428ee504259fecbab63cddd62aa650bfc895d27",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
     "list_fold": {
       "exit_code": 0,
       "stdout_bytes": 330730,

@@ -18,3 +18,9 @@ val _ = capture "bounds" ``
 val _ = capture "ffi" ``
  let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16; call_empty_ffi := F|> in
  data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$FFI «write») [1;2] NONE) : 64 wordLang$prog # num``;
+val _ = capture "list_append" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$BlockOp closLang$ListAppend) [1;2] NONE) : 64 wordLang$prog # num``;
+val _ = capture "list_append_arity" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$BlockOp closLang$ListAppend) [1] NONE) : 64 wordLang$prog # num``;
