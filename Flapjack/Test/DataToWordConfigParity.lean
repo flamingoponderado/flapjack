@@ -238,6 +238,31 @@ private def headerConfig : Config := { conf with lenSize := 4 }
   | some (.skip, 2) => true
   | _ => false
 #guard Flapjack.Test.CakeMLFlatOracle.data_to_word_byte_memory
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.equalConst (.int (-3)))) [1] none) with
+  | some (.ite .equal 4 (.imm n) (.assign 8 (.const 18)) (.assign 8 (.const 2)), 2) => n == (-12 : BitVec 64)
+  | _ => false
+#guard (compileControl? (width := 8) conf 5 2 (.assign 3 (.blockOp (.equalConst (.int 32))) [1] none)).isNone
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp (.copyByte true)) [1, 2, 3] none) with
+  | some (.mustTerminate (.call (some ([8], (.ls (), .ln), .skip, 5, 2)) (some 28) [4, 6, 8] none), 3) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp (.copyByte false)) [1, 2, 3, 4, 5] none) with
+  | some (.mustTerminate (.call (some ([8], (.ls (), .ln), .skip, 5, 2)) (some 25) [4, 6, 8, 10, 12] none), 3) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp (.copyByte false)) [1, 2] none) with
+  | some (.skip, 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.thunkOp (.updateThunk .notEvaluated)) [1, 2] none) with
+  | some (.seq (.store (.op .add [.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)], .const 8]) 6)
+      (.assign 8 (.const 2)), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) { conf with lenSize := 0 } 5 2
+    (.assign 3 (.thunkOp (.updateThunk .evaluated)) [1, 2] none) with
+  | some (.seq (.assign 1 (.const w)) (.alloc 1 (.ls (), .ln)), 2) => w == (-1 : BitVec 64)
+  | _ => false
+#guard match compileControl? (width := 8) conf 5 2 (.assign 3 (.blockOp (.cons 1)) [1] none) with
+  | some (.seq (.assign 1 (.const w)) (.alloc 1 (.ls (), .ln)), 2) => w == (-1 : BitVec 8)
+  | _ => false
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_runtime_ops
 #guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.boolTest (.compare .gt))) [1, 2] none) with
   | some (.ite .equal 4 (.reg 6) (.assign 8 (.const 18)) (.assign 8 (.const 2)), 2) => true
   | _ => false

@@ -53,9 +53,7 @@ private def noOptsConfig : Flapjack.Compiler.Backend.ClosToBvl.Config :=
 #guard match Flapjack.Compiler.Backend.SourceToFlat.compileCakeToDataNoOptsFuel 100
     Flapjack.Compiler.Backend.SourceToFlat.emptyConfig noOptsConfig [] with
   | some (_, _, _, code, _) =>
-      let entry := code.filter fun (x : Nat × Nat × Flapjack.Compiler.Backend.DataLang.Prog) =>
-        [64, 76, 80, 84, 73, 88].contains x.1
-      match entry.mapM fun (x : Nat × Nat × Flapjack.Compiler.Backend.DataLang.Prog) => do
+      match code.mapM fun (x : Nat × Nat × Flapjack.Compiler.Backend.DataLang.Prog) => do
         let word ← Flapjack.Compiler.Backend.DataToWord.compileControl? (width := 64) fullWordConfig x.1 2 x.2.2
         pure (x.1, x.2.1, word) with
       | some word => Flapjack.Test.EmptyCakeWordOracle.matchesCaptured word

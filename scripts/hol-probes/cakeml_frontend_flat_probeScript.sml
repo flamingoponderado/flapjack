@@ -381,6 +381,22 @@ val data_byte_memory_word = EVAL ``let conf = (ARB:data_to_word$config) with <|t
  (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$MemOp closLang$UpdateByte) [1;2] NONE) : 32 wordLang$prog # num) = (wordLang$Skip, 2)``;
 val _ = (print "data_to_word_byte_memory="; print_term (rhs (concl (CONV_RULE
   (RAND_CONV (SIMP_CONV (srw_ss()) [wordsTheory.dimindex_32, wordsTheory.dimindex_64, wordsTheory.dimword_def] THENC EVAL)) data_byte_memory_word))); print "\n");
+val data_runtime_word = EVAL ``let conf = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16|> in
+ (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$BlockOp (closLang$EqualConst (closLang$Int (-3)))) [1] NONE) : 64 wordLang$prog # num) =
+  (wordLang$If asm$Equal 4 (asm$Imm (-12w)) (wordLang$Assign 8 (wordLang$Const 18w)) (wordLang$Assign 8 (wordLang$Const 2w)), 2) /\
+ (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$MemOp (closLang$CopyByte T)) [1;2;3] NONE) : 64 wordLang$prog # num) =
+  (wordLang$MustTerminate (wordLang$Call (SOME ([8], (sptree$LS (), sptree$LN), wordLang$Skip, 5, 2)) (SOME 28) [4;6;8] NONE), 3) /\
+ (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$MemOp (closLang$CopyByte F)) [1;2;3;4;5] NONE) : 64 wordLang$prog # num) =
+  (wordLang$MustTerminate (wordLang$Call (SOME ([8], (sptree$LS (), sptree$LN), wordLang$Skip, 5, 2)) (SOME 25) [4;6;8;10;12] NONE), 3) /\
+ (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$MemOp (closLang$CopyByte F)) [1;2] NONE) : 64 wordLang$prog # num) = (wordLang$Skip, 2) /\
+ (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$ThunkOp (ast$UpdateThunk ast$NotEvaluated)) [1;2] NONE) : 64 wordLang$prog # num) =
+  (wordLang$Seq (wordLang$Store (wordLang$Op asm$Add [wordLang$Op asm$Add [wordLang$Lookup stackLang$CurrHeap; wordLang$Shift ast$Lsr (wordLang$Var 4) (wordLang$Const 5w)]; wordLang$Const 8w]) 6) (wordLang$Assign 8 (wordLang$Const 2w)), 2) /\
+ (data_to_word$comp (conf with len_size := 0) 5 2 (dataLang$Assign 3 (closLang$ThunkOp (ast$UpdateThunk ast$Evaluated)) [1;2] NONE) : 64 wordLang$prog # num) =
+  (wordLang$Seq (wordLang$Assign 1 (wordLang$Const (-1w))) (wordLang$Alloc 1 (sptree$LS (), sptree$LN)), 2) /\
+ (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$BlockOp (closLang$Cons 1)) [1] NONE) : 8 wordLang$prog # num) =
+  (wordLang$Seq (wordLang$Assign 1 (wordLang$Const (-1w))) (wordLang$Alloc 1 (sptree$LS (), sptree$LN)), 2)``;
+val _ = (print "data_to_word_runtime_ops="; print_term (rhs (concl (CONV_RULE
+  (RAND_CONV (SIMP_CONV (srw_ss()) [wordsTheory.dimindex_64, wordsTheory.dimword_def] THENC EVAL)) data_runtime_word))); print "\n");
 val data_comparisons_word = EVAL ``
  (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$BlockOp (closLang$BoolTest (ast$Compare ast$Gt))) [1;2] NONE) : 64 wordLang$prog # num) =
   (wordLang$If asm$Equal 4 (asm$Reg 6) (wordLang$Assign 8 (wordLang$Const 18w)) (wordLang$Assign 8 (wordLang$Const 2w)), 2) /\

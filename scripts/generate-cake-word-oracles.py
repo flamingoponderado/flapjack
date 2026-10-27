@@ -11,8 +11,8 @@ CASES = tuple(
     for name, title in (("empty", "Empty"), ("reference", "Reference"), ("match", "Match"))
 )
 CONSTRUCTORS = {
-    "Seq": (".seq", 2), "Assign": (".assign", 2), "Const": (".const", 1),
-    "If": (".ite", 5), "Test": (".test", 0), "Equal": (".equal", 0), "Imm": (".imm", 1),
+    "Seq": (".seq", 2), "Assign": (".assign", 2), "Const": (".const", 1), "Load": (".load", 1),
+    "If": (".ite", 5), "Test": (".test", 0), "Equal": (".equal", 0), "Less": (".less", 0), "Imm": (".imm", 1),
     "Skip": (".skip", 0), "Alloc": (".alloc", 2), "Var": (".var", 1),
     "Lsr": (".lsr", 0), "Lsl": (".lsl", 0), "Lower": (".lower", 0),
     "Op": (".op", 2), "Add": (".add", 0), "Sub": (".sub", 0), "Or": (".or", 0), "And": (".and", 0),
@@ -20,7 +20,10 @@ CONSTRUCTORS = {
     "NextFree": (".nextFree", 0), "CurrHeap": (".currHeap", 0), "EndOfHeap": (".endOfHeap", 0),
     "Reg": (".reg", 1), "MustTerminate": (".mustTerminate", 1),
     "Call": (".call", 4), "SOME": ("some", 1), "NONE": ("none", 0),
-    "Store": (".store", 2), "Set": (".set", 2), "Globals": (".globals", 0),
+    "Store": (".store", 2), "Set": (".set", 2), "Globals": (".globals", 0), "Move": (".move", 2),
+    "Inst": (".inst", 1), "Arith": (".arith", 1), "AddOverflow": (".addOverflow", 4),
+    "SubOverflow": (".subOverflow", 4), "Mem": (".mem", 3), "Load8": (".load8", 0),
+    "Store8": (".store8", 0), "Addr": (".addr", 2),
     "GlobReal": (".globReal", 0), "Return": (".return", 2), "LN": (".ln", 0),
     "FALSE_CONST": ("(.const 2)", 0), "TRUE_CONST": ("(.const 18)", 0),
 }
@@ -97,22 +100,46 @@ def render(input_path, namespace):
         args = [parse() for _ in range(arity)]
         return "(" + " ".join([name, *args]) + ")" if args else name
 
-    pattern = parse()
+    if tokens[pos] != "[":
+        raise ValueError("expected a list of HOL functions")
+    pos += 1
+    entries = []
+    while tokens[pos] != "]":
+        set_start, word_start = len(sets), len(words)
+        pattern = parse()
+        entries.append((pattern, sets[set_start:], words[word_start:]))
+        if tokens[pos] == ";":
+            pos += 1
+        elif tokens[pos] != "]":
+            raise ValueError("expected function separator")
+    pos += 1
     if pos != len(tokens):
         raise ValueError("trailing HOL output")
-    checks = [f"decide ({name} = Flapjack.sptListInsert [{', '.join(keys)}] .ln)" for name, keys in sets]
-    checks += [f"{name} == (-1 : BitVec 64)" for name in words]
-    checks = " &&\n      ".join(checks) or "true"
+    definitions = []
+    for index, (pattern, entry_sets, entry_words) in enumerate(entries):
+        checks = [f"decide ({name} = Flapjack.sptListInsert [{', '.join(keys)}] .ln)" for name, keys in entry_sets]
+        checks += [f"{name} == (-1 : BitVec 64)" for name in entry_words]
+        checks = " &&\n      ".join(checks) or "true"
+        definitions.append(f'''private def matches{index} (entry : Nat × Nat × (Flapjack.WordLangProgHOL (BitVec 64) × Nat)) : Bool :=
+  match entry with
+  | {pattern} =>
+      {checks}
+  | _ => false''')
+    definitions = "\n\n".join(definitions)
+    entry_names = ", ".join(f"entry{index}" for index in range(len(entries)))
+    entry_checks = " &&\n      ".join(f"matches{index} entry{index}" for index in range(len(entries))) or "true"
     return f'''-- Generated from the pinned original HOL compiler; do not edit.
 import Flapjack.Pancake.WordLang
 
 namespace Flapjack.Test.{namespace}
 
+{definitions}
+
 /-- Match every captured function, including every live set and next label. -/
 def matchesCaptured (code : List (Nat × Nat × (Flapjack.WordLangProgHOL (BitVec 64) × Nat))) : Bool :=
   match code with
-  | {pattern} =>
-      {checks}
+  | [{entry_names}] =>
+      {entry_checks}
   | _ => false
 
 end Flapjack.Test.{namespace}

@@ -74,6 +74,14 @@ private def shiftVar {width : Nat} (op : Shift) (v n : Nat) : WordLangExpHOL (Bi
         | _ => .const 0
       else shiftN op (.var v) n
 
+/-- Internal pointer-field construction for nonempty constructor allocation;
+the standalone HOL helpers remain to be reviewed. -/
+private def pointerBits {width : Nat} (conf : Config) (tag len : Nat) : BitVec width :=
+  let field (n bits shift : Nat) : BitVec width :=
+    let max := 2 ^ bits - 1
+    BitVec.ofNat width ((if n < max then n else max) * 2 ^ shift)
+  field tag conf.tagBits (1 + conf.lenBits) ||| field len conf.lenBits 1
+
 /-- Internal variable-allocation sequence for the reference-array case;
 the standalone width-indexed HOL definition remains to be reviewed. -/
 private def allocVar {width : Nat} [NeZero width] (conf : Config) (limit : Nat) (names : NumSet) :
@@ -188,6 +196,16 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
                   (some equalLocation) [1, 3] none)) (.assign 3 (.const 1)))),
             boolResult dest .equal 1 (.reg 3)], l + 1)
       | _ => some (.skip, l)
+  | l, .assign dest (.blockOp (.equalConst (.int i))) args _ =>
+      match args with
+      | [src] =>
+          let bound : Int := Int.ofNat (2 ^ width / 8)
+          if -bound ≤ i ∧ i < bound then
+            let magnitude := BitVec.ofNat width (4 * i.natAbs)
+            let value := if i < 0 then -magnitude else magnitude
+            some (boolResult dest .equal (adjustVar src) (.imm value), l)
+          else none
+      | _ => some (.skip, l)
   | l, .assign dest (.intOp (.lessConstSmall i)) args _ =>
       match args with
       | [src] => some (boolResult dest .less (adjustVar src) (.imm (BitVec.ofNat width (4 * i))), l)
@@ -257,6 +275,20 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
       if tag < 2 ^ width / 16 then
         some (.assign (adjustVar dest) (.const (BitVec.ofNat width (16 * tag + 2))), l)
       else some (.seq (.assign 1 (.const (-1))) (.alloc 1 (adjustSets (.ln : NumSet))), l)
+  | l, .assign dest (.blockOp (.cons tag)) args _ =>
+      match encodeHeader (width := width) conf (4 * tag) args.length with
+      | none => some (giveUp, l)
+      | some header =>
+          let bytes := BitVec.ofNat width (width / 8) * BitVec.ofNat width (args.length + 1)
+          let mask := BitVec.ofNat width (2 ^ smallShiftLength conf - 1)
+          let pointer := (pointerBits conf tag args.length &&& mask) ||| 1
+          some (listSeq [
+            .assign 1 (.lookup .nextFree), .assign 3 (.const header),
+            storeEach 1 (3 :: args.map adjustVar) 0,
+            .assign (adjustVar dest) (.op .or [
+              shiftN .lsl (.op .sub [.var 1, .lookup .currHeap]) (shiftLength conf - wordShiftAmount width),
+              .const pointer]),
+            .set .nextFree (.op .add [.var 1, .const bytes])], l)
   | l, .assign dest (.blockOp (.elemAt n)) args _ =>
       match args with
       | [src] =>
@@ -335,6 +367,16 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
             .mustTerminate (.call (some ([adjustVar dest], adjustSets names, .skip, secn, l))
               (some refArrayLocation) [adjustVar x, adjustVar y] none)], l + 1)
       | _ => some (.skip, l)
+  | l, .assign dest (.memOp (.copyByte _)) args names =>
+      let loc := match args with
+        | [_, _, _, _, _] => some byteCopyLocation
+        | [_, _, _] => some byteCopyNewLocation
+        | _ => none
+      match loc with
+      | some loc => some (.mustTerminate (.call
+          (some ([adjustVar dest], adjustSets (names.getD .ln), .skip, secn, l))
+          (some loc) (args.map adjustVar) none), l + 1)
+      | none => some (.skip, l)
   | l, .assign dest (.memOp op) args _ =>
       match op, args with
       | .update, [base, index, value] | .updateCons, [base, index, value] =>
@@ -346,6 +388,22 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
             (.assign (adjustVar dest) (.const 2)), l)
       | .update, _ | .updateCons, _ => some (.skip, l)
       | _, _ => none
+  | l, .assign dest (.thunkOp (.updateThunk mode)) args _ =>
+      match args with
+      | [base, value] =>
+          let addr := realAddr conf (adjustVar base)
+          let bytes := BitVec.ofNat width (width / 8)
+          match mode with
+          | .notEvaluated => some (.seq (.store (.op .add [addr, .const bytes]) (adjustVar value))
+              (.assign (adjustVar dest) (.const 2)), l)
+          | .evaluated =>
+              match encodeHeader (width := width) conf 14 1 with
+              | none => some (giveUp, l)
+              | some header => some (listSeq [
+                  .assign 1 addr, .assign 3 (.const header), .store (.var 1) 3,
+                  .store (.op .add [.var 1, .const bytes]) (adjustVar value),
+                  .assign (adjustVar dest) (.const 2)], l)
+      | _ => some (.skip, l)
   | l, .assign dest (.label n) _ _ => some (.locValue (adjustVar dest) n, l)
   | l, .call none target args _ => some (.call none target (0 :: args.map adjustVar) none, l)
   | l, .call (some (ns, names)) target args none =>
