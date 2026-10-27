@@ -30,6 +30,7 @@ val _ = (print "orac_env_inv="; print_thm source_to_flatProofTheory.src_orac_env
 val _ = (print "orac_gen_inv="; print_thm source_to_flatProofTheory.src_orac_gen_inv_def; print "\n");
 val _ = (print "orac_invs="; print_thm source_to_flatProofTheory.src_orac_invs_def; print "\n");
 val _ = (print "orac_weak="; print_thm source_to_flatProofTheory.src_orac_invs_weak; print "\n");
+val _ = (print "orac_lookup="; print_thm source_to_flatProofTheory.src_orac_env_invs_lookup_env; print "\n");
 val fstSndEq = prove (``FST = (\ (a,b). a) /\ SND = (\ (a,b). b)``, simp [FUN_EQ_THM, FORALL_PROD]);
 val firstStep = prove (``source_to_flatProof$src_orac_step_invs interp g (SOME (EvalOracle es)) ==>
   ?i_f env_id0 st_v0 decs0 fdecs0 c0 x0 env_id1 st_v1 decs1 c1 x1.
