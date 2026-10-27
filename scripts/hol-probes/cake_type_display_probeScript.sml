@@ -1,0 +1,18 @@
+load "infer_tTheory";
+load "inferTheory";
+open HolKernel Parse boolLib bossLib;
+val _ = Globals.linewidth := 1000000;
+val _ = Globals.show_types := true;
+val _ = (print "get_tyname="; print_thm infer_tTheory.get_tyname_def; print "\n");
+val _ = (print "type_ident="; print_thm infer_tTheory.type_ident_to_string_def; print "\n");
+val _ = (print "var_name="; print_thm infer_tTheory.ty_var_name_def; print "\n");
+val _ = (print "parentheses="; print_thm infer_tTheory.add_parens_def; print "\n");
+val _ = (print "type_render="; print_thm infer_tTheory.inf_type_to_string_rec_def; print "\n");
+val _ = (print "type_render_final="; print_thm infer_tTheory.inf_type_to_string_def; print "\n");
+val _ = (print "alist_nub="; print_thm inferTheory.alist_nub_def; print "\n");
+val _ = (print "ns_nub="; print_thm inferTheory.ns_nub_def; print "\n");
+val _ = (print "ns_alist="; print_thm inferTheory.ns_to_alist_def; print "\n");
+val _ = (print "types_output="; print_thm inferTheory.inf_env_to_types_string_def; print "\n");
+val _ = (print "type_function="; print_thm (EVAL ``infer_t$inf_type_to_string (namespace$alist_to_ns []) (Infer_Tapp [Infer_Tvar_db 0; Infer_Tvar_db 0] 4)``); print "\n");
+val _ = (print "type_tuple="; print_thm (EVAL ``infer_t$inf_type_to_string (namespace$alist_to_ns []) (Infer_Tapp [Infer_Tapp [] 5; Infer_Tapp [] 1] 9)``); print "\n");
+val _ = (print "type_unknown="; print_thm (EVAL ``infer_t$inf_type_to_string (namespace$alist_to_ns []) (Infer_Tapp [] 123)``); print "\n");

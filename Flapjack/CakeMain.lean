@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.FromText
 import Flapjack.Compiler.Backend.RiscVConfig.Executable
 import Flapjack.RiscV.CakeArtifactFormat
 import Flapjack.Compiler.Inference.Infer.Diagnostics
+import Flapjack.Compiler.Inference.Infer.TypesOutput
 import Flapjack.CakeParser.Diagnostics
 
 /-! Experimental CakeML source-to-RISC-V command. The frontend and backend
@@ -15,6 +16,7 @@ structure Options where
   excludePrelude : Bool := false
   skipTypeInference : Bool := false
   mainReturn : Bool := false
+  onlyTypes : Bool := false
   seenTarget : Bool := false
   seenExcludePrelude : Bool := false
   seenSkipTypeInference : Bool := false
@@ -44,6 +46,7 @@ structure Options where
 
 private def usage : String :=
   "Usage: cake [--target=riscv] [--exclude_prelude=true|false] " ++
+  "[--types] " ++
   "[--skip_type_inference=true|false] [--main_return=true|false] " ++
   "[--multi=true|false] [--known=true|false] [--call=true|false] " ++
   "[--inline_factor=N] [--max_app=N] [--max_body_size=N] " ++
@@ -149,6 +152,7 @@ private def parseArgs : List String → Options → Except String Options
         else if arg == "--target=riscv" then parseArgs args { options with seenTarget := true }
         else .error s!"unsupported option: {arg}"
       else if arg == "--no_warn" then parseArgs args options
+      else if arg == "--types" then parseArgs args { options with onlyTypes := true }
       else if arg.startsWith "--sexp=" then
         if options.seenSexp then parseArgs args options
         else if parseBool (arg.drop "--sexp=".length |>.toString) == some false then
@@ -342,6 +346,23 @@ def compileBytes (options : Options) (source : List HolChar) : PrimitiveCheckedS
     | none => return .backendRejected
     | some (bytes, bitmaps, config) => return .success bytes bitmaps config
 
+/-- Parse and infer the input for the driver's `--types` mode. Errors follow
+the same path as ordinary compilation; no backend pass is run on success. -/
+private def inferTypesBytes (options : Options) (source : List HolChar) :
+    Except PrimitiveCheckedSourceResult (List HolChar) := do
+  let fuel := sourceFuel source
+  let decls ← match Flapjack.CakeParser.Frontend.parseSourceFuel fuel fuel source with
+    | .exhausted => .error .parseExhausted
+    | .rejected => .error .parseRejected
+    | .success ds => .ok ds
+  let full := if options.excludePrelude then decls else Flapjack.Basis.BasisProg.basis ++ decls
+  let env ← if options.skipTypeInference then
+    .ok Flapjack.Compiler.Inference.Infer.initConfig
+  else match Flapjack.Compiler.Inference.Infer.Core.inferProgramFuel fuel fuel full with
+    | .error e => .error (.inferenceError e)
+    | .ok env => .ok env
+  return Flapjack.Compiler.Inference.Infer.TypesOutput.render env
+
 def main (args : List String) : IO UInt32 := do
   if args == ["--help"] || args == ["-h"] then
     IO.println usage
@@ -365,7 +386,14 @@ def main (args : List String) : IO UInt32 := do
   | .ok options =>
     let input ← (← IO.getStdin).readBinToEnd
     let chars := input.data.toList.map (fun c => BitVec.ofNat 8 c.toNat)
-    let result := compileBytes options chars
+    let typeOutput := if options.onlyTypes then some (inferTypesBytes options chars) else none
+    if let some (.ok bytes) := typeOutput then
+      let stderr ← IO.getStderr
+      stderr.write (ByteArray.mk (bytes.map (fun b => UInt8.ofNat b.toNat)).toArray)
+      return 0
+    let result := match typeOutput with
+      | some (.error result) => result
+      | _ => compileBytes options chars
     if let .parseRejected := result then
       if let some bytes := Flapjack.CakeParser.Diagnostics.renderUnconsumedToken (sourceFuel chars) chars then
         let stderr ← IO.getStderr

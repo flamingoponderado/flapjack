@@ -19,6 +19,17 @@ REFERENCE_REV = 'e8eca63affd1653105ca4b9cc2f5ca87a01cd0af'
 PINNED_REV = '857f0d98da8f8a3580f34423338e697809308ede'
 HOL_REV = 'a390cbabd3a4521bab4ee20281e3e42933a8a3ae'
 CASES = {
+    'types_empty': '',
+    'types_simple': 'val id = fn x => x; val n = 3;',
+    'types_shadow': 'val x = 1; val x = True;',
+    'types_modules': 'structure M = struct val x = 1; val id = fn y => y; end; val z = M.x;',
+    'types_module_shadow': 'structure M = struct val old = 1; end; structure M = struct val new = True; end;',
+    'types_datatype': 'datatype t = A | B int; val x = A;',
+    'types_function_tuple': 'val x = fn f => fn y => f y; val t = (1,True);',
+    'types_basis': 'val n = 3;',
+    'types_skip': 'val n = 3;',
+    'undefined_types': 'val x = missing;',
+    'parse_error_types': 'val x = ;',
     'empty': '',
     'config_error_reg_alg': '',
     'config_error_gc': '',
@@ -219,6 +230,10 @@ CASES = {
 
 def run(executable, source, name):
     flags = ['--target=riscv']
+    if name.startswith('types_') or name in ('undefined_types', 'parse_error_types'):
+        flags.append('--types')
+        if name != 'types_basis': flags.append('--exclude_prelude=true')
+        if name == 'types_skip': flags.append('--skip_type_inference=true')
     if name.startswith('no_prelude_'): flags.append('--exclude_prelude=true')
     if name == 'config_error_reg_alg': flags.append('--reg_alg=bad')
     if name == 'config_error_gc': flags.append('--gc=bad')
@@ -324,7 +339,10 @@ if __name__ == '__main__':
         rows = {name: run(args.record_reference, source, name) for name, source in CASES.items()}
         for name, row in rows.items():
             rejected = name.startswith(('undefined_', 'parse_error_', 'type_error_', 'config_error_'))
-            if row['exit_code'] != (1 if rejected else 0) or (row['stderr_bytes'] == 0) == rejected:
+            if name.startswith('types_'):
+                if row['exit_code'] != 0 or row['stdout_bytes'] != 0 or row['stderr_bytes'] == 0:
+                    raise SystemExit(f'{name}: reference type-report outcome is unexpected')
+            elif row['exit_code'] != (1 if rejected else 0) or (row['stderr_bytes'] == 0) == rejected:
                 raise SystemExit(f'{name}: reference outcome did not match the expected category')
         FIXTURE.write_text(json.dumps({'reference_revision': REFERENCE_REV, 'hol_revision': HOL_REV,
                                        'pinned_revision': PINNED_REV, 'cases': rows}, indent=2) + '\n')

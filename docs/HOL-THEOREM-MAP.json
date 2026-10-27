@@ -104652,5 +104652,61 @@
     "lean_name": "SourceSemantics",
     "statement_status": "pending_statement_review",
     "reviewer": "Codex: source declarations and relevant typed HOL equations captured in cake_type_env_probe; full source and carrier review remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/inference/infer_tScript.sml",
+    "hol_name": "get_tyname_def",
+    "lean_path": "Flapjack/Compiler/Inference/InferT/Display.lean",
+    "lean_name": "getTyName",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed original equations captured in cake_type_display_probe, including the polymorphic namespace payload; full source and carrier review remains pending. The executed --types path uses this renderer."
+  },
+  {
+    "hol_path": "cakeml/compiler/inference/infer_tScript.sml",
+    "hol_name": "type_ident_to_string_def",
+    "lean_path": "Flapjack/Compiler/Inference/InferT/Display.lean",
+    "lean_name": "typeIdentToString",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed original equations captured in cake_type_display_probe, including the polymorphic namespace payload; full source and carrier review remains pending. The executed --types path uses this renderer."
+  },
+  {
+    "hol_path": "cakeml/compiler/inference/infer_tScript.sml",
+    "hol_name": "ty_var_name_def",
+    "lean_path": "Flapjack/Compiler/Inference/InferT/Display.lean",
+    "lean_name": "tyVarName",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed original equations captured in cake_type_display_probe, including the polymorphic namespace payload; full source and carrier review remains pending. The executed --types path uses this renderer."
+  },
+  {
+    "hol_path": "cakeml/compiler/inference/infer_tScript.sml",
+    "hol_name": "add_parens_def",
+    "lean_path": "Flapjack/Compiler/Inference/InferT/Display.lean",
+    "lean_name": "addParens",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed original equations captured in cake_type_display_probe, including the polymorphic namespace payload; full source and carrier review remains pending. The executed --types path uses this renderer."
+  },
+  {
+    "hol_path": "cakeml/compiler/inference/infer_tScript.sml",
+    "hol_name": "inf_type_to_string_rec_def",
+    "lean_path": "Flapjack/Compiler/Inference/InferT/Display.lean",
+    "lean_name": "inferTypeToStringRec",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed original equations captured in cake_type_display_probe, including the polymorphic namespace payload; full source and carrier review remains pending. The executed --types path uses this renderer."
+  },
+  {
+    "hol_path": "cakeml/compiler/inference/infer_tScript.sml",
+    "hol_name": "inf_type_to_string_rec_def",
+    "lean_path": "Flapjack/Compiler/Inference/InferT/Display.lean",
+    "lean_name": "inferTypesToStringRec",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed original equations captured in cake_type_display_probe, including the polymorphic namespace payload; full source and carrier review remains pending. The executed --types path uses this renderer."
+  },
+  {
+    "hol_path": "cakeml/compiler/inference/infer_tScript.sml",
+    "hol_name": "inf_type_to_string_def",
+    "lean_path": "Flapjack/Compiler/Inference/InferT/Display.lean",
+    "lean_name": "inferTypeToString",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed original equations captured in cake_type_display_probe, including the polymorphic namespace payload; full source and carrier review remains pending. The executed --types path uses this renderer."
   }
 ]
