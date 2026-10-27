@@ -18,7 +18,9 @@ CASES = tuple(
      (ROOT / "scripts/hol-probes/install_xor_word_probe.out",
       ROOT / "Flapjack/Test/InstallXorWordOracle.lean", "InstallXorWordOracle"),
      (ROOT / "scripts/hol-probes/compare_equal_word_probe.out",
-      ROOT / "Flapjack/Test/CompareEqualWordOracle.lean", "CompareEqualWordOracle"))
+      ROOT / "Flapjack/Test/CompareEqualWordOracle.lean", "CompareEqualWordOracle"),
+     (ROOT / "scripts/hol-probes/longdiv_word_probe.out",
+      ROOT / "Flapjack/Test/LongDivWordOracle.lean", "LongDivWordOracle"))
 CONSTRUCTORS = {
     "Seq": (".seq", 2), "Assign": (".assign", 2), "Const": (".const", 1), "Load": (".load", 1),
     "If": (".ite", 5), "Test": (".test", 0), "Equal": (".equal", 0), "Less": (".less", 0), "Imm": (".imm", 1),
@@ -32,6 +34,7 @@ CONSTRUCTORS = {
     "Store": (".store", 2), "Set": (".set", 2), "Globals": (".globals", 0), "Move": (".move", 2),
     "Inst": (".inst", 1), "Arith": (".arith", 1), "AddOverflow": (".addOverflow", 4),
     "SubOverflow": (".subOverflow", 4), "Mem": (".mem", 3), "Load8": (".load8", 0),
+    "AddCarry": (".addCarry", 4), "LongDiv": (".longDiv", 5),
     "Store8": (".store8", 0), "Addr": (".addr", 2),
     "Install": (".install", 5), "CodeBufferWrite": (".codeBufferWrite", 2),
     "DataBufferWrite": (".dataBufferWrite", 2), "BitmapBuffer": (".bitmapBuffer", 0),
