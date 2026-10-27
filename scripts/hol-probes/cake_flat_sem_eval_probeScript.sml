@@ -11,6 +11,8 @@ val _ = show_thm "bytes_typed=" flatSemTheory.v_to_bytes_def;
 val _ = show_thm "words_typed=" flatSemTheory.v_to_words_def;
 val _ = show_thm "do_eval_typed=" flatSemTheory.do_eval_def;
 val _ = show_thm "app_unit_typed=" flatSemTheory.AppUnit_def;
+val _ = show_thm "evaluate_clock_typed=" flatSemTheory.evaluate_clock;
+val _ = show_thm "fix_clock_evaluate_typed=" flatSemTheory.fix_clock_evaluate;
 val fix_clock_imp = prove(
   ``flatSem$fix_clock s x = (s1,res) ⇒ s1.clock ≤ s.clock``,
   Cases_on `x` >> fs [flatSemTheory.fix_clock_def] >> rw [] >> fs []);

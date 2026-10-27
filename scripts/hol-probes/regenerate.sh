@@ -254,7 +254,7 @@ run_probe cake_flat_sem_thunk_probeScript.sml cake_flat_sem_thunk_probe.out \
   "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe cake_flat_sem_eval_probeScript.sml cake_flat_sem_eval_probe.out \
-  dec_clock_typed fix_clock_typed bytes_typed words_typed do_eval_typed app_unit_typed fix_clock_imp_typed zero_clock decrement fix_clamps empty_eval bytes_valid words_valid eval_success \
+  dec_clock_typed fix_clock_typed bytes_typed words_typed do_eval_typed app_unit_typed evaluate_clock_typed fix_clock_evaluate_typed fix_clock_imp_typed zero_clock decrement fix_clamps empty_eval bytes_valid words_valid eval_success \
   "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe source_to_flat_pmatch_statement_probeScript.sml source_to_flat_pmatch_statement_probe.out \

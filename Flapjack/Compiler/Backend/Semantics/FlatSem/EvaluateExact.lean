@@ -4,8 +4,8 @@ import Flapjack.Misc.ListEl
 /-! Clocked flat evaluation without an extra fuel parameter. The definition is
 untagged pending complete review against HOL and the source numeric carrier.
 Lean currently fails to derive the generated functional induction principle for
-this mutual well-founded definition; proofs need an explicit induction over
-the clock and expression-weight measure until that issue is resolved. -/
+this mutual well-founded definition; `EvaluateClock` proves clock preservation
+using an explicit induction over the clock and expression-weight measure. -/
 namespace Flapjack.Compiler.Backend.FlatSem
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 open Flapjack.Basis.Pure.MlString
@@ -167,5 +167,15 @@ decreasing_by
   all_goals try simp_all only [Nat.lt_irrefl, false_or, true_and]
   all_goals omega
 end
+
+/-- Evaluate one flat declaration, accepting exactly the unit result. This
+projection is kept separate for comparison with the original mutual clauses. -/
+noncomputable def evaluateDec {C F : Type} (state : State C F) (declaration : FlatLang.Exp) :
+    State C F × Option (ErrorResult Value) :=
+  let next := evaluate ⟨[]⟩ state [declaration]
+  match next.2 with
+  | .err error => (next.1, some error)
+  | .val [.conv none []] => (next.1, none)
+  | .val _ => (next.1, some (.abort .typeError))
 
 end Flapjack.Compiler.Backend.FlatSem
