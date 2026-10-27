@@ -459,6 +459,10 @@ run_probe cake_basis_bvi_probeScript.sml cake_basis_bvi_probe.out \
 run_probe cake_build_lowering_probeScript.sml cake_build_lowering_probe.out \
   parts64 parts32be build64 fromlist64 refbyte64 "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
 
+run_probe cake_type_env_probeScript.sml cake_type_env_probe.out \
+  freevars freevars_ast db_inc db_subst bind_tvar opt_bind tve_lookup extend lookup_local lookup num_tvs bind_list inc_example subst_example lookup_example \
+  "$cake_dir/semantics/typeSystemScript.sml" "$cake_dir/semantics"
+
 run_probe cake_riscv_export_probeScript.sml cake_riscv_export_probe.out \
   assembly assembly_ret end "$cake_dir/compiler/backend/riscv/export_riscvScript.sml" "$cake_dir/compiler/backend/riscv"
 

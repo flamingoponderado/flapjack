@@ -104345,5 +104345,141 @@
     "lean_name": "semanticsProg_deterministic",
     "statement_status": "pending_statement_review",
     "reviewer": "Codex: typed HOL statement captured in semantics_props_implements_probe; source evaluator, lazy-list representation and carrier review remain pending, including inherited rational-cut floating-point assumption."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "check_freevars_def",
+    "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
+    "lean_name": "checkFreevars",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "check_freevars_ast_def",
+    "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
+    "lean_name": "checkFreevarsAst",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "deBruijn_inc_def",
+    "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
+    "lean_name": "deBruijnInc",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "deBruijn_subst_def",
+    "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
+    "lean_name": "deBruijnSubst",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "tenv_val_exp",
+    "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
+    "lean_name": "TenvValExp",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "bind_tvar_def",
+    "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
+    "lean_name": "bindTvar",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "opt_bind_name_def",
+    "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
+    "lean_name": "optBindName",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "tveLookup_def",
+    "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
+    "lean_name": "tveLookup",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "tenv_abbrev",
+    "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
+    "lean_name": "TenvAbbrev",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "tenv_ctor",
+    "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
+    "lean_name": "TenvCtor",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "tenv_val",
+    "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
+    "lean_name": "TenvVal",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "type_env",
+    "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
+    "lean_name": "TypeEnv",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "extend_dec_tenv_def",
+    "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
+    "lean_name": "extendDecTenv",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "lookup_varE_def",
+    "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
+    "lean_name": "lookupVarE",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "lookup_var_def",
+    "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
+    "lean_name": "lookupVar",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "num_tvs_def",
+    "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
+    "lean_name": "numTvs",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "bind_var_list_def",
+    "lean_path": "Flapjack/TypeSystemHOL/Environments.lean",
+    "lean_name": "bindVarList",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: HOL source and inferred definition types captured in cake_type_env_probe where applicable; type-carrier and full cross-language source review remain pending."
   }
 ]

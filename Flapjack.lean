@@ -1866,6 +1866,7 @@ import Flapjack.EvaluateProps.ClockIoExpr
 import Flapjack.EvaluateProps.ClockIoApp
 import Flapjack.EvaluateProps.ClockIoFull
 import Flapjack.EvaluateProps.ClockIoConsequences
+import Flapjack.TypeSystemHOL.Environments
 import Flapjack.SemanticsProps.Clock
 import Flapjack.SemanticsProps.Determinism
 import Flapjack.AstHOL
