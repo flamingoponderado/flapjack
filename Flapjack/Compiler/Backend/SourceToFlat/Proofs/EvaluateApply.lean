@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateControl
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.MemoryOps
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.Equality
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveTest
 
 /-! Expression-level primitive application simulations. These use the
 preliminary factored relations and are not yet reviewed HOL theorem ports. -/
@@ -378,6 +379,103 @@ theorem exprSim_equality {C F : Type} (genv : GlobalEnv) (compMap : Environment)
                     (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
                   simp [getOpClass, doApp, doAppNumericCore, doAppBasic, comparison, astOpToFlatOp,
                     FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, sameEq, EvaluateHOL.listResult]
+                  exact ⟨.value (.cons (boolValue_related genv ok b) .nil), nextRel⟩
+
+
+/-- Primitive comparison expressions preserve operand evaluation and their
+boolean result for the preliminary source-to-flat relations. -/
+theorem exprSim_test {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
+    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (left right : AstHOL.Exp) (test : Test) (typ : PrimType) (ok : genvCOk genv.c)
+    (argsSim : ExprListSim genv compMap trace sourceEnv flatEnv sourceState flatState [right, left])
+    (notTypeError : ∀ next, EvaluateHOL.evaluate sourceState sourceEnv [.app (.test test typ) [left, right]] ≠
+      (next, .err (.abort .typeError))) :
+    ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.app (.test test typ) [left, right]) := by
+  unfold ExprListSim at argsSim
+  simp only [compileExps] at argsSim
+  cases sourceRun : EvaluateHOL.evaluate sourceState sourceEnv [right, left] with
+  | mk sourceNext sourceResult =>
+    rw [sourceRun] at argsSim
+    cases flatRun : FlatSem.evaluate flatEnv flatState [compileExp trace compMap right, compileExp trace compMap left] with
+    | mk flatNext flatResult =>
+      rw [flatRun] at argsSim
+      obtain ⟨related, nextRel⟩ := argsSim
+      cases sourceResult with
+      | err error =>
+        cases error with
+        | raise errorValue =>
+          cases related with
+          | raise rightRel =>
+            unfold ExprSim
+            rw [EvaluateHOL.evaluate]
+            simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+            rw [(EvaluateHOL.fixClockEvaluate sourceState sourceEnv [right, left] []).1, sourceRun]
+            simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+            rw [FlatSem.evaluate]
+            simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+            rw [(FlatSem.fixClock_evaluations flatEnv flatState
+              [compileExp trace compMap right, compileExp trace compMap left]
+              (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+            exact ⟨.raise rightRel, nextRel⟩
+        | abort error =>
+          cases related with
+          | abort =>
+            unfold ExprSim
+            rw [EvaluateHOL.evaluate]
+            simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+            rw [(EvaluateHOL.fixClockEvaluate sourceState sourceEnv [right, left] []).1, sourceRun]
+            simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+            rw [FlatSem.evaluate]
+            simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+            rw [(FlatSem.fixClock_evaluations flatEnv flatState
+              [compileExp trace compMap right, compileExp trace compMap left]
+              (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+            exact ⟨.abort error, nextRel⟩
+      | val values =>
+        have length := EvaluateProps.evaluateLengthFull sourceState sourceNext sourceEnv [right, left] values sourceRun
+        have two : ∃ v p, values = [v, p] := by
+          cases values with
+          | nil => simp at length
+          | cons v tail =>
+            cases tail with
+            | nil => simp at length
+            | cons p rest =>
+              cases rest with
+              | nil => exact ⟨v, p, rfl⟩
+              | cons q rest => simp at length
+        obtain ⟨sourceRight, sourceLeft, rfl⟩ := two
+        cases related with
+        | value valuesRel =>
+          cases valuesRel with
+          | cons rightRel tail =>
+            cases tail with
+            | cons leftRel tail =>
+              cases tail with
+              | nil =>
+                rename_i flatRight flatLeft
+                cases comparison : SemanticPrimitivesHOL.doTest test typ sourceLeft sourceRight with
+                | typeError =>
+                  apply False.elim
+                  apply notTypeError sourceNext
+                  rw [EvaluateHOL.evaluate]
+                  simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+                  rw [(EvaluateHOL.fixClockEvaluate sourceState sourceEnv [right, left] []).1, sourceRun]
+                  simp [getOpClass, doApp, comparison, EvaluateHOL.typeError]
+                | val b =>
+                  have flatComparison := doTest_related genv ok test typ sourceLeft sourceRight flatLeft flatRight b leftRel rightRel comparison
+                  unfold ExprSim
+                  rw [EvaluateHOL.evaluate]
+                  simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+                  rw [(EvaluateHOL.fixClockEvaluate sourceState sourceEnv [right, left] []).1, sourceRun]
+                  simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+                  rw [FlatSem.evaluate]
+                  simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+                  rw [(FlatSem.fixClock_evaluations flatEnv flatState
+                    [compileExp trace compMap right, compileExp trace compMap left]
+                    (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+                  simp [getOpClass, doApp, comparison, astOpToFlatOp,
+                    FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, flatComparison, EvaluateHOL.listResult]
                   exact ⟨.value (.cons (boolValue_related genv ok b) .nil), nextRel⟩
 
 end Flapjack.Compiler.Backend.SourceToFlat
