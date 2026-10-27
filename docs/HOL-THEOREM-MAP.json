@@ -105279,6 +105279,14 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "AppUnit_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Eval.lean",
+    "lean_name": "appUnit",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: The single flat expression argument is applied to the nullary unit constructor using the source Opapp, with disabled traces on both constructed expressions. The original inferred type and complete equation are captured in cake_flat_sem_eval_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
     "hol_name": "dec_clock_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Eval.lean",
     "lean_name": "decClock",

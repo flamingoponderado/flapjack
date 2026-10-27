@@ -347,6 +347,7 @@ import Flapjack.Test.CakeFlatSemApplyParity
 import Flapjack.Test.CakeFlatSemMemoryParity
 import Flapjack.Test.CakeFlatSemApplyCompleteParity
 import Flapjack.Test.CakeFlatSemEvaluateParity
+import Flapjack.Test.CakeFlatSemEvaluateExactParity
 import Flapjack.Test.CakeGlobalEnvConditionsParity
 import Flapjack.Test.CakeSourceConversionsParity
 import Flapjack.Test.CakeSourceThunkParity

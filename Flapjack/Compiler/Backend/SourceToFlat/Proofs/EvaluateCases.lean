@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalLookup
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StateRel
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
+import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 import Flapjack.EvaluateHOL.Definition
 
 /-! Initial source-to-flat expression simulations. These are Flapjack-specific
@@ -140,5 +141,73 @@ theorem evaluate_function_related {C F : Type} (genv : GlobalEnv) (compMap : Env
           (bindLocals traces (flatEnv.v.map Prod.fst) compMap.v)) } body)) := by
     simpa [bindLocals, nsBindList] using related
   exact ⟨by simp [EvaluateHOL.evaluate], rfl, closureRel, statesRel⟩
+
+/-- Literal simulation using both clocked evaluators without extra fuel. This
+is infrastructure over the factored value and state relations. -/
+theorem evaluate_literal_unbounded {C F : Type} (genv : GlobalEnv) (compMap : Environment)
+    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (statesRel : StateRel genv sourceState flatState) (trace : List VarN) (lit : Lit) :
+    EvaluateHOL.evaluate sourceState sourceEnv [.lit lit] = (sourceState, .val [.litv lit]) ∧
+    FlatSem.evaluate flatEnv flatState [compileExp trace compMap (.lit lit)] =
+      (flatState, .val [.litv lit]) ∧
+    ValueRel genv (.litv lit) (.litv lit) ∧ StateRel genv sourceState flatState := by
+  exact ⟨by simp [EvaluateHOL.evaluate], by simp [compileExp, FlatSem.evaluate], .literal genv lit, statesRel⟩
+
+/-- Local-variable simulation using both clocked evaluators without extra fuel. -/
+theorem evaluate_local_unbounded {C F : Type} (genv : GlobalEnv) (compMap : Environment)
+    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
+    (envRel : EnvRel genv sourceEnv.v flatEnv.v)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (statesRel : StateRel genv sourceState flatState) (trace : List VarN) (name : VarN) (t : Tra)
+    (compiled : nsLookup compMap.v (.short name) = some (.localName t name))
+    (source : SemanticPrimitivesHOL.Value) (lookup : nsLookup sourceEnv.v (.short name) = some source) :
+    ∃ flat, EvaluateHOL.evaluate sourceState sourceEnv [.var (.short name)] = (sourceState, .val [source]) ∧
+      FlatSem.evaluate flatEnv flatState [compileExp trace compMap (.var (.short name))] =
+        (flatState, .val [flat]) ∧ ValueRel genv source flat ∧ StateRel genv sourceState flatState := by
+  obtain ⟨flat, flatLookup, valueRel⟩ := envRel_lookup genv sourceEnv.v flatEnv.v envRel name source lookup
+  refine ⟨flat, ?_, ?_, valueRel, statesRel⟩
+  · simp [EvaluateHOL.evaluate, lookup]
+  · simp [compileExp, compiled, compileVar, FlatSem.evaluate, flatLookup]
+
+/-- Global-variable simulation using both clocked evaluators without extra fuel. -/
+theorem evaluate_global_unbounded {C F : Type} (genv : GlobalEnv) (compMap : Environment)
+    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (statesRel : StateRel genv sourceState flatState) (globalsEq : flatState.globals = genv.v)
+    (trace : List VarN) (id : Ident ModN VarN) (source : SemanticPrimitivesHOL.Value)
+    (lookup : nsLookup sourceEnv.v id = some source) (related : GlobalLookupRel genv compMap id source) :
+    ∃ flat, EvaluateHOL.evaluate sourceState sourceEnv [.var id] = (sourceState, .val [source]) ∧
+      FlatSem.evaluate flatEnv flatState [compileExp trace compMap (.var id)] =
+        (flatState, .val [flat]) ∧ ValueRel genv source flat ∧ StateRel genv sourceState flatState := by
+  obtain ⟨n, flat, t, compiled, valueRel, flatDo⟩ :=
+    globalLookupRel_doApp genv compMap id source flatState globalsEq related
+  refine ⟨flat, ?_, ?_, valueRel, statesRel⟩
+  · simp [EvaluateHOL.evaluate, lookup]
+  · simp [compileExp, compiled, compileVar, FlatSem.evaluate, FlatSem.fixClock, FlatSem.doApp, flatDo]
+
+/-- Closure capture simulation using both clocked evaluators without extra fuel. -/
+theorem evaluate_function_unbounded {C F : Type} (genv : GlobalEnv) (compMap : Environment)
+    (globalEnv : SemEnv SemanticPrimitivesHOL.Value)
+    (sourceLocal : Namespace ModN VarN SemanticPrimitivesHOL.Value)
+    (flatEnv : FlatSem.Environment FlatSem.Value) (localRel : EnvRel genv sourceLocal flatEnv.v)
+    (globalInv : GlobalEnvInv genv compMap (fun n => n ∈ flatEnv.v.map Prod.fst) globalEnv)
+    (traces : List Tra) (length : traces.length = flatEnv.v.length)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (statesRel : StateRel genv sourceState flatState) (trace : List VarN)
+    (name : VarN) (body : AstHOL.Exp) :
+    let sourceEnv := { globalEnv with v := nsAppend sourceLocal globalEnv.v }
+    let currentMap := { compMap with v := bindLocals traces (flatEnv.v.map Prod.fst) compMap.v }
+    let compiledBody := compileExp trace
+      { currentMap with v := nsBind name (.localName .none name) currentMap.v } body
+    EvaluateHOL.evaluate sourceState sourceEnv [.fn name body] =
+      (sourceState, .val [.closure sourceEnv name body]) ∧
+    FlatSem.evaluate flatEnv flatState [compileExp trace currentMap (.fn name body)] =
+      (flatState, .val [.closure flatEnv name compiledBody]) ∧
+    ValueRel genv (.closure sourceEnv name body) (.closure flatEnv name compiledBody) ∧
+    StateRel genv sourceState flatState := by
+  have bounded := evaluate_function_related genv compMap globalEnv sourceLocal flatEnv localRel globalInv
+    traces length sourceState flatState statesRel trace name body 0
+  exact ⟨by simp [EvaluateHOL.evaluate], by simp [compileExp, FlatSem.evaluate], bounded.2.2.1, statesRel⟩
 
 end Flapjack.Compiler.Backend.SourceToFlat

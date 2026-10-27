@@ -100,8 +100,7 @@ noncomputable def evaluateFuel {C F : Type} : Nat → Environment Value → Stat
             | .isThunk .evaluated value => some (next, .val [value])
             | .isThunk .notEvaluated value =>
               let name := ofString "f"
-              let app : FlatLang.Exp := .app .none (.src .opapp)
-                [.varLocal .none name, .con .none none []]
+              let app := appUnit (.varLocal .none name)
               let (last, result) ← evaluateFuel fuel ⟨[(name, value)]⟩ next [app]
               match result with
               | .err error => some (last, .err error)

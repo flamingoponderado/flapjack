@@ -4,6 +4,11 @@ import Flapjack.Misc.ShiftSeq
 /-! Clock and dynamic-compilation helpers for the flat evaluator. -/
 namespace Flapjack.Compiler.Backend.FlatSem
 
+/-- Apply a flat expression to unit, as used when forcing a thunk. -/
+@[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "AppUnit_def"]
+def appUnit (expr : FlatLang.Exp) : FlatLang.Exp :=
+  .app .none (.src .opapp) [expr, .con .none none []]
+
 /-- Decrement the evaluator clock with natural-number subtraction. -/
 @[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "dec_clock_def"]
 def decClock {C F : Type} (state : State C F) : State C F :=
