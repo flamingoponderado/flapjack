@@ -1,0 +1,4 @@
+divs=[2; -3; -3; 2; 1; 2; -2; -1]
+ops=[Var 0; Op (IntOp (Const (-4))) []; Op (IntOp (Const (-3))) []; Op (BlockOp (EqualConst (Int 4))) [Var 0]; mk_elem_at (Var 1) 2]
+compile=Let [Op (IntOp (Const 0)) []; Op (IntOp (Const 5)) []] (Op (IntOp Add) [Var 5; Op (IntOp (Const 5)) []])
+algebra=[Op (IntOp Add) [Var 0; Op (IntOp (Const 5)) []]; Op (IntOp Add) [Var 0; Op (IntOp (Const 1)) []]; Op (IntOp Sub) [Op (IntOp Sub) [Var 0; Var 1]; Op (IntOp (Const 5)) []]; Op (IntOp Sub) [Op (IntOp Add) [Var 0; Var 1]; Op (IntOp (Const 1)) []]; Op (IntOp Mult) [Op (IntOp (Const 6)) []; Op (IntOp Mult) [Var 0; Var 1]]; Op (IntOp (Const (-2))) []; Op (BlockOp (Cons 1)) []; Op (BlockOp (Cons 1)) []]

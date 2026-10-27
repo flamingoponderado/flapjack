@@ -66,6 +66,18 @@ def compileCakeToBviBvlHandleFuel (fuel inlineLimit cutSize : Nat) (splitSeq : B
   let names := BvlToBvi.getNames (code.map fun (n, _, _) => n) names
   pure (source, closure, start, code, next, names)
 
+/-- Run the BVL inlining pipeline before BVI lowering. Known-function,
+call, tail-recursion, TMC and subsequent BVI optimizations remain separate. -/
+def compileCakeToBviBvlOptimizedFuel (fuel inlineLimit cutSize : Nat) (splitSeq : Bool)
+    (source : Config) (closure : ClosToBvl.Config) (decls : List AstHOL.Dec) :
+    Option (Config × ClosToBvl.Config × Nat × List (Nat × Nat × Bvi.Exp) × Nat × Spt Basis.Pure.MlString.MlString) := do
+  let (source, exps) ← compileCakeToClosFuel fuel source decls
+  let (closure, bvl, names) ← ClosToBvl.compileMtiOnlyFuel? fuel closure exps
+  let (_, bvl) ← BvlInline.compileProgFuel fuel inlineLimit cutSize splitSeq bvl
+  let (start, code, next) ← BvlToBvi.compileProgFuel fuel fuel closure.start 0 bvl
+  let names := BvlToBvi.getNames (code.map fun (n, _, _) => n) names
+  pure (source, closure, start, code, next, names)
+
 /-- The checked multi-argument route followed by BVI wrapper inlining and
 tick removal. BVL inlining, tail-recursion and TMC passes remain absent. -/
 def compileCakeToBviInlineFuel (fuel : Nat) (source : Config)

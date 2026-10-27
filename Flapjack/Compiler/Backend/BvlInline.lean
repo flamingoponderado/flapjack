@@ -172,4 +172,12 @@ def compileWithoutConstantsFuel (fuel inlineLimit cutSize : Nat) (splitSeq : Boo
     pure (name, arity, ← BvlHandle.compileAnyWithoutConstantsFuel fuel splitSeq cutSize arity body)
   pure (cache, prog)
 
+/-- Execute the BVL inlining and handler pipeline with explicit fuel. -/
+def compileProgFuel (fuel inlineLimit cutSize : Nat) (splitSeq : Bool)
+    (prog : List (Nat × Nat × Exp)) : Option (Spt (Nat × Exp) × List (Nat × Nat × Exp)) := do
+  let (cache, prog) ← compileWithoutHandleFuel fuel inlineLimit prog
+  let prog ← prog.mapM fun (name, arity, body) => do
+    pure (name, arity, ← BvlHandle.compileAnyFuel fuel splitSeq cutSize arity body)
+  pure (cache, prog)
+
 end Flapjack.Compiler.Backend.BvlInline

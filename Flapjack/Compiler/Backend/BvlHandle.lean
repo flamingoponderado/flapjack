@@ -1,9 +1,9 @@
 import Flapjack.Compiler.Backend.Bvl.Syntax
 import Flapjack.Compiler.Backend.DbVars
+import Flapjack.Compiler.Backend.BvlConst
 
 /-! Fuel-bounded executable infrastructure for the BVL handler pass. The
-total HOL definitions, termination proofs and constant-folding prerequisite
-have not yet been ported. -/
+total HOL definitions and termination proofs have not yet been ported. -/
 namespace Flapjack.Compiler.Backend.BvlHandle
 open Bvl DbVars
 
@@ -174,5 +174,27 @@ def compileAnyWithoutConstantsFuel (fuel : Nat) (splitSeq : Bool) (limit arity :
     (e : Exp) : Option Exp :=
   if arity == 0 && splitSeq then compileSeqsWithoutConstantsFuel fuel limit e none
   else compileExpWithoutConstantsFuel fuel limit arity e
+
+/-- Run constant propagation followed by handler simplification and lowering. -/
+def compileExpFuel (fuel limit arity : Nat) (e : Exp) : Option Exp := do
+  let e ← BvlConst.compileFuel fuel [] e
+  compileExpWithoutConstantsFuel fuel limit arity e
+
+/-- Lower the original sequence decomposition, including constant propagation. -/
+def compileSeqsFuel : Nat → Nat → Exp → Option Exp → Option Exp
+  | 0, _, _, _ => none
+  | fuel + 1, limit, .let [x, y] (.var 1), acc => do
+      let rest ← compileSeqsFuel fuel limit y acc
+      compileSeqsFuel fuel limit x (some rest)
+  | fuel + 1, limit, e, acc => do
+      let e ← compileExpFuel fuel limit 0 e
+      match acc with
+      | none => pure e
+      | some rest => pure (.let [e] (.let [] (.let [] rest)))
+
+/-- Execute the full BVL handler stage with explicit fuel. -/
+def compileAnyFuel (fuel : Nat) (splitSeq : Bool) (limit arity : Nat) (e : Exp) : Option Exp :=
+  if arity == 0 && splitSeq then compileSeqsFuel fuel limit e none
+  else compileExpFuel fuel limit arity e
 
 end Flapjack.Compiler.Backend.BvlHandle

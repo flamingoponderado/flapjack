@@ -72,6 +72,7 @@ probe_needs_refresh() {
          "$(basename "$probe")" == inline_cake_bvi_probeScript.sml ||
          "$(basename "$probe")" == bvl_inline_cake_bvi_probeScript.sml ||
          "$(basename "$probe")" == bvl_handle_cake_bvi_probeScript.sml ||
+         "$(basename "$probe")" == bvl_optimized_cake_bvi_probeScript.sml ||
          "$(basename "$probe")" == empty_cake_data_probeScript.sml ||
          "$(basename "$probe")" == reference_cake_data_probeScript.sml ||
          "$(basename "$probe")" == match_cake_data_probeScript.sml ||
@@ -100,6 +101,7 @@ probe_needs_refresh() {
          "$cake_dir/compiler/backend/bvi_inlineScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/bvl_inlineScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/bvl_handleScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/bvl_constScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/bvi_to_dataScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/data_liveScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/data_simpScript.sml" -nt "$output" ||
@@ -249,11 +251,17 @@ run_probe bvl_inline_frontend_probeScript.sml bvl_inline_frontend_probe.out \
 run_probe bvl_handle_frontend_probeScript.sml bvl_handle_frontend_probe.out \
   simplify compiled cut seq "$cake_dir/compiler/backend/bvl_handleScript.sml" "$cake_dir/compiler/backend"
 
+run_probe bvl_const_frontend_probeScript.sml bvl_const_frontend_probe.out \
+  divs ops compile algebra "$cake_dir/compiler/backend/bvl_constScript.sml" "$cake_dir/compiler/backend"
+
 run_probe bvl_inline_cake_bvi_probeScript.sml bvl_inline_cake_bvi_probe.out \
   code "$cake_dir/compiler/backend/bvl_inlineScript.sml" "$cake_dir/compiler/backend"
 
 run_probe bvl_handle_cake_bvi_probeScript.sml bvl_handle_cake_bvi_probe.out \
   code "$cake_dir/compiler/backend/bvl_handleScript.sml" "$cake_dir/compiler/backend"
+
+run_probe bvl_optimized_cake_bvi_probeScript.sml bvl_optimized_cake_bvi_probe.out \
+  code "$cake_dir/compiler/backend/bvl_inlineScript.sml" "$cake_dir/compiler/backend"
 
 run_probe empty_cake_bvi_probeScript.sml empty_cake_bvi_probe.out \
   code "$cake_dir/compiler/backend/bvl_to_bviScript.sml" "$cake_dir/compiler/backend"

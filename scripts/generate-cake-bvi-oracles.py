@@ -24,6 +24,8 @@ CASES = (
      ROOT / "Flapjack/Test/BvlInlineCakeBviOracle.lean", "BvlInlineCakeBviOracle"),
     (ROOT / "scripts/hol-probes/bvl_handle_cake_bvi_probe.out",
      ROOT / "Flapjack/Test/BvlHandleCakeBviOracle.lean", "BvlHandleCakeBviOracle"),
+    (ROOT / "scripts/hol-probes/bvl_optimized_cake_bvi_probe.out",
+     ROOT / "Flapjack/Test/BvlOptimizedCakeBviOracle.lean", "BvlOptimizedCakeBviOracle"),
 )
 
 CONSTRUCTORS = {
@@ -51,7 +53,7 @@ def render(input_path, namespace):
     if not raw.startswith("code="):
         raise ValueError("missing HOL code row")
     source = raw[5:]
-    tokens = re.findall(r"[A-Za-z_][A-Za-z_0-9]*|[0-9]+|[][(),;]", source)
+    tokens = re.findall(r"[A-Za-z_][A-Za-z_0-9]*|-?[0-9]+|[][(),;]", source)
     if "".join(tokens) != re.sub(r"\s+", "", source):
         raise ValueError("unexpected character in HOL output")
     pos = 0
@@ -62,8 +64,8 @@ def render(input_path, namespace):
             raise ValueError("unexpected end of HOL output")
         token = tokens[pos]
         pos += 1
-        if token.isdigit():
-            return token
+        if token.lstrip("-").isdigit():
+            return f"({token})" if token.startswith("-") else token
         if token == "[":
             items = []
             while tokens[pos] != "]":
@@ -94,7 +96,7 @@ def render(input_path, namespace):
         args = [parse() for _ in range(arity)]
         return "(" + " ".join([name, *args]) + ")" if args else name
 
-    if namespace in ("MtiCakeBviOracle", "BvlInlineCakeBviOracle", "BvlHandleCakeBviOracle"):
+    if namespace in ("MtiCakeBviOracle", "BvlInlineCakeBviOracle", "BvlHandleCakeBviOracle", "BvlOptimizedCakeBviOracle"):
         if tokens[pos] != "[":
             raise ValueError("expected BVI program list")
         pos += 1
