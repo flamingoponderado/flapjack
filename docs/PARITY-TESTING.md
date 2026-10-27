@@ -414,4 +414,6 @@ the recorded hashes. A pinned executable comparison is still required for the
 final parity claim. The suite also covers selected parser and type errors; other
 diagnostic paths remain incomplete. Its `--reg_alg` cases compare complete
 assembly for allocator modes 0 through 4, including first-option precedence.
-The linear-scan mode is substantially slower in the Lean executable.
+The linear-scan mode is substantially slower in the Lean executable. Separate
+`--gc` cases compare no GC, simple GC, generational lists, duplicate options,
+and malformed options.

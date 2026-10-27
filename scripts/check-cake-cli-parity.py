@@ -21,6 +21,8 @@ HOL_REV = 'a390cbabd3a4521bab4ee20281e3e42933a8a3ae'
 CASES = {
     'empty': '',
     'config_error_reg_alg': '',
+    'config_error_gc': '',
+    'config_error_gc_generation': '',
     'no_prelude_reg_alg_0': 'fun id x = x; val a = id (1, 2);',
     'no_prelude_reg_alg_1': 'fun id x = x; val a = id (1, 2);',
     'no_prelude_reg_alg_2': 'fun id x = x; val a = id (1, 2);',
@@ -28,6 +30,12 @@ CASES = {
     'no_prelude_reg_alg_4': 'fun id x = x; val a = id (1, 2);',
     'no_prelude_reg_alg_duplicate': 'fun id x = x; val a = id (1, 2);',
     'no_prelude_reg_alg_empty': 'fun id x = x; val a = id (1, 2);',
+    'no_prelude_gc_none': 'fun id x = x; val a = id (1, 2);',
+    'no_prelude_gc_simple': 'fun id x = x; val a = id (1, 2);',
+    'no_prelude_gc_generational': 'fun id x = x; val a = id (1, 2);',
+    'no_prelude_gc_empty': 'fun id x = x; val a = id (1, 2);',
+    'no_prelude_gc_multiple': 'fun id x = x; val a = id (1, 2);',
+    'no_prelude_gc_duplicate': 'fun id x = x; val a = id (1, 2);',
     'hello': 'val _ = print "Hello";',
     'identity': 'val id = fn x => x;',
     'module': 'structure M = struct val x = 1; end;',
@@ -142,6 +150,17 @@ def run(executable, source, name):
     flags = ['--target=riscv']
     if name.startswith('no_prelude_'): flags.append('--exclude_prelude=true')
     if name == 'config_error_reg_alg': flags.append('--reg_alg=bad')
+    if name == 'config_error_gc': flags.append('--gc=bad')
+    if name == 'config_error_gc_generation': flags.append('--gc=gen1,,bad')
+    gc_options = {
+        'no_prelude_gc_none': ['--gc=none'],
+        'no_prelude_gc_simple': ['--gc=simple'],
+        'no_prelude_gc_generational': ['--gc=gen1000'],
+        'no_prelude_gc_empty': ['--gc=gen'],
+        'no_prelude_gc_multiple': ['--gc=gen1000,,2000'],
+        'no_prelude_gc_duplicate': ['--gc=none', '--gc=bad'],
+    }
+    flags.extend(gc_options.get(name, []))
     if name == 'no_prelude_reg_alg_duplicate': flags.extend(['--reg_alg=1', '--reg_alg=bad'])
     elif name == 'no_prelude_reg_alg_empty': flags.extend(['--reg_alg=', '--reg_alg=3'])
     elif name.startswith('no_prelude_reg_alg_'): flags.append('--reg_alg=' + name.rsplit('_', 1)[1])
