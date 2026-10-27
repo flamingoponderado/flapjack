@@ -31,6 +31,18 @@ def compileStub? {width : Nat} (location : Nat) : Option (Nat × WordLangProgHOL
         .assign 4 (.op .add [.var 4, .const 1]),
         .assign 6 (.op .sub [.var 6, .const 1]),
         .call none (some stringCmpLoopLocation) [0, 2, 4, 6, 8, 10] none]))
+  else if location = replicateLocation then
+    some (5, .ite .equal 6 (.imm 0) (.return 0 [8]) (listSeq [
+      .assign 2 (.op .add [.var 2, .const (BitVec.ofNat width (width / 8))]),
+      .store (.var 2) 4,
+      .assign 6 (.op .sub [.var 6, .const 4]),
+      .call none (some replicateLocation) [0, 2, 4, 6, 8] none]))
+  else if location = addLocation ∨ location = subLocation ∨ location = mulLocation ∨
+      location = divLocation ∨ location = modLocation then
+    let operation := if location = addLocation then 0 else if location = subLocation then 1
+      else if location = mulLocation then 4 else if location = divLocation then 5 else 6
+    some (3, .seq (.assign 6 (.const (BitVec.ofNat width (4 * operation))))
+      (.call none (some anyArithLocation) [0, 2, 4, 6] none))
   else if location = unusedLocation then some (6, .skip)
   else if location = byteCopyNewLocation then some (4, .skip)
   else if location = dummyLocation then some (0, .skip)

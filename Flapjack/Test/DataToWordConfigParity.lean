@@ -280,6 +280,15 @@ private def headerConfig : Config := { conf with lenSize := 4 }
 #guard match compileStub? (width := 64) byteCopyNewLocation with
   | some (4, .skip) => true
   | _ => false
+#guard match compileStub? (width := 32) replicateLocation with
+  | some (5, .ite .equal 6 (.imm 0) (.return 0 [8])
+      (.seq (.assign 2 (.op .add [.var 2, .const 4])) (.seq (.store (.var 2) 4)
+       (.seq (.assign 6 (.op .sub [.var 6, .const 4])) (.call none (some 11) [0, 2, 4, 6, 8] none))))) => true
+  | _ => false
+#guard [addLocation, subLocation, mulLocation, divLocation, modLocation].map (fun loc =>
+    match compileStub? (width := 64) loc with
+    | some (3, .seq (.assign 6 (.const op)) (.call none (some 12) [0, 2, 4, 6] none)) => some op.toNat
+    | _ => none) == [some 0, some 4, some 16, some 20, some 24]
 #guard (compileStub? (width := 64) refArrayLocation).isNone
 #guard Flapjack.Test.CakeMLFlatOracle.data_to_word_stubs
 #guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.boolTest (.compare .gt))) [1, 2] none) with

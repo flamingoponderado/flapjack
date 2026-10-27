@@ -415,7 +415,16 @@ val data_stubs_word = EVAL ``
        (wordLang$Seq (wordLang$Assign 4 (wordLang$Op asm$Add [wordLang$Var 4; wordLang$Const 1w]))
         (wordLang$Seq (wordLang$Assign 6 (wordLang$Op asm$Sub [wordLang$Var 6; wordLang$Const 1w]))
          (wordLang$Call NONE (SOME 38) [0;2;4;6;8;10] NONE))))))) /\
- (data_to_word$ByteCopyNew_code (ARB:data_to_word$config) : 64 wordLang$prog) = wordLang$Skip``;
+ (data_to_word$ByteCopyNew_code (ARB:data_to_word$config) : 64 wordLang$prog) = wordLang$Skip /\
+ (data_to_word$Replicate_code : 32 wordLang$prog) =
+  wordLang$If asm$Equal 6 (asm$Imm 0w) (wordLang$Return 0 [8])
+   (wordLang$Seq (wordLang$Assign 2 (wordLang$Op asm$Add [wordLang$Var 2; wordLang$Const 4w]))
+    (wordLang$Seq (wordLang$Store (wordLang$Var 2) 4)
+     (wordLang$Seq (wordLang$Assign 6 (wordLang$Op asm$Sub [wordLang$Var 6; wordLang$Const 4w]))
+      (wordLang$Call NONE (SOME 11) [0;2;4;6;8] NONE)))) /\
+ [(data_to_word$Add_code : 64 wordLang$prog); data_to_word$Sub_code; data_to_word$Mul_code; data_to_word$Div_code; data_to_word$Mod_code] =
+ MAP (\n. wordLang$Seq (wordLang$Assign 6 (wordLang$Const (n2w n)))
+   (wordLang$Call NONE (SOME 12) [0;2;4;6] NONE)) [0;4;16;20;24]``;
 val _ = (print "data_to_word_stubs="; print_term (rhs (concl (CONV_RULE
   (RAND_CONV (SIMP_CONV (srw_ss()) [wordsTheory.dimindex_32, wordsTheory.dimindex_64, wordsTheory.dimword_def] THENC EVAL)) data_stubs_word))); print "\n");
 val data_comparisons_word = EVAL ``
