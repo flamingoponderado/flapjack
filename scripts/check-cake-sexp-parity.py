@@ -43,7 +43,14 @@ RAW_PROGRAMS = {
 }
 RAW_FLAGS = ['--sexp=true', '--target=riscv', '--skip_type_inference=true', '--exclude_prelude=true']
 BAD_INPUTS = ['', '(', '(1 . 2)', '(garbage)', '((Dlet))', '((Denv "\\\\20"))']
-TYPE_ERRORS = [
+DENV_TYPE_ERRORS = [
+    '((Denv "foo"))',
+    '((Dmod "A" ((Denv "foo"))))',
+    '((Dlocal ((Denv "foo")) nil))',
+    '((Denv "first") (Dlet (unk unk) "x" (Var (Short "missing"))))',
+    '((Dlet (unk unk) "x" (Var (Short "missing"))) (Denv "later"))',
+]
+TYPE_ERRORS = DENV_TYPE_ERRORS + [
     '((Dlet (unk unk) "x" (Var (Short "missing"))))',
     '((Dlet ((0 0) (0 1)) "x" (Var (Short "missing"))))',
     '((Dlet (unk unk) "x" (If (Lit 1) (Lit 2) (Lit 3))))',
@@ -169,6 +176,10 @@ def main():
         for executable in ([args.check_reference, args.cake] if args.check_reference else [args.cake]):
             if capture(executable, source.encode('ascii'), flags['types']) != want:
                 raise SystemExit(f'type-error input {i}: output differs for {executable}')
+            if source in DENV_TYPE_ERRORS:
+                for extra in (['--sexp=true', '--target=riscv'], ['--sexp=true', '--print_sexp']):
+                    if capture(executable, source.encode('ascii'), extra) != want:
+                        raise SystemExit(f'Denv type-error input {i}/{extra}: output differs for {executable}')
     print('S-expression type-error diagnostics match pinned CakeML')
     for name, source in STRESS_INPUTS.items():
         for executable in ([args.check_reference, args.cake] if args.check_reference else [args.cake]):

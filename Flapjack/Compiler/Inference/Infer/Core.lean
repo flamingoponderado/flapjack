@@ -11,7 +11,7 @@ open Flapjack.Basis.Pure.MlString Flapjack.NamespaceHOL Flapjack.AstHOL
 open Flapjack.Compiler.Inference.Unify
 
 inductive Error where
-  | exhausted | unsupported | mismatch | undefinedName | invalidPattern | valueRestriction
+  | exhausted | unsupported | mismatch | undefinedName | invalidPattern | valueRestriction | envDeclaration
   | unsafeOperation | thunkOperation | primitiveTypeMismatch
   | primitiveArity : String → Nat → Nat → Error
   | typeMismatch : InferT → InferT → Error
@@ -579,7 +579,7 @@ private def inferDeclWorker : Nat → Nat → Env → Dec → M Env
     | .dlocal ds body =>
       let env' ← inferDeclsWorker fuel unifFuel env ds
       inferDeclsWorker fuel unifFuel (extendEnv env' env) body
-    | .denv _ => fail .unsupported
+    | .denv _ => fail .envDeclaration
 
 private def inferDeclsWorker : Nat → Nat → Env → List Dec → M Env
   | 0, _, _, _ => fail .exhausted

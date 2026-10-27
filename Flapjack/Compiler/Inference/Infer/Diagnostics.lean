@@ -152,6 +152,11 @@ def renderUnsupportedPrimitive (input : List HolChar) (error : Error) : Option (
   some (ascii "### ERROR: type error\n" ++ ascii message ++ ascii " at " ++
     sourceLocation input loc ++ ascii "\nProgram exited with nonzero exit code.\n")
 
+/-- The original inference pass rejects `Denv` with no source location. -/
+def renderUnsupportedDeclaration : Error → Option (List HolChar)
+  | .envDeclaration => some (ascii "### ERROR: type error\nEnv declaration (Denv) is not supported. at unknown location\nProgram exited with nonzero exit code.\n")
+  | _ => none
+
 /-- Render the value restriction at the declaration location. -/
 def renderValueRestriction (input : List HolChar) : Error → Option (List HolChar)
   | .located loc .valueRestriction => some (ascii "### ERROR: type error\nValue restriction violated at " ++
