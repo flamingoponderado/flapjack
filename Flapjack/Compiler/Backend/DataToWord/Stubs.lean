@@ -10,6 +10,27 @@ private def listSeq {α : Type} : List (WordLangProgHOL α) → WordLangProgHOL 
   | [x] => x
   | x :: y :: xs => .seq x (listSeq (y :: xs))
 
+/-- Internal common shape of the two directional byte-copy loops. -/
+private def byteCopyLoop {width : Nat} (forward : Bool) : WordLangProgHOL (BitVec width) :=
+  let offset (n : Nat) : BitVec width :=
+    if forward then BitVec.ofNat width n else -(BitVec.ofNat width n)
+  let load (r n : Nat) := WordLangProgHOL.inst (.mem .load8 r (.addr 4 (offset n)))
+  let store (r n : Nat) := WordLangProgHOL.inst (.mem .store8 r (.addr 6 (offset n)))
+  let op := if forward then BinOp.add else BinOp.sub
+  let loc := if forward then byteCopyAddLocation else byteCopySubLocation
+  .ite .lower 2 (.imm 4)
+    (.ite .lower 2 (.imm 2)
+      (.ite .equal 2 (.imm 0) (.return 0 [8]) (listSeq [load 1 0, store 1 0, .return 0 [8]]))
+      (listSeq [load 1 0, load 3 1,
+        .ite .equal 2 (.imm 2) (listSeq [store 1 0, store 3 1, .return 0 [8]])
+          (listSeq [load 5 2, store 1 0, store 3 1, store 5 2, .return 0 [8]])]))
+    (listSeq [load 1 0, load 3 1, load 5 2, load 7 3,
+      store 1 0, store 3 1, store 5 2, store 7 3,
+      .assign 9 (.op .sub [.var 2, .const 4]),
+      .assign 11 (.op op [.var 4, .const 4]),
+      .assign 13 (.op op [.var 6, .const 4]),
+      .call none (some loc) [0, 9, 11, 13, 8] none])
+
 /-- Flapjack's partial stub lookup. It supplies only the listed stubs and
 returns `none` for all others; the complete HOL `stubs` list, including
 bignum code, remains unported. -/
@@ -38,6 +59,8 @@ def compileStub? {width : Nat} (location : Nat) : Option (Nat × WordLangProgHOL
       .store (.var 2) 4,
       .assign 6 (.op .sub [.var 6, .const 4]),
       .call none (some replicateLocation) [0, 2, 4, 6, 8] none]))
+  else if location = byteCopyAddLocation then some (5, byteCopyLoop true)
+  else if location = byteCopySubLocation then some (5, byteCopyLoop false)
   else if location = addLocation ∨ location = subLocation ∨ location = mulLocation ∨
       location = divLocation ∨ location = modLocation then
     let operation := if location = addLocation then 0 else if location = subLocation then 1

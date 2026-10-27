@@ -9,7 +9,8 @@ CASES = tuple(
     (ROOT / f"scripts/hol-probes/{name}_cake_word_probe.out",
      ROOT / f"Flapjack/Test/{title}CakeWordOracle.lean", f"{title}CakeWordOracle")
     for name, title in (("empty", "Empty"), ("reference", "Reference"), ("match", "Match"))
-)
+) + ((ROOT / "scripts/hol-probes/byte_copy_word_probe.out",
+      ROOT / "Flapjack/Test/ByteCopyWordOracle.lean", "ByteCopyWordOracle"),)
 CONSTRUCTORS = {
     "Seq": (".seq", 2), "Assign": (".assign", 2), "Const": (".const", 1), "Load": (".load", 1),
     "If": (".ite", 5), "Test": (".test", 0), "Equal": (".equal", 0), "Less": (".less", 0), "Imm": (".imm", 1),

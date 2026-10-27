@@ -4,6 +4,8 @@
 
 `empty_cake_word_probe.out`, `reference_cake_word_probe.out`, and `match_cake_word_probe.out` capture all word-language functions produced from the corresponding CakeML ASTs under the same restricted settings, using the configuration in `CakeMLControlFlowParity.lean`. `scripts/generate-cake-word-oracles.py` converts them into exhaustive Lean patterns, including the live sets and next labels. These probes do not include data-to-word's separately generated runtime stubs or establish final RISC-V output parity.
 
+`byte_copy_word_probe.out` captures the complete forward and backward byte-copy stub bodies; the same generator checks every emitted instruction and offset. The recorded locations and arities follow the original `stubs` list.
+
 `data_to_word_header_types_probe.out` records the original types and typed definitions for header construction and its checked encoding. The frontend probe also captures 32-bit and 64-bit encoded values and an invalid length; these observations are regression evidence, not a cross-language proof.
 
 `riscv_sltu_decode_probe.out` freshly kernel-proves the unrestricted original SLTU DecodeAny(Word(Encode instruction)) identity for every word5 register tuple, with typed universal statement and zero hypotheses. It also captures the actual Rtype source clause (funct3=011/funct7=0000000), word5 carriers and zero/all-ones31/high-bit/alias evaluations. Lean proves the same full native composition. This untagged infrastructure supplies the real decoder prerequisite for the full six-instruction AddCarry encoder, including source-zero and temporary31 operands; it does not prove that constructor simulation alone. The local shape/capture pin is a regression check and does not independently establish HOL-to-Lean correspondence.
