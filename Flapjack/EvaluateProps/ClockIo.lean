@@ -96,4 +96,61 @@ theorem isClockIoMono_cong {σ α β : Type} (s t : State σ)
     same { s with clock } ⟨rfl, rfl, rfl⟩
   simp only [isClockIoMono, mainEq, clockEq]
 
+@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "is_clock_io_mono_check"]
+theorem isClockIoMono_check {σ α β : Type} (f : State σ → State σ × Result α β) (s : State σ)
+    (h : s.clock ≠ 0 → isClockIoMono (fun st => f (adjClock 1 0 st)) (EvaluateHOL.decClock s)) :
+    isClockIoMono (fun st => if st.clock = 0 then (st, Result.err (α := α) (.abort .timeoutError)) else f st) s := by
+  by_cases hs : s.clock = 0
+  · simp only [isClockIoMono, hs, if_true]
+    refine ⟨ioEventsMonoHOL_refl _, Nat.le_refl _, Nat.le_refl _, Nat.le_refl _, Nat.le_refl _, ?_⟩
+    intro clock
+    cases clock with
+    | zero => simp [ioEventsMonoHOL]
+    | succ n => simp
+  · have inv := h hs
+    have restored : adjClock 1 0 (EvaluateHOL.decClock s) = s := by
+      cases s
+      simp only [adjClock, EvaluateHOL.decClock] at *
+      congr 1
+      omega
+    simp only [isClockIoMono, restored] at inv
+    cases heval : f s with
+    | mk next result =>
+      simp only [heval] at inv
+      rcases inv with ⟨trace, bound, types, exns, refs, comparisons⟩
+      simp only [isClockIoMono, hs, if_false, heval]
+      refine ⟨trace, ?_, types, exns, refs, ?_⟩
+      · simp only [EvaluateHOL.decClock] at bound
+        omega
+      · intro clock
+        cases clock with
+        | zero =>
+          have positive : 0 < s.clock - next.clock := by
+            simp only [EvaluateHOL.decClock] at bound
+            omega
+          simpa [Nat.not_le_of_gt positive, EvaluateHOL.decClock] using trace
+        | succ k =>
+          have adjusted : adjClock 1 0 { EvaluateHOL.decClock s with clock := k } =
+              { s with clock := Nat.succ k } := by
+            cases s
+            simp [adjClock, EvaluateHOL.decClock]
+          have comparison := comparisons k
+          simp only [adjusted] at comparison
+          cases hevalOther : f { s with clock := Nat.succ k } with
+          | mk other otherResult =>
+            simp only [hevalOther] at comparison
+            simp only [Nat.succ_ne_zero, if_false]
+            have clockEq : k - ((EvaluateHOL.decClock s).clock - next.clock) =
+                Nat.succ k - (s.clock - next.clock) := by
+              simp only [EvaluateHOL.decClock] at bound ⊢
+              omega
+            have geEq : (k ≥ (EvaluateHOL.decClock s).clock - next.clock) ↔
+                (Nat.succ k ≥ s.clock - next.clock) := by
+              simp only [EvaluateHOL.decClock] at bound ⊢
+              omega
+            have leEq : (k ≤ (EvaluateHOL.decClock s).clock) ↔ (Nat.succ k ≤ s.clock) := by
+              simp only [EvaluateHOL.decClock]
+              omega
+            simpa only [clockEq, geEq, leEq] using comparison
+
 end Flapjack.EvaluateProps

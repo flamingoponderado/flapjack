@@ -103945,5 +103945,13 @@
     "lean_name": "decIncClock",
     "statement_status": "pending_statement_review",
     "reviewer": "Codex (pending full evaluator state and carrier review): pinned typed original is captured in cake_evaluate_ffi_props_probe; result value and error payload types remain independent."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "is_clock_io_mono_check",
+    "lean_path": "Flapjack/EvaluateProps/ClockIo.lean",
+    "lean_name": "isClockIoMono_check",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending full evaluator state and carrier review): pinned typed original captured in cake_evaluate_ffi_props_probe; the proof handles zero and positive clocks and retains independent success/error payload types."
   }
 ]
