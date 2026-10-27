@@ -284,7 +284,12 @@ private def parseArgs : List String → Options → Except String Options
         match parseBool (arg.drop "--main_return=".length |>.toString) with
         | some b => parseArgs args { options with mainReturn := b, seenMainReturn := true }
         | none => .error s!"invalid Boolean option: {arg}"
-      else .error s!"unsupported option: {arg}"
+      else if arg == "--print_sexp" || arg == "--explore" || arg == "--pancake" ||
+          arg == "--help" || arg == "--version" || arg == "--repl" ||
+          arg.startsWith "--pancake_feature=" then
+        .error s!"unsupported option: {arg}"
+      -- The original driver's flag lookups ignore arguments they do not recognize.
+      else parseArgs args options
 
 private def errorMessage : PrimitiveCheckedSourceResult → Option String
   | .parseExhausted => some "parser or lexer exhausted its execution bound"
@@ -364,7 +369,7 @@ private def inferTypesBytes (options : Options) (source : List HolChar) :
   return Flapjack.Compiler.Inference.Infer.TypesOutput.render env
 
 def main (args : List String) : IO UInt32 := do
-  if args == ["--help"] || args == ["-h"] then
+  if args == ["--help"] then
     IO.println usage
     return 0
   let errors := topConfigErrors args

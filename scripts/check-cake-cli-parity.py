@@ -28,6 +28,8 @@ CASES = {
     'types_function_tuple': 'val x = fn f => fn y => f y; val t = (1,True);',
     'types_basis': 'val n = 3;',
     'types_skip': 'val n = 3;',
+    'types_unknown': 'val n = 3;',
+    'types_short_help': 'val n = 3;',
     'undefined_types': 'val x = missing;',
     'parse_error_types': 'val x = ;',
     'empty': '',
@@ -168,6 +170,7 @@ CASES = {
     'parse_error_long_comment': '(*' + 'x' * 11000 + '*)\nval x = ;',
     'no_prelude_empty': '',
     'no_prelude_val': 'val x = 42;',
+    'no_prelude_unknown': 'val x = 42;',
     'no_prelude_identity': 'val id = fn x => x;',
     'undefined_variable': 'val x = foo;',
     'undefined_qualified': 'val x = A.foo;',
@@ -235,6 +238,9 @@ def run(executable, source, name):
         if name != 'types_basis': flags.append('--exclude_prelude=true')
         if name == 'types_skip': flags.append('--skip_type_inference=true')
     if name.startswith('no_prelude_'): flags.append('--exclude_prelude=true')
+    if name in ('types_unknown', 'no_prelude_unknown'):
+        flags.extend(['--unknown=abc', 'input.cml', '--known'])
+    if name == 'types_short_help': flags.append('-h')
     if name == 'config_error_reg_alg': flags.append('--reg_alg=bad')
     if name == 'config_error_gc': flags.append('--gc=bad')
     if name == 'config_error_gc_generation': flags.append('--gc=gen1,,bad')

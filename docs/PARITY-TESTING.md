@@ -418,3 +418,5 @@ assembly for allocator modes 0 through 4, including first-option precedence.
 The linear-scan mode is substantially slower in the Lean executable. Separate
 `--gc` cases compare no GC, simple GC, generational lists, duplicate options,
 and malformed options.
+The suite also checks ignored unrecognized arguments, including the short `-h`
+argument, in both type-reporting and complete RISC-V assembly output.
