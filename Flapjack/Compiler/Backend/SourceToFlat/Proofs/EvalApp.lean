@@ -332,6 +332,68 @@ theorem evaluate_sourceEval_declaration_error {F : Type}
     evalEnv [] decs).2]
   cases error <;> simp_all only
 
+/-- An error in the declaration induction hypothesis propagates through
+both Eval expressions and preserves the factored result and state relations.
+The source and flat declaration runs are the induction hypothesis; neither
+whole Eval result is assumed. -/
+theorem evaluate_eval_declaration_error_related {C F : Type}
+    (genv : GlobalEnv) (envId : Nat × Nat) (config nextConfig : Config)
+    (decs : List Dec) (flatDecs : List FlatLang.Exp)
+    (sourceEnv evalEnv : SemEnv Value) (flatEnv : FlatSem.Environment FlatSem.Value)
+    (sourceInitial sourceArguments sourceLast : SemanticPrimitivesHOL.State F)
+    (flatInitial flatArguments flatLast : FlatSem.State C F)
+    (begin : Option EvalState) (sourceError : ErrorResult Value) (flatError : ErrorResult FlatSem.Value)
+    (exprs : List AstHOL.Exp) (sourceValues : List Value) (a b c d bytes words : FlatSem.Value)
+    (flatNextConfig : FlatSem.InstallConfig C) (trace : List VarN) (compMap : Environment)
+    (n : Nat) (next : NextIndices) (newMap : Environment) (gen : EnvironmentGenerationStore)
+    (body : List FlatLang.Exp)
+    (sourceRun : EvaluateHOL.evaluate sourceInitial sourceEnv exprs.reverse =
+      (sourceArguments, .val sourceValues.reverse))
+    (sourceDecoded : SemanticPrimitivesHOL.doEval sourceValues sourceArguments.evalState =
+      some (evalEnv, decs, begin))
+    (positive : 0 < sourceArguments.clock)
+    (sourceDeclarations : EvaluateHOL.evaluateDecs
+      (EvaluateHOL.decClock { sourceArguments with evalState := begin }) evalEnv decs =
+        (sourceLast, .err sourceError))
+    (flatRun : FlatSem.evaluate flatEnv flatInitial (compileExps trace compMap exprs).reverse =
+      (flatArguments, .val [words, bytes, d, c, b, a]))
+    (flatDecoded : FlatSem.doEval [bytes, words] flatArguments.evalConfig =
+      some (flatDecs, flatNextConfig, FlatSem.unitValue))
+    (compiled : incCompileProg envId config decs = (nextConfig, flatDecs))
+    (compiledBody : compileDecs [] 1 config.next (lookupEnvId envId config.envs)
+      ⟨0, config.envs.next, .ln⟩ decs = (n, next, newMap, gen, body))
+    (bodyRun : FlatSem.evaluateDecs
+      { FlatSem.decClock { flatArguments with evalConfig := flatNextConfig } with
+        globals := flatArguments.globals ++ List.replicate (next.vidx - config.next.vidx) none } body =
+        (flatLast, some flatError))
+    (argumentsRel : StateRel genv sourceArguments flatArguments)
+    (lastRel : StateRel genv sourceLast flatLast)
+    (errorRel : EvalResultRel genv (.err sourceError) (.err flatError)) :
+    let sourceResult := EvaluateHOL.evaluate sourceInitial sourceEnv [.app .eval exprs]
+    let flatResult := FlatSem.evaluate flatEnv flatInitial [compileExp trace compMap (.app .eval exprs)]
+    EvalResultRel genv sourceResult.2 flatResult.2 ∧ StateRel genv sourceResult.1 flatResult.1 := by
+  have flatPositive : 0 < flatArguments.clock := by
+    cases argumentsRel with
+    | intro _ _ clock _ => simpa [← clock] using positive
+  let flatStart := FlatSem.decClock { flatArguments with evalConfig := flatNextConfig }
+  have bodyRun' : FlatSem.evaluateDecs
+      { flatStart with globals := flatStart.globals ++ List.replicate (next.vidx - config.next.vidx) none }
+        body = (flatLast, some flatError) := by simpa [flatStart, FlatSem.decClock] using bodyRun
+  have flatDeclarations := evaluateIncCompileProg_error flatStart flatLast envId config decs n next
+    newMap gen body flatError compiledBody bodyRun'
+  rw [compiled] at flatDeclarations
+  have flatResult := evaluate_compileEval_error flatEnv flatInitial flatArguments flatLast trace compMap exprs
+    a b c d bytes words flatDecs flatNextConfig flatError flatRun flatDecoded flatPositive
+    (by simpa [flatStart] using flatDeclarations)
+  have sourceResult := evaluate_sourceEval_declaration_error sourceEnv evalEnv sourceInitial sourceArguments
+    sourceLast exprs sourceValues decs begin sourceError sourceRun sourceDecoded positive sourceDeclarations
+  dsimp only
+  rw [sourceResult, flatResult]
+  refine ⟨errorRel, ?_⟩
+  cases lastRel with
+  | intro nonempty refs clock ffi =>
+    cases sourceError <;> exact .intro _ _ nonempty refs clock ffi
+
 /-- With related operands and the callback invariant, a zero-clock Eval
 times out in both evaluators after advancing their respective callback states.
 The operand runs are the expression-list induction hypothesis. -/
