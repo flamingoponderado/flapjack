@@ -402,6 +402,55 @@
       "stderr_bytes": 0,
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
+    "nested_constructor_pattern": {
+      "exit_code": 0,
+      "stdout_bytes": 327594,
+      "stdout_sha256": "1aca1e271837ffb3b6032fc9c29a9040fa962d4606afc4c61ccc2d68fe444490",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "as_pattern": {
+      "exit_code": 0,
+      "stdout_bytes": 329244,
+      "stdout_sha256": "4c506cbaadef3e2498ace210641f67c2ff0826ec3039964b134f8c3a51bda4c6",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "recursive_list": {
+      "exit_code": 0,
+      "stdout_bytes": 331242,
+      "stdout_sha256": "666f275242dcfcb4dd78738dd4858aeeb7963b77d5bc0ab91b1607e454196ffb",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "word8_shift": {
+      "exit_code": 0,
+      "stdout_bytes": 332255,
+      "stdout_sha256": "242dd1d21d12805f623044dee43e5f55a3ccf2bdf73a9c6c324a869fa6543917",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "byte_array_copy_vector": {
+      "exit_code": 0,
+      "stdout_bytes": 335685,
+      "stdout_sha256": "b03b957f768fb7a45b04a6ad4b232c3568ae5b822c3714fc921512d77d5d88aa",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "double_sqrt": {
+      "exit_code": 0,
+      "stdout_bytes": 429202,
+      "stdout_sha256": "2b52883c153683676c99fb77bc240013aeffad33aa41fb0e89db1aaf540715ef",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "double_multiply": {
+      "exit_code": 0,
+      "stdout_bytes": 429400,
+      "stdout_sha256": "e80d9eef2de9d9fd68a75d77e01127b79bb20bca6b07233de3e9778bc8ca47f6",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
     "no_prelude_empty": {
       "exit_code": 0,
       "stdout_bytes": 310091,
