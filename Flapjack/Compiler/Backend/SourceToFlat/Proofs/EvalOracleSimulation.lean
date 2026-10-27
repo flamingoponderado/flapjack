@@ -213,11 +213,38 @@ theorem doEval_oracle_envStoreAdvance {C : Type} [Nonempty C]
   obtain ⟨post, _, _, _, nextGenRel⟩ :=
     doEval_oracle_preserves_oracles decode transform state flat steps related
       first second third fourth bytesValue wordsValue output success
-  obtain ⟨current, next, currentCfg, nextCfg, length, valid, submap⟩ :=
+  obtain ⟨current, next, currentCfg, nextCfg, length, _, valid, submap⟩ :=
     sourceOracle_envStoreAdvance decode transform genv state steps envs
   refine ⟨current, next, currentCfg, ?_, length, valid, submap, ?_⟩
   · simpa [post] using nextCfg
   · simpa [length] using nextGenRel
+
+/-- Successful Eval preserves the combined source oracle invariants, including
+the stored environments, when the global environment grows. The relation is
+the factored source-to-flat relation, not the full reviewed HOL invariant. -/
+theorem doEval_oracle_preserves_sourceInvs {C : Type} [Nonempty C]
+    (decode : Value → Option (Config × C)) (transform : List Dec → List Dec)
+    (state : EvalOracleState) (flat : FlatSem.InstallConfig C)
+    (old new : GlobalEnv) (growth : GlobalGrowth old new)
+    (invs : srcOracInvs (some decode) transform old (some (.evalOracle state)))
+    (related : oracRel (some decode) transform (some (.evalOracle state)) flat)
+    (first second third fourth bytesValue wordsValue : Value)
+    (output : SemEnv Value × List Dec × Option EvalState)
+    (success : SemanticPrimitivesHOL.doEval
+      [first, second, third, fourth, bytesValue, wordsValue] (some (.evalOracle state)) = some output) :
+    srcOracInvs (some decode) transform new output.2.2 ∧
+      oracRel (some decode) transform output.2.2
+        { flat with compileOracle := Flapjack.holShiftSeq 1 flat.compileOracle } := by
+  obtain ⟨post, nextSteps, nextRelated, nextGen, _⟩ :=
+    doEval_oracle_preserves_oracles decode transform state flat invs.1 related
+      first second third fourth bytesValue wordsValue output success
+  have nextEnvs := srcOracEnvInvs_advance decode transform old state invs.1 invs.2.1
+  rw [post]
+  refine ⟨⟨?_, ?_, ?_⟩, ?_⟩
+  · simpa [post] using nextSteps
+  · exact srcOracEnvInvs_growth (some decode) old new growth _ nextEnvs
+  · simpa [post] using nextGen
+  · simpa [post] using nextRelated
 
 private theorem list_length_six {α : Type} (xs : List α) (length : xs.length = 6) :
     ∃ a b c d e f, xs = [a, b, c, d, e, f] := by
@@ -301,5 +328,41 @@ theorem doEval_oracle_related {C : Type} [Nonempty C]
                 exact ⟨envId, stateValue, decs, config, payload, flatDecs,
                   entry, decoded, sourceDecls, flatEq, rfl, flatSuccess, nextSteps, nextRelated,
                   nextGenInv, nextGenRel⟩
+
+/-- Related Eval arguments and the combined source oracle invariant yield a
+successful flat callback and preserve the combined oracle invariant under
+global growth. Full source-to-flat evaluator and allocation invariants remain
+separate obligations. -/
+theorem doEval_oracle_related_invs {C : Type} [Nonempty C]
+    (decode : Value → Option (Config × C)) (transform : List Dec → List Dec)
+    (state : EvalOracleState) (flat : FlatSem.InstallConfig C)
+    (old new : GlobalEnv) (growth : GlobalGrowth old new)
+    (invs : srcOracInvs (some decode) transform old (some (.evalOracle state)))
+    (related : oracRel (some decode) transform (some (.evalOracle state)) flat)
+    (constructors : genvCOk old.c) (sourceValues : List Value) (flatValues : List FlatSem.Value)
+    (valuesRel : List.Forall₂ (ValueRel old) sourceValues flatValues)
+    (output : SemEnv Value × List Dec × Option EvalState)
+    (success : SemanticPrimitivesHOL.doEval sourceValues (some (.evalOracle state)) = some output) :
+    ∃ envId stateValue decs config payload flatDecs,
+      state.oracle 0 = (envId, stateValue, decs) ∧
+      decode stateValue = some (config, payload) ∧ output.2.1 = transform decs ∧
+      flatDecs = (incCompileProg envId config (transform decs)).2 ∧ flatValues.length = 6 ∧
+      FlatSem.doEval (flatValues.drop 4) flat =
+        some (flatDecs, { flat with compileOracle := Flapjack.holShiftSeq 1 flat.compileOracle },
+          FlatSem.unitValue) ∧
+      srcOracInvs (some decode) transform new output.2.2 ∧
+      oracRel (some decode) transform output.2.2
+        { flat with compileOracle := Flapjack.holShiftSeq 1 flat.compileOracle } := by
+  obtain ⟨envId, stateValue, decs, config, payload, flatDecs, entry, decoded, sourceDecls,
+    flatEq, flatLength, flatSuccess, _, _, _, _⟩ :=
+    doEval_oracle_related decode transform state flat invs.1 related old constructors
+      sourceValues flatValues valuesRel output success
+  have sourceLength : sourceValues.length = 6 := valuesRel.length_eq.trans flatLength
+  obtain ⟨a, b, c, d, bytes, words, rfl⟩ := list_length_six sourceValues sourceLength
+  obtain ⟨nextInvs, nextRelated⟩ :=
+    doEval_oracle_preserves_sourceInvs decode transform state flat old new growth invs related
+      a b c d bytes words output success
+  exact ⟨envId, stateValue, decs, config, payload, flatDecs, entry, decoded, sourceDecls,
+    flatEq, flatLength, flatSuccess, nextInvs, nextRelated⟩
 
 end Flapjack.Compiler.Backend.SourceToFlat.OracleInvariant

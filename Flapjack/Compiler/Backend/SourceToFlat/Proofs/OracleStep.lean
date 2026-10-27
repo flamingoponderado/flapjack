@@ -54,6 +54,14 @@ theorem incCompileProg_envSubmap (envId : Nat × Nat) (config next : Config)
     · exact (Flapjack.sptMem_sptInsert _ _ _ _).2 (Or.inr mem)
     · exact Flapjack.sptLookup_sptInsert_ne _ _ _ _ ne
 
+/-- Incremental compilation advances the environment generation by one. -/
+theorem incCompileProg_envNext (envId : Nat × Nat) (config : Config) (decs : List Dec) :
+    (incCompileProg envId config decs).1.envs.next = config.envs.next + 1 := by
+  generalize h : compileDecs [] 1 config.next (lookupEnvId envId config.envs)
+    ⟨0, config.envs.next, .ln⟩ decs = result
+  rcases result with ⟨n, indices, env, gen, compiledDecs⟩
+  simp [incCompileProg, h]
+
 /-- Current compiler and source-oracle generations agree. The bounded index
 premise makes the optional lookup agree with HOL's `EL`. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "env_gen_rel_def"]
@@ -258,7 +266,7 @@ theorem sourceOracle_envStoreAdvance {C : Type} [Nonempty C]
       srcOracNextCfg (some decode) (some (.evalOracle state)) = some current ∧
       srcOracNextCfg (some decode)
         (some (.evalOracle (addEnvGeneration { state with oracle := Flapjack.holShiftSeq 1 state.oracle }))) = some next ∧
-      current.envs.next = state.envs.length ∧ envStoreInv next.envs ∧
+      current.envs.next = state.envs.length ∧ next.envs.next = current.envs.next + 1 ∧ envStoreInv next.envs ∧
       Flapjack.sptSubspt current.envs.envGens next.envs.envGens := by
   obtain ⟨_, envId, value, decs, flatDecs, current, payload, nextId, nextValue, nextDecs,
     next, nextPayload, decoderEq, entry, nextEntry, decoded, nextDecoded, compiled, currentCfg⟩ :=
@@ -268,8 +276,43 @@ theorem sourceOracle_envStoreAdvance {C : Type} [Nonempty C]
   rw [currentCfg] at storedCfg
   cases storedCfg
   obtain ⟨nextValid, submap⟩ := incCompileProg_envSubmap envId current next (transform decs) flatDecs compiled valid
-  refine ⟨current, next, currentCfg, ?_, length, nextValid, submap⟩
+  have nextLength := incCompileProg_envNext envId current (transform decs)
+  rw [compiled] at nextLength
+  refine ⟨current, next, currentCfg, ?_, length, nextLength, nextValid, submap⟩
   simp [srcOracNextCfg, srcOracNextCfgInner, addEnvGeneration, Flapjack.holShiftSeq, nextEntry, nextDecoded]
+
+/-- Advancing an oracle preserves the stored source-environment invariant.
+Existing generations keep their compiler maps; the newly appended generation
+is empty. This uses the factored `GlobalEnvInv` relation. -/
+theorem srcOracEnvInvs_advance {C : Type} [Nonempty C]
+    (decode : Value → Option (Config × C)) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (state : EvalOracleState)
+    (steps : srcOracStepInvs (some decode) transform (some (.evalOracle state)))
+    (invs : srcOracEnvInvs (some decode) genv (some (.evalOracle state))) :
+    srcOracEnvInvs (some decode) genv
+      (some (.evalOracle (addEnvGeneration { state with oracle := Flapjack.holShiftSeq 1 state.oracle }))) := by
+  obtain ⟨current, next, currentCfg, nextCfg, length, nextLength, valid, submap⟩ :=
+    sourceOracle_envStoreAdvance decode transform genv state steps invs
+  obtain ⟨old, oldCfg, _, _, oldEnvs⟩ := invs
+  rw [currentCfg] at oldCfg
+  cases oldCfg
+  refine ⟨next, nextCfg, valid, ?_, ?_⟩
+  · simpa [addEnvGeneration, length] using nextLength
+  · intro gId gBound id idBound
+    by_cases oldBound : gId < state.envs.length
+    · have oldIdBound : id < state.envs[gId].length := by
+        simpa [addEnvGeneration, List.getElem_append_left, oldBound] using idBound
+      obtain ⟨mapGen, compMap, generation, mapping, inv⟩ := oldEnvs gId oldBound id oldIdBound
+      have mem : Flapjack.sptMem gId current.envs.envGens :=
+        Flapjack.sptMem_iff_lookup _ _ |>.2 ⟨mapGen, generation⟩
+      have nextLookup := (submap gId mem).2
+      refine ⟨mapGen, compMap, ?_, mapping, ?_⟩
+      · exact nextLookup.trans generation
+      · simpa [addEnvGeneration, List.getElem_append_left, oldBound] using inv
+    · have bound : gId < state.envs.length + 1 := by simpa [addEnvGeneration] using gBound
+      have eq : gId = state.envs.length := by omega
+      subst gId
+      simp [addEnvGeneration] at idBound
 
 /-- An oracle environment lookup and the first incremental step agree on the
 same compiler configuration and its stored global environment. This is
