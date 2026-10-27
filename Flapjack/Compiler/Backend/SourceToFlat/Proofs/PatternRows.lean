@@ -74,6 +74,36 @@ def sourcePmatchRows {F : Type} (env : SemEnv SemanticPrimitivesHOL.Value)
     | .noMatch => sourcePmatchRows env state value rows
     | .match bindings => .match (bindings, pattern, body)
 
+/-- An all-row source check excludes a type error in first-row selection. -/
+theorem sourcePmatchRows_noTypeError {F : Type} (env : SemEnv SemanticPrimitivesHOL.Value)
+    (state : SemanticPrimitivesHOL.State F) (value : SemanticPrimitivesHOL.Value)
+    (rows : List (Pat × AstHOL.Exp))
+    (can : canPmatchAll env.c state.refs (rows.map Prod.fst) value = true) :
+    sourcePmatchRows env state value rows ≠ .typeError := by
+  induction rows with
+  | nil => simp [sourcePmatchRows]
+  | cons row rest ih =>
+    obtain ⟨pattern, body⟩ := row
+    have checks := can
+    simp only [canPmatchAll, List.map_cons, List.all_cons, Bool.and_eq_true] at checks
+    have restSafe := ih checks.2
+    cases matching : pmatch env.c state.refs pattern value [] <;>
+      simp_all [sourcePmatchRows]
+
+/-- A selected source row belongs to the original ordered row list. -/
+theorem sourcePmatchRows_mem {F : Type} (env : SemEnv SemanticPrimitivesHOL.Value)
+    (state : SemanticPrimitivesHOL.State F) (value : SemanticPrimitivesHOL.Value)
+    (rows : List (Pat × AstHOL.Exp)) (bindings : List (VarN × SemanticPrimitivesHOL.Value))
+    (pattern : Pat) (body : AstHOL.Exp)
+    (selected : sourcePmatchRows env state value rows = .match (bindings, pattern, body)) :
+    (pattern, body) ∈ rows := by
+  induction rows with
+  | nil => simp [sourcePmatchRows] at selected
+  | cons row rest ih =>
+    obtain ⟨headPattern, headBody⟩ := row
+    cases matching : pmatch env.c state.refs headPattern value [] <;>
+      simp_all [sourcePmatchRows]
+
 /-- Relate the selected source row to its compiled flat row and bindings. -/
 def MatchRowsRel (genv : GlobalEnv) (compMap : Environment) (trace : List VarN) :
     MatchResult (List (VarN × SemanticPrimitivesHOL.Value) × Pat × AstHOL.Exp) →
