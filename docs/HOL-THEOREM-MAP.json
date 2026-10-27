@@ -104986,5 +104986,109 @@
     "lean_name": "doOpApp",
     "statement_status": "reviewed_exact",
     "reviewer": "Codex source comparison: the original accepts exactly a closure or recursive closure followed by one argument. The ordinary case prepends the binding; the recursive case requires ALL_DISTINCT of function names, finds the requested function, and prepends its argument to build_rec_env. All other cases return NONE. Lean uses the same ordered association lists, function triples and source lookup; typed equations and original successful and duplicate-name samples are captured in cake_flat_sem_ops_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
+    "hol_name": "bind_tag_def",
+    "lean_path": "Flapjack/Compiler/Backend/BackendCommon/ConstructorTags.lean",
+    "lean_name": "bindTag",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: pinned backend_common definition is the natural number 0; the typed source_to_flat_global_env_probe captures the same equation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
+    "hol_name": "chr_tag_def",
+    "lean_path": "Flapjack/Compiler/Backend/BackendCommon/ConstructorTags.lean",
+    "lean_name": "chrTag",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: pinned backend_common definition is the natural number 1; the typed source_to_flat_global_env_probe captures the same equation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
+    "hol_name": "div_tag_def",
+    "lean_path": "Flapjack/Compiler/Backend/BackendCommon/ConstructorTags.lean",
+    "lean_name": "divTag",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: pinned backend_common definition is the natural number 2; the typed source_to_flat_global_env_probe captures the same equation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
+    "hol_name": "subscript_tag_def",
+    "lean_path": "Flapjack/Compiler/Backend/BackendCommon/ConstructorTags.lean",
+    "lean_name": "subscriptTag",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: pinned backend_common definition is the natural number 3; the typed source_to_flat_global_env_probe captures the same equation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
+    "hol_name": "nil_tag_def",
+    "lean_path": "Flapjack/Compiler/Backend/BackendCommon/ConstructorTags.lean",
+    "lean_name": "nilTag",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: pinned backend_common definition is the natural number 0; the typed source_to_flat_global_env_probe captures the same equation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
+    "hol_name": "cons_tag_def",
+    "lean_path": "Flapjack/Compiler/Backend/BackendCommon/ConstructorTags.lean",
+    "lean_name": "consTag",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: pinned backend_common definition is the natural number 0; the typed source_to_flat_global_env_probe captures the same equation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "has_bools_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalEnvConditions.lean",
+    "lean_name": "hasBools",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "genv"
+    ],
+    "reviewer": "Codex source comparison: Both original true/false constructor keys, arity zero, and named source stamps are retained in source order. Each named HOL finite-map input uses HolFiniteMapExact and a same-module lookup/support codec roundtrip witness. The complete typed source declaration and empty-map examples are in source_to_flat_global_env_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "has_lists_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalEnvConditions.lean",
+    "lean_name": "hasLists",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "genv"
+    ],
+    "reviewer": "Codex source comparison: Both original cons/nil constructor keys, arities two/zero, list ID, and named source stamps are retained in source order. Each named HOL finite-map input uses HolFiniteMapExact and a same-module lookup/support codec roundtrip witness. The complete typed source declaration and empty-map examples are in source_to_flat_global_env_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "has_exns_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalEnvConditions.lean",
+    "lean_name": "hasExns",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "genv"
+    ],
+    "reviewer": "Codex source comparison: The four original exception keys, arity zero and stamps are retained in source order. The otherwise-unused optional type-ID carrier remains independently polymorphic, as confirmed by the typed capture. Each named HOL finite-map input uses HolFiniteMapExact and a same-module lookup/support codec roundtrip witness. The complete typed source declaration and empty-map examples are in source_to_flat_global_env_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "genv_c_ok_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalEnvConditions.lean",
+    "lean_name": "genvCOk",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "genvC"
+    ],
+    "reviewer": "Codex source comparison: All three original prerequisites, same-type iff for any two lookups, and injectivity of constructor/arity pairs for equal stamps are retained. Source and flat constructor-type predicates are applied on their original carriers. Each named HOL finite-map input uses HolFiniteMapExact and a same-module lookup/support codec roundtrip witness. The complete typed source declaration and empty-map examples are in source_to_flat_global_env_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "genv_c_tys_ok_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalEnvConditions.lean",
+    "lean_name": "genvCTysOk",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "genvC",
+      "genvTys"
+    ],
+    "reviewer": "Codex source comparison: All four original carrier types α β γ δ remain independently polymorphic. Domain membership uses successful canonical lookup; a matching type map lookup and constructor/arity list membership are required exactly as in HOL. Each named HOL finite-map input uses HolFiniteMapExact and a same-module lookup/support codec roundtrip witness. The complete typed source declaration and empty-map examples are in source_to_flat_global_env_probe."
   }
 ]
