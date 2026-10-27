@@ -103961,5 +103961,21 @@
     "lean_name": "isClockIoMono_bind",
     "statement_status": "pending_statement_review",
     "reviewer": "Codex (pending full evaluator state and carrier review): pinned typed original is captured in cake_evaluate_ffi_props_probe. Both success types and both error payload types are independent; timeout propagation is retained."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "do_app_refs_length",
+    "lean_path": "Flapjack/EvaluateProps/PrimitiveLength.lean",
+    "lean_name": "doApp_refs_length",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending complete source evaluator and carrier review): pinned typed original captured in cake_evaluate_ffi_props_probe; primitive dispatcher inherits the rational-cut floating-point assumption."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "is_clock_io_mono_do_app_simple",
+    "lean_path": "Flapjack/EvaluateProps/PrimitiveLength.lean",
+    "lean_name": "isClockIoMono_doAppSimple",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending complete source evaluator and carrier review): pinned typed original captured in cake_evaluate_ffi_props_probe; primitive dispatcher inherits the rational-cut floating-point assumption."
   }
 ]

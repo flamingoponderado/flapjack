@@ -8865,5 +8865,5 @@ run_probe prim_sem_env_probeScript.sml prim_sem_env_probe.out \
   add_type prim_type "$cake_dir/semantics/primTypesScript.sml" "$cake_dir/semantics"
 
 run_probe cake_evaluate_ffi_props_probeScript.sml cake_evaluate_ffi_props_probe.out \
-  clock_mono_bind clock_mono_check clock_mono_type clock_mono_def clock_mono_return clock_mono_err clock_mono_cong clock_mono_extra clock_mono_extra_mono adj_clock dec_inc_clock evaluate_call_ffi_imp evaluate_decs_call_ffi_imp evaluate_io_mono evaluate_io_mono_imp evaluate_call_ffi do_app_io_mono do_app_call_ffi call_length mono_definition mono_refl mono_trans mono_antisym call_consts rtc_consts rtc_mono \
+  do_app_refs_length clock_mono_do_app clock_mono_bind clock_mono_check clock_mono_type clock_mono_def clock_mono_return clock_mono_err clock_mono_cong clock_mono_extra clock_mono_extra_mono adj_clock dec_inc_clock evaluate_call_ffi_imp evaluate_decs_call_ffi_imp evaluate_io_mono evaluate_io_mono_imp evaluate_call_ffi do_app_io_mono do_app_call_ffi call_length mono_definition mono_refl mono_trans mono_antisym call_consts rtc_consts rtc_mono \
   "$cake_dir/semantics/proofs/evaluatePropsScript.sml" "$cake_dir/semantics/proofs"

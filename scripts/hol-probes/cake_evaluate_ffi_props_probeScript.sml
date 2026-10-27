@@ -2,6 +2,8 @@ load "evaluatePropsTheory";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
+val _ = (print "do_app_refs_length="; print_thm evaluatePropsTheory.do_app_refs_length; print "\n");
+val _ = (print "clock_mono_do_app="; print_thm evaluatePropsTheory.is_clock_io_mono_do_app_simple; print "\n");
 val _ = (print "clock_mono_bind="; print_thm evaluatePropsTheory.is_clock_io_mono_bind; print "\n");
 val _ = (print "clock_mono_check="; print_thm evaluatePropsTheory.is_clock_io_mono_check; print "\n");
 val _ = (print "clock_mono_type="; print_type (type_of ``evaluateProps$is_clock_io_mono``); print "\n");
