@@ -59,6 +59,24 @@ private def mtiConfig : ClosToBvl.Config :=
   | some (_, _, _, code, _, _) => Flapjack.Test.BvlOptimizedCakeBviOracle.matchesCaptured code
   | none => false
 
+#guard match SourceToFlat.compileCakeToBviBvlOptimizedFuel 100 8 100 false SourceToFlat.emptyConfig mtiConfig
+    [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "f"))
+      (.fn (ofString "x") (.fn (ofString "y") (.var (.short (ofString "x")))))] with
+  | some (_, _, _, code, _, _) =>
+      code.map (fun (loc, _, body) => (loc, BviTailrec.hasRecFuel 100 loc body)) ==
+        [(62, some false), (63, some false), (64, some false), (65, some false),
+         (66, some false), (67, some false), (68, some false), (69, some false),
+         (72, some false), (73, some false), (76, some false), (77, some false),
+         (80, some false), (84, some false), (88, some false), (92, some false),
+         (96, some false), (100, some false)]
+  | none => false
+
+#guard match SourceToFlat.compileCakeToBviTailrecCheckedFuel 100 8 100 false SourceToFlat.emptyConfig mtiConfig
+    [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "f"))
+      (.fn (ofString "x") (.fn (ofString "y") (.var (.short (ofString "x")))))] with
+  | some (_, _, _, _, _, _) => true
+  | none => false
+
 private def wordConfig : DataToWord.Config :=
   ⟨1, 2, 3, 16, false, false, false, false, false, false, .simple⟩
 

@@ -42,6 +42,8 @@
 
 `bvl_const_frontend_probe.out` captures constant propagation, operation rewrites, and signed floor division and remainder. `bvl_optimized_cake_bvi_probe.out` captures the complete BVI output for the nested-function declaration after the original BVL inlining pipeline, including constant folding, while later optimizations remain omitted.
 
+`bvi_tailrec_frontend_probe.out` captures the original tail-recursion candidate decisions for every BVI function of that example, focused recursion-detector cases, and tail-modulo-constructor decisions. The Lean tail-recursion route currently accepts only functions that fail the necessary recursion test; the positive cases and TMC rewrite remain unported.
+
 `data_to_word_header_types_probe.out` records the original types and typed definitions for header construction and its checked encoding. The frontend probe also captures 32-bit and 64-bit encoded values and an invalid length; these observations are regression evidence, not a cross-language proof.
 
 `riscv_sltu_decode_probe.out` freshly kernel-proves the unrestricted original SLTU DecodeAny(Word(Encode instruction)) identity for every word5 register tuple, with typed universal statement and zero hypotheses. It also captures the actual Rtype source clause (funct3=011/funct7=0000000), word5 carriers and zero/all-ones31/high-bit/alias evaluations. Lean proves the same full native composition. This untagged infrastructure supplies the real decoder prerequisite for the full six-instruction AddCarry encoder, including source-zero and temporary31 operands; it does not prove that constructor simulation alone. The local shape/capture pin is a regression check and does not independently establish HOL-to-Lean correspondence.

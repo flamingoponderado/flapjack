@@ -101838,5 +101838,13 @@
     "hol_name": "canonical_wrapper_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Variable-list checks transcribed; typed source and equivalence review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec.lean",
+    "lean_name": "isRec",
+    "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
+    "hol_name": "is_rec_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Direct unhandled self-call test transcribed; inferred source typing and complete declaration review remain pending."
   }
 ]
