@@ -668,6 +668,48 @@
       "stderr_bytes": 338,
       "stderr_sha256": "006618d2661bf00f25cff4d30fa46fab9d56fbfd6f9eaa4b7b7c0e2fd1fc61a4"
     },
+    "type_error_duplicate_binding": {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 179,
+      "stderr_sha256": "085e639bc6fd6264e7fb3972407b7bb454df8e4be967895b6d789096fa39a700"
+    },
+    "type_error_duplicate_pattern": {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 174,
+      "stderr_sha256": "0fa8edabc144d4b4ad44dbb90c7d3ea166fdda750f07bea9e6ecf476589d1b4a"
+    },
+    "type_error_duplicate_function_pattern": {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 147,
+      "stderr_sha256": "233d44ef42bdcfdf9a191634713bff1cadc7b67c0b2308f28c7cd166dc4e16a0"
+    },
+    "type_error_duplicate_function": {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 199,
+      "stderr_sha256": "c30f6b6366eab78c5759ca165e2900e71f1b2ae2945bd6d2e1eec4b5be860956"
+    },
+    "type_error_duplicate_abbreviation": {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 183,
+      "stderr_sha256": "11f9df58082f174fdff3657477f6a7e28ac37d0c9c967c2b43655e55874e91d8"
+    },
+    "type_error_constructor_arity": {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 200,
+      "stderr_sha256": "ee575e6e6f4d0e0a753acf3a123864509410c5ac9fc976da149d81891a2894d4"
+    },
     "type_error_duplicate_constructor": {
       "exit_code": 1,
       "stdout_bytes": 0,

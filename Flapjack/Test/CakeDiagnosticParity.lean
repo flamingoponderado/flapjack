@@ -53,4 +53,20 @@ private def qname : NamespaceHOL.Ident MlString MlString := .long (ofString "A")
     | _ => false
   | _ => false
 
+-- The inferred pattern environment is reversed: find_dup selects b first.
+-- Declaration patterns and match patterns retain distinct diagnostics.
+#guard match Flapjack.CakeParser.Frontend.parseSourceFuel 500 500
+    (ofString "val (a,b,a,b) = (1,2,3,4);").explode with
+  | .success decls => match inferProgramFuel 500 500 decls with
+    | .error (.located _ (.duplicateDefinitionVariable name)) => name == ofString "b"
+    | _ => false
+  | _ => false
+
+#guard renderBindingError (ofString "val (x,x) = (1,2);").explode
+    (.located (.locs (.posn 0 0) (.posn 0 17)) (.duplicateDefinitionVariable (ofString "x"))) ==
+  some (ofString "### ERROR: type error\nDuplicate variable x in the left-hand side of a definition at line 1\n\nval (x,x) = (1,2);\n^^^^^^^^^^^^^^^^^^\n\nProgram exited with nonzero exit code.\n").explode
+
+#guard renderBindingError [] (.located loc (.typeConstructorArity qname 2 1)) ==
+  some (ofString "### ERROR: type error\nType constructor A.foo given 2 arguments, but expected 1 at line 1\n\n\n           ^^^^^\n\nProgram exited with nonzero exit code.\n").explode
+
 end Flapjack.Test.CakeDiagnosticParity

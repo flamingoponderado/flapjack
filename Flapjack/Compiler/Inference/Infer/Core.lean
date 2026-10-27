@@ -13,6 +13,11 @@ inductive Error where
   | exhausted | unsupported | mismatch | undefinedName | invalidPattern | valueRestriction
   | typeMismatch : InferT → InferT → Error
   | typeMismatchNames : List (Nat × MlString) → InferT → InferT → Error
+  | duplicatePatternVariable : MlString → Error
+  | duplicateDefinitionVariable : MlString → Error
+  | duplicateFunctionName : MlString → Bool → Error
+  | duplicateAbbreviationVariable : MlString → MlString → Error
+  | typeConstructorArity : Ident MlString MlString → Nat → Nat → Error
   | duplicateTypeName : MlString → Error
   | duplicateConstructor : MlString → MlString → Error
   | duplicateTypeVariable : MlString → MlString → Error
@@ -25,6 +30,10 @@ inductive Error where
 abbrev M (α : Type) := StateT State (Except Error) α
 
 private def fail (e : Error) : M α := fun _ => .error e
+
+private def firstRepeatedName : List MlString → Option MlString
+  | [] => none
+  | name :: rest => if name ∈ rest then some name else firstRepeatedName rest
 
 /-- Preserve the innermost source location for errors that carry enough
 information for original-style rendering. Other error classes remain unchanged. -/
@@ -45,6 +54,11 @@ private def withLoc (loc : Flapjack.Misc.Location.Locs) (env : Env) (action : M 
   | .error (.undefinedTypeConstructor name) => .error (.located loc (.undefinedTypeConstructor name))
   | .error (.typeMismatch left right) => .error (.located loc
       (.typeMismatchNames (typeNamesFuel 10000 (ofString "") env.infT) left right))
+  | .error (.duplicatePatternVariable name) => .error (.located loc (.duplicatePatternVariable name))
+  | .error (.duplicateDefinitionVariable name) => .error (.located loc (.duplicateDefinitionVariable name))
+  | .error (.duplicateFunctionName name isLocal) => .error (.located loc (.duplicateFunctionName name isLocal))
+  | .error (.duplicateAbbreviationVariable name typ) => .error (.located loc (.duplicateAbbreviationVariable name typ))
+  | .error (.typeConstructorArity name actual expected) => .error (.located loc (.typeConstructorArity name actual expected))
   | .error (.duplicateTypeName name) => .error (.located loc (.duplicateTypeName name))
   | .error (.duplicateConstructor name typ) => .error (.located loc (.duplicateConstructor name typ))
   | .error (.duplicateTypeVariable name typ) => .error (.located loc (.duplicateTypeVariable name typ))
@@ -120,7 +134,7 @@ private def annotationWorker : Nat → Env → List MlString → AstT → Except
       match nsLookup env.infT name with
       | none => .error (.undefinedTypeConstructor name)
       | some (params, body) =>
-        if params.length != ts.length then .error .mismatch
+        if params.length != ts.length then .error (.typeConstructorArity name ts.length params.length)
         else .ok (semanticSubst (List.zip params ts) body)
 
 private def annotationsWorker : Nat → Env → List MlString → List AstT → Except Error (List TypeSystemHOL.SemanticT)
@@ -307,10 +321,6 @@ private def inferOp (fuel : Nat) (op : Op) (ts : List InferT) : M InferT := do
 private def bindVars (env : Env) (bindings : List (MlString × InferT)) : Env :=
   { env with infV := nsAppend (alistToNs (bindings.map (fun (name, t) => (name, (0, t))))) env.infV }
 
-private def distinctBindings (bindings : List (MlString × InferT)) : Bool :=
-  let names := bindings.map Prod.fst
-  names.eraseDups.length == names.length
-
 mutual
 private def inferExprWorker : Nat → Nat → Env → Exp → M InferT
   | 0, _, _, _ => fail .exhausted
@@ -381,7 +391,7 @@ private def inferExprWorker : Nat → Nat → Env → Exp → M InferT
       return t
     | .letrec funs body =>
       let names := funs.map (fun (name, _, _) => name)
-      if names.eraseDups.length != names.length then fail .invalidPattern else
+      if let some name := firstRepeatedName names then fail (.duplicateFunctionName name true) else
       let vars ← freshMany funs.length
       let env := bindVars env (List.zip names vars)
       let types ← inferFunsWorker fuel unifFuel env funs
@@ -411,7 +421,7 @@ private def inferClausesWorker : Nat → Nat → Env → List (Pat × Exp) → I
   | _ + 1, _, _, [], _, _ => pure ()
   | fuel + 1, unifFuel, env, (p, e) :: ps, input, output => do
     let (pType, bindings) ← inferPatWorker fuel unifFuel env p
-    if !distinctBindings bindings then fail .invalidPattern else
+    if let some name := firstRepeatedName (bindings.map Prod.fst) then fail (.duplicatePatternVariable name) else
     constrain unifFuel input pType
     let eType ← inferExprWorker fuel unifFuel (bindVars env bindings) e
     constrain unifFuel output eType
@@ -462,12 +472,6 @@ private def asCheckedTypes (fuel : Nat) (env : Env) (free : List MlString) (ts :
   | .error e => fail e
   | .ok ts => pure ts
 
-private def distinctNames (names : List MlString) : Bool := names.eraseDups.length == names.length
-
-private def firstRepeatedName : List MlString → Option MlString
-  | [] => none
-  | name :: rest => if name ∈ rest then some name else firstRepeatedName rest
-
 private def datatypeEnv (fuel : Nat) (env : Env) (defs : TypeDef) : M Env := do
   let names := defs.map (fun (_, name, _) => name)
   if let some name := firstRepeatedName names then fail (.duplicateTypeName name) else
@@ -500,7 +504,7 @@ private def inferDeclWorker : Nat → Nat → Env → Dec → M Env
       set (resetState st)
       let exprType ← withLoc loc env (inferExprWorker fuel unifFuel env expr)
       let (patType, bindings) ← inferPatWorker fuel unifFuel env pat
-      if !distinctBindings bindings then fail .invalidPattern else
+      if let some name := firstRepeatedName (bindings.map Prod.fst) then fail (.duplicateDefinitionVariable name) else
       constrain unifFuel exprType patType
       let ts ← applyFull unifFuel (bindings.map Prod.snd)
       let (count, _, ts) := generaliseList 0 0 .ln ts
@@ -509,7 +513,7 @@ private def inferDeclWorker : Nat → Nat → Env → Dec → M Env
       return { emptyEnv with infV := alistToNs vars }
     | .dletrec loc funs => withLoc loc env do
       let names := funs.map (fun (name, _, _) => name)
-      if !distinctNames names then fail .invalidPattern else
+      if let some name := firstRepeatedName names then fail (.duplicateFunctionName name false) else
       let st ← get
       set (resetState st)
       let vars ← freshMany funs.length
@@ -521,7 +525,7 @@ private def inferDeclWorker : Nat → Nat → Env → Dec → M Env
       return { emptyEnv with infV := alistToNs (List.zip names (ts.map (fun t => (count, t)))) }
     | .dtype loc defs => withLoc loc env (datatypeEnv fuel env defs)
     | .dtabbrev loc vars name t => withLoc loc env do
-      if !distinctNames vars then fail .invalidPattern else
+      if let some varName := firstRepeatedName vars then fail (.duplicateAbbreviationVariable varName name) else
       let t ← asCheckedType fuel env vars t
       return { emptyEnv with infT := alistToNs [(name, (vars, t))] }
     | .dexn loc name ts => withLoc loc env do

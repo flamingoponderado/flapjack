@@ -132,4 +132,20 @@ def renderDatatypeError (input : List HolChar) : Error → Option (List HolChar)
       sourceLocation input (some loc) ++ ascii "\nProgram exited with nonzero exit code.\n")
   | _ => none
 
+/-- Render duplicate bindings and type-constructor arity errors. -/
+def renderBindingError (input : List HolChar) : Error → Option (List HolChar)
+  | .located loc error => do
+    let message ← match error with
+      | .duplicatePatternVariable name => some (ascii "Duplicate variable " ++ name.explode ++ ascii " in pattern")
+      | .duplicateDefinitionVariable name => some (ascii "Duplicate variable " ++ name.explode ++ ascii " in the left-hand side of a definition")
+      | .duplicateFunctionName name isLocal => some (ascii "Duplicate function name " ++ name.explode ++
+          ascii (if isLocal then " in mutually recursive function definition" else " a mutually recursive function definition"))
+      | .duplicateAbbreviationVariable name typ => some (ascii "Duplicate type variable bindings for " ++ name.explode ++ ascii " in type abbreviation " ++ typ.explode)
+      | .typeConstructorArity name actual expected => some (ascii "Type constructor " ++ nameBytes name ++
+          ascii (" given " ++ toString actual ++ " arguments, but expected " ++ toString expected))
+      | _ => none
+    some (ascii "### ERROR: type error\n" ++ message ++ ascii " at " ++
+      sourceLocation input (some loc) ++ ascii "\nProgram exited with nonzero exit code.\n")
+  | _ => none
+
 end Flapjack.Compiler.Inference.Infer.Diagnostics
