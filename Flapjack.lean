@@ -1894,6 +1894,7 @@ import Flapjack.EvaluateProps.EvaluateFfiFull
 import Flapjack.EvaluateProps.ClockIo
 import Flapjack.EvaluateProps.ClockIoBind
 import Flapjack.EvaluateProps.PrimitiveLength
+import Flapjack.EvaluateProps.Length
 import Flapjack.EvaluateProps.ClockIoSafe
 import Flapjack.EvaluateProps.ClockIoCases
 import Flapjack.EvaluateProps.ClockIoDecs

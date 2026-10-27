@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateCases
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveType
 import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateClock
 import Flapjack.EvaluateHOL.ClockFull
+import Flapjack.EvaluateProps.Length
 
 /-! Composition of expression simulations over the factored source-to-flat
 relations. These declarations are untagged until the relations and the flat
@@ -142,15 +143,12 @@ theorem exprListSim_nil {C F : Type} (genv : GlobalEnv) (compMap : Environment) 
   exact ⟨.value .nil, statesRel⟩
 
 /-- Sequencing two or more expressions preserves simulation when the head and
-tail induction hypotheses hold. The head's singleton-result invariant remains
-an explicit premise pending the source evaluator's general length theorem. -/
+tail induction hypotheses hold. -/
 theorem exprListSim_cons {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
     (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
     (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
     (first second : AstHOL.Exp) (rest : List AstHOL.Exp)
     (headSim : ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState first)
-    (headSingleton : ∀ (next : SemanticPrimitivesHOL.State F) (values : List SemanticPrimitivesHOL.Value),
-      EvaluateHOL.evaluate sourceState sourceEnv [first] = (next, .val values) → ∃ value, values = [value])
     (tailSim : ∀ (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F),
       StateRel genv source flat → ExprListSim genv compMap trace sourceEnv flatEnv source flat (second :: rest)) :
     ExprListSim genv compMap trace sourceEnv flatEnv sourceState flatState (first :: second :: rest) := by
@@ -184,7 +182,7 @@ theorem exprListSim_cons {C F : Type} (genv : GlobalEnv) (compMap : Environment)
               [compileExp trace compMap first] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatHead]
             exact ⟨.abort error, nextRel⟩
       | val values =>
-        obtain ⟨value, rfl⟩ := headSingleton sourceNext values sourceHead
+        obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceNext sourceEnv first values sourceHead
         cases related with
         | value valuesRel =>
           cases valuesRel with
@@ -225,10 +223,6 @@ theorem exprSim_tuple_literals {C F : Type} (genv : GlobalEnv) (compMap : Enviro
   simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
   apply exprListSim_cons
   · exact exprSim_literal genv compMap trace sourceEnv flatEnv sourceState flatState statesRel second
-  · intro next values run
-    have resultEq := congrArg Prod.snd run
-    simp only [EvaluateHOL.evaluate, Result.val.injEq] at resultEq
-    exact ⟨.litv second, resultEq.symm⟩
   · intro source flat related
     apply exprListSim_singleton
     exact exprSim_literal genv compMap trace sourceEnv flatEnv source flat related first
@@ -315,17 +309,12 @@ theorem exprSim_if_error {C F : Type} (genv : GlobalEnv) (compMap : Environment)
           [compileExp trace compMap cond] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatCondition]
         exact ⟨.abort error, nextRel⟩
 
-/-- Conditional simulation for all non-type-error source outcomes. Successful
-condition evaluation is assumed to return one value; establishing that
-invariant for all source expressions remains a separate obligation. -/
+/-- Conditional simulation for all non-type-error source outcomes. -/
 theorem exprSim_if {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
     (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
     (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
     (cond yes no : AstHOL.Exp) (ok : genvCOk genv.c)
     (conditionSim : ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState cond)
-    (conditionSingleton : ∀ (next : SemanticPrimitivesHOL.State F) (values : List SemanticPrimitivesHOL.Value),
-      EvaluateHOL.evaluate sourceState sourceEnv [cond] = (next, .val values) →
-      ∃ value, values = [value])
     (notTypeError : ∀ next : SemanticPrimitivesHOL.State F,
       EvaluateHOL.evaluate sourceState sourceEnv [.if_ cond yes no] ≠ (next, .err (.abort .typeError)))
     (yesSim : ∀ (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F),
@@ -340,7 +329,7 @@ theorem exprSim_if {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trac
       exact exprSim_if_error genv compMap trace sourceEnv flatEnv sourceState flatState cond yes no
         next error conditionRun conditionSim
     | val values =>
-      obtain ⟨value, rfl⟩ := conditionSingleton next values conditionRun
+      obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull sourceState next sourceEnv cond values conditionRun
       cases selection : SemanticPrimitivesHOL.doIf value yes no with
       | none =>
         have bad : EvaluateHOL.evaluate sourceState sourceEnv [.if_ cond yes no] =
@@ -356,16 +345,11 @@ theorem exprSim_if {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trac
         exact exprSim_if_boolean genv compMap trace sourceEnv flatEnv sourceState flatState cond yes no ok b
           next conditionRun conditionSim yesSim noSim
 
-/-- Raise simulation from the operand induction hypothesis. Successful
-operand evaluation is assumed to return a singleton until the source
-evaluator's general length theorem has been ported. -/
+/-- Raise simulation from the operand induction hypothesis. -/
 theorem exprSim_raise {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
     (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
     (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F) (body : AstHOL.Exp)
-    (bodySim : ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState body)
-    (bodySingleton : ∀ (next : SemanticPrimitivesHOL.State F) (values : List SemanticPrimitivesHOL.Value),
-      EvaluateHOL.evaluate sourceState sourceEnv [body] = (next, .val values) →
-      ∃ value, values = [value]) :
+    (bodySim : ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState body) :
     ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.raise body) := by
   unfold ExprSim at bodySim
   cases sourceRun : EvaluateHOL.evaluate sourceState sourceEnv [body] with
@@ -391,7 +375,7 @@ theorem exprSim_raise {C F : Type} (genv : GlobalEnv) (compMap : Environment) (t
             rw [EvaluateHOL.evaluate, sourceRun, compileExp, FlatSem.evaluate, flatRun]
             exact ⟨.abort error, nextRel⟩
       | val values =>
-        obtain ⟨value, rfl⟩ := bodySingleton sourceNext values sourceRun
+        obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceNext sourceEnv body values sourceRun
         cases related with
         | value valuesRel =>
           cases valuesRel with
