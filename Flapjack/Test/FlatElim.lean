@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.FlatElim.Reachability
 import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
 import Flapjack.Compiler.Backend.SourceToFlat.ToClos
+import Flapjack.Compiler.Backend.SourceToFlat.ToBvi
 import Flapjack.Compiler.Backend.ClosToBvl.Constants
 import Flapjack.Compiler.Backend.ClosToBvl.Layout
 import Flapjack.Compiler.Backend.ClosToBvl.Sort
@@ -435,6 +436,13 @@ private def noOptsClosConfig : Flapjack.Compiler.Backend.ClosToBvl.Config :=
       [sptLookup 2 names, sptLookup 4 names] == [some (ofString "dec"), some (ofString "f_clos")]
   | _ => false
 #guard closure_no_options_function
+#guard match Flapjack.Compiler.Backend.SourceToFlat.compileCakeToBviNoOptsFuel 100
+    Flapjack.Compiler.Backend.SourceToFlat.emptyConfig noOptsClosConfig [] with
+  | some (_, c, start, code, next) => c.start == 1 && c.nextLoc == 4 && start == 64 && next == 1 &&
+      (code.map (fun (p : Nat × Nat × Flapjack.Compiler.Backend.Bvi.Exp) => (p.1, p.2.1)) ==
+        [(62,1), (63,3), (64,0), (65,2), (66,3), (67,3), (68,2), (69,3), (72,2), (76,0), (80,0), (84,0), (73,0), (88,0)])
+  | _ => false
+#guard empty_cake_to_bvi
 example : Flapjack.Compiler.Backend.ClosToBvl.extractName
     [.op .none (.intOp (.const 7)) [], .var .none 2] = (7, [.var .none 2]) := rfl
 example : Flapjack.Compiler.Backend.ClosToBvl.extractName

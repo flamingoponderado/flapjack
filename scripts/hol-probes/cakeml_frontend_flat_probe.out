@@ -101,3 +101,4 @@ closure_free_variables=T
 closure_annotation=T
 closure_no_options_program=T
 closure_no_options_function=T
+empty_cake_to_bvi=T

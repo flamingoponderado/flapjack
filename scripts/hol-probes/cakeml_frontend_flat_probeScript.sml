@@ -377,3 +377,11 @@ val _ = capture "closure_no_options_function" ``
  EL 2 code = (2, 0, bvl$Op (closLang$BlockOp (closLang$Cons 30)) [bvl$Op (closLang$IntOp (closLang$Const 0)) []; bvl$Op (closLang$Label 4) []]) /\
  EL 3 code = (4, 2, bvl$Let [bvl$Var 0] (bvl$Var 0)) /\
  [sptree$lookup 2 names; sptree$lookup 4 names] = [SOME «dec»; SOME «f_clos»]``;
+val _ = capture "empty_cake_to_bvi" ``
+ let (sc, flat) = source_to_flat$compile source_to_flat$empty_config (source_to_source$compile []) in
+ let exps = flat_to_clos$compile_prog flat in
+ let cc = clos_to_bvl$default_config with <| do_mti := F; do_call := F; known_conf := NONE; max_app := 0 |> in
+ let (cc,bvl,names) = clos_to_bvl$compile cc exps in
+ let (start,code,next) = bvl_to_bvi$compile_prog cc.start 0 bvl in
+ (cc.start,cc.next_loc,start,LENGTH code,next,MAP (\(n,a,e). (n,a)) code) =
+ (1,4,64,14,1,[(62,1); (63,3); (64,0); (65,2); (66,3); (67,3); (68,2); (69,3); (72,2); (76,0); (80,0); (84,0); (73,0); (88,0)])``;

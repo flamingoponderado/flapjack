@@ -100,6 +100,7 @@ def closure_free_variables : Bool := true
 def closure_annotation : Bool := true
 def closure_no_options_program : Bool := true
 def closure_no_options_function : Bool := true
+def empty_cake_to_bvi : Bool := true
 def eliminate_pure_length : Nat := 0
 def eval_bypass_length : Nat := 2
 def empty_program_globals : Nat := 1
