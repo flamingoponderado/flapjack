@@ -115,6 +115,19 @@ private def headerConfig : Config := { conf with lenSize := 4 }
   | some (.skip, 2) => true
   | _ => false
 #guard Flapjack.Test.CakeMLFlatOracle.data_to_word_loads
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp .ref) [1] none) with
+  | some (.seq (.set .triggerGC (.op .sub [.lookup .triggerGC, .const 16]))
+      (.seq (.assign 1 (.op .sub [.lookup .endOfHeap, .const 16]))
+       (.seq (.set .endOfHeap (.var 1))
+        (.seq (.assign 3 (.const 281474976710667))
+         (.seq (.seq (.store (.op .add [.var 1, .const 0]) 3)
+          (.seq (.store (.op .add [.var 1, .const 8]) 4) .skip))
+          (.assign 8 (.op .or [.shift .lsl (.op .sub [.var 1, .lookup .currHeap]) (.const 5), .const 1])))))), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) { conf with lenSize := 0 } 5 2 (.assign 3 (.memOp .ref) [1] none) with
+  | some (.seq (.assign 1 (.const w)) (.alloc 1 (.ls (), .ln)), 2) => w == (-1 : BitVec 64)
+  | _ => false
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_ref
 #guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.boolTest (.compare .gt))) [1, 2] none) with
   | some (.ite .equal 4 (.reg 6) (.assign 8 (.const 18)) (.assign 8 (.const 2)), 2) => true
   | _ => false

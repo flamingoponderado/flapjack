@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.DataLang.Syntax
 import Flapjack.Compiler.Backend.DataToWord.Config
+import Flapjack.Compiler.Backend.DataToWord.Header
 import Flapjack.Compiler.Backend.DataToWord.Variables
 import Flapjack.Compiler.Backend.DataToWord.WordOp
 import Flapjack.Pancake.WordLang
@@ -13,6 +14,13 @@ private def listSeq {α : Type} : List (WordLangProgHOL α) → WordLangProgHOL 
   | [] => .skip
   | [x] => x
   | x :: y :: xs => .seq x (listSeq (y :: xs))
+
+/-- Internal storage sequence used by reference allocation. The standalone
+width-indexed HOL helper has not yet been reviewed as a port. -/
+private def storeEach {width : Nat} (base : Nat) : List Nat → BitVec width → WordLangProgHOL (BitVec width)
+  | [], _ => .skip
+  | x :: xs, offset => .seq (.store (.op .add [.var base, .const offset]) x)
+      (storeEach base xs (offset + BitVec.ofNat width (width / 8)))
 
 /-- Internal support for the checked allocation case; a reviewed port of
 `SilentFFI` and its width-indexed statement remains open. -/
@@ -175,6 +183,20 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
           let offset := WordLangExpHOL.op .add [.const (BitVec.ofNat width (width / 8)), scaled]
           some (.assign (adjustVar dest) (.load (.op .add [realAddr conf (adjustVar base), offset])), l)
       | _ => some (.skip, l)
+  | l, .assign dest (.memOp .ref) args _ =>
+      match encodeHeader (width := width) conf 2 args.length with
+      | none => some (.seq (.assign 1 (.const (-1))) (.alloc 1 (adjustSets (.ln : NumSet))), l)
+      | some header =>
+          let bytes := BitVec.ofNat width (width / 8) * BitVec.ofNat width (args.length + 1)
+          some (listSeq [
+            .set .triggerGC (.op .sub [.lookup .triggerGC, .const bytes]),
+            .assign 1 (.op .sub [.lookup .endOfHeap, .const bytes]),
+            .set .endOfHeap (.var 1),
+            .assign 3 (.const header),
+            storeEach 1 (3 :: args.map adjustVar) 0,
+            .assign (adjustVar dest) (.op .or [
+              shiftN .lsl (.op .sub [.var 1, .lookup .currHeap]) (shiftLength conf - wordShiftAmount width),
+              .const 1])], l)
   | l, .assign dest (.memOp op) args _ =>
       match op, args with
       | .update, [base, index, value] | .updateCons, [base, index, value] =>

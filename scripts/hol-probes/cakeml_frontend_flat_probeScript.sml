@@ -291,6 +291,19 @@ val data_loads_word = EVAL ``let conf = (ARB:data_to_word$config) with <|tag_bit
  (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$MemOp closLang$Update) [1] NONE) : 64 wordLang$prog # num) = (wordLang$Skip, 2)``;
 val _ = (print "data_to_word_loads="; print_term (rhs (concl (CONV_RULE
   (RAND_CONV (SIMP_CONV (srw_ss()) [wordsTheory.dimindex_32, wordsTheory.dimindex_64, wordsTheory.dimword_def] THENC EVAL)) data_loads_word))); print "\n");
+val data_ref_word = EVAL ``let conf = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16|> in
+ (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$MemOp closLang$Ref) [1] NONE) : 64 wordLang$prog # num) =
+  (wordLang$Seq (wordLang$Set stackLang$TriggerGC (wordLang$Op asm$Sub [wordLang$Lookup stackLang$TriggerGC; wordLang$Const 16w]))
+   (wordLang$Seq (wordLang$Assign 1 (wordLang$Op asm$Sub [wordLang$Lookup stackLang$EndOfHeap; wordLang$Const 16w]))
+    (wordLang$Seq (wordLang$Set stackLang$EndOfHeap (wordLang$Var 1))
+     (wordLang$Seq (wordLang$Assign 3 (wordLang$Const 281474976710667w))
+      (wordLang$Seq (wordLang$Seq (wordLang$Store (wordLang$Op asm$Add [wordLang$Var 1; wordLang$Const 0w]) 3)
+       (wordLang$Seq (wordLang$Store (wordLang$Op asm$Add [wordLang$Var 1; wordLang$Const 8w]) 4) wordLang$Skip))
+       (wordLang$Assign 8 (wordLang$Op asm$Or [wordLang$Shift ast$Lsl (wordLang$Op asm$Sub [wordLang$Var 1; wordLang$Lookup stackLang$CurrHeap]) (wordLang$Const 5w); wordLang$Const 1w])))))), 2) /\
+ (data_to_word$comp (conf with len_size := 0) 5 2 (dataLang$Assign 3 (closLang$MemOp closLang$Ref) [1] NONE) : 64 wordLang$prog # num) =
+  (wordLang$Seq (wordLang$Assign 1 (wordLang$Const (-1w))) (wordLang$Alloc 1 (sptree$LS (), sptree$LN)), 2)``;
+val _ = (print "data_to_word_ref="; print_term (rhs (concl (CONV_RULE
+  (RAND_CONV (SIMP_CONV (srw_ss()) [wordsTheory.dimindex_64, wordsTheory.dimword_def] THENC EVAL)) data_ref_word))); print "\n");
 val data_comparisons_word = EVAL ``
  (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$BlockOp (closLang$BoolTest (ast$Compare ast$Gt))) [1;2] NONE) : 64 wordLang$prog # num) =
   (wordLang$If asm$Equal 4 (asm$Reg 6) (wordLang$Assign 8 (wordLang$Const 18w)) (wordLang$Assign 8 (wordLang$Const 2w)), 2) /\

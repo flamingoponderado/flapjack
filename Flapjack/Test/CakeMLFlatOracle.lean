@@ -86,6 +86,7 @@ def clos_to_bvi_constant : Bool := true
 def bvi_to_data_constant : Bool := true
 def data_to_word_globals : Bool := true
 def data_to_word_loads : Bool := true
+def data_to_word_ref : Bool := true
 def data_to_word_comparisons : Bool := true
 def data_to_word_byte_ops : Bool := true
 def data_to_word_byte_shifts : Bool := true
