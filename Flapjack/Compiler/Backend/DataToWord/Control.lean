@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.DataLang.Syntax
 import Flapjack.Compiler.Backend.DataToWord.Config
 import Flapjack.Compiler.Backend.DataToWord.Header
+import Flapjack.Compiler.Backend.DataToWord.Locations
 import Flapjack.Compiler.Backend.DataToWord.Variables
 import Flapjack.Compiler.Backend.DataToWord.WordOp
 import Flapjack.Pancake.WordLang
@@ -129,6 +130,34 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
       match args with
       | [src] => some (boolResult dest .less (adjustVar src) (.imm (BitVec.ofNat width (4 * i))), l)
       | _ => some (.skip, l)
+  | l, .assign dest (.intOp .less) args names =>
+      match args with
+      | [x, y] =>
+          let cutsets := adjustSets (names.getD .ln)
+          some (listSeq [
+            .assign 1 (.var (adjustVar x)), .assign 3 (.var (adjustVar y)),
+            .assign 5 (.op .or [.var 1, .var 3]),
+            .ite .test 5 (.imm 1) .skip
+              (.seq (.mustTerminate (.call (some ([1], cutsets, .skip, secn, l))
+                (some compareLocation) [1, 3] none)) (.assign 3 (.const 1))),
+            boolResult dest .less 1 (.reg 3)], l + 1)
+      | _ => some (.skip, l)
+  | l, .assign dest (.intOp op) args names =>
+      match op, args with
+      | .add, [x, y] | .sub, [x, y] =>
+          let cutsets := adjustSets (names.getD .ln)
+          let (instr, loc) := match op with
+            | .add => (WordLangArith.addOverflow 1 (adjustVar x) (adjustVar y) 3, addLocation)
+            | _ => (WordLangArith.subOverflow 1 (adjustVar x) (adjustVar y) 3, subLocation)
+          some (listSeq [
+            .inst (.arith instr),
+            .assign 3 (.op .or [.var 3, .var (adjustVar x), .var (adjustVar y)]),
+            .ite .test 3 (.imm 1) .skip
+              (.mustTerminate (.call (some ([1], cutsets, .skip, secn, l))
+                (some loc) [adjustVar x, adjustVar y] none)),
+            .move 2 [(adjustVar dest, 1)]], l + 1)
+      | .add, _ | .sub, _ => some (.skip, l)
+      | _, _ => none
   | l, .assign dest (.wordOp (.wordTest _ test)) args _ =>
       match args, test with
       | [x, y], .equal => some (boolResult dest .equal (adjustVar x) (.reg (adjustVar y)), l)

@@ -304,6 +304,28 @@ val data_ref_word = EVAL ``let conf = (ARB:data_to_word$config) with <|tag_bits 
   (wordLang$Seq (wordLang$Assign 1 (wordLang$Const (-1w))) (wordLang$Alloc 1 (sptree$LS (), sptree$LN)), 2)``;
 val _ = (print "data_to_word_ref="; print_term (rhs (concl (CONV_RULE
   (RAND_CONV (SIMP_CONV (srw_ss()) [wordsTheory.dimindex_64, wordsTheory.dimword_def] THENC EVAL)) data_ref_word))); print "\n");
+val data_int_word = EVAL ``
+ (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$IntOp closLang$Add) [1;2] NONE) : 64 wordLang$prog # num) =
+  (wordLang$Seq (wordLang$Inst (asm$Arith (asm$AddOverflow 1 4 6 3)))
+   (wordLang$Seq (wordLang$Assign 3 (wordLang$Op asm$Or [wordLang$Var 3; wordLang$Var 4; wordLang$Var 6]))
+    (wordLang$Seq (wordLang$If asm$Test 3 (asm$Imm 1w) wordLang$Skip
+     (wordLang$MustTerminate (wordLang$Call (SOME ([1], (sptree$LS (), sptree$LN), wordLang$Skip, 5, 2)) (SOME 13) [4;6] NONE)))
+     (wordLang$Move 2 [(8,1)]))), 3) /\
+ (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$IntOp closLang$Sub) [1;2] NONE) : 64 wordLang$prog # num) =
+  (wordLang$Seq (wordLang$Inst (asm$Arith (asm$SubOverflow 1 4 6 3)))
+   (wordLang$Seq (wordLang$Assign 3 (wordLang$Op asm$Or [wordLang$Var 3; wordLang$Var 4; wordLang$Var 6]))
+    (wordLang$Seq (wordLang$If asm$Test 3 (asm$Imm 1w) wordLang$Skip
+     (wordLang$MustTerminate (wordLang$Call (SOME ([1], (sptree$LS (), sptree$LN), wordLang$Skip, 5, 2)) (SOME 14) [4;6] NONE)))
+     (wordLang$Move 2 [(8,1)]))), 3) /\
+ (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$IntOp closLang$Less) [1;2] NONE) : 64 wordLang$prog # num) =
+  (wordLang$Seq (wordLang$Assign 1 (wordLang$Var 4)) (wordLang$Seq (wordLang$Assign 3 (wordLang$Var 6))
+   (wordLang$Seq (wordLang$Assign 5 (wordLang$Op asm$Or [wordLang$Var 1; wordLang$Var 3]))
+    (wordLang$Seq (wordLang$If asm$Test 5 (asm$Imm 1w) wordLang$Skip
+     (wordLang$Seq (wordLang$MustTerminate (wordLang$Call (SOME ([1], (sptree$LS (), sptree$LN), wordLang$Skip, 5, 2)) (SOME 19) [1;3] NONE)) (wordLang$Assign 3 (wordLang$Const 1w))))
+     (wordLang$If asm$Less 1 (asm$Reg 3) (wordLang$Assign 8 (wordLang$Const 18w)) (wordLang$Assign 8 (wordLang$Const 2w)))))), 3) /\
+ (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$IntOp closLang$Add) [1] NONE) : 64 wordLang$prog # num) = (wordLang$Skip, 2)``;
+val _ = (print "data_to_word_int="; print_term (rhs (concl (CONV_RULE
+  (RAND_CONV (SIMP_CONV (srw_ss()) [wordsTheory.dimindex_64, wordsTheory.dimword_def] THENC EVAL)) data_int_word))); print "\n");
 val data_comparisons_word = EVAL ``
  (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$BlockOp (closLang$BoolTest (ast$Compare ast$Gt))) [1;2] NONE) : 64 wordLang$prog # num) =
   (wordLang$If asm$Equal 4 (asm$Reg 6) (wordLang$Assign 8 (wordLang$Const 18w)) (wordLang$Assign 8 (wordLang$Const 2w)), 2) /\

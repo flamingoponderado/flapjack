@@ -54,7 +54,9 @@ private def headerConfig : Config := { conf with lenSize := 4 }
 #guard match compileControl? (width := 64) conf 5 2 (.call none (some 9) [0, 3] none) with
   | some (.call none (some 9) [0, 2, 8] none, 2) => true
   | _ => false
-#guard (compileControl? (width := 64) conf 5 2 (.assign 0 (.intOp .add) [] none)).isNone
+#guard match compileControl? (width := 64) conf 5 2 (.assign 0 (.intOp .add) [] none) with
+  | some (.skip, 2) => true
+  | _ => false
 #guard Flapjack.Test.CakeMLFlatOracle.data_to_word_control
 #guard match compileControl? (width := 64) conf 5 2 (.makeSpace 2 .ln) with
   | some (.seq (.assign 1 (.op .sub [.lookup .triggerGC, .lookup .nextFree]))
@@ -128,6 +130,28 @@ private def headerConfig : Config := { conf with lenSize := 4 }
   | some (.seq (.assign 1 (.const w)) (.alloc 1 (.ls (), .ln)), 2) => w == (-1 : BitVec 64)
   | _ => false
 #guard Flapjack.Test.CakeMLFlatOracle.data_to_word_ref
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.intOp .add) [1, 2] none) with
+  | some (.seq (.inst (.arith (.addOverflow 1 4 6 3)))
+      (.seq (.assign 3 (.op .or [.var 3, .var 4, .var 6]))
+       (.seq (.ite .test 3 (.imm 1) .skip
+        (.mustTerminate (.call (some ([1], (.ls (), .ln), .skip, 5, 2)) (some 13) [4, 6] none)))
+        (.move 2 [(8, 1)]))), 3) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.intOp .sub) [1, 2] none) with
+  | some (.seq (.inst (.arith (.subOverflow 1 4 6 3)))
+      (.seq (.assign 3 (.op .or [.var 3, .var 4, .var 6]))
+       (.seq (.ite .test 3 (.imm 1) .skip
+        (.mustTerminate (.call (some ([1], (.ls (), .ln), .skip, 5, 2)) (some 14) [4, 6] none)))
+        (.move 2 [(8, 1)]))), 3) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.intOp .less) [1, 2] none) with
+  | some (.seq (.assign 1 (.var 4)) (.seq (.assign 3 (.var 6))
+      (.seq (.assign 5 (.op .or [.var 1, .var 3]))
+       (.seq (.ite .test 5 (.imm 1) .skip
+        (.seq (.mustTerminate (.call (some ([1], (.ls (), .ln), .skip, 5, 2)) (some 19) [1, 3] none)) (.assign 3 (.const 1))))
+        (.ite .less 1 (.reg 3) (.assign 8 (.const 18)) (.assign 8 (.const 2)))))), 3) => true
+  | _ => false
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_int
 #guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.boolTest (.compare .gt))) [1, 2] none) with
   | some (.ite .equal 4 (.reg 6) (.assign 8 (.const 18)) (.assign 8 (.const 2)), 2) => true
   | _ => false

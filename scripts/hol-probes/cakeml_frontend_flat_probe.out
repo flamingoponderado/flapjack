@@ -88,6 +88,7 @@ bvi_to_data_constant=T
 data_to_word_globals=T
 data_to_word_loads=T
 data_to_word_ref=T
+data_to_word_int=T
 data_to_word_comparisons=T
 data_to_word_byte_ops=T
 data_to_word_byte_shifts=T
