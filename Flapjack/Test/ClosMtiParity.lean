@@ -4,6 +4,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.ToBvi
 import Flapjack.Test.MtiCakeBviOracle
 import Flapjack.Compiler.Backend.SourceToFlat.ToWord
 import Flapjack.Test.FullMtiInlineCakeWordOracle
+import Flapjack.Test.BvlInlineCakeBviOracle
 
 /-! Original examples for checked multi-argument introduction. -/
 namespace Flapjack.Test.ClosMtiParity
@@ -35,6 +36,12 @@ private def mtiConfig : ClosToBvl.Config :=
     [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "f"))
       (.fn (ofString "x") (.fn (ofString "y") (.var (.short (ofString "x")))))] with
   | some (_, _, _, code, _, _) => Flapjack.Test.MtiCakeBviOracle.matchesCaptured code
+  | none => false
+
+#guard match SourceToFlat.compileCakeToBviBvlInlineFuel 100 8 SourceToFlat.emptyConfig mtiConfig
+    [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "f"))
+      (.fn (ofString "x") (.fn (ofString "y") (.var (.short (ofString "x")))))] with
+  | some (_, _, _, code, _, _) => Flapjack.Test.BvlInlineCakeBviOracle.matchesCaptured code
   | none => false
 
 private def wordConfig : DataToWord.Config :=

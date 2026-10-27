@@ -70,6 +70,7 @@ probe_needs_refresh() {
          "$(basename "$probe")" == match_cake_bvi_probeScript.sml ||
          "$(basename "$probe")" == mti_cake_bvi_probeScript.sml ||
          "$(basename "$probe")" == inline_cake_bvi_probeScript.sml ||
+         "$(basename "$probe")" == bvl_inline_cake_bvi_probeScript.sml ||
          "$(basename "$probe")" == empty_cake_data_probeScript.sml ||
          "$(basename "$probe")" == reference_cake_data_probeScript.sml ||
          "$(basename "$probe")" == match_cake_data_probeScript.sml ||
@@ -96,6 +97,7 @@ probe_needs_refresh() {
          "$cake_dir/compiler/backend/backend_commonScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/bvi_letScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/bvi_inlineScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/bvl_inlineScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/bvi_to_dataScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/data_liveScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/data_simpScript.sml" -nt "$output" ||
@@ -238,6 +240,12 @@ run_probe full_mti_inline_cake_word_probeScript.sml full_mti_inline_cake_word_pr
 
 run_probe mti_ops_word_probeScript.sml mti_ops_word_probe.out \
   entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe bvl_inline_frontend_probeScript.sml bvl_inline_frontend_probe.out \
+  inline size letop "$cake_dir/compiler/backend/bvl_inlineScript.sml" "$cake_dir/compiler/backend"
+
+run_probe bvl_inline_cake_bvi_probeScript.sml bvl_inline_cake_bvi_probe.out \
+  code "$cake_dir/compiler/backend/bvl_inlineScript.sml" "$cake_dir/compiler/backend"
 
 run_probe empty_cake_bvi_probeScript.sml empty_cake_bvi_probe.out \
   code "$cake_dir/compiler/backend/bvl_to_bviScript.sml" "$cake_dir/compiler/backend"

@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Prepared
 import Flapjack.Compiler.Backend.BvlToBvi.Compile
 import Flapjack.Compiler.Backend.BvlToBvi.Names
 import Flapjack.Compiler.Backend.BviInline
+import Flapjack.Compiler.Backend.BvlInline
 
 /-! Checked source-to-BVI composition with closure optimizations disabled. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
@@ -36,6 +37,19 @@ def compileCakeToBviMtiFuel (fuel : Nat) (source : Config)
     Option (Config × ClosToBvl.Config × Nat × List (Nat × Nat × Bvi.Exp) × Nat × Spt Basis.Pure.MlString.MlString) := do
   let (source, exps) ← compileCakeToClosFuel fuel source decls
   let (closure, bvl, names) ← ClosToBvl.compileMtiOnlyFuel? fuel closure exps
+  let (start, code, next) ← BvlToBvi.compileProgFuel fuel fuel closure.start 0 bvl
+  let names := BvlToBvi.getNames (code.map fun (n, _, _) => n) names
+  pure (source, closure, start, code, next, names)
+
+/-- Multi-argument introduction followed by the implemented BVL inlining
+and simplification stages. This deliberately omits `bvl_handle`, tail-call
+optimizations and the remaining frontend optimizations. -/
+def compileCakeToBviBvlInlineFuel (fuel limit : Nat) (source : Config)
+    (closure : ClosToBvl.Config) (decls : List AstHOL.Dec) :
+    Option (Config × ClosToBvl.Config × Nat × List (Nat × Nat × Bvi.Exp) × Nat × Spt Basis.Pure.MlString.MlString) := do
+  let (source, exps) ← compileCakeToClosFuel fuel source decls
+  let (closure, bvl, names) ← ClosToBvl.compileMtiOnlyFuel? fuel closure exps
+  let (_, bvl) ← BvlInline.compileWithoutHandleFuel fuel limit bvl
   let (start, code, next) ← BvlToBvi.compileProgFuel fuel fuel closure.start 0 bvl
   let names := BvlToBvi.getNames (code.map fun (n, _, _) => n) names
   pure (source, closure, start, code, next, names)
