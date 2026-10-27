@@ -135,6 +135,17 @@ def renderUnboundTypeVariable (input : List HolChar) : Error → Option (List Ho
       sourceLocation input (some loc) ++ ascii "\nProgram exited with nonzero exit code.\n")
   | _ => none
 
+/-- Render the original inference errors for unsafe and thunk primitives. -/
+def renderUnsupportedPrimitive (input : List HolChar) (error : Error) : Option (List HolChar) := do
+  let (loc, message) ← match error with
+    | .located loc .unsafeOperation => some (some loc, "Unsafe ops do not have a type")
+    | .located loc .thunkOperation => some (some loc, "Thunk ops do not have a type")
+    | .unsafeOperation => some (none, "Unsafe ops do not have a type")
+    | .thunkOperation => some (none, "Thunk ops do not have a type")
+    | _ => none
+  some (ascii "### ERROR: type error\n" ++ ascii message ++ ascii " at " ++
+    sourceLocation input loc ++ ascii "\nProgram exited with nonzero exit code.\n")
+
 /-- Render the value restriction at the declaration location. -/
 def renderValueRestriction (input : List HolChar) : Error → Option (List HolChar)
   | .located loc .valueRestriction => some (ascii "### ERROR: type error\nValue restriction violated at " ++

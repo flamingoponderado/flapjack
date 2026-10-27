@@ -12,6 +12,7 @@ open Flapjack.Compiler.Inference.Unify
 
 inductive Error where
   | exhausted | unsupported | mismatch | undefinedName | invalidPattern | valueRestriction
+  | unsafeOperation | thunkOperation
   | typeMismatch : InferT → InferT → Error
   | typeMismatchNames : List (Nat × MlString) → InferT → InferT → Error
   | unboundTypeVariable : MlString → Error
@@ -57,6 +58,8 @@ private def typeNamesFuel : Nat → MlString → Namespace MlString MlString
 private def withLoc (loc : Flapjack.Misc.Location.Locs) (env : Env) (action : M α) : M α := fun state =>
   match action state with
   | .error .valueRestriction => .error (.located loc .valueRestriction)
+  | .error .unsafeOperation => .error (.located loc .unsafeOperation)
+  | .error .thunkOperation => .error (.located loc .thunkOperation)
   | .error (.undefinedVariable name) => .error (.located loc (.undefinedVariable name))
   | .error (.undefinedConstructor name) => .error (.located loc (.undefinedConstructor name))
   | .error (.undefinedTypeConstructor name) => .error (.located loc (.undefinedTypeConstructor name))
@@ -273,6 +276,10 @@ private def inferOp (fuel : Nat) (op : Op) (ts : List InferT) : M InferT := do
     constrainMany fuel ts args
     return result
   match op, ts with
+  | .vsubUnsafe, _ | .asubUnsafe, _ | .aupdateUnsafe, _ | .aw8subUnsafe, _
+  | .aw8updateUnsafe, _ | .xorAw8StrUnsafe, _ | .aallocFixed, _ | .eval, _ | .envId, _ =>
+    fail .unsafeOperation
+  | .thunkOp _, _ => fail .thunkOperation
   | .opapp, [f, x] =>
     let r ← fresh
     constrain fuel f (.app [x, r] 4)

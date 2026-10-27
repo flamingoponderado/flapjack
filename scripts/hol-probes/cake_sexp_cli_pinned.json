@@ -398,6 +398,104 @@
       "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stderr_bytes": 116,
       "stderr_sha256": "ccba12fae46ffd533df7316c411ab8a06b53dc711487c18c9b2cb95f02858a75"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 111,
+      "stderr_sha256": "2ff104158224b5076775c211964c2e6e1c3ea73d4c4801a5218f640d895b658c"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 111,
+      "stderr_sha256": "2ff104158224b5076775c211964c2e6e1c3ea73d4c4801a5218f640d895b658c"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 111,
+      "stderr_sha256": "2ff104158224b5076775c211964c2e6e1c3ea73d4c4801a5218f640d895b658c"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 111,
+      "stderr_sha256": "2ff104158224b5076775c211964c2e6e1c3ea73d4c4801a5218f640d895b658c"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 111,
+      "stderr_sha256": "2ff104158224b5076775c211964c2e6e1c3ea73d4c4801a5218f640d895b658c"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 111,
+      "stderr_sha256": "2ff104158224b5076775c211964c2e6e1c3ea73d4c4801a5218f640d895b658c"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 111,
+      "stderr_sha256": "2ff104158224b5076775c211964c2e6e1c3ea73d4c4801a5218f640d895b658c"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 111,
+      "stderr_sha256": "2ff104158224b5076775c211964c2e6e1c3ea73d4c4801a5218f640d895b658c"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 111,
+      "stderr_sha256": "2ff104158224b5076775c211964c2e6e1c3ea73d4c4801a5218f640d895b658c"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 110,
+      "stderr_sha256": "2d7433d4c383724df645af837018ed116f85afd2d978ac70494e8ca87f9caefe"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 110,
+      "stderr_sha256": "2d7433d4c383724df645af837018ed116f85afd2d978ac70494e8ca87f9caefe"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 110,
+      "stderr_sha256": "2d7433d4c383724df645af837018ed116f85afd2d978ac70494e8ca87f9caefe"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 177,
+      "stderr_sha256": "fb3dba00be0a32b52bc9fc50d0c43c0efb9e779c0b18a681d055544878a7be4c"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 109,
+      "stderr_sha256": "c74b0772a09c7370d739f64c22e8a344af2cc16232aff00750a0e7151254dea9"
     }
   ],
   "stress": {

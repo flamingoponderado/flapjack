@@ -49,6 +49,17 @@ TYPE_ERRORS = [
     '((Dlet (unk unk) "x" (If (Lit 1) (Lit 2) (Lit 3))))',
     '((Dlet (unk unk) "x" (App (Arith Add . IntT) ((Lit 1) (Con (SOME (Short "True")) nil)))))',
 ]
+# The original rejects these primitives during inference, before checking
+# their argument count. Retain both location and argument-error precedence.
+TYPE_ERRORS += [
+    f'((Dlet (unk unk) "x" (App {op} nil)))'
+    for op in ['Eval', 'Envid', 'Vsubunsafe', 'Asubunsafe', 'Aupdateunsafe',
+               'Aw8subunsafe', 'Aw8updateunsafe', 'XorAw8Strunsafe', 'AallocFixed',
+               'ForceThunk', '(AllocThunk . Evaluated)', '(UpdateThunk . NotEvaluated)']
+] + [
+    '((Dlet ((0 0) (0 1)) "x" (Lannot (App Eval nil) ((0 2) (0 7)))))',
+    '((Dlet (unk unk) "x" (App ForceThunk ((Var (Short "missing"))))))',
+]
 STRESS_INPUTS = {
     'many_declarations': b'(' + b'(Denv "a") ' * 20000 + b')',
     'long_byte_string': b'((Denv "' + b'x' * 100000 + b'"))',
