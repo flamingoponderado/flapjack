@@ -109,4 +109,20 @@ theorem evaluates_deterministic {expr : PegExpr} {input : Input} {first second :
     (evaluates_completed h₁) (evaluates_completed h₂)
   exact hfirst.symm.trans hsecond
 
+/-- Repetition cannot return ordinary failure; it either finishes successfully
+or does not have a finite derivation. -/
+theorem repeat_ne_failure {e : PegExpr} {input : Input}
+    (h : Evaluates (.repeat e) input .failure) : False := by
+  generalize he : PegExpr.repeat e = expr at h
+  generalize hr : Result.failure = result at h
+  induction h <;> cases he <;> cases hr
+  rename_i ih
+  exact ih rfl rfl
+
+/-- Any completed execution of repetition succeeds. -/
+theorem eval_repeat_ne_failure (fuel : Nat) (e : PegExpr) (input : Input) :
+    eval fuel (.repeat e) input ≠ .failure := by
+  intro h
+  exact repeat_ne_failure (eval_sound fuel (.repeat e) input .failure (by simp) h)
+
 end Flapjack.CakeParser.PegRelation

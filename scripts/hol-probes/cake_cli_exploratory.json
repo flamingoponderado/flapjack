@@ -1472,6 +1472,48 @@
       "stdout_sha256": "190452c735f110b227123cb1f21e3a3d4738b2d51a39687b8c2d8b8b98b581eb",
       "stderr_bytes": 0,
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "frontend_nested_let": {
+      "exit_code": 0,
+      "stdout_bytes": 396283,
+      "stdout_sha256": "92388b6543e5e9078d52ddf7b6a865695cca4406d86ed7a5fc10453b5b2deae6",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "frontend_datatype_match": {
+      "exit_code": 0,
+      "stdout_bytes": 395472,
+      "stdout_sha256": "1f37bab898e5bad7c91f552eed22f9c1b3968d28e0e0f038ac02d070a4c0d1ea",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "frontend_type_alias": {
+      "exit_code": 0,
+      "stdout_bytes": 396882,
+      "stdout_sha256": "95e3ef9daf27cbca0251b2e5077ed0de8892bd32e31d7ca406eb605048abb385",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "frontend_escaped_bytes": {
+      "exit_code": 0,
+      "stdout_bytes": 374758,
+      "stdout_sha256": "146a92f94909b51b07a15afce56097e10ca6989b28f23c25f742ace6f5cbd015",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "frontend_hex_literal": {
+      "exit_code": 0,
+      "stdout_bytes": 393660,
+      "stdout_sha256": "0f224733ed69f7dc023759469524a8a5bcc4febb279fba4a132f9a22e8d53ff3",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "frontend_multiarg_function": {
+      "exit_code": 0,
+      "stdout_bytes": 394856,
+      "stdout_sha256": "c9d9845f5fe5c66311bea31190106d3072ef7fd91d4cfa0882b49fe9a33d8aec",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     }
   }
 }
