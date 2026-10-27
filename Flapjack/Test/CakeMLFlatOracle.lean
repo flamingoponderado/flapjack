@@ -96,6 +96,7 @@ def data_to_word_stubs : Bool := true
 def bvl_output_names : Bool := true
 def data_stub_names : Bool := true
 def source_output_names : Bool := true
+def closure_mti : Bool := true
 def data_to_word_comparisons : Bool := true
 def data_to_word_byte_ops : Bool := true
 def data_to_word_byte_shifts : Bool := true

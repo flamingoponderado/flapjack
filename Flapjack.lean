@@ -197,6 +197,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.ToBvi
 import Flapjack.Compiler.Backend.SourceToFlat.ToData
 import Flapjack.Compiler.Backend.SourceToFlat.ToWord
 import Flapjack.Compiler.Backend.SourceToFlat.ToRiscV
+import Flapjack.Compiler.Backend.ClosMti
 import Flapjack.Compiler.Backend.SourceToSource
 import Flapjack.Compiler.Backend.ClosToBvl.Constants
 import Flapjack.Compiler.Backend.ClosToBvl.Layout

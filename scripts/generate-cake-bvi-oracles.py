@@ -16,6 +16,8 @@ CASES = (
      ROOT / "Flapjack/Test/ReferenceCakeBviOracle.lean", "ReferenceCakeBviOracle"),
     (ROOT / "scripts/hol-probes/match_cake_bvi_probe.out",
      ROOT / "Flapjack/Test/MatchCakeBviOracle.lean", "MatchCakeBviOracle"),
+    (ROOT / "scripts/hol-probes/mti_cake_bvi_probe.out",
+     ROOT / "Flapjack/Test/MtiCakeBviOracle.lean", "MtiCakeBviOracle"),
 )
 
 CONSTRUCTORS = {
@@ -27,11 +29,13 @@ CONSTRUCTORS = {
     "Cons": (".cons", 1), "EqualConst": (".equalConst", 1), "CopyByte": (".copyByte", 1),
     "SetGlobal": (".setGlobal", 1), "UpdateThunk": (".updateThunk", 1),
     "GlobalsPtr": (".globalsPtr", 0), "SetGlobalsPtr": (".setGlobalsPtr", 0),
-    "Add": (".add", 0), "Sub": (".sub", 0), "Less": (".less", 0),
+    "Add": (".add", 0), "Sub": (".sub", 0), "Less": (".less", 0), "LessConstSmall": (".lessConstSmall", 1),
     "El": (".el", 0), "Length": (".length", 0), "Update": (".update", 0),
     "RefArray": (".refArray", 0), "UpdateByte": (".updateByte", 0),
     "DerefByte": (".derefByte", 0), "LengthByte": (".lengthByte", 0),
-    "Ref": (".ref", 0), "Equal": (".equal", 0), "Evaluated": (".evaluated", 0),
+    "Ref": (".ref", 0), "Equal": (".equal", 0), "TagEq": (".tagEq", 1), "Evaluated": (".evaluated", 0),
+    "ConsExtend": (".consExtend", 1), "Div": (".div", 0), "Global": (".global", 1),
+    "Label": (".label", 1), "LengthBlock": (".lengthBlock", 0), "Mult": (".mult", 0), "Tick": (".tick", 1),
     "SOME": ("some", 1), "NONE": ("none", 0), "F": ("false", 0), "T": ("true", 0),
 }
 
@@ -84,7 +88,29 @@ def render(input_path, namespace):
         args = [parse() for _ in range(arity)]
         return "(" + " ".join([name, *args]) + ")" if args else name
 
-    pattern = parse()
+    if namespace == "MtiCakeBviOracle":
+        if tokens[pos] != "[":
+            raise ValueError("expected BVI program list")
+        pos += 1
+        entries = []
+        while tokens[pos] != "]":
+            entries.append(parse())
+            if tokens[pos] == ";":
+                pos += 1
+            elif tokens[pos] != "]":
+                raise ValueError("expected BVI function separator")
+        pos += 1
+        definitions = "\n\n".join(f'''private def matches{index} (entry : Nat × Nat × Flapjack.Compiler.Backend.Bvi.Exp) : Bool :=
+  match entry with
+  | {pattern} => true
+  | _ => false''' for index, pattern in enumerate(entries))
+        names = ", ".join(f"entry{index}" for index in range(len(entries)))
+        checks = " &&\n      ".join(f"matches{index} entry{index}" for index in range(len(entries))) or "true"
+        body = f"  match code with\n  | [{names}] =>\n      {checks}\n  | _ => false"
+    else:
+        pattern = parse()
+        definitions = ""
+        body = f"  match code with\n  | {pattern} => true\n  | _ => false"
     if pos != len(tokens):
         raise ValueError("trailing HOL output")
     return f'''-- Generated from the pinned original HOL compiler; do not edit.
@@ -92,11 +118,11 @@ import Flapjack.Compiler.Backend.Bvi.Syntax
 
 namespace Flapjack.Test.{namespace}
 
+{definitions}
+
 /-- Match every location, arity and expression in the captured BVI program. -/
 def matchesCaptured (code : List (Nat × Nat × Flapjack.Compiler.Backend.Bvi.Exp)) : Bool :=
-  match code with
-  | {pattern} => true
-  | _ => false
+{body}
 
 end Flapjack.Test.{namespace}
 '''

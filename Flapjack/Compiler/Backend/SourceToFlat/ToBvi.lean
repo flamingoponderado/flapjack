@@ -27,4 +27,16 @@ def compileCakeToBviNoOptsFuel (fuel : Nat) (source : Config)
   let (source, closure, start, code, next, _) ← compileCakeToBviWithNamesNoOptsFuel fuel source closure decls
   pure (source, closure, start, code, next)
 
+/-- Checked source-to-BVI composition allowing multi-argument introduction.
+Known-function and call optimizations and the outer BVL/BVI optimizations
+remain unsupported. -/
+def compileCakeToBviMtiFuel (fuel : Nat) (source : Config)
+    (closure : ClosToBvl.Config) (decls : List AstHOL.Dec) :
+    Option (Config × ClosToBvl.Config × Nat × List (Nat × Nat × Bvi.Exp) × Nat × Spt Basis.Pure.MlString.MlString) := do
+  let (source, exps) ← compileCakeToClosFuel fuel source decls
+  let (closure, bvl, names) ← ClosToBvl.compileMtiOnlyFuel? fuel closure exps
+  let (start, code, next) ← BvlToBvi.compileProgFuel fuel fuel closure.start 0 bvl
+  let names := BvlToBvi.getNames (code.map fun (n, _, _) => n) names
+  pure (source, closure, start, code, next, names)
+
 end Flapjack.Compiler.Backend.SourceToFlat

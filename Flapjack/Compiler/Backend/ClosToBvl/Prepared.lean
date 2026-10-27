@@ -5,6 +5,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Sort
 import Flapjack.Compiler.Backend.ClosToBvl.Stubs
 import Flapjack.Compiler.Backend.ClosAnnotate.Shift
 import Flapjack.Compiler.Backend.ClosNumber
+import Flapjack.Compiler.Backend.ClosMti
 
 /-! Checked closure-to-BVL assembly after closure preprocessing. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
@@ -45,5 +46,14 @@ def compileNoOpts? (c : Config) (es : List ClosLang.Exp) :
     Option (Config × List (Nat × Nat × Bvl.Exp) × Spt MlString) := do
   let (current, prog) ← compileCommonNoOpts? c es
   compilePrepared? c current es prog
+
+/-- Checked closure compilation with multi-argument introduction enabled or
+disabled. Known-function and call optimizations are still rejected, and the
+multi-argument traversal can fail when its explicit fuel is exhausted. -/
+def compileMtiOnlyFuel? (fuel : Nat) (c : Config) (es : List ClosLang.Exp) :
+    Option (Config × List (Nat × Nat × Bvl.Exp) × Spt MlString) := do
+  let es' ← ClosMti.compileFuel fuel c.doMti c.maxApp es
+  let (current, prog) ← compileCommonNoOpts? { c with doMti := false } es'
+  compilePrepared? c { current with doMti := c.doMti } es' prog
 
 end Flapjack.Compiler.Backend.ClosToBvl

@@ -301,6 +301,7 @@ import Flapjack.Test.FlatElim
 import Flapjack.Test.CakeMLControlFlowParity
 import Flapjack.Test.CakeMLRiscVPartial
 import Flapjack.Test.CakeMLNamesParity
+import Flapjack.Test.ClosMtiParity
 import Flapjack.Test.MiscLookupAnyFindIndexParity
 import Flapjack.Test.StackPropsClockSupportParity
 import Flapjack.Test.StackToLabExecutedCodecParity

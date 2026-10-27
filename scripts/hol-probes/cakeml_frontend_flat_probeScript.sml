@@ -487,6 +487,20 @@ val _ = capture "source_output_names" ``
   SOME «_FromList»; SOME «_RefByte»; SOME «_Bignum»; SOME «_Bignum»; SOME «AllocGlobal»;
   SOME «CopyGlobals»; SOME «start»; SOME «ListLength»; SOME «ConcatByte»; NONE; SOME «bvl_force»;
   SOME «bvl_init»; SOME «dec»; SOME «dec»; SOME «dec»]``;
+load "clos_mtiTheory";
+val _ = capture "closure_mti" ``
+ clos_mti$collect_args 5 1 (closLang$Fn «f» NONE NONE 2 (closLang$Fn «g» NONE NONE 3 (closLang$Var backend_common$None 0))) =
+  (3, closLang$Fn «g» NONE NONE 3 (closLang$Var backend_common$None 0)) /\
+ clos_mti$collect_apps 4 [closLang$Var backend_common$None 3]
+  (closLang$App backend_common$None NONE (closLang$Var backend_common$None 0) [closLang$Var backend_common$None 1; closLang$Var backend_common$None 2]) =
+  ([closLang$Var backend_common$None 3; closLang$Var backend_common$None 1; closLang$Var backend_common$None 2], closLang$Var backend_common$None 0) /\
+ clos_mti$intro_multi 5
+  [closLang$Fn «f» NONE NONE 1 (closLang$Fn «g» NONE NONE 2 (closLang$Var backend_common$None 0));
+   closLang$App backend_common$None NONE (closLang$App backend_common$None NONE (closLang$Var backend_common$None 0)
+      [closLang$Var backend_common$None 1; closLang$Var backend_common$None 2]) [closLang$Var backend_common$None 3]] =
+  [closLang$Fn «f» NONE NONE 3 (closLang$Var backend_common$None 0);
+   closLang$App backend_common$None NONE (closLang$Var backend_common$None 0)
+      [closLang$Var backend_common$None 3; closLang$Var backend_common$None 1; closLang$Var backend_common$None 2]]``;
 val data_comparisons_word = EVAL ``
  (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$BlockOp (closLang$BoolTest (ast$Compare ast$Gt))) [1;2] NONE) : 64 wordLang$prog # num) =
   (wordLang$If asm$Equal 4 (asm$Reg 6) (wordLang$Assign 8 (wordLang$Const 18w)) (wordLang$Assign 8 (wordLang$Const 2w)), 2) /\

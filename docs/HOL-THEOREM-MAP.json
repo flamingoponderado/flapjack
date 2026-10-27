@@ -101806,5 +101806,21 @@
     "hol_name": "stub_names_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source list transcribed using byte-backed names; typed source and complete list review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti.lean",
+    "lean_name": "collectArgs",
+    "hol_path": "cakeml/compiler/backend/clos_mtiScript.sml",
+    "hol_name": "collect_args_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; typed carrier and complete declaration review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosMti.lean",
+    "lean_name": "collectApps",
+    "hol_path": "cakeml/compiler/backend/clos_mtiScript.sml",
+    "hol_name": "collect_apps_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; typed carrier and complete declaration review remain pending."
   }
 ]
