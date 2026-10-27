@@ -4,6 +4,8 @@ val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
 val _ = (print "subglobals_type="; print_type (type_of ``source_to_flatProof$subglobals``); print "\n");
 val _ = (print "subglobals_definition="; print_thm source_to_flatProofTheory.subglobals_def; print "\n");
+val _ = (print "submap_fresh="; print_thm source_to_flatProofTheory.submap_distinct_fupdate_flookup; print "\n");
+val _ = (print "submap_update="; print_thm source_to_flatProofTheory.submap_fupdate_flookup; print "\n");
 val refl = prove (``∀g : 'a option list. source_to_flatProof$subglobals g g``,
   simp [source_to_flatProofTheory.subglobals_def]);
 val _ = (print "refl_replay="; print_thm refl; print "\n");

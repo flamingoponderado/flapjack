@@ -1,6 +1,30 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "submap_distinct_fupdate_flookup",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/FiniteMapGrowth.lean",
+    "lean_name": "finiteSubmap_update_fresh",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "f",
+      "g"
+    ],
+    "reviewer": "Source comparison against typed submap_fresh row of cake_subglobals_probe: HOL maps f and g share arbitrary key α and value β; key x is outside FDOM f iff its lookup is NONE. Both sides assert that the single update of f is a submap of g exactly when g maps x to y and f is already a submap of g. finiteSubmap is the SUBMAP_FLOOKUP_EQN lookup characterization; finiteUpdate uses HOL equality and FUPDATE lookup, without BEq or extra premises. Both map parameters use HolFiniteMapExact with same-module lookup/support roundtrip witnesses; the qualifier records only the finite-map representation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "submap_fupdate_flookup",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/FiniteMapGrowth.lean",
+    "lean_name": "finiteSubmap_update",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "f",
+      "g"
+    ],
+    "reviewer": "Source comparison against typed submap_update row of cake_subglobals_probe: arbitrary maps f and g share key type α and value type β; the updated map is a submap of g iff g maps x to y and f with x removed is a submap of g. finiteSubmap follows SUBMAP_FLOOKUP_EQN, finiteUpdate and finiteErase use HOL equality and the FUPDATE and DOMSUB lookup behavior. No additional premises or BEq assumptions. Both map parameters use HolFiniteMapExact with same-module lookup/support roundtrip witnesses; the qualifier records only the finite-map representation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "subglobals_def",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalWeakening.lean",
     "lean_name": "subglobals",

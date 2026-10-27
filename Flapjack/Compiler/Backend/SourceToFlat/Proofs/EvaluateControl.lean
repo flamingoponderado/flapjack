@@ -1,5 +1,5 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateCases
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalWeakening
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.FiniteMapGrowth
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveType
 import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateClock
 import Flapjack.EvaluateHOL.ClockFull
