@@ -22,6 +22,239 @@ noncomputable def factoredInvariant {C F : Type} [Nonempty C]
   evalRefInv (flat.globals.take 1) (flat.refs.take 1) ∧ envGenInv gen ∧
   finIdxMatch flat.globals.length idxs.2.1 (srcOracNextCfg interp source.evalState)
 
+/-- Replacing the reserved first reference preserves the factored simulation
+invariant. The relations underlying it still require HOL correspondence
+review, so this is not tagged as the original invariant theorem. -/
+theorem factoredInvariant_changeEvalRef {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
+    (idxs : NextIndices × NextIndices × Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F) (value : FlatSem.Value)
+    (valid : factoredInvariant interp transform gen genv idxs source flat) :
+    factoredInvariant interp transform gen genv idxs source
+      { flat with refs := .refv value :: flat.refs.tail } := by
+  obtain ⟨cOk, tysOk, states, range, invs, orac, globals, reserved, genInv, fin⟩ := valid
+  have newStates : StateRel genv source { flat with refs := .refv value :: flat.refs.tail } := by
+    cases states with
+    | intro nonempty refs clock ffi => exact .intro _ _ (by simp) (by simpa using refs) clock ffi
+  have newReserved : evalRefInv (flat.globals.take 1) ((.refv value :: flat.refs.tail).take 1) := by
+    exact ⟨reserved.1, ⟨value, by simp⟩⟩
+  exact ⟨cOk, tysOk, newStates, range, invs, orac, globals, newReserved, genInv, fin⟩
+
+/-- Returning from an Eval call restores the caller's generation relation:
+the call relation preserves every generation that preceded the fresh one. -/
+theorem envGenRel_resetAfterEval (gen : EnvironmentGenerationStore)
+    (prior begin : EvalOracleState) (after : Option EvalState)
+    (priorRel : envGenRel gen (some (.evalOracle prior)))
+    (beginEnvs : begin.envs = (addEnvGeneration prior).envs)
+    (beginGeneration : begin.generation = (addEnvGeneration prior).generation)
+    (called : evalStateCallRel (some (.evalOracle begin)) after) :
+    envGenRel gen (resetEnvGeneration (some (.evalOracle prior)) after) := by
+  obtain ⟨last, rfl, _, length, earlier⟩ := called
+  have priorBound : prior.generation < prior.envs.length := priorRel.2.1
+  have beforeFresh : prior.generation < begin.generation := by
+    simpa [addEnvGeneration, beginGeneration] using priorBound
+  have beginBound : prior.generation < begin.envs.length := by
+    simp [beginEnvs, addEnvGeneration]
+    omega
+  have lastBound : prior.generation < last.envs.length := by omega
+  have same := earlier prior.generation beforeFresh
+  rw [Flapjack.holEl_eq_getElem _ _ lastBound, Flapjack.holEl_eq_getElem _ _ beginBound] at same
+  have beginEntry : begin.envs[prior.generation] = prior.envs[prior.generation] := by
+    simp [beginEnvs, addEnvGeneration, List.getElem_append_left, priorBound]
+  have sameLookup : last.envs[prior.generation]? = prior.envs[prior.generation]? := by
+    simp [lastBound, priorBound, same, beginEntry]
+  change gen.generation = prior.generation ∧ prior.generation < last.envs.length ∧
+    gen.next = (last.envs[prior.generation]?.getD []).length
+  exact ⟨priorRel.1, lastBound, by rw [sameLookup]; exact priorRel.2.2⟩
+
+/-- Resetting to the caller's generation preserves its earlier environments
+after a call that started from a freshly appended generation. -/
+theorem evalStateCallRel_resetAfterEval (prior begin : EvalOracleState) (after : Option EvalState)
+    (priorBound : prior.generation < prior.envs.length)
+    (beginEnvs : begin.envs = (addEnvGeneration prior).envs)
+    (beginGeneration : begin.generation = (addEnvGeneration prior).generation)
+    (called : evalStateCallRel (some (.evalOracle begin)) after) :
+    evalStateCallRel (some (.evalOracle prior))
+      (resetEnvGeneration (some (.evalOracle prior)) after) := by
+  obtain ⟨last, rfl, _, length, earlier⟩ := called
+  refine ⟨{ last with generation := prior.generation }, rfl, rfl, ?_, ?_⟩
+  · simp [beginEnvs, addEnvGeneration] at length
+    change prior.envs.length ≤ last.envs.length
+    omega
+  · intro i bound
+    have priorIndex : i < prior.envs.length := by omega
+    have freshBound : i < begin.generation := by simpa [beginGeneration, addEnvGeneration] using priorIndex
+    have beginIndex : i < begin.envs.length := by simp [beginEnvs, addEnvGeneration]; omega
+    have lastIndex : i < last.envs.length := by omega
+    have same := earlier i freshBound
+    rw [Flapjack.holEl_eq_getElem _ _ lastIndex, Flapjack.holEl_eq_getElem _ _ beginIndex] at same
+    rw [Flapjack.holEl_eq_getElem _ _ lastIndex, Flapjack.holEl_eq_getElem _ _ priorIndex]
+    simpa [beginEnvs, addEnvGeneration, List.getElem_append_left, priorIndex] using same
+
+/-- The forward oracle relation composes through the fresh Eval generation
+and the subsequent reset to the caller's generation. -/
+theorem oracForwardRel_resetAfterEval {C : Type}
+    (interp : Option (Value → Option (Config × C))) (prior begin : EvalOracleState)
+    (after : Option EvalState) (priorBound : prior.generation < prior.envs.length)
+    (beginEnvs : begin.envs = (addEnvGeneration prior).envs)
+    (beginGeneration : begin.generation = (addEnvGeneration prior).generation)
+    (first : oracConfigEnvsSubspt interp (some (.evalOracle prior)) (some (.evalOracle begin)))
+    (second : oracForwardRel interp (some (.evalOracle begin)) after) :
+    oracForwardRel interp (some (.evalOracle prior))
+      (resetEnvGeneration (some (.evalOracle prior)) after) := by
+  have stable : srcOracNextCfg interp (resetEnvGeneration (some (.evalOracle prior)) after) =
+      srcOracNextCfg interp after := by
+    cases after with
+    | none => rfl
+    | some state => cases state <;> rfl
+  have related := oracConfigEnvsSubspt_trans interp (some (.evalOracle prior))
+    (some (.evalOracle begin)) after ⟨first, second.1⟩
+  refine ⟨?_, evalStateCallRel_resetAfterEval prior begin after priorBound beginEnvs beginGeneration second.2⟩
+  simpa [oracConfigEnvsSubspt, stable] using related
+
+/-- Resetting an oracle state's generation preserves its decoded oracle,
+step conditions, and stored environment invariants when the restored index
+is in range. -/
+theorem srcOracInvs_resetOracle {C : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (prior last : EvalOracleState)
+    (current : srcOracInvs interp transform genv (some (.evalOracle last)))
+    (priorBound : prior.generation < last.envs.length) :
+    srcOracInvs interp transform genv
+      (resetEnvGeneration (some (.evalOracle prior)) (some (.evalOracle last))) := by
+  refine ⟨?_, ?_, ?_⟩
+  · cases interp <;> simpa [srcOracStepInvs, resetEnvGeneration] using current.1
+  · simpa [srcOracEnvInvs, srcOracNextCfg, resetEnvGeneration] using current.2.1
+  · simpa [srcOracGenInv, resetEnvGeneration] using priorBound
+
+/-- The flat oracle relation depends on the source oracle and callback, which
+are unchanged by resetting the generation. -/
+theorem oracRel_resetOracle {C : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (prior last : EvalOracleState) (flat : FlatSem.InstallConfig C)
+    (related : oracRel interp transform (some (.evalOracle last)) flat) :
+    oracRel interp transform
+      (resetEnvGeneration (some (.evalOracle prior)) (some (.evalOracle last))) flat := by
+  cases interp with
+  | none => simp [oracRel] at related
+  | some decode => simpa [oracRel, oracRelInner, resetEnvGeneration] using related
+
+/-- Resetting an oracle generation keeps the factored invariant at the
+current index block and generation store. Restoring the caller's earlier
+index block is a separate obligation. -/
+theorem factoredInvariant_resetOracle {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
+    (idxs : NextIndices × NextIndices × Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F) (prior last : EvalOracleState)
+    (mode : source.evalState = some (.evalOracle last))
+    (valid : factoredInvariant interp transform gen genv idxs source flat)
+    (priorBound : prior.generation < last.envs.length) :
+    factoredInvariant interp transform gen genv idxs
+      { source with evalState := resetEnvGeneration (some (.evalOracle prior)) source.evalState } flat := by
+  obtain ⟨cOk, tysOk, states, range, invs, orac, globals, reserved, genInv, fin⟩ := valid
+  have srcInvs := srcOracInvs_resetOracle interp transform genv prior last (by simpa [mode] using invs) priorBound
+  have oracle := oracRel_resetOracle interp transform prior last flat.evalConfig (by simpa [mode] using orac)
+  refine ⟨cOk, tysOk, ?_, ?_, ?_, ?_, globals, reserved, genInv, ?_⟩
+  · cases states with
+    | intro nonempty refs clock ffi => exact .intro _ _ nonempty refs clock ffi
+  · simpa [idxRangeRel, mode, srcOracNextCfg, resetEnvGeneration] using range
+  · simpa [mode] using srcInvs
+  · simpa [mode] using oracle
+  · simpa [mode, srcOracNextCfg, resetEnvGeneration] using fin
+
+/-- Restore the caller's factored invariant, forward-oracle relation, and
+generation relation after an incremental Eval execution. The underlying
+factored relations still need HOL correspondence review. -/
+theorem factoredInvariant_endEval {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (gen innerGen : EnvironmentGenerationStore) (oldGenv genv : GlobalEnv)
+    (start finish innerStart innerFinish : NextIndices) (other : Set (Nat × IndexKind))
+    (prevSource source : SemanticPrimitivesHOL.State F) (prevFlat flat : FlatSem.State C F)
+    (prior begin : EvalOracleState)
+    (priorMode : prevSource.evalState = some (.evalOracle prior))
+    (current : factoredInvariant interp transform innerGen genv
+      (innerStart, innerFinish, idxBlock start finish ∪ other) source flat)
+    (previousInv : factoredInvariant interp transform gen oldGenv (start, finish, other) prevSource prevFlat)
+    (forward : oracForwardRel interp (some (.evalOracle begin)) source.evalState)
+    (indices : idxPrev finish innerFinish)
+    (initialForward : oracConfigEnvsSubspt interp prevSource.evalState (some (.evalOracle begin)))
+    (beginEnvs : begin.envs = (addEnvGeneration prior).envs)
+    (beginGeneration : begin.generation = (addEnvGeneration prior).generation) :
+    let reset := resetEnvGeneration prevSource.evalState source.evalState
+    factoredInvariant interp transform gen genv (start, finish, other)
+      { source with evalState := reset } flat ∧
+    oracForwardRel interp prevSource.evalState reset ∧
+    (envGenRel gen prevSource.evalState → envGenRel gen reset) := by
+  have ⟨_, _, _, oldRange, oldInvs, _, _, _, oldGenInv, _⟩ := previousInv
+  have priorBound : prior.generation < prior.envs.length := by
+    simpa [priorMode, srcOracGenInv] using oldInvs.2.2
+  obtain ⟨last, lastMode, _, length, _⟩ := forward.2
+  have lastBound : prior.generation < last.envs.length := by
+    simp [beginEnvs, addEnvGeneration] at length
+    omega
+  have resetInv := factoredInvariant_resetOracle interp transform innerGen genv
+    (innerStart, innerFinish, idxBlock start finish ∪ other) source flat prior last lastMode current lastBound
+  have ⟨cOk, tysOk, states, currentRange, invs, oracle, globals, reserved, _, final⟩ := resetInv
+  have restoredRange := idxRangeRel_restore interp oldGenv genv prevSource.nextTypeStamp prevSource.nextExnStamp
+    source.nextTypeStamp source.nextExnStamp prevSource.evalState
+    (resetEnvGeneration (some (.evalOracle prior)) source.evalState) start finish innerStart innerFinish other
+    oldRange currentRange indices
+  have restoredFin : finIdxMatch flat.globals.length finish
+      (srcOracNextCfg interp (resetEnvGeneration (some (.evalOracle prior)) source.evalState)) := by
+    cases cfg : srcOracNextCfg interp (resetEnvGeneration (some (.evalOracle prior)) source.evalState) with
+    | none =>
+      have bound : innerFinish.vidx ≤ flat.globals.length := by simpa [finIdxMatch, cfg] using final
+      simpa [finIdxMatch, cfg] using Nat.le_trans indices.1 bound
+    | some next => simpa [finIdxMatch, cfg] using final
+  have resetForward := oracForwardRel_resetAfterEval interp prior begin source.evalState priorBound beginEnvs
+    beginGeneration (by simpa [priorMode] using initialForward) forward
+  refine ⟨?_, ?_, ?_⟩
+  · simpa [priorMode] using (show factoredInvariant interp transform gen genv (start, finish, other)
+        { source with evalState := resetEnvGeneration (some (.evalOracle prior)) source.evalState } flat from
+      ⟨cOk, tysOk, states, restoredRange, invs, oracle, globals, reserved, oldGenInv, restoredFin⟩)
+  · simpa [priorMode] using resetForward
+  · intro genRel
+    simpa [priorMode] using envGenRel_resetAfterEval gen prior begin source.evalState
+      (by simpa [priorMode] using genRel) beginEnvs beginGeneration forward.2
+
+/-- Source-shaped Eval return lemma over the factored invariant. It retains
+the original oracle-shape premise; the factored relations remain unreviewed. -/
+theorem factoredInvariant_endEval_sourceShape {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (gen innerGen : EnvironmentGenerationStore) (oldGenv genv : GlobalEnv)
+    (start finish innerStart innerFinish : NextIndices) (other : Set (Nat × IndexKind))
+    (prevSource source : SemanticPrimitivesHOL.State F) (prevFlat flat : FlatSem.State C F)
+    (begin : Option EvalState)
+    (current : factoredInvariant interp transform innerGen genv
+      (innerStart, innerFinish, idxBlock start finish ∪ other) source flat)
+    (previousInv : factoredInvariant interp transform gen oldGenv (start, finish, other) prevSource prevFlat)
+    (forward : oracForwardRel interp begin source.evalState)
+    (indices : idxPrev finish innerFinish)
+    (initialForward : oracConfigEnvsSubspt interp prevSource.evalState begin)
+    (beginShape : match prevSource.evalState with
+      | some (.evalOracle prior) => ∃ beginState, begin = some (.evalOracle beginState) ∧
+          beginState.envs = (addEnvGeneration prior).envs ∧
+          beginState.generation = (addEnvGeneration prior).generation
+      | _ => False) :
+    let reset := resetEnvGeneration prevSource.evalState source.evalState
+    factoredInvariant interp transform gen genv (start, finish, other)
+      { source with evalState := reset } flat ∧
+    oracForwardRel interp prevSource.evalState reset ∧
+    (envGenRel gen prevSource.evalState → envGenRel gen reset) := by
+  cases priorMode : prevSource.evalState with
+  | none => simp [priorMode] at beginShape
+  | some mode =>
+    cases mode with
+    | evalDecs prior => simp [priorMode] at beginShape
+    | evalOracle prior =>
+      obtain ⟨beginState, beginEq, beginEnvs, beginGeneration⟩ := by simpa [priorMode] using beginShape
+      subst begin
+      simpa [priorMode] using factoredInvariant_endEval interp transform gen innerGen oldGenv genv
+        start finish innerStart innerFinish other prevSource source prevFlat flat prior beginState priorMode
+        current previousInv forward indices initialForward beginEnvs beginGeneration
+
 /-- Declaring an oracle environment preserves the factored simulation
 invariant, provided the next compiler configuration contains the new map.
 This is a partial step toward the HOL declaration theorem; the factored

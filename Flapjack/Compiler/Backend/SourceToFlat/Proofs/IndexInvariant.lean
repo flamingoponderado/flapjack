@@ -175,6 +175,58 @@ theorem allDisjoint_consume {α : Type} (block remaining future other allocated 
     | exact q23 x a b
     | exact q23 x b a
 
+/-- Split an old reserved block back out of the combined third set after an
+incremental compilation step. -/
+theorem allDisjoint_restore {α : Type} (current future oldBlock other allocated : Set α)
+    (valid : allDisjoint [current, future, oldBlock ∪ other, allocated])
+    (oldSeparate : ∀ x, x ∈ oldBlock → x ∈ other → False) :
+    allDisjoint [oldBlock, future, other, allocated] := by
+  have pair (i j : Nat) (hi : i < 4) (hj : j < 4) (ne : i ≠ j) :
+      ∀ x, x ∈ ([current, future, oldBlock ∪ other, allocated] : List (Set α))[i] →
+        x ∈ ([current, future, oldBlock ∪ other, allocated] : List (Set α))[j] → False := by
+    intro x xi xj
+    have h := valid i j (by simpa using hi) (by simpa using hj) ne
+    have hx : x ∈ ([current, future, oldBlock ∪ other, allocated] : List (Set α))[i] ∩
+        ([current, future, oldBlock ∪ other, allocated] : List (Set α))[j] := ⟨xi, xj⟩
+    rw [h] at hx
+    exact hx
+  have p12 := pair 1 2 (by omega) (by omega) (by omega)
+  have p13 := pair 1 3 (by omega) (by omega) (by omega)
+  have p23 := pair 2 3 (by omega) (by omega) (by omega)
+  simp only [List.getElem_cons_zero, List.getElem_cons_succ] at p12 p13 p23
+  have q01 : ∀ x, x ∈ oldBlock → x ∈ future → False := by
+    intro x a b; exact p12 x b (Or.inl a)
+  have q03 : ∀ x, x ∈ oldBlock → x ∈ allocated → False := by
+    intro x a b; exact p23 x (Or.inl a) b
+  have q12 : ∀ x, x ∈ future → x ∈ other → False := by
+    intro x a b; exact p12 x a (Or.inr b)
+  have q23 : ∀ x, x ∈ other → x ∈ allocated → False := by
+    intro x a b; exact p23 x (Or.inr a) b
+  intro i j hi hj ne
+  have hi' : i = 0 ∨ i = 1 ∨ i = 2 ∨ i = 3 := by simp at hi; omega
+  have hj' : j = 0 ∨ j = 1 ∨ j = 2 ∨ j = 3 := by simp at hj; omega
+  apply Set.eq_empty_iff_forall_notMem.mpr
+  intro x hx
+  rcases hi' with rfl | rfl | rfl | rfl <;>
+    rcases hj' with rfl | rfl | rfl | rfl <;>
+    simp only [List.getElem_cons_zero, List.getElem_cons_succ, Set.mem_inter_iff] at hx
+  all_goals try omega
+  all_goals rcases hx with ⟨a, b⟩
+  all_goals
+    first
+    | exact q01 x a b
+    | exact q01 x b a
+    | exact oldSeparate x a b
+    | exact oldSeparate x b a
+    | exact q03 x a b
+    | exact q03 x b a
+    | exact q12 x a b
+    | exact q12 x b a
+    | exact p13 x a b
+    | exact p13 x b a
+    | exact q23 x a b
+    | exact q23 x b a
+
 /-- Split the second of four disjoint sets, while moving the first into the
 third. This is the set rearrangement required by an incremental Eval step. -/
 theorem allDisjoint_four_advance {α : Type} (oldBlock oldFuture other allocated newBlock newFuture : Set α)

@@ -166,6 +166,31 @@ theorem idxRangeRel_fillSlot {C : Type}
     simp only [idxBlock]
     omega
 
+/-- Restore the caller's reserved index block after an incremental Eval
+step, retaining the current global allocation and final oracle configuration. -/
+theorem idxRangeRel_restore {C : Type}
+    (interp : Option (Value → Option (Config × C))) (oldGenv newGenv : GlobalEnv)
+    (oldType oldExn nextType nextExn : Nat) (oldState newState : Option EvalState)
+    (start finish innerStart innerFinish : NextIndices) (other : Set (Nat × IndexKind))
+    (oldRange : idxRangeRel interp oldGenv oldType oldExn oldState (start, finish, other))
+    (currentRange : idxRangeRel interp newGenv nextType nextExn newState
+      (innerStart, innerFinish, idxBlock start finish ∪ other))
+    (previous : idxPrev finish innerFinish) :
+    idxRangeRel interp newGenv nextType nextExn newState (start, finish, other) := by
+  obtain ⟨_, _, oldFinal, _, oldTuple, _, _, oldDisjoint, _, _⟩ := oldRange
+  cases oldTuple
+  obtain ⟨_, _, final, _, currentTuple, nextMatch, finalPrev, disjoint, types, exceptions⟩ := currentRange
+  cases currentTuple
+  have oldSeparate : ∀ key, key ∈ idxBlock start finish → key ∈ other → False := by
+    intro key inBlock inOther
+    have h := oldDisjoint 0 2 (by simp) (by simp) (by decide)
+    have member : key ∈ idxBlock start finish ∩ other := ⟨inBlock, inOther⟩
+    simp only [List.getElem_cons_zero, List.getElem_cons_succ] at h
+    rw [h] at member
+    exact member
+  refine ⟨start, finish, final, other, rfl, nextMatch, idxPrev_trans _ _ _ ⟨previous, finalPrev⟩,
+    allDisjoint_restore _ _ _ _ _ disjoint oldSeparate, types, exceptions⟩
+
 /-- Advancing the compiler's next configuration moves the old current block
 into the reserved set and splits the old future range at the new counters.
 Appending blank globals leaves allocated indices and stamp maps unchanged. -/

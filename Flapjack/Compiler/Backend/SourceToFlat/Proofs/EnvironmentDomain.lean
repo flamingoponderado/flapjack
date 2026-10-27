@@ -308,13 +308,19 @@ theorem evalDeclare_store_factored {C F : Type} [Nonempty C]
         ({ flat with refs := .refv stored :: flat.refs.tail }, none) ∧
       OracleInvariant.factoredInvariant interp transform { gen with next := gen.next + 1 } newGenv idxs
         { source with evalState := after } flat ∧
+      OracleInvariant.factoredInvariant interp transform { gen with next := gen.next + 1 } newGenv idxs
+        { source with evalState := after } { flat with refs := .refv stored :: flat.refs.tail } ∧
       (∃ globals, flat.globals = some (.loc true 0) :: globals) ∧
       ValueRel newGenv value stored ∧ OracleInvariant.oracForwardRel interp source.evalState after ∧
       OracleInvariant.envGenRel { gen with next := gen.next + 1 } after := by
   dsimp only
   have newMap := evalDeclaredEnvMap_factored interp envId config next decs flatDecs before source.evalState
     oldGenv newGenv sourceEnv sourceNew compiled nextCfg forward growth baseInv newDomain newInv
-  exact OracleInvariant.declareEnv_storeEnvId_factored_all interp transform _ newGenv idxs source flat
-    (extendDecEnv sourceNew sourceEnv) value after invariant generation declared newMap
+  obtain ⟨stored, run, nextInvariant, globals, related, nextForward, nextGeneration⟩ :=
+    OracleInvariant.declareEnv_storeEnvId_factored_all interp transform _ newGenv idxs source flat
+      (extendDecEnv sourceNew sourceEnv) value after invariant generation declared newMap
+  exact ⟨stored, run, nextInvariant,
+    OracleInvariant.factoredInvariant_changeEvalRef interp transform _ newGenv idxs _ flat stored nextInvariant,
+    globals, related, nextForward, nextGeneration⟩
 
 end Flapjack.Compiler.Backend.SourceToFlat
