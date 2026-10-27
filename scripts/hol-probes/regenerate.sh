@@ -248,6 +248,10 @@ run_probe() {
   done
 }
 
+run_probe source_to_flat_pattern_rows_probeScript.sml source_to_flat_pattern_rows_probe.out \
+  pattern_bindings_typed all_rows_typed \
+  "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe source_to_flat_function_handle_probeScript.sml source_to_flat_function_handle_probe.out \
   function_compile_typed empty_match_typed flat_rows_typed \
   "$cake_dir/compiler/backend/source_to_flatScript.sml" "$cake_dir/compiler/backend/proofs"

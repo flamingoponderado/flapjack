@@ -1,5 +1,13 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "pat_bindings_compile_pat",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/PatternRows.lean",
+    "lean_name": "compilePat_bindings",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source comparison against the typed source_to_flat_pattern_rows_probe: both universally quantify the source_to_flat environment and ast pattern, and equate the flat pattern bindings of compile_pat with the original ast pattern bindings. The environment, ast and flat pattern carriers and compile_pat and both pat_bindings definitions use their constructor-for-constructor counterparts; no additional hypotheses or representation qualifiers."
+  },
+  {
     "hol_path": "cakeml/semantics/astScript.sml",
     "hol_name": "opb",
     "lean_path": "Flapjack/AstHOL.lean",

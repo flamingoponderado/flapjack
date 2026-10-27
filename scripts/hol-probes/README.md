@@ -1,3 +1,5 @@
+`source_to_flat_pattern_rows_probe.out` captures the original typed pattern-binding preservation and all-row safety theorems. Lean ports binding preservation exactly and proves analogous all-row safety and first-row selection over the preliminary factored relations; the HOL row theorem and complete match simulation remain open.
+
 `source_to_flat_function_handle_probe.out` captures original typed function compilation, empty source matching, and flat matching-row equations. Lean relates captured function environments and empty-handler behavior over preliminary relations; general handler matching and pass correctness remain open.
 
 `source_to_flat_constructor_probe.out` captures the original typed constructor compilation, arity check, and value construction equations. Lean proves named-constructor composition using its preliminary global invariant and fixed-global simulation relation; the complete HOL invariant and pass correctness remain open.
