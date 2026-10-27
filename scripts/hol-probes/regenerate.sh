@@ -417,6 +417,9 @@ run_probe cake_source_control_probeScript.sml cake_source_control_probe.out \
 run_probe cake_source_array_probeScript.sml cake_source_array_probe.out \
   copy_type slice dest negative_offset negative_length src_short dest_short dest_negative endpoint bytes "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
 
+run_probe cake_source_primitive_probeScript.sml cake_source_primitive_probe.out \
+  check_type shift8_type shift64_type bool_ok bool_bad word_ok word_bad lsl8 lsr8 asr8 ror8 asr64 ror64 "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+
 run_probe cake_parse_error_probeScript.sml cake_parse_error_probe.out \
   missing after_decl multiline "$cake_dir/compiler/parsing/pegexec_cml_foScript.sml" "$cake_dir/compiler/parsing"
 

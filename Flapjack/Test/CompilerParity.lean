@@ -337,6 +337,7 @@ import Flapjack.Test.CakeSourceConcreteParity
 import Flapjack.Test.CakeSourceEvalParity
 import Flapjack.Test.CakeSourceControlParity
 import Flapjack.Test.CakeSourceArrayParity
+import Flapjack.Test.CakeSourcePrimitiveParity
 import Flapjack.Test.CakeBuildLoweringParity
 import Flapjack.Test.CakeIoLoweringParity
 import Flapjack.Test.CakeExportParity

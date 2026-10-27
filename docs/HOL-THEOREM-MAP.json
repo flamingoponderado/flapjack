@@ -103117,5 +103117,37 @@
     "lean_name": "wordsToChars",
     "statement_status": "pending_statement_review",
     "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "check_type_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Primitives.lean",
+    "lean_name": "checkType",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "dest_Litv_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Primitives.lean",
+    "lean_name": "destLitv",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "shift64_lookup_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Primitives.lean",
+    "lean_name": "shift64Lookup",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "shift8_lookup_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Primitives.lean",
+    "lean_name": "shift8Lookup",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
   }
 ]

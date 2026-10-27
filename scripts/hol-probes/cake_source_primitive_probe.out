@@ -1,0 +1,13 @@
+check_type=:prim_type -> v -> bool
+shift8_type=:shift -> word8 -> num -> word8
+shift64_type=:shift -> word64 -> num -> word64
+bool_ok=T
+bool_bad=F
+word_ok=T
+word_bad=F
+lsl8=(0w :word8)
+lsr8=(0w :word8)
+asr8=(255w :word8)
+ror8=(192w :word8)
+asr64=(0xFFFFFFFFFFFFFFFFw :word64)
+ror64=(0x4000000000000000w :word64)
