@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Inference.InferT
 import Flapjack.TypeSystemHOL
 import Flapjack.Misc.Sptree
+import Flapjack.NamespaceHOL
 
 /-! Substitution and generalization operations used by CakeML inference. -/
 namespace Flapjack.Compiler.Inference.Infer
@@ -59,6 +60,20 @@ termination_by t => sizeOf t
 termination_by ts => sizeOf ts
 end
 
+
+
+/-- CakeML's inference environment, with independent value, constructor,
+and type-abbreviation namespaces. -/
+@[hol "cakeml/compiler/inference/inferScript.sml" "inf_env"]
+structure Env where
+  infV : Flapjack.NamespaceHOL.Namespace MlString MlString (Nat × InferT)
+  infC : Flapjack.NamespaceHOL.Namespace MlString MlString
+    (List MlString × List TypeSystemHOL.SemanticT × Nat)
+  infT : Flapjack.NamespaceHOL.Namespace MlString MlString
+    (List MlString × TypeSystemHOL.SemanticT)
+
+def emptyEnv : Env := ⟨Flapjack.NamespaceHOL.nsEmpty, Flapjack.NamespaceHOL.nsEmpty,
+  Flapjack.NamespaceHOL.nsEmpty⟩
 
 /-- Executable inference state using sparse-tree substitutions. HOL uses a
 finite map, so this carrier and its operations are Flapjack infrastructure

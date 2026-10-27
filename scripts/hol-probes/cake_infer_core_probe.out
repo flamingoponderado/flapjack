@@ -1,0 +1,5 @@
+function=(M_success (Infer_Tapp [Infer_Tuvar 0; Infer_Tuvar 0] 4),infer_st 1 FEMPTY 15)
+pattern=(M_success (Infer_Tapp [Infer_Tuvar 0; Infer_Tapp [Infer_Tuvar 1] 7] 9,[(«y»,Infer_Tuvar 1); («x»,Infer_Tuvar 0)]),infer_st 2 FEMPTY 15)
+application=(M_success (Infer_Tuvar 1),infer_st 2 FEMPTY⟨1 ↦ Infer_Tapp [] 5; 0 ↦ Infer_Tapp [] 5⟩ 15)
+recursive=(M_success (Infer_Tuvar 0),infer_st 2 FEMPTY⟨0 ↦ Infer_Tapp [Infer_Tuvar 1; Infer_Tuvar 1] 4⟩ 15)
+annotation=(M_success (Infer_Tapp [] 5),infer_st 0 FEMPTY 15)

@@ -377,6 +377,9 @@ run_probe cake_source_frontend_probeScript.sml cake_source_frontend_probe.out \
 run_probe cake_inference_probeScript.sml cake_inference_probe.out \
   subst generalise unify occurs "$cake_dir/compiler/inference/inferScript.sml" "$cake_dir/compiler/inference"
 
+run_probe cake_infer_core_probeScript.sml cake_infer_core_probe.out \
+  function pattern application recursive annotation "$cake_dir/compiler/inference/inferScript.sml" "$cake_dir/compiler/inference"
+
 run_probe bvl_inline_cake_bvi_probeScript.sml bvl_inline_cake_bvi_probe.out \
   code "$cake_dir/compiler/backend/bvl_inlineScript.sml" "$cake_dir/compiler/backend"
 
