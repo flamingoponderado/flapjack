@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDenv
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateControl
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternRows
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.AllocDefsLookup
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateEmptyDeclarations
 
 /-! Declaration simulation for simple source aliases. The factored value and
 state relations remain subject to HOL correspondence review. -/
@@ -1481,6 +1482,80 @@ theorem evaluateDlet_advanced_compiled {C F : Type} [Nonempty C]
   · exact evaluateDlet_growing_compiled interp transform genv start finish next other source sourceLast flat
       sourceEnv trace n n' compMap nextMap gen nextGen location pattern expr flatDecs result
       compiled bounded sourceRun notTypeError envInv invariant generation expressionStep
+
+/-- Convert the advanced value-declaration simulation into the shared
+factored declaration case, including both abort and raised-error outcomes. -/
+theorem DletOutcomeAdvanced.toFactoredDecCase {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (start finish next : NextIndices) (other : Set (Nat × IndexKind))
+    (source sourceLast : State F) (flat : FlatSem.State C F) (sourceEnv : SemEnv Value)
+    (trace : List VarN) (n n' : Nat) (env nextEnv : Environment)
+    (gen nextGen : EnvironmentGenerationStore) (location : Flapjack.Misc.Location.Locs)
+    (pattern : Pat) (expr : AstHOL.Exp) (flatDecs : List FlatLang.Exp) (result : Result (SemEnv Value) Value)
+    (sourceRun : EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] = (sourceLast, result))
+    (compiled : compileDecs trace n start env gen [.dlet location pattern expr] =
+      (n', next, nextEnv, nextGen, flatDecs))
+    (outcome : DletOutcomeAdvanced interp transform genv start finish other source flat sourceEnv trace n env gen
+      location pattern expr) :
+    FactoredDecCase interp transform genv source sourceLast flat finish next other nextGen nextEnv flatDecs result := by
+  unfold DletOutcomeAdvanced at outcome
+  rw [sourceRun, compiled] at outcome
+  obtain ⟨flatLast, finalGenv, flatError, flatRun, states, post⟩ := outcome
+  refine ⟨flatLast, finalGenv, flatError, flatRun, states, ?_⟩
+  cases result with
+  | val resultEnv =>
+    obtain ⟨noError, domain, envInv, growth, invariant, generation, forward⟩ := post
+    refine ⟨?_, ?_, ?_⟩
+    · intro _
+      exact ⟨invariant, forward, growth⟩
+    · intro env same
+      cases same
+      exact ⟨noError, domain, generation, envInv⟩
+    · intro error impossible
+      cases impossible
+  | err error =>
+    obtain ⟨flatErr, isError, related, effects⟩ := post
+    refine ⟨?_, ?_, ?_⟩
+    · intro notAbort
+      cases error with
+      | abort kind => exact False.elim notAbort
+      | raise value => exact ⟨effects.2.1, effects.2.2.2, effects.1⟩
+    · intro env impossible
+      cases impossible
+    · intro error' same
+      cases same
+      refine ⟨flatErr, isError, ?_⟩
+      cases related with
+      | raise valueRel => exact .raise valueRel
+      | abort kind => exact .abort kind
+
+/-- The `Dlet` declaration case in the shared factored result shape, assuming
+the expression simulation and oracle effects supplied by its induction step.
+The factored relations still require correspondence review. -/
+theorem evaluateDlet_case_factored {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (start finish next : NextIndices) (other : Set (Nat × IndexKind))
+    (source sourceLast : State F) (flat : FlatSem.State C F) (sourceEnv : SemEnv Value)
+    (trace : List VarN) (n n' : Nat) (env nextEnv : Environment)
+    (gen nextGen : EnvironmentGenerationStore) (location : Flapjack.Misc.Location.Locs)
+    (pattern : Pat) (expr : AstHOL.Exp) (flatDecs : List FlatLang.Exp) (result : Result (SemEnv Value) Value)
+    (sourceRun : EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] = (sourceLast, result))
+    (invariant : factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (compiled : compileDecs trace n start env gen [.dlet location pattern expr] =
+      (n', next, nextEnv, nextGen, flatDecs))
+    (envInv : GlobalEnvInv genv env (fun _ => False) sourceEnv)
+    (notTypeError : result ≠ .err (.abort .typeError))
+    (generation : envGenRel gen source.evalState)
+    (_future : envGenFutureRel interp nextGen source.evalState)
+    (bounded : idxPrev next finish)
+    (expressionStep : DletExpressionStep interp transform genv start finish other source flat sourceEnv
+      ((AstHOL.patBindings pattern).reverse ++ trace) env gen expr) :
+    FactoredDecCase interp transform genv source sourceLast flat finish next other nextGen nextEnv flatDecs result := by
+  apply DletOutcomeAdvanced.toFactoredDecCase interp transform genv start finish next other source sourceLast flat
+    sourceEnv trace n n' env nextEnv gen nextGen location pattern expr flatDecs result sourceRun compiled
+  exact evaluateDlet_advanced_compiled interp transform genv start finish next other source sourceLast flat
+    sourceEnv trace n n' env nextEnv gen nextGen location pattern expr flatDecs result compiled bounded
+    sourceRun notTypeError envInv invariant generation expressionStep
 
 /-- A literal value declaration has the advanced factored outcome without an
 expression induction hypothesis, for any source-safe pattern. The factored

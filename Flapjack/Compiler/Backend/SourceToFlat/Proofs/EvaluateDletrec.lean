@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDlet
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateEmptyDeclarations
 
 /-! Recursive declaration simulation over the preliminary factored value and
 state relations. These helpers are not yet a port of `compile_correct`. -/
@@ -418,18 +419,7 @@ theorem evaluateDletrec_case_factored {C F : Type} [Nonempty C]
     (generation : envGenRel gen source.evalState)
     (_future : envGenFutureRel interp nextGen source.evalState)
     (bounded : idxPrev next finish) :
-    ∃ finalState finalGenv flatError,
-      FlatSem.evaluateDecs flat flatDecs = (finalState, flatError) ∧
-      StateRel finalGenv sourceLast finalState ∧
-      ((match result with | .err (.abort _) => False | _ => True) →
-        factoredInvariant interp transform nextGen finalGenv (next, finish, other) sourceLast finalState ∧
-        oracForwardRel interp source.evalState sourceLast.evalState ∧ GlobalGrowth genv finalGenv) ∧
-      (∀ resultEnv, result = .val resultEnv →
-        flatError = none ∧ EnvDomainEq nextEnv resultEnv ∧ envGenRel nextGen sourceLast.evalState ∧
-        GlobalEnvInv finalGenv nextEnv (fun _ => False) resultEnv) ∧
-      (∀ error, result = .err error → ∃ flatErr,
-        flatError = some flatErr ∧
-        ResultRel (fun _ (_ : SemEnv Value) (_ : Unit) => True) finalGenv (.err error) (.err flatErr)) := by
+    FactoredDecCase interp transform genv source sourceLast flat finish next other nextGen nextEnv flatDecs result := by
   have safe : ∀ last, EvaluateHOL.evaluateDecs source sourceEnv [.dletrec location funs] ≠
       (last, .err (.abort .typeError)) := by
     intro last bad
