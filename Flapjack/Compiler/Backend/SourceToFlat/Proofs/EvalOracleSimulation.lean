@@ -257,8 +257,11 @@ theorem doEval_oracle_envGenFuture {C : Type} [Nonempty C]
     (output : SemEnv Value × List Dec × Option EvalState)
     (success : SemanticPrimitivesHOL.doEval
       [first, second, third, fourth, bytesValue, wordsValue] (some (.evalOracle state)) = some output) :
-    ∃ envId config,
+    ∃ envId config next flatDecs,
       srcOracNextCfg (some decode) (some (.evalOracle state)) = some config ∧
+      srcOracNextCfg (some decode) output.2.2 = some next ∧
+      incCompileProg envId config output.2.1 = (next, flatDecs) ∧
+      idxPrev config.next next.next ∧
       envGenFutureRel (some decode)
         (compileDecs [] 1 config.next (lookupEnvId envId config.envs)
           ⟨0, config.envs.next, .ln⟩ output.2.1).2.2.2.1 output.2.2 := by
@@ -282,10 +285,11 @@ theorem doEval_oracle_envGenFuture {C : Type} [Nonempty C]
     | some env =>
       simp [SemanticPrimitivesHOL.doEval, called, found] at success
       subst output
-      refine ⟨envId, config, currentCfg, ?_⟩
       have nextCfg : srcOracNextCfg (some decode)
           (some (.evalOracle (addEnvGeneration { state with oracle := Flapjack.holShiftSeq 1 state.oracle }))) = some next := by
         simp [srcOracNextCfg, srcOracNextCfgInner, addEnvGeneration, Flapjack.holShiftSeq, nextEntry, nextDecoded]
+      refine ⟨envId, config, next, flatDecs, currentCfg, nextCfg, compiled,
+        incCompileProg_idxPrev envId config next (transform decs) flatDecs compiled, ?_⟩
       have future := incCompileProg_envGenFuture envId config (transform decs)
       rw [compiled] at future
       simpa [envGenFutureRel, nextCfg] using future

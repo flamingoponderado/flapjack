@@ -39,6 +39,22 @@ theorem compileDecs_generation (t : List Flapjack.Basis.Pure.MlString.MlString)
     envs'.generation = envs.generation := by
   simpa [compiled] using compileDecs_generation_core t n next env envs decs
 
+/-- Declaration compilation advances or preserves each allocation counter. -/
+theorem compileDecs_idxPrev_core (t : List Flapjack.Basis.Pure.MlString.MlString)
+    (n : Nat) (next : NextIndices) (env : Environment) (envs : EnvironmentGenerationStore)
+    (decs : List Dec) : idxPrev next (compileDecs t n next env envs decs).2.1 := by
+  fun_induction compileDecs t n next env envs decs <;> simp_all [idxPrev] <;> omega
+
+/-- The declaration compiler's output indices are at least its input indices. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "compile_decs_idx_prev"]
+theorem compileDecs_idxPrev (t : List Flapjack.Basis.Pure.MlString.MlString)
+    (n : Nat) (next : NextIndices) (env : Environment) (envs : EnvironmentGenerationStore)
+    (decs : List Dec) (n' : Nat) (next' : NextIndices) (env' : Environment)
+    (envs' : EnvironmentGenerationStore) (flatDecs : List FlatLang.Exp)
+    (compiled : compileDecs t n next env envs decs = (n', next', env', envs', flatDecs)) :
+    idxPrev next next' := by
+  simpa [compiled] using compileDecs_idxPrev_core t n next env envs decs
+
 /-- Compiling declarations preserves allocation bounds and previously stored
 environment mappings. -/
 private theorem freshGenerationInsert (env : Environment) (envs : EnvironmentGenerationStore)
@@ -119,6 +135,21 @@ theorem incCompileProg_envNext (envId : Nat × Nat) (config : Config) (decs : Li
     ⟨0, config.envs.next, .ln⟩ decs = result
   rcases result with ⟨n, indices, env, gen, compiledDecs⟩
   simp [incCompileProg, h]
+
+/-- Incremental compilation advances or preserves each allocation counter. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "inc_compile_prog_idx_prev"]
+theorem incCompileProg_idxPrev (envId : Nat × Nat) (config next : Config)
+    (decs : List Dec) (flatDecs : List FlatLang.Exp)
+    (compiled : incCompileProg envId config decs = (next, flatDecs)) :
+    idxPrev config.next next.next := by
+  generalize h : compileDecs [] 1 config.next (lookupEnvId envId config.envs)
+    ⟨0, config.envs.next, .ln⟩ decs = result at compiled
+  rcases result with ⟨n, indices, env, gen, compiledDecs⟩
+  have indicesPrev := compileDecs_idxPrev [] 1 config.next (lookupEnvId envId config.envs)
+    ⟨0, config.envs.next, .ln⟩ decs n indices env gen compiledDecs h
+  simp only [incCompileProg, h] at compiled
+  have nextEq := (Prod.mk.inj compiled).1
+  simpa [← nextEq] using indicesPrev
 
 /-- The generation produced while compiling incremental declarations is
 stored in the resulting configuration, with all of its existing mappings. -/

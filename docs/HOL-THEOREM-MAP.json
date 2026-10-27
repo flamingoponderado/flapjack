@@ -1,6 +1,22 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "compile_decs_idx_prev",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleStep.lean",
+    "lean_name": "compileDecs_idxPrev",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed compile_decs_idx_prev capture: the same path, index, compiler environment, generation store, source declarations and five result carriers are quantified; equality of the compiler result implies the original componentwise input-to-output allocation-index ordering."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "inc_compile_prog_idx_prev",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleStep.lean",
+    "lean_name": "incCompileProg_idxPrev",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed inc_compile_idx_prev capture: the same environment-id pair, input and output configs, source declarations and flat output appear in the incremental-compilation equality, implying the same componentwise ordering of their next indices."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "compile_decs_generation",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleStep.lean",
     "lean_name": "compileDecs_generation",
