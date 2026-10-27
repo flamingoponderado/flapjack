@@ -17,6 +17,14 @@ def doLog (op : Lop) (value : Value) (expr : AstHOL.Exp) : Option ExpOrVal :=
   | .andalso, some false | .orelse, some true => some (.val value)
   | _, none => none
 
+/-- Flapjack infrastructure: a Boolean left operand either selects the right
+operand or returns the original Boolean value. -/
+theorem doLog_boolValue (op : Lop) (b : Bool) (expr : AstHOL.Exp) :
+    doLog op (boolValue b) expr =
+      if (op = .andalso ∧ b = true) ∨ (op = .orelse ∧ b = false) then
+        some (.exp expr) else some (.val (boolValue b)) := by
+  cases op <;> cases b <;> rfl
+
 @[hol "cakeml/semantics/semanticPrimitivesScript.sml" "do_if_def"]
 def doIf {α : Type} (value : Value) (yes no : α) : Option α :=
   match valueAsBool value with
@@ -53,6 +61,18 @@ theorem doIf_success_boolean {α : Type} (value : Value) (yes no result : α)
             simp [different] at evaluated
             exact ⟨false, rfl, evaluated.symm⟩
           · simp [htrue, hfalse] at evaluated
+
+/-- Flapjack infrastructure: successful short-circuit selection requires a
+Boolean left operand. -/
+theorem doLog_success_boolean (op : Lop) (value : Value) (expr : AstHOL.Exp) (result : ExpOrVal)
+    (selected : doLog op value expr = some result) : ∃ b, value = boolValue b := by
+  cases h : valueAsBool value with
+  | none => cases op <;> simp [doLog, h] at selected
+  | some b =>
+    have selection : doIf value () () = some () := by
+      cases b <;> simp [doIf, h]
+    obtain ⟨b, valueEq, _⟩ := doIf_success_boolean value () () () selection
+    exact ⟨b, valueEq⟩
 
 @[hol "cakeml/semantics/semanticPrimitivesScript.sml" "build_constrs_def"]
 def buildConstrs (stamp : Nat) (constructors : List (ConN × List AstT)) : List (ConN × Nat × Stamp) :=

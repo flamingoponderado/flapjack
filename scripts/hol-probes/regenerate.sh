@@ -245,6 +245,10 @@ run_probe() {
   done
 }
 
+run_probe source_to_flat_log_probeScript.sml source_to_flat_log_probe.out \
+  do_log_typed log_boolean log_non_boolean \
+  "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe cake_from_sexp_probeScript.sml cake_from_sexp_probe.out \
   control lists option identifier literals locations types patterns operators \
   "$cake_dir/compiler/parsing/fromSexpScript.sml" "$cake_dir/compiler/parsing"
