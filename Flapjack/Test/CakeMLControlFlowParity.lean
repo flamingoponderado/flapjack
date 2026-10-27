@@ -60,25 +60,24 @@ private def noOptsConfig : Flapjack.Compiler.Backend.ClosToBvl.Config :=
       | none => false
   | none => false
 
-private def compileFunction92? (decls : List Flapjack.AstHOL.Dec) :
+private def compileWordFunctions? (decls : List Flapjack.AstHOL.Dec) :
     Option (List (Nat × Nat × (Flapjack.WordLangProgHOL (BitVec 64) × Nat))) := do
   let (_, _, _, code, _) ← Flapjack.Compiler.Backend.SourceToFlat.compileCakeToDataNoOptsFuel 100
     Flapjack.Compiler.Backend.SourceToFlat.emptyConfig noOptsConfig decls
-  let selected := code.filter fun (x : Nat × Nat × Flapjack.Compiler.Backend.DataLang.Prog) => x.1 == 92
-  selected.mapM fun (x : Nat × Nat × Flapjack.Compiler.Backend.DataLang.Prog) => do
+  code.mapM fun (x : Nat × Nat × Flapjack.Compiler.Backend.DataLang.Prog) => do
     let word ← Flapjack.Compiler.Backend.DataToWord.compileControl? (width := 64) fullWordConfig x.1 2 x.2.2
     pure (x.1, x.2.1, word)
 
-#guard match compileFunction92?
+#guard match compileWordFunctions?
     [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x")) (.app .opref [.lit (.intLit 1)])] with
   | some code => Flapjack.Test.ReferenceCakeWordOracle.matchesCaptured code
   | none => false
-#guard match compileFunction92?
+#guard match compileWordFunctions?
     [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x"))
       (.let_ (some (ofString "y")) (.app .opref [.lit (.intLit 1)]) (.var (.short (ofString "y"))))] with
   | some code => Flapjack.Test.ReferenceCakeWordOracle.matchesCaptured code
   | none => false
-#guard match compileFunction92?
+#guard match compileWordFunctions?
     [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x"))
       (.app .opref [.mat (.lit (.intLit 1))
         [(.plit (.intLit 1), .lit (.intLit 2)), (.pany, .lit (.intLit 3))]])] with
