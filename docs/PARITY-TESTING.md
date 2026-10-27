@@ -434,7 +434,9 @@ disabled entries, duplicate flags, and precedence over configuration errors.
 `python3 scripts/check-cake-pinned-parity.py` checks additional successful,
 basis-enabled programs against complete-output captures from the pinned
 compiler. The cases exercise observable array and byte-array updates, strings,
-closures, exceptions, lists, vectors, integers and words. It also checks that
+closures, exceptions, lists, vectors, integers and words, plus polymorphic trees,
+local and module declarations, recursive list matches, and tuple patterns. It
+also checks that
 `--types` takes precedence over `--print_sexp` and `--explore` in either flag
 order, including parse and type failures.
 It also checks `--print_sexp` output for declarations, modules, byte escapes,
