@@ -68,6 +68,8 @@ jobs:
           python3 scripts/generate-cake-export-oracle.py --check
           python3 scripts/generate-cake-help.py --check
           python3 scripts/check-cake-help.py
+          python3 scripts/generate-cake-features.py --check
+          python3 scripts/check-cake-features.py
           python3 scripts/check-cake-cli-parity.py
 
       - name: Check Pan-to-Crep intermediate fixture coverage

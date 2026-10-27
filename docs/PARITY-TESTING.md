@@ -426,6 +426,8 @@ and multi-argument functions; each is compared over the full assembly output.
 `scripts/check-cake-help.py` separately compares the complete `--help` output
 and its flag precedence with the pinned driver source. Interactive modes remain
 unsupported; their precedence over help is preserved by reporting that limit.
+The feature-query checks cover every feature in the pinned NEWS file, including
+disabled entries, duplicate flags, and precedence over configuration errors.
 
 An additional unverified bootstrap provides an original compiler built from
 the pinned translated CakeML compiler AST. Given the pinned CakeML and HOL

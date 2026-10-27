@@ -23,6 +23,7 @@ if args.pinned_reference:
 
 for flags in (['--help'], ['--target=bad', '--help'],
               ['--help', '--version', '--sexp=bad'],
+              ['--pancake_feature=structs', '--help'],
               ['--print_sexp', '--help', '--unknown']):
     result = subprocess.run([str(cake), *flags], input=b'invalid CakeML',
                             stdout=subprocess.PIPE, stderr=subprocess.PIPE,

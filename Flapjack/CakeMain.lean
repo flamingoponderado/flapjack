@@ -5,6 +5,7 @@ import Flapjack.Compiler.Inference.Infer.Diagnostics
 import Flapjack.Compiler.Inference.Infer.TypesOutput
 import Flapjack.CakeParser.Diagnostics
 import Flapjack.CakeHelp
+import Flapjack.CakeFeatures
 
 /-! Experimental CakeML source-to-RISC-V command. The frontend and backend
 are still bounded ports, the original diagnostics and full CLI are incomplete,
@@ -375,6 +376,12 @@ def main (args : List String) : IO UInt32 := do
     return 2
   if args.contains "--help" then
     IO.print Flapjack.CakeHelp.text
+    return 0
+  if args.contains "--version" then
+    IO.eprintln s!"cake: unsupported option: --version\n{usage}"
+    return 2
+  if let some feature := findFlag args "--pancake_feature=" then
+    IO.print (if Flapjack.CakeFeatures.enabled feature then "true" else "false")
     return 0
   let errors := topConfigErrors args
   if !errors.isEmpty then
