@@ -213,6 +213,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveTest
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternStamps
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StateRel
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StoreUpdate
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.MemoryOps
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ThunkRel
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternRel
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternSimulation
@@ -226,6 +227,7 @@ import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Eval
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Thunk
 import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyFlat
+import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyMemory
 import Flapjack.Compiler.Backend.SourceToFlat.CompileDecs
 import Flapjack.Compiler.Backend.SourceToFlat.CompileProg
 import Flapjack.Compiler.Backend.FlatElim.Reachability

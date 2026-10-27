@@ -30,3 +30,23 @@ val _ = show_eval "ref_bad_index=" ``OPTION_MAP SND
   (flatSem$do_app ((ARB : (unit,unit) flatSem$state) with refs := [Refv (Litv (IntLit 7))]) (El 1) [Loc T 0])``;
 val _ = show_eval "identity=" ``OPTION_MAP SND
   (flatSem$do_app (ARB : (unit,unit) flatSem$state) Id [Litv (IntLit 7)])``;
+val _ = show_eval "ref_alloc=" ``OPTION_MAP (λ(s,r). (s.refs,r))
+  (flatSem$do_app ((ARB : (unit,unit) flatSem$state) with refs := [Refv (Litv (IntLit 2))])
+    (Src Opref) [Litv (IntLit 7)])``;
+val _ = show_eval "ref_assign=" ``OPTION_MAP (λ(s,r). (s.refs,r))
+  (flatSem$do_app ((ARB : (unit,unit) flatSem$state) with refs := [Refv (Litv (IntLit 2))])
+    (Src Opassign) [Loc T 0; Litv (IntLit 7)])``;
+val _ = show_eval "byte_safe_oob=" ``OPTION_MAP SND
+  (flatSem$do_app ((ARB : (unit,unit) flatSem$state) with refs := [W8array [1w]])
+    (Src Aw8sub) [Loc T 0; Litv (IntLit 2)])``;
+val _ = show_eval "byte_unsafe_oob=" ``OPTION_MAP SND
+  (flatSem$do_app ((ARB : (unit,unit) flatSem$state) with refs := [W8array [1w]])
+    (Src Aw8sub_unsafe) [Loc T 0; Litv (IntLit 2)])``;
+val _ = show_eval "array_negative=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src Aalloc) [Litv (IntLit ~1); Litv (IntLit 7)])``;
+val _ = show_eval "array_update=" ``OPTION_MAP (λ(s,r). (s.refs,r))
+  (flatSem$do_app ((ARB : (unit,unit) flatSem$state) with refs := [Varray [Litv (IntLit 2)]])
+    (Src Aupdate) [Loc T 0; Litv (IntLit 0); Litv (IntLit 7)])``;
+val _ = show_eval "array_wrong_store=" ``OPTION_MAP SND
+  (flatSem$do_app ((ARB : (unit,unit) flatSem$state) with refs := [W8array [1w]])
+    (Src Aupdate) [Loc T 0; Litv (IntLit 0); Litv (IntLit 7)])``;

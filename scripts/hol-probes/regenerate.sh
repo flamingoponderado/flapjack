@@ -242,7 +242,7 @@ run_probe() {
 }
 
 run_probe cake_flat_sem_apply_probeScript.sml cake_flat_sem_apply_probe.out \
-  do_app_typed global_alloc global_init global_reinit global_lookup global_missing tag_match tag_mismatch tuple_length field_index ref_field ref_bad_index identity \
+  do_app_typed global_alloc global_init global_reinit global_lookup global_missing tag_match tag_mismatch tuple_length field_index ref_field ref_bad_index identity ref_alloc ref_assign byte_safe_oob byte_unsafe_oob array_negative array_update array_wrong_store \
   "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe cake_flat_sem_thunk_probeScript.sml cake_flat_sem_thunk_probe.out \
