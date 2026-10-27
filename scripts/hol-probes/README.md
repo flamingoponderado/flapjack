@@ -1,3 +1,5 @@
+`source_to_flat_global_env_probe.out` captures the original global environment's value-list and two finite-map field types. The map witness checks the Lean representation roundtrip; it does not establish the value relation or pass correctness.
+
 `cake_flat_sem_carriers_probe.out` captures flat-semantics value constructors, environment and state field types, compiler callback widths, and basic value and constructor helper definitions with inferred types. It is carrier and definition evidence, not evaluator or simulation correctness.
 
 `source_to_flat_bind_locals_probe.out` captures the original binding definition and replays its local namespace-composition and pattern-binding theorems with full inferred types, including independent namespace-module and function-payload types. This checks prerequisites, not source-to-flat semantic correctness.

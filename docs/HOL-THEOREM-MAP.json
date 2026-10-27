@@ -104953,5 +104953,14 @@
     "lean_name": "ctorSameType",
     "statement_status": "reviewed_exact",
     "reviewer": "Codex source comparison: Typed original shows independent constructor payload types α and γ and shared comparison type β; Lean preserves all three without an equality-instance premise. Both SOME cases compare only type fields, both NONE is true, and mixed NONE/SOME cases are false."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "global_env",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalEnv.lean",
+    "lean_name": "GlobalEnv",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["c", "tys"],
+    "reviewer": "Codex source comparison: HOL global_env has v : flatSem$v option list, c : ((ctor_id # type_id) # num) |-> semanticPrimitives$stamp, and tys : num |-> (ctor_id # num) list, in that field order. Typed source_to_flat_global_env_probe confirms the normalized key/value types. Lean uses the reviewed flat value and source stamp carriers, literal lists and pairs, and canonical HolFiniteMapExact for both HOL finite-map fields. The same-module GlobalEnv.toBroad/ofBroad witness reconstructs both lookup functions and finite-support proofs; it does not establish the value relation or simulation."
   }
 ]

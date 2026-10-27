@@ -1,0 +1,3 @@
+globals_type=:global_env -> v option list
+constructors_type=:global_env -> ((num # num option) # num |-> stamp)
+types_type=:global_env -> (num |-> (num # num) list)
