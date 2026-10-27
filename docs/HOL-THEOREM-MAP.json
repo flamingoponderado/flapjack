@@ -102997,5 +102997,21 @@
     "lean_name": "resetEnvGeneration",
     "statement_status": "pending_statement_review",
     "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "concrete_v_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Concrete.lean",
+    "lean_name": "concreteValue",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "concrete_v_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Concrete.lean",
+    "lean_name": "concreteValues",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
   }
 ]

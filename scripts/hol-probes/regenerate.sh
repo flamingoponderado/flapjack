@@ -403,6 +403,9 @@ run_probe cake_source_evaluate_clock_probeScript.sml cake_source_evaluate_clock_
 run_probe cake_source_eval_state_probeScript.sml cake_source_eval_state_probe.out \
   declare_type reset_type decs oracle lookup invalid_lookup declared_decs declared_oracle invalid_decl reset "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
 
+run_probe cake_source_concrete_probeScript.sml cake_source_concrete_probe.out \
+  type literal location tree closure nested_closure environment "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+
 run_probe cake_parse_error_probeScript.sml cake_parse_error_probe.out \
   missing after_decl multiline "$cake_dir/compiler/parsing/pegexec_cml_foScript.sml" "$cake_dir/compiler/parsing"
 

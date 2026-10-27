@@ -1,0 +1,7 @@
+type=:v -> bool
+literal=T
+location=T
+tree=T
+closure=F
+nested_closure=F
+environment=F
