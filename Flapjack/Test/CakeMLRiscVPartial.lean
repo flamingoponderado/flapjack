@@ -51,4 +51,20 @@ private def optimizedConfig : Backend.Config :=
   | some (bytes, bitmaps, _) => !bytes.isEmpty && !bitmaps.isEmpty
   | none => false
 
+-- These operations are AST-level primitives; the ordinary source parser does
+-- not expose the unsafe XOR operation. Check the actual configured backend.
+#guard match SourceToFlat.compileCakeToRiscVConfiguredFuel 100
+    { optimizedConfig with closConf := { optimizedConfig.closConf with doCall := true, knownConf := some (ClosKnown.defaultConfig 2) }, bvlConf := BvlToBvi.defaultConfig }
+    [.dlet Flapjack.Misc.Location.unknownLoc .pany
+      (.app .configGC [.lit (.intLit 0), .lit (.intLit 0)])] with
+  | some (bytes, _, _) => !bytes.isEmpty
+  | none => false
+
+#guard match SourceToFlat.compileCakeToRiscVConfiguredFuel 100
+    { optimizedConfig with closConf := { optimizedConfig.closConf with doCall := true, knownConf := some (ClosKnown.defaultConfig 2) }, bvlConf := BvlToBvi.defaultConfig }
+    [.dlet Flapjack.Misc.Location.unknownLoc .pany
+      (.app .xorAw8StrUnsafe [(.app .aw8alloc [.lit (.intLit 3), .lit (.word8 0)]), .lit (.strLit (ofString "abc"))])] with
+  | some (bytes, _, _) => !bytes.isEmpty
+  | none => false
+
 end Flapjack.Test.CakeMLRiscVPartial

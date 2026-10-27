@@ -76,6 +76,41 @@ private def conf : Config := ⟨1, 2, 3, 16, true, false, false, false, false, f
   | some (.skip, 2) => true
   | _ => false
 
+-- Original data_to_word$comp results captured by cake_io_lowering_probe.
+#guard match compileControl? (width := 64) conf 5 2
+    (.assign 3 (.memOp .xorByte) [1, 2] none) with
+  | some (.seq (.assign 1 (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)]))
+      (.seq (.assign 3 (.op .add [.lookup .currHeap, .shift .lsr (.var 6) (.const 5)]))
+      (.seq (.assign 5 (.shift .lsr (.load (.var 3)) (.const 48)))
+      (.seq (.assign 1 (.op .add [.var 1, .const 8]))
+      (.seq (.assign 3 (.op .add [.var 3, .const 8]))
+        (.mustTerminate (.call (some ([8], (.ls (), .ln), .skip, 5, 2))
+          (some 36) [1, 3, 5] none)))))), 3) => true
+  | _ => false
+
+#guard match compileControl? (width := 64) conf 5 2
+    (.assign 3 (.memOp .configGC) [1, 2] none) with
+  | some (.seq .skip (.seq (.assign 1 (.const 0))
+      (.seq (.alloc 1 (.ls (), .ln)) (.seq .skip (.assign 8 (.const 2))))), 2) => true
+  | _ => false
+
+#guard match compileControl? (width := 64) { conf with callEmptyFfi := true } 5 2
+    (.assign 3 (.memOp .configGC) [1, 2] none) with
+  | some (.seq (.seq (.assign 3 (.const 0))
+      (.seq (.assign 7 (.op .sub [.lookup .nextFree, .lookup .currHeap]))
+      (.seq (.assign 9 (.lookup .heapLength)) (.ffi n 7 3 9 3 (.ls (), .ln)))))
+      (.seq (.assign 1 (.const 0)) (.seq (.alloc 1 (.ls (), .ln))
+      (.seq (.seq (.assign 3 (.const 0))
+      (.seq (.assign 7 (.op .sub [.lookup .nextFree, .lookup .currHeap]))
+      (.seq (.assign 9 (.lookup .heapLength)) (.ffi m 7 3 9 3 (.ls (), .ln)))))
+      (.assign 8 (.const 2))))), 2) => n == ofString "" && m == ofString ""
+  | _ => false
+
+#guard match compileControl? (width := 64) conf 5 2
+    (.assign 3 (.memOp .xorByte) [1] none) with
+  | some (.skip, 2) => true
+  | _ => false
+
 private def matchesWord64Shift (shift : Shift) (amount expected : Nat) : Bool :=
   match compileControl? (width := 64) conf 5 2
       (.assign 3 (.wordOp (.wordShift .w64 shift amount)) [1] none) with

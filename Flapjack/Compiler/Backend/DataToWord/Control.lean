@@ -712,6 +712,27 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
           (some ([adjustVar dest], adjustSets (names.getD .ln), .skip, secn, l))
           (some loc) (args.map adjustVar) none), l + 1)
       | none => some (.skip, l)
+  | l, .assign dest (.memOp .configGC) args names =>
+      match args with
+      | [_, _] =>
+          let names := adjustSets (names.getD .ln)
+          some (listSeq [silentFfi conf 3 names, .assign 1 (.const 0), .alloc 1 names,
+            silentFfi conf 3 names, .assign (adjustVar dest) (.const 2)], l)
+      | _ => some (.skip, l)
+  | l, .assign dest (.memOp .xorByte) args names =>
+      match args with
+      | [first, second] =>
+          let bytes := BitVec.ofNat width (width / 8)
+          some (listSeq [
+            .assign 1 (realAddr conf (adjustVar first)),
+            .assign 3 (realAddr conf (adjustVar second)),
+            .assign 5 (shiftN .lsr (.load (.var 3)) (width - conf.lenSize)),
+            .assign 1 (.op .add [.var 1, .const bytes]),
+            .assign 3 (.op .add [.var 3, .const bytes]),
+            .mustTerminate (.call
+              (some ([adjustVar dest], adjustSets (names.getD .ln), .skip, secn, l))
+              (some xorLoopLocation) [1, 3, 5] none)], l + 1)
+      | _ => some (.skip, l)
   | l, .assign dest (.memOp op) args _ =>
       match op, args with
       | .mutCons tag _, _ =>

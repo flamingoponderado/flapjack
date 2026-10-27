@@ -24,3 +24,12 @@ val _ = capture "list_append" ``
 val _ = capture "list_append_arity" ``
  let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16|> in
  data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$BlockOp closLang$ListAppend) [1] NONE) : 64 wordLang$prog # num``;
+val _ = capture "xor_byte" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$MemOp closLang$XorByte) [1;2] NONE) : 64 wordLang$prog # num``;
+val _ = capture "config_gc" ``
+ let c = (ARB:data_to_word$config) with <|call_empty_ffi := F|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$MemOp closLang$ConfigGC) [1;2] NONE) : 64 wordLang$prog # num``;
+val _ = capture "config_gc_ffi" ``
+ let c = (ARB:data_to_word$config) with <|call_empty_ffi := T|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$MemOp closLang$ConfigGC) [1;2] NONE) : 64 wordLang$prog # num``;
