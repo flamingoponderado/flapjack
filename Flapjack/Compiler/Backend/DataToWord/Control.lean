@@ -34,7 +34,7 @@ private def silentFfi {width : Nat} (conf : Config) (n : Nat) (names : WordLangC
   else .skip
 
 /-- Internal allocation-failure sequence used by supported cases. -/
-private def giveUp {width : Nat} : WordLangProgHOL (BitVec width) :=
+def giveUp {width : Nat} : WordLangProgHOL (BitVec width) :=
   .seq (.assign 1 (.const (-1))) (.alloc 1 (adjustSets (.ln : NumSet)))
 
 /-- Internal word-address construction for supported load cases; the
@@ -58,7 +58,7 @@ private def boolResult {width : Nat} (dest : Nat) (cmp : Cmp) (r : Nat)
 
 /-- Internal shift constructor and source-shaped saturation for variable
 shifts. The standalone HOL `ShiftVar` declaration remains to be reviewed. -/
-private def shiftN {width : Nat} (op : Shift) (e : WordLangExpHOL (BitVec width)) (n : Nat) :
+def shiftN {width : Nat} (op : Shift) (e : WordLangExpHOL (BitVec width)) (n : Nat) :
     WordLangExpHOL (BitVec width) := .shift op e (.const (BitVec.ofNat width n))
 
 def shiftVar {width : Nat} (op : Shift) (v n : Nat) : WordLangExpHOL (BitVec width) :=
@@ -84,7 +84,7 @@ private def pointerBits {width : Nat} (conf : Config) (tag len : Nat) : BitVec w
 
 /-- Internal variable-allocation sequence for the reference-array case;
 the standalone width-indexed HOL definition remains to be reviewed. -/
-private def allocVar {width : Nat} [NeZero width] (conf : Config) (limit : Nat) (names : NumSet) :
+def allocVar {width : Nat} [NeZero width] (conf : Config) (limit : Nat) (names : NumSet) :
     WordLangProgHOL (BitVec width) :=
   let cutsets := adjustSets names
   let ffiCutsets := (cutsets.1, sptInsert 1 () cutsets.2)

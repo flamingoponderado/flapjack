@@ -6,6 +6,7 @@ import Flapjack.Compiler.Backend.DataToWord.Control
 import Flapjack.Compiler.Backend.DataToWord.Stubs
 import Flapjack.Test.CakeMLFlatOracle
 import Flapjack.Test.ByteCopyWordOracle
+import Flapjack.Test.FromListWordOracle
 
 /-!
 # `data_to_word` configuration helpers: original-oracle rows
@@ -322,6 +323,9 @@ private def headerConfig : Config := { conf with lenSize := 4 }
     let (arity, body) ← compileStub? (width := 64) loc
     pure (loc, arity, body, 0)) with
   | some stubs => Flapjack.Test.ByteCopyWordOracle.matchesCaptured stubs
+  | none => false
+#guard match compileConfiguredStub? (width := 64) conf fromListLocation with
+  | some (arity, body) => Flapjack.Test.FromListWordOracle.matchesCaptured [(fromListLocation, arity, body, 0)]
   | none => false
 #guard Flapjack.Test.CakeMLFlatOracle.data_to_word_stubs
 #guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.boolTest (.compare .gt))) [1, 2] none) with

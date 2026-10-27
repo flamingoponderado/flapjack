@@ -76,7 +76,28 @@ def compileStub? {width : Nat} (location : Nat) : Option (Nat × WordLangProgHOL
 unimplemented stubs still return `none`, so this is not HOL's complete list. -/
 def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (location : Nat) :
     Option (Nat × WordLangProgHOL (BitVec width)) :=
-  if location = refArrayLocation then
+  if location = fromListLocation then
+    let maxout (bits shift dest src : Nat) : WordLangProgHOL (BitVec width) :=
+      let max := 2 ^ bits - 1
+      .ite .lower src (.imm (BitVec.ofNat width max))
+        (.assign dest (.op .or [.var dest, shiftN .lsl (.var src) shift]))
+        (.assign dest (.op .or [.var dest, .const (BitVec.ofNat width (max * 2 ^ shift))]))
+    let ptr := listSeq [
+      .assign 3 (.op .or [.const 1, shiftN .lsl (.op .sub [.lookup .nextFree, .lookup .currHeap])
+        (shiftLength conf - wordShiftAmount width)]),
+      maxout conf.tagBits (1 + conf.lenBits) 3 9,
+      maxout conf.lenBits 1 3 7]
+    let limit := min (2 ^ conf.lenSize) (2 ^ width / 16)
+    some (4, .ite .equal 2 (.imm 0)
+      (listSeq [.assign 6 (.op .add [.var 6, .const 2]), .return 0 [6]])
+      (listSeq [
+        .ite .test 2 (.imm 1) .skip giveUp,
+        .assign 1 (.var 2), allocVar conf limit (sptListInsert [0, 1, 2] .ln),
+        .assign 1 (.lookup .nextFree),
+        .assign 5 (.op .or [shiftN .lsl (.var 2) (width - conf.lenSize - 2), .const 3, .var 6]),
+        .assign 7 (shiftN .lsr (.var 2) 2), .assign 9 (shiftN .lsr (.var 6) 4),
+        ptr, .call none (some fromList1Location) [0, 1, 4, 2, 3, 5] none]))
+  else if location = refArrayLocation then
     let shiftN (op : Shift) (value : WordLangExpHOL (BitVec width)) (amount : Nat) :=
       WordLangExpHOL.shift op value (.const (BitVec.ofNat width amount))
     some (3, listSeq [
