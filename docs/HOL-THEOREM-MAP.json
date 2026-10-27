@@ -101590,5 +101590,77 @@
     "hol_name": "force_thunk_code_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DbVars.lean",
+    "lean_name": "DbVarSet",
+    "hol_path": "cakeml/compiler/backend/db_varsScript.sml",
+    "hol_name": "db_var_set",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source constructors and clauses transcribed; typed carrier and complete statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DbVars.lean",
+    "lean_name": "mkUnion",
+    "hol_path": "cakeml/compiler/backend/db_varsScript.sml",
+    "hol_name": "mk_Union_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source constructors and clauses transcribed; typed carrier and complete statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DbVars.lean",
+    "lean_name": "listMkUnion",
+    "hol_path": "cakeml/compiler/backend/db_varsScript.sml",
+    "hol_name": "list_mk_Union_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source constructors and clauses transcribed; typed carrier and complete statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DbVars.lean",
+    "lean_name": "dbToSetAcc",
+    "hol_path": "cakeml/compiler/backend/db_varsScript.sml",
+    "hol_name": "db_to_set_acc_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source constructors and clauses transcribed; typed carrier and complete statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DbVars.lean",
+    "lean_name": "dbToSet",
+    "hol_path": "cakeml/compiler/backend/db_varsScript.sml",
+    "hol_name": "db_to_set_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source constructors and clauses transcribed; typed carrier and complete statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DbVars.lean",
+    "lean_name": "varsToList",
+    "hol_path": "cakeml/compiler/backend/db_varsScript.sml",
+    "hol_name": "vars_to_list_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source constructors and clauses transcribed; typed carrier and complete statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DbVars.lean",
+    "lean_name": "varsFromList",
+    "hol_path": "cakeml/compiler/backend/db_varsScript.sml",
+    "hol_name": "vars_from_list_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source constructors and clauses transcribed; typed carrier and complete statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DbVars.lean",
+    "lean_name": "varsFlatten",
+    "hol_path": "cakeml/compiler/backend/db_varsScript.sml",
+    "hol_name": "vars_flatten_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source constructors and clauses transcribed; typed carrier and complete statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DbVars.lean",
+    "lean_name": "hasVar",
+    "hol_path": "cakeml/compiler/backend/db_varsScript.sml",
+    "hol_name": "has_var_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source constructors and clauses transcribed; typed carrier and complete statement review remain pending."
   }
 ]

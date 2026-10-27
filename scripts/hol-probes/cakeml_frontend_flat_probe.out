@@ -94,3 +94,6 @@ bvl_to_bvi_stubs=T
 bvl_to_bvi_whole_program=T
 bvl_to_bvi_stub_bodies=T
 bvl_closure_stubs=T
+bvl_prepared_program=T
+bvl_force_thunk=T
+db_vars_order=T

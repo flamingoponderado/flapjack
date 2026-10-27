@@ -203,6 +203,8 @@ import Flapjack.Compiler.Backend.ClosToBvl.ExtractName
 import Flapjack.Compiler.Backend.ClosToBvl.Compile
 import Flapjack.Compiler.Backend.BvlJump
 import Flapjack.Compiler.Backend.ClosToBvl.Stubs
+import Flapjack.Compiler.Backend.ClosToBvl.Prepared
+import Flapjack.Compiler.Backend.DbVars
 import Flapjack.Compiler.Backend.BvlToBvi.Analysis
 import Flapjack.Compiler.Backend.BvlToBvi.CompileOp
 import Flapjack.Compiler.Backend.BvlToBvi.Stubs

@@ -10,6 +10,8 @@ import Flapjack.Compiler.Backend.ClosToBvl.ExtractName
 import Flapjack.Compiler.Backend.ClosToBvl.Compile
 import Flapjack.Compiler.Backend.BvlJump
 import Flapjack.Compiler.Backend.ClosToBvl.Stubs
+import Flapjack.Compiler.Backend.ClosToBvl.Prepared
+import Flapjack.Compiler.Backend.DbVars
 import Flapjack.Compiler.Backend.BvlToBvi.Analysis
 import Flapjack.Compiler.Backend.BvlToBvi.CompileOp
 import Flapjack.Compiler.Backend.BvlToBvi.Stubs
@@ -368,6 +370,28 @@ example : Flapjack.Compiler.Backend.ClosToBvl.initGlobals 0 7 =
 #guard (sptToAList (Flapjack.Compiler.Backend.ClosToBvl.initCode 2)).map (fun (loc, arity, _) => (loc, arity)) ==
   [(1, 3), (0, 2), (2, 2)]
 #guard bvl_closure_stubs
+private def smallClosConfig : Flapjack.Compiler.Backend.ClosToBvl.Config :=
+  { Flapjack.Compiler.Backend.ClosToBvl.defaultConfig with maxApp := 0 }
+#guard match Flapjack.Compiler.Backend.ClosToBvl.compilePrepared? smallClosConfig smallClosConfig [] [] with
+  | some (c, code, names) => c.start == 1 &&
+      (code.map (fun (loc, arity, _) => (loc, arity)) == [(0, 2), (1, 0)]) &&
+      [sptLookup 0 names, sptLookup 1 names] == [some (ofString "bvl_force"), some (ofString "bvl_init")]
+  | _ => false
+#guard bvl_prepared_program
+example : Flapjack.Compiler.Backend.ClosToBvl.forceThunkCode =
+    .ifThenElse (.op (.blockOp (.equalConst (.int 0))) [.op (.blockOp (.elemAt 1)) [.var 1]])
+      (.let [.call 0 none [.op (.blockOp (.cons 0)) [], .var 1, .op (.blockOp (.elemAt 0)) [.var 1]]]
+        (.let [.op (.thunkOp (.updateThunk .evaluated)) [.var 0, .var 1]] (.var 1)))
+      (.let [.call 0 (some 0) [.op (.blockOp (.cons 0)) [], .var 1]]
+        (.let [.op (.thunkOp (.updateThunk .evaluated)) [.var 0, .var 1]] (.var 1))) := rfl
+#guard bvl_force_thunk
+private def dbExample : Flapjack.Compiler.Backend.DbVars.DbVarSet :=
+  .shift 2 (.union (.var 1) (.var 3))
+#guard Flapjack.Compiler.Backend.DbVars.varsToList dbExample == [1]
+#guard Flapjack.Compiler.Backend.DbVars.hasVar 1 dbExample
+#guard !Flapjack.Compiler.Backend.DbVars.hasVar 0 dbExample
+#guard Flapjack.Compiler.Backend.DbVars.varsToList (Flapjack.Compiler.Backend.DbVars.varsFromList [0, 1, 2]) == [1, 0, 2]
+#guard db_vars_order
 example : Flapjack.Compiler.Backend.ClosToBvl.extractName
     [.op .none (.intOp (.const 7)) [], .var .none 2] = (7, [.var .none 2]) := rfl
 example : Flapjack.Compiler.Backend.ClosToBvl.extractName

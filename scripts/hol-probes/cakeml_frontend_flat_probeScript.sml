@@ -1,4 +1,4 @@
-load "flat_patternTheory"; load "flat_elimTheory"; load "source_to_flatTheory"; load "flat_to_closTheory"; load "source_to_sourceTheory"; load "clos_to_bvlTheory"; load "clos_numberTheory"; load "bvl_to_bviTheory"; load "bvi_letTheory"; load "dataLangTheory"; load "data_spaceTheory"; load "data_simpTheory"; load "data_liveTheory"; load "bvi_to_dataTheory"; load "data_to_wordTheory"; load "wordsLib";
+load "flat_patternTheory"; load "flat_elimTheory"; load "source_to_flatTheory"; load "flat_to_closTheory"; load "source_to_sourceTheory"; load "clos_to_bvlTheory"; load "clos_numberTheory"; load "bvl_to_bviTheory"; load "bvi_letTheory"; load "dataLangTheory"; load "data_spaceTheory"; load "data_simpTheory"; load "data_liveTheory"; load "bvi_to_dataTheory"; load "data_to_wordTheory"; load "db_varsTheory"; load "wordsLib";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 fun capture label term =
@@ -338,3 +338,19 @@ val _ = capture "bvl_closure_stubs" ``
      (bvl$Let [bvl$Op (closLang$BlockOp (closLang$ElemAt 1)) [bvl$Var 2]] (bvl$Op (closLang$IntOp (closLang$Const 0)) []))
      (bvl$If (bvl$Op (closLang$BlockOp (closLang$TagEq 30)) [bvl$Var 2]) (bvl$Op (closLang$BlockOp (closLang$Cons 31)) _) _)) => T | _ => F) /\
  MAP (\(loc,arity,exp). (loc,arity)) (sptree$toAList (clos_to_bvl$init_code 2)) = [(1,3); (0,2); (2,2)]``;
+val _ = capture "bvl_prepared_program" ``
+ let n = clos_to_bvl$num_stubs 0 in
+ let prog = [] : (num # num # closLang$exp) list in
+ let code = sptree$toAList (clos_to_bvl$init_code 0) ++ [(n-2, 2, clos_to_bvl$force_thunk_code); (n-1, 0, clos_to_bvl$init_globals 0 (n+1))] ++ clos_to_bvl$compile_prog 0 prog in
+ let names = clos_to_bvl$make_name_alist (MAP FST code) prog n 0 0 in
+ MAP (\(loc,arity,exp). (loc,arity)) (clos_to_bvl$code_sort code) = [(0,2); (1,0)] /\
+ [sptree$lookup 0 names; sptree$lookup 1 names] = [SOME «bvl_force»; SOME «bvl_init»]``;
+val _ = capture "bvl_force_thunk" ``clos_to_bvl$force_thunk_code =
+ bvl$If (bvl$Op (closLang$BlockOp (closLang$EqualConst (closLang$Int 0))) [bvl$Op (closLang$BlockOp (closLang$ElemAt 1)) [bvl$Var 1]])
+  (bvl$Let [bvl$Call 0 NONE [bvl$Op (closLang$BlockOp (closLang$Cons 0)) []; bvl$Var 1; bvl$Op (closLang$BlockOp (closLang$ElemAt 0)) [bvl$Var 1]]]
+   (bvl$Let [bvl$Op (closLang$ThunkOp (ast$UpdateThunk ast$Evaluated)) [bvl$Var 0; bvl$Var 1]] (bvl$Var 1)))
+  (bvl$Let [bvl$Call 0 (SOME 0) [bvl$Op (closLang$BlockOp (closLang$Cons 0)) []; bvl$Var 1]]
+   (bvl$Let [bvl$Op (closLang$ThunkOp (ast$UpdateThunk ast$Evaluated)) [bvl$Var 0; bvl$Var 1]] (bvl$Var 1)))``;
+val _ = capture "db_vars_order" ``let db = db_vars$Shift 2 (db_vars$Union (db_vars$Var 1) (db_vars$Var 3)) in
+ db_vars$vars_to_list db = [1] /\ db_vars$has_var 1 db /\ ~db_vars$has_var 0 db /\
+ db_vars$vars_to_list (db_vars$vars_from_list [0;1;2]) = [1;0;2]``;
