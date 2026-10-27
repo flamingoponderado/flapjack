@@ -476,6 +476,14 @@ type-checking inputs and successful programs compiled to RISC-V. Case counts
 can be changed with `--type-cases` and `--compile-cases`; the random seeds are
 fixed so a mismatch is reproducible. These samples do not prove general parity.
 
+`python3 scripts/check-cake-benchmark-parity.py` compares the complete RISC-V
+output for 27 benchmark programs from the pinned CakeML submodule with captured
+original-compiler output. It checks the source revision and source hashes before
+using the captures. Pass `--check-reference /var/tmp/flapjack-pinned-cake` to
+also rerun the pinned compiler, or `--record-reference` with that executable
+to regenerate the captures. The benchmark comparisons are finite regression
+evidence, not a proof of output parity.
+
 `python3 scripts/check-cake-sexp-parity.py` compares `--sexp=true` type and
 complete RISC-V output against pinned-compiler captures. The original compiler
 exports each source program as an S-expression, then compiles that input;
