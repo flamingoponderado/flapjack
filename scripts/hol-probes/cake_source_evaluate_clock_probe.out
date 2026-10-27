@@ -1,6 +1,7 @@
 fix_type=:α state -> β state # γ -> β state # γ
 list_type=:(α, β) result -> (α list, β) result
 clock_lemma=⊢ ∀(s :α state) (x :β state # γ) (s1 :β state) (res :γ). fix_clock s x = (s1,res) ⇒ s1.clock ≤ s.clock
+eval_clock_lemma=⊢ fix_clock (s :α state) (do_eval_res (vs :v list) s :α state # (v sem_env # dec list, β) result) = (do_eval_res vs s :α state # (v sem_env # dec list, β) result)
 fixed=(3 :num)
 zero=(0 :num)
 failure=(Rerr (Rraise (1 :num)) :(bool list, num) result)

@@ -8,6 +8,7 @@ val replay = prove (``∀s x s1 res.
   evaluate$fix_clock s x = (s1,res) ⇒ s1.clock ≤ s.clock``,
   rpt gen_tac THEN Cases_on `x` THEN fs[evaluateTheory.fix_clock_def] THEN rw[] THEN fs[]);
 val _ = (print "clock_lemma="; print_thm replay; print "\n");
+val _ = (print "eval_clock_lemma="; print_thm evaluateTheory.fix_clock_do_eval_res; print "\n");
 val fixed = rhs (concl (EVAL ``(FST (evaluate$fix_clock
   ((ARB:'ffi semanticPrimitives$state) with clock := 3)
   (((ARB:'ffi semanticPrimitives$state) with clock := 7),T))).clock``));

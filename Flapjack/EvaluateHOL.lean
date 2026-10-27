@@ -41,4 +41,13 @@ theorem fixClockImp {σ τ α : Type} (state : State σ) (state' : State τ) (re
   subst state'
   exact Nat.min_le_right _ _
 
+@[hol "cakeml/semantics/evaluateScript.sml" "fix_clock_do_eval_res"]
+theorem fixClockDoEvalRes {σ β : Type} (values : List Value) (state : State σ) :
+    fixClock state (doEvalRes (β := β) values state) = doEvalRes values state := by
+  cases h : doEval values state.evalState with
+  | none => simp [doEvalRes, h, fixClock]
+  | some result =>
+    rcases result with ⟨env, decs, evalState⟩
+    simp [doEvalRes, h, fixClock]
+
 end Flapjack.EvaluateHOL

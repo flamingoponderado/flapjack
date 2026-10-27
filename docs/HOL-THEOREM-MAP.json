@@ -102936,6 +102936,14 @@
   },
   {
     "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "fix_clock_do_eval_res",
+    "lean_path": "Flapjack/EvaluateHOL.lean",
+    "lean_name": "fixClockDoEvalRes",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: kernel-checked source-evaluator clock identity; complete carrier and do_eval_res correspondence review remains pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
     "hol_name": "fix_clock_IMP",
     "lean_path": "Flapjack/EvaluateHOL.lean",
     "lean_name": "fixClockImp",
