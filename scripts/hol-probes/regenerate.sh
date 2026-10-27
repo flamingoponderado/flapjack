@@ -263,7 +263,7 @@ run_probe bvl_const_frontend_probeScript.sml bvl_const_frontend_probe.out \
   divs ops compile algebra "$cake_dir/compiler/backend/bvl_constScript.sml" "$cake_dir/compiler/backend"
 
 run_probe bvi_tailrec_frontend_probeScript.sml bvi_tailrec_frontend_probe.out \
-  decisions cases tmc "$cake_dir/compiler/backend/bvi_tailrecScript.sml" "$cake_dir/compiler/backend"
+  decisions cases tmc analysis "$cake_dir/compiler/backend/bvi_tailrecScript.sml" "$cake_dir/compiler/backend"
 
 run_probe bvl_inline_cake_bvi_probeScript.sml bvl_inline_cake_bvi_probe.out \
   code "$cake_dir/compiler/backend/bvl_inlineScript.sml" "$cake_dir/compiler/backend"

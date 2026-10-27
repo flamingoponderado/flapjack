@@ -101846,5 +101846,21 @@
     "hol_name": "is_rec_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Direct unhandled self-call test transcribed; inferred source typing and complete declaration review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Analysis.lean",
+    "lean_name": "ValueType",
+    "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
+    "hol_name": "v_ty",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Three nullary constructors transcribed; source typing and complete declaration review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Analysis.lean",
+    "lean_name": "AssocOp",
+    "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
+    "hol_name": "assoc_op",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Four nullary constructors transcribed; source typing and complete declaration review remain pending."
   }
 ]

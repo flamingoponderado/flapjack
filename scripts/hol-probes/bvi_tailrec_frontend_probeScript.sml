@@ -25,3 +25,14 @@ val _ = (print "tmc="; print_term (rhs (concl (EVAL ``
  let bvl = SND (bvl_inline$compile_prog 8 F 100 bvl) in
  let (start,code,next) = bvl_to_bvi$compile_prog cc.start 0 bvl in
  MAP (\(loc,arity,exp). (loc, IS_SOME (bvi_tmc$compile_exp loc 59 arity exp))) code``))); print "\n");
+val _ = (print "analysis="; print_term (rhs (concl (EVAL ``
+ let c = \i. bvi$Op (closLang$IntOp (closLang$Const i)) [] in
+ let call = bvi$Call 0 (SOME 3) [bvi$Var 0] NONE in
+ MAP (\e. (bvi_tailrec$scan_expr_sing [bvi_tailrec$Any] 3 e, bvi_tailrec$check_exp 3 1 e))
+ [bvi$Op (closLang$IntOp closLang$Add) [c 1; call];
+  bvi$Op (closLang$IntOp closLang$Mult) [call; c 2];
+  bvi$Op (closLang$IntOp closLang$Add) [bvi$Var 0; call];
+  bvi$Let [bvi$Op (closLang$IntOp closLang$Less) [bvi$Var 0; c 4]]
+    (bvi$Op (closLang$IntOp closLang$Add) [bvi$Var 1; call]);
+  bvi$Op (closLang$BlockOp closLang$ListAppend) [bvi$Op (closLang$BlockOp (closLang$Cons 0)) []; call];
+  bvi$Op (closLang$IntOp closLang$Add) [c 268435458; call]]``))); print "\n");
