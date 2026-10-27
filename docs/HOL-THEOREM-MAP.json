@@ -1,5 +1,45 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "do_eval_oracle_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs.lean",
+    "lean_name": "doEvalOracle",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete typed do_eval_oracle probe: both accept exactly six values, decode byte and fixed 64-bit word lists from the last two, invoke the source compiler on oracle entry zero, compare its bytes and words and its returned state to oracle entry one's state, and return the same environment id, one-step shifted oracle and transformed declarations. The inner HOL pattern shadows the fourth input, so it is not compared. Classical source-value equality adds no BEq premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "orac_rel_inner_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleRel.lean",
+    "lean_name": "oracRelInner",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed orac_rel_inner probe: the arbitrary decoder payload is exactly the flat install-config state type; source compiler output uses fixed word8 and word64 lists, and both require the same oracle entry, compiled declaration list, successful callback witness, and decoding implication. The shared holThe preserves HOL THE including unspecified NONE; Nonempty C models HOL type inhabitation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "orac_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleRel.lean",
+    "lean_name": "oracRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed orac_rel probe: NONE source Eval state is true regardless of decoder; SOME EvalOracle and SOME decoder require the same existential source compiler callback equality and oracRelInner; other cases are false. The arbitrary flat compiler state carrier remains independent, with Nonempty C for HOL THE in the inner relation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "orac_rel_SOME_eval",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleRel.lean",
+    "lean_name": "oracRel_some",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed orac_rel_some probe: a related SOME source Eval state implies an existential decoder and EvalOracle state with the same two equalities. The decoder result payload is the flat compiler state type, inhabited as required by HOL THE."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "inc_compile_prog_nonempty",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleRel.lean",
+    "lean_name": "incCompileProg_nonempty",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed inc_compile_nonempty probe and the source incremental compiler's outer definition: for the same environment-id pair, config and declaration list, equality to the same config and flat-declaration pair implies the declaration list is nonempty. The original and Lean outer compiler clauses both prepend glob_alloc, independent of compile_decs results."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "src_orac_gen_inv_def",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleStep.lean",

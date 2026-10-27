@@ -1,5 +1,5 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateCases
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.OracleStep
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.OracleRel
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.FiniteMapGrowth
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveType
 import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateClock
