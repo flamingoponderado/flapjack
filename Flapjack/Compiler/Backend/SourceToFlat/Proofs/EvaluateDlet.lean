@@ -28,6 +28,43 @@ theorem dlet_alias_lookup_of_safe {F : Type} (source : SemanticPrimitivesHOL.Sta
         oneConCheck, lookup, EvaluateHOL.typeError]
     exact False.elim (safe source bad)
 
+/-- The source non-type-error premise enforces distinct pattern names and
+the declaration's constructor check. -/
+theorem dlet_conditions_of_safe {F : Type} (source : SemanticPrimitivesHOL.State F)
+    (sourceEnv : SemEnv Value) (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp)
+    (safe : ∀ next, EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] ≠
+      (next, .err (.abort .typeError))) :
+    (AstHOL.patBindings pattern).Nodup ∧ AstHOL.everyExp (oneConCheck sourceEnv.c) expr = true := by
+  by_cases distinct : (AstHOL.patBindings pattern).Nodup
+  · cases checked : AstHOL.everyExp (oneConCheck sourceEnv.c) expr with
+    | true => exact ⟨distinct, rfl⟩
+    | false =>
+      have bad : EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] =
+          (source, .err (.abort .typeError)) := by
+        simp [EvaluateHOL.evaluateDecs, distinct, checked, EvaluateHOL.typeError]
+      exact False.elim (safe source bad)
+  · have bad : EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] =
+        (source, .err (.abort .typeError)) := by
+      simp [EvaluateHOL.evaluateDecs, distinct, EvaluateHOL.typeError]
+    exact False.elim (safe source bad)
+
+/-- A safe declaration whose expression succeeds cannot have a pattern
+matching type error. -/
+theorem dlet_match_noTypeError_of_safe {F : Type} (source middle : SemanticPrimitivesHOL.State F)
+    (sourceEnv : SemEnv Value) (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp)
+    (value : Value)
+    (safe : ∀ next, EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] ≠
+      (next, .err (.abort .typeError)))
+    (sourceRun : EvaluateHOL.evaluate source sourceEnv [expr] = (middle, .val [value])) :
+    pmatch sourceEnv.c middle.refs pattern value [] ≠ .typeError := by
+  obtain ⟨distinct, wellformed⟩ := dlet_conditions_of_safe source sourceEnv location pattern expr safe
+  intro failed
+  have bad : EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] =
+      (middle, .err (.abort .typeError)) := by
+    simp [EvaluateHOL.evaluateDecs, distinct, wellformed, sourceRun, EvaluateHOL.headValue,
+      Flapjack.holHd, failed, EvaluateHOL.typeError]
+  exact safe middle bad
+
 /-- A singleton source alias and compiler binding share a global slot. -/
 theorem globalEnvInv_alias (genv : GlobalEnv) (name : VarN) (idx : Nat) (trace : Tra)
     (value : Value) (stored : FlatSem.Value) (bound : idx < genv.v.length)
@@ -365,6 +402,131 @@ theorem evaluateDlet_pattern_flat_success {C F : Type}
   dsimp only [initialEnv, body] at matRun
   rw [matRun]
   simp [FlatSem.fixClock, FlatSem.unitValue, FlatSem.evaluateDecs, Nat.min_eq_right lastBound]
+
+/-- A nonmatching flat declaration pattern raises the bind exception before
+running the global initializer. -/
+theorem evaluateDlet_pattern_flat_noMatch {C F : Type}
+    (flat middle : FlatSem.State C F) (trace : List VarN) (n : Nat) (next : NextIndices)
+    (compMap : Environment) (gen : EnvironmentGenerationStore) (location : Flapjack.Misc.Location.Locs)
+    (pattern : Pat) (expr : AstHOL.Exp) (value : FlatSem.Value)
+    (notAlias : simpleDlet pattern expr = none)
+    (expressionRun : FlatSem.evaluate ⟨[]⟩ flat
+      [compileExp ((AstHOL.patBindings pattern).reverse ++ trace) compMap expr] = (middle, .val [value]))
+    (matched : FlatSem.pmatch middle (compilePat compMap pattern) value [] = .noMatch) :
+    FlatSem.evaluateDecs flat (compileDecs trace n next compMap gen [.dlet location pattern expr]).2.2.2.2 =
+      (middle, some (.raise FlatSem.bindExnV)) := by
+  let body := makeVarls 0 .none next.vidx (AstHOL.patBindings pattern).reverse
+  have bound : middle.clock ≤ flat.clock := FlatSem.evaluate_clock_spec.1 _ _ _ _ _ expressionRun
+  have fixed : FlatSem.fixClock flat (middle, (Result.val [value] : Result (List FlatSem.Value) FlatSem.Value)) =
+      (middle, .val [value]) := by simp [FlatSem.fixClock, Nat.min_eq_right bound]
+  have selection : FlatSem.selectRow middle [(compilePat compMap pattern, body)] value FlatSem.bindExnV =
+      .error (.raise FlatSem.bindExnV) := by
+    simp [FlatSem.selectRow, FlatSem.pmatchRows, matched]
+  have matRun : FlatSem.evaluate ⟨[]⟩ flat
+      [.mat .none (compileExp ((AstHOL.patBindings pattern).reverse ++ trace) compMap expr)
+        [(compilePat compMap pattern, body)]] = (middle, .err (.raise FlatSem.bindExnV)) := by
+    rw [FlatSem.evaluate, expressionRun, fixed]
+    simp (config := { zeta := false })
+    have selection' := selection
+    dsimp only [body] at selection'
+    rw [selection']
+  simp only [compileDecs, notAlias]
+  rw [FlatSem.evaluateDecs]
+  dsimp only [body] at matRun
+  rw [matRun]
+  simp [FlatSem.fixClock, Nat.min_eq_right bound]
+
+/-- A source pattern mismatch produces related bind exceptions and retains
+the post-expression factored invariant in both evaluators. -/
+theorem evaluateDlet_pattern_noMatch {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (idxs : NextIndices × NextIndices × Set (Nat × IndexKind))
+    (source sourceMiddle : SemanticPrimitivesHOL.State F) (flat flatMiddle : FlatSem.State C F)
+    (sourceEnv : SemEnv Value) (trace : List VarN) (n : Nat) (next : NextIndices)
+    (compMap compMap2 : Environment) (gen : EnvironmentGenerationStore)
+    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp)
+    (value : Value) (flatValue : FlatSem.Value)
+    (notAlias : simpleDlet pattern expr = none) (distinct : (AstHOL.patBindings pattern).Nodup)
+    (wellformed : AstHOL.everyExp (oneConCheck sourceEnv.c) expr = true)
+    (sourceRun : EvaluateHOL.evaluate source sourceEnv [expr] = (sourceMiddle, .val [value]))
+    (flatRun : FlatSem.evaluate ⟨[]⟩ flat
+      [compileExp ((AstHOL.patBindings pattern).reverse ++ trace) compMap expr] = (flatMiddle, .val [flatValue]))
+    (matched : pmatch sourceEnv.c sourceMiddle.refs pattern value [] = .noMatch)
+    (shadowers : VarN → Prop) (envInv : GlobalEnvInv genv compMap2 shadowers sourceEnv)
+    (mapsEq : compMap2.c = compMap.c) (valueRel : ValueRel genv value flatValue)
+    (invariant : factoredInvariant interp transform gen genv idxs sourceMiddle flatMiddle) :
+    EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] =
+      (sourceMiddle, .err (.raise SemanticPrimitivesHOL.bindExnV)) ∧
+    FlatSem.evaluateDecs flat (compileDecs trace n next compMap gen [.dlet location pattern expr]).2.2.2.2 =
+      (flatMiddle, some (.raise FlatSem.bindExnV)) ∧
+    ValueRel genv SemanticPrimitivesHOL.bindExnV FlatSem.bindExnV ∧
+    StateRel genv sourceMiddle flatMiddle ∧
+    factoredInvariant interp transform gen genv idxs sourceMiddle flatMiddle := by
+  have ok := invariant.1
+  have typesOk := invariant.2.1
+  have states := invariant.2.2.1
+  have matchRel := patternSimulation genv compMap compMap2 sourceEnv sourceMiddle flatMiddle [] shadowers
+    envInv mapsEq ok typesOk states pattern value flatValue [] []
+    (by simpa [alistToNs, nsEmpty] using EnvRel.empty genv) valueRel
+  simp only [List.nil_append, matched] at matchRel
+  have flatMatched : FlatSem.pmatch flatMiddle (compilePat compMap pattern) flatValue [] = .noMatch := by
+    cases flatMatch : FlatSem.pmatch flatMiddle (compilePat compMap pattern) flatValue [] <;>
+      simp_all [MatchResultRel]
+  refine ⟨?_, evaluateDlet_pattern_flat_noMatch flat flatMiddle trace n next compMap gen location pattern expr
+    flatValue notAlias flatRun flatMatched, (exceptionValues_related genv ok).2.2.1, states, invariant⟩
+  simp [EvaluateHOL.evaluateDecs, distinct, wellformed, sourceRun, matched,
+    EvaluateHOL.headValue, Flapjack.holHd]
+
+/-- A failing expression propagates through a non-alias declaration before
+the generated pattern match can initialize any globals. -/
+theorem evaluateDlet_pattern_flat_error {C F : Type}
+    (flat middle : FlatSem.State C F) (trace : List VarN) (n : Nat) (next : NextIndices)
+    (compMap : Environment) (gen : EnvironmentGenerationStore) (location : Flapjack.Misc.Location.Locs)
+    (pattern : Pat) (expr : AstHOL.Exp) (error : ErrorResult FlatSem.Value)
+    (notAlias : simpleDlet pattern expr = none)
+    (expressionRun : FlatSem.evaluate ⟨[]⟩ flat
+      [compileExp ((AstHOL.patBindings pattern).reverse ++ trace) compMap expr] = (middle, .err error)) :
+    FlatSem.evaluateDecs flat (compileDecs trace n next compMap gen [.dlet location pattern expr]).2.2.2.2 =
+      (middle, some error) := by
+  have bound : middle.clock ≤ flat.clock := FlatSem.evaluate_clock_spec.1 _ _ _ _ _ expressionRun
+  simp only [compileDecs, notAlias]
+  simp [FlatSem.evaluateDecs, FlatSem.evaluate, expressionRun, FlatSem.fixClock, Nat.min_eq_right bound]
+
+/-- The expression induction hypothesis supplies related errors for a
+non-alias declaration with any source-safe pattern. -/
+theorem evaluateDlet_pattern_error {C F : Type} (genv : GlobalEnv)
+    (source sourceMiddle : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (sourceEnv : SemEnv Value) (trace : List VarN) (n : Nat) (next : NextIndices)
+    (compMap : Environment) (gen : EnvironmentGenerationStore) (location : Flapjack.Misc.Location.Locs)
+    (pattern : Pat) (expr : AstHOL.Exp) (error : ErrorResult Value)
+    (notAlias : simpleDlet pattern expr = none) (distinct : (AstHOL.patBindings pattern).Nodup)
+    (wellformed : AstHOL.everyExp (oneConCheck sourceEnv.c) expr = true)
+    (sourceRun : EvaluateHOL.evaluate source sourceEnv [expr] = (sourceMiddle, .err error))
+    (expressionSim : ExprSim genv compMap ((AstHOL.patBindings pattern).reverse ++ trace)
+      sourceEnv ⟨[]⟩ source flat expr) :
+    ∃ flatMiddle flatError,
+      EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] = (sourceMiddle, .err error) ∧
+      FlatSem.evaluateDecs flat (compileDecs trace n next compMap gen [.dlet location pattern expr]).2.2.2.2 =
+        (flatMiddle, some flatError) ∧
+      EvalResultRel genv (.err error) (.err flatError) ∧ StateRel genv sourceMiddle flatMiddle := by
+  unfold ExprSim at expressionSim
+  rw [sourceRun] at expressionSim
+  cases flatRun : FlatSem.evaluate ⟨[]⟩ flat
+      [compileExp ((AstHOL.patBindings pattern).reverse ++ trace) compMap expr] with
+  | mk flatMiddle flatResult =>
+    rw [flatRun] at expressionSim
+    obtain ⟨resultRel, states⟩ := expressionSim
+    cases resultRel with
+    | raise valueRel =>
+      refine ⟨flatMiddle, .raise _, ?_, ?_, .raise valueRel, states⟩
+      · simp [EvaluateHOL.evaluateDecs, distinct, wellformed, sourceRun]
+      · exact evaluateDlet_pattern_flat_error flat flatMiddle trace n next compMap gen location pattern expr _
+          notAlias flatRun
+    | abort kind =>
+      refine ⟨flatMiddle, .abort kind, ?_, ?_, .abort kind, states⟩
+      · simp [EvaluateHOL.evaluateDecs, distinct, wellformed, sourceRun]
+      · exact evaluateDlet_pattern_flat_error flat flatMiddle trace n next compMap gen location pattern expr _
+          notAlias flatRun
 
 /-- Successful evaluation and matching of a non-alias declaration pattern
 produce related source and flat declarations and the resulting global
