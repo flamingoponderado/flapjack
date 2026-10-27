@@ -98,6 +98,58 @@ theorem nsDomMod_append_preserved {M N V W : Type} [DecidableEq M]
     cases h1 : nsLookupMod first [moduleName] <;> cases h2 : nsLookupMod first' [moduleName] <;>
       simp_all
 
+/-- Pointwise lookup correspondence is preserved by namespace extension
+when the leading namespaces have the same value and module domains. -/
+theorem nsLookup_append_transfer {M N V W : Type} [DecidableEq M] [DecidableEq N]
+    (first second : Namespace M N V) (first' second' : Namespace M N W)
+    (firstDomain : nsDom first = nsDom first') (firstModules : nsDomMod first = nsDomMod first')
+    (id : Ident M N) (value : W) (rel : W → V → Prop)
+    (firstRelated : ∀ v, nsLookup first' id = some v →
+      ∃ w, nsLookup first id = some w ∧ rel v w)
+    (secondRelated : ∀ v, nsLookup second' id = some v →
+      ∃ w, nsLookup second id = some w ∧ rel v w)
+    (sourceLookup : nsLookup (nsAppend first' second') id = some value) :
+    ∃ w, nsLookup (nsAppend first second) id = some w ∧ rel value w := by
+  cases id with
+  | short name =>
+    rw [nsLookup_append_short] at sourceLookup ⊢
+    cases src : nsLookup first' (.short name) with
+    | some v =>
+      simp [src] at sourceLookup
+      subst v
+      obtain ⟨w, lookup, related⟩ := firstRelated value src
+      exact ⟨w, by simp [lookup], related⟩
+    | none =>
+      have firstNone : nsLookup first (.short name) = none := by
+        have h := congrFun firstDomain (.short name)
+        change (∃ v, nsLookup first (.short name) = some v) =
+          (∃ v, nsLookup first' (.short name) = some v) at h
+        cases found : nsLookup first (.short name) <;> simp_all
+      have sourceSecond : nsLookup second' (.short name) = some value := by simpa [src] using sourceLookup
+      obtain ⟨w, lookup, related⟩ := secondRelated value sourceSecond
+      exact ⟨w, by simp [firstNone, lookup], related⟩
+  | long moduleName rest =>
+    rw [nsLookup_append_long] at sourceLookup ⊢
+    have modules := congrFun firstModules [moduleName]
+    change (∃ v, nsLookupMod first [moduleName] = some v) =
+      (∃ v, nsLookupMod first' [moduleName] = some v) at modules
+    cases srcModule : nsLookupMod first' [moduleName] with
+    | none =>
+      have firstNone : nsLookupMod first [moduleName] = none := by
+        cases found : nsLookupMod first [moduleName] <;> simp_all
+      have sourceSecond : nsLookup second' (.long moduleName rest) = some value := by
+        simpa [srcModule] using sourceLookup
+      obtain ⟨w, lookup, related⟩ := secondRelated value sourceSecond
+      exact ⟨w, by simp [firstNone, lookup], related⟩
+    | some sourceModule =>
+      have firstSome : ∃ targetModule, nsLookupMod first [moduleName] = some targetModule := by
+        cases found : nsLookupMod first [moduleName] <;> simp_all
+      obtain ⟨targetModule, targetLookup⟩ := firstSome
+      have sourceFirst : nsLookup first' (.long moduleName rest) = some value := by
+        simpa [srcModule] using sourceLookup
+      obtain ⟨w, lookup, related⟩ := firstRelated value sourceFirst
+      exact ⟨w, by simp [targetLookup, lookup], related⟩
+
 /-- Extending compiler and source environments preserves their value,
 constructor, and module domains. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "env_domain_eq_append"]
@@ -109,5 +161,57 @@ theorem envDomainEq_append (first second : Environment) (sourceFirst sourceSecon
     nsDomMod_append_preserved _ _ _ _ vm1 vm2,
     nsDom_append_preserved _ _ _ _ c1 c2 cm1,
     nsDomMod_append_preserved _ _ _ _ cm1 cm2⟩
+
+/-- The factored global environment invariant composes across declaration
+extensions. This is untagged until the factored value and global relations
+have been reviewed as corresponding to their HOL inductive relations. -/
+theorem globalEnvInv_append_factored (genv : GlobalEnv)
+    (first second : Environment) (sourceFirst sourceSecond : SemEnv Value)
+    (domain : EnvDomainEq first sourceFirst)
+    (firstInv : GlobalEnvInv genv first (fun _ => False) sourceFirst)
+    (secondInv : GlobalEnvInv genv second (fun _ => False) sourceSecond) :
+    GlobalEnvInv genv (extendEnv first second) (fun _ => False)
+      (extendDecEnv sourceFirst sourceSecond) := by
+  obtain ⟨values1, constructors1⟩ := (globalEnvInv_iff genv first (fun _ => False) sourceFirst).mp firstInv
+  obtain ⟨values2, constructors2⟩ := (globalEnvInv_iff genv second (fun _ => False) sourceSecond).mp secondInv
+  obtain ⟨valueDomain, valueModules, constructorDomain, constructorModules⟩ := domain
+  apply GlobalEnvInv.intro
+  · intro id value _ sourceLookup
+    let valueRelation : Value → VarName → Prop := fun v name =>
+      ∃ n flat trace, name = .glob trace n ∧ n < genv.v.length ∧
+        genv.v[n]?.getD none = some flat ∧ ValueRel genv v flat
+    have left : ∀ v, nsLookup sourceFirst.v id = some v →
+        ∃ name, nsLookup first.v id = some name ∧ valueRelation v name := by
+      intro v lookup
+      obtain ⟨n, flat, trace, target, bound, slot, related⟩ := values1 id v (by simp) lookup
+      exact ⟨.glob trace n, target, n, flat, trace, rfl, bound, slot, related⟩
+    have right : ∀ v, nsLookup sourceSecond.v id = some v →
+        ∃ name, nsLookup second.v id = some name ∧ valueRelation v name := by
+      intro v lookup
+      obtain ⟨n, flat, trace, target, bound, slot, related⟩ := values2 id v (by simp) lookup
+      exact ⟨.glob trace n, target, n, flat, trace, rfl, bound, slot, related⟩
+    obtain ⟨name, lookup, n, flat, trace, nameEq, bound, slot, related⟩ :=
+      nsLookup_append_transfer first.v second.v sourceFirst.v sourceSecond.v
+        valueDomain valueModules id value valueRelation left right sourceLookup
+    subst name
+    exact .intro _ _ _ _ n flat trace lookup bound slot related
+  · intro id arity stamp sourceLookup
+    let constructorRelation : (Nat × Stamp) → (Nat × Option (Nat × List (Nat × Nat))) → Prop :=
+      fun source target => genv.c.lookup ((target.1, target.2.map Prod.fst), source.1) = some source.2 ∧
+        ∀ tyId ctors, target.2 = some (tyId, ctors) → genv.tys.lookup tyId = some ctors
+    have left : ∀ v, nsLookup sourceFirst.c id = some v →
+        ∃ c, nsLookup first.c id = some c ∧ constructorRelation v c := by
+      rintro ⟨arity, stamp⟩ lookup
+      obtain ⟨cn, group, target, mapped, types⟩ := constructors1 id arity stamp lookup
+      exact ⟨(cn, group), target, mapped, types⟩
+    have right : ∀ v, nsLookup sourceSecond.c id = some v →
+        ∃ c, nsLookup second.c id = some c ∧ constructorRelation v c := by
+      rintro ⟨arity, stamp⟩ lookup
+      obtain ⟨cn, group, target, mapped, types⟩ := constructors2 id arity stamp lookup
+      exact ⟨(cn, group), target, mapped, types⟩
+    obtain ⟨⟨cn, group⟩, lookup, mapped, types⟩ :=
+      nsLookup_append_transfer first.c second.c sourceFirst.c sourceSecond.c
+        constructorDomain constructorModules id (arity, stamp) constructorRelation left right sourceLookup
+    exact ⟨cn, group, lookup, mapped, types⟩
 
 end Flapjack.Compiler.Backend.SourceToFlat
