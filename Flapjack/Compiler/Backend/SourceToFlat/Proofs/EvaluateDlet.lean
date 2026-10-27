@@ -994,6 +994,215 @@ theorem evaluateDlet_safe_with_effects {C F : Type} [Nonempty C]
     by simpa [compileDlet_generationStore] using
       dlet_effects_of_expression interp gen source sourceEnv location pattern expr expressionEffects⟩
 
+/-- Expression induction hypothesis allowing the global environment to grow.
+The growth and oracle postconditions are required only for non-abort results,
+as in the original correctness theorem. The factored relations still need
+HOL correspondence review. -/
+def DletExpressionStep {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F) (sourceEnv : SemEnv Value)
+    (trace : List VarN) (compMap : Environment) (gen : EnvironmentGenerationStore) (expr : AstHOL.Exp) : Prop :=
+  let result := EvaluateHOL.evaluate source sourceEnv [expr]
+  let flatResult := FlatSem.evaluate ⟨[]⟩ flat [compileExp trace compMap expr]
+  ∃ nextGenv, ExprSim nextGenv compMap trace sourceEnv ⟨[]⟩ source flat expr ∧
+    match result.2 with
+    | .err (.abort _) => True
+    | _ => GlobalGrowth genv nextGenv ∧
+        factoredInvariant interp transform gen nextGenv (start, finish, other) result.1 flatResult.1 ∧
+        envGenRel gen result.1.evalState ∧ oracForwardRel interp source.evalState result.1.evalState
+
+/-- Declaration outcome with the original abort-sensitive growth condition.
+This remains factored infrastructure until the carrier and evaluator
+relations are reviewed against HOL. -/
+def DletOutcomeGrowing {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F) (sourceEnv : SemEnv Value)
+    (trace : List VarN) (n : Nat) (compMap : Environment) (gen : EnvironmentGenerationStore)
+    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp) : Prop :=
+  let result := EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr]
+  let compiled := compileDecs trace n start compMap gen [.dlet location pattern expr]
+  ∃ flatLast nextGenv flatError,
+    FlatSem.evaluateDecs flat compiled.2.2.2.2 = (flatLast, flatError) ∧
+    StateRel nextGenv result.1 flatLast ∧
+    match result.2 with
+    | .val env => flatError = none ∧ EnvDomainEq compiled.2.2.1 env ∧
+        GlobalEnvInv nextGenv compiled.2.2.1 (fun _ => False) env ∧ GlobalGrowth genv nextGenv ∧
+        factoredInvariant interp transform compiled.2.2.2.1 nextGenv (compiled.2.1, finish, other) result.1 flatLast ∧
+        envGenRel compiled.2.2.2.1 result.1.evalState ∧ oracForwardRel interp source.evalState result.1.evalState
+    | .err error => ∃ flatErr, flatError = some flatErr ∧ EvalResultRel nextGenv (.err error) (.err flatErr) ∧
+        match error with
+        | .abort _ => True
+        | .raise _ => GlobalGrowth genv nextGenv ∧
+            factoredInvariant interp transform gen nextGenv (start, finish, other) result.1 flatLast ∧
+            envGenRel gen result.1.evalState ∧ oracForwardRel interp source.evalState result.1.evalState
+
+/-- A fixed-global declaration result and its oracle effects can be weakened
+from an earlier global environment. -/
+theorem DletOutcome.toGrowing {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (old middle : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F) (sourceEnv : SemEnv Value)
+    (trace : List VarN) (n : Nat) (compMap : Environment) (gen : EnvironmentGenerationStore)
+    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp)
+    (growth : GlobalGrowth old middle)
+    (outcome : DletOutcome interp transform middle start finish other source flat sourceEnv trace n compMap gen
+      location pattern expr)
+    (effects : let result := EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr]
+      match result.2 with
+      | .err (.abort _) => True
+      | _ => envGenRel gen result.1.evalState ∧ oracForwardRel interp source.evalState result.1.evalState) :
+    DletOutcomeGrowing interp transform old start finish other source flat sourceEnv trace n compMap gen
+      location pattern expr := by
+  unfold DletOutcome at outcome
+  unfold DletOutcomeGrowing
+  obtain ⟨flatLast, nextGenv, flatError, run, states, nextGrowth, post⟩ := outcome
+  refine ⟨flatLast, nextGenv, flatError, run, states, ?_⟩
+  cases sourceRun : EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] with
+  | mk sourceLast result =>
+    rw [sourceRun] at post effects
+    cases result with
+    | val env =>
+      obtain ⟨noError, domain, envInv, invariant⟩ := post
+      exact ⟨noError, domain, envInv, growth.trans nextGrowth, invariant,
+        by simpa [compileDlet_generationStore] using effects.1, effects.2⟩
+    | err error =>
+      obtain ⟨flatErr, isError, related, rest⟩ := post
+      refine ⟨flatErr, isError, related, ?_⟩
+      cases error with
+      | abort kind => trivial
+      | raise value => exact ⟨growth.trans nextGrowth, rest, effects.1, effects.2⟩
+
+/-- Simulate a non-alias `Dlet` when its expression may grow the global
+environment. The abort branch does not assume global growth; successful and
+raised branches compose the expression's growth with declaration allocation. -/
+theorem evaluateDlet_pattern_growing {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F) (sourceEnv : SemEnv Value)
+    (trace : List VarN) (n : Nat) (compMap : Environment) (gen : EnvironmentGenerationStore)
+    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp)
+    (notAlias : simpleDlet pattern expr = none)
+    (safe : ∀ next, EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] ≠
+      (next, .err (.abort .typeError)))
+    (envInv : GlobalEnvInv genv compMap (fun _ => False) sourceEnv)
+    (expressionStep : DletExpressionStep interp transform genv start finish other source flat sourceEnv
+      ((AstHOL.patBindings pattern).reverse ++ trace) compMap gen expr)
+    (fits : start.vidx + (AstHOL.patBindings pattern).length ≤ finish.vidx) :
+    DletOutcomeGrowing interp transform genv start finish other source flat sourceEnv trace n compMap gen
+      location pattern expr := by
+  obtain ⟨distinct, wellformed⟩ := dlet_conditions_of_safe source sourceEnv location pattern expr safe
+  unfold DletExpressionStep at expressionStep
+  obtain ⟨middleGenv, expressionSim, expressionPost⟩ := expressionStep
+  cases sourceRun : EvaluateHOL.evaluate source sourceEnv [expr] with
+  | mk sourceMiddle result =>
+    rw [sourceRun] at expressionPost
+    by_cases aborted : ∃ kind, result = .err (.abort kind)
+    · obtain ⟨kind, rfl⟩ := aborted
+      obtain ⟨flatMiddle, flatError, sourceDec, flatDec, errors, states⟩ :=
+        evaluateDlet_pattern_error middleGenv source sourceMiddle flat sourceEnv trace n start compMap gen
+          location pattern expr (.abort kind) notAlias distinct wellformed sourceRun expressionSim
+      unfold DletOutcomeGrowing
+      rw [sourceDec]
+      exact ⟨flatMiddle, middleGenv, some flatError, flatDec, states, flatError, rfl, errors, trivial⟩
+    · have growth : GlobalGrowth genv middleGenv := by
+        cases result with
+        | val values => exact expressionPost.1
+        | err error =>
+          cases error with
+          | abort kind => exact (aborted ⟨kind, rfl⟩).elim
+          | raise value => exact expressionPost.1
+      have postInvariant :
+          let result := EvaluateHOL.evaluate source sourceEnv [expr]
+          let flatResult := FlatSem.evaluate ⟨[]⟩ flat
+            [compileExp ((AstHOL.patBindings pattern).reverse ++ trace) compMap expr]
+          match result.2 with
+          | .err (.abort _) => True
+          | _ => factoredInvariant interp transform gen middleGenv (start, finish, other) result.1 flatResult.1 := by
+        rw [sourceRun]
+        cases result with
+        | val values => exact expressionPost.2.1
+        | err error =>
+          cases error with
+          | abort kind => trivial
+          | raise value => exact expressionPost.2.1
+      have expressionEffects :
+          let result := EvaluateHOL.evaluate source sourceEnv [expr]
+          match result.2 with
+          | .err (.abort _) => True
+          | _ => envGenRel gen result.1.evalState ∧ oracForwardRel interp source.evalState result.1.evalState := by
+        rw [sourceRun]
+        cases result with
+        | val values => exact expressionPost.2.2
+        | err error =>
+          cases error with
+          | abort kind => trivial
+          | raise value => exact expressionPost.2.2
+      have envInv' := globalEnvInv_growth genv middleGenv growth compMap (fun _ => False) sourceEnv envInv
+      have outcome := evaluateDlet_pattern_cases interp transform middleGenv start finish other source flat sourceEnv
+        trace n compMap gen location pattern expr notAlias safe envInv' expressionSim postInvariant fits
+      exact DletOutcome.toGrowing interp transform genv middleGenv start finish other source flat sourceEnv trace n
+        compMap gen location pattern expr growth outcome
+        (dlet_effects_of_expression interp gen source sourceEnv location pattern expr expressionEffects)
+
+/-- The optimized alias case preserves its original generation and oracle
+relations because evaluating the source variable leaves the state unchanged. -/
+theorem evaluateDlet_alias_growing {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F) (sourceEnv : SemEnv Value)
+    (trace : List VarN) (n : Nat) (compMap : Environment) (gen : EnvironmentGenerationStore)
+    (location : Flapjack.Misc.Location.Locs) (name : VarN) (id : Ident ModN VarN)
+    (safe : ∀ next, EvaluateHOL.evaluateDecs source sourceEnv [.dlet location (.pvar name) (.var id)] ≠
+      (next, .err (.abort .typeError)))
+    (envInv : GlobalEnvInv genv compMap (fun _ => False) sourceEnv)
+    (invariant : factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (generation : envGenRel gen source.evalState) :
+    DletOutcomeGrowing interp transform genv start finish other source flat sourceEnv trace n compMap gen
+      location (.pvar name) (.var id) := by
+  obtain ⟨value, lookup⟩ := dlet_alias_lookup_of_safe source sourceEnv location name id safe
+  have effects : let result := EvaluateHOL.evaluate source sourceEnv [.var id]
+      match result.2 with
+      | .err (.abort _) => True
+      | _ => envGenRel gen result.1.evalState ∧ oracForwardRel interp source.evalState result.1.evalState := by
+    simpa [EvaluateHOL.evaluate, lookup] using ⟨generation, oracForwardRel_refl interp source.evalState⟩
+  exact DletOutcome.toGrowing interp transform genv genv start finish other source flat sourceEnv trace n compMap gen
+    location (.pvar name) (.var id) (GlobalGrowth.refl genv)
+    (evaluateDlet_alias_outcome interp transform genv start finish other source flat sourceEnv trace n compMap gen
+      location name id safe envInv invariant)
+    (dlet_effects_of_expression interp gen source sourceEnv location (.pvar name) (.var id) effects)
+
+/-- A source-safe `Dlet` satisfies the abort-sensitive growing declaration
+outcome from the expression induction hypothesis, for both alias and general
+pattern compilation. It remains untagged until its factored relations and
+evaluator carriers are reviewed against the full HOL theorem. -/
+theorem evaluateDlet_growing {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F) (sourceEnv : SemEnv Value)
+    (trace : List VarN) (n : Nat) (compMap : Environment) (gen : EnvironmentGenerationStore)
+    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp)
+    (safe : ∀ next, EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] ≠
+      (next, .err (.abort .typeError)))
+    (envInv : GlobalEnvInv genv compMap (fun _ => False) sourceEnv)
+    (invariant : factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (generation : envGenRel gen source.evalState)
+    (expressionStep : DletExpressionStep interp transform genv start finish other source flat sourceEnv
+      ((AstHOL.patBindings pattern).reverse ++ trace) compMap gen expr)
+    (fits : start.vidx + (match simpleDlet pattern expr with
+      | some _ => 0 | none => (AstHOL.patBindings pattern).length) ≤ finish.vidx) :
+    DletOutcomeGrowing interp transform genv start finish other source flat sourceEnv trace n compMap gen
+      location pattern expr := by
+  cases aliasEq : simpleDlet pattern expr with
+  | none =>
+    exact evaluateDlet_pattern_growing interp transform genv start finish other source flat sourceEnv trace n
+      compMap gen location pattern expr aliasEq safe envInv expressionStep (by simpa [aliasEq] using fits)
+  | some found =>
+    obtain ⟨name, id, rfl, rfl⟩ := simpleDlet_some_shape pattern expr found aliasEq
+    exact evaluateDlet_alias_growing interp transform genv start finish other source flat sourceEnv trace n compMap gen
+      location name id safe envInv invariant generation
+
 /-- A literal declaration initializes its reserved flat global slot. -/
 theorem evaluateDlet_literal_flat {C F : Type} (flat : FlatSem.State C F)
     (trace : List VarN) (n : Nat) (next : NextIndices) (compMap : Environment)
