@@ -308,3 +308,12 @@ val byte_shifts_word = EVAL ``
    wordLang$Shift ast$Lsr (wordLang$Shift ast$Lsl (wordLang$Var 4) (wordLang$Const 62w)) (wordLang$Const 54w)]), 2)``;
 val _ = (print "data_to_word_byte_shifts="; print_term (rhs (concl (CONV_RULE
   (RAND_CONV (SIMP_CONV (srw_ss()) [wordsTheory.dimindex_64, wordsTheory.dimword_def] THENC EVAL)) byte_shifts_word))); print "\n");
+val _ = capture "bvl_to_bvi_stubs" ``
+ MAP (\(loc,arity,exp). (loc,arity)) (bvl_to_bvi$stubs 7 0) =
+ [(62,1); (63,3); (64,0); (65,2); (66,3); (67,3); (68,2); (69,3)] /\
+ bvl_to_bvi$InitGlobals_code 7 10001 = (0,
+  bvi$Let [bvi$Op (closLang$MemOp closLang$RefArray) [bvi$Op (closLang$IntOp (closLang$Const 0)) []; bvi$Op (closLang$IntOp (closLang$Const 10000)) []]]
+   (bvi$Let [bvi$Op (closLang$MemOp closLang$Update) [bvi$Op (closLang$IntOp (closLang$Const 1)) []; bvi$Op (closLang$IntOp (closLang$Const 0)) []; bvi$Var 0]]
+    (bvi$Let [bvi$Op (closLang$GlobOp closLang$SetGlobalsPtr) [bvi$Var 1]] (bvi$Call 0 (SOME 7) [] (SOME (bvi$Var 0))))))``;
+val _ = capture "bvl_to_bvi_whole_program" ``bvl_to_bvi$compile_prog 5 0 [(5, 1, bvl$Var 0)] =
+ (64, bvl_to_bvi$stubs 92 0 ++ [(92, 1, bvi$Var 0)], 0)``;

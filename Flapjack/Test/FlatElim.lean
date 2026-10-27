@@ -10,6 +10,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.ExtractName
 import Flapjack.Compiler.Backend.ClosToBvl.Compile
 import Flapjack.Compiler.Backend.BvlToBvi.Analysis
 import Flapjack.Compiler.Backend.BvlToBvi.CompileOp
+import Flapjack.Compiler.Backend.BvlToBvi.Stubs
 import Flapjack.Compiler.Backend.BviLet.Compile
 import Flapjack.Compiler.Backend.BvlToBvi.Compile
 import Flapjack.Compiler.Backend.DataLang.Syntax
@@ -401,6 +402,19 @@ example : Flapjack.Compiler.Backend.BvlToBvi.compileOp (.memOp (.copyByte true))
       (.let [.op (.memOp (.refByte true)) [.op (.intOp (.const 0)) [], .var 0]]
         (.let [.op (.memOp (.copyByte false)) [.op (.intOp (.const 0)) [], .var 0, .var 1, .var 2, .var 3]] (.var 1))) := rfl
 #guard bvl_to_bvi_operations
+#guard (Flapjack.Compiler.Backend.BvlToBvi.stubs 7 0).map (fun (loc, arity, _) => (loc, arity)) ==
+  [(62, 1), (63, 3), (64, 0), (65, 2), (66, 3), (67, 3), (68, 2), (69, 3)]
+example : Flapjack.Compiler.Backend.BvlToBvi.initGlobalsCode 7 10001 =
+    (0, .let [.op (.memOp .refArray) [.op (.intOp (.const 0)) [], .op (.intOp (.const 10000)) []]]
+      (.let [.op (.memOp .update) [.op (.intOp (.const 1)) [], .op (.intOp (.const 0)) [], .var 0]]
+        (.let [.op (.globOp .setGlobalsPtr) [.var 1]] (.call 0 (some 7) [] (some (.var 0)))))) := rfl
+#guard bvl_to_bvi_stubs
+#guard match Flapjack.Compiler.Backend.BvlToBvi.compileProgFuel 10 10 5 0 [(5, 1, .var 0)] with
+  | some (64, code, 0) => code.length == 9 && match code[8]? with
+      | some (92, 1, Flapjack.Compiler.Backend.Bvi.Exp.var 0) => true
+      | _ => false
+  | _ => false
+#guard bvl_to_bvi_whole_program
 example : Flapjack.Compiler.Backend.BviLet.extractList
     [.var 2, .op (.intOp (.const 7)) []] = [4, 0] := rfl
 example : Flapjack.Compiler.Backend.BviLet.compileFuel 5 [] 0

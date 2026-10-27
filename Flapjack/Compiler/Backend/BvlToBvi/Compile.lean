@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.BvlToBvi.CompileOp
+import Flapjack.Compiler.Backend.BvlToBvi.Stubs
 import Flapjack.Compiler.Backend.BviLet.Compile
 
 /-! Checked BVL-to-BVI expression conversion. -/
@@ -92,5 +93,14 @@ def compileIncFuel (fuel optFuel n : Nat) (prog : List (Nat × Nat × Bvl.Exp)) 
     Option (Nat × List (Nat × Nat × Bvi.Exp)) := do
   let (code, n) ← compileProgramsFuel fuel optFuel n prog
   pure (n, code)
+
+/-- Checked whole-program lowering, including the original stub order and
+global-allocation count. Fuel and the flattened auxiliary carrier retain the
+limitations of `compileFuel`. -/
+def compileProgFuel (fuel optFuel start n : Nat) (prog : List (Nat × Nat × Bvl.Exp)) :
+    Option (Nat × List (Nat × Nat × Bvi.Exp) × Nat) := do
+  let count := globalCountList (prog.map (fun (_, _, exp) => exp))
+  let (code, n) ← compileProgramsFuel fuel optFuel n prog
+  pure (initGlobalsLocation, stubs (bvlNumStubs + bvlToBviNamespaces * start) count ++ code, n)
 
 end Flapjack.Compiler.Backend.BvlToBvi
