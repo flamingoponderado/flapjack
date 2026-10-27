@@ -11,7 +11,8 @@ open Flapjack.Basis.Pure.MlString Flapjack.NamespaceHOL Flapjack.AstHOL
 open Flapjack.Compiler.Inference.Unify
 
 inductive Error where
-  | exhausted | unsupported | mismatch | undefinedName | invalidPattern | valueRestriction | envDeclaration
+  | exhausted | unsupported | mismatch | undefinedName | valueRestriction | envDeclaration
+  | floatPattern | emptyCase | emptyHandle
   | unsafeOperation | thunkOperation | primitiveTypeMismatch
   | primitiveArity : String → Nat → Nat → Error
   | typeMismatch : InferT → InferT → Error
@@ -59,6 +60,9 @@ private def typeNamesFuel : Nat → MlString → Namespace MlString MlString
 private def withLoc (loc : Flapjack.Misc.Location.Locs) (env : Env) (action : M α) : M α := fun state =>
   match action state with
   | .error .valueRestriction => .error (.located loc .valueRestriction)
+  | .error .floatPattern => .error (.located loc .floatPattern)
+  | .error .emptyCase => .error (.located loc .emptyCase)
+  | .error .emptyHandle => .error (.located loc .emptyHandle)
   | .error .unsafeOperation => .error (.located loc .unsafeOperation)
   | .error .thunkOperation => .error (.located loc .thunkOperation)
   | .error .primitiveTypeMismatch => .error (.located loc .primitiveTypeMismatch)
@@ -178,7 +182,7 @@ private def inferPatWorker : Nat → Nat → Env → Pat → M (InferT × List (
     match p with
     | .pvar v => let t ← fresh; return (t, [(v, t)])
     | .pany => let t ← fresh; return (t, [])
-    | .plit (.float64 _) => fail .invalidPattern
+    | .plit (.float64 _) => fail .floatPattern
     | .plit lit => match litType lit with
       | some t => return (t, [])
       | none => fail .unsupported
@@ -421,12 +425,12 @@ private def inferExprWorker : Nat → Nat → Env → Exp → M InferT
       constrain unifFuel t (.app [] 3)
       fresh
     | .handle e clauses =>
-      if clauses.isEmpty then fail .invalidPattern else
+      if clauses.isEmpty then fail .emptyHandle else
       let t ← inferExprWorker fuel unifFuel env e
       inferClausesWorker fuel unifFuel env clauses (.app [] 3) t
       return t
     | .mat e clauses =>
-      if clauses.isEmpty then fail .invalidPattern else
+      if clauses.isEmpty then fail .emptyCase else
       let t ← inferExprWorker fuel unifFuel env e
       let result ← fresh
       inferClausesWorker fuel unifFuel env clauses t result

@@ -50,7 +50,16 @@ DENV_TYPE_ERRORS = [
     '((Denv "first") (Dlet (unk unk) "x" (Var (Short "missing"))))',
     '((Dlet (unk unk) "x" (Var (Short "missing"))) (Denv "later"))',
 ]
-TYPE_ERRORS = DENV_TYPE_ERRORS + [
+PATTERN_TYPE_ERRORS = [
+    '((Dlet (unk unk) (Plit (float64 0)) (Lit (float64 0))))',
+    '((Dlet ((0 0) (0 4)) (Plit (float64 0)) (Lit (float64 0))))',
+    '((Dlet (unk unk) "x" (Mat (Var (Short "missing")) nil)))',
+    '((Dlet ((0 0) (0 1)) "x" (Lannot (Mat (Lit 1) nil) ((0 3) (0 7)))))',
+    '((Dlet (unk unk) "x" (Handle (Var (Short "missing")) nil)))',
+    '((Dlet ((0 0) (0 1)) "x" (Lannot (Handle (Lit 1) nil) ((0 3) (0 7)))))',
+    '((Dlet (unk unk) (Plit (float64 0)) (Var (Short "missing"))))',
+]
+TYPE_ERRORS = DENV_TYPE_ERRORS + PATTERN_TYPE_ERRORS + [
     '((Dlet (unk unk) "x" (Var (Short "missing"))))',
     '((Dlet ((0 0) (0 1)) "x" (Var (Short "missing"))))',
     '((Dlet (unk unk) "x" (If (Lit 1) (Lit 2) (Lit 3))))',
@@ -176,10 +185,10 @@ def main():
         for executable in ([args.check_reference, args.cake] if args.check_reference else [args.cake]):
             if capture(executable, source.encode('ascii'), flags['types']) != want:
                 raise SystemExit(f'type-error input {i}: output differs for {executable}')
-            if source in DENV_TYPE_ERRORS:
+            if source in DENV_TYPE_ERRORS + PATTERN_TYPE_ERRORS:
                 for extra in (['--sexp=true', '--target=riscv'], ['--sexp=true', '--print_sexp']):
                     if capture(executable, source.encode('ascii'), extra) != want:
-                        raise SystemExit(f'Denv type-error input {i}/{extra}: output differs for {executable}')
+                        raise SystemExit(f'type-error input {i}/{extra}: output differs for {executable}')
     print('S-expression type-error diagnostics match pinned CakeML')
     for name, source in STRESS_INPUTS.items():
         for executable in ([args.check_reference, args.cake] if args.check_reference else [args.cake]):

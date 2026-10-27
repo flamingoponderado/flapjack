@@ -455,6 +455,10 @@ def main (args : List String) : IO UInt32 := do
         let stderr ← IO.getStderr
         stderr.write (ByteArray.mk (bytes.map (fun b => UInt8.ofNat b.toNat)).toArray)
         return 1
+      if let some bytes := Flapjack.Compiler.Inference.Infer.Diagnostics.renderPatternError chars error then
+        let stderr ← IO.getStderr
+        stderr.write (ByteArray.mk (bytes.map (fun b => UInt8.ofNat b.toNat)).toArray)
+        return 1
       if let some bytes := Flapjack.Compiler.Inference.Infer.Diagnostics.renderUnsupportedPrimitive chars error then
         let stderr ← IO.getStderr
         stderr.write (ByteArray.mk (bytes.map (fun b => UInt8.ofNat b.toNat)).toArray)

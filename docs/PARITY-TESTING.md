@@ -470,7 +470,8 @@ malformed inputs are also checked. Pass `--check-reference /path/to/pinned/cake`
 to rerun both original export and compilation, or `--record-reference` to
 regenerate the captures. The suite also checks type-error diagnostics and
 the original unsupported-`Denv` diagnostic, including nested declarations,
-error precedence, and type, assembly, and S-expression output modes. It checks
+float-pattern and empty-match diagnostics, error precedence, and type, assembly,
+and S-expression output modes. It checks
 large inputs with 20,000 declarations and a 100,000-byte name. To compare a
 complete exported compiler AST, add `--bootstrap-sexp /path/to/compiler.sexpr`
 alongside `--check-reference`; this compares type-reporting output with type

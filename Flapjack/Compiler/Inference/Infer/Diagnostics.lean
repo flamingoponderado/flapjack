@@ -157,6 +157,20 @@ def renderUnsupportedDeclaration : Error → Option (List HolChar)
   | .envDeclaration => some (ascii "### ERROR: type error\nEnv declaration (Denv) is not supported. at unknown location\nProgram exited with nonzero exit code.\n")
   | _ => none
 
+/-- Render rejected float patterns and empty case/handler rows at the current
+inference location, as in the original inference pass. -/
+def renderPatternError (input : List HolChar) (error : Error) : Option (List HolChar) := do
+  let (loc, error) := match error with
+    | .located loc error => (some loc, error)
+    | error => (none, error)
+  let message ← match error with
+    | .floatPattern => some "Floats cannot be used in patterns"
+    | .emptyCase => some "No patterns in case"
+    | .emptyHandle => some "No patterns in handle"
+    | _ => none
+  some (ascii "### ERROR: type error\n" ++ ascii message ++ ascii " at " ++
+    sourceLocation input loc ++ ascii "\nProgram exited with nonzero exit code.\n")
+
 /-- Render the value restriction at the declaration location. -/
 def renderValueRestriction (input : List HolChar) : Error → Option (List HolChar)
   | .located loc .valueRestriction => some (ascii "### ERROR: type error\nValue restriction violated at " ++
