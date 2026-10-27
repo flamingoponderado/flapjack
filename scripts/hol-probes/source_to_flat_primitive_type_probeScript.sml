@@ -23,6 +23,9 @@ val _ = show_thm "bind_exn_typed=" flatSemTheory.bind_exn_v_def;
 val _ = show_thm "chr_exn_typed=" flatSemTheory.chr_exn_v_def;
 val _ = show_thm "div_exn_typed=" flatSemTheory.div_exn_v_def;
 val _ = show_thm "subscript_exn_typed=" flatSemTheory.subscript_exn_v_def;
+val _ = show_thm "do_if_typed=" flatSemTheory.do_if_def;
+val _ = show_thm "do_if_either_or_typed=" flatSemTheory.do_if_either_or;
+val _ = show_thm "boolean_relation_typed=" source_to_flatProofTheory.v_rel_Bool_eqn;
 val local_eqns =
   [``source_to_flatProof$v_rel genv (Litv l) v``, ``source_to_flatProof$v_rel genv (Conv cn vs) v``,
    ``source_to_flatProof$v_rel genv (Loc b l) v``, ``source_to_flatProof$v_rel genv (Vectorv vs) v``,
@@ -59,3 +62,6 @@ val _ = show_eval "to_flat_true=" ``flatSem$v_to_flat (semanticPrimitives$Boolv 
 val _ = show_eval "to_flat_other=" ``flatSem$v_to_flat (semanticPrimitives$Loc T 4)``;
 val _ = show_eval "from_flat_false=" ``flatSem$flat_to_v (flatSem$Boolv F)``;
 val _ = show_eval "from_flat_other=" ``flatSem$flat_to_v (flatSem$Loc T 4)``;
+val _ = show_eval "if_true=" ``flatSem$do_if (flatSem$Boolv T) (3 :num) 4``;
+val _ = show_eval "if_false=" ``flatSem$do_if (flatSem$Boolv F) (3 :num) 4``;
+val _ = show_eval "if_non_bool=" ``flatSem$do_if (flatSem$Litv (IntLit 1)) (3 :num) 4``;

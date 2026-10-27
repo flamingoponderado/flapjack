@@ -143,6 +143,40 @@ theorem boolValue_related (genv : GlobalEnv) (ok : genvCOk genv.c) (b : Bool) :
   · simpa [SemanticPrimitivesHOL.boolValue, FlatSem.boolValue, boolToTag, boolTypeNum] using ok.1.2
   · simpa [SemanticPrimitivesHOL.boolValue, FlatSem.boolValue, boolToTag, boolTypeNum] using ok.1.1
 
+/-- A source Boolean relates to exactly its corresponding flat Boolean. This
+is infrastructure over the factored value relation. -/
+theorem boolValueRel_iff (genv : GlobalEnv) (ok : genvCOk genv.c) (b : Bool) (flat : FlatSem.Value) :
+    ValueRel genv (SemanticPrimitivesHOL.boolValue b) flat ↔ flat = FlatSem.boolValue b := by
+  constructor
+  · intro rel
+    cases b <;> simp only [SemanticPrimitivesHOL.boolValue, boolTypeNum] at rel
+    all_goals
+      obtain ⟨flats, ctor, fields, rfl, flatCtor, rfl, lookup⟩ :=
+        (valueRel_conv_iff genv _ _ flat).mp rel
+      cases fields
+    · have key := ok.2.2.2.2 flatCtor (falseTag, some FlatLang.boolId) 0 0
+        (.typeStamp (ofString "False") 0) lookup (by simpa [boolTypeNum] using ok.1.2)
+      rcases key with ⟨rfl, _⟩
+      rfl
+    · have key := ok.2.2.2.2 flatCtor (trueTag, some FlatLang.boolId) 0 0
+        (.typeStamp (ofString "True") 0) lookup (by simpa [boolTypeNum] using ok.1.1)
+      rcases key with ⟨rfl, _⟩
+      rfl
+  · intro h
+    subst flat
+    exact boolValue_related genv ok b
+
+/-- Successful source conditional selection agrees with the related flat
+value. This is infrastructure over the factored value relation. -/
+theorem doIf_related {α : Type} (genv : GlobalEnv) (ok : genvCOk genv.c)
+    (source : SemanticPrimitivesHOL.Value) (flat : FlatSem.Value) (yes no result : α)
+    (rel : ValueRel genv source flat) (evaluated : SemanticPrimitivesHOL.doIf source yes no = some result) :
+    FlatSem.doIf flat yes no = some result := by
+  obtain ⟨b, rfl, hresult⟩ := SemanticPrimitivesHOL.doIf_success_boolean source yes no result evaluated
+  have hflat := (boolValueRel_iff genv ok b flat).mp rel
+  subst flat
+  cases b <;> simp_all [FlatSem.doIf, FlatSem.boolValue, boolToTag, trueTag, falseTag, FlatLang.boolId]
+
 /-- Related original exception constructors under the constructor-map assumptions.
 This is infrastructure over the factored relation. -/
 theorem exceptionValues_related (genv : GlobalEnv) (ok : genvCOk genv.c) :

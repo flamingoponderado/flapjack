@@ -10,6 +10,9 @@ bind_exn_typed=bind_exn_v = Conv (SOME (bind_tag,(NONE :num option))) ([] :v lis
 chr_exn_typed=chr_exn_v = Conv (SOME (chr_tag,(NONE :num option))) ([] :v list)
 div_exn_typed=div_exn_v = Conv (SOME (div_tag,(NONE :num option))) ([] :v list)
 subscript_exn_typed=subscript_exn_v = Conv (SOME (subscript_tag,(NONE :num option))) ([] :v list)
+do_if_typed=∀(v :v) (e1 :α) (e2 :α). do_if v e1 e2 = if v = (Boolv T :v) then SOME e1 else if v = (Boolv F :v) then SOME e2 else (NONE :α option)
+do_if_either_or_typed=do_if (v :v) (e1 :α) (e2 :α) = SOME (e :α) ⇒ e = e1 ∨ e = e2
+boolean_relation_typed=genv_c_ok (genv :global_env).c ⇒ ((v_rel genv (Boolv (b :bool) :semanticPrimitives$v) (v :v) :bool) ⇔ v = (Boolv b :v))
 values_rel_typed=∀(genv :global_env). genv_c_ok genv.c ⇒ (∀(b :bool). (v_rel genv (Boolv b :semanticPrimitives$v) (Boolv b :v) :bool)) ∧ (v_rel genv div_exn_v div_exn_v :bool) ∧ (v_rel genv chr_exn_v chr_exn_v :bool) ∧ (v_rel genv bind_exn_v bind_exn_v :bool) ∧ (v_rel genv sub_exn_v subscript_exn_v :bool)
 true_bool=T
 false_bool=T
@@ -24,3 +27,6 @@ to_flat_true=Conv (SOME (1,SOME 0)) []
 to_flat_other=Vectorv []
 from_flat_false=Conv (SOME (TypeStamp «False» 0)) []
 from_flat_other=Vectorv []
+if_true=SOME 3
+if_false=SOME 4
+if_non_bool=NONE

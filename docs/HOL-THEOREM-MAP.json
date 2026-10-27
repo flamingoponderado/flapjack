@@ -105260,5 +105260,21 @@
       "genvC"
     ],
     "reviewer": "Codex source comparison: retains the original constructor-map invariant, two lookup hypotheses, same source type, equal flat constructor IDs and equal arities, concluding same source constructor. The finite-map input has a same-module lookup/support codec roundtrip; the fully typed original theorem is in source_to_flat_global_env_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_if_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Primitives.lean",
+    "lean_name": "doIf",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: The full flat value must be one of the two nullary Boolean constructors; True returns the first polymorphic branch, False returns the second, and all other values return none. Typed original declarations and example outcomes are in source_to_flat_primitive_type_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_if_either_or",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Primitives.lean",
+    "lean_name": "doIf_either_or",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: The original single successful-selection equation implies that the selected value equals the first or the second arbitrary branch; no extra premises are added. Typed original declarations and example outcomes are in source_to_flat_primitive_type_probe."
   }
 ]

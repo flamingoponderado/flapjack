@@ -21,4 +21,7 @@ example : bindExnV = .conv (some (0, none)) [] := by rfl
 example : chrExnV = .conv (some (1, none)) [] := by rfl
 example : divExnV = .conv (some (2, none)) [] := by rfl
 example : subscriptExnV = .conv (some (3, none)) [] := by rfl
+example : doIf (boolValue true) (3 : Nat) 4 = some 3 := by rfl
+example : doIf (boolValue false) (3 : Nat) 4 = some 4 := by rfl
+example : doIf (.litv (.intLit 1)) (3 : Nat) 4 = none := by rfl
 end Flapjack.Test.CakeFlatSemPrimitiveParity

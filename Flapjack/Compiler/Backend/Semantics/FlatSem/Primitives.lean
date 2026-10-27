@@ -61,4 +61,36 @@ def flatToValue : Value → SemanticPrimitivesHOL.Value
     else if typeId == FlatLang.boolId && tag == falseTag then SemanticPrimitivesHOL.boolValue false
     else .vectorv []
   | _ => .vectorv []
+
+/-- Choose the appropriate branch for a flat Boolean value. -/
+@[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "do_if_def"]
+def doIf {α : Type} (value : Value) (yes no : α) : Option α :=
+  match value with
+  | .conv (some (tag, some typeId)) [] =>
+    if typeId == FlatLang.boolId && tag == trueTag then some yes
+    else if typeId == FlatLang.boolId && tag == falseTag then some no else none
+  | _ => none
+
+/-- A successful conditional selects one of its two branches. -/
+@[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "do_if_either_or"]
+theorem doIf_either_or {α : Type} (value : Value) (yes no result : α)
+    (evaluated : doIf value yes no = some result) : result = yes ∨ result = no := by
+  cases value <;> simp [doIf] at evaluated
+  case conv stamp values =>
+    cases stamp with
+    | none => simp at evaluated
+    | some ctor =>
+      obtain ⟨tag, typeId⟩ := ctor
+      cases typeId with
+      | none => simp at evaluated
+      | some typeId =>
+        cases values with
+        | cons => simp at evaluated
+        | nil =>
+          simp only at evaluated
+          split at evaluated
+          · exact Or.inl (Option.some.inj evaluated).symm
+          · split at evaluated
+            · exact Or.inr (Option.some.inj evaluated).symm
+            · contradiction
 end Flapjack.Compiler.Backend.FlatSem

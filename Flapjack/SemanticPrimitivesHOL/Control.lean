@@ -24,6 +24,30 @@ def doIf {α : Type} (value : Value) (yes no : α) : Option α :=
   | some false => some no
   | none => none
 
+/-- Flapjack infrastructure: successful source conditionals expose the Boolean
+constructor and selected branch. -/
+theorem doIf_success_boolean {α : Type} (value : Value) (yes no result : α)
+    (evaluated : doIf value yes no = some result) :
+    ∃ b, value = boolValue b ∧ result = if b then yes else no := by
+  cases value <;> simp [doIf, valueAsBool] at evaluated
+  case conv stamp values =>
+    cases stamp with
+    | none => simp at evaluated
+    | some stamp =>
+      cases values with
+      | cons => simp at evaluated
+      | nil =>
+        by_cases htrue : stamp = .typeStamp (ofString "True") boolTypeNum
+        · subst stamp
+          simp at evaluated
+          exact ⟨true, rfl, evaluated.symm⟩
+        · by_cases hfalse : stamp = .typeStamp (ofString "False") boolTypeNum
+          · subst stamp
+            have different : ofString "False" ≠ ofString "True" := by decide
+            simp [different] at evaluated
+            exact ⟨false, rfl, evaluated.symm⟩
+          · simp [htrue, hfalse] at evaluated
+
 @[hol "cakeml/semantics/semanticPrimitivesScript.sml" "build_constrs_def"]
 def buildConstrs (stamp : Nat) (constructors : List (ConN × List AstT)) : List (ConN × Nat × Stamp) :=
   constructors.map fun (name, args) => (name, args.length, .typeStamp name stamp)
