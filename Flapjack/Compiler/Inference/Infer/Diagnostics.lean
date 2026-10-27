@@ -117,6 +117,24 @@ def renderTypeMismatch (input : List HolChar) : Error → Option (List HolChar)
   | .located loc (.typeMismatchNames names left right) => renderTypes input loc names left right
   | _ => none
 
+/-- Render unbound type variables at the point where the source type is checked. -/
+def renderUnboundTypeVariable (input : List HolChar) : Error → Option (List HolChar)
+  | .located loc error => do
+    let message ← match error with
+      | .annotationTypeVariable name => some (ascii "Type variable " ++ name.explode ++
+          ascii " found in type annotation. Type variables are not supported in type annotations.")
+      | .abbreviationTypeVariable name typ => some (ascii "Unbound type variable " ++ name.explode ++
+          ascii " in type abbreviation " ++ typ.explode)
+      | .datatypeTypeVariable name ctor => some (ascii "Unbound type variable " ++ name.explode ++
+          ascii " in type definition with constructor " ++ ctor.explode)
+      | .exceptionTypeVariable name ctor => some (ascii "Type variable " ++ name.explode ++
+          ascii " found in declaration of exception " ++ ctor.explode ++
+          ascii ". Type variables are not allowed in exception declarations.")
+      | _ => none
+    some (ascii "### ERROR: type error\n" ++ message ++ ascii " at " ++
+      sourceLocation input (some loc) ++ ascii "\nProgram exited with nonzero exit code.\n")
+  | _ => none
+
 /-- Render the value restriction at the declaration location. -/
 def renderValueRestriction (input : List HolChar) : Error → Option (List HolChar)
   | .located loc .valueRestriction => some (ascii "### ERROR: type error\nValue restriction violated at " ++
