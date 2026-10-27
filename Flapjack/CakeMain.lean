@@ -31,6 +31,14 @@ structure Options where
   splitMain : Option Bool := none
   tmc : Option Bool := none
   tailrec : Option Bool := none
+  tagBits : Option Nat := none
+  lenBits : Option Nat := none
+  padBits : Option Nat := none
+  lenSize : Option Nat := none
+  emitEmptyFfi : Option Bool := none
+  jump : Option Bool := none
+  perfCallgraph : Option Bool := none
+  hashSize : Option Nat := none
   regAlg : Option Nat := none
   gcKind : Option Flapjack.Compiler.Backend.DataToWord.GcKind := none
 
@@ -40,7 +48,10 @@ private def usage : String :=
   "[--multi=true|false] [--known=true|false] [--call=true|false] " ++
   "[--inline_factor=N] [--max_app=N] [--max_body_size=N] " ++
   "[--tmc=true|false] [--tailrec=true|false] [--split=true|false] " ++
-  "[--inline_size=N] [--exp_cut=N] [--reg_alg=N] [--gc=G] < input_file\n" ++
+  "[--inline_size=N] [--exp_cut=N] [--reg_alg=N] [--gc=G] " ++
+  "[--tag_bits=N] [--len_bits=N] [--pad_bits=N] [--len_size=N] " ++
+  "[--emit_empty_ffi=true|false] [--jump=true|false] [--perf_callgraph=true|false] " ++
+  "[--hash_size=N] < input_file\n" ++
   "Experimental CakeML to RISC-V port; complete CakeML output parity is not yet established."
 
 private def parseBool (text : String) : Option Bool :=
@@ -97,18 +108,37 @@ private def backendConfigErrors (args : List String) : List String := Id.run do
       if !valid then
         bvl := bvl ++ [s!"Unable to parse as {if isBool then "bool" else "num"}: {value} for flag: {flag}"]
   let mut groups := []
-  if !clos.isEmpty then groups := groups ++ [String.intercalate "\n" clos]
-  if !bvl.isEmpty then groups := groups ++ [String.intercalate "\n" bvl]
+  if !clos.isEmpty then groups := groups ++ [String.intercalate "\n" clos ++ "\n\n"]
+  if !bvl.isEmpty then groups := groups ++ [String.intercalate "\n" bvl ++ "\n\n"]
   if let some value := first "--reg_alg=" then
     if (parseNum value).isNone then
-      groups := groups ++ [s!"Unable to parse as num: {value} for flag: --reg_alg="]
+      groups := groups ++ [s!"Unable to parse as num: {value} for flag: --reg_alg=\n\n"]
+  let mut data := []
+  for flag in ["--tag_bits=", "--len_bits=", "--pad_bits=", "--len_size="] do
+    if let some value := first flag then
+      if (parseNum value).isNone then
+        data := data ++ [s!"Unable to parse as num: {value} for flag: {flag}"]
   if let some value := first "--gc=" then
     if value != "none" && value != "simple" then
       if value.startsWith "gen" then
         let parts := (value.drop 3).toString.splitOn "," |>.filter (fun s => !s.isEmpty)
         if let some bad := parts.find? (fun s => (parseNum s).isNone) then
-          groups := groups ++ [s!"Error parsing GenGC argument: Unable to parse as num: {bad}"]
-      else groups := groups ++ [s!"Unrecognized GC option: {value}"]
+          data := data ++ [s!"Error parsing GenGC argument: Unable to parse as num: {bad}"]
+      else data := data ++ [s!"Unrecognized GC option: {value}"]
+  if let some value := first "--emit_empty_ffi=" then
+    if (parseBool value).isNone then
+      data := data ++ [s!"Unable to parse as bool: {value} for flag: --emit_empty_ffi="]
+  if !data.isEmpty then groups := groups ++ [String.intercalate "\n" data ++ "\n\n"]
+  let mut stackError : Option String := none
+  for flag in ["--jump=", "--perf_callgraph="] do
+    if stackError.isNone then
+      if let some value := first flag then
+        if (parseBool value).isNone then
+          stackError := some s!"Unable to parse as bool: {value} for flag: {flag}"
+  if let some error := stackError then groups := groups ++ [error ++ "\n"]
+  if let some value := first "--hash_size=" then
+    if (parseNum value).isNone then
+      groups := groups ++ [s!"Unable to parse as num: {value} for flag: --hash_size=\n"]
   return groups
 
 private def parseArgs : List String → Options → Except String Options
@@ -152,6 +182,46 @@ private def parseArgs : List String → Options → Except String Options
       else if arg.startsWith "--max_body_size=" then
         if options.maxBodySize.isSome then parseArgs args options else
         parseArgs args { options with maxBodySize := some (arg.drop "--max_body_size=".length |>.toString) }
+      else if arg.startsWith "--tag_bits=" then
+        if options.tagBits.isSome then parseArgs args options else
+        match parseNum (arg.drop "--tag_bits=".length |>.toString) with
+        | some n => parseArgs args { options with tagBits := some n }
+        | none => .error s!"invalid numeric option: {arg}"
+      else if arg.startsWith "--len_bits=" then
+        if options.lenBits.isSome then parseArgs args options else
+        match parseNum (arg.drop "--len_bits=".length |>.toString) with
+        | some n => parseArgs args { options with lenBits := some n }
+        | none => .error s!"invalid numeric option: {arg}"
+      else if arg.startsWith "--pad_bits=" then
+        if options.padBits.isSome then parseArgs args options else
+        match parseNum (arg.drop "--pad_bits=".length |>.toString) with
+        | some n => parseArgs args { options with padBits := some n }
+        | none => .error s!"invalid numeric option: {arg}"
+      else if arg.startsWith "--len_size=" then
+        if options.lenSize.isSome then parseArgs args options else
+        match parseNum (arg.drop "--len_size=".length |>.toString) with
+        | some n => parseArgs args { options with lenSize := some n }
+        | none => .error s!"invalid numeric option: {arg}"
+      else if arg.startsWith "--emit_empty_ffi=" then
+        if options.emitEmptyFfi.isSome then parseArgs args options else
+        match parseBool (arg.drop "--emit_empty_ffi=".length |>.toString) with
+        | some b => parseArgs args { options with emitEmptyFfi := some b }
+        | none => .error s!"invalid Boolean option: {arg}"
+      else if arg.startsWith "--jump=" then
+        if options.jump.isSome then parseArgs args options else
+        match parseBool (arg.drop "--jump=".length |>.toString) with
+        | some b => parseArgs args { options with jump := some b }
+        | none => .error s!"invalid Boolean option: {arg}"
+      else if arg.startsWith "--perf_callgraph=" then
+        if options.perfCallgraph.isSome then parseArgs args options else
+        match parseBool (arg.drop "--perf_callgraph=".length |>.toString) with
+        | some b => parseArgs args { options with perfCallgraph := some b }
+        | none => .error s!"invalid Boolean option: {arg}"
+      else if arg.startsWith "--hash_size=" then
+        if options.hashSize.isSome then parseArgs args options else
+        match parseNum (arg.drop "--hash_size=".length |>.toString) with
+        | some n => parseArgs args { options with hashSize := some n }
+        | none => .error s!"invalid numeric option: {arg}"
       else if arg.startsWith "--inline_size=" then
         if options.inlineSize.isSome then parseArgs args options else
         match parseNum (arg.drop "--inline_size=".length |>.toString) with
@@ -247,7 +317,17 @@ def compileBytes (options : Options) (source : List HolChar) : PrimitiveCheckedS
       doTmc := options.tmc.getD base.bvlConf.doTmc
       doTailrec := options.tailrec.getD base.bvlConf.doTailrec }
     wordToWordConf := { base.wordToWordConf with regAlg := options.regAlg.getD base.wordToWordConf.regAlg }
-    dataConf := { base.dataConf with gcKind := options.gcKind.getD base.dataConf.gcKind } }
+    dataConf := { base.dataConf with
+      tagBits := options.tagBits.getD base.dataConf.tagBits
+      lenBits := options.lenBits.getD base.dataConf.lenBits
+      padBits := options.padBits.getD base.dataConf.padBits
+      lenSize := options.lenSize.getD base.dataConf.lenSize
+      callEmptyFfi := options.emitEmptyFfi.getD base.dataConf.callEmptyFfi
+      gcKind := options.gcKind.getD base.dataConf.gcKind }
+    stackConf := { base.stackConf with
+      jump := options.jump.getD base.stackConf.jump
+      perfCalls := options.perfCallgraph.getD base.stackConf.perfCalls }
+    labConf := { base.labConf with hashSize := options.hashSize.getD base.labConf.hashSize } }
   let fuel := sourceFuel source
   match Flapjack.CakeParser.Frontend.parseSourceFuel fuel fuel source with
   | .exhausted => return .parseExhausted
@@ -272,7 +352,8 @@ def main (args : List String) : IO UInt32 := do
     return 1
   let errors := backendConfigErrors args
   if !errors.isEmpty then
-    IO.eprint (configError (String.intercalate "\n\n" errors))
+    IO.eprint ("### ERROR: config error\n" ++ String.join errors ++
+      "\n\nProgram exited with nonzero exit code.\n")
     return 1
   match parseArgs args {} with
   | .error message =>

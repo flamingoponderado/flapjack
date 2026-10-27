@@ -27,6 +27,21 @@ CASES = {
     'main_return_false': 'val _ = print "Hello";',
     'no_prelude_main_return': 'val x = 42;',
     'no_prelude_main_return_duplicate': 'val x = 42;',
+    'no_prelude_backend_tag': 'fun id x = x; val a = id (1,2);',
+    'no_prelude_backend_len': 'fun id x = x; val a = id (1,2);',
+    'no_prelude_backend_pad': 'fun id x = x; val a = id (1,2);',
+    'no_prelude_backend_size': 'fun id x = x; val a = id (1,2);',
+    'no_prelude_backend_ffi': 'fun id x = x; val a = id (1,2);',
+    'no_prelude_backend_jump': 'fun id x = x; val a = id (1,2);',
+    'no_prelude_backend_jump_true': 'fun id x = x; val a = id (1,2);',
+    'no_prelude_backend_hash_zero': 'fun id x = x; val a = id (1,2);',
+    'no_prelude_backend_hash_small': 'fun id x = x; val a = id (1,2);',
+    'no_prelude_backend_perf': 'fun id x = x; val a = id (1,2);',
+    'no_prelude_backend_duplicate': 'fun id x = x; val a = id (1,2);',
+    'config_error_backend_data': '',
+    'config_error_backend_stack': '',
+    'config_error_backend_lab': '',
+    'config_error_backend_mixed': '',
     'no_prelude_clos_multi': 'fun id x = x; fun f x = id (id x); val a = f (1,2);',
     'no_prelude_clos_known': 'fun id x = x; fun f x = id (id x); val a = f (1,2);',
     'no_prelude_clos_call': 'fun id x = x; fun f x = id (id x); val a = f (1,2);',
@@ -240,6 +255,24 @@ def run(executable, source, name):
         'config_error_clos_max_body': ['--max_body_size=bad'],
         'config_error_clos_ignores_max_body': ['--multi=bad', '--max_body_size=bad'],
     }
+    backend_options = {
+        'no_prelude_backend_tag': ['--tag_bits=3'],
+        'no_prelude_backend_len': ['--len_bits=2'],
+        'no_prelude_backend_pad': ['--pad_bits=1'],
+        'no_prelude_backend_size': ['--len_size=8'],
+        'no_prelude_backend_ffi': ['--emit_empty_ffi=true'],
+        'no_prelude_backend_jump': ['--jump=false'],
+        'no_prelude_backend_jump_true': ['--jump=true'],
+        'no_prelude_backend_hash_zero': ['--hash_size=0'],
+        'no_prelude_backend_hash_small': ['--hash_size=4'],
+        'no_prelude_backend_perf': ['--perf_callgraph=true'],
+        'no_prelude_backend_duplicate': ['--tag_bits=3', '--tag_bits=bad', '--jump=false', '--jump=bad'],
+        'config_error_backend_data': ['--emit_empty_ffi=bad', '--gc=bad', '--tag_bits=bad'],
+        'config_error_backend_stack': ['--perf_callgraph=bad', '--jump=bad'],
+        'config_error_backend_lab': ['--hash_size=bad'],
+        'config_error_backend_mixed': ['--hash_size=bad', '--jump=bad', '--gc=bad', '--tmc=bad'],
+    }
+    flags.extend(backend_options.get(name, []))
     flags.extend(clos_options.get(name, []))
     flags.extend(bvl_options.get(name, []))
     if name == 'config_error_bool': flags.append('--exclude_prelude=foo')
