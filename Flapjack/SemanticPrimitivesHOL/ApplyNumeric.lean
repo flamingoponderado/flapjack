@@ -3,7 +3,7 @@ import Flapjack.SemanticPrimitivesHOL.Test
 
 /-! Source primitive arithmetic and the assembled application dispatcher.
 The dispatcher uses the existing rational-cut floating-point model. The
-complete declaration remains untagged pending source and carrier review. -/
+complete declaration is pending full source and carrier review. -/
 namespace Flapjack.SemanticPrimitivesHOL
 open Flapjack.AstHOL Flapjack.Basis.Pure.MlString
 
@@ -71,8 +71,10 @@ private noncomputable def floatArith (action : Arith) (values : List Value) : Op
 
 /-- Source primitive application. The `doAppBasic` and numeric cases together
 cover the original dispatch; `opapp` and `eval` are handled by the evaluator
-and return `none` here, as in HOL. Untagged until all clauses and carriers have
-been reviewed against the pinned source. -/
+and return `none` here, as in HOL. The full clause and carrier review is
+pending. Floating-point behavior inherits the rational-cut assumption used by
+`fpSemFpUopComp`, `fpSemFpBopComp`, `fpSemFpfma`, and `doTest`. -/
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "do_app_def"]
 noncomputable def doApp {σ : Type} (state : Store Value × HolFfiState σ) (op : Op)
     (values : List Value) : Option (BasicAppResult σ) :=
   match op with

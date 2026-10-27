@@ -210,4 +210,10 @@ private def noVars : Flapjack.AstHOL.Exp → Bool
 #guard Flapjack.AstHOL.everyExp noVars
   (.letrec [(ofString "f", ofString "x", .lit (.intLit 1))] (.lit (.intLit 0)))
 
+-- The FMA argument order follows fp64_mul_add y z x in the HOL source.
+example (x y z : BitVec 64) :
+    doApp ([], ffi) (.arith .fma .float64T)
+      [.litv (.float64 x), .litv (.float64 y), .litv (.float64 z)] =
+    some (([], ffi), .val (.litv (.float64 (Flapjack.fpSemFpfma x y z)))) := by rfl
+
 end Flapjack.Test.CakeSourceStoreParity

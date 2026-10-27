@@ -1,3 +1,4 @@
+do_app_type=:v store_v list # α ffi_state -> op -> v list -> ((v store_v list # α ffi_state) # (v, v) result) option
 ref_alloc=SOME ([Refv (Litv (IntLit (5 :int))); Refv (Litv (IntLit (7 :int)))],(Rval (Loc T (1 :num)) :(v, v) result))
 ref_assign=SOME ([Refv (Litv (IntLit (7 :int)))],(Rval (Conv (NONE :stamp option) ([] :v list)) :(v, v) result))
 ref_invalid=(NONE :(v store_v list # (v, v) result) option)

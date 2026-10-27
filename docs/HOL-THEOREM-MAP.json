@@ -102976,6 +102976,14 @@
   },
   {
     "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "do_app_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/ApplyNumeric.lean",
+    "lean_name": "doApp",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: the pinned cake_source_apply_probe records the inferred polymorphic FFI, state, operation, and result type and exercises the dispatcher. Complete clause, imported-carrier, and floating-point correspondence review remains pending; the inherited rational-cut assumption is documented beside doApp."
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
     "hol_name": "add_decs_generation_def",
     "lean_path": "Flapjack/SemanticPrimitivesHOL/EvalState.lean",
     "lean_name": "addDecsGeneration",

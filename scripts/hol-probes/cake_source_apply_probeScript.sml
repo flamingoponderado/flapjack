@@ -2,6 +2,7 @@ load "semanticPrimitivesTheory"; load "wordsLib";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
+val _ = (print "do_app_type="; print_type (type_of ``semanticPrimitives$do_app``); print "\n");
 val exists_eq = CONV_RULE (DEPTH_CONV ETA_CONV) (prove (``∀a:'a. ∃x. a = x``, metis_tac []));
 fun capture name tm =
   let val result = rhs (concl (CONV_RULE (RAND_CONV (SIMP_CONV (srw_ss()) [boolTheory.EXISTS_REFL, exists_eq] THENC EVAL THENC SIMP_CONV (srw_ss()) [boolTheory.EXISTS_REFL, exists_eq] THENC EVAL THENC DEPTH_CONV (CHANGED_CONV wordsLib.WORD_EVAL_CONV))) (EVAL tm)))
