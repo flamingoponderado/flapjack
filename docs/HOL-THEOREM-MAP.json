@@ -102955,6 +102955,86 @@
   },
   {
     "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/EvaluateHOL/Clock.lean",
+    "lean_name": "evaluateClock_nil",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: kernel-checked constructor case of the original evaluator clock theorem, with the recursive induction hypothesis only where needed. The complete source and imported-evaluator correspondence review and assembling theorem remain pending. The pinned cake_source_evaluate_clock_probe records the polymorphic source theorem and a raise-case specialization."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/EvaluateHOL/Clock.lean",
+    "lean_name": "evaluateClock_lit",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: kernel-checked constructor case of the original evaluator clock theorem, with the recursive induction hypothesis only where needed. The complete source and imported-evaluator correspondence review and assembling theorem remain pending. The pinned cake_source_evaluate_clock_probe records the polymorphic source theorem and a raise-case specialization."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/EvaluateHOL/Clock.lean",
+    "lean_name": "evaluateClock_fun",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: kernel-checked constructor case of the original evaluator clock theorem, with the recursive induction hypothesis only where needed. The complete source and imported-evaluator correspondence review and assembling theorem remain pending. The pinned cake_source_evaluate_clock_probe records the polymorphic source theorem and a raise-case specialization."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/EvaluateHOL/Clock.lean",
+    "lean_name": "evaluateClock_var",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: kernel-checked constructor case of the original evaluator clock theorem, with the recursive induction hypothesis only where needed. The complete source and imported-evaluator correspondence review and assembling theorem remain pending. The pinned cake_source_evaluate_clock_probe records the polymorphic source theorem and a raise-case specialization."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/EvaluateHOL/Clock.lean",
+    "lean_name": "evaluateMatchClock_nil",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: kernel-checked constructor case of the original evaluator clock theorem, with the recursive induction hypothesis only where needed. The complete source and imported-evaluator correspondence review and assembling theorem remain pending. The pinned cake_source_evaluate_clock_probe records the polymorphic source theorem and a raise-case specialization."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/EvaluateHOL/Clock.lean",
+    "lean_name": "evaluateDecsClock_nil",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: kernel-checked constructor case of the original evaluator clock theorem, with the recursive induction hypothesis only where needed. The complete source and imported-evaluator correspondence review and assembling theorem remain pending. The pinned cake_source_evaluate_clock_probe records the polymorphic source theorem and a raise-case specialization."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/EvaluateHOL/Clock.lean",
+    "lean_name": "evaluateDecsClock_tabbrev",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: kernel-checked constructor case of the original evaluator clock theorem, with the recursive induction hypothesis only where needed. The complete source and imported-evaluator correspondence review and assembling theorem remain pending. The pinned cake_source_evaluate_clock_probe records the polymorphic source theorem and a raise-case specialization."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/EvaluateHOL/Clock.lean",
+    "lean_name": "evaluateClock_raise",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: kernel-checked constructor case of the original evaluator clock theorem, with the recursive induction hypothesis only where needed. The complete source and imported-evaluator correspondence review and assembling theorem remain pending. The pinned cake_source_evaluate_clock_probe records the polymorphic source theorem and a raise-case specialization."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/EvaluateHOL/Clock.lean",
+    "lean_name": "evaluateClock_tannot",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: kernel-checked constructor case of the original evaluator clock theorem, with the recursive induction hypothesis only where needed. The complete source and imported-evaluator correspondence review and assembling theorem remain pending. The pinned cake_source_evaluate_clock_probe records the polymorphic source theorem and a raise-case specialization."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/EvaluateHOL/Clock.lean",
+    "lean_name": "evaluateClock_lannot",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: kernel-checked constructor case of the original evaluator clock theorem, with the recursive induction hypothesis only where needed. The complete source and imported-evaluator correspondence review and assembling theorem remain pending. The pinned cake_source_evaluate_clock_probe records the polymorphic source theorem and a raise-case specialization."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
     "hol_name": "dec_clock_def",
     "lean_path": "Flapjack/EvaluateHOL.lean",
     "lean_name": "decClock",

@@ -6,6 +6,7 @@ import Flapjack.SemanticPrimitivesHOL.Conversions
 import Flapjack.SemanticPrimitivesHOL.Thunk
 import Flapjack.EvaluateHOL
 import Flapjack.EvaluateHOL.Definition
+import Flapjack.EvaluateHOL.Clock
 import Flapjack.SemanticPrimitivesHOL.EvalState
 import Flapjack.SemanticPrimitivesHOL.Concrete
 import Flapjack.SemanticPrimitivesHOL.Eval
