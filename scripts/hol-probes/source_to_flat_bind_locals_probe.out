@@ -1,0 +1,4 @@
+bind_locals_def_typed=∀(ts :tra list) (locals :mlstring list) (comp_map :(α, mlstring, var_name) namespace). bind_locals ts locals comp_map = nsBindList (MAP2 (λ(t :tra) (x :mlstring). (x,Local t x)) ts locals :(mlstring # var_name) list) comp_map
+
+nsAppend_bind_locals_typed=∀(funs :(mlstring # α) list). nsAppend (alist_to_ns (MAP (λ(x :mlstring). (x,Local (t :tra) x)) (MAP (FST :mlstring # α -> mlstring) funs)) :(β, mlstring, var_name) namespace) (bind_locals (ts :tra list) (locals :mlstring list) (comp_map :(β, mlstring, var_name) namespace)) = bind_locals (REPLICATE (LENGTH funs) t ++ ts) (MAP (FST :mlstring # α -> mlstring) funs ++ locals) comp_map
+

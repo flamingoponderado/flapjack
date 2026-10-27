@@ -104857,5 +104857,21 @@
     "lean_name": "compileExps_length",
     "statement_status": "reviewed_exact",
     "reviewer": "Codex source comparison: original local theorem states LENGTH (compile_exps t m es) = LENGTH es with no hypotheses. The typed source_to_flat_exps_length_probe replay confirms t : mlstring list, m : environment, es : ast$exp list and the result : flatLang$exp list. Lean uses the reviewed constructor-for-constructor carriers and the reviewed compileExps definition, with the same quantification and list-length equality; induction follows the same nil and cons clauses. This is a list-shape prerequisite, not the pass simulation theorem."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "bind_locals_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/BindLocals.lean",
+    "lean_name": "bindLocals",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: HOL binds nsBindList (MAP2 (λt x. (x, Local t x)) ts locals) comp_map. Lean zipWith preserves the same order and truncates at the shorter list, and uses the reviewed Tra, byte-valued MlString, VarName and Namespace carriers. Typed capture confirms comp_map has independent polymorphic module-name type α and fixed mlstring and var_name types."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "nsAppend_bind_locals",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/BindLocals.lean",
+    "lean_name": "nsAppend_bindLocals",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: the original local theorem equates nsAppend of a namespace of function names mapped to Local t with binding REPLICATE (LENGTH funs) t ++ ts against MAP FST funs ++ locals. Lean retains exactly these lists, operations, equality and no hypotheses. Typed source_to_flat_bind_locals_probe replay confirms the function-pair payload type α and namespace-module type β remain independent. HOL MAP2 and Lean zipWith both stop at the shorter list."
   }
 ]
