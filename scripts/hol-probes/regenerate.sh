@@ -69,13 +69,15 @@ probe_needs_refresh() {
          "$(basename "$probe")" == reference_cake_bvi_probeScript.sml ||
          "$(basename "$probe")" == match_cake_bvi_probeScript.sml ||
          "$(basename "$probe")" == mti_cake_bvi_probeScript.sml ||
+         "$(basename "$probe")" == inline_cake_bvi_probeScript.sml ||
          "$(basename "$probe")" == empty_cake_data_probeScript.sml ||
          "$(basename "$probe")" == reference_cake_data_probeScript.sml ||
          "$(basename "$probe")" == match_cake_data_probeScript.sml ||
          "$(basename "$probe")" == empty_cake_word_probeScript.sml ||
          "$(basename "$probe")" == reference_cake_word_probeScript.sml ||
          "$(basename "$probe")" == match_cake_word_probeScript.sml ||
-         "$(basename "$probe")" == full_cake_word_probeScript.sml ) &&
+         "$(basename "$probe")" == full_cake_word_probeScript.sml ||
+         "$(basename "$probe")" == full_inline_cake_word_probeScript.sml ) &&
        ( "$cake_dir/compiler/backend/source_to_sourceScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/source_to_flatScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/flat_elimScript.sml" -nt "$output" ||
@@ -92,6 +94,7 @@ probe_needs_refresh() {
          "$cake_dir/compiler/backend/bvl_jumpScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/backend_commonScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/bvi_letScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/bvi_inlineScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/bvi_to_dataScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/data_liveScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/data_simpScript.sml" -nt "$output" ||
@@ -101,7 +104,8 @@ probe_needs_refresh() {
     [[ "$(basename "$probe")" == l3_riscv_int_to_fp_probeScript.sml &&
        "$probe_dir/binary_ieee_directed_certificates.sml" -nt "$output" ]] ||
     [[ ( "$(basename "$probe")" == bignum_word_probeScript.sml ||
-         "$(basename "$probe")" == full_cake_word_probeScript.sml ) &&
+         "$(basename "$probe")" == full_cake_word_probeScript.sml ||
+         "$(basename "$probe")" == full_inline_cake_word_probeScript.sml ) &&
        ( "$hol_dir/examples/machine-code/multiword/mc_multiwordScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/data_to_wordScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/word_bignumScript.sml" -nt "$output" ||
@@ -172,7 +176,7 @@ run_probe() {
 }
 
 run_probe cakeml_frontend_flat_probeScript.sml cakeml_frontend_flat_probe.out \
-  name_roundtrips name_bytes name_unreserved pure_init hidden_init impure_lookup_init hidden_lookup_init keep_empty keep_reachable eliminate_pure_length eval_bypass_length guard_double_not guard_false_conj pattern_encoding empty_program_globals empty_program_output word8_literal smart_constructor int_division copy_string array_update word8_conversion compile_let compile_constructor compile_nop closure_empty_program closure_install_detect closure_init_false incremental_empty interpreter_arity pattern_any_tree pattern_constructor_guard pattern_nub pattern_specialize pattern_compile_empty pattern_compile_any pattern_exhaustive pattern_bind_variable pattern_compile_branch pattern_naive_branch pattern_constructor_branch empty_source_to_clos reference_source_to_clos source_let_lifting lifted_source_to_clos match_source_to_clos match_bind_source_to_clos bvl_shared_constant bvl_stub_layout bvl_chain_empty bvl_code_sort bvl_build_aux bvl_source_names closure_numbering closure_number_incremental bvl_closure_call bvl_partial_application bvl_extract_name bvl_name_alist bvl_recursive_closures bvl_compile_closure bvl_compile_program bvl_to_bvi_analysis bvl_to_bvi_operations bvi_let_optimization bvl_to_bvi_marker bvl_to_bvi_incremental clos_to_bvi_program data_lang_syntax data_space_requirements bvi_to_data_assign bvi_to_data_expression data_simplification data_liveness data_optimisation bvi_to_data_complete_example clos_to_data_program data_to_word_variables data_to_word_header data_to_word_locations data_to_word_word_ops data_to_word_control clos_to_word_control data_to_word_space data_to_word_assign clos_to_bvi_constant bvi_to_data_constant data_to_word_globals data_to_word_loads data_to_word_ref data_to_word_int data_to_word_ref_array data_to_word_lengths data_to_word_byte_memory data_to_word_runtime_ops data_to_word_stubs bvl_output_names data_stub_names source_output_names closure_mti data_to_word_comparisons data_to_word_byte_ops data_to_word_byte_shifts bvl_to_bvi_stubs bvl_to_bvi_whole_program bvl_to_bvi_stub_bodies bvl_closure_stubs bvl_prepared_program bvl_force_thunk db_vars_order closure_free_variables closure_annotation closure_no_options_program closure_no_options_function empty_cake_to_bvi \
+  name_roundtrips name_bytes name_unreserved pure_init hidden_init impure_lookup_init hidden_lookup_init keep_empty keep_reachable eliminate_pure_length eval_bypass_length guard_double_not guard_false_conj pattern_encoding empty_program_globals empty_program_output word8_literal smart_constructor int_division copy_string array_update word8_conversion compile_let compile_constructor compile_nop closure_empty_program closure_install_detect closure_init_false incremental_empty interpreter_arity pattern_any_tree pattern_constructor_guard pattern_nub pattern_specialize pattern_compile_empty pattern_compile_any pattern_exhaustive pattern_bind_variable pattern_compile_branch pattern_naive_branch pattern_constructor_branch empty_source_to_clos reference_source_to_clos source_let_lifting lifted_source_to_clos match_source_to_clos match_bind_source_to_clos bvl_shared_constant bvl_stub_layout bvl_chain_empty bvl_code_sort bvl_build_aux bvl_source_names closure_numbering closure_number_incremental bvl_closure_call bvl_partial_application bvl_extract_name bvl_name_alist bvl_recursive_closures bvl_compile_closure bvl_compile_program bvl_to_bvi_analysis bvl_to_bvi_operations bvi_let_optimization bvl_to_bvi_marker bvl_to_bvi_incremental clos_to_bvi_program data_lang_syntax data_space_requirements bvi_to_data_assign bvi_to_data_expression data_simplification data_liveness data_optimisation bvi_to_data_complete_example clos_to_data_program data_to_word_variables data_to_word_header data_to_word_locations data_to_word_word_ops data_to_word_control clos_to_word_control data_to_word_space data_to_word_assign clos_to_bvi_constant bvi_to_data_constant data_to_word_globals data_to_word_loads data_to_word_ref data_to_word_int data_to_word_ref_array data_to_word_lengths data_to_word_byte_memory data_to_word_runtime_ops data_to_word_stubs bvl_output_names data_stub_names source_output_names closure_mti bvi_inline_wrapper data_to_word_comparisons data_to_word_byte_ops data_to_word_byte_shifts bvl_to_bvi_stubs bvl_to_bvi_whole_program bvl_to_bvi_stub_bodies bvl_closure_stubs bvl_prepared_program bvl_force_thunk db_vars_order closure_free_variables closure_annotation closure_no_options_program closure_no_options_function empty_cake_to_bvi \
   "$cake_dir/compiler/backend/flat_elimScript.sml" "$cake_dir/compiler/backend"
 
 run_probe data_to_word_header_types_probeScript.sml data_to_word_header_types_probe.out \
@@ -224,6 +228,9 @@ run_probe bignum_word_probeScript.sml bignum_word_probe.out \
 run_probe full_cake_word_probeScript.sml full_cake_word_probe.out \
   entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
 
+run_probe full_inline_cake_word_probeScript.sml full_inline_cake_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
 run_probe empty_cake_bvi_probeScript.sml empty_cake_bvi_probe.out \
   code "$cake_dir/compiler/backend/bvl_to_bviScript.sml" "$cake_dir/compiler/backend"
 
@@ -235,6 +242,9 @@ run_probe match_cake_bvi_probeScript.sml match_cake_bvi_probe.out \
 
 run_probe mti_cake_bvi_probeScript.sml mti_cake_bvi_probe.out \
   code "$cake_dir/compiler/backend/bvl_to_bviScript.sml" "$cake_dir/compiler/backend"
+
+run_probe inline_cake_bvi_probeScript.sml inline_cake_bvi_probe.out \
+  code "$cake_dir/compiler/backend/bvi_inlineScript.sml" "$cake_dir/compiler/backend"
 
 run_probe empty_cake_data_probeScript.sml empty_cake_data_probe.out \
   code "$cake_dir/compiler/backend/bvl_to_bviScript.sml" "$cake_dir/compiler/backend"

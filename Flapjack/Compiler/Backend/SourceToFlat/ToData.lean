@@ -23,4 +23,15 @@ def compileCakeToDataNoOptsFuel (fuel : Nat) (source : Config)
   let (source, closure, start, code, next, _) ← compileCakeToDataWithNamesNoOptsFuel fuel source closure decls
   pure (source, closure, start, code, next)
 
+/-- Continue the checked multi-argument and BVI-inlining route through the
+bounded BVI-to-data pass. Other BVL/BVI optimizations remain omitted. -/
+def compileCakeToDataInlineFuel (fuel : Nat) (source : Config)
+    (closure : ClosToBvl.Config) (decls : List AstHOL.Dec) :
+    Option (Config × ClosToBvl.Config × Nat × List (Nat × Nat × DataLang.Prog) × Nat × Spt Basis.Pure.MlString.MlString) := do
+  let (source, closure, start, code, next, names) ← compileCakeToBviInlineFuel fuel source closure decls
+  let code ← code.mapM fun (name, args, exp) => do
+    let body ← BviToData.compileExpFuel fuel args exp
+    pure (name, args, body)
+  pure (source, closure, start, code, next, names)
+
 end Flapjack.Compiler.Backend.SourceToFlat

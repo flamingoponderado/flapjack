@@ -64,4 +64,18 @@ def compileCakeToWordWithStubsAndNames64NoOptsFuel
   let code := code.map fun (name, args, body, _) => (name, args + 1, body)
   pure (source, closure, start, fixed ++ WordBignum.generatedStubs64 ++ code, next, names)
 
+/-- Continue the checked multi-argument and BVI-inlining route to the 64-bit
+word stage. Unsupported data operations and exhausted fuel return `none`. -/
+def compileCakeToWordWithStubsAndNames64InlineFuel
+    (fuel : Nat) (source : Config) (closure : ClosToBvl.Config)
+    (word : DataToWord.Config) (decls : List AstHOL.Dec) :
+    Option (Config × ClosToBvl.Config × Nat × List (Nat × Nat × WordLangProgHOL (BitVec 64)) × Nat ×
+      Spt Basis.Pure.MlString.MlString) := do
+  let (source, closure, start, code, next, names) ← compileCakeToDataInlineFuel fuel source closure decls
+  let code ← code.mapM fun (name, args, body) => do
+    let (body, _) ← DataToWord.compileControl? (width := 64) word name 2 body
+    pure (name, args + 1, body)
+  let fixed ← DataToWord.fixedStubs? word
+  pure (source, closure, start, fixed ++ WordBignum.generatedStubs64 ++ code, next, names)
+
 end Flapjack.Compiler.Backend.SourceToFlat

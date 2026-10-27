@@ -21,4 +21,10 @@ private def testConfig : Backend.Config :=
       bytes == namedBytes && bitmaps == namedBitmaps
   | _, _ => false
 
+#guard match SourceToFlat.compileCakeToRiscVNamedNoOptsFuel 100 testConfig [],
+    SourceToFlat.compileCakeToRiscVInlineFuel 100 testConfig [] with
+  | some (bytes, bitmaps, _), some (inlineBytes, inlineBitmaps, _) =>
+      bytes == inlineBytes && bitmaps == inlineBitmaps
+  | _, _ => false
+
 end Flapjack.Test.CakeMLRiscVPartial

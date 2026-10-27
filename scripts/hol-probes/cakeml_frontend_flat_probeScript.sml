@@ -501,6 +501,17 @@ val _ = capture "closure_mti" ``
   [closLang$Fn «f» NONE NONE 3 (closLang$Var backend_common$None 0);
    closLang$App backend_common$None NONE (closLang$Var backend_common$None 0)
       [closLang$Var backend_common$None 3; closLang$Var backend_common$None 1; closLang$Var backend_common$None 2]]``;
+load "bvi_inlineTheory";
+val _ = capture "bvi_inline_wrapper" ``
+ let wrapper = bvi$LetCall 2 3 11 [bvi$Var 0; bvi$Var 1] (bvi$Op (closLang$BlockOp (closLang$Cons 7)) [bvi$Var 1; bvi$Var 0]) in
+ let code = [(10,2,wrapper); (12,0,bvi$Call 5 (SOME 10) [bvi$Var 3; bvi$Var 4] NONE)] in
+ SND (bvi_inline$compile_prog code) =
+ [(10,2,bvi$LetCall 2 0 11 [bvi$Var 0; bvi$Var 1] (bvi$Op (closLang$BlockOp (closLang$Cons 7)) [bvi$Var 1; bvi$Var 0]));
+  (12,0,bvi$Let [bvi$Var 3; bvi$Var 4] (bvi$LetCall 2 0 11 [bvi$Var 0; bvi$Var 1]
+    (bvi$Op (closLang$BlockOp (closLang$Cons 7)) [bvi$Var 1; bvi$Var 0])))] /\
+ bvi_inline$inline_exp (sptree$insert 10 (2,wrapper) sptree$LN)
+  (bvi$Call 4 (SOME 10) [bvi$Var 3; bvi$Var 4] (SOME (bvi$Tick (bvi$Var 0)))) =
+  bvi$Call 4 (SOME 10) [bvi$Var 3; bvi$Var 4] (SOME (bvi$Tick (bvi$Var 0)))``;
 val data_comparisons_word = EVAL ``
  (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$BlockOp (closLang$BoolTest (ast$Compare ast$Gt))) [1;2] NONE) : 64 wordLang$prog # num) =
   (wordLang$If asm$Equal 4 (asm$Reg 6) (wordLang$Assign 8 (wordLang$Const 18w)) (wordLang$Assign 8 (wordLang$Const 2w)), 2) /\

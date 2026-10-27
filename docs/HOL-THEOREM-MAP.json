@@ -101822,5 +101822,21 @@
     "hol_name": "collect_apps_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source clauses transcribed; typed carrier and complete declaration review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BviInline.lean",
+    "lean_name": "mkTick",
+    "hol_path": "cakeml/compiler/backend/bvi_inlineScript.sml",
+    "hol_name": "bvi_mk_tick_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Recursive form transcribed; typed source and complete declaration review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BviInline.lean",
+    "lean_name": "canonicalWrapper",
+    "hol_path": "cakeml/compiler/backend/bvi_inlineScript.sml",
+    "hol_name": "canonical_wrapper_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Variable-list checks transcribed; typed source and equivalence review remain pending."
   }
 ]

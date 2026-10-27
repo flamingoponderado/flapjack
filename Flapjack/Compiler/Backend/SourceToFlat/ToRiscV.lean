@@ -50,4 +50,19 @@ def compileCakeToRiscVNamedNoOptsFuel (fuel : Nat) (config : Backend.Config)
   let config := { config with wordToWordConf := { config.wordToWordConf with colOracle := col } }
   Backend.fromWord asmConf config (backendNames names) program
 
+/-- Execute the named RISC-V route after the checked multi-argument and BVI
+inlining passes. Other frontend optimizations and the generic bignum generator
+remain missing; this is not the full original compiler or its correctness proof. -/
+def compileCakeToRiscVInlineFuel (fuel : Nat) (config : Backend.Config)
+    (decls : List AstHOL.Dec) : Option (List (BitVec 8) × List (BitVec 64) × Backend.Config) := do
+  let asmConf := Flapjack.Compiler.Encoders.RiscV.Target.riscvConfig
+  let dataConf := { config.dataConf with hasFpOps := decide (1 < asmConf.fpRegCount), hasFpTern := false }
+  let (source, closure, start, program, _, names) ←
+    compileCakeToWordWithStubsAndNames64InlineFuel fuel config.sourceConf config.closConf dataConf decls
+  let closure := { closure with start := start }
+  let (col, program) := WordToWord.compileWith RegAlloc.regAllocExecutable config.wordToWordConf asmConf program
+  let config := { config with sourceConf := source, closConf := closure }
+  let config := { config with wordToWordConf := { config.wordToWordConf with colOracle := col } }
+  Backend.fromWord asmConf config (backendNames names) program
+
 end Flapjack.Compiler.Backend.SourceToFlat

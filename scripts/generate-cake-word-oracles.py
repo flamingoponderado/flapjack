@@ -32,7 +32,9 @@ CASES = tuple(
      (ROOT / "scripts/hol-probes/bignum_word_probe.out",
       ROOT / "Flapjack/Test/BignumWordOracle.lean", "BignumWordOracle", 64),
      (ROOT / "scripts/hol-probes/full_cake_word_probe.out",
-      ROOT / "Flapjack/Test/FullCakeWordOracle.lean", "FullCakeWordOracle", 64))
+      ROOT / "Flapjack/Test/FullCakeWordOracle.lean", "FullCakeWordOracle", 64),
+     (ROOT / "scripts/hol-probes/full_inline_cake_word_probe.out",
+      ROOT / "Flapjack/Test/FullInlineCakeWordOracle.lean", "FullInlineCakeWordOracle", 64))
 CONSTRUCTORS = {
     "Seq": (".seq", 2), "Assign": (".assign", 2), "Const": (".const", 1), "Load": (".load", 1),
     "If": (".ite", 5), "Test": (".test", 0), "NotTest": (".notTest", 0),
@@ -154,7 +156,7 @@ def parse_entries(input_path, fragments=None):
 
 def render(input_path, namespace, width):
     fragments = []
-    entries = parse_entries(input_path, fragments if namespace in ("BignumWordOracle", "FullCakeWordOracle") else None)
+    entries = parse_entries(input_path, fragments if namespace in ("BignumWordOracle", "FullCakeWordOracle", "FullInlineCakeWordOracle") else None)
     all_sets = {name: keys for _, sets, _ in entries for name, keys in sets}
     all_words = {name for _, _, words in entries for name in words}
 

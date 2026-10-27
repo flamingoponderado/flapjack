@@ -98,6 +98,7 @@ bvl_output_names=T
 data_stub_names=T
 source_output_names=T
 closure_mti=T
+bvi_inline_wrapper=T
 data_to_word_comparisons=T
 data_to_word_byte_ops=T
 data_to_word_byte_shifts=T
