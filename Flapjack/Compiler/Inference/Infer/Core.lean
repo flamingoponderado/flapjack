@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Inference.Infer
 import Flapjack.Compiler.Inference.Unify
 import Flapjack.AstHOL.Syntax
+import Flapjack.TypeSystemHOL.Values
 
 /-! Bounded executable inference infrastructure. The result distinguishes
 unsupported forms from rejected inputs and resource exhaustion. It does not
@@ -455,20 +456,6 @@ private def extendEnv (new old : Env) : Env :=
 private def liftEnv (name : MlString) (env : Env) : Env :=
   ⟨nsLift name env.infV, nsLift name env.infC, nsLift name env.infT⟩
 
-mutual
-private def isValue : Exp → Bool
-  | .lit _ | .var _ | .fn _ _ => true
-  | .con _ es => isValueList es
-  | .tannot e _ | .lannot e _ => isValue e
-  | _ => false
-termination_by e => sizeOf e
-
-private def isValueList : List Exp → Bool
-  | [] => true
-  | e :: es => isValue e && isValueList es
-termination_by es => sizeOf es
-end
-
 private def applyFull (fuel : Nat) (ts : List InferT) : M (List InferT) := do
   let s ← get
   match walkStarListFuel fuel s.subst ts with
@@ -525,7 +512,7 @@ private def inferDeclWorker : Nat → Nat → Env → Dec → M Env
       constrain unifFuel exprType patType
       let ts ← applyFull unifFuel (bindings.map Prod.snd)
       let (count, _, ts) := generaliseList 0 0 .ln ts
-      if count != 0 && !isValue expr then fail .valueRestriction else
+      if count != 0 && !TypeSystemHOL.isValue expr then fail .valueRestriction else
       let vars := List.zip (bindings.map Prod.fst) (ts.map (fun t => (count, t)))
       return { emptyEnv with infV := alistToNs vars }
     | .dletrec loc funs => withLoc loc env do

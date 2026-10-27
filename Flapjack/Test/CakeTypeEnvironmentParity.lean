@@ -1,4 +1,4 @@
-import Flapjack.TypeSystemHOL.Expressions
+import Flapjack.TypeSystemHOL.Declarations
 
 /-! Representative cases captured from the pinned HOL type-system definitions.
 The capture is regression evidence, not a cross-language equivalence proof. -/
@@ -65,5 +65,25 @@ example : ¬ typeOp .aw8subUnsafe [.app [] 13, .app [] 5] (.app [] 12) := by
 
 example : TypeE emptyTypeEnv .empty (.lit (.intLit 3)) (.app [] 5) :=
   .intLit emptyTypeEnv .empty 3
+
+#guard isValue (.con none [.lit (.intLit 1), .lit (.intLit 2)])
+#guard !isValue (.app .opapp [.lit (.intLit 1), .lit (.intLit 2)])
+
+example : checkCtorTenv nsEmpty [([], ofString "t", [(ofString "A", []), (ofString "B", [])])] := by
+  simp [checkCtorTenv, Flapjack.SemanticPrimitivesHOL.checkDupCtors, ofString]
+
+example : ¬ checkCtorTenv nsEmpty [([], ofString "t", [(ofString "A", []), (ofString "A", [])])] := by
+  simp [checkCtorTenv, Flapjack.SemanticPrimitivesHOL.checkDupCtors]
+
+example : TypeD false emptyTypeEnv
+    (.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x")) (.lit (.intLit 3)))
+    (fun _ => False) ⟨alistToNs [(ofString "x", (0, .app [] 5))], nsEmpty, nsEmpty⟩ := by
+  apply TypeD.value false 0 emptyTypeEnv (.pvar (ofString "x")) (.lit (.intLit 3))
+    (.app [] 5) [(ofString "x", .app [] 5)] Flapjack.Misc.Location.unknownLoc
+  · simp [isValue]
+  · simp [patBindings]
+  · exact .var 0 emptyTypeEnv (ofString "x") (.app [] 5) (by simp [checkFreevars, checkFreevarsList])
+  · simpa [bindTvar] using TypeE.intLit emptyTypeEnv .empty 3
+  · simp
 
 end Flapjack.Test.CakeTypeEnvironmentParity

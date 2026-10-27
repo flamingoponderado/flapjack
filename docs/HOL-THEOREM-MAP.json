@@ -104564,5 +104564,61 @@
     "lean_name": "typeOp",
     "statement_status": "pending_statement_review",
     "reviewer": "Codex: typed HOL equations captured in cake_type_env_probe; operator, semantic type carriers and complete source review remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "is_value_def",
+    "lean_path": "Flapjack/TypeSystemHOL/Values.lean",
+    "lean_name": "isValue",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: is_value_def and its inferred type captured in cake_type_env_probe. Lit, Var and Fun are values; Con checks every child; Tannot and Lannot recurse; all other expressions are false. Input is the reviewed constructor-for-constructor AstHOL.Exp carrier. The production inference path calls this definition for the value restriction; examples are checked against pinned HOL and complete executable output is regression-tested."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "check_ctor_tenv_def",
+    "lean_path": "Flapjack/TypeSystemHOL/Declarations.lean",
+    "lean_name": "checkCtorTenv",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed HOL equations captured in cake_type_env_probe; full source and carrier review remains pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "build_ctor_tenv_def",
+    "lean_path": "Flapjack/TypeSystemHOL/Declarations.lean",
+    "lean_name": "buildCtorTenv",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed HOL equations captured in cake_type_env_probe; full source and carrier review remains pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "tenv_add_tvs_def",
+    "lean_path": "Flapjack/TypeSystemHOL/Declarations.lean",
+    "lean_name": "tenvAddTvs",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed HOL equations captured in cake_type_env_probe; full source and carrier review remains pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "tscheme_inst_def",
+    "lean_path": "Flapjack/TypeSystemHOL/Declarations.lean",
+    "lean_name": "tschemeInst",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed HOL equations captured in cake_type_env_probe; full source and carrier review remains pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "tenvLift_def",
+    "lean_path": "Flapjack/TypeSystemHOL/Declarations.lean",
+    "lean_name": "tenvLift",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed HOL equations captured in cake_type_env_probe; full source and carrier review remains pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "prim_type_nums_def",
+    "lean_path": "Flapjack/TypeSystemHOL/Declarations.lean",
+    "lean_name": "primTypeNums",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed HOL equations captured in cake_type_env_probe; full source and carrier review remains pending."
   }
 ]

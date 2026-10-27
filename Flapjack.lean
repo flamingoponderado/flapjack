@@ -1871,6 +1871,7 @@ import Flapjack.TypeSystemHOL.TypeNames
 import Flapjack.TypeSystemHOL.Patterns
 import Flapjack.TypeSystemHOL.Operators
 import Flapjack.TypeSystemHOL.Expressions
+import Flapjack.TypeSystemHOL.Declarations
 import Flapjack.SemanticsProps.Clock
 import Flapjack.SemanticsProps.Determinism
 import Flapjack.AstHOL
