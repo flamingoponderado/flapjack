@@ -200,6 +200,7 @@ import Flapjack.AstHOL.LitOp
 import Flapjack.AstHOL.Syntax
 import Flapjack.PrimTypesHOL
 import Flapjack.Compiler.Backend.SourceToFlat.CompileExp
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.CompileExp
 import Flapjack.Compiler.Backend.SourceToFlat.CompileDecs
 import Flapjack.Compiler.Backend.SourceToFlat.CompileProg
 import Flapjack.Compiler.Backend.FlatElim.Reachability
