@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateControl
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.MemoryOps
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.Equality
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveTest
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveArith
 
 /-! Expression-level primitive application simulations. These use the
 preliminary factored relations and are not yet reviewed HOL theorem ports. -/
