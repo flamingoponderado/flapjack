@@ -1,4 +1,5 @@
 import Flapjack.CakeParser.SexpPrint
+import Flapjack.CakeParser.ToSexp
 
 /-! Regression observations from `cake_sexp_parser_probe.out`. These finite
 examples do not prove the direct parser equivalent to HOL's PEG. -/
@@ -46,5 +47,21 @@ example : [render (sym "nil"), render (.num 12345), render (str "a\"b\\c"),
     [bytes "nil", bytes "12345", bytes "\"a\\\"b\\\\c\"", bytes "(1 2)",
      bytes "(1 . 2)", bytes "'x", bytes "(quote x . tail)",
      [40, 34, 0, 128, 34, 32, 46, 32, 34, 122, 34, 41]] := by native_decide
+
+-- Kernel evaluation checks control encoding; the second observation exercises
+-- the total AST encoders and their nested list traversal.
+example (name : MlString) :
+    Flapjack.CakeParser.ToSexp.type (.atvar name) =
+      Flapjack.CakeParser.ToSexp.node "Atvar" [Flapjack.CakeParser.ToSexp.str name] := by
+  rw [Flapjack.CakeParser.ToSexp.type]
+
+example : Flapjack.CakeParser.ToSexp.encodeControl [0, 31, 32, 92, 127, 255] =
+    bytes "\\00\\1F \\\\\\7F\\FF" := by decide
+
+example : render (Flapjack.CakeParser.ToSexp.program
+    [.dlet (.locs .unknownPt .unknownPt) (.pvar (ofString "x")) (.lit (.intLit 42)),
+     .dmod (ofString "M") [.dlet (.locs .unknownPt .eofPt) .pany
+       (.con none [.lit (.intLit 1), .lit (.intLit 2)])]]) =
+    bytes "((Dlet (unk unk) \"x\" (Lit 42)) (Dmod \"M\" ((Dlet (unk eof) (Pany) (Con NONE ((Lit 1) (Lit 2)))))))" := by native_decide
 
 end Flapjack.Test.CakeSexpParserParity
