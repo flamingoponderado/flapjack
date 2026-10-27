@@ -1863,6 +1863,9 @@ import Flapjack.EvaluateProps.ClockIoSafe
 import Flapjack.EvaluateProps.ClockIoCases
 import Flapjack.EvaluateProps.ClockIoDecs
 import Flapjack.EvaluateProps.ClockIoExpr
+import Flapjack.EvaluateProps.ClockIoApp
+import Flapjack.EvaluateProps.ClockIoFull
+import Flapjack.EvaluateProps.ClockIoConsequences
 import Flapjack.AstHOL
 import Flapjack.Compiler.Backend.BackendCommon
 import Flapjack.Compiler.Backend.Semantics.WordSem

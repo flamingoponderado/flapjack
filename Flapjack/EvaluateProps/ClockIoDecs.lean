@@ -1,7 +1,7 @@
 import Flapjack.EvaluateProps.ClockIoCases
 
 /-! Conditional structural assembly of the declaration and pattern-match
-invariants. The expression invariant is an explicit temporary dependency;
+invariants. The expression invariant is an explicit dependency;
 these Flapjack helpers are not the original unconditional HOL theorem. -/
 namespace Flapjack.EvaluateProps
 open Flapjack.EvaluateHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL Flapjack.AstHOL

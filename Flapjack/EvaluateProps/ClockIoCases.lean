@@ -2,8 +2,7 @@ import Flapjack.EvaluateProps.ClockIoSafe
 import Flapjack.EvaluateProps.PrimitiveLength
 
 /-! Constructor cases for the original mutual clock-and-I/O evaluator theorem.
-The recursive assembly and remaining cases are open; source and carrier review
-remain pending. -/
+The mutual assembly is in ClockIoFull; source and carrier review remain pending. -/
 namespace Flapjack.EvaluateProps
 open Flapjack.EvaluateHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL Flapjack.AstHOL
 
