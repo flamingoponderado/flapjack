@@ -1,4 +1,4 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Config
+import Flapjack.Compiler.Backend.SourceToFlat.Helpers
 
 /-! Binding source variable names and traces in the source-to-flat proof. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
@@ -46,5 +46,22 @@ theorem nsAppend_bindLocals {ModuleName α : Type} (funs : List (MlString × α)
   simp only [bindLocals, bindList_eq_append, zipLocals_append]
   cases compMap
   simp [nsAppend, alistToNs, List.append_assoc]
+
+/-- Pattern bindings correspond to a list of local traces of the same length. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "nsBindList_pat_tups_bind_locals"]
+theorem nsBindList_patTups_bindLocals {ModuleName : Type} (names : List MlString)
+    (trace : Tra) (traces : List Tra) (locals : List MlString)
+    (compMap : Namespace ModuleName MlString VarName) :
+    ∃ patternTraces,
+      nsBindList (patTups trace names) (bindLocals traces locals compMap) =
+        bindLocals (patternTraces ++ traces) (names ++ locals) compMap ∧
+      patternTraces.length = names.length := by
+  induction names with
+  | nil => exact ⟨[], by simp [patTups, nsBindList], rfl⟩
+  | cons name rest ih =>
+    obtain ⟨patternTraces, h, hlen⟩ := ih
+    refine ⟨mkCons trace (rest.length + 1) :: patternTraces, ?_, by simp [hlen]⟩
+    simp [patTups, nsBindList, bindLocals] at h ⊢
+    exact congrArg (nsBind name (VarName.localName (mkCons trace (rest.length + 1)) name)) h
 
 end Flapjack.Compiler.Backend.SourceToFlat

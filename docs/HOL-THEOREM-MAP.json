@@ -104873,5 +104873,13 @@
     "lean_name": "nsAppend_bindLocals",
     "statement_status": "reviewed_exact",
     "reviewer": "Codex source comparison: the original local theorem equates nsAppend of a namespace of function names mapped to Local t with binding REPLICATE (LENGTH funs) t ++ ts against MAP FST funs ++ locals. Lean retains exactly these lists, operations, equality and no hypotheses. Typed source_to_flat_bind_locals_probe replay confirms the function-pair payload type α and namespace-module type β remain independent. HOL MAP2 and Lean zipWith both stop at the shorter list."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "nsBindList_pat_tups_bind_locals",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/BindLocals.lean",
+    "lean_name": "nsBindList_patTups_bindLocals",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: the original local theorem quantifies over names and asserts an existential trace list whose binding equals nsBindList (pat_tups t names) (bind_locals ts locals comp_map), and whose length equals the names length. Lean retains the existential, both conjuncts, list order, namespace and trace carriers, and no extra premises. Typed source_to_flat_bind_locals_probe replay confirms names : mlstring list, traces : tra list and independent polymorphic namespace-module type α. The witness uses the original mk_cons t (LENGTH tail + 1) case."
   }
 ]
