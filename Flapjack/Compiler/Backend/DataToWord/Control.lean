@@ -861,6 +861,28 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
                   .store (.op .add [.var 1, .const bytes]) (adjustVar value),
                   .assign (adjustVar dest) (.const 2)], l)
       | _ => some (.skip, l)
+  | l, .assign dest .install args names =>
+      match args with
+      | [code, data, codeLen, dataLen] =>
+          let code := adjustVar code
+          let data := adjustVar data
+          let codeLen := adjustVar codeLen
+          let dataLen := adjustVar dataLen
+          let halt (r : Nat) := WordLangProgHOL.ite .test r (.imm 1) .skip giveUp
+          some (listSeq [
+            halt codeLen, halt dataLen,
+            .assign 1 (.lookup .bitmapBuffer),
+            .assign 3 (.op .sub [.lookup .bitmapBufferEnd, .var 1]),
+            .assign 5 (shiftVar .lsr dataLen 2),
+            .assign 3 (shiftVar .lsr 3 (wordShiftAmount width)),
+            .ite .lower 3 (.reg 5) giveUp .skip,
+            .assign 1 (.lookup .codeBuffer),
+            .assign 3 (.op .sub [.lookup .codeBufferEnd, .var 1]),
+            .assign 5 (shiftVar .lsr codeLen 2),
+            .ite .lower 3 (.reg 5) giveUp .skip,
+            .mustTerminate (.call (some ([adjustVar dest], adjustSets (names.getD .ln), .skip, secn, l))
+              (some installCodeLocation) [code, data, 1] none)], l + 1)
+      | _ => some (.skip, l)
   | l, .assign dest (.label n) _ _ => some (.locValue (adjustVar dest) n, l)
   | l, .force ret loc v =>
       match encodeHeader (width := width) conf 14 1 with

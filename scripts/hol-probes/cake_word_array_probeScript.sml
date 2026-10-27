@@ -93,3 +93,12 @@ val _ = capture "word_from_word_narrow_64" ``
 val _ = capture "word_from_word_widen_64" ``
  let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16; be := F|> in
  data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$WordOp (closLang$WordFromWord F)) [1] NONE) : 64 wordLang$prog # num``;
+val _ = capture "install_64" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16; be := F|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 closLang$Install [1;2;3;4] (SOME (sptree$LS ()))) : 64 wordLang$prog # num``;
+val _ = capture "install_32" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16; be := F|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 closLang$Install [1;2;3;4] (NONE)) : 32 wordLang$prog # num``;
+val _ = capture "install_bad_arity" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16; be := F|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 closLang$Install [1;2;3] (NONE)) : 64 wordLang$prog # num``;

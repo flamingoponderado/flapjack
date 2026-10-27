@@ -319,6 +319,53 @@ private def headerConfig : Config := { conf with lenSize := 4 }
   | some (.skip, 2) => true
   | _ => false
 #guard (compileControl? (width := 8) conf 5 2 (.assign 3 (.blockOp (.equalConst (.int 32))) [1] none)).isNone
+-- Installation checks and call captured from the original data-to-word pass.
+private def matchesInstallFailure {width : Nat} [NeZero width] (p : Flapjack.WordLangProgHOL (BitVec width)) : Bool :=
+  match p with
+  | .seq (.assign 1 (.const n)) (.alloc 1 (.ls (), .ln)) => n == -1
+  | _ => false
+
+private def matchesInstall64 (shift : BitVec 64)
+    (names : Flapjack.NumSet) : Bool :=
+  match compileControl? (width := 64) conf 5 2 (.assign 3 .install [1, 2, 3, 4] (some names)) with
+  | some (.seq (.ite .test 8 (.imm 1) .skip failure1)
+      (.seq (.ite .test 10 (.imm 1) .skip failure2)
+        (.seq (.assign 1 (.lookup .bitmapBuffer))
+          (.seq (.assign 3 (.op .sub [.lookup .bitmapBufferEnd, .var 1]))
+            (.seq (.assign 5 (.shift .lsr (.var 10) (.const 2)))
+              (.seq (.assign 3 (.shift .lsr (.var 3) (.const actualShift)))
+                (.seq (.ite .lower 3 (.reg 5) failure3 .skip)
+                  (.seq (.assign 1 (.lookup .codeBuffer))
+                    (.seq (.assign 3 (.op .sub [.lookup .codeBufferEnd, .var 1]))
+                      (.seq (.assign 5 (.shift .lsr (.var 8) (.const 2)))
+                        (.seq (.ite .lower 3 (.reg 5) failure4 .skip)
+                          (.mustTerminate (.call (some ([8], live, .skip, 5, 2)) (some 30) [4, 6, 1] none)))))))))))), 3) =>
+      actualShift == shift && matchesInstallFailure failure1 && matchesInstallFailure failure2 &&
+        matchesInstallFailure failure3 && matchesInstallFailure failure4 && live == adjustSets names
+  | _ => false
+#guard matchesInstall64 3 (.ls ())
+private def matchesInstall32 (shift : BitVec 32)
+    (names : Flapjack.NumSet) : Bool :=
+  match compileControl? (width := 32) conf 5 2 (.assign 3 .install [1, 2, 3, 4] (some names)) with
+  | some (.seq (.ite .test 8 (.imm 1) .skip failure1)
+      (.seq (.ite .test 10 (.imm 1) .skip failure2)
+        (.seq (.assign 1 (.lookup .bitmapBuffer))
+          (.seq (.assign 3 (.op .sub [.lookup .bitmapBufferEnd, .var 1]))
+            (.seq (.assign 5 (.shift .lsr (.var 10) (.const 2)))
+              (.seq (.assign 3 (.shift .lsr (.var 3) (.const actualShift)))
+                (.seq (.ite .lower 3 (.reg 5) failure3 .skip)
+                  (.seq (.assign 1 (.lookup .codeBuffer))
+                    (.seq (.assign 3 (.op .sub [.lookup .codeBufferEnd, .var 1]))
+                      (.seq (.assign 5 (.shift .lsr (.var 8) (.const 2)))
+                        (.seq (.ite .lower 3 (.reg 5) failure4 .skip)
+                          (.mustTerminate (.call (some ([8], live, .skip, 5, 2)) (some 30) [4, 6, 1] none)))))))))))), 3) =>
+      actualShift == shift && matchesInstallFailure failure1 && matchesInstallFailure failure2 &&
+        matchesInstallFailure failure3 && matchesInstallFailure failure4 && live == adjustSets names
+  | _ => false
+#guard matchesInstall32 2 .ln
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 .install [1, 2, 3] none) with
+  | some (.skip, 2) => true
+  | _ => false
 -- Exact Word64/Word8 conversion programs captured from the original pass.
 #guard match compileControl? (width := 32) conf 5 2 (.assign 3 (.wordOp (.wordFromWord true)) [1] none) with
   | some (.seq (.assign 1 (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 6)]))
