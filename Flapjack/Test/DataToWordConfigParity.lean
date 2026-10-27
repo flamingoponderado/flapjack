@@ -14,6 +14,7 @@ import Flapjack.Test.LongDivWordOracle
 import Flapjack.Test.AnyArithWordOracle
 import Flapjack.Test.RefByte64WordOracle
 import Flapjack.Test.RefByte32WordOracle
+import Flapjack.Test.FixedStubsWordOracle
 
 /-!
 # `data_to_word` configuration helpers: original-oracle rows
@@ -364,6 +365,10 @@ private def headerConfig : Config := { conf with lenSize := 4 }
   | none => false
 #guard match compileConfiguredStub? (width := 32) conf refByteLocation with
   | some (arity, body) => Flapjack.Test.RefByte32WordOracle.matchesCaptured [(refByteLocation, arity, body, 0)]
+  | none => false
+#guard match fixedStubs? (width := 64) conf with
+  | some stubs => Flapjack.Test.FixedStubsWordOracle.matchesCaptured
+      (stubs.map fun (loc, arity, body) => (loc, arity, body, 0))
   | none => false
 #guard Flapjack.Test.CakeMLFlatOracle.data_to_word_stubs
 #guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.boolTest (.compare .gt))) [1, 2] none) with

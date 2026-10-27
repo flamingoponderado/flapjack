@@ -26,11 +26,13 @@ CASES = tuple(
      (ROOT / "scripts/hol-probes/ref_byte_64_word_probe.out",
       ROOT / "Flapjack/Test/RefByte64WordOracle.lean", "RefByte64WordOracle", 64),
      (ROOT / "scripts/hol-probes/ref_byte_32_word_probe.out",
-      ROOT / "Flapjack/Test/RefByte32WordOracle.lean", "RefByte32WordOracle", 32))
+      ROOT / "Flapjack/Test/RefByte32WordOracle.lean", "RefByte32WordOracle", 32),
+     (ROOT / "scripts/hol-probes/fixed_stubs_word_probe.out",
+      ROOT / "Flapjack/Test/FixedStubsWordOracle.lean", "FixedStubsWordOracle", 64))
 CONSTRUCTORS = {
     "Seq": (".seq", 2), "Assign": (".assign", 2), "Const": (".const", 1), "Load": (".load", 1),
     "If": (".ite", 5), "Test": (".test", 0), "NotTest": (".notTest", 0),
-    "NotLess": (".notLess", 0), "Equal": (".equal", 0), "Less": (".less", 0), "Imm": (".imm", 1),
+    "NotLess": (".notLess", 0), "NotEqual": (".notEqual", 0), "Equal": (".equal", 0), "Less": (".less", 0), "Imm": (".imm", 1),
     "Skip": (".skip", 0), "Alloc": (".alloc", 2), "Var": (".var", 1),
     "Lsr": (".lsr", 0), "Lsl": (".lsl", 0), "Asr": (".asr", 0), "Lower": (".lower", 0),
     "Op": (".op", 2), "Add": (".add", 0), "Sub": (".sub", 0), "Or": (".or", 0), "And": (".and", 0), "Xor": (".xor", 0),

@@ -391,4 +391,17 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
           .inst (.arith (.addCarry 10 10 16 1)), .inst (.arith (.addCarry 12 12 14 1)), recur]))
   else compileStub? location
 
+/-- The fixed prefix of the source stub table, in source order. The generated
+bignum suffix is not included; failure indicates a missing fixed stub. -/
+def fixedStubs? {width : Nat} [NeZero width] (conf : Config) :
+    Option (List (Nat × Nat × WordLangProgHOL (BitVec width))) :=
+  [fromListLocation, fromList1Location, refByteLocation, refArrayLocation, replicateLocation,
+   anyArithLocation, addLocation, subLocation, mulLocation, divLocation, modLocation,
+   compare1Location, compareLocation, equal1Location, equalLocation, longDiv1Location, longDivLocation,
+   installLocation, installCodeLocation, installDataLocation, appendLocation, appendMainLoopLocation,
+   appendLenLoopLocation, xorLoopLocation, unusedLocation, stringCmpLoopLocation, memCopyLocation,
+   byteCopyLocation, byteCopyAddLocation, byteCopySubLocation, byteCopyNewLocation, dummyLocation].mapM fun loc => do
+    let (arity, body) ← compileConfiguredStub? conf loc
+    pure (loc, arity, body)
+
 end Flapjack.Compiler.Backend.DataToWord
