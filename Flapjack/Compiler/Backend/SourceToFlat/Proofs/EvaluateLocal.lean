@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateModule
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateException
 
 /-! Local declaration simulation over the preliminary factored relations. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
@@ -139,6 +140,8 @@ theorem factoredDecIH_dlocal {C F : Type} [Nonempty C]
 blocks. This is proof bookkeeping and does not constrain CakeML programs. -/
 inductive FactoredScopedDec : Dec → Prop where
   | basic (dec : Dec) : FactoredDecSupported dec → FactoredScopedDec dec
+  | exception_ (location : Flapjack.Misc.Location.Locs) (name : ConN) (types : List AstT) :
+      FactoredScopedDec (.dexn location name types)
   | module_ (moduleName : ModN) (decs : List Dec) :
       (∀ dec, dec ∈ decs → FactoredScopedDec dec) → FactoredScopedDec (.dmod moduleName decs)
   | local_ (locals body : List Dec) :
@@ -157,6 +160,7 @@ theorem factoredDecIH_scoped {C F : Type} [Nonempty C]
     simp only [List.mem_singleton] at member
     subst item
     exact supported
+  | exception_ location name types => exact factoredDecIH_dexn interp transform location name types
   | module_ moduleName decs _ ih =>
     apply factoredDecIH_dmod interp transform moduleName decs
     apply factoredDecIH_list interp transform decs
