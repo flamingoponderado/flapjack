@@ -200,6 +200,12 @@ run_probe longdiv_word_probeScript.sml longdiv_word_probe.out \
 run_probe any_arith_word_probeScript.sml any_arith_word_probe.out \
   entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
 
+run_probe ref_byte_64_word_probeScript.sml ref_byte_64_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe ref_byte_32_word_probeScript.sml ref_byte_32_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
 run_probe empty_cake_bvi_probeScript.sml empty_cake_bvi_probe.out \
   code "$cake_dir/compiler/backend/bvl_to_bviScript.sml" "$cake_dir/compiler/backend"
 

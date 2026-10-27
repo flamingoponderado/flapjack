@@ -7,22 +7,26 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 CASES = tuple(
     (ROOT / f"scripts/hol-probes/{name}_cake_word_probe.out",
-     ROOT / f"Flapjack/Test/{title}CakeWordOracle.lean", f"{title}CakeWordOracle")
+     ROOT / f"Flapjack/Test/{title}CakeWordOracle.lean", f"{title}CakeWordOracle", 64)
     for name, title in (("empty", "Empty"), ("reference", "Reference"), ("match", "Match"))
 ) + ((ROOT / "scripts/hol-probes/byte_copy_word_probe.out",
-      ROOT / "Flapjack/Test/ByteCopyWordOracle.lean", "ByteCopyWordOracle"),
+      ROOT / "Flapjack/Test/ByteCopyWordOracle.lean", "ByteCopyWordOracle", 64),
      (ROOT / "scripts/hol-probes/from_list_word_probe.out",
-      ROOT / "Flapjack/Test/FromListWordOracle.lean", "FromListWordOracle"),
+      ROOT / "Flapjack/Test/FromListWordOracle.lean", "FromListWordOracle", 64),
      (ROOT / "scripts/hol-probes/append_word_probe.out",
-      ROOT / "Flapjack/Test/AppendWordOracle.lean", "AppendWordOracle"),
+      ROOT / "Flapjack/Test/AppendWordOracle.lean", "AppendWordOracle", 64),
      (ROOT / "scripts/hol-probes/install_xor_word_probe.out",
-      ROOT / "Flapjack/Test/InstallXorWordOracle.lean", "InstallXorWordOracle"),
+      ROOT / "Flapjack/Test/InstallXorWordOracle.lean", "InstallXorWordOracle", 64),
      (ROOT / "scripts/hol-probes/compare_equal_word_probe.out",
-      ROOT / "Flapjack/Test/CompareEqualWordOracle.lean", "CompareEqualWordOracle"),
+      ROOT / "Flapjack/Test/CompareEqualWordOracle.lean", "CompareEqualWordOracle", 64),
      (ROOT / "scripts/hol-probes/longdiv_word_probe.out",
-      ROOT / "Flapjack/Test/LongDivWordOracle.lean", "LongDivWordOracle"),
+      ROOT / "Flapjack/Test/LongDivWordOracle.lean", "LongDivWordOracle", 64),
      (ROOT / "scripts/hol-probes/any_arith_word_probe.out",
-      ROOT / "Flapjack/Test/AnyArithWordOracle.lean", "AnyArithWordOracle"))
+      ROOT / "Flapjack/Test/AnyArithWordOracle.lean", "AnyArithWordOracle", 64),
+     (ROOT / "scripts/hol-probes/ref_byte_64_word_probe.out",
+      ROOT / "Flapjack/Test/RefByte64WordOracle.lean", "RefByte64WordOracle", 64),
+     (ROOT / "scripts/hol-probes/ref_byte_32_word_probe.out",
+      ROOT / "Flapjack/Test/RefByte32WordOracle.lean", "RefByte32WordOracle", 32))
 CONSTRUCTORS = {
     "Seq": (".seq", 2), "Assign": (".assign", 2), "Const": (".const", 1), "Load": (".load", 1),
     "If": (".ite", 5), "Test": (".test", 0), "NotTest": (".notTest", 0),
@@ -47,7 +51,7 @@ CONSTRUCTORS = {
 }
 
 
-def render(input_path, namespace):
+def render(input_path, namespace, width):
     raw = input_path.read_text().strip()
     if not raw.startswith("entry="):
         raise ValueError("missing HOL entry row")
@@ -136,9 +140,9 @@ def render(input_path, namespace):
     definitions = []
     for index, (pattern, entry_sets, entry_words) in enumerate(entries):
         checks = [f"decide ({name} = Flapjack.sptListInsert [{', '.join(keys)}] .ln)" for name, keys in entry_sets]
-        checks += [f"{name} == (-1 : BitVec 64)" for name in entry_words]
+        checks += [f"{name} == (-1 : BitVec {width})" for name in entry_words]
         checks = " &&\n      ".join(checks) or "true"
-        definitions.append(f'''private def matches{index} (entry : Nat × Nat × (Flapjack.WordLangProgHOL (BitVec 64) × Nat)) : Bool :=
+        definitions.append(f'''private def matches{index} (entry : Nat × Nat × (Flapjack.WordLangProgHOL (BitVec {width}) × Nat)) : Bool :=
   match entry with
   | {pattern} =>
       {checks}
@@ -154,7 +158,7 @@ namespace Flapjack.Test.{namespace}
 {definitions}
 
 /-- Match every captured function, including every live set and next label. -/
-def matchesCaptured (code : List (Nat × Nat × (Flapjack.WordLangProgHOL (BitVec 64) × Nat))) : Bool :=
+def matchesCaptured (code : List (Nat × Nat × (Flapjack.WordLangProgHOL (BitVec {width}) × Nat))) : Bool :=
   match code with
   | [{entry_names}] =>
       {entry_checks}
@@ -168,8 +172,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
-    for input_path, output_path, namespace in CASES:
-        expected = render(input_path, namespace)
+    for input_path, output_path, namespace, width in CASES:
+        expected = render(input_path, namespace, width)
         if args.check:
             if not output_path.exists() or output_path.read_text() != expected:
                 raise SystemExit(f"{output_path} is stale; regenerate it from the HOL capture")

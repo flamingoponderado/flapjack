@@ -163,6 +163,36 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
         .assign 5 (.op .or [shiftN .lsl (.var 2) (width - conf.lenSize - 2), .const 3, .var 6]),
         .assign 7 (shiftN .lsr (.var 2) 2), .assign 9 (shiftN .lsr (.var 6) 4),
         ptr, .call none (some fromList1Location) [0, 1, 4, 2, 3, 5] none]))
+  else if location = refByteLocation then
+    let bytes := BitVec.ofNat width (width / 8)
+    let h := WordLangExpHOL.op .add [shiftN .lsr (.var 2) 2, .const bytes]
+    let x := if width - 63 = 0 then h else shiftN .lsr h (width - 63)
+    let y := shiftN .lsl h (width - wordShiftAmount width - conf.lenSize)
+    let makeBytes := listSeq [
+      .assign 4 (shiftN .lsr (.var 4) 2),
+      .assign 4 (.op .or [.var 4, shiftN .lsl (.var 4) 8]),
+      .assign 4 (.op .or [.var 4, shiftN .lsl (.var 4) 16]),
+      if width = 32 then .skip else .assign 4 (.op .or [.var 4, shiftN .lsl (.var 4) 32])]
+    let offsets := if width = 32 then [0, 1, 2, 3] else [0, 1, 2, 3, 4, 5, 6, 7]
+    let writeLast := offsets.foldr (fun offset tail =>
+      WordLangProgHOL.ite .equal 11 (.imm (BitVec.ofNat width offset)) .skip
+        (.seq (.inst (.mem .store8 4 (.addr 1 (BitVec.ofNat width offset)))) tail)) .skip
+    let limit := min (2 ^ conf.lenSize) (2 ^ width / 16)
+    some (4, listSeq [
+      .ite .test 2 (.imm 1) .skip giveUp,
+      .assign 1 x, allocVar conf limit (sptListInsert [0, 1, 2] .ln),
+      .assign 5 (shiftN .lsr h (wordShiftAmount width)),
+      .assign 7 (shiftN .lsl (.var 5) 2), .assign 9 (.lookup .nextFree),
+      .assign 1 (.op .add [.var 9, shiftN .lsl (.var 5) (wordShiftAmount width)]),
+      .set .nextFree (.op .add [.var 1, .const bytes]),
+      .assign 3 (.op .or [shiftN .lsl (.op .sub [.var 9, .lookup .currHeap])
+        (shiftLength conf - wordShiftAmount width), .const 1]),
+      .assign 5 (.op .or [.op .or [y, .const 7], .var 6]), makeBytes,
+      .store (.var 9) 5,
+      .assign 11 (.op .and [shiftN .lsr (.var 2) 2, .const (bytes - 1)]),
+      .assign 13 (.const 0), .store (.var 1) 13, writeLast,
+      .assign 7 (.op .sub [.var 7, .const 4]),
+      .call none (some replicateLocation) [0, 9, 4, 7, 3] none])
   else if location = refArrayLocation then
     let shiftN (op : Shift) (value : WordLangExpHOL (BitVec width)) (amount : Nat) :=
       WordLangExpHOL.shift op value (.const (BitVec.ofNat width amount))
