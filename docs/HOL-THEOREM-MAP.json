@@ -1,6 +1,54 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "env_gen_inv_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleStep.lean",
+    "lean_name": "envGenInv",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed env_gen_inv probe: HOL domain subset count next is pointwise that every spt domain member is less than next. The original environment_generation_store and its spt tree carrier are retained."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "env_store_inv_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleStep.lean",
+    "lean_name": "envStoreInv",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed env_store_inv probe: the nested spt generation map's domain is a subset of count next exactly when each domain member is below next; the original environment_store carrier is retained."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "env_gen_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleStep.lean",
+    "lean_name": "envGenRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed env_gen_rel probe: NONE is true, EvalDecs is false, and EvalOracle has the same generation equality, bound, and next-equals-environment-list-length conjunction. The optional lookup equals HOL EL under that bound; the out-of-bounds default cannot affect the conjunction."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "env_gen_future_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleStep.lean",
+    "lean_name": "envGenFutureRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed env_gen_future probe: the arbitrary decoder payload remains independent; NONE next configuration is true and SOME requires the same generation lookup and sptree subspt relation using the original spt carrier."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "src_orac_step_invs_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleStep.lean",
+    "lean_name": "srcOracStepInvs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the complete typed orac_step probe: the decoder's second component remains arbitrary, NONE/NONE is true, SOME EvalOracle requires the two original universally quantified decoding and incremental-step clauses, and all other cases are false. Lean uses the reviewed holThe for the original THE, including its unspecified NONE value; Nonempty C models HOL type inhabitation, and the concrete Config carrier is inhabited."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "step_1",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleStep.lean",
+    "lean_name": "sourceOracle_firstStep",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the local source theorem with the typed orac_first_step replay of its HOL proof: both retain the arbitrary decoder payload type and the same twelve existential witnesses, source oracle entries, two decoded pairs, incremental compilation result, and next-config equality. Nonempty C reflects HOL's inhabited types for the THE used by the premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "src_orac_next_cfg_inner_def",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleInvariant.lean",
     "lean_name": "srcOracNextCfgInner",
