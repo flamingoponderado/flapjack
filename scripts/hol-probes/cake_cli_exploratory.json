@@ -947,6 +947,48 @@
       "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stderr_bytes": 159,
       "stderr_sha256": "baf49192c48f17b04b5703a26ad19a18d6f7105de04f54139af6fbb5771bf296"
+    },
+    "config_error_bool": {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 123,
+      "stderr_sha256": "1b6a190dc1547b478bf8bb40a1a1eae553ee82d540726fcefa6a7bb45ba8157c"
+    },
+    "config_error_bool_multiple": {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 185,
+      "stderr_sha256": "0fa00f2067d5654d4079f27c61347341b0c218ce0e31353964a76a8ad83fd73b"
+    },
+    "config_error_bool_before_backend": {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 123,
+      "stderr_sha256": "5fae0a55dbaff66df2b3511ce71d4a5a3b5f8e94133c988f0cbd2b9734cf730a"
+    },
+    "config_error_target_bool": {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 162,
+      "stderr_sha256": "f8ba2a3230ef816e78109258d3b735546221c1b32bb3c6ee662ca818d360ea98"
+    },
+    "no_prelude_bool_duplicate": {
+      "exit_code": 0,
+      "stdout_bytes": 310091,
+      "stdout_sha256": "190452c735f110b227123cb1f21e3a3d4738b2d51a39687b8c2d8b8b98b581eb",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "no_prelude_target_duplicate": {
+      "exit_code": 0,
+      "stdout_bytes": 310091,
+      "stdout_sha256": "190452c735f110b227123cb1f21e3a3d4738b2d51a39687b8c2d8b8b98b581eb",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     }
   }
 }

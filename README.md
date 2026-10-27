@@ -37,7 +37,7 @@ Flapjack is an in-progress Lean 4 port of the formally verified Pancake compiler
   that model; see [`docs/ARM8.md`](docs/ARM8.md) and
   [`docs/SOUNDNESS.md`](docs/SOUNDNESS.md) item 10.
 - Other backends, including 32-bit ARM and x86, have not yet been ported to Lean.
-- The CakeML front end has not been ported to Lean.
+- An experimental CakeML front end and `cake` executable compile CakeML source to RISC-V. The ports are bounded, and full output parity and end-to-end correctness remain unproved; see [parity testing](docs/PARITY-TESTING.md).
 
 The Lean specifications and their implications still require independent review. See
 [`docs/SOUNDNESS.md`](docs/SOUNDNESS.md) for limitations and

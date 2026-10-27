@@ -14,6 +14,9 @@ open Flapjack.Basis.Pure.MlString
 structure Options where
   excludePrelude : Bool := false
   skipTypeInference : Bool := false
+  seenTarget : Bool := false
+  seenExcludePrelude : Bool := false
+  seenSkipTypeInference : Bool := false
   regAlg : Option Nat := none
   gcKind : Option Flapjack.Compiler.Backend.DataToWord.GcKind := none
 
@@ -28,10 +31,33 @@ private def parseBool (text : String) : Option Bool :=
 private def configError (message : String) : String :=
   "### ERROR: config error\n" ++ message ++ "\n\n\n\nProgram exited with nonzero exit code.\n"
 
+/-- The original driver validates the first occurrence of each top-level flag
+before parsing backend options, collecting errors in declaration order. -/
+private def topConfigErrors (args : List String) : List String := Id.run do
+  let first (flagPrefix : String) : Option String :=
+    (args.find? (fun arg => arg.startsWith flagPrefix)).map
+      (fun arg => (arg.drop flagPrefix.length).toString)
+  let mut errors := []
+  if let some target := first "--target=" then
+    if !(target == "riscv" || target == "x64" || target == "arm8" || target == "mips") then
+      errors := errors ++ [s!"Unrecognized 64-bit target option: {target}"]
+  for flag in ["--sexp=", "--exclude_prelude=", "--skip_type_inference=", "--main_return="] do
+    if let some value := first flag then
+      if (parseBool value).isNone then
+        errors := errors ++ [s!"Unable to parse as bool: {value} for flag: {flag}"]
+  return errors
+
+private def topConfigError (errors : List String) : String :=
+  "### ERROR: config error\n" ++ String.intercalate "\n" errors ++
+    "\n\n\nProgram exited with nonzero exit code.\n"
+
 private def parseArgs : List String → Options → Except String Options
   | [], options => .ok options
   | arg :: args, options =>
-      if arg == "--target=riscv" then parseArgs args options
+      if arg.startsWith "--target=" then
+        if options.seenTarget then parseArgs args options
+        else if arg == "--target=riscv" then parseArgs args { options with seenTarget := true }
+        else .error s!"unsupported option: {arg}"
       else if arg.startsWith "--reg_alg=" then
         let digits := (arg.drop "--reg_alg=".length).toString
         if options.regAlg.isSome then parseArgs args options
@@ -51,12 +77,14 @@ private def parseArgs : List String → Options → Except String Options
           | none => parseArgs args { options with gcKind := some (.generational (parts.map (fun s => s.toNat?.getD 0))) }
         else .error (configError s!"Unrecognized GC option: {value}")
       else if arg.startsWith "--exclude_prelude=" then
+        if options.seenExcludePrelude then parseArgs args options else
         match parseBool (arg.drop "--exclude_prelude=".length |>.toString) with
-        | some b => parseArgs args { options with excludePrelude := b }
+        | some b => parseArgs args { options with excludePrelude := b, seenExcludePrelude := true }
         | none => .error s!"invalid Boolean option: {arg}"
       else if arg.startsWith "--skip_type_inference=" then
+        if options.seenSkipTypeInference then parseArgs args options else
         match parseBool (arg.drop "--skip_type_inference=".length |>.toString) with
-        | some b => parseArgs args { options with skipTypeInference := b }
+        | some b => parseArgs args { options with skipTypeInference := b, seenSkipTypeInference := true }
         | none => .error s!"invalid Boolean option: {arg}"
       else .error s!"unsupported option: {arg}"
 
@@ -92,6 +120,10 @@ def main (args : List String) : IO UInt32 := do
   if args == ["--help"] || args == ["-h"] then
     IO.println usage
     return 0
+  let errors := topConfigErrors args
+  if !errors.isEmpty then
+    IO.eprint (topConfigError errors)
+    return 1
   match parseArgs args {} with
   | .error message =>
     if message.startsWith "### ERROR: config error\n" then

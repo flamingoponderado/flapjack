@@ -23,6 +23,12 @@ CASES = {
     'config_error_reg_alg': '',
     'config_error_gc': '',
     'config_error_gc_generation': '',
+    'config_error_bool': '',
+    'config_error_bool_multiple': '',
+    'config_error_bool_before_backend': '',
+    'config_error_target_bool': '',
+    'no_prelude_bool_duplicate': 'val x = 42;',
+    'no_prelude_target_duplicate': 'val x = 42;',
     'no_prelude_reg_alg_0': 'fun id x = x; val a = id (1, 2);',
     'no_prelude_reg_alg_1': 'fun id x = x; val a = id (1, 2);',
     'no_prelude_reg_alg_2': 'fun id x = x; val a = id (1, 2);',
@@ -162,6 +168,12 @@ def run(executable, source, name):
     if name == 'config_error_reg_alg': flags.append('--reg_alg=bad')
     if name == 'config_error_gc': flags.append('--gc=bad')
     if name == 'config_error_gc_generation': flags.append('--gc=gen1,,bad')
+    if name == 'config_error_bool': flags.append('--exclude_prelude=foo')
+    if name == 'config_error_bool_multiple': flags.extend(['--skip_type_inference=foo', '--exclude_prelude=bad'])
+    if name == 'config_error_bool_before_backend': flags.extend(['--reg_alg=bad', '--exclude_prelude=bad'])
+    if name == 'config_error_target_bool': flags = ['--target=bad', '--exclude_prelude=bad']
+    if name == 'no_prelude_bool_duplicate': flags.extend(['--exclude_prelude=false', '--skip_type_inference=false', '--skip_type_inference=bad'])
+    if name == 'no_prelude_target_duplicate': flags.append('--target=bad')
     gc_options = {
         'no_prelude_gc_none': ['--gc=none'],
         'no_prelude_gc_simple': ['--gc=simple'],
