@@ -110,6 +110,26 @@ theorem exprSim_global {C F : Type} (genv : GlobalEnv) (compMap : Environment) (
   rw [sourceRun, flatRun]
   exact ⟨.value (.cons valueRel .nil), nextRel⟩
 
+/-- Function creation preserves simulation when the captured local
+environment and the unshadowed global environment satisfy their relations. -/
+theorem exprSim_function {C F : Type} (genv : GlobalEnv) (compMap : Environment)
+    (globalEnv : SemEnv SemanticPrimitivesHOL.Value)
+    (sourceLocal : Namespace ModN VarN SemanticPrimitivesHOL.Value)
+    (flatEnv : FlatSem.Environment FlatSem.Value) (localRel : EnvRel genv sourceLocal flatEnv.v)
+    (globalInv : GlobalEnvInv genv compMap (fun n => n ∈ flatEnv.v.map Prod.fst) globalEnv)
+    (traces : List BackendCommon.Tra) (length : traces.length = flatEnv.v.length)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (statesRel : StateRel genv sourceState flatState) (trace : List VarN)
+    (name : VarN) (body : AstHOL.Exp) :
+    ExprSim genv { compMap with v := bindLocals traces (flatEnv.v.map Prod.fst) compMap.v } trace
+      { globalEnv with v := nsAppend sourceLocal globalEnv.v } flatEnv sourceState flatState (.fn name body) := by
+  obtain ⟨sourceRun, flatRun, related, nextRel⟩ :=
+    evaluate_function_unbounded genv compMap globalEnv sourceLocal flatEnv localRel globalInv traces length
+      sourceState flatState statesRel trace name body
+  unfold ExprSim
+  rw [sourceRun, flatRun]
+  exact ⟨.value (.cons related .nil), nextRel⟩
+
 /-- Tuple construction is simulated when the reversed argument list is
 simulated. Values are restored to source order after evaluation. -/
 theorem exprSim_tuple {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
@@ -609,6 +629,79 @@ theorem exprSim_raise {C F : Type} (genv : GlobalEnv) (compMap : Environment) (t
               rw [EvaluateHOL.evaluate, sourceRun, compileExp, FlatSem.evaluate, flatRun]
               simp only [EvaluateHOL.headValue, Flapjack.holHd]
               exact ⟨.raise valueRel, nextRel⟩
+
+/-- An exception handler preserves a simulated body result when the body does
+not raise an exception; its rows are irrelevant for values and aborts. -/
+theorem exprSim_handle_unraised {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
+    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F) (body : AstHOL.Exp)
+    (rows : List (Pat × AstHOL.Exp))
+    (bodySim : ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState body)
+    (notRaised : ∀ value, (EvaluateHOL.evaluate sourceState sourceEnv [body]).2 ≠ .err (.raise value)) :
+    ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.handle body rows) := by
+  unfold ExprSim at bodySim
+  cases sourceRun : EvaluateHOL.evaluate sourceState sourceEnv [body] with
+  | mk sourceNext sourceResult =>
+    rw [sourceRun] at bodySim
+    cases flatRun : FlatSem.evaluate flatEnv flatState [compileExp trace compMap body] with
+    | mk flatNext flatResult =>
+      rw [flatRun] at bodySim
+      obtain ⟨related, nextRel⟩ := bodySim
+      cases related with
+      | value valuesRel =>
+        unfold ExprSim
+        rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate sourceState sourceEnv [body] []).1, sourceRun]
+        rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flatState
+          [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+        exact ⟨.value valuesRel, nextRel⟩
+      | abort error =>
+        unfold ExprSim
+        rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate sourceState sourceEnv [body] []).1, sourceRun]
+        rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flatState
+          [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+        exact ⟨.abort error, nextRel⟩
+      | raise valueRel =>
+        rename_i sourceValue flatValue
+        have contradiction := notRaised sourceValue
+        rw [sourceRun] at contradiction
+        exact (contradiction rfl).elim
+
+/-- An empty exception handler preserves the expression's result, including
+re-raising an exception after no rows match. -/
+theorem exprSim_handle_empty {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
+    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F) (body : AstHOL.Exp)
+    (bodySim : ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState body) :
+    ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.handle body []) := by
+  unfold ExprSim at bodySim
+  cases sourceRun : EvaluateHOL.evaluate sourceState sourceEnv [body] with
+  | mk sourceNext sourceResult =>
+    rw [sourceRun] at bodySim
+    cases flatRun : FlatSem.evaluate flatEnv flatState [compileExp trace compMap body] with
+    | mk flatNext flatResult =>
+      rw [flatRun] at bodySim
+      obtain ⟨related, nextRel⟩ := bodySim
+      cases related with
+      | value valuesRel =>
+        unfold ExprSim
+        rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate sourceState sourceEnv [body] []).1, sourceRun]
+        rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flatState
+          [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+        exact ⟨.value valuesRel, nextRel⟩
+      | abort error =>
+        unfold ExprSim
+        rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate sourceState sourceEnv [body] []).1, sourceRun]
+        rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flatState
+          [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+        exact ⟨.abort error, nextRel⟩
+      | raise valueRel =>
+        unfold ExprSim
+        rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate sourceState sourceEnv [body] []).1, sourceRun]
+        rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flatState
+          [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+        simp only [List.map_nil, canPmatchAll, List.all_nil, ↓reduceIte, EvaluateHOL.evaluateMatch,
+          compilePes, FlatSem.selectRow, FlatSem.pmatchRows]
+        exact ⟨.raise valueRel, nextRel⟩
 
 /-- An anonymous let evaluates its body in the unchanged environments after
 the first expression succeeds, and propagates related errors otherwise. -/

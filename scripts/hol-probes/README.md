@@ -1,3 +1,5 @@
+`source_to_flat_function_handle_probe.out` captures original typed function compilation, empty source matching, and flat matching-row equations. Lean relates captured function environments and empty-handler behavior over preliminary relations; general handler matching and pass correctness remain open.
+
 `source_to_flat_constructor_probe.out` captures the original typed constructor compilation, arity check, and value construction equations. Lean proves named-constructor composition using its preliminary global invariant and fixed-global simulation relation; the complete HOL invariant and pass correctness remain open.
 
 `source_to_flat_let_probe.out` captures the original typed named and anonymous let-compilation equations and optional namespace binding. Lean proves corresponding expression composition over its preliminary fixed-global simulation relation; it does not establish the full HOL invariant or pass correctness.

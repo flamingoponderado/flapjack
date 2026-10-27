@@ -40,6 +40,9 @@ probe_needs_refresh() {
   local probe="$2"
   local source="$3"
   [[ ! -f "$output" || "$probe" -nt "$output" || "$source" -nt "$output" ]] ||
+    [[ "$(basename "$probe")" == source_to_flat_function_handle_probeScript.sml &&
+       ( "$cake_dir/semantics/evaluateScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/semantics/flatSemScript.sml" -nt "$output" ) ]] ||
     [[ "$(basename "$probe")" == cake_sexp_parser_probeScript.sml &&
        ( "$hol_dir/examples/formal-languages/context-free/simpleSexpScript.sml" -nt "$output" ||
          "$hol_dir/examples/formal-languages/context-free/simpleSexpParseScript.sml" -nt "$output" ||
@@ -244,6 +247,10 @@ run_probe() {
     fi
   done
 }
+
+run_probe source_to_flat_function_handle_probeScript.sml source_to_flat_function_handle_probe.out \
+  function_compile_typed empty_match_typed flat_rows_typed \
+  "$cake_dir/compiler/backend/source_to_flatScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe source_to_flat_constructor_probeScript.sml source_to_flat_constructor_probe.out \
   constructor_compile_typed constructor_check_typed constructor_build_typed \
