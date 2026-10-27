@@ -1870,6 +1870,7 @@ import Flapjack.Compiler.Inference.InferT.Display
 import Flapjack.Compiler.Inference.Infer.TypesOutput
 import Flapjack.Misc.Grammar
 import Flapjack.CakeParser.ParseTree.Grammar
+import Flapjack.CakeParser.CfgGrammar
 import Flapjack.TypeSystemHOL.Environments
 import Flapjack.TypeSystemHOL.TypeNames
 import Flapjack.TypeSystemHOL.Patterns

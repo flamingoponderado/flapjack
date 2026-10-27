@@ -463,6 +463,9 @@ run_probe cake_type_display_probeScript.sml cake_type_display_probe.out \
   get_tyname type_ident var_name parentheses type_render type_render_final alist_nub ns_nub ns_alist types_output type_function type_tuple type_unknown \
   "$cake_dir/compiler/inference/infer_tScript.sml" "$cake_dir/compiler/inference"
 
+run_probe cake_cfg_grammar_probeScript.sml cake_cfg_grammar_probe.out \
+  cml_grammar cml_start empty_top decl_top "$cake_dir/semantics/gramScript.sml" "$cake_dir/semantics"
+
 run_probe context_free_tree_probeScript.sml context_free_tree_probe.out \
   merge_locs merge_list is_tok dest_tok ptree_loc ptree_list_loc ptree_head ptree_fringe real_fringe valid_locs valid_ptree complete_ptree valid_lptree merge_example fringe_example valid_example missing_rule \
   "$hol_dir/examples/formal-languages/context-free/grammarScript.sml" "$hol_dir/examples/formal-languages/context-free"
