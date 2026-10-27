@@ -33,6 +33,10 @@ private def silentFfi {width : Nat} (conf : Config) (n : Nat) (names : WordLangC
       .assign 9 (.lookup .heapLength), .ffi (.implode []) 7 n 9 n names]
   else .skip
 
+/-- Internal allocation-failure sequence used by supported cases. -/
+private def giveUp {width : Nat} : WordLangProgHOL (BitVec width) :=
+  .seq (.assign 1 (.const (-1))) (.alloc 1 (adjustSets (.ln : NumSet)))
+
 /-- Internal word-address construction for supported load cases; the
 standalone width-indexed HOL definition remains to be reviewed and tagged. -/
 private def realAddr {width : Nat} [NeZero width] (conf : Config) (r : Nat) : WordLangExpHOL (BitVec width) :=
@@ -69,6 +73,21 @@ private def shiftVar {width : Nat} (op : Shift) (v n : Nat) : WordLangExpHOL (Bi
         | .asr => shiftN .asr (.var v) (width - 1)
         | _ => .const 0
       else shiftN op (.var v) n
+
+/-- Internal variable-allocation sequence for the reference-array case;
+the standalone width-indexed HOL definition remains to be reviewed. -/
+private def allocVar {width : Nat} [NeZero width] (conf : Config) (limit : Nat) (names : NumSet) :
+    WordLangProgHOL (BitVec width) :=
+  let cutsets := adjustSets names
+  let ffiCutsets := (cutsets.1, sptInsert 1 () cutsets.2)
+  listSeq [
+    .assign 1 (shiftN .lsr (.var 1) 2),
+    .ite .lower 1 (.imm (BitVec.ofNat width limit))
+      (.assign 1 (shiftN .lsl (.op .add [.var 1, .const 1]) (wordShiftAmount width)))
+      (.assign 1 (.const (-1))),
+    .assign 3 (.op .sub [.lookup .triggerGC, .lookup .nextFree]),
+    .ite .lower 3 (.reg 1)
+      (listSeq [silentFfi conf 3 ffiCutsets, .alloc 1 cutsets, silentFfi conf 3 cutsets]) .skip]
 
 /-- Flapjack's partial traversal. Unsupported assignment operations and
 thunk cases return `none`; this is not HOL's total `comp`. -/
@@ -214,7 +233,7 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
       | _ => some (.skip, l)
   | l, .assign dest (.memOp .ref) args _ =>
       match encodeHeader (width := width) conf 2 args.length with
-      | none => some (.seq (.assign 1 (.const (-1))) (.alloc 1 (adjustSets (.ln : NumSet))), l)
+      | none => some (giveUp, l)
       | some header =>
           let bytes := BitVec.ofNat width (width / 8) * BitVec.ofNat width (args.length + 1)
           some (listSeq [
@@ -226,6 +245,18 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
             .assign (adjustVar dest) (.op .or [
               shiftN .lsl (.op .sub [.var 1, .lookup .currHeap]) (shiftLength conf - wordShiftAmount width),
               .const 1])], l)
+  | l, .assign dest (.memOp .refArray) args names =>
+      match args with
+      | [x, y] =>
+          let names := names.getD .ln
+          let limit := min (2 ^ conf.lenSize) (2 ^ width / 16)
+          some (listSeq [
+            .ite .test (adjustVar x) (.imm 1) .skip giveUp,
+            .move 0 [(1, adjustVar x)],
+            allocVar conf limit (sptListInsert [x, y] names),
+            .mustTerminate (.call (some ([adjustVar dest], adjustSets names, .skip, secn, l))
+              (some refArrayLocation) [adjustVar x, adjustVar y] none)], l + 1)
+      | _ => some (.skip, l)
   | l, .assign dest (.memOp op) args _ =>
       match op, args with
       | .update, [base, index, value] | .updateCons, [base, index, value] =>

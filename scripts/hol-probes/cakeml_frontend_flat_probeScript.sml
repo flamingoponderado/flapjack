@@ -326,6 +326,24 @@ val data_int_word = EVAL ``
  (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$IntOp closLang$Add) [1] NONE) : 64 wordLang$prog # num) = (wordLang$Skip, 2)``;
 val _ = (print "data_to_word_int="; print_term (rhs (concl (CONV_RULE
   (RAND_CONV (SIMP_CONV (srw_ss()) [wordsTheory.dimindex_64, wordsTheory.dimword_def] THENC EVAL)) data_int_word))); print "\n");
+val data_ref_array_word = EVAL ``
+ let conf = (ARB:data_to_word$config) with <|len_size := 16; call_empty_ffi := F|> in
+ let cut = data_to_word$adjust_sets (sptree$list_insert [1;2] sptree$LN) in
+ (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$MemOp closLang$RefArray) [1;2] NONE) : 64 wordLang$prog # num) =
+  (wordLang$Seq (wordLang$If asm$Test 4 (asm$Imm 1w) wordLang$Skip
+     (wordLang$Seq (wordLang$Assign 1 (wordLang$Const (-1w))) (wordLang$Alloc 1 (sptree$LS (), sptree$LN))))
+   (wordLang$Seq (wordLang$Move 0 [(1,4)])
+    (wordLang$Seq
+     (wordLang$Seq (wordLang$Assign 1 (wordLang$Shift ast$Lsr (wordLang$Var 1) (wordLang$Const 2w)))
+      (wordLang$Seq (wordLang$If asm$Lower 1 (asm$Imm 65536w)
+       (wordLang$Assign 1 (wordLang$Shift ast$Lsl (wordLang$Op asm$Add [wordLang$Var 1; wordLang$Const 1w]) (wordLang$Const 3w)))
+       (wordLang$Assign 1 (wordLang$Const (-1w))))
+       (wordLang$Seq (wordLang$Assign 3 (wordLang$Op asm$Sub [wordLang$Lookup stackLang$TriggerGC; wordLang$Lookup stackLang$NextFree]))
+        (wordLang$If asm$Lower 3 (asm$Reg 1) (wordLang$Seq wordLang$Skip (wordLang$Seq (wordLang$Alloc 1 cut) wordLang$Skip)) wordLang$Skip))))
+     (wordLang$MustTerminate (wordLang$Call (SOME ([8], (sptree$LS (), sptree$LN), wordLang$Skip, 5, 2)) (SOME 10) [4;6] NONE)))), 3) /\
+ (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$MemOp closLang$RefArray) [1] NONE) : 64 wordLang$prog # num) = (wordLang$Skip, 2)``;
+val _ = (print "data_to_word_ref_array="; print_term (rhs (concl (CONV_RULE
+  (RAND_CONV (SIMP_CONV (srw_ss()) [wordsTheory.dimindex_64, wordsTheory.dimword_def] THENC EVAL)) data_ref_array_word))); print "\n");
 val data_comparisons_word = EVAL ``
  (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$BlockOp (closLang$BoolTest (ast$Compare ast$Gt))) [1;2] NONE) : 64 wordLang$prog # num) =
   (wordLang$If asm$Equal 4 (asm$Reg 6) (wordLang$Assign 8 (wordLang$Const 18w)) (wordLang$Assign 8 (wordLang$Const 2w)), 2) /\
