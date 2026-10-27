@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.FlatElim.Reachability
 import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
 import Flapjack.Compiler.Backend.SourceToFlat.ToClos
 import Flapjack.Compiler.Backend.SourceToFlat.ToBvi
+import Flapjack.Compiler.Backend.SourceToFlat.ToData
 import Flapjack.Compiler.Backend.ClosToBvl.Constants
 import Flapjack.Compiler.Backend.ClosToBvl.Layout
 import Flapjack.Compiler.Backend.ClosToBvl.Sort
@@ -44,6 +45,7 @@ import Flapjack.Test.CakeMLFlatOracle
 import Flapjack.Test.EmptyCakeBviOracle
 import Flapjack.Test.ReferenceCakeBviOracle
 import Flapjack.Test.MatchCakeBviOracle
+import Flapjack.Test.EmptyCakeDataOracle
 
 namespace Flapjack.Test.FlatElim
 open Flapjack Flapjack.Compiler.Backend.FlatLang Flapjack.Compiler.Backend.FlatElim
@@ -449,6 +451,10 @@ private def noOptsClosConfig : Flapjack.Compiler.Backend.ClosToBvl.Config :=
 #guard match Flapjack.Compiler.Backend.SourceToFlat.compileCakeToBviNoOptsFuel 100
     Flapjack.Compiler.Backend.SourceToFlat.emptyConfig noOptsClosConfig [] with
   | some (_, _, _, code, _) => Flapjack.Test.EmptyCakeBviOracle.matchesCaptured code
+  | _ => false
+#guard match Flapjack.Compiler.Backend.SourceToFlat.compileCakeToDataNoOptsFuel 100
+    Flapjack.Compiler.Backend.SourceToFlat.emptyConfig noOptsClosConfig [] with
+  | some (_, _, 64, code, 1) => Flapjack.Test.EmptyCakeDataOracle.matchesCaptured code
   | _ => false
 #guard match Flapjack.Compiler.Backend.SourceToFlat.compileCakeToBviNoOptsFuel 100
     Flapjack.Compiler.Backend.SourceToFlat.emptyConfig noOptsClosConfig
