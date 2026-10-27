@@ -218,6 +218,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateControl
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternRows
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateMatch
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateApply
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvalApp
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDenv
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EnvironmentDomain
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.MemoryOps
