@@ -2,7 +2,10 @@ import Flapjack.Compiler.Backend.Semantics.FlatSem.Measure
 import Flapjack.Misc.ListEl
 
 /-! Clocked flat evaluation without an extra fuel parameter. The definition is
-untagged pending complete review against HOL and the source numeric carrier. -/
+untagged pending complete review against HOL and the source numeric carrier.
+Lean currently fails to derive the generated functional induction principle for
+this mutual well-founded definition; proofs need an explicit induction over
+the clock and expression-weight measure until that issue is resolved. -/
 namespace Flapjack.Compiler.Backend.FlatSem
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 open Flapjack.Basis.Pure.MlString

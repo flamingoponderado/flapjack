@@ -26,6 +26,11 @@ CASES = {
     'negative_int_to_string': 'val _ = print (Int.toString (~123456789));',
     'word64_xor': 'val _ = print_int (Word64.toInt (Word64.xorb 0w123 0w77));',
     'substring_size': 'val _ = print_int (String.size (String.substring "abcdef" 2 3));',
+    'recursive_factorial': 'fun fact n = if n <= 1 then 1 else n * fact (n - 1); val _ = print_int (fact 7);',
+    'mutual_recursion': 'fun even n = if n = 0 then True else odd (n-1) and odd n = if n = 0 then False else even (n-1); val _ = print_int (if even 9 then 1 else 0);',
+    'byte_array_copy_vector': 'val a = Word8Array.array 4 (Word8.fromInt 1); val _ = Word8Array.copyVec "abc" 0 3 a 1; val _ = print_int (Word8.toInt (Word8Array.sub a 2));',
+    'exception_through_function': 'exception E int; fun f n = if n = 0 then raise E 17 else n; val _ = print_int (f 0 handle E x => x);',
+    'large_integer_to_string': 'val _ = print (Int.toString 999999999999999999999999999999);',
 }
 
 

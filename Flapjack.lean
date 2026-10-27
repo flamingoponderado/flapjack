@@ -230,6 +230,7 @@ import Flapjack.Compiler.Backend.Semantics.FlatSem.Thunk
 import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyFlat
 import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyMemory
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Apply
+import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyClock
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Evaluate
 import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
 import Flapjack.Compiler.Backend.SourceToFlat.CompileDecs
