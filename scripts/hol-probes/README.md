@@ -1,3 +1,5 @@
+`source_to_flat_value_relation_probe.out` captures the full original mutual value/environment relation rules and inferred types. The corresponding Lean relation factors nested premises into helpers; full correspondence review and pass correctness remain open.
+
 `source_to_flat_global_env_probe.out` captures the original global environment's value-list and two finite-map field types. The map witness checks the Lean representation roundtrip; it does not establish the value relation or pass correctness.
 
 `cake_flat_sem_carriers_probe.out` captures flat-semantics value constructors, environment and state field types, compiler callback widths, and basic value and constructor helper definitions with inferred types. It is carrier and definition evidence, not evaluator or simulation correctness.
