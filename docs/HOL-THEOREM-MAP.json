@@ -103131,6 +103131,46 @@
   },
   {
     "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/EvaluateHOL/Clock.lean",
+    "lean_name": "evaluateClock_let",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: kernel-checked control-flow case of evaluate_clock, with branch-specific recursive hypotheses compared against the pinned full_evaluate_ind capture. Full evaluator correspondence review and the assembling theorem remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/EvaluateHOL/Clock.lean",
+    "lean_name": "evaluateClock_if",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: kernel-checked control-flow case of evaluate_clock, with branch-specific recursive hypotheses compared against the pinned full_evaluate_ind capture. Full evaluator correspondence review and the assembling theorem remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/EvaluateHOL/Clock.lean",
+    "lean_name": "evaluateClock_log",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: kernel-checked control-flow case of evaluate_clock, with branch-specific recursive hypotheses compared against the pinned full_evaluate_ind capture. Full evaluator correspondence review and the assembling theorem remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/EvaluateHOL/Clock.lean",
+    "lean_name": "evaluateClock_mat",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: kernel-checked control-flow case of evaluate_clock, with branch-specific recursive hypotheses compared against the pinned full_evaluate_ind capture. Full evaluator correspondence review and the assembling theorem remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/EvaluateHOL/Clock.lean",
+    "lean_name": "evaluateClock_handle",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: kernel-checked control-flow case of evaluate_clock, with branch-specific recursive hypotheses compared against the pinned full_evaluate_ind capture. Full evaluator correspondence review and the assembling theorem remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
     "hol_name": "dec_clock_def",
     "lean_path": "Flapjack/EvaluateHOL.lean",
     "lean_name": "decClock",

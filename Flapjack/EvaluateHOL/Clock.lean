@@ -326,4 +326,196 @@ theorem evaluateClock_cons {σ : Type} (st st' : State σ) (env : SemEnv Value)
     cases ht : tail.2 <;> simp only [ht] at hs
     all_goals exact Nat.le_trans (Nat.le_of_eq hs.symm) (Nat.le_trans tailBound firstBound)
 
+@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+theorem evaluateClock_let {σ : Type} (st st' : State σ) (env : SemEnv Value)
+    (name : Option VarN) (first body : Flapjack.AstHOL.Exp) (result : Result (List Value) Value)
+    (ihFirst : ∀ next outcome, evaluate st env [first] = (next, outcome) → next.clock ≤ st.clock)
+    (ihBody : ∀ middle values next outcome,
+      evaluate st env [first] = (middle, .val values) →
+      evaluate middle { env with v := nsOptBind name (headValue values) env.v } [body] = (next, outcome) →
+        next.clock ≤ middle.clock)
+    (h : evaluate st env [.let_ name first body] = (st', result)) : st'.clock ≤ st.clock := by
+  let firstResult := evaluate st env [first]
+  have firstBound := ihFirst firstResult.1 firstResult.2 (Prod.eta firstResult).symm
+  have clamp := fixClock_eq_of_bound st firstResult firstBound
+  simp only [evaluate] at h
+  change (match (fixClock st firstResult).2 with
+    | .err err => ((fixClock st firstResult).1, .err err)
+    | .val values => evaluate (fixClock st firstResult).1
+        { env with v := nsOptBind name (headValue values) env.v } [body]) = (st', result) at h
+  rw [clamp] at h
+  cases hv : firstResult.2 with
+  | err err =>
+    simp only [hv] at h
+    have hs := congrArg (fun pair => pair.1.clock) h
+    exact Nat.le_trans (Nat.le_of_eq hs.symm) firstBound
+  | val values =>
+    simp only [hv] at h
+    have firstEq : evaluate st env [first] = (firstResult.1, .val values) := by
+      simpa only [hv] using (Prod.eta firstResult).symm
+    exact Nat.le_trans (ihBody firstResult.1 values st' result firstEq h) firstBound
+
+@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+theorem evaluateClock_if {σ : Type} (st st' : State σ) (env : SemEnv Value)
+    (test yes no : Flapjack.AstHOL.Exp) (result : Result (List Value) Value)
+    (ihTest : ∀ next outcome, evaluate st env [test] = (next, outcome) → next.clock ≤ st.clock)
+    (ihBranch : ∀ middle values chosen next outcome,
+      evaluate st env [test] = (middle, .val values) → doIf (headValue values) yes no = some chosen →
+      evaluate middle env [chosen] = (next, outcome) → next.clock ≤ middle.clock)
+    (h : evaluate st env [.if_ test yes no] = (st', result)) : st'.clock ≤ st.clock := by
+  let testResult := evaluate st env [test]
+  have testBound := ihTest testResult.1 testResult.2 (Prod.eta testResult).symm
+  have clamp := fixClock_eq_of_bound st testResult testBound
+  simp only [evaluate] at h
+  change (match (fixClock st testResult).2 with
+    | .err err => ((fixClock st testResult).1, .err err)
+    | .val values => match _hif : doIf (headValue values) yes no with
+      | none => typeError (fixClock st testResult).1
+      | some chosen => evaluate (fixClock st testResult).1 env [chosen]) = (st', result) at h
+  rw [clamp] at h
+  cases hv : testResult.2 with
+  | err err =>
+    simp only [hv] at h
+    have hs := congrArg (fun pair => pair.1.clock) h
+    exact Nat.le_trans (Nat.le_of_eq hs.symm) testBound
+  | val values =>
+    simp only [hv] at h
+    have testEq : evaluate st env [test] = (testResult.1, .val values) := by
+      simpa only [hv] using (Prod.eta testResult).symm
+    cases hc : doIf (headValue values) yes no with
+    | none =>
+      rw [hc] at h
+      have hs := congrArg (fun pair => pair.1.clock) h
+      simp only [typeError] at hs
+      exact Nat.le_trans (Nat.le_of_eq hs.symm) testBound
+    | some chosen =>
+      rw [hc] at h
+      exact Nat.le_trans (ihBranch testResult.1 values chosen st' result testEq hc h) testBound
+
+@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+theorem evaluateClock_log {σ : Type} (st st' : State σ) (env : SemEnv Value)
+    (op : Lop) (first second : Flapjack.AstHOL.Exp) (result : Result (List Value) Value)
+    (ihFirst : ∀ next outcome, evaluate st env [first] = (next, outcome) → next.clock ≤ st.clock)
+    (ihBranch : ∀ middle values chosen next outcome,
+      evaluate st env [first] = (middle, .val values) → doLog op (headValue values) second = some (.exp chosen) →
+      evaluate middle env [chosen] = (next, outcome) → next.clock ≤ middle.clock)
+    (h : evaluate st env [.log op first second] = (st', result)) : st'.clock ≤ st.clock := by
+  let firstResult := evaluate st env [first]
+  have firstBound := ihFirst firstResult.1 firstResult.2 (Prod.eta firstResult).symm
+  have clamp := fixClock_eq_of_bound st firstResult firstBound
+  simp only [evaluate] at h
+  change (match (fixClock st firstResult).2 with
+    | .err err => ((fixClock st firstResult).1, .err err)
+    | .val values => match _hlog : doLog op (headValue values) second with
+      | none => typeError (fixClock st firstResult).1
+      | some (.val v) => ((fixClock st firstResult).1, .val [v])
+      | some (.exp chosen) => evaluate (fixClock st firstResult).1 env [chosen]) = (st', result) at h
+  rw [clamp] at h
+  cases hv : firstResult.2 with
+  | err err =>
+    simp only [hv] at h
+    have hs := congrArg (fun pair => pair.1.clock) h
+    exact Nat.le_trans (Nat.le_of_eq hs.symm) firstBound
+  | val values =>
+    simp only [hv] at h
+    have firstEq : evaluate st env [first] = (firstResult.1, .val values) := by
+      simpa only [hv] using (Prod.eta firstResult).symm
+    cases hc : doLog op (headValue values) second with
+    | none =>
+      rw [hc] at h
+      have hs := congrArg (fun pair => pair.1.clock) h
+      simp only [typeError] at hs
+      exact Nat.le_trans (Nat.le_of_eq hs.symm) firstBound
+    | some choice =>
+      cases choice with
+      | val v =>
+        rw [hc] at h
+        have hs := congrArg (fun pair => pair.1.clock) h
+        exact Nat.le_trans (Nat.le_of_eq hs.symm) firstBound
+      | exp chosen =>
+        rw [hc] at h
+        exact Nat.le_trans (ihBranch firstResult.1 values chosen st' result firstEq hc h) firstBound
+
+@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+theorem evaluateClock_mat {σ : Type} (st st' : State σ) (env : SemEnv Value)
+    (expr : Flapjack.AstHOL.Exp) (clauses : List (Pat × Flapjack.AstHOL.Exp))
+    (result : Result (List Value) Value)
+    (ihExpr : ∀ next outcome, evaluate st env [expr] = (next, outcome) → next.clock ≤ st.clock)
+    (ihMatch : ∀ middle values next outcome,
+      evaluate st env [expr] = (middle, .val values) →
+      canPmatchAll env.c middle.refs (clauses.map Prod.fst) (headValue values) = true →
+      evaluateMatch middle env (headValue values) clauses bindExnV = (next, outcome) →
+        next.clock ≤ middle.clock)
+    (h : evaluate st env [.mat expr clauses] = (st', result)) : st'.clock ≤ st.clock := by
+  let first := evaluate st env [expr]
+  have firstBound := ihExpr first.1 first.2 (Prod.eta first).symm
+  have clamp := fixClock_eq_of_bound st first firstBound
+  simp only [evaluate] at h
+  change (match (fixClock st first).2 with
+    | .err err => ((fixClock st first).1, .err err)
+    | .val values =>
+      if canPmatchAll env.c (fixClock st first).1.refs (clauses.map Prod.fst) (headValue values) then
+        evaluateMatch (fixClock st first).1 env (headValue values) clauses bindExnV
+      else typeError (fixClock st first).1) = (st', result) at h
+  rw [clamp] at h
+  cases hv : first.2 with
+  | err err =>
+    simp only [hv] at h
+    have hs := congrArg (fun pair => pair.1.clock) h
+    exact Nat.le_trans (Nat.le_of_eq hs.symm) firstBound
+  | val values =>
+    simp only [hv] at h
+    have firstEq : evaluate st env [expr] = (first.1, .val values) := by
+      simpa only [hv] using (Prod.eta first).symm
+    split at h
+    · rename_i valid
+      exact Nat.le_trans (ihMatch first.1 values st' result firstEq valid h) firstBound
+    · have hs := congrArg (fun pair => pair.1.clock) h
+      simp only [typeError] at hs
+      exact Nat.le_trans (Nat.le_of_eq hs.symm) firstBound
+
+@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+theorem evaluateClock_handle {σ : Type} (st st' : State σ) (env : SemEnv Value)
+    (expr : Flapjack.AstHOL.Exp) (clauses : List (Pat × Flapjack.AstHOL.Exp))
+    (result : Result (List Value) Value)
+    (ihExpr : ∀ next outcome, evaluate st env [expr] = (next, outcome) → next.clock ≤ st.clock)
+    (ihMatch : ∀ middle value next outcome,
+      evaluate st env [expr] = (middle, .err (.raise value)) →
+      canPmatchAll env.c middle.refs (clauses.map Prod.fst) value = true →
+      evaluateMatch middle env value clauses value = (next, outcome) → next.clock ≤ middle.clock)
+    (h : evaluate st env [.handle expr clauses] = (st', result)) : st'.clock ≤ st.clock := by
+  let first := evaluate st env [expr]
+  have firstBound := ihExpr first.1 first.2 (Prod.eta first).symm
+  have clamp := fixClock_eq_of_bound st first firstBound
+  simp only [evaluate] at h
+  change (match (fixClock st first).2 with
+    | .val values => ((fixClock st first).1, .val values)
+    | .err (.abort err) => ((fixClock st first).1, .err (.abort err))
+    | .err (.raise value) =>
+      if canPmatchAll env.c (fixClock st first).1.refs (clauses.map Prod.fst) value then
+        evaluateMatch (fixClock st first).1 env value clauses value
+      else typeError (fixClock st first).1) = (st', result) at h
+  rw [clamp] at h
+  cases hv : first.2 with
+  | val values =>
+    simp only [hv] at h
+    have hs := congrArg (fun pair => pair.1.clock) h
+    exact Nat.le_trans (Nat.le_of_eq hs.symm) firstBound
+  | err err =>
+    cases err with
+    | abort abort =>
+      simp only [hv] at h
+      have hs := congrArg (fun pair => pair.1.clock) h
+      exact Nat.le_trans (Nat.le_of_eq hs.symm) firstBound
+    | raise value =>
+      simp only [hv] at h
+      have firstEq : evaluate st env [expr] = (first.1, .err (.raise value)) := by
+        simpa only [hv] using (Prod.eta first).symm
+      split at h
+      · rename_i valid
+        exact Nat.le_trans (ihMatch first.1 value st' result firstEq valid h) firstBound
+      · have hs := congrArg (fun pair => pair.1.clock) h
+        simp only [typeError] at hs
+        exact Nat.le_trans (Nat.le_of_eq hs.symm) firstBound
+
 end Flapjack.EvaluateHOL
