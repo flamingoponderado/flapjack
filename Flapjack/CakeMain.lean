@@ -20,6 +20,7 @@ structure Options where
   mainReturn : Bool := false
   onlyTypes : Bool := false
   seenTarget : Bool := false
+  otherTarget : Option String := none
   seenExcludePrelude : Bool := false
   seenSkipTypeInference : Bool := false
   seenMainReturn : Bool := false
@@ -87,8 +88,11 @@ private def topConfigErrors (args : List String) : List String := Id.run do
   return errors
 
 private def topConfigError (errors : List String) : String :=
+  let separator := match errors with
+    | [error] => if error.startsWith "Unrecognized 64-bit target option: " then "\n\n" else "\n\n\n"
+    | _ => "\n\n\n"
   "### ERROR: config error\n" ++ String.intercalate "\n" errors ++
-    "\n\n\nProgram exited with nonzero exit code.\n"
+    separator ++ "Program exited with nonzero exit code.\n"
 
 /-- Original backend configuration groups report errors in pass order, with
 errors within the BVL group in the order used by `parse_bvl_conf`. -/
@@ -152,7 +156,7 @@ private def parseArgs : List String → Options → Except String Options
       if arg.startsWith "--target=" then
         if options.seenTarget then parseArgs args options
         else if arg == "--target=riscv" then parseArgs args { options with seenTarget := true }
-        else .error s!"unsupported option: {arg}"
+        else parseArgs args { options with seenTarget := true, otherTarget := some arg }
       else if arg == "--no_warn" then parseArgs args options
       else if arg == "--types" then parseArgs args { options with onlyTypes := true }
       else if arg.startsWith "--sexp=" then
@@ -400,6 +404,10 @@ def main (args : List String) : IO UInt32 := do
     IO.eprintln s!"cake: {message}\n{usage}"
     return 2
   | .ok options =>
+    if !options.onlyTypes then
+      if let some target := options.otherTarget then
+        IO.eprintln s!"cake: unsupported option: {target}\n{usage}"
+        return 2
     let input ← (← IO.getStdin).readBinToEnd
     let chars := input.data.toList.map (fun c => BitVec.ofNat 8 c.toNat)
     let typeOutput := if options.onlyTypes then some (inferTypesBytes options chars) else none

@@ -30,10 +30,15 @@ CASES = {
     'types_skip': 'val n = 3;',
     'types_unknown': 'val n = 3;',
     'types_short_help': 'val n = 3;',
+    'types_target_x64': 'val n = 3;',
+    'types_target_arm8': 'val n = 3;',
+    'types_target_mips': 'val n = 3;',
+    'types_target_duplicate': 'val n = 3;',
     'undefined_types': 'val x = missing;',
     'parse_error_types': 'val x = ;',
     'empty': '',
     'config_error_reg_alg': '',
+    'config_error_target_only': '',
     'config_error_gc': '',
     'config_error_gc_generation': '',
     'main_return_true': 'val _ = print "Hello";',
@@ -247,6 +252,10 @@ def run(executable, source, name):
     if name in ('types_unknown', 'no_prelude_unknown'):
         flags.extend(['--unknown=abc', 'input.cml', '--known'])
     if name == 'types_short_help': flags.append('-h')
+    if name in ('types_target_x64', 'types_target_arm8', 'types_target_mips'):
+        flags.append('--target=' + name.rsplit('_', 1)[1])
+    if name == 'types_target_duplicate': flags.extend(['--target=x64', '--target=bad'])
+    if name == 'config_error_target_only': flags.append('--target=bad')
     if name == 'config_error_reg_alg': flags.append('--reg_alg=bad')
     if name == 'config_error_gc': flags.append('--gc=bad')
     if name == 'config_error_gc_generation': flags.append('--gc=gen1,,bad')
