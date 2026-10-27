@@ -5,6 +5,21 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.WordLists
 namespace Flapjack.Compiler.Backend.SourceToFlat.OracleInvariant
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 
+/-- Factored source-to-flat invariant for the proof-side evaluator. Its value,
+state, and global-environment relations still require HOL correspondence
+review, so this is not tagged as the original `invariant` definition. -/
+noncomputable def factoredInvariant {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
+    (idxs : NextIndices × NextIndices × Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F) : Prop :=
+  genvCOk genv.c ∧ genvCTysOk genv.c genv.tys ∧ StateRel genv source flat ∧
+  idxRangeRel interp genv source.nextTypeStamp source.nextExnStamp source.evalState idxs ∧
+  srcOracInvs interp transform genv source.evalState ∧
+  oracRel interp transform source.evalState flat.evalConfig ∧ genv.v = flat.globals ∧
+  evalRefInv (flat.globals.take 1) (flat.refs.take 1) ∧ envGenInv gen ∧
+  finIdxMatch flat.globals.length idxs.2.1 (srcOracNextCfg interp source.evalState)
+
 /-- Advancing both compiler oracles preserves their pointwise relationship.
 Environment generation changes do not affect this relationship. -/
 theorem oracRel_advance {C : Type} [Nonempty C]
@@ -613,5 +628,118 @@ theorem doEval_oracle_combined {C F : Type} [Nonempty C]
   cases states with
   | intro nonempty refs clock ffi =>
     exact .intro _ _ nonempty (storeList_growth genv _ growth _ _ refs) clock ffi
+
+/-- Oracle-mode Eval preserves the factored source-to-flat invariant and
+provides the same compilation and environment witnesses for both evaluators.
+This is not the HOL `do_eval` port: its component relations remain under
+source review and its hypotheses explicitly select oracle mode. -/
+theorem doEval_factoredInvariant {C F : Type} [Nonempty C]
+    (decode : Value → Option (Config × C)) (transform : List Dec → List Dec)
+    (state : EvalOracleState) (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
+    (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (sourceMode : source.evalState = some (.evalOracle state))
+    (invariant : factoredInvariant (some decode) transform gen genv (start, finish, other) source flat)
+    (sourceValues : List Value) (flatValues : List FlatSem.Value)
+    (valuesRel : List.Forall₂ (ValueRel genv) sourceValues flatValues)
+    (output : SemEnv Value × List Dec × Option EvalState)
+    (success : SemanticPrimitivesHOL.doEval sourceValues source.evalState = some output) :
+    ∃ envId config next flatDecs,
+      FlatSem.doEval (flatValues.drop 4) flat.evalConfig =
+        some (flatDecs, { flat.evalConfig with compileOracle := Flapjack.holShiftSeq 1 flat.evalConfig.compileOracle },
+          FlatSem.unitValue) ∧ flatValues.length = 6 ∧
+      incCompileProg envId config output.2.1 = (next, flatDecs) ∧ flatDecs ≠ [] ∧
+      let extra := List.replicate (next.next.vidx - config.next.vidx) none
+      let expanded := { genv with v := genv.v ++ extra }
+      let source' := { source with evalState := output.2.2 }
+      let flat' := { flat with globals := flat.globals ++ extra, evalConfig :=
+        { flat.evalConfig with compileOracle := Flapjack.holShiftSeq 1 flat.evalConfig.compileOracle } }
+      factoredInvariant (some decode) transform ⟨0, config.envs.next, .ln⟩ expanded
+        (config.next, next.next, idxBlock start finish ∪ other) source' flat' ∧
+      envGenRel ⟨0, config.envs.next, .ln⟩ output.2.2 ∧
+      envGenFutureRel (some decode)
+        (compileDecs [] 1 config.next (lookupEnvId envId config.envs)
+          ⟨0, config.envs.next, .ln⟩ output.2.1).2.2.2.1 output.2.2 ∧
+      GlobalEnvInv expanded (lookupEnvId envId config.envs) (fun _ => False) output.1 ∧
+      srcOracNextCfg (some decode) output.2.2 = some next ∧ idxPrev finish next.next ∧
+      GlobalGrowth genv expanded ∧ oracConfigEnvsSubspt (some decode) source.evalState output.2.2 ∧
+      (match source.evalState with
+       | some (.evalOracle prior) => ∃ after, output.2.2 = some (.evalOracle after) ∧
+           after.envs = (addEnvGeneration prior).envs ∧ after.generation = (addEnvGeneration prior).generation
+       | _ => False) := by
+  obtain ⟨constructors, typesOk, states, range, invs, related, globals, refs, _, lengthMatch⟩ := invariant
+  rw [sourceMode] at range invs related lengthMatch success
+  have lengthMatch' : finIdxMatch genv.v.length finish
+      (srcOracNextCfg (some decode) (some (.evalOracle state))) := by
+    simpa [globals] using lengthMatch
+  obtain ⟨envId, config, next, flatDecs, currentCfg, nextCfg, compiled, nonempty,
+    flatLength, flatSuccess, growth, states', invs', related', range', length', genRel, future, envInv,
+    finishPrev, submap⟩ :=
+    doEval_oracle_combined decode transform state source flat genv states invs related constructors
+      start finish other range lengthMatch' sourceValues flatValues valuesRel output success
+  refine ⟨envId, config, next, flatDecs, flatSuccess, flatLength, compiled, nonempty, ?_, genRel,
+    future, envInv, nextCfg, finishPrev, growth, ?_, ?_⟩
+  · refine ⟨constructors, typesOk, states', range', invs', related', ?_, ?_, ?_, ?_⟩
+    · simp [globals]
+    · exact evalRefInv_append flat.globals flat.refs _ refs
+    · simp [envGenInv]
+    · simpa [globals] using length'
+  · simp [oracConfigEnvsSubspt, sourceMode, currentCfg, nextCfg, submap]
+  · have sourceLength : sourceValues.length = 6 := valuesRel.length_eq.trans flatLength
+    obtain ⟨a, b, c, d, bytes, words, rfl⟩ := list_length_six sourceValues sourceLength
+    obtain ⟨post, _, _, _, _⟩ :=
+      doEval_oracle_preserves_oracles decode transform state flat.evalConfig invs.1 related
+        a b c d bytes words output success
+    simp only [sourceMode]
+    refine ⟨addEnvGeneration { state with oracle := Flapjack.holShiftSeq 1 state.oracle }, post, ?_, ?_⟩ <;>
+      rfl
+
+/-- A successful Eval under the factored invariant necessarily uses oracle
+mode and preserves that invariant. The component relations are still under
+HOL correspondence review, so this is not tagged as `do_eval`. -/
+theorem doEval_factoredInvariant_any {C F : Type} [Nonempty C]
+    (decode : Value → Option (Config × C)) (transform : List Dec → List Dec)
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
+    (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (invariant : factoredInvariant (some decode) transform gen genv (start, finish, other) source flat)
+    (sourceValues : List Value) (flatValues : List FlatSem.Value)
+    (valuesRel : List.Forall₂ (ValueRel genv) sourceValues flatValues)
+    (output : SemEnv Value × List Dec × Option EvalState)
+    (success : SemanticPrimitivesHOL.doEval sourceValues source.evalState = some output) :
+    ∃ envId config next flatDecs,
+      FlatSem.doEval (flatValues.drop 4) flat.evalConfig =
+        some (flatDecs, { flat.evalConfig with compileOracle := Flapjack.holShiftSeq 1 flat.evalConfig.compileOracle },
+          FlatSem.unitValue) ∧ flatValues.length = 6 ∧
+      incCompileProg envId config output.2.1 = (next, flatDecs) ∧ flatDecs ≠ [] ∧
+      let extra := List.replicate (next.next.vidx - config.next.vidx) none
+      let expanded := { genv with v := genv.v ++ extra }
+      let source' := { source with evalState := output.2.2 }
+      let flat' := { flat with globals := flat.globals ++ extra, evalConfig :=
+        { flat.evalConfig with compileOracle := Flapjack.holShiftSeq 1 flat.evalConfig.compileOracle } }
+      factoredInvariant (some decode) transform ⟨0, config.envs.next, .ln⟩ expanded
+        (config.next, next.next, idxBlock start finish ∪ other) source' flat' ∧
+      envGenRel ⟨0, config.envs.next, .ln⟩ output.2.2 ∧
+      envGenFutureRel (some decode)
+        (compileDecs [] 1 config.next (lookupEnvId envId config.envs)
+          ⟨0, config.envs.next, .ln⟩ output.2.1).2.2.2.1 output.2.2 ∧
+      GlobalEnvInv expanded (lookupEnvId envId config.envs) (fun _ => False) output.1 ∧
+      srcOracNextCfg (some decode) output.2.2 = some next ∧ idxPrev finish next.next ∧
+      GlobalGrowth genv expanded ∧ oracConfigEnvsSubspt (some decode) source.evalState output.2.2 ∧
+      (match source.evalState with
+       | some (.evalOracle prior) => ∃ after, output.2.2 = some (.evalOracle after) ∧
+           after.envs = (addEnvGeneration prior).envs ∧ after.generation = (addEnvGeneration prior).generation
+       | _ => False) := by
+  cases mode : source.evalState with
+  | none => simp [SemanticPrimitivesHOL.doEval, mode] at success
+  | some evalState =>
+    have related : oracRel (some decode) transform (some evalState) flat.evalConfig := by
+      simpa [mode] using invariant.2.2.2.2.2.1
+    obtain ⟨decode', state, decoderEq, stateEq⟩ :=
+      oracRel_some (some decode) transform evalState flat.evalConfig related
+    cases decoderEq
+    subst evalState
+    simpa [mode] using doEval_factoredInvariant decode transform state source flat gen genv start finish other
+      mode invariant sourceValues flatValues valuesRel output success
 
 end Flapjack.Compiler.Backend.SourceToFlat.OracleInvariant

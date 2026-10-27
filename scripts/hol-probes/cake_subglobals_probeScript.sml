@@ -9,6 +9,10 @@ val _ = (print "compile_decs_generation="; print_thm source_to_flatProofTheory.c
 val _ = (print "compile_decs_env_gen_inv="; print_thm source_to_flatProofTheory.compile_decs_env_gen_inv; print "\n");
 val _ = (print "compile_decs_idx_prev="; print_thm source_to_flatProofTheory.compile_decs_idx_prev; print "\n");
 val _ = (print "inc_compile_idx_prev="; print_thm source_to_flatProofTheory.inc_compile_prog_idx_prev; print "\n");
+val _ = (print "eval_ref_inv="; print_thm source_to_flatProofTheory.eval_ref_inv_def; print "\n");
+val _ = (print "orac_config_envs_subspt="; print_thm source_to_flatProofTheory.orac_config_envs_subspt_def; print "\n");
+val _ = (print "orac_config_envs_subspt_trans="; print_thm source_to_flatProofTheory.orac_config_envs_subspt_trans; print "\n");
+val _ = (print "orac_config_envs_subspt_refl="; print_thm source_to_flatProofTheory.orac_config_envs_subspt_refl; print "\n");
 val _ = (print "submap_fresh="; print_thm source_to_flatProofTheory.submap_distinct_fupdate_flookup; print "\n");
 val _ = (print "submap_update="; print_thm source_to_flatProofTheory.submap_fupdate_flookup; print "\n");
 val _ = (print "subglobals_none="; print_thm source_to_flatProofTheory.subglobals_NONE; print "\n");

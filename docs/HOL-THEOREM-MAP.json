@@ -1,6 +1,38 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "eval_ref_inv_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleInvariant.lean",
+    "lean_name": "evalRefInv",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed eval_ref_inv capture: the global list contains exactly SOME (Loc T 0), while the independent polymorphic store-value list contains exactly one Refv with an existential payload. The payload type is independent of the flat-value type in both statements."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "orac_config_envs_subspt_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleInvariant.lean",
+    "lean_name": "oracConfigEnvsSubspt",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed oracle-store capture and pinned HOL OPTREL clauses: both NONE cases are true, mixed option cases false, and two decoded configs require the original source-to-target sptree submap. The decoder payload remains an arbitrary independent type."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "orac_config_envs_subspt_refl",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleInvariant.lean",
+    "lean_name": "oracConfigEnvsSubspt_refl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed reflexivity capture: arbitrary decoder payload and source Eval state are unchanged, and the same option-aware environment-store relation holds from the state to itself."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "orac_config_envs_subspt_trans",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleInvariant.lean",
+    "lean_name": "oracConfigEnvsSubspt_trans",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed transitivity capture: the same arbitrary decoder and three source Eval states satisfy the same two adjacent oracle-store relations, implying the first-to-last relation. The proof composes the source-to-target sptree submaps."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "compile_decs_idx_prev",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleStep.lean",
     "lean_name": "compileDecs_idxPrev",

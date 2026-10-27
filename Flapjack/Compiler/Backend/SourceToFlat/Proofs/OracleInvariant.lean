@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.IndexInvariant
+import Flapjack.Misc.Sptree.Subspt
 
 /-! Source-oracle configuration and index-range conditions. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
@@ -20,6 +21,48 @@ def srcOracNextCfg {R C : Type} (interp : Option (Value → Option (R × C)))
   match evalState with
   | some (.evalOracle state) => srcOracNextCfgInner interp (state.oracle 0)
   | _ => none
+
+/-- The reserved global points to the first flat reference cell. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "eval_ref_inv_def"]
+def evalRefInv {α : Type} (firstGlobal : List (Option FlatSem.Value)) (firstRef : List (StoreValue α)) : Prop :=
+  firstGlobal = [some (.loc true 0)] ∧ ∃ v, firstRef = [.refv v]
+
+/-- Extending the global list does not change the reserved first reference. -/
+theorem evalRefInv_append {α : Type} (globals : List (Option FlatSem.Value))
+    (refs : List (StoreValue α)) (extra : List (Option FlatSem.Value))
+    (valid : evalRefInv (globals.take 1) (refs.take 1)) :
+    evalRefInv ((globals ++ extra).take 1) (refs.take 1) := by
+  cases globals with
+  | nil => simp [evalRefInv] at valid
+  | cons first rest => simpa using valid
+
+/-- Future source-oracle configurations retain the preceding environment
+generation store. Missing configurations correspond only to missing ones. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "orac_config_envs_subspt_def"]
+def oracConfigEnvsSubspt {C : Type} (interp : Option (Value → Option (Config × C)))
+    (before after : Option EvalState) : Prop :=
+  match srcOracNextCfg interp before, srcOracNextCfg interp after with
+  | none, none => True
+  | some a, some b => Flapjack.sptSubspt a.envs.envGens b.envs.envGens
+  | _, _ => False
+
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "orac_config_envs_subspt_refl"]
+theorem oracConfigEnvsSubspt_refl {C : Type} (interp : Option (Value → Option (Config × C)))
+    (state : Option EvalState) : oracConfigEnvsSubspt interp state state := by
+  unfold oracConfigEnvsSubspt
+  cases srcOracNextCfg interp state with
+  | none => trivial
+  | some config => intro key member; exact ⟨member, rfl⟩
+
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "orac_config_envs_subspt_trans"]
+theorem oracConfigEnvsSubspt_trans {C : Type} (interp : Option (Value → Option (Config × C)))
+    (first middle last : Option EvalState)
+    (relations : oracConfigEnvsSubspt interp first middle ∧ oracConfigEnvsSubspt interp middle last) :
+    oracConfigEnvsSubspt interp first last := by
+  unfold oracConfigEnvsSubspt at *
+  cases h1 : srcOracNextCfg interp first <;> cases h2 : srcOracNextCfg interp middle <;>
+    cases h3 : srcOracNextCfg interp last <;> simp [h1, h2, h3] at relations ⊢
+  exact Flapjack.sptSubsptTrans _ _ _ ⟨relations.1, relations.2⟩
 
 /-- Canonical roundtrip for the imported global environment's finite maps. -/
 theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :
