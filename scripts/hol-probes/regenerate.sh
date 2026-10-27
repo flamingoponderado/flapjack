@@ -460,7 +460,7 @@ run_probe cake_build_lowering_probeScript.sml cake_build_lowering_probe.out \
   parts64 parts32be build64 fromlist64 refbyte64 "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
 
 run_probe cake_type_env_probeScript.sml cake_type_env_probe.out \
-  freevars freevars_ast db_inc db_subst bind_tvar opt_bind tve_lookup extend lookup_local lookup num_tvs bind_list inc_example subst_example lookup_example type_subst check_type_names type_name_subst type_p_rules type_name_example type_name_missing type_name_duplicates \
+  freevars freevars_ast db_inc db_subst bind_tvar opt_bind tve_lookup extend lookup_local lookup num_tvs bind_list inc_example subst_example lookup_example type_subst check_type_names type_name_subst type_p_rules type_name_example type_name_missing type_name_duplicates type_of supported_test supported_arith supported_conversion type_op type_e_rules arith_good arith_bad_arity empty_array unsafe_op \
   "$cake_dir/semantics/typeSystemScript.sml" "$cake_dir/semantics"
 
 run_probe cake_riscv_export_probeScript.sml cake_riscv_export_probe.out \

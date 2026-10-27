@@ -104524,5 +104524,45 @@
     "lean_name": "TypePs",
     "statement_status": "pending_statement_review",
     "reviewer": "Codex: typed HOL source equations and pattern-typing rules captured in cake_type_env_probe; complete source, finite-map and carrier review remains pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "t_of_def",
+    "lean_path": "Flapjack/TypeSystemHOL/Operators.lean",
+    "lean_name": "typeOf",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed HOL equations captured in cake_type_env_probe; operator, semantic type carriers and complete source review remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "supported_test_def",
+    "lean_path": "Flapjack/TypeSystemHOL/Operators.lean",
+    "lean_name": "supportedTest",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed HOL equations captured in cake_type_env_probe; operator, semantic type carriers and complete source review remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "supported_arith_def",
+    "lean_path": "Flapjack/TypeSystemHOL/Operators.lean",
+    "lean_name": "supportedArith",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed HOL equations captured in cake_type_env_probe; operator, semantic type carriers and complete source review remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "supported_conversion_def",
+    "lean_path": "Flapjack/TypeSystemHOL/Operators.lean",
+    "lean_name": "supportedConversion",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed HOL equations captured in cake_type_env_probe; operator, semantic type carriers and complete source review remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "type_op_def",
+    "lean_path": "Flapjack/TypeSystemHOL/Operators.lean",
+    "lean_name": "typeOp",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed HOL equations captured in cake_type_env_probe; operator, semantic type carriers and complete source review remain pending."
   }
 ]

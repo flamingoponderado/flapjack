@@ -1,4 +1,4 @@
-import Flapjack.TypeSystemHOL.Patterns
+import Flapjack.TypeSystemHOL.Expressions
 
 /-! Representative cases captured from the pinned HOL type-system definitions.
 The capture is regression evidence, not a cross-language equivalence proof. -/
@@ -50,5 +50,20 @@ example : TypePs 0 emptyTypeEnv [.pvar (ofString "x"), .pvar (ofString "y")]
     (.var 0 emptyTypeEnv (ofString "x") (.app [] 5) (by simp [checkFreevars, checkFreevarsList]))
     (.cons 0 emptyTypeEnv _ _ _ _ _ _
       (.var 0 emptyTypeEnv (ofString "y") (.app [] 1) (by simp [checkFreevars, checkFreevarsList])) (.nil 0 emptyTypeEnv))
+
+example : typeOp (.arith .add .intT) [.app [] 5, .app [] 5] (.app [] 5) := by
+  simp [typeOp, typeOf, supportedArith]
+
+example : ¬ typeOp (.arith .add .intT) [.app [] 5] (.app [] 5) := by
+  simp [typeOp, typeOf, supportedArith]
+
+example : typeOp .aallocEmpty [.app [] 9] (.app [.app [] 5] 0) := by
+  exact ⟨rfl, ⟨.app [] 5, rfl⟩⟩
+
+example : ¬ typeOp .aw8subUnsafe [.app [] 13, .app [] 5] (.app [] 12) := by
+  simp [typeOp]
+
+example : TypeE emptyTypeEnv .empty (.lit (.intLit 3)) (.app [] 5) :=
+  .intLit emptyTypeEnv .empty 3
 
 end Flapjack.Test.CakeTypeEnvironmentParity

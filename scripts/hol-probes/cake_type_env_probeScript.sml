@@ -24,3 +24,13 @@ val _ = (print "type_p_rules="; print_thm typeSystemTheory.type_p_rules; print "
 val _ = (print "type_name_example="; print_thm (EVAL ``typeSystem$type_name_subst (namespace$alist_to_ns [(«pair», ([«a»; «b»], Tapp [Tvar «a»; Tvar «b»] 9))]) (Atapp [Atvar «x»; Atvar «y»] (Short «pair»))``); print "\n");
 val _ = (print "type_name_missing="; print_thm (EVAL ``typeSystem$type_name_subst (namespace$alist_to_ns []) (Atapp [Atvar «x»] (Short «missing»))``); print "\n");
 val _ = (print "type_name_duplicates="; print_thm (EVAL ``typeSystem$type_name_subst (namespace$alist_to_ns [(«dup», ([«a»; «a»], Tvar «a»))]) (Atapp [Atvar «x»; Atvar «y»] (Short «dup»))``); print "\n");
+val _ = (print "type_of="; print_thm typeSystemTheory.t_of_def; print "\n");
+val _ = (print "supported_test="; print_thm typeSystemTheory.supported_test_def; print "\n");
+val _ = (print "supported_arith="; print_thm typeSystemTheory.supported_arith_def; print "\n");
+val _ = (print "supported_conversion="; print_thm typeSystemTheory.supported_conversion_def; print "\n");
+val _ = (print "type_op="; print_thm typeSystemTheory.type_op_def; print "\n");
+val _ = (print "type_e_rules="; print_thm typeSystemTheory.type_e_rules; print "\n");
+val _ = (print "arith_good="; print_thm (EVAL ``type_op (Arith Add IntT) [Tint; Tint] Tint``); print "\n");
+val _ = (print "arith_bad_arity="; print_thm (EVAL ``type_op (Arith Add IntT) [Tint] Tint``); print "\n");
+val _ = (print "empty_array="; print_thm (EVAL ``type_op AallocEmpty [Ttup []] (Tarray Tint)``); print "\n");
+val _ = (print "unsafe_op="; print_thm (EVAL ``type_op Aw8sub_unsafe [Tword8array; Tint] Tword8``); print "\n");
