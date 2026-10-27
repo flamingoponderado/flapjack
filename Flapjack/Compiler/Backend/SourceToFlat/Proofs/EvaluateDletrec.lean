@@ -399,4 +399,62 @@ theorem evaluateDletrec_factored {C F : Type} [Nonempty C]
   · simpa [compileDecs, finalGenv, finalState, finalSlots, flatBindings, compiled, List.append_assoc] using finalInv
   · simpa [compileDecs] using generation
 
+/-- Recursive declaration case in the shape of the declaration conjunct of
+the original compiler theorem, using Flapjack's preliminary factored
+relations. The relations and evaluator carriers still require HOL review. -/
+theorem evaluateDletrec_case_factored {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (env nextEnv : Environment) (sourceEnv : SemEnv Value) (trace : List VarN)
+    (funs : List (VarN × VarN × AstHOL.Exp)) (source sourceLast : State F)
+    (flat : FlatSem.State C F) (start finish next : NextIndices) (other : Set (Nat × IndexKind))
+    (n n' : Nat) (gen nextGen : EnvironmentGenerationStore) (location : Flapjack.Misc.Location.Locs)
+    (flatDecs : List FlatLang.Exp) (result : Result (SemEnv Value) Value)
+    (sourceRun : EvaluateHOL.evaluateDecs source sourceEnv [.dletrec location funs] = (sourceLast, result))
+    (invariant : factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (compiled : compileDecs trace n start env gen [.dletrec location funs] =
+      (n', next, nextEnv, nextGen, flatDecs))
+    (envInv : GlobalEnvInv genv env (fun _ => False) sourceEnv)
+    (notTypeError : result ≠ .err (.abort .typeError))
+    (generation : envGenRel gen source.evalState)
+    (_future : envGenFutureRel interp nextGen source.evalState)
+    (bounded : idxPrev next finish) :
+    ∃ finalState finalGenv flatError,
+      FlatSem.evaluateDecs flat flatDecs = (finalState, flatError) ∧
+      StateRel finalGenv sourceLast finalState ∧
+      ((match result with | .err (.abort _) => False | _ => True) →
+        factoredInvariant interp transform nextGen finalGenv (next, finish, other) sourceLast finalState ∧
+        oracForwardRel interp source.evalState sourceLast.evalState ∧ GlobalGrowth genv finalGenv) ∧
+      (∀ resultEnv, result = .val resultEnv →
+        flatError = none ∧ EnvDomainEq nextEnv resultEnv ∧ envGenRel nextGen sourceLast.evalState ∧
+        GlobalEnvInv finalGenv nextEnv (fun _ => False) resultEnv) ∧
+      (∀ error, result = .err error → ∃ flatErr,
+        flatError = some flatErr ∧
+        ResultRel (fun _ (_ : SemEnv Value) (_ : Unit) => True) finalGenv (.err error) (.err flatErr)) := by
+  have safe : ∀ last, EvaluateHOL.evaluateDecs source sourceEnv [.dletrec location funs] ≠
+      (last, .err (.abort .typeError)) := by
+    intro last bad
+    apply notTypeError
+    exact congrArg Prod.snd (sourceRun.symm.trans bad)
+  have bound : idxPrev (compileDecs trace n start env gen [.dletrec location funs]).2.1 finish := by
+    simpa [compiled] using bounded
+  obtain ⟨sourceEq, finalGenv, finalState, flatRun, growth, states, domain, finalEnv,
+    finalInvariant, finalGeneration, forward⟩ :=
+    evaluateDletrec_factored interp transform genv env sourceEnv trace funs source flat start finish other
+      n gen location safe envInv invariant generation bound
+  have pairEq := sourceRun.symm.trans sourceEq
+  have lastEq : sourceLast = source := congrArg Prod.fst pairEq
+  have resultEq : result = .val ⟨SemanticPrimitivesHOL.buildRecEnv funs sourceEnv nsEmpty, nsEmpty⟩ :=
+    congrArg Prod.snd pairEq
+  subst sourceLast
+  subst result
+  simp only [compiled] at flatRun domain finalEnv finalInvariant finalGeneration
+  refine ⟨finalState, finalGenv, none, flatRun, states, ?_, ?_, ?_⟩
+  · intro _
+    exact ⟨finalInvariant, forward, growth⟩
+  · intro resultEnv same
+    cases same
+    exact ⟨rfl, domain, finalGeneration, finalEnv⟩
+  · intro error impossible
+    cases impossible
+
 end Flapjack.Compiler.Backend.SourceToFlat
