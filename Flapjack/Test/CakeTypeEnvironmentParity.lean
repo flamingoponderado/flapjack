@@ -1,4 +1,5 @@
 import Flapjack.TypeSystemHOL.Declarations
+import Flapjack.PrimTypesHOL.Types
 
 /-! Representative cases captured from the pinned HOL type-system definitions.
 The capture is regression evidence, not a cross-language equivalence proof. -/
@@ -85,5 +86,14 @@ example : TypeD false emptyTypeEnv
   · exact .var 0 emptyTypeEnv (ofString "x") (.app [] 5) (by simp [checkFreevars, checkFreevarsList])
   · simpa [bindTvar] using TypeE.intLit emptyTypeEnv .empty 3
   · simp
+
+#guard match nsLookup Flapjack.PrimTypesHOL.primTenv.t (.short (ofString "list")) with
+  | some ([a], .app [.var b] 6) => a == ofString "'a" && b == ofString "'a"
+  | _ => false
+
+#guard match nsLookup Flapjack.PrimTypesHOL.primTenv.c (.short (ofString "::")) with
+  | some ([a], [.var b, .app [.var c] 6], 6) =>
+    a == ofString "'a" && b == ofString "'a" && c == ofString "'a"
+  | _ => false
 
 end Flapjack.Test.CakeTypeEnvironmentParity

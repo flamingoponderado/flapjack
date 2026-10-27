@@ -1,4 +1,6 @@
 load "typeSystemTheory";
+load "primTypesTheory";
+load "semanticsTheory";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
@@ -46,3 +48,9 @@ val _ = (print "value_tuple="; print_thm (EVAL ``is_value (Con NONE [Lit (IntLit
 val _ = (print "value_apply="; print_thm (EVAL ``is_value (App Opapp [Lit (IntLit 1); Lit (IntLit 2)])``); print "\n");
 val _ = (print "ctor_distinct="; print_thm (EVAL ``check_ctor_tenv (namespace$alist_to_ns []) [([], «t», [(«A», []); («B», [])])]``); print "\n");
 val _ = (print "ctor_duplicate="; print_thm (EVAL ``check_ctor_tenv (namespace$alist_to_ns []) [([], «t», [(«A», []); («A», [])])]``); print "\n");
+val _ = (print "prim_tenv="; print_thm primTypesTheory.prim_tenv_def; print "\n");
+val _ = (print "prim_type_ids="; print_thm primTypesTheory.prim_type_ids_def; print "\n");
+val _ = (print "can_type_prog="; print_thm semanticsTheory.can_type_prog_def; print "\n");
+val _ = (print "semantics_def="; print_thm semanticsTheory.semantics_def; print "\n");
+val _ = (print "prim_list_lookup="; print_thm (EVAL ``namespace$nsLookup primTypes$prim_tenv.t (Short «list»)``); print "\n");
+val _ = (print "prim_cons_lookup="; print_thm (EVAL ``namespace$nsLookup primTypes$prim_tenv.c (Short «::»)``); print "\n");

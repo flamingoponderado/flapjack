@@ -104620,5 +104620,37 @@
     "lean_name": "primTypeNums",
     "statement_status": "pending_statement_review",
     "reviewer": "Codex: typed HOL equations captured in cake_type_env_probe; full source and carrier review remains pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/primTypesScript.sml",
+    "hol_name": "prim_tenv_def",
+    "lean_path": "Flapjack/PrimTypesHOL/Types.lean",
+    "lean_name": "primTenv",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: source declarations and relevant typed HOL equations captured in cake_type_env_probe; full source and carrier review remains pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/primTypesScript.sml",
+    "hol_name": "prim_type_ids_def",
+    "lean_path": "Flapjack/PrimTypesHOL/Types.lean",
+    "lean_name": "primTypeIds",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: source declarations and relevant typed HOL equations captured in cake_type_env_probe; full source and carrier review remains pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticsScript.sml",
+    "hol_name": "state",
+    "lean_path": "Flapjack/SemanticsHOL/Typed.lean",
+    "lean_name": "SourceState",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: source declarations and relevant typed HOL equations captured in cake_type_env_probe; full source and carrier review remains pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticsScript.sml",
+    "hol_name": "semantics",
+    "lean_path": "Flapjack/SemanticsHOL/Typed.lean",
+    "lean_name": "SourceSemantics",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: source declarations and relevant typed HOL equations captured in cake_type_env_probe; full source and carrier review remains pending."
   }
 ]
