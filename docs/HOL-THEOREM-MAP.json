@@ -103977,5 +103977,149 @@
     "lean_name": "isClockIoMono_doAppSimple",
     "statement_status": "pending_statement_review",
     "reviewer": "Codex (pending complete source evaluator and carrier review): pinned typed original captured in cake_evaluate_ffi_props_probe; primitive dispatcher inherits the rational-cut floating-point assumption."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "is_clock_io_mono_acc_safe",
+    "lean_path": "Flapjack/EvaluateProps/ClockIoSafe.lean",
+    "lean_name": "isClockIoMono_accSafe",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending source evaluator and carrier review): original typed statement captured in cake_evaluate_ffi_props_probe; independent success and error carriers retained."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "is_clock_io_mono_if_safe",
+    "lean_path": "Flapjack/EvaluateProps/ClockIoSafe.lean",
+    "lean_name": "isClockIoMono_ifSafe",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending source evaluator and carrier review): original typed statement captured in cake_evaluate_ffi_props_probe; independent success and error carriers retained."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "is_clock_io_mono_option_case_safe",
+    "lean_path": "Flapjack/EvaluateProps/ClockIoSafe.lean",
+    "lean_name": "isClockIoMono_optionCaseSafe",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending source evaluator and carrier review): original typed statement captured in cake_evaluate_ffi_props_probe; independent success and error carriers retained."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "is_clock_io_mono_match_case_safe",
+    "lean_path": "Flapjack/EvaluateProps/ClockIoSafe.lean",
+    "lean_name": "isClockIoMono_matchCaseSafe",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending source evaluator and carrier review): original typed statement captured in cake_evaluate_ffi_props_probe; independent success and error carriers retained."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "is_clock_io_mono_match_case_pair_safe",
+    "lean_path": "Flapjack/EvaluateProps/ClockIoSafe.lean",
+    "lean_name": "isClockIoMono_matchCasePairSafe",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending source evaluator and carrier review): original typed statement captured in cake_evaluate_ffi_props_probe; independent success and error carriers retained."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "is_clock_io_mono_evaluate",
+    "lean_path": "Flapjack/EvaluateProps/ClockIoCases.lean",
+    "lean_name": "clockIoEvaluate_nil",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending source evaluator and carrier review): constructor case of the original mutual invariant theorem, typed HOL statement captured in cake_evaluate_ffi_props_probe. The mutual assembly remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "is_clock_io_mono_evaluate",
+    "lean_path": "Flapjack/EvaluateProps/ClockIoCases.lean",
+    "lean_name": "clockIoEvaluate_lit",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending source evaluator and carrier review): constructor case of the original mutual invariant theorem, typed HOL statement captured in cake_evaluate_ffi_props_probe. The mutual assembly remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "is_clock_io_mono_evaluate",
+    "lean_path": "Flapjack/EvaluateProps/ClockIoCases.lean",
+    "lean_name": "clockIoEvaluate_fn",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending source evaluator and carrier review): constructor case of the original mutual invariant theorem, typed HOL statement captured in cake_evaluate_ffi_props_probe. The mutual assembly remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "is_clock_io_mono_evaluate",
+    "lean_path": "Flapjack/EvaluateProps/ClockIoCases.lean",
+    "lean_name": "clockIoEvaluate_var",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending source evaluator and carrier review): constructor case of the original mutual invariant theorem, typed HOL statement captured in cake_evaluate_ffi_props_probe. The mutual assembly remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "is_clock_io_mono_evaluate",
+    "lean_path": "Flapjack/EvaluateProps/ClockIoCases.lean",
+    "lean_name": "clockIoMatch_nil",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending source evaluator and carrier review): constructor case of the original mutual invariant theorem, typed HOL statement captured in cake_evaluate_ffi_props_probe. The mutual assembly remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "is_clock_io_mono_evaluate",
+    "lean_path": "Flapjack/EvaluateProps/ClockIoCases.lean",
+    "lean_name": "clockIoDecs_nil",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending source evaluator and carrier review): constructor case of the original mutual invariant theorem, typed HOL statement captured in cake_evaluate_ffi_props_probe. The mutual assembly remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "is_clock_io_mono_evaluate",
+    "lean_path": "Flapjack/EvaluateProps/ClockIoCases.lean",
+    "lean_name": "clockIoDecs_tabbrev",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending source evaluator and carrier review): constructor case of the original mutual invariant theorem, typed HOL statement captured in cake_evaluate_ffi_props_probe. The mutual assembly remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "is_clock_io_mono_evaluate",
+    "lean_path": "Flapjack/EvaluateProps/ClockIoCases.lean",
+    "lean_name": "clockIoEvaluate_tannot",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending source evaluator and carrier review): constructor case of the original mutual invariant theorem, typed HOL statement captured in cake_evaluate_ffi_props_probe. The mutual assembly remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "is_clock_io_mono_evaluate",
+    "lean_path": "Flapjack/EvaluateProps/ClockIoCases.lean",
+    "lean_name": "clockIoEvaluate_lannot",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending source evaluator and carrier review): constructor case of the original mutual invariant theorem, typed HOL statement captured in cake_evaluate_ffi_props_probe. The mutual assembly remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "is_clock_io_mono_evaluate",
+    "lean_path": "Flapjack/EvaluateProps/ClockIoCases.lean",
+    "lean_name": "clockIoEvaluate_letrec",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending source evaluator and carrier review): constructor case of the original mutual invariant theorem, typed HOL statement captured in cake_evaluate_ffi_props_probe. The mutual assembly remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "is_clock_io_mono_evaluate",
+    "lean_path": "Flapjack/EvaluateProps/ClockIoCases.lean",
+    "lean_name": "clockIoEvaluate_raise",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending source evaluator and carrier review): constructor case of the original mutual invariant theorem, typed HOL statement captured in cake_evaluate_ffi_props_probe. The mutual assembly remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "is_clock_io_mono_evaluate",
+    "lean_path": "Flapjack/EvaluateProps/ClockIoCases.lean",
+    "lean_name": "clockIoDecs_exn",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending source evaluator and carrier review): constructor case of the original mutual invariant theorem, typed HOL statement captured in cake_evaluate_ffi_props_probe. The mutual assembly remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "is_clock_io_mono_evaluate",
+    "lean_path": "Flapjack/EvaluateProps/ClockIoCases.lean",
+    "lean_name": "clockIoDecs_type",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending source evaluator and carrier review): constructor case of the original mutual invariant theorem, typed HOL statement captured in cake_evaluate_ffi_props_probe. The mutual assembly remains open."
   }
 ]
