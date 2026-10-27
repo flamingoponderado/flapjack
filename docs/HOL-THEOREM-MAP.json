@@ -1,6 +1,54 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "eval_state_call_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleInvariant.lean",
+    "lean_name": "evalStateCallRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed eval_state_call_rel capture: NONE and EvalDecs impose no condition; EvalOracle requires a resulting oracle state, equal generation, nondecreasing environment-list length, and HOL EL equality at every index below the original generation. The shared holEl preserves the original total out-of-range behavior."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "eval_state_call_rel_refl",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleInvariant.lean",
+    "lean_name": "evalStateCallRel_refl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed eval_state_call_rel_refl capture: the call relation holds from an arbitrary optional Eval state to itself."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "eval_state_call_rel_trans",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleInvariant.lean",
+    "lean_name": "evalStateCallRel_trans",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed eval_state_call_rel_trans capture: two adjacent call relations between the same three optional Eval states imply the first-to-last relation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "orac_forward_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleInvariant.lean",
+    "lean_name": "oracForwardRel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed orac_forward_rel capture: the decoder payload remains independent and the relation is exactly the conjunction of oracle configuration submap and Eval state call relations."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "orac_forward_rel_refl",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleInvariant.lean",
+    "lean_name": "oracForwardRel_refl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed orac_forward_rel_refl capture: the same arbitrary optional decoder and Eval state satisfy the reflexive forward relation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "orac_forward_rel_trans",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleInvariant.lean",
+    "lean_name": "oracForwardRel_trans",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed orac_forward_rel_trans capture: the same optional decoder and three Eval states satisfy the two adjacent forward relations, implying the first-to-last relation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "pmatch_rows_drop_4",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvalPattern.lean",
     "lean_name": "pmatchRows_dropFour",

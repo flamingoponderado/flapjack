@@ -13,6 +13,12 @@ val _ = (print "eval_ref_inv="; print_thm source_to_flatProofTheory.eval_ref_inv
 val _ = (print "orac_config_envs_subspt="; print_thm source_to_flatProofTheory.orac_config_envs_subspt_def; print "\n");
 val _ = (print "orac_config_envs_subspt_trans="; print_thm source_to_flatProofTheory.orac_config_envs_subspt_trans; print "\n");
 val _ = (print "orac_config_envs_subspt_refl="; print_thm source_to_flatProofTheory.orac_config_envs_subspt_refl; print "\n");
+val _ = (print "eval_state_call_rel="; print_thm source_to_flatProofTheory.eval_state_call_rel_def; print "\n");
+val _ = (print "eval_state_call_rel_refl="; print_thm source_to_flatProofTheory.eval_state_call_rel_refl; print "\n");
+val _ = (print "eval_state_call_rel_trans="; print_thm source_to_flatProofTheory.eval_state_call_rel_trans; print "\n");
+val _ = (print "orac_forward_rel="; print_thm source_to_flatProofTheory.orac_forward_rel_def; print "\n");
+val _ = (print "orac_forward_rel_refl="; print_thm source_to_flatProofTheory.orac_forward_rel_refl; print "\n");
+val _ = (print "orac_forward_rel_trans="; print_thm source_to_flatProofTheory.orac_forward_rel_trans; print "\n");
 (* Typed replays of the two local lemmas immediately preceding compile_correct[App]. *)
 val pmatchDrop = prove (
   ``LENGTH (vs : flatSem$v list) = 6 ==>

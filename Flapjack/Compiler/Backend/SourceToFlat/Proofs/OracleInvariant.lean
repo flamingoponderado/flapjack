@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.IndexInvariant
 import Flapjack.Misc.Sptree.Subspt
+import Flapjack.Misc.ListEl
 
 /-! Source-oracle configuration and index-range conditions. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
@@ -63,6 +64,61 @@ theorem oracConfigEnvsSubspt_trans {C : Type} (interp : Option (Value → Option
   cases h1 : srcOracNextCfg interp first <;> cases h2 : srcOracNextCfg interp middle <;>
     cases h3 : srcOracNextCfg interp last <;> simp [h1, h2, h3] at relations ⊢
   exact Flapjack.sptSubsptTrans _ _ _ ⟨relations.1, relations.2⟩
+
+/-- Calls return to the same source environment generation, preserving the
+earlier generations while allowing the environment store to grow. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "eval_state_call_rel_def"]
+def evalStateCallRel (before after : Option EvalState) : Prop :=
+  match before with
+  | some (.evalOracle first) => ∃ last, after = some (.evalOracle last) ∧
+      last.generation = first.generation ∧ first.envs.length ≤ last.envs.length ∧
+      ∀ i, i < first.generation → Flapjack.holEl i last.envs = Flapjack.holEl i first.envs
+  | _ => True
+
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "eval_state_call_rel_refl"]
+theorem evalStateCallRel_refl (state : Option EvalState) : evalStateCallRel state state := by
+  cases state with
+  | none => trivial
+  | some state =>
+    cases state with
+    | evalDecs state => trivial
+    | evalOracle state => exact ⟨state, rfl, rfl, Nat.le_refl _, fun _ _ => rfl⟩
+
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "eval_state_call_rel_trans"]
+theorem evalStateCallRel_trans (first middle last : Option EvalState)
+    (relations : evalStateCallRel first middle ∧ evalStateCallRel middle last) :
+    evalStateCallRel first last := by
+  cases first with
+  | none => trivial
+  | some first =>
+    cases first with
+    | evalDecs state => trivial
+    | evalOracle first =>
+      obtain ⟨middleState, rfl, generation, length, earlier⟩ := relations.1
+      obtain ⟨lastState, lastEq, generation', length', earlier'⟩ := relations.2
+      refine ⟨lastState, lastEq, generation'.trans generation, Nat.le_trans length length', ?_⟩
+      intro i bound
+      exact (earlier' i (by simpa [generation] using bound)).trans (earlier i bound)
+
+/-- Successful calls preserve both oracle configuration stores and source
+environment generations. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "orac_forward_rel_def"]
+def oracForwardRel {C : Type} (interp : Option (Value → Option (Config × C)))
+    (before after : Option EvalState) : Prop :=
+  oracConfigEnvsSubspt interp before after ∧ evalStateCallRel before after
+
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "orac_forward_rel_refl"]
+theorem oracForwardRel_refl {C : Type} (interp : Option (Value → Option (Config × C)))
+    (state : Option EvalState) : oracForwardRel interp state state :=
+  ⟨oracConfigEnvsSubspt_refl interp state, evalStateCallRel_refl state⟩
+
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "orac_forward_rel_trans"]
+theorem oracForwardRel_trans {C : Type} (interp : Option (Value → Option (Config × C)))
+    (first middle last : Option EvalState)
+    (relations : oracForwardRel interp first middle ∧ oracForwardRel interp middle last) :
+    oracForwardRel interp first last :=
+  ⟨oracConfigEnvsSubspt_trans interp first middle last ⟨relations.1.1, relations.2.1⟩,
+    evalStateCallRel_trans first middle last ⟨relations.1.2, relations.2.2⟩⟩
 
 /-- Canonical roundtrip for the imported global environment's finite maps. -/
 theorem holFmapAsFiniteSupportWitness (env : GlobalEnv) :

@@ -13,6 +13,45 @@ open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 private instance : Nonempty Config :=
   ⟨{ next := ⟨0, 0, 0⟩, modEnv := emptyEnv, patternCfg := ⟨0⟩, envs := ⟨0, .ln⟩ }⟩
 
+/-- Declaring an environment in oracle mode preserves the call relation:
+the current generation grows by one entry, and earlier generations are
+unchanged. -/
+theorem declareEnv_oracle_callRel (state : EvalOracleState) (env : SemEnv Value)
+    (value : Value) (after : Option EvalState)
+    (declared : declareEnv (some (.evalOracle state)) env = some (value, after)) :
+    evalStateCallRel (some (.evalOracle state)) after := by
+  cases found : state.envs[state.generation]? with
+  | none => simp [declareEnv, found] at declared
+  | some generation =>
+    have bound : state.generation < state.envs.length := (List.getElem?_eq_some_iff.mp found).1
+    simp [declareEnv, found] at declared
+    obtain ⟨_, afterEq⟩ := declared
+    subst after
+    refine ⟨{ state with envs := state.envs.set state.generation (generation ++ [env]) },
+      rfl, rfl, ?_, ?_⟩
+    · simp
+    · intro i earlier
+      rw [Flapjack.holEl_set _ _ _ _ bound, if_neg (by omega)]
+
+/-- Declaring an environment does not advance the source compiler oracle and
+therefore preserves both parts of the forward relation. -/
+theorem declareEnv_oracle_forward {C : Type} (interp : Option (Value → Option (Config × C)))
+    (state : EvalOracleState) (env : SemEnv Value) (value : Value) (after : Option EvalState)
+    (declared : declareEnv (some (.evalOracle state)) env = some (value, after)) :
+    oracForwardRel interp (some (.evalOracle state)) after := by
+  refine ⟨?_, declareEnv_oracle_callRel state env value after declared⟩
+  cases found : state.envs[state.generation]? with
+  | none => simp [declareEnv, found] at declared
+  | some generation =>
+    simp [declareEnv, found] at declared
+    obtain ⟨_, afterEq⟩ := declared
+    subst after
+    unfold oracConfigEnvsSubspt
+    simp only [srcOracNextCfg]
+    cases srcOracNextCfgInner interp (state.oracle 0) with
+    | none => trivial
+    | some config => intro key member; exact ⟨member, rfl⟩
+
 /-- Allocated environment identifiers lie below the next generation counter. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "env_gen_inv_def"]
 def envGenInv (gen : EnvironmentGenerationStore) : Prop :=
