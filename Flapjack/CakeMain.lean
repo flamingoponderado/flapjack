@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.FromText
 import Flapjack.Compiler.Backend.RiscVConfig.Executable
 import Flapjack.RiscV.CakeArtifactFormat
 import Flapjack.Compiler.Inference.Infer.Diagnostics
+import Flapjack.CakeParser.Diagnostics
 
 /-! Experimental CakeML source-to-RISC-V command. The frontend and backend
 are still bounded ports, the original diagnostics and full CLI are incomplete,
@@ -73,6 +74,11 @@ def main (args : List String) : IO UInt32 := do
     let input ← (← IO.getStdin).readBinToEnd
     let chars := input.data.toList.map (fun c => BitVec.ofNat 8 c.toNat)
     let result := compileBytes options chars
+    if let .parseRejected := result then
+      if let some bytes := Flapjack.CakeParser.Diagnostics.renderUnconsumedToken 10000 chars then
+        let stderr ← IO.getStderr
+        stderr.write (ByteArray.mk (bytes.map (fun b => UInt8.ofNat b.toNat)).toArray)
+        return 1
     if let .inferenceError error := result then
       if let some bytes := Flapjack.Compiler.Inference.Infer.Diagnostics.renderUndefinedVariable chars error then
         let stderr ← IO.getStderr

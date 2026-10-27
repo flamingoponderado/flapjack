@@ -2,6 +2,8 @@
 
 `cake_basis_bvi_probe.out` captures the entire BVI program produced by the pinned HOL compiler for the standard basis under its RISC-V configuration. The generated Lean oracle compares all locations, arities and expression nodes with the configured frontend used by `cake`. The capture uses HOL's CV evaluator and can take several minutes to regenerate. It is regression evidence for this input, not a compiler equivalence proof.
 
+`cake_parse_error_probe.out` captures the first unconsumed token's location after malformed declarations, including a multiline example. The CLI renders those locations as the original compiler's parse diagnostic; parser failures without an unconsumed-token location are not covered by this probe.
+
 `mti_cake_bvi_probe.out` captures the full BVI program for a nested-function declaration with multi-argument introduction enabled, the other closure optimizations disabled, and the outer BVL/BVI optimizations omitted.
 
 `empty_cake_data_probe.out`, `reference_cake_data_probe.out`, and `match_cake_data_probe.out` capture complete results after BVI-to-data and its data optimizations for the corresponding restricted examples. Their probes add the source-proved `op_requires_names_eqn` to HOL's evaluator to avoid residual existential expressions. `scripts/generate-cake-data-oracles.py` translates the captures into Lean patterns and checks the printed sparse live sets against exact tree values. Regenerate the probes before the generator; the comparisons are regression evidence, not a proof for other inputs.

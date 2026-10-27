@@ -44,6 +44,11 @@ CASES = {
     'undefined_nested': 'val x = (fn a => missing);',
     'undefined_multiline': 'val x =\n missing;',
     'undefined_ref': 'val x = ref 0; val _ = x := 3;',
+    'parse_error_missing': 'val x = ;',
+    'parse_error_after_decl': 'val x = 1; val y = ;',
+    'parse_error_multiline': 'val x = 1;\nval y = ;',
+    'parse_error_character': 'val x = #"ab";',
+    'parse_error_expression': 'if',
 }
 
 def run(executable, source, name):
@@ -79,7 +84,7 @@ if __name__ == '__main__':
         check_reference(args.record_reference)
         rows = {name: run(args.record_reference, source, name) for name, source in CASES.items()}
         for name, row in rows.items():
-            rejected = name.startswith('undefined_')
+            rejected = name.startswith(('undefined_', 'parse_error_'))
             if row['exit_code'] != (1 if rejected else 0) or (row['stderr_bytes'] == 0) == rejected:
                 raise SystemExit(f'{name}: reference outcome did not match the expected category')
         FIXTURE.write_text(json.dumps({'reference_revision': REFERENCE_REV, 'hol_revision': HOL_REV,

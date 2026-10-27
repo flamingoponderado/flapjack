@@ -42,6 +42,8 @@ probe_needs_refresh() {
   [[ ! -f "$output" || "$probe" -nt "$output" || "$source" -nt "$output" ]] ||
     [[ "$(basename "$probe")" == cake_basis_bvi_probeScript.sml &&
        "$cake_dir/basis/basisProgScript.sml" -nt "$output" ]] ||
+    [[ "$(basename "$probe")" == cake_parse_error_probeScript.sml &&
+       "$cake_dir/semantics/lexer_funScript.sml" -nt "$output" ]] ||
     [[ "$(basename "$probe")" == cakeml_frontend_flat_probeScript.sml &&
        ( "$cake_dir/compiler/backend/flat_patternScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/source_to_flatScript.sml" -nt "$output" ) ]] ||
@@ -376,6 +378,9 @@ run_probe cake_ptree_expr_probeScript.sml cake_ptree_expr_probe.out \
 
 run_probe cake_source_frontend_probeScript.sml cake_source_frontend_probe.out \
   empty value datatype structure expression "$cake_dir/semantics/cmlPtreeConversionScript.sml" "$cake_dir/compiler/parsing" "$cake_dir/semantics"
+
+run_probe cake_parse_error_probeScript.sml cake_parse_error_probe.out \
+  missing after_decl multiline "$cake_dir/compiler/parsing/pegexec_cml_foScript.sml" "$cake_dir/compiler/parsing"
 
 run_probe cake_inference_probeScript.sml cake_inference_probe.out \
   subst generalise unify occurs "$cake_dir/compiler/inference/inferScript.sml" "$cake_dir/compiler/inference"

@@ -1,4 +1,5 @@
 import Flapjack.CakeParser.Frontend
+import Flapjack.CakeParser.Diagnostics
 
 /-! Parse source bytes end to end and compare with the original HOL lexer,
 PEG, and top-level conversion captures. -/
@@ -30,5 +31,13 @@ private def loc (a b : Nat) : Locs := .locs (.posn 0 a) (.posn 0 b)
   | .success [.dlet span (.pvar name) (.lannot (.lit (.intLit 1)) valueSpan)] =>
       name == ofString "it" && span == .locs (.posn 0 0) .unknownPt && valueSpan == loc 0 0
   | _ => false
+
+-- Locations captured from the pinned HOL PEG's unconsumed token list.
+#guard unconsumedTokenLocationFuel 500 500 (ofString "val x = ;").explode == some (loc 0 3)
+#guard unconsumedTokenLocationFuel 500 500 (ofString "val x = 1; val y = ;").explode == some (loc 15 18)
+#guard unconsumedTokenLocationFuel 500 500 (ofString "val x = 1;\nval y = ;").explode ==
+  some (.locs (.posn 1 0) (.posn 1 3))
+#guard Flapjack.CakeParser.Diagnostics.renderUnconsumedToken 500 (ofString "val x = ;").explode ==
+  some (ofString "### ERROR: parse error\nParsing failed at line 1\n\nval x = ;\n^^^^\n\nProgram exited with nonzero exit code.\n").explode
 
 end Flapjack.Test.CakeSourceFrontendParity

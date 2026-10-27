@@ -31,4 +31,13 @@ def parseSourceFuel (lexerFuel parserFuel : Nat) (source : List HolChar) : Parse
   | none => .exhausted
   | some tokens => parseTokensFuel parserFuel tokens
 
+/-- Return the location of the first token left after parsing top-level
+declarations. Other parser failures have no location in this bounded
+interpreter and therefore return `none`. -/
+def unconsumedTokenLocationFuel (lexerFuel parserFuel : Nat) (source : List HolChar) : Option Locs := do
+  let tokens ← Lexer.lexFuel lexerFuel source defaultLoc
+  match eval parserFuel (.nt (.inl .nTopLevelDecs) .id) tokens with
+  | .success _ ((_, loc) :: _) => some loc
+  | _ => none
+
 end Flapjack.CakeParser.Frontend
