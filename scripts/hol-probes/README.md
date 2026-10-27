@@ -1,3 +1,5 @@
+`source_to_flat_equality_probe.out` replays the original local source-to-flat equality theorem and captures its complete typed statement. Lean proves an analogous equality simulation over its factored relation; the relation's full HOL correspondence and pass correctness remain open.
+
 `source_to_flat_value_relation_probe.out` captures the full original mutual value/environment relation rules, inferred types, local case-equation replay, and the environment association-list theorem. The corresponding Lean relation factors nested premises into helpers; full correspondence review and pass correctness remain open.
 
 `source_to_flat_global_env_probe.out` captures the original global environment's value-list and finite-map field types, constructor tags and map conditions, including their independent polymorphic types and empty-map observations. The map witnesses check Lean representation roundtrips; they do not establish the value relation or pass correctness.
