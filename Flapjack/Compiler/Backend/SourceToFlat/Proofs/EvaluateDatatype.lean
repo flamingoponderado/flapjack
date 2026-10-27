@@ -173,6 +173,51 @@ theorem allocTags1_namespace {M N A : Type} (constructors : List (N × List A)) 
     rw [ih]
     rfl
 
+/-- Pair source constructor names with the tag table emitted by the actual
+allocator, preserving their source order. -/
+def allocatedConstructorEntries {M N A : Type} (constructors : List (N × List A)) : List (N × Nat × Nat) :=
+  ((constructors.map Prod.fst).zip
+    ((allocTags1 constructors : Namespace M N Nat × Spt Nat × List (Nat × Nat)).2.2)).map
+      fun (name, tag, arity) => (name, tag, arity)
+
+/-- The allocator emits one tag per source constructor. -/
+theorem allocTags1_length {M N A : Type} (constructors : List (N × List A)) :
+    ((allocTags1 constructors : Namespace M N Nat × Spt Nat × List (Nat × Nat)).2.2).length =
+      constructors.length := by
+  have h := congrArg List.length (allocTags1_arities (M := M) constructors)
+  simpa using h
+
+/-- Projections of the zipped allocation entries are exactly the source
+names and the allocator's tag table. -/
+theorem allocatedConstructorEntries_projections {M N A : Type} (constructors : List (N × List A)) :
+    (allocatedConstructorEntries (M := M) constructors).map Prod.fst = constructors.map Prod.fst ∧
+    (allocatedConstructorEntries (M := M) constructors).map Prod.snd =
+      (allocTags1 constructors : Namespace M N Nat × Spt Nat × List (Nat × Nat)).2.2 := by
+  have lengths : (constructors.map Prod.fst).length =
+      ((allocTags1 constructors : Namespace M N Nat × Spt Nat × List (Nat × Nat)).2.2).length := by
+    simp [allocTags1_length]
+  constructor
+  · simp only [allocatedConstructorEntries, List.map_map]
+    change (((constructors.map Prod.fst).zip
+      ((allocTags1 constructors : Namespace M N Nat × Spt Nat × List (Nat × Nat)).2.2)).map
+        (fun pair => pair.1)) = _
+    exact List.map_fst_zip (Nat.le_of_eq lengths)
+  · simp only [allocatedConstructorEntries, List.map_map]
+    change (((constructors.map Prod.fst).zip
+      ((allocTags1 constructors : Namespace M N Nat × Spt Nat × List (Nat × Nat)).2.2)).map
+        (fun pair => pair.2)) = _
+    exact List.map_snd_zip (Nat.le_of_eq lengths.symm)
+
+/-- Distinct source constructor names and the allocator's fresh tags give
+both distinctness conditions required by the list-level invariant. -/
+theorem allocatedConstructorEntries_nodup {M N A : Type} (constructors : List (N × List A))
+    (names : (constructors.map Prod.fst).Nodup) :
+    ((allocatedConstructorEntries (M := M) constructors).map Prod.fst).Nodup ∧
+      ((allocatedConstructorEntries (M := M) constructors).map Prod.snd).Nodup := by
+  rw [(allocatedConstructorEntries_projections (M := M) constructors).1,
+    (allocatedConstructorEntries_projections (M := M) constructors).2]
+  exact ⟨names, allocTags1_tags_nodup (M := M) constructors⟩
+
 /-- Recording a type's tag table allocates exactly that type index. -/
 theorem allocatedIndices_installTypeTable (genv : GlobalEnv) (idx : Nat) (tags : List (Nat × Nat)) :
     genvAllocatedIndices { genv with tys := finiteUpdate genv.tys idx tags } =
@@ -603,5 +648,116 @@ theorem factoredInvariant_allocateFirstTypeConstructor {C F : Type} [Nonempty C]
     { start with tidx := start.tidx + 1 } finish other nextSource flat start.tidx tag arity name
     source.nextTypeStamp tags reservedInv table member (by simp [nextSource]) (free tag arity) (fresh name) compatible
   simpa [reserved, nextSource] using result
+
+/-- Install a list of named constructor tags for one type. This proof-side
+operation uses the same finite-map updates used by the allocation invariant. -/
+noncomputable def installTypeConstructorList (idx stamp : Nat) :
+    List (ConN × Nat × Nat) → GlobalEnv → GlobalEnv
+  | [], genv => genv
+  | (name, tag, arity) :: rest, genv =>
+    installTypeConstructorList idx stamp rest
+      { genv with c := finiteUpdate genv.c ((tag, some idx), arity) (.typeStamp name stamp) }
+
+/-- Installing a list of distinct constructors for an already allocated type
+preserves the factored invariant. The anchor supplies the established type
+relation and is preserved through every update. -/
+theorem factoredInvariant_installConstructorList {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (gen : EnvironmentGenerationStore) (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : State F) (flat : FlatSem.State C F) (idx stamp : Nat) (tags : List (Nat × Nat))
+    (anchorTag anchorArity : Nat) (anchorName : ConN) (entries : List (ConN × Nat × Nat)) :
+    ∀ genv : GlobalEnv,
+      factoredInvariant interp transform gen genv (start, finish, other) source flat →
+      genv.tys.lookup idx = some tags → stamp < source.nextTypeStamp →
+      genv.c.lookup ((anchorTag, some idx), anchorArity) = some (.typeStamp anchorName stamp) →
+      (entries.map Prod.fst).Nodup → (entries.map Prod.snd).Nodup →
+      (∀ name tag arity, (name, tag, arity) ∈ entries → (tag, arity) ∈ tags) →
+      (∀ name tag arity, (name, tag, arity) ∈ entries → genv.c.lookup ((tag, some idx), arity) = none) →
+      (∀ name tag arity, (name, tag, arity) ∈ entries →
+        ∀ key, genv.c.lookup key ≠ some (.typeStamp name stamp)) →
+      factoredInvariant interp transform gen (installTypeConstructorList idx stamp entries genv)
+        (start, finish, other) source flat := by
+  classical
+  induction entries with
+  | nil =>
+    intro genv valid _ _ _ _ _ _ _ _
+    exact valid
+  | cons entry rest ih =>
+    rcases entry with ⟨name, tag, arity⟩
+    intro genv valid table older anchor names keys members free fresh
+    have names' := (List.nodup_cons.mp names)
+    have keys' := (List.nodup_cons.mp keys)
+    have headMember : (name, tag, arity) ∈ (name, tag, arity) :: rest := by simp
+    have headFree := free name tag arity headMember
+    have growth := GlobalGrowth.installTypeConstructor genv idx tag arity name stamp headFree
+    let next := { genv with c := finiteUpdate genv.c ((tag, some idx), arity) (.typeStamp name stamp) }
+    have nextValid : factoredInvariant interp transform gen next (start, finish, other) source flat :=
+      factoredInvariant_installSiblingConstructor interp transform gen genv start finish other source flat
+        idx tag arity anchorTag anchorArity name anchorName stamp tags valid table
+        (members name tag arity headMember) older anchor headFree (fresh name tag arity headMember)
+    have nextAnchor : next.c.lookup ((anchorTag, some idx), anchorArity) = some (.typeStamp anchorName stamp) :=
+      growth.constructors _ _ anchor
+    apply ih next nextValid table older nextAnchor names'.2 keys'.2
+    · intro name' tag' arity' present
+      exact members name' tag' arity' (List.mem_cons_of_mem _ present)
+    · intro name' tag' arity' present
+      have different : ((tag', some idx), arity') ≠ ((tag, some idx), arity) := by
+        intro same
+        have pair : (tag', arity') = (tag, arity) := by simpa [and_assoc] using same
+        apply keys'.1
+        apply List.mem_map.mpr
+        exact ⟨(name', tag', arity'), present, pair⟩
+      simpa [next, finiteUpdate, FUPDATE_HOL, different] using
+        free name' tag' arity' (List.mem_cons_of_mem _ present)
+    · intro name' tag' arity' present key
+      have different : name' ≠ name := by
+        intro same
+        apply names'.1
+        apply List.mem_map.mpr
+        exact ⟨(name', tag', arity'), present, same⟩
+      by_cases atKey : key = ((tag, some idx), arity)
+      · subst key
+        simp [next, finiteUpdate, FUPDATE_HOL, Ne.symm different]
+      · simpa [next, finiteUpdate, FUPDATE_HOL, atKey] using
+          fresh name' tag' arity' (List.mem_cons_of_mem _ present) key
+
+/-- The list-level invariant applies to a suffix of the actual allocator
+entries once a constructor of the type has been installed. Its distinctness
+and table membership follow from the allocator. -/
+theorem factoredInvariant_installAllocatedConstructors {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (gen : EnvironmentGenerationStore) (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : State F) (flat : FlatSem.State C F) (idx stamp : Nat)
+    (anchorTag anchorArity : Nat) (anchorName : ConN) (constructors : List (ConN × List AstT)) (skip : Nat)
+    (genv : GlobalEnv)
+    (valid : factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (table : genv.tys.lookup idx = some
+      (allocTags1 constructors : Namespace ModN ConN Nat × Spt Nat × List (Nat × Nat)).2.2)
+    (older : stamp < source.nextTypeStamp)
+    (anchor : genv.c.lookup ((anchorTag, some idx), anchorArity) = some (.typeStamp anchorName stamp))
+    (names : (constructors.map Prod.fst).Nodup)
+    (free : ∀ name tag arity, (name, tag, arity) ∈ (allocatedConstructorEntries (M := ModN) constructors).drop skip →
+      genv.c.lookup ((tag, some idx), arity) = none)
+    (fresh : ∀ name tag arity, (name, tag, arity) ∈ (allocatedConstructorEntries (M := ModN) constructors).drop skip →
+      ∀ key, genv.c.lookup key ≠ some (.typeStamp name stamp)) :
+    factoredInvariant interp transform gen
+      (installTypeConstructorList idx stamp ((allocatedConstructorEntries (M := ModN) constructors).drop skip) genv)
+      (start, finish, other) source flat := by
+  have distinct := allocatedConstructorEntries_nodup (M := ModN) constructors names
+  have namesTail : (((allocatedConstructorEntries (M := ModN) constructors).drop skip).map Prod.fst).Nodup := by
+    rw [List.map_drop]
+    exact List.Nodup.sublist (List.drop_sublist _ _) distinct.1
+  have keysTail : (((allocatedConstructorEntries (M := ModN) constructors).drop skip).map Prod.snd).Nodup := by
+    rw [List.map_drop]
+    exact List.Nodup.sublist (List.drop_sublist _ _) distinct.2
+  apply factoredInvariant_installConstructorList interp transform gen start finish other source flat idx stamp
+    (allocTags1 constructors : Namespace ModN ConN Nat × Spt Nat × List (Nat × Nat)).2.2
+    anchorTag anchorArity anchorName ((allocatedConstructorEntries (M := ModN) constructors).drop skip)
+    genv valid table older anchor namesTail keysTail
+  · intro name tag arity member
+    rw [← (allocatedConstructorEntries_projections (M := ModN) constructors).2]
+    exact List.mem_map.mpr ⟨(name, tag, arity), List.mem_of_mem_drop member, rfl⟩
+  · exact free
+  · exact fresh
 
 end Flapjack.Compiler.Backend.SourceToFlat
