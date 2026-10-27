@@ -102269,5 +102269,69 @@
     "hol_name": "ptree_StructName_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Transcribed against the pinned parse-tree conversion and specialized CakeML carriers; full source and carrier review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/TypeSystemHOL.lean",
+    "lean_name": "TypeIdent",
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "type_ident",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Inference carrier or substitution transcribed against pinned HOL; full source and carrier review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/TypeSystemHOL.lean",
+    "lean_name": "SemanticT",
+    "hol_path": "cakeml/semantics/typeSystemScript.sml",
+    "hol_name": "t",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Inference carrier or substitution transcribed against pinned HOL; full source and carrier review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Inference/InferT.lean",
+    "lean_name": "InferT",
+    "hol_path": "cakeml/compiler/inference/infer_tScript.sml",
+    "hol_name": "infer_t",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Inference carrier or substitution transcribed against pinned HOL; full source and carrier review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Inference/Infer.lean",
+    "lean_name": "inferTypeSubst",
+    "hol_path": "cakeml/compiler/inference/inferScript.sml",
+    "hol_name": "infer_type_subst_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Inference carrier or substitution transcribed against pinned HOL; full source and carrier review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Inference/Infer.lean",
+    "lean_name": "inferTypeSubstList",
+    "hol_path": "cakeml/compiler/inference/inferScript.sml",
+    "hol_name": "infer_type_subst_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Inference carrier or substitution transcribed against pinned HOL; full source and carrier review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Inference/Infer.lean",
+    "lean_name": "inferDeBruijnSubst",
+    "hol_path": "cakeml/compiler/inference/inferScript.sml",
+    "hol_name": "infer_deBruijn_subst_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Inference carrier or substitution transcribed against pinned HOL; full source and carrier review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Inference/Infer.lean",
+    "lean_name": "inferDeBruijnSubstList",
+    "hol_path": "cakeml/compiler/inference/inferScript.sml",
+    "hol_name": "infer_deBruijn_subst_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Inference carrier or substitution transcribed against pinned HOL; full source and carrier review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Inference/Unify.lean",
+    "lean_name": "applySubst",
+    "hol_path": "cakeml/compiler/inference/unifyScript.sml",
+    "hol_name": "capply_subst_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Inference carrier or substitution transcribed against pinned HOL; full source and carrier review remains pending."
   }
 ]

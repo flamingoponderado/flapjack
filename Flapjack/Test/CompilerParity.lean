@@ -320,6 +320,7 @@ import Flapjack.Test.CakePtreePatternParity
 import Flapjack.Test.CakePtreeExprParity
 import Flapjack.Test.CakeSourceFrontendParity
 import Flapjack.Test.CakeSourceRiscVPartial
+import Flapjack.Test.CakeInferenceParity
 import Flapjack.Test.BviInlineParity
 import Flapjack.Test.MiscLookupAnyFindIndexParity
 import Flapjack.Test.StackPropsClockSupportParity

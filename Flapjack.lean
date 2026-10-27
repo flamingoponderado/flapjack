@@ -2254,6 +2254,8 @@ import Flapjack.CakeParser.PegActions
 import Flapjack.CakeParser.PegEval
 import Flapjack.CakeParser.PtreeConversion
 import Flapjack.CakeParser.Frontend
+import Flapjack.Compiler.Inference.Infer
+import Flapjack.Compiler.Inference.Unify
 import Flapjack.Compiler.Backend.SourceToFlat.FromText
 import Flapjack.Parser.ByteRanged
 import Flapjack.Parser.ConversionByteRanged
