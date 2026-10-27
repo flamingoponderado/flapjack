@@ -4,6 +4,7 @@ import Flapjack.RiscV.CakeArtifactFormat
 import Flapjack.Compiler.Inference.Infer.Diagnostics
 import Flapjack.Compiler.Inference.Infer.TypesOutput
 import Flapjack.CakeParser.Diagnostics
+import Flapjack.CakeHelp
 
 /-! Experimental CakeML source-to-RISC-V command. The frontend and backend
 are still bounded ports, the original diagnostics and full CLI are incomplete,
@@ -285,7 +286,7 @@ private def parseArgs : List String → Options → Except String Options
         | some b => parseArgs args { options with mainReturn := b, seenMainReturn := true }
         | none => .error s!"invalid Boolean option: {arg}"
       else if arg == "--print_sexp" || arg == "--explore" || arg == "--pancake" ||
-          arg == "--help" || arg == "--version" || arg == "--repl" ||
+          arg == "--help" || arg == "--version" || arg == "--repl" || arg == "--candle" ||
           arg.startsWith "--pancake_feature=" then
         .error s!"unsupported option: {arg}"
       -- The original driver's flag lookups ignore arguments they do not recognize.
@@ -369,8 +370,11 @@ private def inferTypesBytes (options : Options) (source : List HolChar) :
   return Flapjack.Compiler.Inference.Infer.TypesOutput.render env
 
 def main (args : List String) : IO UInt32 := do
-  if args == ["--help"] then
-    IO.println usage
+  if args.contains "--repl" || args.contains "--candle" then
+    IO.eprintln s!"cake: interactive mode is not supported\n{usage}"
+    return 2
+  if args.contains "--help" then
+    IO.print Flapjack.CakeHelp.text
     return 0
   let errors := topConfigErrors args
   if !errors.isEmpty then

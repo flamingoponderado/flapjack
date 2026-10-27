@@ -423,3 +423,6 @@ argument, in both type-reporting and complete RISC-V assembly output.
 Additional basis-enabled examples retain observable calls through nested
 closures, datatype matches, type aliases, byte escapes, hexadecimal literals,
 and multi-argument functions; each is compared over the full assembly output.
+`scripts/check-cake-help.py` separately compares the complete `--help` output
+and its flag precedence with the pinned driver source. Interactive modes remain
+unsupported; their precedence over help is preserved by reporting that limit.
