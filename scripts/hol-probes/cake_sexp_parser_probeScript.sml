@@ -21,3 +21,11 @@ val _ = show "edges" ``MAP (\s. simpleSexpParse$parse_sexp (MAP (\c. (c,location
 val _ = show "bytes" ``MAP (\s. simpleSexpParse$parse_sexp (MAP (\c. (c,location$unknown_loc)) s))
   [[CHR 9; CHR 10; #"x"; CHR 13]; [CHR 0]; [CHR 127]; [CHR 128];
    [#"\""; CHR 31; #"\""]; [#"\""; CHR 126; #"\""]; [#"x"; CHR 128]]``;
+val print_cases = ``MAP simpleSexpParse$print_sexp
+  [SX_SYM "nil"; SX_NUM 12345; SX_STR "a\"b\\c";
+   SX_CONS (SX_NUM 1) (SX_CONS (SX_NUM 2) (SX_SYM "nil"));
+   SX_CONS (SX_NUM 1) (SX_NUM 2);
+   SX_CONS (SX_SYM "quote") (SX_CONS (SX_SYM "x") (SX_SYM "nil"));
+   SX_CONS (SX_SYM "quote") (SX_CONS (SX_SYM "x") (SX_SYM "tail"));
+   SX_CONS (SX_STR [CHR 0; CHR 128]) (SX_STR "z")]``;
+val _ = (print "print="; print_term (rhs (concl (EVAL print_cases))); print "\n");

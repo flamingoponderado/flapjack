@@ -1,4 +1,4 @@
-import Flapjack.CakeParser.Sexp
+import Flapjack.CakeParser.SexpPrint
 
 /-! Regression observations from `cake_sexp_parser_probe.out`. These finite
 examples do not prove the direct parser equivalent to HOL's PEG. -/
@@ -36,5 +36,15 @@ example : [parseText "  (a .b) \n", parseText "a.b", parseText ".a", parseText "
 example : [parse [9, 10, 120, 13], parse [0], parse [127], parse [128],
     parse [34, 31, 34], parse [34, 126, 34], parse [120, 128]] =
     [some (sym "x"), none, none, none, none, some (str "~"), none] := by native_decide
+
+-- The printer observations are captured from the pinned HOL `print_sexp`.
+example : [render (sym "nil"), render (.num 12345), render (str "a\"b\\c"),
+    render (list [.num 1, .num 2]), render (.cons (.num 1) (.num 2)),
+    render (list [sym "quote", sym "x"]),
+    render (.cons (sym "quote") (.cons (sym "x") (sym "tail"))),
+    render (.cons (.str [0, 128]) (str "z"))] =
+    [bytes "nil", bytes "12345", bytes "\"a\\\"b\\\\c\"", bytes "(1 2)",
+     bytes "(1 . 2)", bytes "'x", bytes "(quote x . tail)",
+     [40, 34, 0, 128, 34, 32, 46, 32, 34, 122, 34, 41]] := by native_decide
 
 end Flapjack.Test.CakeSexpParserParity
