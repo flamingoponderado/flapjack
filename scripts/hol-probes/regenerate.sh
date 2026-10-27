@@ -40,6 +40,8 @@ probe_needs_refresh() {
   local probe="$2"
   local source="$3"
   [[ ! -f "$output" || "$probe" -nt "$output" || "$source" -nt "$output" ]] ||
+    [[ "$(basename "$probe")" == source_to_flat_opref_probeScript.sml &&
+       "$cake_dir/semantics/semanticPrimitivesScript.sml" -nt "$output" ]] ||
     [[ "$(basename "$probe")" == source_to_flat_function_handle_probeScript.sml &&
        ( "$cake_dir/semantics/evaluateScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/semantics/flatSemScript.sml" -nt "$output" ) ]] ||
@@ -247,6 +249,10 @@ run_probe() {
     fi
   done
 }
+
+run_probe source_to_flat_opref_probeScript.sml source_to_flat_opref_probe.out \
+  source_opref_typed flat_opref_typed \
+  "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe source_to_flat_pattern_rows_probeScript.sml source_to_flat_pattern_rows_probe.out \
   pattern_bindings_typed all_rows_typed \

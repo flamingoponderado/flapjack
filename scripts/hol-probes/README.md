@@ -1,3 +1,5 @@
+`source_to_flat_opref_probe.out` captures original source and flat reference allocations with a reserved flat store entry. Lean composes operand evaluation with reference allocation over its preliminary state and value relations; this observation is not a cross-language equivalence proof.
+
 `source_to_flat_pattern_rows_probe.out` captures the original typed pattern-binding preservation and all-row safety theorems. Lean ports binding preservation exactly and proves analogous all-row safety, first-row selection, and match-evaluation composition over the preliminary factored relations. Its handler and case-expression simulations use row-body induction hypotheses and the source non-type-error condition; the HOL row theorem, correspondence review, and complete pass theorem remain open.
 
 `source_to_flat_function_handle_probe.out` captures original typed function compilation, empty source matching, and flat matching-row equations. Lean relates captured function environments and empty-handler behavior over preliminary relations; general handler matching and pass correctness remain open.
