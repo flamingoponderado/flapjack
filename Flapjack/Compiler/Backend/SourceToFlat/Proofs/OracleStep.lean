@@ -1,6 +1,8 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.OracleInvariant
 import Flapjack.Compiler.Backend.SourceToFlat.CompileProg
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.FiniteMapGrowth
 import Flapjack.Misc.Option
+import Flapjack.HolArb
 
 /-! Source-oracle decoding and incremental compiler steps. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat.OracleInvariant
@@ -41,6 +43,48 @@ def envGenFutureRel {C : Type} (interp : Option (Value → Option (Config × C))
     Flapjack.sptLookup gen.generation config.envs.envGens = some genFinal ∧
       Flapjack.sptSubspt gen.envs genFinal
 
+/-- The oracle generation is valid. HOL's incomplete `EvalDecs` case is the
+fixed unspecified Boolean `ARB`, not a chosen false value. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "src_orac_gen_inv_def"]
+noncomputable def srcOracGenInv (evalState : Option EvalState) : Prop :=
+  match evalState with
+  | none => True
+  | some (.evalOracle state) => state.generation < state.envs.length
+  | some (.evalDecs _) => Flapjack.holArb Bool = true
+
+/-- Every stored source oracle environment has a related compiler map. This
+uses Flapjack's factored global environment relation, whose HOL correspondence
+is still under review, and therefore is not tagged as the original invariant. -/
+def srcOracEnvInvs {C : Type} (interp : Option (Value → Option (Config × C)))
+    (genv : GlobalEnv) (evalState : Option EvalState) : Prop :=
+  match evalState with
+  | none => True
+  | some (.evalDecs _) => False
+  | some (.evalOracle state) =>
+    ∃ config, srcOracNextCfg interp evalState = some config ∧ envStoreInv config.envs ∧
+      config.envs.next = state.envs.length ∧
+      ∀ gId (gBound : gId < state.envs.length) id (idBound : id < state.envs[gId].length),
+        ∃ mapGen compMap, Flapjack.sptLookup gId config.envs.envGens = some mapGen ∧
+          Flapjack.sptLookup id mapGen = some compMap ∧
+          GlobalEnvInv genv compMap (fun _ => False) state.envs[gId][id]
+
+/-- Stored source-oracle environment relationships survive global growth. -/
+theorem srcOracEnvInvs_growth {C : Type} (interp : Option (Value → Option (Config × C)))
+    (old new : GlobalEnv) (growth : GlobalGrowth old new) (evalState : Option EvalState)
+    (invs : srcOracEnvInvs interp old evalState) : srcOracEnvInvs interp new evalState := by
+  cases evalState with
+  | none => trivial
+  | some state =>
+    cases state with
+    | evalDecs state => exact invs
+    | evalOracle state =>
+      obtain ⟨config, next, store, length, envs⟩ := invs
+      refine ⟨config, next, store, length, ?_⟩
+      intro gId gBound id idBound
+      obtain ⟨mapGen, compMap, generationLookup, mapLookup, inv⟩ := envs gId gBound id idBound
+      exact ⟨mapGen, compMap, generationLookup, mapLookup,
+        globalEnvInv_growth old new growth compMap (fun _ => False) _ inv⟩
+
 /-- The source oracle is decodable at each step, and successive decoded
 configurations agree with incremental compilation. HOL types are inhabited;
 `Nonempty C` supplies the payload inhabitance needed for HOL's `THE NONE`. -/
@@ -57,6 +101,26 @@ noncomputable def srcOracStepInvs {C : Type} [Nonempty C]
     ∀ k envId stateValue decs, state.oracle k = (envId, stateValue, decs) →
       configAt (k + 1) = (incCompileProg envId (configAt k) (transform decs)).1
   | _, _ => False
+
+/-- Combined source-oracle conditions using the factored environment
+relation. This is not yet the original HOL invariant. -/
+noncomputable def srcOracInvs {C : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (evalState : Option EvalState) : Prop :=
+  srcOracStepInvs interp transform evalState ∧ srcOracEnvInvs interp genv evalState ∧
+    srcOracGenInv evalState
+
+/-- The factored source-oracle invariant is stable under the original
+subglobal and submap growth hypotheses. -/
+theorem srcOracInvs_growth {C : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (old new : GlobalEnv) (evalState : Option EvalState)
+    (premises : srcOracInvs interp transform old evalState ∧ finiteSubmap old.c new.c ∧
+      finiteSubmap old.tys new.tys ∧ subglobals old.v new.v) :
+    srcOracInvs interp transform new evalState := by
+  obtain ⟨⟨steps, envs, gen⟩, constructors, types, slots⟩ := premises
+  have growth := GlobalGrowth.ofSubmaps old new slots constructors types
+  exact ⟨steps, srcOracEnvInvs_growth interp old new growth evalState envs, gen⟩
 
 /-- The first two source-oracle entries expose consecutive incremental
 compilation configurations. This is the original local `step_1` statement. -/

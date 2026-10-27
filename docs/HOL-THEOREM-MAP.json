@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "src_orac_gen_inv_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleStep.lean",
+    "lean_name": "srcOracGenInv",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed orac_gen_inv probe, including HOL's pattern-completed EvalDecs case: NONE is true, EvalOracle requires generation < LENGTH envs, and EvalDecs uses the shared opaque holArb Bool = true for the original unspecified ARB Boolean."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "env_gen_inv_def",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleStep.lean",
     "lean_name": "envGenInv",
