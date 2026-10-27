@@ -1,0 +1,25 @@
+load "semanticPrimitivesTheory";
+load "wordsLib";
+open HolKernel Parse boolLib bossLib;
+val _ = Globals.linewidth := 1000000;
+val _ = Globals.show_types := true;
+val _ = (print "copy_type="; print_type (type_of ``semanticPrimitives$copy_array``); print "\n");
+val slice = rhs (concl (EVAL ``semanticPrimitives$copy_array ([(1:num);2;3;4],1) 2 NONE``));
+val _ = (print "slice="; print_term slice; print "\n");
+val dest = rhs (concl (EVAL ``semanticPrimitives$copy_array ([(1:num);2;3;4],1) 2 (SOME ([9;9;9;9],1))``));
+val _ = (print "dest="; print_term dest; print "\n");
+val negative_offset = rhs (concl (EVAL ``semanticPrimitives$copy_array ([(1:num)],-1) 1 NONE``));
+val _ = (print "negative_offset="; print_term negative_offset; print "\n");
+val negative_length = rhs (concl (EVAL ``semanticPrimitives$copy_array ([(1:num)],0) (-1) NONE``));
+val _ = (print "negative_length="; print_term negative_length; print "\n");
+val src_short = rhs (concl (EVAL ``semanticPrimitives$copy_array ([(1:num);2],1) 2 NONE``));
+val _ = (print "src_short="; print_term src_short; print "\n");
+val dest_short = rhs (concl (EVAL ``semanticPrimitives$copy_array ([(1:num);2],0) 2 (SOME ([9],0))``));
+val _ = (print "dest_short="; print_term dest_short; print "\n");
+val dest_negative = rhs (concl (EVAL ``semanticPrimitives$copy_array ([(1:num);2],0) 1 (SOME ([9],-1))``));
+val _ = (print "dest_negative="; print_term dest_negative; print "\n");
+val endpoint = rhs (concl (EVAL ``semanticPrimitives$copy_array ([(1:num);2],2) 0 (SOME ([9],1))``));
+val _ = (print "endpoint="; print_term endpoint; print "\n");
+val bytes = rhs (concl ((EVAL THENC DEPTH_CONV (CHANGED_CONV wordsLib.WORD_EVAL_CONV) THENC EVAL)
+  ``semanticPrimitives$chars_to_ws (semanticPrimitives$ws_to_chars [0w:word8; 255w])``));
+val _ = (print "bytes="; print_term bytes; print "\n");

@@ -1,0 +1,10 @@
+copy_type=:α list # int -> int -> (α list # int) option -> α list option
+slice=SOME [(2 :num); (3 :num)]
+dest=SOME [(9 :num); (2 :num); (3 :num); (9 :num)]
+negative_offset=(NONE :num list option)
+negative_length=(NONE :num list option)
+src_short=(NONE :num list option)
+dest_short=(NONE :num list option)
+dest_negative=(NONE :num list option)
+endpoint=SOME [(9 :num)]
+bytes=[(0w :word8); (255w :word8)]

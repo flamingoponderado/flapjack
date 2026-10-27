@@ -103093,5 +103093,29 @@
     "lean_name": "extendDecEnv",
     "statement_status": "pending_statement_review",
     "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "chars_to_ws_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Array.lean",
+    "lean_name": "charsToWords",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "copy_array_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Array.lean",
+    "lean_name": "copyArray",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "ws_to_chars_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Array.lean",
+    "lean_name": "wordsToChars",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
   }
 ]
