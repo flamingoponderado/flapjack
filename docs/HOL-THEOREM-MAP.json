@@ -102045,5 +102045,37 @@
     "lean_path": "Flapjack/CakeParser/PegActions.lean", "lean_name": "evalBinary",
     "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml", "hol_name": "eval_binary_def",
     "statement_status": "pending_statement_review", "reviewer": "First-order semantic action transcribed against generated nonterminal and parse-tree carriers; complete source review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PegSyntax.lean",
+    "lean_name": "TokenMap",
+    "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml",
+    "hol_name": "tok_map",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Transcribed against the pinned first-order PEG and specialized CakeML parse-tree carriers; full source and carrier review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PegSyntax.lean",
+    "lean_name": "PegExpr",
+    "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml",
+    "hol_name": "pegsym_fo",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Transcribed against the pinned first-order PEG and specialized CakeML parse-tree carriers; full source and carrier review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PegGrammar.lean",
+    "lean_name": "ntRule",
+    "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml",
+    "hol_name": "nt_rule_fo_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Transcribed against the pinned first-order PEG and specialized CakeML parse-tree carriers; full source and carrier review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PegEval.lean",
+    "lean_name": "evalTokenMap",
+    "hol_path": "cakeml/compiler/parsing/pegexec_cml_foScript.sml",
+    "hol_name": "eval_tok_map_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Transcribed against the pinned first-order PEG and specialized CakeML parse-tree carriers; full source and carrier review remains pending."
   }
 ]

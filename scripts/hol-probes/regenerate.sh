@@ -359,6 +359,9 @@ run_probe cake_nonterminals_probeScript.sml cake_nonterminals_probe.out \
 run_probe cake_peg_actions_probeScript.sml cake_peg_actions_probe.out \
   unary infix actions "$cake_dir/compiler/parsing/pegexec_cml_foScript.sml" "$cake_dir/compiler/parsing"
 
+run_probe cake_peg_grammar_probeScript.sml cake_peg_grammar_probe.out \
+  variable empty "$cake_dir/compiler/parsing/pegexec_cml_foScript.sml" "$cake_dir/compiler/parsing"
+
 run_probe bvl_inline_cake_bvi_probeScript.sml bvl_inline_cake_bvi_probe.out \
   code "$cake_dir/compiler/backend/bvl_inlineScript.sml" "$cake_dir/compiler/backend"
 

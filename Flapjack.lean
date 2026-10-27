@@ -2251,6 +2251,7 @@ import Flapjack.Parser
 import Flapjack.CakeParser.LexerImpl
 import Flapjack.CakeParser.PegChecks
 import Flapjack.CakeParser.PegActions
+import Flapjack.CakeParser.PegEval
 import Flapjack.Parser.ByteRanged
 import Flapjack.Parser.ConversionByteRanged
 import Flapjack.Parser.GrammarByteRanged
