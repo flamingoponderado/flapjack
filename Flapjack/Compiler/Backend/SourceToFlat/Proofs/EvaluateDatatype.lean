@@ -88,6 +88,91 @@ theorem allocTags1_reverse_arities {M N A : Type} (constructors : List (N × Lis
       constructors.map (fun constructor => constructor.2.length) := by
   rw [List.map_reverse, allocTags1_arities, List.map_reverse, List.reverse_reverse]
 
+/-- The tag table contains exactly the tags below the counter for each
+arity. This is an allocation invariant over the actual executable pass. -/
+theorem allocTags1_membership {M N A : Type} (constructors : List (N × List A)) :
+    ∀ tag arity,
+      (tag, arity) ∈ (allocTags1 constructors : Namespace M N Nat × Spt Nat × List (Nat × Nat)).2.2 ↔
+      ∃ max, sptLookup arity (allocTags1 constructors : Namespace M N Nat × Spt Nat × List (Nat × Nat)).2.1 =
+        some max ∧ tag < max := by
+  induction constructors with
+  | nil =>
+    intro tag arity
+    simp [allocTags1]
+  | cons constructor rest ih =>
+    rcases constructor with ⟨name, args⟩
+    generalize eq : (allocTags1 rest : Namespace M N Nat × Spt Nat × List (Nat × Nat)) = result at ih ⊢
+    rcases result with ⟨ns, cids, tags⟩
+    intro tag arity
+    by_cases same : arity = args.length
+    · subst arity
+      cases found : sptLookup args.length cids with
+      | none =>
+        have old := ih tag args.length
+        simp only [found] at old
+        simp [allocTags1, eq, lookupInc, found, sptLookup_sptInsert_same, old]
+      | some count =>
+        have old := ih tag args.length
+        simp only [found, Option.some.injEq, exists_eq_left'] at old
+        simp only [allocTags1, eq, lookupInc, found, sptLookup_sptInsert_same, List.mem_cons,
+          Prod.mk.injEq, Option.some.injEq, exists_eq_left', old]
+        constructor
+        · rintro (⟨same, _⟩ | less) <;> omega
+        · intro less
+          by_cases same : tag = count
+          · exact Or.inl ⟨same, trivial⟩
+          · exact Or.inr (by omega)
+    · cases found : sptLookup args.length cids with
+      | none =>
+        have old := ih tag arity
+        simp [allocTags1, eq, lookupInc, found, sptLookup_sptInsert_ne _ _ _ _ same, same, old]
+      | some count =>
+        have old := ih tag arity
+        simp [allocTags1, eq, lookupInc, found, sptLookup_sptInsert_ne _ _ _ _ same, same, old]
+
+/-- Distinct allocated tags never collide at the same arity. -/
+theorem allocTags1_tags_nodup {M N A : Type} (constructors : List (N × List A)) :
+    ((allocTags1 constructors : Namespace M N Nat × Spt Nat × List (Nat × Nat)).2.2).Nodup := by
+  induction constructors with
+  | nil => simp [allocTags1]
+  | cons constructor rest ih =>
+    rcases constructor with ⟨name, args⟩
+    have membership := allocTags1_membership (M := M) rest
+    generalize eq : (allocTags1 rest : Namespace M N Nat × Spt Nat × List (Nat × Nat)) = result at ih membership ⊢
+    rcases result with ⟨ns, cids, tags⟩
+    cases found : sptLookup args.length cids with
+    | none =>
+      have absent : (0, args.length) ∉ tags := by
+        have h := membership 0 args.length
+        simp [found] at h
+        exact h
+      simpa [allocTags1, eq, lookupInc, found, absent] using ih
+    | some count =>
+      have absent : (count, args.length) ∉ tags := by
+        have h := membership count args.length
+        simp [found] at h
+        exact h
+      simpa [allocTags1, eq, lookupInc, found, absent] using ih
+
+/-- The allocator's namespace associates each input constructor name with
+the tag in the corresponding tag-table position. -/
+theorem allocTags1_namespace {M N A : Type} (constructors : List (N × List A)) :
+    (allocTags1 constructors : Namespace M N Nat × Spt Nat × List (Nat × Nat)).1 =
+      alistToNs ((constructors.map Prod.fst).zip
+        ((allocTags1 constructors : Namespace M N Nat × Spt Nat × List (Nat × Nat)).2.2.map Prod.fst)) := by
+  induction constructors with
+  | nil => rfl
+  | cons constructor rest ih =>
+    rcases constructor with ⟨name, args⟩
+    generalize eq : (allocTags1 rest : Namespace M N Nat × Spt Nat × List (Nat × Nat)) = result at ih ⊢
+    rcases result with ⟨ns, cids, tags⟩
+    generalize inc : lookupInc args.length cids = result
+    rcases result with ⟨tag, newCids⟩
+    simp only [allocTags1, eq, inc, List.map_cons, List.zip_cons_cons] at ⊢
+    change ns = alistToNs ((rest.map Prod.fst).zip (tags.map Prod.fst)) at ih
+    rw [ih]
+    rfl
+
 /-- Recording a type's tag table allocates exactly that type index. -/
 theorem allocatedIndices_installTypeTable (genv : GlobalEnv) (idx : Nat) (tags : List (Nat × Nat)) :
     genvAllocatedIndices { genv with tys := finiteUpdate genv.tys idx tags } =
