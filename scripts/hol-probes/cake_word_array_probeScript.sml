@@ -12,3 +12,15 @@ val _ = capture "word64" ``
 val _ = capture "array" ``
  let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16|> in
  data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$MemOp closLang$BoundsCheckArray) [1;2] NONE) : 64 wordLang$prog # num``;
+val _ = capture "shift64" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$WordOp (closLang$WordShift W64 Lsl 5)) [1] NONE) : 64 wordLang$prog # num``;
+val _ = capture "shift64_large" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$WordOp (closLang$WordShift W64 Ror 65)) [1] NONE) : 64 wordLang$prog # num``;
+val _ = capture "shift64_asr_large" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$WordOp (closLang$WordShift W64 Asr 65)) [1] NONE) : 64 wordLang$prog # num``;
+val _ = capture "boundsblock" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$BlockOp closLang$BoundsCheckBlock) [1;2] NONE) : 64 wordLang$prog # num``;

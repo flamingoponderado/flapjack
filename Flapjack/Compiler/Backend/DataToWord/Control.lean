@@ -426,6 +426,35 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
                   shiftN .lsr (shiftVar .lsl src ((width - 2) - n)) (width - 10)]
           some (.assign (adjustVar dest) value, l)
       | _ => some (.skip, l)
+  | l, .assign dest (.wordOp (.wordShift .w64 sh n)) args _ =>
+      match args with
+      | [src] =>
+          if width != 64 then none else
+          match encodeHeader (width := width) conf 3 1 with
+          | none => some (giveUp, l)
+          | some header =>
+              let bytes := BitVec.ofNat width (width / 8)
+              let address := WordLangExpHOL.op .add [realAddr conf (adjustVar src), .const bytes]
+              let stored := listSeq [
+                .assign 1 (.lookup .nextFree), .store (.op .add [.var 1, .const bytes]) 3,
+                .assign 3 (.const header), .store (.var 1) 3,
+                .set .nextFree (.op .add [.var 1, .const (2 * bytes)]),
+                .assign (adjustVar dest) (.op .or [
+                  shiftN .lsl (.op .sub [.var 1, .lookup .currHeap]) (shiftLength conf - wordShiftAmount width),
+                  .const 1])]
+              some (listSeq [.assign 3 (.load address), .assign 3 (shiftVar sh 3 n), stored], l)
+      | _ => some (.skip, l)
+  | l, .assign dest (.blockOp .boundsCheckBlock) args _ =>
+      match args with
+      | [base, index] =>
+          let base := adjustVar base
+          let header := WordLangExpHOL.load (realAddr conf base)
+          some (listSeq [
+            .ite .test base (.imm 1) (.assign 1 (.const 0))
+              (.assign 1 (shiftN .lsr header (width - conf.lenSize))),
+            .assign 3 (shiftVar .ror (adjustVar index) 2),
+            boolResult dest .lower 3 (.reg 1)], l)
+      | _ => some (.skip, l)
   | l, .assign dest (.blockOp (.cons tag)) args _ =>
       some (compileCons conf l dest tag args)
   | l, .assign dest (.blockOp (.consExtend tag)) args names =>

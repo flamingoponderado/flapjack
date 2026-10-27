@@ -64,4 +64,30 @@ private def conf : Config := ⟨1, 2, 3, 16, true, false, false, false, false, f
         (.ite .lower 3 (.reg 1) (.assign 8 (.const 18)) (.assign 8 (.const 2)))), 2) => true
   | _ => false
 
+private def matchesWord64Shift (shift : Shift) (amount expected : Nat) : Bool :=
+  match compileControl? (width := 64) conf 5 2
+      (.assign 3 (.wordOp (.wordShift .w64 shift amount)) [1] none) with
+  | some (.seq (.assign 3 (.load (.op .add [.op .add [.lookup .currHeap,
+        .shift .lsr (.var 4) (.const 5)], .const 8])))
+      (.seq (.assign 3 (.shift actual (.var 3) (.const n)))
+      (.seq (.assign 1 (.lookup .nextFree)) (.seq (.store (.op .add [.var 1, .const 8]) 3)
+      (.seq (.assign 3 (.const h)) (.seq (.store (.var 1) 3)
+      (.seq (.set .nextFree (.op .add [.var 1, .const 16]))
+        (.assign 8 (.op .or [.shift .lsl (.op .sub [.var 1, .lookup .currHeap]) (.const 5), .const 1])))))))), 2) =>
+      decide (actual = shift) && n.toNat == expected && h == 0x100000000000F
+  | _ => false
+
+#guard matchesWord64Shift .lsl 5 5
+#guard matchesWord64Shift .ror 65 1
+#guard matchesWord64Shift .asr 65 63
+
+#guard match compileControl? (width := 64) conf 5 2
+    (.assign 3 (.blockOp .boundsCheckBlock) [1, 2] none) with
+  | some (.seq (.ite .test 4 (.imm 1) (.assign 1 (.const 0))
+      (.assign 1 (.shift .lsr (.load (.op .add [.lookup .currHeap,
+        .shift .lsr (.var 4) (.const 5)])) (.const 48))))
+      (.seq (.assign 3 (.shift .ror (.var 6) (.const 2)))
+        (.ite .lower 3 (.reg 1) (.assign 8 (.const 18)) (.assign 8 (.const 2)))), 2) => true
+  | _ => false
+
 end Flapjack.Test.CakeIoLoweringParity
