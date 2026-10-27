@@ -1,0 +1,3 @@
+merge=[Clos 4 1 (Var None 0) 1; Other; Tuple 2 [Int 3; Int 5]; Other]
+knownop=(Other,Int 5,Int 9,[(2,Int 5)])
+compiled=([Let None [Fn «f» (SOME 4) NONE 1 (Var None 0)] (Let None [Op None (IntOp (Const 42)) []] (Var None 0)); Op None (GlobOp (SetGlobal 2)) [Op None (IntOp (Const 5)) []]; Op None (IntOp (Const 5)) []],[(2,Int 5)])

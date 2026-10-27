@@ -80,4 +80,18 @@ def compileCakeToRiscVOptimizedFuel (fuel inlineLimit cutSize : Nat) (splitSeq :
   let config := { config with wordToWordConf := { config.wordToWordConf with colOracle := col } }
   Backend.fromWord asmConf config (backendNames names) program
 
+/-- Run the configured CakeML AST-to-RISC-V path. The bignum generator is a
+pinned 64-bit snapshot, unsupported cases return `none`, and no whole-compiler
+correctness theorem or final-byte correspondence is claimed. -/
+def compileCakeToRiscVConfiguredFuel (fuel : Nat) (config : Backend.Config)
+    (decls : List AstHOL.Dec) : Option (List (BitVec 8) × List (BitVec 64) × Backend.Config) := do
+  let asmConf := Flapjack.Compiler.Encoders.RiscV.Target.riscvConfig
+  let dataConf := { config.dataConf with hasFpOps := decide (1 < asmConf.fpRegCount), hasFpTern := false }
+  let (source, closure, bvlConfig, program, names) ←
+    compileCakeToWord64ConfiguredFuel fuel config.sourceConf config.closConf config.bvlConf dataConf decls
+  let (col, program) := WordToWord.compileWith RegAlloc.regAllocExecutable config.wordToWordConf asmConf program
+  let config := { config with sourceConf := source, closConf := closure, bvlConf := bvlConfig }
+  let config := { config with wordToWordConf := { config.wordToWordConf with colOracle := col } }
+  Backend.fromWord asmConf config (backendNames names) program
+
 end Flapjack.Compiler.Backend.SourceToFlat

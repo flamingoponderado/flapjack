@@ -48,9 +48,13 @@
 
 `clos_call_frontend_probe.out` captures closure free-variable annotations, direct-call conversion, effectful calls, and mutually recursive code extraction. `full_clos_call_cake_word_probe.out` captures the complete word program for a nested-function CakeML declaration with direct-call conversion and the ported BVL/BVI optimizations enabled; known-function optimization is disabled.
 
-`clos_known_helpers_probe.out` captures closure free-variable cleanup, tick removal, let-operation cleanup and inlining decisions, including trace preservation and size limits. These support the known-function pass; its main traversal remains unported.
+`clos_known_helpers_probe.out` captures closure free-variable cleanup, tick removal, let-operation cleanup and inlining decisions, including trace preservation and size limits. These support the bounded known-function pass.
 
-`clos_op_frontend_probe.out` captures smart arithmetic, constructor inspection, equality expansion, trace retention and effectful binding order. The bounded Lean operation simplifier is checked against these selected original outputs; the known-function traversal is not yet connected.
+`clos_op_frontend_probe.out` captures smart arithmetic, constructor inspection, equality expansion, trace retention and effectful binding order. The bounded Lean operation simplifier is checked against these selected original outputs.
+
+`clos_known_frontend_probe.out` captures approximation merging, global updates and closure inlining. `full_clos_known_cake_word_probe.out` and `full_default_frontend_word_probe.out` capture complete word programs with known-function optimization enabled; the latter uses the default BVL optimization settings for the selected 64-bit nested-function example.
+
+`default_frontend_config_probe.out` captures the original configured frontend's entry location, fresh-name counters, inline-cache keys, program size and symbol-name keys for that same example.
 
 `tmc_ops_word_probe.out` captures mutable-constructor, finalisation and update lowering under simple and generational GC configurations. `tmc_program_word_probe.out` captures all word functions for a positive TMC example after BVI inlining and data lowering.
 

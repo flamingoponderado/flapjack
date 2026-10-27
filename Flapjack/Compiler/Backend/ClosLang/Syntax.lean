@@ -20,6 +20,7 @@ inductive Const where
   | constInt : Int → Const
   | constStr : MlString → Const
   | constWord64 : BitVec 64 → Const
+  deriving BEq
 
 /-- Complete original `const_part` datatype, preserving every constructor and payload. -/
 @[hol "cakeml/compiler/backend/closLangScript.sml" "const_part"]
@@ -44,6 +45,7 @@ inductive IntOp where
   | greater
   | greaterEq
   | lessConstSmall : Nat → IntOp
+  deriving BEq
 
 /-- Complete original `word_op` datatype, preserving every constructor and payload. -/
 @[hol "cakeml/compiler/backend/closLangScript.sml" "word_op"]
@@ -58,6 +60,7 @@ inductive WordOp where
   | fpUop : FpUop → WordOp
   | fpBop : FpBop → WordOp
   | fpTop : FpTop → WordOp
+  deriving BEq
 
 /-- Complete original `block_op` datatype, preserving every constructor and payload. -/
 @[hol "cakeml/compiler/backend/closLangScript.sml" "block_op"]
@@ -78,6 +81,7 @@ inductive BlockOp where
   | equal
   | equalConst : ConstPart → BlockOp
   | build : List ConstPart → BlockOp
+  deriving BEq
 
 /-- Complete original `glob_op` datatype, preserving every constructor and payload. -/
 @[hol "cakeml/compiler/backend/closLangScript.sml" "glob_op"]
@@ -87,6 +91,7 @@ inductive GlobOp where
   | allocGlobal
   | globalsPtr
   | setGlobalsPtr
+  deriving BEq
 
 /-- Complete original `mem_op` datatype, preserving every constructor and payload. -/
 @[hol "cakeml/compiler/backend/closLangScript.sml" "mem_op"]
@@ -114,6 +119,7 @@ inductive MemOp where
   | updateCons
   | finaliseCons
   | configGC
+  deriving BEq
 
 /-- Complete original `op` datatype, preserving every constructor and payload. -/
 @[hol "cakeml/compiler/backend/closLangScript.sml" "op"]
@@ -127,6 +133,7 @@ inductive Op where
   | memOp : MemOp → Op
   | install
   | thunkOp : AstHOL.ThunkOp → Op
+  deriving BEq
 
 /-- Complete original `exp` datatype, preserving every constructor and payload. -/
 @[hol "cakeml/compiler/backend/closLangScript.sml" "exp"]
@@ -142,5 +149,6 @@ inductive Exp where
   | fn : MlString → Option Nat → Option (List Nat) → Nat → Exp → Exp
   | letrec : List MlString → Option Nat → Option (List Nat) → List (Nat × Exp) → Exp → Exp
   | op : BackendCommon.Tra → Op → List Exp → Exp
+  deriving BEq
 
 end Flapjack.Compiler.Backend.ClosLang

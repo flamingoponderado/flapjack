@@ -93,4 +93,17 @@ def compileCakeToWord64OptimizedFuel (fuel inlineLimit cutSize : Nat) (splitSeq 
   let fixed ← DataToWord.fixedStubs? word
   pure (source, closure, start, fixed ++ WordBignum.generatedStubs64 ++ code, next, names)
 
+/-- Continue the configured BVL/BVI pipeline through 64-bit word lowering. -/
+def compileCakeToWord64ConfiguredFuel (fuel : Nat) (source : Config) (closure : ClosToBvl.Config)
+    (bvlConfig : BvlToBvi.Config) (word : DataToWord.Config) (decls : List AstHOL.Dec) :
+    Option (Config × ClosToBvl.Config × BvlToBvi.Config × List (Nat × Nat × WordLangProgHOL (BitVec 64)) ×
+      Spt Basis.Pure.MlString.MlString) := do
+  let (source, closure, bvlConfig, code, names) ← compileCakeToBviConfiguredFuel fuel source closure bvlConfig decls
+  let code ← code.mapM fun (name, args, body) => do
+    let body ← BviToData.compileExpFuel fuel args body
+    let (body, _) ← DataToWord.compileControl? (width := 64) word name 2 body
+    pure (name, args + 1, body)
+  let fixed ← DataToWord.fixedStubs? word
+  pure (source, closure, bvlConfig, fixed ++ WordBignum.generatedStubs64 ++ code, names)
+
 end Flapjack.Compiler.Backend.SourceToFlat

@@ -74,6 +74,8 @@ probe_needs_refresh() {
          "$(basename "$probe")" == bvl_handle_cake_bvi_probeScript.sml ||
          "$(basename "$probe")" == bvl_optimized_cake_bvi_probeScript.sml ||
          "$(basename "$probe")" == bvi_tailrec_frontend_probeScript.sml ||
+         "$(basename "$probe")" == default_frontend_config_probeScript.sml ||
+         "$(basename "$probe")" == clos_known_frontend_probeScript.sml ||
          "$(basename "$probe")" == empty_cake_data_probeScript.sml ||
          "$(basename "$probe")" == reference_cake_data_probeScript.sml ||
          "$(basename "$probe")" == match_cake_data_probeScript.sml ||
@@ -84,7 +86,9 @@ probe_needs_refresh() {
          "$(basename "$probe")" == full_inline_cake_word_probeScript.sml ||
          "$(basename "$probe")" == full_mti_inline_cake_word_probeScript.sml ||
          "$(basename "$probe")" == full_bvl_optimized_cake_word_probeScript.sml ||
-         "$(basename "$probe")" == full_clos_call_cake_word_probeScript.sml ) &&
+         "$(basename "$probe")" == full_clos_call_cake_word_probeScript.sml ||
+         "$(basename "$probe")" == full_clos_known_cake_word_probeScript.sml ||
+         "$(basename "$probe")" == full_default_frontend_word_probeScript.sml ) &&
        ( "$cake_dir/compiler/backend/source_to_sourceScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/source_to_flatScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/flat_elimScript.sml" -nt "$output" ||
@@ -95,6 +99,10 @@ probe_needs_refresh() {
          "$cake_dir/compiler/backend/clos_numberScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/clos_mtiScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/clos_knownScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/clos_fvsScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/clos_opScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/clos_ticksScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/clos_letopScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/clos_callScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/closLangScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/db_varsScript.sml" -nt "$output" ||
@@ -140,7 +148,9 @@ probe_needs_refresh() {
          "$(basename "$probe")" == full_inline_cake_word_probeScript.sml ||
          "$(basename "$probe")" == full_mti_inline_cake_word_probeScript.sml ||
          "$(basename "$probe")" == full_bvl_optimized_cake_word_probeScript.sml ||
-         "$(basename "$probe")" == full_clos_call_cake_word_probeScript.sml ) &&
+         "$(basename "$probe")" == full_clos_call_cake_word_probeScript.sml ||
+         "$(basename "$probe")" == full_clos_known_cake_word_probeScript.sml ||
+         "$(basename "$probe")" == full_default_frontend_word_probeScript.sml ) &&
        ( "$hol_dir/examples/machine-code/multiword/mc_multiwordScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/data_to_wordScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/word_bignumScript.sml" -nt "$output" ||
@@ -275,6 +285,12 @@ run_probe full_bvl_optimized_cake_word_probeScript.sml full_bvl_optimized_cake_w
 run_probe full_clos_call_cake_word_probeScript.sml full_clos_call_cake_word_probe.out \
   entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
 
+run_probe full_clos_known_cake_word_probeScript.sml full_clos_known_cake_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe full_default_frontend_word_probeScript.sml full_default_frontend_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
 run_probe mti_ops_word_probeScript.sml mti_ops_word_probe.out \
   entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
 
@@ -304,6 +320,12 @@ run_probe clos_call_frontend_probeScript.sml clos_call_frontend_probe.out \
 
 run_probe clos_known_helpers_probeScript.sml clos_known_helpers_probe.out \
   fvs ticks letop decisions inline "$cake_dir/compiler/backend/clos_knownScript.sml" "$cake_dir/compiler/backend"
+
+run_probe clos_known_frontend_probeScript.sml clos_known_frontend_probe.out \
+  merge knownop compiled "$cake_dir/compiler/backend/clos_knownScript.sml" "$cake_dir/compiler/backend"
+
+run_probe default_frontend_config_probeScript.sml default_frontend_config_probe.out \
+  state "$cake_dir/compiler/backend/bvl_to_bviScript.sml" "$cake_dir/compiler/backend"
 
 run_probe clos_op_frontend_probeScript.sml clos_op_frontend_probe.out \
   ops "$cake_dir/compiler/backend/clos_opScript.sml" "$cake_dir/compiler/backend"

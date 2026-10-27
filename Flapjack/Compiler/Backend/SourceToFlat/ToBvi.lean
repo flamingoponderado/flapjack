@@ -6,6 +6,7 @@ import Flapjack.Compiler.Backend.BviInline
 import Flapjack.Compiler.Backend.BvlInline
 import Flapjack.Compiler.Backend.BviTailrec.Rewrite
 import Flapjack.Compiler.Backend.BviTmc
+import Flapjack.Compiler.Backend.BvlToBvi.Config
 
 /-! Checked source-to-BVI composition with closure optimizations disabled. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
@@ -80,9 +81,8 @@ def compileCakeToBviBvlOptimizedFuel (fuel inlineLimit cutSize : Nat) (splitSeq 
   let names := BvlToBvi.getNames (code.map fun (n, _, _) => n) names
   pure (source, closure, start, code, next, names)
 
-/-- Follow closure direct-call conversion and BVL inlining with BVI
-tail-recursion, TMC and wrapper inlining. Known-function optimization remains
-unsupported. -/
+/-- Follow closure optimization and BVL inlining with BVI tail-recursion, TMC
+and wrapper inlining, using explicit traversal fuel. -/
 def compileCakeToBviOptimizedInlineFuel (fuel inlineLimit cutSize : Nat) (splitSeq : Bool)
     (source : Config) (closure : ClosToBvl.Config) (decls : List AstHOL.Dec) :
     Option (Config × ClosToBvl.Config × Nat × List (Nat × Nat × Bvi.Exp) × Nat × Spt Basis.Pure.MlString.MlString) := do
@@ -95,6 +95,23 @@ def compileCakeToBviOptimizedInlineFuel (fuel inlineLimit cutSize : Nat) (splitS
   let (_, code) ← BviInline.compileProgFuel fuel code
   let names := BvlToBvi.getNames (code.map fun (n, _, _) => n) names
   pure (source, closure, start, code, next, names)
+
+/-- Run the configured whole-program BVL/BVI pipeline, retaining its inline
+maps and fresh-name counters for subsequent compiler invocations. -/
+def compileCakeToBviConfiguredFuel (fuel : Nat) (source : Config) (closure : ClosToBvl.Config)
+    (bvlConfig : BvlToBvi.Config) (decls : List AstHOL.Dec) :
+    Option (Config × ClosToBvl.Config × BvlToBvi.Config × List (Nat × Nat × Bvi.Exp) × Spt Basis.Pure.MlString.MlString) := do
+  let (source, exps) ← compileCakeToClosFuel fuel source decls
+  let (closure, bvl, names) ← ClosToBvl.compileCallMtiFuel? fuel closure exps
+  let (inlines, bvl) ← BvlInline.compileProgFuel fuel bvlConfig.inlineSizeLimit bvlConfig.expCut bvlConfig.splitMainAtSeq bvl
+  let (start, code, next1) ← BvlToBvi.compileProgFuel fuel fuel closure.start 0 bvl
+  let (next2, code) ← BviTailrec.compileProgFuel fuel bvlConfig.doTailrec (Flapjack.bvlNumStubs + 2) code
+  let (next3, code) ← BviTmc.compileProgFuel fuel bvlConfig.doTmc (Flapjack.bvlNumStubs + 3) code
+  let (bviInlines, code) ← BviInline.compileProgFuel fuel code
+  let names := BvlToBvi.getNames (code.map fun (n, _, _) => n) names
+  let closure := { closure with start := start }
+  let bvlConfig := { bvlConfig with inlines := inlines, bviInlines := bviInlines, nextName1 := next1, nextName2 := next2, nextName3 := next3 }
+  pure (source, closure, bvlConfig, code, names)
 
 /-- Run BVL optimization, accept only BVI functions whose tail-recursion
 analysis selects no rewrite, then apply BVI inlining. The tail-modulo-

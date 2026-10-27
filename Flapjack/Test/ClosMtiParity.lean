@@ -6,6 +6,8 @@ import Flapjack.Compiler.Backend.SourceToFlat.ToWord
 import Flapjack.Test.FullMtiInlineCakeWordOracle
 import Flapjack.Test.FullBvlOptimizedCakeWordOracle
 import Flapjack.Test.FullClosCallCakeWordOracle
+import Flapjack.Test.FullClosKnownCakeWordOracle
+import Flapjack.Test.FullDefaultFrontendWordOracle
 import Flapjack.Test.BvlInlineCakeBviOracle
 import Flapjack.Test.BvlHandleCakeBviOracle
 import Flapjack.Test.BvlOptimizedCakeBviOracle
@@ -94,6 +96,34 @@ private def wordConfig : DataToWord.Config :=
     [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "f"))
       (.fn (ofString "x") (.fn (ofString "y") (.var (.short (ofString "x")))))] with
   | some (_, _, _, code, _, _) => Flapjack.Test.FullBvlOptimizedCakeWordOracle.matchesCaptured
+      (code.map fun (loc, arity, body) => (loc, arity, body, 0))
+  | none => false
+
+#guard match SourceToFlat.compileCakeToWord64ConfiguredFuel 100 SourceToFlat.emptyConfig
+    { mtiConfig with doCall := true, knownConf := some (ClosKnown.defaultConfig 2) }
+    BvlToBvi.defaultConfig wordConfig
+    [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "f"))
+      (.fn (ofString "x") (.fn (ofString "y") (.var (.short (ofString "x")))))] with
+  | some (_, _, _, code, _) => Flapjack.Test.FullDefaultFrontendWordOracle.matchesCaptured
+      (code.map fun (loc, arity, body) => (loc, arity, body, 0))
+  | none => false
+
+#guard match SourceToFlat.compileCakeToBviConfiguredFuel 100 SourceToFlat.emptyConfig
+    { mtiConfig with doCall := true, knownConf := some (ClosKnown.defaultConfig 2) } BvlToBvi.defaultConfig
+    [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "f"))
+      (.fn (ofString "x") (.fn (ofString "y") (.var (.short (ofString "x")))))] with
+  | some (_, closure, config, code, names) =>
+      closure.start == 64 && config.nextName1 == 0 && config.nextName2 == 74 && config.nextName3 == 75 &&
+      (sptToAList config.inlines).map Prod.fst == [7, 5, 4, 2, 6] &&
+      (sptToAList config.bviInlines).isEmpty && code.length == 16 &&
+      (sptToAList names).map Prod.fst == [63, 67, 65, 69, 64, 96, 80, 72, 88, 68, 100, 84, 76, 92, 66, 62]
+  | none => false
+
+#guard match SourceToFlat.compileCakeToWord64OptimizedFuel 100 8 100 false
+    SourceToFlat.emptyConfig { mtiConfig with doCall := true, knownConf := some (ClosKnown.defaultConfig 2) } wordConfig
+    [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "f"))
+      (.fn (ofString "x") (.fn (ofString "y") (.var (.short (ofString "x")))))] with
+  | some (_, _, _, code, _, _) => Flapjack.Test.FullClosKnownCakeWordOracle.matchesCaptured
       (code.map fun (loc, arity, body) => (loc, arity, body, 0))
   | none => false
 
