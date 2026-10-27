@@ -589,6 +589,9 @@ run_probe cake_riscv_export_probeScript.sml cake_riscv_export_probe.out \
 run_probe cake_io_lowering_probeScript.sml cake_io_lowering_probe.out \
   lesseq mod bounds ffi list_append list_append_arity xor_byte config_gc config_gc_ffi len_zero len_small len_header len_overflow "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
 
+run_probe cake_subglobals_probeScript.sml cake_subglobals_probe.out \
+  subglobals_type subglobals_definition refl_replay trans_replay empty fill_empty append shorter overwrite remove "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe cake_word_array_probeScript.sml cake_word_array_probe.out \
   word64 array shift64 shift64_large shift64_asr_large boundsblock wordfrom wordto stringcmp stringcmp_fast fp_cmp_no_hardware fp_bop_no_hardware fp_uop_no_hardware fp_top_no_hardware fp_top_no_ternary equal_large_int equal_negative_int equal_word64 equal_string equal_constructor alloc_thunk_evaluated alloc_thunk_pending force_thunk_tail force_thunk_return force_thunk_bad_header word_from_word_narrow_32 word_from_word_widen_32 word_from_word_narrow_64 word_from_word_widen_64 install_64 install_32 install_bad_arity "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
 

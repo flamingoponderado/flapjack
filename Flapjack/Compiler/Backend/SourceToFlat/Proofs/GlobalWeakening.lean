@@ -4,9 +4,54 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StateRel
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 
+/-- Earlier initialized global slots retain their values, and the list may
+only grow. The optional lookup has the same meaning as HOL's `EL` under the
+explicit bounds premise. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "subglobals_def"]
+def subglobals {α : Type} (old new : List (Option α)) : Prop :=
+  old.length ≤ new.length ∧
+    ∀ n, n < old.length ∧ (old[n]?.getD none).isSome → old[n]?.getD none = new[n]?.getD none
+
+/-- Observation-based growth agrees with the bounded slot condition used in
+`subglobals`. This is Flapjack infrastructure for the factored relation. -/
+theorem subglobals_iff_observations {α : Type} (old new : List (Option α)) :
+    subglobals old new ↔ old.length ≤ new.length ∧
+      ∀ (n : Nat) (value : α), old[n]?.getD none = some value → new[n]?.getD none = some value := by
+  constructor
+  · rintro ⟨length, preserves⟩
+    refine ⟨length, ?_⟩
+    intro n value slot
+    have bound : n < old.length := by
+      by_contra notBound
+      simp [List.getElem?_eq_none (Nat.le_of_not_gt notBound)] at slot
+    have valid : (old[n]?.getD none).isSome := by simp [slot]
+    exact (preserves n ⟨bound, valid⟩).symm.trans slot
+  · rintro ⟨length, preserves⟩
+    refine ⟨length, ?_⟩
+    intro n ⟨_, valid⟩
+    cases slot : old[n]?.getD none with
+    | none => simp [slot] at valid
+    | some value =>
+      have next := preserves n value slot
+      exact next.symm
+
+/-- A global list preserves itself. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "subglobals_refl"]
+theorem subglobals_refl {α : Type} (globals : List (Option α)) : subglobals globals globals :=
+  (subglobals_iff_observations globals globals).mpr ⟨Nat.le_refl _, fun _ _ h => h⟩
+
+/-- Slot preservation composes across successive global lists. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "subglobals_trans"]
+theorem subglobals_trans {α : Type} (first middle last : List (Option α))
+    (related : subglobals first middle ∧ subglobals middle last) : subglobals first last := by
+  obtain ⟨len1, values1⟩ := (subglobals_iff_observations first middle).mp related.1
+  obtain ⟨len2, values2⟩ := (subglobals_iff_observations middle last).mp related.2
+  exact (subglobals_iff_observations first last).mpr
+    ⟨Nat.le_trans len1 len2, fun n value slot => values2 n value (values1 n value slot)⟩
+
 /-- Existing global slots and constructor/type lookups survive growth. This
 Flapjack relation exposes the observations needed by the factored relations;
-correspondence to the original subglobal/submap conditions is still open. -/
+the slot component agrees with `subglobals` above. -/
 structure GlobalGrowth (old new : GlobalEnv) : Prop where
   length : old.v.length ≤ new.v.length
   values : ∀ (n : Nat) (v : FlatSem.Value), old.v[n]?.getD none = some v → new.v[n]?.getD none = some v
@@ -51,6 +96,29 @@ theorem valueRel_growth (old new : GlobalEnv) (growth : GlobalGrowth old new)
   case intro compMap id source n flat t =>
     intro lookup bound slot related ih
     exact .intro new compMap id source n flat t lookup (Nat.lt_of_lt_of_le bound growth.length) (growth.values n _ slot) ih
+
+/-- Construct the observation-based growth condition from `subglobals` and
+pointwise finite-map extension. -/
+theorem GlobalGrowth.ofSubglobals (old new : GlobalEnv)
+    (slots : subglobals old.v new.v)
+    (constructors : ∀ key value, old.c.lookup key = some value → new.c.lookup key = some value)
+    (types : ∀ key value, old.tys.lookup key = some value → new.tys.lookup key = some value) :
+    GlobalGrowth old new := by
+  obtain ⟨length, values⟩ := (subglobals_iff_observations old.v new.v).mp slots
+  exact ⟨length, values, constructors, types⟩
+
+/-- The observation-based condition is exactly the subglobal condition plus
+pointwise preservation of existing map entries. -/
+theorem globalGrowth_iff (old new : GlobalEnv) : GlobalGrowth old new ↔
+    subglobals old.v new.v ∧
+    (∀ key value, old.c.lookup key = some value → new.c.lookup key = some value) ∧
+    (∀ key value, old.tys.lookup key = some value → new.tys.lookup key = some value) := by
+  constructor
+  · intro growth
+    exact ⟨(subglobals_iff_observations old.v new.v).mpr ⟨growth.length, growth.values⟩,
+      growth.constructors, growth.types⟩
+  · rintro ⟨slots, constructors, types⟩
+    exact GlobalGrowth.ofSubglobals old new slots constructors types
 
 /-- Growth is reflexive and composes across successive declarations. -/
 theorem GlobalGrowth.refl (env : GlobalEnv) : GlobalGrowth env env :=

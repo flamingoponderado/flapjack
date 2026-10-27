@@ -1,6 +1,30 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "subglobals_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalWeakening.lean",
+    "lean_name": "subglobals",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared with the typed cake_subglobals_probe: both take two option lists over the same arbitrary element type and require the first length not exceed the second, with every initialized first-list element preserved at the same bounded index. The Lean getElem?/getD none is equal to HOL EL under the explicit first-list bound and the length premise supplies the second-list bound; no out-of-range EL observation occurs."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "subglobals_refl",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalWeakening.lean",
+    "lean_name": "subglobals_refl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original local source statement with the typed refl_replay in cake_subglobals_probe: both universally quantify one polymorphic option list and conclude subglobals of that list with itself. No additional premises or carrier differences."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "subglobals_trans",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalWeakening.lean",
+    "lean_name": "subglobals_trans",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original local source statement with typed trans_replay in cake_subglobals_probe: both quantify three option lists over one shared arbitrary element type and derive the first-to-third subglobals relation from the conjunction of the first-to-second and second-to-third relations. No extra premises or carrier differences."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "pat_bindings_compile_pat",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/PatternRows.lean",
     "lean_name": "compilePat_bindings",

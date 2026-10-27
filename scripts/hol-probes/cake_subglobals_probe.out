@@ -1,0 +1,10 @@
+subglobals_type=:α option list -> α option list -> bool
+subglobals_definition=⊢ ∀(g1 :α option list) (g2 :α option list). subglobals g1 g2 ⇔ LENGTH g1 ≤ LENGTH g2 ∧ ∀(n :num). n < LENGTH g1 ∧ IS_SOME g1❲n❳ ⇒ g1❲n❳ = g2❲n❳
+refl_replay=⊢ ∀(g :α option list). subglobals g g
+trans_replay=⊢ ∀(g1 :α option list) (g2 :α option list) (g3 :α option list). subglobals g1 g2 ∧ subglobals g2 g3 ⇒ subglobals g1 g3
+empty=∀(n :num). T
+fill_empty=∀(n :num). n < (2 :num) ∧ IS_SOME [SOME (1 :num); (NONE :num option)]❲n❳ ⇒ [SOME (1 :num); (NONE :num option)]❲n❳ = [SOME (1 :num); SOME (2 :num)]❲n❳
+append=∀(n :num). n < (2 :num) ∧ IS_SOME [SOME (1 :num); (NONE :num option)]❲n❳ ⇒ [SOME (1 :num); (NONE :num option)]❲n❳ = [SOME (1 :num); SOME (2 :num); SOME (3 :num)]❲n❳
+shorter=F
+overwrite=∀(n :num). n < (2 :num) ∧ IS_SOME [SOME (1 :num); (NONE :num option)]❲n❳ ⇒ [SOME (1 :num); (NONE :num option)]❲n❳ = [SOME (2 :num); (NONE :num option)]❲n❳
+remove=∀(n :num). n < (1 :num) ∧ IS_SOME [SOME (1 :num)]❲n❳ ⇒ [SOME (1 :num)]❲n❳ = [(NONE :num option)]❲n❳

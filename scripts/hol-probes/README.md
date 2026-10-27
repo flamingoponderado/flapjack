@@ -105,6 +105,8 @@
 
 `cake_source_test_probe.out` captures source comparison dispatch, including the original rejection of ordered Word64 comparisons. Floating-point comparison uses the existing pinned machine-IEEE probes and inherits the documented rational-cut assumption.
 
+`cake_subglobals_probe.out` captures the polymorphic global-slot preservation definition, typed replays of its local reflexivity and transitivity lemmas, and symbolic bounded-slot observations. Lean checks the concrete finite cases separately.
+
 `cake_word_array_probe.out` captures 64-bit Word64 arithmetic, shifts and integer conversions, array and block bounds, both string-comparison modes, and the floating-point `GiveUp` fallback when hardware operations are unavailable. The Word64 shift and integer-conversion implementations currently support the executed 64-bit path; their 32-bit lowering remains open. Hardware floating-point lowering also remains open. The same probe captures boxed positive and negative integer, Word64, string, and constructor constant comparisons in `data_to_word`, along with thunk allocation and forcing (including both call forms and invalid headers), Word64/Word8 conversions on both 32-bit and 64-bit targets, and dynamic installation buffer checks and calls.
 
 `mti_cake_bvi_probe.out` captures the full BVI program for a nested-function declaration with multi-argument introduction enabled, the other closure optimizations disabled, and the outer BVL/BVI optimizations omitted.
