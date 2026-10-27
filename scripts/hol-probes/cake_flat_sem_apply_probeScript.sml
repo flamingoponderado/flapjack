@@ -50,3 +50,23 @@ val _ = show_eval "array_update=" ``OPTION_MAP (λ(s,r). (s.refs,r))
 val _ = show_eval "array_wrong_store=" ``OPTION_MAP SND
   (flatSem$do_app ((ARB : (unit,unit) flatSem$state) with refs := [W8array [1w]])
     (Src Aupdate) [Loc T 0; Litv (IntLit 0); Litv (IntLit 7)])``;
+val _ = show_eval "data_strlen=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src Strlen) [Litv (StrLit «abc»)])``;
+val _ = show_eval "data_strsub_negative=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src Strsub) [Litv (StrLit «abc»); Litv (IntLit (-1))])``;
+val _ = show_eval "data_vector_sub=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src Vsub) [Vectorv [Litv (IntLit 4)]; Litv (IntLit 0)])``;
+val _ = show_eval "data_vector_unsafe=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src Vsub_unsafe) [Vectorv [Litv (IntLit 4)]; Litv (IntLit 1)])``;
+val _ = show_eval "data_copy=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src CopyStrStr) [Litv (StrLit «abcd»); Litv (IntLit 1); Litv (IntLit 2)])``;
+val _ = show_eval "data_copy_oob=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src CopyStrStr) [Litv (StrLit «abcd»); Litv (IntLit 3); Litv (IntLit 2)])``;
+val _ = show_eval "data_thunk_alloc=" ``OPTION_MAP (λ(s,r). (s.refs,r))
+  (flatSem$do_app ((ARB : (unit,unit) flatSem$state) with refs := [])
+    (Src (ThunkOp (AllocThunk NotEvaluated))) [Litv (IntLit 5)])``;
+val _ = show_eval "numeric_shift=" ``OPTION_MAP SND
+  (flatSem$do_app (ARB : (unit,unit) flatSem$state) (Src (Shift W8 Lsl 2)) [Litv (Word8 7w)])``;
+val _ = show_eval "data_copy_overlap=" ``OPTION_MAP (λ(s,r). (s.refs,r))
+  (flatSem$do_app ((ARB : (unit,unit) flatSem$state) with refs := [W8array [1w;2w;3w;4w]])
+    (Src CopyAw8Aw8) [Loc T 0; Litv (IntLit 0); Litv (IntLit 3); Loc T 0; Litv (IntLit 1)])``;

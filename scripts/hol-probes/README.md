@@ -1,4 +1,4 @@
-`cake_flat_sem_apply_probe.out` captures the complete typed original flat primitive-application equations and observations for globals, constructor tests, field access, identity, reference allocation and assignment, and array bounds, updates, and store type errors. Lean fixtures cover the matching cases; the complete dispatcher and the original do_app simulation remain incomplete.
+`cake_flat_sem_apply_probe.out` captures the complete typed original flat primitive-application equations and observations for globals, constructor tests, field access, identity, reference and array operations, strings, vectors, copying, thunks, and shifts. Lean fixtures cover the matching cases through the assembled dispatcher; its complete source and carrier review and the original do_app simulation remain incomplete.
 
 `cake_flat_sem_thunk_probe.out` captures typed flat thunk definitions and original cases for invalid addresses, reference flags, ordinary references, and successful or nested updates. Lean fixtures match these cases; source-to-flat thunk simulation uses the still-unreviewed factored relations.
 
