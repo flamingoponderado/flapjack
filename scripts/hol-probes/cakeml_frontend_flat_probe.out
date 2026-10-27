@@ -97,3 +97,7 @@ bvl_closure_stubs=T
 bvl_prepared_program=T
 bvl_force_thunk=T
 db_vars_order=T
+closure_free_variables=T
+closure_annotation=T
+closure_no_options_program=T
+closure_no_options_function=T

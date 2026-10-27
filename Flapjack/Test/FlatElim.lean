@@ -12,6 +12,8 @@ import Flapjack.Compiler.Backend.BvlJump
 import Flapjack.Compiler.Backend.ClosToBvl.Stubs
 import Flapjack.Compiler.Backend.ClosToBvl.Prepared
 import Flapjack.Compiler.Backend.DbVars
+import Flapjack.Compiler.Backend.ClosAnnotate.Free
+import Flapjack.Compiler.Backend.ClosAnnotate.Shift
 import Flapjack.Compiler.Backend.BvlToBvi.Analysis
 import Flapjack.Compiler.Backend.BvlToBvi.CompileOp
 import Flapjack.Compiler.Backend.BvlToBvi.Stubs
@@ -392,6 +394,47 @@ private def dbExample : Flapjack.Compiler.Backend.DbVars.DbVarSet :=
 #guard !Flapjack.Compiler.Backend.DbVars.hasVar 0 dbExample
 #guard Flapjack.Compiler.Backend.DbVars.varsToList (Flapjack.Compiler.Backend.DbVars.varsFromList [0, 1, 2]) == [1, 0, 2]
 #guard db_vars_order
+#guard match Flapjack.Compiler.Backend.ClosAnnotate.altFreeSing
+    (.fn (ofString "f") none none 1 (.var .none 3)) with
+  | (.fn _ none (some [2]) 1 (.var .none 3), .shift 1 (.var 3)) => true
+  | _ => false
+#guard match Flapjack.Compiler.Backend.ClosAnnotate.altFreeSing (.let .none [.var .none 0] (.var .none 1)) with
+  | (.let .none [.op .none (.intOp (.const 0)) []] (.var .none 1), .shift 1 (.var 1)) => true
+  | _ => false
+#guard !Flapjack.Compiler.Backend.ClosLang.pureOp (.memOp (.copyByte false))
+#guard Flapjack.Compiler.Backend.ClosLang.pureOp (.memOp (.copyByte true))
+#guard closure_free_variables
+#guard [sptLookup 4 (Flapjack.Compiler.Backend.ClosAnnotate.shiftedEnv 0 [4, 4, 2]),
+  sptLookup 2 (Flapjack.Compiler.Backend.ClosAnnotate.shiftedEnv 0 [4, 4, 2])] == [some 0, some 2]
+#guard match Flapjack.Compiler.Backend.ClosAnnotate.annotateSing 3
+    (.fn (ofString "f") none none 1 (.var .none 3)) with
+  | .fn _ none (some [2]) 1 (.var .none 1) => true
+  | _ => false
+#guard closure_annotation
+private def noOptsClosConfig : Flapjack.Compiler.Backend.ClosToBvl.Config :=
+  { smallClosConfig with doMti := false, doCall := false, knownConf := none }
+#guard match Flapjack.Compiler.Backend.ClosToBvl.compileNoOpts? noOptsClosConfig [] with
+  | some (c, code, names) => c.start == 1 && c.nextLoc == 2 &&
+      (code.map (fun (loc, arity, _) => (loc, arity)) == [(0, 2), (1, 0), (2, 0)]) &&
+      [sptLookup 0 names, sptLookup 1 names, sptLookup 2 names] ==
+        [some (ofString "bvl_force"), some (ofString "bvl_init"), some (ofString "unknown_clos_fun")]
+  | _ => false
+#guard (Flapjack.Compiler.Backend.ClosToBvl.compileNoOpts? smallClosConfig []).isNone
+#guard closure_no_options_program
+#guard match Flapjack.Compiler.Backend.ClosToBvl.compileNoOpts? noOptsClosConfig
+    [.fn (ofString "f") none none 1 (.var .none 0)] with
+  | some (c, code, names) => c.nextLoc == 4 &&
+      (code.map (fun (loc, arity, _) => (loc, arity)) == [(0, 2), (1, 0), (2, 0), (4, 2)]) &&
+      (match code[2]? with
+        | some (2, 0, Flapjack.Compiler.Backend.Bvl.Exp.op (.blockOp (.cons 30))
+            [.op (.intOp (.const 0)) [], .op (.label 4) []]) => true
+        | _ => false) &&
+      (match code[3]? with
+        | some (4, 2, Flapjack.Compiler.Backend.Bvl.Exp.let [.var 0] (.var 0)) => true
+        | _ => false) &&
+      [sptLookup 2 names, sptLookup 4 names] == [some (ofString "dec"), some (ofString "f_clos")]
+  | _ => false
+#guard closure_no_options_function
 example : Flapjack.Compiler.Backend.ClosToBvl.extractName
     [.op .none (.intOp (.const 7)) [], .var .none 2] = (7, [.var .none 2]) := rfl
 example : Flapjack.Compiler.Backend.ClosToBvl.extractName

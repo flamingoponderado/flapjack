@@ -101662,5 +101662,133 @@
     "hol_name": "has_var_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source constructors and clauses transcribed; typed carrier and complete statement review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosLang/Pure.lean",
+    "lean_name": "pureOp",
+    "hol_path": "cakeml/compiler/backend/closLangScript.sml",
+    "hol_name": "pure_op_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosLang/Pure.lean",
+    "lean_name": "pure",
+    "hol_path": "cakeml/compiler/backend/closLangScript.sml",
+    "hol_name": "pure_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Free.lean",
+    "lean_name": "const0",
+    "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
+    "hol_name": "const_0_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Free.lean",
+    "lean_name": "noOverlap",
+    "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
+    "hol_name": "no_overlap_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Free.lean",
+    "lean_name": "altFreeSing",
+    "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
+    "hol_name": "alt_free_sing_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Free.lean",
+    "lean_name": "altFreeList",
+    "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
+    "hol_name": "alt_free_sing_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Free.lean",
+    "lean_name": "altFreeFuns",
+    "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
+    "hol_name": "alt_free_sing_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Shift.lean",
+    "lean_name": "getVar",
+    "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
+    "hol_name": "get_var_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed, using its singleton equivalence where applicable; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Shift.lean",
+    "lean_name": "shiftedEnv",
+    "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
+    "hol_name": "shifted_env_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed, using its singleton equivalence where applicable; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Shift.lean",
+    "lean_name": "shiftSing",
+    "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
+    "hol_name": "shift_sing_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed, using its singleton equivalence where applicable; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Shift.lean",
+    "lean_name": "shiftList",
+    "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
+    "hol_name": "shift_sing_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed, using its singleton equivalence where applicable; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Shift.lean",
+    "lean_name": "shiftFuns",
+    "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
+    "hol_name": "shift_sing_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed, using its singleton equivalence where applicable; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Shift.lean",
+    "lean_name": "annotateSing",
+    "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
+    "hol_name": "annotate_sing_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed, using its singleton equivalence where applicable; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Shift.lean",
+    "lean_name": "annotateList",
+    "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
+    "hol_name": "annotate_list_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed, using its singleton equivalence where applicable; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Shift.lean",
+    "lean_name": "compile",
+    "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
+    "hol_name": "compile_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed, using its singleton equivalence where applicable; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosAnnotate/Shift.lean",
+    "lean_name": "compileInc",
+    "hol_path": "cakeml/compiler/backend/clos_annotateScript.sml",
+    "hol_name": "compile_inc_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed, using its singleton equivalence where applicable; complete typed carrier and statement review remains pending."
   }
 ]

@@ -1,4 +1,4 @@
-load "flat_patternTheory"; load "flat_elimTheory"; load "source_to_flatTheory"; load "flat_to_closTheory"; load "source_to_sourceTheory"; load "clos_to_bvlTheory"; load "clos_numberTheory"; load "bvl_to_bviTheory"; load "bvi_letTheory"; load "dataLangTheory"; load "data_spaceTheory"; load "data_simpTheory"; load "data_liveTheory"; load "bvi_to_dataTheory"; load "data_to_wordTheory"; load "db_varsTheory"; load "wordsLib";
+load "flat_patternTheory"; load "flat_elimTheory"; load "source_to_flatTheory"; load "flat_to_closTheory"; load "source_to_sourceTheory"; load "clos_to_bvlTheory"; load "clos_numberTheory"; load "bvl_to_bviTheory"; load "bvi_letTheory"; load "dataLangTheory"; load "data_spaceTheory"; load "data_simpTheory"; load "data_liveTheory"; load "bvi_to_dataTheory"; load "data_to_wordTheory"; load "db_varsTheory"; load "clos_annotateTheory"; load "wordsLib";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 fun capture label term =
@@ -354,3 +354,26 @@ val _ = capture "bvl_force_thunk" ``clos_to_bvl$force_thunk_code =
 val _ = capture "db_vars_order" ``let db = db_vars$Shift 2 (db_vars$Union (db_vars$Var 1) (db_vars$Var 3)) in
  db_vars$vars_to_list db = [1] /\ db_vars$has_var 1 db /\ ~db_vars$has_var 0 db /\
  db_vars$vars_to_list (db_vars$vars_from_list [0;1;2]) = [1;0;2]``;
+val _ = capture "closure_free_variables" ``
+ clos_annotate$alt_free_sing (closLang$Fn «f» NONE NONE 1 (closLang$Var backend_common$None 3)) =
+  (closLang$Fn «f» NONE (SOME [2]) 1 (closLang$Var backend_common$None 3), db_vars$Shift 1 (db_vars$Var 3)) /\
+ clos_annotate$alt_free_sing (closLang$Let backend_common$None [closLang$Var backend_common$None 0] (closLang$Var backend_common$None 1)) =
+  (closLang$Let backend_common$None [closLang$Op backend_common$None (closLang$IntOp (closLang$Const 0)) []] (closLang$Var backend_common$None 1), db_vars$Shift 1 (db_vars$Var 1)) /\
+ ~closLang$pure_op (closLang$MemOp (closLang$CopyByte F)) /\ closLang$pure_op (closLang$MemOp (closLang$CopyByte T))``;
+val _ = capture "closure_annotation" ``
+ [sptree$lookup 4 (clos_annotate$shifted_env 0 [4;4;2]); sptree$lookup 2 (clos_annotate$shifted_env 0 [4;4;2])] = [SOME 0; SOME 2] /\
+ clos_annotate$annotate_sing 3 (closLang$Fn «f» NONE NONE 1 (closLang$Var backend_common$None 3)) =
+  closLang$Fn «f» NONE (SOME [2]) 1 (closLang$Var backend_common$None 1)``;
+val _ = capture "closure_no_options_program" ``
+ let c = clos_to_bvl$default_config with <| do_mti := F; do_call := F; known_conf := NONE; max_app := 0 |> in
+ let (c,code,names) = clos_to_bvl$compile c [] in
+ c.start = 1 /\ c.next_loc = 2 /\
+ MAP (\(loc,arity,exp). (loc,arity)) code = [(0,2); (1,0); (2,0)] /\
+ [sptree$lookup 0 names; sptree$lookup 1 names; sptree$lookup 2 names] = [SOME «bvl_force»; SOME «bvl_init»; SOME «unknown_clos_fun»]``;
+val _ = capture "closure_no_options_function" ``
+ let c = clos_to_bvl$default_config with <| do_mti := F; do_call := F; known_conf := NONE; max_app := 0 |> in
+ let (c,code,names) = clos_to_bvl$compile c [closLang$Fn «f» NONE NONE 1 (closLang$Var backend_common$None 0)] in
+ c.next_loc = 4 /\ MAP (\(loc,arity,exp). (loc,arity)) code = [(0,2); (1,0); (2,0); (4,2)] /\
+ EL 2 code = (2, 0, bvl$Op (closLang$BlockOp (closLang$Cons 30)) [bvl$Op (closLang$IntOp (closLang$Const 0)) []; bvl$Op (closLang$Label 4) []]) /\
+ EL 3 code = (4, 2, bvl$Let [bvl$Var 0] (bvl$Var 0)) /\
+ [sptree$lookup 2 names; sptree$lookup 4 names] = [SOME «dec»; SOME «f_clos»]``;
