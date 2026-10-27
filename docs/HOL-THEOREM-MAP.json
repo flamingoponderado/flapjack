@@ -102917,5 +102917,45 @@
     "lean_name": "xorBytes",
     "statement_status": "pending_statement_review",
     "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "dec_clock_def",
+    "lean_path": "Flapjack/EvaluateHOL.lean",
+    "lean_name": "decClock",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "fix_clock_def",
+    "lean_path": "Flapjack/EvaluateHOL.lean",
+    "lean_name": "fixClock",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison 2026-10-27: HOL fix_clock preserves the output state and result, replacing its clock by the smaller input/output clock; Lean uses Nat.min for the same conditional. The pinned cake_source_evaluate_clock_probe captures the inferred type with independent input-state, output-state, and result type variables."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "fix_clock_IMP",
+    "lean_path": "Flapjack/EvaluateHOL.lean",
+    "lean_name": "fixClockImp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison 2026-10-27: the local HOL theorem assumes fix_clock s x = (s1,res) and concludes s1.clock <= s.clock, with no further premises. cake_source_evaluate_clock_probe replays it with inferred independent input-state, output-state, and result type variables. Lean states the same implication and kernel-checks the proof."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "list_result_def",
+    "lean_path": "Flapjack/EvaluateHOL.lean",
+    "lean_name": "listResult",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison 2026-10-27: HOL maps Rval v to Rval [v] and leaves Rerr unchanged; Lean retains both cases and independent value/error payload types. The pinned cake_source_evaluate_clock_probe captures the inferred type and an error case."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "sing_env_def",
+    "lean_path": "Flapjack/EvaluateHOL.lean",
+    "lean_name": "singleEnv",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
   }
 ]

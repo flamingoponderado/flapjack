@@ -397,6 +397,9 @@ run_probe cake_source_conversions_probeScript.sml cake_source_conversions_probe.
 run_probe cake_source_thunk_probeScript.sml cake_source_thunk_probe.out \
   thunk_op_type dest_type good bad ordinary update nested operation xor_tail xor_short "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
 
+run_probe cake_source_evaluate_clock_probeScript.sml cake_source_evaluate_clock_probe.out \
+  fix_type list_type clock_lemma fixed zero failure "$cake_dir/semantics/evaluateScript.sml" "$cake_dir/semantics"
+
 run_probe cake_parse_error_probeScript.sml cake_parse_error_probe.out \
   missing after_decl multiline "$cake_dir/compiler/parsing/pegexec_cml_foScript.sml" "$cake_dir/compiler/parsing"
 

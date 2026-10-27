@@ -1,0 +1,35 @@
+import Flapjack.SemanticPrimitivesHOL
+
+/-! Initial definitions from the CakeML source evaluator. The main evaluator
+and its compiler-correctness theorem are not yet ported; declaration-specific
+review status is recorded in the HOL inventory. -/
+namespace Flapjack.EvaluateHOL
+open Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL Flapjack.AstHOL
+
+@[hol "cakeml/semantics/evaluateScript.sml" "fix_clock_def"]
+def fixClock {σ τ α : Type} (initial : State σ) (output : State τ × α) : State τ × α :=
+  ({ output.1 with clock := min output.1.clock initial.clock }, output.2)
+
+@[hol "cakeml/semantics/evaluateScript.sml" "dec_clock_def"]
+def decClock {σ : Type} (state : State σ) : State σ :=
+  { state with clock := state.clock - 1 }
+
+@[hol "cakeml/semantics/evaluateScript.sml" "list_result_def"]
+def listResult {α β : Type} : Result α β → Result (List α) β
+  | .val value => .val [value]
+  | .err error => .err error
+
+@[hol "cakeml/semantics/evaluateScript.sml" "sing_env_def"]
+def singleEnv (name : VarN) (value : Value) : SemEnv Value :=
+  { v := nsBind name value nsEmpty, c := nsEmpty }
+
+@[hol "cakeml/semantics/evaluateScript.sml" "fix_clock_IMP"]
+theorem fixClockImp {σ τ α : Type} (state : State σ) (state' : State τ) (result : α) (output : State τ × α)
+    (h : fixClock state output = (state', result)) : state'.clock ≤ state.clock := by
+  rcases output with ⟨other, value⟩
+  simp only [fixClock, Prod.mk.injEq] at h
+  rcases h with ⟨h, _⟩
+  subst state'
+  exact Nat.min_le_right _ _
+
+end Flapjack.EvaluateHOL
