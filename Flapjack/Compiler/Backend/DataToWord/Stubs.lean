@@ -61,6 +61,26 @@ def compileStub? {width : Nat} (location : Nat) : Option (Nat × WordLangProgHOL
       .call none (some replicateLocation) [0, 2, 4, 6, 8] none]))
   else if location = byteCopyAddLocation then some (5, byteCopyLoop true)
   else if location = byteCopySubLocation then some (5, byteCopyLoop false)
+  else if location = xorLoopLocation then
+    let bytes := BitVec.ofNat width (width / 8)
+    some (4, .ite .lower 6 (.imm 2)
+      (.ite .equal 6 (.imm 0) (listSeq [.assign 1 (.const 2), .return 0 [1]])
+        (listSeq [.assign 5 (.load (.var 4)), .assign 3 (.load (.var 2)),
+          .assign 7 (.op .xor [.var 5, .var 3]), .store (.var 2) 7,
+          .assign 1 (.const 2), .return 0 [1]]))
+      (listSeq [.assign 5 (.load (.var 4)), .assign 3 (.load (.var 2)),
+        .assign 9 (.load (.op .add [.var 4, .const bytes])),
+        .assign 7 (.load (.op .add [.var 2, .const bytes])),
+        .assign 6 (.op .sub [.var 6, .const 2]),
+        .assign 5 (.op .xor [.var 5, .var 3]), .assign 9 (.op .xor [.var 9, .var 7]),
+        .store (.var 2) 5, .store (.op .add [.var 2, .const bytes]) 9,
+        .assign 4 (.op .add [.var 4, .const (2 * bytes)]),
+        .assign 2 (.op .add [.var 2, .const (2 * bytes)]),
+        .call none (some xorLoopLocation) [0, 2, 4, 6] none]))
+  else if location = installLocation then
+    some (3, listSeq [.assign 1 (.lookup .bitmapBuffer), .assign 3 (.lookup .codeBuffer),
+      .set .bitmapBuffer (.var 2), .set .codeBuffer (.var 4),
+      .install 3 4 1 2 (.ls (), .ln), .return 0 [3]])
   else if location = addLocation ∨ location = subLocation ∨ location = mulLocation ∨
       location = divLocation ∨ location = modLocation then
     let operation := if location = addLocation then 0 else if location = subLocation then 1
@@ -181,6 +201,26 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
         .assign 2 (.load (.op .add [realAddr conf 2, .const (2 * bytes)])),
         .assign 4 (.op .add [.var 4, .const 12]),
         .call none (some appendLenLoopLocation) [0, 2, 4] none]))
+  else if location = installCodeLocation then
+    let bytes := BitVec.ofNat width (width / 8)
+    some (4, .ite .test 2 (.imm 1)
+      (.seq (.assign 2 (.lookup .bitmapBuffer)) (.call none (some installDataLocation) [0, 2, 4, 6] none))
+      (listSeq [.assign 3 (realAddr conf 2),
+        .assign 2 (.load (.op .add [.var 3, .const bytes])),
+        .assign 2 (shiftVar .lsr 2 2), .codeBufferWrite 6 2,
+        .assign 6 (.op .add [.var 6, .const 1]),
+        .assign 2 (.load (.op .add [.var 3, .const (2 * bytes)])),
+        .call none (some installCodeLocation) [0, 2, 4, 6] none]))
+  else if location = installDataLocation then
+    let bytes := BitVec.ofNat width (width / 8)
+    some (4, .ite .test 4 (.imm 1)
+      (.call none (some installLocation) [0, 2, 6] none)
+      (listSeq [.assign 3 (realAddr conf 4),
+        .assign 4 (.load (.op .add [.var 3, .const bytes])), .assign 4 (realAddr conf 4),
+        .assign 4 (.load (.op .add [.var 4, .const bytes])), .dataBufferWrite 2 4,
+        .assign 2 (.op .add [.var 2, .const bytes]),
+        .assign 4 (.load (.op .add [.var 3, .const (2 * bytes)])),
+        .call none (some installDataLocation) [0, 2, 4, 6] none]))
   else compileStub? location
 
 end Flapjack.Compiler.Backend.DataToWord

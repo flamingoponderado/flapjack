@@ -14,13 +14,15 @@ CASES = tuple(
      (ROOT / "scripts/hol-probes/from_list_word_probe.out",
       ROOT / "Flapjack/Test/FromListWordOracle.lean", "FromListWordOracle"),
      (ROOT / "scripts/hol-probes/append_word_probe.out",
-      ROOT / "Flapjack/Test/AppendWordOracle.lean", "AppendWordOracle"))
+      ROOT / "Flapjack/Test/AppendWordOracle.lean", "AppendWordOracle"),
+     (ROOT / "scripts/hol-probes/install_xor_word_probe.out",
+      ROOT / "Flapjack/Test/InstallXorWordOracle.lean", "InstallXorWordOracle"))
 CONSTRUCTORS = {
     "Seq": (".seq", 2), "Assign": (".assign", 2), "Const": (".const", 1), "Load": (".load", 1),
     "If": (".ite", 5), "Test": (".test", 0), "Equal": (".equal", 0), "Less": (".less", 0), "Imm": (".imm", 1),
     "Skip": (".skip", 0), "Alloc": (".alloc", 2), "Var": (".var", 1),
     "Lsr": (".lsr", 0), "Lsl": (".lsl", 0), "Lower": (".lower", 0),
-    "Op": (".op", 2), "Add": (".add", 0), "Sub": (".sub", 0), "Or": (".or", 0), "And": (".and", 0),
+    "Op": (".op", 2), "Add": (".add", 0), "Sub": (".sub", 0), "Or": (".or", 0), "And": (".and", 0), "Xor": (".xor", 0),
     "Lookup": (".lookup", 1), "TriggerGC": (".triggerGC", 0),
     "NextFree": (".nextFree", 0), "CurrHeap": (".currHeap", 0), "EndOfHeap": (".endOfHeap", 0),
     "Reg": (".reg", 1), "MustTerminate": (".mustTerminate", 1),
@@ -29,6 +31,9 @@ CONSTRUCTORS = {
     "Inst": (".inst", 1), "Arith": (".arith", 1), "AddOverflow": (".addOverflow", 4),
     "SubOverflow": (".subOverflow", 4), "Mem": (".mem", 3), "Load8": (".load8", 0),
     "Store8": (".store8", 0), "Addr": (".addr", 2),
+    "Install": (".install", 5), "CodeBufferWrite": (".codeBufferWrite", 2),
+    "DataBufferWrite": (".dataBufferWrite", 2), "BitmapBuffer": (".bitmapBuffer", 0),
+    "CodeBuffer": (".codeBuffer", 0),
     "GlobReal": (".globReal", 0), "Temp": (".temp", 1), "Return": (".return", 2), "LN": (".ln", 0),
     "FALSE_CONST": ("(.const 2)", 0), "TRUE_CONST": ("(.const 18)", 0),
 }

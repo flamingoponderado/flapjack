@@ -8,6 +8,7 @@ import Flapjack.Test.CakeMLFlatOracle
 import Flapjack.Test.ByteCopyWordOracle
 import Flapjack.Test.FromListWordOracle
 import Flapjack.Test.AppendWordOracle
+import Flapjack.Test.InstallXorWordOracle
 
 /-!
 # `data_to_word` configuration helpers: original-oracle rows
@@ -332,6 +333,11 @@ private def headerConfig : Config := { conf with lenSize := 4 }
     let (arity, body) ← compileConfiguredStub? (width := 64) conf loc
     pure (loc, arity, body, 0)) with
   | some stubs => Flapjack.Test.AppendWordOracle.matchesCaptured stubs
+  | none => false
+#guard match [installLocation, installCodeLocation, installDataLocation, xorLoopLocation].mapM (fun loc => do
+    let (arity, body) ← compileConfiguredStub? (width := 64) conf loc
+    pure (loc, arity, body, 0)) with
+  | some stubs => Flapjack.Test.InstallXorWordOracle.matchesCaptured stubs
   | none => false
 #guard Flapjack.Test.CakeMLFlatOracle.data_to_word_stubs
 #guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.boolTest (.compare .gt))) [1, 2] none) with
