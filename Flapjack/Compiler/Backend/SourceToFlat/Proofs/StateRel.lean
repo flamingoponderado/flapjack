@@ -118,4 +118,22 @@ theorem stateRel_byteArray_lookup {C F : Type} (genv : GlobalEnv)
     | w8array bytes =>
       simpa [storeLookup, hflat, Nat.add_comm] using hfound
 
+/-- A source value-array lookup has related elements at the shifted flat
+address. This is infrastructure over the factored state relation. -/
+theorem stateRel_array_lookup {C F : Type} (genv : GlobalEnv)
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (related : StateRel genv source flat) (n : Nat) (values : List SemanticPrimitivesHOL.Value)
+    (lookup : storeLookup n source.refs = some (.varray values)) :
+    ∃ flatValues, storeLookup (n + 1) flat.refs = some (.varray flatValues) ∧
+      List.Forall₂ (ValueRel genv) values flatValues := by
+  cases related with
+  | intro nonempty refs _ _ =>
+    obtain ⟨entry, rest, hflat⟩ := List.exists_cons_of_ne_nil nonempty
+    have relatedRest : List.Forall₂ (StoreValueRel genv) source.refs rest := by simpa [hflat] using refs
+    obtain ⟨found, hfound, hrel⟩ := forall₂_lookup relatedRest n (.varray values) lookup
+    cases hrel with
+    | varray hvalues =>
+      refine ⟨_, ?_, hvalues⟩
+      simpa [storeLookup, hflat, Nat.add_comm] using hfound
+
 end Flapjack.Compiler.Backend.SourceToFlat

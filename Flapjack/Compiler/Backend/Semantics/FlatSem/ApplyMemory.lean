@@ -18,7 +18,8 @@ def readIndexed {C F α : Type} (state : State C F) (unsafeOp : Bool)
   | none => boundsFailure state unsafeOp
   | some value => some (state, .val (toValue value))
 
-private def updateIndexed {C F α : Type} (state : State C F) (unsafeOp : Bool)
+/-- Shared indexed-update helper for the partial memory dispatcher. -/
+def updateIndexed {C F α : Type} (state : State C F) (unsafeOp : Bool)
     (address : Nat) (items : List α) (index : Int) (value : α)
     (asStore : List α → StoreValue Value) : Option (State C F × Result Value Value) := do
   if index < 0 || items.length ≤ index.toNat then boundsFailure state unsafeOp else
