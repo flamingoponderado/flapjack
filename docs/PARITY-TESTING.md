@@ -450,6 +450,9 @@ basis-enabled programs against complete-output captures from the pinned
 compiler. The cases exercise observable array and byte-array updates, strings,
 closures, exceptions, lists, vectors, integers and words, plus polymorphic trees,
 local and module declarations, recursive list matches, and tuple patterns. It
+also covers list reversal and folding, an array update at the first slot,
+character extraction, datatype payload matches, substring output, and a local
+function that captures its enclosing argument. It
 also checks that
 `--types` takes precedence over `--print_sexp` and `--explore` in either flag
 order, including parse and type failures.
