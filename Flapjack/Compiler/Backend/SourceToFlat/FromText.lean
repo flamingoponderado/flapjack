@@ -1,4 +1,5 @@
 import Flapjack.CakeParser.Frontend
+import Flapjack.Basis.BasisProg
 import Flapjack.Compiler.Backend.SourceToFlat.ToRiscV
 import Flapjack.Compiler.Inference.Infer.Core
 
@@ -46,6 +47,23 @@ def compilePrimitiveCheckedSourceFuel (lexerFuel parserFuel inferFuel unifFuel b
     match Flapjack.Compiler.Inference.Infer.Core.inferProgramFuel inferFuel unifFuel decls with
     | .error e => .inferenceError e
     | .ok _ => match compileCakeToRiscVConfiguredFuel backendFuel config decls with
+      | none => .backendRejected
+      | some (bytes, bitmaps, config) => .success bytes bitmaps config
+
+
+/-- Parse source and prepend the pinned CakeML basis before inference and the
+restricted backend. This composition does not yet reproduce CakeML's complete
+backend, diagnostics, or output format; unsupported cases remain explicit. -/
+def compileBasisSourceFuel (lexerFuel parserFuel inferFuel unifFuel backendFuel : Nat)
+    (config : Backend.Config) (source : List HolChar) : PrimitiveCheckedSourceResult :=
+  match CakeParser.Frontend.parseSourceFuel lexerFuel parserFuel source with
+  | .exhausted => .parseExhausted
+  | .rejected => .parseRejected
+  | .success decls =>
+    let fullProgram := Flapjack.Basis.BasisProg.basis ++ decls
+    match Flapjack.Compiler.Inference.Infer.Core.inferProgramFuel inferFuel unifFuel fullProgram with
+    | .error e => .inferenceError e
+    | .ok _ => match compileCakeToRiscVConfiguredFuel backendFuel config fullProgram with
       | none => .backendRejected
       | some (bytes, bitmaps, config) => .success bytes bitmaps config
 

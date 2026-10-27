@@ -102349,5 +102349,13 @@
     "hol_name": "init_config_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Primitive inference namespaces transcribed including association-list order; complete source and carrier review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Basis/BasisProg.lean",
+    "lean_name": "basis",
+    "hol_path": "cakeml/basis/basisProgScript.sml",
+    "hol_name": "basis_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Generated from the pinned full HOL basis AST capture; complete source, generator, and carrier review remains pending."
   }
 ]
