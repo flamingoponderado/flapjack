@@ -319,6 +319,38 @@ private def headerConfig : Config := { conf with lenSize := 4 }
   | some (.skip, 2) => true
   | _ => false
 #guard (compileControl? (width := 8) conf 5 2 (.assign 3 (.blockOp (.equalConst (.int 32))) [1] none)).isNone
+-- Exact Word64/Word8 conversion programs captured from the original pass.
+#guard match compileControl? (width := 32) conf 5 2 (.assign 3 (.wordOp (.wordFromWord true)) [1] none) with
+  | some (.seq (.assign 1 (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 6)]))
+      (.seq (.assign 1 (.load (.op .add [.var 1, .const 8])))
+        (.seq (.assign 1 (.op .and [.var 1, .const 255])) (.assign 8 (.shift .lsl (.var 1) (.const 2))))), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.wordOp (.wordFromWord true)) [1] none) with
+  | some (.seq (.assign 1 (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)]))
+      (.seq (.assign 1 (.load (.op .add [.var 1, .const 8])))
+        (.seq (.assign 1 (.op .and [.var 1, .const 255])) (.assign 8 (.shift .lsl (.var 1) (.const 2))))), 2) => true
+  | _ => false
+#guard match compileControl? (width := 32) conf 5 2 (.assign 3 (.wordOp (.wordFromWord false)) [1] none) with
+  | some (.seq (.assign 5 (.shift .lsr (.var 4) (.const 2)))
+      (.seq (.assign 3 (.const 0)) (.seq (.assign 1 (.lookup .nextFree))
+        (.seq (.store (.op .add [.var 1, .const 4]) 3) (.seq (.store (.op .add [.var 1, .const 8]) 5)
+          (.seq (.assign 3 (.const 0x2000f)) (.seq (.store (.var 1) 3)
+            (.seq (.set .nextFree (.op .add [.var 1, .const 12]))
+              (.assign 8 (.op .or [.shift .lsl (.op .sub [.var 1, .lookup .currHeap]) (.const 6), .const 1]))))))))), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.wordOp (.wordFromWord false)) [1] none) with
+  | some (.seq (.assign 3 (.shift .lsr (.var 4) (.const 2))) (.seq (.assign 1 (.lookup .nextFree))
+      (.seq (.store (.op .add [.var 1, .const 8]) 3) (.seq (.assign 3 (.const 0x100000000000f))
+        (.seq (.store (.var 1) 3) (.seq (.set .nextFree (.op .add [.var 1, .const 16]))
+          (.assign 8 (.op .or [.shift .lsl (.op .sub [.var 1, .lookup .currHeap]) (.const 5), .const 1]))))))), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) { conf with lenSize := 0 } 5 2
+    (.assign 3 (.wordOp (.wordFromWord false)) [1] none) with
+  | some (.seq (.assign 1 (.const n)) (.alloc 1 _), 2) => n == (-1 : BitVec 64)
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.wordOp (.wordFromWord false)) [] none) with
+  | some (.skip, 2) => true
+  | _ => false
 -- Thunk allocation and force programs captured from the pinned HOL pass.
 private def thunkAllocMatches (mode : Flapjack.AstHOL.ThunkMode) (header : BitVec 64) : Bool :=
   match compileControl? (width := 64) conf 5 2 (.assign 3 (.thunkOp (.allocThunk mode)) [1] none) with

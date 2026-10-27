@@ -95,6 +95,20 @@ private def writeWord64 {width : Nat} [NeZero width] (conf : Config) (header : B
       shiftN .lsl (.op .sub [.var 1, .lookup .currHeap]) (shiftLength conf - wordShiftAmount width),
       .const 1])]
 
+/-- Two-word representation used when lowering Word64 onto a 32-bit target.
+The standalone HOL helper is not yet independently reviewed as a port. -/
+private def writeWord64On32 {width : Nat} [NeZero width] (conf : Config) (header : BitVec width)
+    (dest high low : Nat) : WordLangProgHOL (BitVec width) :=
+  let bytes := BitVec.ofNat width (width / 8)
+  listSeq [
+    .assign 1 (.lookup .nextFree), .store (.op .add [.var 1, .const bytes]) low,
+    .store (.op .add [.var 1, .const (2 * bytes)]) high,
+    .assign 3 (.const header), .store (.var 1) 3,
+    .set .nextFree (.op .add [.var 1, .const (3 * bytes)]),
+    .assign (adjustVar dest) (.op .or [
+      shiftN .lsl (.op .sub [.var 1, .lookup .currHeap]) (shiftLength conf - wordShiftAmount width),
+      .const 1])]
+
 /-- Internal pointer-field construction for nonempty constructor allocation;
 the standalone HOL helpers remain to be reviewed. -/
 def pointerBits {width : Nat} (conf : Config) (tag len : Nat) : BitVec width :=
@@ -518,6 +532,30 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
                   shiftN .lsl (.op .sub [.var 1, .lookup .currHeap]) (shiftLength conf - wordShiftAmount width),
                   .const 1])]
               some (listSeq [.assign 3 (.load address), .assign 3 (shiftVar sh 3 n), stored], l)
+      | _ => some (.skip, l)
+  | l, .assign dest (.wordOp (.wordFromWord narrow)) args _ =>
+      match args with
+      | [src] =>
+          if width != 32 && width != 64 then none else
+          let src := adjustVar src
+          let bytes := BitVec.ofNat width (width / 8)
+          if narrow then
+            let offset := if width = 32 then 2 * bytes else bytes
+            some (listSeq [
+              .assign 1 (realAddr conf src),
+              .assign 1 (.load (.op .add [.var 1, .const offset])),
+              .assign 1 (.op .and [.var 1, .const 255]),
+              .assign (adjustVar dest) (shiftVar .lsl 1 2)], l)
+          else
+            let count := if width < 64 then 2 else 1
+            match encodeHeader (width := width) conf 3 count with
+            | none => some (giveUp, l)
+            | some header =>
+                if width < 64 then
+                  some (listSeq [.assign 5 (shiftN .lsr (.var src) 2),
+                    .assign 3 (.const 0), writeWord64On32 conf header dest 5 3], l)
+                else some (.seq (.assign 3 (shiftN .lsr (.var src) 2))
+                    (writeWord64 conf header dest), l)
       | _ => some (.skip, l)
   | l, .assign dest (.wordOp .wordFromInt) args _ =>
       match args with

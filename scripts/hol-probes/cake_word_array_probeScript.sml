@@ -3,7 +3,7 @@ open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 fun capture label tm =
  let val result = EVAL tm |> CONV_RULE (RAND_CONV (SIMP_CONV (srw_ss())
-   [wordsTheory.dimindex_64, wordsTheory.dimword_def]
+   [wordsTheory.dimindex_32, wordsTheory.dimindex_64, wordsTheory.dimword_def]
    THENC EVAL THENC DEPTH_CONV (CHANGED_CONV wordsLib.WORD_EVAL_CONV)))
  in print (label ^ "="); print_term (rhs (concl result)); print "\n" end;
 val _ = capture "word64" ``
@@ -81,3 +81,15 @@ val _ = capture "force_thunk_return" ``
 val _ = capture "force_thunk_bad_header" ``
  let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 0; be := F|> in
  data_to_word$comp c 5 2 (dataLang$Force NONE 42 1) : 64 wordLang$prog # num``;
+val _ = capture "word_from_word_narrow_32" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16; be := F|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$WordOp (closLang$WordFromWord T)) [1] NONE) : 32 wordLang$prog # num``;
+val _ = capture "word_from_word_widen_32" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16; be := F|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$WordOp (closLang$WordFromWord F)) [1] NONE) : 32 wordLang$prog # num``;
+val _ = capture "word_from_word_narrow_64" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16; be := F|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$WordOp (closLang$WordFromWord T)) [1] NONE) : 64 wordLang$prog # num``;
+val _ = capture "word_from_word_widen_64" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16; be := F|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$WordOp (closLang$WordFromWord F)) [1] NONE) : 64 wordLang$prog # num``;
