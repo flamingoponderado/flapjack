@@ -36,6 +36,8 @@
 
 `cake_source_primitive_probe.out` captures source literal type checks and 8- and 64-bit shifts at and beyond the word width.
 
+`cake_source_compare_probe.out` captures numeric and byte-string comparisons, including the original fast mode's length-first ordering.
+
 `mti_cake_bvi_probe.out` captures the full BVI program for a nested-function declaration with multi-argument introduction enabled, the other closure optimizations disabled, and the outer BVL/BVI optimizations omitted.
 
 `empty_cake_data_probe.out`, `reference_cake_data_probe.out`, and `match_cake_data_probe.out` capture complete results after BVI-to-data and its data optimizations for the corresponding restricted examples. Their probes add the source-proved `op_requires_names_eqn` to HOL's evaluator to avoid residual existential expressions. `scripts/generate-cake-data-oracles.py` translates the captures into Lean patterns and checks the printed sparse live sets against exact tree values. Regenerate the probes before the generator; the comparisons are regression evidence, not a proof for other inputs.

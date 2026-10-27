@@ -420,6 +420,9 @@ run_probe cake_source_array_probeScript.sml cake_source_array_probe.out \
 run_probe cake_source_primitive_probeScript.sml cake_source_primitive_probe.out \
   check_type shift8_type shift64_type bool_ok bool_bad word_ok word_bad lsl8 lsr8 asr8 ror8 asr64 ror64 "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
 
+run_probe cake_source_compare_probeScript.sml cake_source_compare_probe.out \
+  num_type int_type str_type natural integer lex fast same_length byte "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+
 run_probe cake_parse_error_probeScript.sml cake_parse_error_probe.out \
   missing after_decl multiline "$cake_dir/compiler/parsing/pegexec_cml_foScript.sml" "$cake_dir/compiler/parsing"
 

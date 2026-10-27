@@ -103149,5 +103149,29 @@
     "lean_name": "shift8Lookup",
     "statement_status": "pending_statement_review",
     "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "int_cmp_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Compare.lean",
+    "lean_name": "intCmp",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "num_cmp_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Compare.lean",
+    "lean_name": "numCmp",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "str_cmp_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Compare.lean",
+    "lean_name": "strCmp",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
   }
 ]
