@@ -86,10 +86,31 @@ def productions : Nonterminal → List (List Atom)
 /-- The finite list of all source grammar nonterminals. -/
 def nonterminals : List Nonterminal := [.nNonETopLevelDecs, .nTopLevelDecs, .nStructure, .nDecls, .nDecl, .nOptionalSignatureAscription, .nSignatureValue, .nSpecLineList, .nOptTypEqn, .nSpecLine, .nStructName, .nPEs, .nPEsfx, .nPE, .nPbaseList1, .nPatternList, .nPtuple, .nPattern, .nPas, .nPcons, .nPapp, .nPConApp, .nPbase, .nLetDecs, .nLetDec, .nAndFDecls, .nFDecl, .nE, .nEhandle, .nElogicOR, .nElogicAND, .nEtyped, .nEbefore, .nEcomp, .nErel, .nElistop, .nEadd, .nEmult, .nListOps, .nCompOps, .nRelOps, .nAddOps, .nMultOps, .nEapp, .nElist1, .nElist2, .nEtuple, .nEseq, .nEbase, .nEliteral, .nOpID, .nFQV, .nV, .nConstructorName, .nUQConstructorName, .nTypeAbbrevDec, .nTypeDec, .nDtypeDecls, .nDtypeDecl, .nDtypeCons, .nDconstructor, .nTyVarList, .nTypeName, .nPTbase, .nTbaseList, .nType, .nPType, .nDType, .nTbase, .nTypeList2, .nTypeList1, .nTyOp, .nTyvarN, .nUQTyOp]
 
+/-- Every nonterminal is represented in the generated finite support. -/
+theorem mem_nonterminals (n : Nonterminal) : n ∈ nonterminals := by
+  cases n <;> simp [nonterminals]
+
 /-- Source-shaped CakeML grammar built from the generated production patterns.
 Full equivalence to HOL's `cmlG` is not yet established. -/
-def cmlGrammar : Grammar Token Nonterminal :=
-  ⟨.inl .nTopLevelDecs, HolFiniteMapExact.updateListEq HolFiniteMapExact.empty
-    ((nonterminals.map fun n => (.inl n, fun rhs => (productions n).any (fun pattern => matchesProduction pattern rhs) = true)).reverse)⟩
+def cmlGrammar : Grammar Token Nonterminal where
+  start := .inl .nTopLevelDecs
+  rules :=
+    { lookup := fun key => match key with
+        | .inl n => some (fun rhs => (productions n).any (fun pattern => matchesProduction pattern rhs) = true)
+        | .inr _ => none
+      finiteSupport := by
+        refine ⟨nonterminals.map Sum.inl, ?_⟩
+        intro key present
+        cases key with
+        | inl n => exact List.mem_map.mpr ⟨n, mem_nonterminals n, rfl⟩
+        | inr _ => exact False.elim (present rfl) }
+
+/-- Lookup is direct for every source nonterminal. -/
+theorem lookup_nonterminal (n : Nonterminal) :
+    cmlGrammar.rules.lookup (.inl n) =
+      some (fun rhs => (productions n).any (fun pattern => matchesProduction pattern rhs) = true) := rfl
+
+/-- The original grammar contains no auxiliary numeric nonterminal rules. -/
+theorem lookup_auxiliary (n : Nat) : cmlGrammar.rules.lookup (.inr n) = none := rfl
 
 end Flapjack.CakeParser.CfgGrammar
