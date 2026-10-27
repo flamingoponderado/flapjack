@@ -20,6 +20,12 @@ structure Options where
   seenSkipTypeInference : Bool := false
   seenMainReturn : Bool := false
   seenSexp : Bool := false
+  multi : Option Bool := none
+  known : Option Bool := none
+  call : Option Bool := none
+  inlineFactor : Option Nat := none
+  maxApp : Option Nat := none
+  maxBodySize : Option String := none
   inlineSize : Option Nat := none
   expCut : Option Nat := none
   splitMain : Option Bool := none
@@ -31,6 +37,8 @@ structure Options where
 private def usage : String :=
   "Usage: cake [--target=riscv] [--exclude_prelude=true|false] " ++
   "[--skip_type_inference=true|false] [--main_return=true|false] " ++
+  "[--multi=true|false] [--known=true|false] [--call=true|false] " ++
+  "[--inline_factor=N] [--max_app=N] [--max_body_size=N] " ++
   "[--tmc=true|false] [--tailrec=true|false] [--split=true|false] " ++
   "[--inline_size=N] [--exp_cut=N] [--reg_alg=N] [--gc=G] < input_file\n" ++
   "Experimental CakeML to RISC-V port; complete CakeML output parity is not yet established."
@@ -70,6 +78,17 @@ private def topConfigError (errors : List String) : String :=
 errors within the BVL group in the order used by `parse_bvl_conf`. -/
 private def backendConfigErrors (args : List String) : List String := Id.run do
   let first := findFlag args
+  let mut clos := []
+  for (flag, isBool) in [("--multi=", true), ("--known=", true),
+      ("--inline_factor=", false), ("--call=", true), ("--max_app=", false)] do
+    if let some value := first flag then
+      let valid := if isBool then (parseBool value).isSome else (parseNum value).isSome
+      if !valid then
+        clos := clos ++ [s!"Unable to parse as {if isBool then "bool" else "num"}: {value} for flag: {flag}"]
+  if clos.isEmpty && ((first "--known=").bind parseBool).getD true then
+    if let some value := first "--max_body_size=" then
+      if (parseNum value).isNone then
+        clos := clos ++ [s!"Unable to parse as num: {value} for flag: --max_body_size="]
   let mut bvl := []
   for (flag, isBool) in [("--inline_size=", false), ("--exp_cut=", false),
       ("--split=", true), ("--tmc=", true), ("--tailrec=", true)] do
@@ -78,6 +97,7 @@ private def backendConfigErrors (args : List String) : List String := Id.run do
       if !valid then
         bvl := bvl ++ [s!"Unable to parse as {if isBool then "bool" else "num"}: {value} for flag: {flag}"]
   let mut groups := []
+  if !clos.isEmpty then groups := groups ++ [String.intercalate "\n" clos]
   if !bvl.isEmpty then groups := groups ++ [String.intercalate "\n" bvl]
   if let some value := first "--reg_alg=" then
     if (parseNum value).isNone then
@@ -104,6 +124,34 @@ private def parseArgs : List String → Options → Except String Options
         else if parseBool (arg.drop "--sexp=".length |>.toString) == some false then
           parseArgs args { options with seenSexp := true }
         else .error s!"unsupported option: {arg}"
+      else if arg.startsWith "--multi=" then
+        if options.multi.isSome then parseArgs args options else
+        match parseBool (arg.drop "--multi=".length |>.toString) with
+        | some b => parseArgs args { options with multi := some b }
+        | none => .error s!"invalid Boolean option: {arg}"
+      else if arg.startsWith "--known=" then
+        if options.known.isSome then parseArgs args options else
+        match parseBool (arg.drop "--known=".length |>.toString) with
+        | some b => parseArgs args { options with known := some b }
+        | none => .error s!"invalid Boolean option: {arg}"
+      else if arg.startsWith "--call=" then
+        if options.call.isSome then parseArgs args options else
+        match parseBool (arg.drop "--call=".length |>.toString) with
+        | some b => parseArgs args { options with call := some b }
+        | none => .error s!"invalid Boolean option: {arg}"
+      else if arg.startsWith "--inline_factor=" then
+        if options.inlineFactor.isSome then parseArgs args options else
+        match parseNum (arg.drop "--inline_factor=".length |>.toString) with
+        | some n => parseArgs args { options with inlineFactor := some n }
+        | none => .error s!"invalid numeric option: {arg}"
+      else if arg.startsWith "--max_app=" then
+        if options.maxApp.isSome then parseArgs args options else
+        match parseNum (arg.drop "--max_app=".length |>.toString) with
+        | some n => parseArgs args { options with maxApp := some n }
+        | none => .error s!"invalid numeric option: {arg}"
+      else if arg.startsWith "--max_body_size=" then
+        if options.maxBodySize.isSome then parseArgs args options else
+        parseArgs args { options with maxBodySize := some (arg.drop "--max_body_size=".length |>.toString) }
       else if arg.startsWith "--inline_size=" then
         if options.inlineSize.isSome then parseArgs args options else
         match parseNum (arg.drop "--inline_size=".length |>.toString) with
@@ -180,7 +228,18 @@ private def sourceFuel (source : List HolChar) : Nat :=
 Flapjack CLI infrastructure, not a port of the full HOL compiler driver. -/
 def compileBytes (options : Options) (source : List HolChar) : PrimitiveCheckedSourceResult := Id.run do
   let base := RiscVConfig.riscvBackendConfigExecutable
+  let maxApp := options.maxApp.getD base.closConf.maxApp
+  let inlineFactor := options.inlineFactor.getD ClosKnown.defaultInlineFactor
+  let maxBodySize := (options.maxBodySize.bind parseNum).getD
+    (ClosKnown.defaultMaxBodySize maxApp inlineFactor)
+  let knownConf := if options.known.getD base.closConf.knownConf.isSome then
+    some (ClosKnown.mkConfig maxBodySize inlineFactor) else none
   let config := { base with
+    closConf := { base.closConf with
+      doMti := options.multi.getD base.closConf.doMti
+      doCall := options.call.getD base.closConf.doCall
+      maxApp := maxApp
+      knownConf := knownConf }
     bvlConf := { base.bvlConf with
       inlineSizeLimit := options.inlineSize.getD base.bvlConf.inlineSizeLimit
       expCut := options.expCut.getD base.bvlConf.expCut

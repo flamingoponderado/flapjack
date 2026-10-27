@@ -27,6 +27,18 @@ CASES = {
     'main_return_false': 'val _ = print "Hello";',
     'no_prelude_main_return': 'val x = 42;',
     'no_prelude_main_return_duplicate': 'val x = 42;',
+    'no_prelude_clos_multi': 'fun id x = x; fun f x = id (id x); val a = f (1,2);',
+    'no_prelude_clos_known': 'fun id x = x; fun f x = id (id x); val a = f (1,2);',
+    'no_prelude_clos_call': 'fun id x = x; fun f x = id (id x); val a = f (1,2);',
+    'no_prelude_clos_max_app': 'fun id x = x; fun f x = id (id x); val a = f (1,2);',
+    'no_prelude_clos_inline_factor': 'fun id x = x; fun f x = id (id x); val a = f (1,2);',
+    'no_prelude_clos_max_body': 'fun id x = x; fun f x = id (id x); val a = f (1,2);',
+    'no_prelude_clos_combined': 'fun id x = x; fun f x = id (id x); val a = f (1,2);',
+    'no_prelude_clos_known_ignores_bad': 'fun id x = x; fun f x = id (id x); val a = f (1,2);',
+    'no_prelude_clos_duplicate': 'fun id x = x; fun f x = id (id x); val a = f (1,2);',
+    'config_error_clos_multiple': '',
+    'config_error_clos_max_body': '',
+    'config_error_clos_ignores_max_body': '',
     'no_prelude_bvl_tmc': 'fun f x = x; val a = f (1,2);',
     'no_prelude_bvl_tailrec': 'fun f x = x; val a = f (1,2);',
     'no_prelude_bvl_split': 'fun f x = x; val a = f (1,2);',
@@ -214,6 +226,21 @@ def run(executable, source, name):
         'config_error_bvl_multiple': ['--tailrec=bad', '--inline_size=bad', '--split=bad'],
         'config_error_bvl_backend_groups': ['--gc=bad', '--reg_alg=bad', '--tmc=bad'],
     }
+    clos_options = {
+        'no_prelude_clos_multi': ['--multi=false'],
+        'no_prelude_clos_known': ['--known=false'],
+        'no_prelude_clos_call': ['--call=false'],
+        'no_prelude_clos_max_app': ['--max_app=1'],
+        'no_prelude_clos_inline_factor': ['--inline_factor=0'],
+        'no_prelude_clos_max_body': ['--max_body_size=0'],
+        'no_prelude_clos_combined': ['--multi=false', '--known=false', '--call=false'],
+        'no_prelude_clos_known_ignores_bad': ['--max_body_size=bad', '--known=false'],
+        'no_prelude_clos_duplicate': ['--known=false', '--known=bad', '--max_app=1', '--max_app=bad'],
+        'config_error_clos_multiple': ['--known=bad', '--multi=bad', '--inline_size=bad'],
+        'config_error_clos_max_body': ['--max_body_size=bad'],
+        'config_error_clos_ignores_max_body': ['--multi=bad', '--max_body_size=bad'],
+    }
+    flags.extend(clos_options.get(name, []))
     flags.extend(bvl_options.get(name, []))
     if name == 'config_error_bool': flags.append('--exclude_prelude=foo')
     if name == 'config_error_bool_multiple': flags.extend(['--skip_type_inference=foo', '--exclude_prelude=bad'])
