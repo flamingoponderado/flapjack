@@ -5,6 +5,7 @@ import Flapjack.Test.MtiCakeBviOracle
 import Flapjack.Compiler.Backend.SourceToFlat.ToWord
 import Flapjack.Test.FullMtiInlineCakeWordOracle
 import Flapjack.Test.FullBvlOptimizedCakeWordOracle
+import Flapjack.Test.FullClosCallCakeWordOracle
 import Flapjack.Test.BvlInlineCakeBviOracle
 import Flapjack.Test.BvlHandleCakeBviOracle
 import Flapjack.Test.BvlOptimizedCakeBviOracle
@@ -93,6 +94,14 @@ private def wordConfig : DataToWord.Config :=
     [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "f"))
       (.fn (ofString "x") (.fn (ofString "y") (.var (.short (ofString "x")))))] with
   | some (_, _, _, code, _, _) => Flapjack.Test.FullBvlOptimizedCakeWordOracle.matchesCaptured
+      (code.map fun (loc, arity, body) => (loc, arity, body, 0))
+  | none => false
+
+#guard match SourceToFlat.compileCakeToWord64OptimizedFuel 100 8 100 false
+    SourceToFlat.emptyConfig { mtiConfig with doCall := true } wordConfig
+    [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "f"))
+      (.fn (ofString "x") (.fn (ofString "y") (.var (.short (ofString "x")))))] with
+  | some (_, _, _, code, _, _) => Flapjack.Test.FullClosCallCakeWordOracle.matchesCaptured
       (code.map fun (loc, arity, body) => (loc, arity, body, 0))
   | none => false
 

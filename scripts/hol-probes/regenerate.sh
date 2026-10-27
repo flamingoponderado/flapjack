@@ -83,7 +83,8 @@ probe_needs_refresh() {
          "$(basename "$probe")" == full_cake_word_probeScript.sml ||
          "$(basename "$probe")" == full_inline_cake_word_probeScript.sml ||
          "$(basename "$probe")" == full_mti_inline_cake_word_probeScript.sml ||
-         "$(basename "$probe")" == full_bvl_optimized_cake_word_probeScript.sml ) &&
+         "$(basename "$probe")" == full_bvl_optimized_cake_word_probeScript.sml ||
+         "$(basename "$probe")" == full_clos_call_cake_word_probeScript.sml ) &&
        ( "$cake_dir/compiler/backend/source_to_sourceScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/source_to_flatScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/flat_elimScript.sml" -nt "$output" ||
@@ -121,11 +122,16 @@ probe_needs_refresh() {
          "$cake_dir/compiler/backend/data_liveScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/data_spaceScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/data_simpScript.sml" -nt "$output" ) ]] ||
+    [[ "$(basename "$probe")" == clos_call_frontend_probeScript.sml &&
+       ( "$cake_dir/compiler/backend/closLangScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/db_varsScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/backend_commonScript.sml" -nt "$output" ) ]] ||
     [[ ( "$(basename "$probe")" == bignum_word_probeScript.sml ||
          "$(basename "$probe")" == full_cake_word_probeScript.sml ||
          "$(basename "$probe")" == full_inline_cake_word_probeScript.sml ||
          "$(basename "$probe")" == full_mti_inline_cake_word_probeScript.sml ||
-         "$(basename "$probe")" == full_bvl_optimized_cake_word_probeScript.sml ) &&
+         "$(basename "$probe")" == full_bvl_optimized_cake_word_probeScript.sml ||
+         "$(basename "$probe")" == full_clos_call_cake_word_probeScript.sml ) &&
        ( "$hol_dir/examples/machine-code/multiword/mc_multiwordScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/data_to_wordScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/word_bignumScript.sml" -nt "$output" ||
@@ -257,6 +263,9 @@ run_probe full_mti_inline_cake_word_probeScript.sml full_mti_inline_cake_word_pr
 run_probe full_bvl_optimized_cake_word_probeScript.sml full_bvl_optimized_cake_word_probe.out \
   entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
 
+run_probe full_clos_call_cake_word_probeScript.sml full_clos_call_cake_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
 run_probe mti_ops_word_probeScript.sml mti_ops_word_probe.out \
   entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
 
@@ -280,6 +289,9 @@ run_probe bvi_tailrec_frontend_probeScript.sml bvi_tailrec_frontend_probe.out \
 
 run_probe bvi_tmc_frontend_probeScript.sml bvi_tmc_frontend_probe.out \
   examples program "$cake_dir/compiler/backend/bvi_tmcScript.sml" "$cake_dir/compiler/backend"
+
+run_probe clos_call_frontend_probeScript.sml clos_call_frontend_probe.out \
+  free closed open apps letrec "$cake_dir/compiler/backend/clos_callScript.sml" "$cake_dir/compiler/backend"
 
 run_probe bvl_inline_cake_bvi_probeScript.sml bvl_inline_cake_bvi_probe.out \
   code "$cake_dir/compiler/backend/bvl_inlineScript.sml" "$cake_dir/compiler/backend"

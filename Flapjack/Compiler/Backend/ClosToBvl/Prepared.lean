@@ -6,6 +6,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Stubs
 import Flapjack.Compiler.Backend.ClosAnnotate.Shift
 import Flapjack.Compiler.Backend.ClosNumber
 import Flapjack.Compiler.Backend.ClosMti
+import Flapjack.Compiler.Backend.ClosCall
 
 /-! Checked closure-to-BVL assembly after closure preprocessing. -/
 namespace Flapjack.Compiler.Backend.ClosToBvl
@@ -55,5 +56,19 @@ def compileMtiOnlyFuel? (fuel : Nat) (c : Config) (es : List ClosLang.Exp) :
   let es' ← ClosMti.compileFuel fuel c.doMti c.maxApp es
   let (current, prog) ← compileCommonNoOpts? { c with doMti := false } es'
   compilePrepared? c { current with doMti := c.doMti } es' prog
+
+/-- Checked closure compilation with multi-argument introduction and direct
+call conversion. Known-function optimization is still rejected. -/
+def compileCallMtiFuel? (fuel : Nat) (c : Config) (es : List ClosLang.Exp) :
+    Option (Config × List (Nat × Nat × Bvl.Exp) × Spt MlString) := do
+  if c.knownConf.isSome then failure
+  let transformed ← ClosMti.compileFuel fuel c.doMti c.maxApp es
+  let next := c.nextLoc + max 1 transformed.length
+  let aligned := if next % 2 = 0 then next else next + 1
+  let (next, transformed) := ClosNumber.renumberList aligned transformed
+  let (transformed, callState) ← ClosCall.compileFuel fuel c.doCall transformed
+  let prog := ClosAnnotate.compile (chainExps c.nextLoc transformed ++ callState.2)
+  let current := { c with start := c.nextLoc, nextLoc := next, knownConf := none, callState := callState }
+  compilePrepared? c current es prog
 
 end Flapjack.Compiler.Backend.ClosToBvl

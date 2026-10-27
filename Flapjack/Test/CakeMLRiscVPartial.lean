@@ -37,4 +37,11 @@ private def optimizedConfig : Backend.Config :=
   | some (bytes, bitmaps, _) => !bytes.isEmpty && !bitmaps.isEmpty
   | none => false
 
+#guard match SourceToFlat.compileCakeToRiscVOptimizedFuel 100 8 100 false
+    { optimizedConfig with closConf := { optimizedConfig.closConf with doCall := true } }
+    [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "f"))
+      (.fn (ofString "x") (.fn (ofString "y") (.var (.short (ofString "x")))))] with
+  | some (bytes, bitmaps, _) => !bytes.isEmpty && !bitmaps.isEmpty
+  | none => false
+
 end Flapjack.Test.CakeMLRiscVPartial
