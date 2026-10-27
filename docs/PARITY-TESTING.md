@@ -471,8 +471,11 @@ to rerun both original export and compilation, or `--record-reference` to
 regenerate the captures. The suite also checks type-error diagnostics and
 the original unsupported-`Denv` diagnostic, including nested declarations,
 float-pattern and empty-match diagnostics, error precedence, and type, assembly,
-and S-expression output modes. It checks
-large inputs with 20,000 declarations and a 100,000-byte name. To compare a
+and S-expression output modes. It checks large inputs with 20,000 declarations
+and a 100,000-byte name. With type inference disabled, complete-output cases
+also exercise direct,
+sequential, module, and local `Denv` declarations and the `Envid` and `Eval`
+primitives. To compare a
 complete exported compiler AST, add `--bootstrap-sexp /path/to/compiler.sexpr`
 alongside `--check-reference`; this compares type-reporting output with type
 inference disabled, using the bootstrap's heap and stack settings. The parser

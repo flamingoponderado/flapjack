@@ -34,9 +34,18 @@ PROGRAMS = {
     'annotated_function': 'fun f (x : int) = x + 1; val _ = print_int (f 7);',
     'boolean_logic': 'val _ = print_int (if True andalso False orelse True then 1 else 0);',
 }
-# Eval and thunk primitives are expressible in bootstrap S-expressions rather than
-# ordinary surface syntax. Their source programs bypass type inference.
+# Environment declarations, Eval and thunk primitives are expressible in
+# bootstrap S-expressions rather than ordinary surface syntax. These programs
+# bypass type inference.
 RAW_PROGRAMS = {
+    'environment_declaration': '((Denv "a"))',
+    'two_environment_declarations': '((Denv "a") (Denv "b"))',
+    'module_environment_declaration': '((Dmod "M" ((Denv "a"))))',
+    'local_environment_declarations': '((Dlocal ((Denv "a")) ((Denv "b"))))',
+    'environment_after_binding': '((Dlet (unk unk) "x" (Lit 1)) (Denv "a"))',
+    'binding_after_environment': '((Denv "a") (Dlet (unk unk) "x" (Lit 1)))',
+    'current_environment_id': '((Dlet (unk unk) "a" (App Envid nil)))',
+    'eval_empty_arguments': '((Dlet (unk unk) "a" (App Eval nil)))',
     'dynamic_eval': '((Dlet (unk unk) "x" (App Eval ((Lit 0) (Lit 0) (Lit 0) (Lit 0) (Con NONE nil) (Con NONE nil)))))',
     'evaluated_thunk': '((Dlet (unk unk) "x" (App (AllocThunk . Evaluated) ((Lit 1)))) (Dlet (unk unk) "y" (App ForceThunk ((Var (Short "x"))))))',
     'pending_thunk': '((Dlet (unk unk) "x" (App (AllocThunk . NotEvaluated) ((Fun "v" (Lit 7))))) (Dlet (unk unk) "y" (App ForceThunk ((Var (Short "x"))))))',

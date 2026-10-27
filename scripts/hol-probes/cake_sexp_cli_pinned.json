@@ -871,6 +871,62 @@
       "stdout_sha256": "fc82997cb81037cbcb93b5079f626c3213aaa82b6f550e9bf112d696a9e1e560",
       "stderr_bytes": 0,
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "environment_declaration": {
+      "exit_code": 0,
+      "stdout_bytes": 310091,
+      "stdout_sha256": "190452c735f110b227123cb1f21e3a3d4738b2d51a39687b8c2d8b8b98b581eb",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "two_environment_declarations": {
+      "exit_code": 0,
+      "stdout_bytes": 310091,
+      "stdout_sha256": "ce66dbbe77bc1513c00872a286d094f94db2e7084c6694e6588d80b0821227a3",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "module_environment_declaration": {
+      "exit_code": 0,
+      "stdout_bytes": 310091,
+      "stdout_sha256": "190452c735f110b227123cb1f21e3a3d4738b2d51a39687b8c2d8b8b98b581eb",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local_environment_declarations": {
+      "exit_code": 0,
+      "stdout_bytes": 310091,
+      "stdout_sha256": "ce66dbbe77bc1513c00872a286d094f94db2e7084c6694e6588d80b0821227a3",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "environment_after_binding": {
+      "exit_code": 0,
+      "stdout_bytes": 310091,
+      "stdout_sha256": "ce66dbbe77bc1513c00872a286d094f94db2e7084c6694e6588d80b0821227a3",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "binding_after_environment": {
+      "exit_code": 0,
+      "stdout_bytes": 310091,
+      "stdout_sha256": "ce66dbbe77bc1513c00872a286d094f94db2e7084c6694e6588d80b0821227a3",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "current_environment_id": {
+      "exit_code": 0,
+      "stdout_bytes": 310214,
+      "stdout_sha256": "5c424cd5643b96cce9f55d3bbfdd339ec7557022c89dae116a6cb848e2a222da",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "eval_empty_arguments": {
+      "exit_code": 0,
+      "stdout_bytes": 330857,
+      "stdout_sha256": "f45c3c871eba0010d752c150da5b09b6afee2f7e046361493645bb2919cba575",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     }
   }
 }
