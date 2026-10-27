@@ -12,8 +12,11 @@ open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.Basis.Pure.MlString
 open Flapjack.SemanticPrimitivesHOL Flapjack.Compiler.Backend.BackendCommon
 
 mutual
-/-- Flapjack representation of the source-to-flat value relation. Nested HOL
-premises use the helpers below; correspondence to HOL is still under review. -/
+/-- Flapjack representation of the source-to-flat value relation. HOL includes
+both `recclosure` and `topRecclosure` forms; the latter is not an extra Lean
+case. Nested HOL list and lookup premises use the helpers below. Full
+correspondence, including the mutual induction and carriers, remains under
+review. -/
 inductive ValueRel : GlobalEnv → SemanticPrimitivesHOL.Value → FlatSem.Value → Prop where
   | literal (genv : GlobalEnv) (lit : Lit) :
       ValueRel genv (.litv lit) (.litv lit)
