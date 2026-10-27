@@ -24,6 +24,25 @@ theorem compilePat_bindings (compMap : Environment) (pattern : Pat) :
     intro pattern patterns head tail
     simp [FlatLang.patsBindings, AstHOL.patsBindings, head, tail]
 
+/-- Successful source matching yields related flat bindings in source pattern
+order. This combines pattern simulation with binding-order preservation. -/
+theorem pmatch_success_sourceBindings {C F : Type} (genv : GlobalEnv) (compMap compMap2 : Environment)
+    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (sourceState : SemanticPrimitivesHOL.State F)
+    (flatState : FlatSem.State C F) (shadowers : VarN → Prop)
+    (inv : GlobalEnvInv genv compMap2 shadowers sourceEnv) (mapsEq : compMap2.c = compMap.c)
+    (ok : genvCOk genv.c) (typesOk : genvCTysOk genv.c genv.tys) (stateRel : StateRel genv sourceState flatState)
+    (pattern : Pat) (source : SemanticPrimitivesHOL.Value) (flat : FlatSem.Value)
+    (valueRel : ValueRel genv source flat) (bindings : List (VarN × SemanticPrimitivesHOL.Value))
+    (matched : pmatch sourceEnv.c sourceState.refs pattern source [] = .match bindings) :
+    ∃ flatBindings,
+      FlatSem.pmatch flatState (compilePat compMap pattern) flat [] = .match flatBindings ∧
+      EnvRel genv (alistToNs bindings) flatBindings ∧
+      flatBindings.map Prod.fst = AstHOL.patBindings pattern := by
+  obtain ⟨flatBindings, matchedFlat, related, names⟩ :=
+    pmatch_success_bindings genv compMap compMap2 sourceEnv sourceState flatState shadowers inv mapsEq ok
+      typesOk stateRel pattern source flat valueRel bindings matched
+  exact ⟨flatBindings, matchedFlat, related, by simpa [compilePat_bindings] using names⟩
+
 /-- If every source pattern is type-compatible, matching the compiled rows
 cannot fail with a flat pattern type error. This is Flapjack infrastructure
 over the factored relations, not yet a reviewed port of the HOL theorem. -/

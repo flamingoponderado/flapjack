@@ -7,6 +7,16 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.SemanticPrimitivesHOL
 open Flapjack.Compiler.Backend.BackendCommon
 
+/-- The allocation counter is threaded for source correspondence but does not
+affect the generated bindings. -/
+theorem allocDefs_ignoreCounter {α : Type} (names : List α) (first second base : Nat) :
+    allocDefs first base names = allocDefs second base names := by
+  induction names generalizing first second base with
+  | nil => rfl
+  | cons name names ih =>
+    simp only [allocDefs]
+    exact congrArg (fun tail => (name, .glob omTra base) :: tail) (ih (first + 1) (second + 1) (base + 1))
+
 /-- A successful lookup in an association list identifies the same occurrence
 in `allocDefs` and in its list of values, including when names repeat. -/
 theorem allocDefs_lookup {α : Type} (entries : List (VarN × α)) (name : VarN) (value : α)
