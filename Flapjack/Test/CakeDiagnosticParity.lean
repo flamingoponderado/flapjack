@@ -2,7 +2,7 @@ import Flapjack.Compiler.Inference.Infer.Diagnostics
 import Flapjack.CakeParser.Frontend
 
 /-! Original inferencer message and source-location formatting for undefined
-variables, including qualified and multiline names. -/
+variables and selected built-in type mismatches. -/
 namespace Flapjack.Test.CakeDiagnosticParity
 open Flapjack Flapjack.AstHOL Flapjack.Misc.Location
 open Flapjack.Compiler.Inference.Infer Flapjack.Compiler.Inference.Infer.Core
@@ -22,5 +22,19 @@ private def qname : NamespaceHOL.Ident MlString MlString := .long (ofString "A")
 #guard sourceLocation (ofString "val x =\n missing;").explode
     (some (.locs (.posn 1 1) (.posn 1 8))) ==
   (ofString "line 2\n\n missing;\n ^^^^^^^^\n").explode
+
+#guard renderTypeMismatch (ofString "val x = 1 + True;").explode
+    (.located (.locs (.posn 0 11) (.posn 0 20))
+      (.typeMismatch (.app [.app [] 5, .app [] 5] 4) (.app [.app [] 1, .uvar 1] 4))) ==
+  some (ofString "### ERROR: type error\nType mismatch between int -> int and bool -> _1 at line 1\n\nval x = 1 + True;\n           ^^^^^^^^^^\n\nProgram exited with nonzero exit code.\n").explode
+
+-- A user-defined type needs the inference environment to recover its name.
+#guard (renderTypeMismatch [] (.located loc (.typeMismatch (.app [] 5) (.app [] 15)))).isNone
+
+-- The nested function, tuple and variable formatting is captured in
+-- cake_type_diagnostic_probe.out from the original inferencer.
+#guard renderTypeMismatch [] (.located loc
+    (.typeMismatch (.app [.app [.app [] 5, .app [] 1] 4] 6) (.app [.app [] 1, .app [] 5] 9))) ==
+  some (ofString "### ERROR: type error\nType mismatch between (int -> bool) list and bool * int at line 1\n\n\n           ^^^^^\n\nProgram exited with nonzero exit code.\n").explode
 
 end Flapjack.Test.CakeDiagnosticParity

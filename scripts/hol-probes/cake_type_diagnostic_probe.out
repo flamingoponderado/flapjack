@@ -1,0 +1,4 @@
+function=«int -> int»
+nested=«(int -> bool) list»
+tuple=«bool * int»
+variable=«_1»

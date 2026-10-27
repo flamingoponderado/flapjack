@@ -4,6 +4,8 @@
 
 `cake_parse_error_probe.out` captures the first unconsumed token's location after malformed declarations, including a multiline example. The CLI renders those locations as the original compiler's parse diagnostic; parser failures without an unconsumed-token location are not covered by this probe.
 
+`cake_type_diagnostic_probe.out` captures the original inferencer's formatting for function, nested list, tuple, and variable types. The CLI can render failed constraints involving built-in constructors; rendering user-defined type names requires the original inference error environment.
+
 `mti_cake_bvi_probe.out` captures the full BVI program for a nested-function declaration with multi-argument introduction enabled, the other closure optimizations disabled, and the outer BVL/BVI optimizations omitted.
 
 `empty_cake_data_probe.out`, `reference_cake_data_probe.out`, and `match_cake_data_probe.out` capture complete results after BVI-to-data and its data optimizations for the corresponding restricted examples. Their probes add the source-proved `op_requires_names_eqn` to HOL's evaluator to avoid residual existential expressions. `scripts/generate-cake-data-oracles.py` translates the captures into Lean patterns and checks the printed sparse live sets against exact tree values. Regenerate the probes before the generator; the comparisons are regression evidence, not a proof for other inputs.

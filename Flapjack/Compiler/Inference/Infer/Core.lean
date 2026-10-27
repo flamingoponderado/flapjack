@@ -11,6 +11,7 @@ open Flapjack.Compiler.Inference.Unify
 
 inductive Error where
   | exhausted | unsupported | mismatch | undefinedName | invalidPattern | valueRestriction
+  | typeMismatch : InferT → InferT → Error
   | undefinedVariable : Ident MlString MlString → Error
   | located : Flapjack.Misc.Location.Locs → Error → Error
   deriving Repr
@@ -24,6 +25,7 @@ information for original-style rendering. Other error classes remain unchanged. 
 private def withLoc (loc : Flapjack.Misc.Location.Locs) (action : M α) : M α := fun state =>
   match action state with
   | .error (.undefinedVariable name) => .error (.located loc (.undefinedVariable name))
+  | .error (.typeMismatch left right) => .error (.located loc (.typeMismatch left right))
   | other => other
 private def fresh : M InferT := do
   let s ← get
@@ -41,7 +43,10 @@ private def constrain (fuel : Nat) (a b : InferT) : M Unit := do
   let s ← get
   match unifyFuel fuel s.subst a b with
   | none => fail .exhausted
-  | some none => fail .mismatch
+  | some none =>
+    match walkStarFuel fuel s.subst a, walkStarFuel fuel s.subst b with
+    | some left, some right => fail (.typeMismatch left right)
+    | _, _ => fail .mismatch
   | some (some subst) => set { s with subst }
 
 private def constrainMany (fuel : Nat) : List InferT → List InferT → M Unit
@@ -461,7 +466,7 @@ private def inferDeclWorker : Nat → Nat → Env → Dec → M Env
   | 0, _, _, _ => fail .exhausted
   | fuel + 1, unifFuel, env, decl => do
     match decl with
-    | .dlet loc pat expr =>
+    | .dlet loc pat expr => withLoc loc do
       let st ← get
       set (resetState st)
       let exprType ← withLoc loc (inferExprWorker fuel unifFuel env expr)
@@ -473,7 +478,7 @@ private def inferDeclWorker : Nat → Nat → Env → Dec → M Env
       if count != 0 && !isValue expr then fail .valueRestriction else
       let vars := List.zip (bindings.map Prod.fst) (ts.map (fun t => (count, t)))
       return { emptyEnv with infV := alistToNs vars }
-    | .dletrec _ funs =>
+    | .dletrec loc funs => withLoc loc do
       let names := funs.map (fun (name, _, _) => name)
       if !distinctNames names then fail .invalidPattern else
       let st ← get

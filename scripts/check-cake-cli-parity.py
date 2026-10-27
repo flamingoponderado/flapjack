@@ -49,6 +49,14 @@ CASES = {
     'parse_error_multiline': 'val x = 1;\nval y = ;',
     'parse_error_character': 'val x = #"ab";',
     'parse_error_expression': 'if',
+    'type_error_apply': 'val x = 1 + True;',
+    'type_error_condition': 'val x = if 1 then 2 else 3;',
+    'type_error_annotation': 'val x : int = True;',
+    'type_error_tuple': 'val x = (1,False) : bool * int;',
+    'type_error_list': 'val x : int list = [True];',
+    'type_error_function': 'val x : int -> bool = fn y => y + 1;',
+    'type_error_multiline': 'val x = 1;\nval y = if x then 2 else 3;',
+    'type_error_polymorphism': 'val x = fn f => f 1 + f True;',
 }
 
 def run(executable, source, name):
@@ -84,7 +92,7 @@ if __name__ == '__main__':
         check_reference(args.record_reference)
         rows = {name: run(args.record_reference, source, name) for name, source in CASES.items()}
         for name, row in rows.items():
-            rejected = name.startswith(('undefined_', 'parse_error_'))
+            rejected = name.startswith(('undefined_', 'parse_error_', 'type_error_'))
             if row['exit_code'] != (1 if rejected else 0) or (row['stderr_bytes'] == 0) == rejected:
                 raise SystemExit(f'{name}: reference outcome did not match the expected category')
         FIXTURE.write_text(json.dumps({'reference_revision': REFERENCE_REV, 'hol_revision': HOL_REV,

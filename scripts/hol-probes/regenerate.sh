@@ -412,6 +412,9 @@ run_probe cake_word_array_probeScript.sml cake_word_array_probe.out \
 run_probe cake_undefined_diagnostic_probeScript.sml cake_undefined_diagnostic_probe.out \
   infer "$cake_dir/compiler/inference/inferScript.sml" "$cake_dir/compiler/inference" "$cake_dir/compiler"
 
+run_probe cake_type_diagnostic_probeScript.sml cake_type_diagnostic_probe.out \
+  function nested tuple variable "$cake_dir/compiler/inference/infer_tScript.sml" "$cake_dir/compiler/inference"
+
 run_probe bvl_inline_cake_bvi_probeScript.sml bvl_inline_cake_bvi_probe.out \
   code "$cake_dir/compiler/backend/bvl_inlineScript.sml" "$cake_dir/compiler/backend"
 
