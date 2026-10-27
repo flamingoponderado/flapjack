@@ -2,7 +2,9 @@ import Flapjack.Compiler.Backend.ClosToBvl.Compile
 import Flapjack.Compiler.Backend.BvlToBvi.Compile
 import Flapjack.Compiler.Backend.BviToData.Compile
 import Flapjack.Compiler.Backend.DataToWord.Control
+import Flapjack.Compiler.Backend.SourceToFlat.ToData
 import Flapjack.Test.CakeMLFlatOracle
+import Flapjack.Test.EmptyCakeWordOracle
 
 /-! A small cross-pass parity observation through word-language control flow. -/
 namespace Flapjack.Test.CakeMLControlFlowParity
@@ -36,5 +38,23 @@ private def config : Flapjack.Compiler.Backend.DataToWord.Config :=
   | _ => false
 #guard Flapjack.Test.CakeMLFlatOracle.clos_to_bvi_constant &&
   Flapjack.Test.CakeMLFlatOracle.bvi_to_data_constant && Flapjack.Test.CakeMLFlatOracle.data_to_word_assign
+
+private def fullWordConfig : Flapjack.Compiler.Backend.DataToWord.Config :=
+  ⟨1, 2, 3, 16, false, false, false, false, false, false, .simple⟩
+
+private def noOptsConfig : Flapjack.Compiler.Backend.ClosToBvl.Config :=
+  { Flapjack.Compiler.Backend.ClosToBvl.defaultConfig with
+    maxApp := 0, doMti := false, doCall := false, knownConf := none }
+
+#guard match Flapjack.Compiler.Backend.SourceToFlat.compileCakeToDataNoOptsFuel 100
+    Flapjack.Compiler.Backend.SourceToFlat.emptyConfig noOptsConfig [] with
+  | some (_, _, _, code, _) =>
+      let entry := code.filter fun (x : Nat × Nat × Flapjack.Compiler.Backend.DataLang.Prog) => x.1 == 64
+      match entry.mapM fun (x : Nat × Nat × Flapjack.Compiler.Backend.DataLang.Prog) => do
+        let word ← Flapjack.Compiler.Backend.DataToWord.compileControl? (width := 64) fullWordConfig x.1 2 x.2.2
+        pure (x.1, x.2.1, word) with
+      | some word => Flapjack.Test.EmptyCakeWordOracle.matchesCaptured word
+      | none => false
+  | none => false
 
 end Flapjack.Test.CakeMLControlFlowParity
