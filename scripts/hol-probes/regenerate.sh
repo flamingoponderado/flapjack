@@ -241,6 +241,10 @@ run_probe() {
   done
 }
 
+run_probe cake_flat_sem_evaluate_probeScript.sml cake_flat_sem_evaluate_probe.out \
+  eval_lit eval_missing eval_call eval_timeout eval_raise_handle eval_reference_order eval_match_failure eval_force eval_decs_unit eval_decs_nonunit \
+  "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe cake_flat_sem_apply_probeScript.sml cake_flat_sem_apply_probe.out \
   do_app_typed global_alloc global_init global_reinit global_lookup global_missing tag_match tag_mismatch tuple_length field_index ref_field ref_bad_index identity ref_alloc ref_assign byte_safe_oob byte_unsafe_oob array_negative array_update array_wrong_store data_strlen data_strsub_negative data_vector_sub data_vector_unsafe data_copy data_copy_oob data_thunk_alloc numeric_shift data_copy_overlap \
   "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/semantics"

@@ -1,0 +1,10 @@
+eval_lit=Rval [Litv (IntLit 3)]
+eval_missing=Rerr (Rabort Rtype_error)
+eval_call=(3,Rval [Litv (IntLit 7)])
+eval_timeout=(0,Rerr (Rabort Rtimeout_error))
+eval_raise_handle=Rval [Litv (IntLit 8)]
+eval_reference_order=([Refv (Litv (IntLit 2)); Refv (Litv (IntLit 1))],Rval [Conv NONE [Loc T 1; Loc T 0]])
+eval_match_failure=Rerr (Rraise (Conv (SOME (0,NONE)) []))
+eval_force=(3,[Thunk Evaluated (Litv (IntLit 5))],Rval [Litv (IntLit 5)])
+eval_decs_unit=NONE
+eval_decs_nonunit=SOME (Rabort Rtype_error)
