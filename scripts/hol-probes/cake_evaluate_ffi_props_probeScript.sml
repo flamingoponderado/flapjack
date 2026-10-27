@@ -1,0 +1,12 @@
+load "evaluatePropsTheory";
+open HolKernel Parse boolLib bossLib;
+val _ = Globals.linewidth := 1000000;
+val _ = Globals.show_types := true;
+val _ = (print "call_length="; print_thm evaluatePropsTheory.call_FFI_LENGTH; print "\n");
+val _ = (print "mono_definition="; print_thm evaluatePropsTheory.io_events_mono_def; print "\n");
+val _ = (print "mono_refl="; print_thm evaluatePropsTheory.io_events_mono_refl; print "\n");
+val _ = (print "mono_trans="; print_thm evaluatePropsTheory.io_events_mono_trans; print "\n");
+val _ = (print "mono_antisym="; print_thm evaluatePropsTheory.io_events_mono_antisym; print "\n");
+val _ = (print "call_consts="; print_thm evaluatePropsTheory.call_FFI_rel_consts; print "\n");
+val _ = (print "rtc_consts="; print_thm evaluatePropsTheory.RTC_call_FFI_rel_consts; print "\n");
+val _ = (print "rtc_mono="; print_thm evaluatePropsTheory.call_FFI_rel_io_events_mono; print "\n");

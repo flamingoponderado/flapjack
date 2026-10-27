@@ -8863,3 +8863,7 @@ run_probe l3_step_immediate_comparison_nop_probeScript.sml l3_step_immediate_com
 
 run_probe prim_sem_env_probeScript.sml prim_sem_env_probe.out \
   add_type prim_type "$cake_dir/semantics/primTypesScript.sml" "$cake_dir/semantics"
+
+run_probe cake_evaluate_ffi_props_probeScript.sml cake_evaluate_ffi_props_probe.out \
+  call_length mono_definition mono_refl mono_trans mono_antisym call_consts rtc_consts rtc_mono \
+  "$cake_dir/semantics/proofs/evaluatePropsScript.sml" "$cake_dir/semantics/proofs"

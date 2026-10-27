@@ -1,0 +1,8 @@
+call_length=⊢ call_FFI (st :α ffi_state) (index :ffiname) (conf :word8 list) (x :word8 list) = FFI_return (new_st :α ffi_state) (new_bytes :word8 list) ⇒ LENGTH x = LENGTH new_bytes
+mono_definition=⊢ ∀(s1 :α ffi_state) (s2 :α ffi_state). io_events_mono s1 s2 ⇔ s1.io_events ≼ s2.io_events ∧ (s2.io_events = s1.io_events ⇒ s2 = s1)
+mono_refl=⊢ io_events_mono (ffi :α ffi_state) ffi
+mono_trans=⊢ io_events_mono (ffi1 :α ffi_state) (ffi2 :α ffi_state) ∧ io_events_mono ffi2 (ffi3 :α ffi_state) ⇒ io_events_mono ffi1 ffi3
+mono_antisym=⊢ io_events_mono (s1 :α ffi_state) (s2 :α ffi_state) ∧ io_events_mono s2 s1 ⇒ s1 = s2
+call_consts=⊢ call_FFI_rel (s1 :α ffi_state) (s2 :α ffi_state) ⇒ s2.oracle = s1.oracle
+rtc_consts=⊢ ∀(s1 :α ffi_state) (s2 :α ffi_state). (call_FFI_rel :α ffi_state -> α ffi_state -> bool)꙳ s1 s2 ⇒ s2.oracle = s1.oracle
+rtc_mono=⊢ ∀(s1 :α ffi_state) (s2 :α ffi_state). (call_FFI_rel :α ffi_state -> α ffi_state -> bool)꙳ s1 s2 ⇒ io_events_mono s1 s2

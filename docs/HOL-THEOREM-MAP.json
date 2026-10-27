@@ -103505,5 +103505,69 @@
     "lean_name": "primSemEnv",
     "statement_status": "pending_statement_review",
     "reviewer": "Codex (pending complete source evaluator and carrier review): pinned HOL types captured in prim_sem_env_probe; inherits the floating-point rational-cut assumption."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "call_FFI_LENGTH",
+    "lean_path": "Flapjack/EvaluateProps.lean",
+    "lean_name": "callFFIHOL_length",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending review): pinned typed original captured in cake_evaluate_ffi_props_probe; RTC uses Relation.ReflTransGen and FFI states use the existing HOL-shaped carrier."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "call_FFI_rel_consts",
+    "lean_path": "Flapjack/EvaluateProps.lean",
+    "lean_name": "callFFIRelHOL_consts",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending review): pinned typed original captured in cake_evaluate_ffi_props_probe; RTC uses Relation.ReflTransGen and FFI states use the existing HOL-shaped carrier."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "RTC_call_FFI_rel_consts",
+    "lean_path": "Flapjack/EvaluateProps.lean",
+    "lean_name": "callFFIRelHOL_rtc_consts",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending review): pinned typed original captured in cake_evaluate_ffi_props_probe; RTC uses Relation.ReflTransGen and FFI states use the existing HOL-shaped carrier."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "io_events_mono_def",
+    "lean_path": "Flapjack/EvaluateProps.lean",
+    "lean_name": "ioEventsMonoHOL",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending review): pinned typed original captured in cake_evaluate_ffi_props_probe; RTC uses Relation.ReflTransGen and FFI states use the existing HOL-shaped carrier."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "io_events_mono_refl",
+    "lean_path": "Flapjack/EvaluateProps.lean",
+    "lean_name": "ioEventsMonoHOL_refl",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending review): pinned typed original captured in cake_evaluate_ffi_props_probe; RTC uses Relation.ReflTransGen and FFI states use the existing HOL-shaped carrier."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "io_events_mono_trans",
+    "lean_path": "Flapjack/EvaluateProps.lean",
+    "lean_name": "ioEventsMonoHOL_trans",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending review): pinned typed original captured in cake_evaluate_ffi_props_probe; RTC uses Relation.ReflTransGen and FFI states use the existing HOL-shaped carrier."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "io_events_mono_antisym",
+    "lean_path": "Flapjack/EvaluateProps.lean",
+    "lean_name": "ioEventsMonoHOL_antisym",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending review): pinned typed original captured in cake_evaluate_ffi_props_probe; RTC uses Relation.ReflTransGen and FFI states use the existing HOL-shaped carrier."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "call_FFI_rel_io_events_mono",
+    "lean_path": "Flapjack/EvaluateProps.lean",
+    "lean_name": "callFFIRelHOL_rtc_ioEventsMono",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending review): pinned typed original captured in cake_evaluate_ffi_props_probe; RTC uses Relation.ReflTransGen and FFI states use the existing HOL-shaped carrier."
   }
 ]
