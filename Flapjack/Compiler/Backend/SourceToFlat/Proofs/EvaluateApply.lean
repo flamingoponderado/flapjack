@@ -23,6 +23,17 @@ theorem opDeref_success {F : Type} (state : SemanticPrimitivesHOL.State F)
       | varray values => simp [lookup] at successful
       | thunk mode value => simp [lookup] at successful
 
+/-- Successful source assignment identifies a location and its updated store. -/
+theorem opAssign_success {F : Type} (state : SemanticPrimitivesHOL.State F)
+    (pointer value : SemanticPrimitivesHOL.Value)
+    (successful : doApp (state.refs, state.ffi) .opassign [pointer, value] ≠ none) :
+    ∃ flag address refs, pointer = .loc flag address ∧ storeAssign address (.refv value) state.refs = some refs := by
+  cases pointer <;> simp [doApp, doAppNumericCore, doAppBasic] at successful
+  case loc flag address =>
+    cases assigned : storeAssign address (.refv value) state.refs with
+    | none => simp [assigned] at successful
+    | some refs => exact ⟨flag, address, refs, rfl, assigned⟩
+
 /-- Allocating a reference after evaluating its operand preserves the value
 and state relations, including operand errors and the flat store offset. -/
 theorem exprSim_opref {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
@@ -171,5 +182,104 @@ theorem exprSim_opderef {C F : Type} (genv : GlobalEnv) (compMap : Environment) 
               simp [getOpClass, doApp, doAppNumericCore, doAppBasic, sourceLookup, astOpToFlatOp,
                 FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppFlat, flatLookup, EvaluateHOL.listResult]
               exact ⟨.value (.cons resultRel .nil), nextRel⟩
+
+/-- Reference assignment simulates the reversed operand evaluation order and
+the source store update, assuming the source does not end in a type error. -/
+theorem exprSim_opassign {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
+    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (pointer value : AstHOL.Exp)
+    (argsSim : ExprListSim genv compMap trace sourceEnv flatEnv sourceState flatState [value, pointer])
+    (notTypeError : ∀ next, EvaluateHOL.evaluate sourceState sourceEnv [.app .opassign [pointer, value]] ≠
+      (next, .err (.abort .typeError))) :
+    ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.app .opassign [pointer, value]) := by
+  unfold ExprListSim at argsSim
+  simp only [compileExps] at argsSim
+  cases sourceRun : EvaluateHOL.evaluate sourceState sourceEnv [value, pointer] with
+  | mk sourceNext sourceResult =>
+    rw [sourceRun] at argsSim
+    cases flatRun : FlatSem.evaluate flatEnv flatState [compileExp trace compMap value, compileExp trace compMap pointer] with
+    | mk flatNext flatResult =>
+      rw [flatRun] at argsSim
+      obtain ⟨related, nextRel⟩ := argsSim
+      cases sourceResult with
+      | err error =>
+        cases error with
+        | raise errorValue =>
+          cases related with
+          | raise valueRel =>
+            unfold ExprSim
+            rw [EvaluateHOL.evaluate]
+            simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+            rw [(EvaluateHOL.fixClockEvaluate sourceState sourceEnv [value, pointer] []).1, sourceRun]
+            simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+            rw [FlatSem.evaluate]
+            simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+            rw [(FlatSem.fixClock_evaluations flatEnv flatState
+              [compileExp trace compMap value, compileExp trace compMap pointer]
+              (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+            exact ⟨.raise valueRel, nextRel⟩
+        | abort error =>
+          cases related with
+          | abort =>
+            unfold ExprSim
+            rw [EvaluateHOL.evaluate]
+            simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+            rw [(EvaluateHOL.fixClockEvaluate sourceState sourceEnv [value, pointer] []).1, sourceRun]
+            simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+            rw [FlatSem.evaluate]
+            simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+            rw [(FlatSem.fixClock_evaluations flatEnv flatState
+              [compileExp trace compMap value, compileExp trace compMap pointer]
+              (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+            exact ⟨.abort error, nextRel⟩
+      | val values =>
+        have length := EvaluateProps.evaluateLengthFull sourceState sourceNext sourceEnv [value, pointer] values sourceRun
+        have two : ∃ v p, values = [v, p] := by
+          cases values with
+          | nil => simp at length
+          | cons v tail =>
+            cases tail with
+            | nil => simp at length
+            | cons p rest =>
+              cases rest with
+              | nil => exact ⟨v, p, rfl⟩
+              | cons q rest => simp at length
+        obtain ⟨sourceValue, sourcePointer, rfl⟩ := two
+        cases related with
+        | value valuesRel =>
+          cases valuesRel with
+          | cons valueRel tail =>
+            cases tail with
+            | cons pointerRel tail =>
+              cases tail with
+              | nil =>
+                rename_i flatValue flatPointer
+                have successful : doApp (sourceNext.refs, sourceNext.ffi) .opassign [sourcePointer, sourceValue] ≠ none := by
+                  intro failed
+                  apply notTypeError sourceNext
+                  rw [EvaluateHOL.evaluate]
+                  simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+                  rw [(EvaluateHOL.fixClockEvaluate sourceState sourceEnv [value, pointer] []).1, sourceRun]
+                  simp [getOpClass, failed, EvaluateHOL.typeError]
+                obtain ⟨flag, address, refs, rfl, assigned⟩ :=
+                  opAssign_success sourceNext sourcePointer sourceValue successful
+                have flatLocation := (valueRel_location_iff genv flag address flatPointer).mp pointerRel
+                subst flatPointer
+                obtain ⟨flatRefs, sourceApp, flatApp, unitRel, stateRel, _⟩ :=
+                  opassign_related genv sourceNext flatNext nextRel flag address sourceValue flatValue valueRel refs assigned
+                unfold ExprSim
+                rw [EvaluateHOL.evaluate]
+                simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+                rw [(EvaluateHOL.fixClockEvaluate sourceState sourceEnv [value, pointer] []).1, sourceRun]
+                simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+                rw [FlatSem.evaluate]
+                simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+                rw [(FlatSem.fixClock_evaluations flatEnv flatState
+                  [compileExp trace compMap value, compileExp trace compMap pointer]
+                  (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+                simp [getOpClass, doApp, doAppNumericCore, sourceApp, astOpToFlatOp,
+                  FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, flatApp, EvaluateHOL.listResult]
+                exact ⟨.value (.cons unitRel .nil), stateRel⟩
 
 end Flapjack.Compiler.Backend.SourceToFlat

@@ -1,3 +1,5 @@
+`source_to_flat_opassign_probe.out` captures successful and invalid original assignments on source and flat stores with the reserved-entry offset. Lean proves expression-level assignment simulation, including reversed operand evaluation, under the source non-type-error condition and preliminary relations; the observation is not a cross-language equivalence proof.
+
 `source_to_flat_opderef_probe.out` captures successful and invalid original reference dereferences on source and flat stores with the one-slot offset. Lean proves expression-level dereference simulation under the source non-type-error condition and preliminary relations; the observation is not a cross-language equivalence proof.
 
 `source_to_flat_opref_probe.out` captures original source and flat reference allocations with a reserved flat store entry. Lean composes operand evaluation with reference allocation over its preliminary state and value relations; this observation is not a cross-language equivalence proof.
