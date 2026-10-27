@@ -254,7 +254,7 @@ run_probe source_to_flat_pmatch_statement_probeScript.sml source_to_flat_pmatch_
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe source_to_flat_state_pattern_probeScript.sml source_to_flat_state_pattern_probe.out \
-  store_rel_rules state_rel_rules state_rel_cases match_result_def match_result_imp store_same_type \
+  store_rel_rules state_rel_rules state_rel_cases match_result_def match_result_imp store_same_type store_assign store_alloc allocate_ref assign_ref assign_wrong_type assign_missing \
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe source_to_flat_global_env_probeScript.sml source_to_flat_global_env_probe.out \
