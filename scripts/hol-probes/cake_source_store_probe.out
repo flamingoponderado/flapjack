@@ -1,6 +1,10 @@
 closure_type=:v sem_env -> mlstring -> exp -> v
 recclosure_type=:v sem_env -> (mlstring # mlstring # exp) list -> mlstring -> v
 store_assign_type=:num -> α store_v -> α store_v list -> α store_v list option
+compiler_type=:eval_decs_state -> (num # num) # v # dec list -> (v # word8 list # word64 list) option
+oracle_type=:eval_oracle_state -> v list -> (num -> (num # num) # v # dec list) -> ((num # num) # (num -> (num # num) # v # dec list) # dec list) option
+state_ffi_type=:'ffi state -> 'ffi ffi_state
+state_eval_type=:'ffi state -> eval_state option
 ref_same=T
 thunk_update=T
 thunk_final=F

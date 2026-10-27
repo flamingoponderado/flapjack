@@ -102525,5 +102525,61 @@
     "lean_name": "subscriptStamp",
     "statement_status": "pending_statement_review",
     "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "compiler_args",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
+    "lean_name": "CompilerArgs",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "compiler_fun",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
+    "lean_name": "CompilerFun",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "eval_decs_state",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
+    "lean_name": "EvalDecsState",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "eval_oracle_fun",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
+    "lean_name": "EvalOracleFun",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "eval_oracle_state",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
+    "lean_name": "EvalOracleState",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "eval_state",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
+    "lean_name": "EvalState",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "state",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
+    "lean_name": "State",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
   }
 ]

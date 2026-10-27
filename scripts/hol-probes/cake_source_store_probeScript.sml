@@ -5,6 +5,10 @@ val _ = Globals.show_types := true;
 val _ = (print "closure_type="; print_type (type_of ``semanticPrimitives$Closure``); print "\n");
 val _ = (print "recclosure_type="; print_type (type_of ``semanticPrimitives$Recclosure``); print "\n");
 val _ = (print "store_assign_type="; print_type (type_of ``semanticPrimitives$store_assign``); print "\n");
+val _ = (print "compiler_type="; print_type (type_of ``λ(s:semanticPrimitives$eval_decs_state). s.compiler``); print "\n");
+val _ = (print "oracle_type="; print_type (type_of ``λ(s:semanticPrimitives$eval_oracle_state). s.custom_do_eval``); print "\n");
+val _ = (print "state_ffi_type="; print_type (type_of ``λ(s:'ffi semanticPrimitives$state). s.ffi``); print "\n");
+val _ = (print "state_eval_type="; print_type (type_of ``λ(s:'ffi semanticPrimitives$state). s.eval_state``); print "\n");
 val ref_same = rhs (concl (EVAL ``semanticPrimitives$store_v_same_type (Refv (1:num)) (Refv 2)``));
 val _ = (print "ref_same="; print_term ref_same; print "\n");
 val thunk_update = rhs (concl (EVAL ``semanticPrimitives$store_v_same_type

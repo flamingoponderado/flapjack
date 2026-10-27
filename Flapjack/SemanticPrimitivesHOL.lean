@@ -82,6 +82,44 @@ def storeAssign {α : Type} (n : Nat) (value : StoreValue α) (store : Store α)
   let old ← store[n]?
   if storeValueSameType old value then some (store.set n value) else none
 
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "compiler_args"]
+abbrev CompilerArgs := (Nat × Nat) × Value × List AstHOL.Dec
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "compiler_fun"]
+abbrev CompilerFun := CompilerArgs → Option (Value × List (BitVec 8) × List (BitVec 64))
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "eval_decs_state"]
+structure EvalDecsState where
+  compiler : CompilerFun
+  compilerState : Value
+  envIdCounter : Nat × Nat × Nat
+  decodeDecs : Value → Option (List AstHOL.Dec)
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "eval_oracle_fun"]
+abbrev EvalOracleFun := Nat → CompilerArgs
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "eval_oracle_state"]
+structure EvalOracleState where
+  oracle : EvalOracleFun
+  customDoEval : List Value → EvalOracleFun → Option ((Nat × Nat) × EvalOracleFun × List AstHOL.Dec)
+  envs : List (List (SemEnv Value))
+  generation : Nat
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "eval_state"]
+inductive EvalState where
+  | evalDecs : EvalDecsState → EvalState
+  | evalOracle : EvalOracleState → EvalState
+
+/-- Source evaluator state, including its FFI and optional Eval machinery. -/
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "state"]
+structure State (σ : Type) where
+  clock : Nat
+  refs : Store Value
+  ffi : HolFfiState σ
+  nextTypeStamp : Nat
+  nextExnStamp : Nat
+  evalState : Option EvalState
+
 @[hol "cakeml/semantics/semanticPrimitivesScript.sml" "bind_stamp_def"]
 def bindStamp : Stamp := .exnStamp 0
 @[hol "cakeml/semantics/semanticPrimitivesScript.sml" "chr_stamp_def"]

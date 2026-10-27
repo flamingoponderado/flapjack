@@ -10,7 +10,7 @@
 
 `cake_undefined_diagnostic_probe.out` captures original inference errors for qualified missing variables, constructors, and type constructors. These cover formatting and lookup failure, not the full inferencer.
 
-`cake_source_store_probe.out` captures inferred closure and store-assignment types plus source-store allocation, lookup, updates, and rejected assignments, including the one-way thunk update rule.
+`cake_source_store_probe.out` captures inferred closure, evaluator-state, and store-assignment types plus source-store allocation, lookup, updates, and rejected assignments, including the one-way thunk update rule.
 
 `mti_cake_bvi_probe.out` captures the full BVI program for a nested-function declaration with multi-argument introduction enabled, the other closure optimizations disabled, and the outer BVL/BVI optimizations omitted.
 
