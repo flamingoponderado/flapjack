@@ -213,6 +213,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveTest
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternStamps
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StateRel
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StoreUpdate
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateCases
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.MemoryOps
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ThunkRel
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternRel
