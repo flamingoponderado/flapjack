@@ -48,6 +48,8 @@
 
 `clos_call_frontend_probe.out` captures closure free-variable annotations, direct-call conversion, effectful calls, and mutually recursive code extraction. `full_clos_call_cake_word_probe.out` captures the complete word program for a nested-function CakeML declaration with direct-call conversion and the ported BVL/BVI optimizations enabled; known-function optimization is disabled.
 
+`clos_known_helpers_probe.out` captures closure free-variable cleanup, tick removal, let-operation cleanup and inlining decisions, including trace preservation and size limits. These support the known-function pass; its main traversal and the `clos_op` optimizer remain unported.
+
 `tmc_ops_word_probe.out` captures mutable-constructor, finalisation and update lowering under simple and generational GC configurations. `tmc_program_word_probe.out` captures all word functions for a positive TMC example after BVI inlining and data lowering.
 
 `data_to_word_header_types_probe.out` records the original types and typed definitions for header construction and its checked encoding. The frontend probe also captures 32-bit and 64-bit encoded values and an invalid length; these observations are regression evidence, not a cross-language proof.

@@ -1,0 +1,5 @@
+fvs=[Let None [Op None (MemOp El) []] (Fn «f» (SOME 4) (SOME [0; 1]) 1 (Op None (MemOp El) [])); Letrec [«f»] (SOME 4) (SOME [0]) [(1,Op None (MemOp El) [])] (Op None (MemOp El) [])]
+ticks=[Call None 0 4 [Var None 0]; Fn «f» (SOME 4) NONE 1 (Var None 0)]
+letop=[Op (SourceLoc 1 2 3 4) (IntOp Add) [Var None 2; Var None 3]]
+decisions=[SOME 3; NONE]
+inline=[inlD_LetInline (Op None (IntOp Add) [Var None 0; Var None 0]); inlD_Annotate 4; inlD_Annotate 4; inlD_Nothing; inlD_Annotate 4; inlD_Annotate 4]

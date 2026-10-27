@@ -126,6 +126,12 @@ probe_needs_refresh() {
        ( "$cake_dir/compiler/backend/closLangScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/db_varsScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/backend_commonScript.sml" -nt "$output" ) ]] ||
+    [[ "$(basename "$probe")" == clos_known_helpers_probeScript.sml &&
+       ( "$cake_dir/compiler/backend/clos_fvsScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/clos_ticksScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/clos_letopScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/closLangScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/db_varsScript.sml" -nt "$output" ) ]] ||
     [[ ( "$(basename "$probe")" == bignum_word_probeScript.sml ||
          "$(basename "$probe")" == full_cake_word_probeScript.sml ||
          "$(basename "$probe")" == full_inline_cake_word_probeScript.sml ||
@@ -292,6 +298,9 @@ run_probe bvi_tmc_frontend_probeScript.sml bvi_tmc_frontend_probe.out \
 
 run_probe clos_call_frontend_probeScript.sml clos_call_frontend_probe.out \
   free closed open apps letrec "$cake_dir/compiler/backend/clos_callScript.sml" "$cake_dir/compiler/backend"
+
+run_probe clos_known_helpers_probeScript.sml clos_known_helpers_probe.out \
+  fvs ticks letop decisions inline "$cake_dir/compiler/backend/clos_knownScript.sml" "$cake_dir/compiler/backend"
 
 run_probe bvl_inline_cake_bvi_probeScript.sml bvl_inline_cake_bvi_probe.out \
   code "$cake_dir/compiler/backend/bvl_inlineScript.sml" "$cake_dir/compiler/backend"
