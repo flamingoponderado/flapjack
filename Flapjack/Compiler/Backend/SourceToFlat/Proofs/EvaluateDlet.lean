@@ -1055,6 +1055,76 @@ def DletExpressionStep {C F : Type} [Nonempty C]
         factoredInvariant interp transform gen nextGenv (start, finish, other) result.1 flatResult.1 ∧
         envGenRel gen result.1.evalState ∧ oracForwardRel interp source.evalState result.1.evalState
 
+/-- A literal discharges the declaration expression hypothesis without an
+induction premise: both evaluators leave their states unchanged. This uses
+the preliminary factored relations and is not a reviewed HOL theorem. -/
+theorem dletExpressionStep_literal {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F) (sourceEnv : SemEnv Value)
+    (trace : List VarN) (compMap : Environment) (gen : EnvironmentGenerationStore) (lit : Lit)
+    (invariant : factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (generation : envGenRel gen source.evalState) :
+    DletExpressionStep interp transform genv start finish other source flat sourceEnv trace compMap gen (.lit lit) := by
+  refine ⟨genv, exprSim_literal genv compMap trace sourceEnv ⟨[]⟩ source flat invariant.2.2.1 lit, ?_⟩
+  simpa only [EvaluateHOL.evaluate, compileExp, FlatSem.evaluate] using
+    And.intro (GlobalGrowth.refl genv) (And.intro invariant
+      (And.intro generation (oracForwardRel_refl interp source.evalState)))
+
+/-- An existing unshadowed global variable satisfies the declaration
+expression hypothesis without changing either evaluator state. -/
+theorem dletExpressionStep_global {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F) (sourceEnv : SemEnv Value)
+    (trace : List VarN) (compMap : Environment) (gen : EnvironmentGenerationStore)
+    (id : Ident ModN VarN) (value : Value) (lookup : nsLookup sourceEnv.v id = some value)
+    (envInv : GlobalEnvInv genv compMap (fun _ => False) sourceEnv)
+    (invariant : factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (generation : envGenRel gen source.evalState) :
+    DletExpressionStep interp transform genv start finish other source flat sourceEnv trace compMap gen (.var id) := by
+  cases envInv with
+  | intro _ _ _ values _ =>
+    have related := values id value (by simp) lookup
+    obtain ⟨flatValue, sourceRun, flatRun, valueRel, states⟩ :=
+      evaluate_global_unbounded genv compMap sourceEnv ⟨[]⟩ source flat invariant.2.2.1
+        invariant.2.2.2.2.2.2.1.symm trace id value lookup related
+    refine ⟨genv, ?_, ?_⟩
+    · unfold ExprSim
+      rw [sourceRun, flatRun]
+      exact ⟨.value (.cons valueRel .nil), states⟩
+    · rw [sourceRun, flatRun]
+      exact ⟨GlobalGrowth.refl genv, invariant, generation, oracForwardRel_refl interp source.evalState⟩
+
+/-- Type annotations preserve the factored declaration expression step. -/
+theorem dletExpressionStep_tannot {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F) (sourceEnv : SemEnv Value)
+    (trace : List VarN) (compMap : Environment) (gen : EnvironmentGenerationStore)
+    (expr : AstHOL.Exp) (typ : AstHOL.AstT)
+    (step : DletExpressionStep interp transform genv start finish other source flat sourceEnv trace compMap gen expr) :
+    DletExpressionStep interp transform genv start finish other source flat sourceEnv trace compMap gen
+      (.tannot expr typ) := by
+  obtain ⟨next, sim, post⟩ := step
+  refine ⟨next, exprSim_tannot next compMap trace sourceEnv ⟨[]⟩ source flat expr typ sim, ?_⟩
+  simpa only [EvaluateHOL.evaluate, compileExp] using post
+
+/-- Source-location annotations preserve the factored declaration expression step. -/
+theorem dletExpressionStep_lannot {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F) (sourceEnv : SemEnv Value)
+    (trace : List VarN) (compMap : Environment) (gen : EnvironmentGenerationStore)
+    (expr : AstHOL.Exp) (loc : Misc.Location.Locs)
+    (step : DletExpressionStep interp transform genv start finish other source flat sourceEnv trace compMap gen expr) :
+    DletExpressionStep interp transform genv start finish other source flat sourceEnv trace compMap gen
+      (.lannot expr loc) := by
+  obtain ⟨next, sim, post⟩ := step
+  refine ⟨next, exprSim_lannot next compMap trace sourceEnv ⟨[]⟩ source flat expr loc sim, ?_⟩
+  cases loc
+  simpa only [EvaluateHOL.evaluate, compileExp] using post
+
 /-- Declaration outcome with the original abort-sensitive growth condition.
 This remains factored infrastructure until the carrier and evaluator
 relations are reviewed against HOL. -/
@@ -1371,6 +1441,34 @@ theorem evaluateDlet_advanced_compiled {C F : Type} [Nonempty C]
   · exact evaluateDlet_growing_compiled interp transform genv start finish next other source sourceLast flat
       sourceEnv trace n n' compMap nextMap gen nextGen location pattern expr flatDecs result
       compiled bounded sourceRun notTypeError envInv invariant generation expressionStep
+
+/-- A literal value declaration has the advanced factored outcome without an
+expression induction hypothesis, for any source-safe pattern. The factored
+relations still require correspondence review. -/
+theorem evaluateDlet_literal_advanced {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (start finish next : NextIndices) (other : Set (Nat × IndexKind))
+    (source sourceLast : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (sourceEnv : SemEnv Value) (trace : List VarN) (n n' : Nat)
+    (compMap nextMap : Environment) (gen nextGen : EnvironmentGenerationStore)
+    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (lit : Lit)
+    (flatDecs : List FlatLang.Exp) (result : Result (SemEnv Value) Value)
+    (compiled : compileDecs trace n start compMap gen [.dlet location pattern (.lit lit)] =
+      (n', next, nextMap, nextGen, flatDecs))
+    (bounded : idxPrev next finish)
+    (sourceRun : EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern (.lit lit)] =
+      (sourceLast, result))
+    (notTypeError : result ≠ .err (.abort .typeError))
+    (envInv : GlobalEnvInv genv compMap (fun _ => False) sourceEnv)
+    (invariant : factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (generation : envGenRel gen source.evalState) :
+    DletOutcomeAdvanced interp transform genv start finish other source flat sourceEnv trace n compMap gen
+      location pattern (.lit lit) := by
+  apply evaluateDlet_advanced_compiled interp transform genv start finish next other source sourceLast flat
+    sourceEnv trace n n' compMap nextMap gen nextGen location pattern (.lit lit) flatDecs result
+    compiled bounded sourceRun notTypeError envInv invariant generation
+  exact dletExpressionStep_literal interp transform genv start finish other source flat sourceEnv
+    ((AstHOL.patBindings pattern).reverse ++ trace) compMap gen lit invariant generation
 
 /-- A literal declaration initializes its reserved flat global slot. -/
 theorem evaluateDlet_literal_flat {C F : Type} (flat : FlatSem.State C F)
