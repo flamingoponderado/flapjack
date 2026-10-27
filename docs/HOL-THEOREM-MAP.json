@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "env_domain_eq_append",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EnvironmentDomain.lean",
+    "lean_name": "envDomainEq_append",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Replayed the original local theorem and captured its inferred types: both compiler environments use source_to_flat.environment, both source environments use semanticPrimitives.v sem_env, and the conjunction of the two domain equalities implies equality for the corresponding left-biased extensions. The Lean proof retains module shadowing when the first namespace contains an initial module."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "env_domain_eq_def",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateDenv.lean",
     "lean_name": "EnvDomainEq",

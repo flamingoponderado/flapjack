@@ -9092,4 +9092,6 @@ The capture is finite regression evidence, not a cross-language equivalence proo
 `source_to_flat_env_domain_probe.out` records the polymorphic type and four
 namespace-domain clauses of `env_domain_eq_def`; `EnvDomainEq` retains the
 independent source value type and all four domain equalities. The capture is
-source-review evidence, not a cross-language equivalence proof.
+source-review evidence, not a cross-language equivalence proof. It also
+replays the local `env_domain_eq_append` theorem with inferred types and no
+HOL hypotheses.

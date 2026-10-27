@@ -1,2 +1,3 @@
 env_domain_type=:source_to_flat$environment -> α sem_env -> bool
 env_domain_definition=∀(var_map :source_to_flat$environment) (env :α sem_env). env_domain_eq var_map env ⇔ nsDom var_map.v = nsDom env.v ∧ nsDomMod var_map.v = nsDomMod env.v ∧ nsDom var_map.c = nsDom env.c ∧ nsDomMod var_map.c = nsDomMod env.c
+env_domain_append=env_domain_eq (env1 :source_to_flat$environment) (env1' :semanticPrimitives$v sem_env) ∧ env_domain_eq (env2 :source_to_flat$environment) (env2' :semanticPrimitives$v sem_env) ⇒ env_domain_eq (extend_env env1 env2) ((env1' +++ env2') :semanticPrimitives$v sem_env)
