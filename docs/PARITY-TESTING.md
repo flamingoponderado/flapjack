@@ -474,11 +474,13 @@ For deterministic generated inputs, run
 `python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake`
 after building `cake`. The script verifies the pinned compiler provenance and
 compares exit status and complete stdout and stderr for generated parser and
-type-checking inputs, generated S-expression output, decimal string and
-character escapes for all 256 bytes, and successful programs compiled to RISC-V. Case counts can be
-changed with `--type-cases`, `--sexp-cases`, `--byte-cases`, and
-`--compile-cases`. `--type-seed` and `--compile-seed` select reproducible
-random inputs. These samples do not prove general parity.
+type-checking inputs, generated S-expression output, nested expression and
+lexical edge cases, decimal string and character escapes for all 256 bytes,
+and successful programs compiled to RISC-V. Case counts can be changed with
+`--type-cases`, `--sexp-cases`, `--structured-cases`, `--lex-cases`,
+`--byte-cases`, and `--compile-cases`. `--type-seed`, `--edge-seed`, and
+`--compile-seed` select reproducible random inputs. These samples do not prove
+general parity.
 
 `python3 scripts/check-cake-benchmark-parity.py` compares the complete RISC-V
 output for 27 benchmark programs from the pinned CakeML submodule with captured
