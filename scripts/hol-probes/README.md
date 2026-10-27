@@ -40,7 +40,7 @@
 
 `cake_source_test_probe.out` captures source comparison dispatch, including the original rejection of ordered Word64 comparisons. Floating-point comparison uses the existing pinned machine-IEEE probes and inherits the documented rational-cut assumption.
 
-`cake_word_array_probe.out` captures 64-bit Word64 arithmetic and shifts, array bounds, and block bounds lowering. The Word64 shift implementation currently supports the executed 64-bit path; its 32-bit lowering remains open.
+`cake_word_array_probe.out` captures 64-bit Word64 arithmetic, shifts and integer conversions, array and block bounds, and both string-comparison modes. The Word64 shift and integer-conversion implementations currently support the executed 64-bit path; their 32-bit lowering remains open.
 
 `mti_cake_bvi_probe.out` captures the full BVI program for a nested-function declaration with multi-argument introduction enabled, the other closure optimizations disabled, and the outer BVL/BVI optimizations omitted.
 

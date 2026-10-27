@@ -75,6 +75,18 @@ def shiftVar {width : Nat} (op : Shift) (v n : Nat) : WordLangExpHOL (BitVec wid
         | _ => .const 0
       else shiftN op (.var v) n
 
+/-- Storage sequence shared by the checked 64-bit word operations. -/
+private def writeWord64 {width : Nat} [NeZero width] (conf : Config) (header : BitVec width)
+    (dest : Nat) : WordLangProgHOL (BitVec width) :=
+  let bytes := BitVec.ofNat width (width / 8)
+  listSeq [
+    .assign 1 (.lookup .nextFree), .store (.op .add [.var 1, .const bytes]) 3,
+    .assign 3 (.const header), .store (.var 1) 3,
+    .set .nextFree (.op .add [.var 1, .const (2 * bytes)]),
+    .assign (adjustVar dest) (.op .or [
+      shiftN .lsl (.op .sub [.var 1, .lookup .currHeap]) (shiftLength conf - wordShiftAmount width),
+      .const 1])]
+
 /-- Internal pointer-field construction for nonempty constructor allocation;
 the standalone HOL helpers remain to be reviewed. -/
 def pointerBits {width : Nat} (conf : Config) (tag len : Nat) : BitVec width :=
@@ -444,6 +456,38 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
                   .const 1])]
               some (listSeq [.assign 3 (.load address), .assign 3 (shiftVar sh 3 n), stored], l)
       | _ => some (.skip, l)
+  | l, .assign dest (.wordOp .wordFromInt) args _ =>
+      match args with
+      | [src] =>
+          if width != 64 then none else
+          match encodeHeader (width := width) conf 3 1 with
+          | none => some (giveUp, l)
+          | some header =>
+              let src := adjustVar src
+              let bytes := BitVec.ofNat width (width / 8)
+              let loadBignum := listSeq [
+                .assign 3 (realAddr conf src), .assign 1 (.load (.var 3)),
+                .assign 3 (.load (.op .add [.var 3, .const bytes]))]
+              let value := WordLangProgHOL.ite .test src (.imm 1)
+                (.assign 3 (shiftN .asr (.var src) 2))
+                (.seq loadBignum (.ite .test 1 (.imm 16) .skip
+                  (.assign 3 (.op .sub [.const 0, .var 3]))))
+              some (.seq value (writeWord64 conf header dest), l)
+      | _ => some (.skip, l)
+  | l, .assign dest (.wordOp .wordToInt) args _ =>
+      match args with
+      | [src] =>
+          if width != 64 then none else
+          match encodeHeader (width := width) conf 3 1 with
+          | none => some (giveUp, l)
+          | some header =>
+              let bytes := BitVec.ofNat width (width / 8)
+              let address := WordLangExpHOL.op .add [realAddr conf (adjustVar src), .const bytes]
+              some (listSeq [
+                .assign 3 (.load address), .assign 1 (shiftN .lsr (.var 3) 61),
+                .ite .equal 1 (.imm 0) (.assign (adjustVar dest) (shiftN .lsl (.var 3) 2))
+                  (writeWord64 conf header dest)], l)
+      | _ => some (.skip, l)
   | l, .assign dest (.blockOp .boundsCheckBlock) args _ =>
       match args with
       | [base, index] =>
@@ -518,6 +562,32 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
             .assign 1 (shiftN .lsr header (width - conf.lenSize)),
             .assign 3 (shiftVar .ror (adjustVar index) 2),
             boolResult dest .lower 3 (.reg 1)], l)
+      | _ => some (.skip, l)
+  | l, .assign dest (.memOp (.stringCmp fast cmp)) args names =>
+      match args with
+      | [first, second] =>
+          let bytes := BitVec.ofNat width (width / 8)
+          let offset := width - conf.lenSize - wordShiftAmount width
+          let names := adjustSets (names.getD .ln)
+          let call (args : List Nat) := WordLangProgHOL.mustTerminate
+            (.call (some ([5, 7], names, .skip, secn, l)) (some stringCmpLoopLocation) args none)
+          let compareBytes := if fast then
+              WordLangProgHOL.ite .equal 5 (.reg 7) (listSeq [
+                .assign 11 (.op .add [.var 1, .const bytes]),
+                .assign 13 (.op .add [.var 3, .const bytes]), call [11, 13, 7, 7, 7]]) .skip
+            else listSeq [
+              .assign 11 (.op .add [.var 1, .const bytes]),
+              .assign 13 (.op .add [.var 3, .const bytes]), .assign 9 (.var 5),
+              .ite .lower 7 (.reg 5) (.assign 9 (.var 7)) .skip, call [11, 13, 9, 5, 7]]
+          let result := match cmp with
+            | .lt => boolResult dest .lower 5 (.reg 7)
+            | .gt => boolResult dest .lower 7 (.reg 5)
+            | .leq => boolResult dest .notLower 7 (.reg 5)
+            | .geq => boolResult dest .notLower 5 (.reg 7)
+          some (listSeq [
+            .assign 1 (realAddr conf (adjustVar first)), .assign 3 (realAddr conf (adjustVar second)),
+            .assign 5 (shiftN .lsr (.load (.var 1)) offset),
+            .assign 7 (shiftN .lsr (.load (.var 3)) offset), compareBytes, result], l + 1)
       | _ => some (.skip, l)
   | l, .assign dest (.memOp (.boundsCheckByte leq)) args _ =>
       match args with

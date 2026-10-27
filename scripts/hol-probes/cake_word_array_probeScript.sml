@@ -24,3 +24,15 @@ val _ = capture "shift64_asr_large" ``
 val _ = capture "boundsblock" ``
  let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16|> in
  data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$BlockOp closLang$BoundsCheckBlock) [1;2] NONE) : 64 wordLang$prog # num``;
+val _ = capture "wordfrom" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$WordOp closLang$WordFromInt) [1] NONE) : 64 wordLang$prog # num``;
+val _ = capture "wordto" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$WordOp closLang$WordToInt) [1] NONE) : 64 wordLang$prog # num``;
+val _ = capture "stringcmp" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$MemOp (closLang$StringCmp F Lt)) [1;2] NONE) : 64 wordLang$prog # num``;
+val _ = capture "stringcmp_fast" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$MemOp (closLang$StringCmp T Geq)) [1;2] NONE) : 64 wordLang$prog # num``;

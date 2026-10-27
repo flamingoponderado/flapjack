@@ -90,4 +90,53 @@ private def matchesWord64Shift (shift : Shift) (amount expected : Nat) : Bool :=
         (.ite .lower 3 (.reg 1) (.assign 8 (.const 18)) (.assign 8 (.const 2)))), 2) => true
   | _ => false
 
+private def matchesWord64Store : WordLangProgHOL (BitVec 64) → Bool
+  | .seq (.assign 1 (.lookup .nextFree)) (.seq (.store (.op .add [.var 1, .const 8]) 3)
+      (.seq (.assign 3 (.const h)) (.seq (.store (.var 1) 3)
+      (.seq (.set .nextFree (.op .add [.var 1, .const 16]))
+        (.assign 8 (.op .or [.shift .lsl (.op .sub [.var 1, .lookup .currHeap]) (.const 5), .const 1])))))) =>
+      h == 0x100000000000F
+  | _ => false
+
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.wordOp .wordFromInt) [1] none) with
+  | some (.seq (.ite .test 4 (.imm 1) (.assign 3 (.shift .asr (.var 4) (.const 2)))
+      (.seq (.seq (.assign 3 (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)]))
+          (.seq (.assign 1 (.load (.var 3))) (.assign 3 (.load (.op .add [.var 3, .const 8])))))
+        (.ite .test 1 (.imm 16) .skip (.assign 3 (.op .sub [.const 0, .var 3]))))) stored, 2) =>
+      matchesWord64Store stored
+  | _ => false
+
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.wordOp .wordToInt) [1] none) with
+  | some (.seq (.assign 3 (.load (.op .add [.op .add [.lookup .currHeap,
+        .shift .lsr (.var 4) (.const 5)], .const 8])))
+      (.seq (.assign 1 (.shift .lsr (.var 3) (.const 61)))
+        (.ite .equal 1 (.imm 0) (.assign 8 (.shift .lsl (.var 3) (.const 2))) stored)), 2) =>
+      matchesWord64Store stored
+  | _ => false
+
+#guard match compileControl? (width := 64) conf 5 2
+    (.assign 3 (.memOp (.stringCmp false .lt)) [1, 2] none) with
+  | some (.seq (.assign 1 (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)]))
+      (.seq (.assign 3 (.op .add [.lookup .currHeap, .shift .lsr (.var 6) (.const 5)]))
+      (.seq (.assign 5 (.shift .lsr (.load (.var 1)) (.const 45)))
+      (.seq (.assign 7 (.shift .lsr (.load (.var 3)) (.const 45)))
+      (.seq (.seq (.assign 11 (.op .add [.var 1, .const 8]))
+        (.seq (.assign 13 (.op .add [.var 3, .const 8]))
+        (.seq (.assign 9 (.var 5)) (.seq (.ite .lower 7 (.reg 5) (.assign 9 (.var 7)) .skip)
+          (.mustTerminate (.call (some ([5, 7], (.ls (), .ln), .skip, 5, 2)) (some 38) [11, 13, 9, 5, 7] none))))))
+        (.ite .lower 5 (.reg 7) (.assign 8 (.const 18)) (.assign 8 (.const 2))))))), 3) => true
+  | _ => false
+
+#guard match compileControl? (width := 64) conf 5 2
+    (.assign 3 (.memOp (.stringCmp true .geq)) [1, 2] none) with
+  | some (.seq (.assign 1 (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)]))
+      (.seq (.assign 3 (.op .add [.lookup .currHeap, .shift .lsr (.var 6) (.const 5)]))
+      (.seq (.assign 5 (.shift .lsr (.load (.var 1)) (.const 45)))
+      (.seq (.assign 7 (.shift .lsr (.load (.var 3)) (.const 45)))
+      (.seq (.ite .equal 5 (.reg 7) (.seq (.assign 11 (.op .add [.var 1, .const 8]))
+        (.seq (.assign 13 (.op .add [.var 3, .const 8]))
+          (.mustTerminate (.call (some ([5, 7], (.ls (), .ln), .skip, 5, 2)) (some 38) [11, 13, 7, 7, 7] none)))) .skip)
+        (.ite .notLower 5 (.reg 7) (.assign 8 (.const 18)) (.assign 8 (.const 2))))))), 3) => true
+  | _ => false
+
 end Flapjack.Test.CakeIoLoweringParity

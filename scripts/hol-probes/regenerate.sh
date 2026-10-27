@@ -454,7 +454,7 @@ run_probe cake_io_lowering_probeScript.sml cake_io_lowering_probe.out \
   lesseq mod bounds ffi "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
 
 run_probe cake_word_array_probeScript.sml cake_word_array_probe.out \
-  word64 array shift64 shift64_large shift64_asr_large boundsblock "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+  word64 array shift64 shift64_large shift64_asr_large boundsblock wordfrom wordto stringcmp stringcmp_fast "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
 
 run_probe cake_undefined_diagnostic_probeScript.sml cake_undefined_diagnostic_probe.out \
   infer constructor type_constructor "$cake_dir/compiler/inference/inferScript.sml" "$cake_dir/compiler/inference" "$cake_dir/compiler"
