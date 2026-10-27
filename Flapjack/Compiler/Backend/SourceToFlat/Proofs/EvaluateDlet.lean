@@ -908,6 +908,92 @@ theorem evaluateDlet_safe {C F : Type} [Nonempty C]
     exact evaluateDlet_alias_outcome interp transform genv start finish other source flat sourceEnv trace n compMap gen
       location name id safe envInv invariant
 
+/-- A `Dlet` retains the expression's oracle-forward and generation relations
+on success and raised errors. Abort results impose no postcondition. -/
+theorem dlet_effects_of_expression {C F : Type}
+    (interp : Option (Value → Option (Config × C))) (gen : EnvironmentGenerationStore)
+    (source : SemanticPrimitivesHOL.State F) (sourceEnv : SemEnv Value)
+    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp)
+    (expressionEffects :
+      let result := EvaluateHOL.evaluate source sourceEnv [expr]
+      match result.2 with
+      | .err (.abort _) => True
+      | _ => envGenRel gen result.1.evalState ∧ oracForwardRel interp source.evalState result.1.evalState) :
+    let result := EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr]
+    match result.2 with
+    | .err (.abort _) => True
+    | _ => envGenRel gen result.1.evalState ∧ oracForwardRel interp source.evalState result.1.evalState := by
+  by_cases distinct : (AstHOL.patBindings pattern).Nodup
+  · cases checked : AstHOL.everyExp (oneConCheck sourceEnv.c) expr with
+    | false => simp [EvaluateHOL.evaluateDecs, distinct, checked, EvaluateHOL.typeError]
+    | true =>
+      cases run : EvaluateHOL.evaluate source sourceEnv [expr] with
+      | mk middle result =>
+        rw [run] at expressionEffects
+        cases result with
+        | err error =>
+          cases error <;> simp_all [EvaluateHOL.evaluateDecs]
+        | val values =>
+          cases matched : pmatch sourceEnv.c middle.refs pattern (EvaluateHOL.headValue values) [] <;>
+            simp_all [EvaluateHOL.evaluateDecs, EvaluateHOL.typeError]
+  · simp [EvaluateHOL.evaluateDecs, distinct, EvaluateHOL.typeError]
+
+/-- Compiling one value declaration leaves the environment-generation store
+unchanged, including its identifier counter and stored maps. -/
+theorem compileDlet_generationStore (trace : List VarN) (n : Nat) (start : NextIndices)
+    (compMap : Environment) (gen : EnvironmentGenerationStore)
+    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp) :
+    (compileDecs trace n start compMap gen [.dlet location pattern expr]).2.2.2.1 = gen := by
+  cases found : simpleDlet pattern expr with
+  | none => simp [compileDecs, found]
+  | some pair =>
+    cases pair with
+    | mk name id =>
+      cases lookup : nsLookup compMap.v id <;> simp [compileDecs, found, lookup]
+      case some binding => cases binding <;> rfl
+
+/-- A source-safe declaration has both the factored simulation outcome and
+the oracle/generation effects supplied by its expression induction
+hypothesis. The fixed-global simulation and the factored relations still need
+HOL correspondence review. -/
+theorem evaluateDlet_safe_with_effects {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F) (sourceEnv : SemEnv Value)
+    (trace : List VarN) (n : Nat) (compMap : Environment) (gen : EnvironmentGenerationStore)
+    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp)
+    (safe : ∀ next, EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] ≠
+      (next, .err (.abort .typeError)))
+    (envInv : GlobalEnvInv genv compMap (fun _ => False) sourceEnv)
+    (invariant : factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (expressionSim : ExprSim genv compMap ((AstHOL.patBindings pattern).reverse ++ trace)
+      sourceEnv ⟨[]⟩ source flat expr)
+    (expressionInvariant :
+      let result := EvaluateHOL.evaluate source sourceEnv [expr]
+      let flatResult := FlatSem.evaluate ⟨[]⟩ flat
+        [compileExp ((AstHOL.patBindings pattern).reverse ++ trace) compMap expr]
+      match result.2 with
+      | .err (.abort _) => True
+      | _ => factoredInvariant interp transform gen genv (start, finish, other) result.1 flatResult.1)
+    (expressionEffects :
+      let result := EvaluateHOL.evaluate source sourceEnv [expr]
+      match result.2 with
+      | .err (.abort _) => True
+      | _ => envGenRel gen result.1.evalState ∧ oracForwardRel interp source.evalState result.1.evalState)
+    (fits : start.vidx + (match simpleDlet pattern expr with
+      | some _ => 0 | none => (AstHOL.patBindings pattern).length) ≤ finish.vidx) :
+    DletOutcome interp transform genv start finish other source flat sourceEnv trace n compMap gen
+      location pattern expr ∧
+    (let result := EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr]
+     match result.2 with
+     | .err (.abort _) => True
+     | _ => envGenRel (compileDecs trace n start compMap gen [.dlet location pattern expr]).2.2.2.1
+          result.1.evalState ∧ oracForwardRel interp source.evalState result.1.evalState) := by
+  exact ⟨evaluateDlet_safe interp transform genv start finish other source flat sourceEnv trace n compMap gen
+    location pattern expr safe envInv invariant expressionSim expressionInvariant fits,
+    by simpa [compileDlet_generationStore] using
+      dlet_effects_of_expression interp gen source sourceEnv location pattern expr expressionEffects⟩
+
 /-- A literal declaration initializes its reserved flat global slot. -/
 theorem evaluateDlet_literal_flat {C F : Type} (flat : FlatSem.State C F)
     (trace : List VarN) (n : Nat) (next : NextIndices) (compMap : Environment)
