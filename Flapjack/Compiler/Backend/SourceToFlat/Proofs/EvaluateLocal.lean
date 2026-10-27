@@ -149,6 +149,9 @@ inductive FactoredScopedDec : Dec → Prop where
   | literalConstructor (location : Flapjack.Misc.Location.Locs) (pattern : Pat)
       (name : Option (Ident ModN ConN)) (lits : List Lit) :
       FactoredScopedDec (.dlet location pattern (.con name (lits.map AstHOL.Exp.lit)))
+  | pureConstructor (location : Flapjack.Misc.Location.Locs) (pattern : Pat)
+      (name : Option (Ident ModN ConN)) (args : List (Lit ⊕ (VarN × AstHOL.Exp))) :
+      FactoredScopedDec (.dlet location pattern (.con name (args.map pureConstructorArgument)))
   | module_ (moduleName : ModN) (decs : List Dec) :
       (∀ dec, dec ∈ decs → FactoredScopedDec dec) → FactoredScopedDec (.dmod moduleName decs)
   | local_ (locals body : List Dec) :
@@ -171,6 +174,8 @@ theorem factoredDecIH_scoped {C F : Type} [Nonempty C]
   | datatype_ location types => exact factoredDecIH_dtype interp transform location types
   | literalConstructor location pattern name lits =>
     exact factoredDecIH_dlet_literalConstructor interp transform location pattern name lits
+  | pureConstructor location pattern name args =>
+    exact factoredDecIH_dlet_pureConstructor interp transform location pattern name args
   | module_ moduleName decs _ ih =>
     apply factoredDecIH_dmod interp transform moduleName decs
     apply factoredDecIH_list interp transform decs
