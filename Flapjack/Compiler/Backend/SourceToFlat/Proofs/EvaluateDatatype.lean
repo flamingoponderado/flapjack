@@ -1191,4 +1191,174 @@ theorem GlobalGrowth.allocateTags {C : Type}
     (fun _ tag arity _ => free.2 tag arity)
   exact tableGrowth.trans constructorGrowth
 
+/-- The compiler constructor namespace for a sequence of type definitions,
+in the order used by the datatype declaration pass. -/
+def datatypeConstructorNamespace : Nat → TypeDef → Namespace ModN ConN (Nat × Option (Nat × List (Nat × Nat)))
+  | _, [] => nsEmpty
+  | idx, (_, _, constructors) :: rest =>
+    nsAppend (datatypeConstructorNamespace (idx + 1) rest) (allocTags idx constructors).1
+
+private theorem namespaceAppend_assoc {M N A : Type} (first second third : Namespace M N A) :
+    nsAppend (nsAppend first second) third = nsAppend first (nsAppend second third) := by
+  cases first; cases second; cases third
+  simp [nsAppend, List.append_assoc]
+
+/-- The recursive namespace above is exactly the compiler's indexed fold,
+including its ordering of shadowed constructors. -/
+theorem datatypeConstructorNamespace_fold (types : TypeDef) (idx offset : Nat)
+    (acc : Namespace ModN ConN (Nat × Option (Nat × List (Nat × Nat)))) :
+    ((types.zipIdx offset).map fun (td, tid) => allocTags (idx + tid) td.2.2).foldl
+      (fun ns lc => nsAppend lc.1 ns) acc = nsAppend (datatypeConstructorNamespace (idx + offset) types) acc := by
+  induction types generalizing offset acc with
+  | nil =>
+    cases acc
+    simp [datatypeConstructorNamespace, nsAppend, nsEmpty]
+  | cons td rest ih =>
+    rcases td with ⟨parameters, typeName, constructors⟩
+    simp only [List.zipIdx_cons, List.map_cons, List.foldl_cons, datatypeConstructorNamespace]
+    rw [ih]
+    rw [namespaceAppend_assoc]
+    simp only [Nat.add_assoc]
+
+/-- The compiler's datatype case returns this recursively described
+constructor namespace. -/
+theorem compileDecs_dtype_constructorNamespace (trace : List VarN) (n : Nat) (next : NextIndices)
+    (env : Environment) (gen : EnvironmentGenerationStore) (location : Flapjack.Misc.Location.Locs)
+    (types : TypeDef) :
+    (compileDecs trace n next env gen [.dtype location types]).2.2.1.c =
+      datatypeConstructorNamespace next.tidx types := by
+  simp only [compileDecs]
+  rw [datatypeConstructorNamespace_fold]
+  cases result : datatypeConstructorNamespace next.tidx types
+  simp [nsAppend, nsEmpty]
+
+/-- Each type definition preserves constructor and module domains, and the
+property composes in the declaration's shadowing order. -/
+theorem envDomainEq_datatypeConstructorNamespace (idx stamp : Nat) (types : TypeDef) :
+    EnvDomainEq { v := nsEmpty, c := datatypeConstructorNamespace idx types }
+      ({ v := nsEmpty, c := buildTdefs stamp types } : SemEnv Value) := by
+  induction types generalizing idx stamp with
+  | nil =>
+    simpa [datatypeConstructorNamespace, buildTdefs, emptyEnv] using envDomainEq_empty
+  | cons td rest ih =>
+    rcases td with ⟨parameters, typeName, constructors⟩
+    have first := envDomainEq_allocTags idx stamp constructors
+    have remaining := ih (idx + 1) (stamp + 1)
+    have combined := envDomainEq_append _ _ _ _ ⟨remaining, first⟩
+    simpa [datatypeConstructorNamespace, buildTdefs, extendEnv, extendDecEnv, nsAppend, nsEmpty] using combined
+
+/-- Proof-side global environment produced by allocating each type in a
+declaration, using consecutive compiler IDs and source stamps. -/
+noncomputable def allocateTypeDefinitions : Nat → Nat → TypeDef → GlobalEnv → GlobalEnv
+  | _, _, [], genv => genv
+  | idx, stamp, (_, _, constructors) :: rest, genv =>
+    allocateTypeDefinitions (idx + 1) (stamp + 1) rest
+      (installTypeConstructorList idx stamp (allocatedConstructorEntries (M := ModN) constructors.reverse)
+        { genv with tys := finiteUpdate genv.tys idx ((allocTags1 constructors.reverse :
+          Namespace ModN ConN Nat × Spt Nat × List (Nat × Nat)).2.2.reverse) })
+
+/-- Allocation of an entire well-formed datatype declaration preserves the
+factored invariant and relates the source and compiled environments. -/
+theorem factoredInvariant_allocateTypeDefinitions {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (gen : EnvironmentGenerationStore) (finish : NextIndices) (other : Set (Nat × IndexKind))
+    (flat : FlatSem.State C F) (types : TypeDef) :
+    ∀ (genv : GlobalEnv) (start : NextIndices) (source : State F),
+      factoredInvariant interp transform gen genv (start, finish, other) source flat →
+      start.tidx + types.length ≤ finish.tidx → types.all checkDupCtors = true →
+      let finalGenv := allocateTypeDefinitions start.tidx source.nextTypeStamp types genv
+      factoredInvariant interp transform gen finalGenv
+        ({ start with tidx := start.tidx + types.length }, finish, other)
+        { source with nextTypeStamp := source.nextTypeStamp + types.length } flat ∧
+      GlobalGrowth genv finalGenv ∧
+      GlobalEnvInv finalGenv { v := nsEmpty, c := datatypeConstructorNamespace start.tidx types }
+        (fun _ => False) { v := nsEmpty, c := buildTdefs source.nextTypeStamp types } := by
+  induction types with
+  | nil =>
+    intro genv start source valid _ _
+    exact ⟨by simpa [allocateTypeDefinitions] using valid, GlobalGrowth.refl genv,
+      by simpa [allocateTypeDefinitions, datatypeConstructorNamespace, buildTdefs, emptyEnv] using globalEnvInv_empty genv⟩
+  | cons td rest ih =>
+    rcases td with ⟨parameters, typeName, constructors⟩
+    intro genv start source valid fits checked
+    have checkedHead : checkDupCtors (parameters, typeName, constructors) = true := (List.all_eq_true.mp checked) _ (by simp)
+    have names : (constructors.map Prod.fst).Nodup := by simpa [checkDupCtors] using checkedHead
+    have checkedRest : rest.all checkDupCtors = true := by
+      apply List.all_eq_true.mpr
+      intro item member
+      exact (List.all_eq_true.mp checked) item (List.mem_cons_of_mem _ member)
+    let nextGenv := installTypeConstructorList start.tidx source.nextTypeStamp
+      (allocatedConstructorEntries (M := ModN) constructors.reverse)
+      { genv with tys := finiteUpdate genv.tys start.tidx ((allocTags1 constructors.reverse :
+        Namespace ModN ConN Nat × Spt Nat × List (Nat × Nat)).2.2.reverse) }
+    let nextStart := { start with tidx := start.tidx + 1 }
+    let nextSource := { source with nextTypeStamp := source.nextTypeStamp + 1 }
+    have nextValid : factoredInvariant interp transform gen nextGenv (nextStart, finish, other) nextSource flat :=
+      factoredInvariant_allocateTags interp transform gen genv start finish other source flat constructors valid (by simp at fits; omega) names
+    have nextGrowth : GlobalGrowth genv nextGenv :=
+      GlobalGrowth.allocateTags interp genv source.nextTypeStamp source.nextExnStamp source.evalState start finish other
+        constructors valid.2.2.2.1 (by simp at fits; omega)
+    have nextInv : GlobalEnvInv nextGenv
+        { v := nsEmpty, c := (allocTags start.tidx constructors :
+          Namespace ModN ConN (Nat × Option (Nat × List (Nat × Nat))) × Spt Nat).1 }
+        (fun _ => False) { v := nsEmpty, c := alistToNs (buildConstrs source.nextTypeStamp constructors).reverse } :=
+      globalEnvInv_allocTags genv start.tidx source.nextTypeStamp constructors names
+    obtain ⟨lastValid, lastGrowth, lastInv⟩ := ih nextGenv nextStart nextSource nextValid (by simp [nextStart] at fits ⊢; omega) checkedRest
+    have carriedInv := globalEnvInv_growth nextGenv _ lastGrowth _ (fun _ => False) _ nextInv
+    have domain := envDomainEq_datatypeConstructorNamespace nextStart.tidx nextSource.nextTypeStamp rest
+    have combined := globalEnvInv_append_factored _ _ _ _ _ domain lastInv carriedInv
+    refine ⟨?_, ?_, ?_⟩
+    · simpa [allocateTypeDefinitions, nextGenv, nextStart, nextSource, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using lastValid
+    · simpa [allocateTypeDefinitions, nextGenv, nextStart, nextSource] using nextGrowth.trans lastGrowth
+    · simpa [allocateTypeDefinitions, datatypeConstructorNamespace, buildTdefs, extendEnv, extendDecEnv,
+        nsAppend, nsEmpty, nextGenv, nextStart, nextSource] using combined
+
+/-- Datatype declarations satisfy the factored declaration simulation. The
+factored relations remain subject to the separate HOL correspondence review. -/
+theorem factoredDecIH_dtype {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (location : Flapjack.Misc.Location.Locs) (types : TypeDef) :
+    FactoredDecIH (F := F) interp transform [.dtype location types] := by
+  intro genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen
+    flatDecs result sourceRun invariant compiled _envInv notTypeError generation _future bounded
+  have checked : types.all checkDupCtors = true := by
+    cases h : types.all checkDupCtors with
+    | true => rfl
+    | false =>
+      have bad : EvaluateHOL.evaluateDecs source sourceEnv [.dtype location types] =
+          (source, .err (.abort .typeError)) := by
+        simp [EvaluateHOL.evaluateDecs, h, EvaluateHOL.typeError]
+      rw [sourceRun] at bad
+      exact False.elim (notTypeError (Prod.mk.inj bad).2)
+  have sourceEq := sourceRun
+  simp only [EvaluateHOL.evaluateDecs, checked, if_true, Prod.mk.injEq] at sourceEq
+  obtain ⟨stateEq, resultEq⟩ := sourceEq
+  subst sourceLast
+  subst result
+  have foldEq : ((types.zipIdx.map fun (td, tid) => allocTags (start.tidx + tid) td.2.2).foldl
+      (fun ns lc => nsAppend lc.1 ns) nsEmpty) = datatypeConstructorNamespace start.tidx types := by
+    have result := compileDecs_dtype_constructorNamespace trace n start env gen location types
+    simpa only [compileDecs] using result
+  have compiledEq := compiled
+  simp only [compileDecs, foldEq, Prod.mk.injEq] at compiledEq
+  obtain ⟨_, nextEq, envEq, genEq, codeEq⟩ := compiledEq
+  subst next
+  subst nextEnv
+  subst nextGen
+  subst flatDecs
+  have fits : start.tidx + types.length ≤ finish.tidx := bounded.2.1
+  obtain ⟨finalInvariant, growth, envResult⟩ :=
+    factoredInvariant_allocateTypeDefinitions interp transform gen finish other flat types genv start source
+      invariant fits checked
+  refine ⟨flat, _, none, ?_, finalInvariant.2.2.1, ?_, ?_, ?_⟩
+  · simp [FlatSem.evaluateDecs]
+  · intro _
+    exact ⟨finalInvariant, oracForwardRel_refl interp source.evalState, growth⟩
+  · intro resultEnv same
+    cases same
+    exact ⟨rfl, envDomainEq_datatypeConstructorNamespace start.tidx source.nextTypeStamp types,
+      generation, envResult⟩
+  · intro error impossible
+    cases impossible
+
 end Flapjack.Compiler.Backend.SourceToFlat
