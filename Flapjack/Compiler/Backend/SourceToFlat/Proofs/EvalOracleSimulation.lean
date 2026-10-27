@@ -191,6 +191,34 @@ theorem doEval_oracle_preserves_oracles {C : Type} [Nonempty C]
             (envGenRel_advance state (Flapjack.holShiftSeq 1 state.oracle)).1,
             (envGenRel_advance state (Flapjack.holShiftSeq 1 state.oracle)).2⟩
 
+/-- The compiler configuration selected by a successful source Eval retains
+the previous environment-generation map. This isolates the corresponding
+postcondition of the full source-to-flat Eval simulation. -/
+theorem doEval_oracle_envStoreAdvance {C : Type} [Nonempty C]
+    (decode : Value → Option (Config × C)) (transform : List Dec → List Dec)
+    (state : EvalOracleState) (flat : FlatSem.InstallConfig C) (genv : GlobalEnv)
+    (steps : srcOracStepInvs (some decode) transform (some (.evalOracle state)))
+    (envs : srcOracEnvInvs (some decode) genv (some (.evalOracle state)))
+    (related : oracRel (some decode) transform (some (.evalOracle state)) flat)
+    (first second third fourth bytesValue wordsValue : Value)
+    (output : SemEnv Value × List Dec × Option EvalState)
+    (success : SemanticPrimitivesHOL.doEval
+      [first, second, third, fourth, bytesValue, wordsValue] (some (.evalOracle state)) = some output) :
+    ∃ current next,
+      srcOracNextCfg (some decode) (some (.evalOracle state)) = some current ∧
+      srcOracNextCfg (some decode) output.2.2 = some next ∧
+      current.envs.next = state.envs.length ∧ envStoreInv next.envs ∧
+      Flapjack.sptSubspt current.envs.envGens next.envs.envGens ∧
+      envGenRel ⟨0, current.envs.next, .ln⟩ output.2.2 := by
+  obtain ⟨post, _, _, _, nextGenRel⟩ :=
+    doEval_oracle_preserves_oracles decode transform state flat steps related
+      first second third fourth bytesValue wordsValue output success
+  obtain ⟨current, next, currentCfg, nextCfg, length, valid, submap⟩ :=
+    sourceOracle_envStoreAdvance decode transform genv state steps envs
+  refine ⟨current, next, currentCfg, ?_, length, valid, submap, ?_⟩
+  · simpa [post] using nextCfg
+  · simpa [length] using nextGenRel
+
 private theorem list_length_six {α : Type} (xs : List α) (length : xs.length = 6) :
     ∃ a b c d e f, xs = [a, b, c, d, e, f] := by
   cases xs with

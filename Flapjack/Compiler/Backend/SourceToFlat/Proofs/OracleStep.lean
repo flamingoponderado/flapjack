@@ -22,6 +22,38 @@ def envGenInv (gen : EnvironmentGenerationStore) : Prop :=
 def envStoreInv (store : EnvironmentStore) : Prop :=
   ∀ i, Flapjack.sptMem i store.envGens → i < store.next
 
+/-- Incremental compilation adds a fresh environment generation and retains
+every previously stored generation. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "inc_compile_prog_env_submap"]
+theorem incCompileProg_envSubmap (envId : Nat × Nat) (config next : Config)
+    (decs : List Dec) (flatDecs : List FlatLang.Exp)
+    (compiled : incCompileProg envId config decs = (next, flatDecs))
+    (valid : envStoreInv config.envs) :
+    envStoreInv next.envs ∧ Flapjack.sptSubspt config.envs.envGens next.envs.envGens := by
+  generalize resultEq : compileDecs [] 1 config.next (lookupEnvId envId config.envs)
+    ⟨0, config.envs.next, .ln⟩ decs = result at compiled
+  rcases result with ⟨n, indices, env, gen, compiledDecs⟩
+  simp only [incCompileProg, resultEq] at compiled
+  have nextEq : next = { config with next := indices, envs :=
+      ⟨config.envs.next + 1,
+        Flapjack.sptInsert config.envs.next (Flapjack.sptInsert gen.next (extendEnv env (lookupEnvId envId config.envs)) gen.envs) config.envs.envGens⟩ } :=
+    (Prod.mk.inj compiled).1.symm
+  subst next
+  dsimp only
+  constructor
+  · intro i mem
+    change i < config.envs.next + 1
+    rw [Flapjack.sptMem_sptInsert] at mem
+    rcases mem with eq | old
+    · omega
+    · have := valid i old; omega
+  · intro i mem
+    have bound := valid i mem
+    have ne : i ≠ config.envs.next := by omega
+    constructor
+    · exact (Flapjack.sptMem_sptInsert _ _ _ _).2 (Or.inr mem)
+    · exact Flapjack.sptLookup_sptInsert_ne _ _ _ _ ne
+
 /-- Current compiler and source-oracle generations agree. The bounded index
 premise makes the optional lookup agree with HOL's `EL`. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "env_gen_rel_def"]
@@ -212,6 +244,32 @@ theorem sourceOracle_firstStep {C : Type} [Nonempty C]
               rfl, rfl, rfl, decoded0, decoded1, ?_, ?_⟩
             · exact Prod.ext advance.symm rfl
             · simp [srcOracNextCfg, srcOracNextCfgInner, firstEntry, decoded0]
+
+/-- An Eval step advances to the compiler's next configuration while
+preserving the old environment-generation map. The source environment
+invariant supplies the initial store bound needed by the original submap
+theorem; full preservation of the environment invariant remains separate. -/
+theorem sourceOracle_envStoreAdvance {C : Type} [Nonempty C]
+    (decode : Value → Option (Config × C)) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (state : EvalOracleState)
+    (steps : srcOracStepInvs (some decode) transform (some (.evalOracle state)))
+    (envs : srcOracEnvInvs (some decode) genv (some (.evalOracle state))) :
+    ∃ current next,
+      srcOracNextCfg (some decode) (some (.evalOracle state)) = some current ∧
+      srcOracNextCfg (some decode)
+        (some (.evalOracle (addEnvGeneration { state with oracle := Flapjack.holShiftSeq 1 state.oracle }))) = some next ∧
+      current.envs.next = state.envs.length ∧ envStoreInv next.envs ∧
+      Flapjack.sptSubspt current.envs.envGens next.envs.envGens := by
+  obtain ⟨_, envId, value, decs, flatDecs, current, payload, nextId, nextValue, nextDecs,
+    next, nextPayload, decoderEq, entry, nextEntry, decoded, nextDecoded, compiled, currentCfg⟩ :=
+    sourceOracle_firstStep (some decode) transform state steps
+  cases decoderEq
+  obtain ⟨stored, storedCfg, valid, length, _⟩ := envs
+  rw [currentCfg] at storedCfg
+  cases storedCfg
+  obtain ⟨nextValid, submap⟩ := incCompileProg_envSubmap envId current next (transform decs) flatDecs compiled valid
+  refine ⟨current, next, currentCfg, ?_, length, nextValid, submap⟩
+  simp [srcOracNextCfg, srcOracNextCfgInner, addEnvGeneration, Flapjack.holShiftSeq, nextEntry, nextDecoded]
 
 /-- An oracle environment lookup and the first incremental step agree on the
 same compiler configuration and its stored global environment. This is

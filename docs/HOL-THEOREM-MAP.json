@@ -1,5 +1,13 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "inc_compile_prog_env_submap",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleStep.lean",
+    "lean_name": "incCompileProg_envSubmap",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed inc_compile_env_submap probe and incremental compiler definition: identical environment-id pair, source config and declarations, compiler-result equality and initial environment-store invariant imply the same final invariant and old-to-new sptree submap. The Lean sptSubspt definition preserves both domain membership and lookup values, matching HOL subspt; the new generation uses the old next index and the same sptree insertion."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "do_eval_oracle_def",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs.lean",
