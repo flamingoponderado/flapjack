@@ -105144,5 +105144,21 @@
       "genvC"
     ],
     "reviewer": "Codex source comparison: The original genv_c_ok premise and complete lookup iff retain the list stamp, tag, type ID and arity. The canonical finite-map input has a same-module lookup/support roundtrip witness. The typed original theorem is captured in source_to_flat_global_env_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "check_type_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Primitives.lean",
+    "lean_name": "checkType",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: The Bool case accepts exactly empty constructors with the original Boolean type ID and true or false tag; the remaining primitive cases accept only the matching literal constructor and word width. Typed original equations and finite examples are captured in source_to_flat_primitive_type_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "dest_Litv_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Primitives.lean",
+    "lean_name": "destLitv",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: A literal projects to its payload and every other value returns none. Typed original equations and finite examples are captured in source_to_flat_primitive_type_probe."
   }
 ]

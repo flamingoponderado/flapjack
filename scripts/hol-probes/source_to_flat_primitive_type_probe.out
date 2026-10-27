@@ -1,0 +1,12 @@
+check_type_typed=(check_type BoolT (v :v) ⇔ v = (Boolv T :v) ∨ v = (Boolv F :v)) ∧ (check_type IntT v ⇔ ∃(i :int). v = (Litv (IntLit i) :v)) ∧ (check_type CharT v ⇔ ∃(c :char). v = (Litv (Char c) :v)) ∧ (check_type StrT v ⇔ ∃(s :mlstring). v = (Litv (StrLit s) :v)) ∧ (check_type (WordT W8 :prim_type) v ⇔ ∃(w :word8). v = (Litv (Word8 w) :v)) ∧ (check_type (WordT W64 :prim_type) v ⇔ ∃(w :word64). v = (Litv (Word64 w) :v)) ∧ (check_type Float64T v ⇔ ∃(w :word64). v = (Litv (Float64 w) :v))
+dest_litv_typed=dest_Litv (Litv (v :lit) :v) = SOME v ∧ dest_Litv (Conv (v2 :(num # num option) option) (v3 :v list)) = (NONE :lit option) ∧ dest_Litv (Closure (v4 :v environment) (v5 :mlstring) (v6 :exp) :v) = (NONE :lit option) ∧ dest_Litv (Recclosure (v7 :v environment) (v8 :(mlstring # mlstring # exp) list) (v9 :mlstring) :v) = (NONE :lit option) ∧ dest_Litv (Loc (v10 :bool) (v11 :num) :v) = (NONE :lit option) ∧ dest_Litv (Vectorv (v12 :v list)) = (NONE :lit option)
+v_rel_check_type_typed=(v_rel (genv :global_env) (v1 :semanticPrimitives$v) (w1 :v) :bool) ∧ genv_c_ok genv.c ∧ check_type (ty :prim_type) v1 ⇒ check_type ty w1
+true_bool=T
+false_bool=T
+wrong_bool=F
+int_type=T
+wrong_int=F
+word8_type=T
+word64_type=T
+literal_projection=SOME (IntLit 7)
+nonliteral_projection=NONE
