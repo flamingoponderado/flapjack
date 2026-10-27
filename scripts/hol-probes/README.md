@@ -9024,4 +9024,4 @@ The capture is finite regression evidence, not a cross-language equivalence proo
 
 `prim_sem_env_probeScript.sml` captures the original semantic initialization types for `Flapjack/PrimTypesHOL.lean`.
 
-`cake_evaluate_ffi_props_probeScript.sml` captures the pinned typed FFI trace and oracle-preservation lemmas used by `Flapjack/EvaluateProps.lean`.
+`cake_evaluate_ffi_props_probeScript.sml` captures the pinned typed primitive-application, FFI trace, and oracle-preservation lemmas used by `Flapjack/EvaluateProps.lean`.

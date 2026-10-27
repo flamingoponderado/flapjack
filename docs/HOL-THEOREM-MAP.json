@@ -103569,5 +103569,37 @@
     "lean_name": "callFFIRelHOL_rtc_ioEventsMono",
     "statement_status": "pending_statement_review",
     "reviewer": "Codex (pending review): pinned typed original captured in cake_evaluate_ffi_props_probe; RTC uses Relation.ReflTransGen and FFI states use the existing HOL-shaped carrier."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "do_app_call_FFI_rel",
+    "lean_path": "Flapjack/EvaluateProps/DoApp.lean",
+    "lean_name": "doAppFfi_callFFIRel",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending complete source evaluator and carrier review): one constructor case of the pinned original theorem captured in cake_evaluate_ffi_props_probe; the general theorem and other primitive cases remain open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "do_app_call_FFI_rel",
+    "lean_path": "Flapjack/EvaluateProps/DoApp.lean",
+    "lean_name": "doAppTest_callFFIRel",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending complete source evaluator and carrier review): one constructor case of the pinned original theorem captured in cake_evaluate_ffi_props_probe; the general theorem and other primitive cases remain open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "do_app_call_FFI_rel",
+    "lean_path": "Flapjack/EvaluateProps/DoApp.lean",
+    "lean_name": "doAppFromTo_callFFIRel",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending complete source evaluator and carrier review): one constructor case of the pinned original theorem captured in cake_evaluate_ffi_props_probe; the general theorem and other primitive cases remain open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "do_app_call_FFI_rel",
+    "lean_path": "Flapjack/EvaluateProps/DoApp.lean",
+    "lean_name": "doAppArith_callFFIRel",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending complete source evaluator and carrier review): one constructor case of the pinned original theorem captured in cake_evaluate_ffi_props_probe; the general theorem and other primitive cases remain open."
   }
 ]
