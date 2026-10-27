@@ -88,6 +88,93 @@ theorem genvAllocatedIndices_append_none (genv : GlobalEnv) (count : Nat) :
   | «type» => rfl
   | «exception» => rfl
 
+/-- Filling one blank global slot adds exactly its variable index to the
+allocated-index set. -/
+theorem genvAllocatedIndices_fillSlot (genv : GlobalEnv) (idx : Nat) (value : FlatSem.Value)
+    (empty : genv.v[idx]? = some none) :
+    genvAllocatedIndices { genv with v := genv.v.set idx (some value) } =
+      genvAllocatedIndices genv ∪ {(idx, .variable)} := by
+  have bound : idx < genv.v.length := (List.getElem?_eq_some_iff.mp empty).1
+  ext ⟨i, kind⟩
+  change genvAllocatedIndices { genv with v := genv.v.set idx (some value) } (i, kind) ↔
+    genvAllocatedIndices genv (i, kind) ∨ (i, kind) = (idx, .variable)
+  cases kind with
+  | «variable» =>
+    change (i < (genv.v.set idx (some value)).length ∧
+      (genv.v.set idx (some value))[i]?.getD none ≠ none) ↔
+      (i < genv.v.length ∧ genv.v[i]?.getD none ≠ none) ∨ (i, IndexKind.variable) = (idx, .variable)
+    by_cases same : i = idx
+    · subst i
+      simp [bound]
+    · simp [Ne.symm same, same]
+  | «type» => simp [genvAllocatedIndices]
+  | «exception» => simp [genvAllocatedIndices]
+
+/-- Moving a single point from a reserved block into the allocated set
+preserves four-way disjointness when the remaining block excludes it. -/
+theorem allDisjoint_consume {α : Type} (block remaining future other allocated : Set α) (point : α)
+    (old : allDisjoint [block, future, other, allocated])
+    (subset : remaining ⊆ block) (inBlock : point ∈ block) (notRemaining : point ∉ remaining) :
+    allDisjoint [remaining, future, other, allocated ∪ {point}] := by
+  have pair (i j : Nat) (hi : i < 4) (hj : j < 4) (ne : i ≠ j) :
+      ∀ x, x ∈ ([block, future, other, allocated] : List (Set α))[i] →
+        x ∈ ([block, future, other, allocated] : List (Set α))[j] → False := by
+    intro x xi xj
+    have h := old i j (by simpa using hi) (by simpa using hj) ne
+    have hx : x ∈ ([block, future, other, allocated] : List (Set α))[i] ∩
+        ([block, future, other, allocated] : List (Set α))[j] := ⟨xi, xj⟩
+    rw [h] at hx
+    exact hx
+  have p01 := pair 0 1 (by omega) (by omega) (by omega)
+  have p02 := pair 0 2 (by omega) (by omega) (by omega)
+  have p03 := pair 0 3 (by omega) (by omega) (by omega)
+  have p12 := pair 1 2 (by omega) (by omega) (by omega)
+  have p13 := pair 1 3 (by omega) (by omega) (by omega)
+  have p23 := pair 2 3 (by omega) (by omega) (by omega)
+  simp only [List.getElem_cons_zero, List.getElem_cons_succ] at p01 p02 p03 p12 p13 p23
+  have q03 : ∀ x, x ∈ remaining → x ∈ allocated ∪ {point} → False := by
+    intro x h mem
+    rcases mem with mem | mem
+    · exact p03 x (subset h) mem
+    · have eq : x = point := mem
+      exact notRemaining (eq ▸ h)
+  have q13 : ∀ x, x ∈ future → x ∈ allocated ∪ {point} → False := by
+    intro x h mem
+    rcases mem with mem | mem
+    · exact p13 x h mem
+    · have eq : x = point := mem
+      exact p01 point inBlock (eq ▸ h)
+  have q23 : ∀ x, x ∈ other → x ∈ allocated ∪ {point} → False := by
+    intro x h mem
+    rcases mem with mem | mem
+    · exact p23 x h mem
+    · have eq : x = point := mem
+      exact p02 point inBlock (eq ▸ h)
+  intro i j hi hj ne
+  have hi' : i = 0 ∨ i = 1 ∨ i = 2 ∨ i = 3 := by simp at hi; omega
+  have hj' : j = 0 ∨ j = 1 ∨ j = 2 ∨ j = 3 := by simp at hj; omega
+  apply Set.eq_empty_iff_forall_notMem.mpr
+  intro x hx
+  rcases hi' with rfl | rfl | rfl | rfl <;>
+    rcases hj' with rfl | rfl | rfl | rfl <;>
+    simp only [List.getElem_cons_zero, List.getElem_cons_succ, Set.mem_inter_iff] at hx
+  all_goals try omega
+  all_goals rcases hx with ⟨a, b⟩
+  all_goals
+    first
+    | exact p01 x (subset a) b
+    | exact p01 x (subset b) a
+    | exact p02 x (subset a) b
+    | exact p02 x (subset b) a
+    | exact q03 x a b
+    | exact q03 x b a
+    | exact p12 x a b
+    | exact p12 x b a
+    | exact q13 x a b
+    | exact q13 x b a
+    | exact q23 x a b
+    | exact q23 x b a
+
 /-- Split the second of four disjoint sets, while moving the first into the
 third. This is the set rearrangement required by an incremental Eval step. -/
 theorem allDisjoint_four_advance {α : Type} (oldBlock oldFuture other allocated newBlock newFuture : Set α)

@@ -138,6 +138,34 @@ def idxRangeRel {C : Type} (interp : Option (Value → Option (Config × C))) (g
     (∀ cn t, nextType ≤ t → ¬ ∃ key, genv.c.lookup key = some (.typeStamp cn t)) ∧
     (∀ cn, nextExn ≤ cn → ¬ ∃ key, genv.c.lookup key = some (.exnStamp cn))
 
+/-- Filling the next reserved variable slot advances the start of the
+current block while preserving the source index-range invariant. -/
+theorem idxRangeRel_fillSlot {C : Type}
+    (interp : Option (Value → Option (Config × C))) (genv : GlobalEnv)
+    (nextType nextExn : Nat) (evalState : Option EvalState)
+    (start finish : NextIndices) (other : Set (Nat × IndexKind)) (value : FlatSem.Value)
+    (range : idxRangeRel interp genv nextType nextExn evalState (start, finish, other))
+    (empty : genv.v[start.vidx]? = some none) (fits : start.vidx + 1 ≤ finish.vidx) :
+    idxRangeRel interp { genv with v := genv.v.set start.vidx (some value) }
+      nextType nextExn evalState ({ start with vidx := start.vidx + 1 }, finish, other) := by
+  obtain ⟨_, _, final, _, tuple, nextMatch, previous, disjoint, types, exceptions⟩ := range
+  cases tuple
+  refine ⟨_, _, final, other, rfl, nextMatch, previous, ?_, types, exceptions⟩
+  rw [genvAllocatedIndices_fillSlot genv start.vidx value empty]
+  apply allDisjoint_consume (idxBlock start finish)
+    (idxBlock { start with vidx := start.vidx + 1 } finish) (idxFinalBlock final)
+    other (genvAllocatedIndices genv) (start.vidx, .variable) disjoint
+  · intro ⟨i, kind⟩ member
+    change idxBlock { start with vidx := start.vidx + 1 } finish (i, kind) at member
+    change idxBlock start finish (i, kind)
+    cases kind <;> simp only [idxBlock] at member ⊢ <;> omega
+  · change idxBlock start finish (start.vidx, .variable)
+    simp only [idxBlock]
+    omega
+  · change ¬ idxBlock { start with vidx := start.vidx + 1 } finish (start.vidx, .variable)
+    simp only [idxBlock]
+    omega
+
 /-- Advancing the compiler's next configuration moves the old current block
 into the reserved set and splits the old future range at the new counters.
 Appending blank globals leaves allocated indices and stamp maps unchanged. -/

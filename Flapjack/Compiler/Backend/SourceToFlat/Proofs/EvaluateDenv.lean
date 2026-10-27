@@ -8,6 +8,22 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.SemanticPrimitivesHOL
 open OracleInvariant
 
+/-- The next declaration's first global slot is blank whenever its one-slot
+allocation fits in the current index block. -/
+theorem factoredInvariant_nextSlot_blank {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
+    (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (valid : factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (fits : start.vidx + 1 ≤ finish.vidx) : flat.globals[start.vidx]? = some none := by
+  have ⟨_, _, _, range, _, _, globals, _, _, final⟩ := valid
+  obtain ⟨pre, post, slots, size⟩ := idxRangeRel_blank interp genv source.nextTypeStamp
+    source.nextExnStamp source.evalState start finish other 1
+    ⟨range, by simpa [globals] using final, by omega⟩
+  rw [← globals, slots, ← size]
+  simp
+
 /-- Initializing a blank global slot preserves all previously initialized
 slots, so existing factored value relations remain valid. -/
 theorem GlobalGrowth.fillSlot (genv : GlobalEnv) (idx : Nat) (value : FlatSem.Value)
@@ -93,5 +109,68 @@ theorem evaluateDenv_oracle {C F : Type}
     nextGen, ?_⟩
   · simp [EvaluateHOL.evaluateDecs, declared]
   · simpa [sourceState] using forward
+
+/-- The factored compiler invariant supplies the oracle mode and blank slot
+needed for the concrete `Denv` simulation. -/
+theorem evaluateDenv_factored {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (env : SemEnv Value) (trace : List VarN) (n : Nat) (start finish : NextIndices)
+    (other : Set (Nat × IndexKind)) (compMap : Environment) (gen : EnvironmentGenerationStore)
+    (name : VarN) (value : Value) (after : Option EvalState)
+    (valid : factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (generation : envGenRel gen source.evalState)
+    (declared : declareEnv source.evalState env = some (value, after))
+    (fits : start.vidx + 1 ≤ finish.vidx) :
+    let stored : FlatSem.Value := .conv none
+      [.litv (.intLit (gen.generation : Int)), .litv (.intLit (gen.next : Int))]
+    EvaluateHOL.evaluateDecs source env [.denv name] =
+      ({ source with evalState := after }, .val { v := nsSing name value, c := nsEmpty }) ∧
+    FlatSem.evaluateDecs flat (compileDecs trace n start compMap gen [.denv name]).2.2.2.2 =
+      ({ flat with globals := flat.globals.set start.vidx (some stored) }, none) ∧
+    GlobalGrowth genv { genv with v := genv.v.set start.vidx (some stored) } ∧
+    ValueRel { genv with v := genv.v.set start.vidx (some stored) } value stored ∧
+    StateRel { genv with v := genv.v.set start.vidx (some stored) }
+      { source with evalState := after }
+      { flat with globals := flat.globals.set start.vidx (some stored) } ∧
+    idxRangeRel interp { genv with v := genv.v.set start.vidx (some stored) }
+      source.nextTypeStamp source.nextExnStamp after
+      ({ start with vidx := start.vidx + 1 }, finish, other) ∧
+    envGenRel { gen with next := gen.next + 1 } after ∧
+    oracForwardRel interp source.evalState after := by
+  have ⟨_, _, related, range, _, oracle, globals, _, _, _⟩ := valid
+  have empty := factoredInvariant_nextSlot_blank interp transform gen genv start finish other
+    source flat valid fits
+  cases sourceState : source.evalState with
+  | none => simp [sourceState, declareEnv] at declared
+  | some mode =>
+    obtain ⟨_, state, _, modeEq⟩ := oracRel_some interp transform mode flat.evalConfig
+      (by simpa [sourceState] using oracle)
+    subst mode
+    have result := evaluateDenv_oracle interp genv source flat state env trace n start compMap gen
+      name value after sourceState generation declared related globals empty
+    have cfgEq : srcOracNextCfg interp after = srcOracNextCfg interp source.evalState := by
+      have decl : declareEnv (some (.evalOracle state)) env = some (value, after) := by
+        simpa [sourceState] using declared
+      cases found : state.envs[state.generation]? with
+      | none => simp [declareEnv, found] at decl
+      | some storedEnvs =>
+        simp [declareEnv, found] at decl
+        obtain ⟨_, afterEq⟩ := decl
+        subst after
+        simp [sourceState, srcOracNextCfg]
+    have range' := idxRangeRel_fillSlot interp genv source.nextTypeStamp source.nextExnStamp
+      source.evalState start finish other
+      (.conv none [.litv (.intLit (gen.generation : Int)), .litv (.intLit (gen.next : Int))])
+      range (by simpa [globals] using empty) fits
+    have nextRange : idxRangeRel interp
+        { genv with v := genv.v.set start.vidx (some (.conv none
+          [.litv (.intLit (gen.generation : Int)), .litv (.intLit (gen.next : Int))])) }
+        source.nextTypeStamp source.nextExnStamp after
+        ({ start with vidx := start.vidx + 1 }, finish, other) := by
+      simpa [idxRangeRel, cfgEq] using range'
+    exact ⟨result.1, result.2.1, result.2.2.2.2.1, result.2.2.2.2.2.1,
+      result.2.2.2.2.2.2.1, nextRange, result.2.2.2.2.2.2.2.1,
+      by simpa [sourceState] using result.2.2.2.2.2.2.2.2⟩
 
 end Flapjack.Compiler.Backend.SourceToFlat
