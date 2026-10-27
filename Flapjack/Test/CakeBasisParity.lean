@@ -2,6 +2,7 @@ import Flapjack.Basis.BasisProg
 import Flapjack.Compiler.Inference.Infer.Core
 import Flapjack.Compiler.Backend.SourceToFlat.FromText
 import Flapjack.Compiler.Backend.RiscVConfig.Executable
+import Flapjack.Test.BasisCakeBviOracle
 
 /-! The complete generated basis has the captured HOL declaration count and
 is accepted by the current bounded inferencer. This does not establish full
@@ -15,6 +16,16 @@ open Flapjack.Compiler.Inference.Infer.Core
   | .ok env => (nsLookup env.infV (.short (ofString "print"))).isSome &&
       (nsLookup env.infV (.long (ofString "List") (.short (ofString "map")))).isSome
   | .error _ => false
+
+-- Compare the actual configured frontend with every expression of the pinned
+-- HOL compiler's BVI result for the complete standard basis.
+#guard match Flapjack.Compiler.Backend.SourceToFlat.compileCakeToBviConfiguredFuel 1000
+    Flapjack.Compiler.Backend.RiscVConfig.riscvBackendConfigExecutable.sourceConf
+    Flapjack.Compiler.Backend.RiscVConfig.riscvBackendConfigExecutable.closConf
+    Flapjack.Compiler.Backend.RiscVConfig.riscvBackendConfigExecutable.bvlConf
+    Flapjack.Basis.BasisProg.basis with
+  | some (_, _, _, code, _) => Flapjack.Test.BasisCakeBviOracle.matchesCaptured code
+  | none => false
 
 #guard match Flapjack.Compiler.Backend.SourceToFlat.compileBasisSourceFuel 1000 1000 1000 1000 1000
     Flapjack.Compiler.Backend.RiscVConfig.riscvBackendConfigExecutable [] with

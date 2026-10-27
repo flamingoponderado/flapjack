@@ -1,0 +1,13 @@
+load "to_data_cvTheory"; load "basisProgTheory"; load "riscv_configTheory"; load "cv_transLib"; load "wordsLib";
+open HolKernel Parse boolLib bossLib cv_transLib;
+val _ = Globals.linewidth := 100000000;
+val _ = new_theory "flapjack_basis_bvi_probe";
+val _ = print "Preparing basis CV translation\n";
+val _ = cv_trans_deep_embedding (EVAL THENC DEPTH_CONV (CHANGED_CONV wordsLib.WORD_EVAL_CONV)) basisProgTheory.basis_def;
+val _ = print "Preparing backend configuration\n";
+val config = rhs (concl (EVAL ``riscv_config$riscv_backend_config``));
+val _ = print "Evaluating original basis BVI pipeline\n";
+val result = cv_eval ``backend$to_bvi ^config basisProg$basis``;
+val _ = print "Original basis BVI pipeline evaluated\n";
+val code = List.nth (pairSyntax.strip_pair (rhs (concl result)), 1);
+val _ = (print "code="; print_term code; print "\n");

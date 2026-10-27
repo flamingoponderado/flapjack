@@ -40,6 +40,8 @@ probe_needs_refresh() {
   local probe="$2"
   local source="$3"
   [[ ! -f "$output" || "$probe" -nt "$output" || "$source" -nt "$output" ]] ||
+    [[ "$(basename "$probe")" == cake_basis_bvi_probeScript.sml &&
+       "$cake_dir/basis/basisProgScript.sml" -nt "$output" ]] ||
     [[ "$(basename "$probe")" == cakeml_frontend_flat_probeScript.sml &&
        ( "$cake_dir/compiler/backend/flat_patternScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/source_to_flatScript.sml" -nt "$output" ) ]] ||
@@ -65,7 +67,8 @@ probe_needs_refresh() {
          "$cake_dir/compiler/backend/bvi_to_dataScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/pattern_matching/pattern_compScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/pattern_matching/pattern_exhScript.sml" -nt "$output" ) ]] ||
-    [[ ( "$(basename "$probe")" == empty_cake_bvi_probeScript.sml ||
+    [[ ( "$(basename "$probe")" == cake_basis_bvi_probeScript.sml ||
+         "$(basename "$probe")" == empty_cake_bvi_probeScript.sml ||
          "$(basename "$probe")" == reference_cake_bvi_probeScript.sml ||
          "$(basename "$probe")" == match_cake_bvi_probeScript.sml ||
          "$(basename "$probe")" == mti_cake_bvi_probeScript.sml ||
@@ -385,6 +388,9 @@ run_probe cake_infer_decl_probeScript.sml cake_infer_decl_probe.out \
 
 run_probe cake_basis_probeScript.sml cake_basis_probe.out \
   basis length "$cake_dir/basis/basisProgScript.sml" "$cake_dir/basis"
+
+run_probe cake_basis_bvi_probeScript.sml cake_basis_bvi_probe.out \
+  code "$cake_dir/compiler/backend/backendScript.sml" "$cake_dir/cv_translator"
 
 run_probe cake_build_lowering_probeScript.sml cake_build_lowering_probe.out \
   parts64 parts32be build64 fromlist64 refbyte64 "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"

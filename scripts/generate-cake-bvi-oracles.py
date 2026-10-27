@@ -5,6 +5,7 @@ The grammar deliberately accepts only constructors present in this capture;
 unexpected syntax fails the check instead of silently dropping output.
 """
 import argparse
+import json
 import re
 from pathlib import Path
 
@@ -28,6 +29,8 @@ CASES = (
      ROOT / "Flapjack/Test/BvlOptimizedCakeBviOracle.lean", "BvlOptimizedCakeBviOracle"),
     (ROOT / "scripts/hol-probes/bvi_tmc_frontend_probe.out",
      ROOT / "Flapjack/Test/BviTmcOracle.lean", "BviTmcOracle"),
+    (ROOT / "scripts/hol-probes/cake_basis_bvi_probe.out",
+     ROOT / "Flapjack/Test/BasisCakeBviOracle.lean", "BasisCakeBviOracle"),
 )
 
 CONSTRUCTORS = {
@@ -48,6 +51,9 @@ CONSTRUCTORS = {
     "ConsExtend": (".consExtend", 1), "Div": (".div", 0), "Global": (".global", 1),
     "Label": (".label", 1), "LengthBlock": (".lengthBlock", 0), "Mult": (".mult", 0), "Tick": (".tick", 1),
     "SOME": ("some", 1), "NONE": ("none", 0), "F": ("false", 0), "T": ("true", 0),
+    "Build": (".build", 1), "Str": (".str", 1), "Con": (".con", 2),
+    "RefByte": (".refByte", 1),
+    "FromList": (".fromList", 1),
 }
 
 
@@ -57,7 +63,7 @@ def render(input_path, namespace):
     if not raw.startswith(prefix):
         raise ValueError("missing HOL code row")
     source = raw.splitlines()[0][len(prefix):] if namespace == "BviTmcOracle" else raw[len(prefix):]
-    tokens = re.findall(r"[A-Za-z_][A-Za-z_0-9]*|-?[0-9]+|[][(),;]", source)
+    tokens = re.findall(r"«[^»]*»|[A-Za-z_][A-Za-z_0-9]*|-?[0-9]+|[][(),;]", source)
     if "".join(tokens) != re.sub(r"\s+", "", source):
         raise ValueError("unexpected character in HOL output")
     pos = 0
@@ -68,6 +74,10 @@ def render(input_path, namespace):
             raise ValueError("unexpected end of HOL output")
         token = tokens[pos]
         pos += 1
+        if token.startswith("«"):
+            if not token[1:-1].isascii():
+                raise ValueError("non-ASCII HOL string requires explicit byte decoding")
+            return f"(Flapjack.Basis.Pure.MlString.ofString {json.dumps(token[1:-1])})"
         if token.lstrip("-").isdigit():
             return f"({token})" if token.startswith("-") else token
         if token == "[":
@@ -100,7 +110,7 @@ def render(input_path, namespace):
         args = [parse() for _ in range(arity)]
         return "(" + " ".join([name, *args]) + ")" if args else name
 
-    if namespace in ("MtiCakeBviOracle", "BvlInlineCakeBviOracle", "BvlHandleCakeBviOracle", "BvlOptimizedCakeBviOracle"):
+    if namespace in ("MtiCakeBviOracle", "BvlInlineCakeBviOracle", "BvlHandleCakeBviOracle", "BvlOptimizedCakeBviOracle", "BasisCakeBviOracle"):
         if tokens[pos] != "[":
             raise ValueError("expected BVI program list")
         pos += 1
@@ -112,13 +122,19 @@ def render(input_path, namespace):
             elif tokens[pos] != "]":
                 raise ValueError("expected BVI function separator")
         pos += 1
-        definitions = "\n\n".join(f'''private def matches{index} (entry : Nat × Nat × Flapjack.Compiler.Backend.Bvi.Exp) : Bool :=
+        if namespace == "BasisCakeBviOracle":
+            definitions = "\n\n".join(f'''private def entry{index} : Nat × Nat × Flapjack.Compiler.Backend.Bvi.Exp :=
+  {pattern}''' for index, pattern in enumerate(entries))
+            names = ", ".join(f"entry{index}" for index in range(len(entries)))
+            body = f"  code == [{names}]"
+        else:
+            definitions = "\n\n".join(f'''private def matches{index} (entry : Nat × Nat × Flapjack.Compiler.Backend.Bvi.Exp) : Bool :=
   match entry with
   | {pattern} => true
   | _ => false''' for index, pattern in enumerate(entries))
-        names = ", ".join(f"entry{index}" for index in range(len(entries)))
-        checks = " &&\n      ".join(f"matches{index} entry{index}" for index in range(len(entries))) or "true"
-        body = f"  match code with\n  | [{names}] =>\n      {checks}\n  | _ => false"
+            names = ", ".join(f"entry{index}" for index in range(len(entries)))
+            checks = " &&\n      ".join(f"matches{index} entry{index}" for index in range(len(entries))) or "true"
+            body = f"  match code with\n  | [{names}] =>\n      {checks}\n  | _ => false"
     else:
         pattern = parse()
         definitions = ""

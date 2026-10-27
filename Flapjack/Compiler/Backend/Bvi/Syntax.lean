@@ -16,5 +16,6 @@ inductive Exp where
   | op : ClosLang.Op → List Exp → Exp
   | letCall : Nat → Nat → Nat → List Exp → Exp → Exp
   | «return» : List Exp → Exp
+  deriving BEq
 
 end Flapjack.Compiler.Backend.Bvi
