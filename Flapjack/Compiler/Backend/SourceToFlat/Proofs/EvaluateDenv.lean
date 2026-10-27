@@ -128,6 +128,48 @@ theorem factoredInvariant_fillSlot {C F : Type} [Nonempty C]
   · simp [globals]
   · simpa using fin
 
+/-- Filling a consecutive reserved block preserves the factored invariant and
+advances the value index by the number of initialized globals. -/
+theorem factoredInvariant_fillBlock {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
+    (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (values : List FlatSem.Value) (pre post : List (Option FlatSem.Value))
+    (valid : factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (slots : flat.globals = pre ++ (List.replicate values.length none ++ post))
+    (prefixLength : pre.length = start.vidx)
+    (fits : start.vidx + values.length ≤ finish.vidx) :
+    factoredInvariant interp transform gen { genv with v := pre ++ (values.map some ++ post) }
+      ({ start with vidx := start.vidx + values.length }, finish, other) source
+      { flat with globals := pre ++ (values.map some ++ post) } := by
+  induction values generalizing genv start flat pre with
+  | nil =>
+    have globals : genv.v = flat.globals := valid.2.2.2.2.2.2.1
+    have flatEq : flat.globals = pre ++ post := by simpa using slots
+    simp only [List.length_nil, List.map_nil, List.nil_append, Nat.add_zero]
+    rw [← flatEq]
+    cases genv
+    cases flat
+    cases start
+    simp_all
+  | cons value values ih =>
+    have oneFits : start.vidx + 1 ≤ finish.vidx := by simp at fits; omega
+    have advanced := factoredInvariant_fillSlot interp transform gen genv start finish other source flat value valid oneFits
+    have flatSet : flat.globals.set start.vidx (some value) =
+        (pre ++ [some value]) ++ (List.replicate values.length none ++ post) := by
+      rw [slots, ← prefixLength]
+      simp [List.set_append_right, List.replicate_succ, List.append_assoc]
+    have nextPrefix : (pre ++ [some value]).length = ({ start with vidx := start.vidx + 1 } : NextIndices).vidx := by
+      simp [prefixLength]
+    have remainingFits : ({ start with vidx := start.vidx + 1 } : NextIndices).vidx + values.length ≤ finish.vidx := by
+      simp at fits ⊢
+      omega
+    have remaining := ih { genv with v := genv.v.set start.vidx (some value) }
+      { start with vidx := start.vidx + 1 } { flat with globals := flat.globals.set start.vidx (some value) }
+      (pre ++ [some value]) advanced (by simpa using flatSet) nextPrefix remainingFits
+    simpa [List.append_assoc, List.map_cons, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using remaining
+
 /-- A compiled environment declaration initializes its allocated global slot
 with the current generation and environment ID. -/
 theorem evaluate_compileDenv {C F : Type} (state : FlatSem.State C F)
