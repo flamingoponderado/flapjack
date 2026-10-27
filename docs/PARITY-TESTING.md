@@ -468,6 +468,14 @@ Flapjack, or `--record-reference /path/to/pinned/cake` to regenerate captures;
 both commands verify the reported CakeML and HOL revisions. These finite
 comparisons are regression evidence, not a proof of output parity.
 
+For deterministic generated inputs, run
+`python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake`
+after building `cake`. The script verifies the pinned compiler provenance and
+compares exit status and complete stdout and stderr for generated parser and
+type-checking inputs and successful programs compiled to RISC-V. Case counts
+can be changed with `--type-cases` and `--compile-cases`; the random seeds are
+fixed so a mismatch is reproducible. These samples do not prove general parity.
+
 `python3 scripts/check-cake-sexp-parity.py` compares `--sexp=true` type and
 complete RISC-V output against pinned-compiler captures. The original compiler
 exports each source program as an S-expression, then compiles that input;
