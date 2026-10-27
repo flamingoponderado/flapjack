@@ -103171,6 +103171,14 @@
   },
   {
     "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/EvaluateHOL/Clock.lean",
+    "lean_name": "evaluateClock_app",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: kernel-checked application case of evaluate_clock with the argument, function-call, thunk-force, and dynamic-evaluation induction hypotheses and guards compared against the typed full_evaluate_ind capture. Complete evaluator correspondence review and the assembling theorem remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
     "hol_name": "dec_clock_def",
     "lean_path": "Flapjack/EvaluateHOL.lean",
     "lean_name": "decClock",

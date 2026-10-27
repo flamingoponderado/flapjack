@@ -14,6 +14,12 @@ private theorem fixClock_eq_of_bound {σ τ α : Type} (st : State σ) (output :
     cases next
     simp_all [fixClock, Nat.min_eq_left]
 
+/-- Dynamic compilation changes only the Eval bookkeeping field. -/
+private theorem doEvalRes_clock {σ β : Type} (values : List Value) (st : State σ) :
+    (doEvalRes (β := β) values st).1.clock = st.clock := by
+  unfold doEvalRes
+  split <;> rfl
+
 @[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
 theorem evaluateClock_nil {σ : Type} (st st' : State σ) (env : SemEnv Value)
     (result : Result (List Value) Value) (h : evaluate st env [] = (st', result)) :
@@ -516,6 +522,216 @@ theorem evaluateClock_handle {σ : Type} (st st' : State σ) (env : SemEnv Value
         exact Nat.le_trans (ihMatch first.1 value st' result firstEq valid h) firstBound
       · have hs := congrArg (fun pair => pair.1.clock) h
         simp only [typeError] at hs
+        exact Nat.le_trans (Nat.le_of_eq hs.symm) firstBound
+
+@[hol "cakeml/semantics/evaluateScript.sml" "evaluate_clock"]
+theorem evaluateClock_app {σ : Type} (st st' : State σ) (env : SemEnv Value)
+    (op : Op) (args : List Flapjack.AstHOL.Exp) (result : Result (List Value) Value)
+    (ihArgs : ∀ next outcome, evaluate st env args.reverse = (next, outcome) → next.clock ≤ st.clock)
+    (ihFun : ∀ middle values callEnv body next outcome,
+      evaluate st env args.reverse = (middle, .val values) → getOpClass op = .funApp →
+      doOpApp values.reverse = some (callEnv, body) → middle.clock ≠ 0 →
+      evaluate (decClock middle) callEnv [body] = (next, outcome) → next.clock ≤ (decClock middle).clock)
+    (ihForce : ∀ middle values thunk callEnv body next outcome,
+      evaluate st env args.reverse = (middle, .val values) → getOpClass op = .force →
+      destThunk values.reverse middle.refs = .isThunk .notEvaluated thunk →
+      doOpApp [thunk, .conv none []] = some (callEnv, body) → middle.clock ≠ 0 →
+      evaluate (decClock middle) callEnv [body] = (next, outcome) → next.clock ≤ (decClock middle).clock)
+    (ihEval : ∀ middle values decoded evalEnv decs next outcome,
+      evaluate st env args.reverse = (middle, .val values) → getOpClass op = .evalOp →
+      doEvalRes (β := Value) values.reverse middle = (decoded, .val (evalEnv, decs)) → decoded.clock ≠ 0 →
+      evaluateDecs (decClock decoded) evalEnv decs = (next, outcome) → next.clock ≤ (decClock decoded).clock)
+    (h : evaluate st env [.app op args] = (st', result)) : st'.clock ≤ st.clock := by
+  let first := evaluate st env args.reverse
+  have firstBound := ihArgs first.1 first.2 (Prod.eta first).symm
+  have clamp : fixClock st (evaluate st env args.reverse) = evaluate st env args.reverse :=
+    fixClock_eq_of_bound st first firstBound
+  simp only [evaluate, clamp] at h
+  change (match first.2 with
+    | .err err => (first.1, .err err)
+    | .val _ => _) = (st', result) at h
+  cases hv : first.2 with
+  | err err =>
+    simp only [hv] at h
+    have hs := congrArg (fun pair => pair.1.clock) h
+    exact Nat.le_trans (Nat.le_of_eq hs.symm) firstBound
+  | val values =>
+    simp only [hv] at h
+    have firstEq : evaluate st env args.reverse = (first.1, .val values) := by
+      simpa only [hv] using (Prod.eta first).symm
+    cases hc : getOpClass op with
+    | funApp =>
+      simp only [hc] at h
+      cases happ : doOpApp values.reverse with
+      | none =>
+        simp only [happ] at h
+        have hs := congrArg (fun pair => pair.1.clock) h
+        simp only [typeError] at hs
+        exact Nat.le_trans (Nat.le_of_eq hs.symm) firstBound
+      | some call =>
+        rcases call with ⟨callEnv, body⟩
+        simp only [happ] at h
+        split at h
+        · have hs := congrArg (fun pair => pair.1.clock) h
+          simp only [timeoutError] at hs
+          exact Nat.le_trans (Nat.le_of_eq hs.symm) firstBound
+        · rename_i nonzero
+          have callBound := ihFun first.1 values callEnv body st' result firstEq hc happ nonzero h
+          exact Nat.le_trans callBound (Nat.le_trans (Nat.sub_le _ _) firstBound)
+    | force =>
+      simp only [hc] at h
+      change (match destThunk values.reverse first.1.refs with
+        | .badRef | .notThunk => typeError first.1
+        | .isThunk .evaluated v => (first.1, .val [v])
+        | .isThunk .notEvaluated thunk => match doOpApp [thunk, .conv none []] with
+          | none => typeError first.1
+          | some (callEnv, body) =>
+            if first.1.clock = 0 then timeoutError first.1 else
+            let next := evaluate (decClock first.1) callEnv [body]
+            match next.2 with
+            | .err err => (next.1, .err err)
+            | .val newValues => match updateThunk values.reverse next.1.refs newValues with
+              | none => typeError next.1
+              | some refs => ({ next.1 with refs }, .val newValues)) = (st', result) at h
+      cases hd : destThunk values.reverse first.1.refs with
+      | badRef =>
+        simp only [hd] at h
+        have hs := congrArg (fun pair => pair.1.clock) h
+        simp only [typeError] at hs
+        exact Nat.le_trans (Nat.le_of_eq hs.symm) firstBound
+      | notThunk =>
+        simp only [hd] at h
+        have hs := congrArg (fun pair => pair.1.clock) h
+        simp only [typeError] at hs
+        exact Nat.le_trans (Nat.le_of_eq hs.symm) firstBound
+      | isThunk mode thunk =>
+        cases mode with
+        | evaluated =>
+          simp only [hd] at h
+          have hs := congrArg (fun pair => pair.1.clock) h
+          exact Nat.le_trans (Nat.le_of_eq hs.symm) firstBound
+        | notEvaluated =>
+          simp only [hd] at h
+          cases happ : doOpApp [thunk, .conv none []] with
+          | none =>
+            simp only [happ] at h
+            have hs := congrArg (fun pair => pair.1.clock) h
+            simp only [typeError] at hs
+            exact Nat.le_trans (Nat.le_of_eq hs.symm) firstBound
+          | some call =>
+            rcases call with ⟨callEnv, body⟩
+            simp only [happ] at h
+            split at h
+            · have hs := congrArg (fun pair => pair.1.clock) h
+              simp only [timeoutError] at hs
+              exact Nat.le_trans (Nat.le_of_eq hs.symm) firstBound
+            · rename_i nonzero
+              let next := evaluate (decClock first.1) callEnv [body]
+              have nextBound := ihForce first.1 values thunk callEnv body next.1 next.2
+                firstEq hc hd happ nonzero (Prod.eta next).symm
+              have bound := Nat.le_trans nextBound (Nat.le_trans (Nat.sub_le _ _) firstBound)
+              change (match next.2 with
+                | .err err => (next.1, .err err)
+                | .val newValues => match updateThunk values.reverse next.1.refs newValues with
+                  | none => typeError next.1
+                  | some refs => ({ next.1 with refs }, .val newValues)) = (st', result) at h
+              cases hn : next.2 with
+              | err err =>
+                simp only [hn] at h
+                have hs := congrArg (fun pair => pair.1.clock) h
+                exact Nat.le_trans (Nat.le_of_eq hs.symm) bound
+              | val newValues =>
+                simp only [hn] at h
+                cases hu : updateThunk values.reverse next.1.refs newValues with
+                | none =>
+                  simp only [hu] at h
+                  have hs := congrArg (fun pair => pair.1.clock) h
+                  simp only [typeError] at hs
+                  exact Nat.le_trans (Nat.le_of_eq hs.symm) bound
+                | some refs =>
+                  simp only [hu] at h
+                  have hs := congrArg (fun pair => pair.1.clock) h
+                  exact Nat.le_trans (Nat.le_of_eq hs.symm) bound
+    | evalOp =>
+      simp only [hc, fixClockDoEvalRes] at h
+      let decoded := doEvalRes (β := Value) values.reverse first.1
+      have decodedClock : decoded.1.clock = first.1.clock := doEvalRes_clock _ _
+      change (match decoded.2 with
+        | .err err => (decoded.1, .err err)
+        | .val (evalEnv, decs) => _) = (st', result) at h
+      cases hd : decoded.2 with
+      | err err =>
+        simp only [hd] at h
+        have hs := congrArg (fun pair => pair.1.clock) h
+        exact Nat.le_trans (Nat.le_of_eq hs.symm) (by simpa only [decodedClock] using firstBound)
+      | val info =>
+        rcases info with ⟨evalEnv, decs⟩
+        simp only [hd] at h
+        split at h
+        · have hs := congrArg (fun pair => pair.1.clock) h
+          simp only [timeoutError] at hs
+          change decoded.1.clock = st'.clock at hs
+          exact Nat.le_trans (Nat.le_of_eq hs.symm) (by simpa only [decodedClock] using firstBound)
+        · rename_i nonzero
+          let next := evaluateDecs (decClock decoded.1) evalEnv decs
+          have decodedEq : doEvalRes (β := Value) values.reverse first.1 =
+              (decoded.1, .val (evalEnv, decs)) := by
+            simpa only [hd] using (Prod.eta decoded).symm
+          have nextBound := ihEval first.1 values decoded.1 evalEnv decs next.1 next.2
+            firstEq hc decodedEq nonzero (Prod.eta next).symm
+          have clampNext : fixClock (decClock decoded.1) next = next :=
+            fixClock_eq_of_bound (decClock decoded.1) next nextBound
+          rw [clampNext] at h
+          have bound : next.1.clock ≤ st.clock := by
+            have hsub : (decClock decoded.1).clock ≤ decoded.1.clock := Nat.sub_le _ _
+            exact Nat.le_trans nextBound (Nat.le_trans hsub (by simpa only [decodedClock] using firstBound))
+          change (match next.2 with
+            | .val newEnv => match declareEnv next.1.evalState (extendDecEnv newEnv evalEnv) with
+              | none => typeError next.1
+              | some (value, evalState) =>
+                ({ next.1 with evalState := resetEnvGeneration first.1.evalState evalState }, .val [value])
+            | .err (.abort err) => (next.1, .err (.abort err))
+            | .err err => ({ next.1 with evalState := resetEnvGeneration first.1.evalState next.1.evalState }, .err err)) =
+              (st', result) at h
+          cases hn : next.2 with
+          | val newEnv =>
+            simp only [hn] at h
+            cases he : declareEnv next.1.evalState (extendDecEnv newEnv evalEnv) with
+            | none =>
+              simp only [he] at h
+              have hs := congrArg (fun pair => pair.1.clock) h
+              simp only [typeError] at hs
+              exact Nat.le_trans (Nat.le_of_eq hs.symm) bound
+            | some output =>
+              rcases output with ⟨value, evalState⟩
+              simp only [he] at h
+              have hs := congrArg (fun pair => pair.1.clock) h
+              exact Nat.le_trans (Nat.le_of_eq hs.symm) bound
+          | err err =>
+            cases err with
+            | abort abort =>
+              simp only [hn] at h
+              have hs := congrArg (fun pair => pair.1.clock) h
+              exact Nat.le_trans (Nat.le_of_eq hs.symm) bound
+            | raise value =>
+              simp only [hn] at h
+              have hs := congrArg (fun pair => pair.1.clock) h
+              exact Nat.le_trans (Nat.le_of_eq hs.symm) bound
+    | simple =>
+      simp only [hc] at h
+      change (match doApp (first.1.refs, first.1.ffi) op values.reverse with
+        | none => typeError first.1
+        | some ((refs, ffi), outcome) => ({ first.1 with refs, ffi }, listResult outcome)) = (st', result) at h
+      cases ha : doApp (first.1.refs, first.1.ffi) op values.reverse with
+      | none =>
+        simp only [ha] at h
+        have hs := congrArg (fun pair => pair.1.clock) h
+        simp only [typeError] at hs
+        exact Nat.le_trans (Nat.le_of_eq hs.symm) firstBound
+      | some output =>
+        rcases output with ⟨⟨refs, ffi⟩, outcome⟩
+        simp only [ha] at h
+        have hs := congrArg (fun pair => pair.1.clock) h
         exact Nat.le_trans (Nat.le_of_eq hs.symm) firstBound
 
 end Flapjack.EvaluateHOL
