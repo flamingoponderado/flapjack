@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.DataToWord.Locations
+import Flapjack.Compiler.Backend.DataToWord.Header
 import Flapjack.Pancake.WordLang
 
 /-! A partial selection of data-to-word runtime stubs. -/
@@ -47,5 +48,25 @@ def compileStub? {width : Nat} (location : Nat) : Option (Nat × WordLangProgHOL
   else if location = byteCopyNewLocation then some (4, .skip)
   else if location = dummyLocation then some (0, .skip)
   else none
+
+/-- Extend the partial stub lookup with configuration-dependent cases. The
+unimplemented stubs still return `none`, so this is not HOL's complete list. -/
+def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (location : Nat) :
+    Option (Nat × WordLangProgHOL (BitVec width)) :=
+  if location = refArrayLocation then
+    let shiftN (op : Shift) (value : WordLangExpHOL (BitVec width)) (amount : Nat) :=
+      WordLangExpHOL.shift op value (.const (BitVec.ofNat width amount))
+    some (3, listSeq [
+      .assign 1 (shiftN .lsl (.op .add [shiftN .lsr (.var 2) 2, .const 1]) (wordShiftAmount width)),
+      .set .triggerGC (.op .sub [.lookup .triggerGC, .var 1]),
+      .assign 1 (.op .sub [.lookup .endOfHeap, .var 1]),
+      .set .endOfHeap (.var 1),
+      .assign 3 (.op .or [shiftN .lsl (.op .sub [.var 1, .lookup .currHeap])
+        (shiftLength conf - wordShiftAmount width), .const 1]),
+      .assign 5 (.op .or [shiftN .lsl (.var 2) (width - conf.lenSize - 2),
+        .const (makeHeader conf 2 0)]),
+      .store (.var 1) 5,
+      .call none (some replicateLocation) [0, 1, 4, 2, 3] none])
+  else compileStub? location
 
 end Flapjack.Compiler.Backend.DataToWord

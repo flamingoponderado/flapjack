@@ -289,6 +289,14 @@ private def headerConfig : Config := { conf with lenSize := 4 }
     match compileStub? (width := 64) loc with
     | some (3, .seq (.assign 6 (.const op)) (.call none (some 12) [0, 2, 4, 6] none)) => some op.toNat
     | _ => none) == [some 0, some 4, some 16, some 20, some 24]
+#guard match compileConfiguredStub? (width := 64) conf refArrayLocation with
+  | some (3, .seq (.assign 1 (.shift .lsl (.op .add [.shift .lsr (.var 2) (.const 2), .const 1]) (.const 3)))
+      (.seq (.set .triggerGC (.op .sub [.lookup .triggerGC, .var 1]))
+       (.seq (.assign 1 (.op .sub [.lookup .endOfHeap, .var 1])) (.seq (.set .endOfHeap (.var 1))
+        (.seq (.assign 3 (.op .or [.shift .lsl (.op .sub [.var 1, .lookup .currHeap]) (.const 5), .const 1]))
+         (.seq (.assign 5 (.op .or [.shift .lsl (.var 2) (.const 46), .const 11]))
+          (.seq (.store (.var 1) 5) (.call none (some 11) [0, 1, 4, 2, 3] none)))))))) => true
+  | _ => false
 #guard (compileStub? (width := 64) refArrayLocation).isNone
 #guard Flapjack.Test.CakeMLFlatOracle.data_to_word_stubs
 #guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.boolTest (.compare .gt))) [1, 2] none) with
