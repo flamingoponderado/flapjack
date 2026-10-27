@@ -141,6 +141,36 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
       match args with
       | [src] => some (.assign (adjustVar dest) (.op .xor [.var (adjustVar src), .const 16]), l)
       | _ => some (.skip, l)
+  | l, .assign dest (.blockOp .lengthBlock) args _ =>
+      match args with
+      | [src] =>
+          let header := WordLangExpHOL.load (realAddr conf (adjustVar src))
+          let length := shiftN .lsl (shiftN .lsr header (width - conf.lenSize)) 2
+          some (.ite .test (adjustVar src) (.imm 1) (.assign (adjustVar dest) (.const 0))
+            (.assign (adjustVar dest) length), l)
+      | _ => some (.skip, l)
+  | l, .assign dest (.blockOp (.tagLenEq tag len)) args _ =>
+      match args with
+      | [src] =>
+          let src := adjustVar src
+          if len = 0 then
+            if tag < 2 ^ width / 16 then
+              some (boolResult dest .equal src (.imm (BitVec.ofNat width (16 * tag + 2))), l)
+            else some (.assign (adjustVar dest) (.const 2), l)
+          else if tag < 2 ^ conf.tagBits - 1 ∧ len < 2 ^ conf.lenBits - 1 then
+            let mask := BitVec.ofNat width (2 ^ (conf.lenBits + conf.tagBits + 1) - 1)
+            let bits := (BitVec.ofNat width tag <<< (1 + conf.lenBits)) |||
+              (BitVec.ofNat width len <<< 1) ||| 1
+            some (.seq (.assign 1 (.op .and [.var src, .const mask]))
+              (boolResult dest .equal 1 (.imm bits)), l)
+          else
+            match encodeHeader (width := width) conf (4 * tag) len with
+            | none => some (.assign (adjustVar dest) (.const 2), l)
+            | some header => some (listSeq [
+                .assign 1 (.const 0),
+                .ite .test src (.imm 1) .skip (.assign 1 (.load (realAddr conf src))),
+                boolResult dest .equal 1 (.imm header)], l)
+      | _ => some (.skip, l)
   | l, .assign dest (.blockOp (.boolTest _)) args _ =>
       match args with
       | [x, y] => some (boolResult dest .equal (adjustVar x) (.reg (adjustVar y)), l)
@@ -230,6 +260,20 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
             else .shift .lsl (.var index) (.const 1)
           let offset := WordLangExpHOL.op .add [.const (BitVec.ofNat width (width / 8)), scaled]
           some (.assign (adjustVar dest) (.load (.op .add [realAddr conf (adjustVar base), offset])), l)
+      | _ => some (.skip, l)
+  | l, .assign dest (.memOp .length) args _ =>
+      match args with
+      | [src] =>
+          let header := WordLangExpHOL.load (realAddr conf (adjustVar src))
+          some (.assign (adjustVar dest) (shiftN .lsl (shiftN .lsr header (width - conf.lenSize)) 2), l)
+      | _ => some (.skip, l)
+  | l, .assign dest (.memOp .lengthByte) args _ =>
+      match args with
+      | [src] =>
+          let header := WordLangExpHOL.load (realAddr conf (adjustVar src))
+          let length := shiftN .lsr header (width - wordShiftAmount width - conf.lenSize)
+          some (.assign (adjustVar dest)
+            (shiftN .lsl (.op .sub [length, .const (BitVec.ofNat width (width / 8))]) 2), l)
       | _ => some (.skip, l)
   | l, .assign dest (.memOp .ref) args _ =>
       match encodeHeader (width := width) conf 2 args.length with

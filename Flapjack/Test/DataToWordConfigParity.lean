@@ -177,6 +177,38 @@ private def headerConfig : Config := { conf with lenSize := 4 }
       decide (before = (cut.1, Flapjack.sptInsert 1 () cut.2)) && decide (after = cut)
   | _ => false
 #guard Flapjack.Test.CakeMLFlatOracle.data_to_word_ref_array
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp .length) [1] none) with
+  | some (.assign 8 (.shift .lsl (.shift .lsr (.load (.op .add [.lookup .currHeap,
+      .shift .lsr (.var 4) (.const 5)])) (.const 48)) (.const 2)), 2) => true
+  | _ => false
+#guard match compileControl? (width := 32) conf 5 2 (.assign 3 (.memOp .lengthByte) [1] none) with
+  | some (.assign 8 (.shift .lsl (.op .sub [.shift .lsr (.load (.op .add [.lookup .currHeap,
+      .shift .lsr (.var 4) (.const 6)])) (.const 14), .const 4]) (.const 2)), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp .lengthBlock) [1] none) with
+  | some (.ite .test 4 (.imm 1) (.assign 8 (.const 0)) (.assign 8 (.shift .lsl (.shift .lsr
+      (.load (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)])) (.const 48)) (.const 2))), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.tagLenEq 0 0)) [1] none) with
+  | some (.ite .equal 4 (.imm 2) (.assign 8 (.const 18)) (.assign 8 (.const 2)), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.tagLenEq 0 1)) [1] none) with
+  | some (.seq (.assign 1 (.op .and [.var 4, .const 15]))
+      (.ite .equal 1 (.imm 3) (.assign 8 (.const 18)) (.assign 8 (.const 2))), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.tagLenEq 1 1)) [1] none) with
+  | some (.seq (.assign 1 (.const 0)) (.seq (.ite .test 4 (.imm 1) .skip
+      (.assign 1 (.load (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)]))))
+      (.ite .equal 1 (.imm 281474976710675) (.assign 8 (.const 18)) (.assign 8 (.const 2)))), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) { conf with lenSize := 0 } 5 2
+    (.assign 3 (.blockOp (.tagLenEq 1 1)) [1] none) with
+  | some (.assign 8 (.const 2), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.tagLenEq 0 1)) [] none) with
+  | some (.skip, 2) => true
+  | _ => false
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_lengths
 #guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.boolTest (.compare .gt))) [1, 2] none) with
   | some (.ite .equal 4 (.reg 6) (.assign 8 (.const 18)) (.assign 8 (.const 2)), 2) => true
   | _ => false

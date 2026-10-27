@@ -344,6 +344,23 @@ val data_ref_array_word = EVAL ``
  (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$MemOp closLang$RefArray) [1] NONE) : 64 wordLang$prog # num) = (wordLang$Skip, 2)``;
 val _ = (print "data_to_word_ref_array="; print_term (rhs (concl (CONV_RULE
   (RAND_CONV (SIMP_CONV (srw_ss()) [wordsTheory.dimindex_64, wordsTheory.dimword_def] THENC EVAL)) data_ref_array_word))); print "\n");
+val data_length_word = EVAL ``let conf = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16|> in
+ (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$MemOp closLang$Length) [1] NONE) : 64 wordLang$prog # num) =
+  (wordLang$Assign 8 (wordLang$Shift ast$Lsl (wordLang$Shift ast$Lsr (wordLang$Load (wordLang$Op asm$Add [wordLang$Lookup stackLang$CurrHeap; wordLang$Shift ast$Lsr (wordLang$Var 4) (wordLang$Const 5w)])) (wordLang$Const 48w)) (wordLang$Const 2w)), 2) /\
+ (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$MemOp closLang$LengthByte) [1] NONE) : 32 wordLang$prog # num) =
+  (wordLang$Assign 8 (wordLang$Shift ast$Lsl (wordLang$Op asm$Sub [wordLang$Shift ast$Lsr (wordLang$Load (wordLang$Op asm$Add [wordLang$Lookup stackLang$CurrHeap; wordLang$Shift ast$Lsr (wordLang$Var 4) (wordLang$Const 6w)])) (wordLang$Const 14w); wordLang$Const 4w]) (wordLang$Const 2w)), 2) /\
+ (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$BlockOp closLang$LengthBlock) [1] NONE) : 64 wordLang$prog # num) =
+  (wordLang$If asm$Test 4 (asm$Imm 1w) (wordLang$Assign 8 (wordLang$Const 0w)) (wordLang$Assign 8 (wordLang$Shift ast$Lsl (wordLang$Shift ast$Lsr (wordLang$Load (wordLang$Op asm$Add [wordLang$Lookup stackLang$CurrHeap; wordLang$Shift ast$Lsr (wordLang$Var 4) (wordLang$Const 5w)])) (wordLang$Const 48w)) (wordLang$Const 2w))), 2) /\
+ (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$BlockOp (closLang$TagLenEq 0 0)) [1] NONE) : 64 wordLang$prog # num) =
+  (wordLang$If asm$Equal 4 (asm$Imm 2w) (wordLang$Assign 8 (wordLang$Const 18w)) (wordLang$Assign 8 (wordLang$Const 2w)), 2) /\
+ (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$BlockOp (closLang$TagLenEq 0 1)) [1] NONE) : 64 wordLang$prog # num) =
+  (wordLang$Seq (wordLang$Assign 1 (wordLang$Op asm$And [wordLang$Var 4; wordLang$Const 15w])) (wordLang$If asm$Equal 1 (asm$Imm 3w) (wordLang$Assign 8 (wordLang$Const 18w)) (wordLang$Assign 8 (wordLang$Const 2w))), 2) /\
+ (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$BlockOp (closLang$TagLenEq 1 1)) [1] NONE) : 64 wordLang$prog # num) =
+  (wordLang$Seq (wordLang$Assign 1 (wordLang$Const 0w)) (wordLang$Seq (wordLang$If asm$Test 4 (asm$Imm 1w) wordLang$Skip (wordLang$Assign 1 (wordLang$Load (wordLang$Op asm$Add [wordLang$Lookup stackLang$CurrHeap; wordLang$Shift ast$Lsr (wordLang$Var 4) (wordLang$Const 5w)])))) (wordLang$If asm$Equal 1 (asm$Imm 281474976710675w) (wordLang$Assign 8 (wordLang$Const 18w)) (wordLang$Assign 8 (wordLang$Const 2w)))), 2) /\
+ (data_to_word$comp (conf with len_size := 0) 5 2 (dataLang$Assign 3 (closLang$BlockOp (closLang$TagLenEq 1 1)) [1] NONE) : 64 wordLang$prog # num) = (wordLang$Assign 8 (wordLang$Const 2w), 2) /\
+ (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$BlockOp (closLang$TagLenEq 0 1)) [] NONE) : 64 wordLang$prog # num) = (wordLang$Skip, 2)``;
+val _ = (print "data_to_word_lengths="; print_term (rhs (concl (CONV_RULE
+  (RAND_CONV (SIMP_CONV (srw_ss()) [wordsTheory.dimindex_32, wordsTheory.dimindex_64, wordsTheory.dimword_def] THENC EVAL)) data_length_word))); print "\n");
 val data_comparisons_word = EVAL ``
  (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$BlockOp (closLang$BoolTest (ast$Compare ast$Gt))) [1;2] NONE) : 64 wordLang$prog # num) =
   (wordLang$If asm$Equal 4 (asm$Reg 6) (wordLang$Assign 8 (wordLang$Const 18w)) (wordLang$Assign 8 (wordLang$Const 2w)), 2) /\
