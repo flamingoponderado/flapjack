@@ -102077,5 +102077,69 @@
     "hol_name": "eval_tok_map_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Transcribed against the pinned first-order PEG and specialized CakeML parse-tree carriers; full source and carrier review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
+    "lean_name": "tokcheck",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
+    "hol_name": "tokcheck_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Transcribed against the pinned parse-tree conversion and specialized CakeML carriers; full source and carrier review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
+    "lean_name": "longShort",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
+    "hol_name": "Long_Short_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Transcribed against the pinned parse-tree conversion and specialized CakeML carriers; full source and carrier review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
+    "lean_name": "ptreeUQTyop",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
+    "hol_name": "ptree_UQTyop_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Transcribed against the pinned parse-tree conversion and specialized CakeML carriers; full source and carrier review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
+    "lean_name": "ptreeTyvarN",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
+    "hol_name": "ptree_TyvarN_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Transcribed against the pinned parse-tree conversion and specialized CakeML carriers; full source and carrier review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
+    "lean_name": "ptreeTyop",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
+    "hol_name": "ptree_Tyop_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Transcribed against the pinned parse-tree conversion and specialized CakeML carriers; full source and carrier review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
+    "lean_name": "ptreeV",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
+    "hol_name": "ptree_V_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Transcribed against the pinned parse-tree conversion and specialized CakeML carriers; full source and carrier review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
+    "lean_name": "ptreeFQV",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
+    "hol_name": "ptree_FQV_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Transcribed against the pinned parse-tree conversion and specialized CakeML carriers; full source and carrier review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
+    "lean_name": "tuplify",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
+    "hol_name": "tuplify_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Transcribed against the pinned parse-tree conversion and specialized CakeML carriers; full source and carrier review remains pending."
   }
 ]
