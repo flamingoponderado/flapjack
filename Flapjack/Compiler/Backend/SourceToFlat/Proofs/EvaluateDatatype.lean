@@ -218,6 +218,89 @@ theorem allocatedConstructorEntries_nodup {M N A : Type} (constructors : List (N
     (allocatedConstructorEntries_projections (M := M) constructors).2]
   exact ⟨names, allocTags1_tags_nodup (M := M) constructors⟩
 
+private theorem zipConstructor_member_arity {N A : Type} (constructors : List (N × List A))
+    (tags : List (Nat × Nat)) (arities : tags.map Prod.snd = constructors.map (fun c => c.2.length)) :
+    ∀ name tag arity, (name, tag, arity) ∈ ((constructors.map Prod.fst).zip tags).map
+      (fun (name, tag, arity) => (name, tag, arity)) →
+      ∃ args, (name, args) ∈ constructors ∧ args.length = arity := by
+  induction constructors generalizing tags with
+  | nil =>
+    intro name tag arity member
+    simp at member
+  | cons constructor rest ih =>
+    rcases constructor with ⟨headName, headArgs⟩
+    cases tags with
+    | nil => simp at arities
+    | cons headTag restTags =>
+      rcases headTag with ⟨headTag, headArity⟩
+      have arities' : headArity = headArgs.length ∧
+          restTags.map Prod.snd = rest.map (fun c => c.2.length) := by simpa using arities
+      intro name tag arity member
+      simp only [List.map_cons, List.zip_cons_cons, List.mem_cons] at member
+      rcases member with same | member
+      · have fields : name = headName ∧ tag = headTag ∧ arity = headArity := by simpa [and_assoc] using same
+        obtain ⟨rfl, rfl, rfl⟩ := fields
+        exact ⟨headArgs, by simp, arities'.1.symm⟩
+      · obtain ⟨args, found, length⟩ := ih restTags arities'.2 name tag arity member
+        exact ⟨args, List.mem_cons_of_mem _ found, length⟩
+
+/-- Every allocator entry refers to a source constructor with the same
+name and arity. -/
+theorem allocatedConstructorEntries_source {M N A : Type} (constructors : List (N × List A))
+    (name : N) (tag arity : Nat) (member : (name, tag, arity) ∈ allocatedConstructorEntries (M := M) constructors) :
+    ∃ args, (name, args) ∈ constructors ∧ args.length = arity := by
+  exact zipConstructor_member_arity constructors _ (allocTags1_arities (M := M) constructors) name tag arity member
+
+private theorem constructorLookup_exists_iff_key_mem {α : Type} (entries : List (ConN × α)) (name : ConN) :
+    (∃ value, entries.lookup name = some value) ↔ name ∈ entries.map Prod.fst := by
+  induction entries with
+  | nil => simp
+  | cons entry entries ih =>
+    obtain ⟨key, value⟩ := entry
+    by_cases equal : name = key
+    · subst key
+      simp
+    · simp [List.lookup_cons, BEq.beq, equal, ih]
+
+/-- Allocating tags for a type and building its source constructors export
+the same constructor and module domains. -/
+theorem envDomainEq_allocTags (idx stamp : Nat) (constructors : List (ConN × List AstT)) :
+    EnvDomainEq { v := nsEmpty, c := (allocTags idx constructors :
+      Namespace ModN ConN (Nat × Option (Nat × List (Nat × Nat))) × Spt Nat).1 }
+      ({ v := nsEmpty, c := alistToNs (buildConstrs stamp constructors).reverse } : SemEnv Value) := by
+  have namespaceEq := allocTags1_namespace (M := ModN) constructors.reverse
+  have lengthEq := allocTags1_length (M := ModN) constructors.reverse
+  generalize eq : (allocTags1 constructors.reverse : Namespace ModN ConN Nat × Spt Nat × List (Nat × Nat)) = result
+    at namespaceEq lengthEq ⊢
+  rcases result with ⟨ns, cids, tags⟩
+  change ns = alistToNs ((constructors.reverse.map Prod.fst).zip (tags.map Prod.fst)) at namespaceEq
+  change tags.length = constructors.reverse.length at lengthEq
+  have keys : (((constructors.reverse.map Prod.fst).zip (tags.map Prod.fst)).map Prod.fst) =
+      constructors.reverse.map Prod.fst := by
+    apply List.map_fst_zip
+    simp [lengthEq]
+  simp only [allocTags, eq, namespaceEq, nsMap, alistToNs]
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · funext id
+    apply propext
+    cases id <;> simp [nsDom, nsLookup, nsEmpty]
+  · funext path
+    apply propext
+    cases path <;> simp [nsDomMod, nsLookupMod, nsEmpty]
+  · funext id
+    apply propext
+    cases id with
+    | short name =>
+      simp only [nsDom, nsLookup]
+      rw [constructorLookup_exists_iff_key_mem, constructorLookup_exists_iff_key_mem]
+      simp only [List.map_map, Function.comp_def, List.map_reverse, buildConstrs]
+      simpa only [List.map_map, Function.comp_def, List.map_reverse] using
+        Iff.of_eq (congrArg (fun xs => name ∈ xs) keys)
+    | long moduleName rest => simp [nsDom, nsLookup]
+  · funext path
+    apply propext
+    cases path <;> simp [nsDomMod, nsLookupMod]
+
 /-- Recording a type's tag table allocates exactly that type index. -/
 theorem allocatedIndices_installTypeTable (genv : GlobalEnv) (idx : Nat) (tags : List (Nat × Nat)) :
     genvAllocatedIndices { genv with tys := finiteUpdate genv.tys idx tags } =
@@ -657,6 +740,63 @@ noncomputable def installTypeConstructorList (idx stamp : Nat) :
   | (name, tag, arity) :: rest, genv =>
     installTypeConstructorList idx stamp rest
       { genv with c := finiteUpdate genv.c ((tag, some idx), arity) (.typeStamp name stamp) }
+
+/-- An installation list cannot alter a constructor key absent from its tag
+and arity projection. -/
+theorem installTypeConstructorList_lookup_unchanged (idx stamp tag arity : Nat)
+    (entries : List (ConN × Nat × Nat))
+    (absent : (tag, arity) ∉ entries.map Prod.snd) (genv : GlobalEnv) :
+    (installTypeConstructorList idx stamp entries genv).c.lookup ((tag, some idx), arity) =
+      genv.c.lookup ((tag, some idx), arity) := by
+  classical
+  induction entries generalizing genv with
+  | nil => rfl
+  | cons entry rest ih =>
+    rcases entry with ⟨name, newTag, newArity⟩
+    have absent' : (tag, arity) ≠ (newTag, newArity) ∧ (tag, arity) ∉ rest.map Prod.snd := by
+      simpa only [List.map_cons, List.mem_cons, not_or] using absent
+    have different : ((tag, some idx), arity) ≠ ((newTag, some idx), newArity) := by
+      intro same
+      apply absent'.1
+      simpa [and_assoc] using same
+    simp only [installTypeConstructorList]
+    rw [ih absent'.2]
+    simp [finiteUpdate, FUPDATE_HOL, different]
+
+/-- Each entry of a distinct installation list is present in the resulting
+global constructor map with the source type stamp assigned to its name. -/
+theorem installTypeConstructorList_lookup_entry (idx stamp : Nat) (entries : List (ConN × Nat × Nat))
+    (distinct : (entries.map Prod.snd).Nodup) (name : ConN) (tag arity : Nat)
+    (member : (name, tag, arity) ∈ entries) (genv : GlobalEnv) :
+    (installTypeConstructorList idx stamp entries genv).c.lookup ((tag, some idx), arity) =
+      some (.typeStamp name stamp) := by
+  classical
+  induction entries generalizing genv with
+  | nil => simp at member
+  | cons entry rest ih =>
+    rcases entry with ⟨headName, headTag, headArity⟩
+    have distinct' := List.nodup_cons.mp distinct
+    simp only [List.mem_cons] at member
+    rcases member with same | member
+    · have fields : name = headName ∧ tag = headTag ∧ arity = headArity := by simpa [and_assoc] using same
+      obtain ⟨rfl, rfl, rfl⟩ := fields
+      simp only [installTypeConstructorList]
+      rw [installTypeConstructorList_lookup_unchanged _ _ _ _ rest distinct'.1]
+      simp [finiteUpdate, FUPDATE_HOL]
+    · simp only [installTypeConstructorList]
+      exact ih distinct'.2 member _
+
+/-- Each constructor entry generated by `allocTags` is installed at its
+allocated flat key with the corresponding source stamp. -/
+theorem installAllocatedConstructor_lookup (idx stamp : Nat) (constructors : List (ConN × List AstT))
+    (name : ConN) (tag arity : Nat)
+    (member : (name, tag, arity) ∈ allocatedConstructorEntries (M := ModN) constructors.reverse)
+    (genv : GlobalEnv) :
+    (installTypeConstructorList idx stamp (allocatedConstructorEntries (M := ModN) constructors.reverse) genv).c.lookup
+      ((tag, some idx), arity) = some (.typeStamp name stamp) := by
+  apply installTypeConstructorList_lookup_entry idx stamp _ _ name tag arity member genv
+  rw [(allocatedConstructorEntries_projections (M := ModN) constructors.reverse).2]
+  exact allocTags1_tags_nodup (M := ModN) constructors.reverse
 
 /-- Installing a list of distinct constructors for an already allocated type
 preserves the factored invariant. The anchor supplies the established type
