@@ -14,6 +14,8 @@ val _ = show_thm "has_lists=" source_to_flatProofTheory.has_lists_def;
 val _ = show_thm "has_exns=" source_to_flatProofTheory.has_exns_def;
 val _ = show_thm "genv_c_ok=" source_to_flatProofTheory.genv_c_ok_def;
 val _ = show_thm "genv_c_tys_ok=" source_to_flatProofTheory.genv_c_tys_ok_def;
+val _ = show_thm "genv_lookup_nil=" source_to_flatProofTheory.genv_lookup_nil;
+val _ = show_thm "genv_lookup_cons=" source_to_flatProofTheory.genv_lookup_cons;
 val _ = show_thm "bind_tag=" backend_commonTheory.bind_tag_def;
 val _ = show_thm "chr_tag=" backend_commonTheory.chr_tag_def;
 val _ = show_thm "div_tag=" backend_commonTheory.div_tag_def;

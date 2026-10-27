@@ -1,3 +1,5 @@
+`cake_flat_sem_conversions_probe.out` captures typed list and string conversion equations and malformed and valid examples. Lean parity fixtures replay these observations; the source-to-flat relation and compiler correctness remain open.
+
 `source_to_flat_equality_probe.out` replays the original local source-to-flat equality theorem and captures its complete typed statement. Lean proves an analogous equality simulation over its factored relation; the relation's full HOL correspondence and pass correctness remain open.
 
 `source_to_flat_value_relation_probe.out` captures the full original mutual value/environment relation rules, inferred types, local case-equation replay, and the environment association-list theorem. The corresponding Lean relation factors nested premises into helpers; full correspondence review and pass correctness remain open.

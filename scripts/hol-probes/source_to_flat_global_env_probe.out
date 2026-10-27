@@ -11,6 +11,10 @@ genv_c_ok=∀(genv_c :(num # num option) # num |-> stamp). genv_c_ok genv_c ⇔ 
 
 genv_c_tys_ok=∀(genv_c :(α # β option) # γ |-> δ) (genv_tys :β |-> (α # γ) list). genv_c_tys_ok genv_c genv_tys ⇔ ∀(cn :α) (ty_id :β) (arity :γ). ((cn,SOME ty_id),arity) ∈ FDOM genv_c ⇒ ∃(ctors :(α # γ) list). FLOOKUP genv_tys ty_id = SOME ctors ∧ MEM (cn,arity) ctors
 
+genv_lookup_nil=genv_c_ok (genv_c :(num # num option) # num |-> stamp) ⇒ (FLOOKUP genv_c (cn :(num # num option) # num) = SOME (TypeStamp «[]» list_type_num) ⇔ cn = ((nil_tag,SOME list_id),(0 :num)))
+
+genv_lookup_cons=genv_c_ok (genv_c :(num # num option) # num |-> stamp) ⇒ (FLOOKUP genv_c (cn :(num # num option) # num) = SOME (TypeStamp «::» list_type_num) ⇔ cn = ((cons_tag,SOME list_id),(2 :num)))
+
 bind_tag=bind_tag = (0 :num)
 
 chr_tag=chr_tag = (1 :num)

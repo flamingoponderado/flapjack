@@ -83,4 +83,48 @@ theorem holFmapAsFiniteSupportParamWitness_genvCTysOk_genvTys {α β γ : Type}
     (genvTys : HolFiniteMapExact β (List (α × γ))) :
     GlobalMap.ofBroad (GlobalMap.toBroadlookup genvTys) genvTys.finiteSupport = genvTys := by cases genvTys; rfl
 
+/-- The nil stamp occurs at exactly its original constructor key. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "genv_lookup_nil"
+  (fmap_as_finite_support_parameters := [genvC])]
+theorem genvLookupNil (genvC : HolFiniteMapExact ConstructorKey Stamp) (key : ConstructorKey)
+    (ok : genvCOk genvC) :
+    genvC.lookup key = some (.typeStamp (ofString "[]") listTypeNum) ↔
+      key = ((nilTag, some FlatSem.listId), 0) := by
+  obtain ⟨cn, arity⟩ := key
+  constructor
+  · intro h
+    have injective := ok.2.2.2.2 cn (nilTag, some FlatSem.listId) arity 0
+      (.typeStamp (ofString "[]") listTypeNum) h ok.2.2.1.2
+    rcases injective with ⟨rfl, rfl⟩
+    rfl
+  · intro h
+    cases h
+    exact ok.2.2.1.2
+
+/-- Flapjack finite-map codec witness; it has no separate HOL declaration. -/
+theorem holFmapAsFiniteSupportParamWitness_genvLookupNil_genvC (genvC : HolFiniteMapExact ConstructorKey Stamp) :
+    GlobalMap.ofBroad (GlobalMap.toBroadlookup genvC) genvC.finiteSupport = genvC := by cases genvC; rfl
+
+/-- The cons stamp occurs at exactly its original constructor key. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "genv_lookup_cons"
+  (fmap_as_finite_support_parameters := [genvC])]
+theorem genvLookupCons (genvC : HolFiniteMapExact ConstructorKey Stamp) (key : ConstructorKey)
+    (ok : genvCOk genvC) :
+    genvC.lookup key = some (.typeStamp (ofString "::") listTypeNum) ↔
+      key = ((consTag, some FlatSem.listId), 2) := by
+  obtain ⟨cn, arity⟩ := key
+  constructor
+  · intro h
+    have injective := ok.2.2.2.2 cn (consTag, some FlatSem.listId) arity 2
+      (.typeStamp (ofString "::") listTypeNum) h ok.2.2.1.1
+    rcases injective with ⟨rfl, rfl⟩
+    rfl
+  · intro h
+    cases h
+    exact ok.2.2.1.1
+
+/-- Flapjack finite-map codec witness; it has no separate HOL declaration. -/
+theorem holFmapAsFiniteSupportParamWitness_genvLookupCons_genvC (genvC : HolFiniteMapExact ConstructorKey Stamp) :
+    GlobalMap.ofBroad (GlobalMap.toBroadlookup genvC) genvC.finiteSupport = genvC := by cases genvC; rfl
+
 end Flapjack.Compiler.Backend.SourceToFlat

@@ -105090,5 +105090,59 @@
       "genvTys"
     ],
     "reviewer": "Codex source comparison: All four original carrier types α β γ δ remain independently polymorphic. Domain membership uses successful canonical lookup; a matching type map lookup and constructor/arity list membership are required exactly as in HOL. Each named HOL finite-map input uses HolFiniteMapExact and a same-module lookup/support codec roundtrip witness. The complete typed source declaration and empty-map examples are in source_to_flat_global_env_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "v_to_list_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Conversions.lean",
+    "lean_name": "valueToList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: Both nil and cons cases check the original tag and optional list type ID; malformed shapes and recursive failures return none. Complete typed original equations and finite examples are captured in cake_flat_sem_conversions_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "list_to_v_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Conversions.lean",
+    "lean_name": "listToValue",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: Empty and cons cases construct the original nil and cons tags, list ID, arity, and field order. Complete typed original equations and finite examples are captured in cake_flat_sem_conversions_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "v_to_char_list_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Conversions.lean",
+    "lean_name": "valueToCharList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: The cons head must be a character literal; malformed tags, noncharacters and recursive failures return none. Complete typed original equations and finite examples are captured in cake_flat_sem_conversions_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "vs_to_string_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Conversions.lean",
+    "lean_name": "valuesToString",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: The empty case returns the empty mlstring; only string-literal heads are concatenated recursively and other values fail. Complete typed original equations and finite examples are captured in cake_flat_sem_conversions_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "genv_lookup_nil",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalEnvConditions.lean",
+    "lean_name": "genvLookupNil",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "genvC"
+    ],
+    "reviewer": "Codex source comparison: The original genv_c_ok premise and complete lookup iff retain the list stamp, tag, type ID and arity. The canonical finite-map input has a same-module lookup/support roundtrip witness. The typed original theorem is captured in source_to_flat_global_env_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "genv_lookup_cons",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalEnvConditions.lean",
+    "lean_name": "genvLookupCons",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": [
+      "genvC"
+    ],
+    "reviewer": "Codex source comparison: The original genv_c_ok premise and complete lookup iff retain the list stamp, tag, type ID and arity. The canonical finite-map input has a same-module lookup/support roundtrip witness. The typed original theorem is captured in source_to_flat_global_env_probe."
   }
 ]

@@ -336,6 +336,7 @@ import Flapjack.Test.CakeSourceConstructorParity
 import Flapjack.Test.CakeSourcePatternParity
 import Flapjack.Test.CakeSourceOpsParity
 import Flapjack.Test.CakeFlatSemOpsParity
+import Flapjack.Test.CakeFlatSemConversionsParity
 import Flapjack.Test.CakeGlobalEnvConditionsParity
 import Flapjack.Test.CakeSourceConversionsParity
 import Flapjack.Test.CakeSourceThunkParity
