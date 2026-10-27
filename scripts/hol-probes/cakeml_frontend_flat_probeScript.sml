@@ -458,6 +458,35 @@ val data_stubs_word = EVAL ``
          (wordLang$Call NONE (SOME 26) [0;6;2;8;1] NONE)))))))``;
 val _ = (print "data_to_word_stubs="; print_term (rhs (concl (CONV_RULE
   (RAND_CONV (SIMP_CONV (srw_ss()) [wordsTheory.dimindex_32, wordsTheory.dimindex_64, wordsTheory.dimword_def] THENC EVAL)) data_stubs_word))); print "\n");
+val _ = capture "bvl_output_names" ``let old = sptree$insert 3 «alpha» sptree$LN in
+ let names = bvl_to_bvi$get_names [62;63;64;65;66;67;68;69;70;84;85;96;97] old in
+ MAP (\n. sptree$lookup n names) [62;63;64;65;66;67;68;69;70;84;85;96;97] =
+ [SOME «AllocGlobal»; SOME «CopyGlobals»; SOME «start»; SOME «ListLength»; SOME «FromListByte»;
+  SOME «ToListByte»; SOME «SumListLength»; SOME «ConcatByte»; SOME «bvi_unknown»;
+  SOME «alpha»; SOME «alpha_bvi_aux»; SOME «bvi_unmapped»; SOME «bvi_unmapped_bvi_aux»]``;
+val _ = capture "data_stub_names" ``
+ MAP SND (TAKE 32 (data_to_word$stub_names ())) =
+ [«_FromList»; «_FromList1»; «_RefByte»; «_RefArray»; «_Replicate»; «_AnyArith»;
+  «_Add»; «_Sub»; «_Mul»; «_Div»; «_Mod»; «_Compare1»; «_Compare»; «_Equal1»; «_Equal»;
+  «_LongDiv1»; «_LongDiv»; «_Install»; «_InstallCode»; «_InstallData»; «_Append»; «_AppendMainLoop»;
+  «_AppendLenLoop»; «_XorLoop»; «_Unused»; «_StringCmpLoop»; «_MemCopy»; «_ByteCopy»;
+  «_ByteCopyAdd»; «_ByteCopySub»; «_ByteCopyNew»; «_Dummy»] /\
+ DROP 32 (data_to_word$stub_names ()) = GENLIST (\n. (n + 39, «_Bignum»)) 23``;
+load "word_to_stackTheory"; load "stack_allocTheory"; load "stack_removeTheory";
+val _ = capture "source_output_names" ``
+ let (sc, flat) = source_to_flat$compile source_to_flat$empty_config (source_to_source$compile []) in
+ let exps = flat_to_clos$compile_prog flat in
+ let cc = clos_to_bvl$default_config with <| do_mti := F; do_call := F; known_conf := NONE; max_app := 0 |> in
+ let (cc,bvl,old) = clos_to_bvl$compile cc exps in
+ let (start,code,next) = bvl_to_bvi$compile_prog cc.start 0 bvl in
+ let names = bvl_to_bvi$get_names (MAP FST code) old in
+ let names = sptree$union (sptree$fromAList (data_to_word$stub_names () ++ word_to_stack$stub_names () ++
+   stack_alloc$stub_names () ++ stack_remove$stub_names ())) names in
+ MAP (\n. sptree$lookup n names) [0;1;2;3;4;5;6;7;9;39;61;62;63;64;65;69;70;72;76;80;84;88] =
+ [SOME «_Init»; SOME «_Halt0»; SOME «_Halt2»; NONE; SOME «_GC»; SOME «_Raise»; SOME «_StoreConsts»;
+  SOME «_FromList»; SOME «_RefByte»; SOME «_Bignum»; SOME «_Bignum»; SOME «AllocGlobal»;
+  SOME «CopyGlobals»; SOME «start»; SOME «ListLength»; SOME «ConcatByte»; NONE; SOME «bvl_force»;
+  SOME «bvl_init»; SOME «dec»; SOME «dec»; SOME «dec»]``;
 val data_comparisons_word = EVAL ``
  (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$BlockOp (closLang$BoolTest (ast$Compare ast$Gt))) [1;2] NONE) : 64 wordLang$prog # num) =
   (wordLang$If asm$Equal 4 (asm$Reg 6) (wordLang$Assign 8 (wordLang$Const 18w)) (wordLang$Assign 8 (wordLang$Const 2w)), 2) /\

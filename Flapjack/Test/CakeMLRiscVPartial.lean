@@ -15,4 +15,10 @@ private def testConfig : Backend.Config :=
   | some (bytes, bitmaps, _) => bytes.length == 15012 && bitmaps.length == 65
   | none => false
 
+#guard match SourceToFlat.compileCakeToRiscVNoOptsFuel 100 testConfig .ln [],
+    SourceToFlat.compileCakeToRiscVNamedNoOptsFuel 100 testConfig [] with
+  | some (bytes, bitmaps, _), some (namedBytes, namedBitmaps, _) =>
+      bytes == namedBytes && bitmaps == namedBitmaps
+  | _, _ => false
+
 end Flapjack.Test.CakeMLRiscVPartial

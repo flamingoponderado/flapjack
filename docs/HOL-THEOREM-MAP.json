@@ -101790,5 +101790,21 @@
     "hol_name": "compile_inc_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source clauses transcribed, using its singleton equivalence where applicable; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Names.lean",
+    "lean_name": "getNames",
+    "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
+    "hol_name": "get_names_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed using byte-backed names; typed source and complete carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Names.lean",
+    "lean_name": "stubNames",
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "stub_names_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source list transcribed using byte-backed names; typed source and complete list review remain pending."
   }
 ]

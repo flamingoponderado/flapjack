@@ -9,15 +9,25 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 /-- Flapjack's checked per-function composition retains the next local label
 for diagnostics. It returns `none` when an upstream pass or a data-to-word
 case is unsupported; it does not add the separately generated word stubs. -/
+def compileCakeToWordWithNamesAndLabelsNoOptsFuel {width : Nat} [NeZero width]
+    (fuel : Nat) (source : Config) (closure : ClosToBvl.Config)
+    (word : DataToWord.Config) (decls : List AstHOL.Dec) :
+    Option (Config × ClosToBvl.Config × Nat ×
+      List (Nat × Nat × (WordLangProgHOL (BitVec width) × Nat)) × Nat × Spt Basis.Pure.MlString.MlString) := do
+  let (source, closure, start, code, next, names) ← compileCakeToDataWithNamesNoOptsFuel fuel source closure decls
+  let code ← code.mapM fun (name, args, body) => do
+    let compiled ← DataToWord.compileControl? word name 2 body
+    pure (name, args, compiled)
+  pure (source, closure, start, code, next, names)
+
+/-- The checked word composition without its symbol-name result. -/
 def compileCakeToWordWithLabelsNoOptsFuel {width : Nat} [NeZero width]
     (fuel : Nat) (source : Config) (closure : ClosToBvl.Config)
     (word : DataToWord.Config) (decls : List AstHOL.Dec) :
     Option (Config × ClosToBvl.Config × Nat ×
       List (Nat × Nat × (WordLangProgHOL (BitVec width) × Nat)) × Nat) := do
-  let (source, closure, start, code, next) ← compileCakeToDataNoOptsFuel fuel source closure decls
-  let code ← code.mapM fun (name, args, body) => do
-    let compiled ← DataToWord.compileControl? word name 2 body
-    pure (name, args, compiled)
+  let (source, closure, start, code, next, _) ←
+    compileCakeToWordWithNamesAndLabelsNoOptsFuel fuel source closure word decls
   pure (source, closure, start, code, next)
 
 /-- Apply the source `compile_part` arity and result projection to the checked
@@ -41,5 +51,17 @@ def compileCakeToWordWithStubs64NoOptsFuel
   let (source, closure, start, code, next) ← compileCakeToWordNoOptsFuel fuel source closure word decls
   let fixed ← DataToWord.fixedStubs? word
   pure (source, closure, start, fixed ++ WordBignum.generatedStubs64 ++ code, next)
+
+/-- As above, retaining the BVI symbol-name map for the backend. -/
+def compileCakeToWordWithStubsAndNames64NoOptsFuel
+    (fuel : Nat) (source : Config) (closure : ClosToBvl.Config)
+    (word : DataToWord.Config) (decls : List AstHOL.Dec) :
+    Option (Config × ClosToBvl.Config × Nat × List (Nat × Nat × WordLangProgHOL (BitVec 64)) × Nat ×
+      Spt Basis.Pure.MlString.MlString) := do
+  let (source, closure, start, code, next, names) ←
+    compileCakeToWordWithNamesAndLabelsNoOptsFuel fuel source closure word decls
+  let fixed ← DataToWord.fixedStubs? word
+  let code := code.map fun (name, args, body, _) => (name, args + 1, body)
+  pure (source, closure, start, fixed ++ WordBignum.generatedStubs64 ++ code, next, names)
 
 end Flapjack.Compiler.Backend.SourceToFlat
