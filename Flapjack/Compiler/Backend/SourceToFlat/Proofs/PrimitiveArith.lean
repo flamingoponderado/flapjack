@@ -141,4 +141,58 @@ theorem word64Arith_related {C F : Type} (genv : GlobalEnv)
   all_goals exact ResultRel.value (.literal genv _)
 
 
+/-- Successful Word8 shifts have a single word operand. -/
+theorem word8Shift_operand {F : Type} (source : SemanticPrimitivesHOL.State F)
+    (shift : Shift) (amount : Nat) (operand : SemanticPrimitivesHOL.Value)
+    (successful : doApp (source.refs, source.ffi) (.shift .w8 shift amount) [operand] ≠ none) :
+    ∃ word, operand = .litv (.word8 word) := by
+  simp only [doApp, doAppNumericCore, doAppBasic] at successful
+  cases operand <;> simp at successful
+  case litv lit =>
+    cases lit <;> simp at successful
+    case word8 word => exact ⟨word, rfl⟩
+
+/-- The two primitive dispatchers agree on a Word8 shift and preserve both
+states. This is infrastructure over the preliminary factored relation. -/
+theorem word8Shift_related {C F : Type} (genv : GlobalEnv)
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (shift : Shift) (amount : Nat) (word : BitVec 8) :
+    doApp (source.refs, source.ffi) (.shift .w8 shift amount) [.litv (.word8 word)] =
+      some ((source.refs, source.ffi), .val (.litv (.word8 (shift8Lookup shift word amount)))) ∧
+    FlatSem.doAppNumeric flat (.shift .w8 shift amount) [.litv (.word8 word)] =
+      some (some (flat, .val (.litv (.word8 (shift8Lookup shift word amount))))) ∧
+    ValueRel genv (.litv (.word8 (shift8Lookup shift word amount)))
+      (.litv (.word8 (shift8Lookup shift word amount))) := by
+  refine ⟨?_, ?_, .literal genv _⟩
+  · simp [doApp, doAppNumericCore, doAppBasic]
+  · simp [FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue,
+      doApp, doAppNumericCore, doAppBasic, FlatSem.valueToFlat]
+
+/-- Successful Word64 shifts have a single word operand. -/
+theorem word64Shift_operand {F : Type} (source : SemanticPrimitivesHOL.State F)
+    (shift : Shift) (amount : Nat) (operand : SemanticPrimitivesHOL.Value)
+    (successful : doApp (source.refs, source.ffi) (.shift .w64 shift amount) [operand] ≠ none) :
+    ∃ word, operand = .litv (.word64 word) := by
+  simp only [doApp, doAppNumericCore, doAppBasic] at successful
+  cases operand <;> simp at successful
+  case litv lit =>
+    cases lit <;> simp at successful
+    case word64 word => exact ⟨word, rfl⟩
+
+/-- The two primitive dispatchers agree on a Word64 shift and preserve both
+states. This is infrastructure over the preliminary factored relation. -/
+theorem word64Shift_related {C F : Type} (genv : GlobalEnv)
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (shift : Shift) (amount : Nat) (word : BitVec 64) :
+    doApp (source.refs, source.ffi) (.shift .w64 shift amount) [.litv (.word64 word)] =
+      some ((source.refs, source.ffi), .val (.litv (.word64 (shift64Lookup shift word amount)))) ∧
+    FlatSem.doAppNumeric flat (.shift .w64 shift amount) [.litv (.word64 word)] =
+      some (some (flat, .val (.litv (.word64 (shift64Lookup shift word amount))))) ∧
+    ValueRel genv (.litv (.word64 (shift64Lookup shift word amount)))
+      (.litv (.word64 (shift64Lookup shift word amount))) := by
+  refine ⟨?_, ?_, .literal genv _⟩
+  · simp [doApp, doAppNumericCore, doAppBasic]
+  · simp [FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue,
+      doApp, doAppNumericCore, doAppBasic, FlatSem.valueToFlat]
+
 end Flapjack.Compiler.Backend.SourceToFlat
