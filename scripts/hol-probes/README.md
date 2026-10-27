@@ -11,6 +11,7 @@
 `cake_undefined_diagnostic_probe.out` captures original inference errors for qualified missing variables, constructors, and type constructors. These cover formatting and lookup failure, not the full inferencer.
 
 `cake_source_store_probe.out` captures inferred closure, evaluator-state, and store-assignment types plus source-store allocation, lookup, updates, and rejected assignments, including the one-way thunk update rule.
+`cake_source_apply_probe.out` captures reference allocation, assignment and failure, list append, word shift, and equality failure from the source `do_app` definition.
 
 `cake_source_constructor_probe.out` captures constructor and datatype identity checks, arity checking, construction, and inferred recursive-environment helper types.
 
