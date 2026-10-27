@@ -1,5 +1,5 @@
 import Flapjack.Compiler.Backend.DataToWord.Locations
-import Flapjack.Compiler.Backend.DataToWord.Header
+import Flapjack.Compiler.Backend.DataToWord.Control
 import Flapjack.Pancake.WordLang
 
 /-! A partial selection of data-to-word runtime stubs. -/
@@ -67,6 +67,33 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
         .const (makeHeader conf 2 0)]),
       .store (.var 1) 5,
       .call none (some replicateLocation) [0, 1, 4, 2, 3] none])
+  else if location = fromList1Location then
+    let bytes := BitVec.ofNat width (width / 8)
+    some (6, listSeq [
+      .store (.var 2) 10,
+      .assign 2 (.op .add [.var 2, .const bytes]),
+      .ite .equal 6 (.imm 0)
+        (listSeq [.set .nextFree (.var 2), .return 0 [8]])
+        (listSeq [
+          .assign 4 (realAddr conf 4),
+          .assign 10 (.load (.op .add [.var 4, .const bytes])),
+          .assign 4 (.load (.op .add [.var 4, .const (2 * bytes)])),
+          .assign 6 (.op .sub [.var 6, .const 4]),
+          .call none (some fromList1Location) [0, 2, 4, 6, 8, 10] none])])
+  else if location = byteCopyLocation then
+    let bytes := BitVec.ofNat width (width / 8)
+    some (6, listSeq [
+      .assign 4 (shiftVar .lsr 4 2), .assign 6 (shiftVar .lsr 6 2),
+      .assign 10 (shiftVar .lsr 10 2), .assign 1 (.const 2),
+      .assign 2 (.op .add [realAddr conf 2, .const bytes, .var 4]),
+      .assign 8 (.op .add [realAddr conf 8, .const bytes, .var 10]),
+      .ite .lower 4 (.reg 10)
+        (listSeq [
+          .assign 3 (.op .sub [.var 6, .const 1]),
+          .assign 2 (.op .add [.var 2, .var 3]),
+          .assign 8 (.op .add [.var 8, .var 3]),
+          .call none (some byteCopySubLocation) [0, 6, 2, 8, 1] none])
+        (.call none (some byteCopyAddLocation) [0, 6, 2, 8, 1] none)])
   else compileStub? location
 
 end Flapjack.Compiler.Backend.DataToWord

@@ -432,7 +432,30 @@ val data_stubs_word = EVAL ``
      (wordLang$Seq (wordLang$Set stackLang$EndOfHeap (wordLang$Var 1))
       (wordLang$Seq (wordLang$Assign 3 (wordLang$Op asm$Or [wordLang$Shift ast$Lsl (wordLang$Op asm$Sub [wordLang$Var 1; wordLang$Lookup stackLang$CurrHeap]) (wordLang$Const 5w); wordLang$Const 1w]))
        (wordLang$Seq (wordLang$Assign 5 (wordLang$Op asm$Or [wordLang$Shift ast$Lsl (wordLang$Var 2) (wordLang$Const 46w); wordLang$Const 11w]))
-        (wordLang$Seq (wordLang$Store (wordLang$Var 1) 5) (wordLang$Call NONE (SOME 11) [0;1;4;2;3] NONE)))))))``;
+        (wordLang$Seq (wordLang$Store (wordLang$Var 1) 5) (wordLang$Call NONE (SOME 11) [0;1;4;2;3] NONE))))))) /\
+ (data_to_word$FromList1_code ((ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3|>) : 64 wordLang$prog) =
+  wordLang$Seq (wordLang$Store (wordLang$Var 2) 10)
+   (wordLang$Seq (wordLang$Assign 2 (wordLang$Op asm$Add [wordLang$Var 2; wordLang$Const 8w]))
+    (wordLang$If asm$Equal 6 (asm$Imm 0w)
+     (wordLang$Seq (wordLang$Set stackLang$NextFree (wordLang$Var 2)) (wordLang$Return 0 [8]))
+     (wordLang$Seq (wordLang$Assign 4 (wordLang$Op asm$Add [wordLang$Lookup stackLang$CurrHeap; wordLang$Shift ast$Lsr (wordLang$Var 4) (wordLang$Const 5w)]))
+      (wordLang$Seq (wordLang$Assign 10 (wordLang$Load (wordLang$Op asm$Add [wordLang$Var 4; wordLang$Const 8w])))
+       (wordLang$Seq (wordLang$Assign 4 (wordLang$Load (wordLang$Op asm$Add [wordLang$Var 4; wordLang$Const 16w])))
+        (wordLang$Seq (wordLang$Assign 6 (wordLang$Op asm$Sub [wordLang$Var 6; wordLang$Const 4w]))
+         (wordLang$Call NONE (SOME 8) [0;2;4;6;8;10] NONE))))))) /\
+ (data_to_word$ByteCopy_code ((ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3|>) : 64 wordLang$prog) =
+  wordLang$Seq (wordLang$Assign 4 (wordLang$Shift ast$Lsr (wordLang$Var 4) (wordLang$Const 2w)))
+   (wordLang$Seq (wordLang$Assign 6 (wordLang$Shift ast$Lsr (wordLang$Var 6) (wordLang$Const 2w)))
+    (wordLang$Seq (wordLang$Assign 10 (wordLang$Shift ast$Lsr (wordLang$Var 10) (wordLang$Const 2w)))
+     (wordLang$Seq (wordLang$Assign 1 (wordLang$Const 2w))
+      (wordLang$Seq (wordLang$Assign 2 (wordLang$Op asm$Add [wordLang$Op asm$Add [wordLang$Lookup stackLang$CurrHeap; wordLang$Shift ast$Lsr (wordLang$Var 2) (wordLang$Const 5w)]; wordLang$Const 8w; wordLang$Var 4]))
+       (wordLang$Seq (wordLang$Assign 8 (wordLang$Op asm$Add [wordLang$Op asm$Add [wordLang$Lookup stackLang$CurrHeap; wordLang$Shift ast$Lsr (wordLang$Var 8) (wordLang$Const 5w)]; wordLang$Const 8w; wordLang$Var 10]))
+        (wordLang$If asm$Lower 4 (asm$Reg 10)
+         (wordLang$Seq (wordLang$Assign 3 (wordLang$Op asm$Sub [wordLang$Var 6; wordLang$Const 1w]))
+          (wordLang$Seq (wordLang$Assign 2 (wordLang$Op asm$Add [wordLang$Var 2; wordLang$Var 3]))
+           (wordLang$Seq (wordLang$Assign 8 (wordLang$Op asm$Add [wordLang$Var 8; wordLang$Var 3]))
+            (wordLang$Call NONE (SOME 27) [0;6;2;8;1] NONE))))
+         (wordLang$Call NONE (SOME 26) [0;6;2;8;1] NONE)))))))``;
 val _ = (print "data_to_word_stubs="; print_term (rhs (concl (CONV_RULE
   (RAND_CONV (SIMP_CONV (srw_ss()) [wordsTheory.dimindex_32, wordsTheory.dimindex_64, wordsTheory.dimword_def] THENC EVAL)) data_stubs_word))); print "\n");
 val data_comparisons_word = EVAL ``

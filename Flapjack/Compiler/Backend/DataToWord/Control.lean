@@ -39,7 +39,7 @@ private def giveUp {width : Nat} : WordLangProgHOL (BitVec width) :=
 
 /-- Internal word-address construction for supported load cases; the
 standalone width-indexed HOL definition remains to be reviewed and tagged. -/
-private def realAddr {width : Nat} [NeZero width] (conf : Config) (r : Nat) : WordLangExpHOL (BitVec width) :=
+def realAddr {width : Nat} [NeZero width] (conf : Config) (r : Nat) : WordLangExpHOL (BitVec width) :=
   let k := wordShiftAmount width
   let l := shiftLength conf
   let offset := if k = l ∧ conf.lenBits = 0 ∧ conf.tagBits = 0 then
@@ -61,7 +61,7 @@ shifts. The standalone HOL `ShiftVar` declaration remains to be reviewed. -/
 private def shiftN {width : Nat} (op : Shift) (e : WordLangExpHOL (BitVec width)) (n : Nat) :
     WordLangExpHOL (BitVec width) := .shift op e (.const (BitVec.ofNat width n))
 
-private def shiftVar {width : Nat} (op : Shift) (v n : Nat) : WordLangExpHOL (BitVec width) :=
+def shiftVar {width : Nat} (op : Shift) (v n : Nat) : WordLangExpHOL (BitVec width) :=
   match op with
   | .ror =>
       let m := if n < width then n else n % width

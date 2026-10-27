@@ -297,6 +297,25 @@ private def headerConfig : Config := { conf with lenSize := 4 }
          (.seq (.assign 5 (.op .or [.shift .lsl (.var 2) (.const 46), .const 11]))
           (.seq (.store (.var 1) 5) (.call none (some 11) [0, 1, 4, 2, 3] none)))))))) => true
   | _ => false
+#guard match compileConfiguredStub? (width := 64) conf fromList1Location with
+  | some (6, .seq (.store (.var 2) 10) (.seq (.assign 2 (.op .add [.var 2, .const 8]))
+      (.ite .equal 6 (.imm 0) (.seq (.set .nextFree (.var 2)) (.return 0 [8]))
+       (.seq (.assign 4 (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)]))
+        (.seq (.assign 10 (.load (.op .add [.var 4, .const 8])))
+         (.seq (.assign 4 (.load (.op .add [.var 4, .const 16])))
+          (.seq (.assign 6 (.op .sub [.var 6, .const 4])) (.call none (some 8) [0, 2, 4, 6, 8, 10] none)))))))) => true
+  | _ => false
+#guard match compileConfiguredStub? (width := 64) conf byteCopyLocation with
+  | some (6, .seq (.assign 4 (.shift .lsr (.var 4) (.const 2)))
+      (.seq (.assign 6 (.shift .lsr (.var 6) (.const 2))) (.seq (.assign 10 (.shift .lsr (.var 10) (.const 2)))
+       (.seq (.assign 1 (.const 2))
+        (.seq (.assign 2 (.op .add [.op .add [.lookup .currHeap, .shift .lsr (.var 2) (.const 5)], .const 8, .var 4]))
+         (.seq (.assign 8 (.op .add [.op .add [.lookup .currHeap, .shift .lsr (.var 8) (.const 5)], .const 8, .var 10]))
+          (.ite .lower 4 (.reg 10)
+           (.seq (.assign 3 (.op .sub [.var 6, .const 1])) (.seq (.assign 2 (.op .add [.var 2, .var 3]))
+            (.seq (.assign 8 (.op .add [.var 8, .var 3])) (.call none (some 27) [0, 6, 2, 8, 1] none))))
+           (.call none (some 26) [0, 6, 2, 8, 1] none)))))))) => true
+  | _ => false
 #guard (compileStub? (width := 64) refArrayLocation).isNone
 #guard Flapjack.Test.CakeMLFlatOracle.data_to_word_stubs
 #guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.boolTest (.compare .gt))) [1, 2] none) with
