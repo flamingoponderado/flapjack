@@ -1854,6 +1854,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.Maximum.Max3
 import Flapjack.HolRef
 import Flapjack.EvaluateProps
 import Flapjack.EvaluateProps.DoApp
+import Flapjack.EvaluateProps.EvaluateFfi
 import Flapjack.AstHOL
 import Flapjack.Compiler.Backend.BackendCommon
 import Flapjack.Compiler.Backend.Semantics.WordSem

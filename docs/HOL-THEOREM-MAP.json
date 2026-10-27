@@ -103617,5 +103617,181 @@
     "lean_name": "doApp_ioEventsMono",
     "statement_status": "pending_statement_review",
     "reviewer": "Codex (pending complete source evaluator and carrier review): original typed statement captured in cake_evaluate_ffi_props_probe; follows from assembled primitive FFI relation and FFI trace monotonicity."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "evaluate_call_FFI_rel",
+    "lean_path": "Flapjack/EvaluateProps/EvaluateFfi.lean",
+    "lean_name": "evaluateFfi_nil",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending full evaluator and carrier review): constructor case of the original mutual FFI relation theorem; typed HOL statement captured in cake_evaluate_ffi_props_probe. The general mutual theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "evaluate_call_FFI_rel",
+    "lean_path": "Flapjack/EvaluateProps/EvaluateFfi.lean",
+    "lean_name": "evaluateFfi_lit",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending full evaluator and carrier review): constructor case of the original mutual FFI relation theorem; typed HOL statement captured in cake_evaluate_ffi_props_probe. The general mutual theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "evaluate_call_FFI_rel",
+    "lean_path": "Flapjack/EvaluateProps/EvaluateFfi.lean",
+    "lean_name": "evaluateFfi_fun",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending full evaluator and carrier review): constructor case of the original mutual FFI relation theorem; typed HOL statement captured in cake_evaluate_ffi_props_probe. The general mutual theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "evaluate_call_FFI_rel",
+    "lean_path": "Flapjack/EvaluateProps/EvaluateFfi.lean",
+    "lean_name": "evaluateFfi_var",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending full evaluator and carrier review): constructor case of the original mutual FFI relation theorem; typed HOL statement captured in cake_evaluate_ffi_props_probe. The general mutual theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "evaluate_call_FFI_rel",
+    "lean_path": "Flapjack/EvaluateProps/EvaluateFfi.lean",
+    "lean_name": "evaluateMatchFfi_nil",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending full evaluator and carrier review): constructor case of the original mutual FFI relation theorem; typed HOL statement captured in cake_evaluate_ffi_props_probe. The general mutual theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "evaluate_call_FFI_rel",
+    "lean_path": "Flapjack/EvaluateProps/EvaluateFfi.lean",
+    "lean_name": "evaluateDecsFfi_nil",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending full evaluator and carrier review): constructor case of the original mutual FFI relation theorem; typed HOL statement captured in cake_evaluate_ffi_props_probe. The general mutual theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "evaluate_call_FFI_rel",
+    "lean_path": "Flapjack/EvaluateProps/EvaluateFfi.lean",
+    "lean_name": "evaluateFfi_raise",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending full evaluator and carrier review): constructor case of the original mutual FFI relation theorem; typed HOL statement captured in cake_evaluate_ffi_props_probe. The general mutual theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "evaluate_call_FFI_rel",
+    "lean_path": "Flapjack/EvaluateProps/EvaluateFfi.lean",
+    "lean_name": "evaluateFfi_tannot",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending full evaluator and carrier review): constructor case of the original mutual FFI relation theorem; typed HOL statement captured in cake_evaluate_ffi_props_probe. The general mutual theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "evaluate_call_FFI_rel",
+    "lean_path": "Flapjack/EvaluateProps/EvaluateFfi.lean",
+    "lean_name": "evaluateFfi_lannot",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending full evaluator and carrier review): constructor case of the original mutual FFI relation theorem; typed HOL statement captured in cake_evaluate_ffi_props_probe. The general mutual theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "evaluate_call_FFI_rel",
+    "lean_path": "Flapjack/EvaluateProps/EvaluateFfi.lean",
+    "lean_name": "evaluateFfi_cons",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending full evaluator and carrier review): constructor case of the original mutual FFI relation theorem; typed HOL statement captured in cake_evaluate_ffi_props_probe. The general mutual theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "evaluate_call_FFI_rel",
+    "lean_path": "Flapjack/EvaluateProps/EvaluateFfi.lean",
+    "lean_name": "evaluateMatchFfi_cons",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending full evaluator and carrier review): constructor case of the original mutual FFI relation theorem; typed HOL statement captured in cake_evaluate_ffi_props_probe. The general mutual theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "evaluate_call_FFI_rel",
+    "lean_path": "Flapjack/EvaluateProps/EvaluateFfi.lean",
+    "lean_name": "evaluateDecsFfi_tabbrev",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending full evaluator and carrier review): constructor case of the original mutual FFI relation theorem; typed HOL statement captured in cake_evaluate_ffi_props_probe. The general mutual theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "evaluate_call_FFI_rel",
+    "lean_path": "Flapjack/EvaluateProps/EvaluateFfi.lean",
+    "lean_name": "evaluateDecsFfi_exn",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending full evaluator and carrier review): constructor case of the original mutual FFI relation theorem; typed HOL statement captured in cake_evaluate_ffi_props_probe. The general mutual theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "evaluate_call_FFI_rel",
+    "lean_path": "Flapjack/EvaluateProps/EvaluateFfi.lean",
+    "lean_name": "evaluateDecsFfi_type",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending full evaluator and carrier review): constructor case of the original mutual FFI relation theorem; typed HOL statement captured in cake_evaluate_ffi_props_probe. The general mutual theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "evaluate_call_FFI_rel",
+    "lean_path": "Flapjack/EvaluateProps/EvaluateFfi.lean",
+    "lean_name": "evaluateDecsFfi_mod",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending full evaluator and carrier review): constructor case of the original mutual FFI relation theorem; typed HOL statement captured in cake_evaluate_ffi_props_probe. The general mutual theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "evaluate_call_FFI_rel",
+    "lean_path": "Flapjack/EvaluateProps/EvaluateFfi.lean",
+    "lean_name": "evaluateDecsFfi_cons",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending full evaluator and carrier review): constructor case of the original mutual FFI relation theorem; typed HOL statement captured in cake_evaluate_ffi_props_probe. The general mutual theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "evaluate_call_FFI_rel",
+    "lean_path": "Flapjack/EvaluateProps/EvaluateFfi.lean",
+    "lean_name": "evaluateDecsFfi_local",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending full evaluator and carrier review): constructor case of the original mutual FFI relation theorem; typed HOL statement captured in cake_evaluate_ffi_props_probe. The general mutual theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "evaluate_call_FFI_rel",
+    "lean_path": "Flapjack/EvaluateProps/EvaluateFfi.lean",
+    "lean_name": "evaluateDecsFfi_let",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending full evaluator and carrier review): constructor case of the original mutual FFI relation theorem; typed HOL statement captured in cake_evaluate_ffi_props_probe. The general mutual theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "evaluate_call_FFI_rel",
+    "lean_path": "Flapjack/EvaluateProps/EvaluateFfi.lean",
+    "lean_name": "evaluateFfi_con",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending full evaluator and carrier review): constructor case of the original mutual FFI relation theorem; typed HOL statement captured in cake_evaluate_ffi_props_probe. The general mutual theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "evaluate_call_FFI_rel",
+    "lean_path": "Flapjack/EvaluateProps/EvaluateFfi.lean",
+    "lean_name": "evaluateDecsFfi_env",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending full evaluator and carrier review): constructor case of the original mutual FFI relation theorem; typed HOL statement captured in cake_evaluate_ffi_props_probe. The general mutual theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "evaluate_call_FFI_rel",
+    "lean_path": "Flapjack/EvaluateProps/EvaluateFfi.lean",
+    "lean_name": "evaluateDecsFfi_letrec",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending full evaluator and carrier review): constructor case of the original mutual FFI relation theorem; typed HOL statement captured in cake_evaluate_ffi_props_probe. The general mutual theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "evaluate_call_FFI_rel",
+    "lean_path": "Flapjack/EvaluateProps/EvaluateFfi.lean",
+    "lean_name": "evaluateFfi_letrec",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending full evaluator and carrier review): constructor case of the original mutual FFI relation theorem; typed HOL statement captured in cake_evaluate_ffi_props_probe. The general mutual theorem remains open."
   }
 ]
