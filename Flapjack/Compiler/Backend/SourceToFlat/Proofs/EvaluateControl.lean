@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateCases
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalWeakening
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveType
 import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateClock
 import Flapjack.EvaluateHOL.ClockFull
@@ -40,6 +41,35 @@ def ExprListSim {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace :
   let source := EvaluateHOL.evaluate sourceState sourceEnv expressions
   let flat := FlatSem.evaluate flatEnv flatState (compileExps trace compMap expressions)
   EvalResultRel genv source.2 flat.2 ∧ StateRel genv source.1 flat.1
+
+/-- Expression-list results remain related after global growth. -/
+theorem evalResultRel_growth (old new : GlobalEnv) (growth : GlobalGrowth old new)
+    (source : Result (List SemanticPrimitivesHOL.Value) SemanticPrimitivesHOL.Value)
+    (flat : Result (List FlatSem.Value) FlatSem.Value)
+    (related : EvalResultRel old source flat) : EvalResultRel new source flat := by
+  cases related with
+  | value rel => exact .value (valueList_growth old new growth _ _ rel)
+  | raise rel => exact .raise (valueRel_growth old new growth _ _ rel)
+  | abort error => exact .abort error
+
+/-- A simulation remains valid when its global relation grows. The evaluator
+runs are unchanged; this weakens only their result and state relations. -/
+theorem exprSim_growth {C F : Type} (old new : GlobalEnv) (growth : GlobalGrowth old new)
+    (compMap : Environment) (trace : List VarN)
+    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F) (expr : AstHOL.Exp)
+    (sim : ExprSim old compMap trace sourceEnv flatEnv sourceState flatState expr) :
+    ExprSim new compMap trace sourceEnv flatEnv sourceState flatState expr := by
+  exact ⟨evalResultRel_growth old new growth _ _ sim.1, stateRel_growth old new growth _ _ sim.2⟩
+
+/-- Expression-list simulations admit the same weakening. -/
+theorem exprListSim_growth {C F : Type} (old new : GlobalEnv) (growth : GlobalGrowth old new)
+    (compMap : Environment) (trace : List VarN)
+    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F) (exprs : List AstHOL.Exp)
+    (sim : ExprListSim old compMap trace sourceEnv flatEnv sourceState flatState exprs) :
+    ExprListSim new compMap trace sourceEnv flatEnv sourceState flatState exprs := by
+  exact ⟨evalResultRel_growth old new growth _ _ sim.1, stateRel_growth old new growth _ _ sim.2⟩
 
 /-- Compiling an expression list commutes with reversing its evaluation order. -/
 theorem compileExps_reverse (trace : List VarN) (compMap : Environment) (expressions : List AstHOL.Exp) :
