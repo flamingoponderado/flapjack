@@ -104708,5 +104708,146 @@
     "lean_name": "inferTypeToString",
     "statement_status": "pending_statement_review",
     "reviewer": "Codex: typed original equations captured in cake_type_display_probe, including the polymorphic namespace payload; full source and carrier review remains pending. The executed --types path uses this renderer."
+  },
+  {
+    "hol_path": "HOL/examples/formal-languages/context-free/locationScript.sml",
+    "hol_name": "merge_locs_def",
+    "lean_path": "Flapjack/Misc/Location/Merge.lean",
+    "lean_name": "mergeLocs",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed HOL equations and a location-merge example captured in context_free_tree_probe; full source review remains pending."
+  },
+  {
+    "hol_path": "HOL/examples/formal-languages/context-free/locationScript.sml",
+    "hol_name": "merge_list_locs_def",
+    "lean_path": "Flapjack/Misc/Location/Merge.lean",
+    "lean_name": "mergeListLocs",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed HOL equations and a location-merge example captured in context_free_tree_probe; full source review remains pending."
+  },
+  {
+    "hol_path": "HOL/examples/formal-languages/context-free/grammarScript.sml",
+    "hol_name": "symbol",
+    "lean_path": "Flapjack/Misc/Grammar.lean",
+    "lean_name": "Symbol",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed HOL equations captured in context_free_tree_probe; full generic carrier and source review remains pending."
+  },
+  {
+    "hol_path": "HOL/examples/formal-languages/context-free/grammarScript.sml",
+    "hol_name": "grammar",
+    "lean_path": "Flapjack/Misc/Grammar.lean",
+    "lean_name": "Grammar",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "reviewer": "Codex source comparison: HOL grammar has polymorphic start and a finite map from nonterminals to sets of production lists; rules is the canonical HolFiniteMapExact with predicate-valued productions. The same-module holFmapAsFiniteSupportWitness gives the two-way lookup/support roundtrip. For validPtree, membership in FDOM followed by FAPPLY is represented by a successful lookup and its production predicate; every child is checked. The complete and location-valid forms retain the original head, fringe and location premises. Typed equations are captured in context_free_tree_probe. This records the map representation and source clauses, not CakeML parser equivalence.",
+    "fmap_as_finite_support": [
+      "rules"
+    ]
+  },
+  {
+    "hol_path": "HOL/examples/formal-languages/context-free/grammarScript.sml",
+    "hol_name": "isTOK_def",
+    "lean_path": "Flapjack/Misc/Grammar.lean",
+    "lean_name": "isTok",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed HOL equations captured in context_free_tree_probe; full generic carrier and source review remains pending."
+  },
+  {
+    "hol_path": "HOL/examples/formal-languages/context-free/grammarScript.sml",
+    "hol_name": "destTOK_def",
+    "lean_path": "Flapjack/Misc/Grammar.lean",
+    "lean_name": "destTok",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed HOL equations captured in context_free_tree_probe; full generic carrier and source review remains pending."
+  },
+  {
+    "hol_path": "HOL/examples/formal-languages/context-free/grammarScript.sml",
+    "hol_name": "parsetree",
+    "lean_path": "Flapjack/Misc/Grammar.lean",
+    "lean_name": "ParseTree",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed HOL equations captured in context_free_tree_probe; full generic carrier and source review remains pending."
+  },
+  {
+    "hol_path": "HOL/examples/formal-languages/context-free/grammarScript.sml",
+    "hol_name": "ptree_loc_def",
+    "lean_path": "Flapjack/Misc/Grammar.lean",
+    "lean_name": "treeLoc",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed HOL equations captured in context_free_tree_probe; full generic carrier and source review remains pending."
+  },
+  {
+    "hol_path": "HOL/examples/formal-languages/context-free/grammarScript.sml",
+    "hol_name": "ptree_list_loc_def",
+    "lean_path": "Flapjack/Misc/Grammar.lean",
+    "lean_name": "treeListLoc",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed HOL equations captured in context_free_tree_probe; full generic carrier and source review remains pending."
+  },
+  {
+    "hol_path": "HOL/examples/formal-languages/context-free/grammarScript.sml",
+    "hol_name": "ptree_head_def",
+    "lean_path": "Flapjack/Misc/Grammar.lean",
+    "lean_name": "treeHead",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed HOL equations captured in context_free_tree_probe; full generic carrier and source review remains pending."
+  },
+  {
+    "hol_path": "HOL/examples/formal-languages/context-free/grammarScript.sml",
+    "hol_name": "ptree_fringe_def",
+    "lean_path": "Flapjack/Misc/Grammar.lean",
+    "lean_name": "treeFringe",
+    "hol_line": 57,
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed HOL equations captured in context_free_tree_probe; full generic carrier and source review remains pending."
+  },
+  {
+    "hol_path": "HOL/examples/formal-languages/context-free/grammarScript.sml",
+    "hol_name": "real_fringe_def",
+    "lean_path": "Flapjack/Misc/Grammar.lean",
+    "lean_name": "realFringe",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed HOL equations captured in context_free_tree_probe; full generic carrier and source review remains pending."
+  },
+  {
+    "hol_path": "HOL/examples/formal-languages/context-free/grammarScript.sml",
+    "hol_name": "valid_locs_def",
+    "lean_path": "Flapjack/Misc/Grammar.lean",
+    "lean_name": "validLocs",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed HOL equations captured in context_free_tree_probe; full generic carrier and source review remains pending."
+  },
+  {
+    "hol_path": "HOL/examples/formal-languages/context-free/grammarScript.sml",
+    "hol_name": "valid_ptree_def",
+    "lean_path": "Flapjack/Misc/Grammar.lean",
+    "lean_name": "validPtree",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "reviewer": "Codex source comparison: HOL grammar has polymorphic start and a finite map from nonterminals to sets of production lists; rules is the canonical HolFiniteMapExact with predicate-valued productions. The same-module holFmapAsFiniteSupportWitness gives the two-way lookup/support roundtrip. For validPtree, membership in FDOM followed by FAPPLY is represented by a successful lookup and its production predicate; every child is checked. The complete and location-valid forms retain the original head, fringe and location premises. Typed equations are captured in context_free_tree_probe. This records the map representation and source clauses, not CakeML parser equivalence.",
+    "fmap_as_finite_support": [
+      "rules"
+    ]
+  },
+  {
+    "hol_path": "HOL/examples/formal-languages/context-free/grammarScript.sml",
+    "hol_name": "complete_ptree_def",
+    "lean_path": "Flapjack/Misc/Grammar.lean",
+    "lean_name": "completePtree",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "reviewer": "Codex source comparison: HOL grammar has polymorphic start and a finite map from nonterminals to sets of production lists; rules is the canonical HolFiniteMapExact with predicate-valued productions. The same-module holFmapAsFiniteSupportWitness gives the two-way lookup/support roundtrip. For validPtree, membership in FDOM followed by FAPPLY is represented by a successful lookup and its production predicate; every child is checked. The complete and location-valid forms retain the original head, fringe and location premises. Typed equations are captured in context_free_tree_probe. This records the map representation and source clauses, not CakeML parser equivalence.",
+    "fmap_as_finite_support": [
+      "rules"
+    ]
+  },
+  {
+    "hol_path": "HOL/examples/formal-languages/context-free/grammarScript.sml",
+    "hol_name": "valid_lptree_def",
+    "lean_path": "Flapjack/Misc/Grammar.lean",
+    "lean_name": "validLptree",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "reviewer": "Codex source comparison: HOL grammar has polymorphic start and a finite map from nonterminals to sets of production lists; rules is the canonical HolFiniteMapExact with predicate-valued productions. The same-module holFmapAsFiniteSupportWitness gives the two-way lookup/support roundtrip. For validPtree, membership in FDOM followed by FAPPLY is represented by a successful lookup and its production predicate; every child is checked. The complete and location-valid forms retain the original head, fringe and location premises. Typed equations are captured in context_free_tree_probe. This records the map representation and source clauses, not CakeML parser equivalence.",
+    "fmap_as_finite_support": [
+      "rules"
+    ]
   }
 ]

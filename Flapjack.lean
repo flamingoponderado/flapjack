@@ -1868,6 +1868,8 @@ import Flapjack.EvaluateProps.ClockIoFull
 import Flapjack.EvaluateProps.ClockIoConsequences
 import Flapjack.Compiler.Inference.InferT.Display
 import Flapjack.Compiler.Inference.Infer.TypesOutput
+import Flapjack.Misc.Grammar
+import Flapjack.CakeParser.ParseTree.Grammar
 import Flapjack.TypeSystemHOL.Environments
 import Flapjack.TypeSystemHOL.TypeNames
 import Flapjack.TypeSystemHOL.Patterns

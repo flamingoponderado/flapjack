@@ -463,6 +463,10 @@ run_probe cake_type_display_probeScript.sml cake_type_display_probe.out \
   get_tyname type_ident var_name parentheses type_render type_render_final alist_nub ns_nub ns_alist types_output type_function type_tuple type_unknown \
   "$cake_dir/compiler/inference/infer_tScript.sml" "$cake_dir/compiler/inference"
 
+run_probe context_free_tree_probeScript.sml context_free_tree_probe.out \
+  merge_locs merge_list is_tok dest_tok ptree_loc ptree_list_loc ptree_head ptree_fringe real_fringe valid_locs valid_ptree complete_ptree valid_lptree merge_example fringe_example valid_example missing_rule \
+  "$hol_dir/examples/formal-languages/context-free/grammarScript.sml" "$hol_dir/examples/formal-languages/context-free"
+
 run_probe cake_type_env_probeScript.sml cake_type_env_probe.out \
   freevars freevars_ast db_inc db_subst bind_tvar opt_bind tve_lookup extend lookup_local lookup num_tvs bind_list inc_example subst_example lookup_example type_subst check_type_names type_name_subst type_p_rules type_name_example type_name_missing type_name_duplicates type_of supported_test supported_arith supported_conversion type_op type_e_rules arith_good arith_bad_arity empty_array unsafe_op value_def check_ctor build_ctor add_tvs scheme tenv_lift primitive_nums type_d_rules value_tuple value_apply ctor_distinct ctor_duplicate prim_tenv prim_type_ids can_type_prog semantics_def prim_list_lookup prim_cons_lookup \
   "$cake_dir/semantics/typeSystemScript.sml" "$cake_dir/semantics"
