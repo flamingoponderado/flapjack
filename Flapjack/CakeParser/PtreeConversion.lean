@@ -706,4 +706,207 @@ Flapjack infrastructure until the bound and correspondence with HOL are proved. 
 def ptreeExpr (n : Nonterminal) (pt : ParseTree) : Option Exp :=
   exprWorker (2 * treeSize pt + 1) n pt
 
+
+private def linfixWorker (nt : Nonterminal) (separator : Token)
+    (item : ParseTree → Option α) : Nat → ParseTree → Option (List α)
+  | 0, _ => none
+  | fuel + 1, pt => do
+    let xs ← children nt pt
+    match xs with
+    | [x] => (item x).map (fun a => [a])
+    | [front, sep, last] => do
+      if !tokcheck sep separator then none else
+      let front ← linfixWorker nt separator item fuel front
+      let last ← item last
+      some (front ++ [last])
+    | _ => none
+
+private def ptbase (pt : ParseTree) : Option AstT := do
+  let xs ← children .nPTbase pt
+  match xs with
+  | [x] => match tyvar x with
+    | some v => some (.atvar v)
+    | none => (ptreeTyop x).map (AstT.atapp [])
+  | [l, t, r] =>
+    if tokcheck l .lparT && tokcheck r .rparT then ptreeType .nType t else none
+  | _ => none
+
+private def tbaseList : Nat → ParseTree → Option (List AstT)
+  | 0, _ => none
+  | fuel + 1, pt => do
+    let xs ← children .nTbaseList pt
+    match xs with
+    | [] => some []
+    | [x, rest] => do
+      let t ← ptbase x
+      let ts ← tbaseList fuel rest
+      some (t :: ts)
+    | _ => none
+
+private def dconstructor (pt : ParseTree) : Option (MlString × List AstT) := do
+  let [name, ts] ← children .nDconstructor pt | none
+  let name ← ptreeUQConstructorName name
+  let ts ← tbaseList (treeSize ts + 1) ts
+  some (name, ts)
+
+private def dtypeDecl (pt : ParseTree) : Option (List MlString × MlString × List (MlString × List AstT)) := do
+  let [name, eq, constructors] ← children .nDtypeDecl pt | none
+  if !tokcheck eq .equalsT then none else
+  let (vars, name) ← ptreeTypeName name
+  let cs ← linfixWorker .nDtypeCons .barT dconstructor (treeSize constructors + 1) constructors
+  some (vars, name, cs)
+
+private def typeDec (pt : ParseTree) : Option TypeDef := do
+  let [kw, decls] ← children .nTypeDec pt | none
+  if !tokcheck kw .datatypeT then none else
+  linfixWorker .nDtypeDecls .andT dtypeDecl (treeSize decls + 1) decls
+
+@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "ptree_StructName_def"]
+def ptreeStructName (pt : ParseTree) : Option MlString := do
+  let [leaf] ← children .nStructName pt | none
+  match leaf.token with
+  | some (.alphaT s) => some s
+  | _ => none
+
+private def optTypeEqn (pt : ParseTree) : Option (Option AstT) := do
+  let xs ← children .nOptTypEqn pt
+  match xs with
+  | [] => some none
+  | [eq, t] => if tokcheck eq .equalsT then (ptreeType .nType t).map some else none
+  | _ => none
+
+private def specLine (pt : ParseTree) : Option Unit := do
+  let xs ← children .nSpecLine pt
+  match xs with
+  | [t] => do let _ ← typeDec t; some ()
+  | [kw, c] => do
+    if !tokcheck kw .exceptionT then none else
+    let _ ← dconstructor c
+    some ()
+  | [kw, name, typ] => do
+    if !tokcheck kw .typeT then none else
+    let _ ← ptreeTypeName name
+    let _ ← optTypeEqn typ
+    some ()
+  | [kw, name, colon, typ] => do
+    if !(tokcheck kw .valT && tokcheck colon .colonT) then none else
+    let _ ← ptreeV name
+    let _ ← ptreeType .nType typ
+    some ()
+  | _ => none
+
+private def specLines : Nat → ParseTree → Option Unit
+  | 0, _ => none
+  | fuel + 1, pt => do
+    let xs ← children .nSpecLineList pt
+    match xs with
+    | [] => some ()
+    | [x, rest] =>
+      if tokcheck x .semicolonT then specLines fuel rest else do
+        let _ ← specLine x
+        specLines fuel rest
+    | _ => none
+
+private def signatureValue (pt : ParseTree) : Option Unit := do
+  let [sigTok, lines, endTok] ← children .nSignatureValue pt | none
+  if !(tokcheck sigTok .sigT && tokcheck endTok .endT) then none else
+  specLines (treeSize lines + 1) lines
+
+private def signatureAscription (pt : ParseTree) : Option (Option Unit) := do
+  let xs ← children .nOptionalSignatureAscription pt
+  match xs with
+  | [] => some none
+  | [sealTok, sigv] => if tokcheck sealTok .sealT then (signatureValue sigv).map some else none
+  | _ => none
+
+mutual
+private def declWorker : Nat → ParseTree → Option Dec
+  | 0, _ => none
+  | fuel + 1, pt => do
+    let .node _ loc _ := pt | none
+    let xs ← children .nDecl pt
+    match xs with
+    | [x] => match typeDec x with
+      | some d => some (.dtype loc d)
+      | none => match ptreeTypeAbbrevDec x with
+        | some d => some d
+        | none => structureWorker fuel x
+    | [tok, x] =>
+      if tokcheck tok .funT then (andFdeclsWorker (2 * treeSize x + 1) x).map (Dec.dletrec loc)
+      else if tokcheck tok .exceptionT then do
+        let (name, ts) ← dconstructor x
+        some (.dexn loc name ts)
+      else none
+    | [tok, pat, eq, expr] => do
+      if !(tokcheck tok .valT && tokcheck eq .equalsT) then none else
+      let pat ← ptreePattern .nPattern pat
+      let expr ← ptreeExpr .nE expr
+      some (.dlet loc pat expr)
+    | [tok, ds1, inTok, ds2, endTok] => do
+      if !(tokcheck tok .localT && tokcheck inTok .inT && tokcheck endTok .endT) then none else
+      let ds1 ← declsWorker fuel ds1
+      let ds2 ← declsWorker fuel ds2
+      some (.dlocal ds1 ds2)
+    | _ => none
+
+private def declsWorker : Nat → ParseTree → Option (List Dec)
+  | 0, _ => none
+  | fuel + 1, pt => do
+    let xs ← children .nDecls pt
+    match xs with
+    | [] => some []
+    | [d, ds] => if tokcheck d .semicolonT then declsWorker fuel ds else do
+      let d ← declWorker fuel d
+      let ds ← declsWorker fuel ds
+      some (d :: ds)
+    | _ => none
+
+private def structureWorker : Nat → ParseTree → Option Dec
+  | 0, _ => none
+  | fuel + 1, pt => do
+    let [kw, name, asc, eq, structTok, ds, endTok] ← children .nStructure pt | none
+    if !(tokcheck kw .structureT && tokcheck eq .equalsT && tokcheck structTok .structT && tokcheck endTok .endT) then none else
+    let name ← ptreeStructName name
+    let _ ← signatureAscription asc
+    let ds ← declsWorker fuel ds
+    some (.dmod name ds)
+end
+
+mutual
+private def topLevelWorker : Nat → ParseTree → Option (List Dec)
+  | 0, _ => none
+  | fuel + 1, pt => do
+    let .node _ loc _ := pt | none
+    let xs ← children .nTopLevelDecs pt
+    match xs with
+    | [] => some []
+    | [d, ds] => if tokcheck d .semicolonT then topLevelWorker fuel ds else do
+      let d ← declWorker (treeSize d * 2 + 1) d
+      let ds ← nonETopLevelWorker fuel ds
+      some (d :: ds)
+    | [e, semi, ds] => do
+      if !tokcheck semi .semicolonT then none else
+      let e ← ptreeExpr .nE e
+      let ds ← topLevelWorker fuel ds
+      some (.dlet loc (.pvar (ofString "it")) e :: ds)
+    | _ => none
+
+private def nonETopLevelWorker : Nat → ParseTree → Option (List Dec)
+  | 0, _ => none
+  | fuel + 1, pt => do
+    let xs ← children .nNonETopLevelDecs pt
+    match xs with
+    | [] => some []
+    | [d, ds] => if tokcheck d .semicolonT then topLevelWorker fuel ds else do
+      let d ← declWorker (treeSize d * 2 + 1) d
+      let ds ← nonETopLevelWorker fuel ds
+      some (d :: ds)
+    | _ => none
+end
+
+/-- Convert a complete top-level declaration tree. Bounds are derived from
+the tree; their sufficiency and correspondence with HOL remain unproved. -/
+def ptreeTopLevelDecs (pt : ParseTree) : Option (List Dec) :=
+  topLevelWorker (treeSize pt + 1) pt
+
 end Flapjack.CakeParser.PtreeConversion

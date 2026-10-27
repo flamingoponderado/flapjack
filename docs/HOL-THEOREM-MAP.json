@@ -102261,5 +102261,13 @@
     "hol_name": "letFromPat_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Transcribed against pinned expression conversion and specialized CakeML carriers; complete source and carrier review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
+    "lean_name": "ptreeStructName",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
+    "hol_name": "ptree_StructName_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Transcribed against the pinned parse-tree conversion and specialized CakeML carriers; full source and carrier review remains pending."
   }
 ]

@@ -371,6 +371,9 @@ run_probe cake_ptree_pattern_probeScript.sml cake_ptree_pattern_probe.out \
 run_probe cake_ptree_expr_probeScript.sml cake_ptree_expr_probe.out \
   function let case "$cake_dir/semantics/cmlPtreeConversionScript.sml" "$cake_dir/compiler/parsing" "$cake_dir/semantics"
 
+run_probe cake_source_frontend_probeScript.sml cake_source_frontend_probe.out \
+  empty value datatype structure expression "$cake_dir/semantics/cmlPtreeConversionScript.sml" "$cake_dir/compiler/parsing" "$cake_dir/semantics"
+
 run_probe bvl_inline_cake_bvi_probeScript.sml bvl_inline_cake_bvi_probe.out \
   code "$cake_dir/compiler/backend/bvl_inlineScript.sml" "$cake_dir/compiler/backend"
 

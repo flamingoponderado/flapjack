@@ -1,0 +1,5 @@
+empty=SOME []
+value=SOME [Dlet (Locs (POSN 0 0) (POSN 0 11)) (Pvar «x») (Lannot (Lit (IntLit 1)) (Locs (POSN 0 11) (POSN 0 11)))]
+datatype=SOME [Dtype (Locs (POSN 0 0) UNKNOWNpt) [([],«t»,[(«A»,[]); («B»,[])])]]
+structure=SOME [Dmod «M» [Dlet (Locs (POSN 0 25) (POSN 0 36)) (Pvar «x») (Lannot (Lit (IntLit 1)) (Locs (POSN 0 36) (POSN 0 36)))]]
+expression=SOME [Dlet (Locs (POSN 0 0) UNKNOWNpt) (Pvar «it») (Lannot (Lit (IntLit 1)) (Locs (POSN 0 0) (POSN 0 0)))]
