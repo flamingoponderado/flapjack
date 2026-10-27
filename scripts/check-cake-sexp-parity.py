@@ -34,6 +34,13 @@ PROGRAMS = {
     'annotated_function': 'fun f (x : int) = x + 1; val _ = print_int (f 7);',
     'boolean_logic': 'val _ = print_int (if True andalso False orelse True then 1 else 0);',
 }
+# Thunk primitives are expressible in bootstrap S-expressions rather than
+# ordinary surface syntax. Their source programs bypass type inference.
+RAW_PROGRAMS = {
+    'evaluated_thunk': '((Dlet (unk unk) "x" (App (AllocThunk . Evaluated) ((Lit 1)))) (Dlet (unk unk) "y" (App ForceThunk ((Var (Short "x"))))))',
+    'pending_thunk': '((Dlet (unk unk) "x" (App (AllocThunk . NotEvaluated) ((Fun "v" (Lit 7))))) (Dlet (unk unk) "y" (App ForceThunk ((Var (Short "x"))))))',
+}
+RAW_FLAGS = ['--sexp=true', '--target=riscv', '--skip_type_inference=true', '--exclude_prelude=true']
 BAD_INPUTS = ['', '(', '(1 . 2)', '(garbage)', '((Dlet))', '((Denv "\\\\20"))']
 TYPE_ERRORS = [
     '((Dlet (unk unk) "x" (Var (Short "missing"))))',
@@ -81,6 +88,10 @@ def main():
             if any(row['exit_code'] for row in outputs.values()) or not outputs['assembly']['stdout_bytes']:
                 raise SystemExit(f'original compilation failed for {name}')
             rows[name] = {'sexp': sexp, 'outputs': outputs}
+        raw = {name: capture(args.record_reference, source.encode('ascii'), RAW_FLAGS)
+               for name, source in RAW_PROGRAMS.items()}
+        if any(row['exit_code'] or not row['stdout_bytes'] or row['stderr_bytes'] for row in raw.values()):
+            raise SystemExit('original thunk compilation failed')
         failures = [capture(args.record_reference, s.encode('ascii'), flags['types']) for s in BAD_INPUTS]
         if any(row['exit_code'] != 1 or row['stdout_bytes'] or not row['stderr_bytes'] for row in failures):
             raise SystemExit('original rejected-input outcome is unexpected')
@@ -91,12 +102,12 @@ def main():
         if any(row['exit_code'] or row['stdout_bytes'] or not row['stderr_bytes'] for row in stress.values()):
             raise SystemExit('original stress-input outcome is unexpected')
         FIXTURE.write_text(json.dumps({'cakeml_revision': parity.PINNED_REV, 'hol_revision': parity.HOL_REV,
-                                       'programs': rows, 'failures': failures, 'type_errors': type_errors,
+                                       'programs': rows, 'raw_programs': raw, 'failures': failures, 'type_errors': type_errors,
                                        'stress': stress}, indent=2) + '\n')
     fixture = json.loads(FIXTURE.read_text())
     if (fixture['cakeml_revision'], fixture['hol_revision']) != (parity.PINNED_REV, parity.HOL_REV):
         raise SystemExit('unexpected reference provenance')
-    if (set(fixture['programs']) != set(PROGRAMS) or len(fixture['failures']) != len(BAD_INPUTS) or
+    if (set(fixture['programs']) != set(PROGRAMS) or set(fixture['raw_programs']) != set(RAW_PROGRAMS) or len(fixture['failures']) != len(BAD_INPUTS) or
             len(fixture['type_errors']) != len(TYPE_ERRORS) or set(fixture['stress']) != set(STRESS_INPUTS)):
         raise SystemExit('reference case list has changed')
     if args.check_reference:
@@ -114,6 +125,12 @@ def main():
             if got != want:
                 raise SystemExit(f'{name}/{mode}: output mismatch\nexpected {want}\nactual   {got}')
         print(f'{name}: type and complete RISC-V output match pinned CakeML', flush=True)
+    for name, source in RAW_PROGRAMS.items():
+        want = fixture['raw_programs'][name]
+        for executable in ([args.check_reference, args.cake] if args.check_reference else [args.cake]):
+            if capture(executable, source.encode('ascii'), RAW_FLAGS) != want:
+                raise SystemExit(f'{name}: output differs for {executable}')
+        print(f'{name}: complete RISC-V output matches pinned CakeML', flush=True)
     for i, source in enumerate(BAD_INPUTS):
         want = fixture['failures'][i]
         for executable in ([args.check_reference, args.cake] if args.check_reference else [args.cake]):

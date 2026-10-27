@@ -66,3 +66,18 @@ val _ = capture "equal_string" ``
 val _ = capture "equal_constructor" ``
  let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16; be := F|> in
  data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$BlockOp (closLang$EqualConst (closLang$Con 4 [1]))) [1] NONE) : 64 wordLang$prog # num``;
+val _ = capture "alloc_thunk_evaluated" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16; be := F|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$ThunkOp (ast$AllocThunk ast$Evaluated)) [1] NONE) : 64 wordLang$prog # num``;
+val _ = capture "alloc_thunk_pending" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16; be := F|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$ThunkOp (ast$AllocThunk ast$NotEvaluated)) [1] NONE) : 64 wordLang$prog # num``;
+val _ = capture "force_thunk_tail" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16; be := F|> in
+ data_to_word$comp c 5 2 (dataLang$Force NONE 42 1) : 64 wordLang$prog # num``;
+val _ = capture "force_thunk_return" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16; be := F|> in
+ data_to_word$comp c 5 2 (dataLang$Force (SOME (3, sptree$LS ())) 42 1) : 64 wordLang$prog # num``;
+val _ = capture "force_thunk_bad_header" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 0; be := F|> in
+ data_to_word$comp c 5 2 (dataLang$Force NONE 42 1) : 64 wordLang$prog # num``;

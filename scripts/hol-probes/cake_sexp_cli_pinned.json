@@ -415,5 +415,21 @@
       "stderr_bytes": 2,
       "stderr_sha256": "75a11da44c802486bc6f65640aa48a730f0f684c5c07a42ba3cd1735eb3fb070"
     }
+  },
+  "raw_programs": {
+    "evaluated_thunk": {
+      "exit_code": 0,
+      "stdout_bytes": 311621,
+      "stdout_sha256": "f0e1a8acd4c661ec07a027f495ca6d94c1f2ec23a1a9ccd30b1ebefc046fa9a1",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "pending_thunk": {
+      "exit_code": 0,
+      "stdout_bytes": 312127,
+      "stdout_sha256": "d007570bbc4741542d7d25aa1d444ffc4b808260f4a9a22b194d37eb533b4270",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
   }
 }

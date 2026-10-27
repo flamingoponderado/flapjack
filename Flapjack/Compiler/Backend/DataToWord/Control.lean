@@ -157,8 +157,8 @@ private def compileCons {width : Nat} [NeZero width] (conf : Config) (l dest tag
             .const pointer]),
           .set .nextFree (.op .add [.var 1, .const bytes])], l)
 
-/-- Flapjack's partial traversal. Unsupported assignment operations and
-thunk cases return `none`; this is not HOL's total `comp`. -/
+/-- Flapjack's partial traversal. Unsupported assignment operations return
+`none`; this is not HOL's total `comp`. -/
 def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
     Nat → DataLang.Prog → Option (WordLangProgHOL (BitVec width) × Nat)
   | l, .skip => some (.skip, l)
@@ -788,6 +788,25 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
             (.assign (adjustVar dest) (.const 2)), l)
       | .update, _ | .updateCons, _ => some (.skip, l)
       | _, _ => none
+  | l, .assign dest (.thunkOp (.allocThunk mode)) args _ =>
+      match args with
+      | [arg] =>
+          let tag := match mode with
+            | .evaluated => 14
+            | .notEvaluated => 6
+          match encodeHeader (width := width) conf tag 1 with
+          | none => some (giveUp, l)
+          | some header =>
+              let bytes := BitVec.ofNat width (2 * (width / 8))
+              some (listSeq [
+                .set .triggerGC (.op .sub [.lookup .triggerGC, .const bytes]),
+                .assign 1 (.op .sub [.lookup .endOfHeap, .const bytes]),
+                .set .endOfHeap (.var 1), .assign 3 (.const header),
+                storeEach 1 [3, adjustVar arg] 0,
+                .assign (adjustVar dest) (.op .or [
+                  shiftN .lsl (.op .sub [.var 1, .lookup .currHeap]) (shiftLength conf - wordShiftAmount width),
+                  .const 1])], l)
+      | _ => some (.skip, l)
   | l, .assign dest (.thunkOp (.updateThunk mode)) args _ =>
       match args with
       | [base, value] =>
@@ -805,6 +824,27 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
                   .assign (adjustVar dest) (.const 2)], l)
       | _ => some (.skip, l)
   | l, .assign dest (.label n) _ _ => some (.locValue (adjustVar dest) n, l)
+  | l, .force ret loc v =>
+      match encodeHeader (width := width) conf 14 1 with
+      | none => some (giveUp, l)
+      | some _ =>
+          let v := adjustVar v
+          let unchanged := match ret with
+            | none => WordLangProgHOL.return 0 [v]
+            | some (dest, _) => .assign (adjustVar dest) (.var v)
+          let loaded := WordLangExpHOL.load (.op .add [.var 1, .const (BitVec.ofNat width (width / 8))])
+          let evaluated := match ret with
+            | none => listSeq [.assign 1 loaded, .return 0 [1]]
+            | some (dest, _) => .assign (adjustVar dest) loaded
+          let call := match ret with
+            | none => WordLangProgHOL.call none (some loc) [0, v, 5] none
+            | some (dest, names) => .call (some ([adjustVar dest], adjustSets names, .skip, secn, l))
+                (some loc) [v, 5] none
+          some (.ite .test v (.imm 1) unchanged (listSeq [
+            .assign 1 (realAddr conf v),
+            .assign 3 (.op .and [.load (.var 1), .const 60]),
+            .ite .equal 3 (.imm 56) evaluated
+              (.ite .notEqual 3 (.imm 24) unchanged (listSeq [.assign 5 loaded, call]))]), l + 1)
   | l, .call none target args _ => some (.call none target (0 :: args.map adjustVar) none, l)
   | l, .call (some (ns, names)) target args none =>
       some (.call (some (ns.map adjustVar, adjustSets names, .skip, secn, l))

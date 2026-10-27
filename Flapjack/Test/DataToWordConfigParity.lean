@@ -319,6 +319,45 @@ private def headerConfig : Config := { conf with lenSize := 4 }
   | some (.skip, 2) => true
   | _ => false
 #guard (compileControl? (width := 8) conf 5 2 (.assign 3 (.blockOp (.equalConst (.int 32))) [1] none)).isNone
+-- Thunk allocation and force programs captured from the pinned HOL pass.
+private def thunkAllocMatches (mode : Flapjack.AstHOL.ThunkMode) (header : BitVec 64) : Bool :=
+  match compileControl? (width := 64) conf 5 2 (.assign 3 (.thunkOp (.allocThunk mode)) [1] none) with
+  | some (.seq (.set .triggerGC (.op .sub [.lookup .triggerGC, .const 16]))
+      (.seq (.assign 1 (.op .sub [.lookup .endOfHeap, .const 16]))
+        (.seq (.set .endOfHeap (.var 1))
+          (.seq (.assign 3 (.const actual))
+            (.seq (.seq (.store (.op .add [.var 1, .const 0]) 3)
+              (.seq (.store (.op .add [.var 1, .const 8]) 4) .skip))
+              (.assign 8 (.op .or [.shift .lsl (.op .sub [.var 1, .lookup .currHeap]) (.const 5), .const 1])))))), 2) => actual == header
+  | _ => false
+#guard thunkAllocMatches .evaluated 0x100000000003b
+#guard thunkAllocMatches .notEvaluated 0x100000000001b
+#guard match compileControl? (width := 64) conf 5 2 (.force none 42 1) with
+  | some (.ite .test 4 (.imm 1) (.return 0 [4])
+      (.seq (.assign 1 (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)]))
+        (.seq (.assign 3 (.op .and [.load (.var 1), .const 60]))
+          (.ite .equal 3 (.imm 56)
+            (.seq (.assign 1 (.load (.op .add [.var 1, .const 8]))) (.return 0 [1]))
+            (.ite .notEqual 3 (.imm 24) (.return 0 [4])
+              (.seq (.assign 5 (.load (.op .add [.var 1, .const 8])))
+                (.call none (some 42) [0, 4, 5] none)))))), 3) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.force (some (3, .ls ())) 42 1) with
+  | some (.ite .test 4 (.imm 1) (.assign 8 (.var 4))
+      (.seq (.assign 1 (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)]))
+        (.seq (.assign 3 (.op .and [.load (.var 1), .const 60]))
+          (.ite .equal 3 (.imm 56) (.assign 8 (.load (.op .add [.var 1, .const 8])))
+            (.ite .notEqual 3 (.imm 24) (.assign 8 (.var 4))
+              (.seq (.assign 5 (.load (.op .add [.var 1, .const 8])))
+                (.call (some ([8], live, .skip, 5, 2)) (some 42) [4, 5] none)))))), 3) =>
+      live == adjustSets (Flapjack.sptInsert 0 () .ln)
+  | _ => false
+#guard match compileControl? (width := 64) { conf with lenSize := 0 } 5 2 (.force none 42 1) with
+  | some (.seq (.assign 1 (.const n)) (.alloc 1 _), 2) => n == (-1 : BitVec 64)
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.thunkOp (.allocThunk .evaluated)) [] none) with
+  | some (.skip, 2) => true
+  | _ => false
 #guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp (.copyByte true)) [1, 2, 3] none) with
   | some (.mustTerminate (.call (some ([8], (.ls (), .ln), .skip, 5, 2)) (some 28) [4, 6, 8] none), 3) => true
   | _ => false
