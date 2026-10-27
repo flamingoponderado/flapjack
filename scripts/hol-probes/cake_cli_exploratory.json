@@ -1073,6 +1073,27 @@
       "stdout_sha256": "8c4f16daf521551cfcb1df341a5b3dc673672bab319b5981c7beb40a286a9b6a",
       "stderr_bytes": 0,
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "no_prelude_long_comment": {
+      "exit_code": 0,
+      "stdout_bytes": 310091,
+      "stdout_sha256": "190452c735f110b227123cb1f21e3a3d4738b2d51a39687b8c2d8b8b98b581eb",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "no_prelude_long_space": {
+      "exit_code": 0,
+      "stdout_bytes": 310091,
+      "stdout_sha256": "190452c735f110b227123cb1f21e3a3d4738b2d51a39687b8c2d8b8b98b581eb",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "parse_error_long_comment": {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 104,
+      "stderr_sha256": "4e554b408b4dfc3ed4fe6a4f382e2dfeab6abc9349ab0480152572ba7935bfeb"
     }
   }
 }

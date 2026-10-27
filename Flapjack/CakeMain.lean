@@ -103,6 +103,11 @@ private def errorMessage : PrimitiveCheckedSourceResult → Option String
   | .backendRejected => some "compiler backend could not compile this program"
   | .success _ _ _ => none
 
+/-- Scale the execution bound with the source size. The compiler remains a
+bounded port; no general sufficiency theorem is claimed for this bound. -/
+private def sourceFuel (source : List HolChar) : Nat :=
+  10000 + 16 * source.length
+
 /-- Run the currently supported CakeML frontend and backend options. This is
 Flapjack CLI infrastructure, not a port of the full HOL compiler driver. -/
 def compileBytes (options : Options) (source : List HolChar) : PrimitiveCheckedSourceResult := Id.run do
@@ -110,7 +115,7 @@ def compileBytes (options : Options) (source : List HolChar) : PrimitiveCheckedS
   let config := { base with
     wordToWordConf := { base.wordToWordConf with regAlg := options.regAlg.getD base.wordToWordConf.regAlg }
     dataConf := { base.dataConf with gcKind := options.gcKind.getD base.dataConf.gcKind } }
-  let fuel := 10000
+  let fuel := sourceFuel source
   match Flapjack.CakeParser.Frontend.parseSourceFuel fuel fuel source with
   | .exhausted => return .parseExhausted
   | .rejected => return .parseRejected
@@ -144,7 +149,7 @@ def main (args : List String) : IO UInt32 := do
     let chars := input.data.toList.map (fun c => BitVec.ofNat 8 c.toNat)
     let result := compileBytes options chars
     if let .parseRejected := result then
-      if let some bytes := Flapjack.CakeParser.Diagnostics.renderUnconsumedToken 10000 chars then
+      if let some bytes := Flapjack.CakeParser.Diagnostics.renderUnconsumedToken (sourceFuel chars) chars then
         let stderr ← IO.getStderr
         stderr.write (ByteArray.mk (bytes.map (fun b => UInt8.ofNat b.toNat)).toArray)
         return 1
