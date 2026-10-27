@@ -6,3 +6,4 @@ literals=[SOME (IntLit 0); SOME (IntLit 12); SOME (StrLit «a\^@b»); NONE; SOME
 locations=[SOME (Locs UNKNOWNpt EOFpt); SOME (Locs (POSN 1 2) (POSN 3 4)); NONE; NONE]
 types=[SOME (Atvar «a»); SOME (Atfun (Atvar «a») (Attup [])); SOME (Atapp [Atvar «a»] (Short «list»)); NONE]
 patterns=[SOME (Pvar «x»); SOME Pany; SOME (Plit (IntLit 42)); SOME (Pcon NONE [Pvar «x»; Pany]); SOME (Pas (Pref (Pvar «x»)) «y»); SOME (Ptannot (Pvar «x») (Atvar «a»)); NONE]
+operators=[SOME Equality; SOME Opapp; SOME Aw8sub_unsafe; SOME (ThunkOp ForceThunk); SOME Env_id; SOME (FFI «x\^@y»); SOME (ThunkOp (AllocThunk Evaluated)); SOME (ThunkOp (UpdateThunk NotEvaluated)); SOME (Shift W64 Ror 123); SOME (Arith Add IntT); SOME (FromTo (WordT W8) (WordT W64)); SOME (Test (AltCompare Leq) IntT); NONE; NONE]

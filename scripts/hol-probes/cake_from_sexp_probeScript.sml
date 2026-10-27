@@ -33,3 +33,13 @@ val _ = show "patterns" ``MAP fromSexp$sexppat
    ⟪SX_SYM "Pas"; ⟪SX_SYM "Pref"; SX_STR "x"⟫; SX_STR "y"⟫;
    ⟪SX_SYM "Ptannot"; SX_STR "x"; ⟪SX_SYM "Atvar"; SX_STR "a"⟫⟫;
    ⟪SX_SYM "Pany"; 1⟫]``;
+val _ = show "operators" ``MAP fromSexp$sexpop
+  [SX_SYM "Equality"; SX_SYM "Opapp"; SX_SYM "Aw8subunsafe"; SX_SYM "ForceThunk";
+   SX_SYM "Envid"; ⟪SX_SYM "FFI" • SX_STR "x\\00y"⟫;
+   ⟪SX_SYM "AllocThunk" • SX_SYM "Evaluated"⟫;
+   ⟪SX_SYM "UpdateThunk" • SX_SYM "NotEvaluated"⟫;
+   ⟪SX_SYM "Shift64Ror" • 123⟫;
+   ⟪SX_SYM "Arith" • ⟪SX_SYM "Add" • SX_SYM "IntT"⟫⟫;
+   ⟪SX_SYM "FromTo" • ⟪SX_SYM "Word8T" • SX_SYM "Word64T"⟫⟫;
+   ⟪SX_SYM "Test" • ⟪SX_SYM "AltLessEq" • SX_SYM "IntT"⟫⟫;
+   ⟪SX_SYM "Arith"; SX_SYM "Add"; SX_SYM "IntT"⟫; SX_SYM "NoSuchOp"]``;

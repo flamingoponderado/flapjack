@@ -2,8 +2,8 @@ import Flapjack.Basis.Pure.MlString
 
 /-! Byte-oriented S-expression parser for the CakeML bootstrap input path.
 The grammar follows HOL's `simpleSexpPEG`, but this direct, fuel-bounded
-implementation has not been proved equivalent to the PEG. It is not yet
-connected to the compiler's AST decoder. -/
+implementation has not been proved equivalent to the PEG. The executable's
+S-expression path uses it before decoding the compiler AST. -/
 namespace Flapjack.CakeParser.Sexp
 open Flapjack.Basis.Pure.MlString
 

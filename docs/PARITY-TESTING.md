@@ -442,6 +442,14 @@ Flapjack, or `--record-reference /path/to/pinned/cake` to regenerate captures;
 both commands verify the reported CakeML and HOL revisions. These finite
 comparisons are regression evidence, not a proof of output parity.
 
+`python3 scripts/check-cake-sexp-parity.py` compares `--sexp=true` type and
+complete RISC-V output against pinned-compiler captures. The original compiler
+exports each source program as an S-expression, then compiles that input;
+malformed inputs are also checked. Pass `--check-reference /path/to/pinned/cake`
+to rerun both original export and compilation, or `--record-reference` to
+regenerate the captures. The parser and AST decoder remain bounded and their
+equivalence with HOL has not been proved.
+
 An additional unverified bootstrap provides an original compiler built from
 the pinned translated CakeML compiler AST. Given the pinned CakeML and HOL
 checkouts, an already-built `compiler64ProgTheory`, and the historical bootstrap

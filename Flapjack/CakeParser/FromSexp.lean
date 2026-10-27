@@ -4,7 +4,7 @@ import Flapjack.AstHOL.Syntax
 /-! Shared conversions for CakeML's S-expression AST format, following
 `compiler/parsing/fromSexpScript.sml`. The S-expression carrier and bounded
 identifier traversal have not yet completed HOL correspondence review; these
-declarations are untagged and are not yet connected to the executable. -/
+declarations are untagged. The executable's S-expression path uses them. -/
 namespace Flapjack.CakeParser.FromSexp
 open Flapjack.CakeParser.Sexp Flapjack.Basis.Pure.MlString
 open Flapjack.AstHOL Flapjack.NamespaceHOL

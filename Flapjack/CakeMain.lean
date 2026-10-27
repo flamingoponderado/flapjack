@@ -6,6 +6,7 @@ import Flapjack.Compiler.Inference.Infer.TypesOutput
 import Flapjack.CakeParser.Diagnostics
 import Flapjack.CakeHelp
 import Flapjack.CakeFeatures
+import Flapjack.CakeParser.FromSexp.Ast
 
 /-! Experimental CakeML source-to-RISC-V command. The frontend and backend
 are still bounded ports, the original diagnostics and full CLI are incomplete,
@@ -25,6 +26,7 @@ structure Options where
   seenSkipTypeInference : Bool := false
   seenMainReturn : Bool := false
   seenSexp : Bool := false
+  inputSexp : Bool := false
   multi : Option Bool := none
   known : Option Bool := none
   call : Option Bool := none
@@ -48,7 +50,7 @@ structure Options where
   gcKind : Option Flapjack.Compiler.Backend.DataToWord.GcKind := none
 
 private def usage : String :=
-  "Usage: cake [--target=riscv] [--exclude_prelude=true|false] " ++
+  "Usage: cake [--target=riscv] [--sexp=true|false] [--exclude_prelude=true|false] " ++
   "[--types] " ++
   "[--skip_type_inference=true|false] [--main_return=true|false] " ++
   "[--multi=true|false] [--known=true|false] [--call=true|false] " ++
@@ -161,9 +163,9 @@ private def parseArgs : List String → Options → Except String Options
       else if arg == "--types" then parseArgs args { options with onlyTypes := true }
       else if arg.startsWith "--sexp=" then
         if options.seenSexp then parseArgs args options
-        else if parseBool (arg.drop "--sexp=".length |>.toString) == some false then
-          parseArgs args { options with seenSexp := true }
-        else .error s!"unsupported option: {arg}"
+        else match parseBool (arg.drop "--sexp=".length |>.toString) with
+        | some value => parseArgs args { options with seenSexp := true, inputSexp := value }
+        | none => .error s!"invalid Boolean option: {arg}"
       else if arg.startsWith "--multi=" then
         if options.multi.isSome then parseArgs args options else
         match parseBool (arg.drop "--multi=".length |>.toString) with
@@ -311,6 +313,19 @@ bounded port; no general sufficiency theorem is claimed for this bound. -/
 private def sourceFuel (source : List HolChar) : Nat :=
   10000 + 16 * source.length
 
+/-- Parse ordinary CakeML text or the bootstrap S-expression encoding. Both
+paths are bounded and the S-expression decoder's correspondence is not yet
+proved. -/
+private def parseInput (options : Options) (fuel : Nat) (source : List HolChar) :
+    Flapjack.CakeParser.Frontend.ParseResult :=
+  if options.inputSexp then
+    match Flapjack.CakeParser.Sexp.parseFuel fuel source with
+    | none => .rejected
+    | some sexp => match Flapjack.CakeParser.FromSexp.decodeProgramFuel fuel sexp with
+      | none => .rejected
+      | some decls => .success decls
+  else Flapjack.CakeParser.Frontend.parseSourceFuel fuel fuel source
+
 /-- Run the currently supported CakeML frontend and backend options. This is
 Flapjack CLI infrastructure, not a port of the full HOL compiler driver. -/
 def compileBytes (options : Options) (source : List HolChar) : PrimitiveCheckedSourceResult := Id.run do
@@ -346,7 +361,7 @@ def compileBytes (options : Options) (source : List HolChar) : PrimitiveCheckedS
       perfCalls := options.perfCallgraph.getD base.stackConf.perfCalls }
     labConf := { base.labConf with hashSize := options.hashSize.getD base.labConf.hashSize } }
   let fuel := sourceFuel source
-  match Flapjack.CakeParser.Frontend.parseSourceFuel fuel fuel source with
+  match parseInput options fuel source with
   | .exhausted => return .parseExhausted
   | .rejected => return .parseRejected
   | .success decls =>
@@ -364,7 +379,7 @@ the same path as ordinary compilation; no backend pass is run on success. -/
 private def inferTypesBytes (options : Options) (source : List HolChar) :
     Except PrimitiveCheckedSourceResult (List HolChar) := do
   let fuel := sourceFuel source
-  let decls ← match Flapjack.CakeParser.Frontend.parseSourceFuel fuel fuel source with
+  let decls ← match parseInput options fuel source with
     | .exhausted => .error .parseExhausted
     | .rejected => .error .parseRejected
     | .success ds => .ok ds
@@ -422,6 +437,9 @@ def main (args : List String) : IO UInt32 := do
       | some (.error result) => result
       | _ => compileBytes options chars
     if let .parseRejected := result then
+      if options.inputSexp then
+        IO.eprint "### ERROR: parse error\nParsing of sexp syntax failed\nProgram exited with nonzero exit code.\n"
+        return 1
       if let some bytes := Flapjack.CakeParser.Diagnostics.renderUnconsumedToken (sourceFuel chars) chars then
         let stderr ← IO.getStderr
         stderr.write (ByteArray.mk (bytes.map (fun b => UInt8.ofNat b.toNat)).toArray)

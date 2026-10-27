@@ -246,7 +246,7 @@ run_probe() {
 }
 
 run_probe cake_from_sexp_probeScript.sml cake_from_sexp_probe.out \
-  control lists option identifier literals locations types patterns \
+  control lists option identifier literals locations types patterns operators \
   "$cake_dir/compiler/parsing/fromSexpScript.sml" "$cake_dir/compiler/parsing"
 
 run_probe cake_sexp_parser_probeScript.sml cake_sexp_parser_probe.out \

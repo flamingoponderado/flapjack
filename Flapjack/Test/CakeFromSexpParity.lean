@@ -1,4 +1,4 @@
-import Flapjack.CakeParser.FromSexp
+import Flapjack.CakeParser.FromSexp.Ast
 
 /-! Finite observations from `cake_from_sexp_probe.out`. The decoder and its
 carrier have not yet completed source correspondence review. -/
@@ -90,5 +90,20 @@ private def patternCases : Bool := Id.run do
   return (decodePatternFuel 20 (node "Pany" [.num 1])).isNone
 
 example : typeCases = true ∧ patternCases = true := by native_decide
+
+example : [decodeOp (sym "Equality"), decodeOp (sym "Opapp"), decodeOp (sym "Aw8subunsafe"),
+    decodeOp (sym "ForceThunk"), decodeOp (sym "Envid"), decodeOp (.cons (sym "FFI") (str "x\\00y")),
+    decodeOp (.cons (sym "AllocThunk") (sym "Evaluated")),
+    decodeOp (.cons (sym "UpdateThunk") (sym "NotEvaluated")),
+    decodeOp (.cons (sym "Shift64Ror") (.num 123)),
+    decodeOp (.cons (sym "Arith") (.cons (sym "Add") (sym "IntT"))),
+    decodeOp (.cons (sym "FromTo") (.cons (sym "Word8T") (sym "Word64T"))),
+    decodeOp (.cons (sym "Test") (.cons (sym "AltLessEq") (sym "IntT"))),
+    decodeOp (node "Arith" [sym "Add", sym "IntT"]), decodeOp (sym "NoSuchOp")] =
+    [some .equality, some .opapp, some .aw8subUnsafe, some (.thunkOp .forceThunk), some .envId,
+     some (.ffi (.implode [120, 0, 121])), some (.thunkOp (.allocThunk .evaluated)),
+     some (.thunkOp (.updateThunk .notEvaluated)), some (.shift .w64 .ror 123),
+     some (.arith .add .intT), some (.fromTo (.wordT .w8) (.wordT .w64)),
+     some (.test (.altCompare .leq) .intT), none, none] := by native_decide
 
 end Flapjack.Test.CakeFromSexpParity
