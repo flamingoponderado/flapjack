@@ -82,6 +82,23 @@ def pointerBits {width : Nat} (conf : Config) (tag len : Nat) : BitVec width :=
     BitVec.ofNat width ((if n < max then n else max) * 2 ^ shift)
   field tag conf.tagBits (1 + conf.lenBits) ||| field len conf.lenBits 1
 
+/-- Internal tag-mask construction used by checked word lowering. -/
+def tagMask {width : Nat} (conf : Config) : BitVec width :=
+  BitVec.ofNat width (((2 ^ (width - conf.lenSize) - 1) / 4) * 4)
+
+/-- Internal pointer-field program used by the checked allocation cases. -/
+def makePtrBitsCode {width : Nat} [NeZero width] (conf : Config) (tag len dest : Nat) :
+    WordLangProgHOL (BitVec width) :=
+  let maxout (bits shift src : Nat) : WordLangProgHOL (BitVec width) :=
+    let max := 2 ^ bits - 1
+    .ite .lower src (.imm (BitVec.ofNat width max))
+      (.assign dest (.op .or [.var dest, shiftN .lsl (.var src) shift]))
+      (.assign dest (.op .or [.var dest, .const (BitVec.ofNat width (max * 2 ^ shift))]))
+  listSeq [
+    .assign dest (.op .or [.const 1, shiftN .lsl (.op .sub [.lookup .nextFree, .lookup .currHeap])
+      (shiftLength conf - wordShiftAmount width)]),
+    maxout conf.tagBits (1 + conf.lenBits) tag, maxout conf.lenBits 1 len]
+
 /-- Internal variable-allocation sequence for the reference-array case;
 the standalone width-indexed HOL definition remains to be reviewed. -/
 def allocVar {width : Nat} [NeZero width] (conf : Config) (limit : Nat) (names : NumSet) :
@@ -179,6 +196,18 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
                 .ite .test src (.imm 1) .skip (.assign 1 (.load (realAddr conf src))),
                 boolResult dest .equal 1 (.imm header)], l)
       | _ => some (.skip, l)
+  | l, .assign dest (.blockOp (.tagEq tag)) args _ =>
+      match args with
+      | [src] =>
+          let src := adjustVar src
+          if tag < 2 ^ width / 16 then
+            some (listSeq [
+              .assign 1 (.var src),
+              .ite .test src (.imm 1) .skip
+                (.assign 1 (.op .and [.load (realAddr conf src), .const (tagMask conf ||| 2)])),
+              boolResult dest .equal 1 (.imm (BitVec.ofNat width (16 * tag + 2)))], l)
+          else some (.assign (adjustVar dest) (.const 2), l)
+      | _ => some (.skip, l)
   | l, .assign dest (.blockOp (.boolTest _)) args _ =>
       match args with
       | [x, y] => some (boolResult dest .equal (adjustVar x) (.reg (adjustVar y)), l)
@@ -237,6 +266,37 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
                 (some loc) [adjustVar x, adjustVar y] none)),
             .move 2 [(adjustVar dest, 1)]], l + 1)
       | .add, _ | .sub, _ => some (.skip, l)
+      | .mult, [x, y] =>
+          let cutsets := adjustSets (names.getD .ln)
+          some (listSeq [
+            .assign 1 (shiftVar .lsr (adjustVar x) 1),
+            .inst (.arith (.longMul 3 1 1 (adjustVar y))),
+            .assign 3 (.op .or [.var 3, .op .and [.const 1, .op .or [.var (adjustVar x), .var (adjustVar y)]]]),
+            .assign 1 (shiftVar .lsr 1 1),
+            .ite .equal 3 (.imm 0) .skip (.mustTerminate
+              (.call (some ([1], cutsets, .skip, secn, l)) (some mulLocation) [adjustVar x, adjustVar y] none)),
+            .move 2 [(adjustVar dest, 1)]], l + 1)
+      | .div, [x, y] =>
+          let cutsets := adjustSets (names.getD .ln)
+          let fast := if conf.hasDiv then listSeq [
+              .inst (.arith (.div 1 (adjustVar x) (adjustVar y))),
+              .assign (adjustVar dest) (shiftVar .lsl 1 2)]
+            else if conf.hasLongdiv then listSeq [
+              .assign 1 (.const 0), .inst (.arith (.longDiv 1 3 1 (adjustVar x) (adjustVar y))),
+              .assign (adjustVar dest) (shiftVar .lsl 1 2)]
+            else listSeq [
+              .assign 1 (.const 0),
+              .mustTerminate (.call (some ([1], cutsets, .skip, secn, l + 1))
+                (some longDivLocation) [1, adjustVar x, adjustVar y] none),
+              .assign (adjustVar dest) (shiftVar .lsl 1 2)]
+          some (listSeq [
+            .assign 1 (.op .or [.var (adjustVar x), .var (adjustVar y)]),
+            .assign 1 (.op .or [.var 1, shiftVar .lsr 1 (width - 1)]),
+            .ite .test 1 (.imm 1) fast (listSeq [
+              .mustTerminate (.call (some ([1], cutsets, .skip, secn, l))
+                (some divLocation) [adjustVar x, adjustVar y] none),
+              .move 2 [(adjustVar dest, 1)]])], l + 2)
+      | .mult, _ | .div, _ => some (.skip, l)
       | _, _ => none
   | l, .assign dest (.wordOp (.wordTest _ test)) args _ =>
       match args, test with
@@ -289,6 +349,32 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
               shiftN .lsl (.op .sub [.var 1, .lookup .currHeap]) (shiftLength conf - wordShiftAmount width),
               .const pointer]),
             .set .nextFree (.op .add [.var 1, .const bytes])], l)
+  | l, .assign dest (.blockOp (.consExtend tag)) args names =>
+      match args with
+      | old :: start :: len :: total :: rest =>
+          match encodeHeader (width := width) conf (4 * tag) 0 with
+          | none => some (giveUp, l)
+          | some header =>
+              let names := names.getD .ln
+              let bytes := BitVec.ofNat width (width / 8)
+              let limit := min (2 ^ conf.lenSize) (2 ^ width / 16)
+              let total := adjustVar total
+              some (listSeq [
+                .ite .test total (.imm 1) .skip giveUp,
+                .assign 1 (.var total), allocVar conf limit (sptListInsert args names),
+                .assign 1 (.lookup .nextFree),
+                .assign 5 (.op .or [shiftN .lsl (.var total) (width - conf.lenSize - 2), .const header]),
+                .assign 7 (shiftN .lsr (.var total) 2), .assign 9 (.const (BitVec.ofNat width tag)),
+                storeEach 1 (5 :: rest.map adjustVar) 0, makePtrBitsCode conf 9 7 3,
+                .set .nextFree (.op .add [.var 1, .const bytes, shiftN .lsl (.var 7) (wordShiftAmount width)]),
+                .assign 15 (.var (adjustVar len)),
+                .assign 13 (.op .add [.var 1, .const (bytes * BitVec.ofNat width (rest.length + 1))]),
+                .assign 11 (.op .add [realAddr conf (adjustVar old), .const bytes,
+                  shiftVar .lsl (adjustVar start) (wordShiftAmount width - 2)]),
+                .ite .test 15 (.reg 15) (.assign (adjustVar dest) (.var 3))
+                  (.mustTerminate (.call (some ([adjustVar dest], adjustSets names, .skip, secn, l))
+                    (some memCopyLocation) [15, 11, 13, 3] none))], l + 1)
+      | _ => some (.skip, l)
   | l, .assign dest (.blockOp (.elemAt n)) args _ =>
       match args with
       | [src] =>

@@ -34,7 +34,11 @@ CASES = tuple(
      (ROOT / "scripts/hol-probes/full_cake_word_probe.out",
       ROOT / "Flapjack/Test/FullCakeWordOracle.lean", "FullCakeWordOracle", 64),
      (ROOT / "scripts/hol-probes/full_inline_cake_word_probe.out",
-      ROOT / "Flapjack/Test/FullInlineCakeWordOracle.lean", "FullInlineCakeWordOracle", 64))
+      ROOT / "Flapjack/Test/FullInlineCakeWordOracle.lean", "FullInlineCakeWordOracle", 64),
+     (ROOT / "scripts/hol-probes/full_mti_inline_cake_word_probe.out",
+      ROOT / "Flapjack/Test/FullMtiInlineCakeWordOracle.lean", "FullMtiInlineCakeWordOracle", 64),
+     (ROOT / "scripts/hol-probes/mti_ops_word_probe.out",
+      ROOT / "Flapjack/Test/MtiOpsWordOracle.lean", "MtiOpsWordOracle", 64))
 CONSTRUCTORS = {
     "Seq": (".seq", 2), "Assign": (".assign", 2), "Const": (".const", 1), "Load": (".load", 1),
     "If": (".ite", 5), "Test": (".test", 0), "NotTest": (".notTest", 0),
@@ -49,12 +53,12 @@ CONSTRUCTORS = {
     "Store": (".store", 2), "Set": (".set", 2), "Get": (".get", 2), "Globals": (".globals", 0), "Move": (".move", 2),
     "Inst": (".inst", 1), "Arith": (".arith", 1), "AddOverflow": (".addOverflow", 4),
     "SubOverflow": (".subOverflow", 4), "Mem": (".mem", 3), "Load8": (".load8", 0),
-    "AddCarry": (".addCarry", 4), "LongDiv": (".longDiv", 5), "LongMul": (".longMul", 4),
+    "AddCarry": (".addCarry", 4), "LongDiv": (".longDiv", 5), "LongMul": (".longMul", 4), "Div": (".div", 3),
     "Store8": (".store8", 0), "Addr": (".addr", 2),
     "Install": (".install", 5), "CodeBufferWrite": (".codeBufferWrite", 2),
     "DataBufferWrite": (".dataBufferWrite", 2), "BitmapBuffer": (".bitmapBuffer", 0),
     "CodeBuffer": (".codeBuffer", 0),
-    "GlobReal": (".globReal", 0), "Temp": (".temp", 1), "Return": (".return", 2), "LN": (".ln", 0),
+    "GlobReal": (".globReal", 0), "Temp": (".temp", 1), "Return": (".return", 2), "LocValue": (".locValue", 2), "LN": (".ln", 0),
     "FALSE_CONST": ("(.const 2)", 0), "TRUE_CONST": ("(.const 18)", 0),
 }
 
@@ -156,7 +160,7 @@ def parse_entries(input_path, fragments=None):
 
 def render(input_path, namespace, width):
     fragments = []
-    entries = parse_entries(input_path, fragments if namespace in ("BignumWordOracle", "FullCakeWordOracle", "FullInlineCakeWordOracle") else None)
+    entries = parse_entries(input_path, fragments if namespace in ("BignumWordOracle", "FullCakeWordOracle", "FullInlineCakeWordOracle", "FullMtiInlineCakeWordOracle") else None)
     all_sets = {name: keys for _, sets, _ in entries for name, keys in sets}
     all_words = {name for _, _, words in entries for name in words}
 

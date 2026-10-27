@@ -30,6 +30,8 @@
 
 `full_inline_cake_word_probe.out` repeats that complete word-stage comparison after original BVI wrapper inlining and tick removal; earlier BVL/BVI optimizations are still omitted.
 
+`full_mti_inline_cake_word_probe.out` captures the complete 64-bit word program for a nested-function declaration with multi-argument introduction and BVI wrapper inlining enabled. Known-function and call optimizations and the earlier BVL optimizations are omitted. `mti_ops_word_probe.out` separately captures tag equality, multiplication, three division configurations, and block extension, including the resulting next labels.
+
 `data_to_word_header_types_probe.out` records the original types and typed definitions for header construction and its checked encoding. The frontend probe also captures 32-bit and 64-bit encoded values and an invalid length; these observations are regression evidence, not a cross-language proof.
 
 `riscv_sltu_decode_probe.out` freshly kernel-proves the unrestricted original SLTU DecodeAny(Word(Encode instruction)) identity for every word5 register tuple, with typed universal statement and zero hypotheses. It also captures the actual Rtype source clause (funct3=011/funct7=0000000), word5 carriers and zero/all-ones31/high-bit/alias evaluations. Lean proves the same full native composition. This untagged infrastructure supplies the real decoder prerequisite for the full six-instruction AddCarry encoder, including source-zero and temporary31 operands; it does not prove that constructor simulation alone. The local shape/capture pin is a regression check and does not independently establish HOL-to-Lean correspondence.

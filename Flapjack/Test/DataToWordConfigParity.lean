@@ -15,6 +15,7 @@ import Flapjack.Test.AnyArithWordOracle
 import Flapjack.Test.RefByte64WordOracle
 import Flapjack.Test.RefByte32WordOracle
 import Flapjack.Test.FixedStubsWordOracle
+import Flapjack.Test.MtiOpsWordOracle
 
 /-!
 # `data_to_word` configuration helpers: original-oracle rows
@@ -30,6 +31,18 @@ private def conf : Config :=
   { tagBits := 1, lenBits := 2, padBits := 3, lenSize := 16, hasDiv := false,
     hasLongdiv := false, hasFpOps := false, hasFpTern := false, be := false,
     callEmptyFfi := false, gcKind := .simple }
+
+#guard match (do
+    let (p0, n0) ← compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.tagEq 30)) [1] none)
+    let (p1, n1) ← compileControl? (width := 64) conf 5 2 (.assign 3 (.intOp .mult) [1, 2] none)
+    let (p2, n2) ← compileControl? (width := 64) conf 5 2 (.assign 3 (.intOp .div) [1, 2] none)
+    let (p3, n3) ← compileControl? (width := 64) { conf with hasDiv := true } 5 2 (.assign 3 (.intOp .div) [1, 2] none)
+    let (p4, n4) ← compileControl? (width := 64) { conf with hasLongdiv := true } 5 2 (.assign 3 (.intOp .div) [1, 2] none)
+    let (p5, n5) ← compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.consExtend 1)) [1, 2, 3, 4, 5] none)
+    pure [(0, 0, p0, n0), (1, 0, p1, n1), (2, 0, p2, n2),
+      (3, 0, p3, n3), (4, 0, p4, n4), (5, 0, p5, n5)]) with
+  | some entries => Flapjack.Test.MtiOpsWordOracle.matchesCaptured entries
+  | none => false
 
 -- shift_length=8
 example : shiftLength conf = 8 := rfl

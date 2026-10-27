@@ -2,6 +2,8 @@ import Flapjack.Compiler.Backend.ClosMti
 import Flapjack.Test.CakeMLFlatOracle
 import Flapjack.Compiler.Backend.SourceToFlat.ToBvi
 import Flapjack.Test.MtiCakeBviOracle
+import Flapjack.Compiler.Backend.SourceToFlat.ToWord
+import Flapjack.Test.FullMtiInlineCakeWordOracle
 
 /-! Original examples for checked multi-argument introduction. -/
 namespace Flapjack.Test.ClosMtiParity
@@ -33,6 +35,17 @@ private def mtiConfig : ClosToBvl.Config :=
     [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "f"))
       (.fn (ofString "x") (.fn (ofString "y") (.var (.short (ofString "x")))))] with
   | some (_, _, _, code, _, _) => Flapjack.Test.MtiCakeBviOracle.matchesCaptured code
+  | none => false
+
+private def wordConfig : DataToWord.Config :=
+  ⟨1, 2, 3, 16, false, false, false, false, false, false, .simple⟩
+
+#guard match SourceToFlat.compileCakeToWordWithStubsAndNames64InlineFuel 100
+    SourceToFlat.emptyConfig mtiConfig wordConfig
+    [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "f"))
+      (.fn (ofString "x") (.fn (ofString "y") (.var (.short (ofString "x")))))] with
+  | some (_, _, _, code, _, _) => Flapjack.Test.FullMtiInlineCakeWordOracle.matchesCaptured
+      (code.map fun (loc, arity, body) => (loc, arity, body, 0))
   | none => false
 
 end Flapjack.Test.ClosMtiParity

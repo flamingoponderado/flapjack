@@ -143,16 +143,7 @@ unimplemented stubs still return `none`, so this is not HOL's complete list. -/
 def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (location : Nat) :
     Option (Nat × WordLangProgHOL (BitVec width)) :=
   if location = fromListLocation then
-    let maxout (bits shift dest src : Nat) : WordLangProgHOL (BitVec width) :=
-      let max := 2 ^ bits - 1
-      .ite .lower src (.imm (BitVec.ofNat width max))
-        (.assign dest (.op .or [.var dest, shiftN .lsl (.var src) shift]))
-        (.assign dest (.op .or [.var dest, .const (BitVec.ofNat width (max * 2 ^ shift))]))
-    let ptr := listSeq [
-      .assign 3 (.op .or [.const 1, shiftN .lsl (.op .sub [.lookup .nextFree, .lookup .currHeap])
-        (shiftLength conf - wordShiftAmount width)]),
-      maxout conf.tagBits (1 + conf.lenBits) 3 9,
-      maxout conf.lenBits 1 3 7]
+    let ptr := makePtrBitsCode conf 9 7 3
     let limit := min (2 ^ conf.lenSize) (2 ^ width / 16)
     some (4, .ite .equal 2 (.imm 0)
       (listSeq [.assign 6 (.op .add [.var 6, .const 2]), .return 0 [6]])
@@ -348,7 +339,7 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
   else if location = equalLocation then
     let bytes := BitVec.ofNat width (width / 8)
     let result (n : Nat) := WordLangProgHOL.seq (.assign 2 (.const (BitVec.ofNat width n))) (.return 0 [2])
-    let tagMask := BitVec.ofNat width (((2 ^ (width - conf.lenSize) - 1) / 4) * 4) ||| 2
+    let tagMask := tagMask conf ||| 2
     some (3, listSeq [
       .ite .equal 2 (.reg 4) (result 1) .skip,
       .assign 1 (.op .and [.var 2, .var 4]), .ite .test 1 (.imm 1) (result 0) .skip,
