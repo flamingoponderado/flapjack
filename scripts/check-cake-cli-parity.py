@@ -23,6 +23,10 @@ CASES = {
     'config_error_reg_alg': '',
     'config_error_gc': '',
     'config_error_gc_generation': '',
+    'main_return_true': 'val _ = print "Hello";',
+    'main_return_false': 'val _ = print "Hello";',
+    'no_prelude_main_return': 'val x = 42;',
+    'no_prelude_main_return_duplicate': 'val x = 42;',
     'config_error_bool': '',
     'config_error_bool_multiple': '',
     'config_error_bool_before_backend': '',
@@ -176,6 +180,9 @@ def run(executable, source, name):
     if name == 'config_error_reg_alg': flags.append('--reg_alg=bad')
     if name == 'config_error_gc': flags.append('--gc=bad')
     if name == 'config_error_gc_generation': flags.append('--gc=gen1,,bad')
+    if name in ('main_return_true', 'no_prelude_main_return'): flags.append('--main_return=true')
+    if name == 'main_return_false': flags.append('--main_return=false')
+    if name == 'no_prelude_main_return_duplicate': flags.extend(['--main_return=true', '--main_return=bad'])
     if name == 'config_error_bool': flags.append('--exclude_prelude=foo')
     if name == 'config_error_bool_multiple': flags.extend(['--skip_type_inference=foo', '--exclude_prelude=bad'])
     if name == 'config_error_bool_before_backend': flags.extend(['--reg_alg=bad', '--exclude_prelude=bad'])

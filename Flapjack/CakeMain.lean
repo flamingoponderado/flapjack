@@ -14,15 +14,18 @@ open Flapjack.Basis.Pure.MlString
 structure Options where
   excludePrelude : Bool := false
   skipTypeInference : Bool := false
+  mainReturn : Bool := false
   seenTarget : Bool := false
   seenExcludePrelude : Bool := false
   seenSkipTypeInference : Bool := false
+  seenMainReturn : Bool := false
   regAlg : Option Nat := none
   gcKind : Option Flapjack.Compiler.Backend.DataToWord.GcKind := none
 
 private def usage : String :=
   "Usage: cake [--target=riscv] [--exclude_prelude=true|false] " ++
-  "[--skip_type_inference=true|false] [--reg_alg=N] [--gc=G] < input_file\n" ++
+  "[--skip_type_inference=true|false] [--main_return=true|false] " ++
+  "[--reg_alg=N] [--gc=G] < input_file\n" ++
   "Experimental CakeML to RISC-V port; complete CakeML output parity is not yet established."
 
 private def parseBool (text : String) : Option Bool :=
@@ -85,6 +88,11 @@ private def parseArgs : List String → Options → Except String Options
         if options.seenSkipTypeInference then parseArgs args options else
         match parseBool (arg.drop "--skip_type_inference=".length |>.toString) with
         | some b => parseArgs args { options with skipTypeInference := b, seenSkipTypeInference := true }
+        | none => .error s!"invalid Boolean option: {arg}"
+      else if arg.startsWith "--main_return=" then
+        if options.seenMainReturn then parseArgs args options else
+        match parseBool (arg.drop "--main_return=".length |>.toString) with
+        | some b => parseArgs args { options with mainReturn := b, seenMainReturn := true }
         | none => .error s!"invalid Boolean option: {arg}"
       else .error s!"unsupported option: {arg}"
 
@@ -174,7 +182,7 @@ def main (args : List String) : IO UInt32 := do
       return 1
     match result with
     | .success bytes bitmaps config =>
-      IO.print (Flapjack.RiscV.CakeArtifactFormat.assembly bytes bitmaps config)
+      IO.print (Flapjack.RiscV.CakeArtifactFormat.assembly bytes bitmaps config options.mainReturn)
       return 0
     | _ => return 1
 

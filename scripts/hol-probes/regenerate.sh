@@ -460,7 +460,7 @@ run_probe cake_build_lowering_probeScript.sml cake_build_lowering_probe.out \
   parts64 parts32be build64 fromlist64 refbyte64 "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
 
 run_probe cake_riscv_export_probeScript.sml cake_riscv_export_probe.out \
-  assembly end "$cake_dir/compiler/backend/riscv/export_riscvScript.sml" "$cake_dir/compiler/backend/riscv"
+  assembly assembly_ret end "$cake_dir/compiler/backend/riscv/export_riscvScript.sml" "$cake_dir/compiler/backend/riscv"
 
 run_probe cake_io_lowering_probeScript.sml cake_io_lowering_probe.out \
   lesseq mod bounds ffi list_append list_append_arity xor_byte config_gc config_gc_ffi len_zero len_small len_header len_overflow "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"

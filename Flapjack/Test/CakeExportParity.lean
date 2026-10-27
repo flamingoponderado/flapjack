@@ -14,4 +14,7 @@ private def config : Backend.Config :=
 
 #guard RiscV.CakeArtifactFormat.assembly [0, 171, 255] [4, 17] config == CakeExportOracle.expected
 
+#guard RiscV.CakeArtifactFormat.assembly [0, 171, 255] [4, 17]
+  { config with exported := [ofString "a+", ofString "F"] } true == CakeExportOracle.expectedRet
+
 end Flapjack.Test.CakeExportParity
