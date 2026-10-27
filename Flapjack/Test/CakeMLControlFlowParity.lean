@@ -7,6 +7,9 @@ import Flapjack.Test.CakeMLFlatOracle
 import Flapjack.Test.EmptyCakeWordOracle
 import Flapjack.Test.ReferenceCakeWordOracle
 import Flapjack.Test.MatchCakeWordOracle
+import Flapjack.Test.FixedStubsWordOracle
+import Flapjack.Test.BignumWordOracle
+import Flapjack.Test.FullCakeWordOracle
 
 /-! A small cross-pass parity observation through word-language control flow. -/
 namespace Flapjack.Test.CakeMLControlFlowParity
@@ -67,6 +70,24 @@ private def compileWordFunctions? (decls : List Flapjack.AstHOL.Dec) :
       (x.1, x.2.1)) == [(62, 2), (63, 4), (64, 1), (65, 3), (66, 4), (67, 4), (68, 3),
         (69, 4), (72, 3), (76, 1), (80, 1), (84, 1), (73, 1), (88, 1)]
   | _ => false
+
+#guard match Flapjack.Compiler.Backend.SourceToFlat.compileCakeToWordWithStubs64NoOptsFuel 100
+    Flapjack.Compiler.Backend.SourceToFlat.emptyConfig noOptsConfig fullWordConfig [] with
+  | some (_, _, 64, code, _) =>
+      let observe := fun (xs : List (Nat × Nat × Flapjack.WordLangProgHOL (BitVec 64))) =>
+        xs.map fun (loc, arity, body) => (loc, arity, body, 0)
+      Flapjack.Test.FixedStubsWordOracle.matchesCaptured (observe (code.take 32)) &&
+      Flapjack.Test.BignumWordOracle.matchesCaptured (observe ((code.drop 32).take 23)) &&
+      (code.drop 55).map (fun (x : Nat × Nat × Flapjack.WordLangProgHOL (BitVec 64)) => (x.1, x.2.1)) ==
+        [(62, 2), (63, 4), (64, 1), (65, 3), (66, 4), (67, 4), (68, 3),
+         (69, 4), (72, 3), (76, 1), (80, 1), (84, 1), (73, 1), (88, 1)]
+  | _ => false
+
+#guard match Flapjack.Compiler.Backend.SourceToFlat.compileCakeToWordWithStubs64NoOptsFuel 100
+    Flapjack.Compiler.Backend.SourceToFlat.emptyConfig noOptsConfig fullWordConfig [] with
+  | some (_, _, _, code, _) => Flapjack.Test.FullCakeWordOracle.matchesCaptured
+      (code.map fun (loc, arity, body) => (loc, arity, body, 0))
+  | none => false
 
 #guard match compileWordFunctions?
     [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x")) (.app .opref [.lit (.intLit 1)])] with

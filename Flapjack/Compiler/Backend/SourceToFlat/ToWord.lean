@@ -1,5 +1,7 @@
 import Flapjack.Compiler.Backend.SourceToFlat.ToData
 import Flapjack.Compiler.Backend.DataToWord.Control
+import Flapjack.Compiler.Backend.DataToWord.Stubs
+import Flapjack.Compiler.Backend.WordBignum.Generated64
 
 /-! Restricted source-to-word composition. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
@@ -28,5 +30,16 @@ def compileCakeToWordNoOptsFuel {width : Nat} [NeZero width]
   let (source, closure, start, code, next) ←
     compileCakeToWordWithLabelsNoOptsFuel fuel source closure word decls
   pure (source, closure, start, code.map fun (name, args, body, _) => (name, args + 1, body), next)
+
+/-- Add the fixed data-to-word stubs and the pinned 64-bit bignum snapshot to
+the restricted source-to-word composition. This is still partial and stops
+before word-to-word optimization; the generic bignum generator is unported. -/
+def compileCakeToWordWithStubs64NoOptsFuel
+    (fuel : Nat) (source : Config) (closure : ClosToBvl.Config)
+    (word : DataToWord.Config) (decls : List AstHOL.Dec) :
+    Option (Config × ClosToBvl.Config × Nat × List (Nat × Nat × WordLangProgHOL (BitVec 64)) × Nat) := do
+  let (source, closure, start, code, next) ← compileCakeToWordNoOptsFuel fuel source closure word decls
+  let fixed ← DataToWord.fixedStubs? word
+  pure (source, closure, start, fixed ++ WordBignum.generatedStubs64 ++ code, next)
 
 end Flapjack.Compiler.Backend.SourceToFlat

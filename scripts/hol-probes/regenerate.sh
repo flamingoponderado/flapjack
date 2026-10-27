@@ -72,7 +72,8 @@ probe_needs_refresh() {
          "$(basename "$probe")" == match_cake_data_probeScript.sml ||
          "$(basename "$probe")" == empty_cake_word_probeScript.sml ||
          "$(basename "$probe")" == reference_cake_word_probeScript.sml ||
-         "$(basename "$probe")" == match_cake_word_probeScript.sml ) &&
+         "$(basename "$probe")" == match_cake_word_probeScript.sml ||
+         "$(basename "$probe")" == full_cake_word_probeScript.sml ) &&
        ( "$cake_dir/compiler/backend/source_to_sourceScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/source_to_flatScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/flat_elimScript.sml" -nt "$output" ||
@@ -96,7 +97,13 @@ probe_needs_refresh() {
          "$cake_dir/compiler/backend/pattern_matching/pattern_compScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/pattern_matching/pattern_exhScript.sml" -nt "$output" ) ]] ||
     [[ "$(basename "$probe")" == l3_riscv_int_to_fp_probeScript.sml &&
-       "$probe_dir/binary_ieee_directed_certificates.sml" -nt "$output" ]]
+       "$probe_dir/binary_ieee_directed_certificates.sml" -nt "$output" ]] ||
+    [[ ( "$(basename "$probe")" == bignum_word_probeScript.sml ||
+         "$(basename "$probe")" == full_cake_word_probeScript.sml ) &&
+       ( "$hol_dir/examples/machine-code/multiword/mc_multiwordScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/data_to_wordScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/word_bignumScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/encoders/asm/asmScript.sml" -nt "$output" ) ]]
 }
 
 run_probe() {
@@ -207,6 +214,12 @@ run_probe ref_byte_32_word_probeScript.sml ref_byte_32_word_probe.out \
   entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
 
 run_probe fixed_stubs_word_probeScript.sml fixed_stubs_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe bignum_word_probeScript.sml bignum_word_probe.out \
+  entry "$cake_dir/compiler/backend/word_bignumScript.sml" "$cake_dir/compiler/backend"
+
+run_probe full_cake_word_probeScript.sml full_cake_word_probe.out \
   entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
 
 run_probe empty_cake_bvi_probeScript.sml empty_cake_bvi_probe.out \

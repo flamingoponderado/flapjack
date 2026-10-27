@@ -1,0 +1,532 @@
+-- Generated from the pinned original HOL compiler; do not edit.
+import Flapjack.Pancake.WordLang
+
+namespace Flapjack.Test.BignumWordOracle
+
+private def matches_fragment0 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.assign 24 ((.op .add [(.lookup ((.temp 2))), (.const 1)])))) ((.set ((.temp 2)) ((.var 24)))))) ((.seq ((.seq ((.assign 25 ((.const 0)))) ((.set ((.temp 3)) ((.var 25)))))) ((.seq ((.call ((some ([26], (live0, .ln), .skip, 39, 2))) ((some 40)) [] none)) ((.seq ((.seq ((.assign 27 ((.lookup ((.temp 2)))))) ((.set ((.temp 1)) ((.var 27)))))) ((.seq ((.seq ((.assign 28 ((.const 0)))) ((.set ((.temp 9)) ((.var 28)))))) ((.seq ((.call ((some ([29], (live1, .ln), .skip, 39, 3))) ((some 41)) [] none)) ((.seq ((.assign 34 ((.lookup ((.temp 3)))))) ((.ite .equal 34 ((.imm 0)) ((.seq .skip .skip)) ((.seq ((.seq ((.assign 30 ((.const 1)))) ((.set ((.temp 8)) ((.var 30)))))) ((.seq ((.seq ((.assign 31 ((.lookup ((.temp 8)))))) ((.seq ((.assign 32 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.store ((.var 32)) 31)))))) ((.seq ((.seq ((.assign 33 ((.op .add [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 33)))))) ((.seq .skip .skip)))))))))))))))))))))))) =>
+      decide (live0 = Flapjack.sptListInsert [0] .ln) &&
+      decide (live1 = Flapjack.sptListInsert [0] .ln)
+  | _ => false
+
+private def matches_fragment1 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.assign 20 ((.lookup ((.temp 8)))))) ((.set ((.temp 9)) ((.var 20)))))) ((.seq ((.seq ((.assign 21 ((.lookup ((.temp 8)))))) ((.set ((.temp 10)) ((.var 21)))))) ((.seq ((.seq ((.seq ((.assign 22 ((.op .sub [(.lookup ((.temp 2))), (.lookup ((.temp 1)))])))) ((.set ((.temp 2)) ((.var 22)))))) ((.seq ((.seq ((.seq ((.assign 23 ((.op .add [(.lookup ((.temp 1))), (.const 1)])))) ((.set ((.temp 1)) ((.var 23)))))) fragment0)) ((.seq .skip .skip)))))) ((.seq ((.seq ((.assign 36 ((.lookup ((.temp 0)))))) ((.ite .equal 36 ((.imm 0)) ((.seq .skip .skip)) ((.seq ((.seq ((.assign 35 ((.lookup ((.temp 31)))))) ((.seq ((.set ((.temp 31)) ((.lookup ((.temp 30)))))) ((.set ((.temp 30)) ((.var 35)))))))) ((.seq .skip .skip)))))))) ((.seq ((.seq ((.assign 37 ((.shift .lsl ((.lookup ((.temp 10)))) (.const 1))))) ((.set ((.temp 10)) ((.var 37)))))) ((.seq ((.seq ((.assign 38 ((.op .add [(.lookup ((.temp 10))), (.lookup ((.temp 11)))])))) ((.set ((.temp 10)) ((.var 38)))))) ((.seq .skip .skip)))))))))))))) =>
+      matches_fragment0 fragment0
+  | _ => false
+
+private def matches_fragment2 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.assign 64 ((.op .sub [(.lookup ((.temp 2))), (.lookup ((.temp 1)))])))) ((.set ((.temp 2)) ((.var 64)))))) ((.seq ((.seq ((.seq ((.assign 65 ((.op .add [(.lookup ((.temp 1))), (.const 1)])))) ((.set ((.temp 1)) ((.var 65)))))) ((.seq ((.seq ((.assign 66 ((.op .add [(.lookup ((.temp 2))), (.const 1)])))) ((.set ((.temp 2)) ((.var 66)))))) ((.seq ((.seq ((.assign 67 ((.const 1)))) ((.set ((.temp 3)) ((.var 67)))))) ((.seq ((.seq ((.assign 68 ((.op .sub [(.lookup ((.temp 8))), (.const 0)])))) ((.set ((.temp 8)) ((.var 68)))))) ((.seq ((.call ((some ([69], (live3, .ln), .skip, 39, 5))) ((some 43)) [] none)) ((.seq ((.seq ((.assign 70 ((.lookup ((.temp 2)))))) ((.set ((.temp 1)) ((.var 70)))))) ((.seq ((.seq ((.assign 71 ((.const 0)))) ((.set ((.temp 9)) ((.var 71)))))) ((.seq ((.call ((some ([72], (live4, .ln), .skip, 39, 6))) ((some 44)) [] none)) ((.seq .skip .skip)))))))))))))))))) ((.seq ((.call ((some ([73], (live5, .ln), .skip, 39, 7))) ((some 45)) [] none)) ((.seq .skip .skip)))))))) =>
+      decide (live3 = Flapjack.sptListInsert [0] .ln) &&
+      decide (live4 = Flapjack.sptListInsert [0] .ln) &&
+      decide (live5 = Flapjack.sptListInsert [0] .ln)
+  | _ => false
+
+private def matches_fragment3 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.assign 59 ((.const 0)))) ((.set ((.temp 8)) ((.var 59)))))) ((.seq ((.seq ((.assign 60 ((.lookup ((.temp 8)))))) ((.set ((.temp 9)) ((.var 60)))))) ((.seq ((.seq ((.assign 61 ((.lookup ((.temp 8)))))) ((.set ((.temp 10)) ((.var 61)))))) ((.seq ((.seq ((.assign 62 ((.shift .lsr ((.lookup ((.temp 1)))) (.const 1))))) ((.set ((.temp 1)) ((.var 62)))))) ((.seq ((.seq ((.assign 63 ((.shift .lsr ((.lookup ((.temp 2)))) (.const 1))))) ((.set ((.temp 2)) ((.var 63)))))) ((.seq fragment2 ((.seq ((.seq ((.assign 75 ((.lookup ((.temp 0)))))) ((.ite .equal 75 ((.imm 0)) ((.seq .skip .skip)) ((.seq ((.seq ((.assign 74 ((.lookup ((.temp 31)))))) ((.seq ((.set ((.temp 31)) ((.lookup ((.temp 30)))))) ((.set ((.temp 30)) ((.var 74)))))))) ((.seq .skip .skip)))))))) ((.seq ((.seq ((.assign 76 ((.shift .lsl ((.lookup ((.temp 10)))) (.const 1))))) ((.set ((.temp 10)) ((.var 76)))))) ((.seq ((.seq ((.assign 77 ((.op .add [(.lookup ((.temp 10))), (.lookup ((.temp 12)))])))) ((.set ((.temp 10)) ((.var 77)))))) ((.seq .skip .skip)))))))))))))))))))) =>
+      matches_fragment2 fragment2
+  | _ => false
+
+private def matches_fragment4 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.assign 49 ((.lookup ((.temp 10)))))) ((.seq ((.assign 50 ((.lookup ((.temp 11)))))) ((.ite .lower 49 ((.reg 50)) ((.seq ((.seq ((.assign 44 ((.const 1)))) ((.set ((.temp 10)) ((.var 44)))))) ((.seq .skip .skip)))) ((.seq ((.assign 47 ((.lookup ((.temp 11)))))) ((.seq ((.assign 48 ((.lookup ((.temp 10)))))) ((.ite .lower 47 ((.reg 48)) ((.seq ((.seq ((.assign 45 (.const 2))) ((.set ((.temp 10)) ((.var 45)))))) ((.seq .skip .skip)))) ((.seq ((.call ((some ([46], (live2, .ln), .skip, 39, 4))) ((some 42)) [] none)) ((.seq .skip .skip)))))))))))))))) ((.seq ((.assign 78 ((.lookup ((.temp 10)))))) ((.ite .equal 78 ((.imm 0)) ((.seq .skip .skip)) ((.seq ((.seq ((.seq ((.assign 51 ((.const 0)))) ((.set ((.temp 0)) ((.var 51)))))) ((.seq ((.assign 58 ((.lookup ((.temp 10)))))) ((.ite .equal 58 ((.imm 1)) ((.seq ((.seq ((.assign 52 ((.lookup ((.temp 31)))))) ((.seq ((.set ((.temp 31)) ((.lookup ((.temp 30)))))) ((.set ((.temp 30)) ((.var 52)))))))) ((.seq ((.seq ((.assign 53 ((.op .xor [(.lookup ((.temp 12))), (.const 1)])))) ((.set ((.temp 12)) ((.var 53)))))) ((.seq ((.seq ((.assign 54 ((.const 1)))) ((.set ((.temp 0)) ((.var 54)))))) ((.seq .skip .skip)))))))) ((.seq ((.seq ((.assign 55 ((.lookup ((.temp 1)))))) ((.set ((.temp 8)) ((.var 55)))))) ((.seq ((.seq ((.assign 56 ((.lookup ((.temp 2)))))) ((.set ((.temp 1)) ((.var 56)))))) ((.seq ((.seq ((.assign 57 ((.lookup ((.temp 8)))))) ((.set ((.temp 2)) ((.var 57)))))) ((.seq .skip .skip)))))))))))))) fragment3)))))))) =>
+      decide (live2 = Flapjack.sptListInsert [0] .ln) &&
+      matches_fragment3 fragment3
+  | _ => false
+
+private def matches_fragment5 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.ite .equal 79 ((.reg 80)) ((.seq ((.seq ((.assign 9 ((.shift .lsr ((.lookup ((.temp 1)))) (.const 1))))) ((.set ((.temp 1)) ((.var 9)))))) ((.seq ((.seq ((.assign 10 ((.shift .lsr ((.lookup ((.temp 2)))) (.const 1))))) ((.set ((.temp 2)) ((.var 10)))))) ((.seq ((.seq ((.seq ((.assign 11 ((.const 0)))) ((.set ((.temp 0)) ((.var 11)))))) ((.seq ((.assign 17 ((.lookup ((.temp 1)))))) ((.seq ((.assign 18 ((.lookup ((.temp 2)))))) ((.ite .lower 17 ((.reg 18)) ((.seq ((.seq ((.assign 12 ((.lookup ((.temp 31)))))) ((.seq ((.set ((.temp 31)) ((.lookup ((.temp 30)))))) ((.set ((.temp 30)) ((.var 12)))))))) ((.seq ((.seq ((.assign 13 ((.const 1)))) ((.set ((.temp 0)) ((.var 13)))))) ((.seq .skip .skip)))))) ((.seq ((.seq ((.assign 14 ((.lookup ((.temp 1)))))) ((.set ((.temp 8)) ((.var 14)))))) ((.seq ((.seq ((.assign 15 ((.lookup ((.temp 2)))))) ((.set ((.temp 1)) ((.var 15)))))) ((.seq ((.seq ((.assign 16 ((.lookup ((.temp 8)))))) ((.set ((.temp 2)) ((.var 16)))))) ((.seq .skip .skip)))))))))))))))) ((.seq ((.seq ((.assign 19 ((.const 0)))) ((.set ((.temp 8)) ((.var 19)))))) fragment1)))))))) ((.seq ((.seq ((.assign 39 ((.lookup ((.temp 10)))))) ((.set ((.temp 12)) ((.var 39)))))) ((.seq ((.seq ((.assign 40 ((.lookup ((.temp 1)))))) ((.set ((.temp 10)) ((.var 40)))))) ((.seq ((.seq ((.assign 41 ((.shift .lsr ((.lookup ((.temp 10)))) (.const 1))))) ((.set ((.temp 10)) ((.var 41)))))) ((.seq ((.seq ((.assign 42 ((.lookup ((.temp 2)))))) ((.set ((.temp 11)) ((.var 42)))))) ((.seq ((.seq ((.assign 43 ((.shift .lsr ((.lookup ((.temp 11)))) (.const 1))))) ((.set ((.temp 11)) ((.var 43)))))) fragment4)))))))))))) =>
+      matches_fragment1 fragment1 &&
+      matches_fragment4 fragment4
+  | _ => false
+
+private def matches_fragment6 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.assign 97 ((.shift .lsr ((.lookup ((.temp 7)))) (.const 1))))) ((.set ((.temp 7)) ((.var 97)))))) ((.seq ((.seq ((.assign 98 ((.lookup ((.temp 2)))))) ((.set ((.temp 9)) ((.var 98)))))) ((.seq ((.seq ((.assign 99 ((.shift .lsr ((.lookup ((.temp 9)))) (.const 1))))) ((.set ((.temp 9)) ((.var 99)))))) ((.seq ((.seq ((.assign 100 ((.const 0)))) ((.set ((.temp 10)) ((.var 100)))))) ((.seq ((.seq ((.assign 101 ((.const 0)))) ((.set ((.temp 12)) ((.var 101)))))) ((.seq ((.call ((some ([102], (live7, .ln), .skip, 39, 9))) ((some 47)) [] none)) ((.seq ((.seq ((.assign 103 ((.const 0)))) ((.set ((.temp 8)) ((.var 103)))))) ((.seq ((.call ((some ([104], (live8, .ln), .skip, 39, 10))) ((some 45)) [] none)) ((.seq ((.seq ((.assign 105 ((.shift .lsl ((.lookup ((.temp 10)))) (.const 1))))) ((.set ((.temp 10)) ((.var 105)))))) ((.seq ((.seq ((.assign 106 ((.op .add [(.lookup ((.temp 10))), (.lookup ((.temp 13)))])))) ((.set ((.temp 10)) ((.var 106)))))) ((.seq .skip .skip)))))))))))))))))))))) =>
+      decide (live7 = Flapjack.sptListInsert [0] .ln) &&
+      decide (live8 = Flapjack.sptListInsert [0] .ln)
+  | _ => false
+
+private def matches_fragment7 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.assign 86 ((.shift .lsr ((.lookup ((.temp 10)))) (.const 1))))) ((.set ((.temp 10)) ((.var 86)))))) ((.seq ((.call ((some ([87], (live6, .ln), .skip, 39, 8))) ((some 46)) [] none)) ((.seq ((.seq ((.assign 88 ((.lookup ((.temp 1)))))) ((.set ((.temp 10)) ((.var 88)))))) ((.seq ((.seq ((.assign 89 ((.op .and [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 89)))))) ((.seq ((.seq ((.assign 90 ((.lookup ((.temp 2)))))) ((.set ((.temp 11)) ((.var 90)))))) ((.seq ((.seq ((.assign 91 ((.op .and [(.lookup ((.temp 11))), (.const 1)])))) ((.set ((.temp 11)) ((.var 91)))))) ((.seq ((.seq ((.assign 94 ((.lookup ((.temp 10)))))) ((.seq ((.assign 95 ((.lookup ((.temp 11)))))) ((.ite .equal 94 ((.reg 95)) ((.seq ((.seq ((.assign 92 ((.const 0)))) ((.set ((.temp 13)) ((.var 92)))))) .skip)) ((.seq ((.seq ((.assign 93 ((.const 1)))) ((.set ((.temp 13)) ((.var 93)))))) .skip)))))))) ((.seq ((.seq ((.assign 96 ((.lookup ((.temp 1)))))) ((.set ((.temp 7)) ((.var 96)))))) fragment6)))))))))))))))) =>
+      decide (live6 = Flapjack.sptListInsert [0] .ln) &&
+      matches_fragment6 fragment6
+  | _ => false
+
+private def matches_fragment8 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.assign 137 ((.lookup ((.temp 8)))))) ((.set ((.temp 0)) ((.var 137)))))) ((.seq ((.seq ((.assign 138 ((.lookup ((.temp 14)))))) ((.set ((.temp 3)) ((.var 138)))))) ((.seq ((.assign 147 ((.lookup ((.temp 3)))))) ((.ite .equal 147 ((.imm 0)) ((.seq ((.assign 140 ((.lookup ((.temp 2)))))) ((.ite .equal 140 ((.imm 0)) ((.seq .skip .skip)) ((.seq ((.seq ((.assign 139 ((.const 1)))) ((.set ((.temp 6)) ((.var 139)))))) ((.seq .skip .skip)))))))) ((.seq ((.seq ((.assign 141 ((.const 1)))) ((.set ((.temp 0)) ((.var 141)))))) ((.seq ((.seq ((.assign 142 ((.const 0)))) ((.set ((.temp 10)) ((.var 142)))))) ((.seq ((.seq ((.assign 143 ((.lookup ((.temp 2)))))) ((.seq ((.assign 144 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.store ((.var 144)) 143)))))) ((.seq ((.assign 146 ((.lookup ((.temp 2)))))) ((.ite .equal 146 ((.imm 0)) ((.seq .skip .skip)) ((.seq ((.seq ((.assign 145 ((.const 1)))) ((.set ((.temp 6)) ((.var 145)))))) ((.seq .skip .skip)))))))))))))))))))))) =>
+      true
+  | _ => false
+
+private def matches_fragment9 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.assign 189 ((.lookup ((.temp 8)))))) ((.set ((.temp 7)) ((.var 189)))))) ((.seq ((.call ((some ([190], (live17, .ln), .skip, 39, 19))) ((some 45)) [] none)) ((.seq ((.seq ((.assign 191 ((.lookup ((.temp 10)))))) ((.set ((.temp 6)) ((.var 191)))))) ((.seq ((.seq ((.assign 192 ((.lookup ((.temp 9)))))) ((.set ((.temp 10)) ((.var 192)))))) ((.seq ((.seq ((.assign 193 ((.lookup ((.temp 18)))))) ((.set ((.temp 3)) ((.var 193)))))) ((.seq ((.seq ((.assign 194 ((.lookup ((.temp 7)))))) ((.set ((.temp 8)) ((.var 194)))))) ((.seq ((.assign 199 ((.lookup ((.temp 3)))))) ((.ite .equal 199 ((.imm 0)) ((.seq ((.seq ((.assign 195 ((.const 0)))) ((.set ((.temp 11)) ((.var 195)))))) ((.seq ((.call ((some ([196], (live18, .ln), .skip, 39, 20))) ((some 59)) [] none)) ((.seq ((.seq ((.assign 197 ((.lookup ((.temp 7)))))) ((.set ((.temp 0)) ((.var 197)))))) ((.seq .skip .skip)))))))) ((.seq ((.seq ((.assign 198 ((.lookup ((.temp 9)))))) ((.set ((.temp 0)) ((.var 198)))))) ((.seq .skip .skip)))))))))))))))))))) =>
+      decide (live17 = Flapjack.sptListInsert [0] .ln) &&
+      decide (live18 = Flapjack.sptListInsert [0] .ln)
+  | _ => false
+
+private def matches_fragment10 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.assign 178 ((.lookup ((.temp 1)))))) ((.set ((.temp 15)) ((.var 178)))))) ((.seq ((.seq ((.assign 179 ((.lookup ((.temp 10)))))) ((.set ((.temp 17)) ((.var 179)))))) ((.seq ((.call ((some ([180], (live15, .ln), .skip, 39, 17))) ((some 54)) [] none)) ((.seq ((.seq ((.assign 181 ((.lookup ((.temp 17)))))) ((.set ((.temp 8)) ((.var 181)))))) ((.seq ((.seq ((.assign 182 ((.lookup ((.temp 9)))))) ((.set ((.temp 11)) ((.var 182)))))) ((.seq ((.seq ((.assign 183 ((.lookup ((.temp 9)))))) ((.set ((.temp 10)) ((.var 183)))))) ((.seq ((.seq ((.seq ((.assign 184 ((.lookup ((.temp 7)))))) ((.set ((.temp 9)) ((.var 184)))))) ((.seq ((.seq ((.assign 185 ((.const 0)))) ((.set ((.temp 2)) ((.var 185)))))) ((.seq ((.call ((some ([186], (live16, .ln), .skip, 39, 18))) ((some 58)) [] none)) ((.seq ((.seq ((.assign 187 ((.lookup ((.temp 11)))))) ((.set ((.temp 9)) ((.var 187)))))) ((.seq ((.seq ((.assign 188 ((.lookup ((.temp 9)))))) ((.set ((.temp 10)) ((.var 188)))))) fragment9)))))))))) ((.seq .skip .skip)))))))))))))))) =>
+      decide (live15 = Flapjack.sptListInsert [0] .ln) &&
+      decide (live16 = Flapjack.sptListInsert [0] .ln) &&
+      matches_fragment9 fragment9
+  | _ => false
+
+private def matches_fragment11 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.assign 167 ((.lookup ((.temp 0)))))) ((.set ((.temp 1)) ((.var 167)))))) ((.seq ((.seq ((.assign 168 ((.lookup ((.temp 0)))))) ((.set ((.temp 3)) ((.var 168)))))) ((.seq ((.seq ((.assign 169 ((.lookup ((.temp 0)))))) ((.set ((.temp 11)) ((.var 169)))))) ((.seq ((.seq ((.assign 170 ((.lookup ((.temp 7)))))) ((.set ((.temp 9)) ((.var 170)))))) ((.seq ((.call ((some ([171], (live14, .ln), .skip, 39, 16))) ((some 53)) [] none)) ((.seq ((.seq ((.assign 172 ((.lookup ((.temp 8)))))) ((.set ((.temp 7)) ((.var 172)))))) ((.seq ((.seq ((.assign 173 ((.lookup ((.temp 9)))))) ((.set ((.temp 11)) ((.var 173)))))) ((.seq ((.seq ((.assign 174 ((.lookup ((.temp 19)))))) ((.set ((.temp 10)) ((.var 174)))))) ((.seq ((.seq ((.assign 175 ((.op .sub [(.lookup ((.temp 10))), (.lookup ((.temp 9)))])))) ((.set ((.temp 10)) ((.var 175)))))) ((.seq ((.seq ((.assign 176 ((.op .add [(.lookup ((.temp 10))), (.const 2)])))) ((.set ((.temp 10)) ((.var 176)))))) ((.seq ((.seq ((.assign 177 ((.lookup ((.temp 0)))))) ((.set ((.temp 14)) ((.var 177)))))) fragment10)))))))))))))))))))))) =>
+      decide (live14 = Flapjack.sptListInsert [0] .ln) &&
+      matches_fragment10 fragment10
+  | _ => false
+
+private def matches_fragment12 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.assign 156 ((.const 1)))) ((.set ((.temp 2)) ((.var 156)))))) ((.seq ((.call ((some ([157], (live12, .ln), .skip, 39, 14))) ((some 51)) [] none)) ((.seq ((.seq ((.seq ((.assign 158 ((.const 0)))) ((.set ((.temp 1)) ((.var 158)))))) ((.seq ((.seq ((.assign 159 ((.lookup ((.temp 2)))))) ((.set ((.temp 8)) ((.var 159)))))) ((.seq ((.seq ((.assign 160 ((.lookup ((.temp 1)))))) ((.set ((.temp 10)) ((.var 160)))))) ((.seq ((.seq ((.assign 161 ((.lookup ((.temp 1)))))) ((.set ((.temp 11)) ((.var 161)))))) ((.seq ((.call ((some ([162], (live13, .ln), .skip, 39, 15))) ((some 52)) [] none)) ((.seq ((.seq ((.assign 163 ((.const 0)))) ((.set ((.temp 1)) ((.var 163)))))) ((.seq ((.seq ((.assign 164 ((.lookup ((.temp 1)))))) ((.seq ((.assign 165 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.store ((.var 165)) 164)))))) ((.seq ((.seq ((.assign 166 ((.const 0)))) ((.set ((.temp 0)) ((.var 166)))))) fragment11)))))))))))))))) ((.seq .skip .skip)))))))) =>
+      decide (live12 = Flapjack.sptListInsert [0] .ln) &&
+      decide (live13 = Flapjack.sptListInsert [0] .ln) &&
+      matches_fragment11 fragment11
+  | _ => false
+
+private def matches_fragment13 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.ite .equal 200 ((.imm 1)) ((.seq ((.seq ((.seq ((.assign 128 ((.lookup ((.temp 3)))))) ((.set ((.temp 14)) ((.var 128)))))) ((.seq ((.seq ((.assign 129 ((.const 0)))) ((.set ((.temp 2)) ((.var 129)))))) ((.seq ((.seq ((.assign 130 ((.lookup ((.temp 2)))))) ((.set ((.temp 10)) ((.var 130)))))) ((.seq ((.seq ((.assign 131 ((.op .add [(.lookup ((.temp 30))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.seq ((.assign 132 ((.load ((.var 131)))))) ((.set ((.temp 9)) ((.var 132)))))))) ((.seq ((.seq ((.assign 133 ((.lookup ((.temp 0)))))) ((.set ((.temp 10)) ((.var 133)))))) ((.seq ((.seq ((.assign 134 ((.lookup ((.temp 0)))))) ((.set ((.temp 8)) ((.var 134)))))) ((.seq ((.call ((some ([135], (live11, .ln), .skip, 39, 13))) ((some 50)) [] none)) ((.seq ((.seq ((.assign 136 ((.const 0)))) ((.set ((.temp 6)) ((.var 136)))))) fragment8)))))))))))))))) ((.seq .skip .skip)))) ((.seq ((.seq ((.assign 148 ((.lookup ((.temp 3)))))) ((.set ((.temp 18)) ((.var 148)))))) ((.seq ((.seq ((.assign 149 ((.lookup ((.temp 0)))))) ((.set ((.temp 19)) ((.var 149)))))) ((.seq ((.seq ((.assign 150 ((.lookup ((.temp 1)))))) ((.set ((.temp 7)) ((.var 150)))))) ((.seq ((.seq ((.assign 151 ((.lookup ((.temp 0)))))) ((.set ((.temp 9)) ((.var 151)))))) ((.seq ((.seq ((.assign 152 ((.lookup ((.temp 1)))))) ((.set ((.temp 10)) ((.var 152)))))) ((.seq ((.seq ((.assign 153 ((.op .sub [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 153)))))) ((.seq ((.seq ((.assign 154 ((.op .add [(.lookup ((.temp 30))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.seq ((.assign 155 ((.load ((.var 154)))))) ((.set ((.temp 1)) ((.var 155)))))))) fragment12)))))))))))))))) =>
+      decide (live11 = Flapjack.sptListInsert [0] .ln) &&
+      matches_fragment8 fragment8 &&
+      matches_fragment12 fragment12
+  | _ => false
+
+private def matches_fragment14 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.ite .lower 201 ((.reg 202)) ((.seq ((.seq ((.seq ((.assign 118 ((.lookup ((.temp 0)))))) ((.set ((.temp 6)) ((.var 118)))))) ((.seq ((.assign 127 ((.lookup ((.temp 3)))))) ((.ite .equal 127 ((.imm 0)) ((.seq ((.seq ((.assign 119 ((.const 0)))) ((.set ((.temp 0)) ((.var 119)))))) ((.seq .skip .skip)))) ((.seq ((.seq ((.assign 120 ((.lookup ((.temp 0)))))) ((.set ((.temp 11)) ((.var 120)))))) ((.seq ((.seq ((.assign 121 ((.lookup ((.temp 1)))))) ((.set ((.temp 10)) ((.var 121)))))) ((.seq ((.seq ((.assign 122 ((.const 0)))) ((.set ((.temp 0)) ((.var 122)))))) ((.seq ((.call ((some ([123], (live9, .ln), .skip, 39, 11))) ((some 46)) [] none)) ((.seq ((.seq ((.assign 124 ((.lookup ((.temp 11)))))) ((.set ((.temp 10)) ((.var 124)))))) ((.seq ((.call ((some ([125], (live10, .ln), .skip, 39, 12))) ((some 49)) [] none)) ((.seq ((.seq ((.assign 126 ((.lookup ((.temp 1)))))) ((.set ((.temp 0)) ((.var 126)))))) ((.seq .skip .skip)))))))))))))))))))))) ((.seq .skip .skip)))) ((.seq ((.assign 200 ((.lookup ((.temp 1)))))) fragment13)))) =>
+      decide (live9 = Flapjack.sptListInsert [0] .ln) &&
+      decide (live10 = Flapjack.sptListInsert [0] .ln) &&
+      matches_fragment13 fragment13
+  | _ => false
+
+private def matches_fragment15 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.assign 215 ((.lookup ((.temp 2)))))) ((.ite .equal 215 ((.imm 0)) ((.seq .skip .skip)) ((.seq ((.assign 214 ((.lookup ((.temp 6)))))) ((.ite .equal 214 ((.imm 0)) ((.seq .skip .skip)) ((.seq ((.seq ((.assign 210 ((.const 0)))) ((.set ((.temp 2)) ((.var 210)))))) ((.seq ((.seq ((.assign 211 ((.lookup ((.temp 2)))))) ((.set ((.temp 10)) ((.var 211)))))) ((.seq ((.seq ((.assign 212 ((.op .xor [(.lookup ((.temp 2))), (.op .sub [(.const 0), (.const 1)])])))) ((.set ((.temp 2)) ((.var 212)))))) ((.seq ((.call ((some ([213], (live20, .ln), .skip, 39, 22))) ((some 60)) [] none)) ((.seq .skip .skip)))))))))))))))))) ((.seq ((.assign 218 ((.lookup ((.temp 11)))))) ((.ite .equal 218 ((.imm 0)) ((.seq .skip .skip)) ((.seq ((.seq ((.assign 216 ((.shift .lsl ((.lookup ((.temp 11)))) (.const 1))))) ((.set ((.temp 11)) ((.var 216)))))) ((.seq ((.seq ((.assign 217 ((.op .add [(.lookup ((.temp 11))), (.lookup ((.temp 3)))])))) ((.set ((.temp 11)) ((.var 217)))))) ((.seq .skip .skip)))))))))))) =>
+      decide (live20 = Flapjack.sptListInsert [0] .ln)
+  | _ => false
+
+private def matches_fragment16 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.ite .equal 232 ((.imm 0)) ((.seq .skip .skip)) ((.seq ((.seq ((.assign 222 ((.lookup ((.temp 6)))))) ((.set ((.temp 8)) ((.var 222)))))) ((.seq ((.seq ((.assign 223 ((.lookup ((.temp 6)))))) ((.set ((.temp 9)) ((.var 223)))))) ((.seq ((.seq ((.assign 224 ((.lookup ((.temp 1)))))) ((.set ((.temp 3)) ((.var 224)))))) ((.seq ((.seq ((.seq ((.seq ((.assign 225 ((.const 0)))) ((.set ((.temp 10)) ((.var 225)))))) ((.seq ((.seq ((.assign 226 ((.op .add [(.lookup ((.temp 1))), (.const 1)])))) ((.set ((.temp 1)) ((.var 226)))))) ((.seq ((.seq ((.assign 227 ((.const 1)))) ((.set ((.temp 4)) ((.var 227)))))) ((.seq ((.call ((some ([228], (live21, .ln), .skip, 39, 23))) ((some 61)) [] none)) .skip)))))))) ((.seq .skip .skip)))) ((.seq ((.seq ((.assign 229 ((.lookup ((.temp 3)))))) ((.set ((.temp 10)) ((.var 229)))))) ((.seq ((.call ((some ([230], (live22, .ln), .skip, 39, 24))) ((some 45)) [] none)) ((.seq ((.seq ((.assign 231 ((.lookup ((.temp 10)))))) ((.set ((.temp 6)) ((.var 231)))))) ((.seq .skip .skip)))))))))))))))))) =>
+      decide (live21 = Flapjack.sptListInsert [0] .ln) &&
+      decide (live22 = Flapjack.sptListInsert [0] .ln)
+  | _ => false
+
+private def matches_fragment17 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.ite .equal 239 ((.imm 0)) ((.seq ((.seq ((.assign 204 ((.lookup ((.temp 0)))))) ((.set ((.temp 10)) ((.var 204)))))) ((.seq ((.seq ((.assign 205 ((.lookup ((.temp 10)))))) ((.set ((.temp 8)) ((.var 205)))))) ((.seq ((.call ((some ([206], (live19, .ln), .skip, 39, 21))) ((some 45)) [] none)) ((.seq ((.seq ((.assign 207 ((.lookup ((.temp 10)))))) ((.set ((.temp 11)) ((.var 207)))))) ((.seq ((.seq ((.assign 208 ((.lookup ((.temp 20)))))) ((.set ((.temp 2)) ((.var 208)))))) ((.seq ((.seq ((.assign 209 ((.lookup ((.temp 2)))))) ((.set ((.temp 3)) ((.var 209)))))) fragment15)))))))))))) ((.seq ((.seq ((.assign 219 ((.lookup ((.temp 20)))))) ((.set ((.temp 2)) ((.var 219)))))) ((.seq ((.seq ((.assign 220 ((.lookup ((.temp 11)))))) ((.set ((.temp 1)) ((.var 220)))))) ((.seq ((.seq ((.assign 221 ((.shift .lsr ((.lookup ((.temp 1)))) (.const 1))))) ((.set ((.temp 1)) ((.var 221)))))) ((.seq ((.seq ((.assign 233 ((.lookup ((.temp 2)))))) ((.ite .equal 233 ((.imm 0)) ((.seq .skip .skip)) ((.seq ((.assign 232 ((.lookup ((.temp 6)))))) fragment16)))))) ((.seq ((.seq ((.assign 237 ((.lookup ((.temp 6)))))) ((.ite .equal 237 ((.imm 0)) ((.seq .skip .skip)) ((.seq ((.seq ((.assign 234 ((.shift .lsl ((.lookup ((.temp 6)))) (.const 1))))) ((.set ((.temp 6)) ((.var 234)))))) ((.seq ((.assign 236 ((.lookup ((.temp 11)))))) ((.ite .test 236 ((.imm 1)) ((.seq .skip .skip)) ((.seq ((.seq ((.assign 235 ((.op .add [(.lookup ((.temp 6))), (.const 1)])))) ((.set ((.temp 6)) ((.var 235)))))) ((.seq .skip .skip)))))))))))))) ((.seq ((.seq ((.assign 238 ((.lookup ((.temp 6)))))) ((.set ((.temp 11)) ((.var 238)))))) ((.seq .skip .skip)))))))))))))))) =>
+      decide (live19 = Flapjack.sptListInsert [0] .ln) &&
+      matches_fragment15 fragment15 &&
+      matches_fragment16 fragment16
+  | _ => false
+
+private def matches_fragment18 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.seq ((.assign 112 ((.shift .lsr ((.lookup ((.temp 10)))) (.const 1))))) ((.set ((.temp 0)) ((.var 112)))))) ((.seq ((.seq ((.assign 113 ((.shift .lsr ((.lookup ((.temp 11)))) (.const 1))))) ((.set ((.temp 1)) ((.var 113)))))) ((.seq ((.seq ((.assign 114 ((.op .xor [(.lookup ((.temp 10))), (.lookup ((.temp 11)))])))) ((.set ((.temp 10)) ((.var 114)))))) ((.seq ((.seq ((.assign 115 ((.op .and [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 115)))))) ((.seq ((.seq ((.assign 116 ((.lookup ((.temp 10)))))) ((.set ((.temp 20)) ((.var 116)))))) ((.seq ((.seq ((.assign 117 ((.lookup ((.temp 11)))))) ((.set ((.temp 21)) ((.var 117)))))) ((.seq ((.seq ((.assign 201 ((.lookup ((.temp 0)))))) ((.seq ((.assign 202 ((.lookup ((.temp 1)))))) fragment14)))) ((.seq ((.seq ((.assign 203 ((.lookup ((.temp 21)))))) ((.set ((.temp 11)) ((.var 203)))))) ((.seq ((.seq ((.assign 239 ((.lookup ((.temp 3)))))) fragment17)) ((.seq .skip .skip)))))))))))))))))))) ((.seq ((.seq ((.assign 240 ((.lookup ((.temp 11)))))) ((.set ((.temp 10)) ((.var 240)))))) ((.seq .skip .skip)))))) =>
+      matches_fragment14 fragment14 &&
+      matches_fragment17 fragment17
+  | _ => false
+
+private def matches_fragment19 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.ite .equal 241 ((.imm 4)) ((.seq ((.seq ((.assign 81 ((.lookup ((.temp 1)))))) ((.set ((.temp 2)) ((.var 81)))))) ((.seq ((.seq ((.assign 82 ((.lookup ((.temp 0)))))) ((.set ((.temp 1)) ((.var 82)))))) ((.seq ((.seq ((.seq ((.assign 83 ((.const 0)))) ((.set ((.temp 10)) ((.var 83)))))) ((.seq ((.assign 108 ((.lookup ((.temp 1)))))) ((.ite .equal 108 ((.imm 0)) ((.seq .skip .skip)) ((.seq ((.assign 107 ((.lookup ((.temp 2)))))) ((.ite .equal 107 ((.imm 0)) ((.seq .skip .skip)) ((.seq ((.seq ((.assign 84 ((.const 0)))) ((.set ((.temp 0)) ((.var 84)))))) ((.seq ((.seq ((.assign 85 ((.lookup ((.temp 2)))))) ((.set ((.temp 10)) ((.var 85)))))) fragment7)))))))))))))) ((.seq .skip .skip)))))))) ((.seq ((.seq ((.assign 109 ((.op .sub [(.lookup ((.temp 3))), (.const 5)])))) ((.set ((.temp 3)) ((.var 109)))))) ((.seq ((.seq ((.assign 110 ((.lookup ((.temp 0)))))) ((.set ((.temp 10)) ((.var 110)))))) ((.seq ((.seq ((.assign 111 ((.lookup ((.temp 1)))))) ((.set ((.temp 11)) ((.var 111)))))) fragment18)))))))) =>
+      matches_fragment7 fragment7 &&
+      matches_fragment18 fragment18
+  | _ => false
+
+private def matches_fragment20 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.ite .lower 242 ((.imm 2)) ((.seq ((.seq ((.assign 2 ((.lookup ((.temp 3)))))) ((.ite .equal 2 ((.imm 0)) .skip ((.seq ((.seq ((.assign 1 ((.op .xor [(.lookup ((.temp 1))), (.const 1)])))) ((.set ((.temp 1)) ((.var 1)))))) .skip)))))) ((.seq ((.seq ((.assign 3 ((.lookup ((.temp 1)))))) ((.set ((.temp 2)) ((.var 3)))))) ((.seq ((.seq ((.assign 4 ((.lookup ((.temp 0)))))) ((.set ((.temp 1)) ((.var 4)))))) ((.seq ((.seq ((.seq ((.assign 5 ((.lookup ((.temp 1)))))) ((.set ((.temp 10)) ((.var 5)))))) ((.seq ((.seq ((.assign 6 ((.op .and [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 6)))))) ((.seq ((.seq ((.assign 7 ((.lookup ((.temp 2)))))) ((.set ((.temp 11)) ((.var 7)))))) ((.seq ((.seq ((.assign 8 ((.op .and [(.lookup ((.temp 11))), (.const 1)])))) ((.set ((.temp 11)) ((.var 8)))))) ((.seq ((.assign 79 ((.lookup ((.temp 10)))))) ((.seq ((.assign 80 ((.lookup ((.temp 11)))))) fragment5)))))))))))) ((.seq .skip .skip)))))))))) ((.seq ((.assign 241 ((.lookup ((.temp 3)))))) fragment19)))) =>
+      matches_fragment5 fragment5 &&
+      matches_fragment19 fragment19
+  | _ => false
+
+private def matches_fragment21 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.assign 3 ((.op .add [(.lookup ((.temp 30))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.seq ((.assign 4 ((.load ((.var 3)))))) ((.set ((.temp 8)) ((.var 4)))))))) ((.seq ((.seq ((.assign 5 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.seq ((.assign 6 ((.load ((.var 5)))))) ((.set ((.temp 9)) ((.var 6)))))))) ((.seq ((.seq ((.assign 11 ((.lookup ((.temp 4)))))) ((.seq ((.assign 10 ((.lookup ((.temp 9)))))) ((.seq ((.assign 10 ((.op .xor [(.var 10), (.const 18446744073709551615)])))) ((.seq ((.assign 9 ((.lookup ((.temp 8)))))) ((.seq ((.inst ((.arith ((.addCarry 8 9 10 11)))))) ((.seq ((.set ((.temp 8)) ((.var 8)))) ((.set ((.temp 4)) ((.var 11)))))))))))))))) ((.seq ((.seq ((.assign 12 ((.lookup ((.temp 8)))))) ((.seq ((.assign 13 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.store ((.var 13)) 12)))))) ((.seq ((.seq ((.assign 14 ((.op .add [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 14)))))) ((.call none ((some 61)) [0] none)))))))))))) =>
+      true
+  | _ => false
+
+private def matches_fragment22 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.ite .equal 16 ((.reg 17)) ((.seq ((.seq ((.assign 1 ((.const 1)))) ((.set ((.temp 0)) ((.var 1)))))) ((.seq ((.seq ((.assign 2 ((.lookup ((.temp 0)))))) ((.seq ((.assign 3 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.store ((.var 3)) 2)))))) ((.seq ((.seq ((.assign 4 ((.op .add [(.lookup ((.temp 11))), (.const 1)])))) ((.set ((.temp 11)) ((.var 4)))))) ((.seq .skip .skip)))))))) ((.seq ((.seq ((.assign 5 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.seq ((.assign 6 ((.load ((.var 5)))))) ((.set ((.temp 0)) ((.var 6)))))))) ((.seq ((.assign 14 ((.lookup ((.temp 0)))))) ((.seq ((.assign 15 ((.lookup ((.temp 2)))))) ((.ite .equal 14 ((.reg 15)) ((.seq ((.seq ((.assign 7 ((.const 0)))) ((.set ((.temp 0)) ((.var 7)))))) ((.seq ((.seq ((.assign 8 ((.lookup ((.temp 0)))))) ((.seq ((.assign 9 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.store ((.var 9)) 8)))))) ((.seq ((.seq ((.assign 10 ((.op .add [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 10)))))) ((.seq .skip ((.call none ((some 60)) [0] none)))))))))) ((.seq ((.seq ((.assign 11 ((.op .add [(.lookup ((.temp 0))), (.const 1)])))) ((.set ((.temp 0)) ((.var 11)))))) ((.seq ((.seq ((.assign 12 ((.lookup ((.temp 0)))))) ((.seq ((.assign 13 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.store ((.var 13)) 12)))))) ((.seq .skip .skip)))))))))))))))) =>
+      true
+  | _ => false
+
+private def matches_fragment23 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.ite .equal 11 ((.imm 0)) ((.seq .skip .skip)) ((.seq ((.seq ((.assign 1 ((.op .sub [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 1)))))) ((.seq ((.seq ((.assign 2 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.seq ((.assign 3 ((.load ((.var 2)))))) ((.set ((.temp 0)) ((.var 3)))))))) ((.seq ((.seq ((.seq ((.assign 8 ((.lookup ((.temp 9)))))) ((.seq ((.assign 7 ((.lookup ((.temp 0)))))) ((.seq ((.assign 6 ((.lookup ((.temp 2)))))) ((.seq ((.mustTerminate ((.seq ((.call ((some ([4], (live23, .ln), .skip, 58, 2))) ((some 23)) [6, 7, 8] none)) ((.assign 5 ((.lookup ((.temp 28)))))))))) ((.seq ((.set ((.temp 0)) ((.var 4)))) ((.set ((.temp 2)) ((.var 5)))))))))))))) .skip)) ((.seq ((.seq ((.assign 9 ((.lookup ((.temp 0)))))) ((.seq ((.assign 10 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.store ((.var 10)) 9)))))) ((.seq .skip ((.call none ((some 58)) [0] none)))))))))))))) =>
+      decide (live23 = Flapjack.sptListInsert [0] .ln)
+  | _ => false
+
+private def matches_fragment24 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.assign 23 ((.lookup ((.temp 11)))))) ((.set ((.temp 2)) ((.var 23)))))) ((.seq ((.seq ((.assign 31 ((.lookup ((.temp 2)))))) ((.seq ((.assign 32 ((.lookup ((.temp 1)))))) ((.ite .lower 31 ((.reg 32)) ((.seq ((.seq ((.assign 28 ((.lookup ((.temp 1)))))) ((.seq ((.assign 27 ((.lookup ((.temp 0)))))) ((.seq ((.assign 26 ((.lookup ((.temp 2)))))) ((.seq ((.mustTerminate ((.seq ((.call ((some ([24], (live24, .ln), .skip, 54, 2))) ((some 23)) [26, 27, 28] none)) ((.assign 25 ((.lookup ((.temp 28)))))))))) ((.seq ((.set ((.temp 0)) ((.var 24)))) ((.set ((.temp 2)) ((.var 25)))))))))))))) .skip)) ((.seq ((.seq ((.assign 29 ((.const 0)))) ((.set ((.temp 0)) ((.var 29)))))) ((.seq ((.seq ((.assign 30 ((.op .xor [(.lookup ((.temp 0))), (.op .sub [(.const 0), (.const 1)])])))) ((.set ((.temp 0)) ((.var 30)))))) .skip)))))))))) ((.seq ((.seq ((.assign 33 ((.lookup ((.temp 0)))))) ((.set ((.temp 6)) ((.var 33)))))) ((.seq ((.call ((some ([34], (live25, .ln), .skip, 54, 3))) ((some 55)) [] none)) ((.seq .skip .skip)))))))))) =>
+      decide (live24 = Flapjack.sptListInsert [0] .ln) &&
+      decide (live25 = Flapjack.sptListInsert [0] .ln)
+  | _ => false
+
+private def matches_fragment25 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.assign 54 ((.lookup ((.temp 1)))))) ((.set ((.temp 8)) ((.var 54)))))) ((.seq ((.seq ((.assign 55 ((.const 1)))) ((.set ((.temp 8)) ((.var 55)))))) ((.seq ((.seq ((.assign 56 ((.lookup ((.temp 1)))))) ((.set ((.temp 11)) ((.var 56)))))) ((.seq ((.seq ((.assign 57 ((.lookup ((.temp 1)))))) ((.set ((.temp 12)) ((.var 57)))))) ((.seq ((.call ((some ([58], (live27, .ln), .skip, 54, 5))) ((some 57)) [] none)) ((.seq ((.seq ((.assign 59 ((.op .sub [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 59)))))) ((.seq ((.seq ((.assign 60 ((.lookup ((.temp 7)))))) ((.seq ((.assign 61 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.store ((.var 61)) 60)))))) ((.seq ((.seq ((.assign 62 ((.op .sub [(.lookup ((.temp 10))), (.lookup ((.temp 9)))])))) ((.set ((.temp 10)) ((.var 62)))))) ((.seq ((.seq ((.assign 63 ((.lookup ((.temp 6)))))) ((.set ((.temp 7)) ((.var 63)))))) ((.seq .skip ((.call none ((some 54)) [0] none)))))))))))))))))))))) =>
+      decide (live27 = Flapjack.sptListInsert [0] .ln)
+  | _ => false
+
+private def matches_fragment26 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.seq ((.assign 43 ((.const 0)))) ((.set ((.temp 1)) ((.var 43)))))) ((.seq ((.seq ((.assign 44 ((.lookup ((.temp 1)))))) ((.set ((.temp 8)) ((.var 44)))))) ((.seq ((.seq ((.assign 45 ((.lookup ((.temp 1)))))) ((.set ((.temp 11)) ((.var 45)))))) ((.seq ((.seq ((.assign 46 ((.lookup ((.temp 1)))))) ((.set ((.temp 12)) ((.var 46)))))) ((.seq ((.call ((some ([47], (live26, .ln), .skip, 54, 4))) ((some 56)) [] none)) ((.seq ((.assign 50 ((.lookup ((.temp 7)))))) ((.ite .equal 50 ((.imm 0)) ((.seq .skip .skip)) ((.seq ((.assign 49 ((.lookup ((.temp 8)))))) ((.ite .equal 49 ((.imm 0)) ((.seq .skip .skip)) ((.seq ((.seq ((.assign 48 ((.op .sub [(.lookup ((.temp 7))), (.const 1)])))) ((.set ((.temp 7)) ((.var 48)))))) ((.seq .skip .skip)))))))))))))))))))))) ((.seq ((.seq ((.assign 51 ((.op .sub [(.lookup ((.temp 10))), (.lookup ((.temp 9)))])))) ((.set ((.temp 10)) ((.var 51)))))) ((.seq ((.seq ((.assign 52 ((.op .sub [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 52)))))) ((.seq ((.seq ((.assign 53 ((.const 0)))) ((.set ((.temp 1)) ((.var 53)))))) fragment25)))))))) =>
+      decide (live26 = Flapjack.sptListInsert [0] .ln) &&
+      matches_fragment25 fragment25
+  | _ => false
+
+private def matches_fragment27 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.assign 20 ((.lookup ((.temp 6)))))) ((.set ((.temp 8)) ((.var 20)))))) ((.seq ((.seq ((.seq ((.assign 21 ((.lookup ((.temp 10)))))) ((.set ((.temp 0)) ((.var 21)))))) ((.seq ((.seq ((.assign 22 ((.lookup ((.temp 8)))))) ((.set ((.temp 1)) ((.var 22)))))) fragment24)))) ((.seq ((.seq ((.assign 35 ((.lookup ((.temp 6)))))) ((.set ((.temp 0)) ((.var 35)))))) ((.seq ((.seq ((.assign 36 ((.lookup ((.temp 14)))))) ((.set ((.temp 6)) ((.var 36)))))) ((.seq ((.seq ((.assign 37 ((.lookup ((.temp 15)))))) ((.set ((.temp 9)) ((.var 37)))))) ((.seq ((.seq ((.assign 38 ((.lookup ((.temp 16)))))) ((.set ((.temp 10)) ((.var 38)))))) ((.seq ((.seq ((.assign 39 ((.op .sub [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 39)))))) ((.seq ((.seq ((.assign 40 ((.lookup ((.temp 7)))))) ((.set ((.temp 15)) ((.var 40)))))) ((.seq ((.seq ((.assign 41 ((.lookup ((.temp 8)))))) ((.set ((.temp 14)) ((.var 41)))))) ((.seq ((.seq ((.assign 42 ((.lookup ((.temp 0)))))) ((.set ((.temp 7)) ((.var 42)))))) fragment26)))))))))))))))))))) =>
+      matches_fragment24 fragment24 &&
+      matches_fragment26 fragment26
+  | _ => false
+
+private def matches_fragment28 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.assign 10 ((.op .sub [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 10)))))) ((.seq ((.seq ((.assign 11 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.seq ((.assign 12 ((.load ((.var 11)))))) ((.set ((.temp 1)) ((.var 12)))))))) ((.seq ((.seq ((.assign 13 ((.op .sub [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 13)))))) ((.seq ((.seq ((.assign 14 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.seq ((.assign 15 ((.load ((.var 14)))))) ((.set ((.temp 2)) ((.var 15)))))))) ((.seq ((.seq ((.assign 16 ((.lookup ((.temp 0)))))) ((.set ((.temp 11)) ((.var 16)))))) ((.seq ((.seq ((.assign 17 ((.lookup ((.temp 1)))))) ((.set ((.temp 10)) ((.var 17)))))) ((.seq ((.seq ((.assign 18 ((.lookup ((.temp 2)))))) ((.set ((.temp 9)) ((.var 18)))))) ((.seq ((.seq ((.assign 19 ((.lookup ((.temp 3)))))) ((.set ((.temp 7)) ((.var 19)))))) fragment27)))))))))))))))) =>
+      matches_fragment27 fragment27
+  | _ => false
+
+private def matches_fragment29 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.seq ((.assign 56 ((.lookup ((.temp 8)))))) ((.seq ((.assign 55 ((.lookup ((.temp 0)))))) ((.seq ((.assign 55 ((.op .xor [(.var 55), (.const 18446744073709551615)])))) ((.seq ((.assign 54 ((.lookup ((.temp 3)))))) ((.seq ((.inst ((.arith ((.addCarry 53 54 55 56)))))) ((.seq ((.set ((.temp 3)) ((.var 53)))) ((.set ((.temp 8)) ((.var 56)))))))))))))))) .skip)) ((.seq ((.seq ((.assign 57 ((.lookup ((.temp 1)))))) ((.set ((.temp 0)) ((.var 57)))))) ((.seq ((.seq ((.assign 58 ((.lookup ((.temp 3)))))) ((.set ((.temp 1)) ((.var 58)))))) ((.seq ((.seq ((.assign 59 ((.lookup ((.temp 1)))))) ((.seq ((.assign 60 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.store ((.var 60)) 59)))))) ((.seq ((.seq ((.assign 61 ((.lookup ((.temp 0)))))) ((.set ((.temp 1)) ((.var 61)))))) ((.seq ((.seq ((.assign 62 ((.op .add [(.lookup ((.temp 11))), (.const 1)])))) ((.set ((.temp 11)) ((.var 62)))))) ((.seq ((.seq ((.assign 63 ((.op .add [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 63)))))) ((.seq .skip ((.call none ((some 57)) [0] none)))))))))))))))))) =>
+      true
+  | _ => false
+
+private def matches_fragment30 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.seq ((.assign 37 ((.lookup ((.temp 2)))))) ((.seq ((.assign 36 ((.lookup ((.temp 0)))))) ((.seq ((.inst ((.arith ((.longMul 34 35 36 37)))))) ((.seq ((.set ((.temp 2)) ((.var 34)))) ((.set ((.temp 0)) ((.var 35)))))))))))) ((.seq ((.seq ((.assign 42 ((.const 0)))) ((.seq ((.assign 41 ((.lookup ((.temp 1)))))) ((.seq ((.assign 40 ((.lookup ((.temp 0)))))) ((.seq ((.inst ((.arith ((.addCarry 39 40 41 42)))))) ((.seq ((.set ((.temp 0)) ((.var 39)))) ((.set ((.temp 4)) ((.var 42)))))))))))))) ((.seq ((.seq ((.assign 47 ((.lookup ((.temp 4)))))) ((.seq ((.assign 46 ((.const 0)))) ((.seq ((.assign 45 ((.lookup ((.temp 2)))))) ((.seq ((.inst ((.arith ((.addCarry 44 45 46 47)))))) ((.seq ((.set ((.temp 2)) ((.var 44)))) ((.set ((.temp 4)) ((.var 47)))))))))))))) ((.seq .skip .skip)))))))) ((.seq ((.seq ((.assign 48 ((.lookup ((.temp 12)))))) ((.set ((.temp 1)) ((.var 48)))))) ((.seq ((.seq ((.assign 49 ((.lookup ((.temp 2)))))) ((.set ((.temp 12)) ((.var 49)))))) ((.seq ((.seq ((.assign 50 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.seq ((.assign 51 ((.load ((.var 50)))))) ((.set ((.temp 3)) ((.var 51)))))))) fragment29)))))))) =>
+      matches_fragment29 fragment29
+  | _ => false
+
+private def matches_fragment31 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.seq ((.assign 19 ((.lookup ((.temp 2)))))) ((.seq ((.assign 18 ((.lookup ((.temp 0)))))) ((.seq ((.inst ((.arith ((.longMul 16 17 18 19)))))) ((.seq ((.set ((.temp 2)) ((.var 16)))) ((.set ((.temp 0)) ((.var 17)))))))))))) ((.seq ((.seq ((.assign 24 ((.const 0)))) ((.seq ((.assign 23 ((.lookup ((.temp 1)))))) ((.seq ((.assign 22 ((.lookup ((.temp 0)))))) ((.seq ((.inst ((.arith ((.addCarry 21 22 23 24)))))) ((.seq ((.set ((.temp 0)) ((.var 21)))) ((.set ((.temp 4)) ((.var 24)))))))))))))) ((.seq ((.seq ((.assign 29 ((.lookup ((.temp 4)))))) ((.seq ((.assign 28 ((.const 0)))) ((.seq ((.assign 27 ((.lookup ((.temp 2)))))) ((.seq ((.inst ((.arith ((.addCarry 26 27 28 29)))))) ((.seq ((.set ((.temp 2)) ((.var 26)))) ((.set ((.temp 4)) ((.var 29)))))))))))))) ((.seq .skip .skip)))))))) ((.seq ((.seq ((.assign 30 ((.lookup ((.temp 12)))))) ((.set ((.temp 1)) ((.var 30)))))) ((.seq ((.seq ((.assign 31 ((.lookup ((.temp 2)))))) ((.set ((.temp 12)) ((.var 31)))))) ((.seq ((.seq ((.assign 32 ((.lookup ((.temp 0)))))) ((.set ((.temp 2)) ((.var 32)))))) ((.seq ((.seq ((.assign 33 ((.lookup ((.temp 7)))))) ((.set ((.temp 0)) ((.var 33)))))) fragment30)))))))))) =>
+      matches_fragment30 fragment30
+  | _ => false
+
+private def matches_fragment32 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.ite .equal 64 ((.reg 65)) ((.seq ((.seq ((.assign 1 ((.lookup ((.temp 12)))))) ((.set ((.temp 0)) ((.var 1)))))) ((.seq ((.seq ((.assign 2 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.seq ((.assign 3 ((.load ((.var 2)))))) ((.set ((.temp 3)) ((.var 3)))))))) ((.seq ((.seq ((.seq ((.assign 8 ((.lookup ((.temp 8)))))) ((.seq ((.assign 7 ((.lookup ((.temp 0)))))) ((.seq ((.assign 7 ((.op .xor [(.var 7), (.const 18446744073709551615)])))) ((.seq ((.assign 6 ((.lookup ((.temp 3)))))) ((.seq ((.inst ((.arith ((.addCarry 5 6 7 8)))))) ((.seq ((.set ((.temp 3)) ((.var 5)))) ((.set ((.temp 8)) ((.var 8)))))))))))))))) .skip)) ((.seq ((.seq ((.assign 9 ((.lookup ((.temp 3)))))) ((.set ((.temp 1)) ((.var 9)))))) ((.seq ((.seq ((.assign 10 ((.lookup ((.temp 1)))))) ((.seq ((.assign 11 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.store ((.var 11)) 10)))))) ((.seq ((.seq ((.assign 12 ((.op .add [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 12)))))) ((.seq .skip .skip)))))))))))))) ((.seq ((.seq ((.assign 13 ((.lookup ((.temp 6)))))) ((.set ((.temp 0)) ((.var 13)))))) ((.seq ((.seq ((.assign 14 ((.op .add [(.lookup ((.temp 30))), (.shift .lsl ((.lookup ((.temp 11)))) (.const 3))])))) ((.seq ((.assign 15 ((.load ((.var 14)))))) ((.set ((.temp 2)) ((.var 15)))))))) fragment31)))))) =>
+      matches_fragment31 fragment31
+  | _ => false
+
+private def matches_fragment33 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.assign 47 ((.lookup ((.temp 2)))))) ((.set ((.temp 12)) ((.var 47)))))) ((.seq ((.seq ((.assign 48 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.seq ((.assign 49 ((.load ((.var 48)))))) ((.set ((.temp 3)) ((.var 49)))))))) ((.seq ((.seq ((.assign 54 ((.lookup ((.temp 0)))))) ((.seq ((.assign 55 ((.lookup ((.temp 3)))))) ((.ite .equal 54 ((.reg 55)) .skip ((.seq ((.seq ((.assign 50 ((.const 1)))) ((.set ((.temp 8)) ((.var 50)))))) ((.seq ((.assign 52 ((.lookup ((.temp 3)))))) ((.seq ((.assign 53 ((.lookup ((.temp 0)))))) ((.ite .lower 52 ((.reg 53)) .skip ((.seq ((.seq ((.assign 51 ((.const 0)))) ((.set ((.temp 8)) ((.var 51)))))) .skip)))))))))))))))) ((.seq ((.seq ((.assign 56 ((.op .add [(.lookup ((.temp 11))), (.const 1)])))) ((.set ((.temp 11)) ((.var 56)))))) ((.seq ((.seq ((.assign 57 ((.op .add [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 57)))))) ((.seq .skip ((.call none ((some 56)) [0] none)))))))))))))) =>
+      true
+  | _ => false
+
+private def matches_fragment34 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.assign 31 ((.lookup ((.temp 7)))))) ((.set ((.temp 0)) ((.var 31)))))) ((.seq ((.seq ((.seq ((.assign 35 ((.lookup ((.temp 2)))))) ((.seq ((.assign 34 ((.lookup ((.temp 0)))))) ((.seq ((.inst ((.arith ((.longMul 32 33 34 35)))))) ((.seq ((.set ((.temp 2)) ((.var 32)))) ((.set ((.temp 0)) ((.var 33)))))))))))) ((.seq ((.seq ((.assign 40 ((.const 0)))) ((.seq ((.assign 39 ((.lookup ((.temp 1)))))) ((.seq ((.assign 38 ((.lookup ((.temp 0)))))) ((.seq ((.inst ((.arith ((.addCarry 37 38 39 40)))))) ((.seq ((.set ((.temp 0)) ((.var 37)))) ((.set ((.temp 4)) ((.var 40)))))))))))))) ((.seq ((.seq ((.assign 45 ((.lookup ((.temp 4)))))) ((.seq ((.assign 44 ((.const 0)))) ((.seq ((.assign 43 ((.lookup ((.temp 2)))))) ((.seq ((.inst ((.arith ((.addCarry 42 43 44 45)))))) ((.seq ((.set ((.temp 2)) ((.var 42)))) ((.set ((.temp 4)) ((.var 45)))))))))))))) ((.seq .skip .skip)))))))) ((.seq ((.seq ((.assign 46 ((.lookup ((.temp 12)))))) ((.set ((.temp 1)) ((.var 46)))))) fragment33)))))) =>
+      matches_fragment33 fragment33
+  | _ => false
+
+private def matches_fragment35 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.seq ((.assign 17 ((.lookup ((.temp 2)))))) ((.seq ((.assign 16 ((.lookup ((.temp 0)))))) ((.seq ((.inst ((.arith ((.longMul 14 15 16 17)))))) ((.seq ((.set ((.temp 2)) ((.var 14)))) ((.set ((.temp 0)) ((.var 15)))))))))))) ((.seq ((.seq ((.assign 22 ((.const 0)))) ((.seq ((.assign 21 ((.lookup ((.temp 1)))))) ((.seq ((.assign 20 ((.lookup ((.temp 0)))))) ((.seq ((.inst ((.arith ((.addCarry 19 20 21 22)))))) ((.seq ((.set ((.temp 0)) ((.var 19)))) ((.set ((.temp 4)) ((.var 22)))))))))))))) ((.seq ((.seq ((.assign 27 ((.lookup ((.temp 4)))))) ((.seq ((.assign 26 ((.const 0)))) ((.seq ((.assign 25 ((.lookup ((.temp 2)))))) ((.seq ((.inst ((.arith ((.addCarry 24 25 26 27)))))) ((.seq ((.set ((.temp 2)) ((.var 24)))) ((.set ((.temp 4)) ((.var 27)))))))))))))) ((.seq .skip .skip)))))))) ((.seq ((.seq ((.assign 28 ((.lookup ((.temp 12)))))) ((.set ((.temp 1)) ((.var 28)))))) ((.seq ((.seq ((.assign 29 ((.lookup ((.temp 2)))))) ((.set ((.temp 12)) ((.var 29)))))) ((.seq ((.seq ((.assign 30 ((.lookup ((.temp 0)))))) ((.set ((.temp 2)) ((.var 30)))))) fragment34)))))))) =>
+      matches_fragment34 fragment34
+  | _ => false
+
+private def matches_fragment36 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.ite .equal 58 ((.reg 59)) ((.seq ((.seq ((.assign 1 ((.lookup ((.temp 12)))))) ((.set ((.temp 0)) ((.var 1)))))) ((.seq ((.seq ((.assign 2 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.seq ((.assign 3 ((.load ((.var 2)))))) ((.set ((.temp 3)) ((.var 3)))))))) ((.seq ((.seq ((.assign 4 ((.op .add [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 4)))))) ((.seq ((.seq ((.assign 9 ((.lookup ((.temp 0)))))) ((.seq ((.assign 10 ((.lookup ((.temp 3)))))) ((.ite .equal 9 ((.reg 10)) .skip ((.seq ((.seq ((.assign 5 ((.const 1)))) ((.set ((.temp 8)) ((.var 5)))))) ((.seq ((.assign 7 ((.lookup ((.temp 3)))))) ((.seq ((.assign 8 ((.lookup ((.temp 0)))))) ((.ite .lower 7 ((.reg 8)) .skip ((.seq ((.seq ((.assign 6 ((.const 0)))) ((.set ((.temp 8)) ((.var 6)))))) .skip)))))))))))))))) ((.seq .skip .skip)))))))))) ((.seq ((.seq ((.assign 11 ((.lookup ((.temp 6)))))) ((.set ((.temp 0)) ((.var 11)))))) ((.seq ((.seq ((.assign 12 ((.op .add [(.lookup ((.temp 30))), (.shift .lsl ((.lookup ((.temp 11)))) (.const 3))])))) ((.seq ((.assign 13 ((.load ((.var 12)))))) ((.set ((.temp 2)) ((.var 13)))))))) fragment35)))))) =>
+      matches_fragment35 fragment35
+  | _ => false
+
+private def matches_fragment37 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.seq ((.assign 25 ((.lookup ((.temp 2)))))) ((.seq ((.assign 24 ((.lookup ((.temp 0)))))) ((.seq ((.inst ((.arith ((.longMul 22 23 24 25)))))) ((.seq ((.set ((.temp 2)) ((.var 22)))) ((.set ((.temp 0)) ((.var 23)))))))))))) ((.seq ((.seq ((.assign 30 ((.const 0)))) ((.seq ((.assign 29 ((.lookup ((.temp 1)))))) ((.seq ((.assign 28 ((.lookup ((.temp 0)))))) ((.seq ((.inst ((.arith ((.addCarry 27 28 29 30)))))) ((.seq ((.set ((.temp 0)) ((.var 27)))) ((.set ((.temp 4)) ((.var 30)))))))))))))) ((.seq ((.seq ((.assign 35 ((.lookup ((.temp 4)))))) ((.seq ((.assign 34 ((.const 0)))) ((.seq ((.assign 33 ((.lookup ((.temp 2)))))) ((.seq ((.inst ((.arith ((.addCarry 32 33 34 35)))))) ((.seq ((.set ((.temp 2)) ((.var 32)))) ((.set ((.temp 4)) ((.var 35)))))))))))))) ((.seq .skip .skip)))))))) ((.seq ((.seq ((.assign 36 ((.lookup ((.temp 2)))))) ((.set ((.temp 3)) ((.var 36)))))) ((.seq ((.seq ((.assign 37 ((.lookup ((.temp 0)))))) ((.set ((.temp 2)) ((.var 37)))))) ((.seq ((.seq ((.assign 38 ((.lookup ((.temp 12)))))) ((.set ((.temp 1)) ((.var 38)))))) ((.seq .skip .skip)))))))))) =>
+      true
+  | _ => false
+
+private def matches_fragment38 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.seq ((.assign 7 ((.lookup ((.temp 2)))))) ((.seq ((.assign 6 ((.lookup ((.temp 0)))))) ((.seq ((.inst ((.arith ((.longMul 4 5 6 7)))))) ((.seq ((.set ((.temp 2)) ((.var 4)))) ((.set ((.temp 0)) ((.var 5)))))))))))) ((.seq ((.seq ((.assign 12 ((.const 0)))) ((.seq ((.assign 11 ((.lookup ((.temp 1)))))) ((.seq ((.assign 10 ((.lookup ((.temp 0)))))) ((.seq ((.inst ((.arith ((.addCarry 9 10 11 12)))))) ((.seq ((.set ((.temp 0)) ((.var 9)))) ((.set ((.temp 4)) ((.var 12)))))))))))))) ((.seq ((.seq ((.assign 17 ((.lookup ((.temp 4)))))) ((.seq ((.assign 16 ((.const 0)))) ((.seq ((.assign 15 ((.lookup ((.temp 2)))))) ((.seq ((.inst ((.arith ((.addCarry 14 15 16 17)))))) ((.seq ((.set ((.temp 2)) ((.var 14)))) ((.set ((.temp 4)) ((.var 17)))))))))))))) ((.seq .skip .skip)))))))) ((.seq ((.seq ((.assign 18 ((.lookup ((.temp 0)))))) ((.set ((.temp 12)) ((.var 18)))))) ((.seq ((.seq ((.assign 19 ((.lookup ((.temp 6)))))) ((.set ((.temp 0)) ((.var 19)))))) ((.seq ((.seq ((.assign 20 ((.lookup ((.temp 2)))))) ((.set ((.temp 1)) ((.var 20)))))) ((.seq ((.seq ((.assign 21 ((.lookup ((.temp 8)))))) ((.set ((.temp 2)) ((.var 21)))))) fragment37)))))))))) =>
+      matches_fragment37 fragment37
+  | _ => false
+
+private def matches_fragment39 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.ite .equal 54 ((.reg 55)) ((.seq ((.assign 49 ((.lookup ((.temp 2)))))) ((.seq ((.assign 50 ((.lookup ((.temp 10)))))) ((.ite .equal 49 ((.reg 50)) ((.seq ((.assign 44 ((.lookup ((.temp 1)))))) ((.seq ((.assign 45 ((.lookup ((.temp 9)))))) ((.ite .equal 44 ((.reg 45)) ((.seq ((.seq ((.assign 40 ((.const 0)))) ((.set ((.temp 0)) ((.var 40)))))) .skip)) ((.seq ((.assign 42 ((.lookup ((.temp 9)))))) ((.seq ((.assign 43 ((.lookup ((.temp 1)))))) ((.ite .lower 42 ((.reg 43)) .skip ((.seq ((.seq ((.assign 41 ((.const 0)))) ((.set ((.temp 0)) ((.var 41)))))) .skip)))))))))))))) ((.seq ((.assign 47 ((.lookup ((.temp 10)))))) ((.seq ((.assign 48 ((.lookup ((.temp 2)))))) ((.ite .lower 47 ((.reg 48)) .skip ((.seq ((.seq ((.assign 46 ((.const 0)))) ((.set ((.temp 0)) ((.var 46)))))) .skip)))))))))))))) ((.seq ((.assign 52 ((.lookup ((.temp 11)))))) ((.seq ((.assign 53 ((.lookup ((.temp 3)))))) ((.ite .lower 52 ((.reg 53)) .skip ((.seq ((.seq ((.assign 51 ((.const 0)))) ((.set ((.temp 0)) ((.var 51)))))) .skip)))))))))) =>
+      true
+  | _ => false
+
+private def matches_fragment40 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.assign 70 ((.const 0)))) ((.seq ((.assign 69 ((.lookup ((.temp 1)))))) ((.seq ((.assign 68 ((.lookup ((.temp 0)))))) ((.seq ((.inst ((.arith ((.addCarry 67 68 69 70)))))) ((.seq ((.set ((.temp 0)) ((.var 67)))) ((.set ((.temp 4)) ((.var 70)))))))))))))) ((.seq ((.seq ((.assign 75 ((.lookup ((.temp 4)))))) ((.seq ((.assign 74 ((.const 0)))) ((.seq ((.assign 73 ((.lookup ((.temp 2)))))) ((.seq ((.inst ((.arith ((.addCarry 72 73 74 75)))))) ((.seq ((.set ((.temp 2)) ((.var 72)))) ((.set ((.temp 4)) ((.var 75)))))))))))))) ((.seq ((.seq ((.assign 80 ((.const 0)))) ((.seq ((.assign 79 ((.lookup ((.temp 3)))))) ((.seq ((.assign 78 ((.lookup ((.temp 0)))))) ((.seq ((.inst ((.arith ((.addCarry 77 78 79 80)))))) ((.seq ((.set ((.temp 0)) ((.var 77)))) ((.set ((.temp 4)) ((.var 80)))))))))))))) ((.seq ((.seq ((.assign 85 ((.lookup ((.temp 4)))))) ((.seq ((.assign 84 ((.const 0)))) ((.seq ((.assign 83 ((.lookup ((.temp 2)))))) ((.seq ((.inst ((.arith ((.addCarry 82 83 84 85)))))) ((.seq ((.set ((.temp 2)) ((.var 82)))) ((.set ((.temp 4)) ((.var 85)))))))))))))) ((.seq .skip .skip)))))))))) =>
+      true
+  | _ => false
+
+private def matches_fragment41 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.seq ((.assign 87 ((.const 1)))) ((.set ((.temp 1)) ((.var 87)))))) ((.seq ((.assign 97 ((.lookup ((.temp 2)))))) ((.seq ((.assign 98 ((.lookup ((.temp 11)))))) ((.ite .equal 97 ((.reg 98)) ((.seq ((.assign 92 ((.lookup ((.temp 0)))))) ((.seq ((.assign 93 ((.lookup ((.temp 10)))))) ((.ite .equal 92 ((.reg 93)) ((.seq ((.seq ((.assign 88 ((.const 0)))) ((.set ((.temp 1)) ((.var 88)))))) .skip)) ((.seq ((.assign 90 ((.lookup ((.temp 10)))))) ((.seq ((.assign 91 ((.lookup ((.temp 0)))))) ((.ite .lower 90 ((.reg 91)) .skip ((.seq ((.seq ((.assign 89 ((.const 0)))) ((.set ((.temp 1)) ((.var 89)))))) .skip)))))))))))))) ((.seq ((.assign 95 ((.lookup ((.temp 11)))))) ((.seq ((.assign 96 ((.lookup ((.temp 2)))))) ((.ite .lower 95 ((.reg 96)) .skip ((.seq ((.seq ((.assign 94 ((.const 0)))) ((.set ((.temp 1)) ((.var 94)))))) .skip)))))))))))))))) ((.seq ((.assign 99 ((.lookup ((.temp 1)))))) ((.ite .equal 99 ((.imm 0)) ((.seq .skip .skip)) ((.seq .skip ((.call none ((some 55)) [0] none)))))))))) =>
+      true
+  | _ => false
+
+private def matches_fragment42 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.assign 100 ((.lookup ((.temp 0)))))) ((.ite .equal 100 ((.imm 0)) ((.seq .skip .skip)) ((.seq ((.seq ((.assign 57 ((.lookup ((.temp 6)))))) ((.ite .equal 57 ((.imm 0)) .skip ((.seq ((.seq ((.assign 56 ((.op .sub [(.lookup ((.temp 6))), (.const 1)])))) ((.set ((.temp 6)) ((.var 56)))))) .skip)))))) ((.seq ((.seq ((.assign 58 ((.lookup ((.temp 6)))))) ((.set ((.temp 0)) ((.var 58)))))) ((.seq ((.seq ((.assign 59 ((.const 0)))) ((.set ((.temp 1)) ((.var 59)))))) ((.seq ((.seq ((.assign 60 ((.lookup ((.temp 8)))))) ((.set ((.temp 2)) ((.var 60)))))) ((.seq ((.seq ((.assign 61 ((.lookup ((.temp 1)))))) ((.set ((.temp 3)) ((.var 61)))))) ((.seq ((.seq ((.seq ((.assign 65 ((.lookup ((.temp 2)))))) ((.seq ((.assign 64 ((.lookup ((.temp 0)))))) ((.seq ((.inst ((.arith ((.longMul 62 63 64 65)))))) ((.seq ((.set ((.temp 2)) ((.var 62)))) ((.set ((.temp 0)) ((.var 63)))))))))))) fragment40)) ((.seq ((.seq ((.assign 86 ((.op .add [(.lookup ((.temp 2))), (.const 1)])))) ((.set ((.temp 2)) ((.var 86)))))) fragment41)))))))))))))))))) =>
+      matches_fragment40 fragment40 &&
+      matches_fragment41 fragment41
+  | _ => false
+
+private def matches_fragment43 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.seq ((.assign 9 ((.lookup ((.temp 2)))))) ((.seq ((.assign 8 ((.lookup ((.temp 0)))))) ((.seq ((.inst ((.arith ((.longMul 6 7 8 9)))))) ((.seq ((.set ((.temp 2)) ((.var 6)))) ((.set ((.temp 0)) ((.var 7)))))))))))) ((.seq ((.seq ((.assign 14 ((.const 0)))) ((.seq ((.assign 13 ((.lookup ((.temp 1)))))) ((.seq ((.assign 12 ((.lookup ((.temp 0)))))) ((.seq ((.inst ((.arith ((.addCarry 11 12 13 14)))))) ((.seq ((.set ((.temp 0)) ((.var 11)))) ((.set ((.temp 4)) ((.var 14)))))))))))))) ((.seq ((.seq ((.assign 19 ((.lookup ((.temp 4)))))) ((.seq ((.assign 18 ((.const 0)))) ((.seq ((.assign 17 ((.lookup ((.temp 2)))))) ((.seq ((.inst ((.arith ((.addCarry 16 17 18 19)))))) ((.seq ((.set ((.temp 2)) ((.var 16)))) ((.set ((.temp 4)) ((.var 19)))))))))))))) ((.seq .skip .skip)))))))) ((.seq ((.seq ((.assign 20 ((.lookup ((.temp 2)))))) ((.set ((.temp 1)) ((.var 20)))))) ((.seq ((.seq ((.assign 21 ((.op .add [(.lookup ((.temp 11))), (.const 1)])))) ((.set ((.temp 11)) ((.var 21)))))) ((.seq .skip ((.call none ((some 53)) [0] none)))))))))) =>
+      true
+  | _ => false
+
+private def matches_fragment44 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.assign 16 ((.const 0)))) ((.seq ((.assign 15 ((.lookup ((.temp 1)))))) ((.seq ((.assign 14 ((.lookup ((.temp 0)))))) ((.seq ((.inst ((.arith ((.addCarry 13 14 15 16)))))) ((.seq ((.set ((.temp 0)) ((.var 13)))) ((.set ((.temp 4)) ((.var 16)))))))))))))) ((.seq ((.seq ((.assign 21 ((.lookup ((.temp 4)))))) ((.seq ((.assign 20 ((.const 0)))) ((.seq ((.assign 19 ((.lookup ((.temp 2)))))) ((.seq ((.inst ((.arith ((.addCarry 18 19 20 21)))))) ((.seq ((.set ((.temp 2)) ((.var 18)))) ((.set ((.temp 4)) ((.var 21)))))))))))))) ((.seq ((.seq ((.assign 26 ((.const 0)))) ((.seq ((.assign 25 ((.lookup ((.temp 3)))))) ((.seq ((.assign 24 ((.lookup ((.temp 0)))))) ((.seq ((.inst ((.arith ((.addCarry 23 24 25 26)))))) ((.seq ((.set ((.temp 0)) ((.var 23)))) ((.set ((.temp 4)) ((.var 26)))))))))))))) ((.seq ((.seq ((.assign 31 ((.lookup ((.temp 4)))))) ((.seq ((.assign 30 ((.const 0)))) ((.seq ((.assign 29 ((.lookup ((.temp 2)))))) ((.seq ((.inst ((.arith ((.addCarry 28 29 30 31)))))) ((.seq ((.set ((.temp 2)) ((.var 28)))) ((.set ((.temp 4)) ((.var 31)))))))))))))) ((.seq .skip .skip)))))))))) =>
+      true
+  | _ => false
+
+private def matches_fragment45 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.ite .equal 37 ((.reg 38)) ((.seq ((.seq ((.assign 1 ((.lookup ((.temp 1)))))) ((.seq ((.assign 2 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.store ((.var 2)) 1)))))) ((.seq ((.seq ((.assign 3 ((.op .add [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 3)))))) ((.seq .skip .skip)))))) ((.seq ((.seq ((.assign 4 ((.op .add [(.lookup ((.temp 31))), (.shift .lsl ((.lookup ((.temp 11)))) (.const 3))])))) ((.seq ((.assign 5 ((.load ((.var 4)))))) ((.set ((.temp 2)) ((.var 5)))))))) ((.seq ((.seq ((.assign 6 ((.lookup ((.temp 8)))))) ((.set ((.temp 0)) ((.var 6)))))) ((.seq ((.seq ((.assign 7 ((.const 0)))) ((.set ((.temp 3)) ((.var 7)))))) ((.seq ((.seq ((.seq ((.assign 11 ((.lookup ((.temp 2)))))) ((.seq ((.assign 10 ((.lookup ((.temp 0)))))) ((.seq ((.inst ((.arith ((.longMul 8 9 10 11)))))) ((.seq ((.set ((.temp 2)) ((.var 8)))) ((.set ((.temp 0)) ((.var 9)))))))))))) fragment44)) ((.seq ((.seq ((.assign 32 ((.lookup ((.temp 0)))))) ((.seq ((.assign 33 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.store ((.var 33)) 32)))))) ((.seq ((.seq ((.assign 34 ((.lookup ((.temp 2)))))) ((.set ((.temp 1)) ((.var 34)))))) ((.seq ((.seq ((.assign 35 ((.op .add [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 35)))))) ((.seq ((.seq ((.assign 36 ((.op .add [(.lookup ((.temp 11))), (.const 1)])))) ((.set ((.temp 11)) ((.var 36)))))) ((.seq .skip ((.call none ((some 52)) [0] none)))))))))))))))))))))) =>
+      matches_fragment44 fragment44
+  | _ => false
+
+private def matches_fragment46 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.ite .equal 11 ((.imm 0)) ((.seq .skip .skip)) ((.seq ((.seq ((.assign 1 ((.op .sub [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 1)))))) ((.seq ((.seq ((.assign 2 ((.op .add [(.lookup ((.temp 31))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.seq ((.assign 3 ((.load ((.var 2)))))) ((.set ((.temp 0)) ((.var 3)))))))) ((.seq ((.seq ((.seq ((.assign 8 ((.lookup ((.temp 9)))))) ((.seq ((.assign 7 ((.lookup ((.temp 0)))))) ((.seq ((.assign 6 ((.lookup ((.temp 2)))))) ((.seq ((.mustTerminate ((.seq ((.call ((some ([4], (live28, .ln), .skip, 50, 2))) ((some 23)) [6, 7, 8] none)) ((.assign 5 ((.lookup ((.temp 28)))))))))) ((.seq ((.set ((.temp 0)) ((.var 4)))) ((.set ((.temp 2)) ((.var 5)))))))))))))) .skip)) ((.seq ((.seq ((.assign 9 ((.lookup ((.temp 0)))))) ((.seq ((.assign 10 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.store ((.var 10)) 9)))))) ((.seq .skip ((.call none ((some 50)) [0] none)))))))))))))) =>
+      decide (live28 = Flapjack.sptListInsert [0] .ln)
+  | _ => false
+
+private def matches_fragment47 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.ite .equal 10 ((.imm 0)) ((.seq ((.seq ((.assign 1 ((.op .add [(.lookup ((.temp 10))), (.lookup ((.temp 9)))])))) ((.set ((.temp 10)) ((.var 1)))))) ((.seq .skip .skip)))) ((.seq ((.seq ((.assign 2 ((.op .sub [(.lookup ((.temp 7))), (.const 1)])))) ((.set ((.temp 7)) ((.var 2)))))) ((.seq ((.seq ((.assign 3 ((.op .add [(.lookup ((.temp 31))), (.shift .lsl ((.lookup ((.temp 12)))) (.const 3))])))) ((.seq ((.assign 4 ((.load ((.var 3)))))) ((.set ((.temp 8)) ((.var 4)))))))) ((.seq ((.seq ((.assign 5 ((.op .add [(.lookup ((.temp 12))), (.const 1)])))) ((.set ((.temp 12)) ((.var 5)))))) ((.seq ((.seq ((.assign 6 ((.const 0)))) ((.set ((.temp 11)) ((.var 6)))))) ((.seq ((.seq ((.assign 7 ((.lookup ((.temp 11)))))) ((.set ((.temp 1)) ((.var 7)))))) ((.seq ((.call ((some ([8], (live29, .ln), .skip, 47, 2))) ((some 48)) [] none)) ((.seq ((.seq ((.assign 9 ((.op .sub [(.lookup ((.temp 10))), (.lookup ((.temp 9)))])))) ((.set ((.temp 10)) ((.var 9)))))) ((.seq .skip ((.call none ((some 47)) [0] none)))))))))))))))))))) =>
+      decide (live29 = Flapjack.sptListInsert [0] .ln)
+  | _ => false
+
+private def matches_fragment48 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.assign 17 ((.const 0)))) ((.seq ((.assign 16 ((.lookup ((.temp 1)))))) ((.seq ((.assign 15 ((.lookup ((.temp 0)))))) ((.seq ((.inst ((.arith ((.addCarry 14 15 16 17)))))) ((.seq ((.set ((.temp 0)) ((.var 14)))) ((.set ((.temp 4)) ((.var 17)))))))))))))) ((.seq ((.seq ((.assign 22 ((.lookup ((.temp 4)))))) ((.seq ((.assign 21 ((.const 0)))) ((.seq ((.assign 20 ((.lookup ((.temp 2)))))) ((.seq ((.inst ((.arith ((.addCarry 19 20 21 22)))))) ((.seq ((.set ((.temp 2)) ((.var 19)))) ((.set ((.temp 4)) ((.var 22)))))))))))))) ((.seq ((.seq ((.assign 27 ((.const 0)))) ((.seq ((.assign 26 ((.lookup ((.temp 3)))))) ((.seq ((.assign 25 ((.lookup ((.temp 0)))))) ((.seq ((.inst ((.arith ((.addCarry 24 25 26 27)))))) ((.seq ((.set ((.temp 0)) ((.var 24)))) ((.set ((.temp 4)) ((.var 27)))))))))))))) ((.seq ((.seq ((.assign 32 ((.lookup ((.temp 4)))))) ((.seq ((.assign 31 ((.const 0)))) ((.seq ((.assign 30 ((.lookup ((.temp 2)))))) ((.seq ((.inst ((.arith ((.addCarry 29 30 31 32)))))) ((.seq ((.set ((.temp 2)) ((.var 29)))) ((.set ((.temp 4)) ((.var 32)))))))))))))) ((.seq .skip .skip)))))))))) =>
+      true
+  | _ => false
+
+private def matches_fragment49 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.assign 6 ((.op .add [(.lookup ((.temp 30))), (.shift .lsl ((.lookup ((.temp 11)))) (.const 3))])))) ((.seq ((.assign 7 ((.load ((.var 6)))))) ((.set ((.temp 2)) ((.var 7)))))))) ((.seq ((.seq ((.assign 8 ((.lookup ((.temp 8)))))) ((.set ((.temp 0)) ((.var 8)))))) ((.seq ((.seq ((.seq ((.assign 12 ((.lookup ((.temp 2)))))) ((.seq ((.assign 11 ((.lookup ((.temp 0)))))) ((.seq ((.inst ((.arith ((.longMul 9 10 11 12)))))) ((.seq ((.set ((.temp 2)) ((.var 9)))) ((.set ((.temp 0)) ((.var 10)))))))))))) fragment48)) ((.seq ((.seq ((.assign 33 ((.lookup ((.temp 0)))))) ((.seq ((.assign 34 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.store ((.var 34)) 33)))))) ((.seq ((.seq ((.assign 35 ((.lookup ((.temp 2)))))) ((.set ((.temp 1)) ((.var 35)))))) ((.seq ((.seq ((.assign 36 ((.op .add [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 36)))))) ((.seq ((.seq ((.assign 37 ((.op .add [(.lookup ((.temp 11))), (.const 1)])))) ((.set ((.temp 11)) ((.var 37)))))) ((.seq .skip ((.call none ((some 48)) [0] none)))))))))))))))))) =>
+      matches_fragment48 fragment48
+  | _ => false
+
+private def matches_fragment50 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.ite .equal 13 ((.imm 1)) ((.seq ((.seq ((.assign 1 ((.const 0)))) ((.set ((.temp 1)) ((.var 1)))))) .skip)) ((.seq ((.seq ((.assign 2 ((.op .sub [(.lookup ((.temp 1))), (.const 1)])))) ((.set ((.temp 1)) ((.var 2)))))) ((.seq ((.seq ((.assign 3 ((.op .add [(.lookup ((.temp 31))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.seq ((.assign 4 ((.load ((.var 3)))))) ((.set ((.temp 8)) ((.var 4)))))))) ((.seq ((.seq ((.assign 9 ((.lookup ((.temp 3)))))) ((.seq ((.assign 8 ((.lookup ((.temp 9)))))) ((.seq ((.assign 8 ((.op .xor [(.var 8), (.const 18446744073709551615)])))) ((.seq ((.assign 7 ((.lookup ((.temp 8)))))) ((.seq ((.inst ((.arith ((.addCarry 6 7 8 9)))))) ((.seq ((.set ((.temp 8)) ((.var 6)))) ((.set ((.temp 3)) ((.var 9)))))))))))))))) ((.seq ((.seq ((.assign 10 ((.lookup ((.temp 8)))))) ((.seq ((.assign 11 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.store ((.var 11)) 10)))))) ((.seq ((.seq ((.assign 12 ((.op .add [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 12)))))) ((.call none ((some 44)) [0] none)))))))))))))) =>
+      true
+  | _ => false
+
+private def matches_fragment51 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.assign 3 ((.op .add [(.lookup ((.temp 31))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.seq ((.assign 4 ((.load ((.var 3)))))) ((.set ((.temp 8)) ((.var 4)))))))) ((.seq ((.seq ((.assign 5 ((.op .add [(.lookup ((.temp 30))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.seq ((.assign 6 ((.load ((.var 5)))))) ((.set ((.temp 9)) ((.var 6)))))))) ((.seq ((.seq ((.assign 11 ((.lookup ((.temp 3)))))) ((.seq ((.assign 10 ((.lookup ((.temp 9)))))) ((.seq ((.assign 10 ((.op .xor [(.var 10), (.const 18446744073709551615)])))) ((.seq ((.assign 9 ((.lookup ((.temp 8)))))) ((.seq ((.inst ((.arith ((.addCarry 8 9 10 11)))))) ((.seq ((.set ((.temp 8)) ((.var 8)))) ((.set ((.temp 3)) ((.var 11)))))))))))))))) ((.seq ((.seq ((.assign 12 ((.lookup ((.temp 8)))))) ((.seq ((.assign 13 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.store ((.var 13)) 12)))))) ((.seq ((.seq ((.assign 14 ((.op .add [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 14)))))) ((.call none ((some 43)) [0] none)))))))))))) =>
+      true
+  | _ => false
+
+private def matches_fragment52 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.ite .equal 12 ((.imm 0)) ((.seq .skip .skip)) ((.seq ((.seq ((.assign 1 ((.op .sub [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 1)))))) ((.seq ((.seq ((.assign 2 ((.op .add [(.lookup ((.temp 31))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.seq ((.assign 3 ((.load ((.var 2)))))) ((.set ((.temp 8)) ((.var 3)))))))) ((.seq ((.seq ((.assign 4 ((.op .add [(.lookup ((.temp 30))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.seq ((.assign 5 ((.load ((.var 4)))))) ((.set ((.temp 9)) ((.var 5)))))))) ((.seq ((.assign 10 ((.lookup ((.temp 8)))))) ((.seq ((.assign 11 ((.lookup ((.temp 9)))))) ((.ite .equal 10 ((.reg 11)) ((.seq .skip ((.call none ((some 42)) [0] none)))) ((.seq ((.assign 8 ((.lookup ((.temp 8)))))) ((.seq ((.assign 9 ((.lookup ((.temp 9)))))) ((.ite .lower 8 ((.reg 9)) ((.seq ((.seq ((.assign 6 ((.const 1)))) ((.set ((.temp 10)) ((.var 6)))))) ((.seq .skip .skip)))) ((.seq ((.seq ((.assign 7 (.const 2))) ((.set ((.temp 10)) ((.var 7)))))) ((.seq .skip .skip)))))))))))))))))))))))) =>
+      true
+  | _ => false
+
+private def matches_fragment53 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.ite .equal 13 ((.imm 1)) ((.seq ((.seq ((.assign 1 ((.const 0)))) ((.set ((.temp 1)) ((.var 1)))))) .skip)) ((.seq ((.seq ((.assign 2 ((.op .sub [(.lookup ((.temp 1))), (.const 1)])))) ((.set ((.temp 1)) ((.var 2)))))) ((.seq ((.seq ((.assign 3 ((.op .add [(.lookup ((.temp 31))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.seq ((.assign 4 ((.load ((.var 3)))))) ((.set ((.temp 8)) ((.var 4)))))))) ((.seq ((.seq ((.assign 9 ((.lookup ((.temp 3)))))) ((.seq ((.assign 8 ((.lookup ((.temp 9)))))) ((.seq ((.assign 7 ((.lookup ((.temp 8)))))) ((.seq ((.inst ((.arith ((.addCarry 6 7 8 9)))))) ((.seq ((.set ((.temp 8)) ((.var 6)))) ((.set ((.temp 3)) ((.var 9)))))))))))))) ((.seq ((.seq ((.assign 10 ((.lookup ((.temp 8)))))) ((.seq ((.assign 11 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.store ((.var 11)) 10)))))) ((.seq ((.seq ((.assign 12 ((.op .add [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 12)))))) ((.call none ((some 41)) [0] none)))))))))))))) =>
+      true
+  | _ => false
+
+private def matches_fragment54 (entry : Flapjack.WordLangProgHOL (BitVec 64)) : Bool :=
+  match entry with
+  | ((.seq ((.seq ((.assign 3 ((.op .add [(.lookup ((.temp 31))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.seq ((.assign 4 ((.load ((.var 3)))))) ((.set ((.temp 8)) ((.var 4)))))))) ((.seq ((.seq ((.assign 5 ((.op .add [(.lookup ((.temp 30))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.seq ((.assign 6 ((.load ((.var 5)))))) ((.set ((.temp 9)) ((.var 6)))))))) ((.seq ((.seq ((.assign 11 ((.lookup ((.temp 3)))))) ((.seq ((.assign 10 ((.lookup ((.temp 9)))))) ((.seq ((.assign 9 ((.lookup ((.temp 8)))))) ((.seq ((.inst ((.arith ((.addCarry 8 9 10 11)))))) ((.seq ((.set ((.temp 8)) ((.var 8)))) ((.set ((.temp 3)) ((.var 11)))))))))))))) ((.seq ((.seq ((.assign 12 ((.lookup ((.temp 8)))))) ((.seq ((.assign 13 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.store ((.var 13)) 12)))))) ((.seq ((.seq ((.assign 14 ((.op .add [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 14)))))) ((.call none ((some 40)) [0] none)))))))))))) =>
+      true
+  | _ => false
+
+private def matches0 (entry : Nat × Nat × (Flapjack.WordLangProgHOL (BitVec 64) × Nat)) : Bool :=
+  match entry with
+  | (39, 1, (.seq ((.seq ((.assign 242 ((.lookup ((.temp 3)))))) fragment20)) ((.return 0 [0]))), 0) =>
+      matches_fragment20 fragment20
+  | _ => false
+
+private def matches1 (entry : Nat × Nat × (Flapjack.WordLangProgHOL (BitVec 64) × Nat)) : Bool :=
+  match entry with
+  | (61, 1, (.seq ((.seq ((.assign 15 ((.lookup ((.temp 1)))))) ((.ite .equal 15 ((.imm 1)) ((.seq ((.seq ((.assign 1 ((.const 0)))) ((.set ((.temp 1)) ((.var 1)))))) .skip)) ((.seq ((.seq ((.assign 2 ((.op .sub [(.lookup ((.temp 1))), (.const 1)])))) ((.set ((.temp 1)) ((.var 2)))))) fragment21)))))) ((.return 0 [0]))), 0) =>
+      matches_fragment21 fragment21
+  | _ => false
+
+private def matches2 (entry : Nat × Nat × (Flapjack.WordLangProgHOL (BitVec 64) × Nat)) : Bool :=
+  match entry with
+  | (60, 1, (.seq ((.seq ((.assign 16 ((.lookup ((.temp 10)))))) ((.seq ((.assign 17 ((.lookup ((.temp 11)))))) fragment22)))) ((.return 0 [0]))), 0) =>
+      matches_fragment22 fragment22
+  | _ => false
+
+private def matches3 (entry : Nat × Nat × (Flapjack.WordLangProgHOL (BitVec 64) × Nat)) : Bool :=
+  match entry with
+  | (59, 1, (.seq ((.seq ((.assign 8 ((.lookup ((.temp 8)))))) ((.ite .equal 8 ((.imm 0)) ((.seq .skip .skip)) ((.seq ((.seq ((.assign 1 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.seq ((.assign 2 ((.load ((.var 1)))))) ((.set ((.temp 0)) ((.var 2)))))))) ((.seq ((.seq ((.assign 3 ((.op .sub [(.lookup ((.temp 8))), (.const 1)])))) ((.set ((.temp 8)) ((.var 3)))))) ((.seq ((.seq ((.assign 4 ((.op .add [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 4)))))) ((.seq ((.seq ((.assign 5 ((.lookup ((.temp 0)))))) ((.seq ((.assign 6 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 11)))) (.const 3))])))) ((.store ((.var 6)) 5)))))) ((.seq ((.seq ((.assign 7 ((.op .add [(.lookup ((.temp 11))), (.const 1)])))) ((.set ((.temp 11)) ((.var 7)))))) ((.seq .skip ((.call none ((some 59)) [0] none)))))))))))))))))) ((.return 0 [0]))), 0) =>
+      true
+  | _ => false
+
+private def matches4 (entry : Nat × Nat × (Flapjack.WordLangProgHOL (BitVec 64) × Nat)) : Bool :=
+  match entry with
+  | (58, 1, (.seq ((.seq ((.assign 11 ((.lookup ((.temp 10)))))) fragment23)) ((.return 0 [0]))), 0) =>
+      matches_fragment23 fragment23
+  | _ => false
+
+private def matches5 (entry : Nat × Nat × (Flapjack.WordLangProgHOL (BitVec 64) × Nat)) : Bool :=
+  match entry with
+  | (54, 1, (.seq ((.seq ((.assign 64 ((.lookup ((.temp 10)))))) ((.ite .equal 64 ((.imm 0)) ((.seq .skip .skip)) ((.seq ((.seq ((.assign 1 ((.lookup ((.temp 14)))))) ((.set ((.temp 6)) ((.var 1)))))) ((.seq ((.seq ((.assign 2 ((.lookup ((.temp 15)))))) ((.set ((.temp 3)) ((.var 2)))))) ((.seq ((.seq ((.assign 3 ((.lookup ((.temp 7)))))) ((.set ((.temp 14)) ((.var 3)))))) ((.seq ((.seq ((.assign 4 ((.lookup ((.temp 9)))))) ((.set ((.temp 15)) ((.var 4)))))) ((.seq ((.seq ((.assign 5 ((.lookup ((.temp 10)))))) ((.set ((.temp 16)) ((.var 5)))))) ((.seq ((.seq ((.assign 6 ((.op .add [(.lookup ((.temp 10))), (.lookup ((.temp 9)))])))) ((.set ((.temp 10)) ((.var 6)))))) ((.seq ((.seq ((.assign 7 ((.op .sub [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 7)))))) ((.seq ((.seq ((.assign 8 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.seq ((.assign 9 ((.load ((.var 8)))))) ((.set ((.temp 0)) ((.var 9)))))))) fragment28)))))))))))))))))))) ((.return 0 [0]))), 0) =>
+      matches_fragment28 fragment28
+  | _ => false
+
+private def matches6 (entry : Nat × Nat × (Flapjack.WordLangProgHOL (BitVec 64) × Nat)) : Bool :=
+  match entry with
+  | (57, 1, (.seq ((.seq ((.assign 64 ((.lookup ((.temp 9)))))) ((.seq ((.assign 65 ((.lookup ((.temp 11)))))) fragment32)))) ((.return 0 [0]))), 0) =>
+      matches_fragment32 fragment32
+  | _ => false
+
+private def matches7 (entry : Nat × Nat × (Flapjack.WordLangProgHOL (BitVec 64) × Nat)) : Bool :=
+  match entry with
+  | (56, 1, (.seq ((.seq ((.assign 58 ((.lookup ((.temp 9)))))) ((.seq ((.assign 59 ((.lookup ((.temp 11)))))) fragment36)))) ((.return 0 [0]))), 0) =>
+      matches_fragment36 fragment36
+  | _ => false
+
+private def matches8 (entry : Nat × Nat × (Flapjack.WordLangProgHOL (BitVec 64) × Nat)) : Bool :=
+  match entry with
+  | (55, 1, (.seq ((.seq ((.seq ((.seq ((.seq ((.assign 1 ((.lookup ((.temp 6)))))) ((.set ((.temp 0)) ((.var 1)))))) ((.seq ((.seq ((.assign 2 ((.const 0)))) ((.set ((.temp 1)) ((.var 2)))))) ((.seq ((.seq ((.assign 3 ((.lookup ((.temp 7)))))) ((.set ((.temp 2)) ((.var 3)))))) fragment38)))))) ((.seq ((.seq ((.seq ((.assign 39 ((.const 1)))) ((.set ((.temp 0)) ((.var 39)))))) ((.seq ((.assign 54 ((.lookup ((.temp 3)))))) ((.seq ((.assign 55 ((.lookup ((.temp 11)))))) fragment39)))))) ((.seq .skip .skip)))))) fragment42)) ((.return 0 [0]))), 0) =>
+      matches_fragment38 fragment38 &&
+      matches_fragment39 fragment39 &&
+      matches_fragment42 fragment42
+  | _ => false
+
+private def matches9 (entry : Nat × Nat × (Flapjack.WordLangProgHOL (BitVec 64) × Nat)) : Bool :=
+  match entry with
+  | (53, 1, (.seq ((.seq ((.assign 22 ((.lookup ((.temp 9)))))) ((.seq ((.assign 23 ((.lookup ((.temp 11)))))) ((.ite .equal 22 ((.reg 23)) ((.seq ((.seq ((.assign 1 ((.lookup ((.temp 3)))))) ((.set ((.temp 1)) ((.var 1)))))) ((.seq .skip .skip)))) ((.seq ((.seq ((.assign 2 ((.lookup ((.temp 0)))))) ((.set ((.temp 3)) ((.var 2)))))) ((.seq ((.seq ((.assign 3 ((.op .add [(.lookup ((.temp 30))), (.shift .lsl ((.lookup ((.temp 11)))) (.const 3))])))) ((.seq ((.assign 4 ((.load ((.var 3)))))) ((.set ((.temp 2)) ((.var 4)))))))) ((.seq ((.seq ((.assign 5 ((.lookup ((.temp 8)))))) ((.set ((.temp 0)) ((.var 5)))))) fragment43)))))))))))) ((.return 0 [0]))), 0) =>
+      matches_fragment43 fragment43
+  | _ => false
+
+private def matches10 (entry : Nat × Nat × (Flapjack.WordLangProgHOL (BitVec 64) × Nat)) : Bool :=
+  match entry with
+  | (52, 1, (.seq ((.seq ((.assign 37 ((.lookup ((.temp 9)))))) ((.seq ((.assign 38 ((.lookup ((.temp 11)))))) fragment45)))) ((.return 0 [0]))), 0) =>
+      matches_fragment45 fragment45
+  | _ => false
+
+private def matches11 (entry : Nat × Nat × (Flapjack.WordLangProgHOL (BitVec 64) × Nat)) : Bool :=
+  match entry with
+  | (51, 1, (.seq ((.seq ((.assign 3 ((.lookup ((.temp 1)))))) ((.ite .less 3 ((.imm 0)) ((.seq .skip .skip)) ((.seq ((.seq ((.assign 1 ((.op .add [(.lookup ((.temp 1))), (.lookup ((.temp 1)))])))) ((.set ((.temp 1)) ((.var 1)))))) ((.seq ((.seq ((.assign 2 ((.op .add [(.lookup ((.temp 2))), (.lookup ((.temp 2)))])))) ((.set ((.temp 2)) ((.var 2)))))) ((.call none ((some 51)) [0] none)))))))))) ((.return 0 [0]))), 0) =>
+      true
+  | _ => false
+
+private def matches12 (entry : Nat × Nat × (Flapjack.WordLangProgHOL (BitVec 64) × Nat)) : Bool :=
+  match entry with
+  | (50, 1, (.seq ((.seq ((.assign 11 ((.lookup ((.temp 10)))))) fragment46)) ((.return 0 [0]))), 0) =>
+      matches_fragment46 fragment46
+  | _ => false
+
+private def matches13 (entry : Nat × Nat × (Flapjack.WordLangProgHOL (BitVec 64) × Nat)) : Bool :=
+  match entry with
+  | (49, 1, (.seq ((.seq ((.assign 6 ((.lookup ((.temp 10)))))) ((.ite .equal 6 ((.imm 0)) ((.seq .skip .skip)) ((.seq ((.seq ((.assign 1 ((.op .sub [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 1)))))) ((.seq ((.seq ((.assign 2 ((.op .add [(.lookup ((.temp 31))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.seq ((.assign 3 ((.load ((.var 2)))))) ((.set ((.temp 0)) ((.var 3)))))))) ((.seq ((.seq ((.assign 4 ((.lookup ((.temp 0)))))) ((.seq ((.assign 5 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.store ((.var 5)) 4)))))) ((.seq .skip ((.call none ((some 49)) [0] none)))))))))))))) ((.return 0 [0]))), 0) =>
+      true
+  | _ => false
+
+private def matches14 (entry : Nat × Nat × (Flapjack.WordLangProgHOL (BitVec 64) × Nat)) : Bool :=
+  match entry with
+  | (47, 1, (.seq ((.seq ((.assign 10 ((.lookup ((.temp 7)))))) fragment47)) ((.return 0 [0]))), 0) =>
+      matches_fragment47 fragment47
+  | _ => false
+
+private def matches15 (entry : Nat × Nat × (Flapjack.WordLangProgHOL (BitVec 64) × Nat)) : Bool :=
+  match entry with
+  | (48, 1, (.seq ((.seq ((.assign 38 ((.lookup ((.temp 9)))))) ((.seq ((.assign 39 ((.lookup ((.temp 11)))))) ((.ite .equal 38 ((.reg 39)) ((.seq ((.seq ((.assign 1 ((.lookup ((.temp 1)))))) ((.seq ((.assign 2 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.store ((.var 2)) 1)))))) ((.seq ((.seq ((.assign 3 ((.op .add [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 3)))))) ((.seq .skip .skip)))))) ((.seq ((.seq ((.assign 4 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.seq ((.assign 5 ((.load ((.var 4)))))) ((.set ((.temp 3)) ((.var 5)))))))) fragment49)))))))) ((.return 0 [0]))), 0) =>
+      matches_fragment49 fragment49
+  | _ => false
+
+private def matches16 (entry : Nat × Nat × (Flapjack.WordLangProgHOL (BitVec 64) × Nat)) : Bool :=
+  match entry with
+  | (46, 1, (.seq ((.seq ((.assign 4 ((.lookup ((.temp 10)))))) ((.ite .equal 4 ((.imm 0)) ((.seq .skip .skip)) ((.seq ((.seq ((.assign 1 ((.op .sub [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 1)))))) ((.seq ((.seq ((.assign 2 ((.lookup ((.temp 0)))))) ((.seq ((.assign 3 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.store ((.var 3)) 2)))))) ((.call none ((some 46)) [0] none)))))))))) ((.return 0 [0]))), 0) =>
+      true
+  | _ => false
+
+private def matches17 (entry : Nat × Nat × (Flapjack.WordLangProgHOL (BitVec 64) × Nat)) : Bool :=
+  match entry with
+  | (45, 1, (.seq ((.seq ((.assign 6 ((.lookup ((.temp 10)))))) ((.ite .equal 6 ((.imm 0)) .skip ((.seq ((.seq ((.assign 1 ((.op .sub [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 1)))))) ((.seq ((.seq ((.assign 2 ((.op .add [(.lookup ((.temp 29))), (.shift .lsl ((.lookup ((.temp 10)))) (.const 3))])))) ((.seq ((.assign 3 ((.load ((.var 2)))))) ((.set ((.temp 8)) ((.var 3)))))))) ((.seq ((.assign 5 ((.lookup ((.temp 8)))))) ((.ite .equal 5 ((.imm 0)) ((.call none ((some 45)) [0] none)) ((.seq ((.seq ((.assign 4 ((.op .add [(.lookup ((.temp 10))), (.const 1)])))) ((.set ((.temp 10)) ((.var 4)))))) .skip)))))))))))))) ((.return 0 [0]))), 0) =>
+      true
+  | _ => false
+
+private def matches18 (entry : Nat × Nat × (Flapjack.WordLangProgHOL (BitVec 64) × Nat)) : Bool :=
+  match entry with
+  | (44, 1, (.seq ((.seq ((.assign 13 ((.lookup ((.temp 1)))))) fragment50)) ((.return 0 [0]))), 0) =>
+      matches_fragment50 fragment50
+  | _ => false
+
+private def matches19 (entry : Nat × Nat × (Flapjack.WordLangProgHOL (BitVec 64) × Nat)) : Bool :=
+  match entry with
+  | (43, 1, (.seq ((.seq ((.assign 15 ((.lookup ((.temp 1)))))) ((.ite .equal 15 ((.imm 1)) ((.seq ((.seq ((.assign 1 ((.const 0)))) ((.set ((.temp 1)) ((.var 1)))))) .skip)) ((.seq ((.seq ((.assign 2 ((.op .sub [(.lookup ((.temp 1))), (.const 1)])))) ((.set ((.temp 1)) ((.var 2)))))) fragment51)))))) ((.return 0 [0]))), 0) =>
+      matches_fragment51 fragment51
+  | _ => false
+
+private def matches20 (entry : Nat × Nat × (Flapjack.WordLangProgHOL (BitVec 64) × Nat)) : Bool :=
+  match entry with
+  | (42, 1, (.seq ((.seq ((.assign 12 ((.lookup ((.temp 10)))))) fragment52)) ((.return 0 [0]))), 0) =>
+      matches_fragment52 fragment52
+  | _ => false
+
+private def matches21 (entry : Nat × Nat × (Flapjack.WordLangProgHOL (BitVec 64) × Nat)) : Bool :=
+  match entry with
+  | (41, 1, (.seq ((.seq ((.assign 13 ((.lookup ((.temp 1)))))) fragment53)) ((.return 0 [0]))), 0) =>
+      matches_fragment53 fragment53
+  | _ => false
+
+private def matches22 (entry : Nat × Nat × (Flapjack.WordLangProgHOL (BitVec 64) × Nat)) : Bool :=
+  match entry with
+  | (40, 1, (.seq ((.seq ((.assign 15 ((.lookup ((.temp 1)))))) ((.ite .equal 15 ((.imm 1)) ((.seq ((.seq ((.assign 1 ((.const 0)))) ((.set ((.temp 1)) ((.var 1)))))) .skip)) ((.seq ((.seq ((.assign 2 ((.op .sub [(.lookup ((.temp 1))), (.const 1)])))) ((.set ((.temp 1)) ((.var 2)))))) fragment54)))))) ((.return 0 [0]))), 0) =>
+      matches_fragment54 fragment54
+  | _ => false
+
+/-- Match every captured function, including every live set and next label. -/
+def matchesCaptured (code : List (Nat × Nat × (Flapjack.WordLangProgHOL (BitVec 64) × Nat))) : Bool :=
+  match code with
+  | [entry0, entry1, entry2, entry3, entry4, entry5, entry6, entry7, entry8, entry9, entry10, entry11, entry12, entry13, entry14, entry15, entry16, entry17, entry18, entry19, entry20, entry21, entry22] =>
+      matches0 entry0 &&
+      matches1 entry1 &&
+      matches2 entry2 &&
+      matches3 entry3 &&
+      matches4 entry4 &&
+      matches5 entry5 &&
+      matches6 entry6 &&
+      matches7 entry7 &&
+      matches8 entry8 &&
+      matches9 entry9 &&
+      matches10 entry10 &&
+      matches11 entry11 &&
+      matches12 entry12 &&
+      matches13 entry13 &&
+      matches14 entry14 &&
+      matches15 entry15 &&
+      matches16 entry16 &&
+      matches17 entry17 &&
+      matches18 entry18 &&
+      matches19 entry19 &&
+      matches20 entry20 &&
+      matches21 entry21 &&
+      matches22 entry22
+  | _ => false
+
+end Flapjack.Test.BignumWordOracle

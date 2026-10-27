@@ -89,7 +89,8 @@ the cited name occurs in one of the two syntactic forms.
 | `compiler/backend/word_to_wordScript.sml` | `Flapjack/Compiler/Backend/WordToWord/` (`Config.lean` config and `next_n_oracle`; `Compile.lean` `compile_single`, `full_compile_single` and `compile`) |
 | `compiler/backend/proofs/word_to_wordProofScript.sml` | `Flapjack/Compiler/Backend/WordToWord/Proofs/` (`CodeRel.lean` `code_rel` and its helpers; `CompileSingle.lean` `FST_compile_single` and `compile_single_lem`; `CompileSingleCorrect/` the `compile_single_correct` case pieces and assembly; `CompileWordToWord.lean` `compile_word_to_word_thm`) |
 | `misc/miscScript.sml` (`anub`) | `Flapjack/Misc/Anub.lean` |
-| `compiler/backend/data_to_wordScript.sml` | `Flapjack/Compiler/Backend/DataToWord/` (`Config.lean`, `Variables.lean`, `Header.lean`, `Locations.lean`, `WordOp.lean`, `Control.lean` and pointer-layout helpers; partial control-flow conversion, full compiler and statement review remain open) |
+| `compiler/backend/data_to_wordScript.sml` | `Flapjack/Compiler/Backend/DataToWord/` (`Config.lean`, `Variables.lean`, `Header.lean`, `Locations.lean`, `WordOp.lean`, `Control.lean`, `Stubs.lean` and pointer-layout helpers; partial conversion, full compiler and statement review remain open) |
+| `compiler/backend/word_bignumScript.sml` | `Flapjack/Compiler/Backend/WordBignum/` (a pinned 64-bit generated-code snapshot; the generic generator and correctness theorem remain open) |
 | `compiler/backend/proofs/word_gcFunctionsScript.sml` | `Flapjack/Compiler/Backend/WordGcFunctions.lean` (copying, generational and partial GC definitions and `word_gc_fun`); `WordGcFunctions/Roots.lean` (root `EVERY2`/`LENGTH` theorems) |
 | `compiler/backend/proofs/word_allocProofScript.sml` | `Flapjack/Compiler/Backend/WordAlloc/Proofs/` (`StrongLocalsRel.lean` live-scoped lookup transport) |
 | `compiler/backend/proofs/word_unreachProofScript.sml` | `Flapjack/Compiler/Backend/WordUnreach/Proofs.lean` |

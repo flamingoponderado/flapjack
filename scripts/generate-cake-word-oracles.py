@@ -28,7 +28,11 @@ CASES = tuple(
      (ROOT / "scripts/hol-probes/ref_byte_32_word_probe.out",
       ROOT / "Flapjack/Test/RefByte32WordOracle.lean", "RefByte32WordOracle", 32),
      (ROOT / "scripts/hol-probes/fixed_stubs_word_probe.out",
-      ROOT / "Flapjack/Test/FixedStubsWordOracle.lean", "FixedStubsWordOracle", 64))
+      ROOT / "Flapjack/Test/FixedStubsWordOracle.lean", "FixedStubsWordOracle", 64),
+     (ROOT / "scripts/hol-probes/bignum_word_probe.out",
+      ROOT / "Flapjack/Test/BignumWordOracle.lean", "BignumWordOracle", 64),
+     (ROOT / "scripts/hol-probes/full_cake_word_probe.out",
+      ROOT / "Flapjack/Test/FullCakeWordOracle.lean", "FullCakeWordOracle", 64))
 CONSTRUCTORS = {
     "Seq": (".seq", 2), "Assign": (".assign", 2), "Const": (".const", 1), "Load": (".load", 1),
     "If": (".ite", 5), "Test": (".test", 0), "NotTest": (".notTest", 0),
@@ -43,7 +47,7 @@ CONSTRUCTORS = {
     "Store": (".store", 2), "Set": (".set", 2), "Get": (".get", 2), "Globals": (".globals", 0), "Move": (".move", 2),
     "Inst": (".inst", 1), "Arith": (".arith", 1), "AddOverflow": (".addOverflow", 4),
     "SubOverflow": (".subOverflow", 4), "Mem": (".mem", 3), "Load8": (".load8", 0),
-    "AddCarry": (".addCarry", 4), "LongDiv": (".longDiv", 5),
+    "AddCarry": (".addCarry", 4), "LongDiv": (".longDiv", 5), "LongMul": (".longMul", 4),
     "Store8": (".store8", 0), "Addr": (".addr", 2),
     "Install": (".install", 5), "CodeBufferWrite": (".codeBufferWrite", 2),
     "DataBufferWrite": (".dataBufferWrite", 2), "BitmapBuffer": (".bitmapBuffer", 0),
@@ -53,7 +57,7 @@ CONSTRUCTORS = {
 }
 
 
-def render(input_path, namespace, width):
+def parse_entries(input_path, fragments=None):
     raw = input_path.read_text().strip()
     if not raw.startswith("entry="):
         raise ValueError("missing HOL entry row")
@@ -122,6 +126,12 @@ def render(input_path, namespace, width):
             raise ValueError(f"unsupported HOL constructor {token!r}")
         name, arity = CONSTRUCTORS[token]
         args = [parse() for _ in range(arity)]
+        if token == "Seq" and fragments is not None:
+            for index, arg in enumerate(args):
+                if len(arg) > 1000:
+                    fragment = f"fragment{len(fragments)}"
+                    fragments.append((fragment, arg))
+                    args[index] = fragment
         return "(" + " ".join([name, *args]) + ")" if args else name
 
     if tokens[pos] != "[":
@@ -139,11 +149,37 @@ def render(input_path, namespace, width):
     pos += 1
     if pos != len(tokens):
         raise ValueError("trailing HOL output")
+    return entries
+
+
+def render(input_path, namespace, width):
+    fragments = []
+    entries = parse_entries(input_path, fragments if namespace in ("BignumWordOracle", "FullCakeWordOracle") else None)
+    all_sets = {name: keys for _, sets, _ in entries for name, keys in sets}
+    all_words = {name for _, _, words in entries for name in words}
+
+    def pattern_checks(pattern):
+        checks = []
+        for name in dict.fromkeys(re.findall(r"\blive\d+\b", pattern)):
+            checks.append(f"decide ({name} = Flapjack.sptListInsert [{', '.join(all_sets[name])}] .ln)")
+        for name in dict.fromkeys(re.findall(r"\bword\d+\b", pattern)):
+            if name not in all_words:
+                raise ValueError("unknown word binder")
+            checks.append(f"{name} == (-1 : BitVec {width})")
+        for name in dict.fromkeys(re.findall(r"\bfragment\d+\b", pattern)):
+            checks.append(f"matches_{name} {name}")
+        return " &&\n      ".join(checks) or "true"
+
     definitions = []
-    for index, (pattern, entry_sets, entry_words) in enumerate(entries):
-        checks = [f"decide ({name} = Flapjack.sptListInsert [{', '.join(keys)}] .ln)" for name, keys in entry_sets]
-        checks += [f"{name} == (-1 : BitVec {width})" for name in entry_words]
-        checks = " &&\n      ".join(checks) or "true"
+    for name, pattern in fragments:
+        checks = pattern_checks(pattern)
+        definitions.append(f'''private def matches_{name} (entry : Flapjack.WordLangProgHOL (BitVec {width})) : Bool :=
+  match entry with
+  | {pattern} =>
+      {checks}
+  | _ => false''')
+    for index, (pattern, _, _) in enumerate(entries):
+        checks = pattern_checks(pattern)
         definitions.append(f'''private def matches{index} (entry : Nat × Nat × (Flapjack.WordLangProgHOL (BitVec {width}) × Nat)) : Bool :=
   match entry with
   | {pattern} =>
@@ -152,6 +188,14 @@ def render(input_path, namespace, width):
     definitions = "\n\n".join(definitions)
     entry_names = ", ".join(f"entry{index}" for index in range(len(entries)))
     entry_checks = " &&\n      ".join(f"matches{index} entry{index}" for index in range(len(entries))) or "true"
+    if len(entries) > 32:
+        checks = " &&\n    ".join(
+            f"(match code[{index}]? with | some entry => matches{index} entry | none => false)"
+            for index in range(len(entries))
+        )
+        body = f"  code.length == {len(entries)} &&\n    {checks}"
+    else:
+        body = f"  match code with\n  | [{entry_names}] =>\n      {entry_checks}\n  | _ => false"
     return f'''-- Generated from the pinned original HOL compiler; do not edit.
 import Flapjack.Pancake.WordLang
 
@@ -161,10 +205,7 @@ namespace Flapjack.Test.{namespace}
 
 /-- Match every captured function, including every live set and next label. -/
 def matchesCaptured (code : List (Nat × Nat × (Flapjack.WordLangProgHOL (BitVec {width}) × Nat))) : Bool :=
-  match code with
-  | [{entry_names}] =>
-      {entry_checks}
-  | _ => false
+{body}
 
 end Flapjack.Test.{namespace}
 '''
