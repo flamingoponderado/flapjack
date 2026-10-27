@@ -317,6 +317,7 @@ import Flapjack.Test.CakePegActionsParity
 import Flapjack.Test.CakePegGrammarParity
 import Flapjack.Test.CakePtreeTypeParity
 import Flapjack.Test.CakePtreePatternParity
+import Flapjack.Test.CakePtreeExprParity
 import Flapjack.Test.BviInlineParity
 import Flapjack.Test.MiscLookupAnyFindIndexParity
 import Flapjack.Test.StackPropsClockSupportParity

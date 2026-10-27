@@ -102197,5 +102197,69 @@
     "hol_name": "ptree_Eliteral_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Transcribed against pinned pattern and literal conversion using specialized CakeML carriers; complete source and carrier review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
+    "lean_name": "ptreeOp",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
+    "hol_name": "ptree_Op_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Transcribed against pinned expression conversion and specialized CakeML carriers; complete source and carrier review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
+    "lean_name": "mkBinop",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
+    "hol_name": "mk_binop_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Transcribed against pinned expression conversion and specialized CakeML carriers; complete source and carrier review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
+    "lean_name": "bindLoc",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
+    "hol_name": "bind_loc_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Transcribed against pinned expression conversion and specialized CakeML carriers; complete source and carrier review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
+    "lean_name": "stripLocExpr",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
+    "hol_name": "strip_loc_expr_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Transcribed against pinned expression conversion and specialized CakeML carriers; complete source and carrier review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
+    "lean_name": "mkAstApp",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
+    "hol_name": "mkAst_App_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Transcribed against pinned expression conversion and specialized CakeML carriers; complete source and carrier review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
+    "lean_name": "dePat",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
+    "hol_name": "dePat_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Transcribed against pinned expression conversion and specialized CakeML carriers; complete source and carrier review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
+    "lean_name": "mkFun",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
+    "hol_name": "mkFun_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Transcribed against pinned expression conversion and specialized CakeML carriers; complete source and carrier review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/PtreeConversion.lean",
+    "lean_name": "letFromPat",
+    "hol_path": "cakeml/semantics/cmlPtreeConversionScript.sml",
+    "hol_name": "letFromPat_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Transcribed against pinned expression conversion and specialized CakeML carriers; complete source and carrier review remains pending."
   }
 ]

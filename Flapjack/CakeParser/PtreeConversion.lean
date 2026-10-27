@@ -1,4 +1,5 @@
 import Flapjack.CakeParser.ParseTree
+import Flapjack.CakeParser.Grammar
 import Flapjack.AstHOL.Syntax
 
 /-! CakeML parse-tree conversion. The type converter uses a structurally
@@ -351,5 +352,358 @@ end
 proved equivalent to the original unbounded HOL conversion. -/
 def ptreePattern (n : Nonterminal) (pt : ParseTree) : Option Pat :=
   patternWorker (treeSize pt + 1) n pt
+
+
+private def symOp (p : List HolChar → Bool) (xs : List ParseTree) : Option (Ident MlString MlString) := do
+  let [leaf] := xs | none
+  let some (.symbolT s) := leaf.token | none
+  if p s.explode then some (.short s) else none
+
+@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "ptree_Op_def"]
+def ptreeOp (pt : ParseTree) : Option (Ident MlString MlString) := do
+  let .node (.inl n) _ xs := pt | none
+  match n with
+  | .nMultOps => match xs with
+    | [leaf] =>
+      if tokcheck leaf .starT then some (.short (ofString "*"))
+      else match leaf.token with
+        | some (.alphaT s) => if s == ofString "mod" || s == ofString "div" then some (.short s) else none
+        | _ => symOp Grammar.validMultSym xs
+    | _ => none
+  | .nAddOps => symOp Grammar.validAddSym xs
+  | .nListOps => symOp Grammar.validListSym xs
+  | .nRelOps => match symOp Grammar.validRelSym xs with
+    | some x => some x
+    | none => match xs with
+      | [leaf] => if tokcheck leaf .equalsT then some (.short (ofString "=")) else none
+      | _ => none
+  | .nCompOps => match xs with
+    | [leaf] => match leaf.token with
+      | some (.symbolT s) => if s == ofString ":=" then some (.short s) else none
+      | some (.alphaT s) => if s == ofString "o" then some (.short s) else none
+      | _ => none
+    | _ => none
+  | _ => none
+
+@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "mk_binop_def"]
+def mkBinop (op : Ident MlString MlString) (a b : Exp) : Exp :=
+  if op == .short (ofString "::") then .con (some (.short (ofString "::"))) [a, b]
+  else .app .opapp [.app .opapp [.var op, a], b]
+
+@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "bind_loc_def"]
+def bindLoc (e : Exp) (loc : Flapjack.Misc.Location.Locs) : Exp :=
+  match e with
+  | .lannot _ _ => e
+  | _ => .lannot e loc
+
+@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "strip_loc_expr_def"]
+def stripLocExpr : Exp → Exp × Option Flapjack.Misc.Location.Locs
+  | .lannot e loc => ((stripLocExpr e).1, some loc)
+  | e => (e, none)
+
+private def mergeLocs (a b : Flapjack.Misc.Location.Locs) : Flapjack.Misc.Location.Locs :=
+  match a, b with | .locs start _, .locs _ stop => .locs start stop
+
+@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "mkAst_App_def"]
+def mkAstApp (a b : Exp) : Exp :=
+  let (bare, l1) := stripLocExpr a
+  match bare with
+  | .con name args =>
+    if name == some (.short (ofString "Ref")) && args.isEmpty then .app .opref [b]
+    else
+      let (b', l2) := stripLocExpr b
+      let result := Exp.con name (args ++ [b'])
+      match l1, l2 with
+      | some l, some r => .lannot result (mergeLocs l r)
+      | _, _ => result
+  | .app (.ffi name) args => .app (.ffi name) (args ++ [b])
+  | _ => .app .opapp [a, b]
+
+@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "dePat_def"]
+def dePat (p : Pat) (body : Exp) : MlString × Exp :=
+  match p with
+  | .pvar n => (n, body)
+  | _ => (ofString "", .mat (.var (.short (ofString ""))) [(p, body)])
+
+@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "mkFun_def"]
+def mkFun (p : Pat) (body : Exp) : Exp :=
+  let (v, e) := dePat p body
+  .fn v e
+
+@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "letFromPat_def"]
+def letFromPat (p : Pat) (rhs body : Exp) : Exp :=
+  match p with
+  | .pany => .let_ none rhs body
+  | .pvar v => .let_ (some v) rhs body
+  | _ => .mat rhs [(p, body)]
+
+private def seqEncode : List Exp → Option Exp
+  | [] => none
+  | [x] => some x
+  | x :: xs => (seqEncode xs).map (Exp.let_ none x)
+
+private abbrev FunDecl := MlString × MlString × Exp
+private abbrev LetDecl := Sum (Pat × Exp) (List FunDecl)
+
+mutual
+private def exprWorker : Nat → Nonterminal → ParseTree → Option Exp
+  | 0, _, _ => none
+  | fuel + 1, n, pt => do
+    let .node _ loc _ := pt | none
+    let xs ← children n pt
+    let e ← match n, xs with
+      | .nEbase, [l, p, r] =>
+        if tokcheck l .lparT then do
+          if !tokcheck r .rparT then none else
+          seqWorker fuel p >>= seqEncode
+        else do
+          if !(tokcheck l .lbrackT && tokcheck r .rbrackT) then none else
+          let es ← exprListWorker fuel p
+          some (es.foldr (fun x acc => .con (some (.short (ofString "::"))) [x, acc])
+            (.con (some (.short (ofString "[]"))) []))
+      | .nEbase, [x] => match ptreeEliteral x with
+        | some e => some e
+        | none => match ptreeFQV x with
+          | some v => some (.var v)
+          | none => match ptreeConstructorName x with
+            | some c => some (.con (some c) [])
+            | none => exprWorker fuel .nEtuple x
+      | .nEbase, [l, r] =>
+        if tokcheck l .lparT && tokcheck r .rparT then some (.con none [])
+        else if tokcheck l .lbrackT && tokcheck r .rbrackT then some (.con (some (.short (ofString "[]"))) [])
+        else if tokcheck l .opT then ptreeOpID r else none
+      | .nEbase, [lt, ds, it, body, et] => do
+        if !(tokcheck lt .letT && tokcheck it .inT && tokcheck et .endT) then none else
+        let decls ← letDecsWorker fuel ds
+        let body ← seqWorker fuel body >>= seqEncode
+        some (decls.foldr (fun d acc => match d with
+          | .inl (p, e) => letFromPat p e acc
+          | .inr fs => .letrec fs acc) body)
+      | .nEapp, [x] => exprWorker fuel .nEbase x
+      | .nEapp, [x, y] => do
+        let a ← exprWorker fuel .nEapp x
+        let b ← exprWorker fuel .nEbase y
+        some (mkAstApp a b)
+      | .nEtuple, [l, es, r] => do
+        if !(tokcheck l .lparT && tokcheck r .rparT) then none else
+        let es ← exprListWorker fuel es
+        some (.con none es)
+      | .nEmult, [x] => exprWorker fuel .nEapp x
+      | .nEadd, [x] => exprWorker fuel .nEmult x
+      | .nElistop, [x] => exprWorker fuel .nEadd x
+      | .nErel, [x] => exprWorker fuel .nElistop x
+      | .nEcomp, [x] => exprWorker fuel .nErel x
+      | .nEbefore, [x] => exprWorker fuel .nEcomp x
+      | .nEtyped, [x] => exprWorker fuel .nEbefore x
+      | .nElogicAND, [x] => exprWorker fuel .nEtyped x
+      | .nElogicOR, [x] => exprWorker fuel .nElogicAND x
+      | .nEhandle, [x] => exprWorker fuel .nElogicOR x
+      | .nE, [x] => exprWorker fuel .nEhandle x
+      | .nEmult, [a, op, b] => binaryWorker fuel .nEmult .nEapp a op b
+      | .nEadd, [a, op, b] => binaryWorker fuel .nEadd .nEmult a op b
+      | .nElistop, [a, op, b] => binaryWorker fuel .nEadd .nElistop a op b
+      | .nErel, [a, op, b] => binaryWorker fuel .nErel .nElistop a op b
+      | .nEcomp, [a, op, b] => binaryWorker fuel .nEcomp .nErel a op b
+      | .nEbefore, [a, op, b] => do
+        if !tokcheck op (.alphaT (ofString "before")) then none else
+        let a ← exprWorker fuel .nEbefore a
+        let b ← exprWorker fuel .nEcomp b
+        some (mkBinop (.short (ofString "before")) a b)
+      | .nEtyped, [x, colon, t] => do
+        if !tokcheck colon .colonT then none else
+        let x ← exprWorker fuel .nEbefore x
+        let t ← ptreeType .nType t
+        some (.tannot x t)
+      | .nElogicAND, [a, op, b] => do
+        if !tokcheck op .andalsoT then none else
+        let a ← exprWorker fuel .nElogicAND a
+        let b ← exprWorker fuel .nEtyped b
+        some (.log .andalso a b)
+      | .nElogicOR, [a, op, b] => do
+        if !tokcheck op .orelseT then none else
+        let a ← exprWorker fuel .nElogicOR a
+        let b ← exprWorker fuel .nElogicAND b
+        some (.log .orelse a b)
+      | .nEhandle, [x, tok, clauses] => do
+        if !tokcheck tok .handleT then none else
+        let x ← exprWorker fuel .nElogicOR x
+        let clauses ← pesWorker fuel clauses
+        some (.handle x clauses)
+      | .nE, [tok, x] => do
+        if !tokcheck tok .raiseT then none else
+        (exprWorker fuel .nE x).map Exp.raise
+      | .nE, [tok, x, separator, body] =>
+        if tokcheck tok .fnT && tokcheck separator .darrowT then do
+          let p ← ptreePattern .nPattern x
+          let body ← exprWorker fuel .nE body
+          some (mkFun p body)
+        else if tokcheck tok .caseT && tokcheck separator .ofT then do
+          let x ← exprWorker fuel .nE x
+          let clauses ← pesWorker fuel body
+          some (.mat x clauses)
+        else none
+      | .nE, [it, guard, tt, yes, et, no] => do
+        if !(tokcheck it .ifT && tokcheck tt .thenT && tokcheck et .elseT) then none else
+        let guard ← exprWorker fuel .nE guard
+        let yes ← exprWorker fuel .nE yes
+        let no ← exprWorker fuel .nE no
+        some (.if_ guard yes no)
+      | _, _ => none
+    some (bindLoc e loc)
+
+private def binaryWorker : Nat → Nonterminal → Nonterminal → ParseTree → ParseTree → ParseTree → Option Exp
+  | 0, _, _, _, _, _ => none
+  | fuel + 1, left, right, a, op, b => do
+    let a ← exprWorker fuel left a
+    let op ← ptreeOp op
+    let b ← exprWorker fuel right b
+    some (mkBinop op a b)
+
+private def exprListWorker : Nat → ParseTree → Option (List Exp)
+  | 0, _ => none
+  | fuel + 1, pt => do
+    let .node (.inl n) _ xs := pt | none
+    match n, xs with
+    | .nElist1, [x] => (exprWorker fuel .nE x).map (fun e => [e])
+    | .nElist1, [x, comma, rest] | .nElist2, [x, comma, rest] => do
+      if !tokcheck comma .commaT then none else
+      let x ← exprWorker fuel .nE x
+      let rest ← exprListWorker fuel rest
+      some (x :: rest)
+    | _, _ => none
+
+private def seqWorker : Nat → ParseTree → Option (List Exp)
+  | 0, _ => none
+  | fuel + 1, pt => do
+    let xs ← children .nEseq pt
+    match xs with
+    | [x] => (exprWorker fuel .nE x).map (fun e => [e])
+    | [x, semi, rest] => do
+      if !tokcheck semi .semicolonT then none else
+      let x ← exprWorker fuel .nE x
+      let rest ← seqWorker fuel rest
+      some (x :: rest)
+    | _ => none
+
+private def pbaseListWorker : Nat → ParseTree → Option (List Pat)
+  | 0, _ => none
+  | fuel + 1, pt => do
+    let xs ← children .nPbaseList1 pt
+    match xs with
+    | [x] => (ptreePattern .nPbase x).map (fun p => [p])
+    | [x, rest] => do
+      let x ← ptreePattern .nPbase x
+      let rest ← pbaseListWorker fuel rest
+      some (x :: rest)
+    | _ => none
+
+private def fdeclWorker : Nat → ParseTree → Option FunDecl
+  | 0, _ => none
+  | fuel + 1, pt => do
+    let [name, pats, eq, body] ← children .nFDecl pt | none
+    if !tokcheck eq .equalsT then none else
+    let name ← ptreeV name
+    let p :: ps ← pbaseListWorker fuel pats | none
+    let body ← exprWorker fuel .nE body
+    let (arg, body) := dePat p (ps.foldr mkFun body)
+    some (name, arg, body)
+
+private def andFdeclsWorker : Nat → ParseTree → Option (List FunDecl)
+  | 0, _ => none
+  | fuel + 1, pt => do
+    let xs ← children .nAndFDecls pt
+    match xs with
+    | [x] => (fdeclWorker fuel x).map (fun d => [d])
+    | [ds, tok, d] => do
+      if !tokcheck tok .andT then none else
+      let ds ← andFdeclsWorker fuel ds
+      let d ← fdeclWorker fuel d
+      some (ds ++ [d])
+    | _ => none
+
+private def letDecsWorker : Nat → ParseTree → Option (List LetDecl)
+  | 0, _ => none
+  | fuel + 1, pt => do
+    let xs ← children .nLetDecs pt
+    match xs with
+    | [] => some []
+    | [d, rest] => if tokcheck d .semicolonT then letDecsWorker fuel rest else do
+      let d ← letDecWorker fuel d
+      let rest ← letDecsWorker fuel rest
+      some (d :: rest)
+    | _ => none
+
+private def letDecWorker : Nat → ParseTree → Option LetDecl
+  | 0, _ => none
+  | fuel + 1, pt => do
+    let xs ← children .nLetDec pt
+    match xs with
+    | [tok, fs] => do
+      if !tokcheck tok .funT then none else
+      (andFdeclsWorker fuel fs).map Sum.inr
+    | [tok, pat, eq, body] => do
+      if !(tokcheck tok .valT && tokcheck eq .equalsT) then none else
+      let pat ← ptreePattern .nPattern pat
+      let body ← exprWorker fuel .nE body
+      some (.inl (pat, body))
+    | _ => none
+
+private def pesWorker : Nat → ParseTree → Option (List (Pat × Exp))
+  | 0, _ => none
+  | fuel + 1, pt => do
+    let [p, arrow, rest] ← children .nPEs pt | none
+    if !tokcheck arrow .darrowT then none else
+    let p ← ptreePattern .nPattern p
+    let (e, rest) ← peWorker fuel rest
+    some ((p, e) :: rest)
+
+private def peWorker : Nat → ParseTree → Option (Exp × List (Pat × Exp))
+  | 0, _ => none
+  | fuel + 1, pt => do
+    let xs ← children .nPE pt
+    match xs with
+    | [first, rest] =>
+      if tokcheck first .raiseT then do
+        let (e, rest) ← peWorker fuel rest
+        some (.raise e, rest)
+      else do
+        let e ← exprWorker fuel .nElogicOR first
+        let (isHandle, clauses) ← pesfxWorker fuel rest
+        if isHandle then some (.handle e clauses, []) else some (e, clauses)
+    | [tok, x, sep, rest] =>
+      if tokcheck tok .fnT && tokcheck sep .darrowT then do
+        let p ← ptreePattern .nPattern x
+        let e ← exprWorker fuel .nE rest
+        some (mkFun p e, [])
+      else if tokcheck tok .caseT && tokcheck sep .ofT then do
+        let e ← exprWorker fuel .nE x
+        let ps ← pesWorker fuel rest
+        some (.mat e ps, [])
+      else none
+    | [it, guard, tt, yes, et, no] => do
+      if !(tokcheck it .ifT && tokcheck tt .thenT && tokcheck et .elseT) then none else
+      let guard ← exprWorker fuel .nE guard
+      let yes ← exprWorker fuel .nE yes
+      let (no, rest) ← peWorker fuel no
+      some (.if_ guard yes no, rest)
+    | _ => none
+
+private def pesfxWorker : Nat → ParseTree → Option (Bool × List (Pat × Exp))
+  | 0, _ => none
+  | fuel + 1, pt => do
+    let xs ← children .nPEsfx pt
+    match xs with
+    | [] => some (false, [])
+    | [tok, rest] =>
+      if tokcheck tok .handleT then (pesWorker fuel rest).map (fun xs => (true, xs))
+      else if tokcheck tok .barT then (pesWorker fuel rest).map (fun xs => (false, xs))
+      else none
+    | _ => none
+end
+
+/-- Convert an expression with a tree-size based recursion bound. This is
+Flapjack infrastructure until the bound and correspondence with HOL are proved. -/
+def ptreeExpr (n : Nonterminal) (pt : ParseTree) : Option Exp :=
+  exprWorker (2 * treeSize pt + 1) n pt
 
 end Flapjack.CakeParser.PtreeConversion
