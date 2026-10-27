@@ -1,3 +1,5 @@
+`cake_flat_sem_apply_probe.out` captures the complete typed original flat primitive-application equations and observations for globals, constructor tests, field access, and identity. Lean fixtures cover the matching flat-specific cases; its dispatcher and the original do_app simulation remain incomplete.
+
 `cake_flat_sem_thunk_probe.out` captures typed flat thunk definitions and original cases for invalid addresses, reference flags, ordinary references, and successful or nested updates. Lean fixtures match these cases; source-to-flat thunk simulation uses the still-unreviewed factored relations.
 
 `cake_flat_sem_eval_probe.out` captures typed flat clock, choice-based byte/word decoding, and dynamic-compilation definitions, replays the clock-bound theorem, and proves concrete decoding and oracle observations. Lean fixtures match those cases; the flat evaluator and compiler correctness remain open.

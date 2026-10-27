@@ -216,6 +216,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StoreUpdate
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ThunkRel
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternRel
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternSimulation
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalLookup
 import Flapjack.Compiler.Backend.Semantics.FlatSem
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Operations
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Conversions
@@ -224,6 +225,7 @@ import Flapjack.Compiler.Backend.Semantics.FlatSem.Test
 import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Eval
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Thunk
+import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyFlat
 import Flapjack.Compiler.Backend.SourceToFlat.CompileDecs
 import Flapjack.Compiler.Backend.SourceToFlat.CompileProg
 import Flapjack.Compiler.Backend.FlatElim.Reachability
