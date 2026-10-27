@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.OracleInvariant
 import Flapjack.Compiler.Backend.SourceToFlat.CompileProg
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.FiniteMapGrowth
 import Flapjack.Misc.Option
+import Flapjack.Misc.Sptree.Subspt
 import Flapjack.HolArb
 import Flapjack.SemanticPrimitivesHOL.EvalState
 
@@ -21,6 +22,63 @@ def envGenInv (gen : EnvironmentGenerationStore) : Prop :=
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "env_store_inv_def"]
 def envStoreInv (store : EnvironmentStore) : Prop :=
   ∀ i, Flapjack.sptMem i store.envGens → i < store.next
+
+/-- Compiling declarations does not change their environment generation. -/
+theorem compileDecs_generation_core (t : List Flapjack.Basis.Pure.MlString.MlString)
+    (n : Nat) (next : NextIndices) (env : Environment) (envs : EnvironmentGenerationStore)
+    (decs : List Dec) : (compileDecs t n next env envs decs).2.2.2.1.generation = envs.generation := by
+  fun_induction compileDecs t n next env envs decs <;> simp_all
+
+/-- Compilation preserves the environment generation. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "compile_decs_generation"]
+theorem compileDecs_generation (t : List Flapjack.Basis.Pure.MlString.MlString)
+    (n : Nat) (next : NextIndices) (env : Environment) (envs : EnvironmentGenerationStore)
+    (decs : List Dec) (n' : Nat) (next' : NextIndices) (env' : Environment)
+    (envs' : EnvironmentGenerationStore) (flatDecs : List FlatLang.Exp)
+    (compiled : compileDecs t n next env envs decs = (n', next', env', envs', flatDecs)) :
+    envs'.generation = envs.generation := by
+  simpa [compiled] using compileDecs_generation_core t n next env envs decs
+
+/-- Compiling declarations preserves allocation bounds and previously stored
+environment mappings. -/
+private theorem freshGenerationInsert (env : Environment) (envs : EnvironmentGenerationStore)
+    (valid : envGenInv envs) :
+    envGenInv { envs with next := envs.next + 1, envs := Flapjack.sptInsert envs.next env envs.envs } ∧
+      Flapjack.sptSubspt envs.envs (Flapjack.sptInsert envs.next env envs.envs) := by
+  constructor
+  · intro i mem
+    change i < envs.next + 1
+    rw [Flapjack.sptMem_sptInsert] at mem
+    rcases mem with eq | old
+    · omega
+    · have := valid i old; omega
+  · intro i mem
+    have bound := valid i mem
+    have ne : i ≠ envs.next := by omega
+    exact ⟨(Flapjack.sptMem_sptInsert _ _ _ _).2 (Or.inr mem),
+      Flapjack.sptLookup_sptInsert_ne _ _ _ _ ne⟩
+
+theorem compileDecs_envGenInv_core (t : List Flapjack.Basis.Pure.MlString.MlString)
+    (n : Nat) (next : NextIndices) (env : Environment) (envs : EnvironmentGenerationStore)
+    (decs : List Dec) :
+    envGenInv envs →
+      envGenInv (compileDecs t n next env envs decs).2.2.2.1 ∧
+      Flapjack.sptSubspt envs.envs (compileDecs t n next env envs decs).2.2.2.1.envs := by
+  fun_induction compileDecs t n next env envs decs <;>
+    simp_all [Flapjack.sptSubspt, freshGenerationInsert]
+  intro valid
+  exact (freshGenerationInsert _ _ valid).2
+
+/-- Declaration compilation preserves generation-store validity and its
+existing mappings. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "compile_decs_env_gen_inv"]
+theorem compileDecs_envGenInv (t : List Flapjack.Basis.Pure.MlString.MlString)
+    (n : Nat) (next : NextIndices) (env : Environment) (envs : EnvironmentGenerationStore)
+    (decs : List Dec) (n' : Nat) (next' : NextIndices) (env' : Environment)
+    (envs' : EnvironmentGenerationStore) (flatDecs : List FlatLang.Exp)
+    (compiled : compileDecs t n next env envs decs = (n', next', env', envs', flatDecs))
+    (valid : envGenInv envs) : envGenInv envs' ∧ Flapjack.sptSubspt envs.envs envs'.envs := by
+  simpa [compiled] using compileDecs_envGenInv_core t n next env envs decs valid
 
 /-- Incremental compilation adds a fresh environment generation and retains
 every previously stored generation. -/
@@ -61,6 +119,29 @@ theorem incCompileProg_envNext (envId : Nat × Nat) (config : Config) (decs : Li
     ⟨0, config.envs.next, .ln⟩ decs = result
   rcases result with ⟨n, indices, env, gen, compiledDecs⟩
   simp [incCompileProg, h]
+
+/-- The generation produced while compiling incremental declarations is
+stored in the resulting configuration, with all of its existing mappings. -/
+theorem incCompileProg_envGenFuture (envId : Nat × Nat) (config : Config) (decs : List Dec) :
+    let gen := (compileDecs [] 1 config.next (lookupEnvId envId config.envs)
+      ⟨0, config.envs.next, .ln⟩ decs).2.2.2.1
+    ∃ final, Flapjack.sptLookup gen.generation (incCompileProg envId config decs).1.envs.envGens = some final ∧
+      Flapjack.sptSubspt gen.envs final := by
+  generalize h : compileDecs [] 1 config.next (lookupEnvId envId config.envs)
+    ⟨0, config.envs.next, .ln⟩ decs = result
+  rcases result with ⟨n, indices, env, gen, flatDecs⟩
+  have generation : gen.generation = config.envs.next := by
+    simpa [h] using compileDecs_generation_core [] 1 config.next (lookupEnvId envId config.envs)
+      ⟨0, config.envs.next, .ln⟩ decs
+  have valid : envGenInv gen := by
+    have initial : envGenInv (⟨0, config.envs.next, .ln⟩ : EnvironmentGenerationStore) := by
+      simp [envGenInv]
+    have inv := compileDecs_envGenInv_core [] 1 config.next (lookupEnvId envId config.envs)
+      ⟨0, config.envs.next, .ln⟩ decs initial
+    simpa [h] using inv.1
+  refine ⟨Flapjack.sptInsert gen.next (extendEnv env (lookupEnvId envId config.envs)) gen.envs, ?_, ?_⟩
+  · simp [incCompileProg, h, generation, Flapjack.sptLookup_sptInsert_same]
+  · exact (freshGenerationInsert _ _ valid).2
 
 /-- Current compiler and source-oracle generations agree. The bounded index
 premise makes the optional lookup agree with HOL's `EL`. -/

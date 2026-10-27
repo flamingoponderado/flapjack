@@ -246,6 +246,50 @@ theorem doEval_oracle_preserves_sourceInvs {C : Type} [Nonempty C]
   · simpa [post] using nextGen
   · simpa [post] using nextRelated
 
+/-- The declaration compiler's environment generation survives in the next
+oracle configuration selected by a successful source Eval. -/
+theorem doEval_oracle_envGenFuture {C : Type} [Nonempty C]
+    (decode : Value → Option (Config × C)) (transform : List Dec → List Dec)
+    (state : EvalOracleState) (flat : FlatSem.InstallConfig C)
+    (steps : srcOracStepInvs (some decode) transform (some (.evalOracle state)))
+    (related : oracRel (some decode) transform (some (.evalOracle state)) flat)
+    (first second third fourth bytesValue wordsValue : Value)
+    (output : SemEnv Value × List Dec × Option EvalState)
+    (success : SemanticPrimitivesHOL.doEval
+      [first, second, third, fourth, bytesValue, wordsValue] (some (.evalOracle state)) = some output) :
+    ∃ envId config,
+      srcOracNextCfg (some decode) (some (.evalOracle state)) = some config ∧
+      envGenFutureRel (some decode)
+        (compileDecs [] 1 config.next (lookupEnvId envId config.envs)
+          ⟨0, config.envs.next, .ln⟩ output.2.1).2.2.2.1 output.2.2 := by
+  obtain ⟨_, envId, value, decs, flatDecs, config, payload, nextId, nextValue, nextDecs,
+    next, nextPayload, decoderEq, entry, nextEntry, decoded, nextDecoded, compiled, currentCfg⟩ :=
+    sourceOracle_firstStep (some decode) transform state steps
+  cases decoderEq
+  obtain ⟨compiler, callback, _⟩ := related
+  cases called : state.customDoEval [first, second, third, fourth, bytesValue, wordsValue] state.oracle with
+  | none => simp [SemanticPrimitivesHOL.doEval, called] at success
+  | some result =>
+    have compilerSuccess : SourceEval.Proofs.doEvalOracle compiler transform
+        [first, second, third, fourth, bytesValue, wordsValue] state.oracle = some result := by
+      simpa [callback] using called
+    obtain ⟨_, _, _, _, _, _, _, resultEq⟩ :=
+      SourceEval.Proofs.doEvalOracle_six_inv compiler transform state.oracle first second third fourth
+        bytesValue wordsValue envId value decs result entry compilerSuccess
+    rw [resultEq] at called
+    cases found : lookupEnv state envId with
+    | none => simp [SemanticPrimitivesHOL.doEval, called, found] at success
+    | some env =>
+      simp [SemanticPrimitivesHOL.doEval, called, found] at success
+      subst output
+      refine ⟨envId, config, currentCfg, ?_⟩
+      have nextCfg : srcOracNextCfg (some decode)
+          (some (.evalOracle (addEnvGeneration { state with oracle := Flapjack.holShiftSeq 1 state.oracle }))) = some next := by
+        simp [srcOracNextCfg, srcOracNextCfgInner, addEnvGeneration, Flapjack.holShiftSeq, nextEntry, nextDecoded]
+      have future := incCompileProg_envGenFuture envId config (transform decs)
+      rw [compiled] at future
+      simpa [envGenFutureRel, nextCfg] using future
+
 private theorem list_length_six {α : Type} (xs : List α) (length : xs.length = 6) :
     ∃ a b c d e f, xs = [a, b, c, d, e, f] := by
   cases xs with

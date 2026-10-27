@@ -1,6 +1,8 @@
 subglobals_type=:α option list -> α option list -> bool
 subglobals_definition=⊢ ∀(g1 :α option list) (g2 :α option list). subglobals g1 g2 ⇔ LENGTH g1 ≤ LENGTH g2 ∧ ∀(n :num). n < LENGTH g1 ∧ IS_SOME g1❲n❳ ⇒ g1❲n❳ = g2❲n❳
 inc_compile_env_submap=⊢ inc_compile_prog (env_id :num # num) (c :config) (p :dec list) = ((c' :config),(p' :exp list)) ∧ env_store_inv c.envs ⇒ env_store_inv c'.envs ∧ subspt c.envs.env_gens c'.envs.env_gens
+compile_decs_generation=⊢ ∀(t :mlstring list) (n :num) (next :next_indices) (env :source_to_flat$environment) (envs :environment_generation_store) (ds :dec list) (n' :num) (next' :next_indices) (env' :source_to_flat$environment) (envs' :environment_generation_store) (ds_i1 :exp list). compile_decs t n next env envs ds = (n',next',env',envs',ds_i1) ⇒ envs'.generation = envs.generation
+compile_decs_env_gen_inv=⊢ ∀(t :mlstring list) (n :num) (next :next_indices) (env :source_to_flat$environment) (envs :environment_generation_store) (ds :dec list) (n' :num) (next' :next_indices) (env' :source_to_flat$environment) (envs' :environment_generation_store) (ds_i1 :exp list). compile_decs t n next env envs ds = (n',next',env',envs',ds_i1) ∧ env_gen_inv envs ⇒ env_gen_inv envs' ∧ subspt envs.envs envs'.envs
 submap_fresh=⊢ (x :α) ∉ FDOM (f :α |-> β) ⇒ (f⟨x ↦ (y :β)⟩ ⊑ (g :α |-> β) ⇔ FLOOKUP g x = SOME y ∧ f ⊑ g)
 submap_update=⊢ (f :α |-> β)⟨(x :α) ↦ (y :β)⟩ ⊑ (g :α |-> β) ⇔ FLOOKUP g x = SOME y ∧ f \\ x ⊑ g
 subglobals_none=⊢ subglobals (REPLICATE (n :num) (NONE :α option)) (g :α option list) ⇔ n ≤ LENGTH g

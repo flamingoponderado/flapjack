@@ -1,6 +1,22 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "compile_decs_generation",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleStep.lean",
+    "lean_name": "compileDecs_generation",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed compile_decs_generation capture: the same mlstring path, index, source environment, generation store and source declarations compile to the same five result carriers, implying equality of the result and input generation fields."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "compile_decs_env_gen_inv",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleStep.lean",
+    "lean_name": "compileDecs_envGenInv",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed compile_decs_env_gen_inv capture: identical declaration compilation equality and input generation-store validity imply output validity and an old-to-new sptree submap. The Lean sptSubspt definition preserves both domain membership and lookup values, matching HOL subspt."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "inc_compile_prog_env_submap",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleStep.lean",
     "lean_name": "incCompileProg_envSubmap",

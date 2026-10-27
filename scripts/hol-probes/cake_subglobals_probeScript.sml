@@ -5,6 +5,8 @@ val _ = Globals.show_types := true;
 val _ = (print "subglobals_type="; print_type (type_of ``source_to_flatProof$subglobals``); print "\n");
 val _ = (print "subglobals_definition="; print_thm source_to_flatProofTheory.subglobals_def; print "\n");
 val _ = (print "inc_compile_env_submap="; print_thm source_to_flatProofTheory.inc_compile_prog_env_submap; print "\n");
+val _ = (print "compile_decs_generation="; print_thm source_to_flatProofTheory.compile_decs_generation; print "\n");
+val _ = (print "compile_decs_env_gen_inv="; print_thm source_to_flatProofTheory.compile_decs_env_gen_inv; print "\n");
 val _ = (print "submap_fresh="; print_thm source_to_flatProofTheory.submap_distinct_fupdate_flookup; print "\n");
 val _ = (print "submap_update="; print_thm source_to_flatProofTheory.submap_fupdate_flookup; print "\n");
 val _ = (print "subglobals_none="; print_thm source_to_flatProofTheory.subglobals_NONE; print "\n");
