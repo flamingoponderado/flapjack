@@ -91,6 +91,7 @@ def data_to_word_byte_ops : Bool := true
 def data_to_word_byte_shifts : Bool := true
 def bvl_to_bvi_stubs : Bool := true
 def bvl_to_bvi_whole_program : Bool := true
+def bvl_to_bvi_stub_bodies : Bool := true
 def eliminate_pure_length : Nat := 0
 def eval_bypass_length : Nat := 2
 def empty_program_globals : Nat := 1

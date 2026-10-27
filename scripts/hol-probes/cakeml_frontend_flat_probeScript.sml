@@ -317,3 +317,11 @@ val _ = capture "bvl_to_bvi_stubs" ``
     (bvi$Let [bvi$Op (closLang$GlobOp closLang$SetGlobalsPtr) [bvi$Var 1]] (bvi$Call 0 (SOME 7) [] (SOME (bvi$Var 0))))))``;
 val _ = capture "bvl_to_bvi_whole_program" ``bvl_to_bvi$compile_prog 5 0 [(5, 1, bvl$Var 0)] =
  (64, bvl_to_bvi$stubs 92 0 ++ [(92, 1, bvi$Var 0)], 0)``;
+val _ = capture "bvl_to_bvi_stub_bodies" ``
+ bvl_to_bvi$ListLength_code = (2, bvi$If (bvi$Op (closLang$BlockOp (closLang$TagLenEq 0 0)) [bvi$Var 0]) (bvi$Var 1)
+  (bvi$Call 0 (SOME 65) [bvi$Op (closLang$MemOp closLang$El) [bvi$Op (closLang$IntOp (closLang$Const 1)) []; bvi$Var 0];
+   bvi$Op (closLang$IntOp closLang$Add) [bvi$Var 1; bvi$Op (closLang$IntOp (closLang$Const 1)) []]] NONE)) /\
+ bvl_to_bvi$CopyGlobals_code = (3, bvi$Let [bvi$Op (closLang$MemOp closLang$Update)
+  [bvi$Op (closLang$MemOp closLang$El) [bvi$Var 2; bvi$Var 1]; bvi$Var 2; bvi$Var 0]]
+  (bvi$If (bvi$Op (closLang$BlockOp closLang$Equal) [bvi$Op (closLang$IntOp (closLang$Const 0)) []; bvi$Var 3]) (bvi$Var 0)
+   (bvi$Call 0 (SOME 63) [bvi$Var 1; bvi$Var 2; bvi$Op (closLang$IntOp closLang$Sub) [bvi$Op (closLang$IntOp (closLang$Const 1)) []; bvi$Var 3]] NONE)))``;

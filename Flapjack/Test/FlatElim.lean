@@ -409,6 +409,15 @@ example : Flapjack.Compiler.Backend.BvlToBvi.initGlobalsCode 7 10001 =
       (.let [.op (.memOp .update) [.op (.intOp (.const 1)) [], .op (.intOp (.const 0)) [], .var 0]]
         (.let [.op (.globOp .setGlobalsPtr) [.var 1]] (.call 0 (some 7) [] (some (.var 0)))))) := rfl
 #guard bvl_to_bvi_stubs
+example : Flapjack.Compiler.Backend.BvlToBvi.listLengthCode =
+    (2, .ifThenElse (.op (.blockOp (.tagLenEq 0 0)) [.var 0]) (.var 1)
+      (.call 0 (some 65) [.op (.memOp .el) [.op (.intOp (.const 1)) [], .var 0],
+        .op (.intOp .add) [.var 1, .op (.intOp (.const 1)) []]] none)) := rfl
+example : Flapjack.Compiler.Backend.BvlToBvi.copyGlobalsCode =
+    (3, .let [.op (.memOp .update) [.op (.memOp .el) [.var 2, .var 1], .var 2, .var 0]]
+      (.ifThenElse (.op (.blockOp .equal) [.op (.intOp (.const 0)) [], .var 3]) (.var 0)
+        (.call 0 (some 63) [.var 1, .var 2, .op (.intOp .sub) [.op (.intOp (.const 1)) [], .var 3]] none))) := rfl
+#guard bvl_to_bvi_stub_bodies
 #guard match Flapjack.Compiler.Backend.BvlToBvi.compileProgFuel 10 10 5 0 [(5, 1, .var 0)] with
   | some (64, code, 0) => code.length == 9 && match code[8]? with
       | some (92, 1, Flapjack.Compiler.Backend.Bvi.Exp.var 0) => true
