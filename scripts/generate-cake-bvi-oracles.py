@@ -14,6 +14,8 @@ CASES = (
      ROOT / "Flapjack/Test/EmptyCakeBviOracle.lean", "EmptyCakeBviOracle"),
     (ROOT / "scripts/hol-probes/reference_cake_bvi_probe.out",
      ROOT / "Flapjack/Test/ReferenceCakeBviOracle.lean", "ReferenceCakeBviOracle"),
+    (ROOT / "scripts/hol-probes/match_cake_bvi_probe.out",
+     ROOT / "Flapjack/Test/MatchCakeBviOracle.lean", "MatchCakeBviOracle"),
 )
 
 CONSTRUCTORS = {

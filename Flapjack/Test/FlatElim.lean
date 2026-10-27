@@ -43,6 +43,7 @@ import Flapjack.Compiler.Backend.FlatToClos.Compile
 import Flapjack.Test.CakeMLFlatOracle
 import Flapjack.Test.EmptyCakeBviOracle
 import Flapjack.Test.ReferenceCakeBviOracle
+import Flapjack.Test.MatchCakeBviOracle
 
 namespace Flapjack.Test.FlatElim
 open Flapjack Flapjack.Compiler.Backend.FlatLang Flapjack.Compiler.Backend.FlatElim
@@ -453,6 +454,19 @@ private def noOptsClosConfig : Flapjack.Compiler.Backend.ClosToBvl.Config :=
     Flapjack.Compiler.Backend.SourceToFlat.emptyConfig noOptsClosConfig
     [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x")) (.app .opref [.lit (.intLit 1)])] with
   | some (_, _, _, code, _) => Flapjack.Test.ReferenceCakeBviOracle.matchesCaptured code
+  | _ => false
+#guard match Flapjack.Compiler.Backend.SourceToFlat.compileCakeToBviNoOptsFuel 100
+    Flapjack.Compiler.Backend.SourceToFlat.emptyConfig noOptsClosConfig
+    [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x"))
+      (.let_ (some (ofString "y")) (.app .opref [.lit (.intLit 1)]) (.var (.short (ofString "y"))))] with
+  | some (_, _, _, code, _) => Flapjack.Test.ReferenceCakeBviOracle.matchesCaptured code
+  | _ => false
+#guard match Flapjack.Compiler.Backend.SourceToFlat.compileCakeToBviNoOptsFuel 100
+    Flapjack.Compiler.Backend.SourceToFlat.emptyConfig noOptsClosConfig
+    [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x"))
+      (.app .opref [.mat (.lit (.intLit 1))
+        [(.plit (.intLit 1), .lit (.intLit 2)), (.pany, .lit (.intLit 3))]])] with
+  | some (_, _, _, code, _) => Flapjack.Test.MatchCakeBviOracle.matchesCaptured code
   | _ => false
 example : Flapjack.Compiler.Backend.ClosToBvl.extractName
     [.op .none (.intOp (.const 7)) [], .var .none 2] = (7, [.var .none 2]) := rfl
