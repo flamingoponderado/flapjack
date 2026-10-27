@@ -6,8 +6,8 @@ open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL
 
 /-- Original constructor-stamp compatibility relation. -/
 @[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "pmatch_stamps_ok"]
-inductive PmatchStampsOk : Option (FlatLang.CtorId × FlatLang.TypeGroupId) →
-    Option (FlatLang.CtorId × FlatLang.TypeId) → Nat → Nat → Prop where
+inductive PmatchStampsOk {α β γ : Type} : Option (α × Option (β × List (α × γ))) →
+    Option (α × Option β) → γ → γ → Prop where
   | exception (cn cn' np nv) : PmatchStampsOk (some (cn, none)) (some (cn', none)) np nv
   | constructor (cn cn' ty ty' constructors np nv)
       (typeEq : ty = ty') (patternMem : (cn, np) ∈ constructors)
@@ -16,8 +16,8 @@ inductive PmatchStampsOk : Option (FlatLang.CtorId × FlatLang.TypeGroupId) →
   | tuple (np nv) (lengthEq : np = nv) : PmatchStampsOk none none np nv
 
 /-- Flapjack-specific decidable case analysis for the original stamp relation. -/
-def pmatchStampsOk : Option (FlatLang.CtorId × FlatLang.TypeGroupId) →
-    Option (FlatLang.CtorId × FlatLang.TypeId) → Nat → Nat → Prop
+def pmatchStampsOk {α β γ : Type} : Option (α × Option (β × List (α × γ))) →
+    Option (α × Option β) → γ → γ → Prop
   | some (_, none), some (_, none), _, _ => True
   | some (cn, some (ty, constructors)), some (cn', some ty'), np, nv =>
     ty = ty' ∧ (cn, np) ∈ constructors ∧ (cn', nv) ∈ constructors
@@ -25,8 +25,8 @@ def pmatchStampsOk : Option (FlatLang.CtorId × FlatLang.TypeGroupId) →
   | _, _, _, _ => False
 
 /-- Flapjack-specific equivalence between the case analysis and the inductive relation. -/
-theorem pmatchStampsOk_iff (p : Option (FlatLang.CtorId × FlatLang.TypeGroupId))
-    (v : Option (FlatLang.CtorId × FlatLang.TypeId)) (np nv : Nat) :
+theorem pmatchStampsOk_iff {α β γ : Type} (p : Option (α × Option (β × List (α × γ))))
+    (v : Option (α × Option β)) (np nv : γ) :
     pmatchStampsOk p v np nv ↔ PmatchStampsOk p v np nv := by
   constructor
   · intro h
@@ -38,8 +38,9 @@ theorem pmatchStampsOk_iff (p : Option (FlatLang.CtorId × FlatLang.TypeGroupId)
   · intro h
     cases h <;> simp_all [pmatchStampsOk]
 
-instance (p : Option (FlatLang.CtorId × FlatLang.TypeGroupId))
-    (v : Option (FlatLang.CtorId × FlatLang.TypeId)) (np nv : Nat) :
+instance {α β γ : Type} [DecidableEq α] [DecidableEq β] [DecidableEq γ]
+    (p : Option (α × Option (β × List (α × γ))))
+    (v : Option (α × Option β)) (np nv : γ) :
     Decidable (PmatchStampsOk p v np nv) := by
   have : Decidable (pmatchStampsOk p v np nv) := by
     unfold pmatchStampsOk
@@ -88,8 +89,8 @@ end
 
 /-- Select the first matching row, unless any row produces a type error. -/
 @[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "pmatch_rows_def"]
-def pmatchRows {C F : Type} (rows : List (FlatLang.Pat × FlatLang.Exp))
-    (state : State C F) (value : Value) : MatchResult (List (VarN × Value) × FlatLang.Pat × FlatLang.Exp) :=
+def pmatchRows {C F E : Type} (rows : List (FlatLang.Pat × E))
+    (state : State C F) (value : Value) : MatchResult (List (VarN × Value) × FlatLang.Pat × E) :=
   match rows with
   | [] => .noMatch
   | (pattern, expr) :: rest =>

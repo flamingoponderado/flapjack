@@ -1,6 +1,22 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "pmatch_rows_drop_4",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvalPattern.lean",
+    "lean_name": "pmatchRows_dropFour",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed pmatch_rows_drop_4_replay with the local source lemma and proof: the same six flat values bind bytes to EL 4 and words to LAST, in reverse binding-list order, with the identical tuple pattern and row payload. The row payload type and the two state parameters are independently polymorphic."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "drop_4_via_el",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvalPattern.lean",
+    "lean_name": "dropFour_viaEl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed drop_4_via_el_replay with the local source lemma: the same arbitrary HOL list element type and six-element length premise yield [EL 4 vs, LAST vs] = DROP 4 vs. Nonempty models HOL's inhabited element type for the shared total EL and LAST operations."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "eval_ref_inv_def",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleInvariant.lean",
     "lean_name": "evalRefInv",
@@ -105588,7 +105604,7 @@
     "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/PatternMatch.lean",
     "lean_name": "PmatchStampsOk",
     "statement_status": "reviewed_exact",
-    "reviewer": "Codex source comparison: The original three rules retain exception stamps, matching type identifiers and both constructor/arity membership conditions, and equal tuple arity. The case implementation is proved equivalent to this inductive relation. The complete typed original declarations and finite observations are captured in cake_flat_sem_pattern_probe."
+    "reviewer": "Compared stamp_rules_typed and stamp_cases_typed: constructor identifiers, type identifiers, and arities retain three independent generic carriers; the original rules retain exception stamps, matching type identifiers and both constructor/arity membership conditions, and equal tuple arity. The decidable case analysis is proved equivalent."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
@@ -105612,7 +105628,7 @@
     "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/PatternMatch.lean",
     "lean_name": "pmatchRows",
     "statement_status": "reviewed_exact",
-    "reviewer": "Codex source comparison: The original recursive clauses select the first match while retaining a type error from any later row. The complete typed original declarations and finite observations are captured in cake_flat_sem_pattern_probe."
+    "reviewer": "Compared rows_typed and the recursive source clauses: row payloads have an independent generic type, and the compiler and FFI state types remain independent. Both select the first match while retaining a type error from any later row."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",

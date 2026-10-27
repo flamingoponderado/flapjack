@@ -13,6 +13,22 @@ val _ = (print "eval_ref_inv="; print_thm source_to_flatProofTheory.eval_ref_inv
 val _ = (print "orac_config_envs_subspt="; print_thm source_to_flatProofTheory.orac_config_envs_subspt_def; print "\n");
 val _ = (print "orac_config_envs_subspt_trans="; print_thm source_to_flatProofTheory.orac_config_envs_subspt_trans; print "\n");
 val _ = (print "orac_config_envs_subspt_refl="; print_thm source_to_flatProofTheory.orac_config_envs_subspt_refl; print "\n");
+(* Typed replays of the two local lemmas immediately preceding compile_correct[App]. *)
+val pmatchDrop = prove (
+  ``LENGTH (vs : flatSem$v list) = 6 ==>
+    flatSem$pmatch_rows [(flatLang$Pcon NONE [flatLang$Pany; flatLang$Pany; flatLang$Pany;
+      flatLang$Pany; flatLang$Pvar b; flatLang$Pvar w], exp)] st (flatSem$Conv NONE vs) =
+    Match ([(w, LAST vs); (b, EL 4 vs)],
+      flatLang$Pcon NONE [flatLang$Pany; flatLang$Pany; flatLang$Pany; flatLang$Pany;
+        flatLang$Pvar b; flatLang$Pvar w], exp)``,
+  simp [flatSemTheory.pmatch_rows_def, flatSemTheory.pmatch_def, flatSemTheory.pmatch_stamps_ok_cases] >>
+  rpt (rename [`flatSem$pmatch_list _ _ pm_vs _`] >> Cases_on `pm_vs` >> simp [flatSemTheory.pmatch_def, ADD1]));
+val _ = (print "pmatch_rows_drop_4_replay="; print_thm pmatchDrop; print "\n");
+val dropFour = prove (
+  ``LENGTH (vs : 'a list) = 6 ==> [EL 4 vs; LAST vs] = DROP 4 vs``,
+  rw [LIST_EQ_REWRITE] >> Cases_on `x` >> fs [HD_DROP] >>
+  Cases_on `n` >> fs [EL_DROP] >> DEP_REWRITE_TAC [LAST_EL] >> simp [] >> strip_tac >> fs []);
+val _ = (print "drop_4_via_el_replay="; print_thm dropFour; print "\n");
 val _ = (print "submap_fresh="; print_thm source_to_flatProofTheory.submap_distinct_fupdate_flookup; print "\n");
 val _ = (print "submap_update="; print_thm source_to_flatProofTheory.submap_fupdate_flookup; print "\n");
 val _ = (print "subglobals_none="; print_thm source_to_flatProofTheory.subglobals_NONE; print "\n");

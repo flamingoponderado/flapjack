@@ -228,7 +228,7 @@ theorem pmatch_tuple_related {C F : Type} (genv : GlobalEnv) (compMap : Environm
       (FlatSem.pmatch state (compilePat compMap (.pcon none patterns)) (.conv none flats) flatEnv) := by
   have len := valuesRel.length_eq
   by_cases same : patterns.length = sources.length
-  · have compatible : FlatSem.PmatchStampsOk none none flats.length flats.length := .tuple _ _ rfl
+  · have compatible : FlatSem.PmatchStampsOk (α := Nat) (β := Nat) none none flats.length flats.length := .tuple _ _ rfl
     simpa [SemanticPrimitivesHOL.pmatch, FlatSem.pmatch, compilePat, same, len, compatible] using ih
   · simp [SemanticPrimitivesHOL.pmatch, same, MatchResultRel]
 
