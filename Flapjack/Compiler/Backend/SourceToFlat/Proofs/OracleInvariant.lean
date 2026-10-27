@@ -39,6 +39,41 @@ def idxRangeRel {C : Type} (interp : Option (Value → Option (Config × C))) (g
     (∀ cn t, nextType ≤ t → ¬ ∃ key, genv.c.lookup key = some (.typeStamp cn t)) ∧
     (∀ cn, nextExn ≤ cn → ¬ ∃ key, genv.c.lookup key = some (.exnStamp cn))
 
+/-- Advancing the compiler's next configuration moves the old current block
+into the reserved set and splits the old future range at the new counters.
+Appending blank globals leaves allocated indices and stamp maps unchanged. -/
+theorem idxRangeRel_advance {C : Type}
+    (interp : Option (Value → Option (Config × C))) (genv : GlobalEnv)
+    (nextType nextExn : Nat) (oldState newState : Option EvalState)
+    (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (config next : Config) (count : Nat)
+    (range : idxRangeRel interp genv nextType nextExn oldState (start, finish, other))
+    (currentCfg : srcOracNextCfg interp oldState = some config)
+    (nextCfg : srcOracNextCfg interp newState = some next)
+    (prev : idxPrev config.next next.next) :
+    idxRangeRel interp { genv with v := genv.v ++ List.replicate count none } nextType nextExn newState
+      (config.next, next.next, idxBlock start finish ∪ other) := by
+  obtain ⟨_, _, final, _, tuple, finalCfg, _, disjoint, types, exceptions⟩ := range
+  cases tuple
+  simp [currentCfg] at finalCfg
+  subst final
+  refine ⟨config.next, next.next, next.next, idxBlock start finish ∪ other,
+    rfl, ?_, idxPrev_refl _, ?_, types, exceptions⟩
+  · simp [nextCfg]
+  · rw [genvAllocatedIndices_append_none]
+    apply allDisjoint_four_advance (idxBlock start finish) (idxFinalBlock config.next)
+      other (genvAllocatedIndices genv) (idxBlock config.next next.next) (idxFinalBlock next.next)
+      disjoint
+    · intro ⟨i, kind⟩ member
+      cases kind <;> exact member.1
+    · intro ⟨i, kind⟩ member
+      cases kind with
+      | «variable» => exact Nat.le_trans prev.1 member
+      | «type» => exact Nat.le_trans prev.2.1 member
+      | «exception» => exact Nat.le_trans prev.2.2 member
+    · intro ⟨i, kind⟩ block future
+      cases kind <;> exact (Nat.not_le_of_gt block.2) future
+
 /-- The original index-range invariant reserves the block of blank globals
 needed for the next declaration. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "idx_range_rel_v_REPLICATE_NONE"

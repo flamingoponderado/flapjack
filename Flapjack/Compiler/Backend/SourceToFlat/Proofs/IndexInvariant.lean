@@ -88,6 +88,74 @@ theorem genvAllocatedIndices_append_none (genv : GlobalEnv) (count : Nat) :
   | «type» => rfl
   | «exception» => rfl
 
+/-- Split the second of four disjoint sets, while moving the first into the
+third. This is the set rearrangement required by an incremental Eval step. -/
+theorem allDisjoint_four_advance {α : Type} (oldBlock oldFuture other allocated newBlock newFuture : Set α)
+    (old : allDisjoint [oldBlock, oldFuture, other, allocated])
+    (blockSubset : newBlock ⊆ oldFuture) (futureSubset : newFuture ⊆ oldFuture)
+    (separate : ∀ x, x ∈ newBlock → x ∈ newFuture → False) :
+    allDisjoint [newBlock, newFuture, oldBlock ∪ other, allocated] := by
+  have pair (i j : Nat) (hi : i < 4) (hj : j < 4) (ne : i ≠ j) :
+      ∀ x, x ∈ ([oldBlock, oldFuture, other, allocated] : List (Set α))[i] →
+        x ∈ ([oldBlock, oldFuture, other, allocated] : List (Set α))[j] → False := by
+    intro x xi xj
+    have h := old i j (by simpa using hi) (by simpa using hj) ne
+    have hx : x ∈ ([oldBlock, oldFuture, other, allocated] : List (Set α))[i] ∩
+        ([oldBlock, oldFuture, other, allocated] : List (Set α))[j] := ⟨xi, xj⟩
+    rw [h] at hx
+    exact hx
+  have p01 := pair 0 1 (by omega) (by omega) (by omega)
+  have p03 := pair 0 3 (by omega) (by omega) (by omega)
+  have p12 := pair 1 2 (by omega) (by omega) (by omega)
+  have p13 := pair 1 3 (by omega) (by omega) (by omega)
+  have p23 := pair 2 3 (by omega) (by omega) (by omega)
+  simp only [List.getElem_cons_zero, List.getElem_cons_succ] at p01 p03 p12 p13 p23
+  clear pair old
+  have q02 : ∀ x, x ∈ newBlock → x ∈ oldBlock ∪ other → False := by
+    intro x a b
+    rcases b with b | b
+    · exact p01 x b (blockSubset a)
+    · exact p12 x (blockSubset a) b
+  have q03 : ∀ x, x ∈ newBlock → x ∈ allocated → False := by
+    intro x a b; exact p13 x (blockSubset a) b
+  have q12 : ∀ x, x ∈ newFuture → x ∈ oldBlock ∪ other → False := by
+    intro x a b
+    rcases b with b | b
+    · exact p01 x b (futureSubset a)
+    · exact p12 x (futureSubset a) b
+  have q13 : ∀ x, x ∈ newFuture → x ∈ allocated → False := by
+    intro x a b; exact p13 x (futureSubset a) b
+  have q23 : ∀ x, x ∈ oldBlock ∪ other → x ∈ allocated → False := by
+    intro x a b
+    rcases a with a | a
+    · exact p03 x a b
+    · exact p23 x a b
+  clear p01 p03 p12 p13 p23 blockSubset futureSubset
+  intro i j hi hj ne
+  have hi' : i = 0 ∨ i = 1 ∨ i = 2 ∨ i = 3 := by simp at hi; omega
+  have hj' : j = 0 ∨ j = 1 ∨ j = 2 ∨ j = 3 := by simp at hj; omega
+  apply Set.eq_empty_iff_forall_notMem.mpr
+  intro x hx
+  rcases hi' with rfl | rfl | rfl | rfl <;>
+    rcases hj' with rfl | rfl | rfl | rfl <;>
+    simp only [List.getElem_cons_zero, List.getElem_cons_succ, Set.mem_inter_iff] at hx
+  all_goals try omega
+  all_goals rcases hx with ⟨a, b⟩
+  all_goals
+    first
+    | exact separate x a b
+    | exact separate x b a
+    | exact q02 x a b
+    | exact q02 x b a
+    | exact q03 x a b
+    | exact q03 x b a
+    | exact q12 x a b
+    | exact q12 x b a
+    | exact q13 x a b
+    | exact q13 x b a
+    | exact q23 x a b
+    | exact q23 x b a
+
 /-- The variable-index projection is precisely the initialized-slot predicate
 used by the declaration initialization proof. -/
 theorem allocatedIndices_variable (genv : GlobalEnv) (i : Nat) :

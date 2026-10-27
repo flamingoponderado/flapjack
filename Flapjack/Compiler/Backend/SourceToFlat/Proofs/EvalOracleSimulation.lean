@@ -327,6 +327,34 @@ theorem doEval_oracle_globalSlots {C : Type} [Nonempty C]
   have bound : config.next.vidx ≤ next.next.vidx := prev.1
   omega
 
+/-- Successful Eval advances the index-range invariant to the block reserved
+by the next incremental compilation. -/
+theorem doEval_oracle_idxRange {C : Type} [Nonempty C]
+    (decode : Value → Option (Config × C)) (transform : List Dec → List Dec)
+    (state : EvalOracleState) (flat : FlatSem.InstallConfig C) (genv : GlobalEnv)
+    (steps : srcOracStepInvs (some decode) transform (some (.evalOracle state)))
+    (related : oracRel (some decode) transform (some (.evalOracle state)) flat)
+    (nextType nextExn : Nat) (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (range : idxRangeRel (some decode) genv nextType nextExn (some (.evalOracle state)) (start, finish, other))
+    (lengthMatch : finIdxMatch genv.v.length finish
+      (srcOracNextCfg (some decode) (some (.evalOracle state))))
+    (first second third fourth bytesValue wordsValue : Value)
+    (output : SemEnv Value × List Dec × Option EvalState)
+    (success : SemanticPrimitivesHOL.doEval
+      [first, second, third, fourth, bytesValue, wordsValue] (some (.evalOracle state)) = some output) :
+    ∃ envId config next flatDecs,
+      srcOracNextCfg (some decode) output.2.2 = some next ∧
+      incCompileProg envId config output.2.1 = (next, flatDecs) ∧
+      idxRangeRel (some decode)
+        { genv with v := genv.v ++ List.replicate (next.next.vidx - config.next.vidx) none }
+        nextType nextExn output.2.2 (config.next, next.next, idxBlock start finish ∪ other) := by
+  obtain ⟨envId, config, next, flatDecs, currentCfg, nextCfg, compiled, prev, _⟩ :=
+    doEval_oracle_globalSlots decode transform state flat genv steps related finish lengthMatch
+      first second third fourth bytesValue wordsValue output success
+  refine ⟨envId, config, next, flatDecs, nextCfg, compiled, ?_⟩
+  exact idxRangeRel_advance (some decode) genv nextType nextExn _ _ start finish other config next _
+    range currentCfg nextCfg prev
+
 /-- The factored state relation survives the Eval state updates and global
 slot allocation. This does not yet establish the remaining full evaluator
 invariant or execution of the compiled declarations. -/
