@@ -1,6 +1,82 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "idx_types",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/IndexInvariant.lean",
+    "lean_name": "IndexKind",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the original idx_types datatype and typed idx_kind_type probe: Lean retains the three nullary variable, type and exception constructors in the same order."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "idx_prev_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/IndexInvariant.lean",
+    "lean_name": "idxPrev",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed idx_prev probe: both relations order the vidx, tidx and eidx components of the same source next_indices carrier, with the same three conjuncts."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "idx_prev_refl",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/IndexInvariant.lean",
+    "lean_name": "idxPrev_refl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed idx_prev_refl probe: both assert idx_prev for a next_indices record against itself without additional premises."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "idx_prev_trans",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/IndexInvariant.lean",
+    "lean_name": "idxPrev_trans",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed idx_prev_trans probe: both quantify three next_indices records and conclude the first-to-third relation from the conjunction of the first-to-second and second-to-third relations."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "idx_block_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/IndexInvariant.lean",
+    "lean_name": "idxBlock",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed idx_block probe: for each pair of a natural index and idx_types constructor, membership has the corresponding start-inclusive, end-exclusive component bounds; the Lean set is the HOL predicate-set translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "idx_final_block_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/IndexInvariant.lean",
+    "lean_name": "idxFinalBlock",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed idx_final_block probe: each index class contains exactly its natural indices at least the corresponding start counter; the Lean set uses the HOL predicate-set translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "ALL_DISJOINT_DEF",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/IndexInvariant.lean",
+    "lean_name": "allDisjoint",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed idx_disjoint probe: both quantify arbitrary sets of a single element type and bounded distinct list indices and require their intersection to equal the empty set. Lean indexed access is used only under those bounds."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "fin_idx_match_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/IndexInvariant.lean",
+    "lean_name": "finIdxMatch",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed idx_finish probe: both take a natural length, next_indices and source-to-flat config option, requiring end vidx <= length for NONE and the config next vidx = length for SOME."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "genv_allocated_idxs_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/IndexInvariant.lean",
+    "lean_name": "genvAllocatedIndices",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "c",
+      "tys"
+    ],
+    "reviewer": "Compared the typed idx_allocated probe with the complete definition: variable indices require a bounded non-NONE list slot, type indices occur in either the typed constructor-key domain or the type-map domain, and exception indices occur in the untyped constructor-key domain. Canonical GlobalEnv c and tys finite maps use lookup-isSome for FDOM; the module re-exports the owning carrier's checked broad-carrier roundtrip. The qualifier records only those finite-map fields."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "subglobals_NONE",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/GlobalWeakening.lean",
     "lean_name": "subglobals_none",

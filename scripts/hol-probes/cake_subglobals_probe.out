@@ -4,6 +4,15 @@ submap_fresh=⊢ (x :α) ∉ FDOM (f :α |-> β) ⇒ (f⟨x ↦ (y :β)⟩ ⊑ (
 submap_update=⊢ (f :α |-> β)⟨(x :α) ↦ (y :β)⟩ ⊑ (g :α |-> β) ⇔ FLOOKUP g x = SOME y ∧ f \\ x ⊑ g
 subglobals_none=⊢ subglobals (REPLICATE (n :num) (NONE :α option)) (g :α option list) ⇔ n ≤ LENGTH g
 subglobals_add_none=⊢ subglobals (gs :α option list) (gs ++ REPLICATE (n :num) (NONE :α option))
+idx_kind_type=:idx_types
+idx_prev=⊢ ∀(idx :next_indices) (idx2 :next_indices). idx_prev idx idx2 ⇔ idx.vidx ≤ idx2.vidx ∧ idx.tidx ≤ idx2.tidx ∧ idx.eidx ≤ idx2.eidx
+idx_prev_refl=⊢ idx_prev (idx :next_indices) idx
+idx_prev_trans=⊢ idx_prev (idx :next_indices) (idx2 :next_indices) ∧ idx_prev idx2 (idx3 :next_indices) ⇒ idx_prev idx idx3
+idx_block=⊢ ∀(start_idx :next_indices) (end_idx :next_indices). idx_block start_idx end_idx = {(i,Idx_Var) | start_idx.vidx ≤ i ∧ i < end_idx.vidx} ∪ {(i,Idx_Type) | start_idx.tidx ≤ i ∧ i < end_idx.tidx} ∪ {(i,Idx_Exn) | start_idx.eidx ≤ i ∧ i < end_idx.eidx}
+idx_final_block=⊢ ∀(start_idx :next_indices). idx_final_block start_idx = {(i,Idx_Var) | start_idx.vidx ≤ i} ∪ {(i,Idx_Type) | start_idx.tidx ≤ i} ∪ {(i,Idx_Exn) | start_idx.eidx ≤ i}
+idx_allocated=⊢ ∀(genv :global_env). genv_allocated_idxs genv = {(i,Idx_Var) | i < LENGTH genv.v ∧ genv.v❲i❳ ≠ (NONE :v option)} ∪ {(i,Idx_Type) | ∃(cn :num) (a :num). ((cn,SOME i),a) ∈ FDOM genv.c} ∪ {(i,Idx_Type) | i ∈ FDOM genv.tys} ∪ {(i,Idx_Exn) | ∃(a :num). ((i,(NONE :num option)),a) ∈ FDOM genv.c}
+idx_disjoint=⊢ ∀(xs :(α -> bool) list). ALL_DISJOINT xs ⇔ ∀(i :num) (j :num). i < LENGTH xs ∧ j < LENGTH xs ∧ i ≠ j ⇒ xs❲i❳ ∩ xs❲j❳ = (∅ :α -> bool)
+idx_finish=⊢ ∀(len :num) (end_idx :next_indices) (next_cfg :config option). fin_idx_match len end_idx next_cfg ⇔ case next_cfg of (NONE :config option) => end_idx.vidx ≤ len | SOME c => c.next.vidx = len
 refl_replay=⊢ ∀(g :α option list). subglobals g g
 trans_replay=⊢ ∀(g1 :α option list) (g2 :α option list) (g3 :α option list). subglobals g1 g2 ∧ subglobals g2 g3 ⇒ subglobals g1 g3
 append_replay=⊢ ∀(g1 :α option list) (g2 :α option list) (g3 :α option list). (subglobals (g1 ++ g2) (g1 ++ g3) ⇔ subglobals g2 g3) ∧ (LENGTH g2 = LENGTH g3 ⇒ (subglobals (g2 ++ g1) (g3 ++ g1) ⇔ subglobals g2 g3))
