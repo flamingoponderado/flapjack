@@ -400,6 +400,9 @@ run_probe cake_source_thunk_probeScript.sml cake_source_thunk_probe.out \
 run_probe cake_source_evaluate_clock_probeScript.sml cake_source_evaluate_clock_probe.out \
   fix_type list_type clock_lemma fixed zero failure "$cake_dir/semantics/evaluateScript.sml" "$cake_dir/semantics"
 
+run_probe cake_source_eval_state_probeScript.sml cake_source_eval_state_probe.out \
+  declare_type reset_type decs oracle lookup invalid_lookup declared_decs declared_oracle invalid_decl reset "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+
 run_probe cake_parse_error_probeScript.sml cake_parse_error_probe.out \
   missing after_decl multiline "$cake_dir/compiler/parsing/pegexec_cml_foScript.sml" "$cake_dir/compiler/parsing"
 

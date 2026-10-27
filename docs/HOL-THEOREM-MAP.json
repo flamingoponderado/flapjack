@@ -102957,5 +102957,45 @@
     "lean_name": "singleEnv",
     "statement_status": "pending_statement_review",
     "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "add_decs_generation_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/EvalState.lean",
+    "lean_name": "addDecsGeneration",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "add_env_generation_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/EvalState.lean",
+    "lean_name": "addEnvGeneration",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "declare_env_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/EvalState.lean",
+    "lean_name": "declareEnv",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "lookup_env_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/EvalState.lean",
+    "lean_name": "lookupEnv",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "reset_env_generation_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/EvalState.lean",
+    "lean_name": "resetEnvGeneration",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
   }
 ]

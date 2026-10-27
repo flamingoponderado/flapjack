@@ -1,0 +1,10 @@
+declare_type=:eval_state option -> v sem_env -> (v # eval_state option) option
+reset_type=:eval_state option -> eval_state option -> eval_state option
+decs=((9 :num),(0 :num),(10 :num))
+oracle=((2 :num),(3 :num))
+lookup=T
+invalid_lookup=F
+declared_decs=SOME (((2 :num),(3 :num)),(2 :num),(4 :num),(9 :num))
+declared_oracle=SOME ((0 :int),(1 :int),(2 :num))
+invalid_decl=F
+reset=SOME ((2 :num),(3 :num),(11 :num))
