@@ -195,6 +195,7 @@ import Flapjack.Compiler.Backend.FlatPattern.CompileOrder
 import Flapjack.Compiler.Backend.SourceToFlat.ToClos
 import Flapjack.Compiler.Backend.SourceToFlat.ToBvi
 import Flapjack.Compiler.Backend.SourceToFlat.ToData
+import Flapjack.Compiler.Backend.SourceToFlat.ToWord
 import Flapjack.Compiler.Backend.SourceToSource
 import Flapjack.Compiler.Backend.ClosToBvl.Constants
 import Flapjack.Compiler.Backend.ClosToBvl.Layout

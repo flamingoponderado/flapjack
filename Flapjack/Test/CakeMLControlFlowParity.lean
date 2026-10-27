@@ -2,7 +2,7 @@ import Flapjack.Compiler.Backend.ClosToBvl.Compile
 import Flapjack.Compiler.Backend.BvlToBvi.Compile
 import Flapjack.Compiler.Backend.BviToData.Compile
 import Flapjack.Compiler.Backend.DataToWord.Control
-import Flapjack.Compiler.Backend.SourceToFlat.ToData
+import Flapjack.Compiler.Backend.SourceToFlat.ToWord
 import Flapjack.Test.CakeMLFlatOracle
 import Flapjack.Test.EmptyCakeWordOracle
 import Flapjack.Test.ReferenceCakeWordOracle
@@ -50,23 +50,23 @@ private def noOptsConfig : Flapjack.Compiler.Backend.ClosToBvl.Config :=
   { Flapjack.Compiler.Backend.ClosToBvl.defaultConfig with
     maxApp := 0, doMti := false, doCall := false, knownConf := none }
 
-#guard match Flapjack.Compiler.Backend.SourceToFlat.compileCakeToDataNoOptsFuel 100
-    Flapjack.Compiler.Backend.SourceToFlat.emptyConfig noOptsConfig [] with
-  | some (_, _, _, code, _) =>
-      match code.mapM fun (x : Nat × Nat × Flapjack.Compiler.Backend.DataLang.Prog) => do
-        let word ← Flapjack.Compiler.Backend.DataToWord.compileControl? (width := 64) fullWordConfig x.1 2 x.2.2
-        pure (x.1, x.2.1, word) with
-      | some word => Flapjack.Test.EmptyCakeWordOracle.matchesCaptured word
-      | none => false
+#guard match Flapjack.Compiler.Backend.SourceToFlat.compileCakeToWordWithLabelsNoOptsFuel (width := 64) 100
+    Flapjack.Compiler.Backend.SourceToFlat.emptyConfig noOptsConfig fullWordConfig [] with
+  | some (_, _, _, code, _) => Flapjack.Test.EmptyCakeWordOracle.matchesCaptured code
   | none => false
 
 private def compileWordFunctions? (decls : List Flapjack.AstHOL.Dec) :
     Option (List (Nat × Nat × (Flapjack.WordLangProgHOL (BitVec 64) × Nat))) := do
-  let (_, _, _, code, _) ← Flapjack.Compiler.Backend.SourceToFlat.compileCakeToDataNoOptsFuel 100
-    Flapjack.Compiler.Backend.SourceToFlat.emptyConfig noOptsConfig decls
-  code.mapM fun (x : Nat × Nat × Flapjack.Compiler.Backend.DataLang.Prog) => do
-    let word ← Flapjack.Compiler.Backend.DataToWord.compileControl? (width := 64) fullWordConfig x.1 2 x.2.2
-    pure (x.1, x.2.1, word)
+  let (_, _, _, code, _) ← Flapjack.Compiler.Backend.SourceToFlat.compileCakeToWordWithLabelsNoOptsFuel
+    100 Flapjack.Compiler.Backend.SourceToFlat.emptyConfig noOptsConfig fullWordConfig decls
+  pure code
+
+#guard match Flapjack.Compiler.Backend.SourceToFlat.compileCakeToWordNoOptsFuel (width := 64) 100
+    Flapjack.Compiler.Backend.SourceToFlat.emptyConfig noOptsConfig fullWordConfig [] with
+  | some (_, _, 64, code, _) => code.map (fun (x : Nat × Nat × Flapjack.WordLangProgHOL (BitVec 64)) =>
+      (x.1, x.2.1)) == [(62, 2), (63, 4), (64, 1), (65, 3), (66, 4), (67, 4), (68, 3),
+        (69, 4), (72, 3), (76, 1), (80, 1), (84, 1), (73, 1), (88, 1)]
+  | _ => false
 
 #guard match compileWordFunctions?
     [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x")) (.app .opref [.lit (.intLit 1)])] with
