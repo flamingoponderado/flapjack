@@ -57,6 +57,17 @@ jobs:
           python3 scripts/generate-cake-word-oracles.py --check
           python3 scripts/generate-bignum-word-snapshot.py --check
 
+      - name: Check CakeML source-to-RISC-V exploratory parity
+        # The captures identify their historical original revision; they do not
+        # replace the still-required comparison with a pinned cake executable.
+        run: |
+          lake build cake
+          python3 scripts/generate-cake-nonterminals.py --check
+          python3 scripts/generate-cake-peg-grammar.py --check
+          python3 scripts/generate-cake-basis.py --check
+          python3 scripts/generate-cake-export-oracle.py --check
+          python3 scripts/check-cake-cli-parity.py
+
       - name: Check Pan-to-Crep intermediate fixture coverage
         run: python3 scripts/pan-to-crep-coverage-report.py --check
 

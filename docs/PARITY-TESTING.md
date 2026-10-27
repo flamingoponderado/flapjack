@@ -391,3 +391,26 @@ original Install/FFI register conventions. All 840 positive Boolean observations
 are true and all 120 negative guards are false. This is regression evidence,
 not a replay of the complete original proof or cross-language equivalence.
 Recursive/Call register-bound assembly remains separate unfinished work.
+
+The CakeML command has an exploratory complete-output regression suite:
+`lake build cake` followed by `python3 scripts/check-cake-cli-parity.py`.
+It checks the entire stdout and stderr (byte count and SHA-256), and exit
+status, for successful examples including the standard basis, FFI, arrays,
+Word64, recursion, datatypes and compilation without the prelude. The recorded
+reference binary identifies itself as CakeML
+`e8eca63affd1653105ca4b9cc2f5ca87a01cd0af` and HOL
+`a390cbabd3a4521bab4ee20281e3e42933a8a3ae`; it is **not** the pinned CakeML
+revision `857f0d98da8f8a3580f34423338e697809308ede`. The reference check
+verifies that the backend, parser, inferencer, basis, semantics, translator and
+CV translator directories are unchanged between those CakeML revisions. The
+compiler driver diff adds Pancake feature handling; its normal CakeML path is
+unchanged. These facts make the comparisons useful evidence, but the historical
+binary is not a pinned oracle and the hashes are not a cross-language proof.
+
+To recheck the recorded historical outputs when that exact binary is available,
+run `python3 scripts/check-cake-cli-parity.py --check-reference /path/to/cake`.
+`--record-reference /path/to/cake` checks the same provenance before replacing
+the recorded hashes. A pinned executable comparison is still required for the
+final parity claim. Rejected programs are deliberately excluded from this
+successful-output suite because parser and type-error diagnostics do not yet
+match the original CakeML executable.

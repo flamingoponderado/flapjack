@@ -392,6 +392,25 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
             else value
           some (.assign (adjustVar dest) value, l)
       | _ => some (.skip, l)
+  | l, .assign dest (.wordOp (.wordOpw .w64 op)) args _ =>
+      match args with
+      | [x, y] =>
+          if width != 64 then none else
+          match encodeHeader (width := width) conf 3 1 with
+          | none => some (giveUp, l)
+          | some header =>
+              let binop := match lookupWordOp op with | .bitwise b | .carried b => b
+              let bytes := BitVec.ofNat width (width / 8)
+              let addr (v : Nat) := WordLangExpHOL.op .add [realAddr conf (adjustVar v), .const bytes]
+              let stored := listSeq [
+                .assign 1 (.lookup .nextFree), .store (.op .add [.var 1, .const bytes]) 3,
+                .assign 3 (.const header), .store (.var 1) 3,
+                .set .nextFree (.op .add [.var 1, .const (2 * bytes)]),
+                .assign (adjustVar dest) (.op .or [
+                  shiftN .lsl (.op .sub [.var 1, .lookup .currHeap]) (shiftLength conf - wordShiftAmount width),
+                  .const 1])]
+              some (.seq (.assign 3 (.op binop [.load (addr x), .load (addr y)])) stored, l)
+      | _ => some (.skip, l)
   | l, .assign dest (.wordOp (.wordShift .w8 sh n)) args _ =>
       match args with
       | [src] =>
@@ -461,6 +480,15 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
               .assign 7 (if empty then .const 0 else .op .sub [shiftN .lsr (.load addr2) offset, .const bytes]),
               .ffi ffiName 1 3 5 7 (adjustSets (names.getD .ln)),
               .assign (adjustVar dest) (.const 2)], l)
+      | _ => some (.skip, l)
+  | l, .assign dest (.memOp .boundsCheckArray) args _ =>
+      match args with
+      | [base, index] =>
+          let header := WordLangExpHOL.load (realAddr conf (adjustVar base))
+          some (listSeq [
+            .assign 1 (shiftN .lsr header (width - conf.lenSize)),
+            .assign 3 (shiftVar .ror (adjustVar index) 2),
+            boolResult dest .lower 3 (.reg 1)], l)
       | _ => some (.skip, l)
   | l, .assign dest (.memOp (.boundsCheckByte leq)) args _ =>
       match args with

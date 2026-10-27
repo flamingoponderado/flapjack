@@ -395,6 +395,9 @@ run_probe cake_riscv_export_probeScript.sml cake_riscv_export_probe.out \
 run_probe cake_io_lowering_probeScript.sml cake_io_lowering_probe.out \
   lesseq mod bounds ffi "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
 
+run_probe cake_word_array_probeScript.sml cake_word_array_probe.out \
+  word64 array "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
 run_probe bvl_inline_cake_bvi_probeScript.sml bvl_inline_cake_bvi_probe.out \
   code "$cake_dir/compiler/backend/bvl_inlineScript.sml" "$cake_dir/compiler/backend"
 
