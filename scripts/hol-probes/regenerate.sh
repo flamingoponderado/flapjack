@@ -64,6 +64,25 @@ probe_needs_refresh() {
          "$cake_dir/compiler/backend/bvi_to_dataScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/pattern_matching/pattern_compScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/pattern_matching/pattern_exhScript.sml" -nt "$output" ) ]] ||
+    [[ "$(basename "$probe")" == empty_cake_bvi_probeScript.sml &&
+       ( "$cake_dir/compiler/backend/source_to_sourceScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/source_to_flatScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/flat_elimScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/flat_patternScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/flat_to_closScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/clos_to_bvlScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/clos_annotateScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/clos_numberScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/clos_mtiScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/clos_knownScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/clos_callScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/closLangScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/db_varsScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/bvl_jumpScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/backend_commonScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/bvi_letScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/pattern_matching/pattern_compScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/pattern_matching/pattern_exhScript.sml" -nt "$output" ) ]] ||
     [[ "$(basename "$probe")" == l3_riscv_int_to_fp_probeScript.sml &&
        "$probe_dir/binary_ieee_directed_certificates.sml" -nt "$output" ]]
 }
@@ -138,6 +157,9 @@ run_probe cakeml_frontend_flat_probeScript.sml cakeml_frontend_flat_probe.out \
 run_probe data_to_word_header_types_probeScript.sml data_to_word_header_types_probe.out \
   make_header_type make_header_definition encode_header_type encode_header_definition \
   "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe empty_cake_bvi_probeScript.sml empty_cake_bvi_probe.out \
+  code "$cake_dir/compiler/backend/bvl_to_bviScript.sml" "$cake_dir/compiler/backend"
 
 run_probe l3_step_register_comparison_probeScript.sml l3_step_register_comparison_probe.out \
   slt_hypotheses slt_statement slt_gen slt_hypothesis_count sltu_hypotheses sltu_statement sltu_gen sltu_hypothesis_count slt_nop_hypotheses slt_nop_statement slt_nop_gen slt_nop_hypothesis_count sltu_nop_hypotheses sltu_nop_statement sltu_nop_gen sltu_nop_hypothesis_count \

@@ -1,0 +1,113 @@
+#!/usr/bin/env python3
+"""Translate the captured original BVI tree into an exact Lean match pattern.
+
+The grammar deliberately accepts only constructors present in this capture;
+unexpected syntax fails the check instead of silently dropping output.
+"""
+import argparse
+import re
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+INPUT = ROOT / "scripts/hol-probes/empty_cake_bvi_probe.out"
+OUTPUT = ROOT / "Flapjack/Test/EmptyCakeBviOracle.lean"
+
+CONSTRUCTORS = {
+    "Var": (".var", 1), "Let": (".let", 2), "If": (".ifThenElse", 3),
+    "Call": (".call", 4), "Op": (".op", 2),
+    "IntOp": (".intOp", 1), "MemOp": (".memOp", 1), "GlobOp": (".globOp", 1),
+    "BlockOp": (".blockOp", 1), "ThunkOp": (".thunkOp", 1),
+    "Const": (".const", 1), "Int": (".int", 1), "TagLenEq": (".tagLenEq", 2),
+    "Cons": (".cons", 1), "EqualConst": (".equalConst", 1), "CopyByte": (".copyByte", 1),
+    "SetGlobal": (".setGlobal", 1), "UpdateThunk": (".updateThunk", 1),
+    "GlobalsPtr": (".globalsPtr", 0), "SetGlobalsPtr": (".setGlobalsPtr", 0),
+    "Add": (".add", 0), "Sub": (".sub", 0), "Less": (".less", 0),
+    "El": (".el", 0), "Length": (".length", 0), "Update": (".update", 0),
+    "RefArray": (".refArray", 0), "UpdateByte": (".updateByte", 0),
+    "DerefByte": (".derefByte", 0), "LengthByte": (".lengthByte", 0),
+    "Ref": (".ref", 0), "Equal": (".equal", 0), "Evaluated": (".evaluated", 0),
+    "SOME": ("some", 1), "NONE": ("none", 0), "F": ("false", 0), "T": ("true", 0),
+}
+
+
+def render():
+    raw = INPUT.read_text().strip()
+    if not raw.startswith("code="):
+        raise ValueError("missing HOL code row")
+    source = raw[5:]
+    tokens = re.findall(r"[A-Za-z_][A-Za-z_0-9]*|[0-9]+|[][(),;]", source)
+    if "".join(tokens) != re.sub(r"\s+", "", source):
+        raise ValueError("unexpected character in HOL output")
+    pos = 0
+
+    def parse():
+        nonlocal pos
+        if pos >= len(tokens):
+            raise ValueError("unexpected end of HOL output")
+        token = tokens[pos]
+        pos += 1
+        if token.isdigit():
+            return token
+        if token == "[":
+            items = []
+            while tokens[pos] != "]":
+                items.append(parse())
+                if tokens[pos] == ";":
+                    pos += 1
+                elif tokens[pos] != "]":
+                    raise ValueError("expected list separator")
+            pos += 1
+            return "[" + ", ".join(items) + "]"
+        if token == "(":
+            items = [parse()]
+            while tokens[pos] == ",":
+                pos += 1
+                items.append(parse())
+            if tokens[pos] != ")":
+                raise ValueError("expected closing parenthesis")
+            pos += 1
+            return "(" + ", ".join(items) + ")"
+        if token == "mk_unit":
+            return "(.op (.blockOp (.cons 0)) [])"
+        if token == "mk_elem_at":
+            base, index = parse(), parse()
+            return f"(.op (.blockOp (.elemAt {index})) [{base}])"
+        if token not in CONSTRUCTORS:
+            raise ValueError(f"unsupported HOL constructor {token!r}")
+        name, arity = CONSTRUCTORS[token]
+        args = [parse() for _ in range(arity)]
+        return "(" + " ".join([name, *args]) + ")" if args else name
+
+    pattern = parse()
+    if pos != len(tokens):
+        raise ValueError("trailing HOL output")
+    return f'''-- Generated from the pinned original HOL compiler; do not edit.
+import Flapjack.Compiler.Backend.Bvi.Syntax
+
+namespace Flapjack.Test.EmptyCakeBviOracle
+
+/-- Match every location, arity and expression in the captured BVI program. -/
+def matchesCaptured (code : List (Nat × Nat × Flapjack.Compiler.Backend.Bvi.Exp)) : Bool :=
+  match code with
+  | {pattern} => true
+  | _ => false
+
+end Flapjack.Test.EmptyCakeBviOracle
+'''
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--check", action="store_true")
+    args = parser.parse_args()
+    expected = render()
+    if args.check:
+        if not OUTPUT.exists() or OUTPUT.read_text() != expected:
+            raise SystemExit(f"{OUTPUT} is stale; regenerate it from the HOL capture")
+        print("Full empty CakeML BVI fixture matches the captured HOL output")
+    else:
+        OUTPUT.write_text(expected)
+
+
+if __name__ == "__main__":
+    main()
