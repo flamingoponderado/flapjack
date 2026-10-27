@@ -16,6 +16,7 @@ import Flapjack.Test.RefByte64WordOracle
 import Flapjack.Test.RefByte32WordOracle
 import Flapjack.Test.FixedStubsWordOracle
 import Flapjack.Test.MtiOpsWordOracle
+import Flapjack.Test.TmcOpsWordOracle
 
 /-!
 # `data_to_word` configuration helpers: original-oracle rows
@@ -42,6 +43,16 @@ private def conf : Config :=
     pure [(0, 0, p0, n0), (1, 0, p1, n1), (2, 0, p2, n2),
       (3, 0, p3, n3), (4, 0, p4, n4), (5, 0, p5, n5)]) with
   | some entries => Flapjack.Test.MtiOpsWordOracle.matchesCaptured entries
+  | none => false
+
+#guard match (do
+    let (p0, n0) ← compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp (.mutCons 0 0)) [1, 2] none)
+    let (p1, n1) ← compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp (.mutCons 2 1)) [] none)
+    let (p2, n2) ← compileControl? (width := 64) { conf with gcKind := .generational [8] } 5 2 (.assign 3 (.memOp (.mutCons 0 0)) [1, 2] none)
+    let (p3, n3) ← compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp .finaliseCons) [1] none)
+    let (p4, n4) ← compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp .updateCons) [1, 2, 3] none)
+    pure [(0, 0, p0, n0), (1, 0, p1, n1), (2, 0, p2, n2), (3, 0, p3, n3), (4, 0, p4, n4)]) with
+  | some entries => Flapjack.Test.TmcOpsWordOracle.matchesCaptured entries
   | none => false
 
 -- shift_length=8

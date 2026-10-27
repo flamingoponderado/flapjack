@@ -32,7 +32,7 @@
 
 `full_mti_inline_cake_word_probe.out` captures the complete 64-bit word program for a nested-function declaration with multi-argument introduction and BVI wrapper inlining enabled. Known-function and call optimizations and the earlier BVL optimizations are omitted. `mti_ops_word_probe.out` separately captures tag equality, multiplication, three division configurations, and block extension, including the resulting next labels.
 
-`full_bvl_optimized_cake_word_probe.out` captures the complete 64-bit word program for the nested-function declaration after BVL inlining and BVI wrapper inlining. Known-function, call, tail-recursion and TMC optimizations are omitted; this comparison stops before word optimization and RISC-V emission.
+`full_bvl_optimized_cake_word_probe.out` captures the complete 64-bit word program for the nested-function declaration after BVL inlining, BVI tail-recursion, TMC and wrapper inlining. Known-function and call optimizations are omitted; this comparison stops before word optimization and RISC-V emission.
 
 `bvl_inline_frontend_probe.out` captures BVL tick inlining, the size budget and let-operation reduction for focused examples. These are checks of selected cases, not a correctness theorem or full compiler-output comparison.
 
@@ -42,7 +42,11 @@
 
 `bvl_const_frontend_probe.out` captures constant propagation, operation rewrites, and signed floor division and remainder. `bvl_optimized_cake_bvi_probe.out` captures the complete BVI output for the nested-function declaration after the original BVL inlining pipeline, including constant folding, while later optimizations remain omitted.
 
-`bvi_tailrec_frontend_probe.out` captures the original tail-recursion candidate decisions for every BVI function of that example, focused recursion-detector and type-analysis cases, positive accumulator rewrites, worker labels and tail-modulo-constructor decisions. The bounded Lean tail-recursion pass includes the accumulator rewrite; TMC remains unported.
+`bvi_tailrec_frontend_probe.out` captures the original tail-recursion candidate decisions for every BVI function of that example, focused recursion-detector and type-analysis cases, positive accumulator rewrites, worker labels and tail-modulo-constructor decisions.
+
+`bvi_tmc_frontend_probe.out` captures full TMC wrapper and worker examples, including nested constructors, multiple calls, effectful arguments, and program-level worker allocation. These checks are regression evidence, not a correctness theorem.
+
+`tmc_ops_word_probe.out` captures mutable-constructor, finalisation and update lowering under simple and generational GC configurations. `tmc_program_word_probe.out` captures all word functions for a positive TMC example after BVI inlining and data lowering.
 
 `data_to_word_header_types_probe.out` records the original types and typed definitions for header construction and its checked encoding. The frontend probe also captures 32-bit and 64-bit encoded values and an invalid length; these observations are regression evidence, not a cross-language proof.
 

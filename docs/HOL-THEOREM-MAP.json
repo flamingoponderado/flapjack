@@ -101878,5 +101878,37 @@
     "hol_name": "to_op_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source accumulator operation mapping transcribed; full carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BviTmc.lean",
+    "lean_name": "CallBlock",
+    "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
+    "hol_name": "call_block",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Two constructor skeleton transcribed; inferred source typing and complete declaration review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BviTmc.lean",
+    "lean_name": "pureOp",
+    "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
+    "hol_name": "pure_op_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source operation purity cases transcribed; full carrier and declaration review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BviTmc.lean",
+    "lean_name": "shiftBlock",
+    "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
+    "hol_name": "shift_cb_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source call-block index shifting transcribed; inferred source typing and complete review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BviTmc.lean",
+    "lean_name": "workerAux",
+    "hol_path": "cakeml/compiler/backend/bvi_tmcScript.sml",
+    "hol_name": "cb_to_bvi_worker_aux_alt_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source shift-accumulator worker transcribed; complete carrier and definition review remain pending."
   }
 ]

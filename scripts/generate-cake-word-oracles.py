@@ -40,7 +40,11 @@ CASES = tuple(
      (ROOT / "scripts/hol-probes/full_bvl_optimized_cake_word_probe.out",
       ROOT / "Flapjack/Test/FullBvlOptimizedCakeWordOracle.lean", "FullBvlOptimizedCakeWordOracle", 64),
      (ROOT / "scripts/hol-probes/mti_ops_word_probe.out",
-      ROOT / "Flapjack/Test/MtiOpsWordOracle.lean", "MtiOpsWordOracle", 64))
+      ROOT / "Flapjack/Test/MtiOpsWordOracle.lean", "MtiOpsWordOracle", 64),
+     (ROOT / "scripts/hol-probes/tmc_ops_word_probe.out",
+      ROOT / "Flapjack/Test/TmcOpsWordOracle.lean", "TmcOpsWordOracle", 64),
+     (ROOT / "scripts/hol-probes/tmc_program_word_probe.out",
+      ROOT / "Flapjack/Test/TmcProgramWordOracle.lean", "TmcProgramWordOracle", 64))
 CONSTRUCTORS = {
     "Seq": (".seq", 2), "Assign": (".assign", 2), "Const": (".const", 1), "Load": (".load", 1),
     "If": (".ite", 5), "Test": (".test", 0), "NotTest": (".notTest", 0),

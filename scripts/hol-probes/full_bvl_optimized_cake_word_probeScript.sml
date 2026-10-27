@@ -1,4 +1,4 @@
-load "flat_patternTheory"; load "flat_elimTheory"; load "source_to_flatTheory"; load "flat_to_closTheory"; load "source_to_sourceTheory"; load "clos_to_bvlTheory"; load "bvl_inlineTheory"; load "bvl_to_bviTheory"; load "bvi_to_dataTheory"; load "data_to_wordTheory"; load "bvi_inlineTheory"; load "wordsLib";
+load "flat_patternTheory"; load "flat_elimTheory"; load "source_to_flatTheory"; load "flat_to_closTheory"; load "source_to_sourceTheory"; load "clos_to_bvlTheory"; load "bvl_inlineTheory"; load "bvl_to_bviTheory"; load "bvi_tailrecTheory"; load "bvi_tmcTheory"; load "bvi_to_dataTheory"; load "data_to_wordTheory"; load "bvi_inlineTheory"; load "wordsLib";
 val _ = computeLib.add_funs [bvi_to_dataTheory.op_requires_names_eqn];
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
@@ -9,6 +9,8 @@ val entry = EVAL ``
  let (cc,bvl,names) = clos_to_bvl$compile cc exps in
  let bvl = SND (bvl_inline$compile_prog 8 F 100 bvl) in
  let (start,code,next) = bvl_to_bvi$compile_prog cc.start 0 bvl in
+ let code = SND (bvi_tailrec$compile_prog T (backend_common$bvl_num_stubs + 2) code) in
+ let code = SND (bvi_tmc$compile_prog T (backend_common$bvl_num_stubs + 3) code) in
  let code = SND (bvi_inline$compile_prog code) in
  let data = MAP bvi_to_data$compile_part code in
  let conf = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16; call_empty_ffi := F; has_div := F; has_longdiv := F|> in

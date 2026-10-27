@@ -26,6 +26,8 @@ CASES = (
      ROOT / "Flapjack/Test/BvlHandleCakeBviOracle.lean", "BvlHandleCakeBviOracle"),
     (ROOT / "scripts/hol-probes/bvl_optimized_cake_bvi_probe.out",
      ROOT / "Flapjack/Test/BvlOptimizedCakeBviOracle.lean", "BvlOptimizedCakeBviOracle"),
+    (ROOT / "scripts/hol-probes/bvi_tmc_frontend_probe.out",
+     ROOT / "Flapjack/Test/BviTmcOracle.lean", "BviTmcOracle"),
 )
 
 CONSTRUCTORS = {
@@ -42,6 +44,7 @@ CONSTRUCTORS = {
     "RefArray": (".refArray", 0), "UpdateByte": (".updateByte", 0),
     "DerefByte": (".derefByte", 0), "LengthByte": (".lengthByte", 0),
     "Ref": (".ref", 0), "Equal": (".equal", 0), "TagEq": (".tagEq", 1), "Evaluated": (".evaluated", 0),
+    "MutCons": (".mutCons", 2), "UpdateCons": (".updateCons", 0), "FinaliseCons": (".finaliseCons", 0),
     "ConsExtend": (".consExtend", 1), "Div": (".div", 0), "Global": (".global", 1),
     "Label": (".label", 1), "LengthBlock": (".lengthBlock", 0), "Mult": (".mult", 0), "Tick": (".tick", 1),
     "SOME": ("some", 1), "NONE": ("none", 0), "F": ("false", 0), "T": ("true", 0),
@@ -50,9 +53,10 @@ CONSTRUCTORS = {
 
 def render(input_path, namespace):
     raw = input_path.read_text().strip()
-    if not raw.startswith("code="):
+    prefix = "examples=" if namespace == "BviTmcOracle" else "code="
+    if not raw.startswith(prefix):
         raise ValueError("missing HOL code row")
-    source = raw[5:]
+    source = raw.splitlines()[0][len(prefix):] if namespace == "BviTmcOracle" else raw[len(prefix):]
     tokens = re.findall(r"[A-Za-z_][A-Za-z_0-9]*|-?[0-9]+|[][(),;]", source)
     if "".join(tokens) != re.sub(r"\s+", "", source):
         raise ValueError("unexpected character in HOL output")
@@ -121,6 +125,8 @@ def render(input_path, namespace):
         body = f"  match code with\n  | {pattern} => true\n  | _ => false"
     if pos != len(tokens):
         raise ValueError("trailing HOL output")
+    code_type = ("List (Option (Flapjack.Compiler.Backend.Bvi.Exp × Flapjack.Compiler.Backend.Bvi.Exp))"
+                 if namespace == "BviTmcOracle" else "List (Nat × Nat × Flapjack.Compiler.Backend.Bvi.Exp)")
     return f'''-- Generated from the pinned original HOL compiler; do not edit.
 import Flapjack.Compiler.Backend.Bvi.Syntax
 
@@ -129,7 +135,7 @@ namespace Flapjack.Test.{namespace}
 {definitions}
 
 /-- Match every location, arity and expression in the captured BVI program. -/
-def matchesCaptured (code : List (Nat × Nat × Flapjack.Compiler.Backend.Bvi.Exp)) : Bool :=
+def matchesCaptured (code : {code_type}) : Bool :=
 {body}
 
 end Flapjack.Test.{namespace}

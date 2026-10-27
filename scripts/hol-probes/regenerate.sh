@@ -114,6 +114,13 @@ probe_needs_refresh() {
          "$cake_dir/compiler/backend/pattern_matching/pattern_exhScript.sml" -nt "$output" ) ]] ||
     [[ "$(basename "$probe")" == l3_riscv_int_to_fp_probeScript.sml &&
        "$probe_dir/binary_ieee_directed_certificates.sml" -nt "$output" ]] ||
+    [[ "$(basename "$probe")" == tmc_program_word_probeScript.sml &&
+       ( "$cake_dir/compiler/backend/bvi_tmcScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/bvi_inlineScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/bvi_to_dataScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/data_liveScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/data_spaceScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/backend/data_simpScript.sml" -nt "$output" ) ]] ||
     [[ ( "$(basename "$probe")" == bignum_word_probeScript.sml ||
          "$(basename "$probe")" == full_cake_word_probeScript.sml ||
          "$(basename "$probe")" == full_inline_cake_word_probeScript.sml ||
@@ -253,6 +260,12 @@ run_probe full_bvl_optimized_cake_word_probeScript.sml full_bvl_optimized_cake_w
 run_probe mti_ops_word_probeScript.sml mti_ops_word_probe.out \
   entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
 
+run_probe tmc_ops_word_probeScript.sml tmc_ops_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe tmc_program_word_probeScript.sml tmc_program_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
 run_probe bvl_inline_frontend_probeScript.sml bvl_inline_frontend_probe.out \
   inline size letop "$cake_dir/compiler/backend/bvl_inlineScript.sml" "$cake_dir/compiler/backend"
 
@@ -264,6 +277,9 @@ run_probe bvl_const_frontend_probeScript.sml bvl_const_frontend_probe.out \
 
 run_probe bvi_tailrec_frontend_probeScript.sml bvi_tailrec_frontend_probe.out \
   decisions cases tmc analysis rewrites program "$cake_dir/compiler/backend/bvi_tailrecScript.sml" "$cake_dir/compiler/backend"
+
+run_probe bvi_tmc_frontend_probeScript.sml bvi_tmc_frontend_probe.out \
+  examples program "$cake_dir/compiler/backend/bvi_tmcScript.sml" "$cake_dir/compiler/backend"
 
 run_probe bvl_inline_cake_bvi_probeScript.sml bvl_inline_cake_bvi_probe.out \
   code "$cake_dir/compiler/backend/bvl_inlineScript.sml" "$cake_dir/compiler/backend"

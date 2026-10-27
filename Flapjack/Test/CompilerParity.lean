@@ -306,6 +306,7 @@ import Flapjack.Test.BvlInlineParity
 import Flapjack.Test.BvlHandleParity
 import Flapjack.Test.BvlConstParity
 import Flapjack.Test.BviTailrecParity
+import Flapjack.Test.BviTmcParity
 import Flapjack.Test.BviInlineParity
 import Flapjack.Test.MiscLookupAnyFindIndexParity
 import Flapjack.Test.StackPropsClockSupportParity

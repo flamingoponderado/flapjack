@@ -114,6 +114,28 @@ def allocVar {width : Nat} [NeZero width] (conf : Config) (limit : Nat) (names :
     .ite .lower 3 (.reg 1)
       (listSeq [silentFfi conf 3 ffiCutsets, .alloc 1 cutsets, silentFfi conf 3 cutsets]) .skip]
 
+/-- Shared constructor lowering for immutable and non-generational mutable
+blocks. This is bounded-path infrastructure, not a separately reviewed port. -/
+private def compileCons {width : Nat} [NeZero width] (conf : Config) (l dest tag : Nat)
+    (args : List Nat) : WordLangProgHOL (BitVec width) × Nat :=
+  if args.isEmpty then
+    if tag < 2 ^ width / 16 then
+      (.assign (adjustVar dest) (.const (BitVec.ofNat width (16 * tag + 2))), l)
+    else (giveUp, l)
+  else match encodeHeader (width := width) conf (4 * tag) args.length with
+    | none => (giveUp, l)
+    | some header =>
+        let bytes := BitVec.ofNat width (width / 8) * BitVec.ofNat width (args.length + 1)
+        let mask := BitVec.ofNat width (2 ^ smallShiftLength conf - 1)
+        let pointer := (pointerBits conf tag args.length &&& mask) ||| 1
+        (listSeq [
+          .assign 1 (.lookup .nextFree), .assign 3 (.const header),
+          storeEach 1 (3 :: args.map adjustVar) 0,
+          .assign (adjustVar dest) (.op .or [
+            shiftN .lsl (.op .sub [.var 1, .lookup .currHeap]) (shiftLength conf - wordShiftAmount width),
+            .const pointer]),
+          .set .nextFree (.op .add [.var 1, .const bytes])], l)
+
 /-- Flapjack's partial traversal. Unsupported assignment operations and
 thunk cases return `none`; this is not HOL's total `comp`. -/
 def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
@@ -331,24 +353,8 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
                   shiftN .lsr (shiftVar .lsl src ((width - 2) - n)) (width - 10)]
           some (.assign (adjustVar dest) value, l)
       | _ => some (.skip, l)
-  | l, .assign dest (.blockOp (.cons tag)) [] _ =>
-      if tag < 2 ^ width / 16 then
-        some (.assign (adjustVar dest) (.const (BitVec.ofNat width (16 * tag + 2))), l)
-      else some (.seq (.assign 1 (.const (-1))) (.alloc 1 (adjustSets (.ln : NumSet))), l)
   | l, .assign dest (.blockOp (.cons tag)) args _ =>
-      match encodeHeader (width := width) conf (4 * tag) args.length with
-      | none => some (giveUp, l)
-      | some header =>
-          let bytes := BitVec.ofNat width (width / 8) * BitVec.ofNat width (args.length + 1)
-          let mask := BitVec.ofNat width (2 ^ smallShiftLength conf - 1)
-          let pointer := (pointerBits conf tag args.length &&& mask) ||| 1
-          some (listSeq [
-            .assign 1 (.lookup .nextFree), .assign 3 (.const header),
-            storeEach 1 (3 :: args.map adjustVar) 0,
-            .assign (adjustVar dest) (.op .or [
-              shiftN .lsl (.op .sub [.var 1, .lookup .currHeap]) (shiftLength conf - wordShiftAmount width),
-              .const pointer]),
-            .set .nextFree (.op .add [.var 1, .const bytes])], l)
+      some (compileCons conf l dest tag args)
   | l, .assign dest (.blockOp (.consExtend tag)) args names =>
       match args with
       | old :: start :: len :: total :: rest =>
@@ -465,6 +471,12 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
       | none => some (.skip, l)
   | l, .assign dest (.memOp op) args _ =>
       match op, args with
+      | .mutCons tag _, _ =>
+          match conf.gcKind with
+          | .generational _ => some (giveUp, l)
+          | _ => some (compileCons conf l dest tag args)
+      | .finaliseCons, [src] => some (.assign (adjustVar dest) (.var (adjustVar src)), l)
+      | .finaliseCons, _ => some (.skip, l)
       | .update, [base, index, value] | .updateCons, [base, index, value] =>
           let index := adjustVar index
           let scaled := if width = 32 then WordLangExpHOL.var index
