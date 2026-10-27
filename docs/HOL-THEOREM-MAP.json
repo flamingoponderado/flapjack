@@ -102733,5 +102733,125 @@
     "lean_name": "doOpApp",
     "statement_status": "pending_statement_review",
     "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "id_type_num_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Conversions.lean",
+    "lean_name": "idTypeNum",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "list_to_v_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Conversions.lean",
+    "lean_name": "listToValue",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "list_type_num_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Conversions.lean",
+    "lean_name": "listTypeNum",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "maybe_all_list_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Conversions.lean",
+    "lean_name": "maybeAllList",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "maybe_to_v_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Conversions.lean",
+    "lean_name": "maybeToValue",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "nat_to_v_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Conversions.lean",
+    "lean_name": "natToValue",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "option_type_num_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Conversions.lean",
+    "lean_name": "optionTypeNum",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "v_to_char_list_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Conversions.lean",
+    "lean_name": "valueToCharList",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "v_to_id_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Conversions.lean",
+    "lean_name": "valueToId",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "v_to_list_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Conversions.lean",
+    "lean_name": "valueToList",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "v_to_word64_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Conversions.lean",
+    "lean_name": "valueToWord64",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "v_to_word64_list_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Conversions.lean",
+    "lean_name": "valueToWord64List",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "v_to_word8_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Conversions.lean",
+    "lean_name": "valueToWord8",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "v_to_word8_list_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Conversions.lean",
+    "lean_name": "valueToWord8List",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "vs_to_string_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Conversions.lean",
+    "lean_name": "valuesToString",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
   }
 ]

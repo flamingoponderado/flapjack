@@ -1,0 +1,10 @@
+id_type=:v -> (mlstring, mlstring) id option
+chars_type=:v -> string option
+word64_type=:v -> word64 list option
+list_roundtrip=SOME [Litv (IntLit (1 :int)); Litv (IntLit (2 :int))]
+malformed=(NONE :v list option)
+chars=SOME "ab"
+strings=SOME «ab»
+identifier=SOME (Long «M» (Short «x» :(mlstring, mlstring) id))
+word8=SOME [(3w :word8); (7w :word8)]
+bad_word8=(NONE :word8 list option)
