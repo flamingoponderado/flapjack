@@ -245,6 +245,10 @@ run_probe() {
   done
 }
 
+run_probe source_to_flat_constructor_probeScript.sml source_to_flat_constructor_probe.out \
+  constructor_compile_typed constructor_check_typed constructor_build_typed \
+  "$cake_dir/compiler/backend/source_to_flatScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe source_to_flat_let_probeScript.sml source_to_flat_let_probe.out \
   named_compile_typed anonymous_compile_typed optional_bind_typed \
   "$cake_dir/compiler/backend/source_to_flatScript.sml" "$cake_dir/compiler/backend/proofs"

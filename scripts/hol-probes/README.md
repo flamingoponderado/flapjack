@@ -1,3 +1,5 @@
+`source_to_flat_constructor_probe.out` captures the original typed constructor compilation, arity check, and value construction equations. Lean proves named-constructor composition using its preliminary global invariant and fixed-global simulation relation; the complete HOL invariant and pass correctness remain open.
+
 `source_to_flat_let_probe.out` captures the original typed named and anonymous let-compilation equations and optional namespace binding. Lean proves corresponding expression composition over its preliminary fixed-global simulation relation; it does not establish the full HOL invariant or pass correctness.
 
 `source_to_flat_log_probe.out` captures the original typed short-circuit definition and its Boolean and non-Boolean cases. Lean proves logical-expression composition over its preliminary fixed-global simulation relation; source correspondence review and the complete pass correctness theorem remain open.

@@ -144,6 +144,88 @@ theorem exprSim_tuple {C F : Type} (genv : GlobalEnv) (compMap : Environment) (t
         simp only [doConCheck, ↓reduceIte]
         exact ⟨.abort error, nextRel⟩
 
+/-- A named constructor is simulated when its source lookup has the given
+arity and the global environment invariant supplies the compiled tag. -/
+theorem exprSim_constructor_valid {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
+    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (id : Ident ModN ConN) (args : List AstHOL.Exp) (stamp : Stamp) (shadowers : VarN → Prop)
+    (sourceLookup : nsLookup sourceEnv.c id = some (args.length, stamp))
+    (globalInv : GlobalEnvInv genv compMap shadowers sourceEnv)
+    (argsSim : ExprListSim genv compMap trace sourceEnv flatEnv sourceState flatState args.reverse) :
+    ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.con (some id) args) := by
+  cases globalInv with
+  | intro _ _ _ _ constructors =>
+    obtain ⟨cn, group, compiledLookup, stampLookup, _⟩ := constructors id args.length stamp sourceLookup
+    have compiledCtor : typeGroupIdType (some (cn, group)) = some (cn, group.map Prod.fst) := by
+      cases group with
+      | none => rfl
+      | some pair => cases pair; rfl
+    unfold ExprListSim at argsSim
+    rw [compileExps_reverse] at argsSim
+    cases sourceRun : EvaluateHOL.evaluate sourceState sourceEnv args.reverse with
+    | mk sourceNext sourceResult =>
+      rw [sourceRun] at argsSim
+      cases flatRun : FlatSem.evaluate flatEnv flatState (compileExps trace compMap args).reverse with
+      | mk flatNext flatResult =>
+        rw [flatRun] at argsSim
+        obtain ⟨related, nextRel⟩ := argsSim
+        cases related with
+        | value valuesRel =>
+          have lengthEq := EvaluateProps.evaluateLengthFull sourceState sourceNext sourceEnv args.reverse _ sourceRun
+          simp only [List.length_reverse] at lengthEq
+          unfold ExprSim
+          rw [EvaluateHOL.evaluate, compileExp, FlatSem.evaluate]
+          simp only [doConCheck, sourceLookup, beq_self_eq_true, ↓reduceIte,
+            Option.bind_some, compiledLookup, compiledCtor, sourceRun, flatRun, buildConv]
+          apply And.intro _ nextRel
+          apply ResultRel.value
+          apply List.Forall₂.cons _ List.Forall₂.nil
+          apply valueRel_constructor genv stamp (cn, group.map Prod.fst)
+          · exact List.rel_reverse valuesRel
+          · simpa [List.length_reverse, lengthEq] using stampLookup
+        | raise valueRel =>
+          unfold ExprSim
+          rw [EvaluateHOL.evaluate, compileExp, FlatSem.evaluate]
+          simp only [doConCheck, sourceLookup, beq_self_eq_true, ↓reduceIte, sourceRun, flatRun]
+          exact ⟨.raise valueRel, nextRel⟩
+        | abort error =>
+          unfold ExprSim
+          rw [EvaluateHOL.evaluate, compileExp, FlatSem.evaluate]
+          simp only [doConCheck, sourceLookup, beq_self_eq_true, ↓reduceIte, sourceRun, flatRun]
+          exact ⟨.abort error, nextRel⟩
+
+/-- Named-constructor simulation for source executions without a type error.
+The source constructor check supplies the arity required by the valid case. -/
+theorem exprSim_constructor {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
+    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (id : Ident ModN ConN) (args : List AstHOL.Exp) (shadowers : VarN → Prop)
+    (globalInv : GlobalEnvInv genv compMap shadowers sourceEnv)
+    (notTypeError : ∀ next : SemanticPrimitivesHOL.State F,
+      EvaluateHOL.evaluate sourceState sourceEnv [.con (some id) args] ≠ (next, .err (.abort .typeError)))
+    (argsSim : doConCheck sourceEnv.c (some id) args.length = true →
+      ExprListSim genv compMap trace sourceEnv flatEnv sourceState flatState args.reverse) :
+    ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.con (some id) args) := by
+  cases lookup : nsLookup sourceEnv.c id with
+  | none =>
+    have bad : EvaluateHOL.evaluate sourceState sourceEnv [.con (some id) args] =
+        (sourceState, .err (.abort .typeError)) := by
+      simp [EvaluateHOL.evaluate, doConCheck, lookup, EvaluateHOL.typeError]
+    exact (notTypeError sourceState bad).elim
+  | some entry =>
+    obtain ⟨arity, stamp⟩ := entry
+    by_cases same : args.length = arity
+    · subst arity
+      have valid : doConCheck sourceEnv.c (some id) args.length = true := by
+        simp [doConCheck, lookup]
+      exact exprSim_constructor_valid genv compMap trace sourceEnv flatEnv sourceState flatState
+        id args stamp shadowers lookup globalInv (argsSim valid)
+    · have bad : EvaluateHOL.evaluate sourceState sourceEnv [.con (some id) args] =
+          (sourceState, .err (.abort .typeError)) := by
+        simp [EvaluateHOL.evaluate, doConCheck, lookup, same, EvaluateHOL.typeError]
+      exact (notTypeError sourceState bad).elim
+
 /-- A singleton expression simulation is an expression-list simulation. -/
 theorem exprListSim_singleton {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
     (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
