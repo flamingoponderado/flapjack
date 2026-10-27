@@ -340,10 +340,20 @@ def check_reference(executable):
     if changed:
         raise SystemExit('reference and pinned CakeML compiler sources differ: ' + changed)
 
+def check_pinned_reference(executable):
+    version = subprocess.check_output([str(executable), '--version'], text=True)
+    if f'CakeML: {PINNED_REV}' not in version or f'HOL4:   {HOL_REV}' not in version:
+        raise SystemExit('reference executable does not report the pinned CakeML and HOL revisions')
+    actual = subprocess.check_output(['git', '-C', str(ROOT / 'cakeml'), 'rev-parse', 'HEAD'], text=True).strip()
+    if actual != PINNED_REV:
+        raise SystemExit('CakeML submodule is not at the expected pinned revision')
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--record-reference', type=Path, help='recapture from the explicitly versioned historical executable')
     parser.add_argument('--check-reference', type=Path, help='also verify captures against that historical executable')
+    parser.add_argument('--check-pinned-reference', type=Path,
+                        help='also compare every case against a pinned-revision original executable')
     parser.add_argument('--cake', type=Path, default=ROOT / '.lake/build/bin/cake')
     args = parser.parse_args()
     if args.record_reference:
@@ -363,10 +373,14 @@ if __name__ == '__main__':
         raise SystemExit('unexpected reference provenance')
     if set(expected['cases']) != set(CASES): raise SystemExit('reference case list has changed')
     if args.check_reference: check_reference(args.check_reference)
+    if args.check_pinned_reference: check_pinned_reference(args.check_pinned_reference)
     for name, source in CASES.items():
         want = expected['cases'][name]
         if args.check_reference and run(args.check_reference, source, name) != want:
             raise SystemExit(f'{name}: historical reference no longer matches its capture')
+        if args.check_pinned_reference and run(args.check_pinned_reference, source, name) != want:
+            raise SystemExit(f'{name}: pinned reference differs from the historical capture')
         got = run(args.cake, source, name)
         if got != want: raise SystemExit(f'{name}: output mismatch\nexpected {want}\nactual   {got}')
-        print(f'{name}: complete stdout, stderr and exit status match the historical reference', flush=True)
+        reference = 'pinned and historical references' if args.check_pinned_reference else 'historical reference'
+        print(f'{name}: complete stdout, stderr and exit status match the {reference}', flush=True)

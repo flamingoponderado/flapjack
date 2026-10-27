@@ -18,6 +18,10 @@ def source_help():
     text = source.split(start, 1)[1].split(end, 1)[0]
     if not text.isascii():
         raise ValueError('the CakeML help string contains non-ASCII characters')
+    # compilerScript.sml's help_string_tm drops through the first newline.
+    _, newline, text = text.partition('\n')
+    if not newline:
+        raise ValueError('the CakeML help quotation has no leading newline')
     return text
 
 

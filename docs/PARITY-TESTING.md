@@ -426,3 +426,27 @@ and multi-argument functions; each is compared over the full assembly output.
 `scripts/check-cake-help.py` separately compares the complete `--help` output
 and its flag precedence with the pinned driver source. Interactive modes remain
 unsupported; their precedence over help is preserved by reporting that limit.
+
+An additional unverified bootstrap provides an original compiler built from
+the pinned translated CakeML compiler AST. Given the pinned CakeML and HOL
+checkouts, an already-built `compiler64ProgTheory`, and the historical bootstrap
+binary described above, build it outside the reference checkouts with:
+
+```sh
+python3 scripts/build-cake-pinned-oracle.py --cakeml /path/to/pinned/cakeml \
+  --hol /path/to/pinned/HOL --output-dir /var/tmp/flapjack-cake-oracle
+python3 scripts/check-cake-cli-parity.py \
+  --check-pinned-reference /var/tmp/flapjack-cake-oracle/cake
+python3 scripts/check-cake-help.py \
+  --pinned-reference /var/tmp/flapjack-cake-oracle/cake
+```
+
+The build uses the pinned theory's `compiler64_prog_def` and the same AST
+export and historical-compiler flags as CakeML's unverified S-expression
+bootstrap. It checks both source revisions and the generated compiler's
+reported revisions. A previously exported AST may be supplied with
+`--reuse-sexpr`; its provenance then has to be checked separately. The
+bootstrap depends on the historical compiler and is not a verified pinned
+compiler build or a proof of cross-language equivalence. The CLI checker
+compares the pinned bootstrap, historical captures, and Lean executable using
+the full stdout and stderr lengths and SHA-256 hashes plus exit status.
