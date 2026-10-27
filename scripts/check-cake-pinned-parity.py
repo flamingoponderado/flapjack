@@ -60,6 +60,10 @@ CASES = {
     'explore_before_types': 'val id = fn x => x;',
     'types_print_sexp_type_error': 'val x = missing;',
     'types_explore_parse_error': 'val x = ;',
+    'explore_parse_error': 'val x = ;',
+    'explore_type_error': 'val x = missing;',
+    'explore_sexp_parse_error': '(',
+    'explore_sexp_type_error': '((Denv "x"))',
     'print_sexp_empty': '',
     'print_sexp_datatype': 'datatype t = A | B int; fun f x = case x of A => 0 | B n => n;',
     'print_sexp_exception': 'exception E int; val _ = (raise E 4) handle E n => n;',
@@ -79,6 +83,10 @@ CASE_ARGS = {
     'explore_before_types': ['--explore', '--types', '--exclude_prelude=true'],
     'types_print_sexp_type_error': ['--print_sexp', '--types', '--exclude_prelude=true'],
     'types_explore_parse_error': ['--explore', '--types', '--exclude_prelude=true'],
+    'explore_parse_error': ['--explore'],
+    'explore_type_error': ['--explore'],
+    'explore_sexp_parse_error': ['--explore', '--sexp=true'],
+    'explore_sexp_type_error': ['--explore', '--sexp=true'],
     'print_sexp_empty': ['--print_sexp', '--exclude_prelude=true'],
     'print_sexp_datatype': ['--print_sexp', '--exclude_prelude=true'],
     'print_sexp_exception': ['--print_sexp', '--exclude_prelude=true'],
@@ -91,6 +99,7 @@ CASE_ARGS = {
     'print_sexp_parse_error': ['--print_sexp', '--exclude_prelude=true'],
 }
 ERROR_CASES = {'types_print_sexp_type_error', 'types_explore_parse_error',
+               'explore_parse_error', 'explore_type_error', 'explore_sexp_parse_error', 'explore_sexp_type_error',
                'print_sexp_type_error', 'print_sexp_parse_error'}
 
 def run(executable, source, name):
@@ -134,6 +143,10 @@ def main():
         if got != want:
             raise SystemExit(f'{name}: output mismatch\nexpected {want}\nactual   {got}')
         print(f'{name}: complete stdout, stderr and exit status match pinned CakeML', flush=True)
+    unsupported = subprocess.run([str(args.cake), '--target=riscv', '--explore', '--exclude_prelude=true'],
+                                 input=b'val x = 1;', stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=180)
+    if unsupported.returncode != 2 or unsupported.stdout or b'unsupported option: --explore' not in unsupported.stderr:
+        raise SystemExit('successful explore mode must remain explicitly unsupported until its output is ported')
 
 
 if __name__ == '__main__':

@@ -22,6 +22,7 @@ structure Options where
   mainReturn : Bool := false
   onlyTypes : Bool := false
   onlySexp : Bool := false
+  explore : Bool := false
   seenTarget : Bool := false
   otherTarget : Option String := none
   seenExcludePrelude : Bool := false
@@ -294,9 +295,10 @@ private def parseArgs : List String → Options → Except String Options
         match parseBool (arg.drop "--main_return=".length |>.toString) with
         | some b => parseArgs args { options with mainReturn := b, seenMainReturn := true }
         | none => .error s!"invalid Boolean option: {arg}"
-      else if arg == "--print_sexp" || (arg == "--explore" && (options.onlyTypes || options.onlySexp)) then
+      else if arg == "--print_sexp" then
         parseArgs args options
-      else if arg == "--explore" || arg == "--pancake" ||
+      else if arg == "--explore" then parseArgs args { options with explore := true }
+      else if arg == "--pancake" ||
           arg == "--help" || arg == "--version" || arg == "--repl" || arg == "--candle" ||
           arg.startsWith "--pancake_feature=" then
         .error s!"unsupported option: {arg}"
@@ -393,9 +395,11 @@ private def outputOnlyBytes (options : Options) (source : List HolChar) :
     | .ok env => .ok env
   if options.onlyTypes then
     return Flapjack.Compiler.Inference.Infer.TypesOutput.render env
-  else
+  else if options.onlySexp then
     return [BitVec.ofNat 8 10] ++
       Flapjack.CakeParser.Sexp.render (Flapjack.CakeParser.ToSexp.program full)
+  else
+    return []
 
 def main (args : List String) : IO UInt32 := do
   if args.contains "--repl" || args.contains "--candle" then
@@ -434,8 +438,12 @@ def main (args : List String) : IO UInt32 := do
         return 2
     let input ← (← IO.getStdin).readBinToEnd
     let chars := input.data.toList.map (fun c => BitVec.ofNat 8 c.toNat)
-    let typeOutput := if options.onlyTypes || options.onlySexp then some (outputOnlyBytes options chars) else none
+    let typeOutput := if options.onlyTypes || options.onlySexp || options.explore then
+      some (outputOnlyBytes options chars) else none
     if let some (.ok bytes) := typeOutput then
+      if options.explore && !options.onlyTypes && !options.onlySexp then
+        IO.eprintln s!"cake: unsupported option: --explore\n{usage}"
+        return 2
       let stderr ← IO.getStderr
       stderr.write (ByteArray.mk (bytes.map (fun b => UInt8.ofNat b.toNat)).toArray)
       return 0

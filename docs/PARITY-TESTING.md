@@ -457,7 +457,9 @@ also checks that
 `--types` takes precedence over `--print_sexp` and `--explore` in either flag
 order, including parse and type failures.
 It also checks `--print_sexp` output for declarations, modules, byte escapes,
-the full prelude, S-expression input, and parse and type errors. Use
+the full prelude, S-expression input, and parse and type errors. The `--explore`
+cases verify parse and type errors before backend exploration;
+successful exploration remains unsupported. Use
 `--check-reference /path/to/pinned/cake` to rerun the original alongside
 Flapjack, or `--record-reference /path/to/pinned/cake` to regenerate captures;
 both commands verify the reported CakeML and HOL revisions. These finite
