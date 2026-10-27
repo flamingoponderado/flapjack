@@ -62,10 +62,12 @@ def summary(result):
             "stderr_bytes": len(result.stderr), "stderr": repr(result.stderr[:500])}
 
 
-def compare(reference, cake, options, source, timeout, require_success):
+def compare(reference, cake, options, source, timeout, require_success, output_channel="stdout"):
     expected = run(reference, options, source, timeout)
     actual = run(cake, options, source, timeout)
-    if require_success and (expected.returncode != 0 or not expected.stdout or expected.stderr):
+    other_channel = "stderr" if output_channel == "stdout" else "stdout"
+    if require_success and (expected.returncode != 0 or not getattr(expected, output_channel) or
+                            getattr(expected, other_channel)):
         raise SystemExit(f"generated compilation case rejected by pinned CakeML: {source}\n{summary(expected)}")
     if (expected.returncode, expected.stdout, expected.stderr) != (actual.returncode, actual.stdout, actual.stderr):
         raise SystemExit(f"output mismatch for {options}:\n{source}\n"
@@ -78,17 +80,34 @@ def main():
     parser.add_argument("--cake", type=Path, default=ROOT / ".lake/build/bin/cake")
     parser.add_argument("--type-cases", type=int, default=200)
     parser.add_argument("--compile-cases", type=int, default=20)
+    parser.add_argument("--sexp-cases", type=int, default=100,
+                        help="generated programs to compare in S-expression output mode")
+    parser.add_argument("--byte-cases", type=int, default=256,
+                        help="decimal string escapes to compare, from byte 0 (maximum 256)")
+    parser.add_argument("--type-seed", type=int, default=42)
+    parser.add_argument("--compile-seed", type=int, default=27)
     parser.add_argument("--timeout", type=int, default=90)
     args = parser.parse_args()
-    if args.type_cases < 0 or args.compile_cases < 0 or args.timeout <= 0:
-        parser.error("case counts must be nonnegative and timeout positive")
+    if (args.type_cases < 0 or args.compile_cases < 0 or args.sexp_cases < 0 or
+            not 0 <= args.byte_cases <= 256 or args.timeout <= 0):
+        parser.error("case counts must be nonnegative, byte-cases at most 256, and timeout positive")
     parity.check_pinned_reference(args.reference)
-    types_rng = random.Random(42)
+    types_rng = random.Random(args.type_seed)
     for _ in range(args.type_cases):
         compare(args.reference, args.cake, ["--types", "--exclude_prelude=true"],
                 type_program(types_rng), args.timeout, False)
     print(f"{args.type_cases} structured parser and type-checking cases match pinned CakeML", flush=True)
-    compile_rng = random.Random(27)
+    sexp_rng = random.Random(args.type_seed)
+    for _ in range(args.sexp_cases):
+        compare(args.reference, args.cake, ["--print_sexp", "--exclude_prelude=true"],
+                type_program(sexp_rng), args.timeout, False)
+    print(f"{args.sexp_cases} generated S-expression output cases match pinned CakeML", flush=True)
+    for byte in range(args.byte_cases):
+        for literal in (f'"\\{byte:03d}"', f'#"\\{byte:03d}"'):
+            compare(args.reference, args.cake, ["--print_sexp", "--exclude_prelude=true"],
+                    f"val x = {literal};", args.timeout, True, output_channel="stderr")
+    print(f"{args.byte_cases} decimal string and character escapes match pinned CakeML", flush=True)
+    compile_rng = random.Random(args.compile_seed)
     for _ in range(args.compile_cases):
         depth = compile_rng.randint(1, 3)
         source = f"fun f x = {integer_expression(compile_rng, depth)}; val _ = print_int (f 7);"
