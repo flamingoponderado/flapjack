@@ -323,7 +323,15 @@ val data_int_word = EVAL ``
     (wordLang$Seq (wordLang$If asm$Test 5 (asm$Imm 1w) wordLang$Skip
      (wordLang$Seq (wordLang$MustTerminate (wordLang$Call (SOME ([1], (sptree$LS (), sptree$LN), wordLang$Skip, 5, 2)) (SOME 19) [1;3] NONE)) (wordLang$Assign 3 (wordLang$Const 1w))))
      (wordLang$If asm$Less 1 (asm$Reg 3) (wordLang$Assign 8 (wordLang$Const 18w)) (wordLang$Assign 8 (wordLang$Const 2w)))))), 3) /\
- (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$IntOp closLang$Add) [1] NONE) : 64 wordLang$prog # num) = (wordLang$Skip, 2)``;
+ (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$IntOp closLang$Add) [1] NONE) : 64 wordLang$prog # num) = (wordLang$Skip, 2) /\
+ (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$BlockOp closLang$Equal) [1;2] NONE) : 64 wordLang$prog # num) =
+  (wordLang$Seq (wordLang$Assign 1 (wordLang$Var 4)) (wordLang$Seq (wordLang$Assign 3 (wordLang$Var 6))
+   (wordLang$Seq (wordLang$Assign 5 (wordLang$Op asm$And [wordLang$Var 1; wordLang$Var 3]))
+    (wordLang$Seq (wordLang$If asm$Test 5 (asm$Imm 1w) wordLang$Skip
+     (wordLang$If asm$Equal 1 (asm$Reg 3) wordLang$Skip
+      (wordLang$Seq (wordLang$MustTerminate (wordLang$Call (SOME ([1], (sptree$LS (), sptree$LN), wordLang$Skip, 5, 2)) (SOME 21) [1;3] NONE)) (wordLang$Assign 3 (wordLang$Const 1w)))))
+     (wordLang$If asm$Equal 1 (asm$Reg 3) (wordLang$Assign 8 (wordLang$Const 18w)) (wordLang$Assign 8 (wordLang$Const 2w)))))), 3) /\
+ (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$BlockOp closLang$Equal) [1] NONE) : 64 wordLang$prog # num) = (wordLang$Skip, 2)``;
 val _ = (print "data_to_word_int="; print_term (rhs (concl (CONV_RULE
   (RAND_CONV (SIMP_CONV (srw_ss()) [wordsTheory.dimindex_64, wordsTheory.dimword_def] THENC EVAL)) data_int_word))); print "\n");
 val data_ref_array_word = EVAL ``

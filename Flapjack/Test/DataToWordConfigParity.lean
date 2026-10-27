@@ -152,6 +152,17 @@ private def headerConfig : Config := { conf with lenSize := 4 }
         (.ite .less 1 (.reg 3) (.assign 8 (.const 18)) (.assign 8 (.const 2)))))), 3) => true
   | _ => false
 #guard Flapjack.Test.CakeMLFlatOracle.data_to_word_int
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp .equal) [1, 2] none) with
+  | some (.seq (.assign 1 (.var 4)) (.seq (.assign 3 (.var 6))
+      (.seq (.assign 5 (.op .and [.var 1, .var 3]))
+       (.seq (.ite .test 5 (.imm 1) .skip (.ite .equal 1 (.reg 3) .skip
+        (.seq (.mustTerminate (.call (some ([1], (.ls (), .ln), .skip, 5, 2)) (some 21) [1, 3] none))
+         (.assign 3 (.const 1)))))
+        (.ite .equal 1 (.reg 3) (.assign 8 (.const 18)) (.assign 8 (.const 2)))))), 3) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp .equal) [1] none) with
+  | some (.skip, 2) => true
+  | _ => false
 #guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp .refArray) [1, 2] none) with
   | some (.seq (.ite .test 4 (.imm 1) .skip (.seq (.assign 1 (.const fail)) (.alloc 1 (.ls (), .ln))))
       (.seq (.move 0 [(1, 4)])

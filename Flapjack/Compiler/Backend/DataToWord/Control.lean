@@ -175,6 +175,19 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
       match args with
       | [x, y] => some (boolResult dest .equal (adjustVar x) (.reg (adjustVar y)), l)
       | _ => some (.skip, l)
+  | l, .assign dest (.blockOp .equal) args names =>
+      match args with
+      | [x, y] =>
+          let cutsets := adjustSets (names.getD .ln)
+          some (listSeq [
+            .assign 1 (.var (adjustVar x)), .assign 3 (.var (adjustVar y)),
+            .assign 5 (.op .and [.var 1, .var 3]),
+            .ite .test 5 (.imm 1) .skip
+              (.ite .equal 1 (.reg 3) .skip
+                (.seq (.mustTerminate (.call (some ([1], cutsets, .skip, secn, l))
+                  (some equalLocation) [1, 3] none)) (.assign 3 (.const 1)))),
+            boolResult dest .equal 1 (.reg 3)], l + 1)
+      | _ => some (.skip, l)
   | l, .assign dest (.intOp (.lessConstSmall i)) args _ =>
       match args with
       | [src] => some (boolResult dest .less (adjustVar src) (.imm (BitVec.ofNat width (4 * i))), l)

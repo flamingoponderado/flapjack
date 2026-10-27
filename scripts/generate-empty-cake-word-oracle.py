@@ -12,9 +12,9 @@ CONSTRUCTORS = {
     "If": (".ite", 5), "Test": (".test", 0), "Imm": (".imm", 1),
     "Skip": (".skip", 0), "Alloc": (".alloc", 2), "Var": (".var", 1),
     "Lsr": (".lsr", 0), "Lsl": (".lsl", 0), "Lower": (".lower", 0),
-    "Op": (".op", 2), "Add": (".add", 0), "Sub": (".sub", 0),
+    "Op": (".op", 2), "Add": (".add", 0), "Sub": (".sub", 0), "Or": (".or", 0),
     "Lookup": (".lookup", 1), "TriggerGC": (".triggerGC", 0),
-    "NextFree": (".nextFree", 0), "CurrHeap": (".currHeap", 0),
+    "NextFree": (".nextFree", 0), "CurrHeap": (".currHeap", 0), "EndOfHeap": (".endOfHeap", 0),
     "Reg": (".reg", 1), "MustTerminate": (".mustTerminate", 1),
     "Call": (".call", 4), "SOME": ("some", 1), "NONE": ("none", 0),
     "Store": (".store", 2), "Set": (".set", 2), "Globals": (".globals", 0),
@@ -105,7 +105,7 @@ import Flapjack.Pancake.WordLang
 
 namespace Flapjack.Test.EmptyCakeWordOracle
 
-/-- Match the complete captured entry function, including every live set. -/
+/-- Match every captured function, including every live set and next label. -/
 def matchesCaptured (code : List (Nat × Nat × (Flapjack.WordLangProgHOL (BitVec 64) × Nat))) : Bool :=
   match code with
   | {pattern} =>
