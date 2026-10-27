@@ -1,3 +1,5 @@
+`cake_flat_sem_eval_probe.out` captures typed flat clock, choice-based byte/word decoding, and dynamic-compilation definitions, replays the clock-bound theorem, and proves concrete decoding and oracle observations. Lean fixtures match those cases; the flat evaluator and compiler correctness remain open.
+
 `source_to_flat_pmatch_statement_probe.out` captures a typed quotation of the complete original local pattern theorem, including both pattern and list conjuncts and independent compiler/FFI types. It does not replay the HOL proof. Lean proves analogous wrappers with the original explicit environment, store, and flat-global hypotheses over factored relations; full HOL correspondence remains open.
 
 `source_to_flat_state_pattern_probe.out` captures the complete typed original store and state relation rules, state inversion, and match-result relation. Lean uses analogous untagged relations over its factored value relation; full correspondence and pattern-preservation assembly remain open.

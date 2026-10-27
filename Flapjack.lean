@@ -220,6 +220,7 @@ import Flapjack.Compiler.Backend.Semantics.FlatSem.Conversions
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Primitives
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Test
 import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
+import Flapjack.Compiler.Backend.Semantics.FlatSem.Eval
 import Flapjack.Compiler.Backend.SourceToFlat.CompileDecs
 import Flapjack.Compiler.Backend.SourceToFlat.CompileProg
 import Flapjack.Compiler.Backend.FlatElim.Reachability

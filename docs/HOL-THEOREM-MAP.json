@@ -105276,5 +105276,53 @@
     "lean_name": "doIf_either_or",
     "statement_status": "reviewed_exact",
     "reviewer": "Codex source comparison: The original single successful-selection equation implies that the selected value equals the first or the second arbitrary branch; no extra premises are added. Typed original declarations and example outcomes are in source_to_flat_primitive_type_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "dec_clock_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Eval.lean",
+    "lean_name": "decClock",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: The only update is natural-number subtraction of one from the existing clock. The original inferred types, theorem replay and representative outcomes are captured in cake_flat_sem_eval_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "fix_clock_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Eval.lean",
+    "lean_name": "fixClock",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: The incoming and returned state compiler and FFI type variables are independently polymorphic; only the returned clock changes to the minimum and the arbitrary result is preserved. The original inferred types, theorem replay and representative outcomes are captured in cake_flat_sem_eval_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "fix_clock_IMP",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Eval.lean",
+    "lean_name": "fixClock_imp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: The sole original fixed-pair equality implies the returned clock is bounded by the incoming clock. Incoming and returned states retain four independent carrier variables and the result carrier is arbitrary. The original inferred types, theorem replay and representative outcomes are captured in cake_flat_sem_eval_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "v_to_bytes_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Eval.lean",
+    "lean_name": "valueToBytes",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: The option choice selects precisely a list of 8-bit words whose encoded literal list equals successful flat-list decoding. The same-module kernel theorem establishes uniqueness and the successful-result characterization. The original inferred types, theorem replay and representative outcomes are captured in cake_flat_sem_eval_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "v_to_words_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Eval.lean",
+    "lean_name": "valueToWords",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: The option choice selects precisely a list of 64-bit words whose encoded literal list equals successful flat-list decoding. The same-module kernel theorem establishes uniqueness and the successful-result characterization. The original inferred types, theorem replay and representative outcomes are captured in cake_flat_sem_eval_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_eval_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Eval.lean",
+    "lean_name": "doEval",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: Requires exactly two decoded lists, invokes the oracle at zero and its compiler, compares bytes and words, requires nonempty declarations and the shifted oracle state to match, and returns the same declarations, shifted oracle and Unitv. The compiler state carrier remains arbitrary. The original inferred types, theorem replay and representative outcomes are captured in cake_flat_sem_eval_probe."
   }
 ]

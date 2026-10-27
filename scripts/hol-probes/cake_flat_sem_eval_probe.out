@@ -1,0 +1,13 @@
+dec_clock_typed=∀(s :(α, β) state). dec_clock s = s with clock := s.clock − (1 :num)
+fix_clock_typed=∀(s :(δ, ε) state) (s1 :(α, β) state) (res :γ). fix_clock s (s1,res) = (s1 with clock := MIN s.clock s1.clock,res)
+bytes_typed=∀(lv :v). v_to_bytes lv = some(ns :word8 list). v_to_list lv = SOME (MAP (Litv ∘ Word8) ns)
+words_typed=∀(lv :v). v_to_words lv = some(ns :word64 list). v_to_list lv = SOME (MAP (Litv ∘ Word64) ns)
+do_eval_typed=∀(vs :v list) (eval_config :α install_config). (do_eval vs eval_config :(exp list # α install_config # v) option) = case vs of ([] :v list) => (NONE :(exp list # α install_config # v) option) | [v1] => (NONE :(exp list # α install_config # v) option) | [v1; v2] => (case (v_to_bytes v1,v_to_words v2) of ((NONE :word8 list option),v4) => (NONE :(exp list # α install_config # v) option) | (SOME bytes,(NONE :word64 list option)) => (NONE :(exp list # α install_config # v) option) | (SOME bytes,SOME data) => (let ((st :α),(decs :exp list)) = eval_config.compile_oracle (0 :num); (new_oracle :num -> α # exp list) = shift_seq (1 :num) eval_config.compile_oracle in case eval_config.compile st decs of (NONE :(word8 list # word64 list # α) option) => (NONE :(exp list # α install_config # v) option) | SOME (bytes',data',st') => if bytes = bytes' ∧ data = data' ∧ decs ≠ ([] :exp list) ∧ FST (new_oracle (0 :num)) = st' then SOME (decs,eval_config with compile_oracle := new_oracle,Unitv) else (NONE :(exp list # α install_config # v) option))) | v1::v2::v15::v16 => (NONE :(exp list # α install_config # v) option)
+fix_clock_imp_typed=fix_clock (s :(δ, ε) state) (x :(α, β) state # γ) = ((s1 :(α, β) state),(res :γ)) ⇒ s1.clock ≤ s.clock
+zero_clock=0
+decrement=3
+fix_clamps=3
+empty_eval=NONE
+bytes_valid=SOME [2w; 255w]
+words_valid=SOME [4w]
+eval_success=SOME (1,2)
