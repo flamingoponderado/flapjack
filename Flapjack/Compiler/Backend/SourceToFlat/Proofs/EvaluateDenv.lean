@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvalOracleSimulation
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.MakeVarls
 import Flapjack.EvaluateHOL.Definition
+import Flapjack.HolRef
 
 /-! Source-to-flat execution of the environment declaration. The flat
 evaluator and factored relations still require HOL correspondence review. -/
@@ -8,8 +9,9 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.SemanticPrimitivesHOL
 open OracleInvariant
 
-/-- The four namespace domains compared by the source-to-flat declaration
-proof. This rendering remains untagged pending HOL carrier and statement review. -/
+/-- Equality of value, constructor, and module domains for the compiler and
+polymorphic source environments. -/
+@[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "env_domain_eq_def"]
 def EnvDomainEq {α : Type} (compMap : Environment) (env : SemEnv α) : Prop :=
   nsDom compMap.v = nsDom env.v ∧ nsDomMod compMap.v = nsDomMod env.v ∧
     nsDom compMap.c = nsDom env.c ∧ nsDomMod compMap.c = nsDomMod env.c

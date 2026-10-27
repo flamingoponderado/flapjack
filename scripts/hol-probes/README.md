@@ -9088,3 +9088,8 @@ The capture is finite regression evidence, not a cross-language equivalence proo
 `prim_sem_env_probeScript.sml` captures the original semantic initialization types for `Flapjack/PrimTypesHOL.lean`.
 
 `cake_evaluate_ffi_props_probeScript.sml` captures the pinned typed evaluator, primitive-application, FFI trace, and oracle-preservation lemmas used by `Flapjack/EvaluateProps.lean`.
+
+`source_to_flat_env_domain_probe.out` records the polymorphic type and four
+namespace-domain clauses of `env_domain_eq_def`; `EnvDomainEq` retains the
+independent source value type and all four domain equalities. The capture is
+source-review evidence, not a cross-language equivalence proof.

@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "env_domain_eq_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EvaluateDenv.lean",
+    "lean_name": "EnvDomainEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed env_domain_eq capture and the namespace carriers: the source environment value type remains independent, and the definition equates value and constructor namespace domains and their module domains in the same order. Both namespace sets are represented as predicates, with constructor-for-constructor namespace and mlstring carriers."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "eval_state_call_rel_def",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleInvariant.lean",
     "lean_name": "evalStateCallRel",

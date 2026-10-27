@@ -1,0 +1,2 @@
+env_domain_type=:source_to_flat$environment -> α sem_env -> bool
+env_domain_definition=∀(var_map :source_to_flat$environment) (env :α sem_env). env_domain_eq var_map env ⇔ nsDom var_map.v = nsDom env.v ∧ nsDomMod var_map.v = nsDomMod env.v ∧ nsDom var_map.c = nsDom env.c ∧ nsDomMod var_map.c = nsDomMod env.c

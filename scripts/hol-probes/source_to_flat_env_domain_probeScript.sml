@@ -1,0 +1,10 @@
+load "source_to_flatProofTheory";
+open HolKernel Parse boolLib bossLib;
+val _ = Globals.linewidth := 1000000;
+val _ = Globals.show_types := true;
+val _ = print "env_domain_type=";
+val _ = print_type (type_of ``source_to_flatProof$env_domain_eq``);
+val _ = print "\n";
+val _ = print "env_domain_definition=";
+val _ = print_term (concl source_to_flatProofTheory.env_domain_eq_def);
+val _ = print "\n";
