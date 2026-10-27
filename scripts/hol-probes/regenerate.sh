@@ -70,7 +70,9 @@ probe_needs_refresh() {
          "$(basename "$probe")" == empty_cake_data_probeScript.sml ||
          "$(basename "$probe")" == reference_cake_data_probeScript.sml ||
          "$(basename "$probe")" == match_cake_data_probeScript.sml ||
-         "$(basename "$probe")" == empty_cake_word_probeScript.sml ) &&
+         "$(basename "$probe")" == empty_cake_word_probeScript.sml ||
+         "$(basename "$probe")" == reference_cake_word_probeScript.sml ||
+         "$(basename "$probe")" == match_cake_word_probeScript.sml ) &&
        ( "$cake_dir/compiler/backend/source_to_sourceScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/source_to_flatScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/flat_elimScript.sml" -nt "$output" ||
@@ -169,6 +171,12 @@ run_probe data_to_word_header_types_probeScript.sml data_to_word_header_types_pr
   "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
 
 run_probe empty_cake_word_probeScript.sml empty_cake_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe reference_cake_word_probeScript.sml reference_cake_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe match_cake_word_probeScript.sml match_cake_word_probe.out \
   entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
 
 run_probe empty_cake_bvi_probeScript.sml empty_cake_bvi_probe.out \

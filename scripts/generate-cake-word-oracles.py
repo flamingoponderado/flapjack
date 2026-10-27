@@ -5,26 +5,29 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-INPUT = ROOT / "scripts/hol-probes/empty_cake_word_probe.out"
-OUTPUT = ROOT / "Flapjack/Test/EmptyCakeWordOracle.lean"
+CASES = tuple(
+    (ROOT / f"scripts/hol-probes/{name}_cake_word_probe.out",
+     ROOT / f"Flapjack/Test/{title}CakeWordOracle.lean", f"{title}CakeWordOracle")
+    for name, title in (("empty", "Empty"), ("reference", "Reference"), ("match", "Match"))
+)
 CONSTRUCTORS = {
     "Seq": (".seq", 2), "Assign": (".assign", 2), "Const": (".const", 1),
-    "If": (".ite", 5), "Test": (".test", 0), "Imm": (".imm", 1),
+    "If": (".ite", 5), "Test": (".test", 0), "Equal": (".equal", 0), "Imm": (".imm", 1),
     "Skip": (".skip", 0), "Alloc": (".alloc", 2), "Var": (".var", 1),
     "Lsr": (".lsr", 0), "Lsl": (".lsl", 0), "Lower": (".lower", 0),
-    "Op": (".op", 2), "Add": (".add", 0), "Sub": (".sub", 0), "Or": (".or", 0),
+    "Op": (".op", 2), "Add": (".add", 0), "Sub": (".sub", 0), "Or": (".or", 0), "And": (".and", 0),
     "Lookup": (".lookup", 1), "TriggerGC": (".triggerGC", 0),
     "NextFree": (".nextFree", 0), "CurrHeap": (".currHeap", 0), "EndOfHeap": (".endOfHeap", 0),
     "Reg": (".reg", 1), "MustTerminate": (".mustTerminate", 1),
     "Call": (".call", 4), "SOME": ("some", 1), "NONE": ("none", 0),
     "Store": (".store", 2), "Set": (".set", 2), "Globals": (".globals", 0),
     "GlobReal": (".globReal", 0), "Return": (".return", 2), "LN": (".ln", 0),
-    "FALSE_CONST": ("(.const 2)", 0),
+    "FALSE_CONST": ("(.const 2)", 0), "TRUE_CONST": ("(.const 18)", 0),
 }
 
 
-def render():
-    raw = INPUT.read_text().strip()
+def render(input_path, namespace):
+    raw = input_path.read_text().strip()
     if not raw.startswith("entry="):
         raise ValueError("missing HOL entry row")
     source = raw[6:]
@@ -103,7 +106,7 @@ def render():
     return f'''-- Generated from the pinned original HOL compiler; do not edit.
 import Flapjack.Pancake.WordLang
 
-namespace Flapjack.Test.EmptyCakeWordOracle
+namespace Flapjack.Test.{namespace}
 
 /-- Match every captured function, including every live set and next label. -/
 def matchesCaptured (code : List (Nat × Nat × (Flapjack.WordLangProgHOL (BitVec 64) × Nat))) : Bool :=
@@ -112,7 +115,7 @@ def matchesCaptured (code : List (Nat × Nat × (Flapjack.WordLangProgHOL (BitVe
       {checks}
   | _ => false
 
-end Flapjack.Test.EmptyCakeWordOracle
+end Flapjack.Test.{namespace}
 '''
 
 
@@ -120,13 +123,14 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
-    expected = render()
-    if args.check:
-        if not OUTPUT.exists() or OUTPUT.read_text() != expected:
-            raise SystemExit(f"{OUTPUT} is stale; regenerate it from the HOL capture")
-        print("EmptyCakeWordOracle matches the captured HOL output")
-    else:
-        OUTPUT.write_text(expected)
+    for input_path, output_path, namespace in CASES:
+        expected = render(input_path, namespace)
+        if args.check:
+            if not output_path.exists() or output_path.read_text() != expected:
+                raise SystemExit(f"{output_path} is stale; regenerate it from the HOL capture")
+            print(f"{namespace} matches the captured HOL output")
+        else:
+            output_path.write_text(expected)
 
 
 if __name__ == "__main__":

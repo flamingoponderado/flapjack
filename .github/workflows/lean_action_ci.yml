@@ -54,7 +54,7 @@ jobs:
           python3 scripts/generate-cakeml-flat-oracle.py --check
           python3 scripts/generate-cake-bvi-oracles.py --check
           python3 scripts/generate-cake-data-oracles.py --check
-          python3 scripts/generate-empty-cake-word-oracle.py --check
+          python3 scripts/generate-cake-word-oracles.py --check
 
       - name: Check Pan-to-Crep intermediate fixture coverage
         run: python3 scripts/pan-to-crep-coverage-report.py --check
