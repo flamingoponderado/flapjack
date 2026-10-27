@@ -1,13 +1,25 @@
 import Flapjack.EvaluateProps
+import Aesop
 import Flapjack.SemanticPrimitivesHOL.ApplyNumeric
 
-/-! FFI, test, conversion, and arithmetic cases of the original
-primitive-application transition theorem. The other primitive cases and the
-assembling theorem remain open. The evaluator and dispatcher are pending source
-and carrier review; floating-point operations inherit the rational-cut assumption
-in `docs/SOUNDNESS.md`. -/
+/-! Cases and assembly of the original primitive-application FFI transition
+theorem. The evaluator and dispatcher are pending source and carrier review;
+floating-point operations inherit the rational-cut assumption in
+`docs/SOUNDNESS.md`. -/
 namespace Flapjack.EvaluateProps
 open Flapjack.SemanticPrimitivesHOL Flapjack.Basis.Pure.MlString
+
+/-- Flapjack helper, with no separate HOL declaration: the basic dispatcher
+preserves the FFI state or returns a successful FFI transition. -/
+theorem doAppBasic_ffi {σ : Type} (store store' : Store Value)
+    (ffi ffi' : HolFfiState σ) (op : AstHOL.Op) (values : List Value)
+    (result : Result Value Value)
+    (h : doAppBasic (store, ffi) op values = some (some ((store', ffi'), result))) :
+    ffi' = ffi ∨ ∃ name conf bytes returned,
+      callFFIHOL ffi name conf bytes = .ret ffi' returned := by
+  cases op <;> simp only [doAppBasic] at h <;>
+    repeat' first | split at h | simp_all [Option.bind_eq_some_iff, boundsFailure, readIndexed, updateIndexed, thunkOp]
+  all_goals aesop
 
 /-- Flapjack helper: numeric application does not modify the FFI state. -/
 theorem doAppNumericCore_ffi {σ : Type} (store store' : Store Value)
@@ -78,5 +90,47 @@ theorem doAppFfi_callFFIRel {σ : Type} (store store' : Store Value)
     simp_all
     apply Relation.ReflTransGen.single
     exact ⟨_, _, _, _, by assumption⟩
+
+/-- Flapjack helper for dispatching a supported basic operation. -/
+theorem doAppBasic_getD_callFFIRel {σ : Type} (store store' : Store Value)
+    (ffi ffi' : HolFfiState σ) (op : AstHOL.Op) (values : List Value)
+    (result : Result Value Value)
+    (h : (doAppBasic (store, ffi) op values).getD none = some ((store', ffi'), result)) :
+    Relation.ReflTransGen callFFIRelHOL ffi ffi' := by
+  cases hb : doAppBasic (store, ffi) op values with
+  | none => simp [hb] at h
+  | some outcome =>
+    simp only [hb, Option.getD] at h
+    have hbasic : doAppBasic (store, ffi) op values = some (some ((store', ffi'), result)) := by
+      rw [hb]; exact congrArg some h
+    rcases doAppBasic_ffi store store' ffi ffi' op values result hbasic with heq | ⟨name, conf, bytes, returned, hcall⟩
+    · subst ffi'; exact Relation.ReflTransGen.refl
+    · exact Relation.ReflTransGen.single ⟨name, conf, bytes, returned, hcall⟩
+
+/-- The complete original primitive-application FFI transition theorem.
+The dispatcher and its carriers are pending full source review. -/
+@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "do_app_call_FFI_rel"]
+theorem doApp_callFFIRel {σ : Type} (store store' : Store Value)
+    (ffi ffi' : HolFfiState σ) (op : AstHOL.Op) (values : List Value)
+    (result : Result Value Value)
+    (h : doApp (store, ffi) op values = some ((store', ffi'), result)) :
+    Relation.ReflTransGen callFFIRelHOL ffi ffi' := by
+  cases op with
+  | arith action typ => exact doAppArith_callFFIRel store store' ffi ffi' action typ values result h
+  | test test typ => exact doAppTest_callFFIRel store store' ffi ffi' test typ values result h
+  | ffi name => exact doAppFfi_callFFIRel store store' ffi ffi' name values result h
+  | fromTo source target => exact doAppFromTo_callFFIRel store store' ffi ffi' source target values result h
+  | _ =>
+    simp only [doApp, doAppNumericCore] at h
+    exact doAppBasic_getD_callFFIRel store store' ffi ffi' _ values result h
+
+/-- Primitive execution preserves and extends FFI traces. -/
+@[hol "cakeml/semantics/proofs/evaluatePropsScript.sml" "do_app_io_events_mono"]
+theorem doApp_ioEventsMono {σ : Type} (store store' : Store Value)
+    (ffi ffi' : HolFfiState σ) (op : AstHOL.Op) (values : List Value)
+    (result : Result Value Value)
+    (h : doApp (store, ffi) op values = some ((store', ffi'), result)) :
+    ioEventsMonoHOL ffi ffi' :=
+  callFFIRelHOL_rtc_ioEventsMono ffi ffi' (doApp_callFFIRel store store' ffi ffi' op values result h)
 
 end Flapjack.EvaluateProps

@@ -2,6 +2,7 @@ load "evaluatePropsTheory";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
+val _ = (print "do_app_io_mono="; print_thm evaluatePropsTheory.do_app_io_events_mono; print "\n");
 val _ = (print "do_app_call_ffi="; print_thm evaluatePropsTheory.do_app_call_FFI_rel; print "\n");
 val _ = (print "call_length="; print_thm evaluatePropsTheory.call_FFI_LENGTH; print "\n");
 val _ = (print "mono_definition="; print_thm evaluatePropsTheory.io_events_mono_def; print "\n");

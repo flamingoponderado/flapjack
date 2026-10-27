@@ -14,18 +14,18 @@ open Flapjack.AstHOL Flapjack.Basis.Pure.MlString
 abbrev BasicAppResult (σ : Type) :=
   (Store Value × HolFfiState σ) × Result Value Value
 
-private def boundsFailure {σ : Type} (state : Store Value × HolFfiState σ)
+def boundsFailure {σ : Type} (state : Store Value × HolFfiState σ)
     (isUnsafe : Bool) : Option (BasicAppResult σ) :=
   if isUnsafe then none else some (state, .err (.raise subExnV))
 
-private def readIndexed {σ α : Type} (state : Store Value × HolFfiState σ)
+def readIndexed {σ α : Type} (state : Store Value × HolFfiState σ)
     (isUnsafe : Bool) (items : List α) (index : Int) (toValue : α → Value) : Option (BasicAppResult σ) :=
   if index < 0 then boundsFailure state isUnsafe else
   match items[index.toNat]? with
   | none => boundsFailure state isUnsafe
   | some value => some (state, .val (toValue value))
 
-private def updateIndexed {σ α : Type} (state : Store Value × HolFfiState σ)
+def updateIndexed {σ α : Type} (state : Store Value × HolFfiState σ)
     (isUnsafe : Bool) (address : Nat) (items : List α) (index : Int) (value : α)
     (asStore : List α → StoreValue Value) : Option (BasicAppResult σ) := do
   if index < 0 || items.length ≤ index.toNat then boundsFailure state isUnsafe else
