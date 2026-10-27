@@ -36,3 +36,20 @@ val _ = (print "analysis="; print_term (rhs (concl (EVAL ``
     (bvi$Op (closLang$IntOp closLang$Add) [bvi$Var 1; call]);
   bvi$Op (closLang$BlockOp closLang$ListAppend) [bvi$Op (closLang$BlockOp (closLang$Cons 0)) []; call];
   bvi$Op (closLang$IntOp closLang$Add) [c 268435458; call]]``))); print "\n");
+val _ = (print "rewrites="; print_term (rhs (concl (EVAL ``
+ let c = \i. bvi$Op (closLang$IntOp (closLang$Const i)) [] in
+ let call = bvi$Call 0 (SOME 3) [bvi$Var 0] NONE in
+ let es = [bvi$Op (closLang$IntOp closLang$Add) [c 1; call];
+   bvi$Op (closLang$IntOp closLang$Mult) [call; c 2];
+   bvi$If (bvi$Var 0) (bvi$Op (closLang$IntOp closLang$Add) [c 1; call]) (c 7);
+   bvi$Let [bvi$Op (closLang$IntOp closLang$Less) [bvi$Var 0; c 4]]
+     (bvi$Op (closLang$IntOp closLang$Add) [bvi$Var 1; call]);
+   bvi$Op (closLang$BlockOp closLang$ListAppend) [bvi$Op (closLang$BlockOp (closLang$Cons 0)) []; call];
+   bvi$Op (closLang$IntOp closLang$Add) [bvi$Var 0; call]] in
+ MAP (bvi_tailrec$compile_exp 3 58 1) es``))); print "\n");
+val _ = (print "program="; print_term (rhs (concl (EVAL ``
+ let c = \i. bvi$Op (closLang$IntOp (closLang$Const i)) [] in
+ bvi_tailrec$compile_prog T 58
+ [(3,1,bvi$Op (closLang$IntOp closLang$Add) [c 1; bvi$Call 0 (SOME 3) [bvi$Var 0] NONE]);
+  (7,1,bvi$Op (closLang$IntOp closLang$Mult) [c 2; bvi$Call 0 (SOME 7) [bvi$Var 0] NONE]);
+  (8,0,bvi$Var 0)]``))); print "\n");

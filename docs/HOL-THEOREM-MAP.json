@@ -101862,5 +101862,21 @@
     "hol_name": "assoc_op",
     "statement_status": "pending_statement_review",
     "reviewer": "Four nullary constructors transcribed; source typing and complete declaration review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Analysis.lean",
+    "lean_name": "fromOp",
+    "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
+    "hol_name": "from_op_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source operator classification transcribed; full carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BviTailrec/Analysis.lean",
+    "lean_name": "toOp",
+    "hol_path": "cakeml/compiler/backend/bvi_tailrecScript.sml",
+    "hol_name": "to_op_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source accumulator operation mapping transcribed; full carrier and statement review remains pending."
   }
 ]

@@ -42,7 +42,7 @@
 
 `bvl_const_frontend_probe.out` captures constant propagation, operation rewrites, and signed floor division and remainder. `bvl_optimized_cake_bvi_probe.out` captures the complete BVI output for the nested-function declaration after the original BVL inlining pipeline, including constant folding, while later optimizations remain omitted.
 
-`bvi_tailrec_frontend_probe.out` captures the original tail-recursion candidate decisions for every BVI function of that example, focused recursion-detector and type-analysis cases, and tail-modulo-constructor decisions. The Lean tail-recursion route accepts only functions for which the bounded analysis selects no rewrite; the positive-case rewrite and TMC remain unported.
+`bvi_tailrec_frontend_probe.out` captures the original tail-recursion candidate decisions for every BVI function of that example, focused recursion-detector and type-analysis cases, positive accumulator rewrites, worker labels and tail-modulo-constructor decisions. The bounded Lean tail-recursion pass includes the accumulator rewrite; TMC remains unported.
 
 `data_to_word_header_types_probe.out` records the original types and typed definitions for header construction and its checked encoding. The frontend probe also captures 32-bit and 64-bit encoded values and an invalid length; these observations are regression evidence, not a cross-language proof.
 

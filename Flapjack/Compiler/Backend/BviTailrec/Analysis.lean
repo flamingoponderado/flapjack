@@ -23,13 +23,17 @@ private def opType : AssocOp → ValueType
   | .append => .list
   | .noop => .any
 
-private def fromOp : ClosLang.Op → AssocOp
+/-- Classify operations as source accumulator operators. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "from_op_def"]
+def fromOp : ClosLang.Op → AssocOp
   | .intOp .add => .plus
   | .intOp .mult => .times
   | .blockOp .listAppend => .append
   | _ => .noop
 
-private def toOp : AssocOp → ClosLang.Op
+/-- Convert a source accumulator operator into its BVI operation. -/
+@[hol "cakeml/compiler/backend/bvi_tailrecScript.sml" "to_op_def"]
+def toOp : AssocOp → ClosLang.Op
   | .plus => .intOp .add
   | .times => .intOp .mult
   | .append => .blockOp .listAppend
@@ -102,7 +106,9 @@ private def termFuel (fuel : Nat) (ctx : List ValueType) (ty : ValueType) (e : E
   | .list => termAnyFuel fuel ctx true e
   | .any => termAnyFuel fuel ctx false e
 
-private def checkOpFuel (fuel : Nat) (ctx : List ValueType) (assoc : AssocOp) (loc : Nat)
+/-- Fuel-bounded check of a candidate operation; this is infrastructure for
+the total source operation, which remains to be ported and reviewed. -/
+def checkOpFuel (fuel : Nat) (ctx : List ValueType) (assoc : AssocOp) (loc : Nat)
     (xs : List Exp) : Option (Option Exp) := do
   match xs with
   | [left, right] =>

@@ -4,7 +4,7 @@ import Flapjack.Compiler.Backend.BvlToBvi.Compile
 import Flapjack.Compiler.Backend.BvlToBvi.Names
 import Flapjack.Compiler.Backend.BviInline
 import Flapjack.Compiler.Backend.BvlInline
-import Flapjack.Compiler.Backend.BviTailrec.Analysis
+import Flapjack.Compiler.Backend.BviTailrec.Rewrite
 
 /-! Checked source-to-BVI composition with closure optimizations disabled. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
@@ -79,14 +79,18 @@ def compileCakeToBviBvlOptimizedFuel (fuel inlineLimit cutSize : Nat) (splitSeq 
   let names := BvlToBvi.getNames (code.map fun (n, _, _) => n) names
   pure (source, closure, start, code, next, names)
 
-/-- Follow BVL inlining with BVI wrapper inlining and tick removal. Earlier
-closure optimizations and BVL tail-recursion/TMC are still omitted. -/
+/-- Follow BVL inlining with BVI tail-recursion and wrapper inlining. Earlier
+closure optimizations and BVI tail-modulo-constructor are still omitted. -/
 def compileCakeToBviOptimizedInlineFuel (fuel inlineLimit cutSize : Nat) (splitSeq : Bool)
     (source : Config) (closure : ClosToBvl.Config) (decls : List AstHOL.Dec) :
     Option (Config × ClosToBvl.Config × Nat × List (Nat × Nat × Bvi.Exp) × Nat × Spt Basis.Pure.MlString.MlString) := do
-  let (source, closure, start, code, next, names) ←
-    compileCakeToBviBvlOptimizedFuel fuel inlineLimit cutSize splitSeq source closure decls
+  let (source, exps) ← compileCakeToClosFuel fuel source decls
+  let (closure, bvl, names) ← ClosToBvl.compileMtiOnlyFuel? fuel closure exps
+  let (_, bvl) ← BvlInline.compileProgFuel fuel inlineLimit cutSize splitSeq bvl
+  let (start, code, next) ← BvlToBvi.compileProgFuel fuel fuel closure.start 0 bvl
+  let (_, code) ← BviTailrec.compileProgFuel fuel true (Flapjack.bvlNumStubs + 2) code
   let (_, code) ← BviInline.compileProgFuel fuel code
+  let names := BvlToBvi.getNames (code.map fun (n, _, _) => n) names
   pure (source, closure, start, code, next, names)
 
 /-- Run BVL optimization, accept only BVI functions whose tail-recursion
