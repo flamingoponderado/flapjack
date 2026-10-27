@@ -191,6 +191,9 @@ run_probe append_word_probeScript.sml append_word_probe.out \
 run_probe install_xor_word_probeScript.sml install_xor_word_probe.out \
   entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
 
+run_probe compare_equal_word_probeScript.sml compare_equal_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
 run_probe empty_cake_bvi_probeScript.sml empty_cake_bvi_probe.out \
   code "$cake_dir/compiler/backend/bvl_to_bviScript.sml" "$cake_dir/compiler/backend"
 

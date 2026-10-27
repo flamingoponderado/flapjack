@@ -81,6 +81,29 @@ def compileStub? {width : Nat} (location : Nat) : Option (Nat × WordLangProgHOL
     some (3, listSeq [.assign 1 (.lookup .bitmapBuffer), .assign 3 (.lookup .codeBuffer),
       .set .bitmapBuffer (.var 2), .set .codeBuffer (.var 4),
       .install 3 4 1 2 (.ls (), .ln), .return 0 [3]])
+  else if location = compare1Location then
+    let bytes := BitVec.ofNat width (width / 8)
+    let result (n : Nat) := WordLangProgHOL.seq (.assign 2 (.const (BitVec.ofNat width n))) (.return 0 [2])
+    some (4, .ite .equal 2 (.imm 0) (result 1) (listSeq [
+      .assign 8 (.load (.var 4)), .assign 9 (.load (.var 6)),
+      .ite .equal 8 (.reg 9) (listSeq [
+        .assign 2 (.op .sub [.var 2, .const 1]),
+        .assign 4 (.op .sub [.var 4, .const bytes]),
+        .assign 6 (.op .sub [.var 6, .const bytes]),
+        .call none (some compare1Location) [0, 2, 4, 6] none])
+        (.ite .lower 8 (.reg 9) (result 0) (result 2))]))
+  else if location = equal1Location then
+    let bytes := BitVec.ofNat width (width / 8)
+    some (4, listSeq [
+      .ite .equal 2 (.imm 0) (.seq (.assign 2 (.const 1)) (.return 0 [2])) .skip,
+      .assign 1 (.load (.var 4)), .assign 3 (.load (.var 6)),
+      .call (some ([5], (sptListInsert [0, 2, 4, 6] .ln, .ln), .skip, equal1Location, 2))
+        (some equalLocation) [1, 3] none,
+      .ite .equal 5 (.imm 1) .skip (.return 0 [5]),
+      .assign 2 (.op .sub [.var 2, .const 1]),
+      .assign 4 (.op .add [.var 4, .const bytes]),
+      .assign 6 (.op .add [.var 6, .const bytes]),
+      .call none (some equal1Location) [0, 2, 4, 6] none])
   else if location = addLocation ∨ location = subLocation ∨ location = mulLocation ∨
       location = divLocation ∨ location = modLocation then
     let operation := if location = addLocation then 0 else if location = subLocation then 1
@@ -221,6 +244,47 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
         .assign 2 (.op .add [.var 2, .const bytes]),
         .assign 4 (.load (.op .add [.var 3, .const (2 * bytes)])),
         .call none (some installDataLocation) [0, 2, 4, 6] none]))
+  else if location = compareLocation then
+    let result (n : Nat) := WordLangProgHOL.seq (.assign 2 (.const (BitVec.ofNat width n))) (.return 0 [2])
+    some (3, .ite .test 2 (.imm 1)
+      (listSeq [.assign 1 (.load (realAddr conf 4)), .ite .test 1 (.imm 16) (result 0) (result 2)])
+      (.ite .test 4 (.imm 1)
+        (listSeq [.assign 1 (.load (realAddr conf 2)), .ite .test 1 (.imm 16) (result 2) (result 0)])
+        (listSeq [.assign 11 (realAddr conf 2), .assign 1 (.load (.var 11)),
+          .assign 13 (realAddr conf 4), .assign 3 (.load (.var 13)),
+          .assign 6 (shiftN .lsr (.var 1) (width - conf.lenSize)),
+          .assign 8 (shiftN .lsr (.var 3) (width - conf.lenSize)),
+          .ite .equal 1 (.reg 3)
+            (listSeq [.assign 2 (.op .add [.var 11, shiftN .lsl (.var 6) (wordShiftAmount width)]),
+              .assign 4 (.op .add [.var 13, shiftN .lsl (.var 6) (wordShiftAmount width)]),
+              .ite .test 1 (.imm 16) (.call none (some compare1Location) [0, 6, 2, 4] none)
+                (.call none (some compare1Location) [0, 6, 4, 2] none)])
+            (.ite .test 1 (.imm 16)
+              (.ite .test 3 (.imm 16) (.ite .lower 6 (.reg 8) (result 0) (result 2)) (result 2))
+              (.ite .test 3 (.imm 16) (result 0) (.ite .lower 6 (.reg 8) (result 2) (result 0))))])))
+  else if location = equalLocation then
+    let bytes := BitVec.ofNat width (width / 8)
+    let result (n : Nat) := WordLangProgHOL.seq (.assign 2 (.const (BitVec.ofNat width n))) (.return 0 [2])
+    let tagMask := BitVec.ofNat width (((2 ^ (width - conf.lenSize) - 1) / 4) * 4) ||| 2
+    some (3, listSeq [
+      .ite .equal 2 (.reg 4) (result 1) .skip,
+      .assign 1 (.op .and [.var 2, .var 4]), .ite .test 1 (.imm 1) (result 0) .skip,
+      .assign 20 (realAddr conf 2), .assign 40 (realAddr conf 4),
+      .assign 21 (.load (.var 20)), .assign 41 (.load (.var 40)),
+      .ite .test 21 (.imm 12) (listSeq [
+        .assign 1 (.op .and [.var 21, .const tagMask]),
+        .ite .equal 1 (.imm 482) (result 1) .skip,
+        .ite .equal 1 (.imm 498) (result 1) .skip,
+        .ite .equal 21 (.reg 41) .skip (result 0),
+        .assign 6 (shiftVar .lsr 21 (width - conf.lenSize)),
+        .assign 20 (.op .add [.var 20, .const bytes]), .assign 40 (.op .add [.var 40, .const bytes]),
+        .call none (some equal1Location) [0, 6, 20, 40] none]) .skip,
+      .ite .equal 21 (.reg 41) .skip (result 0), .ite .test 21 (.imm 4) (result 0) .skip,
+      .assign 1 (.op .and [.var 21, .const 24]), .ite .equal 1 (.imm 16) (result 0) .skip,
+      .assign 6 (shiftVar .lsr 21 (width - conf.lenSize)),
+      .assign 2 (.op .add [.var 20, shiftVar .lsl 6 (wordShiftAmount width)]),
+      .assign 4 (.op .add [.var 40, shiftVar .lsl 6 (wordShiftAmount width)]),
+      .call none (some compare1Location) [0, 6, 2, 4] none])
   else compileStub? location
 
 end Flapjack.Compiler.Backend.DataToWord

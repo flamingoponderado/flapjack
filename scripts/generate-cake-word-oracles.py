@@ -16,7 +16,9 @@ CASES = tuple(
      (ROOT / "scripts/hol-probes/append_word_probe.out",
       ROOT / "Flapjack/Test/AppendWordOracle.lean", "AppendWordOracle"),
      (ROOT / "scripts/hol-probes/install_xor_word_probe.out",
-      ROOT / "Flapjack/Test/InstallXorWordOracle.lean", "InstallXorWordOracle"))
+      ROOT / "Flapjack/Test/InstallXorWordOracle.lean", "InstallXorWordOracle"),
+     (ROOT / "scripts/hol-probes/compare_equal_word_probe.out",
+      ROOT / "Flapjack/Test/CompareEqualWordOracle.lean", "CompareEqualWordOracle"))
 CONSTRUCTORS = {
     "Seq": (".seq", 2), "Assign": (".assign", 2), "Const": (".const", 1), "Load": (".load", 1),
     "If": (".ite", 5), "Test": (".test", 0), "Equal": (".equal", 0), "Less": (".less", 0), "Imm": (".imm", 1),
