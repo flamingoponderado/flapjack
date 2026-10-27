@@ -19,17 +19,31 @@ structure Options where
   seenExcludePrelude : Bool := false
   seenSkipTypeInference : Bool := false
   seenMainReturn : Bool := false
+  seenSexp : Bool := false
+  inlineSize : Option Nat := none
+  expCut : Option Nat := none
+  splitMain : Option Bool := none
+  tmc : Option Bool := none
+  tailrec : Option Bool := none
   regAlg : Option Nat := none
   gcKind : Option Flapjack.Compiler.Backend.DataToWord.GcKind := none
 
 private def usage : String :=
   "Usage: cake [--target=riscv] [--exclude_prelude=true|false] " ++
   "[--skip_type_inference=true|false] [--main_return=true|false] " ++
-  "[--reg_alg=N] [--gc=G] < input_file\n" ++
+  "[--tmc=true|false] [--tailrec=true|false] [--split=true|false] " ++
+  "[--inline_size=N] [--exp_cut=N] [--reg_alg=N] [--gc=G] < input_file\n" ++
   "Experimental CakeML to RISC-V port; complete CakeML output parity is not yet established."
 
 private def parseBool (text : String) : Option Bool :=
   if text == "true" then some true else if text == "false" then some false else none
+
+private def findFlag (args : List String) (flagPrefix : String) : Option String :=
+  (args.find? (fun arg => arg.startsWith flagPrefix)).map
+    (fun arg => (arg.drop flagPrefix.length).toString)
+
+private def parseNum (text : String) : Option Nat :=
+  if text.toList.all (fun c => c ≥ '0' && c ≤ '9') then some (text.toNat?.getD 0) else none
 
 private def configError (message : String) : String :=
   "### ERROR: config error\n" ++ message ++ "\n\n\n\nProgram exited with nonzero exit code.\n"
@@ -37,9 +51,7 @@ private def configError (message : String) : String :=
 /-- The original driver validates the first occurrence of each top-level flag
 before parsing backend options, collecting errors in declaration order. -/
 private def topConfigErrors (args : List String) : List String := Id.run do
-  let first (flagPrefix : String) : Option String :=
-    (args.find? (fun arg => arg.startsWith flagPrefix)).map
-      (fun arg => (arg.drop flagPrefix.length).toString)
+  let first := findFlag args
   let mut errors := []
   if let some target := first "--target=" then
     if !(target == "riscv" || target == "x64" || target == "arm8" || target == "mips") then
@@ -54,6 +66,31 @@ private def topConfigError (errors : List String) : String :=
   "### ERROR: config error\n" ++ String.intercalate "\n" errors ++
     "\n\n\nProgram exited with nonzero exit code.\n"
 
+/-- Original backend configuration groups report errors in pass order, with
+errors within the BVL group in the order used by `parse_bvl_conf`. -/
+private def backendConfigErrors (args : List String) : List String := Id.run do
+  let first := findFlag args
+  let mut bvl := []
+  for (flag, isBool) in [("--inline_size=", false), ("--exp_cut=", false),
+      ("--split=", true), ("--tmc=", true), ("--tailrec=", true)] do
+    if let some value := first flag then
+      let valid := if isBool then (parseBool value).isSome else (parseNum value).isSome
+      if !valid then
+        bvl := bvl ++ [s!"Unable to parse as {if isBool then "bool" else "num"}: {value} for flag: {flag}"]
+  let mut groups := []
+  if !bvl.isEmpty then groups := groups ++ [String.intercalate "\n" bvl]
+  if let some value := first "--reg_alg=" then
+    if (parseNum value).isNone then
+      groups := groups ++ [s!"Unable to parse as num: {value} for flag: --reg_alg="]
+  if let some value := first "--gc=" then
+    if value != "none" && value != "simple" then
+      if value.startsWith "gen" then
+        let parts := (value.drop 3).toString.splitOn "," |>.filter (fun s => !s.isEmpty)
+        if let some bad := parts.find? (fun s => (parseNum s).isNone) then
+          groups := groups ++ [s!"Error parsing GenGC argument: Unable to parse as num: {bad}"]
+      else groups := groups ++ [s!"Unrecognized GC option: {value}"]
+  return groups
+
 private def parseArgs : List String → Options → Except String Options
   | [], options => .ok options
   | arg :: args, options =>
@@ -61,6 +98,37 @@ private def parseArgs : List String → Options → Except String Options
         if options.seenTarget then parseArgs args options
         else if arg == "--target=riscv" then parseArgs args { options with seenTarget := true }
         else .error s!"unsupported option: {arg}"
+      else if arg == "--no_warn" then parseArgs args options
+      else if arg.startsWith "--sexp=" then
+        if options.seenSexp then parseArgs args options
+        else if parseBool (arg.drop "--sexp=".length |>.toString) == some false then
+          parseArgs args { options with seenSexp := true }
+        else .error s!"unsupported option: {arg}"
+      else if arg.startsWith "--inline_size=" then
+        if options.inlineSize.isSome then parseArgs args options else
+        match parseNum (arg.drop "--inline_size=".length |>.toString) with
+        | some n => parseArgs args { options with inlineSize := some n }
+        | none => .error s!"invalid numeric option: {arg}"
+      else if arg.startsWith "--exp_cut=" then
+        if options.expCut.isSome then parseArgs args options else
+        match parseNum (arg.drop "--exp_cut=".length |>.toString) with
+        | some n => parseArgs args { options with expCut := some n }
+        | none => .error s!"invalid numeric option: {arg}"
+      else if arg.startsWith "--split=" then
+        if options.splitMain.isSome then parseArgs args options else
+        match parseBool (arg.drop "--split=".length |>.toString) with
+        | some b => parseArgs args { options with splitMain := some b }
+        | none => .error s!"invalid Boolean option: {arg}"
+      else if arg.startsWith "--tmc=" then
+        if options.tmc.isSome then parseArgs args options else
+        match parseBool (arg.drop "--tmc=".length |>.toString) with
+        | some b => parseArgs args { options with tmc := some b }
+        | none => .error s!"invalid Boolean option: {arg}"
+      else if arg.startsWith "--tailrec=" then
+        if options.tailrec.isSome then parseArgs args options else
+        match parseBool (arg.drop "--tailrec=".length |>.toString) with
+        | some b => parseArgs args { options with tailrec := some b }
+        | none => .error s!"invalid Boolean option: {arg}"
       else if arg.startsWith "--reg_alg=" then
         let digits := (arg.drop "--reg_alg=".length).toString
         if options.regAlg.isSome then parseArgs args options
@@ -113,6 +181,12 @@ Flapjack CLI infrastructure, not a port of the full HOL compiler driver. -/
 def compileBytes (options : Options) (source : List HolChar) : PrimitiveCheckedSourceResult := Id.run do
   let base := RiscVConfig.riscvBackendConfigExecutable
   let config := { base with
+    bvlConf := { base.bvlConf with
+      inlineSizeLimit := options.inlineSize.getD base.bvlConf.inlineSizeLimit
+      expCut := options.expCut.getD base.bvlConf.expCut
+      splitMainAtSeq := options.splitMain.getD base.bvlConf.splitMainAtSeq
+      doTmc := options.tmc.getD base.bvlConf.doTmc
+      doTailrec := options.tailrec.getD base.bvlConf.doTailrec }
     wordToWordConf := { base.wordToWordConf with regAlg := options.regAlg.getD base.wordToWordConf.regAlg }
     dataConf := { base.dataConf with gcKind := options.gcKind.getD base.dataConf.gcKind } }
   let fuel := sourceFuel source
@@ -136,6 +210,10 @@ def main (args : List String) : IO UInt32 := do
   let errors := topConfigErrors args
   if !errors.isEmpty then
     IO.eprint (topConfigError errors)
+    return 1
+  let errors := backendConfigErrors args
+  if !errors.isEmpty then
+    IO.eprint (configError (String.intercalate "\n\n" errors))
     return 1
   match parseArgs args {} with
   | .error message =>

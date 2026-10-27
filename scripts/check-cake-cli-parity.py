@@ -27,6 +27,19 @@ CASES = {
     'main_return_false': 'val _ = print "Hello";',
     'no_prelude_main_return': 'val x = 42;',
     'no_prelude_main_return_duplicate': 'val x = 42;',
+    'no_prelude_bvl_tmc': 'fun f x = x; val a = f (1,2);',
+    'no_prelude_bvl_tailrec': 'fun f x = x; val a = f (1,2);',
+    'no_prelude_bvl_split': 'fun f x = x; val a = f (1,2);',
+    'no_prelude_bvl_inline': 'fun f x = x; val a = f (1,2);',
+    'no_prelude_bvl_exp_cut': 'fun f x = x; val a = f (1,2);',
+    'no_prelude_bvl_combined': 'fun f x = x; val a = f (1,2);',
+    'no_prelude_bvl_duplicate': 'fun f x = x; val a = f (1,2);',
+    'no_prelude_sexp_false': 'fun f x = x; val a = f (1,2);',
+    'bvl_tmc_copy': 'fun copy xs = case xs of [] => [] | x::rest => x::copy rest; val _ = print_int (List.length (copy [1,2,3]));',
+    'bvl_inline_copy': 'fun copy xs = case xs of [] => [] | x::rest => x::copy rest; val _ = print_int (List.length (copy [1,2,3]));',
+    'config_error_bvl_bool': '',
+    'config_error_bvl_multiple': '',
+    'config_error_bvl_backend_groups': '',
     'config_error_bool': '',
     'config_error_bool_multiple': '',
     'config_error_bool_before_backend': '',
@@ -186,6 +199,22 @@ def run(executable, source, name):
     if name in ('main_return_true', 'no_prelude_main_return'): flags.append('--main_return=true')
     if name == 'main_return_false': flags.append('--main_return=false')
     if name == 'no_prelude_main_return_duplicate': flags.extend(['--main_return=true', '--main_return=bad'])
+    bvl_options = {
+        'no_prelude_bvl_tmc': ['--tmc=false'],
+        'no_prelude_bvl_tailrec': ['--tailrec=false'],
+        'no_prelude_bvl_split': ['--split=false'],
+        'no_prelude_bvl_inline': ['--inline_size=0'],
+        'no_prelude_bvl_exp_cut': ['--exp_cut=30'],
+        'no_prelude_bvl_combined': ['--tmc=false', '--tailrec=false', '--split=false', '--inline_size=0', '--exp_cut=30'],
+        'no_prelude_bvl_duplicate': ['--inline_size=0', '--inline_size=bad', '--tmc=false', '--tmc=bad'],
+        'no_prelude_sexp_false': ['--sexp=false', '--sexp=bad', '--no_warn'],
+        'bvl_tmc_copy': ['--tmc=false'],
+        'bvl_inline_copy': ['--inline_size=0'],
+        'config_error_bvl_bool': ['--tmc=bad'],
+        'config_error_bvl_multiple': ['--tailrec=bad', '--inline_size=bad', '--split=bad'],
+        'config_error_bvl_backend_groups': ['--gc=bad', '--reg_alg=bad', '--tmc=bad'],
+    }
+    flags.extend(bvl_options.get(name, []))
     if name == 'config_error_bool': flags.append('--exclude_prelude=foo')
     if name == 'config_error_bool_multiple': flags.extend(['--skip_type_inference=foo', '--exclude_prelude=bad'])
     if name == 'config_error_bool_before_backend': flags.extend(['--reg_alg=bad', '--exclude_prelude=bad'])

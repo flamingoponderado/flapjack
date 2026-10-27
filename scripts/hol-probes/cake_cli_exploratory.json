@@ -1094,6 +1094,97 @@
       "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stderr_bytes": 104,
       "stderr_sha256": "4e554b408b4dfc3ed4fe6a4f382e2dfeab6abc9349ab0480152572ba7935bfeb"
+    },
+    "no_prelude_bvl_tmc": {
+      "exit_code": 0,
+      "stdout_bytes": 311912,
+      "stdout_sha256": "1d0fae2737751ec823960aa1ebc4120e59116f2bfc50f7f24af5e9fce80a306b",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "no_prelude_bvl_tailrec": {
+      "exit_code": 0,
+      "stdout_bytes": 311912,
+      "stdout_sha256": "1d0fae2737751ec823960aa1ebc4120e59116f2bfc50f7f24af5e9fce80a306b",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "no_prelude_bvl_split": {
+      "exit_code": 0,
+      "stdout_bytes": 311912,
+      "stdout_sha256": "1d0fae2737751ec823960aa1ebc4120e59116f2bfc50f7f24af5e9fce80a306b",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "no_prelude_bvl_inline": {
+      "exit_code": 0,
+      "stdout_bytes": 311912,
+      "stdout_sha256": "1d0fae2737751ec823960aa1ebc4120e59116f2bfc50f7f24af5e9fce80a306b",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "no_prelude_bvl_exp_cut": {
+      "exit_code": 0,
+      "stdout_bytes": 348054,
+      "stdout_sha256": "c6e8e2f1dad346b9281641810fbaac30ec9fcb0a1ed2f2991a350f5b60bcd532",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "no_prelude_bvl_combined": {
+      "exit_code": 0,
+      "stdout_bytes": 348054,
+      "stdout_sha256": "c6e8e2f1dad346b9281641810fbaac30ec9fcb0a1ed2f2991a350f5b60bcd532",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "no_prelude_bvl_duplicate": {
+      "exit_code": 0,
+      "stdout_bytes": 311912,
+      "stdout_sha256": "1d0fae2737751ec823960aa1ebc4120e59116f2bfc50f7f24af5e9fce80a306b",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "no_prelude_sexp_false": {
+      "exit_code": 0,
+      "stdout_bytes": 311912,
+      "stdout_sha256": "1d0fae2737751ec823960aa1ebc4120e59116f2bfc50f7f24af5e9fce80a306b",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "bvl_tmc_copy": {
+      "exit_code": 0,
+      "stdout_bytes": 399625,
+      "stdout_sha256": "1c1af7a8a610a7e9e68d3cb0338f5f9547bf5607cfe26db93231bd51d7294694",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "bvl_inline_copy": {
+      "exit_code": 0,
+      "stdout_bytes": 400546,
+      "stdout_sha256": "291c0c8d99f92d43235c3d80b8fea1b212b1b3d81224e86ec9bb8b5bc845233d",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "config_error_bvl_bool": {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 112,
+      "stderr_sha256": "83999c75369c1b08ef0ad96dc0b55037f09c860239747ed82600abe7a249e817"
+    },
+    "config_error_bvl_multiple": {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 217,
+      "stderr_sha256": "83ec4fe5069af7a6c3b96a88d3c995702abf081c736e756e068f95042aced7b5"
+    },
+    "config_error_bvl_backend_groups": {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 191,
+      "stderr_sha256": "62af98470444529f1da89ac34ed4a4cac620603abae227a991481cd140832849"
     }
   }
 }
