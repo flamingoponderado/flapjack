@@ -447,8 +447,13 @@ complete RISC-V output against pinned-compiler captures. The original compiler
 exports each source program as an S-expression, then compiles that input;
 malformed inputs are also checked. Pass `--check-reference /path/to/pinned/cake`
 to rerun both original export and compilation, or `--record-reference` to
-regenerate the captures. The parser and AST decoder remain bounded and their
-equivalence with HOL has not been proved.
+regenerate the captures. The suite also checks type-error diagnostics and
+large inputs with 20,000 declarations and a 100,000-byte name. To compare a
+complete exported compiler AST, add `--bootstrap-sexp /path/to/compiler.sexpr`
+alongside `--check-reference`; this compares type-reporting output with type
+inference disabled, using the bootstrap's heap and stack settings. The parser
+and AST decoder remain bounded and their equivalence with HOL has not been
+proved.
 
 An additional unverified bootstrap provides an original compiler built from
 the pinned translated CakeML compiler AST. Given the pinned CakeML and HOL

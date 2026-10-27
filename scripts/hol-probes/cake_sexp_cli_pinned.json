@@ -267,6 +267,63 @@
           "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         }
       }
+    },
+    "recursive_list": {
+      "sexp": "\n((Dletrec ((0 0) (0 63)) ((\"f\" \"n\" Lannot (If (Lannot (App Opapp ((App Opapp ((Var (Short \"=\")) (Lannot (Var (Short \"n\")) ((0 18) (0 19))))) (Lannot (Lit 0) ((0 24) (0 24))))) ((0 18) (0 24))) (Lannot (Con (SOME (Short \"[]\")) nil) ((0 32) (0 35))) (Lannot (Con (SOME (Short \"::\")) ((Lannot (Var (Short \"n\")) ((0 43) (0 44))) (Lannot (App Opapp ((Lannot (Var (Short \"f\")) ((0 50) (0 51))) (Lannot (App Opapp ((App Opapp ((Var (Short \"-\")) (Lannot (Var (Short \"n\")) ((0 55) (0 56))))) (Lannot (Lit 1) ((0 61) (0 61))))) ((0 55) (0 61))))) ((0 50) (0 63))))) ((0 43) (0 63)))) ((0 14) (0 63))))) (Dlet ((0 67) (0 111)) (Pany) (Lannot (App Opapp ((Lannot (Var (Short \"print_int\")) ((0 77) (0 86))) (Lannot (App Opapp ((Lannot (Var (Long \"List\" (Short \"length\"))) ((0 90) (0 100))) (Lannot (App Opapp ((Lannot (Var (Short \"f\")) ((0 104) (0 105))) (Lannot (Lit 7) ((0 107) (0 107))))) ((0 104) (0 107))))) ((0 90) (0 109))))) ((0 77) (0 111)))))",
+      "outputs": {
+        "types": {
+          "exit_code": 0,
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_bytes": 21327,
+          "stderr_sha256": "97f95c8b0a034da70ff08d0096c0c1f927ac91d29af5a5bb9c08615c922d21bd"
+        },
+        "assembly": {
+          "exit_code": 0,
+          "stdout_bytes": 401584,
+          "stdout_sha256": "f360e9d1f1e278fa54ef6d47041738527fcfed50292dfe2d8b9f45e82041df2d",
+          "stderr_bytes": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    "annotated_function": {
+      "sexp": "\n((Dletrec ((0 0) (0 32)) ((\"f\" \"\" Mat (Var (Short \"\")) (((Ptannot \"x\" (Atapp nil (Short \"int\"))) Lannot (App Opapp ((App Opapp ((Var (Short \"+\")) (Lannot (Var (Short \"x\")) ((0 26) (0 27))))) (Lannot (Lit 1) ((0 32) (0 32))))) ((0 26) (0 32))))))) (Dlet ((0 36) (0 64)) (Pany) (Lannot (App Opapp ((Lannot (Var (Short \"print_int\")) ((0 46) (0 55))) (Lannot (App Opapp ((Lannot (Var (Short \"f\")) ((0 59) (0 60))) (Lannot (Lit 7) ((0 62) (0 62))))) ((0 59) (0 62))))) ((0 46) (0 64)))))",
+      "outputs": {
+        "types": {
+          "exit_code": 0,
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_bytes": 21322,
+          "stderr_sha256": "84d777b52dbc3f172508d08b750425c858c457fd2051f78340bb58e83b74b65e"
+        },
+        "assembly": {
+          "exit_code": 0,
+          "stdout_bytes": 395382,
+          "stdout_sha256": "85a1a64bbfd268df8e85cde2e17ecf52d744439733b32c88881da54a639c9c02",
+          "stderr_bytes": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    "boolean_logic": {
+      "sexp": "\n((Dlet ((0 0) (0 79)) (Pany) (Lannot (App Opapp ((Lannot (Var (Short \"print_int\")) ((0 10) (0 19))) (Lannot (If (Lannot (Log Orelse (Lannot (Log Andalso (Lannot (Con (SOME (Short \"True\")) nil) ((0 27) (0 31))) (Lannot (Con (SOME (Short \"False\")) nil) ((0 42) (0 47)))) ((0 27) (0 47))) (Lannot (Con (SOME (Short \"True\")) nil) ((0 57) (0 61)))) ((0 27) (0 61))) (Lannot (Lit 1) ((0 69) (0 69))) (Lannot (Lit 0) ((0 77) (0 77)))) ((0 23) (0 77))))) ((0 10) (0 79)))))",
+      "outputs": {
+        "types": {
+          "exit_code": 0,
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr_bytes": 21308,
+          "stderr_sha256": "1d40f191b0e88de2c66dd177026236a43188ba5b7cade74afb4fb2d6395580d8"
+        },
+        "assembly": {
+          "exit_code": 0,
+          "stdout_bytes": 393660,
+          "stdout_sha256": "102530504e75357c438a589e0e0d61ea58ee821005c88220cba21df00a2b3663",
+          "stderr_bytes": 0,
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
     }
   },
   "failures": [
@@ -312,5 +369,51 @@
       "stderr_bytes": 92,
       "stderr_sha256": "ed70ad3c59c4dee248a3b578f91a601ab3180a6d06b74beeebed4ec84276dfa1"
     }
-  ]
+  ],
+  "type_errors": [
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 109,
+      "stderr_sha256": "c74b0772a09c7370d739f64c22e8a344af2cc16232aff00750a0e7151254dea9"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 155,
+      "stderr_sha256": "112b9f2dd6567a5e8f6a81a21f7f8f3836d8fe49cebe18af1a9e018873e17b74"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 116,
+      "stderr_sha256": "0e2c7ab2e88468b0c4dc7bec6419a0a937e5455de06513ce435e787f0bd28c8a"
+    },
+    {
+      "exit_code": 1,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 116,
+      "stderr_sha256": "ccba12fae46ffd533df7316c411ab8a06b53dc711487c18c9b2cb95f02858a75"
+    }
+  ],
+  "stress": {
+    "many_declarations": {
+      "exit_code": 0,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 2,
+      "stderr_sha256": "75a11da44c802486bc6f65640aa48a730f0f684c5c07a42ba3cd1735eb3fb070"
+    },
+    "long_byte_string": {
+      "exit_code": 0,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_bytes": 2,
+      "stderr_sha256": "75a11da44c802486bc6f65640aa48a730f0f684c5c07a42ba3cd1735eb3fb070"
+    }
+  }
 }

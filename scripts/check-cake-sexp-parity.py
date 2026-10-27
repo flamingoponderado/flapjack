@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import importlib.util
 import json
+import os
 import subprocess
 from pathlib import Path
 
@@ -29,12 +30,26 @@ PROGRAMS = {
     'type_alias': 'type t = int list; val x : t = [1];',
     'array': 'val a = Array.array 3 1; val _ = Array.update a 1 4; val _ = print_int (Array.sub a 1);',
     'closure': 'val x = fn x => fn y => x+y;',
+    'recursive_list': 'fun f n = if n = 0 then [] else n :: f (n - 1); val _ = print_int (List.length (f 7));',
+    'annotated_function': 'fun f (x : int) = x + 1; val _ = print_int (f 7);',
+    'boolean_logic': 'val _ = print_int (if True andalso False orelse True then 1 else 0);',
 }
 BAD_INPUTS = ['', '(', '(1 . 2)', '(garbage)', '((Dlet))', '((Denv "\\\\20"))']
+TYPE_ERRORS = [
+    '((Dlet (unk unk) "x" (Var (Short "missing"))))',
+    '((Dlet ((0 0) (0 1)) "x" (Var (Short "missing"))))',
+    '((Dlet (unk unk) "x" (If (Lit 1) (Lit 2) (Lit 3))))',
+    '((Dlet (unk unk) "x" (App (Arith Add . IntT) ((Lit 1) (Con (SOME (Short "True")) nil)))))',
+]
+STRESS_INPUTS = {
+    'many_declarations': b'(' + b'(Denv "a") ' * 20000 + b')',
+    'long_byte_string': b'((Denv "' + b'x' * 100000 + b'"))',
+}
+STRESS_FLAGS = ['--sexp=true', '--types', '--exclude_prelude=true', '--skip_type_inference=true']
 
 
-def capture(executable, source, flags):
-    result = subprocess.run([str(executable), *flags], input=source, capture_output=True, timeout=180)
+def capture(executable, source, flags, env=None):
+    result = subprocess.run([str(executable), *flags], input=source, capture_output=True, timeout=180, env=env)
     return {'exit_code': result.returncode,
             'stdout_bytes': len(result.stdout), 'stdout_sha256': hashlib.sha256(result.stdout).hexdigest(),
             'stderr_bytes': len(result.stderr), 'stderr_sha256': hashlib.sha256(result.stderr).hexdigest()}
@@ -53,6 +68,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--record-reference', type=Path)
     parser.add_argument('--check-reference', type=Path)
+    parser.add_argument('--bootstrap-sexp', type=Path, help='also compare a large exported compiler AST')
     parser.add_argument('--cake', type=Path, default=ROOT / '.lake/build/bin/cake')
     args = parser.parse_args()
     flags = {'types': ['--sexp=true', '--types'], 'assembly': ['--sexp=true', '--target=riscv']}
@@ -68,12 +84,20 @@ def main():
         failures = [capture(args.record_reference, s.encode('ascii'), flags['types']) for s in BAD_INPUTS]
         if any(row['exit_code'] != 1 or row['stdout_bytes'] or not row['stderr_bytes'] for row in failures):
             raise SystemExit('original rejected-input outcome is unexpected')
+        type_errors = [capture(args.record_reference, s.encode('ascii'), flags['types']) for s in TYPE_ERRORS]
+        if any(row['exit_code'] != 1 or row['stdout_bytes'] or not row['stderr_bytes'] for row in type_errors):
+            raise SystemExit('original type-error outcome is unexpected')
+        stress = {name: capture(args.record_reference, s, STRESS_FLAGS) for name, s in STRESS_INPUTS.items()}
+        if any(row['exit_code'] or row['stdout_bytes'] or not row['stderr_bytes'] for row in stress.values()):
+            raise SystemExit('original stress-input outcome is unexpected')
         FIXTURE.write_text(json.dumps({'cakeml_revision': parity.PINNED_REV, 'hol_revision': parity.HOL_REV,
-                                       'programs': rows, 'failures': failures}, indent=2) + '\n')
+                                       'programs': rows, 'failures': failures, 'type_errors': type_errors,
+                                       'stress': stress}, indent=2) + '\n')
     fixture = json.loads(FIXTURE.read_text())
     if (fixture['cakeml_revision'], fixture['hol_revision']) != (parity.PINNED_REV, parity.HOL_REV):
         raise SystemExit('unexpected reference provenance')
-    if set(fixture['programs']) != set(PROGRAMS) or len(fixture['failures']) != len(BAD_INPUTS):
+    if (set(fixture['programs']) != set(PROGRAMS) or len(fixture['failures']) != len(BAD_INPUTS) or
+            len(fixture['type_errors']) != len(TYPE_ERRORS) or set(fixture['stress']) != set(STRESS_INPUTS)):
         raise SystemExit('reference case list has changed')
     if args.check_reference:
         parity.check_pinned_reference(args.check_reference)
@@ -96,6 +120,28 @@ def main():
             if capture(executable, source.encode('ascii'), flags['types']) != want:
                 raise SystemExit(f'rejected input {i}: output differs for {executable}')
     print('malformed S-expression outputs match pinned CakeML')
+    for i, source in enumerate(TYPE_ERRORS):
+        want = fixture['type_errors'][i]
+        for executable in ([args.check_reference, args.cake] if args.check_reference else [args.cake]):
+            if capture(executable, source.encode('ascii'), flags['types']) != want:
+                raise SystemExit(f'type-error input {i}: output differs for {executable}')
+    print('S-expression type-error diagnostics match pinned CakeML')
+    for name, source in STRESS_INPUTS.items():
+        for executable in ([args.check_reference, args.cake] if args.check_reference else [args.cake]):
+            if capture(executable, source, STRESS_FLAGS) != fixture['stress'][name]:
+                raise SystemExit(f'{name}: output differs for {executable}')
+        print(f'{name}: large-input output matches pinned CakeML')
+    if args.bootstrap_sexp:
+        if not args.check_reference:
+            raise SystemExit('--bootstrap-sexp requires --check-reference')
+        source = args.bootstrap_sexp.read_bytes()
+        env = os.environ.copy()
+        env.update(CML_STACK_SIZE='8000', CML_HEAP_SIZE='8000')
+        reference = capture(args.check_reference, source, STRESS_FLAGS, env)
+        actual = capture(args.cake, source, STRESS_FLAGS, env)
+        if reference['exit_code'] != 0 or actual != reference:
+            raise SystemExit(f'bootstrap AST output mismatch\nexpected {reference}\nactual   {actual}')
+        print(f'bootstrap AST ({len(source)} bytes): output matches pinned CakeML')
 
 
 if __name__ == '__main__':

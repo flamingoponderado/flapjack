@@ -60,6 +60,25 @@ theorem exprSim_literal {C F : Type} (genv : GlobalEnv) (compMap : Environment) 
   simp only [ExprSim, EvaluateHOL.evaluate, compileExp, FlatSem.evaluate]
   exact ⟨.value (.cons (.literal genv lit) .nil), statesRel⟩
 
+/-- Type annotations preserve a simulation of the annotated expression. -/
+theorem exprSim_tannot {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
+    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (expr : AstHOL.Exp) (typ : AstHOL.AstT)
+    (sim : ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState expr) :
+    ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.tannot expr typ) := by
+  simpa only [ExprSim, EvaluateHOL.evaluate, compileExp] using sim
+
+/-- Source-location annotations preserve a simulation of the annotated expression. -/
+theorem exprSim_lannot {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
+    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (expr : AstHOL.Exp) (loc : Misc.Location.Locs)
+    (sim : ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState expr) :
+    ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.lannot expr loc) := by
+  cases loc
+  simpa only [ExprSim, EvaluateHOL.evaluate, compileExp] using sim
+
 /-- A related local binding is simulated by its compiled local lookup. -/
 theorem exprSim_local {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
     (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
