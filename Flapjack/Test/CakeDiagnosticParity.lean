@@ -41,4 +41,12 @@ private def qname : NamespaceHOL.Ident MlString MlString := .long (ofString "A")
     (.typeMismatch (.app [.app [.app [] 5, .app [] 1] 4] 6) (.app [.app [] 1, .app [] 5] 9))) ==
   some (ofString "### ERROR: type error\nType mismatch between (int -> bool) list and bool * int at line 1\n\n\n           ^^^^^\n\nProgram exited with nonzero exit code.\n").explode
 
+-- The original check chooses the first name that appears again later.
+#guard match Flapjack.CakeParser.Frontend.parseSourceFuel 500 500
+    (ofString "datatype t = A | B | A | B;").explode with
+  | .success decls => match inferProgramFuel 500 500 decls with
+    | .error (.located _ (.duplicateConstructor name typ)) => name == ofString "A" && typ == ofString "t"
+    | _ => false
+  | _ => false
+
 end Flapjack.Test.CakeDiagnosticParity

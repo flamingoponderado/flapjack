@@ -61,6 +61,11 @@ CASES = {
     'type_error_qualified': 'structure M = struct datatype t = A; end; val x : M.t = 1;',
     'type_error_alias': 'datatype t = A; type alias = t; val x : alias = 1;',
     'type_error_two_modules': 'structure A = struct datatype t = A; end; structure B = struct datatype t = B; end; val x : A.t = B.B;',
+    'type_error_duplicate_constructor': 'datatype t = A | A;',
+    'type_error_duplicate_type': 'datatype t = A and t = B;',
+    'type_error_duplicate_variable': "datatype ('a,'a) t = A;",
+    'type_error_duplicate_order': 'datatype t = A | B | A | B;',
+    'type_error_duplicate_mutual': 'datatype t = A and u = B | B;',
 }
 
 def run(executable, source, name):

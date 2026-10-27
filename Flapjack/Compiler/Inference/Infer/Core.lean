@@ -13,6 +13,9 @@ inductive Error where
   | exhausted | unsupported | mismatch | undefinedName | invalidPattern | valueRestriction
   | typeMismatch : InferT → InferT → Error
   | typeMismatchNames : List (Nat × MlString) → InferT → InferT → Error
+  | duplicateTypeName : MlString → Error
+  | duplicateConstructor : MlString → MlString → Error
+  | duplicateTypeVariable : MlString → MlString → Error
   | undefinedVariable : Ident MlString MlString → Error
   | located : Flapjack.Misc.Location.Locs → Error → Error
   deriving Repr
@@ -38,6 +41,9 @@ private def withLoc (loc : Flapjack.Misc.Location.Locs) (env : Env) (action : M 
   | .error (.undefinedVariable name) => .error (.located loc (.undefinedVariable name))
   | .error (.typeMismatch left right) => .error (.located loc
       (.typeMismatchNames (typeNamesFuel 10000 (ofString "") env.infT) left right))
+  | .error (.duplicateTypeName name) => .error (.located loc (.duplicateTypeName name))
+  | .error (.duplicateConstructor name typ) => .error (.located loc (.duplicateConstructor name typ))
+  | .error (.duplicateTypeVariable name typ) => .error (.located loc (.duplicateTypeVariable name typ))
   | other => other
 private def fresh : M InferT := do
   let s ← get
@@ -454,9 +460,13 @@ private def asCheckedTypes (fuel : Nat) (env : Env) (free : List MlString) (ts :
 
 private def distinctNames (names : List MlString) : Bool := names.eraseDups.length == names.length
 
+private def firstRepeatedName : List MlString → Option MlString
+  | [] => none
+  | name :: rest => if name ∈ rest then some name else firstRepeatedName rest
+
 private def datatypeEnv (fuel : Nat) (env : Env) (defs : TypeDef) : M Env := do
   let names := defs.map (fun (_, name, _) => name)
-  if !distinctNames names then fail .invalidPattern else
+  if let some name := firstRepeatedName names then fail (.duplicateTypeName name) else
   let s ← get
   let (ids, s) := freshIds defs.length s
   set s
@@ -464,8 +474,11 @@ private def datatypeEnv (fuel : Nat) (env : Env) (defs : TypeDef) : M Env := do
     (name, (vars, TypeSystemHOL.SemanticT.app (vars.map TypeSystemHOL.SemanticT.var) id))))
   let checkEnv := { env with infT := nsAppend tenv env.infT }
   let mut constructors := []
-  for ((vars, _, ctors), id) in List.zip defs ids do
-    if !distinctNames vars || !distinctNames (ctors.map Prod.fst) then fail .invalidPattern else
+  for ((vars, typeName, ctors), id) in List.zip defs ids do
+    if let some name := firstRepeatedName (ctors.map Prod.fst) then
+      fail (.duplicateConstructor name typeName)
+    if let some name := firstRepeatedName vars then
+      fail (.duplicateTypeVariable name typeName)
     let mut block := []
     for (name, ts) in ctors do
       let ts ← asCheckedTypes fuel checkEnv vars ts
@@ -502,7 +515,7 @@ private def inferDeclWorker : Nat → Nat → Env → Dec → M Env
       let ts ← applyFull unifFuel vars
       let (count, _, ts) := generaliseList 0 0 .ln ts
       return { emptyEnv with infV := alistToNs (List.zip names (ts.map (fun t => (count, t)))) }
-    | .dtype _ defs => datatypeEnv fuel env defs
+    | .dtype loc defs => withLoc loc env (datatypeEnv fuel env defs)
     | .dtabbrev _ vars name t =>
       if !distinctNames vars then fail .invalidPattern else
       let t ← asCheckedType fuel env vars t

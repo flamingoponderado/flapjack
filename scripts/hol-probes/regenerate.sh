@@ -415,6 +415,9 @@ run_probe cake_undefined_diagnostic_probeScript.sml cake_undefined_diagnostic_pr
 run_probe cake_type_diagnostic_probeScript.sml cake_type_diagnostic_probe.out \
   function nested tuple variable named qualified "$cake_dir/compiler/inference/infer_tScript.sml" "$cake_dir/compiler/inference"
 
+run_probe cake_duplicate_datatype_probeScript.sml cake_duplicate_datatype_probe.out \
+  first constructor "$cake_dir/compiler/inference/inferScript.sml" "$cake_dir/compiler/inference"
+
 run_probe bvl_inline_cake_bvi_probeScript.sml bvl_inline_cake_bvi_probe.out \
   code "$cake_dir/compiler/backend/bvl_inlineScript.sml" "$cake_dir/compiler/backend"
 

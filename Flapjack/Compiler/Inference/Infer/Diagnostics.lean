@@ -106,4 +106,19 @@ def renderTypeMismatch (input : List HolChar) : Error → Option (List HolChar)
   | .located loc (.typeMismatchNames names left right) => renderTypes input loc names left right
   | _ => none
 
+/-- Render duplicate names rejected by datatype definitions. -/
+def renderDatatypeError (input : List HolChar) : Error → Option (List HolChar)
+  | .located loc error => do
+    let message ← match error with
+      | .duplicateTypeName name => some (ascii "Duplicate type constructor " ++ name.explode ++
+          ascii " in a mutually recursive type definition")
+      | .duplicateConstructor name typ => some (ascii "Duplicate constructor " ++ name.explode ++
+          ascii " in the definition of type " ++ typ.explode)
+      | .duplicateTypeVariable name typ => some (ascii "Duplicate type variable binding " ++ name.explode ++
+          ascii " in the definition of type " ++ typ.explode)
+      | _ => none
+    some (ascii "### ERROR: type error\n" ++ message ++ ascii " at " ++
+      sourceLocation input (some loc) ++ ascii "\nProgram exited with nonzero exit code.\n")
+  | _ => none
+
 end Flapjack.Compiler.Inference.Infer.Diagnostics
