@@ -102581,5 +102581,101 @@
     "lean_name": "State",
     "statement_status": "pending_statement_review",
     "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "match_result",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
+    "lean_name": "MatchResult",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "bool_type_num_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
+    "lean_name": "boolTypeNum",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "Boolv_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
+    "lean_name": "boolValue",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "build_conv_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
+    "lean_name": "buildConv",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "build_rec_env_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
+    "lean_name": "buildRecEnv",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "ctor_same_type_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
+    "lean_name": "ctorSameType",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "do_con_check_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
+    "lean_name": "doConCheck",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "find_recfun_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
+    "lean_name": "findRecFun",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "lit_same_type_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
+    "lean_name": "litSameType",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "one_con_check_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
+    "lean_name": "oneConCheck",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "same_ctor_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
+    "lean_name": "sameCtor",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "same_type_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL.lean",
+    "lean_name": "sameType",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
   }
 ]

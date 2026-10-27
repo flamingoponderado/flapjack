@@ -5,13 +5,14 @@ import Flapjack.FfiHOL
 pending; the source evaluator and compiler correctness theorem are not yet
 ported by this module. -/
 namespace Flapjack.SemanticPrimitivesHOL
-open Flapjack.AstHOL Flapjack.NamespaceHOL
+open Flapjack.AstHOL Flapjack.NamespaceHOL Flapjack.Basis.Pure.MlString
 
 /-- Unique identities for datatype and exception constructors. -/
 @[hol "cakeml/semantics/semanticPrimitivesScript.sml" "stamp"]
 inductive Stamp where
   | typeStamp : ConN → Nat → Stamp
   | exnStamp : Nat → Stamp
+  deriving DecidableEq
 
 /-- Lexical value and constructor environments. -/
 @[hol "cakeml/semantics/semanticPrimitivesScript.sml" "sem_env"]
@@ -119,6 +120,77 @@ structure State (σ : Type) where
   nextTypeStamp : Nat
   nextExnStamp : Nat
   evalState : Option EvalState
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "do_con_check_def"]
+def doConCheck (env : Namespace ModN ConN (Nat × Stamp))
+    (name : Option (Ident ModN ConN)) (arity : Nat) : Bool :=
+  match name with
+  | none => true
+  | some name => match nsLookup env name with
+    | none => false
+    | some (expected, _) => arity == expected
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "one_con_check_def"]
+def oneConCheck (env : Namespace ModN ConN (Nat × Stamp)) : AstHOL.Exp → Bool
+  | .con name args => doConCheck env name args.length
+  | _ => true
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "build_conv_def"]
+def buildConv (env : Namespace ModN ConN (Nat × Stamp))
+    (name : Option (Ident ModN ConN)) (values : List Value) : Option Value :=
+  match name with
+  | none => some (.conv none values)
+  | some name => match nsLookup env name with
+    | none => none
+    | some (_, stamp) => some (.conv (some stamp) values)
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "lit_same_type_def"]
+def litSameType : Lit → Lit → Bool
+  | .intLit _, .intLit _ => true
+  | .char _, .char _ => true
+  | .strLit _, .strLit _ => true
+  | .word8 _, .word8 _ => true
+  | .word64 _, .word64 _ => true
+  | .float64 _, .float64 _ => true
+  | _, _ => false
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "match_result"]
+inductive MatchResult (α : Type) where
+  | noMatch
+  | typeError
+  | match : α → MatchResult α
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "same_type_def"]
+def sameType : Stamp → Stamp → Bool
+  | .typeStamp _ n, .typeStamp _ m => n == m
+  | .exnStamp _, .exnStamp _ => true
+  | _, _ => false
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "same_ctor_def"]
+def sameCtor (a b : Stamp) : Bool := decide (a = b)
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "ctor_same_type_def"]
+def ctorSameType : Option Stamp → Option Stamp → Bool
+  | none, none => true
+  | some a, some b => sameType a b
+  | _, _ => false
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "bool_type_num_def"]
+def boolTypeNum : Nat := 0
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "Boolv_def"]
+def boolValue (b : Bool) : Value :=
+  .conv (some (.typeStamp (ofString (if b then "True" else "False")) boolTypeNum)) []
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "find_recfun_def"]
+def findRecFun {α β : Type} (name : VarN) : List (VarN × α × β) → Option (α × β)
+  | [] => none
+  | (f, x, body) :: rest => if f = name then some (x, body) else findRecFun name rest
+
+@[hol "cakeml/semantics/semanticPrimitivesScript.sml" "build_rec_env_def"]
+def buildRecEnv (funs : List (VarN × VarN × AstHOL.Exp)) (closureEnv : SemEnv Value)
+    (env : Namespace ModN VarN Value) : Namespace ModN VarN Value :=
+  funs.foldr (fun (name, _, _) rest => nsBind name (.recclosure closureEnv funs name) rest) env
 
 @[hol "cakeml/semantics/semanticPrimitivesScript.sml" "bind_stamp_def"]
 def bindStamp : Stamp := .exnStamp 0

@@ -12,6 +12,8 @@
 
 `cake_source_store_probe.out` captures inferred closure, evaluator-state, and store-assignment types plus source-store allocation, lookup, updates, and rejected assignments, including the one-way thunk update rule.
 
+`cake_source_constructor_probe.out` captures constructor and datatype identity checks, arity checking, construction, and inferred recursive-environment helper types.
+
 `mti_cake_bvi_probe.out` captures the full BVI program for a nested-function declaration with multi-argument introduction enabled, the other closure optimizations disabled, and the outer BVL/BVI optimizations omitted.
 
 `empty_cake_data_probe.out`, `reference_cake_data_probe.out`, and `match_cake_data_probe.out` capture complete results after BVI-to-data and its data optimizations for the corresponding restricted examples. Their probes add the source-proved `op_requires_names_eqn` to HOL's evaluator to avoid residual existential expressions. `scripts/generate-cake-data-oracles.py` translates the captures into Lean patterns and checks the printed sparse live sets against exact tree values. Regenerate the probes before the generator; the comparisons are regression evidence, not a proof for other inputs.

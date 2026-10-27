@@ -382,6 +382,9 @@ run_probe cake_source_frontend_probeScript.sml cake_source_frontend_probe.out \
 run_probe cake_source_store_probeScript.sml cake_source_store_probe.out \
   closure_type recclosure_type store_assign_type compiler_type oracle_type state_ffi_type state_eval_type ref_same thunk_update thunk_final allocation lookup update invalid wrong_type "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
 
+run_probe cake_source_constructor_probeScript.sml cake_source_constructor_probe.out \
+  find_type build_env_type same_type same_ctor exn_type check wrong_arity build "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+
 run_probe cake_parse_error_probeScript.sml cake_parse_error_probe.out \
   missing after_decl multiline "$cake_dir/compiler/parsing/pegexec_cml_foScript.sml" "$cake_dir/compiler/parsing"
 
