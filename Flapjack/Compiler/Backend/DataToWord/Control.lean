@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.DataLang.Syntax
 import Flapjack.Compiler.Backend.DataToWord.Config
 import Flapjack.Compiler.Backend.DataToWord.Header
+import Flapjack.Compiler.Backend.DataToWord.Build
 import Flapjack.Compiler.Backend.DataToWord.Locations
 import Flapjack.Compiler.Backend.DataToWord.Variables
 import Flapjack.Compiler.Backend.DataToWord.WordOp
@@ -183,6 +184,26 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
           let offset := BitVec.ofNat width (width / 8) * BitVec.ofNat width (n + 1)
           some (.seq (.store (.op .add [.lookup .globReal, .const offset]) (adjustVar src))
             (.assign (adjustVar dest) (.const 2)), l)
+      | _ => some (.skip, l)
+  | l, .assign dest (.blockOp (.build parts)) _ _ =>
+      if width != 32 && width != 64 then none else
+      match Build.partsWords (width := width) conf parts with
+      | none => some (giveUp, l)
+      | some ((relative, value), words) =>
+          let final : WordLangProgHOL (BitVec width) := .seq (.set .nextFree (.var 1))
+            (.assign (adjustVar dest) (if relative then .op .add [.const value, .var 3] else .const value))
+          let store := if words.isEmpty then final else .seq (.storeConsts 1 3 1 3 words) final
+          some (listSeq [.assign 1 (.lookup .nextFree),
+            .assign 3 (shiftN .lsl (.op .sub [.var 1, .lookup .currHeap])
+              (shiftLength conf - wordShiftAmount width)), store], l)
+  | l, .assign dest (.blockOp (.fromList tag)) args names =>
+      match args with
+      | [x, y] => match encodeHeader (width := width) conf (4 * tag) 0 with
+        | none => some (giveUp, l)
+        | some _ => some (.mustTerminate (listSeq [
+            .assign 1 (.const (BitVec.ofNat width (16 * tag))),
+            .call (some ([adjustVar dest], adjustSets (names.getD .ln), .skip, secn, l))
+              (some fromListLocation) [adjustVar x, adjustVar y, 1] none]), l + 1)
       | _ => some (.skip, l)
   | l, .assign dest (.blockOp .boolNot) args _ =>
       match args with
@@ -388,6 +409,13 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
           let offset := bytes + bytes * BitVec.ofNat width n
           some (.assign (adjustVar dest)
             (.load (.op .add [realAddr conf (adjustVar src), .const offset])), l)
+      | _ => some (.skip, l)
+  | l, .assign dest (.memOp (.refByte immutable)) args names =>
+      match args with
+      | [x, y] => some (.seq (.assign 1 (.const (if immutable then 0 else 16)))
+          (.mustTerminate (.call
+            (some ([adjustVar dest], adjustSets (names.getD .ln), .skip, secn, l))
+            (some refByteLocation) [adjustVar x, adjustVar y, 1] none)), l + 1)
       | _ => some (.skip, l)
   | l, .assign dest (.memOp .el) args _ =>
       match args with

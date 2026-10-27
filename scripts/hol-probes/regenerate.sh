@@ -386,6 +386,9 @@ run_probe cake_infer_decl_probeScript.sml cake_infer_decl_probe.out \
 run_probe cake_basis_probeScript.sml cake_basis_probe.out \
   basis length "$cake_dir/basis/basisProgScript.sml" "$cake_dir/basis"
 
+run_probe cake_build_lowering_probeScript.sml cake_build_lowering_probe.out \
+  parts64 parts32be build64 fromlist64 refbyte64 "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
 run_probe bvl_inline_cake_bvi_probeScript.sml bvl_inline_cake_bvi_probe.out \
   code "$cake_dir/compiler/backend/bvl_inlineScript.sml" "$cake_dir/compiler/backend"
 
