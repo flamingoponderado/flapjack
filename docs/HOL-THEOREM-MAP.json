@@ -102919,6 +102919,14 @@
     "reviewer": "Codex (reference inventory)"
   },
   {
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "every_exp_def",
+    "lean_path": "Flapjack/AstHOL/Syntax.lean",
+    "lean_name": "everyExp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison 2026-10-27: all expression constructors apply the predicate at the current node and traverse the same children as HOL, including branch expressions and recursive function bodies. Lists, patterns, names, and expression constructors use the corresponding HOL-shaped carriers. The pinned cake_source_every_exp_probe records the inferred (exp -> bool) -> exp -> bool type and nested, clause, and recursive-function cases."
+  },
+  {
     "hol_path": "cakeml/semantics/evaluateScript.sml",
     "hol_name": "dec_clock_def",
     "lean_path": "Flapjack/EvaluateHOL.lean",

@@ -381,6 +381,9 @@ run_probe cake_ptree_expr_probeScript.sml cake_ptree_expr_probe.out \
 run_probe cake_source_frontend_probeScript.sml cake_source_frontend_probe.out \
   empty value datatype structure expression "$cake_dir/semantics/cmlPtreeConversionScript.sml" "$cake_dir/compiler/parsing" "$cake_dir/semantics"
 
+run_probe cake_source_every_exp_probeScript.sml cake_source_every_exp_probe.out \
+  type nested clauses funs all_good "$cake_dir/semantics/astScript.sml" "$cake_dir/semantics"
+
 run_probe cake_source_apply_probeScript.sml cake_source_apply_probe.out \
   ref_alloc ref_assign ref_invalid ref_wrong_type list_append shift8 eq_mismatch byte_alloc byte_negative byte_read byte_safe_oob byte_unsafe_oob byte_update array_fixed array_update array_negative vector_unsafe substring substring_oob byte_copy_overlap string_copy_byte byte_xor byte_xor_short string_sub_negative env_id ffi_empty thunk_alloc ffi_return ffi_final int_div_pos int_div_neg int_mod_neg int_div_zero int_to_w8 int_to_char_bad word_add bool_not arith_bad_type "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
 

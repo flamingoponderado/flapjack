@@ -94,4 +94,38 @@ def patsBindings : List Pat → List VarN
   | p :: ps => patsBindings ps ++ patBindings p
 end
 
+mutual
+/-- Recursively test a predicate at each source expression. The helper
+traversals implement HOL's `EVERY` over expression-bearing lists. -/
+@[hol "cakeml/semantics/astScript.sml" "every_exp_def"]
+def everyExp (predicate : Exp → Bool) (expr : Exp) : Bool :=
+  predicate expr && match expr with
+  | .raise e | .fn _ e | .tannot e _ | .lannot e _ => everyExp predicate e
+  | .handle e clauses | .mat e clauses => everyExp predicate e && everyExpClauses predicate clauses
+  | .con _ exprs | .app _ exprs => everyExpList predicate exprs
+  | .log _ first second | .let_ _ first second => everyExp predicate first && everyExp predicate second
+  | .if_ condition yes no => everyExp predicate condition && everyExp predicate yes && everyExp predicate no
+  | .letrec funs body => everyExp predicate body && everyExpFuns predicate funs
+  | .lit _ | .var _ => true
+termination_by sizeOf expr
+
+private def everyExpList (predicate : Exp → Bool) (exprs : List Exp) : Bool :=
+  match exprs with
+  | [] => true
+  | e :: rest => everyExp predicate e && everyExpList predicate rest
+termination_by sizeOf exprs
+
+private def everyExpClauses (predicate : Exp → Bool) (clauses : List (Pat × Exp)) : Bool :=
+  match clauses with
+  | [] => true
+  | (_, e) :: rest => everyExp predicate e && everyExpClauses predicate rest
+termination_by sizeOf clauses
+
+private def everyExpFuns (predicate : Exp → Bool) (funs : List (VarN × VarN × Exp)) : Bool :=
+  match funs with
+  | [] => true
+  | (_, _, e) :: rest => everyExp predicate e && everyExpFuns predicate rest
+termination_by sizeOf funs
+end
+
 end Flapjack.AstHOL

@@ -195,4 +195,19 @@ example : doApp ([], ffi) .opref [intValue 7] =
     some (([.refv (intValue 7)], ffi), .val (.loc true 0)) := by rfl
 example : doApp ([], ffi) .opapp [] = none := by rfl
 
+private def noVars : Flapjack.AstHOL.Exp → Bool
+  | .var _ => false
+  | _ => true
+
+-- Nested expressions, pattern branches, and recursive function bodies are
+-- all visited by the original ast$every_exp (see the pinned HOL probe).
+#guard !Flapjack.AstHOL.everyExp noVars
+  (.if_ (.lit (.intLit 1)) (.con none [.lit (.intLit 2), .var (.short (ofString "x"))]) (.lit (.intLit 3)))
+#guard !Flapjack.AstHOL.everyExp noVars
+  (.mat (.lit (.intLit 0)) [(.pany, .lit (.intLit 1)), (.pany, .var (.short (ofString "x")))])
+#guard !Flapjack.AstHOL.everyExp noVars
+  (.letrec [(ofString "f", ofString "x", .var (.short (ofString "x")))] (.lit (.intLit 0)))
+#guard Flapjack.AstHOL.everyExp noVars
+  (.letrec [(ofString "f", ofString "x", .lit (.intLit 1))] (.lit (.intLit 0)))
+
 end Flapjack.Test.CakeSourceStoreParity
