@@ -214,4 +214,107 @@ theorem globalEnvInv_append_factored (genv : GlobalEnv)
         constructorDomain constructorModules id (arity, stamp) constructorRelation left right sourceLookup
     exact ⟨cn, group, lookup, mapped, types⟩
 
+/-- Incremental compilation stores the extended compiler environment at the
+next ID in the generation produced by compiling its declarations. -/
+theorem incCompileProg_declaredEnvMap (envId : Nat × Nat) (config : Config) (decs : List Dec) :
+    let initial := lookupEnvId envId config.envs
+    let compiled := compileDecs [] 1 config.next initial ⟨0, config.envs.next, .ln⟩ decs
+    let gen := compiled.2.2.2.1
+    ∃ mapGen, Flapjack.sptLookup gen.generation (incCompileProg envId config decs).1.envs.envGens =
+        some mapGen ∧
+      Flapjack.sptLookup gen.next mapGen = some (extendEnv compiled.2.2.1 initial) := by
+  dsimp only
+  generalize h : compileDecs [] 1 config.next (lookupEnvId envId config.envs)
+    ⟨0, config.envs.next, .ln⟩ decs = result
+  rcases result with ⟨n, indices, env, gen, compiledDecs⟩
+  have generation : gen.generation = config.envs.next := by
+    simpa [h] using OracleInvariant.compileDecs_generation_core [] 1 config.next (lookupEnvId envId config.envs)
+      ⟨0, config.envs.next, .ln⟩ decs
+  refine ⟨Flapjack.sptInsert gen.next (extendEnv env (lookupEnvId envId config.envs)) gen.envs, ?_, ?_⟩
+  · simp [incCompileProg, h, generation, Flapjack.sptLookup_sptInsert_same]
+  · simpa [h] using Flapjack.sptLookup_sptInsert_same gen.next
+      (extendEnv env (lookupEnvId envId config.envs)) gen.envs
+
+/-- After incremental declaration compilation, the forward-oracle relation
+retains the map for the newly extended source environment. This supplies the
+lookup premise of the factored environment-ID store step. -/
+theorem evalDeclaredEnvMap_factored {C : Type}
+    (interp : Option (Value → Option (Config × C))) (envId : Nat × Nat)
+    (config next : Config) (decs : List Dec) (flatDecs : List FlatLang.Exp)
+    (before after : Option EvalState) (oldGenv newGenv : GlobalEnv)
+    (sourceEnv sourceNew : SemEnv Value)
+    (compiled : incCompileProg envId config decs = (next, flatDecs))
+    (nextCfg : OracleInvariant.srcOracNextCfg interp before = some next)
+    (forward : OracleInvariant.oracForwardRel interp before after)
+    (growth : GlobalGrowth oldGenv newGenv)
+    (baseInv : GlobalEnvInv oldGenv (lookupEnvId envId config.envs) (fun _ => False) sourceEnv)
+    (newDomain : EnvDomainEq
+      (compileDecs [] 1 config.next (lookupEnvId envId config.envs) ⟨0, config.envs.next, .ln⟩ decs).2.2.1
+      sourceNew)
+    (newInv : GlobalEnvInv newGenv
+      (compileDecs [] 1 config.next (lookupEnvId envId config.envs) ⟨0, config.envs.next, .ln⟩ decs).2.2.1
+      (fun _ => False) sourceNew) :
+    let compiledDecs := compileDecs [] 1 config.next (lookupEnvId envId config.envs)
+      ⟨0, config.envs.next, .ln⟩ decs
+    let gen := compiledDecs.2.2.2.1
+    ∀ current, OracleInvariant.srcOracNextCfg interp after = some current →
+      ∃ mapGen compMap, Flapjack.sptLookup gen.generation current.envs.envGens = some mapGen ∧
+        Flapjack.sptLookup gen.next mapGen = some compMap ∧
+        GlobalEnvInv newGenv compMap (fun _ => False) (extendDecEnv sourceNew sourceEnv) := by
+  dsimp only
+  intro current currentCfg
+  have sub : Flapjack.sptSubspt next.envs.envGens current.envs.envGens := by
+    simpa [OracleInvariant.oracConfigEnvsSubspt, nextCfg, currentCfg] using forward.1
+  obtain ⟨mapGen, lookup, stored⟩ := incCompileProg_declaredEnvMap envId config decs
+  have lookupNext := lookup
+  rw [compiled] at lookupNext
+  have lookupCurrent := (Flapjack.sptSubsptLookup _ _).mp sub _ _ lookupNext
+  have baseNew := globalEnvInv_growth oldGenv newGenv growth (lookupEnvId envId config.envs)
+    (fun _ => False) sourceEnv baseInv
+  exact ⟨mapGen, _, lookupCurrent, stored,
+    globalEnvInv_append_factored newGenv _ _ sourceNew sourceEnv newDomain newInv baseNew⟩
+
+/-- The Eval success path can declare its extended environment and execute
+the generated ID store using the compiler map retained by the oracle. This
+uses the factored simulation relations and is not yet the full HOL App case. -/
+theorem evalDeclare_store_factored {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (envId : Nat × Nat) (config next : Config) (decs : List Dec) (flatDecs : List FlatLang.Exp)
+    (before : Option EvalState) (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (oldGenv newGenv : GlobalEnv) (idxs : NextIndices × NextIndices × Set (Nat × IndexKind))
+    (sourceEnv sourceNew : SemEnv Value) (value : Value) (after : Option EvalState)
+    (compiled : incCompileProg envId config decs = (next, flatDecs))
+    (nextCfg : OracleInvariant.srcOracNextCfg interp before = some next)
+    (forward : OracleInvariant.oracForwardRel interp before source.evalState)
+    (growth : GlobalGrowth oldGenv newGenv)
+    (baseInv : GlobalEnvInv oldGenv (lookupEnvId envId config.envs) (fun _ => False) sourceEnv)
+    (newDomain : EnvDomainEq
+      (compileDecs [] 1 config.next (lookupEnvId envId config.envs) ⟨0, config.envs.next, .ln⟩ decs).2.2.1
+      sourceNew)
+    (newInv : GlobalEnvInv newGenv
+      (compileDecs [] 1 config.next (lookupEnvId envId config.envs) ⟨0, config.envs.next, .ln⟩ decs).2.2.1
+      (fun _ => False) sourceNew)
+    (invariant : OracleInvariant.factoredInvariant interp transform
+      (compileDecs [] 1 config.next (lookupEnvId envId config.envs) ⟨0, config.envs.next, .ln⟩ decs).2.2.2.1
+      newGenv idxs source flat)
+    (generation : OracleInvariant.envGenRel
+      (compileDecs [] 1 config.next (lookupEnvId envId config.envs) ⟨0, config.envs.next, .ln⟩ decs).2.2.2.1
+      source.evalState)
+    (declared : declareEnv source.evalState (extendDecEnv sourceNew sourceEnv) = some (value, after)) :
+    let gen := (compileDecs [] 1 config.next (lookupEnvId envId config.envs)
+      ⟨0, config.envs.next, .ln⟩ decs).2.2.2.1
+    ∃ stored : FlatSem.Value,
+      FlatSem.evaluateDecs flat [storeEnvId gen.generation gen.next] =
+        ({ flat with refs := .refv stored :: flat.refs.tail }, none) ∧
+      OracleInvariant.factoredInvariant interp transform { gen with next := gen.next + 1 } newGenv idxs
+        { source with evalState := after } flat ∧
+      (∃ globals, flat.globals = some (.loc true 0) :: globals) ∧
+      ValueRel newGenv value stored ∧ OracleInvariant.oracForwardRel interp source.evalState after ∧
+      OracleInvariant.envGenRel { gen with next := gen.next + 1 } after := by
+  dsimp only
+  have newMap := evalDeclaredEnvMap_factored interp envId config next decs flatDecs before source.evalState
+    oldGenv newGenv sourceEnv sourceNew compiled nextCfg forward growth baseInv newDomain newInv
+  exact OracleInvariant.declareEnv_storeEnvId_factored_all interp transform _ newGenv idxs source flat
+    (extendDecEnv sourceNew sourceEnv) value after invariant generation declared newMap
+
 end Flapjack.Compiler.Backend.SourceToFlat
