@@ -1,7 +1,7 @@
 import Flapjack.EvaluateProps.EvaluateFfiFull
 
 /-! Original combined clock, state-growth and FFI-trace invariant. The main
-mutual evaluator proof and its bind/check closure lemmas remain open. The
+mutual evaluator proof remains open. The
 source evaluator and its carriers remain pending review. -/
 namespace Flapjack.EvaluateProps
 open Flapjack.SemanticPrimitivesHOL

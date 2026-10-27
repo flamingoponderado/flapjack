@@ -103953,5 +103953,13 @@
     "lean_name": "isClockIoMono_check",
     "statement_status": "pending_statement_review",
     "reviewer": "Codex (pending full evaluator state and carrier review): pinned typed original captured in cake_evaluate_ffi_props_probe; the proof handles zero and positive clocks and retains independent success/error payload types."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
+    "hol_name": "is_clock_io_mono_bind",
+    "lean_path": "Flapjack/EvaluateProps/ClockIoBind.lean",
+    "lean_name": "isClockIoMono_bind",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending full evaluator state and carrier review): pinned typed original is captured in cake_evaluate_ffi_props_probe. Both success types and both error payload types are independent; timeout propagation is retained."
   }
 ]
