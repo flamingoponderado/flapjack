@@ -1,3 +1,5 @@
+`source_to_flat_pmatch_statement_probe.out` captures a typed quotation of the complete original local pattern theorem, including both pattern and list conjuncts and independent compiler/FFI types. It does not replay the HOL proof. Lean proves analogous wrappers with the original explicit environment, store, and flat-global hypotheses over factored relations; full HOL correspondence remains open.
+
 `source_to_flat_state_pattern_probe.out` captures the complete typed original store and state relation rules, state inversion, and match-result relation. Lean uses analogous untagged relations over its factored value relation; full correspondence and pattern-preservation assembly remain open.
 
 `cake_flat_sem_pattern_probe.out` captures the original typed stamp relation, matching equations, and matched literal, constructor, tuple, and error-precedence observations. The Lean matcher is a semantic prerequisite; source-to-flat matching preservation and whole compiler correctness remain open.

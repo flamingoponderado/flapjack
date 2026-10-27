@@ -241,6 +241,10 @@ run_probe() {
   done
 }
 
+run_probe source_to_flat_pmatch_statement_probeScript.sml source_to_flat_pmatch_statement_probe.out \
+  pmatch_statement_typed \
+  "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe source_to_flat_state_pattern_probeScript.sml source_to_flat_state_pattern_probe.out \
   store_rel_rules state_rel_rules state_rel_cases match_result_def match_result_imp \
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"

@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StateRel
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PatternStamps
 import Flapjack.Compiler.Backend.Semantics.FlatSem.PatternMatch
 import Flapjack.SemanticPrimitivesHOL.PatternMatch
 
@@ -230,5 +231,105 @@ theorem pmatch_tuple_related {C F : Type} (genv : GlobalEnv) (compMap : Environm
   · have compatible : FlatSem.PmatchStampsOk none none flats.length flats.length := .tuple _ _ rfl
     simpa [SemanticPrimitivesHOL.pmatch, FlatSem.pmatch, compilePat, same, len, compatible] using ih
   · simp [SemanticPrimitivesHOL.pmatch, same, MatchResultRel]
+
+/-- The named-constructor case uses the source and flat constructor lookups,
+the constructor-map invariants, and the pattern-list induction hypothesis.
+This is infrastructure over the factored value and environment relations. -/
+theorem pmatch_namedConstructor_related {C F : Type} (genv : GlobalEnv) (compMap : Environment)
+    (constructors : Namespace ModN ConN (Nat × Stamp)) (store : Store SemanticPrimitivesHOL.Value)
+    (state : FlatSem.State C F) (suffix bound : List (VarN × SemanticPrimitivesHOL.Value))
+    (flatEnv : List (VarN × FlatSem.Value)) (name : Ident ModN ConN) (patterns : List Pat)
+    (sources : List SemanticPrimitivesHOL.Value) (flats : List FlatSem.Value)
+    (arity : Nat) (expected actual : Stamp) (flatCn : FlatLang.CtorId)
+    (group : FlatLang.TypeGroupId) (flatStamp : FlatLang.CtorId × FlatLang.TypeId)
+    (sourceLookup : nsLookup constructors name = some (arity, expected))
+    (compileLookup : nsLookup compMap.c name = some (flatCn, group))
+    (expectedLookup : genv.c.lookup ((flatCn, group.map Prod.fst), arity) = some expected)
+    (actualLookup : genv.c.lookup (flatStamp, sources.length) = some actual)
+    (groupLookup : ∀ ty ctors, group = some (ty, ctors) → genv.tys.lookup ty = some ctors)
+    (ok : genvCOk genv.c) (typesOk : genvCTysOk genv.c genv.tys)
+    (valuesRel : List.Forall₂ (ValueRel genv) sources flats)
+    (ih : MatchResultRel genv suffix
+      (SemanticPrimitivesHOL.pmatchList constructors store patterns sources (bound ++ suffix))
+      (FlatSem.pmatchList state (patterns.map (compilePat compMap)) flats flatEnv)) :
+    MatchResultRel genv suffix
+      (SemanticPrimitivesHOL.pmatch constructors store (.pcon (some name) patterns)
+        (.conv (some actual) sources) (bound ++ suffix))
+      (FlatSem.pmatch state (compilePat compMap (.pcon (some name) patterns))
+        (.conv (some flatStamp) flats) flatEnv) := by
+  have lengths := valuesRel.length_eq
+  by_cases sameType : SemanticPrimitivesHOL.sameType expected actual = true
+  · by_cases patternArity : patterns.length = arity
+    · have compatible : FlatSem.PmatchStampsOk (some (flatCn, group)) (some flatStamp)
+          patterns.length flats.length := by
+        rw [patternArity, ← lengths]
+        exact genvCOk_pmatchStamps genv.c genv.tys flatCn group flatStamp arity sources.length
+          expected actual ok typesOk sameType expectedLookup actualLookup groupLookup
+      by_cases sameCtor : SemanticPrimitivesHOL.sameCtor expected actual = true
+      · have stampEq : expected = actual := by simpa [SemanticPrimitivesHOL.sameCtor] using sameCtor
+        subst actual
+        have keyEq := ok.2.2.2.2 (flatCn, group.map Prod.fst) flatStamp arity sources.length
+          expected expectedLookup actualLookup
+        have sameFlat : flatCn = flatStamp.1 := congrArg Prod.fst keyEq.1
+        have valueArity : sources.length = arity := keyEq.2.symm
+        have compatible' : FlatSem.PmatchStampsOk (some (flatStamp.1, group)) (some flatStamp)
+            arity flats.length := by simpa [patternArity, sameFlat] using compatible
+        have flatArity : arity = flats.length := valueArity.symm.trans lengths
+        have compatible'' : FlatSem.PmatchStampsOk (some (flatStamp.1, group)) (some flatStamp)
+            flats.length flats.length := by simpa [flatArity] using compatible'
+        simpa [SemanticPrimitivesHOL.pmatch, FlatSem.pmatch, compilePat, sourceLookup,
+          compileLookup, sameType, patternArity, sameCtor, valueArity, lengths, compatible'', sameFlat,
+          flatArity] using ih
+      · have mismatch : ¬ (flatCn = flatStamp.1 ∧ patterns.length = flats.length) := by
+          intro ⟨sameFlat, sameLength⟩
+          have arityEq : arity = sources.length := patternArity.symm.trans (sameLength.trans lengths.symm)
+          have sameSource := genvCOk_sameType_ctorEq genv.c (flatCn, group.map Prod.fst) flatStamp
+            arity sources.length expected actual ok expectedLookup actualLookup sameType sameFlat arityEq
+          exact sameCtor sameSource
+        have compatible' : FlatSem.PmatchStampsOk (some (flatCn, group)) (some flatStamp)
+            arity flats.length := by simpa [patternArity] using compatible
+        have mismatch' : ¬ (flatCn = flatStamp.1 ∧ arity = flats.length) := by
+          simpa [patternArity] using mismatch
+        simp [SemanticPrimitivesHOL.pmatch, FlatSem.pmatch, compilePat, sourceLookup, compileLookup,
+          sameType, patternArity, sameCtor, compatible', mismatch', MatchResultRel]
+    · simp [SemanticPrimitivesHOL.pmatch, sourceLookup, sameType, patternArity, MatchResultRel]
+  · simp [SemanticPrimitivesHOL.pmatch, sourceLookup, sameType, MatchResultRel]
+
+/-- Named-pattern matching under the global constructor invariant. This is
+infrastructure over the factored value and global environment relations; the
+list-matching induction hypothesis is retained for related constructor fields. -/
+theorem pmatch_named_related {C F : Type} (genv : GlobalEnv) (compMap compMap2 : Environment)
+    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (shadowers : VarN → Prop)
+    (store : Store SemanticPrimitivesHOL.Value) (state : FlatSem.State C F)
+    (suffix bound : List (VarN × SemanticPrimitivesHOL.Value)) (flatEnv : List (VarN × FlatSem.Value))
+    (name : Ident ModN ConN) (patterns : List Pat) (source : SemanticPrimitivesHOL.Value)
+    (flat : FlatSem.Value) (inv : GlobalEnvInv genv compMap2 shadowers sourceEnv)
+    (mapsEq : compMap2.c = compMap.c)
+    (ok : genvCOk genv.c) (typesOk : genvCTysOk genv.c genv.tys) (valueRel : ValueRel genv source flat)
+    (ih : ∀ sources flats, List.Forall₂ (ValueRel genv) sources flats →
+      MatchResultRel genv suffix
+        (SemanticPrimitivesHOL.pmatchList sourceEnv.c store patterns sources (bound ++ suffix))
+        (FlatSem.pmatchList state (patterns.map (compilePat compMap)) flats flatEnv)) :
+    MatchResultRel genv suffix
+      (SemanticPrimitivesHOL.pmatch sourceEnv.c store (.pcon (some name) patterns) source (bound ++ suffix))
+      (FlatSem.pmatch state (compilePat compMap (.pcon (some name) patterns)) flat flatEnv) := by
+  cases source with
+  | conv stamp sources =>
+    cases stamp with
+    | none => simp [SemanticPrimitivesHOL.pmatch, MatchResultRel]
+    | some actual =>
+      cases sourceLookup : nsLookup sourceEnv.c name with
+      | none => simp [SemanticPrimitivesHOL.pmatch, sourceLookup, MatchResultRel]
+      | some entry =>
+        obtain ⟨arity, expected⟩ := entry
+        obtain ⟨flats, ctor, valuesRel, rfl, flatStamp, rfl, actualLookup⟩ :=
+          (valueRel_conv_iff genv _ _ flat).mp valueRel
+        obtain ⟨flatCn, group, compileLookup, expectedLookup, groupLookup⟩ :=
+          ((globalEnvInv_iff genv compMap2 shadowers sourceEnv).mp inv).2 name arity expected sourceLookup
+        rw [mapsEq] at compileLookup
+        exact pmatch_namedConstructor_related genv compMap sourceEnv.c store state suffix bound flatEnv
+          name patterns sources flats arity expected actual flatCn group flatStamp sourceLookup compileLookup
+          expectedLookup actualLookup groupLookup ok typesOk valuesRel (ih sources flats valuesRel)
+  | _ => simp [SemanticPrimitivesHOL.pmatch, MatchResultRel]
 
 end Flapjack.Compiler.Backend.SourceToFlat
