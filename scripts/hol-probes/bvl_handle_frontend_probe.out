@@ -1,0 +1,4 @@
+simplify=[Let [Var 0] (Let [Var 0] (Var 2)); If (Var 0) (Let [Var 1] (Var 1)) (Var 2); Handle (Call 0 (SOME 2) []) (Force 9 1)]
+compiled=[(Handle (Let [Var 0; Var 2] (Let [Var 0; Op (IntOp (Const 0)) []; Var 1] (Call 0 (SOME 2) [Var 2; Var 0]))) (Var 1),Union (Union (Var 2) (Var 0)) (Shift 1 (Var 1)),1,T); (Var 1,Var 1,1,T); (Op (IntOp (Const 0)) [],Empty,1,T)]
+cut=(Let [] (Let [Var 0; Var 2] (Let [Var 0; Op (IntOp (Const 0)) []; Var 1] (Call 0 (SOME 4) [Var 2; Var 0]))),Union (Var 2) (Union (Var 0) Empty),0,F)
+seq=Let [Call 0 (SOME 1) []] (Let [] (Let [] (Call 0 (SOME 2) [])))

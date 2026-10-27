@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.Bvl.Syntax
 import Flapjack.Misc.Sptree
+import Flapjack.Compiler.Backend.BvlHandle
 
 /-! Fuel-bounded executable pieces of CakeML's BVL inlining pass. These are
 Flapjack infrastructure until the original total definitions and termination
@@ -160,6 +161,15 @@ def compileWithoutHandleFuel (fuel limit : Nat) (prog : List (Nat × Nat × Exp)
   let prog ← prog.mapM fun (name, arity, body) => do
     let body ← removeTicksFuel fuel body
     pure (name, arity, ← letOpFuel fuel body)
+  pure (cache, prog)
+
+/-- Continue through handler processing without its constant-folding
+prerequisite; the result is not the full original BVL optimization pass. -/
+def compileWithoutConstantsFuel (fuel inlineLimit cutSize : Nat) (splitSeq : Bool)
+    (prog : List (Nat × Nat × Exp)) : Option (Spt (Nat × Exp) × List (Nat × Nat × Exp)) := do
+  let (cache, prog) ← compileWithoutHandleFuel fuel inlineLimit prog
+  let prog ← prog.mapM fun (name, arity, body) => do
+    pure (name, arity, ← BvlHandle.compileAnyWithoutConstantsFuel fuel splitSeq cutSize arity body)
   pure (cache, prog)
 
 end Flapjack.Compiler.Backend.BvlInline

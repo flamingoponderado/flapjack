@@ -22,6 +22,8 @@ CASES = (
      ROOT / "Flapjack/Test/InlineCakeBviOracle.lean", "InlineCakeBviOracle"),
     (ROOT / "scripts/hol-probes/bvl_inline_cake_bvi_probe.out",
      ROOT / "Flapjack/Test/BvlInlineCakeBviOracle.lean", "BvlInlineCakeBviOracle"),
+    (ROOT / "scripts/hol-probes/bvl_handle_cake_bvi_probe.out",
+     ROOT / "Flapjack/Test/BvlHandleCakeBviOracle.lean", "BvlHandleCakeBviOracle"),
 )
 
 CONSTRUCTORS = {
@@ -92,7 +94,7 @@ def render(input_path, namespace):
         args = [parse() for _ in range(arity)]
         return "(" + " ".join([name, *args]) + ")" if args else name
 
-    if namespace in ("MtiCakeBviOracle", "BvlInlineCakeBviOracle"):
+    if namespace in ("MtiCakeBviOracle", "BvlInlineCakeBviOracle", "BvlHandleCakeBviOracle"):
         if tokens[pos] != "[":
             raise ValueError("expected BVI program list")
         pos += 1

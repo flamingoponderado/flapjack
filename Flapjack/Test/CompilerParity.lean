@@ -303,6 +303,7 @@ import Flapjack.Test.CakeMLRiscVPartial
 import Flapjack.Test.CakeMLNamesParity
 import Flapjack.Test.ClosMtiParity
 import Flapjack.Test.BvlInlineParity
+import Flapjack.Test.BvlHandleParity
 import Flapjack.Test.BviInlineParity
 import Flapjack.Test.MiscLookupAnyFindIndexParity
 import Flapjack.Test.StackPropsClockSupportParity
