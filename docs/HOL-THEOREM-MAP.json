@@ -101534,5 +101534,61 @@
     "hol_name": "stubs_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source stub and operand order transcribed; full typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BvlJump.lean",
+    "lean_name": "jumpList",
+    "hol_path": "cakeml/compiler/backend/bvl_jumpScript.sml",
+    "hol_name": "JumpList_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BvlJump.lean",
+    "lean_name": "jump",
+    "hol_path": "cakeml/compiler/backend/bvl_jumpScript.sml",
+    "hol_name": "Jump_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Stubs.lean",
+    "lean_name": "generateGenericApp",
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
+    "hol_name": "generate_generic_app_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Stubs.lean",
+    "lean_name": "checkClosure",
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
+    "hol_name": "check_closure_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Stubs.lean",
+    "lean_name": "initCode",
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
+    "hol_name": "init_code_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Stubs.lean",
+    "lean_name": "initGlobals",
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
+    "hol_name": "init_globals_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Stubs.lean",
+    "lean_name": "forceThunkCode",
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
+    "hol_name": "force_thunk_code_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source clauses transcribed; complete typed carrier and statement review remains pending."
   }
 ]

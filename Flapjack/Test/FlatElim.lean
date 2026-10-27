@@ -8,6 +8,8 @@ import Flapjack.Compiler.Backend.ClosToBvl.Names
 import Flapjack.Compiler.Backend.ClosNumber
 import Flapjack.Compiler.Backend.ClosToBvl.ExtractName
 import Flapjack.Compiler.Backend.ClosToBvl.Compile
+import Flapjack.Compiler.Backend.BvlJump
+import Flapjack.Compiler.Backend.ClosToBvl.Stubs
 import Flapjack.Compiler.Backend.BvlToBvi.Analysis
 import Flapjack.Compiler.Backend.BvlToBvi.CompileOp
 import Flapjack.Compiler.Backend.BvlToBvi.Stubs
@@ -349,6 +351,23 @@ example : Flapjack.Compiler.Backend.ClosToBvl.generatePartialAppClosureFn 2 1 =
       (.call 0 none [.var 1, .op (.blockOp (.elemAt 3)) [.var 2],
         .op (.blockOp (.elemAt 4)) [.var 2], .var 0, .op (.blockOp (.elemAt 0)) [.var 0]]) := rfl
 #guard bvl_closure_call && bvl_partial_application
+#guard match Flapjack.Compiler.Backend.BvlJump.jumpList 0 [.var 1, .var 2, .var 3] with
+  | .ifThenElse (.op (.intOp (.lessConstSmall 1)) [.var 0]) (.var 1)
+      (.ifThenElse (.op (.intOp (.lessConstSmall 2)) [.var 0]) (.var 2) (.var 3)) => true
+  | _ => false
+example : Flapjack.Compiler.Backend.ClosToBvl.initGlobals 0 7 =
+    .let [.op (.globOp .allocGlobal) [.op (.intOp (.const 1)) []]]
+      (.let [.op (.globOp (.setGlobal 0)) [.op (.blockOp (.cons 0)) []]] (.call 0 (some 7) [])) := rfl
+#guard (sptLookup 0 (Flapjack.Compiler.Backend.ClosToBvl.initCode 0)).isNone
+#guard match Flapjack.Compiler.Backend.ClosToBvl.generateGenericApp 0 0 with
+  | .let [.op (.intOp .sub) [.op (.intOp (.const 1)) [], .op (.blockOp (.elemAt 1)) [.var 1]]]
+      (.ifThenElse (.op (.intOp .less) [.op (.intOp (.const 0)) [], .var 0])
+        (.let [.op (.blockOp (.elemAt 1)) [.var 2]] (.op (.intOp (.const 0)) []))
+        (.ifThenElse (.op (.blockOp (.tagEq 30)) [.var 2]) (.op (.blockOp (.cons 31)) _) _)) => true
+  | _ => false
+#guard (sptToAList (Flapjack.Compiler.Backend.ClosToBvl.initCode 2)).map (fun (loc, arity, _) => (loc, arity)) ==
+  [(1, 3), (0, 2), (2, 2)]
+#guard bvl_closure_stubs
 example : Flapjack.Compiler.Backend.ClosToBvl.extractName
     [.op .none (.intOp (.const 7)) [], .var .none 2] = (7, [.var .none 2]) := rfl
 example : Flapjack.Compiler.Backend.ClosToBvl.extractName

@@ -325,3 +325,16 @@ val _ = capture "bvl_to_bvi_stub_bodies" ``
   [bvi$Op (closLang$MemOp closLang$El) [bvi$Var 2; bvi$Var 1]; bvi$Var 2; bvi$Var 0]]
   (bvi$If (bvi$Op (closLang$BlockOp closLang$Equal) [bvi$Op (closLang$IntOp (closLang$Const 0)) []; bvi$Var 3]) (bvi$Var 0)
    (bvi$Call 0 (SOME 63) [bvi$Var 1; bvi$Var 2; bvi$Op (closLang$IntOp closLang$Sub) [bvi$Op (closLang$IntOp (closLang$Const 1)) []; bvi$Var 3]] NONE)))``;
+val _ = capture "bvl_closure_stubs" ``
+ bvl_jump$JumpList 0 [bvl$Var 1; bvl$Var 2; bvl$Var 3] =
+  bvl$If (bvl$Op (closLang$IntOp (closLang$LessConstSmall 1)) [bvl$Var 0]) (bvl$Var 1)
+   (bvl$If (bvl$Op (closLang$IntOp (closLang$LessConstSmall 2)) [bvl$Var 0]) (bvl$Var 2) (bvl$Var 3)) /\
+ clos_to_bvl$init_globals 0 7 = bvl$Let [bvl$Op (closLang$GlobOp closLang$AllocGlobal) [bvl$Op (closLang$IntOp (closLang$Const 1)) []]]
+  (bvl$Let [bvl$Op (closLang$GlobOp (closLang$SetGlobal 0)) [bvl$Op (closLang$BlockOp (closLang$Cons 0)) []]] (bvl$Call 0 (SOME 7) [])) /\
+ sptree$lookup 0 (clos_to_bvl$init_code 0) = NONE /\
+ (case clos_to_bvl$generate_generic_app 0 0 of
+   bvl$Let [bvl$Op (closLang$IntOp closLang$Sub) [bvl$Op (closLang$IntOp (closLang$Const 1)) []; bvl$Op (closLang$BlockOp (closLang$ElemAt 1)) [bvl$Var 1]]]
+    (bvl$If (bvl$Op (closLang$IntOp closLang$Less) [bvl$Op (closLang$IntOp (closLang$Const 0)) []; bvl$Var 0])
+     (bvl$Let [bvl$Op (closLang$BlockOp (closLang$ElemAt 1)) [bvl$Var 2]] (bvl$Op (closLang$IntOp (closLang$Const 0)) []))
+     (bvl$If (bvl$Op (closLang$BlockOp (closLang$TagEq 30)) [bvl$Var 2]) (bvl$Op (closLang$BlockOp (closLang$Cons 31)) _) _)) => T | _ => F) /\
+ MAP (\(loc,arity,exp). (loc,arity)) (sptree$toAList (clos_to_bvl$init_code 2)) = [(1,3); (0,2); (2,2)]``;
