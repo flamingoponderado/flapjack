@@ -369,6 +369,18 @@ val data_length_word = EVAL ``let conf = (ARB:data_to_word$config) with <|tag_bi
  (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$BlockOp (closLang$TagLenEq 0 1)) [] NONE) : 64 wordLang$prog # num) = (wordLang$Skip, 2)``;
 val _ = (print "data_to_word_lengths="; print_term (rhs (concl (CONV_RULE
   (RAND_CONV (SIMP_CONV (srw_ss()) [wordsTheory.dimindex_32, wordsTheory.dimindex_64, wordsTheory.dimword_def] THENC EVAL)) data_length_word))); print "\n");
+val data_byte_memory_word = EVAL ``let conf = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3|> in
+ (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$MemOp closLang$DerefByte) [1;2] NONE) : 64 wordLang$prog # num) =
+  (wordLang$Seq (wordLang$Assign 1 (wordLang$Op asm$Add [wordLang$Op asm$Add [wordLang$Lookup stackLang$CurrHeap; wordLang$Shift ast$Lsr (wordLang$Var 4) (wordLang$Const 5w)]; wordLang$Op asm$Add [wordLang$Const 8w; wordLang$Shift ast$Lsr (wordLang$Var 6) (wordLang$Const 2w)]]))
+   (wordLang$Seq (wordLang$Inst (asm$Mem asm$Load8 3 (asm$Addr 1 0w))) (wordLang$Assign 8 (wordLang$Shift ast$Lsl (wordLang$Var 3) (wordLang$Const 2w)))), 2) /\
+ (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$MemOp closLang$UpdateByte) [1;2;3] NONE) : 32 wordLang$prog # num) =
+  (wordLang$Seq (wordLang$Assign 1 (wordLang$Op asm$Add [wordLang$Op asm$Add [wordLang$Lookup stackLang$CurrHeap; wordLang$Shift ast$Lsr (wordLang$Var 4) (wordLang$Const 6w)]; wordLang$Op asm$Add [wordLang$Const 4w; wordLang$Shift ast$Lsr (wordLang$Var 6) (wordLang$Const 2w)]]))
+   (wordLang$Seq (wordLang$Assign 3 (wordLang$Shift ast$Lsr (wordLang$Var 8) (wordLang$Const 2w)))
+    (wordLang$Seq (wordLang$Inst (asm$Mem asm$Store8 3 (asm$Addr 1 0w))) (wordLang$Assign 8 (wordLang$Const 2w)))), 2) /\
+ (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$MemOp closLang$DerefByte) [1] NONE) : 64 wordLang$prog # num) = (wordLang$Skip, 2) /\
+ (data_to_word$comp conf 5 2 (dataLang$Assign 3 (closLang$MemOp closLang$UpdateByte) [1;2] NONE) : 32 wordLang$prog # num) = (wordLang$Skip, 2)``;
+val _ = (print "data_to_word_byte_memory="; print_term (rhs (concl (CONV_RULE
+  (RAND_CONV (SIMP_CONV (srw_ss()) [wordsTheory.dimindex_32, wordsTheory.dimindex_64, wordsTheory.dimword_def] THENC EVAL)) data_byte_memory_word))); print "\n");
 val data_comparisons_word = EVAL ``
  (data_to_word$comp (ARB:data_to_word$config) 5 2 (dataLang$Assign 3 (closLang$BlockOp (closLang$BoolTest (ast$Compare ast$Gt))) [1;2] NONE) : 64 wordLang$prog # num) =
   (wordLang$If asm$Equal 4 (asm$Reg 6) (wordLang$Assign 8 (wordLang$Const 18w)) (wordLang$Assign 8 (wordLang$Const 2w)), 2) /\

@@ -288,6 +288,27 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
           some (.assign (adjustVar dest)
             (shiftN .lsl (.op .sub [length, .const (BitVec.ofNat width (width / 8))]) 2), l)
       | _ => some (.skip, l)
+  | l, .assign dest (.memOp .derefByte) args _ =>
+      match args with
+      | [base, index] =>
+          let offset := WordLangExpHOL.op .add [.const (BitVec.ofNat width (width / 8)),
+            shiftN .lsr (.var (adjustVar index)) 2]
+          some (listSeq [
+            .assign 1 (.op .add [realAddr conf (adjustVar base), offset]),
+            .inst (.mem .load8 3 (.addr 1 0)),
+            .assign (adjustVar dest) (shiftN .lsl (.var 3) 2)], l)
+      | _ => some (.skip, l)
+  | l, .assign dest (.memOp .updateByte) args _ =>
+      match args with
+      | [base, index, value] =>
+          let offset := WordLangExpHOL.op .add [.const (BitVec.ofNat width (width / 8)),
+            shiftN .lsr (.var (adjustVar index)) 2]
+          some (listSeq [
+            .assign 1 (.op .add [realAddr conf (adjustVar base), offset]),
+            .assign 3 (shiftN .lsr (.var (adjustVar value)) 2),
+            .inst (.mem .store8 3 (.addr 1 0)),
+            .assign (adjustVar dest) (.const 2)], l)
+      | _ => some (.skip, l)
   | l, .assign dest (.memOp .ref) args _ =>
       match encodeHeader (width := width) conf 2 args.length with
       | none => some (giveUp, l)

@@ -90,6 +90,7 @@ def data_to_word_ref : Bool := true
 def data_to_word_int : Bool := true
 def data_to_word_ref_array : Bool := true
 def data_to_word_lengths : Bool := true
+def data_to_word_byte_memory : Bool := true
 def data_to_word_comparisons : Bool := true
 def data_to_word_byte_ops : Bool := true
 def data_to_word_byte_shifts : Bool := true

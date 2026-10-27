@@ -220,6 +220,24 @@ private def headerConfig : Config := { conf with lenSize := 4 }
   | some (.skip, 2) => true
   | _ => false
 #guard Flapjack.Test.CakeMLFlatOracle.data_to_word_lengths
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp .derefByte) [1, 2] none) with
+  | some (.seq (.assign 1 (.op .add [.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)],
+      .op .add [.const 8, .shift .lsr (.var 6) (.const 2)]]))
+      (.seq (.inst (.mem .load8 3 (.addr 1 0))) (.assign 8 (.shift .lsl (.var 3) (.const 2)))), 2) => true
+  | _ => false
+#guard match compileControl? (width := 32) conf 5 2 (.assign 3 (.memOp .updateByte) [1, 2, 3] none) with
+  | some (.seq (.assign 1 (.op .add [.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 6)],
+      .op .add [.const 4, .shift .lsr (.var 6) (.const 2)]]))
+      (.seq (.assign 3 (.shift .lsr (.var 8) (.const 2)))
+        (.seq (.inst (.mem .store8 3 (.addr 1 0))) (.assign 8 (.const 2)))), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp .derefByte) [1] none) with
+  | some (.skip, 2) => true
+  | _ => false
+#guard match compileControl? (width := 32) conf 5 2 (.assign 3 (.memOp .updateByte) [1, 2] none) with
+  | some (.skip, 2) => true
+  | _ => false
+#guard Flapjack.Test.CakeMLFlatOracle.data_to_word_byte_memory
 #guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.boolTest (.compare .gt))) [1, 2] none) with
   | some (.ite .equal 4 (.reg 6) (.assign 8 (.const 18)) (.assign 8 (.const 2)), 2) => true
   | _ => false
