@@ -385,6 +385,9 @@ run_probe cake_source_store_probeScript.sml cake_source_store_probe.out \
 run_probe cake_source_constructor_probeScript.sml cake_source_constructor_probe.out \
   find_type build_env_type same_type same_ctor exn_type check wrong_arity build "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
 
+run_probe cake_source_pmatch_probeScript.sml cake_source_pmatch_probe.out \
+  pmatch_type variable no_match wrong_arity later_type_error reference invalid_ref safe_no_match unsafe_match "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+
 run_probe cake_parse_error_probeScript.sml cake_parse_error_probe.out \
   missing after_decl multiline "$cake_dir/compiler/parsing/pegexec_cml_foScript.sml" "$cake_dir/compiler/parsing"
 

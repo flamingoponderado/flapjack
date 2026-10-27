@@ -1,0 +1,9 @@
+pmatch_type=:(mlstring, mlstring, num # stamp) namespace -> v store_v list -> pat -> v -> (mlstring # v) list -> (mlstring # v) list match_result
+variable=Match [(«x»,Litv (IntLit (4 :int)))]
+no_match=(No_match :(mlstring # v) list match_result)
+wrong_arity=(Match_type_error :(mlstring # v) list match_result)
+later_type_error=(Match_type_error :(mlstring # v) list match_result)
+reference=Match [(«x»,Litv (IntLit (4 :int)))]
+invalid_ref=(Match_type_error :(mlstring # v) list match_result)
+safe_no_match=T
+unsafe_match=F

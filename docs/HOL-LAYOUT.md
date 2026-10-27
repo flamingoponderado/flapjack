@@ -126,7 +126,7 @@ the cited name occurs in one of the two syntactic forms.
 | `compiler/backend/semantics/labPropsScript.sml` | `Flapjack/Compiler/Backend/LabProps.lean` (`line_ok_pre`, `sec_ok_pre`, and `all_enc_ok_pre`; asm/config carrier bridge remains explicit) |
 | `compiler/backend/semantics/labSemScript.sml` | `Flapjack/Compiler/Backend/LabSem.lean` (`is_Label`) |
 | `semantics/astScript.sml` | `Flapjack/AstHOL.lean` (exact `ast$shift`, `opb`), `Flapjack/AstHOL/BackendOperators.lean` (`word_size`, `thunk_mode`, `thunk_op`, `test`), `Flapjack/AstHOL/LitOp.lean` (`lit`, `arith`, name abbreviations, `prim_type`, `op`, `op_class`, `getOpClass_def`, `lop`), `Flapjack/AstHOL/Syntax.lean` (`ast_t`, `pat`, `exp`, `type_def`, `dec`, `pat_bindings_def`) |
-| `semantics/semanticPrimitivesScript.sml` | `Flapjack/SemanticPrimitivesHOL.lean` (source values, environments, results, stores, evaluator state, and constructor helpers; statement review pending) |
+| `semantics/semanticPrimitivesScript.sml` | `Flapjack/SemanticPrimitivesHOL.lean` and `Flapjack/SemanticPrimitivesHOL/PatternMatch.lean` (source values, environments, results, stores, evaluator state, constructor helpers, and pattern matching; statement review pending) |
 | `semantics/namespaceScript.sml` | `Flapjack/NamespaceHOL.lean` (`alist`, `namespace`, `id` and every namespace operation of lines 14-117) |
 | `semantics/primTypesScript.sml` | `Flapjack/PrimTypesHOL.lean` (`prim_types_program_def`) |
 | `compiler/backend/stack_namesScript.sml` | `Flapjack/Compiler/Backend/StackNames.lean` |

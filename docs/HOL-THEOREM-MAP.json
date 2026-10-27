@@ -102677,5 +102677,29 @@
     "lean_name": "sameType",
     "statement_status": "pending_statement_review",
     "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "can_pmatch_all_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/PatternMatch.lean",
+    "lean_name": "canPmatchAll",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "pmatch_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/PatternMatch.lean",
+    "lean_name": "pmatch",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "pmatch_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/PatternMatch.lean",
+    "lean_name": "pmatchList",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
   }
 ]
