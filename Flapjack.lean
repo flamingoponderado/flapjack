@@ -221,6 +221,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateApply
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvalApp
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDenv
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDlet
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDletrec
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EnvironmentDomain
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.MemoryOps
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ThunkRel
