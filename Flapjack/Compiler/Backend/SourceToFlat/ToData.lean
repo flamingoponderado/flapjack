@@ -34,4 +34,15 @@ def compileCakeToDataInlineFuel (fuel : Nat) (source : Config)
     pure (name, args, body)
   pure (source, closure, start, code, next, names)
 
+/-- Lower the checked BVL-optimized and BVI-inlined route to data language. -/
+def compileCakeToDataOptimizedFuel (fuel inlineLimit cutSize : Nat) (splitSeq : Bool)
+    (source : Config) (closure : ClosToBvl.Config) (decls : List AstHOL.Dec) :
+    Option (Config × ClosToBvl.Config × Nat × List (Nat × Nat × DataLang.Prog) × Nat × Spt Basis.Pure.MlString.MlString) := do
+  let (source, closure, start, code, next, names) ←
+    compileCakeToBviOptimizedInlineFuel fuel inlineLimit cutSize splitSeq source closure decls
+  let code ← code.mapM fun (name, args, exp) => do
+    let body ← BviToData.compileExpFuel fuel args exp
+    pure (name, args, body)
+  pure (source, closure, start, code, next, names)
+
 end Flapjack.Compiler.Backend.SourceToFlat

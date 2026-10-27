@@ -78,4 +78,19 @@ def compileCakeToWordWithStubsAndNames64InlineFuel
   let fixed ← DataToWord.fixedStubs? word
   pure (source, closure, start, fixed ++ WordBignum.generatedStubs64 ++ code, next, names)
 
+/-- Continue the checked BVL-optimized route through 64-bit word lowering.
+Unsupported operations return `none`; the bignum stubs are a pinned snapshot. -/
+def compileCakeToWord64OptimizedFuel (fuel inlineLimit cutSize : Nat) (splitSeq : Bool)
+    (source : Config) (closure : ClosToBvl.Config) (word : DataToWord.Config)
+    (decls : List AstHOL.Dec) :
+    Option (Config × ClosToBvl.Config × Nat × List (Nat × Nat × WordLangProgHOL (BitVec 64)) × Nat ×
+      Spt Basis.Pure.MlString.MlString) := do
+  let (source, closure, start, code, next, names) ←
+    compileCakeToDataOptimizedFuel fuel inlineLimit cutSize splitSeq source closure decls
+  let code ← code.mapM fun (name, args, body) => do
+    let (body, _) ← DataToWord.compileControl? (width := 64) word name 2 body
+    pure (name, args + 1, body)
+  let fixed ← DataToWord.fixedStubs? word
+  pure (source, closure, start, fixed ++ WordBignum.generatedStubs64 ++ code, next, names)
+
 end Flapjack.Compiler.Backend.SourceToFlat

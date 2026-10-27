@@ -4,6 +4,7 @@ import Flapjack.Compiler.Backend.RiscVConfig.Executable
 /-! Smoke check of the explicitly restricted source-AST to RISC-V route. -/
 namespace Flapjack.Test.CakeMLRiscVPartial
 open Flapjack.Compiler.Backend
+open Flapjack.Basis.Pure.MlString
 
 private def testConfig : Backend.Config :=
   { RiscVConfig.riscvBackendConfigExecutable with
@@ -26,5 +27,14 @@ private def testConfig : Backend.Config :=
   | some (bytes, bitmaps, _), some (inlineBytes, inlineBitmaps, _) =>
       bytes == inlineBytes && bitmaps == inlineBitmaps
   | _, _ => false
+
+private def optimizedConfig : Backend.Config :=
+  { testConfig with closConf := { testConfig.closConf with maxApp := 2, doMti := true } }
+
+#guard match SourceToFlat.compileCakeToRiscVOptimizedFuel 100 8 100 false optimizedConfig
+    [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "f"))
+      (.fn (ofString "x") (.fn (ofString "y") (.var (.short (ofString "x")))))] with
+  | some (bytes, bitmaps, _) => !bytes.isEmpty && !bitmaps.isEmpty
+  | none => false
 
 end Flapjack.Test.CakeMLRiscVPartial

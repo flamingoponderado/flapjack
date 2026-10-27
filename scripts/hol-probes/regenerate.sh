@@ -81,7 +81,8 @@ probe_needs_refresh() {
          "$(basename "$probe")" == match_cake_word_probeScript.sml ||
          "$(basename "$probe")" == full_cake_word_probeScript.sml ||
          "$(basename "$probe")" == full_inline_cake_word_probeScript.sml ||
-         "$(basename "$probe")" == full_mti_inline_cake_word_probeScript.sml ) &&
+         "$(basename "$probe")" == full_mti_inline_cake_word_probeScript.sml ||
+         "$(basename "$probe")" == full_bvl_optimized_cake_word_probeScript.sml ) &&
        ( "$cake_dir/compiler/backend/source_to_sourceScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/source_to_flatScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/flat_elimScript.sml" -nt "$output" ||
@@ -113,7 +114,8 @@ probe_needs_refresh() {
     [[ ( "$(basename "$probe")" == bignum_word_probeScript.sml ||
          "$(basename "$probe")" == full_cake_word_probeScript.sml ||
          "$(basename "$probe")" == full_inline_cake_word_probeScript.sml ||
-         "$(basename "$probe")" == full_mti_inline_cake_word_probeScript.sml ) &&
+         "$(basename "$probe")" == full_mti_inline_cake_word_probeScript.sml ||
+         "$(basename "$probe")" == full_bvl_optimized_cake_word_probeScript.sml ) &&
        ( "$hol_dir/examples/machine-code/multiword/mc_multiwordScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/data_to_wordScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/word_bignumScript.sml" -nt "$output" ||
@@ -240,6 +242,9 @@ run_probe full_inline_cake_word_probeScript.sml full_inline_cake_word_probe.out 
   entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
 
 run_probe full_mti_inline_cake_word_probeScript.sml full_mti_inline_cake_word_probe.out \
+  entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe full_bvl_optimized_cake_word_probeScript.sml full_bvl_optimized_cake_word_probe.out \
   entry "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
 
 run_probe mti_ops_word_probeScript.sml mti_ops_word_probe.out \

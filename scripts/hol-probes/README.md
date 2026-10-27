@@ -32,6 +32,8 @@
 
 `full_mti_inline_cake_word_probe.out` captures the complete 64-bit word program for a nested-function declaration with multi-argument introduction and BVI wrapper inlining enabled. Known-function and call optimizations and the earlier BVL optimizations are omitted. `mti_ops_word_probe.out` separately captures tag equality, multiplication, three division configurations, and block extension, including the resulting next labels.
 
+`full_bvl_optimized_cake_word_probe.out` captures the complete 64-bit word program for the nested-function declaration after BVL inlining and BVI wrapper inlining. Known-function, call, tail-recursion and TMC optimizations are omitted; this comparison stops before word optimization and RISC-V emission.
+
 `bvl_inline_frontend_probe.out` captures BVL tick inlining, the size budget and let-operation reduction for focused examples. These are checks of selected cases, not a correctness theorem or full compiler-output comparison.
 
 `bvl_inline_cake_bvi_probe.out` captures the complete BVI result of a nested-function CakeML declaration after those BVL transformations. It omits the BVL handler transformation and other frontend optimizations.
