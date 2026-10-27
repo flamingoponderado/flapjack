@@ -37,3 +37,7 @@ root = "Flapjack.LimitVarBenchMain"
 [[lean_exe]]
 name = "flapjack-native-wordstack-profile"
 root = "Flapjack.NativeWordStackProfileMain"
+
+[[lean_exe]]
+name = "cake"
+root = "Flapjack.CakeMain"

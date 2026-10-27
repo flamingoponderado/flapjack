@@ -325,6 +325,8 @@ import Flapjack.Test.CakeInferCoreParity
 import Flapjack.Test.CakeInferDeclParity
 import Flapjack.Test.CakeBasisParity
 import Flapjack.Test.CakeBuildLoweringParity
+import Flapjack.Test.CakeIoLoweringParity
+import Flapjack.Test.CakeExportParity
 import Flapjack.Test.BviInlineParity
 import Flapjack.Test.MiscLookupAnyFindIndexParity
 import Flapjack.Test.StackPropsClockSupportParity

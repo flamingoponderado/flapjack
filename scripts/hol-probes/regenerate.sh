@@ -389,6 +389,12 @@ run_probe cake_basis_probeScript.sml cake_basis_probe.out \
 run_probe cake_build_lowering_probeScript.sml cake_build_lowering_probe.out \
   parts64 parts32be build64 fromlist64 refbyte64 "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
 
+run_probe cake_riscv_export_probeScript.sml cake_riscv_export_probe.out \
+  assembly end "$cake_dir/compiler/backend/riscv/export_riscvScript.sml" "$cake_dir/compiler/backend/riscv"
+
+run_probe cake_io_lowering_probeScript.sml cake_io_lowering_probe.out \
+  lesseq mod bounds ffi "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
+
 run_probe bvl_inline_cake_bvi_probeScript.sml bvl_inline_cake_bvi_probe.out \
   code "$cake_dir/compiler/backend/bvl_inlineScript.sml" "$cake_dir/compiler/backend"
 

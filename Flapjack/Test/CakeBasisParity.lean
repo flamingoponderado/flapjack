@@ -21,4 +21,10 @@ open Flapjack.Compiler.Inference.Infer.Core
   | .success bytes bitmaps _ => bytes.length == 55864 && bitmaps.length == 1669
   | _ => false
 
+#guard match Flapjack.Compiler.Backend.SourceToFlat.compileBasisSourceFuel 1000 1000 1000 1000 1000
+    Flapjack.Compiler.Backend.RiscVConfig.riscvBackendConfigExecutable
+    (ofString "val _ = print \"Hello\";").explode with
+  | .success bytes bitmaps _ => !bytes.isEmpty && !bitmaps.isEmpty
+  | _ => false
+
 end Flapjack.Test.CakeBasisParity

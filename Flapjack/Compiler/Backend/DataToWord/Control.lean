@@ -294,6 +294,18 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
                 (some compareLocation) [1, 3] none)) (.assign 3 (.const 1))),
             boolResult dest .less 1 (.reg 3)], l + 1)
       | _ => some (.skip, l)
+  | l, .assign dest (.intOp .lessEq) args names =>
+      match args with
+      | [x, y] =>
+          let cutsets := adjustSets (names.getD .ln)
+          some (listSeq [
+            .assign 1 (.var (adjustVar x)), .assign 3 (.var (adjustVar y)),
+            .assign 5 (.op .or [.var 1, .var 3]),
+            .ite .test 5 (.imm 1) .skip
+              (.seq (.mustTerminate (.call (some ([1], cutsets, .skip, secn, l))
+                (some compareLocation) [1, 3] none)) (.assign 3 (.const 1))),
+            boolResult dest .notLess 3 (.reg 1)], l + 1)
+      | _ => some (.skip, l)
   | l, .assign dest (.intOp op) args names =>
       match op, args with
       | .add, [x, y] | .sub, [x, y] =>
@@ -339,7 +351,28 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
               .mustTerminate (.call (some ([1], cutsets, .skip, secn, l))
                 (some divLocation) [adjustVar x, adjustVar y] none),
               .move 2 [(adjustVar dest, 1)]])], l + 2)
-      | .mult, _ | .div, _ => some (.skip, l)
+      | .mod, [x, y] =>
+          let cutsets := adjustSets (names.getD .ln)
+          let fast := if conf.hasDiv then listSeq [
+              .inst (.arith (.div 1 (adjustVar x) (adjustVar y))),
+              .inst (.arith (.longMul 3 1 1 (adjustVar y))),
+              .assign (adjustVar dest) (.op .sub [.var (adjustVar x), .var 1])]
+            else if conf.hasLongdiv then listSeq [
+              .assign 1 (.const 0), .inst (.arith (.longDiv 1 3 1 (adjustVar x) (adjustVar y))),
+              .move 2 [(adjustVar dest, 3)]]
+            else listSeq [
+              .assign 1 (.const 0),
+              .mustTerminate (.call (some ([1], cutsets, .skip, secn, l + 1))
+                (some longDivLocation) [1, adjustVar x, adjustVar y] none),
+              .get (adjustVar dest) (.temp 28)]
+          some (listSeq [
+            .assign 1 (.op .or [.var (adjustVar x), .var (adjustVar y)]),
+            .assign 1 (.op .or [.var 1, shiftVar .lsr 1 (width - 1)]),
+            .ite .test 1 (.imm 1) fast (listSeq [
+              .mustTerminate (.call (some ([1], cutsets, .skip, secn, l))
+                (some modLocation) [adjustVar x, adjustVar y] none),
+              .move 2 [(adjustVar dest, 1)]])], l + 2)
+      | .mult, _ | .div, _ | .mod, _ => some (.skip, l)
       | _, _ => none
   | l, .assign dest (.wordOp (.wordTest _ test)) args _ =>
       match args, test with
@@ -409,6 +442,36 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
           let offset := bytes + bytes * BitVec.ofNat width n
           some (.assign (adjustVar dest)
             (.load (.op .add [realAddr conf (adjustVar src), .const offset])), l)
+      | _ => some (.skip, l)
+  | l, .assign dest (.ffi ffiName) args names =>
+      match args with
+      | [x, y] =>
+          if !conf.callEmptyFfi && ffiName == Flapjack.Basis.Pure.MlString.ofString "" then
+            some (.assign (adjustVar dest) (.const 2), l)
+          else
+            let bytes := BitVec.ofNat width (width / 8)
+            let offset := width - wordShiftAmount width - conf.lenSize
+            let addr1 := realAddr conf (adjustVar x)
+            let addr2 := realAddr conf (adjustVar y)
+            let empty := ffiName == Flapjack.Basis.Pure.MlString.ofString ""
+            some (listSeq [
+              .assign 1 (.op .add [addr1, .const bytes]),
+              .assign 3 (.op .sub [shiftN .lsr (.load addr1) offset, .const bytes]),
+              .assign 5 (if empty then .const 0 else .op .add [addr2, .const bytes]),
+              .assign 7 (if empty then .const 0 else .op .sub [shiftN .lsr (.load addr2) offset, .const bytes]),
+              .ffi ffiName 1 3 5 7 (adjustSets (names.getD .ln)),
+              .assign (adjustVar dest) (.const 2)], l)
+      | _ => some (.skip, l)
+  | l, .assign dest (.memOp (.boundsCheckByte leq)) args _ =>
+      match args with
+      | [base, index] =>
+          let header := WordLangExpHOL.load (realAddr conf (adjustVar base))
+          let shift := width - conf.lenSize - (if width = 32 then 2 else 3)
+          let result := if leq then boolResult dest .notLower 1 (.reg 3)
+            else boolResult dest .lower 3 (.reg 1)
+          some (listSeq [
+            .assign 1 (.op .sub [shiftN .lsr header shift, .const (BitVec.ofNat width (width / 8))]),
+            .assign 3 (shiftVar .ror (adjustVar index) 2), result], l)
       | _ => some (.skip, l)
   | l, .assign dest (.memOp (.refByte immutable)) args names =>
       match args with
