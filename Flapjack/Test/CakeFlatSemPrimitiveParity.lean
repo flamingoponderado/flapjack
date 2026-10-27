@@ -17,4 +17,8 @@ example : valueToFlat (Flapjack.SemanticPrimitivesHOL.boolValue true) = boolValu
 example : valueToFlat (.loc true 4) = .vectorv [] := by rfl
 example : flatToValue (boolValue false) = Flapjack.SemanticPrimitivesHOL.boolValue false := by rfl
 example : flatToValue (.loc true 4) = .vectorv [] := by rfl
+example : bindExnV = .conv (some (0, none)) [] := by rfl
+example : chrExnV = .conv (some (1, none)) [] := by rfl
+example : divExnV = .conv (some (2, none)) [] := by rfl
+example : subscriptExnV = .conv (some (3, none)) [] := by rfl
 end Flapjack.Test.CakeFlatSemPrimitiveParity

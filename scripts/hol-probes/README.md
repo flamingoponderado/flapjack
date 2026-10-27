@@ -2,7 +2,7 @@
 
 `cake_flat_sem_test_probe.out` captures the typed flat primitive-test equations and representative equality, type-error, integer, character and string ordering cases. The Lean simulation uses the factored relation and inherits the documented rational-cut assumption; full HOL correspondence and compiler correctness remain open.
 
-`source_to_flat_primitive_type_probe.out` captures flat primitive checks, literal projection, bidirectional source/flat value conversions, the original typed preservation theorems, and representative valid and invalid values. The Lean theorem uses the factored relation; its full HOL correspondence and compiler correctness remain open.
+`source_to_flat_primitive_type_probe.out` captures flat primitive checks, literal projection, bidirectional source/flat value conversions, the original typed preservation theorems, flat exception constants, a replay of the original Boolean and exception relation, and representative valid and invalid values. The Lean theorem uses the factored relation; its full HOL correspondence and compiler correctness remain open.
 
 `source_to_flat_list_conversion_probe.out` replays the original local list and character-list decoding proofs and captures their complete typed statements. Lean establishes analogous statements over its factored value relation; full correspondence of that relation and compiler correctness remain open.
 

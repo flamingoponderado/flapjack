@@ -5,6 +5,12 @@ flat_to_v_typed=flat_to_v (Litv (v :lit) :v) = (Litv v :semanticPrimitives$v) �
 v_rel_check_type_typed=(v_rel (genv :global_env) (v1 :semanticPrimitives$v) (w1 :v) :bool) ∧ genv_c_ok genv.c ∧ check_type (ty :prim_type) v1 ⇒ check_type ty w1
 check_type_to_flat_typed=check_type (ty :prim_type) (v :semanticPrimitives$v) ∧ genv_c_ok (genv :global_env).c ⇒ (v_rel genv v (v_to_flat v) :bool)
 check_type_from_flat_typed=check_type (ty :prim_type) (v :semanticPrimitives$v) ∧ (v_rel (genv :global_env) v (y :v) :bool) ∧ genv_c_ok genv.c ⇒ flat_to_v y = v
+check_type_from_flat_list_typed=∀(v :semanticPrimitives$v list) (y :v list). EVERY (check_type (ty :prim_type) :semanticPrimitives$v -> bool) v ∧ LIST_REL (v_rel (genv :global_env) :semanticPrimitives$v -> v -> bool) v y ∧ genv_c_ok genv.c ⇒ MAP flat_to_v y = v
+bind_exn_typed=bind_exn_v = Conv (SOME (bind_tag,(NONE :num option))) ([] :v list)
+chr_exn_typed=chr_exn_v = Conv (SOME (chr_tag,(NONE :num option))) ([] :v list)
+div_exn_typed=div_exn_v = Conv (SOME (div_tag,(NONE :num option))) ([] :v list)
+subscript_exn_typed=subscript_exn_v = Conv (SOME (subscript_tag,(NONE :num option))) ([] :v list)
+values_rel_typed=∀(genv :global_env). genv_c_ok genv.c ⇒ (∀(b :bool). (v_rel genv (Boolv b :semanticPrimitives$v) (Boolv b :v) :bool)) ∧ (v_rel genv div_exn_v div_exn_v :bool) ∧ (v_rel genv chr_exn_v chr_exn_v :bool) ∧ (v_rel genv bind_exn_v bind_exn_v :bool) ∧ (v_rel genv sub_exn_v subscript_exn_v :bool)
 true_bool=T
 false_bool=T
 wrong_bool=F

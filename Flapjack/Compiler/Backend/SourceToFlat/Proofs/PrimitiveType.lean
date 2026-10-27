@@ -121,4 +121,40 @@ theorem checked_flatToValue_related (genv : GlobalEnv) (ok : genvCOk genv.c)
   | closure => cases typ <;> simp_all [SemanticPrimitivesHOL.checkType]
   | recclosure => cases typ <;> simp_all [SemanticPrimitivesHOL.checkType]
   | topRecclosure => cases typ <;> simp_all [SemanticPrimitivesHOL.checkType]
+/-- Conversion back to source values preserves a pointwise-related, checked list.
+This is infrastructure over the factored relation, whose HOL correspondence remains open. -/
+theorem checked_flatToValue_list (genv : GlobalEnv) (ok : genvCOk genv.c)
+    (typ : PrimType) (xs : List SemanticPrimitivesHOL.Value) (ys : List FlatSem.Value)
+    (checked : xs.all (SemanticPrimitivesHOL.checkType typ) = true)
+    (related : List.Forall₂ (ValueRel genv) xs ys) :
+    ys.map FlatSem.flatToValue = xs := by
+  induction related with
+  | nil => rfl
+  | cons head tail ih =>
+    simp only [List.all_cons, Bool.and_eq_true] at checked
+    simp only [List.map_cons, checked_flatToValue_related genv ok typ _ _ checked.1 head,
+      ih checked.2]
+
+/-- Related Boolean constructors under the original constructor-map assumptions.
+This is infrastructure over the factored relation. -/
+theorem boolValue_related (genv : GlobalEnv) (ok : genvCOk genv.c) (b : Bool) :
+    ValueRel genv (SemanticPrimitivesHOL.boolValue b) (FlatSem.boolValue b) := by
+  cases b <;> apply ValueRel.constructor <;> try exact .nil genv
+  · simpa [SemanticPrimitivesHOL.boolValue, FlatSem.boolValue, boolToTag, boolTypeNum] using ok.1.2
+  · simpa [SemanticPrimitivesHOL.boolValue, FlatSem.boolValue, boolToTag, boolTypeNum] using ok.1.1
+
+/-- Related original exception constructors under the constructor-map assumptions.
+This is infrastructure over the factored relation. -/
+theorem exceptionValues_related (genv : GlobalEnv) (ok : genvCOk genv.c) :
+    ValueRel genv SemanticPrimitivesHOL.divExnV FlatSem.divExnV ∧
+    ValueRel genv SemanticPrimitivesHOL.chrExnV FlatSem.chrExnV ∧
+    ValueRel genv SemanticPrimitivesHOL.bindExnV FlatSem.bindExnV ∧
+    ValueRel genv SemanticPrimitivesHOL.subExnV FlatSem.subscriptExnV := by
+  constructor
+  · exact .constructor genv _ _ [] [] (.nil genv) ok.2.1.1
+  constructor
+  · exact .constructor genv _ _ [] [] (.nil genv) ok.2.1.2.1
+  constructor
+  · exact .constructor genv _ _ [] [] (.nil genv) ok.2.1.2.2.2
+  · exact .constructor genv _ _ [] [] (.nil genv) ok.2.1.2.2.1
 end Flapjack.Compiler.Backend.SourceToFlat

@@ -1,10 +1,27 @@
 import Flapjack.Compiler.Backend.Semantics.FlatSem
 import Flapjack.Compiler.Backend.BackendCommon.BoolTags
+import Flapjack.Compiler.Backend.BackendCommon.ConstructorTags
 import Flapjack.SemanticPrimitivesHOL.Primitives
 
 /-! Primitive type checks and literal projection in the flat evaluator. -/
 namespace Flapjack.Compiler.Backend.FlatSem
 open Flapjack.AstHOL Flapjack.Compiler.Backend.BackendCommon
+
+/-- The flat representation of the pattern-binding exception. -/
+@[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "bind_exn_v_def"]
+def bindExnV : Value := .conv (some (bindTag, none)) []
+
+/-- The flat representation of the character-conversion exception. -/
+@[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "chr_exn_v_def"]
+def chrExnV : Value := .conv (some (chrTag, none)) []
+
+/-- The flat representation of the division exception. -/
+@[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "div_exn_v_def"]
+def divExnV : Value := .conv (some (divTag, none)) []
+
+/-- The flat representation of the subscript exception. -/
+@[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "subscript_exn_v_def"]
+def subscriptExnV : Value := .conv (some (subscriptTag, none)) []
 
 /-- Check the seven primitive types against flat values. -/
 @[hol "cakeml/compiler/backend/semantics/flatSemScript.sml" "check_type_def"]
