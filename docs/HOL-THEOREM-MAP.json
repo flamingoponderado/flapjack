@@ -1,6 +1,46 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "src_orac_next_cfg_inner_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleInvariant.lean",
+    "lean_name": "srcOracNextCfgInner",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed orac_next_inner probe: oracle tuple components and decoder input, first result, and second result have five independent types. Both return NONE when the decoder or decoded pair is absent and otherwise return the first decoded component."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "src_orac_next_cfg_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleInvariant.lean",
+    "lean_name": "srcOracNextCfg",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed orac_next probe: the decoded pair components remain independent type variables, input is the concrete source value and eval_state carrier, and only SOME EvalOracle uses entry zero; NONE and EvalDecs return NONE."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "idx_range_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleInvariant.lean",
+    "lean_name": "idxRangeRel",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "c",
+      "tys"
+    ],
+    "reviewer": "Compared the typed idx_range probe: the decoder's second result is arbitrary, idxs has the same three components, and the existential counters, optional next configuration, idxPrev, all four disjoint blocks, and both stamp freshness conditions have the same scope and order. FRANGE membership is expressed by existence of a key with that successful lookup. GlobalEnv c and tys use the reviewed finite-support maps with the same-module canonical carrier roundtrip."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "idx_range_rel_v_REPLICATE_NONE",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/OracleInvariant.lean",
+    "lean_name": "idxRangeRel_blank",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "c",
+      "tys"
+    ],
+    "reviewer": "Compared the typed idx_blank probe: both quantify the same source oracle, global environment, stamps, index tuple and n; the conjunction of idxRangeRel, finIdxMatch and n + idx.vidx <= end_idx.vidx implies the same existential prefix, n NONE entries and suffix with prefix length idx.vidx. The decoder payload type remains arbitrary. The canonical GlobalEnv maps c and tys have the same-module roundtrip witness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "idx_types",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/IndexInvariant.lean",
     "lean_name": "IndexKind",

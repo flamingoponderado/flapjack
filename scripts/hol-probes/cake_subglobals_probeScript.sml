@@ -17,6 +17,10 @@ val _ = (print "idx_final_block="; print_thm source_to_flatProofTheory.idx_final
 val _ = (print "idx_allocated="; print_thm source_to_flatProofTheory.genv_allocated_idxs_def; print "\n");
 val _ = (print "idx_disjoint="; print_thm source_to_flatProofTheory.ALL_DISJOINT_DEF; print "\n");
 val _ = (print "idx_finish="; print_thm source_to_flatProofTheory.fin_idx_match_def; print "\n");
+val _ = (print "orac_next_inner="; print_thm source_to_flatProofTheory.src_orac_next_cfg_inner_def; print "\n");
+val _ = (print "orac_next="; print_thm source_to_flatProofTheory.src_orac_next_cfg_def; print "\n");
+val _ = (print "idx_range="; print_thm source_to_flatProofTheory.idx_range_rel_def; print "\n");
+val _ = (print "idx_blank="; print_thm source_to_flatProofTheory.idx_range_rel_v_REPLICATE_NONE; print "\n");
 val refl = prove (``∀g : 'a option list. source_to_flatProof$subglobals g g``,
   simp [source_to_flatProofTheory.subglobals_def]);
 val _ = (print "refl_replay="; print_thm refl; print "\n");
