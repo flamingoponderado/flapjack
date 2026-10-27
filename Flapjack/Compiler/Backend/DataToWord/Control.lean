@@ -76,7 +76,7 @@ def shiftVar {width : Nat} (op : Shift) (v n : Nat) : WordLangExpHOL (BitVec wid
 
 /-- Internal pointer-field construction for nonempty constructor allocation;
 the standalone HOL helpers remain to be reviewed. -/
-private def pointerBits {width : Nat} (conf : Config) (tag len : Nat) : BitVec width :=
+def pointerBits {width : Nat} (conf : Config) (tag len : Nat) : BitVec width :=
   let field (n bits shift : Nat) : BitVec width :=
     let max := 2 ^ bits - 1
     BitVec.ofNat width ((if n < max then n else max) * 2 ^ shift)

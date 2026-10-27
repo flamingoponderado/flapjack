@@ -138,6 +138,49 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
           .assign 8 (.op .add [.var 8, .var 3]),
           .call none (some byteCopySubLocation) [0, 6, 2, 8, 1] none])
         (.call none (some byteCopyAddLocation) [0, 6, 2, 8, 1] none)])
+  else if location = appendLocation then
+    match encodeHeader (width := width) conf 0 2 with
+    | none => some (3, .skip)
+    | some header =>
+        let mask := BitVec.ofNat width (2 ^ smallShiftLength conf - 1)
+        let ptr := (pointerBits conf 0 2 &&& mask) ||| 1
+        some (3, .ite .test 4 (.imm 1) (.return 0 [2]) (listSeq [
+          .set (.temp 0) (.var 2), .set (.temp 1) (.var 4),
+          .assign 1 (.lookup .nextFree), .assign 3 (.const header),
+          .assign 5 (.op .sub [.lookup .triggerGC, .var 1]),
+          .assign 7 (.op .or [shiftN .lsl (.op .sub [.var 1, .lookup .currHeap])
+            (shiftLength conf - wordShiftAmount width), .const ptr]),
+          .set (.temp 2) (.var 7),
+          .call none (some appendMainLoopLocation) [0, 1, 4, 3, 5, 7] none]))
+  else if location = appendMainLoopLocation then
+    let bytes := BitVec.ofNat width (width / 8)
+    some (6, listSeq [
+      .assign 1 (realAddr conf 4),
+      .assign 3 (.load (.op .add [.var 1, .const bytes])),
+      .assign 5 (.load (.op .add [.var 1, .const (2 * bytes)])),
+      .ite .lower 8 (.imm (3 * bytes))
+        (.seq (.assign 1 (.const 0)) (.call none (some appendLenLoopLocation) [0, 4, 1] none)) .skip,
+      .store (.var 2) 6, .store (.op .add [.var 2, .const bytes]) 3,
+      .ite .test 5 (.imm 1) .skip (listSeq [
+        .assign 10 (.op .add [.var 10, .const (BitVec.ofNat width (3 * 2 ^ shiftLength conf))]),
+        .assign 8 (.op .sub [.var 8, .const (3 * bytes)]),
+        .store (.op .add [.var 2, .const (2 * bytes)]) 10,
+        .assign 2 (.op .add [.var 2, .const (3 * bytes)]),
+        .call none (some appendMainLoopLocation) [0, 2, 5, 6, 8, 10] none]),
+      .assign 1 (.lookup (.temp 0)), .assign 3 (.lookup (.temp 2)),
+      .store (.op .add [.var 2, .const (2 * bytes)]) 1,
+      .set .nextFree (.op .add [.var 2, .const (3 * bytes)]), .return 0 [3]])
+  else if location = appendLenLoopLocation then
+    let bytes := BitVec.ofNat width (width / 8)
+    some (3, .ite .test 2 (.imm 1) (listSeq [
+      .assign 1 (.op .sub [.lookup .triggerGC, .lookup .nextFree]),
+      .assign 1 (.op .add [.var 4, shiftVar .lsr 1 (wordShiftAmount width - 2)]),
+      .assign 4 (.lookup (.temp 0)), .assign 2 (.lookup (.temp 1)),
+      allocVar conf (2 ^ width / 8 - 1) (sptListInsert [0, 1] .ln),
+      .call none (some appendLocation) [0, 4, 2] none]) (listSeq [
+        .assign 2 (.load (.op .add [realAddr conf 2, .const (2 * bytes)])),
+        .assign 4 (.op .add [.var 4, .const 12]),
+        .call none (some appendLenLoopLocation) [0, 2, 4] none]))
   else compileStub? location
 
 end Flapjack.Compiler.Backend.DataToWord

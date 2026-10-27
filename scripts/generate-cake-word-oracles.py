@@ -12,7 +12,9 @@ CASES = tuple(
 ) + ((ROOT / "scripts/hol-probes/byte_copy_word_probe.out",
       ROOT / "Flapjack/Test/ByteCopyWordOracle.lean", "ByteCopyWordOracle"),
      (ROOT / "scripts/hol-probes/from_list_word_probe.out",
-      ROOT / "Flapjack/Test/FromListWordOracle.lean", "FromListWordOracle"))
+      ROOT / "Flapjack/Test/FromListWordOracle.lean", "FromListWordOracle"),
+     (ROOT / "scripts/hol-probes/append_word_probe.out",
+      ROOT / "Flapjack/Test/AppendWordOracle.lean", "AppendWordOracle"))
 CONSTRUCTORS = {
     "Seq": (".seq", 2), "Assign": (".assign", 2), "Const": (".const", 1), "Load": (".load", 1),
     "If": (".ite", 5), "Test": (".test", 0), "Equal": (".equal", 0), "Less": (".less", 0), "Imm": (".imm", 1),
@@ -27,7 +29,7 @@ CONSTRUCTORS = {
     "Inst": (".inst", 1), "Arith": (".arith", 1), "AddOverflow": (".addOverflow", 4),
     "SubOverflow": (".subOverflow", 4), "Mem": (".mem", 3), "Load8": (".load8", 0),
     "Store8": (".store8", 0), "Addr": (".addr", 2),
-    "GlobReal": (".globReal", 0), "Return": (".return", 2), "LN": (".ln", 0),
+    "GlobReal": (".globReal", 0), "Temp": (".temp", 1), "Return": (".return", 2), "LN": (".ln", 0),
     "FALSE_CONST": ("(.const 2)", 0), "TRUE_CONST": ("(.const 18)", 0),
 }
 
