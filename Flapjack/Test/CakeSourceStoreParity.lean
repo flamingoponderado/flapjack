@@ -1,4 +1,4 @@
-import Flapjack.SemanticPrimitivesHOL.Apply
+import Flapjack.SemanticPrimitivesHOL.ApplyNumeric
 
 /-! Store observations captured from the pinned CakeML source semantics. -/
 namespace Flapjack.Test.CakeSourceStoreParity
@@ -156,5 +156,43 @@ private def returningFfi : Flapjack.HolFfiState Nat :=
         | [event] => event.configuration == [120] && event.bytes == [(1, 9)]
         | _ => false
   | _ => false
+
+-- Integer division and modulus use HOL's flooring convention, including a
+-- negative divisor; Lean's default Euclidean division differs in that case.
+#guard match doAppNumericCore ([], ffi) (.arith .div .intT) [intValue (-7), intValue 3] with
+  | some (some (([], _), .val (.litv (.intLit (-3))))) => true
+  | _ => false
+#guard match doAppNumericCore ([], ffi) (.arith .div .intT) [intValue 7, intValue (-3)] with
+  | some (some (([], _), .val (.litv (.intLit (-3))))) => true
+  | _ => false
+#guard match doAppNumericCore ([], ffi) (.arith .mod .intT) [intValue 7, intValue (-3)] with
+  | some (some (([], _), .val (.litv (.intLit (-2))))) => true
+  | _ => false
+#guard match doAppNumericCore ([], ffi) (.arith .div .intT) [intValue 7, intValue 0] with
+  | some (some (([], _), .err (.raise (.conv (some (.exnStamp 2)) [])))) => true
+  | _ => false
+#guard match doAppNumericCore ([], ffi) (.fromTo .intT (.wordT .w8)) [intValue (-1)] with
+  | some (some (([], _), .val (.litv (.word8 w)))) => w == 255
+  | _ => false
+#guard match doAppNumericCore ([], ffi) (.fromTo .intT .charT) [intValue 256] with
+  | some (some (([], _), .err (.raise (.conv (some (.exnStamp 1)) [])))) => true
+  | _ => false
+#guard match doAppNumericCore ([], ffi) (.arith .add (.wordT .w8)) [.litv (.word8 255), .litv (.word8 2)] with
+  | some (some (([], _), .val (.litv (.word8 w)))) => w == 1
+  | _ => false
+#guard match doAppNumericCore ([], ffi) (.arith .not .boolT) [boolValue true] with
+  | some (some (([], _), .val (.conv (some (.typeStamp name 0)) []))) => name == ofString "False"
+  | _ => false
+#guard match doAppNumericCore ([], ffi) (.arith .add .intT) [.litv (.word8 1), intValue 2] with
+  | some none => true
+  | _ => false
+
+-- Check that the assembled noncomputable dispatcher selects the same actual
+-- arithmetic and reference branches; noncomputability comes from float cases.
+example : doApp ([], ffi) (.arith .div .intT) [intValue 7, intValue (-3)] =
+    some (([], ffi), .val (intValue (-3))) := by rfl
+example : doApp ([], ffi) .opref [intValue 7] =
+    some (([.refv (intValue 7)], ffi), .val (.loc true 0)) := by rfl
+example : doApp ([], ffi) .opapp [] = none := by rfl
 
 end Flapjack.Test.CakeSourceStoreParity

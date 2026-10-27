@@ -2,8 +2,9 @@ load "semanticPrimitivesTheory"; load "wordsLib";
 open HolKernel Parse boolLib bossLib;
 val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
+val exists_eq = CONV_RULE (DEPTH_CONV ETA_CONV) (prove (``∀a:'a. ∃x. a = x``, metis_tac []));
 fun capture name tm =
-  let val result = rhs (concl (CONV_RULE (RAND_CONV (DEPTH_CONV (CHANGED_CONV wordsLib.WORD_EVAL_CONV))) (EVAL tm)))
+  let val result = rhs (concl (CONV_RULE (RAND_CONV (SIMP_CONV (srw_ss()) [boolTheory.EXISTS_REFL, exists_eq] THENC EVAL THENC SIMP_CONV (srw_ss()) [boolTheory.EXISTS_REFL, exists_eq] THENC EVAL THENC DEPTH_CONV (CHANGED_CONV wordsLib.WORD_EVAL_CONV))) (EVAL tm)))
   in print (name ^ "="); print_term result; print "\n" end;
 val _ = capture "ref_alloc" ``OPTION_MAP (λ(x,r). (FST x,r))
   (do_app ([Refv (Litv (IntLit 5))], (ARB:num ffi$ffi_state)) Opref [Litv (IntLit 7)])``;
@@ -71,3 +72,21 @@ val _ = capture "ffi_final" ``OPTION_MAP (λ(x,r). (FST x, (SND x).ffi_state, (S
   (do_app ([W8array [1w]],
     (ARB:num ffi$ffi_state) with <|oracle := (λn st conf bytes. Oracle_final FFI_failed); ffi_state := 41; io_events := []|>)
     (FFI «test») [Litv (StrLit «x»); Loc T 0])``;
+val _ = capture "int_div_pos" ``OPTION_MAP (λ(x,r). (FST x,r))
+  (do_app ([], (ARB:num ffi$ffi_state)) (Arith Div IntT) [Litv (IntLit (-7)); Litv (IntLit 3)])``;
+val _ = capture "int_div_neg" ``OPTION_MAP (λ(x,r). (FST x,r))
+  (do_app ([], (ARB:num ffi$ffi_state)) (Arith Div IntT) [Litv (IntLit 7); Litv (IntLit (-3))])``;
+val _ = capture "int_mod_neg" ``OPTION_MAP (λ(x,r). (FST x,r))
+  (do_app ([], (ARB:num ffi$ffi_state)) (Arith Mod IntT) [Litv (IntLit 7); Litv (IntLit (-3))])``;
+val _ = capture "int_div_zero" ``OPTION_MAP (λ(x,r). (FST x,r))
+  (do_app ([], (ARB:num ffi$ffi_state)) (Arith Div IntT) [Litv (IntLit 7); Litv (IntLit 0)])``;
+val _ = capture "int_to_w8" ``OPTION_MAP (λ(x,r). (FST x,r))
+  (do_app ([], (ARB:num ffi$ffi_state)) (FromTo IntT (WordT W8)) [Litv (IntLit (-1))])``;
+val _ = capture "int_to_char_bad" ``OPTION_MAP (λ(x,r). (FST x,r))
+  (do_app ([], (ARB:num ffi$ffi_state)) (FromTo IntT CharT) [Litv (IntLit 256)])``;
+val _ = capture "word_add" ``OPTION_MAP (λ(x,r). (FST x,r))
+  (do_app ([], (ARB:num ffi$ffi_state)) (Arith Add (WordT W8)) [Litv (Word8 255w); Litv (Word8 2w)])``;
+val _ = capture "bool_not" ``OPTION_MAP (λ(x,r). (FST x,r))
+  (do_app ([], (ARB:num ffi$ffi_state)) (Arith Not BoolT) [Boolv T])``;
+val _ = capture "arith_bad_type" ``OPTION_MAP (λ(x,r). (FST x,r))
+  (do_app ([], (ARB:num ffi$ffi_state)) (Arith Add IntT) [Litv (Word8 1w); Litv (IntLit 2)])``;

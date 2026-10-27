@@ -1,5 +1,5 @@
 import Flapjack.SemanticPrimitivesHOL.Eval
-import Flapjack.SemanticPrimitivesHOL.Apply
+import Flapjack.SemanticPrimitivesHOL.ApplyNumeric
 
 /-! Initial definitions from the CakeML source evaluator. The main evaluator
 and its compiler-correctness theorem are not yet ported; declaration-specific
