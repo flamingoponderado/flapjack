@@ -184,7 +184,7 @@ theorem evaluate_global_unbounded {C F : Type} (genv : GlobalEnv) (compMap : Env
     globalLookupRel_doApp genv compMap id source flatState globalsEq related
   refine ⟨flat, ?_, ?_, valueRel, statesRel⟩
   · simp [EvaluateHOL.evaluate, lookup]
-  · simp [compileExp, compiled, compileVar, FlatSem.evaluate, FlatSem.fixClock, FlatSem.doApp, flatDo]
+  · simp [compileExp, compiled, compileVar, FlatSem.evaluate, FlatSem.fixClock, FlatSem.applyResult, FlatSem.doApp, flatDo]
 
 /-- Closure capture simulation using both clocked evaluators without extra fuel. -/
 theorem evaluate_function_unbounded {C F : Type} (genv : GlobalEnv) (compMap : Environment)

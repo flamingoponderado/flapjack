@@ -31,7 +31,7 @@ example {C F : Type} (s : State C F) :
         .app .none (.src .opref) [.lit .none (.intLit 2)]]] =
       ({ s with clock := 4, refs := [.refv (.litv (.intLit 2)), .refv (.litv (.intLit 1))] },
         .val [.conv none [.loc true 1, .loc true 0]]) := by
-  simp [evaluate, env, fixClock, doApp, doAppNumeric, doAppMemory, Flapjack.SemanticPrimitivesHOL.storeAlloc]
+  simp [evaluate, env, fixClock, applyResult, doApp, doAppNumeric, doAppMemory, Flapjack.SemanticPrimitivesHOL.storeAlloc]
 example {C F : Type} (s : State C F) :
     evaluate env { s with clock := 4 } [.mat .none (.lit .none (.intLit 1)) []] =
       ({ s with clock := 4 }, .err (.raise bindExnV)) := by

@@ -28,6 +28,15 @@ private def timeoutError {C F : Type} (state : State C F) : EvalResult C F :=
 @[simp] private theorem timeoutError_eq {C F : Type} (state : State C F) :
     timeoutError state = (state, .err (.abort .timeoutError)) := rfl
 
+/-- Lift a primitive operation's result into the evaluator's singleton-result
+form, including the original type-error behavior. -/
+noncomputable def applyResult {C F : Type} (state : State C F) (op : FlatLang.Op)
+    (values : List Value) : EvalResult C F :=
+  match doApp state op values with
+  | none => typeError state
+  | some (next, .err error) => (next, .err error)
+  | some (next, .val value) => (next, .val [value])
+
 mutual
 /-- Evaluate flat expressions using the original clock, without fuel. -/
 noncomputable def evaluate {C F : Type} (env : Environment Value) (state : State C F)
@@ -96,10 +105,7 @@ noncomputable def evaluate {C F : Type} (env : Environment Value) (state : State
             | .val values' => match updateThunk values last.1.refs values' with
               | none => typeError last.1
               | some refs => ({ last.1 with refs := refs }, .val values')
-        | _ => match doApp next.1 op values.reverse with
-          | none => typeError next.1
-          | some (last, .err error) => (last, .err error)
-          | some (last, .val value) => (last, .val [value])
+        | _ => applyResult next.1 op values.reverse
     | .if_ _ cond yes no =>
       let next := fixClock state (evaluate env state [cond])
       match next.2 with
