@@ -135,13 +135,19 @@ def renderUnboundTypeVariable (input : List HolChar) : Error → Option (List Ho
       sourceLocation input (some loc) ++ ascii "\nProgram exited with nonzero exit code.\n")
   | _ => none
 
-/-- Render the original inference errors for unsafe and thunk primitives. -/
+/-- Render primitive inference errors, retaining their original locations. -/
 def renderUnsupportedPrimitive (input : List HolChar) (error : Error) : Option (List HolChar) := do
   let (loc, message) ← match error with
     | .located loc .unsafeOperation => some (some loc, "Unsafe ops do not have a type")
     | .located loc .thunkOperation => some (some loc, "Thunk ops do not have a type")
+    | .located loc .primitiveTypeMismatch => some (some loc, "Type mismatch")
+    | .located loc (.primitiveArity name actual expected) => some (some loc,
+        s!"Primitive {name} given {actual} arguments, but expects {expected}")
     | .unsafeOperation => some (none, "Unsafe ops do not have a type")
     | .thunkOperation => some (none, "Thunk ops do not have a type")
+    | .primitiveTypeMismatch => some (none, "Type mismatch")
+    | .primitiveArity name actual expected => some (none,
+        s!"Primitive {name} given {actual} arguments, but expects {expected}")
     | _ => none
   some (ascii "### ERROR: type error\n" ++ ascii message ++ ascii " at " ++
     sourceLocation input loc ++ ascii "\nProgram exited with nonzero exit code.\n")

@@ -12,7 +12,8 @@ open Flapjack.Compiler.Inference.Unify
 
 inductive Error where
   | exhausted | unsupported | mismatch | undefinedName | invalidPattern | valueRestriction
-  | unsafeOperation | thunkOperation
+  | unsafeOperation | thunkOperation | primitiveTypeMismatch
+  | primitiveArity : String → Nat → Nat → Error
   | typeMismatch : InferT → InferT → Error
   | typeMismatchNames : List (Nat × MlString) → InferT → InferT → Error
   | unboundTypeVariable : MlString → Error
@@ -60,6 +61,8 @@ private def withLoc (loc : Flapjack.Misc.Location.Locs) (env : Env) (action : M 
   | .error .valueRestriction => .error (.located loc .valueRestriction)
   | .error .unsafeOperation => .error (.located loc .unsafeOperation)
   | .error .thunkOperation => .error (.located loc .thunkOperation)
+  | .error .primitiveTypeMismatch => .error (.located loc .primitiveTypeMismatch)
+  | .error (.primitiveArity name actual expected) => .error (.located loc (.primitiveArity name actual expected))
   | .error (.undefinedVariable name) => .error (.located loc (.undefinedVariable name))
   | .error (.undefinedConstructor name) => .error (.located loc (.undefinedConstructor name))
   | .error (.undefinedTypeConstructor name) => .error (.located loc (.undefinedTypeConstructor name))
@@ -271,8 +274,33 @@ private def simpleOp : Op → Option (List InferT × InferT)
   | .strcat => some ([.app [.app [] 8] 6], .app [] 8)
   | _ => none
 
+/-- Names and arities used by the original primitive-argument diagnostic.
+This executable helper is not yet a reviewed HOL declaration port. -/
+private def primitiveInfo (op : Op) : String × Nat :=
+  match op with
+  | .arith a t => ("Arith", (arithArity a t).getD 0)
+  | .fromTo _ _ => ("FromTo", 1) | .test _ _ => ("Test", 2)
+  | .shift _ _ _ => ("Shift", 1) | .equality => ("Equality", 2)
+  | .opapp => ("Opapp", 2) | .opassign => ("Opassign", 2)
+  | .opref => ("Opref", 1) | .opderef => ("Opderef", 1)
+  | .aw8alloc => ("Aw8alloc", 2) | .aw8sub => ("Aw8sub", 2)
+  | .aw8length => ("Aw8length", 1) | .aw8update => ("Aw8update", 3)
+  | .copyStrStr => ("CopyStrStr", 3) | .copyStrAw8 => ("CopyStrAw8", 5)
+  | .copyAw8Str => ("CopyAw8Str", 3) | .copyAw8Aw8 => ("CopyAw8Aw8", 5)
+  | .implode => ("Implode", 1) | .explode => ("Explode", 1)
+  | .strsub => ("Strsub", 2) | .strlen => ("Strlen", 1) | .strcat => ("Strcat", 1)
+  | .vfromList => ("VfromList", 1) | .vsub => ("Vsub", 2) | .vlength => ("Vlength", 1)
+  | .aalloc => ("Aalloc", 2) | .aallocEmpty => ("AallocEmpty", 1)
+  | .asub => ("Asub", 2) | .alength => ("Alength", 1) | .aupdate => ("Aupdate", 3)
+  | .listAppend => ("ListAppend", 2) | .configGC => ("ConfigGC", 2) | .ffi _ => ("FFI", 2)
+  -- Unsafe and thunk operations produce their own errors before this helper is used.
+  | _ => ("", 0)
+
 private def inferOp (fuel : Nat) (op : Op) (ts : List InferT) : M InferT := do
   if let some (args, result) := simpleOp op then
+    if ts.length != args.length then
+      let (name, expected) := primitiveInfo op
+      fail (.primitiveArity name ts.length expected)
     constrainMany fuel ts args
     return result
   match op, ts with
@@ -337,7 +365,10 @@ private def inferOp (fuel : Nat) (op : Op) (ts : List InferT) : M InferT := do
     constrain fuel x (.app [] 8)
     constrain fuel y (.app [] 13)
     return .app [] 9
-  | _, _ => fail .unsupported
+  | .arith _ _, _ | .fromTo _ _, _ | .test _ _, _ => fail .primitiveTypeMismatch
+  | _, _ =>
+    let (name, expected) := primitiveInfo op
+    fail (.primitiveArity name ts.length expected)
 
 private def bindVars (env : Env) (bindings : List (MlString × InferT)) : Env :=
   { env with infV := nsAppend (alistToNs (bindings.map (fun (name, t) => (name, (0, t))))) env.infV }

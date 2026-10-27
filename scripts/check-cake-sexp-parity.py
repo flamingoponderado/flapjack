@@ -60,6 +60,21 @@ TYPE_ERRORS += [
     '((Dlet ((0 0) (0 1)) "x" (Lannot (App Eval nil) ((0 2) (0 7)))))',
     '((Dlet (unk unk) "x" (App ForceThunk ((Var (Short "missing"))))))',
 ]
+# Wrong primitive arities and unsupported typed primitive combinations.
+TYPE_ERRORS += [
+    f'((Dlet (unk unk) "x" (App {op} nil)))'
+    for op in ['Opapp', 'Opassign', 'Opref', 'Opderef', 'Equality', 'Aw8alloc',
+               'Aw8sub', 'Aw8length', 'Aw8update', 'CopyStrStr', 'CopyStrAw8',
+               'CopyAw8Str', 'CopyAw8Aw8', 'Strsub', 'Strlen', 'Implode', 'Explode',
+               'Strcat', 'VfromList', 'Vsub', 'Vlength', 'Aalloc', 'AallocEmpty',
+               'Asub', 'Alength', 'Aupdate', 'ConfigGC', 'ListAppend', '(FFI . "test")',
+               '(Arith Add . IntT)', '(Arith Mul . BoolT)', '(FromTo IntT . StrT)',
+               '(Shift8Lsl . 3)']
+] + [
+    '((Dlet (unk unk) "x" (App (Arith Add . IntT) ((Con (SOME (Short "True")) nil)))))',
+    '((Dlet (unk unk) "x" (App Strlen ((Lit 5) (Lit 6)))))',
+    '((Dlet (unk unk) "x" (Lannot (App Opref nil) ((0 2) (0 7)))))',
+]
 STRESS_INPUTS = {
     'many_declarations': b'(' + b'(Denv "a") ' * 20000 + b')',
     'long_byte_string': b'((Denv "' + b'x' * 100000 + b'"))',
