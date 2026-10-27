@@ -103035,6 +103035,102 @@
   },
   {
     "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/EvaluateHOL/Clock.lean",
+    "lean_name": "evaluateClock_con",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: kernel-checked constructor case of evaluate_clock. Recursive hypotheses and guards were compared with full_evaluate_ind, captured with inferred types in cake_source_evaluate_clock_probe; the proof removes original clock clamps using the corresponding first-call induction hypothesis. Complete evaluator correspondence review and the assembling theorem remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/EvaluateHOL/Clock.lean",
+    "lean_name": "evaluateDecsClock_mod",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: kernel-checked constructor case of evaluate_clock. Recursive hypotheses and guards were compared with full_evaluate_ind, captured with inferred types in cake_source_evaluate_clock_probe; the proof removes original clock clamps using the corresponding first-call induction hypothesis. Complete evaluator correspondence review and the assembling theorem remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/EvaluateHOL/Clock.lean",
+    "lean_name": "evaluateDecsClock_let",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: kernel-checked constructor case of evaluate_clock. Recursive hypotheses and guards were compared with full_evaluate_ind, captured with inferred types in cake_source_evaluate_clock_probe; the proof removes original clock clamps using the corresponding first-call induction hypothesis. Complete evaluator correspondence review and the assembling theorem remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/EvaluateHOL/Clock.lean",
+    "lean_name": "evaluateDecsClock_exn",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: kernel-checked constructor case of evaluate_clock. Recursive hypotheses and guards were compared with full_evaluate_ind, captured with inferred types in cake_source_evaluate_clock_probe; the proof removes original clock clamps using the corresponding first-call induction hypothesis. Complete evaluator correspondence review and the assembling theorem remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/EvaluateHOL/Clock.lean",
+    "lean_name": "evaluateDecsClock_type",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: kernel-checked constructor case of evaluate_clock. Recursive hypotheses and guards were compared with full_evaluate_ind, captured with inferred types in cake_source_evaluate_clock_probe; the proof removes original clock clamps using the corresponding first-call induction hypothesis. Complete evaluator correspondence review and the assembling theorem remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/EvaluateHOL/Clock.lean",
+    "lean_name": "evaluateDecsClock_env",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: kernel-checked constructor case of evaluate_clock. Recursive hypotheses and guards were compared with full_evaluate_ind, captured with inferred types in cake_source_evaluate_clock_probe; the proof removes original clock clamps using the corresponding first-call induction hypothesis. Complete evaluator correspondence review and the assembling theorem remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/EvaluateHOL/Clock.lean",
+    "lean_name": "evaluateDecsClock_letrec",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: kernel-checked constructor case of evaluate_clock. Recursive hypotheses and guards were compared with full_evaluate_ind, captured with inferred types in cake_source_evaluate_clock_probe; the proof removes original clock clamps using the corresponding first-call induction hypothesis. Complete evaluator correspondence review and the assembling theorem remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/EvaluateHOL/Clock.lean",
+    "lean_name": "evaluateClock_letrec",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: kernel-checked constructor case of evaluate_clock. Recursive hypotheses and guards were compared with full_evaluate_ind, captured with inferred types in cake_source_evaluate_clock_probe; the proof removes original clock clamps using the corresponding first-call induction hypothesis. Complete evaluator correspondence review and the assembling theorem remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/EvaluateHOL/Clock.lean",
+    "lean_name": "evaluateMatchClock_cons",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: kernel-checked constructor case of evaluate_clock. Recursive hypotheses and guards were compared with full_evaluate_ind, captured with inferred types in cake_source_evaluate_clock_probe; the proof removes original clock clamps using the corresponding first-call induction hypothesis. Complete evaluator correspondence review and the assembling theorem remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/EvaluateHOL/Clock.lean",
+    "lean_name": "evaluateDecsClock_local",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: kernel-checked constructor case of evaluate_clock. Recursive hypotheses and guards were compared with full_evaluate_ind, captured with inferred types in cake_source_evaluate_clock_probe; the proof removes original clock clamps using the corresponding first-call induction hypothesis. Complete evaluator correspondence review and the assembling theorem remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/EvaluateHOL/Clock.lean",
+    "lean_name": "evaluateDecsClock_cons",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: kernel-checked constructor case of evaluate_clock. Recursive hypotheses and guards were compared with full_evaluate_ind, captured with inferred types in cake_source_evaluate_clock_probe; the proof removes original clock clamps using the corresponding first-call induction hypothesis. Complete evaluator correspondence review and the assembling theorem remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/EvaluateHOL/Clock.lean",
+    "lean_name": "evaluateClock_cons",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: kernel-checked constructor case of evaluate_clock. Recursive hypotheses and guards were compared with full_evaluate_ind, captured with inferred types in cake_source_evaluate_clock_probe; the proof removes original clock clamps using the corresponding first-call induction hypothesis. Complete evaluator correspondence review and the assembling theorem remain pending."
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
     "hol_name": "dec_clock_def",
     "lean_path": "Flapjack/EvaluateHOL.lean",
     "lean_name": "decClock",
