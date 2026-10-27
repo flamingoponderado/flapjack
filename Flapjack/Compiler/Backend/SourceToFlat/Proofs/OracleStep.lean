@@ -235,6 +235,53 @@ def envGenFutureRel {C : Type} (interp : Option (Value → Option (Config × C))
     Flapjack.sptLookup gen.generation config.envs.envGens = some genFinal ∧
       Flapjack.sptSubspt gen.envs genFinal
 
+/-- A future relation for the output of declaration compilation also holds
+for its input generation store. This helper follows the original proof's
+generation-preservation and submap argument; typed HOL review is pending. -/
+theorem compileDecs_futureRel {C : Type} (interp : Option (Value → Option (Config × C)))
+    (trace : List Flapjack.Basis.Pure.MlString.MlString) (n : Nat) (start : NextIndices)
+    (env : Environment) (gen : EnvironmentGenerationStore) (decs : List Dec)
+    (n' : Nat) (next : NextIndices) (nextEnv : Environment)
+    (nextGen : EnvironmentGenerationStore) (flatDecs : List FlatLang.Exp) (evalState : Option EvalState)
+    (compiled : compileDecs trace n start env gen decs = (n', next, nextEnv, nextGen, flatDecs))
+    (future : envGenFutureRel interp nextGen evalState) (valid : envGenInv gen) :
+    envGenFutureRel interp gen evalState := by
+  have generation := compileDecs_generation trace n start env gen decs n' next nextEnv nextGen flatDecs compiled
+  have submap := (compileDecs_envGenInv trace n start env gen decs n' next nextEnv nextGen flatDecs compiled valid).2
+  unfold envGenFutureRel at future ⊢
+  cases configEq : srcOracNextCfg interp evalState with
+  | none => trivial
+  | some config =>
+    simp only [configEq] at future ⊢
+    obtain ⟨final, lookup, subset⟩ := future
+    exact ⟨final, by simpa [generation] using lookup, Flapjack.sptSubsptTrans _ _ _ ⟨submap, subset⟩⟩
+
+/-- Moving forward through the source oracle preserves its future relation.
+This helper follows the original submap argument; typed HOL review is pending. -/
+theorem envGenFutureRel_forward {C : Type} (interp : Option (Value → Option (Config × C)))
+    (gen : EnvironmentGenerationStore) (before after : Option EvalState)
+    (future : envGenFutureRel interp gen before) (forward : oracForwardRel interp before after) :
+    envGenFutureRel interp gen after := by
+  unfold envGenFutureRel at future ⊢
+  have configs := forward.1
+  unfold oracConfigEnvsSubspt at configs
+  cases beforeEq : srcOracNextCfg interp before with
+  | none =>
+    cases afterEq : srcOracNextCfg interp after with
+    | none => trivial
+    | some config => simp [beforeEq, afterEq] at configs
+  | some first =>
+    cases afterEq : srcOracNextCfg interp after with
+    | none => simp [beforeEq, afterEq] at configs
+    | some second =>
+      simp only [beforeEq] at future
+      obtain ⟨oldMap, lookup, subset⟩ := future
+      have configSub : Flapjack.sptSubspt first.envs.envGens second.envs.envGens := by
+        simpa [beforeEq, afterEq] using configs
+      have nextLookup : Flapjack.sptLookup gen.generation second.envs.envGens = some oldMap :=
+        (Flapjack.sptSubsptLookup _ _).mp configSub gen.generation oldMap lookup
+      exact ⟨oldMap, nextLookup, subset⟩
+
 /-- The oracle generation is valid. HOL's incomplete `EvalDecs` case is the
 fixed unspecified Boolean `ARB`, not a chosen false value. -/
 @[hol "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml" "src_orac_gen_inv_def"]
