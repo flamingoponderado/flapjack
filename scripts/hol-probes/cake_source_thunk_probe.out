@@ -1,0 +1,10 @@
+thunk_op_type=:v store_v list # α ffi_state -> thunk_op -> v list -> ((v store_v list # α ffi_state) # (v, β) result) option
+dest_type=:v list -> v store_v list -> dest_thunk_ret
+good=IsThunk NotEvaluated (Litv (IntLit (1 :int)))
+bad=BadRef
+ordinary=NotThunk
+update=SOME [Thunk Evaluated (Litv (IntLit (2 :int)))]
+nested=(NONE :v store_v list option)
+operation=SOME [Thunk Evaluated (Litv (IntLit (2 :int)))]
+xor_tail=SOME [(6w :word8); (7w :word8)]
+xor_short=(NONE :word8 list option)

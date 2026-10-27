@@ -102853,5 +102853,69 @@
     "lean_name": "valuesToString",
     "statement_status": "pending_statement_review",
     "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "dest_thunk_ret",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Thunk.lean",
+    "lean_name": "DestThunkResult",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "exp_or_val",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Thunk.lean",
+    "lean_name": "ExpOrVal",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "store_ffi",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Thunk.lean",
+    "lean_name": "StoreFfi",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "bad_thunk_update_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Thunk.lean",
+    "lean_name": "badThunkUpdate",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "dest_thunk_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Thunk.lean",
+    "lean_name": "destThunk",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "thunk_op_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Thunk.lean",
+    "lean_name": "thunkOp",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "update_thunk_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Thunk.lean",
+    "lean_name": "updateThunk",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "xor_bytes_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Thunk.lean",
+    "lean_name": "xorBytes",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
   }
 ]

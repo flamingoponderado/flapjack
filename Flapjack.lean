@@ -3,6 +3,7 @@ import Flapjack.SemanticPrimitivesHOL
 import Flapjack.SemanticPrimitivesHOL.PatternMatch
 import Flapjack.SemanticPrimitivesHOL.Operations
 import Flapjack.SemanticPrimitivesHOL.Conversions
+import Flapjack.SemanticPrimitivesHOL.Thunk
 import Flapjack.RiscV.RuntimeImageBackendOutput
 import Flapjack.RiscV.NativeBackendOutput
 import Flapjack.Compiler.Backend.RiscVConfig.Executable

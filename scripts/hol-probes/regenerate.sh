@@ -394,6 +394,9 @@ run_probe cake_source_ops_probeScript.sml cake_source_ops_probe.out \
 run_probe cake_source_conversions_probeScript.sml cake_source_conversions_probe.out \
   id_type chars_type word64_type list_roundtrip malformed chars strings identifier word8 bad_word8 "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
 
+run_probe cake_source_thunk_probeScript.sml cake_source_thunk_probe.out \
+  thunk_op_type dest_type good bad ordinary update nested operation xor_tail xor_short "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+
 run_probe cake_parse_error_probeScript.sml cake_parse_error_probe.out \
   missing after_decl multiline "$cake_dir/compiler/parsing/pegexec_cml_foScript.sml" "$cake_dir/compiler/parsing"
 
