@@ -22,6 +22,21 @@ noncomputable def factoredInvariant {C F : Type} [Nonempty C]
   evalRefInv (flat.globals.take 1) (flat.refs.take 1) ∧ envGenInv gen ∧
   finIdxMatch flat.globals.length idxs.2.1 (srcOracNextCfg interp source.evalState)
 
+/-- Shrinking the reserved block preserves the factored invariant. This is
+Flapjack-specific because the factored invariant still needs correspondence
+review against the original invariant. -/
+theorem factoredInvariant_shrink {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
+    (start next finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (valid : factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (previous : idxPrev start next) (bounded : idxPrev next finish) :
+    factoredInvariant interp transform gen genv (next, finish, other) source flat := by
+  obtain ⟨cOk, tysOk, states, range, invs, orac, globals, reserved, genInv, fin⟩ := valid
+  exact ⟨cOk, tysOk, states, idxRangeRel_shrink interp genv _ _ _ start next finish other
+    ⟨range, previous, bounded⟩, invs, orac, globals, reserved, genInv, fin⟩
+
 /-- Replacing the reserved first reference preserves the factored simulation
 invariant. The relations underlying it still require HOL correspondence
 review, so this is not tagged as the original invariant theorem. -/

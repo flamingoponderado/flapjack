@@ -968,6 +968,20 @@ theorem compileDlet_valueIndex (trace : List VarN) (n : Nat) (start : NextIndice
       cases lookup : nsLookup compMap.v id <;> simp [compileDecs, found, lookup]
       case some binding => cases binding <;> rfl
 
+/-- Compiling one value declaration never decreases an allocation counter.
+This specialized helper has no separate HOL declaration. -/
+theorem compileDlet_idxPrev (trace : List VarN) (n : Nat) (start : NextIndices)
+    (compMap : Environment) (gen : EnvironmentGenerationStore)
+    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp) :
+    idxPrev start (compileDecs trace n start compMap gen [.dlet location pattern expr]).2.1 := by
+  cases found : simpleDlet pattern expr with
+  | none => simp [compileDecs, found, idxPrev]
+  | some pair =>
+    cases pair with
+    | mk name id =>
+      cases lookup : nsLookup compMap.v id <;> simp [compileDecs, found, lookup, idxPrev]
+      case some binding => cases binding <;> simp
+
 /-- The compiler's index-order premise supplies the reserved-slot bound used
 by the factored declaration simulation. This helper has no separate HOL
 declaration. -/
@@ -1066,6 +1080,66 @@ def DletOutcomeGrowing {C F : Type} [Nonempty C]
         | .raise _ => GlobalGrowth genv nextGenv ∧
             factoredInvariant interp transform gen nextGenv (start, finish, other) result.1 flatLast ∧
             envGenRel gen result.1.evalState ∧ oracForwardRel interp source.evalState result.1.evalState
+
+/-- The growing declaration outcome with the compiled index and generation
+store on both successful and raised results. Its relations are still
+factored Flapjack infrastructure, not a reviewed HOL theorem. -/
+def DletOutcomeAdvanced {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F) (sourceEnv : SemEnv Value)
+    (trace : List VarN) (n : Nat) (compMap : Environment) (gen : EnvironmentGenerationStore)
+    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp) : Prop :=
+  let result := EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr]
+  let compiled := compileDecs trace n start compMap gen [.dlet location pattern expr]
+  ∃ flatLast nextGenv flatError,
+    FlatSem.evaluateDecs flat compiled.2.2.2.2 = (flatLast, flatError) ∧
+    StateRel nextGenv result.1 flatLast ∧
+    match result.2 with
+    | .val env => flatError = none ∧ EnvDomainEq compiled.2.2.1 env ∧
+        GlobalEnvInv nextGenv compiled.2.2.1 (fun _ => False) env ∧ GlobalGrowth genv nextGenv ∧
+        factoredInvariant interp transform compiled.2.2.2.1 nextGenv (compiled.2.1, finish, other) result.1 flatLast ∧
+        envGenRel compiled.2.2.2.1 result.1.evalState ∧ oracForwardRel interp source.evalState result.1.evalState
+    | .err error => ∃ flatErr, flatError = some flatErr ∧ EvalResultRel nextGenv (.err error) (.err flatErr) ∧
+        match error with
+        | .abort _ => True
+        | .raise _ => GlobalGrowth genv nextGenv ∧
+            factoredInvariant interp transform compiled.2.2.2.1 nextGenv (compiled.2.1, finish, other) result.1 flatLast ∧
+            envGenRel compiled.2.2.2.1 result.1.evalState ∧ oracForwardRel interp source.evalState result.1.evalState
+
+/-- Advance the reserved block after a raised declaration result. -/
+theorem DletOutcomeGrowing.advance {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F) (sourceEnv : SemEnv Value)
+    (trace : List VarN) (n : Nat) (compMap : Environment) (gen : EnvironmentGenerationStore)
+    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp)
+    (bounded : idxPrev (compileDecs trace n start compMap gen [.dlet location pattern expr]).2.1 finish)
+    (outcome : DletOutcomeGrowing interp transform genv start finish other source flat sourceEnv trace n
+      compMap gen location pattern expr) :
+    DletOutcomeAdvanced interp transform genv start finish other source flat sourceEnv trace n
+      compMap gen location pattern expr := by
+  unfold DletOutcomeGrowing at outcome
+  unfold DletOutcomeAdvanced
+  obtain ⟨flatLast, nextGenv, flatError, run, states, post⟩ := outcome
+  refine ⟨flatLast, nextGenv, flatError, run, states, ?_⟩
+  cases sourceRun : EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] with
+  | mk sourceLast result =>
+    rw [sourceRun] at post
+    cases result with
+    | val env => exact post
+    | err error =>
+      obtain ⟨flatErr, isError, related, rest⟩ := post
+      refine ⟨flatErr, isError, related, ?_⟩
+      cases error with
+      | abort kind => trivial
+      | raise value =>
+        obtain ⟨growth, invariant, generation, forward⟩ := rest
+        have advanced := factoredInvariant_shrink interp transform gen nextGenv start
+          (compileDecs trace n start compMap gen [.dlet location pattern expr]).2.1 finish other
+          sourceLast flatLast invariant (compileDlet_idxPrev trace n start compMap gen location pattern expr) bounded
+        exact ⟨growth, by simpa [compileDlet_generationStore] using advanced,
+          by simpa [compileDlet_generationStore] using generation, forward⟩
 
 /-- A fixed-global declaration result and its oracle effects can be weakened
 from an earlier global environment. -/
@@ -1266,6 +1340,37 @@ theorem evaluateDlet_growing_compiled {C F : Type} [Nonempty C]
   exact evaluateDlet_growing interp transform genv start finish other source flat sourceEnv trace n compMap gen
     location pattern expr safe envInv invariant generation expressionStep
     (compileDlet_fits_of_idxPrev trace n start finish compMap gen location pattern expr bound)
+
+/-- The factored simulation with compiled indices on every non-abort result.
+The expression induction hypothesis and correspondence review are still
+needed for the full source-to-flat correctness theorem. -/
+theorem evaluateDlet_advanced_compiled {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (start finish next : NextIndices) (other : Set (Nat × IndexKind))
+    (source sourceLast : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (sourceEnv : SemEnv Value) (trace : List VarN) (n n' : Nat)
+    (compMap nextMap : Environment) (gen nextGen : EnvironmentGenerationStore)
+    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp)
+    (flatDecs : List FlatLang.Exp) (result : Result (SemEnv Value) Value)
+    (compiled : compileDecs trace n start compMap gen [.dlet location pattern expr] =
+      (n', next, nextMap, nextGen, flatDecs))
+    (bounded : idxPrev next finish)
+    (sourceRun : EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] =
+      (sourceLast, result))
+    (notTypeError : result ≠ .err (.abort .typeError))
+    (envInv : GlobalEnvInv genv compMap (fun _ => False) sourceEnv)
+    (invariant : factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (generation : envGenRel gen source.evalState)
+    (expressionStep : DletExpressionStep interp transform genv start finish other source flat sourceEnv
+      ((AstHOL.patBindings pattern).reverse ++ trace) compMap gen expr) :
+    DletOutcomeAdvanced interp transform genv start finish other source flat sourceEnv trace n compMap gen
+      location pattern expr := by
+  apply DletOutcomeGrowing.advance interp transform genv start finish other source flat sourceEnv trace n
+    compMap gen location pattern expr
+  · simpa [compiled] using bounded
+  · exact evaluateDlet_growing_compiled interp transform genv start finish next other source sourceLast flat
+      sourceEnv trace n n' compMap nextMap gen nextGen location pattern expr flatDecs result
+      compiled bounded sourceRun notTypeError envInv invariant generation expressionStep
 
 /-- A literal declaration initializes its reserved flat global slot. -/
 theorem evaluateDlet_literal_flat {C F : Type} (flat : FlatSem.State C F)

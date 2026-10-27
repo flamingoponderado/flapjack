@@ -110,6 +110,27 @@ theorem genvAllocatedIndices_fillSlot (genv : GlobalEnv) (idx : Nat) (value : Fl
   | «type» => simp [genvAllocatedIndices]
   | «exception» => simp [genvAllocatedIndices]
 
+/-- Shrinking the first of four disjoint sets preserves their disjointness. -/
+theorem allDisjoint_shrinkFirst {α : Type} (block remaining future other allocated : Set α)
+    (old : allDisjoint [block, future, other, allocated]) (subset : remaining ⊆ block) :
+    allDisjoint [remaining, future, other, allocated] := by
+  have subsetAt (i : Nat) (hi : i < ([remaining, future, other, allocated] : List (Set α)).length) :
+      ([remaining, future, other, allocated] : List (Set α))[i] ⊆
+        ([block, future, other, allocated] : List (Set α))[i]'(by simpa using hi) := by
+    have cases : i = 0 ∨ i = 1 ∨ i = 2 ∨ i = 3 := by simp at hi; omega
+    rcases cases with rfl | rfl | rfl | rfl
+    · exact subset
+    all_goals simp
+  intro i j hi hj ne
+  have oldDisjoint := old i j (by simpa using hi) (by simpa using hj) ne
+  apply Set.eq_empty_iff_forall_notMem.mpr
+  intro x hx
+  have oldMember : x ∈ ([block, future, other, allocated] : List (Set α))[i]'(by simpa using hi) ∩
+      ([block, future, other, allocated] : List (Set α))[j]'(by simpa using hj) :=
+    ⟨subsetAt i hi hx.1, subsetAt j hj hx.2⟩
+  rw [oldDisjoint] at oldMember
+  exact oldMember
+
 /-- Moving a single point from a reserved block into the allocated set
 preserves four-way disjointness when the remaining block excludes it. -/
 theorem allDisjoint_consume {α : Type} (block remaining future other allocated : Set α) (point : α)

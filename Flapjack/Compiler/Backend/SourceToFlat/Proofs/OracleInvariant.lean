@@ -138,6 +138,31 @@ def idxRangeRel {C : Type} (interp : Option (Value → Option (Config × C))) (g
     (∀ cn t, nextType ≤ t → ¬ ∃ key, genv.c.lookup key = some (.typeStamp cn t)) ∧
     (∀ cn, nextExn ≤ cn → ¬ ∃ key, genv.c.lookup key = some (.exnStamp cn))
 
+/-- Advancing the beginning of a reserved block preserves its disjointness
+from the future and allocated indices. This helper resembles HOL's
+`idx_range_shrink`, but is not yet a reviewed port: an independent typed HOL
+capture and complete carrier comparison remain pending. -/
+theorem idxRangeRel_shrink {C : Type}
+    (interp : Option (Value → Option (Config × C))) (genv : GlobalEnv)
+    (nextType nextExn : Nat) (evalState : Option EvalState)
+    (start next finish : NextIndices) (other : Set (Nat × IndexKind))
+    (premises : idxRangeRel interp genv nextType nextExn evalState (start, finish, other) ∧
+      idxPrev start next ∧ idxPrev next finish) :
+    idxRangeRel interp genv nextType nextExn evalState (next, finish, other) := by
+  obtain ⟨range, previous, _⟩ := premises
+  obtain ⟨_, _, final, _, tuple, nextMatch, finalPrev, disjoint, types, exceptions⟩ := range
+  cases tuple
+  refine ⟨next, finish, final, other, rfl, nextMatch, finalPrev, ?_, types, exceptions⟩
+  apply allDisjoint_shrinkFirst (idxBlock start finish) (idxBlock next finish)
+    (idxFinalBlock final) other (genvAllocatedIndices genv) disjoint
+  intro ⟨i, kind⟩ member
+  change idxBlock next finish (i, kind) at member
+  change idxBlock start finish (i, kind)
+  cases kind <;> simp only [idxBlock] at member ⊢
+  · exact ⟨Nat.le_trans previous.1 member.1, member.2⟩
+  · exact ⟨Nat.le_trans previous.2.1 member.1, member.2⟩
+  · exact ⟨Nat.le_trans previous.2.2 member.1, member.2⟩
+
 /-- Filling the next reserved variable slot advances the start of the
 current block while preserving the source index-range invariant. -/
 theorem idxRangeRel_fillSlot {C : Type}
