@@ -392,6 +392,22 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
       | [x, y], .compare .lt => some (boolResult dest .lower (adjustVar x) (.reg (adjustVar y)), l)
       | [x, y], .compare .leq => some (boolResult dest .notLower (adjustVar y) (.reg (adjustVar x)), l)
       | _, _ => some (.skip, l)
+  | l, .assign _ (.wordOp (.fpCmp _)) args _ =>
+      match args with
+      | [_, _] => if !conf.hasFpOps then some (giveUp, l) else none
+      | _ => some (.skip, l)
+  | l, .assign _ (.wordOp (.fpBop _)) args _ =>
+      match args with
+      | [_, _] => if !conf.hasFpOps then some (giveUp, l) else none
+      | _ => some (.skip, l)
+  | l, .assign _ (.wordOp (.fpUop _)) args _ =>
+      match args with
+      | [_] => if !conf.hasFpOps then some (giveUp, l) else none
+      | _ => some (.skip, l)
+  | l, .assign _ (.wordOp (.fpTop _)) args _ =>
+      match args with
+      | [_, _, _] => if !conf.hasFpOps || !conf.hasFpTern then some (giveUp, l) else none
+      | _ => some (.skip, l)
   | l, .assign dest (.wordOp (.wordOpw .w8 op)) args _ =>
       match args with
       | [x, y] =>

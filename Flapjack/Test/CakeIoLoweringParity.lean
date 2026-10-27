@@ -139,4 +139,23 @@ private def matchesWord64Store : WordLangProgHOL (BitVec 64) → Bool
         (.ite .notLower 5 (.reg 7) (.assign 8 (.const 18)) (.assign 8 (.const 2))))))), 3) => true
   | _ => false
 
+private def matchesFpFallback (op : ClosLang.WordOp) (args : List Nat) : Bool :=
+  match compileControl? (width := 64) conf 5 2 (.assign 3 (.wordOp op) args none) with
+  | some (.seq (.assign 1 (.const value)) (.alloc 1 (.ls (), .ln)), 2) => value == 0xffffffffffffffff
+  | _ => false
+
+#guard matchesFpFallback (.fpCmp .less) [1, 2]
+#guard matchesFpFallback (.fpBop .add) [1, 2]
+#guard matchesFpFallback (.fpUop .neg) [1]
+#guard matchesFpFallback (.fpTop .fma) [1, 2, 3]
+#guard match compileControl? (width := 64) { conf with hasFpOps := true, hasFpTern := false } 5 2
+    (.assign 3 (.wordOp (.fpTop .fma)) [1, 2, 3] none) with
+  | some (.seq (.assign 1 (.const value)) (.alloc 1 (.ls (), .ln)), 2) => value == 0xffffffffffffffff
+  | _ => false
+#guard (compileControl? (width := 64) { conf with hasFpOps := true } 5 2
+  (.assign 3 (.wordOp (.fpBop .add)) [1, 2] none)).isNone
+#guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.wordOp (.fpUop .neg)) [] none) with
+  | some (.skip, 2) => true
+  | _ => false
+
 end Flapjack.Test.CakeIoLoweringParity

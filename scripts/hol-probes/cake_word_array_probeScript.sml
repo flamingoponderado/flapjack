@@ -36,3 +36,18 @@ val _ = capture "stringcmp" ``
 val _ = capture "stringcmp_fast" ``
  let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16|> in
  data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$MemOp (closLang$StringCmp T Geq)) [1;2] NONE) : 64 wordLang$prog # num``;
+val _ = capture "fp_cmp_no_hardware" ``
+ let c = (ARB:data_to_word$config) with <|has_fp_ops := F; has_fp_tern := F|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$WordOp (closLang$FP_cmp FP_Less)) [1;2] NONE) : 64 wordLang$prog # num``;
+val _ = capture "fp_bop_no_hardware" ``
+ let c = (ARB:data_to_word$config) with <|has_fp_ops := F; has_fp_tern := F|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$WordOp (closLang$FP_bop FP_Add)) [1;2] NONE) : 64 wordLang$prog # num``;
+val _ = capture "fp_uop_no_hardware" ``
+ let c = (ARB:data_to_word$config) with <|has_fp_ops := F; has_fp_tern := F|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$WordOp (closLang$FP_uop FP_Neg)) [1] NONE) : 64 wordLang$prog # num``;
+val _ = capture "fp_top_no_hardware" ``
+ let c = (ARB:data_to_word$config) with <|has_fp_ops := F; has_fp_tern := F|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$WordOp (closLang$FP_top FP_Fma)) [1;2;3] NONE) : 64 wordLang$prog # num``;
+val _ = capture "fp_top_no_ternary" ``
+ let c = (ARB:data_to_word$config) with <|has_fp_ops := T; has_fp_tern := F|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$WordOp (closLang$FP_top FP_Fma)) [1;2;3] NONE) : 64 wordLang$prog # num``;
