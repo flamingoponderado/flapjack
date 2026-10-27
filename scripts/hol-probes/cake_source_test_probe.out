@@ -1,0 +1,7 @@
+type=:test -> prim_type -> v -> v -> eq_result
+int_eq=Eq_val T
+mismatch=Eq_type_error
+word64=Eq_type_error
+int_compare=Eq_val T
+str_normal=Eq_val F
+str_fast=Eq_val T

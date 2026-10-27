@@ -12,6 +12,7 @@ import Flapjack.SemanticPrimitivesHOL.Control
 import Flapjack.SemanticPrimitivesHOL.Array
 import Flapjack.SemanticPrimitivesHOL.Primitives
 import Flapjack.SemanticPrimitivesHOL.Compare
+import Flapjack.SemanticPrimitivesHOL.Test
 import Flapjack.RiscV.RuntimeImageBackendOutput
 import Flapjack.RiscV.NativeBackendOutput
 import Flapjack.Compiler.Backend.RiscVConfig.Executable

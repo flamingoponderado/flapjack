@@ -103173,5 +103173,14 @@
     "lean_name": "strCmp",
     "statement_status": "pending_statement_review",
     "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "do_test_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Test.lean",
+    "lean_name": "doTest",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (pending source review): floating-point branches call qualified FpSemHOL comparisons and inherit the reals_as_rational_cuts assumption in docs/SOUNDNESS.md item 8.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
