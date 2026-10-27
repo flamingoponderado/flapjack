@@ -1,13 +1,15 @@
 import Flapjack.SemanticPrimitivesHOL.Primitives
 import Flapjack.SemanticPrimitivesHOL.Conversions
 import Flapjack.SemanticPrimitivesHOL.Operations
+import Flapjack.SemanticPrimitivesHOL.Array
+import Flapjack.SemanticPrimitivesHOL.Thunk
 
 /-! Initial source primitive application cases. This is Flapjack infrastructure
 for assembling the source evaluator, not a port of the complete HOL `do_app`:
 outer `none` means an operation is not implemented, while `some none` means
 HOL's type-error result for a supported operation. -/
 namespace Flapjack.SemanticPrimitivesHOL
-open Flapjack.AstHOL
+open Flapjack.AstHOL Flapjack.Basis.Pure.MlString
 
 abbrev BasicAppResult (σ : Type) :=
   (Store Value × HolFfiState σ) × Result Value Value
@@ -30,7 +32,7 @@ private def updateIndexed {σ α : Type} (state : Store Value × HolFfiState σ)
   let store ← storeAssign address (asStore (items.set index.toNat value)) state.1
   some ((store, state.2), .val (.conv none []))
 
-/-- Supported pure, reference, array, vector and list cases of source primitive application.
+/-- Supported cases of source primitive application.
 The complete HOL `do_app` has additional cases and no outer unsupported result;
 this partial dispatcher therefore intentionally has no `@[hol]` attribute. -/
 def doAppBasic {σ : Type} (state : Store Value × HolFfiState σ) (op : Op)
@@ -92,6 +94,78 @@ def doAppBasic {σ : Type} (state : Store Value × HolFfiState σ) (op : Op)
       | some (.w8array items) => updateIndexed state (op == .aw8updateUnsafe) address items index value .w8array
       | _ => none
     | _ => none
+  | .copyStrStr => some <| match values with
+    | [.litv (.strLit str), .litv (.intLit offset), .litv (.intLit length)] =>
+      match copyArray (str.explode, offset) length none with
+      | none => boundsFailure state false
+      | some chars => some (state, .val (.litv (.strLit (.implode chars))))
+    | _ => none
+  | .copyStrAw8 => some do
+    match values with
+    | [.litv (.strLit str), .litv (.intLit offset), .litv (.intLit length),
+        .loc _ destination, .litv (.intLit dstOffset)] =>
+      match storeLookup destination store with
+      | some (.w8array bytes) =>
+        match copyArray (str.explode, offset) length (some (bytes, dstOffset)) with
+        | none => boundsFailure state false
+        | some result =>
+          let store ← storeAssign destination (.w8array result) store
+          some ((store, ffi), .val (.conv none []))
+      | _ => none
+    | _ => none
+  | .copyAw8Str => some do
+    match values with
+    | [.loc _ source, .litv (.intLit offset), .litv (.intLit length)] =>
+      match storeLookup source store with
+      | some (.w8array bytes) =>
+        match copyArray (bytes, offset) length none with
+        | none => boundsFailure state false
+        | some result => some (state, .val (.litv (.strLit (.implode result))))
+      | _ => none
+    | _ => none
+  | .copyAw8Aw8 => some do
+    match values with
+    | [.loc _ source, .litv (.intLit offset), .litv (.intLit length),
+        .loc _ destination, .litv (.intLit dstOffset)] =>
+      match storeLookup source store, storeLookup destination store with
+      | some (.w8array src), some (.w8array dst) =>
+        match copyArray (src, offset) length (some (dst, dstOffset)) with
+        | none => boundsFailure state false
+        | some result =>
+          let store ← storeAssign destination (.w8array result) store
+          some ((store, ffi), .val (.conv none []))
+      | _, _ => none
+    | _ => none
+  | .xorAw8StrUnsafe => some do
+    match values with
+    | [.loc _ destination, .litv (.strLit str)] =>
+      match storeLookup destination store with
+      | some (.w8array bytes) =>
+        let result ← xorBytes str.explode bytes
+        let store ← storeAssign destination (.w8array result) store
+        some ((store, ffi), .val (.conv none []))
+      | _ => none
+    | _ => none
+  | .implode => some do
+    match values with
+    | [value] => some (state, .val (.litv (.strLit (.implode (← valueToCharList value)))))
+    | _ => none
+  | .explode => some <| match values with
+    | [.litv (.strLit str)] => some (state, .val (listToValue (str.explode.map (.litv ∘ Lit.char))))
+    | _ => none
+  | .strsub => some <| match values with
+    | [.litv (.strLit str), .litv (.intLit index)] => readIndexed state false str.explode index (.litv ∘ Lit.char)
+    | _ => none
+  | .strlen => some <| match values with
+    | [.litv (.strLit str)] => some (state, .val (.litv (.intLit str.explode.length)))
+    | _ => none
+  | .strcat => some do
+    match values with
+    | [value] =>
+      let parts ← valueToList value
+      let result ← valuesToString parts
+      some (state, .val (.litv (.strLit result)))
+    | _ => none
   | .vfromList => some do
     match values with
     | [value] => some (state, .val (.vectorv (← valueToList value)))
@@ -129,6 +203,26 @@ def doAppBasic {σ : Type} (state : Store Value × HolFfiState σ) (op : Op)
   | .aupdate | .aupdateUnsafe => some <| match values with
     | [.loc _ address, .litv (.intLit index), value] => match storeLookup address store with
       | some (.varray items) => updateIndexed state (op == .aupdateUnsafe) address items index value .varray
+      | _ => none
+    | _ => none
+  | .configGC => some <| match values with
+    | [.litv (.intLit _), .litv (.intLit _)] => some (state, .val (.conv none []))
+    | _ => none
+  | .envId => some <| match values with
+    | [.env _ (generation, id)] => some (state, .val (.conv none [natToValue generation, natToValue id]))
+    | [.conv none [generation, id]] => some (state, .val (.conv none [generation, id]))
+    | _ => none
+  | .thunkOp thunk => some (thunkOp state thunk values)
+  | .ffi name => some do
+    match values with
+    | [.litv (.strLit configuration), .loc _ address] =>
+      match storeLookup address store with
+      | some (.w8array bytes) =>
+        match callFFIHOL ffi (.extCall name) configuration.explode bytes with
+        | .ret ffi bytes =>
+          let store ← storeAssign address (.w8array bytes) store
+          some ((store, ffi), .val (.conv none []))
+        | .final event => some (state, .err (.abort (.ffiError event)))
       | _ => none
     | _ => none
   | _ => none

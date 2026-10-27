@@ -39,3 +39,35 @@ val _ = capture "array_negative" ``OPTION_MAP (λ(x,r). (FST x,r))
   (do_app ([Varray [Litv (IntLit 4)]], (ARB:num ffi$ffi_state)) Asub [Loc T 0; Litv (IntLit (-1))])``;
 val _ = capture "vector_unsafe" ``OPTION_MAP (λ(x,r). (FST x,r))
   (do_app ([], (ARB:num ffi$ffi_state)) Vsub_unsafe [Vectorv [Litv (IntLit 4)]; Litv (IntLit (-1))])``;
+val _ = capture "substring" ``OPTION_MAP (λ(x,r). (FST x,r))
+  (do_app ([], (ARB:num ffi$ffi_state)) CopyStrStr [Litv (StrLit «abcd»); Litv (IntLit 1); Litv (IntLit 2)])``;
+val _ = capture "substring_oob" ``OPTION_MAP (λ(x,r). (FST x,r))
+  (do_app ([], (ARB:num ffi$ffi_state)) CopyStrStr [Litv (StrLit «abcd»); Litv (IntLit 3); Litv (IntLit 2)])``;
+val _ = capture "byte_copy_overlap" ``OPTION_MAP (λ(x,r). (FST x,r))
+  (do_app ([W8array [1w;2w;3w;4w]], (ARB:num ffi$ffi_state)) CopyAw8Aw8
+    [Loc T 0; Litv (IntLit 0); Litv (IntLit 3); Loc F 0; Litv (IntLit 1)])``;
+val _ = capture "string_copy_byte" ``OPTION_MAP (λ(x,r). (FST x,r))
+  (do_app ([W8array [0w;0w;0w]], (ARB:num ffi$ffi_state)) CopyStrAw8
+    [Litv (StrLit «abc»); Litv (IntLit 1); Litv (IntLit 2); Loc T 0; Litv (IntLit 1)])``;
+val _ = capture "byte_xor" ``OPTION_MAP (λ(x,r). (FST x,r))
+  (do_app ([W8array [1w;2w;3w]], (ARB:num ffi$ffi_state)) XorAw8Str_unsafe
+    [Loc F 0; Litv (StrLit «AB»)])``;
+val _ = capture "byte_xor_short" ``OPTION_MAP (λ(x,r). (FST x,r))
+  (do_app ([W8array [1w]], (ARB:num ffi$ffi_state)) XorAw8Str_unsafe
+    [Loc T 0; Litv (StrLit «AB»)])``;
+val _ = capture "string_sub_negative" ``OPTION_MAP (λ(x,r). (FST x,r))
+  (do_app ([], (ARB:num ffi$ffi_state)) Strsub [Litv (StrLit «abc»); Litv (IntLit (-1))])``;
+val _ = capture "env_id" ``OPTION_MAP (λ(x,r). (FST x,r))
+  (do_app ([], (ARB:num ffi$ffi_state)) Env_id [Conv NONE [Litv (IntLit 5); Litv (IntLit 9)]])``;
+val _ = capture "ffi_empty" ``OPTION_MAP (λ(x,r). (FST x,r))
+  (do_app ([W8array [1w;2w]], (ARB:num ffi$ffi_state)) (FFI «») [Litv (StrLit «x»); Loc T 0])``;
+val _ = capture "thunk_alloc" ``OPTION_MAP (λ(x,r). (FST x,r))
+  (do_app ([], (ARB:num ffi$ffi_state)) (ThunkOp (AllocThunk NotEvaluated)) [Litv (IntLit 5)])``;
+val _ = capture "ffi_return" ``OPTION_MAP (λ(x,r). (FST x, (SND x).ffi_state, (SND x).io_events, r))
+  (do_app ([W8array [1w]],
+    (ARB:num ffi$ffi_state) with <|oracle := (λn st conf bytes. Oracle_return (st+1) [9w]); ffi_state := 41; io_events := []|>)
+    (FFI «test») [Litv (StrLit «x»); Loc T 0])``;
+val _ = capture "ffi_final" ``OPTION_MAP (λ(x,r). (FST x, (SND x).ffi_state, (SND x).io_events, r))
+  (do_app ([W8array [1w]],
+    (ARB:num ffi$ffi_state) with <|oracle := (λn st conf bytes. Oracle_final FFI_failed); ffi_state := 41; io_events := []|>)
+    (FFI «test») [Litv (StrLit «x»); Loc T 0])``;

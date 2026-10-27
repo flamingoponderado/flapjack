@@ -2,7 +2,7 @@ import Flapjack.SemanticPrimitivesHOL.Apply
 
 /-! Store observations captured from the pinned CakeML source semantics. -/
 namespace Flapjack.Test.CakeSourceStoreParity
-open Flapjack.SemanticPrimitivesHOL
+open Flapjack.SemanticPrimitivesHOL Flapjack.Basis.Pure.MlString
 
 -- The original field types are captured by cake_source_store_probe.out.
 example (s : EvalDecsState) : (Nat × Nat) × Value × List Flapjack.AstHOL.Dec →
@@ -64,7 +64,7 @@ private def intValue (n : Int) : Value := .litv (.intLit n)
   | _ => false
 
 -- Unsupported operations are kept separate from HOL's failed application.
-#guard match doAppBasic ([], ffi) .copyStrStr [] with
+#guard match doAppBasic ([], ffi) (.arith .add .intT) [] with
   | none => true
   | _ => false
 
@@ -102,6 +102,59 @@ private def intValue (n : Int) : Value := .litv (.intLit n)
   | _ => false
 #guard match doAppBasic ([.refv (intValue 4)], ffi) .alength [.loc true 0] with
   | some none => true
+  | _ => false
+
+private def stringValue (s : String) : Value := .litv (.strLit (ofString s))
+
+#guard match doAppBasic ([], ffi) .copyStrStr [stringValue "abcd", intValue 1, intValue 2] with
+  | some (some (([], _), .val (.litv (.strLit str)))) => str == ofString "bc"
+  | _ => false
+#guard match doAppBasic ([], ffi) .copyStrStr [stringValue "abcd", intValue 3, intValue 2] with
+  | some (some (([], _), .err (.raise (.conv (some (.exnStamp 3)) [])))) => true
+  | _ => false
+#guard match doAppBasic ([.w8array [1, 2, 3, 4]], ffi) .copyAw8Aw8
+    [.loc true 0, intValue 0, intValue 3, .loc false 0, intValue 1] with
+  | some (some (([.w8array [a, b, c, d]], _), .val (.conv none []))) =>
+      a == 1 && b == 1 && c == 2 && d == 3
+  | _ => false
+#guard match doAppBasic ([.w8array [0, 0, 0]], ffi) .copyStrAw8
+    [stringValue "abc", intValue 1, intValue 2, .loc true 0, intValue 1] with
+  | some (some (([.w8array [a, b, c]], _), .val (.conv none []))) => a == 0 && b == 98 && c == 99
+  | _ => false
+#guard match doAppBasic ([.w8array [1, 2, 3]], ffi) .xorAw8StrUnsafe [.loc false 0, stringValue "AB"] with
+  | some (some (([.w8array [a, b, c]], _), .val (.conv none []))) => a == 64 && b == 64 && c == 3
+  | _ => false
+#guard match doAppBasic ([.w8array [1]], ffi) .xorAw8StrUnsafe [.loc true 0, stringValue "AB"] with
+  | some none => true
+  | _ => false
+#guard match doAppBasic ([], ffi) .strsub [stringValue "abc", intValue (-1)] with
+  | some (some (([], _), .err (.raise (.conv (some (.exnStamp 3)) [])))) => true
+  | _ => false
+#guard match doAppBasic ([], ffi) .envId [.conv none [intValue 5, intValue 9]] with
+  | some (some (([], _), .val (.conv none [.litv (.intLit 5), .litv (.intLit 9)]))) => true
+  | _ => false
+#guard match doAppBasic ([.w8array [1, 2]], ffi) (.ffi (ofString "")) [stringValue "x", .loc true 0] with
+  | some (some (([.w8array [a, b]], outFfi), .val (.conv none []))) => a == 1 && b == 2 && outFfi.ffiState == 42
+  | _ => false
+#guard match doAppBasic ([], ffi) (.thunkOp (.allocThunk .notEvaluated)) [intValue 5] with
+  | some (some (([.thunk .notEvaluated (.litv (.intLit 5))], _), .val (.loc false 0))) => true
+  | _ => false
+
+private def failingFfi : Flapjack.HolFfiState Nat :=
+  Flapjack.initialHolFfiState (fun _ _ _ _ => .final .failed) 41
+#guard match doAppBasic ([.w8array [1]], failingFfi) (.ffi (ofString "test")) [stringValue "x", .loc true 0] with
+  | some (some (([.w8array [a]], outFfi), .err (.abort (.ffiError event)))) =>
+      a == 1 && outFfi.ffiState == 41 && outFfi.ioEvents.isEmpty && event.configuration == [120] && event.bytes == [1]
+  | _ => false
+
+private def returningFfi : Flapjack.HolFfiState Nat :=
+  Flapjack.initialHolFfiState (fun _ state _ _ => .ret (state + 1) [9]) 41
+#guard match doAppBasic ([.w8array [1]], returningFfi) (.ffi (ofString "test")) [stringValue "x", .loc true 0] with
+  | some (some (([.w8array [a]], outFfi), .val (.conv none []))) =>
+      a == 9 && outFfi.ffiState == 42 &&
+        match outFfi.ioEvents with
+        | [event] => event.configuration == [120] && event.bytes == [(1, 9)]
+        | _ => false
   | _ => false
 
 end Flapjack.Test.CakeSourceStoreParity
