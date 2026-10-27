@@ -1,0 +1,3 @@
+list=SOME (Pcon (SOME (Short «::»)) [Pvar «x»; Pcon (SOME (Short «::»)) [Pref (Pvar «y»); Pcon (SOME (Short «[]»)) []]])
+typed=SOME (Ptannot (Pvar «x») (Atapp [] (Short «int»)))
+literal=(SOME (Lit (Word64 42w)),SOME (App (FFI «print») []))

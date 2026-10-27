@@ -195,4 +195,161 @@ def ptreeTypeAbbrevDec (pt : ParseTree) : Option Dec := do
   let t ← ptreeType .nType typ
   some (.dtabbrev loc vars n t)
 
+
+@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "ptree_UQConstructorName_def"]
+def ptreeUQConstructorName (pt : ParseTree) : Option MlString := do
+  let [leaf] ← children .nUQConstructorName pt | none
+  match leaf.token with
+  | some (.alphaT s) => some s
+  | _ => none
+
+@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "ptree_ConstructorName_def"]
+def ptreeConstructorName (pt : ParseTree) : Option (Ident MlString MlString) := do
+  let [child] ← children .nConstructorName pt | none
+  match ptreeUQConstructorName child with
+  | some s => some (.short s)
+  | none => match child.token with
+    | some (.longidT path s) => some (longShort path s)
+    | _ => none
+
+private def uppercase (s : MlString) : Bool :=
+  match s.explode with
+  | c :: _ => 65 ≤ c.toNat && c.toNat ≤ 90
+  | [] => false
+
+private def constructorName (s : MlString) : Bool :=
+  s == ofString "::" || uppercase s
+
+@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "ptree_OpID_def"]
+def ptreeOpID (pt : ParseTree) : Option Exp := do
+  let [leaf] ← children .nOpID pt | none
+  match leaf.token with
+  | some (.alphaT s) =>
+    some (if constructorName s then .con (some (.short s)) [] else .var (.short s))
+  | some (.symbolT s) =>
+    some (if s == ofString "::" then .con (some (.short s)) [] else .var (.short s))
+  | some (.longidT path s) =>
+    let name := longShort path s
+    some (if constructorName s then .con (some name) [] else .var name)
+  | some .starT => some (.var (.short (ofString "*")))
+  | some .equalsT => some (.var (.short (ofString "=")))
+  | _ => none
+
+@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "EtoPat_def"]
+def etoPat : Exp → Option Pat
+  | .con c [] => some (.pcon c [])
+  | .var (.short n) => some (.pvar n)
+  | .var (.long m rest) => some (.pcon (some (.long m rest)) [])
+  | _ => none
+
+@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "Papply_def"]
+def papply (pat arg : Pat) : Pat :=
+  match pat with
+  | .pcon c args => .pcon c (args ++ [arg])
+  | _ => pat
+
+@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "maybe_handleRef_def"]
+def maybeHandleRef : Pat → Pat
+  | .pcon (some (.short s)) [p] => if s == ofString "Ref" then .pref p else .pcon (some (.short s)) [p]
+  | p => p
+
+@[hol "cakeml/semantics/cmlPtreeConversionScript.sml" "ptree_Eliteral_def"]
+def ptreeEliteral (pt : ParseTree) : Option Exp := do
+  let [leaf] ← children .nEliteral pt | none
+  match leaf.token with
+  | some (.intT i) => some (.lit (.intLit i))
+  | some (.charT c) => some (.lit (.char c))
+  | some (.stringT s) => some (.lit (.strLit s))
+  | some (.wordT n) => some (.lit (.word64 (BitVec.ofNat 64 n)))
+  | some (.ffiT s) => some (.app (.ffi s) [])
+  | _ => none
+
+private def emptyListPat : Pat := .pcon (some (.short (ofString "[]"))) []
+private def consPat (x xs : Pat) : Pat := .pcon (some (.short (ofString "::"))) [x, xs]
+
+mutual
+private def patternWorker : Nat → Nonterminal → ParseTree → Option Pat
+  | 0, _, _ => none
+  | fuel + 1, n, pt => do
+    let xs ← children n pt
+    match n, xs with
+    | .nPbase, [x] =>
+      match patternWorker fuel .nPtuple x with
+      | some p => some p
+      | none => match ptreeConstructorName x with
+        | some name => some (.pcon (some name) [])
+        | none => match ptreeV x with
+          | some name => some (.pvar name)
+          | none => match x.token with
+            | some (.intT i) => some (.plit (.intLit i))
+            | some (.stringT s) => some (.plit (.strLit s))
+            | some (.charT c) => some (.plit (.char c))
+            | some .underbarT => some .pany
+            | _ => none
+    | .nPbase, [l, r] =>
+      if tokcheck l .lbrackT && tokcheck r .rbrackT then some emptyListPat
+      else if tokcheck l .opT then ptreeOpID r >>= etoPat
+      else none
+    | .nPbase, [l, ps, r] => do
+      if !(tokcheck l .lbrackT && tokcheck r .rbrackT) then none else
+      let pats ← patternListWorker fuel ps
+      some (pats.foldr consPat emptyListPat)
+    | .nPConApp, [c] => (ptreeConstructorName c).map (fun name => .pcon (some name) [])
+    | .nPConApp, [c, p] => do
+      let cp ← patternWorker fuel .nPConApp c
+      let arg ← patternWorker fuel .nPbase p
+      some (papply cp arg)
+    | .nPapp, [p] => patternWorker fuel .nPbase p
+    | .nPapp, [c, p] => do
+      let cp ← patternWorker fuel .nPConApp c
+      let arg ← patternWorker fuel .nPbase p
+      some (maybeHandleRef (papply cp arg))
+    | .nPcons, [p] => patternWorker fuel .nPapp p
+    | .nPcons, [p, tok, rest] => do
+      if !tokcheck tok (.symbolT (ofString "::")) then none else
+      let p ← patternWorker fuel .nPapp p
+      let rest ← patternWorker fuel .nPcons rest
+      some (consPat p rest)
+    | .nPas, [p] => patternWorker fuel .nPcons p
+    | .nPas, [v, tok, p] => do
+      if !tokcheck tok .asT then none else
+      let pat ← patternWorker fuel .nPcons p
+      let name ← ptreeV v
+      some (.pas pat name)
+    | .nPattern, [p] => patternWorker fuel .nPas p
+    | .nPattern, [p, tok, typ] => do
+      if !tokcheck tok .colonT then none else
+      let pat ← patternWorker fuel .nPas p
+      let typ ← ptreeType .nType typ
+      some (.ptannot pat typ)
+    | .nPtuple, [l, r] =>
+      if tokcheck l .lparT && tokcheck r .rparT then some (.pcon none []) else none
+    | .nPtuple, [l, ps, r] => do
+      if !(tokcheck l .lparT && tokcheck r .rparT) then none else
+      let pats ← patternListWorker fuel ps
+      match pats with
+      | [] => none
+      | [p] => some p
+      | ps => some (.pcon none ps)
+    | _, _ => none
+
+private def patternListWorker : Nat → ParseTree → Option (List Pat)
+  | 0, _ => none
+  | fuel + 1, pt => do
+    let xs ← children .nPatternList pt
+    match xs with
+    | [p] => (patternWorker fuel .nPattern p).map (fun p => [p])
+    | [p, comma, rest] => do
+      if !tokcheck comma .commaT then none else
+      let p ← patternWorker fuel .nPattern p
+      let rest ← patternListWorker fuel rest
+      some (p :: rest)
+    | _ => none
+end
+
+/-- Convert a pattern using a tree-size bound. This infrastructure is not yet
+proved equivalent to the original unbounded HOL conversion. -/
+def ptreePattern (n : Nonterminal) (pt : ParseTree) : Option Pat :=
+  patternWorker (treeSize pt + 1) n pt
+
 end Flapjack.CakeParser.PtreeConversion
