@@ -1,3 +1,5 @@
+`source_to_flat_state_pattern_probe.out` captures the complete typed original store and state relation rules, state inversion, and match-result relation. Lean uses analogous untagged relations over its factored value relation; full correspondence and pattern-preservation assembly remain open.
+
 `cake_flat_sem_pattern_probe.out` captures the original typed stamp relation, matching equations, and matched literal, constructor, tuple, and error-precedence observations. The Lean matcher is a semantic prerequisite; source-to-flat matching preservation and whole compiler correctness remain open.
 
 `source_to_flat_test_probe.out` replays the original local primitive-test preservation proof and captures its typed statement. Lean proves the analogous statement over its factored relation; full HOL correspondence and compiler correctness remain open.
