@@ -105324,5 +105324,37 @@
     "lean_name": "doEval",
     "statement_status": "reviewed_exact",
     "reviewer": "Codex source comparison: Requires exactly two decoded lists, invokes the oracle at zero and its compiler, compares bytes and words, requires nonempty declarations and the shifted oracle state to match, and returns the same declarations, shifted oracle and Unitv. The compiler state carrier remains arbitrary. The original inferred types, theorem replay and representative outcomes are captured in cake_flat_sem_eval_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "dest_thunk_ret",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Thunk.lean",
+    "lean_name": "DestThunkResult",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: The original three constructors retain the same mode and flat-value fields. Typed original equations and matched outcomes are captured in cake_flat_sem_thunk_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "dest_thunk_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Thunk.lean",
+    "lean_name": "destThunk",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: Only a singleton location inspects the indexed store; missing entries and reference-flagged thunks are bad references, other non-thunks are NotThunk, and each thunk mode and payload are preserved. Typed original equations and matched outcomes are captured in cake_flat_sem_thunk_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "update_thunk_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Thunk.lean",
+    "lean_name": "updateThunk",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: Only a false-flagged singleton target and singleton replacement are accepted, and the original NotThunk guard precedes store_assign of an evaluated thunk. Typed original equations and matched outcomes are captured in cake_flat_sem_thunk_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "bad_thunk_update_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Thunk.lean",
+    "lean_name": "badThunkUpdate",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: The result holds exactly for evaluated mode and a thunk inspection result other than NotThunk. Typed original equations and matched outcomes are captured in cake_flat_sem_thunk_probe."
   }
 ]

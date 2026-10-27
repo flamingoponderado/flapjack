@@ -16,6 +16,18 @@ inductive StoreValueRel (genv : GlobalEnv) : StoreValue SemanticPrimitivesHOL.Va
   | thunk (mode) {v v'} (related : ValueRel genv v v') :
       StoreValueRel genv (.thunk mode v) (.thunk mode v')
 
+/-- Store-entry compatibility is preserved by related entries. This is
+Flapjack infrastructure over the factored value relation. -/
+theorem storeValueSameType_related (genv : GlobalEnv)
+    (old new : StoreValue SemanticPrimitivesHOL.Value) (flatOld flatNew : StoreValue FlatSem.Value)
+    (oldRel : StoreValueRel genv old flatOld) (newRel : StoreValueRel genv new flatNew) :
+    storeValueSameType old new = storeValueSameType flatOld flatNew := by
+  cases oldRel with
+  | refv related => cases newRel <;> rfl
+  | w8array bytes => cases newRel <;> rfl
+  | varray related => cases newRel <;> rfl
+  | thunk mode related => cases mode <;> cases newRel <;> rfl
+
 /-- Flapjack infrastructure relating evaluator states. The flat store has the
 original reserved leading entry; no relationship is imposed on that entry.
 This is untagged until the underlying value relation is reviewed against HOL. -/
@@ -43,6 +55,35 @@ theorem forall₂_lookup {α β : Type} {R : α → β → Prop} {xs : List α} 
     | succ n =>
       simp only [List.getElem?_cons_succ] at lookup ⊢
       exact ih n lookup
+
+/-- Flapjack option infrastructure for pointwise related successful or absent
+lookups. -/
+def LookupRel {α β : Type} (R : α → β → Prop) : Option α → Option β → Prop
+  | none, none => True
+  | some x, some y => R x y
+  | _, _ => False
+
+/-- Pointwise related lists have related indexed lookups, including absence. -/
+theorem forall₂_lookupRel {α β : Type} {R : α → β → Prop} {xs : List α} {ys : List β}
+    (related : List.Forall₂ R xs ys) (n : Nat) : LookupRel R xs[n]? ys[n]? := by
+  induction related generalizing n with
+  | nil => simp [LookupRel]
+  | cons head tail ih =>
+    cases n with
+    | zero => simpa [LookupRel] using head
+    | succ n => simpa using ih n
+
+/-- Source and flat store lookups agree at the original one-slot offset. This
+is infrastructure over the factored source-to-flat value relation. -/
+theorem stateRel_lookup {C F : Type} (genv : GlobalEnv)
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (related : StateRel genv source flat) (n : Nat) :
+    LookupRel (StoreValueRel genv) (storeLookup n source.refs) (storeLookup (n + 1) flat.refs) := by
+  cases related with
+  | intro nonempty refs _ _ =>
+    obtain ⟨entry, rest, hflat⟩ := List.exists_cons_of_ne_nil nonempty
+    have relatedRest : List.Forall₂ (StoreValueRel genv) source.refs rest := by simpa [hflat] using refs
+    simpa [storeLookup, hflat, Nat.add_comm] using forall₂_lookupRel relatedRest n
 
 /-- A source reference lookup has a related flat reference one slot later.
 This is infrastructure over the factored source-to-flat value relation. -/

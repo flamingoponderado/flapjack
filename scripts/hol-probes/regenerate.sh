@@ -241,6 +241,10 @@ run_probe() {
   done
 }
 
+run_probe cake_flat_sem_thunk_probeScript.sml cake_flat_sem_thunk_probe.out \
+  thunk_type thunk_dest thunk_update thunk_bad valid_thunk ref_flag bad_index ordinary_ref nonlocation update_value update_nested \
+  "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe cake_flat_sem_eval_probeScript.sml cake_flat_sem_eval_probe.out \
   dec_clock_typed fix_clock_typed bytes_typed words_typed do_eval_typed fix_clock_imp_typed zero_clock decrement fix_clamps empty_eval bytes_valid words_valid eval_success \
   "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/semantics"
@@ -250,7 +254,7 @@ run_probe source_to_flat_pmatch_statement_probeScript.sml source_to_flat_pmatch_
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe source_to_flat_state_pattern_probeScript.sml source_to_flat_state_pattern_probe.out \
-  store_rel_rules state_rel_rules state_rel_cases match_result_def match_result_imp \
+  store_rel_rules state_rel_rules state_rel_cases match_result_def match_result_imp store_same_type \
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe source_to_flat_global_env_probeScript.sml source_to_flat_global_env_probe.out \
