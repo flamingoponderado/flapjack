@@ -42,6 +42,7 @@ import Flapjack.Compiler.Backend.FlatToClos.Op
 import Flapjack.Compiler.Backend.FlatToClos.Compile
 import Flapjack.Test.CakeMLFlatOracle
 import Flapjack.Test.EmptyCakeBviOracle
+import Flapjack.Test.ReferenceCakeBviOracle
 
 namespace Flapjack.Test.FlatElim
 open Flapjack Flapjack.Compiler.Backend.FlatLang Flapjack.Compiler.Backend.FlatElim
@@ -447,6 +448,11 @@ private def noOptsClosConfig : Flapjack.Compiler.Backend.ClosToBvl.Config :=
 #guard match Flapjack.Compiler.Backend.SourceToFlat.compileCakeToBviNoOptsFuel 100
     Flapjack.Compiler.Backend.SourceToFlat.emptyConfig noOptsClosConfig [] with
   | some (_, _, _, code, _) => Flapjack.Test.EmptyCakeBviOracle.matchesCaptured code
+  | _ => false
+#guard match Flapjack.Compiler.Backend.SourceToFlat.compileCakeToBviNoOptsFuel 100
+    Flapjack.Compiler.Backend.SourceToFlat.emptyConfig noOptsClosConfig
+    [.dlet Flapjack.Misc.Location.unknownLoc (.pvar (ofString "x")) (.app .opref [.lit (.intLit 1)])] with
+  | some (_, _, _, code, _) => Flapjack.Test.ReferenceCakeBviOracle.matchesCaptured code
   | _ => false
 example : Flapjack.Compiler.Backend.ClosToBvl.extractName
     [.op .none (.intOp (.const 7)) [], .var .none 2] = (7, [.var .none 2]) := rfl

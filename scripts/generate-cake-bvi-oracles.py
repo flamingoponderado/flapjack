@@ -9,8 +9,12 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-INPUT = ROOT / "scripts/hol-probes/empty_cake_bvi_probe.out"
-OUTPUT = ROOT / "Flapjack/Test/EmptyCakeBviOracle.lean"
+CASES = (
+    (ROOT / "scripts/hol-probes/empty_cake_bvi_probe.out",
+     ROOT / "Flapjack/Test/EmptyCakeBviOracle.lean", "EmptyCakeBviOracle"),
+    (ROOT / "scripts/hol-probes/reference_cake_bvi_probe.out",
+     ROOT / "Flapjack/Test/ReferenceCakeBviOracle.lean", "ReferenceCakeBviOracle"),
+)
 
 CONSTRUCTORS = {
     "Var": (".var", 1), "Let": (".let", 2), "If": (".ifThenElse", 3),
@@ -30,8 +34,8 @@ CONSTRUCTORS = {
 }
 
 
-def render():
-    raw = INPUT.read_text().strip()
+def render(input_path, namespace):
+    raw = input_path.read_text().strip()
     if not raw.startswith("code="):
         raise ValueError("missing HOL code row")
     source = raw[5:]
@@ -84,7 +88,7 @@ def render():
     return f'''-- Generated from the pinned original HOL compiler; do not edit.
 import Flapjack.Compiler.Backend.Bvi.Syntax
 
-namespace Flapjack.Test.EmptyCakeBviOracle
+namespace Flapjack.Test.{namespace}
 
 /-- Match every location, arity and expression in the captured BVI program. -/
 def matchesCaptured (code : List (Nat × Nat × Flapjack.Compiler.Backend.Bvi.Exp)) : Bool :=
@@ -92,7 +96,7 @@ def matchesCaptured (code : List (Nat × Nat × Flapjack.Compiler.Backend.Bvi.Ex
   | {pattern} => true
   | _ => false
 
-end Flapjack.Test.EmptyCakeBviOracle
+end Flapjack.Test.{namespace}
 '''
 
 
@@ -100,13 +104,14 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
-    expected = render()
-    if args.check:
-        if not OUTPUT.exists() or OUTPUT.read_text() != expected:
-            raise SystemExit(f"{OUTPUT} is stale; regenerate it from the HOL capture")
-        print("Full empty CakeML BVI fixture matches the captured HOL output")
-    else:
-        OUTPUT.write_text(expected)
+    for input_path, output_path, namespace in CASES:
+        expected = render(input_path, namespace)
+        if args.check:
+            if not output_path.exists() or output_path.read_text() != expected:
+                raise SystemExit(f"{output_path} is stale; regenerate it from the HOL capture")
+            print(f"{namespace} matches the captured HOL output")
+        else:
+            output_path.write_text(expected)
 
 
 if __name__ == "__main__":
