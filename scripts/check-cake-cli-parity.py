@@ -39,6 +39,11 @@ CASES = {
     'no_prelude_empty': '',
     'no_prelude_val': 'val x = 42;',
     'no_prelude_identity': 'val id = fn x => x;',
+    'undefined_variable': 'val x = foo;',
+    'undefined_qualified': 'val x = A.foo;',
+    'undefined_nested': 'val x = (fn a => missing);',
+    'undefined_multiline': 'val x =\n missing;',
+    'undefined_ref': 'val x = ref 0; val _ = x := 3;',
 }
 
 def run(executable, source, name):
@@ -73,8 +78,10 @@ if __name__ == '__main__':
     if args.record_reference:
         check_reference(args.record_reference)
         rows = {name: run(args.record_reference, source, name) for name, source in CASES.items()}
-        if any(row['exit_code'] != 0 or row['stderr_bytes'] != 0 for row in rows.values()):
-            raise SystemExit('reference did not compile every selected successful example')
+        for name, row in rows.items():
+            rejected = name.startswith('undefined_')
+            if row['exit_code'] != (1 if rejected else 0) or (row['stderr_bytes'] == 0) == rejected:
+                raise SystemExit(f'{name}: reference outcome did not match the expected category')
         FIXTURE.write_text(json.dumps({'reference_revision': REFERENCE_REV, 'hol_revision': HOL_REV,
                                        'pinned_revision': PINNED_REV, 'cases': rows}, indent=2) + '\n')
     expected = json.loads(FIXTURE.read_text())

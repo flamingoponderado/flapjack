@@ -11,11 +11,20 @@ open Flapjack.Compiler.Inference.Unify
 
 inductive Error where
   | exhausted | unsupported | mismatch | undefinedName | invalidPattern | valueRestriction
-  deriving Repr, BEq
+  | undefinedVariable : Ident MlString MlString → Error
+  | located : Flapjack.Misc.Location.Locs → Error → Error
+  deriving Repr
 
 abbrev M (α : Type) := StateT State (Except Error) α
 
 private def fail (e : Error) : M α := fun _ => .error e
+
+/-- Preserve the innermost source location for errors that carry enough
+information for original-style rendering. Other error classes remain unchanged. -/
+private def withLoc (loc : Flapjack.Misc.Location.Locs) (action : M α) : M α := fun state =>
+  match action state with
+  | .error (.undefinedVariable name) => .error (.located loc (.undefinedVariable name))
+  | other => other
 private def fresh : M InferT := do
   let s ← get
   let (t, s) := freshUvar s
@@ -284,7 +293,7 @@ private def inferExprWorker : Nat → Nat → Env → Exp → M InferT
       | some t => return t
       | none => fail .unsupported
     | .var name => match nsLookup env.infV name with
-      | none => fail .undefinedName
+      | none => fail (.undefinedVariable name)
       | some (n, t) =>
         let freshVars ← freshMany n
         return inferDeBruijnSubst freshVars t
@@ -337,7 +346,7 @@ private def inferExprWorker : Nat → Nat → Env → Exp → M InferT
       let t ← inferExprWorker fuel unifFuel env value
       let env := match name with | none => env | some n => bindVars env [(n, t)]
       inferExprWorker fuel unifFuel env body
-    | .lannot body _ => inferExprWorker fuel unifFuel env body
+    | .lannot body loc => withLoc loc (inferExprWorker fuel unifFuel env body)
     | .tannot body typ =>
       let t ← inferExprWorker fuel unifFuel env body
       let typ ← annotation fuel env typ
@@ -452,10 +461,10 @@ private def inferDeclWorker : Nat → Nat → Env → Dec → M Env
   | 0, _, _, _ => fail .exhausted
   | fuel + 1, unifFuel, env, decl => do
     match decl with
-    | .dlet _ pat expr =>
+    | .dlet loc pat expr =>
       let st ← get
       set (resetState st)
-      let exprType ← inferExprWorker fuel unifFuel env expr
+      let exprType ← withLoc loc (inferExprWorker fuel unifFuel env expr)
       let (patType, bindings) ← inferPatWorker fuel unifFuel env pat
       if !distinctBindings bindings then fail .invalidPattern else
       constrain unifFuel exprType patType

@@ -1,0 +1,1 @@
+infer=(M_failure (SOME (Locs (POSN 0 11) (POSN 0 15)),«Undefined variable: A.foo»),infer_st 0 FEMPTY 15)

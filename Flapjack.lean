@@ -2257,6 +2257,7 @@ import Flapjack.CakeParser.Frontend
 import Flapjack.RiscV.CakeArtifactFormat
 import Flapjack.Compiler.Inference.Infer
 import Flapjack.Compiler.Inference.Infer.Core
+import Flapjack.Compiler.Inference.Infer.Diagnostics
 import Flapjack.Compiler.Inference.Unify
 import Flapjack.Compiler.Backend.SourceToFlat.FromText
 import Flapjack.Parser.ByteRanged

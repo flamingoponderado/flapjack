@@ -395,7 +395,7 @@ Recursive/Call register-bound assembly remains separate unfinished work.
 The CakeML command has an exploratory complete-output regression suite:
 `lake build cake` followed by `python3 scripts/check-cake-cli-parity.py`.
 It checks the entire stdout and stderr (byte count and SHA-256), and exit
-status, for successful examples including the standard basis, FFI, arrays,
+status, for examples including the standard basis, FFI, arrays,
 Word64, recursion, datatypes and compilation without the prelude. The recorded
 reference binary identifies itself as CakeML
 `e8eca63affd1653105ca4b9cc2f5ca87a01cd0af` and HOL
@@ -411,6 +411,5 @@ To recheck the recorded historical outputs when that exact binary is available,
 run `python3 scripts/check-cake-cli-parity.py --check-reference /path/to/cake`.
 `--record-reference /path/to/cake` checks the same provenance before replacing
 the recorded hashes. A pinned executable comparison is still required for the
-final parity claim. Rejected programs are deliberately excluded from this
-successful-output suite because parser and type-error diagnostics do not yet
-match the original CakeML executable.
+final parity claim. The suite also covers undefined-variable errors; other parser and type-error
+diagnostics do not yet match the original CakeML executable.
