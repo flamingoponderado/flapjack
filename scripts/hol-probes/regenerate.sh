@@ -411,6 +411,9 @@ run_probe cake_source_concrete_probeScript.sml cake_source_concrete_probe.out \
 run_probe cake_source_eval_probeScript.sml cake_source_eval_probe.out \
   agrees_type eval_type result_type missing oracle decs mismatch abort "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
 
+run_probe cake_source_control_probeScript.sml cake_source_control_probe.out \
+  if_type combine_type if_true if_false if_invalid and_true and_false constructors duplicates failure "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+
 run_probe cake_parse_error_probeScript.sml cake_parse_error_probe.out \
   missing after_decl multiline "$cake_dir/compiler/parsing/pegexec_cml_foScript.sml" "$cake_dir/compiler/parsing"
 

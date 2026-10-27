@@ -103037,5 +103037,61 @@
     "lean_name": "doEval",
     "statement_status": "pending_statement_review",
     "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "build_constrs_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Control.lean",
+    "lean_name": "buildConstrs",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "build_tdefs_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Control.lean",
+    "lean_name": "buildTdefs",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "check_dup_ctors_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Control.lean",
+    "lean_name": "checkDupCtors",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "combine_dec_result_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Control.lean",
+    "lean_name": "combineDecResult",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "do_if_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Control.lean",
+    "lean_name": "doIf",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "do_log_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Control.lean",
+    "lean_name": "doLog",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "extend_dec_env_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Control.lean",
+    "lean_name": "extendDecEnv",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
   }
 ]
