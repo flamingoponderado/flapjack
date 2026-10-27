@@ -43,6 +43,27 @@ private def occursListFuel : Nat → Spt InferT → Nat → List InferT → Opti
     if ← occursFuel fuel s n t then some true else occursListFuel fuel s n ts
 end
 
+
+mutual
+/-- Fully follow a substitution, reporting exhaustion on cyclic or overly deep
+inputs. The HOL operation is unbounded and requires well-formed substitution. -/
+def walkStarFuel : Nat → Spt InferT → InferT → Option InferT
+  | 0, _, _ => none
+  | fuel + 1, s, t => do
+    match ← walkFuel (fuel + 1) s t with
+    | .varDb n => some (.varDb n)
+    | .uvar n => some (.uvar n)
+    | .app ts name => (walkStarListFuel fuel s ts).map (InferT.app · name)
+
+def walkStarListFuel : Nat → Spt InferT → List InferT → Option (List InferT)
+  | 0, _, _ => none
+  | _ + 1, _, [] => some []
+  | fuel + 1, s, t :: ts => do
+    let t ← walkStarFuel fuel s t
+    let ts ← walkStarListFuel fuel s ts
+    some (t :: ts)
+end
+
 /-- A finite worklist implementation of the source unification equations.
 The outer option reports fuel exhaustion; the inner option reports unification
 failure. This is Flapjack infrastructure until its correspondence with HOL's

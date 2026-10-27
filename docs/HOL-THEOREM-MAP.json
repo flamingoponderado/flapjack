@@ -102341,5 +102341,13 @@
     "hol_name": "inf_env",
     "statement_status": "pending_statement_review",
     "reviewer": "Inference environment transcribed with namespace and semantic-type carriers; full HOL source and carrier review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Inference/Infer.lean",
+    "lean_name": "initConfig",
+    "hol_path": "cakeml/compiler/inference/inferScript.sml",
+    "hol_name": "init_config_def",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Primitive inference namespaces transcribed including association-list order; complete source and carrier review remains pending."
   }
 ]

@@ -10,7 +10,7 @@ open Flapjack.Basis.Pure.MlString Flapjack.NamespaceHOL Flapjack.AstHOL
 open Flapjack.Compiler.Inference.Unify
 
 inductive Error where
-  | exhausted | unsupported | mismatch | undefinedName | invalidPattern
+  | exhausted | unsupported | mismatch | undefinedName | invalidPattern | valueRestriction
   deriving Repr, BEq
 
 abbrev M (α : Type) := StateT State (Except Error) α
@@ -72,32 +72,32 @@ termination_by ts => sizeOf ts
 end
 
 mutual
-private def annotationWorker : Nat → Env → AstT → Except Error TypeSystemHOL.SemanticT
-  | 0, _, _ => .error .exhausted
-  | fuel + 1, env, typ => do
+private def annotationWorker : Nat → Env → List MlString → AstT → Except Error TypeSystemHOL.SemanticT
+  | 0, _, _, _ => .error .exhausted
+  | fuel + 1, env, free, typ => do
     match typ with
-    | .atvar _ => .error .mismatch
-    | .attup ts => return .app (← annotationsWorker fuel env ts) 9
-    | .atfun a b => return .app [← annotationWorker fuel env a, ← annotationWorker fuel env b] 4
+    | .atvar v => if v ∈ free then .ok (.var v) else .error .mismatch
+    | .attup ts => return .app (← annotationsWorker fuel env free ts) 9
+    | .atfun a b => return .app [← annotationWorker fuel env free a, ← annotationWorker fuel env free b] 4
     | .atapp ts name =>
-      let ts ← annotationsWorker fuel env ts
+      let ts ← annotationsWorker fuel env free ts
       match nsLookup env.infT name with
       | none => .error .undefinedName
       | some (params, body) =>
         if params.length != ts.length then .error .mismatch
         else .ok (semanticSubst (List.zip params ts) body)
 
-private def annotationsWorker : Nat → Env → List AstT → Except Error (List TypeSystemHOL.SemanticT)
-  | 0, _, _ => .error .exhausted
-  | _ + 1, _, [] => .ok []
-  | fuel + 1, env, t :: ts => do
-    let t ← annotationWorker fuel env t
-    let ts ← annotationsWorker fuel env ts
+private def annotationsWorker : Nat → Env → List MlString → List AstT → Except Error (List TypeSystemHOL.SemanticT)
+  | 0, _, _, _ => .error .exhausted
+  | _ + 1, _, _, [] => .ok []
+  | fuel + 1, env, free, t :: ts => do
+    let t ← annotationWorker fuel env free t
+    let ts ← annotationsWorker fuel env free ts
     return t :: ts
 end
 
 private def annotation (fuel : Nat) (env : Env) (t : AstT) : M InferT := do
-  match annotationWorker fuel env t with
+  match annotationWorker fuel env [] t with
   | .error e => fail e
   | .ok t => pure (inferTypeSubst [] t)
 
@@ -388,5 +388,129 @@ remaining cases are not implemented. -/
 def inferExprFuel (fuel unifFuel : Nat) (env : Env) (e : Exp) (s : State) :
     Except Error (InferT × State) :=
   (inferExprWorker fuel unifFuel env e) s
+
+
+private def extendEnv (new old : Env) : Env :=
+  ⟨nsAppend new.infV old.infV, nsAppend new.infC old.infC, nsAppend new.infT old.infT⟩
+
+private def liftEnv (name : MlString) (env : Env) : Env :=
+  ⟨nsLift name env.infV, nsLift name env.infC, nsLift name env.infT⟩
+
+mutual
+private def isValue : Exp → Bool
+  | .lit _ | .var _ | .fn _ _ => true
+  | .con _ es => isValueList es
+  | .tannot e _ | .lannot e _ => isValue e
+  | _ => false
+termination_by e => sizeOf e
+
+private def isValueList : List Exp → Bool
+  | [] => true
+  | e :: es => isValue e && isValueList es
+termination_by es => sizeOf es
+end
+
+private def applyFull (fuel : Nat) (ts : List InferT) : M (List InferT) := do
+  let s ← get
+  match walkStarListFuel fuel s.subst ts with
+  | none => fail .exhausted
+  | some ts => pure ts
+
+private def asCheckedType (fuel : Nat) (env : Env) (free : List MlString) (t : AstT) : M TypeSystemHOL.SemanticT := do
+  match annotationWorker fuel env free t with
+  | .error e => fail e
+  | .ok t => pure t
+
+private def asCheckedTypes (fuel : Nat) (env : Env) (free : List MlString) (ts : List AstT) : M (List TypeSystemHOL.SemanticT) := do
+  match annotationsWorker fuel env free ts with
+  | .error e => fail e
+  | .ok ts => pure ts
+
+private def distinctNames (names : List MlString) : Bool := names.eraseDups.length == names.length
+
+private def datatypeEnv (fuel : Nat) (env : Env) (defs : TypeDef) : M Env := do
+  let names := defs.map (fun (_, name, _) => name)
+  if !distinctNames names then fail .invalidPattern else
+  let s ← get
+  let (ids, s) := freshIds defs.length s
+  set s
+  let tenv := alistToNs ((List.zip defs ids).map (fun ((vars, name, _), id) =>
+    (name, (vars, TypeSystemHOL.SemanticT.app (vars.map TypeSystemHOL.SemanticT.var) id))))
+  let checkEnv := { env with infT := nsAppend tenv env.infT }
+  let mut constructors := []
+  for ((vars, _, ctors), id) in List.zip defs ids do
+    if !distinctNames vars || !distinctNames (ctors.map Prod.fst) then fail .invalidPattern else
+    let mut block := []
+    for (name, ts) in ctors do
+      let ts ← asCheckedTypes fuel checkEnv vars ts
+      block := (name, (vars, ts, id)) :: block
+    constructors := block ++ constructors
+  return { emptyEnv with infC := alistToNs constructors, infT := tenv }
+
+mutual
+private def inferDeclWorker : Nat → Nat → Env → Dec → M Env
+  | 0, _, _, _ => fail .exhausted
+  | fuel + 1, unifFuel, env, decl => do
+    match decl with
+    | .dlet _ pat expr =>
+      let st ← get
+      set (resetState st)
+      let exprType ← inferExprWorker fuel unifFuel env expr
+      let (patType, bindings) ← inferPatWorker fuel unifFuel env pat
+      if !distinctBindings bindings then fail .invalidPattern else
+      constrain unifFuel exprType patType
+      let ts ← applyFull unifFuel (bindings.map Prod.snd)
+      let (count, _, ts) := generaliseList 0 0 .ln ts
+      if count != 0 && !isValue expr then fail .valueRestriction else
+      let vars := List.zip (bindings.map Prod.fst) (ts.map (fun t => (count, t)))
+      return { emptyEnv with infV := alistToNs vars }
+    | .dletrec _ funs =>
+      let names := funs.map (fun (name, _, _) => name)
+      if !distinctNames names then fail .invalidPattern else
+      let st ← get
+      set (resetState st)
+      let vars ← freshMany funs.length
+      let env' := bindVars env (List.zip names vars)
+      let types ← inferFunsWorker fuel unifFuel env' funs
+      constrainMany unifFuel vars types
+      let ts ← applyFull unifFuel vars
+      let (count, _, ts) := generaliseList 0 0 .ln ts
+      return { emptyEnv with infV := alistToNs (List.zip names (ts.map (fun t => (count, t)))) }
+    | .dtype _ defs => datatypeEnv fuel env defs
+    | .dtabbrev _ vars name t =>
+      if !distinctNames vars then fail .invalidPattern else
+      let t ← asCheckedType fuel env vars t
+      return { emptyEnv with infT := alistToNs [(name, (vars, t))] }
+    | .dexn _ name ts =>
+      let ts ← asCheckedTypes fuel env [] ts
+      return { emptyEnv with infC := alistToNs [(name, ([], ts, 3))] }
+    | .dmod name ds =>
+      let env' ← inferDeclsWorker fuel unifFuel env ds
+      return liftEnv name env'
+    | .dlocal ds body =>
+      let env' ← inferDeclsWorker fuel unifFuel env ds
+      inferDeclsWorker fuel unifFuel (extendEnv env' env) body
+    | .denv _ => fail .unsupported
+
+private def inferDeclsWorker : Nat → Nat → Env → List Dec → M Env
+  | 0, _, _, _ => fail .exhausted
+  | _ + 1, _, _, [] => pure emptyEnv
+  | fuel + 1, unifFuel, env, d :: ds => do
+    let first ← inferDeclWorker fuel unifFuel env d
+    let rest ← inferDeclsWorker fuel unifFuel (extendEnv first env) ds
+    return extendEnv rest first
+end
+
+/-- Infer declarations with explicit bounds. Diagnostic messages and failure
+states still differ from HOL, and the bounded workers need correspondence proofs. -/
+def inferDeclsFuel (fuel unifFuel : Nat) (env : Env) (decls : List Dec) (state : State) :
+    Except Error (Env × State) :=
+  (inferDeclsWorker fuel unifFuel env decls) state
+
+/-- The successful whole-program inference environment, starting with CakeML's
+primitive type environment and the first non-primitive type identifier. -/
+def inferProgramFuel (fuel unifFuel : Nat) (decls : List Dec) : Except Error Env := do
+  let (env, _) ← inferDeclsFuel fuel unifFuel initConfig decls ⟨0, .ln, 15⟩
+  return extendEnv env initConfig
 
 end Flapjack.Compiler.Inference.Infer.Core
