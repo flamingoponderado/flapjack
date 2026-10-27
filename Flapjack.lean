@@ -1,6 +1,7 @@
 import Flapjack.RiscV.SourceRuntimeBackendOutput
 import Flapjack.SemanticPrimitivesHOL
 import Flapjack.SemanticPrimitivesHOL.PatternMatch
+import Flapjack.SemanticPrimitivesHOL.Operations
 import Flapjack.RiscV.RuntimeImageBackendOutput
 import Flapjack.RiscV.NativeBackendOutput
 import Flapjack.Compiler.Backend.RiscVConfig.Executable

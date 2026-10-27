@@ -102701,5 +102701,37 @@
     "lean_name": "pmatchList",
     "statement_status": "pending_statement_review",
     "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "eq_result",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Operations.lean",
+    "lean_name": "EqResult",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "do_eq_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Operations.lean",
+    "lean_name": "doEq",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "do_eq_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Operations.lean",
+    "lean_name": "doEqList",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "do_opapp_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Operations.lean",
+    "lean_name": "doOpApp",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
   }
 ]
