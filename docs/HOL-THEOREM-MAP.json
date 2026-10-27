@@ -104337,5 +104337,13 @@
     "lean_name": "semanticsProg_total",
     "statement_status": "pending_statement_review",
     "reviewer": "Codex: typed HOL statement captured in semantics_props_implements_probe; source evaluator, lazy-list representation and carrier review remain pending, including inherited rational-cut floating-point assumption."
+  },
+  {
+    "hol_path": "cakeml/semantics/proofs/semanticsPropsScript.sml",
+    "hol_name": "semantics_prog_deterministic",
+    "lean_path": "Flapjack/SemanticsProps/Determinism.lean",
+    "lean_name": "semanticsProg_deterministic",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex: typed HOL statement captured in semantics_props_implements_probe; source evaluator, lazy-list representation and carrier review remain pending, including inherited rational-cut floating-point assumption."
   }
 ]

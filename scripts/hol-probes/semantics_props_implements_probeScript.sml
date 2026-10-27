@@ -13,3 +13,4 @@ val _ = Globals.show_types := true;
 val _ = (print "prog_events_determ="; print_thm evaluate_prog_events_determ; print "\n");
 val _ = (print "prog_io_events_chain="; print_thm evaluate_prog_io_events_chain; print "\n");
 val _ = (print "semantics_prog_total="; print_thm semantics_prog_total; print "\n");
+val _ = (print "semantics_prog_deterministic="; print_thm semantics_prog_deterministic; print "\n");

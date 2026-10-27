@@ -905,7 +905,7 @@ run_probe pan_structs_compile_exp_correct_probeScript.sml pan_structs_compile_ex
   "$cake_dir/pancake/proofs"
 
 run_probe semantics_props_implements_probeScript.sml semantics_props_implements_probe.out \
-  implements_prime_trans prog_events_determ prog_io_events_chain semantics_prog_total \
+  implements_prime_trans prog_events_determ prog_io_events_chain semantics_prog_total semantics_prog_deterministic \
   "$cake_dir/semantics/proofs/semanticsPropsScript.sml" \
   "$cake_dir/semantics/proofs"
 run_probe pan_structs_mem_load_conversion_probeScript.sml pan_structs_mem_load_conversion_probe.out \

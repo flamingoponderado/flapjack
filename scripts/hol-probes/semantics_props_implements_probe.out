@@ -2,3 +2,4 @@ implements_prime_trans=∀x y z b. implements' b y z ∧ implements' b x y ⇒ i
 prog_events_determ=⊢ ∀(st :α semanticPrimitives$state) (env :v sem_env) (k :num) (p :dec list) (k' :num). LENGTH (FST (evaluate_prog_with_clock st env k p)).io_events = LENGTH (FST (evaluate_prog_with_clock st env k' p)).io_events ⇒ (FST (evaluate_prog_with_clock st env k p)).io_events = (FST (evaluate_prog_with_clock st env k' p)).io_events
 prog_io_events_chain=⊢ lprefix_chain (IMAGE (λ(k :num). (fromList (FST (evaluate_prog_with_clock (st :α semanticPrimitives$state) (env :v sem_env) k (prog :dec list))).io_events :io_event llist)) 𝕌(:num))
 semantics_prog_total=⊢ ∀(s :α semanticPrimitives$state) (e :v sem_env) (p :dec list). ∃(b :behaviour). semantics_prog s e p b
+semantics_prog_deterministic=⊢ ∀(s :α semanticPrimitives$state) (e :v sem_env) (p :dec list) (b :behaviour) (b' :behaviour). semantics_prog s e p b ∧ semantics_prog s e p b' ⇒ b = b'
