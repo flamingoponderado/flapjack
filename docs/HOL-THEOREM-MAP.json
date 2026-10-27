@@ -104962,5 +104962,29 @@
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["c", "tys"],
     "reviewer": "Codex source comparison: HOL global_env has v : flatSem$v option list, c : ((ctor_id # type_id) # num) |-> semanticPrimitives$stamp, and tys : num |-> (ctor_id # num) list, in that field order. Typed source_to_flat_global_env_probe confirms the normalized key/value types. Lean uses the reviewed flat value and source stamp carriers, literal lists and pairs, and canonical HolFiniteMapExact for both HOL finite-map fields. The same-module GlobalEnv.toBroad/ofBroad witness reconstructs both lookup functions and finite-support proofs; it does not establish the value relation or simulation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_eq_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Operations.lean",
+    "lean_name": "doEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: all original flat equality clauses match: literal type check and equality, location equality only when both flags hold, constructor identity and length before recursive equality with same-type fallback, vector length, all four closure/recursive-closure pairs yielding true, and the type-error fallback. The imported flat Value and source EqResult carriers match the original constructors. Constructor-type comparison uses the original polymorphic predicate with a concrete decidability instance, without changing its proposition. The typed equations and behavior samples are captured in cake_flat_sem_ops_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_eq_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Operations.lean",
+    "lean_name": "doEqList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: the original mutual list clauses return true for two empty lists, propagate a head type error, return false immediately for a false head, recurse for a true head, and return false for unequal list shapes. Lean retains the same flat Value and EqResult carriers and clause behavior. Typed equations and samples are captured in cake_flat_sem_ops_probe."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "do_opapp_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Operations.lean",
+    "lean_name": "doOpApp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex source comparison: the original accepts exactly a closure or recursive closure followed by one argument. The ordinary case prepends the binding; the recursive case requires ALL_DISTINCT of function names, finds the requested function, and prepends its argument to build_rec_env. All other cases return NONE. Lean uses the same ordered association lists, function triples and source lookup; typed equations and original successful and duplicate-name samples are captured in cake_flat_sem_ops_probe."
   }
 ]

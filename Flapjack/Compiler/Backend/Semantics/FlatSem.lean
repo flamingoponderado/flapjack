@@ -65,4 +65,9 @@ def ctorSameType {α β γ : Type} (left : Option (α × β)) (right : Option (�
   | none, none => True
   | _, _ => False
 
+/-- Decidable comparison when the shared type identifier has decidable equality. -/
+instance {α β γ : Type} [DecidableEq β] (left : Option (α × β)) (right : Option (γ × β)) :
+    Decidable (ctorSameType left right) := by
+  cases left <;> cases right <;> simp only [ctorSameType] <;> infer_instance
+
 end Flapjack.Compiler.Backend.FlatSem

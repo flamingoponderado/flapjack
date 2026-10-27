@@ -206,6 +206,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalEnv
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRel
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
 import Flapjack.Compiler.Backend.Semantics.FlatSem
+import Flapjack.Compiler.Backend.Semantics.FlatSem.Operations
 import Flapjack.Compiler.Backend.SourceToFlat.CompileDecs
 import Flapjack.Compiler.Backend.SourceToFlat.CompileProg
 import Flapjack.Compiler.Backend.FlatElim.Reachability
