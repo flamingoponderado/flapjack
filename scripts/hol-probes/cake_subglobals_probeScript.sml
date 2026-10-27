@@ -36,6 +36,9 @@ val _ = (print "orac_rel_inner="; print_thm source_to_flatProofTheory.orac_rel_i
 val _ = (print "orac_rel="; print_thm source_to_flatProofTheory.orac_rel_def; print "\n");
 val _ = (print "orac_rel_some="; print_thm source_to_flatProofTheory.orac_rel_SOME_eval; print "\n");
 val _ = (print "inc_compile_nonempty="; print_thm source_to_flatProofTheory.inc_compile_prog_nonempty; print "\n");
+val _ = (print "word8_rel="; print_thm source_to_flatProofTheory.v_to_word8_list_rel; print "\n");
+val _ = (print "word64_rel="; print_thm source_to_flatProofTheory.v_to_word64_list_rel; print "\n");
+val _ = (print "source_to_flat_do_eval="; print_thm source_to_flatProofTheory.do_eval; print "\n");
 val fstSndEq = prove (``FST = (\ (a,b). a) /\ SND = (\ (a,b). b)``, simp [FUN_EQ_THM, FORALL_PROD]);
 val firstStep = prove (``source_to_flatProof$src_orac_step_invs interp g (SOME (EvalOracle es)) ==>
   ?i_f env_id0 st_v0 decs0 fdecs0 c0 x0 env_id1 st_v1 decs1 c1 x1.
