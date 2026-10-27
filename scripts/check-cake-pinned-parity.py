@@ -15,6 +15,8 @@ spec.loader.exec_module(parity)
 
 # Each program makes the computed result observable through an output call.
 CASES = {
+    'string_pattern': 'fun f s = case s of "abc" => 1 | _ => 0; val _ = print_int (f "abc");',
+    'large_integer_pattern': 'fun f n = case n of 2305843009213693952 => 1 | _ => 0; val _ = print_int (f 2305843009213693952);',
     'array_update_and_sub': 'val a = Array.array 3 1; val _ = Array.update a 1 4; val _ = print_int (Array.sub a 1);',
     'byte_array_update_and_sub': 'val b = Word8Array.array 3 (Word8.fromInt 9); val _ = Word8Array.update b 1 (Word8.fromInt 7); val _ = print_int (Word8.toInt (Word8Array.sub b 1));',
     'string_concat': 'val _ = print (String.concat ["abc","def"]);',

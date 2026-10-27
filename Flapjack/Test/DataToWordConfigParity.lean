@@ -276,6 +276,48 @@ private def headerConfig : Config := { conf with lenSize := 4 }
 #guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.equalConst (.int (-3)))) [1] none) with
   | some (.ite .equal 4 (.imm n) (.assign 8 (.const 18)) (.assign 8 (.const 2)), 2) => n == (-12 : BitVec 64)
   | _ => false
+-- Exact programs captured by cake_word_array_probe for boxed constants.
+#guard match compileControl? (width := 64) conf 5 2
+    (.assign 3 (.blockOp (.equalConst (.int 2305843009213693952))) [1] none) with
+  | some (.ite .test 4 (.imm 1) (.assign 8 (.const 2))
+      (.seq (.assign 1 (.const 2)) (.seq (.assign 3 (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)]))
+        (.seq (.seq (.assign 5 (.load (.op .add [.var 3, .const 0])))
+          (.ite .equal 5 (.imm 0x100000000000f)
+            (.seq (.assign 5 (.load (.op .add [.var 3, .const 8])))
+              (.ite .equal 5 (.imm 0x2000000000000000) (.assign 1 (.const 18)) .skip)) .skip))
+          (.assign 8 (.var 1))))), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2
+    (.assign 3 (.blockOp (.equalConst (.int (-2305843009213693953)))) [1] none) with
+  | some (.ite .test 4 (.imm 1) (.assign 8 (.const 2))
+      (.seq (.assign 1 (.const 2)) (.seq (.assign 3 (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)]))
+        (.seq (.seq (.assign 5 (.load (.op .add [.var 3, .const 0])))
+          (.ite .equal 5 (.imm 0x100000000001f)
+            (.seq (.assign 5 (.load (.op .add [.var 3, .const 8])))
+              (.ite .equal 5 (.imm 0x2000000000000001) (.assign 1 (.const 18)) .skip)) .skip))
+          (.assign 8 (.var 1))))), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2
+    (.assign 3 (.blockOp (.equalConst (.w64 123456789))) [1] none) with
+  | some (.seq (.assign 1 (.const 2))
+      (.seq (.assign 3 (.op .add [.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)], .const 8]))
+        (.seq (.seq (.assign 5 (.load (.op .add [.var 3, .const 0])))
+          (.ite .equal 5 (.imm 123456789) (.assign 1 (.const 18)) .skip)) (.assign 8 (.var 1)))), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2
+    (.assign 3 (.blockOp (.equalConst (.str (Flapjack.Basis.Pure.MlString.ofString "abc")))) [1] none) with
+  | some (.seq (.assign 1 (.const 2))
+      (.seq (.assign 3 (.op .add [.lookup .currHeap, .shift .lsr (.var 4) (.const 5)]))
+        (.seq (.seq (.assign 5 (.load (.op .add [.var 3, .const 0])))
+          (.ite .equal 5 (.imm 0x1600000000007)
+            (.seq (.assign 5 (.load (.op .add [.var 3, .const 8])))
+              (.ite .equal 5 (.imm 0x636261) (.assign 1 (.const 18)) .skip)) .skip))
+          (.assign 8 (.var 1)))), 2) => true
+  | _ => false
+#guard match compileControl? (width := 64) conf 5 2
+    (.assign 3 (.blockOp (.equalConst (.con 4 [1]))) [1] none) with
+  | some (.skip, 2) => true
+  | _ => false
 #guard (compileControl? (width := 8) conf 5 2 (.assign 3 (.blockOp (.equalConst (.int 32))) [1] none)).isNone
 #guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.memOp (.copyByte true)) [1, 2, 3] none) with
   | some (.mustTerminate (.call (some ([8], (.ls (), .ln), .skip, 5, 2)) (some 28) [4, 6, 8] none), 3) => true

@@ -51,3 +51,18 @@ val _ = capture "fp_top_no_hardware" ``
 val _ = capture "fp_top_no_ternary" ``
  let c = (ARB:data_to_word$config) with <|has_fp_ops := T; has_fp_tern := F|> in
  data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$WordOp (closLang$FP_top FP_Fma)) [1;2;3] NONE) : 64 wordLang$prog # num``;
+val _ = capture "equal_large_int" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16; be := F|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$BlockOp (closLang$EqualConst (closLang$Int 2305843009213693952))) [1] NONE) : 64 wordLang$prog # num``;
+val _ = capture "equal_negative_int" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16; be := F|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$BlockOp (closLang$EqualConst (closLang$Int (-2305843009213693953)))) [1] NONE) : 64 wordLang$prog # num``;
+val _ = capture "equal_word64" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16; be := F|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$BlockOp (closLang$EqualConst (closLang$W64 123456789w))) [1] NONE) : 64 wordLang$prog # num``;
+val _ = capture "equal_string" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16; be := F|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$BlockOp (closLang$EqualConst (closLang$Str «abc»))) [1] NONE) : 64 wordLang$prog # num``;
+val _ = capture "equal_constructor" ``
+ let c = (ARB:data_to_word$config) with <|tag_bits := 1; len_bits := 2; pad_bits := 3; len_size := 16; be := F|> in
+ data_to_word$comp c 5 2 (dataLang$Assign 3 (closLang$BlockOp (closLang$EqualConst (closLang$Con 4 [1]))) [1] NONE) : 64 wordLang$prog # num``;

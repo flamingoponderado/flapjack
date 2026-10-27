@@ -24,6 +24,14 @@ private def storeEach {width : Nat} (base : Nat) : List Nat → BitVec width →
   | x :: xs, offset => .seq (.store (.op .add [.var base, .const offset]) x)
       (storeEach base xs (offset + BitVec.ofNat width (width / 8)))
 
+/-- Compare consecutive memory words against a constant layout. This helper
+follows `MemEqList`; its cross-language statement review remains open. -/
+private def memEqList {width : Nat} (offset : BitVec width) :
+    List (BitVec width) → WordLangProgHOL (BitVec width)
+  | [] => .assign 1 (.const 18)
+  | w :: ws => .seq (.assign 5 (.load (.op .add [.var 3, .const offset])))
+      (.ite .equal 5 (.imm w) (memEqList (offset + BitVec.ofNat width (width / 8)) ws) .skip)
+
 /-- Internal support for the checked allocation case; a reviewed port of
 `SilentFFI` and its width-indexed statement remains open. -/
 private def silentFfi {width : Nat} (conf : Config) (n : Nat) (names : WordLangCutsetsHOL) :
@@ -308,15 +316,26 @@ def compileControl? {width : Nat} [NeZero width] (conf : Config) (secn : Nat) :
                   (some equalLocation) [1, 3] none)) (.assign 3 (.const 1)))),
             boolResult dest .equal 1 (.reg 3)], l + 1)
       | _ => some (.skip, l)
-  | l, .assign dest (.blockOp (.equalConst (.int i))) args _ =>
+  | l, .assign dest (.blockOp (.equalConst part)) args _ =>
       match args with
       | [src] =>
-          let bound : Int := Int.ofNat (2 ^ width / 8)
-          if -bound ≤ i ∧ i < bound then
-            let magnitude := BitVec.ofNat width (4 * i.natAbs)
-            let value := if i < 0 then -magnitude else magnitude
-            some (boolResult dest .equal (adjustVar src) (.imm value), l)
-          else none
+          if width != 32 && width != 64 then none else
+          match Build.partWords conf .ln part 0 with
+          | none => some (.assign (adjustVar dest) (.const 2), l)
+          | some ((false, w), _) => some (boolResult dest .equal (adjustVar src) (.imm w), l)
+          | some ((true, _), words) =>
+              let words := words.map Prod.snd
+              let compare (address : WordLangExpHOL (BitVec width)) (words : List (BitVec width)) :=
+                listSeq [.assign 1 (.const 2), .assign 3 address, memEqList 0 words,
+                  .assign (adjustVar dest) (.var 1)]
+              let code := match part with
+                | .int _ => .ite .test (adjustVar src) (.imm 1)
+                    (.assign (adjustVar dest) (.const 2)) (compare (realAddr conf (adjustVar src)) words)
+                | .w64 _ => compare (.op .add [realAddr conf (adjustVar src),
+                    .const (BitVec.ofNat width (width / 8))]) (words.drop 1)
+                | .str _ => compare (realAddr conf (adjustVar src)) words
+                | _ => .skip
+              some (code, l)
       | _ => some (.skip, l)
   | l, .assign dest (.intOp (.lessConstSmall i)) args _ =>
       match args with

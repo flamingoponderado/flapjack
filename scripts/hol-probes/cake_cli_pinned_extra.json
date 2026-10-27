@@ -197,6 +197,20 @@
       "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "stderr_bytes": 104,
       "stderr_sha256": "373730321b940a37bcc50be3f5724e6b0d32ea688f5a3d5623acd43b15a3172d"
+    },
+    "string_pattern": {
+      "exit_code": 0,
+      "stdout_bytes": 395758,
+      "stdout_sha256": "c50a17361677a2c9ffc89317813d8fb80202253c1208b01450a915a826740365",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "large_integer_pattern": {
+      "exit_code": 0,
+      "stdout_bytes": 395945,
+      "stdout_sha256": "8c769b6f86831fd3eb508b5617257c625e5af9951a59f2ddb6ce26601f347f88",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     }
   }
 }
