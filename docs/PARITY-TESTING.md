@@ -415,7 +415,21 @@ final parity claim. The suite also covers selected parser and type errors, inclu
 value restrictions and constructor-arity diagnostics; other
 diagnostic paths remain incomplete. Its `--reg_alg` cases compare complete
 assembly for allocator modes 0 through 4, including first-option precedence.
-The linear-scan mode is substantially slower in the Lean executable. Separate
+The linear-scan mode is substantially slower in the Lean executable. To compare
+and time the complete output for an allocator setting of 4 or higher against a
+pinned compiler, run:
+
+```sh
+python3 scripts/check-cake-linear-scan-parity.py --reference /var/tmp/flapjack-pinned-cake
+```
+
+The script accepts `--alg` and
+`--input` for other settings and source programs. A sampled `--reg_alg=5` run
+on `val x = 1;` took about 69–101 seconds in Flapjack and 0.25–0.46 seconds in
+the pinned compiler; both emitted the same 521,616 bytes. A debugger sample found the
+Flapjack worker in repeated list-backed `mUpdate` calls. Two kernel-equal local
+update replacements preserved output but did not improve that end-to-end time,
+so the executed implementation was left unchanged. Separate
 `--gc` cases compare no GC, simple GC, generational lists, duplicate options,
 and malformed options.
 The suite also checks ignored unrecognized arguments, including the short `-h`
