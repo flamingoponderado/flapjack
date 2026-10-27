@@ -379,6 +379,9 @@ run_probe cake_ptree_expr_probeScript.sml cake_ptree_expr_probe.out \
 run_probe cake_source_frontend_probeScript.sml cake_source_frontend_probe.out \
   empty value datatype structure expression "$cake_dir/semantics/cmlPtreeConversionScript.sml" "$cake_dir/compiler/parsing" "$cake_dir/semantics"
 
+run_probe cake_source_store_probeScript.sml cake_source_store_probe.out \
+  closure_type recclosure_type store_assign_type ref_same thunk_update thunk_final allocation lookup update invalid wrong_type "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+
 run_probe cake_parse_error_probeScript.sml cake_parse_error_probe.out \
   missing after_decl multiline "$cake_dir/compiler/parsing/pegexec_cml_foScript.sml" "$cake_dir/compiler/parsing"
 

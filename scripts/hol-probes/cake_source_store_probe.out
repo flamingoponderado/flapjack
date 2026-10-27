@@ -1,0 +1,11 @@
+closure_type=:v sem_env -> mlstring -> exp -> v
+recclosure_type=:v sem_env -> (mlstring # mlstring # exp) list -> mlstring -> v
+store_assign_type=:num -> α store_v -> α store_v list -> α store_v list option
+ref_same=T
+thunk_update=T
+thunk_final=F
+allocation=([Refv (3 :num); Refv (7 :num)],(1 :num))
+lookup=SOME (Refv (3 :num))
+update=SOME [Refv (7 :num)]
+invalid=(NONE :num store_v list option)
+wrong_type=(NONE :num store_v list option)
