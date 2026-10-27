@@ -245,6 +245,10 @@ run_probe() {
   done
 }
 
+run_probe source_to_flat_let_probeScript.sml source_to_flat_let_probe.out \
+  named_compile_typed anonymous_compile_typed optional_bind_typed \
+  "$cake_dir/compiler/backend/source_to_flatScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe source_to_flat_log_probeScript.sml source_to_flat_log_probe.out \
   do_log_typed log_boolean log_non_boolean \
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"

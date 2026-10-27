@@ -528,4 +528,99 @@ theorem exprSim_raise {C F : Type} (genv : GlobalEnv) (compMap : Environment) (t
               simp only [EvaluateHOL.headValue, Flapjack.holHd]
               exact ⟨.raise valueRel, nextRel⟩
 
+/-- An anonymous let evaluates its body in the unchanged environments after
+the first expression succeeds, and propagates related errors otherwise. -/
+theorem exprSim_let_anonymous {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
+    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (first body : AstHOL.Exp)
+    (firstSim : ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState first)
+    (bodySim : ∀ (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F),
+      StateRel genv source flat → ExprSim genv compMap trace sourceEnv flatEnv source flat body) :
+    ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.let_ none first body) := by
+  unfold ExprSim at firstSim
+  cases sourceRun : EvaluateHOL.evaluate sourceState sourceEnv [first] with
+  | mk sourceNext sourceResult =>
+    rw [sourceRun] at firstSim
+    cases flatRun : FlatSem.evaluate flatEnv flatState [compileExp trace compMap first] with
+    | mk flatNext flatResult =>
+      rw [flatRun] at firstSim
+      obtain ⟨related, nextRel⟩ := firstSim
+      cases related with
+      | raise valueRel =>
+        unfold ExprSim
+        rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate sourceState sourceEnv [first] []).1, sourceRun]
+        rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flatState
+          [compileExp trace compMap first] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+        exact ⟨.raise valueRel, nextRel⟩
+      | abort error =>
+        unfold ExprSim
+        rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate sourceState sourceEnv [first] []).1, sourceRun]
+        rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flatState
+          [compileExp trace compMap first] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+        exact ⟨.abort error, nextRel⟩
+      | value _ =>
+        unfold ExprSim
+        rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate sourceState sourceEnv [first] []).1, sourceRun]
+        rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flatState
+          [compileExp trace compMap first] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+        simpa [ExprSim, nsOptBind] using bodySim sourceNext flatNext nextRel
+
+/-- A named let binding preserves simulation when the binding expression and
+body simulations hold for related values and states. The body uses the
+extended source, flat, and compilation environments. -/
+theorem exprSim_let_named {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
+    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (name : VarN) (first body : AstHOL.Exp)
+    (firstSim : ExprSim genv compMap (name :: trace) sourceEnv flatEnv sourceState flatState first)
+    (bodySim : ∀ (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+      (value : SemanticPrimitivesHOL.Value) (flatValue : FlatSem.Value),
+      StateRel genv source flat → ValueRel genv value flatValue →
+      ExprSim genv { compMap with v := nsBind name (.localName .none name) compMap.v } trace
+        { sourceEnv with v := nsBind name value sourceEnv.v }
+        { flatEnv with v := (name, flatValue) :: flatEnv.v } source flat body) :
+    ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.let_ (some name) first body) := by
+  unfold ExprSim at firstSim
+  cases sourceRun : EvaluateHOL.evaluate sourceState sourceEnv [first] with
+  | mk sourceNext sourceResult =>
+    rw [sourceRun] at firstSim
+    cases flatRun : FlatSem.evaluate flatEnv flatState [compileExp (name :: trace) compMap first] with
+    | mk flatNext flatResult =>
+      rw [flatRun] at firstSim
+      obtain ⟨related, nextRel⟩ := firstSim
+      cases sourceResult with
+      | err error =>
+        cases error with
+        | raise value =>
+          cases related with
+          | raise valueRel =>
+            unfold ExprSim
+            rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate sourceState sourceEnv [first] []).1, sourceRun]
+            rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flatState
+              [compileExp (name :: trace) compMap first] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+            exact ⟨.raise valueRel, nextRel⟩
+        | abort error =>
+          cases related with
+          | abort =>
+            unfold ExprSim
+            rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate sourceState sourceEnv [first] []).1, sourceRun]
+            rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flatState
+              [compileExp (name :: trace) compMap first] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+            exact ⟨.abort error, nextRel⟩
+      | val values =>
+        obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceNext sourceEnv first values sourceRun
+        cases related with
+        | value valuesRel =>
+          cases valuesRel with
+          | cons valueRel tail =>
+            cases tail with
+            | nil =>
+              unfold ExprSim
+              rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate sourceState sourceEnv [first] []).1, sourceRun]
+              rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flatState
+                [compileExp (name :: trace) compMap first] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+              simp only [EvaluateHOL.headValue, Flapjack.holHd, nsOptBind]
+              simpa [ExprSim] using bodySim sourceNext flatNext value _ nextRel valueRel
+
 end Flapjack.Compiler.Backend.SourceToFlat

@@ -1,0 +1,3 @@
+named_compile_typed=(compile_exp (t :mlstring list) (env :source_to_flat$environment) (Let (SOME (x :mlstring)) (e1 :ast$exp) (e2 :ast$exp) :ast$exp) :exp) = (Let None (SOME x) (compile_exp (x::t) env e1 :exp) (compile_exp t (env with v := nsBind x (Local None x) env.v) e2 :exp) :exp)
+anonymous_compile_typed=(compile_exp (t :mlstring list) (env :source_to_flat$environment) (Let (NONE :mlstring option) (e1 :ast$exp) (e2 :ast$exp) :ast$exp) :exp) = (Let None (NONE :mlstring option) (compile_exp t env e1 :exp) (compile_exp t env e2 :exp) :exp)
+optional_bind_typed=∀(n :β option) (x :γ) (env :(α, β, γ) namespace). nsOptBind n x env = case n of (NONE :β option) => env | SOME n => nsBind n x env

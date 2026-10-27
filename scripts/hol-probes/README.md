@@ -1,3 +1,5 @@
+`source_to_flat_let_probe.out` captures the original typed named and anonymous let-compilation equations and optional namespace binding. Lean proves corresponding expression composition over its preliminary fixed-global simulation relation; it does not establish the full HOL invariant or pass correctness.
+
 `source_to_flat_log_probe.out` captures the original typed short-circuit definition and its Boolean and non-Boolean cases. Lean proves logical-expression composition over its preliminary fixed-global simulation relation; source correspondence review and the complete pass correctness theorem remain open.
 
 `cake_from_sexp_probe.out` evaluates CakeML's S-expression decoding of byte escapes, lists, options, identifiers, literals, locations, types, patterns, and representative operators. `Flapjack/Test/CakeFromSexpParity.lean` checks corresponding Lean observations; finite examples do not establish cross-language equivalence. The bounded expression and declaration decoders are used by the executable and remain subject to source correspondence review.
