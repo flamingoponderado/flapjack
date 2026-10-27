@@ -101910,5 +101910,50 @@
     "hol_name": "cb_to_bvi_worker_aux_alt_def",
     "statement_status": "pending_statement_review",
     "reviewer": "Source shift-accumulator worker transcribed; complete carrier and definition review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/Tokens.lean", "lean_name": "Path",
+    "hol_path": "cakeml/semantics/tokensScript.sml", "hol_name": "path",
+    "statement_status": "pending_statement_review", "reviewer": "Path constructors transcribed; complete source review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/Tokens.lean", "lean_name": "Token",
+    "hol_path": "cakeml/semantics/tokensScript.sml", "hol_name": "token",
+    "statement_status": "pending_statement_review", "reviewer": "Complete token constructor sequence transcribed; complete source review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/Lexer.lean", "lean_name": "Symbol",
+    "hol_path": "cakeml/semantics/lexer_funScript.sml", "hol_name": "symbol",
+    "statement_status": "pending_statement_review", "reviewer": "Intermediate symbol constructors and byte-list carriers transcribed; source review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/Lexer.lean", "lean_name": "nextLoc",
+    "hol_path": "cakeml/semantics/lexer_funScript.sml", "hol_name": "next_loc_def",
+    "statement_status": "pending_statement_review", "reviewer": "Position update transcribed; complete source review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/Lexer.lean", "lean_name": "nextLine",
+    "hol_path": "cakeml/semantics/lexer_funScript.sml", "hol_name": "next_line_def",
+    "statement_status": "pending_statement_review", "reviewer": "Line update transcribed; complete source review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/Lexer.lean", "lean_name": "getToken",
+    "hol_path": "cakeml/semantics/lexer_funScript.sml", "hol_name": "get_token_def",
+    "statement_status": "pending_statement_review", "reviewer": "Token table transcribed; complete classification and byte-carrier review remain pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/Lexer.lean", "lean_name": "toPath",
+    "hol_path": "cakeml/semantics/lexer_funScript.sml", "hol_name": "to_path_def",
+    "statement_status": "pending_statement_review", "reviewer": "Qualified identifier path conversion transcribed; complete source review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/Lexer.lean", "lean_name": "tokenOfSymbol",
+    "hol_path": "cakeml/semantics/lexer_funScript.sml", "hol_name": "token_of_sym_def",
+    "statement_status": "pending_statement_review", "reviewer": "Intermediate symbol conversion transcribed; complete source review remains pending."
+  },
+  {
+    "lean_path": "Flapjack/CakeParser/LexerImpl.lean", "lean_name": "lexAuxTokens",
+    "hol_path": "cakeml/compiler/parsing/lexer_implScript.sml", "hol_name": "lex_aux_tokens_def",
+    "statement_status": "pending_statement_review", "reviewer": "Top-level token grouping transcribed; complete source review remains pending."
   }
 ]

@@ -2248,6 +2248,7 @@ import Flapjack.FlatCorrectness
 import Flapjack.Tests
 import Flapjack.Pancake.PanStatic
 import Flapjack.Parser
+import Flapjack.CakeParser.LexerImpl
 import Flapjack.Parser.ByteRanged
 import Flapjack.Parser.ConversionByteRanged
 import Flapjack.Parser.GrammarByteRanged

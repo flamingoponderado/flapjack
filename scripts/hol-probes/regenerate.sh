@@ -143,6 +143,11 @@ probe_needs_refresh() {
     [[ "$(basename "$probe")" == clos_op_frontend_probeScript.sml &&
        ( "$cake_dir/compiler/backend/closLangScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/backend_commonScript.sml" -nt "$output" ) ]] ||
+    [[ ( "$(basename "$probe")" == cake_lexer_probeScript.sml ||
+         "$(basename "$probe")" == cake_lexer_chunks_probeScript.sml ) &&
+       ( "$cake_dir/semantics/lexer_funScript.sml" -nt "$output" ||
+         "$cake_dir/semantics/tokensScript.sml" -nt "$output" ||
+         "$cake_dir/compiler/parsing/lexer_implScript.sml" -nt "$output" ) ]] ||
     [[ ( "$(basename "$probe")" == bignum_word_probeScript.sml ||
          "$(basename "$probe")" == full_cake_word_probeScript.sml ||
          "$(basename "$probe")" == full_inline_cake_word_probeScript.sml ||
@@ -329,6 +334,12 @@ run_probe default_frontend_config_probeScript.sml default_frontend_config_probe.
 
 run_probe clos_op_frontend_probeScript.sml clos_op_frontend_probe.out \
   ops "$cake_dir/compiler/backend/clos_opScript.sml" "$cake_dir/compiler/backend"
+
+run_probe cake_lexer_probeScript.sml cake_lexer_probe.out \
+  basic comments strings errors edge "$cake_dir/semantics/lexer_funScript.sml" "$cake_dir/semantics"
+
+run_probe cake_lexer_chunks_probeScript.sml cake_lexer_chunks_probe.out \
+  chunks "$cake_dir/compiler/parsing/lexer_implScript.sml" "$cake_dir/compiler/parsing"
 
 run_probe bvl_inline_cake_bvi_probeScript.sml bvl_inline_cake_bvi_probe.out \
   code "$cake_dir/compiler/backend/bvl_inlineScript.sml" "$cake_dir/compiler/backend"

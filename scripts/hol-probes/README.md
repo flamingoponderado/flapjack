@@ -54,6 +54,8 @@
 
 `clos_known_frontend_probe.out` captures approximation merging, global updates and closure inlining. `full_clos_known_cake_word_probe.out` and `full_default_frontend_word_probe.out` capture complete word programs with known-function optimization enabled; the latter uses the default BVL optimization settings for the selected 64-bit nested-function example.
 
+`cake_lexer_probe.out` captures CakeML tokens and source locations for identifiers, numbers, nested comments, strings, characters, FFI names and lexical errors. `cake_lexer_chunks_probe.out` captures top-level semicolon grouping and incomplete trailing input. The bounded Lean lexer consumes the HOL byte-character carrier; CakeML parsing and type inference remain separate work.
+
 `default_frontend_config_probe.out` captures the original configured frontend's entry location, fresh-name counters, inline-cache keys, program size and symbol-name keys for that same example.
 
 `tmc_ops_word_probe.out` captures mutable-constructor, finalisation and update lowering under simple and generational GC configurations. `tmc_program_word_probe.out` captures all word functions for a positive TMC example after BVI inlining and data lowering.
