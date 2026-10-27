@@ -1,0 +1,8 @@
+agrees_type=:((num # num) # v # dec list -> (v # word8 list # word64 list) option) -> (num # num) # v # dec list -> v # v # v -> bool
+eval_type=:v list -> eval_state option -> (v sem_env # dec list # eval_state option) option
+result_type=:v list -> α state -> α state # (v sem_env # dec list, β) result
+missing=(NONE :(v sem_env # dec list # eval_state option) option)
+oracle=SOME ((0 :num),(1 :num),(2 :num))
+decs=SOME ((0 :num),(9 :num),(0 :num),(10 :num))
+mismatch=F
+abort=T

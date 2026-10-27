@@ -7,6 +7,7 @@ import Flapjack.SemanticPrimitivesHOL.Thunk
 import Flapjack.EvaluateHOL
 import Flapjack.SemanticPrimitivesHOL.EvalState
 import Flapjack.SemanticPrimitivesHOL.Concrete
+import Flapjack.SemanticPrimitivesHOL.Eval
 import Flapjack.RiscV.RuntimeImageBackendOutput
 import Flapjack.RiscV.NativeBackendOutput
 import Flapjack.Compiler.Backend.RiscVConfig.Executable

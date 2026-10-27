@@ -103013,5 +103013,29 @@
     "lean_name": "concreteValues",
     "statement_status": "pending_statement_review",
     "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/evaluateScript.sml",
+    "hol_name": "do_eval_res_def",
+    "lean_path": "Flapjack/EvaluateHOL.lean",
+    "lean_name": "doEvalRes",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "compiler_agrees_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Eval.lean",
+    "lean_name": "compilerAgrees",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
+  },
+  {
+    "hol_path": "cakeml/semantics/semanticPrimitivesScript.sml",
+    "hol_name": "do_eval_def",
+    "lean_path": "Flapjack/SemanticPrimitivesHOL/Eval.lean",
+    "lean_name": "doEval",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Codex (reference inventory)"
   }
 ]

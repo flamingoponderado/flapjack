@@ -44,6 +44,8 @@ probe_needs_refresh() {
        "$cake_dir/basis/basisProgScript.sml" -nt "$output" ]] ||
     [[ "$(basename "$probe")" == cake_parse_error_probeScript.sml &&
        "$cake_dir/semantics/lexer_funScript.sml" -nt "$output" ]] ||
+    [[ "$(basename "$probe")" == cake_source_eval_probeScript.sml &&
+       "$cake_dir/semantics/evaluateScript.sml" -nt "$output" ]] ||
     [[ "$(basename "$probe")" == cakeml_frontend_flat_probeScript.sml &&
        ( "$cake_dir/compiler/backend/flat_patternScript.sml" -nt "$output" ||
          "$cake_dir/compiler/backend/source_to_flatScript.sml" -nt "$output" ) ]] ||
@@ -405,6 +407,9 @@ run_probe cake_source_eval_state_probeScript.sml cake_source_eval_state_probe.ou
 
 run_probe cake_source_concrete_probeScript.sml cake_source_concrete_probe.out \
   type literal location tree closure nested_closure environment "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
+
+run_probe cake_source_eval_probeScript.sml cake_source_eval_probe.out \
+  agrees_type eval_type result_type missing oracle decs mismatch abort "$cake_dir/semantics/semanticPrimitivesScript.sml" "$cake_dir/semantics"
 
 run_probe cake_parse_error_probeScript.sml cake_parse_error_probe.out \
   missing after_decl multiline "$cake_dir/compiler/parsing/pegexec_cml_foScript.sml" "$cake_dir/compiler/parsing"
