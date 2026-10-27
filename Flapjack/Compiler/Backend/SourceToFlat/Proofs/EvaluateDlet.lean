@@ -85,6 +85,81 @@ theorem globalEnvInv_alias (genv : GlobalEnv) (name : VarN) (idx : Nat) (trace :
   · intro id arity stamp lookup
     cases id <;> simp [nsLookup, nsEmpty] at lookup
 
+/-- Singleton alias environments have the same domains for any global trace. -/
+theorem envDomainEq_alias {α : Type} (name : VarN) (idx : Nat) (trace : Tra) (value : α) :
+    EnvDomainEq { v := nsSing name (.glob trace idx), c := nsEmpty }
+      { v := nsSing name value, c := nsEmpty } := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · funext id
+    apply propext
+    cases id with
+    | short key =>
+      by_cases equal : key = name
+      · subst key; simp [nsDom, nsLookup, nsSing]
+      · simp [nsDom, nsLookup, nsSing, List.lookup, BEq.beq, equal]
+    | long moduleName inner => simp [nsDom, nsLookup, nsSing]
+  · funext path
+    apply propext
+    cases path <;> simp [nsDomMod, nsLookupMod, nsSing]
+  · funext id
+    apply propext
+    cases id <;> simp [nsDom, nsLookup, nsEmpty]
+  · funext path
+    apply propext
+    cases path <;> simp [nsDomMod, nsLookupMod, nsEmpty]
+
+private theorem lookup_exists_iff_key_mem {α : Type} (entries : List (VarN × α)) (name : VarN) :
+    (∃ value, entries.lookup name = some value) ↔ name ∈ entries.map Prod.fst := by
+  induction entries with
+  | nil => simp
+  | cons entry entries ih =>
+    obtain ⟨key, value⟩ := entry
+    by_cases equal : name = key
+    · subst key
+      simp
+    · simp [List.lookup_cons, BEq.beq, equal, ih]
+
+private theorem allocDefs_keys {α : Type} (names : List α) (n base : Nat) :
+    (allocDefs n base names).map Prod.fst = names := by
+  induction names generalizing n base with
+  | nil => rfl
+  | cons name names ih => simp [allocDefs, ih]
+
+/-- Allocating a binding for every distinct source pattern name preserves
+the value and module domains of the source binding environment. -/
+theorem envDomainEq_patternBindings (genv : GlobalEnv)
+    (bindings : List (VarN × Value)) (flatBindings : List (VarN × FlatSem.Value))
+    (pattern : Pat) (n base : Nat)
+    (related : EnvRel genv (alistToNs bindings) flatBindings)
+    (names : flatBindings.map Prod.fst = AstHOL.patBindings pattern) :
+    EnvDomainEq { emptyEnv with v := alistToNs (allocDefs n base (AstHOL.patBindings pattern).reverse) }
+      ⟨alistToNs bindings, nsEmpty⟩ := by
+  have namesRelated : bindings.map Prod.fst = flatBindings.map Prod.fst := by
+    have pairs := (envRel_alist_iff genv bindings flatBindings).mp related
+    clear related names
+    induction pairs with
+    | nil => rfl
+    | cons head tail ih => simp only [List.map_cons, head.1, ih]
+  have namesEq : bindings.map Prod.fst = AstHOL.patBindings pattern := namesRelated.trans names
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · funext id
+    apply propext
+    cases id with
+    | short name =>
+      simp only [nsDom, alistToNs, nsLookup]
+      rw [lookup_exists_iff_key_mem, lookup_exists_iff_key_mem, allocDefs_keys, namesEq]
+      simp
+    | long moduleName id => simp [nsDom, alistToNs, nsLookup]
+  · funext path
+    apply propext
+    cases path <;> simp [nsDomMod, alistToNs, nsLookupMod]
+  · funext id
+    apply propext
+    cases id <;> simp [emptyEnv, nsDom, nsLookup, nsEmpty]
+  · funext path
+    apply propext
+    cases path <;> simp [emptyEnv, nsDomMod, nsLookupMod, nsEmpty]
+
 /-- A simple variable declaration reuses the original global binding and
 emits no flat declarations. The source and flat states stay related; the
 returned environments retain the factored global invariant. -/
@@ -340,6 +415,9 @@ theorem evaluateDlet_pattern_initializer {C F : Type} (genv : GlobalEnv)
         [makeVarls 0 .none pre.length (AstHOL.patBindings pattern).reverse] =
           (finalFlat, .val [FlatSem.unitValue]) ∧
       GlobalGrowth genv finalGenv ∧ StateRel finalGenv sourceState finalFlat ∧
+      EnvDomainEq
+        { emptyEnv with v := alistToNs (allocDefs (n + 4) pre.length (AstHOL.patBindings pattern).reverse) }
+        ⟨alistToNs bindings, nsEmpty⟩ ∧
       GlobalEnvInv finalGenv
         { emptyEnv with v := alistToNs (allocDefs (n + 4) pre.length (AstHOL.patBindings pattern).reverse) }
         (fun _ => False) ⟨alistToNs bindings, nsEmpty⟩ := by
@@ -359,10 +437,16 @@ theorem evaluateDlet_pattern_initializer {C F : Type} (genv : GlobalEnv)
     simpa [lengthEq] using slots
   have initialized := evaluate_makeVarls_globalEnvInv genv bindings flatBindings related bindingsDistinct
     sourceState flatState states globals pre post flatSlots 0 .none
+  have domain := envDomainEq_patternBindings genv bindings flatBindings pattern (n + 4) pre.length related names
   refine ⟨flatBindings, flatMatch, related, names, ?_⟩
   dsimp only
-  rw [allocDefs_ignoreCounter (AstHOL.patBindings pattern).reverse (n + 4) 0 pre.length]
-  simpa [List.map_reverse, names, Function.comp_def] using initialized
+  obtain ⟨run, growth, finalStates, finalEnv⟩ := initialized
+  refine ⟨?_, ?_, ?_, domain, ?_⟩
+  · simpa [List.map_reverse, names, Function.comp_def] using run
+  · simpa [List.map_map, Function.comp_def] using growth
+  · simpa [List.map_map, Function.comp_def] using finalStates
+  · rw [allocDefs_ignoreCounter (AstHOL.patBindings pattern).reverse (n + 4) 0 pre.length]
+    simpa [List.map_reverse, names, Function.comp_def] using finalEnv
 
 /-- A successful flat expression and pattern match run the generated
 initializer as the body of the declaration's match expression. -/
@@ -560,18 +644,22 @@ theorem evaluateDlet_pattern_success {C F : Type} (genv : GlobalEnv)
       FlatSem.evaluateDecs flat (compileDecs trace n next compMap gen [.dlet location pattern expr]).2.2.2.2 =
         (finalFlat, none) ∧
       GlobalGrowth genv finalGenv ∧ StateRel finalGenv sourceMiddle finalFlat ∧
+      EnvDomainEq
+        { emptyEnv with v := alistToNs (allocDefs (n + 4) next.vidx (AstHOL.patBindings pattern).reverse) }
+        ⟨alistToNs bindings, nsEmpty⟩ ∧
       GlobalEnvInv finalGenv
         { emptyEnv with v := alistToNs (allocDefs (n + 4) next.vidx (AstHOL.patBindings pattern).reverse) }
         (fun _ => False) ⟨alistToNs bindings, nsEmpty⟩ := by
-  obtain ⟨flatBindings, flatMatch, _, names, initRun, growth, finalStates, finalEnv⟩ :=
+  obtain ⟨flatBindings, flatMatch, _, names, initRun, growth, finalStates, domain, finalEnv⟩ :=
     evaluateDlet_pattern_initializer genv compMap compMap2 sourceEnv sourceMiddle flatMiddle shadowers envInv mapsEq
       ok typesOk states globals pattern value flatValue valueRel bindings matched distinct pre post slots n
-  refine ⟨flatBindings, names, ?_, ?_, growth, finalStates, ?_⟩
+  refine ⟨flatBindings, names, ?_, ?_, growth, finalStates, ?_, ?_⟩
   · simp [EvaluateHOL.evaluateDecs, distinct, wellformed, sourceRun, matched,
       EvaluateHOL.headValue, Flapjack.holHd]
   · apply evaluateDlet_pattern_flat_success flat flatMiddle _ trace n next compMap gen location pattern expr
       flatValue flatBindings notAlias distinct flatRun flatMatch
     simpa [prefixLength] using initRun
+  · simpa [prefixLength] using domain
   · simpa [prefixLength] using finalEnv
 
 /-- A successful non-alias declaration preserves the full factored invariant
@@ -609,6 +697,9 @@ theorem evaluateDlet_pattern_factored {C F : Type} [Nonempty C]
       FlatSem.evaluateDecs flat (compileDecs trace n start compMap gen [.dlet location pattern expr]).2.2.2.2 =
         (finalFlat, none) ∧
       GlobalGrowth genv finalGenv ∧ StateRel finalGenv sourceMiddle finalFlat ∧
+      EnvDomainEq
+        { emptyEnv with v := alistToNs (allocDefs (n + 4) start.vidx (AstHOL.patBindings pattern).reverse) }
+        ⟨alistToNs bindings, nsEmpty⟩ ∧
       GlobalEnvInv finalGenv
         { emptyEnv with v := alistToNs (allocDefs (n + 4) start.vidx (AstHOL.patBindings pattern).reverse) }
         (fun _ => False) ⟨alistToNs bindings, nsEmpty⟩ ∧
@@ -620,7 +711,7 @@ theorem evaluateDlet_pattern_factored {C F : Type} [Nonempty C]
       ⟨range, by simpa [globals] using fin, by omega⟩
   have slots : flatMiddle.globals = pre ++ (List.replicate (AstHOL.patBindings pattern).length none ++ post) :=
     globals.symm.trans genSlots
-  obtain ⟨flatBindings, names, sourceResult, flatResult, growth, finalStates, finalEnv⟩ :=
+  obtain ⟨flatBindings, names, sourceResult, flatResult, growth, finalStates, domain, finalEnv⟩ :=
     evaluateDlet_pattern_success genv source sourceMiddle flat flatMiddle sourceEnv trace n start compMap compMap2
       gen location pattern expr value flatValue bindings notAlias distinct wellformed sourceRun flatRun matched
       shadowers envInv mapsEq ok typesOk states globals.symm valueRel pre post slots prefixLength
@@ -629,9 +720,193 @@ theorem evaluateDlet_pattern_factored {C F : Type} [Nonempty C]
   have finalInvariant := factoredInvariant_fillBlock interp transform gen genv start finish other sourceMiddle
     flatMiddle (flatBindings.reverse.map Prod.snd) pre post invariant (by simpa [flatCount] using slots)
     prefixLength (by simpa [flatCount] using fits)
-  refine ⟨flatBindings, pre, post, sourceResult, ?_, flatResult, growth, finalStates, finalEnv, ?_⟩
+  refine ⟨flatBindings, pre, post, sourceResult, ?_, flatResult, growth, finalStates, domain, finalEnv, ?_⟩
   · simp [compileDecs, notAlias, emptyEnv]
   · simpa [flatCount, List.map_map, Function.comp_def] using finalInvariant
+
+/-- Factored outcome for a single declaration. This relation is narrower than
+the full HOL correctness theorem: it does not yet carry oracle-forward or
+generation relations, and the underlying evaluator relations remain under
+review. -/
+def DletOutcome {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F) (sourceEnv : SemEnv Value)
+    (trace : List VarN) (n : Nat) (compMap : Environment) (gen : EnvironmentGenerationStore)
+    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp) : Prop :=
+  let sourceResult := EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr]
+  let compiled := compileDecs trace n start compMap gen [.dlet location pattern expr]
+  ∃ flatLast newGenv flatError,
+    FlatSem.evaluateDecs flat compiled.2.2.2.2 = (flatLast, flatError) ∧
+    StateRel newGenv sourceResult.1 flatLast ∧ GlobalGrowth genv newGenv ∧
+    match sourceResult.2 with
+    | .val env => flatError = none ∧ EnvDomainEq compiled.2.2.1 env ∧
+        GlobalEnvInv newGenv compiled.2.2.1 (fun _ => False) env ∧
+        factoredInvariant interp transform compiled.2.2.2.1 newGenv
+          (compiled.2.1, finish, other) sourceResult.1 flatLast
+    | .err error => ∃ flatErr, flatError = some flatErr ∧ EvalResultRel newGenv (.err error) (.err flatErr) ∧
+        match error with
+        | .abort _ => True
+        | .raise _ => factoredInvariant interp transform gen newGenv (start, finish, other) sourceResult.1 flatLast
+
+/-- A safe simple alias satisfies the factored declaration outcome. -/
+theorem evaluateDlet_alias_outcome {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F) (sourceEnv : SemEnv Value)
+    (trace : List VarN) (n : Nat) (compMap : Environment) (gen : EnvironmentGenerationStore)
+    (location : Flapjack.Misc.Location.Locs) (name : VarN) (id : Ident ModN VarN)
+    (safe : ∀ next, EvaluateHOL.evaluateDecs source sourceEnv [.dlet location (.pvar name) (.var id)] ≠
+      (next, .err (.abort .typeError)))
+    (envInv : GlobalEnvInv genv compMap (fun _ => False) sourceEnv)
+    (invariant : factoredInvariant interp transform gen genv (start, finish, other) source flat) :
+    DletOutcome interp transform genv start finish other source flat sourceEnv trace n compMap gen
+      location (.pvar name) (.var id) := by
+  obtain ⟨value, stored, idx, nameTrace, sourceDec, compiled, flatDec, _, newEnv, _, growth, _⟩ :=
+    evaluateDlet_alias_safe interp transform genv (start, finish, other) source flat sourceEnv trace n start
+      compMap gen location name id safe envInv invariant
+  rw [compiled] at flatDec
+  unfold DletOutcome
+  rw [sourceDec, compiled]
+  exact ⟨flat, genv, none, flatDec, invariant.2.2.1, growth, rfl,
+    envDomainEq_alias name idx nameTrace value, newEnv, invariant⟩
+
+/-- Assemble the non-alias `Dlet` cases from the expression induction
+hypothesis. The hypothesis preserves the factored invariant for successful
+and raised expression results; aborts need only the state relation. -/
+theorem evaluateDlet_pattern_cases {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F) (sourceEnv : SemEnv Value)
+    (trace : List VarN) (n : Nat) (compMap : Environment) (gen : EnvironmentGenerationStore)
+    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp)
+    (notAlias : simpleDlet pattern expr = none)
+    (safe : ∀ next, EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] ≠
+      (next, .err (.abort .typeError)))
+    (envInv : GlobalEnvInv genv compMap (fun _ => False) sourceEnv)
+    (expressionSim : ExprSim genv compMap ((AstHOL.patBindings pattern).reverse ++ trace)
+      sourceEnv ⟨[]⟩ source flat expr)
+    (expressionInvariant :
+      let result := EvaluateHOL.evaluate source sourceEnv [expr]
+      let flatResult := FlatSem.evaluate ⟨[]⟩ flat
+        [compileExp ((AstHOL.patBindings pattern).reverse ++ trace) compMap expr]
+      match result.2 with
+      | .err (.abort _) => True
+      | _ => factoredInvariant interp transform gen genv (start, finish, other) result.1 flatResult.1)
+    (fits : start.vidx + (AstHOL.patBindings pattern).length ≤ finish.vidx) :
+    DletOutcome interp transform genv start finish other source flat sourceEnv trace n compMap gen location pattern expr := by
+  obtain ⟨distinct, wellformed⟩ := dlet_conditions_of_safe source sourceEnv location pattern expr safe
+  have expressionRel := expressionSim
+  unfold ExprSim at expressionRel
+  cases sourceRun : EvaluateHOL.evaluate source sourceEnv [expr] with
+  | mk sourceMiddle sourceResult =>
+    rw [sourceRun] at expressionRel expressionInvariant
+    cases flatRun : FlatSem.evaluate ⟨[]⟩ flat
+        [compileExp ((AstHOL.patBindings pattern).reverse ++ trace) compMap expr] with
+    | mk flatMiddle flatResult =>
+      rw [flatRun] at expressionRel expressionInvariant
+      obtain ⟨resultRel, states⟩ := expressionRel
+      cases sourceResult with
+      | err error =>
+        cases resultRel with
+        | @raise sourceValue flatValue related =>
+          have sourceDec : EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] =
+              (sourceMiddle, .err (.raise sourceValue)) := by
+            simp [EvaluateHOL.evaluateDecs, distinct, wellformed, sourceRun]
+          have flatDec := evaluateDlet_pattern_flat_error flat flatMiddle trace n start compMap gen location
+            pattern expr (.raise flatValue) notAlias flatRun
+          unfold DletOutcome
+          rw [sourceDec]
+          refine ⟨flatMiddle, genv, some (.raise flatValue), flatDec, states, GlobalGrowth.refl genv, ?_⟩
+          exact ⟨.raise flatValue, rfl, .raise related, by simpa using expressionInvariant⟩
+        | abort kind =>
+          have sourceDec : EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] =
+              (sourceMiddle, .err (.abort kind)) := by
+            simp [EvaluateHOL.evaluateDecs, distinct, wellformed, sourceRun]
+          have flatDec := evaluateDlet_pattern_flat_error flat flatMiddle trace n start compMap gen location
+            pattern expr (.abort kind) notAlias flatRun
+          unfold DletOutcome
+          rw [sourceDec]
+          exact ⟨flatMiddle, genv, some (.abort kind), flatDec, states, GlobalGrowth.refl genv,
+            _, rfl, .abort kind, trivial⟩
+      | val values =>
+        obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull source sourceMiddle sourceEnv expr values sourceRun
+        cases resultRel with
+        | value valueRelations =>
+          cases valueRelations with
+          | cons valueRel tail =>
+            cases tail with
+            | nil =>
+              rename_i flatValue
+              have current : factoredInvariant interp transform gen genv (start, finish, other)
+                  sourceMiddle flatMiddle := by simpa using expressionInvariant
+              have safeMatch := dlet_match_noTypeError_of_safe source sourceMiddle sourceEnv location pattern expr
+                value safe sourceRun
+              cases matched : pmatch sourceEnv.c sourceMiddle.refs pattern value [] with
+              | typeError => exact (safeMatch matched).elim
+              | noMatch =>
+                have result := evaluateDlet_pattern_noMatch interp transform genv (start, finish, other)
+                  source sourceMiddle flat flatMiddle sourceEnv trace n start compMap compMap gen location pattern expr
+                  value flatValue notAlias distinct wellformed sourceRun flatRun matched (fun _ => False) envInv rfl
+                  valueRel current
+                obtain ⟨sourceDec, flatDec, errorRel, finalStates, finalInvariant⟩ := result
+                unfold DletOutcome
+                rw [sourceDec]
+                exact ⟨flatMiddle, genv, some (.raise FlatSem.bindExnV), flatDec, finalStates,
+                  GlobalGrowth.refl genv, _, rfl, .raise errorRel, finalInvariant⟩
+              | «match» bindings =>
+                obtain ⟨flatBindings, pre, post, sourceDec, compiled, flatDec, growth, finalStates,
+                  domain, finalEnv, finalInvariant⟩ :=
+                  evaluateDlet_pattern_factored interp transform genv start finish other source sourceMiddle flat
+                    flatMiddle sourceEnv trace n compMap compMap gen location pattern expr value flatValue bindings
+                    notAlias distinct wellformed sourceRun flatRun matched (fun _ => False) envInv rfl valueRel current fits
+                rw [compiled] at flatDec
+                unfold DletOutcome
+                rw [sourceDec, compiled]
+                exact ⟨_, _, none, flatDec, finalStates, growth, rfl, domain, finalEnv, finalInvariant⟩
+
+/-- The simple-declaration optimization only recognizes a variable pattern
+whose expression is itself a variable. -/
+theorem simpleDlet_some_shape (pattern : Pat) (expr : AstHOL.Exp) (aliasValue : VarN × Ident ModN VarN)
+    (found : simpleDlet pattern expr = some aliasValue) :
+    ∃ name id, pattern = .pvar name ∧ expr = .var id := by
+  cases pattern <;> cases expr <;> simp_all [simpleDlet]
+
+/-- A source-safe `Dlet` satisfies the factored declaration outcome in both
+the optimized alias and general pattern cases. The expression induction
+hypothesis is still the fixed-global preliminary simulation, not the full
+HOL compiler theorem. -/
+theorem evaluateDlet_safe {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F) (sourceEnv : SemEnv Value)
+    (trace : List VarN) (n : Nat) (compMap : Environment) (gen : EnvironmentGenerationStore)
+    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp)
+    (safe : ∀ next, EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] ≠
+      (next, .err (.abort .typeError)))
+    (envInv : GlobalEnvInv genv compMap (fun _ => False) sourceEnv)
+    (invariant : factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (expressionSim : ExprSim genv compMap ((AstHOL.patBindings pattern).reverse ++ trace)
+      sourceEnv ⟨[]⟩ source flat expr)
+    (expressionInvariant :
+      let result := EvaluateHOL.evaluate source sourceEnv [expr]
+      let flatResult := FlatSem.evaluate ⟨[]⟩ flat
+        [compileExp ((AstHOL.patBindings pattern).reverse ++ trace) compMap expr]
+      match result.2 with
+      | .err (.abort _) => True
+      | _ => factoredInvariant interp transform gen genv (start, finish, other) result.1 flatResult.1)
+    (fits : start.vidx + (match simpleDlet pattern expr with
+      | some _ => 0 | none => (AstHOL.patBindings pattern).length) ≤ finish.vidx) :
+    DletOutcome interp transform genv start finish other source flat sourceEnv trace n compMap gen
+      location pattern expr := by
+  cases aliasEq : simpleDlet pattern expr with
+  | none =>
+    exact evaluateDlet_pattern_cases interp transform genv start finish other source flat sourceEnv trace n compMap gen
+      location pattern expr aliasEq safe envInv expressionSim expressionInvariant (by simpa [aliasEq] using fits)
+  | some found =>
+    obtain ⟨name, id, rfl, rfl⟩ := simpleDlet_some_shape pattern expr found aliasEq
+    exact evaluateDlet_alias_outcome interp transform genv start finish other source flat sourceEnv trace n compMap gen
+      location name id safe envInv invariant
 
 /-- A literal declaration initializes its reserved flat global slot. -/
 theorem evaluateDlet_literal_flat {C F : Type} (flat : FlatSem.State C F)
