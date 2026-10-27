@@ -19,6 +19,10 @@ private def qname : NamespaceHOL.Ident MlString MlString := .long (ofString "A")
 #guard renderUndefinedVariable (ofString "val x = A.foo;").explode (.located loc (.undefinedVariable qname)) ==
   some (ofString "### ERROR: type error\nUndefined variable: A.foo at line 1\n\nval x = A.foo;\n           ^^^^^\n\nProgram exited with nonzero exit code.\n").explode
 
+#guard renderUndefinedConstructor (ofString "val x = A.foo;").explode
+    (.located loc (.undefinedTypeConstructor qname)) ==
+  some (ofString "### ERROR: type error\nUndefined type constructor: A.foo at line 1\n\nval x = A.foo;\n           ^^^^^\n\nProgram exited with nonzero exit code.\n").explode
+
 #guard sourceLocation (ofString "val x =\n missing;").explode
     (some (.locs (.posn 1 1) (.posn 1 8))) ==
   (ofString "line 2\n\n missing;\n ^^^^^^^^\n").explode

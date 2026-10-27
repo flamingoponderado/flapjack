@@ -410,7 +410,7 @@ run_probe cake_word_array_probeScript.sml cake_word_array_probe.out \
   word64 array "$cake_dir/compiler/backend/data_to_wordScript.sml" "$cake_dir/compiler/backend"
 
 run_probe cake_undefined_diagnostic_probeScript.sml cake_undefined_diagnostic_probe.out \
-  infer "$cake_dir/compiler/inference/inferScript.sml" "$cake_dir/compiler/inference" "$cake_dir/compiler"
+  infer constructor type_constructor "$cake_dir/compiler/inference/inferScript.sml" "$cake_dir/compiler/inference" "$cake_dir/compiler"
 
 run_probe cake_type_diagnostic_probeScript.sml cake_type_diagnostic_probe.out \
   function nested tuple variable named qualified "$cake_dir/compiler/inference/infer_tScript.sml" "$cake_dir/compiler/inference"

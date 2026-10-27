@@ -8,6 +8,8 @@
 
 `cake_duplicate_datatype_probe.out` captures the duplicate-name selection order and an original duplicate-constructor error. The CLI uses that order for duplicate type constructors, datatype constructors, and datatype type variables.
 
+`cake_undefined_diagnostic_probe.out` captures original inference errors for qualified missing variables, constructors, and type constructors. These cover formatting and lookup failure, not the full inferencer.
+
 `mti_cake_bvi_probe.out` captures the full BVI program for a nested-function declaration with multi-argument introduction enabled, the other closure optimizations disabled, and the outer BVL/BVI optimizations omitted.
 
 `empty_cake_data_probe.out`, `reference_cake_data_probe.out`, and `match_cake_data_probe.out` capture complete results after BVI-to-data and its data optimizations for the corresponding restricted examples. Their probes add the source-proved `op_requires_names_eqn` to HOL's evaluator to avoid residual existential expressions. `scripts/generate-cake-data-oracles.py` translates the captures into Lean patterns and checks the printed sparse live sets against exact tree values. Regenerate the probes before the generator; the comparisons are regression evidence, not a proof for other inputs.

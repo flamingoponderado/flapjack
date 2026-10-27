@@ -17,6 +17,8 @@ inductive Error where
   | duplicateConstructor : MlString → MlString → Error
   | duplicateTypeVariable : MlString → MlString → Error
   | undefinedVariable : Ident MlString MlString → Error
+  | undefinedConstructor : Ident MlString MlString → Error
+  | undefinedTypeConstructor : Ident MlString MlString → Error
   | located : Flapjack.Misc.Location.Locs → Error → Error
   deriving Repr
 
@@ -39,6 +41,8 @@ private def typeNamesFuel : Nat → MlString → Namespace MlString MlString
 private def withLoc (loc : Flapjack.Misc.Location.Locs) (env : Env) (action : M α) : M α := fun state =>
   match action state with
   | .error (.undefinedVariable name) => .error (.located loc (.undefinedVariable name))
+  | .error (.undefinedConstructor name) => .error (.located loc (.undefinedConstructor name))
+  | .error (.undefinedTypeConstructor name) => .error (.located loc (.undefinedTypeConstructor name))
   | .error (.typeMismatch left right) => .error (.located loc
       (.typeMismatchNames (typeNamesFuel 10000 (ofString "") env.infT) left right))
   | .error (.duplicateTypeName name) => .error (.located loc (.duplicateTypeName name))
@@ -84,7 +88,7 @@ private def litType : Lit → Option InferT
 
 private def ctorInfo (env : Env) (name : Ident MlString MlString) : M (List MlString × List TypeSystemHOL.SemanticT × Nat) :=
   match nsLookup env.infC name with
-  | none => fail .undefinedName
+  | none => fail (.undefinedConstructor name)
   | some x => pure x
 
 
@@ -114,7 +118,7 @@ private def annotationWorker : Nat → Env → List MlString → AstT → Except
     | .atapp ts name =>
       let ts ← annotationsWorker fuel env free ts
       match nsLookup env.infT name with
-      | none => .error .undefinedName
+      | none => .error (.undefinedTypeConstructor name)
       | some (params, body) =>
         if params.length != ts.length then .error .mismatch
         else .ok (semanticSubst (List.zip params ts) body)
@@ -516,11 +520,11 @@ private def inferDeclWorker : Nat → Nat → Env → Dec → M Env
       let (count, _, ts) := generaliseList 0 0 .ln ts
       return { emptyEnv with infV := alistToNs (List.zip names (ts.map (fun t => (count, t)))) }
     | .dtype loc defs => withLoc loc env (datatypeEnv fuel env defs)
-    | .dtabbrev _ vars name t =>
+    | .dtabbrev loc vars name t => withLoc loc env do
       if !distinctNames vars then fail .invalidPattern else
       let t ← asCheckedType fuel env vars t
       return { emptyEnv with infT := alistToNs [(name, (vars, t))] }
-    | .dexn _ name ts =>
+    | .dexn loc name ts => withLoc loc env do
       let ts ← asCheckedTypes fuel env [] ts
       return { emptyEnv with infC := alistToNs [(name, ([], ts, 3))] }
     | .dmod name ds =>

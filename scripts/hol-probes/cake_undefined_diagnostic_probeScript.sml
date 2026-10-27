@@ -9,3 +9,11 @@ val th = cv_transLib.cv_eval ``
   <| next_uvar := 0; subst := FEMPTY; next_id := 15 |>``;
 val pre = prove (fst (dest_imp (concl th)), simp[infer_cvTheory.IMP_infer_e_pre, emptyWfs]);
 val _ = (print "infer="; print_term (rhs (concl (MP th pre))); print "\n");
+val constructor = rhs (concl (EVAL ``infer$lookup_st_ex
+  <| loc := SOME (Locs (POSN 0 0) (POSN 0 3)); err := Bind [] [] |>
+  «constructor» (Long «M» (Short «C»)) (Bind [] []) ()``));
+val _ = (print "constructor="; print_term constructor; print "\n");
+val type_constructor = rhs (concl (EVAL ``infer$lookup_st_ex
+  <| loc := SOME (Locs (POSN 0 0) (POSN 0 3)); err := Bind [] [] |>
+  «type constructor» (Long «M» (Short «t»)) (Bind [] []) ()``));
+val _ = (print "type_constructor="; print_term type_constructor; print "\n");

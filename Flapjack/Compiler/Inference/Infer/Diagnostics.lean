@@ -40,6 +40,17 @@ def renderUndefinedVariable (input : List HolChar) : Error → Option (List HolC
       ascii "\nProgram exited with nonzero exit code.\n")
   | _ => none
 
+/-- Render missing constructor and type-constructor names. -/
+def renderUndefinedConstructor (input : List HolChar) : Error → Option (List HolChar)
+  | .located loc error => do
+    let (kind, name) ← match error with
+      | .undefinedConstructor name => some ("constructor", name)
+      | .undefinedTypeConstructor name => some ("type constructor", name)
+      | _ => none
+    some (ascii ("### ERROR: type error\nUndefined " ++ kind ++ ": ") ++ nameBytes name ++
+      ascii " at " ++ sourceLocation input (some loc) ++ ascii "\nProgram exited with nonzero exit code.\n")
+  | _ => none
+
 private def builtinTypeName : Nat → Option String
   | 0 => some "Array.array" | 1 => some "bool" | 2 => some "char"
   | 3 => some "exn" | 5 => some "int" | 6 => some "list"
