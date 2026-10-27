@@ -11,6 +11,7 @@ import Flapjack.Test.AppendWordOracle
 import Flapjack.Test.InstallXorWordOracle
 import Flapjack.Test.CompareEqualWordOracle
 import Flapjack.Test.LongDivWordOracle
+import Flapjack.Test.AnyArithWordOracle
 
 /-!
 # `data_to_word` configuration helpers: original-oracle rows
@@ -352,6 +353,9 @@ private def headerConfig : Config := { conf with lenSize := 4 }
       let (arity, body) ← compileConfiguredStub? (width := 64) config loc
       pure (loc, arity, body, 0)) with
   | some stubs => Flapjack.Test.LongDivWordOracle.matchesCaptured stubs
+  | none => false
+#guard match compileConfiguredStub? (width := 64) conf anyArithLocation with
+  | some (arity, body) => Flapjack.Test.AnyArithWordOracle.matchesCaptured [(anyArithLocation, arity, body, 0)]
   | none => false
 #guard Flapjack.Test.CakeMLFlatOracle.data_to_word_stubs
 #guard match compileControl? (width := 64) conf 5 2 (.assign 3 (.blockOp (.boolTest (.compare .gt))) [1, 2] none) with

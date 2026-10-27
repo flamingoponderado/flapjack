@@ -31,6 +31,29 @@ private def byteCopyLoop {width : Nat} (forward : Bool) : WordLangProgHOL (BitVe
       .assign 13 (.op op [.var 6, .const 4]),
       .call none (some loc) [0, 9, 11, 13, 8] none])
 
+private def addNumSize {width : Nat} [NeZero width] (conf : Config) (src : Nat) : WordLangProgHOL (BitVec width) :=
+  let r := adjustVar src
+  .ite .equal r (.imm 0) .skip (.ite .test r (.imm 1)
+    (.assign 1 (.op .add [.var 1, .const 4]))
+    (.assign 1 (.op .add [.var 1, shiftN .lsl (shiftN .lsr (.load (realAddr conf r)) (width - conf.lenSize)) 2])))
+
+private def anyHeader {width : Nat} [NeZero width] (conf : Config) (r : Nat) (other : Bool)
+    (t1 t2 t3 : BitVec 5) : WordLangProgHOL (BitVec width) :=
+  let heap : WordStoreHOL := if other then .otherHeap else .nextFree
+  .ite .equal r (.imm 0) (listSeq [.assign 7 (.const 0), .set (.temp t1) (.var r),
+    .set (.temp t2) (.var r), .set (.temp t3) (.var r)])
+    (.ite .notTest r (.imm 1) (listSeq [
+      .assign 7 (realAddr conf r),
+      .set (.temp t2) (.op .add [.var 7, .const (BitVec.ofNat width (width / 8))]),
+      .set (.temp t1) (.op .add [shiftN .lsl (shiftN .lsr (.load (.var 7)) (width - conf.lenSize)) 1,
+        .op .and [.const 1, shiftN .lsr (.load (.var 7)) 4]]),
+      .set (.temp t3) (.const 0)])
+      (.ite .notLess r (.imm 0)
+        (listSeq [.set (.temp t1) (.const 2), .set (.temp t2) (.lookup heap),
+          .set (.temp t3) (shiftN .lsr (.var r) 2), .assign 7 (.const 0)])
+        (listSeq [.set (.temp t1) (.const 3), .set (.temp t2) (.lookup heap),
+          .set (.temp t3) (.op .sub [.const 0, shiftN .asr (.var r) 2]), .assign 7 (.const 0)])))
+
 /-- Flapjack's partial stub lookup. It supplies only the listed stubs and
 returns `none` for all others; the complete HOL `stubs` list, including
 bignum code, remains unported. -/
@@ -224,6 +247,36 @@ def compileConfiguredStub? {width : Nat} [NeZero width] (conf : Config) (locatio
         .assign 2 (.load (.op .add [realAddr conf 2, .const (2 * bytes)])),
         .assign 4 (.op .add [.var 4, .const 12]),
         .call none (some appendLenLoopLocation) [0, 2, 4] none]))
+  else if location = anyArithLocation then
+    let bytes := BitVec.ofNat width (width / 8)
+    let retSmall (value : WordLangExpHOL (BitVec width)) := WordLangProgHOL.seq (.assign 1 value) (.return 0 [1])
+    some (4, listSeq [
+      .assign 1 (.const 4), addNumSize conf 0, addNumSize conf 1, .set (.temp 29) (.var 1),
+      allocVar conf (2 ^ conf.lenSize) (sptListInsert [0, 1, 2] .ln),
+      anyHeader conf 2 false 0 31 12, anyHeader conf 4 true 1 30 11,
+      .get 1 (.temp 11), .store (.lookup .otherHeap) 1,
+      .get 1 (.temp 12), .store (.lookup .nextFree) 1,
+      .get 1 (.temp 29), .assign 2 (.lookup .nextFree), .set (.temp 29) (.var 2),
+      .set (.temp 3) (shiftN .lsr (.var 6) 2), .assign 3 (.const 0),
+      .call (some ([0], (.ls (), .ln), .skip, anyArithLocation, 2)) (some replicateLocation) [2, 3, 1, 0] none,
+      .set (.temp 29) (.op .add [.lookup (.temp 29), .const bytes]),
+      .call (some ([1], (.ls (), .ln), .skip, anyArithLocation, 3)) (some bignumLocation) [] none,
+      .get 1 (.temp 10), .ite .test 1 (.reg 1) (.return 0 [1]) .skip,
+      .assign 3 (.load (.op .add [.lookup .nextFree, .const bytes])),
+      .ite .equal 1 (.imm 2)
+        (.seq (.assign 5 (shiftN .lsr (.var 3) (width - 3)))
+          (.ite .test 5 (.reg 5) (retSmall (shiftN .lsl (.var 3) 2)) .skip))
+        (.ite .equal 1 (.imm 3)
+          (.seq (.assign 5 (shiftN .lsr (.op .sub [.var 3, .const 1]) (width - 3)))
+            (.ite .test 5 (.reg 5) (retSmall (.op .sub [.const 0, shiftN .lsl (.var 3) 2])) .skip))
+          (.assign 5 (.const 0))),
+      .assign 5 (.lookup .nextFree), .assign 6 (shiftVar .lsr 1 1),
+      .assign 8 (.op .and [.var 1, .const 1]),
+      .assign 7 (.op .or [.const 15, shiftVar .lsl 6 (width - conf.lenSize), shiftVar .lsl 8 4]),
+      .store (.var 5) 7, .assign 1 (.op .sub [.var 5, .lookup .currHeap]),
+      .assign 1 (.op .or [shiftVar .lsl 1 (shiftLength conf - wordShiftAmount width), .const 1]),
+      .set .nextFree (.op .add [.var 5, .const bytes, shiftVar .lsl 6 (wordShiftAmount width)]),
+      .return 0 [1]])
   else if location = installCodeLocation then
     let bytes := BitVec.ofNat width (width / 8)
     some (4, .ite .test 2 (.imm 1)
