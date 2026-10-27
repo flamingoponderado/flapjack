@@ -262,6 +262,89 @@ private theorem constructorLookup_exists_iff_key_mem {α : Type} (entries : List
       simp
     · simp [List.lookup_cons, BEq.beq, equal, ih]
 
+private theorem constructorLookup_of_mem_nodup {α : Type} (entries : List (ConN × α))
+    (name : ConN) (value : α) (member : (name, value) ∈ entries)
+    (distinct : (entries.map Prod.fst).Nodup) : entries.lookup name = some value := by
+  induction entries with
+  | nil => simp at member
+  | cons head tail ih =>
+    rcases head with ⟨key, current⟩
+    simp only [List.map_cons, List.nodup_cons] at distinct
+    rcases List.mem_cons.mp member with same | tailMember
+    · cases same
+      simp
+    · have different : name ≠ key := by
+        intro equal
+        subst key
+        exact distinct.1 (List.mem_map.mpr ⟨(name, value), tailMember, rfl⟩)
+      have compare : (name == key) = false := by
+        change decide (name = key) = false
+        simp [different]
+      simp [List.lookup_cons, compare, ih tailMember distinct.2]
+
+private theorem constructorLookup_mem {α : Type} (entries : List (ConN × α)) (name : ConN) (value : α)
+    (lookup : entries.lookup name = some value) : (name, value) ∈ entries := by
+  induction entries with
+  | nil => simp at lookup
+  | cons head tail ih =>
+    rcases head with ⟨key, current⟩
+    by_cases same : name = key
+    · subst key
+      simp at lookup
+      subst current
+      simp
+    · have different : (name == key) = false := by
+        change decide (name = key) = false
+        simp [same]
+      simp only [List.lookup_cons, different] at lookup
+      exact List.mem_cons_of_mem _ (ih lookup)
+
+/-- A named source constructor with a unique name appears in the allocator's
+entry list with its source arity. -/
+theorem allocatedConstructorEntries_find {M A : Type} (constructors : List (ConN × List A))
+    (distinct : (constructors.map Prod.fst).Nodup) (name : ConN) (args : List A)
+    (member : (name, args) ∈ constructors) :
+    ∃ tag, (name, tag, args.length) ∈ allocatedConstructorEntries (M := M) constructors := by
+  have nameMember : name ∈ (allocatedConstructorEntries (M := M) constructors).map Prod.fst := by
+    rw [(allocatedConstructorEntries_projections (M := M) constructors).1]
+    exact List.mem_map.mpr ⟨(name, args), member, rfl⟩
+  obtain ⟨entry, entryMember, entryName⟩ := List.mem_map.mp nameMember
+  obtain ⟨entryName', tag, arity⟩ := entry
+  change entryName' = name at entryName
+  subst entryName'
+  obtain ⟨args', sourceMember, length⟩ :=
+    allocatedConstructorEntries_source (M := M) constructors name tag arity entryMember
+  have found := constructorLookup_of_mem_nodup constructors name args member distinct
+  have found' := constructorLookup_of_mem_nodup constructors name args' sourceMember distinct
+  have same : args' = args := Option.some.inj (found'.symm.trans found)
+  subst args'
+  subst arity
+  exact ⟨tag, entryMember⟩
+
+/-- The allocator namespace is the name-to-tag projection of its entries. -/
+theorem allocTags1_namespace_entries {M N A : Type} (constructors : List (N × List A)) :
+    (allocTags1 constructors : Namespace M N Nat × Spt Nat × List (Nat × Nat)).1 =
+      alistToNs ((allocatedConstructorEntries (M := M) constructors).map fun (name, tag, _) => (name, tag)) := by
+  rw [allocTags1_namespace, List.zip_map_right]
+  simp only [allocatedConstructorEntries, List.map_map]
+  congr 2
+
+/-- The compiled type namespace maps each allocation entry to its tag and
+the common type table. -/
+theorem allocTags_namespace_entries (idx : Nat) (constructors : List (ConN × List AstT)) :
+    (allocTags idx constructors : Namespace ModN ConN (Nat × Option (Nat × List (Nat × Nat))) × Spt Nat).1 =
+      alistToNs ((allocatedConstructorEntries (M := ModN) constructors.reverse).map fun (name, tag, _) =>
+        (name, (tag, some (idx,
+          (allocTags1 constructors.reverse : Namespace ModN ConN Nat × Spt Nat × List (Nat × Nat)).2.2.reverse)))) := by
+  have namespaceEq := allocTags1_namespace_entries (M := ModN) constructors.reverse
+  generalize eq : (allocTags1 constructors.reverse : Namespace ModN ConN Nat × Spt Nat × List (Nat × Nat)) = result
+    at namespaceEq ⊢
+  rcases result with ⟨ns, cids, tags⟩
+  change ns = alistToNs ((allocatedConstructorEntries (M := ModN) constructors.reverse).map
+    fun (name, tag, _) => (name, tag)) at namespaceEq
+  simp only [allocTags, eq, namespaceEq, nsMap, alistToNs, List.map_map, Function.comp_def]
+  rfl
+
 /-- Allocating tags for a type and building its source constructors export
 the same constructor and module domains. -/
 theorem envDomainEq_allocTags (idx stamp : Nat) (constructors : List (ConN × List AstT)) :
@@ -797,6 +880,67 @@ theorem installAllocatedConstructor_lookup (idx stamp : Nat) (constructors : Lis
   apply installTypeConstructorList_lookup_entry idx stamp _ _ name tag arity member genv
   rw [(allocatedConstructorEntries_projections (M := ModN) constructors.reverse).2]
   exact allocTags1_tags_nodup (M := ModN) constructors.reverse
+
+/-- Installing constructor entries leaves the type table unchanged. -/
+theorem installTypeConstructorList_tys (idx stamp : Nat) (entries : List (ConN × Nat × Nat))
+    (genv : GlobalEnv) : (installTypeConstructorList idx stamp entries genv).tys = genv.tys := by
+  induction entries generalizing genv with
+  | nil => rfl
+  | cons entry rest ih =>
+    rcases entry with ⟨name, tag, arity⟩
+    exact ih _
+
+/-- For one source type, the installed global map relates every source
+constructor lookup to its compiled tag and common type table. -/
+theorem globalEnvInv_allocTags (genv : GlobalEnv) (idx stamp : Nat)
+    (constructors : List (ConN × List AstT)) (names : (constructors.map Prod.fst).Nodup) :
+    GlobalEnvInv
+      (installTypeConstructorList idx stamp (allocatedConstructorEntries (M := ModN) constructors.reverse)
+        { genv with tys := finiteUpdate genv.tys idx ((allocTags1 constructors.reverse :
+          Namespace ModN ConN Nat × Spt Nat × List (Nat × Nat)).2.2.reverse) })
+      { v := nsEmpty, c := (allocTags idx constructors :
+        Namespace ModN ConN (Nat × Option (Nat × List (Nat × Nat))) × Spt Nat).1 }
+      (fun _ => False) { v := nsEmpty, c := alistToNs (buildConstrs stamp constructors).reverse } := by
+  classical
+  let entries := allocatedConstructorEntries (M := ModN) constructors.reverse
+  let tags := (allocTags1 constructors.reverse : Namespace ModN ConN Nat × Spt Nat × List (Nat × Nat)).2.2.reverse
+  let reserved := { genv with tys := finiteUpdate genv.tys idx tags }
+  have reversedNames : (constructors.reverse.map Prod.fst).Nodup := by
+    rw [List.map_reverse, List.Nodup, List.pairwise_reverse]
+    exact names.imp (fun h => Ne.symm h)
+  have entryNames : (entries.map Prod.fst).Nodup :=
+    (allocatedConstructorEntries_nodup (M := ModN) constructors.reverse reversedNames).1
+  have compilerNames : ((entries.map fun (name, tag, _) => (name, (tag, some (idx, tags)))).map Prod.fst).Nodup := by
+    simpa [List.map_map, Function.comp_def] using entryNames
+  apply GlobalEnvInv.intro
+  · intro id value _ lookup
+    cases id <;> simp [nsEmpty, nsLookup] at lookup
+  · intro id arity sourceStamp lookup
+    cases id with
+    | long moduleName rest => simp [nsLookup, alistToNs] at lookup
+    | short name =>
+      change (buildConstrs stamp constructors).reverse.lookup name = some (arity, sourceStamp) at lookup
+      have sourceMember := List.mem_reverse.mp (constructorLookup_mem _ name (arity, sourceStamp) lookup)
+      simp only [buildConstrs, List.mem_map] at sourceMember
+      obtain ⟨constructor, constructorMember, equality⟩ := sourceMember
+      rcases constructor with ⟨constructorName, args⟩
+      have fields : constructorName = name ∧ args.length = arity ∧ .typeStamp constructorName stamp = sourceStamp := by
+        simpa [and_assoc] using equality
+      obtain ⟨rfl, rfl, rfl⟩ := fields
+      obtain ⟨tag, entryMember⟩ := allocatedConstructorEntries_find (M := ModN) constructors.reverse
+        reversedNames constructorName args (List.mem_reverse.mpr constructorMember)
+      have compilerMember : (constructorName, (tag, some (idx, tags))) ∈
+          entries.map (fun (name, tag, _) => (name, (tag, some (idx, tags)))) :=
+        List.mem_map.mpr ⟨(constructorName, tag, args.length), entryMember, rfl⟩
+      have compilerLookup := constructorLookup_of_mem_nodup _ constructorName (tag, some (idx, tags)) compilerMember compilerNames
+      refine ⟨tag, some (idx, tags), ?_, ?_, ?_⟩
+      · rw [allocTags_namespace_entries]
+        exact compilerLookup
+      · exact installAllocatedConstructor_lookup idx stamp constructors constructorName tag args.length entryMember reserved
+      · intro tyId ctors same
+        cases same
+        rw [installTypeConstructorList_tys]
+        simp [finiteUpdate, FUPDATE_HOL, tags]
 
 /-- Installing a list of distinct constructors for an already allocated type
 preserves the factored invariant. The anchor supplies the established type
