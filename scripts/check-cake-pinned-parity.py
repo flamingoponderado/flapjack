@@ -31,11 +31,32 @@ CASES = {
     'byte_array_copy_vector': 'val a = Word8Array.array 4 (Word8.fromInt 1); val _ = Word8Array.copyVec "abc" 0 3 a 1; val _ = print_int (Word8.toInt (Word8Array.sub a 2));',
     'exception_through_function': 'exception E int; fun f n = if n = 0 then raise E 17 else n; val _ = print_int (f 0 handle E x => x);',
     'large_integer_to_string': 'val _ = print (Int.toString 999999999999999999999999999999);',
+    'integer_modulo': 'val _ = print_int (10 mod 3);',
+    'negative_integer_division': 'val _ = print_int (~10 div 3);',
+    'foldr_subtraction': 'val _ = print_int (List.foldr (fn x => fn y => x-y) 0 [1,2,3]);',
+    'recursive_tree_match': 'datatype tree = Leaf int | Node (tree * tree); fun sum t = case t of Leaf x => x | Node (a,b) => sum a + sum b; val _ = print_int (sum (Node (Leaf 3, Leaf 4)));',
+    'string_char_roundtrip': 'val _ = print_int (String.size (String.implode (String.explode "abcdef")));',
+    'vector_tabulate': 'val v = Vector.tabulate 5 (fn n => n*n); val _ = print_int (Vector.sub v 3);',
+    'types_before_print_sexp': 'val x = 42;',
+    'print_sexp_before_types': 'val id = fn x => x;',
+    'types_before_explore': 'val x = 42;',
+    'explore_before_types': 'val id = fn x => x;',
+    'types_print_sexp_type_error': 'val x = missing;',
+    'types_explore_parse_error': 'val x = ;',
 }
 
+CASE_ARGS = {
+    'types_before_print_sexp': ['--types', '--print_sexp', '--exclude_prelude=true'],
+    'print_sexp_before_types': ['--print_sexp', '--types', '--exclude_prelude=true'],
+    'types_before_explore': ['--types', '--explore', '--exclude_prelude=true'],
+    'explore_before_types': ['--explore', '--types', '--exclude_prelude=true'],
+    'types_print_sexp_type_error': ['--print_sexp', '--types', '--exclude_prelude=true'],
+    'types_explore_parse_error': ['--explore', '--types', '--exclude_prelude=true'],
+}
+ERROR_CASES = {'types_print_sexp_type_error', 'types_explore_parse_error'}
 
-def run(executable, source):
-    process = subprocess.run([str(executable), '--target=riscv'], input=source.encode('ascii'),
+def run(executable, source, name):
+    process = subprocess.run([str(executable), '--target=riscv', *CASE_ARGS.get(name, [])], input=source.encode('ascii'),
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=180)
     return {'exit_code': process.returncode,
             'stdout_bytes': len(process.stdout), 'stdout_sha256': hashlib.sha256(process.stdout).hexdigest(),
@@ -50,9 +71,13 @@ def main():
     args = parser.parse_args()
     if args.record_reference:
         parity.check_pinned_reference(args.record_reference)
-        rows = {name: run(args.record_reference, source) for name, source in CASES.items()}
+        rows = {name: run(args.record_reference, source, name) for name, source in CASES.items()}
         for name, row in rows.items():
-            if row['exit_code'] != 0 or row['stdout_bytes'] == 0 or row['stderr_bytes'] != 0:
+            expected_exit = 1 if name in ERROR_CASES else 0
+            is_types = name in CASE_ARGS
+            if (row['exit_code'] != expected_exit or
+                    (row['stdout_bytes'] != 0 if is_types else row['stdout_bytes'] == 0) or
+                    (row['stderr_bytes'] == 0 if is_types else row['stderr_bytes'] != 0)):
                 raise SystemExit(f'{name}: original compiler did not successfully emit assembly: {row}')
         FIXTURE.write_text(json.dumps({'cakeml_revision': parity.PINNED_REV,
                                        'hol_revision': parity.HOL_REV, 'cases': rows}, indent=2) + '\n')
@@ -65,9 +90,9 @@ def main():
         parity.check_pinned_reference(args.check_reference)
     for name, source in CASES.items():
         want = expected['cases'][name]
-        if args.check_reference and run(args.check_reference, source) != want:
+        if args.check_reference and run(args.check_reference, source, name) != want:
             raise SystemExit(f'{name}: pinned reference no longer matches its capture')
-        got = run(args.cake, source)
+        got = run(args.cake, source, name)
         if got != want:
             raise SystemExit(f'{name}: output mismatch\nexpected {want}\nactual   {got}')
         print(f'{name}: complete stdout, stderr and exit status match pinned CakeML', flush=True)

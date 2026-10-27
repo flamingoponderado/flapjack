@@ -434,7 +434,9 @@ disabled entries, duplicate flags, and precedence over configuration errors.
 `python3 scripts/check-cake-pinned-parity.py` checks additional successful,
 basis-enabled programs against complete-output captures from the pinned
 compiler. The cases exercise observable array and byte-array updates, strings,
-closures, exceptions, lists, vectors, integers and words. Use
+closures, exceptions, lists, vectors, integers and words. It also checks that
+`--types` takes precedence over `--print_sexp` and `--explore` in either flag
+order, including parse and type failures. Use
 `--check-reference /path/to/pinned/cake` to rerun the original alongside
 Flapjack, or `--record-reference /path/to/pinned/cake` to regenerate captures;
 both commands verify the reported CakeML and HOL revisions. These finite

@@ -290,6 +290,8 @@ private def parseArgs : List String → Options → Except String Options
         match parseBool (arg.drop "--main_return=".length |>.toString) with
         | some b => parseArgs args { options with mainReturn := b, seenMainReturn := true }
         | none => .error s!"invalid Boolean option: {arg}"
+      else if (arg == "--print_sexp" || arg == "--explore") && options.onlyTypes then
+        parseArgs args options
       else if arg == "--print_sexp" || arg == "--explore" || arg == "--pancake" ||
           arg == "--help" || arg == "--version" || arg == "--repl" || arg == "--candle" ||
           arg.startsWith "--pancake_feature=" then
@@ -396,7 +398,8 @@ def main (args : List String) : IO UInt32 := do
     IO.eprint ("### ERROR: config error\n" ++ String.join errors ++
       "\n\nProgram exited with nonzero exit code.\n")
     return 1
-  match parseArgs args {} with
+  -- The original driver checks these flags by membership, independent of order.
+  match parseArgs args { onlyTypes := args.contains "--types" } with
   | .error message =>
     if message.startsWith "### ERROR: config error\n" then
       IO.eprint message
