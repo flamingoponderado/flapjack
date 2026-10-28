@@ -3,6 +3,62 @@
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "do_app_SOME_flat_state_rel",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyData.lean",
+    "lean_name": "doApp_some_flatStateRel_vectorFromList",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original statement captured in flat_elim_value_globals_probe.out; full flat value, list, sparse-tree, and statement review remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "do_app_SOME_flat_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyData.lean",
+    "lean_name": "doApp_some_flatStateRel_listAppend",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original statement captured in flat_elim_value_globals_probe.out; full flat value, list, sparse-tree, and statement review remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "find_v_globals_v_to_list",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyData.lean",
+    "lean_name": "findValueGlobals_valueToList",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original statement captured in flat_elim_value_globals_probe.out; full flat value, list, sparse-tree, and statement review remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "find_v_globals_list_to_v",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyData.lean",
+    "lean_name": "findValueGlobals_listToValue",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original statement captured in flat_elim_value_globals_probe.out; full flat value, list, sparse-tree, and statement review remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "find_v_globals_list_to_v_APPEND",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyData.lean",
+    "lean_name": "findValueGlobals_listToValue_append",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original statement captured in flat_elim_value_globals_probe.out; full flat value, list, sparse-tree, and statement review remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "v_has_Eval_list_to_v",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyData.lean",
+    "lean_name": "valueHasEval_listToValue",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original statement captured in flat_elim_value_globals_probe.out; full flat value, list, sparse-tree, and statement review remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "v_has_Eval_v_to_list",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyData.lean",
+    "lean_name": "valueHasEval_valueToList",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original statement captured in flat_elim_value_globals_probe.out; full flat value, list, sparse-tree, and statement review remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "do_app_SOME_flat_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyData.lean",
     "lean_name": "doApp_some_flatStateRel_vectorSub",
     "statement_status": "pending_statement_review",
     "reviewer": "Source data-operation case only; typed original theorem captured in flat_elim_value_globals_probe.out. Full primitive simulation, carrier, and statement review remain pending."

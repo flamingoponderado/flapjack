@@ -22,6 +22,11 @@ val _ = show_thm "state_transitivity=" flat_elimProofTheory.flat_state_rel_trans
 val _ = show_thm "state_pmatch=" flat_elimProofTheory.flat_state_rel_pmatch;
 val _ = show_thm "state_pmatch_rows=" flat_elimProofTheory.flat_state_rel_pmatch_rows;
 val _ = show_thm "selected_row_lookups=" flat_elimProofTheory.pmatch_rows_find_lookups;
+val _ = show_thm "value_to_list_globals=" flat_elimProofTheory.find_v_globals_v_to_list;
+val _ = show_thm "list_to_value_globals=" flat_elimProofTheory.find_v_globals_list_to_v;
+val _ = show_thm "list_append_globals=" flat_elimProofTheory.find_v_globals_list_to_v_APPEND;
+val _ = show_thm "list_to_value_eval=" flat_elimProofTheory.v_has_Eval_list_to_v;
+val _ = show_thm "value_to_list_eval=" flat_elimProofTheory.v_has_Eval_v_to_list;
 val _ = show_thm "primitive_simulation=" flat_elimProofTheory.do_app_SOME_flat_state_rel;
 val _ = show_thm "result_values=" flatPropsTheory.result_vs_def;
 val _ = show_thm "refs_update_reachable=" flat_elimProofTheory.find_refs_globals_LUPDATE;
