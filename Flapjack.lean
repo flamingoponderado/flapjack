@@ -244,6 +244,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundPair
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundList
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundConstructor
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundControl
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalEnvironment
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocal
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EnvironmentDomain
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.MemoryOps
