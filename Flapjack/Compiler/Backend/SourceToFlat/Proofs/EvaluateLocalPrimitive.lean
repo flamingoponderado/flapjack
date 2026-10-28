@@ -644,7 +644,7 @@ theorem localEnvIH_word64Arith {C F : Type} [Nonempty C]
                       | abort error => simp [EvaluateHOL.listResult]
 
 
-/-- WordW shifts compose a growing operand simulation in a local environment. -/
+/-- Word8 shifts compose a growing operand simulation in a local environment. -/
 theorem localEnvIH_word8Shift {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (body : AstHOL.Exp) (shift : Shift) (amount : Nat)
@@ -729,7 +729,7 @@ theorem localEnvIH_word8Shift {C F : Type} [Nonempty C]
         simpa [getOpClass, astOpToFlatOp, sourceApp, FlatSem.applyResult, FlatSem.doApp, flatApp, EvaluateHOL.listResult] using
           And.intro growth (And.intro nextInvariant (And.intro nextGeneration forward))
 
-/-- WordW shifts compose a growing operand simulation in a local environment. -/
+/-- Word64 shifts compose a growing operand simulation in a local environment. -/
 theorem localEnvIH_word64Shift {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (body : AstHOL.Exp) (shift : Shift) (amount : Nat)
@@ -814,6 +814,118 @@ theorem localEnvIH_word64Shift {C F : Type} [Nonempty C]
         simpa [getOpClass, astOpToFlatOp, sourceApp, FlatSem.applyResult, FlatSem.doApp, flatApp, EvaluateHOL.listResult] using
           And.intro growth (And.intro nextInvariant (And.intro nextGeneration forward))
 
+/-- Primitive conversions compose a growing operand simulation in a local environment. -/
+theorem localEnvIH_conversion {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (body : AstHOL.Exp) (fromType toType : PrimType)
+    (bodyIH : LocalEnvIH (F := F) interp transform body) :
+    LocalEnvIH (F := F) interp transform (.app (.fromTo fromType toType) [body]) := by
+  intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen localRel envInv tracesLen invariant generation safe
+  let sourceEnv := { baseEnv with v := nsAppend sourceLocal baseEnv.v }
+  let compMap := { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v }
+  have bodySafe : ∀ last, EvaluateHOL.evaluate source sourceEnv [body] ≠ (last, .err (.abort .typeError)) := by
+    intro last bad
+    apply safe last
+    change EvaluateHOL.evaluate source sourceEnv [.app (.fromTo fromType toType) [body]] = _
+    rw [EvaluateHOL.evaluate]
+    simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+    rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, bad]
+  obtain ⟨nextGenv, bodySim, post⟩ := bodyIH genv start finish other source flat baseEnv sourceLocal flatEnv traces
+    trace baseMap gen localRel envInv tracesLen invariant generation bodySafe
+  have bodySimCopy := bodySim
+  unfold ExprSim at bodySim
+  generalize sourceRun : EvaluateHOL.evaluate source sourceEnv [body] = sourceResult at bodySim post
+  obtain ⟨nextSource, sourceResult⟩ := sourceResult
+  generalize flatRun : FlatSem.evaluate flatEnv flat [compileExp trace compMap body] = flatResult at bodySim post
+  obtain ⟨nextFlat, flatResult⟩ := flatResult
+  obtain ⟨related, states⟩ := bodySim
+  cases related with
+  | abort error =>
+    refine ⟨nextGenv, ?_, ?_⟩
+    · unfold ExprSim
+      rw [EvaluateHOL.evaluate]
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+      rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]
+      simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+      rw [FlatSem.evaluate]
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+      rw [(FlatSem.fixClock_evaluations flatEnv flat [compileExp trace compMap body]
+        (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+      exact ⟨.abort error, states⟩
+    · rw [EvaluateHOL.evaluate]
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+      rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]
+      trivial
+  | raise valueRel =>
+    obtain ⟨growth, nextInvariant, nextGeneration, forward⟩ := post
+    refine ⟨nextGenv, exprSim_conversion nextGenv compMap trace sourceEnv flatEnv source flat body fromType toType nextInvariant.1 bodySimCopy safe, ?_⟩
+    rw [EvaluateHOL.evaluate]
+    simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+    rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]
+    simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+    rw [FlatSem.evaluate]
+    simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+    rw [(FlatSem.fixClock_evaluations flatEnv flat [compileExp trace compMap body]
+      (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+    exact ⟨growth, nextInvariant, nextGeneration, forward⟩
+  | @value sourceValues flatValues valuesRel =>
+    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source nextSource sourceEnv body sourceValues sourceRun
+    cases valuesRel with
+    | cons valueRel tail =>
+      cases tail with
+      | nil =>
+        rename_i flatOperand
+        obtain ⟨growth, nextInvariant, nextGeneration, forward⟩ := post
+        have successful : doApp (nextSource.refs, nextSource.ffi) (.fromTo fromType toType) [operand] ≠ none := by
+          intro failed
+          apply safe nextSource
+          change EvaluateHOL.evaluate source sourceEnv [.app (.fromTo fromType toType) [body]] = _
+          rw [EvaluateHOL.evaluate]
+          simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+          rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]
+          simp [getOpClass, failed, EvaluateHOL.typeError]
+        obtain ⟨lit, rfl⟩ := conversion_operand nextSource fromType toType operand successful
+        have flatEq := (valueRel_literal_iff nextGenv lit flatOperand).mp valueRel
+        subst flatOperand
+        have primitive := conversion_related nextGenv nextInvariant.1 nextSource nextFlat fromType toType lit
+        cases sourceApp : doApp (nextSource.refs, nextSource.ffi) (.fromTo fromType toType) [.litv lit] with
+        | none => exact (successful sourceApp).elim
+        | some sourceOut =>
+          cases sourceOut with
+          | mk store sourceResult =>
+            cases store with
+            | mk refs ffi =>
+              cases flatApp : FlatSem.doAppNumeric nextFlat (.fromTo fromType toType) [.litv lit] with
+              | none => simp [sourceApp, flatApp] at primitive
+              | some flatOut =>
+                cases flatOut with
+                | none => simp [sourceApp, flatApp] at primitive
+                | some flatOut =>
+                  cases flatOut with
+                  | mk flatAfter flatResult =>
+                    simp only [sourceApp, flatApp] at primitive
+                    obtain ⟨rfl, rfl, rfl, resultRel⟩ := primitive
+                    refine ⟨nextGenv, exprSim_conversion nextGenv compMap trace sourceEnv flatEnv source flat body
+                      fromType toType nextInvariant.1 bodySimCopy safe, ?_⟩
+                    rw [EvaluateHOL.evaluate]
+                    simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+                    rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]
+                    simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+                    rw [FlatSem.evaluate]
+                    simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+                    rw [(FlatSem.fixClock_evaluations flatEnv flat [compileExp trace compMap body]
+                      (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+                    simp only [List.reverse_cons, List.reverse_nil, List.nil_append, getOpClass, astOpToFlatOp,
+                      sourceApp, FlatSem.applyResult, FlatSem.doApp, flatApp]
+                    cases resultRel with
+                    | value valueRel =>
+                      simpa [EvaluateHOL.listResult] using And.intro growth (And.intro nextInvariant
+                        (And.intro nextGeneration forward))
+                    | raise valueRel =>
+                      simpa [EvaluateHOL.listResult] using And.intro growth (And.intro nextInvariant
+                        (And.intro nextGeneration forward))
+                    | abort error => simp [EvaluateHOL.listResult]
+
 /-- Covered expressions combine primitives, constructors, nested bindings and control flow. -/
 inductive LocalEnvPrimitiveExpression : AstHOL.Exp → Prop where
   | base (expr : AstHOL.Exp) : LocalEnvConstructorExpression expr → LocalEnvPrimitiveExpression expr
@@ -839,6 +951,8 @@ inductive LocalEnvPrimitiveExpression : AstHOL.Exp → Prop where
       LocalEnvPrimitiveExpression (.app (.shift .w8 shift amount) [body])
   | word64Shift (shift : Shift) (amount : Nat) (body : AstHOL.Exp) : LocalEnvPrimitiveExpression body →
       LocalEnvPrimitiveExpression (.app (.shift .w64 shift amount) [body])
+  | conversion (fromType toType : PrimType) (body : AstHOL.Exp) : LocalEnvPrimitiveExpression body →
+      LocalEnvPrimitiveExpression (.app (.fromTo fromType toType) [body])
   | letNamed (name : VarN) (first body : AstHOL.Exp) : LocalEnvPrimitiveExpression first →
       LocalEnvPrimitiveExpression body → LocalEnvPrimitiveExpression (.let_ (some name) first body)
   | letAnonymous (first body : AstHOL.Exp) : LocalEnvPrimitiveExpression first → LocalEnvPrimitiveExpression body →
@@ -871,6 +985,8 @@ theorem localEnvIH_primitiveTree {C F : Type} [Nonempty C]
     exact localEnvIH_word64Arith interp transform action left right leftIH rightIH
   | word8Shift shift amount body _ ih => exact localEnvIH_word8Shift interp transform body shift amount ih
   | word64Shift shift amount body _ ih => exact localEnvIH_word64Shift interp transform body shift amount ih
+  | conversion fromType toType body _ ih =>
+    exact localEnvIH_conversion interp transform body fromType toType ih
   | letNamed name first body _ _ firstIH bodyIH => exact localEnvIH_let_named interp transform name first body firstIH bodyIH
   | letAnonymous first body _ _ firstIH bodyIH => exact localEnvIH_let_anonymous interp transform first body firstIH bodyIH
   | if_ cond yes no _ _ _ condIH yesIH noIH => exact localEnvIH_if interp transform cond yes no condIH yesIH noIH
