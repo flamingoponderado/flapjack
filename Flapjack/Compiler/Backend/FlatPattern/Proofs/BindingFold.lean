@@ -6,6 +6,24 @@ namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack.Compiler.Backend
 open Flapjack.Basis.Pure.MlString
 
+/-- Index-independent predicates agree on indexed and ordinary maps. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "EVERY_MAPi_simple"]
+theorem everyMapIdxSimple {A B : Type} (predicate : B → Prop) (f : Nat → A → B)
+    (xs : List A) (independent : ∀ i j x, predicate (f i x) ↔ predicate (f j x)) :
+    (∀ y ∈ xs.mapIdx f, predicate y) ↔ ∀ y ∈ xs.map (f 0), predicate y := by
+  constructor
+  · intro indexed y member
+    obtain ⟨x, hx, rfl⟩ := List.mem_map.mp member
+    obtain ⟨i, hi, heq⟩ := List.getElem_of_mem hx
+    have mapped : f i x ∈ xs.mapIdx f := by
+      rw [List.mem_mapIdx]
+      exact ⟨i, hi, by simp [heq]⟩
+    exact (independent i 0 x).mp (indexed _ mapped)
+  · intro plain y member
+    rw [List.mem_mapIdx] at member
+    obtain ⟨i, hi, rfl⟩ := member
+    exact (independent i 0 _).mpr (plain _ (List.mem_map.mpr ⟨_, List.getElem_mem hi, rfl⟩))
+
 /-- A helper for the binding-fold simulation. The original HOL theorem has an
 additional unused universally quantified variable of an independent type.
 Its image premise follows because HOL types are inhabited; this Lean helper

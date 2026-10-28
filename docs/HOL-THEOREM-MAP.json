@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+    "hol_name": "EVERY_MAPi_simple",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/BindingFold.lean",
+    "lean_name": "everyMapIdxSimple",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out; independent input and output types retained. Review of MAPi and EVERY translations remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
     "hol_name": "ALOOKUP_rel_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
     "lean_name": "aLookupRel",
