@@ -35,6 +35,9 @@ inductive LocalEnvBoundedArrayExpression : AstHOL.Exp → Prop where
       LocalEnvBoundedArrayExpression (.app .aw8sub [pointer, index])
   | byteSubscriptUnsafe (pointer index : AstHOL.Exp) : LocalEnvBoundedArrayExpression pointer → LocalEnvBoundedArrayExpression index →
       LocalEnvBoundedArrayExpression (.app .aw8subUnsafe [pointer, index])
+  | stringSlice (string offset length : AstHOL.Exp) :
+      LocalEnvBoundedArrayExpression string → LocalEnvBoundedArrayExpression offset →
+      LocalEnvBoundedArrayExpression length → LocalEnvBoundedArrayExpression (.app .copyStrStr [string, offset, length])
   | stringSubscript (string index : AstHOL.Exp) : LocalEnvBoundedArrayExpression string → LocalEnvBoundedArrayExpression index →
       LocalEnvBoundedArrayExpression (.app .strsub [string, index])
   | vectorSubscript (vector index : AstHOL.Exp) : LocalEnvBoundedArrayExpression vector → LocalEnvBoundedArrayExpression index →
@@ -140,6 +143,8 @@ theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
     exact localEnvBounded_aw8sub interp transform limit pointer index pointerIH indexIH
   | byteSubscriptUnsafe pointer index _ _ pointerIH indexIH =>
     exact localEnvBounded_aw8subUnsafe interp transform limit pointer index pointerIH indexIH
+  | stringSlice string offset length _ _ _ stringIH offsetIH lengthIH =>
+    exact localEnvBounded_copyStrStr interp transform limit string offset length stringIH offsetIH lengthIH
   | stringSubscript string index _ _ stringIH indexIH =>
     exact localEnvBounded_strsub interp transform limit string index stringIH indexIH
   | vectorSubscript vector index _ _ vectorIH indexIH =>
