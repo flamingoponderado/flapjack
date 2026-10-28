@@ -291,6 +291,7 @@ import Flapjack.Compiler.Backend.FlatElim.Proofs.EvaluateFull
 import Flapjack.Compiler.Backend.FlatElim.Proofs.EvaluateSpecialization
 import Flapjack.Compiler.Backend.FlatElim.Proofs.TotalPattern
 import Flapjack.Compiler.Backend.FlatElim.Proofs.PureState
+import Flapjack.Compiler.Backend.FlatElim.Proofs.PureApplication
 import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
 import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
