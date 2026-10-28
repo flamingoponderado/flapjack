@@ -153,4 +153,32 @@ theorem initEvalStateOk_envGenRel (evalState : Option EvalState)
       obtain ⟨generation, envs⟩ := initial
       simp [OracleInvariant.envGenRel, generation, envs]
 
+/-- When the next oracle configuration is the result of compiling this
+program, the compiled generation is retained in that configuration. This
+discharges the future-generation premise of the declaration simulation. -/
+theorem compileProg_envGenFutureRel {C : Type}
+    (interp : Option (Value → Option (Config × C))) (evalState : Option EvalState)
+    (config : Config) (decs : List Dec) (n : Nat) (next : NextIndices)
+    (outEnv : Environment) (outGen : EnvironmentGenerationStore) (body : List FlatLang.Exp)
+    (compiled : compileDecs [] 1 { config.next with vidx := config.next.vidx + 1 } config.modEnv
+      ⟨0, config.envs.next, .ln⟩ decs = (n, next, outEnv, outGen, body))
+    (oracleConfig : match OracleInvariant.srcOracNextCfg interp evalState with
+      | none => True
+      | some nextConfig => nextConfig = (compileProg config decs).1) :
+    OracleInvariant.envGenFutureRel interp outGen evalState := by
+  have generation := OracleInvariant.compileDecs_generation [] 1
+    { config.next with vidx := config.next.vidx + 1 } config.modEnv
+    ⟨0, config.envs.next, .ln⟩ decs n next outEnv outGen body compiled
+  unfold OracleInvariant.envGenFutureRel
+  cases eq : OracleInvariant.srcOracNextCfg interp evalState with
+  | none => trivial
+  | some nextConfig =>
+    simp only [eq] at oracleConfig ⊢
+    subst nextConfig
+    refine ⟨outGen.envs, ?_, ?_⟩
+    · simpa [compileProg, compiled, generation] using
+        (Flapjack.sptLookup_sptInsert_same config.envs.next outGen.envs config.envs.envGens)
+    · intro key member
+      exact ⟨member, rfl⟩
+
 end Flapjack.Compiler.Backend.SourceToFlat

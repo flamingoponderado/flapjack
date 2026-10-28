@@ -845,6 +845,48 @@ theorem factoredCompileProg_prepared {C F : Type} [Nonempty C]
   rw [evaluateCompileProg_continue flat config decs n next outEnv outGen body globalsEmpty refsEmpty compiled]
   exact flatRun
 
+/-- Whole-program simulation with the original initial evaluation-state and
+oracle-configuration conditions. The remaining invariant is the prepared
+post-allocation invariant, whose derivation is still a separate obligation. -/
+theorem factoredCompileProg_initial {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (config : Config) (decs : List Dec) (sourceEnv : SemEnv Value)
+    (source sourceLast : State F) (flat : FlatSem.State C F)
+    (n : Nat) (next : NextIndices) (outEnv : Environment) (outGen : EnvironmentGenerationStore)
+    (body : List FlatLang.Exp) (result : Result (SemEnv Value) Value)
+    (compiled : compileDecs [] 1 { config.next with vidx := config.next.vidx + 1 } config.modEnv
+      ⟨0, config.envs.next, .ln⟩ decs = (n, next, outEnv, outGen, body))
+    (sourceRun : EvaluateHOL.evaluateDecs source sourceEnv decs = (sourceLast, result))
+    (globalsEmpty : flat.globals = []) (refsEmpty : flat.refs = [])
+    (initialEnv : FactoredInitGlobalEnvInv initGenv config.modEnv sourceEnv)
+    (invariant : factoredInvariant interp transform ⟨0, config.envs.next, .ln⟩
+      { initGenv with v := some (.loc true 0) ::
+          List.replicate (next.vidx - config.next.vidx - 1) none }
+      ({ config.next with vidx := config.next.vidx + 1 }, next, ∅) source
+      { flat with globals := some (.loc true 0) :: List.replicate (next.vidx - config.next.vidx - 1) none,
+                  refs := [.refv (.conv none [])] })
+    (safe : result ≠ .err (.abort .typeError))
+    (emptyGeneration : config.envs.next = 0) (initialEval : initEvalStateOk source.evalState)
+    (oracleConfig : match srcOracNextCfg interp source.evalState with
+      | none => True
+      | some nextConfig => nextConfig = (compileProg config decs).1) :
+    ∃ finalFlat nextGenv flatError,
+      FlatSem.evaluateDecs flat (compileProg config decs).2 = (finalFlat, flatError) ∧
+      StateRel nextGenv sourceLast finalFlat ∧
+      (∀ resultEnv, result = .val resultEnv → flatError = none ∧ EnvDomainEq outEnv resultEnv ∧
+        envGenRel outGen sourceLast.evalState ∧ GlobalEnvInv nextGenv outEnv (fun _ => False) resultEnv) ∧
+      (∀ error, result = .err error → ∃ flatErr, flatError = some flatErr ∧
+        ResultRel (fun _ (_ : SemEnv Value) (_ : Unit) => True) nextGenv (.err error) (.err flatErr)) := by
+  apply factoredCompileProg_prepared interp transform config decs
+    { initGenv with v := some (.loc true 0) ::
+        List.replicate (next.vidx - config.next.vidx - 1) none } sourceEnv source sourceLast flat
+    n next outEnv outGen body result compiled sourceRun globalsEmpty refsEmpty
+  · simpa [FactoredInitGlobalEnvInv] using initialEnv
+  · exact invariant
+  · exact safe
+  · simpa [emptyGeneration] using initEvalStateOk_envGenRel source.evalState initialEval
+  · exact compileProg_envGenFutureRel interp source.evalState config decs n next outEnv outGen body compiled oracleConfig
+
 /-- Match-row result in existential form, over the preliminary factored
 relations and the compiled-row safety premise. -/
 theorem factoredCompileMatch {C F : Type} [Nonempty C]
