@@ -113,4 +113,35 @@ theorem boundedEnvListStep_of_each {C F : Type} [Nonempty C]
 
 
 
+/-- A bounded initializer simulation supplies the bounded value-declaration
+case, including arbitrary patterns and source-safe error behavior. -/
+theorem factoredDecBoundedIH_dlet_expression {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
+    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp)
+    (expressionIH : LocalEnvBoundedIH (F := F) interp transform limit expr) :
+    FactoredDecBoundedIH (F := F) interp transform limit [.dlet location pattern expr] := by
+  intro genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen
+    flatDecs result clockBound sourceRun invariant compiled envInv notTypeError generation future bounded
+  have safe : ∀ last, EvaluateHOL.evaluateDecs source sourceEnv [.dlet location pattern expr] ≠
+      (last, .err (.abort .typeError)) := by
+    intro last bad
+    apply notTypeError
+    exact congrArg Prod.snd (sourceRun.symm.trans bad)
+  have expressionSafe := dlet_expression_safe source sourceEnv location pattern expr safe
+  have emptyAppend : nsAppend nsEmpty sourceEnv.v = sourceEnv.v := by
+    cases sourceEnv.v
+    rfl
+  have sourceEq : { sourceEnv with v := nsAppend nsEmpty sourceEnv.v } = sourceEnv := by
+    simp only [emptyAppend]
+  have mapEq : { env with v := bindLocals [] [] env.v } = env := by
+    simp [bindLocals, nsBindList]
+  have step := expressionIH genv start finish other source flat sourceEnv nsEmpty ⟨[]⟩ []
+    ((AstHOL.patBindings pattern).reverse ++ trace) env gen clockBound (.empty genv)
+    (by simpa using envInv) rfl invariant generation (by simpa only [sourceEq] using expressionSafe)
+  have expressionStep := (localExpressionStep_empty interp transform genv start finish other source flat sourceEnv
+    ((AstHOL.patBindings pattern).reverse ++ trace) env gen expr).mp (by simpa only [List.map_nil, sourceEq, mapEq] using step)
+  exact evaluateDlet_case_factored interp transform genv start finish next other source sourceLast flat sourceEnv
+    trace n n' env nextEnv gen nextGen location pattern expr flatDecs result
+    sourceRun invariant compiled envInv notTypeError generation future bounded expressionStep
+
 end Flapjack.Compiler.Backend.SourceToFlat

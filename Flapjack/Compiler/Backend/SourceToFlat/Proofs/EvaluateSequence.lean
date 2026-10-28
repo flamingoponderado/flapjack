@@ -466,6 +466,90 @@ theorem factoredDecIH_cons {C F : Type} [Nonempty C]
       next1 finish next2 other n1 n2 gen1 gen2 code2 tailResult tailRun midInvariant tailCompiled midInv tailSafe
       midGeneration midFuture bounded
 
+/-- Clock-bounded declaration simulations compose in source order. -/
+theorem factoredDecBoundedIH_cons {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (limit : Nat) (first second : Dec) (rest : List Dec)
+    (firstIH : FactoredDecBoundedIH (F := F) interp transform limit [first])
+    (tailIH : FactoredDecBoundedIH (F := F) interp transform limit (second :: rest)) :
+    FactoredDecBoundedIH (F := F) interp transform limit (first :: second :: rest) := by
+  intro genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen
+    flatDecs result clockBound sourceRun invariant compiled envInv notTypeError generation future bounded
+  generalize firstCompiled : compileDecs trace n start env gen [first] = firstTuple
+  obtain ⟨n1, next1, env1, gen1, code1⟩ := firstTuple
+  generalize tailCompiled : compileDecs trace n1 next1 (extendEnv env1 env) gen1 (second :: rest) = tailTuple
+  obtain ⟨n2, next2, env2, gen2, code2⟩ := tailTuple
+  have wholeCompiled : compileDecs trace n start env gen (first :: second :: rest) =
+      (n2, next2, extendEnv env2 env1, gen2, code1 ++ code2) := by
+    simp [compileDecs, firstCompiled, tailCompiled]
+  have compiledEq := compiled.symm.trans wholeCompiled
+  simp only [Prod.mk.injEq] at compiledEq
+  obtain ⟨_, nextEq, envEq, genEq, codeEq⟩ := compiledEq
+  subst next
+  subst nextEnv
+  subst nextGen
+  subst flatDecs
+  have invariantCopy := invariant
+  obtain ⟨_, _, _, _, _, _, _, _, validGen, _⟩ := invariantCopy
+  have validFirst := (compileDecs_envGenInv trace n start env gen [first] n1 next1 env1 gen1 code1
+    firstCompiled validGen).1
+  have validFinal := (compileDecs_envGenInv trace n1 next1 (extendEnv env1 env) gen1 (second :: rest)
+    n2 next2 env2 gen2 code2 tailCompiled validFirst).1
+  have previous := compileDecs_idxPrev trace n1 next1 (extendEnv env1 env) gen1 (second :: rest)
+    n2 next2 env2 gen2 code2 tailCompiled
+  have firstBound := idxPrev_trans next1 next2 finish ⟨previous, bounded⟩
+  have firstFuture := compileDecs_futureRel interp trace n1 next1 (extendEnv env1 env) gen1
+    (second :: rest) n2 next2 env2 gen2 code2 source.evalState tailCompiled future validFirst
+  generalize firstRun : EvaluateHOL.evaluateDecs source sourceEnv [first] = firstResult
+  obtain ⟨middle, firstResult⟩ := firstResult
+  have clockFix : EvaluateHOL.fixClock source (EvaluateHOL.evaluateDecs source sourceEnv [first]) =
+      EvaluateHOL.evaluateDecs source sourceEnv [first] :=
+    (EvaluateHOL.fixClockEvaluate source sourceEnv [] [first]).2
+  cases firstResult with
+  | err error =>
+    have fixed : EvaluateHOL.fixClock source (middle, (Result.err error : Result (SemEnv Value) Value)) =
+        (middle, .err error) := by
+      rw [← firstRun]
+      exact clockFix
+    have sourceEq : sourceLast = middle ∧ result = .err error := by
+      have h := sourceRun
+      simp only [EvaluateHOL.evaluateDecs, firstRun, fixed] at h
+      exact Prod.mk.inj h.symm
+    obtain ⟨lastEq, resultEq⟩ := sourceEq
+    subst sourceLast
+    subst result
+    have firstCase := firstIH genv env env1 sourceEnv trace source middle flat start finish next1 other n n1
+      gen gen1 code1 (.err error) clockBound firstRun invariant firstCompiled envInv notTypeError generation firstFuture firstBound
+    exact factoredDecCase_append_error interp transform genv env1 env2 source middle flat finish next1 next2 other
+      gen1 gen2 code1 code2 error firstCase previous bounded validFinal
+  | val firstEnv =>
+    have fixed : EvaluateHOL.fixClock source (middle, (Result.val firstEnv : Result (SemEnv Value) Value)) =
+        (middle, .val firstEnv) := by
+      rw [← firstRun]
+      exact clockFix
+    generalize tailRun : EvaluateHOL.evaluateDecs middle (extendDecEnv firstEnv sourceEnv) (second :: rest) = tailResult
+    obtain ⟨last, tailResult⟩ := tailResult
+    have sourceEq : sourceLast = last ∧ result = combineDecResult firstEnv tailResult := by
+      have h := sourceRun
+      simp only [EvaluateHOL.evaluateDecs, firstRun, fixed, tailRun] at h
+      exact Prod.mk.inj h.symm
+    obtain ⟨lastEq, resultEq⟩ := sourceEq
+    subst sourceLast
+    subst result
+    have firstCase := firstIH genv env env1 sourceEnv trace source middle flat start finish next1 other n n1
+      gen gen1 code1 (.val firstEnv) clockBound firstRun invariant firstCompiled envInv (by simp) generation firstFuture firstBound
+    have tailSafe : tailResult ≠ .err (.abort .typeError) := by
+      cases tailResult with
+      | val resultEnv => simp
+      | err error => simpa [combineDecResult] using notTypeError
+    apply factoredDecCase_append_success interp transform genv env env1 env2 sourceEnv firstEnv source middle last flat
+      finish next1 next2 other gen1 gen2 code1 code2 tailResult envInv future firstCase
+    intro midGenv midFlat midInvariant midInv midGeneration midFuture
+    exact tailIH midGenv (extendEnv env1 env) env2 (extendDecEnv firstEnv sourceEnv) trace middle last midFlat
+      next1 finish next2 other n1 n2 gen1 gen2 code2 tailResult
+      (Nat.le_trans (EvaluateHOL.evaluateDecsClockFull source middle sourceEnv [first] _ firstRun) clockBound) tailRun midInvariant tailCompiled midInv tailSafe
+      midGeneration midFuture bounded
+
 /-- A declaration list satisfies the factored simulation whenever each of
 its singleton declarations satisfies the factored induction hypothesis. -/
 theorem factoredDecIH_list {C F : Type} [Nonempty C]
@@ -479,6 +563,24 @@ theorem factoredDecIH_list {C F : Type} [Nonempty C]
     | nil => exact singletons first (by simp)
     | cons second tail =>
       apply factoredDecIH_cons interp transform first second tail
+      · exact singletons first (by simp)
+      · apply ih
+        intro dec member
+        exact singletons dec (by simp [member])
+
+/-- A declaration list has a bounded simulation when each singleton does. -/
+theorem factoredDecBoundedIH_list {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (limit : Nat) (decs : List Dec)
+    (singletons : ∀ dec, dec ∈ decs → FactoredDecBoundedIH (F := F) interp transform limit [dec]) :
+    FactoredDecBoundedIH (F := F) interp transform limit decs := by
+  induction decs with
+  | nil => exact factoredDecBoundedIH_of_unbounded interp transform limit [] (factoredDecIH_empty interp transform)
+  | cons first rest ih =>
+    cases rest with
+    | nil => exact singletons first (by simp)
+    | cons second tail =>
+      apply factoredDecBoundedIH_cons interp transform limit first second tail
       · exact singletons first (by simp)
       · apply ih
         intro dec member

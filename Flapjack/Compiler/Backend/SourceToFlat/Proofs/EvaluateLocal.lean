@@ -317,4 +317,27 @@ theorem factoredDecIH_scoped_list {C F : Type} [Nonempty C]
   intro dec member
   exact factoredDecIH_scoped interp transform dec (covered dec member)
 
+/-- Declaration forms with bounded simulations, including value declarations
+whose initializers use the bounded expression proof. -/
+inductive FactoredBoundedDec : Dec → Prop where
+  | existing (dec : Dec) : FactoredScopedDec dec → FactoredBoundedDec dec
+  | value (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp) :
+      LocalEnvBoundedArrayExpression expr → FactoredBoundedDec (.dlet location pattern expr)
+
+/-- Covered declarations compose under the same smaller-clock hypotheses as
+their initializer expressions. -/
+theorem factoredDecBoundedIH_covered_list {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
+    (smallerExprs : ∀ n, n < limit → ∀ expr, LocalEnvBoundedIH (F := F) interp transform n expr)
+    (smallerDecs : ∀ n, n < limit → ∀ decs, FactoredDecBoundedIH (F := F) interp transform n decs)
+    (decs : List Dec) (covered : ∀ dec, dec ∈ decs → FactoredBoundedDec dec) :
+    FactoredDecBoundedIH (F := F) interp transform limit decs := by
+  apply factoredDecBoundedIH_list interp transform limit decs
+  intro dec member
+  cases covered dec member with
+  | existing dec covered =>
+    exact factoredDecBoundedIH_of_unbounded interp transform limit [dec] (factoredDecIH_scoped interp transform dec covered)
+  | value location pattern expr covered =>
+    exact factoredDecBoundedIH_dlet_arrayTree interp transform limit smallerExprs smallerDecs location pattern expr covered
+
 end Flapjack.Compiler.Backend.SourceToFlat

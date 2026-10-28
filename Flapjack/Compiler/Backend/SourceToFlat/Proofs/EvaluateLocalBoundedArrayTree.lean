@@ -248,6 +248,18 @@ theorem localEnvBounded_arrayTree_of_smaller {C F : Type} [Nonempty C]
     (localEnvClockIH_of_smaller interp transform limit smallerExprs)
     (factoredDecClockIH_of_smaller interp transform limit smallerDecs) expr covered
 
+/-- A value declaration with a covered initializer follows from the same
+smaller-clock hypotheses as the initializer expression. -/
+theorem factoredDecBoundedIH_dlet_arrayTree {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
+    (smallerExprs : ∀ n, n < limit → ∀ expr, LocalEnvBoundedIH (F := F) interp transform n expr)
+    (smallerDecs : ∀ n, n < limit → ∀ decs, FactoredDecBoundedIH (F := F) interp transform n decs)
+    (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp)
+    (covered : LocalEnvBoundedArrayExpression expr) :
+    FactoredDecBoundedIH (F := F) interp transform limit [.dlet location pattern expr] := by
+  apply factoredDecBoundedIH_dlet_expression interp transform limit location pattern expr
+  exact localEnvBounded_arrayTree_of_smaller interp transform limit smallerExprs smallerDecs expr covered
+
 /-- Dynamic evaluation is simulated for covered operands, assuming the
 declaration induction hypothesis for every decoded declaration list. -/
 theorem localEnvBounded_eval_arrayTree {C F : Type} [Nonempty C]
