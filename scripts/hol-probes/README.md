@@ -9105,5 +9105,6 @@ a cross-language equivalence proof.
 
 `flat_elim_closure_probe.out` captures the original closure equation and its
 result for a noncanonical sparse tree with no stored keys. The Lean regression
-checks this case and the lookup-level subset theorem covers all unit trees;
-closure termination and full pass correspondence remain separate obligations.
+checks this case and the lookup-level subset theorem covers all unit trees.
+Lean also proves the executable fuel bound is sufficient; full pass
+correspondence remains a separate obligation.

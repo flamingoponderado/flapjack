@@ -149,8 +149,7 @@ theorem closureFuel_step (fuel : Nat) (reachable : NumSet) (tree : Spt NumSet) :
   simp only [closureFuel, beq_iff_eq, difference_size_zero_iff_subspt]
 
 /-- Run the elimination algorithm with explicit closure fuel. `none` reports
-exhaustion; the dynamic-evaluation guard returns the original program directly.
-The HOL total pass remains unported until closure termination is established. -/
+exhaustion; the dynamic-evaluation guard returns the original program directly. -/
 def removeFlatProgFuel (fuel : Nat) (code : List Exp) : Option (List Exp) :=
   if code.any hasEvalDec then some code
   else
@@ -158,8 +157,8 @@ def removeFlatProgFuel (fuel : Nat) (code : List Exp) : Option (List Exp) :=
     (closureFuel fuel roots tree).map (fun reachable => removeUnreachable reachable code)
 
 /-- Run with a limit derived from the number of distinct dependency targets.
-Each nonterminal iteration should discover a new target; proving that fact and
-that exhaustion is impossible remains necessary for a total HOL port. -/
+`Proofs.Reachability.removeFlatProg_succeeds` proves this bound cannot be
+exhausted. Correspondence of the complete pass to HOL remains to be proved. -/
 def removeFlatProg (code : List Exp) : Option (List Exp) :=
   if code.any hasEvalDec then some code
   else

@@ -274,6 +274,7 @@ import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateClock
 import Flapjack.Compiler.Backend.SourceToFlat.CompileDecs
 import Flapjack.Compiler.Backend.SourceToFlat.CompileProg
 import Flapjack.Compiler.Backend.FlatElim.Reachability
+import Flapjack.Compiler.Backend.FlatElim.Proofs.Reachability
 import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
 import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
@@ -282,6 +283,7 @@ import Flapjack.Compiler.Backend.FlatPattern.Bindings
 import Flapjack.Compiler.Backend.FlatPattern.Patterns
 import Flapjack.Compiler.Backend.FlatPattern.CompileOrder
 import Flapjack.Compiler.Backend.SourceToFlat.ToClos
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.CompileTotal
 import Flapjack.Compiler.Backend.SourceToFlat.ToBvi
 import Flapjack.Compiler.Backend.SourceToFlat.ToData
 import Flapjack.Compiler.Backend.SourceToFlat.ToWord

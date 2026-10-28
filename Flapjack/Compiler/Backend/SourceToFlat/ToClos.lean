@@ -8,10 +8,11 @@ import Flapjack.Compiler.Backend.SourceToSource
 namespace Flapjack.Compiler.Backend.SourceToFlat
 
 /-- Compile declarations through program lowering, flat elimination, pattern
-compilation and closure lowering. `none` reports an exhausted bounded analysis.
+compilation and closure lowering. `none` reports an exhausted bounded analysis;
+the flat-elimination proof shows that its closure bound is sufficient.
 This entry takes declarations after `source_to_source`; use
-`compileCakeToClosFuel` to include it. Proofs of sufficient bounds, subsequent
-closure/backend passes and end-to-end output parity remain open. The fuel
+`compileCakeToClosFuel` to include it. Proofs of subsequent closure/backend
+passes and end-to-end output parity remain open. The fuel
 argument is retained for callers of the former bounded pattern implementation;
 pattern compilation itself is now total. -/
 def compileToClosFuel (_fuel : Nat) (c : Config) (p : List AstHOL.Dec) :
@@ -20,8 +21,7 @@ def compileToClosFuel (_fuel : Nat) (c : Config) (p : List AstHOL.Dec) :
   pure (c', FlatToClos.compileProg flat)
 
 /-- Apply CakeML's source-to-source pass before the bounded source-to-closure
-pipeline. The later closure/backend passes and sufficient-bound proofs remain
-open. -/
+pipeline. Correctness of the later closure/backend passes remains open. -/
 def compileCakeToClosFuel (fuel : Nat) (c : Config) (p : List AstHOL.Dec) :
     Option (Config × List ClosLang.Exp) :=
   compileToClosFuel fuel c (SourceToSource.compile p)
