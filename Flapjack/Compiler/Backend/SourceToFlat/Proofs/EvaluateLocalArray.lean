@@ -54,6 +54,55 @@ theorem aw8length_operand {F : Type} (source : State F) (operand : Value)
       | varray values => simp [lookup] at successful
       | thunk mode value => simp [lookup] at successful
 
+/-- A byte-array subscript without a type error has a location, integer
+index, and byte-array store cell. -/
+theorem aw8sub_operands {F : Type} (source : State F) (pointer index : Value) (unsafeOp : Bool)
+    (successful : doApp (source.refs, source.ffi) (if unsafeOp then .aw8subUnsafe else .aw8sub)
+      [pointer, index] ≠ none) :
+    ∃ flag address n bytes, pointer = .loc flag address ∧ index = .litv (.intLit n) ∧
+      storeLookup address source.refs = some (.w8array bytes) := by
+  cases unsafeOp <;> cases pointer <;> cases index <;>
+    simp [doApp, doAppNumericCore, doAppBasic] at successful
+  all_goals rename_i flag address lit
+  all_goals cases lit <;> simp at successful
+  all_goals rename_i n
+  all_goals cases lookup : storeLookup address source.refs <;> simp [lookup] at successful
+  all_goals rename_i cell
+  all_goals cases cell <;> simp at successful
+  all_goals rename_i bytes
+  all_goals exact ⟨flag, address, n, bytes, rfl, rfl, lookup⟩
+
+/-- Byte-array subscript dispatch agrees on success, checked bounds errors,
+and unchecked failure. Both states remain unchanged. -/
+theorem aw8sub_complete_related {C F : Type} (genv : GlobalEnv)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (statesRel : StateRel genv sourceState flatState) (ok : genvCOk genv.c) (flag : Bool) (n : Nat)
+    (bytes : List (BitVec 8)) (lookup : storeLookup n sourceState.refs = some (.w8array bytes))
+    (index : Int) (unsafeOp : Bool) :
+    let op := if unsafeOp then Flapjack.AstHOL.Op.aw8subUnsafe else .aw8sub
+    match doApp (sourceState.refs, sourceState.ffi) op [.loc flag n, .litv (.intLit index)],
+      FlatSem.doAppMemory flatState op [.loc flag (n + 1), .litv (.intLit index)] with
+    | none, some none => True
+    | some ((refs, ffi), result), some (some (nextFlat, flatResult)) =>
+        refs = sourceState.refs ∧ ffi = sourceState.ffi ∧ nextFlat = flatState ∧ ResultRel ValueRel genv result flatResult
+    | _, _ => False := by
+  by_cases negative : index < 0
+  · have ⟨src, dst, exceptionRel⟩ := aw8sub_outOfBounds genv sourceState flatState statesRel ok flag n bytes lookup
+      index (Or.inl negative) unsafeOp
+    cases unsafeOp <;> simp only [Bool.false_eq_true, if_false, if_true] at src dst ⊢ <;>
+      simp [doApp, doAppNumericCore, src, dst, ResultRel.raise exceptionRel]
+  · cases element : bytes[index.toNat]? with
+    | none =>
+      have ⟨src, dst, exceptionRel⟩ := aw8sub_outOfBounds genv sourceState flatState statesRel ok flag n bytes lookup
+        index (Or.inr element) unsafeOp
+      cases unsafeOp <;> simp only [Bool.false_eq_true, if_false, if_true] at src dst ⊢ <;>
+        simp [doApp, doAppNumericCore, src, dst, ResultRel.raise exceptionRel]
+    | some byte =>
+      have ⟨src, dst, valueRel⟩ := aw8sub_related genv sourceState flatState statesRel flag n bytes lookup index
+        (Int.le_of_not_gt negative) byte element unsafeOp
+      cases unsafeOp <;> simp only [Bool.false_eq_true, if_false, if_true] at src dst ⊢ <;>
+        simp [doApp, doAppNumericCore, src, dst, ResultRel.value valueRel]
+
 /-- Fixed array allocation evaluates its fields right-to-left, restores the
 source field order, and preserves the reserved flat store entry. -/
 theorem localEnvIH_aallocFixed {C F : Type} [Nonempty C]
