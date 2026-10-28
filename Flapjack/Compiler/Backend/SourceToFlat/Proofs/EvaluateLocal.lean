@@ -536,6 +536,55 @@ theorem factoredDecIH_all {C F : Type} [Nonempty C]
   exact (factoredAllBounded (F := F) interp transform source.clock).2 decs genv env nextEnv sourceEnv trace
     source sourceLast flat start finish next other n n' gen nextGen flatDecs result (Nat.le_refl _)
 
+/-- The original initialization condition expressed using the preliminary
+factored global relation. Full cross-language correspondence remains under review. -/
+def FactoredInitGlobalEnvInv (genv : GlobalEnv) (compMap : Environment) (env : SemEnv Value) : Prop :=
+  env.v = nsEmpty ∧
+    match env.c with
+    | .bind entries modules => modules = [] ∧ ∀ name arity stamp, (name, (arity, stamp)) ∈ entries →
+        ∃ cn tyGroup, nsLookup compMap.c (.short name) = some (cn, tyGroup) ∧
+          genv.c.lookup ((cn, tyGroup.map Prod.fst), arity) = some stamp ∧
+          ∀ tyId ctors, tyGroup = some (tyId, ctors) → genv.tys.lookup tyId = some ctors
+
+private theorem constructorLookup_member {α : Type} (entries : List (ConN × α)) (name : ConN) (value : α)
+    (found : entries.lookup name = some value) : (name, value) ∈ entries := by
+  induction entries with
+  | nil => simp at found
+  | cons head tail ih =>
+    obtain ⟨key, current⟩ := head
+    by_cases same : name = key
+    · subst key
+      simp at found
+      subst current
+      simp
+    · have different : (name == key) = false := by
+        change decide (name = key) = false
+        simp [same]
+      simp only [List.lookup_cons, different] at found
+      exact List.mem_cons_of_mem _ (ih found)
+
+/-- The factored initialization condition supplies the global environment
+invariant needed by declaration simulation. -/
+theorem factoredInitGlobalEnvInv_imp (genv : GlobalEnv) (compMap : Environment) (env : SemEnv Value)
+    (initial : FactoredInitGlobalEnvInv genv compMap env) :
+    GlobalEnvInv genv compMap (fun _ => False) env := by
+  obtain ⟨emptyValues, constructors⟩ := initial
+  cases envC : env.c with
+  | bind entries modules =>
+    rw [envC] at constructors
+    obtain ⟨rfl, entriesValid⟩ := constructors
+    apply GlobalEnvInv.intro
+    · intro id value _ found
+      rw [emptyValues] at found
+      cases id <;> simp [nsEmpty, nsLookup] at found
+    · intro id arity stamp found
+      rw [envC] at found
+      cases id with
+      | long module id => simp [nsLookup] at found
+      | short name =>
+        have member := constructorLookup_member entries name (arity, stamp) (by simpa [nsLookup] using found)
+        exact entriesValid name arity stamp member
+
 /-- HOL-shaped combined environment relation using the preliminary factored
 value and global relations. Its full HOL correspondence remains under review. -/
 def FactoredEnvAllRel (genv : GlobalEnv) (compMap : Environment) (sourceEnv : SemEnv Value)
@@ -755,6 +804,45 @@ theorem factoredCompileDeclarations {C F : Type} [Nonempty C]
   cases result with
   | val values => exact caseProof
   | err error => cases error <;> exact caseProof
+
+/-- Compose whole-program prefix execution with the factored declaration
+simulation. The prepared invariant and oracle conditions are explicit until
+their derivation from the original whole-program precondition is ported. -/
+theorem factoredCompileProg_prepared {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (config : Config) (decs : List Dec) (genv : GlobalEnv) (sourceEnv : SemEnv Value)
+    (source sourceLast : State F) (flat : FlatSem.State C F)
+    (n : Nat) (next : NextIndices) (outEnv : Environment) (outGen : EnvironmentGenerationStore)
+    (body : List FlatLang.Exp) (result : Result (SemEnv Value) Value)
+    (compiled : compileDecs [] 1 { config.next with vidx := config.next.vidx + 1 } config.modEnv
+      ⟨0, config.envs.next, .ln⟩ decs = (n, next, outEnv, outGen, body))
+    (sourceRun : EvaluateHOL.evaluateDecs source sourceEnv decs = (sourceLast, result))
+    (globalsEmpty : flat.globals = []) (refsEmpty : flat.refs = [])
+    (initialEnv : FactoredInitGlobalEnvInv genv config.modEnv sourceEnv)
+    (invariant : factoredInvariant interp transform ⟨0, config.envs.next, .ln⟩ genv
+      ({ config.next with vidx := config.next.vidx + 1 }, next, ∅) source
+      { flat with globals := some (.loc true 0) :: List.replicate (next.vidx - config.next.vidx - 1) none,
+                  refs := [.refv (.conv none [])] })
+    (safe : result ≠ .err (.abort .typeError))
+    (generation : envGenRel ⟨0, config.envs.next, .ln⟩ source.evalState)
+    (future : envGenFutureRel interp outGen source.evalState) :
+    ∃ finalFlat nextGenv flatError,
+      FlatSem.evaluateDecs flat (compileProg config decs).2 = (finalFlat, flatError) ∧
+      StateRel nextGenv sourceLast finalFlat ∧
+      (∀ resultEnv, result = .val resultEnv → flatError = none ∧ EnvDomainEq outEnv resultEnv ∧
+        envGenRel outGen sourceLast.evalState ∧ GlobalEnvInv nextGenv outEnv (fun _ => False) resultEnv) ∧
+      (∀ error, result = .err error → ∃ flatErr, flatError = some flatErr ∧
+        ResultRel (fun _ (_ : SemEnv Value) (_ : Unit) => True) nextGenv (.err error) (.err flatErr)) := by
+  obtain ⟨finalFlat, nextGenv, flatError, flatRun, states, _, success, errors⟩ :=
+    factoredCompileDeclarations interp transform decs genv config.modEnv outEnv sourceEnv [] source sourceLast
+      { flat with globals := some (.loc true 0) :: List.replicate (next.vidx - config.next.vidx - 1) none,
+                  refs := [.refv (.conv none [])] }
+      { config.next with vidx := config.next.vidx + 1 } next next ∅ 1 n ⟨0, config.envs.next, .ln⟩ outGen body result
+      sourceRun invariant compiled (factoredInitGlobalEnvInv_imp genv config.modEnv sourceEnv initialEnv)
+      safe generation future (idxPrev_refl next)
+  refine ⟨finalFlat, nextGenv, flatError, ?_, states, success, errors⟩
+  rw [evaluateCompileProg_continue flat config decs n next outEnv outGen body globalsEmpty refsEmpty compiled]
+  exact flatRun
 
 /-- Match-row result in existential form, over the preliminary factored
 relations and the compiled-row safety premise. -/
