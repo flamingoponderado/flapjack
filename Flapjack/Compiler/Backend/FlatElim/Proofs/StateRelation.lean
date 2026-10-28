@@ -131,6 +131,20 @@ def flatStateRel {C F : Type} (reachable : NumSet) (source target : FlatSem.Stat
   (∀ key, sptMem key (findRefsGlobals source.refs) → sptMem key reachable) ∧
   storeHasNoEval source.refs
 
+/-- Updating the same reference in related states preserves the relation when
+its replacement obeys the store invariants. This is a Flapjack simulation helper. -/
+theorem flatStateRel_setRefs {C F : Type} (reachable : NumSet) (source target : FlatSem.State C F)
+    (index : Nat) (value : Flapjack.SemanticPrimitivesHOL.StoreValue FlatSem.Value)
+    (related : flatStateRel reachable source target)
+    (valueReachable : globalsWithin (storeValueGlobals value) reachable)
+    (valueSafe : storeHasNoEval [value]) :
+    flatStateRel reachable { source with refs := source.refs.set index value }
+      { target with refs := target.refs.set index value } := by
+  obtain ⟨clock, refs, ffi, globals, refsReachable, refsSafe⟩ := related
+  refine ⟨clock, by simp [refs], ffi, globals, ?_, ?_⟩
+  · exact findRefsGlobals_set_within source.refs index value reachable refsReachable valueReachable
+  · exact storeHasNoEval_set source.refs index value refsSafe valueSafe
+
 /-- The flat state relation composes for a fixed reachable set. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "flat_state_rel_trans"]
 theorem flatStateRel_trans {C F : Type} (reachable : NumSet) (first middle last : FlatSem.State C F)

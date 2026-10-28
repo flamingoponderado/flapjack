@@ -22,6 +22,8 @@ val _ = show_thm "state_transitivity=" flat_elimProofTheory.flat_state_rel_trans
 val _ = show_thm "state_pmatch=" flat_elimProofTheory.flat_state_rel_pmatch;
 val _ = show_thm "state_pmatch_rows=" flat_elimProofTheory.flat_state_rel_pmatch_rows;
 val _ = show_thm "selected_row_lookups=" flat_elimProofTheory.pmatch_rows_find_lookups;
+val _ = show_thm "primitive_simulation=" flat_elimProofTheory.do_app_SOME_flat_state_rel;
+val _ = show_thm "result_values=" flatPropsTheory.result_vs_def;
 val _ = show_thm "refs_update_reachable=" flat_elimProofTheory.find_refs_globals_LUPDATE;
 val _ = show_thm "pmatch_reachable=" flat_elimProofTheory.pmatch_Match_reachable;
 val _ = show_thm "pmatch_no_eval=" flat_elimProofTheory.pmatch_not_has_Eval;

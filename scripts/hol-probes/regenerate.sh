@@ -337,7 +337,7 @@ run_probe flat_elim_closure_probeScript.sml flat_elim_closure_probe.out \
   "$hol_dir/examples/algorithms/spt_closureScript.sml" "$cake_dir/compiler/backend"
 
 run_probe flat_elim_value_globals_probeScript.sml flat_elim_value_globals_probe.out \
-  value_globals refs_globals env_globals result_globals primitive_result_globals value_has_eval globals_relation globals_transitivity declarations_closed closed_tail closed_head state_relation state_transitivity state_pmatch state_pmatch_rows selected_row_lookups refs_update_reachable pmatch_reachable pmatch_no_eval closure_lookup tuple_lookup closure_eval \
+  value_globals refs_globals env_globals result_globals primitive_result_globals value_has_eval globals_relation globals_transitivity declarations_closed closed_tail closed_head state_relation state_transitivity state_pmatch state_pmatch_rows selected_row_lookups primitive_simulation result_values refs_update_reachable pmatch_reachable pmatch_no_eval closure_lookup tuple_lookup closure_eval \
   "$cake_dir/compiler/backend/proofs/flat_elimProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe source_to_flat_env_domain_probeScript.sml source_to_flat_env_domain_probe.out \

@@ -1,6 +1,22 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "do_app_SOME_flat_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyMemory.lean",
+    "lean_name": "doApp_some_flatStateRel_assign",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Assignment case only; typed original theorem captured in flat_elim_value_globals_probe.out. Full primitive simulation, argument carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+    "hol_name": "result_vs_def",
+    "lean_path": "Flapjack/Compiler/Backend/FlatProps/ResultValues.lean",
+    "lean_name": "resultValues",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original clauses captured in flat_elim_value_globals_probe.out; full flat value and result carrier review remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "find_refs_globals_LUPDATE",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ValueGlobals.lean",
     "lean_name": "findRefsGlobals_LUPDATE",
