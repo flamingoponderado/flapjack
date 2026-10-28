@@ -110,6 +110,29 @@ def integer_expression(rng, depth):
     return rng.choice(LEAVES)
 
 
+def rich_program(rng):
+    """Generate well-typed programs that exercise frontend and backend passes."""
+    a, b, c = (rng.randrange(1, 20) for _ in range(3))
+    return rng.choice([
+        f'datatype tree = L int | N (tree * tree); '
+        f'fun sum t = case t of L n => n | N (x,y) => sum x + sum y; '
+        f'val _ = print_int (sum (N (L {a}, L {b})));',
+        f'fun make x = let val y = x + {a} in fn z => y * z end; '
+        f'val _ = print_int (make {b} {c});',
+        f'exception E int; fun f x = ((if x = {a} then raise E (x + {b}) else x) '
+        f'handle E y => y * {c}); val _ = print_int (f {a});',
+        f'fun f x = let val r = Ref x; val _ = r := !r + {a} '
+        f'in !r * {b} end; val _ = print_int (f {c});',
+        f'structure M = struct datatype t = A | B int; '
+        f'fun f x = case x of A => {a} | B n => n + {b}; end; '
+        f'val _ = print_int (M.f (M.B {c}));',
+        f'fun f xs = case xs of [] => {a} | x::rest => x + f rest; '
+        f'val _ = print_int (f [{a},{b},{c}]);',
+        f'fun f x y = if x < y andalso y <> {a} then x + y else x * y; '
+        f'val _ = print_int (f {b} {c});',
+    ])
+
+
 def run(executable, options, source, timeout):
     return subprocess.run([str(executable), "--target=riscv", *options], input=source.encode("ascii"),
                           stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=timeout)
@@ -139,6 +162,8 @@ def main():
     parser.add_argument("--cake", type=Path, default=ROOT / ".lake/build/bin/cake")
     parser.add_argument("--type-cases", type=int, default=200)
     parser.add_argument("--compile-cases", type=int, default=20)
+    parser.add_argument("--rich-cases", type=int, default=20,
+                        help="well-typed programs exercising diverse compiler passes")
     parser.add_argument("--sexp-cases", type=int, default=100,
                         help="generated programs to compare in S-expression output mode")
     parser.add_argument("--byte-cases", type=int, default=256,
@@ -152,7 +177,7 @@ def main():
     parser.add_argument("--edge-seed", type=int, default=83219)
     parser.add_argument("--timeout", type=int, default=90)
     args = parser.parse_args()
-    if (args.type_cases < 0 or args.compile_cases < 0 or args.sexp_cases < 0 or
+    if (args.type_cases < 0 or args.compile_cases < 0 or args.rich_cases < 0 or args.sexp_cases < 0 or
             args.structured_cases < 0 or args.lex_cases < 0 or
             not 0 <= args.byte_cases <= 256 or args.timeout <= 0):
         parser.error("case counts must be nonnegative, byte-cases at most 256, and timeout positive")
@@ -189,6 +214,9 @@ def main():
         source = f"fun f x = {integer_expression(compile_rng, depth)}; val _ = print_int (f 7);"
         compare(args.reference, args.cake, [], source, args.timeout, True)
     print(f"{args.compile_cases} generated programs match complete pinned RISC-V output", flush=True)
+    for _ in range(args.rich_cases):
+        compare(args.reference, args.cake, [], rich_program(compile_rng), args.timeout, True)
+    print(f"{args.rich_cases} diverse programs match complete pinned RISC-V output", flush=True)
 
 
 if __name__ == "__main__":
