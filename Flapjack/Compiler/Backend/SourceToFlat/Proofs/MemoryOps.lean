@@ -169,6 +169,51 @@ theorem alength_related {C F : Type} (genv : GlobalEnv)
   exact ⟨by simp [doAppBasic, lookup], by simp [FlatSem.doAppMemory, flatLookup, ← length],
     .literal genv _⟩
 
+/-- Array reads preserve related values in the factored source and flat stores. -/
+theorem asub_related {C F : Type} (genv : GlobalEnv)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (statesRel : StateRel genv sourceState flatState) (flag : Bool) (n : Nat)
+    (values : List SemanticPrimitivesHOL.Value) (lookup : storeLookup n sourceState.refs = some (.varray values))
+    (index : Int) (nonnegative : 0 ≤ index) (value : SemanticPrimitivesHOL.Value)
+    (element : values[index.toNat]? = some value) (unsafeOp : Bool) :
+    let op := if unsafeOp then Flapjack.AstHOL.Op.asubUnsafe else .asub
+    ∃ flatValue,
+      doAppBasic (sourceState.refs, sourceState.ffi) op [.loc flag n, .litv (.intLit index)] =
+        some (some ((sourceState.refs, sourceState.ffi), .val value)) ∧
+      FlatSem.doAppMemory flatState op [.loc flag (n + 1), .litv (.intLit index)] =
+        some (some (flatState, .val flatValue)) ∧ ValueRel genv value flatValue := by
+  obtain ⟨flatValues, flatLookup, valuesRel⟩ := stateRel_array_lookup genv sourceState flatState statesRel n values lookup
+  obtain ⟨flatValue, flatElement, valueRel⟩ := forall₂_lookup valuesRel index.toNat value element
+  have notNegative : ¬index < 0 := Int.not_lt.mpr nonnegative
+  refine ⟨flatValue, ?_, ?_, valueRel⟩
+  · cases unsafeOp <;> simp [doAppBasic, SemanticPrimitivesHOL.readIndexed, lookup, notNegative, element]
+  · cases unsafeOp <;> simp [FlatSem.doAppMemory, FlatSem.readIndexed, flatLookup, notNegative, flatElement]
+
+/-- Invalid array reads raise related exceptions when checked and fail when unchecked. -/
+theorem asub_outOfBounds {C F : Type} (genv : GlobalEnv)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (statesRel : StateRel genv sourceState flatState) (ok : genvCOk genv.c) (flag : Bool) (n : Nat)
+    (values : List SemanticPrimitivesHOL.Value) (lookup : storeLookup n sourceState.refs = some (.varray values))
+    (index : Int) (outOfBounds : index < 0 ∨ values[index.toNat]? = none) (unsafeOp : Bool) :
+    let op := if unsafeOp then Flapjack.AstHOL.Op.asubUnsafe else .asub
+    doAppBasic (sourceState.refs, sourceState.ffi) op [.loc flag n, .litv (.intLit index)] =
+      some (if unsafeOp then none else some ((sourceState.refs, sourceState.ffi), .err (.raise subExnV))) ∧
+    FlatSem.doAppMemory flatState op [.loc flag (n + 1), .litv (.intLit index)] =
+      some (if unsafeOp then none else some (flatState, .err (.raise FlatSem.subscriptExnV))) ∧
+    ValueRel genv subExnV FlatSem.subscriptExnV := by
+  obtain ⟨flatValues, flatLookup, valuesRel⟩ := stateRel_array_lookup genv sourceState flatState statesRel n values lookup
+  have length := List.Forall₂.length_eq valuesRel
+  have exceptionRel := (exceptionValues_related genv ok).2.2.2
+  rcases outOfBounds with negative | absent
+  · cases unsafeOp <;> simp [doAppBasic, FlatSem.doAppMemory, SemanticPrimitivesHOL.readIndexed,
+      FlatSem.readIndexed, SemanticPrimitivesHOL.boundsFailure, FlatSem.boundsFailure, *]
+  · have flatAbsent : flatValues[index.toNat]? = none := by
+      apply List.getElem?_eq_none_iff.mpr
+      rw [← length]
+      exact List.getElem?_eq_none_iff.mp absent
+    cases unsafeOp <;> simp [doAppBasic, FlatSem.doAppMemory, SemanticPrimitivesHOL.readIndexed,
+      FlatSem.readIndexed, SemanticPrimitivesHOL.boundsFailure, FlatSem.boundsFailure, *]
+
 /-- A valid byte-array subscript returns the same byte in the source and flat
 states. This covers both checked and unchecked source operations. -/
 theorem aw8sub_related {C F : Type} (genv : GlobalEnv)
