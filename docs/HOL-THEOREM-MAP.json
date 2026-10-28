@@ -1,5 +1,29 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+    "hol_name": "eval_sim_def",
+    "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvalSim.lean",
+    "lean_name": "evalSim",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out; source and target configuration types remain independent. Full evaluator, carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "flat_remove_eval_sim",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/Removal.lean",
+    "lean_name": "flat_remove_evalSim",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out. Full evaluator, carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "flat_remove_semantics",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/Removal.lean",
+    "lean_name": "flat_remove_semantics",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out. Full evaluator, observational semantics, carrier, and statement review remain pending."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "evaluate_sing_notKeep_flat_state_rel",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/Removal.lean",

@@ -9,6 +9,18 @@ namespace Flapjack.Compiler.Backend.FlatSem
 def initialState {C F : Type} (ffi : HolFfiState F) (clock : Nat) (evalConfig : InstallConfig C) : State C F :=
   ⟨clock, [], ffi, [], evalConfig⟩
 
+/-- Terminating observations used by the factored semantics. This is a
+Flapjack-specific name for the predicate inside the semantics definition. -/
+def terminatingObservation {C F : Type} (evalConfig : InstallConfig C)
+    (ffi : HolFfiState F) (program : List FlatLang.Exp) (behavior : HolBehaviour) : Prop :=
+  ∃ clock state result outcome,
+    evaluateDecs (initialState ffi clock evalConfig) program = (state, result) ∧
+    (match result with
+     | some (.abort (.ffiError event)) => outcome = HolOutcome.ffiOutcome event
+     | some (.abort _) => False
+     | _ => outcome = HolOutcome.success) ∧
+    behavior = HolBehaviour.terminate outcome state.ffi.ioEvents
+
 /-- Observational behavior built from the current flat evaluator. Its
 correspondence depends on the remaining source review of that evaluator, so
 this definition is not yet tagged as the original HOL semantics. -/
@@ -18,13 +30,7 @@ noncomputable def semantics {C F : Type} (evalConfig : InstallConfig C)
   if ∃ clock, (evaluateDecs (initialState ffi clock evalConfig) program).2 = some (.abort .typeError)
   then .fail
   else
-    match holOptionSome (fun behavior => ∃ clock state result outcome,
-      evaluateDecs (initialState ffi clock evalConfig) program = (state, result) ∧
-      (match result with
-       | some (.abort (.ffiError event)) => outcome = HolOutcome.ffiOutcome event
-       | some (.abort _) => False
-       | _ => outcome = HolOutcome.success) ∧
-      behavior = HolBehaviour.terminate outcome state.ffi.ioEvents) with
+    match holOptionSome (terminatingObservation evalConfig ffi program) with
     | some behavior => behavior
     | none => .diverge (HolLList.buildLprefixLub (fun trace => ∃ clock,
         trace = HolLList.fromList (evaluateDecs (initialState ffi clock evalConfig) program).1.ffi.ioEvents))

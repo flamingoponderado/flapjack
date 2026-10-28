@@ -1,5 +1,7 @@
 import Flapjack.Compiler.Backend.FlatElim.Proofs.PureFull
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Semantics
+import Flapjack.Compiler.Backend.Semantics.FlatSem.SemanticsCongruence
+import Flapjack.Compiler.Backend.FlatProps.EvalSim
 
 /-! Declaration-removal simulation for flat elimination. -/
 namespace Flapjack.Compiler.Backend.FlatElim
@@ -185,5 +187,71 @@ theorem flat_removal {C F : Type} (ffi : HolFfiState F) (clock : Nat)
     simpa using h
   exact flat_decs_removal _ declarations next result (closureTotal roots tree) removed _ run notTypeError filtered
     initialRelated eachSafe (decsClosed_analysisClosure declarations roots tree analysis.symm)
+
+/-- Flat elimination preserves the exact result and FFI state at the same
+clock whenever the source result is not a type error. This Flapjack helper
+strengthens the original result-class simulation. -/
+theorem flat_remove_sameClock {C F : Type} (ffi : HolFfiState F) (declarations : List FlatLang.Exp)
+    (config : FlatSem.InstallConfig C) (clock : Nat) (sourceState : FlatSem.State C F)
+    (result : Option (ErrorResult FlatSem.Value))
+    (run : FlatSem.evaluateDecs (FlatSem.initialState ffi clock config) declarations = (sourceState, result))
+    (notTypeError : result ≠ some (.abort .typeError)) :
+    ∃ targetState, targetState.ffi = sourceState.ffi ∧
+      FlatSem.evaluateDecs (FlatSem.initialState ffi clock config) (removeFlatProgTotal declarations) = (targetState, result) := by
+  cases safe : declarations.any hasEvalDec with
+  | true =>
+    refine ⟨sourceState, rfl, ?_⟩
+    simpa [removeFlatProgTotal, safe] using run
+  | false =>
+    cases analysis : analyseCode declarations with
+    | mk roots tree =>
+      have filtered : removeUnreachable (closureTotal roots tree) declarations = removeFlatProgTotal declarations := by
+        simp [removeFlatProgTotal, safe, analysis]
+      exact flat_removal ffi clock declarations sourceState result roots tree (closureTotal roots tree)
+        (removeFlatProgTotal declarations) config run notTypeError analysis.symm rfl safe filtered
+
+/-- The flat elimination pass satisfies the original evaluation simulation
+relation with no added clock. The evaluator and carriers remain pending HOL
+correspondence review. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "flat_remove_eval_sim"]
+theorem flat_remove_evalSim {C F : Type} (ffi : HolFfiState F) (declarations : List FlatLang.Exp)
+    (config : FlatSem.InstallConfig C) :
+    FlatProps.evalSim ffi declarations (removeFlatProgTotal declarations) config config
+      (fun source target => target = removeFlatProgTotal source) false := by
+  intro clock result sourceState run allowed _
+  have notTypeError : result ≠ some (.abort .typeError) := by simpa using allowed
+  obtain ⟨targetState, ffiEq, evaluated⟩ := flat_remove_sameClock ffi declarations config clock sourceState result run notTypeError
+  refine ⟨0, result, targetState, by simpa using evaluated, ffiEq.symm, ?_, ?_, ?_⟩
+  · intro eq
+    exact eq
+  · intro value eq
+    exact ⟨value, eq⟩
+  · intro abort eq
+    exact eq
+
+/-- Flat elimination preserves the factored observational semantics whenever
+the source semantics is not failure. The evaluator, semantics definition,
+and carriers remain pending complete HOL correspondence review. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "flat_remove_semantics"]
+theorem flat_remove_semantics {C F : Type} (ffi : HolFfiState F) (declarations : List FlatLang.Exp)
+    (config : FlatSem.InstallConfig C) (notFail : FlatSem.semantics config ffi declarations ≠ .fail) :
+    FlatSem.semantics config ffi declarations = FlatSem.semantics config ffi (removeFlatProgTotal declarations) := by
+  classical
+  have sourceSafe : ∀ clock, (FlatSem.evaluateDecs (FlatSem.initialState ffi clock config) declarations).2 ≠
+      some (.abort .typeError) := by
+    intro clock bad
+    have failure : FlatSem.semantics config ffi declarations = .fail := by
+      simp [FlatSem.semantics, show ∃ clock, (FlatSem.evaluateDecs (FlatSem.initialState ffi clock config) declarations).2 =
+        some (.abort .typeError) from ⟨clock, bad⟩]
+    exact notFail failure
+  apply FlatSem.semantics_eq_of_same_observations config ffi declarations (removeFlatProgTotal declarations)
+  intro clock
+  cases sourceEval : FlatSem.evaluateDecs (FlatSem.initialState ffi clock config) declarations with
+  | mk state result =>
+    have notTypeError : result ≠ some (.abort .typeError) := by
+      simpa [sourceEval] using sourceSafe clock
+    obtain ⟨targetState, ffiEq, targetEval⟩ :=
+      flat_remove_sameClock ffi declarations config clock state result sourceEval notTypeError
+    simp [targetEval, ffiEq]
 
 end Flapjack.Compiler.Backend.FlatElim
