@@ -165,9 +165,105 @@ theorem boundLocalIH_lannot {C F : Type} [Nonempty C]
   cases loc
   simpa only [EvaluateHOL.evaluate, compileExp] using post
 
+/-- Binding a local name leaves all other short names and all qualified
+lookups unchanged. -/
+theorem nsLookup_bind_other {α : Type} (env : Namespace ModN VarN α) (name : VarN) (value : α)
+    (id : Ident ModN VarN) (other : id ≠ .short name) :
+    nsLookup (nsBind name value env) id = nsLookup env id := by
+  cases env with
+  | bind values modules =>
+    cases id with
+    | short key =>
+      have different : key ≠ name := by
+        intro equal
+        subst key
+        exact other rfl
+      have neq : (key == name) = false := by
+        change decide (key = name) = false
+        simp [different]
+      simp [nsBind, nsLookup, List.lookup_cons, neq]
+    | long moduleName inner => rfl
+
+/-- Local variable lookup chooses the new binding when names coincide and
+otherwise uses the related surrounding global binding. -/
+theorem boundLocalIH_variable {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (name : VarN) (id : Ident ModN VarN) :
+    BoundLocalIH (F := F) interp transform name (.var id) := by
+  intro genv start finish other source flat baseEnv trace baseMap gen value flatValue related envInv invariant generation safe
+  by_cases same : id = .short name
+  · subst id
+    exact localExpressionStep_boundVariable interp transform genv start finish other source flat baseEnv trace
+      baseMap gen name value flatValue related invariant generation
+  · let sourceEnv := { baseEnv with v := nsBind name value baseEnv.v }
+    let compMap := { baseMap with v := nsBind name (.localName .none name) baseMap.v }
+    let flatEnv : FlatSem.Environment FlatSem.Value := ⟨[(name, flatValue)]⟩
+    change LocalExpressionStep interp transform genv start finish other source flat sourceEnv flatEnv trace compMap gen
+      (.var id)
+    have lookupEq : nsLookup sourceEnv.v id = nsLookup baseEnv.v id :=
+      nsLookup_bind_other baseEnv.v name value id same
+    cases lookup : nsLookup baseEnv.v id with
+    | none =>
+      have bad : EvaluateHOL.evaluate source sourceEnv [.var id] = (source, .err (.abort .typeError)) := by
+        simp [EvaluateHOL.evaluate, lookupEq, lookup, EvaluateHOL.typeError]
+      exact False.elim (safe source bad)
+    | some sourceValue =>
+      have oldRel : GlobalLookupRel genv baseMap id sourceValue := by
+        cases envInv with
+        | intro _ _ _ values _ => exact values id sourceValue (by simp) lookup
+      have newRel : GlobalLookupRel genv compMap id sourceValue := by
+        cases oldRel with
+        | intro _ _ _ index stored tr compiled bound slot valueRel =>
+          apply GlobalLookupRel.intro genv compMap id sourceValue index stored tr _ bound slot valueRel
+          simpa [compMap, nsLookup_bind_other baseMap.v name (.localName .none name) id same] using compiled
+      have sourceLookup : nsLookup sourceEnv.v id = some sourceValue := by rw [lookupEq, lookup]
+      obtain ⟨flatValue', sourceRun, flatRun, valueRel, states⟩ :=
+        evaluate_global_unbounded genv compMap sourceEnv flatEnv source flat invariant.2.2.1
+          invariant.2.2.2.2.2.2.1.symm trace id sourceValue sourceLookup newRel
+      refine ⟨genv, ?_, ?_⟩
+      · unfold ExprSim
+        rw [sourceRun, flatRun]
+        exact ⟨.value (.cons valueRel .nil), states⟩
+      · rw [sourceRun, flatRun]
+        exact ⟨GlobalGrowth.refl genv, invariant, generation, oracForwardRel_refl interp source.evalState⟩
+
+/-- Function creation captures the related local binding and preserves both
+states. Its surrounding global invariant is restricted by local shadowing. -/
+theorem boundLocalIH_function {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (name arg : VarN) (body : AstHOL.Exp) :
+    BoundLocalIH (F := F) interp transform name (.fn arg body) := by
+  intro genv start finish other source flat baseEnv trace baseMap gen value flatValue related envInv invariant generation _
+  let localEnv : Namespace ModN VarN Value := nsBind name value nsEmpty
+  let flatEnv : FlatSem.Environment FlatSem.Value := ⟨[(name, flatValue)]⟩
+  have localRel : EnvRel genv localEnv flatEnv.v :=
+    .bind genv name value nsEmpty [] flatValue (.empty genv) related
+  have shadowInv : GlobalEnvInv genv baseMap (fun n => n ∈ flatEnv.v.map Prod.fst) baseEnv := by
+    cases envInv with
+    | intro _ _ _ values constructors =>
+      apply GlobalEnvInv.intro
+      · intro id v _ lookup
+        exact values id v (by simp) lookup
+      · exact constructors
+  have sim := exprSim_function genv baseMap baseEnv localEnv flatEnv localRel shadowInv
+    [.none] rfl source flat invariant.2.2.1 trace arg body
+  have adjusted : ExprSim genv { baseMap with v := nsBind name (.localName .none name) baseMap.v } trace
+      { baseEnv with v := nsBind name value baseEnv.v } flatEnv source flat (.fn arg body) := by
+    cases envEq : baseEnv.v with
+    | bind values modules =>
+      cases mapEq : baseMap.v with
+      | bind names namespaces =>
+        simpa [localEnv, flatEnv, envEq, mapEq, nsBind, nsEmpty, nsAppend, bindLocals, nsBindList] using sim
+  refine ⟨genv, adjusted, ?_⟩
+  simpa only [EvaluateHOL.evaluate, compileExp, FlatSem.evaluate] using
+    And.intro (GlobalGrowth.refl genv) (And.intro invariant
+      (And.intro generation (oracForwardRel_refl interp source.evalState)))
+
 /-- Local expressions with sequencing, exceptions, annotations, and the previously covered forms. -/
 inductive BoundControlExpression (name : VarN) : AstHOL.Exp → Prop where
   | base (expr : AstHOL.Exp) : BoundConstructorExpression name expr → BoundControlExpression name expr
+  | variable_ (id : Ident ModN VarN) : BoundControlExpression name (.var id)
+  | function_ (arg : VarN) (body : AstHOL.Exp) : BoundControlExpression name (.fn arg body)
   | raise_ (body : AstHOL.Exp) : BoundControlExpression name body → BoundControlExpression name (.raise body)
   | letAnonymous (first body : AstHOL.Exp) : BoundControlExpression name first → BoundControlExpression name body →
       BoundControlExpression name (.let_ none first body)
@@ -200,6 +296,8 @@ theorem boundLocalIH_controlTree {C F : Type} [Nonempty C]
     BoundLocalIH (F := F) interp transform name expr := by
   induction covered with
   | base expr covered => exact boundLocalIH_constructorTree interp transform name expr covered
+  | variable_ id => exact boundLocalIH_variable interp transform name id
+  | function_ arg body => exact boundLocalIH_function interp transform name arg body
   | raise_ body _ ih => exact boundLocalIH_raise interp transform name body ih
   | letAnonymous first body _ _ firstIH bodyIH =>
     exact boundLocalIH_let_anonymous interp transform name first body firstIH bodyIH
