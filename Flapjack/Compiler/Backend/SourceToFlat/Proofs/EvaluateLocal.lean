@@ -317,15 +317,158 @@ theorem factoredDecIH_scoped_list {C F : Type} [Nonempty C]
   intro dec member
   exact factoredDecIH_scoped interp transform dec (covered dec member)
 
+/- Bounded versions retain the source clock bound across nested declarations. -/
+theorem factoredDecBoundedIH_dmod {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (limit : Nat) (moduleName : ModN) (decs : List Dec) (innerIH : FactoredDecBoundedIH (F := F) interp transform limit decs) :
+    FactoredDecBoundedIH (F := F) interp transform limit [.dmod moduleName decs] := by
+  intro genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen
+    flatDecs result clockBound sourceRun invariant compiled envInv notTypeError generation future bounded
+  generalize innerCompiled : compileDecs (moduleName :: trace) n start env gen decs = innerTuple
+  obtain ⟨innerN, innerNext, innerEnv, innerGen, innerCode⟩ := innerTuple
+  have outerCompiled : compileDecs trace n start env gen [.dmod moduleName decs] =
+      (innerN, innerNext, liftEnv moduleName innerEnv, innerGen, innerCode) := by
+    simp [compileDecs, innerCompiled]
+  have compEq := compiled.symm.trans outerCompiled
+  simp only [Prod.mk.injEq] at compEq
+  obtain ⟨_, nextEq, envEq, genEq, codeEq⟩ := compEq
+  subst next
+  subst nextEnv
+  subst nextGen
+  subst flatDecs
+  generalize innerRun : EvaluateHOL.evaluateDecs source sourceEnv decs = innerPair
+  obtain ⟨innerLast, innerResult⟩ := innerPair
+  have resultEq : sourceLast = innerLast ∧ result =
+      (match innerResult with
+       | .val inner => .val ⟨nsLift moduleName inner.v, nsLift moduleName inner.c⟩
+       | .err error => .err error) := by
+    have h := sourceRun
+    simp only [EvaluateHOL.evaluateDecs, innerRun] at h
+    cases innerResult <;> simp_all
+  obtain ⟨lastEq, outEq⟩ := resultEq
+  subst sourceLast
+  subst result
+  have innerSafe : innerResult ≠ .err (.abort .typeError) := by
+    cases innerResult with
+    | val resultEnv => simp
+    | err error => simpa using notTypeError
+  have inner := innerIH genv env innerEnv sourceEnv (moduleName :: trace) source innerLast flat start finish
+    innerNext other n innerN gen innerGen innerCode innerResult clockBound innerRun invariant innerCompiled envInv innerSafe
+    generation future bounded
+  cases innerResult <;>
+    exact factoredDecCase_liftModule interp transform genv source innerLast flat finish innerNext other innerGen
+      innerEnv moduleName innerCode _ inner
+
+theorem factoredDecBoundedIH_dlocal {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (limit : Nat) (locals body : List Dec) (localIH : FactoredDecBoundedIH (F := F) interp transform limit locals)
+    (bodyIH : FactoredDecBoundedIH (F := F) interp transform limit body) :
+    FactoredDecBoundedIH (F := F) interp transform limit [.dlocal locals body] := by
+  intro genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen
+    flatDecs result clockBound sourceRun invariant compiled envInv notTypeError generation future bounded
+  generalize localCompiled : compileDecs trace n start env gen locals = localTuple
+  obtain ⟨n1, next1, env1, gen1, code1⟩ := localTuple
+  generalize bodyCompiled : compileDecs trace n1 next1 (extendEnv env1 env) gen1 body = bodyTuple
+  obtain ⟨n2, next2, env2, gen2, code2⟩ := bodyTuple
+  have outerCompiled : compileDecs trace n start env gen [.dlocal locals body] =
+      (n2, next2, env2, gen2, code1 ++ code2) := by
+    simp [compileDecs, localCompiled, bodyCompiled]
+  have compiledEq := compiled.symm.trans outerCompiled
+  simp only [Prod.mk.injEq] at compiledEq
+  obtain ⟨_, nextEq, envEq, genEq, codeEq⟩ := compiledEq
+  subst next
+  subst nextEnv
+  subst nextGen
+  subst flatDecs
+  have invariantCopy := invariant
+  obtain ⟨_, _, _, _, _, _, _, _, validGen, _⟩ := invariantCopy
+  have validFirst := (compileDecs_envGenInv trace n start env gen locals n1 next1 env1 gen1 code1
+    localCompiled validGen).1
+  have validFinal := (compileDecs_envGenInv trace n1 next1 (extendEnv env1 env) gen1 body
+    n2 next2 env2 gen2 code2 bodyCompiled validFirst).1
+  have previous := compileDecs_idxPrev trace n1 next1 (extendEnv env1 env) gen1 body
+    n2 next2 env2 gen2 code2 bodyCompiled
+  have firstBound := idxPrev_trans next1 next2 finish ⟨previous, bounded⟩
+  have firstFuture := compileDecs_futureRel interp trace n1 next1 (extendEnv env1 env) gen1 body
+    n2 next2 env2 gen2 code2 source.evalState bodyCompiled future validFirst
+  generalize localRun : EvaluateHOL.evaluateDecs source sourceEnv locals = localResult
+  obtain ⟨middle, localResult⟩ := localResult
+  have clockFix : EvaluateHOL.fixClock source (EvaluateHOL.evaluateDecs source sourceEnv locals) =
+      EvaluateHOL.evaluateDecs source sourceEnv locals :=
+    (EvaluateHOL.fixClockEvaluate source sourceEnv [] locals).2
+  cases localResult with
+  | err error =>
+    have fixed : EvaluateHOL.fixClock source (middle, (Result.err error : Result (SemEnv Value) Value)) =
+        (middle, .err error) := by
+      rw [← localRun]
+      exact clockFix
+    have sourceEq : sourceLast = middle ∧ result = .err error := by
+      have h := sourceRun
+      simp only [EvaluateHOL.evaluateDecs, localRun, fixed] at h
+      exact Prod.mk.inj h.symm
+    obtain ⟨lastEq, resultEq⟩ := sourceEq
+    subst sourceLast
+    subst result
+    have localCase := localIH genv env env1 sourceEnv trace source middle flat start finish next1 other n n1
+      gen gen1 code1 (.err error) clockBound localRun invariant localCompiled envInv notTypeError generation firstFuture firstBound
+    have combined := factoredDecCase_append_error interp transform genv env1 env2 source middle flat finish next1 next2
+      other gen1 gen2 code1 code2 error localCase previous bounded validFinal
+    exact factoredDecCase_error_changeEnv interp transform genv source middle flat finish next2 other gen2
+      (extendEnv env2 env1) env2 (code1 ++ code2) error combined
+  | val localEnv =>
+    have fixed : EvaluateHOL.fixClock source (middle, (Result.val localEnv : Result (SemEnv Value) Value)) =
+        (middle, .val localEnv) := by
+      rw [← localRun]
+      exact clockFix
+    have bodyRun : EvaluateHOL.evaluateDecs middle (extendDecEnv localEnv sourceEnv) body = (sourceLast, result) := by
+      have h := sourceRun
+      simpa only [EvaluateHOL.evaluateDecs, localRun, fixed] using h
+    have localCase := localIH genv env env1 sourceEnv trace source middle flat start finish next1 other n n1
+      gen gen1 code1 (.val localEnv) clockBound localRun invariant localCompiled envInv (by simp) generation firstFuture firstBound
+    apply factoredDecCase_local_success interp transform genv env env1 env2 sourceEnv localEnv source middle
+      sourceLast flat finish next1 next2 other gen1 gen2 code1 code2 result envInv future localCase
+    intro midGenv midFlat midInvariant midInv midGeneration midFuture
+    exact bodyIH midGenv (extendEnv env1 env) env2 (extendDecEnv localEnv sourceEnv) trace middle sourceLast midFlat
+      next1 finish next2 other n1 n2 gen1 gen2 code2 result
+      (Nat.le_trans (EvaluateHOL.evaluateDecsClockFull source middle sourceEnv locals _ localRun) clockBound) bodyRun midInvariant bodyCompiled midInv notTypeError
+      midGeneration midFuture bounded
+
 /-- Declaration forms with bounded simulations, including value declarations
 whose initializers use the bounded expression proof. -/
 inductive FactoredBoundedDec : Dec → Prop where
   | existing (dec : Dec) : FactoredScopedDec dec → FactoredBoundedDec dec
   | value (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp) :
       LocalEnvBoundedArrayExpression expr → FactoredBoundedDec (.dlet location pattern expr)
+  | module_ (moduleName : ModN) (decs : List Dec) :
+      (∀ dec, dec ∈ decs → FactoredBoundedDec dec) → FactoredBoundedDec (.dmod moduleName decs)
+  | local_ (locals body : List Dec) :
+      (∀ dec, dec ∈ locals → FactoredBoundedDec dec) →
+      (∀ dec, dec ∈ body → FactoredBoundedDec dec) → FactoredBoundedDec (.dlocal locals body)
 
-/-- Covered declarations compose under the same smaller-clock hypotheses as
-their initializer expressions. -/
+/-- Singleton simulations for recursively covered bounded declarations. -/
+theorem factoredDecBoundedIH_covered {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
+    (smallerExprs : ∀ n, n < limit → ∀ expr, LocalEnvBoundedIH (F := F) interp transform n expr)
+    (smallerDecs : ∀ n, n < limit → ∀ decs, FactoredDecBoundedIH (F := F) interp transform n decs)
+    (dec : Dec) (covered : FactoredBoundedDec dec) :
+    FactoredDecBoundedIH (F := F) interp transform limit [dec] := by
+  induction covered with
+  | existing dec covered =>
+    exact factoredDecBoundedIH_of_unbounded interp transform limit [dec] (factoredDecIH_scoped interp transform dec covered)
+  | value location pattern expr covered =>
+    exact factoredDecBoundedIH_dlet_arrayTree interp transform limit smallerExprs smallerDecs location pattern expr covered
+  | module_ moduleName decs _ ih =>
+    apply factoredDecBoundedIH_dmod interp transform limit moduleName decs
+    apply factoredDecBoundedIH_list interp transform limit decs
+    exact ih
+  | local_ locals body _ _ localIH bodyIH =>
+    apply factoredDecBoundedIH_dlocal interp transform limit locals body
+    · apply factoredDecBoundedIH_list interp transform limit locals
+      exact localIH
+    · apply factoredDecBoundedIH_list interp transform limit body
+      exact bodyIH
+
+/-- Covered declaration lists compose under smaller-clock hypotheses. -/
 theorem factoredDecBoundedIH_covered_list {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
     (smallerExprs : ∀ n, n < limit → ∀ expr, LocalEnvBoundedIH (F := F) interp transform n expr)
@@ -334,10 +477,6 @@ theorem factoredDecBoundedIH_covered_list {C F : Type} [Nonempty C]
     FactoredDecBoundedIH (F := F) interp transform limit decs := by
   apply factoredDecBoundedIH_list interp transform limit decs
   intro dec member
-  cases covered dec member with
-  | existing dec covered =>
-    exact factoredDecBoundedIH_of_unbounded interp transform limit [dec] (factoredDecIH_scoped interp transform dec covered)
-  | value location pattern expr covered =>
-    exact factoredDecBoundedIH_dlet_arrayTree interp transform limit smallerExprs smallerDecs location pattern expr covered
+  exact factoredDecBoundedIH_covered interp transform limit smallerExprs smallerDecs dec (covered dec member)
 
 end Flapjack.Compiler.Backend.SourceToFlat
