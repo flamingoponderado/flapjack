@@ -154,6 +154,21 @@ theorem aw8length_related {C F : Type} (genv : GlobalEnv)
   exact ⟨by simp [doAppBasic, lookup], by simp [FlatSem.doAppMemory, flatLookup],
     .literal genv _⟩
 
+/-- Array length agrees between related source and flat stores. -/
+theorem alength_related {C F : Type} (genv : GlobalEnv)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (statesRel : StateRel genv sourceState flatState) (flag : Bool) (n : Nat)
+    (values : List SemanticPrimitivesHOL.Value) (lookup : storeLookup n sourceState.refs = some (.varray values)) :
+    doAppBasic (sourceState.refs, sourceState.ffi) .alength [.loc flag n] =
+      some (some ((sourceState.refs, sourceState.ffi), .val (.litv (.intLit values.length)))) ∧
+    FlatSem.doAppMemory flatState .alength [.loc flag (n + 1)] =
+      some (some (flatState, .val (.litv (.intLit values.length)))) ∧
+    ValueRel genv (.litv (.intLit values.length)) (.litv (.intLit values.length)) := by
+  obtain ⟨flatValues, flatLookup, valuesRel⟩ := stateRel_array_lookup genv sourceState flatState statesRel n values lookup
+  have length := List.Forall₂.length_eq valuesRel
+  exact ⟨by simp [doAppBasic, lookup], by simp [FlatSem.doAppMemory, flatLookup, ← length],
+    .literal genv _⟩
+
 /-- A valid byte-array subscript returns the same byte in the source and flat
 states. This covers both checked and unchecked source operations. -/
 theorem aw8sub_related {C F : Type} (genv : GlobalEnv)
