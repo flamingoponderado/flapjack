@@ -137,6 +137,13 @@ def closureFuel : Nat → NumSet → Spt NumSet → Option NumSet
       if sptSize (sptDifference nodes reachable) == 0 then some reachable
       else closureFuel fuel (sptUnion reachable nodes) tree
 
+/-- Executable total closure. The target-count fuel is proved sufficient in
+`Proofs.Reachability`, which also proves equality with the source-shaped
+recursive closure; the fallback cannot be observed. -/
+@[hol "HOL/examples/algorithms/spt_closureScript.sml" "closure_spt_def"]
+def closureTotal (reachable : NumSet) (tree : Spt NumSet) : NumSet :=
+  (closureFuel (sptSize (foldUnion .ln tree) + 1) reachable tree).getD reachable
+
 open Classical in
 /-- One fuelled closure step has the same stopping and update conditions as
 the HOL closure equation. Fuel exhaustion remains a separate obligation. -/
@@ -156,14 +163,17 @@ def removeFlatProgFuel (fuel : Nat) (code : List Exp) : Option (List Exp) :=
     let (roots, tree) := analyseCode code
     (closureFuel fuel roots tree).map (fun reachable => removeUnreachable reachable code)
 
-/-- Run with a limit derived from the number of distinct dependency targets.
-`Proofs.Reachability.removeFlatProg_succeeds` proves this bound cannot be
-exhausted. Correspondence of the complete pass to HOL remains to be proved. -/
-def removeFlatProg (code : List Exp) : Option (List Exp) :=
-  if code.any hasEvalDec then some code
+/-- Total dead-code elimination in the original pass order. Its closure
+recurrence is proved in `Proofs.Reachability`; the full cross-language pass
+correspondence remains to be reviewed. -/
+@[hol "cakeml/compiler/backend/flat_elimScript.sml" "remove_flat_prog_def"]
+def removeFlatProgTotal (code : List Exp) : List Exp :=
+  if code.any hasEvalDec then code
   else
     let (roots, tree) := analyseCode code
-    let fuel := sptSize (foldUnion .ln tree) + 1
-    (closureFuel fuel roots tree).map (fun reachable => removeUnreachable reachable code)
+    removeUnreachable (closureTotal roots tree) code
+
+/-- Compatibility entry point for callers of the former bounded pass. -/
+def removeFlatProg (code : List Exp) : Option (List Exp) := some (removeFlatProgTotal code)
 
 end Flapjack.Compiler.Backend.FlatElim

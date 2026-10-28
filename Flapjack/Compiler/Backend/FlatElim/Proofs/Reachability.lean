@@ -201,15 +201,26 @@ theorem closureFuel_target_eq_closure (tree : Spt NumSet) (reachable : NumSet) :
   rw [closureFuel_eq_closure tree _ reachable result computed]
   exact computed
 
+/-- The production total closure is the source-shaped recursive closure. -/
+theorem closureTotal_eq_closure (reachable : NumSet) (tree : Spt NumSet) :
+    closureTotal reachable tree = closure reachable tree := by
+  simp [closureTotal, closureFuel_target_eq_closure]
+
+/-- Elimination executes the source-shaped closure before filtering. -/
+theorem removeFlatProgTotal_eq (code : List FlatLang.Exp) :
+    removeFlatProgTotal code =
+      if code.any hasEvalDec then code else
+        let (roots, tree) := analyseCode code
+        removeUnreachable (closure roots tree) code := by
+  simp only [removeFlatProgTotal]
+  split
+  · rfl
+  · cases analyseCode code with
+    | mk roots tree => simp [closureTotal_eq_closure]
+
 /-- Flat elimination cannot fail through exhaustion of its closure bound. -/
 theorem removeFlatProg_succeeds (code : List FlatLang.Exp) :
     ∃ result, removeFlatProg code = some result := by
-  unfold removeFlatProg
-  split
-  · exact ⟨code, rfl⟩
-  · generalize analysis : analyseCode code = pair
-    obtain ⟨roots, tree⟩ := pair
-    obtain ⟨reachable, reached⟩ := closureFuel_target_bound tree roots
-    exact ⟨removeUnreachable reachable code, by simp [reached]⟩
+  exact ⟨removeFlatProgTotal code, rfl⟩
 
 end Flapjack.Compiler.Backend.FlatElim

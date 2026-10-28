@@ -8,8 +8,8 @@ import Flapjack.Compiler.Backend.SourceToSource
 namespace Flapjack.Compiler.Backend.SourceToFlat
 
 /-- Compile declarations through program lowering, flat elimination, pattern
-compilation and closure lowering. `none` reports an exhausted bounded analysis;
-the flat-elimination proof shows that its closure bound is sufficient.
+compilation and closure lowering. The option is retained for compatibility;
+the flat-elimination closure bound is proved sufficient.
 This entry takes declarations after `source_to_source`; use
 `compileCakeToClosFuel` to include it. Proofs of subsequent closure/backend
 passes and end-to-end output parity remain open. The fuel

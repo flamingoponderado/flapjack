@@ -1,5 +1,21 @@
 [
   {
+    "hol_path": "HOL/examples/algorithms/spt_closureScript.sml",
+    "hol_name": "closure_spt_def",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Reachability.lean",
+    "lean_name": "closureTotal",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed HOL closure equation captured in flat_elim_closure_probe.out. Lean proves the executed fuelled result equals its source-shaped recursive closure; full fold and carrier correspondence review remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
+    "hol_name": "remove_flat_prog_def",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Reachability.lean",
+    "lean_name": "removeFlatProgTotal",
+    "statement_status": "pending_statement_review",
+    "reviewer": "The production path follows the original Eval guard, analysis, closure and filtering order; full cross-language carrier and dependency review remains pending."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
     "hol_name": "inc_compile_def",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/CompileProg.lean",
