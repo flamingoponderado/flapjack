@@ -48,6 +48,8 @@ inductive LocalEnvBoundedArrayExpression : AstHOL.Exp → Prop where
       LocalEnvBoundedArrayExpression (.app .configGC [left, right])
   | listAppend (left right : AstHOL.Exp) : LocalEnvBoundedArrayExpression left → LocalEnvBoundedArrayExpression right →
       LocalEnvBoundedArrayExpression (.app .listAppend [left, right])
+  | envId (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body →
+      LocalEnvBoundedArrayExpression (.app .envId [body])
   | vectorFromList (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body → LocalEnvBoundedArrayExpression (.app .vfromList [body])
   | stringImplode (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body → LocalEnvBoundedArrayExpression (.app .implode [body])
   | stringExplode (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body → LocalEnvBoundedArrayExpression (.app .explode [body])
@@ -150,6 +152,7 @@ theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
     exact localEnvBounded_configGC interp transform limit left right leftIH rightIH
   | listAppend left right _ _ leftIH rightIH =>
     exact localEnvBounded_listAppend interp transform limit left right leftIH rightIH
+  | envId body _ ih => exact localEnvBounded_envId interp transform limit body ih
   | vectorFromList body _ ih => exact localEnvBounded_vfromList interp transform limit body ih
   | stringImplode body _ ih => exact localEnvBounded_implode interp transform limit body ih
   | stringExplode body _ ih => exact localEnvBounded_explode interp transform limit body ih
