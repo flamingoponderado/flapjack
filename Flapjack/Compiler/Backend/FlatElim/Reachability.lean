@@ -1,5 +1,7 @@
 import Flapjack.Compiler.Backend.FlatElim.Analysis
 import Flapjack.Misc.Sptree.Map
+import Flapjack.Misc.Sptree.Wf
+import Flapjack.Misc.Sptree.Subspt
 
 /-! Reachability inputs and removal criterion for flatLang elimination.
 The bounded closure exposes exhaustion until its bound is proved sufficient. -/
@@ -68,6 +70,62 @@ def foldUnion (acc : NumSet) : Spt NumSet → NumSet
   | .bn l r => foldUnion (foldUnion acc l) r
   | .bs l a r => foldUnion (sptUnion a (foldUnion acc l)) r
 
+/-- A sparse tree has size zero exactly when no key can be looked up. This
+also handles noncanonical trees whose branch nodes contain no values. -/
+theorem size_eq_zero_iff_lookup_none {α : Type} (tree : Spt α) :
+    sptSize tree = 0 ↔ ∀ key, sptLookup key tree = none := by
+  induction tree with
+  | ln => simp [sptLookup]
+  | ls value =>
+    constructor
+    · simp
+    · intro empty
+      have := empty 0
+      simp [sptLookup] at this
+  | bn left right ihLeft ihRight =>
+    constructor
+    · intro zero
+      have lzero : sptSize left = 0 := by simp at zero; omega
+      have rzero : sptSize right = 0 := by simp at zero; omega
+      have lnone := ihLeft.mp lzero
+      have rnone := ihRight.mp rzero
+      intro key
+      simp [sptLookup, lnone, rnone]
+    · intro empty
+      have lnone : ∀ key, sptLookup key left = none := by
+        intro key
+        simpa [sptLookup_left_bn] using empty (2 * key + 2)
+      have rnone : ∀ key, sptLookup key right = none := by
+        intro key
+        simpa [sptLookup_right_bn] using empty (2 * key + 1)
+      simp [ihLeft.mpr lnone, ihRight.mpr rnone]
+  | bs left value right ihLeft ihRight =>
+    constructor
+    · simp
+    · intro empty
+      have := empty 0
+      simp [sptLookup] at this
+
+/-- For unit-valued trees, an empty difference has exactly the meaning of
+HOL's pointwise `subspt`, including for noncanonical sparse trees. -/
+theorem difference_size_zero_iff_subspt (nodes reachable : NumSet) :
+    sptSize (sptDifference nodes reachable) = 0 ↔ sptSubspt nodes reachable := by
+  rw [size_eq_zero_iff_lookup_none, sptSubsptLookup]
+  constructor
+  · intro empty key value found
+    have noDifference := empty key
+    rw [sptLookupDifference] at noDifference
+    cases target : sptLookup key reachable with
+    | none => simp [target, found] at noDifference
+    | some targetValue => cases value; cases targetValue; rfl
+  · intro subset key
+    rw [sptLookupDifference]
+    cases source : sptLookup key nodes with
+    | none => simp
+    | some value =>
+      have target := subset key value source
+      simp [target]
+
 /-- Execute the HOL closure iteration with an explicit limit. `none` means the
 limit was exhausted before the subset test succeeded. This is infrastructure,
 not a port of the total HOL definition: sufficiency of a chosen limit still
@@ -76,8 +134,19 @@ def closureFuel : Nat → NumSet → Spt NumSet → Option NumSet
   | 0, _, _ => none
   | fuel + 1, reachable, tree =>
       let nodes := foldUnion .ln (sptInter tree reachable)
-      if sptIsEmpty (sptDifference nodes reachable) then some reachable
+      if sptSize (sptDifference nodes reachable) == 0 then some reachable
       else closureFuel fuel (sptUnion reachable nodes) tree
+
+open Classical in
+/-- One fuelled closure step has the same stopping and update conditions as
+the HOL closure equation. Fuel exhaustion remains a separate obligation. -/
+theorem closureFuel_step (fuel : Nat) (reachable : NumSet) (tree : Spt NumSet) :
+    closureFuel (fuel + 1) reachable tree =
+      let nodes := foldUnion .ln (sptInter tree reachable)
+      if sptSubspt nodes reachable then some reachable
+      else closureFuel fuel (sptUnion reachable nodes) tree := by
+  classical
+  simp only [closureFuel, beq_iff_eq, difference_size_zero_iff_subspt]
 
 /-- Run the elimination algorithm with explicit closure fuel. `none` reports
 exhaustion; the dynamic-evaluation guard returns the original program directly.

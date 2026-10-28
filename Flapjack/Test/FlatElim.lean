@@ -93,6 +93,9 @@ private def roots : NumSet := sptInsert 1 () .ln
 #guard (closureFuel 2 roots graph).isNone
 #guard ((closureFuel 3 roots graph).bind (sptLookup 3)).isSome
 #guard (closureFuel 3 roots graph).isSome
+-- HOL's lookup-based subset test recognizes a tree with no values even when
+-- it has noncanonical empty branch nodes.
+#guard closureFuel 1 (.ls ()) (.ls (.bn .ln .ln)) == some (.ls ())
 #guard (removeFlatProgFuel 0 [eval]).isSome
 #guard (removeFlatProgFuel 0 [pureSet]).isNone
 #guard (removeFlatProg [pureSet]).map List.length == some eliminate_pure_length

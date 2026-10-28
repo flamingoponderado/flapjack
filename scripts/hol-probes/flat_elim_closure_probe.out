@@ -1,0 +1,3 @@
+closure_definition=∀(tree :sptree$num_set sptree$num_map) (reachable :sptree$num_set). closure_spt reachable tree = (let (sets :sptree$num_set sptree$num_map) = inter tree reachable; (nodes :sptree$num_set) = spt_fold (union :sptree$num_set -> sptree$num_set -> sptree$num_set) (LN :sptree$num_set) sets in if subspt nodes reachable then reachable else closure_spt (union reachable nodes) tree)
+noncanonical_subset=T
+noncanonical_closure=⦕ 0 ⦖
