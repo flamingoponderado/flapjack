@@ -22,6 +22,8 @@ inductive LocalEnvBoundedArrayExpression : AstHOL.Exp → Prop where
       LocalEnvBoundedArrayExpression (.app .eval args)
   | call (left right : AstHOL.Exp) : LocalEnvBoundedArrayExpression left → LocalEnvBoundedArrayExpression right →
       LocalEnvBoundedArrayExpression (.app .opapp [left, right])
+  | callBadArity (args : List AstHOL.Exp) : args.length ≠ 2 →
+      (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) → LocalEnvBoundedArrayExpression (.app .opapp args)
   | arrayEmpty (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body →
       LocalEnvBoundedArrayExpression (.app .aallocEmpty [body])
   | arrayFixed (args : List AstHOL.Exp) : (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) →
@@ -77,11 +79,20 @@ inductive LocalEnvBoundedArrayExpression : AstHOL.Exp → Prop where
       LocalEnvBoundedArrayExpression (.app .configGC [left, right])
   | forceThunk (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body →
       LocalEnvBoundedArrayExpression (.app (.thunkOp .forceThunk) [body])
+  | forceThunkBadArity (args : List AstHOL.Exp) : args.length ≠ 1 →
+      (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) →
+      LocalEnvBoundedArrayExpression (.app (.thunkOp .forceThunk) args)
   | allocThunk (mode : ThunkMode) (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body →
       LocalEnvBoundedArrayExpression (.app (.thunkOp (.allocThunk mode)) [body])
+  | allocThunkBadArity (mode : ThunkMode) (args : List AstHOL.Exp) : args.length ≠ 1 →
+      (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) →
+      LocalEnvBoundedArrayExpression (.app (.thunkOp (.allocThunk mode)) args)
   | updateThunk (mode : ThunkMode) (pointer value : AstHOL.Exp) :
       LocalEnvBoundedArrayExpression pointer → LocalEnvBoundedArrayExpression value →
       LocalEnvBoundedArrayExpression (.app (.thunkOp (.updateThunk mode)) [pointer, value])
+  | updateThunkBadArity (mode : ThunkMode) (args : List AstHOL.Exp) : args.length ≠ 2 →
+      (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) →
+      LocalEnvBoundedArrayExpression (.app (.thunkOp (.updateThunk mode)) args)
   | byteXor (array string : AstHOL.Exp) : LocalEnvBoundedArrayExpression array → LocalEnvBoundedArrayExpression string →
       LocalEnvBoundedArrayExpression (.app .xorAw8StrUnsafe [array, string])
   | listAppend (left right : AstHOL.Exp) : LocalEnvBoundedArrayExpression left → LocalEnvBoundedArrayExpression right →
@@ -369,6 +380,62 @@ theorem ffiExpression_covered (name : Basis.Pure.MlString.MlString) (args : List
       | nil => exact .ffi name first second firstCovered secondCovered
       | cons third rest => exact .ffiBadArity name (first :: second :: third :: rest) (by simp) each
 
+/-- Thunk allocation is covered for every operand count. -/
+theorem allocThunkExpression_covered (mode : ThunkMode) (args : List AstHOL.Exp)
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
+    LocalEnvBoundedArrayExpression (.app (.thunkOp (.allocThunk mode)) args) := by
+  cases args with
+  | nil => exact .allocThunkBadArity mode [] (by simp) each
+  | cons first rest =>
+    have firstCovered := each first (by simp)
+    cases rest with
+    | nil => exact .allocThunk mode first firstCovered
+    | cons second rest => exact .allocThunkBadArity mode (first :: second :: rest) (by simp) each
+
+/-- Thunk update is covered for every operand count. -/
+theorem updateThunkExpression_covered (mode : ThunkMode) (args : List AstHOL.Exp)
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
+    LocalEnvBoundedArrayExpression (.app (.thunkOp (.updateThunk mode)) args) := by
+  cases args with
+  | nil => exact .updateThunkBadArity mode [] (by simp) each
+  | cons first rest =>
+    have firstCovered := each first (by simp)
+    cases rest with
+    | nil => exact .updateThunkBadArity mode [first] (by simp) each
+    | cons second rest =>
+      have secondCovered := each second (by simp)
+      cases rest with
+      | nil => exact .updateThunk mode first second firstCovered secondCovered
+      | cons third rest => exact .updateThunkBadArity mode (first :: second :: third :: rest) (by simp) each
+
+/-- Function applications are covered for every operand count. -/
+theorem callExpression_covered (args : List AstHOL.Exp)
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
+    LocalEnvBoundedArrayExpression (.app .opapp args) := by
+  cases args with
+  | nil => exact .callBadArity [] (by simp) each
+  | cons first rest =>
+    have firstCovered := each first (by simp)
+    cases rest with
+    | nil => exact .callBadArity [first] (by simp) each
+    | cons second rest =>
+      have secondCovered := each second (by simp)
+      cases rest with
+      | nil => exact .call first second firstCovered secondCovered
+      | cons third rest => exact .callBadArity (first :: second :: third :: rest) (by simp) each
+
+/-- Thunk forcing is covered for every operand count. -/
+theorem forceThunkExpression_covered (args : List AstHOL.Exp)
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
+    LocalEnvBoundedArrayExpression (.app (.thunkOp .forceThunk) args) := by
+  cases args with
+  | nil => exact .forceThunkBadArity [] (by simp) each
+  | cons first rest =>
+    have firstCovered := each first (by simp)
+    cases rest with
+    | nil => exact .forceThunk first firstCovered
+    | cons second rest => exact .forceThunkBadArity (first :: second :: rest) (by simp) each
+
 /-- Covered expressions satisfy the preliminary arbitrary-local hypothesis;
 the relations remain pending HOL correspondence review. -/
 theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
@@ -390,6 +457,7 @@ theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
   | eval args _ ih => exact localEnvBounded_eval interp transform limit decsIH args ih
   | call left right _ _ leftIH rightIH =>
     exact localEnvBounded_opapp interp transform limit calledIH left right leftIH rightIH
+  | callBadArity args badArity _ ih => exact localEnvBounded_opapp_badArity interp transform limit args badArity ih
   | arrayEmpty body _ ih => exact localEnvBounded_aallocEmpty interp transform limit body ih
   | arrayFixed args _ ih => exact localEnvBounded_aallocFixed interp transform limit args ih
   | arrayAlloc size value _ _ sizeIH valueIH => exact localEnvBounded_aalloc interp transform limit size value sizeIH valueIH
@@ -431,9 +499,15 @@ theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
   | configGC left right _ _ leftIH rightIH =>
     exact localEnvBounded_configGC interp transform limit left right leftIH rightIH
   | forceThunk body _ ih => exact localEnvBounded_forceThunk interp transform limit calledIH body ih
+  | forceThunkBadArity args badArity _ ih =>
+    exact localEnvBounded_forceThunk_badArity interp transform limit args badArity ih
   | allocThunk mode body _ ih => exact localEnvBounded_allocThunk interp transform limit mode body ih
+  | allocThunkBadArity mode args badArity _ ih =>
+    exact localEnvBounded_allocThunk_badArity interp transform limit mode args badArity ih
   | updateThunk mode pointer value _ _ pointerIH valueIH =>
     exact localEnvBounded_updateThunk interp transform limit mode pointer value pointerIH valueIH
+  | updateThunkBadArity mode args badArity _ ih =>
+    exact localEnvBounded_updateThunk_badArity interp transform limit mode args badArity ih
   | byteXor array string _ _ arrayIH stringIH =>
     exact localEnvBounded_xorAw8StrUnsafe interp transform limit array string arrayIH stringIH
   | listAppend left right _ _ leftIH rightIH =>
