@@ -293,4 +293,40 @@ theorem floatUnary_related {C F : Type} (genv : GlobalEnv)
     FlatSem.flatToValue, FlatSem.valueToFlat]
   all_goals exact ResultRel.value (.literal genv _)
 
+
+/-- A successful binary floating-point application has two float literals. -/
+theorem floatBinary_operands {F : Type} (source : SemanticPrimitivesHOL.State F)
+    (action : Arith) (first second : SemanticPrimitivesHOL.Value)
+    (successful : doApp (source.refs, source.ffi) (.arith action .float64T) [first, second] ≠ none) :
+    ∃ left right, [first, second] = [.litv (.float64 left), .litv (.float64 right)] := by
+  cases first with
+  | litv firstLit =>
+    cases firstLit with
+    | float64 left =>
+      cases second with
+      | litv secondLit =>
+        cases secondLit with
+        | float64 right => exact ⟨left, right, rfl⟩
+        | _ => cases action <;> simp [doApp, floatArith] at successful
+      | _ => cases action <;> simp [doApp, floatArith] at successful
+    | _ => cases action <;> simp [doApp, floatArith] at successful
+  | _ => cases action <;> simp [doApp, floatArith] at successful
+
+/-- Binary floating-point primitives preserve the factored value relation. -/
+theorem floatBinary_related {C F : Type} (genv : GlobalEnv)
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (action : Arith) (left right : BitVec 64) :
+    match doApp (source.refs, source.ffi) (.arith action .float64T)
+        [.litv (.float64 left), .litv (.float64 right)],
+      FlatSem.doAppNumeric flat (.arith action .float64T)
+        [.litv (.float64 left), .litv (.float64 right)] with
+    | none, some none => True
+    | some ((refs, ffi), sourceResult), some (some (flatNext, flatResult)) =>
+        refs = source.refs ∧ ffi = source.ffi ∧ flatNext = flat ∧
+          ResultRel ValueRel genv sourceResult flatResult
+    | _, _ => False := by
+  cases action <;> simp [doApp, floatArith, FlatSem.doAppNumeric,
+    FlatSem.applyNumericProjection, FlatSem.flatToValue, FlatSem.valueToFlat]
+  all_goals exact ResultRel.value (.literal genv _)
+
 end Flapjack.Compiler.Backend.SourceToFlat

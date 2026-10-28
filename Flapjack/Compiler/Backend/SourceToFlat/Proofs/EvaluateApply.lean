@@ -878,6 +878,137 @@ theorem exprSim_word64Arith {C F : Type} (genv : GlobalEnv) (compMap : Environme
                               simp only [EvaluateHOL.listResult]
                               exact ⟨.abort error, nextRel⟩
 
+/-- Binary floating-point arithmetic preserves the factored simulation. -/
+theorem exprSim_floatBinary {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
+    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F)
+    (left right : AstHOL.Exp) (action : Arith)
+    (argsSim : ExprListSim genv compMap trace sourceEnv flatEnv sourceState flatState [right, left])
+    (notTypeError : ∀ next, EvaluateHOL.evaluate sourceState sourceEnv [.app (.arith action .float64T) [left, right]] ≠
+      (next, .err (.abort .typeError))) :
+    ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.app (.arith action .float64T) [left, right]) := by
+  unfold ExprListSim at argsSim
+  simp only [compileExps] at argsSim
+  cases sourceRun : EvaluateHOL.evaluate sourceState sourceEnv [right, left] with
+  | mk sourceNext sourceResult =>
+    rw [sourceRun] at argsSim
+    cases flatRun : FlatSem.evaluate flatEnv flatState [compileExp trace compMap right, compileExp trace compMap left] with
+    | mk flatNext flatResult =>
+      rw [flatRun] at argsSim
+      obtain ⟨related, nextRel⟩ := argsSim
+      cases sourceResult with
+      | err error =>
+        cases error with
+        | raise errorValue =>
+          cases related with
+          | raise rightRel =>
+            unfold ExprSim
+            rw [EvaluateHOL.evaluate]
+            simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+            rw [(EvaluateHOL.fixClockEvaluate sourceState sourceEnv [right, left] []).1, sourceRun]
+            simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+            rw [FlatSem.evaluate]
+            simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+            rw [(FlatSem.fixClock_evaluations flatEnv flatState
+              [compileExp trace compMap right, compileExp trace compMap left]
+              (FlatLang.Exp.lit .none (.float64 0)) []).1, flatRun]
+            exact ⟨.raise rightRel, nextRel⟩
+        | abort error =>
+          cases related with
+          | abort =>
+            unfold ExprSim
+            rw [EvaluateHOL.evaluate]
+            simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+            rw [(EvaluateHOL.fixClockEvaluate sourceState sourceEnv [right, left] []).1, sourceRun]
+            simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+            rw [FlatSem.evaluate]
+            simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+            rw [(FlatSem.fixClock_evaluations flatEnv flatState
+              [compileExp trace compMap right, compileExp trace compMap left]
+              (FlatLang.Exp.lit .none (.float64 0)) []).1, flatRun]
+            exact ⟨.abort error, nextRel⟩
+      | val values =>
+        have length := EvaluateProps.evaluateLengthFull sourceState sourceNext sourceEnv [right, left] values sourceRun
+        have two : ∃ v p, values = [v, p] := by
+          cases values with
+          | nil => simp at length
+          | cons v tail =>
+            cases tail with
+            | nil => simp at length
+            | cons p rest =>
+              cases rest with
+              | nil => exact ⟨v, p, rfl⟩
+              | cons q rest => simp at length
+        obtain ⟨sourceRight, sourceLeft, rfl⟩ := two
+        cases related with
+        | value valuesRel =>
+          cases valuesRel with
+          | cons rightRel tail =>
+            cases tail with
+            | cons leftRel tail =>
+              cases tail with
+              | nil =>
+                rename_i flatRight flatLeft
+                have successful : doApp (sourceNext.refs, sourceNext.ffi) (.arith action .float64T)
+                    [sourceLeft, sourceRight] ≠ none := by
+                  intro failed
+                  apply notTypeError sourceNext
+                  rw [EvaluateHOL.evaluate]
+                  simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+                  rw [(EvaluateHOL.fixClockEvaluate sourceState sourceEnv [right, left] []).1, sourceRun]
+                  simp [getOpClass, failed, EvaluateHOL.typeError]
+                obtain ⟨leftWord, rightWord, operands⟩ :=
+                  floatBinary_operands sourceNext action sourceLeft sourceRight successful
+                simp only [List.cons.injEq] at operands
+                obtain ⟨rfl, rfl, _⟩ := operands
+                have flatLeftEq := (valueRel_literal_iff genv (.float64 leftWord) flatLeft).mp leftRel
+                have flatRightEq := (valueRel_literal_iff genv (.float64 rightWord) flatRight).mp rightRel
+                subst flatLeft
+                subst flatRight
+                have sim := floatBinary_related genv sourceNext flatNext action leftWord rightWord
+                cases sourceApp : doApp (sourceNext.refs, sourceNext.ffi) (.arith action .float64T)
+                    [.litv (.float64 leftWord), .litv (.float64 rightWord)] with
+                | none => exact (successful sourceApp).elim
+                | some sourceOut =>
+                  cases sourceOut with
+                  | mk store sourceResult =>
+                    cases store with
+                    | mk refs ffi =>
+                      cases flatApp : FlatSem.doAppNumeric flatNext (.arith action .float64T)
+                          [.litv (.float64 leftWord), .litv (.float64 rightWord)] with
+                      | none => simp [sourceApp, flatApp] at sim
+                      | some flatOut =>
+                        cases flatOut with
+                        | none => simp [sourceApp, flatApp] at sim
+                        | some flatOut =>
+                          cases flatOut with
+                          | mk flatAfter flatResult =>
+                            simp only [sourceApp, flatApp] at sim
+                            obtain ⟨rfl, rfl, rfl, resultRel⟩ := sim
+                            unfold ExprSim
+                            rw [EvaluateHOL.evaluate]
+                            simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+                            rw [(EvaluateHOL.fixClockEvaluate sourceState sourceEnv [right, left] []).1, sourceRun]
+                            simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+                            rw [FlatSem.evaluate]
+                            simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+                            rw [(FlatSem.fixClock_evaluations flatEnv flatState
+                              [compileExp trace compMap right, compileExp trace compMap left]
+                              (FlatLang.Exp.lit .none (.float64 0)) []).1, flatRun]
+                            simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append,
+                              getOpClass, astOpToFlatOp, sourceApp, FlatSem.applyResult,
+                              FlatSem.doApp, flatApp]
+                            cases resultRel with
+                            | value valueRel =>
+                              simp only [EvaluateHOL.listResult]
+                              exact ⟨.value (.cons valueRel .nil), nextRel⟩
+                            | raise valueRel =>
+                              simp only [EvaluateHOL.listResult]
+                              exact ⟨.raise valueRel, nextRel⟩
+                            | abort error =>
+                              simp only [EvaluateHOL.listResult]
+                              exact ⟨.abort error, nextRel⟩
+
 /-- Word8 shift expression simulation, including operand errors, for the
 preliminary source-to-flat relations. -/
 theorem exprSim_word8Shift {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)

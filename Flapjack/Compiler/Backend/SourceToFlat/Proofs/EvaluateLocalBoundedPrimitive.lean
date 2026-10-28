@@ -767,6 +767,146 @@ theorem localEnvBounded_word64Arith {C F : Type} [Nonempty C]
                       | abort error => simp [EvaluateHOL.listResult]
 
 
+/-- Binary floating-point arithmetic preserves the factored simulation. -/
+theorem localEnvBounded_floatBinary {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
+    (action : Arith) (left right : AstHOL.Exp)
+    (leftIH : LocalEnvBoundedIH (F := F) interp transform limit left)
+    (rightIH : LocalEnvBoundedIH (F := F) interp transform limit right) :
+    LocalEnvBoundedIH (F := F) interp transform limit (.app (.arith action .float64T) [left, right]) := by
+  intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen clockBound localRel envInv tracesLen invariant generation safe
+  let sourceEnv := { baseEnv with v := nsAppend sourceLocal baseEnv.v }
+  let compMap := { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v }
+  have argsSafe : ∀ last, EvaluateHOL.evaluate source sourceEnv [right, left] ≠
+      (last, .err (.abort .typeError)) := by
+    intro last bad
+    apply safe last
+    change EvaluateHOL.evaluate source sourceEnv [.app (.arith action .float64T) [left, right]] = _
+    rw [EvaluateHOL.evaluate]
+    simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+    rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [right, left] []).1, bad]
+  obtain ⟨nextGenv, argsSim, post⟩ := boundedEnvListStep_of_each interp transform limit [right, left]
+    (by intro expr member; simp only [List.mem_cons, List.not_mem_nil, or_false] at member; rcases member with rfl | rfl <;> assumption)
+    genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen clockBound localRel envInv tracesLen invariant generation argsSafe
+  have argsSimCopy := argsSim
+  unfold ExprListSim at argsSim
+  simp only [compileExps] at argsSim post
+  generalize sourceRun : EvaluateHOL.evaluate source sourceEnv [right, left] = sourceResult at argsSim post
+  obtain ⟨nextSource, sourceResult⟩ := sourceResult
+  generalize flatRun : FlatSem.evaluate flatEnv flat [compileExp trace compMap right, compileExp trace compMap left] = flatResult at argsSim post
+  obtain ⟨nextFlat, flatResult⟩ := flatResult
+  obtain ⟨related, states⟩ := argsSim
+  cases related with
+  | abort error =>
+    refine ⟨nextGenv, ?_, ?_⟩
+    · unfold ExprSim
+      rw [EvaluateHOL.evaluate]
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+      rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [right, left] []).1, sourceRun]
+      simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+      rw [FlatSem.evaluate]
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+      rw [(FlatSem.fixClock_evaluations flatEnv flat
+        [compileExp trace compMap right, compileExp trace compMap left]
+        (FlatLang.Exp.lit .none (.float64 0)) []).1, flatRun]
+      exact ⟨.abort error, states⟩
+    · rw [EvaluateHOL.evaluate]
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+      rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [right, left] []).1, sourceRun]
+      trivial
+  | raise valueRel =>
+    obtain ⟨growth, nextInvariant, nextGeneration, forward⟩ := post
+    refine ⟨nextGenv, exprSim_floatBinary nextGenv compMap trace sourceEnv flatEnv source flat left right action
+      argsSimCopy safe, ?_⟩
+    rw [EvaluateHOL.evaluate]
+    simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+    rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [right, left] []).1, sourceRun]
+    simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+    rw [FlatSem.evaluate]
+    simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+    rw [(FlatSem.fixClock_evaluations flatEnv flat
+      [compileExp trace compMap right, compileExp trace compMap left]
+      (FlatLang.Exp.lit .none (.float64 0)) []).1, flatRun]
+    exact ⟨growth, nextInvariant, nextGeneration, forward⟩
+  | @value sourceValues flatValues valuesRel =>
+    have length := EvaluateProps.evaluateLengthFull source nextSource sourceEnv [right, left] sourceValues sourceRun
+    have two : ∃ v p, sourceValues = [v, p] := by
+      cases sourceValues with
+      | nil => simp at length
+      | cons v tail =>
+        cases tail with
+        | nil => simp at length
+        | cons p rest =>
+          cases rest with
+          | nil => exact ⟨v, p, rfl⟩
+          | cons q rest => simp at length
+    obtain ⟨sourceRight, sourceLeft, rfl⟩ := two
+    cases valuesRel with
+    | cons rightRel tail =>
+      cases tail with
+      | cons leftRel tail =>
+        cases tail with
+        | nil =>
+          rename_i flatRight flatLeft
+          obtain ⟨growth, nextInvariant, nextGeneration, forward⟩ := post
+          have successful : doApp (nextSource.refs, nextSource.ffi) (.arith action .float64T)
+              [sourceLeft, sourceRight] ≠ none := by
+            intro failed
+            apply safe nextSource
+            rw [EvaluateHOL.evaluate]
+            simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+            rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [right, left] []).1, sourceRun]
+            simp [getOpClass, failed, EvaluateHOL.typeError]
+          obtain ⟨leftWord, rightWord, operands⟩ := floatBinary_operands nextSource action sourceLeft sourceRight successful
+          simp only [List.cons.injEq] at operands
+          obtain ⟨rfl, rfl, _⟩ := operands
+          have flatLeftEq := (valueRel_literal_iff nextGenv (.float64 leftWord) flatLeft).mp leftRel
+          have flatRightEq := (valueRel_literal_iff nextGenv (.float64 rightWord) flatRight).mp rightRel
+          subst flatLeft
+          subst flatRight
+          have primitive := floatBinary_related nextGenv nextSource nextFlat action leftWord rightWord
+          cases sourceApp : doApp (nextSource.refs, nextSource.ffi) (.arith action .float64T)
+              [.litv (.float64 leftWord), .litv (.float64 rightWord)] with
+          | none => exact (successful sourceApp).elim
+          | some sourceOut =>
+            cases sourceOut with
+            | mk store sourceResult =>
+              cases store with
+              | mk refs ffi =>
+                cases flatApp : FlatSem.doAppNumeric nextFlat (.arith action .float64T)
+                    [.litv (.float64 leftWord), .litv (.float64 rightWord)] with
+                | none => simp [sourceApp, flatApp] at primitive
+                | some flatOut =>
+                  cases flatOut with
+                  | none => simp [sourceApp, flatApp] at primitive
+                  | some flatOut =>
+                    cases flatOut with
+                    | mk flatAfter flatResult =>
+                      simp only [sourceApp, flatApp] at primitive
+                      obtain ⟨rfl, rfl, rfl, resultRel⟩ := primitive
+                      refine ⟨nextGenv, exprSim_floatBinary nextGenv compMap trace sourceEnv flatEnv source flat
+                        left right action argsSimCopy safe, ?_⟩
+                      rw [EvaluateHOL.evaluate]
+                      simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+                      rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [right, left] []).1, sourceRun]
+                      simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+                      rw [FlatSem.evaluate]
+                      simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+                      rw [(FlatSem.fixClock_evaluations flatEnv flat
+                        [compileExp trace compMap right, compileExp trace compMap left]
+                        (FlatLang.Exp.lit .none (.float64 0)) []).1, flatRun]
+                      simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append,
+                        getOpClass, astOpToFlatOp, sourceApp, FlatSem.applyResult, FlatSem.doApp, flatApp]
+                      cases resultRel with
+                      | value valueRel =>
+                        simpa [EvaluateHOL.listResult] using And.intro growth (And.intro nextInvariant
+                          (And.intro nextGeneration forward))
+                      | raise valueRel =>
+                        simpa [EvaluateHOL.listResult] using And.intro growth (And.intro nextInvariant
+                          (And.intro nextGeneration forward))
+                      | abort error => simp [EvaluateHOL.listResult]
+
+
 /-- Word8 shifts compose a growing operand simulation in a local environment. -/
 theorem localEnvBounded_word8Shift {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
