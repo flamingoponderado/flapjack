@@ -135,6 +135,98 @@ theorem localEnvBounded_comparison_badArity {C F : Type} [Nonempty C]
       | nil => simp at bad
       | cons third rest => cases test <;> simp [op, doApp, doAppNumericCore, doAppBasic]
 
+/-- Arithmetic operators take at least one and at most three operands. This
+case preserves argument errors even when the operand count is outside that
+range. More precise arities depend on the primitive type. -/
+theorem localEnvBounded_arith_extremeArity {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
+    (action : Arith) (typ : PrimType) (args : List AstHOL.Exp)
+    (badArity : args.length = 0 ∨ 3 < args.length)
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedIH (F := F) interp transform limit expr) :
+    LocalEnvBoundedIH (F := F) interp transform limit (.app (.arith action typ) args) := by
+  apply localEnvBounded_rejectedSimple interp transform limit (.arith action typ) args rfl
+    (by simp) (by simp) (by simp) _ each
+  intro state values length
+  have bad : values.length = 0 ∨ 3 < values.length := by simpa [length] using badArity
+  cases values with
+  | nil => cases typ <;> (try cases ‹WordSize›) <;> cases action <;>
+      simp [doApp, doAppNumericCore, floatArith]
+  | cons first rest =>
+    cases rest with
+    | nil => simp at bad
+    | cons second rest =>
+      cases rest with
+      | nil => simp at bad
+      | cons third rest =>
+        cases rest with
+        | nil => simp at bad
+        | cons fourth rest =>
+          cases typ <;> (try cases ‹WordSize›) <;> cases action <;>
+            simp [doApp, doAppNumericCore, floatArith]
+
+/-- Integer and word arithmetic reject every non-binary operand list. -/
+theorem localEnvBounded_intWordArith_badArity {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
+    (action : Arith) (size : Option WordSize) (args : List AstHOL.Exp) (badArity : args.length ≠ 2)
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedIH (F := F) interp transform limit expr) :
+    LocalEnvBoundedIH (F := F) interp transform limit
+      (.app (.arith action (match size with | none => .intT | some w => .wordT w)) args) := by
+  let typ := match size with | none => PrimType.intT | some w => PrimType.wordT w
+  change LocalEnvBoundedIH (F := F) interp transform limit (.app (.arith action typ) args)
+  apply localEnvBounded_rejectedSimple interp transform limit (.arith action typ) args rfl
+    (by simp) (by simp) (by simp) _ each
+  intro state values length
+  have bad : values.length ≠ 2 := by simpa [length] using badArity
+  cases values with
+  | nil => cases size <;> simp [typ, doApp, doAppNumericCore]
+  | cons first rest =>
+    cases rest with
+    | nil => cases size <;> simp [typ, doApp, doAppNumericCore]
+    | cons second rest =>
+      cases rest with
+      | nil => simp at bad
+      | cons third rest => cases size <;> simp [typ, doApp, doAppNumericCore]
+
+/-- Boolean arithmetic rejects every non-unary operand list. -/
+theorem localEnvBounded_boolArith_badArity {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
+    (action : Arith) (args : List AstHOL.Exp) (badArity : args.length ≠ 1)
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedIH (F := F) interp transform limit expr) :
+    LocalEnvBoundedIH (F := F) interp transform limit (.app (.arith action .boolT) args) := by
+  apply localEnvBounded_rejectedSimple interp transform limit (.arith action .boolT) args rfl
+    (by simp) (by simp) (by simp) _ each
+  intro state values length
+  have bad : values.length ≠ 1 := by simpa [length] using badArity
+  cases values with
+  | nil => cases action <;> simp [doApp, doAppNumericCore]
+  | cons first rest =>
+    cases rest with
+    | nil => simp at bad
+    | cons second rest => cases action <;> simp [doApp, doAppNumericCore]
+
+/-- Only fused multiply-add accepts three floating-point operands. -/
+theorem localEnvBounded_floatTernary_nonFma {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
+    (action : Arith) (args : List AstHOL.Exp) (notFma : action ≠ .fma) (arity : args.length = 3)
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedIH (F := F) interp transform limit expr) :
+    LocalEnvBoundedIH (F := F) interp transform limit (.app (.arith action .float64T) args) := by
+  apply localEnvBounded_rejectedSimple interp transform limit (.arith action .float64T) args rfl
+    (by simp) (by simp) (by simp) _ each
+  intro state values length
+  have count : values.length = 3 := by simpa [length] using arity
+  cases values with
+  | nil => simp at count
+  | cons first rest =>
+    cases rest with
+    | nil => simp at count
+    | cons second rest =>
+      cases rest with
+      | nil => simp at count
+      | cons third rest =>
+        cases rest with
+        | cons fourth rest => simp at count
+        | nil => cases action <;> simp [doApp, floatArith] at notFma ⊢
+
 /-- Compose localEnvBounded_tuple over arbitrary related local environments. -/
 theorem localEnvBounded_tuple {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)

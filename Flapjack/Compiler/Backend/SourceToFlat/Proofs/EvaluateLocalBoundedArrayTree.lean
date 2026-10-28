@@ -107,11 +107,25 @@ inductive LocalEnvBoundedArrayExpression : AstHOL.Exp → Prop where
       LocalEnvBoundedArrayExpression first → LocalEnvBoundedArrayExpression second →
       LocalEnvBoundedArrayExpression third →
       LocalEnvBoundedArrayExpression (.app (.arith .fma .float64T) [first, second, third])
+  | floatTernaryNonFma (action : Arith) (args : List AstHOL.Exp) :
+      action ≠ .fma → args.length = 3 → (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) →
+      LocalEnvBoundedArrayExpression (.app (.arith action .float64T) args)
   | floatBinary (action : Arith) (left right : AstHOL.Exp) :
       LocalEnvBoundedArrayExpression left → LocalEnvBoundedArrayExpression right →
       LocalEnvBoundedArrayExpression (.app (.arith action .float64T) [left, right])
   | floatUnary (action : Arith) (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body →
       LocalEnvBoundedArrayExpression (.app (.arith action .float64T) [body])
+  | arithExtremeArity (action : Arith) (typ : PrimType) (args : List AstHOL.Exp) :
+      (args.length = 0 ∨ 3 < args.length) →
+      (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) →
+      LocalEnvBoundedArrayExpression (.app (.arith action typ) args)
+  | intWordArithBadArity (action : Arith) (size : Option WordSize) (args : List AstHOL.Exp) :
+      args.length ≠ 2 → (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) →
+      LocalEnvBoundedArrayExpression
+        (.app (.arith action (match size with | none => .intT | some w => .wordT w)) args)
+  | boolArithBadArity (action : Arith) (args : List AstHOL.Exp) :
+      args.length ≠ 1 → (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) →
+      LocalEnvBoundedArrayExpression (.app (.arith action .boolT) args)
   | integerArith (action : Arith) (left right : AstHOL.Exp) :
       LocalEnvBoundedArrayExpression left → LocalEnvBoundedArrayExpression right →
       LocalEnvBoundedArrayExpression (.app (.arith action .intT) [left, right])
@@ -239,9 +253,17 @@ theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
   | booleanNot body _ ih => exact localEnvBounded_booleanNot interp transform limit body ih
   | floatFma first second third _ _ _ firstIH secondIH thirdIH =>
     exact localEnvBounded_floatFma interp transform limit first second third firstIH secondIH thirdIH
+  | floatTernaryNonFma action args notFma arity _ ih =>
+    exact localEnvBounded_floatTernary_nonFma interp transform limit action args notFma arity ih
   | floatBinary action left right _ _ leftIH rightIH =>
     exact localEnvBounded_floatBinary interp transform limit action left right leftIH rightIH
   | floatUnary action body _ ih => exact localEnvBounded_floatUnary interp transform limit body action ih
+  | arithExtremeArity action typ args badArity _ ih =>
+    exact localEnvBounded_arith_extremeArity interp transform limit action typ args badArity ih
+  | intWordArithBadArity action size args badArity _ ih =>
+    exact localEnvBounded_intWordArith_badArity interp transform limit action size args badArity ih
+  | boolArithBadArity action args badArity _ ih =>
+    exact localEnvBounded_boolArith_badArity interp transform limit action args badArity ih
   | integerArith action left right _ _ leftIH rightIH =>
     exact localEnvBounded_integerArith interp transform limit action left right leftIH rightIH
   | word8Arith action left right _ _ leftIH rightIH =>
