@@ -5,6 +5,44 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open OracleInvariant
 
+/-- Sequencing expressions with anonymous lets propagates the same first
+error as evaluating the expression list. This is flat-evaluator infrastructure. -/
+theorem flatFoldLets_error {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+    (expressions : List FlatLang.Exp) (body : FlatLang.Exp) (state last : FlatSem.State C F)
+    (error : ErrorResult FlatSem.Value)
+    (run : FlatSem.evaluate env state expressions = (last, .err error)) :
+    FlatSem.evaluate env state [expressions.foldr (FlatLang.Exp.let_ .none none) body] =
+      (last, .err error) := by
+  induction expressions generalizing state with
+  | nil => simp [FlatSem.evaluate] at run
+  | cons first rest ih =>
+    cases rest with
+    | nil =>
+      simp only [List.foldr_cons, List.foldr_nil]
+      rw [FlatSem.evaluate, (FlatSem.fixClock_evaluations env state [first] body []).1, run]
+    | cons second tail =>
+      rw [FlatSem.evaluate, (FlatSem.fixClock_evaluations env state [first] body []).1] at run
+      generalize headRun : FlatSem.evaluate env state [first] = headResult at run
+      obtain ⟨middle, headResult⟩ := headResult
+      cases headResult with
+      | err headError =>
+        simp only [Prod.mk.injEq, Result.err.injEq] at run
+        obtain ⟨rfl, rfl⟩ := run
+        simp only [List.foldr_cons]
+        rw [FlatSem.evaluate, (FlatSem.fixClock_evaluations env state [first] body []).1, headRun]
+      | val values =>
+        cases tailRun : FlatSem.evaluate env middle (second :: tail) with
+        | mk next result =>
+          rw [tailRun] at run
+          cases result with
+          | val values => cases run
+          | err tailError =>
+            simp only [Prod.mk.injEq, Result.err.injEq] at run
+            obtain ⟨rfl, rfl⟩ := run
+            simp only [List.foldr_cons]
+            rw [FlatSem.evaluate, (FlatSem.fixClock_evaluations env state [first] body []).1, headRun]
+            exact ih middle tailRun
+
 /-- Fixed array allocation evaluates its fields right-to-left, restores the
 source field order, and preserves the reserved flat store entry. -/
 theorem localEnvBounded_aallocFixed {C F : Type} [Nonempty C]
@@ -2054,5 +2092,73 @@ theorem localEnvBounded_aallocEmpty {C F : Type} [Nonempty C]
             FlatSem.fixClock, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
             FlatSem.applyResult, EvaluateHOL.listResult] using
             And.intro growth (And.intro finalInvariant (And.intro nextGeneration forward))
+
+/-- Malformed empty-array allocation propagates operand errors through the generated lets. -/
+theorem localEnvBounded_aallocEmpty_badArity {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
+    (args : List AstHOL.Exp) (badArity : args.length ≠ 1)
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedIH (F := F) interp transform limit expr) :
+    LocalEnvBoundedIH (F := F) interp transform limit (.app .aallocEmpty args) := by
+  intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen clockBound localRel envInv tracesLen invariant generation safe
+  let sourceEnv := { baseEnv with v := nsAppend sourceLocal baseEnv.v }
+  let compMap := { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v }
+  have compiled : compileExp trace compMap (.app .aallocEmpty args) =
+      (compileExps trace compMap args).reverse.foldr (FlatLang.Exp.let_ .none none)
+        (.app .none (.src .aalloc) [.lit .none (.intLit 0), .lit .none (.intLit 0)]) := rfl
+  have argsSafe : ∀ last, EvaluateHOL.evaluate source sourceEnv args.reverse ≠ (last, .err (.abort .typeError)) := by
+    intro last bad
+    apply safe last
+    change EvaluateHOL.evaluate source sourceEnv [.app .aallocEmpty args] = _
+    rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv args.reverse []).1, bad]
+  obtain ⟨nextGenv, argsSim, post⟩ := boundedEnvListStep_of_each interp transform limit args.reverse
+    (fun expr member => each expr (List.mem_reverse.mp member)) genv start finish other source flat baseEnv sourceLocal flatEnv traces
+    trace baseMap gen clockBound localRel envInv tracesLen invariant generation argsSafe
+  unfold ExprListSim at argsSim
+  rw [compileExps_reverse] at argsSim post
+  generalize sourceRun : EvaluateHOL.evaluate source sourceEnv args.reverse = sourceResult at argsSim post
+  obtain ⟨sourceNext, sourceResult⟩ := sourceResult
+  generalize flatRun : FlatSem.evaluate flatEnv flat (compileExps trace compMap args).reverse = flatResult at argsSim post
+  obtain ⟨flatNext, flatResult⟩ := flatResult
+  obtain ⟨resultRel, states⟩ := argsSim
+  cases resultRel with
+  | abort error =>
+    refine ⟨nextGenv, ?_, ?_⟩
+    · unfold ExprSim
+      rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv args.reverse []).1, sourceRun]
+      rw [compiled]
+      rw [flatFoldLets_error flatEnv (compileExps trace compMap args).reverse
+        (.app .none (.src .aalloc) [.lit .none (.intLit 0), .lit .none (.intLit 0)]) flat flatNext _ flatRun]
+      exact ⟨.abort error, states⟩
+    · rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv args.reverse []).1, sourceRun]
+      trivial
+  | raise related =>
+    refine ⟨nextGenv, ?_, ?_⟩
+    · unfold ExprSim
+      rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv args.reverse []).1, sourceRun]
+      rw [compiled]
+      rw [flatFoldLets_error flatEnv (compileExps trace compMap args).reverse
+        (.app .none (.src .aalloc) [.lit .none (.intLit 0), .lit .none (.intLit 0)]) flat flatNext _ flatRun]
+      exact ⟨.raise related, states⟩
+    · rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv args.reverse []).1, sourceRun]
+      rw [compiled]
+      rw [flatFoldLets_error flatEnv (compileExps trace compMap args).reverse
+        (.app .none (.src .aalloc) [.lit .none (.intLit 0), .lit .none (.intLit 0)]) flat flatNext _ flatRun]
+      exact post
+  | @value sourceValues flatValues related =>
+    have length := EvaluateProps.evaluateLengthFull source sourceNext sourceEnv args.reverse sourceValues sourceRun
+    have bad : sourceValues.reverse.length ≠ 1 := by simpa [length] using badArity
+    have rejected : doApp (sourceNext.refs, sourceNext.ffi) .aallocEmpty sourceValues.reverse = none := by
+      cases vals : sourceValues.reverse with
+      | nil => simp [doApp, doAppNumericCore, doAppBasic]
+      | cons first rest =>
+        cases rest with
+        | nil => simp [vals] at bad
+        | cons second rest => simp [doApp, doAppNumericCore, doAppBasic]
+    apply False.elim
+    apply safe sourceNext
+    change EvaluateHOL.evaluate source sourceEnv [.app .aallocEmpty args] = _
+    rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv args.reverse []).1, sourceRun]
+    simp [getOpClass, rejected, EvaluateHOL.typeError]
+
 
 end Flapjack.Compiler.Backend.SourceToFlat

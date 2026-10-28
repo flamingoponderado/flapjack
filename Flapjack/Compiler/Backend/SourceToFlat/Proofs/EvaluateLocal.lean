@@ -445,6 +445,23 @@ inductive FactoredBoundedDec : Dec → Prop where
       (∀ dec, dec ∈ locals → FactoredBoundedDec dec) →
       (∀ dec, dec ∈ body → FactoredBoundedDec dec) → FactoredBoundedDec (.dlocal locals body)
 
+/-- Every source declaration has a structural bounded-coverage derivation. -/
+theorem allDeclarations_covered : (dec : Dec) → FactoredBoundedDec dec
+  | .dlet location pattern expr => .value location pattern expr (allExpressions_covered expr)
+  | .dletrec location funs => .existing _ (.basic _ (.letrec location funs))
+  | .dtype location types => .existing _ (.datatype_ location types)
+  | .dtabbrev location vars name typ => .existing _ (.basic _ (.tabbrev location vars name typ))
+  | .dexn location name types => .existing _ (.exception_ location name types)
+  | .dmod name decs => .module_ name decs (fun dec _member => allDeclarations_covered dec)
+  | .dlocal locals body => .local_ locals body
+      (fun dec _member => allDeclarations_covered dec) (fun dec _member => allDeclarations_covered dec)
+  | .denv name => .existing _ (.basic _ (.denv name))
+termination_by dec => sizeOf dec
+decreasing_by
+  all_goals simp_wf
+  all_goals have h := List.sizeOf_lt_of_mem _member
+  all_goals omega
+
 /-- Singleton simulations for recursively covered bounded declarations. -/
 theorem factoredDecBoundedIH_covered {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
@@ -478,5 +495,45 @@ theorem factoredDecBoundedIH_covered_list {C F : Type} [Nonempty C]
   apply factoredDecBoundedIH_list interp transform limit decs
   intro dec member
   exact factoredDecBoundedIH_covered interp transform limit smallerExprs smallerDecs dec (covered dec member)
+
+/-- Simultaneous expression and declaration simulation at every clock bound.
+This closes the clock induction over the preliminary factored relations; it is
+not yet a reviewed port of HOL's pass-correctness theorem. -/
+theorem factoredAllBounded {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (limit : Nat) :
+    (∀ expr, LocalEnvBoundedIH (F := F) interp transform limit expr) ∧
+    (∀ decs, FactoredDecBoundedIH (F := F) interp transform limit decs) := by
+  induction limit using Nat.strong_induction_on with
+  | h limit ih =>
+    have smallerExprs : ∀ n, n < limit → ∀ expr, LocalEnvBoundedIH (F := F) interp transform n expr :=
+      fun n lt => (ih n lt).1
+    have smallerDecs : ∀ n, n < limit → ∀ decs, FactoredDecBoundedIH (F := F) interp transform n decs :=
+      fun n lt => (ih n lt).2
+    constructor
+    · intro expr
+      exact localEnvBounded_arrayTree_of_smaller interp transform limit smallerExprs smallerDecs expr
+        (allExpressions_covered expr)
+    · intro decs
+      exact factoredDecBoundedIH_covered_list interp transform limit smallerExprs smallerDecs decs
+        (fun dec _ => allDeclarations_covered dec)
+
+/-- Arbitrary source expressions satisfy the preliminary local simulation.
+The factored relations are not yet reviewed as the original HOL theorem. -/
+theorem localEnvIH_all {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (expr : AstHOL.Exp) : LocalEnvIH (F := F) interp transform expr := by
+  intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen
+  exact (factoredAllBounded (F := F) interp transform source.clock).1 expr genv start finish other
+    source flat baseEnv sourceLocal flatEnv traces trace baseMap gen (Nat.le_refl _)
+
+/-- Arbitrary source declaration lists satisfy the preliminary factored
+simulation. This is not yet the reviewed HOL pass-correctness statement. -/
+theorem factoredDecIH_all {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (decs : List Dec) : FactoredDecIH (F := F) interp transform decs := by
+  intro genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen flatDecs result
+  exact (factoredAllBounded (F := F) interp transform source.clock).2 decs genv env nextEnv sourceEnv trace
+    source sourceLast flat start finish next other n n' gen nextGen flatDecs result (Nat.le_refl _)
 
 end Flapjack.Compiler.Backend.SourceToFlat

@@ -134,6 +134,78 @@ theorem localEnvBounded_forceThunk_badArity {C F : Type} [Nonempty C]
     rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv args.reverse []).1, sourceRun]
     simp [getOpClass, rejected, EvaluateHOL.typeError]
 
+/-- Malformed environment-ID applications preserve operand errors. -/
+theorem localEnvBounded_envId_badArity {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
+    (args : List AstHOL.Exp) (badArity : args.length ≠ 1)
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedIH (F := F) interp transform limit expr) :
+    LocalEnvBoundedIH (F := F) interp transform limit (.app .envId args) := by
+  intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen clockBound localRel envInv tracesLen invariant generation safe
+  let sourceEnv := { baseEnv with v := nsAppend sourceLocal baseEnv.v }
+  let compMap := { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v }
+  have compiled : compileExp trace compMap (.app .envId args) =
+      .app .none (.el 0) (compileExps trace compMap args) := by
+    cases args with
+    | nil => rfl
+    | cons first rest =>
+      cases rest with
+      | nil => simp at badArity
+      | cons second rest => rfl
+  have argsSafe : ∀ last, EvaluateHOL.evaluate source sourceEnv args.reverse ≠ (last, .err (.abort .typeError)) := by
+    intro last bad
+    apply safe last
+    change EvaluateHOL.evaluate source sourceEnv [.app .envId args] = _
+    rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv args.reverse []).1, bad]
+  obtain ⟨nextGenv, argsSim, post⟩ := boundedEnvListStep_of_each interp transform limit args.reverse
+    (fun expr member => each expr (List.mem_reverse.mp member)) genv start finish other source flat baseEnv sourceLocal flatEnv traces
+    trace baseMap gen clockBound localRel envInv tracesLen invariant generation argsSafe
+  unfold ExprListSim at argsSim
+  rw [compileExps_reverse] at argsSim post
+  generalize sourceRun : EvaluateHOL.evaluate source sourceEnv args.reverse = sourceResult at argsSim post
+  obtain ⟨sourceNext, sourceResult⟩ := sourceResult
+  generalize flatRun : FlatSem.evaluate flatEnv flat (compileExps trace compMap args).reverse = flatResult at argsSim post
+  obtain ⟨flatNext, flatResult⟩ := flatResult
+  obtain ⟨resultRel, states⟩ := argsSim
+  cases resultRel with
+  | abort error =>
+    refine ⟨nextGenv, ?_, ?_⟩
+    · unfold ExprSim
+      rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv args.reverse []).1, sourceRun]
+      rw [compiled]
+      rw [FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flat
+        (compileExps trace compMap args).reverse (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+      exact ⟨.abort error, states⟩
+    · rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv args.reverse []).1, sourceRun]
+      trivial
+  | raise related =>
+    refine ⟨nextGenv, ?_, ?_⟩
+    · unfold ExprSim
+      rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv args.reverse []).1, sourceRun]
+      rw [compiled]
+      rw [FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flat
+        (compileExps trace compMap args).reverse (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+      exact ⟨.raise related, states⟩
+    · rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv args.reverse []).1, sourceRun]
+      rw [compiled]
+      rw [FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flat
+        (compileExps trace compMap args).reverse (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+      exact post
+  | @value sourceValues flatValues related =>
+    have length := EvaluateProps.evaluateLengthFull source sourceNext sourceEnv args.reverse sourceValues sourceRun
+    have bad : sourceValues.reverse.length ≠ 1 := by simpa [length] using badArity
+    have rejected : doApp (sourceNext.refs, sourceNext.ffi) .envId sourceValues.reverse = none := by
+      cases vals : sourceValues.reverse with
+      | nil => simp [doApp, doAppNumericCore, doAppBasic]
+      | cons first rest =>
+        cases rest with
+        | nil => simp [vals] at bad
+        | cons second rest => simp [doApp, doAppNumericCore, doAppBasic]
+    apply False.elim
+    apply safe sourceNext
+    change EvaluateHOL.evaluate source sourceEnv [.app .envId args] = _
+    rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv args.reverse []).1, sourceRun]
+    simp [getOpClass, rejected, EvaluateHOL.typeError]
+
 /-- Malformed function applications propagate operand errors. -/
 theorem localEnvBounded_opapp_badArity {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)

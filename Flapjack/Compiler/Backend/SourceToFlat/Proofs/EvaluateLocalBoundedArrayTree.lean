@@ -26,6 +26,8 @@ inductive LocalEnvBoundedArrayExpression : AstHOL.Exp → Prop where
       (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) → LocalEnvBoundedArrayExpression (.app .opapp args)
   | arrayEmpty (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body →
       LocalEnvBoundedArrayExpression (.app .aallocEmpty [body])
+  | arrayEmptyBadArity (args : List AstHOL.Exp) : args.length ≠ 1 →
+      (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) → LocalEnvBoundedArrayExpression (.app .aallocEmpty args)
   | arrayFixed (args : List AstHOL.Exp) : (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) →
       LocalEnvBoundedArrayExpression (.app .aallocFixed args)
   | arrayAlloc (size value : AstHOL.Exp) : LocalEnvBoundedArrayExpression size → LocalEnvBoundedArrayExpression value →
@@ -99,6 +101,8 @@ inductive LocalEnvBoundedArrayExpression : AstHOL.Exp → Prop where
       LocalEnvBoundedArrayExpression (.app .listAppend [left, right])
   | envId (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body →
       LocalEnvBoundedArrayExpression (.app .envId [body])
+  | envIdBadArity (args : List AstHOL.Exp) : args.length ≠ 1 →
+      (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) → LocalEnvBoundedArrayExpression (.app .envId args)
   | vectorFromList (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body → LocalEnvBoundedArrayExpression (.app .vfromList [body])
   | stringImplode (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body → LocalEnvBoundedArrayExpression (.app .implode [body])
   | stringExplode (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body → LocalEnvBoundedArrayExpression (.app .explode [body])
@@ -436,6 +440,143 @@ theorem forceThunkExpression_covered (args : List AstHOL.Exp)
     | nil => exact .forceThunk first firstCovered
     | cons second rest => exact .forceThunkBadArity (first :: second :: rest) (by simp) each
 
+/-- Environment-ID applications are covered for every operand count. -/
+theorem envIdExpression_covered (args : List AstHOL.Exp)
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
+    LocalEnvBoundedArrayExpression (.app .envId args) := by
+  cases args with
+  | nil => exact .envIdBadArity [] (by simp) each
+  | cons first rest =>
+    have firstCovered := each first (by simp)
+    cases rest with
+    | nil => exact .envId first firstCovered
+    | cons second rest => exact .envIdBadArity (first :: second :: rest) (by simp) each
+
+/-- Empty-array allocation is covered for every operand count. -/
+theorem arrayEmptyExpression_covered (args : List AstHOL.Exp)
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
+    LocalEnvBoundedArrayExpression (.app .aallocEmpty args) := by
+  cases args with
+  | nil => exact .arrayEmptyBadArity [] (by simp) each
+  | cons first rest =>
+    have firstCovered := each first (by simp)
+    cases rest with
+    | nil => exact .arrayEmpty first firstCovered
+    | cons second rest => exact .arrayEmptyBadArity (first :: second :: rest) (by simp) each
+
+/-- Conversion applications are covered for every operand count. -/
+theorem conversionExpression_covered (fromType toType : PrimType) (args : List AstHOL.Exp)
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
+    LocalEnvBoundedArrayExpression (.app (.fromTo fromType toType) args) := by
+  cases args with
+  | nil => exact .conversionBadArity fromType toType [] (by simp) each
+  | cons first rest =>
+    have firstCovered := each first (by simp)
+    cases rest with
+    | nil => exact .conversion fromType toType first firstCovered
+    | cons second rest => exact .conversionBadArity fromType toType (first :: second :: rest) (by simp) each
+
+/-- Shift applications are covered for every operand count. -/
+theorem shiftExpression_covered (size : WordSize) (shift : Shift) (amount : Nat) (args : List AstHOL.Exp)
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
+    LocalEnvBoundedArrayExpression (.app (.shift size shift amount) args) := by
+  cases args with
+  | nil => exact .shiftBadArity size shift amount [] (by simp) each
+  | cons first rest =>
+    have firstCovered := each first (by simp)
+    cases rest with
+    | nil => cases size with
+      | w8 => exact .word8Shift shift amount first firstCovered
+      | w64 => exact .word64Shift shift amount first firstCovered
+    | cons second rest => exact .shiftBadArity size shift amount (first :: second :: rest) (by simp) each
+
+/-- Equality and primitive comparisons are covered for every operand count. -/
+theorem comparisonExpression_covered (test : Option (Test × PrimType)) (args : List AstHOL.Exp)
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
+    LocalEnvBoundedArrayExpression (.app (match test with | none => .equality | some (test, typ) => .test test typ) args) := by
+  cases test with
+  | none =>
+    cases args with
+    | nil => exact .equalityBadArity [] (by simp) each
+    | cons first rest =>
+      cases rest with
+      | nil => exact .equalityBadArity [first] (by simp) each
+      | cons second rest =>
+        cases rest with
+        | nil => exact .equality first second (each first (by simp)) (each second (by simp))
+        | cons third rest => exact .equalityBadArity (first :: second :: third :: rest) (by simp) each
+  | some pair =>
+    obtain ⟨test, typ⟩ := pair
+    cases args with
+    | nil => exact .testBadArity test typ [] (by simp) each
+    | cons first rest =>
+      cases rest with
+      | nil => exact .testBadArity test typ [first] (by simp) each
+      | cons second rest =>
+        cases rest with
+        | nil => exact .test test typ first second (each first (by simp)) (each second (by simp))
+        | cons third rest => exact .testBadArity test typ (first :: second :: third :: rest) (by simp) each
+
+/-- Every source primitive application is covered when all of its operands
+are covered. This is structural coverage, not the full correctness theorem. -/
+theorem applicationExpression_covered (op : Op) (args : List AstHOL.Exp)
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
+    LocalEnvBoundedArrayExpression (.app op args) := by
+  cases op with
+  | arith action typ => exact arithmeticExpression_covered action typ args each
+  | fromTo fromType toType => exact conversionExpression_covered fromType toType args each
+  | shift size shift amount => exact shiftExpression_covered size shift amount args each
+  | equality => exact comparisonExpression_covered none args each
+  | test test typ => exact comparisonExpression_covered (some (test, typ)) args each
+  | opapp => exact callExpression_covered args each
+  | eval => exact .eval args each
+  | aallocEmpty => exact arrayEmptyExpression_covered args each
+  | aallocFixed => exact .arrayFixed args each
+  | envId => exact envIdExpression_covered args each
+  | ffi name => exact ffiExpression_covered name args each
+  | thunkOp op => cases op with
+    | allocThunk mode => exact allocThunkExpression_covered mode args each
+    | updateThunk mode => exact updateThunkExpression_covered mode args each
+    | forceThunk => exact forceThunkExpression_covered args each
+  | opref | opderef | aw8length | implode | explode | strlen | strcat | vfromList | vlength | alength =>
+    apply unaryBasicExpression_covered _ args (by simp [UnaryBasicOp]) each
+  | opassign | listAppend | aw8alloc | aw8sub | aw8subUnsafe | xorAw8StrUnsafe | strsub | vsub | vsubUnsafe | aalloc | asub | asubUnsafe | configGC =>
+    apply binaryBasicExpression_covered _ args (by simp [BinaryBasicOp]) each
+  | aupdate | aupdateUnsafe | aw8update | aw8updateUnsafe | copyStrStr | copyAw8Str =>
+    apply ternaryBasicExpression_covered _ args (by simp [TernaryBasicOp]) each
+  | copyStrAw8 | copyAw8Aw8 =>
+    apply fiveArgBasicExpression_covered _ args (by simp [FiveArgBasicOp]) each
+
+/-- Every source expression has a structural coverage derivation. The
+simulation itself still depends on the preliminary factored relations. -/
+theorem allExpressions_covered : (expr : AstHOL.Exp) → LocalEnvBoundedArrayExpression expr
+  | .raise body => .raise_ body (allExpressions_covered body)
+  | .handle body rows => .handle body rows (allExpressions_covered body)
+      (fun pat row _member => allExpressions_covered row)
+  | .lit lit => .base _ (.base _ (.base _ (.base _ (.literal lit))))
+  | .con none args => .tuple args (fun expr _member => allExpressions_covered expr)
+  | .con (some id) args => .constructor id args (fun expr _member => allExpressions_covered expr)
+  | .var id => .base _ (.base _ (.base _ (.base _ (.variable_ id))))
+  | .fn name body => .base _ (.base _ (.base _ (.base _ (.function_ name body))))
+  | .app op args => applicationExpression_covered op args (fun expr _member => allExpressions_covered expr)
+  | .log op left right => .log op left right (allExpressions_covered left) (allExpressions_covered right)
+  | .if_ cond yes no => .if_ cond yes no (allExpressions_covered cond)
+      (allExpressions_covered yes) (allExpressions_covered no)
+  | .mat body rows => .mat body rows (allExpressions_covered body)
+      (fun pat row _member => allExpressions_covered row)
+  | .let_ none first body => .letAnonymous first body (allExpressions_covered first) (allExpressions_covered body)
+  | .let_ (some name) first body => .letNamed name first body (allExpressions_covered first) (allExpressions_covered body)
+  | .letrec funs body => .letrec funs body (allExpressions_covered body)
+  | .tannot body typ => .tannot body typ (allExpressions_covered body)
+  | .lannot body loc => .lannot body loc (allExpressions_covered body)
+termination_by expr => sizeOf expr
+decreasing_by
+  all_goals simp_wf
+  all_goals try omega
+  all_goals have h := List.sizeOf_lt_of_mem _member
+  all_goals try simp only [Prod.mk.sizeOf_spec] at h
+  all_goals omega
+
 /-- Covered expressions satisfy the preliminary arbitrary-local hypothesis;
 the relations remain pending HOL correspondence review. -/
 theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
@@ -459,6 +600,8 @@ theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
     exact localEnvBounded_opapp interp transform limit calledIH left right leftIH rightIH
   | callBadArity args badArity _ ih => exact localEnvBounded_opapp_badArity interp transform limit args badArity ih
   | arrayEmpty body _ ih => exact localEnvBounded_aallocEmpty interp transform limit body ih
+  | arrayEmptyBadArity args badArity _ ih =>
+    exact localEnvBounded_aallocEmpty_badArity interp transform limit args badArity ih
   | arrayFixed args _ ih => exact localEnvBounded_aallocFixed interp transform limit args ih
   | arrayAlloc size value _ _ sizeIH valueIH => exact localEnvBounded_aalloc interp transform limit size value sizeIH valueIH
   | byteArrayAlloc size value _ _ sizeIH valueIH => exact localEnvBounded_aw8alloc interp transform limit size value sizeIH valueIH
@@ -513,6 +656,7 @@ theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
   | listAppend left right _ _ leftIH rightIH =>
     exact localEnvBounded_listAppend interp transform limit left right leftIH rightIH
   | envId body _ ih => exact localEnvBounded_envId interp transform limit body ih
+  | envIdBadArity args badArity _ ih => exact localEnvBounded_envId_badArity interp transform limit args badArity ih
   | vectorFromList body _ ih => exact localEnvBounded_vfromList interp transform limit body ih
   | stringImplode body _ ih => exact localEnvBounded_implode interp transform limit body ih
   | stringExplode body _ ih => exact localEnvBounded_explode interp transform limit body ih
