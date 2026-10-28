@@ -16,6 +16,8 @@ inductive LocalEnvBoundedArrayExpression : AstHOL.Exp → Prop where
       (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) → LocalEnvBoundedArrayExpression (.app op args)
   | ternaryBasicBadArity (op : Op) (args : List AstHOL.Exp) : TernaryBasicOp op → args.length ≠ 3 →
       (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) → LocalEnvBoundedArrayExpression (.app op args)
+  | fiveArgBasicBadArity (op : Op) (args : List AstHOL.Exp) : FiveArgBasicOp op → args.length ≠ 5 →
+      (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) → LocalEnvBoundedArrayExpression (.app op args)
   | eval (args : List AstHOL.Exp) : (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) →
       LocalEnvBoundedArrayExpression (.app .eval args)
   | call (left right : AstHOL.Exp) : LocalEnvBoundedArrayExpression left → LocalEnvBoundedArrayExpression right →
@@ -69,6 +71,8 @@ inductive LocalEnvBoundedArrayExpression : AstHOL.Exp → Prop where
   | ffi (name : Basis.Pure.MlString.MlString) (left right : AstHOL.Exp) :
       LocalEnvBoundedArrayExpression left → LocalEnvBoundedArrayExpression right →
       LocalEnvBoundedArrayExpression (.app (.ffi name) [left, right])
+  | ffiBadArity (name : Basis.Pure.MlString.MlString) (args : List AstHOL.Exp) : args.length ≠ 2 →
+      (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) → LocalEnvBoundedArrayExpression (.app (.ffi name) args)
   | configGC (left right : AstHOL.Exp) : LocalEnvBoundedArrayExpression left → LocalEnvBoundedArrayExpression right →
       LocalEnvBoundedArrayExpression (.app .configGC [left, right])
   | forceThunk (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body →
@@ -315,6 +319,56 @@ theorem ternaryBasicExpression_covered (op : Op) (args : List AstHOL.Exp) (terna
           · exact .stringSlice first second third firstCovered secondCovered thirdCovered
           · exact .byteArraySlice first second third firstCovered secondCovered thirdCovered
 
+/-- Both byte-copy primitives are covered for every operand count when each
+operand is covered. -/
+theorem fiveArgBasicExpression_covered (op : Op) (args : List AstHOL.Exp) (copy : FiveArgBasicOp op)
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
+    LocalEnvBoundedArrayExpression (.app op args) := by
+  by_cases arity : args.length = 5
+  · cases args with
+    | nil => simp at arity
+    | cons first rest =>
+      cases rest with
+      | nil => simp at arity
+      | cons second rest =>
+        cases rest with
+        | nil => simp at arity
+        | cons third rest =>
+          cases rest with
+          | nil => simp at arity
+          | cons fourth rest =>
+            cases rest with
+            | nil => simp at arity
+            | cons fifth rest =>
+              cases rest with
+              | cons sixth rest => simp at arity
+              | nil =>
+                have firstCovered := each first (by simp)
+                have secondCovered := each second (by simp)
+                have thirdCovered := each third (by simp)
+                have fourthCovered := each fourth (by simp)
+                have fifthCovered := each fifth (by simp)
+                rcases copy with rfl | rfl
+                · exact .stringToBytes first second third fourth fifth firstCovered secondCovered thirdCovered fourthCovered fifthCovered
+                · exact .copyBytes first second third fourth fifth firstCovered secondCovered thirdCovered fourthCovered fifthCovered
+  · exact .fiveArgBasicBadArity op args copy arity each
+
+/-- Foreign-call applications are covered for every operand count. -/
+theorem ffiExpression_covered (name : Basis.Pure.MlString.MlString) (args : List AstHOL.Exp)
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
+    LocalEnvBoundedArrayExpression (.app (.ffi name) args) := by
+  cases args with
+  | nil => exact .ffiBadArity name [] (by simp) each
+  | cons first rest =>
+    have firstCovered := each first (by simp)
+    cases rest with
+    | nil => exact .ffiBadArity name [first] (by simp) each
+    | cons second rest =>
+      have secondCovered := each second (by simp)
+      cases rest with
+      | nil => exact .ffi name first second firstCovered secondCovered
+      | cons third rest => exact .ffiBadArity name (first :: second :: third :: rest) (by simp) each
+
 /-- Covered expressions satisfy the preliminary arbitrary-local hypothesis;
 the relations remain pending HOL correspondence review. -/
 theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
@@ -331,6 +385,8 @@ theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
     exact localEnvBounded_binaryBasic_badArity interp transform limit op args binary badArity ih
   | ternaryBasicBadArity op args ternary badArity _ ih =>
     exact localEnvBounded_ternaryBasic_badArity interp transform limit op args ternary badArity ih
+  | fiveArgBasicBadArity op args copy badArity _ ih =>
+    exact localEnvBounded_fiveArgBasic_badArity interp transform limit op args copy badArity ih
   | eval args _ ih => exact localEnvBounded_eval interp transform limit decsIH args ih
   | call left right _ _ leftIH rightIH =>
     exact localEnvBounded_opapp interp transform limit calledIH left right leftIH rightIH
@@ -370,6 +426,8 @@ theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
     exact localEnvBounded_vsubUnsafe interp transform limit vector index vectorIH indexIH
   | ffi name left right _ _ leftIH rightIH =>
     exact localEnvBounded_ffi interp transform limit name left right leftIH rightIH
+  | ffiBadArity name args badArity _ ih =>
+    exact localEnvBounded_ffi_badArity interp transform limit name args badArity ih
   | configGC left right _ _ leftIH rightIH =>
     exact localEnvBounded_configGC interp transform limit left right leftIH rightIH
   | forceThunk body _ ih => exact localEnvBounded_forceThunk interp transform limit calledIH body ih

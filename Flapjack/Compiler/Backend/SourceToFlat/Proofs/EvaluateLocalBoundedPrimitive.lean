@@ -320,6 +320,58 @@ theorem localEnvBounded_ternaryBasic_badArity {C F : Type} [Nonempty C]
           | nil => simp at bad
           | cons fourth rest => simp [doApp, doAppNumericCore, doAppBasic]
 
+/-- The two five-operand byte-copy primitives. -/
+def FiveArgBasicOp (op : Op) : Prop := op = .copyStrAw8 ∨ op = .copyAw8Aw8
+
+/-- Five-operand byte copies reject operand lists of any other length. -/
+theorem localEnvBounded_fiveArgBasic_badArity {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
+    (op : Op) (args : List AstHOL.Exp) (copy : FiveArgBasicOp op) (badArity : args.length ≠ 5)
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedIH (F := F) interp transform limit expr) :
+    LocalEnvBoundedIH (F := F) interp transform limit (.app op args) := by
+  rcases copy with rfl | rfl
+  all_goals apply localEnvBounded_rejectedSimple interp transform limit _ args rfl (by simp) (by simp) (by simp) _ each
+  all_goals intro state values length
+  all_goals have bad : values.length ≠ 5 := by simpa [length] using badArity
+  all_goals cases values with
+    | nil => simp [doApp, doAppNumericCore, doAppBasic]
+    | cons first rest =>
+      cases rest with
+      | nil => simp [doApp, doAppNumericCore, doAppBasic]
+      | cons second rest =>
+        cases rest with
+        | nil => simp [doApp, doAppNumericCore, doAppBasic]
+        | cons third rest =>
+          cases rest with
+          | nil => simp [doApp, doAppNumericCore, doAppBasic]
+          | cons fourth rest =>
+            cases rest with
+            | nil => simp [doApp, doAppNumericCore, doAppBasic]
+            | cons fifth rest =>
+              cases rest with
+              | nil => simp at bad
+              | cons sixth rest => simp [doApp, doAppNumericCore, doAppBasic]
+
+/-- Foreign calls reject non-binary operand lists after evaluating them. -/
+theorem localEnvBounded_ffi_badArity {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
+    (name : Basis.Pure.MlString.MlString) (args : List AstHOL.Exp) (badArity : args.length ≠ 2)
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedIH (F := F) interp transform limit expr) :
+    LocalEnvBoundedIH (F := F) interp transform limit (.app (.ffi name) args) := by
+  apply localEnvBounded_rejectedSimple interp transform limit (.ffi name) args rfl
+    (by simp) (by simp) (by simp) _ each
+  intro state values length
+  have bad : values.length ≠ 2 := by simpa [length] using badArity
+  cases values with
+  | nil => simp [doApp, doAppNumericCore, doAppBasic]
+  | cons first rest =>
+    cases rest with
+    | nil => simp [doApp, doAppNumericCore, doAppBasic]
+    | cons second rest =>
+      cases rest with
+      | nil => simp at bad
+      | cons third rest => simp [doApp, doAppNumericCore, doAppBasic]
+
 /-- Compose localEnvBounded_tuple over arbitrary related local environments. -/
 theorem localEnvBounded_tuple {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
