@@ -523,15 +523,15 @@ theorem doApp_some_flatStateRel_arraySubUnsafe {C F G : Type} (reachable : NumSe
                   refine ⟨targetNext, stateRel, ?_, closed, safe⟩
                   simpa [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, ← related.2.1, lookup] using read
 
-/-- Byte-array reads preserve related states and result invariants, including
+/-- Byte-backed literal reads preserve related states and result invariants, including
 safe bounds exceptions. This is a Flapjack dispatcher helper. -/
-theorem readIndexed_bytes_related {C F : Type} (reachable : NumSet)
+theorem readIndexed_literal_related {C F : Type} (reachable : NumSet)
     (source target next : FlatSem.State C F) (unsafeOp : Bool)
-    (items : List (BitVec 8)) (index : Int) (result : Result FlatSem.Value FlatSem.Value)
+    (items : List (BitVec 8)) (index : Int) (toLit : BitVec 8 → Flapjack.AstHOL.Lit) (result : Result FlatSem.Value FlatSem.Value)
     (related : flatStateRel reachable source target)
-    (run : FlatSem.readIndexed source unsafeOp items index (FlatSem.Value.litv ∘ Flapjack.AstHOL.Lit.word8) = some (next, result)) :
+    (run : FlatSem.readIndexed source unsafeOp items index (FlatSem.Value.litv ∘ toLit) = some (next, result)) :
     ∃ targetNext, flatStateRel reachable next targetNext ∧
-      FlatSem.readIndexed target unsafeOp items index (FlatSem.Value.litv ∘ Flapjack.AstHOL.Lit.word8) = some (targetNext, result) ∧
+      FlatSem.readIndexed target unsafeOp items index (FlatSem.Value.litv ∘ toLit) = some (targetNext, result) ∧
       globalsWithin (findPrimitiveResultGlobals (Flapjack.EvaluateHOL.listResult result)) reachable ∧
       valuesNoEval (Flapjack.Compiler.Backend.FlatProps.resultValues
         (Flapjack.EvaluateHOL.listResult result)) := by
@@ -559,7 +559,7 @@ theorem readIndexed_bytes_related {C F : Type} (reachable : NumSet)
     | some value =>
       simp [FlatSem.readIndexed, negative, lookup] at run
       rcases run with ⟨rfl, rfl⟩
-      have resultSafe := primitiveResult_value_invariants reachable (FlatSem.Value.litv (.word8 value))
+      have resultSafe := primitiveResult_value_invariants reachable (FlatSem.Value.litv (toLit value))
         (by simp [findValueGlobals, globalsWithin, sptMem, sptDomain]) (by simp [valueHasEval])
       exact ⟨target, related, by simp [FlatSem.readIndexed, negative, lookup], resultSafe.1, resultSafe.2⟩
 
@@ -602,7 +602,7 @@ theorem doApp_some_flatStateRel_byteArraySub {C F G : Type} (reachable : NumSet)
                 case w8array items =>
                   have opEq : (Flapjack.AstHOL.Op.aw8sub == .aw8subUnsafe) = false := by decide
                   obtain ⟨targetNext, stateRel, read, closed, safe⟩ :=
-                    readIndexed_bytes_related reachable source target next false items index result related
+                    readIndexed_literal_related reachable source target next false items index Flapjack.AstHOL.Lit.word8 result related
                       (by simpa [opEq] using run)
                   refine ⟨targetNext, stateRel, ?_, closed, safe⟩
                   simpa [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, ← related.2.1, lookup, opEq] using read
@@ -645,7 +645,7 @@ theorem doApp_some_flatStateRel_byteArraySubUnsafe {C F G : Type} (reachable : N
                 cases ref <;> simp [lookup] at run
                 case w8array items =>
                   obtain ⟨targetNext, stateRel, read, closed, safe⟩ :=
-                    readIndexed_bytes_related reachable source target next true items index result related
+                    readIndexed_literal_related reachable source target next true items index Flapjack.AstHOL.Lit.word8 result related
                       (by simpa using run)
                   refine ⟨targetNext, stateRel, ?_, closed, safe⟩
                   simpa [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, ← related.2.1, lookup] using read

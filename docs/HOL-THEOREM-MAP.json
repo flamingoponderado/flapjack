@@ -2,6 +2,78 @@
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "do_app_SOME_flat_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyData.lean",
+    "lean_name": "doApp_some_flatStateRel_vectorSub",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source data-operation case only; typed original theorem captured in flat_elim_value_globals_probe.out. Full primitive simulation, carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "do_app_SOME_flat_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyData.lean",
+    "lean_name": "doApp_some_flatStateRel_vectorSubUnsafe",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source data-operation case only; typed original theorem captured in flat_elim_value_globals_probe.out. Full primitive simulation, carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "do_app_SOME_flat_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyData.lean",
+    "lean_name": "doApp_some_flatStateRel_vectorLength",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source data-operation case only; typed original theorem captured in flat_elim_value_globals_probe.out. Full primitive simulation, carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "do_app_SOME_flat_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyData.lean",
+    "lean_name": "doApp_some_flatStateRel_stringLength",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source data-operation case only; typed original theorem captured in flat_elim_value_globals_probe.out. Full primitive simulation, carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "do_app_SOME_flat_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyData.lean",
+    "lean_name": "doApp_some_flatStateRel_stringSub",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source data-operation case only; typed original theorem captured in flat_elim_value_globals_probe.out. Full primitive simulation, carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "do_app_SOME_flat_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyData.lean",
+    "lean_name": "doApp_some_flatStateRel_stringImplode",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source data-operation case only; typed original theorem captured in flat_elim_value_globals_probe.out. Full primitive simulation, carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "do_app_SOME_flat_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyData.lean",
+    "lean_name": "doApp_some_flatStateRel_stringConcat",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source data-operation case only; typed original theorem captured in flat_elim_value_globals_probe.out. Full primitive simulation, carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "do_app_SOME_flat_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyData.lean",
+    "lean_name": "doApp_some_flatStateRel_stringExplode",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source data-operation case only; typed original theorem captured in flat_elim_value_globals_probe.out. Full primitive simulation, carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "do_app_SOME_flat_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyData.lean",
+    "lean_name": "doApp_some_flatStateRel_configGC",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source data-operation case only; typed original theorem captured in flat_elim_value_globals_probe.out. Full primitive simulation, carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "do_app_SOME_flat_state_rel",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyMemory.lean",
     "lean_name": "doApp_some_flatStateRel_arrayUpdate",
     "statement_status": "pending_statement_review",
