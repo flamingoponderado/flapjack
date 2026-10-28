@@ -125,4 +125,72 @@ theorem factoredExpressionIH_let_named_pure {C F : Type} [Nonempty C]
   exact localExpressionStep_boundPure interp transform genv start finish other source flat sourceEnv trace
     compMap gen name value flatValue body covered related invariant generation
 
+/-- A pair of covered local expressions simulates its evaluation list while
+preserving both states and the growing invariant. -/
+theorem boundPure_pairStep {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : State F) (flat : FlatSem.State C F) (baseEnv : SemEnv Value)
+    (trace : List VarN) (baseMap : Environment) (gen : EnvironmentGenerationStore)
+    (name : VarN) (value : Value) (flatValue : FlatSem.Value) (left right : AstHOL.Exp)
+    (leftCovered : BoundPureExpression name left) (rightCovered : BoundPureExpression name right)
+    (relatedValue : ValueRel genv value flatValue)
+    (invariant : factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (generation : envGenRel gen source.evalState) :
+    let sourceEnv := { baseEnv with v := nsBind name value baseEnv.v }
+    let compMap := { baseMap with v := nsBind name (.localName .none name) baseMap.v }
+    let flatEnv : FlatSem.Environment FlatSem.Value := ⟨[(name, flatValue)]⟩
+    ∃ nextGenv, ExprListSim nextGenv compMap trace sourceEnv flatEnv source flat [right, left] ∧
+      match (EvaluateHOL.evaluate source sourceEnv [right, left]).2 with
+      | .err (.abort _) => True
+      | _ => GlobalGrowth genv nextGenv ∧
+          factoredInvariant interp transform gen nextGenv (start, finish, other)
+            (EvaluateHOL.evaluate source sourceEnv [right, left]).1
+            (FlatSem.evaluate flatEnv flat (compileExps trace compMap [right, left])).1 ∧
+          envGenRel gen (EvaluateHOL.evaluate source sourceEnv [right, left]).1.evalState ∧
+          oracForwardRel interp source.evalState (EvaluateHOL.evaluate source sourceEnv [right, left]).1.evalState := by
+  let sourceEnv := { baseEnv with v := nsBind name value baseEnv.v }
+  let compMap := { baseMap with v := nsBind name (.localName .none name) baseMap.v }
+  let flatEnv : FlatSem.Environment FlatSem.Value := ⟨[(name, flatValue)]⟩
+  have each : ∀ e, e ∈ [right, left] → ∀ (s : State F) (f : FlatSem.State C F), StateRel genv s f →
+      ExprSim genv compMap trace sourceEnv flatEnv s f e ∧
+      (EvaluateHOL.evaluate s sourceEnv [e]).1 = s ∧
+      (FlatSem.evaluate flatEnv f [compileExp trace compMap e]).1 = f := by
+    intro e member s f states
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at member
+    rcases member with rfl | rfl
+    · exact boundPure_simulation genv name value flatValue relatedValue baseEnv trace baseMap _ rightCovered s f states
+    · exact boundPure_simulation genv name value flatValue relatedValue baseEnv trace baseMap _ leftCovered s f states
+  have argsSim : ExprListSim genv compMap trace sourceEnv flatEnv source flat [right, left] := by
+    apply exprListSim_of_expressions genv compMap trace sourceEnv flatEnv [right, left]
+    · intro e member s f states; exact (each e member s f states).1
+    · exact invariant.2.2.1
+  have sourceSame : (EvaluateHOL.evaluate source sourceEnv [right, left]).1 = source := by
+    apply evaluateList_state_of_singletons
+    intro e member
+    exact (each e member source flat invariant.2.2.1).2.1
+  have flatSame : (FlatSem.evaluate flatEnv flat (compileExps trace compMap [right, left])).1 = flat := by
+    apply flatEvaluateList_state_of_singletons
+    intro e member
+    exact (each e member source flat invariant.2.2.1).2.2
+  have post : match (EvaluateHOL.evaluate source sourceEnv [right, left]).2 with
+    | .err (.abort _) => True
+    | _ => GlobalGrowth genv genv ∧
+        factoredInvariant interp transform gen genv (start, finish, other)
+          (EvaluateHOL.evaluate source sourceEnv [right, left]).1
+          (FlatSem.evaluate flatEnv flat (compileExps trace compMap [right, left])).1 ∧
+        envGenRel gen (EvaluateHOL.evaluate source sourceEnv [right, left]).1.evalState ∧
+        oracForwardRel interp source.evalState (EvaluateHOL.evaluate source sourceEnv [right, left]).1.evalState := by
+    cases result : (EvaluateHOL.evaluate source sourceEnv [right, left]).2 with
+    | val values =>
+      simp only [sourceSame, flatSame]
+      exact ⟨GlobalGrowth.refl genv, invariant, generation, oracForwardRel_refl interp source.evalState⟩
+    | err error =>
+      cases error with
+      | abort error => simp
+      | raise value =>
+        simp only [sourceSame, flatSame]
+        exact ⟨GlobalGrowth.refl genv, invariant, generation, oracForwardRel_refl interp source.evalState⟩
+  exact ⟨genv, argsSim, post⟩
+
 end Flapjack.Compiler.Backend.SourceToFlat
