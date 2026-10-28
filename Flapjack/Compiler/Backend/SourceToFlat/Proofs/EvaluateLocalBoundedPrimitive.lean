@@ -6,6 +6,135 @@ namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
 open OracleInvariant
 
+/-- A simple primitive that rejects all argument lists of this length still
+simulates errors raised while evaluating its arguments. The rejection premise
+is discharged separately for each malformed operator and arity. -/
+theorem localEnvBounded_rejectedSimple {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
+    (op : Op) (args : List AstHOL.Exp)
+    (simple : getOpClass op = .simple)
+    (notEmpty : op ≠ .aallocEmpty) (notEval : op ≠ .eval) (notEnvId : op ≠ .envId)
+    (rejects : ∀ (state : State F) values, values.length = args.length →
+      doApp (state.refs, state.ffi) op values = none)
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedIH (F := F) interp transform limit expr) :
+    LocalEnvBoundedIH (F := F) interp transform limit (.app op args) := by
+  intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen clockBound localRel envInv tracesLen invariant generation safe
+  let sourceEnv := { baseEnv with v := nsAppend sourceLocal baseEnv.v }
+  let compMap := { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v }
+  have argsSafe : ∀ last, EvaluateHOL.evaluate source sourceEnv args.reverse ≠ (last, .err (.abort .typeError)) := by
+    intro last bad
+    apply safe last
+    change EvaluateHOL.evaluate source sourceEnv [.app op args] = _
+    rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv args.reverse []).1, bad]
+  obtain ⟨nextGenv, argsSim, post⟩ := boundedEnvListStep_of_each interp transform limit args.reverse
+    (fun expr member => each expr (List.mem_reverse.mp member)) genv start finish other source flat baseEnv sourceLocal flatEnv traces
+    trace baseMap gen clockBound localRel envInv tracesLen invariant generation argsSafe
+  unfold ExprListSim at argsSim
+  rw [compileExps_reverse] at argsSim post
+  generalize sourceRun : EvaluateHOL.evaluate source sourceEnv args.reverse = sourceResult at argsSim post
+  obtain ⟨sourceNext, sourceResult⟩ := sourceResult
+  generalize flatRun : FlatSem.evaluate flatEnv flat (compileExps trace compMap args).reverse = flatResult at argsSim post
+  obtain ⟨flatNext, flatResult⟩ := flatResult
+  obtain ⟨resultRel, states⟩ := argsSim
+  cases resultRel with
+  | abort error =>
+    refine ⟨nextGenv, ?_, ?_⟩
+    · unfold ExprSim
+      rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv args.reverse []).1, sourceRun]
+      simp only [compileExp, notEmpty, notEval, notEnvId, ↓reduceIte]
+      rw [FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flat
+        (compileExps trace compMap args).reverse (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+      exact ⟨.abort error, states⟩
+    · rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv args.reverse []).1, sourceRun]
+      trivial
+  | raise related =>
+    refine ⟨nextGenv, ?_, ?_⟩
+    · unfold ExprSim
+      rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv args.reverse []).1, sourceRun]
+      simp only [compileExp, notEmpty, notEval, notEnvId, ↓reduceIte]
+      rw [FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flat
+        (compileExps trace compMap args).reverse (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+      exact ⟨.raise related, states⟩
+    · rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv args.reverse []).1, sourceRun]
+      simp only [compileExp, notEmpty, notEval, notEnvId, ↓reduceIte]
+      rw [FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flat
+        (compileExps trace compMap args).reverse (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+      exact post
+  | @value sourceValues flatValues related =>
+    have length := EvaluateProps.evaluateLengthFull source sourceNext sourceEnv args.reverse sourceValues sourceRun
+    have rejected : doApp (sourceNext.refs, sourceNext.ffi) op sourceValues.reverse = none :=
+      rejects sourceNext sourceValues.reverse (by simpa using length)
+    apply False.elim
+    apply safe sourceNext
+    change EvaluateHOL.evaluate source sourceEnv [.app op args] = _
+    rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv args.reverse []).1, sourceRun]
+    simp [simple, rejected, EvaluateHOL.typeError]
+
+/-- Conversions reject every non-unary application after evaluating its
+arguments. Argument errors are still propagated by the enclosing expression. -/
+theorem localEnvBounded_conversion_badArity {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
+    (fromType toType : PrimType) (args : List AstHOL.Exp) (badArity : args.length ≠ 1)
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedIH (F := F) interp transform limit expr) :
+    LocalEnvBoundedIH (F := F) interp transform limit (.app (.fromTo fromType toType) args) := by
+  apply localEnvBounded_rejectedSimple interp transform limit (.fromTo fromType toType) args rfl
+    (by simp) (by simp) (by simp) _ each
+  intro state values length
+  have bad : values.length ≠ 1 := by simpa [length] using badArity
+  cases values with
+  | nil => cases fromType <;> cases toType <;> (try cases ‹WordSize›) <;> (try cases ‹WordSize›) <;>
+      simp [doApp, doAppNumericCore]
+  | cons first rest =>
+    cases rest with
+    | nil => simp at bad
+    | cons second rest =>
+      cases fromType <;> cases toType <;> (try cases ‹WordSize›) <;> (try cases ‹WordSize›) <;>
+        simp [doApp, doAppNumericCore]
+
+/-- Shifts reject non-unary argument lists after evaluating their operands. -/
+theorem localEnvBounded_shift_badArity {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
+    (size : WordSize) (shift : Shift) (amount : Nat) (args : List AstHOL.Exp) (badArity : args.length ≠ 1)
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedIH (F := F) interp transform limit expr) :
+    LocalEnvBoundedIH (F := F) interp transform limit (.app (.shift size shift amount) args) := by
+  apply localEnvBounded_rejectedSimple interp transform limit (.shift size shift amount) args rfl
+    (by simp) (by simp) (by simp) _ each
+  intro state values length
+  have bad : values.length ≠ 1 := by simpa [length] using badArity
+  cases values with
+  | nil => cases size <;> simp [doApp, doAppNumericCore, doAppBasic]
+  | cons first rest =>
+    cases rest with
+    | nil => simp at bad
+    | cons second rest => cases size <;> simp [doApp, doAppNumericCore, doAppBasic]
+
+/-- Equality and primitive tests reject non-binary argument lists after their
+operands have been evaluated. -/
+theorem localEnvBounded_comparison_badArity {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
+    (test : Option (Test × PrimType)) (args : List AstHOL.Exp) (badArity : args.length ≠ 2)
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedIH (F := F) interp transform limit expr) :
+    LocalEnvBoundedIH (F := F) interp transform limit
+      (.app (match test with | none => .equality | some (test, typ) => .test test typ) args) := by
+  let op := match test with | none => Op.equality | some (test, typ) => Op.test test typ
+  change LocalEnvBoundedIH (F := F) interp transform limit (.app op args)
+  have simple : getOpClass op = .simple := by cases test <;> simp [op, getOpClass]
+  have notEmpty : op ≠ .aallocEmpty := by cases test <;> simp [op]
+  have notEval : op ≠ .eval := by cases test <;> simp [op]
+  have notEnvId : op ≠ .envId := by cases test <;> simp [op]
+  apply localEnvBounded_rejectedSimple interp transform limit op args simple notEmpty notEval notEnvId _ each
+  intro state values length
+  have bad : values.length ≠ 2 := by simpa [length] using badArity
+  cases values with
+  | nil => cases test <;> simp [op, doApp, doAppNumericCore, doAppBasic]
+  | cons first rest =>
+    cases rest with
+    | nil => cases test <;> simp [op, doApp, doAppNumericCore, doAppBasic]
+    | cons second rest =>
+      cases rest with
+      | nil => simp at bad
+      | cons third rest => cases test <;> simp [op, doApp, doAppNumericCore, doAppBasic]
+
 /-- Compose localEnvBounded_tuple over arbitrary related local environments. -/
 theorem localEnvBounded_tuple {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)

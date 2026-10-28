@@ -95,6 +95,12 @@ inductive LocalEnvBoundedArrayExpression : AstHOL.Exp → Prop where
       LocalEnvBoundedArrayExpression (.app (.test test typ) [left, right])
   | equality (left right : AstHOL.Exp) : LocalEnvBoundedArrayExpression left → LocalEnvBoundedArrayExpression right →
       LocalEnvBoundedArrayExpression (.app .equality [left, right])
+  | equalityBadArity (args : List AstHOL.Exp) : args.length ≠ 2 →
+      (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) →
+      LocalEnvBoundedArrayExpression (.app .equality args)
+  | testBadArity (test : Test) (typ : PrimType) (args : List AstHOL.Exp) : args.length ≠ 2 →
+      (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) →
+      LocalEnvBoundedArrayExpression (.app (.test test typ) args)
   | booleanNot (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body →
       LocalEnvBoundedArrayExpression (.app (.arith .not .boolT) [body])
   | floatFma (first second third : AstHOL.Exp) :
@@ -119,8 +125,14 @@ inductive LocalEnvBoundedArrayExpression : AstHOL.Exp → Prop where
       LocalEnvBoundedArrayExpression (.app (.shift .w8 shift amount) [body])
   | word64Shift (shift : Shift) (amount : Nat) (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body →
       LocalEnvBoundedArrayExpression (.app (.shift .w64 shift amount) [body])
+  | shiftBadArity (size : WordSize) (shift : Shift) (amount : Nat) (args : List AstHOL.Exp) :
+      args.length ≠ 1 → (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) →
+      LocalEnvBoundedArrayExpression (.app (.shift size shift amount) args)
   | conversion (fromType toType : PrimType) (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body →
       LocalEnvBoundedArrayExpression (.app (.fromTo fromType toType) [body])
+  | conversionBadArity (fromType toType : PrimType) (args : List AstHOL.Exp) :
+      args.length ≠ 1 → (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) →
+      LocalEnvBoundedArrayExpression (.app (.fromTo fromType toType) args)
   | ref_ (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body →
       LocalEnvBoundedArrayExpression (.app .opref [body])
   | assign (left right : AstHOL.Exp) : LocalEnvBoundedArrayExpression left → LocalEnvBoundedArrayExpression right →
@@ -220,6 +232,10 @@ theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
   | constructor id args _ ih => exact localEnvBounded_constructor interp transform limit id args ih
   | test test typ left right _ _ leftIH rightIH => exact localEnvBounded_test interp transform limit test typ left right leftIH rightIH
   | equality left right _ _ leftIH rightIH => exact localEnvBounded_equality interp transform limit left right leftIH rightIH
+  | equalityBadArity args badArity _ ih =>
+    exact localEnvBounded_comparison_badArity interp transform limit none args badArity ih
+  | testBadArity test typ args badArity _ ih =>
+    exact localEnvBounded_comparison_badArity interp transform limit (some (test, typ)) args badArity ih
   | booleanNot body _ ih => exact localEnvBounded_booleanNot interp transform limit body ih
   | floatFma first second third _ _ _ firstIH secondIH thirdIH =>
     exact localEnvBounded_floatFma interp transform limit first second third firstIH secondIH thirdIH
@@ -234,8 +250,12 @@ theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
     exact localEnvBounded_word64Arith interp transform limit action left right leftIH rightIH
   | word8Shift shift amount body _ ih => exact localEnvBounded_word8Shift interp transform limit body shift amount ih
   | word64Shift shift amount body _ ih => exact localEnvBounded_word64Shift interp transform limit body shift amount ih
+  | shiftBadArity size shift amount args badArity _ ih =>
+    exact localEnvBounded_shift_badArity interp transform limit size shift amount args badArity ih
   | conversion fromType toType body _ ih =>
     exact localEnvBounded_conversion interp transform limit body fromType toType ih
+  | conversionBadArity fromType toType args badArity _ ih =>
+    exact localEnvBounded_conversion_badArity interp transform limit fromType toType args badArity ih
   | ref_ body _ ih => exact localEnvBounded_opref interp transform limit body ih
   | assign left right _ _ leftIH rightIH => exact localEnvBounded_opassign interp transform limit left right leftIH rightIH
   | deref body _ ih => exact localEnvBounded_opderef interp transform limit body ih
