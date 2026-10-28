@@ -2,6 +2,46 @@
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "do_app_SOME_flat_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyCopy.lean",
+    "lean_name": "doApp_some_flatStateRel_copyStrStr",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Copy or XOR primitive case only; typed original theorem captured in flat_elim_value_globals_probe.out. Full primitive simulation, byte/string carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "do_app_SOME_flat_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyCopy.lean",
+    "lean_name": "doApp_some_flatStateRel_copyAw8Str",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Copy or XOR primitive case only; typed original theorem captured in flat_elim_value_globals_probe.out. Full primitive simulation, byte/string carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "do_app_SOME_flat_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyCopy.lean",
+    "lean_name": "doApp_some_flatStateRel_copyStrAw8",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Copy or XOR primitive case only; typed original theorem captured in flat_elim_value_globals_probe.out. Full primitive simulation, byte/string carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "do_app_SOME_flat_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyCopy.lean",
+    "lean_name": "doApp_some_flatStateRel_copyAw8Aw8",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Copy or XOR primitive case only; typed original theorem captured in flat_elim_value_globals_probe.out. Full primitive simulation, byte/string carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "do_app_SOME_flat_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyCopy.lean",
+    "lean_name": "doApp_some_flatStateRel_xorAw8StrUnsafe",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Copy or XOR primitive case only; typed original theorem captured in flat_elim_value_globals_probe.out. Full primitive simulation, byte/string carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "do_app_SOME_flat_state_rel",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyData.lean",
     "lean_name": "doApp_some_flatStateRel_thunkAlloc",
     "statement_status": "pending_statement_review",
