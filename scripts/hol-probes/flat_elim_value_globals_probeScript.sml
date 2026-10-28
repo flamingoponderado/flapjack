@@ -34,6 +34,7 @@ val _ = show_thm "singleton_evaluation_simulation=" flat_elimProofTheory.evaluat
 val _ = show_thm "declaration_evaluation_simulation=" flat_elimProofTheory.evaluate_dec_flat_state_rel;
 val _ = show_thm "total_pattern_no_match=" flat_elimProofTheory.total_pat_IMP;
 val _ = show_thm "row_total_pattern_no_match=" flat_elimProofTheory.EXISTS_total_pat;
+val _ = show_thm "pure_evaluation_simulation=" flat_elimProofTheory.evaluate_flat_state_rel_lemma;
 val _ = show_thm "primitive_simulation=" flat_elimProofTheory.do_app_SOME_flat_state_rel;
 val _ = show_thm "result_values=" flatPropsTheory.result_vs_def;
 val _ = show_thm "refs_update_reachable=" flat_elimProofTheory.find_refs_globals_LUPDATE;
