@@ -39,6 +39,12 @@ inductive LocalEnvBoundedArrayExpression : AstHOL.Exp → Prop where
       LocalEnvBoundedArrayExpression (.app .vsub [vector, index])
   | vectorSubscriptUnsafe (vector index : AstHOL.Exp) : LocalEnvBoundedArrayExpression vector → LocalEnvBoundedArrayExpression index →
       LocalEnvBoundedArrayExpression (.app .vsubUnsafe [vector, index])
+  | listAppend (left right : AstHOL.Exp) : LocalEnvBoundedArrayExpression left → LocalEnvBoundedArrayExpression right →
+      LocalEnvBoundedArrayExpression (.app .listAppend [left, right])
+  | vectorFromList (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body → LocalEnvBoundedArrayExpression (.app .vfromList [body])
+  | stringImplode (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body → LocalEnvBoundedArrayExpression (.app .implode [body])
+  | stringExplode (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body → LocalEnvBoundedArrayExpression (.app .explode [body])
+  | stringConcat (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body → LocalEnvBoundedArrayExpression (.app .strcat [body])
   | stringLength (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body → LocalEnvBoundedArrayExpression (.app .strlen [body])
   | vectorLength (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body → LocalEnvBoundedArrayExpression (.app .vlength [body])
   | arrayLength (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body → LocalEnvBoundedArrayExpression (.app .alength [body])
@@ -130,6 +136,12 @@ theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
     exact localEnvBounded_vsub interp transform limit vector index vectorIH indexIH
   | vectorSubscriptUnsafe vector index _ _ vectorIH indexIH =>
     exact localEnvBounded_vsubUnsafe interp transform limit vector index vectorIH indexIH
+  | listAppend left right _ _ leftIH rightIH =>
+    exact localEnvBounded_listAppend interp transform limit left right leftIH rightIH
+  | vectorFromList body _ ih => exact localEnvBounded_vfromList interp transform limit body ih
+  | stringImplode body _ ih => exact localEnvBounded_implode interp transform limit body ih
+  | stringExplode body _ ih => exact localEnvBounded_explode interp transform limit body ih
+  | stringConcat body _ ih => exact localEnvBounded_strcat interp transform limit body ih
   | stringLength body _ ih => exact localEnvBounded_strlen interp transform limit body ih
   | vectorLength body _ ih => exact localEnvBounded_vlength interp transform limit body ih
   | arrayLength body _ ih => exact localEnvBounded_alength interp transform limit body ih
