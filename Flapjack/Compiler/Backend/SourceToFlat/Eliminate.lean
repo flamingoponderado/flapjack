@@ -2,8 +2,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.CompileProg
 import Flapjack.Compiler.Backend.FlatElim.Reachability
 import Flapjack.Compiler.Backend.FlatPattern.CompileTotal
 
-/-! The source-to-flat program stage followed by bounded dead-code elimination.
-Pattern compilation remains necessary before flat-to-closure compilation. -/
+/-! The source-to-flat program stage followed by elimination and pattern compilation. -/
 
 namespace Flapjack.Compiler.Backend.SourceToFlat
 
@@ -15,13 +14,24 @@ def compileProgElim (c : Config) (p : List AstHOL.Dec) : Option (Config × List 
   (FlatElim.removeFlatProg code).map (fun code' => (c', code'))
 
 /-- Flat elimination followed by pattern compilation, in the original pass
-order. The option is retained for compatibility. -/
-def compileFlat (cfg : FlatPattern.Config) (code : List FlatLang.Exp) : Option (List FlatLang.Exp) :=
-  (FlatElim.removeFlatProg code).map (List.map (FlatPattern.compileDec cfg))
+order. Full cross-language review of the constituent passes remains open. -/
+@[hol "cakeml/compiler/backend/source_to_flatScript.sml" "compile_flat_def"]
+def compileFlatTotal (cfg : FlatPattern.Config) (code : List FlatLang.Exp) : List FlatLang.Exp :=
+  (FlatElim.removeFlatProgTotal code).map (FlatPattern.compileDec cfg)
 
-/-- Whole source-to-flat compilation with explicit elimination exhaustion. -/
-def compile (c : Config) (p : List AstHOL.Dec) : Option (Config × List FlatLang.Exp) :=
+/-- Compatibility entry point for callers of the formerly bounded pass. -/
+def compileFlat (cfg : FlatPattern.Config) (code : List FlatLang.Exp) : Option (List FlatLang.Exp) :=
+  some (compileFlatTotal cfg code)
+
+/-- Complete source-to-flat pass, using the output configuration's pattern
+settings. Full cross-language review of its constituent passes remains open. -/
+@[hol "cakeml/compiler/backend/source_to_flatScript.sml" "compile_def"]
+def compileTotal (c : Config) (p : List AstHOL.Dec) : Config × List FlatLang.Exp :=
   let (next, code) := compileProg c p
-  (compileFlat next.patternCfg code).map (fun result => (next, result))
+  (next, compileFlatTotal next.patternCfg code)
+
+/-- Compatibility entry point for callers of the formerly bounded pipeline. -/
+def compile (c : Config) (p : List AstHOL.Dec) : Option (Config × List FlatLang.Exp) :=
+  some (compileTotal c p)
 
 end Flapjack.Compiler.Backend.SourceToFlat

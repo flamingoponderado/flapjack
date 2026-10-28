@@ -1,5 +1,21 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "compile_flat_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Eliminate.lean",
+    "lean_name": "compileFlatTotal",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed HOL pass composition captured in source_to_flat_init_probe.out. The executed pipeline composes total elimination and pattern compilation; complete dependency correspondence review remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "compile_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Eliminate.lean",
+    "lean_name": "compileTotal",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed HOL whole-pass equation captured in source_to_flat_init_probe.out. The executed pipeline uses the resulting configuration and flat pass; complete dependency correspondence review remains pending."
+  },
+  {
     "hol_path": "HOL/examples/algorithms/spt_closureScript.sml",
     "hol_name": "closure_spt_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Reachability.lean",
