@@ -133,5 +133,58 @@ theorem doOpApp_recclosure_local (genv : GlobalEnv) (baseMap : Environment) (bas
     change Nat.succ traces.length = Nat.succ recursiveFlat.length
     simp [flatLength, len]
 
+/-- Every global slot in a top-level recursive group contains a closure
+related to the corresponding source recursive closure. -/
+theorem topRec_group_slot_related (genv : GlobalEnv) (baseMap : Environment) (sourceEnv : SemEnv Value)
+    (funs : List (VarN × VarN × AstHOL.Exp)) (flatEnv : FlatSem.Environment FlatSem.Value)
+    (newVars : List (VarN × VarName))
+    (names : newVars.map Prod.fst = funs.reverse.map Prod.fst)
+    (globals : GlobalEnvInv genv baseMap (fun _ => False) sourceEnv) (empty : flatEnv.v = [])
+    (closures : ∀ x, x ∈ funs.map Prod.fst → ∃ n y e storedTrace bodyTrace localTrace,
+      newVars.lookup x = some (.glob storedTrace n) ∧ n < genv.v.length ∧
+      findRecFun x funs = some (y, e) ∧
+      genv.v[n]?.getD none = some (.closure flatEnv y
+        (compileExp bodyTrace { baseMap with v := nsBindList ((y, .localName localTrace y) :: newVars) baseMap.v } e)))
+    (name : VarN) (member : name ∈ funs.map Prod.fst) :
+    ∃ n storedTrace flatValue, newVars.lookup name = some (.glob storedTrace n) ∧
+      n < genv.v.length ∧ genv.v[n]?.getD none = some flatValue ∧
+      ValueRel genv (.recclosure sourceEnv funs name) flatValue := by
+  obtain ⟨n, arg, body, storedTrace, bodyTrace, argTrace, lookup, bound, found, slot⟩ := closures name member
+  refine ⟨n, storedTrace, _, lookup, bound, slot, ?_⟩
+  exact .topRecclosure genv baseMap sourceEnv funs flatEnv name arg body newVars bodyTrace argTrace
+    names globals empty found closures
+
+/-- A source top-level recursive closure related to a flat ordinary closure
+selects the same function body and argument. The retained global-slot
+hypothesis is needed to relate the rebuilt recursive environment before
+simulating the body. -/
+theorem doOpApp_topRecclosure_setup (genv : GlobalEnv) (sourceEnv : SemEnv Value)
+    (funs : List (VarN × VarN × AstHOL.Exp)) (name : VarN)
+    (flatEnv : FlatSem.Environment FlatSem.Value) (arg : VarN) (flatBody : FlatLang.Exp)
+    (argument : Value) (flatArgument : FlatSem.Value)
+    (closureRel : ValueRel genv (.recclosure sourceEnv funs name) (.closure flatEnv arg flatBody))
+    (distinct : (funs.map Prod.fst).Nodup) :
+    ∃ (baseMap : Environment) (body : AstHOL.Exp) (newVars : List (VarN × VarName))
+      (trace : List VarN) (argTrace : BackendCommon.Tra),
+      newVars.map Prod.fst = funs.reverse.map Prod.fst ∧
+      GlobalEnvInv genv baseMap (fun _ => False) sourceEnv ∧ flatEnv.v = [] ∧
+      findRecFun name funs = some (arg, body) ∧
+      (∀ x, x ∈ funs.map Prod.fst → ∃ n y e storedTrace bodyTrace localTrace,
+        newVars.lookup x = some (.glob storedTrace n) ∧ n < genv.v.length ∧
+        findRecFun x funs = some (y, e) ∧
+        genv.v[n]?.getD none = some (.closure flatEnv y
+          (compileExp bodyTrace { baseMap with v := nsBindList ((y, .localName localTrace y) :: newVars) baseMap.v } e))) ∧
+      doOpApp [.recclosure sourceEnv funs name, argument] =
+        some ({ sourceEnv with v := nsBind arg argument (buildRecEnv funs sourceEnv sourceEnv.v) }, body) ∧
+      FlatSem.doOpApp [.closure flatEnv arg flatBody, flatArgument] =
+        some ({ flatEnv with v := [(arg, flatArgument)] },
+          compileExp trace { baseMap with v := nsBindList ((arg, .localName argTrace arg) :: newVars) baseMap.v } body) := by
+  cases closureRel with
+  | topRecclosure =>
+    rename_i baseMap body newVars trace argTrace globals names empty closures found
+    refine ⟨baseMap, body, newVars, trace, argTrace, names, globals, empty, found, closures, ?_, ?_⟩
+    · simp [doOpApp, distinct, found]
+    · simp [FlatSem.doOpApp, empty]
+
 
 end Flapjack.Compiler.Backend.SourceToFlat
