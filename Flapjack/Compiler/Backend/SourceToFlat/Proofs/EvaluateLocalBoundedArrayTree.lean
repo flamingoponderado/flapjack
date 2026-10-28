@@ -126,6 +126,10 @@ inductive LocalEnvBoundedArrayExpression : AstHOL.Exp → Prop where
   | boolArithBadArity (action : Arith) (args : List AstHOL.Exp) :
       args.length ≠ 1 → (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) →
       LocalEnvBoundedArrayExpression (.app (.arith action .boolT) args)
+  | arithRejectedType (action : Arith) (typ : PrimType) (args : List AstHOL.Exp) :
+      (typ = .charT ∨ typ = .strT ∨ (typ = .boolT ∧ action ≠ .not)) →
+      (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) →
+      LocalEnvBoundedArrayExpression (.app (.arith action typ) args)
   | integerArith (action : Arith) (left right : AstHOL.Exp) :
       LocalEnvBoundedArrayExpression left → LocalEnvBoundedArrayExpression right →
       LocalEnvBoundedArrayExpression (.app (.arith action .intT) [left, right])
@@ -173,6 +177,57 @@ inductive LocalEnvBoundedArrayExpression : AstHOL.Exp → Prop where
   | tannot (expr : AstHOL.Exp) (typ : AstT) : LocalEnvBoundedArrayExpression expr → LocalEnvBoundedArrayExpression (.tannot expr typ)
   | lannot (expr : AstHOL.Exp) (loc : Flapjack.Misc.Location.Locs) : LocalEnvBoundedArrayExpression expr →
       LocalEnvBoundedArrayExpression (.lannot expr loc)
+
+/-- Arithmetic applications are covered whenever their operands are covered,
+including operations that reject their type or arity. -/
+theorem arithmeticExpression_covered (action : Arith) (typ : PrimType) (args : List AstHOL.Exp)
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
+    LocalEnvBoundedArrayExpression (.app (.arith action typ) args) := by
+  cases args with
+  | nil => exact .arithExtremeArity action typ [] (Or.inl rfl) each
+  | cons first rest =>
+    have firstCovered := each first (by simp)
+    cases rest with
+    | nil =>
+      cases typ with
+      | boolT =>
+        by_cases isNot : action = .not
+        · subst action; exact .booleanNot first firstCovered
+        · exact .arithRejectedType action .boolT [first] (Or.inr (Or.inr ⟨rfl, isNot⟩)) each
+      | intT => exact .intWordArithBadArity action none [first] (by simp) each
+      | charT => exact .arithRejectedType action .charT [first] (Or.inl rfl) each
+      | strT => exact .arithRejectedType action .strT [first] (Or.inr (Or.inl rfl)) each
+      | wordT size => exact .intWordArithBadArity action (some size) [first] (by simp) each
+      | float64T => exact .floatUnary action first firstCovered
+    | cons second rest =>
+      have secondCovered := each second (by simp)
+      cases rest with
+      | nil =>
+        cases typ with
+        | boolT => exact .boolArithBadArity action [first, second] (by simp) each
+        | intT => exact .integerArith action first second firstCovered secondCovered
+        | charT => exact .arithRejectedType action .charT [first, second] (Or.inl rfl) each
+        | strT => exact .arithRejectedType action .strT [first, second] (Or.inr (Or.inl rfl)) each
+        | wordT size => cases size with
+          | w8 => exact .word8Arith action first second firstCovered secondCovered
+          | w64 => exact .word64Arith action first second firstCovered secondCovered
+        | float64T => exact .floatBinary action first second firstCovered secondCovered
+      | cons third rest =>
+        have thirdCovered := each third (by simp)
+        cases rest with
+        | nil =>
+          cases typ with
+          | boolT => exact .boolArithBadArity action [first, second, third] (by simp) each
+          | intT => exact .intWordArithBadArity action none [first, second, third] (by simp) each
+          | charT => exact .arithRejectedType action .charT [first, second, third] (Or.inl rfl) each
+          | strT => exact .arithRejectedType action .strT [first, second, third] (Or.inr (Or.inl rfl)) each
+          | wordT size => exact .intWordArithBadArity action (some size) [first, second, third] (by simp) each
+          | float64T =>
+            by_cases isFma : action = .fma
+            · subst action; exact .floatFma first second third firstCovered secondCovered thirdCovered
+            · exact .floatTernaryNonFma action [first, second, third] isFma rfl each
+        | cons fourth rest =>
+          exact .arithExtremeArity action typ (first :: second :: third :: fourth :: rest) (Or.inr (by simp)) each
 
 /-- Covered expressions satisfy the preliminary arbitrary-local hypothesis;
 the relations remain pending HOL correspondence review. -/
@@ -264,6 +319,8 @@ theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
     exact localEnvBounded_intWordArith_badArity interp transform limit action size args badArity ih
   | boolArithBadArity action args badArity _ ih =>
     exact localEnvBounded_boolArith_badArity interp transform limit action args badArity ih
+  | arithRejectedType action typ args unsupported _ ih =>
+    exact localEnvBounded_arith_rejectedType interp transform limit action typ args unsupported ih
   | integerArith action left right _ _ leftIH rightIH =>
     exact localEnvBounded_integerArith interp transform limit action left right leftIH rightIH
   | word8Arith action left right _ _ leftIH rightIH =>

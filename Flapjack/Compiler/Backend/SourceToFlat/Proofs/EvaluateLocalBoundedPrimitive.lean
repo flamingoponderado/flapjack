@@ -227,6 +227,22 @@ theorem localEnvBounded_floatTernary_nonFma {C F : Type} [Nonempty C]
         | cons fourth rest => simp at count
         | nil => cases action <;> simp [doApp, floatArith] at notFma ⊢
 
+/-- Character and string arithmetic, and Boolean arithmetic other than
+negation, reject every operand list after evaluating its expressions. -/
+theorem localEnvBounded_arith_rejectedType {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
+    (action : Arith) (typ : PrimType) (args : List AstHOL.Exp)
+    (unsupported : typ = .charT ∨ typ = .strT ∨ (typ = .boolT ∧ action ≠ .not))
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedIH (F := F) interp transform limit expr) :
+    LocalEnvBoundedIH (F := F) interp transform limit (.app (.arith action typ) args) := by
+  apply localEnvBounded_rejectedSimple interp transform limit (.arith action typ) args rfl
+    (by simp) (by simp) (by simp) _ each
+  intro state values _
+  rcases unsupported with rfl | rfl | ⟨rfl, notNot⟩
+  · simp [doApp, doAppNumericCore]
+  · simp [doApp, doAppNumericCore]
+  · cases action <;> simp [doApp, doAppNumericCore] at notNot ⊢
+
 /-- Compose localEnvBounded_tuple over arbitrary related local environments. -/
 theorem localEnvBounded_tuple {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
