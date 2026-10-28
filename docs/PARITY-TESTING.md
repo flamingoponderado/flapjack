@@ -477,7 +477,8 @@ compares exit status and complete stdout and stderr for generated parser and
 type-checking inputs, generated S-expression output, nested expression and
 lexical edge cases, decimal string and character escapes for all 256 bytes,
 and successful programs compiled to RISC-V, including generated datatype,
-closure, exception, reference, module, and recursion examples. It also compares
+closure, exception, reference, module, recursion, and mutable array examples,
+including byte-array access and recursive array traversal. It also compares
 generated type and datatype declarations and successful compilation with
 combinations of backend options. Case counts can be changed with
 `--type-cases`, `--sexp-cases`, `--structured-cases`, `--lex-cases`,

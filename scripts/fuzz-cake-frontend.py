@@ -157,6 +157,14 @@ def rich_program(rng):
         f'val _ = print_int (f [{a},{b},{c}]);',
         f'fun f x y = if x < y andalso y <> {a} then x + y else x * y; '
         f'val _ = print_int (f {b} {c});',
+        f'val a = Array.array 3 {a}; val _ = Array.update a 1 {b}; '
+        f'val _ = print_int (Array.sub a 0 + Array.sub a 1 + Array.sub a 2);',
+        f'val a = Word8Array.array 3 (Word8.fromInt {a}); '
+        f'val _ = Word8Array.update a 2 (Word8.fromInt {b}); '
+        f'val _ = print_int (Word8.toInt (Word8Array.sub a 0) + Word8.toInt (Word8Array.sub a 2));',
+        f'fun sum a i = if i = 3 then 0 else Array.sub a i + sum a (i + 1); '
+        f'val a = Array.array 3 {a}; val _ = Array.update a 1 {b}; '
+        f'val _ = print_int (sum a 0);',
     ])
 
 
