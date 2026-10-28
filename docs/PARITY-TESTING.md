@@ -460,7 +460,9 @@ also covers mutable references, captured reference updates, nested exception
 handlers, datatypes with several constructor arities, array tabulation,
 word shifts, local tail recursion, division exception handling, and list mapping. It
 also compares complete assembly for a caught out-of-bounds array access and
-word shifts through the top bit of a 64-bit word. It
+word shifts through the top bit of a 64-bit word. Nested list and tuple
+patterns, signed division and remainder, and addition of a large integer
+through a function are also checked with observable outputs. It
 also checks that
 `--types` takes precedence over `--print_sexp` and `--explore` in either flag
 order, including parse and type failures.
@@ -486,10 +488,13 @@ including byte-array access, tabulation and recursive array traversal, word
 shifts, local tail recursion, division exception handling, and list mapping. It also compares
 generated type and datatype declarations and successful compilation with
 combinations of backend options, including allocator 3 and explicitly sized
-generational garbage collection. Case counts can be changed with
+generational garbage collection. It also compares a matrix of malformed and
+valid flag values and generated combinations, including duplicate flags and
+configuration-error precedence. Case counts can be changed with
 `--type-cases`, `--sexp-cases`, `--structured-cases`, `--lex-cases`,
 `--byte-cases`, `--raw-byte-cases`, `--declaration-cases`, `--compile-cases`,
-`--rich-cases`, and `--config-cases`. `--type-seed`, `--edge-seed`, and
+`--rich-cases`, `--config-cases`, and `--config-error-cases` (zero skips the
+option matrix). `--type-seed`, `--edge-seed`, and
 `--compile-seed` select reproducible random inputs. These samples do not prove
 general parity. Set `--raw-byte-cases=1536` to compare each byte in all
 three contexts under both output modes; larger counts add random byte strings.

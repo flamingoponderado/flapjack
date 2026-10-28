@@ -44,6 +44,14 @@ BACKEND_OPTIONS = [
     ["--max_app=0", "--max_app=2", "--max_app=8"], ["--tag_bits=2", "--tag_bits=3"],
     ["--hash_size=0", "--hash_size=4"],
 ]
+CONFIG_FLAGS = ["--sexp=", "--exclude_prelude=", "--skip_type_inference=", "--main_return=",
+                "--multi=", "--known=", "--inline_factor=", "--call=", "--max_app=",
+                "--max_body_size=", "--inline_size=", "--exp_cut=", "--split=", "--tmc=",
+                "--tailrec=", "--reg_alg=", "--tag_bits=", "--len_bits=", "--pad_bits=",
+                "--len_size=", "--gc=", "--emit_empty_ffi=", "--jump=", "--perf_callgraph=",
+                "--hash_size="]
+CONFIG_VALUES = ["", "abc", "-1", "+1", "00", "01", " 1", "1 ", "1a", "true", "false",
+                 "True", "FALSE", "gen", "gen,", "gen1,,2", "gen1,xx,3", "none", "riscv"]
 
 
 def type_program(rng):
@@ -212,6 +220,8 @@ def main():
                         help="generated datatype, exception, type and namespace cases")
     parser.add_argument("--config-cases", type=int, default=10,
                         help="successful compilations with generated backend options")
+    parser.add_argument("--config-error-cases", type=int, default=100,
+                        help="generated option combinations; zero also skips the single-option matrix")
     parser.add_argument("--sexp-cases", type=int, default=100,
                         help="generated programs to compare in S-expression output mode")
     parser.add_argument("--byte-cases", type=int, default=256,
@@ -228,7 +238,7 @@ def main():
     parser.add_argument("--timeout", type=int, default=90)
     args = parser.parse_args()
     if (args.type_cases < 0 or args.compile_cases < 0 or args.rich_cases < 0 or args.sexp_cases < 0 or
-            args.declaration_cases < 0 or args.config_cases < 0 or
+            args.declaration_cases < 0 or args.config_cases < 0 or args.config_error_cases < 0 or
             args.structured_cases < 0 or args.lex_cases < 0 or args.raw_byte_cases < 0 or
             not 0 <= args.byte_cases <= 256 or args.timeout <= 0):
         parser.error("case counts must be nonnegative, byte-cases at most 256, and timeout positive")
@@ -278,6 +288,16 @@ def main():
         mode = decl_rng.choice(["--types", "--print_sexp"])
         compare(args.reference, args.cake, [mode, "--exclude_prelude=true"], source, args.timeout, False)
     print(f"{args.declaration_cases} generated declaration cases match pinned CakeML", flush=True)
+    if args.config_error_cases:
+        option_rng = random.Random(args.edge_seed ^ 344)
+        option_cases = [[flag + value] for flag in CONFIG_FLAGS for value in CONFIG_VALUES]
+        option_cases += [[option_rng.choice(CONFIG_FLAGS) + option_rng.choice(CONFIG_VALUES)
+                          for _ in range(option_rng.randint(2, 7))]
+                         for _ in range(args.config_error_cases)]
+        for options in option_cases:
+            compare(args.reference, args.cake, ["--types", *options, "--exclude_prelude=true"],
+                    "val x = 1;", args.timeout, False)
+        print(f"{len(option_cases)} option validation cases match pinned CakeML", flush=True)
     compile_rng = random.Random(args.compile_seed)
     for _ in range(args.compile_cases):
         depth = compile_rng.randint(1, 3)
