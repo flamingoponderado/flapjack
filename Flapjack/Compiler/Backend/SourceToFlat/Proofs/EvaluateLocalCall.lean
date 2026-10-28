@@ -1,5 +1,4 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalList
-import Flapjack.EvaluateHOL.ClockFull
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBounded
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
 
 /-! Function-call prerequisites over the factored source-to-flat relations.
@@ -506,8 +505,8 @@ using the smaller-clock induction hypothesis for the called body. -/
 theorem localEnvStep_opapp {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (limit : Nat) (calledIH : LocalEnvClockIH (F := F) interp transform limit)
-    (left right : AstHOL.Exp) (leftIH : LocalEnvIH (F := F) interp transform left)
-    (rightIH : LocalEnvIH (F := F) interp transform right)
+    (left right : AstHOL.Exp) (leftIH : LocalEnvBoundedIH (F := F) interp transform limit left)
+    (rightIH : LocalEnvBoundedIH (F := F) interp transform limit right)
     (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
     (source : State F) (flat : FlatSem.State C F) (baseEnv : SemEnv Value)
     (sourceLocal : Namespace ModN VarN Value) (flatEnv : FlatSem.Environment FlatSem.Value)
@@ -530,9 +529,9 @@ theorem localEnvStep_opapp {C F : Type} [Nonempty C]
     rw [EvaluateHOL.evaluate]
     simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
     rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [right, left] []).1, bad]
-  obtain ⟨middleGenv, argsSim, post⟩ := localEnvListStep_of_each interp transform [right, left]
+  obtain ⟨middleGenv, argsSim, post⟩ := boundedEnvListStep_of_each interp transform limit [right, left]
     (by intro expr member; simp only [List.mem_cons, List.not_mem_nil, or_false] at member; rcases member with rfl | rfl <;> assumption)
-    genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen localRel envInv tracesLen invariant generation argsSafe
+    genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen clockBound localRel envInv tracesLen invariant generation argsSafe
   unfold ExprListSim at argsSim
   simp only [compileExps] at argsSim post
   generalize sourceRun : EvaluateHOL.evaluate source sourceEnv [right, left] = sourceResult at argsSim post
@@ -646,6 +645,30 @@ theorem localEnvStep_opapp {C F : Type} [Nonempty C]
               obtain ⟨nextGrowth, finalInvariant, finalGeneration, callForward⟩ := callPost
               exact ⟨growth.trans nextGrowth, finalInvariant, finalGeneration,
                 oracForwardRel_trans interp _ _ _ ⟨forward, callForward⟩⟩
+
+/-- The function-application case composes two bounded operand simulations
+with the smaller-clock called-body hypothesis. -/
+theorem localEnvBounded_opapp {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (limit : Nat) (calledIH : LocalEnvClockIH (F := F) interp transform limit)
+    (left right : AstHOL.Exp) (leftIH : LocalEnvBoundedIH (F := F) interp transform limit left)
+    (rightIH : LocalEnvBoundedIH (F := F) interp transform limit right) :
+    LocalEnvBoundedIH (F := F) interp transform limit (.app .opapp [left, right]) := by
+  intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen bound
+    localRel envInv tracesLen invariant generation safe
+  exact localEnvStep_opapp interp transform limit calledIH left right leftIH rightIH genv start finish other source flat
+    baseEnv sourceLocal flatEnv traces trace baseMap gen bound localRel envInv tracesLen invariant generation safe
+
+/-- Bounded simulations below the current clock yield the called-body
+induction hypothesis needed by function application. -/
+theorem localEnvClockIH_of_smaller {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
+    (smaller : ∀ n, n < limit → ∀ expr, LocalEnvBoundedIH (F := F) interp transform n expr) :
+    LocalEnvClockIH (F := F) interp transform limit := by
+  intro expr genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen below
+    localRel envInv tracesLen invariant generation safe
+  exact smaller source.clock below expr genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen
+    (Nat.le_refl _) localRel envInv tracesLen invariant generation safe
 
 
 end Flapjack.Compiler.Backend.SourceToFlat
