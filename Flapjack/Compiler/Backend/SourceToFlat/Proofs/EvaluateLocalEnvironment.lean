@@ -172,6 +172,169 @@ theorem localEnvIH_function {C F : Type} [Nonempty C]
     And.intro (GlobalGrowth.refl genv) (And.intro invariant
       (And.intro generation (oracForwardRel_refl interp source.evalState)))
 
+/-- Recursive source bindings commute with appending a surrounding namespace. -/
+theorem buildRecEnv_nsAppend (funs : List (VarN × VarN × AstHOL.Exp)) (closureEnv : SemEnv Value)
+    (localEnv globalEnv : Namespace ModN VarN Value) :
+    buildRecEnv funs closureEnv (nsAppend localEnv globalEnv) =
+      nsAppend (buildRecEnv funs closureEnv localEnv) globalEnv := by
+  have aux : ∀ remaining : List (VarN × VarN × AstHOL.Exp),
+      remaining.foldr (fun (name, _, _) rest => nsBind name (.recclosure closureEnv funs name) rest)
+          (nsAppend localEnv globalEnv) =
+        nsAppend (remaining.foldr (fun (name, _, _) rest => nsBind name (.recclosure closureEnv funs name) rest)
+          localEnv) globalEnv := by
+    intro remaining
+    induction remaining with
+    | nil => rfl
+    | cons head tail ih =>
+      obtain ⟨name, arg, body⟩ := head
+      simp only [List.foldr_cons, ih]
+      cases tailEnv : tail.foldr (fun (name, _, _) rest => nsBind name (.recclosure closureEnv funs name) rest) localEnv
+      cases globalEnv
+      rfl
+  exact aux funs
+
+/-- Compilation preserves the names and order of a recursive function group. -/
+theorem compileFuns_local_names (trace : List VarN) (env : Environment)
+    (funs : List (VarN × VarN × AstHOL.Exp)) :
+    (compileFuns trace env funs).map Prod.fst = funs.map Prod.fst := by
+  induction funs with
+  | nil => rfl
+  | cons head tail ih =>
+    obtain ⟨name, arg, body⟩ := head
+    simp [compileFuns, ih]
+
+/-- The flat recursive environment prepends the compiled function names. -/
+theorem flatBuildRecEnv_names (funs : List (VarN × VarN × FlatLang.Exp))
+    (closureEnv : FlatSem.Environment FlatSem.Value) (initial : List (VarN × FlatSem.Value)) :
+    (FlatSem.buildRecEnv funs closureEnv initial).map Prod.fst = funs.map Prod.fst ++ initial.map Prod.fst := by
+  have aux : ∀ remaining : List (VarN × VarN × FlatLang.Exp),
+      (remaining.foldr (fun (name, _, _) rest => (name, FlatSem.Value.recclosure closureEnv funs name) :: rest) initial).map Prod.fst =
+        remaining.map Prod.fst ++ initial.map Prod.fst := by
+    intro remaining
+    induction remaining with
+    | nil => rfl
+    | cons head tail _ =>
+      obtain ⟨name, arg, body⟩ := head
+      simp
+  exact aux funs
+
+/-- The compiler's recursive-name bindings agree with the extended local
+trace list used by the arbitrary-environment induction hypothesis. -/
+theorem bindRecNames_bindLocals (names : List VarN) (traces : List BackendCommon.Tra)
+    (locals : List VarN) (compMap : Namespace ModN VarN VarName) :
+    nsBindList (names.map (fun name => (name, VarName.localName .none name)))
+        (bindLocals traces locals compMap) =
+      bindLocals (List.replicate names.length .none ++ traces) (names ++ locals) compMap := by
+  induction names with
+  | nil => rfl
+  | cons name tail ih =>
+    simp only [List.map_cons, List.length_cons, List.replicate_succ, List.cons_append]
+    simp only [nsBindList, List.foldr_cons]
+    unfold nsBindList at ih
+    rw [ih]
+    simp [bindLocals, nsBindList]
+
+/-- Constructing a local recursive environment preserves the factored
+source-to-flat value relation for every mutually recursive closure. -/
+theorem localRecEnv_related (genv : GlobalEnv) (baseMap : Environment)
+    (baseEnv : SemEnv Value) (sourceLocal : Namespace ModN VarN Value)
+    (flatEnv : FlatSem.Environment FlatSem.Value) (funs : List (VarN × VarN × AstHOL.Exp))
+    (trace : List VarN) (traces : List BackendCommon.Tra)
+    (localRel : EnvRel genv sourceLocal flatEnv.v)
+    (envInv : GlobalEnvInv genv baseMap (fun n => n ∈ flatEnv.v.map Prod.fst) baseEnv)
+    (length : traces.length = funs.length + flatEnv.v.length) :
+    let compMap := { baseMap with v := bindLocals traces (funs.map Prod.fst ++ flatEnv.v.map Prod.fst) baseMap.v }
+    let sourceEnv := { baseEnv with v := nsAppend sourceLocal baseEnv.v }
+    let compiled := compileFuns trace compMap funs
+    EnvRel genv (buildRecEnv funs sourceEnv sourceLocal) (FlatSem.buildRecEnv compiled flatEnv flatEnv.v) := by
+  let compMap := { baseMap with v := bindLocals traces (funs.map Prod.fst ++ flatEnv.v.map Prod.fst) baseMap.v }
+  let sourceEnv := { baseEnv with v := nsAppend sourceLocal baseEnv.v }
+  let compiled := compileFuns trace compMap funs
+  have recRel : ∀ name, ValueRel genv (.recclosure sourceEnv funs name) (.recclosure flatEnv compiled name) := by
+    intro name
+    exact .recclosure genv baseMap baseEnv sourceLocal funs name flatEnv trace traces localRel envInv length
+  have helper : ∀ remaining : List (VarN × VarN × AstHOL.Exp),
+      EnvRel genv
+        (remaining.foldr (fun (name, _, _) rest => nsBind name (.recclosure sourceEnv funs name) rest) sourceLocal)
+        ((compileFuns trace compMap remaining).foldr
+          (fun (name, _, _) rest => (name, .recclosure flatEnv compiled name) :: rest) flatEnv.v) := by
+    intro remaining
+    induction remaining with
+    | nil => exact localRel
+    | cons head rest ih =>
+      obtain ⟨name, arg, body⟩ := head
+      simp only [List.foldr_cons, compileFuns]
+      exact .bind genv name _ _ _ _ ih (recRel name)
+  exact helper funs
+
+/-- Local mutually recursive bindings preserve the arbitrary-environment
+simulation when the body does. -/
+theorem localEnvIH_letrec {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (funs : List (VarN × VarN × AstHOL.Exp)) (body : AstHOL.Exp)
+    (bodyIH : LocalEnvIH (F := F) interp transform body) :
+    LocalEnvIH (F := F) interp transform (.letrec funs body) := by
+  intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen localRel envInv tracesLen invariant generation safe
+  let sourceEnv := { baseEnv with v := nsAppend sourceLocal baseEnv.v }
+  let compMap := { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v }
+  let newTraces := List.replicate funs.length BackendCommon.Tra.none ++ traces
+  let newMap := { compMap with v := nsBindList (funs.map Prod.fst |>.map (fun name => (name, VarName.localName .none name))) compMap.v }
+  let compiled := compileFuns trace newMap funs
+  let sourceLocal' := buildRecEnv funs sourceEnv sourceLocal
+  let flatLocal' := FlatSem.buildRecEnv compiled flatEnv flatEnv.v
+  have distinct : (funs.map Prod.fst).Nodup := by
+    by_contra invalid
+    apply safe source
+    simp [EvaluateHOL.evaluate, invalid, EvaluateHOL.typeError]
+  have names : flatLocal'.map Prod.fst = funs.map Prod.fst ++ flatEnv.v.map Prod.fst := by
+    simp only [flatLocal', flatBuildRecEnv_names, compiled, compileFuns_local_names]
+  have mapBind : bindLocals newTraces (funs.map Prod.fst ++ flatEnv.v.map Prod.fst) baseMap.v = newMap.v := by
+    simpa [newTraces, newMap, compMap] using (bindRecNames_bindLocals (funs.map Prod.fst) traces (flatEnv.v.map Prod.fst) baseMap.v).symm
+  have extendedRel : EnvRel genv sourceLocal' flatLocal' := by
+    have related := localRecEnv_related genv baseMap baseEnv sourceLocal flatEnv funs trace newTraces
+      localRel envInv (by simp [newTraces, tracesLen])
+    simpa only [sourceLocal', sourceEnv, flatLocal', compiled, newMap, compMap, mapBind] using related
+  have extendedInv : GlobalEnvInv genv baseMap (fun n => n ∈ flatLocal'.map Prod.fst) baseEnv := by
+    cases envInv with
+    | intro _ _ _ values constructors =>
+      apply GlobalEnvInv.intro
+      · intro id v fresh lookup
+        apply values id v _ lookup
+        intro ⟨n, mem, eq⟩
+        apply fresh
+        exact ⟨n, by rw [names]; simp [mem], eq⟩
+      · exact constructors
+  have sourceBind : nsAppend sourceLocal' baseEnv.v = buildRecEnv funs sourceEnv sourceEnv.v := by
+    simpa [sourceLocal'] using (buildRecEnv_nsAppend funs sourceEnv sourceLocal baseEnv.v).symm
+  have bodySafe : ∀ last, EvaluateHOL.evaluate source { sourceEnv with v := buildRecEnv funs sourceEnv sourceEnv.v }
+      [body] ≠ (last, .err (.abort .typeError)) := by
+    intro last bad
+    apply safe last
+    simpa [EvaluateHOL.evaluate, distinct] using bad
+  have localLength : flatLocal'.length = funs.length + flatEnv.v.length := by
+    have h := congrArg List.length names
+    simpa using h
+  obtain ⟨nextGenv, bodySim, bodyPost⟩ := bodyIH genv start finish other source flat baseEnv sourceLocal'
+    { flatEnv with v := flatLocal' } newTraces trace baseMap gen extendedRel extendedInv
+    (by simp [newTraces, tracesLen, localLength]) invariant generation (by simpa [sourceBind] using bodySafe)
+  have bodySim : ExprSim nextGenv newMap trace
+      { sourceEnv with v := buildRecEnv funs sourceEnv sourceEnv.v } { flatEnv with v := flatLocal' }
+      source flat body := by
+    simpa [sourceBind, names, mapBind] using bodySim
+  simp only [sourceBind, names, mapBind] at bodyPost
+  have sourceOuter : EvaluateHOL.evaluate source sourceEnv [.letrec funs body] =
+      EvaluateHOL.evaluate source { sourceEnv with v := buildRecEnv funs sourceEnv sourceEnv.v } [body] := by
+    simp [EvaluateHOL.evaluate, distinct]
+  have flatOuter : FlatSem.evaluate flatEnv flat [compileExp trace compMap (.letrec funs body)] =
+      FlatSem.evaluate { flatEnv with v := flatLocal' } flat [compileExp trace newMap body] := by
+    simp [compileExp, FlatSem.evaluate, compiled, flatLocal', newMap, compileFuns_local_names, distinct]
+  refine ⟨nextGenv, ?_, ?_⟩
+  · unfold ExprSim at bodySim ⊢
+    rw [sourceOuter, flatOuter]
+    exact bodySim
+  · rw [sourceOuter, flatOuter]
+    exact bodyPost
+
 /-- An arbitrary-environment induction hypothesis specializes to the empty
 local environment used by declaration expressions. -/
 theorem localEnvIH_to_factored {C F : Type} [Nonempty C]
