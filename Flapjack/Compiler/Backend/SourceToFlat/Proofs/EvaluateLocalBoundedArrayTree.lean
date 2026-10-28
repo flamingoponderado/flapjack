@@ -11,6 +11,8 @@ inductive LocalEnvBoundedArrayExpression : AstHOL.Exp → Prop where
   | base (expr : AstHOL.Exp) : LocalEnvPrimitiveExpression expr → LocalEnvBoundedArrayExpression expr
   | call (left right : AstHOL.Exp) : LocalEnvBoundedArrayExpression left → LocalEnvBoundedArrayExpression right →
       LocalEnvBoundedArrayExpression (.app .opapp [left, right])
+  | arrayEmpty (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body →
+      LocalEnvBoundedArrayExpression (.app .aallocEmpty [body])
   | arrayFixed (args : List AstHOL.Exp) : (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) →
       LocalEnvBoundedArrayExpression (.app .aallocFixed args)
   | arrayAlloc (size value : AstHOL.Exp) : LocalEnvBoundedArrayExpression size → LocalEnvBoundedArrayExpression value →
@@ -116,6 +118,7 @@ theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
     exact localEnvBounded_of_unbounded interp transform limit expr (localEnvIH_primitiveTree interp transform expr covered)
   | call left right _ _ leftIH rightIH =>
     exact localEnvBounded_opapp interp transform limit calledIH left right leftIH rightIH
+  | arrayEmpty body _ ih => exact localEnvBounded_aallocEmpty interp transform limit body ih
   | arrayFixed args _ ih => exact localEnvBounded_aallocFixed interp transform limit args ih
   | arrayAlloc size value _ _ sizeIH valueIH => exact localEnvBounded_aalloc interp transform limit size value sizeIH valueIH
   | byteArrayAlloc size value _ _ sizeIH valueIH => exact localEnvBounded_aw8alloc interp transform limit size value sizeIH valueIH
