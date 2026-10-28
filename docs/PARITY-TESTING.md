@@ -475,18 +475,20 @@ For deterministic generated inputs, run
 after building `cake`. The script verifies the pinned compiler provenance and
 compares exit status and complete stdout and stderr for generated parser and
 type-checking inputs, generated S-expression output, nested expression and
-lexical edge cases, decimal string and character escapes for all 256 bytes,
-and successful programs compiled to RISC-V, including generated datatype,
+lexical edge cases, arbitrary byte input in expressions, strings and comments,
+decimal string and character escapes for all 256 bytes, and successful programs
+compiled to RISC-V, including generated datatype,
 closure, exception, reference, module, recursion, and mutable array examples,
 including byte-array access and recursive array traversal. It also compares
 generated type and datatype declarations and successful compilation with
 combinations of backend options, including allocator 3 and explicitly sized
 generational garbage collection. Case counts can be changed with
 `--type-cases`, `--sexp-cases`, `--structured-cases`, `--lex-cases`,
-`--byte-cases`, `--declaration-cases`, `--compile-cases`, `--rich-cases`, and
-`--config-cases`. `--type-seed`, `--edge-seed`, and
+`--byte-cases`, `--raw-byte-cases`, `--declaration-cases`, `--compile-cases`,
+`--rich-cases`, and `--config-cases`. `--type-seed`, `--edge-seed`, and
 `--compile-seed` select reproducible random inputs. These samples do not prove
-general parity.
+general parity. Set `--raw-byte-cases=1536` to compare each byte in all
+three contexts under both output modes; larger counts add random byte strings.
 
 `python3 scripts/check-cake-benchmark-parity.py` compares the complete RISC-V
 output for 27 benchmark programs from the pinned CakeML submodule with captured

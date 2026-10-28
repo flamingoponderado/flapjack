@@ -170,7 +170,8 @@ def rich_program(rng):
 
 
 def run(executable, options, source, timeout):
-    return subprocess.run([str(executable), "--target=riscv", *options], input=source.encode("ascii"),
+    data = source.encode("ascii") if isinstance(source, str) else source
+    return subprocess.run([str(executable), "--target=riscv", *options], input=data,
                           stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=timeout)
 
 
@@ -188,7 +189,7 @@ def compare(reference, cake, options, source, timeout, require_success, output_c
                             getattr(expected, other_channel)):
         raise SystemExit(f"generated compilation case rejected by pinned CakeML: {source}\n{summary(expected)}")
     if (expected.returncode, expected.stdout, expected.stderr) != (actual.returncode, actual.stdout, actual.stderr):
-        raise SystemExit(f"output mismatch for {options}:\n{source}\n"
+        raise SystemExit(f"output mismatch for {options}:\n{source!r}\n"
                          f"reference: {summary(expected)}\nflapjack: {summary(actual)}")
 
 
@@ -212,6 +213,8 @@ def main():
                         help="nested expression, pattern, type and declaration cases")
     parser.add_argument("--lex-cases", type=int, default=100,
                         help="comment, literal, identifier and malformed-token cases")
+    parser.add_argument("--raw-byte-cases", type=int, default=100,
+                        help="arbitrary source bytes including non-UTF-8 lexer inputs")
     parser.add_argument("--type-seed", type=int, default=42)
     parser.add_argument("--compile-seed", type=int, default=27)
     parser.add_argument("--edge-seed", type=int, default=83219)
@@ -219,7 +222,7 @@ def main():
     args = parser.parse_args()
     if (args.type_cases < 0 or args.compile_cases < 0 or args.rich_cases < 0 or args.sexp_cases < 0 or
             args.declaration_cases < 0 or args.config_cases < 0 or
-            args.structured_cases < 0 or args.lex_cases < 0 or
+            args.structured_cases < 0 or args.lex_cases < 0 or args.raw_byte_cases < 0 or
             not 0 <= args.byte_cases <= 256 or args.timeout <= 0):
         parser.error("case counts must be nonnegative, byte-cases at most 256, and timeout positive")
     parity.check_pinned_reference(args.reference)
@@ -249,6 +252,19 @@ def main():
         mode = edge_rng.choice(["--types", "--print_sexp"])
         compare(args.reference, args.cake, [mode, "--exclude_prelude=true"], source, args.timeout, False)
     print(f"{args.lex_cases} lexical edge cases match pinned CakeML", flush=True)
+    byte_rng = random.Random(args.edge_seed ^ 91200)
+    byte_alphabet = (b"abcdefghijklmnopqrstuvwxyz0123456789~!@#$%^&*+-/=<>?|:.\'\"_()[]{};\\ \n\t\r"
+                     + bytes(range(256)))
+    for case in range(args.raw_byte_cases):
+        payload = (bytes([(case // 6 * 73) % 256]) if case < 1536 else
+                   bytes(byte_rng.choice(byte_alphabet) for _ in range(byte_rng.randrange(1, 25))))
+        source = (b"val x = " + payload + b";" if case % 3 == 0 else
+                  b"val x = \"" + payload + b"\";" if case % 3 == 1 else
+                  b"(*" + payload + b"*) val x = 1;")
+        mode = "--types" if case % 2 == 0 else "--print_sexp"
+        compare(args.reference, args.cake, [mode, "--exclude_prelude=true"], source,
+                args.timeout, False)
+    print(f"{args.raw_byte_cases} arbitrary byte input cases match pinned CakeML", flush=True)
     decl_rng = random.Random(args.edge_seed ^ 5431)
     for _ in range(args.declaration_cases):
         source = declaration_program(decl_rng)
