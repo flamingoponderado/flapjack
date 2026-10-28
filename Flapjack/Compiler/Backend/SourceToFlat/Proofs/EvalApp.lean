@@ -1,3 +1,5 @@
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateSequence
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalCall
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBounded
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EnvironmentDomain
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvalPattern
@@ -721,6 +723,101 @@ theorem evaluate_eval_declare_and_restore {C F : Type} [Nonempty C]
   · simpa using restored.1.2.2.1
   · simpa using restored.1
   · simpa using restored.2.1
+
+/-- Successful dynamic decoding supplies the declaration induction hypothesis
+with compiled declarations, related initial states, and a smaller clock. The
+factored relations still need HOL correspondence review. -/
+theorem eval_declaration_context {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
+    (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (invariant : OracleInvariant.factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (sourceValues : List Value) (flatValues : List FlatSem.Value)
+    (valuesRel : List.Forall₂ (ValueRel genv) sourceValues flatValues)
+    (evalEnv : SemEnv Value) (decs : List Dec) (begin : Option EvalState)
+    (decoded : SemanticPrimitivesHOL.doEval sourceValues source.evalState = some (evalEnv, decs, begin))
+    (positive : 0 < source.clock) :
+    ∃ baseGenv envId config next flatDecs n newMap nextGen body,
+      FlatSem.doEval (flatValues.drop 4) flat.evalConfig =
+        some (flatDecs, { flat.evalConfig with compileOracle := Flapjack.holShiftSeq 1 flat.evalConfig.compileOracle }, FlatSem.unitValue) ∧
+      flatValues.length = 6 ∧ incCompileProg envId config decs = (next, flatDecs) ∧
+      compileDecs [] 1 config.next (lookupEnvId envId config.envs) ⟨0, config.envs.next, .ln⟩ decs =
+        (n, next.next, newMap, nextGen, body) ∧
+      OracleInvariant.factoredInvariant interp transform ⟨0, config.envs.next, .ln⟩ baseGenv
+        (config.next, next.next, idxBlock start finish ∪ other)
+        (EvaluateHOL.decClock { source with evalState := begin })
+        (FlatSem.decClock { flat with globals := flat.globals ++ List.replicate (next.next.vidx - config.next.vidx) none, evalConfig := { flat.evalConfig with compileOracle := Flapjack.holShiftSeq 1 flat.evalConfig.compileOracle } }) ∧
+      OracleInvariant.envGenRel ⟨0, config.envs.next, .ln⟩ begin ∧
+      OracleInvariant.envGenFutureRel interp nextGen begin ∧
+      GlobalEnvInv baseGenv (lookupEnvId envId config.envs) (fun _ => False) evalEnv ∧
+      OracleInvariant.srcOracNextCfg interp begin = some next ∧ idxPrev finish next.next ∧
+      GlobalGrowth genv baseGenv ∧ (EvaluateHOL.decClock { source with evalState := begin }).clock < source.clock := by
+  obtain ⟨baseGenv, envId, config, next, flatDecs, start', finish', other', indexEq, flatDecoded, flatLength,
+    compiled, nonempty, postInv, generation, future, envInv, nextCfg, previous, cGrowth, tGrowth, vGrowth,
+    oracleSubmap, oracleShape⟩ := OracleInvariant.doEval_factoredInvariant_sourceShape interp transform source flat
+      gen genv (start, finish, other) invariant sourceValues flatValues valuesRel (evalEnv, decs, begin) decoded
+  simp only [Prod.mk.injEq] at indexEq
+  obtain ⟨rfl, rfl, rfl⟩ := indexEq
+  generalize bodyEq : compileDecs [] 1 config.next (lookupEnvId envId config.envs)
+      ⟨0, config.envs.next, .ln⟩ decs = bodyResult at future
+  obtain ⟨n, newNext, newMap, nextGen, body⟩ := bodyResult
+  have nextEq : newNext = next.next := by
+    simp [incCompileProg, bodyEq] at compiled
+    exact congrArg Config.next compiled.1
+  subst newNext
+  have decInv := factoredInvariant_decClock interp transform ⟨0, config.envs.next, .ln⟩ baseGenv
+    (config.next, next.next, idxBlock start finish ∪ other)
+    { source with evalState := begin }
+    { flat with globals := flat.globals ++ List.replicate (next.next.vidx - config.next.vidx) none, evalConfig := { flat.evalConfig with compileOracle := Flapjack.holShiftSeq 1 flat.evalConfig.compileOracle } } postInv
+  refine ⟨baseGenv, envId, config, next, flatDecs, n, newMap, nextGen, body, flatDecoded, flatLength,
+    compiled, bodyEq, decInv, generation, ?_, envInv, nextCfg, previous, ?_, ?_⟩
+  · simpa [bodyEq] using future
+  · exact (globalGrowth_iff genv baseGenv).mpr ⟨vGrowth, cGrowth, tGrowth⟩
+  · simp only [EvaluateHOL.decClock]
+    omega
+
+/-- Apply a declaration induction hypothesis to the context produced by a
+successful dynamic decode. The result includes the compiled declaration run
+and its factored postconditions. -/
+theorem eval_declarations_factored {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
+    (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (invariant : OracleInvariant.factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (sourceValues : List Value) (flatValues : List FlatSem.Value)
+    (valuesRel : List.Forall₂ (ValueRel genv) sourceValues flatValues)
+    (evalEnv : SemEnv Value) (decs : List Dec) (begin : Option EvalState)
+    (decoded : SemanticPrimitivesHOL.doEval sourceValues source.evalState = some (evalEnv, decs, begin))
+    (positive : 0 < source.clock) (decsIH : FactoredDecIH (F := F) interp transform decs)
+    (sourceLast : SemanticPrimitivesHOL.State F) (result : Result (SemEnv Value) Value)
+    (sourceRun : EvaluateHOL.evaluateDecs (EvaluateHOL.decClock { source with evalState := begin }) evalEnv decs =
+      (sourceLast, result)) (safe : result ≠ .err (.abort .typeError)) :
+    ∃ baseGenv envId config next flatDecs n newMap nextGen body,
+      FlatSem.doEval (flatValues.drop 4) flat.evalConfig =
+        some (flatDecs, { flat.evalConfig with compileOracle := Flapjack.holShiftSeq 1 flat.evalConfig.compileOracle }, FlatSem.unitValue) ∧
+      flatValues.length = 6 ∧ incCompileProg envId config decs = (next, flatDecs) ∧
+      compileDecs [] 1 config.next (lookupEnvId envId config.envs) ⟨0, config.envs.next, .ln⟩ decs =
+        (n, next.next, newMap, nextGen, body) ∧
+      GlobalGrowth genv baseGenv ∧ OracleInvariant.srcOracNextCfg interp begin = some next ∧ idxPrev finish next.next ∧
+      FactoredDecCase interp transform baseGenv (EvaluateHOL.decClock { source with evalState := begin }) sourceLast
+        (FlatSem.decClock { flat with globals := flat.globals ++ List.replicate (next.next.vidx - config.next.vidx) none, evalConfig := { flat.evalConfig with compileOracle := Flapjack.holShiftSeq 1 flat.evalConfig.compileOracle } })
+        next.next next.next (idxBlock start finish ∪ other) nextGen newMap body result := by
+  obtain ⟨baseGenv, envId, config, next, flatDecs, n, newMap, nextGen, body,
+    flatDecoded, flatLength, compiled, bodyEq, decInv, generation, future, envInv, nextCfg, previous, growth, smaller⟩ :=
+    eval_declaration_context interp transform source flat gen genv start finish other invariant sourceValues flatValues
+      valuesRel evalEnv decs begin decoded positive
+  refine ⟨baseGenv, envId, config, next, flatDecs, n, newMap, nextGen, body,
+    flatDecoded, flatLength, compiled, bodyEq, growth, nextCfg, previous, ?_⟩
+  apply decsIH baseGenv (lookupEnvId envId config.envs) newMap evalEnv []
+    (EvaluateHOL.decClock { source with evalState := begin }) sourceLast
+    (FlatSem.decClock { flat with globals := flat.globals ++ List.replicate (next.next.vidx - config.next.vidx) none, evalConfig := { flat.evalConfig with compileOracle := Flapjack.holShiftSeq 1 flat.evalConfig.compileOracle } })
+    config.next next.next next.next (idxBlock start finish ∪ other) 1 n ⟨0, config.envs.next, .ln⟩ nextGen body result
+    sourceRun decInv bodyEq envInv safe
+  · simpa [EvaluateHOL.decClock] using generation
+  · simpa [EvaluateHOL.decClock] using future
+  · exact idxPrev_refl _
 
 /-- At clock zero, dynamic evaluation either propagates an operand error or
 reaches the corresponding timeout after decoding. This establishes the Eval
