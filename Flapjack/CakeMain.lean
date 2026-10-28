@@ -23,6 +23,8 @@ structure Options where
   onlyTypes : Bool := false
   onlySexp : Bool := false
   explore : Bool := false
+  pancake : Bool := false
+  noWarn : Bool := false
   seenTarget : Bool := false
   otherTarget : Option String := none
   seenExcludePrelude : Bool := false
@@ -62,7 +64,7 @@ private def usage : String :=
   "[--inline_size=N] [--exp_cut=N] [--reg_alg=N] [--gc=G] " ++
   "[--tag_bits=N] [--len_bits=N] [--pad_bits=N] [--len_size=N] " ++
   "[--emit_empty_ffi=true|false] [--jump=true|false] [--perf_callgraph=true|false] " ++
-  "[--hash_size=N] < input_file\n" ++
+  "[--hash_size=N] [--pancake] [--no_warn] < input_file\n" ++
   "Experimental CakeML to RISC-V port; complete CakeML output parity is not yet established."
 
 private def parseBool (text : String) : Option Bool :=
@@ -162,7 +164,7 @@ private def parseArgs : List String → Options → Except String Options
         if options.seenTarget then parseArgs args options
         else if arg == "--target=riscv" then parseArgs args { options with seenTarget := true }
         else parseArgs args { options with seenTarget := true, otherTarget := some arg }
-      else if arg == "--no_warn" then parseArgs args options
+      else if arg == "--no_warn" then parseArgs args { options with noWarn := true }
       else if arg == "--types" then parseArgs args { options with onlyTypes := true }
       else if arg.startsWith "--sexp=" then
         if options.seenSexp then parseArgs args options
@@ -298,8 +300,8 @@ private def parseArgs : List String → Options → Except String Options
       else if arg == "--print_sexp" then
         parseArgs args options
       else if arg == "--explore" then parseArgs args { options with explore := true }
-      else if arg == "--pancake" ||
-          arg == "--help" || arg == "--version" || arg == "--repl" || arg == "--candle" ||
+      else if arg == "--pancake" then parseArgs args { options with pancake := true }
+      else if arg == "--help" || arg == "--version" || arg == "--repl" || arg == "--candle" ||
           arg.startsWith "--pancake_feature=" then
         .error s!"unsupported option: {arg}"
       -- The original driver's flag lookups ignore arguments they do not recognize.
@@ -416,7 +418,16 @@ def main (args : List String) : IO UInt32 := do
     return 0
   let errors := topConfigErrors args
   if !errors.isEmpty then
-    IO.eprint (topConfigError errors)
+    if args.contains "--pancake" then
+      match errors with
+      | first :: _ =>
+        if first.startsWith "Unrecognized 64-bit target option: " then
+          IO.eprint ("### ERROR: config error\n" ++ first ++ "\nProgram exited with nonzero exit code.\n")
+        else
+          IO.eprint ("### ERROR: config error\n" ++ String.intercalate "\n" errors ++
+            "\n\nProgram exited with nonzero exit code.\n")
+      | [] => pure ()
+    else IO.eprint (topConfigError errors)
     return 1
   let errors := backendConfigErrors args
   if !errors.isEmpty then
@@ -432,11 +443,38 @@ def main (args : List String) : IO UInt32 := do
     IO.eprintln s!"cake: {message}\n{usage}"
     return 2
   | .ok options =>
-    if !options.onlyTypes && !options.onlySexp then
+    if options.pancake || (!options.onlyTypes && !options.onlySexp) then
       if let some target := options.otherTarget then
         IO.eprintln s!"cake: unsupported option: {target}\n{usage}"
         return 2
     let input ← (← IO.getStdin).readBinToEnd
+    if options.pancake then
+      if options.mainReturn || options.explore || options.perfCallgraph.getD false then
+        IO.eprintln "cake: Pancake returning entry, exploration and perf callgraph are not yet supported"
+        return 2
+      let some source := String.fromUTF8? input | do
+        IO.eprintln "cake: non-UTF-8 Pancake source is not yet supported"
+        return 2
+      let base := RiscVConfig.pancakeRiscVBackendConfig
+      let config := { base with
+        wordToWordConf := { base.wordToWordConf with regAlg := options.regAlg.getD base.wordToWordConf.regAlg }
+        stackConf := { base.stackConf with jump := options.jump.getD base.stackConf.jump }
+        labConf := { base.labConf with hashSize := options.hashSize.getD base.labConf.hashSize } }
+      match Flapjack.RiscV.NativeSource.compileWithConfig config source with
+      | .error _ =>
+        IO.eprintln "cake: Pancake parse and static diagnostics are not yet supported"
+        return 2
+      | .ok out =>
+        if !options.noWarn && !out.warnings.isEmpty then
+          IO.eprintln "cake: Pancake warning diagnostics are not yet supported; use --no_warn"
+          return 2
+        match out.artifact with
+        | none =>
+          IO.eprintln "cake: Pancake backend compilation failed"
+          return 2
+        | some (bytes, bitmaps, config) =>
+          IO.print (Flapjack.RiscV.NativeCLI.assembly out.declarations bytes bitmaps config)
+          return 0
     let chars := input.data.toList.map (fun c => BitVec.ofNat 8 c.toNat)
     let typeOutput := if options.onlyTypes || options.onlySexp || options.explore then
       some (outputOnlyBytes options chars) else none

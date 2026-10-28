@@ -27,6 +27,22 @@ def compileDeclarations (declarations : List (Decl (BitVec 64))) : Artifact :=
   compileProgAsmFast Compiler.Backend.RiscVConfig.pancakeRiscVBackendConfig riscvConfig
     (Pancake.PanToTarget.mainFirstHOL (declarations.map declToHOL))
 
+/-- The same native Pancake route with a caller-supplied backend configuration.
+This is driver infrastructure rather than an additional HOL declaration. -/
+def compileWithConfig (config : Compiler.Backend.Backend.Config) (source : String) :
+    Except SourceRiscVImageError Output :=
+  match Parser.parseTopDecs (fun value => BitVec.ofInt 64 value) source with
+  | .error errors => .error (.parse errors)
+  | .ok declarations =>
+      let checked := staticCheck declarations
+      match checked.1 with
+      | .error error => .error (.static error)
+      | .ok _ =>
+          let declarations := Pancake.PanToTarget.mainFirstHOL (declarations.map declToHOL)
+          .ok { declarations := declarations
+                artifact := compileProgAsmFast config riscvConfig declarations
+                warnings := checked.2 }
+
 /-- Parse and static-check the source before invoking the native artifact compiler.
 The artifact retains backend failure. -/
 def compile (source : String) : Except SourceRiscVImageError Output :=
@@ -42,5 +58,12 @@ def compile (source : String) : Except SourceRiscVImageError Output :=
             artifact := compileDeclarations declarations
             warnings := checked.2
           }
+
+/-- Selecting the standard configuration recovers the existing native
+source compiler, including its declarations, artifact, and warnings. -/
+theorem compileWithConfig_default (source : String) :
+    compileWithConfig Compiler.Backend.RiscVConfig.pancakeRiscVBackendConfig source = compile source := by
+  unfold compileWithConfig compile compileDeclarations
+  split <;> simp_all
 
 end Flapjack.RiscV.NativeSource
