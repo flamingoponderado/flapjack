@@ -12,7 +12,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalArray
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedArrayTree
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.Initialization
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Semantics
-import Flapjack.SemanticsHOL
+import Flapjack.SemanticsProps.Clock
 
 /-! Local declaration simulation over the preliminary factored relations. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
@@ -1062,6 +1062,189 @@ theorem factoredCompileProg_semantics_ne_fail {C F : Type} [Nonempty C]
   exact FlatSem.semantics_ne_fail evalConfig source.ffi flatDecs
     (factoredCompileProg_noTypeError interp transform source sourceEnv config outputConfig
       evalConfig decs flatDecs precondition compiled safe)
+
+/-- Every terminating flat observation is a source-program observation,
+including the outcome and complete FFI event list. This uses the preliminary
+factored simulation relations. -/
+theorem factoredCompileProg_semantics_terminate {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (source : State F) (sourceEnv : SemEnv Value) (config outputConfig : Config)
+    (evalConfig : FlatSem.InstallConfig C) (decs : List Dec) (flatDecs : List FlatLang.Exp)
+    (precondition : FactoredPrecondition1 interp transform source sourceEnv config evalConfig decs)
+    (compiled : compileProg config decs = (outputConfig, flatDecs))
+    (safe : ¬ Flapjack.SemanticsHOL.semanticsProg source sourceEnv decs .fail)
+    (outcome : HolOutcome) (events : List HolIoEvent)
+    (terminates : FlatSem.semantics evalConfig source.ffi flatDecs = .terminate outcome events) :
+    Flapjack.SemanticsHOL.semanticsProg source sourceEnv decs (.terminate outcome events) := by
+  obtain ⟨clock, flatLast, flatResult, flatRun, flatOutcome, eventEq⟩ :=
+    FlatSem.semantics_terminate evalConfig source.ffi flatDecs outcome events terminates
+  generalize sourceRun : EvaluateHOL.evaluateDecs { source with clock } sourceEnv decs = sourcePair
+  obtain ⟨sourceLast, result⟩ := sourcePair
+  have sourceSafe : result ≠ .err (.abort .typeError) := by
+    intro error
+    apply safe
+    change ∃ k, (Flapjack.SemanticsHOL.evaluateProgWithClock source sourceEnv k decs).2 =
+      .err (.abort .typeError)
+    refine ⟨clock, ?_⟩
+    simp [Flapjack.SemanticsHOL.evaluateProgWithClock, sourceRun, error]
+  obtain ⟨actualFlat, genv, actualResult, actualRun, states, success, errors⟩ :=
+    factoredCompileProg_correct interp transform { source with clock } sourceLast sourceEnv config outputConfig
+      evalConfig decs flatDecs result
+      (factoredPrecondition1_changeClock interp transform source sourceEnv config evalConfig decs clock precondition)
+      compiled sourceRun sourceSafe
+  rw [flatRun] at actualRun
+  cases actualRun
+  have equalFfi : sourceLast.ffi = flatLast.ffi := (stateRel_iff _ _ _).mp states |>.2.2.2
+  refine ⟨clock, sourceLast.ffi, result, ?_, ?_, ?_, sourceSafe⟩
+  · simp [Flapjack.SemanticsHOL.evaluateProgWithClock, sourceRun]
+  · cases result with
+    | val env =>
+      have eq := success env rfl
+      subst flatResult
+      simpa using flatOutcome
+    | err error =>
+      obtain ⟨flatError, eq, _, related⟩ := errors error rfl
+      subst flatResult
+      cases related with
+      | raise related => simpa using flatOutcome
+      | abort error =>
+        cases error with
+        | typeError => exact False.elim (sourceSafe rfl)
+        | timeoutError => exact False.elim flatOutcome
+        | ffiError event => simpa using flatOutcome
+  · simpa [equalFfi] using eventEq
+
+/-- Divergence of the flat program forces the source run to time out at
+every clock, under the factored compilation conditions. -/
+theorem factoredCompileProg_diverge_sourceTimeout {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (source : State F) (sourceEnv : SemEnv Value) (config outputConfig : Config)
+    (evalConfig : FlatSem.InstallConfig C) (decs : List Dec) (flatDecs : List FlatLang.Exp)
+    (precondition : FactoredPrecondition1 interp transform source sourceEnv config evalConfig decs)
+    (compiled : compileProg config decs = (outputConfig, flatDecs))
+    (safe : ¬ Flapjack.SemanticsHOL.semanticsProg source sourceEnv decs .fail)
+    (events : HolLList HolIoEvent)
+    (diverges : FlatSem.semantics evalConfig source.ffi flatDecs = .diverge events) :
+    ∀ clock, ∃ ffi, Flapjack.SemanticsHOL.evaluateProgWithClock source sourceEnv clock decs =
+      (ffi, .err (.abort .timeoutError)) := by
+  have noTerm := (FlatSem.semantics_diverge evalConfig source.ffi flatDecs events diverges).1
+  intro clock
+  generalize sourceRun : EvaluateHOL.evaluateDecs { source with clock } sourceEnv decs = sourcePair
+  obtain ⟨sourceLast, result⟩ := sourcePair
+  have sourceSafe : result ≠ .err (.abort .typeError) := by
+    intro error
+    apply safe
+    change ∃ k, (Flapjack.SemanticsHOL.evaluateProgWithClock source sourceEnv k decs).2 =
+      .err (.abort .typeError)
+    refine ⟨clock, ?_⟩
+    simp [Flapjack.SemanticsHOL.evaluateProgWithClock, sourceRun, error]
+  obtain ⟨flatLast, genv, flatResult, flatRun, _, success, errors⟩ :=
+    factoredCompileProg_correct interp transform { source with clock } sourceLast sourceEnv config outputConfig
+      evalConfig decs flatDecs result
+      (factoredPrecondition1_changeClock interp transform source sourceEnv config evalConfig decs clock precondition)
+      compiled sourceRun sourceSafe
+  have timeout : result = .err (.abort .timeoutError) := by
+    cases result with
+    | val env =>
+      have eq := success env rfl
+      subst flatResult
+      exact False.elim (noTerm clock flatLast none .success flatRun rfl)
+    | err error =>
+      obtain ⟨flatError, eq, _, related⟩ := errors error rfl
+      subst flatResult
+      cases related with
+      | raise related =>
+        exact False.elim (noTerm clock flatLast (some (.raise _)) .success flatRun rfl)
+      | abort error =>
+        cases error with
+        | typeError => exact False.elim (sourceSafe rfl)
+        | timeoutError => rfl
+        | ffiError event =>
+          exact False.elim (noTerm clock flatLast (some (.abort (.ffiError event))) (.ffiOutcome event) flatRun rfl)
+  exact ⟨sourceLast.ffi, by simp [Flapjack.SemanticsHOL.evaluateProgWithClock, sourceRun, timeout]⟩
+
+/-- Every clock produces the same FFI state in the source and flat runs. -/
+theorem factoredCompileProg_clockFfi {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (source : State F) (sourceEnv : SemEnv Value) (config outputConfig : Config)
+    (evalConfig : FlatSem.InstallConfig C) (decs : List Dec) (flatDecs : List FlatLang.Exp)
+    (precondition : FactoredPrecondition1 interp transform source sourceEnv config evalConfig decs)
+    (compiled : compileProg config decs = (outputConfig, flatDecs))
+    (safe : ¬ Flapjack.SemanticsHOL.semanticsProg source sourceEnv decs .fail)
+    (clock : Nat) :
+    (Flapjack.SemanticsHOL.evaluateProgWithClock source sourceEnv clock decs).1 =
+      (FlatSem.evaluateDecs (FlatSem.initialState source.ffi clock evalConfig) flatDecs).1.ffi := by
+  generalize sourceRun : EvaluateHOL.evaluateDecs { source with clock } sourceEnv decs = sourcePair
+  obtain ⟨sourceLast, result⟩ := sourcePair
+  have sourceSafe : result ≠ .err (.abort .typeError) := by
+    intro error
+    apply safe
+    change ∃ k, (Flapjack.SemanticsHOL.evaluateProgWithClock source sourceEnv k decs).2 =
+      .err (.abort .typeError)
+    refine ⟨clock, ?_⟩
+    simp [Flapjack.SemanticsHOL.evaluateProgWithClock, sourceRun, error]
+  obtain ⟨flatLast, genv, flatResult, flatRun, states, _, _⟩ :=
+    factoredCompileProg_correct interp transform { source with clock } sourceLast sourceEnv config outputConfig
+      evalConfig decs flatDecs result
+      (factoredPrecondition1_changeClock interp transform source sourceEnv config evalConfig decs clock precondition)
+      compiled sourceRun sourceSafe
+  have ffiEq := (stateRel_iff genv sourceLast flatLast).mp states |>.2.2.2
+  simpa [Flapjack.SemanticsHOL.evaluateProgWithClock, sourceRun, flatRun] using ffiEq
+
+/-- A flat divergence observation is a source divergence observation,
+including equality of the complete least-upper-bound event trace. -/
+theorem factoredCompileProg_semantics_diverge {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (source : State F) (sourceEnv : SemEnv Value) (config outputConfig : Config)
+    (evalConfig : FlatSem.InstallConfig C) (decs : List Dec) (flatDecs : List FlatLang.Exp)
+    (precondition : FactoredPrecondition1 interp transform source sourceEnv config evalConfig decs)
+    (compiled : compileProg config decs = (outputConfig, flatDecs))
+    (safe : ¬ Flapjack.SemanticsHOL.semanticsProg source sourceEnv decs .fail)
+    (events : HolLList HolIoEvent)
+    (diverges : FlatSem.semantics evalConfig source.ffi flatDecs = .diverge events) :
+    Flapjack.SemanticsHOL.semanticsProg source sourceEnv decs (.diverge events) := by
+  refine ⟨factoredCompileProg_diverge_sourceTimeout interp transform source sourceEnv config outputConfig
+    evalConfig decs flatDecs precondition compiled safe events diverges, ?_⟩
+  have eventEq := (FlatSem.semantics_diverge evalConfig source.ffi flatDecs events diverges).2
+  have families : (fun trace => ∃ clock,
+      trace = HolLList.fromList (FlatSem.evaluateDecs (FlatSem.initialState source.ffi clock evalConfig) flatDecs).1.ffi.ioEvents) =
+      (fun trace => ∃ clock,
+        HolLList.fromList (Flapjack.SemanticsHOL.evaluateProgWithClock source sourceEnv clock decs).1.ioEvents = trace) := by
+    funext trace
+    apply propext
+    constructor <;> rintro ⟨clock, eq⟩ <;> refine ⟨clock, ?_⟩
+    · rw [factoredCompileProg_clockFfi interp transform source sourceEnv config outputConfig
+        evalConfig decs flatDecs precondition compiled safe clock]
+      exact eq.symm
+    · rw [factoredCompileProg_clockFfi interp transform source sourceEnv config outputConfig
+        evalConfig decs flatDecs precondition compiled safe clock] at eq
+      exact eq.symm
+  rw [families] at eventEq
+  rw [eventEq]
+  exact HolLList.buildLprefixLub_thm (Flapjack.SemanticsProps.evaluateProg_ioEventsChain source sourceEnv decs)
+
+/-- The flat program's complete observable behavior is a source behavior,
+under the factored precondition and simulation relations. The correspondence
+of these factored relations to HOL remains a separate review obligation. -/
+theorem factoredCompileProg_semantics {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (source : State F) (sourceEnv : SemEnv Value) (config outputConfig : Config)
+    (evalConfig : FlatSem.InstallConfig C) (decs : List Dec) (flatDecs : List FlatLang.Exp)
+    (precondition : FactoredPrecondition1 interp transform source sourceEnv config evalConfig decs)
+    (compiled : compileProg config decs = (outputConfig, flatDecs))
+    (safe : ¬ Flapjack.SemanticsHOL.semanticsProg source sourceEnv decs .fail) :
+    Flapjack.SemanticsHOL.semanticsProg source sourceEnv decs
+      (FlatSem.semantics evalConfig source.ffi flatDecs) := by
+  cases behavior : FlatSem.semantics evalConfig source.ffi flatDecs with
+  | fail =>
+    exact False.elim (factoredCompileProg_semantics_ne_fail interp transform source sourceEnv config outputConfig
+      evalConfig decs flatDecs precondition compiled safe behavior)
+  | terminate outcome events =>
+    exact factoredCompileProg_semantics_terminate interp transform source sourceEnv config outputConfig
+      evalConfig decs flatDecs precondition compiled safe outcome events behavior
+  | diverge events =>
+    exact factoredCompileProg_semantics_diverge interp transform source sourceEnv config outputConfig
+      evalConfig decs flatDecs precondition compiled safe events behavior
 
 /-- Match-row result in existential form, over the preliminary factored
 relations and the compiled-row safety premise. -/
