@@ -282,6 +282,7 @@ import Flapjack.Compiler.Backend.FlatElim.Proofs.ApplyMemory
 import Flapjack.Compiler.Backend.FlatElim.Proofs.ApplyFlat
 import Flapjack.Compiler.Backend.FlatElim.Proofs.ApplyData
 import Flapjack.Compiler.Backend.FlatElim.Proofs.ApplyCopy
+import Flapjack.Compiler.Backend.FlatElim.Proofs.ApplyNumeric
 import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
 import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
