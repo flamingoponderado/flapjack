@@ -369,15 +369,14 @@ theorem evaluate_eval_declaration_error_related {C F : Type}
       { FlatSem.decClock { flatArguments with evalConfig := flatNextConfig } with
         globals := flatArguments.globals ++ List.replicate (next.vidx - config.next.vidx) none } body =
         (flatLast, some flatError))
-    (argumentsRel : StateRel genv sourceArguments flatArguments)
+    (argumentsClock : sourceArguments.clock = flatArguments.clock)
     (lastRel : StateRel genv sourceLast flatLast)
     (errorRel : EvalResultRel genv (.err sourceError) (.err flatError)) :
     let sourceResult := EvaluateHOL.evaluate sourceInitial sourceEnv [.app .eval exprs]
     let flatResult := FlatSem.evaluate flatEnv flatInitial [compileExp trace compMap (.app .eval exprs)]
     EvalResultRel genv sourceResult.2 flatResult.2 ∧ StateRel genv sourceResult.1 flatResult.1 := by
   have flatPositive : 0 < flatArguments.clock := by
-    cases argumentsRel with
-    | intro _ _ clock _ => simpa [← clock] using positive
+    simpa [← argumentsClock] using positive
   let flatStart := FlatSem.decClock { flatArguments with evalConfig := flatNextConfig }
   have bodyRun' : FlatSem.evaluateDecs
       { flatStart with globals := flatStart.globals ++ List.replicate (next.vidx - config.next.vidx) none }
@@ -702,7 +701,9 @@ theorem evaluate_eval_declare_and_restore {C F : Type} [Nonempty C]
         { sourceLast with evalState := resetEnvGeneration sourceArguments.evalState after }
         { flatMiddle with refs := .refv stored :: flatMiddle.refs.tail } ∧
       OracleInvariant.oracForwardRel interp sourceArguments.evalState
-        (resetEnvGeneration sourceArguments.evalState after) := by
+        (resetEnvGeneration sourceArguments.evalState after) ∧
+      (OracleInvariant.envGenRel oldGen sourceArguments.evalState →
+        OracleInvariant.envGenRel oldGen (resetEnvGeneration sourceArguments.evalState after)) := by
   obtain ⟨stored, flatResult, nextInvariant, related, nextForward, _⟩ :=
     evaluate_compileEval_declare_success interp transform envId config nextConfig decs flatDecs begin sourceLast
       flatEnv flatInitial flatArguments flatMiddle baseGenv newGenv
@@ -717,12 +718,13 @@ theorem evaluate_eval_declare_and_restore {C F : Type} [Nonempty C]
     sourceArguments { sourceLast with evalState := after } flatArguments
     { flatMiddle with refs := .refv stored :: flatMiddle.refs.tail } begin
     nextInvariant previousInv (by simpa using fullForward) indices initialForward beginShape
-  refine ⟨stored, ?_, flatResult, related, .value (.cons related .nil), ?_, ?_, ?_⟩
+  refine ⟨stored, ?_, flatResult, related, .value (.cons related .nil), ?_, ?_, ?_, ?_⟩
   · exact evaluate_sourceEval_success sourceEnv evalEnv newEnv sourceInitial sourceArguments sourceLast
       exprs sourceValues decs begin after value sourceRun sourceDecoded sourcePositive sourceDeclarations declared
   · simpa using restored.1.2.2.1
   · simpa using restored.1
   · simpa using restored.2.1
+  · simpa using restored.2.2
 
 /-- Successful dynamic decoding supplies the declaration induction hypothesis
 with compiled declarations, related initial states, and a smaller clock. The
@@ -752,7 +754,11 @@ theorem eval_declaration_context {C F : Type} [Nonempty C]
       OracleInvariant.envGenFutureRel interp nextGen begin ∧
       GlobalEnvInv baseGenv (lookupEnvId envId config.envs) (fun _ => False) evalEnv ∧
       OracleInvariant.srcOracNextCfg interp begin = some next ∧ idxPrev finish next.next ∧
-      GlobalGrowth genv baseGenv ∧ (EvaluateHOL.decClock { source with evalState := begin }).clock < source.clock := by
+      GlobalGrowth genv baseGenv ∧ OracleInvariant.oracConfigEnvsSubspt interp source.evalState begin ∧
+      (match source.evalState with
+       | some (.evalOracle prior) => ∃ beginState, begin = some (.evalOracle beginState) ∧
+           beginState.envs = (addEnvGeneration prior).envs ∧ beginState.generation = (addEnvGeneration prior).generation
+       | _ => False) ∧ (EvaluateHOL.decClock { source with evalState := begin }).clock < source.clock := by
   obtain ⟨baseGenv, envId, config, next, flatDecs, start', finish', other', indexEq, flatDecoded, flatLength,
     compiled, nonempty, postInv, generation, future, envInv, nextCfg, previous, cGrowth, tGrowth, vGrowth,
     oracleSubmap, oracleShape⟩ := OracleInvariant.doEval_factoredInvariant_sourceShape interp transform source flat
@@ -771,7 +777,7 @@ theorem eval_declaration_context {C F : Type} [Nonempty C]
     { source with evalState := begin }
     { flat with globals := flat.globals ++ List.replicate (next.next.vidx - config.next.vidx) none, evalConfig := { flat.evalConfig with compileOracle := Flapjack.holShiftSeq 1 flat.evalConfig.compileOracle } } postInv
   refine ⟨baseGenv, envId, config, next, flatDecs, n, newMap, nextGen, body, flatDecoded, flatLength,
-    compiled, bodyEq, decInv, generation, ?_, envInv, nextCfg, previous, ?_, ?_⟩
+    compiled, bodyEq, decInv, generation, ?_, envInv, nextCfg, previous, ?_, oracleSubmap, oracleShape, ?_⟩
   · simpa [bodyEq] using future
   · exact (globalGrowth_iff genv baseGenv).mpr ⟨vGrowth, cGrowth, tGrowth⟩
   · simp only [EvaluateHOL.decClock]
@@ -801,15 +807,21 @@ theorem eval_declarations_factored {C F : Type} [Nonempty C]
       compileDecs [] 1 config.next (lookupEnvId envId config.envs) ⟨0, config.envs.next, .ln⟩ decs =
         (n, next.next, newMap, nextGen, body) ∧
       GlobalGrowth genv baseGenv ∧ OracleInvariant.srcOracNextCfg interp begin = some next ∧ idxPrev finish next.next ∧
+      GlobalEnvInv baseGenv (lookupEnvId envId config.envs) (fun _ => False) evalEnv ∧
+      OracleInvariant.oracConfigEnvsSubspt interp source.evalState begin ∧
+      (match source.evalState with
+       | some (.evalOracle prior) => ∃ beginState, begin = some (.evalOracle beginState) ∧
+           beginState.envs = (addEnvGeneration prior).envs ∧ beginState.generation = (addEnvGeneration prior).generation
+       | _ => False) ∧
       FactoredDecCase interp transform baseGenv (EvaluateHOL.decClock { source with evalState := begin }) sourceLast
         (FlatSem.decClock { flat with globals := flat.globals ++ List.replicate (next.next.vidx - config.next.vidx) none, evalConfig := { flat.evalConfig with compileOracle := Flapjack.holShiftSeq 1 flat.evalConfig.compileOracle } })
         next.next next.next (idxBlock start finish ∪ other) nextGen newMap body result := by
   obtain ⟨baseGenv, envId, config, next, flatDecs, n, newMap, nextGen, body,
-    flatDecoded, flatLength, compiled, bodyEq, decInv, generation, future, envInv, nextCfg, previous, growth, smaller⟩ :=
+    flatDecoded, flatLength, compiled, bodyEq, decInv, generation, future, envInv, nextCfg, previous, growth, oracleSubmap, oracleShape, smaller⟩ :=
     eval_declaration_context interp transform source flat gen genv start finish other invariant sourceValues flatValues
       valuesRel evalEnv decs begin decoded positive
   refine ⟨baseGenv, envId, config, next, flatDecs, n, newMap, nextGen, body,
-    flatDecoded, flatLength, compiled, bodyEq, growth, nextCfg, previous, ?_⟩
+    flatDecoded, flatLength, compiled, bodyEq, growth, nextCfg, previous, envInv, oracleSubmap, oracleShape, ?_⟩
   apply decsIH baseGenv (lookupEnvId envId config.envs) newMap evalEnv []
     (EvaluateHOL.decClock { source with evalState := begin }) sourceLast
     (FlatSem.decClock { flat with globals := flat.globals ++ List.replicate (next.next.vidx - config.next.vidx) none, evalConfig := { flat.evalConfig with compileOracle := Flapjack.holShiftSeq 1 flat.evalConfig.compileOracle } })
@@ -818,6 +830,118 @@ theorem eval_declarations_factored {C F : Type} [Nonempty C]
   · simpa [EvaluateHOL.decClock] using generation
   · simpa [EvaluateHOL.decClock] using future
   · exact idxPrev_refl _
+
+/-- Successful dynamic declarations and environment restoration follow from
+the declaration induction hypothesis and related operands. No flat declaration
+run is assumed. The factored relations remain pending HOL correspondence review. -/
+theorem eval_success_from_declarations {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (oldGen : EnvironmentGenerationStore) (oldGenv : GlobalEnv)
+    (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (sourceEnv evalEnv newEnv : SemEnv Value) (flatEnv : FlatSem.Environment FlatSem.Value)
+    (sourceInitial sourceArguments sourceLast : SemanticPrimitivesHOL.State F)
+    (flatInitial flatArguments : FlatSem.State C F) (begin after : Option EvalState) (value : Value)
+    (exprs : List AstHOL.Exp) (sourceValues : List Value) (flatValues : List FlatSem.Value)
+    (trace : List VarN) (compMap : Environment) (decs : List Dec)
+    (sourceRun : EvaluateHOL.evaluate sourceInitial sourceEnv exprs.reverse =
+      (sourceArguments, .val sourceValues.reverse))
+    (flatRun : FlatSem.evaluate flatEnv flatInitial (compileExps trace compMap exprs).reverse =
+      (flatArguments, .val flatValues.reverse))
+    (valuesRel : List.Forall₂ (ValueRel oldGenv) sourceValues flatValues)
+    (invariant : OracleInvariant.factoredInvariant interp transform oldGen oldGenv
+      (start, finish, other) sourceArguments flatArguments)
+    (decoded : SemanticPrimitivesHOL.doEval sourceValues sourceArguments.evalState = some (evalEnv, decs, begin))
+    (priorGeneration : OracleInvariant.envGenRel oldGen sourceArguments.evalState)
+    (positive : 0 < sourceArguments.clock) (decsIH : FactoredDecIH (F := F) interp transform decs)
+    (sourceDeclarations : EvaluateHOL.evaluateDecs
+      (EvaluateHOL.decClock { sourceArguments with evalState := begin }) evalEnv decs = (sourceLast, .val newEnv))
+    (declared : declareEnv sourceLast.evalState (extendDecEnv newEnv evalEnv) = some (value, after)) :
+    ∃ (finalGenv : GlobalEnv) (flatMiddle : FlatSem.State C F) (stored : FlatSem.Value),
+      EvaluateHOL.evaluate sourceInitial sourceEnv [.app .eval exprs] =
+        ({ sourceLast with evalState := resetEnvGeneration sourceArguments.evalState after }, .val [value]) ∧
+      FlatSem.evaluate flatEnv flatInitial [compileExp trace compMap (.app .eval exprs)] =
+        ({ flatMiddle with refs := .refv stored :: flatMiddle.refs.tail }, .val [stored]) ∧
+      GlobalGrowth oldGenv finalGenv ∧ EvalResultRel finalGenv (.val [value]) (.val [stored]) ∧
+      StateRel finalGenv { sourceLast with evalState := resetEnvGeneration sourceArguments.evalState after }
+        { flatMiddle with refs := .refv stored :: flatMiddle.refs.tail } ∧
+      OracleInvariant.factoredInvariant interp transform oldGen finalGenv (start, finish, other)
+        { sourceLast with evalState := resetEnvGeneration sourceArguments.evalState after }
+        { flatMiddle with refs := .refv stored :: flatMiddle.refs.tail } ∧
+      OracleInvariant.oracForwardRel interp sourceArguments.evalState
+        (resetEnvGeneration sourceArguments.evalState after) ∧
+      OracleInvariant.envGenRel oldGen (resetEnvGeneration sourceArguments.evalState after) := by
+  obtain ⟨baseGenv, envId, config, nextConfig, flatDecs, n, newMap, nextGen, body,
+    flatDecoded, flatLength, compiled, bodyEq, baseGrowth, nextCfg, previous, baseInv, initialForward, beginShape, decCase⟩ :=
+    eval_declarations_factored interp transform sourceArguments flatArguments oldGen oldGenv start finish other
+      invariant sourceValues flatValues valuesRel evalEnv decs begin decoded positive decsIH sourceLast (.val newEnv)
+      sourceDeclarations (by simp)
+  obtain ⟨a, b, c, d, bytes, words, rfl⟩ := six_values flatValues flatLength
+  obtain ⟨flatMiddle, finalGenv, flatError, bodyRun, states, post, success, error⟩ := decCase
+  obtain ⟨finalInvariant, forward, finalGrowth⟩ := post (by simp)
+  obtain ⟨flatErrorEq, newDomain, generation, newInv⟩ := success newEnv rfl
+  subst flatError
+  have flatPositive : 0 < flatArguments.clock := by
+    cases invariant.2.2.1 with
+    | intro _ _ clock _ => simpa [← clock] using positive
+  obtain ⟨stored, sourceResult, flatResult, valueRel, resultRel, finalStates, restored, nextForward, generationRestored⟩ :=
+    evaluate_eval_declare_and_restore interp transform oldGen oldGenv baseGenv finalGenv start finish
+      nextConfig.next nextConfig.next other envId config nextConfig decs flatDecs sourceEnv evalEnv newEnv flatEnv
+      sourceInitial sourceArguments sourceLast flatInitial flatArguments flatMiddle begin after value exprs sourceValues
+      a b c d bytes words { flatArguments.evalConfig with compileOracle := Flapjack.holShiftSeq 1 flatArguments.evalConfig.compileOracle }
+      trace compMap n nextConfig.next newMap nextGen body sourceRun decoded positive sourceDeclarations
+      (by simpa using flatRun) (by simpa using flatDecoded) flatPositive compiled bodyEq
+      (by simpa [FlatSem.decClock] using bodyRun) nextCfg (by simpa [EvaluateHOL.decClock] using forward)
+      finalGrowth baseInv newDomain newInv finalInvariant generation declared invariant previous initialForward beginShape
+  exact ⟨finalGenv, flatMiddle, stored, sourceResult, flatResult, baseGrowth.trans finalGrowth, resultRel, finalStates, restored, nextForward, generationRestored priorGeneration⟩
+
+/-- A declaration error during positive-clock dynamic evaluation is simulated
+from the declaration induction hypothesis, without assuming a flat run. -/
+theorem eval_error_from_declarations {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (oldGen : EnvironmentGenerationStore) (oldGenv : GlobalEnv)
+    (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (sourceEnv evalEnv : SemEnv Value) (flatEnv : FlatSem.Environment FlatSem.Value)
+    (sourceInitial sourceArguments sourceLast : SemanticPrimitivesHOL.State F)
+    (flatInitial flatArguments : FlatSem.State C F) (begin : Option EvalState) (sourceError : ErrorResult Value)
+    (exprs : List AstHOL.Exp) (sourceValues : List Value) (flatValues : List FlatSem.Value)
+    (trace : List VarN) (compMap : Environment) (decs : List Dec)
+    (sourceRun : EvaluateHOL.evaluate sourceInitial sourceEnv exprs.reverse =
+      (sourceArguments, .val sourceValues.reverse))
+    (flatRun : FlatSem.evaluate flatEnv flatInitial (compileExps trace compMap exprs).reverse =
+      (flatArguments, .val flatValues.reverse))
+    (valuesRel : List.Forall₂ (ValueRel oldGenv) sourceValues flatValues)
+    (invariant : OracleInvariant.factoredInvariant interp transform oldGen oldGenv
+      (start, finish, other) sourceArguments flatArguments)
+    (decoded : SemanticPrimitivesHOL.doEval sourceValues sourceArguments.evalState = some (evalEnv, decs, begin))
+    (positive : 0 < sourceArguments.clock) (decsIH : FactoredDecIH (F := F) interp transform decs)
+    (sourceDeclarations : EvaluateHOL.evaluateDecs
+      (EvaluateHOL.decClock { sourceArguments with evalState := begin }) evalEnv decs = (sourceLast, .err sourceError))
+    (safe : sourceError ≠ .abort .typeError) :
+    ∃ finalGenv,
+      let src := EvaluateHOL.evaluate sourceInitial sourceEnv [.app .eval exprs]
+      let dst := FlatSem.evaluate flatEnv flatInitial [compileExp trace compMap (.app .eval exprs)]
+      (EvalResultRel finalGenv src.2 dst.2 ∧ StateRel finalGenv src.1 dst.1) := by
+  obtain ⟨baseGenv, envId, config, nextConfig, flatDecs, n, newMap, nextGen, body,
+    flatDecoded, flatLength, compiled, bodyEq, baseGrowth, nextCfg, previous, baseInv, initialForward, beginShape, decCase⟩ :=
+    eval_declarations_factored interp transform sourceArguments flatArguments oldGen oldGenv start finish other
+      invariant sourceValues flatValues valuesRel evalEnv decs begin decoded positive decsIH sourceLast (.err sourceError)
+      sourceDeclarations (by simpa using safe)
+  obtain ⟨a, b, c, d, bytes, words, rfl⟩ := six_values flatValues flatLength
+  obtain ⟨flatLast, finalGenv, flatError, bodyRun, states, post, success, errors⟩ := decCase
+  obtain ⟨errorValue, errorEq, errorRel⟩ := errors sourceError rfl
+  subst flatError
+  have resultRel : EvalResultRel finalGenv (.err sourceError) (.err errorValue) := by
+    cases errorRel with
+    | raise related => exact .raise related
+    | abort error => exact .abort error
+  refine ⟨finalGenv, ?_⟩
+  exact evaluate_eval_declaration_error_related finalGenv envId config nextConfig decs flatDecs sourceEnv evalEnv
+    flatEnv sourceInitial sourceArguments sourceLast flatInitial flatArguments flatLast begin sourceError errorValue
+    exprs sourceValues a b c d bytes words
+    { flatArguments.evalConfig with compileOracle := Flapjack.holShiftSeq 1 flatArguments.evalConfig.compileOracle }
+    trace compMap n nextConfig.next newMap nextGen body sourceRun decoded positive sourceDeclarations
+    (by simpa using flatRun) (by simpa using flatDecoded) compiled bodyEq
+    (by simpa [FlatSem.decClock] using bodyRun) (stateRel_iff oldGenv sourceArguments flatArguments |>.mp invariant.2.2.1 |>.2.2.1) states resultRel
 
 /-- At clock zero, dynamic evaluation either propagates an operand error or
 reaches the corresponding timeout after decoding. This establishes the Eval
