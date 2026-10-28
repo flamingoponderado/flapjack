@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateException
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateDatatype
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLiteralConstructors
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingConstructors
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingRaise
 
 /-! Local declaration simulation over the preliminary factored relations. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
@@ -155,6 +156,8 @@ inductive FactoredScopedDec : Dec → Prop where
       FactoredScopedDec (.dlet location pattern (.con name (args.map pureConstructorArgument)))
   | constructorExpression (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp) :
       FactoredConstructorExpression expr → FactoredScopedDec (.dlet location pattern expr)
+  | raisedExpression (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp) :
+      FactoredRaisedExpression expr → FactoredScopedDec (.dlet location pattern expr)
   | module_ (moduleName : ModN) (decs : List Dec) :
       (∀ dec, dec ∈ decs → FactoredScopedDec dec) → FactoredScopedDec (.dmod moduleName decs)
   | local_ (locals body : List Dec) :
@@ -182,6 +185,9 @@ theorem factoredDecIH_scoped {C F : Type} [Nonempty C]
   | constructorExpression location pattern expr covered =>
     exact factoredDecIH_dlet_expression interp transform location pattern expr
       (factoredExpressionIH_constructorTree interp transform expr covered)
+  | raisedExpression location pattern expr covered =>
+    exact factoredDecIH_dlet_expression interp transform location pattern expr
+      (factoredExpressionIH_raisedTree interp transform expr covered)
   | module_ moduleName decs _ ih =>
     apply factoredDecIH_dmod interp transform moduleName decs
     apply factoredDecIH_list interp transform decs
