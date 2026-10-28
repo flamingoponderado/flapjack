@@ -1146,6 +1146,111 @@ theorem exprSim_conversion {C F : Type} (genv : GlobalEnv) (compMap : Environmen
                             exact ⟨.abort error, nextRel⟩
 
 
+/-- Unary floating-point operations preserve the preliminary expression simulation. -/
+theorem exprSim_floatUnary {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
+    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)
+    (sourceState : SemanticPrimitivesHOL.State F) (flatState : FlatSem.State C F) (body : AstHOL.Exp) (action : Arith)
+    (bodySim : ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState body)
+    (notTypeError : ∀ next, EvaluateHOL.evaluate sourceState sourceEnv [.app (.arith action .float64T) [body]] ≠
+      (next, .err (.abort .typeError))) :
+    ExprSim genv compMap trace sourceEnv flatEnv sourceState flatState (.app (.arith action .float64T) [body]) := by
+  unfold ExprSim at bodySim
+  cases sourceRun : EvaluateHOL.evaluate sourceState sourceEnv [body] with
+  | mk sourceNext sourceResult =>
+    rw [sourceRun] at bodySim
+    cases flatRun : FlatSem.evaluate flatEnv flatState [compileExp trace compMap body] with
+    | mk flatNext flatResult =>
+      rw [flatRun] at bodySim
+      obtain ⟨related, nextRel⟩ := bodySim
+      cases sourceResult with
+      | err error =>
+        cases error with
+        | raise value =>
+          cases related with
+          | raise valueRel =>
+            unfold ExprSim
+            rw [EvaluateHOL.evaluate]
+            simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+            rw [(EvaluateHOL.fixClockEvaluate sourceState sourceEnv [body] []).1, sourceRun]
+            simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+            rw [FlatSem.evaluate]
+            simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+            rw [(FlatSem.fixClock_evaluations flatEnv flatState
+              [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+            exact ⟨.raise valueRel, nextRel⟩
+        | abort error =>
+          cases related with
+          | abort =>
+            unfold ExprSim
+            rw [EvaluateHOL.evaluate]
+            simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+            rw [(EvaluateHOL.fixClockEvaluate sourceState sourceEnv [body] []).1, sourceRun]
+            simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+            rw [FlatSem.evaluate]
+            simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+            rw [(FlatSem.fixClock_evaluations flatEnv flatState
+              [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+            exact ⟨.abort error, nextRel⟩
+      | val values =>
+        obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull sourceState sourceNext sourceEnv body values sourceRun
+        cases related with
+        | value valuesRel =>
+          cases valuesRel with
+          | cons valueRel tail =>
+            cases tail with
+            | nil =>
+              rename_i flatOperand
+              have successful : doApp (sourceNext.refs, sourceNext.ffi) (.arith action .float64T) [operand] ≠ none := by
+                intro failed
+                apply notTypeError sourceNext
+                rw [EvaluateHOL.evaluate]
+                simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+                rw [(EvaluateHOL.fixClockEvaluate sourceState sourceEnv [body] []).1, sourceRun]
+                simp [getOpClass, failed, EvaluateHOL.typeError]
+              obtain ⟨bits, rfl⟩ := floatUnary_operand sourceNext action operand successful
+              have flatEq := (valueRel_literal_iff genv (.float64 bits) flatOperand).mp valueRel
+              subst flatOperand
+              have sim := floatUnary_related genv sourceNext flatNext action bits
+              cases sourceApp : doApp (sourceNext.refs, sourceNext.ffi) (.arith action .float64T) [.litv (.float64 bits)] with
+              | none => exact (successful sourceApp).elim
+              | some sourceOut =>
+                cases sourceOut with
+                | mk store sourceResult =>
+                  cases store with
+                  | mk refs ffi =>
+                    cases flatApp : FlatSem.doAppNumeric flatNext (.arith action .float64T) [.litv (.float64 bits)] with
+                    | none => simp [sourceApp, flatApp] at sim
+                    | some flatOut =>
+                      cases flatOut with
+                      | none => simp [sourceApp, flatApp] at sim
+                      | some flatOut =>
+                        cases flatOut with
+                        | mk flatAfter flatResult =>
+                          simp only [sourceApp, flatApp] at sim
+                          obtain ⟨rfl, rfl, rfl, resultRel⟩ := sim
+                          unfold ExprSim
+                          rw [EvaluateHOL.evaluate]
+                          simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+                          rw [(EvaluateHOL.fixClockEvaluate sourceState sourceEnv [body] []).1, sourceRun]
+                          simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+                          rw [FlatSem.evaluate]
+                          simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+                          rw [(FlatSem.fixClock_evaluations flatEnv flatState
+                            [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+                          simp only [List.reverse_cons, List.reverse_nil, List.nil_append, getOpClass, astOpToFlatOp,
+                            sourceApp, FlatSem.applyResult, FlatSem.doApp, flatApp]
+                          cases resultRel with
+                          | value valueRel =>
+                            simp only [EvaluateHOL.listResult]
+                            exact ⟨.value (.cons valueRel .nil), nextRel⟩
+                          | raise valueRel =>
+                            simp only [EvaluateHOL.listResult]
+                            exact ⟨.raise valueRel, nextRel⟩
+                          | abort error =>
+                            simp only [EvaluateHOL.listResult]
+                            exact ⟨.abort error, nextRel⟩
+
+
 /-- Boolean negation preserves the preliminary expression simulation. -/
 theorem exprSim_booleanNot {C F : Type} (genv : GlobalEnv) (compMap : Environment) (trace : List VarN)
     (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (flatEnv : FlatSem.Environment FlatSem.Value)

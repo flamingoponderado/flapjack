@@ -58,7 +58,9 @@ def doAppNumericCore {σ : Type} (state : Store Value × HolFfiState σ) (op : O
     | _, _, _ => none
   | _ => none
 
-private noncomputable def floatArith (action : Arith) (values : List Value) : Option Value :=
+/-- Floating arithmetic dispatcher used by `doApp`; this helper is not a
+separate HOL declaration. -/
+noncomputable def floatArith (action : Arith) (values : List Value) : Option Value :=
   match action, values with
   | .abs, [.litv (.float64 x)] => some (.litv (.float64 (fpSemFpUopComp .abs x)))
   | .neg, [.litv (.float64 x)] => some (.litv (.float64 (fpSemFpUopComp .neg x)))

@@ -1049,6 +1049,118 @@ theorem localEnvBounded_conversion {C F : Type} [Nonempty C]
                         (And.intro nextGeneration forward))
                     | abort error => simp [EvaluateHOL.listResult]
 
+/-- Unary floating-point operations compose a bounded operand simulation. -/
+theorem localEnvBounded_floatUnary {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
+    (body : AstHOL.Exp) (action : Arith)
+    (bodyIH : LocalEnvBoundedIH (F := F) interp transform limit body) :
+    LocalEnvBoundedIH (F := F) interp transform limit (.app (.arith action .float64T) [body]) := by
+  intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen clockBound localRel envInv tracesLen invariant generation safe
+  let sourceEnv := { baseEnv with v := nsAppend sourceLocal baseEnv.v }
+  let compMap := { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v }
+  have bodySafe : ∀ last, EvaluateHOL.evaluate source sourceEnv [body] ≠ (last, .err (.abort .typeError)) := by
+    intro last bad
+    apply safe last
+    change EvaluateHOL.evaluate source sourceEnv [.app (.arith action .float64T) [body]] = _
+    rw [EvaluateHOL.evaluate]
+    simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+    rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, bad]
+  obtain ⟨nextGenv, bodySim, post⟩ := bodyIH genv start finish other source flat baseEnv sourceLocal flatEnv traces
+    trace baseMap gen clockBound localRel envInv tracesLen invariant generation bodySafe
+  have bodySimCopy := bodySim
+  unfold ExprSim at bodySim
+  generalize sourceRun : EvaluateHOL.evaluate source sourceEnv [body] = sourceResult at bodySim post
+  obtain ⟨nextSource, sourceResult⟩ := sourceResult
+  generalize flatRun : FlatSem.evaluate flatEnv flat [compileExp trace compMap body] = flatResult at bodySim post
+  obtain ⟨nextFlat, flatResult⟩ := flatResult
+  obtain ⟨related, states⟩ := bodySim
+  cases related with
+  | abort error =>
+    refine ⟨nextGenv, ?_, ?_⟩
+    · unfold ExprSim
+      rw [EvaluateHOL.evaluate]
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+      rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]
+      simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+      rw [FlatSem.evaluate]
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+      rw [(FlatSem.fixClock_evaluations flatEnv flat [compileExp trace compMap body]
+        (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+      exact ⟨.abort error, states⟩
+    · rw [EvaluateHOL.evaluate]
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+      rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]
+      trivial
+  | raise valueRel =>
+    obtain ⟨growth, nextInvariant, nextGeneration, forward⟩ := post
+    refine ⟨nextGenv, exprSim_floatUnary nextGenv compMap trace sourceEnv flatEnv source flat body action bodySimCopy safe, ?_⟩
+    rw [EvaluateHOL.evaluate]
+    simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+    rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]
+    simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+    rw [FlatSem.evaluate]
+    simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+    rw [(FlatSem.fixClock_evaluations flatEnv flat [compileExp trace compMap body]
+      (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+    exact ⟨growth, nextInvariant, nextGeneration, forward⟩
+  | @value sourceValues flatValues valuesRel =>
+    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source nextSource sourceEnv body sourceValues sourceRun
+    cases valuesRel with
+    | cons valueRel tail =>
+      cases tail with
+      | nil =>
+        rename_i flatOperand
+        obtain ⟨growth, nextInvariant, nextGeneration, forward⟩ := post
+        have successful : doApp (nextSource.refs, nextSource.ffi) (.arith action .float64T) [operand] ≠ none := by
+          intro failed
+          apply safe nextSource
+          change EvaluateHOL.evaluate source sourceEnv [.app (.arith action .float64T) [body]] = _
+          rw [EvaluateHOL.evaluate]
+          simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+          rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]
+          simp [getOpClass, failed, EvaluateHOL.typeError]
+        obtain ⟨bits, rfl⟩ := floatUnary_operand nextSource action operand successful
+        have flatEq := (valueRel_literal_iff nextGenv (.float64 bits) flatOperand).mp valueRel
+        subst flatOperand
+        have primitive := floatUnary_related nextGenv nextSource nextFlat action bits
+        cases sourceApp : doApp (nextSource.refs, nextSource.ffi) (.arith action .float64T) [.litv (.float64 bits)] with
+        | none => exact (successful sourceApp).elim
+        | some sourceOut =>
+          cases sourceOut with
+          | mk store sourceResult =>
+            cases store with
+            | mk refs ffi =>
+              cases flatApp : FlatSem.doAppNumeric nextFlat (.arith action .float64T) [.litv (.float64 bits)] with
+              | none => simp [sourceApp, flatApp] at primitive
+              | some flatOut =>
+                cases flatOut with
+                | none => simp [sourceApp, flatApp] at primitive
+                | some flatOut =>
+                  cases flatOut with
+                  | mk flatAfter flatResult =>
+                    simp only [sourceApp, flatApp] at primitive
+                    obtain ⟨rfl, rfl, rfl, resultRel⟩ := primitive
+                    refine ⟨nextGenv, exprSim_floatUnary nextGenv compMap trace sourceEnv flatEnv source flat body
+                      action bodySimCopy safe, ?_⟩
+                    rw [EvaluateHOL.evaluate]
+                    simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+                    rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]
+                    simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+                    rw [FlatSem.evaluate]
+                    simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+                    rw [(FlatSem.fixClock_evaluations flatEnv flat [compileExp trace compMap body]
+                      (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+                    simp only [List.reverse_cons, List.reverse_nil, List.nil_append, getOpClass, astOpToFlatOp,
+                      sourceApp, FlatSem.applyResult, FlatSem.doApp, flatApp]
+                    cases resultRel with
+                    | value valueRel =>
+                      simpa [EvaluateHOL.listResult] using And.intro growth (And.intro nextInvariant
+                        (And.intro nextGeneration forward))
+                    | raise valueRel =>
+                      simpa [EvaluateHOL.listResult] using And.intro growth (And.intro nextInvariant
+                        (And.intro nextGeneration forward))
+                    | abort error => simp [EvaluateHOL.listResult]
+
 /-- Boolean negation composes a bounded operand simulation. -/
 theorem localEnvBounded_booleanNot {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)

@@ -264,4 +264,33 @@ theorem booleanNot_related {C F : Type} (genv : GlobalEnv) (ok : genvCOk genv.c)
     BackendCommon.trueTag, BackendCommon.falseTag, FlatLang.boolId, distinct] at related ⊢
   all_goals exact related
 
+/-- A successful unary floating-point operation has a floating-point literal
+operand. This is infrastructure for the factored expression simulation. -/
+theorem floatUnary_operand {F : Type} (source : SemanticPrimitivesHOL.State F)
+    (action : Arith) (operand : SemanticPrimitivesHOL.Value)
+    (successful : doApp (source.refs, source.ffi) (.arith action .float64T) [operand] ≠ none) :
+    ∃ bits, operand = .litv (.float64 bits) := by
+  cases operand with
+  | litv lit =>
+    cases lit with
+    | float64 bits => exact ⟨bits, rfl⟩
+    | _ => cases action <;> simp [doApp, floatArith] at successful
+  | _ => cases action <;> simp [doApp, floatArith] at successful
+
+/-- Unary floating-point operations agree on literal operands. Their floating
+point functions retain the assumptions of the source evaluator. -/
+theorem floatUnary_related {C F : Type} (genv : GlobalEnv)
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (action : Arith) (bits : BitVec 64) :
+    match doApp (source.refs, source.ffi) (.arith action .float64T) [.litv (.float64 bits)],
+      FlatSem.doAppNumeric flat (.arith action .float64T) [.litv (.float64 bits)] with
+    | none, some none => True
+    | some ((refs, ffi), sourceResult), some (some (flatNext, flatResult)) =>
+        refs = source.refs ∧ ffi = source.ffi ∧ flatNext = flat ∧
+          ResultRel ValueRel genv sourceResult flatResult
+    | _, _ => False := by
+  cases action <;> simp [doApp, floatArith, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
+    FlatSem.flatToValue, FlatSem.valueToFlat]
+  all_goals exact ResultRel.value (.literal genv _)
+
 end Flapjack.Compiler.Backend.SourceToFlat
