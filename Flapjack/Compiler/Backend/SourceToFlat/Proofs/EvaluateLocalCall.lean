@@ -133,6 +133,44 @@ theorem doOpApp_recclosure_local (genv : GlobalEnv) (baseMap : Environment) (bas
     change Nat.succ traces.length = Nat.succ recursiveFlat.length
     simp [flatLength, len]
 
+/-- A recursive binding lookup depends only on membership in the group. -/
+theorem lookup_recursive_bindings (sourceEnv : SemEnv Value)
+    (funs : List (VarN × VarN × AstHOL.Exp)) (names : List VarN) (name : VarN) :
+    (names.map (fun x => (x, Value.recclosure sourceEnv funs x))).lookup name =
+      if name ∈ names then some (.recclosure sourceEnv funs name) else none := by
+  induction names with
+  | nil => simp
+  | cons head tail ih =>
+    by_cases eq : name = head
+    · subst head
+      simp
+    · simp [List.lookup_cons, BEq.beq, eq, ih]
+
+/-- An association list has a value at exactly its listed keys. -/
+theorem lookup_key_exists {α : Type} (entries : List (VarN × α)) (name : VarN) :
+    (∃ value, entries.lookup name = some value) ↔ name ∈ entries.map Prod.fst := by
+  induction entries with
+  | nil => simp
+  | cons entry tail ih =>
+    obtain ⟨key, value⟩ := entry
+    by_cases eq : name = key
+    · subst key
+      simp
+    · simp [List.lookup_cons, BEq.beq, eq, ih]
+
+/-- Installing a binding list is namespace append with its association list. -/
+theorem nsBindList_eq_nsAppend {α : Type} (entries : List (VarN × α)) (env : Namespace ModN VarN α) :
+    nsBindList entries env = nsAppend (alistToNs entries) env := by
+  cases env with
+  | bind values modules =>
+    induction entries with
+    | nil => rfl
+    | cons entry tail ih =>
+      obtain ⟨name, value⟩ := entry
+      simp only [nsBindList, List.foldr_cons] at ih ⊢
+      rw [ih]
+      rfl
+
 /-- Every global slot in a top-level recursive group contains a closure
 related to the corresponding source recursive closure. -/
 theorem topRec_group_slot_related (genv : GlobalEnv) (baseMap : Environment) (sourceEnv : SemEnv Value)
@@ -153,6 +191,82 @@ theorem topRec_group_slot_related (genv : GlobalEnv) (baseMap : Environment) (so
   refine ⟨n, storedTrace, _, lookup, bound, slot, ?_⟩
   exact .topRecclosure genv baseMap sourceEnv funs flatEnv name arg body newVars bodyTrace argTrace
     names globals empty found closures
+
+/-- The global slots of a top-level recursive group establish the global
+invariant for the rebuilt source environment and the extended compiler map. -/
+theorem topRec_rebuilt_globalInv (genv : GlobalEnv) (baseMap : Environment) (sourceEnv : SemEnv Value)
+    (funs : List (VarN × VarN × AstHOL.Exp)) (flatEnv : FlatSem.Environment FlatSem.Value)
+    (newVars : List (VarN × VarName))
+    (names : newVars.map Prod.fst = funs.reverse.map Prod.fst)
+    (globals : GlobalEnvInv genv baseMap (fun _ => False) sourceEnv) (empty : flatEnv.v = [])
+    (closures : ∀ x, x ∈ funs.map Prod.fst → ∃ n y e storedTrace bodyTrace localTrace,
+      newVars.lookup x = some (.glob storedTrace n) ∧ n < genv.v.length ∧
+      findRecFun x funs = some (y, e) ∧
+      genv.v[n]?.getD none = some (.closure flatEnv y
+        (compileExp bodyTrace { baseMap with v := nsBindList ((y, .localName localTrace y) :: newVars) baseMap.v } e))) :
+    GlobalEnvInv genv { baseMap with v := nsBindList newVars baseMap.v } (fun _ => False)
+      { sourceEnv with v := buildRecEnv funs sourceEnv sourceEnv.v } := by
+  have sourceShape : buildRecEnv funs sourceEnv sourceEnv.v =
+      nsAppend (alistToNs ((funs.map Prod.fst).map (fun x => (x, Value.recclosure sourceEnv funs x)))) sourceEnv.v := by
+    have h := buildRecEnv_nsAppend funs sourceEnv nsEmpty sourceEnv.v
+    have emptyAppend : nsAppend (nsEmpty : Namespace ModN VarN Value) sourceEnv.v = sourceEnv.v := by
+      cases sourceEnv.v
+      rfl
+    rw [emptyAppend, dletrec_sourceEnv] at h
+    exact h
+  cases globals with
+  | intro _ _ _ values constructors =>
+    apply GlobalEnvInv.intro
+    · intro id value _ lookup
+      cases id with
+      | short name =>
+        by_cases member : name ∈ funs.map Prod.fst
+        · have sourceFound : nsLookup (buildRecEnv funs sourceEnv sourceEnv.v) (.short name) =
+              some (.recclosure sourceEnv funs name) := by
+            rw [sourceShape, nsLookup_append_short]
+            change (((funs.map Prod.fst).map (fun x => (x, Value.recclosure sourceEnv funs x))).lookup name).orElse (fun _ => nsLookup sourceEnv.v (.short name)) = some (.recclosure sourceEnv funs name)
+            rw [lookup_recursive_bindings]
+            simp [member]
+          change nsLookup (buildRecEnv funs sourceEnv sourceEnv.v) (.short name) = some value at lookup
+          rw [sourceFound] at lookup
+          cases lookup
+          have originalInv : GlobalEnvInv genv baseMap (fun _ => False) sourceEnv := .intro genv baseMap _ sourceEnv values constructors
+          obtain ⟨n, storedTrace, flatValue, found, bound, slot, related⟩ :=
+            topRec_group_slot_related genv baseMap sourceEnv funs flatEnv newVars names originalInv empty closures name member
+          apply GlobalLookupRel.intro genv _ (.short name) _ n flatValue storedTrace _ bound slot related
+          rw [nsBindList_eq_nsAppend, nsLookup_append_short]
+          simp [alistToNs, nsLookup, found]
+        · have absent : newVars.lookup name = none := by
+            cases found : newVars.lookup name with
+            | none => rfl
+            | some item =>
+              have key := (lookup_key_exists newVars name).mp ⟨item, found⟩
+              rw [names] at key
+              simp only [List.map_reverse, List.mem_reverse] at key
+              exact (member key).elim
+          have baseLookup : nsLookup sourceEnv.v (.short name) = some value := by
+            change nsLookup (buildRecEnv funs sourceEnv sourceEnv.v) (.short name) = some value at lookup
+            rw [sourceShape, nsLookup_append_short] at lookup
+            change (((funs.map Prod.fst).map (fun x => (x, Value.recclosure sourceEnv funs x))).lookup name).orElse (fun _ => nsLookup sourceEnv.v (.short name)) = some value at lookup
+            rw [lookup_recursive_bindings] at lookup
+            simpa [member] using lookup
+          have rel := values (.short name) value (by simp) baseLookup
+          cases rel with
+          | intro _ _ _ n flatValue trace found bound slot related =>
+            apply GlobalLookupRel.intro genv _ (.short name) value n flatValue trace _ bound slot related
+            rw [nsBindList_eq_nsAppend, nsLookup_append_short]
+            simpa [alistToNs, nsLookup, absent] using found
+      | long moduleName rest =>
+        have baseLookup : nsLookup sourceEnv.v (.long moduleName rest) = some value := by
+          change nsLookup (buildRecEnv funs sourceEnv sourceEnv.v) (.long moduleName rest) = some value at lookup
+          simpa [sourceShape, nsLookup_append_long, alistToNs, nsLookupMod] using lookup
+        have rel := values (.long moduleName rest) value (by simp) baseLookup
+        cases rel with
+        | intro _ _ _ n flatValue trace found bound slot related =>
+          apply GlobalLookupRel.intro genv _ (.long moduleName rest) value n flatValue trace _ bound slot related
+          rw [nsBindList_eq_nsAppend, nsLookup_append_long]
+          simpa [alistToNs, nsLookupMod] using found
+    · exact constructors
 
 /-- A source top-level recursive closure related to a flat ordinary closure
 selects the same function body and argument. The retained global-slot
@@ -185,6 +299,47 @@ theorem doOpApp_topRecclosure_setup (genv : GlobalEnv) (sourceEnv : SemEnv Value
     refine ⟨baseMap, body, newVars, trace, argTrace, names, globals, empty, found, closures, ?_, ?_⟩
     · simp [doOpApp, distinct, found]
     · simp [FlatSem.doOpApp, empty]
+
+/-- Calling a top-level recursive closure establishes the same local and
+global invariants as an ordinary closure call. -/
+theorem doOpApp_topRecclosure_local (genv : GlobalEnv) (sourceEnv : SemEnv Value)
+    (funs : List (VarN × VarN × AstHOL.Exp)) (name : VarN)
+    (flatEnv : FlatSem.Environment FlatSem.Value) (arg : VarN) (flatBody : FlatLang.Exp)
+    (argument : Value) (flatArgument : FlatSem.Value)
+    (closureRel : ValueRel genv (.recclosure sourceEnv funs name) (.closure flatEnv arg flatBody))
+    (argumentRel : ValueRel genv argument flatArgument) (distinct : (funs.map Prod.fst).Nodup) :
+    ∃ (baseMap : Environment) (baseEnv : SemEnv Value) (sourceLocal : Namespace ModN VarN Value)
+      (flatLocal : FlatSem.Environment FlatSem.Value) (trace : List VarN) (traces : List BackendCommon.Tra)
+      (body : AstHOL.Exp),
+      doOpApp [.recclosure sourceEnv funs name, argument] =
+        some ({ baseEnv with v := nsAppend sourceLocal baseEnv.v }, body) ∧
+      FlatSem.doOpApp [.closure flatEnv arg flatBody, flatArgument] =
+        some (flatLocal, compileExp trace { baseMap with v := bindLocals traces (flatLocal.v.map Prod.fst) baseMap.v } body) ∧
+      EnvRel genv sourceLocal flatLocal.v ∧
+      GlobalEnvInv genv baseMap (fun n => n ∈ flatLocal.v.map Prod.fst) baseEnv ∧
+      traces.length = flatLocal.v.length := by
+  obtain ⟨baseMap, body, newVars, trace, argTrace, names, globals, empty, found, closures, sourceApp, flatApp⟩ :=
+    doOpApp_topRecclosure_setup genv sourceEnv funs name flatEnv arg flatBody argument flatArgument closureRel distinct
+  let extendedMap := { baseMap with v := nsBindList newVars baseMap.v }
+  let extendedEnv := { sourceEnv with v := buildRecEnv funs sourceEnv sourceEnv.v }
+  let localEnv := nsBind arg argument (nsEmpty : Namespace ModN VarN Value)
+  let flatLocal := { flatEnv with v := [(arg, flatArgument)] }
+  have localRel : EnvRel genv localEnv flatLocal.v := by
+    exact .bind genv arg argument nsEmpty [] flatArgument (.empty genv) argumentRel
+  have rebuilt := topRec_rebuilt_globalInv genv baseMap sourceEnv funs flatEnv newVars names globals empty closures
+  have extendedInv : GlobalEnvInv genv extendedMap (fun n => n ∈ flatLocal.v.map Prod.fst) extendedEnv := by
+    cases rebuilt with
+    | intro _ _ _ values constructors =>
+      apply GlobalEnvInv.intro
+      · intro id value _ lookup
+        exact values id value (by simp) lookup
+      · exact constructors
+  refine ⟨extendedMap, extendedEnv, localEnv, flatLocal, trace, [argTrace], body, ?_, ?_, localRel, extendedInv, rfl⟩
+  · rw [sourceApp]
+    cases h : buildRecEnv funs sourceEnv sourceEnv.v
+    simp [extendedEnv, localEnv, nsAppend, nsBind, nsEmpty, h]
+  · rw [flatApp]
+    simp [extendedMap, flatLocal, bindLocals, nsBindList]
 
 
 end Flapjack.Compiler.Backend.SourceToFlat
