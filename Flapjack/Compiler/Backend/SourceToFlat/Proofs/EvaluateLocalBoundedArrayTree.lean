@@ -10,6 +10,8 @@ open OracleInvariant
 
 inductive LocalEnvBoundedArrayExpression : AstHOL.Exp → Prop where
   | base (expr : AstHOL.Exp) : LocalEnvPrimitiveExpression expr → LocalEnvBoundedArrayExpression expr
+  | eval (args : List AstHOL.Exp) : (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) →
+      LocalEnvBoundedArrayExpression (.app .eval args)
   | call (left right : AstHOL.Exp) : LocalEnvBoundedArrayExpression left → LocalEnvBoundedArrayExpression right →
       LocalEnvBoundedArrayExpression (.app .opapp [left, right])
   | arrayEmpty (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body →
@@ -140,10 +142,12 @@ the relations remain pending HOL correspondence review. -/
 theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (limit : Nat) (calledIH : LocalEnvClockIH (F := F) interp transform limit)
+    (decsIH : FactoredDecClockIH (F := F) interp transform limit)
     (expr : AstHOL.Exp) (covered : LocalEnvBoundedArrayExpression expr) : LocalEnvBoundedIH (F := F) interp transform limit expr := by
   induction covered with
   | base expr covered =>
     exact localEnvBounded_of_unbounded interp transform limit expr (localEnvIH_primitiveTree interp transform expr covered)
+  | eval args _ ih => exact localEnvBounded_eval interp transform limit decsIH args ih
   | call left right _ _ leftIH rightIH =>
     exact localEnvBounded_opapp interp transform limit calledIH left right leftIH rightIH
   | arrayEmpty body _ ih => exact localEnvBounded_aallocEmpty interp transform limit body ih
@@ -232,23 +236,42 @@ theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
 
 
 
+/-- The covered expression proof can be invoked directly from the expression
+and declaration induction hypotheses at smaller clocks. -/
+theorem localEnvBounded_arrayTree_of_smaller {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
+    (smallerExprs : ∀ n, n < limit → ∀ expr, LocalEnvBoundedIH (F := F) interp transform n expr)
+    (smallerDecs : ∀ n, n < limit → ∀ decs, FactoredDecBoundedIH (F := F) interp transform n decs)
+    (expr : AstHOL.Exp) (covered : LocalEnvBoundedArrayExpression expr) :
+    LocalEnvBoundedIH (F := F) interp transform limit expr :=
+  localEnvBounded_arrayTree interp transform limit
+    (localEnvClockIH_of_smaller interp transform limit smallerExprs)
+    (factoredDecClockIH_of_smaller interp transform limit smallerDecs) expr covered
+
 /-- Dynamic evaluation is simulated for covered operands, assuming the
 declaration induction hypothesis for every decoded declaration list. -/
 theorem localEnvBounded_eval_arrayTree {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
     (limit : Nat) (calledIH : LocalEnvClockIH (F := F) interp transform limit)
-    (decsIH : ∀ decs, FactoredDecIH (F := F) interp transform decs)
+    (decsIH : FactoredDecClockIH (F := F) interp transform limit)
     (exprs : List AstHOL.Exp) (covered : ∀ expr, expr ∈ exprs → LocalEnvBoundedArrayExpression expr) :
     LocalEnvBoundedIH (F := F) interp transform limit (.app .eval exprs) := by
   apply localEnvBounded_eval interp transform limit decsIH exprs
   intro expr member
-  exact localEnvBounded_arrayTree interp transform limit calledIH expr (covered expr member)
+  exact localEnvBounded_arrayTree interp transform limit calledIH decsIH expr (covered expr member)
 
 /-- At clock zero the smaller-clock function-call hypothesis is vacuous. -/
 theorem localEnvClockIH_zero {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) :
     LocalEnvClockIH (F := F) interp transform 0 := by
   intro expr genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen below
+  omega
+
+/-- At clock zero the smaller-clock declaration hypothesis is vacuous. -/
+theorem factoredDecClockIH_zero {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) :
+    FactoredDecClockIH (F := F) interp transform 0 := by
+  intro decs genv env nextEnv sourceEnv trace source sourceLast flat start finish next other n n' gen nextGen flatDecs result below
   omega
 
 /-- Dynamic evaluation at clock zero is simulated when its operands are
@@ -259,6 +282,7 @@ theorem localEnvBounded_eval_zero_arrayTree {C F : Type} [Nonempty C]
     LocalEnvBoundedIH (F := F) interp transform 0 (.app .eval exprs) := by
   apply localEnvBounded_eval_zero interp transform exprs
   intro expr member
-  exact localEnvBounded_arrayTree interp transform 0 (localEnvClockIH_zero interp transform) expr (covered expr member)
+  exact localEnvBounded_arrayTree interp transform 0 (localEnvClockIH_zero interp transform)
+    (factoredDecClockIH_zero interp transform) expr (covered expr member)
 
 end Flapjack.Compiler.Backend.SourceToFlat

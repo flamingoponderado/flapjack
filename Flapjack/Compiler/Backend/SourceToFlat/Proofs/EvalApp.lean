@@ -796,7 +796,8 @@ theorem eval_declarations_factored {C F : Type} [Nonempty C]
     (valuesRel : List.Forall₂ (ValueRel genv) sourceValues flatValues)
     (evalEnv : SemEnv Value) (decs : List Dec) (begin : Option EvalState)
     (decoded : SemanticPrimitivesHOL.doEval sourceValues source.evalState = some (evalEnv, decs, begin))
-    (positive : 0 < source.clock) (decsIH : FactoredDecIH (F := F) interp transform decs)
+    (positive : 0 < source.clock) (limit : Nat) (clockBound : source.clock ≤ limit)
+    (decsIH : FactoredDecClockIH (F := F) interp transform limit)
     (sourceLast : SemanticPrimitivesHOL.State F) (result : Result (SemEnv Value) Value)
     (sourceRun : EvaluateHOL.evaluateDecs (EvaluateHOL.decClock { source with evalState := begin }) evalEnv decs =
       (sourceLast, result)) (safe : result ≠ .err (.abort .typeError)) :
@@ -822,11 +823,11 @@ theorem eval_declarations_factored {C F : Type} [Nonempty C]
       valuesRel evalEnv decs begin decoded positive
   refine ⟨baseGenv, envId, config, next, flatDecs, n, newMap, nextGen, body,
     flatDecoded, flatLength, compiled, bodyEq, growth, nextCfg, previous, envInv, oracleSubmap, oracleShape, ?_⟩
-  apply decsIH baseGenv (lookupEnvId envId config.envs) newMap evalEnv []
+  apply decsIH decs baseGenv (lookupEnvId envId config.envs) newMap evalEnv []
     (EvaluateHOL.decClock { source with evalState := begin }) sourceLast
     (FlatSem.decClock { flat with globals := flat.globals ++ List.replicate (next.next.vidx - config.next.vidx) none, evalConfig := { flat.evalConfig with compileOracle := Flapjack.holShiftSeq 1 flat.evalConfig.compileOracle } })
     config.next next.next next.next (idxBlock start finish ∪ other) 1 n ⟨0, config.envs.next, .ln⟩ nextGen body result
-    sourceRun decInv bodyEq envInv safe
+    (by omega) sourceRun decInv bodyEq envInv safe
   · simpa [EvaluateHOL.decClock] using generation
   · simpa [EvaluateHOL.decClock] using future
   · exact idxPrev_refl _
@@ -852,7 +853,8 @@ theorem eval_success_from_declarations {C F : Type} [Nonempty C]
       (start, finish, other) sourceArguments flatArguments)
     (decoded : SemanticPrimitivesHOL.doEval sourceValues sourceArguments.evalState = some (evalEnv, decs, begin))
     (priorGeneration : OracleInvariant.envGenRel oldGen sourceArguments.evalState)
-    (positive : 0 < sourceArguments.clock) (decsIH : FactoredDecIH (F := F) interp transform decs)
+    (positive : 0 < sourceArguments.clock) (limit : Nat) (clockBound : sourceArguments.clock ≤ limit)
+    (decsIH : FactoredDecClockIH (F := F) interp transform limit)
     (sourceDeclarations : EvaluateHOL.evaluateDecs
       (EvaluateHOL.decClock { sourceArguments with evalState := begin }) evalEnv decs = (sourceLast, .val newEnv))
     (declared : declareEnv sourceLast.evalState (extendDecEnv newEnv evalEnv) = some (value, after)) :
@@ -873,7 +875,7 @@ theorem eval_success_from_declarations {C F : Type} [Nonempty C]
   obtain ⟨baseGenv, envId, config, nextConfig, flatDecs, n, newMap, nextGen, body,
     flatDecoded, flatLength, compiled, bodyEq, baseGrowth, nextCfg, previous, baseInv, initialForward, beginShape, decCase⟩ :=
     eval_declarations_factored interp transform sourceArguments flatArguments oldGen oldGenv start finish other
-      invariant sourceValues flatValues valuesRel evalEnv decs begin decoded positive decsIH sourceLast (.val newEnv)
+      invariant sourceValues flatValues valuesRel evalEnv decs begin decoded positive limit clockBound decsIH sourceLast (.val newEnv)
       sourceDeclarations (by simp)
   obtain ⟨a, b, c, d, bytes, words, rfl⟩ := six_values flatValues flatLength
   obtain ⟨flatMiddle, finalGenv, flatError, bodyRun, states, post, success, error⟩ := decCase
@@ -914,7 +916,8 @@ theorem eval_error_from_declarations {C F : Type} [Nonempty C]
       (start, finish, other) sourceArguments flatArguments)
     (decoded : SemanticPrimitivesHOL.doEval sourceValues sourceArguments.evalState = some (evalEnv, decs, begin))
     (priorGeneration : OracleInvariant.envGenRel oldGen sourceArguments.evalState)
-    (positive : 0 < sourceArguments.clock) (decsIH : FactoredDecIH (F := F) interp transform decs)
+    (positive : 0 < sourceArguments.clock) (limit : Nat) (clockBound : sourceArguments.clock ≤ limit)
+    (decsIH : FactoredDecClockIH (F := F) interp transform limit)
     (sourceDeclarations : EvaluateHOL.evaluateDecs
       (EvaluateHOL.decClock { sourceArguments with evalState := begin }) evalEnv decs = (sourceLast, .err sourceError))
     (safe : sourceError ≠ .abort .typeError) :
@@ -931,7 +934,7 @@ theorem eval_error_from_declarations {C F : Type} [Nonempty C]
   obtain ⟨baseGenv, envId, config, nextConfig, flatDecs, n, newMap, nextGen, body,
     flatDecoded, flatLength, compiled, bodyEq, baseGrowth, nextCfg, previous, baseInv, initialForward, beginShape, decCase⟩ :=
     eval_declarations_factored interp transform sourceArguments flatArguments oldGen oldGenv start finish other
-      invariant sourceValues flatValues valuesRel evalEnv decs begin decoded positive decsIH sourceLast (.err sourceError)
+      invariant sourceValues flatValues valuesRel evalEnv decs begin decoded positive limit clockBound decsIH sourceLast (.err sourceError)
       sourceDeclarations (by simpa using safe)
   obtain ⟨a, b, c, d, bytes, words, rfl⟩ := six_values flatValues flatLength
   obtain ⟨flatLast, finalGenv, flatError, bodyRun, states, post, success, errors⟩ := decCase
@@ -1046,7 +1049,7 @@ theorem localEnvBounded_eval_zero {C F : Type} [Nonempty C]
 induction hypothesis for decoded declarations. -/
 theorem localEnvBounded_eval {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
-    (limit : Nat) (decsIH : ∀ decs, FactoredDecIH (F := F) interp transform decs)
+    (limit : Nat) (decsIH : FactoredDecClockIH (F := F) interp transform limit)
     (exprs : List AstHOL.Exp)
     (each : ∀ expr, expr ∈ exprs → LocalEnvBoundedIH (F := F) interp transform limit expr) :
     LocalEnvBoundedIH (F := F) interp transform limit (.app .eval exprs) := by
@@ -1107,6 +1110,8 @@ theorem localEnvBounded_eval {C F : Type} [Nonempty C]
           rw [sourceTimeout]
           trivial
       · have positive : 0 < nextSource.clock := Nat.pos_of_ne_zero nextZero
+        have nextBound : nextSource.clock ≤ limit := Nat.le_trans
+          (EvaluateHOL.evaluateClockFull source nextSource sourceEnv exprs.reverse _ sourceRun) clockBound
         have reversedRel : List.Forall₂ (ValueRel nextGenv) sourceValues.reverse flatValues.reverse :=
           List.rel_reverse valuesRel
         cases declarationRun : EvaluateHOL.evaluateDecs
@@ -1123,7 +1128,7 @@ theorem localEnvBounded_eval {C F : Type} [Nonempty C]
             obtain ⟨finalGenv, sim, finalPost⟩ := eval_error_from_declarations interp transform gen nextGenv start finish other
               sourceEnv evalEnv flatEnv source nextSource sourceLast flat nextFlat begin sourceError exprs
               sourceValues.reverse flatValues.reverse trace compMap decs (by simpa using sourceRun) (by simpa using flatRun)
-              reversedRel nextInvariant decoded nextGeneration positive (decsIH decs) declarationRun errorSafe
+              reversedRel nextInvariant decoded nextGeneration positive limit nextBound decsIH declarationRun errorSafe
             refine ⟨finalGenv, sim, ?_⟩
             cases result : (EvaluateHOL.evaluate source sourceEnv [.app .eval exprs]).2 with
             | err error =>
@@ -1158,7 +1163,7 @@ theorem localEnvBounded_eval {C F : Type} [Nonempty C]
                 eval_success_from_declarations interp transform gen nextGenv start finish other sourceEnv evalEnv newEnv
                   flatEnv source nextSource sourceLast flat nextFlat begin after value exprs sourceValues.reverse flatValues.reverse
                   trace compMap decs (by simpa using sourceRun) (by simpa using flatRun) reversedRel nextInvariant decoded
-                  nextGeneration positive (decsIH decs) declarationRun declared
+                  nextGeneration positive limit nextBound decsIH declarationRun declared
               refine ⟨finalGenv, ?_, ?_⟩
               · unfold ExprSim
                 rw [sourceResult, flatResult]
