@@ -5,6 +5,23 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
 These lemmas remain pending HOL correspondence review. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.NamespaceHOL
+open OracleInvariant
+
+/-- Decrementing both evaluator clocks preserves the factored invariant.
+This is used before entering a function body. -/
+theorem factoredInvariant_decClock {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
+    (idxs : NextIndices × NextIndices × Set (Nat × IndexKind))
+    (source : State F) (flat : FlatSem.State C F)
+    (invariant : factoredInvariant interp transform gen genv idxs source flat) :
+    factoredInvariant interp transform gen genv idxs (EvaluateHOL.decClock source) (FlatSem.decClock flat) := by
+  obtain ⟨cOk, tysOk, states, range, invs, orac, globals, reserved, genInv, fin⟩ := invariant
+  have decStates : StateRel genv (EvaluateHOL.decClock source) (FlatSem.decClock flat) := by
+    cases states with
+    | intro nonempty refs clock ffi =>
+      exact .intro _ _ nonempty refs (by simp [EvaluateHOL.decClock, FlatSem.decClock, clock]) ffi
+  exact ⟨cOk, tysOk, decStates, range, invs, orac, globals, reserved, genInv, fin⟩
 
 /-- Looking up a compiled recursive function preserves its name and argument
 and compiles its body under the same recursive environment. -/
@@ -340,6 +357,50 @@ theorem doOpApp_topRecclosure_local (genv : GlobalEnv) (sourceEnv : SemEnv Value
     simp [extendedEnv, localEnv, nsAppend, nsBind, nsEmpty, h]
   · rw [flatApp]
     simp [extendedMap, flatLocal, bindLocals, nsBindList]
+
+/-- Every successful source function application to a related argument has a
+flat call with related local environments and a compiled source body. This
+unifies ordinary, local-recursive, and top-level-recursive closure cases. -/
+theorem doOpApp_related (genv : GlobalEnv) (sourceFunction : Value) (flatFunction : FlatSem.Value)
+    (argument : Value) (flatArgument : FlatSem.Value)
+    (functionRel : ValueRel genv sourceFunction flatFunction) (argumentRel : ValueRel genv argument flatArgument)
+    (successful : doOpApp [sourceFunction, argument] ≠ none) :
+    ∃ (baseMap : Environment) (baseEnv : SemEnv Value) (sourceLocal : Namespace ModN VarN Value)
+      (flatLocal : FlatSem.Environment FlatSem.Value) (trace : List VarN) (traces : List BackendCommon.Tra)
+      (body : AstHOL.Exp),
+      doOpApp [sourceFunction, argument] = some ({ baseEnv with v := nsAppend sourceLocal baseEnv.v }, body) ∧
+      FlatSem.doOpApp [flatFunction, flatArgument] =
+        some (flatLocal, compileExp trace { baseMap with v := bindLocals traces (flatLocal.v.map Prod.fst) baseMap.v } body) ∧
+      EnvRel genv sourceLocal flatLocal.v ∧
+      GlobalEnvInv genv baseMap (fun n => n ∈ flatLocal.v.map Prod.fst) baseEnv ∧
+      traces.length = flatLocal.v.length := by
+  cases sourceFunction with
+  | litv lit => simp [doOpApp] at successful
+  | conv stamp values => simp [doOpApp] at successful
+  | loc flag address => simp [doOpApp] at successful
+  | vectorv values => simp [doOpApp] at successful
+  | env env id => simp [doOpApp] at successful
+  | closure env name body =>
+    obtain ⟨baseMap, baseEnv, sourceLocal, flatLocal, trace, traces, src, dst, locals, globals, len⟩ :=
+      doOpApp_closure_local genv env name body flatFunction argument flatArgument functionRel argumentRel
+    exact ⟨baseMap, baseEnv, sourceLocal, flatLocal, trace, traces, body, src, dst, locals, globals, len⟩
+  | recclosure env funs name =>
+    have distinct : (funs.map Prod.fst).Nodup := by
+      by_contra no
+      simp [doOpApp, no] at successful
+    cases found : findRecFun name funs with
+    | none => simp [doOpApp, distinct, found] at successful
+    | some pair =>
+      obtain ⟨arg, body⟩ := pair
+      rcases (valueRel_recclosure_iff genv env funs name flatFunction).mp functionRel with
+        ⟨baseMap, baseEnv, captured, flatCaptured, trace, traces, rfl, rfl, locals, globals, len⟩ |
+        ⟨baseMap, flatEnv, flatArg, flatBody, newVars, trace, argTrace, names, globals, empty, findFlat, closures, flatEq⟩
+      · have setup := doOpApp_recclosure_local genv baseMap baseEnv captured flatCaptured funs name arg body
+          trace traces locals globals len distinct found argument flatArgument argumentRel
+        dsimp only at setup
+        exact ⟨baseMap, baseEnv, _, _, name :: trace, .none :: traces, body, setup⟩
+      · rw [flatEq] at functionRel ⊢
+        exact doOpApp_topRecclosure_local genv env funs name flatEnv flatArg _ argument flatArgument functionRel argumentRel distinct
 
 
 end Flapjack.Compiler.Backend.SourceToFlat
