@@ -387,6 +387,20 @@
       "stderr_bytes": 0,
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
+    "array_bounds_handler": {
+      "exit_code": 0,
+      "stdout_bytes": 398918,
+      "stdout_sha256": "43e372750adc3f8fb600dedf39969e51eebe0751dcb44f79fc700f0f89aa6763",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "word_boundary_shift": {
+      "exit_code": 0,
+      "stdout_bytes": 420673,
+      "stdout_sha256": "118e241be6ec5171d7f885d5b499ac6c56f91010bf34919f5d4c32bfef77abb6",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
     "types_before_print_sexp": {
       "exit_code": 0,
       "stdout_bytes": 0,

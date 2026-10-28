@@ -70,6 +70,8 @@ CASES = {
     'local_tail_recursive_product': 'fun f x = let fun loop n a = if n = 0 then a else loop (n-1) (a*n) in loop x 1 end; val _ = print_int (f 10);',
     'division_exception': 'fun f x = (x div 0) handle Div => 9; val _ = print_int (f 4);',
     'list_map_length': 'val _ = print_int (List.length (List.map (fn x => x + 1) [1,2,3]));',
+    'array_bounds_handler': 'val a = Array.array 2 5; val _ = print_int ((Array.sub a 8) handle Subscript => 17);',
+    'word_boundary_shift': 'val _ = print_int (Word64.toInt (Word64.>> (Word64.<< 0w1 63) 63));',
     'types_before_print_sexp': 'val x = 42;',
     'print_sexp_before_types': 'val id = fn x => x;',
     'types_before_explore': 'val x = 42;',

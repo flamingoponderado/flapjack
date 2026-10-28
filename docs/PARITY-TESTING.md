@@ -459,6 +459,8 @@ products, and datatype matches through a module. It
 also covers mutable references, captured reference updates, nested exception
 handlers, datatypes with several constructor arities, array tabulation,
 word shifts, local tail recursion, division exception handling, and list mapping. It
+also compares complete assembly for a caught out-of-bounds array access and
+word shifts through the top bit of a 64-bit word. It
 also checks that
 `--types` takes precedence over `--print_sexp` and `--explore` in either flag
 order, including parse and type failures.
