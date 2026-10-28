@@ -1,6 +1,22 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "total_pat_IMP",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/TotalPattern.lean",
+    "lean_name": "totalPat_imp",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out. Full pattern evaluator, carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "EXISTS_total_pat",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/TotalPattern.lean",
+    "lean_name": "exists_totalPat",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out; row payload type remains polymorphic. Full pattern evaluator, carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "evaluate_sing_keep_flat_state_rel_eq",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/EvaluateSpecialization.lean",
     "lean_name": "evaluate_sing_keep_flatStateRel",
