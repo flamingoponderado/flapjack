@@ -469,4 +469,106 @@ theorem evaluate_keep_flatStateRel_mat {C F : Type} (tra : BackendCommon.Tra)
           cases same
           exact evaluated
 
+/-- The exception-handler case of the original evaluation simulation. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "evaluate_keep_flat_state_rel_eq_lemma"]
+theorem evaluate_keep_flatStateRel_handle {C F : Type} (tra : BackendCommon.Tra)
+    (body : FlatLang.Exp) (rows : List (FlatLang.Pat × FlatLang.Exp))
+    (bodyIH : evaluationSimulation (C := C) (F := F) [body])
+    (rowIH : ∀ pattern branch, (pattern, branch) ∈ rows → evaluationSimulation (C := C) (F := F) [branch]) :
+    evaluationSimulation (C := C) (F := F) [.handle tra body rows] := by
+  intro env source next result reachable target run lookupsClosed related envClosed envSafe expressionsSafe notTypeError
+  have expressionClosed := (findLookupsList_within_iff _ _).mp lookupsClosed (.handle tra body rows) (by simp)
+  simp only [findLookups, findGlobals, globalsWithin_union] at expressionClosed
+  have bodyClosed := singletonLookups_within body reachable expressionClosed.1
+  have expressionSafe := expressionsSafe (.handle tra body rows) (by simp)
+  simp [hasEval] at expressionSafe
+  have bodySafe := singletonExpression_noEval body expressionSafe.1
+  cases bodyEval : FlatSem.evaluate env source [body] with
+  | mk bodyState bodyResult =>
+    simp only [FlatSem.evaluate, bodyEval, FlatSem.fixClock] at run
+    have bodyNotTypeError : bodyResult ≠ .err (.abort .typeError) := by
+      intro bad
+      subst bodyResult
+      simp at run
+      rcases run with ⟨_, rfl⟩
+      exact notTypeError rfl
+    obtain ⟨targetBodyState, targetBodyEval, bodyRelated, bodyResultClosed, bodyResultSafe⟩ :=
+      bodyIH env source bodyState bodyResult reachable target bodyEval bodyClosed related envClosed envSafe bodySafe bodyNotTypeError
+    have clampedRelated := flatStateRel_fixClock reachable source target bodyState targetBodyState bodyResult related bodyRelated
+    simp only [FlatSem.fixClock] at clampedRelated
+    cases bodyResult with
+    | val values =>
+      simp only at run
+      rcases run with ⟨rfl, rfl⟩
+      refine ⟨{ targetBodyState with clock := min target.clock targetBodyState.clock }, ?_,
+        clampedRelated, bodyResultClosed, bodyResultSafe⟩
+      simp [FlatSem.evaluate, targetBodyEval, FlatSem.fixClock]
+    | err error =>
+      cases error with
+      | abort reason =>
+        simp only at run
+        rcases run with ⟨rfl, rfl⟩
+        refine ⟨{ targetBodyState with clock := min target.clock targetBodyState.clock }, ?_,
+          clampedRelated, bodyResultClosed, bodyResultSafe⟩
+        simp [FlatSem.evaluate, targetBodyEval, FlatSem.fixClock]
+      | raise value =>
+        have valueClosed : globalsWithin (findValueGlobals value) reachable := by
+          simpa [findPrimitiveResultGlobals, findResultGlobals] using bodyResultClosed
+        have valueSafe : valueHasEval value = false := by
+          simpa [Flapjack.Compiler.Backend.FlatProps.resultValues, valuesNoEval] using bodyResultSafe
+        simp only at run
+        split at run
+        · rename_i error selected
+          simp only [bodyEval] at selected
+          change FlatSem.selectRow { bodyState with clock := min source.clock bodyState.clock } rows value value = .error error at selected
+          have shape := selectRow_error _ rows value value error selected
+          rcases shape with bad | raised
+          · subst error
+            simp at run
+            rcases run with ⟨_, rfl⟩
+            exact (notTypeError rfl).elim
+          · subst error
+            rcases run with ⟨rfl, rfl⟩
+            refine ⟨{ targetBodyState with clock := min target.clock targetBodyState.clock }, ?_,
+              clampedRelated, bodyResultClosed, bodyResultSafe⟩
+            rw [FlatSem.evaluate]
+            simp only [targetBodyEval, FlatSem.fixClock]
+            split
+            · rename_i targetError targetSelected
+              simp only [targetBodyEval] at targetSelected
+              change FlatSem.selectRow { targetBodyState with clock := min target.clock targetBodyState.clock } rows value value = .error targetError at targetSelected
+              have sameSelection := selectRow_related reachable _ _ rows value value clampedRelated
+              have same : targetError = .raise value := Except.error.inj (targetSelected.symm.trans (sameSelection.trans selected))
+              subst targetError
+              rfl
+            · rename_i targetBindings targetBranch targetSelected
+              simp only [targetBodyEval] at targetSelected
+              change FlatSem.selectRow { targetBodyState with clock := min target.clock targetBodyState.clock } rows value value = .ok (targetBindings, targetBranch) at targetSelected
+              have sameSelection := selectRow_related reachable _ _ rows value value clampedRelated
+              have impossible := targetSelected.symm.trans (sameSelection.trans selected)
+              cases impossible
+        · rename_i bindings branch selected
+          simp only [bodyEval] at selected
+          change FlatSem.selectRow { bodyState with clock := min source.clock bodyState.clock } rows value value = .ok (bindings, branch) at selected
+          obtain ⟨targetNext, evaluated, nextRelated, closed, safe⟩ :=
+            evaluate_selectedRow rows rowIH env _ _ next reachable value value bindings branch result
+              selected run clampedRelated expressionClosed.2 expressionSafe.2 valueClosed valueSafe envClosed envSafe notTypeError
+          refine ⟨targetNext, ?_, nextRelated, closed, safe⟩
+          rw [FlatSem.evaluate]
+          simp only [targetBodyEval, FlatSem.fixClock]
+          split
+          · rename_i targetError targetSelected
+            simp only [targetBodyEval] at targetSelected
+            change FlatSem.selectRow { targetBodyState with clock := min target.clock targetBodyState.clock } rows value value = .error targetError at targetSelected
+            have sameSelection := selectRow_related reachable _ _ rows value value clampedRelated
+            have impossible := targetSelected.symm.trans (sameSelection.trans selected)
+            cases impossible
+          · rename_i targetBindings targetBranch targetSelected
+            simp only [targetBodyEval] at targetSelected
+            change FlatSem.selectRow { targetBodyState with clock := min target.clock targetBodyState.clock } rows value value = .ok (targetBindings, targetBranch) at targetSelected
+            have sameSelection := selectRow_related reachable _ _ rows value value clampedRelated
+            have same : (targetBindings, targetBranch) = (bindings, branch) := Except.ok.inj (targetSelected.symm.trans (sameSelection.trans selected))
+            cases same
+            exact evaluated
+
 end Flapjack.Compiler.Backend.FlatElim

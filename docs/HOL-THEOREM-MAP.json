@@ -3,6 +3,14 @@
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "evaluate_keep_flat_state_rel_eq_lemma",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/EvaluateControl.lean",
+    "lean_name": "evaluate_keep_flatStateRel_handle",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Exception-handler induction case only; typed original captured in flat_elim_value_globals_probe.out. Full evaluator, carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "evaluate_keep_flat_state_rel_eq_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/EvaluateControl.lean",
     "lean_name": "evaluate_keep_flatStateRel_mat",
     "statement_status": "pending_statement_review",
     "reviewer": "Pattern-match induction case only; typed original captured in flat_elim_value_globals_probe.out. Full evaluator, carrier, and statement review remain pending."
