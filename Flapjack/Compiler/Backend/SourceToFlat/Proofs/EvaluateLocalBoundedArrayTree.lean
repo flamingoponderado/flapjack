@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvalApp
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedArray
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedData
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedTree
@@ -230,5 +231,22 @@ theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
 
 
 
+
+/-- At clock zero the smaller-clock function-call hypothesis is vacuous. -/
+theorem localEnvClockIH_zero {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) :
+    LocalEnvClockIH (F := F) interp transform 0 := by
+  intro expr genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen below
+  omega
+
+/-- Dynamic evaluation at clock zero is simulated when its operands are
+covered by the bounded expression proof. -/
+theorem localEnvBounded_eval_zero_arrayTree {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (exprs : List AstHOL.Exp) (covered : ∀ expr, expr ∈ exprs → LocalEnvBoundedArrayExpression expr) :
+    LocalEnvBoundedIH (F := F) interp transform 0 (.app .eval exprs) := by
+  apply localEnvBounded_eval_zero interp transform exprs
+  intro expr member
+  exact localEnvBounded_arrayTree interp transform 0 (localEnvClockIH_zero interp transform) expr (covered expr member)
 
 end Flapjack.Compiler.Backend.SourceToFlat
