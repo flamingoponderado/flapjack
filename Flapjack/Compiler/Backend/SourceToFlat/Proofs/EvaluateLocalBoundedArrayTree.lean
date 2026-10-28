@@ -232,6 +232,18 @@ theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
 
 
 
+/-- Dynamic evaluation is simulated for covered operands, assuming the
+declaration induction hypothesis for every decoded declaration list. -/
+theorem localEnvBounded_eval_arrayTree {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (limit : Nat) (calledIH : LocalEnvClockIH (F := F) interp transform limit)
+    (decsIH : ∀ decs, FactoredDecIH (F := F) interp transform decs)
+    (exprs : List AstHOL.Exp) (covered : ∀ expr, expr ∈ exprs → LocalEnvBoundedArrayExpression expr) :
+    LocalEnvBoundedIH (F := F) interp transform limit (.app .eval exprs) := by
+  apply localEnvBounded_eval interp transform limit decsIH exprs
+  intro expr member
+  exact localEnvBounded_arrayTree interp transform limit calledIH expr (covered expr member)
+
 /-- At clock zero the smaller-clock function-call hypothesis is vacuous. -/
 theorem localEnvClockIH_zero {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) :
