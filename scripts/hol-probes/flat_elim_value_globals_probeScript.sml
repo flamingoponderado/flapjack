@@ -27,6 +27,8 @@ val _ = show_thm "list_to_value_globals=" flat_elimProofTheory.find_v_globals_li
 val _ = show_thm "list_append_globals=" flat_elimProofTheory.find_v_globals_list_to_v_APPEND;
 val _ = show_thm "list_to_value_eval=" flat_elimProofTheory.v_has_Eval_list_to_v;
 val _ = show_thm "value_to_list_eval=" flat_elimProofTheory.v_has_Eval_v_to_list;
+val _ = show_thm "evaluation_length=" flatPropsTheory.evaluate_length;
+val _ = show_thm "evaluation_singleton=" flatPropsTheory.evaluate_sing;
 val _ = show_thm "evaluation_simulation=" flat_elimProofTheory.evaluate_keep_flat_state_rel_eq_lemma;
 val _ = show_thm "primitive_simulation=" flat_elimProofTheory.do_app_SOME_flat_state_rel;
 val _ = show_thm "result_values=" flatPropsTheory.result_vs_def;

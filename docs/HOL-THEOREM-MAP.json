@@ -1,5 +1,37 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+    "hol_name": "evaluate_length",
+    "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvaluateLength.lean",
+    "lean_name": "evaluate_length",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out; full evaluator, carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+    "hol_name": "evaluate_sing",
+    "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvaluateLength.lean",
+    "lean_name": "evaluate_sing",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out; full evaluator, carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "evaluate_keep_flat_state_rel_eq_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/EvaluateBasic.lean",
+    "lean_name": "evaluate_keep_flatStateRel_raise",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out; full evaluator, carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "evaluate_keep_flat_state_rel_eq_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/EvaluateBasic.lean",
+    "lean_name": "evaluate_keep_flatStateRel_list",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out; full evaluator, carrier, and statement review remain pending."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "evaluate_keep_flat_state_rel_eq_lemma",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/EvaluateBasic.lean",

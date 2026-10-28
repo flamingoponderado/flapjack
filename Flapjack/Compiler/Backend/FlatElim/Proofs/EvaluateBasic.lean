@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.FlatElim.Proofs.ApplyNumeric
 import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateExact
+import Flapjack.Compiler.Backend.FlatProps.EvaluateLength
 
 /-! Basic expression cases of the flat-elimination evaluation simulation. -/
 namespace Flapjack.Compiler.Backend.FlatElim
@@ -56,10 +57,7 @@ theorem valuesNoEval_reverse (values : List FlatSem.Value)
   intro value member
   exact safe value (by simpa using member)
 
-/-- The evaluation simulation statement for one expression list. The raise
-and pattern cases also need the original singleton-result theorem: `holHd []`
-is intentionally unspecified, so their successful singleton subevaluations
-must first be proved nonempty. -/
+/-- The evaluation simulation statement for one expression list. -/
 def evaluationSimulation {C F : Type} (expressions : List FlatLang.Exp) : Prop :=
   ∀ (env : FlatSem.Environment FlatSem.Value) (source next : FlatSem.State C F)
     (result : Result (List FlatSem.Value) FlatSem.Value) (reachable : NumSet) (target : FlatSem.State C F),
@@ -457,5 +455,145 @@ theorem evaluate_keep_flatStateRel_con {C F : Type} (tra : BackendCommon.Tra)
         simpa [valueHasEval] using (valuesHaveEval_eq_false_iff _).mpr valuesSafe
       have resultSafe := primitiveResult_value_invariants reachable (.conv constructor values.reverse) valueClosed valueSafe
       exact ⟨targetArgState, by simp [FlatSem.evaluate, targetArgEval], argRelated, resultSafe.1, resultSafe.2⟩
+
+/-- The raise-expression case of the original evaluation simulation,
+assuming its body induction hypothesis. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "evaluate_keep_flat_state_rel_eq_lemma"]
+theorem evaluate_keep_flatStateRel_raise {C F : Type} (tra : BackendCommon.Tra)
+    (body : FlatLang.Exp) (ih : evaluationSimulation (C := C) (F := F) [body]) :
+    evaluationSimulation (C := C) (F := F) [.raise tra body] := by
+  intro env source next result reachable target run lookupsClosed related envClosed envSafe expressionsSafe notTypeError
+  have bodyClosed : globalsWithin (findGlobalsList destGlobalVarLookup [body]) reachable := by
+    simp only [findGlobalsList, findGlobals, globalsWithin_union] at lookupsClosed ⊢
+    exact lookupsClosed
+  have bodySafe : expressionsNoEval [body] := by
+    intro expression member
+    simp only [List.mem_singleton] at member
+    subst expression
+    have safe := expressionsSafe (.raise tra body) (by simp)
+    simpa [hasEval] using safe
+  cases bodyEval : FlatSem.evaluate env source [body] with
+  | mk bodyState bodyResult =>
+    simp only [FlatSem.evaluate, bodyEval] at run
+    have bodyNotTypeError : bodyResult ≠ .err (.abort .typeError) := by
+      intro bad
+      subst bodyResult
+      simp at run
+      rcases run with ⟨_, rfl⟩
+      exact notTypeError rfl
+    obtain ⟨targetBodyState, targetBodyEval, bodyRelated, bodyResultClosed, bodyResultSafe⟩ :=
+      ih env source bodyState bodyResult reachable target bodyEval bodyClosed related envClosed envSafe bodySafe bodyNotTypeError
+    cases bodyResult with
+    | err error =>
+      simp only at run
+      rcases run with ⟨rfl, rfl⟩
+      exact ⟨targetBodyState, by simp [FlatSem.evaluate, targetBodyEval], bodyRelated, bodyResultClosed, bodyResultSafe⟩
+    | val values =>
+      obtain ⟨value, rfl⟩ := Flapjack.Compiler.Backend.FlatProps.evaluate_sing env source bodyState body values bodyEval
+      simp at run
+      rcases run with ⟨rfl, rfl⟩
+      have valueClosed : globalsWithin (findValueGlobals value) reachable := by
+        have allClosed : globalsWithin (findValuesGlobals [value]) reachable := by
+          simpa [findPrimitiveResultGlobals] using bodyResultClosed
+        exact (findValuesGlobals_within_iff _ _).mp allClosed value (by simp)
+      have valueSafe : valueHasEval value = false := by
+        have allSafe : valuesNoEval [value] := by
+          simpa [Flapjack.Compiler.Backend.FlatProps.resultValues] using bodyResultSafe
+        exact allSafe value (by simp)
+      have raisedSafe := primitiveResult_raise_invariants reachable value valueClosed valueSafe
+      exact ⟨targetBodyState, by simp [FlatSem.evaluate, targetBodyEval], bodyRelated, raisedSafe.1, raisedSafe.2⟩
+
+/-- The multi-expression case of the original evaluation simulation,
+assuming the head and tail induction hypotheses. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "evaluate_keep_flat_state_rel_eq_lemma"]
+theorem evaluate_keep_flatStateRel_list {C F : Type} (first second : FlatLang.Exp) (rest : List FlatLang.Exp)
+    (headIH : evaluationSimulation (C := C) (F := F) [first])
+    (tailIH : evaluationSimulation (C := C) (F := F) (second :: rest)) :
+    evaluationSimulation (C := C) (F := F) (first :: second :: rest) := by
+  intro env source next result reachable target run lookupsClosed related envClosed envSafe expressionsSafe notTypeError
+  have headClosed : globalsWithin (findGlobalsList destGlobalVarLookup [first]) reachable := by
+    apply (findLookupsList_within_iff _ _).mpr
+    intro expression member
+    simp only [List.mem_singleton] at member
+    subst expression
+    exact (findLookupsList_within_iff _ _).mp lookupsClosed first (by simp)
+  have tailClosed : globalsWithin (findGlobalsList destGlobalVarLookup (second :: rest)) reachable := by
+    apply (findLookupsList_within_iff _ _).mpr
+    intro expression member
+    exact (findLookupsList_within_iff _ _).mp lookupsClosed expression (by simp [member])
+  have headSafe : expressionsNoEval [first] := by
+    intro expression member
+    simp only [List.mem_singleton] at member
+    subst expression
+    exact expressionsSafe first (by simp)
+  have tailSafe : expressionsNoEval (second :: rest) := by
+    intro expression member
+    exact expressionsSafe expression (by simp [member])
+  cases headEval : FlatSem.evaluate env source [first] with
+  | mk headState headResult =>
+    simp only [FlatSem.evaluate, headEval, FlatSem.fixClock] at run
+    have headNotTypeError : headResult ≠ .err (.abort .typeError) := by
+      intro bad
+      subst headResult
+      simp at run
+      rcases run with ⟨_, rfl⟩
+      exact notTypeError rfl
+    obtain ⟨targetHeadState, targetHeadEval, headRelated, headResultClosed, headResultSafe⟩ :=
+      headIH env source headState headResult reachable target headEval headClosed related envClosed envSafe headSafe headNotTypeError
+    have clampedRelated := flatStateRel_fixClock reachable source target headState targetHeadState headResult related headRelated
+    simp only [FlatSem.fixClock] at clampedRelated
+    cases headResult with
+    | err error =>
+      simp only at run
+      rcases run with ⟨rfl, rfl⟩
+      refine ⟨{ targetHeadState with clock := min target.clock targetHeadState.clock }, ?_,
+        clampedRelated, headResultClosed, headResultSafe⟩
+      simp [FlatSem.evaluate, targetHeadEval, FlatSem.fixClock]
+    | val heads =>
+      obtain ⟨head, rfl⟩ := Flapjack.Compiler.Backend.FlatProps.evaluate_sing env source headState first heads headEval
+      simp only at run
+      cases tailEval : FlatSem.evaluate env { headState with clock := min source.clock headState.clock } (second :: rest) with
+      | mk tailState tailResult =>
+        simp only [tailEval] at run
+        have tailNotTypeError : tailResult ≠ .err (.abort .typeError) := by
+          intro bad
+          subst tailResult
+          simp at run
+          rcases run with ⟨_, rfl⟩
+          exact notTypeError rfl
+        obtain ⟨targetTailState, targetTailEval, tailRelated, tailResultClosed, tailResultSafe⟩ :=
+          tailIH env _ tailState tailResult reachable _ tailEval tailClosed clampedRelated envClosed envSafe tailSafe tailNotTypeError
+        cases tailResult with
+        | err error =>
+          simp only at run
+          rcases run with ⟨rfl, rfl⟩
+          refine ⟨targetTailState, ?_, tailRelated, tailResultClosed, tailResultSafe⟩
+          simp [FlatSem.evaluate, targetHeadEval, FlatSem.fixClock, targetTailEval]
+        | val tailValues =>
+          simp at run
+          rcases run with ⟨rfl, rfl⟩
+          have headValueClosed : globalsWithin (findValueGlobals head) reachable := by
+            have h : globalsWithin (findValuesGlobals [head]) reachable := by
+              simpa [findPrimitiveResultGlobals] using headResultClosed
+            exact (findValuesGlobals_within_iff _ _).mp h head (by simp)
+          have headValueSafe : valueHasEval head = false := by
+            have h : valuesNoEval [head] := by
+              simpa [Flapjack.Compiler.Backend.FlatProps.resultValues] using headResultSafe
+            exact h head (by simp)
+          have valuesClosed : globalsWithin (findValuesGlobals (head :: tailValues)) reachable := by
+            have tailValuesClosed : globalsWithin (findValuesGlobals tailValues) reachable := by
+              simpa [findPrimitiveResultGlobals] using tailResultClosed
+            simpa [findValuesGlobals, globalsWithin_union] using And.intro headValueClosed tailValuesClosed
+          have valuesSafe : valuesNoEval (head :: tailValues) := by
+            have tailValuesSafe : valuesNoEval tailValues := by
+              simpa [Flapjack.Compiler.Backend.FlatProps.resultValues] using tailResultSafe
+            intro value member
+            rcases List.mem_cons.mp member with rfl | member
+            · exact headValueSafe
+            · exact tailValuesSafe value member
+          refine ⟨targetTailState, ?_, tailRelated, ?_, ?_⟩
+          · simp [FlatSem.evaluate, targetHeadEval, FlatSem.fixClock, targetTailEval]
+          · simpa [findPrimitiveResultGlobals] using valuesClosed
+          · simpa [Flapjack.Compiler.Backend.FlatProps.resultValues] using valuesSafe
 
 end Flapjack.Compiler.Backend.FlatElim
