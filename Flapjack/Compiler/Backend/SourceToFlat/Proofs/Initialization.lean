@@ -98,6 +98,191 @@ theorem initGenv_lookup_mem (key : ConstructorKey) (stamp : Stamp)
   · exact member
   · cases impossible
 
+/-- The original initial-stamp condition excludes every initial constructor
+stamp from the source state's fresh-stamp ranges. -/
+theorem initGenv_stamp_fresh (nextType nextExn : Nat)
+    (bounded : ∀ entry ∈ initGenvEntries, match entry.2 with
+      | .typeStamp _ index => index < nextType
+      | .exnStamp index => index < nextExn) :
+    (∀ name index, nextType ≤ index → ¬ ∃ key, initGenv.c.lookup key = some (.typeStamp name index)) ∧
+    (∀ index, nextExn ≤ index → ¬ ∃ key, initGenv.c.lookup key = some (.exnStamp index)) := by
+  constructor
+  · intro name index fresh ⟨key, lookup⟩
+    have bound := bounded (key, .typeStamp name index) (initGenv_lookup_mem key _ lookup)
+    simp only at bound
+    omega
+  · intro index fresh ⟨key, lookup⟩
+    have bound := bounded (key, .exnStamp index) (initGenv_lookup_mem key _ lookup)
+    simp only at bound
+    omega
+
+/-- The initial type map contains no type index at or above the first fresh
+type index. -/
+theorem initGenv_type_lookup_bound (index : Nat) (entries : List (Nat × Nat))
+    (found : initGenv.tys.lookup index = some entries) : index < initGenvNext.tidx := by
+  change FUPDATE_LIST_HOL (fun _ => none)
+    (initGenvTyEntries.map (fun (id, entries) => (id, entries.map (fun (tag, arity, _) => (tag, arity)))))
+    index = some entries at found
+  rcases updateList_lookup_mem _ (fun _ => none) index entries found with member | impossible
+  · simp [initGenvTyEntries, FlatLang.boolId, FlatSem.listId] at member
+    rcases member with first | second <;> simp_all [initGenvNext_values]
+  · cases impossible
+
+/-- Every allocated type or exception index in the initial constructor map
+lies below its corresponding first fresh index. -/
+theorem initGenv_constructor_index_bounds (key : ConstructorKey) (stamp : Stamp)
+    (found : initGenv.c.lookup key = some stamp) :
+    (∀ cn tyId arity, key = ((cn, some tyId), arity) → tyId < initGenvNext.tidx) ∧
+    (∀ exnId arity, key = ((exnId, none), arity) → exnId < initGenvNext.eidx) := by
+  have member := initGenv_lookup_mem key stamp found
+  simp [initGenvEntries, initGenvTyEntries, FlatLang.boolId, FlatSem.listId,
+    trueTag, falseTag, consTag, nilTag, divTag, chrTag, subscriptTag, bindTag] at member
+  rcases member with h | h | h | h | h | h | h | h <;>
+    simp_all [initGenvNext_values]
+
+/-- After reserving global slot zero and blank slots, the allocated indices
+are below the corresponding initialization counters (with variable counter
+one). -/
+theorem initGenv_allocated_bound (blankCount : Nat) (i : Nat) (kind : IndexKind)
+    (allocated : genvAllocatedIndices
+      { initGenv with v := some (.loc true 0) :: List.replicate blankCount none } (i, kind)) :
+    i < (match kind with
+      | .variable => 1
+      | .type => initGenvNext.tidx
+      | .exception => initGenvNext.eidx) := by
+  cases kind with
+  | «variable» =>
+    cases i with
+    | zero => simp
+    | succ i =>
+      simp [genvAllocatedIndices] at allocated
+      have bound : i < (List.replicate blankCount (none : Option FlatSem.Value)).length := by
+        simpa using allocated.1
+      simp [List.getElem?_eq_getElem bound] at allocated
+  | «type» =>
+    change i < initGenvNext.tidx
+    change (∃ cn arity, (initGenv.c.lookup ((cn, some i), arity)).isSome) ∨
+      (initGenv.tys.lookup i).isSome at allocated
+    rcases allocated with ⟨cn, arity, present⟩ | present
+    · cases found : initGenv.c.lookup ((cn, some i), arity) with
+      | none => simp [found] at present
+      | some stamp => exact (initGenv_constructor_index_bounds _ _ found).1 cn i arity rfl
+    · cases found : initGenv.tys.lookup i with
+      | none => simp [found] at present
+      | some entries => exact initGenv_type_lookup_bound i entries found
+  | «exception» =>
+    change i < initGenvNext.eidx
+    change ∃ arity, (initGenv.c.lookup ((i, none), arity)).isSome at allocated
+    obtain ⟨arity, present⟩ := allocated
+    cases found : initGenv.c.lookup ((i, none), arity) with
+    | none => simp [found] at present
+    | some stamp => exact (initGenv_constructor_index_bounds _ _ found).2 i arity rfl
+
+/-- The initial reserved block, future block, and already allocated indices
+are pairwise disjoint when compilation begins at the fresh counters. -/
+theorem initGenv_disjoint (blankCount : Nat) (start finish : NextIndices)
+    (startVar : start.vidx = 1) (initial : idxPrev initGenvNext start)
+    (progress : idxPrev start finish) :
+    allDisjoint [idxBlock start finish, idxFinalBlock finish, ∅,
+      genvAllocatedIndices { initGenv with v := some (.loc true 0) :: List.replicate blankCount none }] := by
+  let allocated := genvAllocatedIndices
+    { initGenv with v := some (.loc true 0) :: List.replicate blankCount none }
+  have blockFuture : ∀ x, x ∈ idxBlock start finish → x ∈ idxFinalBlock finish → False := by
+    rintro ⟨i, kind⟩ block future
+    change idxBlock start finish (i, kind) at block
+    change idxFinalBlock finish (i, kind) at future
+    cases kind <;> simp only [idxBlock, idxFinalBlock] at block future <;> omega
+  have blockAllocated : ∀ x, x ∈ idxBlock start finish → x ∈ allocated → False := by
+    rintro ⟨i, kind⟩ block present
+    have bound := initGenv_allocated_bound blankCount i kind present
+    change idxBlock start finish (i, kind) at block
+    cases kind <;> simp only [idxBlock] at block <;> simp only at bound
+    all_goals simp only [idxPrev] at initial progress
+    all_goals omega
+  have futureAllocated : ∀ x, x ∈ idxFinalBlock finish → x ∈ allocated → False := by
+    rintro ⟨i, kind⟩ future present
+    have bound := initGenv_allocated_bound blankCount i kind present
+    change idxFinalBlock finish (i, kind) at future
+    cases kind <;> simp only [idxFinalBlock] at future <;> simp only at bound
+    all_goals simp only [idxPrev] at initial progress
+    all_goals omega
+  intro i j hi hj ne
+  have hi' : i = 0 ∨ i = 1 ∨ i = 2 ∨ i = 3 := by simp at hi; omega
+  have hj' : j = 0 ∨ j = 1 ∨ j = 2 ∨ j = 3 := by simp at hj; omega
+  apply Set.eq_empty_iff_forall_notMem.mpr
+  intro x hx
+  rcases hi' with rfl | rfl | rfl | rfl <;>
+    rcases hj' with rfl | rfl | rfl | rfl <;>
+    simp only [List.getElem_cons_zero, List.getElem_cons_succ, Set.mem_inter_iff] at hx
+  all_goals try omega
+  all_goals rcases hx with ⟨a, b⟩
+  all_goals first
+    | exact blockFuture x a b
+    | exact blockFuture x b a
+    | exact blockAllocated x a b
+    | exact blockAllocated x b a
+    | exact futureAllocated x a b
+    | exact futureAllocated x b a
+    | exact a
+    | exact b
+
+/-- The source precondition's fresh-stamp and counter bounds establish the
+index-range component of the post-allocation invariant. -/
+theorem initGenv_idxRange {C : Type}
+    (interp : Option (Value → Option (Config × C))) (evalState : Option EvalState)
+    (nextType nextExn blankCount : Nat) (start finish : NextIndices)
+    (startVar : start.vidx = 1) (initial : idxPrev initGenvNext start)
+    (progress : idxPrev start finish)
+    (stamps : ∀ entry ∈ initGenvEntries, match entry.2 with
+      | .typeStamp _ index => index < nextType
+      | .exnStamp index => index < nextExn)
+    (oracleNext : match OracleInvariant.srcOracNextCfg interp evalState with
+      | none => True
+      | some config => finish = config.next) :
+    OracleInvariant.idxRangeRel interp
+      { initGenv with v := some (.loc true 0) :: List.replicate blankCount none }
+      nextType nextExn evalState (start, finish, ∅) := by
+  obtain ⟨typeFresh, exnFresh⟩ := initGenv_stamp_fresh nextType nextExn stamps
+  refine ⟨start, finish, finish, ∅, rfl, oracleNext, idxPrev_refl finish,
+    initGenv_disjoint blankCount start finish startVar initial progress, ?_, ?_⟩
+  · exact typeFresh
+  · exact exnFresh
+
+/-- Compilation itself supplies the final counter and monotonicity facts
+needed for the initial index-range relation. -/
+theorem initGenv_idxRange_compileProg {C : Type}
+    (interp : Option (Value → Option (Config × C))) (evalState : Option EvalState)
+    (nextType nextExn blankCount : Nat) (config : Config) (decs : List Dec)
+    (n : Nat) (next : NextIndices) (outEnv : Environment) (outGen : EnvironmentGenerationStore)
+    (body : List FlatLang.Exp)
+    (compiled : compileDecs [] 1 { config.next with vidx := config.next.vidx + 1 } config.modEnv
+      ⟨0, config.envs.next, .ln⟩ decs = (n, next, outEnv, outGen, body))
+    (startVar : config.next.vidx = 0) (initial : idxPrev initGenvNext config.next)
+    (stamps : ∀ entry ∈ initGenvEntries, match entry.2 with
+      | .typeStamp _ index => index < nextType
+      | .exnStamp index => index < nextExn)
+    (oracleConfig : match OracleInvariant.srcOracNextCfg interp evalState with
+      | none => True
+      | some nextConfig => nextConfig = (compileProg config decs).1) :
+    OracleInvariant.idxRangeRel interp
+      { initGenv with v := some (.loc true 0) :: List.replicate blankCount none }
+      nextType nextExn evalState
+      ({ config.next with vidx := config.next.vidx + 1 }, next, ∅) := by
+  have progress := OracleInvariant.compileDecs_idxPrev [] 1
+    { config.next with vidx := config.next.vidx + 1 } config.modEnv
+    ⟨0, config.envs.next, .ln⟩ decs n next outEnv outGen body compiled
+  have initial' : idxPrev initGenvNext { config.next with vidx := config.next.vidx + 1 } := by
+    simp only [idxPrev] at initial ⊢
+    exact ⟨by omega, initial.2.1, initial.2.2⟩
+  apply initGenv_idxRange interp evalState nextType nextExn blankCount _ next
+    (by simp [startVar]) initial' progress stamps
+  cases eq : OracleInvariant.srcOracNextCfg interp evalState with
+  | none => trivial
+  | some nextConfig =>
+    simp only [eq] at oracleConfig ⊢
+    rw [oracleConfig]
+    simp [compileProg, compiled]
+
 /-- Every typed constructor in the initial map belongs to its initial
 constructor group. -/
 theorem initGenv_typesOk : genvCTysOk initGenv.c initGenv.tys := by
