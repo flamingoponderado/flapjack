@@ -74,6 +74,24 @@ theorem factoredInvariant_changeStores {C F : Type} [Nonempty C]
   refine ⟨cOk, tysOk, states, range, invs, orac, globals, ?_, genInv, fin⟩
   simpa only [reserved] using oldReserved
 
+/-- An external call can change the FFI state as well as the two stores.
+The remaining components of the factored invariant do not observe FFI. -/
+theorem factoredInvariant_changeStoresFfi {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
+    (idxs : NextIndices × NextIndices × Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (sourceRefs : Store Value) (flatRefs : Store FlatSem.Value) (ffi : HolFfiState F)
+    (valid : factoredInvariant interp transform gen genv idxs source flat)
+    (states : StateRel genv { source with refs := sourceRefs, ffi := ffi }
+      { flat with refs := flatRefs, ffi := ffi })
+    (reserved : flatRefs.take 1 = flat.refs.take 1) :
+    factoredInvariant interp transform gen genv idxs
+      { source with refs := sourceRefs, ffi := ffi } { flat with refs := flatRefs, ffi := ffi } := by
+  obtain ⟨cOk, tysOk, _, range, invs, orac, globals, oldReserved, genInv, fin⟩ := valid
+  refine ⟨cOk, tysOk, states, range, invs, orac, globals, ?_, genInv, fin⟩
+  simpa only [reserved] using oldReserved
+
 /-- Returning from an Eval call restores the caller's generation relation:
 the call relation preserves every generation that preceded the fresh one. -/
 theorem envGenRel_resetAfterEval (gen : EnvironmentGenerationStore)

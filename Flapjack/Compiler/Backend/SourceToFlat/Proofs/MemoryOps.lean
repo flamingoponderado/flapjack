@@ -1,7 +1,8 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StoreUpdate
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.PrimitiveType
 import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyMemory
-import Flapjack.SemanticPrimitivesHOL.Apply
+import Flapjack.Compiler.Backend.Semantics.FlatSem.ApplyData
+import Flapjack.SemanticPrimitivesHOL.ApplyNumeric
 
 /-! Reference and array simulation over the factored source-to-flat relations.
 The complete primitive-application theorem remains open. -/
@@ -379,5 +380,79 @@ theorem aupdate_outOfBounds {C F : Type} (genv : GlobalEnv)
     cases unsafeOp <;>
       simp [doAppBasic, FlatSem.doAppMemory, SemanticPrimitivesHOL.updateIndexed, FlatSem.updateIndexed,
         SemanticPrimitivesHOL.boundsFailure, FlatSem.boundsFailure, *]
+
+/-- A non-type-error external call has a string configuration and a byte-array
+location. The corresponding flat location is one store slot later. -/
+theorem ffi_operands {F : Type} (source : SemanticPrimitivesHOL.State F)
+    (name : Basis.Pure.MlString.MlString) (configuration pointer : SemanticPrimitivesHOL.Value)
+    (successful : doApp (source.refs, source.ffi) (.ffi name) [configuration, pointer] ≠ none) :
+    ∃ text flag address bytes, configuration = .litv (.strLit text) ∧ pointer = .loc flag address ∧
+      storeLookup address source.refs = some (.w8array bytes) := by
+  cases configuration <;> cases pointer <;> simp [doApp, doAppNumericCore, doAppBasic] at successful
+  case litv.loc lit flag address =>
+    cases lit <;> simp at successful
+    case strLit text =>
+      cases lookup : storeLookup address source.refs with
+      | none => simp [lookup] at successful
+      | some cell =>
+        cases cell with
+        | w8array bytes => exact ⟨text, flag, address, bytes, rfl, rfl, lookup⟩
+        | refv value => simp [lookup] at successful
+        | varray values => simp [lookup] at successful
+        | thunk mode value => simp [lookup] at successful
+
+/-- A returning external call updates corresponding byte arrays and keeps the
+same FFI state on both sides. This is infrastructure over the factored,
+unreviewed source-to-flat relations. -/
+theorem ffi_return_related {C F : Type} (genv : GlobalEnv)
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (statesRel : StateRel genv source flat) (name : Basis.Pure.MlString.MlString)
+    (configuration : Basis.Pure.MlString.MlString) (flag : Bool) (address : Nat)
+    (bytes output : List (BitVec 8)) (nextFfi : HolFfiState F)
+    (lookup : storeLookup address source.refs = some (.w8array bytes))
+    (returned : callFFIHOL source.ffi (.extCall name) configuration.explode bytes = .ret nextFfi output) :
+    ∃ sourceRefs flatRefs,
+      doAppBasic (source.refs, source.ffi) (.ffi name) [.litv (.strLit configuration), .loc flag address] =
+        some (some ((sourceRefs, nextFfi), .val (.conv none []))) ∧
+      FlatSem.doAppData flat (.ffi name) [.litv (.strLit configuration), .loc flag (address + 1)] =
+        some (some ({ flat with refs := flatRefs, ffi := nextFfi }, .val FlatSem.unitValue)) ∧
+      StateRel genv { source with refs := sourceRefs, ffi := nextFfi }
+        { flat with refs := flatRefs, ffi := nextFfi } ∧
+      flatRefs.take 1 = flat.refs.take 1 := by
+  have assigned : storeAssign address (.w8array output) source.refs =
+      some (source.refs.set address (.w8array output)) := by
+    have indexed : source.refs[address]? = some (.w8array bytes) := lookup
+    simp [storeAssign, indexed, storeValueSameType]
+  obtain ⟨flatRefs, flatAssigned, reserved, nextRel⟩ :=
+    stateRel_storeAssign genv source flat statesRel address (.w8array output) (.w8array output)
+      (.w8array output) _ assigned
+  have flatLookup := stateRel_byteArray_lookup genv source flat statesRel address bytes lookup
+  have ffiEq := (stateRel_iff genv source flat).mp statesRel |>.2.2.2
+  have finalRel : StateRel genv { source with refs := source.refs.set address (.w8array output), ffi := nextFfi }
+      { flat with refs := flatRefs, ffi := nextFfi } := by
+    cases nextRel with
+    | intro nonempty refs clock _ => exact .intro _ _ nonempty refs clock rfl
+  refine ⟨_, flatRefs, ?_, ?_, finalRel, reserved⟩
+  · simp [doAppBasic, lookup, returned, assigned]
+  · simp [FlatSem.doAppData, flatLookup, ← ffiEq, returned, flatAssigned]
+
+/-- A terminal external call produces the same final event without changing
+stored data. This relies only on the factored state relation. -/
+theorem ffi_final_related {C F : Type} (genv : GlobalEnv)
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (statesRel : StateRel genv source flat) (name : Basis.Pure.MlString.MlString)
+    (configuration : Basis.Pure.MlString.MlString) (flag : Bool) (address : Nat)
+    (bytes : List (BitVec 8)) (event : HolFinalEvent)
+    (lookup : storeLookup address source.refs = some (.w8array bytes))
+    (finished : callFFIHOL source.ffi (.extCall name) configuration.explode bytes = .final event) :
+    doAppBasic (source.refs, source.ffi) (.ffi name) [.litv (.strLit configuration), .loc flag address] =
+      some (some ((source.refs, source.ffi), .err (.abort (.ffiError event)))) ∧
+    FlatSem.doAppData flat (.ffi name) [.litv (.strLit configuration), .loc flag (address + 1)] =
+      some (some (flat, .err (.abort (.ffiError event)))) := by
+  have flatLookup := stateRel_byteArray_lookup genv source flat statesRel address bytes lookup
+  have ffiEq := (stateRel_iff genv source flat).mp statesRel |>.2.2.2
+  constructor
+  · simp [doAppBasic, lookup, finished]
+  · simp [FlatSem.doAppData, flatLookup, ← ffiEq, finished]
 
 end Flapjack.Compiler.Backend.SourceToFlat

@@ -39,6 +39,9 @@ inductive LocalEnvBoundedArrayExpression : AstHOL.Exp → Prop where
       LocalEnvBoundedArrayExpression (.app .vsub [vector, index])
   | vectorSubscriptUnsafe (vector index : AstHOL.Exp) : LocalEnvBoundedArrayExpression vector → LocalEnvBoundedArrayExpression index →
       LocalEnvBoundedArrayExpression (.app .vsubUnsafe [vector, index])
+  | ffi (name : Basis.Pure.MlString.MlString) (left right : AstHOL.Exp) :
+      LocalEnvBoundedArrayExpression left → LocalEnvBoundedArrayExpression right →
+      LocalEnvBoundedArrayExpression (.app (.ffi name) [left, right])
   | configGC (left right : AstHOL.Exp) : LocalEnvBoundedArrayExpression left → LocalEnvBoundedArrayExpression right →
       LocalEnvBoundedArrayExpression (.app .configGC [left, right])
   | listAppend (left right : AstHOL.Exp) : LocalEnvBoundedArrayExpression left → LocalEnvBoundedArrayExpression right →
@@ -138,6 +141,8 @@ theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
     exact localEnvBounded_vsub interp transform limit vector index vectorIH indexIH
   | vectorSubscriptUnsafe vector index _ _ vectorIH indexIH =>
     exact localEnvBounded_vsubUnsafe interp transform limit vector index vectorIH indexIH
+  | ffi name left right _ _ leftIH rightIH =>
+    exact localEnvBounded_ffi interp transform limit name left right leftIH rightIH
   | configGC left right _ _ leftIH rightIH =>
     exact localEnvBounded_configGC interp transform limit left right leftIH rightIH
   | listAppend left right _ _ leftIH rightIH =>
