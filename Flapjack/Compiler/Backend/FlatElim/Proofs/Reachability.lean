@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.FlatElim.Reachability
 import Flapjack.Misc.Sptree.ToAList
+import Flapjack.Misc.Sptree.UnionAlgebra
 import Mathlib.Data.Finset.Card
 import Aesop
 
@@ -16,6 +17,58 @@ def isAdjacent (tree : Spt NumSet) (source target : Nat) : Prop :=
 @[hol "HOL/examples/algorithms/spt_closureScript.sml" "is_reachable_def"]
 def isReachable (tree : Spt NumSet) : Nat → Nat → Prop :=
   Relation.ReflTransGen (isAdjacent tree)
+
+/-- Lookup through dependency-tree union combines the two payload sets when
+both trees contain the queried key. -/
+@[hol "HOL/examples/algorithms/spt_closureScript.sml" "lookup_num_set_tree_union"]
+theorem lookupNumSetTreeUnion (first second : Spt NumSet) (key : Nat) :
+    sptLookup key (numSetTreeUnion first second) =
+      match sptLookup key first, sptLookup key second with
+      | some a, some b => some (sptUnion a b)
+      | some a, none => some a
+      | none, result => result := by
+  induction first generalizing second key with
+  | ln => simp [numSetTreeUnion, sptLookup]
+  | ls value =>
+    cases second <;> by_cases zero : key = 0 <;> simp [numSetTreeUnion, sptLookup, zero]
+  | bn left right ihLeft ihRight =>
+    cases second <;> by_cases zero : key = 0 <;> by_cases even : key % 2 = 0 <;>
+      simp [numSetTreeUnion, sptLookup, zero, even, ihLeft, ihRight]
+    all_goals split <;> simp_all
+  | bs left value right ihLeft ihRight =>
+    cases second <;> by_cases zero : key = 0 <;> by_cases even : key % 2 = 0 <;>
+      simp [numSetTreeUnion, sptLookup, zero, even, ihLeft, ihRight]
+    all_goals split <;> simp_all
+
+/-- Dependency-tree union is symmetric for unit-valued target sets. -/
+@[hol "HOL/examples/algorithms/spt_closureScript.sml" "num_set_tree_union_sym"]
+theorem numSetTreeUnion_sym (first second : Spt NumSet) :
+    numSetTreeUnion first second = numSetTreeUnion second first := by
+  induction first generalizing second with
+  | ln => cases second <;> rfl
+  | ls value => cases second <;> simp [numSetTreeUnion, sptUnion_numSet_sym]
+  | bn left right ihLeft ihRight =>
+    cases second <;> simp [numSetTreeUnion, ihLeft, ihRight]
+  | bs left value right ihLeft ihRight =>
+    cases second <;> simp [numSetTreeUnion, ihLeft, ihRight, sptUnion_numSet_sym]
+/-- Adding another dependency tree retains each edge from the first. -/
+@[hol "HOL/examples/algorithms/spt_closureScript.sml" "is_adjacent_num_set_tree_union"]
+theorem isAdjacent_union (first second : Spt NumSet) (source target : Nat)
+    (edge : isAdjacent first source target) : isAdjacent (numSetTreeUnion first second) source target := by
+  obtain ⟨values, found, targetFound⟩ := edge
+  cases other : sptLookup source second with
+  | none => exact ⟨values, by simp [lookupNumSetTreeUnion, found, other], targetFound⟩
+  | some values' =>
+    refine ⟨sptUnion values values', by simp [lookupNumSetTreeUnion, found, other], ?_⟩
+    simp [sptLookup_sptUnion, targetFound]
+
+/-- Adding another dependency tree retains every existing path. -/
+@[hol "HOL/examples/algorithms/spt_closureScript.sml" "is_reachable_num_set_tree_union"]
+theorem isReachable_union (first second : Spt NumSet) (source target : Nat)
+    (path : isReachable first source target) : isReachable (numSetTreeUnion first second) source target := by
+  induction path with
+  | refl => exact .refl
+  | tail path edge ih => exact ih.tail (isAdjacent_union first second _ _ edge)
 
 /-- Payload sets contained in a sparse dependency tree. This list is used
 only to reason about the executed tree fold. -/

@@ -15,6 +15,8 @@ val _ = show_thm "value_has_eval=" flat_elimProofTheory.v_has_Eval_def1;
 val _ = show_thm "globals_relation=" flat_elimProofTheory.globals_rel_def;
 val _ = show_thm "globals_transitivity=" flat_elimProofTheory.globals_rel_trans;
 val _ = show_thm "declarations_closed=" flat_elimProofTheory.decs_closed_def;
+val _ = show_thm "closed_tail=" flat_elimProofTheory.decs_closed_reduce;
+val _ = show_thm "closed_head=" flat_elimProofTheory.decs_closed_reduce_HD;
 val _ = show_thm "state_relation=" flat_elimProofTheory.flat_state_rel_def;
 val _ = show_thm "state_transitivity=" flat_elimProofTheory.flat_state_rel_trans;
 val _ = show_eval "closure_lookup=" ``sptree$lookup 3 (flat_elimProof$find_v_globals (flatSem$Closure <|v := []|> «x» (flatLang$App backend_common$None (flatLang$GlobalVarLookup 3) [])))``;

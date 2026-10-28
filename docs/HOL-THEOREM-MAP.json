@@ -1,6 +1,54 @@
 [
   {
     "hol_path": "HOL/examples/algorithms/spt_closureScript.sml",
+    "hol_name": "lookup_num_set_tree_union",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/Reachability.lean",
+    "lean_name": "lookupNumSetTreeUnion",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed HOL capture: both trees contain unit-valued sparse target sets, and all lookup cases preserve the original left/right union order."
+  },
+  {
+    "hol_path": "HOL/examples/algorithms/spt_closureScript.sml",
+    "hol_name": "num_set_tree_union_sym",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/Reachability.lean",
+    "lean_name": "numSetTreeUnion_sym",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared typed HOL capture: both arguments are trees of unit-valued sparse sets and the conclusion is literal symmetric tree equality."
+  },
+  {
+    "hol_path": "HOL/examples/algorithms/spt_closureScript.sml",
+    "hol_name": "is_adjacent_num_set_tree_union",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/Reachability.lean",
+    "lean_name": "isAdjacent_union",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed HOL capture preserves both trees and source/target keys; adjacency and carrier review remains pending."
+  },
+  {
+    "hol_path": "HOL/examples/algorithms/spt_closureScript.sml",
+    "hol_name": "is_reachable_num_set_tree_union",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/Reachability.lean",
+    "lean_name": "isReachable_union",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed HOL capture preserves both trees and source/target keys; RTC correspondence review remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "decs_closed_reduce",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/StateRelation.lean",
+    "lean_name": "decsClosed_tail",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed HOL tail statement captured; complete closed-declaration and RTC correspondence review remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "decs_closed_reduce_HD",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/StateRelation.lean",
+    "lean_name": "decsClosed_head",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed HOL singleton-head statement captured; complete closed-declaration and RTC correspondence review remains pending."
+  },
+  {
+    "hol_path": "HOL/examples/algorithms/spt_closureScript.sml",
     "hol_name": "is_adjacent_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/Reachability.lean",
     "lean_name": "isAdjacent",

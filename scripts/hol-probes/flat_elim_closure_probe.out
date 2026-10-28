@@ -3,5 +3,9 @@ fold_domain=∀(tree :α sptree$num_map sptree$num_map) (y :α sptree$num_map). 
 adjacent=∀(tree :sptree$num_set sptree$num_map) (x :num) (y :num). is_adjacent tree x y ⇔ ∃(aSetx :sptree$num_set). lookup x tree = SOME aSetx ∧ lookup y aSetx = SOME ()
 reachable=∀(tree :sptree$num_set sptree$num_map). is_reachable tree = (is_adjacent tree)꙳
 closure_reachable=∀(tree :sptree$num_set sptree$num_map) (start :sptree$num_set). (domain (closure_spt start tree) :num -> bool) = {a | ∃(n :num). n ∈ (domain start :num -> bool) ∧ is_reachable tree n a}
+tree_union_lookup=∀(t1 :sptree$num_set sptree$num_map) (t2 :sptree$num_set sptree$num_map) (n :num). lookup n (num_set_tree_union t1 t2) = case lookup n t1 of (NONE :sptree$num_set option) => lookup n t2 | SOME x => case lookup n t2 of (NONE :sptree$num_set option) => SOME x | SOME y => SOME (union x y)
+tree_union_symmetric=∀(t1 :sptree$num_set sptree$num_map) (t2 :sptree$num_set sptree$num_map). num_set_tree_union t1 t2 = num_set_tree_union t2 t1
+adjacent_union=∀(t1 :sptree$num_set sptree$num_map) (t2 :sptree$num_set sptree$num_map) (n :num) (m :num). is_adjacent t1 n m ⇒ is_adjacent (num_set_tree_union t1 t2) n m
+reachable_union=∀(t1 :sptree$num_set sptree$num_map) (t2 :sptree$num_set sptree$num_map) (n :num) (m :num). is_reachable t1 n m ⇒ is_reachable (num_set_tree_union t1 t2) n m
 noncanonical_subset=T
 noncanonical_closure=⦕ 0 ⦖

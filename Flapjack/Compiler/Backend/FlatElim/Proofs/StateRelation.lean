@@ -12,6 +12,50 @@ def decsClosed (reachable : NumSet) (decs : List FlatLang.Exp) : Prop :=
     (∀ key, sptMem key roots → sptMem key reachable) ∧
     ∀ source target, sptMem source reachable → isReachable tree source target → sptMem target reachable
 
+/-- A closed declaration sequence remains closed after removing its head. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "decs_closed_reduce"]
+theorem decsClosed_tail (reachable : NumSet) (head : FlatLang.Exp) (tail : List FlatLang.Exp)
+    (closed : decsClosed reachable (head :: tail)) : decsClosed reachable tail := by
+  intro roots tree analysis
+  cases headAnalysis : analyseExp head with
+  | mk headRoots headTree =>
+    have combined : analyseCode (head :: tail) =
+        (sptUnion headRoots roots, numSetTreeUnion headTree tree) := by
+      simp [analyseCode, codeAnalysisUnion, headAnalysis, analysis]
+    obtain ⟨rootsClosed, pathsClosed⟩ := closed _ _ combined
+    constructor
+    · intro key member
+      exact rootsClosed key ((sptMem_sptUnion _ _ _).mpr (Or.inr member))
+    · intro source target member path
+      apply pathsClosed source target member
+      rw [numSetTreeUnion_sym]
+      exact isReachable_union tree headTree source target path
+
+/-- A closed declaration sequence also has a closed singleton head. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "decs_closed_reduce_HD"]
+theorem decsClosed_head (reachable : NumSet) (head : FlatLang.Exp) (tail : List FlatLang.Exp)
+    (closed : decsClosed reachable (head :: tail)) : decsClosed reachable [head] := by
+  intro roots tree analysis
+  cases headAnalysis : analyseExp head with
+  | mk headRoots headTree =>
+    cases tailAnalysis : analyseCode tail with
+    | mk tailRoots tailTree =>
+      have combined : analyseCode (head :: tail) =
+          (sptUnion headRoots tailRoots, numSetTreeUnion headTree tailTree) := by
+        simp [analyseCode, codeAnalysisUnion, headAnalysis, tailAnalysis]
+      have singleton : analyseCode [head] = (headRoots, headTree) := by
+        have unionEmpty : sptUnion headRoots .ln = headRoots := by cases headRoots <;> simp [sptUnion]
+        have treeEmpty : numSetTreeUnion headTree .ln = headTree := by cases headTree <;> rfl
+        simp [analyseCode, codeAnalysisUnion, headAnalysis, unionEmpty, treeEmpty]
+      rw [singleton] at analysis
+      cases analysis
+      obtain ⟨rootsClosed, pathsClosed⟩ := closed _ _ combined
+      constructor
+      · intro key member
+        exact rootsClosed key ((sptMem_sptUnion _ _ _).mpr (Or.inl member))
+      · intro source target member path
+        exact pathsClosed source target member (isReachable_union _ tailTree source target path)
+
 /-- The calculated closure satisfies the original closed-declaration
 condition for the program it analyses. This is a helper for the elimination
 simulation, not a separately named HOL theorem. -/
