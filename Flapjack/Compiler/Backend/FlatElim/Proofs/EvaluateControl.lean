@@ -571,4 +571,133 @@ theorem evaluate_keep_flatStateRel_handle {C F : Type} (tra : BackendCommon.Tra)
             cases same
             exact evaluated
 
+/-- A successful recursive-function lookup identifies an actual member of
+the function list. -/
+theorem findRecFun_member (name arg : Flapjack.AstHOL.VarN) (body : FlatLang.Exp)
+    (funs : List (Flapjack.AstHOL.VarN × Flapjack.AstHOL.VarN × FlatLang.Exp))
+    (found : findRecFun name funs = some (arg, body)) : (name, arg, body) ∈ funs := by
+  induction funs with
+  | nil => simp [findRecFun] at found
+  | cons entry rest ih =>
+    obtain ⟨f, x, e⟩ := entry
+    by_cases same : f = name
+    · subst f
+      simp [findRecFun] at found
+      rcases found with ⟨rfl, rfl⟩
+      simp
+    · simp [findRecFun, same] at found
+      exact List.mem_cons_of_mem _ (ih found)
+
+/-- Each recursive body contributes its lookups to the function-list analysis. -/
+theorem findGlobalsFuns_member (funs : List (Flapjack.AstHOL.VarN × Flapjack.AstHOL.VarN × FlatLang.Exp))
+    (name arg : Flapjack.AstHOL.VarN) (body : FlatLang.Exp) (member : (name, arg, body) ∈ funs)
+    (reachable : NumSet) (closed : globalsWithin (findGlobalsFuns destGlobalVarLookup funs) reachable) :
+    globalsWithin (findLookups body) reachable := by
+  rw [findFunctionGlobals_eq_map] at closed
+  apply (findLookupsList_within_iff _ _).mp closed body
+  exact List.mem_map.mpr ⟨(name, arg, body), member, rfl⟩
+
+/-- Each recursive body is Eval-free when the function list is Eval-free. -/
+theorem hasEvalFuns_member (funs : List (Flapjack.AstHOL.VarN × Flapjack.AstHOL.VarN × FlatLang.Exp))
+    (name arg : Flapjack.AstHOL.VarN) (body : FlatLang.Exp) (member : (name, arg, body) ∈ funs)
+    (safe : hasEvalFuns funs = false) : hasEval body = false := by
+  rw [hasEvalFuns_eq_map] at safe
+  have h := (List.any_eq_false.mp safe) body (List.mem_map.mpr ⟨(name, arg, body), member, rfl⟩)
+  simpa using h
+
+/-- Applying an ordinary closure preserves the bounds on the selected body
+and the extended environment. -/
+theorem closureApplication_invariants (env : FlatSem.Environment FlatSem.Value)
+    (name : Flapjack.AstHOL.VarN) (body : FlatLang.Exp) (value : FlatSem.Value) (reachable : NumSet)
+    (closureClosed : globalsWithin (findValueGlobals (.closure env name body)) reachable)
+    (closureSafe : valueHasEval (.closure env name body) = false)
+    (valueClosed : globalsWithin (findValueGlobals value) reachable) (valueSafe : valueHasEval value = false) :
+    globalsWithin (findLookups body) reachable ∧ hasEval body = false ∧
+      globalsWithin (findEnvGlobals { env with v := (name, value) :: env.v }) reachable ∧
+      bindingsNoEval ((name, value) :: env.v) := by
+  cases env with
+  | mk bindings =>
+    simp only [findValueGlobals, findBindingsGlobals_eq_map, globalsWithin_union] at closureClosed
+    simp [valueHasEval] at closureSafe
+    have envSafe : bindingsNoEval bindings := by
+      have valuesSafe := (valuesHaveEval_eq_false_iff _).mp (by simpa [bindingsHaveEval_eq_map] using closureSafe.2)
+      intro binding member
+      exact valuesSafe binding.2 (List.mem_map.mpr ⟨binding, member, rfl⟩)
+    refine ⟨closureClosed.2, closureSafe.1, ?_, ?_⟩
+    · exact (bindingsWithin_cons name value bindings reachable).mpr ⟨valueClosed, closureClosed.1⟩
+    · simpa [bindingsNoEval] using And.intro valueSafe envSafe
+
+/-- Applying a recursive closure preserves the bounds on the selected body
+and the environment rebuilt from the recursive function group. -/
+theorem recclosureApplication_invariants (env : FlatSem.Environment FlatSem.Value)
+    (funs : List (Flapjack.AstHOL.VarN × Flapjack.AstHOL.VarN × FlatLang.Exp))
+    (name arg : Flapjack.AstHOL.VarN) (body : FlatLang.Exp) (value : FlatSem.Value) (reachable : NumSet)
+    (found : findRecFun name funs = some (arg, body))
+    (closureClosed : globalsWithin (findValueGlobals (.recclosure env funs name)) reachable)
+    (closureSafe : valueHasEval (.recclosure env funs name) = false)
+    (valueClosed : globalsWithin (findValueGlobals value) reachable) (valueSafe : valueHasEval value = false) :
+    globalsWithin (findLookups body) reachable ∧ hasEval body = false ∧
+      globalsWithin (findEnvGlobals { env with v := (arg, value) :: FlatSem.buildRecEnv funs env env.v }) reachable ∧
+      bindingsNoEval ((arg, value) :: FlatSem.buildRecEnv funs env env.v) := by
+  have member := findRecFun_member name arg body funs found
+  cases env with
+  | mk bindings =>
+    simp only [findValueGlobals, findBindingsGlobals_eq_map, globalsWithin_union] at closureClosed
+    simp [valueHasEval] at closureSafe
+    have envSafe : bindingsNoEval bindings := by
+      have valuesSafe := (valuesHaveEval_eq_false_iff _).mp (by simpa [bindingsHaveEval_eq_map] using closureSafe.1)
+      intro binding bindingMember
+      exact valuesSafe binding.2 (List.mem_map.mpr ⟨binding, bindingMember, rfl⟩)
+    have built := buildRecEnv_invariants funs ⟨bindings⟩ reachable closureClosed.1 envSafe closureClosed.2 closureSafe.2
+    refine ⟨findGlobalsFuns_member funs name arg body member reachable closureClosed.2,
+      hasEvalFuns_member funs name arg body member closureSafe.2, ?_, ?_⟩
+    · exact (bindingsWithin_cons arg value _ reachable).mpr ⟨valueClosed, built.1⟩
+    · simpa [bindingsNoEval] using And.intro valueSafe built.2
+
+/-- Successful function application yields a closed, Eval-free body and
+environment whenever its argument values have those invariants. -/
+theorem doOpApp_invariants (values : List FlatSem.Value) (env : FlatSem.Environment FlatSem.Value)
+    (body : FlatLang.Exp) (reachable : NumSet) (selected : FlatSem.doOpApp values = some (env, body))
+    (closed : globalsWithin (findValuesGlobals values) reachable) (safe : valuesNoEval values) :
+    globalsWithin (findLookups body) reachable ∧ hasEval body = false ∧
+      globalsWithin (findEnvGlobals env) reachable ∧ bindingsNoEval env.v := by
+  cases values with
+  | nil => simp [FlatSem.doOpApp] at selected
+  | cons function rest =>
+    cases rest with
+    | nil => simp [FlatSem.doOpApp] at selected
+    | cons value tail =>
+      cases tail with
+      | cons extra tail => simp [FlatSem.doOpApp] at selected
+      | nil =>
+        have functionClosed := (findValuesGlobals_within_iff _ _).mp closed function (by simp)
+        have valueClosed := (findValuesGlobals_within_iff _ _).mp closed value (by simp)
+        have functionSafe := safe function (by simp)
+        have valueSafe := safe value (by simp)
+        cases function <;> simp only [FlatSem.doOpApp] at selected
+        all_goals try contradiction
+        case closure captured name expression =>
+          simp only [Option.some.injEq, Prod.mk.injEq] at selected
+          rcases selected with ⟨rfl, rfl⟩
+          exact closureApplication_invariants captured name expression value reachable functionClosed functionSafe valueClosed valueSafe
+        case recclosure captured funs name =>
+          by_cases distinct : (funs.map Prod.fst).Nodup
+          · simp only [distinct, ↓reduceIte] at selected
+            cases found : findRecFun name funs with
+            | none => simp [found] at selected
+            | some entry =>
+              obtain ⟨arg, expression⟩ := entry
+              simp [found] at selected
+              rcases selected with ⟨rfl, rfl⟩
+              exact recclosureApplication_invariants captured funs name arg expression value reachable found functionClosed functionSafe valueClosed valueSafe
+          · simp [distinct] at selected
+
+/-- Dynamic evaluation is excluded by the simulation's Eval-free premise. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "evaluate_keep_flat_state_rel_eq_lemma"]
+theorem evaluate_keep_flatStateRel_appEval {C F : Type} (tra : BackendCommon.Tra)
+    (args : List FlatLang.Exp) : evaluationSimulation (C := C) (F := F) [.app tra (.src .eval) args] := by
+  intro env source next result reachable target run lookupsClosed related envClosed envSafe expressionsSafe notTypeError
+  have impossible := expressionsSafe (.app tra (.src .eval) args) (by simp)
+  simp [hasEval] at impossible
+
 end Flapjack.Compiler.Backend.FlatElim
