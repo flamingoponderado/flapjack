@@ -1,5 +1,13 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "keep_glob_alloc",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/Elimination.lean",
+    "lean_name": "keepGlobAlloc",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source_to_flat_init_probe capture: the reachable sparse tree has arbitrary payload type, and the same next indices and configuration are used by the unconditional keep result."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
     "hol_name": "compile_flat_def",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Eliminate.lean",
@@ -100074,8 +100082,8 @@
     "lean_name": "keep",
     "hol_path": "cakeml/compiler/backend/flat_elimScript.sml",
     "hol_name": "keep_def",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Source clauses transcribed; independent typed HOL capture and complete statement and carrier review remain pending."
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed elimination_keep capture: reachable is a sparse tree with an independent arbitrary payload type, and the intersection, emptiness test, negated purity result and true branch follow the original equation."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Reachability.lean",

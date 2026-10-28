@@ -51,7 +51,7 @@ def analyseCode : List Exp → NumSet × Spt NumSet
 
 /-- Keep side-effecting expressions and assignments to reachable globals. -/
 @[hol "cakeml/compiler/backend/flat_elimScript.sml" "keep_def"]
-def keep (reachable : NumSet) (e : Exp) : Bool :=
+def keep {α : Type} (reachable : Spt α) (e : Exp) : Bool :=
   if sptIsEmpty (sptInter (findLoc e) reachable) then !isPure e else true
 
 /-- Filter a program by the result of the reachability analysis. -/

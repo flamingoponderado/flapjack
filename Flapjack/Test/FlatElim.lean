@@ -78,9 +78,9 @@ private def function : Exp := .fn (ofString "f") (ofString "x")
 private def pureSet : Exp := .app .none (.globalVarInit 2) [lit]
 #guard isPure pureSet == pure_init
 #guard isHidden pureSet == hidden_init
-#guard keep .ln pureSet == keep_empty
+#guard keep (.ln : NumSet) pureSet == keep_empty
 #guard keep (sptInsert 2 () .ln) pureSet == keep_reachable
-#guard keep .ln eval
+#guard keep (.ln : NumSet) eval
 
 -- Only a match with a total pattern is considered pure.
 #guard isPure (.mat .none lit [(.pany, lit)])
