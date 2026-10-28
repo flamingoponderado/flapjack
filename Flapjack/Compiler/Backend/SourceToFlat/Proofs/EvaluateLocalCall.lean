@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ThunkRel
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBounded
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
 
@@ -553,6 +554,152 @@ theorem localThunkCall_related {C F : Type} [Nonempty C]
       invariant generation clockBound function (.conv none []) flatFunction FlatSem.unitValue
       functionRel unitRel successful safe
 
+/-- After a deferred call returns, update the original thunk cell in both
+stores and preserve the factored invariant. This is an intermediate step in
+forcing, over relations that still require HOL correspondence review. -/
+theorem localThunkReturn_related {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (idxs : NextIndices × NextIndices × Set (Nat × IndexKind))
+    (source : State F) (flat : FlatSem.State C F) (gen : EnvironmentGenerationStore)
+    (invariant : factoredInvariant interp transform gen genv idxs source flat)
+    (generation : envGenRel gen source.evalState) (address : Nat)
+    (value : Value) (flatValue : FlatSem.Value) (related : ValueRel genv value flatValue)
+    (sourceRefs : Store Value)
+    (updated : SemanticPrimitivesHOL.updateThunk [.loc false address] source.refs [value] = some sourceRefs) :
+    ∃ flatRefs,
+      FlatSem.updateThunk [.loc false (address + 1)] flat.refs [flatValue] = some flatRefs ∧
+      EvalResultRel genv (.val [value]) (.val [flatValue]) ∧
+      StateRel genv { source with refs := sourceRefs } { flat with refs := flatRefs } ∧
+      factoredInvariant interp transform gen genv idxs
+        { source with refs := sourceRefs } { flat with refs := flatRefs } ∧
+      envGenRel gen { source with refs := sourceRefs }.evalState := by
+  obtain ⟨flatRefs, flatUpdated, reserved, stateRel⟩ :=
+    updateThunk_related genv source flat invariant.2.2.1 address value flatValue related sourceRefs updated
+  refine ⟨flatRefs, flatUpdated, .value (.cons related .nil), stateRel, ?_, generation⟩
+  exact factoredInvariant_changeStores interp transform gen genv idxs source flat sourceRefs flatRefs
+    invariant stateRel reserved
+
+/-- Inspecting a thunk succeeds only at a non-reference location. -/
+theorem destThunk_isThunk_location (operand : Value) (store : Store Value)
+    (mode : ThunkMode) (value : Value)
+    (inspected : SemanticPrimitivesHOL.destThunk [operand] store = .isThunk mode value) :
+    ∃ address, operand = .loc false address := by
+  cases operand <;> simp [SemanticPrimitivesHOL.destThunk] at inspected
+  case loc flag address =>
+    cases flag <;> simp at inspected
+    · exact ⟨address, rfl⟩
+    · cases h : storeLookup address store <;> simp [h] at inspected
+      case some cell => cases cell <;> simp at inspected
+
+/-- Finish a deferred source call by storing its returned value in the thunk. -/
+noncomputable def sourceThunkCallResult {F : Type} (source : State F) (address : Nat) (function : Value) :
+    State F × Result (List Value) Value :=
+  let next := sourceCallResult source function (.conv none [])
+  match next.2 with
+  | .err error => (next.1, .err error)
+  | .val values => match SemanticPrimitivesHOL.updateThunk [.loc false address] next.1.refs values with
+    | none => EvaluateHOL.typeError next.1
+    | some refs => ({ next.1 with refs := refs }, .val values)
+
+/-- Expand the source deferred call in the same order as the force evaluator. -/
+theorem sourceThunkCallResult_eq {F : Type} (source : State F) (address : Nat) (function : Value) :
+    sourceThunkCallResult source address function =
+      match doOpApp [function, .conv none []] with
+      | none => EvaluateHOL.typeError source
+      | some (env, body) =>
+        if source.clock = 0 then EvaluateHOL.timeoutError source else
+        let next := EvaluateHOL.evaluate (EvaluateHOL.decClock source) env [body]
+        match next.2 with
+        | .err error => (next.1, .err error)
+        | .val values => match SemanticPrimitivesHOL.updateThunk [.loc false address] next.1.refs values with
+          | none => EvaluateHOL.typeError next.1
+          | some refs => ({ next.1 with refs := refs }, .val values) := by
+  cases app : doOpApp [function, .conv none []] with
+  | none => simp [sourceThunkCallResult, sourceCallResult, app, EvaluateHOL.typeError]
+  | some call =>
+    obtain ⟨env, body⟩ := call
+    by_cases zero : source.clock = 0
+    · simp [sourceThunkCallResult, sourceCallResult, app, zero, EvaluateHOL.timeoutError]
+    · simp [sourceThunkCallResult, sourceCallResult, app, zero]
+
+/-- Finish the flat deferred call by updating the shifted thunk cell. -/
+noncomputable def flatThunkCallResult {C F : Type} (flat : FlatSem.State C F) (address : Nat)
+    (function : FlatSem.Value) : FlatSem.EvalResult C F :=
+  let next := flatCallResult flat function FlatSem.unitValue
+  match next.2 with
+  | .err error => (next.1, .err error)
+  | .val values => match FlatSem.updateThunk [.loc false (address + 1)] next.1.refs values with
+    | none => (next.1, .err (.abort .typeError))
+    | some refs => ({ next.1 with refs := refs }, .val values)
+
+/-- A successful deferred call and its thunk-cell update preserve the factored
+simulation; call success and absence of a final type error are supplied by the
+surrounding forcing case. -/
+theorem localThunkCallUpdate_related {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (limit : Nat) (calledIH : LocalEnvClockIH (F := F) interp transform limit)
+    (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : State F) (flat : FlatSem.State C F) (gen : EnvironmentGenerationStore)
+    (invariant : factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (generation : envGenRel gen source.evalState) (clockBound : source.clock ≤ limit)
+    (address : Nat) (function : Value) (flatFunction : FlatSem.Value)
+    (functionRel : ValueRel genv function flatFunction)
+    (successful : doOpApp [function, .conv none []] ≠ none)
+    (safe : ∀ last, sourceThunkCallResult source address function ≠ (last, .err (.abort .typeError))) :
+    let src := sourceThunkCallResult source address function
+    let dst := flatThunkCallResult flat address flatFunction
+    ∃ nextGenv, (EvalResultRel nextGenv src.2 dst.2 ∧ StateRel nextGenv src.1 dst.1) ∧
+      match src.2 with
+      | .err (.abort _) => True
+      | _ => GlobalGrowth genv nextGenv ∧
+          factoredInvariant interp transform gen nextGenv (start, finish, other) src.1 dst.1 ∧
+          envGenRel gen src.1.evalState ∧ oracForwardRel interp source.evalState src.1.evalState := by
+  have callSafe : ∀ last, sourceCallResult source function (.conv none []) ≠ (last, .err (.abort .typeError)) := by
+    intro last bad
+    apply safe last
+    simp [sourceThunkCallResult, bad]
+  have unitRel : ValueRel genv (.conv none []) FlatSem.unitValue := .tuple genv [] [] (.nil genv)
+  obtain ⟨nextGenv, simulation, post⟩ := localCallResult_related interp transform limit calledIH genv start finish other
+    source flat gen invariant generation clockBound function (.conv none []) flatFunction FlatSem.unitValue
+    functionRel unitRel successful callSafe
+  generalize srcRun : sourceCallResult source function (.conv none []) = src at simulation post
+  obtain ⟨after, sourceResult⟩ := src
+  generalize dstRun : flatCallResult flat flatFunction FlatSem.unitValue = dst at simulation post
+  obtain ⟨flatAfter, flatResult⟩ := dst
+  obtain ⟨resultRel, states⟩ := simulation
+  cases resultRel with
+  | abort error =>
+    refine ⟨nextGenv, ?_, ?_⟩
+    · simpa [sourceThunkCallResult, flatThunkCallResult, srcRun, dstRun] using
+        And.intro (ResultRel.abort error) states
+    · simp [sourceThunkCallResult, srcRun]
+  | raise valueRel =>
+    refine ⟨nextGenv, ?_, ?_⟩
+    · simpa [sourceThunkCallResult, flatThunkCallResult, srcRun, dstRun] using
+        And.intro (ResultRel.raise valueRel) states
+    · simpa [sourceThunkCallResult, flatThunkCallResult, srcRun, dstRun] using post
+  | @value sourceValues flatValues valuesRel =>
+    obtain ⟨value, rfl⟩ := sourceCallResult_value_singleton source function (.conv none []) after sourceValues srcRun
+    cases valuesRel with
+    | cons valueRel tail =>
+      cases tail with
+      | nil =>
+        rename_i flatValue
+        obtain ⟨growth, nextInvariant, nextGeneration, forward⟩ := post
+        cases updated : SemanticPrimitivesHOL.updateThunk [.loc false address] after.refs [value] with
+        | none =>
+          have impossible := safe after
+          simp [sourceThunkCallResult, srcRun, updated, EvaluateHOL.typeError] at impossible
+        | some sourceRefs =>
+          obtain ⟨flatRefs, flatUpdated, relatedResult, nextStates, finalInvariant, finalGeneration⟩ :=
+            localThunkReturn_related interp transform nextGenv (start, finish, other) after flatAfter gen
+              nextInvariant nextGeneration address value flatValue valueRel sourceRefs updated
+          refine ⟨nextGenv, ?_, ?_⟩
+          · simpa [sourceThunkCallResult, flatThunkCallResult, srcRun, dstRun, updated, flatUpdated] using
+              And.intro relatedResult nextStates
+          · simpa [sourceThunkCallResult, flatThunkCallResult, srcRun, dstRun, updated, flatUpdated] using
+              And.intro growth (And.intro finalInvariant (And.intro finalGeneration forward))
+
 /-- Simulate a two-operand function application at a given clock bound,
 using the smaller-clock induction hypothesis for the called body. -/
 theorem localEnvStep_opapp {C F : Type} [Nonempty C]
@@ -711,6 +858,194 @@ theorem localEnvBounded_opapp {C F : Type} [Nonempty C]
     localRel envInv tracesLen invariant generation safe
   exact localEnvStep_opapp interp transform limit calledIH left right leftIH rightIH genv start finish other source flat
     baseEnv sourceLocal flatEnv traces trace baseMap gen bound localRel envInv tracesLen invariant generation safe
+
+/-- Compose thunk forcing with its operand simulation and the smaller-clock
+induction hypothesis for the deferred function. -/
+theorem localEnvBounded_forceThunk {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (limit : Nat) (calledIH : LocalEnvClockIH (F := F) interp transform limit)
+    (body : AstHOL.Exp) (bodyIH : LocalEnvBoundedIH (F := F) interp transform limit body) :
+    LocalEnvBoundedIH (F := F) interp transform limit (.app (.thunkOp .forceThunk) [body]) := by
+  intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen clockBound localRel envInv tracesLen invariant generation safe
+  let sourceEnv := { baseEnv with v := nsAppend sourceLocal baseEnv.v }
+  let compMap := { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v }
+  have bodySafe : ∀ last, EvaluateHOL.evaluate source sourceEnv [body] ≠ (last, .err (.abort .typeError)) := by
+    intro last bad
+    apply safe last
+    change EvaluateHOL.evaluate source sourceEnv [.app (.thunkOp .forceThunk) [body]] = _
+    rw [EvaluateHOL.evaluate]
+    simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+    rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, bad]
+  obtain ⟨nextGenv, bodySim, post⟩ := bodyIH genv start finish other source flat baseEnv sourceLocal flatEnv traces
+    trace baseMap gen clockBound localRel envInv tracesLen invariant generation bodySafe
+  unfold ExprSim at bodySim
+  generalize sourceRun : EvaluateHOL.evaluate source sourceEnv [body] = sourceResult at bodySim post
+  obtain ⟨nextSource, sourceResult⟩ := sourceResult
+  generalize flatRun : FlatSem.evaluate flatEnv flat [compileExp trace compMap body] = flatResult at bodySim post
+  obtain ⟨nextFlat, flatResult⟩ := flatResult
+  obtain ⟨related, states⟩ := bodySim
+  cases related with
+  | abort error =>
+    refine ⟨nextGenv, ?_, ?_⟩
+    · unfold ExprSim
+      rw [EvaluateHOL.evaluate]
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+      rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]
+      simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+      rw [FlatSem.evaluate]
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+      rw [(FlatSem.fixClock_evaluations flatEnv flat [compileExp trace compMap body]
+        (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+      exact ⟨.abort error, states⟩
+    · rw [EvaluateHOL.evaluate]
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+      rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]
+      trivial
+  | raise valueRel =>
+    refine ⟨nextGenv, ?_, ?_⟩
+    · unfold ExprSim
+      rw [EvaluateHOL.evaluate]
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+      rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]
+      simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+      rw [FlatSem.evaluate]
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+      rw [(FlatSem.fixClock_evaluations flatEnv flat [compileExp trace compMap body]
+        (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+      exact ⟨.raise valueRel, states⟩
+    · rw [EvaluateHOL.evaluate]
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+      rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]
+      simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+      rw [FlatSem.evaluate]
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+      rw [(FlatSem.fixClock_evaluations flatEnv flat [compileExp trace compMap body]
+        (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+      exact post
+  | @value sourceValues flatValues valuesRel =>
+    obtain ⟨operand, rfl⟩ := EvaluateProps.evaluateSingFull source nextSource sourceEnv body sourceValues sourceRun
+    cases valuesRel with
+    | cons operandRel tail =>
+      cases tail with
+      | nil =>
+        rename_i flatOperand
+        obtain ⟨growth, nextInvariant, nextGeneration, forward⟩ := post
+        have inspected := destThunk_related nextGenv nextSource nextFlat states operand flatOperand operandRel
+        cases sourceThunk : SemanticPrimitivesHOL.destThunk [operand] nextSource.refs with
+        | badRef =>
+          exfalso
+          apply safe nextSource
+          change EvaluateHOL.evaluate source sourceEnv [.app (.thunkOp .forceThunk) [body]] = _
+          rw [EvaluateHOL.evaluate]
+          simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+          rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]
+          simp [getOpClass, sourceThunk, EvaluateHOL.typeError]
+        | notThunk =>
+          exfalso
+          apply safe nextSource
+          change EvaluateHOL.evaluate source sourceEnv [.app (.thunkOp .forceThunk) [body]] = _
+          rw [EvaluateHOL.evaluate]
+          simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+          rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]
+          simp [getOpClass, sourceThunk, EvaluateHOL.typeError]
+        | isThunk mode value =>
+          cases flatThunk : FlatSem.destThunk [flatOperand] nextFlat.refs with
+          | badRef => rw [sourceThunk, flatThunk] at inspected; cases inspected
+          | notThunk => rw [sourceThunk, flatThunk] at inspected; cases inspected
+          | isThunk flatMode flatValue =>
+            rw [sourceThunk, flatThunk] at inspected
+            cases inspected with
+            | isThunk _ valueRel =>
+              cases mode with
+              | evaluated =>
+                refine ⟨nextGenv, ?_, ?_⟩
+                · unfold ExprSim
+                  rw [EvaluateHOL.evaluate]
+                  simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+                  rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]
+                  simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+                  rw [FlatSem.evaluate]
+                  simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+                  rw [(FlatSem.fixClock_evaluations flatEnv flat [compileExp trace compMap body]
+                    (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+                  simp [getOpClass, astOpToFlatOp, sourceThunk, flatThunk]
+                  exact ⟨.value (.cons valueRel .nil), states⟩
+                · rw [EvaluateHOL.evaluate]
+                  simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+                  rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]
+                  simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+                  rw [FlatSem.evaluate]
+                  simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+                  rw [(FlatSem.fixClock_evaluations flatEnv flat [compileExp trace compMap body]
+                    (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+                  simpa [getOpClass, astOpToFlatOp, sourceThunk, flatThunk] using
+                    And.intro growth (And.intro nextInvariant (And.intro nextGeneration forward))
+              | notEvaluated =>
+                obtain ⟨address, rfl⟩ := destThunk_isThunk_location operand nextSource.refs .notEvaluated value sourceThunk
+                have flatLocation := (valueRel_location_iff nextGenv false address flatOperand).mp operandRel
+                subst flatOperand
+                have callSuccess : doOpApp [value, .conv none []] ≠ none := by
+                  intro failed
+                  apply safe nextSource
+                  change EvaluateHOL.evaluate source sourceEnv [.app (.thunkOp .forceThunk) [body]] = _
+                  rw [EvaluateHOL.evaluate]
+                  simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+                  rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]
+                  simp [getOpClass, sourceThunk, failed, EvaluateHOL.typeError]
+                have sourceOuter : EvaluateHOL.evaluate source sourceEnv [.app (.thunkOp .forceThunk) [body]] =
+                    sourceThunkCallResult nextSource address value := by
+                  rw [EvaluateHOL.evaluate]
+                  simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+                  rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]
+                  cases app : doOpApp [value, .conv none []] with
+                  | none => exact (callSuccess app).elim
+                  | some call =>
+                    obtain ⟨env, calledBody⟩ := call
+                    by_cases zero : nextSource.clock = 0
+                    · simp [getOpClass, sourceThunk, app, zero, sourceThunkCallResult, sourceCallResult, EvaluateHOL.timeoutError]
+                    · simp [getOpClass, sourceThunk, app, zero, sourceThunkCallResult, sourceCallResult]
+                      split <;> simp_all
+                      split <;> simp_all
+                have flatOuter : FlatSem.evaluate flatEnv flat [compileExp trace compMap (.app (.thunkOp .forceThunk) [body])] =
+                    flatThunkCallResult nextFlat address flatValue := by
+                  simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+                  rw [FlatSem.evaluate]
+                  simp only [List.reverse_cons, List.reverse_nil, List.nil_append]
+                  rw [(FlatSem.fixClock_evaluations flatEnv flat [compileExp trace compMap body]
+                    (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+                  simp [astOpToFlatOp, flatThunk, flatThunkCallResult, flatCallResult_appUnit]
+                  split <;> simp_all
+                  split <;> simp_all
+                have callSafe : ∀ last, sourceThunkCallResult nextSource address value ≠ (last, .err (.abort .typeError)) := by
+                  intro last bad
+                  apply safe last
+                  change EvaluateHOL.evaluate source sourceEnv [.app (.thunkOp .forceThunk) [body]] = _
+                  rw [sourceOuter]
+                  exact bad
+                have nextBound : nextSource.clock ≤ limit := Nat.le_trans
+                  (EvaluateHOL.evaluateClockFull source nextSource sourceEnv [body] _ sourceRun) clockBound
+                obtain ⟨finalGenv, callSim, callPost⟩ := localThunkCallUpdate_related interp transform limit calledIH
+                  nextGenv start finish other nextSource nextFlat gen nextInvariant nextGeneration nextBound address
+                  value flatValue valueRel callSuccess callSafe
+                refine ⟨finalGenv, ?_, ?_⟩
+                · unfold ExprSim
+                  rw [sourceOuter, flatOuter]
+                  exact callSim
+                · rw [sourceOuter, flatOuter]
+                  cases sourceResult : (sourceThunkCallResult nextSource address value).2 with
+                  | err error =>
+                    cases error with
+                    | abort error => trivial
+                    | raise value =>
+                      rw [sourceResult] at callPost
+                      obtain ⟨callGrowth, finalInvariant, finalGeneration, callForward⟩ := callPost
+                      exact ⟨growth.trans callGrowth, finalInvariant, finalGeneration,
+                        oracForwardRel_trans interp _ _ _ ⟨forward, callForward⟩⟩
+                  | val values =>
+                    rw [sourceResult] at callPost
+                    obtain ⟨callGrowth, finalInvariant, finalGeneration, callForward⟩ := callPost
+                    exact ⟨growth.trans callGrowth, finalInvariant, finalGeneration,
+                      oracForwardRel_trans interp _ _ _ ⟨forward, callForward⟩⟩
 
 /-- Bounded simulations below the current clock yield the called-body
 induction hypothesis needed by function application. -/

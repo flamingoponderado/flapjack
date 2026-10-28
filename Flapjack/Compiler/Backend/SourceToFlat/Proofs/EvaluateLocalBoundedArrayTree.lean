@@ -52,6 +52,8 @@ inductive LocalEnvBoundedArrayExpression : AstHOL.Exp → Prop where
       LocalEnvBoundedArrayExpression (.app (.ffi name) [left, right])
   | configGC (left right : AstHOL.Exp) : LocalEnvBoundedArrayExpression left → LocalEnvBoundedArrayExpression right →
       LocalEnvBoundedArrayExpression (.app .configGC [left, right])
+  | forceThunk (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body →
+      LocalEnvBoundedArrayExpression (.app (.thunkOp .forceThunk) [body])
   | allocThunk (mode : ThunkMode) (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body →
       LocalEnvBoundedArrayExpression (.app (.thunkOp (.allocThunk mode)) [body])
   | updateThunk (mode : ThunkMode) (pointer value : AstHOL.Exp) :
@@ -167,6 +169,7 @@ theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
     exact localEnvBounded_ffi interp transform limit name left right leftIH rightIH
   | configGC left right _ _ leftIH rightIH =>
     exact localEnvBounded_configGC interp transform limit left right leftIH rightIH
+  | forceThunk body _ ih => exact localEnvBounded_forceThunk interp transform limit calledIH body ih
   | allocThunk mode body _ ih => exact localEnvBounded_allocThunk interp transform limit mode body ih
   | updateThunk mode pointer value _ _ pointerIH valueIH =>
     exact localEnvBounded_updateThunk interp transform limit mode pointer value pointerIH valueIH
