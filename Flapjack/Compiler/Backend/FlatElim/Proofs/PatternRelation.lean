@@ -280,6 +280,15 @@ theorem pmatch_Match_reachable {C F : Type} :
 def valuesNoEval (values : List FlatSem.Value) : Prop :=
   ∀ value ∈ values, valueHasEval value = false
 
+/-- Replacing a list element with an Eval-free value preserves the invariant. -/
+theorem valuesNoEval_set (values : List FlatSem.Value) (index : Nat) (value : FlatSem.Value)
+    (old : valuesNoEval values) (new : valueHasEval value = false) :
+    valuesNoEval (values.set index value) := by
+  intro item member
+  rcases List.mem_or_eq_of_mem_set member with oldMember | rfl
+  · exact old item oldMember
+  · exact new
+
 /-- Every value in a pattern environment is free of dynamic evaluation. -/
 def bindingsNoEval (bindings : List (VarN × FlatSem.Value)) : Prop :=
   ∀ binding ∈ bindings, valueHasEval binding.2 = false

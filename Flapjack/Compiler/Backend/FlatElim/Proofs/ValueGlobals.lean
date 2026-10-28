@@ -143,6 +143,27 @@ theorem findValuesGlobals_member (values : List FlatSem.Value) (value : FlatSem.
     · exact Or.inl found
     · exact Or.inr (ih member)
 
+/-- A list is reachable exactly when every member value is reachable. -/
+theorem findValuesGlobals_within_iff (values : List FlatSem.Value) (reachable : NumSet) :
+    globalsWithin (findValuesGlobals values) reachable ↔
+      ∀ value ∈ values, globalsWithin (findValueGlobals value) reachable := by
+  induction values with
+  | nil => simp [findValuesGlobals, globalsWithin, sptMem, sptDomain]
+  | cons value rest ih =>
+    simp only [findValuesGlobals, globalsWithin_union, List.mem_cons, forall_eq_or_imp, ih]
+
+/-- Replacing a list element with a reachable value preserves reachability. -/
+theorem findValuesGlobals_set_within (values : List FlatSem.Value) (index : Nat)
+    (value : FlatSem.Value) (reachable : NumSet)
+    (old : globalsWithin (findValuesGlobals values) reachable)
+    (new : globalsWithin (findValueGlobals value) reachable) :
+    globalsWithin (findValuesGlobals (values.set index value)) reachable := by
+  apply (findValuesGlobals_within_iff _ _).mpr
+  intro item member
+  rcases List.mem_or_eq_of_mem_set member with oldMember | rfl
+  · exact (findValuesGlobals_within_iff _ _).mp old item oldMember
+  · exact new
+
 /-- Global dependencies held by a single store entry. -/
 def storeValueGlobals : StoreValue FlatSem.Value → NumSet
   | .refv value | .thunk _ value => findValueGlobals value

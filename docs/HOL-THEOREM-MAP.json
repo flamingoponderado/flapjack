@@ -3,6 +3,38 @@
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "do_app_SOME_flat_state_rel",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyMemory.lean",
+    "lean_name": "doApp_some_flatStateRel_arrayUpdate",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Array update case only; typed original theorem captured in flat_elim_value_globals_probe.out. Full primitive simulation, carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "do_app_SOME_flat_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyMemory.lean",
+    "lean_name": "doApp_some_flatStateRel_arrayUpdateUnsafe",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Array update case only; typed original theorem captured in flat_elim_value_globals_probe.out. Full primitive simulation, carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "do_app_SOME_flat_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyMemory.lean",
+    "lean_name": "doApp_some_flatStateRel_byteArrayUpdate",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Array update case only; typed original theorem captured in flat_elim_value_globals_probe.out. Full primitive simulation, carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "do_app_SOME_flat_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyMemory.lean",
+    "lean_name": "doApp_some_flatStateRel_byteArrayUpdateUnsafe",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Array update case only; typed original theorem captured in flat_elim_value_globals_probe.out. Full primitive simulation, carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "do_app_SOME_flat_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyMemory.lean",
     "lean_name": "doApp_some_flatStateRel_arrayLength",
     "statement_status": "pending_statement_review",
     "reviewer": "Array read or length case only; typed original theorem captured in flat_elim_value_globals_probe.out. Full primitive simulation, carrier, and statement review remain pending."
