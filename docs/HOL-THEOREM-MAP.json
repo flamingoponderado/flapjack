@@ -1,5 +1,29 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "evaluate_keep_flat_state_rel_eq_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/EvaluateControl.lean",
+    "lean_name": "evaluate_keep_flatStateRel_if",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Conditional induction case only; typed original captured in flat_elim_value_globals_probe.out. Full evaluator, carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "evaluate_keep_flat_state_rel_eq_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/EvaluateControl.lean",
+    "lean_name": "evaluate_keep_flatStateRel_let",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Let induction case only; typed original captured in flat_elim_value_globals_probe.out. Full evaluator, carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "evaluate_keep_flat_state_rel_eq_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/EvaluateControl.lean",
+    "lean_name": "evaluate_keep_flatStateRel_letrec",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Recursive-binding induction case only; typed original captured in flat_elim_value_globals_probe.out. Full evaluator, carrier, and statement review remain pending."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
     "hol_name": "evaluate_length",
     "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvaluateLength.lean",
