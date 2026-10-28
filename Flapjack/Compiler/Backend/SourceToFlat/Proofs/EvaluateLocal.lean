@@ -11,6 +11,8 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingArith
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalArray
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedArrayTree
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.Initialization
+import Flapjack.Compiler.Backend.Semantics.FlatSem.Semantics
+import Flapjack.SemanticsHOL
 
 /-! Local declaration simulation over the preliminary factored relations. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
@@ -965,6 +967,15 @@ noncomputable def FactoredPrecondition1 {C F : Type} [Nonempty C]
     | .exnStamp index => index < source.nextExnStamp) ∧
   config.envs = emptyConfig.envs
 
+/-- Changing the source clock preserves the factored program precondition. -/
+theorem factoredPrecondition1_changeClock {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (source : State F) (sourceEnv : SemEnv Value) (config : Config)
+    (evalConfig : FlatSem.InstallConfig C) (decs : List Dec) (clock : Nat)
+    (precondition : FactoredPrecondition1 interp transform source sourceEnv config evalConfig decs) :
+    FactoredPrecondition1 interp transform { source with clock } sourceEnv config evalConfig decs := by
+  simpa [FactoredPrecondition1] using precondition
+
 /-- Whole-program simulation in the original existential result shape, over
 the preliminary factored relations and precondition. -/
 theorem factoredCompileProg_correct {C F : Type} [Nonempty C]
@@ -977,7 +988,7 @@ theorem factoredCompileProg_correct {C F : Type} [Nonempty C]
     (sourceRun : EvaluateHOL.evaluateDecs source sourceEnv decs = (sourceLast, result))
     (safe : result ≠ .err (.abort .typeError)) :
     ∃ finalFlat nextGenv flatError,
-      FlatSem.evaluateDecs ⟨source.clock, [], source.ffi, [], evalConfig⟩ flatDecs = (finalFlat, flatError) ∧
+      FlatSem.evaluateDecs (FlatSem.initialState source.ffi source.clock evalConfig) flatDecs = (finalFlat, flatError) ∧
       StateRel nextGenv sourceLast finalFlat ∧
       (∀ resultEnv, result = .val resultEnv → flatError = none) ∧
       (∀ error, result = .err error → ∃ flatErr, flatError = some flatErr ∧
@@ -989,7 +1000,7 @@ theorem factoredCompileProg_correct {C F : Type} [Nonempty C]
     ⟨0, config.envs.next, .ln⟩ decs = compiledResult
   obtain ⟨n, next, outEnv, outGen, body⟩ := compiledResult
   have actual := factoredCompileProg_initial interp transform config decs sourceEnv source sourceLast
-    (⟨source.clock, [], source.ffi, [], evalConfig⟩ : FlatSem.State C F)
+    (FlatSem.initialState source.ffi source.clock evalConfig)
     n next outEnv outGen body result bodyCompiled sourceRun rfl rfl initialEnv safe startVar initialIdx emptyStore
     initialEval steps oracle stamps sourceRefs rfl rfl oracleConfig
   obtain ⟨finalFlat, nextGenv, flatError, flatRun, states, success, errors⟩ := actual
@@ -1004,6 +1015,53 @@ theorem factoredCompileProg_correct {C F : Type} [Nonempty C]
     subst flatErr
     cases related
     exact safe resultEq
+
+/-- Source type safety at every clock rules out a flat type error at every
+clock for the compiled program, over the factored simulation relations. -/
+theorem factoredCompileProg_noTypeError {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (source : State F) (sourceEnv : SemEnv Value) (config outputConfig : Config)
+    (evalConfig : FlatSem.InstallConfig C) (decs : List Dec) (flatDecs : List FlatLang.Exp)
+    (precondition : FactoredPrecondition1 interp transform source sourceEnv config evalConfig decs)
+    (compiled : compileProg config decs = (outputConfig, flatDecs))
+    (safe : ¬ Flapjack.SemanticsHOL.semanticsProg source sourceEnv decs .fail) :
+    ∀ clock, (FlatSem.evaluateDecs (FlatSem.initialState source.ffi clock evalConfig) flatDecs).2 ≠
+      some (.abort .typeError) := by
+  intro clock
+  generalize sourceRun : EvaluateHOL.evaluateDecs { source with clock } sourceEnv decs = resultPair
+  obtain ⟨sourceLast, result⟩ := resultPair
+  have sourceSafe : result ≠ .err (.abort .typeError) := by
+    intro error
+    apply safe
+    change ∃ k, (Flapjack.SemanticsHOL.evaluateProgWithClock source sourceEnv k decs).2 =
+      .err (.abort .typeError)
+    refine ⟨clock, ?_⟩
+    simp [Flapjack.SemanticsHOL.evaluateProgWithClock, sourceRun, error]
+  obtain ⟨flatLast, genv, flatError, flatRun, _, success, errors⟩ :=
+    factoredCompileProg_correct interp transform { source with clock } sourceLast sourceEnv config outputConfig
+      evalConfig decs flatDecs result
+      (factoredPrecondition1_changeClock interp transform source sourceEnv config evalConfig decs clock precondition)
+      compiled sourceRun sourceSafe
+  rw [flatRun]
+  cases result with
+  | val env => simp [success env rfl]
+  | err error =>
+    obtain ⟨flatErr, eq, notTypeError, _⟩ := errors error rfl
+    simp [eq, notTypeError]
+
+/-- The compiled flat program cannot have failure behavior when the source
+program is safe, under the factored source-to-flat preconditions. -/
+theorem factoredCompileProg_semantics_ne_fail {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (source : State F) (sourceEnv : SemEnv Value) (config outputConfig : Config)
+    (evalConfig : FlatSem.InstallConfig C) (decs : List Dec) (flatDecs : List FlatLang.Exp)
+    (precondition : FactoredPrecondition1 interp transform source sourceEnv config evalConfig decs)
+    (compiled : compileProg config decs = (outputConfig, flatDecs))
+    (safe : ¬ Flapjack.SemanticsHOL.semanticsProg source sourceEnv decs .fail) :
+    FlatSem.semantics evalConfig source.ffi flatDecs ≠ .fail := by
+  exact FlatSem.semantics_ne_fail evalConfig source.ffi flatDecs
+    (factoredCompileProg_noTypeError interp transform source sourceEnv config outputConfig
+      evalConfig decs flatDecs precondition compiled safe)
 
 /-- Match-row result in existential form, over the preliminary factored
 relations and the compiled-row safety premise. -/

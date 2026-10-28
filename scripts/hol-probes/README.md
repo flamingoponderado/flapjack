@@ -9098,5 +9098,6 @@ HOL hypotheses.
 
 `source_to_flat_init_probe.out` captures the typed original source-to-flat
 initialization definitions and evaluates the initial constructor entries and
-next indices. It supports source review and finite regression checks; it is not
+next indices, together with the flat initial state and observational semantics.
+It supports source review and finite regression checks; it is not
 a cross-language equivalence proof.

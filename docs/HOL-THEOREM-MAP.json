@@ -1,5 +1,13 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
+    "hol_name": "initial_state_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Semantics.lean",
+    "lean_name": "initialState",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Compared the typed source_to_flat_init_probe capture: compiler and FFI payload types remain independent, and clock, empty references, FFI, empty globals and install configuration occupy the same fields."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "init_eval_state_ok_def",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/Initialization.lean",

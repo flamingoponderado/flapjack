@@ -15,5 +15,7 @@ val _ = show_thm "initial_global_inv=" source_to_flatProofTheory.init_global_env
 val _ = show_thm "initial_global_imp=" source_to_flatProofTheory.init_global_env_inv_imp;
 val _ = show_thm "initial_env_ok=" source_to_flatProofTheory.init_genv_ok;
 val _ = show_thm "initial_types_ok=" source_to_flatProofTheory.init_genv_tys_ok;
+val _ = show_thm "flat_initial_state=" flatSemTheory.initial_state_def;
+val _ = show_thm "flat_semantics=" flatSemTheory.semantics_def;
 val _ = show_eval "evaluated_entries=" ``source_to_flatProof$init_genv_els``;
 val _ = show_eval "evaluated_next=" ``source_to_flatProof$init_genv_next``;
