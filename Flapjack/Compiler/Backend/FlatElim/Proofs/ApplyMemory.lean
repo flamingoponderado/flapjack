@@ -7,6 +7,20 @@ import Flapjack.Compiler.Backend.Semantics.FlatSem.Apply
 namespace Flapjack.Compiler.Backend.FlatElim
 open Flapjack.SemanticPrimitivesHOL
 
+/-- A single Eval-free reachable value satisfies the primitive result invariants. -/
+theorem primitiveResult_value_invariants (reachable : NumSet) (value : FlatSem.Value)
+    (valueReachable : globalsWithin (findValueGlobals value) reachable)
+    (valueSafe : valueHasEval value = false) :
+    globalsWithin (findPrimitiveResultGlobals (Flapjack.EvaluateHOL.listResult (.val value))) reachable ∧
+      valuesNoEval (Flapjack.Compiler.Backend.FlatProps.resultValues
+        (Flapjack.EvaluateHOL.listResult (.val value))) := by
+  constructor
+  · simp only [findPrimitiveResultGlobals, Flapjack.EvaluateHOL.listResult, findValuesGlobals]
+    rw [globalsWithin_union]
+    exact ⟨valueReachable, by simp [globalsWithin, sptMem, sptDomain]⟩
+  · simpa [Flapjack.Compiler.Backend.FlatProps.resultValues, Flapjack.EvaluateHOL.listResult,
+      valuesNoEval] using valueSafe
+
 /-- Reference assignment produces the same result in related states and
 preserves their relation. This Flapjack helper covers successful assignments
 with an explicit location/value argument pair; the general HOL primitive
@@ -290,5 +304,350 @@ theorem doApp_some_flatStateRel_byteArray {C F G : Type} (reachable : NumSet)
                       findValuesGlobals, findValueGlobals, sptUnion, globalsWithin, sptMem, sptDomain]
                   · simp [Flapjack.Compiler.Backend.FlatProps.resultValues, Flapjack.EvaluateHOL.listResult,
                       valuesNoEval, valueHasEval]
+
+/-- The arrayLength case preserves related states and primitive-result invariants. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+theorem doApp_some_flatStateRel_arrayLength {C F G : Type} (reachable : NumSet)
+    (source target next : FlatSem.State C F) (values : List FlatSem.Value)
+    (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
+    (related : flatStateRel reachable source target)
+    (_opNotApply : FlatLang.Op.src .alength ≠ .src .opapp)
+    (_valuesReachable : globalsWithin (findValuesGlobals values) reachable)
+    (_opReachable : globalsWithin (findLookups (.app tra (.src .alength) [])) reachable)
+    (_valuesSafe : valuesNoEval values)
+    (run : FlatSem.doApp source (.src .alength) values = some (next, result))
+    (_notTypeError : result ≠ .err (.abort .typeError)) :
+    ∃ targetNext, flatStateRel reachable next targetNext ∧
+      FlatSem.doApp target (.src .alength) values = some (targetNext, result) ∧
+      globalsWithin (findPrimitiveResultGlobals (Flapjack.EvaluateHOL.listResult result)) reachable ∧
+      valuesNoEval (Flapjack.Compiler.Backend.FlatProps.resultValues
+        (Flapjack.EvaluateHOL.listResult result)) := by
+  cases values with
+  | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+  | cons first rest =>
+    cases rest with
+    | cons other rest => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+    | nil =>
+      cases first <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+      case loc flag address =>
+        cases lookup : storeLookup address source.refs with
+        | none => simp [lookup] at run
+        | some ref =>
+          cases ref <;> simp [lookup] at run
+          case varray items =>
+            rcases run with ⟨rfl, rfl⟩
+            have resultSafe := primitiveResult_value_invariants reachable (FlatSem.Value.litv (.intLit items.length))
+              (by simp [findValueGlobals, globalsWithin, sptMem, sptDomain])
+              (by simp [valueHasEval])
+            exact ⟨target, related,
+              by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, ← related.2.1, lookup],
+              resultSafe.1, resultSafe.2⟩
+
+/-- The byteArrayLength case preserves related states and primitive-result invariants. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+theorem doApp_some_flatStateRel_byteArrayLength {C F G : Type} (reachable : NumSet)
+    (source target next : FlatSem.State C F) (values : List FlatSem.Value)
+    (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
+    (related : flatStateRel reachable source target)
+    (_opNotApply : FlatLang.Op.src .aw8length ≠ .src .opapp)
+    (_valuesReachable : globalsWithin (findValuesGlobals values) reachable)
+    (_opReachable : globalsWithin (findLookups (.app tra (.src .aw8length) [])) reachable)
+    (_valuesSafe : valuesNoEval values)
+    (run : FlatSem.doApp source (.src .aw8length) values = some (next, result))
+    (_notTypeError : result ≠ .err (.abort .typeError)) :
+    ∃ targetNext, flatStateRel reachable next targetNext ∧
+      FlatSem.doApp target (.src .aw8length) values = some (targetNext, result) ∧
+      globalsWithin (findPrimitiveResultGlobals (Flapjack.EvaluateHOL.listResult result)) reachable ∧
+      valuesNoEval (Flapjack.Compiler.Backend.FlatProps.resultValues
+        (Flapjack.EvaluateHOL.listResult result)) := by
+  cases values with
+  | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+  | cons first rest =>
+    cases rest with
+    | cons other rest => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+    | nil =>
+      cases first <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+      case loc flag address =>
+        cases lookup : storeLookup address source.refs with
+        | none => simp [lookup] at run
+        | some ref =>
+          cases ref <;> simp [lookup] at run
+          case w8array items =>
+            rcases run with ⟨rfl, rfl⟩
+            have resultSafe := primitiveResult_value_invariants reachable (FlatSem.Value.litv (.intLit items.length))
+              (by simp [findValueGlobals, globalsWithin, sptMem, sptDomain])
+              (by simp [valueHasEval])
+            exact ⟨target, related,
+              by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, ← related.2.1, lookup],
+              resultSafe.1, resultSafe.2⟩
+
+/-- Array reads preserve related states and result invariants, including the
+safe operation's bounds exception. This is a Flapjack dispatcher helper. -/
+theorem readIndexed_array_related {C F : Type} (reachable : NumSet)
+    (source target next : FlatSem.State C F) (unsafeOp : Bool)
+    (items : List FlatSem.Value) (index : Int) (result : Result FlatSem.Value FlatSem.Value)
+    (related : flatStateRel reachable source target)
+    (itemsReachable : globalsWithin (findValuesGlobals items) reachable)
+    (itemsSafe : valuesNoEval items)
+    (run : FlatSem.readIndexed source unsafeOp items index id = some (next, result)) :
+    ∃ targetNext, flatStateRel reachable next targetNext ∧
+      FlatSem.readIndexed target unsafeOp items index id = some (targetNext, result) ∧
+      globalsWithin (findPrimitiveResultGlobals (Flapjack.EvaluateHOL.listResult result)) reachable ∧
+      valuesNoEval (Flapjack.Compiler.Backend.FlatProps.resultValues
+        (Flapjack.EvaluateHOL.listResult result)) := by
+  have exceptionSafe :
+      globalsWithin (findPrimitiveResultGlobals (Flapjack.EvaluateHOL.listResult
+        (.err (.raise FlatSem.subscriptExnV)))) reachable ∧
+      valuesNoEval (Flapjack.Compiler.Backend.FlatProps.resultValues
+        (Flapjack.EvaluateHOL.listResult (.err (.raise FlatSem.subscriptExnV)))) := by
+    constructor
+    · simp [findPrimitiveResultGlobals, findResultGlobals, Flapjack.EvaluateHOL.listResult,
+        findValueGlobals, FlatSem.subscriptExnV, findValuesGlobals, globalsWithin, sptMem, sptDomain]
+    · simp [Flapjack.Compiler.Backend.FlatProps.resultValues, Flapjack.EvaluateHOL.listResult,
+        valuesNoEval, valueHasEval, valuesHaveEval, FlatSem.subscriptExnV]
+  by_cases negative : index < 0
+  · cases unsafeOp <;> simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative] at run
+    rcases run with ⟨rfl, rfl⟩
+    exact ⟨target, related, by simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative],
+      exceptionSafe.1, exceptionSafe.2⟩
+  · cases lookup : items[index.toNat]? with
+    | none =>
+      cases unsafeOp <;> simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative, lookup] at run
+      rcases run with ⟨rfl, rfl⟩
+      exact ⟨target, related, by simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative, lookup],
+        exceptionSafe.1, exceptionSafe.2⟩
+    | some value =>
+      simp [FlatSem.readIndexed, negative, lookup] at run
+      rcases run with ⟨rfl, rfl⟩
+      have member : value ∈ items := List.mem_of_getElem? lookup
+      have valueReachable : globalsWithin (findValueGlobals value) reachable := by
+        intro key keyFound
+        exact itemsReachable key (findValuesGlobals_member items value member key keyFound)
+      have resultSafe := primitiveResult_value_invariants reachable value valueReachable (itemsSafe value member)
+      exact ⟨target, related, by simp [FlatSem.readIndexed, negative, lookup], resultSafe.1, resultSafe.2⟩
+
+/-- The arraySub case preserves related states and primitive-result invariants. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+theorem doApp_some_flatStateRel_arraySub {C F G : Type} (reachable : NumSet)
+    (source target next : FlatSem.State C F) (values : List FlatSem.Value)
+    (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
+    (related : flatStateRel reachable source target)
+    (_opNotApply : FlatLang.Op.src .asub ≠ .src .opapp)
+    (_valuesReachable : globalsWithin (findValuesGlobals values) reachable)
+    (_opReachable : globalsWithin (findLookups (.app tra (.src .asub) [])) reachable)
+    (_valuesSafe : valuesNoEval values)
+    (run : FlatSem.doApp source (.src .asub) values = some (next, result))
+    (_notTypeError : result ≠ .err (.abort .typeError)) :
+    ∃ targetNext, flatStateRel reachable next targetNext ∧
+      FlatSem.doApp target (.src .asub) values = some (targetNext, result) ∧
+      globalsWithin (findPrimitiveResultGlobals (Flapjack.EvaluateHOL.listResult result)) reachable ∧
+      valuesNoEval (Flapjack.Compiler.Backend.FlatProps.resultValues
+        (Flapjack.EvaluateHOL.listResult result)) := by
+  cases values with
+  | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+    | cons second rest =>
+      cases rest with
+      | cons other rest => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+      | nil =>
+        cases first <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+        case loc flag address =>
+          cases second <;> try simp at run
+          case litv lit =>
+            cases lit <;> try simp at run
+            case intLit index =>
+              cases lookup : storeLookup address source.refs with
+              | none => simp [lookup] at run
+              | some ref =>
+                cases ref <;> simp [lookup] at run
+                case varray items =>
+                  have member : StoreValue.varray items ∈ source.refs :=
+                    List.mem_of_getElem? (by simpa [storeLookup] using lookup)
+                  have itemsReachable : globalsWithin (findValuesGlobals items) reachable :=
+                    (findRefsGlobals_within_iff _ _).mp related.2.2.2.2.1 (.varray items) member
+                  have itemsSafe : valuesNoEval items := related.2.2.2.2.2 (.varray items) member
+                  have opEq : (Flapjack.AstHOL.Op.asub == .asubUnsafe) = false := by decide
+                  obtain ⟨targetNext, stateRel, read, closed, safe⟩ :=
+                    readIndexed_array_related reachable source target next false items index result related
+                      itemsReachable itemsSafe (by simpa [opEq] using run)
+                  refine ⟨targetNext, stateRel, ?_, closed, safe⟩
+                  simpa [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, ← related.2.1, lookup, opEq] using read
+
+/-- The arraySubUnsafe case preserves related states and primitive-result invariants. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+theorem doApp_some_flatStateRel_arraySubUnsafe {C F G : Type} (reachable : NumSet)
+    (source target next : FlatSem.State C F) (values : List FlatSem.Value)
+    (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
+    (related : flatStateRel reachable source target)
+    (_opNotApply : FlatLang.Op.src .asubUnsafe ≠ .src .opapp)
+    (_valuesReachable : globalsWithin (findValuesGlobals values) reachable)
+    (_opReachable : globalsWithin (findLookups (.app tra (.src .asubUnsafe) [])) reachable)
+    (_valuesSafe : valuesNoEval values)
+    (run : FlatSem.doApp source (.src .asubUnsafe) values = some (next, result))
+    (_notTypeError : result ≠ .err (.abort .typeError)) :
+    ∃ targetNext, flatStateRel reachable next targetNext ∧
+      FlatSem.doApp target (.src .asubUnsafe) values = some (targetNext, result) ∧
+      globalsWithin (findPrimitiveResultGlobals (Flapjack.EvaluateHOL.listResult result)) reachable ∧
+      valuesNoEval (Flapjack.Compiler.Backend.FlatProps.resultValues
+        (Flapjack.EvaluateHOL.listResult result)) := by
+  cases values with
+  | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+    | cons second rest =>
+      cases rest with
+      | cons other rest => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+      | nil =>
+        cases first <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+        case loc flag address =>
+          cases second <;> try simp at run
+          case litv lit =>
+            cases lit <;> try simp at run
+            case intLit index =>
+              cases lookup : storeLookup address source.refs with
+              | none => simp [lookup] at run
+              | some ref =>
+                cases ref <;> simp [lookup] at run
+                case varray items =>
+                  have member : StoreValue.varray items ∈ source.refs :=
+                    List.mem_of_getElem? (by simpa [storeLookup] using lookup)
+                  have itemsReachable : globalsWithin (findValuesGlobals items) reachable :=
+                    (findRefsGlobals_within_iff _ _).mp related.2.2.2.2.1 (.varray items) member
+                  have itemsSafe : valuesNoEval items := related.2.2.2.2.2 (.varray items) member
+                  obtain ⟨targetNext, stateRel, read, closed, safe⟩ :=
+                    readIndexed_array_related reachable source target next true items index result related
+                      itemsReachable itemsSafe (by simpa using run)
+                  refine ⟨targetNext, stateRel, ?_, closed, safe⟩
+                  simpa [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, ← related.2.1, lookup] using read
+
+/-- Byte-array reads preserve related states and result invariants, including
+safe bounds exceptions. This is a Flapjack dispatcher helper. -/
+theorem readIndexed_bytes_related {C F : Type} (reachable : NumSet)
+    (source target next : FlatSem.State C F) (unsafeOp : Bool)
+    (items : List (BitVec 8)) (index : Int) (result : Result FlatSem.Value FlatSem.Value)
+    (related : flatStateRel reachable source target)
+    (run : FlatSem.readIndexed source unsafeOp items index (FlatSem.Value.litv ∘ Flapjack.AstHOL.Lit.word8) = some (next, result)) :
+    ∃ targetNext, flatStateRel reachable next targetNext ∧
+      FlatSem.readIndexed target unsafeOp items index (FlatSem.Value.litv ∘ Flapjack.AstHOL.Lit.word8) = some (targetNext, result) ∧
+      globalsWithin (findPrimitiveResultGlobals (Flapjack.EvaluateHOL.listResult result)) reachable ∧
+      valuesNoEval (Flapjack.Compiler.Backend.FlatProps.resultValues
+        (Flapjack.EvaluateHOL.listResult result)) := by
+  have exceptionSafe :
+      globalsWithin (findPrimitiveResultGlobals (Flapjack.EvaluateHOL.listResult
+        (.err (.raise FlatSem.subscriptExnV)))) reachable ∧
+      valuesNoEval (Flapjack.Compiler.Backend.FlatProps.resultValues
+        (Flapjack.EvaluateHOL.listResult (.err (.raise FlatSem.subscriptExnV)))) := by
+    constructor
+    · simp [findPrimitiveResultGlobals, findResultGlobals, Flapjack.EvaluateHOL.listResult,
+        findValueGlobals, FlatSem.subscriptExnV, findValuesGlobals, globalsWithin, sptMem, sptDomain]
+    · simp [Flapjack.Compiler.Backend.FlatProps.resultValues, Flapjack.EvaluateHOL.listResult,
+        valuesNoEval, valueHasEval, valuesHaveEval, FlatSem.subscriptExnV]
+  by_cases negative : index < 0
+  · cases unsafeOp <;> simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative] at run
+    rcases run with ⟨rfl, rfl⟩
+    exact ⟨target, related, by simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative],
+      exceptionSafe.1, exceptionSafe.2⟩
+  · cases lookup : items[index.toNat]? with
+    | none =>
+      cases unsafeOp <;> simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative, lookup] at run
+      rcases run with ⟨rfl, rfl⟩
+      exact ⟨target, related, by simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative, lookup],
+        exceptionSafe.1, exceptionSafe.2⟩
+    | some value =>
+      simp [FlatSem.readIndexed, negative, lookup] at run
+      rcases run with ⟨rfl, rfl⟩
+      have resultSafe := primitiveResult_value_invariants reachable (FlatSem.Value.litv (.word8 value))
+        (by simp [findValueGlobals, globalsWithin, sptMem, sptDomain]) (by simp [valueHasEval])
+      exact ⟨target, related, by simp [FlatSem.readIndexed, negative, lookup], resultSafe.1, resultSafe.2⟩
+
+/-- The byteArraySub case preserves related states and primitive-result invariants. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+theorem doApp_some_flatStateRel_byteArraySub {C F G : Type} (reachable : NumSet)
+    (source target next : FlatSem.State C F) (values : List FlatSem.Value)
+    (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
+    (related : flatStateRel reachable source target)
+    (_opNotApply : FlatLang.Op.src .aw8sub ≠ .src .opapp)
+    (_valuesReachable : globalsWithin (findValuesGlobals values) reachable)
+    (_opReachable : globalsWithin (findLookups (.app tra (.src .aw8sub) [])) reachable)
+    (_valuesSafe : valuesNoEval values)
+    (run : FlatSem.doApp source (.src .aw8sub) values = some (next, result))
+    (_notTypeError : result ≠ .err (.abort .typeError)) :
+    ∃ targetNext, flatStateRel reachable next targetNext ∧
+      FlatSem.doApp target (.src .aw8sub) values = some (targetNext, result) ∧
+      globalsWithin (findPrimitiveResultGlobals (Flapjack.EvaluateHOL.listResult result)) reachable ∧
+      valuesNoEval (Flapjack.Compiler.Backend.FlatProps.resultValues
+        (Flapjack.EvaluateHOL.listResult result)) := by
+  cases values with
+  | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+    | cons second rest =>
+      cases rest with
+      | cons other rest => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+      | nil =>
+        cases first <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+        case loc flag address =>
+          cases second <;> try simp at run
+          case litv lit =>
+            cases lit <;> try simp at run
+            case intLit index =>
+              cases lookup : storeLookup address source.refs with
+              | none => simp [lookup] at run
+              | some ref =>
+                cases ref <;> simp [lookup] at run
+                case w8array items =>
+                  have opEq : (Flapjack.AstHOL.Op.aw8sub == .aw8subUnsafe) = false := by decide
+                  obtain ⟨targetNext, stateRel, read, closed, safe⟩ :=
+                    readIndexed_bytes_related reachable source target next false items index result related
+                      (by simpa [opEq] using run)
+                  refine ⟨targetNext, stateRel, ?_, closed, safe⟩
+                  simpa [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, ← related.2.1, lookup, opEq] using read
+
+/-- The byteArraySubUnsafe case preserves related states and primitive-result invariants. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+theorem doApp_some_flatStateRel_byteArraySubUnsafe {C F G : Type} (reachable : NumSet)
+    (source target next : FlatSem.State C F) (values : List FlatSem.Value)
+    (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
+    (related : flatStateRel reachable source target)
+    (_opNotApply : FlatLang.Op.src .aw8subUnsafe ≠ .src .opapp)
+    (_valuesReachable : globalsWithin (findValuesGlobals values) reachable)
+    (_opReachable : globalsWithin (findLookups (.app tra (.src .aw8subUnsafe) [])) reachable)
+    (_valuesSafe : valuesNoEval values)
+    (run : FlatSem.doApp source (.src .aw8subUnsafe) values = some (next, result))
+    (_notTypeError : result ≠ .err (.abort .typeError)) :
+    ∃ targetNext, flatStateRel reachable next targetNext ∧
+      FlatSem.doApp target (.src .aw8subUnsafe) values = some (targetNext, result) ∧
+      globalsWithin (findPrimitiveResultGlobals (Flapjack.EvaluateHOL.listResult result)) reachable ∧
+      valuesNoEval (Flapjack.Compiler.Backend.FlatProps.resultValues
+        (Flapjack.EvaluateHOL.listResult result)) := by
+  cases values with
+  | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+    | cons second rest =>
+      cases rest with
+      | cons other rest => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+      | nil =>
+        cases first <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+        case loc flag address =>
+          cases second <;> try simp at run
+          case litv lit =>
+            cases lit <;> try simp at run
+            case intLit index =>
+              cases lookup : storeLookup address source.refs with
+              | none => simp [lookup] at run
+              | some ref =>
+                cases ref <;> simp [lookup] at run
+                case w8array items =>
+                  obtain ⟨targetNext, stateRel, read, closed, safe⟩ :=
+                    readIndexed_bytes_related reachable source target next true items index result related
+                      (by simpa using run)
+                  refine ⟨targetNext, stateRel, ?_, closed, safe⟩
+                  simpa [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, ← related.2.1, lookup] using read
 
 end Flapjack.Compiler.Backend.FlatElim

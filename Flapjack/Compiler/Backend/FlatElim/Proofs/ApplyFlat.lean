@@ -4,20 +4,6 @@ import Flapjack.Compiler.Backend.FlatElim.Proofs.ApplyMemory
 namespace Flapjack.Compiler.Backend.FlatElim
 open Flapjack.SemanticPrimitivesHOL
 
-/-- A single Eval-free reachable value satisfies the primitive result invariants. -/
-theorem primitiveResult_value_invariants (reachable : NumSet) (value : FlatSem.Value)
-    (valueReachable : globalsWithin (findValueGlobals value) reachable)
-    (valueSafe : valueHasEval value = false) :
-    globalsWithin (findPrimitiveResultGlobals (Flapjack.EvaluateHOL.listResult (.val value))) reachable ∧
-      valuesNoEval (Flapjack.Compiler.Backend.FlatProps.resultValues
-        (Flapjack.EvaluateHOL.listResult (.val value))) := by
-  constructor
-  · simp only [findPrimitiveResultGlobals, Flapjack.EvaluateHOL.listResult, findValuesGlobals]
-    rw [globalsWithin_union]
-    exact ⟨valueReachable, by simp [globalsWithin, sptMem, sptDomain]⟩
-  · simpa [Flapjack.Compiler.Backend.FlatProps.resultValues, Flapjack.EvaluateHOL.listResult,
-      valuesNoEval] using valueSafe
-
 /-- The flat element operation covers constructor projection and reference
 reads. Both preserve the primitive simulation's original result obligations. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
