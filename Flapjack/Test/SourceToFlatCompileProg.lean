@@ -17,4 +17,12 @@ example : lookupEnvId (0, 0) (incCompileProg (0, 0) emptyConfig []).1.envs = emp
 example : (incCompileProg (0, 0) emptyConfig []).2 =
     [globAlloc emptyConfig.next emptyConfig, storeEnvId 0 0] := by simp [incCompileProg, compileDecs, lookupEnvId, emptyConfig]
 
+-- The original HOL incremental compiler emits these same two flat
+-- declarations for an empty program after pattern compilation.
+example : (incCompile (0, 0) emptyConfig []).2 =
+    [globAlloc emptyConfig.next emptyConfig, storeEnvId 0 0] := by
+  simp [incCompile, incCompileProg, compileDecs, lookupEnvId, emptyConfig, globAlloc,
+    storeEnvId, envIdTuple, Flapjack.Compiler.Backend.FlatPattern.compileDec,
+    Flapjack.Compiler.Backend.FlatPattern.compileExp, Flapjack.Compiler.Backend.FlatPattern.compileExps]
+
 end Flapjack.Test.SourceToFlatCompileProg

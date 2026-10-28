@@ -1,5 +1,13 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "inc_compile_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/CompileProg.lean",
+    "lean_name": "incCompile",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed definition and empty-program evaluation captured in source_to_flat_init_probe.out; full carrier and dependency review remains pending."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/flatSemScript.sml",
     "hol_name": "initial_state_def",
     "lean_path": "Flapjack/Compiler/Backend/Semantics/FlatSem/Semantics.lean",

@@ -16,9 +16,8 @@ argument is retained for callers of the former bounded pattern implementation;
 pattern compilation itself is now total. -/
 def compileToClosFuel (_fuel : Nat) (c : Config) (p : List AstHOL.Dec) :
     Option (Config × List ClosLang.Exp) := do
-  let (c', flat) ← compileProgElim c p
-  let patterns := flat.map (FlatPattern.compileDec c'.patternCfg)
-  pure (c', FlatToClos.compileProg patterns)
+  let (c', flat) ← compile c p
+  pure (c', FlatToClos.compileProg flat)
 
 /-- Apply CakeML's source-to-source pass before the bounded source-to-closure
 pipeline. The later closure/backend passes and sufficient-bound proofs remain

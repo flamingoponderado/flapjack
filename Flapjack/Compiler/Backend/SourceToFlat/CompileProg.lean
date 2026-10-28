@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.SourceToFlat.CompileDecs
+import Flapjack.Compiler.Backend.FlatPattern.CompileTotal
 
 /-! Program and incremental compilation before flat elimination and pattern compilation.
 These definitions do not yet constitute the complete `source_to_flat$compile` pass. -/
@@ -54,5 +55,12 @@ def incCompileProg (envId : Nat × Nat) (c : Config) (p : List AstHOL.Dec) :
     { next := c.envs.next + 1, envGens := sptInsert c.envs.next genEnvs c.envs.envGens }
   ({ c with next := next, envs := envs2 },
     globAlloc next c :: (p' ++ [storeEnvId gen.generation gen.next]))
+
+/-- Incremental compilation applies pattern compilation directly; the
+original incremental path deliberately omits flat elimination. -/
+@[hol "cakeml/compiler/backend/source_to_flatScript.sml" "inc_compile_def"]
+def incCompile (envId : Nat × Nat) (c : Config) (p : List AstHOL.Dec) : Config × List FlatLang.Exp :=
+  let (next, program) := incCompileProg envId c p
+  (next, program.map (FlatPattern.compileDec next.patternCfg))
 
 end Flapjack.Compiler.Backend.SourceToFlat
