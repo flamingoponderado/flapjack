@@ -6,3 +6,14 @@ sum_string_ords=sum_string_ords (i :num) (s :mlstring) = (SUM (MAP (λ(c :char).
 generated_name_aux=∀(xs :string). dec_name_to_num (implode (enc_num_to_name_aux (i :num) xs)) = i + (SUM (MAP (λ(c :char). ORD c − (35 :num)) xs) :num)
 generated_name_roundtrip=dec_name_to_num (enc_num_to_name (i :num)) = i
 generated_name_injective=enc_num_to_name (i :num) = enc_num_to_name (j :num) ⇔ i = j
+lookup_relation=∀(P :α -> bool) (R :β -> γ -> bool) (env1 :(α # β) list) (env2 :(α # γ) list). ALOOKUP_rel P R env1 env2 ⇔ ∀(x :α). P x ⇒ OPTREL R (ALOOKUP env1 x) (ALOOKUP env2 x)
+lookup_relation_empty=ALOOKUP_rel (P :α -> bool) (R :β -> γ -> bool) ([] :(α # β) list) ([] :(α # γ) list)
+lookup_relation_cons_false=(¬(P :α -> bool) (x :α) ⇒ (ALOOKUP_rel P (R :β -> β -> bool) ((x,(y :β))::(env1 :(α # β) list)) (env2 :(α # β) list) ⇔ ALOOKUP_rel P R env1 env2)) ∧ (¬P x ⇒ (ALOOKUP_rel P R env1 ((x,y)::env2) ⇔ ALOOKUP_rel P R env1 env2))
+lookup_relation_append_false=EVERY ($¬ ∘ (P :α -> bool) ∘ (FST :α # β -> α)) (xs :(α # β) list) ⇒ (ALOOKUP_rel P (R :β -> γ -> bool) (xs ++ (ys :(α # β) list)) (zs :(α # γ) list) ⇔ ALOOKUP_rel P R ys zs)
+lookup_relation_reflexive=(∀(x :α) (y :β). (P :α -> bool) x ∧ MEM (x,y) (xs :(α # β) list) ⇒ (R :β -> β -> bool) y y) ⇒ ALOOKUP_rel P R xs xs
+lookup_relation_cons=((P :α -> bool) (x :α) ⇒ (R :β -> γ -> bool) (y :β) (z :γ)) ∧ ALOOKUP_rel P R (ys :(α # β) list) (zs :(α # γ) list) ⇒ ALOOKUP_rel P R ((x,y)::ys) ((x,z)::zs)
+lookup_relation_mono=ALOOKUP_rel (P :α -> bool) (R :β -> γ -> bool) (xs :(α # β) list) (ys :(α # γ) list) ∧ (∀(x :α) (y :δ) (z :ε). (P' :α -> bool) x ⇒ P x) ∧ (∀(x :α) (y :β) (z :γ). P' x ∧ R y z ⇒ (R' :β -> γ -> bool) y z) ⇒ ALOOKUP_rel P' R' xs ys
+lookup_relation_mono_rel=(∀(y :α) (z :β). (R :α -> β -> bool) y z ⇒ (R' :α -> β -> bool) y z) ⇒ ALOOKUP_rel (P :γ -> bool) R (xs :(γ # α) list) (ys :(γ # β) list) ⇒ ALOOKUP_rel P R' xs ys
+lookup_relation_append=ALOOKUP_rel (P :α -> bool) (R :β -> γ -> bool) (xs1 :(α # β) list) (xs3 :(α # γ) list) ∧ ALOOKUP_rel P R (xs2 :(α # β) list) (xs4 :(α # γ) list) ⇒ ALOOKUP_rel P R (xs1 ++ xs2) (xs3 ++ xs4)
+lookup_relation_equal=ALOOKUP_rel (P :α -> bool) ($= :β -> β -> bool) (xs :(α # β) list) (ys :(α # β) list) ∧ P (x :α) ⇒ ALOOKUP xs x = ALOOKUP ys x
+lookup_relation_fst=∀(xs :(α # β) list) (ys :(α # γ) list). LIST_REL (λ(x :α # β) (y :α # γ). FST x = FST y ∧ ((P :α -> bool) (FST x) ⇒ (R :β -> γ -> bool) (SND x) (SND y))) xs ys ⇒ ALOOKUP_rel P R xs ys

@@ -1,6 +1,86 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+    "hol_name": "ALOOKUP_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
+    "lean_name": "aLookupRel",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out; independent key and value types retained. Complete declaration and lookup correspondence review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+    "hol_name": "ALOOKUP_rel_empty",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
+    "lean_name": "aLookupRel_empty",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out; independent key and value types retained. Complete declaration and lookup correspondence review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+    "hol_name": "ALOOKUP_rel_cons_false",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
+    "lean_name": "aLookupRel_cons_false",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out; independent key and value types retained. Complete declaration and lookup correspondence review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+    "hol_name": "ALOOKUP_rel_refl",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
+    "lean_name": "aLookupRel_refl",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out; independent key and value types retained. Complete declaration and lookup correspondence review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+    "hol_name": "ALOOKUP_rel_cons",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
+    "lean_name": "aLookupRel_cons",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out; independent key and value types retained. Complete declaration and lookup correspondence review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+    "hol_name": "ALOOKUP_rel_mono_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
+    "lean_name": "aLookupRel_mono_rel",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out; independent key and value types retained. Complete declaration and lookup correspondence review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+    "hol_name": "ALOOKUP_rel_EQ_ALOOKUP",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
+    "lean_name": "aLookupRel_eq_lookup",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out; independent key and value types retained. Complete declaration and lookup correspondence review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+    "hol_name": "ALOOKUP_rel_APPEND_L_false",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
+    "lean_name": "aLookupRel_append_left_false",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out; independent key and value types retained. Complete declaration and lookup correspondence review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+    "hol_name": "ALOOKUP_rel_append_suff",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
+    "lean_name": "aLookupRel_append",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out; independent key and value types retained. Complete declaration and lookup correspondence review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+    "hol_name": "ALOOKUP_rel_eq_fst",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
+    "lean_name": "aLookupRel_of_forall₂",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out; independent key and value types retained. Complete declaration and lookup correspondence review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
     "hol_name": "sum_string_ords_eq",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GeneratedNames.lean",
     "lean_name": "sumStringOrds_eq",
