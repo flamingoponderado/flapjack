@@ -31,7 +31,7 @@ argument-list induction hypothesis and simulation at all smaller clocks.
 This is a clock-induction step, not the assembled HOL theorem. -/
 theorem evaluate_call_simulation_step {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     (source : FlatSem.State C F) (tra : BackendCommon.Tra) (args : List FlatLang.Exp)
-    (argsIH : evaluationSimulation (C := C) (F := F) args.reverse)
+    (argsIH : evaluationSimulationAt env source args.reverse)
     (smallerClock : ∀ (newEnv : FlatSem.Environment FlatSem.Value) (newState : FlatSem.State C F)
       (body : FlatLang.Exp), newState.clock < source.clock → evaluationSimulationAt newEnv newState [body]) :
     evaluationSimulationAt env source [.app tra (.src .opapp) args] := by
@@ -55,7 +55,7 @@ theorem evaluate_call_simulation_step {C F : Type} (env : FlatSem.Environment Fl
       rcases run with ⟨_, rfl⟩
       exact notTypeError rfl
     obtain ⟨targetArgState, targetArgEval, argRelated, argClosed, argSafe⟩ :=
-      argsIH env source argState argResult reachable target argEval argsClosed related envClosed envSafe argsSafe argNotTypeError
+      argsIH argState argResult reachable target argEval argsClosed related envClosed envSafe argsSafe argNotTypeError
     have clampedRelated := flatStateRel_fixClock reachable source target argState targetArgState argResult related argRelated
     simp only [FlatSem.fixClock] at clampedRelated
     cases argResult with

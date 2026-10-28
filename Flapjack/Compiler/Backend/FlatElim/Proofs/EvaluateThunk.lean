@@ -86,7 +86,7 @@ of the generated application at the clamped state. This is a Flapjack
 induction step, not the assembled HOL theorem. -/
 theorem evaluate_force_simulation_step {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     (source : FlatSem.State C F) (tra : BackendCommon.Tra) (args : List FlatLang.Exp)
-    (argsIH : evaluationSimulation (C := C) (F := F) args.reverse)
+    (argsIH : evaluationSimulationAt env source args.reverse)
     (forceIH : ∀ (newState : FlatSem.State C F) (value : FlatSem.Value), newState.clock ≤ source.clock →
       evaluationSimulationAt ⟨[(Flapjack.Basis.Pure.MlString.ofString "f", value)]⟩ newState
         [FlatSem.appUnit (.varLocal .none (Flapjack.Basis.Pure.MlString.ofString "f"))]) :
@@ -111,7 +111,7 @@ theorem evaluate_force_simulation_step {C F : Type} (env : FlatSem.Environment F
       rcases run with ⟨_, rfl⟩
       exact notTypeError rfl
     obtain ⟨targetArgState, targetArgEval, argRelated, argClosed, argSafe⟩ :=
-      argsIH env source argState argResult reachable target argEval argsClosed related envClosed envSafe argsSafe argNotTypeError
+      argsIH argState argResult reachable target argEval argsClosed related envClosed envSafe argsSafe argNotTypeError
     have clampedRelated := flatStateRel_fixClock reachable source target argState targetArgState argResult related argRelated
     simp only [FlatSem.fixClock] at clampedRelated
     cases argResult with
