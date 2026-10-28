@@ -33,6 +33,12 @@ inductive LocalEnvBoundedArrayExpression : AstHOL.Exp → Prop where
       LocalEnvBoundedArrayExpression (.app .aw8sub [pointer, index])
   | byteSubscriptUnsafe (pointer index : AstHOL.Exp) : LocalEnvBoundedArrayExpression pointer → LocalEnvBoundedArrayExpression index →
       LocalEnvBoundedArrayExpression (.app .aw8subUnsafe [pointer, index])
+  | stringSubscript (string index : AstHOL.Exp) : LocalEnvBoundedArrayExpression string → LocalEnvBoundedArrayExpression index →
+      LocalEnvBoundedArrayExpression (.app .strsub [string, index])
+  | vectorSubscript (vector index : AstHOL.Exp) : LocalEnvBoundedArrayExpression vector → LocalEnvBoundedArrayExpression index →
+      LocalEnvBoundedArrayExpression (.app .vsub [vector, index])
+  | vectorSubscriptUnsafe (vector index : AstHOL.Exp) : LocalEnvBoundedArrayExpression vector → LocalEnvBoundedArrayExpression index →
+      LocalEnvBoundedArrayExpression (.app .vsubUnsafe [vector, index])
   | stringLength (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body → LocalEnvBoundedArrayExpression (.app .strlen [body])
   | vectorLength (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body → LocalEnvBoundedArrayExpression (.app .vlength [body])
   | arrayLength (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body → LocalEnvBoundedArrayExpression (.app .alength [body])
@@ -118,6 +124,12 @@ theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
     exact localEnvBounded_aw8sub interp transform limit pointer index pointerIH indexIH
   | byteSubscriptUnsafe pointer index _ _ pointerIH indexIH =>
     exact localEnvBounded_aw8subUnsafe interp transform limit pointer index pointerIH indexIH
+  | stringSubscript string index _ _ stringIH indexIH =>
+    exact localEnvBounded_strsub interp transform limit string index stringIH indexIH
+  | vectorSubscript vector index _ _ vectorIH indexIH =>
+    exact localEnvBounded_vsub interp transform limit vector index vectorIH indexIH
+  | vectorSubscriptUnsafe vector index _ _ vectorIH indexIH =>
+    exact localEnvBounded_vsubUnsafe interp transform limit vector index vectorIH indexIH
   | stringLength body _ ih => exact localEnvBounded_strlen interp transform limit body ih
   | vectorLength body _ ih => exact localEnvBounded_vlength interp transform limit body ih
   | arrayLength body _ ih => exact localEnvBounded_alength interp transform limit body ih
