@@ -52,6 +52,11 @@ inductive LocalEnvBoundedArrayExpression : AstHOL.Exp → Prop where
       LocalEnvBoundedArrayExpression (.app (.ffi name) [left, right])
   | configGC (left right : AstHOL.Exp) : LocalEnvBoundedArrayExpression left → LocalEnvBoundedArrayExpression right →
       LocalEnvBoundedArrayExpression (.app .configGC [left, right])
+  | allocThunk (mode : ThunkMode) (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body →
+      LocalEnvBoundedArrayExpression (.app (.thunkOp (.allocThunk mode)) [body])
+  | updateThunk (mode : ThunkMode) (pointer value : AstHOL.Exp) :
+      LocalEnvBoundedArrayExpression pointer → LocalEnvBoundedArrayExpression value →
+      LocalEnvBoundedArrayExpression (.app (.thunkOp (.updateThunk mode)) [pointer, value])
   | byteXor (array string : AstHOL.Exp) : LocalEnvBoundedArrayExpression array → LocalEnvBoundedArrayExpression string →
       LocalEnvBoundedArrayExpression (.app .xorAw8StrUnsafe [array, string])
   | listAppend (left right : AstHOL.Exp) : LocalEnvBoundedArrayExpression left → LocalEnvBoundedArrayExpression right →
@@ -162,6 +167,9 @@ theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
     exact localEnvBounded_ffi interp transform limit name left right leftIH rightIH
   | configGC left right _ _ leftIH rightIH =>
     exact localEnvBounded_configGC interp transform limit left right leftIH rightIH
+  | allocThunk mode body _ ih => exact localEnvBounded_allocThunk interp transform limit mode body ih
+  | updateThunk mode pointer value _ _ pointerIH valueIH =>
+    exact localEnvBounded_updateThunk interp transform limit mode pointer value pointerIH valueIH
   | byteXor array string _ _ arrayIH stringIH =>
     exact localEnvBounded_xorAw8StrUnsafe interp transform limit array string arrayIH stringIH
   | listAppend left right _ _ leftIH rightIH =>
