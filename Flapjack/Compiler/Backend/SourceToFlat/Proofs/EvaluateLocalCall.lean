@@ -438,6 +438,32 @@ noncomputable def flatCallResult {C F : Type} (flat : FlatSem.State C F)
     if flat.clock = 0 then (flat, .err (.abort .timeoutError))
     else FlatSem.evaluate env (FlatSem.decClock flat) [body]
 
+/-- A successful function-body evaluation returns exactly one value, including
+when the function is called by thunk forcing. -/
+theorem sourceCallResult_value_singleton {F : Type} (source : State F) (function argument : Value)
+    (after : State F) (values : List Value)
+    (called : sourceCallResult source function argument = (after, .val values)) :
+    ∃ value, values = [value] := by
+  cases h : doOpApp [function, argument] with
+  | none => simp [sourceCallResult, h, EvaluateHOL.typeError] at called
+  | some call =>
+    obtain ⟨env, body⟩ := call
+    by_cases zero : source.clock = 0
+    · simp [sourceCallResult, h, zero, EvaluateHOL.timeoutError] at called
+    · have run : EvaluateHOL.evaluate (EvaluateHOL.decClock source) env [body] = (after, .val values) := by
+        simpa [sourceCallResult, h, zero] using called
+      exact EvaluateProps.evaluateSingFull (EvaluateHOL.decClock source) after env body values run
+
+/-- The flat thunk-forcing expansion applies its stored function to unit.
+This relates the evaluator's synthetic expression to the call simulation. -/
+theorem flatCallResult_appUnit {C F : Type} (flat : FlatSem.State C F) (function : FlatSem.Value) :
+    FlatSem.evaluate ⟨[(Basis.Pure.MlString.ofString "f", function)]⟩ flat
+      [FlatSem.appUnit (.varLocal .none (Basis.Pure.MlString.ofString "f"))] =
+      flatCallResult flat function FlatSem.unitValue := by
+  cases flat
+  simp [FlatSem.appUnit, FlatSem.evaluate, FlatSem.fixClock, FlatSem.unitValue, flatCallResult]
+  split <;> simp_all
+
 /-- Related calls either time out together or enter related bodies at a
 strictly smaller clock. The called-body induction hypothesis supplies the
 simulation and the post-state invariant. -/
@@ -499,6 +525,33 @@ theorem localCallResult_related {C F : Type} [Nonempty C]
       | val values =>
         rw [result] at bodyPost
         simpa [EvaluateHOL.decClock] using bodyPost
+
+/-- Simulate the deferred call performed by thunk forcing. The update of the
+thunk cell after a successful call remains a separate obligation. -/
+theorem localThunkCall_related {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (limit : Nat) (calledIH : LocalEnvClockIH (F := F) interp transform limit)
+    (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : State F) (flat : FlatSem.State C F) (gen : EnvironmentGenerationStore)
+    (invariant : factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (generation : envGenRel gen source.evalState) (clockBound : source.clock ≤ limit)
+    (function : Value) (flatFunction : FlatSem.Value) (functionRel : ValueRel genv function flatFunction)
+    (successful : doOpApp [function, .conv none []] ≠ none)
+    (safe : ∀ last, sourceCallResult source function (.conv none []) ≠ (last, .err (.abort .typeError))) :
+    let src := sourceCallResult source function (.conv none [])
+    let dst := FlatSem.evaluate ⟨[(Basis.Pure.MlString.ofString "f", flatFunction)]⟩ flat
+      [FlatSem.appUnit (.varLocal .none (Basis.Pure.MlString.ofString "f"))]
+    ∃ nextGenv, (EvalResultRel nextGenv src.2 dst.2 ∧ StateRel nextGenv src.1 dst.1) ∧
+      match src.2 with
+      | .err (.abort _) => True
+      | _ => GlobalGrowth genv nextGenv ∧
+          factoredInvariant interp transform gen nextGenv (start, finish, other) src.1 dst.1 ∧
+          envGenRel gen src.1.evalState ∧ oracForwardRel interp source.evalState src.1.evalState := by
+  have unitRel : ValueRel genv (.conv none []) FlatSem.unitValue := .tuple genv [] [] (.nil genv)
+  simpa only [flatCallResult_appUnit] using
+    localCallResult_related interp transform limit calledIH genv start finish other source flat gen
+      invariant generation clockBound function (.conv none []) flatFunction FlatSem.unitValue
+      functionRel unitRel successful safe
 
 /-- Simulate a two-operand function application at a given clock bound,
 using the smaller-clock induction hypothesis for the called body. -/
