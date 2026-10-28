@@ -130,6 +130,19 @@ theorem globalsWithin_union (left right reachable : NumSet) :
   exact ⟨fun h => ⟨fun k hk => h k (Or.inl hk), fun k hk => h k (Or.inr hk)⟩,
     fun h k hk => hk.elim (h.1 k) (h.2 k)⟩
 
+/-- Every member value's global dependencies occur in the list analysis. -/
+theorem findValuesGlobals_member (values : List FlatSem.Value) (value : FlatSem.Value)
+    (member : value ∈ values) (key : Nat) (found : sptMem key (findValueGlobals value)) :
+    sptMem key (findValuesGlobals values) := by
+  induction values with
+  | nil => simp at member
+  | cons first rest ih =>
+    simp only [List.mem_cons] at member
+    simp only [findValuesGlobals, sptMem_sptUnion]
+    rcases member with rfl | member
+    · exact Or.inl found
+    · exact Or.inr (ih member)
+
 /-- Global dependencies held by a single store entry. -/
 def storeValueGlobals : StoreValue FlatSem.Value → NumSet
   | .refv value | .thunk _ value => findValueGlobals value

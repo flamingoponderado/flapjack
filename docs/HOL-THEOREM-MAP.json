@@ -2,6 +2,38 @@
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "do_app_SOME_flat_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyFlat.lean",
+    "lean_name": "doApp_some_flatStateRel_lenEq",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Flat operation case only; typed original theorem captured in flat_elim_value_globals_probe.out. Full primitive simulation, carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "do_app_SOME_flat_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyFlat.lean",
+    "lean_name": "doApp_some_flatStateRel_tagLenEq",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Flat operation case only; typed original theorem captured in flat_elim_value_globals_probe.out. Full primitive simulation, carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "do_app_SOME_flat_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyFlat.lean",
+    "lean_name": "doApp_some_flatStateRel_el",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Flat operation case only; typed original theorem captured in flat_elim_value_globals_probe.out. Full primitive simulation, carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "do_app_SOME_flat_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyFlat.lean",
+    "lean_name": "doApp_some_flatStateRel_id",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Flat operation case only; typed original theorem captured in flat_elim_value_globals_probe.out. Full primitive simulation, carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "do_app_SOME_flat_state_rel",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyMemory.lean",
     "lean_name": "doApp_some_flatStateRel_byteArray",
     "statement_status": "pending_statement_review",
