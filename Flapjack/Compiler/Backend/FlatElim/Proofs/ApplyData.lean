@@ -594,4 +594,177 @@ theorem doApp_some_flatStateRel_listAppend {C F G : Type} (reachable : NumSet)
               by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, leftDecoded, rightDecoded],
               resultSafe.1, resultSafe.2⟩
 
+/-- Thunk allocation preserves the primitive simulation. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+theorem doApp_some_flatStateRel_thunkAlloc {C F G : Type} (reachable : NumSet)
+    (source target next : FlatSem.State C F) (values : List FlatSem.Value) (mode : Flapjack.AstHOL.ThunkMode)
+    (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
+    (related : flatStateRel reachable source target)
+    (_opNotApply : FlatLang.Op.src (.thunkOp (.allocThunk mode)) ≠ .src .opapp)
+    (valuesReachable : globalsWithin (findValuesGlobals values) reachable)
+    (_opReachable : globalsWithin (findLookups (.app tra (.src (.thunkOp (.allocThunk mode))) [])) reachable)
+    (valuesSafe : valuesNoEval values)
+    (run : FlatSem.doApp source (.src (.thunkOp (.allocThunk mode))) values = some (next, result))
+    (_notTypeError : result ≠ .err (.abort .typeError)) :
+    ∃ targetNext, flatStateRel reachable next targetNext ∧
+      FlatSem.doApp target (.src (.thunkOp (.allocThunk mode))) values = some (targetNext, result) ∧
+      globalsWithin (findPrimitiveResultGlobals (Flapjack.EvaluateHOL.listResult result)) reachable ∧
+      valuesNoEval (Flapjack.Compiler.Backend.FlatProps.resultValues
+        (Flapjack.EvaluateHOL.listResult result)) := by
+  cases values with
+  | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
+  | cons value rest =>
+    cases rest with
+    | cons other rest => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
+    | nil =>
+      have valueClosed : globalsWithin (findValueGlobals value) reachable :=
+        (findValuesGlobals_within_iff _ _).mp valuesReachable value (by simp)
+      have valueSafe : valueHasEval value = false := valuesSafe value (by simp)
+      cases bad : FlatSem.badThunkUpdate mode value source.refs with
+      | true => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, bad] at run
+      | false =>
+        have refsEq := related.2.1
+        simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, bad, storeAlloc] at run
+        rcases run with ⟨rfl, rfl⟩
+        have resultSafe := primitiveResult_value_invariants reachable (.loc false source.refs.length)
+          (by simp [findValueGlobals, globalsWithin, sptMem, sptDomain]) (by simp [valueHasEval])
+        refine ⟨{ target with refs := target.refs ++ [.thunk mode value] }, ?_, ?_, resultSafe.1, resultSafe.2⟩
+        · apply flatStateRel_appendRef reachable source target (.thunk mode value) related
+          · exact valueClosed
+          · simpa [storeHasNoEval] using valueSafe
+        · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData,
+            ← refsEq, bad, storeAlloc]
+
+/-- Thunk update preserves the primitive simulation. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+theorem doApp_some_flatStateRel_thunkUpdate {C F G : Type} (reachable : NumSet)
+    (source target next : FlatSem.State C F) (values : List FlatSem.Value) (mode : Flapjack.AstHOL.ThunkMode)
+    (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
+    (related : flatStateRel reachable source target)
+    (_opNotApply : FlatLang.Op.src (.thunkOp (.updateThunk mode)) ≠ .src .opapp)
+    (valuesReachable : globalsWithin (findValuesGlobals values) reachable)
+    (_opReachable : globalsWithin (findLookups (.app tra (.src (.thunkOp (.updateThunk mode))) [])) reachable)
+    (valuesSafe : valuesNoEval values)
+    (run : FlatSem.doApp source (.src (.thunkOp (.updateThunk mode))) values = some (next, result))
+    (_notTypeError : result ≠ .err (.abort .typeError)) :
+    ∃ targetNext, flatStateRel reachable next targetNext ∧
+      FlatSem.doApp target (.src (.thunkOp (.updateThunk mode))) values = some (targetNext, result) ∧
+      globalsWithin (findPrimitiveResultGlobals (Flapjack.EvaluateHOL.listResult result)) reachable ∧
+      valuesNoEval (Flapjack.Compiler.Backend.FlatProps.resultValues
+        (Flapjack.EvaluateHOL.listResult result)) := by
+  cases values with
+  | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
+    | cons value rest =>
+      cases rest with
+      | cons other rest => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
+      | nil =>
+        have valueClosed : globalsWithin (findValueGlobals value) reachable :=
+          (findValuesGlobals_within_iff _ _).mp valuesReachable value (by simp)
+        have valueSafe : valueHasEval value = false := valuesSafe value (by simp)
+        cases first <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
+        case loc flag address =>
+          cases flag <;> simp at run
+          case false =>
+            cases bad : FlatSem.badThunkUpdate mode value source.refs with
+            | true => simp [bad] at run
+            | false =>
+              cases assigned : storeAssign address (.thunk mode value) source.refs with
+              | none => simp [bad, assigned] at run
+              | some refs =>
+                simp [bad, assigned] at run
+                rcases run with ⟨rfl, rfl⟩
+                have assignSet : refs = source.refs.set address (.thunk mode value) := by
+                  unfold storeAssign at assigned
+                  cases lookup : source.refs[address]? with
+                  | none => simp [lookup] at assigned
+                  | some old =>
+                    simp only [lookup] at assigned
+                    change (if storeValueSameType old (.thunk mode value) then
+                      some (source.refs.set address (.thunk mode value)) else none) = some refs at assigned
+                    split at assigned <;> simp_all
+                subst refs
+                have refsEq := related.2.1
+                have resultSafe := primitiveResult_value_invariants reachable FlatSem.unitValue
+                  (by simp [FlatSem.unitValue, findValueGlobals, findValuesGlobals, globalsWithin, sptMem, sptDomain])
+                  (by simp [FlatSem.unitValue, valueHasEval, valuesHaveEval])
+                refine ⟨{ target with refs := target.refs.set address (.thunk mode value) }, ?_, ?_,
+                  resultSafe.1, resultSafe.2⟩
+                · apply flatStateRel_setRefs reachable source target address (.thunk mode value) related
+                  · exact valueClosed
+                  · simpa [storeHasNoEval] using valueSafe
+                · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData,
+                    ← refsEq, bad, assigned]
+
+/-- An FFI call preserves the primitive simulation, including both returning
+calls that update a byte array and final FFI events. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "do_app_SOME_flat_state_rel"]
+theorem doApp_some_flatStateRel_ffi {C F G : Type} (reachable : NumSet)
+    (source target next : FlatSem.State C F) (values : List FlatSem.Value) (name : Flapjack.AstHOL.VarN)
+    (result : Result FlatSem.Value FlatSem.Value) (_unusedRemovedState : G) (tra : BackendCommon.Tra)
+    (related : flatStateRel reachable source target)
+    (_opNotApply : FlatLang.Op.src (.ffi name) ≠ .src .opapp)
+    (_valuesReachable : globalsWithin (findValuesGlobals values) reachable)
+    (_opReachable : globalsWithin (findLookups (.app tra (.src (.ffi name)) [])) reachable)
+    (_valuesSafe : valuesNoEval values)
+    (run : FlatSem.doApp source (.src (.ffi name)) values = some (next, result))
+    (_notTypeError : result ≠ .err (.abort .typeError)) :
+    ∃ targetNext, flatStateRel reachable next targetNext ∧
+      FlatSem.doApp target (.src (.ffi name)) values = some (targetNext, result) ∧
+      globalsWithin (findPrimitiveResultGlobals (Flapjack.EvaluateHOL.listResult result)) reachable ∧
+      valuesNoEval (Flapjack.Compiler.Backend.FlatProps.resultValues
+        (Flapjack.EvaluateHOL.listResult result)) := by
+  cases values with
+  | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
+  | cons first rest =>
+    cases rest with
+    | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
+    | cons second rest =>
+      cases rest with
+      | cons other rest => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
+      | nil =>
+        cases first <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
+        case litv lit =>
+          cases lit <;> try simp at run
+          case strLit config =>
+            cases second <;> try simp at run
+            case loc flag address =>
+              cases lookup : storeLookup address source.refs with
+              | none => simp [lookup] at run
+              | some ref =>
+                cases ref <;> simp [lookup] at run
+                case w8array bytes =>
+                  have refsEq := related.2.1
+                  have ffiEq := related.2.2.1
+                  cases call : Flapjack.callFFIHOL source.ffi (.extCall name) config.explode bytes with
+                  | final event =>
+                    simp [call] at run
+                    rcases run with ⟨rfl, rfl⟩
+                    refine ⟨target, related, ?_, ?_, ?_⟩
+                    · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData,
+                        ← refsEq, ← ffiEq, lookup, call]
+                    · simp [findPrimitiveResultGlobals, findResultGlobals, Flapjack.EvaluateHOL.listResult,
+                        globalsWithin, sptMem, sptDomain]
+                    · simp [Flapjack.Compiler.Backend.FlatProps.resultValues, Flapjack.EvaluateHOL.listResult, valuesNoEval]
+                  | ret ffi output =>
+                    have lookup' : source.refs[address]? = some (.w8array bytes) := by simpa [storeLookup] using lookup
+                    have assigned : storeAssign address (.w8array output) source.refs =
+                        some (source.refs.set address (.w8array output)) := by
+                      simp [storeAssign, lookup', storeValueSameType]
+                    simp [call, assigned] at run
+                    rcases run with ⟨rfl, rfl⟩
+                    have resultSafe := primitiveResult_value_invariants reachable FlatSem.unitValue
+                      (by simp [FlatSem.unitValue, findValueGlobals, findValuesGlobals, globalsWithin, sptMem, sptDomain])
+                      (by simp [FlatSem.unitValue, valueHasEval, valuesHaveEval])
+                    refine ⟨{ target with refs := target.refs.set address (.w8array output), ffi := ffi }, ?_, ?_,
+                      resultSafe.1, resultSafe.2⟩
+                    · have stateRel := flatStateRel_setRefs reachable source target address (.w8array output) related
+                        (by simp [storeValueGlobals, globalsWithin, sptMem, sptDomain])
+                        (by simp [storeHasNoEval])
+                      exact ⟨stateRel.1, stateRel.2.1, rfl, stateRel.2.2.2⟩
+                    · simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData,
+                        ← refsEq, ← ffiEq, lookup, call, assigned]
+
 end Flapjack.Compiler.Backend.FlatElim

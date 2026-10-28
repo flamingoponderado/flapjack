@@ -3,6 +3,30 @@
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "do_app_SOME_flat_state_rel",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyData.lean",
+    "lean_name": "doApp_some_flatStateRel_thunkAlloc",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source primitive case only; typed original theorem captured in flat_elim_value_globals_probe.out. Full primitive simulation, store/FFI carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "do_app_SOME_flat_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyData.lean",
+    "lean_name": "doApp_some_flatStateRel_thunkUpdate",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source primitive case only; typed original theorem captured in flat_elim_value_globals_probe.out. Full primitive simulation, store/FFI carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "do_app_SOME_flat_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyData.lean",
+    "lean_name": "doApp_some_flatStateRel_ffi",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source primitive case only; typed original theorem captured in flat_elim_value_globals_probe.out. Full primitive simulation, store/FFI carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "do_app_SOME_flat_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ApplyData.lean",
     "lean_name": "doApp_some_flatStateRel_vectorFromList",
     "statement_status": "pending_statement_review",
     "reviewer": "Typed original statement captured in flat_elim_value_globals_probe.out; full flat value, list, sparse-tree, and statement review remains pending."
