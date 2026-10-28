@@ -1,6 +1,71 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+    "hol_name": "op_gbag_def",
+    "lean_path": "Flapjack/Compiler/Backend/FlatProps/Globals.lean",
+    "lean_name": "opGlobalBag",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out; HOL bags are natural-number-valued functions. Expression carriers and complete declaration review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+    "hol_name": "set_globals_def",
+    "lean_path": "Flapjack/Compiler/Backend/FlatProps/Globals.lean",
+    "lean_name": "setGlobals",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out; HOL bags are natural-number-valued functions. Expression carriers and complete declaration review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+    "hol_name": "set_globals_def",
+    "lean_path": "Flapjack/Compiler/Backend/FlatProps/Globals.lean",
+    "lean_name": "elistGlobals",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out; HOL bags are natural-number-valued functions. Expression carriers and complete declaration review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+    "hol_name": "esgc_free_def",
+    "lean_path": "Flapjack/Compiler/Backend/FlatProps/Globals.lean",
+    "lean_name": "esgcFree",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out; HOL bags are natural-number-valued functions. Expression carriers and complete declaration review remain pending.",
+    "hol_line": 836
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "remove_flat_prog_sub_bag",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/GlobalInvariants.lean",
+    "lean_name": "removeFlatProg_subBag",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out; HOL bags are natural-number-valued functions. Expression carriers and complete declaration review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "remove_flat_prog_elist_globals_eq_empty",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/GlobalInvariants.lean",
+    "lean_name": "removeFlatProg_globals_empty",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out; HOL bags are natural-number-valued functions. Expression carriers and complete declaration review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "remove_flat_prog_esgc_free",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/GlobalInvariants.lean",
+    "lean_name": "removeFlatProg_esgcFree",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out; HOL bags are natural-number-valued functions. Expression carriers and complete declaration review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "remove_flat_prog_distinct_globals",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/GlobalInvariants.lean",
+    "lean_name": "removeFlatProg_distinctGlobals",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out; HOL bags are natural-number-valued functions. Expression carriers and complete declaration review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
     "hol_name": "eval_sim_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatProps/EvalSim.lean",
     "lean_name": "evalSim",

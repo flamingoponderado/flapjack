@@ -294,6 +294,7 @@ import Flapjack.Compiler.Backend.FlatElim.Proofs.PureState
 import Flapjack.Compiler.Backend.FlatElim.Proofs.PureApplication
 import Flapjack.Compiler.Backend.FlatElim.Proofs.PureFull
 import Flapjack.Compiler.Backend.FlatElim.Proofs.Removal
+import Flapjack.Compiler.Backend.FlatElim.Proofs.GlobalInvariants
 import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
 import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
