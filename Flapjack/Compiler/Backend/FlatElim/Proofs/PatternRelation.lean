@@ -136,4 +136,137 @@ theorem pmatchRows_findLookups {C F R : Type} (rows : List (FlatLang.Pat × Flat
   apply findLookupsList_member body _ _ key found
   exact List.mem_map.mpr ⟨(pattern, body), pmatchRows_selected_mem rows state value bindings pattern body selected, rfl⟩
 
+/-- Every value in a list is free of dynamic evaluation. -/
+def valuesNoEval (values : List FlatSem.Value) : Prop :=
+  ∀ value ∈ values, valueHasEval value = false
+
+/-- Every value in a pattern environment is free of dynamic evaluation. -/
+def bindingsNoEval (bindings : List (VarN × FlatSem.Value)) : Prop :=
+  ∀ binding ∈ bindings, valueHasEval binding.2 = false
+
+/-- The recursive Boolean traversal agrees with its member-wise form. -/
+theorem valuesHaveEval_eq_false_iff (values : List FlatSem.Value) :
+    valuesHaveEval values = false ↔ valuesNoEval values := by
+  induction values with
+  | nil => simp [valuesHaveEval, valuesNoEval]
+  | cons value rest ih =>
+    simp [valuesHaveEval, valuesNoEval] at ih ⊢
+    intro _
+    exact ih
+
+/-- A successful match preserves the absence of dynamic evaluation. -/
+theorem pmatchNoEval_aux {C F : Type} (state : FlatSem.State C F) :
+    (∀ pattern value bindings result, FlatSem.pmatch state pattern value bindings = .match result →
+      valueHasEval value = false → storeHasNoEval state.refs → bindingsNoEval bindings →
+      bindingsNoEval result) ∧
+    (∀ patterns values bindings result, FlatSem.pmatchList state patterns values bindings = .match result →
+      valuesNoEval values → storeHasNoEval state.refs → bindingsNoEval bindings →
+      bindingsNoEval result) := by
+  have one : ∀ pattern : FlatLang.Pat, ∀ value bindings result,
+      FlatSem.pmatch state pattern value bindings = .match result →
+      valueHasEval value = false → storeHasNoEval state.refs → bindingsNoEval bindings →
+      bindingsNoEval result := by
+    apply FlatLang.Pat.rec
+      (motive_1 := fun pattern => ∀ value bindings result,
+        FlatSem.pmatch state pattern value bindings = .match result →
+        valueHasEval value = false → storeHasNoEval state.refs → bindingsNoEval bindings →
+        bindingsNoEval result)
+      (motive_2 := fun patterns => ∀ values bindings result,
+        FlatSem.pmatchList state patterns values bindings = .match result →
+        valuesNoEval values → storeHasNoEval state.refs → bindingsNoEval bindings →
+        bindingsNoEval result)
+    case pany => intros; simp_all [FlatSem.pmatch]
+    case pvar =>
+      intro name value bindings result matched safe store env
+      simp [FlatSem.pmatch] at matched
+      subst result
+      simpa [bindingsNoEval] using And.intro safe env
+    case plit =>
+      intro lit value bindings result matched safe store env
+      cases value <;> simp_all [FlatSem.pmatch]
+      case litv actual =>
+        split at matched <;> try simp_all
+        split at matched <;> simp_all
+    case pcon =>
+      intro stamp patterns ih value bindings result matched safe store env
+      cases value <;> simp [FlatSem.pmatch] at matched
+      case conv actual values =>
+        split at matched
+        · split at matched
+          · exact ih values bindings result matched
+              ((valuesHaveEval_eq_false_iff values).mp (by simpa [valueHasEval] using safe)) store env
+          · contradiction
+        · contradiction
+    case pref =>
+      intro pattern ih value bindings result matched safe store env
+      cases value <;> simp [FlatSem.pmatch] at matched
+      case loc flag index =>
+        cases lookup : storeLookup index state.refs with
+        | none => simp [lookup] at matched
+        | some ref =>
+          cases ref <;> simp [lookup] at matched
+          case refv v =>
+            apply ih v bindings result matched
+            · exact store _ (List.mem_of_getElem? (by simpa [storeLookup] using lookup))
+            · exact store
+            · exact env
+    case pas =>
+      intro pattern name ih value bindings result matched safe store env
+      apply ih value ((name, value) :: bindings) result (by simpa [FlatSem.pmatch] using matched) safe store
+      simpa [bindingsNoEval] using And.intro safe env
+    case nil =>
+      intro values bindings result matched safe store env
+      cases values <;> simp_all [FlatSem.pmatchList]
+    case cons =>
+      intro pattern patterns ihHead ihTail values bindings result matched safe store env
+      cases values with
+      | nil => simp [FlatSem.pmatchList] at matched
+      | cons value values =>
+        have headSafe : valueHasEval value = false := safe value (by simp)
+        have tailSafe : valuesNoEval values := by
+          intro v member
+          exact safe v (by simp [member])
+        cases head : FlatSem.pmatch state pattern value bindings with
+        | typeError => simp [FlatSem.pmatchList, head] at matched
+        | noMatch =>
+          cases tail : FlatSem.pmatchList state patterns values bindings <;>
+            simp [FlatSem.pmatchList, head, tail] at matched
+        | «match» next =>
+          apply ihTail values next result (by simpa [FlatSem.pmatchList, head] using matched) tailSafe store
+          exact ihHead value bindings next head headSafe store env
+  refine ⟨one, ?_⟩
+  intro patterns
+  induction patterns with
+  | nil => intro values bindings result matched safe store env; cases values <;> simp_all [FlatSem.pmatchList]
+  | cons pattern patterns ih =>
+    intro values bindings result matched safe store env
+    cases values with
+    | nil => simp [FlatSem.pmatchList] at matched
+    | cons value values =>
+      have headSafe : valueHasEval value = false := safe value (by simp)
+      have tailSafe : valuesNoEval values := by
+        intro v member
+        exact safe v (by simp [member])
+      cases head : FlatSem.pmatch state pattern value bindings with
+      | typeError => simp [FlatSem.pmatchList, head] at matched
+      | noMatch =>
+        cases tail : FlatSem.pmatchList state patterns values bindings <;>
+          simp [FlatSem.pmatchList, head, tail] at matched
+      | «match» next =>
+        apply ih values next result (by simpa [FlatSem.pmatchList, head] using matched) tailSafe store
+        exact one pattern value bindings next head headSafe store env
+
+/-- Successful pattern matching preserves the absence of Eval in all bindings. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "pmatch_not_has_Eval"]
+theorem pmatch_not_has_Eval {C F : Type} :
+    (∀ (state : FlatSem.State C F) pattern value bindings result,
+      FlatSem.pmatch state pattern value bindings = .match result →
+      valueHasEval value = false → storeHasNoEval state.refs → bindingsNoEval bindings →
+      bindingsNoEval result) ∧
+    (∀ (state : FlatSem.State C F) patterns values bindings result,
+      FlatSem.pmatchList state patterns values bindings = .match result →
+      valuesNoEval values → storeHasNoEval state.refs → bindingsNoEval bindings →
+      bindingsNoEval result) := by
+  exact ⟨fun state => (pmatchNoEval_aux state).1, fun state => (pmatchNoEval_aux state).2⟩
+
 end Flapjack.Compiler.Backend.FlatElim

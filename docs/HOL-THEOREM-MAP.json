@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "pmatch_not_has_Eval",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/PatternRelation.lean",
+    "lean_name": "pmatch_not_has_Eval",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original statement captured in flat_elim_value_globals_probe.out; full matcher, value, and store carrier review remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "flat_state_rel_pmatch",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/PatternRelation.lean",
     "lean_name": "flatStateRel_pmatch",

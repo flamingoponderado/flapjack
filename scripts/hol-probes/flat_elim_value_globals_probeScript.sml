@@ -22,6 +22,7 @@ val _ = show_thm "state_transitivity=" flat_elimProofTheory.flat_state_rel_trans
 val _ = show_thm "state_pmatch=" flat_elimProofTheory.flat_state_rel_pmatch;
 val _ = show_thm "state_pmatch_rows=" flat_elimProofTheory.flat_state_rel_pmatch_rows;
 val _ = show_thm "selected_row_lookups=" flat_elimProofTheory.pmatch_rows_find_lookups;
+val _ = show_thm "pmatch_no_eval=" flat_elimProofTheory.pmatch_not_has_Eval;
 val _ = show_eval "closure_lookup=" ``sptree$lookup 3 (flat_elimProof$find_v_globals (flatSem$Closure <|v := []|> «x» (flatLang$App backend_common$None (flatLang$GlobalVarLookup 3) [])))``;
 val _ = show_eval "tuple_lookup=" ``sptree$lookup 3 (flat_elimProof$find_v_globals (flatSem$Conv NONE [flatSem$Closure <|v := []|> «x» (flatLang$App backend_common$None (flatLang$GlobalVarLookup 3) [])]))``;
 val _ = show_eval "closure_eval=" ``flat_elimProof$v_has_Eval (flatSem$Closure <|v := []|> «x» (flatLang$App backend_common$None (flatLang$Src ast$Eval) []))``;
