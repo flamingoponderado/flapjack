@@ -35,6 +35,11 @@ inductive LocalEnvBoundedArrayExpression : AstHOL.Exp → Prop where
       LocalEnvBoundedArrayExpression (.app .aw8sub [pointer, index])
   | byteSubscriptUnsafe (pointer index : AstHOL.Exp) : LocalEnvBoundedArrayExpression pointer → LocalEnvBoundedArrayExpression index →
       LocalEnvBoundedArrayExpression (.app .aw8subUnsafe [pointer, index])
+  | copyBytes (source offset length destination dstOffset : AstHOL.Exp) :
+      LocalEnvBoundedArrayExpression source → LocalEnvBoundedArrayExpression offset →
+      LocalEnvBoundedArrayExpression length → LocalEnvBoundedArrayExpression destination →
+      LocalEnvBoundedArrayExpression dstOffset →
+      LocalEnvBoundedArrayExpression (.app .copyAw8Aw8 [source, offset, length, destination, dstOffset])
   | stringToBytes (string offset length array dstOffset : AstHOL.Exp) :
       LocalEnvBoundedArrayExpression string → LocalEnvBoundedArrayExpression offset →
       LocalEnvBoundedArrayExpression length → LocalEnvBoundedArrayExpression array →
@@ -160,6 +165,8 @@ theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
     exact localEnvBounded_aw8sub interp transform limit pointer index pointerIH indexIH
   | byteSubscriptUnsafe pointer index _ _ pointerIH indexIH =>
     exact localEnvBounded_aw8subUnsafe interp transform limit pointer index pointerIH indexIH
+  | copyBytes source offset length destination dstOffset _ _ _ _ _ sourceIH offsetIH lengthIH destinationIH dstOffsetIH =>
+    exact localEnvBounded_copyAw8Aw8 interp transform limit source offset length destination dstOffset sourceIH offsetIH lengthIH destinationIH dstOffsetIH
   | stringToBytes string offset length array dstOffset _ _ _ _ _ stringIH offsetIH lengthIH arrayIH dstOffsetIH =>
     exact localEnvBounded_copyStrAw8 interp transform limit string offset length array dstOffset stringIH offsetIH lengthIH arrayIH dstOffsetIH
   | byteArraySlice array offset length _ _ _ arrayIH offsetIH lengthIH =>
