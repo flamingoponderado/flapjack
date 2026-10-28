@@ -31,6 +31,18 @@ LEX_ATOMS = ['""', '"a\\n\\t\\r"', '"\\000\\127\\255"', '"\\001x"', '"\\256"', '
              "0w99999999999999999999999999", "0xFF", "0wxFF", "0.0", "1.2e3", "1e2", "~1.5",
              "1.", "1..2", "1_000", "0b10", "x", "x'", "_", "_x", "Ab", "a.b", "a..b", "M.x",
              "a_b", "x0", "op", "andalso", "not", "type", "x\x7f"]
+DECL_TYPES = ["int", "bool", "string", "'a", "'a list", "int * int", "t", "u", "int -> int", "missing"]
+DECL_CONSTRUCTORS = ["A", "B", "C", "D", "A int", "B bool", "C (int * int)", "D 'a", "E t"]
+DECL_VALUES = ["A", "B", "C 1", "(A, B)", "fn x => x", "1", "True", "[A,B]", "(raise E)"]
+BACKEND_OPTIONS = [
+    ["--multi=true", "--multi=false"], ["--known=true", "--known=false"],
+    ["--call=true", "--call=false"], ["--tailrec=true", "--tailrec=false"],
+    ["--tmc=true", "--tmc=false"], ["--split=true", "--split=false"],
+    ["--reg_alg=0", "--reg_alg=1", "--reg_alg=2"], ["--gc=none", "--gc=simple", "--gc=gen"],
+    ["--inline_size=0", "--inline_size=3", "--inline_size=20"],
+    ["--max_app=0", "--max_app=2", "--max_app=8"], ["--tag_bits=2", "--tag_bits=3"],
+    ["--hash_size=0", "--hash_size=4"],
+]
 
 
 def type_program(rng):
@@ -89,6 +101,21 @@ def structured_program(rng):
 def lexical_program(rng):
     return (rng.choice(LEX_PREFIXES) + rng.choice(["val x = ", "val y = ", "fun f x = ", "type t = "]) +
             rng.choice(LEX_ATOMS) + rng.choice(LEX_SUFFIXES))
+
+
+def declaration_program(rng):
+    constructors = " | ".join(rng.choices(DECL_CONSTRUCTORS, k=rng.randrange(1, 5)))
+    return rng.choice([
+        f"datatype t = {constructors}; val x = {rng.choice(DECL_VALUES)};",
+        f"datatype 'a t = {constructors}; val x = {rng.choice(DECL_VALUES)};",
+        f"type t = {rng.choice(DECL_TYPES)}; type u = {rng.choice(DECL_TYPES)}; "
+        f"val x : t = {rng.choice(DECL_VALUES)};",
+        f"exception E {rng.choice(DECL_TYPES)}; exception F {rng.choice(DECL_TYPES)}; "
+        f"val x = {rng.choice(DECL_VALUES)};",
+        f"structure M = struct datatype t = {constructors}; val x = {rng.choice(DECL_VALUES)}; "
+        "end; val z = M.x;",
+        f"local datatype t = {constructors} in val x = {rng.choice(DECL_VALUES)} end;",
+    ])
 
 
 def integer_expression(rng, depth):
@@ -164,6 +191,10 @@ def main():
     parser.add_argument("--compile-cases", type=int, default=20)
     parser.add_argument("--rich-cases", type=int, default=20,
                         help="well-typed programs exercising diverse compiler passes")
+    parser.add_argument("--declaration-cases", type=int, default=100,
+                        help="generated datatype, exception, type and namespace cases")
+    parser.add_argument("--config-cases", type=int, default=10,
+                        help="successful compilations with generated backend options")
     parser.add_argument("--sexp-cases", type=int, default=100,
                         help="generated programs to compare in S-expression output mode")
     parser.add_argument("--byte-cases", type=int, default=256,
@@ -178,6 +209,7 @@ def main():
     parser.add_argument("--timeout", type=int, default=90)
     args = parser.parse_args()
     if (args.type_cases < 0 or args.compile_cases < 0 or args.rich_cases < 0 or args.sexp_cases < 0 or
+            args.declaration_cases < 0 or args.config_cases < 0 or
             args.structured_cases < 0 or args.lex_cases < 0 or
             not 0 <= args.byte_cases <= 256 or args.timeout <= 0):
         parser.error("case counts must be nonnegative, byte-cases at most 256, and timeout positive")
@@ -208,6 +240,12 @@ def main():
         mode = edge_rng.choice(["--types", "--print_sexp"])
         compare(args.reference, args.cake, [mode, "--exclude_prelude=true"], source, args.timeout, False)
     print(f"{args.lex_cases} lexical edge cases match pinned CakeML", flush=True)
+    decl_rng = random.Random(args.edge_seed ^ 5431)
+    for _ in range(args.declaration_cases):
+        source = declaration_program(decl_rng)
+        mode = decl_rng.choice(["--types", "--print_sexp"])
+        compare(args.reference, args.cake, [mode, "--exclude_prelude=true"], source, args.timeout, False)
+    print(f"{args.declaration_cases} generated declaration cases match pinned CakeML", flush=True)
     compile_rng = random.Random(args.compile_seed)
     for _ in range(args.compile_cases):
         depth = compile_rng.randint(1, 3)
@@ -217,6 +255,12 @@ def main():
     for _ in range(args.rich_cases):
         compare(args.reference, args.cake, [], rich_program(compile_rng), args.timeout, True)
     print(f"{args.rich_cases} diverse programs match complete pinned RISC-V output", flush=True)
+    config_rng = random.Random(args.compile_seed ^ 7431)
+    source = "fun f xs = case xs of [] => [] | x::rest => x::f rest; val a = f [1,2,3];"
+    for _ in range(args.config_cases):
+        options = [config_rng.choice(group) for group in config_rng.sample(BACKEND_OPTIONS, k=4)]
+        compare(args.reference, args.cake, ["--exclude_prelude=true", *options], source, args.timeout, True)
+    print(f"{args.config_cases} backend option combinations match complete pinned RISC-V output", flush=True)
 
 
 if __name__ == "__main__":
