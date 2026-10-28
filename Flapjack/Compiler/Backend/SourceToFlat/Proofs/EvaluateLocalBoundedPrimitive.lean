@@ -243,6 +243,83 @@ theorem localEnvBounded_arith_rejectedType {C F : Type} [Nonempty C]
   · simp [doApp, doAppNumericCore]
   · cases action <;> simp [doApp, doAppNumericCore] at notNot ⊢
 
+/-- The ordinary unary primitives used by references, strings, vectors, and
+arrays. This predicate is bookkeeping for the factored simulation. -/
+def UnaryBasicOp (op : Op) : Prop :=
+  op = .opref ∨ op = .opderef ∨ op = .aw8length ∨ op = .implode ∨ op = .explode ∨
+  op = .strlen ∨ op = .strcat ∨ op = .vfromList ∨ op = .vlength ∨ op = .alength
+
+/-- Ordinary unary primitives reject operand lists of any other length. -/
+theorem localEnvBounded_unaryBasic_badArity {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
+    (op : Op) (args : List AstHOL.Exp) (unary : UnaryBasicOp op) (badArity : args.length ≠ 1)
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedIH (F := F) interp transform limit expr) :
+    LocalEnvBoundedIH (F := F) interp transform limit (.app op args) := by
+  rcases unary with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
+  all_goals apply localEnvBounded_rejectedSimple interp transform limit _ args rfl (by simp) (by simp) (by simp) _ each
+  all_goals intro state values length
+  all_goals have bad : values.length ≠ 1 := by simpa [length] using badArity
+  all_goals cases values with
+    | nil => simp [doApp, doAppNumericCore, doAppBasic]
+    | cons first rest =>
+      cases rest with
+      | nil => simp at bad
+      | cons second rest => simp [doApp, doAppNumericCore, doAppBasic]
+
+/-- Ordinary binary reference, collection, and configuration primitives. -/
+def BinaryBasicOp (op : Op) : Prop :=
+  op = .opassign ∨ op = .listAppend ∨ op = .aw8alloc ∨ op = .aw8sub ∨ op = .aw8subUnsafe ∨
+  op = .xorAw8StrUnsafe ∨ op = .strsub ∨ op = .vsub ∨ op = .vsubUnsafe ∨ op = .aalloc ∨
+  op = .asub ∨ op = .asubUnsafe ∨ op = .configGC
+
+/-- Ordinary binary primitives reject operand lists of any other length. -/
+theorem localEnvBounded_binaryBasic_badArity {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
+    (op : Op) (args : List AstHOL.Exp) (binary : BinaryBasicOp op) (badArity : args.length ≠ 2)
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedIH (F := F) interp transform limit expr) :
+    LocalEnvBoundedIH (F := F) interp transform limit (.app op args) := by
+  rcases binary with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
+  all_goals apply localEnvBounded_rejectedSimple interp transform limit _ args rfl (by simp) (by simp) (by simp) _ each
+  all_goals intro state values length
+  all_goals have bad : values.length ≠ 2 := by simpa [length] using badArity
+  all_goals cases values with
+    | nil => simp [doApp, doAppNumericCore, doAppBasic]
+    | cons first rest =>
+      cases rest with
+      | nil => simp [doApp, doAppNumericCore, doAppBasic]
+      | cons second rest =>
+        cases rest with
+        | nil => simp at bad
+        | cons third rest => simp [doApp, doAppNumericCore, doAppBasic]
+
+/-- Ordinary ternary update and slicing primitives. -/
+def TernaryBasicOp (op : Op) : Prop :=
+  op = .aupdate ∨ op = .aupdateUnsafe ∨ op = .aw8update ∨ op = .aw8updateUnsafe ∨
+  op = .copyStrStr ∨ op = .copyAw8Str
+
+/-- Ordinary ternary primitives reject operand lists of any other length. -/
+theorem localEnvBounded_ternaryBasic_badArity {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
+    (op : Op) (args : List AstHOL.Exp) (ternary : TernaryBasicOp op) (badArity : args.length ≠ 3)
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedIH (F := F) interp transform limit expr) :
+    LocalEnvBoundedIH (F := F) interp transform limit (.app op args) := by
+  rcases ternary with rfl | rfl | rfl | rfl | rfl | rfl
+  all_goals apply localEnvBounded_rejectedSimple interp transform limit _ args rfl (by simp) (by simp) (by simp) _ each
+  all_goals intro state values length
+  all_goals have bad : values.length ≠ 3 := by simpa [length] using badArity
+  all_goals cases values with
+    | nil => simp [doApp, doAppNumericCore, doAppBasic]
+    | cons first rest =>
+      cases rest with
+      | nil => simp [doApp, doAppNumericCore, doAppBasic]
+      | cons second rest =>
+        cases rest with
+        | nil => simp [doApp, doAppNumericCore, doAppBasic]
+        | cons third rest =>
+          cases rest with
+          | nil => simp at bad
+          | cons fourth rest => simp [doApp, doAppNumericCore, doAppBasic]
+
 /-- Compose localEnvBounded_tuple over arbitrary related local environments. -/
 theorem localEnvBounded_tuple {C F : Type} [Nonempty C]
     (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)

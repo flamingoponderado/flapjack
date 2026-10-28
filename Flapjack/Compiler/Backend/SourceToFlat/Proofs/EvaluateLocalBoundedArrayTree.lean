@@ -10,6 +10,12 @@ open OracleInvariant
 
 inductive LocalEnvBoundedArrayExpression : AstHOL.Exp → Prop where
   | base (expr : AstHOL.Exp) : LocalEnvPrimitiveExpression expr → LocalEnvBoundedArrayExpression expr
+  | unaryBasicBadArity (op : Op) (args : List AstHOL.Exp) : UnaryBasicOp op → args.length ≠ 1 →
+      (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) → LocalEnvBoundedArrayExpression (.app op args)
+  | binaryBasicBadArity (op : Op) (args : List AstHOL.Exp) : BinaryBasicOp op → args.length ≠ 2 →
+      (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) → LocalEnvBoundedArrayExpression (.app op args)
+  | ternaryBasicBadArity (op : Op) (args : List AstHOL.Exp) : TernaryBasicOp op → args.length ≠ 3 →
+      (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) → LocalEnvBoundedArrayExpression (.app op args)
   | eval (args : List AstHOL.Exp) : (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) →
       LocalEnvBoundedArrayExpression (.app .eval args)
   | call (left right : AstHOL.Exp) : LocalEnvBoundedArrayExpression left → LocalEnvBoundedArrayExpression right →
@@ -229,6 +235,86 @@ theorem arithmeticExpression_covered (action : Arith) (typ : PrimType) (args : L
         | cons fourth rest =>
           exact .arithExtremeArity action typ (first :: second :: third :: fourth :: rest) (Or.inr (by simp)) each
 
+/-- All ordinary unary primitive forms are covered when their operands are. -/
+theorem unaryBasicExpression_covered (op : Op) (args : List AstHOL.Exp) (unary : UnaryBasicOp op)
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
+    LocalEnvBoundedArrayExpression (.app op args) := by
+  cases args with
+  | nil => exact .unaryBasicBadArity op [] unary (by simp) each
+  | cons first rest =>
+    have firstCovered := each first (by simp)
+    cases rest with
+    | cons second rest => exact .unaryBasicBadArity op (first :: second :: rest) unary (by simp) each
+    | nil =>
+      rcases unary with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
+      · exact .ref_ first firstCovered
+      · exact .deref first firstCovered
+      · exact .byteArrayLength first firstCovered
+      · exact .stringImplode first firstCovered
+      · exact .stringExplode first firstCovered
+      · exact .stringLength first firstCovered
+      · exact .stringConcat first firstCovered
+      · exact .vectorFromList first firstCovered
+      · exact .vectorLength first firstCovered
+      · exact .arrayLength first firstCovered
+
+/-- All ordinary binary primitive forms are covered when their operands are. -/
+theorem binaryBasicExpression_covered (op : Op) (args : List AstHOL.Exp) (binary : BinaryBasicOp op)
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
+    LocalEnvBoundedArrayExpression (.app op args) := by
+  cases args with
+  | nil => exact .binaryBasicBadArity op [] binary (by simp) each
+  | cons first rest =>
+    have firstCovered := each first (by simp)
+    cases rest with
+    | nil => exact .binaryBasicBadArity op [first] binary (by simp) each
+    | cons second rest =>
+      have secondCovered := each second (by simp)
+      cases rest with
+      | cons third rest => exact .binaryBasicBadArity op (first :: second :: third :: rest) binary (by simp) each
+      | nil =>
+        rcases binary with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
+        · exact .assign first second firstCovered secondCovered
+        · exact .listAppend first second firstCovered secondCovered
+        · exact .byteArrayAlloc first second firstCovered secondCovered
+        · exact .byteSubscript first second firstCovered secondCovered
+        · exact .byteSubscriptUnsafe first second firstCovered secondCovered
+        · exact .byteXor first second firstCovered secondCovered
+        · exact .stringSubscript first second firstCovered secondCovered
+        · exact .vectorSubscript first second firstCovered secondCovered
+        · exact .vectorSubscriptUnsafe first second firstCovered secondCovered
+        · exact .arrayAlloc first second firstCovered secondCovered
+        · exact .arraySubscript first second firstCovered secondCovered
+        · exact .arraySubscriptUnsafe first second firstCovered secondCovered
+        · exact .configGC first second firstCovered secondCovered
+
+/-- All ordinary ternary primitive forms are covered when their operands are. -/
+theorem ternaryBasicExpression_covered (op : Op) (args : List AstHOL.Exp) (ternary : TernaryBasicOp op)
+    (each : ∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) :
+    LocalEnvBoundedArrayExpression (.app op args) := by
+  cases args with
+  | nil => exact .ternaryBasicBadArity op [] ternary (by simp) each
+  | cons first rest =>
+    have firstCovered := each first (by simp)
+    cases rest with
+    | nil => exact .ternaryBasicBadArity op [first] ternary (by simp) each
+    | cons second rest =>
+      have secondCovered := each second (by simp)
+      cases rest with
+      | nil => exact .ternaryBasicBadArity op [first, second] ternary (by simp) each
+      | cons third rest =>
+        have thirdCovered := each third (by simp)
+        cases rest with
+        | cons fourth rest => exact .ternaryBasicBadArity op (first :: second :: third :: fourth :: rest) ternary (by simp) each
+        | nil =>
+          rcases ternary with rfl | rfl | rfl | rfl | rfl | rfl
+          · exact .arrayUpdate first second third firstCovered secondCovered thirdCovered
+          · exact .arrayUpdateUnsafe first second third firstCovered secondCovered thirdCovered
+          · exact .byteUpdate first second third firstCovered secondCovered thirdCovered
+          · exact .byteUpdateUnsafe first second third firstCovered secondCovered thirdCovered
+          · exact .stringSlice first second third firstCovered secondCovered thirdCovered
+          · exact .byteArraySlice first second third firstCovered secondCovered thirdCovered
+
 /-- Covered expressions satisfy the preliminary arbitrary-local hypothesis;
 the relations remain pending HOL correspondence review. -/
 theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
@@ -239,6 +325,12 @@ theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
   induction covered with
   | base expr covered =>
     exact localEnvBounded_of_unbounded interp transform limit expr (localEnvIH_primitiveTree interp transform expr covered)
+  | unaryBasicBadArity op args unary badArity _ ih =>
+    exact localEnvBounded_unaryBasic_badArity interp transform limit op args unary badArity ih
+  | binaryBasicBadArity op args binary badArity _ ih =>
+    exact localEnvBounded_binaryBasic_badArity interp transform limit op args binary badArity ih
+  | ternaryBasicBadArity op args ternary badArity _ ih =>
+    exact localEnvBounded_ternaryBasic_badArity interp transform limit op args ternary badArity ih
   | eval args _ ih => exact localEnvBounded_eval interp transform limit decsIH args ih
   | call left right _ _ leftIH rightIH =>
     exact localEnvBounded_opapp interp transform limit calledIH left right leftIH rightIH
