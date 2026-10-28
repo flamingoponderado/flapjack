@@ -1,6 +1,22 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "evaluate_sing_keep_flat_state_rel_eq",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/EvaluateSpecialization.lean",
+    "lean_name": "evaluate_sing_keep_flatStateRel",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out; the input environment is polymorphic and clearing its sole field changes its value type. Full evaluator, carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "evaluate_dec_flat_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/EvaluateSpecialization.lean",
+    "lean_name": "evaluate_dec_flatStateRel",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out. Full evaluator, carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "evaluate_keep_flat_state_rel_eq_lemma",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/EvaluateFull.lean",
     "lean_name": "evaluate_keep_flatStateRel",
