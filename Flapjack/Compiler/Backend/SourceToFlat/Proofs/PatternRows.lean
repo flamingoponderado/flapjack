@@ -195,4 +195,36 @@ theorem pmatchRows_related {C F : Type} (genv : GlobalEnv)
       cases flatMatch : FlatSem.pmatch flatState (compilePat compMap pattern) flat [] <;>
       simp_all [sourcePmatchRows, compilePes, FlatSem.pmatchRows, MatchResultRel, MatchRowsRel]
 
+/-- If compiled rows avoid pattern type errors, row selection agrees whenever
+the source selection itself succeeds. Unlike the all-row compatibility lemma,
+this permits a source-incompatible later row after an earlier match. -/
+theorem pmatchRows_related_of_flatSafe {C F : Type} (genv : GlobalEnv)
+    (compMap compMap2 : Environment) (trace : List VarN)
+    (sourceEnv : SemEnv SemanticPrimitivesHOL.Value) (sourceState : SemanticPrimitivesHOL.State F)
+    (flatState : FlatSem.State C F) (shadowers : VarN → Prop)
+    (inv : GlobalEnvInv genv compMap2 shadowers sourceEnv) (mapsEq : compMap2.c = compMap.c)
+    (ok : genvCOk genv.c) (typesOk : genvCTysOk genv.c genv.tys)
+    (stateRel : StateRel genv sourceState flatState)
+    (source : SemanticPrimitivesHOL.Value) (flat : FlatSem.Value) (valueRel : ValueRel genv source flat)
+    (rows : List (Pat × AstHOL.Exp))
+    (flatSafe : FlatSem.pmatchRows (compilePes trace compMap rows) flatState flat ≠ .typeError) :
+    MatchRowsRel genv compMap trace (sourcePmatchRows sourceEnv sourceState source rows)
+      (FlatSem.pmatchRows (compilePes trace compMap rows) flatState flat) := by
+  induction rows with
+  | nil => simp [sourcePmatchRows, compilePes, FlatSem.pmatchRows, MatchRowsRel]
+  | cons row rows ih =>
+    obtain ⟨pattern, body⟩ := row
+    have related := patternSimulation genv compMap compMap2 sourceEnv sourceState flatState [] shadowers
+      inv mapsEq ok typesOk stateRel pattern source flat [] [] (by simpa [alistToNs, nsEmpty] using EnvRel.empty genv) valueRel
+    simp only [List.nil_append] at related
+    have restSafe : FlatSem.pmatchRows (compilePes trace compMap rows) flatState flat ≠ .typeError := by
+      intro bad
+      apply flatSafe
+      cases flatMatch : FlatSem.pmatch flatState (compilePat compMap pattern) flat [] <;>
+        simp [compilePes, FlatSem.pmatchRows, flatMatch, bad]
+    have restRelated := ih restSafe
+    cases sourceMatch : pmatch sourceEnv.c sourceState.refs pattern source [] <;>
+      cases flatMatch : FlatSem.pmatch flatState (compilePat compMap pattern) flat [] <;>
+      simp_all [sourcePmatchRows, compilePes, FlatSem.pmatchRows, MatchResultRel, MatchRowsRel]
+
 end Flapjack.Compiler.Backend.SourceToFlat

@@ -53,6 +53,25 @@ theorem localEnvBounded_patternBody {C F : Type} [Nonempty C]
     (by simpa [local_nsAppend_assoc] using safe)
   simpa [local_nsAppend_assoc, List.map_append, bindingNames, ← mapBind] using result
 
+/-- A type error during source row selection is also a type error in the
+source match evaluator, including when an earlier row has duplicate names. -/
+theorem sourcePmatchRows_typeError_evaluateMatch {F : Type} (source : State F)
+    (env : SemEnv Value) (value errorValue : Value) (rows : List (Pat × AstHOL.Exp))
+    (bad : sourcePmatchRows env source value rows = .typeError) :
+    EvaluateHOL.evaluateMatch source env value rows errorValue = (source, .err (.abort .typeError)) := by
+  induction rows with
+  | nil => simp [sourcePmatchRows] at bad
+  | cons row rest ih =>
+    obtain ⟨pattern, body⟩ := row
+    by_cases distinct : (patBindings pattern).Nodup
+    ·
+      cases matched : pmatch env.c source.refs pattern value [] with
+      | typeError => simp [EvaluateHOL.evaluateMatch, distinct, matched, EvaluateHOL.typeError]
+      | «match» bindings => simp [sourcePmatchRows, matched] at bad
+      | noMatch =>
+        simpa [EvaluateHOL.evaluateMatch, distinct, matched] using ih (by simpa [sourcePmatchRows, matched] using bad)
+    · simp [EvaluateHOL.evaluateMatch, distinct, EvaluateHOL.typeError]
+
 /-- Simulate selection and evaluation of an arbitrary list of pattern rows.
 The all-row compatibility and row-body hypotheses are supplied by the
 surrounding expression case. -/
@@ -90,6 +109,99 @@ theorem boundedEvaluateMatch_related {C F : Type} [Nonempty C]
   have rowRel := pmatchRows_related genv compMap baseMap trace sourceEnv source flat (fun _ => True)
     rowInv rfl invariant.1 invariant.2.1 states value flatValue valueRel rows can
   have sourceSafe := sourcePmatchRows_noTypeError sourceEnv source value rows can
+  cases sourceSelected : sourcePmatchRows sourceEnv source value rows with
+  | typeError => exact (sourceSafe sourceSelected).elim
+  | noMatch =>
+    rw [sourceSelected] at rowRel
+    cases flatSelected : FlatSem.pmatchRows (compilePes trace compMap rows) flat flatValue with
+    | typeError => simp [flatSelected, MatchRowsRel] at rowRel
+    | «match» pair => simp [flatSelected, MatchRowsRel] at rowRel
+    | noMatch =>
+      have sourceRun := evaluateMatch_noMatch source sourceEnv value errorValue rows safe sourceSelected
+      dsimp only [sourceEnv] at sourceRun
+      dsimp only [compMap] at flatSelected
+      refine ⟨genv, ?_, ?_⟩
+      · simp only [sourceRun, flatEvaluateMatch, FlatSem.selectRow, flatSelected]
+        exact ⟨.raise errorRel, states⟩
+      · simpa [sourceRun, flatEvaluateMatch, FlatSem.selectRow, flatSelected] using
+          And.intro (GlobalGrowth.refl genv) (And.intro invariant
+            (And.intro generation (oracForwardRel_refl interp source.evalState)))
+  | «match» selected =>
+    obtain ⟨bindings, pattern, body⟩ := selected
+    rw [sourceSelected] at rowRel
+    cases flatSelected : FlatSem.pmatchRows (compilePes trace compMap rows) flat flatValue with
+    | typeError => simp [flatSelected, MatchRowsRel] at rowRel
+    | noMatch => simp [flatSelected, MatchRowsRel] at rowRel
+    | «match» selectedFlat =>
+      obtain ⟨flatBindings, flatPattern, flatBody⟩ := selectedFlat
+      have names := flatPmatchRows_bindingNames flat flatValue (compilePes trace compMap rows)
+        flatBindings flatPattern flatBody flatSelected
+      simp only [flatSelected, MatchRowsRel] at rowRel
+      obtain ⟨bindingsRel, rfl, rfl⟩ := rowRel
+      have names : flatBindings.map Prod.fst = patBindings pattern := by simpa [compilePat_bindings] using names
+      obtain ⟨distinct, sourceRun⟩ := evaluateMatch_selected source sourceEnv value errorValue rows
+        bindings pattern body safe sourceSelected
+      have member := sourcePmatchRows_mem sourceEnv source value rows bindings pattern body sourceSelected
+      have bodySafe : ∀ last, EvaluateHOL.evaluate source
+          { baseEnv with v := nsAppend (alistToNs bindings) (nsAppend sourceLocal baseEnv.v) } [body] ≠
+          (last, .err (.abort .typeError)) := by
+        intro last bad
+        apply safe last
+        rw [sourceRun]
+        exact bad
+      obtain ⟨nextGenv, bodySim, bodyPost⟩ := localEnvBounded_patternBody interp transform limit pattern body (each pattern body member)
+        genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen clockBound localRel envInv tracesLen
+        invariant generation bindings flatBindings bindingsRel names bodySafe
+      dsimp only [sourceEnv] at sourceRun
+      dsimp only [compMap] at flatSelected
+      refine ⟨nextGenv, ?_, ?_⟩
+      · simp only [sourceRun, flatEvaluateMatch, FlatSem.selectRow, flatSelected, compilePat_bindings, distinct, ↓reduceIte]
+        exact bodySim
+      · simp only [sourceRun, flatEvaluateMatch, FlatSem.selectRow, flatSelected, compilePat_bindings, distinct, ↓reduceIte]
+        exact bodyPost
+
+
+/-- Match simulation using the compiled-row safety premise, without an
+all-source-rows compatibility premise. -/
+theorem boundedEvaluateMatch_related_flatSafe {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (limit : Nat) (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : State F) (flat : FlatSem.State C F) (baseEnv : SemEnv Value)
+    (sourceLocal : Namespace ModN VarN Value) (flatEnv : FlatSem.Environment FlatSem.Value)
+    (traces : List BackendCommon.Tra) (trace : List VarN) (baseMap : Environment) (gen : EnvironmentGenerationStore)
+    (clockBound : source.clock ≤ limit) (localRel : EnvRel genv sourceLocal flatEnv.v)
+    (envInv : GlobalEnvInv genv baseMap (fun n => n ∈ flatEnv.v.map Prod.fst) baseEnv)
+    (tracesLen : traces.length = flatEnv.v.length)
+    (invariant : factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (generation : envGenRel gen source.evalState)
+    (value errorValue : Value) (flatValue flatError : FlatSem.Value)
+    (valueRel : ValueRel genv value flatValue) (errorRel : ValueRel genv errorValue flatError)
+    (rows : List (Pat × AstHOL.Exp))
+    (flatSafe : FlatSem.pmatchRows
+      (compilePes trace { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v } rows)
+      flat flatValue ≠ .typeError)
+    (safe : ∀ last, EvaluateHOL.evaluateMatch source { baseEnv with v := nsAppend sourceLocal baseEnv.v }
+      value rows errorValue ≠ (last, .err (.abort .typeError)))
+    (each : ∀ pattern body, (pattern, body) ∈ rows → LocalEnvBoundedIH (F := F) interp transform limit body) :
+    let sourceResult := EvaluateHOL.evaluateMatch source { baseEnv with v := nsAppend sourceLocal baseEnv.v } value rows errorValue
+    let flatResult := flatEvaluateMatch flatEnv flat flatValue flatError
+      (compilePes trace { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v } rows)
+    ∃ nextGenv, (EvalResultRel nextGenv sourceResult.2 flatResult.2 ∧ StateRel nextGenv sourceResult.1 flatResult.1) ∧
+      match sourceResult.2 with
+      | .err (.abort _) => True
+      | _ => GlobalGrowth genv nextGenv ∧
+          factoredInvariant interp transform gen nextGenv (start, finish, other) sourceResult.1 flatResult.1 ∧
+          envGenRel gen sourceResult.1.evalState ∧ oracForwardRel interp source.evalState sourceResult.1.evalState := by
+  let sourceEnv := { baseEnv with v := nsAppend sourceLocal baseEnv.v }
+  let compMap := { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v }
+  have states := invariant.2.2.1
+  have rowInv := globalEnvInv_local_for_patterns genv baseMap baseEnv sourceLocal flatEnv.v localRel envInv
+  have rowRel := pmatchRows_related_of_flatSafe genv compMap baseMap trace sourceEnv source flat (fun _ => True)
+    rowInv rfl invariant.1 invariant.2.1 states value flatValue valueRel rows flatSafe
+  have sourceSafe : sourcePmatchRows sourceEnv source value rows ≠ .typeError := by
+    intro bad
+    apply safe source
+    exact sourcePmatchRows_typeError_evaluateMatch source sourceEnv value errorValue rows bad
   cases sourceSelected : sourcePmatchRows sourceEnv source value rows with
   | typeError => exact (sourceSafe sourceSelected).elim
   | noMatch =>

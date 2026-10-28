@@ -536,4 +536,64 @@ theorem factoredDecIH_all {C F : Type} [Nonempty C]
   exact (factoredAllBounded (F := F) interp transform source.clock).2 decs genv env nextEnv sourceEnv trace
     source sourceLast flat start finish next other n n' gen nextGen flatDecs result (Nat.le_refl _)
 
+/-- Arbitrary source expression lists satisfy the preliminary factored
+simulation. HOL correspondence of its relations remains under review. -/
+theorem factoredExpressionList_all {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (exprs : List AstHOL.Exp) (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : State F) (flat : FlatSem.State C F) (baseEnv : SemEnv Value)
+    (sourceLocal : Namespace ModN VarN Value) (flatEnv : FlatSem.Environment FlatSem.Value)
+    (traces : List BackendCommon.Tra) (trace : List VarN) (baseMap : Environment) (gen : EnvironmentGenerationStore)
+    (localRel : EnvRel genv sourceLocal flatEnv.v)
+    (envInv : GlobalEnvInv genv baseMap (fun n => n ∈ flatEnv.v.map Prod.fst) baseEnv)
+    (tracesLen : traces.length = flatEnv.v.length)
+    (invariant : factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (generation : envGenRel gen source.evalState)
+    (safe : ∀ last, EvaluateHOL.evaluate source { baseEnv with v := nsAppend sourceLocal baseEnv.v } exprs ≠
+      (last, .err (.abort .typeError))) :
+    LocalExpressionListStep interp transform genv start finish other source flat
+      { baseEnv with v := nsAppend sourceLocal baseEnv.v } flatEnv trace
+      { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v } gen exprs := by
+  exact boundedEnvListStep_of_each interp transform source.clock exprs
+    (fun expr _ => (factoredAllBounded (F := F) interp transform source.clock).1 expr)
+    genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen
+    (Nat.le_refl _) localRel envInv tracesLen invariant generation safe
+
+/-- Arbitrary source match rows satisfy the preliminary simulation under the
+compiled-row safety condition; HOL correspondence remains under review. -/
+theorem factoredEvaluateMatch_all {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : State F) (flat : FlatSem.State C F) (baseEnv : SemEnv Value)
+    (sourceLocal : Namespace ModN VarN Value) (flatEnv : FlatSem.Environment FlatSem.Value)
+    (traces : List BackendCommon.Tra) (trace : List VarN) (baseMap : Environment) (gen : EnvironmentGenerationStore)
+    (localRel : EnvRel genv sourceLocal flatEnv.v)
+    (envInv : GlobalEnvInv genv baseMap (fun n => n ∈ flatEnv.v.map Prod.fst) baseEnv)
+    (tracesLen : traces.length = flatEnv.v.length)
+    (invariant : factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (generation : envGenRel gen source.evalState)
+    (value errorValue : Value) (flatValue flatError : FlatSem.Value)
+    (valueRel : ValueRel genv value flatValue) (errorRel : ValueRel genv errorValue flatError)
+    (rows : List (Pat × AstHOL.Exp))
+    (flatSafe : FlatSem.pmatchRows
+      (compilePes trace { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v } rows)
+      flat flatValue ≠ .typeError)
+    (safe : ∀ last, EvaluateHOL.evaluateMatch source { baseEnv with v := nsAppend sourceLocal baseEnv.v }
+      value rows errorValue ≠ (last, .err (.abort .typeError)))
+    :
+    let sourceResult := EvaluateHOL.evaluateMatch source { baseEnv with v := nsAppend sourceLocal baseEnv.v } value rows errorValue
+    let flatResult := flatEvaluateMatch flatEnv flat flatValue flatError
+      (compilePes trace { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v } rows)
+    ∃ nextGenv, (EvalResultRel nextGenv sourceResult.2 flatResult.2 ∧ StateRel nextGenv sourceResult.1 flatResult.1) ∧
+      match sourceResult.2 with
+      | .err (.abort _) => True
+      | _ => GlobalGrowth genv nextGenv ∧
+          factoredInvariant interp transform gen nextGenv (start, finish, other) sourceResult.1 flatResult.1 ∧
+          envGenRel gen sourceResult.1.evalState ∧ oracForwardRel interp source.evalState sourceResult.1.evalState := by
+  exact boundedEvaluateMatch_related_flatSafe interp transform source.clock genv start finish other
+    source flat baseEnv sourceLocal flatEnv traces trace baseMap gen (Nat.le_refl _) localRel envInv tracesLen
+    invariant generation value errorValue flatValue flatError valueRel errorRel rows flatSafe safe
+    (fun _ body _ => (factoredAllBounded (F := F) interp transform source.clock).1 body)
+
+
 end Flapjack.Compiler.Backend.SourceToFlat
