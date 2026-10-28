@@ -103,6 +103,87 @@ theorem globalsRel_trans (reachable : NumSet) (first middle last : List (Option 
   · intro n bound empty
     exact empty2 n bound (empty1 n (by omega) empty)
 
+/-- Initializing the same empty slot in related global lists preserves their
+relation when the initialized value is closed and Eval-free. -/
+theorem globalsRel_set_init (reachable : NumSet) (source target : List (Option FlatSem.Value))
+    (index : Nat) (value : FlatSem.Value) (related : globalsRel reachable source target)
+    (sourceEmpty : source[index]? = some none) (targetEmpty : target[index]? = some none)
+    (safe : valueHasEval value = false) (closed : globalsWithin (findValueGlobals value) reachable) :
+    globalsRel reachable (source.set index (some value)) (target.set index (some value)) := by
+  have sourceBound : index < source.length := (List.getElem?_eq_some_iff.mp sourceEmpty).choose
+  have targetBound : index < target.length := (List.getElem?_eq_some_iff.mp targetEmpty).choose
+  obtain ⟨lengths, same, present, empty, contents⟩ := related
+  refine ⟨by simpa using lengths, ?_, ?_, ?_, ?_⟩
+  · intro n reachableN bound
+    simp only [List.length_set] at bound
+    by_cases eq : n = index
+    · subst n
+      simp [sourceBound, targetBound]
+    · simpa [List.getElem?_set_ne (Ne.symm eq)] using same n reachableN bound
+  · intro n v bound found
+    simp only [List.length_set] at bound
+    by_cases eq : n = index
+    · subst n
+      simpa [sourceBound, targetBound] using found
+    · simp only [List.getElem?_set_ne (Ne.symm eq)] at found ⊢
+      exact present n v bound found
+  · intro n bound isEmpty
+    simp only [List.length_set] at bound
+    by_cases eq : n = index
+    · subst n
+      simp [sourceBound] at isEmpty
+    · simp only [List.getElem?_set_ne (Ne.symm eq)] at isEmpty ⊢
+      exact empty n bound isEmpty
+  · intro n v reachableN bound found
+    simp only [List.length_set] at bound
+    by_cases eq : n = index
+    · subst n
+      simp [targetBound] at found
+      subst v
+      exact ⟨safe, closed⟩
+    · simp only [List.getElem?_set_ne (Ne.symm eq)] at found
+      exact contents n v reachableN bound found
+
+/-- Extending both global lists with empty slots preserves the elimination
+relation. This is a Flapjack helper for global allocation. -/
+theorem globalsRel_append_empty (reachable : NumSet) (source target : List (Option FlatSem.Value))
+    (count : Nat) (related : globalsRel reachable source target) :
+    globalsRel reachable (source ++ List.replicate count none) (target ++ List.replicate count none) := by
+  obtain ⟨lengths, same, present, empty, contents⟩ := related
+  have sourceExtra (n : Nat) (bound : source.length ≤ n) :
+      (source ++ List.replicate count none)[n]?.getD none = none := by
+    rw [List.getElem?_append_right bound, List.getElem?_replicate]
+    split <;> rfl
+  have targetExtra (n : Nat) (bound : target.length ≤ n) :
+      (target ++ List.replicate count none)[n]?.getD none = none := by
+    rw [List.getElem?_append_right bound, List.getElem?_replicate]
+    split <;> rfl
+  refine ⟨by simp [lengths], ?_, ?_, ?_, ?_⟩
+  · intro n reachableN bound
+    by_cases old : n < target.length
+    · have sourceOld : n < source.length := by omega
+      simpa [List.getElem?_append_left old, List.getElem?_append_left sourceOld] using same n reachableN old
+    · rw [sourceExtra n (by omega), targetExtra n (by omega)]
+  · intro n v bound found
+    by_cases old : n < target.length
+    · have sourceOld : n < source.length := by omega
+      simp only [List.getElem?_append_left old] at found
+      simpa [List.getElem?_append_left sourceOld] using present n v old found
+    · rw [targetExtra n (by omega)] at found
+      contradiction
+  · intro n bound isEmpty
+    by_cases old : n < target.length
+    · have sourceOld : n < source.length := by omega
+      simp only [List.getElem?_append_left sourceOld] at isEmpty
+      simpa [List.getElem?_append_left old] using empty n old isEmpty
+    · exact targetExtra n (by omega)
+  · intro n v reachableN bound found
+    by_cases old : n < target.length
+    · simp only [List.getElem?_append_left old] at found
+      exact contents n v reachableN old found
+    · rw [targetExtra n (by omega)] at found
+      contradiction
+
 /-- Stores contain no dynamic Eval values, including in reference and thunk
 payloads. This helper expands the original store-value list traversal. -/
 def storeHasNoEval (refs : List (Flapjack.SemanticPrimitivesHOL.StoreValue FlatSem.Value)) : Prop :=
