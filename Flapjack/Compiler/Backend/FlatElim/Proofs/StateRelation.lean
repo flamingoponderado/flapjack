@@ -145,6 +145,29 @@ theorem flatStateRel_setRefs {C F : Type} (reachable : NumSet) (source target : 
   · exact findRefsGlobals_set_within source.refs index value reachable refsReachable valueReachable
   · exact storeHasNoEval_set source.refs index value refsSafe valueSafe
 
+/-- Allocating the same Eval-free, reachable entry preserves related states.
+This Flapjack helper applies to reference, array, and thunk allocation. -/
+theorem flatStateRel_appendRef {C F : Type} (reachable : NumSet) (source target : FlatSem.State C F)
+    (value : Flapjack.SemanticPrimitivesHOL.StoreValue FlatSem.Value)
+    (related : flatStateRel reachable source target)
+    (valueReachable : globalsWithin (storeValueGlobals value) reachable)
+    (valueSafe : storeHasNoEval [value]) :
+    flatStateRel reachable { source with refs := source.refs ++ [value] }
+      { target with refs := target.refs ++ [value] } := by
+  obtain ⟨clock, refs, ffi, globals, refsReachable, refsSafe⟩ := related
+  refine ⟨clock, by simp [refs], ffi, globals, ?_, ?_⟩
+  · apply (findRefsGlobals_within_iff _ _).mpr
+    intro ref member
+    rcases List.mem_append.mp member with old | new
+    · exact (findRefsGlobals_within_iff _ _).mp refsReachable ref old
+    · have : ref = value := by simpa using new
+      subst ref
+      exact valueReachable
+  · intro ref member
+    rcases List.mem_append.mp member with old | new
+    · exact refsSafe ref old
+    · exact valueSafe ref new
+
 /-- The flat state relation composes for a fixed reachable set. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "flat_state_rel_trans"]
 theorem flatStateRel_trans {C F : Type} (reachable : NumSet) (first middle last : FlatSem.State C F)
