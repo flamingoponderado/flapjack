@@ -947,6 +947,64 @@ theorem factoredCompileProg_initial {C F : Type} [Nonempty C]
   · simpa [emptyStore, emptyConfig] using initEvalStateOk_envGenRel source.evalState initialEval
   · exact compileProg_envGenFutureRel interp source.evalState config decs n next outEnv outGen body compiled oracleConfig
 
+/-- Whole-program preconditions over the factored global environment
+relation. The relation's cross-language correspondence remains under review. -/
+noncomputable def FactoredPrecondition1 {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (source : State F) (sourceEnv : SemEnv Value) (config : Config)
+    (evalConfig : FlatSem.InstallConfig C) (decs : List Dec) : Prop :=
+  srcOracStepInvs interp transform source.evalState ∧
+  oracRel interp transform source.evalState evalConfig ∧
+  (match srcOracNextCfg interp source.evalState with
+    | none => True | some nextConfig => nextConfig = (compileProg config decs).1) ∧
+  config.next.vidx = 0 ∧ source.refs = [] ∧
+  FactoredInitGlobalEnvInv initGenv config.modEnv sourceEnv ∧
+  initEvalStateOk source.evalState ∧ idxPrev initGenvNext config.next ∧
+  (∀ entry ∈ initGenvEntries, match entry.2 with
+    | .typeStamp _ index => index < source.nextTypeStamp
+    | .exnStamp index => index < source.nextExnStamp) ∧
+  config.envs = emptyConfig.envs
+
+/-- Whole-program simulation in the original existential result shape, over
+the preliminary factored relations and precondition. -/
+theorem factoredCompileProg_correct {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (source sourceLast : State F) (sourceEnv : SemEnv Value) (config outputConfig : Config)
+    (evalConfig : FlatSem.InstallConfig C) (decs : List Dec) (flatDecs : List FlatLang.Exp)
+    (result : Result (SemEnv Value) Value)
+    (precondition : FactoredPrecondition1 interp transform source sourceEnv config evalConfig decs)
+    (compiled : compileProg config decs = (outputConfig, flatDecs))
+    (sourceRun : EvaluateHOL.evaluateDecs source sourceEnv decs = (sourceLast, result))
+    (safe : result ≠ .err (.abort .typeError)) :
+    ∃ finalFlat nextGenv flatError,
+      FlatSem.evaluateDecs ⟨source.clock, [], source.ffi, [], evalConfig⟩ flatDecs = (finalFlat, flatError) ∧
+      StateRel nextGenv sourceLast finalFlat ∧
+      (∀ resultEnv, result = .val resultEnv → flatError = none) ∧
+      (∀ error, result = .err error → ∃ flatErr, flatError = some flatErr ∧
+        flatErr ≠ .abort .typeError ∧
+        ResultRel (fun _ (_ : SemEnv Value) (_ : Unit) => True) nextGenv (.err error) (.err flatErr)) := by
+  obtain ⟨steps, oracle, oracleConfig, startVar, sourceRefs, initialEnv, initialEval, initialIdx, stamps, emptyStore⟩ :=
+    precondition
+  generalize bodyCompiled : compileDecs [] 1 { config.next with vidx := config.next.vidx + 1 } config.modEnv
+    ⟨0, config.envs.next, .ln⟩ decs = compiledResult
+  obtain ⟨n, next, outEnv, outGen, body⟩ := compiledResult
+  have actual := factoredCompileProg_initial interp transform config decs sourceEnv source sourceLast
+    (⟨source.clock, [], source.ffi, [], evalConfig⟩ : FlatSem.State C F)
+    n next outEnv outGen body result bodyCompiled sourceRun rfl rfl initialEnv safe startVar initialIdx emptyStore
+    initialEval steps oracle stamps sourceRefs rfl rfl oracleConfig
+  obtain ⟨finalFlat, nextGenv, flatError, flatRun, states, success, errors⟩ := actual
+  refine ⟨finalFlat, nextGenv, flatError, ?_, states, ?_, ?_⟩
+  · simpa [compiled] using flatRun
+  · intro resultEnv resultEq
+    exact (success resultEnv resultEq).1
+  · intro error resultEq
+    obtain ⟨flatErr, flatEq, related⟩ := errors error resultEq
+    refine ⟨flatErr, flatEq, ?_, related⟩
+    intro flatTypeError
+    subst flatErr
+    cases related
+    exact safe resultEq
+
 /-- Match-row result in existential form, over the preliminary factored
 relations and the compiled-row safety premise. -/
 theorem factoredCompileMatch {C F : Type} [Nonempty C]
