@@ -332,6 +332,10 @@ run_probe source_to_flat_init_probeScript.sml source_to_flat_init_probe.out \
   eval_state_ok type_entries constructor_entries initial_env initial_next initial_global_inv initial_global_imp initial_env_ok initial_types_ok keep_global_allocation elimination_keep incremental_nonempty flat_initial_state flat_semantics compile_flat compile incremental_compile evaluated_entries evaluated_next incremental_empty \
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe flat_pattern_global_flag_probeScript.sml flat_pattern_global_flag_probe.out \
+  operator_global_flag expression_global_flag tuple_global_flag global_bag_list_empty \
+  "$cake_dir/compiler/backend/proofs/flat_patternProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe flat_elim_closure_probeScript.sml flat_elim_closure_probe.out \
   closure_definition fold_domain adjacent reachable closure_reachable tree_union_lookup tree_union_symmetric adjacent_union reachable_union noncanonical_subset noncanonical_closure \
   "$hol_dir/examples/algorithms/spt_closureScript.sml" "$cake_dir/compiler/backend"

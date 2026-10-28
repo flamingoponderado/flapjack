@@ -1,6 +1,38 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+    "hol_name": "elist_globals_eq_empty",
+    "lean_path": "Flapjack/Compiler/Backend/FlatProps/GlobalBagProperties.lean",
+    "lean_name": "elistGlobals_eq_empty",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out. Expression carriers and full declaration review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+    "hol_name": "op_sets_globals_gbag",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalFlag.lean",
+    "lean_name": "opSetsGlobals_gbag",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out. Compiler and carrier review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+    "hol_name": "compile_exp_set_globals_FST_SND",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalFlag.lean",
+    "lean_name": "compileExp_setGlobals_flag",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out. Compiler and carrier review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+    "hol_name": "compile_exp_set_globals_tup",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GlobalFlag.lean",
+    "lean_name": "compileExp_setGlobals_tuple",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out. Compiler and carrier review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
     "hol_name": "op_gbag_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatProps/Globals.lean",
     "lean_name": "opGlobalBag",

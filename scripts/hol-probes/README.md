@@ -1,3 +1,5 @@
+`flat_pattern_global_flag_probe.out` captures the typed original operator, expression, list and row global-write flag theorems and the flat global-bag empty-list theorem. Lean kernel-checks corresponding statements; full source and carrier review remains pending.
+
 `source_to_flat_opassign_probe.out` captures successful and invalid original assignments on source and flat stores with the reserved-entry offset. Lean proves expression-level assignment simulation, including reversed operand evaluation, under the source non-type-error condition and preliminary relations; the observation is not a cross-language equivalence proof.
 
 `source_to_flat_opderef_probe.out` captures successful and invalid original reference dereferences on source and flat stores with the one-slot offset. Lean proves expression-level dereference simulation under the source non-type-error condition and preliminary relations; the observation is not a cross-language equivalence proof.
