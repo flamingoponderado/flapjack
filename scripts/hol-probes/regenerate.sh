@@ -333,7 +333,7 @@ run_probe source_to_flat_init_probeScript.sml source_to_flat_init_probe.out \
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe flat_pattern_global_flag_probeScript.sml flat_pattern_global_flag_probe.out \
-  operator_global_flag expression_global_flag tuple_global_flag global_bag_list_empty \
+  operator_global_flag expression_global_flag tuple_global_flag global_bag_list_empty sum_string_ords generated_name_aux generated_name_roundtrip generated_name_injective \
   "$cake_dir/compiler/backend/proofs/flat_patternProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe flat_elim_closure_probeScript.sml flat_elim_closure_probe.out \

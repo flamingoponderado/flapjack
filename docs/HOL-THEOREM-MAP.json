@@ -1,5 +1,37 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+    "hol_name": "sum_string_ords_eq",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GeneratedNames.lean",
+    "lean_name": "sumStringOrds_eq",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out. Name and carrier review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+    "hol_name": "dec_enc_aux",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GeneratedNames.lean",
+    "lean_name": "decEncAux",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out. Name and carrier review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+    "hol_name": "dec_enc",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GeneratedNames.lean",
+    "lean_name": "decEnc",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out. Name and carrier review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+    "hol_name": "enc_num_to_name_inj",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/GeneratedNames.lean",
+    "lean_name": "encNumToName_inj",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_pattern_global_flag_probe.out. Name and carrier review remain pending."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
     "hol_name": "elist_globals_eq_empty",
     "lean_path": "Flapjack/Compiler/Backend/FlatProps/GlobalBagProperties.lean",
