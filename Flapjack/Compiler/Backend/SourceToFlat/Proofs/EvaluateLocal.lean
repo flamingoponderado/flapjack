@@ -10,6 +10,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingLog
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingArith
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalArray
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedArrayTree
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.Initialization
 
 /-! Local declaration simulation over the preliminary factored relations. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat

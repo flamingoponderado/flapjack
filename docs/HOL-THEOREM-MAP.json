@@ -1,6 +1,50 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "init_eval_state_ok_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/Initialization.lean",
+    "lean_name": "initEvalStateOk",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original definitions and evaluated initial values captured in source_to_flat_init_probe.out; full carrier and representation review remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "init_genv_ty_els_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/Initialization.lean",
+    "lean_name": "initGenvTyEntries",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original definitions and evaluated initial values captured in source_to_flat_init_probe.out; full carrier and representation review remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "init_genv_els_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/Initialization.lean",
+    "lean_name": "initGenvEntries",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original definitions and evaluated initial values captured in source_to_flat_init_probe.out; full carrier and representation review remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "init_genv_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/Initialization.lean",
+    "lean_name": "initGenv",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "c",
+      "tys"
+    ],
+    "reviewer": "Compared the typed init_genv_def capture: v is empty, c is FUPDATE_LIST of init_genv_els and tys is FUPDATE_LIST of init_genv_ty_els after dropping stamps. Both fields use the canonical finite-support carrier and the same-module GlobalEnv roundtrip witness; captured lookup values agree."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
+    "hol_name": "init_genv_next",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/Initialization.lean",
+    "lean_name": "initGenvNext",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original definitions and evaluated initial values captured in source_to_flat_init_probe.out; full carrier and representation review remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "env_domain_eq_append",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/EnvironmentDomain.lean",
     "lean_name": "envDomainEq_append",

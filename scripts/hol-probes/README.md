@@ -9095,3 +9095,8 @@ independent source value type and all four domain equalities. The capture is
 source-review evidence, not a cross-language equivalence proof. It also
 replays the local `env_domain_eq_append` theorem with inferred types and no
 HOL hypotheses.
+
+`source_to_flat_init_probe.out` captures the typed original source-to-flat
+initialization definitions and evaluates the initial constructor entries and
+next indices. It supports source review and finite regression checks; it is not
+a cross-language equivalence proof.
