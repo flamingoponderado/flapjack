@@ -336,6 +336,10 @@ run_probe flat_elim_closure_probeScript.sml flat_elim_closure_probe.out \
   closure_definition noncanonical_subset noncanonical_closure \
   "$hol_dir/examples/algorithms/spt_closureScript.sml" "$cake_dir/compiler/backend"
 
+run_probe flat_elim_value_globals_probeScript.sml flat_elim_value_globals_probe.out \
+  value_globals refs_globals env_globals result_globals primitive_result_globals value_has_eval globals_relation globals_transitivity state_relation state_transitivity closure_lookup tuple_lookup closure_eval \
+  "$cake_dir/compiler/backend/proofs/flat_elimProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe source_to_flat_env_domain_probeScript.sml source_to_flat_env_domain_probe.out \
   env_domain_type env_domain_definition env_domain_append \
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"

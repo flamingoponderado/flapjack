@@ -9108,3 +9108,8 @@ result for a noncanonical sparse tree with no stored keys. The Lean regression
 checks this case and the lookup-level subset theorem covers all unit trees.
 Lean also proves the executable fuel bound is sufficient; full pass
 correspondence remains a separate obligation.
+
+`flat_elim_value_globals_probe.out` captures the typed value and store
+dependency analyses, Eval detection, and elimination state relations, with
+sample closure and tuple lookups. The Lean relation ports remain pending full
+carrier and dependency review.

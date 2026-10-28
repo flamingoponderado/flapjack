@@ -275,6 +275,8 @@ import Flapjack.Compiler.Backend.SourceToFlat.CompileDecs
 import Flapjack.Compiler.Backend.SourceToFlat.CompileProg
 import Flapjack.Compiler.Backend.FlatElim.Reachability
 import Flapjack.Compiler.Backend.FlatElim.Proofs.Reachability
+import Flapjack.Compiler.Backend.FlatElim.Proofs.ValueGlobals
+import Flapjack.Compiler.Backend.FlatElim.Proofs.StateRelation
 import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
 import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode

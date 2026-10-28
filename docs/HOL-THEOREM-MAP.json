@@ -1,5 +1,93 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "find_v_globals_def",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ValueGlobals.lean",
+    "lean_name": "findValueGlobals",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original clauses captured in flat_elim_value_globals_probe.out; complete mutual-carrier and dependency review remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "find_v_globals_def",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ValueGlobals.lean",
+    "lean_name": "findValuesGlobals",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original clauses captured in flat_elim_value_globals_probe.out; complete mutual-carrier and dependency review remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "find_refs_globals_def",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ValueGlobals.lean",
+    "lean_name": "findRefsGlobals",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original clauses captured in flat_elim_value_globals_probe.out; complete mutual-carrier and dependency review remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "find_env_globals_def",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ValueGlobals.lean",
+    "lean_name": "findEnvGlobals",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original clauses captured in flat_elim_value_globals_probe.out; complete mutual-carrier and dependency review remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "find_result_globals_def",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ValueGlobals.lean",
+    "lean_name": "findResultGlobals",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original clauses captured in flat_elim_value_globals_probe.out; complete mutual-carrier and dependency review remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "find_sem_prim_res_globals_def",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ValueGlobals.lean",
+    "lean_name": "findPrimitiveResultGlobals",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original clauses captured in flat_elim_value_globals_probe.out; complete mutual-carrier and dependency review remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "v_has_Eval_def1",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ValueGlobals.lean",
+    "lean_name": "valueHasEval",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original clauses captured in flat_elim_value_globals_probe.out; complete mutual-carrier and dependency review remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "globals_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/StateRelation.lean",
+    "lean_name": "globalsRel",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original clauses captured in flat_elim_value_globals_probe.out; complete mutual-carrier and dependency review remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "globals_rel_trans",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/StateRelation.lean",
+    "lean_name": "globalsRel_trans",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original clauses captured in flat_elim_value_globals_probe.out; complete mutual-carrier and dependency review remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "flat_state_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/StateRelation.lean",
+    "lean_name": "flatStateRel",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original clauses captured in flat_elim_value_globals_probe.out; complete mutual-carrier and dependency review remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "flat_state_rel_trans",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/StateRelation.lean",
+    "lean_name": "flatStateRel_trans",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original clauses captured in flat_elim_value_globals_probe.out; complete mutual-carrier and dependency review remains pending."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/source_to_flatProofScript.sml",
     "hol_name": "keep_glob_alloc",
     "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Proofs/Elimination.lean",

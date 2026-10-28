@@ -299,6 +299,7 @@ import Flapjack.Test.LabToTargetCompileParity
 import Flapjack.Test.SourceToFlatPrimConfigParity
 import Flapjack.Test.SourceToFlatCompileProg
 import Flapjack.Test.FlatElim
+import Flapjack.Test.FlatElimValueGlobals
 import Flapjack.Test.CakeMLControlFlowParity
 import Flapjack.Test.CakeMLRiscVPartial
 import Flapjack.Test.CakeMLNamesParity
