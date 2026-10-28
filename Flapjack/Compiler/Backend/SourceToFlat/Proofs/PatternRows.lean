@@ -81,6 +81,36 @@ theorem canPmatchAll_rows_noTypeError {C F : Type} (genv : GlobalEnv)
       | noMatch => simp
       | «match» result => simp
 
+/-- A flat row selected by pattern matching binds exactly the names of its
+selected pattern, in order. -/
+theorem flatPmatchRows_bindingNames {C F E : Type} (state : FlatSem.State C F)
+    (value : FlatSem.Value) (rows : List (FlatLang.Pat × E))
+    (bindings : List (VarN × FlatSem.Value)) (pattern : FlatLang.Pat) (body : E)
+    (selected : FlatSem.pmatchRows rows state value = .match (bindings, pattern, body)) :
+    bindings.map Prod.fst = FlatLang.patBindings pattern := by
+  induction rows with
+  | nil => simp [FlatSem.pmatchRows] at selected
+  | cons row rest ih =>
+    obtain ⟨headPattern, headBody⟩ := row
+    cases matched : FlatSem.pmatch state headPattern value [] with
+    | typeError => simp [FlatSem.pmatchRows, matched] at selected
+    | noMatch =>
+      apply ih
+      simpa [FlatSem.pmatchRows, matched] using selected
+    | «match» found =>
+      cases restResult : FlatSem.pmatchRows rest state value with
+      | typeError => simp [FlatSem.pmatchRows, matched, restResult] at selected
+      | noMatch =>
+        simp only [FlatSem.pmatchRows, matched, restResult, MatchResult.match.injEq, Prod.mk.injEq] at selected
+        obtain ⟨rfl, rfl, rfl⟩ := selected
+        have names := (FlatProps.pmatchBindings state).1 headPattern value [] found matched
+        simpa using names
+      | «match» other =>
+        simp only [FlatSem.pmatchRows, matched, restResult, MatchResult.match.injEq, Prod.mk.injEq] at selected
+        obtain ⟨rfl, rfl, rfl⟩ := selected
+        have names := (FlatProps.pmatchBindings state).1 headPattern value [] found matched
+        simpa using names
+
 /-- Select the first source pattern that matches. This comparison helper does
 not perform the separate all-row type check or the duplicate-binding check. -/
 def sourcePmatchRows {F : Type} (env : SemEnv SemanticPrimitivesHOL.Value)
