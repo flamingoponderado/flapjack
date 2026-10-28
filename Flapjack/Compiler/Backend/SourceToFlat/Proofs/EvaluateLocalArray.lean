@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalMatch
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalCall
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedControl
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedMatch
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedTree
 
 /-! Array primitive simulation in arbitrary related local environments.
 These factored relations remain pending HOL correspondence review. -/
