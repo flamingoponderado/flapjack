@@ -1,3 +1,7 @@
 closure_definition=∀(tree :sptree$num_set sptree$num_map) (reachable :sptree$num_set). closure_spt reachable tree = (let (sets :sptree$num_set sptree$num_map) = inter tree reachable; (nodes :sptree$num_set) = spt_fold (union :sptree$num_set -> sptree$num_set -> sptree$num_set) (LN :sptree$num_set) sets in if subspt nodes reachable then reachable else closure_spt (union reachable nodes) tree)
+fold_domain=∀(tree :α sptree$num_map sptree$num_map) (y :α sptree$num_map). (domain (spt_fold (union :α sptree$num_map -> α sptree$num_map -> α sptree$num_map) y tree) :num -> bool) = (domain y :num -> bool) ∪ {n | ∃(k :num) (aSet :α sptree$num_map). lookup k tree = SOME aSet ∧ n ∈ (domain aSet :num -> bool)}
+adjacent=∀(tree :sptree$num_set sptree$num_map) (x :num) (y :num). is_adjacent tree x y ⇔ ∃(aSetx :sptree$num_set). lookup x tree = SOME aSetx ∧ lookup y aSetx = SOME ()
+reachable=∀(tree :sptree$num_set sptree$num_map). is_reachable tree = (is_adjacent tree)꙳
+closure_reachable=∀(tree :sptree$num_set sptree$num_map) (start :sptree$num_set). (domain (closure_spt start tree) :num -> bool) = {a | ∃(n :num). n ∈ (domain start :num -> bool) ∧ is_reachable tree n a}
 noncanonical_subset=T
 noncanonical_closure=⦕ 0 ⦖

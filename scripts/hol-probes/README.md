@@ -9103,8 +9103,9 @@ flat pass order, and the empty incremental compiler output.
 It supports source review and finite regression checks; it is not
 a cross-language equivalence proof.
 
-`flat_elim_closure_probe.out` captures the original closure equation and its
-result for a noncanonical sparse tree with no stored keys. The Lean regression
+`flat_elim_closure_probe.out` captures the original closure equation, typed
+fold and reachability statements, and its result for a noncanonical sparse tree
+with no stored keys. The Lean regression
 checks this case and the lookup-level subset theorem covers all unit trees.
 Lean also proves the executable fuel bound is sufficient; full pass
 correspondence remains a separate obligation.

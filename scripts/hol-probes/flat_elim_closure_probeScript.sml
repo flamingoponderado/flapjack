@@ -7,5 +7,9 @@ fun show_thm label th =
   else raise Fail (label ^ " has hypotheses");
 fun show_eval label tm = (print label; print_term (rhs (concl (EVAL tm))); print "\n");
 val _ = show_thm "closure_definition=" spt_closureTheory.closure_spt_def;
+val _ = show_thm "fold_domain=" spt_closureTheory.domain_spt_fold_union;
+val _ = show_thm "adjacent=" spt_closureTheory.is_adjacent_def;
+val _ = show_thm "reachable=" spt_closureTheory.is_reachable_def;
+val _ = show_thm "closure_reachable=" spt_closureTheory.closure_spt_thm;
 val _ = show_eval "noncanonical_subset=" ``sptree$subspt (sptree$BN sptree$LN sptree$LN : unit sptree$spt) (sptree$LS ())``;
 val _ = show_eval "noncanonical_closure=" ``spt_closure$closure_spt (sptree$LS ()) (sptree$LS (sptree$BN sptree$LN sptree$LN : unit sptree$spt))``;

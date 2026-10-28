@@ -64,7 +64,7 @@ def removeUnreachable (reachable : NumSet) (code : List Exp) : List Exp :=
 def hasEvalDec (e : Exp) : Bool := hasEval e
 
 /-- The original `spt_fold` order specialized to unioning sets. -/
-def foldUnion (acc : NumSet) : Spt NumSet → NumSet
+def foldUnion {α : Type} (acc : Spt α) : Spt (Spt α) → Spt α
   | .ln => acc
   | .ls a => sptUnion a acc
   | .bn l r => foldUnion (foldUnion acc l) r

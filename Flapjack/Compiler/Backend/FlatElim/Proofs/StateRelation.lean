@@ -1,7 +1,38 @@
 import Flapjack.Compiler.Backend.FlatElim.Proofs.ValueGlobals
+import Flapjack.Compiler.Backend.FlatElim.Proofs.Reachability
 
 /-! State relation used by the flat dead-code elimination proof. -/
 namespace Flapjack.Compiler.Backend.FlatElim
+
+/-- The analysis roots are reachable and reachability is closed under the
+program's dependency graph. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "decs_closed_def"]
+def decsClosed (reachable : NumSet) (decs : List FlatLang.Exp) : Prop :=
+  ∀ roots tree, analyseCode decs = (roots, tree) →
+    (∀ key, sptMem key roots → sptMem key reachable) ∧
+    ∀ source target, sptMem source reachable → isReachable tree source target → sptMem target reachable
+
+/-- The calculated closure satisfies the original closed-declaration
+condition for the program it analyses. This is a helper for the elimination
+simulation, not a separately named HOL theorem. -/
+theorem decsClosed_analysisClosure (decs : List FlatLang.Exp) (roots : NumSet) (tree : Spt NumSet)
+    (analysis : analyseCode decs = (roots, tree)) : decsClosed (closureTotal roots tree) decs := by
+  intro roots' tree' eq
+  rw [analysis] at eq
+  cases eq
+  have domain := closureTotal_reachable tree roots
+  constructor
+  · intro key member
+    change sptDomain (closureTotal roots tree) key
+    rw [domain]
+    exact ⟨key, member, .refl⟩
+  · intro source target member path
+    change sptDomain (closureTotal roots tree) source at member
+    rw [domain] at member
+    obtain ⟨root, rootMem, prior⟩ := member
+    change sptDomain (closureTotal roots tree) target
+    rw [domain]
+    exact ⟨root, rootMem, prior.trans path⟩
 
 /-- Relate the original global list to the list after unreachable entries are
 removed, retaining every reachable value and its closed dependency set. -/

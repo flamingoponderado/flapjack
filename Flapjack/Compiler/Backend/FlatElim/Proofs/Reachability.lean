@@ -6,25 +6,94 @@ import Aesop
 /-! Dependency bounds for flat elimination closure. -/
 namespace Flapjack.Compiler.Backend.FlatElim
 
+/-- A dependency edge looks up the source key and then the target key in its
+stored set. -/
+@[hol "HOL/examples/algorithms/spt_closureScript.sml" "is_adjacent_def"]
+def isAdjacent (tree : Spt NumSet) (source target : Nat) : Prop :=
+  ∃ targets, sptLookup source tree = some targets ∧ sptLookup target targets = some ()
+
+/-- Reflexive transitive reachability through dependency edges. -/
+@[hol "HOL/examples/algorithms/spt_closureScript.sml" "is_reachable_def"]
+def isReachable (tree : Spt NumSet) : Nat → Nat → Prop :=
+  Relation.ReflTransGen (isAdjacent tree)
+
 /-- Payload sets contained in a sparse dependency tree. This list is used
 only to reason about the executed tree fold. -/
-def dependencySets : Spt NumSet → List NumSet
+def dependencySets {α : Type} : Spt (Spt α) → List (Spt α)
   | .ln => []
   | .ls value => [value]
   | .bn left right => dependencySets left ++ dependencySets right
   | .bs left value right => dependencySets left ++ value :: dependencySets right
 
-private theorem dependencySets_mkBN (left right : Spt NumSet) :
+/-- A successful sparse-tree lookup identifies one of its payload sets. -/
+theorem dependencySets_of_lookup {α : Type} (tree : Spt (Spt α)) (key : Nat) (values : Spt α)
+    (found : sptLookup key tree = some values) : values ∈ dependencySets tree := by
+  induction tree generalizing key with
+  | ln => simp [sptLookup] at found
+  | ls value =>
+    by_cases zero : key = 0 <;> simp [sptLookup, zero] at found
+    subst values
+    simp [dependencySets]
+  | bn left right ihLeft ihRight =>
+    by_cases zero : key = 0
+    · simp [sptLookup, zero] at found
+    · by_cases even : key % 2 = 0
+      · have nested : sptLookup ((key - 1) / 2) left = some values := by
+          simpa [sptLookup, zero, even] using found
+        exact List.mem_append_left _ (ihLeft _ nested)
+      · have nested : sptLookup ((key - 1) / 2) right = some values := by
+          simpa [sptLookup, zero, even] using found
+        exact List.mem_append_right _ (ihRight _ nested)
+  | bs left value right ihLeft ihRight =>
+    by_cases zero : key = 0
+    · simp [sptLookup, zero] at found
+      subst values
+      simp [dependencySets]
+    · by_cases even : key % 2 = 0
+      · have nested : sptLookup ((key - 1) / 2) left = some values := by
+          simpa [sptLookup, zero, even] using found
+        simp [dependencySets, ihLeft _ nested]
+      · have nested : sptLookup ((key - 1) / 2) right = some values := by
+          simpa [sptLookup, zero, even] using found
+        simp [dependencySets, ihRight _ nested]
+
+/-- Every dependency-set payload is found at some sparse-tree key. -/
+theorem lookup_of_dependencySets {α : Type} (tree : Spt (Spt α)) (values : Spt α)
+    (member : values ∈ dependencySets tree) : ∃ key, sptLookup key tree = some values := by
+  induction tree with
+  | ln => simp [dependencySets] at member
+  | ls value =>
+    simp [dependencySets] at member
+    subst values
+    exact ⟨0, rfl⟩
+  | bn left right ihLeft ihRight =>
+    simp only [dependencySets, List.mem_append] at member
+    rcases member with member | member
+    · obtain ⟨key, found⟩ := ihLeft member
+      exact ⟨2 * key + 2, by simpa [sptLookup_left_bn] using found⟩
+    · obtain ⟨key, found⟩ := ihRight member
+      exact ⟨2 * key + 1, by simpa [sptLookup_right_bn] using found⟩
+  | bs left value right ihLeft ihRight =>
+    simp only [dependencySets, List.mem_append, List.mem_cons] at member
+    rcases member with member | equal | member
+    · obtain ⟨key, found⟩ := ihLeft member
+      exact ⟨2 * key + 2, by simpa [sptLookup_left_bs] using found⟩
+    · subst values
+      exact ⟨0, rfl⟩
+    · obtain ⟨key, found⟩ := ihRight member
+      exact ⟨2 * key + 1, by simpa [sptLookup_right_bs] using found⟩
+
+private theorem dependencySets_mkBN {α : Type} (left right : Spt (Spt α)) :
     dependencySets (sptMkBN left right) = dependencySets left ++ dependencySets right := by
   cases left <;> cases right <;> rfl
 
-private theorem dependencySets_mkBS (left : Spt NumSet) (value : NumSet) (right : Spt NumSet) :
+private theorem dependencySets_mkBS {α : Type} (left : Spt (Spt α)) (value : Spt α) (right : Spt (Spt α)) :
     dependencySets (sptMkBS left value right) = dependencySets left ++ value :: dependencySets right := by
   cases left <;> cases right <;> rfl
 
 /-- The fold contains exactly the accumulator keys and the keys in its
 dependency-set payloads. -/
-theorem foldUnion_mem_iff (tree : Spt NumSet) (acc : NumSet) (key : Nat) :
+theorem foldUnion_mem_iff {α : Type} (tree : Spt (Spt α)) (acc : Spt α) (key : Nat) :
     sptMem key (foldUnion acc tree) ↔
       sptMem key acc ∨ ∃ values ∈ dependencySets tree, sptMem key values := by
   induction tree generalizing acc with
@@ -38,6 +107,57 @@ theorem foldUnion_mem_iff (tree : Spt NumSet) (acc : NumSet) (key : Nat) :
       or_and_right, exists_or, exists_eq_left, sptMem_sptUnion]
     aesop
 
+/-- The union fold's domain is the accumulator domain plus the domains of
+every payload found in the dependency tree. -/
+@[hol "HOL/examples/algorithms/spt_closureScript.sml" "domain_spt_fold_union"]
+theorem domainFoldUnion {α : Type} (tree : Spt (Spt α)) (acc : Spt α) :
+    sptDomain (foldUnion acc tree) = fun key =>
+      sptDomain acc key ∨ ∃ source values, sptLookup source tree = some values ∧ sptDomain values key := by
+  funext key
+  apply propext
+  change sptMem key (foldUnion acc tree) ↔
+    sptMem key acc ∨ ∃ source values, sptLookup source tree = some values ∧ sptMem key values
+  rw [foldUnion_mem_iff]
+  constructor
+  · rintro (accMem | ⟨values, member, inValues⟩)
+    · exact Or.inl accMem
+    · obtain ⟨source, found⟩ := lookup_of_dependencySets tree values member
+      exact Or.inr ⟨source, values, found, inValues⟩
+  · rintro (accMem | ⟨source, values, found, inValues⟩)
+    · exact Or.inl accMem
+    · exact Or.inr ⟨values, dependencySets_of_lookup tree source values found, inValues⟩
+
+/-- One closure step discovers exactly the targets adjacent to currently
+reachable source keys. -/
+theorem closureNodes_iff (tree : Spt NumSet) (reachable : NumSet) (target : Nat) :
+    sptMem target (foldUnion .ln (sptInter tree reachable)) ↔
+      ∃ source, sptMem source reachable ∧ isAdjacent tree source target := by
+  rw [foldUnion_mem_iff]
+  simp only [sptMem, sptDomain, sptLookup, Option.isSome_none, Bool.false_eq_true, false_or]
+  constructor
+  · rintro ⟨values, member, targetMem⟩
+    obtain ⟨source, found⟩ := lookup_of_dependencySets (sptInter tree reachable) values member
+    rw [sptLookup_sptInterCases] at found
+    cases sourceFound : sptLookup source tree with
+    | none => simp [sourceFound] at found
+    | some sourceValues =>
+      cases reachableFound : sptLookup source reachable with
+      | none => simp [sourceFound, reachableFound] at found
+      | some reachedValue =>
+        simp [sourceFound, reachableFound] at found
+        subst sourceValues
+        cases targetFound : sptLookup target values with
+        | none => simp [targetFound] at targetMem
+        | some targetValue =>
+          cases targetValue
+          exact ⟨source, by simp [reachableFound], values, sourceFound, targetFound⟩
+  · rintro ⟨source, reachableMem, values, sourceFound, targetFound⟩
+    cases reachableFound : sptLookup source reachable with
+    | none => simp [reachableFound] at reachableMem
+    | some reachedValue =>
+      have found : sptLookup source (sptInter tree reachable) = some values := by
+        simp [sptLookup_sptInterCases, sourceFound, reachableFound]
+      exact ⟨values, dependencySets_of_lookup _ source values found, by simp [targetFound]⟩
 /-- Intersecting a dependency tree with a key set cannot introduce a new
 dependency-set payload. -/
 theorem dependencySets_inter_subset (tree : Spt NumSet) (keys : NumSet) :
@@ -205,6 +325,83 @@ theorem closureFuel_target_eq_closure (tree : Spt NumSet) (reachable : NumSet) :
 theorem closureTotal_eq_closure (reachable : NumSet) (tree : Spt NumSet) :
     closureTotal reachable tree = closure reachable tree := by
   simp [closureTotal, closureFuel_target_eq_closure]
+
+/-- Fuelled closure preserves every input key. -/
+theorem closureFuel_preserves (tree : Spt NumSet) (fuel : Nat) (initial result : NumSet)
+    (computed : closureFuel fuel initial tree = some result) :
+    ∀ key, sptMem key initial → sptMem key result := by
+  induction fuel generalizing initial with
+  | zero => simp [closureFuel] at computed
+  | succ fuel ih =>
+    classical
+    rw [closureFuel_step] at computed
+    by_cases done : sptSubspt (foldUnion .ln (sptInter tree initial)) initial
+    · simp [done] at computed
+      subst result
+      exact fun _ member => member
+    · simp [done] at computed
+      intro key member
+      apply ih _ computed key
+      exact (sptMem_sptUnion _ _ _).mpr (Or.inl member)
+
+/-- Every key in a successful fuelled closure is reachable from an input key. -/
+theorem closureFuel_reachable (tree : Spt NumSet) (fuel : Nat) (initial result : NumSet)
+    (computed : closureFuel fuel initial tree = some result) :
+    ∀ key, sptMem key result → ∃ root, sptMem root initial ∧ isReachable tree root key := by
+  induction fuel generalizing initial with
+  | zero => simp [closureFuel] at computed
+  | succ fuel ih =>
+    classical
+    rw [closureFuel_step] at computed
+    by_cases done : sptSubspt (foldUnion .ln (sptInter tree initial)) initial
+    · simp [done] at computed
+      subst result
+      intro key member
+      exact ⟨key, member, .refl⟩
+    · simp [done] at computed
+      intro key member
+      obtain ⟨root, rootMem, path⟩ := ih _ computed key member
+      rcases (sptMem_sptUnion _ _ _).mp rootMem with rootMem | nodeMem
+      · exact ⟨root, rootMem, path⟩
+      · obtain ⟨source, sourceMem, adjacent⟩ := (closureNodes_iff tree initial root).mp nodeMem
+        exact ⟨source, sourceMem, Relation.ReflTransGen.head adjacent path⟩
+
+/-- A successful fuelled closure is closed under every dependency edge. -/
+theorem closureFuel_closed (tree : Spt NumSet) (fuel : Nat) (initial result : NumSet)
+    (computed : closureFuel fuel initial tree = some result) :
+    ∀ source target, sptMem source result → isAdjacent tree source target → sptMem target result := by
+  induction fuel generalizing initial with
+  | zero => simp [closureFuel] at computed
+  | succ fuel ih =>
+    classical
+    rw [closureFuel_step] at computed
+    by_cases done : sptSubspt (foldUnion .ln (sptInter tree initial)) initial
+    · simp [done] at computed
+      subst result
+      intro source target sourceMem adjacent
+      exact (done target ((closureNodes_iff tree initial target).mpr ⟨source, sourceMem, adjacent⟩)).1
+    · simp [done] at computed
+      exact ih _ computed
+
+/-- The executed closure contains precisely the nodes reachable from its
+input roots in the dependency graph. -/
+@[hol "HOL/examples/algorithms/spt_closureScript.sml" "closure_spt_thm"]
+theorem closureTotal_reachable (tree : Spt NumSet) (roots : NumSet) :
+    sptDomain (closureTotal roots tree) = fun key =>
+      ∃ root, sptDomain roots root ∧ isReachable tree root key := by
+  have computed := closureFuel_target_eq_closure tree roots
+  have equal := closureTotal_eq_closure roots tree
+  rw [← equal] at computed
+  funext key
+  apply propext
+  constructor
+  · exact closureFuel_reachable tree _ roots _ computed key
+  · rintro ⟨root, rootMem, path⟩
+    have initial := closureFuel_preserves tree _ roots _ computed root rootMem
+    induction path with
+    | refl => exact initial
+    | tail path edge ih =>
+      exact closureFuel_closed tree _ roots _ computed _ _ ih edge
 
 /-- Elimination executes the source-shaped closure before filtering. -/
 theorem removeFlatProgTotal_eq (code : List FlatLang.Exp) :
