@@ -236,6 +236,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingLog
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingArith
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingTest
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingEquality
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingNamedLet
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocal
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EnvironmentDomain
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.MemoryOps
