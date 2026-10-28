@@ -136,18 +136,6 @@ theorem pmatchRows_findLookups {C F R : Type} (rows : List (FlatLang.Pat × Flat
   apply findLookupsList_member body _ _ key found
   exact List.mem_map.mpr ⟨(pattern, body), pmatchRows_selected_mem rows state value bindings pattern body selected, rfl⟩
 
-/-- All global keys in an analysis occur in the reachable set. -/
-def globalsWithin (globals reachable : NumSet) : Prop :=
-  ∀ key, sptMem key globals → sptMem key reachable
-
-/-- Reachability of a union is equivalent to reachability of both inputs. -/
-theorem globalsWithin_union (left right reachable : NumSet) :
-    globalsWithin (sptUnion left right) reachable ↔
-      globalsWithin left reachable ∧ globalsWithin right reachable := by
-  simp only [globalsWithin, sptMem_sptUnion]
-  exact ⟨fun h => ⟨fun k hk => h k (Or.inl hk), fun k hk => h k (Or.inr hk)⟩,
-    fun h k hk => hk.elim (h.1 k) (h.2 k)⟩
-
 /-- A reference value contributes its globals to the store analysis. -/
 theorem findRefsGlobals_ref_mem (refs : List (StoreValue FlatSem.Value))
     (value : FlatSem.Value) (member : StoreValue.refv value ∈ refs) (key : Nat)

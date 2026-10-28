@@ -111,6 +111,17 @@ def storeHasNoEval (refs : List (Flapjack.SemanticPrimitivesHOL.StoreValue FlatS
     | .varray values => ∀ value ∈ values, valueHasEval value = false
     | .w8array _ => True
 
+/-- Updating a store with an Eval-free entry preserves the store invariant.
+This is a Flapjack helper for the evaluator simulation. -/
+theorem storeHasNoEval_set (refs : List (Flapjack.SemanticPrimitivesHOL.StoreValue FlatSem.Value))
+    (index : Nat) (value : Flapjack.SemanticPrimitivesHOL.StoreValue FlatSem.Value)
+    (old : storeHasNoEval refs) (new : storeHasNoEval [value]) :
+    storeHasNoEval (refs.set index value) := by
+  intro ref member
+  rcases List.mem_or_eq_of_mem_set member with oldMember | rfl
+  · exact old ref oldMember
+  · exact new ref (by simp)
+
 /-- The original flat state relation, including all reference dependencies
 and the absence of Eval in stored values. -/
 @[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "flat_state_rel_def"]

@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.Semantics.FlatSem
 
 /-! Global dependencies stored in flat-language values. -/
 namespace Flapjack.Compiler.Backend.FlatElim
+open Flapjack.SemanticPrimitivesHOL
 
 mutual
 /-- Global slots referenced by a flat value, including captured environments
@@ -116,5 +117,71 @@ theorem hasEvalFuns_eq_map (funs : List (Flapjack.AstHOL.VarN × Flapjack.AstHOL
   | cons funSpec rest ih =>
     obtain ⟨_, _, _⟩ := funSpec
     simp [hasEvalFuns, ih]
+
+/-- All global keys in an analysis occur in the reachable set. -/
+def globalsWithin (globals reachable : NumSet) : Prop :=
+  ∀ key, sptMem key globals → sptMem key reachable
+
+/-- Reachability of a union is equivalent to reachability of both inputs. -/
+theorem globalsWithin_union (left right reachable : NumSet) :
+    globalsWithin (sptUnion left right) reachable ↔
+      globalsWithin left reachable ∧ globalsWithin right reachable := by
+  simp only [globalsWithin, sptMem_sptUnion]
+  exact ⟨fun h => ⟨fun k hk => h k (Or.inl hk), fun k hk => h k (Or.inr hk)⟩,
+    fun h k hk => hk.elim (h.1 k) (h.2 k)⟩
+
+/-- Global dependencies held by a single store entry. -/
+def storeValueGlobals : StoreValue FlatSem.Value → NumSet
+  | .refv value | .thunk _ value => findValueGlobals value
+  | .varray values => findValuesGlobals values
+  | .w8array _ => .ln
+
+/-- A store is reachable exactly when every entry's dependencies are reachable. -/
+theorem findRefsGlobals_within_iff (refs : List (StoreValue FlatSem.Value)) (reachable : NumSet) :
+    globalsWithin (findRefsGlobals refs) reachable ↔
+      ∀ ref ∈ refs, globalsWithin (storeValueGlobals ref) reachable := by
+  induction refs with
+  | nil => simp [findRefsGlobals, globalsWithin, sptMem, sptDomain]
+  | cons ref rest ih =>
+    cases ref <;>
+      simp only [findRefsGlobals, List.mem_cons, forall_eq_or_imp, storeValueGlobals,
+        globalsWithin_union, ih]
+    simp [globalsWithin, sptMem, sptDomain]
+
+/-- Replacing a store entry with a reachable entry preserves reachability. -/
+theorem findRefsGlobals_set_within (refs : List (StoreValue FlatSem.Value))
+    (index : Nat) (value : StoreValue FlatSem.Value) (reachable : NumSet)
+    (old : globalsWithin (findRefsGlobals refs) reachable)
+    (new : globalsWithin (storeValueGlobals value) reachable) :
+    globalsWithin (findRefsGlobals (refs.set index value)) reachable := by
+  apply (findRefsGlobals_within_iff _ _).mpr
+  intro ref member
+  rcases List.mem_or_eq_of_mem_set member with oldMember | rfl
+  · exact (findRefsGlobals_within_iff _ _).mp old ref oldMember
+  · exact new
+
+/-- Updating a store entry preserves the bound when the inserted value is
+reachable; byte arrays add no value dependencies. -/
+@[hol "cakeml/compiler/backend/proofs/flat_elimProofScript.sml" "find_refs_globals_LUPDATE"]
+theorem findRefsGlobals_LUPDATE (reachable : NumSet) (refs : List (StoreValue FlatSem.Value))
+    (index : Nat) (_inBounds : index < refs.length)
+    (old : globalsWithin (findRefsGlobals refs) reachable) :
+    (∀ value, globalsWithin (findValueGlobals value) reachable →
+      globalsWithin (findRefsGlobals (refs.set index (.refv value))) reachable) ∧
+    (∀ values, globalsWithin (findValuesGlobals values) reachable →
+      globalsWithin (findRefsGlobals (refs.set index (.varray values))) reachable) ∧
+    (∀ bytes, globalsWithin (findRefsGlobals (refs.set index (.w8array bytes))) reachable) ∧
+    (∀ mode value, globalsWithin (findValueGlobals value) reachable →
+      globalsWithin (findRefsGlobals (refs.set index (.thunk mode value))) reachable) := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · intro value safe
+    exact findRefsGlobals_set_within refs index (.refv value) reachable old safe
+  · intro values safe
+    exact findRefsGlobals_set_within refs index (.varray values) reachable old safe
+  · intro bytes
+    apply findRefsGlobals_set_within refs index (.w8array bytes) reachable old
+    simp [storeValueGlobals, globalsWithin, sptMem, sptDomain]
+  · intro mode value safe
+    exact findRefsGlobals_set_within refs index (.thunk mode value) reachable old safe
 
 end Flapjack.Compiler.Backend.FlatElim

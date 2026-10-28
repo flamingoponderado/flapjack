@@ -1,6 +1,14 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "find_refs_globals_LUPDATE",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/ValueGlobals.lean",
+    "lean_name": "findRefsGlobals_LUPDATE",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original statement captured in flat_elim_value_globals_probe.out; full store, sparse-tree carrier, and list-update review remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "pmatch_Match_reachable",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/PatternRelation.lean",
     "lean_name": "pmatch_Match_reachable",
