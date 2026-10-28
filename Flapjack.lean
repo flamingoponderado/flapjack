@@ -286,6 +286,7 @@ import Flapjack.Compiler.Backend.FlatElim.Proofs.ApplyNumeric
 import Flapjack.Compiler.Backend.FlatElim.Proofs.EvaluateBasic
 import Flapjack.Compiler.Backend.FlatElim.Proofs.EvaluateControl
 import Flapjack.Compiler.Backend.FlatElim.Proofs.EvaluateCall
+import Flapjack.Compiler.Backend.FlatElim.Proofs.EvaluateThunk
 import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
 import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode
