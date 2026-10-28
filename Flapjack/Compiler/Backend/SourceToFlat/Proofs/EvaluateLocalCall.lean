@@ -1,4 +1,5 @@
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalEnvironment
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalList
+import Flapjack.EvaluateHOL.ClockFull
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.ValueRelCases
 
 /-! Function-call prerequisites over the factored source-to-flat relations.
@@ -401,6 +402,250 @@ theorem doOpApp_related (genv : GlobalEnv) (sourceFunction : Value) (flatFunctio
         exact ⟨baseMap, baseEnv, _, _, name :: trace, .none :: traces, body, setup⟩
       · rw [flatEq] at functionRel ⊢
         exact doOpApp_topRecclosure_local genv env funs name flatEnv flatArg _ argument flatArgument functionRel argumentRel distinct
+
+/-- The local expression simulation available at strictly smaller source
+clocks, used as the recursive induction hypothesis for function calls. -/
+def LocalEnvClockIH {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat) : Prop :=
+  ∀ (expr : AstHOL.Exp) (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : State F) (flat : FlatSem.State C F) (baseEnv : SemEnv Value)
+    (sourceLocal : Namespace ModN VarN Value) (flatEnv : FlatSem.Environment FlatSem.Value)
+    (traces : List BackendCommon.Tra) (trace : List VarN) (baseMap : Environment) (gen : EnvironmentGenerationStore),
+    source.clock < limit → EnvRel genv sourceLocal flatEnv.v →
+    GlobalEnvInv genv baseMap (fun n => n ∈ flatEnv.v.map Prod.fst) baseEnv →
+    traces.length = flatEnv.v.length → factoredInvariant interp transform gen genv (start, finish, other) source flat →
+    envGenRel gen source.evalState →
+    (∀ last, EvaluateHOL.evaluate source { baseEnv with v := nsAppend sourceLocal baseEnv.v } [expr] ≠
+      (last, .err (.abort .typeError))) →
+    LocalExpressionStep interp transform genv start finish other source flat
+      { baseEnv with v := nsAppend sourceLocal baseEnv.v } flatEnv trace
+      { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v } gen expr
+
+/-- Source function application after argument evaluation. -/
+noncomputable def sourceCallResult {F : Type} (source : State F) (function argument : Value) :
+    State F × Result (List Value) Value :=
+  match doOpApp [function, argument] with
+  | none => EvaluateHOL.typeError source
+  | some (env, body) =>
+    if source.clock = 0 then EvaluateHOL.timeoutError source
+    else EvaluateHOL.evaluate (EvaluateHOL.decClock source) env [body]
+
+/-- Flat function application after argument evaluation. -/
+noncomputable def flatCallResult {C F : Type} (flat : FlatSem.State C F)
+    (function argument : FlatSem.Value) : FlatSem.EvalResult C F :=
+  match FlatSem.doOpApp [function, argument] with
+  | none => (flat, .err (.abort .typeError))
+  | some (env, body) =>
+    if flat.clock = 0 then (flat, .err (.abort .timeoutError))
+    else FlatSem.evaluate env (FlatSem.decClock flat) [body]
+
+/-- Related calls either time out together or enter related bodies at a
+strictly smaller clock. The called-body induction hypothesis supplies the
+simulation and the post-state invariant. -/
+theorem localCallResult_related {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (limit : Nat) (calledIH : LocalEnvClockIH (F := F) interp transform limit)
+    (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : State F) (flat : FlatSem.State C F) (gen : EnvironmentGenerationStore)
+    (invariant : factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (generation : envGenRel gen source.evalState) (clockBound : source.clock ≤ limit)
+    (function argument : Value) (flatFunction flatArgument : FlatSem.Value)
+    (functionRel : ValueRel genv function flatFunction) (argumentRel : ValueRel genv argument flatArgument)
+    (successful : doOpApp [function, argument] ≠ none)
+    (safe : ∀ last, sourceCallResult source function argument ≠ (last, .err (.abort .typeError))) :
+    let src := sourceCallResult source function argument
+    let dst := flatCallResult flat flatFunction flatArgument
+    ∃ nextGenv, (EvalResultRel nextGenv src.2 dst.2 ∧ StateRel nextGenv src.1 dst.1) ∧
+      match src.2 with
+      | .err (.abort _) => True
+      | _ => GlobalGrowth genv nextGenv ∧
+          factoredInvariant interp transform gen nextGenv (start, finish, other) src.1 dst.1 ∧
+          envGenRel gen src.1.evalState ∧ oracForwardRel interp source.evalState src.1.evalState := by
+  obtain ⟨baseMap, baseEnv, sourceLocal, flatLocal, trace, traces, body, srcApp, dstApp, locals, globals, len⟩ :=
+    doOpApp_related genv function flatFunction argument flatArgument functionRel argumentRel successful
+  have clocks : source.clock = flat.clock := by
+    cases invariant.2.2.1 with
+    | intro _ _ clock _ => exact clock
+  by_cases zero : source.clock = 0
+  · have flatZero : flat.clock = 0 := clocks ▸ zero
+    refine ⟨genv, ?_, ?_⟩
+    · simp only [sourceCallResult, srcApp, zero, if_true, EvaluateHOL.timeoutError,
+        flatCallResult, dstApp, flatZero]
+      exact ⟨.abort .timeoutError, invariant.2.2.1⟩
+    · simp [sourceCallResult, srcApp, zero, EvaluateHOL.timeoutError]
+  · have flatNonzero : flat.clock ≠ 0 := by simpa [← clocks] using zero
+    have bodySafe : ∀ last, EvaluateHOL.evaluate (EvaluateHOL.decClock source)
+        { baseEnv with v := nsAppend sourceLocal baseEnv.v } [body] ≠ (last, .err (.abort .typeError)) := by
+      intro last bad
+      apply safe last
+      simpa [sourceCallResult, srcApp, zero] using bad
+    have smaller : (EvaluateHOL.decClock source).clock < limit := by
+      simp only [EvaluateHOL.decClock]
+      omega
+    obtain ⟨nextGenv, bodySim, bodyPost⟩ := calledIH body genv start finish other
+      (EvaluateHOL.decClock source) (FlatSem.decClock flat) baseEnv sourceLocal flatLocal traces trace baseMap gen
+      smaller locals globals len (factoredInvariant_decClock interp transform gen genv (start, finish, other) source flat invariant)
+      generation bodySafe
+    refine ⟨nextGenv, ?_, ?_⟩
+    · simpa [sourceCallResult, srcApp, zero, flatCallResult, dstApp, flatNonzero, ExprSim] using bodySim
+    · simp only [sourceCallResult, srcApp, zero, if_false, flatCallResult, dstApp, flatNonzero]
+      cases result : (EvaluateHOL.evaluate (EvaluateHOL.decClock source)
+          { baseEnv with v := nsAppend sourceLocal baseEnv.v } [body]).2 with
+      | err error =>
+        cases error with
+        | abort error => trivial
+        | raise value =>
+          rw [result] at bodyPost
+          simpa [EvaluateHOL.decClock] using bodyPost
+      | val values =>
+        rw [result] at bodyPost
+        simpa [EvaluateHOL.decClock] using bodyPost
+
+/-- Simulate a two-operand function application at a given clock bound,
+using the smaller-clock induction hypothesis for the called body. -/
+theorem localEnvStep_opapp {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (limit : Nat) (calledIH : LocalEnvClockIH (F := F) interp transform limit)
+    (left right : AstHOL.Exp) (leftIH : LocalEnvIH (F := F) interp transform left)
+    (rightIH : LocalEnvIH (F := F) interp transform right)
+    (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : State F) (flat : FlatSem.State C F) (baseEnv : SemEnv Value)
+    (sourceLocal : Namespace ModN VarN Value) (flatEnv : FlatSem.Environment FlatSem.Value)
+    (traces : List BackendCommon.Tra) (trace : List VarN) (baseMap : Environment) (gen : EnvironmentGenerationStore)
+    (clockBound : source.clock ≤ limit) (localRel : EnvRel genv sourceLocal flatEnv.v)
+    (envInv : GlobalEnvInv genv baseMap (fun n => n ∈ flatEnv.v.map Prod.fst) baseEnv)
+    (tracesLen : traces.length = flatEnv.v.length)
+    (invariant : factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (generation : envGenRel gen source.evalState)
+    (safe : ∀ last, EvaluateHOL.evaluate source { baseEnv with v := nsAppend sourceLocal baseEnv.v }
+      [.app .opapp [left, right]] ≠ (last, .err (.abort .typeError))) :
+    LocalExpressionStep interp transform genv start finish other source flat
+      { baseEnv with v := nsAppend sourceLocal baseEnv.v } flatEnv trace
+      { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v } gen (.app .opapp [left, right]) := by
+  let sourceEnv := { baseEnv with v := nsAppend sourceLocal baseEnv.v }
+  let compMap := { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v }
+  have argsSafe : ∀ last, EvaluateHOL.evaluate source sourceEnv [right, left] ≠ (last, .err (.abort .typeError)) := by
+    intro last bad
+    apply safe last
+    rw [EvaluateHOL.evaluate]
+    simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+    rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [right, left] []).1, bad]
+  obtain ⟨middleGenv, argsSim, post⟩ := localEnvListStep_of_each interp transform [right, left]
+    (by intro expr member; simp only [List.mem_cons, List.not_mem_nil, or_false] at member; rcases member with rfl | rfl <;> assumption)
+    genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen localRel envInv tracesLen invariant generation argsSafe
+  unfold ExprListSim at argsSim
+  simp only [compileExps] at argsSim post
+  generalize sourceRun : EvaluateHOL.evaluate source sourceEnv [right, left] = sourceResult at argsSim post
+  obtain ⟨middleSource, sourceResult⟩ := sourceResult
+  generalize flatRun : FlatSem.evaluate flatEnv flat [compileExp trace compMap right, compileExp trace compMap left] = flatResult at argsSim post
+  obtain ⟨middleFlat, flatResult⟩ := flatResult
+  obtain ⟨related, states⟩ := argsSim
+  cases related with
+  | abort error =>
+    refine ⟨middleGenv, ?_, ?_⟩
+    · unfold ExprSim
+      rw [EvaluateHOL.evaluate]
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+      rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [right, left] []).1, sourceRun]
+      simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+      rw [FlatSem.evaluate]
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+      rw [(FlatSem.fixClock_evaluations flatEnv flat [compileExp trace compMap right, compileExp trace compMap left]
+        (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+      exact ⟨.abort error, states⟩
+    · rw [EvaluateHOL.evaluate]
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+      rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [right, left] []).1, sourceRun]
+      trivial
+  | raise valueRel =>
+    refine ⟨middleGenv, ?_, ?_⟩
+    · unfold ExprSim
+      rw [EvaluateHOL.evaluate]
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+      rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [right, left] []).1, sourceRun]
+      simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+      rw [FlatSem.evaluate]
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+      rw [(FlatSem.fixClock_evaluations flatEnv flat [compileExp trace compMap right, compileExp trace compMap left]
+        (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+      exact ⟨.raise valueRel, states⟩
+    · rw [EvaluateHOL.evaluate]
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+      rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [right, left] []).1, sourceRun]
+      simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+      rw [FlatSem.evaluate]
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+      rw [(FlatSem.fixClock_evaluations flatEnv flat [compileExp trace compMap right, compileExp trace compMap left]
+        (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+      exact post
+  | @value sourceValues flatValues valuesRel =>
+    have length := EvaluateProps.evaluateLengthFull source middleSource sourceEnv [right, left] sourceValues sourceRun
+    have two : ∃ v f, sourceValues = [v, f] := by
+      cases sourceValues with
+      | nil => simp at length
+      | cons v tail =>
+        cases tail with
+        | nil => simp at length
+        | cons f rest =>
+          cases rest with
+          | nil => exact ⟨v, f, rfl⟩
+          | cons q rest => simp at length
+    obtain ⟨argument, function, rfl⟩ := two
+    cases valuesRel with
+    | cons argumentRel tail =>
+      cases tail with
+      | cons functionRel tail =>
+        cases tail with
+        | nil =>
+          rename_i flatArgument flatFunction
+          obtain ⟨growth, middleInvariant, middleGeneration, forward⟩ := post
+          have sourceOuter : EvaluateHOL.evaluate source sourceEnv [.app .opapp [left, right]] =
+              sourceCallResult middleSource function argument := by
+            rw [EvaluateHOL.evaluate]
+            simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+            rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [right, left] []).1, sourceRun]
+            rfl
+          have flatOuter : FlatSem.evaluate flatEnv flat [compileExp trace compMap (.app .opapp [left, right])] =
+              flatCallResult middleFlat flatFunction flatArgument := by
+            simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+            rw [FlatSem.evaluate]
+            simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+            rw [(FlatSem.fixClock_evaluations flatEnv flat [compileExp trace compMap right, compileExp trace compMap left]
+              (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+            rfl
+          have successful : doOpApp [function, argument] ≠ none := by
+            intro failed
+            apply safe middleSource
+            rw [sourceOuter]
+            simp [sourceCallResult, failed, EvaluateHOL.typeError]
+          have callSafe : ∀ last, sourceCallResult middleSource function argument ≠ (last, .err (.abort .typeError)) := by
+            intro last bad
+            apply safe last
+            exact sourceOuter.trans bad
+          have clockLe : middleSource.clock ≤ limit :=
+            Nat.le_trans (EvaluateHOL.evaluateClockFull source middleSource sourceEnv [right, left] _ sourceRun) clockBound
+          obtain ⟨finalGenv, callSim, callPost⟩ := localCallResult_related interp transform limit calledIH middleGenv
+            start finish other middleSource middleFlat gen middleInvariant middleGeneration clockLe function argument
+            flatFunction flatArgument functionRel argumentRel successful callSafe
+          refine ⟨finalGenv, ?_, ?_⟩
+          · unfold ExprSim
+            rw [sourceOuter, flatOuter]
+            exact callSim
+          · rw [sourceOuter, flatOuter]
+            cases result : (sourceCallResult middleSource function argument).2 with
+            | err error =>
+              cases error with
+              | abort error => trivial
+              | raise value =>
+                rw [result] at callPost
+                obtain ⟨nextGrowth, finalInvariant, finalGeneration, callForward⟩ := callPost
+                exact ⟨growth.trans nextGrowth, finalInvariant, finalGeneration,
+                  oracForwardRel_trans interp _ _ _ ⟨forward, callForward⟩⟩
+            | val values =>
+              rw [result] at callPost
+              obtain ⟨nextGrowth, finalInvariant, finalGeneration, callForward⟩ := callPost
+              exact ⟨growth.trans nextGrowth, finalInvariant, finalGeneration,
+                oracForwardRel_trans interp _ _ _ ⟨forward, callForward⟩⟩
 
 
 end Flapjack.Compiler.Backend.SourceToFlat
