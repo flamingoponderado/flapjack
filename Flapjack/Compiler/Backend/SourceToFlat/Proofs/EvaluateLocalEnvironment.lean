@@ -234,6 +234,79 @@ theorem bindRecNames_bindLocals (names : List VarN) (traces : List BackendCommon
     rw [ih]
     simp [bindLocals, nsBindList]
 
+/-- Appending related local environments preserves their value relation. -/
+theorem envRel_nsAppend (genv : GlobalEnv)
+    (left right : Namespace ModN VarN Value) (flatLeft flatRight : List (VarN × FlatSem.Value))
+    (leftRel : EnvRel genv left flatLeft) (rightRel : EnvRel genv right flatRight) :
+    EnvRel genv (nsAppend left right) (flatLeft ++ flatRight) := by
+  induction flatLeft generalizing left with
+  | nil =>
+    cases leftRel
+    cases right
+    simpa [nsAppend, nsEmpty] using rightRel
+  | cons head tail ih =>
+    cases leftRel with
+    | bind name value env flatEnv flat hEnv hValue =>
+      have extended := EnvRel.bind genv name value (nsAppend env right) (tail ++ flatRight) flat (ih env hEnv) hValue
+      cases env
+      cases right
+      simpa [nsAppend, nsBind] using extended
+
+/-- Namespace concatenation is associative. -/
+theorem local_nsAppend_assoc (a b c : Namespace ModN VarN Value) :
+    nsAppend (nsAppend a b) c = nsAppend a (nsAppend b c) := by
+  cases a
+  cases b
+  cases c
+  simp [nsAppend, List.append_assoc]
+
+/-- A selected pattern body can use the arbitrary-local induction hypothesis
+with its related pattern bindings and compiler-generated traces. -/
+theorem localEnvIH_patternBody {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (pattern : Pat) (body : AstHOL.Exp) (bodyIH : LocalEnvIH (F := F) interp transform body)
+    (genv : GlobalEnv) (start finish : NextIndices) (other : Set (Nat × IndexKind))
+    (source : State F) (flat : FlatSem.State C F) (baseEnv : SemEnv Value)
+    (sourceLocal : Namespace ModN VarN Value) (flatEnv : FlatSem.Environment FlatSem.Value)
+    (traces : List BackendCommon.Tra) (trace : List VarN) (baseMap : Environment) (gen : EnvironmentGenerationStore)
+    (localRel : EnvRel genv sourceLocal flatEnv.v)
+    (envInv : GlobalEnvInv genv baseMap (fun n => n ∈ flatEnv.v.map Prod.fst) baseEnv)
+    (tracesLen : traces.length = flatEnv.v.length)
+    (invariant : factoredInvariant interp transform gen genv (start, finish, other) source flat)
+    (generation : envGenRel gen source.evalState)
+    (bindings : List (VarN × Value)) (flatBindings : List (VarN × FlatSem.Value))
+    (bindingRel : EnvRel genv (alistToNs bindings) flatBindings)
+    (bindingNames : flatBindings.map Prod.fst = patBindings pattern)
+    (safe : ∀ last, EvaluateHOL.evaluate source
+      { baseEnv with v := nsAppend (alistToNs bindings) (nsAppend sourceLocal baseEnv.v) } [body] ≠
+      (last, .err (.abort .typeError))) :
+    LocalExpressionStep interp transform genv start finish other source flat
+      { baseEnv with v := nsAppend (alistToNs bindings) (nsAppend sourceLocal baseEnv.v) }
+      { flatEnv with v := flatBindings ++ flatEnv.v } trace
+      { baseMap with v := nsBindList (patTups .none (patBindings pattern)) (bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v) } gen body := by
+  obtain ⟨patternTraces, mapBind, patternLength⟩ := nsBindList_patTups_bindLocals
+    (patBindings pattern) .none traces (flatEnv.v.map Prod.fst) baseMap.v
+  have extendedRel := envRel_nsAppend genv (alistToNs bindings) sourceLocal flatBindings flatEnv.v bindingRel localRel
+  have extendedInv : GlobalEnvInv genv baseMap (fun n => n ∈ (flatBindings ++ flatEnv.v).map Prod.fst) baseEnv := by
+    cases envInv with
+    | intro _ _ _ values constructors =>
+      apply GlobalEnvInv.intro
+      · intro id v fresh lookup
+        apply values id v _ lookup
+        intro ⟨n, mem, eq⟩
+        apply fresh
+        exact ⟨n, by simp [mem], eq⟩
+      · exact constructors
+  have bindingLength : flatBindings.length = (patBindings pattern).length := by
+    have h := congrArg List.length bindingNames
+    simpa using h
+  obtain result := bodyIH genv start finish other source flat baseEnv
+    (nsAppend (alistToNs bindings) sourceLocal) { flatEnv with v := flatBindings ++ flatEnv.v }
+    (patternTraces ++ traces) trace baseMap gen extendedRel extendedInv
+    (by simp [patternLength, bindingLength, tracesLen]) invariant generation
+    (by simpa [local_nsAppend_assoc] using safe)
+  simpa [local_nsAppend_assoc, List.map_append, bindingNames, ← mapBind] using result
+
 /-- Constructing a local recursive environment preserves the factored
 source-to-flat value relation for every mutually recursive closure. -/
 theorem localRecEnv_related (genv : GlobalEnv) (baseMap : Environment)
