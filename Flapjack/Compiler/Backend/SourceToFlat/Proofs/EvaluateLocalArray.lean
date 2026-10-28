@@ -2247,6 +2247,9 @@ inductive LocalEnvArrayExpression : AstHOL.Exp → Prop where
       LocalEnvArrayExpression (.app .opassign [left, right])
   | deref (body : AstHOL.Exp) : LocalEnvArrayExpression body →
       LocalEnvArrayExpression (.app .opderef [body])
+  | mat (body : AstHOL.Exp) (rows : List (Pat × AstHOL.Exp)) : LocalEnvArrayExpression body →
+      (∀ pattern rowBody, (pattern, rowBody) ∈ rows → LocalEnvArrayExpression rowBody) →
+      LocalEnvArrayExpression (.mat body rows)
   | handle (body : AstHOL.Exp) (rows : List (Pat × AstHOL.Exp)) : LocalEnvArrayExpression body →
       (∀ pattern rowBody, (pattern, rowBody) ∈ rows → LocalEnvArrayExpression rowBody) →
       LocalEnvArrayExpression (.handle body rows)
@@ -2310,6 +2313,7 @@ theorem localEnvIH_arrayTree {C F : Type} [Nonempty C]
   | ref_ body _ ih => exact localEnvIH_opref interp transform body ih
   | assign left right _ _ leftIH rightIH => exact localEnvIH_opassign interp transform left right leftIH rightIH
   | deref body _ ih => exact localEnvIH_opderef interp transform body ih
+  | mat body rows _ _ bodyIH rowsIH => exact localEnvIH_mat interp transform body rows bodyIH rowsIH
   | handle body rows _ _ bodyIH rowsIH => exact localEnvIH_handle interp transform body rows bodyIH rowsIH
   | letrec funs body _ ih => exact localEnvIH_letrec interp transform funs body ih
   | letNamed name first body _ _ firstIH bodyIH => exact localEnvIH_let_named interp transform name first body firstIH bodyIH

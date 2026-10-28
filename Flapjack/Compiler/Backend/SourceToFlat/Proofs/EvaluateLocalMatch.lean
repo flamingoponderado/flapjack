@@ -213,4 +213,108 @@ theorem localEnvIH_handle {C F : Type} [Nonempty C]
           exact ⟨bodyGrowth.trans growth, finalInvariant, finalGeneration,
             oracForwardRel_trans interp _ _ _ ⟨bodyForward, rowForward⟩⟩
 
+/-- Compose pattern matching with the scrutinee and every row
+body in arbitrary related local environments. -/
+theorem localEnvIH_mat {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (body : AstHOL.Exp) (rows : List (Pat × AstHOL.Exp))
+    (bodyIH : LocalEnvIH (F := F) interp transform body)
+    (each : ∀ pattern rowBody, (pattern, rowBody) ∈ rows → LocalEnvIH (F := F) interp transform rowBody) :
+    LocalEnvIH (F := F) interp transform (.mat body rows) := by
+  intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen localRel envInv tracesLen invariant generation safe
+  let sourceEnv := { baseEnv with v := nsAppend sourceLocal baseEnv.v }
+  let compMap := { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v }
+  have bodySafe : ∀ last, EvaluateHOL.evaluate source sourceEnv [body] ≠ (last, .err (.abort .typeError)) := by
+    intro last bad
+    apply safe last
+    rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, bad]
+  obtain ⟨middleGenv, bodySim, bodyPost⟩ := bodyIH genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen
+    localRel envInv tracesLen invariant generation bodySafe
+  unfold ExprSim at bodySim
+  generalize sourceRun : EvaluateHOL.evaluate source sourceEnv [body] = sourceResult at bodySim bodyPost
+  obtain ⟨middleSource, sourceResult⟩ := sourceResult
+  generalize flatRun : FlatSem.evaluate flatEnv flat [compileExp trace compMap body] = flatResult at bodySim bodyPost
+  obtain ⟨middleFlat, flatResult⟩ := flatResult
+  obtain ⟨related, states⟩ := bodySim
+  cases related with
+  | abort error =>
+    refine ⟨middleGenv, ?_, ?_⟩
+    · unfold ExprSim
+      rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]
+      rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flat
+        [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+      exact ⟨.abort error, states⟩
+    · rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]
+      trivial
+  | raise valueRel =>
+    refine ⟨middleGenv, ?_, ?_⟩
+    · unfold ExprSim
+      rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]
+      rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flat
+        [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+      exact ⟨.raise valueRel, states⟩
+    · rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]
+      rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flat
+        [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+      exact bodyPost
+  | @value sourceValues flatValues valuesRel =>
+    obtain ⟨value, rfl⟩ := EvaluateProps.evaluateSingFull source middleSource sourceEnv body sourceValues sourceRun
+    cases valuesRel with
+    | cons valueRel tail =>
+      cases tail with
+      | nil =>
+        rename_i flatValue
+        obtain ⟨bodyGrowth, middleInvariant, middleGeneration, bodyForward⟩ := bodyPost
+        have middleLocal := envRel_growth genv middleGenv bodyGrowth sourceLocal flatEnv.v localRel
+        have middleEnv := globalEnvInv_growth genv middleGenv bodyGrowth baseMap (fun n => n ∈ flatEnv.v.map Prod.fst) baseEnv envInv
+        cases can : canPmatchAll sourceEnv.c middleSource.refs (rows.map Prod.fst) value with
+        | false =>
+          have bad : EvaluateHOL.evaluate source sourceEnv [.mat body rows] =
+              (middleSource, .err (.abort .typeError)) := by
+            rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]
+            simp [EvaluateHOL.headValue, Flapjack.holHd, can, EvaluateHOL.typeError]
+          exact (safe middleSource bad).elim
+        | true =>
+          have rowSafe : ∀ last, EvaluateHOL.evaluateMatch middleSource sourceEnv value rows bindExnV ≠
+              (last, .err (.abort .typeError)) := by
+            intro last bad
+            apply safe last
+            rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]
+            have canBase : canPmatchAll baseEnv.c middleSource.refs (rows.map Prod.fst) value = true := can
+            simpa [sourceEnv, EvaluateHOL.headValue, Flapjack.holHd, canBase] using bad
+          obtain ⟨finalGenv, matching, matchingPost⟩ := localEvaluateMatch_related interp transform middleGenv start finish other
+            middleSource middleFlat baseEnv sourceLocal flatEnv traces trace baseMap gen middleLocal middleEnv tracesLen
+            middleInvariant middleGeneration value bindExnV flatValue FlatSem.bindExnV valueRel (exceptionValues_related middleGenv middleInvariant.1).2.2.1 rows can rowSafe each
+          have sourceOuter : EvaluateHOL.evaluate source sourceEnv [.mat body rows] =
+              EvaluateHOL.evaluateMatch middleSource sourceEnv value rows bindExnV := by
+            rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv [body] []).1, sourceRun]
+            simp [EvaluateHOL.headValue, Flapjack.holHd, can]
+          have flatOuter : FlatSem.evaluate flatEnv flat [compileExp trace compMap (.mat body rows)] =
+              flatEvaluateMatch flatEnv middleFlat flatValue FlatSem.bindExnV (compilePes trace compMap rows) := by
+            rw [compileExp, FlatSem.evaluate, (FlatSem.fixClock_evaluations flatEnv flat
+              [compileExp trace compMap body] (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+            simp only
+            unfold flatEvaluateMatch
+            split <;> simp_all
+          refine ⟨finalGenv, ?_, ?_⟩
+          · unfold ExprSim
+            rw [sourceOuter, flatOuter]
+            exact matching
+          · rw [sourceOuter, flatOuter]
+            cases result : (EvaluateHOL.evaluateMatch middleSource sourceEnv value rows bindExnV).2 with
+            | err error =>
+              cases error with
+              | abort error => simp
+              | raise raised =>
+                rw [result] at matchingPost
+                obtain ⟨growth, finalInvariant, finalGeneration, rowForward⟩ := matchingPost
+                exact ⟨bodyGrowth.trans growth, finalInvariant, finalGeneration,
+                  oracForwardRel_trans interp _ _ _ ⟨bodyForward, rowForward⟩⟩
+            | val values =>
+              rw [result] at matchingPost
+              obtain ⟨growth, finalInvariant, finalGeneration, rowForward⟩ := matchingPost
+              exact ⟨bodyGrowth.trans growth, finalInvariant, finalGeneration,
+                oracForwardRel_trans interp _ _ _ ⟨bodyForward, rowForward⟩⟩
+
+
 end Flapjack.Compiler.Backend.SourceToFlat
