@@ -1,6 +1,30 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "evaluate_sing_notKeep_flat_state_rel",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/Removal.lean",
+    "lean_name": "evaluate_sing_notKeep_flatStateRel",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out; the cleared input environment retains its independent polymorphic value type. Full evaluator, carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "flat_decs_removal_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/Removal.lean",
+    "lean_name": "flat_decs_removal",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out. Full evaluator, carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
+    "hol_name": "flat_removal_thm",
+    "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/Removal.lean",
+    "lean_name": "flat_removal",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_elim_value_globals_probe.out. Full evaluator, carrier, and statement review remain pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_elimProofScript.sml",
     "hol_name": "evaluate_flat_state_rel_lemma",
     "lean_path": "Flapjack/Compiler/Backend/FlatElim/Proofs/PureFull.lean",
     "lean_name": "evaluate_pure_flatStateRel",
