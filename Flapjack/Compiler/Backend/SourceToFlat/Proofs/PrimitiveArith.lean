@@ -229,4 +229,39 @@ theorem conversion_related {C F : Type} (genv : GlobalEnv) (ok : genvCOk genv.c)
     FlatSem.applyNumericProjection, FlatSem.flatToValue, FlatSem.valueToFlat]
   all_goals exact ResultRel.value (.literal genv _)
 
+/-- A successful Boolean negation has a Boolean operand. This is a helper for
+the preliminary source-to-flat simulation. -/
+theorem booleanNot_operand {F : Type} (source : SemanticPrimitivesHOL.State F)
+    (operand : SemanticPrimitivesHOL.Value)
+    (successful : doApp (source.refs, source.ffi) (.arith .not .boolT) [operand] ≠ none) :
+    ∃ b, operand = SemanticPrimitivesHOL.boolValue b := by
+  cases operand <;> try simp [doApp, doAppNumericCore] at successful
+  case conv stamp values =>
+    cases stamp <;> try simp at successful
+    case some stamp =>
+      cases stamp <;> try simp at successful
+      case typeStamp name num =>
+        cases num <;> cases values <;> simp [checkType] at successful
+        case zero.nil =>
+          by_cases h : name = Basis.Pure.MlString.ofString "True"
+          · exact ⟨true, by simp [SemanticPrimitivesHOL.boolValue, boolTypeNum, h]⟩
+          · exact ⟨false, by simp [SemanticPrimitivesHOL.boolValue, boolTypeNum, successful h]⟩
+
+/-- Source and flat Boolean negation agree on related Boolean values. This is
+infrastructure over the preliminary factored value relation. -/
+theorem booleanNot_related {C F : Type} (genv : GlobalEnv) (ok : genvCOk genv.c)
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F) (b : Bool) :
+    doApp (source.refs, source.ffi) (.arith .not .boolT) [SemanticPrimitivesHOL.boolValue b] =
+      some ((source.refs, source.ffi), .val (SemanticPrimitivesHOL.boolValue (!b))) ∧
+    FlatSem.doAppNumeric flat (.arith .not .boolT) [FlatSem.boolValue b] =
+      some (some (flat, .val (FlatSem.boolValue (!b)))) ∧
+    ValueRel genv (SemanticPrimitivesHOL.boolValue (!b)) (FlatSem.boolValue (!b)) := by
+  have distinct : Basis.Pure.MlString.ofString "False" ≠ Basis.Pure.MlString.ofString "True" := by decide
+  have related := boolValue_related genv ok (!b)
+  cases b <;> simp [doApp, doAppNumericCore, checkType, SemanticPrimitivesHOL.boolValue, boolTypeNum,
+    FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue,
+    FlatSem.valueToFlat, FlatSem.boolValue, BackendCommon.boolToTag,
+    BackendCommon.trueTag, BackendCommon.falseTag, FlatLang.boolId, distinct] at related ⊢
+  all_goals exact related
+
 end Flapjack.Compiler.Backend.SourceToFlat

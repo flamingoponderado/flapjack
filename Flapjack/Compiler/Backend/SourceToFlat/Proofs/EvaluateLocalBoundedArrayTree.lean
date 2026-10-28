@@ -95,6 +95,8 @@ inductive LocalEnvBoundedArrayExpression : AstHOL.Exp → Prop where
       LocalEnvBoundedArrayExpression (.app (.test test typ) [left, right])
   | equality (left right : AstHOL.Exp) : LocalEnvBoundedArrayExpression left → LocalEnvBoundedArrayExpression right →
       LocalEnvBoundedArrayExpression (.app .equality [left, right])
+  | booleanNot (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body →
+      LocalEnvBoundedArrayExpression (.app (.arith .not .boolT) [body])
   | integerArith (action : Arith) (left right : AstHOL.Exp) :
       LocalEnvBoundedArrayExpression left → LocalEnvBoundedArrayExpression right →
       LocalEnvBoundedArrayExpression (.app (.arith action .intT) [left, right])
@@ -209,6 +211,7 @@ theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
   | constructor id args _ ih => exact localEnvBounded_constructor interp transform limit id args ih
   | test test typ left right _ _ leftIH rightIH => exact localEnvBounded_test interp transform limit test typ left right leftIH rightIH
   | equality left right _ _ leftIH rightIH => exact localEnvBounded_equality interp transform limit left right leftIH rightIH
+  | booleanNot body _ ih => exact localEnvBounded_booleanNot interp transform limit body ih
   | integerArith action left right _ _ leftIH rightIH =>
     exact localEnvBounded_integerArith interp transform limit action left right leftIH rightIH
   | word8Arith action left right _ _ leftIH rightIH =>
