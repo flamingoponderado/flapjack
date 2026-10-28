@@ -298,6 +298,7 @@ import Flapjack.Compiler.Backend.FlatElim.Proofs.GlobalInvariants
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.GlobalFlag
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.GeneratedNames
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.LookupRelation
+import Flapjack.Compiler.Backend.FlatPattern.Proofs.BindingFold
 import Flapjack.Compiler.Backend.SourceToFlat.Eliminate
 import Flapjack.Compiler.Backend.FlatPattern.Names
 import Flapjack.Compiler.Backend.FlatPattern.Decode

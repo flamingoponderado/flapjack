@@ -24,3 +24,5 @@ val _ = show_thm "lookup_relation_mono_rel=" flat_patternProofTheory.ALOOKUP_rel
 val _ = show_thm "lookup_relation_append=" flat_patternProofTheory.ALOOKUP_rel_append_suff;
 val _ = show_thm "lookup_relation_equal=" flat_patternProofTheory.ALOOKUP_rel_EQ_ALOOKUP;
 val _ = show_thm "lookup_relation_fst=" flat_patternProofTheory.ALOOKUP_rel_eq_fst;
+val _ = show_thm "environment_set_noop=" flat_patternProofTheory.env_set_v_noop;
+val _ = show_thm "binding_fold_evaluation=" flat_patternProofTheory.pat_bindings_evaluate_FOLDR_lemma;

@@ -1,4 +1,4 @@
-`flat_pattern_global_flag_probe.out` captures the typed original global-write flag, generated-name, and association-list relation theorems. Lean kernel-checks corresponding statements; full source and carrier review remains pending.
+`flat_pattern_global_flag_probe.out` captures the typed original global-write flag, generated-name, association-list relation, environment update, and binding-fold evaluation theorems. The binding-fold theorem's unused universally quantified variable has an independent HOL type; the Lean helper explicitly requires that type to be inhabited and remains untagged pending evaluator and type-translation review. Full source and carrier review remains pending for the other corresponding Lean statements.
 
 `source_to_flat_opassign_probe.out` captures successful and invalid original assignments on source and flat stores with the reserved-entry offset. Lean proves expression-level assignment simulation, including reversed operand evaluation, under the source non-type-error condition and preliminary relations; the observation is not a cross-language equivalence proof.
 
