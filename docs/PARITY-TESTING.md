@@ -480,7 +480,8 @@ and successful programs compiled to RISC-V, including generated datatype,
 closure, exception, reference, module, recursion, and mutable array examples,
 including byte-array access and recursive array traversal. It also compares
 generated type and datatype declarations and successful compilation with
-combinations of backend options. Case counts can be changed with
+combinations of backend options, including allocator 3 and explicitly sized
+generational garbage collection. Case counts can be changed with
 `--type-cases`, `--sexp-cases`, `--structured-cases`, `--lex-cases`,
 `--byte-cases`, `--declaration-cases`, `--compile-cases`, `--rich-cases`, and
 `--config-cases`. `--type-seed`, `--edge-seed`, and
