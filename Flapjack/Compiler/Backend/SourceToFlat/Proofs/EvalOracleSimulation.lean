@@ -56,6 +56,24 @@ theorem factoredInvariant_changeEvalRef {C F : Type} [Nonempty C]
     exact ⟨reserved.1, ⟨value, by simp⟩⟩
   exact ⟨cOk, tysOk, newStates, range, invs, orac, globals, newReserved, genInv, fin⟩
 
+/-- Replacing the ordinary source and flat stores preserves the factored
+invariant when the new stores are related and the reserved flat entry is
+unchanged. This is preliminary Flapjack infrastructure. -/
+theorem factoredInvariant_changeStores {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (gen : EnvironmentGenerationStore) (genv : GlobalEnv)
+    (idxs : NextIndices × NextIndices × Set (Nat × IndexKind))
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (sourceRefs : Store Value) (flatRefs : Store FlatSem.Value)
+    (valid : factoredInvariant interp transform gen genv idxs source flat)
+    (states : StateRel genv { source with refs := sourceRefs } { flat with refs := flatRefs })
+    (reserved : flatRefs.take 1 = flat.refs.take 1) :
+    factoredInvariant interp transform gen genv idxs
+      { source with refs := sourceRefs } { flat with refs := flatRefs } := by
+  obtain ⟨cOk, tysOk, _, range, invs, orac, globals, oldReserved, genInv, fin⟩ := valid
+  refine ⟨cOk, tysOk, states, range, invs, orac, globals, ?_, genInv, fin⟩
+  simpa only [reserved] using oldReserved
+
 /-- Returning from an Eval call restores the caller's generation relation:
 the call relation preserves every generation that preceded the fresh one. -/
 theorem envGenRel_resetAfterEval (gen : EnvironmentGenerationStore)
