@@ -329,4 +329,45 @@ theorem floatBinary_related {C F : Type} (genv : GlobalEnv)
     FlatSem.applyNumericProjection, FlatSem.flatToValue, FlatSem.valueToFlat]
   all_goals exact ResultRel.value (.literal genv _)
 
+/-- Successful fused multiply-add has three floating-point operands. -/
+theorem floatFma_operands {F : Type} (source : SemanticPrimitivesHOL.State F)
+    (first second third : SemanticPrimitivesHOL.Value)
+    (successful : doApp (source.refs, source.ffi) (.arith .fma .float64T) [first, second, third] ≠ none) :
+    ∃ a b c, first = .litv (.float64 a) ∧ second = .litv (.float64 b) ∧ third = .litv (.float64 c) := by
+  cases first with
+  | litv firstLit =>
+    cases firstLit with
+    | float64 a =>
+      cases second with
+      | litv secondLit =>
+        cases secondLit with
+        | float64 b =>
+          cases third with
+          | litv thirdLit =>
+            cases thirdLit with
+            | float64 c => exact ⟨a, b, c, rfl, rfl, rfl⟩
+            | _ => simp [doApp, floatArith] at successful
+          | _ => simp [doApp, floatArith] at successful
+        | _ => simp [doApp, floatArith] at successful
+      | _ => simp [doApp, floatArith] at successful
+    | _ => simp [doApp, floatArith] at successful
+  | _ => simp [doApp, floatArith] at successful
+
+/-- Fused multiply-add preserves literal values in the factored relation. -/
+theorem floatFma_related {C F : Type} (genv : GlobalEnv)
+    (source : SemanticPrimitivesHOL.State F) (flat : FlatSem.State C F)
+    (a b c : BitVec 64) :
+    match doApp (source.refs, source.ffi) (.arith .fma .float64T)
+        [.litv (.float64 a), .litv (.float64 b), .litv (.float64 c)],
+      FlatSem.doAppNumeric flat (.arith .fma .float64T)
+        [.litv (.float64 a), .litv (.float64 b), .litv (.float64 c)] with
+    | none, some none => True
+    | some ((refs, ffi), sourceResult), some (some (flatNext, flatResult)) =>
+        refs = source.refs ∧ ffi = source.ffi ∧ flatNext = flat ∧
+          ResultRel ValueRel genv sourceResult flatResult
+    | _, _ => False := by
+  simp [doApp, floatArith, FlatSem.doAppNumeric, FlatSem.applyNumericProjection,
+    FlatSem.flatToValue, FlatSem.valueToFlat]
+  exact ResultRel.value (.literal genv _)
+
 end Flapjack.Compiler.Backend.SourceToFlat

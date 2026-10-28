@@ -97,6 +97,10 @@ inductive LocalEnvBoundedArrayExpression : AstHOL.Exp → Prop where
       LocalEnvBoundedArrayExpression (.app .equality [left, right])
   | booleanNot (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body →
       LocalEnvBoundedArrayExpression (.app (.arith .not .boolT) [body])
+  | floatFma (first second third : AstHOL.Exp) :
+      LocalEnvBoundedArrayExpression first → LocalEnvBoundedArrayExpression second →
+      LocalEnvBoundedArrayExpression third →
+      LocalEnvBoundedArrayExpression (.app (.arith .fma .float64T) [first, second, third])
   | floatBinary (action : Arith) (left right : AstHOL.Exp) :
       LocalEnvBoundedArrayExpression left → LocalEnvBoundedArrayExpression right →
       LocalEnvBoundedArrayExpression (.app (.arith action .float64T) [left, right])
@@ -217,6 +221,8 @@ theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
   | test test typ left right _ _ leftIH rightIH => exact localEnvBounded_test interp transform limit test typ left right leftIH rightIH
   | equality left right _ _ leftIH rightIH => exact localEnvBounded_equality interp transform limit left right leftIH rightIH
   | booleanNot body _ ih => exact localEnvBounded_booleanNot interp transform limit body ih
+  | floatFma first second third _ _ _ firstIH secondIH thirdIH =>
+    exact localEnvBounded_floatFma interp transform limit first second third firstIH secondIH thirdIH
   | floatBinary action left right _ _ leftIH rightIH =>
     exact localEnvBounded_floatBinary interp transform limit action left right leftIH rightIH
   | floatUnary action body _ ih => exact localEnvBounded_floatUnary interp transform limit body action ih
