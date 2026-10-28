@@ -279,6 +279,75 @@ theorem updateThunkOp_related {C F : Type} (genv : GlobalEnv)
   · simp [doApp, doAppNumericCore, doAppBasic, thunkOp, guard, assigned]
   · simp [FlatSem.doAppData, flatGuard, flatAssigned]
 
+/-- A non-type-error string-to-byte-array copy has its five expected operands
+and a byte-array destination. -/
+theorem copyStrAw8_operands {F : Type} (source : State F) (a b c d e : Value)
+    (successful : doApp (source.refs, source.ffi) .copyStrAw8 [a,b,c,d,e] ≠ none) :
+    ∃ text offset length flag address dstOffset bytes,
+      a = .litv (.strLit text) ∧ b = .litv (.intLit offset) ∧ c = .litv (.intLit length) ∧
+      d = .loc flag address ∧ e = .litv (.intLit dstOffset) ∧
+      storeLookup address source.refs = some (.w8array bytes) := by
+  cases a <;> simp [doApp, doAppNumericCore, doAppBasic] at successful
+  case litv aLit =>
+    cases aLit <;> try simp at successful
+    case strLit text =>
+      cases b <;> try simp at successful
+      case litv bLit =>
+        cases bLit <;> try simp at successful
+        case intLit offset =>
+          cases c <;> try simp at successful
+          case litv cLit =>
+            cases cLit <;> try simp at successful
+            case intLit length =>
+              cases d <;> try simp at successful
+              case loc flag address =>
+                cases e <;> try simp at successful
+                case litv eLit =>
+                  cases eLit <;> try simp at successful
+                  case intLit dstOffset =>
+                    cases lookup : storeLookup address source.refs with
+                    | none => simp [lookup] at successful
+                    | some cell =>
+                      cases cell with
+                      | w8array bytes => exact ⟨text, offset, length, flag, address, dstOffset, bytes, rfl, rfl, rfl, rfl, rfl, lookup⟩
+                      | refv value => simp [lookup] at successful
+                      | varray values => simp [lookup] at successful
+                      | thunk mode value => simp [lookup] at successful
+
+/-- Copying a string slice into a byte array has related success and bounds
+results, preserving the reserved flat-store slot. -/
+theorem copyStrAw8_related {C F : Type} (genv : GlobalEnv)
+    (source : State F) (flat : FlatSem.State C F) (states : StateRel genv source flat)
+    (ok : genvCOk genv.c) (text : Basis.Pure.MlString.MlString) (offset length : Int)
+    (flag : Bool) (address : Nat) (bytes : List (BitVec 8)) (dstOffset : Int)
+    (lookup : storeLookup address source.refs = some (.w8array bytes)) :
+    match doApp (source.refs, source.ffi) .copyStrAw8
+        [.litv (.strLit text), .litv (.intLit offset), .litv (.intLit length), .loc flag address, .litv (.intLit dstOffset)],
+      FlatSem.doAppCopy flat .copyStrAw8
+        [.litv (.strLit text), .litv (.intLit offset), .litv (.intLit length), .loc flag (address + 1), .litv (.intLit dstOffset)] with
+    | some ((refs, ffi), result), some (some (nextFlat, flatResult)) =>
+        ffi = source.ffi ∧ nextFlat = { flat with refs := nextFlat.refs } ∧
+        StateRel genv { source with refs := refs } nextFlat ∧ nextFlat.refs.take 1 = flat.refs.take 1 ∧
+        ResultRel ValueRel genv result flatResult
+    | _, _ => False := by
+  have flatLookup := stateRel_byteArray_lookup genv source flat states address bytes lookup
+  have exceptionRel := (exceptionValues_related genv ok).2.2.2
+  cases copied : copyArray (text.explode, offset) length (some (bytes, dstOffset)) with
+  | none =>
+    simp [doApp, doAppNumericCore, doAppBasic, FlatSem.doAppCopy, lookup, flatLookup,
+      SemanticPrimitivesHOL.boundsFailure, FlatSem.boundsFailure, copied, ResultRel.raise exceptionRel, states]
+  | some result =>
+    have assigned : storeAssign address (.w8array result) source.refs =
+        some (source.refs.set address (.w8array result)) := by
+      have indexed : source.refs[address]? = some (.w8array bytes) := lookup
+      simp [storeAssign, indexed, storeValueSameType]
+    obtain ⟨flatRefs, flatAssigned, reserved, nextRel⟩ :=
+      stateRel_storeAssign genv source flat states address (.w8array result) (.w8array result)
+        (.w8array result) _ assigned
+    have resultRel : ValueRel genv (.conv none []) FlatSem.unitValue := .tuple genv [] [] (.nil genv)
+    simp [doApp, doAppNumericCore, doAppBasic, FlatSem.doAppCopy, lookup, flatLookup, copied,
+      assigned, flatAssigned, nextRel, reserved, ResultRel.value resultRel]
+
 /-- A string length operation without a type error has a string operand. -/
 theorem strlen_operand {F : Type} (source : State F) (operand : Value)
     (successful : doApp (source.refs, source.ffi) .strlen [operand] ≠ none) :
@@ -2538,6 +2607,189 @@ theorem localEnvBounded_updateThunk {C F : Type} [Nonempty C]
               FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, flatApp,
               FlatSem.unitValue, EvaluateHOL.listResult] using
               And.intro growth (And.intro finalInvariant (And.intro nextGeneration forward))
+
+/-- String-to-byte-array copy composes operand simulations in a local environment. -/
+theorem localEnvBounded_copyStrAw8 {C F : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec) (limit : Nat)
+    (left right third fourth fifth : AstHOL.Exp)
+    (leftIH : LocalEnvBoundedIH (F := F) interp transform limit left)
+    (rightIH : LocalEnvBoundedIH (F := F) interp transform limit right)
+    (thirdIH : LocalEnvBoundedIH (F := F) interp transform limit third)
+    (fourthIH : LocalEnvBoundedIH (F := F) interp transform limit fourth)
+    (fifthIH : LocalEnvBoundedIH (F := F) interp transform limit fifth) :
+    LocalEnvBoundedIH (F := F) interp transform limit (.app .copyStrAw8 [left, right, third, fourth, fifth]) := by
+  intro genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen clockBound localRel envInv tracesLen invariant generation safe
+  let sourceEnv := { baseEnv with v := nsAppend sourceLocal baseEnv.v }
+  let compMap := { baseMap with v := bindLocals traces (flatEnv.v.map Prod.fst) baseMap.v }
+  have argsSafe : ∀ last, EvaluateHOL.evaluate source sourceEnv [fifth, fourth, third, right, left] ≠
+      (last, .err (.abort .typeError)) := by
+    intro last bad
+    apply safe last
+    change EvaluateHOL.evaluate source sourceEnv [.app .copyStrAw8 [left, right, third, fourth, fifth]] = _
+    rw [EvaluateHOL.evaluate]
+    simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+    rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [fifth, fourth, third, right, left] []).1, bad]
+  obtain ⟨nextGenv, argsSim, post⟩ := boundedEnvListStep_of_each interp transform limit [fifth, fourth, third, right, left]
+    (by intro expr member; simp only [List.mem_cons, List.not_mem_nil, or_false] at member; rcases member with rfl | rfl | rfl | rfl | rfl <;> assumption)
+    genv start finish other source flat baseEnv sourceLocal flatEnv traces trace baseMap gen clockBound localRel envInv tracesLen invariant generation argsSafe
+  unfold ExprListSim at argsSim
+  simp only [compileExps] at argsSim post
+  generalize sourceRun : EvaluateHOL.evaluate source sourceEnv [fifth, fourth, third, right, left] = sourceResult at argsSim post
+  obtain ⟨nextSource, sourceResult⟩ := sourceResult
+  generalize flatRun : FlatSem.evaluate flatEnv flat [compileExp trace compMap fifth, compileExp trace compMap fourth, compileExp trace compMap third, compileExp trace compMap right, compileExp trace compMap left] = flatResult at argsSim post
+  obtain ⟨nextFlat, flatResult⟩ := flatResult
+  obtain ⟨related, states⟩ := argsSim
+  cases related with
+  | abort error =>
+    refine ⟨nextGenv, ?_, ?_⟩
+    · unfold ExprSim
+      rw [EvaluateHOL.evaluate]
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+      rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [fifth, fourth, third, right, left] []).1, sourceRun]
+      simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+      rw [FlatSem.evaluate]
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+      rw [(FlatSem.fixClock_evaluations flatEnv flat
+        [compileExp trace compMap fifth, compileExp trace compMap fourth, compileExp trace compMap third, compileExp trace compMap right, compileExp trace compMap left]
+        (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+      exact ⟨.abort error, states⟩
+    · rw [EvaluateHOL.evaluate]
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+      rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [fifth, fourth, third, right, left] []).1, sourceRun]
+      trivial
+  | raise valueRel =>
+    refine ⟨nextGenv, ?_, ?_⟩
+    · unfold ExprSim
+      rw [EvaluateHOL.evaluate]
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+      rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [fifth, fourth, third, right, left] []).1, sourceRun]
+      simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+      rw [FlatSem.evaluate]
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+      rw [(FlatSem.fixClock_evaluations flatEnv flat [compileExp trace compMap fifth, compileExp trace compMap fourth, compileExp trace compMap third, compileExp trace compMap right, compileExp trace compMap left]
+        (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+      exact ⟨.raise valueRel, states⟩
+    · rw [EvaluateHOL.evaluate]
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+      rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [fifth, fourth, third, right, left] []).1, sourceRun]
+      simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+      rw [FlatSem.evaluate]
+      simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+      rw [(FlatSem.fixClock_evaluations flatEnv flat [compileExp trace compMap fifth, compileExp trace compMap fourth, compileExp trace compMap third, compileExp trace compMap right, compileExp trace compMap left]
+        (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+      exact post
+  | @value sourceValues flatValues valuesRel =>
+    have length := EvaluateProps.evaluateLengthFull source nextSource sourceEnv [fifth, fourth, third, right, left] sourceValues sourceRun
+    have five : ∃ v5 v4 v3 v2 v1, sourceValues = [v5, v4, v3, v2, v1] := by
+      cases sourceValues with
+      | nil => simp at length
+      | cons v5 tail =>
+        cases tail with
+        | nil => simp at length
+        | cons v4 tail =>
+          cases tail with
+          | nil => simp at length
+          | cons v3 tail =>
+            cases tail with
+            | nil => simp at length
+            | cons v2 tail =>
+              cases tail with
+              | nil => simp at length
+              | cons v1 rest =>
+                cases rest with
+                | nil => exact ⟨v5, v4, v3, v2, v1, rfl⟩
+                | cons extra rest => simp at length
+    obtain ⟨v5, v4, v3, v2, v1, rfl⟩ := five
+    cases valuesRel with
+    | cons r5 tail =>
+      cases tail with
+      | cons r4 tail =>
+        cases tail with
+        | cons r3 tail =>
+          cases tail with
+          | cons r2 tail =>
+            cases tail with
+            | cons r1 tail =>
+              cases tail with
+              | nil =>
+                rename_i f5 f4 f3 f2 f1
+                obtain ⟨growth, nextInvariant, nextGeneration, forward⟩ := post
+                have successful : doApp (nextSource.refs, nextSource.ffi) .copyStrAw8 [v1,v2,v3,v4,v5] ≠ none := by
+                  intro failed
+                  apply safe nextSource
+                  change EvaluateHOL.evaluate source sourceEnv [.app .copyStrAw8 [left, right, third, fourth, fifth]] = _
+                  rw [EvaluateHOL.evaluate]
+                  simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+                  rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [fifth, fourth, third, right, left] []).1, sourceRun]
+                  simp [getOpClass, failed, EvaluateHOL.typeError]
+                obtain ⟨text, offset, sliceLength, flag, address, dstOffset, bytes, rfl, rfl, rfl, rfl, rfl, lookup⟩ :=
+                  copyStrAw8_operands nextSource v1 v2 v3 v4 v5 successful
+                have f1Eq := (valueRel_literal_iff nextGenv (.strLit text) f1).mp r1
+                have f2Eq := (valueRel_literal_iff nextGenv (.intLit offset) f2).mp r2
+                have f3Eq := (valueRel_literal_iff nextGenv (.intLit sliceLength) f3).mp r3
+                have f4Eq := (valueRel_location_iff nextGenv flag address f4).mp r4
+                have f5Eq := (valueRel_literal_iff nextGenv (.intLit dstOffset) f5).mp r5
+                subst f1; subst f2; subst f3; subst f4; subst f5
+                have primitive := copyStrAw8_related nextGenv nextSource nextFlat states nextInvariant.1 text offset sliceLength flag address bytes dstOffset lookup
+                cases sourceApp : doApp (nextSource.refs, nextSource.ffi) .copyStrAw8
+                    [.litv (.strLit text), .litv (.intLit offset), .litv (.intLit sliceLength), .loc flag address, .litv (.intLit dstOffset)] with
+                | none => exact (successful sourceApp).elim
+                | some sourceOut =>
+                  cases sourceOut with
+                  | mk store sourceResult =>
+                    cases store with
+                    | mk refs ffi =>
+                      cases flatApp : FlatSem.doAppCopy nextFlat .copyStrAw8
+                          [.litv (.strLit text), .litv (.intLit offset), .litv (.intLit sliceLength), .loc flag (address+1), .litv (.intLit dstOffset)] with
+                      | none => simp [sourceApp, flatApp] at primitive
+                      | some flatOut =>
+                        cases flatOut with
+                        | none => simp [sourceApp, flatApp] at primitive
+                        | some flatOut =>
+                          cases flatOut with
+                          | mk flatAfter flatResult =>
+                            simp only [sourceApp, flatApp] at primitive
+                            obtain ⟨rfl, flatEq, stateRel, reserved, resultRel⟩ := primitive
+                            have finalInvariant := factoredInvariant_changeStores interp transform gen nextGenv (start, finish, other)
+                              nextSource nextFlat refs flatAfter.refs nextInvariant (by rw [flatEq] at stateRel; exact stateRel) reserved
+                            have finalInvariant' : factoredInvariant interp transform gen nextGenv (start, finish, other)
+                                { nextSource with refs := refs } flatAfter := by
+                              rw [flatEq]
+                              exact finalInvariant
+                            refine ⟨nextGenv, ?_, ?_⟩
+                            · unfold ExprSim
+                              rw [EvaluateHOL.evaluate]
+                              simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+                              rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [fifth, fourth, third, right, left] []).1, sourceRun]
+                              simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+                              rw [FlatSem.evaluate]
+                              simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+                              rw [(FlatSem.fixClock_evaluations flatEnv flat
+                                [compileExp trace compMap fifth, compileExp trace compMap fourth, compileExp trace compMap third, compileExp trace compMap right, compileExp trace compMap left]
+                                (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+                              simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append,
+                                getOpClass, astOpToFlatOp, sourceApp, FlatSem.applyResult, FlatSem.doApp,
+                                FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, flatApp]
+                              cases resultRel with
+                              | value valueRel => simpa [EvaluateHOL.listResult] using And.intro (ResultRel.value (.cons valueRel .nil)) stateRel
+                              | raise valueRel => simpa [EvaluateHOL.listResult] using And.intro (ResultRel.raise valueRel) stateRel
+                              | abort error => simpa [EvaluateHOL.listResult] using And.intro (ResultRel.abort error) stateRel
+                            · rw [EvaluateHOL.evaluate]
+                              simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+                              rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [fifth, fourth, third, right, left] []).1, sourceRun]
+                              simp only [compileExp, compileExps, reduceCtorEq, ↓reduceIte]
+                              rw [FlatSem.evaluate]
+                              simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+                              rw [(FlatSem.fixClock_evaluations flatEnv flat
+                                [compileExp trace compMap fifth, compileExp trace compMap fourth, compileExp trace compMap third, compileExp trace compMap right, compileExp trace compMap left]
+                                (FlatLang.Exp.lit .none (.intLit 0)) []).1, flatRun]
+                              simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append,
+                                getOpClass, astOpToFlatOp, sourceApp, FlatSem.applyResult, FlatSem.doApp,
+                                FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, flatApp]
+                              cases resultRel with
+                              | value valueRel => simpa [EvaluateHOL.listResult] using And.intro growth (And.intro finalInvariant' (And.intro nextGeneration forward))
+                              | raise valueRel => simpa [EvaluateHOL.listResult] using And.intro growth (And.intro finalInvariant' (And.intro nextGeneration forward))
+                              | abort error => simp [EvaluateHOL.listResult]
 
 /-- External calls preserve related stores and the shared FFI state in arbitrary local environments. -/
 theorem localEnvBounded_ffi {C F : Type} [Nonempty C]
