@@ -45,6 +45,7 @@ theorem boundLocal_pairStep {C F : Type} [Nonempty C]
     (firstIH : BoundLocalIH (F := F) interp transform name first)
     (secondIH : BoundLocalIH (F := F) interp transform name second)
     (related : ValueRel genv value flatValue)
+    (envInv : GlobalEnvInv genv baseMap (fun _ => False) baseEnv)
     (invariant : factoredInvariant interp transform gen genv (start, finish, other) source flat)
     (generation : envGenRel gen source.evalState)
     (safe : ∀ last, EvaluateHOL.evaluate source { baseEnv with v := nsBind name value baseEnv.v } [first, second] ≠
@@ -79,7 +80,7 @@ theorem boundLocal_pairStep {C F : Type} [Nonempty C]
     change EvaluateHOL.evaluate source sourceEnv [first, second] = _
     simp only [sourcePair, bad]
   obtain ⟨middleGenv, headSim, headPost⟩ := firstIH genv start finish other source flat baseEnv trace baseMap gen
-    value flatValue related invariant generation firstSafe
+    value flatValue related envInv invariant generation firstSafe
   unfold ExprSim at headSim
   generalize sourceHead : EvaluateHOL.evaluate source sourceEnv [first] = sourceResult at headSim headPost
   obtain ⟨middleSource, sourceResult⟩ := sourceResult
@@ -110,6 +111,7 @@ theorem boundLocal_pairStep {C F : Type} [Nonempty C]
       | nil =>
         obtain ⟨headGrowth, middleInvariant, middleGeneration, headForward⟩ := headPost
         have middleRelated := valueRel_growth genv middleGenv headGrowth value flatValue related
+        have middleEnv := globalEnvInv_growth genv middleGenv headGrowth baseMap (fun _ => False) baseEnv envInv
         have secondSafe : ∀ last, EvaluateHOL.evaluate middleSource sourceEnv [second] ≠
             (last, .err (.abort .typeError)) := by
           intro last bad
@@ -117,7 +119,7 @@ theorem boundLocal_pairStep {C F : Type} [Nonempty C]
           change EvaluateHOL.evaluate source sourceEnv [first, second] = _
           simp only [sourcePair, sourceHead, bad]
         obtain ⟨finalGenv, tailSim, tailPost⟩ := secondIH middleGenv start finish other middleSource middleFlat
-          baseEnv trace baseMap gen value flatValue middleRelated middleInvariant middleGeneration secondSafe
+          baseEnv trace baseMap gen value flatValue middleRelated middleEnv middleInvariant middleGeneration secondSafe
         have tailList := exprListSim_singleton finalGenv compMap trace sourceEnv flatEnv middleSource middleFlat second tailSim
         unfold ExprListSim at tailList
         generalize sourceTail : EvaluateHOL.evaluate middleSource sourceEnv [second] = sourceTailResult at tailList tailPost
@@ -163,7 +165,7 @@ theorem boundLocalIH_test {C F : Type} [Nonempty C]
     (leftIH : BoundLocalIH (F := F) interp transform name left)
     (rightIH : BoundLocalIH (F := F) interp transform name right) :
     BoundLocalIH (F := F) interp transform name (.app (.test test typ) [left, right]) := by
-  intro genv start finish other source flat baseEnv trace baseMap gen value flatValue related invariant generation safe
+  intro genv start finish other source flat baseEnv trace baseMap gen value flatValue related envInv invariant generation safe
   let sourceEnv := { baseEnv with v := nsBind name value baseEnv.v }
   let compMap := { baseMap with v := nsBind name (.localName .none name) baseMap.v }
   let flatEnv : FlatSem.Environment FlatSem.Value := ⟨[(name, flatValue)]⟩
@@ -176,7 +178,7 @@ theorem boundLocalIH_test {C F : Type} [Nonempty C]
     simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
     rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [right, left] []).1, bad]
   obtain ⟨nextGenv, argsSim, post⟩ := boundLocal_pairStep interp transform genv start finish other source flat
-    baseEnv trace baseMap gen name value flatValue right left rightIH leftIH related invariant generation argsSafe
+    baseEnv trace baseMap gen name value flatValue right left rightIH leftIH related envInv invariant generation argsSafe
   have argsSimCopy := argsSim
   unfold ExprListSim at argsSim
   simp only [compileExps] at argsSim post
@@ -273,7 +275,7 @@ theorem boundLocalIH_equality {C F : Type} [Nonempty C]
     (leftIH : BoundLocalIH (F := F) interp transform name left)
     (rightIH : BoundLocalIH (F := F) interp transform name right) :
     BoundLocalIH (F := F) interp transform name (.app .equality [left, right]) := by
-  intro genv start finish other source flat baseEnv trace baseMap gen value flatValue related invariant generation safe
+  intro genv start finish other source flat baseEnv trace baseMap gen value flatValue related envInv invariant generation safe
   let sourceEnv := { baseEnv with v := nsBind name value baseEnv.v }
   let compMap := { baseMap with v := nsBind name (.localName .none name) baseMap.v }
   let flatEnv : FlatSem.Environment FlatSem.Value := ⟨[(name, flatValue)]⟩
@@ -286,7 +288,7 @@ theorem boundLocalIH_equality {C F : Type} [Nonempty C]
     simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
     rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [right, left] []).1, bad]
   obtain ⟨nextGenv, argsSim, post⟩ := boundLocal_pairStep interp transform genv start finish other source flat
-    baseEnv trace baseMap gen name value flatValue right left rightIH leftIH related invariant generation argsSafe
+    baseEnv trace baseMap gen name value flatValue right left rightIH leftIH related envInv invariant generation argsSafe
   have argsSimCopy := argsSim
   unfold ExprListSim at argsSim
   simp only [compileExps] at argsSim post
@@ -383,7 +385,7 @@ theorem boundLocalIH_integerArith {C F : Type} [Nonempty C]
     (leftIH : BoundLocalIH (F := F) interp transform name left)
     (rightIH : BoundLocalIH (F := F) interp transform name right) :
     BoundLocalIH (F := F) interp transform name (.app (.arith action .intT) [left, right]) := by
-  intro genv start finish other source flat baseEnv trace baseMap gen value flatValue related invariant generation safe
+  intro genv start finish other source flat baseEnv trace baseMap gen value flatValue related envInv invariant generation safe
   let sourceEnv := { baseEnv with v := nsBind name value baseEnv.v }
   let compMap := { baseMap with v := nsBind name (.localName .none name) baseMap.v }
   let flatEnv : FlatSem.Environment FlatSem.Value := ⟨[(name, flatValue)]⟩
@@ -396,7 +398,7 @@ theorem boundLocalIH_integerArith {C F : Type} [Nonempty C]
     simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
     rw [(EvaluateHOL.fixClockEvaluate source sourceEnv [right, left] []).1, bad]
   obtain ⟨nextGenv, argsSim, post⟩ := boundLocal_pairStep interp transform genv start finish other source flat
-    baseEnv trace baseMap gen name value flatValue right left rightIH leftIH related invariant generation argsSafe
+    baseEnv trace baseMap gen name value flatValue right left rightIH leftIH related envInv invariant generation argsSafe
   have argsSimCopy := argsSim
   unfold ExprListSim at argsSim
   simp only [compileExps] at argsSim post

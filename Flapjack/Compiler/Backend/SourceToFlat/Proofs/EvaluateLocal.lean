@@ -8,7 +8,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingLet
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingIf
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingLog
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingArith
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundList
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateBoundConstructor
 
 /-! Local declaration simulation over the preliminary factored relations. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
@@ -189,6 +189,9 @@ inductive FactoredScopedDec : Dec → Prop where
   | boundTuple (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (name : VarN) (first body : AstHOL.Exp) :
       FactoredBoundExpression first → BoundTupleExpression name body →
       FactoredScopedDec (.dlet location pattern (.let_ (some name) first body))
+  | boundConstructor (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (name : VarN) (first body : AstHOL.Exp) :
+      FactoredBoundExpression first → BoundConstructorExpression name body →
+      FactoredScopedDec (.dlet location pattern (.let_ (some name) first body))
   | module_ (moduleName : ModN) (decs : List Dec) :
       (∀ dec, dec ∈ decs → FactoredScopedDec dec) → FactoredScopedDec (.dmod moduleName decs)
   | local_ (locals body : List Dec) :
@@ -255,6 +258,10 @@ theorem factoredDecIH_scoped {C F : Type} [Nonempty C]
   | boundTuple location pattern name first body firstCovered bodyCovered =>
     exact factoredDecIH_dlet_expression interp transform location pattern _
       (factoredExpressionIH_let_named_tuple interp transform name first body bodyCovered
+        (factoredExpressionIH_boundTree interp transform first firstCovered))
+  | boundConstructor location pattern name first body firstCovered bodyCovered =>
+    exact factoredDecIH_dlet_expression interp transform location pattern _
+      (factoredExpressionIH_let_named_constructor interp transform name first body bodyCovered
         (factoredExpressionIH_boundTree interp transform first firstCovered))
   | module_ moduleName decs _ ih =>
     apply factoredDecIH_dmod interp transform moduleName decs

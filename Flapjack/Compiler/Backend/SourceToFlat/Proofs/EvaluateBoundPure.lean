@@ -121,7 +121,7 @@ theorem factoredExpressionIH_let_named_pure {C F : Type} [Nonempty C]
     (firstIH : FactoredExpressionIH (F := F) interp transform first) :
     FactoredExpressionIH (F := F) interp transform (.let_ (some name) first body) := by
   apply factoredExpressionIH_let_named_of_local interp transform name first body firstIH
-  intro genv start finish other source flat sourceEnv trace compMap gen value flatValue related invariant generation _
+  intro genv start finish other source flat sourceEnv trace compMap gen value flatValue related _ invariant generation _
   exact localExpressionStep_boundPure interp transform genv start finish other source flat sourceEnv trace
     compMap gen name value flatValue body covered related invariant generation
 

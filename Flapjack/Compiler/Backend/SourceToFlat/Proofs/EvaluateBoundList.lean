@@ -180,6 +180,7 @@ theorem boundLocalListStep_of_each {C F : Type} [Nonempty C]
       (trace : List VarN) (baseMap : Environment) (gen : EnvironmentGenerationStore)
       (value : Value) (flatValue : FlatSem.Value),
       ValueRel genv value flatValue →
+      GlobalEnvInv genv baseMap (fun _ => False) baseEnv →
       factoredInvariant interp transform gen genv (start, finish, other) source flat →
       envGenRel gen source.evalState →
       (∀ last, EvaluateHOL.evaluate source { baseEnv with v := nsBind name value baseEnv.v } expressions ≠
@@ -189,11 +190,11 @@ theorem boundLocalListStep_of_each {C F : Type} [Nonempty C]
         { baseMap with v := nsBind name (.localName .none name) baseMap.v } gen expressions := by
   induction expressions with
   | nil =>
-    intro genv start finish other source flat baseEnv trace baseMap gen value flatValue _ invariant generation _
+    intro genv start finish other source flat baseEnv trace baseMap gen value flatValue _ _ invariant generation _
     exact localExpressionListStep_empty interp transform genv start finish other source flat _ _ trace _ gen
       invariant generation
   | cons first rest ih =>
-    intro genv start finish other source flat baseEnv trace baseMap gen value flatValue related invariant generation safe
+    intro genv start finish other source flat baseEnv trace baseMap gen value flatValue related envInv invariant generation safe
     let sourceEnv := { baseEnv with v := nsBind name value baseEnv.v }
     let compMap := { baseMap with v := nsBind name (.localName .none name) baseMap.v }
     let flatEnv : FlatSem.Environment FlatSem.Value := ⟨[(name, flatValue)]⟩
@@ -201,7 +202,7 @@ theorem boundLocalListStep_of_each {C F : Type} [Nonempty C]
     | nil =>
       apply localExpressionListStep_singleton
       exact each first (by simp) genv start finish other source flat baseEnv trace baseMap gen value flatValue
-        related invariant generation safe
+        related envInv invariant generation safe
     | cons second tail =>
       have headSafe : ∀ last, EvaluateHOL.evaluate source sourceEnv [first] ≠ (last, .err (.abort .typeError)) := by
         intro last bad
@@ -209,7 +210,7 @@ theorem boundLocalListStep_of_each {C F : Type} [Nonempty C]
         change EvaluateHOL.evaluate source sourceEnv (first :: second :: tail) = _
         simp only [sourceEvaluate_cons, bad]
       have headStep := each first (by simp) genv start finish other source flat baseEnv trace baseMap gen value flatValue
-        related invariant generation headSafe
+        related envInv invariant generation headSafe
       change LocalExpressionListStep interp transform genv start finish other source flat sourceEnv flatEnv trace
         compMap gen (first :: second :: tail)
       apply localExpressionListStep_cons interp transform genv start finish other source flat sourceEnv flatEnv trace
@@ -225,6 +226,7 @@ theorem boundLocalListStep_of_each {C F : Type} [Nonempty C]
       · intro expr member
         exact each expr (List.mem_cons_of_mem _ member)
       · exact valueRel_growth genv middleGenv growth value flatValue related
+      · exact globalEnvInv_growth genv middleGenv growth baseMap (fun _ => False) baseEnv envInv
       · exact middleInvariant
       · exact middleGeneration
       · exact tailSafe
@@ -236,7 +238,7 @@ theorem boundLocalIH_tuple {C F : Type} [Nonempty C]
     (name : VarN) (args : List AstHOL.Exp)
     (each : ∀ expr, expr ∈ args → BoundLocalIH (F := F) interp transform name expr) :
     BoundLocalIH (F := F) interp transform name (.con none args) := by
-  intro genv start finish other source flat baseEnv trace baseMap gen value flatValue related invariant generation safe
+  intro genv start finish other source flat baseEnv trace baseMap gen value flatValue related envInv invariant generation safe
   let sourceEnv := { baseEnv with v := nsBind name value baseEnv.v }
   let compMap := { baseMap with v := nsBind name (.localName .none name) baseMap.v }
   let flatEnv : FlatSem.Environment FlatSem.Value := ⟨[(name, flatValue)]⟩
@@ -249,7 +251,7 @@ theorem boundLocalIH_tuple {C F : Type} [Nonempty C]
     simp [EvaluateHOL.evaluate, doConCheck, bad]
   obtain ⟨nextGenv, argsSim, post⟩ := boundLocalListStep_of_each interp transform name args.reverse
     (fun expr member => each expr (List.mem_reverse.mp member)) genv start finish other source flat baseEnv
-    trace baseMap gen value flatValue related invariant generation argsSafe
+    trace baseMap gen value flatValue related envInv invariant generation argsSafe
   refine ⟨nextGenv, exprSim_tuple nextGenv compMap trace sourceEnv flatEnv source flat args argsSim, ?_⟩
   unfold ExprListSim at argsSim
   rw [compileExps_reverse] at argsSim post

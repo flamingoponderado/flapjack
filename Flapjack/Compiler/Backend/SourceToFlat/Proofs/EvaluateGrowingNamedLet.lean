@@ -45,6 +45,7 @@ theorem factoredExpressionIH_let_named_of_local {C F : Type} [Nonempty C]
       (trace : List VarN) (compMap : Environment) (gen : EnvironmentGenerationStore)
       (value : Value) (flatValue : FlatSem.Value),
       ValueRel genv value flatValue →
+      GlobalEnvInv genv compMap (fun _ => False) sourceEnv →
       factoredInvariant interp transform gen genv (start, finish, other) source flat →
       envGenRel gen source.evalState →
       (∀ last, EvaluateHOL.evaluate source { sourceEnv with v := nsBind name value sourceEnv.v } [body] ≠
@@ -96,6 +97,7 @@ theorem factoredExpressionIH_let_named_of_local {C F : Type} [Nonempty C]
       | nil =>
         rename_i flatValue
         obtain ⟨firstGrowth, middleInvariant, middleGeneration, firstForward⟩ := firstPost
+        have middleEnv := globalEnvInv_growth genv middleGenv firstGrowth compMap (fun _ => False) sourceEnv envInv
         have bodySafe : ∀ last, EvaluateHOL.evaluate middleSource
             { sourceEnv with v := nsBind name value sourceEnv.v } [body] ≠ (last, .err (.abort .typeError)) := by
           intro last bad
@@ -103,7 +105,7 @@ theorem factoredExpressionIH_let_named_of_local {C F : Type} [Nonempty C]
           rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv [first] []).1, sourceFirst]
           simpa [nsOptBind, EvaluateHOL.headValue, Flapjack.holHd] using bad
         obtain ⟨finalGenv, bodySim, bodyPost⟩ := bodyIH middleGenv start finish other middleSource middleFlat
-          sourceEnv trace compMap gen value flatValue related middleInvariant middleGeneration bodySafe
+          sourceEnv trace compMap gen value flatValue related middleEnv middleInvariant middleGeneration bodySafe
         have sourceOuter : EvaluateHOL.evaluate source sourceEnv [.let_ (some name) first body] =
             EvaluateHOL.evaluate middleSource { sourceEnv with v := nsBind name value sourceEnv.v } [body] := by
           rw [EvaluateHOL.evaluate, (EvaluateHOL.fixClockEvaluate source sourceEnv [first] []).1, sourceFirst]
@@ -174,7 +176,7 @@ theorem factoredExpressionIH_let_named_self {C F : Type} [Nonempty C]
     (firstIH : FactoredExpressionIH (F := F) interp transform first) :
     FactoredExpressionIH (F := F) interp transform (.let_ (some name) first (.var (.short name))) := by
   apply factoredExpressionIH_let_named_of_local interp transform name first (.var (.short name)) firstIH
-  intro genv start finish other source flat sourceEnv trace compMap gen value flatValue related invariant generation _
+  intro genv start finish other source flat sourceEnv trace compMap gen value flatValue related _ invariant generation _
   exact localExpressionStep_boundVariable interp transform genv start finish other source flat sourceEnv trace
     compMap gen name value flatValue related invariant generation
 

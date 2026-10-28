@@ -378,7 +378,7 @@ theorem factoredExpressionIH_let_named_test {C F : Type} [Nonempty C]
     (firstIH : FactoredExpressionIH (F := F) interp transform first) :
     FactoredExpressionIH (F := F) interp transform (.let_ (some name) first (.app (.test test typ) [left, right])) := by
   apply factoredExpressionIH_let_named_of_local interp transform name first _ firstIH
-  intro genv start finish other source flat sourceEnv trace compMap gen value flatValue related invariant generation safe
+  intro genv start finish other source flat sourceEnv trace compMap gen value flatValue related _ invariant generation safe
   exact localExpressionStep_boundTest interp transform genv start finish other source flat sourceEnv trace compMap gen
     name value flatValue test typ left right leftCovered rightCovered related invariant generation safe
 
@@ -391,7 +391,7 @@ theorem factoredExpressionIH_let_named_equality {C F : Type} [Nonempty C]
     (firstIH : FactoredExpressionIH (F := F) interp transform first) :
     FactoredExpressionIH (F := F) interp transform (.let_ (some name) first (.app .equality [left, right])) := by
   apply factoredExpressionIH_let_named_of_local interp transform name first _ firstIH
-  intro genv start finish other source flat sourceEnv trace compMap gen value flatValue related invariant generation safe
+  intro genv start finish other source flat sourceEnv trace compMap gen value flatValue related _ invariant generation safe
   exact localExpressionStep_boundEquality interp transform genv start finish other source flat sourceEnv trace compMap gen
     name value flatValue left right leftCovered rightCovered related invariant generation safe
 
@@ -405,7 +405,7 @@ theorem factoredExpressionIH_let_named_integerArith {C F : Type} [Nonempty C]
     FactoredExpressionIH (F := F) interp transform
       (.let_ (some name) first (.app (.arith action .intT) [left, right])) := by
   apply factoredExpressionIH_let_named_of_local interp transform name first _ firstIH
-  intro genv start finish other source flat sourceEnv trace compMap gen value flatValue related invariant generation safe
+  intro genv start finish other source flat sourceEnv trace compMap gen value flatValue related _ invariant generation safe
   exact localExpressionStep_boundIntegerArith interp transform genv start finish other source flat sourceEnv trace compMap gen
     name value flatValue action left right leftCovered rightCovered related invariant generation safe
 
