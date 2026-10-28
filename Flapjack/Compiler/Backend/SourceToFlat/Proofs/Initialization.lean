@@ -366,4 +366,54 @@ theorem compileProg_envGenFutureRel {C : Type}
     · intro key member
       exact ⟨member, rfl⟩
 
+/-- The initial empty oracle generation satisfies the factored oracle
+environment invariant after the first program configuration is compiled. -/
+theorem initEvalStateOk_srcOracInvs {C : Type} [Nonempty C]
+    (interp : Option (Value → Option (Config × C))) (transform : List Dec → List Dec)
+    (evalState : Option EvalState) (genv : GlobalEnv) (config : Config) (decs : List Dec)
+    (n : Nat) (next : NextIndices) (outEnv : Environment) (outGen : EnvironmentGenerationStore)
+    (body : List FlatLang.Exp)
+    (compiled : compileDecs [] 1 { config.next with vidx := config.next.vidx + 1 } config.modEnv
+      ⟨0, config.envs.next, .ln⟩ decs = (n, next, outEnv, outGen, body))
+    (emptyStore : config.envs = emptyConfig.envs)
+    (initial : initEvalStateOk evalState)
+    (steps : OracleInvariant.srcOracStepInvs interp transform evalState)
+    (oracleConfig : match OracleInvariant.srcOracNextCfg interp evalState with
+      | none => True
+      | some nextConfig => nextConfig = (compileProg config decs).1) :
+    OracleInvariant.srcOracInvs interp transform genv evalState := by
+  refine ⟨steps, ?_, ?_⟩
+  · cases evalState with
+    | none => trivial
+    | some state =>
+      cases state with
+      | evalDecs state => exact False.elim initial
+      | evalOracle state =>
+        obtain ⟨generation, envs⟩ := initial
+        obtain ⟨decode, envId0, value0, decs0, flatDecs, config0, payload0,
+          envId1, value1, decs1, config1, payload1, chosen, _, _, _, _, _, nextCfg⟩ :=
+          OracleInvariant.sourceOracle_firstStep interp transform state steps
+        have found : OracleInvariant.srcOracNextCfg interp (some (.evalOracle state)) = some config0 := by
+          simpa [chosen] using nextCfg
+        simp only [found] at oracleConfig
+        subst config0
+        refine ⟨(compileProg config decs).1, found, ?_, ?_, ?_⟩
+        · intro i member
+          simp only [compileProg, compiled] at member ⊢
+          rw [Flapjack.sptMem_sptInsert] at member
+          simpa [emptyStore, emptyConfig, Flapjack.sptMem, Flapjack.sptDomain] using member
+        · simp [compileProg, emptyStore, emptyConfig, envs]
+        · intro generationId generationBound id idBound
+          have zero : generationId = 0 := by simp [envs] at generationBound; omega
+          subst generationId
+          simp [envs] at idBound
+  · cases evalState with
+    | none => trivial
+    | some state =>
+      cases state with
+      | evalDecs state => exact False.elim initial
+      | evalOracle state =>
+        obtain ⟨generation, envs⟩ := initial
+        simp [OracleInvariant.srcOracGenInv, generation, envs]
+
 end Flapjack.Compiler.Backend.SourceToFlat
