@@ -328,6 +328,10 @@ run_probe source_to_flat_global_env_probeScript.sml source_to_flat_global_env_pr
   globals_type constructors_type types_type has_bools has_lists has_exns genv_c_ok genv_c_tys_ok genv_lookup_nil genv_lookup_cons same_type_fst_same_ctor pmatch_stamps_ok bind_tag chr_tag div_tag subscript_tag nil_tag cons_tag empty_bools empty_lists empty_exns empty_types \
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe source_to_flat_store_relation_probeScript.sml source_to_flat_store_relation_probe.out \
+  store_relation_rules state_relation_rule \
+  "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe source_to_flat_init_probeScript.sml source_to_flat_init_probe.out \
   eval_state_ok type_entries constructor_entries initial_env initial_next initial_global_inv initial_global_imp initial_env_ok initial_types_ok keep_global_allocation elimination_keep incremental_nonempty flat_initial_state flat_semantics compile_flat compile incremental_compile evaluated_entries evaluated_next incremental_empty \
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
