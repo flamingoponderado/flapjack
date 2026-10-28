@@ -166,6 +166,13 @@ def rich_program(rng):
         f'fun sum a i = if i = 3 then 0 else Array.sub a i + sum a (i + 1); '
         f'val a = Array.array 3 {a}; val _ = Array.update a 1 {b}; '
         f'val _ = print_int (sum a 0);',
+        f'val a = Array.tabulate {a} (fn x => x * {b}); '
+        f'val _ = print_int (Array.sub a {c % a});',
+        f'val _ = print_int (Word64.toInt (Word64.<< 0w{a} {b}));',
+        f'fun f x = let fun loop n a = if n = 0 then a else loop (n-1) (a*{a}) '
+        f'in loop x 1 end; val _ = print_int (f {b});',
+        f'fun f x = (x div 0) handle Div => {a}; val _ = print_int (f {b});',
+        f'val _ = print_int (List.length (List.map (fn x => x + {a}) [{a},{b},{c}]));',
     ])
 
 

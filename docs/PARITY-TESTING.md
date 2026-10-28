@@ -457,7 +457,8 @@ also covers short-circuit Boolean control, partial application, constructor
 matching on triples, escaped byte lookup, captured let bindings, large signed
 products, and datatype matches through a module. It
 also covers mutable references, captured reference updates, nested exception
-handlers, and datatypes with several constructor arities. It
+handlers, datatypes with several constructor arities, array tabulation,
+word shifts, local tail recursion, division exception handling, and list mapping. It
 also checks that
 `--types` takes precedence over `--print_sexp` and `--explore` in either flag
 order, including parse and type failures.
@@ -479,7 +480,8 @@ lexical edge cases, arbitrary byte input in expressions, strings and comments,
 decimal string and character escapes for all 256 bytes, and successful programs
 compiled to RISC-V, including generated datatype,
 closure, exception, reference, module, recursion, and mutable array examples,
-including byte-array access and recursive array traversal. It also compares
+including byte-array access, tabulation and recursive array traversal, word
+shifts, local tail recursion, division exception handling, and list mapping. It also compares
 generated type and datatype declarations and successful compilation with
 combinations of backend options, including allocator 3 and explicitly sized
 generational garbage collection. Case counts can be changed with
