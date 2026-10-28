@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedArray
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedData
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalBoundedTree
 
 /-! Bounded expression composition including arrays and function calls. -/
@@ -32,6 +33,8 @@ inductive LocalEnvBoundedArrayExpression : AstHOL.Exp → Prop where
       LocalEnvBoundedArrayExpression (.app .aw8sub [pointer, index])
   | byteSubscriptUnsafe (pointer index : AstHOL.Exp) : LocalEnvBoundedArrayExpression pointer → LocalEnvBoundedArrayExpression index →
       LocalEnvBoundedArrayExpression (.app .aw8subUnsafe [pointer, index])
+  | stringLength (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body → LocalEnvBoundedArrayExpression (.app .strlen [body])
+  | vectorLength (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body → LocalEnvBoundedArrayExpression (.app .vlength [body])
   | arrayLength (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body → LocalEnvBoundedArrayExpression (.app .alength [body])
   | byteArrayLength (body : AstHOL.Exp) : LocalEnvBoundedArrayExpression body → LocalEnvBoundedArrayExpression (.app .aw8length [body])
   | tuple (args : List AstHOL.Exp) : (∀ expr, expr ∈ args → LocalEnvBoundedArrayExpression expr) →
@@ -115,6 +118,8 @@ theorem localEnvBounded_arrayTree {C F : Type} [Nonempty C]
     exact localEnvBounded_aw8sub interp transform limit pointer index pointerIH indexIH
   | byteSubscriptUnsafe pointer index _ _ pointerIH indexIH =>
     exact localEnvBounded_aw8subUnsafe interp transform limit pointer index pointerIH indexIH
+  | stringLength body _ ih => exact localEnvBounded_strlen interp transform limit body ih
+  | vectorLength body _ ih => exact localEnvBounded_vlength interp transform limit body ih
   | arrayLength body _ ih => exact localEnvBounded_alength interp transform limit body ih
   | byteArrayLength body _ ih => exact localEnvBounded_aw8length interp transform limit body ih
   | tuple args _ ih => exact localEnvBounded_tuple interp transform limit args ih
