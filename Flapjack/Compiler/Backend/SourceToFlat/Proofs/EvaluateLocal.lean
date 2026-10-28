@@ -8,7 +8,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingLet
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingIf
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingLog
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateGrowingArith
-import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalControl
+import Flapjack.Compiler.Backend.SourceToFlat.Proofs.EvaluateLocalList
 
 /-! Local declaration simulation over the preliminary factored relations. -/
 namespace Flapjack.Compiler.Backend.SourceToFlat
@@ -199,6 +199,8 @@ inductive FactoredScopedDec : Dec → Prop where
       LocalEnvExpression expr → FactoredScopedDec (.dlet location pattern expr)
   | localControl (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp) :
       LocalEnvControlExpression expr → FactoredScopedDec (.dlet location pattern expr)
+  | localConstructor (location : Flapjack.Misc.Location.Locs) (pattern : Pat) (expr : AstHOL.Exp) :
+      LocalEnvConstructorExpression expr → FactoredScopedDec (.dlet location pattern expr)
   | module_ (moduleName : ModN) (decs : List Dec) :
       (∀ dec, dec ∈ decs → FactoredScopedDec dec) → FactoredScopedDec (.dmod moduleName decs)
   | local_ (locals body : List Dec) :
@@ -280,6 +282,9 @@ theorem factoredDecIH_scoped {C F : Type} [Nonempty C]
   | localControl location pattern expr covered =>
     exact factoredDecIH_dlet_expression interp transform location pattern expr
       (localEnvIH_to_factored interp transform expr (localEnvIH_controlTree interp transform expr covered))
+  | localConstructor location pattern expr covered =>
+    exact factoredDecIH_dlet_expression interp transform location pattern expr
+      (localEnvIH_to_factored interp transform expr (localEnvIH_constructorTree interp transform expr covered))
   | module_ moduleName decs _ ih =>
     apply factoredDecIH_dmod interp transform moduleName decs
     apply factoredDecIH_list interp transform decs
