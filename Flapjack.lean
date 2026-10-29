@@ -460,6 +460,8 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.Force
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.BlockOperations
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.BlockExpressions
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Globals
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.Memory
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.MemoryExpressions
 import Flapjack.Compiler.Backend.Backend.PrimSrcConfig
 import Flapjack.Misc.Location
 import Flapjack.Compiler.Backend.BackendCommon.Operators
