@@ -495,6 +495,8 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.FlatOperators
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Sequencing
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Correctness
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Executable
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.InstallPipeline
+import Flapjack.Compiler.Backend.ClosInterp.Proofs.EvaluateBasic
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Assignment
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Element
 import Flapjack.Compiler.Backend.Backend.PrimSrcConfig
