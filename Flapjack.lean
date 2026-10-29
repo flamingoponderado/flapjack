@@ -444,6 +444,7 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.StateRelation
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.IntegerOperations
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.IntegerExpressions
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.ByteComparisons
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.WordOperations
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.InstallDecoding
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Install
