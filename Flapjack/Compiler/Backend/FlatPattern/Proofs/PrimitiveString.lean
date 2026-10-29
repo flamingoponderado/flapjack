@@ -13,6 +13,63 @@ theorem literalValues_related (literals : List Lit) :
   | nil => exact .nil
   | cons lit _ ih => exact .cons ((valueRel_lit lit _).2 rfl) ih
 
+/-- A decoded character list is the corresponding canonical flat list. -/
+theorem valueToCharList_inverse (value : FlatSem.Value) (chars : List (BitVec 8))
+    (decoded : FlatSem.valueToCharList value = some chars) :
+    FlatSem.listToValue (chars.map (.litv ∘ Lit.char)) = value := by
+  cases value with
+  | litv _ | loc _ _ | vectorv _ | closure _ _ _ | recclosure _ _ _ => simp [FlatSem.valueToCharList] at decoded
+  | conv stamp fields =>
+    cases stamp with
+    | none => simp [FlatSem.valueToCharList] at decoded
+    | some stamp =>
+      obtain ⟨tag, typeId⟩ := stamp
+      cases fields with
+      | nil =>
+        by_cases valid : tag = BackendCommon.nilTag ∧ typeId = some FlatSem.listId
+        · simp [FlatSem.valueToCharList, valid] at decoded
+          subst chars
+          rcases valid with ⟨rfl, rfl⟩
+          rfl
+        · simp [FlatSem.valueToCharList, valid] at decoded
+      | cons head rest =>
+        cases rest with
+        | nil => simp [FlatSem.valueToCharList] at decoded
+        | cons tail rest =>
+          cases rest with
+          | cons _ _ => simp [FlatSem.valueToCharList] at decoded
+          | nil =>
+            cases head with
+            | litv literal =>
+              cases literal with
+              | char char =>
+                by_cases valid : tag = BackendCommon.consTag ∧ typeId = some FlatSem.listId
+                · cases tailDecoded : FlatSem.valueToCharList tail with
+                  | none => simp [FlatSem.valueToCharList, valid, tailDecoded] at decoded
+                  | some tailChars =>
+                    simp [FlatSem.valueToCharList, valid, tailDecoded] at decoded
+                    subst chars
+                    have tailEq := valueToCharList_inverse tail tailChars tailDecoded
+                    rcases valid with ⟨rfl, rfl⟩
+                    simp [FlatSem.listToValue, tailEq]
+                · simp [FlatSem.valueToCharList, valid] at decoded
+              | intLit _ | word8 _ | word64 _ | strLit _ | float64 _ => simp [FlatSem.valueToCharList] at decoded
+            | conv _ _ | loc _ _ | vectorv _ | closure _ _ _ | recclosure _ _ _ => simp [FlatSem.valueToCharList] at decoded
+termination_by sizeOf value
+
+/-- Character-list decoding agrees for related flat values. -/
+theorem valueToCharList_related (value value' : FlatSem.Value) (chars : List (BitVec 8))
+    (related : ValueRel value value') (decoded : FlatSem.valueToCharList value = some chars) :
+    FlatSem.valueToCharList value' = some chars := by
+  have encoded := valueToCharList_inverse value chars decoded
+  have eq : value' = value := by
+    rw [← encoded] at related ⊢
+    apply literalList_valueRel_eq _ value' ?_ related
+    intro item member
+    obtain ⟨char, _, rfl⟩ := List.mem_map.mp member
+    exact ⟨.char char, rfl⟩
+  simpa [eq] using decoded
+
 /-- String length preserves arbitrary successful primitive results. -/
 theorem doApp_stringLength_related {C F : Type} (cfg : Config) (source target sourceFinal : FlatSem.State C F)
     (values values' : List FlatSem.Value) (result : Result FlatSem.Value FlatSem.Value)
@@ -183,5 +240,70 @@ theorem doApp_stringConcat_related {C F : Type} (cfg : Config) (source target so
           exact ⟨target, .val (.litv (.strLit string)),
             by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, decoded', concatenated'],
             states, .value ((valueRel_lit _ _).2 rfl)⟩
+
+/-- Imploding a character list preserves the returned byte string. -/
+theorem doApp_stringImplode_related {C F : Type} (cfg : Config) (source target sourceFinal : FlatSem.State C F)
+    (values values' : List FlatSem.Value) (result : Result FlatSem.Value FlatSem.Value)
+    (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
+    (run : FlatSem.doApp source (.src .implode) values = some (sourceFinal, result)) :
+    ∃ targetFinal result', FlatSem.doApp target (.src .implode) values' = some (targetFinal, result') ∧
+      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+  cases related with
+  | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
+  | @cons value value' tail tail' valueRel rest =>
+    cases rest with
+    | cons _ _ => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
+    | nil =>
+      cases decoded : FlatSem.valueToCharList value with
+      | none => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, decoded] at run
+      | some chars =>
+        have decoded' := valueToCharList_related value value' chars valueRel decoded
+        simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, decoded] at run
+        rcases run with ⟨rfl, rfl⟩
+        exact ⟨target, .val (.litv (.strLit (.implode chars))),
+          by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, decoded'],
+          states, .value ((valueRel_lit _ _).2 rfl)⟩
+
+/-- GC configuration preserves successful unit results for related operands. -/
+theorem doApp_configGC_related {C F : Type} (cfg : Config) (source target sourceFinal : FlatSem.State C F)
+    (values values' : List FlatSem.Value) (result : Result FlatSem.Value FlatSem.Value)
+    (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
+    (run : FlatSem.doApp source (.src .configGC) values = some (sourceFinal, result)) :
+    ∃ targetFinal result', FlatSem.doApp target (.src .configGC) values' = some (targetFinal, result') ∧
+      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+  cases related with
+  | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
+  | @cons first first' tail tail' firstRel rest =>
+    cases rest with
+    | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
+    | @cons second second' tail tail' secondRel rest =>
+      cases rest with
+      | cons _ _ => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
+      | nil =>
+        cases first with
+        | litv literal =>
+          have eq := (valueRel_lit literal first').1 firstRel
+          subst first'
+          cases literal with
+          | intLit first =>
+            cases second with
+            | litv literal =>
+              have eq := (valueRel_lit literal second').1 secondRel
+              subst second'
+              cases literal with
+              | intLit second =>
+                simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
+                rcases run with ⟨rfl, rfl⟩
+                exact ⟨target, .val FlatSem.unitValue,
+                  by simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData],
+                  states, .value ((valueRel_conv none [] _).2 ⟨[], rfl, .nil⟩)⟩
+              | word8 _ | word64 _ | char _ | strLit _ | float64 _ =>
+                simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
+            | conv _ _ | loc _ _ | vectorv _ | closure _ _ _ | recclosure _ _ _ =>
+              simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
+          | word8 _ | word64 _ | char _ | strLit _ | float64 _ =>
+            simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
+        | conv _ _ | loc _ _ | vectorv _ | closure _ _ _ | recclosure _ _ _ =>
+          simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData] at run
 
 end Flapjack.Compiler.Backend.FlatPattern

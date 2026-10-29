@@ -253,8 +253,10 @@ inductive CoveredSourcePrimitive : Op → Prop where
   | listAppend : CoveredSourcePrimitive .listAppend
   | strlen : CoveredSourcePrimitive .strlen
   | explode : CoveredSourcePrimitive .explode
+  | implode : CoveredSourcePrimitive .implode
   | strsub : CoveredSourcePrimitive .strsub
   | strcat : CoveredSourcePrimitive .strcat
+  | configGC : CoveredSourcePrimitive .configGC
   | vsub (unsafeOp : Bool) : CoveredSourcePrimitive (if unsafeOp then .vsubUnsafe else .vsub)
   | ffi (name : Flapjack.Basis.Pure.MlString.MlString) : CoveredSourcePrimitive (.ffi name)
   | allocThunk (mode : ThunkMode) : CoveredSourcePrimitive (.thunkOp (.allocThunk mode))
@@ -311,8 +313,10 @@ theorem compile_coveredSourceApp_simulation {C F : Type} (cfg stateCfg : Config)
   | listAppend => exact doApp_listAppend_related stateCfg source target sourceFinal values values' result states related run
   | strlen => exact doApp_stringLength_related stateCfg source target sourceFinal values values' result states related run
   | explode => exact doApp_stringExplode_related stateCfg source target sourceFinal values values' result states related run
+  | implode => exact doApp_stringImplode_related stateCfg source target sourceFinal values values' result states related run
   | strsub => exact doApp_stringSub_related stateCfg source target sourceFinal values values' result states related run
   | strcat => exact doApp_stringConcat_related stateCfg source target sourceFinal values values' result states related run
+  | configGC => exact doApp_configGC_related stateCfg source target sourceFinal values values' result states related run
   | vsub unsafeOp => exact doApp_vectorRead_related stateCfg source target sourceFinal unsafeOp values values' result states related run
   | ffi name => exact doApp_ffi_related stateCfg source target sourceFinal name values values' result states related run
   | allocThunk mode => exact doApp_thunkAlloc_related stateCfg source target sourceFinal mode values values' result states related run
