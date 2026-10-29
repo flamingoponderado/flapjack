@@ -38,8 +38,8 @@ def naivePatternMatchesFuel (fuel : Nat) (t : Tra) (v : FlatLang.Exp) :
       let rest ← naivePatternMatchesFuel fuel t v ps default
       pure (FlatLang.smartIf t guard x rest)
 
-/-- The source `sptree$fromList` on branch expressions. -/
-private def branchTree (branches : List FlatLang.Exp) : Spt FlatLang.Exp :=
+/-- Build the indexed branch table used by the flat pattern compiler. -/
+def branchTree (branches : List FlatLang.Exp) : Spt FlatLang.Exp :=
   (branches.foldl (fun (state : Nat × Spt FlatLang.Exp) branch =>
     (state.1 + 1, sptInsert state.1 branch state.2)) (0, .ln)).2
 
