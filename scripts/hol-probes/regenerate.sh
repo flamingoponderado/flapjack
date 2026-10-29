@@ -345,7 +345,7 @@ run_probe source_eval_oracle_adjust_probeScript.sml source_eval_oracle_adjust_pr
   "$cake_dir/compiler/backend/proofs/source_evalProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe flat_pattern_install_relation_probeScript.sml flat_pattern_install_relation_probe.out \
-  pure_cc pure_co snd_pure_co fst_pure_co pure_co_comp pure_co_id pure_cc_id install_relation decs_semantics basic_values value_contents store_relation value_relation_rules state_relation initial_states lookup_map_same do_opapp pmatch_simulation \
+  pure_cc pure_co snd_pure_co fst_pure_co pure_co_comp pure_co_id pure_cc_id install_relation decs_semantics basic_values value_contents store_relation value_relation_rules state_relation initial_states lookup_map_same do_opapp pmatch_simulation compile_match_pmatch_rows \
   "$cake_dir/compiler/backend/proofs/flat_patternProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe source_eval_adjust_local_probeScript.sml source_eval_adjust_local_probe.out \
