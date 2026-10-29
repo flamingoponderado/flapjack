@@ -4,6 +4,7 @@ import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveThunk
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveAccess
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveVector
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveString
+import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveCopy
 
 /-! Source-primitive applications in the proof-side pattern simulation. The
 evaluator and relations remain pending HOL correspondence review. -/
@@ -257,6 +258,11 @@ inductive CoveredSourcePrimitive : Op → Prop where
   | strsub : CoveredSourcePrimitive .strsub
   | strcat : CoveredSourcePrimitive .strcat
   | configGC : CoveredSourcePrimitive .configGC
+  | copyStrStr : CoveredSourcePrimitive .copyStrStr
+  | copyAw8Str : CoveredSourcePrimitive .copyAw8Str
+  | copyStrAw8 : CoveredSourcePrimitive .copyStrAw8
+  | copyAw8Aw8 : CoveredSourcePrimitive .copyAw8Aw8
+  | xorAw8StrUnsafe : CoveredSourcePrimitive .xorAw8StrUnsafe
   | vsub (unsafeOp : Bool) : CoveredSourcePrimitive (if unsafeOp then .vsubUnsafe else .vsub)
   | ffi (name : Flapjack.Basis.Pure.MlString.MlString) : CoveredSourcePrimitive (.ffi name)
   | allocThunk (mode : ThunkMode) : CoveredSourcePrimitive (.thunkOp (.allocThunk mode))
@@ -317,6 +323,11 @@ theorem compile_coveredSourceApp_simulation {C F : Type} (cfg stateCfg : Config)
   | strsub => exact doApp_stringSub_related stateCfg source target sourceFinal values values' result states related run
   | strcat => exact doApp_stringConcat_related stateCfg source target sourceFinal values values' result states related run
   | configGC => exact doApp_configGC_related stateCfg source target sourceFinal values values' result states related run
+  | copyStrStr => exact doApp_copyStrStr_related stateCfg source target sourceFinal values values' result states related run
+  | copyAw8Str => exact doApp_copyAw8Str_related stateCfg source target sourceFinal values values' result states related run
+  | copyStrAw8 => exact doApp_copyStrAw8_related stateCfg source target sourceFinal values values' result states related run
+  | copyAw8Aw8 => exact doApp_copyAw8Aw8_related stateCfg source target sourceFinal values values' result states related run
+  | xorAw8StrUnsafe => exact doApp_xorAw8Str_related stateCfg source target sourceFinal values values' result states related run
   | vsub unsafeOp => exact doApp_vectorRead_related stateCfg source target sourceFinal unsafeOp values values' result states related run
   | ffi name => exact doApp_ffi_related stateCfg source target sourceFinal name values values' result states related run
   | allocThunk mode => exact doApp_thunkAlloc_related stateCfg source target sourceFinal mode values values' result states related run
