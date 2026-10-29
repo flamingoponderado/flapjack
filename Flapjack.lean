@@ -331,9 +331,11 @@ import Flapjack.Compiler.Backend.FlatPattern.Proofs.MatchSimulation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ExpressionCases
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ExpressionList
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ClockedExpressionList
+import Flapjack.Compiler.Backend.FlatPattern.Proofs.ClockedExpressionCases
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.FunctionApplication
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.DynamicEvaluation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.DeclarationEvaluation
+import Flapjack.Compiler.Backend.FlatPattern.Proofs.ClockedDeclaration
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ThunkRelation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ThunkEvaluation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveMemory
