@@ -489,6 +489,7 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.CopyUpdate
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Ffi
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.SourceOperators
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.SpecialOperators
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.FlatOperators
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Assignment
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Element
 import Flapjack.Compiler.Backend.Backend.PrimSrcConfig
