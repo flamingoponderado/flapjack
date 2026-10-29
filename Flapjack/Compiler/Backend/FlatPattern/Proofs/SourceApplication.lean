@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.FlatPattern.Proofs.FlatApplication
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveComparison
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveThunk
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveAccess
+import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveVector
 
 /-! Source-primitive applications in the proof-side pattern simulation. The
 evaluator and relations remain pending HOL correspondence review. -/
@@ -246,13 +247,17 @@ inductive CoveredSourcePrimitive : Op → Prop where
   | asub (unsafeOp : Bool) : CoveredSourcePrimitive (if unsafeOp then .asubUnsafe else .asub)
   | aw8sub (unsafeOp : Bool) : CoveredSourcePrimitive (if unsafeOp then .aw8subUnsafe else .aw8sub)
   | aw8update (unsafeOp : Bool) : CoveredSourcePrimitive (if unsafeOp then .aw8updateUnsafe else .aw8update)
+  | vfromList : CoveredSourcePrimitive .vfromList
+  | vlength : CoveredSourcePrimitive .vlength
+  | listAppend : CoveredSourcePrimitive .listAppend
+  | vsub (unsafeOp : Bool) : CoveredSourcePrimitive (if unsafeOp then .vsubUnsafe else .vsub)
   | ffi (name : Flapjack.Basis.Pure.MlString.MlString) : CoveredSourcePrimitive (.ffi name)
   | allocThunk (mode : ThunkMode) : CoveredSourcePrimitive (.thunkOp (.allocThunk mode))
   | updateThunk (mode : ThunkMode) : CoveredSourcePrimitive (.thunkOp (.updateThunk mode))
 
-/-- Arithmetic, conversion, shift, typed comparison, references, array
-operations, FFI and explicit thunk applications simulate their compiled
-expressions using only argument induction hypotheses. -/
+/-- Arithmetic, conversion, shift, typed comparison, references, arrays,
+list and vector operations, FFI and explicit thunk applications simulate
+their compiled expressions using only argument induction hypotheses. -/
 theorem compile_coveredSourceApp_simulation {C F : Type} (cfg stateCfg : Config) (trace : BackendCommon.Tra)
     (op : Op) (args : List FlatLang.Exp) (covered : CoveredSourcePrimitive op)
     (argumentsIH : ∀ expression ∈ args, ExpressionSimulation (C := C) (F := F) cfg stateCfg expression) :
@@ -263,18 +268,21 @@ theorem compile_coveredSourceApp_simulation {C F : Type} (cfg stateCfg : Config)
     case asub unsafeOp => cases unsafeOp <;> simp
     case aw8sub unsafeOp => cases unsafeOp <;> simp
     case aw8update unsafeOp => cases unsafeOp <;> simp
+    case vsub unsafeOp => cases unsafeOp <;> simp
   have notEval : op ≠ .eval := by
     cases covered <;> simp
     case aupdate unsafeOp => cases unsafeOp <;> simp
     case asub unsafeOp => cases unsafeOp <;> simp
     case aw8sub unsafeOp => cases unsafeOp <;> simp
     case aw8update unsafeOp => cases unsafeOp <;> simp
+    case vsub unsafeOp => cases unsafeOp <;> simp
   have notForce : op ≠ .thunkOp .forceThunk := by
     cases covered <;> simp
     case aupdate unsafeOp => cases unsafeOp <;> simp
     case asub unsafeOp => cases unsafeOp <;> simp
     case aw8sub unsafeOp => cases unsafeOp <;> simp
     case aw8update unsafeOp => cases unsafeOp <;> simp
+    case vsub unsafeOp => cases unsafeOp <;> simp
   apply compile_simpleSourceApp_simulation cfg stateCfg trace op args notCall notEval notForce argumentsIH
   intro source target sourceFinal values values' result states related run
   cases covered with
@@ -293,6 +301,10 @@ theorem compile_coveredSourceApp_simulation {C F : Type} (cfg stateCfg : Config)
   | asub unsafeOp => exact doApp_arrayRead_complete stateCfg source target sourceFinal unsafeOp values values' result states related run
   | aw8sub unsafeOp => exact doApp_byteArrayRead_complete stateCfg source target sourceFinal unsafeOp values values' result states related run
   | aw8update unsafeOp => exact doApp_byteArrayUpdate_complete stateCfg source target sourceFinal unsafeOp values values' result states related run
+  | vfromList => exact doApp_vectorFromList_related stateCfg source target sourceFinal values values' result states related run
+  | vlength => exact doApp_vectorLength_related stateCfg source target sourceFinal values values' result states related run
+  | listAppend => exact doApp_listAppend_related stateCfg source target sourceFinal values values' result states related run
+  | vsub unsafeOp => exact doApp_vectorRead_related stateCfg source target sourceFinal unsafeOp values values' result states related run
   | ffi name => exact doApp_ffi_related stateCfg source target sourceFinal name values values' result states related run
   | allocThunk mode => exact doApp_thunkAlloc_related stateCfg source target sourceFinal mode values values' result states related run
   | updateThunk mode => exact doApp_thunkUpdate_related stateCfg source target sourceFinal mode values values' result states related run
