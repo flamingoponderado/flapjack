@@ -51,3 +51,4 @@ pattern_filter_safe=∀(xs :(pat # num) list). match (refs :num |-> term) xs (v 
 pattern_const_row=(∀(t :num option). (v :term) ≠ Term t ([] :term list)) ∧ is_const_row ((p_1 :pat),(p_2 :α)) ∧ (pmatch (refs :num |-> term) p_1 v :pmatchResult) ≠ PTypeFailure ⇒ (pmatch refs p_1 v :pmatchResult) = PMatchFailure
 pattern_move_const_up=match (refs :num |-> term) (rows :(pat # num) list) (v :term) ≠ (NONE :matchResult option) ⇒ match refs (move_const_up rows) v = match refs rows v
 pattern_non_const_row=¬is_const_row ((p :pat),(x :α)) ∧ ¬is_Or_row (p,x) ∧ ¬is_Any p ⇒ (pmatch (refs :num |-> term) p (Term (t :num option) ([] :term list)) :pmatchResult) ≠ PMatchSuccess
+pattern_take_until_any_prefix=∀(rows :(pat # num) list). EVERY (λ((x :pat),(y :num)). ¬is_Any x) (TL (REVERSE (take_until_Any rows)))

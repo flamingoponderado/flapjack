@@ -58,3 +58,4 @@ val _ = show_thm "pattern_filter_safe=" pattern_compTheory.matdch_FILTER_NOT_NON
 val _ = show_thm "pattern_const_row=" pattern_compTheory.is_const_row_lemma;
 val _ = show_thm "pattern_move_const_up=" pattern_compTheory.match_move_const_up;
 val _ = show_thm "pattern_non_const_row=" pattern_compTheory.not_is_const_row;
+val _ = show_thm "pattern_take_until_any_prefix=" pattern_compTheory.EVERY_take_until_Any;

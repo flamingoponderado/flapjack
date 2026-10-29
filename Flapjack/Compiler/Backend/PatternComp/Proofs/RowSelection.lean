@@ -284,4 +284,118 @@ theorem nonConstRow_not_success_nullary (refs : HolFiniteMapExact Nat Term)
         obtain ⟨actual, siblings⟩ := info
         cases tag <;> simp [pmatch] <;> split <;> simp
 
+/-- If every unselected row before the final row fails, moving selected
+rows to the front preserves a safe match. -/
+theorem matchRows_partition_last (refs : HolFiniteMapExact Nat Term) (value : Term)
+    (preRows : List (Pat × Nat)) (last : Pat × Nat) (predicate : Pat × Nat → Bool)
+    (safe : matchRows refs (preRows ++ [last]) value ≠ none)
+    (failures : ∀ row ∈ preRows, predicate row = false → pmatch refs row.1 value = .failure) :
+    matchRows refs ((preRows ++ [last]).filter predicate ++
+      (preRows ++ [last]).filter (fun row => !predicate row)) value =
+      matchRows refs (preRows ++ [last]) value := by
+  have discarded : matchRows refs (preRows.filter predicate) value = matchRows refs preRows value := by
+    have h := matchRows_filter_discard_failures refs value preRows (fun row => !predicate row) (by
+      intro row member selected
+      apply failures row member
+      simpa using selected)
+    simpa using h
+  have unselectedFails : matchRows refs (preRows.filter (fun row => !predicate row)) value = some .failure := by
+    apply matchRows_all_fail
+    intro row member
+    have membership := List.mem_filter.mp member
+    apply failures row membership.1
+    simpa using membership.2
+  have preRowsSafe : matchRows refs preRows value ≠ none := by
+    intro bad
+    apply safe
+    simp [matchRows_append, bad]
+  have selectedSafe : matchRows refs (preRows.filter predicate) value ≠ none := by
+    rw [discarded]
+    exact preRowsSafe
+  cases preRowsResult : matchRows refs (preRows.filter predicate) value with
+  | none => exact (selectedSafe preRowsResult).elim
+  | some result =>
+    have originalResult : matchRows refs preRows value = some result := discarded.symm.trans preRowsResult
+    cases result <;> by_cases selected : predicate last = true <;>
+      cases last with
+      | mk pattern index =>
+        cases head : pmatch refs pattern value <;>
+          simp [List.filter_append, List.filter, matchRows_append, matchRows, selected, head,
+            preRowsResult, originalResult, unselectedFails]
+
+/-- Every row before the last retained row lacks an unconditional pattern. -/
+theorem takeUntilAny_prefix_noAny (rows preRows : List (Pat × Nat)) (last : Pat × Nat)
+    (decomposition : takeUntilAny rows = preRows ++ [last]) :
+    ∀ row ∈ preRows, isAny row.1 = false := by
+  induction rows generalizing preRows with
+  | nil =>
+    cases preRows <;> simp [takeUntilAny] at decomposition
+  | cons row rows ih =>
+    obtain ⟨pattern, index⟩ := row
+    cases preRows with
+    | nil => simp
+    | cons first rest =>
+      by_cases unconditional : isAny pattern = true
+      · simp [takeUntilAny, unconditional] at decomposition
+      · have equality : (pattern, index) :: takeUntilAny rows = first :: (rest ++ [last]) := by
+          simpa [takeUntilAny, unconditional] using decomposition
+        rcases List.cons.inj equality with ⟨rfl, tailEq⟩
+        have restProperty := ih rest tailEq
+        intro candidate member
+        simp only [List.mem_cons] at member
+        rcases member with equal | member
+        · subst candidate
+          exact Bool.eq_false_iff.mpr unconditional
+        · exact restProperty candidate member
+
+/-- Moving nullary constructor rows preserves safe matching for nullary values. -/
+theorem matchRows_moveConstUp_nullary (refs : HolFiniteMapExact Nat Term) (tag : Option Nat)
+    (rows : List (Pat × Nat)) (safe : matchRows refs rows (.term tag []) ≠ none) :
+    matchRows refs (moveConstUp rows) (.term tag []) = matchRows refs rows (.term tag []) := by
+  let value := Term.term tag []
+  let truncated := takeUntilAny rows
+  have truncEq : matchRows refs truncated value = matchRows refs rows value :=
+    matchRows_takeUntilAny refs value rows safe
+  have truncSafe : matchRows refs truncated value ≠ none := by rw [truncEq]; exact safe
+  by_cases skip : (5 ≤ truncated.length || truncated.any isOrRow) = true
+  · simpa [moveConstUp, truncated, skip] using truncEq
+  · have noOr : truncated.any isOrRow = false := by
+      cases h : truncated.any isOrRow <;> simp_all
+    have noOrMember : ∀ row ∈ truncated, isOrRow row = false := by
+      intro row member
+      exact Bool.eq_false_iff.mpr ((List.any_eq_false.mp noOr) row member)
+    rcases List.eq_nil_or_concat truncated with empty | ⟨preRows, last, decomposition⟩
+    · have emptyTake : takeUntilAny rows = [] := empty
+      simpa [moveConstUp, emptyTake, matchRows, empty, value] using truncEq
+    · have decomposition : truncated = preRows ++ [last] := by simpa using decomposition
+      have noAny := takeUntilAny_prefix_noAny rows preRows last (by
+        simpa [truncated] using decomposition)
+      have failures : ∀ row ∈ preRows, isConstRow row = false → pmatch refs row.1 value = .failure := by
+        intro row member nonconstant
+        have inTruncated : row ∈ truncated := by rw [decomposition]; simp [member]
+        have notSuccess := nonConstRow_not_success_nullary refs tag row nonconstant
+          (noOrMember row inTruncated) (noAny row member)
+        have notTypeFailure := matchRows_member_safe refs value truncated truncSafe row inTruncated
+        cases result : pmatch refs row.1 value with
+        | success => exact (notSuccess result).elim
+        | typeFailure => exact (notTypeFailure result).elim
+        | failure => rfl
+      have partitionEq := matchRows_partition_last refs value preRows last isConstRow (by
+        simpa [← decomposition] using truncSafe) failures
+      have reordered : matchRows refs (truncated.filter isConstRow ++
+          truncated.filter (fun row => !isConstRow row)) value = matchRows refs truncated value := by
+        simpa [← decomposition] using partitionEq
+      simpa [moveConstUp, truncated, skip] using reordered.trans truncEq
+
+/-- Moving nullary constructor rows preserves every non-error match result. -/
+theorem matchRows_moveConstUp (refs : HolFiniteMapExact Nat Term) (value : Term)
+    (rows : List (Pat × Nat)) (safe : matchRows refs rows value ≠ none) :
+    matchRows refs (moveConstUp rows) value = matchRows refs rows value := by
+  by_cases nullary : ∃ tag, value = .term tag []
+  · obtain ⟨tag, rfl⟩ := nullary
+    exact matchRows_moveConstUp_nullary refs tag rows safe
+  · apply matchRows_moveConstUp_nonNullary refs value rows safe
+    intro tag equal
+    exact nullary ⟨tag, equal⟩
+
 end Flapjack.Compiler.Backend.PatternComp
