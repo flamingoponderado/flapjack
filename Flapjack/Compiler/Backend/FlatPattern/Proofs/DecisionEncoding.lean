@@ -226,4 +226,152 @@ theorem decodeGuard_simulation {C F : Type} (trace : BackendCommon.Tra)
           (decodeGuard trace expression right) true env state guardPure
         simpa [decodeGuard, evaluate_smartIf, branch] using evaluate_bool trace true env state
 
+/-- Guard simplification preserves every successful abstract guard outcome. -/
+theorem simpGuard_preserves (refs : HolFiniteMapExact Nat PatternSemantics.Term)
+    (value : PatternSemantics.Term) (guard : PatternSemantics.DGuard) (answer : Bool)
+    (tested : PatternSemantics.dtEvalGuard refs value guard = some answer) :
+    PatternSemantics.dtEvalGuard refs value (simpGuard guard) = some answer := by
+  induction guard generalizing answer with
+  | true_ => simpa [simpGuard] using tested
+  | posTest position test => simpa [simpGuard] using tested
+  | not guard ih =>
+    cases eval : PatternSemantics.dtEvalGuard refs value guard with
+    | none => simp [PatternSemantics.dtEvalGuard, eval] at tested
+    | some b =>
+      have simplified := ih b eval
+      cases b <;> simp [PatternSemantics.dtEvalGuard, eval] at tested <;> subst answer
+      all_goals cases h : simpGuard guard <;> simp_all [simpGuard, PatternSemantics.dtEvalGuard]
+      all_goals rename_i child
+      all_goals cases child <;> simp_all [PatternSemantics.dtEvalGuard]
+  | conj left right ihLeft ihRight =>
+    cases leftEval : PatternSemantics.dtEvalGuard refs value left with
+    | none => simp [PatternSemantics.dtEvalGuard, leftEval] at tested
+    | some b =>
+      have leftSimple := ihLeft b leftEval
+      cases b with
+      | false =>
+        simp [PatternSemantics.dtEvalGuard, leftEval] at tested
+        subst answer
+        simp only [simpGuard]
+        split
+        · simp [PatternSemantics.dtEvalGuard]
+        · split
+          · rename_i h
+            rw [h] at leftSimple
+            simp [PatternSemantics.dtEvalGuard] at leftSimple
+          · split
+            · exact leftSimple
+            · simp [PatternSemantics.dtEvalGuard, leftSimple]
+      | true =>
+        have rightEval : PatternSemantics.dtEvalGuard refs value right = some answer := by
+          simpa [PatternSemantics.dtEvalGuard, leftEval] using tested
+        have rightSimple := ihRight answer rightEval
+        simp only [simpGuard]
+        split
+        · rename_i h
+          rcases h with h | h <;> simp_all [PatternSemantics.dtEvalGuard]
+        · split
+          · exact rightSimple
+          · split
+            · rename_i h
+              rw [h] at rightSimple
+              simp [PatternSemantics.dtEvalGuard] at rightSimple
+              subst answer
+              exact leftSimple
+            · simp [PatternSemantics.dtEvalGuard, leftSimple, rightSimple]
+
+  | disj left right ihLeft ihRight =>
+    cases leftEval : PatternSemantics.dtEvalGuard refs value left with
+    | none => simp [PatternSemantics.dtEvalGuard, leftEval] at tested
+    | some b =>
+      have leftSimple := ihLeft b leftEval
+      cases b with
+      | true =>
+        simp [PatternSemantics.dtEvalGuard, leftEval] at tested
+        subst answer
+        simp only [simpGuard]
+        split
+        · simp [PatternSemantics.dtEvalGuard]
+        · split
+          · rename_i h
+            rw [h] at leftSimple
+            simp [PatternSemantics.dtEvalGuard] at leftSimple
+          · split
+            · exact leftSimple
+            · simp [PatternSemantics.dtEvalGuard, leftSimple]
+      | false =>
+        have rightEval : PatternSemantics.dtEvalGuard refs value right = some answer := by
+          simpa [PatternSemantics.dtEvalGuard, leftEval] using tested
+        have rightSimple := ihRight answer rightEval
+        simp only [simpGuard]
+        split
+        · rename_i h
+          rcases h with h | h <;> simp_all [PatternSemantics.dtEvalGuard]
+        · split
+          · exact rightSimple
+          · split
+            · rename_i h
+              rw [h] at rightSimple
+              simp [PatternSemantics.dtEvalGuard] at rightSimple
+              subst answer
+              exact leftSimple
+            · simp [PatternSemantics.dtEvalGuard, leftSimple, rightSimple]
+
+/-- A successfully evaluated abstract decision tree selects the same branch
+after decoding to flat expressions. Type-failure trees are excluded by the
+successful abstract evaluation premise. -/
+theorem decodeDtree_simulation {C F : Type} (trace : BackendCommon.Tra)
+    (branches : Spt FlatLang.Exp) (expression default : FlatLang.Exp)
+    (state : FlatSem.State C F) (env : FlatSem.Environment FlatSem.Value)
+    (value : FlatSem.Value) (tree : PatternSemantics.DTree) (result : PatternCommon.MatchResult)
+    (evaluated : PatternSemantics.dtEval (encodeRefs state) (encodeValue value) tree = some result)
+    (pure : FlatSem.evaluate env state [expression] = (state, .val [value])) :
+    FlatSem.evaluate env state [decodeDtree trace branches expression default tree] =
+      FlatSem.evaluate env state [match result with
+        | .success index => (sptLookup index branches).getD default
+        | .failure => default] := by
+  induction tree generalizing result with
+  | leaf index =>
+    simp [PatternSemantics.dtEval] at evaluated
+    subst result
+    rfl
+  | fail =>
+    simp [PatternSemantics.dtEval] at evaluated
+    subst result
+    rfl
+  | typeFail => simp [PatternSemantics.dtEval] at evaluated
+  | if_ guard yes no ihYes ihNo =>
+    cases guardEval : PatternSemantics.dtEvalGuard (encodeRefs state) (encodeValue value) guard with
+    | none => simp [PatternSemantics.dtEval, guardEval] at evaluated
+    | some b =>
+      have simplified := simpGuard_preserves (encodeRefs state) (encodeValue value) guard b guardEval
+      have decoded := decodeGuard_simulation trace state env (simpGuard guard) expression value b simplified pure
+      cases b with
+      | false =>
+        have noEval : PatternSemantics.dtEval (encodeRefs state) (encodeValue value) no = some result := by
+          simpa [PatternSemantics.dtEval, guardEval] using evaluated
+        have noCorrect := ihNo result noEval
+        by_cases isTrue : simpGuard guard = .true_
+        · rw [isTrue] at simplified
+          simp [PatternSemantics.dtEvalGuard] at simplified
+        · by_cases isFalse : simpGuard guard = .not .true_
+          · cases result <;> simpa [decodeDtree, isTrue, isFalse] using noCorrect
+          · have branch := evaluate_if_pure_bool trace (decodeGuard trace expression (simpGuard guard))
+              (decodeDtree trace branches expression default yes) (decodeDtree trace branches expression default no)
+              false env state decoded
+            cases result <;> simpa [decodeDtree, isTrue, isFalse, evaluate_smartIf, branch] using noCorrect
+      | true =>
+        have yesEval : PatternSemantics.dtEval (encodeRefs state) (encodeValue value) yes = some result := by
+          simpa [PatternSemantics.dtEval, guardEval] using evaluated
+        have yesCorrect := ihYes result yesEval
+        by_cases isTrue : simpGuard guard = .true_
+        · cases result <;> simpa [decodeDtree, isTrue] using yesCorrect
+        · by_cases isFalse : simpGuard guard = .not .true_
+          · rw [isFalse] at simplified
+            simp [PatternSemantics.dtEvalGuard] at simplified
+          · have branch := evaluate_if_pure_bool trace (decodeGuard trace expression (simpGuard guard))
+              (decodeDtree trace branches expression default yes) (decodeDtree trace branches expression default no)
+              true env state decoded
+            cases result <;> simpa [decodeDtree, isTrue, isFalse, evaluate_smartIf, branch] using yesCorrect
+
 end Flapjack.Compiler.Backend.FlatPattern
