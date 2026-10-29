@@ -325,6 +325,7 @@ import Flapjack.Compiler.Backend.FlatPattern.Proofs.BranchEvaluation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.NaiveMatch
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.DecisionEncoding
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.CompiledMatch
+import Flapjack.Compiler.Backend.FlatPattern.Proofs.MatchBranch
 import Flapjack.Compiler.Backend.PatternSemantics.Semantics
 import Flapjack.Compiler.Backend.PatternComp.Proofs.RowSelection
 import Flapjack.Compiler.Backend.PatternComp.Proofs.GuardCompilation

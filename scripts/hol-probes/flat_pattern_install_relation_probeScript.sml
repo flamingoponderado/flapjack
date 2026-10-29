@@ -68,3 +68,5 @@ val _ = show_thm "pattern_code_correct=" pattern_compTheory.pat_to_code_thm;
 val _ = show_thm "pattern_walk_list=" pattern_compTheory.walk_list_def;
 val _ = show_thm "pattern_exh_dest_val=" pattern_exhTheory.dest_val_def;
 val _ = show_thm "pattern_exh_rows_sound=" pattern_exhTheory.exh_rows_thm;
+val _ = show_thm "flat_selected_pattern_match=" flatPropsTheory.pmatch_rows_IMP_pmatch;
+val _ = show_thm "flat_compile_exps_evaluate=" flat_patternProofTheory.compile_exps_evaluate;
