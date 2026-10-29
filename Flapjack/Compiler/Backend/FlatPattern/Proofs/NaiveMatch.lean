@@ -675,4 +675,79 @@ theorem naivePatternMatches_correct {C F : Type} (trace : Tra) (expression defau
   naivePatternMatches_from_guards trace expression default env state value
     (naiveGuardCorrect_of_pure trace expression env state value pure) rows safe
 
+/-- Transform the body carried by a successful row result, preserving both
+non-match and type-error results. -/
+def mapRowResult {E E' : Type} (f : FlatLang.Pat → E → E') :
+    Flapjack.SemanticPrimitivesHOL.MatchResult (List (VarN × FlatSem.Value) × FlatLang.Pat × E) →
+    Flapjack.SemanticPrimitivesHOL.MatchResult (List (VarN × FlatSem.Value) × FlatLang.Pat × E')
+  | .typeError => .typeError
+  | .noMatch => .noMatch
+  | .match (bindings, pattern, body) => .match (bindings, pattern, f pattern body)
+
+/-- Replacing row bodies leaves row selection unchanged and transforms only
+the body of a successful result. -/
+theorem pmatchRows_map_bodies {C F E E' : Type} (state : FlatSem.State C F) (value : FlatSem.Value)
+    (rows : List (FlatLang.Pat × E)) (f : FlatLang.Pat → E → E') :
+    FlatSem.pmatchRows (rows.map fun (pattern, body) => (pattern, f pattern body)) state value =
+      mapRowResult f (FlatSem.pmatchRows rows state value) := by
+  induction rows with
+  | nil => simp [FlatSem.pmatchRows, mapRowResult]
+  | cons row rows ih =>
+    obtain ⟨pattern, body⟩ := row
+    cases head : FlatSem.pmatch state pattern value [] with
+    | typeError => simp [FlatSem.pmatchRows, head, mapRowResult]
+    | noMatch => simpa [FlatSem.pmatchRows, head] using ih
+    | «match» bindings =>
+      cases tail : FlatSem.pmatchRows rows state value with
+      | typeError => simp [tail, mapRowResult] at ih; simp [FlatSem.pmatchRows, head, tail, ih, mapRowResult]
+      | noMatch => simp [tail, mapRowResult] at ih; simp [FlatSem.pmatchRows, head, tail, ih, mapRowResult]
+      | «match» selected =>
+        rcases selected with ⟨tailBindings, tailPattern, tailBody⟩
+        simp [tail, mapRowResult] at ih
+        simp [FlatSem.pmatchRows, head, tail, ih, mapRowResult]
+
+/-- Zipping the pattern projection with transformed bodies keeps their
+original row pairing. -/
+theorem zip_row_bodies {E E' : Type} (rows : List (FlatLang.Pat × E)) (f : FlatLang.Pat → E → E') :
+    List.zip (rows.map Prod.fst) (rows.map fun row => f row.1 row.2) =
+      rows.map (fun (pattern, body) => (pattern, f pattern body)) := by
+  induction rows with
+  | nil => rfl
+  | cons row rows ih =>
+    obtain ⟨pattern, body⟩ := row
+    simp [ih]
+
+/-- The compiler's naive branch-lowering path evaluates the compiled body of
+the row selected by the source matcher, or the default when no row matches. -/
+theorem evaluate_compilePats_naive {C F : Type} (cfg : Config) (trace : Tra) (n : Nat)
+    (expression default : FlatLang.Exp) (rows : List (FlatLang.Pat × FlatLang.Exp))
+    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F) (value : FlatSem.Value)
+    (pure : FlatSem.evaluate env state [expression] = (state, .val [value]))
+    (safe : FlatSem.pmatchRows rows state value ≠ .typeError) :
+    FlatSem.evaluate env state [compilePats cfg true trace n expression default rows] =
+      FlatSem.evaluate env state [match FlatSem.pmatchRows rows state value with
+        | .match (_, pattern, body) => compilePatRhs trace n expression (pattern, body)
+        | _ => default] := by
+  let f := fun pattern body => compilePatRhs trace n expression (pattern, body)
+  let mapped := rows.map (fun (pattern, body) => (pattern, f pattern body))
+  have mappedResult := pmatchRows_map_bodies state value rows f
+  have mappedSafe : FlatSem.pmatchRows mapped state value ≠ .typeError := by
+    change FlatSem.pmatchRows (rows.map fun (pattern, body) => (pattern, f pattern body)) state value ≠ .typeError
+    rw [mappedResult]
+    cases h : FlatSem.pmatchRows rows state value <;> simp_all [mapRowResult]
+  have dispatch := naivePatternMatches_correct trace expression default env state value mapped pure mappedSafe
+  have compiledRows : List.zip (rows.map Prod.fst) (rows.map (compilePatRhs trace n expression)) = mapped := by
+    simpa [mapped, f] using zip_row_bodies rows f
+  cases original : FlatSem.pmatchRows rows state value with
+  | typeError => exact (safe original).elim
+  | noMatch =>
+    have target : FlatSem.pmatchRows mapped state value = .noMatch := by
+      simpa [mapped, original, mapRowResult] using mappedResult
+    simpa [compilePats, compiledRows, mapped, f, original, target] using dispatch
+  | «match» selected =>
+    rcases selected with ⟨bindings, pattern, body⟩
+    have target : FlatSem.pmatchRows mapped state value = .match (bindings, pattern, f pattern body) := by
+      simpa [mapped, original, mapRowResult] using mappedResult
+    simpa [compilePats, compiledRows, mapped, f, original, target] using dispatch
+
 end Flapjack.Compiler.Backend.FlatPattern

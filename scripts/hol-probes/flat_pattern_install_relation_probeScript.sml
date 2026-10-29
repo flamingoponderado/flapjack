@@ -33,3 +33,4 @@ val _ = show_thm "evaluate_Bool=" flat_patternProofTheory.evaluate_Bool;
 val _ = show_thm "evaluate_SmartIf=" flat_patternProofTheory.evaluate_SmartIf;
 val _ = show_thm "naive_pattern_match_correct=" flat_patternProofTheory.naive_pattern_match_correct;
 val _ = show_thm "naive_pattern_matches_correct=" flat_patternProofTheory.naive_pattern_matches_correct;
+val _ = show_thm "evaluate_compile_pats=" flat_patternProofTheory.evaluate_compile_pats;
