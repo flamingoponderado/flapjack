@@ -2,6 +2,78 @@
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "adjust_oracle_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateDeclarations.lean",
+    "lean_name": "adjustOracle_evaluate_Dtabbrev",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original and evaluator induction captured in the source evaluator and source pass HOL probes. Complete source evaluator, pass, AST and imported carrier correspondence remain pending review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateDeclarations.lean",
+    "lean_name": "adjustOracle_evaluate_Dtype",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original and evaluator induction captured in the source evaluator and source pass HOL probes. Complete source evaluator, pass, AST and imported carrier correspondence remain pending review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateDeclarations.lean",
+    "lean_name": "adjustOracle_evaluate_Dletrec",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original and evaluator induction captured in the source evaluator and source pass HOL probes. Complete source evaluator, pass, AST and imported carrier correspondence remain pending review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateExpressions.lean",
+    "lean_name": "adjustOracle_evaluate_Var",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original and evaluator induction captured in the source evaluator and source pass HOL probes. Complete source evaluator, pass, AST and imported carrier correspondence remain pending review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateExpressions.lean",
+    "lean_name": "adjustOracle_evaluate_Letrec",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original and evaluator induction captured in the source evaluator and source pass HOL probes. Complete source evaluator, pass, AST and imported carrier correspondence remain pending review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleInduction.lean",
+    "lean_name": "adjust_oracle_evaluate",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original and evaluator induction captured in the source evaluator and source pass HOL probes. Complete source evaluator, pass, AST and imported carrier correspondence remain pending review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_semantics_prog",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleInduction.lean",
+    "lean_name": "adjust_oracle_semantics_prog",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original and evaluator induction captured in the source evaluator and source pass HOL probes. Complete source evaluator, pass, AST and imported carrier correspondence remain pending review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_letProofScript.sml",
+    "hol_name": "compile_semantics_oracle",
+    "lean_path": "Flapjack/Compiler/Backend/SourceLet/Proofs/Semantics.lean",
+    "lean_name": "compile_semantics_oracle",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original and evaluator induction captured in the source evaluator and source pass HOL probes. Complete source evaluator, pass, AST and imported carrier correspondence remain pending review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_sourceProofScript.sml",
+    "hol_name": "compile_semantics_oracle",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToSource/Proofs.lean",
+    "lean_name": "compile_semantics_oracle",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original and evaluator induction captured in the source evaluator and source pass HOL probes. Complete source evaluator, pass, AST and imported carrier correspondence remain pending review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_evaluate",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateExpressions.lean",
     "lean_name": "adjustOracle_evaluate_Tannot",
     "statement_status": "pending_statement_review",

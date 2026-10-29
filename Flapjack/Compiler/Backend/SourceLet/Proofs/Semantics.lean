@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.SourceLet.Proofs.Correct
 import Flapjack.SemanticsHOL
+import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleInduction
 
 /-! Observable semantics preservation for source let-lifting. -/
 namespace Flapjack.Compiler.Backend.SourceLet
@@ -32,5 +33,20 @@ theorem compile_semantics {F : Type} (state : State F) (env : SemEnv Value)
     semanticsProg state env (compileDecs program) outcome := by
   have observations := compileDecs_clock_observations state env program noFail
   cases outcome <;> simpa only [semanticsProg, observations] using source
+
+/-- Let-lifting preserves observable semantics when composed into an inserted
+Eval oracle. Source evaluator and carrier correspondence remain pending review. -/
+@[hol "cakeml/compiler/backend/proofs/source_letProofScript.sml" "compile_semantics_oracle"]
+theorem compile_semantics_oracle {Config F : Type}
+    (ci : SourceEval.Proofs.CompilerInstance Config) (f : List Dec → List Dec)
+    (state : State F) (env : SemEnv Value) (program : List Dec) (outcome : HolBehaviour)
+    (inserted : SourceEval.Proofs.isInsertOracle ci f state.evalState)
+    (noFail : ¬ semanticsProg state env program .fail)
+    (source : semanticsProg state env program outcome) :
+    semanticsProg { state with evalState := SourceEval.Proofs.adjustOracle ci (compileDecs ∘ f) state.evalState }
+      env program outcome := by
+  apply SourceEval.Proofs.adjust_oracle_semantics_prog ci f compileDecs ?_ state env program outcome inserted noFail source
+  intro s s' e ds result run safe
+  exact compile_decs_correct s s' e ds result run safe
 
 end Flapjack.Compiler.Backend.SourceLet

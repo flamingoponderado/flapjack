@@ -4,6 +4,48 @@ import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateRecursive
 namespace Flapjack.Compiler.Backend.SourceEval.Proofs
 open Flapjack.AstHOL Flapjack.SemanticPrimitivesHOL Flapjack.EvaluateHOL
 
+/-- Variable-expression case of the source evaluator induction. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
+theorem adjustOracle_evaluate_Var {Config F : Type} (ci : CompilerInstance Config)
+    (f compile : List Dec → List Dec) (_compilePreserve : DeclarationCompilerPreserves (F := F) compile)
+    (state next : State F) (env : SemEnv Value) (name : Flapjack.NamespaceHOL.Ident ModN VarN)
+    (result : Result (List Value) Value) (source : evaluate state env [.var name] = (next, result))
+    (inserted : isInsertOracle ci f state.evalState) (safe : result ≠ .err (.abort .typeError)) :
+    isInsertOracle ci f next.evalState ∧
+      evaluate { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env [.var name] =
+        ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) := by
+  cases lookup : Flapjack.NamespaceHOL.nsLookup env.v name with
+  | none =>
+    simp [evaluate, lookup, typeError] at source
+    obtain ⟨_, rfl⟩ := source
+    exact (safe rfl).elim
+  | some value =>
+    simp [evaluate, lookup] at source
+    obtain ⟨rfl, rfl⟩ := source
+    exact ⟨inserted, by simp [evaluate, lookup]⟩
+
+/-- Recursive-function expression case of the source evaluator induction. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
+theorem adjustOracle_evaluate_Letrec {Config F : Type} (ci : CompilerInstance Config)
+    (f compile : List Dec → List Dec) (_compilePreserve : DeclarationCompilerPreserves (F := F) compile)
+    (state next : State F) (env : SemEnv Value) (funs : List (VarN × VarN × AstHOL.Exp)) (body : AstHOL.Exp)
+    (ih : (funs.map (fun (name, _, _) => name)).Nodup →
+      ExpsOracleAdjustedAt ci f compile state { env with v := buildRecEnv funs env env.v } [body])
+    (result : Result (List Value) Value) (source : evaluate state env [.letrec funs body] = (next, result))
+    (inserted : isInsertOracle ci f state.evalState) (safe : result ≠ .err (.abort .typeError)) :
+    isInsertOracle ci f next.evalState ∧
+      evaluate { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env [.letrec funs body] =
+        ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) := by
+  classical
+  by_cases unique : (funs.map (fun (name, _, _) => name)).Nodup
+  · have bodyRun : evaluate state { env with v := buildRecEnv funs env env.v } [body] = (next, result) := by
+      simpa [evaluate, unique] using source
+    obtain ⟨nextInserted, replacement⟩ := ih unique next result bodyRun inserted safe
+    exact ⟨nextInserted, by simpa [evaluate, unique] using replacement⟩
+  · simp [evaluate, unique, typeError] at source
+    obtain ⟨_, rfl⟩ := source
+    exact (safe rfl).elim
+
 /-- Empty expression-list case of the original evaluator induction. -/
 @[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
 theorem adjustOracle_evaluate_ExpsNil {Config F : Type} (ci : CompilerInstance Config)

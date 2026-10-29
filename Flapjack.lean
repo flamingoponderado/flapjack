@@ -21,6 +21,7 @@ import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateMatch
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateControl
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateEval
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateApp
+import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleInduction
 import Flapjack.SemanticPrimitivesHOL.Control
 import Flapjack.SemanticPrimitivesHOL.Array
 import Flapjack.SemanticPrimitivesHOL.Primitives
