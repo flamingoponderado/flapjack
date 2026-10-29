@@ -391,4 +391,188 @@ theorem evaluate_checkedArrayRead {C F : Type} (env : FlatSem.Environment FlatSe
                   case varray items =>
                     simpa using checkedArrayRead_body_related next nextTarget trace values pointer flag items index states found
 
+
+/-- Unchecked value-array reads reject any argument count other than two. -/
+theorem uncheckedArrayRead_wrong_arity {C F : Type} (state : FlatSem.State C F)
+    (args : List FlatSem.Value) (wrong : args.length ≠ 2) :
+    (FlatSem.applyResult state (.src .asubUnsafe) args).2 = .err (.abort .typeError) := by
+  cases args with
+  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory]
+  | cons first rest =>
+    cases rest with
+    | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory]
+    | cons second rest =>
+      cases rest with
+      | nil => simp at wrong
+      | cons third rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory]
+
+/-- Unchecked value-array indexing simulates the source expression for arbitrary
+argument lists whenever the source does not report a type error. -/
+theorem evaluate_uncheckedArrayRead {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+    (names : List (Option Flapjack.Basis.Pure.MlString.MlString)) (values : List ClosSem.Value)
+    (source : FlatSem.State C F) (target : ClosSem.State C F)
+    (trace : BackendCommon.Tra) (args : List FlatLang.Exp)
+    (argsSim : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values source target args.reverse)
+    (notTypeError : (FlatSem.evaluate env source [.app trace (.src .asubUnsafe) args]).2 ≠
+      .err (.abort .typeError)) :
+    EvalSim env names values source target [.app trace (.src .asubUnsafe) args] := by
+  have flatFix := (FlatSem.fixClock_evaluations env source args.reverse (.lit .none (.intLit 0)) []).1
+  have closFix := ClosSem.fixClock_evaluate (compileExps names args).reverse values target
+  have argsNotTypeError : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) := by
+    intro failure
+    apply notTypeError
+    rw [FlatSem.evaluate]
+    simp only [flatFix, failure]
+  have argsSim := argsSim argsNotTypeError
+  unfold EvalSim at argsSim ⊢
+  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps_reverse] at argsSim
+  rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
+  simp only [flatFix]
+  cases flatRun : FlatSem.evaluate env source args.reverse with
+  | mk next flatResult =>
+    cases closRun : ClosSem.evaluate (compileExps names args).reverse values target with
+    | mk closResult nextTarget =>
+      simp only [flatRun, closRun] at argsSim ⊢
+      rcases argsSim with ⟨states, results⟩
+      cases results with
+      | abort error => exact ⟨states, .abort error⟩
+      | raise related => exact ⟨states, .raise related⟩
+      | value related =>
+        rename_i sourceArgs targetArgs
+        have resultShape : (FlatSem.applyResult next (.src .asubUnsafe) sourceArgs.reverse).2 ≠
+            .err (.abort .typeError) := by
+          have fixed := flatFix
+          rw [flatRun] at fixed
+          have h := notTypeError
+          rw [FlatSem.evaluate, flatRun, fixed] at h
+          simpa using h
+        have length : sourceArgs.length = 2 := by
+          by_contra wrong
+          apply resultShape
+          apply uncheckedArrayRead_wrong_arity
+          simpa using wrong
+        cases related with
+        | nil => simp at length
+        | cons indexRel tail =>
+          cases tail with
+          | nil => simp at length
+          | cons pointerRel tail =>
+            cases tail with
+            | cons _ _ => simp at length
+            | nil =>
+              simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at resultShape
+              cases indexRel <;> cases pointerRel <;>
+                simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
+                  FlatSem.doAppMemory] at resultShape
+              case int.loc index flag pointer =>
+                cases found : storeLookup pointer next.refs with
+                | none => simp [found] at resultShape
+                | some entry =>
+                  cases entry <;> simp [found] at resultShape
+                  case varray items =>
+                    by_cases negative : index < 0
+                    · simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative] at resultShape
+                    · cases element : items[index.toNat]? with
+                      | none => simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative, element] at resultShape
+                      | some value =>
+                        obtain ⟨targetValue, _, _, targetRead, valueRel⟩ :=
+                          arrayRead_related next nextTarget pointer flag items index value states found negative element
+                        simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+                          FlatSem.readIndexed, found, negative, element, ClosSem.doApp, targetRead,
+                          states, EvalResultRel.value (.cons valueRel .nil)]
+
+
+/-- Unchecked byte-array reads reject any argument count other than two. -/
+theorem uncheckedByteRead_wrong_arity {C F : Type} (state : FlatSem.State C F)
+    (args : List FlatSem.Value) (wrong : args.length ≠ 2) :
+    (FlatSem.applyResult state (.src .aw8subUnsafe) args).2 = .err (.abort .typeError) := by
+  cases args with
+  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory]
+  | cons first rest =>
+    cases rest with
+    | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory]
+    | cons second rest =>
+      cases rest with
+      | nil => simp at wrong
+      | cons third rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory]
+
+/-- Unchecked byte-array indexing simulates the source expression for arbitrary
+argument lists whenever the source does not report a type error. -/
+theorem evaluate_uncheckedByteRead {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+    (names : List (Option Flapjack.Basis.Pure.MlString.MlString)) (values : List ClosSem.Value)
+    (source : FlatSem.State C F) (target : ClosSem.State C F)
+    (trace : BackendCommon.Tra) (args : List FlatLang.Exp)
+    (argsSim : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values source target args.reverse)
+    (notTypeError : (FlatSem.evaluate env source [.app trace (.src .aw8subUnsafe) args]).2 ≠
+      .err (.abort .typeError)) :
+    EvalSim env names values source target [.app trace (.src .aw8subUnsafe) args] := by
+  have flatFix := (FlatSem.fixClock_evaluations env source args.reverse (.lit .none (.intLit 0)) []).1
+  have closFix := ClosSem.fixClock_evaluate (compileExps names args).reverse values target
+  have argsNotTypeError : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) := by
+    intro failure
+    apply notTypeError
+    rw [FlatSem.evaluate]
+    simp only [flatFix, failure]
+  have argsSim := argsSim argsNotTypeError
+  unfold EvalSim at argsSim ⊢
+  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps_reverse] at argsSim
+  rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
+  simp only [flatFix]
+  cases flatRun : FlatSem.evaluate env source args.reverse with
+  | mk next flatResult =>
+    cases closRun : ClosSem.evaluate (compileExps names args).reverse values target with
+    | mk closResult nextTarget =>
+      simp only [flatRun, closRun] at argsSim ⊢
+      rcases argsSim with ⟨states, results⟩
+      cases results with
+      | abort error => exact ⟨states, .abort error⟩
+      | raise related => exact ⟨states, .raise related⟩
+      | value related =>
+        rename_i sourceArgs targetArgs
+        have resultShape : (FlatSem.applyResult next (.src .aw8subUnsafe) sourceArgs.reverse).2 ≠
+            .err (.abort .typeError) := by
+          have fixed := flatFix
+          rw [flatRun] at fixed
+          have h := notTypeError
+          rw [FlatSem.evaluate, flatRun, fixed] at h
+          simpa using h
+        have length : sourceArgs.length = 2 := by
+          by_contra wrong
+          apply resultShape
+          apply uncheckedByteRead_wrong_arity
+          simpa using wrong
+        cases related with
+        | nil => simp at length
+        | cons indexRel tail =>
+          cases tail with
+          | nil => simp at length
+          | cons pointerRel tail =>
+            cases tail with
+            | cons _ _ => simp at length
+            | nil =>
+              simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at resultShape
+              cases indexRel <;> cases pointerRel <;>
+                simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
+                  FlatSem.doAppMemory] at resultShape
+              case int.loc index flag pointer =>
+                cases found : storeLookup pointer next.refs with
+                | none => simp [found] at resultShape
+                | some entry =>
+                  cases entry <;> simp [found] at resultShape
+                  case w8array bytes =>
+                    by_cases negative : index < 0
+                    · simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative] at resultShape
+                    · cases element : bytes[index.toNat]? with
+                      | none => simp [FlatSem.readIndexed, FlatSem.boundsFailure, negative, element] at resultShape
+                      | some byte =>
+                        obtain ⟨_, _, targetRead, valueRel⟩ :=
+                          byteArrayRead_related next nextTarget pointer flag bytes index byte states found negative element
+                        simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+                          FlatSem.readIndexed, found, negative, element, ClosSem.doApp, targetRead,
+                          states, EvalResultRel.value (.cons valueRel .nil)]
+
 end Flapjack.Compiler.Backend.FlatToClos
