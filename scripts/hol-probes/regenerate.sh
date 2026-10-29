@@ -344,6 +344,10 @@ run_probe source_eval_oracle_adjust_probeScript.sml source_eval_oracle_adjust_pr
   v_rel_abs compiler_fun init_eval insert adjust is_insert adjust_insert \
   "$cake_dir/compiler/backend/proofs/source_evalProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe source_eval_adjust_local_probeScript.sml source_eval_adjust_local_probe.out \
+  is_insert_decs declare_env_adjust adjust_oracle_reset is_insert_related is_insert_reset declare_env_is_insert do_eval_adjust \
+  "$cake_dir/compiler/backend/proofs/source_evalProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe source_evaluate_decs_probeScript.sml source_evaluate_decs_probe.out \
   evaluate_decs_cons evaluate_decs_append \
   "$cake_dir/semantics/proofs/evaluatePropsScript.sml" "$cake_dir/semantics/proofs"

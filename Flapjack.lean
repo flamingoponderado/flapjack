@@ -12,6 +12,7 @@ import Flapjack.SemanticsHOL
 import Flapjack.SemanticPrimitivesHOL.EvalState
 import Flapjack.SemanticPrimitivesHOL.Concrete
 import Flapjack.SemanticPrimitivesHOL.Eval
+import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleAdjustment
 import Flapjack.SemanticPrimitivesHOL.Control
 import Flapjack.SemanticPrimitivesHOL.Array
 import Flapjack.SemanticPrimitivesHOL.Primitives

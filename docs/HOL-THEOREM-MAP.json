@@ -1,6 +1,62 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "is_insert_decs",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleAdjustment.lean",
+    "lean_name": "isInsertDecs",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Local HOL statement and inferred types captured as a term in source_eval_adjust_local_probe.out; the original local proof is not replayed, and evaluator, carrier, and statement correspondence require review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "declare_env_adjust",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleAdjustment.lean",
+    "lean_name": "declareEnv_adjust",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Local HOL statement and inferred types captured as a term in source_eval_adjust_local_probe.out; the original local proof is not replayed, and evaluator, carrier, and statement correspondence require review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_reset",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleAdjustment.lean",
+    "lean_name": "adjustOracle_reset",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Local HOL statement and inferred types captured as a term in source_eval_adjust_local_probe.out; the original local proof is not replayed, and evaluator, carrier, and statement correspondence require review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "is_insert_related",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleAdjustment.lean",
+    "lean_name": "isInsert_related",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Local HOL statement and inferred types captured as a term in source_eval_adjust_local_probe.out; the original local proof is not replayed, and evaluator, carrier, and statement correspondence require review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "is_insert_reset",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleAdjustment.lean",
+    "lean_name": "isInsert_reset",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Local HOL statement and inferred types captured as a term in source_eval_adjust_local_probe.out; the original local proof is not replayed, and evaluator, carrier, and statement correspondence require review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "declare_env_is_insert",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleAdjustment.lean",
+    "lean_name": "declareEnv_isInsert",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Local HOL statement and inferred types captured as a term in source_eval_adjust_local_probe.out; the original local proof is not replayed, and evaluator, carrier, and statement correspondence require review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "do_eval_adjust",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleAdjustment.lean",
+    "lean_name": "doEval_adjust",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Local HOL statement and inferred types captured as a term in source_eval_adjust_local_probe.out; the original local proof is not replayed, and evaluator, carrier, and statement correspondence require review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "compiler_instance",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs.lean",
     "lean_name": "CompilerInstance",
