@@ -344,6 +344,7 @@ import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveGlobals
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.FlatApplication
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveNumeric
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveComparison
+import Flapjack.Compiler.Backend.FlatPattern.Proofs.SourceApplication
 import Flapjack.Compiler.Backend.PatternSemantics.Semantics
 import Flapjack.Compiler.Backend.PatternComp.Proofs.RowSelection
 import Flapjack.Compiler.Backend.PatternComp.Proofs.GuardCompilation
