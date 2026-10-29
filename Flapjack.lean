@@ -464,6 +464,7 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.Memory
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.MemoryExpressions
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Array
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.ArrayRead
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.ArrayUpdate
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Assignment
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Element
 import Flapjack.Compiler.Backend.Backend.PrimSrcConfig
