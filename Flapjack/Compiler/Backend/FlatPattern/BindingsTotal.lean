@@ -26,7 +26,8 @@ private theorem todoWeight_append (xs ys : List (FlatLang.Pat × Nat × FlatLang
   | nil => simp [todoWeight]
   | cons x xs ih => cases x with | mk p pair => cases pair; simp [todoWeight, ih, Nat.add_assoc]
 
-private def patternEntries (t : Tra) (i j : Nat) : List FlatLang.Pat →
+/-- Generated projection names and work items for constructor arguments. -/
+def patternEntries (t : Tra) (i j : Nat) : List FlatLang.Pat →
     List ((Nat × MlString) × (FlatLang.Pat × Nat × FlatLang.Exp))
   | [] => []
   | p :: ps =>
@@ -43,6 +44,24 @@ private theorem patternEntries_eq_zipIdx (t : Tra) (i j : Nat) (ps : List FlatLa
   induction ps generalizing j with
   | nil => rfl
   | cons p ps ih => simp [patternEntries, List.zipIdx, ih]
+
+/-- Generated entries use consecutive field indices and the corresponding
+encoded temporary names. -/
+theorem patternEntries_member (t : Tra) (i j : Nat) (ps : List FlatLang.Pat)
+    (entry : (Nat × MlString) × (FlatLang.Pat × Nat × FlatLang.Exp))
+    (member : entry ∈ patternEntries t i j ps) :
+    j ≤ entry.1.1 ∧ entry.1.1 < j + ps.length ∧
+    entry.1.2 = encNumToName (i + 1 + entry.1.1) := by
+  induction ps generalizing j with
+  | nil => simp [patternEntries] at member
+  | cons p ps ih =>
+    simp only [patternEntries, List.mem_cons] at member
+    rcases member with same | later
+    · subst entry
+      simp
+    · have h := ih (j + 1) later
+      simp only [List.length_cons]
+      exact ⟨by omega, by omega, h.2.2⟩
 
 private theorem entriesWeight (t : Tra) (i j : Nat) (ps : List FlatLang.Pat) :
     todoWeight ((patternEntries t i j ps).map Prod.snd) = bindWeights ps := by

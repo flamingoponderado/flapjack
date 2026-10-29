@@ -53,6 +53,81 @@ theorem evaluate_con_projection_fold {C F : Type} (trace : BackendCommon.Tra)
     exact evaluate_con_projection trace expression env2 state stamp fields entry.1 entry.2.2
       (pure env2 related) (found entry member)
 
+/-- The constructor case executes the compiler's selected projections and
+continues with their values bound to the corresponding generated names. -/
+theorem compilePatBindings_con_evaluate {C F : Type} (trace : BackendCommon.Tra) (i key : Nat)
+    (patternStamp : Option (FlatLang.CtorId × FlatLang.TypeGroupId)) (patterns : List FlatLang.Pat)
+    (expression body : FlatLang.Exp) (rest : List (FlatLang.Pat × Nat × FlatLang.Exp))
+    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F)
+    (stamp : Option (FlatLang.CtorId × FlatLang.TypeId)) (fields : List FlatSem.Value)
+    (lengths : patterns.length = fields.length)
+    (pure : ∀ env2, aLookupRel (fun name => ¬ i < decNameToNum name) Eq env2.v env.v →
+      FlatSem.evaluate env2 state [expression] = (state, .val [.conv stamp fields])) :
+    let entries := patternEntries trace i 0 patterns
+    let compiled := compilePatBindings trace (i + 2 + patterns.length) (entries.map Prod.snd ++ rest) body
+    let selected := entries.filter (fun entry => (sptLookup entry.2.2.1 compiled.1).isSome)
+    FlatSem.evaluate env state [(compilePatBindings trace i ((.pcon patternStamp patterns, key, expression) :: rest) body).2] =
+      FlatSem.evaluate { env with v := selected.reverse.map (fun entry =>
+        (entry.1.2, (fields[entry.1.1]?).getD FlatSem.unitValue)) ++ env.v } state [compiled.2] := by
+  let entries := patternEntries trace i 0 patterns
+  let compiled := compilePatBindings trace (i + 2 + patterns.length) (entries.map Prod.snd ++ rest) body
+  let selected := entries.filter (fun entry => (sptLookup entry.2.2.1 compiled.1).isSome)
+  have props : ∀ entry ∈ selected, entry.1.1 < fields.length ∧ i < decNameToNum entry.1.2 := by
+    intro entry member
+    have inEntries : entry ∈ entries := (List.mem_filter.mp member).1
+    have h := patternEntries_member trace i 0 patterns entry inEntries
+    constructor
+    · omega
+    · rw [h.2.2, decEnc]
+      omega
+  have folded := evaluateBindingFold
+    (fun entry => some entry.1.2)
+    (fun entry => FlatLang.Exp.app trace (.el entry.1.1) [expression])
+    (fun entry => (fields[entry.1.1]?).getD FlatSem.unitValue)
+    selected (fun name => i < decNameToNum name) env state trace compiled.2
+    (by simp) (by simpa using fun entry member => (props entry member).2)
+    (by
+      intro entry member env2 related
+      have within := (props entry member).1
+      have found : fields[entry.1.1]? = some ((fields[entry.1.1]?).getD FlatSem.unitValue) := by
+        cases h : fields[entry.1.1]? with
+        | none =>
+          have absent := (List.getElem?_eq_none_iff).1 h
+          omega
+        | some value => simp
+      exact evaluate_con_projection trace expression env2 state stamp fields entry.1.1 _ (pure env2 related) found)
+    env (aLookupRel_refl _ _ _ (by intros; rfl))
+  cases h : compiled with
+  | mk used result =>
+    simpa [compilePatBindings, entries, compiled, selected, h] using folded
+
+/-- Selected constructor temporaries do not change lookups below the
+original-name bound. -/
+theorem compilePatBindings_con_lookup (trace : BackendCommon.Tra) (i bound : Nat)
+    (patterns : List FlatLang.Pat) (body : FlatLang.Exp) (rest : List (FlatLang.Pat × Nat × FlatLang.Exp))
+    (env : FlatSem.Environment FlatSem.Value) (fields : List FlatSem.Value)
+    (pre base : List (VarN × FlatSem.Value))
+    (related : aLookupRel (fun n => decNameToNum n < bound) Eq env.v (pre ++ base))
+    (fresh : bound ≤ i + 1) :
+    let entries := patternEntries trace i 0 patterns
+    let compiled := compilePatBindings trace (i + 2 + patterns.length) (entries.map Prod.snd ++ rest) body
+    let selected := entries.filter (fun entry => (sptLookup entry.2.2.1 compiled.1).isSome)
+    aLookupRel (fun n => decNameToNum n < bound) Eq
+      (selected.reverse.map (fun entry => (entry.1.2, (fields[entry.1.1]?).getD FlatSem.unitValue)) ++ env.v)
+      (pre ++ base) := by
+  let entries := patternEntries trace i 0 patterns
+  let compiled := compilePatBindings trace (i + 2 + patterns.length) (entries.map Prod.snd ++ rest) body
+  let selected := entries.filter (fun entry => (sptLookup entry.2.2.1 compiled.1).isSome)
+  apply (aLookupRel_append_left_false _ _ _ _ _ ?_).2 related
+  intro binding member selectedKey
+  obtain ⟨entry, entryMem, rfl⟩ := List.mem_map.mp member
+  have inSelected : entry ∈ selected := by simpa only [List.mem_reverse] using entryMem
+  have inEntries : entry ∈ entries := (List.mem_filter.mp inSelected).1
+  have h := patternEntries_member trace i 0 patterns entry inEntries
+  simp only at selectedKey
+  rw [h.2.2, decEnc] at selectedKey
+  omega
+
 /-- The generated binding for a variable evaluates its source expression
 and then continues with that value at the head of the environment. -/
 theorem compilePatBindings_var_evaluate {C F : Type} (trace : BackendCommon.Tra) (i key : Nat)
