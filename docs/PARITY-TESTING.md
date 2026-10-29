@@ -500,18 +500,30 @@ compiled to RISC-V, including generated datatype,
 closure, exception, reference, module, recursion, and mutable array examples,
 including byte-array access, tabulation and recursive array traversal, word
 shifts, local tail recursion, division exception handling, and list mapping. It also compares
-generated type and datatype declarations and successful compilation with
+generated type and datatype declarations, pattern contexts with exception
+handlers and constructor scopes, and successful compilation with
 combinations of backend options, including allocator 3 and explicitly sized
 generational garbage collection. It also compares a matrix of malformed and
 valid flag values and generated combinations, including duplicate flags and
 configuration-error precedence. Case counts can be changed with
 `--type-cases`, `--sexp-cases`, `--structured-cases`, `--lex-cases`,
-`--byte-cases`, `--raw-byte-cases`, `--declaration-cases`, `--compile-cases`,
+`--byte-cases`, `--raw-byte-cases`, `--declaration-cases`, `--handler-cases`, `--compile-cases`,
 `--rich-cases`, `--token-cases`, `--config-cases`, and `--config-error-cases` (zero skips the
 option matrix). `--type-seed`, `--edge-seed`, and
 `--compile-seed` select reproducible random inputs. These samples do not prove
 general parity. Set `--raw-byte-cases=1536` to compare each byte in all
 three contexts under both output modes; larger counts add random byte strings.
+
+On 2026-10-29, a separate run matched 1,200 generated pattern and exception
+handler cases against the pinned compiler. Reproduce that sample with:
+
+```sh
+python3 scripts/fuzz-cake-frontend.py --reference /var/tmp/flapjack-pinned-cake \
+  --edge-seed 527641 --handler-cases 1200 --type-cases 0 --sexp-cases 0 \
+  --byte-cases 0 --structured-cases 0 --lex-cases 0 --token-cases 0 \
+  --raw-byte-cases 0 --declaration-cases 0 --config-error-cases 0 \
+  --compile-cases 0 --rich-cases 0 --config-cases 0
+```
 
 An additional reproducible run on 2026-10-29 matched the pinned compiler for
 400 type, 200 S-expression, 500 nested, 250 lexical, 300 token, 500 raw-byte,

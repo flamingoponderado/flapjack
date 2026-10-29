@@ -56,6 +56,10 @@ TOKEN_WORDS = ["val", "fun", "type", "datatype", "exception", "local", "in", "en
                "structure", "struct", "case", "of", "if", "then", "else", "fn", "x", "y",
                "A", "int", "True", "0", "1", "(", ")", "[", "]", "=", ":", ";", "|",
                ",", "+", "=>", "::", "_", "\n"]
+HANDLER_PATTERNS = ["x", "_", "A", "A x", "(x,y)", "(x,(y,z))", "x::xs", "[x,y,z]",
+                    "(x : int)", "0", "~1", "True", "False", '#"x"']
+HANDLER_EXPRESSIONS = ["x", "y", "A", "B x", "True", "False", "0", "~1", "[]", "[1,2,3]",
+                       "(1,2,3)", "(fn x => x)", "(raise E)", "(raise F 1)"]
 
 
 def type_program(rng):
@@ -129,6 +133,25 @@ def declaration_program(rng):
         "end; val z = M.x;",
         f"local datatype t = {constructors} in val x = {rng.choice(DECL_VALUES)} end;",
     ])
+
+
+def handler_program(rng):
+    """Exercise pattern contexts, handlers, and constructor scopes together."""
+    pattern, other_pattern = rng.choices(HANDLER_PATTERNS, k=2)
+    expression, other_expression = rng.choices(HANDLER_EXPRESSIONS, k=2)
+    prefix = rng.choice(["", "datatype t = A | B int; exception E; exception F int; ",
+                         "structure M = struct datatype t = A | B int; end; ",
+                         "type t = int * int; "])
+    declaration = rng.choice([
+        f"val {pattern} = {expression};",
+        f"fun f {pattern} = {expression};",
+        f"val z = case {expression} of {pattern} => {other_expression} | _ => {expression};",
+        f"val z = (fn {pattern} => {expression});",
+        f"fun f {pattern} {other_pattern} = {expression};",
+        f"val z = (let val {pattern} = {expression} in {other_expression} end);",
+        f"val z = ({expression} handle {pattern} => {other_expression});",
+    ])
+    return prefix + declaration
 
 
 def integer_expression(rng, depth):
@@ -222,6 +245,8 @@ def main():
                         help="well-typed programs exercising diverse compiler passes")
     parser.add_argument("--declaration-cases", type=int, default=100,
                         help="generated datatype, exception, type and namespace cases")
+    parser.add_argument("--handler-cases", type=int, default=100,
+                        help="generated pattern, exception handler and constructor scope cases")
     parser.add_argument("--config-cases", type=int, default=10,
                         help="successful compilations with generated backend options")
     parser.add_argument("--config-error-cases", type=int, default=100,
@@ -244,7 +269,7 @@ def main():
     parser.add_argument("--timeout", type=int, default=90)
     args = parser.parse_args()
     if (args.type_cases < 0 or args.compile_cases < 0 or args.rich_cases < 0 or args.sexp_cases < 0 or
-            args.declaration_cases < 0 or args.config_cases < 0 or args.config_error_cases < 0 or
+            args.declaration_cases < 0 or args.handler_cases < 0 or args.config_cases < 0 or args.config_error_cases < 0 or
             args.structured_cases < 0 or args.lex_cases < 0 or args.token_cases < 0 or args.raw_byte_cases < 0 or
             not 0 <= args.byte_cases <= 256 or args.timeout <= 0):
         parser.error("case counts must be nonnegative, byte-cases at most 256, and timeout positive")
@@ -300,6 +325,12 @@ def main():
         mode = decl_rng.choice(["--types", "--print_sexp"])
         compare(args.reference, args.cake, [mode, "--exclude_prelude=true"], source, args.timeout, False)
     print(f"{args.declaration_cases} generated declaration cases match pinned CakeML", flush=True)
+    handler_rng = random.Random(args.edge_seed ^ 61531)
+    for _ in range(args.handler_cases):
+        source = handler_program(handler_rng)
+        mode = handler_rng.choice(["--types", "--print_sexp"])
+        compare(args.reference, args.cake, [mode, "--exclude_prelude=true"], source, args.timeout, False)
+    print(f"{args.handler_cases} pattern and handler cases match pinned CakeML", flush=True)
     if args.config_error_cases:
         option_rng = random.Random(args.edge_seed ^ 344)
         option_cases = [[flag + value] for flag in CONFIG_FLAGS for value in CONFIG_VALUES]
