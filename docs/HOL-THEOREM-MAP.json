@@ -1,5 +1,69 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "compiler_instance",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs.lean",
+    "lean_name": "CompilerInstance",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed definitions and theorem captured in source_eval_oracle_adjust_probe.out; compiler instance datatype, source AST and value carriers, and choice correspondence require review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "v_rel_abs",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs.lean",
+    "lean_name": "vFunAbs",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed definitions and theorem captured in source_eval_oracle_adjust_probe.out; compiler instance datatype, source AST and value carriers, and choice correspondence require review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "mk_compiler_fun_from_ci_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs.lean",
+    "lean_name": "mkCompilerFunFromCi",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed definitions and theorem captured in source_eval_oracle_adjust_probe.out; compiler instance datatype, source AST and value carriers, and choice correspondence require review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "mk_init_eval_state_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs.lean",
+    "lean_name": "mkInitEvalState",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed definitions and theorem captured in source_eval_oracle_adjust_probe.out; compiler instance datatype, source AST and value carriers, and choice correspondence require review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "insert_gen_oracle_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs.lean",
+    "lean_name": "insertGenOracle",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed definitions and theorem captured in source_eval_oracle_adjust_probe.out; compiler instance datatype, source AST and value carriers, and choice correspondence require review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs.lean",
+    "lean_name": "adjustOracle",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed definitions and theorem captured in source_eval_oracle_adjust_probe.out; compiler instance datatype, source AST and value carriers, and choice correspondence require review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "is_insert_oracle_def",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs.lean",
+    "lean_name": "isInsertOracle",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed definitions and theorem captured in source_eval_oracle_adjust_probe.out; compiler instance datatype, source AST and value carriers, and choice correspondence require review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_insert_gen_oracle",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs.lean",
+    "lean_name": "adjustOracle_insertGenOracle",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed definitions and theorem captured in source_eval_oracle_adjust_probe.out; compiler instance datatype, source AST and value carriers, and choice correspondence require review."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/source_letProofScript.sml",
     "hol_name": "compile_decs_correct",
     "lean_path": "Flapjack/Compiler/Backend/SourceLet/Proofs/Correct.lean",

@@ -55,6 +55,8 @@
 
 `source_to_source_proof_probe.out` captures the original source-to-source semantics and oracle-adjustment theorems with inferred types. Lean checks the ordinary semantics statement pending correspondence review; the oracle-adjustment theorem remains open.
 
+`source_eval_oracle_adjust_probe.out` captures the source evaluator's compiler-instance conversion and oracle-adjustment definitions and the adjustment/insertion identity with inferred types.
+
 `source_evaluate_decs_probe.out` captures the original typed equations for declaration evaluation over a head and an appended list. Lean checks corresponding statements; the underlying clocked evaluator and its carriers still require correspondence review.
 
 `source_to_flat_global_env_probe.out` captures the original global environment's value-list and finite-map field types, constructor tags and map conditions, including pattern-stamp prerequisites, their independent polymorphic types and empty-map observations. The map witnesses check Lean representation roundtrips; they do not establish the value relation or pass correctness.
