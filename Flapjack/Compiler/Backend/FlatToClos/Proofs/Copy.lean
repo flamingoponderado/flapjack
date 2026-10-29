@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.StringConstruction
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.ArrayUpdate
 
 /-! Byte-copy cases for the proof-side flat-to-closure simulation. These
 lemmas are Flapjack infrastructure and have not been reviewed as HOL ports. -/
@@ -169,6 +170,121 @@ theorem copyByteArray_body_related {C F : Type} (source : FlatSem.State C F)
     cases copyArray (bytes, offset) length none <;> simp
   rw [flatEq, closEq]
   simpa using copyString_body_related source target trace env (.implode bytes) offset length states
+
+/-- Successful XOR updates replace the corresponding byte-array slot on both
+sides, preserving the proof-side state relation. -/
+theorem xorByteArray_related {C F : Type} (source : FlatSem.State C F)
+    (target : ClosSem.State C F) (pointer : Nat) (flag : Bool)
+    (bytes updated : List HolChar) (value : MlString)
+    (states : StateRel source target)
+    (found : storeLookup pointer source.refs = some (.w8array bytes))
+    (xor : xorBytes value.explode bytes = some updated) :
+    ∃ targetNext,
+      FlatSem.doAppCopy source .xorAw8StrUnsafe [.loc flag pointer, .litv (.strLit value)] =
+        some (some ({ source with refs := source.refs.set pointer (.w8array updated) }, .val FlatSem.unitValue)) ∧
+      ClosSem.applyMemory .xorByte [.refPtr flag pointer, .byteVector value.explode] target =
+        some (ClosSem.unitValue, targetNext) ∧
+      StateRel { source with refs := source.refs.set pointer (.w8array updated) } targetNext := by
+  have targetFound := lookup_byteArray states found
+  have foundList : source.refs[pointer]? = some (.w8array bytes) := by simpa [storeLookup] using found
+  have newStores := storeRel_setByteArray source.refs target.refs pointer bytes updated states.2.2.2.1
+    foundList
+  refine ⟨{ target with refs := target.refs.updateEq (pointer, .byteArray updated) }, ?_, ?_, ?_⟩
+  · simp [FlatSem.doAppCopy, foundList, xor, storeAssign, storeLookup, storeValueSameType]
+  · simp [ClosSem.applyMemory, targetFound, xor]
+  · rcases states with ⟨maxApp, ffi, clock, _, globals, values, install⟩
+    exact ⟨maxApp, ffi, clock, newStores, globals, values, install⟩
+
+/-- XOR rejects any argument count other than two. -/
+theorem xorByteArray_wrong_arity {C F : Type} (state : FlatSem.State C F)
+    (args : List FlatSem.Value) (wrong : args.length ≠ 2) :
+    (FlatSem.applyResult state (.src .xorAw8StrUnsafe) args).2 = .err (.abort .typeError) := by
+  cases args with
+  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy]
+  | cons first rest =>
+    cases rest with
+    | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy]
+    | cons second rest =>
+      cases rest with
+      | nil => simp at wrong
+      | cons third rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy]
+
+/-- The unsafe byte-array XOR expression is simulated whenever source
+evaluation does not abort with a type error. -/
+theorem evaluate_xorByteArray {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+    (names : List (Option MlString)) (values : List ClosSem.Value)
+    (source : FlatSem.State C F) (target : ClosSem.State C F)
+    (trace : BackendCommon.Tra) (args : List FlatLang.Exp)
+    (argsSim : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values source target args.reverse)
+    (notTypeError : (FlatSem.evaluate env source [.app trace (.src .xorAw8StrUnsafe) args]).2 ≠
+      .err (.abort .typeError)) :
+    EvalSim env names values source target [.app trace (.src .xorAw8StrUnsafe) args] := by
+  have flatFix := (FlatSem.fixClock_evaluations env source args.reverse (.lit .none (.intLit 0)) []).1
+  have closFix := ClosSem.fixClock_evaluate (compileExps names args).reverse values target
+  have argsNotTypeError : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) := by
+    intro failure
+    apply notTypeError
+    rw [FlatSem.evaluate]
+    simp only [flatFix, failure]
+  have argsSim := argsSim argsNotTypeError
+  unfold EvalSim at argsSim ⊢
+  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps_reverse] at argsSim
+  rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
+  simp only [flatFix]
+  cases flatRun : FlatSem.evaluate env source args.reverse with
+  | mk next flatResult =>
+    cases closRun : ClosSem.evaluate (compileExps names args).reverse values target with
+    | mk closResult nextTarget =>
+      simp only [flatRun, closRun] at argsSim ⊢
+      rcases argsSim with ⟨states, results⟩
+      cases results with
+      | abort error => exact ⟨states, .abort error⟩
+      | raise related => exact ⟨states, .raise related⟩
+      | value related =>
+        rename_i sourceArgs targetArgs
+        have resultShape : (FlatSem.applyResult next (.src .xorAw8StrUnsafe) sourceArgs.reverse).2 ≠
+            .err (.abort .typeError) := by
+          have fixed := flatFix
+          rw [flatRun] at fixed
+          have h := notTypeError
+          rw [FlatSem.evaluate, flatRun, fixed] at h
+          simpa using h
+        have argLength : sourceArgs.length = 2 := by
+          by_contra wrong
+          apply resultShape
+          apply xorByteArray_wrong_arity
+          simpa using wrong
+        cases related with
+        | nil => simp at argLength
+        | cons stringRel tail =>
+          cases tail with
+          | nil => simp at argLength
+          | cons pointerRel tail =>
+            cases tail with
+            | cons _ _ => simp at argLength
+            | nil =>
+              simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at resultShape
+              cases pointerRel <;>
+                simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
+                  FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy] at resultShape
+              case loc flag pointer =>
+                cases stringRel <;> try simp at resultShape
+                case string value =>
+                  cases found : storeLookup pointer next.refs with
+                  | none => simp [found] at resultShape
+                  | some entry =>
+                    cases entry <;> simp [found] at resultShape
+                    case w8array bytes =>
+                      cases xor : xorBytes value.explode bytes with
+                      | none => simp [xor] at resultShape
+                      | some updated =>
+                        obtain ⟨targetUpdated, sourceUpdate, targetUpdate, updatedStates⟩ :=
+                          xorByteArray_related next nextTarget pointer flag bytes updated value states found xor
+                        simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+                          FlatSem.doAppData, sourceUpdate, ClosSem.doApp, targetUpdate, updatedStates,
+                          FlatSem.unitValue, ClosSem.unitValue, EvalResultRel.value (.cons (ValueRel.tuple .nil) .nil)]
 
 /-- String copying rejects argument counts other than three. -/
 theorem copyString_wrong_arity {C F : Type} (state : FlatSem.State C F)
