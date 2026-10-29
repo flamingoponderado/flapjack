@@ -71,6 +71,90 @@ theorem pmatch_literal_bindings {C F : Type} (state : FlatSem.State C F) (lit : 
   | conv _ _ | closure _ _ _ | recclosure _ _ _ | loc _ _ | vectorv _ =>
     simp [FlatSem.pmatch] at matched
 
+/-- A successful constructor-list match splits into a successful match of
+its fields and a successful match of the remaining work-list values. -/
+theorem pmatchList_con_split {C F : Type} (state : FlatSem.State C F)
+    (stamp : Option (FlatLang.CtorId × FlatLang.TypeGroupId)) (patterns rest : List FlatLang.Pat)
+    (actual : Option (FlatLang.CtorId × FlatLang.TypeId)) (fields values : List FlatSem.Value)
+    (pre bindings : List (VarN × FlatSem.Value))
+    (matched : FlatSem.pmatchList state (.pcon stamp patterns :: rest) (.conv actual fields :: values) pre =
+      .match bindings) :
+    patterns.length = fields.length ∧ ∃ intermediate,
+      FlatSem.pmatchList state patterns fields pre = .match intermediate ∧
+      FlatSem.pmatchList state rest values intermediate = .match bindings := by
+  cases head : FlatSem.pmatch state (.pcon stamp patterns) (.conv actual fields) pre with
+  | typeError => simp [FlatSem.pmatchList, head] at matched
+  | noMatch =>
+    cases tail : FlatSem.pmatchList state rest values pre <;>
+      simp [FlatSem.pmatchList, head, tail] at matched
+  | «match» intermediate =>
+    have tail : FlatSem.pmatchList state rest values intermediate = .match bindings := by
+      simpa [FlatSem.pmatchList, head] using matched
+    by_cases stamps : FlatSem.PmatchStampsOk stamp actual patterns.length fields.length
+    · have notBad : ¬ ¬ FlatSem.PmatchStampsOk stamp actual patterns.length fields.length := fun h => h stamps
+      by_cases same : stamp.map Prod.fst = actual.map Prod.fst ∧ patterns.length = fields.length
+      · have inner : FlatSem.pmatchList state patterns fields pre = .match intermediate := by
+          simpa only [FlatSem.pmatch, if_neg notBad, if_pos same] using head
+        exact ⟨same.2, intermediate, inner, tail⟩
+      · simp only [FlatSem.pmatch, if_neg notBad, if_neg same] at head
+        contradiction
+    · simp [FlatSem.pmatch, stamps] at head
+
+/-- A successful constructor match supplies the exact match premise for the
+compiler's expanded work list. -/
+theorem pmatchList_con_worklist {C F : Type} (trace : BackendCommon.Tra) (upper : Nat)
+    (state : FlatSem.State C F) (stamp : Option (FlatLang.CtorId × FlatLang.TypeGroupId))
+    (patterns : List FlatLang.Pat) (rest : List (FlatLang.Pat × Nat × FlatLang.Exp))
+    (actual : Option (FlatLang.CtorId × FlatLang.TypeId)) (fields values : List FlatSem.Value)
+    (pre bindings : List (VarN × FlatSem.Value))
+    (matched : FlatSem.pmatchList state (.pcon stamp patterns :: rest.map Prod.fst)
+      (.conv actual fields :: values) pre = .match bindings) :
+    patterns.length = fields.length ∧
+    FlatSem.pmatchList state
+      (((patternEntries trace upper 0 patterns).map Prod.snd ++ rest).map Prod.fst)
+      (fields ++ values) pre = .match bindings := by
+  obtain ⟨lengths, intermediate, first, second⟩ :=
+    pmatchList_con_split state stamp patterns (rest.map Prod.fst) actual fields values pre bindings matched
+  constructor
+  · exact lengths
+  · have combined := pmatchList_append_match state patterns (rest.map Prod.fst) fields values pre intermediate bindings first second
+    have patternEq : List.map (Prod.fst ∘ Prod.snd) (patternEntries trace upper 0 patterns) = patterns := by
+      simpa only [Function.comp_def] using patternEntries_patterns trace upper 0 patterns
+    simpa only [List.map_append, List.map_map, patternEq] using combined
+
+/-- Expanding a constructor preserves pattern-binding bounds and places each
+new temporary key inside the expanded generated-name interval. -/
+theorem compilePatBindings_con_bounds (trace : BackendCommon.Tra) (lower upper key : Nat)
+    (stamp : Option (FlatLang.CtorId × FlatLang.TypeGroupId)) (patterns : List FlatLang.Pat)
+    (expression : FlatLang.Exp) (rest : List (FlatLang.Pat × Nat × FlatLang.Exp))
+    (_bound : lower < upper)
+    (itemBounds : ∀ item ∈ ((.pcon stamp patterns, key, expression) :: rest),
+      (∀ n ∈ FlatLang.patBindings item.1, decNameToNum n < lower) ∧
+        lower < item.2.1 ∧ item.2.1 < upper) :
+    ∀ item ∈ ((patternEntries trace upper 0 patterns).map Prod.snd ++ rest),
+      (∀ n ∈ FlatLang.patBindings item.1, decNameToNum n < lower) ∧
+        lower < item.2.1 ∧ item.2.1 < upper + 2 + patterns.length := by
+  intro item member
+  rcases List.mem_append.mp member with generated | old
+  · obtain ⟨entry, entryMem, rfl⟩ := List.mem_map.mp generated
+    have patMember : entry.2.1 ∈ patterns := by
+      rw [← patternEntries_patterns trace upper 0 patterns]
+      exact List.mem_map.mpr ⟨entry, entryMem, rfl⟩
+    have info := patternEntries_member trace upper 0 patterns entry entryMem
+    have work := patternEntries_work_expression trace upper 0 patterns entry entryMem
+    have original := itemBounds (.pcon stamp patterns, key, expression) (by simp)
+    refine ⟨?_, ?_, ?_⟩
+    · intro name nameMem
+      apply original.1 name
+      change name ∈ FlatLang.patsBindings patterns
+      exact patBindings_mem_patsBindings patterns entry.2.1 name patMember nameMem
+    · rw [work.1]
+      omega
+    · rw [work.1]
+      omega
+  · have h := itemBounds item (by simp [old])
+    exact ⟨h.1, h.2.1, by omega⟩
+
 /-- Literal case of the binding simulation; a successful literal match adds
 no binding and the generated code is the recursive continuation. -/
 theorem bindingSimulation_lit {C F : Type} (trace : BackendCommon.Tra) (upper key : Nat)
@@ -287,5 +371,117 @@ theorem bindingSimulation_as {C F : Type} (trace : BackendCommon.Tra) (upper key
       · omega
       · exact step.2
       · exact nestedBounds
+
+/-- Constructor case of the binding simulation, assuming the recursive case
+for the generated field work items followed by the original tail. -/
+theorem bindingSimulation_con {C F : Type} (trace : BackendCommon.Tra) (upper key : Nat)
+    (stamp : Option (FlatLang.CtorId × FlatLang.TypeGroupId)) (patterns : List FlatLang.Pat)
+    (expression body : FlatLang.Exp) (rest : List (FlatLang.Pat × Nat × FlatLang.Exp))
+    (ih : @BindingSimulation C F trace (upper + 2 + patterns.length)
+      ((patternEntries trace upper 0 patterns).map Prod.snd ++ rest) body) :
+    @BindingSimulation C F trace upper ((.pcon stamp patterns, key, expression) :: rest) body := by
+  intro lower state values pre bindings env final result base matched evaluated inputs preBound bound related itemBounds
+  cases values with
+  | nil => simp [FlatSem.pmatchList] at matched
+  | cons constructor values =>
+    cases constructor with
+    | litv _ | closure _ _ _ | recclosure _ _ _ | loc _ _ | vectorv _ =>
+      simp [FlatSem.pmatchList, FlatSem.pmatch] at matched
+    | conv actual fields =>
+      let entries := patternEntries trace upper 0 patterns
+      let compiled := compilePatBindings trace (upper + 2 + patterns.length) (entries.map Prod.snd ++ rest) body
+      let selected := entries.filter (fun e => (sptLookup e.2.2.1 compiled.1).isSome)
+      let extended := selected.reverse.map (fun e => (e.1.2, (fields[e.1.1]?).getD FlatSem.unitValue)) ++ env.v
+      have sourceMatch : FlatSem.pmatchList state (.pcon stamp patterns :: rest.map Prod.fst)
+          (.conv actual fields :: values) pre = .match bindings := by simpa using matched
+      obtain ⟨lengths, nestedMatch⟩ := pmatchList_con_worklist trace upper state stamp patterns rest actual fields
+        values pre bindings sourceMatch
+      cases resultEq : compiled with
+      | mk used continuation =>
+        have hInputs : BindingInputs lower upper (if selected.isEmpty then used else sptInsert key () used) env state
+            ((.pcon stamp patterns, key, expression) :: rest) (.conv actual fields :: values) := by
+          simpa [compilePatBindings, entries, compiled, selected, resultEq] using inputs
+        have pure : selected.isEmpty = false → ∀ env2,
+            aLookupRel (fun name => ¬ upper < decNameToNum name) Eq env2.v env.v →
+            FlatSem.evaluate env2 state [expression] = (state, .val [.conv actual fields]) := by
+          intro nonempty env2 stable
+          cases hInputs with
+          | cons head _ =>
+            apply head env2
+            · simp [nonempty, sptLookup_sptInsert_same]
+            · intro name observed
+              apply stable name
+              omega
+        have step := compilePatBindings_con_evaluate_guarded trace upper key stamp patterns expression body rest
+          env state actual fields lengths pure
+        have nestedEval : FlatSem.evaluate { env with v := extended } state [continuation] = (final, result) := by
+          rw [evaluated] at step
+          simpa [entries, compiled, selected, extended, resultEq] using step.symm
+        have oldInputs := bindingInputs_con_tail trace lower upper key patterns body rest env state fields
+          (.pcon stamp patterns) expression (.conv actual fields) values
+        have tailInputs : BindingInputs lower (upper + 2 + patterns.length) used { env with v := extended } state rest values := by
+          have h := oldInputs (by simpa [entries, compiled, selected, resultEq] using hInputs)
+          simpa [entries, compiled, selected, extended, resultEq] using h
+        have fieldsInputs := bindingInputs_con_fields trace lower upper patterns body rest env state fields (by omega) lengths
+        have allInputs : BindingInputs lower (upper + 2 + patterns.length) used { env with v := extended } state
+            (entries.map Prod.snd ++ rest) (fields ++ values) := by
+          apply bindingInputs_append
+          · simpa [entries, compiled, selected, extended, resultEq] using fieldsInputs
+          · exact tailInputs
+        have nextRelated := compilePatBindings_con_lookup trace upper lower patterns body rest env fields pre base related (by omega)
+        have nextBounds := compilePatBindings_con_bounds trace lower upper key stamp patterns expression rest bound itemBounds
+        apply ih lower state (fields ++ values) pre bindings { env with v := extended } final result base
+        · exact nestedMatch
+        · simpa [entries, compiled, resultEq] using nestedEval
+        · simpa [entries, compiled, resultEq] using allInputs
+        · exact preBound
+        · omega
+        · exact nextRelated
+        · exact nextBounds
+
+/-- The complete work-list simulation follows the compiler's own recursive
+induction. This proof-side theorem is untagged until the clocked evaluator and
+its HOL carriers have been reviewed. -/
+theorem bindingSimulation_all {C F : Type} (trace : BackendCommon.Tra) (upper : Nat)
+    (todo : List (FlatLang.Pat × Nat × FlatLang.Exp)) (body : FlatLang.Exp) :
+    @BindingSimulation C F trace upper todo body := by
+  induction upper, todo using compilePatBindings.induct trace body with
+  | case1 i => exact bindingSimulation_nil trace i body
+  | case2 i key expression rest ih => exact bindingSimulation_any trace i key expression body rest ih
+  | case3 i key expression rest lit ih => exact bindingSimulation_lit trace i key lit expression body rest ih
+  | case4 i key expression rest name used continuation compiled ih =>
+    exact bindingSimulation_var trace i key name expression body rest ih
+  | case5 i key expression rest stamp patterns entries used continuation compiled ih =>
+    exact bindingSimulation_con trace i key stamp patterns expression body rest ih
+  | case6 i key expression rest pattern name generated used continuation compiled ih =>
+    exact bindingSimulation_as trace i key pattern name expression body rest ih
+  | case7 i key expression rest pattern generated used continuation compiled ih =>
+    exact bindingSimulation_ref trace i key pattern expression body rest ih
+
+/-- Work-list binding simulation with the compiler result exposed explicitly.
+The `BindingInputs` predicate packages the pointwise pure-evaluation premise;
+the evaluator and carriers remain pending comparison with the HOL theorem. -/
+theorem compilePatBindings_simulation {C F : Type} (trace : BackendCommon.Tra) (lower upper : Nat)
+    (todo : List (FlatLang.Pat × Nat × FlatLang.Exp)) (body compiledBody : FlatLang.Exp) (used : NumSet)
+    (state final : FlatSem.State C F) (values : List FlatSem.Value) (pre bindings : List (VarN × FlatSem.Value))
+    (env : FlatSem.Environment FlatSem.Value) (result : Result (List FlatSem.Value) FlatSem.Value)
+    (base : List (VarN × FlatSem.Value))
+    (compiled : compilePatBindings trace upper todo body = (used, compiledBody))
+    (matched : FlatSem.pmatchList state (todo.map Prod.fst) values pre = .match bindings)
+    (evaluated : FlatSem.evaluate env state [compiledBody] = (final, result))
+    (inputs : BindingInputs lower upper used env state todo values)
+    (preBound : ∀ entry ∈ pre, decNameToNum entry.1 < lower) (bound : lower < upper)
+    (related : aLookupRel (fun name => decNameToNum name < lower) Eq env.v (pre ++ base))
+    (itemBounds : ∀ item ∈ todo, (∀ name ∈ FlatLang.patBindings item.1, decNameToNum name < lower) ∧
+      lower < item.2.1 ∧ item.2.1 < upper) :
+    ∃ env2, FlatSem.evaluate env2 state [body] = (final, result) ∧
+      aLookupRel (fun name => decNameToNum name < lower) Eq env2.v (bindings ++ base) := by
+  apply bindingSimulation_all trace upper todo body lower state values pre bindings env final result base matched
+  · simpa [compiled] using evaluated
+  · simpa [compiled] using inputs
+  · exact preBound
+  · exact bound
+  · exact related
+  · exact itemBounds
 
 end Flapjack.Compiler.Backend.FlatPattern

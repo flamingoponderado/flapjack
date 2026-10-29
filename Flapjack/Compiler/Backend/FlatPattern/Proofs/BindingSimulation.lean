@@ -236,6 +236,41 @@ theorem compilePatBindings_con_evaluate {C F : Type} (trace : BackendCommon.Tra)
   | mk used result =>
     simpa [compilePatBindings, entries, compiled, selected, h] using folded
 
+/-- The constructor expression needs to evaluate purely only when a field
+projection is selected. An empty selection emits no projection code. -/
+theorem compilePatBindings_con_evaluate_guarded {C F : Type} (trace : BackendCommon.Tra) (i key : Nat)
+    (patternStamp : Option (FlatLang.CtorId × FlatLang.TypeGroupId)) (patterns : List FlatLang.Pat)
+    (expression body : FlatLang.Exp) (rest : List (FlatLang.Pat × Nat × FlatLang.Exp))
+    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F)
+    (stamp : Option (FlatLang.CtorId × FlatLang.TypeId)) (fields : List FlatSem.Value)
+    (lengths : patterns.length = fields.length) :
+    let entries := patternEntries trace i 0 patterns
+    let compiled := compilePatBindings trace (i + 2 + patterns.length) (entries.map Prod.snd ++ rest) body
+    let selected := entries.filter (fun entry => (sptLookup entry.2.2.1 compiled.1).isSome)
+    (selected.isEmpty = false → ∀ env2, aLookupRel (fun name => ¬ i < decNameToNum name) Eq env2.v env.v →
+      FlatSem.evaluate env2 state [expression] = (state, .val [.conv stamp fields])) →
+    FlatSem.evaluate env state [(compilePatBindings trace i ((.pcon patternStamp patterns, key, expression) :: rest) body).2] =
+      FlatSem.evaluate { env with v := selected.reverse.map (fun entry =>
+        (entry.1.2, (fields[entry.1.1]?).getD FlatSem.unitValue)) ++ env.v } state [compiled.2] := by
+  let entries := patternEntries trace i 0 patterns
+  let compiled := compilePatBindings trace (i + 2 + patterns.length) (entries.map Prod.snd ++ rest) body
+  let selected := entries.filter (fun entry => (sptLookup entry.2.2.1 compiled.1).isSome)
+  change (selected.isEmpty = false → ∀ env2, aLookupRel (fun name => ¬ i < decNameToNum name) Eq env2.v env.v →
+      FlatSem.evaluate env2 state [expression] = (state, .val [.conv stamp fields])) → _
+  intro pure
+  cases h : selected with
+  | nil =>
+    cases result : compiled with
+    | mk used continuation =>
+      have empty : (patternEntries trace i 0 patterns).filter
+          (fun entry => (sptLookup entry.2.2.1 used).isSome) = [] := by
+        simpa [selected, entries, result] using h
+      simp [compilePatBindings, entries, compiled, result, empty]
+  | cons first tail =>
+    apply compilePatBindings_con_evaluate trace i key patternStamp patterns expression body rest env state stamp fields lengths
+    apply pure
+    simp [h]
+
 /-- Selected constructor temporaries do not change lookups below the
 original-name bound. -/
 theorem compilePatBindings_con_lookup (trace : BackendCommon.Tra) (i bound : Nat)
@@ -262,6 +297,69 @@ theorem compilePatBindings_con_lookup (trace : BackendCommon.Tra) (i bound : Nat
   simp only at selectedKey
   rw [h.2.2, decEnc] at selectedKey
   omega
+
+/-- An unobserved prefix on the right leaves lookup relatedness unchanged. -/
+theorem aLookupRel_append_right_false {K A B : Type} (predicate : K → Prop) (relation : A → B → Prop)
+    (left : List (K × A)) (front suffix : List (K × B))
+    (excluded : ∀ binding ∈ front, ¬ predicate binding.1) :
+    aLookupRel predicate relation left (front ++ suffix) ↔ aLookupRel predicate relation left suffix := by
+  have absent (key : K) (selected : predicate key) : holALookup front key = none := by
+    cases found : holALookup front key with
+    | none => rfl
+    | some value => exact (excluded (key, value) (holALookup_member front key value found) selected).elim
+  unfold aLookupRel
+  constructor <;> intro related key selected
+  all_goals simpa [holALookup_append, absent key selected] using related key selected
+
+/-- Old work items keep their pure-evaluation premise when selected
+constructor temporaries extend the environment and the name interval. -/
+theorem bindingInputs_con_tail {C F : Type} (trace : BackendCommon.Tra) (lower upper key : Nat)
+    (patterns : List FlatLang.Pat) (body : FlatLang.Exp) (rest : List (FlatLang.Pat × Nat × FlatLang.Exp))
+    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F) (fields : List FlatSem.Value)
+    (oldPattern : FlatLang.Pat) (expression : FlatLang.Exp) (value : FlatSem.Value)
+    (values : List FlatSem.Value) :
+    let entries := patternEntries trace upper 0 patterns
+    let compiled := compilePatBindings trace (upper + 2 + patterns.length) (entries.map Prod.snd ++ rest) body
+    let selected := entries.filter (fun e => (sptLookup e.2.2.1 compiled.1).isSome)
+    let extended := selected.reverse.map (fun e => (e.1.2, (fields[e.1.1]?).getD FlatSem.unitValue)) ++ env.v
+    BindingInputs lower upper (if selected.isEmpty then compiled.1 else sptInsert key () compiled.1) env state
+      ((oldPattern, key, expression) :: rest) (value :: values) →
+    BindingInputs lower (upper + 2 + patterns.length) compiled.1 { env with v := extended } state rest values := by
+  let entries := patternEntries trace upper 0 patterns
+  let compiled := compilePatBindings trace (upper + 2 + patterns.length) (entries.map Prod.snd ++ rest) body
+  let selected := entries.filter (fun e => (sptLookup e.2.2.1 compiled.1).isSome)
+  let front := selected.reverse.map (fun e => (e.1.2, (fields[e.1.1]?).getD FlatSem.unitValue))
+  change BindingInputs lower upper (if selected.isEmpty then compiled.1 else sptInsert key () compiled.1) env state
+      ((oldPattern, key, expression) :: rest) (value :: values) →
+    BindingInputs lower (upper + 2 + patterns.length) compiled.1 { env with v := front ++ env.v } state rest values
+  intro inputs
+  have excluded : ∀ binding ∈ front, ¬ (lower < decNameToNum binding.1 ∧ decNameToNum binding.1 < upper) := by
+    intro binding member observed
+    obtain ⟨entry, reverseMember, rfl⟩ := List.mem_map.mp member
+    have inSelected : entry ∈ selected := by simpa only [List.mem_reverse] using reverseMember
+    have inEntries : entry ∈ entries := (List.mem_filter.mp inSelected).1
+    have h := patternEntries_member trace upper 0 patterns entry inEntries
+    simp only at observed
+    rw [h.2.2, decEnc] at observed
+    omega
+  cases inputs with
+  | cons _ tail =>
+    induction tail with
+    | nil => exact .nil
+    | @cons item itemValue rest values head tail ih =>
+      apply List.Forall₂.cons
+      · intro env2 present related
+        apply head env2
+        · by_cases empty : selected.isEmpty = true
+          · simpa [empty] using present
+          · have nonempty : selected.isEmpty = false := by cases h : selected.isEmpty <;> simp_all
+            simpa [nonempty] using sptInsert_preserves_presence compiled.1 key item.2.1 present
+        · have narrow : aLookupRel (fun name => lower < decNameToNum name ∧ decNameToNum name < upper)
+              Eq env2.v (front ++ env.v) := by
+            intro name observed
+            exact related name ⟨observed.1, by omega⟩
+          exact (aLookupRel_append_right_false _ _ env2.v front env.v excluded).1 narrow
+      · exact ih
 
 /-- If all entries with the same key carry the same value, lookup of any
 member's key returns that value, even when keys are repeated. -/
@@ -396,6 +494,26 @@ theorem patternEntries_length (trace : BackendCommon.Tra) (i j : Nat) (patterns 
   | nil => rfl
   | cons pattern patterns ih => simp [patternEntries, ih]
 
+/-- The generated work list preserves the original subpattern order. -/
+theorem patternEntries_patterns (trace : BackendCommon.Tra) (i j : Nat) (patterns : List FlatLang.Pat) :
+    (patternEntries trace i j patterns).map (fun entry => entry.2.1) = patterns := by
+  induction patterns generalizing j with
+  | nil => rfl
+  | cons pattern patterns ih => simp [patternEntries, ih]
+
+/-- Bindings of any member pattern occur among the aggregate bindings. -/
+theorem patBindings_mem_patsBindings (patterns : List FlatLang.Pat) (pattern : FlatLang.Pat) (name : VarN)
+    (inPattern : pattern ∈ patterns) (inBindings : name ∈ FlatLang.patBindings pattern) :
+    name ∈ FlatLang.patsBindings patterns := by
+  induction patterns with
+  | nil => simp at inPattern
+  | cons first rest ih =>
+    rcases List.mem_cons.mp inPattern with equal | later
+    · subst first
+      simp [FlatLang.patsBindings, inBindings]
+    · have h := ih later
+      simp [FlatLang.patsBindings, h]
+
 /-- Equal-length lists satisfy a pointwise relation when their option-valued
 lookups satisfy it at every index. -/
 theorem forall₂_of_getElem {A B : Type} (relation : A → B → Prop) (left : List A) (right : List B)
@@ -483,6 +601,56 @@ theorem compilePatBindings_con_workitems_related {C F : Type} (trace : BackendCo
       have h := compilePatBindings_con_selected_pure trace i patterns body rest env env2 state fields entry inSelected related
       rw [expr]
       simpa [index, valueAt] using h
+
+/-- The generated work items satisfy the recursive binding-input invariant
+against the corresponding constructor fields. -/
+theorem bindingInputs_con_fields {C F : Type} (trace : BackendCommon.Tra) (lower upper : Nat)
+    (patterns : List FlatLang.Pat) (body : FlatLang.Exp) (rest : List (FlatLang.Pat × Nat × FlatLang.Exp))
+    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F) (fields : List FlatSem.Value)
+    (bound : lower ≤ upper) (lengths : patterns.length = fields.length) :
+    let entries := patternEntries trace upper 0 patterns
+    let compiled := compilePatBindings trace (upper + 2 + patterns.length) (entries.map Prod.snd ++ rest) body
+    let selected := entries.filter (fun e => (sptLookup e.2.2.1 compiled.1).isSome)
+    let extended := selected.reverse.map (fun e => (e.1.2, (fields[e.1.1]?).getD FlatSem.unitValue)) ++ env.v
+    BindingInputs lower (upper + 2 + patterns.length) compiled.1 { env with v := extended } state
+      (entries.map Prod.snd) fields := by
+  let entries := patternEntries trace upper 0 patterns
+  let compiled := compilePatBindings trace (upper + 2 + patterns.length) (entries.map Prod.snd ++ rest) body
+  let selected := entries.filter (fun e => (sptLookup e.2.2.1 compiled.1).isSome)
+  let extended := selected.reverse.map (fun e => (e.1.2, (fields[e.1.1]?).getD FlatSem.unitValue)) ++ env.v
+  change BindingInputs lower (upper + 2 + patterns.length) compiled.1 { env with v := extended } state
+      (entries.map Prod.snd) fields
+  have work := compilePatBindings_con_workitems_related trace upper patterns body rest env state fields lengths
+  change List.Forall₂ (fun item value => (sptLookup item.2.1 compiled.1).isSome = true →
+    ∀ env2, aLookupRel (fun name => upper < decNameToNum name ∧ decNameToNum name < upper + 2 + patterns.length)
+      Eq env2.v extended → FlatSem.evaluate env2 state [item.2.2] = (state, .val [value]))
+    (entries.map Prod.snd) fields at work
+  have convert : ∀ xs ys, List.Forall₂ (fun item value => (sptLookup item.2.1 compiled.1).isSome = true →
+      ∀ env2, aLookupRel (fun name => upper < decNameToNum name ∧ decNameToNum name < upper + 2 + patterns.length)
+        Eq env2.v extended → FlatSem.evaluate env2 state [item.2.2] = (state, .val [value])) xs ys →
+      BindingInputs lower (upper + 2 + patterns.length) compiled.1 { env with v := extended } state xs ys := by
+    intro xs ys input
+    induction input with
+    | nil => exact .nil
+    | @cons item value todo values head tail ih =>
+      apply List.Forall₂.cons
+      · intro env2 used related
+        apply head used env2
+        intro name observed
+        exact related name ⟨by omega, observed.2⟩
+      · exact ih
+  exact convert _ _ work
+
+/-- Binding-input relations concatenate alongside their work lists and values. -/
+theorem bindingInputs_append {C F : Type} (lower upper : Nat) (used : NumSet)
+    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F)
+    (left right : List (FlatLang.Pat × Nat × FlatLang.Exp)) (leftValues rightValues : List FlatSem.Value)
+    (first : BindingInputs lower upper used env state left leftValues)
+    (second : BindingInputs lower upper used env state right rightValues) :
+    BindingInputs lower upper used env state (left ++ right) (leftValues ++ rightValues) := by
+  induction first with
+  | nil => exact second
+  | cons head tail ih => exact .cons head ih
 
 /-- The generated binding for a variable evaluates its source expression
 and then continues with that value at the head of the environment. -/
