@@ -1411,4 +1411,43 @@ theorem evaluate_boolEquality {C F : Type} (env : FlatSem.Environment FlatSem.Va
                       simp_all [EvalResultRel.value (.cons (boolValue_related _) .nil)]
 
 
+/-- Primitive equality simulation for every source primitive type. This
+combines the proof-side cases and does not claim HOL correspondence for the
+surrounding evaluator relation. -/
+theorem evaluate_primitiveEquality {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+    (names : List (Option Flapjack.Basis.Pure.MlString.MlString)) (values : List ClosSem.Value)
+    (source : FlatSem.State C F) (target : ClosSem.State C F)
+    (trace : BackendCommon.Tra) (typ : PrimType) (args : List FlatLang.Exp)
+    (argsSim : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values source target args.reverse)
+    (notTypeError : (FlatSem.evaluate env source [.app trace (.src (.test .equal typ)) args]).2 ≠
+      .err (.abort .typeError)) :
+    EvalSim env names values source target [.app trace (.src (.test .equal typ)) args] := by
+  cases typ with
+  | boolT => exact evaluate_boolEquality env names values source target trace args argsSim notTypeError
+  | intT => exact evaluate_intEquality env names values source target trace args argsSim notTypeError
+  | charT => exact evaluate_charEquality env names values source target trace args argsSim notTypeError
+  | strT => exact evaluate_stringEquality env names values source target trace args argsSim notTypeError
+  | float64T => exact evaluate_float64Equality env names values source target trace args argsSim notTypeError
+  | wordT size =>
+    cases size with
+    | w8 => exact evaluate_word8Equality env names values source target trace args argsSim notTypeError
+    | w64 => exact evaluate_word64Equality env names values source target trace args argsSim notTypeError
+
+/-- Integer ordering simulation for all four ordering operators. -/
+theorem evaluate_intCompare {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+    (names : List (Option Flapjack.Basis.Pure.MlString.MlString)) (values : List ClosSem.Value)
+    (source : FlatSem.State C F) (target : ClosSem.State C F)
+    (trace : BackendCommon.Tra) (cmp : Opb) (args : List FlatLang.Exp)
+    (argsSim : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values source target args.reverse)
+    (notTypeError : (FlatSem.evaluate env source [.app trace (.src (.test (.compare cmp) .intT)) args]).2 ≠
+      .err (.abort .typeError)) :
+    EvalSim env names values source target [.app trace (.src (.test (.compare cmp) .intT)) args] := by
+  cases cmp with
+  | lt => exact evaluate_intCmpLt env names values source target trace args argsSim notTypeError
+  | gt => exact evaluate_intCmpGt env names values source target trace args argsSim notTypeError
+  | leq => exact evaluate_intCmpLeq env names values source target trace args argsSim notTypeError
+  | geq => exact evaluate_intCmpGeq env names values source target trace args argsSim notTypeError
+
 end Flapjack.Compiler.Backend.FlatToClos
