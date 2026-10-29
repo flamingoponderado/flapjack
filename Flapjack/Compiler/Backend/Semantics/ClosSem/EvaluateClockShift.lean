@@ -422,4 +422,65 @@ theorem evaluate_if_addClock {C F : Type} (trace : BackendCommon.Tra)
           simp only [found] at run ⊢
           exact branchIH true conditionNext next result bound run notTimeout
 
+
+/-- Direct-call case of clock extension, assuming the argument and selected
+body cases. -/
+theorem evaluate_call_addClock {C F : Type} (trace : BackendCommon.Tra) (ticks location : Nat)
+    (args : List ClosLang.Exp) (env : List Value) (state next : State C F)
+    (result : Result (List Value) Value) (extra : Nat)
+    (argsIH : ∀ (argResult : Result (List Value) Value) (argNext : State C F),
+      evaluate args env state = (argResult, argNext) → argResult ≠ .err (.abort .timeoutError) →
+      evaluate args env { state with clock := state.clock + extra } =
+        (argResult, { argNext with clock := argNext.clock + extra }))
+    (bodyIH : ∀ (body : ClosLang.Exp) (values : List Value) (bodyState bodyNext : State C F)
+      (bodyResult : Result (List Value) Value), bodyState.clock < state.clock →
+      evaluate [body] values bodyState = (bodyResult, bodyNext) → bodyResult ≠ .err (.abort .timeoutError) →
+      evaluate [body] values { bodyState with clock := bodyState.clock + extra } =
+        (bodyResult, { bodyNext with clock := bodyNext.clock + extra }))
+    (run : evaluate [.call trace ticks location args] env state = (result, next))
+    (notTimeout : result ≠ .err (.abort .timeoutError)) :
+    evaluate [.call trace ticks location args] env { state with clock := state.clock + extra } =
+      (result, { next with clock := next.clock + extra }) := by
+  cases argsRun : evaluate args env state with
+  | mk argResult argNext =>
+    have argBound : argNext.clock ≤ state.clock := by
+      have bound := evaluate_clock_le args env state
+      simpa [argsRun] using bound
+    rw [evaluate, fixClock_evaluate, argsRun] at run
+    have argNotTimeout : argResult ≠ .err (.abort .timeoutError) := by
+      intro bad
+      subst argResult
+      simp at run
+      exact notTimeout run.1.symm
+    have shiftedArgs := argsIH argResult argNext argsRun argNotTimeout
+    rw [evaluate, fixClock_evaluate, shiftedArgs]
+    cases argResult with
+    | err error => simp_all
+    | val values =>
+      cases found : findCode location values argNext.code with
+      | none =>
+        simp [found] at run ⊢
+        rcases run with ⟨rfl, rfl⟩
+        simp
+      | some selected =>
+        obtain ⟨callValues, body⟩ := selected
+        by_cases timeout : argNext.clock < ticks + 1
+        · simp [found, timeout] at run
+          exact (notTimeout run.1.symm).elim
+        · have enough : ticks + 1 ≤ argNext.clock := by omega
+          have shiftedEnough : ¬ argNext.clock + extra < ticks + 1 := by omega
+          have bodyRun : evaluate [body] callValues (decClock (ticks + 1) argNext) = (result, next) := by
+            simpa [found, timeout] using run
+          have smaller : (decClock (ticks + 1) argNext).clock < state.clock := by
+            simp only [decClock]
+            omega
+          have shiftedBody := bodyIH body callValues (decClock (ticks + 1) argNext) next result
+            smaller bodyRun notTimeout
+          have clocks : decClock (ticks + 1) { argNext with clock := argNext.clock + extra } =
+              { decClock (ticks + 1) argNext with clock := (decClock (ticks + 1) argNext).clock + extra } := by
+            simp only [decClock]
+            congr 1
+            omega
+          simpa [found, shiftedEnough, clocks] using shiftedBody
+
 end Flapjack.Compiler.Backend.ClosSem
