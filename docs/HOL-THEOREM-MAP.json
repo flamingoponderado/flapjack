@@ -1,5 +1,21 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/source_letProofScript.sml",
+    "hol_name": "lift_lets_is_prefix",
+    "lean_path": "Flapjack/Compiler/Backend/SourceLet/Proofs.lean",
+    "lean_name": "liftLets_isPrefix",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in source_let_proof_probe.out. Review of the underlying let-lifting definition and AST carriers remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_letProofScript.sml",
+    "hol_name": "lift_lets_mod_local",
+    "lean_path": "Flapjack/Compiler/Backend/SourceLet/Proofs.lean",
+    "lean_name": "liftLets_mod_local",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Local HOL theorem replayed with inferred types in source_let_proof_probe.out. Review of the underlying let-lifting definition and AST carriers remains pending."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
     "hol_name": "EVERY_MAPi_simple",
     "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/BindingFold.lean",
