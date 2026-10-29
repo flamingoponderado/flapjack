@@ -208,6 +208,17 @@ def rich_program(rng):
         f'in loop x 1 end; val _ = print_int (f {b});',
         f'fun f x = (x div 0) handle Div => {a}; val _ = print_int (f {b});',
         f'val _ = print_int (List.length (List.map (fn x => x + {a}) [{a},{b},{c}]));',
+        f'fun f x = let val g = fn y => let val h = fn z => x+y+z in h {a} end '
+        f'in g {b} + g {c} end; val _ = print_int (f {a});',
+        f'val r = Ref {a}; val x = (False andalso (r := {b}; True)) orelse '
+        f'(True andalso (r := {c}; True)); val _ = print_int (!r + (if x then 1 else 0));',
+        f'fun f n = if n = 0 then [] else n::f (n-1); '
+        f'val _ = print_int (List.foldl (fn x => fn y => x+y) 0 (f {a}));',
+        f'val v = Vector.tabulate {a} (fn x => x+{b}); '
+        f'val _ = print_int (Vector.sub v {c % a} + Vector.length v);',
+        f'exception E int; exception F int; fun f x = '
+        f'((raise E x) handle E y => raise F (y+{a})) handle F z => z*{b}; '
+        f'val _ = print_int (f {c});',
     ])
 
 

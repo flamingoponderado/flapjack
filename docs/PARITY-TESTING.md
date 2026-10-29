@@ -501,8 +501,9 @@ decimal string and character escapes for all 256 bytes, and successful programs
 compiled to RISC-V, including generated datatype,
 closure, exception, reference, module, recursion, and mutable array examples,
 including byte-array access, tabulation and recursive array traversal, word
-shifts, local tail recursion, division exception handling, and list mapping. It also compares
-generated type and datatype declarations, pattern contexts with exception
+shifts, local tail recursion, division exception handling, list mapping, nested closures,
+short-circuit mutation, recursive list folds, vector tabulation, and nested exception
+handlers. It also compares generated type and datatype declarations, pattern contexts with exception
 handlers and constructor scopes, and successful compilation with
 combinations of backend options, including allocator 3 and explicitly sized
 generational garbage collection. It also compares a matrix of malformed and
