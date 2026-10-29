@@ -183,4 +183,34 @@ theorem evaluateDecs_simulation_all {C F : Type} (cfg stateCfg : Config)
   evaluateDecs_simulation cfg stateCfg declarations (by intro declaration _; exact expressionSimulation_all cfg stateCfg declaration)
     source target sourceFinal outcome states run safe
 
+/-- The expression-list and declaration-list simulations in a single
+conjunction. This is proof-side infrastructure: `FlatSem.evaluate`, `ValueRel`,
+`EnvRel`, and `StateRel` have not yet completed HOL correspondence review, so
+this is not tagged as the original theorem. -/
+theorem compileExps_evaluate_proofSide {C F : Type} (stateCfg : Config) :
+    (∀ (env1 : FlatSem.Environment FlatSem.Value) (s1 : FlatSem.State C F)
+      (xs : List FlatLang.Exp) (t1 : FlatSem.State C F)
+      (r1 : SemanticPrimitivesHOL.Result (List FlatSem.Value) FlatSem.Value)
+      (i : Nat) (sg : Bool) (ys : List FlatLang.Exp) (n : Nat)
+      (env2 : FlatSem.Environment FlatSem.Value) (s2 : FlatSem.State C F) (cfg : Config),
+      FlatSem.evaluate env1 s1 xs = (t1, r1) → compileExps cfg xs = (i, sg, ys) →
+      EnvRel n env1 env2 → StateRel stateCfg s1 s2 → i < n → r1 ≠ .err (.abort .typeError) →
+      ∃ t2 r2, FlatResultRel r1 r2 ∧ StateRel stateCfg t1 t2 ∧ FlatSem.evaluate env2 s2 ys = (t2, r2)) ∧
+    (∀ (s1 : FlatSem.State C F) (decs : List FlatLang.Exp) (s2 t1 : FlatSem.State C F)
+      (cfg : Config) (decs' : List FlatLang.Exp) (res : Option (SemanticPrimitivesHOL.ErrorResult FlatSem.Value)),
+      FlatSem.evaluateDecs s1 decs = (t1, res) → decs' = decs.map (compileDec cfg) →
+      StateRel stateCfg s1 s2 → res ≠ some (.abort .typeError) →
+      ∃ t2 res', FlatSem.evaluateDecs s2 decs' = (t2, res') ∧ optionRel FlatErrorRel res res' ∧ StateRel stateCfg t1 t2) := by
+  constructor
+  · intro env1 s1 xs t1 r1 i sg ys n env2 s2 cfg run compiled envs states bound safe
+    have compiledBound : (compileExps cfg xs).1 < n := by simpa [compiled] using bound
+    obtain ⟨t2, r2, targetRun, finalStates, results⟩ := expressionsSimulation_all cfg stateCfg xs
+      env1 env2 s1 s2 t1 r1 n run envs states compiledBound safe
+    exact ⟨t2, r2, results, finalStates, by simpa [compiled] using targetRun⟩
+  · intro s1 decs s2 t1 cfg decs' res run compiled states safe
+    subst decs'
+    obtain ⟨t2, res', targetRun, finalStates, outcomes⟩ :=
+      evaluateDecs_simulation_all cfg stateCfg s1 s2 t1 decs res states run safe
+    exact ⟨t2, res', targetRun, outcomes, finalStates⟩
+
 end Flapjack.Compiler.Backend.FlatPattern

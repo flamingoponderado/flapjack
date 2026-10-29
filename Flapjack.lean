@@ -355,6 +355,7 @@ import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveCopy
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.SourceApplication
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ClockedApplication
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ClockedInduction
+import Flapjack.Compiler.Backend.FlatPattern.Proofs.ProgramSimulation
 import Flapjack.Compiler.Backend.PatternSemantics.Semantics
 import Flapjack.Compiler.Backend.PatternComp.Proofs.RowSelection
 import Flapjack.Compiler.Backend.PatternComp.Proofs.GuardCompilation
