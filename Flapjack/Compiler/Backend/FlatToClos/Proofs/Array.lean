@@ -43,10 +43,19 @@ theorem evaluate_allocFixed {C F : Type} (env : FlatSem.Environment FlatSem.Valu
     (names : List (Option Flapjack.Basis.Pure.MlString.MlString)) (values : List ClosSem.Value)
     (source : FlatSem.State C F) (target : ClosSem.State C F)
     (trace : BackendCommon.Tra) (args : List FlatLang.Exp)
-    (argsSim : EvalSim env names values source target args.reverse) :
+    (argsSim : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values source target args.reverse)
+    (notTypeError : (FlatSem.evaluate env source [.app trace (.src .aallocFixed) args]).2 ≠
+      .err (.abort .typeError)) :
     EvalSim env names values source target [.app trace (.src .aallocFixed) args] := by
   have flatFix := (FlatSem.fixClock_evaluations env source args.reverse (.lit .none (.intLit 0)) []).1
   have closFix := ClosSem.fixClock_evaluate (compileExps names args).reverse values target
+  have argsNotTypeError : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) := by
+    intro failure
+    apply notTypeError
+    rw [FlatSem.evaluate]
+    simp only [flatFix, failure]
+  have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
   simp only [compile, compileExps_reverse] at argsSim
   simp only [compile, compileExps, compileExp, compileOp] at ⊢
@@ -164,34 +173,48 @@ theorem allocArray_body_related {C F : Type} (source : FlatSem.State C F)
       storeAlloc, negative, evaluate_allocArray_body_nonnegative target trace env size targetValue negative,
       index, updated, EvalResultRel.value (.cons (ValueRel.loc true source.refs.length) .nil)]
 
+/-- An allocation with an argument count other than two is a source type
+error. -/
+theorem allocArray_wrong_arity {C F : Type} (state : FlatSem.State C F)
+    (args : List FlatSem.Value) (wrong : args.length ≠ 2) :
+    (FlatSem.applyResult state (.src .aalloc) args).2 = .err (.abort .typeError) := by
+  cases args with
+  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory]
+  | cons first rest =>
+    cases rest with
+    | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory]
+    | cons second rest =>
+      cases rest with
+      | nil => simp at wrong
+      | cons third rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory]
+
 /-- Sized-array application simulation, excluding source type errors as in
 the source correctness theorem. -/
 theorem evaluate_allocArray {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     (names : List (Option Flapjack.Basis.Pure.MlString.MlString)) (values : List ClosSem.Value)
     (source : FlatSem.State C F) (target : ClosSem.State C F)
-    (trace : BackendCommon.Tra) (sizeExp valueExp : FlatLang.Exp)
-    (argsSim : (FlatSem.evaluate env source [valueExp, sizeExp]).2 ≠ .err (.abort .typeError) →
-      EvalSim env names values source target [valueExp, sizeExp])
-    (notTypeError : (FlatSem.evaluate env source [.app trace (.src .aalloc) [sizeExp, valueExp]]).2 ≠
+    (trace : BackendCommon.Tra) (args : List FlatLang.Exp)
+    (argsSim : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values source target args.reverse)
+    (notTypeError : (FlatSem.evaluate env source [.app trace (.src .aalloc) args]).2 ≠
       .err (.abort .typeError)) :
-    EvalSim env names values source target [.app trace (.src .aalloc) [sizeExp, valueExp]] := by
-  have flatFix := (FlatSem.fixClock_evaluations env source [valueExp, sizeExp] sizeExp []).1
-  have closFix := ClosSem.fixClock_evaluate [compileExp names valueExp, compileExp names sizeExp] values target
-  have argsNotTypeError : (FlatSem.evaluate env source [valueExp, sizeExp]).2 ≠ .err (.abort .typeError) := by
+    EvalSim env names values source target [.app trace (.src .aalloc) args] := by
+  have flatFix := (FlatSem.fixClock_evaluations env source args.reverse (.lit .none (.intLit 0)) []).1
+  have closFix := ClosSem.fixClock_evaluate (compileExps names args).reverse values target
+  have argsNotTypeError : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) := by
     intro failure
     apply notTypeError
     rw [FlatSem.evaluate]
-    simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append, flatFix, failure]
+    simp only [flatFix, failure]
   have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp, List.reverse_cons, List.reverse_nil,
-    List.nil_append, List.cons_append] at ⊢
-  simp only [compile, compileExps] at argsSim
+  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps_reverse] at argsSim
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
-  simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append, flatFix]
-  cases flatRun : FlatSem.evaluate env source [valueExp, sizeExp] with
+  simp only [flatFix]
+  cases flatRun : FlatSem.evaluate env source args.reverse with
   | mk next flatResult =>
-    cases closRun : ClosSem.evaluate [compileExp names valueExp, compileExp names sizeExp] values target with
+    cases closRun : ClosSem.evaluate (compileExps names args).reverse values target with
     | mk closResult nextTarget =>
       simp only [flatRun, closRun] at argsSim ⊢
       rcases argsSim with ⟨states, results⟩
@@ -199,7 +222,19 @@ theorem evaluate_allocArray {C F : Type} (env : FlatSem.Environment FlatSem.Valu
       | abort error => exact ⟨states, .abort error⟩
       | raise related => exact ⟨states, .raise related⟩
       | value related =>
-        have length := FlatSem.evaluate_length env source next [valueExp, sizeExp] _ flatRun
+        rename_i sourceArgs targetArgs
+        have resultShape : (FlatSem.applyResult next (.src .aalloc) sourceArgs.reverse).2 ≠
+            .err (.abort .typeError) := by
+          have fixed := flatFix
+          rw [flatRun] at fixed
+          have h := notTypeError
+          rw [FlatSem.evaluate, flatRun, fixed] at h
+          simpa using h
+        have length : sourceArgs.length = 2 := by
+          by_contra wrong
+          apply resultShape
+          apply allocArray_wrong_arity
+          simpa using wrong
         cases related with
         | nil => simp at length
         | cons head tail =>
@@ -210,15 +245,7 @@ theorem evaluate_allocArray {C F : Type} (env : FlatSem.Environment FlatSem.Valu
             | cons _ _ => simp at length
             | nil =>
               rename_i sourceValue targetValue sourceSize targetSize
-              have resultShape : (FlatSem.applyResult next (.src .aalloc) [sourceSize, sourceValue]).2 ≠
-                  .err (.abort .typeError) := by
-                have fixed := flatFix
-                rw [flatRun] at fixed
-                have h := notTypeError
-                rw [FlatSem.evaluate] at h
-                simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at h
-                rw [flatRun, fixed] at h
-                simpa using h
+              simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at resultShape
               cases sizeRel
               case int size =>
                 simpa using allocArray_body_related next nextTarget trace values size sourceValue targetValue states head
