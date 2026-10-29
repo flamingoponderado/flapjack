@@ -449,6 +449,7 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.Install
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.SmartCons
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Recursive
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvaluateCases
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.Call
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Thunk
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.BlockOperations
 import Flapjack.Compiler.Backend.Backend.PrimSrcConfig

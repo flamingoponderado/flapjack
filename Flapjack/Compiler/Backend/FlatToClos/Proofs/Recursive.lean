@@ -3,7 +3,7 @@ import Mathlib.Data.List.Forall2
 
 /-! Recursive-environment prerequisites for flat-to-closure simulation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
-open Flapjack.AstHOL Flapjack.Basis.Pure.MlString
+open Flapjack.AstHOL Flapjack.Basis.Pure.MlString Flapjack.SemanticPrimitivesHOL
 
 /-- Building recursive source bindings is an ordered prefix of closures. -/
 theorem buildRecEnv_eq_map (funs : List (VarN × VarN × FlatLang.Exp))
@@ -46,6 +46,57 @@ theorem compileFuns_length (names : List (Option MlString)) (funs : List (VarN �
   | cons first rest ih =>
     rcases first with ⟨name, arg, body⟩
     simp [compileFuns, ih]
+
+/-- A distinct recursive function group resolves the function at an index
+to that entry's argument and body. -/
+theorem findRecFun_get (funs : List (VarN × VarN × FlatLang.Exp)) (index : Nat)
+    (bound : index < funs.length) (distinct : (funs.map Prod.fst).Nodup) :
+    findRecFun (funs[index]'bound).1 funs = some (funs[index]'bound).2 := by
+  induction funs generalizing index with
+  | nil => simp at bound
+  | cons first rest ih =>
+    rcases first with ⟨name, arg, body⟩
+    simp only [List.map_cons, List.nodup_cons] at distinct
+    cases index with
+    | zero => simp [findRecFun]
+    | succ index =>
+      have restBound : index < rest.length := by simpa using bound
+      have different : name ≠ (rest[index]'restBound).1 := by
+        intro same
+        apply distinct.1
+        rw [same]
+        exact List.mem_map_of_mem (List.getElem_mem restBound)
+      simpa [findRecFun, different] using ih index restBound distinct.2
+
+/-- The closure function at an index is the corresponding translated body. -/
+theorem compileFuns_get (names : List (Option MlString)) (funs : List (VarN × VarN × FlatLang.Exp))
+    (index : Nat) (bound : index < funs.length) :
+    (compileFuns names funs)[index]? = some
+      (1, compileExp (some (funs[index]'bound).2.1 :: names) (funs[index]'bound).2.2) := by
+  induction funs generalizing index with
+  | nil => simp at bound
+  | cons first rest ih =>
+    rcases first with ⟨name, arg, body⟩
+    cases index with
+    | zero => simp [compileFuns]
+    | succ index =>
+      have restBound : index < rest.length := by simpa using bound
+      simpa [compileFuns] using ih index restBound
+
+/-- Every body in a match-free recursive group is match-free. -/
+theorem noMatFuns_get (funs : List (VarN × VarN × FlatLang.Exp)) (index : Nat)
+    (bound : index < funs.length) (safe : FlatProps.noMatFuns funs = true) :
+    FlatProps.noMat (funs[index]'bound).2.2 = true := by
+  induction funs generalizing index with
+  | nil => simp at bound
+  | cons first rest ih =>
+    rcases first with ⟨name, arg, body⟩
+    simp only [FlatProps.noMatFuns, Bool.and_eq_true] at safe
+    cases index with
+    | zero => simpa using safe.1
+    | succ index =>
+      have restBound : index < rest.length := by simpa using bound
+      simpa using ih index restBound safe.2
 
 /-- Every compiled recursive function has unary arity. -/
 theorem compileFuns_unary (names : List (Option MlString)) (funs : List (VarN × VarN × FlatLang.Exp))
