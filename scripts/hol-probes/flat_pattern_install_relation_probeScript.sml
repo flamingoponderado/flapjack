@@ -49,3 +49,8 @@ val _ = show_thm "simp_guard_thm=" flat_patternProofTheory.simp_guard_thm;
 val _ = show_thm "decode_dtree_simulation=" flat_patternProofTheory.decode_dtree_simulation;
 val _ = show_thm "encode_pat_match_simulation=" flat_patternProofTheory.encode_pat_match_simulation;
 val _ = show_thm "pmatch_rows_encode=" flat_patternProofTheory.pmatch_rows_encode;
+val _ = show_thm "pattern_is_any_match=" pattern_compTheory.is_Any_pmatch;
+val _ = show_thm "pattern_match_append=" pattern_compTheory.match_append;
+val _ = show_thm "pattern_match_take_until_any=" pattern_compTheory.match_take_until_Any;
+val _ = show_thm "pattern_match_insert_any=" pattern_compTheory.match_insert_Any;
+val _ = show_thm "pattern_comp_correct=" pattern_compTheory.comp_thm;
