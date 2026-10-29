@@ -333,8 +333,12 @@ run_probe source_to_flat_store_relation_probeScript.sml source_to_flat_store_rel
   "$cake_dir/compiler/backend/proofs/source_to_flatProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe source_let_proof_probeScript.sml source_let_proof_probe.out \
-  lift_prefix lift_modules_locals lift_single_evaluation lift_all_evaluation compile_declarations compile_semantics \
+  lift_prefix lift_modules_locals lift_single_evaluation lift_all_evaluation compile_declarations compile_semantics compile_semantics_oracle \
   "$cake_dir/compiler/backend/proofs/source_letProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe source_to_source_proof_probeScript.sml source_to_source_proof_probe.out \
+  compile_semantics compile_semantics_oracle \
+  "$cake_dir/compiler/backend/proofs/source_to_sourceProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe source_evaluate_decs_probeScript.sml source_evaluate_decs_probe.out \
   evaluate_decs_cons evaluate_decs_append \

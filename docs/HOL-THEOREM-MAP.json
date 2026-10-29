@@ -1,5 +1,29 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/source_letProofScript.sml",
+    "hol_name": "compile_decs_correct",
+    "lean_path": "Flapjack/Compiler/Backend/SourceLet/Proofs/Correct.lean",
+    "lean_name": "compile_decs_correct",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in source_let_proof_probe.out. Clocked evaluator, source AST carriers, and the executable pass require correspondence review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_letProofScript.sml",
+    "hol_name": "compile_semantics",
+    "lean_path": "Flapjack/Compiler/Backend/SourceLet/Proofs/Semantics.lean",
+    "lean_name": "compile_semantics",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in source_let_proof_probe.out. Source observational semantics, evaluator, AST carriers, and executable pass require correspondence review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_to_sourceProofScript.sml",
+    "hol_name": "compile_semantics",
+    "lean_path": "Flapjack/Compiler/Backend/SourceToSource/Proofs.lean",
+    "lean_name": "compile_semantics",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in source_to_source_proof_probe.out. Source observational semantics, evaluator, AST carriers, and executable pass require correspondence review."
+  },
+  {
     "hol_path": "cakeml/semantics/proofs/evaluatePropsScript.sml",
     "hol_name": "evaluate_decs_cons",
     "lean_path": "Flapjack/EvaluateProps/Declarations.lean",

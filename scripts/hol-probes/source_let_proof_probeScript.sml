@@ -15,3 +15,4 @@ val _ = show_thm "lift_single_evaluation=" source_letProofTheory.evaluate_lift_l
 val _ = show_thm "lift_all_evaluation=" source_letProofTheory.evaluate_lift_lets;
 val _ = show_thm "compile_declarations=" source_letProofTheory.compile_decs_correct;
 val _ = show_thm "compile_semantics=" source_letProofTheory.compile_semantics;
+val _ = show_thm "compile_semantics_oracle=" source_letProofTheory.compile_semantics_oracle;
