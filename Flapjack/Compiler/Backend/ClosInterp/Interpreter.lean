@@ -15,6 +15,22 @@ private def callInterpList (env x : Exp) : Exp :=
 private def isCase (tag len : Nat) (yes no : Exp) : Exp :=
   .ifThenElse .none (.op .none (.blockOp (.tagLenEq tag len)) [v 0]) yes no
 
+/-- Expose the private variable constructor to proofs about the interpreter. -/
+theorem interpreterVar_eq (n : Nat) : v n = .var .none n := rfl
+
+/-- Expose the private projection constructor to proofs about the interpreter. -/
+theorem interpreterGetEl_eq (n : Nat) (x : Exp) : getEl n x = .op .none (.blockOp (.elemAt n)) [x] := rfl
+
+/-- Expose the private constructor application to proofs about the interpreter. -/
+theorem interpreterCons_eq (n : Nat) (xs : List Exp) : cons n xs = .op .none (.blockOp (.cons n)) xs := rfl
+
+/-- Expose the private unary application to proofs about the interpreter. -/
+theorem interpreterApp_eq (f x : Exp) : app f x = .app .none none f [x] := rfl
+
+/-- Expose the private constructor test to proofs about the interpreter. -/
+theorem interpreterIsCase_eq (tag len : Nat) (yes no : Exp) :
+    isCase tag len yes no = .ifThenElse .none (.op .none (.blockOp (.tagLenEq tag len)) [.var .none 0]) yes no := rfl
+
 /-- Interpreter helper selecting a de Bruijn environment element. -/
 @[hol "cakeml/compiler/backend/clos_interpScript.sml" "clos_interp_el_def"]
 def closInterpEl : Exp :=

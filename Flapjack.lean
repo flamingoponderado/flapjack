@@ -500,6 +500,7 @@ import Flapjack.Compiler.Backend.ClosInterp.Proofs.EvaluateBasic
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.EvaluateEl
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.EvaluateRev
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.Simulation
+import Flapjack.Compiler.Backend.ClosInterp.Proofs.InterpreterCases
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Assignment
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Element
 import Flapjack.Compiler.Backend.Backend.PrimSrcConfig
