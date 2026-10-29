@@ -19,6 +19,7 @@ import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateRecursive
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateExpressions
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateMatch
 import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateControl
+import Flapjack.Compiler.Backend.SourceEval.Proofs.EvaluateEval
 import Flapjack.SemanticPrimitivesHOL.Control
 import Flapjack.SemanticPrimitivesHOL.Array
 import Flapjack.SemanticPrimitivesHOL.Primitives
