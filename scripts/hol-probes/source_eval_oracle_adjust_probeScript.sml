@@ -14,3 +14,4 @@ val _ = show_thm "is_insert=" source_evalProofTheory.is_insert_oracle_def;
 val _ = show_thm "adjust_insert=" source_evalProofTheory.adjust_oracle_insert_gen_oracle;
 val _ = show_thm "adjust_evaluate=" source_evalProofTheory.adjust_oracle_evaluate;
 val _ = show_thm "adjust_semantics=" source_evalProofTheory.adjust_oracle_semantics_prog;
+val _ = show_thm "evaluate_induction=" evaluateTheory.full_evaluate_ind;

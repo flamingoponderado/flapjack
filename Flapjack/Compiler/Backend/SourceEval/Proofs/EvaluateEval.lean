@@ -203,7 +203,7 @@ theorem evaluate_eval_adjust_success {Config F : Type} (ci : CompilerInstance Co
     (f compile : List Dec → List Dec) (preserves : DeclarationCompilerPreserves (F := F) compile)
     (state middle decoded next : State F) (env evalEnv : SemEnv Value)
     (args : List AstHOL.Exp) (values : List Value) (decs : List Dec)
-    (argsIH : ExpsOracleAdjusted (F := F) ci f compile args.reverse)
+    (argsIH : ExpsOracleAdjustedAt ci f compile state env args.reverse)
     (decsIH : decoded.clock ≠ 0 → DecsOracleAdjustedAt ci f compile (decClock decoded) evalEnv decs)
     (argsRun : evaluate state env args.reverse = (middle, .val values))
     (decodedRun : doEvalRes (β := Value) values.reverse middle = (decoded, .val (evalEnv, decs)))
@@ -212,7 +212,7 @@ theorem evaluate_eval_adjust_success {Config F : Type} (ci : CompilerInstance Co
     isInsertOracle ci f next.evalState ∧
       evaluate { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env [.app .eval args] =
         ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) := by
-  obtain ⟨middleInserted, adjustedArgs⟩ := argsIH state middle env (.val values) argsRun inserted (by simp)
+  obtain ⟨middleInserted, adjustedArgs⟩ := argsIH middle (.val values) argsRun inserted (by simp)
   obtain ⟨decodedInserted, adjustedDecode⟩ :=
     doEvalRes_adjust_success ci f compile values.reverse middle decoded evalEnv decs decodedRun middleInserted
   have continuation : continueEval middle decoded evalEnv decs = (next, result) := by
@@ -255,7 +255,7 @@ nonzero. -/
 theorem adjustOracle_evaluate_Eval {Config F : Type} (ci : CompilerInstance Config)
     (f compile : List Dec → List Dec) (preserves : DeclarationCompilerPreserves (F := F) compile)
     (state next : State F) (env : SemEnv Value) (args : List AstHOL.Exp)
-    (argsIH : ExpsOracleAdjusted (F := F) ci f compile args.reverse)
+    (argsIH : ExpsOracleAdjustedAt ci f compile state env args.reverse)
     (decsIH : ∀ (middle decoded : State F) (values : List Value) (evalEnv : SemEnv Value) (decs : List Dec),
       evaluate state env args.reverse = (middle, .val values) →
       doEvalRes (β := Value) values.reverse middle = (decoded, .val (evalEnv, decs)) →
@@ -277,7 +277,7 @@ theorem adjustOracle_evaluate_Eval {Config F : Type} (ci : CompilerInstance Conf
         apply safe
         have h := congrArg Prod.snd pair
         simpa [bad] using h.symm
-      obtain ⟨middleInserted, adjustedArgs⟩ := argsIH state middle env (.err error) argsRun inserted innerSafe
+      obtain ⟨middleInserted, adjustedArgs⟩ := argsIH middle (.err error) argsRun inserted innerSafe
       cases pair
       exact ⟨middleInserted, evaluate_eval_args_error _ _ env args error adjustedArgs⟩
     | val values =>

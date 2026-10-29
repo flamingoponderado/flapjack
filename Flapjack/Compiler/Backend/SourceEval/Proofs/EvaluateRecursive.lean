@@ -27,9 +27,20 @@ def ExpsOracleAdjusted {Config F : Type} (ci : CompilerInstance Config)
     evaluate { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env expressions =
       ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result)
 
+/-- Expression adjustment at a fixed input state and environment. This
+Flapjack predicate represents the hypothesis for one recursive evaluation. -/
+def ExpsOracleAdjustedAt {Config F : Type} (ci : CompilerInstance Config)
+    (f compile : List Dec → List Dec) (state : State F) (env : SemEnv Value)
+    (expressions : List AstHOL.Exp) : Prop :=
+  ∀ (next : State F) (result : Result (List Value) Value),
+    evaluate state env expressions = (next, result) →
+    isInsertOracle ci f state.evalState → result ≠ .err (.abort .typeError) →
+    isInsertOracle ci f next.evalState ∧
+      evaluate { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env expressions =
+        ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result)
+
 /-- Module case of the original evaluator induction, using the induction
-hypothesis for its contained declarations. -/
-@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
+hypothesis for its contained declarations. The recursive hypothesis here is stronger than the original fixed-state or conditionally selected induction hypothesis; this is Flapjack infrastructure and the faithful HOL case remains open. -/
 theorem adjustOracle_evaluate_Dmod {Config F : Type} (ci : CompilerInstance Config)
     (f compile : List Dec → List Dec) (_compilePreserve : DeclarationCompilerPreserves (F := F) compile)
     (name : ModN) (ds : List Dec) (ih : DecsOracleAdjusted (F := F) ci f compile ds)
@@ -62,8 +73,7 @@ theorem adjustOracle_evaluate_Dmod {Config F : Type} (ci : CompilerInstance Conf
       exact ⟨middleInserted, by simp [evaluateDecs, replacement]⟩
 
 /-- Local-declaration case, with induction hypotheses for the private and
-visible declarations. -/
-@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
+visible declarations. The recursive hypothesis here is stronger than the original fixed-state or conditionally selected induction hypothesis; this is Flapjack infrastructure and the faithful HOL case remains open. -/
 theorem adjustOracle_evaluate_Dlocal {Config F : Type} (ci : CompilerInstance Config)
     (f compile : List Dec → List Dec) (_compilePreserve : DeclarationCompilerPreserves (F := F) compile)
     (locals body : List Dec) (localsIH : DecsOracleAdjusted (F := F) ci f compile locals)
@@ -97,8 +107,7 @@ theorem adjustOracle_evaluate_Dlocal {Config F : Type} (ci : CompilerInstance Co
         bodyIH middle next (extendDecEnv innerEnv env) result bodyRun middleInserted safe
       exact ⟨nextInserted, by simpa [replacement] using bodyReplacement⟩
 
-/-- Non-singleton declaration-list case of the evaluator induction. -/
-@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
+/-- Non-singleton declaration-list case of the evaluator induction. The recursive hypothesis here is stronger than the original fixed-state or conditionally selected induction hypothesis; this is Flapjack infrastructure and the faithful HOL case remains open. -/
 theorem adjustOracle_evaluate_DecsCons {Config F : Type} (ci : CompilerInstance Config)
     (f compile : List Dec → List Dec) (_compilePreserve : DeclarationCompilerPreserves (F := F) compile)
     (first second : Dec) (rest : List Dec)
@@ -141,8 +150,7 @@ theorem adjustOracle_evaluate_DecsCons {Config F : Type} (ci : CompilerInstance 
         cases pair
         exact ⟨finalInserted, by simp [replacement, tailReplacement]⟩
 
-/-- Value-declaration case of the evaluator induction. -/
-@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
+/-- Value-declaration case of the evaluator induction. The recursive hypothesis here is stronger than the original fixed-state or conditionally selected induction hypothesis; this is Flapjack infrastructure and the faithful HOL case remains open. -/
 theorem adjustOracle_evaluate_Dlet {Config F : Type} (ci : CompilerInstance Config)
     (f compile : List Dec → List Dec) (_compilePreserve : DeclarationCompilerPreserves (F := F) compile)
     (locs : Flapjack.Misc.Location.Locs) (pat : Pat) (expr : AstHOL.Exp)

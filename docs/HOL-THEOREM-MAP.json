@@ -2,6 +2,38 @@
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "adjust_oracle_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateApp.lean",
+    "lean_name": "adjustOracle_evaluate_AppSimple",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Application induction case; typed HOL evaluator induction and theorem captured in source_eval_oracle_adjust_probe.out. Fixed-state and clock-bounded induction hypotheses follow the captured application case; evaluator and carrier correspondence remain pending, and the complete theorem is not assembled."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateApp.lean",
+    "lean_name": "adjustOracle_evaluate_AppFunction",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Application induction case; typed HOL evaluator induction and theorem captured in source_eval_oracle_adjust_probe.out. Fixed-state and clock-bounded induction hypotheses follow the captured application case; evaluator and carrier correspondence remain pending, and the complete theorem is not assembled."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateApp.lean",
+    "lean_name": "adjustOracle_evaluate_AppForce",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Application induction case; typed HOL evaluator induction and theorem captured in source_eval_oracle_adjust_probe.out. Fixed-state and clock-bounded induction hypotheses follow the captured application case; evaluator and carrier correspondence remain pending, and the complete theorem is not assembled."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateApp.lean",
+    "lean_name": "adjustOracle_evaluate_App",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Application induction case; typed HOL evaluator induction and theorem captured in source_eval_oracle_adjust_probe.out. Fixed-state and clock-bounded induction hypotheses follow the captured application case; evaluator and carrier correspondence remain pending, and the complete theorem is not assembled."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_evaluate",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateEval.lean",
     "lean_name": "adjustOracle_evaluate_Eval",
     "statement_status": "pending_statement_review",
@@ -10,56 +42,8 @@
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "adjust_oracle_evaluate",
-    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateControl.lean",
-    "lean_name": "adjustOracle_evaluate_If",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Expression induction case; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
-    "hol_name": "adjust_oracle_evaluate",
-    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateControl.lean",
-    "lean_name": "adjustOracle_evaluate_Log",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Expression induction case; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
-    "hol_name": "adjust_oracle_evaluate",
-    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateControl.lean",
-    "lean_name": "adjustOracle_evaluate_Con",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Expression induction case; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
-    "hol_name": "adjust_oracle_evaluate",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateMatch.lean",
     "lean_name": "adjustOracle_evaluate_MatchNil",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Match or match-containing expression induction case; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
-    "hol_name": "adjust_oracle_evaluate",
-    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateMatch.lean",
-    "lean_name": "adjustOracle_evaluate_MatchCons",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Match or match-containing expression induction case; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
-    "hol_name": "adjust_oracle_evaluate",
-    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateMatch.lean",
-    "lean_name": "adjustOracle_evaluate_Mat",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Match or match-containing expression induction case; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
-    "hol_name": "adjust_oracle_evaluate",
-    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateMatch.lean",
-    "lean_name": "adjustOracle_evaluate_Handle",
     "statement_status": "pending_statement_review",
     "reviewer": "Match or match-containing expression induction case; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
   },
@@ -86,78 +70,6 @@
     "lean_name": "adjustOracle_evaluate_Fn",
     "statement_status": "pending_statement_review",
     "reviewer": "Expression-evaluation induction case; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
-    "hol_name": "adjust_oracle_evaluate",
-    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateExpressions.lean",
-    "lean_name": "adjustOracle_evaluate_Tannot",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Expression-evaluation induction case; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
-    "hol_name": "adjust_oracle_evaluate",
-    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateExpressions.lean",
-    "lean_name": "adjustOracle_evaluate_Lannot",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Expression-evaluation induction case; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
-    "hol_name": "adjust_oracle_evaluate",
-    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateExpressions.lean",
-    "lean_name": "adjustOracle_evaluate_Raise",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Expression-evaluation induction case; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
-    "hol_name": "adjust_oracle_evaluate",
-    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateExpressions.lean",
-    "lean_name": "adjustOracle_evaluate_Let",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Expression-evaluation induction case; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
-    "hol_name": "adjust_oracle_evaluate",
-    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateExpressions.lean",
-    "lean_name": "adjustOracle_evaluate_ExpsCons",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Expression-evaluation induction case; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
-    "hol_name": "adjust_oracle_evaluate",
-    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateRecursive.lean",
-    "lean_name": "adjustOracle_evaluate_Dmod",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Recursive declaration-evaluation induction case; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
-    "hol_name": "adjust_oracle_evaluate",
-    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateRecursive.lean",
-    "lean_name": "adjustOracle_evaluate_Dlocal",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Recursive declaration-evaluation induction case; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
-    "hol_name": "adjust_oracle_evaluate",
-    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateRecursive.lean",
-    "lean_name": "adjustOracle_evaluate_DecsCons",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Recursive declaration-evaluation induction case; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
-    "hol_name": "adjust_oracle_evaluate",
-    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateRecursive.lean",
-    "lean_name": "adjustOracle_evaluate_Dlet",
-    "statement_status": "pending_statement_review",
-    "reviewer": "Recursive declaration-evaluation induction case; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",

@@ -55,7 +55,7 @@
 
 `source_to_source_proof_probe.out` captures the original source-to-source semantics and oracle-adjustment theorems with inferred types. Lean checks the ordinary semantics statement pending correspondence review; the oracle-adjustment theorem remains open.
 
-`source_eval_oracle_adjust_probe.out` captures the source evaluator's compiler-instance conversion and oracle-adjustment definitions, the adjustment/insertion identity, and the evaluator and program-semantics adjustment theorems with inferred types.
+`source_eval_oracle_adjust_probe.out` captures the source evaluator's compiler-instance conversion and oracle-adjustment definitions, the adjustment/insertion identity, the evaluator and program-semantics adjustment theorems, and the mutual evaluator induction theorem with inferred types.
 
 `source_eval_adjust_local_probe.out` captures inferred types of the original script's local oracle-adjustment lemmas as typed terms. These local lemmas are not exported by the HOL theory; this capture does not replay their proofs.
 

@@ -32,8 +32,7 @@ theorem adjustOracle_evaluate_MatchNil {Config F : Type} (ci : CompilerInstance 
   exact ⟨inserted, by simp [evaluateMatch]⟩
 
 /-- Nonempty pattern-match case, with induction hypotheses for the chosen
-branch and for the remaining clauses. -/
-@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
+branch and for the remaining clauses. The recursive hypothesis here is stronger than the original fixed-state or conditionally selected induction hypothesis; this is Flapjack infrastructure and the faithful HOL case remains open. -/
 theorem adjustOracle_evaluate_MatchCons {Config F : Type} (ci : CompilerInstance Config)
     (f compile : List Dec → List Dec) (_compilePreserve : DeclarationCompilerPreserves (F := F) compile)
     (pat : Pat) (expr : AstHOL.Exp) (rest : List (Pat × AstHOL.Exp))
@@ -68,8 +67,7 @@ theorem adjustOracle_evaluate_MatchCons {Config F : Type} (ci : CompilerInstance
     obtain ⟨_, rfl⟩ := source
     exact (safe rfl).elim
 
-/-- Case-expression case of the original evaluator induction. -/
-@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
+/-- Case-expression case of the original evaluator induction. The recursive hypothesis here is stronger than the original fixed-state or conditionally selected induction hypothesis; this is Flapjack infrastructure and the faithful HOL case remains open. -/
 theorem adjustOracle_evaluate_Mat {Config F : Type} (ci : CompilerInstance Config)
     (f compile : List Dec → List Dec) (_compilePreserve : DeclarationCompilerPreserves (F := F) compile)
     (expr : AstHOL.Exp) (clauses : List (Pat × AstHOL.Exp))
@@ -112,8 +110,7 @@ theorem adjustOracle_evaluate_Mat {Config F : Type} (ci : CompilerInstance Confi
         obtain ⟨_, rfl⟩ := source
         exact (safe rfl).elim
 
-/-- Exception-handler case of the original evaluator induction. -/
-@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
+/-- Exception-handler case of the original evaluator induction. The recursive hypothesis here is stronger than the original fixed-state or conditionally selected induction hypothesis; this is Flapjack infrastructure and the faithful HOL case remains open. -/
 theorem adjustOracle_evaluate_Handle {Config F : Type} (ci : CompilerInstance Config)
     (f compile : List Dec → List Dec) (_compilePreserve : DeclarationCompilerPreserves (F := F) compile)
     (expr : AstHOL.Exp) (clauses : List (Pat × AstHOL.Exp))
