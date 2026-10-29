@@ -451,6 +451,7 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.Recursive
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvaluateCases
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Call
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Application
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.Identity
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Declarations
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvalInstall
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
