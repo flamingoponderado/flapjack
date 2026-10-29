@@ -1,0 +1,6 @@
+array_element=SOME (Number 9)
+negative_index=NONE
+byte_update=case if ∃w. 7 = &w2n w then Rval (Block 0 [],<|refs := FEMPTY⟨0 ↦ ByteArray [1w; 7w; 3w]; 0 ↦ ByteArray [1w; 2w; 3w]⟩|>) else Rerr (Rabort Rtype_error) of Rval (v6,s) => FLOOKUP s.refs 0 | Rerr v3 => NONE
+overlap_copy=SOME (ByteArray [1w; 1w; 2w; 3w])
+loose_end=SOME (Block 1 [])
+strict_end=SOME (Block 0 [])

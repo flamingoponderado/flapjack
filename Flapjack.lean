@@ -286,6 +286,8 @@ import Flapjack.Compiler.Backend.Semantics.ClosSem.Word
 import Flapjack.Compiler.Backend.Semantics.ClosSem.Install
 import Flapjack.Compiler.Backend.Semantics.ClosSem.Thunk
 import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBasic
+import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyMemory
+import Flapjack.Compiler.Backend.Semantics.ClosSem.Apply
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Operations
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Conversions
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Primitives
