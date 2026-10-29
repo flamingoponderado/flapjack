@@ -97,4 +97,71 @@ theorem allocArray_related {C F : Type} (source : FlatSem.State C F) (target : C
   · simp [ClosSem.applyMemory, nonnegative, index, targetNext]
   · exact stateRel_allocArray source target _ _ states (replicate_values_related _ _ _ related)
 
+/-- The sized-array check raises the source Subscript exception for a
+negative size, without changing either store. -/
+theorem allocArray_negative {C F : Type} (source : FlatSem.State C F)
+    (size : Int) (value : FlatSem.Value) (negative : size < 0) :
+    FlatSem.doAppMemory source .aalloc [.litv (.intLit size), value] =
+      some (some (source, .err (.raise FlatSem.subscriptExnV))) ∧
+    ValueRel FlatSem.subscriptExnV (.block 3 []) := by
+  simp [FlatSem.doAppMemory, FlatSem.boundsFailure, negative]
+  exact ValueRel.con .nil
+
+/-- Evaluate the body emitted for sized-array allocation after its two
+arguments have been bound. -/
+theorem evaluate_allocArray_body_negative {C F : Type} (state : ClosSem.State C F)
+    (trace : BackendCommon.Tra) (env : List ClosSem.Value) (size : Int) (value : ClosSem.Value)
+    (negative : size < 0) :
+    ClosSem.evaluate
+      [.ifThenElse trace
+        (.op trace (.intOp .less) [.op trace (.intOp (.const 0)) [], .var trace 1])
+        (.raise trace (.op trace (.blockOp (.cons 3)) []))
+        (.op trace (.memOp .refArray) [.var trace 0, .var trace 1])]
+      (value :: .number size :: env) state = (.err (.raise (.block 3 [])), state) := by
+  simp [ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyNumeric,
+    ClosSem.doIntApp, ClosSem.boolValue, ClosSem.asBool, ClosSem.applyBlock,
+    BackendCommon.trueTag, negative]
+
+/-- A nonnegative size reaches the allocation operation in the emitted
+closure-language check. -/
+theorem evaluate_allocArray_body_nonnegative {C F : Type} (state : ClosSem.State C F)
+    (trace : BackendCommon.Tra) (env : List ClosSem.Value) (size : Int) (value : ClosSem.Value)
+    (nonnegative : ¬size < 0) :
+    ClosSem.evaluate
+      [.ifThenElse trace
+        (.op trace (.intOp .less) [.op trace (.intOp (.const 0)) [], .var trace 1])
+        (.raise trace (.op trace (.blockOp (.cons 3)) []))
+        (.op trace (.memOp .refArray) [.var trace 0, .var trace 1])]
+      (value :: .number size :: env) state =
+      (.val [.refPtr true (ClosSem.leastUnusedRef state.refs)],
+        { state with refs := state.refs.updateEq (ClosSem.leastUnusedRef state.refs, .valueArray (List.replicate size.toNat value)) }) := by
+  simp [ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyNumeric,
+    ClosSem.doIntApp, ClosSem.boolValue, ClosSem.asBool, ClosSem.applyMemory,
+    BackendCommon.falseTag, nonnegative]
+
+/-- For a related value and integer size, the emitted check and the flat
+operation produce related outcomes, including the negative-size exception. -/
+theorem allocArray_body_related {C F : Type} (source : FlatSem.State C F)
+    (target : ClosSem.State C F) (trace : BackendCommon.Tra) (env : List ClosSem.Value)
+    (size : Int) (value : FlatSem.Value) (targetValue : ClosSem.Value)
+    (states : StateRel source target) (related : ValueRel value targetValue) :
+    let flat := FlatSem.applyResult source (.src .aalloc) [.litv (.intLit size), value]
+    let clos := ClosSem.evaluate
+      [.ifThenElse trace
+        (.op trace (.intOp .less) [.op trace (.intOp (.const 0)) [], .var trace 1])
+        (.raise trace (.op trace (.blockOp (.cons 3)) []))
+        (.op trace (.memOp .refArray) [.var trace 0, .var trace 1])]
+      (targetValue :: .number size :: env) target
+    StateRel flat.1 clos.2 ∧ EvalResultRel flat.2 clos.1 := by
+  by_cases negative : size < 0
+  · simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+      FlatSem.boundsFailure, negative, evaluate_allocArray_body_negative target trace env size targetValue negative,
+      states, EvalResultRel.raise (allocArray_negative source size value negative).2]
+  · have index := leastUnusedRef_eq_length source.refs target.refs states.2.2.2.1
+    have updated := stateRel_allocArray source target (List.replicate size.toNat value)
+      (List.replicate size.toNat targetValue) states (replicate_values_related _ _ _ related)
+    simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+      storeAlloc, negative, evaluate_allocArray_body_nonnegative target trace env size targetValue negative,
+      index, updated, EvalResultRel.value (.cons (ValueRel.loc true source.refs.length) .nil)]
+
 end Flapjack.Compiler.Backend.FlatToClos
