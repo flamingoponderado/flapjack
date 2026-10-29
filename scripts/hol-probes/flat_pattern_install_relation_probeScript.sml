@@ -54,3 +54,7 @@ val _ = show_thm "pattern_match_append=" pattern_compTheory.match_append;
 val _ = show_thm "pattern_match_take_until_any=" pattern_compTheory.match_take_until_Any;
 val _ = show_thm "pattern_match_insert_any=" pattern_compTheory.match_insert_Any;
 val _ = show_thm "pattern_comp_correct=" pattern_compTheory.comp_thm;
+val _ = show_thm "pattern_filter_safe=" pattern_compTheory.matdch_FILTER_NOT_NONE;
+val _ = show_thm "pattern_const_row=" pattern_compTheory.is_const_row_lemma;
+val _ = show_thm "pattern_move_const_up=" pattern_compTheory.match_move_const_up;
+val _ = show_thm "pattern_non_const_row=" pattern_compTheory.not_is_const_row;

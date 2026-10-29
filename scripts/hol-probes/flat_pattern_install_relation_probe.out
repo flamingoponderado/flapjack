@@ -47,3 +47,7 @@ pattern_match_append=∀(xs :(pat # num) list) (ys :(pat # num) list) (refs :num
 pattern_match_take_until_any=∀(rows :(pat # num) list). match (refs :num |-> term) rows (v :term) ≠ (NONE :matchResult option) ⇒ match refs (take_until_Any rows) v = match refs rows v
 pattern_match_insert_any=∀(rows :(pat # num) list). match (refs :num |-> term) rows (v :term) ≠ (NONE :matchResult option) ⇒ match refs (insert_Any rows) v ≠ (NONE :matchResult option) ∧ (match refs rows v ≠ SOME MatchFailure ⇒ match refs (insert_Any rows) v = match refs rows v)
 pattern_comp_correct=match (refs :num |-> term) (rows :(pat # num) list) (v :term) ≠ (NONE :matchResult option) ⇒ dt_eval refs v (comp rows) = match refs rows v
+pattern_filter_safe=∀(xs :(pat # num) list). match (refs :num |-> term) xs (v :term) ≠ (NONE :matchResult option) ⇒ match refs (FILTER (P :pat # num -> bool) xs) v ≠ (NONE :matchResult option)
+pattern_const_row=(∀(t :num option). (v :term) ≠ Term t ([] :term list)) ∧ is_const_row ((p_1 :pat),(p_2 :α)) ∧ (pmatch (refs :num |-> term) p_1 v :pmatchResult) ≠ PTypeFailure ⇒ (pmatch refs p_1 v :pmatchResult) = PMatchFailure
+pattern_move_const_up=match (refs :num |-> term) (rows :(pat # num) list) (v :term) ≠ (NONE :matchResult option) ⇒ match refs (move_const_up rows) v = match refs rows v
+pattern_non_const_row=¬is_const_row ((p :pat),(x :α)) ∧ ¬is_Or_row (p,x) ∧ ¬is_Any p ⇒ (pmatch (refs :num |-> term) p (Term (t :num option) ([] :term list)) :pmatchResult) ≠ PMatchSuccess
