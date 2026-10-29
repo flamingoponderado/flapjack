@@ -312,6 +312,10 @@ run_probe clos_sem_int_probeScript.sml clos_sem_int_probe.out \
   int_app_typed div_negative_left div_negative_right mod_negative_left mod_negative_right divide_zero small_upper small_invalid \
   "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
+run_probe clos_sem_call_probeScript.sml clos_sem_call_probe.out \
+  dest_closure_typed dest_closure_length_typed partial overapplication direct_mismatch recursive_direct recursive_out_of_range \
+  "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe cake_flat_sem_thunk_probeScript.sml cake_flat_sem_thunk_probe.out \
   thunk_type thunk_dest thunk_update thunk_bad valid_thunk ref_flag bad_index ordinary_ref nonlocation update_value update_nested \
   "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/semantics"
