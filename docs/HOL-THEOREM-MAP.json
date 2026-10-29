@@ -1,5 +1,69 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+    "hol_name": "pure_cc_def",
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps/Pure.lean",
+    "lean_name": "pureCc",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_pattern_install_relation_probe.out; complete source comparison remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+    "hol_name": "pure_co_def",
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps/Pure.lean",
+    "lean_name": "pureCo",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_pattern_install_relation_probe.out; complete source comparison remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+    "hol_name": "SND_pure_co",
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps/Pure.lean",
+    "lean_name": "snd_pureCo",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_pattern_install_relation_probe.out; complete source comparison remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+    "hol_name": "FST_pure_co",
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps/Pure.lean",
+    "lean_name": "fst_pureCo",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_pattern_install_relation_probe.out; complete source comparison remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+    "hol_name": "pure_co_comb_pure_co",
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps/Pure.lean",
+    "lean_name": "pureCo_comp",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_pattern_install_relation_probe.out; complete source comparison remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+    "hol_name": "pure_co_I",
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps/Pure.lean",
+    "lean_name": "pureCo_id",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_pattern_install_relation_probe.out; complete source comparison remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+    "hol_name": "pure_cc_I",
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps/Pure.lean",
+    "lean_name": "pureCc_id",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_pattern_install_relation_probe.out; complete source comparison remains pending."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+    "hol_name": "install_conf_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/InstallRelation.lean",
+    "lean_name": "installConfRel",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_pattern_install_relation_probe.out; pass, installation config, and source carrier correspondence remain pending. The typed compile_decs_semantics probe has independent cfg and cfg1 variables; compileDec_config_irrel proves the Lean pass ignores them, but source pass and semantics review remain open."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "adjust_oracle_evaluate",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateDeclarations.lean",

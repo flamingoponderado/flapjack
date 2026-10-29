@@ -1,0 +1,9 @@
+pure_cc=∀(f :β -> δ) (cc :α -> δ -> γ). pure_cc f cc = (λ(cfg :α) (prog :β). (let (prog1 :δ) = f prog in cc cfg prog1))
+pure_co=∀(f :β -> γ). (pure_co f :α # β -> α # γ) = (I :α -> α) ## f
+snd_pure_co=SND (pure_co (co :γ -> α) (x :β # γ)) = co (SND x)
+fst_pure_co=FST (pure_co (co :γ -> β) (x :α # γ)) = FST x
+pure_co_comp=(pure_co (f :δ -> γ) :β # δ -> β # γ) ∘ (pure_co (g :ε -> δ) :β # ε -> β # δ) ∘ (co :α -> β # ε) = (pure_co (f ∘ g) :β # ε -> β # γ) ∘ co
+pure_co_id=(pure_co (I :β -> β) :α # β -> α # β) = (I :α # β -> α # β)
+pure_cc_id=(pure_cc (I :β -> β) :(α -> β -> γ) -> α -> β -> γ) = (I :(α -> β -> γ) -> α -> β -> γ)
+install_relation=∀(pat_cfg :config) (ic1 :α install_config) (ic2 :α install_config). install_conf_rel pat_cfg ic1 ic2 ⇔ ic2.compile_oracle = (pure_co (MAP (compile_dec pat_cfg)) :α # exp list -> α # exp list) ∘ ic1.compile_oracle ∧ ic1.compile = pure_cc (MAP (compile_dec pat_cfg)) ic2.compile
+decs_semantics=install_conf_rel (cfg :config) (ic1 :α install_config) (ic2 :α install_config) ∧ semantics ic1 (ffi :β ffi_state) (prog :exp list) ≠ Fail ⇒ semantics ic1 ffi prog = semantics ic2 ffi (MAP (compile_dec (cfg1 :config)) prog)
