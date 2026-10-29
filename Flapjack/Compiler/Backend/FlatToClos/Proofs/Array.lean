@@ -37,6 +37,53 @@ theorem stateRel_allocArray {C F : Type} (source : FlatSem.State C F) (target : 
   exact ⟨maxApp, ffi, clock, storeRel_allocArray source.refs target.refs values targetValues stores related,
     globals, globalsRel, install⟩
 
+/-- Appending a byte array preserves the store relation at every index. -/
+theorem storeRel_allocByteArray (refs : Store FlatSem.Value)
+    (targetRefs : HolFiniteMapExact Nat (ClosSem.Ref ClosSem.Value))
+    (bytes : List (BitVec 8)) (stores : StoreRel refs targetRefs) :
+    StoreRel (refs ++ [.w8array bytes])
+      (targetRefs.updateEq (refs.length, .byteArray bytes)) := by
+  intro index
+  have original := stores index
+  by_cases same : index = refs.length
+  · subst index
+    simp [HolFiniteMapExact.lookup_updateEq, Flapjack.FUPDATE_HOL]
+  · have different : refs.length ≠ index := Ne.symm same
+    by_cases bound : index < refs.length
+    · simpa [List.getElem?_append, bound, HolFiniteMapExact.lookup_updateEq, Flapjack.FUPDATE_HOL, same, different] using original
+    · have past : refs.length + 1 ≤ index := by omega
+      have originalNone : refs[index]? = none := List.getElem?_eq_none (by omega)
+      have originalFree : targetRefs.lookup index = none := by simpa [originalNone] using original
+      simpa [List.getElem?_append, bound, past, HolFiniteMapExact.lookup_updateEq, Flapjack.FUPDATE_HOL,
+        same, different] using originalFree
+
+/-- Allocate the same byte array in related states. -/
+theorem stateRel_allocByteArray {C F : Type} (source : FlatSem.State C F) (target : ClosSem.State C F)
+    (bytes : List (BitVec 8)) (states : StateRel source target) :
+    StateRel { source with refs := source.refs ++ [.w8array bytes] }
+      { target with refs := target.refs.updateEq (source.refs.length, .byteArray bytes) } := by
+  rcases states with ⟨maxApp, ffi, clock, stores, globals, globalsRel, install⟩
+  exact ⟨maxApp, ffi, clock, storeRel_allocByteArray source.refs target.refs bytes stores,
+    globals, globalsRel, install⟩
+
+/-- A nonnegative byte-array allocation returns the same fresh index and
+preserves the related stores. -/
+theorem allocByteArray_related {C F : Type} (source : FlatSem.State C F) (target : ClosSem.State C F)
+    (size : Int) (byte : BitVec 8) (states : StateRel source target) (nonnegative : ¬size < 0) :
+    ∃ targetNext,
+      FlatSem.doAppMemory source .aw8alloc [.litv (.intLit size), .litv (.word8 byte)] =
+        some (some ({ source with refs := source.refs ++ [.w8array (List.replicate size.toNat byte)] },
+          .val (.loc true source.refs.length))) ∧
+      ClosSem.applyMemory (.refByte false) [.number size, .number byte.toNat] target =
+        some (.refPtr true source.refs.length, targetNext) ∧
+      StateRel { source with refs := source.refs ++ [.w8array (List.replicate size.toNat byte)] } targetNext := by
+  have index := leastUnusedRef_eq_length source.refs target.refs states.2.2.2.1
+  let targetNext := { target with refs := target.refs.updateEq (source.refs.length, .byteArray (List.replicate size.toNat byte)) }
+  refine ⟨targetNext, ?_, ?_, ?_⟩
+  · simp [FlatSem.doAppMemory, nonnegative, storeAlloc]
+  · simp [ClosSem.applyMemory, nonnegative, index, targetNext, ClosSem.intToByte_toNat]
+  · exact stateRel_allocByteArray source target _ states
+
 /-- Fixed-array allocation preserves the ordering and relation of every
 element after evaluating its argument list. -/
 theorem evaluate_allocFixed {C F : Type} (env : FlatSem.Environment FlatSem.Value)
@@ -173,6 +220,33 @@ theorem allocArray_body_related {C F : Type} (source : FlatSem.State C F)
       storeAlloc, negative, evaluate_allocArray_body_nonnegative target trace env size targetValue negative,
       index, updated, EvalResultRel.value (.cons (ValueRel.loc true source.refs.length) .nil)]
 
+/-- The emitted byte-array bounds check agrees with the flat operation for
+integer sizes and byte operands, including negative-size exceptions. -/
+theorem allocByteArray_body_related {C F : Type} (source : FlatSem.State C F)
+    (target : ClosSem.State C F) (trace : BackendCommon.Tra) (env : List ClosSem.Value)
+    (size : Int) (byte : BitVec 8) (states : StateRel source target) :
+    let flat := FlatSem.applyResult source (.src .aw8alloc) [.litv (.intLit size), .litv (.word8 byte)]
+    let clos := ClosSem.evaluate
+      [.ifThenElse trace
+        (.op trace (.intOp .less) [.op trace (.intOp (.const 0)) [], .var trace 1])
+        (.raise trace (.op trace (.blockOp (.cons 3)) []))
+        (.op trace (.memOp (.refByte false)) [.var trace 0, .var trace 1])]
+      (.number byte.toNat :: .number size :: env) target
+    StateRel flat.1 clos.2 ∧ EvalResultRel flat.2 clos.1 := by
+  by_cases negative : size < 0
+  · have exception : ValueRel FlatSem.subscriptExnV (.block 3 []) := .con .nil
+    simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+      FlatSem.boundsFailure, ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyNumeric,
+      ClosSem.doIntApp, ClosSem.boolValue, ClosSem.asBool, ClosSem.applyBlock, BackendCommon.trueTag,
+      negative, states, EvalResultRel.raise exception]
+  · have index := leastUnusedRef_eq_length source.refs target.refs states.2.2.2.1
+    have updated := stateRel_allocByteArray source target (List.replicate size.toNat byte) states
+    simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, storeAlloc,
+      ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyNumeric, ClosSem.doIntApp,
+      ClosSem.boolValue, ClosSem.asBool, ClosSem.applyMemory, ClosSem.intToByte_toNat,
+      BackendCommon.falseTag, negative, index, updated,
+      EvalResultRel.value (.cons (ValueRel.loc true source.refs.length) .nil)]
+
 /-- An allocation with an argument count other than two is a source type
 error. -/
 theorem allocArray_wrong_arity {C F : Type} (state : FlatSem.State C F)
@@ -187,6 +261,83 @@ theorem allocArray_wrong_arity {C F : Type} (state : FlatSem.State C F)
       cases rest with
       | nil => simp at wrong
       | cons third rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory]
+
+/-- Byte-array allocation rejects any argument count other than two. -/
+theorem allocByteArray_wrong_arity {C F : Type} (state : FlatSem.State C F)
+    (args : List FlatSem.Value) (wrong : args.length ≠ 2) :
+    (FlatSem.applyResult state (.src .aw8alloc) args).2 = .err (.abort .typeError) := by
+  cases args with
+  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory]
+  | cons first rest =>
+    cases rest with
+    | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory]
+    | cons second rest =>
+      cases rest with
+      | nil => simp at wrong
+      | cons third rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory]
+
+/-- Byte-array application is simulated for arbitrary argument lists when
+the source application does not fail with a type error. -/
+theorem evaluate_allocByteArray {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+    (names : List (Option Flapjack.Basis.Pure.MlString.MlString)) (values : List ClosSem.Value)
+    (source : FlatSem.State C F) (target : ClosSem.State C F)
+    (trace : BackendCommon.Tra) (args : List FlatLang.Exp)
+    (argsSim : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values source target args.reverse)
+    (notTypeError : (FlatSem.evaluate env source [.app trace (.src .aw8alloc) args]).2 ≠
+      .err (.abort .typeError)) :
+    EvalSim env names values source target [.app trace (.src .aw8alloc) args] := by
+  have flatFix := (FlatSem.fixClock_evaluations env source args.reverse (.lit .none (.intLit 0)) []).1
+  have closFix := ClosSem.fixClock_evaluate (compileExps names args).reverse values target
+  have argsNotTypeError : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) := by
+    intro failure
+    apply notTypeError
+    rw [FlatSem.evaluate]
+    simp only [flatFix, failure]
+  have argsSim := argsSim argsNotTypeError
+  unfold EvalSim at argsSim ⊢
+  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  simp only [compile, compileExps_reverse] at argsSim
+  rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
+  simp only [flatFix]
+  cases flatRun : FlatSem.evaluate env source args.reverse with
+  | mk next flatResult =>
+    cases closRun : ClosSem.evaluate (compileExps names args).reverse values target with
+    | mk closResult nextTarget =>
+      simp only [flatRun, closRun] at argsSim ⊢
+      rcases argsSim with ⟨states, results⟩
+      cases results with
+      | abort error => exact ⟨states, .abort error⟩
+      | raise related => exact ⟨states, .raise related⟩
+      | value related =>
+        rename_i sourceArgs targetArgs
+        have resultShape : (FlatSem.applyResult next (.src .aw8alloc) sourceArgs.reverse).2 ≠
+            .err (.abort .typeError) := by
+          have fixed := flatFix
+          rw [flatRun] at fixed
+          have h := notTypeError
+          rw [FlatSem.evaluate, flatRun, fixed] at h
+          simpa using h
+        have length : sourceArgs.length = 2 := by
+          by_contra wrong
+          apply resultShape
+          apply allocByteArray_wrong_arity
+          simpa using wrong
+        cases related with
+        | nil => simp at length
+        | cons byteRel tail =>
+          cases tail with
+          | nil => simp at length
+          | cons sizeRel tail =>
+            cases tail with
+            | cons _ _ => simp at length
+            | nil =>
+              simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at resultShape
+              cases byteRel <;> cases sizeRel <;>
+                simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
+                  FlatSem.doAppMemory] at resultShape
+              case word8.int byte size =>
+                simpa using allocByteArray_body_related next nextTarget trace values size byte states
 
 /-- Sized-array application simulation, excluding source type errors as in
 the source correctness theorem. -/
