@@ -93,19 +93,159 @@ theorem compile_simpleSourceApp_simulation {C F : Type} (cfg stateCfg : Config) 
           refine ⟨targetAfter, .err _, ?_, afterStates, .error errors⟩
           simpa [compileExp_app, FlatSem.applyResult, targetFixed, targetPrimitive] using targetOuter
 
+/-- Reference allocation preserves arbitrary successful primitive results. -/
+theorem doApp_refAlloc_complete {C F : Type} (cfg : Config) (source target sourceFinal : FlatSem.State C F)
+    (values values' : List FlatSem.Value) (result : Result FlatSem.Value FlatSem.Value)
+    (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
+    (run : FlatSem.doApp source (.src .opref) values = some (sourceFinal, result)) :
+    ∃ targetFinal result', FlatSem.doApp target (.src .opref) values' = some (targetFinal, result') ∧
+      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+  cases result with
+  | val value =>
+    obtain ⟨targetFinal, value', targetRun, finalStates, valueRel⟩ :=
+      doApp_refAlloc_related cfg source target values values' states related sourceFinal value run
+    exact ⟨targetFinal, .val value', targetRun, finalStates, .value valueRel⟩
+  | err error =>
+    cases values with
+    | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+    | cons value tail =>
+      cases tail <;> simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+        Flapjack.SemanticPrimitivesHOL.storeAlloc] at run
+
+/-- Reference assignment preserves arbitrary successful primitive results. -/
+theorem doApp_refAssign_complete {C F : Type} (cfg : Config) (source target sourceFinal : FlatSem.State C F)
+    (values values' : List FlatSem.Value) (result : Result FlatSem.Value FlatSem.Value)
+    (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
+    (run : FlatSem.doApp source (.src .opassign) values = some (sourceFinal, result)) :
+    ∃ targetFinal result', FlatSem.doApp target (.src .opassign) values' = some (targetFinal, result') ∧
+      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+  cases result with
+  | val value =>
+    obtain ⟨targetFinal, value', targetRun, finalStates, valueRel⟩ :=
+      doApp_refAssign_related cfg source target values values' states related sourceFinal value run
+    exact ⟨targetFinal, .val value', targetRun, finalStates, .value valueRel⟩
+  | err error =>
+    cases values with
+    | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+    | cons value tail =>
+      cases tail with
+      | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+      | cons second rest =>
+        cases rest with
+        | cons _ _ => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+        | nil =>
+          cases value with
+          | loc flag address =>
+            cases assigned : Flapjack.SemanticPrimitivesHOL.storeAssign address (.refv second) source.refs <;>
+              simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, assigned] at run
+          | litv _ | conv _ _ | vectorv _ | closure _ _ _ | recclosure _ _ _ =>
+            simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+
+/-- Fixed-array allocation preserves arbitrary successful primitive results. -/
+theorem doApp_arrayFixed_complete {C F : Type} (cfg : Config) (source target sourceFinal : FlatSem.State C F)
+    (values values' : List FlatSem.Value) (result : Result FlatSem.Value FlatSem.Value)
+    (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
+    (run : FlatSem.doApp source (.src .aallocFixed) values = some (sourceFinal, result)) :
+    ∃ targetFinal result', FlatSem.doApp target (.src .aallocFixed) values' = some (targetFinal, result') ∧
+      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+  obtain ⟨sourceAfter, targetAfter, value, sourceRun, targetRun, finalStates, valueRel⟩ :=
+    doApp_arrayFixed_related cfg source target values values' states related
+  have equal := sourceRun.symm.trans run
+  cases equal
+  exact ⟨targetAfter, .val value, targetRun, finalStates, .value valueRel⟩
+
+/-- Value-array allocation preserves arbitrary successful primitive results. -/
+theorem doApp_arrayAlloc_complete {C F : Type} (cfg : Config) (source target sourceFinal : FlatSem.State C F)
+    (values values' : List FlatSem.Value) (result : Result FlatSem.Value FlatSem.Value)
+    (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
+    (run : FlatSem.doApp source (.src .aalloc) values = some (sourceFinal, result)) :
+    ∃ targetFinal result', FlatSem.doApp target (.src .aalloc) values' = some (targetFinal, result') ∧
+      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+  cases related with
+  | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+  | @cons size size' tail tail' sizeRel rest =>
+    cases rest with
+    | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+    | @cons value value' tail tail' valueRel rest =>
+      cases rest with
+      | cons _ _ => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+      | nil =>
+        cases size with
+        | litv literal =>
+          have eq := (valueRel_lit literal size').1 sizeRel
+          subst size'
+          cases literal with
+          | intLit size =>
+            obtain ⟨sourceAfter, targetAfter, result, result', sourceRun, targetRun, finalStates, resultRel⟩ :=
+              doApp_arrayAlloc_related cfg source target size value value' states valueRel
+            have equal := sourceRun.symm.trans run
+            cases equal
+            exact ⟨targetAfter, result', targetRun, finalStates, resultRel⟩
+          | word8 _ | word64 _ | char _ | strLit _ | float64 _ =>
+            simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+        | conv _ _ | loc _ _ | vectorv _ | closure _ _ _ | recclosure _ _ _ =>
+          simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+
+/-- Byte-array allocation preserves arbitrary successful primitive results. -/
+theorem doApp_byteArrayAlloc_complete {C F : Type} (cfg : Config) (source target sourceFinal : FlatSem.State C F)
+    (values values' : List FlatSem.Value) (result : Result FlatSem.Value FlatSem.Value)
+    (states : StateRel cfg source target) (related : List.Forall₂ ValueRel values values')
+    (run : FlatSem.doApp source (.src .aw8alloc) values = some (sourceFinal, result)) :
+    ∃ targetFinal result', FlatSem.doApp target (.src .aw8alloc) values' = some (targetFinal, result') ∧
+      StateRel cfg sourceFinal targetFinal ∧ PrimitiveResultRel result result' := by
+  cases related with
+  | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+  | @cons size size' tail tail' sizeRel rest =>
+    cases rest with
+    | nil => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+    | @cons value value' tail tail' valueRel rest =>
+      cases rest with
+      | cons _ _ => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+      | nil =>
+        cases size with
+        | litv literal =>
+          have eq := (valueRel_lit literal size').1 sizeRel
+          subst size'
+          cases literal with
+          | intLit size =>
+            cases value with
+            | litv literal =>
+              have eq := (valueRel_lit literal value').1 valueRel
+              subst value'
+              cases literal with
+              | word8 byte =>
+                obtain ⟨sourceAfter, targetAfter, result, sourceRun, targetRun, finalStates, resultRel⟩ :=
+                  doApp_byteArrayAlloc_related cfg source target size byte states
+                have equal := sourceRun.symm.trans run
+                cases equal
+                exact ⟨targetAfter, result, targetRun, finalStates, resultRel⟩
+              | intLit _ | word64 _ | char _ | strLit _ | float64 _ =>
+                simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+            | conv _ _ | loc _ _ | vectorv _ | closure _ _ _ | recclosure _ _ _ =>
+              simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+          | word8 _ | word64 _ | char _ | strLit _ | float64 _ =>
+            simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+        | conv _ _ | loc _ _ | vectorv _ | closure _ _ _ | recclosure _ _ _ =>
+          simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory] at run
+
 /-- Source operators whose primitive relation has been established here. -/
 inductive CoveredSourcePrimitive : Op → Prop where
   | arith (action : Arith) (typ : PrimType) : CoveredSourcePrimitive (.arith action typ)
   | fromTo (source target : PrimType) : CoveredSourcePrimitive (.fromTo source target)
   | shift (width : WordSize) (shift : Shift) (amount : Nat) : CoveredSourcePrimitive (.shift width shift amount)
   | test (test : Test) (typ : PrimType) : CoveredSourcePrimitive (.test test typ)
+  | opref : CoveredSourcePrimitive .opref
+  | opassign : CoveredSourcePrimitive .opassign
+  | aallocFixed : CoveredSourcePrimitive .aallocFixed
+  | aalloc : CoveredSourcePrimitive .aalloc
+  | aw8alloc : CoveredSourcePrimitive .aw8alloc
   | ffi (name : Flapjack.Basis.Pure.MlString.MlString) : CoveredSourcePrimitive (.ffi name)
   | allocThunk (mode : ThunkMode) : CoveredSourcePrimitive (.thunkOp (.allocThunk mode))
   | updateThunk (mode : ThunkMode) : CoveredSourcePrimitive (.thunkOp (.updateThunk mode))
 
-/-- Arithmetic, conversion, shift, typed comparison, FFI and explicit thunk
-applications simulate their compiled expressions using only argument
-induction hypotheses. -/
+/-- Arithmetic, conversion, shift, typed comparison, references, array
+allocation, FFI and explicit thunk applications simulate their compiled
+expressions using only argument induction hypotheses. -/
 theorem compile_coveredSourceApp_simulation {C F : Type} (cfg stateCfg : Config) (trace : BackendCommon.Tra)
     (op : Op) (args : List FlatLang.Exp) (covered : CoveredSourcePrimitive op)
     (argumentsIH : ∀ expression ∈ args, ExpressionSimulation (C := C) (F := F) cfg stateCfg expression) :
@@ -120,6 +260,11 @@ theorem compile_coveredSourceApp_simulation {C F : Type} (cfg stateCfg : Config)
   | fromTo sourceTyp targetTyp => exact doApp_fromTo_related stateCfg source target sourceFinal sourceTyp targetTyp values values' result states related run
   | shift width shift amount => exact doApp_shift_related stateCfg source target sourceFinal width shift amount values values' result states related run
   | test test typ => exact doApp_test_related stateCfg source target sourceFinal test typ values values' result states related run
+  | opref => exact doApp_refAlloc_complete stateCfg source target sourceFinal values values' result states related run
+  | opassign => exact doApp_refAssign_complete stateCfg source target sourceFinal values values' result states related run
+  | aallocFixed => exact doApp_arrayFixed_complete stateCfg source target sourceFinal values values' result states related run
+  | aalloc => exact doApp_arrayAlloc_complete stateCfg source target sourceFinal values values' result states related run
+  | aw8alloc => exact doApp_byteArrayAlloc_complete stateCfg source target sourceFinal values values' result states related run
   | ffi name => exact doApp_ffi_related stateCfg source target sourceFinal name values values' result states related run
   | allocThunk mode => exact doApp_thunkAlloc_related stateCfg source target sourceFinal mode values values' result states related run
   | updateThunk mode => exact doApp_thunkUpdate_related stateCfg source target sourceFinal mode values values' result states related run
