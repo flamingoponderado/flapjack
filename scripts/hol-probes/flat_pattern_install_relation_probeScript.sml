@@ -25,3 +25,5 @@ val _ = show_thm "do_opapp=" flat_patternProofTheory.do_opapp_thm;
 val _ = show_thm "pmatch_simulation=" flat_patternProofTheory.pmatch_thm;
 val _ = show_thm "compile_match_pmatch_rows=" flat_patternProofTheory.compile_match_pmatch_rows;
 val _ = show_thm "compile_match_EL=" flat_patternProofTheory.compile_match_EL;
+val _ = show_thm "pmatch_list_length=" flat_patternProofTheory.pmatch_list_Match_IMP_LENGTH;
+val _ = show_thm "pmatch_list_append=" flat_patternProofTheory.pmatch_list_append_Match_exists;
