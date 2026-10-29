@@ -116,4 +116,83 @@ theorem doInstall_success_addClock {C F : Type} (values : List Value) (state nex
   all_goals simp_all
   all_goals try (rcases run with ⟨_, rfl⟩; simp; omega)
 
+
+/-- A non-timeout installation error is preserved by clock extension. -/
+theorem doInstall_error_addClock {C F : Type} (values : List Value) (state next : State C F)
+    (error : ErrorResult Value) (extra : Nat)
+    (run : doInstall values state = (.err error, next)) (notTimeout : error ≠ .abort .timeoutError) :
+    doInstall values { state with clock := state.clock + extra } =
+      (.err error, { next with clock := next.clock + extra }) := by
+  classical
+  cases values with
+  | nil =>
+    simp [doInstall] at run
+    rcases run with ⟨rfl, rfl⟩
+    rfl
+  | cons first rest =>
+    cases rest with
+    | nil =>
+      simp [doInstall] at run
+      rcases run with ⟨rfl, rfl⟩
+      rfl
+    | cons second rest =>
+      cases rest with
+      | cons third rest =>
+        simp [doInstall] at run
+        rcases run with ⟨rfl, rfl⟩
+        rfl
+      | nil =>
+        cases bytesRun : valueToBytes first with
+        | none =>
+          simp [doInstall, bytesRun] at run
+          rcases run with ⟨rfl, rfl⟩
+          simp [doInstall, bytesRun]
+        | some bytes =>
+          cases wordsRun : valueToWords second with
+          | none =>
+            simp [doInstall, bytesRun, wordsRun] at run
+            rcases run with ⟨rfl, rfl⟩
+            simp [doInstall, bytesRun, wordsRun]
+          | some words =>
+            cases oracleRun : state.compileOracle 0 with
+            | mk config program =>
+              cases program with
+              | mk expressions auxiliary =>
+                by_cases codeValid : (∀ (index arity : Nat) (body : ClosLang.Exp),
+                    (index, arity, body) ∈ auxiliary → state.code.lookup index = none) ∧
+                    (auxiliary.map Prod.fst).Nodup
+                · cases compileRun : state.compile config (expressions, auxiliary) with
+                  | none =>
+                    simp [doInstall, bytesRun, wordsRun, oracleRun, codeValid.2, compileRun] at run
+                    rcases run with ⟨rfl, rfl⟩
+                    simp [doInstall, bytesRun, wordsRun, oracleRun, codeValid.2, compileRun]
+                  | some compiled =>
+                    obtain ⟨compiledBytes, compiledWords, nextConfig⟩ := compiled
+                    by_cases outputValid : bytes = compiledBytes ∧ words = compiledWords ∧
+                        (Flapjack.holShiftSeq 1 state.compileOracle 0).1 = nextConfig ∧ expressions ≠ []
+                    · by_cases zero : state.clock = 0
+                      · simp [doInstall, bytesRun, wordsRun, oracleRun, codeValid.2, compileRun, outputValid, zero] at run
+                        rw [if_pos codeValid.1] at run
+                        cases run
+                        exact (notTimeout rfl).elim
+                      · simp [doInstall, bytesRun, wordsRun, oracleRun, codeValid.2, compileRun, outputValid, zero] at run
+                        rw [if_pos codeValid.1] at run
+                        cases run
+                    · simp [doInstall, bytesRun, wordsRun, oracleRun, codeValid.2, compileRun, outputValid] at run
+                      rcases run with ⟨rfl, rfl⟩
+                      simp [doInstall, bytesRun, wordsRun, oracleRun, codeValid.2, compileRun, outputValid]
+                · simp [doInstall, bytesRun, wordsRun, oracleRun, codeValid] at run
+                  rcases run with ⟨rfl, rfl⟩
+                  simp [doInstall, bytesRun, wordsRun, oracleRun, codeValid]
+
+/-- Every non-timeout installation result commutes with clock extension. -/
+theorem doInstall_addClock {C F : Type} (values : List Value) (state next : State C F)
+    (result : Result (List ClosLang.Exp) Value) (extra : Nat)
+    (run : doInstall values state = (result, next)) (notTimeout : result ≠ .err (.abort .timeoutError)) :
+    doInstall values { state with clock := state.clock + extra } =
+      (result, { next with clock := next.clock + extra }) := by
+  cases result with
+  | val expressions => exact doInstall_success_addClock values state next expressions extra run
+  | err error => exact doInstall_error_addClock values state next error extra run (by simpa using notTimeout)
+
 end Flapjack.Compiler.Backend.ClosSem
