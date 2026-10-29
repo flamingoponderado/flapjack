@@ -448,6 +448,7 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.ByteComparisons
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.FloatComparisons
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.FloatExpressions
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.BooleanExpressions
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.PrimitiveArith
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.StringComparisons
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.PrimitiveTests
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.WordOperations
