@@ -462,6 +462,7 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.BlockExpressions
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Globals
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Memory
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.MemoryExpressions
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.Assignment
 import Flapjack.Compiler.Backend.Backend.PrimSrcConfig
 import Flapjack.Misc.Location
 import Flapjack.Compiler.Backend.BackendCommon.Operators
