@@ -519,4 +519,163 @@ theorem evaluate_checkedStringRead {C F : Type} (env : FlatSem.Environment FlatS
               case int.string index str =>
                 simpa using checkedStringRead_body_related next nextTarget trace values str index states
 
+
+/-- Vector construction rejects any argument count other than one. -/
+theorem vectorFromList_wrong_arity {C F : Type} (state : FlatSem.State C F)
+    (args : List FlatSem.Value) (wrong : args.length ≠ 1) :
+    (FlatSem.applyResult state (.src .vfromList) args).2 = .err (.abort .typeError) := by
+  cases args with
+  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData]
+  | cons first rest =>
+    cases rest with
+    | nil => simp at wrong
+    | cons second rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData]
+
+/-- Vector construction preserves related list elements after evaluating arbitrary
+argument lists, provided the source application avoids a type error. -/
+theorem evaluate_vectorFromList {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+    (names : List (Option MlString)) (values : List ClosSem.Value)
+    (source : FlatSem.State C F) (target : ClosSem.State C F)
+    (trace : BackendCommon.Tra) (args : List FlatLang.Exp)
+    (argSim : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values source target args.reverse)
+    (notTypeError : (FlatSem.evaluate env source [.app trace (.src .vfromList) args]).2 ≠
+      .err (.abort .typeError)) :
+    EvalSim env names values source target [.app trace (.src .vfromList) args] := by
+  have flatFix := (FlatSem.fixClock_evaluations env source args.reverse (.lit .none (.intLit 0)) []).1
+  have closFix := ClosSem.fixClock_evaluate (compileExps names args).reverse values target
+  have argsNotTypeError : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) := by
+    intro failure
+    apply notTypeError
+    rw [FlatSem.evaluate]
+    simp only [flatFix, failure]
+  have argSim := argSim argsNotTypeError
+  unfold EvalSim at argSim ⊢
+  simp only [compile, compileExps_reverse] at argSim
+  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
+  simp only [flatFix]
+  cases flatRun : FlatSem.evaluate env source args.reverse with
+  | mk next flatResult =>
+    cases closRun : ClosSem.evaluate (compileExps names args).reverse values target with
+    | mk closResult nextTarget =>
+      simp only [flatRun, closRun] at argSim ⊢
+      rcases argSim with ⟨states, results⟩
+      cases results with
+      | abort error => exact ⟨states, .abort error⟩
+      | raise related => exact ⟨states, .raise related⟩
+      | value related =>
+        rename_i sourceArgs targetArgs
+        have resultShape : (FlatSem.applyResult next (.src .vfromList) sourceArgs.reverse).2 ≠
+            .err (.abort .typeError) := by
+          have fixed := flatFix
+          rw [flatRun] at fixed
+          have h := notTypeError
+          rw [FlatSem.evaluate, flatRun, fixed] at h
+          simpa using h
+        have length : sourceArgs.length = 1 := by
+          by_contra wrong
+          apply resultShape
+          apply vectorFromList_wrong_arity
+          simpa using wrong
+        cases related with
+        | nil => simp at length
+        | cons head tail =>
+          cases tail with
+          | cons _ _ => simp at length
+          | nil =>
+            simp only [List.reverse_singleton] at resultShape
+            rename_i sourceValue targetValue
+            cases decoded : FlatSem.valueToList sourceValue with
+            | none =>
+              simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+                FlatSem.doAppData, decoded] at resultShape
+            | some items =>
+              obtain ⟨targetItems, targetDecoded, itemRel⟩ := valueToList_related sourceValue targetValue items head decoded
+              simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+                FlatSem.doAppData, decoded, ClosSem.doApp, ClosSem.applyBlock, targetDecoded, states,
+                EvalResultRel.value (.cons (ValueRel.vector itemRel) .nil)]
+
+/-- Exploding bytes yields lists of related characters and closure numbers. -/
+theorem explodedChars_related (bytes : List (BitVec 8)) :
+    List.Forall₂ ValueRel (bytes.map (FlatSem.Value.litv ∘ Flapjack.AstHOL.Lit.char))
+      (bytes.map (fun byte => ClosSem.Value.number byte.toNat)) := by
+  induction bytes with
+  | nil => exact .nil
+  | cons byte rest ih => exact .cons (.char byte) ih
+
+
+/-- String explosion rejects any argument count other than one. -/
+theorem stringExplode_wrong_arity {C F : Type} (state : FlatSem.State C F)
+    (args : List FlatSem.Value) (wrong : args.length ≠ 1) :
+    (FlatSem.applyResult state (.src .explode) args).2 = .err (.abort .typeError) := by
+  cases args with
+  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData]
+  | cons first rest =>
+    cases rest with
+    | nil => simp at wrong
+    | cons second rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData]
+
+/-- String explosion returns related lists of bytes after evaluating arbitrary
+argument lists, provided the source application avoids a type error. -/
+theorem evaluate_stringExplode {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+    (names : List (Option MlString)) (values : List ClosSem.Value)
+    (source : FlatSem.State C F) (target : ClosSem.State C F)
+    (trace : BackendCommon.Tra) (args : List FlatLang.Exp)
+    (argSim : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values source target args.reverse)
+    (notTypeError : (FlatSem.evaluate env source [.app trace (.src .explode) args]).2 ≠
+      .err (.abort .typeError)) :
+    EvalSim env names values source target [.app trace (.src .explode) args] := by
+  have flatFix := (FlatSem.fixClock_evaluations env source args.reverse (.lit .none (.intLit 0)) []).1
+  have closFix := ClosSem.fixClock_evaluate (compileExps names args).reverse values target
+  have argsNotTypeError : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) := by
+    intro failure
+    apply notTypeError
+    rw [FlatSem.evaluate]
+    simp only [flatFix, failure]
+  have argSim := argSim argsNotTypeError
+  unfold EvalSim at argSim ⊢
+  simp only [compile, compileExps_reverse] at argSim
+  simp only [compile, compileExps, compileExp, compileOp] at ⊢
+  rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
+  simp only [flatFix]
+  cases flatRun : FlatSem.evaluate env source args.reverse with
+  | mk next flatResult =>
+    cases closRun : ClosSem.evaluate (compileExps names args).reverse values target with
+    | mk closResult nextTarget =>
+      simp only [flatRun, closRun] at argSim ⊢
+      rcases argSim with ⟨states, results⟩
+      cases results with
+      | abort error => exact ⟨states, .abort error⟩
+      | raise related => exact ⟨states, .raise related⟩
+      | value related =>
+        rename_i sourceArgs targetArgs
+        have resultShape : (FlatSem.applyResult next (.src .explode) sourceArgs.reverse).2 ≠
+            .err (.abort .typeError) := by
+          have fixed := flatFix
+          rw [flatRun] at fixed
+          have h := notTypeError
+          rw [FlatSem.evaluate, flatRun, fixed] at h
+          simpa using h
+        have length : sourceArgs.length = 1 := by
+          by_contra wrong
+          apply resultShape
+          apply stringExplode_wrong_arity
+          simpa using wrong
+        cases related with
+        | nil => simp at length
+        | cons head tail =>
+          cases tail with
+          | cons _ _ => simp at length
+          | nil =>
+            simp only [List.reverse_singleton] at resultShape
+            cases head <;> simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
+              FlatSem.doAppMemory, FlatSem.doAppData] at resultShape
+            case string str =>
+              have listRel := listToValue_related (explodedChars_related str.explode)
+              simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory,
+                FlatSem.doAppData, ClosSem.doApp, ClosSem.applyMemory, states,
+                EvalResultRel.value (.cons listRel .nil)]
+
 end Flapjack.Compiler.Backend.FlatToClos
