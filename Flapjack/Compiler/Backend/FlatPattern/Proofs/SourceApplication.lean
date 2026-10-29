@@ -3,6 +3,7 @@ import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveComparison
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveThunk
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveAccess
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveVector
+import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveString
 
 /-! Source-primitive applications in the proof-side pattern simulation. The
 evaluator and relations remain pending HOL correspondence review. -/
@@ -250,13 +251,17 @@ inductive CoveredSourcePrimitive : Op → Prop where
   | vfromList : CoveredSourcePrimitive .vfromList
   | vlength : CoveredSourcePrimitive .vlength
   | listAppend : CoveredSourcePrimitive .listAppend
+  | strlen : CoveredSourcePrimitive .strlen
+  | explode : CoveredSourcePrimitive .explode
+  | strsub : CoveredSourcePrimitive .strsub
+  | strcat : CoveredSourcePrimitive .strcat
   | vsub (unsafeOp : Bool) : CoveredSourcePrimitive (if unsafeOp then .vsubUnsafe else .vsub)
   | ffi (name : Flapjack.Basis.Pure.MlString.MlString) : CoveredSourcePrimitive (.ffi name)
   | allocThunk (mode : ThunkMode) : CoveredSourcePrimitive (.thunkOp (.allocThunk mode))
   | updateThunk (mode : ThunkMode) : CoveredSourcePrimitive (.thunkOp (.updateThunk mode))
 
 /-- Arithmetic, conversion, shift, typed comparison, references, arrays,
-list and vector operations, FFI and explicit thunk applications simulate
+ list, vector and string operations, FFI and explicit thunk applications simulate
 their compiled expressions using only argument induction hypotheses. -/
 theorem compile_coveredSourceApp_simulation {C F : Type} (cfg stateCfg : Config) (trace : BackendCommon.Tra)
     (op : Op) (args : List FlatLang.Exp) (covered : CoveredSourcePrimitive op)
@@ -304,6 +309,10 @@ theorem compile_coveredSourceApp_simulation {C F : Type} (cfg stateCfg : Config)
   | vfromList => exact doApp_vectorFromList_related stateCfg source target sourceFinal values values' result states related run
   | vlength => exact doApp_vectorLength_related stateCfg source target sourceFinal values values' result states related run
   | listAppend => exact doApp_listAppend_related stateCfg source target sourceFinal values values' result states related run
+  | strlen => exact doApp_stringLength_related stateCfg source target sourceFinal values values' result states related run
+  | explode => exact doApp_stringExplode_related stateCfg source target sourceFinal values values' result states related run
+  | strsub => exact doApp_stringSub_related stateCfg source target sourceFinal values values' result states related run
+  | strcat => exact doApp_stringConcat_related stateCfg source target sourceFinal values values' result states related run
   | vsub unsafeOp => exact doApp_vectorRead_related stateCfg source target sourceFinal unsafeOp values values' result states related run
   | ffi name => exact doApp_ffi_related stateCfg source target sourceFinal name values values' result states related run
   | allocThunk mode => exact doApp_thunkAlloc_related stateCfg source target sourceFinal mode values values' result states related run
