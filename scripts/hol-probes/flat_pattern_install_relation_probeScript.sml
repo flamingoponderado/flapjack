@@ -44,3 +44,6 @@ val _ = show_thm "encode_val=" flat_patternProofTheory.encode_val_def;
 val _ = show_thm "encode_refs=" flat_patternProofTheory.encode_refs_def;
 val _ = show_thm "decode_pos_simulation=" flat_patternProofTheory.decode_pos_simulation;
 val _ = show_thm "decode_test_simulation=" flat_patternProofTheory.decode_test_simulation;
+val _ = show_thm "decode_guard_simulation=" flat_patternProofTheory.decode_guard_simulation;
+val _ = show_thm "simp_guard_thm=" flat_patternProofTheory.simp_guard_thm;
+val _ = show_thm "decode_dtree_simulation=" flat_patternProofTheory.decode_dtree_simulation;

@@ -144,4 +144,86 @@ theorem decodeTest_simulation {C F : Type} (trace : BackendCommon.Tra)
         simpa [decodeTest, equalBool] using guard
       · simp [encodeValue, PatternSemantics.dtTest, sameType] at tested
 
+/-- Comparing a pure Boolean expression to false implements Boolean negation. -/
+theorem evaluate_bool_negation {C F : Type} (trace : BackendCommon.Tra)
+    (state : FlatSem.State C F) (env : FlatSem.Environment FlatSem.Value)
+    (expression : FlatLang.Exp) (value : Bool)
+    (pure : FlatSem.evaluate env state [expression] = (state, .val [FlatSem.boolValue value])) :
+    FlatSem.evaluate env state [.app trace (.src .equality) [expression, FlatLang.mkBool trace false]] =
+      (state, .val [FlatSem.boolValue (!value)]) := by
+  cases value <;> simp [FlatSem.evaluate, pure, FlatSem.fixClock, FlatSem.applyResult, FlatSem.doApp,
+    FlatSem.doAppNumeric, FlatSem.doEq, FlatSem.doEqList, FlatSem.boolValue, FlatSem.ctorSameType,
+    FlatLang.mkBool, FlatLang.boolId, BackendCommon.boolToTag, BackendCommon.trueTag, BackendCommon.falseTag]
+
+/-- A successful abstract guard evaluates to the same Boolean after decoding
+to flat expressions, including short-circuiting conjunction and disjunction. -/
+theorem decodeGuard_simulation {C F : Type} (trace : BackendCommon.Tra)
+    (state : FlatSem.State C F) (env : FlatSem.Environment FlatSem.Value)
+    (guard : PatternSemantics.DGuard) (expression : FlatLang.Exp) (value : FlatSem.Value) (answer : Bool)
+    (tested : PatternSemantics.dtEvalGuard (encodeRefs state) (encodeValue value) guard = some answer)
+    (pure : FlatSem.evaluate env state [expression] = (state, .val [value])) :
+    FlatSem.evaluate env state [decodeGuard trace expression guard] = (state, .val [FlatSem.boolValue answer]) := by
+  induction guard generalizing answer with
+  | true_ =>
+    simp [PatternSemantics.dtEvalGuard] at tested
+    subst answer
+    simpa [decodeGuard] using evaluate_bool trace true env state
+  | posTest position test =>
+    cases selected : PatternSemantics.appPos (encodeRefs state) position (encodeValue value) with
+    | none => simp [PatternSemantics.dtEvalGuard, selected] at tested
+    | some encoded =>
+      have testResult : PatternSemantics.dtTest test encoded = some answer := by
+        simpa [PatternSemantics.dtEvalGuard, selected] using tested
+      obtain ⟨field, encoding, fieldPure⟩ := decodePos_simulation trace state env position expression value encoded selected pure
+      subst encoded
+      simpa [decodeGuard] using decodeTest_simulation trace state env test (decodePos trace expression position)
+        field answer testResult fieldPure
+  | not guard ih =>
+    cases guardResult : PatternSemantics.dtEvalGuard (encodeRefs state) (encodeValue value) guard with
+    | none => simp [PatternSemantics.dtEvalGuard, guardResult] at tested
+    | some b =>
+      have out : (!b) = answer := by
+        simpa only [PatternSemantics.dtEvalGuard, guardResult, Option.map_some, Option.some.injEq] using tested
+      subst answer
+      have inner := ih b guardResult
+      simpa [decodeGuard] using evaluate_bool_negation trace state env (decodeGuard trace expression guard) b inner
+  | conj left right ihLeft ihRight =>
+    cases leftResult : PatternSemantics.dtEvalGuard (encodeRefs state) (encodeValue value) left with
+    | none => simp [PatternSemantics.dtEvalGuard, leftResult] at tested
+    | some b =>
+      cases b with
+      | false =>
+        simp [PatternSemantics.dtEvalGuard, leftResult] at tested
+        subst answer
+        have guardPure := ihLeft false leftResult
+        have branch := evaluate_if_pure_bool trace (decodeGuard trace expression left) (decodeGuard trace expression right)
+          (FlatLang.mkBool trace false) false env state guardPure
+        simpa [decodeGuard, evaluate_smartIf, branch] using evaluate_bool trace false env state
+      | true =>
+        have rightResult : PatternSemantics.dtEvalGuard (encodeRefs state) (encodeValue value) right = some answer := by
+          simpa [PatternSemantics.dtEvalGuard, leftResult] using tested
+        have guardPure := ihLeft true leftResult
+        have branch := evaluate_if_pure_bool trace (decodeGuard trace expression left) (decodeGuard trace expression right)
+          (FlatLang.mkBool trace false) true env state guardPure
+        simpa [decodeGuard, evaluate_smartIf, branch] using ihRight answer rightResult
+  | disj left right ihLeft ihRight =>
+    cases leftResult : PatternSemantics.dtEvalGuard (encodeRefs state) (encodeValue value) left with
+    | none => simp [PatternSemantics.dtEvalGuard, leftResult] at tested
+    | some b =>
+      cases b with
+      | false =>
+        have rightResult : PatternSemantics.dtEvalGuard (encodeRefs state) (encodeValue value) right = some answer := by
+          simpa [PatternSemantics.dtEvalGuard, leftResult] using tested
+        have guardPure := ihLeft false leftResult
+        have branch := evaluate_if_pure_bool trace (decodeGuard trace expression left) (FlatLang.mkBool trace true)
+          (decodeGuard trace expression right) false env state guardPure
+        simpa [decodeGuard, evaluate_smartIf, branch] using ihRight answer rightResult
+      | true =>
+        simp [PatternSemantics.dtEvalGuard, leftResult] at tested
+        subst answer
+        have guardPure := ihLeft true leftResult
+        have branch := evaluate_if_pure_bool trace (decodeGuard trace expression left) (FlatLang.mkBool trace true)
+          (decodeGuard trace expression right) true env state guardPure
+        simpa [decodeGuard, evaluate_smartIf, branch] using evaluate_bool trace true env state
+
 end Flapjack.Compiler.Backend.FlatPattern
