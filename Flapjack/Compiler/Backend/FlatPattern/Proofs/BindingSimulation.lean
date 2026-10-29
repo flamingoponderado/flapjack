@@ -43,6 +43,19 @@ theorem bindingInputs_var_head {C F : Type} (lower upper key : Nat) (used : NumS
     · simp [sptLookup_sptInsert_same]
     · exact aLookupRel_refl _ _ _ (by intros; rfl)
 
+/-- Inserting the head key makes its corresponding expression available in
+the original environment, independently of the head pattern. -/
+theorem bindingInputs_insert_head {C F : Type} (lower upper key : Nat) (used : NumSet)
+    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F)
+    (pattern : FlatLang.Pat) (expression : FlatLang.Exp) (rest : List (FlatLang.Pat × Nat × FlatLang.Exp))
+    (value : FlatSem.Value) (values : List FlatSem.Value)
+    (inputs : BindingInputs lower upper (sptInsert key () used) env state
+      ((pattern, key, expression) :: rest) (value :: values)) :
+    FlatSem.evaluate env state [expression] = (state, .val [value]) := by
+  cases inputs with
+  | cons head _ =>
+    exact head env (by simp [sptLookup_sptInsert_same]) (aLookupRel_refl _ _ _ (by intros; rfl))
+
 /-- After evaluating a variable binding, the remaining inputs retain their
 pure-evaluation premise in the environment extended by that binding. -/
 theorem bindingInputs_var_tail {C F : Type} (lower upper key : Nat) (used : NumSet)
@@ -66,6 +79,69 @@ theorem bindingInputs_var_tail {C F : Type} (lower upper key : Nat) (used : NumS
         intro selected
         omega
       · exact ih
+
+/-- Adding an original low-numbered name leaves all generated-interval input
+assumptions valid for the extended environment. -/
+theorem bindingInputs_add_low_name {C F : Type} (lower upper : Nat) (used : NumSet)
+    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F)
+    (todo : List (FlatLang.Pat × Nat × FlatLang.Exp)) (values : List FlatSem.Value)
+    (name : VarN) (value : FlatSem.Value) (nameBound : decNameToNum name < lower)
+    (inputs : BindingInputs lower upper used env state todo values) :
+    BindingInputs lower upper used { env with v := (name, value) :: env.v } state todo values := by
+  induction inputs with
+  | nil => exact .nil
+  | @cons item itemValue rest values head tail ih =>
+    apply List.Forall₂.cons
+    · intro env2 present related
+      apply head env2 present
+      apply ((aLookupRel_cons_false (fun n => lower < decNameToNum n ∧ decNameToNum n < upper)
+        Eq name value env2.v env.v).2 ?_).1 related
+      intro selected
+      omega
+    · exact ih
+
+/-- Extending the generated-name interval with a fresh temporary supplies its
+value and preserves the pure-evaluation premises for the old work-list tail. -/
+theorem bindingInputs_fresh_nested {C F : Type} (trace : BackendCommon.Tra) (lower upper key : Nat)
+    (used : NumSet) (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F)
+    (oldPattern newPattern : FlatLang.Pat) (expression : FlatLang.Exp)
+    (rest : List (FlatLang.Pat × Nat × FlatLang.Exp)) (oldValue freshValue : FlatSem.Value)
+    (values : List FlatSem.Value) (bound : lower < upper)
+    (inputs : BindingInputs lower upper (sptInsert key () used) env state
+      ((oldPattern, key, expression) :: rest) (oldValue :: values)) :
+    BindingInputs lower (upper + 2) used
+      { env with v := (encNumToName (upper + 1), freshValue) :: env.v } state
+      ((newPattern, upper + 1, .varLocal trace (encNumToName (upper + 1))) :: rest)
+      (freshValue :: values) := by
+  let generated := encNumToName (upper + 1)
+  cases inputs with
+  | cons _ tail =>
+    apply List.Forall₂.cons
+    · intro env2 _ related
+      have inside : lower < decNameToNum generated ∧ decNameToNum generated < upper + 2 := by
+        simp only [generated, decEnc]
+        omega
+      have equalLookup := aLookupRel_eq_lookup _ _ _ generated related inside
+      have found : env2.v.lookup generated = some freshValue := by
+        rw [← holALookup_mlString, equalLookup]
+        simp [holALookup, generated]
+      simp [FlatSem.evaluate, generated] at found ⊢
+      simp [found]
+    · induction tail with
+      | nil => exact .nil
+      | @cons item itemValue rest values head tail ih =>
+        apply List.Forall₂.cons
+        · intro env2 present related
+          apply head env2 (sptInsert_preserves_presence used key item.2.1 present)
+          have narrow : aLookupRel (fun n => lower < decNameToNum n ∧ decNameToNum n < upper)
+              Eq env2.v ((generated, freshValue) :: env.v) := by
+            intro n inside
+            exact related n ⟨inside.1, by omega⟩
+          apply ((aLookupRel_cons_false (fun n => lower < decNameToNum n ∧ decNameToNum n < upper)
+            Eq generated freshValue env2.v env.v).2 ?_).1 narrow
+          simp only [generated, decEnc]
+          omega
+        · exact ih
 
 /-- Projecting a reference whose contents are present is a pure evaluation
 step for the generated `el 0` expression. -/
