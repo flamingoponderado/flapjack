@@ -24,7 +24,7 @@ theorem evaluate_closInterpEl_zero {C F : Type} (first : ClosSem.Value) (tail : 
 
 /-- A unary application evaluates its argument and function before applying
  the resulting value. -/
-private theorem evaluate_unary_app {C F : Type} (function argument : ClosLang.Exp)
+theorem evaluate_unary_app {C F : Type} (function argument : ClosLang.Exp)
     (env : List ClosSem.Value) (state afterArg afterFunction : ClosSem.State C F)
     (argValue fnValue : ClosSem.Value)
     (argRun : ClosSem.evaluate [argument] env state = (.val [argValue], afterArg))
