@@ -5,6 +5,7 @@ import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveAccess
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveVector
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveString
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveCopy
+import Flapjack.Compiler.Backend.FlatPattern.Proofs.StructuralEquality
 
 /-! Source-primitive applications in the proof-side pattern simulation. The
 evaluator and relations remain pending HOL correspondence review. -/
@@ -238,8 +239,12 @@ inductive CoveredSourcePrimitive : Op → Prop where
   | fromTo (source target : PrimType) : CoveredSourcePrimitive (.fromTo source target)
   | shift (width : WordSize) (shift : Shift) (amount : Nat) : CoveredSourcePrimitive (.shift width shift amount)
   | test (test : Test) (typ : PrimType) : CoveredSourcePrimitive (.test test typ)
+  | equality : CoveredSourcePrimitive .equality
   | opref : CoveredSourcePrimitive .opref
   | opassign : CoveredSourcePrimitive .opassign
+  | opderef : CoveredSourcePrimitive .opderef
+  | aallocEmpty : CoveredSourcePrimitive .aallocEmpty
+  | envId : CoveredSourcePrimitive .envId
   | aallocFixed : CoveredSourcePrimitive .aallocFixed
   | aalloc : CoveredSourcePrimitive .aalloc
   | aw8alloc : CoveredSourcePrimitive .aw8alloc
@@ -303,8 +308,12 @@ theorem compile_coveredSourceApp_simulation {C F : Type} (cfg stateCfg : Config)
   | fromTo sourceTyp targetTyp => exact doApp_fromTo_related stateCfg source target sourceFinal sourceTyp targetTyp values values' result states related run
   | shift width shift amount => exact doApp_shift_related stateCfg source target sourceFinal width shift amount values values' result states related run
   | test test typ => exact doApp_test_related stateCfg source target sourceFinal test typ values values' result states related run
+  | equality => exact doApp_equality_related stateCfg source target sourceFinal values values' result states related run
   | opref => exact doApp_refAlloc_complete stateCfg source target sourceFinal values values' result states related run
   | opassign => exact doApp_refAssign_complete stateCfg source target sourceFinal values values' result states related run
+  | opderef => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy] at run
+  | aallocEmpty => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy] at run
+  | envId => simp [FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy] at run
   | aallocFixed => exact doApp_arrayFixed_complete stateCfg source target sourceFinal values values' result states related run
   | aalloc => exact doApp_arrayAlloc_complete stateCfg source target sourceFinal values values' result states related run
   | aw8alloc => exact doApp_byteArrayAlloc_complete stateCfg source target sourceFinal values values' result states related run
@@ -332,4 +341,67 @@ theorem compile_coveredSourceApp_simulation {C F : Type} (cfg stateCfg : Config)
   | ffi name => exact doApp_ffi_related stateCfg source target sourceFinal name values values' result states related run
   | allocThunk mode => exact doApp_thunkAlloc_related stateCfg source target sourceFinal mode values values' result states related run
   | updateThunk mode => exact doApp_thunkUpdate_related stateCfg source target sourceFinal mode values values' result states related run
+
+/-- All source operations other than calls, dynamic evaluation, and forcing
+are covered by the proof-side primitive simulation. Three operations are
+covered because the current evaluator always rejects them; their fidelity to
+the HOL evaluator remains part of the outstanding correspondence review. -/
+theorem covered_simpleSourcePrimitive (op : Op) (notCall : op ≠ .opapp)
+    (notEval : op ≠ .eval) (notForce : op ≠ .thunkOp .forceThunk) : CoveredSourcePrimitive op := by
+  cases op <;> try contradiction
+  all_goals first
+    | exact .arith _ _
+    | exact .fromTo _ _
+    | exact .shift _ _ _
+    | exact .equality
+    | exact .test _ _
+    | exact .opassign
+    | exact .opref
+    | exact .opderef
+    | exact .aw8alloc
+    | exact .aw8sub false
+    | exact .aw8sub true
+    | exact .aw8length
+    | exact .aw8update false
+    | exact .aw8update true
+    | exact .copyStrStr
+    | exact .copyStrAw8
+    | exact .copyAw8Str
+    | exact .copyAw8Aw8
+    | exact .xorAw8StrUnsafe
+    | exact .implode
+    | exact .explode
+    | exact .strsub
+    | exact .strlen
+    | exact .strcat
+    | exact .vfromList
+    | exact .vsub false
+    | exact .vsub true
+    | exact .vlength
+    | exact .aalloc
+    | exact .aallocEmpty
+    | exact .aallocFixed
+    | exact .asub false
+    | exact .asub true
+    | exact .alength
+    | exact .aupdate false
+    | exact .aupdate true
+    | exact .listAppend
+    | exact .configGC
+    | exact .ffi _
+    | exact .envId
+    | (rename_i thunk; cases thunk with
+      | allocThunk mode => exact .allocThunk mode
+      | updateThunk mode => exact .updateThunk mode
+      | forceThunk => exact (notForce rfl).elim)
+
+/-- Every nonrecursive source application simulates its compiled form using
+the argument induction hypotheses in the current proof-side evaluator. -/
+theorem compile_nonrecursiveSourceApp_simulation {C F : Type} (cfg stateCfg : Config) (trace : BackendCommon.Tra)
+    (op : Op) (args : List FlatLang.Exp) (notCall : op ≠ .opapp)
+    (notEval : op ≠ .eval) (notForce : op ≠ .thunkOp .forceThunk)
+    (argumentsIH : ∀ expression ∈ args, ExpressionSimulation (C := C) (F := F) cfg stateCfg expression) :
+    ExpressionSimulation (C := C) (F := F) cfg stateCfg (.app trace (.src op) args) :=
+  compile_coveredSourceApp_simulation cfg stateCfg trace op args
+    (covered_simpleSourcePrimitive op notCall notEval notForce) argumentsIH
 end Flapjack.Compiler.Backend.FlatPattern
