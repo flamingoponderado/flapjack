@@ -170,12 +170,19 @@ theorem evaluate_allocArray {C F : Type} (env : FlatSem.Environment FlatSem.Valu
     (names : List (Option Flapjack.Basis.Pure.MlString.MlString)) (values : List ClosSem.Value)
     (source : FlatSem.State C F) (target : ClosSem.State C F)
     (trace : BackendCommon.Tra) (sizeExp valueExp : FlatLang.Exp)
-    (argsSim : EvalSim env names values source target [valueExp, sizeExp])
+    (argsSim : (FlatSem.evaluate env source [valueExp, sizeExp]).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values source target [valueExp, sizeExp])
     (notTypeError : (FlatSem.evaluate env source [.app trace (.src .aalloc) [sizeExp, valueExp]]).2 ≠
       .err (.abort .typeError)) :
     EvalSim env names values source target [.app trace (.src .aalloc) [sizeExp, valueExp]] := by
   have flatFix := (FlatSem.fixClock_evaluations env source [valueExp, sizeExp] sizeExp []).1
   have closFix := ClosSem.fixClock_evaluate [compileExp names valueExp, compileExp names sizeExp] values target
+  have argsNotTypeError : (FlatSem.evaluate env source [valueExp, sizeExp]).2 ≠ .err (.abort .typeError) := by
+    intro failure
+    apply notTypeError
+    rw [FlatSem.evaluate]
+    simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append, flatFix, failure]
+  have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
   simp only [compile, compileExps, compileExp, compileOp, List.reverse_cons, List.reverse_nil,
     List.nil_append, List.cons_append] at ⊢
