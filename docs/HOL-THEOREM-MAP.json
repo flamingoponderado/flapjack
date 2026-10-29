@@ -1,5 +1,13 @@
 [
   {
+    "hol_path": "cakeml/compiler/backend/proofs/flat_patternProofScript.sml",
+    "hol_name": "ALOOKUP_rel_MAP_same",
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Proofs/LookupRelation.lean",
+    "lean_name": "aLookupRel_map_same",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Typed original captured in flat_pattern_install_relation_probe.out, including independent input and payload types; full source correspondence remains pending."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
     "hol_name": "simple_basic_val_rel_def",
     "lean_path": "Flapjack/Compiler/Backend/FlatProps/ValueBasics.lean",

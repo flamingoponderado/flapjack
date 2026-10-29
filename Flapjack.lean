@@ -27,6 +27,7 @@ import Flapjack.Compiler.Backend.FlatPattern.Proofs.ConfigIrrelevance
 import Flapjack.Compiler.Backend.FlatProps.ValueBasics
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.StateRelation
+import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelationCases
 import Flapjack.SemanticPrimitivesHOL.Control
 import Flapjack.SemanticPrimitivesHOL.Array
 import Flapjack.SemanticPrimitivesHOL.Primitives

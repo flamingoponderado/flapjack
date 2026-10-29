@@ -117,6 +117,31 @@ theorem aLookupRel_cons {K A B : Type} (predicate : K → Prop) (relation : A �
     simpa [holALookup, optionRel] using head selected
   · simpa [holALookup, same] using tail query selected
 
+/-- Pointwise related mapped bindings induce related association-list lookups. -/
+@[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "ALOOKUP_rel_MAP_same"]
+theorem aLookupRel_map_same {X K A B : Type} (predicate : K → Prop) (relation : A → B → Prop)
+    (f : X → K × A) (g : X → K × B) (xs : List X)
+    (pointwise : ∀ x ∈ xs, (f x).1 = (g x).1 ∧
+      (predicate (g x).1 → relation (f x).2 (g x).2)) :
+    aLookupRel predicate relation (xs.map f) (xs.map g) := by
+  induction xs with
+  | nil => exact aLookupRel_empty predicate relation
+  | cons x xs ih =>
+    have head := pointwise x (by simp)
+    have tail : ∀ y ∈ xs, (f y).1 = (g y).1 ∧
+        (predicate (g y).1 → relation (f y).2 (g y).2) := by
+      intro y member
+      exact pointwise y (by simp [member])
+    cases fx : f x with
+    | mk key leftValue =>
+     cases gx : g x with
+     | mk key' rightValue =>
+      simp only [fx, gx] at head
+      simp only [List.map_cons, fx, gx]
+      cases head.1
+      exact aLookupRel_cons predicate relation key leftValue rightValue (xs.map f) (xs.map g)
+        head.2 (ih tail)
+
 /-- Pointwise weakening of the payload relation preserves related lookups. -/
 @[hol "cakeml/compiler/backend/proofs/flat_patternProofScript.sml" "ALOOKUP_rel_mono_rel"]
 theorem aLookupRel_mono_rel {K A B : Type} (predicate : K → Prop) (relation relation' : A → B → Prop)
