@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.StateRelation
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.SmartCons
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.Recursive
 import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateLength
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
 import Mathlib.Data.List.Forall2
@@ -172,6 +173,35 @@ theorem evaluate_fn {C F : Type} (env : FlatSem.Environment FlatSem.Value)
   have positive := states.1
   simp [EvalSim, compile, compileExps, compileExp, FlatSem.evaluate, ClosSem.evaluate.eq_def, positive, states,
     EvalResultRel.value (.cons closure .nil)]
+
+/-- Recursive binding compilation extends related environments with the
+same ordered function group, then evaluates the body. -/
+theorem evaluate_letrec {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+    (names : List (Option MlString)) (values : List ClosSem.Value)
+    (source : FlatSem.State C F) (target : ClosSem.State C F)
+    (trace : MlString) (funs : List (VarN × VarN × FlatLang.Exp)) (body : FlatLang.Exp)
+    (states : StateRel source target) (environments : EnvRel env names values)
+    (safe : FlatProps.noMatFuns funs = true)
+    (bodySim : ∀ (env' : FlatSem.Environment FlatSem.Value) (names' : List (Option MlString))
+        (values' : List ClosSem.Value),
+      EnvRel env' names' values' →
+      (FlatSem.evaluate env' source [body]).2 ≠ .err (.abort .typeError) →
+      EvalSim env' names' values' source target [body])
+    (notTypeError : (FlatSem.evaluate env source [.letrec trace funs body]).2 ≠ .err (.abort .typeError)) :
+    EvalSim env names values source target [.letrec trace funs body] := by
+  have distinct : (funs.map Prod.fst).Nodup := by
+    by_contra duplicate
+    simp [FlatSem.evaluate, duplicate] at notTypeError
+  have unary := compileFuns_unary (funs.map (fun f => some f.1) ++ names) funs target.maxApp states.1
+  have extended := envRel_rec funs env names values environments distinct safe
+  have bodyNot : (FlatSem.evaluate { env with v := FlatSem.buildRecEnv funs env env.v } source [body]).2 ≠
+      .err (.abort .typeError) := by
+    simpa [FlatSem.evaluate, distinct] using notTypeError
+  have simulated := bodySim _ _ _ extended bodyNot
+  unfold EvalSim at simulated ⊢
+  simp only [compile, compileExps, compileExp] at simulated ⊢
+  rw [FlatSem.evaluate, ClosSem.evaluate.eq_def]
+  simpa only [distinct, unary, ↓reduceIte] using simulated
 
 /-- A related body simulation lifts through a raise, preserving an existing
 error or relating the raised singleton value. -/
