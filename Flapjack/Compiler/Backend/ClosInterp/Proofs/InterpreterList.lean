@@ -328,4 +328,191 @@ theorem interpreter_correct_list_success {C F : Type}
           exact interpreter_correct_list_cons_success head tail headIH tailIH env source sourceMid last target
             value tailValues headRun tailRun valid assumption related
 
+/-- The tail-error case composes both induction hypotheses after a successful head. -/
+theorem interpreter_correct_list_cons_tail_error {C F : Type}
+    (head : ClosLang.Exp) (tail : List ClosLang.Exp)
+    (headIH : ∀ (env : List ClosSem.Value) (source target sourceFinal : ClosSem.State C F)
+      (result : Result (List ClosSem.Value) ClosSem.Value),
+      ClosSem.evaluate [head] env source = (result, sourceFinal) → canInterpret head = true →
+      InterpAssum C F source.clock → StateRel source target → result ≠ .err (.abort .typeError) →
+      ∃ extra targetFinal,
+        ClosSem.evaluate [closInterpreterBody]
+          [ClosSem.makeConst (toConstant head), .block 0 [], ClosSem.listToValue env]
+          { target with clock := extra + target.clock } = (result, targetFinal) ∧
+        StateRel sourceFinal targetFinal)
+    (tailIH : ∀ (env : List ClosSem.Value) (source target sourceFinal : ClosSem.State C F)
+      (error : ErrorResult ClosSem.Value),
+      ClosSem.evaluate tail env source = (.err error, sourceFinal) → canInterpretList tail = true →
+      InterpAssum C F source.clock → StateRel source target →
+      (Result.err error : Result (List ClosSem.Value) ClosSem.Value) ≠ .err (.abort .typeError) →
+      ∃ extra targetFinal,
+        ClosSem.evaluate [closInterpreterBody]
+          [ClosSem.makeConst (toConstantList tail), .block 1 [], ClosSem.listToValue env]
+          { target with clock := extra + target.clock } = (.err error, targetFinal) ∧
+        StateRel sourceFinal targetFinal)
+    (env : List ClosSem.Value) (source sourceMid sourceFinal target : ClosSem.State C F)
+    (value : ClosSem.Value) (error : ErrorResult ClosSem.Value)
+    (headRun : ClosSem.evaluate [head] env source = (.val [value], sourceMid))
+    (tailRun : ClosSem.evaluate tail env sourceMid = (.err error, sourceFinal))
+    (valid : canInterpretList (head :: tail) = true)
+    (assumption : InterpAssum C F source.clock) (related : StateRel source target)
+    (notTypeError : (Result.err error : Result (List ClosSem.Value) ClosSem.Value) ≠ .err (.abort .typeError)) :
+    ∃ extra targetFinal,
+      ClosSem.evaluate [closInterpreterBody]
+        [ClosSem.makeConst (toConstantList (head :: tail)), .block 1 [], ClosSem.listToValue env]
+        { target with clock := extra + target.clock } = (.err error, targetFinal) ∧
+      StateRel sourceFinal targetFinal := by
+  have validParts : canInterpret head = true ∧ canInterpretList tail = true := by
+    simpa [canInterpretList] using valid
+  obtain ⟨headExtra, targetMid, targetHead, midRel⟩ :=
+    headIH env source target sourceMid (.val [value]) headRun validParts.1 assumption related (by simp)
+  have sourceBound : sourceMid.clock ≤ source.clock := by
+    have bound := ClosSem.evaluate_clock_le [head] env source
+    simpa [headRun] using bound
+  obtain ⟨tailExtra, targetFinal, targetTail, finalRel⟩ :=
+    tailIH env sourceMid targetMid sourceFinal error tailRun validParts.2
+      (interpAssum_le assumption sourceBound) midRel notTypeError
+  let offset := 3 + tailExtra
+  let enlarged := { target with clock := 3 + ((headExtra + target.clock) + offset) }
+  let enlargedMid := { targetMid with clock := targetMid.clock + offset }
+  have shiftedHead := ClosSem.evaluate_addClock.1 [closInterpreterBody]
+    [ClosSem.makeConst (toConstant head), .block 0 [], ClosSem.listToValue env]
+    { target with clock := headExtra + target.clock } targetMid (.val [value]) offset targetHead (by simp)
+  have headRun' : ClosSem.evaluate [closInterpreterBody]
+      [ClosSem.makeConst (toConstant head), .block 0 [], ClosSem.listToValue env]
+      (ClosSem.decClock 3 enlarged) = (.val [value], enlargedMid) := by
+    simpa [ClosSem.decClock, enlarged, enlargedMid] using shiftedHead
+  have tailRun' : ClosSem.evaluate [closInterpreterBody]
+      [ClosSem.makeConst (toConstantList tail), .block 1 [], ClosSem.listToValue env]
+      (ClosSem.decClock 3 enlargedMid) = (.err error, targetFinal) := by
+    have clocks : ClosSem.decClock 3 enlargedMid =
+        { targetMid with clock := tailExtra + targetMid.clock } := by
+      simp only [ClosSem.decClock, enlargedMid, offset]
+      congr 1
+      omega
+    rw [clocks]
+    exact targetTail
+  have enlargedRel : StateRel { source with clock := enlarged.clock } enlarged :=
+    stateRel_withClock related enlarged.clock
+  have enlargedMidRel : StateRel { sourceMid with clock := enlargedMid.clock } enlargedMid :=
+    stateRel_withClock midRel enlargedMid.clock
+  have enough : 3 ≤ enlarged.clock := by simp [enlarged]
+  have midEnough : 3 ≤ enlargedMid.clock := by simp [enlargedMid, offset]; omega
+  have reduction := interpreter_list_cons_tail_error { source with clock := enlarged.clock }
+    { sourceMid with clock := enlargedMid.clock } enlarged enlargedMid targetFinal enlargedRel enlargedMidRel
+    (toConstant head) (toConstantList tail) env value error enough midEnough headRun' tailRun'
+  refine ⟨3 + (headExtra + offset), targetFinal, ?_, finalRel⟩
+  simpa [toConstantList, enlarged, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using reduction
+
+/-- Inductive nonempty-list simulation for all non-type-error results. -/
+theorem interpreter_correct_list_cons {C F : Type}
+    (head : ClosLang.Exp) (tail : List ClosLang.Exp)
+    (headIH : ∀ (env : List ClosSem.Value) (source target sourceFinal : ClosSem.State C F)
+      (result : Result (List ClosSem.Value) ClosSem.Value),
+      ClosSem.evaluate [head] env source = (result, sourceFinal) → canInterpret head = true →
+      InterpAssum C F source.clock → StateRel source target → result ≠ .err (.abort .typeError) →
+      ∃ extra targetFinal,
+        ClosSem.evaluate [closInterpreterBody]
+          [ClosSem.makeConst (toConstant head), .block 0 [], ClosSem.listToValue env]
+          { target with clock := extra + target.clock } = (result, targetFinal) ∧
+        StateRel sourceFinal targetFinal)
+    (tailIH : ∀ (env : List ClosSem.Value) (source target sourceFinal : ClosSem.State C F)
+      (result : Result (List ClosSem.Value) ClosSem.Value),
+      ClosSem.evaluate tail env source = (result, sourceFinal) → canInterpretList tail = true →
+      InterpAssum C F source.clock → StateRel source target → result ≠ .err (.abort .typeError) →
+      ∃ extra targetFinal,
+        ClosSem.evaluate [closInterpreterBody]
+          [ClosSem.makeConst (toConstantList tail), .block 1 [], ClosSem.listToValue env]
+          { target with clock := extra + target.clock } =
+            (match result with
+             | .err error => .err error
+             | .val values => .val [ClosSem.listToValue values], targetFinal) ∧
+        StateRel sourceFinal targetFinal)
+    (env : List ClosSem.Value) (source target sourceFinal : ClosSem.State C F)
+    (result : Result (List ClosSem.Value) ClosSem.Value)
+    (run : ClosSem.evaluate (head :: tail) env source = (result, sourceFinal))
+    (valid : canInterpretList (head :: tail) = true)
+    (assumption : InterpAssum C F source.clock) (related : StateRel source target)
+    (notTypeError : result ≠ .err (.abort .typeError)) :
+    ∃ extra targetFinal,
+      ClosSem.evaluate [closInterpreterBody]
+        [ClosSem.makeConst (toConstantList (head :: tail)), .block 1 [], ClosSem.listToValue env]
+        { target with clock := extra + target.clock } =
+          (match result with
+           | .err error => .err error
+           | .val values => .val [ClosSem.listToValue values], targetFinal) ∧
+      StateRel sourceFinal targetFinal := by
+  cases result with
+  | val values =>
+    apply interpreter_correct_list_success head tail headIH ?_ env source target sourceFinal values run valid assumption related
+    intro env source target sourceFinal values run valid assumption related
+    exact tailIH env source target sourceFinal (.val values) run valid assumption related (by simp)
+  | err error =>
+    cases headRun : ClosSem.evaluate [head] env source with
+    | mk headResult sourceMid =>
+      cases headResult with
+      | err headError =>
+        have failed := ClosProps.evaluate_cons_error head tail env source sourceMid headError headRun
+        rw [failed] at run
+        simp at run
+        rcases run with ⟨rfl, rfl⟩
+        exact interpreter_correct_list_cons_head_error head tail headIH env source target sourceMid headError
+          headRun valid assumption related notTypeError
+      | val headValues =>
+        obtain ⟨value, rfl⟩ := ClosSem.evaluate_singleton_value head env source sourceMid headValues headRun
+        cases tailRun : ClosSem.evaluate tail env sourceMid with
+        | mk tailResult last =>
+          have sequence := ClosProps.evaluate_cons_value head tail env source sourceMid value headRun
+          rw [sequence, tailRun] at run
+          cases tailResult with
+          | val values => simp at run
+          | err tailError =>
+            simp at run
+            rcases run with ⟨rfl, rfl⟩
+            apply interpreter_correct_list_cons_tail_error head tail headIH ?_ env source sourceMid last target
+              value tailError headRun tailRun valid assumption related notTypeError
+            intro env source target sourceFinal error run valid assumption related notTypeError
+            exact tailIH env source target sourceFinal (.err error) run valid assumption related notTypeError
+
+/-- List simulation assembled from the expression simulations for its members. -/
+theorem interpreter_correct_list_of_members {C F : Type} (expressions : List ClosLang.Exp)
+    (memberIH : ∀ head ∈ expressions, ∀ (env : List ClosSem.Value)
+      (source target sourceFinal : ClosSem.State C F) (result : Result (List ClosSem.Value) ClosSem.Value),
+      ClosSem.evaluate [head] env source = (result, sourceFinal) → canInterpret head = true →
+      InterpAssum C F source.clock → StateRel source target → result ≠ .err (.abort .typeError) →
+      ∃ extra targetFinal,
+        ClosSem.evaluate [closInterpreterBody]
+          [ClosSem.makeConst (toConstant head), .block 0 [], ClosSem.listToValue env]
+          { target with clock := extra + target.clock } = (result, targetFinal) ∧
+        StateRel sourceFinal targetFinal)
+    (env : List ClosSem.Value) (source target sourceFinal : ClosSem.State C F)
+    (result : Result (List ClosSem.Value) ClosSem.Value)
+    (run : ClosSem.evaluate expressions env source = (result, sourceFinal))
+    (valid : canInterpretList expressions = true)
+    (assumption : InterpAssum C F source.clock) (related : StateRel source target)
+    (notTypeError : result ≠ .err (.abort .typeError)) :
+    ∃ extra targetFinal,
+      ClosSem.evaluate [closInterpreterBody]
+        [ClosSem.makeConst (toConstantList expressions), .block 1 [], ClosSem.listToValue env]
+        { target with clock := extra + target.clock } =
+          (match result with
+           | .err error => .err error
+           | .val values => .val [ClosSem.listToValue values], targetFinal) ∧
+      StateRel sourceFinal targetFinal := by
+  induction expressions generalizing env source target sourceFinal result with
+  | nil =>
+    simp only [ClosSem.evaluate] at run
+    cases run
+    refine ⟨0, target, ?_, related⟩
+    simpa using interpreter_list_nil env target
+  | cons head tail ih =>
+    cases result <;>
+      apply interpreter_correct_list_cons head tail (memberIH head (by simp)) ?_
+        env source target sourceFinal _ run valid assumption related notTypeError <;>
+      intro tailEnv tailSource tailTarget tailFinal tailResult tailRun tailValid tailAssumption tailRelated tailNotTypeError <;>
+      cases tailResult <;>
+      apply ih ?_ tailEnv tailSource tailTarget tailFinal _ tailRun tailValid tailAssumption tailRelated tailNotTypeError <;>
+      intro expression member <;>
+      exact memberIH expression (by simp [member])
+
 end Flapjack.Compiler.Backend.ClosInterp
