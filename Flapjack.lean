@@ -288,6 +288,8 @@ import Flapjack.Compiler.Backend.Semantics.ClosSem.Thunk
 import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyBasic
 import Flapjack.Compiler.Backend.Semantics.ClosSem.ApplyMemory
 import Flapjack.Compiler.Backend.Semantics.ClosSem.Apply
+import Flapjack.Compiler.Backend.Semantics.ClosSem.Measure
+import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateFuel
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Operations
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Conversions
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Primitives
