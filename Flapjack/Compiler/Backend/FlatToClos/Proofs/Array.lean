@@ -164,4 +164,58 @@ theorem allocArray_body_related {C F : Type} (source : FlatSem.State C F)
       storeAlloc, negative, evaluate_allocArray_body_nonnegative target trace env size targetValue negative,
       index, updated, EvalResultRel.value (.cons (ValueRel.loc true source.refs.length) .nil)]
 
+/-- Sized-array application simulation, excluding source type errors as in
+the source correctness theorem. -/
+theorem evaluate_allocArray {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+    (names : List (Option Flapjack.Basis.Pure.MlString.MlString)) (values : List ClosSem.Value)
+    (source : FlatSem.State C F) (target : ClosSem.State C F)
+    (trace : BackendCommon.Tra) (sizeExp valueExp : FlatLang.Exp)
+    (argsSim : EvalSim env names values source target [valueExp, sizeExp])
+    (notTypeError : (FlatSem.evaluate env source [.app trace (.src .aalloc) [sizeExp, valueExp]]).2 ≠
+      .err (.abort .typeError)) :
+    EvalSim env names values source target [.app trace (.src .aalloc) [sizeExp, valueExp]] := by
+  have flatFix := (FlatSem.fixClock_evaluations env source [valueExp, sizeExp] sizeExp []).1
+  have closFix := ClosSem.fixClock_evaluate [compileExp names valueExp, compileExp names sizeExp] values target
+  unfold EvalSim at argsSim ⊢
+  simp only [compile, compileExps, compileExp, compileOp, List.reverse_cons, List.reverse_nil,
+    List.nil_append, List.cons_append] at ⊢
+  simp only [compile, compileExps] at argsSim
+  rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
+  simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append, flatFix]
+  cases flatRun : FlatSem.evaluate env source [valueExp, sizeExp] with
+  | mk next flatResult =>
+    cases closRun : ClosSem.evaluate [compileExp names valueExp, compileExp names sizeExp] values target with
+    | mk closResult nextTarget =>
+      simp only [flatRun, closRun] at argsSim ⊢
+      rcases argsSim with ⟨states, results⟩
+      cases results with
+      | abort error => exact ⟨states, .abort error⟩
+      | raise related => exact ⟨states, .raise related⟩
+      | value related =>
+        have length := FlatSem.evaluate_length env source next [valueExp, sizeExp] _ flatRun
+        cases related with
+        | nil => simp at length
+        | cons head tail =>
+          cases tail with
+          | nil => simp at length
+          | cons sizeRel tail =>
+            cases tail with
+            | cons _ _ => simp at length
+            | nil =>
+              rename_i sourceValue targetValue sourceSize targetSize
+              have resultShape : (FlatSem.applyResult next (.src .aalloc) [sourceSize, sourceValue]).2 ≠
+                  .err (.abort .typeError) := by
+                have fixed := flatFix
+                rw [flatRun] at fixed
+                have h := notTypeError
+                rw [FlatSem.evaluate] at h
+                simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append] at h
+                rw [flatRun, fixed] at h
+                simpa using h
+              cases sizeRel
+              case int size =>
+                simpa using allocArray_body_related next nextTarget trace values size sourceValue targetValue states head
+              all_goals simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
+                FlatSem.doAppMemory] at resultShape
+
 end Flapjack.Compiler.Backend.FlatToClos
