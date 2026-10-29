@@ -65,3 +65,4 @@ val _ = show_thm "pattern_walk_position=" pattern_compTheory.walk_thm;
 val _ = show_thm "pattern_match_list_length=" pattern_compTheory.pmatch_list_LENGTH;
 val _ = show_thm "pattern_guard_correct=" pattern_compTheory.dt_eval_guard_pat_to_guard;
 val _ = show_thm "pattern_code_correct=" pattern_compTheory.pat_to_code_thm;
+val _ = show_thm "pattern_walk_list=" pattern_compTheory.walk_list_def;
