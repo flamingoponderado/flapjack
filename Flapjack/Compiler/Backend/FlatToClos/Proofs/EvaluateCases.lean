@@ -134,8 +134,16 @@ theorem evaluate_con {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     (source : FlatSem.State C F) (target : ClosSem.State C F)
     (trace : BackendCommon.Tra) (stamp : Option (FlatLang.CtorId × FlatLang.TypeId))
     (arguments : List FlatLang.Exp)
-    (argsSim : EvalSim env names values source target arguments.reverse) :
+    (argsSim : (FlatSem.evaluate env source arguments.reverse).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values source target arguments.reverse)
+    (notTypeError : (FlatSem.evaluate env source [.con trace stamp arguments]).2 ≠ .err (.abort .typeError)) :
     EvalSim env names values source target [.con trace stamp arguments] := by
+  have argsNotTypeError : (FlatSem.evaluate env source arguments.reverse).2 ≠ .err (.abort .typeError) := by
+    intro failure
+    apply notTypeError
+    rw [FlatSem.evaluate]
+    simp only [failure]
+  have argsSim := argsSim argsNotTypeError
   unfold EvalSim at argsSim ⊢
   simp only [compile, compileExps, compileExp] at ⊢
   simp only [compile, compileExps_reverse] at argsSim
@@ -209,8 +217,16 @@ theorem evaluate_raise {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     (names : List (Option MlString)) (values : List ClosSem.Value)
     (source : FlatSem.State C F) (target : ClosSem.State C F)
     (trace : BackendCommon.Tra) (body : FlatLang.Exp)
-    (bodySim : EvalSim env names values source target [body]) :
+    (bodySim : (FlatSem.evaluate env source [body]).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values source target [body])
+    (notTypeError : (FlatSem.evaluate env source [.raise trace body]).2 ≠ .err (.abort .typeError)) :
     EvalSim env names values source target [.raise trace body] := by
+  have bodyNotTypeError : (FlatSem.evaluate env source [body]).2 ≠ .err (.abort .typeError) := by
+    intro failure
+    apply notTypeError
+    rw [FlatSem.evaluate]
+    simp only [failure]
+  have bodySim := bodySim bodyNotTypeError
   unfold EvalSim at bodySim ⊢
   simp only [compile, compileExps, compileExp] at bodySim ⊢
   rw [FlatSem.evaluate, ClosSem.evaluate]
@@ -239,7 +255,8 @@ theorem evaluate_let {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     (source : FlatSem.State C F) (target : ClosSem.State C F)
     (trace : BackendCommon.Tra) (name : Option MlString) (first body : FlatLang.Exp)
     (environments : EnvRel env names values)
-    (firstSim : EvalSim env names values source target [first])
+    (firstSim : (FlatSem.evaluate env source [first]).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values source target [first])
     (bodySim : ∀ (sourceValue : FlatSem.Value) (targetValue : ClosSem.Value)
         (next : FlatSem.State C F) (nextTarget : ClosSem.State C F),
       ValueRel sourceValue targetValue → StateRel next nextTarget →
@@ -252,6 +269,12 @@ theorem evaluate_let {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     EvalSim env names values source target [.let_ trace name first body] := by
   have flatFix := (FlatSem.fixClock_evaluations env source [first] first []).1
   have closFix := ClosSem.fixClock_evaluate [compileExp names first] values target
+  have firstNotTypeError : (FlatSem.evaluate env source [first]).2 ≠ .err (.abort .typeError) := by
+    intro failure
+    apply notTypeError
+    rw [FlatSem.evaluate, flatFix]
+    simp only [failure]
+  have firstSim := firstSim firstNotTypeError
   unfold EvalSim at firstSim ⊢
   simp only [compile, compileExps, compileExp] at firstSim ⊢
   rw [FlatSem.evaluate, flatFix] at notTypeError ⊢
@@ -288,7 +311,8 @@ theorem evaluate_if {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     (names : List (Option MlString)) (values : List ClosSem.Value)
     (source : FlatSem.State C F) (target : ClosSem.State C F)
     (trace : BackendCommon.Tra) (condition yes no : FlatLang.Exp)
-    (conditionSim : EvalSim env names values source target [condition])
+    (conditionSim : (FlatSem.evaluate env source [condition]).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values source target [condition])
     (branchSim : ∀ (branch : Bool) (next : FlatSem.State C F) (nextTarget : ClosSem.State C F),
       StateRel next nextTarget →
       (FlatSem.evaluate env next [if branch then yes else no]).2 ≠ .err (.abort .typeError) →
@@ -297,6 +321,12 @@ theorem evaluate_if {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     EvalSim env names values source target [.if_ trace condition yes no] := by
   have flatFix := (FlatSem.fixClock_evaluations env source [condition] condition []).1
   have closFix := ClosSem.fixClock_evaluate [compileExp names condition] values target
+  have conditionNotTypeError : (FlatSem.evaluate env source [condition]).2 ≠ .err (.abort .typeError) := by
+    intro failure
+    apply notTypeError
+    rw [FlatSem.evaluate, flatFix]
+    simp only [failure]
+  have conditionSim := conditionSim conditionNotTypeError
   unfold EvalSim at conditionSim ⊢
   simp only [compile, compileExps, compileExp] at conditionSim ⊢
   rw [FlatSem.evaluate, flatFix] at notTypeError ⊢
@@ -340,7 +370,8 @@ theorem evaluate_handle {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     (source : FlatSem.State C F) (target : ClosSem.State C F)
     (trace : BackendCommon.Tra) (name : MlString) (body handler : FlatLang.Exp)
     (environments : EnvRel env names values)
-    (bodySim : EvalSim env names values source target [body])
+    (bodySim : (FlatSem.evaluate env source [body]).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values source target [body])
     (handlerSim : ∀ (sourceValue : FlatSem.Value) (targetValue : ClosSem.Value)
         (next : FlatSem.State C F) (nextTarget : ClosSem.State C F),
       ValueRel sourceValue targetValue → StateRel next nextTarget →
@@ -354,6 +385,12 @@ theorem evaluate_handle {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     EvalSim env names values source target [.handle trace body [(.pvar name, handler)]] := by
   have flatFix := (FlatSem.fixClock_evaluations env source [body] body []).1
   have closFix := ClosSem.fixClock_evaluate [compileExp names body] values target
+  have bodyNotTypeError : (FlatSem.evaluate env source [body]).2 ≠ .err (.abort .typeError) := by
+    intro failure
+    apply notTypeError
+    rw [FlatSem.evaluate, flatFix]
+    simp only [failure]
+  have bodySim := bodySim bodyNotTypeError
   unfold EvalSim at bodySim ⊢
   simp only [compile, compileExps, compileExp] at bodySim ⊢
   rw [FlatSem.evaluate, flatFix] at notTypeError ⊢
@@ -389,7 +426,8 @@ theorem evaluate_cons {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     (names : List (Option MlString)) (values : List ClosSem.Value)
     (source : FlatSem.State C F) (target : ClosSem.State C F)
     (first second : FlatLang.Exp) (rest : List FlatLang.Exp)
-    (firstSim : EvalSim env names values source target [first])
+    (firstSim : (FlatSem.evaluate env source [first]).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values source target [first])
     (tailSim : ∀ (source' : FlatSem.State C F) (target' : ClosSem.State C F), StateRel source' target' →
       (FlatSem.evaluate env source' (second :: rest)).2 ≠ .err (.abort .typeError) →
       EvalSim env names values source' target' (second :: rest))
@@ -397,6 +435,12 @@ theorem evaluate_cons {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     EvalSim env names values source target (first :: second :: rest) := by
   have flatFix := (FlatSem.fixClock_evaluations env source [first] first []).1
   have closFix := ClosSem.fixClock_evaluate [compileExp names first] values target
+  have firstNotTypeError : (FlatSem.evaluate env source [first]).2 ≠ .err (.abort .typeError) := by
+    intro failure
+    apply notTypeError
+    rw [FlatSem.evaluate, flatFix]
+    simp only [failure]
+  have firstSim := firstSim firstNotTypeError
   unfold EvalSim at firstSim ⊢
   simp only [compile, compileExps] at firstSim ⊢
   rw [FlatSem.evaluate, flatFix] at notTypeError ⊢
