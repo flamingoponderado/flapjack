@@ -554,6 +554,17 @@ theorem evaluate_word64ToFloat {C F : Type} (env : FlatSem.Environment FlatSem.V
                 SemanticPrimitivesHOL.doAppNumericCore,
                 ClosSem.evaluate, states, EvalResultRel.value (.cons (ValueRel.float64 _) .nil)]
 
+/-- Word8-to-integer conversion rejects any argument count other than one. -/
+theorem word8ToInt_wrong_arity {C F : Type} (state : FlatSem.State C F)
+    (args : List FlatSem.Value) (wrong : args.length ≠ 1) :
+    (FlatSem.applyResult state (.src (.fromTo (.wordT .w8) .intT)) args).2 = .err (.abort .typeError) := by
+  cases args with
+  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+  | cons first rest =>
+    cases rest with
+    | nil => simp at wrong
+    | cons second rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.applyNumericProjection, FlatSem.flatToValue, SemanticPrimitivesHOL.doApp, SemanticPrimitivesHOL.doAppNumericCore]
+
 /-- Converting a byte to an integer preserves its closure number when the
 argument list is syntactically unary. -/
 theorem evaluate_word8ToInt_singleton {C F : Type} (env : FlatSem.Environment FlatSem.Value)
@@ -600,5 +611,85 @@ theorem evaluate_word8ToInt_singleton {C F : Type} (env : FlatSem.Environment Fl
               rename_i sourceFields targetFields tag typeId
               cases sourceFields <;> cases typeId <;> simp_all [SemanticPrimitivesHOL.boolValue]
               split_ifs at notTypeError <;> simp_all
+
+/-- At a non-unary syntactic arity, the conversion can only propagate an
+argument error under the source non-type-error hypothesis. -/
+theorem evaluate_word8ToInt_nonUnary {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+    (names : List (Option MlString)) (values : List ClosSem.Value)
+    (source : FlatSem.State C F) (target : ClosSem.State C F)
+    (trace : BackendCommon.Tra) (args : List FlatLang.Exp) (wrong : args.length ≠ 1)
+    (argsSim : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values source target args.reverse)
+    (notTypeError : (FlatSem.evaluate env source [.app trace (.src (.fromTo (.wordT .w8) .intT)) args]).2 ≠
+      .err (.abort .typeError)) :
+    EvalSim env names values source target [.app trace (.src (.fromTo (.wordT .w8) .intT)) args] := by
+  have compiled : compileOp trace (.src (.fromTo (.wordT .w8) .intT)) (compileExps names args).reverse =
+      .let .none (compileExps names args).reverse (.var .none 0) := by
+    cases args with
+    | nil => rfl
+    | cons first rest =>
+      cases rest with
+      | nil => simp at wrong
+      | cons second rest =>
+        cases h : (compileExps names rest).reverse <;>
+          simp [compileOp, arg1, compileExps, List.reverse_cons, h]
+  have flatFix := (FlatSem.fixClock_evaluations env source args.reverse (.lit .none (.intLit 0)) []).1
+  have closFix := ClosSem.fixClock_evaluate (compileExps names args).reverse values target
+  have argsNotTypeError : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) := by
+    intro failure
+    apply notTypeError
+    rw [FlatSem.evaluate]
+    simp only [flatFix, failure]
+  have argsSim := argsSim argsNotTypeError
+  unfold EvalSim at argsSim ⊢
+  simp only [compile, compileExps, compileExp, compiled] at ⊢
+  simp only [compile, compileExps_reverse] at argsSim
+  rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
+  simp only [flatFix]
+  cases flatRun : FlatSem.evaluate env source args.reverse with
+  | mk next flatResult =>
+    cases closRun : ClosSem.evaluate (compileExps names args).reverse values target with
+    | mk closResult nextTarget =>
+      simp only [flatRun, closRun] at argsSim ⊢
+      rcases argsSim with ⟨states, results⟩
+      cases results with
+      | abort error => exact ⟨states, .abort error⟩
+      | raise related => exact ⟨states, .raise related⟩
+      | value related =>
+        rename_i sourceArgs targetArgs
+        have resultShape : (FlatSem.applyResult next (.src (.fromTo (.wordT .w8) .intT)) sourceArgs.reverse).2 ≠
+            .err (.abort .typeError) := by
+          have fixed := flatFix
+          rw [flatRun] at fixed
+          have h := notTypeError
+          rw [FlatSem.evaluate, flatRun, fixed] at h
+          simpa using h
+        have length := FlatSem.evaluate_length env source next args.reverse sourceArgs flatRun
+        have wrongValues : sourceArgs.reverse.length ≠ 1 := by
+          intro one
+          apply wrong
+          simpa using length.symm.trans (by simpa using one)
+        exact False.elim (resultShape (word8ToInt_wrong_arity next sourceArgs.reverse wrongValues))
+
+/-- Word8-to-integer conversion preserves the proof-side evaluation relation
+for arbitrary argument lists. -/
+theorem evaluate_word8ToInt {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+    (names : List (Option MlString)) (values : List ClosSem.Value)
+    (source : FlatSem.State C F) (target : ClosSem.State C F)
+    (trace : BackendCommon.Tra) (args : List FlatLang.Exp)
+    (argsSim : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values source target args.reverse)
+    (notTypeError : (FlatSem.evaluate env source [.app trace (.src (.fromTo (.wordT .w8) .intT)) args]).2 ≠
+      .err (.abort .typeError)) :
+    EvalSim env names values source target [.app trace (.src (.fromTo (.wordT .w8) .intT)) args] := by
+  cases args with
+  | nil => exact evaluate_word8ToInt_nonUnary env names values source target trace [] (by simp) argsSim notTypeError
+  | cons first rest =>
+    cases rest with
+    | nil =>
+      exact evaluate_word8ToInt_singleton env names values source target trace first (by simpa using argsSim) notTypeError
+    | cons second rest =>
+      exact evaluate_word8ToInt_nonUnary env names values source target trace (first :: second :: rest)
+        (by simp) argsSim notTypeError
 
 end Flapjack.Compiler.Backend.FlatToClos
