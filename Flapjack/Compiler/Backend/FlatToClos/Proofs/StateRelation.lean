@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.Semantics.ClosSem.State
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Semantics
 import Flapjack.Compiler.Backend.BackendProps.Pure
+import Flapjack.Misc.ShiftSeq
 
 /-! State relations for the proof-side flat-to-closure simulation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
@@ -30,6 +31,20 @@ def installConfigRel {C : Type} (source : FlatSem.InstallConfig C)
   oracle = pureCo incCompileDecsProofSide ∘ source.compileOracle ∧
   source.compile = pureCc incCompileDecsProofSide compiler
 
+/-- Advancing both compilation oracles preserves the installation relation.
+This is proof-side infrastructure; correspondence of its carriers is open. -/
+theorem installConfigRel_shift {C : Type} (source : FlatSem.InstallConfig C)
+    (oracle : ClosSem.CompileOracle C) (compiler : ClosSem.Compiler C)
+    (related : installConfigRel source oracle compiler) (offset : Nat) :
+    installConfigRel { source with compileOracle := Flapjack.holShiftSeq offset source.compileOracle }
+      (Flapjack.holShiftSeq offset oracle) compiler := by
+  rcases related with ⟨safe, oracleEq, compileEq⟩
+  refine ⟨?_, ?_, compileEq⟩
+  · intro index
+    exact safe (index + offset)
+  · rw [oracleEq]
+    rfl
+
 /-- Relation on optional global slots. -/
 def optionalValueRel : Option FlatSem.Value → Option ClosSem.Value → Prop
   | none, none => True
@@ -43,6 +58,16 @@ def StateRel {C F : Type} (source : FlatSem.State C F) (target : ClosSem.State C
   StoreRel source.refs target.refs ∧ target.globals ≠ [] ∧
   List.Forall₂ optionalValueRel source.globals target.globals.tail ∧
   installConfigRel source.evalConfig target.compileOracle target.compile
+
+/-- Advance the related source and closure installation oracles without
+changing the rest of either state. -/
+theorem stateRel_shiftInstall {C F : Type} {source : FlatSem.State C F} {target : ClosSem.State C F}
+    (related : StateRel source target) (offset : Nat) :
+    StateRel { source with evalConfig :=
+      { source.evalConfig with compileOracle := Flapjack.holShiftSeq offset source.evalConfig.compileOracle } }
+      { target with compileOracle := Flapjack.holShiftSeq offset target.compileOracle } := by
+  rcases related with ⟨maxApp, ffi, clock, store, globals, values, install⟩
+  exact ⟨maxApp, ffi, clock, store, globals, values, installConfigRel_shift _ _ _ install offset⟩
 
 /-- A related scalar reference is represented by a singleton value array. -/
 theorem lookup_ref {C F : Type} {source : FlatSem.State C F} {target : ClosSem.State C F}
