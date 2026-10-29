@@ -338,6 +338,8 @@ import Flapjack.Compiler.Backend.FlatPattern.Proofs.ThunkEvaluation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveMemory
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveArray
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveByteArray
+import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveFFI
+import Flapjack.Compiler.Backend.FlatPattern.Proofs.PrimitiveThunk
 import Flapjack.Compiler.Backend.PatternSemantics.Semantics
 import Flapjack.Compiler.Backend.PatternComp.Proofs.RowSelection
 import Flapjack.Compiler.Backend.PatternComp.Proofs.GuardCompilation
