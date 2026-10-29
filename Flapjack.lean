@@ -446,6 +446,7 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.IntegerOperations
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.WordOperations
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.InstallDecoding
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Install
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.SmartCons
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvaluateCases
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.Thunk
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.BlockOperations

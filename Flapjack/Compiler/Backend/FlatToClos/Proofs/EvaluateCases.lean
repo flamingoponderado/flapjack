@@ -1,6 +1,8 @@
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.StateRelation
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.SmartCons
 import Flapjack.Compiler.Backend.Semantics.FlatSem.EvaluateLength
 import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateClock
+import Mathlib.Data.List.Forall2
 
 /-! Initial cases of the proof-side flat-to-closure evaluator simulation. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
@@ -54,6 +56,16 @@ def EvalSim {C F : Type} (env : FlatSem.Environment FlatSem.Value)
   let sourceResult := FlatSem.evaluate env source expressions
   let targetResult := ClosSem.evaluate (compile names expressions) values target
   StateRel sourceResult.1 targetResult.2 ∧ EvalResultRel sourceResult.2 targetResult.1
+
+/-- Compilation preserves the evaluation order of reversed argument lists. -/
+theorem compileExps_reverse (names : List (Option MlString)) (expressions : List FlatLang.Exp) :
+    compileExps names expressions.reverse = (compileExps names expressions).reverse := by
+  have mapEq : ∀ xs : List FlatLang.Exp, compileExps names xs = xs.map (compileExp names) := by
+    intro xs
+    induction xs with
+    | nil => rfl
+    | cons head tail ih => simp [compileExps, ih]
+  simp [mapEq]
 
 /-- The empty expression list preserves the related state and returns empty
 related lists. -/
@@ -113,6 +125,38 @@ theorem evaluate_con_nil {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     simp [EvalSim, compile, compileExps, compileExp, smartCons, FlatSem.evaluate,
       ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp, ClosSem.applyBlock, states,
       EvalResultRel.value (.cons (ValueRel.con .nil) .nil)]
+
+/-- Constructor translation preserves evaluation when its reversed
+argument list is simulated. -/
+theorem evaluate_con {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+    (names : List (Option MlString)) (values : List ClosSem.Value)
+    (source : FlatSem.State C F) (target : ClosSem.State C F)
+    (trace : BackendCommon.Tra) (stamp : Option (FlatLang.CtorId × FlatLang.TypeId))
+    (arguments : List FlatLang.Exp)
+    (argsSim : EvalSim env names values source target arguments.reverse) :
+    EvalSim env names values source target [.con trace stamp arguments] := by
+  unfold EvalSim at argsSim ⊢
+  simp only [compile, compileExps, compileExp] at ⊢
+  simp only [compile, compileExps_reverse] at argsSim
+  rw [FlatSem.evaluate, smartCons_evaluate, ClosSem.evaluate, ClosSem.fixClock_evaluate]
+  cases flatRun : FlatSem.evaluate env source arguments.reverse with
+  | mk next flatResult =>
+    cases closRun : ClosSem.evaluate (compileExps names arguments).reverse values target with
+    | mk closResult nextTarget =>
+      simp only [flatRun, closRun] at argsSim ⊢
+      rcases argsSim with ⟨states, results⟩
+      cases results with
+      | abort error => exact ⟨states, .abort error⟩
+      | raise related => exact ⟨states, .raise related⟩
+      | value related =>
+        cases stamp with
+        | none =>
+          simp [ClosSem.doApp, ClosSem.applyBlock, states,
+            EvalResultRel.value (.cons (ValueRel.tuple (List.rel_reverse related)) .nil)]
+        | some stamp =>
+          obtain ⟨tag, typeId⟩ := stamp
+          simp [ClosSem.doApp, ClosSem.applyBlock, states,
+            EvalResultRel.value (.cons (ValueRel.con (List.rel_reverse related)) .nil)]
 
 /-- A match-free flat function compiles to a related unary closure when the
 target supports unary calls. -/
