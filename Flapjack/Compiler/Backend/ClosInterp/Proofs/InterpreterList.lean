@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.ClosInterp.Proofs.InterpreterTick
 import Flapjack.Compiler.Backend.Semantics.ClosProps.Evaluate
+import Flapjack.Compiler.Backend.Semantics.ClosSem.EvaluateLength
 
 /-! Nonempty expression-list interpretation. Evaluator and state carriers
 remain proof-side and await full HOL correspondence review. -/
@@ -200,5 +201,131 @@ theorem interpreter_correct_list_cons_head_error {C F : Type}
     enlargedRel (toConstant head) (toConstantList tail) env error enough headRun'
   refine ⟨3 + extra, targetFinal, ?_, finalRel⟩
   simpa [toConstantList, enlarged, Nat.add_assoc] using reduction
+
+/-- A successful head and tail compose into the successful nonempty-list
+simulation. The head run may be extended to provide the tail's clock. -/
+theorem interpreter_correct_list_cons_success {C F : Type}
+    (head : ClosLang.Exp) (tail : List ClosLang.Exp)
+    (headIH : ∀ (env : List ClosSem.Value) (source target sourceFinal : ClosSem.State C F)
+      (result : Result (List ClosSem.Value) ClosSem.Value),
+      ClosSem.evaluate [head] env source = (result, sourceFinal) → canInterpret head = true →
+      InterpAssum C F source.clock → StateRel source target → result ≠ .err (.abort .typeError) →
+      ∃ extra targetFinal,
+        ClosSem.evaluate [closInterpreterBody]
+          [ClosSem.makeConst (toConstant head), .block 0 [], ClosSem.listToValue env]
+          { target with clock := extra + target.clock } = (result, targetFinal) ∧
+        StateRel sourceFinal targetFinal)
+    (tailIH : ∀ (env : List ClosSem.Value) (source target sourceFinal : ClosSem.State C F)
+      (values : List ClosSem.Value),
+      ClosSem.evaluate tail env source = (.val values, sourceFinal) → canInterpretList tail = true →
+      InterpAssum C F source.clock → StateRel source target →
+      ∃ extra targetFinal,
+        ClosSem.evaluate [closInterpreterBody]
+          [ClosSem.makeConst (toConstantList tail), .block 1 [], ClosSem.listToValue env]
+          { target with clock := extra + target.clock } = (.val [ClosSem.listToValue values], targetFinal) ∧
+        StateRel sourceFinal targetFinal)
+    (env : List ClosSem.Value) (source sourceMid sourceFinal target : ClosSem.State C F)
+    (value : ClosSem.Value) (values : List ClosSem.Value)
+    (headRun : ClosSem.evaluate [head] env source = (.val [value], sourceMid))
+    (tailRun : ClosSem.evaluate tail env sourceMid = (.val values, sourceFinal))
+    (valid : canInterpretList (head :: tail) = true)
+    (assumption : InterpAssum C F source.clock) (related : StateRel source target) :
+    ∃ extra targetFinal,
+      ClosSem.evaluate [closInterpreterBody]
+        [ClosSem.makeConst (toConstantList (head :: tail)), .block 1 [], ClosSem.listToValue env]
+        { target with clock := extra + target.clock } = (.val [ClosSem.listToValue (value :: values)], targetFinal) ∧
+      StateRel sourceFinal targetFinal := by
+  have validParts : canInterpret head = true ∧ canInterpretList tail = true := by
+    simpa [canInterpretList] using valid
+  obtain ⟨headExtra, targetMid, targetHead, midRel⟩ :=
+    headIH env source target sourceMid (.val [value]) headRun validParts.1 assumption related (by simp)
+  have sourceBound : sourceMid.clock ≤ source.clock := by
+    have bound := ClosSem.evaluate_clock_le [head] env source
+    simpa [headRun] using bound
+  obtain ⟨tailExtra, targetFinal, targetTail, finalRel⟩ :=
+    tailIH env sourceMid targetMid sourceFinal values tailRun validParts.2
+      (interpAssum_le assumption sourceBound) midRel
+  let offset := 3 + tailExtra
+  let enlarged := { target with clock := 3 + ((headExtra + target.clock) + offset) }
+  let enlargedMid := { targetMid with clock := targetMid.clock + offset }
+  have shiftedHead := ClosSem.evaluate_addClock.1 [closInterpreterBody]
+    [ClosSem.makeConst (toConstant head), .block 0 [], ClosSem.listToValue env]
+    { target with clock := headExtra + target.clock } targetMid (.val [value]) offset targetHead (by simp)
+  have headRun' : ClosSem.evaluate [closInterpreterBody]
+      [ClosSem.makeConst (toConstant head), .block 0 [], ClosSem.listToValue env]
+      (ClosSem.decClock 3 enlarged) = (.val [value], enlargedMid) := by
+    simpa [ClosSem.decClock, enlarged, enlargedMid] using shiftedHead
+  have tailRun' : ClosSem.evaluate [closInterpreterBody]
+      [ClosSem.makeConst (toConstantList tail), .block 1 [], ClosSem.listToValue env]
+      (ClosSem.decClock 3 enlargedMid) = (.val [ClosSem.listToValue values], targetFinal) := by
+    have clocks : ClosSem.decClock 3 enlargedMid =
+        { targetMid with clock := tailExtra + targetMid.clock } := by
+      simp only [ClosSem.decClock, enlargedMid, offset]
+      congr 1
+      omega
+    rw [clocks]
+    exact targetTail
+  have enlargedRel : StateRel { source with clock := enlarged.clock } enlarged :=
+    stateRel_withClock related enlarged.clock
+  have enlargedMidRel : StateRel { sourceMid with clock := enlargedMid.clock } enlargedMid :=
+    stateRel_withClock midRel enlargedMid.clock
+  have enough : 3 ≤ enlarged.clock := by simp [enlarged]
+  have midEnough : 3 ≤ enlargedMid.clock := by simp [enlargedMid, offset]; omega
+  have reduction := interpreter_list_cons_success { source with clock := enlarged.clock }
+    { sourceMid with clock := enlargedMid.clock } enlarged enlargedMid targetFinal enlargedRel enlargedMidRel
+    (toConstant head) (toConstantList tail) env value values enough midEnough headRun' tailRun'
+  refine ⟨3 + (headExtra + offset), targetFinal, ?_, finalRel⟩
+  simpa [toConstantList, enlarged, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using reduction
+
+theorem interpreter_correct_list_success {C F : Type}
+    (head : ClosLang.Exp) (tail : List ClosLang.Exp)
+    (headIH : ∀ (env : List ClosSem.Value) (source target sourceFinal : ClosSem.State C F)
+      (result : Result (List ClosSem.Value) ClosSem.Value),
+      ClosSem.evaluate [head] env source = (result, sourceFinal) → canInterpret head = true →
+      InterpAssum C F source.clock → StateRel source target → result ≠ .err (.abort .typeError) →
+      ∃ extra targetFinal,
+        ClosSem.evaluate [closInterpreterBody]
+          [ClosSem.makeConst (toConstant head), .block 0 [], ClosSem.listToValue env]
+          { target with clock := extra + target.clock } = (result, targetFinal) ∧
+        StateRel sourceFinal targetFinal)
+    (tailIH : ∀ (env : List ClosSem.Value) (source target sourceFinal : ClosSem.State C F)
+      (values : List ClosSem.Value),
+      ClosSem.evaluate tail env source = (.val values, sourceFinal) → canInterpretList tail = true →
+      InterpAssum C F source.clock → StateRel source target →
+      ∃ extra targetFinal,
+        ClosSem.evaluate [closInterpreterBody]
+          [ClosSem.makeConst (toConstantList tail), .block 1 [], ClosSem.listToValue env]
+          { target with clock := extra + target.clock } = (.val [ClosSem.listToValue values], targetFinal) ∧
+        StateRel sourceFinal targetFinal)
+    (env : List ClosSem.Value) (source target sourceFinal : ClosSem.State C F)
+    (values : List ClosSem.Value)
+    (run : ClosSem.evaluate (head :: tail) env source = (.val values, sourceFinal))
+    (valid : canInterpretList (head :: tail) = true)
+    (assumption : InterpAssum C F source.clock) (related : StateRel source target) :
+    ∃ extra targetFinal,
+      ClosSem.evaluate [closInterpreterBody]
+        [ClosSem.makeConst (toConstantList (head :: tail)), .block 1 [], ClosSem.listToValue env]
+        { target with clock := extra + target.clock } = (.val [ClosSem.listToValue values], targetFinal) ∧
+      StateRel sourceFinal targetFinal := by
+  cases headRun : ClosSem.evaluate [head] env source with
+  | mk result sourceMid =>
+    cases result with
+    | err error =>
+      have failed := ClosProps.evaluate_cons_error head tail env source sourceMid error headRun
+      rw [failed] at run
+      simp at run
+    | val headValues =>
+      obtain ⟨value, rfl⟩ := ClosSem.evaluate_singleton_value head env source sourceMid headValues headRun
+      cases tailRun : ClosSem.evaluate tail env sourceMid with
+      | mk tailResult last =>
+        have sequence := ClosProps.evaluate_cons_value head tail env source sourceMid value headRun
+        rw [sequence, tailRun] at run
+        cases tailResult with
+        | err error => simp at run
+        | val tailValues =>
+          simp at run
+          rcases run with ⟨rfl, rfl⟩
+          exact interpreter_correct_list_cons_success head tail headIH tailIH env source sourceMid last target
+            value tailValues headRun tailRun valid assumption related
 
 end Flapjack.Compiler.Backend.ClosInterp
