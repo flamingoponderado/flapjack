@@ -328,6 +328,7 @@ import Flapjack.Compiler.Backend.PatternSemantics.Semantics
 import Flapjack.Compiler.Backend.PatternComp.Proofs.RowSelection
 import Flapjack.Compiler.Backend.PatternComp.Proofs.GuardCompilation
 import Flapjack.Compiler.Backend.PatternExh.Proofs.Soundness
+import Flapjack.Compiler.Backend.PatternComp.Proofs.Correctness
 import Flapjack.Test.PatternSemantics
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StoreValueRelCases
 import Flapjack.Compiler.Backend.SourceLet.Proofs
