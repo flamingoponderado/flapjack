@@ -14,6 +14,64 @@ require additional induction hypotheses. This is not a reviewed HOL port. -/
 namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.SemanticPrimitivesHOL Flapjack.AstHOL Flapjack.Basis.Pure.MlString
 
+/-- These source operators have no ordinary Flat semantics: after argument
+evaluation they abort with a type error. -/
+theorem rejectedSourceOp_apply {C F : Type} (state : FlatSem.State C F)
+    (op : AstHOL.Op) (args : List FlatSem.Value)
+    (rejected : op = .opderef ∨ op = .aallocEmpty ∨ op = .envId) :
+    (FlatSem.applyResult state (.src op) args).2 = .err (.abort .typeError) := by
+  rcases rejected with rfl | rfl | rfl <;>
+    simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric,
+      FlatSem.doAppMemory, FlatSem.doAppData, FlatSem.doAppCopy]
+
+/-- The source operators without ordinary Flat semantics preserve argument
+errors; successful arguments contradict the non-type-error premise. -/
+theorem evaluate_rejectedSourceOp {C F : Type} (env : FlatSem.Environment FlatSem.Value)
+    (names : List (Option MlString)) (values : List ClosSem.Value)
+    (source : FlatSem.State C F) (target : ClosSem.State C F)
+    (trace : BackendCommon.Tra) (op : AstHOL.Op) (args : List FlatLang.Exp)
+    (rejected : op = .opderef ∨ op = .aallocEmpty ∨ op = .envId)
+    (argsSim : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values source target args.reverse)
+    (notTypeError : (FlatSem.evaluate env source [.app trace (.src op) args]).2 ≠
+      .err (.abort .typeError)) :
+    EvalSim env names values source target [.app trace (.src op) args] := by
+  have flatFix := (FlatSem.fixClock_evaluations env source args.reverse (.lit .none (.intLit 0)) []).1
+  have closFix := ClosSem.fixClock_evaluate (compileExps names args).reverse values target
+  have argsNotTypeError : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) := by
+    intro failure
+    apply notTypeError
+    rw [FlatSem.evaluate]
+    simp only [flatFix, failure]
+  have argsSim := argsSim argsNotTypeError
+  unfold EvalSim at argsSim ⊢
+  simp only [compile, compileExps_reverse] at argsSim
+  simp only [compile, compileExps] at ⊢
+  have compiled : compileExp names (.app trace (.src op) args) =
+      .let .none (compileExps names args).reverse (.var .none 0) := by
+    rcases rejected with rfl | rfl | rfl <;> simp [compileExp, compileOp]
+  rw [compiled, FlatSem.evaluate, ClosSem.evaluate, closFix]
+  simp only [flatFix]
+  cases flatRun : FlatSem.evaluate env source args.reverse with
+  | mk next flatResult =>
+    cases closRun : ClosSem.evaluate (compileExps names args).reverse values target with
+    | mk closResult nextTarget =>
+      simp only [flatRun, closRun] at argsSim ⊢
+      rcases argsSim with ⟨states, results⟩
+      cases results with
+      | abort error => exact ⟨states, .abort error⟩
+      | raise related => exact ⟨states, .raise related⟩
+      | value related =>
+        rename_i sourceArgs targetArgs
+        have failure : (FlatSem.applyResult next (.src op) sourceArgs.reverse).2 =
+            .err (.abort .typeError) := rejectedSourceOp_apply next op _ rejected
+        have fixed := flatFix
+        rw [flatRun] at fixed
+        apply False.elim
+        apply notTypeError
+        rw [FlatSem.evaluate, flatRun, fixed]
+        rcases rejected with rfl | rfl | rfl <;> simpa using failure
+
 /-- Operators whose simulations require only argument evaluation, except
 for conversion's explicit nested-expression induction hypotheses. -/
 inductive DirectSourceOp : AstHOL.Op → Prop where
@@ -24,6 +82,9 @@ inductive DirectSourceOp : AstHOL.Op → Prop where
   | ffi (name : MlString) : DirectSourceOp (.ffi name)
   | allocThunk (mode : ThunkMode) : DirectSourceOp (.thunkOp (.allocThunk mode))
   | updateThunk (mode : ThunkMode) : DirectSourceOp (.thunkOp (.updateThunk mode))
+  | opderef : DirectSourceOp .opderef
+  | aallocEmpty : DirectSourceOp .aallocEmpty
+  | envId : DirectSourceOp .envId
   | equality : DirectSourceOp .equality
   | opref : DirectSourceOp .opref
   | aw8alloc : DirectSourceOp .aw8alloc
@@ -56,6 +117,60 @@ inductive DirectSourceOp : AstHOL.Op → Prop where
   | listAppend : DirectSourceOp .listAppend
   | configGC : DirectSourceOp .configGC
 
+/-- Every source operator is either covered by the direct dispatcher or is
+one of the four cases requiring separate control-flow simulation. -/
+theorem directSourceOp_or_special (op : AstHOL.Op) :
+    DirectSourceOp op ∨ op = .opapp ∨ op = .opassign ∨ op = .eval ∨
+      op = .thunkOp .forceThunk := by
+  cases op with
+  | arith action typ => exact Or.inl (by constructor)
+  | fromTo a b => exact Or.inl (by constructor)
+  | shift width shift amount => exact Or.inl (by constructor)
+  | equality => exact Or.inl (.equality)
+  | test test typ => exact Or.inl (by constructor)
+  | opapp => exact Or.inr (by simp)
+  | opassign => exact Or.inr (by simp)
+  | opref => exact Or.inl (.opref)
+  | opderef => exact Or.inl (.opderef)
+  | aw8alloc => exact Or.inl (.aw8alloc)
+  | aw8sub => exact Or.inl (.aw8sub)
+  | aw8length => exact Or.inl (.aw8length)
+  | aw8update => exact Or.inl (.aw8update)
+  | copyStrStr => exact Or.inl (.copyStrStr)
+  | copyStrAw8 => exact Or.inl (.copyStrAw8)
+  | copyAw8Str => exact Or.inl (.copyAw8Str)
+  | copyAw8Aw8 => exact Or.inl (.copyAw8Aw8)
+  | xorAw8StrUnsafe => exact Or.inl (.xorAw8StrUnsafe)
+  | implode => exact Or.inl (.implode)
+  | explode => exact Or.inl (.explode)
+  | strsub => exact Or.inl (.strsub)
+  | strlen => exact Or.inl (.strlen)
+  | strcat => exact Or.inl (.strcat)
+  | vfromList => exact Or.inl (.vfromList)
+  | vsub => exact Or.inl (.vsub)
+  | vlength => exact Or.inl (.vlength)
+  | aalloc => exact Or.inl (.aalloc)
+  | aallocEmpty => exact Or.inl (.aallocEmpty)
+  | aallocFixed => exact Or.inl (.aallocFixed)
+  | asub => exact Or.inl (.asub)
+  | alength => exact Or.inl (.alength)
+  | aupdate => exact Or.inl (.aupdate)
+  | vsubUnsafe => exact Or.inl (.vsubUnsafe)
+  | asubUnsafe => exact Or.inl (.asubUnsafe)
+  | aupdateUnsafe => exact Or.inl (.aupdateUnsafe)
+  | aw8subUnsafe => exact Or.inl (.aw8subUnsafe)
+  | aw8updateUnsafe => exact Or.inl (.aw8updateUnsafe)
+  | thunkOp op =>
+    cases op with
+    | forceThunk => exact Or.inr (by simp)
+    | allocThunk mode => exact Or.inl (.allocThunk mode)
+    | updateThunk mode => exact Or.inl (.updateThunk mode)
+  | listAppend => exact Or.inl (.listAppend)
+  | configGC => exact Or.inl (.configGC)
+  | ffi _ => exact Or.inl (by constructor)
+  | eval => exact Or.inr (by simp)
+  | envId => exact Or.inl (.envId)
+
 /-- Ordinary source operator compilation preserves the proof-side evaluator
 relation, assuming the argument and nested conversion expressions simulate. -/
 theorem evaluate_directSourceOp {C F : Type} (env : FlatSem.Environment FlatSem.Value)
@@ -84,6 +199,9 @@ theorem evaluate_directSourceOp {C F : Type} (env : FlatSem.Environment FlatSem.
   | ffi name => exact evaluate_ffi env names values source target trace name args argsSim notTypeError
   | allocThunk mode => exact evaluate_allocThunk env names values source target trace mode args argsSim notTypeError
   | updateThunk mode => exact evaluate_updateThunk env names values source target trace mode args argsSim notTypeError
+  | opderef => exact evaluate_rejectedSourceOp env names values source target trace .opderef args (Or.inl rfl) argsSim notTypeError
+  | aallocEmpty => exact evaluate_rejectedSourceOp env names values source target trace .aallocEmpty args (Or.inr (Or.inl rfl)) argsSim notTypeError
+  | envId => exact evaluate_rejectedSourceOp env names values source target trace .envId args (Or.inr (Or.inr rfl)) argsSim notTypeError
   | equality => exact evaluate_polymorphicEquality env names values source target trace args argsSim notTypeError
   | opref => exact evaluate_ref env names values source target trace args argsSim notTypeError
   | aw8alloc => exact evaluate_allocByteArray env names values source target trace args argsSim notTypeError
