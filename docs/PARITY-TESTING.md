@@ -467,6 +467,9 @@ products, and datatype matches through a module. It
 also covers mutable references, captured reference updates, nested exception
 handlers, datatypes with several constructor arities, array tabulation,
 word shifts, local tail recursion, division exception handling, and list mapping. It
+also covers Fibonacci recursion, a fold with arithmetic, string-valued pattern
+branches, a reused captured function, nullary exception handling, two payload
+constructors, an array update after tabulation, and a curried closure. It
 also compares complete assembly for a caught out-of-bounds array access and
 word shifts through the top bit of a 64-bit word. Nested list and tuple
 patterns, signed division and remainder, and addition of a large integer
@@ -488,7 +491,7 @@ For deterministic generated inputs, run
 after building `cake`. The script verifies the pinned compiler provenance and
 compares exit status and complete stdout and stderr for generated parser and
 type-checking inputs, generated S-expression output, nested expression and
-lexical edge cases, arbitrary byte input in expressions, strings and comments,
+lexical edge cases, random token sequences in both output modes, arbitrary byte input in expressions, strings and comments,
 decimal string and character escapes for all 256 bytes, and successful programs
 compiled to RISC-V, including generated datatype,
 closure, exception, reference, module, recursion, and mutable array examples,
@@ -501,7 +504,7 @@ valid flag values and generated combinations, including duplicate flags and
 configuration-error precedence. Case counts can be changed with
 `--type-cases`, `--sexp-cases`, `--structured-cases`, `--lex-cases`,
 `--byte-cases`, `--raw-byte-cases`, `--declaration-cases`, `--compile-cases`,
-`--rich-cases`, `--config-cases`, and `--config-error-cases` (zero skips the
+`--rich-cases`, `--token-cases`, `--config-cases`, and `--config-error-cases` (zero skips the
 option matrix). `--type-seed`, `--edge-seed`, and
 `--compile-seed` select reproducible random inputs. These samples do not prove
 general parity. Set `--raw-byte-cases=1536` to compare each byte in all

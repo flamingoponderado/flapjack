@@ -52,6 +52,10 @@ CONFIG_FLAGS = ["--sexp=", "--exclude_prelude=", "--skip_type_inference=", "--ma
                 "--hash_size="]
 CONFIG_VALUES = ["", "abc", "-1", "+1", "00", "01", " 1", "1 ", "1a", "true", "false",
                  "True", "FALSE", "gen", "gen,", "gen1,,2", "gen1,xx,3", "none", "riscv"]
+TOKEN_WORDS = ["val", "fun", "type", "datatype", "exception", "local", "in", "end", "let",
+               "structure", "struct", "case", "of", "if", "then", "else", "fn", "x", "y",
+               "A", "int", "True", "0", "1", "(", ")", "[", "]", "=", ":", ";", "|",
+               ",", "+", "=>", "::", "_", "\n"]
 
 
 def type_program(rng):
@@ -230,6 +234,8 @@ def main():
                         help="nested expression, pattern, type and declaration cases")
     parser.add_argument("--lex-cases", type=int, default=100,
                         help="comment, literal, identifier and malformed-token cases")
+    parser.add_argument("--token-cases", type=int, default=100,
+                        help="random token sequences, including malformed declarations")
     parser.add_argument("--raw-byte-cases", type=int, default=100,
                         help="arbitrary source bytes including non-UTF-8 lexer inputs")
     parser.add_argument("--type-seed", type=int, default=42)
@@ -239,7 +245,7 @@ def main():
     args = parser.parse_args()
     if (args.type_cases < 0 or args.compile_cases < 0 or args.rich_cases < 0 or args.sexp_cases < 0 or
             args.declaration_cases < 0 or args.config_cases < 0 or args.config_error_cases < 0 or
-            args.structured_cases < 0 or args.lex_cases < 0 or args.raw_byte_cases < 0 or
+            args.structured_cases < 0 or args.lex_cases < 0 or args.token_cases < 0 or args.raw_byte_cases < 0 or
             not 0 <= args.byte_cases <= 256 or args.timeout <= 0):
         parser.error("case counts must be nonnegative, byte-cases at most 256, and timeout positive")
     parity.check_pinned_reference(args.reference)
@@ -269,6 +275,12 @@ def main():
         mode = edge_rng.choice(["--types", "--print_sexp"])
         compare(args.reference, args.cake, [mode, "--exclude_prelude=true"], source, args.timeout, False)
     print(f"{args.lex_cases} lexical edge cases match pinned CakeML", flush=True)
+    token_rng = random.Random(args.edge_seed ^ 17981)
+    for _ in range(args.token_cases):
+        source = " ".join(token_rng.choices(TOKEN_WORDS, k=token_rng.randrange(1, 24)))
+        mode = token_rng.choice(["--types", "--print_sexp"])
+        compare(args.reference, args.cake, [mode, "--exclude_prelude=true"], source, args.timeout, False)
+    print(f"{args.token_cases} random token sequences match pinned CakeML", flush=True)
     byte_rng = random.Random(args.edge_seed ^ 91200)
     byte_alphabet = (b"abcdefghijklmnopqrstuvwxyz0123456789~!@#$%^&*+-/=<>?|:.\'\"_()[]{};\\ \n\t\r"
                      + bytes(range(256)))
