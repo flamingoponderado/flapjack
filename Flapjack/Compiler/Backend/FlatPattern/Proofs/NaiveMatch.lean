@@ -7,6 +7,14 @@ open Flapjack Flapjack.AstHOL Flapjack.Compiler.Backend
 open Flapjack.Compiler.Backend.BackendCommon
 open Flapjack.SemanticPrimitivesHOL (storeLookup)
 
+/-- Literal type compatibility is reflexive and symmetric. -/
+theorem litSameType_refl (lit : Lit) : Flapjack.SemanticPrimitivesHOL.litSameType lit lit = true := by
+  cases lit <;> rfl
+
+theorem litSameType_symm (left right : Lit) :
+    Flapjack.SemanticPrimitivesHOL.litSameType left right = Flapjack.SemanticPrimitivesHOL.litSameType right left := by
+  cases left <;> cases right <;> rfl
+
 /-- Evaluating the flat Boolean expression yields the corresponding value. -/
 theorem evaluate_bool {C F : Type} (trace : Tra) (b : Bool)
     (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F) :
@@ -26,6 +34,16 @@ theorem evaluate_if_pure_bool {C F : Type} (trace : Tra) (guard yes no : FlatLan
       FlatSem.evaluate env state [if b then yes else no] := by
   cases b <;> simp [FlatSem.evaluate, pure, FlatSem.fixClock, FlatSem.doIf, FlatSem.boolValue,
     FlatLang.boolId, boolToTag, trueTag, falseTag]
+
+/-- Equality of same-typed literal values evaluates to their Boolean equality. -/
+theorem evaluate_literal_equality {C F : Type} (trace : Tra) (expression : FlatLang.Exp)
+    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F) (actual lit : Lit)
+    (pure : FlatSem.evaluate env state [expression] = (state, .val [.litv actual]))
+    (sameType : Flapjack.SemanticPrimitivesHOL.litSameType actual lit = true) :
+    FlatSem.evaluate env state [.app trace (.src .equality) [expression, .lit trace lit]] =
+      (state, .val [FlatSem.boolValue (decide (actual = lit))]) := by
+  simp [FlatSem.evaluate, pure, FlatSem.fixClock, FlatSem.applyResult, FlatSem.doApp,
+    FlatSem.doAppNumeric, FlatSem.doEq, sameType]
 
 /-- Smart conditionals agree with ordinary conditionals in flat evaluation. -/
 theorem evaluate_smartIf {C F : Type} (trace : Tra) (guard yes no : FlatLang.Exp)
@@ -91,6 +109,45 @@ theorem naiveGuard_any_var {C F : Type} (trace : Tra) (expression : FlatLang.Exp
     NaiveGuardCase trace .pany expression env state value ∧
     NaiveGuardCase trace (.pvar name) expression env state value := by
   constructor <;> simpa [NaiveGuardCase, FlatSem.pmatch, naivePatternMatch] using evaluate_bool trace true env state
+
+/-- Literal guards compare same-typed literal values and return the match
+result's Boolean; incompatible literal types correspond to a match error. -/
+theorem naiveGuard_literal {C F : Type} (trace : Tra) (lit : Lit) (expression : FlatLang.Exp)
+    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F) (value : FlatSem.Value)
+    (pure : FlatSem.evaluate env state [expression] = (state, .val [value])) :
+    NaiveGuardCase trace (.plit lit) expression env state value := by
+  cases value with
+  | litv actual =>
+    by_cases same : lit = actual
+    · subst actual
+      have guard := evaluate_literal_equality trace expression env state lit lit pure (litSameType_refl lit)
+      have branch := evaluate_if_pure_bool trace (.app trace (.src .equality) [expression, .lit trace lit])
+        (FlatLang.mkBool trace true) (FlatLang.mkBool trace false) true env state (by simpa using guard)
+      simpa [NaiveGuardCase, FlatSem.pmatch, naivePatternMatch, evaluate_smartIf, branch] using
+        evaluate_bool trace true env state
+    · by_cases typeSame : Flapjack.SemanticPrimitivesHOL.litSameType lit actual = true
+      · have otherType : Flapjack.SemanticPrimitivesHOL.litSameType actual lit = true := by
+          simpa [litSameType_symm actual lit] using typeSame
+        have guard := evaluate_literal_equality trace expression env state actual lit pure otherType
+        have different : actual ≠ lit := Ne.symm same
+        have branch := evaluate_if_pure_bool trace (.app trace (.src .equality) [expression, .lit trace lit])
+          (FlatLang.mkBool trace true) (FlatLang.mkBool trace false) false env state (by simpa [different] using guard)
+        simpa [NaiveGuardCase, FlatSem.pmatch, same, typeSame, naivePatternMatch, evaluate_smartIf, branch] using
+          evaluate_bool trace false env state
+      · simp [NaiveGuardCase, FlatSem.pmatch, same, typeSame]
+  | conv _ _ | closure _ _ _ | recclosure _ _ _ | loc _ _ | vectorv _ =>
+    simp [NaiveGuardCase, FlatSem.pmatch]
+
+/-- An as-pattern has the same success, non-match and error outcome as its
+nested pattern, despite adding the alias to the match environment. -/
+theorem naiveGuard_as {C F : Type} (trace : Tra) (pattern : FlatLang.Pat) (name : VarN)
+    (expression : FlatLang.Exp) (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F)
+    (value : FlatSem.Value) (ih : NaiveGuardCase trace pattern expression env state value) :
+    NaiveGuardCase trace (.pas pattern name) expression env state value := by
+  have suffix := pmatch_append_bindings state pattern value [] [(name, value)]
+  simp only [List.nil_append] at suffix
+  cases result : FlatSem.pmatch state pattern value [] <;>
+    simp_all [NaiveGuardCase, FlatSem.pmatch, naivePatternMatch, appendMatchBindings]
 
 /-- Reference guards reduce to the nested guard after evaluating the same
 reference projection used by the matcher. -/
