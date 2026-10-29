@@ -219,6 +219,14 @@ def rich_program(rng):
         f'exception E int; exception F int; fun f x = '
         f'((raise E x) handle E y => raise F (y+{a})) handle F z => z*{b}; '
         f'val _ = print_int (f {c});',
+        f'val s = String.concat ["alpha", "", "beta", Int.toString {a}]; '
+        f'val _ = print_int (String.size s);',
+        f'val s = String.implode [#"a", #"b", #"c"]; '
+        f'val _ = print_int (String.size s + {a});',
+        f'fun even n = if n = 0 then True else odd (n-1) '
+        f'and odd n = if n = 0 then False else even (n-1); '
+        f'val _ = print_int (if even {a} then {b} else {c});',
+        f'val _ = print_int (String.size (Int.toString (~12345678901234567890{a})));',
     ])
 
 
