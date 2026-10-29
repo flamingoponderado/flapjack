@@ -227,4 +227,74 @@ theorem evaluate_eval_adjust_success {Config F : Type} (ci : CompilerInstance Co
   · rw [evaluate_eval_success _ _ _ env evalEnv args values decs adjustedArgs unchanged]
     exact original
 
+/-- Dynamic Eval propagates an error from evaluating its arguments. This
+Flapjack helper unfolds the corresponding evaluator clause. -/
+theorem evaluate_eval_args_error {F : Type} (state middle : State F) (env : SemEnv Value)
+    (args : List AstHOL.Exp) (error : ErrorResult Value)
+    (argsRun : evaluate state env args.reverse = (middle, .err error)) :
+    evaluate state env [.app .eval args] = (middle, .err error) := by
+  simp only [evaluate]
+  rw [(fixClockEvaluate state env args.reverse []).1, argsRun]
+
+/-- If dynamic Eval cannot decode its input, the evaluator reports a type
+error. This Flapjack helper unfolds the corresponding evaluator clause. -/
+theorem evaluate_eval_decode_failure {F : Type} (state middle : State F) (env : SemEnv Value)
+    (args : List AstHOL.Exp) (values : List Value)
+    (argsRun : evaluate state env args.reverse = (middle, .val values))
+    (decodeFailure : doEval values.reverse middle.evalState = none) :
+    evaluate state env [.app .eval args] = (middle, .err (.abort .typeError)) := by
+  simp only [evaluate]
+  rw [(fixClockEvaluate state env args.reverse []).1, argsRun]
+  simp [getOpClass, doEvalRes, decodeFailure, fixClock]
+
+/-- Dynamic Eval application case of the original evaluator induction. The
+declaration induction hypothesis applies only to the decoded declarations at
+the actual decremented-clock state, when decoding succeeds and the clock is
+nonzero. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
+theorem adjustOracle_evaluate_Eval {Config F : Type} (ci : CompilerInstance Config)
+    (f compile : List Dec → List Dec) (preserves : DeclarationCompilerPreserves (F := F) compile)
+    (state next : State F) (env : SemEnv Value) (args : List AstHOL.Exp)
+    (argsIH : ExpsOracleAdjusted (F := F) ci f compile args.reverse)
+    (decsIH : ∀ (middle decoded : State F) (values : List Value) (evalEnv : SemEnv Value) (decs : List Dec),
+      evaluate state env args.reverse = (middle, .val values) →
+      doEvalRes (β := Value) values.reverse middle = (decoded, .val (evalEnv, decs)) →
+      decoded.clock ≠ 0 → DecsOracleAdjustedAt ci f compile (decClock decoded) evalEnv decs)
+    (result : Result (List Value) Value) (source : evaluate state env [.app .eval args] = (next, result))
+    (inserted : isInsertOracle ci f state.evalState) (safe : result ≠ .err (.abort .typeError)) :
+    isInsertOracle ci f next.evalState ∧
+      evaluate { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env [.app .eval args] =
+        ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) := by
+  cases argsRun : evaluate state env args.reverse with
+  | mk middle inner =>
+    cases inner with
+    | err error =>
+      have pair : (middle, .err error) = (next, result) := by
+        rw [evaluate_eval_args_error state middle env args error argsRun] at source
+        exact source
+      have innerSafe : (Result.err error : Result (List Value) Value) ≠ .err (.abort .typeError) := by
+        intro bad
+        apply safe
+        have h := congrArg Prod.snd pair
+        simpa [bad] using h.symm
+      obtain ⟨middleInserted, adjustedArgs⟩ := argsIH state middle env (.err error) argsRun inserted innerSafe
+      cases pair
+      exact ⟨middleInserted, evaluate_eval_args_error _ _ env args error adjustedArgs⟩
+    | val values =>
+      cases decoded : doEval values.reverse middle.evalState with
+      | none =>
+        have failed := evaluate_eval_decode_failure state middle env args values argsRun decoded
+        rw [failed] at source
+        have h := congrArg Prod.snd source
+        apply False.elim
+        apply safe
+        exact h.symm
+      | some output =>
+        obtain ⟨evalEnv, decs, evalState⟩ := output
+        have decodedRun : doEvalRes (β := Value) values.reverse middle =
+            ({ middle with evalState }, .val (evalEnv, decs)) := by simp [doEvalRes, decoded]
+        exact evaluate_eval_adjust_success ci f compile preserves state middle { middle with evalState } next
+          env evalEnv args values decs argsIH (decsIH middle _ values evalEnv decs argsRun decodedRun)
+          argsRun decodedRun result source inserted safe
+
 end Flapjack.Compiler.Backend.SourceEval.Proofs

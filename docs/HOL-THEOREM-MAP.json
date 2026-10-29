@@ -2,6 +2,14 @@
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "adjust_oracle_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateEval.lean",
+    "lean_name": "adjustOracle_evaluate_Eval",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Dynamic Eval application induction case; typed original captured in source_eval_oracle_adjust_probe.out. Evaluator, source AST and carrier correspondence and the clock-bounded induction-hypothesis shape require review; the complete theorem is not yet assembled."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_evaluate",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateControl.lean",
     "lean_name": "adjustOracle_evaluate_If",
     "statement_status": "pending_statement_review",
