@@ -32,18 +32,6 @@ theorem doEvalRes_adjust_success {Config F β : Type} (ci : CompilerInstance Con
     · right
       simp [doEvalRes, unchanged]
 
-/-- Declaration adjustment at one input state and environment. This
-Flapjack predicate allows the Eval case to use its clock-bounded induction
-hypothesis without requiring a theorem for every input state. -/
-def DecsOracleAdjustedAt {Config F : Type} (ci : CompilerInstance Config)
-    (f compile : List Dec → List Dec) (state : State F) (env : SemEnv Value) (program : List Dec) : Prop :=
-  ∀ (next : State F) (result : Result (SemEnv Value) Value),
-    evaluateDecs state env program = (next, result) →
-    isInsertOracle ci f state.evalState → result ≠ .err (.abort .typeError) →
-    isInsertOracle ci f next.evalState ∧
-      evaluateDecs { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env program =
-        ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result)
-
 /-- The Eval callback can choose either declarations returned by the oracle or
 their compiled form. If the original evaluation is safe, both choices give the
 same adjusted evaluation. This Flapjack lemma combines the induction

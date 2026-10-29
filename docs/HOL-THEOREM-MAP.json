@@ -2,6 +2,126 @@
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "adjust_oracle_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateExpressions.lean",
+    "lean_name": "adjustOracle_evaluate_Tannot",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateExpressions.lean",
+    "lean_name": "adjustOracle_evaluate_Lannot",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateExpressions.lean",
+    "lean_name": "adjustOracle_evaluate_Raise",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateExpressions.lean",
+    "lean_name": "adjustOracle_evaluate_Let",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateExpressions.lean",
+    "lean_name": "adjustOracle_evaluate_ExpsCons",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateControl.lean",
+    "lean_name": "adjustOracle_evaluate_If",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateControl.lean",
+    "lean_name": "adjustOracle_evaluate_Log",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateControl.lean",
+    "lean_name": "adjustOracle_evaluate_Con",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateRecursive.lean",
+    "lean_name": "adjustOracle_evaluate_Dmod",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateRecursive.lean",
+    "lean_name": "adjustOracle_evaluate_Dlocal",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateRecursive.lean",
+    "lean_name": "adjustOracle_evaluate_DecsCons",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateRecursive.lean",
+    "lean_name": "adjustOracle_evaluate_Dlet",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateMatch.lean",
+    "lean_name": "adjustOracle_evaluate_MatchCons",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateMatch.lean",
+    "lean_name": "adjustOracle_evaluate_Mat",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateMatch.lean",
+    "lean_name": "adjustOracle_evaluate_Handle",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Induction case uses the fixed-state and conditional recursive hypotheses in the typed full_evaluate_ind capture. Evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_evaluate",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateApp.lean",
     "lean_name": "adjustOracle_evaluate_AppSimple",
     "statement_status": "pending_statement_review",

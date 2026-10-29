@@ -46,40 +46,41 @@ theorem adjustOracle_evaluate_Fn {Config F : Type} (ci : CompilerInstance Config
   obtain ⟨rfl, rfl⟩ := source
   exact ⟨inserted, by simp [evaluate]⟩
 
-/-- Type-annotation case of the original evaluator induction. The recursive hypothesis here is stronger than the original fixed-state or conditionally selected induction hypothesis; this is Flapjack infrastructure and the faithful HOL case remains open. -/
+/-- Type-annotation case of the original evaluator induction. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
 theorem adjustOracle_evaluate_Tannot {Config F : Type} (ci : CompilerInstance Config)
     (f compile : List Dec → List Dec) (_compilePreserve : DeclarationCompilerPreserves (F := F) compile)
-    (expr : AstHOL.Exp) (typ : AstT) (ih : ExpsOracleAdjusted (F := F) ci f compile [expr])
-    (state next : State F) (env : SemEnv Value) (result : Result (List Value) Value)
+    (expr : AstHOL.Exp) (typ : AstT)
+    (state next : State F) (env : SemEnv Value) (ih : ExpsOracleAdjustedAt ci f compile state env [expr]) (result : Result (List Value) Value)
     (source : evaluate state env [.tannot expr typ] = (next, result))
     (inserted : isInsertOracle ci f state.evalState) (safe : result ≠ .err (.abort .typeError)) :
     isInsertOracle ci f next.evalState ∧
       evaluate { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env [.tannot expr typ] =
         ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) := by
   have source' : evaluate state env [expr] = (next, result) := by simpa [evaluate] using source
-  obtain ⟨nextInserted, replacement⟩ := ih state next env result source' inserted safe
+  obtain ⟨nextInserted, replacement⟩ := ih next result source' inserted safe
   exact ⟨nextInserted, by simpa [evaluate] using replacement⟩
 
-/-- Location-annotation case of the original evaluator induction. The recursive hypothesis here is stronger than the original fixed-state or conditionally selected induction hypothesis; this is Flapjack infrastructure and the faithful HOL case remains open. -/
+/-- Location-annotation case of the original evaluator induction. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
 theorem adjustOracle_evaluate_Lannot {Config F : Type} (ci : CompilerInstance Config)
     (f compile : List Dec → List Dec) (_compilePreserve : DeclarationCompilerPreserves (F := F) compile)
     (expr : AstHOL.Exp) (locs : Flapjack.Misc.Location.Locs)
-    (ih : ExpsOracleAdjusted (F := F) ci f compile [expr])
-    (state next : State F) (env : SemEnv Value) (result : Result (List Value) Value)
+    (state next : State F) (env : SemEnv Value) (ih : ExpsOracleAdjustedAt ci f compile state env [expr]) (result : Result (List Value) Value)
     (source : evaluate state env [.lannot expr locs] = (next, result))
     (inserted : isInsertOracle ci f state.evalState) (safe : result ≠ .err (.abort .typeError)) :
     isInsertOracle ci f next.evalState ∧
       evaluate { state with evalState := adjustOracle ci (compile ∘ f) state.evalState } env [.lannot expr locs] =
         ({ next with evalState := adjustOracle ci (compile ∘ f) next.evalState }, result) := by
   have source' : evaluate state env [expr] = (next, result) := by simpa [evaluate] using source
-  obtain ⟨nextInserted, replacement⟩ := ih state next env result source' inserted safe
+  obtain ⟨nextInserted, replacement⟩ := ih next result source' inserted safe
   exact ⟨nextInserted, by simpa [evaluate] using replacement⟩
 
-/-- Raise case of the original evaluator induction. The recursive hypothesis here is stronger than the original fixed-state or conditionally selected induction hypothesis; this is Flapjack infrastructure and the faithful HOL case remains open. -/
+/-- Raise case of the original evaluator induction. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
 theorem adjustOracle_evaluate_Raise {Config F : Type} (ci : CompilerInstance Config)
     (f compile : List Dec → List Dec) (_compilePreserve : DeclarationCompilerPreserves (F := F) compile)
-    (expr : AstHOL.Exp) (ih : ExpsOracleAdjusted (F := F) ci f compile [expr])
-    (state next : State F) (env : SemEnv Value) (result : Result (List Value) Value)
+    (expr : AstHOL.Exp) (state next : State F) (env : SemEnv Value) (ih : ExpsOracleAdjustedAt ci f compile state env [expr]) (result : Result (List Value) Value)
     (source : evaluate state env [.raise expr] = (next, result))
     (inserted : isInsertOracle ci f state.evalState) (safe : result ≠ .err (.abort .typeError)) :
     isInsertOracle ci f next.evalState ∧
@@ -95,24 +96,27 @@ theorem adjustOracle_evaluate_Raise {Config F : Type} (ci : CompilerInstance Con
         apply safe
         have h := congrArg Prod.snd pair
         simpa [bad] using h.symm
-      obtain ⟨middleInserted, replacement⟩ := ih state middle env (.err error) run inserted innerSafe
+      obtain ⟨middleInserted, replacement⟩ := ih middle (.err error) run inserted innerSafe
       cases pair
       exact ⟨middleInserted, by simp [evaluate, replacement]⟩
     | val values =>
       have pair : (middle, .err (.raise (headValue values))) = (next, result) := by
         simpa [evaluate, run] using source
-      obtain ⟨middleInserted, replacement⟩ := ih state middle env (.val values) run inserted (by simp)
+      obtain ⟨middleInserted, replacement⟩ := ih middle (.val values) run inserted (by simp)
       cases pair
       exact ⟨middleInserted, by simp [evaluate, replacement]⟩
 
 /-- Let-expression case, using the induction hypotheses for the bound and
-body expressions. The recursive hypothesis here is stronger than the original fixed-state or conditionally selected induction hypothesis; this is Flapjack infrastructure and the faithful HOL case remains open. -/
+body expressions. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
 theorem adjustOracle_evaluate_Let {Config F : Type} (ci : CompilerInstance Config)
     (f compile : List Dec → List Dec) (_compilePreserve : DeclarationCompilerPreserves (F := F) compile)
     (name : Option VarN) (bound body : AstHOL.Exp)
-    (boundIH : ExpsOracleAdjusted (F := F) ci f compile [bound])
-    (bodyIH : ExpsOracleAdjusted (F := F) ci f compile [body])
-    (state next : State F) (env : SemEnv Value) (result : Result (List Value) Value)
+    (state next : State F) (env : SemEnv Value)
+    (boundIH : ExpsOracleAdjustedAt ci f compile state env [bound])
+    (bodyIH : ∀ (middle : State F) (values : List Value), evaluate state env [bound] = (middle, .val values) →
+      ExpsOracleAdjustedAt ci f compile middle
+        { env with v := Flapjack.NamespaceHOL.nsOptBind name (headValue values) env.v } [body]) (result : Result (List Value) Value)
     (source : evaluate state env [.let_ name bound body] = (next, result))
     (inserted : isInsertOracle ci f state.evalState) (safe : result ≠ .err (.abort .typeError)) :
     isInsertOracle ci f next.evalState ∧
@@ -134,23 +138,25 @@ theorem adjustOracle_evaluate_Let {Config F : Type} (ci : CompilerInstance Confi
         apply safe
         have h := congrArg Prod.snd pair
         simpa [bad] using h.symm
-      obtain ⟨middleInserted, replacement⟩ := boundIH state middle env (.err error) run inserted innerSafe
+      obtain ⟨middleInserted, replacement⟩ := boundIH middle (.err error) run inserted innerSafe
       cases pair
       exact ⟨middleInserted, by simp [adjusted, replacement]⟩
     | val values =>
       have bodyRun : evaluate middle { env with v := Flapjack.NamespaceHOL.nsOptBind name (headValue values) env.v } [body] =
           (next, result) := by simpa [run] using source
-      obtain ⟨middleInserted, replacement⟩ := boundIH state middle env (.val values) run inserted (by simp)
-      obtain ⟨nextInserted, bodyReplacement⟩ := bodyIH middle next _ result bodyRun middleInserted safe
+      obtain ⟨middleInserted, replacement⟩ := boundIH middle (.val values) run inserted (by simp)
+      obtain ⟨nextInserted, bodyReplacement⟩ := bodyIH middle values run next result bodyRun middleInserted safe
       exact ⟨nextInserted, by simpa [adjusted, replacement] using bodyReplacement⟩
 
-/-- Non-singleton expression-list case of the original evaluator induction. The recursive hypothesis here is stronger than the original fixed-state or conditionally selected induction hypothesis; this is Flapjack infrastructure and the faithful HOL case remains open. -/
+/-- Non-singleton expression-list case of the original evaluator induction. -/
+@[hol "cakeml/compiler/backend/proofs/source_evalProofScript.sml" "adjust_oracle_evaluate"]
 theorem adjustOracle_evaluate_ExpsCons {Config F : Type} (ci : CompilerInstance Config)
     (f compile : List Dec → List Dec) (_compilePreserve : DeclarationCompilerPreserves (F := F) compile)
     (first second : AstHOL.Exp) (rest : List AstHOL.Exp)
-    (firstIH : ExpsOracleAdjusted (F := F) ci f compile [first])
-    (tailIH : ExpsOracleAdjusted (F := F) ci f compile (second :: rest))
-    (state next : State F) (env : SemEnv Value) (result : Result (List Value) Value)
+    (state next : State F) (env : SemEnv Value)
+    (firstIH : ExpsOracleAdjustedAt ci f compile state env [first])
+    (tailIH : ∀ (middle : State F) (values : List Value), evaluate state env [first] = (middle, .val values) →
+      ExpsOracleAdjustedAt ci f compile middle env (second :: rest)) (result : Result (List Value) Value)
     (source : evaluate state env (first :: second :: rest) = (next, result))
     (inserted : isInsertOracle ci f state.evalState) (safe : result ≠ .err (.abort .typeError)) :
     isInsertOracle ci f next.evalState ∧
@@ -172,7 +178,7 @@ theorem adjustOracle_evaluate_ExpsCons {Config F : Type} (ci : CompilerInstance 
         apply safe
         have h := congrArg Prod.snd pair
         simpa [bad] using h.symm
-      obtain ⟨middleInserted, replacement⟩ := firstIH state middle env (.err error) run inserted innerSafe
+      obtain ⟨middleInserted, replacement⟩ := firstIH middle (.err error) run inserted innerSafe
       cases pair
       exact ⟨middleInserted, by simp [adjusted, replacement]⟩
     | val values =>
@@ -186,15 +192,15 @@ theorem adjustOracle_evaluate_ExpsCons {Config F : Type} (ci : CompilerInstance 
             apply safe
             have h := congrArg Prod.snd pair
             simpa [bad] using h.symm
-          obtain ⟨middleInserted, replacement⟩ := firstIH state middle env (.val values) run inserted (by simp)
-          obtain ⟨finalInserted, tailReplacement⟩ := tailIH middle final env (.err error) tailRun middleInserted tailSafe
+          obtain ⟨middleInserted, replacement⟩ := firstIH middle (.val values) run inserted (by simp)
+          obtain ⟨finalInserted, tailReplacement⟩ := tailIH middle values run final (.err error) tailRun middleInserted tailSafe
           cases pair
           exact ⟨finalInserted, by simp [adjusted, replacement, tailReplacement]⟩
         | val tailValues =>
           have pair : (final, .val (headValue values :: tailValues)) = (next, result) := by
             simpa [run, tailRun] using source
-          obtain ⟨middleInserted, replacement⟩ := firstIH state middle env (.val values) run inserted (by simp)
-          obtain ⟨finalInserted, tailReplacement⟩ := tailIH middle final env (.val tailValues) tailRun middleInserted (by simp)
+          obtain ⟨middleInserted, replacement⟩ := firstIH middle (.val values) run inserted (by simp)
+          obtain ⟨finalInserted, tailReplacement⟩ := tailIH middle values run final (.val tailValues) tailRun middleInserted (by simp)
           cases pair
           exact ⟨finalInserted, by simp [adjusted, replacement, tailReplacement]⟩
 end Flapjack.Compiler.Backend.SourceEval.Proofs
