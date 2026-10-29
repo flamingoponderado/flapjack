@@ -472,4 +472,15 @@ theorem evaluate_clock_le {C F : Type} (expressions : List ClosLang.Exp) (env : 
               | memOp x => exact evaluate_ordinaryOp_clock env state trace _ args (by simp) (by simp)
   exact allRanks state.clock (expsWeight expressions) expressions env state rfl rfl
 
+/-- The termination-only clock clamp does not change the result of the
+proof-side evaluator. HOL correspondence for the evaluator remains open. -/
+theorem fixClock_evaluate {C F : Type} (expressions : List ClosLang.Exp)
+    (env : List Value) (state : State C F) :
+    fixClock state (evaluate expressions env state) = evaluate expressions env state := by
+  have bound := evaluate_clock_le expressions env state
+  cases run : evaluate expressions env state with
+  | mk result next =>
+    simp only [run] at bound
+    simp [fixClock, Nat.min_eq_right bound]
+
 end Flapjack.Compiler.Backend.ClosSem
