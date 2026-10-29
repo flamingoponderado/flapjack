@@ -321,6 +321,7 @@ import Flapjack.Compiler.Backend.FlatPattern.Proofs.LookupRelation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.BindingFold
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.BindingSimulation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.BindingRecursive
+import Flapjack.Compiler.Backend.FlatPattern.Proofs.BranchEvaluation
 import Flapjack.Compiler.Backend.SourceToFlat.Proofs.StoreValueRelCases
 import Flapjack.Compiler.Backend.SourceLet.Proofs
 import Flapjack.Compiler.Backend.SourceLet.Proofs.Evaluate

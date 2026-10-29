@@ -28,3 +28,4 @@ val _ = show_thm "compile_match_EL=" flat_patternProofTheory.compile_match_EL;
 val _ = show_thm "pmatch_list_length=" flat_patternProofTheory.pmatch_list_Match_IMP_LENGTH;
 val _ = show_thm "pmatch_list_append=" flat_patternProofTheory.pmatch_list_append_Match_exists;
 val _ = show_thm "compile_pat_bindings_simulation=" flat_patternProofTheory.compile_pat_bindings_simulation;
+val _ = show_thm "evaluate_compile_pat_rhs=" flat_patternProofTheory.evaluate_compile_pat_rhs;
