@@ -236,6 +236,52 @@ theorem patternEntries_work_expression (trace : BackendCommon.Tra) (i j : Nat) (
       simp
     · exact ih (j + 1) later
 
+/-- The field index stored in each entry agrees with its position in the
+generated work list. -/
+theorem patternEntries_index (trace : BackendCommon.Tra) (i j k : Nat) (patterns : List FlatLang.Pat)
+    (entry : (Nat × VarN) × (FlatLang.Pat × Nat × FlatLang.Exp))
+    (found : (patternEntries trace i j patterns)[k]? = some entry) : entry.1.1 = j + k := by
+  induction patterns generalizing j k with
+  | nil => simp [patternEntries] at found
+  | cons pattern patterns ih =>
+    cases k with
+    | zero =>
+      simp [patternEntries] at found
+      subst entry
+      simp
+    | succ k =>
+      simp only [patternEntries, List.getElem?_cons_succ] at found
+      have h := ih (j + 1) k found
+      omega
+
+/-- The constructor work list contains one item for each subpattern. -/
+theorem patternEntries_length (trace : BackendCommon.Tra) (i j : Nat) (patterns : List FlatLang.Pat) :
+    (patternEntries trace i j patterns).length = patterns.length := by
+  induction patterns generalizing j with
+  | nil => rfl
+  | cons pattern patterns ih => simp [patternEntries, ih]
+
+/-- Equal-length lists satisfy a pointwise relation when their option-valued
+lookups satisfy it at every index. -/
+theorem forall₂_of_getElem {A B : Type} (relation : A → B → Prop) (left : List A) (right : List B)
+    (lengths : left.length = right.length)
+    (pointwise : ∀ (k : Nat) (x : A) (y : B), left[k]? = some x → right[k]? = some y → relation x y) :
+    List.Forall₂ relation left right := by
+  induction left generalizing right with
+  | nil =>
+    cases right with
+    | nil => exact .nil
+    | cons _ _ => simp at lengths
+  | cons first left ih =>
+    cases right with
+    | nil => simp at lengths
+    | cons second right =>
+      apply List.Forall₂.cons
+      · exact pointwise 0 first second rfl rfl
+      · apply ih right (by simpa using lengths)
+        intro k x y leftAt rightAt
+        exact pointwise (k + 1) x y (by simpa using leftAt) (by simpa using rightAt)
+
 /-- A used generated constructor work item evaluates purely to its field in
 every environment related on the generated-name interval. -/
 theorem compilePatBindings_con_workitem_pure {C F : Type} (trace : BackendCommon.Tra) (i : Nat)
@@ -264,6 +310,44 @@ theorem compilePatBindings_con_workitem_pure {C F : Type} (trace : BackendCommon
   refine ⟨(fields[entry.1.1]?).getD FlatSem.unitValue, ?_⟩
   rw [expression]
   exact compilePatBindings_con_selected_pure trace i patterns body rest env env2 state fields entry inSelected related
+
+/-- Generated constructor work items and actual fields satisfy the pointwise
+pure-evaluation premise needed by the recursive binding simulation. -/
+theorem compilePatBindings_con_workitems_related {C F : Type} (trace : BackendCommon.Tra) (i : Nat)
+    (patterns : List FlatLang.Pat) (body : FlatLang.Exp) (rest : List (FlatLang.Pat × Nat × FlatLang.Exp))
+    (env : FlatSem.Environment FlatSem.Value) (state : FlatSem.State C F) (fields : List FlatSem.Value)
+    (lengths : patterns.length = fields.length) :
+    let entries := patternEntries trace i 0 patterns
+    let compiled := compilePatBindings trace (i + 2 + patterns.length) (entries.map Prod.snd ++ rest) body
+    let selected := entries.filter (fun e => (sptLookup e.2.2.1 compiled.1).isSome)
+    let extended := selected.reverse.map (fun e => (e.1.2, (fields[e.1.1]?).getD FlatSem.unitValue)) ++ env.v
+    List.Forall₂ (fun item value => (sptLookup item.2.1 compiled.1).isSome = true →
+      ∀ env2, aLookupRel (fun name => i < decNameToNum name ∧ decNameToNum name < i + 2 + patterns.length)
+        Eq env2.v extended → FlatSem.evaluate env2 state [item.2.2] = (state, .val [value]))
+      (entries.map Prod.snd) fields := by
+  let entries := patternEntries trace i 0 patterns
+  let compiled := compilePatBindings trace (i + 2 + patterns.length) (entries.map Prod.snd ++ rest) body
+  let selected := entries.filter (fun e => (sptLookup e.2.2.1 compiled.1).isSome)
+  let extended := selected.reverse.map (fun e => (e.1.2, (fields[e.1.1]?).getD FlatSem.unitValue)) ++ env.v
+  change List.Forall₂ (fun item value => (sptLookup item.2.1 compiled.1).isSome = true →
+      ∀ env2, aLookupRel (fun name => i < decNameToNum name ∧ decNameToNum name < i + 2 + patterns.length)
+        Eq env2.v extended → FlatSem.evaluate env2 state [item.2.2] = (state, .val [value]))
+      (entries.map Prod.snd) fields
+  apply forall₂_of_getElem
+  · simpa [entries, patternEntries_length] using lengths
+  · intro k item value itemAt valueAt used env2 related
+    cases entryAt : entries[k]? with
+    | none => simp [List.getElem?_map, entryAt] at itemAt
+    | some entry =>
+      have itemEq : entry.2 = item := by simpa [List.getElem?_map, entryAt] using itemAt
+      subst item
+      have inEntries : entry ∈ entries := List.mem_of_getElem? entryAt
+      have inSelected : entry ∈ selected := List.mem_filter.mpr ⟨inEntries, used⟩
+      have index := patternEntries_index trace i 0 k patterns entry entryAt
+      have expr := (patternEntries_work_expression trace i 0 patterns entry inEntries).2
+      have h := compilePatBindings_con_selected_pure trace i patterns body rest env env2 state fields entry inSelected related
+      rw [expr]
+      simpa [index, valueAt] using h
 
 /-- The generated binding for a variable evaluates its source expression
 and then continues with that value at the head of the environment. -/
