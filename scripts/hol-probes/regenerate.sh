@@ -308,6 +308,10 @@ run_probe cake_flat_sem_apply_probeScript.sml cake_flat_sem_apply_probe.out \
   do_app_typed global_alloc global_init global_reinit global_lookup global_missing tag_match tag_mismatch tuple_length field_index ref_field ref_bad_index identity ref_alloc ref_assign byte_safe_oob byte_unsafe_oob array_negative array_update array_wrong_store data_strlen data_strsub_negative data_vector_sub data_vector_unsafe data_copy data_copy_oob data_thunk_alloc numeric_shift data_copy_overlap \
   "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
+run_probe clos_sem_int_probeScript.sml clos_sem_int_probe.out \
+  int_app_typed div_negative_left div_negative_right mod_negative_left mod_negative_right divide_zero small_upper small_invalid \
+  "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe cake_flat_sem_thunk_probeScript.sml cake_flat_sem_thunk_probe.out \
   thunk_type thunk_dest thunk_update thunk_bad valid_thunk ref_flag bad_index ordinary_ref nonlocation update_value update_nested \
   "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/semantics"

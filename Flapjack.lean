@@ -280,6 +280,7 @@ import Flapjack.Compiler.Backend.SourceToFlat.Proofs.GlobalLookup
 import Flapjack.Compiler.Backend.Semantics.FlatSem
 import Flapjack.Compiler.Backend.Semantics.ClosSem
 import Flapjack.Compiler.Backend.Semantics.ClosSem.State
+import Flapjack.Compiler.Backend.Semantics.ClosSem.Int
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Operations
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Conversions
 import Flapjack.Compiler.Backend.Semantics.FlatSem.Primitives
@@ -429,6 +430,7 @@ import Flapjack.Compiler.Backend.FlatToClos.Op
 import Flapjack.Compiler.Backend.FlatToClos.Compile
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.FlatToClos.Proofs.StateRelation
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.IntegerOperations
 import Flapjack.Compiler.Backend.Backend.PrimSrcConfig
 import Flapjack.Misc.Location
 import Flapjack.Compiler.Backend.BackendCommon.Operators
