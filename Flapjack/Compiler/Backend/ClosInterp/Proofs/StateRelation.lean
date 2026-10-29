@@ -47,4 +47,12 @@ theorem stateRel_shift {C F : Type} {source target : ClosSem.State C F}
       { target with compileOracle := Flapjack.holShiftSeq offset target.compileOracle } :=
   ⟨stateRel1_shift related.1 offset, related.2⟩
 
+
+/-- Giving both related states the same clock preserves the relation. -/
+theorem stateRel_withClock {C F : Type} {source target : ClosSem.State C F}
+    (related : StateRel source target) (clock : Nat) :
+    StateRel { source with clock := clock } { target with clock := clock } := by
+  rcases related with ⟨⟨safe, sc, tc, maxEq, maxPositive, _, ffi, globals, refs, compiler, oracle⟩, interpreter⟩
+  exact ⟨⟨safe, sc, tc, maxEq, maxPositive, rfl, ffi, globals, refs, compiler, oracle⟩, interpreter⟩
+
 end Flapjack.Compiler.Backend.ClosInterp

@@ -95,7 +95,7 @@ theorem interpreter_correct_list_nil {C F : Type}
 
 
 /-- An evaluated Boolean condition selects the corresponding closure branch. -/
-private theorem evaluate_if_condition {C F : Type} (condition yes no : ClosLang.Exp)
+theorem evaluate_if_condition {C F : Type} (condition yes no : ClosLang.Exp)
     (env : List ClosSem.Value) (state : ClosSem.State C F) (choice : Bool)
     (test : ClosSem.evaluate [condition] env state = (.val [ClosSem.boolValue choice], state)) :
     ClosSem.evaluate [.ifThenElse .none condition yes no] env state =

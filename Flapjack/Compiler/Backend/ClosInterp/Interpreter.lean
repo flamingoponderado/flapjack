@@ -27,6 +27,18 @@ theorem interpreterCons_eq (n : Nat) (xs : List Exp) : cons n xs = .op .none (.b
 /-- Expose the private unary application to proofs about the interpreter. -/
 theorem interpreterApp_eq (f x : Exp) : app f x = .app .none none f [x] := rfl
 
+/-- Expose the interpreter's recursive expression call to proofs. -/
+theorem interpreterCall_eq (env x : Exp) :
+    callInterp env x = .app .none none
+      (.app .none none (.app .none none (.op .none (.globOp (.global 0)) []) [env])
+        [.op .none (.blockOp (.cons 0)) []]) [x] := rfl
+
+/-- Expose the interpreter's recursive expression-list call to proofs. -/
+theorem interpreterCallList_eq (env x : Exp) :
+    callInterpList env x = .app .none none
+      (.app .none none (.app .none none (.op .none (.globOp (.global 0)) []) [env])
+        [.op .none (.blockOp (.cons 1)) []]) [x] := rfl
+
 /-- Expose the private constructor test to proofs about the interpreter. -/
 theorem interpreterIsCase_eq (tag len : Nat) (yes no : Exp) :
     isCase tag len yes no = .ifThenElse .none (.op .none (.blockOp (.tagLenEq tag len)) [.var .none 0]) yes no := rfl

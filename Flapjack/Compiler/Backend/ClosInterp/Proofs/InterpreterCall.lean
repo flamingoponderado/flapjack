@@ -86,4 +86,36 @@ theorem evaluate_optInterp {C F : Type} (source target : ClosSem.State C F)
       (evaluate_constant .none (toConstant expression) [] target) clock
   · contradiction
 
+
+/-- An interpreter recursive call on an encoded constructor field enters the
+body with that field and the original encoded environment. Both expression
+and expression-list modes use this same call sequence. -/
+theorem evaluate_interpreter_field_call {C F : Type} (source target : ClosSem.State C F)
+    (related : StateRel source target) (tag index : Nat) (fields : List ClosLang.Const)
+    (field : ClosLang.Const) (found : fields[index]? = some field)
+    (surroundingFlag : ClosSem.Value) (env : List ClosSem.Value) (listMode : Bool)
+    (clock : 3 ≤ target.clock) :
+    let vars := [ClosSem.makeConst (.constCons tag fields), surroundingFlag, ClosSem.listToValue env]
+    let flagTag := if listMode then 1 else 0
+    let global := ClosLang.Exp.op .none (.globOp (.global 0)) []
+    let first := ClosLang.Exp.app .none none global [.var .none 2]
+    let second := ClosLang.Exp.app .none none first [.op .none (.blockOp (.cons flagTag)) []]
+    ClosSem.evaluate [.app .none none second [.op .none (.blockOp (.elemAt index)) [.var .none 0]]] vars target =
+      ClosSem.evaluate [closInterpreterBody]
+        [ClosSem.makeConst field, .block flagTag [], ClosSem.listToValue env] (ClosSem.decClock 3 target) := by
+  dsimp only
+  let vars := [ClosSem.makeConst (.constCons tag fields), surroundingFlag, ClosSem.listToValue env]
+  let flagTag := if listMode then 1 else 0
+  have envRun : ClosSem.evaluate [.var .none 2] vars target = (.val [ClosSem.listToValue env], target) := by
+    simp [vars, ClosSem.evaluate]
+  have fieldRun : ClosSem.evaluate [.op .none (.blockOp (.elemAt index)) [.var .none 0]] vars target =
+      (.val [ClosSem.makeConst field], target) := by
+    simp [vars, ClosSem.makeConst, ClosSem.evaluate, ClosSem.fixClock, ClosSem.doApp,
+      ClosSem.applyBlock, List.getElem?_map, found]
+  exact evaluate_interpreter_call source target related vars
+    (.var .none 2) (.op .none (.blockOp (.cons flagTag)) [])
+    (.op .none (.blockOp (.elemAt index)) [.var .none 0])
+    (ClosSem.listToValue env) (.block flagTag []) (ClosSem.makeConst field)
+    envRun (evaluate_cons_nil .none flagTag vars target) fieldRun clock
+
 end Flapjack.Compiler.Backend.ClosInterp
