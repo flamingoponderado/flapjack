@@ -7,6 +7,18 @@ namespace Flapjack.Compiler.Backend.FlatPattern
 open Flapjack Flapjack.Compiler.Backend
 open Flapjack.SemanticPrimitivesHOL (storeLookup)
 
+/-- Forget the bindings carried by a flat pattern match. -/
+def encodeMatchResult {A : Type} : Flapjack.SemanticPrimitivesHOL.MatchResult A → PatternCommon.PmatchResult
+  | .match _ => .success
+  | .noMatch => .failure
+  | .typeError => .typeFailure
+
+/-- The auxiliary pattern traversal agrees with mapping the pattern encoding. -/
+theorem encodePats_eq_map (patterns : List FlatLang.Pat) : encodePats patterns = patterns.map encodePat := by
+  induction patterns with
+  | nil => rfl
+  | cons pattern patterns ih => simp [encodePats, ih]
+
 mutual
 /-- Project flat values into the pattern compiler's abstract value domain. -/
 def encodeValue : FlatSem.Value → PatternSemantics.Term
@@ -51,6 +63,221 @@ theorem encodeRefs_lookup {C F : Type} (state : FlatSem.State C F) (index : Nat)
     (encodeRefs state).lookup index = match storeLookup index state.refs with
       | some (.refv value) => some (encodeValue value)
       | _ => none := rfl
+
+/-- A compatible tagged flat constructor appears in the abstract sibling
+group, or the group is absent for an exception. -/
+theorem compatible_encoded_sibling (tag actual : FlatLang.CtorId) (group : FlatLang.TypeGroupId)
+    (typeId : FlatLang.TypeId) (patternLength valueLength : Nat)
+    (compatible : FlatSem.PmatchStampsOk (some (tag, group)) (some (actual, typeId)) patternLength valueLength) :
+    PatternSemantics.isSibling (actual, valueLength) (group.map Prod.snd) = true := by
+  cases compatible with
+  | exception => rfl
+  | constructor _ _ _ _ _ _ _ _ _ valueMember =>
+    simp [PatternSemantics.isSibling, valueMember]
+
+/-- Constructor encoding preserves a non-error match when the recursive
+simulation holds for the constructor's pattern and value lists. -/
+theorem encodePmatch_con {C F : Type} (state : FlatSem.State C F)
+    (stamp : Option (FlatLang.CtorId × FlatLang.TypeGroupId)) (patterns : List FlatLang.Pat)
+    (actual : Option (FlatLang.CtorId × FlatLang.TypeId)) (fields : List FlatSem.Value)
+    (bindings : List (Flapjack.AstHOL.VarN × FlatSem.Value))
+    (safe : FlatSem.pmatch state (.pcon stamp patterns) (.conv actual fields) bindings ≠ .typeError)
+    (nested : FlatSem.pmatchList state patterns fields bindings ≠ .typeError →
+      PatternSemantics.pmatchList (encodeRefs state) (patterns.map encodePat) (fields.map encodeValue) =
+        encodeMatchResult (FlatSem.pmatchList state patterns fields bindings)) :
+    PatternSemantics.pmatch (encodeRefs state) (encodePat (.pcon stamp patterns)) (encodeValue (.conv actual fields)) =
+      encodeMatchResult (FlatSem.pmatch state (.pcon stamp patterns) (.conv actual fields) bindings) := by
+  by_cases compatible : FlatSem.PmatchStampsOk stamp actual patterns.length fields.length
+  · have notBad : ¬ ¬ FlatSem.PmatchStampsOk stamp actual patterns.length fields.length := fun h => h compatible
+    cases stamp with
+    | none =>
+      cases actual with
+      | none =>
+        have lengths : patterns.length = fields.length := by cases compatible with | tuple _ _ h => exact h
+        have flatHead : FlatSem.pmatch state (.pcon none patterns) (.conv none fields) bindings =
+            FlatSem.pmatchList state patterns fields bindings := by
+          simp only [FlatSem.pmatch, if_neg notBad, Option.map_none, true_and, if_pos lengths]
+        have innerSafe : FlatSem.pmatchList state patterns fields bindings ≠ .typeError := by
+          simpa only [flatHead] using safe
+        have abstractHead : PatternSemantics.pmatch (encodeRefs state) (encodePat (.pcon none patterns))
+            (encodeValue (.conv none fields)) =
+            PatternSemantics.pmatchList (encodeRefs state) (patterns.map encodePat) (fields.map encodeValue) := by
+          simp [encodePat, encodePats_eq_map, encodeValue, encodeValues_eq_map, PatternSemantics.pmatch]
+        rw [abstractHead, flatHead]
+        exact nested innerSafe
+      | some tagged => cases compatible
+    | some tagged =>
+      obtain ⟨tag, group⟩ := tagged
+      cases actual with
+      | none => cases compatible
+      | some actualTag =>
+        obtain ⟨actual, typeId⟩ := actualTag
+        have sibling := compatible_encoded_sibling tag actual group typeId patterns.length fields.length compatible
+        by_cases same : tag = actual ∧ patterns.length = fields.length
+        · have sameFlat : (some (tag, group)).map Prod.fst = (some (actual, typeId)).map Prod.fst ∧
+              patterns.length = fields.length := by simpa using same
+          have flatHead : FlatSem.pmatch state (.pcon (some (tag, group)) patterns)
+              (.conv (some (actual, typeId)) fields) bindings = FlatSem.pmatchList state patterns fields bindings := by
+            simp only [FlatSem.pmatch, if_neg notBad, if_pos sameFlat]
+          have innerSafe : FlatSem.pmatchList state patterns fields bindings ≠ .typeError := by
+            simpa only [flatHead] using safe
+          have abstractHead : PatternSemantics.pmatch (encodeRefs state) (encodePat (.pcon (some (tag, group)) patterns))
+              (encodeValue (.conv (some (actual, typeId)) fields)) =
+              PatternSemantics.pmatchList (encodeRefs state) (patterns.map encodePat) (fields.map encodeValue) := by
+            simp only [encodePat, encodePats_eq_map, encodeValue, encodeValues_eq_map, Option.map_some,
+              PatternSemantics.pmatch, List.length_map, if_pos same]
+          rw [abstractHead, flatHead]
+          exact nested innerSafe
+        · have sameFlat : ¬ ((some (tag, group)).map Prod.fst = (some (actual, typeId)).map Prod.fst ∧
+              patterns.length = fields.length) := by simpa using same
+          have flatHead : FlatSem.pmatch state (.pcon (some (tag, group)) patterns)
+              (.conv (some (actual, typeId)) fields) bindings = .noMatch := by
+            simp only [FlatSem.pmatch, if_neg notBad, if_neg sameFlat]
+          have abstractHead : PatternSemantics.pmatch (encodeRefs state) (encodePat (.pcon (some (tag, group)) patterns))
+              (encodeValue (.conv (some (actual, typeId)) fields)) = .failure := by
+            simp only [encodePat, encodePats_eq_map, encodeValue, encodeValues_eq_map, Option.map_some,
+              PatternSemantics.pmatch, List.length_map, if_neg same, sibling, if_true]
+          simp [flatHead, abstractHead, encodeMatchResult]
+  · simp [FlatSem.pmatch, compatible] at safe
+
+mutual
+/-- A non-error flat match has the same success or failure result after
+encoding the pattern, value, and references. -/
+theorem encodePmatch_simulation {C F : Type} (state : FlatSem.State C F)
+    (pattern : FlatLang.Pat) (value : FlatSem.Value) (bindings : List (Flapjack.AstHOL.VarN × FlatSem.Value))
+    (safe : FlatSem.pmatch state pattern value bindings ≠ .typeError) :
+    PatternSemantics.pmatch (encodeRefs state) (encodePat pattern) (encodeValue value) =
+      encodeMatchResult (FlatSem.pmatch state pattern value bindings) := by
+  cases pattern with
+  | pany => simp [encodePat, PatternSemantics.pmatch, FlatSem.pmatch, encodeMatchResult]
+  | pvar name => simp [encodePat, PatternSemantics.pmatch, FlatSem.pmatch, encodeMatchResult]
+  | plit lit =>
+    cases value with
+    | litv actual =>
+      by_cases same : lit = actual
+      · subst actual
+        simp [encodePat, encodeValue, PatternSemantics.pmatch, FlatSem.pmatch, litSameType_refl, encodeMatchResult]
+      · by_cases sameType : Flapjack.SemanticPrimitivesHOL.litSameType lit actual = true
+        · simp [encodePat, encodeValue, PatternSemantics.pmatch, FlatSem.pmatch, same, sameType, encodeMatchResult]
+        · simp [FlatSem.pmatch, same, sameType] at safe
+    | conv _ _ | closure _ _ _ | recclosure _ _ _ | loc _ _ | vectorv _ =>
+      simp [FlatSem.pmatch] at safe
+  | pas pattern name =>
+    have nestedSafe : FlatSem.pmatch state pattern value ((name, value) :: bindings) ≠ .typeError := by
+      simpa [FlatSem.pmatch] using safe
+    simpa [encodePat, FlatSem.pmatch] using encodePmatch_simulation state pattern value ((name, value) :: bindings) nestedSafe
+  | pref pattern =>
+    cases value with
+    | litv _ | conv _ _ | closure _ _ _ | recclosure _ _ _ | vectorv _ => simp [FlatSem.pmatch] at safe
+    | loc flag index =>
+      cases found : storeLookup index state.refs with
+      | none => simp [FlatSem.pmatch, found] at safe
+      | some entry =>
+        cases entry with
+        | w8array _ | varray _ | thunk _ _ => simp [FlatSem.pmatch, found] at safe
+        | refv contents =>
+          have nestedSafe : FlatSem.pmatch state pattern contents bindings ≠ .typeError := by
+            simpa [FlatSem.pmatch, found] using safe
+          simpa [encodePat, encodeValue, PatternSemantics.pmatch, encodeRefs_lookup, FlatSem.pmatch, found] using
+            encodePmatch_simulation state pattern contents bindings nestedSafe
+  | pcon stamp patterns =>
+    cases value with
+    | litv _ | closure _ _ _ | recclosure _ _ _ | loc _ _ | vectorv _ => simp [FlatSem.pmatch] at safe
+    | conv actual fields =>
+      apply encodePmatch_con state stamp patterns actual fields bindings safe
+      intro innerSafe
+      exact encodePmatchList_simulation state patterns fields bindings innerSafe
+termination_by sizeOf pattern
+
+/-- Companion simulation for a list of patterns and values. -/
+theorem encodePmatchList_simulation {C F : Type} (state : FlatSem.State C F)
+    (patterns : List FlatLang.Pat) (values : List FlatSem.Value) (bindings : List (Flapjack.AstHOL.VarN × FlatSem.Value))
+    (safe : FlatSem.pmatchList state patterns values bindings ≠ .typeError) :
+    PatternSemantics.pmatchList (encodeRefs state) (patterns.map encodePat) (values.map encodeValue) =
+      encodeMatchResult (FlatSem.pmatchList state patterns values bindings) := by
+  cases patterns with
+  | nil => cases values <;> simp [FlatSem.pmatchList, PatternSemantics.pmatchList, encodeMatchResult] at safe ⊢
+  | cons pattern patterns =>
+    cases values with
+    | nil => simp [FlatSem.pmatchList] at safe
+    | cons value values =>
+      cases head : FlatSem.pmatch state pattern value bindings with
+      | typeError => simp [FlatSem.pmatchList, head] at safe
+      | «match» next =>
+        have headSim := encodePmatch_simulation state pattern value bindings (by simp [head])
+        have headSuccess : PatternSemantics.pmatch (encodeRefs state) (encodePat pattern) (encodeValue value) = .success := by
+          simpa [head, encodeMatchResult] using headSim
+        have tailSafe : FlatSem.pmatchList state patterns values next ≠ .typeError := by
+          simpa [FlatSem.pmatchList, head] using safe
+        have tailSim := encodePmatchList_simulation state patterns values next tailSafe
+        simpa [PatternSemantics.pmatchList, FlatSem.pmatchList, head, headSuccess, encodeMatchResult] using tailSim
+      | noMatch =>
+        have headSim := encodePmatch_simulation state pattern value bindings (by simp [head])
+        have tailSafe : FlatSem.pmatchList state patterns values bindings ≠ .typeError := by
+          cases h : FlatSem.pmatchList state patterns values bindings <;> simp_all [FlatSem.pmatchList]
+        have tailSim := encodePmatchList_simulation state patterns values bindings tailSafe
+        cases tail : FlatSem.pmatchList state patterns values bindings <;>
+          simp_all [PatternSemantics.pmatchList, FlatSem.pmatchList, encodeMatchResult]
+termination_by sizeOf patterns
+end
+
+/-- Encoded pattern lists retain the source row ordering and selected index;
+an original type error imposes no result obligation. -/
+theorem encodeRows_simulation {C F E : Type} (state : FlatSem.State C F) (value : FlatSem.Value)
+    (rows : List (FlatLang.Pat × E)) (offset : Nat) :
+    let encodedRows := (rows.zipIdx offset).map (fun (row, index) => (encodePat row.1, index))
+    match FlatSem.pmatchRows rows state value with
+    | .typeError => True
+    | .noMatch => PatternSemantics.matchRows (encodeRefs state) encodedRows (encodeValue value) = some .failure
+    | .match (_, pattern, body) =>
+      ∃ index, rows[index]? = some (pattern, body) ∧
+        PatternSemantics.matchRows (encodeRefs state) encodedRows (encodeValue value) = some (.success (offset + index)) := by
+  induction rows generalizing offset with
+  | nil => simp [FlatSem.pmatchRows, PatternSemantics.matchRows]
+  | cons row rows ih =>
+    obtain ⟨pattern, body⟩ := row
+    cases head : FlatSem.pmatch state pattern value [] with
+    | typeError => simp [FlatSem.pmatchRows, head]
+    | noMatch =>
+      have headEncoded := encodePmatch_simulation state pattern value [] (by simp [head])
+      have abstractHead : PatternSemantics.pmatch (encodeRefs state) (encodePat pattern) (encodeValue value) = .failure := by
+        simpa [head, encodeMatchResult] using headEncoded
+      have tail := ih (offset + 1)
+      cases sourceTail : FlatSem.pmatchRows rows state value with
+      | typeError => simp [FlatSem.pmatchRows, head, sourceTail]
+      | noMatch =>
+        simp only [sourceTail] at tail
+        simpa [FlatSem.pmatchRows, PatternSemantics.matchRows, List.zipIdx, head, abstractHead, sourceTail] using tail
+      | «match» selected =>
+        rcases selected with ⟨tailBindings, tailPattern, tailBody⟩
+        simp only [sourceTail] at tail
+        obtain ⟨index, rowAt, target⟩ := tail
+        simp only [FlatSem.pmatchRows, head, sourceTail]
+        refine ⟨index + 1, ?_, ?_⟩
+        · simpa using rowAt
+        · simpa [FlatSem.pmatchRows, PatternSemantics.matchRows, List.zipIdx, head, abstractHead, sourceTail,
+            Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using target
+    | «match» bindings =>
+      have headEncoded := encodePmatch_simulation state pattern value [] (by simp [head])
+      have abstractHead : PatternSemantics.pmatch (encodeRefs state) (encodePat pattern) (encodeValue value) = .success := by
+        simpa [head, encodeMatchResult] using headEncoded
+      have tail := ih (offset + 1)
+      cases sourceTail : FlatSem.pmatchRows rows state value with
+      | typeError => simp [FlatSem.pmatchRows, head, sourceTail]
+      | noMatch =>
+        simp only [sourceTail] at tail
+        simp only [FlatSem.pmatchRows, head, sourceTail]
+        refine ⟨0, ?_, ?_⟩
+        · rfl
+        · simp [PatternSemantics.matchRows, List.zipIdx, abstractHead, tail]
+      | «match» selected =>
+        rcases selected with ⟨tailBindings, tailPattern, tailBody⟩
+        simp only [sourceTail] at tail
+        obtain ⟨index, rowAt, target⟩ := tail
+        simp only [FlatSem.pmatchRows, head, sourceTail]
+        refine ⟨0, ?_, ?_⟩
+        · rfl
+        · simp [PatternSemantics.matchRows, List.zipIdx, abstractHead, target]
 
 /-- Following an encoded position can be replayed by evaluating the generated
 flat projections, yielding a value with the same encoding. -/
