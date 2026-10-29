@@ -624,6 +624,48 @@
       "stdout_sha256": "60f0cc22bcdc088bc1e691988facb980fddabc79031cdef5b7947921135ace5c",
       "stderr_bytes": 0,
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "datatype_string_branch": {
+      "exit_code": 0,
+      "stdout_bytes": 395717,
+      "stdout_sha256": "02d9d3b4f12fedb2ceebe3f2efe5162c10bd8380c780e1652f8ff297e6fa2d8d",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "recursive_list_fold_product": {
+      "exit_code": 0,
+      "stdout_bytes": 402919,
+      "stdout_sha256": "5d83f6e59c6319b11357ad95c4d45a40127c037e05b37fe5099c2604ae8c474b",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "byte_array_max_update": {
+      "exit_code": 0,
+      "stdout_bytes": 396840,
+      "stdout_sha256": "2f53d85892c2fe681ce17c180daa2bdcb29f1bf646807ebca69c7e4a209fe97d",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "vector_concat_length": {
+      "exit_code": 0,
+      "stdout_bytes": 413586,
+      "stdout_sha256": "19f619a17ae3c6b93a68037e25c7fa02fa54a3b199e4822510c1a261f40846f6",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "tuple_captured_curried_closure": {
+      "exit_code": 0,
+      "stdout_bytes": 398375,
+      "stdout_sha256": "17177c28c798a5d9f8fbfd3de2806445e313f29133dbcec7c781406a397f3419",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "nested_recursive_list_match": {
+      "exit_code": 0,
+      "stdout_bytes": 396958,
+      "stdout_sha256": "badc315560416cafdf18567163cf7b9b89643f230e67a274793238c98d43beb2",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     }
   }
 }

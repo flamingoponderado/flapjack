@@ -474,6 +474,9 @@ also compares complete assembly for a caught out-of-bounds array access and
 word shifts through the top bit of a 64-bit word. Nested list and tuple
 patterns, signed division and remainder, and addition of a large integer
 through a function are also checked with observable outputs. It
+also checks a string-bearing datatype branch, recursive list construction and
+folding, a 255-byte array update, vector concatenation, a curried closure that
+captures a tuple-derived value, and nested recursive list matches. It
 also checks that
 `--types` takes precedence over `--print_sexp` and `--explore` in either flag
 order, including parse and type failures.
