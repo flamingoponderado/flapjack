@@ -30,13 +30,23 @@ theorem evaluate_assignment {C F : Type} (env : FlatSem.Environment FlatSem.Valu
     (names : List (Option MlString)) (values : List ClosSem.Value)
     (source : FlatSem.State C F) (target : ClosSem.State C F)
     (trace : BackendCommon.Tra) (reference value : FlatLang.Exp)
-    (valueSim : EvalSim env names values source target [value])
+    (valueSim : (FlatSem.evaluate env source [value]).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values source target [value])
     (referenceSim : ∀ (next : FlatSem.State C F) (nextTarget : ClosSem.State C F),
       StateRel next nextTarget → (FlatSem.evaluate env next [reference]).2 ≠ .err (.abort .typeError) →
       EvalSim env names values next nextTarget [reference])
     (notTypeError : (FlatSem.evaluate env source [.app trace (.src .opassign) [reference, value]]).2 ≠
       .err (.abort .typeError)) :
     EvalSim env names values source target [.app trace (.src .opassign) [reference, value]] := by
+  have valueNotTypeError : (FlatSem.evaluate env source [value]).2 ≠ .err (.abort .typeError) := by
+    intro failure
+    apply notTypeError
+    rw [FlatSem.evaluate]
+    simp only [List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append]
+    rw [(FlatSem.fixClock_evaluations env source [value, reference] value []).1, FlatSem.evaluate]
+    rw [(FlatSem.fixClock_evaluations env source [value] value []).1]
+    simp only [failure]
+  have valueSim := valueSim valueNotTypeError
   unfold EvalSim at valueSim ⊢
   simp only [compile, compileExps, compileExp, compileOp, arg2, List.reverse_cons, List.reverse_nil,
     List.nil_append, List.cons_append] at valueSim ⊢

@@ -5,22 +5,44 @@ import Flapjack.Compiler.Backend.FlatToClos.Proofs.EvaluateCases
 namespace Flapjack.Compiler.Backend.FlatToClos
 open Flapjack.SemanticPrimitivesHOL Flapjack.Basis.Pure.MlString
 
-/-- Unary reference allocation creates related source and closure stores. -/
+/-- A reference allocation with the wrong arity fails with a source type error. -/
+theorem ref_wrong_arity {C F : Type} (state : FlatSem.State C F)
+    (args : List FlatSem.Value) (wrong : args.length ≠ 1) :
+    (FlatSem.applyResult state (.src .opref) args).2 = .err (.abort .typeError) := by
+  cases args with
+  | nil => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory]
+  | cons first rest =>
+    cases rest with
+    | nil => simp at wrong
+    | cons second rest => simp [FlatSem.applyResult, FlatSem.doApp, FlatSem.doAppNumeric, FlatSem.doAppMemory]
+
+/-- Reference allocation creates related source and closure stores, with the
+source type-error exclusion used by the correctness theorem. -/
 theorem evaluate_ref {C F : Type} (env : FlatSem.Environment FlatSem.Value)
     (names : List (Option MlString)) (values : List ClosSem.Value)
     (source : FlatSem.State C F) (target : ClosSem.State C F)
-    (trace : BackendCommon.Tra) (argument : FlatLang.Exp)
-    (argSim : EvalSim env names values source target [argument]) :
-    EvalSim env names values source target [.app trace (.src .opref) [argument]] := by
-  have flatFix := (FlatSem.fixClock_evaluations env source [argument] argument []).1
-  have closFix := ClosSem.fixClock_evaluate [compileExp names argument] values target
+    (trace : BackendCommon.Tra) (args : List FlatLang.Exp)
+    (argSim : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) →
+      EvalSim env names values source target args.reverse)
+    (notTypeError : (FlatSem.evaluate env source [.app trace (.src .opref) args]).2 ≠
+      .err (.abort .typeError)) :
+    EvalSim env names values source target [.app trace (.src .opref) args] := by
+  have flatFix := (FlatSem.fixClock_evaluations env source args.reverse (.lit .none (.intLit 0)) []).1
+  have closFix := ClosSem.fixClock_evaluate (compileExps names args).reverse values target
+  have argsNotTypeError : (FlatSem.evaluate env source args.reverse).2 ≠ .err (.abort .typeError) := by
+    intro failure
+    apply notTypeError
+    rw [FlatSem.evaluate]
+    simp only [flatFix, failure]
+  have argSim := argSim argsNotTypeError
   unfold EvalSim at argSim ⊢
-  simp only [compile, compileExps, compileExp, compileOp, List.reverse_singleton] at argSim ⊢
+  simp only [compile, compileExps_reverse] at argSim
+  simp only [compile, compileExps, compileExp, compileOp] at ⊢
   rw [FlatSem.evaluate, ClosSem.evaluate, closFix]
-  simp only [List.reverse_singleton, flatFix]
-  cases flatRun : FlatSem.evaluate env source [argument] with
+  simp only [flatFix]
+  cases flatRun : FlatSem.evaluate env source args.reverse with
   | mk next flatResult =>
-    cases closRun : ClosSem.evaluate [compileExp names argument] values target with
+    cases closRun : ClosSem.evaluate (compileExps names args).reverse values target with
     | mk closResult nextTarget =>
       simp only [flatRun, closRun] at argSim ⊢
       rcases argSim with ⟨states, results⟩
@@ -28,7 +50,19 @@ theorem evaluate_ref {C F : Type} (env : FlatSem.Environment FlatSem.Value)
       | abort error => exact ⟨states, .abort error⟩
       | raise related => exact ⟨states, .raise related⟩
       | value related =>
-        have length := FlatSem.evaluate_singleton_length env source next argument _ flatRun
+        rename_i sourceArgs targetArgs
+        have resultShape : (FlatSem.applyResult next (.src .opref) sourceArgs.reverse).2 ≠
+            .err (.abort .typeError) := by
+          have fixed := flatFix
+          rw [flatRun] at fixed
+          have h := notTypeError
+          rw [FlatSem.evaluate, flatRun, fixed] at h
+          simpa using h
+        have length : sourceArgs.length = 1 := by
+          by_contra wrong
+          apply resultShape
+          apply ref_wrong_arity
+          simpa using wrong
         cases related with
         | nil => simp at length
         | cons head tail =>
