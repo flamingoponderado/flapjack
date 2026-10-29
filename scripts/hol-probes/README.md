@@ -1,3 +1,5 @@
+`clos_sem_basic_probe.out` captures the typed closure primitive dispatcher and block tag, length, Boolean, extension and constant observations. `Flapjack/Test/ClosSemBasicParity.lean` checks these cases; the full primitive dispatcher and correspondence review remain open.
+
 `clos_sem_thunk_probe.out` captures typed closure thunk operations and missing, flagged, array, valid-update, repeated-update and nested-thunk observations. `Flapjack/Test/ClosSemThunkParity.lean` replays the concrete cases; the proof-side store relation connects flat and closure thunk inspection and successful updates, pending cross-language review.
 
 `clos_sem_install_probe.out` captures typed closure installation, payload decoders and clock theorems, along with invalid-arity observations. Lean checks decoder uniqueness, related flat-to-closure payloads and installation clock facts; finite-map and semantic correspondence remain pending.

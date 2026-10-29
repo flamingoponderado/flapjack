@@ -328,6 +328,10 @@ run_probe clos_sem_thunk_probeScript.sml clos_sem_thunk_probe.out \
   dest_typed store_typed update_typed bad_typed missing ref_flag unevaluated array update repeat_update nested_update \
   "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
 
+run_probe clos_sem_basic_probeScript.sml clos_sem_basic_probe.out \
+  apply_typed taglen length bool_test extend extend_invalid constant \
+  "$cake_dir/compiler/backend/semantics/closSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe cake_flat_sem_thunk_probeScript.sml cake_flat_sem_thunk_probe.out \
   thunk_type thunk_dest thunk_update thunk_bad valid_thunk ref_flag bad_index ordinary_ref nonlocation update_value update_nested \
   "$cake_dir/compiler/backend/semantics/flatSemScript.sml" "$cake_dir/compiler/backend/semantics"
