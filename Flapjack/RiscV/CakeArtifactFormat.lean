@@ -113,6 +113,17 @@ private def exportWrappers (config : Backend.Config) : String :=
         "     j       " ++ label ++ "\n")
     else none)
 
+/-- Add the pinned exporter's returning entry sequence and external wrappers
+to an assembly frame. The caller supplies the symbol and export tables. -/
+def returningAssembly (output : String) (config : Backend.Config) : String :=
+  let output := output.replace "cdecl(cml_stackend): .quad 0\n"
+    ("cdecl(cml_stackend): .quad 0\n" ++
+     "ret_base: .quad 0\nret_stack: .quad 0\nret_stackend: .quad 0\ncan_enter: .quad 0\n")
+  let output := output.replace "     j       cake_main\n" "     j       cml_enter\n"
+  let output := output.replace "cake_exit:\n     tail cdecl(cml_exit)\n"
+    "cake_exit:\n     j    cml_return\n"
+  output ++ String.intercalate "\n" (returnEntryLines ++ [""]) ++ exportWrappers config
+
 /-- Flapjack formatting infrastructure combining the shared Pancake frame with
 CakeML startup, FFI, bitmap, symbol and optional returning-entry conventions.
 It takes a backend configuration rather than the HOL exporter inputs. -/
@@ -125,14 +136,6 @@ def assembly (bytes : List (BitVec 8)) (bitmaps : List (BitVec 64)) (config : Ba
     ("     la      t3,cake_bitmaps\n" ++
      "     sd      t3, 0(a1)              # store bitmap pointer\n" ++
      "     ld      a2,cdecl(cml_stack)    # arg3: first address of stack\n")
-  if mainReturn then
-    let output := output.replace "cdecl(cml_stackend): .quad 0\n"
-      ("cdecl(cml_stackend): .quad 0\n" ++
-       "ret_base: .quad 0\nret_stack: .quad 0\nret_stackend: .quad 0\ncan_enter: .quad 0\n")
-    let output := output.replace "     j       cake_main\n" "     j       cml_enter\n"
-    let output := output.replace "cake_exit:\n     tail cdecl(cml_exit)\n"
-      "cake_exit:\n     j    cml_return\n"
-    output ++ String.intercalate "\n" (returnEntryLines ++ [""]) ++ exportWrappers config
-  else output
+  if mainReturn then returningAssembly output config else output
 
 end Flapjack.RiscV.CakeArtifactFormat

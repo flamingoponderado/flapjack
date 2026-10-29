@@ -23,6 +23,10 @@ CASES = [
     ('Flapjack/Test/OriginalPancake/bitmap_calls.pnk', ['--no_warn', '--reg_alg=2']),
     ('Flapjack/Test/OriginalPancake/bitmap_calls.pnk', ['--no_warn', '--jump=true', '--hash_size=3']),
     ('Flapjack/Test/OriginalPancake/hello.pnk', ['--no_warn', '--types', '--print_sexp', '--gc=gen10']),
+    ('Flapjack/Test/OriginalPancake/const_return.pnk', ['--main_return=true']),
+    ('Flapjack/Test/OriginalPancake/exported_entries.pnk', ['--main_return=true']),
+    ('Flapjack/Test/OriginalPancake/exported_entries.pnk', ['--main_return=false']),
+    ('Flapjack/Test/OriginalPancake/exported_entries.pnk', ['--main_return=true', '--main_return=false']),
 ]
 
 

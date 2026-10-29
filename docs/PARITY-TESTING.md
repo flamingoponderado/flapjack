@@ -448,9 +448,9 @@ disabled entries, duplicate flags, and precedence over configuration errors.
 The `cake --pancake --target=riscv` route uses the native Pancake compiler.
 `python3 scripts/check-cake-pancake-parity.py --reference /var/tmp/flapjack-pinned-cake`
 compares complete output for successful programs, selected allocator and
-backend options, and warning-producing programs with `--no_warn`. Pancake
-parse and static-error diagnostics, warning locations, returning entry points,
-exploration, and perf callgraph mode remain unsupported in this route; the
+backend options, returning entry points and exported functions, and
+warning-producing programs with `--no_warn`. Pancake parse and static-error
+diagnostics, warning locations, exploration, and perf callgraph mode remain unsupported in this route; the
 driver reports those limits explicitly.
 
 `python3 scripts/check-cake-pinned-parity.py` checks additional successful,

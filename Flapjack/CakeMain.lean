@@ -449,8 +449,8 @@ def main (args : List String) : IO UInt32 := do
         return 2
     let input ← (← IO.getStdin).readBinToEnd
     if options.pancake then
-      if options.mainReturn || options.explore || options.perfCallgraph.getD false then
-        IO.eprintln "cake: Pancake returning entry, exploration and perf callgraph are not yet supported"
+      if options.explore || options.perfCallgraph.getD false then
+        IO.eprintln "cake: Pancake exploration and perf callgraph are not yet supported"
         return 2
       let some source := String.fromUTF8? input | do
         IO.eprintln "cake: non-UTF-8 Pancake source is not yet supported"
@@ -473,7 +473,14 @@ def main (args : List String) : IO UInt32 := do
           IO.eprintln "cake: Pancake backend compilation failed"
           return 2
         | some (bytes, bitmaps, config) =>
-          IO.print (Flapjack.RiscV.NativeCLI.assembly out.declarations bytes bitmaps config)
+          let output := Flapjack.RiscV.NativeCLI.assembly out.declarations bytes bitmaps config
+          if options.mainReturn then
+            let config := { config with
+              symbols := Flapjack.RiscV.NativeCLI.exportSymbols
+                (Flapjack.RiscV.NativeCLI.compileProgNames out.declarations) config
+              exported := Flapjack.Pancake.PanToTarget.exportsHOL out.declarations }
+            IO.print (Flapjack.RiscV.CakeArtifactFormat.returningAssembly output config)
+          else IO.print output
           return 0
     let chars := input.data.toList.map (fun c => BitVec.ofNat 8 c.toNat)
     let typeOutput := if options.onlyTypes || options.onlySexp || options.explore then
