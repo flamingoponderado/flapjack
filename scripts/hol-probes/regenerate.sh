@@ -341,7 +341,7 @@ run_probe source_to_source_proof_probeScript.sml source_to_source_proof_probe.ou
   "$cake_dir/compiler/backend/proofs/source_to_sourceProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe source_eval_oracle_adjust_probeScript.sml source_eval_oracle_adjust_probe.out \
-  v_rel_abs compiler_fun init_eval insert adjust is_insert adjust_insert \
+  v_rel_abs compiler_fun init_eval insert adjust is_insert adjust_insert adjust_evaluate adjust_semantics \
   "$cake_dir/compiler/backend/proofs/source_evalProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe source_eval_adjust_local_probeScript.sml source_eval_adjust_local_probe.out \

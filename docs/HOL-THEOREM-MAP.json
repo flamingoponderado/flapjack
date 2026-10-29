@@ -1,6 +1,30 @@
 [
   {
     "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateDeclarations.lean",
+    "lean_name": "adjustOracle_evaluate_DecsNil",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Single declaration-evaluation induction case; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateDeclarations.lean",
+    "lean_name": "adjustOracle_evaluate_Dexn",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Single declaration-evaluation induction case; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
+    "hol_name": "adjust_oracle_evaluate",
+    "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/EvaluateDeclarations.lean",
+    "lean_name": "adjustOracle_evaluate_Denv",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Denv induction case only; the typed original is captured in source_eval_oracle_adjust_probe.out. Full evaluator, source AST and carrier correspondence remain pending; the complete theorem is not yet assembled."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/source_evalProofScript.sml",
     "hol_name": "is_insert_decs",
     "lean_path": "Flapjack/Compiler/Backend/SourceEval/Proofs/OracleAdjustment.lean",
     "lean_name": "isInsertDecs",
