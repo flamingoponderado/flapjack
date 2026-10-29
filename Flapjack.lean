@@ -25,6 +25,7 @@ import Flapjack.Compiler.Backend.SourceEval.Proofs.OracleInduction
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.InstallRelation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ConfigIrrelevance
 import Flapjack.Compiler.Backend.FlatProps.ValueBasics
+import Flapjack.Compiler.Backend.FlatProps.NoMat
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.StateRelation
 import Flapjack.Compiler.Backend.FlatPattern.Proofs.ValueRelationCases
@@ -425,6 +426,7 @@ import Flapjack.Compiler.Backend.FlatToClos.Arith
 import Flapjack.Compiler.Backend.FlatToClos.CopyByte
 import Flapjack.Compiler.Backend.FlatToClos.Op
 import Flapjack.Compiler.Backend.FlatToClos.Compile
+import Flapjack.Compiler.Backend.FlatToClos.Proofs.ValueRelation
 import Flapjack.Compiler.Backend.Backend.PrimSrcConfig
 import Flapjack.Misc.Location
 import Flapjack.Compiler.Backend.BackendCommon.Operators

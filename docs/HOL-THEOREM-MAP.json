@@ -107685,5 +107685,21 @@
     "lean_name": "doEqList",
     "statement_status": "pending_statement_review",
     "reviewer": "Source clauses and fixed word widths compared; inferred HOL types and complete imported carrier correspondence remain pending review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+    "hol_name": "no_Mat_def",
+    "lean_path": "Flapjack/Compiler/Backend/FlatProps/NoMat.lean",
+    "lean_name": "noMat",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source cases compared; inferred HOL types and complete imported syntax carrier correspondence remain pending review."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/flatPropsScript.sml",
+    "hol_name": "no_Mat_decs_def",
+    "lean_path": "Flapjack/Compiler/Backend/FlatProps/NoMat.lean",
+    "lean_name": "noMatDecs",
+    "statement_status": "pending_statement_review",
+    "reviewer": "Source cases compared; inferred HOL types and complete imported syntax carrier correspondence remain pending review."
   }
 ]

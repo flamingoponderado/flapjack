@@ -8,7 +8,7 @@ open Flapjack.Basis.Pure.MlString
 
 /-- First index of a name in a de Bruijn context, or the context length if absent.
 This is the instance of HOL `findi` used by this pass. -/
-private def nameIndex (v : Option MlString) : List (Option MlString) → Nat
+def nameIndex (v : Option MlString) : List (Option MlString) → Nat
   | [] => 0
   | x :: xs => if v = x then 0 else nameIndex v xs + 1
 
